@@ -1,0 +1,33 @@
+{
+	"name": "moviemasher.js",
+	"main": "dist/moviemasher.js",
+	"version": "4.0.07",
+	"homepage": "http://www.moviemasher.com",
+	"authors": [ {"name": "Movie Masher", "email": "support@moviemasher.com" }],
+	"moduleType": ["amd"],
+	"description": "JavaScript library for realtime, browser-based video and audio editing",
+	"keywords": [
+		"movie-masher",
+		"video-masher",
+		"audio-masher",
+		"video-editor",
+		"audio-editor"
+	],
+	"license": "MPL-2.0",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": { "Font.js": "*"},
+	"devDependencies": {
+		"grunt": "^0.4.5",
+		"grunt-contrib-concat": "^0.4.0",
+		"grunt-contrib-copy": "^0.5.0",
+		"grunt-contrib-jshint": "^0.10.0",
+		"grunt-contrib-uglify": "^0.4.0",
+		"jshint-stylish": "^0.2.0"
+	}
+}
