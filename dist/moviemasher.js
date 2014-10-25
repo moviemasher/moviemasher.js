@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.07 - 2014-10-13
+/*! moviemasher.js - v4.0.07 - 2014-10-25
 * Copyright (c) 2014 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -435,15 +435,6 @@ var Filter = {
 			if (! scope.x) scope.x = '((in_w - out_w) / 2)';
 			if (! scope.y) scope.y = '((in_h - out_h) / 2)';
 			return scope;
-		},
-		massage: function(eval_str){
-			/*
-			if (Util.isstring(eval_str)){
-				eval_str = eval_str.replace(/out_h/g, 'h');
-				eval_str = eval_str.replace(/out_w/g, 'w');
-			}
-			*/
-			return eval_str;
 		}
 	},
 	drawbox: { 
@@ -2330,11 +2321,26 @@ var Player = function(evaluated) {
 				module_properties[property_key] = clip_value;
 			}
 		}
-		module_properties.mm_vert = function(size){
-			return Math.round(parseFloat(size) * parseFloat(module_properties.mm_height));
+		var __horz_vert = function(w_h, size, proud){
+			var value = parseFloat(size);
+			var w_h_value = parseFloat(module_properties[w_h]);
+			var w_h_value_scaled = w_h_value * value;
+			if (proud) {
+				var h_w = ('mm_height' === w_h ? 'mm_width' : 'mm_height');
+				var h_w_value = parseFloat(module_properties[h_w]);
+				if (h_w_value > w_h_value) {
+					w_h_value_scaled = w_h_value + (value - 1.0) * h_w_value;
+					//console.log(w_h, w_h_value_scaled, '=', w_h_value, '+ (', value - 1.0, ') * ', h_w_value);
+				}
+			}
+			//console.log(w_h, w_h_value_scaled);
+			return (w_h_value_scaled);
 		};
-		module_properties.mm_horz = function(size){
-			return Math.round(parseFloat(size) * parseFloat(module_properties.mm_width));
+		module_properties.mm_vert = function(size, proud){
+			return __horz_vert('mm_height', size, proud);
+		};
+		module_properties.mm_horz = function(size, proud){
+			return __horz_vert('mm_width', size, proud);
 		};
 		module_properties.mm_cmp = function(a, b, a_val, b_val){
 			return ((a > b) ? a_val : b_val);
@@ -2565,7 +2571,6 @@ var Player = function(evaluated) {
 						}
 						if (! test_bool) console.error('no conditions were true', parameter_value);
 					}
-					if (filter.massage) parameter_value = filter.massage(parameter_value);
 					if (Util.isstring(parameter_value)) { // could well be a number by now
 						for (eval_key in scope) { 
 							parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
@@ -2574,6 +2579,7 @@ var Player = function(evaluated) {
 					eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
 					try {
 						eval(eval_str); 
+						//console.log(evaluated[parameter_name], eval_str);
 					} catch (exception) {
 						//console.error(exception.message, eval_str, parameter_value);
 						evaluated[parameter_name] = parameter_value;

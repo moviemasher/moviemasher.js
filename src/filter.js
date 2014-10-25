@@ -70,15 +70,6 @@ var Filter = {
 			if (! scope.x) scope.x = '((in_w - out_w) / 2)';
 			if (! scope.y) scope.y = '((in_h - out_h) / 2)';
 			return scope;
-		},
-		massage: function(eval_str){
-			/*
-			if (Util.isstring(eval_str)){
-				eval_str = eval_str.replace(/out_h/g, 'h');
-				eval_str = eval_str.replace(/out_w/g, 'w');
-			}
-			*/
-			return eval_str;
 		}
 	},
 	drawbox: { 
