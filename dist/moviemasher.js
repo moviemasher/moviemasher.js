@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.07 - 2014-10-25
+/*! moviemasher.js - v4.0.07 - 2014-10-30
 * Copyright (c) 2014 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -82,7 +82,7 @@ var Audio = {
 	clip_timing: function(clip, zero_seconds, quantize) {
 		if (isNaN(zero_seconds)) console.error('Audio.clip_timing got NaN for zero_seconds', clip);
 		var now, dif, range, result = {offset: 0};
-		range = new Time(clip.frame, quantize, clip.length);
+		range = new TimeRange(clip.frame, quantize, clip.frames);
 		result.start = zero_seconds + range.seconds;
 		if (isNaN(result.start)) console.error('Audio.clip_timing start is NaN', range);
 		result.duration = range.lengthSeconds;
@@ -710,8 +710,8 @@ var Mash = {
 	},
 	clip_time: function(clip, media, time, quantize, add_one_frame) {
 		var clip_time = time.copyTime();
-		clip_time.subtract(new Time(clip.frame, quantize));
-		var limit_time = new Time(clip.length, quantize);
+		clip_time.subtract(new TimeRange(clip.frame, quantize));
+		var limit_time = new TimeRange(clip.frames, quantize);
 		clip_time.min(limit_time);
 		if (add_one_frame) {
 			clip_time.frame += (clip.speed ? Math.ceil(clip.speed) : 1);
@@ -719,14 +719,14 @@ var Mash = {
 		switch (media.type) {
 			case Constant.video:
 				if (clip.trim) {
-					clip_time.add(new Time(clip.trim, quantize));
+					clip_time.add(new TimeRange(clip.trim, quantize));
 				}
 				if (clip.speed) {
 					clip_time.divide(clip.speed, 'ceil');
 				}
 				break;
 			case Constant.audio:
-				if (clip.trim) clip_time.add(new Time(clip.trim, quantize));
+				if (clip.trim) clip_time.add(new TimeRange(clip.trim, quantize));
 				break;
 		}
 		return clip_time;
@@ -751,12 +751,12 @@ var Mash = {
 					case Constant.video:
 					case Constant.audio: {
 						if (Util.isnt(clip[Constant.gain])) clip[Constant.gain] = 1.0;
-						if (Util.isnt(clip.length)) clip.length = (new Time(media.duration, 1)).scale(mash.quantize, 'floor').frame;
+						if (Util.isnt(clip.frames)) clip.frames = (new TimeRange(media.duration, 1)).scale(mash.quantize, 'floor').frame;
 						if (Util.isnt(clip.trim)) clip.trim = 0;
 						break;
 					}
 					default: {
-						if (Util.isnt(clip.length)) clip.length = (new Time(Option.mash[media.type + '_seconds'], 1)).scale(mash.quantize).frame;
+						if (Util.isnt(clip.frames)) clip.frames = (new TimeRange(Option.mash[media.type + '_seconds'], 1)).scale(mash.quantize).frame;
 					}
 				}
 				switch(media.type){
@@ -787,12 +787,11 @@ var Mash = {
 		var media_references, media, clip, tracks, track, key, i, z, j, y, x, k;
 		media_references = {};
 		if (! Util.isarray(mash.media)) mash.media = [];
-		if (! Util.isob(mash.tracks)) mash.tracks = {};
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
-			if (! Util.isarray(mash.tracks[key])) mash.tracks[key] = [];
-			tracks = mash.tracks[key];
+			if (! Util.isarray(mash[key])) mash[key] = [];
+			tracks = mash[key];
 			z = tracks.length;
 			if (z) {
 				for (i = 0; i < z; i++){
@@ -889,18 +888,18 @@ var Mash = {
 		return is;
 	},
 	length_of_clips: function(clips){
-		var clip, length = 0;
+		var clip, frames = 0;
 		if (Util.isarray(clips) && clips.length) {
 			clip = clips[clips.length -1];
-			length = clip.frame + clip.length;
+			frames = clip.frame + clip.frames;
 		}
-		return length;
+		return frames;
 	},
 	loaded_range: function(mash, range, audio_on){
 		var urls = Mash.urls_for_clips(mash, Mash.range_clips(mash, range, audio_on), range);
 		return Loader.loaded_urls_of_type(urls);
 	},
-	max_length_for_clip: function(clip, media, quantize){
+	max_frames_for_clip: function(clip, media, quantize){
 		var max = 0;
 		switch(media.type){
 			case Constant.audio:
@@ -996,7 +995,7 @@ var Mash = {
 		}
 	},
 	media_range: function(clip, media, range, quantize, add_one_frame) {
-		var result = Time.fromTimes(Mash.clip_time(clip, media, range, quantize), Mash.clip_time(clip, media, range.endTime, quantize, add_one_frame));
+		var result = TimeRange.fromTimes(Mash.clip_time(clip, media, range, quantize), Mash.clip_time(clip, media, range.endTime, quantize, add_one_frame));
 		return result;
 	},
 	media_reference: function(mash, media_id, referenced, type){
@@ -1067,12 +1066,12 @@ var Mash = {
 	range_clips: function(mash, time, include_audio){
 		time = time.copyTimeRange();
 		var clip_time, key, tracks, track, clips = [], clip, i, z, j, y, k, x;
-		clip_time = new Time(0, mash.quantize, 1);
+		clip_time = new TimeRange(0, mash.quantize, 1);
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
 			if ((key === Constant.audio) && (! include_audio)) continue;
-			tracks = mash.tracks[key];
+			tracks = mash[key];
 			z = tracks.length;
 			for (i = 0; i < z; i++) {
 				track = tracks[i];
@@ -1080,7 +1079,7 @@ var Mash = {
 				for (j = 0; j < y; j++) {
 					clip = track.clips[j];
 					clip_time.frame = clip.frame;
-					clip_time.length = clip.length;
+					clip_time.frames = clip.frames;
 					if (clip_time.intersection(time)) clips.push(clip);
 				}
 			}
@@ -1100,16 +1099,16 @@ var Mash = {
 		for (i = 0; i < z; i++){
 			clip = clips[i];
 			media = Mash.media(mash, clip);
-			if (i && (Constant.transition === media.type)) start_time -= clip.length;
+			if (i && (Constant.transition === media.type)) start_time -= clip.frames;
 			clip.frame = start_time;
-			if (Constant.transition !== media.type) start_time += clip.length;
+			if (Constant.transition !== media.type) start_time += clip.frames;
 		}
 		Mash.recalc_clips(clips); // sorts by frame 
 	},
 	track_for_clip: function(mash, clip, media){
 		if (! media) media = Mash.media(mash, clip);
 		var track, tracks, i = 0, z;
-		tracks = mash.tracks[Constant.audio === media.type ? Constant.audio : Constant.video];
+		tracks = mash[Constant.audio === media.type ? Constant.audio : Constant.video];
 		if (! Util.isnt(clip.track)) {
 			i = clip.track;
 			z = i + 1;
@@ -1192,11 +1191,11 @@ var Mash = {
 	},
 	urls_for_video_clip: function(clip, media, range, quantize, resources){
 		if (! resources) resources = {};
-		var add_one_frame = (range.length > 1);
+		var add_one_frame = (range.frames > 1);
 		range = Mash.media_range(clip, media, range, quantize, add_one_frame);
 		var s, url;
 		var last_frame, frame,z;
-		var media_time = new Time(Math.floor(Number(media.duration) * Number(media.fps)), media.fps);
+		var media_time = new TimeRange(Math.floor(Number(media.duration) * Number(media.fps)), media.fps);
 		var last_media_frame = media_time.frame;
 		var limited_range = range.copyTimeRange();
 
@@ -1204,7 +1203,7 @@ var Mash = {
 		z = limited_range.end;
 		frame = limited_range.frame;
 		for (; frame <= z; frame ++) {
-			media_time = new Time(frame, limited_range.fps);
+			media_time = new TimeRange(frame, limited_range.fps);
 			media_time.scale(media.fps);
 			if ((frame !== limited_range.frame) && (last_frame === media_time.frame)) continue;
 			last_frame = media_time.frame;
@@ -1240,9 +1239,9 @@ var Mash = {
 	},
 	visual_clips: function(mash){			
 		var track, i, z, clips = [];
-		z = mash.tracks.video.length;
+		z = mash.video.length;
 		for (i = 0; i < z; i++) {
-			track = mash.tracks.video[i];
+			track = mash.video[i];
 			if (Util.isarray(track.clips) && track.clips.length) clips = clips.concat(track.clips);
 		}
 		return clips;
@@ -1363,11 +1362,11 @@ var Player = function(evaluated) {
 	this.__muted = false;
 	this.__paused = true;
 	this.__stalling = false;
-	this.__minbuffertime = new Time(evaluated.minbuffertime, 1);
-	this.__unbuffertime = new Time(evaluated.unbuffertime, 1);	
-	this.__buffertime = new Time(evaluated.buffertime, 1);
-	this.__time = new Time(0, 1);
-	this.__time_drawn = new Time(0, 1);
+	this.__minbuffertime = new TimeRange(evaluated.minbuffertime, 1);
+	this.__unbuffertime = new TimeRange(evaluated.unbuffertime, 1);	
+	this.__buffertime = new TimeRange(evaluated.buffertime, 1);
+	this.__time = new TimeRange(0, 1);
+	this.__time_drawn = new TimeRange(0, 1);
 	for (key in evaluated){
 		value = evaluated[key];
 		switch(key){
@@ -1395,7 +1394,7 @@ var Player = function(evaluated) {
 	}); // autoplay
 	dp(pt, "buffertime", {
 		get: function() {return this.__buffertime.seconds;},
-		set: function(seconds) { this.__buffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__buffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // buffertime
 	dp(pt, "canvas_context", {
 		get: function() { return this.__drawing.context; },
@@ -1419,7 +1418,7 @@ var Player = function(evaluated) {
 	dp(pt, "currentTime", {
 		get: function() { return this.__time.seconds; },
 		set: function(seconds) { 
-			this.time = Time.fromSeconds(seconds, this.__fps);
+			this.time = TimeRange.fromSeconds(seconds, this.__fps);
 		}
 	}); // currentTime
 	dp(pt, "duration", { 
@@ -1445,7 +1444,7 @@ var Player = function(evaluated) {
 		get: function() { return this.__time.frame;},
 		set: function(num) {
 			//console.log('frame=', num);
-			this.time = new Time(num, this.__time.fps);
+			this.time = new TimeRange(num, this.__time.fps);
 		}
 	}); // frame
 	dp(pt, "loop", {
@@ -1472,7 +1471,7 @@ var Player = function(evaluated) {
 	}); // mash
 	dp(pt, "minbuffertime", {
 		get: function() {return this.__minbuffertime.seconds;},
-		set: function(seconds) { this.__minbuffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__minbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // minbuffertime
 	dp(pt, "muted", {
 		get: function() { return this.__muted;},
@@ -1517,7 +1516,7 @@ var Player = function(evaluated) {
 			return pos;
 		},
 		set: function(per) {
-			this.time = new Time(this.duration * per, 1);
+			this.time = new TimeRange(this.duration * per, 1);
 		}
 	}); // position
 	dp(pt, 'selectedClip', { get: function(){ 
@@ -1594,7 +1593,7 @@ var Player = function(evaluated) {
 	dp(pt, "time", {
 		get: function() { return this.__time;},
 		set: function(something) {
-			var new_time = Time.fromSomething(something);
+			var new_time = TimeRange.fromSomething(something);
 			new_time = this.__limit_time(new_time);
 			if (! this.__time.isEqualToTime(new_time)) {
 				this.__redraw_moving(new_time);
@@ -1603,7 +1602,7 @@ var Player = function(evaluated) {
 	}); // time
 	dp(pt, "unbuffertime", {
 		get: function() {return this.__unbuffertime.seconds;},
-		set: function(seconds) { this.__unbuffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__unbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // unbuffertime
 	dp(pt, "volume", {
 		get: function() { return this.__gain;},
@@ -1745,8 +1744,8 @@ var Player = function(evaluated) {
 				}
 				action = new Action(this, redo_func, undo_func);
 				switch(prop){
-					case 'length': {
-						action.max = Mash.max_length_for_clip(target, media, this.__mash.quantize);
+					case 'frames': {
+						action.max = Mash.max_frames_for_clip(target, media, this.__mash.quantize);
 						action.set_property = function(new_value){
 							new_value = Math.max(Option.mash.minframes, new_value);
 							if (this.max) new_value = Math.min(this.max, new_value);
@@ -1757,14 +1756,14 @@ var Player = function(evaluated) {
 						break;
 					}
 					case 'trim': {
-						action.orig_length = Util.ob_property(target, 'length');
+						action.orig_length = Util.ob_property(target, 'frames');
 						action.max = Mash.max_trim_for_clip(target, media, this.__mash.quantize);
 						action.set_property = function(new_value){
 							new_value = Math.max(0, new_value);
 							if (this.max) new_value = Math.min(this.max, new_value);
 							Util.set_ob_property(this.target, this.property, new_value);
 							new_value = this.orig_length - (new_value - this.orig_value);
-							Util.set_ob_property(this.target, 'length', new_value);
+							Util.set_ob_property(this.target, 'frames', new_value);
 							Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
 							this.player.mash_length_changed();
 						};
@@ -1829,7 +1828,7 @@ var Player = function(evaluated) {
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
-			tracks = this.__mash.tracks[key];
+			tracks = this.__mash[key];
 			z = tracks.length;
 			for (i = 0; i < z; i++) {
 				mash_length = Math.max(mash_length, Mash.length_of_clips(tracks[i].clips));
@@ -1837,7 +1836,7 @@ var Player = function(evaluated) {
 		}
 		if (this.__mash_length !== mash_length){
 			this.__mash_length = mash_length;
-			var time = new Time(this.__mash_length, this.__mash.quantize);
+			var time = new TimeRange(this.__mash_length, this.__mash.quantize);
 			time.scale(this.__fps, 'floor');
 			this.__mash_frames = time.frame;
 			this.frame = Math.max(0, Math.min(this.__mash_frames - 1, this.__time.frame)); // move back if we need to
@@ -1859,7 +1858,7 @@ var Player = function(evaluated) {
 				} else if ((Constant.audio === type) || track_index) {
 					action = this.__action_create_clips_move(type, track_index, frame_or_index, ob_or_array);
 				} else {
-					frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash.tracks[type][track_index].clips);
+					frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash[type][track_index].clips);
 					if (-2 < frame_or_index) action = this.__action_create_video_move(track_index, frame_or_index, ob_or_array);
 				}
 				if (action) this.__action_add(action);
@@ -1877,9 +1876,9 @@ var Player = function(evaluated) {
 		if (this.__mash) {
 			audio_on = this.__audio_is_on();
 			// time we want to buffer - just the current frame if paused, otherwise from it to it plus buffertime
-			range = (this.__paused ? this.__time.copyTime() : new Time(this.__time.frame, this.__time.fps, this.__buffertime.frame)); 
+			range = (this.__paused ? this.__time.copyTime() : new TimeRange(this.__time.frame, this.__time.fps, this.__buffertime.frame)); 
 			// make sure range is within the mash range
-			if (! range.intersection(new Time(0, this.__mash.quantize, this.__mash_length))) range = null;
+			if (! range.intersection(new TimeRange(0, this.__mash.quantize, this.__mash_length))) range = null;
 			if (range) {
 				clips = Mash.range_clips(this.__mash, range, audio_on);
 				needed_urls = Mash.urls_for_clips(this.__mash, clips, range, (audio_on ? Constant.both : Constant.video));
@@ -2050,7 +2049,7 @@ var Player = function(evaluated) {
 	pt.__action_create_clips_move = function(type, track_index, frame, clips){
 		clips.sort(Util.sort_by_frame); // so they are all a block
 		var action, orig, orig_track, track, clip, i, z = clips.length;
-		track = this.__mash.tracks[type][track_index];
+		track = this.__mash[type][track_index];
 		orig_track = track;
 		clip = clips[0];
 		if (-1 === track.clips.indexOf(clip)) { // move from different track
@@ -2117,7 +2116,7 @@ var Player = function(evaluated) {
 	pt.__action_create_video_move = function(track_index, index, clips){
 		//console.log('__action_create_video_move', track_index, index, clips);
 		var action, orig, orig_track, track, clip, i, z = clips.length;
-		track = this.__mash.tracks.video[track_index];
+		track = this.__mash.video[track_index];
 		orig_track = track;
 		clip = clips[0];
 		if (-1 === track.clips.indexOf(clip)) { // move from different video track
@@ -2160,7 +2159,7 @@ var Player = function(evaluated) {
 	pt.__action_create_clips_remove = function(type, track_index, clips) {
 		clips.sort(Util.sort_by_frame); // so they are all a block
 		var action, orig, track, clip, i, z = clips.length;
-		track = this.__mash.tracks[type][track_index];
+		track = this.__mash[type][track_index];
 		clip = clips[0];
 		orig = [];
 		for (i = 0; i < z; i++) {
@@ -2205,7 +2204,7 @@ var Player = function(evaluated) {
 	};
 	pt.__action_create_video_remove = function(track_index, clips){
 		var action, orig, track, clip, i, z = clips.length;
-		track = this.__mash.tracks.video[track_index];
+		track = this.__mash.video[track_index];
 		clip = clips[0];
 		orig = [];
 		for (i = 0; i < z; i++) {
@@ -2257,14 +2256,14 @@ var Player = function(evaluated) {
 			for (var i = 0; i < this.tracks; i++){
 				this.player.__track_create(this.type);
 			}
-			target = this.player.mash.tracks[this.type][this.index].clips;
+			target = this.player.mash[this.type][this.index].clips;
 			this.clip.frame = this.frame;
 			target.push(this.clip);
 			Mash.recalc_clips(target);
 			this.player.mash_length_changed();
 		}, function() {
 			var target;
-			target = this.player.mash.tracks[this.type][this.index].clips;
+			target = this.player.mash[this.type][this.index].clips;
 			Util.array_delete(target, this.clip);
 			for (var i = 0; i < this.tracks; i++){
 				this.player.__track_delete(this.type);
@@ -2276,7 +2275,7 @@ var Player = function(evaluated) {
 		action.frame = frame;
 		action.index = index;
 		action.type = (Constant.audio === media_type ? media_type : Constant.video);
-		action.tracks = (index + 1) - this.__mash.tracks[action.type].length;
+		action.tracks = (index + 1) - this.__mash[action.type].length;
 		return action;
 	};
 	pt.__action_create_video_add = function(clip, track_index, index){
@@ -2292,7 +2291,7 @@ var Player = function(evaluated) {
 		});
 		action.clip = clip;
 		action.index = index;
-		action.target = this.__mash.tracks.video[track_index].clips;
+		action.target = this.__mash.video[track_index].clips;
 		return action;
 	};
 	pt.__audio_is_on = function(){
@@ -2330,10 +2329,8 @@ var Player = function(evaluated) {
 				var h_w_value = parseFloat(module_properties[h_w]);
 				if (h_w_value > w_h_value) {
 					w_h_value_scaled = w_h_value + (value - 1.0) * h_w_value;
-					//console.log(w_h, w_h_value_scaled, '=', w_h_value, '+ (', value - 1.0, ') * ', h_w_value);
 				}
 			}
-			//console.log(w_h, w_h_value_scaled);
 			return (w_h_value_scaled);
 		};
 		module_properties.mm_vert = function(size, proud){
@@ -2354,7 +2351,7 @@ var Player = function(evaluated) {
 		if (clip_time) module_properties.t = module_properties.mm_duration = clip_time.lengthSeconds;
 		
 		clip_time.scale(time.fps);
-		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.length;
+		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.frames;
 		module_properties.mm_width = this.__drawing.canvas.width;
 		module_properties.mm_height = this.__drawing.canvas.height;
 		drawing = drawings[drawings.length-1];
@@ -2407,7 +2404,7 @@ var Player = function(evaluated) {
 			case Constant.video: {
 				copy_time = time.copyTime();
 				copy_time.scale(media.fps);
-				copy_time.length = 1;
+				copy_time.frames = 1;
 				for (url in Mash.urls_for_video_clip(clip, media, copy_time, quantize)){
 					resource = Loader.cached_urls[url];
 					if (resource) {
@@ -2579,7 +2576,6 @@ var Player = function(evaluated) {
 					eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
 					try {
 						eval(eval_str); 
-						//console.log(evaluated[parameter_name], eval_str);
 					} catch (exception) {
 						//console.error(exception.message, eval_str, parameter_value);
 						evaluated[parameter_name] = parameter_value;
@@ -2595,10 +2591,10 @@ var Player = function(evaluated) {
 		var ctime, scope, evaluated, filter_config, filter, i, z;
 		if (module_media) {
 			if (module_media.filters) {
-				if (layer_clip.length) {
-					ctime = new Time(0, this.__mash.quantize, this.__mash_length);
+				if (layer_clip.frames) {
+					ctime = new TimeRange(0, this.__mash.quantize, this.__mash_length);
 					ctime.frame = layer_clip.frame;
-					ctime.length = layer_clip.length;
+					ctime.frames = layer_clip.frames;
 					z = module_media.filters.length;
 					for (i = 0; i < z; i++){
 						filter_config = module_media.filters[i];
@@ -2611,7 +2607,7 @@ var Player = function(evaluated) {
 							drawings = filter.render(drawings, scope, evaluated, filter_config);	
 						}
 					}
-				} else console.error('invalid layer clip with no length', layer_clip);
+				} else console.error('invalid layer clip with no frames', layer_clip);
 			} else console.error('invalid module media with no filters', module, module_media);
 		} else console.error('false media while drawing module filters', module, layer_clip);
 		return drawings;
@@ -2619,7 +2615,7 @@ var Player = function(evaluated) {
 	pt.__draw_effects = function(drawings, layer_clip, time) {
 		var effect, effect_media, i, z;
 		if (layer_clip) {
-			if (layer_clip.length){
+			if (layer_clip.frames){
 				if (layer_clip.effects) {
 					z = layer_clip.effects.length;
 					for (i = z - 1; i > -1; i--){ // zero is 'top', so go backwards
@@ -2629,13 +2625,13 @@ var Player = function(evaluated) {
 						else console.error('could not find effect media', effect, layer_clip, this.__mash.media);
 					}
 				}  else console.error('invalid layer clip with no effects', layer_clip);
-			} else console.error('invalid layer clip with no length, so no effects', layer_clip);
+			} else console.error('invalid layer clip with no frames, so no effects', layer_clip);
 		} else console.error('false layer clip, so no effects', drawings);
 		return drawings;
 	};
 	pt.__limit_time = function(time){
 		var start_time = time.copyTime();
-		var limit_time = new Time(this.__mash_length, this.__mash.quantize);
+		var limit_time = new TimeRange(this.__mash_length, this.__mash.quantize);
 		limit_time.frame = Math.max(0, limit_time.frame - 1);
 		start_time.min(limit_time);
 		start_time.scale(this.__fps, 'floor');
@@ -2644,7 +2640,7 @@ var Player = function(evaluated) {
 	pt.__load_timed = function(){
 		if (this.__moving){
 			// hopefully runs twice a frame
-			var now = Time.fromSeconds(Audio.time(), this.__fps, 'ceil');
+			var now = TimeRange.fromSeconds(Audio.time(), this.__fps, 'ceil');
 			if (now.frame !== this.__limit_time(now).frame) {
 				// loop back to start or pause
 				if (! this.__loop) {
@@ -2702,11 +2698,11 @@ var Player = function(evaluated) {
 		}
 	};
 	pt.__track_create = function(audio_or_video){
-		var container = this.__mash.tracks[audio_or_video];
+		var container = this.__mash[audio_or_video];
 		container.push(Mash.init_track(audio_or_video, container.length));
 	};
 	pt.__track_delete = function(audio_or_video){
-		var track = this.__mash.tracks[audio_or_video].pop();
+		var track = this.__mash[audio_or_video].pop();
 		if (this.__mash_length === Mash.length_of_clips(track.clips)) this.mash_length_changed();
 	};
 })(Player.prototype);
@@ -2739,31 +2735,31 @@ var Players = {
 
 };
 
-var Time = function(start, rate, duration){
+var TimeRange = function(start, rate, duration){
 	if (start) this.frame = Number(start) || 0;
 	if (rate) this.fps = Number(rate) || 0;
-	if (duration) this.length = Math.max(1, Number(duration));
+	if (duration) this.frames = Math.max(1, Number(duration));
 };
-Time.fromTimes = function(start, end) {
+TimeRange.fromTimes = function(start, end) {
 	start.synchronize(end);
-	return new Time(start.frame, start.fps, Math.max(1, end.frame - start.frame));
+	return new TimeRange(start.frame, start.fps, Math.max(1, end.frame - start.frame));
 };
-Time.fromSeconds = function(seconds, rate, rounding) {
+TimeRange.fromSeconds = function(seconds, rate, rounding) {
 	if (! rounding) rounding = 'round';
 	if (! rate) rate = 1;
-	return new Time(Math[rounding](Number(seconds) * Number(rate)), rate);
+	return new TimeRange(Math[rounding](Number(seconds) * Number(rate)), rate);
 };
-Time.fromSomething = function(something){
-	var frame, length, fps;
-	if (! something) something = new Time();
-	else if (typeof something === 'number') something = new Time.fromSeconds(something);
+TimeRange.fromSomething = function(something){
+	var frame, frames, fps;
+	if (! something) something = new TimeRange();
+	else if (typeof something === 'number') something = new TimeRange.fromSeconds(something);
 	else if (typeof something === 'string') {
 		something = something.split('-');
 		frame = something.shift();
-		length = fps = 1;
-		if (something.length) { // there was a dash - length was specified
+		frames = fps = 1;
+		if (something.length) { // there was a dash - frames was specified
 			something = something.shift().split('@');
-			length = something.shift();
+			frames = something.shift();
 		} else {
 			something = frame.split('@');
 			frame = something.shift();
@@ -2771,23 +2767,22 @@ Time.fromSomething = function(something){
 		if (something.length) {
 			fps = something.shift();
 		}
-		something = new Time(frame, fps, length);
+		something = new TimeRange(frame, fps, frames);
 	}
 	return something;
 };
 (function(pt){
-	pt.length = 0;
+	pt.frames = 0;
 	pt.frame = 0;
 	pt.fps = 0;	
 	Object.defineProperty(pt, 'end', { 
-		get: function() { return this.frame + this.length; },
-		set: function(n) {this.length = Math.max(1, Number(n) - Number(this.frame));}
+		get: function() { return this.frame + this.frames; },
+		set: function(n) {this.frames = Math.max(1, Number(n) - Number(this.frame));}
 	});
-	Object.defineProperty(pt, 'endTime', { get: function() { return new Time(this.end, this.fps); } } );
-	Object.defineProperty(pt, 'lengthTime', { get: function() { return new Time(this.length, this.fps); } } );
+	Object.defineProperty(pt, 'endTime', { get: function() { return new TimeRange(this.end, this.fps); } } );
 	Object.defineProperty(pt, 'description', { get: function() { 
 		var descr = this.frame;
-		if (this.length) descr += '-' + this.end;
+		if (this.frames) descr += '-' + this.end;
 		descr += '@' + this.fps;
 		return descr; 
 	} } );
@@ -2795,10 +2790,10 @@ Time.fromSomething = function(something){
 		get: function() { return Number(this.frame) / Number(this.fps); },
 		set: function(time) { this.setToTime(time); },
 	} );
-	Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.length) / Number(this.fps); } } );
+	Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.frames) / Number(this.fps); } } );
 	Object.defineProperty(pt, 'timeRange', { get: function() { 
 		var range = this.copyTime();
-		range.length = 1;
+		range.frames = 1;
 		return range;
 	} } );	
 	pt.add = function(time) {
@@ -2810,18 +2805,18 @@ Time.fromSomething = function(something){
 		return this;
 	};
 	pt.setToTime = function(something){
-		something = Time.fromSomething(something);
+		something = TimeRange.fromSomething(something);
 		this.synchronize(something);
 		this.frame = something.frame;
 		return something;
 	};
 	pt.setToTimeRange = function(something){
 		something = this.setToTime(something);
-		this.length = something.length;
+		this.frames = something.frames;
 		return something;
 	};
-	pt.copyTime = function(length) {
-		return new Time(this.frame, this.fps, length);			
+	pt.copyTime = function(frames) {
+		return new TimeRange(this.frame, this.fps, frames);			
 	};
 	pt.divide = function(number, rounding) {
 		if (! rounding) rounding = 'round';
@@ -2831,7 +2826,7 @@ Time.fromSomething = function(something){
 		if (! rounding) rounding = 'round';
 		var start = this.frame;
 		if (rate !== this.fps) {
-			var time = Time.fromSeconds(this.seconds, this.fps, rounding);
+			var time = TimeRange.fromSeconds(this.seconds, this.fps, rounding);
 			start = time.frame;
 		}
 		return start;	
@@ -2898,7 +2893,7 @@ Time.fromSomething = function(something){
 		if (this.fps !== rate) {
 			if (! rounding) rounding = 'round';
 			this.frame = Math[rounding](Number(this.frame) / (Number(this.fps) / Number(rate)));
-			if (this.length) this.length = Math.max(1, Math[rounding](Number(this.length) / (Number(this.fps) / Number(rate))));
+			if (this.frames) this.frames = Math.max(1, Math[rounding](Number(this.frames) / (Number(this.fps) / Number(rate))));
 			this.fps = rate;
 		}
 		return this;
@@ -2923,10 +2918,6 @@ Time.fromSomething = function(something){
 			time.scale(gcf, rounding);
 		}
 	};
-	pt.expand = function(time){
-		this.min(time);
-		this.maxLength(time.lengthTime);
-	};
 	pt.__gcd = function(a, b) {
 		var t;
 		while (b !== 0) {
@@ -2938,7 +2929,7 @@ Time.fromSomething = function(something){
 	};
 	pt.__lcm = function(a, b) { return (a * b / this.__gcd(a, b)); };
 	pt.copyTimeRange = function() {
-		return new Time(this.frame, this.fps, this.length);			
+		return new TimeRange(this.frame, this.fps, this.frames);			
 	};
 	pt.touches = function(range){
 		return this.intersection(range, true);
@@ -2954,10 +2945,10 @@ Time.fromSomething = function(something){
 			range1.synchronize(range2);
 		}
 		var last_start = Math.max(range1.frame, range2.frame);
-		var first_end = Math.min(range1.end + (range1.length ? 0 : 1), range2.end + (range2.length ? 0 : 1));
+		var first_end = Math.min(range1.end + (range1.frames ? 0 : 1), range2.end + (range2.frames ? 0 : 1));
 		if ((last_start < first_end) || (or_equals && (last_start === first_end)))
 		{
-			result = new Time(last_start, range1.fps, first_end - last_start);
+			result = new TimeRange(last_start, range1.fps, first_end - last_start);
 		}
 		//if (or_equals) console.log('intersection', result, range1.description, range2.description);
 		return result;
@@ -2965,26 +2956,26 @@ Time.fromSomething = function(something){
 	pt.isEqualToTimeRange = function(range){
 		var equal = false;
 		if (range && range.fps && this.fps) {
-			if (this.fps === range.fps) equal = ((this.frame === range.frame) && (this.length === range.length));
+			if (this.fps === range.fps) equal = ((this.frame === range.frame) && (this.frames === range.frames));
 			else {
 				// make copies so neither range is changed
 				var range1 = this.copyTimeRange();
 				var range2 = range.copyTimeRange();
 				range1.synchronize(range2);
-				equal = ((range1.frame === range2.frame) && (range1.length === range2.length));
+				equal = ((range1.frame === range2.frame) && (range1.frames === range2.frames));
 			}
 		}
 		return equal;
 	};
 	pt.maxLength = function(time) {
 		this.synchronize(time);
-		this.length = Math.max(time.frame, this.length);
+		this.frames = Math.max(time.frame, this.frames);
 	};
 	pt.minLength = function(time) {
 		this.synchronize(time);
-		this.length = Math.min(time.frame, this.length);
+		this.frames = Math.min(time.frame, this.frames);
 	};
-})(Time.prototype);
+})(TimeRange.prototype);
 
 var Util = {
 	array_empty: function(array){
@@ -3196,7 +3187,7 @@ var Util = {
 	},
 	pad: function(n, width, z) {
 		z = z || '0';
-		n = n + '';
+		n = String(n);
 		return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 	},
 	pluralize: function(n, s){
@@ -3218,8 +3209,8 @@ var Util = {
 			if (ob) ob[prop[i]] = val;
 		}
 	},
-	sort_by_frame: function(time1, time2) {
-		return (time1.frame - time2.frame) || (time1.length - time2.length);
+	sort_by_frame: function(clip1, clip2) {
+		return (clip1.frame - clip2.frame) || (clip1.frames - clip2.frames);
 	},
 	sort_by_label: function(a, b) {
 		if (a.label < b.label) return -1;

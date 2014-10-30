@@ -41,8 +41,8 @@ var Mash = {
 	},
 	clip_time: function(clip, media, time, quantize, add_one_frame) {
 		var clip_time = time.copyTime();
-		clip_time.subtract(new Time(clip.frame, quantize));
-		var limit_time = new Time(clip.length, quantize);
+		clip_time.subtract(new TimeRange(clip.frame, quantize));
+		var limit_time = new TimeRange(clip.frames, quantize);
 		clip_time.min(limit_time);
 		if (add_one_frame) {
 			clip_time.frame += (clip.speed ? Math.ceil(clip.speed) : 1);
@@ -50,14 +50,14 @@ var Mash = {
 		switch (media.type) {
 			case Constant.video:
 				if (clip.trim) {
-					clip_time.add(new Time(clip.trim, quantize));
+					clip_time.add(new TimeRange(clip.trim, quantize));
 				}
 				if (clip.speed) {
 					clip_time.divide(clip.speed, 'ceil');
 				}
 				break;
 			case Constant.audio:
-				if (clip.trim) clip_time.add(new Time(clip.trim, quantize));
+				if (clip.trim) clip_time.add(new TimeRange(clip.trim, quantize));
 				break;
 		}
 		return clip_time;
@@ -82,12 +82,12 @@ var Mash = {
 					case Constant.video:
 					case Constant.audio: {
 						if (Util.isnt(clip[Constant.gain])) clip[Constant.gain] = 1.0;
-						if (Util.isnt(clip.length)) clip.length = (new Time(media.duration, 1)).scale(mash.quantize, 'floor').frame;
+						if (Util.isnt(clip.frames)) clip.frames = (new TimeRange(media.duration, 1)).scale(mash.quantize, 'floor').frame;
 						if (Util.isnt(clip.trim)) clip.trim = 0;
 						break;
 					}
 					default: {
-						if (Util.isnt(clip.length)) clip.length = (new Time(Option.mash[media.type + '_seconds'], 1)).scale(mash.quantize).frame;
+						if (Util.isnt(clip.frames)) clip.frames = (new TimeRange(Option.mash[media.type + '_seconds'], 1)).scale(mash.quantize).frame;
 					}
 				}
 				switch(media.type){
@@ -118,12 +118,11 @@ var Mash = {
 		var media_references, media, clip, tracks, track, key, i, z, j, y, x, k;
 		media_references = {};
 		if (! Util.isarray(mash.media)) mash.media = [];
-		if (! Util.isob(mash.tracks)) mash.tracks = {};
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
-			if (! Util.isarray(mash.tracks[key])) mash.tracks[key] = [];
-			tracks = mash.tracks[key];
+			if (! Util.isarray(mash[key])) mash[key] = [];
+			tracks = mash[key];
 			z = tracks.length;
 			if (z) {
 				for (i = 0; i < z; i++){
@@ -220,18 +219,18 @@ var Mash = {
 		return is;
 	},
 	length_of_clips: function(clips){
-		var clip, length = 0;
+		var clip, frames = 0;
 		if (Util.isarray(clips) && clips.length) {
 			clip = clips[clips.length -1];
-			length = clip.frame + clip.length;
+			frames = clip.frame + clip.frames;
 		}
-		return length;
+		return frames;
 	},
 	loaded_range: function(mash, range, audio_on){
 		var urls = Mash.urls_for_clips(mash, Mash.range_clips(mash, range, audio_on), range);
 		return Loader.loaded_urls_of_type(urls);
 	},
-	max_length_for_clip: function(clip, media, quantize){
+	max_frames_for_clip: function(clip, media, quantize){
 		var max = 0;
 		switch(media.type){
 			case Constant.audio:
@@ -327,7 +326,7 @@ var Mash = {
 		}
 	},
 	media_range: function(clip, media, range, quantize, add_one_frame) {
-		var result = Time.fromTimes(Mash.clip_time(clip, media, range, quantize), Mash.clip_time(clip, media, range.endTime, quantize, add_one_frame));
+		var result = TimeRange.fromTimes(Mash.clip_time(clip, media, range, quantize), Mash.clip_time(clip, media, range.endTime, quantize, add_one_frame));
 		return result;
 	},
 	media_reference: function(mash, media_id, referenced, type){
@@ -398,12 +397,12 @@ var Mash = {
 	range_clips: function(mash, time, include_audio){
 		time = time.copyTimeRange();
 		var clip_time, key, tracks, track, clips = [], clip, i, z, j, y, k, x;
-		clip_time = new Time(0, mash.quantize, 1);
+		clip_time = new TimeRange(0, mash.quantize, 1);
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
 			if ((key === Constant.audio) && (! include_audio)) continue;
-			tracks = mash.tracks[key];
+			tracks = mash[key];
 			z = tracks.length;
 			for (i = 0; i < z; i++) {
 				track = tracks[i];
@@ -411,7 +410,7 @@ var Mash = {
 				for (j = 0; j < y; j++) {
 					clip = track.clips[j];
 					clip_time.frame = clip.frame;
-					clip_time.length = clip.length;
+					clip_time.frames = clip.frames;
 					if (clip_time.intersection(time)) clips.push(clip);
 				}
 			}
@@ -431,16 +430,16 @@ var Mash = {
 		for (i = 0; i < z; i++){
 			clip = clips[i];
 			media = Mash.media(mash, clip);
-			if (i && (Constant.transition === media.type)) start_time -= clip.length;
+			if (i && (Constant.transition === media.type)) start_time -= clip.frames;
 			clip.frame = start_time;
-			if (Constant.transition !== media.type) start_time += clip.length;
+			if (Constant.transition !== media.type) start_time += clip.frames;
 		}
 		Mash.recalc_clips(clips); // sorts by frame 
 	},
 	track_for_clip: function(mash, clip, media){
 		if (! media) media = Mash.media(mash, clip);
 		var track, tracks, i = 0, z;
-		tracks = mash.tracks[Constant.audio === media.type ? Constant.audio : Constant.video];
+		tracks = mash[Constant.audio === media.type ? Constant.audio : Constant.video];
 		if (! Util.isnt(clip.track)) {
 			i = clip.track;
 			z = i + 1;
@@ -523,11 +522,11 @@ var Mash = {
 	},
 	urls_for_video_clip: function(clip, media, range, quantize, resources){
 		if (! resources) resources = {};
-		var add_one_frame = (range.length > 1);
+		var add_one_frame = (range.frames > 1);
 		range = Mash.media_range(clip, media, range, quantize, add_one_frame);
 		var s, url;
 		var last_frame, frame,z;
-		var media_time = new Time(Math.floor(Number(media.duration) * Number(media.fps)), media.fps);
+		var media_time = new TimeRange(Math.floor(Number(media.duration) * Number(media.fps)), media.fps);
 		var last_media_frame = media_time.frame;
 		var limited_range = range.copyTimeRange();
 
@@ -535,7 +534,7 @@ var Mash = {
 		z = limited_range.end;
 		frame = limited_range.frame;
 		for (; frame <= z; frame ++) {
-			media_time = new Time(frame, limited_range.fps);
+			media_time = new TimeRange(frame, limited_range.fps);
 			media_time.scale(media.fps);
 			if ((frame !== limited_range.frame) && (last_frame === media_time.frame)) continue;
 			last_frame = media_time.frame;
@@ -571,9 +570,9 @@ var Mash = {
 	},
 	visual_clips: function(mash){			
 		var track, i, z, clips = [];
-		z = mash.tracks.video.length;
+		z = mash.video.length;
 		for (i = 0; i < z; i++) {
-			track = mash.tracks.video[i];
+			track = mash.video[i];
 			if (Util.isarray(track.clips) && track.clips.length) clips = clips.concat(track.clips);
 		}
 		return clips;

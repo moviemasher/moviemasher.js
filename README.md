@@ -1,4 +1,4 @@
-[![Image](https://github.com/moviemasher/moviemasher.js/blob/master/README/logo-120x60.png "MovieMasher.com")](http://moviemasher.com)
+[![Image](https://github.com/moviemasher/angular-moviemasher/raw/master/README/logo-120x60.png "MovieMasher.com")](http://moviemasher.com)
 **moviemasher.js | [angular-moviemasher](https://github.com/moviemasher/angular-moviemasher "sits between moviemasher.js and moviemasher.rb, providing an editing GUI and simple CMS middleware layer") | [moviemasher.rb](https://github.com/moviemasher/moviemasher.rb "sits behind angular-moviemasher, providing processor intensive video transcoding services through a simple API")**
 
 *JavaScript library for realtime, browser-based video and audio editing*
@@ -22,8 +22,8 @@ A player binds to its mash object directly, without copying or adding any method
 	var context = document.getElementById("mm-canvas").getContext('2d');
 	var mm_player = MovieMasher.player({canvas_context: context, autoplay: true});
 	
-	mm_player.add({ type: 'image', url: 'media/image/cable.jpg', length: 2 });
-	mm_player.add({ type: 'image', url: 'media/image/frog.jpg', length: 2 });
+	mm_player.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
+	mm_player.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
 	mm_player.add({ type: 'audio', url: 'media/audio/loop.mp3', duration: 2 });
 	
 	// OR, more verbosely...
@@ -34,19 +34,17 @@ A player binds to its mash object directly, without copying or adding any method
 			{ "id": "image-frog", "type": "image", "url": "media/image/frog.jpg" },
 			{ "id": "audio-id", "type": "audio", "duration": "2", "url": "media/audio/loop.mp3" }
 		],
-		"tracks": {
-			"video": [ {
-				"type": "video",
-				"clips": [ 
-					{ "id": "image-cable", "frame": 0, "length": 2 },
-					{ "id": "image-frog", "frame": 0, "length": 2 }
-				]
-			} ],
-			"audio": [ {
-				"type": "audio",
-				"clips": [ { "id": "audio-id", "frame": 0, "length": 2 } ]
-			} ]
-		}
+		"video": [ {
+			"type": "video",
+			"clips": [ 
+				{ "id": "image-cable", "frame": 0, "frames": 2 },
+				{ "id": "image-frog", "frame": 0, "frames": 2 }
+			]
+		} ],
+		"audio": [ {
+			"type": "audio",
+			"clips": [ { "id": "audio-id", "frame": 0, "frames": 2 } ]
+		} ]
 	};
 
 ### Related Projects
@@ -56,13 +54,19 @@ Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.r
 ### Included Requirements 
 - Font.js
 
-### Developer Steps
+### Developer Setup
 1. install git, npm, bower and grunt
 2. npm install
 3. bower install
 4. grunt
 
-##### Known issues in Version 4.0.07
+##### Known issues in Version 4.0.08
 - little documentation - see angular-moviemasher for usage
 - video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks
 - audio filters not yet supported
+
+##### Migrating from Version 4.0.07
+- The `begin` key in video clips has been renamed `first`.
+- The `length` key in clips has been renamed `frames`.
+- The `audio` and `video` keys in mash tracks have been moved to mash.
+- The `tracks` key in mashes has been removed. 

@@ -9,11 +9,11 @@ var Player = function(evaluated) {
 	this.__muted = false;
 	this.__paused = true;
 	this.__stalling = false;
-	this.__minbuffertime = new Time(evaluated.minbuffertime, 1);
-	this.__unbuffertime = new Time(evaluated.unbuffertime, 1);	
-	this.__buffertime = new Time(evaluated.buffertime, 1);
-	this.__time = new Time(0, 1);
-	this.__time_drawn = new Time(0, 1);
+	this.__minbuffertime = new TimeRange(evaluated.minbuffertime, 1);
+	this.__unbuffertime = new TimeRange(evaluated.unbuffertime, 1);	
+	this.__buffertime = new TimeRange(evaluated.buffertime, 1);
+	this.__time = new TimeRange(0, 1);
+	this.__time_drawn = new TimeRange(0, 1);
 	for (key in evaluated){
 		value = evaluated[key];
 		switch(key){
@@ -41,7 +41,7 @@ var Player = function(evaluated) {
 	}); // autoplay
 	dp(pt, "buffertime", {
 		get: function() {return this.__buffertime.seconds;},
-		set: function(seconds) { this.__buffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__buffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // buffertime
 	dp(pt, "canvas_context", {
 		get: function() { return this.__drawing.context; },
@@ -65,7 +65,7 @@ var Player = function(evaluated) {
 	dp(pt, "currentTime", {
 		get: function() { return this.__time.seconds; },
 		set: function(seconds) { 
-			this.time = Time.fromSeconds(seconds, this.__fps);
+			this.time = TimeRange.fromSeconds(seconds, this.__fps);
 		}
 	}); // currentTime
 	dp(pt, "duration", { 
@@ -91,7 +91,7 @@ var Player = function(evaluated) {
 		get: function() { return this.__time.frame;},
 		set: function(num) {
 			//console.log('frame=', num);
-			this.time = new Time(num, this.__time.fps);
+			this.time = new TimeRange(num, this.__time.fps);
 		}
 	}); // frame
 	dp(pt, "loop", {
@@ -118,7 +118,7 @@ var Player = function(evaluated) {
 	}); // mash
 	dp(pt, "minbuffertime", {
 		get: function() {return this.__minbuffertime.seconds;},
-		set: function(seconds) { this.__minbuffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__minbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // minbuffertime
 	dp(pt, "muted", {
 		get: function() { return this.__muted;},
@@ -163,7 +163,7 @@ var Player = function(evaluated) {
 			return pos;
 		},
 		set: function(per) {
-			this.time = new Time(this.duration * per, 1);
+			this.time = new TimeRange(this.duration * per, 1);
 		}
 	}); // position
 	dp(pt, 'selectedClip', { get: function(){ 
@@ -240,7 +240,7 @@ var Player = function(evaluated) {
 	dp(pt, "time", {
 		get: function() { return this.__time;},
 		set: function(something) {
-			var new_time = Time.fromSomething(something);
+			var new_time = TimeRange.fromSomething(something);
 			new_time = this.__limit_time(new_time);
 			if (! this.__time.isEqualToTime(new_time)) {
 				this.__redraw_moving(new_time);
@@ -249,7 +249,7 @@ var Player = function(evaluated) {
 	}); // time
 	dp(pt, "unbuffertime", {
 		get: function() {return this.__unbuffertime.seconds;},
-		set: function(seconds) { this.__unbuffertime = Time.fromSeconds(seconds, this.__fps); }
+		set: function(seconds) { this.__unbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
 	}); // unbuffertime
 	dp(pt, "volume", {
 		get: function() { return this.__gain;},
@@ -391,8 +391,8 @@ var Player = function(evaluated) {
 				}
 				action = new Action(this, redo_func, undo_func);
 				switch(prop){
-					case 'length': {
-						action.max = Mash.max_length_for_clip(target, media, this.__mash.quantize);
+					case 'frames': {
+						action.max = Mash.max_frames_for_clip(target, media, this.__mash.quantize);
 						action.set_property = function(new_value){
 							new_value = Math.max(Option.mash.minframes, new_value);
 							if (this.max) new_value = Math.min(this.max, new_value);
@@ -403,14 +403,14 @@ var Player = function(evaluated) {
 						break;
 					}
 					case 'trim': {
-						action.orig_length = Util.ob_property(target, 'length');
+						action.orig_length = Util.ob_property(target, 'frames');
 						action.max = Mash.max_trim_for_clip(target, media, this.__mash.quantize);
 						action.set_property = function(new_value){
 							new_value = Math.max(0, new_value);
 							if (this.max) new_value = Math.min(this.max, new_value);
 							Util.set_ob_property(this.target, this.property, new_value);
 							new_value = this.orig_length - (new_value - this.orig_value);
-							Util.set_ob_property(this.target, 'length', new_value);
+							Util.set_ob_property(this.target, 'frames', new_value);
 							Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
 							this.player.mash_length_changed();
 						};
@@ -475,7 +475,7 @@ var Player = function(evaluated) {
 		x = Constant.track_types.length;
 		for (k = 0; k < x; k++){
 			key = Constant.track_types[k];
-			tracks = this.__mash.tracks[key];
+			tracks = this.__mash[key];
 			z = tracks.length;
 			for (i = 0; i < z; i++) {
 				mash_length = Math.max(mash_length, Mash.length_of_clips(tracks[i].clips));
@@ -483,7 +483,7 @@ var Player = function(evaluated) {
 		}
 		if (this.__mash_length !== mash_length){
 			this.__mash_length = mash_length;
-			var time = new Time(this.__mash_length, this.__mash.quantize);
+			var time = new TimeRange(this.__mash_length, this.__mash.quantize);
 			time.scale(this.__fps, 'floor');
 			this.__mash_frames = time.frame;
 			this.frame = Math.max(0, Math.min(this.__mash_frames - 1, this.__time.frame)); // move back if we need to
@@ -505,7 +505,7 @@ var Player = function(evaluated) {
 				} else if ((Constant.audio === type) || track_index) {
 					action = this.__action_create_clips_move(type, track_index, frame_or_index, ob_or_array);
 				} else {
-					frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash.tracks[type][track_index].clips);
+					frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash[type][track_index].clips);
 					if (-2 < frame_or_index) action = this.__action_create_video_move(track_index, frame_or_index, ob_or_array);
 				}
 				if (action) this.__action_add(action);
@@ -523,9 +523,9 @@ var Player = function(evaluated) {
 		if (this.__mash) {
 			audio_on = this.__audio_is_on();
 			// time we want to buffer - just the current frame if paused, otherwise from it to it plus buffertime
-			range = (this.__paused ? this.__time.copyTime() : new Time(this.__time.frame, this.__time.fps, this.__buffertime.frame)); 
+			range = (this.__paused ? this.__time.copyTime() : new TimeRange(this.__time.frame, this.__time.fps, this.__buffertime.frame)); 
 			// make sure range is within the mash range
-			if (! range.intersection(new Time(0, this.__mash.quantize, this.__mash_length))) range = null;
+			if (! range.intersection(new TimeRange(0, this.__mash.quantize, this.__mash_length))) range = null;
 			if (range) {
 				clips = Mash.range_clips(this.__mash, range, audio_on);
 				needed_urls = Mash.urls_for_clips(this.__mash, clips, range, (audio_on ? Constant.both : Constant.video));
@@ -696,7 +696,7 @@ var Player = function(evaluated) {
 	pt.__action_create_clips_move = function(type, track_index, frame, clips){
 		clips.sort(Util.sort_by_frame); // so they are all a block
 		var action, orig, orig_track, track, clip, i, z = clips.length;
-		track = this.__mash.tracks[type][track_index];
+		track = this.__mash[type][track_index];
 		orig_track = track;
 		clip = clips[0];
 		if (-1 === track.clips.indexOf(clip)) { // move from different track
@@ -763,7 +763,7 @@ var Player = function(evaluated) {
 	pt.__action_create_video_move = function(track_index, index, clips){
 		//console.log('__action_create_video_move', track_index, index, clips);
 		var action, orig, orig_track, track, clip, i, z = clips.length;
-		track = this.__mash.tracks.video[track_index];
+		track = this.__mash.video[track_index];
 		orig_track = track;
 		clip = clips[0];
 		if (-1 === track.clips.indexOf(clip)) { // move from different video track
@@ -806,7 +806,7 @@ var Player = function(evaluated) {
 	pt.__action_create_clips_remove = function(type, track_index, clips) {
 		clips.sort(Util.sort_by_frame); // so they are all a block
 		var action, orig, track, clip, i, z = clips.length;
-		track = this.__mash.tracks[type][track_index];
+		track = this.__mash[type][track_index];
 		clip = clips[0];
 		orig = [];
 		for (i = 0; i < z; i++) {
@@ -851,7 +851,7 @@ var Player = function(evaluated) {
 	};
 	pt.__action_create_video_remove = function(track_index, clips){
 		var action, orig, track, clip, i, z = clips.length;
-		track = this.__mash.tracks.video[track_index];
+		track = this.__mash.video[track_index];
 		clip = clips[0];
 		orig = [];
 		for (i = 0; i < z; i++) {
@@ -903,14 +903,14 @@ var Player = function(evaluated) {
 			for (var i = 0; i < this.tracks; i++){
 				this.player.__track_create(this.type);
 			}
-			target = this.player.mash.tracks[this.type][this.index].clips;
+			target = this.player.mash[this.type][this.index].clips;
 			this.clip.frame = this.frame;
 			target.push(this.clip);
 			Mash.recalc_clips(target);
 			this.player.mash_length_changed();
 		}, function() {
 			var target;
-			target = this.player.mash.tracks[this.type][this.index].clips;
+			target = this.player.mash[this.type][this.index].clips;
 			Util.array_delete(target, this.clip);
 			for (var i = 0; i < this.tracks; i++){
 				this.player.__track_delete(this.type);
@@ -922,7 +922,7 @@ var Player = function(evaluated) {
 		action.frame = frame;
 		action.index = index;
 		action.type = (Constant.audio === media_type ? media_type : Constant.video);
-		action.tracks = (index + 1) - this.__mash.tracks[action.type].length;
+		action.tracks = (index + 1) - this.__mash[action.type].length;
 		return action;
 	};
 	pt.__action_create_video_add = function(clip, track_index, index){
@@ -938,7 +938,7 @@ var Player = function(evaluated) {
 		});
 		action.clip = clip;
 		action.index = index;
-		action.target = this.__mash.tracks.video[track_index].clips;
+		action.target = this.__mash.video[track_index].clips;
 		return action;
 	};
 	pt.__audio_is_on = function(){
@@ -998,7 +998,7 @@ var Player = function(evaluated) {
 		if (clip_time) module_properties.t = module_properties.mm_duration = clip_time.lengthSeconds;
 		
 		clip_time.scale(time.fps);
-		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.length;
+		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.frames;
 		module_properties.mm_width = this.__drawing.canvas.width;
 		module_properties.mm_height = this.__drawing.canvas.height;
 		drawing = drawings[drawings.length-1];
@@ -1051,7 +1051,7 @@ var Player = function(evaluated) {
 			case Constant.video: {
 				copy_time = time.copyTime();
 				copy_time.scale(media.fps);
-				copy_time.length = 1;
+				copy_time.frames = 1;
 				for (url in Mash.urls_for_video_clip(clip, media, copy_time, quantize)){
 					resource = Loader.cached_urls[url];
 					if (resource) {
@@ -1238,10 +1238,10 @@ var Player = function(evaluated) {
 		var ctime, scope, evaluated, filter_config, filter, i, z;
 		if (module_media) {
 			if (module_media.filters) {
-				if (layer_clip.length) {
-					ctime = new Time(0, this.__mash.quantize, this.__mash_length);
+				if (layer_clip.frames) {
+					ctime = new TimeRange(0, this.__mash.quantize, this.__mash_length);
 					ctime.frame = layer_clip.frame;
-					ctime.length = layer_clip.length;
+					ctime.frames = layer_clip.frames;
 					z = module_media.filters.length;
 					for (i = 0; i < z; i++){
 						filter_config = module_media.filters[i];
@@ -1254,7 +1254,7 @@ var Player = function(evaluated) {
 							drawings = filter.render(drawings, scope, evaluated, filter_config);	
 						}
 					}
-				} else console.error('invalid layer clip with no length', layer_clip);
+				} else console.error('invalid layer clip with no frames', layer_clip);
 			} else console.error('invalid module media with no filters', module, module_media);
 		} else console.error('false media while drawing module filters', module, layer_clip);
 		return drawings;
@@ -1262,7 +1262,7 @@ var Player = function(evaluated) {
 	pt.__draw_effects = function(drawings, layer_clip, time) {
 		var effect, effect_media, i, z;
 		if (layer_clip) {
-			if (layer_clip.length){
+			if (layer_clip.frames){
 				if (layer_clip.effects) {
 					z = layer_clip.effects.length;
 					for (i = z - 1; i > -1; i--){ // zero is 'top', so go backwards
@@ -1272,13 +1272,13 @@ var Player = function(evaluated) {
 						else console.error('could not find effect media', effect, layer_clip, this.__mash.media);
 					}
 				}  else console.error('invalid layer clip with no effects', layer_clip);
-			} else console.error('invalid layer clip with no length, so no effects', layer_clip);
+			} else console.error('invalid layer clip with no frames, so no effects', layer_clip);
 		} else console.error('false layer clip, so no effects', drawings);
 		return drawings;
 	};
 	pt.__limit_time = function(time){
 		var start_time = time.copyTime();
-		var limit_time = new Time(this.__mash_length, this.__mash.quantize);
+		var limit_time = new TimeRange(this.__mash_length, this.__mash.quantize);
 		limit_time.frame = Math.max(0, limit_time.frame - 1);
 		start_time.min(limit_time);
 		start_time.scale(this.__fps, 'floor');
@@ -1287,7 +1287,7 @@ var Player = function(evaluated) {
 	pt.__load_timed = function(){
 		if (this.__moving){
 			// hopefully runs twice a frame
-			var now = Time.fromSeconds(Audio.time(), this.__fps, 'ceil');
+			var now = TimeRange.fromSeconds(Audio.time(), this.__fps, 'ceil');
 			if (now.frame !== this.__limit_time(now).frame) {
 				// loop back to start or pause
 				if (! this.__loop) {
@@ -1345,11 +1345,11 @@ var Player = function(evaluated) {
 		}
 	};
 	pt.__track_create = function(audio_or_video){
-		var container = this.__mash.tracks[audio_or_video];
+		var container = this.__mash[audio_or_video];
 		container.push(Mash.init_track(audio_or_video, container.length));
 	};
 	pt.__track_delete = function(audio_or_video){
-		var track = this.__mash.tracks[audio_or_video].pop();
+		var track = this.__mash[audio_or_video].pop();
 		if (this.__mash_length === Mash.length_of_clips(track.clips)) this.mash_length_changed();
 	};
 })(Player.prototype);

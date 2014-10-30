@@ -208,7 +208,7 @@ var Util = {
 	},
 	pad: function(n, width, z) {
 		z = z || '0';
-		n = n + '';
+		n = String(n);
 		return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 	},
 	pluralize: function(n, s){
@@ -230,8 +230,8 @@ var Util = {
 			if (ob) ob[prop[i]] = val;
 		}
 	},
-	sort_by_frame: function(time1, time2) {
-		return (time1.frame - time2.frame) || (time1.length - time2.length);
+	sort_by_frame: function(clip1, clip2) {
+		return (clip1.frame - clip2.frame) || (clip1.frames - clip2.frames);
 	},
 	sort_by_label: function(a, b) {
 		if (a.label < b.label) return -1;

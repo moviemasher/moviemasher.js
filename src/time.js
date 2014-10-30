@@ -1,28 +1,28 @@
-var Time = function(start, rate, duration){
+var TimeRange = function(start, rate, duration){
 	if (start) this.frame = Number(start) || 0;
 	if (rate) this.fps = Number(rate) || 0;
-	if (duration) this.length = Math.max(1, Number(duration));
+	if (duration) this.frames = Math.max(1, Number(duration));
 };
-Time.fromTimes = function(start, end) {
+TimeRange.fromTimes = function(start, end) {
 	start.synchronize(end);
-	return new Time(start.frame, start.fps, Math.max(1, end.frame - start.frame));
+	return new TimeRange(start.frame, start.fps, Math.max(1, end.frame - start.frame));
 };
-Time.fromSeconds = function(seconds, rate, rounding) {
+TimeRange.fromSeconds = function(seconds, rate, rounding) {
 	if (! rounding) rounding = 'round';
 	if (! rate) rate = 1;
-	return new Time(Math[rounding](Number(seconds) * Number(rate)), rate);
+	return new TimeRange(Math[rounding](Number(seconds) * Number(rate)), rate);
 };
-Time.fromSomething = function(something){
-	var frame, length, fps;
-	if (! something) something = new Time();
-	else if (typeof something === 'number') something = new Time.fromSeconds(something);
+TimeRange.fromSomething = function(something){
+	var frame, frames, fps;
+	if (! something) something = new TimeRange();
+	else if (typeof something === 'number') something = new TimeRange.fromSeconds(something);
 	else if (typeof something === 'string') {
 		something = something.split('-');
 		frame = something.shift();
-		length = fps = 1;
-		if (something.length) { // there was a dash - length was specified
+		frames = fps = 1;
+		if (something.length) { // there was a dash - frames was specified
 			something = something.shift().split('@');
-			length = something.shift();
+			frames = something.shift();
 		} else {
 			something = frame.split('@');
 			frame = something.shift();
@@ -30,23 +30,22 @@ Time.fromSomething = function(something){
 		if (something.length) {
 			fps = something.shift();
 		}
-		something = new Time(frame, fps, length);
+		something = new TimeRange(frame, fps, frames);
 	}
 	return something;
 };
 (function(pt){
-	pt.length = 0;
+	pt.frames = 0;
 	pt.frame = 0;
 	pt.fps = 0;	
 	Object.defineProperty(pt, 'end', { 
-		get: function() { return this.frame + this.length; },
-		set: function(n) {this.length = Math.max(1, Number(n) - Number(this.frame));}
+		get: function() { return this.frame + this.frames; },
+		set: function(n) {this.frames = Math.max(1, Number(n) - Number(this.frame));}
 	});
-	Object.defineProperty(pt, 'endTime', { get: function() { return new Time(this.end, this.fps); } } );
-	Object.defineProperty(pt, 'lengthTime', { get: function() { return new Time(this.length, this.fps); } } );
+	Object.defineProperty(pt, 'endTime', { get: function() { return new TimeRange(this.end, this.fps); } } );
 	Object.defineProperty(pt, 'description', { get: function() { 
 		var descr = this.frame;
-		if (this.length) descr += '-' + this.end;
+		if (this.frames) descr += '-' + this.end;
 		descr += '@' + this.fps;
 		return descr; 
 	} } );
@@ -54,10 +53,10 @@ Time.fromSomething = function(something){
 		get: function() { return Number(this.frame) / Number(this.fps); },
 		set: function(time) { this.setToTime(time); },
 	} );
-	Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.length) / Number(this.fps); } } );
+	Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.frames) / Number(this.fps); } } );
 	Object.defineProperty(pt, 'timeRange', { get: function() { 
 		var range = this.copyTime();
-		range.length = 1;
+		range.frames = 1;
 		return range;
 	} } );	
 	pt.add = function(time) {
@@ -69,18 +68,18 @@ Time.fromSomething = function(something){
 		return this;
 	};
 	pt.setToTime = function(something){
-		something = Time.fromSomething(something);
+		something = TimeRange.fromSomething(something);
 		this.synchronize(something);
 		this.frame = something.frame;
 		return something;
 	};
 	pt.setToTimeRange = function(something){
 		something = this.setToTime(something);
-		this.length = something.length;
+		this.frames = something.frames;
 		return something;
 	};
-	pt.copyTime = function(length) {
-		return new Time(this.frame, this.fps, length);			
+	pt.copyTime = function(frames) {
+		return new TimeRange(this.frame, this.fps, frames);			
 	};
 	pt.divide = function(number, rounding) {
 		if (! rounding) rounding = 'round';
@@ -90,7 +89,7 @@ Time.fromSomething = function(something){
 		if (! rounding) rounding = 'round';
 		var start = this.frame;
 		if (rate !== this.fps) {
-			var time = Time.fromSeconds(this.seconds, this.fps, rounding);
+			var time = TimeRange.fromSeconds(this.seconds, this.fps, rounding);
 			start = time.frame;
 		}
 		return start;	
@@ -157,7 +156,7 @@ Time.fromSomething = function(something){
 		if (this.fps !== rate) {
 			if (! rounding) rounding = 'round';
 			this.frame = Math[rounding](Number(this.frame) / (Number(this.fps) / Number(rate)));
-			if (this.length) this.length = Math.max(1, Math[rounding](Number(this.length) / (Number(this.fps) / Number(rate))));
+			if (this.frames) this.frames = Math.max(1, Math[rounding](Number(this.frames) / (Number(this.fps) / Number(rate))));
 			this.fps = rate;
 		}
 		return this;
@@ -182,10 +181,6 @@ Time.fromSomething = function(something){
 			time.scale(gcf, rounding);
 		}
 	};
-	pt.expand = function(time){
-		this.min(time);
-		this.maxLength(time.lengthTime);
-	};
 	pt.__gcd = function(a, b) {
 		var t;
 		while (b !== 0) {
@@ -197,7 +192,7 @@ Time.fromSomething = function(something){
 	};
 	pt.__lcm = function(a, b) { return (a * b / this.__gcd(a, b)); };
 	pt.copyTimeRange = function() {
-		return new Time(this.frame, this.fps, this.length);			
+		return new TimeRange(this.frame, this.fps, this.frames);			
 	};
 	pt.touches = function(range){
 		return this.intersection(range, true);
@@ -213,10 +208,10 @@ Time.fromSomething = function(something){
 			range1.synchronize(range2);
 		}
 		var last_start = Math.max(range1.frame, range2.frame);
-		var first_end = Math.min(range1.end + (range1.length ? 0 : 1), range2.end + (range2.length ? 0 : 1));
+		var first_end = Math.min(range1.end + (range1.frames ? 0 : 1), range2.end + (range2.frames ? 0 : 1));
 		if ((last_start < first_end) || (or_equals && (last_start === first_end)))
 		{
-			result = new Time(last_start, range1.fps, first_end - last_start);
+			result = new TimeRange(last_start, range1.fps, first_end - last_start);
 		}
 		//if (or_equals) console.log('intersection', result, range1.description, range2.description);
 		return result;
@@ -224,23 +219,23 @@ Time.fromSomething = function(something){
 	pt.isEqualToTimeRange = function(range){
 		var equal = false;
 		if (range && range.fps && this.fps) {
-			if (this.fps === range.fps) equal = ((this.frame === range.frame) && (this.length === range.length));
+			if (this.fps === range.fps) equal = ((this.frame === range.frame) && (this.frames === range.frames));
 			else {
 				// make copies so neither range is changed
 				var range1 = this.copyTimeRange();
 				var range2 = range.copyTimeRange();
 				range1.synchronize(range2);
-				equal = ((range1.frame === range2.frame) && (range1.length === range2.length));
+				equal = ((range1.frame === range2.frame) && (range1.frames === range2.frames));
 			}
 		}
 		return equal;
 	};
 	pt.maxLength = function(time) {
 		this.synchronize(time);
-		this.length = Math.max(time.frame, this.length);
+		this.frames = Math.max(time.frame, this.frames);
 	};
 	pt.minLength = function(time) {
 		this.synchronize(time);
-		this.length = Math.min(time.frame, this.length);
+		this.frames = Math.min(time.frame, this.frames);
 	};
-})(Time.prototype);
+})(TimeRange.prototype);

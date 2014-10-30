@@ -23,7 +23,7 @@ var Audio = {
 	clip_timing: function(clip, zero_seconds, quantize) {
 		if (isNaN(zero_seconds)) console.error('Audio.clip_timing got NaN for zero_seconds', clip);
 		var now, dif, range, result = {offset: 0};
-		range = new Time(clip.frame, quantize, clip.length);
+		range = new TimeRange(clip.frame, quantize, clip.frames);
 		result.start = zero_seconds + range.seconds;
 		if (isNaN(result.start)) console.error('Audio.clip_timing start is NaN', range);
 		result.duration = range.lengthSeconds;
