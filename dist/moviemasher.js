@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.07 - 2014-10-30
+/*! moviemasher.js - v4.0.08 - 2014-10-30
 * Copyright (c) 2014 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
