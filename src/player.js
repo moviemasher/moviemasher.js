@@ -1170,71 +1170,72 @@ var Player = function(evaluated) {
 		}
 		return raw_drawing;
 	};
-	var __evaluate_scope = function(time, clip, scope, module, filter_config){ 
-		var eval_key, eval_str, filter, conditional_in, condition, test_bool, parameter, conditional, parameter_name, parameter_value, parameters_array, j, y, i, z, evaluated = {};
-		filter = Filter[filter_config.id];
-		scope = Util.copy_ob(scope);
-		parameters_array = filter_config.parameters;
-		if (parameters_array) {
-			z = parameters_array.length;
-			for (i = 0; i < z; i++){
-				parameter = parameters_array[i];
-				parameter_name = parameter.name;
-				if (parameter_name){
-					parameter_value = parameter.value;
-					if (Util.isarray(parameter_value)){
-						test_bool = false;
-						y = parameter_value.length;
-						for (j = 0; j < y; j++){
-							conditional = parameter_value[j];
-							condition = conditional.condition;
-							// not strict equality, since we may have strings and numbers
-							if (conditional.is) condition = condition + '==' + conditional.is;
-							else if (conditional.in) {
-								conditional_in = conditional.in;
-								if (Util.isstring(conditional_in)) conditional_in = conditional_in.split(',');
-								
-								condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (Util.isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
-							}
-							condition = condition.replace(' or ', ' || ');
-							condition = condition.replace(' and ', ' && ');
-							for (eval_key in scope) { 
-								condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
-							}
-							eval_str = 'test_bool = (' + condition + ');';
-							try {
-								eval(eval_str); 
-							} catch (exception) {
-								console.error(exception.message, eval_str);
-							}
-							if (test_bool) {
-								parameter_value = conditional.value;
-								//console.log(parameter_name, eval_str, parameter_value);
-								break;
-							} // else console.warn(parameter_name, eval_str, parameter_value);
-						}
-						if (! test_bool) console.error('no conditions were true', parameter_value);
-					}
-					if (Util.isstring(parameter_value)) { // could well be a number by now
-						for (eval_key in scope) { 
-							parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
-						}
-					}
-					eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
-					try {
-						eval(eval_str); 
-					} catch (exception) {
-						//console.error(exception.message, eval_str, parameter_value);
-						evaluated[parameter_name] = parameter_value;
-					}
-					// sort of like lookahead, but they have to be in order!
-					scope[parameter_name] = evaluated[parameter_name];
-				}
-			}
-		} else console.log('no parameters_array found', filter_config);
-		return evaluated;
-	};
 	pt.__draw_module_filters = function(time, layer_clip, drawings, module, module_media) {
+		var __evaluate_scope = function(time, clip, scope, module, filter_config){ 
+			var eval_key, eval_str, filter, conditional_in, condition, test_bool, parameter, conditional, parameter_name, parameter_value, parameters_array, j, y, i, z, evaluated = {};
+			filter = Filter[filter_config.id];
+			scope = Util.copy_ob(scope);
+			parameters_array = filter_config.parameters;
+			if (! parameters_array) parameters_array = filter.parameters;
+			if (parameters_array) {
+				z = parameters_array.length;
+				for (i = 0; i < z; i++){
+					parameter = parameters_array[i];
+					parameter_name = parameter.name;
+					if (parameter_name){
+						parameter_value = parameter.value;
+						if (Util.isarray(parameter_value)){
+							test_bool = false;
+							y = parameter_value.length;
+							for (j = 0; j < y; j++){
+								conditional = parameter_value[j];
+								condition = conditional.condition;
+								// not strict equality, since we may have strings and numbers
+								if (conditional.is) condition = condition + '==' + conditional.is;
+								else if (conditional.in) {
+									conditional_in = conditional.in;
+									if (Util.isstring(conditional_in)) conditional_in = conditional_in.split(',');
+								
+									condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (Util.isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
+								}
+								condition = condition.replace(' or ', ' || ');
+								condition = condition.replace(' and ', ' && ');
+								for (eval_key in scope) { 
+									condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+								}
+								eval_str = 'test_bool = (' + condition + ');';
+								try {
+									eval(eval_str); 
+								} catch (exception) {
+									console.error(exception.message, eval_str);
+								}
+								if (test_bool) {
+									parameter_value = conditional.value;
+									//console.log(parameter_name, eval_str, parameter_value);
+									break;
+								} // else console.warn(parameter_name, eval_str, parameter_value);
+							}
+							if (! test_bool) console.error('no conditions were true', parameter_value);
+						}
+						if (Util.isstring(parameter_value)) { // could well be a number by now
+							for (eval_key in scope) { 
+								parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+							}
+						}
+						eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
+						try {
+							eval(eval_str); 
+						} catch (exception) {
+							//console.error(exception.message, eval_str, parameter_value);
+							evaluated[parameter_name] = parameter_value;
+						}
+						// sort of like lookahead, but they have to be in order!
+						scope[parameter_name] = evaluated[parameter_name];
+					}
+				}
+			} else console.log('no parameters_array found', filter_config);
+			return evaluated;
+		};
 		var ctime, scope, evaluated, filter_config, filter, i, z;
 		if (module_media) {
 			if (module_media.filters) {

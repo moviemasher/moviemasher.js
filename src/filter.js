@@ -10,7 +10,13 @@ var Filter = {
 		}, 
 		parse: function(contexts, scope) {
 			return scope;
-		}
+		},
+		parameters: [
+			{ name: "color", value:"color" },
+			{ name: "size", value:"mm_dimensions" },
+			{ name: "duration", value:"mm_duration" },
+			{ name: "rate", value:"mm_fps" },
+		],
 	}, 
 	create_drawing: function(width, height, label, container){
 		//console.log('create_drawing', width, height, label, container); 
