@@ -60,12 +60,12 @@ Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.r
 3. bower install
 4. grunt
 
-##### Known issues in Version 4.0.08
+##### Known issues in Version 4.0.8
 - little documentation - see angular-moviemasher for usage
 - video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks
 - audio filters not yet supported
 
-##### Migrating from Version 4.0.07
+##### Migrating from Version 4.0.7
 - The `begin` key in video clips has been renamed `first`.
 - The `length` key in clips has been renamed `frames`.
 - The `audio` and `video` keys in mash tracks have been moved to mash.
