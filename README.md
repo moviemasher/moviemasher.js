@@ -52,7 +52,7 @@ Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.r
 
 
 ### Included Requirements 
-- Font.js
+- opentype.js
 
 ### Developer Setup
 1. install git, npm, bower and grunt
@@ -60,7 +60,7 @@ Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.r
 3. bower install
 4. grunt
 
-##### Known issues in Version 4.0.8
+##### Known issues in this version
 - little documentation - see angular-moviemasher for usage
 - video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks
 - audio filters not yet supported

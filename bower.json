@@ -1,7 +1,7 @@
 {
 	"name": "moviemasher.js",
 	"main": "dist/moviemasher.js",
-	"version": "4.0.8",
+	"version": "4.0.9",
 	"homepage": "http://www.moviemasher.com",
 	"authors": [ {"name": "Movie Masher", "email": "support@moviemasher.com" }],
 	"moduleType": ["amd"],
@@ -21,7 +21,7 @@
 		"test",
 		"tests"
 	],
-	"dependencies": { "Font.js": "*"},
+	"dependencies": { "opentype.js": "^0.4.0"},
 	"devDependencies": {
 		"grunt": "^0.4.5",
 		"grunt-contrib-concat": "^0.4.0",
