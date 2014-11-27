@@ -6,11 +6,12 @@ var Loader = {
 	load_font: function(url){
 		var font = MovieMasher.find(Constant.font, url, Constant.source);
 		if (font) {
-			Loader.cached_urls[url] = font;
-			opentype.load(url, function (err, font) {
-				if (err) console.error('could not find registered font with url', url);
+			Loader.requested_urls[url] = font;
+			opentype.load(url, function (err, loaded_font) {
+				if (err) console.error('could not find registered font with url', url, err);
 				else {
-					Loader.cached_urls[url] = font;
+					//console.log('loaded font', loaded_font.draw);
+					Loader.cached_urls[url] = loaded_font;
 					delete Loader.requested_urls[url];
 					Players.draw_delayed();
 				}
