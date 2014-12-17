@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.10 - 2014-11-30
+/*! moviemasher.js - v4.0.11 - 2014-12-16
 * Copyright (c) 2014 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -596,20 +596,16 @@ var Loader = {
 		Audio.load(url);
 	},
 	load_font: function(url){
-		var font = MovieMasher.find(Constant.font, url, Constant.source);
-		if (font) {
-			Loader.requested_urls[url] = font;
-			opentype.load(url, function (err, loaded_font) {
-				if (err) console.error('could not find registered font with url', url, err);
-				else {
-					//console.log('loaded font', loaded_font.draw);
-					Loader.cached_urls[url] = loaded_font;
-					delete Loader.requested_urls[url];
-					Players.draw_delayed();
-				}
-			});
-
-		} else console.error('could not find registered font with url', url);
+		Loader.requested_urls[url] = url;
+		opentype.load(url, function (err, loaded_font) {
+			if (err) console.error('could not find registered font with url', url, err);
+			else {
+				//console.log('loaded font', loaded_font.draw);
+				Loader.cached_urls[url] = loaded_font;
+				delete Loader.requested_urls[url];
+				Players.draw_delayed();
+			}
+		});
 	},
 	load_image: function(url){
 		Loader.requested_urls[url] = new Image();
