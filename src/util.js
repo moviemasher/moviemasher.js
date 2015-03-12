@@ -72,19 +72,24 @@ var Util = {
 			if (! ob2) ob2 = {};
 			var key;
 			for (key in ob1) {
-				ob2[key] = ob1[key];
+				if (Util.copy_key_valid(key)) ob2[key] = ob1[key];
 			}
 		}
 		return ob2;
 	},
+	copy_key_valid: function(key){
+		return (key.substr(0,1) !== '$');
+	},
 	copy_ob_scalars: function(ob1, ob2, dont_overwrite){
 		if (! Util.isnt(ob1)) {
-			if (! ob2) ob2 = {};
+			if (Util.isnt(ob2)) ob2 = {};
 			var key;
 			for (key in ob1) {
-				if (! Util.isob(ob1[key])) {
-					if ((! dont_overwrite) || Util.isnt(ob2[key])) {
-						ob2[key] = ob1[key];
+				if (Util.copy_key_valid(key)){
+					if (! Util.isob(ob1[key])) {
+						if ((! dont_overwrite) || Util.isnt(ob2[key])) {
+							ob2[key] = ob1[key];
+						}
 					}
 				}
 			}
@@ -92,17 +97,20 @@ var Util = {
 		return ob2;
 	},
 	copy_keys_recursize: function(ob1, ob2){
-		var key, value1, value2;
-		if (Util.isob(ob1) && Util.isob(ob2)){
+		var key, value1;
+		if (Util.isob(ob1)){
+			if (Util.isnt(ob2)) ob2 = {};
 			for (key in ob1) {
-				value1 = ob1[key];
-				if (Util.isob(value1)) {
-					value2 = ob2[key];
-					if (! Util.isob(value2)) value2 = ob2[key] = {};
-					Util.copy_keys_recursize(value1, value2);
-				} else ob2[key] = value1;
+				if (Util.copy_key_valid(key)){
+					value1 = ob1[key];
+					if (Util.isob(value1)) {
+						if (Util.isarray(value1)) ob2[key] = Util.copy_array(value1);
+						else ob2[key] = Util.copy_keys_recursize(value1, ob2[key]);
+					} else ob2[key] = value1;
+				}
 			}
 		}
+		return ob2;
 	},
 	index_after_removal: function(index, items, container){
 		var found, i, z, container_index, container_indexes = [];

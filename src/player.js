@@ -94,6 +94,9 @@ var Player = function(evaluated) {
 			this.time = new TimeRange(num, this.__time.fps);
 		}
 	}); // frame
+	dp(pt, "frames", {
+		get: function() { return Math.round(Number(this.__mash_length) / Number(this.__mash.quantize) * Number(this.__time.fps));}
+	}); // frame
 	dp(pt, "loop", {
 		get: function() { return this.__loop;},
 		set: function(bool) { 
@@ -330,6 +333,11 @@ var Player = function(evaluated) {
 				should_be_enabled = (this.__selected_clips.length);
 				break;
 			}
+			case 'split':{
+				should_be_enabled = (z === 1);
+				if (should_be_enabled) should_be_enabled = this.__canSplitAtTime(this.__selected_clips[0], this.__time);
+				break;
+			}
 			/* TODO: implement old operations...
 			case 'paste':{
 				should_be_enabled = (clipboard.length > 0);
@@ -342,11 +350,6 @@ var Player = function(evaluated) {
 			}
 			case 'snap':{
 				should_be_enabled = getValue(property).boolean;
-				break;
-			}
-			case 'split':{
-				should_be_enabled = (z > 0);
-				if (should_be_enabled) should_be_enabled = __clipCanBeSplit(this.__selected_clips[0]);
 				break;
 			}
 			case 'freeze':{
@@ -670,6 +673,14 @@ var Player = function(evaluated) {
 		if (Util.isob(effect)) return this.select(effect, toggle_selected);
 		else if (! toggle_selected) this.selectedEffect = effect;
 	};
+	pt.split = function(){
+		var clip = this.selectedClip;
+		var at_time = this.__time.copyTime();
+		if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
+			var action = this.__action_create_split_clip(clip, at_time);
+			this.__action_add(action);
+		}
+	};
 	pt.undo = function() {
 		if (this.__action_index > -1) {
 			this.__action_stack[this.__action_index].undo();
@@ -896,6 +907,33 @@ var Player = function(evaluated) {
 		}
 		return action;
 	};
+	pt.__action_create_split_clip = function(clip, at_time){
+		var new_clip = Util.copy_keys_recursize(clip);
+		at_time.scale(this.__mash.quantize);
+		var trim_frames = clip.frames - (at_time.frame - clip.frame);
+		var media = Mash.media(this.__mash, clip);
+		var target = Mash.track_for_clip(this.__mash, clip).clips;
+		var index = 1 + target.indexOf(clip);
+		new_clip.frames = trim_frames;
+		new_clip.frame = clip.frame + clip.frames - trim_frames;
+		switch(media.type){
+			case Constant.audio:
+			case Constant.video: {
+				new_clip.trim = clip.trim + trim_frames;
+			}
+		}
+		var action = new Action(this, function(){
+			target.splice(index, 0, new_clip);
+			clip.frames -= trim_frames;
+		}, function() {
+			clip.frames += trim_frames;
+			target.splice(index, 1);
+		});
+		action.redo_selected_clips = [clip];
+		action.redo_add_objects = [media];
+		action.undo_delete_objects = [media];
+		return action;
+	};
 	pt.__action_create_track_add = function(media_type, clip, index, frame){
 		// .add handles redo_add_objects and undo_delete_objects
 		var action = new Action(this, function(){
@@ -944,71 +982,21 @@ var Player = function(evaluated) {
 	pt.__audio_is_on = function(){
 		return ((! this.__paused) && (! this.__mute) && this.__gain);
 	};
-	pt.__module_scope = function(time, clip_time, drawings, module, media){
-		if (time.fps !== this.__fps) console.warn('__module_scope FPS', time.fps, this.__fps);
-		if (! this.__drawing.canvas) return {};
-		var clip_value, module_properties, type_ob, type_id, property_key, property_options, drawing;
-		module_properties = {};
-		if (media.properties) {
-			for (property_key in media.properties){
-				clip_value = module[property_key];
-				if (Util.isnt(clip_value)){
-					property_options = media.properties[property_key];
-					clip_value = property_options.value;
-					if (Util.isnt(clip_value)){
-						type_id = property_options.type;
-						if (type_id){
-							type_ob = Constant.property_types[type_id];
-							if (type_ob) clip_value = type_ob.value;
-						}
-						if (Util.isnt(clip_value)) clip_value = '';
-					}
-				} else clip_value = module[property_key];
-				module_properties[property_key] = clip_value;
-			}
-		}
-		var __horz_vert = function(w_h, size, proud){
-			var value = parseFloat(size);
-			var w_h_value = parseFloat(module_properties[w_h]);
-			var w_h_value_scaled = w_h_value * value;
-			if (proud) {
-				var h_w = ('mm_height' === w_h ? 'mm_width' : 'mm_height');
-				var h_w_value = parseFloat(module_properties[h_w]);
-				if (h_w_value > w_h_value) {
-					w_h_value_scaled = w_h_value + (value - 1.0) * h_w_value;
-				}
-			}
-			return (w_h_value_scaled);
-		};
-		module_properties.mm_vert = function(size, proud){
-			return __horz_vert('mm_height', size, proud);
-		};
-		module_properties.mm_horz = function(size, proud){
-			return __horz_vert('mm_width', size, proud);
-		};
-		module_properties.mm_cmp = function(a, b, a_val, b_val){
-			return ((a > b) ? a_val : b_val);
-		};
-		module_properties.mm_max = Math.max;
-		module_properties.mm_min = Math.min;
-		module_properties.floor = Math.floor;
-		module_properties.ceil = Math.ceil;
-		module_properties.mm_fps = this.__fps;
+	pt.__canSplitAtTime = function(clip, now){
+		var clip_time = new TimeRange(clip.frame, this.__mash.quantize, clip.frames);
 		
-		if (clip_time) module_properties.t = module_properties.mm_duration = clip_time.lengthSeconds;
-		
-		clip_time.scale(time.fps);
-		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.frames;
-		module_properties.mm_width = this.__drawing.canvas.width;
-		module_properties.mm_height = this.__drawing.canvas.height;
-		drawing = drawings[drawings.length-1];
-		if (drawing && drawing.canvas) {
-			module_properties.mm_input_width = drawing.canvas.width;
-			module_properties.mm_input_height = drawing.canvas.height;
-			module_properties.mm_input_dimensions = module_properties.mm_input_width + 'x' + module_properties.mm_input_height; // input height
-		} else console.warn('no drawing?', drawings);
-		module_properties.mm_dimensions = module_properties.mm_width + 'x' + module_properties.mm_height; // output height
-		return module_properties;
+		var can_split = clip_time.intersection(now);
+		if (can_split) {
+			now = now.copyTime();
+			now.scale(clip_time.fps);
+			can_split = (now.frame !== clip_time.frame);
+			
+			if (can_split) {
+				can_split = (now.end !== clip_time.end);
+				//if (! can_split) console.log('end match');
+			} //else console.log('frame match');
+		} //else console.log('no intersection');
+		return can_split;
 	};
 	pt.__delete_drawings = function(drawings){
 		var drawing;
@@ -1301,6 +1289,72 @@ var Player = function(evaluated) {
 				}
 			}
 		}
+	};
+	pt.__module_scope = function(time, clip_time, drawings, module, media){
+		if (time.fps !== this.__fps) console.warn('__module_scope FPS', time.fps, this.__fps);
+		if (! this.__drawing.canvas) return {};
+		var clip_value, module_properties, type_ob, type_id, property_key, property_options, drawing;
+		module_properties = {};
+		if (media.properties) {
+			for (property_key in media.properties){
+				clip_value = module[property_key];
+				if (Util.isnt(clip_value)){
+					property_options = media.properties[property_key];
+					clip_value = property_options.value;
+					if (Util.isnt(clip_value)){
+						type_id = property_options.type;
+						if (type_id){
+							type_ob = Constant.property_types[type_id];
+							if (type_ob) clip_value = type_ob.value;
+						}
+						if (Util.isnt(clip_value)) clip_value = '';
+					}
+				} else clip_value = module[property_key];
+				module_properties[property_key] = clip_value;
+			}
+		}
+		var __horz_vert = function(w_h, size, proud){
+			var value = parseFloat(size);
+			var w_h_value = parseFloat(module_properties[w_h]);
+			var w_h_value_scaled = w_h_value * value;
+			if (proud) {
+				var h_w = ('mm_height' === w_h ? 'mm_width' : 'mm_height');
+				var h_w_value = parseFloat(module_properties[h_w]);
+				if (h_w_value > w_h_value) {
+					w_h_value_scaled = w_h_value + (value - 1.0) * h_w_value;
+				}
+			}
+			return (w_h_value_scaled);
+		};
+		module_properties.mm_vert = function(size, proud){
+			return __horz_vert('mm_height', size, proud);
+		};
+		module_properties.mm_horz = function(size, proud){
+			return __horz_vert('mm_width', size, proud);
+		};
+		module_properties.mm_cmp = function(a, b, a_val, b_val){
+			return ((a > b) ? a_val : b_val);
+		};
+		module_properties.mm_max = Math.max;
+		module_properties.mm_min = Math.min;
+		module_properties.floor = Math.floor;
+		module_properties.ceil = Math.ceil;
+		module_properties.mm_fps = this.__fps;
+		
+		if (clip_time) module_properties.t = module_properties.mm_duration = clip_time.lengthSeconds;
+		
+		clip_time.scale(time.fps);
+		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.frames;
+		module_properties.mm_width = this.__drawing.canvas.width;
+		module_properties.mm_height = this.__drawing.canvas.height;
+		drawing = drawings[drawings.length-1];
+		if (drawing && drawing.canvas) {
+			module_properties.mm_input_width = drawing.canvas.width;
+			module_properties.mm_input_height = drawing.canvas.height;
+			module_properties.mm_input_dimensions = module_properties.mm_input_width + 'x' + module_properties.mm_input_height; // input height
+		} else console.warn('no drawing?', drawings);
+		module_properties.mm_dimensions = module_properties.mm_width + 'x' + module_properties.mm_height; // output height
+		return module_properties;
 	};
 	pt.__redraw_moving = function(new_time){
 		var moving = this.__moving;
