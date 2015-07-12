@@ -2,6 +2,7 @@ var Constant = {
 	audio: 'audio',
 	both: 'both',
 	effect: 'effect',
+	filter: 'filter',
 	font: 'font',
 	gain: 'gain',
 	image: 'image',
@@ -35,11 +36,11 @@ var Constant = {
 			values: [0, 1, 2, 3, 4, 5, 6, 7],
 			value: 0,
 		},
-		string: { 
+		string: {
 			type: String,
 			value: '',
 		},
-		text: { 
+		text: {
 			type: String,
 			value: '',
 		},
@@ -52,3 +53,4 @@ var Constant = {
 	volume: 'volume',
 };
 Constant.track_types = [Constant.video, Constant.audio];
+MovieMasher['Constant'] = Constant;

@@ -21,7 +21,10 @@
 		"test",
 		"tests"
 	],
-	"dependencies": { "opentype.js": "^0.4.0"},
+	"dependencies": {
+		"script.js": "=2.5.7",
+		"opentype.js": "^0.4.0"
+		},
 	"devDependencies": {
 		"grunt": "^0.4.5",
 		"grunt-contrib-concat": "^0.4.0",

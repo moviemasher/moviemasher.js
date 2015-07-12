@@ -1,5 +1,4 @@
-var MovieMasher;
-MovieMasher = function() { // it's not necessary to instantiate, but you can
+var MovieMasher = function() { // it's not necessary to instantiate, but you can
 	this.instance_arguments = arguments;
 	this.MovieMasher = MovieMasher;
 	this.initialize();
@@ -14,7 +13,7 @@ MovieMasher.find = function(type, ob_or_id, key){
 	if (Util.isob(ob_or_id)) ob_or_id = ob_or_id[key || 'id'];
 	if (ob_or_id){
 		if (Util.isnt(MovieMasher.registered[type])) {
-			//console.log('finding first type', type);		
+			//console.log('finding first type', type);
 			MovieMasher.registered[type] = [];
 		}
 		ob = Util.array_find(MovieMasher.registered[type], ob_or_id, key);
@@ -40,11 +39,10 @@ MovieMasher.player = function(index_or_options){
 MovieMasher.register = function(type, media){
 	if (! Util.isarray(media)) media = [media];
 	if (Util.isob.apply(Util, media)) {
-		var found_ob, first_for_type, found_default, ob, i, z = media.length;
+		var do_sort, found_ob, first_for_type, found_default, ob, i, z = media.length;
 		if (z) {
 			first_for_type = Util.isnt(MovieMasher.registered[type]);
 			if (first_for_type) {
-				//console.log('registering first of type', type);
 				MovieMasher.registered[type] = [];
 			}
 			for (i = 0; i < z; i++){
@@ -58,8 +56,10 @@ MovieMasher.register = function(type, media){
 					}
 				}
 				if (! found_ob) {
+					if (! ob.type) ob.type = type;
 					MovieMasher.registered[type].push(ob);
-					MovieMasher.registered[type].sort(Util.sort_by_label);
+					do_sort = true;
+
 				}
 			}
 		}
@@ -67,9 +67,11 @@ MovieMasher.register = function(type, media){
 			ob = Defaults.module_for_type(type);
 			if (ob) {
 				MovieMasher.registered[type].push(ob);
+				do_sort = true;
 				MovieMasher.registered[type].sort(Util.sort_by_label);
-			}	
+			}
 		}
+		if (do_sort) MovieMasher.registered[type].sort(Util.sort_by_label);
 	}
 };
 MovieMasher.registered = {};

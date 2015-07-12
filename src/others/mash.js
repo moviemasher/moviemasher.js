@@ -145,7 +145,7 @@ var Mash = {
 		return media_references;
 	},
 	init_media: function(media){
-		
+
 		var error = ! Util.isob(media);
 		if (! error) {
 			if (Util.isnt(media.id)) media.id = Util.uuid();
@@ -257,12 +257,12 @@ var Mash = {
 	},
 	media_count_for_clips: function(mash, clips, referenced){
 		var clip, media, j, y, i, z, key, keys, reference;
-		if (Util.isob(referenced) && Util.isarray(clips)) {	
+		if (Util.isob(referenced) && Util.isarray(clips)) {
 			y = clips.length;
 			for (j = 0; j < y; j++){
 				clip = clips[j];
 				if (! clip) console.error('media_count_for_clips', clips);
-				
+
 				Mash.media_reference(mash, clip.id, referenced);
 				reference = referenced[clip.id];
 				if (reference){
@@ -335,7 +335,7 @@ var Mash = {
 			referenced[media_id] = {};
 			referenced[media_id].count = 1;
 			referenced[media_id].media = Mash.media_search(type, media_id, mash);
-		} 
+		}
 	},
 	media_search: function(type, ob_or_id, mash){
 		var ob = null;
@@ -434,7 +434,7 @@ var Mash = {
 			clip.frame = start_time;
 			if (Constant.transition !== media.type) start_time += clip.frames;
 		}
-		Mash.recalc_clips(clips); // sorts by frame 
+		Mash.recalc_clips(clips); // sorts by frame
 	},
 	track_for_clip: function(mash, clip, media){
 		if (! media) media = Mash.media(mash, clip);
@@ -452,9 +452,18 @@ var Mash = {
 	urls_for_clip: function(mash, clip, range, resources){
 		var quantize, media, i, z, key, keys, font;
 		quantize = mash.quantize;
-		media = Mash.media(mash, clip);
 		if (! Util.isob(resources)) resources = {};
-		if (clip && media) {
+		if (clip) {
+			if (clip[Constant.merger]) {
+				media = Mash.media_search(Constant.merger, clip[Constant.merger].id, mash);
+				Mash.urls_for_media_filters(media, resources);
+			}
+			if (clip[Constant.scaler]) {
+				media = Mash.media_search(Constant.scaler, clip[Constant.scaler].id, mash);
+				Mash.urls_for_media_filters(media, resources);
+			}
+		media = Mash.media(mash, clip);
+		if (media){
 			switch(media.type){
 				case 'frame':
 				case Constant.video: {
@@ -474,6 +483,9 @@ var Mash = {
 					break;
 				}
 				default: { // modules
+					Mash.urls_for_media_filters(media, resources);
+
+
 					keys = Mash.properties_for_media(media, Constant.font);
 					z = keys.length;
 					if (z) {
@@ -503,6 +515,7 @@ var Mash = {
 				}
 			}
 		}
+		}
 		return resources;
 	},
 	urls_for_clips: function(mash, clips, range, avb){
@@ -520,6 +533,22 @@ var Mash = {
 		}
 		return resources;
 	},
+	urls_for_media_filters: function(media, referenced){
+		var i, z, filter, filter_config;
+			if (Util.isob(media) && Util.isob(referenced) && media.filters) {
+				z = media.filters.length;
+				for (i = 0; i < z; i++){
+					filter = media.filters[i];
+					filter_config = Filter.find(filter.id);
+					if (filter_config) {
+						if (! referenced[Constant.filter]) referenced[Constant.filter] = {};
+							referenced[Constant.filter][filter_config.source] = true;
+						}
+					else console.warn('filter not registered', filter.id);
+				}
+			}
+	},
+
 	urls_for_video_clip: function(clip, media, range, quantize, resources){
 		if (! resources) resources = {};
 		var add_one_frame = (range.frames > 1);
@@ -568,7 +597,7 @@ var Mash = {
 		}
 		return urls;
 	},
-	visual_clips: function(mash){			
+	visual_clips: function(mash){
 		var track, i, z, clips = [];
 		z = mash.video.length;
 		for (i = 0; i < z; i++) {

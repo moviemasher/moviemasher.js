@@ -12,7 +12,7 @@ function add_media(id){
 			"label": "Title",
 			"type": "theme",
 			"id": "com.moviemasher.theme.text",
-			"properties": { 
+			"properties": {
 				"string": { "type": "string", "value": "Title" },
 				"size": { "type": "fontsize", "value": 0.2 },
 				"x": { "type": "number", "value": 0 },
@@ -76,7 +76,7 @@ function add_media(id){
 			'type': 'image',
 			'id': 'cable',
 			'url': 'media/img/cable.jpg'
-		}, 
+		},
 		'frog': {
 			'label': 'Frog',
 			'type': 'image',
@@ -99,14 +99,21 @@ function mm_load() {
 	var canvas = document.getElementById('mm-canvas');
 	if (canvas && MovieMasher && MovieMasher.supported) {
 		mm_player = MovieMasher.player();
+		// register the filters we use
+		MovieMasher.register(MovieMasher.Constant.filter, [
+			{ "id":"color", "source": "../dist/filters/color.js" },
+			{ "id":"drawtext", "source": "../dist/filters/drawtext.js" },
+			{ "id":"overlay", "source": "../dist/filters/overlay.js" },
+			{ "id":"scale", "source": "../dist/filters/scale.js" },
+			{ "id":"setsar", "source": "../dist/filters/setsar.js" }
+		]);
 		// register at least a default font, since we're allowing a module that uses fonts
-		MovieMasher.register('font', {
+		MovieMasher.register(MovieMasher.Constant.font, {
 			"label": "Blackout Two AM",
 			"id":"com.moviemasher.font.default",
-			"type":"font",
 			"source": "media/font/default.ttf",
 			"family":"Blackout Two AM"
-		}, 'font');
+		});
 		mm_player.canvas_context = canvas.getContext('2d');
 		mm_player.mash = {};
 		mm_update_textarea();

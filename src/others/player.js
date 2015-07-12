@@ -10,7 +10,7 @@ var Player = function(evaluated) {
 	this.__paused = true;
 	this.__stalling = false;
 	this.__minbuffertime = new TimeRange(evaluated.minbuffertime, 1);
-	this.__unbuffertime = new TimeRange(evaluated.unbuffertime, 1);	
+	this.__unbuffertime = new TimeRange(evaluated.unbuffertime, 1);
 	this.__buffertime = new TimeRange(evaluated.buffertime, 1);
 	this.__time = new TimeRange(0, 1);
 	this.__time_drawn = new TimeRange(0, 1);
@@ -35,7 +35,7 @@ var Player = function(evaluated) {
 	}); // action_index
 	dp(pt, "autoplay", {
 		get: function() {return this.__autoplay;},
-		set: function(bool) { 
+		set: function(bool) {
 			this.__autoplay = bool;
 		}
 	}); // autoplay
@@ -64,16 +64,16 @@ var Player = function(evaluated) {
 	}); // canvas_container
 	dp(pt, "currentTime", {
 		get: function() { return this.__time.seconds; },
-		set: function(seconds) { 
+		set: function(seconds) {
 			this.time = TimeRange.fromSeconds(seconds, this.__fps);
 		}
 	}); // currentTime
-	dp(pt, "duration", { 
-		get: function() { return (this.__mash_length ? Number(this.__mash_length) / Number(this.__mash.quantize) : 0.0); } 
+	dp(pt, "duration", {
+		get: function() { return (this.__mash_length ? Number(this.__mash_length) / Number(this.__mash.quantize) : 0.0); }
 	}); // duration
 	dp(pt, "fps", {
 		get: function() { return this.__fps;},
-		set: function(rate) { 
+		set: function(rate) {
 			if (rate) {
 				rate = Math.round(Number(rate));
 				if (rate && (this.__fps !== rate)) {
@@ -99,13 +99,13 @@ var Player = function(evaluated) {
 	}); // frame
 	dp(pt, "loop", {
 		get: function() { return this.__loop;},
-		set: function(bool) { 
+		set: function(bool) {
 			this.__loop = bool;
 		}
 	}); // loop
 	dp(pt, "mash", {
 		get: function() { return this.__mash; },
-		set: function(obj) { 
+		set: function(obj) {
 			this.paused = true;
 			this.__action_index = -1;
 			this.__action_stack = [];
@@ -125,14 +125,14 @@ var Player = function(evaluated) {
 	}); // minbuffertime
 	dp(pt, "muted", {
 		get: function() { return this.__muted;},
-		set: function(bool) { 
+		set: function(bool) {
 			this.__muted = bool;
 			//console.log('muted=', this.__muted);
 		}
 	}); // muted
 	dp(pt, "paused", {
 		get: function() { return this.__paused;},
-		set: function(bool) { 
+		set: function(bool) {
 			if (! this.__mash_length) bool = true;
 			if (this.__paused !== bool){
 				this.__paused = bool;
@@ -152,12 +152,12 @@ var Player = function(evaluated) {
 					this.rebuffer();
 					this.redraw();
 				}
-				this.__set_stalling((! this.__moving) && (! this.__paused));	
+				this.__set_stalling((! this.__moving) && (! this.__paused));
 			}
 		}
 	}); // paused
 	dp(pt, "position", {
-		get: function() { 
+		get: function() {
 			var dur, pos = 0;
 			if (this.__time.frame) {
 				dur = this.duration;
@@ -169,8 +169,8 @@ var Player = function(evaluated) {
 			this.time = new TimeRange(this.duration * per, 1);
 		}
 	}); // position
-	dp(pt, 'selectedClip', { get: function(){ 
-		return (this.__selected_clips.length === 1 ? this.__selected_clips[0] : null); 
+	dp(pt, 'selectedClip', { get: function(){
+		return (this.__selected_clips.length === 1 ? this.__selected_clips[0] : null);
 	}, set: function(item){
 		this.selectedClips = (Util.isob(item) ? [item] : []);
 	}}); // selectedClip
@@ -210,8 +210,8 @@ var Player = function(evaluated) {
 			if (this.selectedClipOrMash.merger) this.__pristine_clip.merger = Util.copy_ob_scalars(this.selectedClipOrMash.merger);
 		},
 	}); // selectedClips
-	dp(pt, 'selectedEffect', { get: function(){ 
-		return (this.__selected_effects.length === 1 ? this.__selected_effects[0] : null); 
+	dp(pt, 'selectedEffect', { get: function(){
+		return (this.__selected_effects.length === 1 ? this.__selected_effects[0] : null);
 	}, set: function(item){
 		this.selectedEffects = (Util.isob(item) ? [item] : []);
 	}}); // selectedEffect
@@ -237,8 +237,8 @@ var Player = function(evaluated) {
 			this.__pristine_effect = Util.copy_ob_scalars(this.selectedEffect);
 		}
 	}); // selectedEffects
-	dp(pt, "stalling", { 
-		get: function() { return this.__stalling;} 
+	dp(pt, "stalling", {
+		get: function() { return this.__stalling;}
 	}); // stalling
 	dp(pt, "time", {
 		get: function() { return this.__time;},
@@ -256,7 +256,7 @@ var Player = function(evaluated) {
 	}); // unbuffertime
 	dp(pt, "volume", {
 		get: function() { return this.__gain;},
-		set: function(per) { 
+		set: function(per) {
 			this.__gain = per;
 		}
 	}); // volume (gain)
@@ -387,7 +387,7 @@ var Player = function(evaluated) {
 				// check to see if we're changing a module's property of type font
 				if (media && Mash.is_modular_media(media)) action_is_id = ((-1 < Mash.properties_for_media(media, Constant.font).indexOf(prop)) ? Constant.font : null);
 				// check to see if we're changing merger.id or scaler.id
-				if (! action_is_id) action_is_id = (('.id' === prop.substr(-3)) ? prop.substr(0, prop.length-3) : null); 
+				if (! action_is_id) action_is_id = (('.id' === prop.substr(-3)) ? prop.substr(0, prop.length-3) : null);
 				if (action_is_id) {
 					undo_func = function() { this.change_data(this.orig_value, true); };
 					redo_func = function(){ this.change_data(this.value); };
@@ -448,10 +448,10 @@ var Player = function(evaluated) {
 						if (Constant.font === this.is_id) {
 							this.set_property(new_value);
 						} else this.target[this.is_id] = (is_undo ? target_copy[this.is_id] : Mash.clip_from_media(new_ob));
-						//if (! Mash.modules_reference_media(this.player.mash, this.last_value)) 
+						//if (! Mash.modules_reference_media(this.player.mash, this.last_value))
 						this.player.remove_media(Mash.media_search(this.is_id, this.last_value, this.player.mash));
 						this.last_value = new_value;
-					
+
 					};
 				}
 				this.__action_add(action);
@@ -468,7 +468,7 @@ var Player = function(evaluated) {
 		}
 		return unneeded_urls;
 	}; // called by Loader
-	pt.destroy = function(){ 
+	pt.destroy = function(){
 		this.mash = null;
 		this.canvas_context = null;
 	}; // call when player removed from DOM
@@ -514,19 +514,19 @@ var Player = function(evaluated) {
 				if (action) this.__action_add(action);
 			}
 		}
-	};		
-	pt.pause = function() { 
-		this.paused = true; 
 	};
-	pt.play = function() { 
-		this.paused = false; 
+	pt.pause = function() {
+		this.paused = true;
+	};
+	pt.play = function() {
+		this.paused = false;
 	};
 	pt.rebuffer = function(){
 		var delayed_draw, audio_on, range, media, clip, clips, i, z, needed_urls = {}, audio_clips = [];
 		if (this.__mash) {
 			audio_on = this.__audio_is_on();
 			// time we want to buffer - just the current frame if paused, otherwise from it to it plus buffertime
-			range = (this.__paused ? this.__time.copyTime() : new TimeRange(this.__time.frame, this.__time.fps, this.__buffertime.frame)); 
+			range = (this.__paused ? this.__time.copyTime() : new TimeRange(this.__time.frame, this.__time.fps, this.__buffertime.frame));
 			// make sure range is within the mash range
 			if (! range.intersection(new TimeRange(0, this.__mash.quantize, this.__mash_length))) range = null;
 			if (range) {
@@ -560,7 +560,7 @@ var Player = function(evaluated) {
 			//console.log('redoing', this.__action_stack[this.__action_index]);
 			this.__action_stack[this.__action_index].redo();
 			this.did(removed_count);
-			this.__redraw_moving();		
+			this.__redraw_moving();
 		}
 	};
 	pt.redraw = function() {
@@ -570,7 +570,7 @@ var Player = function(evaluated) {
 			clips = Mash.range_clips(this.__mash, this.__time, audio_on); // includes clips on audio tracks if audio_on
 			url_types = Mash.urls_for_clips_by_type(this.__mash, clips, this.__time);
 			video_buffered = Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.video));
-			audio_buffered = (audio_on ? Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.audio)) : true); 
+			audio_buffered = (audio_on ? Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.audio)) : true);
 			//console.log('redraw', video_buffered, audio_buffered, this.__time);
 			if ((video_buffered && audio_buffered) !== this.__moving){
 				if (this.__moving) this.__set_moving(false);
@@ -616,7 +616,7 @@ var Player = function(evaluated) {
 		for (i = 0; i < z; i++){
 			ob = array[i];
 			id = (Util.isob(ob) ? ob.id : ob);
-			if (! this.__media_references[id]) console.warn('remove_media unreferenced media', id); 
+			if (! this.__media_references[id]) console.warn('remove_media unreferenced media', id);
 			else this.__media_references[id]--;
 			if (! this.__media_references[id]) {
 				if (-1 === Util.array_delete_ref(this.__mash.media, ob)) {
@@ -644,7 +644,7 @@ var Player = function(evaluated) {
 						break;
 					}
 					case 1: {
-						if (i > -1) break;  
+						if (i > -1) break;
 					} // potential intentional fall through to default
 					default: {
 						if (i < 0) {
@@ -653,9 +653,9 @@ var Player = function(evaluated) {
 						} else {
 							if (i) array = array.concat(this[array_key].slice(0, i));
 							if (i < (this[array_key].length - 1)) array = array.concat(this[array_key].slice(i + 1));
-						}						
-					} 
-				
+						}
+					}
+
 				}
 			}
 			else {
@@ -686,7 +686,7 @@ var Player = function(evaluated) {
 			this.__action_stack[this.__action_index].undo();
 			this.__action_index --;
 			this.did();
-			this.__redraw_moving();		
+			this.__redraw_moving();
 		}
 	};
 	pt.uuid = function() {
@@ -733,7 +733,7 @@ var Player = function(evaluated) {
 			for (i = z - 1; i > -1; i--) {
 				clip = clips[i];
 				clip.track = track_index;
-				clip.frame = frame + orig[i].offset; 
+				clip.frame = frame + orig[i].offset;
 			}
 			if (track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
 			Mash.recalc_track(this.player.mash, track);
@@ -766,7 +766,7 @@ var Player = function(evaluated) {
 				container.splice(this.orig[i].index, 0, effects[this.orig[i].i]);
 			}
 		});
-		
+
 		action.orig = [];
 		for (i = 0; i < z; i++) action.orig.push({i: i, index: container.indexOf(effects[i])});
 		return action;
@@ -855,7 +855,7 @@ var Player = function(evaluated) {
 				container.splice(this.orig[i].index, 0, effects[this.orig[i].i]);
 			}
 		});
-		
+
 		action.orig = [];
 		for (i = 0; i < z; i++) action.orig.push({i: i, index: container.indexOf(effects[i])});
 		return action;
@@ -984,13 +984,13 @@ var Player = function(evaluated) {
 	};
 	pt.__canSplitAtTime = function(clip, now){
 		var clip_time = new TimeRange(clip.frame, this.__mash.quantize, clip.frames);
-		
+
 		var can_split = clip_time.intersection(now);
 		if (can_split) {
 			now = now.copyTime();
 			now.scale(clip_time.fps);
 			can_split = (now.frame !== clip_time.frame);
-			
+
 			if (can_split) {
 				can_split = (now.end !== clip_time.end);
 				//if (! can_split) console.log('end match');
@@ -1035,7 +1035,7 @@ var Player = function(evaluated) {
 				} //else console.error('attempt to draw unloaded' + media.type, url);
 				break;
 			}
-			case 'frame': 
+			case 'frame':
 			case Constant.video: {
 				copy_time = time.copyTime();
 				copy_time.scale(media.fps);
@@ -1058,7 +1058,7 @@ var Player = function(evaluated) {
 			}
 			default: console.error(media.type + ' unsupported on video track');
 		}
-		if (raw_drawing) {//console.error('no raw drawing', clip, time); else 
+		if (raw_drawing) {//console.error('no raw drawing', clip, time); else
 			drawing.drawings.push(raw_drawing);
 			drawing = this.__draw_scale_and_effects(time, clip, raw_drawing);
 		}
@@ -1068,7 +1068,7 @@ var Player = function(evaluated) {
 		//console.log('__draw_layer_clips', clips.length, time.description);
 		this.__delete_drawings(this.__drawing.drawings);
 		var back_drawing, drawing, transition_indexes, transition_index, medias, clip, media, w, h, y, i, z = clips.length;
-		//transition_drawings = [], 
+		//transition_drawings = [],
 		medias = {};
 		transition_index = -1;
 		transition_indexes = [];
@@ -1133,7 +1133,7 @@ var Player = function(evaluated) {
 		var $this = this;
 		requestAnimationFrame(function(){
 			$this.__draw_layer_clips(clips, $this.__time_drawn);
-		});	
+		});
 	};
 	pt.__drawings_merge = function(time, layer_clip, merger, btm_drawing, top_drawing) {
 		var merger_media;
@@ -1152,76 +1152,78 @@ var Player = function(evaluated) {
 			else raw_drawing = this.__draw_module_filters(time, layer_clip, [raw_drawing], scaler, scaler_media).shift();
 			if (! raw_drawing) console.error('scaler produced no drawing', scaler, layer_clip);
 		}else console.error('no scaler found', layer_clip);
-		
+
 		if (Util.isarray(layer_clip.effects) && layer_clip.effects.length) {
 			raw_drawing = this.__draw_effects([raw_drawing], layer_clip, time).shift();
 		}
 		return raw_drawing;
 	};
 	pt.__draw_module_filters = function(time, layer_clip, drawings, module, module_media) {
-		var __evaluate_scope = function(time, clip, scope, module, filter_config){ 
+		var __evaluate_scope = function(time, clip, scope, module, filter_config){
 			var eval_key, eval_str, filter, conditional_in, condition, test_bool, parameter, conditional, parameter_name, parameter_value, parameters_array, j, y, i, z, evaluated = {};
-			filter = Filter[filter_config.id];
-			scope = Util.copy_ob(scope);
-			parameters_array = filter_config.parameters;
-			if (! parameters_array) parameters_array = filter.parameters;
-			if (parameters_array) {
-				z = parameters_array.length;
-				for (i = 0; i < z; i++){
-					parameter = parameters_array[i];
-					parameter_name = parameter.name;
-					if (parameter_name){
-						parameter_value = parameter.value;
-						if (Util.isarray(parameter_value)){
-							test_bool = false;
-							y = parameter_value.length;
-							for (j = 0; j < y; j++){
-								conditional = parameter_value[j];
-								condition = conditional.condition;
-								// not strict equality, since we may have strings and numbers
-								if (conditional.is) condition = condition + '==' + conditional.is;
-								else if (conditional.in) {
-									conditional_in = conditional.in;
-									if (Util.isstring(conditional_in)) conditional_in = conditional_in.split(',');
-								
-									condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (Util.isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
+			filter = Filter.load(filter_config.id);
+			if (filter) {
+				scope = Util.copy_ob(scope);
+				parameters_array = filter_config.parameters;
+				if (! parameters_array) parameters_array = filter.parameters;
+				if (parameters_array) {
+					z = parameters_array.length;
+					for (i = 0; i < z; i++){
+						parameter = parameters_array[i];
+						parameter_name = parameter.name;
+						if (parameter_name){
+							parameter_value = parameter.value;
+							if (Util.isarray(parameter_value)){
+								test_bool = false;
+								y = parameter_value.length;
+								for (j = 0; j < y; j++){
+									conditional = parameter_value[j];
+									condition = conditional.condition;
+									// not strict equality, since we may have strings and numbers
+									if (conditional.is) condition = condition + '==' + conditional.is;
+									else if (conditional.in) {
+										conditional_in = conditional.in;
+										if (Util.isstring(conditional_in)) conditional_in = conditional_in.split(',');
+
+										condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (Util.isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
+									}
+									condition = condition.replace(' or ', ' || ');
+									condition = condition.replace(' and ', ' && ');
+									for (eval_key in scope) {
+										condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+									}
+									eval_str = 'test_bool = (' + condition + ');';
+									try {
+										eval(eval_str);
+									} catch (exception) {
+										console.error(exception.message, eval_str);
+									}
+									if (test_bool) {
+										parameter_value = conditional.value;
+										//console.log(parameter_name, eval_str, parameter_value);
+										break;
+									} // else console.warn(parameter_name, eval_str, parameter_value);
 								}
-								condition = condition.replace(' or ', ' || ');
-								condition = condition.replace(' and ', ' && ');
-								for (eval_key in scope) { 
-									condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
-								}
-								eval_str = 'test_bool = (' + condition + ');';
-								try {
-									eval(eval_str); 
-								} catch (exception) {
-									console.error(exception.message, eval_str);
-								}
-								if (test_bool) {
-									parameter_value = conditional.value;
-									//console.log(parameter_name, eval_str, parameter_value);
-									break;
-								} // else console.warn(parameter_name, eval_str, parameter_value);
+								if (! test_bool) console.error('no conditions were true', parameter_value);
 							}
-							if (! test_bool) console.error('no conditions were true', parameter_value);
-						}
-						if (Util.isstring(parameter_value)) { // could well be a number by now
-							for (eval_key in scope) { 
-								parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+							if (Util.isstring(parameter_value)) { // could well be a number by now
+								for (eval_key in scope) {
+									parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+								}
 							}
+							eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
+							try {
+								eval(eval_str);
+							} catch (exception) {
+								//console.error(exception.message, eval_str, parameter_value);
+								evaluated[parameter_name] = parameter_value;
+							}
+							// sort of like lookahead, but they have to be in order!
+							scope[parameter_name] = evaluated[parameter_name];
 						}
-						eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
-						try {
-							eval(eval_str); 
-						} catch (exception) {
-							//console.error(exception.message, eval_str, parameter_value);
-							evaluated[parameter_name] = parameter_value;
-						}
-						// sort of like lookahead, but they have to be in order!
-						scope[parameter_name] = evaluated[parameter_name];
 					}
-				}
-			} else console.log('no parameters_array found', filter_config);
+				} else console.log('no parameters_array found', filter_config);
+			} else console.error('filter not found', filter_config.id);
 			return evaluated;
 		};
 		var ctime, scope, evaluated, filter_config, filter, i, z;
@@ -1234,13 +1236,13 @@ var Player = function(evaluated) {
 					z = module_media.filters.length;
 					for (i = 0; i < z; i++){
 						filter_config = module_media.filters[i];
-						filter = Filter[filter_config.id];
+						filter = Filter.load(filter_config.id); //Filter[filter_config.id];
 						if (filter) { // otherwise, just ignore unknown filters
-		
+
 							scope = this.__module_scope(time, ctime, drawings, module, module_media);
 							scope = filter.parse(drawings, scope, filter_config);
 							evaluated = __evaluate_scope(time, layer_clip, scope, module, filter_config);
-							drawings = filter.render(drawings, scope, evaluated, filter_config);	
+							drawings = filter.render(drawings, scope, evaluated, filter_config);
 						}
 					}
 				} else console.error('invalid layer clip with no frames', layer_clip);
@@ -1281,7 +1283,7 @@ var Player = function(evaluated) {
 				// loop back to start or pause
 				if (! this.__loop) {
 					this.paused = true;
-				} else this.frame = 0; 
+				} else this.frame = 0;
 			} else {
 				if (! now.isEqualToTime(this.__time_drawn)) {
 					this.__time.setToTime(now);
@@ -1340,9 +1342,9 @@ var Player = function(evaluated) {
 		module_properties.floor = Math.floor;
 		module_properties.ceil = Math.ceil;
 		module_properties.mm_fps = this.__fps;
-		
+
 		if (clip_time) module_properties.t = module_properties.mm_duration = clip_time.lengthSeconds;
-		
+
 		clip_time.scale(time.fps);
 		module_properties.mm_t = (time.frame - clip_time.frame) / clip_time.frames;
 		module_properties.mm_width = this.__drawing.canvas.width;
@@ -1358,7 +1360,7 @@ var Player = function(evaluated) {
 	};
 	pt.__redraw_moving = function(new_time){
 		var moving = this.__moving;
-		if (moving) this.__set_moving(false); 
+		if (moving) this.__set_moving(false);
 		if (new_time) this.__time.setToTime(new_time);
 		//this.rebuffer();
 		this.redraw();

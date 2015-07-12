@@ -1,24 +1,12 @@
-var Audio = { 
+var Audio = {
 	buffer_source: function(buffer){
 		var context = Audio.get_ctx();
 		var source = context.createBufferSource(); // creates a sound source
 		source.buffer = buffer;                    // tell the source which sound to play
 		return source;
-	},	
+	},
 	load: function(url){
-		var request = new XMLHttpRequest();
-		request.open('GET', url, true);
-		request.responseType = 'arraybuffer';
-		request.onload = function() {
-			Audio.get_ctx().decodeAudioData(request.response, function(buffer) {
-				//console.log('audio.onload', url);
-				Loader.cached_urls[url] = buffer;
-				delete Loader.requested_urls[url];
-				Players.draw_delayed();
-			}, function() { console.error('problem decoding audio', url); });
-		};
-		Loader.requested_urls[url] = request;
-		request.send();
+		Loader.load_audio(url);
 	},
 	clip_timing: function(clip, zero_seconds, quantize) {
 		if (isNaN(zero_seconds)) console.error('Audio.clip_timing got NaN for zero_seconds', clip);
@@ -81,7 +69,7 @@ var Audio = {
 		source.buffer_source.disconnect(source.gainNode);
 		source.gainNode.disconnect(context.destination);
 		delete source.gainNode;
-	
+
 	},
 	get_ctx: function(){
 		if (! Audio.ctx) {
@@ -170,7 +158,7 @@ var Audio = {
 	time: function(){
 		return Audio.__last_seconds + (Audio.get_ctx().currentTime - Audio.__sync_seconds);
 	},
-	zero_seconds: function() { 
+	zero_seconds: function() {
 		return Audio.__sync_seconds - Audio.__last_seconds;
 	},
 	sources: [],

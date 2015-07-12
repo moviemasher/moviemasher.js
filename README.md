@@ -21,7 +21,12 @@ A player binds to its mash object directly, without copying or adding any method
 
 	var context = document.getElementById("mm-canvas").getContext('2d');
 	var mm_player = MovieMasher.player({canvas_context: context, autoplay: true});
-	
+	MovieMasher.register(MovieMasher.Constant.filter, [
+		{ "id":"overlay", "source": "../dist/filters/overlay.js" },
+		{ "id":"scale", "source": "../dist/filters/scale.js" },
+		{ "id":"setsar", "source": "../dist/filters/setsar.js" }
+	]);
+
 	mm_player.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
 	mm_player.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
 	mm_player.add({ type: 'audio', url: 'media/audio/loop.mp3', duration: 2 });
@@ -52,6 +57,7 @@ Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.r
 
 ### Included Requirements 
 - opentype.js
+- script.js
 
 ### User Feedback
 If any problems arise while utilizing this repository, a [GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed. Please include the mash description that's causing problems and any relevant console entries. Please post your issue ticket in the appropriate repository and refrain from cross posting - all projects are monitored with equal zeal. 
@@ -62,11 +68,11 @@ Please join in the shareable economy by gifting your efforts towards improving t
 ### Developer Setup
 1. install git, npm, bower and grunt
 2. npm install
-3. bower install
+3. bower install --allow-root 
 4. grunt
 
 ##### Known issues in this version
-- little documentation - see angular-moviemasher for usage
+- little documentation - see angular-moviemasher for usage and moviemasher.rb for mash syntax
 - video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks
 - audio filters not yet supported
 

@@ -1,0 +1,14 @@
+{
+  "name": "script.js",
+  "homepage": "https://github.com/ded/script.js",
+  "version": "2.5.7",
+  "_release": "2.5.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.5.7",
+    "commit": "417c2871d8d197860b22f91b6268c6405cc25c6f"
+  },
+  "_source": "git://github.com/ded/script.js.git",
+  "_target": "=2.5.7",
+  "_originalSource": "script.js"
+}
