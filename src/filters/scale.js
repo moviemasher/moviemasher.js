@@ -7,7 +7,6 @@ MovieMasher.Filter.register('scale', {
 			out_width = evaluated.w || evaluated.width;
 			out_height = evaluated.h || evaluated.height;
 			//console.error('scale.render output dimensions', evaluated, scope, out_width, out_height);
-
 			if (2 > out_width + out_height) console.error('scale.render invalid output dimensions', evaluated, scope, out_width, out_height);
 			else {
 				in_ctx = contexts[0];

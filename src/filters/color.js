@@ -10,9 +10,6 @@ MovieMasher.Filter.register('color',  {
 		new_context.context.fillRect(0, 0, new_context.canvas.width, new_context.canvas.height);
 		return [new_context];
 	},
-	parse: function(contexts, scope) {
-		return scope;
-	},
 	parameters: [
 		{ name: "color", value: "color" },
 		{ name: "size", value: "mm_dimensions" },

@@ -86,5 +86,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'copy']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
 };

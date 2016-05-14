@@ -17,7 +17,5 @@ MovieMasher.Filter.register('drawbox', {
 			context.context.fillRect(x, y, width, height);
 			drawing.context.drawImage(context.canvas, 0, 0);
 			return contexts;
-		}, parse: function(contexts, scope) {
-			return scope;
 		}
 });

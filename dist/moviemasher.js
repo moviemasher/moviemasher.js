@@ -1,5 +1,5 @@
-/*! moviemasher.js - v4.0.13 - 2015-07-12
-* Copyright (c) 2015 Movie Masher; Licensed  */
+/*! moviemasher.js - v4.0.14 - 2016-05-14
+* Copyright (c) 2016 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
 'use strict';
@@ -2480,9 +2480,9 @@ var Player = function(evaluated) {
 						if (filter) { // otherwise, just ignore unknown filters
 
 							scope = this.__module_scope(time, ctime, drawings, module, module_media);
-							scope = filter.parse(drawings, scope, filter_config);
+							if (filter.parse) scope = filter.parse(drawings, scope, filter_config);
 							evaluated = __evaluate_scope(time, layer_clip, scope, module, filter_config);
-							drawings = filter.render(drawings, scope, evaluated, filter_config);
+							if (filter.render) drawings = filter.render(drawings, scope, evaluated, filter_config);
 						}
 					}
 				} else console.error('invalid layer clip with no frames', layer_clip);

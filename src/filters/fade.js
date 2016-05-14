@@ -10,9 +10,6 @@ MovieMasher.Filter.register('fade', {
 			new_context.context.drawImage(bot_ctx.canvas, 0, 0);
 			new_context.context.globalAlpha = 1;
 			return [new_context];
-		},
-		parse: function(contexts, scope){
-			//console.log('fade.parse', scope);
-			return scope;
 		}
-});
+	}
+);
