@@ -1,5 +1,5 @@
 
-FROM digitallyseamless/nodejs-bower-grunt:latest
+FROM digitallyseamless/nodejs-bower-grunt:0.10
 MAINTAINER Movie Masher <support@moviemasher.com>
 
 # # # # # # # # # #
@@ -10,3 +10,6 @@ COPY ./package.json /data/package.json
 #  ADD BOWER/GRUNT
 RUN npm install
 
+# # # # # # # # # #
+#  DEFAULT COMMAND
+CMD ["grunt"]

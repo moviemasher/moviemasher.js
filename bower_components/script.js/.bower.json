@@ -8,7 +8,7 @@
     "tag": "v2.5.8",
     "commit": "705dee44e3cdd5d090d9e7593e201af1482ed26c"
   },
-  "_source": "git://github.com/ded/script.js.git",
+  "_source": "https://github.com/ded/script.js.git",
   "_target": "=2.5.8",
   "_originalSource": "script.js"
 }

@@ -55,16 +55,16 @@ module.exports = function(grunt) {
       gruntfile: {
         src: 'Gruntfile.js'
       },
-      moviemasher: {
-        src: '<%= concat.moviemasher.dest %>'
-      },
       filters: {
         expand: true,
         src: 'src/filters/*.js'
       },
+      moviemasher: {
+        src: '<%= concat.moviemasher.dest %>'
+      },
       app: {
         src: 'app/app.js'
-      }
+      },
     },
     uglify: {
       moviemasher: {
@@ -86,5 +86,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'copy']);
 };
