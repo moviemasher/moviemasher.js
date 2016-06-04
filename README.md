@@ -11,9 +11,11 @@ Use moviemasher.js to edit and display mashups of video, audio and images within
 - **undo/redo** history and commands
 - **framework** for custom effects, titles and transitions
 
-### Canvas + Mash = Player
+### Overview: Canvas + Mash = Player
 
 Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a simple JavaScript Object that describes a collection of media and how to arrange it over time.
+
+- **Documentation:** [MovieMasher.com](http://moviemasher.com/docs/)
 
 A player binds to its mash object directly, without copying or adding any methods. It may add default objects, arrays and scalar values though, for faster runtime parsing. Changes you make to the mash are reflected in the player the next time redraw() is called. Or as an alternative to direct data manipulation, you can use the player's add(), change() and remove() methods. When using these you can also call undo() and redo() to provide a complete edit history.
 
@@ -73,11 +75,11 @@ Various components of this project can be updated or rebuilt after installing gi
 1. bower install --production --allow-root
 1. grunt
 
-Or if docker is being used...
+Or if docker is being used, `cd` into the *config/docker/grunt* directory and execute...
 
-- `docker-compose --file config/docker/grunt/grunt.yml run --rm grunt`
+- `docker-compose run --rm grunt`
 
-- `docker-compose --file config/docker/grunt/grunt.yml run --rm grunt bower install --production `
+- `docker-compose run --rm grunt bower install --production `
 
 #### Known issues in this version
 - new convolution filter is very beta - does not always match ffmpeg output

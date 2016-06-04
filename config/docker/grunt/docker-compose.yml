@@ -7,6 +7,7 @@ services:
     image: moviemasher_js_grunt
     volumes:
       - "../../../Gruntfile.js:/data/Gruntfile.js"
+      - "../../../package.json:/data/package.json"
       - "../../../bower.json:/data/bower.json"
       - "../../../dist:/data/dist"
       - "../../../src:/data/src"

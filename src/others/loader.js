@@ -51,6 +51,7 @@ var Loader = {
         delete Loader.requested_urls[url];
         Players.draw_delayed();
       };
+      Loader.requested_urls[url].crossOrigin = "Anonymous";
       Loader.requested_urls[url].src = url;
     }
   },

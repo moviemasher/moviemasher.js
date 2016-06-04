@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.15 - 2016-05-25
+/*! moviemasher.js - v4.0.16 - 2016-06-04
 * Copyright (c) 2016 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -657,6 +657,7 @@ var Loader = {
         delete Loader.requested_urls[url];
         Players.draw_delayed();
       };
+      Loader.requested_urls[url].crossOrigin = "Anonymous";
       Loader.requested_urls[url].src = url;
     }
   },
