@@ -1,0 +1,56 @@
+
+version <future>:
+- freeze frame
+
+version 4.0.17:
+- fixed issue undoing moves from track to track in timeline
+- fixed issue undoing effect reordering
+
+version 4.0.16
+- fixed issue with some filters manipulating assets loaded from another domain
+- now mounting package.json in grunt container
+- simpler docker-compose instructions in README
+
+version 4.0.15:
+- switched indent_style to double space
+- locked version of digitallyseamless/nodejs-bower-grunt image to 0.10
+- now running concat first in Gruntfile
+- new chromakey filter
+- added utility methods to Filter
+- docker-compose for grunt
+
+version 4.0.14:
+- new (very beta) convolution filter
+- new colorchannelmixer filter
+- filters no longer have to define no-op methods
+- upgraded dependencies
+
+version 4.0.13:
+- utilize script.js
+- ffmpeg filters now configurable
+- new Filter object with utility methods
+- new Loader object with asset loading methods
+
+version 4.0.12:
+- new split clip feature
+
+version 4.0.11:
+- lazy font look up on load
+
+version 4.0.10:
+- REAME improvements
+
+version 4.0.9:
+- fixed versioning
+- default filter parameters
+- switch to opentype.js
+
+version 4.0.8:
+- The `begin` key in video clips has been renamed `first`.
+- The `length` key in clips has been renamed `frames`.
+- The `audio` and `video` keys in mash tracks have been moved to mash.
+- better evaluation
+
+
+
+

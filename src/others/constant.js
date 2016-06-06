@@ -4,6 +4,8 @@ var Constant = {
   effect: 'effect',
   filter: 'filter',
   font: 'font',
+  frame: 'frame',
+  freeze: 'freeze',
   gain: 'gain',
   image: 'image',
   merger: 'merger',

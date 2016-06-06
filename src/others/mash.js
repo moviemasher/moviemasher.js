@@ -4,8 +4,7 @@ var Mash = {
     if (media.properties){
       for (key in media.properties) {
         property = media.properties[key];
-        if (! Util.isnt(property.value)) clip[key] = property.value;
-        else {
+        if (Util.isnt(property.value)) {
           type = property.type;
           if (type){
             property_type = Constant.property_types[type];
@@ -15,6 +14,7 @@ var Mash = {
             }
           }
         }
+        else clip[key] = property.value;
       }
     }
     return clip;
@@ -548,7 +548,6 @@ var Mash = {
         }
       }
   },
-
   urls_for_video_clip: function(clip, media, range, quantize, resources){
     if (! resources) resources = {};
     var add_one_frame = (range.frames > 1);

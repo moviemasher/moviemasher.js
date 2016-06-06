@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.16 - 2016-06-04
+/*! moviemasher.js - v4.0.17 - 2016-06-06
 * Copyright (c) 2016 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -357,6 +357,8 @@ var Constant = {
   effect: 'effect',
   filter: 'filter',
   font: 'font',
+  frame: 'frame',
+  freeze: 'freeze',
   gain: 'gain',
   image: 'image',
   merger: 'merger',
@@ -724,8 +726,7 @@ var Mash = {
     if (media.properties){
       for (key in media.properties) {
         property = media.properties[key];
-        if (! Util.isnt(property.value)) clip[key] = property.value;
-        else {
+        if (Util.isnt(property.value)) {
           type = property.type;
           if (type){
             property_type = Constant.property_types[type];
@@ -735,6 +736,7 @@ var Mash = {
             }
           }
         }
+        else clip[key] = property.value;
       }
     }
     return clip;
@@ -1268,7 +1270,6 @@ var Mash = {
         }
       }
   },
-
   urls_for_video_clip: function(clip, media, range, quantize, resources){
     if (! resources) resources = {};
     var add_one_frame = (range.frames > 1);
@@ -1452,9 +1453,9 @@ var Player = function(evaluated) {
   }); // frame
   dp(pt, "frames", {
     get: function() { return Math.round(Number(this.__mash_length) / Number(this.__mash.quantize) * Number(this.__time.fps));}
-  }); // frame
+  }); // frames
   dp(pt, "loop", {
-    get: function() { return this.__loop;},
+    get: function() { return this.__loop; },
     set: function(bool) {
       this.__loop = bool;
     }
@@ -1694,6 +1695,12 @@ var Player = function(evaluated) {
         if (should_be_enabled) should_be_enabled = this.__canSplitAtTime(this.__selected_clips[0], this.__time);
         break;
       }
+      case 'freeze':{
+        should_be_enabled = (z > 0);
+        if (should_be_enabled) should_be_enabled = (Constant.video === Mash.media(this.__mash, this.__selected_clips[0]).type);
+        if (should_be_enabled) should_be_enabled = this.__canSplitAtTime(this.__selected_clips[0], this.__time);
+        break;
+      }
       /* TODO: implement old operations...
       case 'paste':{
         should_be_enabled = (clipboard.length > 0);
@@ -1706,14 +1713,6 @@ var Player = function(evaluated) {
       }
       case 'snap':{
         should_be_enabled = getValue(property).boolean;
-        break;
-      }
-      case 'freeze':{
-        should_be_enabled = (z > 0);
-        if (should_be_enabled)
-        {
-          should_be_enabled = __clipCanBeSplit(this.__selected_clips[0], true);
-        }
         break;
       }
       */
@@ -2037,6 +2036,14 @@ var Player = function(evaluated) {
       this.__action_add(action);
     }
   };
+  pt.freeze = function() {
+    var clip = this.selectedClip;
+    var at_time = this.__time.copyTime();
+    if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
+      var action = this.__action_create_freeze_clip(clip, at_time);
+      this.__action_add(action);
+    }
+  };
   pt.undo = function() {
     if (this.__action_index > -1) {
       this.__action_stack[this.__action_index].undo();
@@ -2076,7 +2083,10 @@ var Player = function(evaluated) {
     orig = [];
     for (i = 0; i < z; i++) {
       clip = clips[i];
-      orig.push({offset: (i ? clip.frame - clips[0].frame : 0), frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)});
+      orig.push({
+        clip: clip, offset: (i ? clip.frame - clips[0].frame : 0),
+        frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)
+      });
     }
     //console.log('orig', orig);
     action = new Action(this, function(){
@@ -2100,8 +2110,12 @@ var Player = function(evaluated) {
         for (i = 0; i < z; i++) Util.array_delete(track.clips, clips[i]);
       }
       for (i = 0; i < z; i++) {
-        clip = clips[orig[i].i];
+        clip = orig[i].clip; //clips[orig[i].i];
         clip.frame = orig[i].frame;
+        if (track !== orig_track) {
+          orig_track.clips.splice(orig[i].index, 0, clip);
+          clip.track = orig[i].track;
+        }
       }
       if (track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
       Mash.recalc_track(this.player.mash, track);
@@ -2110,65 +2124,66 @@ var Player = function(evaluated) {
     return action;
   };
   pt.__action_create_effects_move = function(index, effects, container){
-    var action, i, z = effects.length;
+    var action, i, z = effects.length, indexed_effects = [];
     action = new Action(this, function(){
-      this.orig.sort(function(a, b){return b.index-a.index;});
-      for (i = 0; i < z; i++) container.splice(this.orig[i].index, 1);
+      indexed_effects.sort(function(a, b){ return b.i - a.i; });
+      for (i = 0; i < z; i++) container.splice(indexed_effects[i].i, 1);
       for (i = z - 1; i > -1; i--) container.splice(index, 0, effects[i]);
     }, function(){
-      this.orig.sort(function(a, b){return a.index-b.index;});
-      this.target.splice(index, z);
+      indexed_effects.sort(function(a, b){ return a.i - b.i; });
+      for (i = 0; i < z; i++) container.splice(index, 1);
       for (i = 0; i < z; i++) {
-        container.splice(this.orig[i].index, 0, effects[this.orig[i].i]);
+        container.splice(indexed_effects[i].i, 0, indexed_effects[i].effect);
       }
     });
-
-    action.orig = [];
-    for (i = 0; i < z; i++) action.orig.push({i: i, index: container.indexOf(effects[i])});
+    for (i = 0; i < z; i++) {
+      indexed_effects.push({i: container.indexOf(effects[i]), effect: effects[i]});
+    }
     return action;
   };
   pt.__action_create_video_move = function(track_index, index, clips){
-    //console.log('__action_create_video_move', track_index, index, clips);
-    var action, orig, orig_track, track, clip, i, z = clips.length;
-    track = this.__mash.video[track_index];
-    orig_track = track;
+    // console.log('__action_create_video_move', track_index, index, clips);
+    var indexed_clips, orig_track, target_track, clip, i, z = clips.length;
+    target_track = this.__mash.video[track_index];
+    orig_track = target_track;
     clip = clips[0];
-    if (-1 === track.clips.indexOf(clip)) { // move from different video track
+    if (-1 === target_track.clips.indexOf(clip)) { // move from different video track
       orig_track = Mash.track_for_clip(this.__mash, clip);
       if (! orig_track) return console.error('no track for first clip'); // problem, clip not found in any tracks
     }
-    orig = [];
+    indexed_clips = [];
     for (i = 0; i < z; i++) {
       clip = clips[i];
-      orig.push({frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)});
+      indexed_clips.push({clip: clip, frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)});
     }
-    action = new Action(this, function(){
-      orig.sort(function(a, b){return b.index-a.index;});
-      for (i = 0; i < z; i++) orig_track.clips.splice(orig[i].index, 1);
+    return new Action(this, function(){
+      // console.log('REDO __action_create_video_move');
+      indexed_clips.sort(function(a, b){return b.index-a.index;});
+      for (i = 0; i < z; i++) orig_track.clips.splice(indexed_clips[i].index, 1);
+      indexed_clips.sort(function(a, b){return a.i-b.i;});
       for (i = z - 1; i > -1; i--) {
         clip = clips[i];
-        track.clips.splice(index, 0, clip);
+        target_track.clips.splice(index, 0, clip);
         clip.track = track_index;
       }
-      if (track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
-      Mash.recalc_track(this.player.mash, track);
+      if (target_track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
+      Mash.recalc_track(this.player.mash, target_track);
       this.player.mash_length_changed();
     }, function(){
-      orig.sort(function(a, b){return a.index-b.index;});
-      var container_index;
-      track.clips.splice(index, z);
+      // console.log('UNDO __action_create_video_move');
+      indexed_clips.sort(function(a, b){return a.index-b.index;});
+      target_track.clips.splice(index, z);
       for (i = 0; i < z; i++) {
-        container_index = orig[i].index;
-        clip = clips[orig[i].i];
-        orig_track.clips.splice(container_index, 0, clip);
-        clip.track = orig[i].track;
-        clip.frame = orig[i].frame;
+        clip = indexed_clips[i].clip;
+        orig_track.clips.splice(indexed_clips[i].index, 0, clip);
+        // console.log('__action_create_video_move', indexed_clips[i].index, orig_track.clips.length);
+        clip.track = indexed_clips[i].track;
+        clip.frame = indexed_clips[i].frame;
       }
-      if (track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
-      Mash.recalc_track(this.player.mash, track);
+      if (target_track !== orig_track) Mash.recalc_track(this.player.mash, orig_track);
+      Mash.recalc_track(this.player.mash, target_track);
       this.player.mash_length_changed();
     });
-    return action;
   };
   pt.__action_create_clips_remove = function(type, track_index, clips) {
     clips.sort(Util.sort_by_frame); // so they are all a block
@@ -2248,19 +2263,47 @@ var Player = function(evaluated) {
     });
     return action;
   };
-  pt.__action_create_effect_add = function(clip, index){
+  pt.__action_create_effect_add = function(effect, index){
     // .add handles redo_add_objects and undo_delete_objects
-    var action, target = this.selectedClipOrMash;
+    var action, effects, target = this.selectedClipOrMash;
     if (target) {
+      effects = target.effects;
       action = new Action(this, function(){
-        this.target.splice(this.index, 0, this.clip);
+        effects.splice(index, 0, effect);
       }, function() {
-        Util.array_delete(this.target, this.clip);
+        Util.array_delete(effects, effect);
       });
-      action.clip = clip;
-      action.index = index;
-      action.target = target.effects;
     }
+    return action;
+  };
+  pt.__action_create_freeze_clip = function(clip, at_time){
+    // THIS IS NOT YET WORKING!!
+    var media = Mash.media(this.__mash, clip);
+    var new_clip = Util.copy_keys_recursize(clip);
+    var freeze_clip = Util.copy_keys_recursize(clip);
+    var freeze_frames = 2 * this.__mash.quantize;
+    at_time.scale(media.fps);
+    freeze_clip.freeze = at_time.frame;
+    freeze_clip.frames = freeze_frames;
+    at_time.scale(this.__mash.quantize);
+    var trim_frames = clip.frames - (at_time.frame - clip.frame);
+    var track_clips = Mash.track_for_clip(this.__mash, clip).clips;
+    var index = 1 + track_clips.indexOf(clip);
+    new_clip.frames = trim_frames;
+    new_clip.frame = clip.frame + freeze_frames + (clip.frames - trim_frames);
+    new_clip.trim = clip.trim + trim_frames;
+    var action = new Action(this, function(){
+      track_clips.splice(index, 0, new_clip);
+      track_clips.splice(index, 0, freeze_clip);
+      clip.frames -= trim_frames;
+      Mash.recalc_video_clips(this.player.mash, this.target);
+    }, function() {
+      clip.frames += trim_frames;
+      track_clips.splice(index, 2);
+      Mash.recalc_video_clips(this.player.mash, this.target);
+    });
+    action.redo_selected_clips = [clip];
+    action.target = track_clips;
     return action;
   };
   pt.__action_create_split_clip = function(clip, at_time){
@@ -2268,8 +2311,8 @@ var Player = function(evaluated) {
     at_time.scale(this.__mash.quantize);
     var trim_frames = clip.frames - (at_time.frame - clip.frame);
     var media = Mash.media(this.__mash, clip);
-    var target = Mash.track_for_clip(this.__mash, clip).clips;
-    var index = 1 + target.indexOf(clip);
+    var track_clips = Mash.track_for_clip(this.__mash, clip).clips;
+    var index = 1 + track_clips.indexOf(clip);
     new_clip.frames = trim_frames;
     new_clip.frame = clip.frame + clip.frames - trim_frames;
     switch(media.type){
@@ -2279,15 +2322,13 @@ var Player = function(evaluated) {
       }
     }
     var action = new Action(this, function(){
-      target.splice(index, 0, new_clip);
+      track_clips.splice(index, 0, new_clip);
       clip.frames -= trim_frames;
     }, function() {
       clip.frames += trim_frames;
-      target.splice(index, 1);
+      track_clips.splice(index, 1);
     });
     action.redo_selected_clips = [clip];
-    action.redo_add_objects = [media];
-    action.undo_delete_objects = [media];
     return action;
   };
   pt.__action_create_track_add = function(media_type, clip, index, frame){
@@ -2339,25 +2380,20 @@ var Player = function(evaluated) {
     return ((! this.__paused) && (! this.__mute) && this.__gain);
   };
   pt.__canSplitAtTime = function(clip, now){
+    // true if now intersects clip time, but is not start or end frame
     var clip_time = new TimeRange(clip.frame, this.__mash.quantize, clip.frames);
-
     var can_split = clip_time.intersection(now);
     if (can_split) {
       now = now.copyTime();
       now.scale(clip_time.fps);
       can_split = (now.frame !== clip_time.frame);
-
-      if (can_split) {
-        can_split = (now.end !== clip_time.end);
-        //if (! can_split) console.log('end match');
-      } //else console.log('frame match');
-    } //else console.log('no intersection');
+      if (can_split) can_split = (now.end !== clip_time.end);
+    }
     return can_split;
   };
   pt.__delete_drawings = function(drawings){
-    var drawing;
     if (drawings) {
-      drawing = drawings.pop();
+      var drawing = drawings.pop();
       while(drawing){
         this.__delete_drawings(drawing.drawings);
         if (drawing !== this.__drawing) Filter.destroy_drawing(drawing);
