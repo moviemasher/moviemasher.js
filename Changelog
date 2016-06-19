@@ -2,6 +2,12 @@
 version <future>:
 - freeze frame
 
+version 4.0.18:
+  - new blend filter suports merging with blend modes
+  - added support for values that are objects in constant types
+  - fixed issues related to split functionality
+  - fixed several issues related to audio playback
+
 version 4.0.17:
 - fixed issue undoing moves from track to track in timeline
 - fixed issue undoing effect reordering

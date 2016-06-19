@@ -578,20 +578,21 @@ var Mash = {
   },
   urls_of_type: function(urls_by_type, avb){
     var urls = {};
-    var type, url;
+    var type, url, add_type;
     for (type in urls_by_type){
+      add_type = true;
       switch(avb){
         case Constant.audio: {
-          if (type !== avb) continue;
+          add_type = (type === Constant.audio);
           break;
         }
         case Constant.video: {
-          if (type === Constant.audio) continue;
+          add_type = (type !== Constant.audio);
           break;
         }
       }
-      for (url in urls_by_type[type]){
-        urls[url] = type;
+      if (add_type) {
+        for (url in urls_by_type[type]) urls[url] = type;
       }
     }
     return urls;

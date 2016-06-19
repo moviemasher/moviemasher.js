@@ -3,7 +3,6 @@
 
 MovieMasher.Filter.register('color',  {
   render: function(contexts, scope, evaluated, filter_config) {
-    // console.log('color.apply', contexts, evaluated);
     var context = contexts[0]; // one input
     var new_context = MovieMasher.Filter.create_drawing_like(context, MovieMasher.Filter.label(filter_config) + ' ' + evaluated.color);
     new_context.context.fillStyle = evaluated.color;

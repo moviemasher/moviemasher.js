@@ -9,6 +9,9 @@ var Util = {
       if (-1 === pos) array.push(value);
     }
   },
+  array_key: function(array, value, key, id_key){
+    return Util.array_find(array, value, id_key)[key];
+  },
   array_find: function(array, value, key){
     var item = null, i, z;
     if (array && Util.isarray(array)) {
@@ -162,7 +165,7 @@ var Util = {
     return this.is_typeof.apply(this, this.copy_array(arguments, ['string']));
   },
   keys_found_equal: function(hash1,hash2){
-    var key, match = true; 
+    var key, match = true;
     for (key in hash1){
       match = (hash1[key] === hash2[key]);
       if (! match) break;
@@ -192,7 +195,6 @@ var Util = {
     if (Util.isob(ob)) for (key in ob) array.push(key);
     return array;
   },
-  
   ob_property: function(ob, prop) {
     var i, z, val = null;
     if (Util.isob(ob) && (! Util.isnt(prop)) && prop.length) {
@@ -252,3 +254,4 @@ var Util = {
     return (function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b);})();
   },
 };
+MovieMasher.Util = Util;

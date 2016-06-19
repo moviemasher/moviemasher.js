@@ -30,17 +30,54 @@ var Constant = {
     },
     direction4:{
       type: Number,
-      values: [0, 1, 2, 3],
+      values: [
+        { id: 0, identifier: 'top', label: 'Top'},
+        { id: 1, identifier: 'right', label: 'Right'},
+        { id: 2, identifier: 'bottom', label: 'Bottom'},
+        { id: 3, identifier: 'left', label: 'Left'},
+      ],
       value: 0,
     },
     direction8:{
       type: Number,
-      values: [0, 1, 2, 3, 4, 5, 6, 7],
+      values: [
+        { id: 0, identifier: "top", label: "Top"},
+        { id: 1, identifier: "right", label: "Right"},
+        { id: 2, identifier: "bottom", label: "Bottom"},
+        { id: 3, identifier: "left", label: "Left"},
+        { id: 4, identifier: "top_right", label: "Top Right"},
+        { id: 5, identifier: "bottom_right", label: "Bottom Right"},
+        { id: 6, identifier: "bottom_left", label: "Bottom Left"},
+        { id: 7, identifier: "top_left", label: "Top Left"},
+      ],
       value: 0,
     },
     string: {
       type: String,
       value: '',
+    },
+    pixel: {
+      type: Number,
+      value: 0.0,
+    },
+    mode: {
+      type: String,
+      value: 'normal',
+      values: [
+        {id: "burn", composite: "color-burn", label: "Color Burn"},
+        {id: "dodge", composite: "color-dodge", label: "Color Dodge"},
+        {id: "darken", composite: "darken", label: "Darken"},
+        {id: "difference", composite: "difference", label: "Difference"},
+        {id: "exclusion", composite: "exclusion", label: "Exclusion"},
+        {id: "hardlight", composite: "hard-light", label: "Hard Light"},
+        {id: "lighten", composite: "lighter", label: "Lighten"},
+        {id: "multiply", composite: "multiply", label: "Multiply"},
+        {id: "normal", composite: "normal", label: "Normal"},
+        {id: "overlay", composite: "overlay", label: "Overlay"},
+        {id: "screen", composite: "screen", label: "Screen"},
+        {id: "softlight", composite: "soft-light", label: "Soft Light"},
+        {id: "xor", composite: "xor", label: "Xor"},
+      ]
     },
     text: {
       type: String,
@@ -55,4 +92,42 @@ var Constant = {
   volume: 'volume',
 };
 Constant.track_types = [Constant.video, Constant.audio];
-MovieMasher['Constant'] = Constant;
+MovieMasher.Constant = Constant;
+
+/*
+FFMPEG BLEND MODES
+------------------
+addition
+addition128
+and
+average
+difference128
+divide
+freeze
+glow
+hardmix
+heat
+linearlight
+multiply128
+negation
+or
+phoenix
+pinlight
+reflect
+subtract
+vividlight
+JAVASCRIPT BLEND MODES
+----------------------
+color
+copy
+destination-atop
+destination-in
+destination-out
+destination-over
+hue
+saturation
+source-atop
+source-in
+source-out
+source-over
+*/

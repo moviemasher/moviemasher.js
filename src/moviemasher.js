@@ -23,7 +23,7 @@ MovieMasher.find = function(type, ob_or_id, key){
       if (ob) {
         MovieMasher.registered[type].push(ob);
         MovieMasher.registered[type].sort(Util.sort_by_label);
-      } else console.log('could not find registered ' + type, ob_or_id);
+      } else console.error('could not find registered ' + type, ob_or_id);
     }
   }
   return ob;

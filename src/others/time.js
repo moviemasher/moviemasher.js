@@ -37,28 +37,28 @@ TimeRange.fromSomething = function(something){
 (function(pt){
   pt.frames = 0;
   pt.frame = 0;
-  pt.fps = 0;  
-  Object.defineProperty(pt, 'end', { 
+  pt.fps = 0;
+  Object.defineProperty(pt, 'end', {
     get: function() { return this.frame + this.frames; },
     set: function(n) {this.frames = Math.max(1, Number(n) - Number(this.frame));}
   });
   Object.defineProperty(pt, 'endTime', { get: function() { return new TimeRange(this.end, this.fps); } } );
-  Object.defineProperty(pt, 'description', { get: function() { 
+  Object.defineProperty(pt, 'description', { get: function() {
     var descr = this.frame;
     if (this.frames) descr += '-' + this.end;
     descr += '@' + this.fps;
-    return descr; 
+    return descr;
   } } );
-  Object.defineProperty(pt, 'seconds', { 
+  Object.defineProperty(pt, 'seconds', {
     get: function() { return Number(this.frame) / Number(this.fps); },
     set: function(time) { this.setToTime(time); },
   } );
   Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.frames) / Number(this.fps); } } );
-  Object.defineProperty(pt, 'timeRange', { get: function() { 
+  Object.defineProperty(pt, 'timeRange', { get: function() {
     var range = this.copyTime();
     range.frames = 1;
     return range;
-  } } );  
+  } } );
   pt.add = function(time) {
     if (this.fps !== time.fps) {
       time = time.copyTime();
@@ -79,7 +79,7 @@ TimeRange.fromSomething = function(something){
     return something;
   };
   pt.copyTime = function(frames) {
-    return new TimeRange(this.frame, this.fps, frames);      
+    return new TimeRange(this.frame, this.fps, frames);
   };
   pt.divide = function(number, rounding) {
     if (! rounding) rounding = 'round';
@@ -92,7 +92,7 @@ TimeRange.fromSomething = function(something){
       var time = TimeRange.fromSeconds(this.seconds, this.fps, rounding);
       start = time.frame;
     }
-    return start;  
+    return start;
   };
   pt.isEqualToTime = function(time) {
     var equal = false;
@@ -192,7 +192,7 @@ TimeRange.fromSomething = function(something){
   };
   pt.__lcm = function(a, b) { return (a * b / this.__gcd(a, b)); };
   pt.copyTimeRange = function() {
-    return new TimeRange(this.frame, this.fps, this.frames);      
+    return new TimeRange(this.frame, this.fps, this.frames);
   };
   pt.touches = function(range){
     return this.intersection(range, true);
@@ -213,7 +213,6 @@ TimeRange.fromSomething = function(something){
     {
       result = new TimeRange(last_start, range1.fps, first_end - last_start);
     }
-    //if (or_equals) console.log('intersection', result, range1.description, range2.description);
     return result;
   };
   pt.isEqualToTimeRange = function(range){

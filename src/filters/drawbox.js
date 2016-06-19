@@ -3,7 +3,6 @@
 
 MovieMasher.Filter.register('drawbox', {
   render: function(contexts, scope, evaluated, filter_config) {
-    // console.log('drawbox.apply', contexts, evaluated);
     var context, drawing = contexts[0]; // one input
     var color, x, y, width, height;
     color = (MovieMasher.Util.isnt(evaluated.color) ? 'black' : evaluated.color);

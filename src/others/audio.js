@@ -60,7 +60,6 @@ var Audio = {
       Audio.disconnect_source(source);
       delete source.buffer_source;
     }
-    //if (! except_clips) console.log('Audio.destroy_sources', except_clips, new_sources);
     Audio.sources = new_sources;
   },
   disconnect_source: function(source){
@@ -69,7 +68,6 @@ var Audio = {
     source.buffer_source.disconnect(source.gainNode);
     source.gainNode.disconnect(context.destination);
     delete source.gainNode;
-
   },
   get_ctx: function(){
     if (! Audio.ctx) {
@@ -80,10 +78,15 @@ var Audio = {
   },
   gain_source: function(source){
     if (source){
-      if (isNaN(source.clip[Constant.gain])) {
+      if (source.player.muted || !source.player.volume) {
+        source.gainNode[Constant.gain].value = 0;
+      } else if (isNaN(Number(source.clip[Constant.gain]))) {
+        // support for a matrix of volumes...
         var times = Audio.clip_timing(source.clip, Audio.zero_seconds(), source.quantize);
         Audio.config_gain(source.gainNode, source.clip[Constant.gain], times.start, times.duration, source.player.volume);
-      } else source.gainNode[Constant.gain].value = source.clip[Constant.gain] * source.player.volume;
+      } else {
+        source.gainNode[Constant.gain].value = source.clip[Constant.gain] * source.player.volume;
+      }
     }
   },
   media_url: function(media){

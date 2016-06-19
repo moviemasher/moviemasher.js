@@ -10,8 +10,6 @@ MovieMasher.Filter.register('crop', {
     in_height = scope.mm_in_h;
     x = evaluated.x || 0;
     y = evaluated.y || 0;
-    // console.error('crop.render output dimensions', evaluated, scope, out_width, out_height);
-    // console.error('crop.render output position', evaluated, scope, x, y);
     if (2 > out_width + out_height) console.error('crop.render invalid output dimensions', evaluated, scope, out_width, out_height);
     else if (! (in_width && in_height)) console.error('crop.render invalid input dimensions', evaluated, scope, in_width, in_height);
     else {
@@ -28,7 +26,6 @@ MovieMasher.Filter.register('crop', {
     return [out_ctx];
   },
   parse: function(contexts, scope) {
-    // console.log('crop.parse', scope);
     var context = contexts[0];
     scope.in_h = scope.mm_in_h = context.canvas.height;
     scope.in_w = scope.mm_in_w = context.canvas.width;

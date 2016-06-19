@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.17 - 2016-06-06
+/*! moviemasher.js - v4.0.18 - 2016-06-19
 * Copyright (c) 2016 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -33,7 +33,7 @@ MovieMasher.find = function(type, ob_or_id, key){
       if (ob) {
         MovieMasher.registered[type].push(ob);
         MovieMasher.registered[type].sort(Util.sort_by_label);
-      } else console.log('could not find registered ' + type, ob_or_id);
+      } else console.error('could not find registered ' + type, ob_or_id);
     }
   }
   return ob;
@@ -199,7 +199,6 @@ var Audio = {
       Audio.disconnect_source(source);
       delete source.buffer_source;
     }
-    //if (! except_clips) console.log('Audio.destroy_sources', except_clips, new_sources);
     Audio.sources = new_sources;
   },
   disconnect_source: function(source){
@@ -208,7 +207,6 @@ var Audio = {
     source.buffer_source.disconnect(source.gainNode);
     source.gainNode.disconnect(context.destination);
     delete source.gainNode;
-
   },
   get_ctx: function(){
     if (! Audio.ctx) {
@@ -219,10 +217,15 @@ var Audio = {
   },
   gain_source: function(source){
     if (source){
-      if (isNaN(source.clip[Constant.gain])) {
+      if (source.player.muted || !source.player.volume) {
+        source.gainNode[Constant.gain].value = 0;
+      } else if (isNaN(Number(source.clip[Constant.gain]))) {
+        // support for a matrix of volumes...
         var times = Audio.clip_timing(source.clip, Audio.zero_seconds(), source.quantize);
         Audio.config_gain(source.gainNode, source.clip[Constant.gain], times.start, times.duration, source.player.volume);
-      } else source.gainNode[Constant.gain].value = source.clip[Constant.gain] * source.player.volume;
+      } else {
+        source.gainNode[Constant.gain].value = source.clip[Constant.gain] * source.player.volume;
+      }
     }
   },
   media_url: function(media){
@@ -349,7 +352,7 @@ var Colors = {
     return yuv;
   },
 };
-MovieMasher['Colors'] = Colors;
+MovieMasher.Colors = Colors;
 
 var Constant = {
   audio: 'audio',
@@ -383,17 +386,54 @@ var Constant = {
     },
     direction4:{
       type: Number,
-      values: [0, 1, 2, 3],
+      values: [
+        { id: 0, identifier: 'top', label: 'Top'},
+        { id: 1, identifier: 'right', label: 'Right'},
+        { id: 2, identifier: 'bottom', label: 'Bottom'},
+        { id: 3, identifier: 'left', label: 'Left'},
+      ],
       value: 0,
     },
     direction8:{
       type: Number,
-      values: [0, 1, 2, 3, 4, 5, 6, 7],
+      values: [
+        { id: 0, identifier: "top", label: "Top"},
+        { id: 1, identifier: "right", label: "Right"},
+        { id: 2, identifier: "bottom", label: "Bottom"},
+        { id: 3, identifier: "left", label: "Left"},
+        { id: 4, identifier: "top_right", label: "Top Right"},
+        { id: 5, identifier: "bottom_right", label: "Bottom Right"},
+        { id: 6, identifier: "bottom_left", label: "Bottom Left"},
+        { id: 7, identifier: "top_left", label: "Top Left"},
+      ],
       value: 0,
     },
     string: {
       type: String,
       value: '',
+    },
+    pixel: {
+      type: Number,
+      value: 0.0,
+    },
+    mode: {
+      type: String,
+      value: 'normal',
+      values: [
+        {id: "burn", composite: "color-burn", label: "Color Burn"},
+        {id: "dodge", composite: "color-dodge", label: "Color Dodge"},
+        {id: "darken", composite: "darken", label: "Darken"},
+        {id: "difference", composite: "difference", label: "Difference"},
+        {id: "exclusion", composite: "exclusion", label: "Exclusion"},
+        {id: "hardlight", composite: "hard-light", label: "Hard Light"},
+        {id: "lighten", composite: "lighter", label: "Lighten"},
+        {id: "multiply", composite: "multiply", label: "Multiply"},
+        {id: "normal", composite: "normal", label: "Normal"},
+        {id: "overlay", composite: "overlay", label: "Overlay"},
+        {id: "screen", composite: "screen", label: "Screen"},
+        {id: "softlight", composite: "soft-light", label: "Soft Light"},
+        {id: "xor", composite: "xor", label: "Xor"},
+      ]
     },
     text: {
       type: String,
@@ -408,7 +448,45 @@ var Constant = {
   volume: 'volume',
 };
 Constant.track_types = [Constant.video, Constant.audio];
-MovieMasher['Constant'] = Constant;
+MovieMasher.Constant = Constant;
+
+/*
+FFMPEG BLEND MODES
+------------------
+addition
+addition128
+and
+average
+difference128
+divide
+freeze
+glow
+hardmix
+heat
+linearlight
+multiply128
+negation
+or
+phoenix
+pinlight
+reflect
+subtract
+vividlight
+JAVASCRIPT BLEND MODES
+----------------------
+color
+copy
+destination-atop
+destination-in
+destination-out
+destination-over
+hue
+saturation
+source-atop
+source-in
+source-out
+source-over
+*/
 
 var Defaults = {
   modules: {
@@ -1300,20 +1378,21 @@ var Mash = {
   },
   urls_of_type: function(urls_by_type, avb){
     var urls = {};
-    var type, url;
+    var type, url, add_type;
     for (type in urls_by_type){
+      add_type = true;
       switch(avb){
         case Constant.audio: {
-          if (type !== avb) continue;
+          add_type = (type === Constant.audio);
           break;
         }
         case Constant.video: {
-          if (type === Constant.audio) continue;
+          add_type = (type !== Constant.audio);
           break;
         }
       }
-      for (url in urls_by_type[type]){
-        urls[url] = type;
+      if (add_type) {
+        for (url in urls_by_type[type]) urls[url] = type;
       }
     }
     return urls;
@@ -1484,7 +1563,7 @@ var Player = function(evaluated) {
     get: function() { return this.__muted;},
     set: function(bool) {
       this.__muted = bool;
-      //console.log('muted=', this.__muted);
+      if (this.__moving) this.__adjust_gain(Mash.range_clips(this.__mash, this.__time, true));
     }
   }); // muted
   dp(pt, "paused", {
@@ -1615,6 +1694,7 @@ var Player = function(evaluated) {
     get: function() { return this.__gain;},
     set: function(per) {
       this.__gain = per;
+      if (this.__moving) this.__adjust_gain(Mash.range_clips(this.__mash, this.__time, true));
     }
   }); // volume (gain)
   pt.add = function(media, type, frame_or_index, track_index){
@@ -1626,9 +1706,9 @@ var Player = function(evaluated) {
       clip = Mash.clip_from_media(media);
       if (! clip) console.error('add got no clip from media', clip, media);
       Mash.init_clip(this.__mash, clip, media, track_index);
-      if (Constant.effect === type) action = this.__action_create_effect_add(clip, frame_or_index);
-      else if ((Constant.audio === type) || track_index) action = this.__action_create_track_add(media.type, clip, track_index, frame_or_index);
-      else action = this.__action_create_video_add(clip, track_index, frame_or_index);
+      if (Constant.effect === type) action = this.__action_effect_add(clip, frame_or_index);
+      else if ((Constant.audio === type) || track_index) action = this.__action_track_add(media.type, clip, track_index, frame_or_index);
+      else action = this.__action_video_add(clip, track_index, frame_or_index);
       if (action){
         objects = Mash.media_for_clips(this.__mash, clip, media);
         //console.log('media_for_clips', clip, objects, media);
@@ -1859,12 +1939,12 @@ var Player = function(evaluated) {
         var action;
         if (Constant.effect === type) {
           frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
-          if (-2 < frame_or_index) action = this.__action_create_effects_move(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
+          if (-2 < frame_or_index) action = this.__action_effects_move(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
         } else if ((Constant.audio === type) || track_index) {
-          action = this.__action_create_clips_move(type, track_index, frame_or_index, ob_or_array);
+          action = this.__action_clips_move(type, track_index, frame_or_index, ob_or_array);
         } else {
           frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash[type][track_index].clips);
-          if (-2 < frame_or_index) action = this.__action_create_video_move(track_index, frame_or_index, ob_or_array);
+          if (-2 < frame_or_index) action = this.__action_video_move(track_index, frame_or_index, ob_or_array);
         }
         if (action) this.__action_add(action);
       }
@@ -1947,12 +2027,12 @@ var Player = function(evaluated) {
         if (! track_index) track_index = 0;
         var action, objects;
         if (Constant.effect === type) {
-          action = this.__action_create_effects_remove(ob_or_array, this.selectedClipOrMash.effects);
+          action = this.__action_effects_remove(ob_or_array, this.selectedClipOrMash.effects);
           action.redo_selected_effects = [];
         } else {
           if ((Constant.audio === type) || track_index) {
-            action = this.__action_create_clips_remove(type, track_index, ob_or_array);
-          } else action = this.__action_create_video_remove(track_index, ob_or_array);
+            action = this.__action_clips_remove(type, track_index, ob_or_array);
+          } else action = this.__action_video_remove(track_index, ob_or_array);
           action.redo_selected_clips = [];
         }
         if (action) {
@@ -2032,7 +2112,7 @@ var Player = function(evaluated) {
     var clip = this.selectedClip;
     var at_time = this.__time.copyTime();
     if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
-      var action = this.__action_create_split_clip(clip, at_time);
+      var action = this.__action_split_clip(clip, at_time);
       this.__action_add(action);
     }
   };
@@ -2040,7 +2120,7 @@ var Player = function(evaluated) {
     var clip = this.selectedClip;
     var at_time = this.__time.copyTime();
     if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
-      var action = this.__action_create_freeze_clip(clip, at_time);
+      var action = this.__action_freeze_clip(clip, at_time);
       this.__action_add(action);
     }
   };
@@ -2067,7 +2147,7 @@ var Player = function(evaluated) {
     this.__action_stack.push(action);
     this.redo(z);
   };
-  pt.__action_create_clips_move = function(type, track_index, frame, clips){
+  pt.__action_clips_move = function(type, track_index, frame, clips){
     clips.sort(Util.sort_by_frame); // so they are all a block
     var action, orig, orig_track, track, clip, i, z = clips.length;
     track = this.__mash[type][track_index];
@@ -2123,7 +2203,7 @@ var Player = function(evaluated) {
     });
     return action;
   };
-  pt.__action_create_effects_move = function(index, effects, container){
+  pt.__action_effects_move = function(index, effects, container){
     var action, i, z = effects.length, indexed_effects = [];
     action = new Action(this, function(){
       indexed_effects.sort(function(a, b){ return b.i - a.i; });
@@ -2141,8 +2221,8 @@ var Player = function(evaluated) {
     }
     return action;
   };
-  pt.__action_create_video_move = function(track_index, index, clips){
-    // console.log('__action_create_video_move', track_index, index, clips);
+  pt.__action_video_move = function(track_index, index, clips){
+    //console.log('__action_video_move', track_index, index, clips);
     var indexed_clips, orig_track, target_track, clip, i, z = clips.length;
     target_track = this.__mash.video[track_index];
     orig_track = target_track;
@@ -2157,7 +2237,7 @@ var Player = function(evaluated) {
       indexed_clips.push({clip: clip, frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)});
     }
     return new Action(this, function(){
-      // console.log('REDO __action_create_video_move');
+      //console.log('REDO __action_video_move');
       indexed_clips.sort(function(a, b){return b.index-a.index;});
       for (i = 0; i < z; i++) orig_track.clips.splice(indexed_clips[i].index, 1);
       indexed_clips.sort(function(a, b){return a.i-b.i;});
@@ -2170,13 +2250,13 @@ var Player = function(evaluated) {
       Mash.recalc_track(this.player.mash, target_track);
       this.player.mash_length_changed();
     }, function(){
-      // console.log('UNDO __action_create_video_move');
+      //console.log('UNDO __action_video_move');
       indexed_clips.sort(function(a, b){return a.index-b.index;});
       target_track.clips.splice(index, z);
       for (i = 0; i < z; i++) {
         clip = indexed_clips[i].clip;
         orig_track.clips.splice(indexed_clips[i].index, 0, clip);
-        // console.log('__action_create_video_move', indexed_clips[i].index, orig_track.clips.length);
+        //console.log('__action_video_move', indexed_clips[i].index, orig_track.clips.length);
         clip.track = indexed_clips[i].track;
         clip.frame = indexed_clips[i].frame;
       }
@@ -2185,7 +2265,7 @@ var Player = function(evaluated) {
       this.player.mash_length_changed();
     });
   };
-  pt.__action_create_clips_remove = function(type, track_index, clips) {
+  pt.__action_clips_remove = function(type, track_index, clips) {
     clips.sort(Util.sort_by_frame); // so they are all a block
     var action, orig, track, clip, i, z = clips.length;
     track = this.__mash[type][track_index];
@@ -2214,7 +2294,7 @@ var Player = function(evaluated) {
     });
     return action;
   };
-  pt.__action_create_effects_remove = function(effects, container){
+  pt.__action_effects_remove = function(effects, container){
     // index always -1
     var action, i, z = effects.length;
     action = new Action(this, function(){
@@ -2231,7 +2311,7 @@ var Player = function(evaluated) {
     for (i = 0; i < z; i++) action.orig.push({i: i, index: container.indexOf(effects[i])});
     return action;
   };
-  pt.__action_create_video_remove = function(track_index, clips){
+  pt.__action_video_remove = function(track_index, clips){
     var action, orig, track, clip, i, z = clips.length;
     track = this.__mash.video[track_index];
     clip = clips[0];
@@ -2263,7 +2343,7 @@ var Player = function(evaluated) {
     });
     return action;
   };
-  pt.__action_create_effect_add = function(effect, index){
+  pt.__action_effect_add = function(effect, index){
     // .add handles redo_add_objects and undo_delete_objects
     var action, effects, target = this.selectedClipOrMash;
     if (target) {
@@ -2276,7 +2356,7 @@ var Player = function(evaluated) {
     }
     return action;
   };
-  pt.__action_create_freeze_clip = function(clip, at_time){
+  pt.__action_freeze_clip = function(clip, at_time){
     // THIS IS NOT YET WORKING!!
     var media = Mash.media(this.__mash, clip);
     var new_clip = Util.copy_keys_recursize(clip);
@@ -2306,32 +2386,37 @@ var Player = function(evaluated) {
     action.target = track_clips;
     return action;
   };
-  pt.__action_create_split_clip = function(clip, at_time){
-    var new_clip = Util.copy_keys_recursize(clip);
+  pt.__action_split_clip = function(orig_clip, at_time){
     at_time.scale(this.__mash.quantize);
-    var trim_frames = clip.frames - (at_time.frame - clip.frame);
-    var media = Mash.media(this.__mash, clip);
-    var track_clips = Mash.track_for_clip(this.__mash, clip).clips;
-    var index = 1 + track_clips.indexOf(clip);
-    new_clip.frames = trim_frames;
-    new_clip.frame = clip.frame + clip.frames - trim_frames;
+    var undo_frames = orig_clip.frames;
+
+    var media = Mash.media(this.__mash, orig_clip);
+    var track_clips = Mash.track_for_clip(this.__mash, orig_clip).clips;
+    var index = 1 + track_clips.indexOf(orig_clip);
+    var new_clip = Util.copy_keys_recursize(orig_clip);
+    var orig_frame = orig_clip.frame;
+    var new_frame = at_time.frame;
+    var orig_frames = new_frame - orig_frame;
+    var new_frames = undo_frames - orig_frames;
+    new_clip.frames = new_frames;
+    new_clip.frame = new_frame;
     switch(media.type){
       case Constant.audio:
-      case Constant.video: {
-        new_clip.trim = clip.trim + trim_frames;
-      }
+      case Constant.video: new_clip.trim += orig_frames;
     }
+    //console.log('split', Util.copy_keys_recursize(new_clip));
     var action = new Action(this, function(){
       track_clips.splice(index, 0, new_clip);
-      clip.frames -= trim_frames;
+      orig_clip.frames = orig_frames;
     }, function() {
-      clip.frames += trim_frames;
+      orig_clip.frames = undo_frames;
       track_clips.splice(index, 1);
     });
-    action.redo_selected_clips = [clip];
+    action.redo_selected_clips = [new_clip];
+    action.undo_selected_clips = [orig_clip];
     return action;
   };
-  pt.__action_create_track_add = function(media_type, clip, index, frame){
+  pt.__action_track_add = function(media_type, clip, index, frame){
     // .add handles redo_add_objects and undo_delete_objects
     var action = new Action(this, function(){
       var target;
@@ -2360,7 +2445,7 @@ var Player = function(evaluated) {
     action.tracks = (index + 1) - this.__mash[action.type].length;
     return action;
   };
-  pt.__action_create_video_add = function(clip, track_index, index){
+  pt.__action_video_add = function(clip, track_index, index){
     // .add handles redo_add_objects and undo_delete_objects
     var action = new Action(this, function(){
       this.target.splice(this.index, 0, this.clip);
@@ -2376,8 +2461,20 @@ var Player = function(evaluated) {
     action.target = this.__mash.video[track_index].clips;
     return action;
   };
+  pt.__adjust_gain = function(clips){
+    // only some clips have audio
+    var source, media, clip, i, z = clips.length;
+    for (i = 0; i < z; i++){
+      clip = clips[i];
+      media = Mash.media(this.__mash, clip);
+      if (Mash.clip_has_audio(clip, media)) {
+        source = Audio.source_for_clip(clip);
+        Audio.gain_source(source);
+      }
+    }
+  };
   pt.__audio_is_on = function(){
-    return ((! this.__paused) && (! this.__mute) && this.__gain);
+    return ((! this.__paused) && (!this.__muted) && this.__gain);
   };
   pt.__canSplitAtTime = function(clip, now){
     // true if now intersects clip time, but is not start or end frame
@@ -2409,8 +2506,8 @@ var Player = function(evaluated) {
       drawing_context.fillRect(0, 0, drawing_context.canvas.width, drawing_context.canvas.height);
     }
   };
-  pt.__draw_layer_clip = function(time, clip, media, quantize, drawing){
-    var url, copy_time, resource, raw_drawing;
+  pt.__draw_layer_clip = function(time, clip, media, drawing){
+    var url, copy_time, resource, raw_drawing, quantize = this.__mash.quantize;
     var swidth,sheight;
     var __label = function(w, h, media){
       return w + 'x' + h + ' ' + media.type + ' clip ' + (media.label || media.id);
@@ -2487,7 +2584,7 @@ var Player = function(evaluated) {
           back_drawing = Filter.create_drawing(w, h, w + 'x' + h + ' background for ' + media.type + ' clip ' + (media.label || media.id), this.__drawing.container);
           this.__drawing.drawings.push(back_drawing);
           this.__draw_context(back_drawing.context);
-          drawing = this.__draw_layer_clip(time, clip, media, this.__mash.quantize, back_drawing);
+          drawing = this.__draw_layer_clip(time, clip, media, back_drawing);
           this.__drawings_merge(time, clip, clip.merger, back_drawing, drawing);
 
           //transition_drawings.push(drawing);
@@ -2504,7 +2601,7 @@ var Player = function(evaluated) {
       media = medias[clip.id];
       if (Constant.audio === media.type) continue;
       // clips not being transitioned just affect main drawing
-      drawing = this.__draw_layer_clip(time, clip, media, this.__mash.quantize, this.__drawing);
+      drawing = this.__draw_layer_clip(time, clip, media, this.__drawing);
       this.__drawings_merge(time, clip, clip.merger, this.__drawing, drawing);
     }
   };
@@ -2616,7 +2713,7 @@ var Player = function(evaluated) {
               scope[parameter_name] = evaluated[parameter_name];
             }
           }
-        } else console.log('no parameters_array found', filter_config);
+        } else console.error('no parameters_array found', filter_config);
       } else console.error('filter not found', filter_config.id);
       return evaluated;
     };
@@ -2687,7 +2784,7 @@ var Player = function(evaluated) {
     }
   };
   pt.__module_scope = function(time, clip_time, drawings, module, media){
-    if (time.fps !== this.__fps) console.warn('__module_scope FPS', time.fps, this.__fps);
+    // if (time.fps !== this.__fps) console.warn('__module_scope FPS', time.fps, this.__fps);
     if (! this.__drawing.canvas) return {};
     var clip_value, module_properties, type_ob, type_id, property_key, property_options, drawing;
     module_properties = {};
@@ -2771,7 +2868,7 @@ var Player = function(evaluated) {
         this.rebuffer(); // get sounds bufferring now, rather than next timer execution
       } else {
         Audio.stop();
-        //Audio.destroy_sources();
+        Audio.destroy_sources();
         clearInterval(this.__load_timer);
         this.__load_timer = 0;
       }
@@ -2872,28 +2969,28 @@ TimeRange.fromSomething = function(something){
 (function(pt){
   pt.frames = 0;
   pt.frame = 0;
-  pt.fps = 0;  
-  Object.defineProperty(pt, 'end', { 
+  pt.fps = 0;
+  Object.defineProperty(pt, 'end', {
     get: function() { return this.frame + this.frames; },
     set: function(n) {this.frames = Math.max(1, Number(n) - Number(this.frame));}
   });
   Object.defineProperty(pt, 'endTime', { get: function() { return new TimeRange(this.end, this.fps); } } );
-  Object.defineProperty(pt, 'description', { get: function() { 
+  Object.defineProperty(pt, 'description', { get: function() {
     var descr = this.frame;
     if (this.frames) descr += '-' + this.end;
     descr += '@' + this.fps;
-    return descr; 
+    return descr;
   } } );
-  Object.defineProperty(pt, 'seconds', { 
+  Object.defineProperty(pt, 'seconds', {
     get: function() { return Number(this.frame) / Number(this.fps); },
     set: function(time) { this.setToTime(time); },
   } );
   Object.defineProperty(pt, 'lengthSeconds', { get: function() { return Number(this.frames) / Number(this.fps); } } );
-  Object.defineProperty(pt, 'timeRange', { get: function() { 
+  Object.defineProperty(pt, 'timeRange', { get: function() {
     var range = this.copyTime();
     range.frames = 1;
     return range;
-  } } );  
+  } } );
   pt.add = function(time) {
     if (this.fps !== time.fps) {
       time = time.copyTime();
@@ -2914,7 +3011,7 @@ TimeRange.fromSomething = function(something){
     return something;
   };
   pt.copyTime = function(frames) {
-    return new TimeRange(this.frame, this.fps, frames);      
+    return new TimeRange(this.frame, this.fps, frames);
   };
   pt.divide = function(number, rounding) {
     if (! rounding) rounding = 'round';
@@ -2927,7 +3024,7 @@ TimeRange.fromSomething = function(something){
       var time = TimeRange.fromSeconds(this.seconds, this.fps, rounding);
       start = time.frame;
     }
-    return start;  
+    return start;
   };
   pt.isEqualToTime = function(time) {
     var equal = false;
@@ -3027,7 +3124,7 @@ TimeRange.fromSomething = function(something){
   };
   pt.__lcm = function(a, b) { return (a * b / this.__gcd(a, b)); };
   pt.copyTimeRange = function() {
-    return new TimeRange(this.frame, this.fps, this.frames);      
+    return new TimeRange(this.frame, this.fps, this.frames);
   };
   pt.touches = function(range){
     return this.intersection(range, true);
@@ -3048,7 +3145,6 @@ TimeRange.fromSomething = function(something){
     {
       result = new TimeRange(last_start, range1.fps, first_end - last_start);
     }
-    //if (or_equals) console.log('intersection', result, range1.description, range2.description);
     return result;
   };
   pt.isEqualToTimeRange = function(range){
@@ -3085,6 +3181,9 @@ var Util = {
       pos = array.indexOf(value);
       if (-1 === pos) array.push(value);
     }
+  },
+  array_key: function(array, value, key, id_key){
+    return Util.array_find(array, value, id_key)[key];
   },
   array_find: function(array, value, key){
     var item = null, i, z;
@@ -3239,7 +3338,7 @@ var Util = {
     return this.is_typeof.apply(this, this.copy_array(arguments, ['string']));
   },
   keys_found_equal: function(hash1,hash2){
-    var key, match = true; 
+    var key, match = true;
     for (key in hash1){
       match = (hash1[key] === hash2[key]);
       if (! match) break;
@@ -3269,7 +3368,6 @@ var Util = {
     if (Util.isob(ob)) for (key in ob) array.push(key);
     return array;
   },
-  
   ob_property: function(ob, prop) {
     var i, z, val = null;
     if (Util.isob(ob) && (! Util.isnt(prop)) && prop.length) {
@@ -3329,5 +3427,6 @@ var Util = {
     return (function b(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,b);})();
   },
 };
+MovieMasher.Util = Util;
 return MovieMasher; 
 }); 

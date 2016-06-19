@@ -41,4 +41,4 @@ var Colors = {
     return yuv;
   },
 };
-MovieMasher['Colors'] = Colors;
+MovieMasher.Colors = Colors;
