@@ -52,7 +52,8 @@ mm_player.mash = {
     "type": "audio",
     "clips": [ { "id": "audio-id", "frame": 0, "frames": 2 } ]
   } ]
-};```
+};
+```
 
 ### Related Projects
 Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if editing or encoding features are all that's needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content managemnt functions.
