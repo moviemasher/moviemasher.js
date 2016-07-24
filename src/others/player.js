@@ -978,6 +978,9 @@ var Player = function(evaluated) {
     });
     action.redo_selected_clips = [new_clip];
     action.undo_selected_clips = [orig_clip];
+    var objects = Mash.media_for_clips(this.__mash, new_clip, media);
+    action.redo_add_objects = objects;
+    action.undo_delete_objects = objects;
     return action;
   };
   pt.__action_track_add = function(media_type, clip, index, frame){
