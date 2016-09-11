@@ -1,7 +1,7 @@
 {
   "name": "moviemasher.js",
   "main": "dist/moviemasher.js",
-  "version": "4.0.19",
+  "version": "4.0.20",
   "homepage": "http://www.moviemasher.com",
   "authors": [ {"name": "Movie Masher", "email": "support@moviemasher.com" }],
   "moduleType": ["amd"],

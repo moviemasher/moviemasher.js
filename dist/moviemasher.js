@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.18 - 2016-07-24
+/*! moviemasher.js - v4.0.20 - 2016-09-11
 * Copyright (c) 2016 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -1768,6 +1768,9 @@ var Player = function(evaluated) {
       case 'cut':
       case 'remove':{
         should_be_enabled = (this.__selected_clips.length);
+        if (should_be_enabled) {
+          // TODO: test that removing won't create transition problem
+        }
         break;
       }
       case 'split':{
@@ -1781,21 +1784,6 @@ var Player = function(evaluated) {
         if (should_be_enabled) should_be_enabled = this.__canSplitAtTime(this.__selected_clips[0], this.__time);
         break;
       }
-      /* TODO: implement old operations...
-      case 'paste':{
-        should_be_enabled = (clipboard.length > 0);
-        if (should_be_enabled && clipboard[0].appearsOnVisualTrack())
-        {
-          var insert_index = __insertIndex();
-          should_be_enabled = __isDropTarget(insert_index, clipboard);
-        }
-        break;
-      }
-      case 'snap':{
-        should_be_enabled = getValue(property).boolean;
-        break;
-      }
-      */
     }
     return should_be_enabled;
   };
