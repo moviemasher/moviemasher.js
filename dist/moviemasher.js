@@ -1,5 +1,5 @@
-/*! moviemasher.js - v4.0.20 - 2016-09-11
-* Copyright (c) 2016 Movie Masher; Licensed  */
+/*! moviemasher.js - v4.0.21 - 2017-02-25
+* Copyright (c) 2017 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
 'use strict';
@@ -134,8 +134,9 @@ var Action = function(player, redo_func, undo_func, destroy_func){
     delete this.undo_add_objects;
     delete this.redo_delete_objects;
   };
-  
+
 })(Action.prototype);
+MovieMasher.Action = Action;
 
 var Audio = {
   buffer_source: function(buffer){
@@ -308,6 +309,7 @@ var Audio = {
   __last_seconds: 0,
   __sync_seconds: 0,
 };
+MovieMasher.Audio = Audio;
 
 var Colors = {
   yuv2rgb: function(yuv) {
@@ -557,6 +559,7 @@ var Defaults = {
     return ob;
   },
 };
+MovieMasher.Defaults = Defaults;
 
 var Filter = {
   registered: {},
@@ -1407,6 +1410,7 @@ var Mash = {
     return clips;
   },
 };
+MovieMasher.Mash = Mash;
 
 var Option = {
   mash: {
@@ -1434,6 +1438,8 @@ var Option = {
     hscrollpadding: 20,
   }
 };
+MovieMasher.Option = Option;
+
 
 var Player = function(evaluated) {
   if (! Util.isob(evaluated)) evaluated = {};
@@ -2891,6 +2897,7 @@ var Player = function(evaluated) {
     if (this.__mash_length === Mash.length_of_clips(track.clips)) this.mash_length_changed();
   };
 })(Player.prototype);
+MovieMasher.Player = Player;
 
 var Players = {
   draw_delayed: function(){
@@ -2918,8 +2925,8 @@ var Players = {
   instances: [],
   current: null,
   delayed_timer: 0,
-
 };
+MovieMasher.Players = Players;
 
 var TimeRange = function(start, rate, duration){
   if (start) this.frame = Number(start) || 0;
@@ -3161,6 +3168,7 @@ TimeRange.fromSomething = function(something){
     this.frames = Math.min(time.frame, this.frames);
   };
 })(TimeRange.prototype);
+MovieMasher.TimeRange = TimeRange;
 
 var Util = {
   array_empty: function(array){

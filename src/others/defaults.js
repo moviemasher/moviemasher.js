@@ -67,3 +67,4 @@ var Defaults = {
     return ob;
   },
 };
+MovieMasher.Defaults = Defaults;

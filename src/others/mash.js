@@ -607,3 +607,4 @@ var Mash = {
     return clips;
   },
 };
+MovieMasher.Mash = Mash;

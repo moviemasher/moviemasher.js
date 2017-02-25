@@ -44,5 +44,6 @@ var Action = function(player, redo_func, undo_func, destroy_func){
     delete this.undo_add_objects;
     delete this.redo_delete_objects;
   };
-  
+
 })(Action.prototype);
+MovieMasher.Action = Action;

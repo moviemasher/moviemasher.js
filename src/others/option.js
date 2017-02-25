@@ -24,3 +24,4 @@ var Option = {
     hscrollpadding: 20,
   }
 };
+MovieMasher.Option = Option;

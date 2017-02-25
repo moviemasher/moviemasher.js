@@ -24,5 +24,5 @@ var Players = {
   instances: [],
   current: null,
   delayed_timer: 0,
-
 };
+MovieMasher.Players = Players;

@@ -169,3 +169,4 @@ var Audio = {
   __last_seconds: 0,
   __sync_seconds: 0,
 };
+MovieMasher.Audio = Audio;

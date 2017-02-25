@@ -1455,3 +1455,4 @@ var Player = function(evaluated) {
     if (this.__mash_length === Mash.length_of_clips(track.clips)) this.mash_length_changed();
   };
 })(Player.prototype);
+MovieMasher.Player = Player;

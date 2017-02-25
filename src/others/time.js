@@ -238,3 +238,4 @@ TimeRange.fromSomething = function(something){
     this.frames = Math.min(time.frame, this.frames);
   };
 })(TimeRange.prototype);
+MovieMasher.TimeRange = TimeRange;
