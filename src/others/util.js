@@ -155,6 +155,9 @@ var Util = {
     }
     return found;
   },
+  isempty: function(ob) {
+    return !(this.isob(ob) && this.ob_keys(ob).length);
+  },
   isnt: function(){
     return this.is_typeof.apply(this, this.copy_array(arguments, ['undefined']));
   },

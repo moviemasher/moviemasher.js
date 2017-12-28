@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.21 - 2017-03-03
+/*! moviemasher.js - v4.0.22 - 2017-12-28
 * Copyright (c) 2017 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -94,6 +94,7 @@ var Action = function(player, redo_func, undo_func, destroy_func){
   this._undo = undo_func;
   this._destroy = destroy_func;
   this.undo_selected_clips = this.redo_selected_clips = Util.copy_array(player.selectedClips);
+  // console.log('Action initializer', this.redo_selected_clips);
   this.undo_selected_effects = this.redo_selected_effects = Util.copy_array(player.selectedEffects);
   this.redo_add_objects = [];
   this.undo_delete_objects = [];
@@ -105,20 +106,25 @@ var Action = function(player, redo_func, undo_func, destroy_func){
     this.player.add_media(this.redo_add_objects);
     this._redo();
     this.player.remove_media(this.redo_delete_objects);
+    // console.log('Action.redo selectedClips =', this.redo_selected_clips);
     this.player.selectedClips = this.redo_selected_clips;
+    // console.log('Action.redo selectedEffects = ', this.redo_selected_effects);
     this.player.selectedEffects = this.redo_selected_effects;
     this.player.rebuffer();
     this.player.redraw();
+    // console.log('Action.redo is done');
   };
   pt.undo = function(){
     this.player.add_media(this.undo_add_objects);
     this._undo();
     this.player.remove_media(this.undo_delete_objects);
+    // console.log('Action.undo', this.undo_selected_clips);
     this.player.selectedClips = this.undo_selected_clips;
     this.player.selectedEffects = this.undo_selected_effects;
     this.player.rebuffer();
     this.player.redraw();
-  };
+    // console.log('Action.undo is done');
+ };
   pt.destroy = function(){
     if (this._destroy) this._destroy();
     delete this._destroy;
@@ -140,6 +146,7 @@ MovieMasher.Action = Action;
 
 var Audio = {
   buffer_source: function(buffer){
+    // console.log('Audio.buffer_source', buffer);
     var context = Audio.get_ctx();
     var source = context.createBufferSource(); // creates a sound source
     source.buffer = buffer;                    // tell the source which sound to play
@@ -197,13 +204,14 @@ var Audio = {
         new_sources.push(source);
         continue;
       }
+      // console.log('Audio.destroy_sources', source);
       Audio.disconnect_source(source);
       delete source.buffer_source;
     }
     Audio.sources = new_sources;
   },
   disconnect_source: function(source){
-    //console.log('Audio.disconnect_source', source);
+    // console.log('Audio.disconnect_source', source);
     var context = Audio.get_ctx();
     source.buffer_source.disconnect(source.gainNode);
     source.gainNode.disconnect(context.destination);
@@ -253,7 +261,7 @@ var Audio = {
     return url;
   },
   start: function(){
-    //console.log('Audio.start');
+    // console.log('Audio.start');
     var context = Audio.get_ctx();
     Audio.__buffer_source = context.createBufferSource();
     Audio.__buffer_source.loop = true;
@@ -262,7 +270,7 @@ var Audio = {
     Audio.__buffer_source.start(0);
   },
   stop: function(){
-    //console.log('Audio.stop');
+    // console.log('Audio.stop');
     Audio.destroy_sources();
     if (Audio.__buffer_source) {
       Audio.__buffer_source.disconnect(Audio.get_ctx().destination);
@@ -1430,6 +1438,7 @@ var Option = {
     minbuffertime: 1,
     unbuffertime: 1,
     volume: 0.75,
+    position_precision: 3,
   },
   set: function(opts){
     Util.copy_keys_recursize(opts, Option);
@@ -1488,7 +1497,7 @@ var Player = function(evaluated) {
   dp(pt, "canvas_context", {
     get: function() { return this.__drawing.context; },
     set: function(drawing_context) {
-      //console.log('canvas_context=', drawing_context);
+      // console.log('canvas_context=', drawing_context);
       this.__drawing.context = drawing_context;
       this.__drawing.canvas = (drawing_context ? drawing_context.canvas : null);
       if (this.__mash) {
@@ -1500,13 +1509,14 @@ var Player = function(evaluated) {
   dp(pt, "canvas_container", {
     get: function() { return this.__drawing.container; },
     set: function(element) {
-      //console.log('canvas_container=', element);
+      // console.log('canvas_container=', element);
       this.__drawing.container = element;
     }
   }); // canvas_container
   dp(pt, "currentTime", {
     get: function() { return this.__time.seconds; },
     set: function(seconds) {
+      // console.log('currentTime=');
       this.time = TimeRange.fromSeconds(seconds, this.__fps);
     }
   }); // currentTime
@@ -1532,8 +1542,9 @@ var Player = function(evaluated) {
   dp(pt, "frame", {
     get: function() { return this.__time.frame;},
     set: function(num) {
-      //console.log('frame=', num);
-      this.time = new TimeRange(num, this.__time.fps);
+      // called from ruler to change position
+      // console.log('frame=', num);
+      this.time = new TimeRange(num, this.__fps);
     }
   }); // frame
   dp(pt, "frames", {
@@ -1580,6 +1591,7 @@ var Player = function(evaluated) {
         this.__paused = bool;
         if (this.__paused) {
           Players.stop_playing();
+          // console.log('paused __set_moving(false)');
           this.__set_moving(false);
           if (this.__buffer_timer) {
             clearInterval(this.__buffer_timer);
@@ -1600,21 +1612,39 @@ var Player = function(evaluated) {
   }); // paused
   dp(pt, "position", {
     get: function() {
-      var dur, pos = 0;
+      var dur, per = 0;
       if (this.__time.frame) {
         dur = this.duration;
-        if (dur) pos = this.__time.seconds / dur;
+        if (dur) {
+          per = this.__time.seconds / dur;
+          if (per !== 1) per = parseFloat(per.toFixed(this.position_precision));
+        }
       }
-      return pos;
+      // console.log('position ! get', per);
+      return per;
     },
     set: function(per) {
-      this.time = new TimeRange(this.duration * per, 1);
+      // called from player's slider
+      // console.log('position set', per);
+      var time_range = new TimeRange(this.duration * per, 1);
+      time_range.scale(this.__fps);
+      this.time = time_range;
+    }
+  }); // position
+  dp(pt, "position_step", {
+    get: function() {
+      return parseFloat("0." + "0".repeat(this.position_precision - 1) + "1");
     }
   }); // position
   dp(pt, 'selectedClip', { get: function(){
     return (this.__selected_clips.length === 1 ? this.__selected_clips[0] : null);
   }, set: function(item){
-    this.selectedClips = (Util.isob(item) ? [item] : []);
+    // console.log('selectedClip=', item);
+    var selected_clips = [];
+    if (Util.isob(item) && !Util.isempty(item)) {
+      selected_clips.push(item);
+    }
+    this.selectedClips = selected_clips;
   }}); // selectedClip
   dp(pt, "selectedClipOrMash", {
     get: function() { return this.selectedClip || this.__mash; },
@@ -1622,6 +1652,7 @@ var Player = function(evaluated) {
   dp(pt, "selectedClips", {
     get: function() { return this.__selected_clips; },
     set: function(selection) {
+      // console.log('selectedClips=', selection);
       var key, media, clip, i, z, types;
       if (! Util.isob(selection)) selection = [];
       if (selection.length){
@@ -1630,14 +1661,19 @@ var Player = function(evaluated) {
         for (i = 0; i < z; i++){
           clip = selection[i];
           media = Mash.media(this.__mash, clip);
-          key = media.type;
-          switch(key){
-            case Constant.audio: break;
-            case Constant.effect: continue; // effects are ignored
-            default: key = 'video-' + (clip.track || 0);
+          if (! media) {
+            console.error('no media for selected clip', clip);
+          } else {
+
+            key = media.type;
+            switch(key){
+              case Constant.audio: break;
+              case Constant.effect: continue; // effects are ignored
+              default: key = 'video-' + (clip.track || 0);
+            }
+            if (! types[key]) types[key] = [];
+            types[key].push(clip);
           }
-          if (! types[key]) types[key] = [];
-          types[key].push(clip);
         }
         for(key in types) {
           selection = types[key];
@@ -1647,7 +1683,7 @@ var Player = function(evaluated) {
       this.__selected_clips = selection;
       this.selectedEffects = false;
       this.__pristine_clip = Util.copy_ob_scalars(this.selectedClipOrMash);
-      //console.log('__pristine_clip', this.__pristine_clip);
+      // console.log('__pristine_clip', this.__pristine_clip);
       if (this.selectedClipOrMash.scaler) this.__pristine_clip.scaler = Util.copy_ob_scalars(this.selectedClipOrMash.scaler);
       if (this.selectedClipOrMash.merger) this.__pristine_clip.merger = Util.copy_ob_scalars(this.selectedClipOrMash.merger);
     },
@@ -1688,6 +1724,7 @@ var Player = function(evaluated) {
       var new_time = TimeRange.fromSomething(something);
       new_time = this.__limit_time(new_time);
       if (! this.__time.isEqualToTime(new_time)) {
+        // console.log('time= __redraw_moving', this.__time.description, new_time.description);
         this.__redraw_moving(new_time);
       }
     }
@@ -1717,7 +1754,7 @@ var Player = function(evaluated) {
       else action = this.__action_video_add(clip, track_index, frame_or_index);
       if (action){
         objects = Mash.media_for_clips(this.__mash, clip, media);
-        //console.log('media_for_clips', clip, objects, media);
+        // console.log('media_for_clips', clip, objects, media);
         action.redo_add_objects = objects;
         action.undo_delete_objects = objects;
         if (Constant.effect === media.type) action.redo_selected_effects = [clip];
@@ -1744,6 +1781,7 @@ var Player = function(evaluated) {
     }
   }; // called by Action
   pt.addTrack = function(type){
+    // console.log('addTrack creating action');
     this.__action_add(new Action(this, function(){
       this.player.__track_create(type);
     }, function(){
@@ -1794,96 +1832,104 @@ var Player = function(evaluated) {
     return should_be_enabled;
   };
   pt.change = function(prop, is_effect){
-    var media, action, target, target_copy, id = 'change-property';
-    target = (is_effect ? this.selectedEffect : this.selectedClipOrMash);
-    target_copy = (is_effect ? this.__pristine_effect : this.__pristine_clip);
-    if (prop && target){
-      if (
-        (this.__action_index > -1) && // at least one action
-        (this.__action_index === this.__action_stack.length - 1) && // current one is last one
-        (Util.keys_found_equal({id: id, target: target, property: prop}, this.__action_stack[this.__action_index]))
-      ) { // so, reuse existing action
-        action = this.__action_stack[this.__action_index];
-        action.value = Util.ob_property(target, prop);
-        //console.warn('reusing action', action.value);
-        action._redo();
-        this.__redraw_moving();
-      } else {
-        var undo_func = function() { this.set_property(this.orig_value); };
-        var redo_func = function() { this.set_property(this.value); };
-        var action_is_id = false;
-        media = Mash.media(this.__mash, target);
-        // check to see if we're changing a module's property of type font
-        if (media && Mash.is_modular_media(media)) action_is_id = ((-1 < Mash.properties_for_media(media, Constant.font).indexOf(prop)) ? Constant.font : null);
-        // check to see if we're changing merger.id or scaler.id
-        if (! action_is_id) action_is_id = (('.id' === prop.substr(-3)) ? prop.substr(0, prop.length-3) : null);
-        if (action_is_id) {
-          undo_func = function() { this.change_data(this.orig_value, true); };
-          redo_func = function(){ this.change_data(this.value); };
-        }
-        action = new Action(this, redo_func, undo_func);
-        switch(prop){
-          case 'frames': {
-            action.max = Mash.max_frames_for_clip(target, media, this.__mash.quantize);
-            action.set_property = function(new_value){
-              new_value = Math.max(Option.mash.minframes, new_value);
-              if (this.max) new_value = Math.min(this.max, new_value);
-              Util.set_ob_property(this.target, this.property, new_value);
-              Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
-              this.player.mash_length_changed();
-            };
-            break;
+    if (prop && prop.length) {
+      var media, action, target, id = 'change-property';
+      target = (is_effect ? this.selectedEffect : this.selectedClipOrMash);
+      if ( (!is_effect) && (!this.selectedClip)) {
+        // the mash is selected
+        if (Util.isnt(target[prop])) target = null;
+      }
+      if (target){
+        if (
+          (this.__action_index > -1) && // at least one action
+          (this.__action_index === this.__action_stack.length - 1) && // current one is last one
+          (Util.keys_found_equal({id: id, target: target, property: prop}, this.__action_stack[this.__action_index]))
+        ) { // so, reuse existing action
+          action = this.__action_stack[this.__action_index];
+          action.value = Util.ob_property(target, prop);
+          //console.warn('reusing action', action.value);
+          action._redo();
+          this.__redraw_moving();
+        } else {
+          var target_copy = (is_effect ? this.__pristine_effect : this.__pristine_clip);
+          var undo_func = function() { this.set_property(this.orig_value); };
+          var redo_func = function() { this.set_property(this.value); };
+          var action_is_id = false;
+          media = Mash.media(this.__mash, target);
+          // check to see if we're changing a module's property of type font
+          if (media && Mash.is_modular_media(media)) action_is_id = ((-1 < Mash.properties_for_media(media, Constant.font).indexOf(prop)) ? Constant.font : null);
+          // check to see if we're changing merger.id or scaler.id
+          if (! action_is_id) action_is_id = (('.id' === prop.substr(-3)) ? prop.substr(0, prop.length-3) : null);
+          if (action_is_id) {
+            undo_func = function() { this.change_data(this.orig_value, true); };
+            redo_func = function(){ this.change_data(this.value); };
           }
-          case 'trim': {
-            action.orig_length = Util.ob_property(target, 'frames');
-            action.max = Mash.max_trim_for_clip(target, media, this.__mash.quantize);
-            action.set_property = function(new_value){
-              new_value = Math.max(0, new_value);
-              if (this.max) new_value = Math.min(this.max, new_value);
-              Util.set_ob_property(this.target, this.property, new_value);
-              new_value = this.orig_length - (new_value - this.orig_value);
-              Util.set_ob_property(this.target, 'frames', new_value);
-              Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
-              this.player.mash_length_changed();
-            };
-            break;
-          }
-          case Constant.gain: {
-            action.set_property = function(new_value){
-              Util.set_ob_property(this.target, this.property, new_value);
-              Audio.gain_source(Audio.source_for_clip(this.target));
-            };
-            break;
-          }
-          default: {
-            action.set_property = function(new_value){
-              Util.set_ob_property(this.target, this.property, new_value);
-            };
-          }
-        }
-        action.target = target;
-        action.id = id;
-        action.property = prop;
-        action.value = Util.ob_property(target, prop);
-        action.orig_value = Util.ob_property(target_copy, prop);
-        if (action_is_id) {
-          action.is_id = action_is_id;
-          action.last_value = action.orig_value;
-          action.change_data = function(new_value, is_undo){
-            //console.log('change_data', this.is_id, new_value);
-            var new_ob = Mash.media_search(this.is_id, new_value, this.player.mash);
-            if (! new_ob) return console.error("could not find " + this.is_id + " for " + new_value);
-            this.player.add_media(new_ob);
-            if (Constant.font === this.is_id) {
-              this.set_property(new_value);
-            } else this.target[this.is_id] = (is_undo ? target_copy[this.is_id] : Mash.clip_from_media(new_ob));
-            //if (! Mash.modules_reference_media(this.player.mash, this.last_value))
-            this.player.remove_media(Mash.media_search(this.is_id, this.last_value, this.player.mash));
-            this.last_value = new_value;
+          // console.log('change creating action', prop, target);
 
-          };
+          action = new Action(this, redo_func, undo_func);
+          switch(prop){
+            case 'frames': {
+              action.max = Mash.max_frames_for_clip(target, media, this.__mash.quantize);
+              action.set_property = function(new_value){
+                new_value = Math.max(Option.mash.minframes, new_value);
+                if (this.max) new_value = Math.min(this.max, new_value);
+                Util.set_ob_property(this.target, this.property, new_value);
+                Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
+                this.player.mash_length_changed();
+              };
+              break;
+            }
+            case 'trim': {
+              action.orig_length = Util.ob_property(target, 'frames');
+              action.max = Mash.max_trim_for_clip(target, media, this.__mash.quantize);
+              action.set_property = function(new_value){
+                new_value = Math.max(0, new_value);
+                if (this.max) new_value = Math.min(this.max, new_value);
+                Util.set_ob_property(this.target, this.property, new_value);
+                new_value = this.orig_length - (new_value - this.orig_value);
+                Util.set_ob_property(this.target, 'frames', new_value);
+                Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
+                this.player.mash_length_changed();
+              };
+              break;
+            }
+            case Constant.gain: {
+              action.set_property = function(new_value){
+                Util.set_ob_property(this.target, this.property, new_value);
+                Audio.gain_source(Audio.source_for_clip(this.target));
+              };
+              break;
+            }
+            default: {
+              action.set_property = function(new_value){
+                Util.set_ob_property(this.target, this.property, new_value);
+              };
+            }
+          }
+          action.target = target;
+          action.id = id;
+          action.property = prop;
+          action.value = Util.ob_property(target, prop);
+          action.orig_value = Util.ob_property(target_copy, prop);
+          if (action_is_id) {
+            action.is_id = action_is_id;
+            action.last_value = action.orig_value;
+            action.change_data = function(new_value, is_undo){
+              // console.log('change_data', this.is_id, new_value);
+              var new_ob = Mash.media_search(this.is_id, new_value, this.player.mash);
+              if (! new_ob) return console.error("could not find " + this.is_id + " for " + new_value);
+              this.player.add_media(new_ob);
+              if (Constant.font === this.is_id) {
+                this.set_property(new_value);
+              } else this.target[this.is_id] = (is_undo ? target_copy[this.is_id] : Mash.clip_from_media(new_ob));
+              //if (! Mash.modules_reference_media(this.player.mash, this.last_value))
+              this.player.remove_media(Mash.media_search(this.is_id, this.last_value, this.player.mash));
+              this.last_value = new_value;
+
+            };
+          }
+          this.__action_add(action);
         }
-        this.__action_add(action);
       }
     }
   };
@@ -1915,9 +1961,9 @@ var Player = function(evaluated) {
     }
     if (this.__mash_length !== mash_length){
       this.__mash_length = mash_length;
-      var time = new TimeRange(this.__mash_length, this.__mash.quantize);
-      time.scale(this.__fps, 'floor');
-      this.__mash_frames = time.frame;
+      var time_range = new TimeRange(this.__mash_length, this.__mash.quantize);
+      time_range.scale(this.__fps, 'floor');
+      this.__mash_frames = time_range.frame;
       this.frame = Math.max(0, Math.min(this.__mash_frames - 1, this.__time.frame)); // move back if we need to
     }
   };
@@ -1986,9 +2032,10 @@ var Player = function(evaluated) {
   pt.redo = function(removed_count){
     if (this.__action_index < (this.__action_stack.length - 1)) {
       this.__action_index ++;
-      //console.log('redoing', this.__action_stack[this.__action_index]);
+      // console.log('redoing', this.__action_stack[this.__action_index]);
       this.__action_stack[this.__action_index].redo();
       this.did(removed_count);
+      // console.log('redo __redraw_moving');
       this.__redraw_moving();
     }
   };
@@ -2000,10 +2047,13 @@ var Player = function(evaluated) {
       url_types = Mash.urls_for_clips_by_type(this.__mash, clips, this.__time);
       video_buffered = Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.video));
       audio_buffered = (audio_on ? Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.audio)) : true);
-      //console.log('redraw', video_buffered, audio_buffered, this.__time);
+      // console.log('redraw', video_buffered, audio_buffered, this.__moving);
       if ((video_buffered && audio_buffered) !== this.__moving){
-        if (this.__moving) this.__set_moving(false);
-        else if ( (! this.__paused) && Mash.loaded_range(this.__mash, this.__time_drawn.copyTime(this.__buffertime.frame), audio_on)) {
+        if (this.__moving) {
+          // console.log('not buffered but moving', video_buffered, audio_buffered);
+          this.__set_moving(false);
+        } else if ( (! this.__paused) && Mash.loaded_range(this.__mash, this.__time_drawn.copyTime(this.__buffertime.frame), audio_on)) {
+          // console.log('all buffered but not moving');
           this.__set_moving(true);
         }
       }
@@ -2026,7 +2076,10 @@ var Player = function(evaluated) {
         } else {
           if ((Constant.audio === type) || track_index) {
             action = this.__action_clips_remove(type, track_index, ob_or_array);
-          } else action = this.__action_video_remove(track_index, ob_or_array);
+          } else {
+            action = this.__action_video_remove(track_index, ob_or_array);
+          }
+          // console.log('remove setting redo_selected_clips empty');
           action.redo_selected_clips = [];
         }
         if (action) {
@@ -2053,11 +2106,11 @@ var Player = function(evaluated) {
         }
         delete this.__media_references[id];
       }
-      //console.log('remove_media', this.__media_references[id], id);
+      // console.log('remove_media', this.__media_references[id], id);
     }
   }; // called by Action
   pt.select = function(clip_or_effect, toggle_selected){
-    //console.log('select', clip_or_effect, toggle_selected);
+    // console.log('select', clip_or_effect, toggle_selected);
     var media, i, array = [], array_key = '__selected_clips', prop_key = 'selectedClips';
     media = Mash.media(this.__mash, clip_or_effect);
     if (media){
@@ -2092,7 +2145,7 @@ var Player = function(evaluated) {
         array.push(clip_or_effect);
       }
     }
-    //console.log('select', prop_key, array);
+    // console.log('select', prop_key, array);
     this[prop_key] = array;
   };
   pt.selected = function(clip_or_effect){
@@ -2123,6 +2176,7 @@ var Player = function(evaluated) {
       this.__action_stack[this.__action_index].undo();
       this.__action_index --;
       this.did();
+      // console.log('undo __redraw_moving');
       this.__redraw_moving();
     }
   };
@@ -2139,6 +2193,7 @@ var Player = function(evaluated) {
       }
     }
     this.__action_stack.push(action);
+    // console.log('__action_add redoing', z);
     this.redo(z);
   };
   pt.__action_clips_move = function(type, track_index, frame, clips){
@@ -2162,7 +2217,7 @@ var Player = function(evaluated) {
         frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)
       });
     }
-    //console.log('orig', orig);
+    // console.log('__action_clips_move creating action');
     action = new Action(this, function(){
       if (track !== orig_track) { // take them out
         orig.sort(function(a, b){return b.index-a.index;});
@@ -2199,6 +2254,8 @@ var Player = function(evaluated) {
   };
   pt.__action_effects_move = function(index, effects, container){
     var action, i, z = effects.length, indexed_effects = [];
+      // console.log('__action_effects_move creating action');
+
     action = new Action(this, function(){
       indexed_effects.sort(function(a, b){ return b.i - a.i; });
       for (i = 0; i < z; i++) container.splice(indexed_effects[i].i, 1);
@@ -2216,7 +2273,7 @@ var Player = function(evaluated) {
     return action;
   };
   pt.__action_video_move = function(track_index, index, clips){
-    //console.log('__action_video_move', track_index, index, clips);
+    // console.log('__action_video_move', track_index, index, clips);
     var indexed_clips, orig_track, target_track, clip, i, z = clips.length;
     target_track = this.__mash.video[track_index];
     orig_track = target_track;
@@ -2230,8 +2287,10 @@ var Player = function(evaluated) {
       clip = clips[i];
       indexed_clips.push({clip: clip, frame: clip.frame, track: clip.track, i: i, index: orig_track.clips.indexOf(clip)});
     }
+      // console.log('__action_video_move creating action');
+
     return new Action(this, function(){
-      //console.log('REDO __action_video_move');
+      // console.log('REDO __action_video_move');
       indexed_clips.sort(function(a, b){return b.index-a.index;});
       for (i = 0; i < z; i++) orig_track.clips.splice(indexed_clips[i].index, 1);
       indexed_clips.sort(function(a, b){return a.i-b.i;});
@@ -2244,13 +2303,13 @@ var Player = function(evaluated) {
       Mash.recalc_track(this.player.mash, target_track);
       this.player.mash_length_changed();
     }, function(){
-      //console.log('UNDO __action_video_move');
+      // console.log('UNDO __action_video_move');
       indexed_clips.sort(function(a, b){return a.index-b.index;});
       target_track.clips.splice(index, z);
       for (i = 0; i < z; i++) {
         clip = indexed_clips[i].clip;
         orig_track.clips.splice(indexed_clips[i].index, 0, clip);
-        //console.log('__action_video_move', indexed_clips[i].index, orig_track.clips.length);
+        // console.log('__action_video_move', indexed_clips[i].index, orig_track.clips.length);
         clip.track = indexed_clips[i].track;
         clip.frame = indexed_clips[i].frame;
       }
@@ -2269,7 +2328,8 @@ var Player = function(evaluated) {
       clip = clips[i];
       orig.push({offset: (i ? clip.frame - clips[0].frame : 0), frame: clip.frame, track: clip.track, i: i, index: track.clips.indexOf(clip)});
     }
-    //console.log('orig', orig);
+    // console.log('__action_clips_remove creating action');
+
     action = new Action(this, function(){
       orig.sort(function(a, b){return b.index-a.index;});
       for (i = 0; i < z; i++) track.clips.splice(orig[i].index, 1);
@@ -2291,6 +2351,8 @@ var Player = function(evaluated) {
   pt.__action_effects_remove = function(effects, container){
     // index always -1
     var action, i, z = effects.length;
+        // console.log('__action_effects_remove creating action');
+
     action = new Action(this, function(){
       this.orig.sort(function(a, b){return b.index-a.index;});
       for (i = 0; i < z; i++) container.splice(this.orig[i].index, 1);
@@ -2314,10 +2376,12 @@ var Player = function(evaluated) {
       clip = clips[i];
       orig.push({frame: clip.frame, track: clip.track, i: i, index: track.clips.indexOf(clip)});
     }
+      // console.log('__action_video_remove creating action');
+
     action = new Action(this, function(){
       orig.sort(function(a, b){return b.index-a.index;});
       for (i = 0; i < z; i++) {
-        //console.log('removing', orig[i].index);
+        // console.log('removing', orig[i].index);
         track.clips.splice(orig[i].index, 1);
       }
       Mash.recalc_track(this.player.mash, track);
@@ -2342,6 +2406,7 @@ var Player = function(evaluated) {
     var action, effects, target = this.selectedClipOrMash;
     if (target) {
       effects = target.effects;
+    // console.log('__action_effects_add creating action');
       action = new Action(this, function(){
         effects.splice(index, 0, effect);
       }, function() {
@@ -2351,6 +2416,7 @@ var Player = function(evaluated) {
     return action;
   };
   pt.__action_freeze_clip = function(clip, at_time){
+    console.warn('testing __action_freeze_clip');
     // THIS IS NOT YET WORKING!!
     var media = Mash.media(this.__mash, clip);
     var new_clip = Util.copy_keys_recursize(clip);
@@ -2366,6 +2432,7 @@ var Player = function(evaluated) {
     new_clip.frames = trim_frames;
     new_clip.frame = clip.frame + freeze_frames + (clip.frames - trim_frames);
     new_clip.trim = clip.trim + trim_frames;
+    // console.log('__action_freeze_clip creating action');
     var action = new Action(this, function(){
       track_clips.splice(index, 0, new_clip);
       track_clips.splice(index, 0, freeze_clip);
@@ -2398,7 +2465,7 @@ var Player = function(evaluated) {
       case Constant.audio:
       case Constant.video: new_clip.trim += orig_frames;
     }
-    //console.log('split', Util.copy_keys_recursize(new_clip));
+    // console.log('__action_split_clip creating action');
     var action = new Action(this, function(){
       track_clips.splice(index, 0, new_clip);
       orig_clip.frames = orig_frames;
@@ -2414,7 +2481,8 @@ var Player = function(evaluated) {
     return action;
   };
   pt.__action_track_add = function(media_type, clip, index, frame){
-    // .add handles redo_add_objects and undo_delete_objects
+
+    // console.log('__action_track_add creating action');
     var action = new Action(this, function(){
       var target;
       for (var i = 0; i < this.tracks; i++){
@@ -2443,7 +2511,7 @@ var Player = function(evaluated) {
     return action;
   };
   pt.__action_video_add = function(clip, track_index, index){
-    // .add handles redo_add_objects and undo_delete_objects
+    // console.log('__action_video_add creating action');
     var action = new Action(this, function(){
       this.target.splice(this.index, 0, this.clip);
       Mash.recalc_video_clips(this.player.mash, this.target);
@@ -2551,7 +2619,7 @@ var Player = function(evaluated) {
     return drawing;
   };
   pt.__draw_layer_clips = function(clips, time){
-    //console.log('__draw_layer_clips', clips.length, time.description);
+    // console.log('__draw_layer_clips', clips.length, time.description);
     this.__delete_drawings(this.__drawing.drawings);
     var back_drawing, drawing, transition_indexes, transition_index, medias, clip, media, w, h, y, i, z = clips.length;
     //transition_drawings = [],
@@ -2603,12 +2671,12 @@ var Player = function(evaluated) {
     }
   };
   pt.__draw_transition = function(clip_drawings, transition_clip, transition_media, time){
-    //console.log('__draw_transition', clip_drawings, transition_clip, transition_media);
+    // console.log('__draw_transition', clip_drawings, transition_clip, transition_media);
     if (2 > clip_drawings.length) clip_drawings.push(this.__drawing); // make another reference to the background
     var from_drawing = clip_drawings[0];
     var to_drawing = clip_drawings[1];
     if (transition_media.to.filters) {
-      //console.log('to filters', to_drawing, transition_media.to);
+      // console.log('to filters', to_drawing, transition_media.to);
       to_drawing = this.__draw_module_filters(time, transition_clip, [to_drawing], transition_clip, transition_media.to).shift();
     }
     if (transition_media.from.filters) from_drawing = this.__draw_module_filters(time, transition_clip, [from_drawing], transition_clip, transition_media.from).shift();
@@ -2688,7 +2756,7 @@ var Player = function(evaluated) {
                   }
                   if (test_bool) {
                     parameter_value = conditional.value;
-                    //console.log(parameter_name, eval_str, parameter_value);
+                    // console.log(parameter_name, eval_str, parameter_value);
                     break;
                   } // else console.warn(parameter_name, eval_str, parameter_value);
                 }
@@ -2848,14 +2916,21 @@ var Player = function(evaluated) {
   };
   pt.__redraw_moving = function(new_time){
     var moving = this.__moving;
-    if (moving) this.__set_moving(false);
+    if (moving) {
+      // console.log('__redraw_moving __set_moving(false)');
+      this.__set_moving(false);
+    }
     if (new_time) this.__time.setToTime(new_time);
     this.redraw();
-    if (moving) this.__set_moving(true);
+    if (moving) {
+      // console.log('__redraw_moving __set_moving(true)');
+      this.__set_moving(true);
+    }
   };
   pt.__set_moving = function(tf) {
     if (this.__moving !== tf) {
-      //console.log('__set_moving', tf, this.__time_drawn.description, this.__time.description);
+      // console.log('__set_moving', this.__moving, tf, this.__time_drawn.description, this.__time.description);
+      // console.log('Audio.sources', Audio.sources);
       this.__moving = tf;
       if (this.__moving) {
         var $this = this;
@@ -2875,7 +2950,7 @@ var Player = function(evaluated) {
   pt.__set_stalling = function(tf){
     var changed = false; // whether or not __stalling changed
     if (this.__stalling !== tf) {
-      //console.log('__set_stalling', tf, this.__time.description);
+      // console.log('__set_stalling', tf, this.__time.description);
       this.__stalling = tf;
       changed = true;
     }
@@ -2883,7 +2958,7 @@ var Player = function(evaluated) {
   };
   pt.__stop_buffer_timer = function() {
     if (this.__bufferProcessTimer) {
-      //console.log('__stop_buffer_timer');
+      // console.log('__stop_buffer_timer');
       clearInterval(this.__bufferProcessTimer);
       this.__bufferProcessTimer = 0;
     }
@@ -3326,6 +3401,9 @@ var Util = {
       if (! found) break;
     }
     return found;
+  },
+  isempty: function(ob) {
+    return !(this.isob(ob) && this.ob_keys(ob).length);
   },
   isnt: function(){
     return this.is_typeof.apply(this, this.copy_array(arguments, ['undefined']));

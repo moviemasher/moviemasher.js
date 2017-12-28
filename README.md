@@ -13,9 +13,9 @@ Use moviemasher.js to edit and display mashups of video, audio and images within
 
 ### Overview: Canvas + Mash = Player
 
-Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a simple JavaScript Object that describes a collection of media and how to arrange it over time.
+Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a standard JavaScript Object that describes a collection of media and how to arrange it over time.
 
-- **Documentation:** [MovieMasher.com](http://moviemasher.com/docs/)
+- **Documentation:** [MovieMasher.com](http://moviemasher.com/docs/index.html)
 
 A player binds to its mash object directly, without copying or adding any methods. It may add default objects, arrays and scalar values though, for faster runtime parsing. Changes you make to the mash are reflected in the player the next time redraw() is called. Or as an alternative to direct data manipulation, you can use the player's add(), change() and remove() methods. When using these you can also call undo() and redo() to provide a complete edit history.
 
@@ -55,32 +55,41 @@ mm_player.mash = {
 };
 ```
 
+### Installation
+
+##### Directly
+
+[Download the latest ZIP](https://github.com/moviemasher/moviemasher.js/archive/master.zip) and grab the compiled files in the `dist`
+folder. An example application is `app` and if you don't have the required modules installed they are in `node_modules`.
+
+##### Using npm
+- `npm install --save moviemasher.js`
+
+##### To Run Locally
+Due to the security mechanisms used, this project can only be viewed in a web browser if delivered through a web server - simply viewing index.html locally in a browser will not work. If you are not running a web server on your local machine, [Docker](http://docker.com) is a safe and recommended way to do so. Once installed and running, `cd` into the *config/docker/development* directory and:
+- execute `docker-compose up -d` to launch apache web server
+- load [http://localhost:8090/app](http://localhost:8090/app) in a web browser
+- execute `docker-compose down -v` to terminate apache web server
+
 ### Related Projects
-Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if editing or encoding features are all that's needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content managemnt functions.
+Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if editing or encoding features are all that's needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content management functions.
 
 ### Included Requirements
-- opentype.js
 - script.js
+- opentype.js
+- tiny-inflate
 
 ### User Feedback
 If any problems arise while utilizing this repository, a [GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed. Please include the mash description that's causing problems and any relevant console entries. Please post your issue ticket in the appropriate repository and refrain from cross posting - all projects are monitored with equal zeal.
 
 ### Contributing
-Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through [MovieMasher.com](http://moviemasher.com) to discuss your ideas.
+Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through [MovieMasher.com](http://moviemasher.com) to discuss your ideas, or donate to the project.
 
 #### Developer Setup
-Various components of this project can be updated or rebuilt after installing git, npm, bower, and grunt. Once applications are installed `cd` to project directory and execute:
+[Docker](http://docker.com) is required for working on the project itself. Once installed and running, `cd` into the *config/docker/node* directory and:
 
-1. install git, npm, bower and grunt
-1. npm install
-1. bower install --production --allow-root
-1. grunt
-
-Or if docker is being used, `cd` into the *config/docker/grunt* directory and execute...
-
-- `docker-compose run --rm grunt`
-
-- `docker-compose run --rm grunt bower install --production `
+- execute `docker-compose run --rm npm` to update node modules
+- execute `docker-compose run --rm grunt` to rebuild JavaScript files
 
 #### Known issues in this version
 - new convolution filter is very beta - does not always match ffmpeg output

@@ -1,5 +1,6 @@
 var Audio = {
   buffer_source: function(buffer){
+    // console.log('Audio.buffer_source', buffer);
     var context = Audio.get_ctx();
     var source = context.createBufferSource(); // creates a sound source
     source.buffer = buffer;                    // tell the source which sound to play
@@ -57,13 +58,14 @@ var Audio = {
         new_sources.push(source);
         continue;
       }
+      // console.log('Audio.destroy_sources', source);
       Audio.disconnect_source(source);
       delete source.buffer_source;
     }
     Audio.sources = new_sources;
   },
   disconnect_source: function(source){
-    //console.log('Audio.disconnect_source', source);
+    // console.log('Audio.disconnect_source', source);
     var context = Audio.get_ctx();
     source.buffer_source.disconnect(source.gainNode);
     source.gainNode.disconnect(context.destination);
@@ -113,7 +115,7 @@ var Audio = {
     return url;
   },
   start: function(){
-    //console.log('Audio.start');
+    // console.log('Audio.start');
     var context = Audio.get_ctx();
     Audio.__buffer_source = context.createBufferSource();
     Audio.__buffer_source.loop = true;
@@ -122,7 +124,7 @@ var Audio = {
     Audio.__buffer_source.start(0);
   },
   stop: function(){
-    //console.log('Audio.stop');
+    // console.log('Audio.stop');
     Audio.destroy_sources();
     if (Audio.__buffer_source) {
       Audio.__buffer_source.disconnect(Audio.get_ctx().destination);

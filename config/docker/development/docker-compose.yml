@@ -1,0 +1,11 @@
+version: '2'
+services:
+  moviemasherjs:
+    image: php:apache
+    ports:
+      - "8090:80"
+    volumes:
+      - "../../../src:/var/www/html/src"
+      - "../../../app:/var/www/html/app"
+      - "../../../dist:/var/www/html/dist"
+      - "../../../node_modules:/var/www/html/node_modules"

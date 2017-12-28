@@ -16,6 +16,7 @@ var Option = {
     minbuffertime: 1,
     unbuffertime: 1,
     volume: 0.75,
+    position_precision: 3,
   },
   set: function(opts){
     Util.copy_keys_recursize(opts, Option);

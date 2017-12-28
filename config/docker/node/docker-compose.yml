@@ -1,0 +1,18 @@
+version: '2'
+services:
+  grunt:
+    image: huli/grunt
+    command: default
+    volumes:
+      - "./Gruntfile.js:/srv/Gruntfile.js"
+      - "./package-grunt.json:/srv/package.json"
+      - "./node_modules/:/srv/node_modules"
+      - "../../../dist:/srv/dist"
+      - "../../../src:/srv/src"
+      - "../../../app:/srv/app"
+  npm:
+    image: node
+    volumes:
+      - "../../../node_modules/:/node_modules"
+      - "../../../package.json:/package.json"
+    command: npm install --no-bin-links
