@@ -1,5 +1,5 @@
 {
-  "name": "moviemasher.js",
+  "name": "@moviemasher/moviemasher.js",
   "description": "JavaScript library for realtime, browser-based video and audio editing",
   "version": "4.0.22",
   "author": {
@@ -7,10 +7,13 @@
     "email": "support@moviemasher.com"
   },
   "license": "MPL-2.0",
-  "bugs": "https://github.com/moviemasher/moviemasher.js/issues",
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "homepage": "https://github.com/moviemasher/moviemasher.js#readme",
   "repository": {
     "type": "git",
-    "url": "git://github.com/moviemasher/moviemasher.js.git"
+    "url": "git+https://github.com/moviemasher/moviemasher.js.git"
   },
   "dependencies": {
     "scriptjs": "=2.5.8",

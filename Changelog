@@ -2,6 +2,17 @@
 version <future>:
 - freeze frame
 
+version 4.0.21:
+  - support for npm installation
+  - fixed example
+
+version 4.0.20:
+  - all classes now accessible from MovieMasher class
+
+version 4.0.19:
+  - fixed issues related to split functionality
+  - fixed issues related to trim functionality
+
 version 4.0.18:
   - new blend filter suports merging with blend modes
   - added support for values that are objects in constant types

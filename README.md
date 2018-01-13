@@ -63,7 +63,7 @@ mm_player.mash = {
 folder. An example application is `app` and if you don't have the required modules installed they are in `node_modules`.
 
 ##### Using npm
-- `npm install --save moviemasher.js`
+- `npm install --save @moviemasher/moviemasher.js`
 
 ##### To Run Locally
 Due to the security mechanisms used, this project can only be viewed in a web browser if delivered through a web server - simply viewing index.html locally in a browser will not work. If you are not running a web server on your local machine, [Docker](http://docker.com) is a safe and recommended way to do so. Once installed and running, `cd` into the *config/docker/development* directory and:
