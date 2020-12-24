@@ -2,6 +2,7 @@
   "name": "@moviemasher/moviemasher.js",
   "description": "JavaScript library for realtime, browser-based video and audio editing",
   "version": "4.0.22",
+  "keywords": ['video editor', 'audio editor'],
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
