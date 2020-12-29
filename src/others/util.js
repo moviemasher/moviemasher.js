@@ -1,4 +1,4 @@
-var Util = {
+Util = {
   array_empty: function(array){
     while(array.length > 0) array.pop();
   },

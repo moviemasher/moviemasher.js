@@ -1,5 +1,4 @@
-
-var Player = function(evaluated) {
+Player = function(evaluated) {
   if (! Util.isob(evaluated)) evaluated = {};
   var value, key, new_mash = {};
   Util.copy_ob_scalars(Option.player, evaluated);

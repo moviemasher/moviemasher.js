@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         footer: 'return MovieMasher; \n}); \n'
       },
       moviemasher: {
-        src: ['src/others/*.js', 'src/moviemasher.js'],
+        src: ['src/moviemasher.js', 'src/others/*.js'],
         dest: 'dist/<%= pkg.name %>'
       }
     },

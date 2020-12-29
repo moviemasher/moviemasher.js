@@ -1,6 +1,6 @@
 /*global opentype:true*/
 /*global $script:true*/
-var Loader = {
+Loader = {
   load_audio: function(url){
     if (! (Loader.requested_urls[url] || Loader.cached_urls[url])){
         var request = new XMLHttpRequest();

@@ -1,4 +1,4 @@
-var Option = {
+Option = {
   mash: {
     minframes: 1,
     quantize: 10,

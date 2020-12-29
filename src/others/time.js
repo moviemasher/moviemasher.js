@@ -1,4 +1,4 @@
-var TimeRange = function(start, rate, duration){
+TimeRange = function(start, rate, duration){
   if (start) this.frame = Number(start) || 0;
   if (rate) this.fps = Number(rate) || 0;
   if (duration) this.frames = Math.max(1, Number(duration));

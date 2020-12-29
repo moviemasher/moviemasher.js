@@ -1,4 +1,4 @@
-var Colors = {
+Colors = {
   yuv2rgb: function(yuv) {
     var k, rgb = {};
     for(k in yuv) yuv[k] = parseInt(yuv[k]);

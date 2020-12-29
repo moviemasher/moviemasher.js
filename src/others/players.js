@@ -1,4 +1,4 @@
-var Players = {
+Players = {
   draw_delayed: function(){
     // called when assets are cached
     if (! Players.delayed_timer) {

@@ -1,4 +1,4 @@
-var Constant = {
+Constant = {
   audio: 'audio',
   both: 'both',
   effect: 'effect',
@@ -93,41 +93,3 @@ var Constant = {
 };
 Constant.track_types = [Constant.video, Constant.audio];
 MovieMasher.Constant = Constant;
-
-/*
-FFMPEG BLEND MODES
-------------------
-addition
-addition128
-and
-average
-difference128
-divide
-freeze
-glow
-hardmix
-heat
-linearlight
-multiply128
-negation
-or
-phoenix
-pinlight
-reflect
-subtract
-vividlight
-JAVASCRIPT BLEND MODES
-----------------------
-color
-copy
-destination-atop
-destination-in
-destination-out
-destination-over
-hue
-saturation
-source-atop
-source-in
-source-out
-source-over
-*/

@@ -1,3 +1,16 @@
+var Action;
+var Audio;
+var Colors;
+var Constant;
+var Defaults;
+var Filter;
+var Loader;
+var Mash;
+var Option;
+var Player;
+var Players;
+var TimeRange;
+var Util;
 
 var MovieMasher = function() { // it's not necessary to instantiate, but you can
   this.instance_arguments = arguments;
