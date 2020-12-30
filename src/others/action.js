@@ -1,4 +1,4 @@
-var Action = function(player, redo_func, undo_func, destroy_func){
+Action = function(player, redo_func, undo_func, destroy_func){
   this.player = player;
   this._redo = redo_func;
   this._undo = undo_func;

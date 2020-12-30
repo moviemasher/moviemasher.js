@@ -1,5 +1,5 @@
-/*! moviemasher.js - v4.0.22 - 2017-12-28
-* Copyright (c) 2017 Movie Masher; Licensed  */
+/*! moviemasher.js - v4.0.23 - 2020-12-30
+* Copyright (c) 2020 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
 'use strict';
@@ -8,6 +8,19 @@ else if (typeof define === "function" && define.amd) define(definition);
 else context[name] = definition(); 
   })("MovieMasher", this, function() { 
 'use strict';
+var Action;
+var Audio;
+var Colors;
+var Constant;
+var Defaults;
+var Filter;
+var Loader;
+var Mash;
+var Option;
+var Player;
+var Players;
+var TimeRange;
+var Util;
 
 var MovieMasher = function() { // it's not necessary to instantiate, but you can
   this.instance_arguments = arguments;
@@ -88,7 +101,7 @@ MovieMasher.register = function(type, media){
 MovieMasher.registered = {};
 MovieMasher.supported = !! (Object.defineProperty && document.createElement("canvas").getContext && (window.AudioContext || window.webkitAudioContext));
 
-var Action = function(player, redo_func, undo_func, destroy_func){
+Action = function(player, redo_func, undo_func, destroy_func){
   this.player = player;
   this._redo = redo_func;
   this._undo = undo_func;
@@ -144,7 +157,7 @@ var Action = function(player, redo_func, undo_func, destroy_func){
 })(Action.prototype);
 MovieMasher.Action = Action;
 
-var Audio = {
+Audio = {
   buffer_source: function(buffer){
     // console.log('Audio.buffer_source', buffer);
     var context = Audio.get_ctx();
@@ -319,7 +332,7 @@ var Audio = {
 };
 MovieMasher.Audio = Audio;
 
-var Colors = {
+Colors = {
   yuv2rgb: function(yuv) {
     var k, rgb = {};
     for(k in yuv) yuv[k] = parseInt(yuv[k]);
@@ -364,7 +377,7 @@ var Colors = {
 };
 MovieMasher.Colors = Colors;
 
-var Constant = {
+Constant = {
   audio: 'audio',
   both: 'both',
   effect: 'effect',
@@ -460,45 +473,7 @@ var Constant = {
 Constant.track_types = [Constant.video, Constant.audio];
 MovieMasher.Constant = Constant;
 
-/*
-FFMPEG BLEND MODES
-------------------
-addition
-addition128
-and
-average
-difference128
-divide
-freeze
-glow
-hardmix
-heat
-linearlight
-multiply128
-negation
-or
-phoenix
-pinlight
-reflect
-subtract
-vividlight
-JAVASCRIPT BLEND MODES
-----------------------
-color
-copy
-destination-atop
-destination-in
-destination-out
-destination-over
-hue
-saturation
-source-atop
-source-in
-source-out
-source-over
-*/
-
-var Defaults = {
+Defaults = {
   modules: {
     font: {
       "label": "Blackout Two AM",
@@ -569,7 +544,7 @@ var Defaults = {
 };
 MovieMasher.Defaults = Defaults;
 
-var Filter = {
+Filter = {
   registered: {},
   find: function(filter_id){
     return MovieMasher.find(Constant.filter, filter_id);
@@ -697,7 +672,7 @@ MovieMasher.Filter = Filter;
 
 /*global opentype:true*/
 /*global $script:true*/
-var Loader = {
+Loader = {
   load_audio: function(url){
     if (! (Loader.requested_urls[url] || Loader.cached_urls[url])){
         var request = new XMLHttpRequest();
@@ -809,7 +784,7 @@ setInterval(function(){
 }, 2000);
 MovieMasher.Loader = Loader;
 
-var Mash = {
+Mash = {
   clip_from_media: function(media){
     var key, type, property_type, property, clip = {id:media.id};
     if (media.properties){
@@ -1420,7 +1395,7 @@ var Mash = {
 };
 MovieMasher.Mash = Mash;
 
-var Option = {
+Option = {
   mash: {
     minframes: 1,
     quantize: 10,
@@ -1449,8 +1424,7 @@ var Option = {
 };
 MovieMasher.Option = Option;
 
-
-var Player = function(evaluated) {
+Player = function(evaluated) {
   if (! Util.isob(evaluated)) evaluated = {};
   var value, key, new_mash = {};
   Util.copy_ob_scalars(Option.player, evaluated);
@@ -2974,7 +2948,7 @@ var Player = function(evaluated) {
 })(Player.prototype);
 MovieMasher.Player = Player;
 
-var Players = {
+Players = {
   draw_delayed: function(){
     // called when assets are cached
     if (! Players.delayed_timer) {
@@ -3003,7 +2977,7 @@ var Players = {
 };
 MovieMasher.Players = Players;
 
-var TimeRange = function(start, rate, duration){
+TimeRange = function(start, rate, duration){
   if (start) this.frame = Number(start) || 0;
   if (rate) this.fps = Number(rate) || 0;
   if (duration) this.frames = Math.max(1, Number(duration));
@@ -3245,7 +3219,7 @@ TimeRange.fromSomething = function(something){
 })(TimeRange.prototype);
 MovieMasher.TimeRange = TimeRange;
 
-var Util = {
+Util = {
   array_empty: function(array){
     while(array.length > 0) array.pop();
   },

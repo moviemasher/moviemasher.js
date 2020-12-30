@@ -1,4 +1,4 @@
-var Filter = {
+Filter = {
   registered: {},
   find: function(filter_id){
     return MovieMasher.find(Constant.filter, filter_id);

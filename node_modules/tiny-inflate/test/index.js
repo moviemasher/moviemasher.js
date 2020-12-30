@@ -42,26 +42,26 @@ describe('tiny-inflate', function() {
   });
   
   it('should inflate some data', function() {
-    var out = new Buffer(uncompressed.length);
+    var out = Buffer.alloc(uncompressed.length);
     inflate(compressed, out);
     assert.deepEqual(out, uncompressed);
   });
   
   it('should slice output buffer', function() {
-    var out = new Buffer(uncompressed.length + 1024);
+    var out = Buffer.alloc(uncompressed.length + 1024);
     var res = inflate(compressed, out);
     assert.deepEqual(res, uncompressed);
     assert.equal(res.length, uncompressed.length);
   });
   
   it('should handle uncompressed blocks', function() {
-    var out = new Buffer(uncompressed.length);
+    var out = Buffer.alloc(uncompressed.length);
     inflate(noCompression, out);
     assert.deepEqual(out, uncompressed);
   });
   
   it('should handle fixed huffman blocks', function() {
-    var out = new Buffer(uncompressed.length);
+    var out = Buffer.alloc(uncompressed.length);
     inflate(fixed, out);
     assert.deepEqual(out, uncompressed);
   });

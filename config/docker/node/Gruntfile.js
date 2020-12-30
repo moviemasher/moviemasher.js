@@ -1,6 +1,6 @@
 /*global module:false*/
+'use strict';
 module.exports = function(grunt) {
-  'use strict';
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
@@ -9,7 +9,7 @@ module.exports = function(grunt) {
           '<%= grunt.template.today("yyyy-mm-dd") %>\n'+
           '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
           '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-          ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n' +
+          ' Licensed <%= _.map(pkg.licenses, "type").join(", ") %> */\n' +
           '/*global module:true,define:true*/\n' +
           '(function (name, context, definition) { \n' +
           "'use strict';\n" +

@@ -1,4 +1,4 @@
-var Mash = {
+Mash = {
   clip_from_media: function(media){
     var key, type, property_type, property, clip = {id:media.id};
     if (media.properties){

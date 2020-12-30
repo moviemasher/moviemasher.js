@@ -1,4 +1,4 @@
-var Audio = {
+Audio = {
   buffer_source: function(buffer){
     // console.log('Audio.buffer_source', buffer);
     var context = Audio.get_ctx();

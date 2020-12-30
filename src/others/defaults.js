@@ -1,4 +1,4 @@
-var Defaults = {
+Defaults = {
   modules: {
     font: {
       "label": "Blackout Two AM",
