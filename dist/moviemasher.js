@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.22 - 2020-12-29
+/*! moviemasher.js - v4.0.23 - 2020-12-30
 * Copyright (c) 2020 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -100,8 +100,6 @@ MovieMasher.register = function(type, media){
 };
 MovieMasher.registered = {};
 MovieMasher.supported = !! (Object.defineProperty && document.createElement("canvas").getContext && (window.AudioContext || window.webkitAudioContext));
-
-
 
 Action = function(player, redo_func, undo_func, destroy_func){
   this.player = player;

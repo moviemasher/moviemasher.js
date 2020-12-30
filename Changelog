@@ -2,6 +2,12 @@
 version <future>:
 - freeze frame
 
+version 4.0.23:
+  - update dependencies
+
+version 4.0.22:
+  - use npm instead of bower
+
 version 4.0.21:
   - support for npm installation
   - fixed example
