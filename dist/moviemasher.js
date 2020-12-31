@@ -1,4 +1,4 @@
-/*! moviemasher.js - v4.0.23 - 2020-12-30
+/*! moviemasher.js - v4.0.24 - 2020-12-31
 * Copyright (c) 2020 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
@@ -208,6 +208,15 @@ Audio = {
       gainNode[Constant.gain].linearRampToValueAtTime(gain_val, start + time_per * duration);
     }
   },
+  create_buffer_source: function() {
+    if (Audio.__buffer_source) return;
+
+    var context = Audio.get_ctx();
+    Audio.__buffer_source = context.createBufferSource();
+    Audio.__buffer_source.loop = true;
+    Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
+    Audio.__buffer_source.connect(context.destination);
+  },
   destroy_sources: function(except_clips){
     var new_sources = [];
     var source, i, z = Audio.sources.length;
@@ -267,7 +276,7 @@ Audio = {
         break;
       }
       case Constant.audio: {
-        url = (media.url || media.source);
+        url = (media.audio || media.url || media.source);
         break;
       }
     }
@@ -275,11 +284,6 @@ Audio = {
   },
   start: function(){
     // console.log('Audio.start');
-    var context = Audio.get_ctx();
-    Audio.__buffer_source = context.createBufferSource();
-    Audio.__buffer_source.loop = true;
-    Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
-    Audio.__buffer_source.connect(context.destination);
     Audio.__buffer_source.start(0);
   },
   stop: function(){
@@ -727,13 +731,13 @@ Loader = {
       Loader.requested_urls[url].src = url;
     }
   },
-  load_urls_of_type: function(urls){
+  load_urls_of_type: function(types_by_url){
     var url, loaded = false;
-    for (url in urls){
+    for (url in types_by_url){
       if (! (Loader.cached_urls[url] || Loader.requested_urls[url])) {
         loaded = true;
-        //console.log('Loader.load_urls_of_type', urls[url], url);
-        switch(urls[url]){
+        //console.log('Loader.load_urls_of_type', types_by_url[url], url);
+        switch(types_by_url[url]){
           case Constant.font: {
             Loader.load_font(url);
             break;
@@ -751,16 +755,16 @@ Loader = {
             break;
           }
           default: {
-            console.error('cannot load media of unsupported type', urls[url], url);
+            console.error('cannot load media of unsupported type', types_by_url[url], url);
           }
         }
       }
     }
     return loaded;
   },
-  loaded_urls_of_type: function(urls){
+  loaded_urls_of_type: function(types_by_url){
     var url, loaded = true;
-    for (url in urls){
+    for (url in types_by_url){
       if (! Loader.cached_urls[url]) {
         loaded = false;
         break;
@@ -1573,6 +1577,7 @@ Player = function(evaluated) {
           }
         } else {
           Players.start_playing(this);
+          Audio.create_buffer_source();
           if (! this.__buffer_timer){
             var $this = this;
             this.__buffer_timer = setInterval(function(){$this.rebuffer();}, 2000);

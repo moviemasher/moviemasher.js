@@ -49,6 +49,15 @@ Audio = {
       gainNode[Constant.gain].linearRampToValueAtTime(gain_val, start + time_per * duration);
     }
   },
+  create_buffer_source: function() {
+    if (Audio.__buffer_source) return;
+
+    var context = Audio.get_ctx();
+    Audio.__buffer_source = context.createBufferSource();
+    Audio.__buffer_source.loop = true;
+    Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
+    Audio.__buffer_source.connect(context.destination);
+  },
   destroy_sources: function(except_clips){
     var new_sources = [];
     var source, i, z = Audio.sources.length;
@@ -108,7 +117,7 @@ Audio = {
         break;
       }
       case Constant.audio: {
-        url = (media.url || media.source);
+        url = (media.audio || media.url || media.source);
         break;
       }
     }
@@ -116,11 +125,6 @@ Audio = {
   },
   start: function(){
     // console.log('Audio.start');
-    var context = Audio.get_ctx();
-    Audio.__buffer_source = context.createBufferSource();
-    Audio.__buffer_source.loop = true;
-    Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
-    Audio.__buffer_source.connect(context.destination);
     Audio.__buffer_source.start(0);
   },
   stop: function(){

@@ -55,13 +55,13 @@ Loader = {
       Loader.requested_urls[url].src = url;
     }
   },
-  load_urls_of_type: function(urls){
+  load_urls_of_type: function(types_by_url){
     var url, loaded = false;
-    for (url in urls){
+    for (url in types_by_url){
       if (! (Loader.cached_urls[url] || Loader.requested_urls[url])) {
         loaded = true;
-        //console.log('Loader.load_urls_of_type', urls[url], url);
-        switch(urls[url]){
+        //console.log('Loader.load_urls_of_type', types_by_url[url], url);
+        switch(types_by_url[url]){
           case Constant.font: {
             Loader.load_font(url);
             break;
@@ -79,16 +79,16 @@ Loader = {
             break;
           }
           default: {
-            console.error('cannot load media of unsupported type', urls[url], url);
+            console.error('cannot load media of unsupported type', types_by_url[url], url);
           }
         }
       }
     }
     return loaded;
   },
-  loaded_urls_of_type: function(urls){
+  loaded_urls_of_type: function(types_by_url){
     var url, loaded = true;
-    for (url in urls){
+    for (url in types_by_url){
       if (! Loader.cached_urls[url]) {
         loaded = false;
         break;

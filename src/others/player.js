@@ -147,6 +147,7 @@ Player = function(evaluated) {
           }
         } else {
           Players.start_playing(this);
+          Audio.create_buffer_source();
           if (! this.__buffer_timer){
             var $this = this;
             this.__buffer_timer = setInterval(function(){$this.rebuffer();}, 2000);
