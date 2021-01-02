@@ -138,16 +138,15 @@ Player = function(evaluated) {
       if (this.__paused !== bool){
         this.__paused = bool;
         if (this.__paused) {
-          Players.stop_playing();
           // console.log('paused __set_moving(false)');
           this.__set_moving(false);
           if (this.__buffer_timer) {
             clearInterval(this.__buffer_timer);
             this.__buffer_timer = 0;
           }
+          Players.stop_playing();
         } else {
           Players.start_playing(this);
-          Audio.create_buffer_source();
           if (! this.__buffer_timer){
             var $this = this;
             this.__buffer_timer = setInterval(function(){$this.rebuffer();}, 2000);
@@ -210,7 +209,7 @@ Player = function(evaluated) {
         for (i = 0; i < z; i++){
           clip = selection[i];
           media = Mash.media(this.__mash, clip);
-          if (! media) {
+          if (!media) {
             console.error('no media for selected clip', clip);
           } else {
 
@@ -273,8 +272,8 @@ Player = function(evaluated) {
       var new_time = TimeRange.fromSomething(something);
       new_time = this.__limit_time(new_time);
       if (! this.__time.isEqualToTime(new_time)) {
-        // console.log('time= __redraw_moving', this.__time.description, new_time.description);
-        this.__redraw_moving(new_time);
+        // console.log('time= __changed_mash_or_time', this.__time.description, new_time.description);
+        this.__changed_mash_or_time(new_time);
       }
     }
   }); // time
@@ -398,7 +397,7 @@ Player = function(evaluated) {
           action.value = Util.ob_property(target, prop);
           //console.warn('reusing action', action.value);
           action._redo();
-          this.__redraw_moving();
+          this.__changed_mash_or_time();
         } else {
           var target_copy = (is_effect ? this.__pristine_effect : this.__pristine_clip);
           var undo_func = function() { this.set_property(this.orig_value); };
@@ -584,8 +583,8 @@ Player = function(evaluated) {
       // console.log('redoing', this.__action_stack[this.__action_index]);
       this.__action_stack[this.__action_index].redo();
       this.did(removed_count);
-      // console.log('redo __redraw_moving');
-      this.__redraw_moving();
+      // console.log('redo __changed_mash_or_time');
+      this.__changed_mash_or_time();
     }
   };
   pt.redraw = function() {
@@ -725,8 +724,8 @@ Player = function(evaluated) {
       this.__action_stack[this.__action_index].undo();
       this.__action_index --;
       this.did();
-      // console.log('undo __redraw_moving');
-      this.__redraw_moving();
+      // console.log('undo __changed_mash_or_time');
+      this.__changed_mash_or_time();
     }
   };
   pt.uuid = function() {
@@ -1388,7 +1387,10 @@ Player = function(evaluated) {
         // loop back to start or pause
         if (! this.__loop) {
           this.paused = true;
-        } else this.frame = 0;
+        } else {
+          this.frame = 0;
+          this.paused = false;
+        }
       } else {
         if (! now.isEqualToTime(this.__time_drawn)) {
           this.__time.setToTime(now);
@@ -1463,18 +1465,11 @@ Player = function(evaluated) {
     module_properties.mm_dimensions = module_properties.mm_width + 'x' + module_properties.mm_height; // output height
     return module_properties;
   };
-  pt.__redraw_moving = function(new_time){
-    var moving = this.__moving;
-    if (moving) {
-      // console.log('__redraw_moving __set_moving(false)');
-      this.__set_moving(false);
-    }
+  pt.__changed_mash_or_time = function(new_time){
+    // console.log('__changed_mash_or_time', new_time);
     if (new_time) this.__time.setToTime(new_time);
+    this.paused = true; // make sure we are not playing
     this.redraw();
-    if (moving) {
-      // console.log('__redraw_moving __set_moving(true)');
-      this.__set_moving(true);
-    }
   };
   pt.__set_moving = function(tf) {
     if (this.__moving !== tf) {
@@ -1484,12 +1479,10 @@ Player = function(evaluated) {
       if (this.__moving) {
         var $this = this;
         this.__load_timer = setInterval(function() {$this.__load_timed();}, 500 / this.__fps);
-        Audio.start(); // start up the sound buffer
-        Audio.sync(this.__time.seconds); // sync our current time, rather than displayed
+        Audio.start(this.__time.seconds); // start up the sound buffer with our current time, rather than displayed
         this.rebuffer(); // get sounds bufferring now, rather than next timer execution
       } else {
         Audio.stop();
-        Audio.destroy_sources();
         clearInterval(this.__load_timer);
         this.__load_timer = 0;
       }

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Debug :: Example :: Movie Masher</title>
+    <script src="../node_modules/opentype.js/dist/opentype.js"></script>
+    <script src="../node_modules/scriptjs/dist/script.js"></script>
+    <script src="../node_modules/tiny-inflate/index.js"></script>
+    <script src="../dist/moviemasher.js"></script>
+    <script src="app.js"></script>
+    <style>canvas, textarea { width: 320px; height: 240px; }</style>
+  </head>
+  <body onload='mm_load()'>
+    <canvas id='mm-canvas'></canvas>
+    <textarea id='mm-textarea'></textarea>
+    <div>
+      <input type="range" step="0.001" value="0" min="0" max="1" oninput="mm_player.position=this.value" />
+    <div>
+      <button onclick="add_media('title')">Add Title</button>
+      <button onclick="add_media('cable')">Add Cable</button>
+      <button onclick="add_media('frog')">Add Frog</button>
+      <button onclick="add_media('globe')">Add Globe</button>
+    </div>
+  </body>
+</html>

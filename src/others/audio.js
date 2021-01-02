@@ -58,6 +58,12 @@ Audio = {
     Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
     Audio.__buffer_source.connect(context.destination);
   },
+  destroy_buffer_source: function() {
+    if (Audio.__buffer_source) {
+      Audio.__buffer_source.disconnect(Audio.get_ctx().destination);
+      Audio.__buffer_source = null;
+    }
+  },
   destroy_sources: function(except_clips){
     var new_sources = [];
     var source, i, z = Audio.sources.length;
@@ -123,17 +129,18 @@ Audio = {
     }
     return url;
   },
-  start: function(){
-    // console.log('Audio.start');
-    Audio.__buffer_source.start(0);
+  start: function(now_seconds){//_drawn
+    Audio.__last_seconds = now_seconds;
+    Audio.__sync_seconds = Audio.get_ctx().currentTime;
+    Audio.__playing_start();
+
   },
   stop: function(){
     // console.log('Audio.stop');
+    Audio.__playing_stop();
     Audio.destroy_sources();
-    if (Audio.__buffer_source) {
-      Audio.__buffer_source.disconnect(Audio.get_ctx().destination);
-      Audio.__buffer_source = null;
-    }
+    Audio.__last_seconds = 0;
+    Audio.__sync_seconds = 0;
   },
   source_for_clip: function(clip){
     return Util.array_find(Audio.sources, {clip: clip}, 'clip');
@@ -159,20 +166,30 @@ Audio = {
     }
     return source;
   },
-  sync: function(now_seconds){//_drawn
-    Audio.__last_seconds = now_seconds;
-    Audio.__sync_seconds = Audio.get_ctx().currentTime;
-    //console.log(Audio.time());
-  },
   time: function(){
     return Audio.__last_seconds + (Audio.get_ctx().currentTime - Audio.__sync_seconds);
   },
   zero_seconds: function() {
     return Audio.__sync_seconds - Audio.__last_seconds;
   },
+  __playing_start: function() {
+    if (Audio.__playing) return;
+
+    Audio.__playing = true;
+    // console.log('Audio.start');
+    if (Audio.__buffer_source) Audio.__buffer_source.start(0);
+
+  },
+  __playing_stop: function() {
+    if (!Audio.__playing) return;
+
+    Audio.__playing = false;
+    if (Audio.__buffer_source) Audio.__buffer_source.stop();
+  },
   sources: [],
   ctx: null,
   __last_seconds: 0,
   __sync_seconds: 0,
+  __playing: false,
 };
 MovieMasher.Audio = Audio;

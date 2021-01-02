@@ -14,11 +14,14 @@ Players = {
   start_playing: function(instance){
     Players.stop_playing();
     Players.current = instance;
+    Audio.create_buffer_source();
   },
   stop_playing: function(){
     if (Players.current) {
       Players.current.paused = true;
       Players.current = null;
+      Audio.stop();
+      Audio.destroy_buffer_source();
     }
   },
   instances: [],

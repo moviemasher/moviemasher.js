@@ -2,7 +2,7 @@
 version <future>:
 - freeze frame
 
-version 4.0.24:
+version 4.0.25:
   - fix audio buffer source security issue in safari
 
 version 4.0.23:

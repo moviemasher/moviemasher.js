@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/moviemasher.js",
   "description": "JavaScript library for realtime, browser-based video and audio editing",
-  "version": "4.0.24",
+  "version": "4.0.25",
   "keywords": [
     "video editor",
     "audio editor"

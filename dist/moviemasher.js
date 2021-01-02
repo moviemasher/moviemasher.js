@@ -1,5 +1,5 @@
-/*! moviemasher.js - v4.0.24 - 2020-12-31
-* Copyright (c) 2020 Movie Masher; Licensed  */
+/*! moviemasher.js - v4.0.25 - 2021-01-02
+* Copyright (c) 2021 Movie Masher; Licensed  */
 /*global module:true,define:true*/
 (function (name, context, definition) { 
 'use strict';
@@ -217,6 +217,12 @@ Audio = {
     Audio.__buffer_source.buffer = context.createBuffer(2, 44100, 44100);
     Audio.__buffer_source.connect(context.destination);
   },
+  destroy_buffer_source: function() {
+    if (Audio.__buffer_source) {
+      Audio.__buffer_source.disconnect(Audio.get_ctx().destination);
+      Audio.__buffer_source = null;
+    }
+  },
   destroy_sources: function(except_clips){
     var new_sources = [];
     var source, i, z = Audio.sources.length;
@@ -282,17 +288,18 @@ Audio = {
     }
     return url;
   },
-  start: function(){
-    // console.log('Audio.start');
-    Audio.__buffer_source.start(0);
+  start: function(now_seconds){//_drawn
+    Audio.__last_seconds = now_seconds;
+    Audio.__sync_seconds = Audio.get_ctx().currentTime;
+    Audio.__playing_start();
+
   },
   stop: function(){
     // console.log('Audio.stop');
+    Audio.__playing_stop();
     Audio.destroy_sources();
-    if (Audio.__buffer_source) {
-      Audio.__buffer_source.disconnect(Audio.get_ctx().destination);
-      Audio.__buffer_source = null;
-    }
+    Audio.__last_seconds = 0;
+    Audio.__sync_seconds = 0;
   },
   source_for_clip: function(clip){
     return Util.array_find(Audio.sources, {clip: clip}, 'clip');
@@ -318,21 +325,31 @@ Audio = {
     }
     return source;
   },
-  sync: function(now_seconds){//_drawn
-    Audio.__last_seconds = now_seconds;
-    Audio.__sync_seconds = Audio.get_ctx().currentTime;
-    //console.log(Audio.time());
-  },
   time: function(){
     return Audio.__last_seconds + (Audio.get_ctx().currentTime - Audio.__sync_seconds);
   },
   zero_seconds: function() {
     return Audio.__sync_seconds - Audio.__last_seconds;
   },
+  __playing_start: function() {
+    if (Audio.__playing) return;
+
+    Audio.__playing = true;
+    // console.log('Audio.start');
+    if (Audio.__buffer_source) Audio.__buffer_source.start(0);
+
+  },
+  __playing_stop: function() {
+    if (!Audio.__playing) return;
+
+    Audio.__playing = false;
+    if (Audio.__buffer_source) Audio.__buffer_source.stop();
+  },
   sources: [],
   ctx: null,
   __last_seconds: 0,
   __sync_seconds: 0,
+  __playing: false,
 };
 MovieMasher.Audio = Audio;
 
@@ -1568,16 +1585,15 @@ Player = function(evaluated) {
       if (this.__paused !== bool){
         this.__paused = bool;
         if (this.__paused) {
-          Players.stop_playing();
           // console.log('paused __set_moving(false)');
           this.__set_moving(false);
           if (this.__buffer_timer) {
             clearInterval(this.__buffer_timer);
             this.__buffer_timer = 0;
           }
+          Players.stop_playing();
         } else {
           Players.start_playing(this);
-          Audio.create_buffer_source();
           if (! this.__buffer_timer){
             var $this = this;
             this.__buffer_timer = setInterval(function(){$this.rebuffer();}, 2000);
@@ -1640,7 +1656,7 @@ Player = function(evaluated) {
         for (i = 0; i < z; i++){
           clip = selection[i];
           media = Mash.media(this.__mash, clip);
-          if (! media) {
+          if (!media) {
             console.error('no media for selected clip', clip);
           } else {
 
@@ -1703,8 +1719,8 @@ Player = function(evaluated) {
       var new_time = TimeRange.fromSomething(something);
       new_time = this.__limit_time(new_time);
       if (! this.__time.isEqualToTime(new_time)) {
-        // console.log('time= __redraw_moving', this.__time.description, new_time.description);
-        this.__redraw_moving(new_time);
+        // console.log('time= __changed_mash_or_time', this.__time.description, new_time.description);
+        this.__changed_mash_or_time(new_time);
       }
     }
   }); // time
@@ -1828,7 +1844,7 @@ Player = function(evaluated) {
           action.value = Util.ob_property(target, prop);
           //console.warn('reusing action', action.value);
           action._redo();
-          this.__redraw_moving();
+          this.__changed_mash_or_time();
         } else {
           var target_copy = (is_effect ? this.__pristine_effect : this.__pristine_clip);
           var undo_func = function() { this.set_property(this.orig_value); };
@@ -2014,8 +2030,8 @@ Player = function(evaluated) {
       // console.log('redoing', this.__action_stack[this.__action_index]);
       this.__action_stack[this.__action_index].redo();
       this.did(removed_count);
-      // console.log('redo __redraw_moving');
-      this.__redraw_moving();
+      // console.log('redo __changed_mash_or_time');
+      this.__changed_mash_or_time();
     }
   };
   pt.redraw = function() {
@@ -2155,8 +2171,8 @@ Player = function(evaluated) {
       this.__action_stack[this.__action_index].undo();
       this.__action_index --;
       this.did();
-      // console.log('undo __redraw_moving');
-      this.__redraw_moving();
+      // console.log('undo __changed_mash_or_time');
+      this.__changed_mash_or_time();
     }
   };
   pt.uuid = function() {
@@ -2818,7 +2834,10 @@ Player = function(evaluated) {
         // loop back to start or pause
         if (! this.__loop) {
           this.paused = true;
-        } else this.frame = 0;
+        } else {
+          this.frame = 0;
+          this.paused = false;
+        }
       } else {
         if (! now.isEqualToTime(this.__time_drawn)) {
           this.__time.setToTime(now);
@@ -2893,18 +2912,11 @@ Player = function(evaluated) {
     module_properties.mm_dimensions = module_properties.mm_width + 'x' + module_properties.mm_height; // output height
     return module_properties;
   };
-  pt.__redraw_moving = function(new_time){
-    var moving = this.__moving;
-    if (moving) {
-      // console.log('__redraw_moving __set_moving(false)');
-      this.__set_moving(false);
-    }
+  pt.__changed_mash_or_time = function(new_time){
+    // console.log('__changed_mash_or_time', new_time);
     if (new_time) this.__time.setToTime(new_time);
+    this.paused = true; // make sure we are not playing
     this.redraw();
-    if (moving) {
-      // console.log('__redraw_moving __set_moving(true)');
-      this.__set_moving(true);
-    }
   };
   pt.__set_moving = function(tf) {
     if (this.__moving !== tf) {
@@ -2914,12 +2926,10 @@ Player = function(evaluated) {
       if (this.__moving) {
         var $this = this;
         this.__load_timer = setInterval(function() {$this.__load_timed();}, 500 / this.__fps);
-        Audio.start(); // start up the sound buffer
-        Audio.sync(this.__time.seconds); // sync our current time, rather than displayed
+        Audio.start(this.__time.seconds); // start up the sound buffer with our current time, rather than displayed
         this.rebuffer(); // get sounds bufferring now, rather than next timer execution
       } else {
         Audio.stop();
-        Audio.destroy_sources();
         clearInterval(this.__load_timer);
         this.__load_timer = 0;
       }
@@ -2969,11 +2979,14 @@ Players = {
   start_playing: function(instance){
     Players.stop_playing();
     Players.current = instance;
+    Audio.create_buffer_source();
   },
   stop_playing: function(){
     if (Players.current) {
       Players.current.paused = true;
       Players.current = null;
+      Audio.stop();
+      Audio.destroy_buffer_source();
     }
   },
   instances: [],
