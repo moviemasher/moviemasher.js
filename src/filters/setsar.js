@@ -1,4 +1,7 @@
-/*global MovieMasher:true*/
-'use strict';
 
-MovieMasher.Filter.register('setsar', {});
+import Filter from "../others/filter"
+
+
+const SetSar = {}
+Filter.register('setsar', SetSar);
+export default SetSar

@@ -1,11 +1,15 @@
-Action = function(player, redo_func, undo_func, destroy_func){
+
+import { copy_array } from "./util";
+
+
+const Action = function(player, redo_func, undo_func, destroy_func){
   this.player = player;
   this._redo = redo_func;
   this._undo = undo_func;
   this._destroy = destroy_func;
-  this.undo_selected_clips = this.redo_selected_clips = Util.copy_array(player.selectedClips);
+  this.undo_selected_clips = this.redo_selected_clips = copy_array(player.selectedClips);
   // console.log('Action initializer', this.redo_selected_clips);
-  this.undo_selected_effects = this.redo_selected_effects = Util.copy_array(player.selectedEffects);
+  this.undo_selected_effects = this.redo_selected_effects = copy_array(player.selectedEffects);
   this.redo_add_objects = [];
   this.undo_delete_objects = [];
   this.undo_add_objects = [];
@@ -52,4 +56,6 @@ Action = function(player, redo_func, undo_func, destroy_func){
   };
 
 })(Action.prototype);
-MovieMasher.Action = Action;
+
+
+export default Action

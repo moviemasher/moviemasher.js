@@ -1,7 +1,6 @@
-/*global MovieMasher:true*/
-'use strict';
+import Filter from "../others/filter"
 
-MovieMasher.Filter.register('convolution', {
+const Convolution = {
  render: function(contexts, scope, evaluated) {
     var __parse_options = function(evaluated){
       var result = { bias: {}, rdiv: {}, matrix: {} };
@@ -28,7 +27,7 @@ MovieMasher.Filter.register('convolution', {
       var pixel, rgb_matrix, bias, matrix, rdiv, sum, y, i, z, channel;
       z = width * height;
       for (pixel = 0; pixel < z; pixel++){
-        rgb_matrix = MovieMasher.Filter.rgb_matrix_from_pixel(pixel, in_data, width, height);
+        rgb_matrix = Filter.rgb_matrix_from_pixel(pixel, in_data, width, height);
         for (i = 0; i < 4; i++){
           channel = rgbas[i];
           rdiv = options.rdiv[channel];
@@ -53,4 +52,6 @@ MovieMasher.Filter.register('convolution', {
     drawing.context.putImageData(output, 0, 0);
     return contexts;
   }
-});
+}
+Filter.register('convolution', Convolution);
+export default Convolution

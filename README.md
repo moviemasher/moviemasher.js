@@ -1,10 +1,10 @@
-[![Image](https://github.com/moviemasher/angular-moviemasher/raw/master/README/logo-120x60.png "MovieMasher.com")](http://moviemasher.com)
+[![Image](https://github.com/moviemasher/angular-moviemasher/raw/master/README/logo-120x60.png "MovieMasher.com")](https://moviemasher.com)
 **moviemasher.js | [angular-moviemasher](https://github.com/moviemasher/angular-moviemasher "sits between moviemasher.js and moviemasher.rb, providing an editing GUI and simple CMS middleware layer") | [moviemasher.rb](https://github.com/moviemasher/moviemasher.rb "sits behind angular-moviemasher, providing processor intensive video transcoding services through a simple API")**
 
 *JavaScript library for realtime, browser-based video and audio editing*
-# moviemasher.js
+# moviemasher.js (4.0.26)
 
-Use moviemasher.js to edit and display mashups of video, audio and images within a canvas element. Its player works like the native HTML5 video player, but adds support for multitrack compositing, transitions and titling using your custom fonts.
+Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for multitrack compositing, transitions and titling using your custom fonts.
 
 - **visual composition** with transformations
 - **audio mixing** utilizing WebAudio
@@ -15,7 +15,7 @@ Use moviemasher.js to edit and display mashups of video, audio and images within
 
 Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a standard JavaScript Object that describes a collection of media and how to arrange it over time.
 
-- **Documentation:** [MovieMasher.com](http://moviemasher.com/docs/index.html)
+- **Documentation:** [MovieMasher.com](https://moviemasher.com/docs/index.html)
 
 A player binds to its mash object directly, without copying or adding any methods. It may add default objects, arrays and scalar values though, for faster runtime parsing. Changes you make to the mash are reflected in the player the next time redraw() is called. Or as an alternative to direct data manipulation, you can use the player's add(), change() and remove() methods. When using these you can also call undo() and redo() to provide a complete edit history.
 
@@ -60,7 +60,7 @@ mm_player.mash = {
 ##### Directly
 
 [Download the latest ZIP](https://github.com/moviemasher/moviemasher.js/archive/master.zip) and grab the compiled files in the `dist`
-folder. An example application is `app` and if you don't have the required modules installed they are in `node_modules`.
+folder. An example application is in the `app` directory and if you don't have the required modules installed they are in `node_modules`.
 
 ##### Using npm
 - `npm install --save @moviemasher/moviemasher.js`
@@ -72,18 +72,17 @@ Due to the security mechanisms used, this project can only be viewed in a web br
 - execute `docker-compose down -v` to terminate apache web server
 
 ### Related Projects
-Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if editing or encoding features are all that's needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content management functions.
+Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if only editing or encoding features are needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content management functions.
 
-### Included Requirements
+### Included Dependencies
 - script.js
 - opentype.js
-- tiny-inflate
 
 ### User Feedback
 If any problems arise while utilizing this repository, a [GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed. Please include the mash description that's causing problems and any relevant console entries. Please post your issue ticket in the appropriate repository and refrain from cross posting - all projects are monitored with equal zeal.
 
 ### Contributing
-Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through [MovieMasher.com](http://moviemasher.com) to discuss your ideas, or donate to the project.
+Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through [MovieMasher.com](https://moviemasher.com) to discuss your ideas, or donate to the project.
 
 #### Developer Setup
 [Docker](http://docker.com) is required for working on the project itself. Once installed and running, `cd` into the *config/docker/node* directory and:

@@ -1,4 +1,7 @@
-Players = {
+
+import Audio from "./audio"
+
+const Players = {
   draw_delayed: function(){
     // called when assets are cached
     if (! Players.delayed_timer) {
@@ -28,4 +31,5 @@ Players = {
   current: null,
   delayed_timer: 0,
 };
-MovieMasher.Players = Players;
+
+export default Players

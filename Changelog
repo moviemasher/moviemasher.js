@@ -2,6 +2,17 @@
 version <future>:
 - freeze frame
 
+version 4.0.26:
+  - switch to rollup bundler
+  - provide CommonJS module (CJS)
+  - provide Universal module (UMD)
+  - provide ES module (ESM)
+  - pack default font into all modules
+  - automatically register standard filters
+  - modernize codebase
+  - add jest tests
+  - add documentation
+
 version 4.0.25:
   - fix audio buffer source security issue in safari
 

@@ -1,7 +1,7 @@
-/*global MovieMasher:true*/
-'use strict';
 
-MovieMasher.Filter.register('crop', {
+import Filter from "../others/filter"
+
+const Crop = {
   render: function(contexts, scope, evaluated, filter_config){
     var x, y, in_ctx, out_ctx, out_width, in_width, out_height, in_height;
     out_width = evaluated.w || evaluated.out_w;
@@ -18,7 +18,7 @@ MovieMasher.Filter.register('crop', {
       else {
         if (-1 === out_width) out_width = in_width * (out_height / in_height);
         if (-1 === out_height) out_height = in_height * (out_width / in_width);
-        out_ctx = MovieMasher.Filter.create_drawing(out_width, out_height, MovieMasher.Filter.label(filter_config) + ' ' + out_width + 'x' + out_height + ' ' + x + ',' + y, in_ctx.container);
+        out_ctx = Filter.create_drawing(out_width, out_height, Filter.label(filter_config) + ' ' + out_width + 'x' + out_height + ' ' + x + ',' + y, in_ctx.container);
         in_ctx.drawings.push(out_ctx);
         out_ctx.context.drawImage(in_ctx.canvas, x, y, out_width, out_height, 0, 0, out_width, out_height);
       }
@@ -33,4 +33,6 @@ MovieMasher.Filter.register('crop', {
     if (! scope.y) scope.y = '((in_h - out_h) / 2)';
     return scope;
   }
-});
+}
+Filter.register('crop', Crop);
+export default Crop

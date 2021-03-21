@@ -1,18 +1,264 @@
-Player = function(evaluated) {
-  if (! Util.isob(evaluated)) evaluated = {};
+import { v4 as uuid } from 'uuid'
+
+import Action from "./action"
+import Audio from "./audio"
+import Cache from "./cache"
+import Constant from "./constant"
+import Filter from "./filter"
+import Loader from "./loader"
+import Mash from "./mash"
+import Option from "./option"
+import Players from "./players"
+import TimeRange from "../time_range/time_range"
+import Time from "../time/time"
+
+import { 
+  copy_ob, copy_keys_recursize, sort_by_frame, array_delete, 
+  isarray, isnt, isob, isempty, copy_key_valid, isstring,
+  array_find,
+} from "./util"
+
+
+const array_delete_ref = (array, value, key) => {
+  var index = -1
+  if (isarray(array)) {
+    const ob = array_find(array, value, key)
+    if (ob) {
+      index = array.indexOf(ob)
+      if (-1 < index) array.splice(index, 1)
+    }
+  }
+  return index
+}
+
+const keys_found_equal = (hash1, hash2) => {
+  var key, match = true;
+  for (key in hash1){
+    match = (hash1[key] === hash2[key]);
+    if (! match) break;
+  }
+  return match;
+}
+
+const index_after_removal = (index, items, container) => {
+  var found, i, z
+  const container_indexes = []
+  z = items.length
+  for (i = 0; i < z; i++) {
+    const container_index = container.indexOf(items[i])
+    container_indexes.push(container_index)
+    if ((-1 < container_index) && (index > container_index)) index--
+  }
+  for (i = 0; i < z; i++) {
+    found = ((index + i) !== container_indexes[i])
+    if (found) break
+  }
+  if (! found) index = -2
+  return index
+}
+
+const copy_ob_scalars = (ob1, ob2, dont_overwrite) => {
+  if (! isnt(ob1)) {
+    if (isnt(ob2)) ob2 = {}
+    for (var key in ob1) {
+      if (copy_key_valid(key)) {
+        if (! isob(ob1[key])) {
+          if ((! dont_overwrite) || isnt(ob2[key])) {
+            ob2[key] = ob1[key]
+          }
+        }
+      }
+    }
+  }
+  return ob2
+}
+const ob_property = (ob, prop) => {
+  var i, z, val = null;
+  if (isob(ob) && (! isnt(prop)) && prop.length) {
+    prop = prop.split('.');
+    z = prop.length;
+    for (i = 0; i < z; i++){
+      ob = ob[prop[i]];
+      if (isnt(ob)){
+        val = null;
+        break;
+      }
+      val = ob;
+    }
+  }
+  return val;
+}
+
+const set_ob_property = (ob, prop, val) => {
+  var i, z;
+  if (isob(ob) && (! isnt(prop)) && prop.length) {
+    prop = prop.split('.');
+    z = prop.length - 1;
+    for (i = 0; i < z; i++){
+      ob = ob[prop[i]];
+      if (! isob(ob)){
+        ob = null;
+        break;
+      }
+    }
+    if (ob) ob[prop[i]] = val;
+  }
+}
+
+const evaluate_scope = (scope, filter_config) => {
+  var eval_key, filter, conditional_in, condition, test_bool, parameter, conditional, parameter_name, parameter_value, parameters_array, j, y, i, z, evaluated = {};
+  filter = Filter.load(filter_config.id);
+  if (filter) {
+    scope = copy_ob(scope);
+    parameters_array = filter_config.parameters;
+    if (! parameters_array) parameters_array = filter.parameters;
+    if (parameters_array) {
+      z = parameters_array.length;
+      for (i = 0; i < z; i++){
+        parameter = parameters_array[i];
+        parameter_name = parameter.name;
+        if (parameter_name){
+          parameter_value = parameter.value;
+          if (isarray(parameter_value)){
+            test_bool = false;
+            y = parameter_value.length;
+            for (j = 0; j < y; j++){
+              conditional = parameter_value[j];
+              condition = conditional.condition;
+              // not strict equality, since we may have strings and numbers
+              if (conditional.is) condition = condition + '==' + conditional.is;
+              else if (conditional.in) {
+                conditional_in = conditional.in;
+                if (isstring(conditional_in)) conditional_in = conditional_in.split(',');
+
+                condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
+              }
+              condition = condition.replace(' or ', ' || ');
+              condition = condition.replace(' and ', ' && ');
+              for (eval_key in scope) {
+                condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
+              }
+              try {
+                //console.log("Evaluating", condition)
+                test_bool = Function('return ' + condition)()
+              } catch (exception) {
+                console.error(exception.message, condition);
+              }
+              if (test_bool) {
+                parameter_value = conditional.value;
+                break;
+              } // else console.warn(parameter_name, condition, parameter_value);
+            }
+            if (! test_bool) console.error('no conditions were true', parameter_value);
+          }
+          if (isstring(parameter_value)) { // could well be a number by now
+            for (eval_key in scope) {
+              parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'arguments[0].' + eval_key);
+            }
+          }
+          try {
+            //console.log("Evaluating", parameter_value)
+            evaluated[parameter_name] = Function('return ' + parameter_value)(scope)
+          } catch (exception) {
+            evaluated[parameter_name] = parameter_value;
+          }
+          // sort of like lookahead, but they have to be in order!
+          scope[parameter_name] = evaluated[parameter_name];
+        }
+      }
+    } else console.error('no parameters_array found', filter_config);
+  } else console.error('filter not found', filter_config.id);
+  return evaluated;
+};
+
+
+const length_of_clips = (clips) => {
+  var clip, frames = 0;
+  if (isarray(clips) && clips.length) {
+    clip = clips[clips.length -1];
+    frames = clip.frame + clip.frames;
+  }
+  return frames;
+}
+
+const loaded_range = (mash, range, audio_on) => {
+  var urls = Mash.urls_for_clips(mash, range_clips(mash, range, audio_on), range);
+  return Loader.loaded_urls_of_type(urls);
+}
+
+const init_mash = (mash) => {
+  copy_ob_scalars(Option.mash.default, mash, true);
+  mash.quantize = (mash.quantize ? parseInt(mash.quantize) : 1);
+  if (isnt(mash.id)) mash.id = uuid();
+  var media_references, object, clip, tracks, track, key, i, z, j, y, x, k;
+  media_references = {};
+  if (! isarray(mash.media)) mash.media = [];
+  x = Constant.track_types.length;
+  for (k = 0; k < x; k++){
+    key = Constant.track_types[k];
+    if (! isarray(mash[key])) mash[key] = [];
+    tracks = mash[key];
+    z = tracks.length;
+    if (z) {
+      for (i = 0; i < z; i++){
+        track = Mash.init_track(tracks[i], i);
+        y = track.clips.length;
+        if (y){
+          for (j = 0; j < y; j++){
+            clip = track.clips[j];
+            object = Mash.media(mash, clip);
+            Mash.init_clip(mash, clip, object, i);
+          }
+          Mash.media_count_for_clips(mash, track.clips, media_references);
+        }
+      }
+    } else tracks.push(Mash.init_track(key, 0));
+  }
+  for(key in media_references){
+    media_references[key] = media_references[key].count;
+  }
+  return media_references;
+}
+
+const range_clips = (mash, range, include_audio) => {
+  range = range.copy();
+  var clip_range, key, tracks, track, clips = [], clip, i, z, j, y, k, x;
+  clip_range = new TimeRange(0, mash.quantize, 1);
+  x = Constant.track_types.length;
+  for (k = 0; k < x; k++){
+    key = Constant.track_types[k];
+    if ((key === Constant.audio) && (! include_audio)) continue;
+    tracks = mash[key];
+    z = tracks.length;
+    for (i = 0; i < z; i++) {
+      track = tracks[i];
+      y = track.clips.length;
+      for (j = 0; j < y; j++) {
+        clip = track.clips[j];
+        clip_range.frame = clip.frame;
+        clip_range.frames = clip.frames;
+        if (clip_range.intersection(range)) clips.push(clip);
+      }
+    }
+  }
+  return clips;
+}
+
+const Player = function(evaluated) {
+  if (! isob(evaluated)) evaluated = {};
   var value, key, new_mash = {};
-  Util.copy_ob_scalars(Option.player, evaluated);
+  copy_ob_scalars(Option.player, evaluated);
   this.__drawing = {drawings: []};
   this.__load_timer = null;
   this.__moving = false;
   this.__muted = false;
   this.__paused = true;
   this.__stalling = false;
-  this.__minbuffertime = new TimeRange(evaluated.minbuffertime, 1);
-  this.__unbuffertime = new TimeRange(evaluated.unbuffertime, 1);
-  this.__buffertime = new TimeRange(evaluated.buffertime, 1);
-  this.__time = new TimeRange(0, 1);
-  this.__time_drawn = new TimeRange(0, 1);
+  this.__minbuffertime = new Time(evaluated.minbuffertime, 1);
+  this.__unbuffertime = new Time(evaluated.unbuffertime, 1);
+  this.__buffertime = new Time(evaluated.buffertime, 1);
+  this.__time = new Time(0, 1);
+  this.__time_drawn = new Time(0, 1);
   for (key in evaluated){
     value = evaluated[key];
     switch(key){
@@ -40,7 +286,7 @@ Player = function(evaluated) {
   }); // autoplay
   dp(pt, "buffertime", {
     get: function() {return this.__buffertime.seconds;},
-    set: function(seconds) { this.__buffertime = TimeRange.fromSeconds(seconds, this.__fps); }
+    set: function(seconds) { this.__buffertime = Time.fromSeconds(seconds, this.__fps); }
   }); // buffertime
   dp(pt, "canvas_context", {
     get: function() { return this.__drawing.context; },
@@ -65,7 +311,7 @@ Player = function(evaluated) {
     get: function() { return this.__time.seconds; },
     set: function(seconds) {
       // console.log('currentTime=');
-      this.time = TimeRange.fromSeconds(seconds, this.__fps);
+      this.time = Time.fromSeconds(seconds, this.__fps);
     }
   }); // currentTime
   dp(pt, "duration", {
@@ -92,7 +338,7 @@ Player = function(evaluated) {
     set: function(num) {
       // called from ruler to change position
       // console.log('frame=', num);
-      this.time = new TimeRange(num, this.__fps);
+      this.time = new Time(num, this.__fps);
     }
   }); // frame
   dp(pt, "frames", {
@@ -112,7 +358,7 @@ Player = function(evaluated) {
       this.__action_stack = [];
       this.__selected_effects = [];
       this.__mash = obj || {};
-      this.__media_references = Mash.init_mash(this.__mash);
+      this.__media_references = init_mash(this.__mash);
       this.selectedClips = []; // so mash gets copied into __pristine_clip
       this.mash_length_changed();
       this.rebuffer();
@@ -122,13 +368,13 @@ Player = function(evaluated) {
   }); // mash
   dp(pt, "minbuffertime", {
     get: function() {return this.__minbuffertime.seconds;},
-    set: function(seconds) { this.__minbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
+    set: function(seconds) { this.__minbuffertime = Time.fromSeconds(seconds, this.__fps); }
   }); // minbuffertime
   dp(pt, "muted", {
     get: function() { return this.__muted;},
     set: function(bool) {
       this.__muted = bool;
-      if (this.__moving) this.__adjust_gain(Mash.range_clips(this.__mash, this.__time, true));
+      if (this.__moving) this.__adjust_gain(range_clips(this.__mash, TimeRange.fromTimes(this.__time), true));
     }
   }); // muted
   dp(pt, "paused", {
@@ -174,9 +420,9 @@ Player = function(evaluated) {
     set: function(per) {
       // called from player's slider
       // console.log('position set', per);
-      var time_range = new TimeRange(this.duration * per, 1);
-      time_range.scale(this.__fps);
-      this.time = time_range;
+      var time = new Time(this.duration * per, 1);
+      time.scale(this.__fps);
+      this.time = time;
     }
   }); // position
   dp(pt, "position_step", {
@@ -189,7 +435,7 @@ Player = function(evaluated) {
   }, set: function(item){
     // console.log('selectedClip=', item);
     var selected_clips = [];
-    if (Util.isob(item) && !Util.isempty(item)) {
+    if (isob(item) && !isempty(item)) {
       selected_clips.push(item);
     }
     this.selectedClips = selected_clips;
@@ -202,7 +448,7 @@ Player = function(evaluated) {
     set: function(selection) {
       // console.log('selectedClips=', selection);
       var key, media, clip, i, z, types;
-      if (! Util.isob(selection)) selection = [];
+      if (! isob(selection)) selection = [];
       if (selection.length){
         types = {};
         z = selection.length;
@@ -230,26 +476,26 @@ Player = function(evaluated) {
       }
       this.__selected_clips = selection;
       this.selectedEffects = false;
-      this.__pristine_clip = Util.copy_ob_scalars(this.selectedClipOrMash);
+      this.__pristine_clip = copy_ob_scalars(this.selectedClipOrMash);
       // console.log('__pristine_clip', this.__pristine_clip);
-      if (this.selectedClipOrMash.scaler) this.__pristine_clip.scaler = Util.copy_ob_scalars(this.selectedClipOrMash.scaler);
-      if (this.selectedClipOrMash.merger) this.__pristine_clip.merger = Util.copy_ob_scalars(this.selectedClipOrMash.merger);
+      if (this.selectedClipOrMash.scaler) this.__pristine_clip.scaler = copy_ob_scalars(this.selectedClipOrMash.scaler);
+      if (this.selectedClipOrMash.merger) this.__pristine_clip.merger = copy_ob_scalars(this.selectedClipOrMash.merger);
     },
   }); // selectedClips
   dp(pt, 'selectedEffect', { get: function(){
     return (this.__selected_effects.length === 1 ? this.__selected_effects[0] : null);
   }, set: function(item){
-    this.selectedEffects = (Util.isob(item) ? [item] : []);
+    this.selectedEffects = (isob(item) ? [item] : []);
   }}); // selectedEffect
   dp(pt, "selectedEffects", {
     get: function() { return this.__selected_effects; },
     set: function(selection) {
       var effect, i, z, media, effects, target;
-      if (! Util.isarray(selection)) selection = [];
+      if (! isarray(selection)) selection = [];
       if (selection.length && (this.__selected_clips.length < 2)){ // a clip or the mash
         target = this.selectedClip;
         effects = [];
-        if (target && Util.isarray(target.effects)) {
+        if (target && isarray(target.effects)) {
           z = selection.length;
           for (i = 0; i < z; i++){
             effect = selection[i];
@@ -260,7 +506,7 @@ Player = function(evaluated) {
         selection = effects;
       }
       this.__selected_effects = selection;
-      this.__pristine_effect = Util.copy_ob_scalars(this.selectedEffect);
+      this.__pristine_effect = copy_ob_scalars(this.selectedEffect);
     }
   }); // selectedEffects
   dp(pt, "stalling", {
@@ -269,23 +515,22 @@ Player = function(evaluated) {
   dp(pt, "time", {
     get: function() { return this.__time;},
     set: function(something) {
-      var new_time = TimeRange.fromSomething(something);
+      var new_time = Time.fromSomething(something);
       new_time = this.__limit_time(new_time);
-      if (! this.__time.isEqualToTime(new_time)) {
-        // console.log('time= __changed_mash_or_time', this.__time.description, new_time.description);
+      if (! this.__time.equalsTime(new_time)) {
         this.__changed_mash_or_time(new_time);
       }
     }
   }); // time
   dp(pt, "unbuffertime", {
     get: function() {return this.__unbuffertime.seconds;},
-    set: function(seconds) { this.__unbuffertime = TimeRange.fromSeconds(seconds, this.__fps); }
+    set: function(seconds) { this.__unbuffertime = Time.fromSeconds(seconds, this.__fps); }
   }); // unbuffertime
   dp(pt, "volume", {
     get: function() { return this.__gain;},
     set: function(per) {
       this.__gain = per;
-      if (this.__moving) this.__adjust_gain(Mash.range_clips(this.__mash, this.__time, true));
+      if (this.__moving) this.__adjust_gain(range_clips(this.__mash, TimeRange.fromTimes(this.__time), true));
     }
   }); // volume (gain)
   pt.add = function(media, type, frame_or_index, track_index){
@@ -314,14 +559,14 @@ Player = function(evaluated) {
   };
   pt.add_media = function(array){
     var media_id, media, i, z;
-    if (! Util.isarray(array)) array = [array];
+    if (! isarray(array)) array = [array];
     z = array.length;
     for (i = 0; i < z; i++){
       media = array[i];
-      media_id = (Util.isob(media) ? media.id : media);
+      media_id = (isob(media) ? media.id : media);
       if (! this.__media_references[media_id]){
         this.__media_references[media_id] = 0;
-        if (! Util.array_find(this.__mash.media, media)) {
+        if (! array_find(this.__mash.media, media)) {
           this.__mash.media.push(media);
         }
       }
@@ -385,16 +630,16 @@ Player = function(evaluated) {
       target = (is_effect ? this.selectedEffect : this.selectedClipOrMash);
       if ( (!is_effect) && (!this.selectedClip)) {
         // the mash is selected
-        if (Util.isnt(target[prop])) target = null;
+        if (isnt(target[prop])) target = null;
       }
       if (target){
         if (
           (this.__action_index > -1) && // at least one action
           (this.__action_index === this.__action_stack.length - 1) && // current one is last one
-          (Util.keys_found_equal({id: id, target: target, property: prop}, this.__action_stack[this.__action_index]))
+          (keys_found_equal({id: id, target: target, property: prop}, this.__action_stack[this.__action_index]))
         ) { // so, reuse existing action
           action = this.__action_stack[this.__action_index];
-          action.value = Util.ob_property(target, prop);
+          action.value = ob_property(target, prop);
           //console.warn('reusing action', action.value);
           action._redo();
           this.__changed_mash_or_time();
@@ -421,21 +666,21 @@ Player = function(evaluated) {
               action.set_property = function(new_value){
                 new_value = Math.max(Option.mash.minframes, new_value);
                 if (this.max) new_value = Math.min(this.max, new_value);
-                Util.set_ob_property(this.target, this.property, new_value);
+                set_ob_property(this.target, this.property, new_value);
                 Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
                 this.player.mash_length_changed();
               };
               break;
             }
             case 'trim': {
-              action.orig_length = Util.ob_property(target, 'frames');
+              action.orig_length = ob_property(target, 'frames');
               action.max = Mash.max_trim_for_clip(target, media, this.__mash.quantize);
               action.set_property = function(new_value){
                 new_value = Math.max(0, new_value);
                 if (this.max) new_value = Math.min(this.max, new_value);
-                Util.set_ob_property(this.target, this.property, new_value);
+                set_ob_property(this.target, this.property, new_value);
                 new_value = this.orig_length - (new_value - this.orig_value);
-                Util.set_ob_property(this.target, 'frames', new_value);
+                set_ob_property(this.target, 'frames', new_value);
                 Mash.recalc_track(this.player.mash, Mash.track_for_clip(this.player.mash, this.target));
                 this.player.mash_length_changed();
               };
@@ -443,22 +688,22 @@ Player = function(evaluated) {
             }
             case Constant.gain: {
               action.set_property = function(new_value){
-                Util.set_ob_property(this.target, this.property, new_value);
+                set_ob_property(this.target, this.property, new_value);
                 Audio.gain_source(Audio.source_for_clip(this.target));
               };
               break;
             }
             default: {
               action.set_property = function(new_value){
-                Util.set_ob_property(this.target, this.property, new_value);
+                set_ob_property(this.target, this.property, new_value);
               };
             }
           }
           action.target = target;
           action.id = id;
           action.property = prop;
-          action.value = Util.ob_property(target, prop);
-          action.orig_value = Util.ob_property(target_copy, prop);
+          action.value = ob_property(target, prop);
+          action.orig_value = ob_property(target_copy, prop);
           if (action_is_id) {
             action.is_id = action_is_id;
             action.last_value = action.orig_value;
@@ -470,7 +715,6 @@ Player = function(evaluated) {
               if (Constant.font === this.is_id) {
                 this.set_property(new_value);
               } else this.target[this.is_id] = (is_undo ? target_copy[this.is_id] : Mash.clip_from_media(new_ob));
-              //if (! Mash.modules_reference_media(this.player.mash, this.last_value))
               this.player.remove_media(Mash.media_search(this.is_id, this.last_value, this.player.mash));
               this.last_value = new_value;
 
@@ -485,9 +729,11 @@ Player = function(evaluated) {
     this.change(prop, true);
   };
   pt.deleteable_urls = function(urls){
-    var url, unneeded_urls = {};
-    for (url in urls) {
-      if (! this.__needed_urls[url]) unneeded_urls[url] = true;
+    const unneeded_urls = []
+
+    for (var i = 0; i < urls.length; i++) {
+      const url = urls[i]
+      if (!this.__needed_urls[url]) unneeded_urls.push(url)
     }
     return unneeded_urls;
   }; // called by Loader
@@ -504,14 +750,14 @@ Player = function(evaluated) {
       tracks = this.__mash[key];
       z = tracks.length;
       for (i = 0; i < z; i++) {
-        mash_length = Math.max(mash_length, Mash.length_of_clips(tracks[i].clips));
+        mash_length = Math.max(mash_length, length_of_clips(tracks[i].clips));
       }
     }
     if (this.__mash_length !== mash_length){
       this.__mash_length = mash_length;
-      var time_range = new TimeRange(this.__mash_length, this.__mash.quantize);
-      time_range.scale(this.__fps, 'floor');
-      this.__mash_frames = time_range.frame;
+      var time = new Time(this.__mash_length, this.__mash.quantize);
+      time.scale(this.__fps, 'floor');
+      this.__mash_frames = time.frame;
       this.frame = Math.max(0, Math.min(this.__mash_frames - 1, this.__time.frame)); // move back if we need to
     }
   };
@@ -519,19 +765,19 @@ Player = function(evaluated) {
     return Mash.media(this.__mash, ob_or_id);
   };
   pt.move = function(ob_or_array, type, frame_or_index, track_index) {
-    if (! Util.isnt(ob_or_array, type)) {
-      if (! Util.isarray(ob_or_array)) ob_or_array = [ob_or_array];
-      if (Util.isob.apply(Util, ob_or_array)) {
+    if (! isnt(ob_or_array, type)) {
+      if (! isarray(ob_or_array)) ob_or_array = [ob_or_array];
+      if (isob.apply(Util, ob_or_array)) {
         if (! track_index) track_index = 0;
         if (! frame_or_index) frame_or_index = 0;
         var action;
         if (Constant.effect === type) {
-          frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
+          frame_or_index = index_after_removal(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
           if (-2 < frame_or_index) action = this.__action_effects_move(frame_or_index, ob_or_array, this.selectedClipOrMash.effects);
         } else if ((Constant.audio === type) || track_index) {
           action = this.__action_clips_move(type, track_index, frame_or_index, ob_or_array);
         } else {
-          frame_or_index = Util.index_after_removal(frame_or_index, ob_or_array, this.__mash[type][track_index].clips);
+          frame_or_index = index_after_removal(frame_or_index, ob_or_array, this.__mash[type][track_index].clips);
           if (-2 < frame_or_index) action = this.__action_video_move(track_index, frame_or_index, ob_or_array);
         }
         if (action) this.__action_add(action);
@@ -545,20 +791,21 @@ Player = function(evaluated) {
     this.paused = false;
   };
   pt.rebuffer = function(){
-    var delayed_draw, audio_on, range, media, clip, clips, i, z, needed_urls = {}, audio_clips = [];
+    var needed_urls = {}
     if (this.__mash) {
-      audio_on = this.__audio_is_on();
+      const audio_on = this.__audio_is_on();
       // time we want to buffer - just the current frame if paused, otherwise from it to it plus buffertime
-      range = (this.__paused ? this.__time.copyTime() : new TimeRange(this.__time.frame, this.__time.fps, this.__buffertime.frame));
+      const range = new TimeRange(this.__time.frame, this.__time.fps, this.__paused ? 1 : this.__buffertime.frame)
       // make sure range is within the mash range
       if (! range.intersection(new TimeRange(0, this.__mash.quantize, this.__mash_length))) range = null;
       if (range) {
-        clips = Mash.range_clips(this.__mash, range, audio_on);
+        const clips = range_clips(this.__mash, range, audio_on);
         needed_urls = Mash.urls_for_clips(this.__mash, clips, range, (audio_on ? Constant.both : Constant.video));
         Loader.load_urls_of_type(needed_urls);
         if (audio_on) {
-          z = clips.length;
-          for (i = 0; i < z; i++) {
+          var delayed_draw, media, clip
+          const audio_clips = [];
+          for (var i = 0; i < clips.length; i++) {
             clip = clips[i];
             media = Mash.media(this.__mash, clip);
             if (Mash.clip_has_audio(clip, media)) {
@@ -591,7 +838,7 @@ Player = function(evaluated) {
     if (this.__drawing.context) {
       var url_types, audio_on, clips, audio_buffered, video_buffered;
       audio_on = this.__audio_is_on();
-      clips = Mash.range_clips(this.__mash, this.__time, audio_on); // includes clips on audio tracks if audio_on
+      clips = range_clips(this.__mash, TimeRange.fromTimes(this.__time), audio_on); // includes clips on audio tracks if audio_on
       url_types = Mash.urls_for_clips_by_type(this.__mash, clips, this.__time);
       video_buffered = Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.video));
       audio_buffered = (audio_on ? Loader.loaded_urls_of_type(Mash.urls_of_type(url_types, Constant.audio)) : true);
@@ -600,22 +847,22 @@ Player = function(evaluated) {
         if (this.__moving) {
           // console.log('not buffered but moving', video_buffered, audio_buffered);
           this.__set_moving(false);
-        } else if ( (! this.__paused) && Mash.loaded_range(this.__mash, this.__time_drawn.copyTime(this.__buffertime.frame), audio_on)) {
+        } else if ( (!this.__paused) && loaded_range(this.__mash, new TimeRange(this.__time_drawn.frame, this.__time_drawn.fps, this.__buffertime.frame), audio_on)) {
           // console.log('all buffered but not moving');
           this.__set_moving(true);
         }
       }
       if (video_buffered) {
-        this.__time_drawn = this.__time.copyTime();
+        this.__time_drawn = this.__time.copy();
         this.__draw_request(clips);
       }
       else if (this.__paused) this.rebuffer(); // to reset the buffering
     }
   };
   pt.remove = function(ob_or_array, type, track_index){
-    if (! Util.isnt(ob_or_array, type)) {
-      if (! Util.isarray(ob_or_array)) ob_or_array = [ob_or_array];
-      if (Util.isob.apply(Util, ob_or_array)) {
+    if (! isnt(ob_or_array, type)) {
+      if (! isarray(ob_or_array)) ob_or_array = [ob_or_array];
+      if (isob.apply(null, ob_or_array)) {
         if (! track_index) track_index = 0;
         var action, objects;
         if (Constant.effect === type) {
@@ -641,15 +888,15 @@ Player = function(evaluated) {
   };
   pt.remove_media = function(array){
     var id, ob, i, z;
-    if (! Util.isarray(array)) array = [array];
+    if (! isarray(array)) array = [array];
     z = array.length;
     for (i = 0; i < z; i++){
       ob = array[i];
-      id = (Util.isob(ob) ? ob.id : ob);
+      id = (isob(ob) ? ob.id : ob);
       if (! this.__media_references[id]) console.warn('remove_media unreferenced media', id);
       else this.__media_references[id]--;
       if (! this.__media_references[id]) {
-        if (-1 === Util.array_delete_ref(this.__mash.media, ob)) {
+        if (-1 === array_delete_ref(this.__mash.media, ob)) {
           console.error("remove_media no mash media", id, this.__mash.media);
         }
         delete this.__media_references[id];
@@ -700,21 +947,21 @@ Player = function(evaluated) {
     return (-2 < (this.__selected_effects.indexOf(clip_or_effect) + this.__selected_clips.indexOf(clip_or_effect)));
   };
   pt.selectEffect = function(effect, toggle_selected){
-    if (Util.isob(effect)) return this.select(effect, toggle_selected);
+    if (isob(effect)) return this.select(effect, toggle_selected);
     else if (! toggle_selected) this.selectedEffect = effect;
   };
   pt.split = function(){
     var clip = this.selectedClip;
-    var at_time = this.__time.copyTime();
-    if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
+    var at_time = this.__time.copy();
+    if (isob(clip) && this.__canSplitAtTime(clip, at_time)) {
       var action = this.__action_split_clip(clip, at_time);
       this.__action_add(action);
     }
   };
   pt.freeze = function() {
     var clip = this.selectedClip;
-    var at_time = this.__time.copyTime();
-    if (Util.isob(clip) && this.__canSplitAtTime(clip, at_time)) {
+    var at_time = this.__time.copy();
+    if (isob(clip) && this.__canSplitAtTime(clip, at_time)) {
       var action = this.__action_freeze_clip(clip, at_time);
       this.__action_add(action);
     }
@@ -727,9 +974,6 @@ Player = function(evaluated) {
       // console.log('undo __changed_mash_or_time');
       this.__changed_mash_or_time();
     }
-  };
-  pt.uuid = function() {
-    return Util.uuid(); // so new mash IDs can be generated before mash itself
   };
   pt.__action_add = function(action){
     var i, z, removed;
@@ -745,14 +989,14 @@ Player = function(evaluated) {
     this.redo(z);
   };
   pt.__action_clips_move = function(type, track_index, frame, clips){
-    clips.sort(Util.sort_by_frame); // so they are all a block
+    clips.sort(sort_by_frame); // so they are all a block
     var action, orig, orig_track, track, clip, i, z = clips.length;
     track = this.__mash[type][track_index];
     orig_track = track;
     clip = clips[0];
     if (-1 === track.clips.indexOf(clip)) { // move from different track
       orig_track = Mash.track_for_clip(this.__mash, clip);
-      if (Util.isnt(orig_track)) {
+      if (isnt(orig_track)) {
         console.error('clip not found in tracks', clip);
         return false;
       }
@@ -784,7 +1028,7 @@ Player = function(evaluated) {
     }, function(){
       orig.sort(function(a, b){return a.index-b.index;});
       if (track !== orig_track) { // we added to track, so remove
-        for (i = 0; i < z; i++) Util.array_delete(track.clips, clips[i]);
+        for (i = 0; i < z; i++) array_delete(track.clips, clips[i]);
       }
       for (i = 0; i < z; i++) {
         clip = orig[i].clip; //clips[orig[i].i];
@@ -867,7 +1111,7 @@ Player = function(evaluated) {
     });
   };
   pt.__action_clips_remove = function(type, track_index, clips) {
-    clips.sort(Util.sort_by_frame); // so they are all a block
+    clips.sort(sort_by_frame); // so they are all a block
     var action, orig, track, clip, i, z = clips.length;
     track = this.__mash[type][track_index];
     clip = clips[0];
@@ -958,7 +1202,7 @@ Player = function(evaluated) {
       action = new Action(this, function(){
         effects.splice(index, 0, effect);
       }, function() {
-        Util.array_delete(effects, effect);
+        array_delete(effects, effect);
       });
     }
     return action;
@@ -967,8 +1211,8 @@ Player = function(evaluated) {
     console.warn('testing __action_freeze_clip');
     // THIS IS NOT YET WORKING!!
     var media = Mash.media(this.__mash, clip);
-    var new_clip = Util.copy_keys_recursize(clip);
-    var freeze_clip = Util.copy_keys_recursize(clip);
+    var new_clip = copy_keys_recursize(clip);
+    var freeze_clip = copy_keys_recursize(clip);
     var freeze_frames = 2 * this.__mash.quantize;
     at_time.scale(media.fps);
     freeze_clip.freeze = at_time.frame;
@@ -1002,7 +1246,7 @@ Player = function(evaluated) {
     var media = Mash.media(this.__mash, orig_clip);
     var track_clips = Mash.track_for_clip(this.__mash, orig_clip).clips;
     var index = 1 + track_clips.indexOf(orig_clip);
-    var new_clip = Util.copy_keys_recursize(orig_clip);
+    var new_clip = copy_keys_recursize(orig_clip);
     var orig_frame = orig_clip.frame;
     var new_frame = at_time.frame;
     var orig_frames = new_frame - orig_frame;
@@ -1044,7 +1288,7 @@ Player = function(evaluated) {
     }, function() {
       var target;
       target = this.player.mash[this.type][this.index].clips;
-      Util.array_delete(target, this.clip);
+      array_delete(target, this.clip);
       for (var i = 0; i < this.tracks; i++){
         this.player.__track_delete(this.type);
       }
@@ -1065,7 +1309,7 @@ Player = function(evaluated) {
       Mash.recalc_video_clips(this.player.mash, this.target);
       this.player.mash_length_changed();
     }, function() {
-      Util.array_delete(this.target, this.clip);
+      array_delete(this.target, this.clip);
       Mash.recalc_video_clips(this.player.mash, this.target);
       this.player.mash_length_changed();
     });
@@ -1089,15 +1333,16 @@ Player = function(evaluated) {
   pt.__audio_is_on = function(){
     return ((! this.__paused) && (!this.__muted) && this.__gain);
   };
-  pt.__canSplitAtTime = function(clip, now){
+  pt.__canSplitAtTime = function(clip, time){
     // true if now intersects clip time, but is not start or end frame
-    var clip_time = new TimeRange(clip.frame, this.__mash.quantize, clip.frames);
-    var can_split = clip_time.intersection(now);
+    const now = TimeRange.fromTimes(time)
+    var clip_range = new TimeRange(clip.frame, this.__mash.quantize, clip.frames);
+    var can_split = clip_range.intersection(now);
     if (can_split) {
-      now = now.copyTime();
-      now.scale(clip_time.fps);
-      can_split = (now.frame !== clip_time.frame);
-      if (can_split) can_split = (now.end !== clip_time.end);
+      now = now.copy();
+      now.scale(clip_range.fps);
+      can_split = (now.frame !== clip_range.frame);
+      if (can_split) can_split = (now.end !== clip_range.end);
     }
     return can_split;
   };
@@ -1128,7 +1373,7 @@ Player = function(evaluated) {
     switch(media.type){
       case Constant.image: {
         url = (media.url || media.source);
-        resource = Loader.cached_urls[url];
+        resource = Cache.get(url)
         if (resource) {
           swidth = resource.width;
           sheight = resource.height;
@@ -1139,17 +1384,17 @@ Player = function(evaluated) {
       }
       case 'frame':
       case Constant.video: {
-        copy_time = time.copyTime();
+        copy_time = time.copy();
         copy_time.scale(media.fps);
         copy_time.frames = 1;
         for (url in Mash.urls_for_video_clip(clip, media, copy_time, quantize)){
-          resource = Loader.cached_urls[url];
+          resource = Cache.get(url)
           if (resource) {
             swidth = resource.width;
             sheight = resource.height;
             raw_drawing = Filter.create_drawing(swidth, sheight, __label(swidth, sheight, media), drawing.container);
             raw_drawing.context.drawImage(resource,0,0,swidth,sheight,0,0,swidth,sheight);
-          } //else console.error('attempt to draw unloaded' + media.type, url);
+          } // else console.error('attempt to draw unloaded' + media.type, url);
           break;
         }
         break;
@@ -1167,7 +1412,6 @@ Player = function(evaluated) {
     return drawing;
   };
   pt.__draw_layer_clips = function(clips, time){
-    // console.log('__draw_layer_clips', clips.length, time.description);
     this.__delete_drawings(this.__drawing.drawings);
     var back_drawing, drawing, transition_indexes, transition_index, medias, clip, media, w, h, y, i, z = clips.length;
     //transition_drawings = [],
@@ -1257,95 +1501,29 @@ Player = function(evaluated) {
       if (! raw_drawing) console.error('scaler produced no drawing', scaler, layer_clip);
     }else console.error('no scaler found', layer_clip);
 
-    if (Util.isarray(layer_clip.effects) && layer_clip.effects.length) {
+    if (isarray(layer_clip.effects) && layer_clip.effects.length) {
       raw_drawing = this.__draw_effects([raw_drawing], layer_clip, time).shift();
     }
     return raw_drawing;
   };
   pt.__draw_module_filters = function(time, layer_clip, drawings, module, module_media) {
-    var __evaluate_scope = function(time, clip, scope, module, filter_config){
-      var eval_key, eval_str, filter, conditional_in, condition, test_bool, parameter, conditional, parameter_name, parameter_value, parameters_array, j, y, i, z, evaluated = {};
-      filter = Filter.load(filter_config.id);
-      if (filter) {
-        scope = Util.copy_ob(scope);
-        parameters_array = filter_config.parameters;
-        if (! parameters_array) parameters_array = filter.parameters;
-        if (parameters_array) {
-          z = parameters_array.length;
-          for (i = 0; i < z; i++){
-            parameter = parameters_array[i];
-            parameter_name = parameter.name;
-            if (parameter_name){
-              parameter_value = parameter.value;
-              if (Util.isarray(parameter_value)){
-                test_bool = false;
-                y = parameter_value.length;
-                for (j = 0; j < y; j++){
-                  conditional = parameter_value[j];
-                  condition = conditional.condition;
-                  // not strict equality, since we may have strings and numbers
-                  if (conditional.is) condition = condition + '==' + conditional.is;
-                  else if (conditional.in) {
-                    conditional_in = conditional.in;
-                    if (Util.isstring(conditional_in)) conditional_in = conditional_in.split(',');
-
-                    condition = '(-1 < [' + conditional_in.join(',') + '].indexOf(' + (Util.isstring(conditional_in[0]) ? 'String' : 'Number') + '(' + condition + ')))';
-                  }
-                  condition = condition.replace(' or ', ' || ');
-                  condition = condition.replace(' and ', ' && ');
-                  for (eval_key in scope) {
-                    condition = condition.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
-                  }
-                  eval_str = 'test_bool = (' + condition + ');';
-                  try {
-                    eval(eval_str);
-                  } catch (exception) {
-                    console.error(exception.message, eval_str);
-                  }
-                  if (test_bool) {
-                    parameter_value = conditional.value;
-                    // console.log(parameter_name, eval_str, parameter_value);
-                    break;
-                  } // else console.warn(parameter_name, eval_str, parameter_value);
-                }
-                if (! test_bool) console.error('no conditions were true', parameter_value);
-              }
-              if (Util.isstring(parameter_value)) { // could well be a number by now
-                for (eval_key in scope) {
-                  parameter_value = parameter_value.replace(new RegExp('\\b' + eval_key + '\\b', 'g'), 'scope.' + eval_key);
-                }
-              }
-              eval_str = 'evaluated.' + parameter_name + ' = ' + parameter_value + ';';
-              try {
-                eval(eval_str);
-              } catch (exception) {
-                //console.error(exception.message, eval_str, parameter_value);
-                evaluated[parameter_name] = parameter_value;
-              }
-              // sort of like lookahead, but they have to be in order!
-              scope[parameter_name] = evaluated[parameter_name];
-            }
-          }
-        } else console.error('no parameters_array found', filter_config);
-      } else console.error('filter not found', filter_config.id);
-      return evaluated;
-    };
-    var ctime, scope, evaluated, filter_config, filter, i, z;
+   
+    var scope, evaluated, filter_config, filter, i, z;
     if (module_media) {
       if (module_media.filters) {
         if (layer_clip.frames) {
-          ctime = new TimeRange(0, this.__mash.quantize, this.__mash_length);
-          ctime.frame = layer_clip.frame;
-          ctime.frames = layer_clip.frames;
+          const range = new TimeRange(0, this.__mash.quantize, this.__mash_length);
+          range.frame = layer_clip.frame;
+          range.frames = layer_clip.frames;
           z = module_media.filters.length;
           for (i = 0; i < z; i++){
             filter_config = module_media.filters[i];
             filter = Filter.load(filter_config.id);
             if (filter) { // otherwise, just ignore unknown filters
 
-              scope = this.__module_scope(time, ctime, drawings, module, module_media);
+              scope = this.__module_scope(time, range, drawings, module, module_media);
               if (filter.parse) scope = filter.parse(drawings, scope, filter_config);
-              evaluated = __evaluate_scope(time, layer_clip, scope, module, filter_config);
+              evaluated = evaluate_scope(scope, filter_config);
               if (filter.render) drawings = filter.render(drawings, scope, evaluated, filter_config);
             }
           }
@@ -1372,8 +1550,8 @@ Player = function(evaluated) {
     return drawings;
   };
   pt.__limit_time = function(time){
-    var start_time = time.copyTime();
-    var limit_time = new TimeRange(this.__mash_length, this.__mash.quantize);
+    var start_time = time.copy();
+    var limit_time = new Time(this.__mash_length, this.__mash.quantize);
     limit_time.frame = Math.max(0, limit_time.frame - 1);
     start_time.min(limit_time);
     start_time.scale(this.__fps, 'floor');
@@ -1382,7 +1560,7 @@ Player = function(evaluated) {
   pt.__load_timed = function(){
     if (this.__moving){
       // hopefully runs twice a frame
-      var now = TimeRange.fromSeconds(Audio.time(), this.__fps, 'ceil');
+      var now = Time.fromSeconds(Audio.time(), this.__fps, 'ceil');
       if (now.frame !== this.__limit_time(now).frame) {
         // loop back to start or pause
         if (! this.__loop) {
@@ -1392,7 +1570,7 @@ Player = function(evaluated) {
           this.paused = false;
         }
       } else {
-        if (! now.isEqualToTime(this.__time_drawn)) {
+        if (! now.equalsTime(this.__time_drawn)) {
           this.__time.setToTime(now);
           this.redraw();
         }
@@ -1407,16 +1585,16 @@ Player = function(evaluated) {
     if (media.properties) {
       for (property_key in media.properties){
         clip_value = module[property_key];
-        if (Util.isnt(clip_value)){
+        if (isnt(clip_value)){
           property_options = media.properties[property_key];
           clip_value = property_options.value;
-          if (Util.isnt(clip_value)){
+          if (isnt(clip_value)){
             type_id = property_options.type;
             if (type_id){
               type_ob = Constant.property_types[type_id];
               if (type_ob) clip_value = type_ob.value;
             }
-            if (Util.isnt(clip_value)) clip_value = '';
+            if (isnt(clip_value)) clip_value = '';
           }
         } else clip_value = module[property_key];
         module_properties[property_key] = clip_value;
@@ -1473,8 +1651,6 @@ Player = function(evaluated) {
   };
   pt.__set_moving = function(tf) {
     if (this.__moving !== tf) {
-      // console.log('__set_moving', this.__moving, tf, this.__time_drawn.description, this.__time.description);
-      // console.log('Audio.sources', Audio.sources);
       this.__moving = tf;
       if (this.__moving) {
         var $this = this;
@@ -1492,7 +1668,6 @@ Player = function(evaluated) {
   pt.__set_stalling = function(tf){
     var changed = false; // whether or not __stalling changed
     if (this.__stalling !== tf) {
-      // console.log('__set_stalling', tf, this.__time.description);
       this.__stalling = tf;
       changed = true;
     }
@@ -1511,7 +1686,8 @@ Player = function(evaluated) {
   };
   pt.__track_delete = function(audio_or_video){
     var track = this.__mash[audio_or_video].pop();
-    if (this.__mash_length === Mash.length_of_clips(track.clips)) this.mash_length_changed();
+    if (this.__mash_length === length_of_clips(track.clips)) this.mash_length_changed();
   };
 })(Player.prototype);
-MovieMasher.Player = Player;
+
+export default Player

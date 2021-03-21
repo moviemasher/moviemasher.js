@@ -1,7 +1,8 @@
-/*global MovieMasher:true*/
-'use strict';
 
-MovieMasher.Filter.register('scale', {
+import Filter from "../others/filter"
+
+
+const Scale = {
   render: function(contexts, scope, evaluated, filter_config){
     var in_ctx, out_ctx, out_width, in_width, out_height, in_height;
     out_width = evaluated.w || evaluated.width;
@@ -16,7 +17,7 @@ MovieMasher.Filter.register('scale', {
         in_height = scope.mm_in_h;
         if (-1 === out_width) out_width = in_width * (out_height / in_height);
         if (-1 === out_height) out_height = in_height * (out_width / in_width);
-        out_ctx = MovieMasher.Filter.create_drawing(out_width, out_height, MovieMasher.Filter.label(filter_config) + ' ' + out_width + 'x' + out_height, in_ctx.container);
+        out_ctx = Filter.create_drawing(out_width, out_height, Filter.label(filter_config) + ' ' + out_width + 'x' + out_height, in_ctx.container);
         in_ctx.drawings.push(out_ctx);
         out_ctx.context.drawImage(in_ctx.canvas, 0, 0, in_width, in_height, 0, 0, out_width, out_height);
       }
@@ -30,4 +31,6 @@ MovieMasher.Filter.register('scale', {
     scope.in_w = scope.mm_in_w = context.canvas.width;
     return scope;
   }
-});
+}
+Filter.register('scale', Scale);
+export default Scale

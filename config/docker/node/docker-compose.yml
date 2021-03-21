@@ -18,3 +18,12 @@ services:
       - "../../../node_modules/:/node_modules"
       - "../../../package.json:/package.json"
     command: npm install --no-bin-links
+  doc:
+    image: node
+    container_name: moviemasher_npm
+    volumes:
+      - "../../../doc/:/doc"
+      - "./doc/sections.json:/sections.json"
+      - "./doc/doc.js:/doc.js"
+      - "./doc/template.html:/template.html"
+    command: node /doc.js

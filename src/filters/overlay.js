@@ -1,7 +1,9 @@
-/*global MovieMasher:true*/
-'use strict';
 
-MovieMasher.Filter.register('overlay', {
+
+import Filter from "../others/filter"
+
+
+const Overlay = {
   render: function(contexts, scope, evaluated){
     if (2 > contexts.length) return console.error('overlay.apply with insufficient contexts', contexts);
     var bot_ctx = contexts[0];
@@ -17,4 +19,6 @@ MovieMasher.Filter.register('overlay', {
     scope.overlay_h = contexts[1].canvas.height;
     return scope;
   }
-});
+}
+Filter.register('overlay', Overlay);
+export default Overlay

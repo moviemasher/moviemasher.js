@@ -1,17 +1,21 @@
-/*global MovieMasher:true*/
-'use strict';
+import Constant from "../others/constant"
+import Filter from "../others/filter"
+import Cache from "../others/cache"
+import Registry from "../others/registry"
 
-MovieMasher.Filter.register('drawtext', {
-  render: function(contexts, scope, evaluated, filter_config) {
+
+const DrawText = {
+  render: function(contexts, _scope, evaluated, filter_config) {
     var path, loaded_font, context, drawing = contexts[0]; // one input
-    context = MovieMasher.Filter.create_drawing_like(drawing, MovieMasher.Filter.label(filter_config) + ' ' + evaluated.fontsize + 'px ' + evaluated.x + ',' + evaluated.y + ' ' + evaluated.fontcolor + ' ' + evaluated.shadowcolor + ' ' + evaluated.shadowx + ',' + evaluated.shadowy);
+    context = Filter.create_drawing_like(drawing, Filter.label(filter_config) + ' ' + evaluated.fontsize + 'px ' + evaluated.x + ',' + evaluated.y + ' ' + evaluated.fontcolor + ' ' + evaluated.shadowcolor + ' ' + evaluated.shadowx + ',' + evaluated.shadowy);
     if (evaluated.shadowcolor){
       context.context.shadowColor = evaluated.shadowcolor;
       context.context.shadowOffsetX = evaluated.shadowx || 0; // integer
       context.context.shadowOffsetY = evaluated.shadowy || 0; // integer
       context.context.shadowBlur = 0; // sorry, no blur supported yet in ffmpeg
     }
-    loaded_font = MovieMasher.Loader.cached_urls[evaluated.fontfile];
+    // console.log("DrawText.render evaluated.fontfile:", evaluated.fontfile)
+    loaded_font = Cache.get(evaluated.fontfile)
     if (loaded_font){
           path = loaded_font.getPath((evaluated.text || evaluated.textfile), evaluated.x, Number(evaluated.y) + Number(evaluated.fontsize), evaluated.fontsize);
           path.fill = evaluated.fontcolor;
@@ -24,7 +28,7 @@ MovieMasher.Filter.register('drawtext', {
     scope.text_w = 0; // width of the text to draw
     scope.text_h = 0; // height of the text to draw
     scope.mm_fontfamily = function(font_id){
-      var family = '', font = MovieMasher.find(MovieMasher.Constant.font, font_id);
+      var family = '', font = Registry.find(Constant.font, font_id);
       if (font) family = font.family || font.label;
       else console.warn('no registered font family with id', font_id, font);
       return family;
@@ -33,7 +37,7 @@ MovieMasher.Filter.register('drawtext', {
       return text;
     };
     scope.mm_fontfile = function(font_id){
-      var url = '', font = MovieMasher.find(MovieMasher.Constant.font, font_id);
+      var url = '', font = Registry.find(Constant.font, font_id);
       if (font) url = font.source;
       else console.warn('no registered font url with id', font_id, font);
       return url;
@@ -70,4 +74,6 @@ MovieMasher.Filter.register('drawtext', {
       "value":"Hello World"
     }
   ]
-});
+}
+Filter.register('drawtext', DrawText);
+export default DrawText

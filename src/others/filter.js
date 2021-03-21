@@ -1,13 +1,21 @@
-Filter = {
-  registered: {},
+import Loader from "./loader"
+import Registry from "./registry"
+import Constant from "./constant"
+
+const registered = {}
+
+const Filter = {
+  
   find: function(filter_id){
-    return MovieMasher.find(Constant.filter, filter_id);
+    return registered[filter_id] || Registry.find(Constant.filter, filter_id);
   },
   load: function(filter_id){
+    //console.log("Filter.load", filter_id)
     var filter, filter_config;
     filter_config = Filter.find(filter_id);
     if (filter_config) {
-      filter = Filter.registered[filter_id];
+      filter = registered[filter_id];
+      //console.log("Filter.load", filter_id, filter)
       if (! filter) Loader.load_filter(filter_config.source);
     }
     return filter;
@@ -50,7 +58,8 @@ Filter = {
     return filter.description || filter.id;
   },
   register: function(id, object) {
-    Filter.registered[id] = object;
+    //console.log("Filter.register", id, object)
+    registered[id] = object;
   },
   rgb_at_pixel: function(pixel, data){
     var index = Filter.index_from_pixel(pixel);
@@ -122,4 +131,5 @@ Filter = {
     return pixels;
   },
 };
-MovieMasher.Filter = Filter;
+
+export default Filter

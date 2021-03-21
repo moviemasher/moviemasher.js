@@ -1,4 +1,6 @@
-Constant = {
+
+
+const Constant = {
   audio: 'audio',
   both: 'both',
   effect: 'effect',
@@ -92,4 +94,5 @@ Constant = {
   volume: 'volume',
 };
 Constant.track_types = [Constant.video, Constant.audio];
-MovieMasher.Constant = Constant;
+
+export default Constant

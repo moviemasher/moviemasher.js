@@ -1,4 +1,6 @@
-Colors = {
+
+
+const Colors = {
   yuv2rgb: function(yuv) {
     var k, rgb = {};
     for(k in yuv) yuv[k] = parseInt(yuv[k]);
@@ -41,4 +43,4 @@ Colors = {
     return yuv;
   },
 };
-MovieMasher.Colors = Colors;
+export default Colors

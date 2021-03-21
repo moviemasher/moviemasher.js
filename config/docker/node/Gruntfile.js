@@ -5,18 +5,20 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       options: {
-        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - '+
-          '<%= grunt.template.today("yyyy-mm-dd") %>\n'+
-          '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-          '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-          ' Licensed <%= _.map(pkg.licenses, "type").join(", ") %> */\n' +
+        banner: '/*! <%= pkg.name %> version <%= pkg.version %> compiled on ' +
+          '<%= grunt.template.today("yyyy-mm-dd") %> \n' +
+          '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Inc.\n' +
+          '* <%= pkg.author.name %> <%= pkg.homepage %>\n' +
+          '* <%= pkg.description %>\n' +
+          '* Licensed <%= pkg.license %>\n*\n' +
+          '*/\n' +
           '/*global module:true,define:true*/\n' +
           '(function (name, context, definition) { \n' +
           "'use strict';\n" +
-          'if (typeof module !== "undefined" && module.exports) module.exports = definition(); \n' +
-          'else if (typeof define === "function" && define.amd) define(definition); \n' +
-          'else context[name] = definition(); \n' +
-          '  })("MovieMasher", this, function() { \n'+
+          'if (typeof module !== "undefined" && module.exports) { module.exports = definition(); } \n' +
+          'else if (typeof define === "function" && define.amd) { define(definition); } \n' +
+          'else { context[name] = definition(); } \n' +
+          '})("MovieMasher", this, function() { \n'+
           "'use strict';\n" ,
         footer: 'return MovieMasher; \n}); \n'
       },
