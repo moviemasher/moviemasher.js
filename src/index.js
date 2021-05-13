@@ -1,30 +1,3 @@
-// src/index.js
-export { default as MovieMasher } from "./moviemasher/moviemasher";
+import { MovieMasher } from "./MovieMasher"
+export default MovieMasher 
 
-export { default as Action } from "./others/action"
-export { default as Audio } from "./others/audio"
-export { default as Colors } from "./others/colors"
-export { default as Constant } from "./others/constant"
-export { default as Defaults } from "./others/defaults"
-export { default as Filter } from "./others/filter"
-export { default as Loader } from "./others/loader"
-export { default as Mash } from "./others/mash"
-export { default as Option } from "./others/option"
-export { default as Player } from "./others/player"
-export { default as Players } from "./others/players"
-export { default as Registry } from "./others/registry"
-export { default as TimeRange } from "./time_range/time_range"
-export { default as Time } from "./time/time"
-
-export { default as Blend } from "./filters/blend"
-export { default as ChromaKey } from "./filters/chroma_key"
-export { default as Color } from "./filters/color"
-export { default as ColorChannelMixer } from "./filters/color_channel_mixer"
-export { default as Convolution } from "./filters/convolution"
-export { default as Crop } from "./filters/crop"
-export { default as DrawBox } from "./filters/drawbox"
-export { default as DrawText } from "./filters/drawtext"
-export { default as Fade } from "./filters/fade"
-export { default as Overlay } from "./filters/overlay"
-export { default as Scale } from "./filters/scale"
-export { default as SetSar } from "./filters/setsar"

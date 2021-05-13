@@ -1,0 +1,45 @@
+{
+  "label": "Blur",
+  "type": "effect",
+  "id": "com.moviemasher.effect.blur",
+  "properties": {},
+  "filters": [
+    {
+      "id": "convolution",
+      "parameters":[
+        {
+          "name": "0m",
+          "value":"1 1 1 1 1 1 1 1 1"
+        },
+        {
+          "name": "1m",
+          "value":"1 1 1 1 1 1 1 1 1"
+        },
+        {
+          "name": "2m",
+          "value":"1 1 1 1 1 1 1 1 1"
+        },
+        {
+          "name": "3m",
+          "value":"1 1 1 1 1 1 1 1 1"
+        },
+        {
+          "name": "0rdiv",
+          "value":"1/9"
+        },
+        {
+          "name": "1rdiv",
+          "value":"1/9"
+        },
+        {
+          "name": "2rdiv",
+          "value":"1/9"
+        },
+        {
+          "name": "3rdiv",
+          "value":"1/9"
+        }
+      ]
+    }
+  ]
+}

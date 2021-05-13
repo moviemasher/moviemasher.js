@@ -1,0 +1,29 @@
+{
+  "label": "Emboss",
+  "type": "effect",
+  "id": "com.moviemasher.effect.emboss",
+  "properties": {},
+  "filters": [
+    {
+      "id": "convolution",
+      "parameters":[
+        {
+          "name": "0m",
+          "value":"-2 -1 0 -1 1 1 0 1 2"
+        },
+        {
+          "name": "1m",
+          "value":"-2 -1 0 -1 1 1 0 1 2"
+        },
+        {
+          "name": "2m",
+          "value":"-2 -1 0 -1 1 1 0 1 2"
+        },
+        {
+          "name": "3m",
+          "value":"-2 -1 0 -1 1 1 0 1 2"
+        }
+      ]
+    }
+  ]
+}

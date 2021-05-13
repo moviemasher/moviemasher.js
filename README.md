@@ -11,7 +11,30 @@ Use moviemasher.js to edit and display mashups of video, audio, and images withi
 - **undo/redo** history and commands
 - **framework** for custom effects, titles and transitions
 
-### Overview: Canvas + Mash = Player
+
+## Installation
+
+### Use the Node Package Manager
+The following command installs the latest library and its dependencies, saving current version numbers to your __package.json__ file:
+```shell
+npm install @moviemasher/moviemasher.js --save
+```
+
+### Download the Universal Module
+Copy the __dist/moviemasher.min.js__ precompiled UMD file from the [latest ZIP archive](https://github.com/moviemasher/moviemasher.js/archive/master.zip) into your project, referencing its new path in a `script` tag:
+
+```html
+<script src="moviemasher.min.js" />
+```
+
+### Clone the GitHub Repository
+The following command will copy the entire Git project to your local machine, complete with examples and documentation:
+```shell
+git clone https://github.com/moviemasher/moviemasher.js.git
+```
+
+
+## Overview: Canvas + Mash = Player
 
 Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a standard JavaScript Object that describes a collection of media and how to arrange it over time.
 
@@ -23,11 +46,6 @@ A player binds to its mash object directly, without copying or adding any method
 ```JavaScript
 var context = document.getElementById("mm-canvas").getContext('2d');
 var mm_player = MovieMasher.player({canvas_context: context, autoplay: true});
-MovieMasher.register(MovieMasher.Constant.filter, [
-  { "id":"overlay", "source": "../dist/filters/overlay.js" },
-  { "id":"scale", "source": "../dist/filters/scale.js" },
-  { "id":"setsar", "source": "../dist/filters/setsar.js" }
-]);
 
 mm_player.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
 mm_player.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
@@ -55,16 +73,6 @@ mm_player.mash = {
 };
 ```
 
-### Installation
-
-##### Directly
-
-[Download the latest ZIP](https://github.com/moviemasher/moviemasher.js/archive/master.zip) and grab the compiled files in the `dist`
-folder. An example application is in the `app` directory and if you don't have the required modules installed they are in `node_modules`.
-
-##### Using npm
-- `npm install --save @moviemasher/moviemasher.js`
-
 ##### To Run Locally
 Due to the security mechanisms used, this project can only be viewed in a web browser if delivered through a web server - simply viewing index.html locally in a browser will not work. If you are not running a web server on your local machine, [Docker](http://docker.com) is a safe and recommended way to do so. Once installed and running, `cd` into the *config/docker/development* directory and:
 - execute `docker-compose up -d` to launch apache web server
@@ -74,8 +82,7 @@ Due to the security mechanisms used, this project can only be viewed in a web br
 ### Related Projects
 Three separate projects - *moviemasher.js, angular-moviemasher and moviemasher.rb* - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if only editing or encoding features are needed. Only angular-moviemasher is dependent on the other projects, since it's designed to sit between them as a middleware layer providing content management functions.
 
-### Included Dependencies
-- script.js
+### Dependencies
 - opentype.js
 
 ### User Feedback

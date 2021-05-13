@@ -1,0 +1,19 @@
+[
+  {
+    "label": "Blackout Two AM",
+    "id":"com.moviemasher.font.default",
+    "type":"font",
+    "source": "media/font/blackout/theleagueof-blackout/webfonts/blackout_two_am-webfont.ttf"
+  },
+  {
+    "label": "Blackout Midnight",
+    "id":"ttf.blackout.midnight",
+    "type":"font",
+    "source": "media/font/blackout/theleagueof-blackout/webfonts/blackout_midnight-webfont.ttf"
+  },{
+    "label": "Blackout Sunrise",
+    "id":"ttf.blackout.sunrise",
+    "type":"font",
+    "source": "media/font/blackout/theleagueof-blackout/webfonts/blackout_sunrise-webfont.ttf"
+  }
+]

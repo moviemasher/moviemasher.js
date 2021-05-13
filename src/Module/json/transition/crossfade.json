@@ -1,0 +1,26 @@
+{
+  "label": "Crossfade",
+  "type": "transition",
+  "id": "com.moviemasher.transition.crossfade",
+  "to": {
+    "filters": [
+      {
+        "id": "fade",
+        "parameters": [
+          {
+            "name": "alpha",
+            "value":"1"
+          },
+          {
+            "name": "type",
+            "value":"in"
+          },
+          {
+            "name": "duration",
+            "value":"mm_duration"
+          }
+        ]
+      }
+    ]
+  }
+}

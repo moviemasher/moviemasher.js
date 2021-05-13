@@ -1,34 +1,50 @@
 
+import { Is } from '../Is'
+import { CacheCleaner } from "../Cache/CacheCleaner"
+import { Module } from "../Module"
+import { Default } from "../Default"
+import { Errors } from "../Errors"
+import { Masher } from '../Masher/Masher'
+import { Property } from '../Utilities'
+const MovieMasher = function(...args) {
+  this.instance_arguments = args
+  this.cacheCleaner = CacheCleaner // cache is shared between mashers
+  this.initialize()
+}
+MovieMasher.register = (type, objects) => { 
+  return Module.addModulesOfType(objects, type) 
+}
+MovieMasher.configure = (object) => {
+  if (Is.object(object)) console.warn(Errors.deprecation.configure.set)
+  else console.warn(Errors.deprecation.configure.get)
+  return Default
+}
+MovieMasher.player = (object_or_index) => {
+  const argument = Is.defined(object_or_index) ? object_or_index : {}
+  if (Is.object(argument)) return new Masher(argument)
+    
+  return Masher.instances[argument]
+}
+MovieMasher.supported = true
+MovieMasher.registered = Module
+MovieMasher.defaults = Default
+MovieMasher.Constant = Property
+MovieMasher.CoreFilter = Property
 
+Object.defineProperties(MovieMasher, {
+  initialize: { value: function() { console.log("MovieMasher.initialize") } },
+  MovieMasher: { get: function() { return MovieMasher } },
+})
+Object.defineProperties(MovieMasher.prototype, {
+   MovieMasher: { get: function() { return MovieMasher } },
+})
 
-import Registry from "../others/registry"
-import Option from "../others/option"
-import Player from "../others/player"
-import Players from "../others/players"
-import {isnt, isob } from "../others/util"
+// deprecated as of 4.0.26
+//   supported,
+//   register,
+//   registered,
+//   player, 
 
+//MovieMasher.MovieMasher = MovieMasher
+export { MovieMasher }
 
-const MovieMasher = function() { // it's not necessary to instantiate, but you can
-  this.instance_arguments = arguments;
-  this.MovieMasher = MovieMasher;
-  this.initialize();
-};
-MovieMasher.prototype.initialize = function(){}; // override me to parse instance_arguments
-MovieMasher.configure = function(options){
-  if (isob(options)) Option.set(options);
-  return Option;
-};
-
-MovieMasher.player = function(index_or_options){
-  var result = null;
-  if (isnt(index_or_options)) index_or_options = {};
-  if (isob(index_or_options)) { // new player
-    result = new Player(index_or_options);
-    Players.instances.push(result);
-  } else result = Players.instances[index_or_options];
-  return result;
-};
-
-MovieMasher.supported = !! (Object.defineProperty && document.createElement("canvas").getContext && (window.AudioContext || window.webkitAudioContext));
-MovieMasher.register = Registry.register
-export default MovieMasher

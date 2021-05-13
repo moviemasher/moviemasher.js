@@ -1,3 +1,6 @@
+import { Errors } from "../Errors"
+import { Is } from '../Is'
+
 const greatestCommonDenominator = (a, b) => {
     var t
     while (b !== 0) {
@@ -6,106 +9,98 @@ const greatestCommonDenominator = (a, b) => {
       a = t
     }
     return a
+}
+  
+const lowestCommonMultiplier = (a, b) => { return (a * b / greatestCommonDenominator(a, b)) }
+
+class Time {
+  static get zero() { return new Time }
+
+  static scaleTimes(time1, time2, rounding = "round") {
+    if (time1.fps === time2.fps) return [time1, time2]
+
+    var gcf = lowestCommonMultiplier(time1.fps, time2.fps)
+    return [
+      time1.scale(gcf, rounding),
+      time2.scale(gcf, rounding)
+    ]
   }
   
-  const lowestCommonMultiplier = (a, b) => { return (a * b / greatestCommonDenominator(a, b)) }
-  
-  class Time {
-    static fromSeconds(seconds, fps, rounding) {
-      if (!rounding) rounding = 'round'
-      if (!fps) fps = 1
-      return new Time(Math[rounding](Number(seconds) * Number(fps)), fps)
-    }
-  
-    static fromSomething(something) {
-      if (! something) return new Time()
-      if (something instanceof Time) return something.copy()
-      return fromSeconds(something)
-    }
-
-    static scaleTimes(time1, time2, rounding) {
-      if (! rounding) rounding = 'round'
-      if (time1.fps !== time2.fps) {
-        var gcf = lowestCommonMultiplier(time1.fps, time2.fps)
-        time2.scale(gcf, rounding)
-        time1.scale(gcf, rounding)
-      }
-    }
+  constructor(frame = 0, fps = 1) {
+    if (!Is.integer(frame) || frame < 0) throw(Errors.frame)
+    if (!Is.integer(fps) || fps < 1) throw(Errors.fps)
     
-    constructor(frame, fps) {
-      this.frame = 0
-      this.fps = 0
-      if (frame) this.frame = Number(frame) || 0
-      if (fps) this.fps = Number(fps) || 0
-    }
-  
-    add(time) {
-      if (this.fps !== time.fps) {
-        time = time.copy()
-        Time.scaleTimes(this, time)
-      }
-      this.frame += time.frame
-      return this
-    }
+    this.frame = frame
+    this.fps = fps
+  }
 
-    copy() { return new Time(this.frame, this.fps) }
+  add(time) {
+    const [time1, time2] = Time.scaleTimes(this, time)
+    return new Time(time1.frame + time2.frame, time1.fps)
+  }
 
-    divide(number, rounding) {
-      if (! rounding) rounding = 'round'
-      this.frame = Math[rounding](Number(this.frame) / number)
-    }
-    
-    equalsTime(time) {
-      var equal = false
-      if (time && time.fps && this.fps) {
-        if (this.fps === time.fps) equal = (this.frame === time.frame)
-        else {
-          // make copies so neither time is changed
-          const time1 = this.copy()
-          const time2 = time.copy()
-          Time.scaleTimes(time1, time2)
-          equal = (time1.frame === time2.frame)
-        }
-      }
-      return equal
-    }
+  addFrames(frames) {
+    const time = this.copy
+    time.frame += frames
+    return time 
+  }
 
-    min(time) {
-      if (time) {
-        Time.scaleTimes(this, time)
-        this.frame = Math.min(time.frame, this.frame)
-      }
-    } 
-  
-    scale(fps = 1, rounding = "round") {
-      if (this.fps !== fps) {
-        this.frame = Math[rounding](Number(this.frame) / (Number(this.fps) / Number(fps)))
-        this.fps = fps
-      }
-      return this
-    }
+  get copy() { return new Time(this.frame, this.fps) }
 
-    get seconds() { return Number(this.frame) / Number(this.fps) }
-    
-    setToTime(something) {
-      something = Time.fromSomething(something)
-      Time.scaleTimes(this, something)
-      this.frame = something.frame
-      return something
-    }
+  get description() { return `${this.frame}@${this.fps}` }
 
-    subtract(time) {
-      if (this.fps !== time.fps) {
-        time = time.copy()
-        Time.scaleTimes(this, time)
-      }
-      var subtracted = time.frame
-      if (subtracted > this.frame) {
-        subtracted -= subtracted - this.frame
-      }
-      this.frame -= subtracted
-      return subtracted
-    }
+  divide(number, rounding = "round") {
+    if (!Is.number(number)) throw(Errors.argument)
+    return new Time(Math[rounding](Number(this.frame) / number), this.fps)
   }
   
-  export default Time
+  equalsTime(time) {
+    if (!(time instanceof Time)) throw(Errors.time)
+
+    const [time1, time2] = Time.scaleTimes(this, time)
+    return time1.frame === time2.frame
+  }
+
+  min(time) {
+    if (! time instanceof Time) throw(Errors.time)
+    
+    const [time1, time2] = Time.scaleTimes(this, time)
+    return new Time(Math.min(time1.frame, time2.frame), time1.fps)
+  } 
+
+  scale(fps = 1, rounding = "round") {
+    if (this.fps === fps) return this
+    //const scale = Number(this.fps) / Number(fps)
+    const frame = Number(this.frame / this.fps) * Number(fps)
+    return new Time(Math[rounding](frame), fps)
+  }
+
+  get seconds() { return Number(this.frame) / Number(this.fps) }
+  
+  subtract(time) {
+    if (! time instanceof Time) throw(Errors.argument)
+    const [time1, time2] = Time.scaleTimes(this, time)
+  
+    var subtracted = time2.frame
+    if (subtracted > time1.frame) {
+      subtracted -= subtracted - time1.frame
+    }
+    return new Time(time1.frame - subtracted, time1.fps)
+  }
+
+  subtractFrames(frames) {
+    const time = this.copy
+    time.frame -= frames
+    return time 
+  }
+
+  toString() { return `[${this.description}]` }
+
+  withFrame(frame) { 
+    const time = this.copy
+    time.frame = frame
+    return time 
+  }
+}
+
+export { Time }

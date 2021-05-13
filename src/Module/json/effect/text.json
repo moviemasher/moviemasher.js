@@ -1,0 +1,49 @@
+{
+  "label": "Text Box",
+  "type": "effect",
+  "id": "com.moviemasher.effect.textbox",
+  "properties": {
+    "string": { "type": "string", "value": "Text Box" },
+    "size": { "type": "fontsize", "value": 0.2 },
+    "color": { "type": "rgba", "value": "rgba(255,0,0,1)" },
+    "fontface": { "type": "font", "value": "com.moviemasher.font.default" },
+    "shadowcolor": { "type": "rgba", "value": "rgba(0,0,0,0)" },
+    "shadowx": { "type": "number", "value": 0.015 },
+    "shadowy": { "type": "number", "value": 0.015 },
+    "x": { "type": "number", "value": 0 },
+    "y": { "type": "number", "value": 0 }
+  },
+  "filters": [
+    {
+      "id": "drawtext",
+      "parameters":[{
+        "name": "fontcolor",
+        "value":"color"
+      },{
+        "name": "shadowcolor",
+        "value":"shadowcolor"
+      },{
+        "name": "fontsize",
+        "value":"mm_vert(size)"
+      },{
+        "name": "x",
+        "value":"mm_horz(x)"
+      },{
+        "name": "y",
+        "value":"mm_vert(y)"
+      },{
+        "name": "shadowx",
+        "value":"mm_horz(shadowx)"
+      },{
+        "name": "shadowy",
+        "value":"mm_vert(shadowy)"
+      },{
+        "name": "fontfile",
+        "value":"mm_fontfile(fontface)"
+      },{
+        "name": "textfile",
+        "value":"mm_textfile(string)"
+      }]
+    }
+  ]
+}

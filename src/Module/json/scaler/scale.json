@@ -1,0 +1,33 @@
+{
+  "label": "Scale",
+  "type": "scaler",
+  "id": "com.moviemasher.scaler.scale",
+  "properties": { 
+    "scale": { "type": "size1", "value": 1 }
+  },
+  "filters": [
+    {
+      "id": "scale",
+      "parameters": [
+        {
+          "name": "width",
+          "value":"scale * mm_input_width * mm_max(mm_width / mm_input_width, mm_height / mm_input_height)"
+        },{
+          "name": "height",
+          "value":"scale * mm_input_height * mm_max(mm_width / mm_input_width, mm_height / mm_input_height)"
+        }
+      ]
+    },{
+      "id": "setsar",
+      "parameters": [
+        {
+          "name": "sar",
+          "value":"1"
+        },{
+          "name": "max",
+          "value":"1"
+        }
+      ]
+    }
+  ]
+}

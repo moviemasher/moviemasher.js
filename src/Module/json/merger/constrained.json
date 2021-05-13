@@ -1,0 +1,23 @@
+{
+  "label": "Constrained",
+  "type": "merger",
+  "id": "com.moviemasher.merger.constrained",
+  "properties": {
+    "left": { "type": "pixel", "value": 0 },
+    "top": { "type": "pixel", "value": 0 }
+  },
+  "filters": [
+    {
+      "id": "overlay",
+      "parameters": [
+        {
+          "name": "x",
+          "value":"left*(mm_width-overlay_w)"
+        },{
+          "name": "y",
+          "value":"top*(mm_height-overlay_h)"
+        }
+      ]
+    }
+  ]
+}

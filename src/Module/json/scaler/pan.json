@@ -1,0 +1,158 @@
+{
+  "label": "Pan",
+  "type": "scaler",
+  "id": "com.moviemasher.scaler.pan",
+  "properties": {
+    "scale": { "type": "size1", "value": 1.25 },
+    "direction": { "type": "direction8", "value": 1 }
+  },
+  "filters": [
+    {
+      "id": "crop",
+      "description": "crop down diagonals and center",
+      "parameters": [
+        {
+          "name": "out_w",
+          "value": [
+            {
+              "condition": "direction < 4",
+              "value": "mm_input_width"
+            },
+            {
+              "condition": "true",
+              "value": "mm_horz(scale, true) / mm_max(mm_horz(scale, true) / mm_input_width, mm_vert(scale, true) / mm_input_height)"
+            }
+          ]
+        },{
+          "name": "out_h",
+          "value":[
+            {
+              "condition": "direction < 4",
+              "value": "mm_input_height"
+            },
+            {
+              "condition": "true",
+              "value": "mm_vert(scale, true) / mm_max(mm_horz(scale, true) / mm_input_width, mm_vert(scale, true) / mm_input_height)"
+            }
+          ]
+        }, {
+          "name": "x",
+          "value": "(mm_input_width-out_w)/2"
+        }, {
+          "name": "y",
+          "value": "(mm_input_height-out_h)/2"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "description": "scale (proudly for diagonals)",
+      "parameters": [
+        {
+          "name": "w",
+          "value":[
+            {
+              "condition": "direction < 4",
+              "value": "mm_input_width * mm_max(mm_horz(scale) / mm_input_width, mm_vert(scale) / mm_input_height)"
+            },{
+              "condition": "true",
+              "value": "mm_horz(scale, true)"
+            }
+          ]
+        },{
+          "name": "h",
+          "value":[
+            {
+              "condition": "direction < 4",
+              "value": "mm_input_height * mm_max(mm_horz(scale) / mm_input_width, mm_vert(scale) / mm_input_height)"
+            },{
+              "condition": "true",
+              "value": "mm_vert(scale, true)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crop",
+      "description": "crop down and position over time",
+      "parameters": [
+        {
+          "name": "w",
+          "value":"mm_width"
+        },
+        {
+          "name": "h",
+          "value":"mm_height"
+        },
+        {
+          "name": "x",
+          "value":[
+            {
+              "condition": "direction",
+              "in": [0,2],
+              "value": "(in_w-mm_width)/2"
+            },{
+              "condition": "direction",
+              "in": [1,5],
+              "value": "(in_w-mm_width)*mm_t"
+            },{
+              "condition": "direction",
+              "is": 4,
+              "value": "(in_w-mm_width)*mm_t"
+            },{
+              "condition": "direction",
+              "in": [3,7],
+              "value": "(in_w-mm_width)-((in_w-mm_width)*mm_t)"
+            },{
+              "condition": "direction",
+              "is": 6,
+              "value": "floor(((in_w-mm_width)*(1.0-mm_t)))"
+            }
+          ]
+        },{
+          "name": "y",
+          "value":[
+            {
+              "condition": "direction",
+              "in": [1,3],
+              "value": "(in_h-mm_height)/2"
+            },
+            {
+              "condition": "direction",
+              "in": [2,5],
+              "value": "(in_h-mm_height)*mm_t"
+            },
+            {
+              "condition": "direction",
+              "is": 6,
+              "value": "ceil((in_h-mm_height)*mm_t)"
+            },
+            {
+              "condition": "direction",
+              "in": [0,7],
+              "value": "(in_h-mm_height)-((in_h-mm_height)*mm_t)"
+            },
+            {
+              "condition": "direction",
+              "is": 4,
+              "value": "(in_h-mm_height)-((in_h-mm_height) * mm_t)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "setsar",
+      "parameters": [
+        {
+          "name": "sar",
+          "value":"1"
+        },{
+          "name": "max",
+          "value":"1"
+        }
+      ]
+    }
+  ]
+}

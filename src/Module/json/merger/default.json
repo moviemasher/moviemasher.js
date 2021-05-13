@@ -1,0 +1,18 @@
+{
+  "label": "Top Left",
+  "id": "com.moviemasher.merger.default",
+  "filters": [
+    {
+      "id": "overlay",
+      "parameters": [
+        {
+          "name": "x",
+          "value": "0"
+        },{
+          "name": "y",
+          "value": "0"
+        }
+      ]
+    }
+  ]
+}

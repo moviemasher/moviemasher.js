@@ -1,0 +1,13 @@
+{
+  "label": "Center",
+  "id": "com.moviemasher.merger.center",
+  "filters": [
+    {
+      "id": "overlay",
+      "parameters": [
+        {"name": "x", "value": "floor((mm_width - overlay_w) / 2)"},
+        {"name": "y", "value": "floor((mm_height - overlay_h) / 2)"}
+      ]
+    }
+  ]
+}

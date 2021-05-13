@@ -1,0 +1,7 @@
+{
+  "label": "Blackout Two AM",
+  "id": "com.moviemasher.font.default",
+  "type":"font",
+  "source": "../examples/javascript/media/font/blackout/theleagueof-blackout/webfonts/blackout_two_am-webfont.ttf",
+  "family": "Blackout Two AM"
+}

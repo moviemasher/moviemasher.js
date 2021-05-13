@@ -1,0 +1,29 @@
+{
+  "label": "Stretch",
+  "id": "com.moviemasher.scaler.default",
+  "filters": [
+    {
+      "id": "scale",
+      "parameters": [
+        {
+          "name": "width",
+          "value": "mm_width"
+        },{
+          "name": "height",
+          "value": "mm_height"
+        }
+      ]
+    },{
+      "id": "setsar",
+      "parameters": [
+        {
+          "name": "sar",
+          "value": "1"
+        },{
+          "name": "max",
+          "value": "1"
+        }
+      ]
+    }
+  ]
+}

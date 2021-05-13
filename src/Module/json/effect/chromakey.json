@@ -1,0 +1,27 @@
+{
+  "label": "Chromakey",
+  "type": "effect",
+  "id": "com.moviemasher.effect.chromakey",
+  "properties": {
+    "chroma_blend": { "type": "number", "value": 0.01 },
+    "chroma_similarity": { "type": "number", "value": 0.5 },
+    "chroma_color": { "type": "rgb", "value": "rgb(0,255,0)" }
+  },
+  "filters": [
+    {
+      "id": "chromakey",
+      "parameters": [
+        {
+          "name": "color",
+          "value":"chroma_color"
+        },{
+          "name": "blend",
+          "value":"chroma_blend"
+        },{
+          "name": "similarity",
+          "value":"chroma_similarity"
+        }
+      ]
+    }
+  ]
+}
