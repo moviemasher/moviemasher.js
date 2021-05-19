@@ -1,4 +1,4 @@
-import { Pixel } from "../Utilities";
+import { Pixel } from "../Utilities"
 import { CoreFilter } from "./CoreFilter"
 
 const RBGA = 'rgba'

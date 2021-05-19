@@ -1,10 +1,10 @@
-import { UrlsByType } from "../../Utilities"
+import { UrlsByType } from "../../Loading"
 
-export const urlsNone = { 
-  urlsVisibleInTimeRangeForClipByType: { 
-    value: function() { return UrlsByType.none } 
+export const urlsNone = {
+  urlsVisibleInTimeRangeForClipByType: {
+    value: function() { return UrlsByType.none }
   },
-  urlsVisibleInTimeRangeForClipByType: { 
-    value: function() { return UrlsByType.none } 
+  urlsVisibleInTimeRangeForClipByType: {
+    value: function() { return UrlsByType.none }
   },
 }

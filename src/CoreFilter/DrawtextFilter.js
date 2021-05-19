@@ -1,7 +1,7 @@
 import { CoreFilter } from "./CoreFilter"
-import { Cache } from "../Cache"
-import { Module } from "../Module";
-import { Pixel } from "../Utilities";
+import { Cache } from "../Loading"
+import { Module } from "../Setup"
+import { Pixel } from "../Utilities"
 
 const mm_fontfile = font_id => Module.fontById(font_id).source
 const mm_textfile = text => text
@@ -50,21 +50,21 @@ class DrawTextFilter extends CoreFilter {
     if (shadowcolor) {
       context.shadowColor = shadowcolor
       const { shadowx, shadowy/*, shadowblur */ } = evaluated
-      // shadowblur not supported in ffmpeg 
-      // context.shadowBlur = shadowblur 
-      context.shadowOffsetX = shadowx || 0 
-      context.shadowOffsetY = shadowy || 0 
+      // shadowblur not supported in ffmpeg
+      // context.shadowBlur = shadowblur
+      context.shadowOffsetX = shadowx || 0
+      context.shadowOffsetY = shadowy || 0
     }
-    
+
     context.font = `${fontsize}px "${family}"`
     context.fillStyle = Pixel.color(fontcolor)
     context.fillText(text || textfile, x, Number(y) + Number(fontsize))
-  
+
     if (shadowcolor) {
       context.shadowColor = null
-      context.shadowOffsetX = 0 
-      context.shadowOffsetY = 0 
-      // context.shadowBlur = 0 
+      context.shadowOffsetX = 0
+      context.shadowOffsetY = 0
+      // context.shadowBlur = 0
     }
     return context
   }

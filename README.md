@@ -45,15 +45,15 @@ A player binds to its mash object directly, without copying or adding any method
 ##### Basic slideshow with audio
 ```JavaScript
 var context = document.getElementById("mm-canvas").getContext('2d');
-var mm_player = MovieMasher.player({canvas_context: context, autoplay: true});
+var masher = new Masher({ videoContext: context, autoplay: true });
 
-mm_player.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
-mm_player.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
-mm_player.add({ type: 'audio', url: 'media/audio/loop.mp3', duration: 2 });
+masher.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
+masher.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
+masher.add({ type: 'audio', url: 'media/audio/loop.mp3', duration: 2 });
 
 // OR, more verbosely...
 
-mm_player.mash = {
+masher.mash = {
   "media": [
     { "id": "image-cable", "type": "image", "url": "media/image/cable.jpg" },
     { "id": "image-frog", "type": "image", "url": "media/image/frog.jpg" },
@@ -68,7 +68,7 @@ mm_player.mash = {
   } ],
   "audio": [ {
     "type": "audio",
-    "clips": [ { "id": "audio-id", "frame": 0, "frames": 2 } ]
+    "clips": [ { "id": "audio-id", "frame": 0, "frames": 4 } ]
   } ]
 };
 ```

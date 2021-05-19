@@ -1,13 +1,8 @@
-import { Errors } from "../../Errors"
+import { Errors } from "../../Setup/Errors"
 import { Id } from "../../Utilities/Id"
 
 export const deprecated = {
   uuid: { value: function() { return Id() } },
-
-  did: { value: function(_removedCount) {
-    // angular-moviemasher overrides this to be alerted when we actions that
-    // could be undone are destroyed (because we undid then did something else)
-  }},
   canvas_context: {
     get: function() { 
       console.warn(Errors.deprecation.canvas_context.get)

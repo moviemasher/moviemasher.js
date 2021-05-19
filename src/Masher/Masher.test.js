@@ -1,12 +1,9 @@
 import { ThemeClip } from "../Clip"
-import { Default } from "../Default"
-import { Errors } from "../Errors"
+import { Default } from "../Setup"
+import { Errors } from "../Setup"
 import { TimeFactory } from "../Factory/TimeFactory"
-import { Module } from "../Module"
+import { Module } from "../Setup"
 import { Masher } from "./Masher"
-
-const { toMatchImageSnapshot } = require('jest-image-snapshot')
-expect.extend({ toMatchImageSnapshot })
 
 describe("Masher", () => {
   describe("constructor", () => {
@@ -42,8 +39,6 @@ describe("Masher", () => {
       expect(canvas).toBeInstanceOf(HTMLCanvasElement)
     })
   })
-  
-   
   describe("change", () => {
     test("throws when property blank", () => {
       const masher = new Masher
@@ -56,9 +51,11 @@ describe("Masher", () => {
       expect(() => masher.changeEffect("a")).toThrowError(Errors.selection)
     })
   })
+
+  const media_config = Module.themeById('com.moviemasher.theme.text')
+
   describe("add", () => {
-    const media_config = Module.themeById('com.moviemasher.theme.text')
-     
+
     test("returns promise that resolves to clip after loading", async () => {
       const masher = new Masher
       const clip = await masher.add(media_config)
@@ -69,36 +66,35 @@ describe("Masher", () => {
       const image = dataUrl.substring('data:image/png;base64,'.length)
       expect(image).toMatchImageSnapshot()
     })
-    describe("currentTime", () => {
-      test("returns", () => {
-        const masher = new Masher
-        masher.add(media_config)
-        expect(masher.currentTime).toEqual(0)  
-        masher.frame = 3
-        expect(masher.frame).toEqual(3)  
-        expect(masher.currentTime).toEqual(0.1)  
-        
-      })
+  })
+  describe("currentTime", () => {
+    test("returns", () => {
+      const masher = new Masher
+      masher.add(media_config)
+      expect(masher.currentTime).toEqual(0)
+      masher.frame = 3
+      expect(masher.frame).toEqual(3)
+      expect(masher.currentTime).toEqual(0.1)
+
     })
-    describe("frame", () => {
-      test("returns what is set", () => {
-        const masher = new Masher
-        masher.add(media_config)
-        expect(masher.currentTime).toEqual(0)  
-        masher.frame = 3
-        expect(masher.frame).toEqual(3)  
-      })
+  })
+  describe("frame", () => {
+    test("returns what is set", () => {
+      const masher = new Masher
+      masher.add(media_config)
+      expect(masher.currentTime).toEqual(0)
+      masher.frame = 3
+      expect(masher.frame).toEqual(3)
     })
-    describe("time", () => {
-      test("returns what is set", () => {
-        const masher = new Masher
-        masher.add(media_config)
-        expect(masher.currentTime).toEqual(0)  
-        const time = TimeFactory.create(3, 30)
-        masher.time = time
-        expect(masher.time.equalsTime(time)).toBeTruthy()
-      })
+  })
+  describe("time", () => {
+    test("returns what is set", () => {
+      const masher = new Masher
+      masher.add(media_config)
+      expect(masher.currentTime).toEqual(0)
+      const time = TimeFactory.createFromFrame(3, 30)
+      masher.time = time
+      expect(masher.time.equalsTime(time)).toBeTruthy()
     })
-    
-  })  
+  })
 })

@@ -1,11 +1,12 @@
 
-import { MediaType } from "../Types";
+import { MediaType } from "../Setup"
 import { sharedMedia } from "./with/sharedMedia"
 import { inaudible } from "./with/inaudible"
-import { transform } from "./with/transform";
-import { drawFilters } from "./with/drawFilters";
+import { transform } from "./with/transform"
+import { drawFilters } from "./with/drawFilters"
+import { Media } from "./Media"
 
-function MergerMedia(object) { this.object = object }
+class MergerMedia extends Media {}
 
 Object.defineProperties(MergerMedia.prototype, {
   type: { value: MediaType.merger },

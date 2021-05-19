@@ -1,6 +1,6 @@
 import { EffectMedia } from "../Media"
-import { Module } from "../Module"
-import { ModuleType } from "../Types"
+import { Module } from "../Setup"
+import { ModuleType } from "../Setup"
 import { Effect } from "./Effect"
 
 describe("Effect", () => {

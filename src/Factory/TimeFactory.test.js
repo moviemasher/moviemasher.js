@@ -1,12 +1,10 @@
-import { Errors } from "../Errors";
-import { TimeFactory } from "./TimeFactory";
-
-
+import { Errors } from "../Setup"
+import { TimeFactory } from "./TimeFactory"
 
 describe("TimeFactory", () => {
   describe("create", () => {
     test("returns supplied frame and fps", () => {
-      const time = TimeFactory.create(1, 30)
+      const time = TimeFactory.createFromFrame(1, 30)
       expect(time.frame).toEqual(1)
       expect(time.fps).toEqual(30)
     })
@@ -15,7 +13,7 @@ describe("TimeFactory", () => {
     test("throws when seconds is invalid", () => {
         expect(() => TimeFactory.createFromSeconds("0", 1)).toThrow(Errors.seconds)
         expect(() => TimeFactory.createFromSeconds(-1, 1)).toThrow(Errors.seconds)
-    })  
+    })
     test("throws when fps is invalid", () => {
         expect(() => TimeFactory.createFromSeconds(0, "1")).toThrow(Errors.fps)
         expect(() => TimeFactory.createFromSeconds(0, 0)).toThrow(Errors.fps)

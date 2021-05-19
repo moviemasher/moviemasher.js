@@ -1,4 +1,4 @@
-import { MediaType, TrackType } from "../Types"
+import { MediaType, TrackType } from "../Setup"
 import { modularFalse } from "./with/modularFalse"
 import { invisible } from "./with/invisible"
 import { duration } from "./with/duration"
@@ -6,8 +6,9 @@ import { urlAudible } from "./with/urlAudible"
 import { sharedMedia } from "./with/sharedMedia"
 import { propertiesTiming } from "./with/propertiesTiming"
 import { audible } from "./with/audible"
+import { Media } from "./Media"
 
-function AudioMedia(object) { this.object = object }
+class AudioMedia extends Media {}
 
 Object.defineProperties(AudioMedia.prototype, {
   type: { value: MediaType.audio },

@@ -1,10 +1,11 @@
-import { MediaType } from "../Types";
-import { drawFilters } from "./with/drawFilters";
+import { MediaType } from "../Setup"
+import { Media } from "./Media"
+import { drawFilters } from "./with/drawFilters"
 import { inaudible } from "./with/inaudible"
 import { sharedMedia } from "./with/sharedMedia"
-import { transform } from "./with/transform";
+import { transform } from "./with/transform"
 
-function ScalerMedia(object) { this.object = object }
+class ScalerMedia extends Media {}
 
 Object.defineProperties(ScalerMedia.prototype, {
   type: { value: MediaType.scaler },

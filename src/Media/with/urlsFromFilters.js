@@ -1,12 +1,10 @@
+import { Is } from "../../Utilities"
+import { Module, Errors } from "../../Setup"
+import { UrlsByType } from "../../Loading"
 
-import { Errors } from "../../Errors"
-import { Is } from "../../Is"
-import { Module } from "../../Module"
-import { UrlsByType } from "../../Utilities"
-
-export const urlsFromFilters = { 
-  urlsVisibleInTimeRangeForClipByType: { 
-    value: function(timeRange, clip) { 
+export const urlsFromFilters = {
+  urlsVisibleInTimeRangeForClipByType: {
+    value: function(timeRange, clip) {
       const urls = new UrlsByType
       const properties_by_type = this.modularPropertiesByType
       Object.keys(properties_by_type).forEach(type => {
@@ -20,16 +18,16 @@ export const urlsFromFilters = {
               urls[type].push(module.source)
             }
           } else throw(Errors.unknown.type + type)
-        }) 
+        })
       })
-     
+
       return urls
-    } 
+    }
   },
 }
 
 // we no longer load filters - they must be registered or defined in full
-// urlsVisibleInTimeRange(timeRange) { 
+// urlsVisibleInTimeRange(timeRange) {
 //   const urls = super.urlsVisibleInTimeRange(timeRange)
 //   if (Is.array(this.filters)) {
 //     this.filters.forEach(filter => {
@@ -43,4 +41,3 @@ export const urlsFromFilters = {
 //   }
 //   return urls
 // }
-

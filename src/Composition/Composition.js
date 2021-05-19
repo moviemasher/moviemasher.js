@@ -1,13 +1,8 @@
 import { Base } from "../Base"
-import { Cache } from "../Cache"
-import { ClipType } from "../Types"
+import { Cache } from "../Loading"
 import { contexts } from "../Base/with/contexts"
-import { Default } from "../Default"
-import { Errors } from "../Errors"
-import { Is } from "../Is"
-import { Pixel } from "../Utilities"
-import { Sort } from "../Sort"
-import { Time } from "../Time"
+import { Default, Errors, ClipType } from "../Setup"
+import { Pixel, byTrack, Is, Time } from "../Utilities"
 import { TimeFactory } from "../Factory/TimeFactory"
 import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
 
@@ -27,10 +22,10 @@ class Composition extends Base {
     this.sourcesByClip = new Map
     this.__mashSeconds = 0
     this.__contextSeconds = 0
-  }        
+  }
 
   get audible() { return !this.paused && !!this.audioContext }
-   
+
   get bufferedTime() { return this.urlsAtTime.loaded }
 
   get bufferedTimeRange() {
@@ -40,21 +35,21 @@ class Composition extends Base {
   get bufferSeconds() { return this.object.bufferSeconds }
   set bufferSeconds(value) { this.object.bufferSeconds = value }
 
-  get clipsAtTime() { 
+  get clipsAtTime() {
     return this.mash.clipsWithin(this.time, this.audible, this.visible)
   }
 
-  get clipsInTimeRange() { 
+  get clipsInTimeRange() {
     return this.mash.clipsWithin(this.timeRange, this.audible, this.visible)
   }
-  
+
   get configured() { return this.time && this.mash && (this.videoContext || this.audioContext) }
 
-  get gain() { 
+  get gain() {
     if (Is.undefined(this.__gain)) this.__gain = this.__gainInitialize
     return this.__gain
   }
-  get __gainInitialize() { 
+  get __gainInitialize() {
     return Is.defined(this.object.gain) ? this.object.gain : Default.volume
   }
   set gain(value) {
@@ -66,7 +61,7 @@ class Composition extends Base {
     }
   }
 
- 
+
   get mash() { return this.object.mash }
   set mash(value) { this.object.mash = value }
 
@@ -79,40 +74,40 @@ class Composition extends Base {
 
   get time() { return this.__time }
   set time(value) {
-    if (!Is.instance(value, Time)) throw(Errors.time)
+    if (!Is.instanceOf(value, Time)) throw(Errors.time)
 
     this.__time = value
   }
-  
-  get timeRange() { 
+
+  get timeRange() {
     const buffer_time = TimeFactory.createFromSeconds(this.bufferSeconds)
     const end_time = this.time.add(buffer_time)
     return TimeRangeFactory.createFromTimes(this.time, end_time)
   }
 
   get timeRangeAtTime() { return TimeRangeFactory.createFromTime(this.time) }
-  
+
 
   get urlsAtTime() {
     return this.urlsInTimeRangeByType(this.timeRangeAtTime)
   }
-  
+
   get urlsInTimeRange() {
     return this.urlsInTimeRangeByType(this.timeRange)
   }
 
   get visible() { return !!this.videoContext }
-  
+
   adjustSourceGain(clip) {
     const source = this.sourcesByClip.get(clip)
     if (Is.undefined(source)) return
 
     const { gainNode } = source
     if (this.gain === 0.0) return gainNode.gain.value = 0.0
-  
+
     const { gain } = clip
     if (!Is.array(gain)) return gainNode.gain.value = gain * this.gain
-    
+
     // time/gain pairs...
     const times = this.clipTiming(clip)
     const { start, duration } = times
@@ -133,7 +128,7 @@ class Composition extends Base {
     const urls = this.urlsInTimeRangeByType(this.timeRangeAtTime)
     if (!urls.loaded) {
       if (!throwIfUncached) return
-      
+
       throw Errors.uncached + urls.urlsUnloaded[0]
     }
     return clips
@@ -170,7 +165,7 @@ class Composition extends Base {
         const times = this.clipTiming(clip)
         const { start, duration, offset } = times
         if (Is.positive(start) && Is.positive(duration) && duration > 0) {
-          const gainSource = this.audioContext.createBufferSource() 
+          const gainSource = this.audioContext.createBufferSource()
           gainSource.buffer = Cache.get(url)
 
           const gainNode = this.audioContext.createGain()
@@ -182,11 +177,11 @@ class Composition extends Base {
 
           this.adjustSourceGain(clip)
 
-        } 
-      } 
+        }
+      }
     })
   }
- 
+
   destroySources(clipsToKeep = []) {
     this.sourcesByClip.forEach((source, clip) => {
       if (clipsToKeep.includes(clip)) return
@@ -199,8 +194,9 @@ class Composition extends Base {
   }
 
   draw() {
+    // console.log(this.constructor.name, "draw")
     if (!this.configured) return
-    
+
     this.drawClips(this.time, this.clipsToDraw(true))
   }
 
@@ -208,7 +204,7 @@ class Composition extends Base {
     if (!Is.objectStrict(context)) throw Errors.internal
 
     context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-    context.fillStyle = Pixel.color(this.mash.backcolor) 
+    context.fillStyle = Pixel.color(this.mash.backcolor)
     context.fillRect(0, 0, context.canvas.width, context.canvas.height)
   }
 
@@ -226,13 +222,14 @@ class Composition extends Base {
       const [mainClip] = main
       if (mainClip) mainClip.mergeContextAtTime(time, this.videoContext)
     }
-    const tracked = clips.filter(clip => !main.includes(clip)).sort(Sort.byTrack)
+    const tracked = clips.filter(clip => !main.includes(clip)).sort(byTrack)
     tracked.forEach(clip => {
       clip.mergeContextAtTime(time, this.videoContext)
     })
   }
 
   drawFrame() {
+    // console.log(this.constructor.name, "drawFrame")
     if (!this.configured) return
 
     const clips = this.clipsToDraw()
@@ -258,7 +255,7 @@ class Composition extends Base {
     return this.mash.urlsWithin(timeRange, this.audible, this.visible)
   }
 
-  loadTime() { 
+  loadTime() {
     const urls = this.urlsInTimeRangeByType(this.time)
     return urls.load(this.audioContext)
   }
@@ -287,7 +284,7 @@ class Composition extends Base {
 
   stopPlaying() {
     console.log(this.constructor.name, "stopPlaying")
-    
+
     if (!this.playing) return
 
     this.playing = false
@@ -296,7 +293,7 @@ class Composition extends Base {
     this.destroySources()
     this.__mashSeconds = 0
     this.__contextSeconds = 0
-    
+
     if (!this.__bufferSource) return
 
     this.__bufferSource.disconnect(this.audioContext.destination)

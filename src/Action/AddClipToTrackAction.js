@@ -1,4 +1,4 @@
-import { AddTrackAction } from "./AddTrackAction";
+import { AddTrackAction } from "./AddTrackAction"
 
 class AddClipToTrackAction extends AddTrackAction {
   get clips() { return this.track.clips }

@@ -1,9 +1,9 @@
-import { Is } from "../../Is"
-import { id } from "../../Base/with/id";
+import { Is } from "../../Utilities"
+import { Property } from "../../Setup"
+import { id } from "../../Base/with/id"
 import { label } from "./label"
 import { object } from "../../Base/with/object"
-import { Property } from "../../Utilities";
-import { toJSONFromObject } from "../../Base/with/toJSONFromObject";
+import { toJSONFromObject } from "../../Base/with/toJSONFromObject"
 
 export const sharedMedia = {
   ...object,
@@ -50,7 +50,5 @@ export const sharedMedia = {
         if (Is.defined(object[name])) clip[name] = object[name]
       })
     }
-    
-    
   }},
 }

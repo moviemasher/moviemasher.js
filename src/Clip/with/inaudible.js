@@ -1,8 +1,8 @@
-import { UrlsByType } from "../../Utilities";
+import { UrlsByType } from "../../Loading"
 
-export const inaudible = { 
+export const inaudible = {
   audible: { value: false },
-  urlsAudibleInTimeRangeByType: { 
-    value: function() { return UrlsByType.none } 
+  urlsAudibleInTimeRangeByType: {
+    value: function() { return UrlsByType.none }
   },
 }

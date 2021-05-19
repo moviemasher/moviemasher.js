@@ -1,5 +1,5 @@
 import { idMutable } from "../Base/with/idMutable"
-import { ModuleType } from "../Types"
+import { ModuleType } from "../Setup"
 import { drawMediaFilters } from "../Clip/with/drawMediaFilters"
 import { Transform } from "./Transform"
 

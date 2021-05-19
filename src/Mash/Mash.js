@@ -1,46 +1,44 @@
-import { Module } from "../Module"
-import { Is } from '../Is'
 import { Base } from "../Base"
-import { MediaFactory } from '../Factory/MediaFactory'
+import { id } from "../Base/with/id"
+import { MediaFactory } from "../Factory/MediaFactory"
 import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
-import { FilterFactory } from '../Factory/FilterFactory'
-import { TrackFactory } from '../Factory/TrackFactory'
-import { UrlsByType } from '../Utilities'
-import { TimeFactory } from '../Factory/TimeFactory'
-import { Default } from '../Default'
+import { FilterFactory } from "../Factory/FilterFactory"
+import { TrackFactory } from "../Factory/TrackFactory"
+import { UrlsByType } from "../Loading"
+import { TimeFactory } from "../Factory/TimeFactory"
 import { Clip } from "../Clip"
-import { Sort } from "../Sort"
-import { id } from '../Base/with/id'
-import { 
-  EventType, 
-  MediaType, 
-  TrackType, 
-  TrackTypes 
-} from "../Types"
+import { Is, byFrame } from "../Utilities"
+import { Default, Module, Errors } from "../Setup"
+import {
+  EventType,
+  MediaType,
+  TrackType,
+  TrackTypes
+} from "../Setup"
 
 const MashProperty = {
   label: "label",
   backcolor: "backcolor",
 }
 
-class Mash extends Base {  
+class Mash extends Base {
   static get properties() { return Object.values(MashProperty) }
 
   get audio() { return this.__audio ||= this.initializeAudio }
 
-  get backcolor() { 
-    return this.__backcolor ||= this.object.backcolor || Default.mash.backcolor 
+  get backcolor() {
+    return this.__backcolor ||= this.object.backcolor || Default.mash.backcolor
   }
   set backcolor(value) { this.__backcolor = value }
-  
+
   get clips() { return this.tracks.map(track => track.clips).flat() }
-  
+
   get clipsAudible() { return this.clips.filter(clip => clip.audible) }
-  
+
   get clipsAudio() { return this.audio.map(track => track.clips).flat() }
-  
+
   get clipsVideo() { return this.video.flatMap(track => track.clips) }
-  
+
   get events() { return this.__events ||= this.object.events }
   set events(value) { this.__events = value }
 
@@ -49,7 +47,7 @@ class Mash extends Base {
     return Math.max(0, ...this.tracks.map(track => track.frames))
   }
 
-  get initializeAudio() { 
+  get initializeAudio() {
     const array = this.object.audio || [{ type: TrackType.audio }]
     return array.map(track => TrackFactory.create(track, this))
   }
@@ -59,7 +57,7 @@ class Mash extends Base {
     return array.map(media => MediaFactory.create(media))
   }
 
-  get initializeVideo() { 
+  get initializeVideo() {
     const array = this.object.video || [{ type: TrackType.video }]
     return array.map(track => TrackFactory.create(track, this))
   }
@@ -69,21 +67,21 @@ class Mash extends Base {
   get label() { return this.__label ||= this.object.label || Default.mash.label }
   set label(value) { this.__label = value }
 
-  get media() { 
-    return [...new Set(this.clips.flatMap(clip => this.mediaForClip(clip)))] 
+  get media() {
+    return [...new Set(this.clips.flatMap(clip => this.mediaForClip(clip)))]
   }
-  
-  get propertyValues() { 
+
+  get propertyValues() {
     return Object.fromEntries(Mash.properties.map(key => [key, this[key]]))
   }
-  
+
   get quantize() { return this.__quantize ||= this.object.quantize || Default.mash.quantize }
-  
+
   /** combined audio and video tracks */
   get tracks() { return TrackTypes.map(av => this[av]).flat() }
 
   get type() { return "mash" }
-  
+
   get video() { return this.__video ||= this.initializeVideo }
 
   addClipsToTrack(clips, trackIndex = 0, insertIndex = 0) {
@@ -93,7 +91,7 @@ class Mash extends Base {
     // console.log("addClipsToTrack trackIndex", trackIndex, "insertIndex:", insertIndex)
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     const oldTrack = this.clipTrack(clip)
-    
+
     this.emitIfFramesChange(() => {
       if (oldTrack && oldTrack !== newTrack) {
         // console.log("addClipsToTrack", newTrack.index, oldTrack.index)
@@ -110,12 +108,12 @@ class Mash extends Base {
     array.push(track)
     return track
   }
-  
+
   changeClipFrames(clip, value) {
     let limited_value = Math.max(1, value) // frames value must be > 0
 
     if (TrackTypes.includes(clip.type)) {
-      const max = Math.floor(clip.media.duration * this.quantize) - clip.trim 
+      const max = Math.floor(clip.media.duration * this.quantize) - clip.trim
       limited_value = Math.min(max, limited_value)
     }
     const track = this.clipTrack(clip)
@@ -124,12 +122,12 @@ class Mash extends Base {
       track.sortClips()
     })
   }
-  
+
   changeClipTrim(clip, value, frames) {
     let limited_value = Math.max(0, value)
 
     if (TrackTypes.includes(clip.type)) { // trim not remove last frame
-      const max = Math.floor(clip.media.duration * this.quantize) - 1 
+      const max = Math.floor(clip.media.duration * this.quantize) - 1
       limited_value = Math.min(max, limited_value)
     }
     const new_frames = frames - limited_value
@@ -141,7 +139,7 @@ class Mash extends Base {
     })
   }
 
-  clipIntersects(clip, range) { 
+  clipIntersects(clip, range) {
     return clip.timeRange(this.quantize).intersects(range)
   }
 
@@ -149,7 +147,7 @@ class Mash extends Base {
     return this.clipTrackAtIndex(clip, clip.track)
   }
 
-  clipTrackAtIndex(clip, index = 0) { 
+  clipTrackAtIndex(clip, index = 0) {
     return this.trackOfTypeAtIndex(clip.trackType, index)
   }
 
@@ -157,7 +155,7 @@ class Mash extends Base {
 
   clipsAudibleInTimeRange(timeRange) {
     const range = timeRange.scale(this.quantize)
-    return this.clips.filter(clip => 
+    return this.clips.filter(clip =>
       clip.audible && this.clipIntersects(clip, range)
     )
   }
@@ -178,11 +176,11 @@ class Mash extends Base {
   }
 
   emitDuration() {
-    const info = { 
-      value: TimeFactory.create(this.frames, this.quantize).seconds 
+    const info = {
+      value: TimeFactory.createFromFrame(this.frames, this.quantize).seconds
     }
     // console.log(this.constructor.name, "emitDuration", info)
-    this.events.emit(EventType.duration, info)  
+    this.events.emit(EventType.duration, info)
   }
 
   emitIfFramesChange(method) {
@@ -202,7 +200,7 @@ class Mash extends Base {
   }
 
   findMedia(mediaId) {
-    if (!(Is.string(mediaId) && mediaId.length)) return 
+    if (!(Is.string(mediaId) && mediaId.length)) return
     const found = this.findInitialMedia(mediaId)
     if (found) return found
 
@@ -211,7 +209,7 @@ class Mash extends Base {
 
   filterClipSelection(value) {
     const array = Is.array(value) ? value : [value]
-    const clips = array.filter(clip => Is.instance(clip, Clip))
+    const clips = array.filter(clip => Is.instanceOf(clip, Clip))
     const [firstClip] = clips
     // console.log("filterClipSelection", clips)
     if (!firstClip) return []
@@ -219,9 +217,9 @@ class Mash extends Base {
     const { trackType, track } = firstClip
 
     // selected clips must all be on same track
-    const trackClips = clips.filter(clip => 
+    const trackClips = clips.filter(clip =>
       clip.track === track && clip.trackType === trackType
-    ).sort(Sort.byFrame)
+    ).sort(byFrame)
 
     if (track || trackType === TrackType.audio) return trackClips
 
@@ -251,7 +249,7 @@ class Mash extends Base {
         const modular_properties = properties_by_type[type]
         modular_properties.forEach(key => {
           const found = this.searchMedia(clip[key], type)
-          if (found) medias.push(found) 
+          if (found) medias.push(found)
         })
       })
     }
@@ -324,7 +322,7 @@ class Mash extends Base {
 
     return this.findClipMedia(mediaId)
   }
- 
+
   toJSON() {
     return {
       label: this.label,
@@ -337,10 +335,12 @@ class Mash extends Base {
     }
   }
 
-  trackOfTypeAtIndex(trackType, index = 0) { 
+  trackOfTypeAtIndex(trackType, index = 0) {
     if (index < 0) return
-    
-    return this[trackType][index] 
+    // console.log(this.constructor.name, "trackOfTypeAtIndex", trackType, index)
+    if (Is.not(trackType)) throw Errors.type
+
+    return this[trackType][index]
   }
 
   urlsAudibleInTimeRangeForClipsByType(timeRange, clips) {

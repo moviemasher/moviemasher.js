@@ -1,4 +1,4 @@
-import { TransformTypes } from "../../Types"
+import { TransformTypes } from "../../Setup"
 
 export const propertyValues = {
   propertyValues: { get: function() {

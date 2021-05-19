@@ -1,30 +1,29 @@
-import { Base } from "../Base";
-import { TrackType } from "../Types";
-import { ClipFactory } from "../Factory/ClipFactory";
-import { Sort } from "../Sort";
-import { Errors } from "../Errors";
+import { Base } from "../Base"
+import { TrackType, Errors } from "../Setup"
+import { ClipFactory } from "../Factory/ClipFactory"
+import { byFrame } from "../Utilities"
 
 class Track extends Base {
     constructor(object, mash) {
       super(object)
       this.mash = mash
-      
+
       this.object.index ||= 0
       this.object.type ||= TrackType.video
     }
 
     get clips() { return this.__clips ||= this.initializeClips }
-    get initializeClips() { 
+    get initializeClips() {
       const array = this.object.clips || []
       return array.map(object => {
         const media = this.mash.searchMedia(object.id)
-        const clip = ClipFactory.create({ track: this.index, ...object }, media)
-        
+        const clip = ClipFactory.createFromObjectMedia({ track: this.index, ...object }, media)
+
         return clip
       })
     }
 
-    get frames() { 
+    get frames() {
       if (!this.clips.length) return 0
 
       const clip = this.clips[this.clips.length - 1]
@@ -36,10 +35,10 @@ class Track extends Base {
     get isMainVideo() { return !this.index && this.type == TrackType.video }
 
     get type() { return this.object.type }
-    
+
     addClips(clips, insertIndex = 0) {
       insertIndex ||= 0
-      if (!this.isMainVideo) insertIndex = 0 // ordered by clip.frame values 
+      if (!this.isMainVideo) insertIndex = 0 // ordered by clip.frame values
 
       const clipIndex = insertIndex // note original, since it may decrease...
       const movingClips = [] // build array of clips already in this.clips
@@ -55,7 +54,7 @@ class Track extends Base {
       spliceClips.splice(insertIndex, 0, ...clips)
       this.sortClips(spliceClips)
 
-      // set the track of clips we aren't moving 
+      // set the track of clips we aren't moving
       const newClips = clips.filter(clip => !movingClips.includes(clip))
       newClips.forEach(clip => clip.track = this.index)
 
@@ -84,7 +83,7 @@ class Track extends Base {
       this.clips.splice(0, this.clips.length, ...spliceClips)
     }
 
-    sortClips(clips) { 
+    sortClips(clips) {
       clips ||= this.clips
       if (this.isMainVideo) {
         let frame = 0
@@ -95,7 +94,7 @@ class Track extends Base {
           if (!is_transition) frame += clip.frames
         })
       }
-      clips.sort(Sort.byFrame) 
+      clips.sort(byFrame)
     }
 
     toJSON() {

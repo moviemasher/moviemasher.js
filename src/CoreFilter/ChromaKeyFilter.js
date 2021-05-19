@@ -1,5 +1,6 @@
 import { CoreFilter } from "./CoreFilter"
-import { Colors, Pixel } from "../Utilities"
+import { Colors } from "../Utilities"
+import { Pixel } from "../Utilities"
 
 class ChromaKeyFilter extends CoreFilter {
   get parameters() { 

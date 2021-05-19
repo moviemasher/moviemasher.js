@@ -1,5 +1,6 @@
 import { CoreFilter } from "./CoreFilter"
-import { Property, Utilities } from "../Utilities"
+import { Property } from "../Setup"
+import { Utilities } from "../Utilities"
 
 const array_key = (array, value, key, id_key) => {
   return Utilities.findBy(array, value, id_key)[key];

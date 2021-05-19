@@ -1,7 +1,7 @@
-import { Factory } from "./Factory";
-import { ActionType } from "../Types";
-import { 
-  AddTrackAction, 
+import { Factory } from "./Factory"
+
+import {
+  AddTrackAction,
   MoveClipsAction,
   AddClipToTrackAction,
   AddEffectAction,
@@ -12,26 +12,43 @@ import {
   FreezeAction,
   MoveEffectsAction,
   RemoveClipsAction,
+  Action,
 } from "../Action"
-import { Is } from "../Is";
+import { Is } from "../Utilities"
+
+const ActionTypes = [
+  'addTrack',
+  'addClipsToTrack',
+  'moveClips',
+  'addEffect',
+  'change',
+  'changeFrames',
+  'changeTrim',
+  'changeGain',
+  'moveEffects',
+  'split',
+  'freeze',
+  'removeClips',
+]
+const ActionType = Object.fromEntries(ActionTypes.map(type => [type, type]))
 
 class ActionFactory extends Factory {
   constructor() {
-    super()
-    this.classesByType[ActionType.addTrack] = AddTrackAction
-    this.classesByType[ActionType.addClipsToTrack] = AddClipToTrackAction
-    this.classesByType[ActionType.moveClips] = MoveClipsAction
-    this.classesByType[ActionType.addEffect] = AddEffectAction
-    this.classesByType[ActionType.change] = ChangeAction
-    this.classesByType[ActionType.changeFrames] = ChangeFramesAction
-    this.classesByType[ActionType.changeTrim] = ChangeTrimAction
-    this.classesByType[ActionType.split] = SplitAction
-    this.classesByType[ActionType.freeze] = FreezeAction
-    this.classesByType[ActionType.moveEffects] = MoveEffectsAction
-    this.classesByType[ActionType.removeClips] = RemoveClipsAction
+    super(Action)
+    this.install(ActionType.addTrack, AddTrackAction)
+    this.install(ActionType.addClipsToTrack, AddClipToTrackAction)
+    this.install(ActionType.moveClips, MoveClipsAction)
+    this.install(ActionType.addEffect, AddEffectAction)
+    this.install(ActionType.change, ChangeAction)
+    this.install(ActionType.changeFrames, ChangeFramesAction)
+    this.install(ActionType.changeTrim, ChangeTrimAction)
+    this.install(ActionType.split, SplitAction)
+    this.install(ActionType.freeze, FreezeAction)
+    this.install(ActionType.moveEffects, MoveEffectsAction)
+    this.install(ActionType.removeClips, RemoveClipsAction)
   }
-  
-  create(object, masher) {
+
+  createFromObjectMasher(object, masher) {
     const defaults = {
       mash: "",
       undoSelectedClips: "selectedClips",
@@ -39,16 +56,23 @@ class ActionFactory extends Factory {
       redoSelectedClips: "selectedClips",
       redoSelectedEffects: "selectedEffects",
     }
+    const clone = { ...object }
     Object.entries(defaults).forEach(entry => {
       const [key, value] = entry
       if (Is.defined(object[key])) return
 
-      if (Is.emptystring(value)) return object[key] = masher[key]
-      
-      object[key] = [...masher[value]]
-    }) 
-    return super.create(object)
+      if (Is.emptystring(value)) clone[key] = masher[key]
+      else clone[key] = [...masher[value]]
+    })
+
+    return this.createFromObject(clone)
   }
 }
+
+Object.defineProperties(ActionFactory.prototype, {
+  type: { value: ActionType },
+  types: { value: ActionTypes },
+})
+
 const ActionFactoryInstance = new ActionFactory
 export { ActionFactoryInstance as ActionFactory }

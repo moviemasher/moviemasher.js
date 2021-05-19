@@ -1,6 +1,11 @@
 import { Factory } from "./Factory"
-import { LoadType } from "../Types"
-import { AudioLoader, FontLoader, ImageLoader, ModuleLoader } from "../Loader"
+import { LoadType } from "../Setup/Types"
+
+import { AudioLoader } from "../Loading/AudioLoader"
+import { FontLoader } from "../Loading/FontLoader"
+import { ImageLoader } from "../Loading/ImageLoader"
+import { ModuleLoader } from "../Loading/ModuleLoader"
+
 
 class LoaderFactory extends Factory {
   constructor() {
@@ -14,4 +19,3 @@ class LoaderFactory extends Factory {
 
 const LoaderFactoryInstance = new LoaderFactory
 export { LoaderFactoryInstance as LoaderFactory }
-

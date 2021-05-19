@@ -1,8 +1,8 @@
-import { Id } from "../Utilities/Id"
-import { ClipType, MediaType } from "../Types"
+import { Id } from "../Utilities"
+import { ClipType, MediaType } from "../Setup"
 import { VideoClip } from "./VideoClip"
-import { Mash } from '../Mash'
-import { Is } from '../Is'
+import { Mash } from "../Mash"
+import { Is } from "../Utilities"
 
 describe("VideoClip", () => {
   const media_configuration = { id: Id(), url: "frames/", duration: 100, type: MediaType.video, }

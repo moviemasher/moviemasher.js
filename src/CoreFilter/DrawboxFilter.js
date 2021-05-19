@@ -1,5 +1,5 @@
 import { CoreFilter } from "./CoreFilter"
-import { Is } from '../Is'
+import { Is } from "../Utilities"
 import { Pixel } from "../Utilities"
 
 class DrawBoxFilter extends CoreFilter {

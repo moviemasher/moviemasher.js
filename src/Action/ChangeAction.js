@@ -1,4 +1,4 @@
-import { Action } from "./Action";
+import { Action } from "./Action"
 
 class ChangeAction extends Action {
   constructor(object) {

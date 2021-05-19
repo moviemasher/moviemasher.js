@@ -1,5 +1,5 @@
-import { Is } from "../Is";
-import { Pixel } from "../Utilities";
+import { Is } from "../Utilities"
+import { Pixel } from "../Utilities"
 import { CoreFilter } from "./CoreFilter"
 
 class ColorFilter extends CoreFilter {

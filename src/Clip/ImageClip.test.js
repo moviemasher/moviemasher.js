@@ -1,17 +1,14 @@
-import { Id } from "../Utilities/Id"
-import { ClipType, MediaType, ModuleType } from "../Types"
+import { Id } from "../Utilities"
+import { ClipType, MediaType, ModuleType } from "../Setup"
 import { ImageClip } from "./ImageClip"
-import { Scaler } from '../Transform'
-import { MediaFactory } from '../Factory/MediaFactory'
-import { TimeRangeFactory } from '../Factory/TimeRangeFactory'
-import { TimeFactory } from '../Factory/TimeFactory'
-    
-const { toMatchImageSnapshot } = require('jest-image-snapshot')
-expect.extend({ toMatchImageSnapshot })
+import { Scaler } from "../Transform"
+import { MediaFactory } from "../Factory/MediaFactory"
+import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
+import { TimeFactory } from "../Factory/TimeFactory"
 
 describe("ImageClip", () => {
-  const media_configuration = { 
-    id: Id(), url: "../examples/javascript/media/img/globe.jpg", type: MediaType.image, 
+  const media_configuration = {
+    id: Id(), url: "../examples/javascript/media/img/globe.jpg", type: MediaType.image,
   }
   const media = MediaFactory.create(media_configuration)
   const clip = new ImageClip({ media })
@@ -27,10 +24,10 @@ describe("ImageClip", () => {
       expect(clip.copy).not.toEqual(expected)
     })
   })
-  
+
   describe("contextAtTimeForDimensions", () => {
     test("returns expected context", async () => {
-      const time = TimeFactory.create()
+      const time = TimeFactory.createFromFrame()
       await clip.load(TimeRangeFactory.createFromTime(time))
       const dimensions = { width: 640, height: 480 }
       const context = clip.contextAtTimeForDimensions(time, dimensions)
@@ -39,14 +36,14 @@ describe("ImageClip", () => {
       expect(image).toMatchImageSnapshot()
     })
   })
-  
+
   describe("toJSON", () => {
     test("returns expected clip", () => {
       const expected = {}
       expect(clip.toJSON()).not.toEqual(expected)
     })
   })
-  
+
   test("scaler", () => {
     const scaler = clip.scaler
     expect(scaler).toBeInstanceOf(Scaler)

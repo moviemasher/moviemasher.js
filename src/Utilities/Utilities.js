@@ -1,5 +1,5 @@
-import { Errors } from "../Errors"
-import { Is } from '../Is'
+import { Errors } from "../Setup"
+import { Is } from "./Is"
 
 const findBy = (array, object, key = 'id') => {
   if (! Is.array(array)) throw(Errors.array)

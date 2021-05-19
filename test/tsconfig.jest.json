@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ES2015",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "strict": true,
+    "skipLibCheck": false,
+    // "rootDir": "../src",
+    "forceConsistentCasingInFileNames": false,
+    "moduleResolution": "node",
+    "incremental": false,
+    "allowJs": true,
+    "checkJs": false,
+  },
+  "include": ["**/*"]
+}

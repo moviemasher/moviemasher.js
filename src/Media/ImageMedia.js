@@ -1,25 +1,26 @@
-import { MediaType } from "../Types"
-import { modularFalse } from "./with/modularFalse";
-import { inaudible } from "./with/inaudible";
-import { visible } from "./with/visible";
-import { duration } from "./with/duration";
-import { urlVisible } from "./with/urlVisible";
-import { urlsVisible } from "./with/urlsVisible";
-import { sharedMedia } from "./with/sharedMedia";
-import { propertiesTiming } from "./with/propertiesTiming";
+import { MediaType } from "../Setup"
+import { modularFalse } from "./with/modularFalse"
+import { inaudible } from "./with/inaudible"
+import { visibleMedia } from "./with/visibleMedia"
+import { duration } from "./with/duration"
+import { urlVisible } from "./with/urlVisible"
+import { urlsVisible } from "./with/urlsVisible"
+import { sharedMedia } from "./with/sharedMedia"
+import { propertiesTiming } from "./with/propertiesTiming"
+import { Media } from "./Media"
 
-function ImageMedia(object = {}) { this.object = object }
+class ImageMedia extends Media {}
 
 Object.defineProperties(ImageMedia.prototype, {
   type: { value: MediaType.image },
   ...sharedMedia,
   ...modularFalse,
   ...inaudible,
-  ...visible,
+  ...visibleMedia,
   ...duration,
   ...propertiesTiming,
   ...urlVisible,
   ...urlsVisible,
 })
-      
+
 export { ImageMedia }

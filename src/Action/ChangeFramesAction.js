@@ -1,4 +1,4 @@
-import { ChangeAction } from "./ChangeAction";
+import { ChangeAction } from "./ChangeAction"
 
 class ChangeFramesAction extends ChangeAction {
   redoAction() {

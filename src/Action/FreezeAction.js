@@ -1,4 +1,4 @@
-import { Action } from "./Action";
+import { Action } from "./Action"
 
 class FreezeAction extends Action {
   redoAction() {

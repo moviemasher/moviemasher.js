@@ -1,4 +1,4 @@
-import { ClipType } from "../Types"
+import { ClipType } from "../Setup"
 import { sharedClip } from "./with/sharedClip"
 import { invisible } from "./with/invisible"
 import { audible } from "./with/audible"

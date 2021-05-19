@@ -1,17 +1,13 @@
-
-version <future>:
-- freeze frame
-
 version 4.0.26:
+  - modernize codebase
   - switch to rollup bundler
   - provide Universal module (UMD)
   - provide CommonJS module (CJS)
   - provide ES module (ESM)
-  - pack default font into all modules
+  - remove all dependencies
   - automatically register standard filters
-  - modernize codebase
-  - add jest tests
-
+  - add jest tests, including snapshots
+  - freeze frame support
 
 version 4.0.25:
   - fix audio buffer source security issue in safari
@@ -27,7 +23,7 @@ version 4.0.21:
   - fixed example
 
 version 4.0.20:
-  - all classes now accessible from MovieMasher class
+  - all classes now accessible from MovieMasher export
 
 version 4.0.19:
   - fixed issues related to split functionality

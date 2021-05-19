@@ -1,6 +1,9 @@
 import { Factory } from "./Factory"
-import { LoadType } from "../Types"
-import { AudioProcessor, FontProcessor, ImageProcessor, ModuleProcessor } from "../Processor"
+import { LoadType } from "../Setup/Types"
+import { AudioProcessor } from "../Loading/AudioProcessor"
+import { FontProcessor } from "../Loading/FontProcessor"
+import { ImageProcessor } from "../Loading/ImageProcessor"
+import { ModuleProcessor } from "../Loading/ModuleProcessor"
 
 class ProcessorFactory extends Factory {
   constructor() {
@@ -14,4 +17,3 @@ class ProcessorFactory extends Factory {
 
 const ProcessorFactoryInstance = new ProcessorFactory
 export { ProcessorFactoryInstance as ProcessorFactory }
-

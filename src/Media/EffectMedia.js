@@ -1,17 +1,18 @@
-import { MediaType } from "../Types";
+import { MediaType } from "../Setup"
 import { sharedMedia } from "./with/sharedMedia"
 import { inaudible } from "./with/inaudible"
-import { visible } from "./with/visible"
-import { transform } from "./with/transform";
+import { visibleMedia } from "./with/visibleMedia"
+import { transform } from "./with/transform"
+import { Media } from "./Media"
 
-function EffectMedia(object) { this.object = object }
+class EffectMedia extends Media {}
 
 Object.defineProperties(EffectMedia.prototype, {
   type: { value: MediaType.effect },
   ...sharedMedia,
   ...transform,
   ...inaudible,
-  ...visible,
+  ...visibleMedia,
 })
 
 export { EffectMedia }

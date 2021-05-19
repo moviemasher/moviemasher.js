@@ -1,7 +1,7 @@
 import { Action } from "../Action"
 import { Base } from "../Base"
-import { Errors } from "../Errors"
-import { Is } from "../Is"
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
 
 class Actions extends Base {
   constructor(object) {
@@ -25,7 +25,7 @@ class Actions extends Base {
   get masher() { return this.object.masher }
 
   do(action) {
-    if (!Is.instance(action, Action)) throw(Errors.action)
+    if (!Is.instanceOf(action, Action)) throw(Errors.action)
 
     action.actions = this
     const remove = this.actions.length - (this.index + 1)

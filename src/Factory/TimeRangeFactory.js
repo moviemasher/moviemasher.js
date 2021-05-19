@@ -1,7 +1,7 @@
-import { Errors } from '../Errors';
-import { Is } from '../Is'
-import { TimeRange } from "../TimeRange";
-import { Time } from '../Time';
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
+import { TimeRange } from "../Utilities"
+import { Time } from "../Utilities"
 
 const createFromArgs = (frame, fps, frames) => new TimeRange(frame, fps, frames)
 
@@ -19,8 +19,8 @@ const createFromTimes = (startTime, endTime) => {
 }
 
 const create = (object = {}) => { 
-  if (Is.instance(object, TimeRange)) return object
-  if (Is.instance(object, Time)) return createFromTime(object)
+  if (Is.instanceOf(object, TimeRange)) return object
+  if (Is.instanceOf(object, Time)) return createFromTime(object)
 
   const { frame, fps, frames } = object
   return createFromArgs(frame, fps, frames) 

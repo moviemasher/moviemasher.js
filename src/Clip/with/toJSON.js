@@ -1,4 +1,4 @@
-import { Is } from "../../Is"
+import { Is } from "../../Utilities"
 
 export const toJSON = {
   toJSON: { value: function() {

@@ -1,7 +1,7 @@
-import { LoadType } from "../../Types"
-import { UrlsByType } from "../../Utilities"
+import { LoadType } from "../../Setup"
+import { UrlsByType } from "../../Loading"
 
-export const urlsVisible = { 
+export const urlsVisible = {
   urlsVisibleInTimeRange: { value: function() { return [this.urlVisible] } },
   urlsVisibleInTimeRangeForClipByType: { value: function(timeRange, clip) {
     const urls = new UrlsByType

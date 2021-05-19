@@ -19,12 +19,12 @@ export const sharedClip = {
   ...labelFromObjectOrMedia,
   ...track,
   time: {
-    value: function(quantize) { 
-      return TimeFactory.create(this.frame, quantize) 
+    value: function(quantize) {
+      return TimeFactory.createFromFrame(this.frame, quantize)
     }
   },
-  timeRange: { 
-    value: function(quantize) { 
+  timeRange: {
+    value: function(quantize) {
       const options = { frame: this.frame, quantize, frames: this.frames }
       return TimeRangeFactory.create(options)
     }
@@ -45,7 +45,3 @@ export const sharedClip = {
   ...propertiesFromMedia,
   ...load,
 }
-
-
-
-

@@ -1,6 +1,6 @@
 import { Base } from "../Base"
-import { Errors } from '../Errors'
-import { Is } from '../Is'
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
 import { ChangeAction } from "../Action"
 import { Actions } from "../Actions"
 import { Mash } from "../Mash"
@@ -9,24 +9,25 @@ import { MediaFactory } from "../Factory/MediaFactory"
 import { TimeFactory } from "../Factory/TimeFactory"
 import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
 import { Context } from "../Utilities"
+import { Throw } from "../Utilities"
 import { Events } from "../Events"
+import { Default } from "../Setup"
+import { Composition } from "../Composition"
+import { Clip } from "../Clip"
 import { ActionFactory } from "../Factory/ActionFactory"
 import { Effect } from "../Transform"
+import {
+  TrackType,
+  MediaType,
+  EventType,
+  TransformTypes,
+  MoveType,
+  TrackTypes
+} from "../Setup"
+
 import { deprecated } from "./with/deprecated"
 import { contexts } from "../Base/with/contexts"
-import { Default } from "../Default"
-import { Composition } from "../Composition"
 
-import { 
-  DoType, 
-  ActionType, 
-  TrackType, 
-  MediaType, 
-  EventType, 
-  TransformTypes, 
-  MoveType, 
-  TrackTypes 
-} from "../Types"
 
 const MasherProperty = {
   autoplay: "autoplay",
@@ -37,14 +38,13 @@ const MasherProperty = {
   buffer: "buffer",
 }
 
-const Mashers = new Set
 
 const clipCanBeSplit = (clip, time, quantize) => {
-  if (!Is.object(clip)) return 
+  if (!Is.object(clip)) return
 
   // true if now intersects clip time, but is not start or end frame
   let range = TimeRangeFactory.createFromTime(time)
-  const clip_range = clip.timeRange(quantize) 
+  const clip_range = clip.timeRange(quantize)
 
   // ranges must intersect
   if (!clip_range.intersects(range)) return
@@ -56,17 +56,14 @@ const clipCanBeSplit = (clip, time, quantize) => {
   return true
 }
 
+// TODO: support Layers, made up of Rolls (a, b)
 class Masher extends Base {
-  static get instances() { return Mashers }
-
-  static get properties() { return Object.values(MasherProperty) }
 
   constructor(object = {}) {
     super(object)
-    Mashers.add(this)
-   
+
     this.object.canvas ||= Context.createCanvas()
-    
+
     this.events = new Events({ target: this.canvas })
     this.events.addListener(this.handleMasher.bind(this))
 
@@ -76,8 +73,8 @@ class Masher extends Base {
     this.__muted = false
     this.__paused = true
     this.__mashFrames = 0
-    this.__time = TimeFactory.create(0, this.fps)
-    this.__drawnTime = TimeFactory.create(0, this.fps)
+    this.__time = TimeFactory.createFromFrame(0, this.fps)
+    this.__drawnTime = TimeFactory.createFromFrame(0, this.fps)
 
     const mash = this.object.mash || {}
     this.object.mash = false
@@ -87,7 +84,7 @@ class Masher extends Base {
   get action_index() { return this.__actions.index }
 
 
-  get autoplay() { 
+  get autoplay() {
     if (Is.undefined(this.__autoplay)) {
       this.__autoplay = this.initializeProperty(MasherProperty.autoplay)
     }
@@ -95,6 +92,7 @@ class Masher extends Base {
   }
   set autoplay(value) { this.__autoplay = value }
 
+  // TODO: move me to Mash
   get composition() {
     if (!this.__composition) {
       const options = {
@@ -110,7 +108,7 @@ class Masher extends Base {
     return this.__composition
   }
 
-  get buffer() { 
+  get buffer() {
     if (Is.undefined(this.__buffer)) {
       // deprecated buffer properties
       const properties = [MasherProperty.buffer, 'buffertime', 'minbuffertime']
@@ -118,11 +116,11 @@ class Masher extends Base {
     }
     return this.__buffer
   }
-  set buffer(value) { 
+  set buffer(value) {
     if (this.__buffer !== value) {
       this.__buffer = value
       this.composition.bufferSeconds = value
-    } 
+    }
   }
 
   get bufferedTimeRange() { return this.composition.bufferedTimeRange }
@@ -130,10 +128,10 @@ class Masher extends Base {
   get canvas() { return this.videoContext.canvas }
   set canvas(value) {
     this.videoContext = Context.createVideo(value)
-    this.events.target = value   
+    this.events.target = value
   }
-  
-  get configured() { 
+
+  get configured() {
     return this.mash && this.canvas
   }
 
@@ -141,17 +139,17 @@ class Masher extends Base {
   get currentTime() { return this.time.seconds }
   set currentTime(seconds) { this.time = TimeFactory.createFromSeconds(seconds, this.fps) }
 
-  get duration() { return TimeFactory.create(this.__mashFrames, this.mash.quantize).seconds }
+  get duration() { return TimeFactory.createFromFrame(this.__mashFrames, this.mash.quantize).seconds }
 
   get endTime() { return this.mashEndTime.scale(this.fps, 'floor') }
 
-  get fps() { 
+  get fps() {
     if (Is.undefined(this.__fps)) {
       this.__fps = this.initializeProperty(MasherProperty.fps)
     }
     return this.__fps
   }
-  set fps(value = 0) {
+  set fps(value) {
     if (!Is.integer(value) || value < 1) throw(Errors.fps)
 
     if (this.__fps !== value) {
@@ -166,7 +164,7 @@ class Masher extends Base {
     // called from ruler to change position
     //console.log('frame=', value, this.fps)
 
-    this.time = TimeFactory.create(value, this.fps)
+    this.time = TimeFactory.createFromFrame(value, this.fps)
     //console.log("time", this.time)
   }
   // Math.round(Number(this.__mashFrames) / Number(this.mash.quantize) * Number(this.fps));}
@@ -174,7 +172,7 @@ class Masher extends Base {
 
   get gain() { return this.muted ? 0.0 : this.volume }
 
-  get loop() { 
+  get loop() {
     if (Is.undefined(this.__loop)) {
       this.__loop = this.initializeProperty(MasherProperty.loop)
     }
@@ -185,14 +183,14 @@ class Masher extends Base {
   get mash() { return this.__mash ||= this.object.mash }
   set mash(object) {
     // console.log("set mash", object)
-   
-    if (this.__mash === object) return 
+
+    if (this.__mash === object) return
 
     this.paused = true
-   
+
     this.__selectedEffects = []
 
-   
+
     this.__mash = new Mash(object)
     this.__mash.events = this.events
 
@@ -202,7 +200,7 @@ class Masher extends Base {
     this.selectedClips = [] // so mash gets copied into __pristine
 
     this.handleChangeMashFrames()
-    
+
     this.composition.mash = this.mash
     this.time = TimeFactory.createFromSeconds(0, this.fps)
 
@@ -211,7 +209,7 @@ class Masher extends Base {
     if (this.autoplay) this.paused = false
   }
 
-  get mashEndTime() { return TimeFactory.create(this.__mashFrames, this.mash.quantize) }
+  get mashEndTime() { return TimeFactory.createFromFrame(this.__mashFrames, this.mash.quantize) }
 
   get muted() { return this.__muted }
   set muted(value = false) {
@@ -255,18 +253,18 @@ class Masher extends Base {
     const zeros = "0".repeat(this.precision - 1)
     return parseFloat(`0.${zeros}1`)
   }
-  
-  get precision() { 
+
+  get precision() {
     if (Is.undefined(this.__precision)) {
       this.__precision = this.initializeProperty(MasherProperty.precision)
     }
     return this.__precision
-    
+
   }
   set precision(value) { this.__precision = value }
 
   get selectedClip() {
-    if (this.__selectedClips.length === 1) return this.__selectedClips[0] 
+    if (this.__selectedClips.length === 1) return this.__selectedClips[0]
   }
   set selectedClip(value) { this.selectedClips = value }
 
@@ -276,12 +274,12 @@ class Masher extends Base {
 
   set selectedClips(value) {
     this.__selectedClips = this.mash.filterClipSelection(value)
-    this.__pristine = this.selectedClipOrMash.propertyValues 
+    this.__pristine = this.selectedClipOrMash.propertyValues
     this.selectedEffects = []
   }
 
   get selectedEffect() {
-    if (this.__selectedEffects.length === 1) return this.__selectedEffects[0] 
+    if (this.__selectedEffects.length === 1) return this.__selectedEffects[0]
   }
   set selectedEffect(value){
     this.selectedEffects = Is.object(value)  && !Is.empty(value) ? [value] : []
@@ -311,11 +309,11 @@ class Masher extends Base {
     const equal = this.__time.equalsTime(limited_time)
     this.__time = limited_time
     this.composition.time = this.__time
-      
+
     if (!equal) this.handleChangeMash()
   }
 
-  get urlsInUse() { return this.composition.urlsInTimeRange.urls }
+  get urlsCached() { return this.composition.urlsInTimeRange }
 
   get volume() {
     if (Is.undefined(this.__volume)) {
@@ -336,27 +334,34 @@ class Masher extends Base {
   add(object, addType, frameOrIndex, trackIndex) {
     // console.log("add", object, addType)
     if (!Is.object(object)) throw Errors.argument + object
-    
-    if (addType === MoveType.effect) return this.addEffect(object, frameOrIndex)
-    
-    return this.addClip(object, frameOrIndex, trackIndex)
+    const type = Is.defined(addType) ? addType : object.type
+
+    if (type === MoveType.effect) {
+      return this.addEffect(new Effect(object), frameOrIndex)
+    }
+
+    const media = MediaFactory.create({ type, ...object })
+
+    const clip = ClipFactory.createFromObjectMedia(object, media, this.mash)
+    return this.addClip(clip, frameOrIndex, trackIndex)
   }
 
-  addClip(object, frameOrIndex, trackIndex) {
-    // console.log("addClip frameOrIndex", frameOrIndex)
-    const media = MediaFactory.create(object)
-    const { trackType } = media
-    const clip = ClipFactory.createFromMedia(media, this.mash)
+  addClip(clip, frameOrIndex, trackIndex) {
+    // console.log("addClip frameOrIndex", clip, frameOrIndex)
+    Throw.unlessInstanceOf(clip, Clip)
+
+    const { trackType } = clip
+
     const clips = [clip]
-    const options = { 
+    const options = {
       clip,
-      type: ActionType.addClipsToTrack,
+      type: ActionFactory.type.addClipsToTrack,
       redoSelectedClips: clips,
       trackType,
     }
     const track = this.mash.trackOfTypeAtIndex(trackType, trackIndex)
     const trackCount = this.mash[trackType].length
-    if (trackIndex || media.trackType === TrackType.audio) {
+    if (trackIndex || trackType === TrackType.audio) {
       options.trackIndex = trackIndex
       clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex)
       options.createTracks = Math.max(0, trackIndex + 1 - trackCount)
@@ -365,38 +370,37 @@ class Masher extends Base {
       options.createTracks = Math.min(1, Math.max(0, 1 - trackCount))
     }
     this.actionCreate(options)
-    return this.loadVisual().then(() => Promise.resolve(clip)) 
+    return this.loadVisual().then(() => Promise.resolve(clip))
   }
 
-  addEffect(object, index) {
+  addEffect(effect, index) {
     // console.log(this.constructor.name, "addEffect", object, index)
-    if (!Is.object(object)) throw Errors.argument + object
+    Throw.unlessInstanceOf(effect, Effect)
 
-    const effects = this.selectedClip.effects
-    if (!Is.array(effects)) throw Errors.selection
+    const effects = this.selectedClipOrMash.effects
+    Throw.unlessInstanceOf(effects, Array, Errors.selection)
 
-    const effect = new Effect(object)
     const insertIndex = Is.integer(index) && index > 0 ? index : 0
     const undoEffects = [...effects]
     const redoEffects = [...effects]
     redoEffects.splice(insertIndex, 0, effect)
-    const options = { 
-      effects, undoEffects, redoEffects, 
-      type: ActionType.moveEffects 
+    const options = {
+      effects, undoEffects, redoEffects,
+      type: ActionFactory.type.moveEffects
     }
     this.actionCreate(options)
-    return this.loadVisual().then(() => Promise.resolve(effect)) 
+    return this.loadVisual().then(() => Promise.resolve(effect))
   }
   /**
-   * 
+   *
    * @param {String} type audio or video
    */
   addTrack(trackType = TrackType.video) {
     if (!TrackTypes.includes(trackType)) throw Errors.type + trackType
 
-    return this.actionCreate({ trackType, type: ActionType.addTrack })
+    return this.actionCreate({ trackType, type: ActionFactory.type.addTrack })
   }
-  
+
   can(method){
     var should_be_enabled = false;
     var z = this.__selectedClips.length;
@@ -441,10 +445,10 @@ class Masher extends Base {
   }
 
   currentActionReusable(target, property) {
-    if (!this.__actions.currentActionLast) return 
+    if (!this.__actions.currentActionLast) return
 
     const action = this.__actions.currentAction
-    if (!Is.instance(action, ChangeAction)) return
+    if (!Is.instanceOf(action, ChangeAction)) return
 
     if (!(action.target === target && action.property === property)) return
 
@@ -453,7 +457,7 @@ class Masher extends Base {
 
   change(property) {
     if (!this.selectedClip) return this.changeMash(property)
-    
+
     return this.changeClip(property)
   }
 
@@ -462,8 +466,8 @@ class Masher extends Base {
 
     const options = { property, target: this.selectedClip }
     const [transform, transformProperty] = property.split(".")
-    
-    if (transformProperty) { 
+
+    if (transformProperty) {
       // make sure first component is merger or scaler
       if (!TransformTypes.includes(transform)) throw Errors.property + transform
 
@@ -478,31 +482,31 @@ class Masher extends Base {
         options.redoValue = options.target[options.property]
       }
       console.log(this.constructor.name, "changeClip", transform, transformProperty, this.__pristine)
-      
+
       options.undoValue = this.__pristine[transform][transformProperty]
     } else {
-      options.undoValue = this.__pristine[property] 
+      options.undoValue = this.__pristine[property]
       options.redoValue = options.target[options.property]
     }
-   
+
     const action = this.currentActionReusable(options.target, options.property)
     if (action) return action.updateAction(options.redoValue)
-    
+
     switch(options.property) {
       case 'frames': {
-        options.type = ActionType.changeFrames
+        options.type = ActionFactory.type.changeFrames
         break
       }
       case 'trim': {
-        options.type = ActionType.changeTrim
+        options.type = ActionFactory.type.changeTrim
         break
       }
-      default: options.type = ActionType.change
+      default: options.type = ActionFactory.type.change
     }
     return this.actionCreate(options)
   }
 
-  changeEffect(property) { 
+  changeEffect(property) {
     if (!Is.string(property) || Is.empty(property)) throw Errors.property
 
     const target = this.selectedEffect
@@ -511,11 +515,11 @@ class Masher extends Base {
     const redoValue = target[property]
     const action = this.currentActionReusable(target, property)
     if (action) return action.updateAction(redoValue)
-  
+
     const undoValue = this.__pristineEffect[property]
-    const options = { 
-      type: ActionType.change, 
-      target, property, redoValue, undoValue 
+    const options = {
+      type: ActionFactory.type.change,
+      target, property, redoValue, undoValue
     }
     return this.actionCreate(options)
   }
@@ -527,13 +531,13 @@ class Masher extends Base {
     const redoValue = this.mash[property]
     const action = this.currentActionReusable(target, property)
     if (action) return action.updateAction(redoValue)
-  
+
     const options = {
       target,
       property,
       redoValue,
       undoValue: this.__pristine[property],
-      type: ActionType.change,
+      type: ActionFactory.type.change,
     }
     // console.log("changeMash", options)
 
@@ -543,21 +547,17 @@ class Masher extends Base {
   delayedDraw() {
     // console.log("Masher.delayedDraw")
     // called when assets are cached
-    if (! this.delayed_timer) {
+    if (!this.delayed_timer) {
       this.delayed_timer = setTimeout(() => {
-        // console.log("Masher.delayedDraw.timeout")
+        // console.log(this.constructor.name, "delayedDraw timeout", )
         this.delayed_timer = null
         this.redraw()
       }, 50)
     }
   }
 
-  destroy() {
-    Mashers.delete(this)
-    this.mash = null;
-    this.canvas_context = null
-  } // call when player removed from DOM
-
+  // call when player removed from DOM
+  destroy() { Mashers.delete(this) }
 
   handleAction(type, action) {
     this.events.emit(type, { action: action })
@@ -580,7 +580,7 @@ class Masher extends Base {
       const max_frame = Math.max(0, this.endTime.frame - 1)
       if (max_frame < this.time.frame) this.frame = max_frame
       else this.delayedDraw()
-    } 
+    }
   }
 
   handleMasher(event) {
@@ -594,15 +594,15 @@ class Masher extends Base {
       }
       case EventType.action: {
         const action = event.detail.action
-        
+
         this.selectedClips = action.selectedClips
         this.selectedEffects = action.selectedEffects
         switch (action.type) {
-          case ActionType.changeAction: {
+          case ActionFactory.type.changeAction: {
             if (action.property === "gain"){
               if (this.__moving && !this.silenced) {
                 this.composition.adjustSourceGain(action.target)
-              } 
+              }
             }
             break
           }
@@ -615,7 +615,7 @@ class Masher extends Base {
       }
     }
   }
-    
+
   handleRemoveActions(removedActions = []) {
     const type = removedActions.length ? EventType.truncate : EventType.add
     this.handleAction(type, this.__actions.currentAction)
@@ -624,11 +624,11 @@ class Masher extends Base {
     if (removedActions.length) this.did(removedActions.length)
   }
 
-  initializeProperty(...properties) { 
+  initializeProperty(...properties) {
     for (let property of properties) {
-      if (Is.defined(this.object[property])) return this.object[property] 
+      if (Is.defined(this.object[property])) return this.object[property]
     }
-    return Default[properties[0]] 
+    return Default[properties[0]]
   }
 
   loadVisual() {
@@ -638,38 +638,38 @@ class Masher extends Base {
 
   move(objectOrArray, moveType, frameOrIndex, trackIndex) {
     if (!Is.object(objectOrArray)) throw Errors.argument + objectOrArray
- 
+
     if (moveType === MoveType.effect) {
       return this.moveEffects(objectOrArray, frameOrIndex)
     }
-    
+
     return this.moveClips(objectOrArray, frameOrIndex, trackIndex)
   }
-  
+
   moveEffects(effectOrArray, index = 0) {
     // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
     if (!Is.positive(index)) throw Errors.argument + index
-  
-    // Coerce.instanceArray? 
+
+    // Coerce.instanceArray?
 
     const array = Is.array(effectOrArray) ? effectOrArray : [effectOrArray]
-    const moveEffects = array.filter(effect => Is.instance(effect, Effect))
+    const moveEffects = array.filter(effect => Is.instanceOf(effect, Effect))
     if (Is.emptyarray(moveEffects)) throw Errors.argument + effectOrArray
 
     const effects = this.selectedClip.effects
     const undoEffects = [...effects]
-   
+
     const redoEffects = []
     undoEffects.forEach((effect, i) => {
-      if (i === index) redoEffects.push(...moveEffects) 
+      if (i === index) redoEffects.push(...moveEffects)
       if (moveEffects.includes(effect)) return
 
       redoEffects.push(effect)
     })
-    
-    const options = { 
-      effects, undoEffects, redoEffects, 
-      type: ActionType.moveEffects 
+
+    const options = {
+      effects, undoEffects, redoEffects,
+      type: ActionFactory.type.moveEffects
     }
     // console.log(this.constructor.name, "moveEffects", options)
     return this.actionCreate(options)
@@ -679,17 +679,17 @@ class Masher extends Base {
     // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
     if (!Is.positive(frameOrIndex)) throw Errors.argument + frameOrIndex
     if (!Is.positive(trackIndex)) throw Errors.argument + trackIndex
-  
+
     const clips = this.mash.filterClipSelection(clipOrArray)
     if (Is.emptyarray(clips)) throw Errors.argument + clipOrArray
 
     const [firstClip] = clips
     const { trackType, track: undoTrackIndex } = firstClip
     const options = {
-      clips, trackType, trackIndex, undoTrackIndex, 
-      type: ActionType.moveClips
+      clips, trackType, trackIndex, undoTrackIndex,
+      type: ActionFactory.type.moveClips
     }
-    
+
     const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex)
     const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex)
     const currentIndex = redoTrack.clips.indexOf(firstClip)
@@ -729,20 +729,19 @@ class Masher extends Base {
   redo(){
     if (this.__actions.canRedo) {
       const action = this.__actions.redo()
-      this.handleAction(DoType.redo, action)
       this.handleChangeMash()
     }
   }
 
   redraw() {
-    if (! this.configured) return 
+    if (! this.configured) return
 
     const video_buffered = this.composition.drawFrame()
-    const no_audio = !this.__moving || this.silenced 
+    const no_audio = !this.__moving || this.silenced
     const audio_buffered = no_audio || this.composition.bufferedTime
     // console.log(this.constructor.name, "redraw audio_buffered:", audio_buffered)
     const all_buffered = video_buffered && audio_buffered
-    
+
     if (this.__moving !== all_buffered) {
       if (this.__moving) this.__set_moving(false)
       else if (!this.__paused && this.bufferedTimeRange) this.__set_moving(true)
@@ -767,33 +766,33 @@ class Masher extends Base {
     const track = this.mash.clipTrack(firstClip)
     const options = {
       clips, track, index: track.clips.indexOf(firstClip),
-      type: ActionType.removeClips
+      type: ActionFactory.type.removeClips
     }
     return this.actionCreate(options)
   }
 
   removeEffects(effectOrArray) {
     const array = Is.array(effectOrArray) ? effectOrArray : [effectOrArray]
-    const removeEffects = array.filter(effect => Is.instance(effect, Effect))
+    const removeEffects = array.filter(effect => Is.instanceOf(effect, Effect))
     if (Is.emptyarray(removeEffects)) throw Errors.argument + effectOrArray
 
     const effects = this.selectedClip.effects
     const undoEffects = [...effects]
     const redoEffects = effects.filter(effect => !removeEffects.includes(effect))
 
-    const options = { 
+    const options = {
       redoSelectedEffects: [],
-      effects, undoEffects, redoEffects, 
-      type: ActionType.moveEffects 
+      effects, undoEffects, redoEffects,
+      type: ActionFactory.type.moveEffects
     }
     return this.actionCreate(options)
   }
- 
+
   select(object, toggle_selected) {
     if (!object) {
       // console.log("Masher.select FALSE", object, toggle_selected)
       this.selectedClip = false
-      return 
+      return
     }
     // console.log('Masher.select TRUE', object, toggle_selected);
     var media, i, array = [], key_array = '__selectedClips', key_prop = 'selectedClips';
@@ -835,8 +834,8 @@ class Masher extends Base {
   }
 
   selected(object) {
-    if (Is.instance(object, Effect)) return this.selectedEffects.includes(object)
-    
+    if (Is.instanceOf(object, Effect)) return this.selectedEffects.includes(object)
+
     return this.selectedClips.includes(object)
   }
 
@@ -856,15 +855,15 @@ class Masher extends Base {
     insertClip.frames = undoFrames - redoFrames
     insertClip.frame = scaled.frame
     if (splitClip.properties.includes("trim")) insertClip.trim += redoFrames
-    
+
     const trackClips = this.mash.clipTrack(splitClip).clips
-    const options = { 
-      type: ActionType.split, 
-      splitClip, 
+    const options = {
+      type: ActionFactory.type.split,
+      splitClip,
       insertClip,
       trackClips,
       redoFrames,
-      undoFrames, 
+      undoFrames,
       index: 1 + trackClips.indexOf(splitClip),
       redoSelectedClips: [insertClip],
       undoSelectedClips: [splitClip],
@@ -881,34 +880,33 @@ class Masher extends Base {
     const trackClips = this.mash.clipTrack(freezeClip).clips
     const insertClip = freezeClip.copy
     const frozenClip = freezeClip.copy
-    
+
     const options = {
       frames: freezeClip.frames - (scaled.frame - freezeClip.frame),
-      freezeClip, frozenClip, insertClip, trackClips, 
+      freezeClip, frozenClip, insertClip, trackClips,
       redoSelectedClips: [frozenClip],
       index: 1 + trackClips.indexOf(freezeClip),
-      type: ActionType.freeze,
+      type: ActionFactory.type.freeze,
     }
 
-    frozenClip.frame = scaled.frame 
+    frozenClip.frame = scaled.frame
     frozenClip.frames = 1
     frozenClip.trim = freezeClip.trim + (scaled.frame - freezeClip.frame)
     insertClip.frame = scaled.frame + 1
     insertClip.frames = options.frames - 1
     insertClip.trim = frozenClip.trim + 1
-    
+
     return this.actionCreate(options)
   }
 
   undo() {
     if (this.__actions.canUndo) {
       const action = this.__actions.undo()
-      this.handleAction(DoType.undo, action)
       this.handleChangeMash()
     }
   }
 
-  
+
   __limit_time(time) {
     const scaled = time.scale(this.fps)
     const end_time = this.mashEndTime.scale(this.fps)
@@ -954,7 +952,7 @@ class Masher extends Base {
         var $this = this;
         this.__load_timer = setInterval(() => {$this.__load_timed();}, 500 / this.fps);
         // start up the sound buffer with our current time, rather than displayed
-        this.composition.startPlaying() 
+        this.composition.startPlaying()
         this.rebuffer() // get sounds buffering now, rather than next timer execution
       } else {
         this.composition.stopPlaying()
@@ -965,12 +963,20 @@ class Masher extends Base {
   }
 
   actionCreate(object) {
-    const action = ActionFactory.create(object, this) 
+    const action = ActionFactory.createFromObjectMasher(object, this)
     const removed = this.__actions.do(action)
     this.handleRemoveActions(removed)
   }
 }
 
+
+
+
+Object.defineProperties(Masher, {
+  type: { value: "masher" },
+  properties: { get: function() { return Object.values(MasherProperty) }}
+
+})
 Object.defineProperties(Masher.prototype, {
   ...contexts,
   ...deprecated,

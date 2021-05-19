@@ -1,8 +1,8 @@
-import { UrlsByType } from "../../Utilities";
+import { UrlsByType } from "../../Loading"
 
-export const invisible = { 
+export const invisible = {
   visible: { value: false },
-  urlsVisibleInTimeRangeForClipByType: { 
-    value: function() { return UrlsByType.none } 
+  urlsVisibleInTimeRangeForClipByType: {
+    value: function() { return UrlsByType.none }
   },
 }

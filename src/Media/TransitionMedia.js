@@ -1,24 +1,24 @@
-import { MediaType } from "../Types";
-import { duration } from "./with/duration";
-import { inaudible } from "./with/inaudible";
-import { modular } from "./with/modular";
-import { propertiesTiming } from "./with/propertiesTiming";
-import { sharedMedia } from "./with/sharedMedia";
-import { urlsNone } from "./with/urlsNone";
-import { visible } from "./with/visible";
+import { MediaType } from "../Setup"
+import { Media } from "./Media"
+import { duration } from "./with/duration"
+import { inaudible } from "./with/inaudible"
+import { modular } from "./with/modular"
+import { propertiesTiming } from "./with/propertiesTiming"
+import { sharedMedia } from "./with/sharedMedia"
+import { urlsNone } from "./with/urlsNone"
+import { visibleMedia } from "./with/visibleMedia"
 
-function TransitionMedia(object) { this.object = object }
+class TransitionMedia extends Media {}
 
 Object.defineProperties(TransitionMedia.prototype, {
   type: { value: MediaType.transition },
   ...sharedMedia,
   ...modular,
   ...inaudible,
-  ...visible,
+  ...visibleMedia,
   ...propertiesTiming,
   ...duration,
   ...urlsNone,
 })
 
 export { TransitionMedia }
-

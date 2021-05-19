@@ -1,5 +1,5 @@
-import { Context } from "../Utilities";
-import { CoreFilter } from "./CoreFilter";
+import { Context } from "../Utilities"
+import { CoreFilter } from "./CoreFilter"
 
 class ScaleFilter extends CoreFilter {
   draw(evaluator, evaluated) {

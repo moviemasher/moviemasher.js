@@ -1,6 +1,6 @@
-import { Errors } from "../Errors"
-import { Is } from "../Is"
-import { EventType } from "../Types"
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
+import { EventType } from "../Setup"
 
 class Action {
   constructor(object) {

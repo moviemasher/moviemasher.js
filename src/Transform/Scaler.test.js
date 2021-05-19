@@ -1,6 +1,6 @@
-import { ModuleType } from "../Types"
+import { ModuleType } from "../Setup"
 import { ScalerMedia } from "../Media"
-import { Module } from "../Module"
+import { Module } from "../Setup"
 import { Scaler } from "./Scaler"
 
 describe("Scaler", () => {

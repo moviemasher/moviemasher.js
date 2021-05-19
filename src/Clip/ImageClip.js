@@ -1,7 +1,7 @@
-import { ClipType } from "../Types"
+import { ClipType } from "../Setup"
 import { sharedClip } from "./with/sharedClip"
 import { inaudible } from "./with/inaudible"
-import { visible } from "./with/visible"
+import { visibleClip } from "./with/visibleClip"
 import { urls } from "./with/urls"
 import { transform } from "./with/transform"
 import { drawImage } from "./with/drawImage"
@@ -13,7 +13,7 @@ class ImageClip extends Clip {}
 Object.defineProperties(ImageClip.prototype, {
   type: { value: ClipType.image },
   ...sharedClip,
-  ...visible,
+  ...visibleClip,
   ...inaudible,
   ...urls,
   ...transform,

@@ -1,6 +1,6 @@
-import { Id } from "../Utilities/Id"
-import { MediaType } from "../Types"
-import { TimeRangeFactory } from '../Factory/TimeRangeFactory'
+import { Id } from "../Utilities"
+import { MediaType } from "../Setup"
+import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
 import { VideoMedia } from "./VideoMedia"
 
   

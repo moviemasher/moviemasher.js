@@ -1,4 +1,4 @@
-import { Is } from "../Is"
+import { Is } from "../Utilities"
 import { Context } from "../Utilities"
 import { CoreFilter } from "./CoreFilter"
 

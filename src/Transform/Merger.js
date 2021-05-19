@@ -1,7 +1,7 @@
 
 import { idMutable } from "../Base/with/idMutable"
 
-import { ModuleType } from "../Types"
+import { ModuleType } from "../Setup"
 import { drawMerger } from "./with/drawMerger"
 import { Transform } from "./Transform"
 

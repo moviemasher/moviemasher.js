@@ -1,13 +1,13 @@
-import { FilterType, FilterTypes } from "../Types"
+import { ColorFilter, CoreFilter } from "../CoreFilter"
 import { FilterFactory } from "./FilterFactory"
 
 describe("FilterFactory", () => {
   test("color", () => {
-    const color = FilterFactory.create(FilterType.color)
-    // console.log(`Color: ${color}`)
+    const color = FilterFactory.create(FilterFactory.type.color)
+    expect(color).toStrictEqual(ColorFilter)
   })
-  test.each(FilterTypes)("create(%s)", type => {
+  test.each(FilterFactory.types)("create(%s)", type => {
     const filter = FilterFactory.create(type)
-    expect(filter).toBeDefined()
+    expect(filter).toBeInstanceOf(CoreFilter)
   })
 })

@@ -1,6 +1,6 @@
-import { Errors } from "../../Errors"
-import { Is } from "../../Is"
-import { Evaluator, Property } from "../../Utilities"
+import { Errors, Property } from "../../Setup"
+import { Is } from "../../Utilities/Is"
+import { Evaluator } from "../../Clip/Evaluator"
 
 export const evaluator = {
   evaluator: { 

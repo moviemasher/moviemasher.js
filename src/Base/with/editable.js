@@ -1,4 +1,4 @@
-import { object } from "./object";
+import { object } from "./object"
 
 // clips and transforms
 export const editable = {

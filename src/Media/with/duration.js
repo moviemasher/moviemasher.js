@@ -1,5 +1,5 @@
-import { Default } from "../../Default"
-import { Is } from "../../Is"
+import { Default } from "../../Setup"
+import { Is } from "../../Utilities"
 
 export const duration = { 
   duration: { 

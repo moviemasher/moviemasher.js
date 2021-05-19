@@ -1,5 +1,4 @@
-import { Factory } from "./Factory";
-import { FilterType } from "../Types"
+import { Factory } from "./Factory"
 import { BlendFilter } from "../CoreFilter/BlendFilter"
 import { ChromaKeyFilter } from "../CoreFilter/ChromaKeyFilter"
 import { ColorFilter } from "../CoreFilter/ColorFilter"
@@ -12,6 +11,23 @@ import { FadeFilter } from "../CoreFilter/FadeFilter"
 import { OverlayFilter } from "../CoreFilter/OverlayFilter"
 import { ScaleFilter } from "../CoreFilter/ScaleFilter"
 import { SetSarFilter } from "../CoreFilter/SetSarFilter"
+
+
+const FilterTypes = [
+  "blend",
+  "chromakey",
+  "colorchannelmixer",
+  "color",
+  "convolution",
+  "crop",
+  "drawbox",
+  "drawtext",
+  "fade",
+  "overlay",
+  "scale",
+  "setsar",
+]
+const FilterType = Object.fromEntries(FilterTypes.map(type => [type, type]))
 
 class FilterFactory extends Factory {
   constructor() {
@@ -34,6 +50,12 @@ class FilterFactory extends Factory {
 
   createFromObject(object) { return this.create(object.id) }
 }
+
+Object.defineProperties(FilterFactory.prototype, {
+  type: { value: FilterType },
+  types: { value: FilterTypes },
+})
+
 const FilterFactoryInstance = new FilterFactory
 export { FilterFactoryInstance as FilterFactory }
 

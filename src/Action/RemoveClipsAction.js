@@ -1,5 +1,5 @@
-import { track } from "../Clip/with/track";
-import { Action } from "./Action";
+import { track } from "../Clip/with/track"
+import { Action } from "./Action"
 
 class RemoveClipsAction extends Action {
   get trackIndex() { return track.index }

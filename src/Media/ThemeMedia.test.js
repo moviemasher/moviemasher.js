@@ -1,5 +1,5 @@
-import { MediaType } from "../Types"
-import { Module } from "../Module"
+import { MediaType } from "../Setup"
+import { Module } from "../Setup"
 import { ThemeMedia } from "./ThemeMedia"
 
 describe("ThemeMedia", () => {

@@ -2,3 +2,4 @@
 node_modules*
 coverage*
 **/__image_snapshots__*
+*.cache/*

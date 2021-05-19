@@ -1,7 +1,7 @@
-import { ClipType } from "../Types"
+import { ClipType } from "../Setup"
 import { sharedClip } from "./with/sharedClip"
 import { inaudible } from "./with/inaudible"
-import { visible } from "./with/visible"
+import { visibleClip } from "./with/visibleClip"
 import { speedOne } from "./with/speedOne"
 import { urls } from "./with/urls"
 import { transform } from "./with/transform"
@@ -10,7 +10,7 @@ import { Context } from "../Utilities"
 import { drawMediaFilters } from "./with/drawMediaFilters"
 import { mediaTime } from "./with/mediaTime"
 import { Clip } from "./Clip"
-import { Is } from "../Is"
+import { Is } from "../Utilities"
 
 class ThemeClip extends Clip {}
 
@@ -18,7 +18,7 @@ Object.defineProperties(ThemeClip.prototype, {
   type: { value: ClipType.theme },
   ...sharedClip,
   ...inaudible,
-  ...visible,
+  ...visibleClip,
   ...speedOne,
   ...urls,
   ...inaudible,

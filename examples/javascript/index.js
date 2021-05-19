@@ -102,24 +102,20 @@ function populateTextarea() {
 function add_media(id){
   if (!masher) return;
 
-  masher.add(media[id], 'video');
+  masher.add(media[id]);
   populateTextarea();
 }
 function handleEventMasher(event) {
-  // console.log("handleEventMasher", event);
-
   if (event.detail.type === "duration") {
     let range = document.getElementById('range');
     const value = masher.position;
-    // console.log("handleEventMasher changing range", range, value);
     range.value = value;
   }
 }
 
 function handleFetch(fonts) {
-
   const canvas = document.getElementById('canvas');
-  if (canvas && MovieMasher && MovieMasher.supported) {
+  if (canvas && MovieMasher) {
     canvas.addEventListener("masher", handleEventMasher);
     masher = MovieMasher.player();
     // console.log("masher", masher);
@@ -127,11 +123,13 @@ function handleFetch(fonts) {
     // register a default font, since we're allowing a module that uses fonts
     MovieMasher.register("font", fonts);
     // console.log(fonts)
-    masher.canvas_context = canvas.getContext('2d');
+    masher.videoContext = canvas.getContext('2d');
     masher.mash = {};
     populateTextarea();
   }
 }
 function handleLoadBody() {
-  fetch('media/font/blackout/font.json').then((response) => { return response.json()}).then(handleFetch);
+  fetch('media/font/blackout/font.json')
+    .then(response => response.json())
+    .then(handleFetch);
 }

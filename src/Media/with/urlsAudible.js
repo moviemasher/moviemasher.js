@@ -1,9 +1,8 @@
-import { LoadType } from "../../Types"
-import { UrlsByType } from "../../Utilities"
+import { UrlsByType } from "../../Loading"
 
-export const urlsAudible = { 
-  urlsAudibleInTimeRangeForClipByType: { 
-    value: function() { 
+export const urlsAudible = {
+  urlsAudibleInTimeRangeForClipByType: {
+    value: function() {
       const urls = new UrlsByType
       const url = this.urlAudible
       if (url) urls.audio.push(url)

@@ -1,5 +1,5 @@
-import { Is } from "../../Is"
-import { Property } from "../../Utilities"
+import { Is } from "../../Utilities"
+import { Property } from "../../Setup"
 
 export const propertiesModular = { 
   propertiesModular: { 

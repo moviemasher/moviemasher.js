@@ -1,6 +1,6 @@
 import { Factory } from "./Factory"
-import { Errors } from "../Errors"
-import { Is } from "../Is"
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
 import { Track } from "../Track"
 
 class TrackFactoryClass extends Factory {
@@ -8,7 +8,7 @@ class TrackFactoryClass extends Factory {
     if (!Is.object(object)) throw(Errors.object)
     if (object instanceof Track) return object
 
-    //if (!Is.instance(mash, Mash)) throw(Errors.mash)
+    //if (!Is.instanceOf(mash, Mash)) throw(Errors.mash)
 
     return new Track(object, mash)
   }

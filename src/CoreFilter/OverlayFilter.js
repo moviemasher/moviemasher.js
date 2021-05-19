@@ -1,5 +1,5 @@
-import { Errors } from "../Errors"
-import { Is } from "../Is"
+import { Errors } from "../Setup"
+import { Is } from "../Utilities"
 import { CoreFilter } from "./CoreFilter"
 
 class OverlayFilter extends CoreFilter {

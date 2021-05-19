@@ -1,4 +1,4 @@
-import { propertiesModular } from "./propertiesModular";
+import { propertiesModular } from "./propertiesModular"
 
 export const modular = { 
   modular: { value: true },

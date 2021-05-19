@@ -1,4 +1,5 @@
-import { MediaType } from "../Types"
+import { MediaType } from "../Setup"
+import { Media } from "./Media"
 import { duration } from "./with/duration"
 import { filters } from "./with/filters"
 import { html } from "./with/html"
@@ -8,19 +9,16 @@ import { propertiesModular } from "./with/propertiesModular"
 import { propertiesTiming } from "./with/propertiesTiming"
 import { sharedMedia } from "./with/sharedMedia"
 import { urlsFromFilters } from "./with/urlsFromFilters"
-import { visible } from "./with/visible"
+import { visibleMedia } from "./with/visibleMedia"
 
-function ThemeMedia(object = {}) { 
-  this.object = object 
-  
-}
+class ThemeMedia extends Media {}
 
 Object.defineProperties(ThemeMedia.prototype, {
   type: { value: MediaType.theme },
   ...sharedMedia,
   ...modular,
   ...inaudible,
-  ...visible,
+  ...visibleMedia,
   ...duration,
   ...filters,
   ...propertiesModular,

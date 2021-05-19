@@ -1,6 +1,6 @@
 import { id } from "../Clip/with/id"
 
-import { ModuleType } from "../Types"
+import { ModuleType } from "../Setup"
 import { drawMediaFilters } from "../Clip/with/drawMediaFilters"
 import { Transform } from "./Transform"
 
