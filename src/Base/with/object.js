@@ -1,4 +1,2 @@
-export const object = { 
-  property: { value: function(key) { return this[key] || this.object[key] } },
-  
-}
+// everything that has this.object
+export const object = {}

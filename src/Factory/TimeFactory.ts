@@ -1,9 +1,9 @@
 import { Errors } from "../Setup"
 import { Is } from "../Utilities/Is"
-import { Time } from "../Utilities/Time"
+import { Time, roundWithMethod } from "../Utilities/Time"
 
 class TimeFactory {
-  static createFromFrame(frame:number, fps:number) : Time {
+  static createFromFrame(frame = 0, fps = 1) : Time {
     return new Time(frame, fps)
   }
 
@@ -11,16 +11,8 @@ class TimeFactory {
     if (!Is.number(seconds) || seconds < 0) throw Errors.seconds
     if (!Is.integer(fps) || fps < 1) throw Errors.fps
 
-    const rounded = this.roundingFunction(rounding)(seconds * fps)
+    const rounded = roundWithMethod(seconds * fps, rounding)
     return this.createFromFrame(rounded, fps)
-  }
-
-  static roundingFunction(rounding:string = 'round') : Function {
-    switch (rounding) {
-      case 'ceil': return Math.ceil
-      case 'floor': return Math.floor
-      default: return Math.round
-    }
   }
 }
 

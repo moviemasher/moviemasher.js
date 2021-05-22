@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  dynamic:
+    image: ffdynamic/streamlet:1.0
+    build:
+      context: ../../../streamlet
+      dockerfile: ../moviemasher.js/examples/dynamic/Dockerfile-dynamic

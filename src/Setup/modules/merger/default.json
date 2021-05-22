@@ -1,6 +1,7 @@
 {
   "label": "Top Left",
   "id": "com.moviemasher.merger.default",
+  "type": "merger",
   "filters": [
     {
       "id": "overlay",

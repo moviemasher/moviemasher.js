@@ -1,18 +1,25 @@
 import { Errors, Module } from "../../Setup"
 import { MediaFactory } from "../../Factory/MediaFactory"
+import { Is } from "../../Utilities"
 
 export const media = {
-  media: { get: function() {
-    return this.__media ||= this.mediaInitialize }
+  media: {
+    get() {
+      if (Is.undefined(this.__media)) this.__media = this.mediaInitialize
+
+      return this.__media
+    }
   },
   mediaInitialize: {
-    get: function() {
-      if (this.object.media) return MediaFactory.create(this.object.media)
+    get() {
+      if (this.object.media) {
+        return MediaFactory.createFromObject(this.object.media)
+      }
 
       const module = Module.ofType(this.id, this.type)
-      if (! module) throw Errors.unknown[this.type] + this.type + ' ' + this.id
+      if (!module) throw Errors.unknown[this.type]
 
-      return MediaFactory.create(module)
+      return MediaFactory.createFromObject(module)
     }
   }
 }

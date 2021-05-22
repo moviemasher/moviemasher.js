@@ -32,7 +32,7 @@ class Factory implements FactoryInterface {
   }
 
   create(type:string | TypedObject) : object {
-    if (typeof type === "string") return this.createFromType(type)
+    if (Is.string(type)) return this.createFromType(<string>type)
 
     return this.createFromObject(type)
   }

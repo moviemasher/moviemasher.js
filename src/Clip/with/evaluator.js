@@ -1,9 +1,9 @@
 import { Errors, Property } from "../../Setup"
 import { Is } from "../../Utilities/Is"
-import { Evaluator } from "../../Clip/Evaluator"
+import { Evaluator } from "../Evaluator"
 
 export const evaluator = {
-  evaluator: { 
+  evaluator: {
     value: function(clipRange, context, dimensions){
       const evaluator = new Evaluator(clipRange, context, dimensions)
       if (this.media.properties) {
@@ -15,12 +15,12 @@ export const evaluator = {
             value = property.value
             if (Is.undefined(value)) {
               console.log("Transform.draw media lacked property value", property)
-            
+
               value = Property.propertyTypeDefault(property.type)
 
               if (Is.undefined(value)) throw Errors.unknown.type + property.type
             }
-          } 
+          }
           evaluator.set(key, value)
         })
       }

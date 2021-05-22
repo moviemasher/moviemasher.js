@@ -11,6 +11,10 @@ const Errors = {
   actions: `${$expected} Actions`,
   internal: $internal,
   argument: `${$invalidArgument} `,
+  invalid: {
+    track: `${$invalid} track `,
+    trackType: `${$invalid} track type `,
+  },
   type: `${$invalid} type `,
   selection: `${$invalid} selection `,
   unknown: {

@@ -1,14 +1,12 @@
-import { Id } from "../Utilities"
+import { expectContext } from "../../test/expectContext"
 import { MediaFactory } from "../Factory/MediaFactory"
 import { TimeFactory } from "../Factory/TimeFactory"
 import { ClipType, MediaType } from "../Setup"
 import { TransitionClip } from "./TransitionClip"
 
 describe("TransitionClip", () => {
-  const mediaConfiguration = {
-    id: Id(), type: MediaType.transition,
-  }
-  const media = MediaFactory.create(mediaConfiguration)
+  const mediaConfiguration = { id: 'id', type: MediaType.transition }
+  const media = MediaFactory.createFromObject(mediaConfiguration)
   const clip = new TransitionClip({ media })
 
   test("constructor", () => {
@@ -26,7 +24,7 @@ describe("TransitionClip", () => {
   describe("contextAtTimeForDimensions", () => {
     const dimensions = { width: 640, height: 480 }
     const color = "teal"
-    const time = TimeFactory.createFromFrame()
+    const time = TimeFactory.createFromFrame(0)
 
     test("returns empty context with no additional parameters", () => {
       const context = clip.contextAtTimeForDimensions(time, dimensions)

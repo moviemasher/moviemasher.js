@@ -1,6 +1,7 @@
 {
   "label": "Center",
   "id": "com.moviemasher.merger.center",
+  "type": "merger",
   "filters": [
     {
       "id": "overlay",

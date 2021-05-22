@@ -1,24 +1,23 @@
 import { Errors } from "../../Setup/Errors"
-import { Id } from "../../Utilities/Id"
 
 export const deprecated = {
-  uuid: { value: function() { return Id() } },
+  uuid: { value() { return 'ID' } },
   canvas_context: {
-    get: function() { 
+    get() {
       console.warn(Errors.deprecation.canvas_context.get)
       return this.videoContext
     },
-    set: function(value) { 
+    set(value) {
       console.warn(Errors.deprecation.canvas_context.set)
-      this.videoContext = value 
+      this.videoContext = value
     }
   },
   buffertime: {
-    get: function() { return this.buffer },
-    set: function(value) { this.buffer = value }
+    get() { return this.buffer },
+    set(value) { this.buffer = value }
   },
   minbuffertime: {
-    get: function() { return this.buffer },
-    set: function(value) { this.buffer = value }
+    get() { return this.buffer },
+    set(value) { this.buffer = value }
   },
 }

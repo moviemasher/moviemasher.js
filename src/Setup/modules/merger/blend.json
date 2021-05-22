@@ -1,6 +1,7 @@
 {
   "label": "Blend",
   "id": "com.moviemasher.merger.blend",
+  "type": "merger",
   "properties": {
     "mode": { "type": "mode", "value": "normal" }
   },

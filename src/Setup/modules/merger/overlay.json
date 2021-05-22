@@ -1,6 +1,7 @@
 {
   "label": "Overlay",
   "id": "com.moviemasher.merger.overlay",
+  "type": "merger",
   "properties": {
     "left": { "type": "pixel", "value": 0.5 },
     "top": { "type": "pixel", "value": 0.5 }

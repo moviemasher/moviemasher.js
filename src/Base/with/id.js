@@ -1,6 +1,11 @@
-import { Id } from "../../Utilities/Id"
+import { Is } from "../../Utilities"
 
-export const id = { 
-  id: { get: function() { return this.__id ||= this.initializeId } },
-  initializeId: { get: function() { return this.object.id || Id() } },
+export const id = {
+  id: {
+    get() {
+      if (Is.undefined(this.__id)) this.__id = this.initializeId
+      return this.__id
+    }
+  },
+  initializeId: { get() { return this.object.id || 'id' } },
 }

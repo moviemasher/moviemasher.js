@@ -1,6 +1,7 @@
 {
   "label": "Stretch",
   "id": "com.moviemasher.scaler.default",
+  "type": "scaler",
   "filters": [
     {
       "id": "scale",
