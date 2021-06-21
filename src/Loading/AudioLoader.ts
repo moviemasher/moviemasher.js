@@ -1,28 +1,36 @@
-
-import { ProcessorFactory } from "../Factory/ProcessorFactory"
-import { LoadType } from "../Setup"
+import { ProcessorFactory } from "./ProcessorFactory"
+import { AudibleContext, ContextFactory } from "../Playing"
 import { Loader } from "./Loader"
 
+import { Any, LoadPromise, UnknownObject } from "../Setup/declarations"
+import { LoadType} from "../Setup/Enums"
+
 class AudioLoader extends Loader {
-  constructor(object) {
-    super(object)
-    this.object.type ||= LoadType.audio
+  constructor(object? : UnknownObject | undefined) {
+    super()
+    if (object && object.audibleContext) {
+      this._audibleContext = <AudibleContext> object.audibleContext
+    }
+    else this._audibleContext = ContextFactory.audible()
   }
 
-  get audioContext() { return this.object.audioContext }
-  set audioContext(value) { this.object.audioContext = value }
+  type = LoadType.Audio
 
-  async requestUrl(url) {
+  get audibleContext() : AudibleContext { return this._audibleContext }
+
+  set audibleContext(value : AudibleContext) { this._audibleContext = value }
+
+  async requestUrl(url : string) : Promise<AudioBuffer> {
     return fetch(url).then(response => {
-      console.log("AudioLoader.requestUrl fetch", url, response.constructor.name)
       return response.arrayBuffer()
     }).then(loaded => {
-      console.log("AudioLoader.requestUrl arrayBuffer", url, loaded.constructor.name)
-      const options = { type: this.type, audioContext: this.audioContext }
-      const processor = ProcessorFactory.createFromObject(options)
+      const options = { audibleContext: this.audibleContext }
+      const processor = ProcessorFactory.audio(options)
       return processor.process(url, loaded)
     })
   }
+
+  _audibleContext : AudibleContext
 }
 
 export { AudioLoader }

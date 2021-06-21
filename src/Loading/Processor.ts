@@ -1,5 +1,9 @@
-import { Base } from "../Base"
+import { Any } from "../Setup/declarations"
 
-class Processor extends Base {}
+class Processor {
+  process(_url : string, _buffer : ArrayBuffer) : Promise<Any> {
+    return Promise.resolve()
+  }
+}
 
 export { Processor }

@@ -11,7 +11,7 @@ const media = {
     "filters": [{
       "id": "color"
     }]
-  },  
+  },
   'title': {
     "id": "com.moviemasher.theme.text",
     "type": "theme",
@@ -123,7 +123,7 @@ function handleFetch(fonts) {
     // register a default font, since we're allowing a module that uses fonts
     MovieMasher.register("font", fonts);
     // console.log(fonts)
-    masher.videoContext = canvas.getContext('2d');
+    masher.visibleContext = canvas.getContext('2d');
     masher.mash = {};
     populateTextarea();
   }

@@ -1,0 +1,41 @@
+{
+	"id": "mash_color_video",
+	"type": "mash",
+	"mash": {
+		"quantize": 10,
+		"label": "A Second Each of Blue and Video",
+		"backcolor": "red",
+		"media": [
+			{
+				"id": "video_id",
+				"type": "video",
+				"audio": 0,
+				"duration": 10,
+				"source": "magick/10-FF0000.mov"
+			}
+		],
+		"video": [
+			{
+				"type": "video",
+				"clips": [{
+					"id": "com.moviemasher.theme.color",
+					"effects": [],
+					"frame": 0,
+					"frames": 10,
+					"color": "blue"
+				},{
+					"id": "video_id",
+					"effects": [],
+					"frame": 10,
+					"frames": 10
+				}]
+			}
+		],
+		"audio": [
+			{
+				"type": "audio",
+				"clips": []
+			}
+		]
+	}
+}

@@ -8,14 +8,20 @@ const Default = {
   mash: {
     label: "Untitled Mash",
     quantize: 10,
-    backcolor: "rgb(0,0,0)",
+    backcolor: "#00000000",
+  },
+  clip: {
+    audio: { gain: 1.0, trim: 0 },
+    video: { speed: 1.0 }
   },
   media: {
+
     frame: { duration: 2 },
     image: { duration: 2 },
     theme: { duration: 3 },
     transition: { duration: 1 },
-  }
+    video: { pattern: '%.jpg', fps: 30, increment: 1, begin: 1  },
+  },
 }
 
 export { Default }

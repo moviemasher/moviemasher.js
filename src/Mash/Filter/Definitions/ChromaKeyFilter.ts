@@ -1,0 +1,63 @@
+import { Evaluator, Color, Pixel } from "../../../Utilities"
+import { Pixels, ValueObject, Yuv } from "../../../Setup/declarations"
+import { Parameter } from "../../../Setup/Parameter"
+import { FilterDefinitionClass } from "../FilterDefinition"
+import { VisibleContext } from "../../../Playing"
+
+class ChromaKeyFilter extends FilterDefinitionClass {
+  draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
+    const { context } = evaluator
+    const { width, height } = context.size
+    const { accurate } = evaluated
+    const similarity = Number(evaluated.similarity)
+    const blend = Number(evaluated.blend)
+
+    const color = String(evaluated.color)
+    const components = color.substr(4, color.length - 5).split(',')
+    const colors = components.map(f => Number(f))
+    const rgb = { r: colors[0], g: colors[1], b: colors[2] }
+    const yuv = Color.rgb2yuv(rgb)
+    const frame = context.imageData
+    const pixelsRgb = frame.data
+    const pixelsYuv = accurate ? (
+      this.yuvsFromPixelsAccurate(pixelsRgb, width, height) // slow!
+    ) : this.yuvsFromPixels(pixelsRgb)
+
+    let offset = 0
+
+    pixelsYuv.forEach(matrix => {
+      pixelsRgb[offset + 3] = Color.yuvBlend(matrix, yuv, similarity, blend)
+      offset += 4
+    })
+    context.drawImageData(frame)
+    return context
+  }
+
+  id = 'chromakey'
+
+  parameters = [
+    new Parameter({ name: "color", value: "color" }),
+    new Parameter({ name: "similarity", value: "similarity" }),
+    new Parameter({ name: "blend", value: "blend" }),
+  ]
+
+  yuvsFromPixels(pixels : Pixels) : Yuv[][] {
+    const array = []
+    for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
+      array.push([Color.rgb2yuv(Pixel.rgbaAtIndex(index * 4, pixels))])
+    }
+    return array
+  }
+
+  yuvsFromPixelsAccurate(pixels : Pixels, width : number, height : number) : Yuv[][] {
+    const array = []
+    for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
+      const size = { width, height }
+      const rgbs = Pixel.rgbs(index * 4, pixels, size)
+      array.push(rgbs.map(rgb => Color.rgb2yuv(rgb)))
+    }
+    return array
+  }
+}
+
+export { ChromaKeyFilter }

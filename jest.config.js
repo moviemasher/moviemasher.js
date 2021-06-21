@@ -1,15 +1,15 @@
 module.exports = {
-  bail: 1,
+  // bail: 1,
   roots: ["./src"],
   coverageDirectory: "./test/coverage",
   setupFilesAfterEnv: ["./test/jest.setup.js"],
   globals: {
     'ts-jest': {
       tsconfig: {
-        "lib": ["ESNext", "DOM"],
+        "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
         "target": "ES2015",
         "esModuleInterop": true,
-        "strict": false,
+        "strict": true,
         "allowJs": true,
         "checkJs": false,
         "resolveJsonModule": true,
@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   testEnvironment: 'jsdom',
-  testRegex: '.*\\.test?\\.[jt]s$',
+  testRegex: '.*\\.test?\\.ts$',
   moduleFileExtensions: ['ts', 'js'],
   transform: { "^.+\\.[jt]s?$": 'ts-jest' },
 }

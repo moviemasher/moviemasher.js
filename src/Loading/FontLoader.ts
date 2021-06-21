@@ -1,24 +1,15 @@
-import { LoadType } from "../Setup"
-import { ProcessorFactory } from "../Factory/ProcessorFactory"
+import { LoadType } from "../Setup/Enums"
+import { ProcessorFactory } from "./ProcessorFactory"
 import { Loader } from "./Loader"
+import { LoadFontPromise } from "../Setup/declarations"
 
 class FontLoader extends Loader {
-  constructor(object) {
-    super(object)
-    this.object.type ||= LoadType.font
-  }
+  type = LoadType.Font
 
-  async requestUrl(url) {
-    // console.log("FontLoader.requestUrl", url)
-    
-    return fetch(url).then(response => {
-      // console.log("FontLoader.requestUrl fetch", url, response.constructor.name)
-      return response.arrayBuffer()
-    }).then(loaded => {
-      // console.log("FontLoader.requestUrl arrayBuffer", url, loaded.constructor.name)
-      const processor = ProcessorFactory.create(this.type)
-      return processor.process(url, loaded)
-    })
+  requestUrl(url : string) : LoadFontPromise {
+    return fetch(url)
+      .then(response => response.arrayBuffer())
+      .then(buffer => ProcessorFactory.font().process(url, buffer))
   }
 }
 

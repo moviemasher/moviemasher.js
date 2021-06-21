@@ -5,30 +5,22 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ['airbnb-base'],
+  extends: ['plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 12,
     ecmaFeatures: { jsx: true },
     sourceType: 'module',
-    project: ["tsconfig.json"]
+    // project: ["tsconfig.json"]
   },
   plugins: [
-    '@typescript-eslint',
+    '@typescript-eslint/eslint-plugin',
+    'eslint-plugin-tsdoc'
   ],
   rules: {
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        js: "never",
-        jsx: "never",
-        ts: "never",
-        tsx: "never"
-      }
-    ],
-    quotes: 0,
-    semi: 0,
+    "tsdoc/syntax": "warn",
+    "quotes": 0,
+    "semi": 0,
     "no-console": 0,
     "comma-dangle": 0,
     "no-underscore-dangle": 0,
@@ -37,14 +29,16 @@ module.exports = {
     "no-undef": 0,
     "class-methods-use-this": 0,
     "object-curly-newline": 0,
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "radix": 0,
+    "@typescript-eslint/no-empty-interface": 0,
+    "@typescript-eslint/no-unused-vars": 0,
+    "@typescript-eslint/no-empty-function": 0,
   },
   settings: {
     "import/resolver": {
-      node: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"],
-      }
+      node: { extensions: [".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "rollup.config.js", "jest.config.js"],
+  ignorePatterns: ['.eslintrc.js', "rollup.config.js", "test/jest.config.js"],
 };

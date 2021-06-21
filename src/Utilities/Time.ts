@@ -1,13 +1,5 @@
-import { Errors } from "../Setup"
+import { Errors } from "../Setup/Errors"
 import { Is } from "./Is"
-
-interface TimeInterface {
-  copy : TimeInterface
-  frame : number
-  fps : number
-  scale : Function
-  description : string
-}
 
 const greatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1
@@ -25,7 +17,7 @@ const lowestCommonMultiplier = (a : number, b : number) : number => (
   (a * b) / greatestCommonDenominator(a, b)
 )
 
-const scaleTimes = (time1 : TimeInterface, time2 : TimeInterface, rounding = "round") => {
+const scaleTimes = (time1 : Time, time2 : Time, rounding = '') : Time[] => {
   if (time1.fps === time2.fps) return [time1, time2]
 
   const gcf = lowestCommonMultiplier(time1.fps, time2.fps)
@@ -35,7 +27,7 @@ const scaleTimes = (time1 : TimeInterface, time2 : TimeInterface, rounding = "ro
   ]
 }
 
-const roundingMethod = (rounding:string = 'round') : Function => {
+const roundingMethod = (rounding = '') => {
   switch (rounding) {
     case 'ceil': return Math.ceil
     case 'floor': return Math.floor
@@ -43,11 +35,11 @@ const roundingMethod = (rounding:string = 'round') : Function => {
   }
 }
 
-const roundWithMethod = (number : number, method = "round") : number => (
+const roundWithMethod = (number : number, method = '') : number => (
   roundingMethod(method)(number)
 )
 
-class Time implements TimeInterface {
+class Time implements Time {
   frame : number
 
   fps : number
@@ -60,52 +52,51 @@ class Time implements TimeInterface {
     this.fps = fps
   }
 
-  add(time) {
+  add(time : Time) : Time {
     const [time1, time2] = scaleTimes(this, time)
     return new Time(time1.frame + time2.frame, time1.fps)
   }
 
-  addFrames(frames) {
+  addFrames(frames : number) : Time {
     const time = this.copy
     time.frame += frames
     return time
   }
 
-  get copy() { return new Time(this.frame, this.fps) }
+  get copy() : Time { return new Time(this.frame, this.fps) }
 
-  get description() { return `${this.frame}@${this.fps}` }
+  get description() : string { return `${this.frame}@${this.fps}` }
 
-  divide(number, rounding = "round") {
-    if (!Is.number(number)) throw Errors.argument
+  divide(number : number, rounding = '') : Time {
+    if (!Is.number(number)) throw Errors.argument + 'divide'
     return new Time(roundWithMethod(Number(this.frame) / number, rounding), this.fps)
   }
 
-  equalsTime(time) {
-    if (!(time instanceof Time)) throw Errors.time
-
+  equalsTime(time : Time) : boolean {
     const [time1, time2] = scaleTimes(this, time)
     return time1.frame === time2.frame
   }
 
-  min(time : TimeInterface) {
-    if (!Is.instanceOf(time, Time)) throw Errors.time
-
+  min(time : Time) : Time {
     const [time1, time2] = scaleTimes(this, time)
     return new Time(Math.min(time1.frame, time2.frame), time1.fps)
   }
 
-  scale(fps = 1, rounding = "round") : Time {
+  scale(fps : number, rounding = '') : Time {
     if (this.fps === fps) return this
 
     const frame = Number(this.frame / this.fps) * Number(fps)
     return new Time(roundWithMethod(frame, rounding), fps)
   }
 
-  get seconds() { return Number(this.frame) / Number(this.fps) }
+  scaleToFps(fps : number) : Time { return this.scaleToTime(new Time(0, fps)) }
 
-  subtract(time : TimeInterface) : Time {
-    if (!Is.instanceOf(time, Time)) throw Errors.argument
+  scaleToTime(time : Time) : Time {
+    return scaleTimes(this, time)[0]
+  }
+  get seconds() : number { return Number(this.frame) / Number(this.fps) }
 
+  subtract(time : Time) : Time {
     const [time1, time2] = scaleTimes(this, time)
 
     let subtracted = time2.frame
@@ -121,13 +112,26 @@ class Time implements TimeInterface {
     return time
   }
 
-  toString() { return `[${this.description}]` }
+  toString() : string { return `[${this.description}]` }
 
   withFrame(frame : number) : Time {
     const time = this.copy
     time.frame = frame
     return time
   }
-}
 
-export { Time, scaleTimes, roundWithMethod }
+  static fromArgs(frame = 0, fps = 1) : Time {
+    return new Time(frame, fps)
+  }
+
+  static fromSeconds(seconds = 0, fps = 1, rounding = '') : Time {
+    if (!Is.number(seconds) || seconds < 0) throw Errors.seconds
+    if (!Is.integer(fps) || fps < 1) throw Errors.fps
+
+    const rounded = roundWithMethod(seconds * fps, rounding)
+    return this.fromArgs(rounded, fps)
+  }
+}
+type Times = Time[]
+
+export { Time, Times, scaleTimes, roundWithMethod }

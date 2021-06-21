@@ -1,40 +1,46 @@
+import { Any } from "../Setup/declarations"
 import { Errors } from "../Setup/Errors"
 import { Is } from "../Utilities/Is"
 
-class Cache {
-  constructor() {
-    this.__cached_urls = {}
-    this.__urls_by_md5 = {}
-  }
+const CacheKeyPrefix = 'cachekey'
 
-  add(url, value){
+class CacheClass {
+  add(url : string, value : Any) : void {
+    console.log(this.constructor.name, "add", url, value.constructor.name)
     const key = this.key(url)
-    // console.log("Cache.add", url, key)
-    this.__cached_urls[key] = value
-    this.__urls_by_md5[key] = url
+    this.cachedByKey.set(key, value)
+    this.urlsByKey.set(key, url)
   }
 
-  cached(url) { return !!this.get(url) }
+  cached(url : string) : boolean {
+    if (!Is.populatedString(url)) throw Errors.argument + 'url'
 
-  get(url) { 
+    return this.cachedByKey.has(this.key(url))
+  }
+
+  private cachedByKey = new Map<string, Any>()
+
+  get(url : string) : Any | undefined {
+    return this.cachedByKey.get(this.key(url))
+  }
+
+  key(url : string) : string {
+    if (!Is.populatedString(url)) {
+      console.trace()
+      throw Errors.argument + 'url'
+    }
+    return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '')
+  }
+
+  remove(url : string) : void {
+    console.log(this.constructor.name, "remove", url)
     const key = this.key(url)
-    // console.log("Cache.get", url, key)
-    return this.__cached_urls[key] 
+    this.cachedByKey.delete(key)
+    this.urlsByKey.delete(key)
   }
 
-  key(url) {
-    if(!(Is.string(url) && !Is.empty(url))) throw Errors.url + url
-    return url
-  }
-
-  remove(url) {
-    const key = this.key(url)
-    // console.log("Cache.get", url, key)
-    delete this.__cached_urls[key]
-    delete this.__urls_by_md5[key]
-  }
-  urls() { return Object.values(this.__urls_by_md5) }
+  private urlsByKey = new Map<string, string>()
 }
 
-const CacheInstance = new Cache
-export { CacheInstance as Cache }
+const Cache = new CacheClass()
+export { Cache }

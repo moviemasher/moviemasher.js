@@ -1,36 +1,22 @@
-import { Base } from "../Base"
+import { Any, LoadPromise, UnknownObject } from "../Setup/declarations"
 import { Cache } from "./Cache"
 
-class Loader extends Base {
-  constructor(object) {
-    super(object)
-    // console.log("Loader", this.object)
-    this.promises = {}
-  }
-
-  get type() { return this.object.type }
-
-  loadedUrl(url) { return Cache.cached(url) }
-
-  loadedUrls(urls) { return urls.every(url => this.loadedUrl(url)) }
-
-  loadUrl(url) {
-    if (this.promises[url]) return this.promises[url]
-    if (Cache.cached(url)) return Promise.resolve(Cache.get(url))
+class Loader  {
+  async loadUrl(url : string) : LoadPromise {
+    if (Cache.cached(url)) {
+      const promiseOrCached = Cache.get(url)
+      if (promiseOrCached instanceof Promise) return promiseOrCached
+      return Promise.resolve()
+    }
 
     const promise = this.requestUrl(url)
-    this.promises[url] = promise
-    return promise.then(processed => {
-      // console.log(this.constructor.name, "loadUrl", processed.constructor.name)
-      Cache.add(url, processed)
-      delete this.promises[url]
-      return processed
-    })
+    Cache.add(url, promise)
+    const processed = await promise
+    Cache.add(url, processed)
+    return processed
   }
 
-  loadUrls(urls) {
-    return Promise.all(urls.map(url => this.loadUrl(url)))
-  }
+  requestUrl(_url : string) : Promise<Any> { return Promise.resolve() }
 }
 
 export { Loader }

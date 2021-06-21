@@ -1,13 +1,21 @@
 version 4.0.26:
   - modernize codebase
+  - port to typescript
+  - remove all dependencies
   - switch to rollup bundler
   - provide Universal module (UMD)
   - provide CommonJS module (CJS)
   - provide ES module (ESM)
-  - remove all dependencies
   - automatically register standard filters
   - add jest tests, including snapshots
-  - freeze frame support
+  - add Video.mute property
+  - change Video.video_rate to Video.fps
+  - add support for transparency in mash.backcolor
+  - restrict Masher.mash setter to Mash objects
+  - base Masher.add's track type on type key in 1st parameter (definition type)
+  - remove Masher.add's 2nd parameter (track type)
+  - Masher.canvas_context now called canvasRenderingContext2D
+  - Masher.buffertime now called buffer
 
 version 4.0.25:
   - fix audio buffer source security issue in safari
@@ -83,7 +91,3 @@ version 4.0.8:
 - The `length` key in clips has been renamed `frames`.
 - The `audio` and `video` keys in mash tracks have been moved to mash.
 - better evaluation
-
-
-
-

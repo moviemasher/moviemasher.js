@@ -4,7 +4,7 @@
 *JavaScript library for realtime, browser-based video and audio editing*
 # moviemasher.js (4.0.26)
 
-Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for multitrack compositing, transitions and titling using your custom fonts.
+Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for additional media types, multitrack compositing, effects, transitions and event titling using your custom fonts.
 
 - **visual composition** with transformations
 - **audio mixing** utilizing WebAudio
@@ -44,8 +44,8 @@ A player binds to its mash object directly, without copying or adding any method
 
 ##### Basic slideshow with audio
 ```JavaScript
-var context = document.getElementById("mm-canvas").getContext('2d');
-var masher = new Masher({ videoContext: context, autoplay: true });
+const context = document.getElementById("mm-canvas").getContext('2d');
+consts masher = new Masher({ visibleContext: context, autoplay: true });
 
 masher.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
 masher.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
@@ -57,7 +57,7 @@ masher.mash = {
   "media": [
     { "id": "image-cable", "type": "image", "url": "media/image/cable.jpg" },
     { "id": "image-frog", "type": "image", "url": "media/image/frog.jpg" },
-    { "id": "audio-id", "type": "audio", "duration": "2", "url": "media/audio/loop.mp3" }
+    { "id": "audio-id", "type": "audio", "duration": 2, "url": "media/audio/loop.mp3" }
   ],
   "video": [ {
     "type": "video",

@@ -1,0 +1,75 @@
+{
+	"id": "mash_overlays",
+	"type": "mash",
+	"mash": {
+		"quantize": 10,
+		"label": "Overlays",
+		"backcolor": "red",
+		"media": [
+			{
+				"id": "video_id",
+				"type": "video",
+				"audio": 0,
+				"duration": 10,
+				"source": "magick/10-FF0000.mov"
+			}
+		],
+		"video": [
+			{
+				"type": "video",
+				"clips": [{
+					"id": "com.moviemasher.theme.color",
+					"effects": [],
+					"frame": 0,
+					"frames": 50,
+					"color": "blue"
+				},{
+					"id": "com.moviemasher.theme.color",
+					"effects": [],
+					"frame": 50,
+					"frames": 70,
+					"color": "green"
+				},{
+					"id": "com.moviemasher.theme.color",
+					"effects": [],
+					"frame": 120,
+					"frames": 20,
+					"color": "yellow"
+				}]
+			},{
+				"type": "video",
+				"clips": [{
+					"id": "video_id",
+					"effects": [],
+					"frame": 20,
+					"frames": 70,
+					"transform": {
+						"id": "com.moviemasher.transform.overlay",
+						"scale": 0.5,
+						"left": 0.5,
+						"top": 0.5
+					}
+				},
+				{
+					"id": "video_id",
+					"effects": [],
+					"trim": 30,
+					"frame": 100,
+					"frames": 30,
+					"transform": {
+						"id": "com.moviemasher.transform.overlay",
+						"scale": 0.5,
+						"left": 1,
+						"top": 0
+					}
+				}]
+			}
+		],
+		"audio": [
+			{
+				"type": "audio",
+				"clips": []
+			}
+		]
+	}
+}

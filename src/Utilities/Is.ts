@@ -1,89 +1,82 @@
-const objectType = value => typeof value === 'object'
-const stringType = value => typeof value === 'string'
-const undefinedType = value => typeof value === 'undefined'
-const numberType = value => typeof value === 'number'
-const booleanType = value => typeof value === 'boolean'
-const methodType = value => typeof value === 'function'
+import { ScalarArray, UnknownObject } from "../Setup/declarations"
 
-const isDefined = value => !undefinedType(value)
-const isNil = value => value === null
-const isNot = value => undefinedType(value) || isNil(value)
+const objectType = (value : unknown) : boolean => typeof value === 'object'
 
-const isNan = value => numberType(value) && Number.isNaN(value)
-const isNumber = value => numberType(value) && !Number.isNaN(value)
-const isInt = value => Number.isInteger(value)
-const isFloat = value => numberType(value) && !isInt(value)
-const isPositive = value => isNumber(value) && value >= 0
-const isAboveZero = value => isNumber(value) && value > 0
-
-const instanceOf = (value, klass) => objectType(value) && value instanceof klass
-const isArray = value => (
-  isDefined(Array.isArray) ? Array.isArray(value) : instanceOf(value, Array)
+const stringType = (value : unknown) : boolean => (
+  typeof value === 'string'
 )
 
-const length = value => !!value.length
+const undefinedType = (value : unknown) : boolean => typeof value === 'undefined'
 
-const emptystring = value => isNot(value) || !stringType(value) || !length(value)
-const emptyarray = value => isNot(value) || !isArray(value) || !length(value)
-const emptyobject = value => (
-  isNot(value) || !objectType(value) || !length(Object.keys(value))
+const numberType = (value : unknown) : boolean => typeof value === 'number'
+
+const booleanType = (value : unknown) : boolean => typeof value === 'boolean'
+
+const methodType = (value : unknown) : boolean => typeof value === 'function'
+
+const isDefined = (value : unknown) : boolean => !undefinedType(value)
+
+const isNan = (value : unknown) : boolean => numberType(value) && Number.isNaN(value)
+
+const isNumber = (value : unknown) : boolean => numberType(value) && !Number.isNaN(value)
+
+const isInteger = (value : unknown) : boolean => Number.isInteger(value)
+
+const isFloat = (value : unknown) : boolean => numberType(value) && !isInteger(value)
+
+const isPositive = (value : unknown) : boolean => numberType(value) && Number(value) >= 0
+
+const isAboveZero = (value : unknown) : boolean => isNumber(value) && Number(value) > 0
+
+const isArray = (value : unknown) : boolean => (
+  isDefined(Array.isArray) ? Array.isArray(value) : value instanceof Array
 )
 
-const empty = value => {
-  if (isNot(value)) return true
-  if (isArray(value)) return emptyarray(value)
-  if (stringType(value)) return emptystring(value)
+const length = (value : string | ScalarArray) : boolean => !!value.length
 
-  return emptyobject(value)
-}
+const isPopulatedString = (value : unknown) : boolean => stringType(value) && length(String(value))
 
-const objectStrict = value => objectType(value) && !(isNot(value) || isArray(value))
+const isPopulatedObject = (value : unknown) : boolean => (
+  objectType(value) && length(Object.keys(<UnknownObject> value))
+)
+
+const isPopulatedArray = (value : unknown) : boolean => isArray(value) && length(<ScalarArray> value)
 
 const Is = {
-  empty,
-  emptyarray,
-  emptyobject,
-  emptystring,
-  float: isFloat,
-  object: objectType,
-  undefined: undefinedType,
-  boolean: booleanType,
-  number: numberType,
-  integer: isInt,
-  string: stringType,
+  aboveZero: isAboveZero,
   array: isArray,
-  instanceOf,
+  boolean: booleanType,
   defined: isDefined,
+  float: isFloat,
+  integer: isInteger,
   method: methodType,
   nan: isNan,
-  nil: isNil,
-  not: isNot,
-  objectStrict,
+  number: numberType,
+  object: objectType,
+  populatedArray: isPopulatedArray,
+  populatedObject: isPopulatedObject,
+  populatedString: isPopulatedString,
   positive: isPositive,
-  aboveZero: isAboveZero,
+  string: stringType,
+  undefined: undefinedType,
 }
 
 export {
   Is,
-  objectType,
-  undefinedType,
-  booleanType,
-  numberType,
-  stringType,
-  methodType,
-  empty,
-  emptyarray,
-  emptyobject,
-  emptystring,
-  isFloat,
-  isInt,
-  isArray,
-  instanceOf,
-  isDefined,
-  isNan,
-  isNil,
-  isNot,
-  objectStrict,
-  isPositive,
   isAboveZero,
+  isArray,
+  booleanType as isBoolean,
+  isDefined,
+  isFloat,
+  isInteger,
+  methodType as isMethod,
+  isNan,
+  numberType as isNumber,
+  objectType as isObject,
+  isPopulatedArray,
+  isPopulatedObject,
+  isPopulatedString,
+  isPositive,
+  stringType as isString,
+  undefinedType as isUndefined,
 }

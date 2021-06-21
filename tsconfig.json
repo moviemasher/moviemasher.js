@@ -1,21 +1,19 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "jsx": "preserve",
+    "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
     "target": "ESNext",
     "module": "ESNext",
     "esModuleInterop": true,
-    "strict": false,
-    "allowJs": false,
-    "noEmit": true,
+    "declaration": false,
+    "strict": true,
+    "alwaysStrict": true,
+    "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "downlevelIteration": true,
-    "strictFunctionTypes": false,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/*", "test/*"],
 }

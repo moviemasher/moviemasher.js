@@ -1,7 +1,7 @@
-/* eslint-disable dot-notation */
-export const expectContext = context => {
-  const { canvas } = context
-  const dataUrl = canvas.toDataURL()
+import { VisibleContext } from "../src/Playing"
+
+export const expectContext = (context : VisibleContext) => {
+  const { dataUrl } = context
   const image = dataUrl.substring('data:image/png;base64,'.length)
-  expect(image)['toMatchImageSnapshot']()
-};
+  expect(image).toMatchImageSnapshot()
+}

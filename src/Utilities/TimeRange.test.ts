@@ -1,12 +1,9 @@
-import { TimeFactory } from "../Factory/TimeFactory"
-import { TimeRangeFactory } from "../Factory/TimeRangeFactory"
 import { TimeRange } from "./TimeRange"
 
-const range = new TimeRange
-const range_one_second = new TimeRange(0, 1, 1)
-
 describe("TimeRange", () => {
-  test("constructor", () => expect(range).toEqual(range_one_second))
+  const range = new TimeRange()
+  const rangeOneSecond = new TimeRange(0, 1, 1)
+  test("constructor", () => expect(range).toEqual(rangeOneSecond))
   test("frame", () => expect(range.frame).toEqual(0))
   test("frames", () => expect(range.frames).toEqual(1))
   test("fps", () => expect(range.fps).toEqual(1))
@@ -16,9 +13,9 @@ describe("TimeRange", () => {
   })
 
   test("minEndTime", () => {
-    const time = TimeFactory.createFromFrame(5, 10)
-    const time_zero = TimeFactory.createFromFrame(0, 10)
-    const expected = TimeRangeFactory.createFromTimes(time_zero, time)
+    const time = TimeRange.fromArgs(5, 10)
+    const timeZero = TimeRange.fromArgs(0, 10)
+    const expected = TimeRange.fromTimes(timeZero, time)
     expect(range.minEndTime(time)).toEqual(expected)
   })
 })
