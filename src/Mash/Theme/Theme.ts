@@ -22,6 +22,6 @@ interface ThemeDefinition extends Omit <ModularDefinition, "loadedVisible">, Vis
   instanceFromObject(object : ThemeObject) : Theme
 }
 
-type ThemeFactory = GenericFactory<Theme, ThemeObject, ThemeDefinition, ThemeDefinitionObject>
+interface ThemeFactory extends GenericFactory<Theme, ThemeObject, ThemeDefinition, ThemeDefinitionObject> {}
 
 export { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject }

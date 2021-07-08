@@ -26,12 +26,18 @@ describe("Time", () => {
       expect(time.frame).toEqual(0)
       expect(time.fps).toEqual(1)
     })
-    test("supplied frame and fps", () => {
+    test("returns supplied frame and fps", () => {
       const seconds = 4
       const fps = 20
       const time = Time.fromSeconds(seconds, fps)
       expect(time.frame).toEqual(seconds * fps)
       expect(time.fps).toEqual(fps)
+    })
+    test("returns proper frame for float", () => {
+      const seconds = 4.55
+      const fps = 10
+      const time = Time.fromSeconds(seconds, fps, "floor")
+      expect(time.frame).toEqual(45)
     })
   })
 })

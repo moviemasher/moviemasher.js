@@ -18,9 +18,10 @@ class TransitionClass extends TransitionWithVisible {
     return
   }
 
-  definition! : TransitionDefinition
+  declare definition : TransitionDefinition
 
   mergeClipsIntoContextAtTime(clips : Visible[], context : VisibleContext, time : Time, quantize : number, color? : string) : void {
+    // console.log(this.constructor.name, "mergeClipsIntoContextAtTime", clips.length, time, quantize, color)
     if (!Is.aboveZero(clips.length)) return
 
     this.definition.drawVisibleFilters(clips, this, time, quantize, context, color)

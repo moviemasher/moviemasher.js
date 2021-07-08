@@ -31,15 +31,17 @@ enum ClipType {
 
 const ClipTypes = Object.values(ClipType)
 
+// NOTE: order important here - determines initialization
 enum DefinitionType {
-  Audio = 'audio',
-  Effect = 'effect',
   Filter = 'filter',
+  Merger = 'merger',
+  Scaler = 'scaler',
+  Effect = 'effect',
+  Audio = 'audio',
   Font = 'font',
   Image = 'image',
   Mash = 'mash',
-  Merger = 'merger',
-  Scaler = 'scaler',
+  Masher = 'masher',
   Theme = 'theme',
   Transition = 'transition',
   Video = 'video',
@@ -84,6 +86,7 @@ enum MoveType {
 }
 
 enum DataType {
+  Boolean = 'boolean',
   Direction4 = 'direction4',
   Direction8 = 'direction8',
   Font = 'font',

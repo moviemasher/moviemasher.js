@@ -9,11 +9,11 @@ import { Definitions } from "../Definitions/Definitions"
 class MashDefinitionClass extends DefinitionClass {
   constructor(...args : Any[]) {
     super(...args)
-    // this.properties.push(new Property({ name: "id", type: DataType.String, value: "" }))
-    // this.properties.push(new Property({ name: "label", type: DataType.String, value: "Untitled" }))
     this.properties.push(new Property({ name: "backcolor", type: DataType.Rgba, value: "#00000000" }))
     Definitions.install(this)
   }
+
+  id = "com.moviemasher.mash.default"
 
   get instance() : Mash {
     return this.instanceFromObject(this.instanceObject)
@@ -24,6 +24,7 @@ class MashDefinitionClass extends DefinitionClass {
     return instance
   }
 
+  retain = true
   type = DefinitionType.Mash
 }
 

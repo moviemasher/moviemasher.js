@@ -17,11 +17,10 @@ const scalerDefaultId = "com.moviemasher.scaler.default"
 
 const scalerDefinition = (object : ScalerDefinitionObject) : ScalerDefinition => {
   const { id } = object
-  const idString = id && typeof id === "string" && id.length ? id : scalerDefaultId
-  if (!Definitions.installed(idString)) {
-    new ScalerDefinitionClass({ ...object, type: DefinitionType.Scaler, id: idString })
-  }
-  return <ScalerDefinition> Definitions.fromId(idString)
+  const idString = id && Is.populatedString(id) ? id : scalerDefaultId
+  if (Definitions.installed(idString)) return <ScalerDefinition> Definitions.fromId(idString)
+
+  return new ScalerDefinitionClass({ ...object, type: DefinitionType.Scaler, id: idString })
 }
 
 const scalerDefinitionFromId = (id : string) : ScalerDefinition => {
@@ -37,9 +36,9 @@ const scalerFromId = (id : string) : Scaler => {
 }
 
 const scalerInitialize = () : void => {
-  scalerDefinition(scalerDefaultJson)
-  scalerDefinition(scalerPanJson)
-  scalerDefinition(scalerScaleJson)
+  new ScalerDefinitionClass(scalerDefaultJson)
+  new ScalerDefinitionClass(scalerPanJson)
+  new ScalerDefinitionClass(scalerScaleJson)
 }
 
 const scalerDefine = (object : ScalerDefinitionObject) : ScalerDefinition => {

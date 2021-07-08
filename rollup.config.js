@@ -1,4 +1,4 @@
-import ts from "@wessberg/rollup-plugin-ts"
+import ts from "rollup-plugin-ts"
 import { terser } from 'rollup-plugin-terser'
 import pkg from "./package.json";
 import { builtinModules } from "module";
@@ -41,7 +41,7 @@ const tsWithDeclarations = [
 
 const cjs = {
   ...shared,
-  plugins: tsWithoutDeclarations,
+  plugins: tsWithDeclarations,
   output: { format: "cjs", file: pkg.main, sourcemap: true }
 }
 const esm = {
@@ -65,4 +65,4 @@ const umd = {
   ]
 }
 
-export default [umd, cjs, esm]
+export default [umd, esm, cjs]

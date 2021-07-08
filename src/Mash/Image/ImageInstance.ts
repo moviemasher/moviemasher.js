@@ -8,7 +8,7 @@ const ImageWithClip = ClipMixin(InstanceClass)
 const ImageWithVisible = VisibleMixin(ImageWithClip)
 const ImageWithTransformable = TransformableMixin(ImageWithVisible)
 class ImageClass extends ImageWithTransformable {
-  definition! : ImageDefinition
+  declare definition : ImageDefinition
 }
 
 export { ImageClass }

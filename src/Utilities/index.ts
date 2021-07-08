@@ -1,4 +1,5 @@
 export * from "./Color"
+export * from "./Id"
 export * from "./Is"
 export * from "./Pixel"
 export * from "./Sort"

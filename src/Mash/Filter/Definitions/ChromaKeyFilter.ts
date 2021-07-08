@@ -25,7 +25,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
 
     let offset = 0
 
-    pixelsYuv.forEach(matrix => {
+    pixelsYuv.reverse().forEach(matrix => {
       pixelsRgb[offset + 3] = Color.yuvBlend(matrix, yuv, similarity, blend)
       offset += 4
     })
@@ -33,7 +33,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'chromakey'
+  // id = 'chromakey'
 
   parameters = [
     new Parameter({ name: "color", value: "color" }),
@@ -53,8 +53,8 @@ class ChromaKeyFilter extends FilterDefinitionClass {
     const array = []
     for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
       const size = { width, height }
-      const rgbs = Pixel.rgbs(index * 4, pixels, size)
-      array.push(rgbs.map(rgb => Color.rgb2yuv(rgb)))
+      const surroundingRgbas = Pixel.surroundingRgbas(index * 4, pixels, size)
+      array.push(surroundingRgbas.map(rgb => Color.rgb2yuv(rgb)))
     }
     return array
   }

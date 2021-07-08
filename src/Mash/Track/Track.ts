@@ -1,8 +1,7 @@
 import { JsonObject } from "../../Setup/declarations"
 import { TrackType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { byFrame, TimeRange } from "../../Utilities"
-import { Definitions } from "../Definitions"
+import { byFrame } from "../../Utilities"
 import { Clip, ClipObject } from "../Mixin/Clip/Clip"
 
 interface TrackObject {
@@ -10,21 +9,19 @@ interface TrackObject {
   type? : TrackType
   index? : number
 }
+
+interface TrackOptions {
+  clips? : Clip[]
+  type? : TrackType
+  index? : number
+}
+
 class TrackClass {
-  constructor(object : TrackObject) {
+  constructor(object : TrackOptions) {
     const { clips, index, type } = object
     if (index) this.index = index
     if (type) this.type = type
-    if (clips) this.clips.push(...clips.map(clip => {
-      const { id } = clip
-      if (!id) throw Errors.id
-
-      const definition = Definitions.fromId(id)
-      const clipWithTrack = { track: this.index, ...clip }
-      const instance = <Clip> definition.instanceFromObject(clipWithTrack)
-
-      return instance
-    }))
+    if (clips) this.clips.push(...clips)
   }
 
   clips : Clip[] = []
@@ -119,4 +116,4 @@ class TrackClass {
 
 interface Track extends TrackClass {}
 
-export { Track, TrackClass, TrackObject }
+export { Track, TrackClass, TrackObject, TrackOptions}

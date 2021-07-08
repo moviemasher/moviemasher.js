@@ -6,6 +6,7 @@ import { VisibleContext } from "../../../Playing"
 import { Types } from "../../Types"
 
 class BlendFilter extends FilterDefinitionClass {
+
   // eslint-disable-next-line camelcase
   draw(evaluator : Evaluator, evaluated : { all_mode : string }) : VisibleContext {
     const { context, mergeContext } = evaluator
@@ -19,11 +20,11 @@ class BlendFilter extends FilterDefinitionClass {
 
     const { identifier } = mode
 
-    mergeContext.drawWithComposite(context.imageSource, identifier)
+    mergeContext.drawWithComposite(context.drawingSource, identifier)
     return mergeContext
   }
 
-  id = 'blend'
+  // id = 'blend'
 }
 
 export { BlendFilter }

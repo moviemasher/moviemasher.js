@@ -5,13 +5,13 @@ import { Default } from "../../Setup/Default"
 import { Is } from "../../Utilities/Is"
 import { TimeRange } from "../../Utilities/TimeRange"
 import { Time } from "../../Utilities/Time"
-import { Track, TrackClass } from "../Track"
+import { Track, TrackClass, TrackObject, TrackOptions } from "../Track"
 import { Definition, DefinitionTimes } from "../Definition/Definition"
 import { Events, EventsType } from "../../Editing/Events"
 import { Clip, ClipDefinition } from "../Mixin/Clip/Clip"
 import { Visible } from "../Mixin/Visible/Visible"
 import { Audible } from "../Mixin/Audible/Audible"
-import { Factory } from "../Factory"
+import { MovieMasher } from "../../MovieMasher"
 import { AudibleContext } from "../../Playing/AudibleContext"
 import { VisibleContext } from "../../Playing/VisibleContext"
 import { ContextFactory } from "../../Playing/ContextFactory"
@@ -19,10 +19,14 @@ import { Composition } from "../../Playing/Composition/Composition"
 import { ChangeAction } from "../../Editing/Action/ChangeAction"
 import { InstanceClass } from "../Instance"
 import { Mash, MashDefinition, MashOptions } from "./Mash"
+import { Id } from "../../Utilities/Id"
+import { Definitions } from "../Definitions/Definitions"
 
 class MashClass extends InstanceClass implements Mash {
   constructor(...args : Any[]) {
     super(...args)
+    this._id ||= Id()
+
     const object = args[0] || {}
     const {
       audio,
@@ -48,7 +52,7 @@ class MashClass extends InstanceClass implements Mash {
 
     if (media) media.forEach(definition => {
       const { id: definitionId, type } = definition
-      if (!(type && Is.populatedString(type))) throw Errors.type
+      if (!(type && Is.populatedString(type))) throw Errors.type + 'Mash.constructor media'
 
       const definitionType = <DefinitionType> type
       if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
@@ -57,12 +61,16 @@ class MashClass extends InstanceClass implements Mash {
         throw Errors.invalid.definition.id + JSON.stringify(definition)
       }
 
-      return Factory[definitionType].definition(definition)
+      return MovieMasher[definitionType].definition(definition)
     })
 
-    if (audio) this.audio.push(...audio.map(track => new TrackClass(track)))
+    if (audio) this.audio.push(...audio.map((track, index) =>
+      new TrackClass(this.trackOptions(track, index, TrackType.Audio))
+    ))
     else this.audio.push(new TrackClass({ type: TrackType.Audio }))
-    if (video) this.video.push(...video.map(track => new TrackClass(track)))
+    if (video) this.video.push(...video.map((track, index) =>
+      new TrackClass(this.trackOptions(track, index, TrackType.Video))
+    ))
     else this.video.push(new TrackClass({ type: TrackType.Video }))
 
     if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
@@ -74,12 +82,8 @@ class MashClass extends InstanceClass implements Mash {
 
   addClipsToTrack(clips : Clip[], trackIndex = 0, insertIndex = 0) : void {
     // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
+    this.assureClipsHaveFrames(clips)
     const [clip] = clips
-    clips.filter(clip => !Is.positive(clip.frames)).forEach(clip => {
-      const definition = <ClipDefinition> clip.definition
-      const duration = definition.duration
-      clip.frames = Time.fromSeconds(duration).scale(this.quantize, 'floor').frame
-    })
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     if (!newTrack) throw Errors.invalid.track
 
@@ -101,6 +105,14 @@ class MashClass extends InstanceClass implements Mash {
     const track = new TrackClass(options)
     array.push(track)
     return track
+  }
+
+  private assureClipsHaveFrames(clips : Clip[]) :void {
+    clips.filter(clip => !Is.positive(clip.frames)).forEach(clip => {
+      const definition = <ClipDefinition> clip.definition
+      const duration = definition.duration
+      clip.frames = Time.fromSeconds(duration, this.quantize, 'floor').frame
+    })
   }
 
   private _audibleContext? : AudibleContext
@@ -130,7 +142,7 @@ class MashClass extends InstanceClass implements Mash {
     this._backcolor = value
     if (this._composition) this.composition.backcolor = value
   }
-  private _buffer = Default.buffer
+  private _buffer = Default.mash.buffer
 
   get buffer() : number { return this._buffer }
 
@@ -270,14 +282,13 @@ class MashClass extends InstanceClass implements Mash {
     this.composition.compositeVisibleRequest(time, this.clipsVisibleAtTime(time))
   }
 
-  definition! : MashDefinition
+  declare definition : MashDefinition
 
   destroy() : void {
     delete this._events
     delete this._visibleContext
     delete this._audibleContext
     delete this._composition
-
   }
 
   private _drawAtInterval? : Interval
@@ -296,7 +307,7 @@ class MashClass extends InstanceClass implements Mash {
     }
   }
 
-  private drawnTime? : Time
+  drawnTime? : Time
 
   private drawTime(time : Time) : void {
     delete this.seekTime
@@ -348,7 +359,7 @@ class MashClass extends InstanceClass implements Mash {
     return Math.max(0, ...this.tracks.map(track => track.frames))
   }
 
-  private _gain = Default.volume
+  private _gain = Default.mash.gain
 
   get gain() : number { return this._gain }
 
@@ -360,7 +371,6 @@ class MashClass extends InstanceClass implements Mash {
       this.composition.gain = value
     }
   }
-
 
   handleEvent(event : Event) : void {
     if (event.type !== Events.type) return
@@ -402,7 +412,7 @@ class MashClass extends InstanceClass implements Mash {
 
     // console.log(this.constructor.name, "handleEvent", event.type)
 
-    this.stopAndLoad()
+    this.stopLoadAndDraw()
   }
 
   get startAndEnd() : Time[] {
@@ -414,6 +424,7 @@ class MashClass extends InstanceClass implements Mash {
 
   load() : LoadPromise {
     const [start, end] = this.startAndEnd
+    // console.log(this.constructor.name, "load", start, end)
     const promises = this.clips(start, end).map(clip =>
       clip.load(this.quantize, start, end)
     )
@@ -513,29 +524,32 @@ class MashClass extends InstanceClass implements Mash {
 
   private seekTime? : Time
 
-  async seekToTime(time: Time) : LoadPromise {
-    if (this.seekTime === time) return
-
-    this.seekTime = time
-    return this.stopAndLoad()
+  seekToTime(time: Time) : LoadPromise {
+    if (this.seekTime !== time) this.seekTime = time
+    return this.stopLoadAndDraw()
   }
 
   get stalled() : boolean { return !this.paused && !this.playing }
 
-  async stopAndLoad() : LoadPromise {
+  private stopLoadAndDraw() : LoadPromise {
     const { time } = this
+    // console.log(this.constructor.name, "stopLoadAndDraw", time)
 
     const paused = this.paused
     if (this.playing) this.playing = false
-    await this.load()
+    return this.load().then(() => {
+      if (time !== this.time) {
+        // we must have gotten a seek call
+        // console.log(this.constructor.name, "stopLoadAndDraw", time, "!==", this.time)
+        return
+      }
 
-    if (time !== this.time) return // we must have gotten a seek call
-
-    this.drawTime(time)
-    if (!paused) {
-      this.composition.startContext()
-      this.playing = true
-    }
+      this.drawTime(time)
+      if (!paused) {
+        this.composition.startContext()
+        this.playing = true
+      }
+    })
   }
 
   get time() : Time {
@@ -576,6 +590,22 @@ class MashClass extends InstanceClass implements Mash {
 
     // console.log("trackOfTypeAtIndex", type, index)
     return this[type][index]
+  }
+
+  private trackOptions(object : TrackObject, index : number, type : TrackType) : TrackOptions {
+    const { clips } = object
+    if (!(clips && Is.populatedArray(clips))) return { type, index }
+
+    const objects = clips.map(clip => {
+      const { id } = clip
+      if (!id) throw Errors.id
+
+      const definition = Definitions.fromId(id)
+      const clipWithTrack = { track: index, ...clip }
+      return <Clip> definition.instanceFromObject(clipWithTrack)
+    })
+    this.assureClipsHaveFrames(objects)
+    return { type, index, clips: objects }
   }
 
   get tracks() : Track[] { return Object.values(TrackType).map(av => this[av]).flat() }

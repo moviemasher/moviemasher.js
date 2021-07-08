@@ -1,0 +1,450 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MovieMasher | moviemasher.js - v5.0.0</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<ul class="results-priority" style="display:none">
+						<li data-name="interfaces/*" data-subtitle="Interfaces"></li>
+					</ul>
+					<a href="../index.html" class="title">moviemasher.js - v5.0.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="moviemasher.html">MovieMasher</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation outline primary">
+				<a style="margin-left:0em" href="../modules.html">Modules</a>
+				<ul style="display:none">
+					{&quot;Core&quot;:{&quot;MovieMasher&quot;:&quot;classes/moviemasher&quot;,&quot;Definition&quot;:&quot;interfaces/definition&quot;,&quot;Instance&quot;:&quot;interfaces/instance&quot;},&quot;Media&quot;:{&quot;Audio&quot;:&quot;interfaces/audio&quot;,&quot;Effect&quot;:&quot;interfaces/effect&quot;,&quot;Filter&quot;:&quot;interfaces/filter&quot;,&quot;Font&quot;:&quot;interfaces/font&quot;,&quot;Image&quot;:&quot;interfaces/image&quot;,&quot;Mash&quot;:&quot;interfaces/mash&quot;,&quot;Masher&quot;:&quot;interfaces/masher&quot;,&quot;Merger&quot;:&quot;interfaces/merger&quot;,&quot;Scaler&quot;:&quot;interfaces/scaler&quot;,&quot;Theme&quot;:&quot;interfaces/theme&quot;,&quot;Transition&quot;:&quot;interfaces/transition&quot;,&quot;Video&quot;:&quot;interfaces/video&quot;}}
+				</ul>
+			</nav>
+		</div>
+		<div class="col-7 offset-3 col-content">
+			<h1>Class MovieMasher</h1>
+			<section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography tsd-comment-shorttext">
+					<div class="lead">
+						<p>Provides access to factory objects that can create all other object definitions and instances.</p>
+					</div>
+					</div><div class="tsd-comment tsd-typography tsd-comment-tags">
+					<dl class="tsd-comment-tags"><dt>example</dt>
+						<dd><p>Create <a href="../interfaces/masher.html">Masher</a> instance and bind to a CANVAS element</p>
+							<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">canvas</span><span style="color: #000000"> : </span><span style="color: #267F99">ContextElement</span><span style="color: #000000"> = </span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #795E26">getElementById</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;moviemasher-canvas&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">masher</span><span style="color: #000000"> : </span><span style="color: #267F99">Masher</span><span style="color: #000000"> = </span><span style="color: #001080">MovieMasher</span><span style="color: #000000">.</span><span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">instance</span><span style="color: #000000">({ </span><span style="color: #001080">canvas</span><span style="color: #000000"> })</span>
+</code></pre>
+						</dd><dt>sealed</dt>
+					<dd></dd></dl>
+			</div></section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">MovieMasher</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#audio" class="tsd-kind-icon">audio</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#effect" class="tsd-kind-icon">effect</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#filter" class="tsd-kind-icon">filter</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#font" class="tsd-kind-icon">font</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#image" class="tsd-kind-icon">image</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#mash" class="tsd-kind-icon">mash</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#masher" class="tsd-kind-icon">masher</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#merger" class="tsd-kind-icon">merger</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#scaler" class="tsd-kind-icon">scaler</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#theme" class="tsd-kind-icon">theme</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#transition" class="tsd-kind-icon">transition</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="moviemasher.html#video" class="tsd-kind-icon">video</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="audio" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> audio</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> audio<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#audiofactory" class="tsd-signature-type">AudioFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L31">
+											src/MovieMasher/MovieMasher.ts:31
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+								<div class="lead">
+									<p>Object with methods to create audio definitions and instances</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#audiofactory" class="tsd-signature-type">AudioFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="effect" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> effect</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> effect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#effectfactory" class="tsd-signature-type">EffectFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L41">
+											src/MovieMasher/MovieMasher.ts:41
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+								<div class="lead">
+									<p>Object with methods to create effect definitions and instances</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#effectfactory" class="tsd-signature-type">EffectFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="filter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> filter</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> filter<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#filterfactory" class="tsd-signature-type">FilterFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L51">
+											src/MovieMasher/MovieMasher.ts:51
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography tsd-comment-shorttext">
+								<div class="lead">
+									<p>Object with methods to create audio definitions and instances</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#filterfactory" class="tsd-signature-type">FilterFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="font" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> font</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> font<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#fontfactory" class="tsd-signature-type">FontFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L58">
+											src/MovieMasher/MovieMasher.ts:58
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#fontfactory" class="tsd-signature-type">FontFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="image" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> image</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> image<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#imagefactory" class="tsd-signature-type">ImageFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L65">
+											src/MovieMasher/MovieMasher.ts:65
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#imagefactory" class="tsd-signature-type">ImageFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="mash" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> mash</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> mash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#mashfactory" class="tsd-signature-type">MashFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L72">
+											src/MovieMasher/MovieMasher.ts:72
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#mashfactory" class="tsd-signature-type">MashFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="masher" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> masher</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> masher<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/masherfactory.html" class="tsd-signature-type">MasherFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L79">
+											src/MovieMasher/MovieMasher.ts:79
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/masherfactory.html" class="tsd-signature-type">MasherFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="merger" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> merger</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> merger<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/mergerfactory.html" class="tsd-signature-type">MergerFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L86">
+											src/MovieMasher/MovieMasher.ts:86
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/mergerfactory.html" class="tsd-signature-type">MergerFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="scaler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> scaler</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> scaler<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#scalerfactory" class="tsd-signature-type">ScalerFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L93">
+											src/MovieMasher/MovieMasher.ts:93
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#scalerfactory" class="tsd-signature-type">ScalerFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="theme" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> theme</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> theme<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/themefactory.html" class="tsd-signature-type">ThemeFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L100">
+											src/MovieMasher/MovieMasher.ts:100
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/themefactory.html" class="tsd-signature-type">ThemeFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="transition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> transition</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> transition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#transitionfactory" class="tsd-signature-type">TransitionFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L107">
+											src/MovieMasher/MovieMasher.ts:107
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#transitionfactory" class="tsd-signature-type">TransitionFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="video" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> video</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> video<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#videofactory" class="tsd-signature-type">VideoFactory</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in
+										<a href="https://github.com/moviemasher/moviemasher.js/tree/master/src/MovieMasher/MovieMasher.ts#L114">
+											src/MovieMasher/MovieMasher.ts:114
+										</a>
+									</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#videofactory" class="tsd-signature-type">VideoFactory</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<!--{&quot;options&quot;:&quot;/Users/doug/GitHub/moviemasher.js&quot;,&quot;tsconfig&quot;:&quot;/Users/doug/GitHub/moviemasher.js&quot;,&quot;entryPoints&quot;:[&quot;src/index.ts&quot;],&quot;exclude&quot;:[&quot;**/test/**/*.*&quot;,&quot;**/index.ts&quot;],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:true,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:true,&quot;excludeProtected&quot;:true,&quot;disableSources&quot;:false,&quot;disableAliases&quot;:false,&quot;includes&quot;:&quot;&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:true,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;docs/5.0.0&quot;,&quot;json&quot;:&quot;docs/5.0.0/reflections.json&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;moviemasher.js&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[&quot;Interfaces&quot;,&quot;Enumerations&quot;,&quot;Classes&quot;,&quot;*&quot;],&quot;categorizeByGroup&quot;:true,&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:true,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;listInvalidSymbolLinks&quot;:false,&quot;outline&quot;:[{&quot;Core&quot;:{&quot;MovieMasher&quot;:&quot;classes/moviemasher&quot;,&quot;Definition&quot;:&quot;interfaces/definition&quot;,&quot;Instance&quot;:&quot;interfaces/instance&quot;},&quot;Media&quot;:{&quot;Audio&quot;:&quot;interfaces/audio&quot;,&quot;Effect&quot;:&quot;interfaces/effect&quot;,&quot;Filter&quot;:&quot;interfaces/filter&quot;,&quot;Font&quot;:&quot;interfaces/font&quot;,&quot;Image&quot;:&quot;interfaces/image&quot;,&quot;Mash&quot;:&quot;interfaces/mash&quot;,&quot;Masher&quot;:&quot;interfaces/masher&quot;,&quot;Merger&quot;:&quot;interfaces/merger&quot;,&quot;Scaler&quot;:&quot;interfaces/scaler&quot;,&quot;Theme&quot;:&quot;interfaces/theme&quot;,&quot;Transition&quot;:&quot;interfaces/transition&quot;,&quot;Video&quot;:&quot;interfaces/video&quot;}}],&quot;search&quot;:[{&quot;name&quot;:&quot;interfaces/*&quot;,&quot;subtitle&quot;:&quot;Interfaces&quot;}],&quot;source&quot;:[{&quot;path&quot;:&quot;https://github.com/moviemasher/moviemasher.js/tree/master/&quot;,&quot;line&quot;:&quot;L&quot;}]}-->
+		</div>
+		<div class="col-2 col-menu secondary-menu">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class root">
+						<a href="moviemasher.html" class="tsd-kind-icon">Movie<wbr>Masher</a>
+						<ul>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#audio" class="tsd-kind-icon">audio</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#effect" class="tsd-kind-icon">effect</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#filter" class="tsd-kind-icon">filter</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#font" class="tsd-kind-icon">font</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#image" class="tsd-kind-icon">image</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#mash" class="tsd-kind-icon">mash</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#masher" class="tsd-kind-icon">masher</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#merger" class="tsd-kind-icon">merger</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#scaler" class="tsd-kind-icon">scaler</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#theme" class="tsd-kind-icon">theme</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#transition" class="tsd-kind-icon">transition</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="moviemasher.html#video" class="tsd-kind-icon">video</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+</footer>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

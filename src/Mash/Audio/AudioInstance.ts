@@ -7,7 +7,7 @@ import { ClipMixin } from "../Mixin/Clip/ClipMixin"
 const AudioWithClip = ClipMixin(InstanceClass)
 const AudioWithAudible = AudibleMixin(AudioWithClip)
 class AudioClass extends AudioWithAudible {
-  definition! : AudioDefinition
+  declare definition : AudioDefinition
 
   trackType = TrackType.Audio
 }

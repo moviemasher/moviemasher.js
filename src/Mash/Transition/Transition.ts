@@ -2,6 +2,7 @@ import { VisibleContext } from "../../Playing/VisibleContext"
 import { GenericFactory } from "../../Setup/declarations"
 import { Time } from "../../Utilities/Time"
 import { FilterObject } from "../Filter/Filter"
+import { MergerObject } from "../Merger"
 import { ClipDefinitionObject } from "../Mixin/Clip/Clip"
 import {
   Modular,
@@ -10,6 +11,7 @@ import {
   ModularObject
 } from "../Mixin/Modular/Modular"
 import { Visible, VisibleDefinition, VisibleObject } from "../Mixin/Visible/Visible"
+import { ScalerObject } from "../Scaler"
 
 type TransitionObject = ModularObject & VisibleObject
 
@@ -20,6 +22,8 @@ interface Transition extends Modular, Visible {
 
 interface TransitionDefinitionTransformObject {
   filters? : FilterObject[]
+  merger? : MergerObject
+  scaler? : ScalerObject
 }
 interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefinitionObject {
   to? : TransitionDefinitionTransformObject
@@ -27,7 +31,7 @@ interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefini
 }
 
 interface TransitionDefinition extends Omit <ModularDefinition, "loadedVisible">, VisibleDefinition {
-  drawVisibleFilters(clips : Visible[], modular : Modular, time : Time, quantize: number, context : VisibleContext, color? : string) : void
+  drawVisibleFilters(clips : Visible[], modular : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void
   instance : Transition
   instanceFromObject(object : TransitionObject) : Transition
 }

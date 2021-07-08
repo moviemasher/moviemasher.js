@@ -13,7 +13,7 @@ class ColorFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'color'
+  // id = 'color'
 
   parameters = [
     new Parameter({ name: "color", value: "color" }),

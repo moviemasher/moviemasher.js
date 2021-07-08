@@ -4,41 +4,84 @@
 *JavaScript library for realtime, browser-based video and audio editing*
 # moviemasher.js (4.0.26)
 
-Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for additional media types, multitrack compositing, effects, transitions and event titling using your custom fonts.
+Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for additional media types, multitrack compositing, effects, transitions and even titling using your custom fonts.
 
 - **visual composition** with transformations
 - **audio mixing** utilizing WebAudio
 - **undo/redo** history and commands
 - **framework** for custom effects, titles and transitions
 
+## Documentation
+What follows is a quick start - see [MovieMasher.com](https://moviemasher.com/docs/index.html) for a deeper dive.
 
 ## Installation
+The following command installs the library to your project, saving the current version number to the `dependencies` array in your __package.json__ file:
 
-### Use the Node Package Manager
-The following command installs the latest library and its dependencies, saving current version numbers to your __package.json__ file:
 ```shell
 npm install @moviemasher/moviemasher.js --save
 ```
 
-### Download the Universal Module
-Copy the __dist/moviemasher.min.js__ precompiled UMD file from the [latest ZIP archive](https://github.com/moviemasher/moviemasher.js/archive/master.zip) into your project, referencing its new path in a `script` tag:
+Alternatively, the __/dist/__ directory in the [latest ZIP archive](https://github.com/moviemasher/moviemasher.js/archive/master.zip) contains both CJS (CommonJs) and UMD (Universal Module Defintion) builds. To install the later, simply upload __/dist/moviemasher.min.js__ to your web host and use its path as the `src` attribute for a new `SCRIPT` element in your HTML.
 
-```html
-<script src="moviemasher.min.js" />
+## Inclusion
+Import the library into your JavaScript code to include the `MovieMasher` object in its scope:
+
+```javascript
+import { MovieMasher } from '@moviemasher/moviemasher.js'
 ```
 
+This step can be skipped for UMD installations, since the `MovieMasher` object is automatically placed in the global scope. Depending on the build system, CJS installations may be able to use `import` or other mechanisms to include the library like:
+
+```javascript
+const MovieMasher = require('@moviemasher/moviemasher.js')
+```
+
+## Usage
+A typical use case involves binding a new `Masher` object to a `CANVAS` element in your HTML, and then manipulating its `Mash` object by adding `Track` and `Clip` objects of various types - `Audio`, `Transition`, `Video`, `Image`, and `Theme`. Some types (`Video`, `Image`, and `Theme`) are `Transformable` so have `Merger` and `Scaler` objects that control their transformation. These types can also have multiple `Effect` objects that augment their appearance
+
+### Add Canvas to HTML
+Include a new `CANVAS` element somewhere in your HTML and size it either directly or with CSS:
+```html
+<canvas id='moviemasher-canvas' width='320' height='180' />
+```
+### Create Masher and bind to Canvas
+The main `MovieMasher` object provides access to factory/builder objects that are used to construct all other objects. Typically your first step is to construct a `Masher` object, which will immediately draw to your `CANVAS` element:
+
+```javascript
+const canvas = document.getElementById('moviemasher-canvas')
+const masher = MovieMasher.masher.instance({ canvas })
+```
+
+### Manipulate Masher's Mash
+By default, a new `Masher` object will draw a new empty `Mash` object, and the default value for its `backcolor` property is transparent so nothing appears to happen after the code above executes! To draw any valid HTML color instead, any of the following approaches could be used:
+
+```javascript
+masher.mash = MovieMasher.mash.instance({ backcolor: 'yellow' }) // replace Mash
+masher.changeMash('backcolor', 'yellow') // set backcolor of existing mash
+masher.change('backcolor', 'yellow') // same as above, when no clips selected
+```
+
+Alternatively, the `Mash` instance could have been provided as an additional property along with the `CANVAS` element when creating the `Masher`. You could also have just set `masher.mash.backcolor` directly, but you'd need to then call `mash.draw()` to see the result and you couldn't then call `masher.undo()` to revert the change.
+
+### Add a Theme Clip
+
+```javascript
+masher.addClip(MovieMasher.theme.fromId('com.moviemasher.theme.color')) // add color clip
+masher.add({ id: 'com.moviemasher.theme.color' }) // same as above, but more flexible
+```
+----------
+
+masher.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
+masher.mash = MovieMasher.mash.instance({ video: {clips: [{id: 'com.moviemasher.theme.color'}]} }) // replace Mash
+
 ### Clone the GitHub Repository
-The following command will copy the entire Git project to your local machine, complete with examples and documentation:
+The following command will copy the entire Git project to your local machine, complete with examples, tests, and documentation:
 ```shell
 git clone https://github.com/moviemasher/moviemasher.js.git
 ```
 
-
-## Overview: Canvas + Mash = Player
-
 Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a standard JavaScript Object that describes a collection of media and how to arrange it over time.
 
-- **Documentation:** [MovieMasher.com](https://moviemasher.com/docs/index.html)
 
 A player binds to its mash object directly, without copying or adding any methods. It may add default objects, arrays and scalar values though, for faster runtime parsing. Changes you make to the mash are reflected in the player the next time redraw() is called. Or as an alternative to direct data manipulation, you can use the player's add(), change() and remove() methods. When using these you can also call undo() and redo() to provide a complete edit history.
 
@@ -47,7 +90,6 @@ A player binds to its mash object directly, without copying or adding any method
 const context = document.getElementById("mm-canvas").getContext('2d');
 consts masher = new Masher({ visibleContext: context, autoplay: true });
 
-masher.add({ type: 'image', url: 'media/image/cable.jpg', frames: 2 });
 masher.add({ type: 'image', url: 'media/image/frog.jpg', frames: 2 });
 masher.add({ type: 'audio', url: 'media/audio/loop.mp3', duration: 2 });
 

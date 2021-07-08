@@ -8,7 +8,7 @@ class SetSarFilter extends FilterDefinitionClass {
     return evaluator.context
   }
 
-  id = 'setsar'
+  // id = 'setsar'
 }
 
 export { SetSarFilter }

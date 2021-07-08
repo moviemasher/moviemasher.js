@@ -19,6 +19,7 @@ interface MergerDefinition extends ModularDefinition {
   instanceFromObject(object : MergerObject) : Merger
 }
 
-type MergerFactory = GenericFactory<Merger, MergerObject, MergerDefinition, MergerDefinitionObject>
+interface MergerFactory extends GenericFactory<Merger, MergerObject, MergerDefinition, MergerDefinitionObject> {
+}
 
 export { Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject }

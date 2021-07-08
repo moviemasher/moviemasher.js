@@ -36,13 +36,13 @@ class ConvolutionFilter extends FilterDefinitionClass {
     const outputData = output.data
     const area = width * height
     for (let pixel = 0; pixel < area; pixel += 1) {
-      const rgbs = Pixel.rgbs(pixel, inputData, size)
+      const rgbas = Pixel.surroundingRgbas(pixel, inputData, size)
       RBGA.split('').forEach((channel, index) => {
         const rdiv = <number> options.rdiv[channel]
         const matrix = <number[]> options.matrix[channel]
         const bias = <number> options.bias[channel]
         let sum = 0
-        for (let y = 0; y < 9; y += 1) sum += rgbs[y][channel] * matrix[y]
+        for (let y = 0; y < 9; y += 1) sum += rgbas[y][channel] * matrix[y]
 
         sum = Math.floor(sum * rdiv + bias + 0.5)
         outputData[pixel * 4 + index] = sum
@@ -52,7 +52,7 @@ class ConvolutionFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'convolution'
+  // id = 'convolution'
 
 }
 

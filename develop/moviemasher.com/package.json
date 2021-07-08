@@ -1,0 +1,13 @@
+{
+  "name": "moviemasher.com",
+  "description": "Movie Masher Website",
+  "main": "./public/index.js",
+  "source": "./src/index.ts",
+  "version": "5.0.0",
+  "license": "MPL-2.0",
+  "scripts": {
+    "build": "rollup --config",
+    "develop": "rollup --watch --config",
+    "document": "typedoc --watch --out docs/5.0.0 --json docs/5.0.0/reflections.json"
+  }
+}

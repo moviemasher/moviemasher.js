@@ -10,28 +10,27 @@ import {
   Merger,
   MergerObject,
   MergerDefinition,
-  MergerDefinitionObject
+  MergerDefinitionObject,
+  MergerFactory
 } from "../Merger/Merger"
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
-import { GenericFactory } from "../../Setup/declarations"
 
 const mergerDefaultId = "com.moviemasher.merger.default"
 
 const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : mergerDefaultId
-  if (!Definitions.installed(idString)) {
-    new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString })
-  }
-  return <MergerDefinition> Definitions.fromId(idString)
+  if (Definitions.installed(idString)) return <MergerDefinition> Definitions.fromId(idString)
+
+  return new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString })
 }
 
 const mergerDefinitionFromId = (id : string) : MergerDefinition => {
   return mergerDefinition({ id })
 }
 
-const mergerInstance = (object : MergerDefinitionObject) : Merger => {
+const mergerInstance = (object : MergerObject) : Merger => {
   const definition = mergerDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
@@ -42,11 +41,11 @@ const mergerFromId = (id : string) : Merger => {
 }
 
 const mergerInitialize = () : void => {
-  mergerDefinition(mergerBlendJson)
-  mergerDefinition(mergerCenterJson)
-  mergerDefinition(mergerConstrainedJson)
-  mergerDefinition(mergerDefaultJson)
-  mergerDefinition(mergerOverlayJson)
+  new MergerDefinitionClass(mergerBlendJson)
+  new MergerDefinitionClass(mergerCenterJson)
+  new MergerDefinitionClass(mergerConstrainedJson)
+  new MergerDefinitionClass(mergerDefaultJson)
+  new MergerDefinitionClass(mergerOverlayJson)
 }
 
 const mergerDefine = (object : MergerDefinitionObject) : MergerDefinition => {
@@ -56,7 +55,6 @@ const mergerDefine = (object : MergerDefinitionObject) : MergerDefinition => {
   return mergerDefinition(object)
 }
 
-type MergerFactory = GenericFactory<Merger, MergerObject, MergerDefinition, MergerDefinitionObject>
 
 const MergerFactoryImplementation : MergerFactory = {
   define: mergerDefine,

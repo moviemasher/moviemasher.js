@@ -32,7 +32,7 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'colorchannelmixer'
+  // id = 'colorchannelmixer'
 
 }
 

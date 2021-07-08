@@ -1,0 +1,11 @@
+{
+  "name": "umd",
+  "description": "UMD Test",
+  "main": "./public/index.js",
+  "source": "./src/index.js",
+  "version": "5.0.0",
+  "license": "MPL-2.0",
+  "scripts": {
+    "develop": "rollup --watch --config"
+  }
+}

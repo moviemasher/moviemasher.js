@@ -35,7 +35,7 @@ const classes : { [index: string] : typeof Action}= {
 class ActionFactoryClass {
   createFromObject(object : UnknownObject) : Action {
     const { type } = object
-    if (typeof type !== "string") throw Errors.type
+    if (typeof type !== "string") throw Errors.type + JSON.stringify(object)
 
     return new classes[Capitalize(type)](<ActionObject><unknown> object)
   }

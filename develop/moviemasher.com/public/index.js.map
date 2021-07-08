@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../src/index.ts"],"sourcesContent":["\nclass Wtf {\n  constructor() {\n\n    console.log(\"hello\")\n  }\n\n}\nexport { Wtf }\n"],"names":[],"mappings":";;;EACA,MAAM,GAAG,CAAC;EACV,EAAE,WAAW,GAAG;AAChB;EACA,IAAI,OAAO,CAAC,GAAG,CAAC,OAAO,EAAC;EACxB,GAAG;AACH;EACA;;;;;;;;;;"}

@@ -7,11 +7,14 @@ class FadeFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator
     const drawing = ContextFactory.toSize(context.size)
-    drawing.drawWithAlpha(context.imageSource, evaluator.position)
+    const alpha = Number(evaluator.get('alpha') || evaluator.position)
+    const type = String(evaluator.get('type') || 'in')
+    const typedAlpha = type === 'in' ? alpha : 1.0 - alpha
+    drawing.drawWithAlpha(context.drawingSource, typedAlpha)
     return drawing
   }
 
-  id = 'fade'
+  // id = 'fade'
 }
 
 export { FadeFilter }

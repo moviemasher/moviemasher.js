@@ -38,18 +38,20 @@ interface MashDefinition extends Definition {
 interface Mash extends Instance {
   addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number) : void
   addTrack(trackType : TrackType) : Track
+  audibleContext : AudibleContext
   audio: Track[]
   backcolor? : string
-  duration : number
-  endTime : Time
-  events : Events
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
-  clipTrack(clip : Clip) : Track
   clipsInTracks : Clip[]
+  clipTrack(clip : Clip) : Track
   compositeVisible() : void
   definition : MashDefinition
   destroy() : void
+  drawnTime? : Time
+  duration : number
+  endTime : Time
+  events : Events
   load() : LoadPromise
   loadedDefinitions : DefinitionTimes
   loop : boolean
@@ -63,6 +65,7 @@ interface Mash extends Instance {
   trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
   video: Track[]
+  visibleContext : VisibleContext
 }
 
 type MashDefinitionObject = DefinitionObject

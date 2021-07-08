@@ -23,7 +23,7 @@ function ModularMixin<TBase extends Constrained<Instance>>(Base: TBase) {
       })
     }
 
-    definition! : ModularDefinition
+    declare definition : ModularDefinition
 
     get definitions() : Definition[] {
       return [...super.definitions, ...this.modularDefinitions]

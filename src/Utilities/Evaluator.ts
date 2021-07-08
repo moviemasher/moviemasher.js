@@ -122,7 +122,7 @@ class Evaluator {
       // console.log(this.constructor.name, "evaluateExpression", expression, result)
       return result
     } catch (exception) {
-      console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map)
+      //console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map)
       return expression
     }
   }

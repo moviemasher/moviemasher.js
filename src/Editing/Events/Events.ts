@@ -1,4 +1,4 @@
-import { EventsTarget, EventsCallback } from "../../Setup/declarations"
+import { EventsTarget, EventsCallback, UnknownObject } from "../../Setup/declarations"
 import { Action } from "../Action"
 
 
@@ -30,7 +30,7 @@ class Events {
     }
   }
 
-  emit(type : string, info = {}) : void {
+  emit(type : string, info : UnknownObject = {}) : void {
     const detail = { type, ...info }
     const event = { detail }
     if (!this.target) return

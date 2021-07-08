@@ -6,7 +6,7 @@ const CacheKeyPrefix = 'cachekey'
 
 class CacheClass {
   add(url : string, value : Any) : void {
-    console.log(this.constructor.name, "add", url, value.constructor.name)
+    // console.log(this.constructor.name, "add", url, value.constructor.name)
     const key = this.key(url)
     this.cachedByKey.set(key, value)
     this.urlsByKey.set(key, url)
@@ -25,15 +25,13 @@ class CacheClass {
   }
 
   key(url : string) : string {
-    if (!Is.populatedString(url)) {
-      console.trace()
-      throw Errors.argument + 'url'
-    }
+    if (!Is.populatedString(url)) throw Errors.argument + 'url'
+
     return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '')
   }
 
   remove(url : string) : void {
-    console.log(this.constructor.name, "remove", url)
+    // console.log(this.constructor.name, "remove", url)
     const key = this.key(url)
     this.cachedByKey.delete(key)
     this.urlsByKey.delete(key)

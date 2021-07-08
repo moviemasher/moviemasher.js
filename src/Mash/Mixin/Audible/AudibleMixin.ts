@@ -35,7 +35,7 @@ function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
 
     audible = true
 
-    definition! : AudibleDefinition
+    declare definition : AudibleDefinition
 
     definitionTime(quantize : number, time : Time) : Time {
       const scaledTime = super.definitionTime(quantize, time)
@@ -45,7 +45,7 @@ function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
       return scaledTime.withFrame(scaledTime.frame + trimTime.frame)
     }
 
-    gain = Default.clip.audio.gain
+    gain = Default.instance.audio.gain
 
     gainPairs : number[][] = []
 
@@ -61,58 +61,16 @@ function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
       return Math.floor(this.definition.duration * quantize) - space
     }
 
-    mediaTime(time : Time, addOneFrame = false) : Time {
-      const { fps } = time
-      const endFrame = this.frame + this.frames
-      const endTime = Time.fromArgs(endFrame, fps)
-      const limitedTime = time.min(endTime)
-      const startTime = Time.fromArgs(this.frame, fps)
-      let mediaTime = limitedTime.subtract(startTime)
-
-      if (addOneFrame) {
-        const addTime = Time.fromArgs(1, fps)
-        mediaTime = mediaTime.add(addTime)
-      }
-      if (this.trim === Default.clip.audio.trim) return mediaTime
-
-
-        const addTime = Time.fromArgs(this.trim, fps)
-        return mediaTime.add(addTime)
-    }
-
-    mediaTimeRange(timeRange : TimeRange) : TimeRange {
-      const addOneFrame = (timeRange.frames > 1)
-      return TimeRange.fromTimes(
-        this.mediaTime(timeRange.startTime),
-        this.mediaTime(timeRange.endTime, addOneFrame)
-      )
-    }
-
-
-    // timeRangeRelative(time : Time, quantize : number) : TimeRange {
-    //   const range = super.timeRangeRelative(time, quantize)
-    //   return this.mediaTimeRange(range)
-
-    //   // this.timeRange(quantize).scale(time.fps)
-    //   // const trimTime = Time.fromArgs(this.trim, quantize).scale(time.fps)
-
-    //   // const frame = time.frame + trimTime.frame - range.frame
-    //   // const frames = range.frames - trimTime.frame
-    //   // return TimeRange.fromArgs(frame, range.fps, frames)
-    // }
-
     toJSON() : JsonObject {
       const object = super.toJSON()
-      if (this.trim !== Default.clip.audio.trim) object.trim = this.trim
-      if (this.gain !== Default.clip.audio.gain) object.gain = this.gain
+      if (this.trim !== Default.instance.audio.trim) object.trim = this.trim
+      if (this.gain !== Default.instance.audio.gain) object.gain = this.gain
       return object
     }
 
-    trim = Default.clip.audio.trim
+    trim = Default.instance.audio.trim
 
     trimTime(quantize : number) : Time { return Time.fromArgs(this.trim, quantize) }
-
-
   }
 }
 

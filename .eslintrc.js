@@ -11,7 +11,6 @@ module.exports = {
     ecmaVersion: 12,
     ecmaFeatures: { jsx: true },
     sourceType: 'module',
-    // project: ["tsconfig.json"]
   },
   plugins: [
     '@typescript-eslint/eslint-plugin',

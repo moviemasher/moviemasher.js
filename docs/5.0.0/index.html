@@ -1,0 +1,1332 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>moviemasher.js - v5.0.0</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<ul class="results-priority" style="display:none">
+						<li data-name="interfaces/*" data-subtitle="Interfaces"></li>
+					</ul>
+					<a href="index.html" class="title">moviemasher.js - v5.0.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+			</ul>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation outline primary">
+				<a style="margin-left:0em" href="modules.html">Modules</a>
+				<ul style="display:none">
+					{&quot;Core&quot;:{&quot;MovieMasher&quot;:&quot;classes/moviemasher&quot;,&quot;Definition&quot;:&quot;interfaces/definition&quot;,&quot;Instance&quot;:&quot;interfaces/instance&quot;},&quot;Media&quot;:{&quot;Audio&quot;:&quot;interfaces/audio&quot;,&quot;Effect&quot;:&quot;interfaces/effect&quot;,&quot;Filter&quot;:&quot;interfaces/filter&quot;,&quot;Font&quot;:&quot;interfaces/font&quot;,&quot;Image&quot;:&quot;interfaces/image&quot;,&quot;Mash&quot;:&quot;interfaces/mash&quot;,&quot;Masher&quot;:&quot;interfaces/masher&quot;,&quot;Merger&quot;:&quot;interfaces/merger&quot;,&quot;Scaler&quot;:&quot;interfaces/scaler&quot;,&quot;Theme&quot;:&quot;interfaces/theme&quot;,&quot;Transition&quot;:&quot;interfaces/transition&quot;,&quot;Video&quot;:&quot;interfaces/video&quot;}}
+				</ul>
+			</nav>
+		</div>
+		<div class="col-7 offset-3 col-content">
+			<h1>Project moviemasher.js - v5.0.0</h1>
+			<div class="tsd-panel tsd-typography">
+				<p><a href="https://moviemasher.com"><img src="https://github.com/moviemasher/angular-moviemasher/raw/master/README/logo-120x60.png" alt="Image" title="MovieMasher.com"></a>
+				<strong>moviemasher.js | <a href="https://github.com/moviemasher/angular-moviemasher" title="sits between moviemasher.js and moviemasher.rb, providing an editing GUI and simple CMS middleware layer">angular-moviemasher</a> | <a href="https://github.com/moviemasher/moviemasher.rb" title="sits behind angular-moviemasher, providing processor intensive video transcoding services through a simple API">moviemasher.rb</a></strong></p>
+				<p><em>JavaScript library for realtime, browser-based video and audio editing</em></p>
+				<a href="#moviemasherjs-4026" id="moviemasherjs-4026" style="color: inherit; text-decoration: none;">
+					<h1>moviemasher.js (4.0.26)</h1>
+				</a>
+				<p>Use moviemasher.js to edit and display mashups of video, audio, and images within a canvas element. Its player works like the native HTML5 video player, but adds support for additional media types, multitrack compositing, effects, transitions and even titling using your custom fonts.</p>
+				<ul>
+					<li><strong>visual composition</strong> with transformations</li>
+					<li><strong>audio mixing</strong> utilizing WebAudio</li>
+					<li><strong>undo/redo</strong> history and commands</li>
+					<li><strong>framework</strong> for custom effects, titles and transitions</li>
+				</ul>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
+				</a>
+				<p>What follows is a quick start - see <a href="https://moviemasher.com/docs/index.html">MovieMasher.com</a> for a deeper dive.</p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<p>The following command installs the library to your project, saving the current version number to the <code>dependencies</code> array in your <strong>package.json</strong> file:</p>
+				<pre><code class="language-shell"><span style="color: #000000">npm install @moviemasher/moviemasher.js --save</span>
+</code></pre>
+				<p>Alternatively, the <strong>/dist/</strong> directory in the <a href="https://github.com/moviemasher/moviemasher.js/archive/master.zip">latest ZIP archive</a> contains both CJS (CommonJs) and UMD (Universal Module Defintion) builds. To install the later, simply upload <strong>/dist/moviemasher.min.js</strong> to your web host and use its path as the <code>src</code> attribute for a new <code>SCRIPT</code> element in your HTML.</p>
+				<a href="#inclusion" id="inclusion" style="color: inherit; text-decoration: none;">
+					<h2>Inclusion</h2>
+				</a>
+				<p>Import the library into your JavaScript code to include the <code>MovieMasher</code> object in its scope:</p>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">MovieMasher</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@moviemasher/moviemasher.js&#039;</span>
+</code></pre>
+				<p>This step can be skipped for UMD installations, since the <code>MovieMasher</code> object is automatically placed in the global scope. Depending on the build system, CJS installations may be able to use <code>import</code> or other mechanisms to include the library like:</p>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">MovieMasher</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;@moviemasher/moviemasher.js&#039;</span><span style="color: #000000">)</span>
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>A typical use case involves binding a new <code>Masher</code> object to a <code>CANVAS</code> element in your HTML, and then manipulating its <code>Mash</code> object by adding <code>Track</code> and <code>Clip</code> objects of various types - <code>Audio</code>, <code>Transition</code>, <code>Video</code>, <code>Image</code>, and <code>Theme</code>. Some types (<code>Video</code>, <code>Image</code>, and <code>Theme</code>) are <code>Transformable</code> so have <code>Merger</code> and <code>Scaler</code> objects that control their transformation. These types can also have multiple <code>Effect</code> objects that augment their appearance</p>
+				<a href="#add-canvas-to-html" id="add-canvas-to-html" style="color: inherit; text-decoration: none;">
+					<h3>Add Canvas to HTML</h3>
+				</a>
+				<p>Include a new <code>CANVAS</code> element somewhere in your HTML and size it either directly or with CSS:</p>
+				<pre><code class="language-html"><span style="color: #800000">&lt;canvas</span><span style="color: #000000"> </span><span style="color: #FF0000">id</span><span style="color: #000000">=</span><span style="color: #0000FF">&#039;moviemasher-canvas&#039;</span><span style="color: #000000"> </span><span style="color: #FF0000">width</span><span style="color: #000000">=</span><span style="color: #0000FF">&#039;320&#039;</span><span style="color: #000000"> </span><span style="color: #FF0000">height</span><span style="color: #000000">=</span><span style="color: #0000FF">&#039;180&#039;</span><span style="color: #000000"> </span><span style="color: #CD3131">/</span><span style="color: #800000">&gt;</span>
+</code></pre>
+				<a href="#create-masher-and-bind-to-canvas" id="create-masher-and-bind-to-canvas" style="color: inherit; text-decoration: none;">
+					<h3>Create Masher and bind to Canvas</h3>
+				</a>
+				<p>The main <code>MovieMasher</code> object provides access to factory/builder objects that are used to construct all other objects. Typically your first step is to construct a <code>Masher</code> object, which will immediately draw to your <code>CANVAS</code> element:</p>
+				<pre><code class="language-javascript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">canvas</span><span style="color: #000000"> = </span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #795E26">getElementById</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;moviemasher-canvas&#039;</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">masher</span><span style="color: #000000"> = </span><span style="color: #001080">MovieMasher</span><span style="color: #000000">.</span><span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">instance</span><span style="color: #000000">({ </span><span style="color: #001080">canvas</span><span style="color: #000000"> })</span>
+</code></pre>
+				<a href="#manipulate-masher39s-mash" id="manipulate-masher39s-mash" style="color: inherit; text-decoration: none;">
+					<h3>Manipulate Masher&#39;s Mash</h3>
+				</a>
+				<p>By default, a new <code>Masher</code> object will draw a new empty <code>Mash</code> object, and the default value for its <code>backcolor</code> property is transparent so nothing appears to happen after the code above executes! To draw any valid HTML color instead, any of the following approaches could be used:</p>
+				<pre><code class="language-javascript"><span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #001080">mash</span><span style="color: #000000"> = </span><span style="color: #001080">MovieMasher</span><span style="color: #000000">.</span><span style="color: #001080">mash</span><span style="color: #000000">.</span><span style="color: #795E26">instance</span><span style="color: #000000">({ </span><span style="color: #001080">backcolor:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;yellow&#039;</span><span style="color: #000000"> }) </span><span style="color: #008000">// replace Mash</span>
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">changeMash</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;backcolor&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;yellow&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// set backcolor of existing mash</span>
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">change</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;backcolor&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;yellow&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// same as above, when no clips selected</span>
+</code></pre>
+				<p>Alternatively, the <code>Mash</code> instance could have been provided as an additional property along with the <code>CANVAS</code> element when creating the <code>Masher</code>. You could also have just set <code>masher.mash.backcolor</code> directly, but you&#39;d need to then call <code>mash.draw()</code> to see the result and you couldn&#39;t then call <code>masher.undo()</code> to revert the change.</p>
+				<a href="#add-a-theme-clip" id="add-a-theme-clip" style="color: inherit; text-decoration: none;">
+					<h3>Add a Theme Clip</h3>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">addClip</span><span style="color: #000000">(</span><span style="color: #001080">MovieMasher</span><span style="color: #000000">.</span><span style="color: #001080">theme</span><span style="color: #000000">.</span><span style="color: #795E26">fromId</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;com.moviemasher.theme.color&#039;</span><span style="color: #000000">)) </span><span style="color: #008000">// add color clip</span>
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">add</span><span style="color: #000000">({ </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;com.moviemasher.theme.color&#039;</span><span style="color: #000000"> }) </span><span style="color: #008000">// same as above, but more flexible</span>
+</code></pre>
+				<hr>
+				<p>masher.add({ type: &#39;image&#39;, url: &#39;media/image/cable.jpg&#39;, frames: 2 });
+				masher.mash = MovieMasher.mash.instance({ video: {clips: [{id: &#39;com.moviemasher.theme.color&#39;}]} }) // replace Mash</p>
+				<a href="#clone-the-github-repository" id="clone-the-github-repository" style="color: inherit; text-decoration: none;">
+					<h3>Clone the GitHub Repository</h3>
+				</a>
+				<p>The following command will copy the entire Git project to your local machine, complete with examples, tests, and documentation:</p>
+				<pre><code class="language-shell"><span style="color: #000000">git clone https://github.com/moviemasher/moviemasher.js.git</span>
+</code></pre>
+				<p>Each instance of the player is bound to a canvas element and displays just a single mash within it, but this mash can contain any number of audio or video tracks having any number of clips on them. A mash is just a standard JavaScript Object that describes a collection of media and how to arrange it over time.</p>
+				<p>A player binds to its mash object directly, without copying or adding any methods. It may add default objects, arrays and scalar values though, for faster runtime parsing. Changes you make to the mash are reflected in the player the next time redraw() is called. Or as an alternative to direct data manipulation, you can use the player&#39;s add(), change() and remove() methods. When using these you can also call undo() and redo() to provide a complete edit history.</p>
+				<a href="#basic-slideshow-with-audio" id="basic-slideshow-with-audio" style="color: inherit; text-decoration: none;">
+					<h5>Basic slideshow with audio</h5>
+				</a>
+				<pre><code class="language-JavaScript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">context</span><span style="color: #000000"> = </span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #795E26">getElementById</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;mm-canvas&quot;</span><span style="color: #000000">).</span><span style="color: #795E26">getContext</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;2d&#039;</span><span style="color: #000000">);</span>
+<span style="color: #001080">consts</span><span style="color: #000000"> </span><span style="color: #001080">masher</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Masher</span><span style="color: #000000">({ </span><span style="color: #001080">visibleContext:</span><span style="color: #000000"> </span><span style="color: #001080">context</span><span style="color: #000000">, </span><span style="color: #001080">autoplay:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> });</span>
+
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">add</span><span style="color: #000000">({ </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;image&#039;</span><span style="color: #000000">, </span><span style="color: #001080">url:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;media/image/frog.jpg&#039;</span><span style="color: #000000">, </span><span style="color: #001080">frames:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000"> });</span>
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #795E26">add</span><span style="color: #000000">({ </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;audio&#039;</span><span style="color: #000000">, </span><span style="color: #001080">url:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;media/audio/loop.mp3&#039;</span><span style="color: #000000">, </span><span style="color: #001080">duration:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000"> });</span>
+
+<span style="color: #008000">// OR, more verbosely...</span>
+
+<span style="color: #001080">masher</span><span style="color: #000000">.</span><span style="color: #001080">mash</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;media&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">    { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image-cable&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;url&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;media/image/cable.jpg&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">    { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image-frog&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;url&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;media/image/frog.jpg&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">    { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;audio-id&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;audio&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;duration&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;url&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;media/audio/loop.mp3&quot;</span><span style="color: #000000"> }</span>
+<span style="color: #000000">  ],</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;video&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ {</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;video&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;clips&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">      { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image-cable&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frame&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frames&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000"> },</span>
+<span style="color: #000000">      { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;image-frog&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frame&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frames&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000"> }</span>
+<span style="color: #000000">    ]</span>
+<span style="color: #000000">  } ],</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;audio&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ {</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;audio&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;clips&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ { </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;audio-id&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frame&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;frames&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">4</span><span style="color: #000000"> } ]</span>
+<span style="color: #000000">  } ]</span>
+<span style="color: #000000">};</span>
+</code></pre>
+				<a href="#to-run-locally" id="to-run-locally" style="color: inherit; text-decoration: none;">
+					<h5>To Run Locally</h5>
+				</a>
+				<p>Due to the security mechanisms used, this project can only be viewed in a web browser if delivered through a web server - simply viewing index.html locally in a browser will not work. If you are not running a web server on your local machine, <a href="http://docker.com">Docker</a> is a safe and recommended way to do so. Once installed and running, <code>cd</code> into the <em>config/docker/development</em> directory and:</p>
+				<ul>
+					<li>execute <code>docker-compose up -d</code> to launch apache web server</li>
+					<li>load <a href="http://localhost:8090/app">http://localhost:8090/app</a> in a web browser</li>
+					<li>execute <code>docker-compose down -v</code> to terminate apache web server</li>
+				</ul>
+				<a href="#related-projects" id="related-projects" style="color: inherit; text-decoration: none;">
+					<h3>Related Projects</h3>
+				</a>
+				<p>Three separate projects - <em>moviemasher.js, angular-moviemasher and moviemasher.rb</em> - can be combined to engineer a complete, browser-based audio/video editing and encoding system. Or projects can be utilized independently, if only editing or encoding features are needed. Only angular-moviemasher is dependent on the other projects, since it&#39;s designed to sit between them as a middleware layer providing content management functions.</p>
+				<a href="#dependencies" id="dependencies" style="color: inherit; text-decoration: none;">
+					<h3>Dependencies</h3>
+				</a>
+				<ul>
+					<li>opentype.js</li>
+				</ul>
+				<a href="#user-feedback" id="user-feedback" style="color: inherit; text-decoration: none;">
+					<h3>User Feedback</h3>
+				</a>
+				<p>If any problems arise while utilizing this repository, a <a href="https://github.com/moviemasher/moviemasher.js/issues">GitHub Issue Ticket</a> should be filed. Please include the mash description that&#39;s causing problems and any relevant console entries. Please post your issue ticket in the appropriate repository and refrain from cross posting - all projects are monitored with equal zeal.</p>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h3>Contributing</h3>
+				</a>
+				<p>Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through <a href="https://moviemasher.com">MovieMasher.com</a> to discuss your ideas, or donate to the project.</p>
+				<a href="#developer-setup" id="developer-setup" style="color: inherit; text-decoration: none;">
+					<h4>Developer Setup</h4>
+				</a>
+				<p><a href="http://docker.com">Docker</a> is required for working on the project itself. Once installed and running, <code>cd</code> into the <em>config/docker/node</em> directory and:</p>
+				<ul>
+					<li>execute <code>docker-compose run --rm npm</code> to update node modules</li>
+					<li>execute <code>docker-compose run --rm grunt</code> to rebuild JavaScript files</li>
+				</ul>
+				<a href="#known-issues-in-this-version" id="known-issues-in-this-version" style="color: inherit; text-decoration: none;">
+					<h4>Known issues in this version</h4>
+				</a>
+				<ul>
+					<li>new convolution filter is very beta - does not always match ffmpeg output</li>
+					<li>little documentation - see angular-moviemasher for usage and moviemasher.rb for mash syntax</li>
+					<li>video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks</li>
+					<li>audio filters not yet supported</li>
+				</ul>
+				<a href="#migrating-from-version-407" id="migrating-from-version-407" style="color: inherit; text-decoration: none;">
+					<h4>Migrating from Version 4.0.7</h4>
+				</a>
+				<ul>
+					<li>The <code>begin</code> key in video clips has been renamed <code>first</code>.</li>
+					<li>The <code>length</code> key in clips has been renamed <code>frames</code>.</li>
+					<li>The <code>audio</code> and <code>video</code> keys in mash tracks have been moved to mash.</li>
+					<li>The <code>tracks</code> key in mashes has been removed.</li>
+				</ul>
+			</div>
+			<!--{&quot;options&quot;:&quot;/Users/doug/GitHub/moviemasher.js&quot;,&quot;tsconfig&quot;:&quot;/Users/doug/GitHub/moviemasher.js&quot;,&quot;entryPoints&quot;:[&quot;src/index.ts&quot;],&quot;exclude&quot;:[&quot;**/test/**/*.*&quot;,&quot;**/index.ts&quot;],&quot;externalPattern&quot;:[&quot;**/node_modules/**&quot;],&quot;excludeExternals&quot;:true,&quot;excludeNotDocumented&quot;:false,&quot;excludeInternal&quot;:true,&quot;excludePrivate&quot;:true,&quot;excludeProtected&quot;:true,&quot;disableSources&quot;:false,&quot;disableAliases&quot;:false,&quot;includes&quot;:&quot;&quot;,&quot;media&quot;:&quot;&quot;,&quot;watch&quot;:true,&quot;preserveWatchOutput&quot;:false,&quot;emit&quot;:false,&quot;out&quot;:&quot;docs/5.0.0&quot;,&quot;json&quot;:&quot;docs/5.0.0/reflections.json&quot;,&quot;pretty&quot;:true,&quot;theme&quot;:&quot;./node_modules/typedoc-neo-theme/bin/default&quot;,&quot;highlightTheme&quot;:&quot;light-plus&quot;,&quot;name&quot;:&quot;moviemasher.js&quot;,&quot;includeVersion&quot;:true,&quot;excludeTags&quot;:[],&quot;readme&quot;:&quot;&quot;,&quot;defaultCategory&quot;:&quot;Other&quot;,&quot;categoryOrder&quot;:[&quot;Interfaces&quot;,&quot;Enumerations&quot;,&quot;Classes&quot;,&quot;*&quot;],&quot;categorizeByGroup&quot;:true,&quot;gitRevision&quot;:&quot;&quot;,&quot;gitRemote&quot;:&quot;origin&quot;,&quot;gaID&quot;:&quot;&quot;,&quot;gaSite&quot;:&quot;auto&quot;,&quot;hideGenerator&quot;:true,&quot;toc&quot;:[],&quot;disableOutputCheck&quot;:false,&quot;help&quot;:false,&quot;version&quot;:false,&quot;showConfig&quot;:false,&quot;plugin&quot;:[],&quot;logger&quot;:&quot;console&quot;,&quot;logLevel&quot;:1,&quot;listInvalidSymbolLinks&quot;:false,&quot;outline&quot;:[{&quot;Core&quot;:{&quot;MovieMasher&quot;:&quot;classes/moviemasher&quot;,&quot;Definition&quot;:&quot;interfaces/definition&quot;,&quot;Instance&quot;:&quot;interfaces/instance&quot;},&quot;Media&quot;:{&quot;Audio&quot;:&quot;interfaces/audio&quot;,&quot;Effect&quot;:&quot;interfaces/effect&quot;,&quot;Filter&quot;:&quot;interfaces/filter&quot;,&quot;Font&quot;:&quot;interfaces/font&quot;,&quot;Image&quot;:&quot;interfaces/image&quot;,&quot;Mash&quot;:&quot;interfaces/mash&quot;,&quot;Masher&quot;:&quot;interfaces/masher&quot;,&quot;Merger&quot;:&quot;interfaces/merger&quot;,&quot;Scaler&quot;:&quot;interfaces/scaler&quot;,&quot;Theme&quot;:&quot;interfaces/theme&quot;,&quot;Transition&quot;:&quot;interfaces/transition&quot;,&quot;Video&quot;:&quot;interfaces/video&quot;}}],&quot;search&quot;:[{&quot;name&quot;:&quot;interfaces/*&quot;,&quot;subtitle&quot;:&quot;Interfaces&quot;}],&quot;source&quot;:[{&quot;path&quot;:&quot;https://github.com/moviemasher/moviemasher.js/tree/master/&quot;,&quot;line&quot;:&quot;L&quot;}]}-->
+		</div>
+		<div class="col-2 col-menu secondary-menu">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum root">
+						<a href="enums/actiontype.html" class="tsd-kind-icon">Action<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/cliptype.html" class="tsd-kind-icon">Clip<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/datatype.html" class="tsd-kind-icon">Data<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/definitiontype.html" class="tsd-kind-icon">Definition<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/eventtype.html" class="tsd-kind-icon">Event<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/loadtype.html" class="tsd-kind-icon">Load<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/mashtype.html" class="tsd-kind-icon">Mash<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/moduletype.html" class="tsd-kind-icon">Module<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/movetype.html" class="tsd-kind-icon">Move<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/tracktype.html" class="tsd-kind-icon">Track<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum root">
+						<a href="enums/transformtype.html" class="tsd-kind-icon">Transform<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/action.html" class="tsd-kind-icon">Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/actions.html" class="tsd-kind-icon">Actions</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/addcliptotrackaction.html" class="tsd-kind-icon">Add<wbr>Clip<wbr>ToTrack<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/addeffectaction.html" class="tsd-kind-icon">Add<wbr>Effect<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/addtrackaction.html" class="tsd-kind-icon">Add<wbr>Track<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/audiblecontext.html" class="tsd-kind-icon">Audible<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/audioclass.html" class="tsd-kind-icon">Audio<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/audiodefinitionclass.html" class="tsd-kind-icon">Audio<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/audioloader.html" class="tsd-kind-icon">Audio<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/audioprocessor.html" class="tsd-kind-icon">Audio<wbr>Processor</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/changeaction.html" class="tsd-kind-icon">Change<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/changeframesaction.html" class="tsd-kind-icon">Change<wbr>Frames<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/changetrimaction.html" class="tsd-kind-icon">Change<wbr>Trim<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/definitionclass.html" class="tsd-kind-icon">Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/effectclass.html" class="tsd-kind-icon">Effect<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/effectdefinitionclass.html" class="tsd-kind-icon">Effect<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/evaluator.html" class="tsd-kind-icon">Evaluator</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/events.html" class="tsd-kind-icon">Events</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/filterclass.html" class="tsd-kind-icon">Filter<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/filterdefinitionclass.html" class="tsd-kind-icon">Filter<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/fontclass.html" class="tsd-kind-icon">Font<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/fontdefinitionclass.html" class="tsd-kind-icon">Font<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/fontloader.html" class="tsd-kind-icon">Font<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/fontprocessor.html" class="tsd-kind-icon">Font<wbr>Processor</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/freezeaction.html" class="tsd-kind-icon">Freeze<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/imageclass.html" class="tsd-kind-icon">Image<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/imagedefinitionclass.html" class="tsd-kind-icon">Image<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/imageloader.html" class="tsd-kind-icon">Image<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/instanceclass.html" class="tsd-kind-icon">Instance<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/loader.html" class="tsd-kind-icon">Loader</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/mashclass.html" class="tsd-kind-icon">Mash<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/mashdefinitionclass.html" class="tsd-kind-icon">Mash<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/masherclass.html" class="tsd-kind-icon">Masher<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/masherdefinitionclass.html" class="tsd-kind-icon">Masher<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/mergerclass.html" class="tsd-kind-icon">Merger<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/mergerdefinitionclass.html" class="tsd-kind-icon">Merger<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/moduleloader.html" class="tsd-kind-icon">Module<wbr>Loader</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/moduleprocessor.html" class="tsd-kind-icon">Module<wbr>Processor</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/moveclipsaction.html" class="tsd-kind-icon">Move<wbr>Clips<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/moveeffectsaction.html" class="tsd-kind-icon">Move<wbr>Effects<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/moviemasher.html" class="tsd-kind-icon">Movie<wbr>Masher</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/parameter.html" class="tsd-kind-icon">Parameter</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/processor.html" class="tsd-kind-icon">Processor</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/property.html" class="tsd-kind-icon">Property</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/removeclipsaction.html" class="tsd-kind-icon">Remove<wbr>Clips<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/scalerclass.html" class="tsd-kind-icon">Scaler<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/scalerdefinitionclass.html" class="tsd-kind-icon">Scaler<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/splitaction.html" class="tsd-kind-icon">Split<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/themeclass.html" class="tsd-kind-icon">Theme<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/themedefinitionclass.html" class="tsd-kind-icon">Theme<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/time.html" class="tsd-kind-icon">Time</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/timerange.html" class="tsd-kind-icon">Time<wbr>Range</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/trackclass.html" class="tsd-kind-icon">Track<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/transitionclass.html" class="tsd-kind-icon">Transition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/transitiondefinitionclass.html" class="tsd-kind-icon">Transition<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/type.html" class="tsd-kind-icon">Type</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/typevalue.html" class="tsd-kind-icon">Type<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/videoclass.html" class="tsd-kind-icon">Video<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/videodefinitionclass.html" class="tsd-kind-icon">Video<wbr>Definition<wbr>Class</a>
+					</li>
+					<li class=" tsd-kind-class root">
+						<a href="classes/visiblecontext.html" class="tsd-kind-icon">Visible<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/actionobject.html" class="tsd-kind-icon">Action<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/addeffectactionobject.html" class="tsd-kind-icon">Add<wbr>Effect<wbr>Action<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/addtrackactionobject.html" class="tsd-kind-icon">Add<wbr>Track<wbr>Action<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audible.html" class="tsd-kind-icon">Audible</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audibledefinition.html" class="tsd-kind-icon">Audible<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audibledefinitionobject.html" class="tsd-kind-icon">Audible<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audibleobject.html" class="tsd-kind-icon">Audible<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audio.html" class="tsd-kind-icon">Audio</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/audiodefinition.html" class="tsd-kind-icon">Audio<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/changeactionobject.html" class="tsd-kind-icon">Change<wbr>Action<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/clip.html" class="tsd-kind-icon">Clip</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/clipdefinition.html" class="tsd-kind-icon">Clip<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/clipdefinitionobject.html" class="tsd-kind-icon">Clip<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/clipobject.html" class="tsd-kind-icon">Clip<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/definition.html" class="tsd-kind-icon">Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/definitionobject.html" class="tsd-kind-icon">Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/effect.html" class="tsd-kind-icon">Effect</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/effectdefinition.html" class="tsd-kind-icon">Effect<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/evaluatedpoint.html" class="tsd-kind-icon">Evaluated<wbr>Point</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/evaluatedrect.html" class="tsd-kind-icon">Evaluated<wbr>Rect</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/evaluatedsize.html" class="tsd-kind-icon">Evaluated<wbr>Size</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/eventsdetail.html" class="tsd-kind-icon">Events<wbr>Detail</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/filter.html" class="tsd-kind-icon">Filter</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/filterdefinition.html" class="tsd-kind-icon">Filter<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/filterdefinitionobject.html" class="tsd-kind-icon">Filter<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/filterobject.html" class="tsd-kind-icon">Filter<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/font.html" class="tsd-kind-icon">Font</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/fontdefinition.html" class="tsd-kind-icon">Font<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/fontdefinitionobject.html" class="tsd-kind-icon">Font<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter root">
+						<a href="interfaces/genericfactory.html" class="tsd-kind-icon">Generic<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/image.html" class="tsd-kind-icon">Image</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/imagedefinition.html" class="tsd-kind-icon">Image<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/imagedefinitionobject.html" class="tsd-kind-icon">Image<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/instance.html" class="tsd-kind-icon">Instance</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/instanceobject.html" class="tsd-kind-icon">Instance<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mash.html" class="tsd-kind-icon">Mash</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mashdefinition.html" class="tsd-kind-icon">Mash<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mashobject.html" class="tsd-kind-icon">Mash<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mashoptions.html" class="tsd-kind-icon">Mash<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/masher.html" class="tsd-kind-icon">Masher</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/masherdefinition.html" class="tsd-kind-icon">Masher<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/masherfactory.html" class="tsd-kind-icon">Masher<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/masherobject.html" class="tsd-kind-icon">Masher<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/merger.html" class="tsd-kind-icon">Merger</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mergerdefinition.html" class="tsd-kind-icon">Merger<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/mergerfactory.html" class="tsd-kind-icon">Merger<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/modular.html" class="tsd-kind-icon">Modular</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/modulardefinition.html" class="tsd-kind-icon">Modular<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/modulardefinitionobject.html" class="tsd-kind-icon">Modular<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/parameterobject.html" class="tsd-kind-icon">Parameter<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/point.html" class="tsd-kind-icon">Point</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/propertyobject.html" class="tsd-kind-icon">Property<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/rect.html" class="tsd-kind-icon">Rect</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/rgb.html" class="tsd-kind-icon">Rgb</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/rgbobject.html" class="tsd-kind-icon">Rgb<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/rgba.html" class="tsd-kind-icon">Rgba</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/scaler.html" class="tsd-kind-icon">Scaler</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/scalerdefinition.html" class="tsd-kind-icon">Scaler<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/scalerdefinitionobject.html" class="tsd-kind-icon">Scaler<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/size.html" class="tsd-kind-icon">Size</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/textstyle.html" class="tsd-kind-icon">Text<wbr>Style</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/theme.html" class="tsd-kind-icon">Theme</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/themedefinition.html" class="tsd-kind-icon">Theme<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/themefactory.html" class="tsd-kind-icon">Theme<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/track.html" class="tsd-kind-icon">Track</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/trackobject.html" class="tsd-kind-icon">Track<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/trackoptions.html" class="tsd-kind-icon">Track<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transformable.html" class="tsd-kind-icon">Transformable</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transformableobject.html" class="tsd-kind-icon">Transformable<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transition.html" class="tsd-kind-icon">Transition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transitiondefinition.html" class="tsd-kind-icon">Transition<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transitiondefinitionobject.html" class="tsd-kind-icon">Transition<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/transitiondefinitiontransformobject.html" class="tsd-kind-icon">Transition<wbr>Definition<wbr>Transform<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/typeobject.html" class="tsd-kind-icon">Type<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/typevalueobject.html" class="tsd-kind-icon">Type<wbr>Value<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/video.html" class="tsd-kind-icon">Video</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/videodefinition.html" class="tsd-kind-icon">Video<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/videodefinitionobject.html" class="tsd-kind-icon">Video<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/videoobject.html" class="tsd-kind-icon">Video<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/visible.html" class="tsd-kind-icon">Visible</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/visibledefinition.html" class="tsd-kind-icon">Visible<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/visibledefinitionobject.html" class="tsd-kind-icon">Visible<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/visibleobject.html" class="tsd-kind-icon">Visible<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withframe.html" class="tsd-kind-icon">With<wbr>Frame</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withid.html" class="tsd-kind-icon">With<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withlabel.html" class="tsd-kind-icon">With<wbr>Label</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withtrack.html" class="tsd-kind-icon">With<wbr>Track</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withtype.html" class="tsd-kind-icon">With<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withtypeandid.html" class="tsd-kind-icon">With<wbr>Type<wbr>And<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/withtypeandvalue.html" class="tsd-kind-icon">With<wbr>Type<wbr>And<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/yuv.html" class="tsd-kind-icon">Yuv</a>
+					</li>
+					<li class=" tsd-kind-interface root">
+						<a href="interfaces/yuvobject.html" class="tsd-kind-icon">Yuv<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#any" class="tsd-kind-icon">Any</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#audiodefinitionobject" class="tsd-kind-icon">Audio<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#audiofactory" class="tsd-kind-icon">Audio<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#audioobject" class="tsd-kind-icon">Audio<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#cliporeffect" class="tsd-kind-icon">Clip<wbr>OrEffect</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter root">
+						<a href="modules.html#constrained" class="tsd-kind-icon">Constrained</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#constructor" class="tsd-kind-icon">Constructor</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#context2d" class="tsd-kind-icon">Context2D</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#contextdata" class="tsd-kind-icon">Context<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#contextelement" class="tsd-kind-icon">Context<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#definitiontimes" class="tsd-kind-icon">Definition<wbr>Times</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#drawingsource" class="tsd-kind-icon">Drawing<wbr>Source</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#effectdefinitionobject" class="tsd-kind-icon">Effect<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#effectfactory" class="tsd-kind-icon">Effect<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#effectobject" class="tsd-kind-icon">Effect<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#evaluatorvalue" class="tsd-kind-icon">Evaluator<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#eventscallback" class="tsd-kind-icon">Events<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#eventstarget" class="tsd-kind-icon">Events<wbr>Target</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#eventstype" class="tsd-kind-icon">Events<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#factoryobject" class="tsd-kind-icon">Factory<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#filterfactory" class="tsd-kind-icon">Filter<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#fontfactory" class="tsd-kind-icon">Font<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#fontobject" class="tsd-kind-icon">Font<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#imagefactory" class="tsd-kind-icon">Image<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#imageobject" class="tsd-kind-icon">Image<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#interval" class="tsd-kind-icon">Interval</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#jsonobject" class="tsd-kind-icon">Json<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#jsonvalue" class="tsd-kind-icon">Json<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#loadfontpromise" class="tsd-kind-icon">Load<wbr>Font<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#loadimagepromise" class="tsd-kind-icon">Load<wbr>Image<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#loadpromise" class="tsd-kind-icon">Load<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#mashdefinitionobject" class="tsd-kind-icon">Mash<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#mashfactory" class="tsd-kind-icon">Mash<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#masheraddpromise" class="tsd-kind-icon">Masher<wbr>Add<wbr>Promise</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#masherdefinitionobject" class="tsd-kind-icon">Masher<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#mergerdefinitionobject" class="tsd-kind-icon">Merger<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#mergerobject" class="tsd-kind-icon">Merger<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#modularobject" class="tsd-kind-icon">Modular<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#objectunknown" class="tsd-kind-icon">Object<wbr>Unknown</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#pixels" class="tsd-kind-icon">Pixels</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalar" class="tsd-kind-icon">Scalar</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalararray" class="tsd-kind-icon">Scalar<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalarmethod" class="tsd-kind-icon">Scalar<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalarraw" class="tsd-kind-icon">Scalar<wbr>Raw</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalarvalue" class="tsd-kind-icon">Scalar<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalerfactory" class="tsd-kind-icon">Scaler<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#scalerobject" class="tsd-kind-icon">Scaler<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#selectionobject" class="tsd-kind-icon">Selection<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#selectionvalue" class="tsd-kind-icon">Selection<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#themedefinitionobject" class="tsd-kind-icon">Theme<wbr>Definition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#themeobject" class="tsd-kind-icon">Theme<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#timeout" class="tsd-kind-icon">Timeout</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#times" class="tsd-kind-icon">Times</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#transitionfactory" class="tsd-kind-icon">Transition<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#transitionobject" class="tsd-kind-icon">Transition<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#unknownobject" class="tsd-kind-icon">Unknown<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#valueobject" class="tsd-kind-icon">Value<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-type-alias root">
+						<a href="modules.html#videofactory" class="tsd-kind-icon">Video<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#audiofactoryimplementation" class="tsd-kind-icon">Audio<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#cache" class="tsd-kind-icon">Cache</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#cliptypes" class="tsd-kind-icon">Clip<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#color" class="tsd-kind-icon">Color</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#contextfactory" class="tsd-kind-icon">Context<wbr>Factory</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#datatypes" class="tsd-kind-icon">Data<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#default" class="tsd-kind-icon">Default</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitiontypes" class="tsd-kind-icon">Definition<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitions" class="tsd-kind-icon">Definitions</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#effectfactoryimplementation" class="tsd-kind-icon">Effect<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#errors" class="tsd-kind-icon">Errors</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#factories" class="tsd-kind-icon">Factories</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#filterfactoryimplementation" class="tsd-kind-icon">Filter<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#fontfactoryimplementation" class="tsd-kind-icon">Font<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#imagefactoryimplementation" class="tsd-kind-icon">Image<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#is" class="tsd-kind-icon">Is</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#mashfactoryimplementation" class="tsd-kind-icon">Mash<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#mashtypes" class="tsd-kind-icon">Mash<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#masherfactoryimplementation" class="tsd-kind-icon">Masher<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#mergerfactoryimplementation" class="tsd-kind-icon">Merger<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#moduletypes" class="tsd-kind-icon">Module<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#pixel" class="tsd-kind-icon">Pixel</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#scalerfactoryimplementation" class="tsd-kind-icon">Scaler<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#sort" class="tsd-kind-icon">Sort</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#themefactoryimplementation" class="tsd-kind-icon">Theme<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#transformtypes" class="tsd-kind-icon">Transform<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#transitionfactoryimplementation" class="tsd-kind-icon">Transition<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#types" class="tsd-kind-icon">Types</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#videofactoryimplementation" class="tsd-kind-icon">Video<wbr>Factory<wbr>Implementation</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitionsfont" class="tsd-kind-icon">definitions<wbr>Font</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitionsmap" class="tsd-kind-icon">definitions<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitionsmerger" class="tsd-kind-icon">definitions<wbr>Merger</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#definitionsscaler" class="tsd-kind-icon">definitions<wbr>Scaler</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#mergerdefaultid" class="tsd-kind-icon">merger<wbr>Default<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-variable root">
+						<a href="modules.html#scalerdefaultid" class="tsd-kind-icon">scaler<wbr>Default<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#audibledefinitionmixin" class="tsd-kind-icon">Audible<wbr>Definition<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#audiblemixin" class="tsd-kind-icon">Audible<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#capitalize" class="tsd-kind-icon">Capitalize</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#clipdefinitionmixin" class="tsd-kind-icon">Clip<wbr>Definition<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#clipmixin" class="tsd-kind-icon">Clip<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#id" class="tsd-kind-icon">Id</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#modulardefinitionmixin" class="tsd-kind-icon">Modular<wbr>Definition<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#modularmixin" class="tsd-kind-icon">Modular<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#transformablemixin" class="tsd-kind-icon">Transformable<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#visibledefinitionmixin" class="tsd-kind-icon">Visible<wbr>Definition<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter root">
+						<a href="modules.html#visiblemixin" class="tsd-kind-icon">Visible<wbr>Mixin</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#byframe" class="tsd-kind-icon">by<wbr>Frame</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#bylabel" class="tsd-kind-icon">by<wbr>Label</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#bytrack" class="tsd-kind-icon">by<wbr>Track</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsbytype" class="tsd-kind-icon">definitions<wbr>ByType</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsclear" class="tsd-kind-icon">definitions<wbr>Clear</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsfromid" class="tsd-kind-icon">definitions<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsinstall" class="tsd-kind-icon">definitions<wbr>Install</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsinstalled" class="tsd-kind-icon">definitions<wbr>Installed</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#definitionsuninstall" class="tsd-kind-icon">definitions<wbr>Uninstall</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectdefine" class="tsd-kind-icon">effect<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectdefinition" class="tsd-kind-icon">effect<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectdefinitionfromid" class="tsd-kind-icon">effect<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectfromid" class="tsd-kind-icon">effect<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectinitialize" class="tsd-kind-icon">effect<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#effectinstance" class="tsd-kind-icon">effect<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterdefine" class="tsd-kind-icon">filter<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterdefinition" class="tsd-kind-icon">filter<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterdefinitionfromid" class="tsd-kind-icon">filter<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterfromid" class="tsd-kind-icon">filter<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterinitialize" class="tsd-kind-icon">filter<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#filterinstance" class="tsd-kind-icon">filter<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontdefine" class="tsd-kind-icon">font<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontdefinition" class="tsd-kind-icon">font<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontdefinitionfromid" class="tsd-kind-icon">font<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontfromid" class="tsd-kind-icon">font<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontinitialize" class="tsd-kind-icon">font<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#fontinstance" class="tsd-kind-icon">font<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imagedefine" class="tsd-kind-icon">image<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imagedefinition" class="tsd-kind-icon">image<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imagedefinitionfromid" class="tsd-kind-icon">image<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imagefromid" class="tsd-kind-icon">image<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imageinitialize" class="tsd-kind-icon">image<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#imageinstance" class="tsd-kind-icon">image<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isabovezero" class="tsd-kind-icon">is<wbr>Above<wbr>Zero</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isarray" class="tsd-kind-icon">is<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isboolean" class="tsd-kind-icon">is<wbr>Boolean</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isdefined" class="tsd-kind-icon">is<wbr>Defined</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isfloat" class="tsd-kind-icon">is<wbr>Float</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isinteger" class="tsd-kind-icon">is<wbr>Integer</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#ismethod" class="tsd-kind-icon">is<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isnan" class="tsd-kind-icon">is<wbr>Nan</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isnumber" class="tsd-kind-icon">is<wbr>Number</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isobject" class="tsd-kind-icon">is<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#ispopulatedarray" class="tsd-kind-icon">is<wbr>Populated<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#ispopulatedobject" class="tsd-kind-icon">is<wbr>Populated<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#ispopulatedstring" class="tsd-kind-icon">is<wbr>Populated<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#ispositive" class="tsd-kind-icon">is<wbr>Positive</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isstring" class="tsd-kind-icon">is<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#isundefined" class="tsd-kind-icon">is<wbr>Undefined</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashdefine" class="tsd-kind-icon">mash<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashdefinition" class="tsd-kind-icon">mash<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashdefinitionfromid" class="tsd-kind-icon">mash<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashfromid" class="tsd-kind-icon">mash<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashinitialize" class="tsd-kind-icon">mash<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mashinstance" class="tsd-kind-icon">mash<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherdefine" class="tsd-kind-icon">masher<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherdefinition" class="tsd-kind-icon">masher<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherdefinitionfromid" class="tsd-kind-icon">masher<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherdestroy" class="tsd-kind-icon">masher<wbr>Destroy</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherfromid" class="tsd-kind-icon">masher<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherinitialize" class="tsd-kind-icon">masher<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#masherinstance" class="tsd-kind-icon">masher<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerdefine" class="tsd-kind-icon">merger<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerdefinition" class="tsd-kind-icon">merger<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerdefinitionfromid" class="tsd-kind-icon">merger<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerfromid" class="tsd-kind-icon">merger<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerinitialize" class="tsd-kind-icon">merger<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#mergerinstance" class="tsd-kind-icon">merger<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#roundwithmethod" class="tsd-kind-icon">round<wbr>With<wbr>Method</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scaletimes" class="tsd-kind-icon">scale<wbr>Times</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerdefine" class="tsd-kind-icon">scaler<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerdefinition" class="tsd-kind-icon">scaler<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerdefinitionfromid" class="tsd-kind-icon">scaler<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerfromid" class="tsd-kind-icon">scaler<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerinitialize" class="tsd-kind-icon">scaler<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#scalerinstance" class="tsd-kind-icon">scaler<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themedefine" class="tsd-kind-icon">theme<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themedefinition" class="tsd-kind-icon">theme<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themedefinitionfromid" class="tsd-kind-icon">theme<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themefromid" class="tsd-kind-icon">theme<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themeinitialize" class="tsd-kind-icon">theme<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#themeinstance" class="tsd-kind-icon">theme<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitiondefine" class="tsd-kind-icon">transition<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitiondefinition" class="tsd-kind-icon">transition<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitiondefinitionfromid" class="tsd-kind-icon">transition<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitionfromid" class="tsd-kind-icon">transition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitioninitialize" class="tsd-kind-icon">transition<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#transitioninstance" class="tsd-kind-icon">transition<wbr>Instance</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videodefine" class="tsd-kind-icon">video<wbr>Define</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videodefinition" class="tsd-kind-icon">video<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videodefinitionfromid" class="tsd-kind-icon">video<wbr>Definition<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videofromid" class="tsd-kind-icon">video<wbr>From<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videoinitialize" class="tsd-kind-icon">video<wbr>Initialize</a>
+					</li>
+					<li class=" tsd-kind-function root">
+						<a href="modules.html#videoinstance" class="tsd-kind-icon">video<wbr>Instance</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer>
+</footer>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

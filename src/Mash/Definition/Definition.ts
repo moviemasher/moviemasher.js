@@ -1,10 +1,11 @@
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Any, JsonObject, LoadPromise, ScalarValue, UnknownObject } from "../../Setup/declarations"
-import { Is } from "../../Utilities/Is"
+import { Any, JsonObject, LoadPromise, SelectionValue, UnknownObject } from "../../Setup/declarations"
 import { Instance, InstanceClass, InstanceObject } from "../Instance/Instance"
 import { Property } from "../../Setup/Property"
 import { Time, Times } from "../../Utilities/Time"
+import { Default } from "../../Setup"
+import { Is } from "../../Utilities"
 
 interface DefinitionObject {
   [index: string]: unknown
@@ -17,14 +18,11 @@ interface DefinitionObject {
 class DefinitionClass {
   constructor(...args : Any[]) {
     const [object] = args
-    if (!Is.populatedObject(object)) throw Errors.unknown.definition
-
     const { id, label, icon } = <DefinitionObject> object
-    if (!id) throw Errors.id
-
-
+    if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + JSON.stringify(object)
     this.id = id
-    this.label = label || id
+
+    if (label) this.label = label
     if (icon) this.icon = icon
 
     this.properties.push(new Property({ name: "label", type: DataType.String, value: "" }))
@@ -52,7 +50,7 @@ class DefinitionClass {
     return object
   }
 
-  label : string
+  label? : string
 
   load(_start : Time, _end? : Time) : LoadPromise { return Promise.resolve() }
 
@@ -73,8 +71,9 @@ class DefinitionClass {
   retain = false
 
   toJSON() : JsonObject {
-    const object : JsonObject = { id: this.id, type: this.type, label: this.label }
+    const object : JsonObject = { id: this.id, type: this.type }
     if (this.icon) object.icon = this.icon
+    if (this.label) object.label = this.label
     return object
   }
 
@@ -82,7 +81,7 @@ class DefinitionClass {
 
   unload(_times : Times[] = []) : void {}
 
-  value(name : string) : ScalarValue | undefined {
+  value(name : string) : SelectionValue | undefined {
     const property = this.property(name)
     if (!property) return
 

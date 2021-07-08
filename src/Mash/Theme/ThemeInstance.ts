@@ -19,7 +19,7 @@ class ThemeClass extends ThemeWithTransformable {
     const clipTimeRange = this.timeRangeRelative(mashTime, quantize)
     return this.definition.drawFilters(this, clipTimeRange, context, dimensions)
   }
-  definition! : ThemeDefinition
+  declare definition : ThemeDefinition
 }
 
 

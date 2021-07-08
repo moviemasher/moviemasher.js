@@ -27,7 +27,7 @@ function ClipDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBase)
 
     get duration() : number {
       if (!this._duration) {
-        const object = <ObjectUnknown> Default.media
+        const object = <ObjectUnknown> Default.definition
         this._duration = Number(object[this.type].duration)
       }
       return this._duration

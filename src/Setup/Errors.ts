@@ -29,6 +29,7 @@ const Errors = {
       url: `${$invalidDefinitionProperty} url`,
       source: `${$invalidDefinitionProperty} source`,
       id: `${$invalidDefinitionProperty} id`,
+      object: `${$invalidProperty} definition`,
     },
     track: `${$invalid} track `,
     trackType: `${$invalidProperty} trackType `,

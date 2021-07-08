@@ -3,6 +3,7 @@
   "type": "effect",
   "id": "com.moviemasher.effect.chromakey",
   "properties": {
+    "accurate": { "type": "number", "value": 0 },
     "chroma_blend": { "type": "number", "value": 0.01 },
     "chroma_similarity": { "type": "number", "value": 0.5 },
     "chroma_color": { "type": "rgb", "value": "rgb(0,255,0)" }

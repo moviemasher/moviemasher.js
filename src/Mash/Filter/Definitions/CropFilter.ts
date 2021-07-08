@@ -24,11 +24,11 @@ class CropFilter extends FilterDefinitionClass {
     const drawing = ContextFactory.toSize(fromSize)
     // console.log(this.constructor.name, "draw", inRect, fromSize)
 
-    drawing.drawInRectFromSize(context.imageSource, inRect, fromSize)
+    drawing.drawInRectFromSize(context.drawingSource, inRect, fromSize)
     return drawing
   }
 
-  id = 'crop'
+  // id = 'crop'
 
   scopeSet(evaluator : Evaluator) : void {
     evaluator.setInputSize(evaluator.context.size)

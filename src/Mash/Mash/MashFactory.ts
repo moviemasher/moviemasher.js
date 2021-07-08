@@ -5,13 +5,12 @@ import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions/Definitions"
 import { MashDefinitionClass } from "./MashDefinition"
 
+const MashDefaultId = "com.moviemasher.mash.default"
+
 const mashDefinition = (object : MashDefinitionObject) : MashDefinition => {
   const { id } = object
-  if (!id) throw Errors.id + JSON.stringify(object)
-
-  if (Definitions.installed(id)) return <MashDefinition> Definitions.fromId(id)
-
-  return new MashDefinitionClass(object)
+  const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MashDefaultId
+  return <MashDefinition> Definitions.fromId(idString)
 }
 
 const mashDefinitionFromId = (id : string) : MashDefinition => {
@@ -28,7 +27,9 @@ const mashFromId = (id : string) : Mash => {
   return mashInstance({ id })
 }
 
-const mashInitialize = () : void => {}
+const mashInitialize = () : void => {
+  new MashDefinitionClass({ id: MashDefaultId })
+}
 
 const mashDefine = (object : MashDefinitionObject) : MashDefinition => {
   const { id } = object

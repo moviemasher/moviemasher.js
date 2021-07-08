@@ -5,7 +5,7 @@ import { JsonObject } from "../../Setup/declarations"
 
 const EffectWithModular = ModularMixin(InstanceClass)
 class EffectClass extends EffectWithModular {
-  definition! : EffectDefinition
+  declare definition : EffectDefinition
 
   toJSON() : JsonObject {
     const object = super.toJSON()

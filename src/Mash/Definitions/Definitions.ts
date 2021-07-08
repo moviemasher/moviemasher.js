@@ -19,7 +19,10 @@ const definitionsClear = () : void => { definitionsMap.clear() }
 const definitionsFont = definitionsByType(DefinitionType.Font)
 
 const definitionsFromId = (id : string) : Definition => {
-  if (!definitionsInstalled(id)) throw Errors.unknown.definition
+  if (!definitionsInstalled(id)) {
+    console.trace(id)
+    throw Errors.unknown.definition + 'definitionsFromId ' + id
+  }
 
   const definition = definitionsMap.get(id)
   if (!definition) throw Errors.internal
@@ -42,7 +45,7 @@ const definitionsScaler = definitionsByType(DefinitionType.Scaler)
 
 const definitionsUninstall = (id : string) : void => {
   if (!definitionsInstalled(id)) {
-
+    console.log("definitionsUninstall", id)
     return
   }
   const definition = definitionsFromId(id)
@@ -51,7 +54,8 @@ const definitionsUninstall = (id : string) : void => {
   const { type } = definition
   const definitions = definitionsByType(type)
   const index = definitions.indexOf(definition)
-  if (index < 0) throw Errors.internal + type + ' ' + id
+  if (index < 0) throw Errors.internal + 'definitionsUninstall'
+
   definitions.splice(index, 1)
   // console.log("uninstalled", id)
 }

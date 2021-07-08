@@ -9,7 +9,7 @@
         "parameters": [
           {
             "name": "alpha",
-            "value":"1"
+            "value":"mm_t"
           },
           {
             "name": "type",

@@ -7,7 +7,6 @@ import { Is } from "../../Utilities/Is"
 import { Time } from "../../Utilities/Time"
 import { AudibleContext, VisibleContext } from "../../Playing"
 import { ContextFactory } from "../ContextFactory"
-import { Cache } from "../../Loading"
 import { Audible } from "../../Mash/Mixin/Audible/Audible"
 import { Visible } from "../../Mash/Mixin/Visible/Visible"
 import { Transition } from "../../Mash/Transition/Transition"
@@ -93,7 +92,7 @@ class Composition {
 
   backcolor? : string
 
-  buffer = Default.buffer
+  buffer = Default.mash.buffer
 
   private bufferSource? : AudioBufferSourceNode
 
@@ -203,7 +202,7 @@ class Composition {
     this.visibleContext.drawFill(Pixel.color(this.backcolor))
   }
 
-  private _gain = Default.volume
+  private _gain = Default.mash.gain
 
   get gain() : number { return this._gain }
 
@@ -220,7 +219,7 @@ class Composition {
 
   playing = false
 
-  quantize = Default.fps
+  quantize = Default.mash.quantize
 
   get seconds() : number {
     if (!this.audibleContext) throw Errors.internal + 'audibleContext'

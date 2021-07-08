@@ -19,6 +19,11 @@ class TimeRange extends Time {
 
   get endTime() : Time { return Time.fromArgs(this.end, this.fps) }
 
+  equalsTimeRange(timeRange : TimeRange) : boolean {
+    const [range1, range2] = <TimeRange[]> scaleTimes(this, timeRange)
+    return range1.frame === range2.frame && range1.frames === range2.frames
+  }
+
   get lengthSeconds() : number { return Number(this.frames) / Number(this.fps) }
 
   get position() : number { return Number(this.frame) / Number(this.frames) }

@@ -42,7 +42,7 @@ class DrawTextFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'drawtext'
+  // id = 'drawtext'
 
   parameters = [
     new Parameter({ name: "fontcolor", value: "#000000" }),

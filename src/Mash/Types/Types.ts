@@ -1,7 +1,7 @@
 
 import { Is } from "../../Utilities/Is";
 import dataTypesJson from "../../Setup/dataTypes.json"
-import { ScalarValue } from "../../Setup/declarations"
+import { ScalarRaw } from "../../Setup/declarations"
 import { DataType, DataTypes } from "../../Setup/Enums";
 import { Errors } from "../../Setup/Errors";
 import { Type, TypeObject } from "../Type/Type";
@@ -32,7 +32,7 @@ class TypesClass {
     return instance
   }
 
-  propertyTypeDefault(type : DataType) : ScalarValue {
+  propertyTypeDefault(type : DataType) : ScalarRaw {
     if (!(Is.populatedString(type) && DataTypes.includes(type))) throw Errors.type + 'propertyTypeDefault ' + type
 
     const propertyType = this.propertyType(type)

@@ -1,4 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
+import { LoaderFactory } from "../src/Loading/LoaderFactory"
+import { DefinitionTypes, LoadType } from "../src/Setup/Enums"
+import { expectContext } from "../src/Test/expectContext"
+import { FontLoaderTest } from "./FontLoaderTest"
+import { ImageLoaderTest } from "./ImageLoaderTest"
+import { Definitions } from "../src/Mash/Definitions/Definitions"
+import { MovieMasher } from "../src/MovieMasher/MovieMasher"
+import { MashFactoryImplementation } from "../src/Mash/Mash/MashFactory"
+import { MasherFactoryImplementation } from "../src/Mash/Masher/MasherFactory"
 import { AudioFactoryImplementation } from "../src/Mash/Audio"
 import { EffectFactoryImplementation } from "../src/Mash/Effect"
 import { FilterFactoryImplementation } from "../src/Mash/Filter"
@@ -9,21 +19,14 @@ import { ScalerFactoryImplementation } from "../src/Mash/Scaler/ScalerFactory"
 import { ThemeFactoryImplementation } from "../src/Mash/Theme/ThemeFactory"
 import { TransitionFactoryImplementation } from "../src/Mash/Transition/TransitionFactory"
 import { VideoFactoryImplementation } from "../src/Mash/Video/VideoFactory"
-import { LoaderFactory } from "../src/Loading/LoaderFactory"
-import { LoadType } from "../src/Setup/Enums"
-import { expectContext } from "./expectContext"
-import { FontLoaderTest } from "./FontLoaderTest"
-import { ImageLoaderTest } from "./ImageLoaderTest"
-import { Definitions } from "../src/Mash/Definitions/Definitions"
-import { MashFactoryImplementation } from "../src/Mash/Mash/MashFactory"
-
-const factories = [
+export default [
   AudioFactoryImplementation,
   EffectFactoryImplementation,
   FilterFactoryImplementation,
   FontFactoryImplementation,
   ImageFactoryImplementation,
   MashFactoryImplementation,
+  MasherFactoryImplementation,
   MergerFactoryImplementation,
   ScalerFactoryImplementation,
   ThemeFactoryImplementation,
@@ -33,19 +36,13 @@ const factories = [
 const fs = require('fs')
 const path = require('path')
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
-const fetchMock = require('jest-fetch-mock')
-
-beforeEach(() => {
-  Definitions.clear()
-  factories.forEach(factory => factory.initialize())
-})
+require('jest-fetch-mock').enableMocks()
 
 expect.extend({ toMatchImageSnapshot })
 
 global.expectContext = expectContext
 
-fetchMock.enableMocks()
-fetch.mockResponse(req => {
+fetchMock.mockResponse(req => {
   const promise = new Promise((resolve, reject) => {
     const localPath = path.resolve(__dirname, req.url)
     fs.readFile(localPath, 'ascii', (err, data) => {
@@ -54,6 +51,12 @@ fetch.mockResponse(req => {
     })
   })
   return promise
+})
+
+beforeEach(() => {
+  Definitions.clear()
+  DefinitionTypes.forEach(type => { MovieMasher[type].initialize() })
+
 })
 
 LoaderFactory.install(LoadType.Font, FontLoaderTest)

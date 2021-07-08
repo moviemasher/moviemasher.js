@@ -1,12 +1,12 @@
 
-import { ScalarValue } from "../../Setup/declarations"
+import { ScalarRaw } from "../../Setup/declarations"
 import { DataType } from "../../Setup/Enums"
 import { TypeValue, TypeValueObject } from "../TypeValue/TypeValue"
 import { Errors } from "../../Setup/Errors"
 
 interface TypeObject {
   id? : DataType
-  value? : ScalarValue
+  value? : ScalarRaw
   values? : TypeValueObject[]
   modular? : boolean
 }
@@ -27,7 +27,7 @@ class Type {
 
   modular = false
 
-  value : ScalarValue
+  value : ScalarRaw
 
   values : TypeValueObject[] = []
 }

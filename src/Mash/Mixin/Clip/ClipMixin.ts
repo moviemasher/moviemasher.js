@@ -42,10 +42,6 @@ function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase) {
 
     maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
-    mediaTime(time : Time) : Time { return time }
-
-    mediaTimeRange(timeRange : TimeRange) : TimeRange { return timeRange }
-
     time(quantize : number) : Time { return Time.fromArgs(this.frame, quantize) }
 
     timeRange(quantize : number) : TimeRange {
@@ -54,7 +50,7 @@ function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase) {
 
     timeRangeRelative(time : Time, quantize : number) : TimeRange {
       const range = this.timeRange(quantize).scale(time.fps)
-      const frame = time.frame - range.frame
+      const frame = Math.max(0, time.frame - range.frame)
       return range.withFrame(frame)
     }
 

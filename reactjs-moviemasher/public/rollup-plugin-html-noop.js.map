@@ -1,1 +1,0 @@
-{"version":3,"file":"rollup-plugin-html-noop.js","sources":["../@web/rollup-plugin-html-noop"],"sourcesContent":["export default \"noop\""],"names":[],"mappings":";;;;AAAA,2BAAe;;;;"}

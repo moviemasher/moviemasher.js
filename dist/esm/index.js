@@ -28,16 +28,18 @@ var ClipType;
     ClipType["Video"] = "video";
 })(ClipType || (ClipType = {}));
 const ClipTypes = Object.values(ClipType);
+// NOTE: order important here - determines initialization
 var DefinitionType;
 (function (DefinitionType) {
-    DefinitionType["Audio"] = "audio";
-    DefinitionType["Effect"] = "effect";
     DefinitionType["Filter"] = "filter";
+    DefinitionType["Merger"] = "merger";
+    DefinitionType["Scaler"] = "scaler";
+    DefinitionType["Effect"] = "effect";
+    DefinitionType["Audio"] = "audio";
     DefinitionType["Font"] = "font";
     DefinitionType["Image"] = "image";
     DefinitionType["Mash"] = "mash";
-    DefinitionType["Merger"] = "merger";
-    DefinitionType["Scaler"] = "scaler";
+    DefinitionType["Masher"] = "masher";
     DefinitionType["Theme"] = "theme";
     DefinitionType["Transition"] = "transition";
     DefinitionType["Video"] = "video";
@@ -82,6 +84,7 @@ var MoveType;
 })(MoveType || (MoveType = {}));
 var DataType;
 (function (DataType) {
+    DataType["Boolean"] = "boolean";
     DataType["Direction4"] = "direction4";
     DataType["Direction8"] = "direction8";
     DataType["Font"] = "font";
@@ -136,6 +139,7 @@ const Errors = {
             url: `${$invalidDefinitionProperty} url`,
             source: `${$invalidDefinitionProperty} source`,
             id: `${$invalidDefinitionProperty} id`,
+            object: `${$invalidProperty} definition`,
         },
         track: `${$invalid} track `,
         trackType: `${$invalidProperty} trackType `,
@@ -523,31 +527,6 @@ class Events {
     static get type() { return "masher"; }
 }
 
-const Default = {
-    buffer: 10,
-    fps: 30,
-    loop: true,
-    volume: 0.75,
-    precision: 3,
-    autoplay: false,
-    mash: {
-        label: "Untitled Mash",
-        quantize: 10,
-        backcolor: "#00000000",
-    },
-    clip: {
-        audio: { gain: 1.0, trim: 0 },
-        video: { speed: 1.0 }
-    },
-    media: {
-        frame: { duration: 2 },
-        image: { duration: 2 },
-        theme: { duration: 3 },
-        transition: { duration: 1 },
-        video: { pattern: '%.jpg', fps: 30, increment: 1, begin: 1 },
-    },
-};
-
 const objectType = (value) => typeof value === 'object';
 const stringType = (value) => (typeof value === 'string');
 const undefinedType = (value) => typeof value === 'undefined';
@@ -584,6 +563,40 @@ const Is = {
     string: stringType,
     undefined: undefinedType,
 };
+
+const CacheKeyPrefix = 'cachekey';
+class CacheClass {
+    constructor() {
+        this.cachedByKey = new Map();
+        this.urlsByKey = new Map();
+    }
+    add(url, value) {
+        // console.log(this.constructor.name, "add", url, value.constructor.name)
+        const key = this.key(url);
+        this.cachedByKey.set(key, value);
+        this.urlsByKey.set(key, url);
+    }
+    cached(url) {
+        if (!Is.populatedString(url))
+            throw Errors.argument + 'url';
+        return this.cachedByKey.has(this.key(url));
+    }
+    get(url) {
+        return this.cachedByKey.get(this.key(url));
+    }
+    key(url) {
+        if (!Is.populatedString(url))
+            throw Errors.argument + 'url';
+        return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '');
+    }
+    remove(url) {
+        // console.log(this.constructor.name, "remove", url)
+        const key = this.key(url);
+        this.cachedByKey.delete(key);
+        this.urlsByKey.delete(key);
+    }
+}
+const Cache = new CacheClass();
 
 const greatestCommonDenominator = (fps1, fps2) => {
     let a = fps1;
@@ -687,572 +700,6 @@ class Time {
             throw Errors.fps;
         const rounded = roundWithMethod(seconds * fps, rounding);
         return this.fromArgs(rounded, fps);
-    }
-}
-
-class TimeRange extends Time {
-    constructor(frame = 0, fps = 1, frames = 1) {
-        if (!(Is.integer(frames) && frames >= 0)) {
-            throw Errors.argument + 'frames';
-        }
-        super(frame, fps);
-        this.frames = frames;
-    }
-    get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
-    get end() { return this.frame + this.frames; }
-    get endTime() { return Time.fromArgs(this.end, this.fps); }
-    get lengthSeconds() { return Number(this.frames) / Number(this.fps); }
-    get position() { return Number(this.frame) / Number(this.frames); }
-    get startTime() { return Time.fromArgs(this.frame, this.fps); }
-    get copy() {
-        return new TimeRange(this.frame, this.fps, this.frames);
-    }
-    scale(fps = 1, rounding = "") {
-        if (this.fps === fps)
-            return this.copy;
-        const value = Number(this.frames) / (Number(this.fps) / Number(fps));
-        const time = super.scale(fps, rounding);
-        const frames = Math.max(1, roundWithMethod(value, rounding));
-        return new TimeRange(time.frame, time.fps, frames);
-    }
-    intersects(timeRange) {
-        const [range1, range2] = scaleTimes(this, timeRange);
-        if (range1.frame >= range2.end)
-            return false;
-        return range1.end > range2.frame;
-    }
-    intersectsTime(time) {
-        const [time1, scaledTime] = scaleTimes(this, time);
-        const scaledRange = time1;
-        return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end;
-    }
-    minEndTime(endTime) {
-        const [range, time] = scaleTimes(this, endTime);
-        range.frames = Math.min(range.frames, time.frame);
-        return range;
-    }
-    withFrame(frame) {
-        const range = this.copy;
-        range.frame = frame;
-        return range;
-    }
-    withFrames(frames) {
-        const range = this.copy;
-        range.frames = frames;
-        return range;
-    }
-    static fromArgs(frame = 0, fps = 1, frames = 1) {
-        return new TimeRange(frame, fps, frames);
-    }
-    static fromSeconds(start = 0, duration = 1) {
-        return this.fromArgs(start, 1, duration);
-    }
-    static fromTime(time, frames = 1) {
-        return this.fromArgs(time.frame, time.fps, frames);
-    }
-    static fromTimes(startTime, endTime) {
-        const [time1, time2] = scaleTimes(startTime, endTime);
-        if (time2.frame <= time1.frame)
-            throw Errors.argument;
-        const frames = time2.frame - time1.frame;
-        return this.fromArgs(time1.frame, time1.fps, frames);
-    }
-}
-
-const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
-const rgbNumeric = (rgb) => ({
-    r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
-});
-const yuvNumeric = (rgb) => ({
-    y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
-});
-const yuv2rgb = (yuv) => {
-    const floats = yuvNumeric(yuv);
-    return rgbNumeric({
-        r: floats.y + 1.4075 * (floats.v - 128),
-        g: floats.y - 0.3455 * (floats.u - 128) - (0.7169 * (floats.v - 128)),
-        b: floats.y + 1.7790 * (floats.u - 128)
-    });
-};
-const rgb2hex = (rgb) => {
-    let r = rgb.r.toString(16);
-    let g = rgb.g.toString(16);
-    let b = rgb.b.toString(16);
-    if (r.length < 2)
-        r = `0${r}`;
-    if (g.length < 2)
-        g = `0${g}`;
-    if (b.length < 2)
-        b = `0${b}`;
-    return `#${r}${g}${b}`;
-};
-const yuvBlend = (yuvs, yuv, match, blend) => {
-    let diff = 0.0;
-    const blendYuv = yuvNumeric(yuv);
-    yuvs.forEach(yuvObject => {
-        const numericYuv = yuvNumeric(yuvObject);
-        const du = numericYuv.u - blendYuv.u;
-        const dv = numericYuv.v - blendYuv.v;
-        diff += Math.sqrt((du * du + dv * dv) / (255.0 * 255.0));
-    });
-    diff /= yuvs.length;
-    if (blend > 0.0001) {
-        return Math.min(1.0, Math.max(0.0, (diff - match) / blend)) * 255.0;
-    }
-    return (diff > match) ? 255 : 0;
-};
-const rgb2yuv = (rgb) => {
-    const ints = rgbNumeric(rgb);
-    return {
-        y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
-        u: ints.r * -0.168736 + ints.g * -0.331264 + ints.b * 0.500000 + 128,
-        v: ints.r * 0.500000 + ints.g * -0.418688 + ints.b * -0.081312 + 128
-    };
-};
-const Color = {
-    yuvBlend,
-    rgb2yuv,
-    yuv2rgb,
-    rgb2hex, // unused after 4.1 refactor, but perhaps needed?
-};
-
-const fromPoint = (pt, width) => pt.y * width + pt.x;
-const toPoint = (index, width) => ({ x: index % width, y: Math.floor(index / width) });
-const toIndex = (pixel) => pixel * 4;
-const rgbaAtIndex = (index, pixels) => ({
-    r: pixels[index],
-    g: pixels[index + 1],
-    b: pixels[index + 2],
-    a: pixels[index + 3],
-});
-const rgba$1 = (pixel, data) => rgbaAtIndex(toIndex(pixel), data);
-const safePixel = (pixel, offsetPoint, size) => {
-    const { x, y } = offsetPoint;
-    const { width, height } = size;
-    const pt = toPoint(pixel, width);
-    pt.x = Math.max(0, Math.min(width - 1, pt.x + x));
-    pt.y = Math.max(0, Math.min(height - 1, pt.y + y));
-    return fromPoint(pt, width);
-};
-const safePixels = (pixel, size) => {
-    const depth = 3; // should be 4, no?
-    const pixels = [];
-    const halfSize = Math.floor(depth / 2);
-    for (let y = 0; y < depth; y += 1) {
-        for (let x = 0; x < depth; x += 1) {
-            const offsetPoint = { x: x - halfSize, y: y - halfSize };
-            pixels.push(safePixel(pixel, offsetPoint, size));
-        }
-    }
-    return pixels;
-};
-// TODO: this is not correctly converting from rgba to rgb!! (size??)
-const rgbs = (pixel, data, size) => (safePixels(pixel, size).map(p => rgba$1(p, data)));
-const color = (value) => {
-    const string = String(value);
-    if (string.slice(0, 2) === "0x")
-        return `#${string.slice(2)}`;
-    return string;
-};
-const Pixel = {
-    color,
-    rgbaAtIndex,
-    rgbs,
-};
-
-const byFrame = (a, b) => a.frame - b.frame;
-const byTrack = (a, b) => a.track - b.track;
-const byLabel = (a, b) => {
-    if (a.label < b.label)
-        return -1;
-    if (a.label > b.label)
-        return 1;
-    return 0;
-};
-const Sort = { byFrame, byLabel, byTrack };
-
-const KEYS_SIZED = ['mm_width', 'mm_height'];
-const KEYS_GETTERS = [
-    "mm_dimensions",
-    "mm_duration",
-    "mm_fps",
-    "mm_height",
-    "mm_t",
-    "mm_width",
-    "t",
-];
-const KEYS = [
-    "ceil",
-    "floor",
-    "mm_cmp",
-    "mm_horz",
-    "mm_max",
-    "mm_min",
-    "mm_vert",
-    ...KEYS_GETTERS,
-    ...KEYS_SIZED
-];
-const $evaluator = "evaluator";
-const arrayFromElements = (elements) => {
-    if (typeof elements === "string")
-        return String(elements).split(',');
-    return elements;
-};
-const conditionalExpression = (conditional) => {
-    const { condition } = conditional;
-    // not strict equality, since we may have strings and numbers
-    if (Is.defined(conditional.is))
-        return `${condition}==${conditional.is}`;
-    const elements = conditional.in;
-    if (Is.undefined(elements))
-        return String(condition);
-    // support supplying values as array or comma-delimited string
-    const array = arrayFromElements(elements);
-    const strings = Is.string(array[0]);
-    const values = array.map(element => (strings ? `"${element}"` : element));
-    const type = strings ? 'String' : 'Number';
-    const expression = `([${values.join(',')}].includes(${type}(${condition})))`;
-    return expression;
-};
-const replaceOperators = (string) => (string.replaceAll(' or ', ' || ').replaceAll(' and ', ' && '));
-class Evaluator {
-    constructor(timeRange, context, size, mergeContext) {
-        this.ceil = Math.ceil;
-        this.floor = Math.floor;
-        this.map = new Map();
-        this.mm_max = Math.max;
-        this.mm_min = Math.min;
-        this.timeRange = timeRange;
-        this.context = context;
-        this.mergeContext = mergeContext;
-        this.size = size;
-        this.setInputSize(this.size);
-    }
-    conditionalValue(conditionals) {
-        // console.log(this.constructor.name, "conditionalValue", conditionals)
-        const trueConditional = conditionals.find((conditional) => {
-            const expression = replaceOperators(conditionalExpression(conditional));
-            const result = this.evaluateExpression(expression);
-            // console.log(this.constructor.name, "conditionalValue", expression, "=", result)
-            return result;
-        });
-        if (typeof trueConditional === "undefined")
-            throw Errors.eval.conditionTruth;
-        const { value } = trueConditional;
-        if (typeof value === "undefined")
-            throw Errors.eval.conditionValue;
-        // console.log(this.constructor.name, "conditionalValue", value.constructor.name, value)
-        return value;
-    }
-    get duration() { return this.timeRange.lengthSeconds; }
-    evaluate(value) {
-        // console.log(this.constructor.name, "evaluate", value)
-        if (typeof value === "number")
-            return value;
-        const expression = (typeof value === "string") ? String(value) : this.conditionalValue(value);
-        if (typeof expression === "number")
-            return expression;
-        const result = this.evaluateExpression(expression);
-        // console.log(this.constructor.name, "evaluate", expression, "=", result)
-        return result;
-    }
-    evaluateExpression(expression) {
-        const script = `return ${this.replaceKeys(expression)}`;
-        try {
-            // eslint-disable-next-line no-new-func
-            const method = new Function($evaluator, script);
-            const result = method(this);
-            // console.log(this.constructor.name, "evaluateExpression", expression, result)
-            return result;
-        }
-        catch (exception) {
-            console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map);
-            return expression;
-        }
-    }
-    get(key) {
-        if (this.map.has(key)) {
-            // console.log("Evaluator.get returning value from map", key, this.map.get(key))
-            return this.map.get(key);
-        }
-        if (!KEYS.includes(key))
-            throw Errors.eval.get + key;
-        const value = this[key];
-        if (KEYS_GETTERS.includes(key))
-            return value;
-        if (typeof value === "function") {
-            // console.log("Evaluator.get returning method", key)
-            return value.bind(this);
-        }
-        throw Errors.eval.get + key;
-        // return // unknown key
-    }
-    has(key) { return KEYS.includes(key) || this.map.has(key); }
-    initialize(key, value) {
-        if (this.has(key))
-            return false;
-        this.set(key, value);
-        return true;
-    }
-    get inputSize() {
-        return {
-            width: Number(this.get("mm_input_width")),
-            height: Number(this.get("mm_input_height"))
-        };
-    }
-    get keys() { return [...new Set([...this.map.keys(), ...KEYS])]; }
-    mm_cmp(a, b, x, y) {
-        return ((a > b) ? x : y);
-    }
-    get mm_dimensions() { return `${this.mm_width}x${this.mm_height}`; }
-    get mm_duration() { return this.duration; }
-    get mm_fps() { return this.timeRange.fps; }
-    get mm_height() { return this.size.height; }
-    mm_horz(size, proud) {
-        return this.sized(0, size, proud);
-    }
-    get mm_t() { return this.position; }
-    mm_vert(size, proud) {
-        return this.sized(1, size, proud);
-    }
-    get mm_width() { return this.size.width; }
-    get position() { return this.timeRange.position; }
-    replaceKeys(value) {
-        let expression = value;
-        const expressions = Object.fromEntries(this.keys.map(key => ([
-            key, new RegExp(`\\b${key}\\b`, 'g')
-        ])));
-        Object.entries(expressions).forEach(([key, regExp]) => {
-            expression = expression.replaceAll(regExp, `${$evaluator}.get("${key}")`);
-        });
-        return expression;
-    }
-    set(key, value) { this.map.set(key, value); }
-    setInputSize({ width, height }) {
-        this.set("in_h", height);
-        this.set("mm_input_height", height);
-        this.set("in_w", width);
-        this.set("mm_input_width", width);
-    }
-    sized(vertical, size, proud) {
-        const scale = Is.float(size) ? Number(size) : parseFloat(String(size));
-        if (Is.nan(scale))
-            throw Errors.eval.number + 'scale';
-        const sizedKey = KEYS_SIZED[vertical];
-        const sizedValue = this.get(sizedKey);
-        const value = parseFloat(String(sizedValue));
-        if (Is.nan(value))
-            throw Errors.eval.number + `value ${sizedKey}=>${sizedValue}`;
-        const scaled = value * scale;
-        if (!proud)
-            return scaled;
-        const otherSizedKey = KEYS_SIZED[Math.abs(vertical - 1)];
-        const otherValue = this.get(otherSizedKey);
-        if (typeof otherValue === "undefined")
-            throw Errors.internal + 'otherValue';
-        const other = parseFloat(String(otherValue));
-        if (Is.nan(other))
-            throw Errors.eval.number + 'other';
-        if (other <= value)
-            return scaled;
-        return value + (scale - 1.0) * other;
-    }
-    get t() { return this.mm_duration; }
-}
-
-const Capitalize = (value) => {
-    if (!isPopulatedString(value))
-        return value;
-    return `${value[0].toUpperCase()}${value.substr(1)}`;
-};
-
-const classes$3 = {
-    AddTrack: AddTrackAction,
-    AddClipsToTrack: AddClipToTrackAction,
-    MoveClips: MoveClipsAction,
-    AddEffect: AddEffectAction,
-    Change: ChangeAction,
-    ChangeFrames: ChangeFramesAction,
-    ChangeTrim: ChangeTrimAction,
-    Split: SplitAction,
-    Freeze: FreezeAction,
-    MoveEffects: MoveEffectsAction,
-    RemoveClips: RemoveClipsAction,
-};
-class ActionFactoryClass {
-    createFromObject(object) {
-        const { type } = object;
-        if (typeof type !== "string")
-            throw Errors.type;
-        return new classes$3[Capitalize(type)](object);
-    }
-}
-const ActionFactory = new ActionFactoryClass();
-
-const definitionsMap = new Map();
-const DefinitionsByType = new Map();
-const definitionsByType = (type) => {
-    const list = DefinitionsByType.get(type);
-    if (list)
-        return list;
-    const definitionsList = [];
-    DefinitionsByType.set(type, definitionsList);
-    return definitionsList;
-};
-const definitionsClear = () => { definitionsMap.clear(); };
-const definitionsFont = definitionsByType(DefinitionType.Font);
-const definitionsFromId = (id) => {
-    if (!definitionsInstalled(id))
-        throw Errors.unknown.definition;
-    const definition = definitionsMap.get(id);
-    if (!definition)
-        throw Errors.internal;
-    return definition;
-};
-const definitionsInstall = (definition) => {
-    const { type, id } = definition;
-    // console.log("definitionsInstall", type, id)
-    definitionsMap.set(id, definition);
-    definitionsByType(type).push(definition);
-};
-const definitionsInstalled = (id) => definitionsMap.has(id);
-const definitionsMerger = definitionsByType(DefinitionType.Merger);
-const definitionsScaler = definitionsByType(DefinitionType.Scaler);
-const definitionsUninstall = (id) => {
-    if (!definitionsInstalled(id)) {
-        return;
-    }
-    const definition = definitionsFromId(id);
-    definitionsMap.delete(id);
-    const { type } = definition;
-    const definitions = definitionsByType(type);
-    const index = definitions.indexOf(definition);
-    if (index < 0)
-        throw Errors.internal + type + ' ' + id;
-    definitions.splice(index, 1);
-    // console.log("uninstalled", id)
-};
-const Definitions = {
-    byType: definitionsByType,
-    clear: definitionsClear,
-    font: definitionsFont,
-    fromId: definitionsFromId,
-    install: definitionsInstall,
-    installed: definitionsInstalled,
-    map: definitionsMap,
-    merger: definitionsMerger,
-    scaler: definitionsScaler,
-    uninstall: definitionsUninstall,
-};
-
-class InstanceClass {
-    constructor(...args) {
-        const [object] = args;
-        if (!Is.populatedObject(object))
-            throw Errors.invalid.object + 'instance';
-        const { id, definition, label } = object;
-        if (definition)
-            this.definition = definition;
-        else {
-            if (id && Definitions.installed(id)) {
-                this.definition = Definitions.fromId(id);
-            }
-            else
-                throw Errors.invalid.argument;
-        }
-        if (label)
-            this._label = label;
-        // console.log("InstanceClass", this.definition.id)
-    }
-    get copy() {
-        return this.definition.instanceFromObject(this.toJSON());
-    }
-    get definitions() { return [this.definition]; }
-    definitionTime(quantize, time) {
-        return time.scaleToFps(quantize); // may have fps higher than quantize and time.fps
-    }
-    get id() { return this.definition.id; }
-    get label() { return this._label || this.definition.label; }
-    set label(value) { this._label = value; }
-    load(quantize, start, end) {
-        const startTime = this.definitionTime(quantize, start);
-        const endTime = end ? this.definitionTime(quantize, end) : end;
-        return this.definition.load(startTime, endTime);
-    }
-    loaded(quantize, start, end) {
-        const startTime = this.definitionTime(quantize, start);
-        const endTime = end ? this.definitionTime(quantize, end) : end;
-        return this.definition.loaded(startTime, endTime);
-    }
-    get propertyNames() {
-        return this.definition.properties.map(property => property.name);
-    }
-    get propertyValues() {
-        return Object.fromEntries(this.definition.properties.map(property => {
-            return [property.name, this.value(property.name)];
-        }));
-    }
-    get type() { return this.definition.type; }
-    toJSON() { return this.propertyValues; }
-    value(key) {
-        const value = this[key];
-        if (typeof value === "undefined")
-            throw Errors.property + "value " + this.propertyNames.includes(key) + " " + this[key];
-        return value;
-    }
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function ModularMixin(Base) {
-    return class extends Base {
-        constructor(...args) {
-            super(...args);
-            const [object] = args;
-            this.constructProperties(object);
-        }
-        constructProperties(object = {}) {
-            // console.log(this.constructor.name, "constructProperties", object, this.propertyNames)
-            this.definition.properties.forEach(property => {
-                const { name } = property;
-                if (typeof object[name] !== "undefined")
-                    this[name] = object[name];
-                else if (typeof this[name] === "undefined")
-                    this[name] = property.value;
-            });
-        }
-        get definitions() {
-            return [...super.definitions, ...this.modularDefinitions];
-        }
-        load(quantize, start, end) {
-            const promises = [super.load(quantize, start, end)];
-            const startTime = this.definitionTime(quantize, start);
-            const endTime = end ? this.definitionTime(quantize, end) : end;
-            this.modularDefinitions.forEach(definition => {
-                promises.push(definition.load(startTime, endTime));
-            });
-            return Promise.all(promises).then();
-        }
-        loaded(quantize, start, end) {
-            if (!super.load(quantize, start, end))
-                return false;
-            const startTime = this.definitionTime(quantize, start);
-            const endTime = end ? this.definitionTime(quantize, end) : end;
-            return this.modularDefinitions.every(definition => definition.loaded(startTime, endTime));
-        }
-        get modularDefinitions() {
-            const modular = this.definition.propertiesModular;
-            const ids = modular.map(property => String(this.value(property.name)));
-            return ids.map(id => Definitions.fromId(id));
-        }
-    };
-}
-
-const EffectWithModular = ModularMixin(InstanceClass);
-class EffectClass extends EffectWithModular {
-    toJSON() {
-        const object = super.toJSON();
-        object.id = this.id;
-        return object;
     }
 }
 
@@ -1437,8 +884,7 @@ class VisibleContext {
     imageDataFromSize(size) {
         return this.imageDataFromRect({ ...Point0, ...size });
     }
-    // TODO: rename method to match return type
-    get imageSource() { return this.canvas; }
+    get drawingSource() { return this.canvas; }
     get shadow() { return this.context2d.shadowColor; }
     set shadow(value) { this.context2d.shadowColor = value; }
     get shadowPoint() {
@@ -1476,907 +922,197 @@ class ContextFactory {
 }
 const ContextFactoryInstance = new ContextFactory();
 
-const Factories = {};
-
-class FactoryClass {
-    get [DefinitionType.Audio]() {
-        const factory = Factories[DefinitionType.Audio];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Audio;
-        return factory;
-    }
-    get [DefinitionType.Effect]() {
-        const factory = Factories[DefinitionType.Effect];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Effect;
-        return factory;
-    }
-    get [DefinitionType.Filter]() {
-        const factory = Factories[DefinitionType.Filter];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Filter;
-        return factory;
-    }
-    get [DefinitionType.Font]() {
-        const factory = Factories[DefinitionType.Font];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Font;
-        return factory;
-    }
-    get [DefinitionType.Image]() {
-        const factory = Factories[DefinitionType.Image];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Image;
-        return factory;
-    }
-    get [DefinitionType.Mash]() {
-        const factory = Factories[DefinitionType.Mash];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Mash;
-        return factory;
-    }
-    get [DefinitionType.Merger]() {
-        const factory = Factories[DefinitionType.Merger];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Merger;
-        return factory;
-    }
-    get [DefinitionType.Scaler]() {
-        const factory = Factories[DefinitionType.Scaler];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Scaler;
-        return factory;
-    }
-    get [DefinitionType.Theme]() {
-        const factory = Factories[DefinitionType.Theme];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Theme;
-        return factory;
-    }
-    get [DefinitionType.Transition]() {
-        const factory = Factories[DefinitionType.Transition];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Transition;
-        return factory;
-    }
-    get [DefinitionType.Video]() {
-        const factory = Factories[DefinitionType.Video];
-        if (!factory)
-            throw Errors.invalid.factory + DefinitionType.Video;
-        return factory;
+class Processor {
+    process(_url, _buffer) {
+        return Promise.resolve();
     }
 }
-const Factory = new FactoryClass();
 
-const MasherProperty = {
-    autoplay: "autoplay",
-    precision: "precision",
-    loop: "loop",
-    fps: "fps",
-    volume: "volume",
-    buffer: "buffer",
-};
-class MasherClass {
-    constructor(object = {}) {
-        this.autoplay = Default.autoplay;
-        this._buffer = Default.buffer;
-        this._fps = Default.fps;
-        this._loop = Default.loop;
-        this._muted = false;
-        this._paused = true;
-        this.precision = Default.precision;
-        this.selectedClipObject = {};
-        this._selectedClips = [];
-        this._selectedEffects = [];
-        this.type = "masher";
-        this._volume = Default.volume;
-        const { autoplay, precision, loop, fps, volume, buffer, audibleContext, visibleContext, mash, } = object;
-        if (typeof autoplay !== "undefined")
-            this.autoplay = autoplay;
-        if (typeof precision !== "undefined")
-            this.precision = precision;
-        if (typeof loop !== "undefined")
-            this._loop = loop;
-        if (typeof audibleContext !== "undefined")
-            this._audibleContext = audibleContext;
-        if (typeof visibleContext !== "undefined")
-            this._visibleContext = visibleContext;
-        this.events.addListener(this.handleMasher.bind(this));
-        if (typeof fps !== "undefined")
-            this._fps = fps;
-        if (typeof volume !== "undefined")
-            this._volume = volume;
-        if (typeof buffer !== "undefined")
-            this._buffer = buffer;
-        this._time = Time.fromArgs(0, this.fps);
-        if (mash)
-            this.mash = mash;
-    }
-    actionCreate(object) {
-        const mash = object.mash || this.mash;
-        const undoSelectedClips = object.undoSelectedClips || this.selectedClips;
-        const undoSelectedEffects = object.undoSelectedEffects || this.selectedEffects;
-        const redoSelectedClips = object.redoSelectedClips || this.selectedClips;
-        const redoSelectedEffects = object.redoSelectedEffects || this.selectedEffects;
-        const clone = {
-            ...object,
-            mash,
-            undoSelectedClips,
-            undoSelectedEffects,
-            redoSelectedClips,
-            redoSelectedEffects,
-        };
-        const action = ActionFactory.createFromObject(clone);
-        // console.log(this.constructor.name, "actionCreate", action)
-        action.actions = this.actions;
-        // const removedActions =
-        this.actions.do(action);
-        // const type = removedActions.length ? EventType.Truncate : EventType.Add
-        // const { currentAction } = this.actions
-        // this.events.emit(type, { action: currentAction })
-    }
-    get actions() {
-        if (!this._actions) {
-            this._actions = new Actions({ mash: this.mash });
+class AudioProcessor extends Processor {
+    constructor(object) {
+        super();
+        if (object && object.audibleContext) {
+            this._audibleContext = object.audibleContext;
         }
-        return this._actions;
-    }
-    add(object, frameOrIndex = 0, trackIndex = 0) {
-        if (!Is.populatedObject(object))
-            throw Errors.argument + 'add';
-        const { type } = object;
-        if (!type)
-            throw Errors.type + 'Masher.add';
-        if (type === DefinitionType.Effect) {
-            const effectDefinition = Factory.effect.definition(object);
-            const effect = effectDefinition.instance;
-            return this.addEffect(effect, frameOrIndex).then(() => effect);
-        }
-        const clipType = type;
-        if (!ClipTypes.includes(clipType))
-            throw Errors.type + type;
-        const definitionType = type;
-        const definition = Factory[definitionType].definition(object);
-        const clip = definition.instance;
-        return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip);
-    }
-    addClip(clip, frameOrIndex = 0, trackIndex = 0) {
-        const { trackType } = clip;
-        const clips = [clip];
-        const options = {
-            clip,
-            type: ActionType.AddClipsToTrack,
-            redoSelectedClips: clips,
-            trackType,
-        };
-        const track = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
-        const trackCount = this.mash[trackType].length;
-        if (track.isMainVideo) {
-            options.insertIndex = frameOrIndex;
-            options.createTracks = Math.min(1, Math.max(0, 1 - trackCount));
-        }
-        else {
-            options.trackIndex = trackIndex;
-            clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex);
-            options.createTracks = Math.max(0, trackIndex + 1 - trackCount);
-        }
-        this.actionCreate(options);
-        return this.loadMashAndDraw();
-    }
-    addEffect(effect, insertIndex = 0) {
-        // console.log(this.constructor.name, "addEffect", object, index)
-        const { effects } = this.selectedClipOrThrow;
-        if (!effects)
-            throw Errors.selection;
-        const undoEffects = [...effects];
-        const redoEffects = [...effects];
-        const redoSelectedEffects = [effect];
-        redoEffects.splice(insertIndex, 0, effect);
-        const options = {
-            effects,
-            undoEffects,
-            redoEffects,
-            redoSelectedEffects,
-            type: ActionType.MoveEffects
-        };
-        this.actionCreate(options);
-        return this.loadMashAndDraw();
-    }
-    addTrack(trackType = TrackType.Video) {
-        this.actionCreate({ trackType, type: ActionType.AddTrack });
-    }
-    get audibleContext() {
-        if (!this._audibleContext) {
+        else
             this._audibleContext = ContextFactoryInstance.audible();
-            if (this._mash)
-                this.mash.audibleContext = this._audibleContext;
-        }
-        return this._audibleContext;
     }
-    set audibleContext(value) {
-        if (this._audibleContext !== value) {
-            this._audibleContext = value;
-            if (this._mash)
-                this.mash.audibleContext = value;
-        }
-    }
-    get buffer() { return this._buffer; }
-    set buffer(value) {
-        if (this._buffer !== value) {
-            this._buffer = value;
-            this.mash.buffer = value;
-        }
-    }
-    can(method) {
-        const z = this._selectedClips.length;
-        switch (method) {
-            case 'save': return this.actions.canSave;
-            case 'undo': return this.actions.canUndo;
-            case 'redo': return this.actions.canRedo;
-            case 'copy': return z > 0;
-            case 'cut':
-            case 'remove': return !!z; // TODO: check removing won't create transition problem
-            case 'split': return z === 1 && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize);
-            case 'freeze': return (z === 1
-                && DefinitionType.Video === this.selectedClipOrThrow.type
-                && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize));
-            default: throw Errors.argument;
-        }
-    }
-    get canvas() { return this.visibleContext.canvas; }
-    set canvas(value) {
-        // console.log(this.constructor.name, "set canvas")
-        const context2d = value.getContext("2d");
-        if (!context2d)
-            throw Errors.internal + 'context2d';
-        this.events.target = value;
-        this.context2d = context2d;
-    }
-    change(property) {
-        if (Is.populatedObject(this.selectedClip)) {
-            if (Is.populatedObject(this.selectedEffect))
-                this.changeEffect(property);
-            else
-                this.changeClip(property);
-        }
-        else
-            this.changeMash(property);
-    }
-    changeClip(property) {
-        console.log(this.constructor.name, "changeClip", property);
-        if (!Is.populatedString(property))
-            throw Errors.property + "changeClip " + property;
-        if (!this._pristine)
-            throw Errors.internal + "changeClip _pristine";
-        const target = this.selectedClipOrThrow;
-        const options = { property, target };
-        const [transform, transformProperty] = property.split(".");
-        if (transformProperty) {
-            const transformType = transform;
-            // make sure first component is merger or scaler
-            if (!TransformTypes.includes(transformType))
-                throw Errors.property + "transform " + transform;
-            const transformable = target;
-            // we'll call merger/scaler set property, even if it's 'id'
-            options.target = transformable[transformType];
-            options.property = transformProperty;
-            options.redoValue = transformable[transformType].value(transformProperty);
-            const pristineTarget = this._pristine[transformType];
-            if (typeof pristineTarget !== "object")
-                throw Errors.internal + JSON.stringify(this._pristine);
-            const value = pristineTarget[transformProperty];
-            if (typeof value === "undefined")
-                throw Errors.property + 'pristine ' + property + JSON.stringify(pristineTarget);
-            options.undoValue = value;
-        }
-        else {
-            options.undoValue = this._pristine[property];
-            options.redoValue = target.value(property);
-        }
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(options.redoValue);
-            return;
-        }
-        switch (options.property) {
-            case 'frames': {
-                options.type = ActionType.ChangeFrames;
-                break;
-            }
-            case 'trim': {
-                options.type = ActionType.ChangeTrim;
-                // TODO: make sure there's a test for this
-                // not sure where this was derived from - using original clip??
-                options.frames = target.frames + options.undoValue;
-                break;
-            }
-            default: options.type = ActionType.Change;
-        }
-        this.actionCreate(options);
-    }
-    changeEffect(property) {
-        console.log(this.constructor.name, "changeEffect", property);
-        if (!Is.populatedString(property))
-            throw Errors.property;
-        const target = this.selectedEffect;
-        if (!target)
-            throw Errors.selection;
-        if (!this._pristineEffect)
-            throw Errors.selection;
-        const redoValue = target[property];
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(redoValue);
-            return;
-        }
-        const undoValue = this._pristineEffect[property];
-        const options = {
-            type: ActionType.Change, target, property, redoValue, undoValue
-        };
-        this.actionCreate(options);
-    }
-    changeMash(property) {
-        if (!this.mash.propertyNames.includes(property))
-            throw Errors.unknownMash;
-        if (!this._pristine)
-            throw Errors.selection;
-        const target = this.mash;
-        const redoValue = this.mash[property];
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            return changeAction.updateAction(redoValue);
-        }
-        const options = {
-            target,
-            property,
-            redoValue,
-            undoValue: this._pristine[property],
-            type: ActionType.Change,
-        };
-        // console.log("changeMash", options)
-        this.actionCreate(options);
-    }
-    clipCanBeSplit(clip, time, quantize) {
-        if (!Is.object(clip))
-            return false;
-        // true if now intersects clip time, but is not start or end frame
-        const range = TimeRange.fromTime(time);
-        const clipRange = clip.timeRange(quantize);
-        // ranges must intersect
-        if (!clipRange.intersects(range))
-            return false;
-        const scaled = range.scale(clipRange.fps);
-        if (scaled.frame === clipRange.frame)
-            return false;
-        if (scaled.end === clipRange.end)
-            return false;
-        return true;
-    }
-    get context2d() {
-        return this.visibleContext.context2d;
-    }
-    set context2d(value) {
-        // console.log(this.constructor.name, "set context2d")
-        if (this._context2D !== value) {
-            this._context2D = value;
-            if (this._visibleContext) {
-                this.visibleContext.context2d = value;
-                this.mash.compositeVisible();
-            }
-        }
-    }
-    get configured() {
-        return true;
-        // return !!(this._mash && this._context2D)
-    }
-    currentActionReusable(target, property) {
-        if (!this.actions.currentActionLast)
-            return false;
-        const action = this.actions.currentAction;
-        if (!(action instanceof ChangeAction))
-            return false;
-        return action.target === target && action.property === property;
-    }
-    // time, but in seconds
-    get currentTime() { return this.time.seconds; }
-    set currentTime(seconds) { this.time = Time.fromSeconds(seconds, this.fps); }
-    get definitions() { return this.mash.media; }
-    delayedDraw() {
-        // console.log("MasherClass.delayedDraw")
-        // called when assets are cached
-        if (!this._delayedTimer) {
-            this._delayedTimer = setTimeout(() => {
-                // console.log(this.constructor.name, "delayedDraw timeout", )
-                delete this._delayedTimer;
-                this.mash.compositeVisible();
-            }, 50);
-        }
-    }
-    // call when player removed from DOM
-    destroy() {
-        //Mashers.delete(this)
-    }
-    draw() { this.mash.compositeVisible(); }
-    get duration() { return this.mash.duration; }
-    get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
-    get events() {
-        if (!this.__events) {
-            this.__events = new Events({ target: this.canvas });
-        }
-        return this.__events;
-    }
-    filterClipSelection(value) {
-        const clips = Array.isArray(value) ? value : [value];
-        const [firstClip] = clips;
-        if (!firstClip)
-            return [];
-        const { trackType, track } = firstClip;
-        // selected clips must all be on same track
-        const trackClips = clips.filter(clip => (clip.track === track && clip.trackType === trackType)).sort(byFrame);
-        if (track || trackType === TrackType.Audio)
-            return trackClips;
-        // selected clips on main track must be abutting each other
-        let abutting = true;
-        return trackClips.filter((clip, index) => {
-            if (!abutting)
-                return false;
-            if (index === trackClips.length - 1)
-                return true;
-            abutting = clip.frame + clip.frames === trackClips[index + 1].frame;
-            return true;
-        });
-    }
-    get fps() { return this._fps; }
-    set fps(value) {
-        if (!Is.aboveZero(value))
-            throw Errors.fps;
-        if (this._fps !== value) {
-            this._fps = value;
-            this._time = this._time.scale(value);
-        }
-    }
-    get frame() { return this.time.frame; }
-    set frame(value) {
-        // called from ruler to change position
-        // console.log('frame=', value, this.fps)
-        this.time = Time.fromArgs(value, this.fps);
-        // console.log("time", this.time)
-        // console.log("position", this.position)
-    }
-    get frames() { return this.endTime.frame; }
-    freeze() {
-        const clip = this.selectedClipOrThrow;
-        if (!this.clipCanBeSplit(clip, this.time, this.mash.quantize)) {
-            throw Errors.invalid.action;
-        }
-        if (DefinitionType.Video !== clip.type) {
-            throw Errors.invalid.action;
-        }
-        const freezeClip = clip;
-        const scaled = this.time.scale(this.mash.quantize);
-        const trackClips = this.mash.clipTrack(freezeClip).clips;
-        const insertClip = freezeClip.copy;
-        const frozenClip = freezeClip.copy;
-        const options = {
-            frames: freezeClip.frames - (scaled.frame - freezeClip.frame),
-            freezeClip,
-            frozenClip,
-            insertClip,
-            trackClips,
-            redoSelectedClips: [frozenClip],
-            index: 1 + trackClips.indexOf(freezeClip),
-            type: ActionType.Freeze,
-        };
-        frozenClip.frame = scaled.frame;
-        frozenClip.frames = 1;
-        frozenClip.trim = freezeClip.trim + (scaled.frame - freezeClip.frame);
-        insertClip.frame = scaled.frame + 1;
-        insertClip.frames = options.frames - 1;
-        insertClip.trim = frozenClip.trim + 1;
-        this.actionCreate(options);
-    }
-    get gain() { return this.muted ? 0.0 : this.volume; }
-    handleGainChange() { this.mash.gain = this.gain; }
-    handleMasher(event) {
-        // console.log("handleMasher", event.type)
-        if (event.type !== Events.type)
-            return;
-        const { detail } = event;
-        // console.log("handleMasher", detail.type)
-        if (detail.type === EventType.Action) {
-            const { action } = detail;
-            if (!action)
-                throw Errors.internal + 'action';
-            this.selectedClips = action.selectedClips;
-            this.selectedEffects = action.selectedEffects;
-        }
-    }
-    loadMash() { return this.mash.load(); }
-    loadMashAndDraw() { return this.loadMash().then(() => { this.draw(); }); }
-    get loadedDefinitions() { return this.mash.loadedDefinitions; }
-    get loop() { return this._loop; }
-    set loop(value) {
-        this._loop = value;
-        if (this._mash)
-            this.mash.loop = value;
-    }
-    get mash() {
-        if (!this._mash)
-            this._mash = Factory.mash.instance(this.mashOptions({ id: 'mash-id' }));
-        return this._mash;
-    }
-    set mash(object) {
-        if (this._mash === object)
-            return;
-        this.paused = true;
-        if (this._mash)
-            this._mash.destroy();
-        this._selectedEffects = [];
-        this._mash = object;
-        this._mash.events = this.events;
-        this._mash.visibleContext = this.visibleContext;
-        this._mash.audibleContext = this.audibleContext;
-        this._mash.buffer = this.buffer;
-        this._mash.gain = this.gain;
-        if (this._actions) {
-            this._actions.destroy();
-            this._actions.mash = this._mash;
-        }
-        this.selectedClips = []; // so mash gets copied into _pristine
-        this.time = Time.fromSeconds(0, this.fps);
-        if (this.autoplay)
-            this.paused = false;
-    }
-    mashOptions(mashObject = {}) {
-        return {
-            ...mashObject,
-            audibleContext: this.audibleContext,
-            buffer: this.buffer,
-            events: this.events,
-            gain: this.gain,
-            loop: this.loop,
-            visibleContext: this.visibleContext,
-        };
-    }
-    media(clip) { return clip.definition; }
-    move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
-        if (!Is.object(objectOrArray))
-            throw Errors.argument + 'move';
-        if (moveType === MoveType.Effect) {
-            this.moveEffects(objectOrArray, frameOrIndex);
-            return;
-        }
-        this.moveClips(objectOrArray, frameOrIndex, trackIndex);
-    }
-    moveClips(clipOrArray, frameOrIndex = 0, trackIndex = 0) {
-        // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
-        if (!Is.positive(frameOrIndex))
-            throw Errors.argument + 'moveClips frameOrIndex';
-        if (!Is.positive(trackIndex))
-            throw Errors.argument + 'moviClips trackIndex';
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument + 'moviClips clips';
-        const [firstClip] = clips;
-        const { trackType, track: undoTrackIndex } = firstClip;
-        const options = {
-            clips,
-            trackType,
-            trackIndex,
-            undoTrackIndex,
-            type: ActionType.MoveClips
-        };
-        const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
-        const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex);
-        const currentIndex = redoTrack.clips.indexOf(firstClip);
-        if (redoTrack.isMainVideo)
-            options.insertIndex = frameOrIndex;
-        if (undoTrack.isMainVideo) {
-            options.undoInsertIndex = currentIndex;
-            if (frameOrIndex < currentIndex)
-                options.undoInsertIndex += clips.length;
-        }
-        if (!(redoTrack.isMainVideo && undoTrack.isMainVideo)) {
-            const frames = clips.map(clip => clip.frame);
-            const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex);
-            const offset = insertFrame - firstClip.frame;
-            if (!offset)
-                return; // because there would be no change
-            options.undoFrames = frames;
-            options.redoFrames = frames.map(frame => frame + offset);
-        }
-        this.actionCreate(options);
-    }
-    moveEffects(effectOrArray, index = 0) {
-        // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
-        if (!Is.positive(index))
-            throw Errors.argument;
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const moveEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(moveEffects))
-            throw Errors.argument;
-        const { effects } = this.selectedClipOrThrow;
-        const undoEffects = [...effects];
-        const redoEffects = [];
-        undoEffects.forEach((effect, i) => {
-            if (i === index)
-                redoEffects.push(...moveEffects);
-            if (moveEffects.includes(effect))
-                return;
-            redoEffects.push(effect);
-        });
-        const options = {
-            effects, undoEffects, redoEffects, type: ActionType.MoveEffects
-        };
-        // console.log(this.constructor.name, "moveEffects", options)
-        this.actionCreate(options);
-    }
-    get muted() { return this._muted; }
-    set muted(value) {
-        if (this._muted !== value) {
-            this._muted = value;
-            this.handleGainChange();
-        }
-    }
-    pause() { this.paused = true; }
-    get paused() { return this.mash.paused; }
-    set paused(value) { this.mash.paused = value; }
-    play() { this.paused = false; }
-    get position() {
-        let per = 0;
-        if (this._time.frame) {
-            per = this._time.seconds / this.duration;
-            if (per !== 1)
-                per = parseFloat(per.toFixed(this.precision));
-        }
-        return per;
-    }
-    set position(value) {
-        this.time = Time.fromSeconds(this.duration * value, this.fps);
-    }
-    get positionStep() {
-        return parseFloat(`0.${"0".repeat(this.precision - 1)}1`);
-    }
-    get properties() { return Object.values(MasherProperty); }
-    redo() { if (this.actions.canRedo)
-        this.actions.redo(); }
-    remove(objectOrArray, moveType) {
-        if (!Is.object(objectOrArray))
-            throw Errors.argument;
-        if (moveType === MoveType.Effect)
-            return this.removeEffects(objectOrArray);
-        return this.removeClips(objectOrArray);
-    }
-    removeClips(clipOrArray) {
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument;
-        const [firstClip] = clips;
-        const track = this.mash.clipTrack(firstClip);
-        const options = {
-            redoSelectedClips: [],
-            clips,
-            track,
-            index: track.clips.indexOf(firstClip),
-            type: ActionType.RemoveClips
-        };
-        this.actionCreate(options);
-    }
-    removeEffects(effectOrArray) {
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const removeEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(removeEffects))
-            throw Errors.argument;
-        const { effects } = this.selectedClipOrThrow;
-        const undoEffects = [...effects];
-        const redoEffects = effects.filter(effect => !removeEffects.includes(effect));
-        const options = {
-            redoSelectedEffects: [],
-            effects,
-            undoEffects,
-            redoEffects,
-            type: ActionType.MoveEffects
-        };
-        this.actionCreate(options);
-    }
-    save() { this.actions.save(); }
-    select(object, toggleSelected = false) {
-        if (!object) {
-            this.selectedClips = [];
-            return;
-        }
-        if (object instanceof EffectClass) {
-            this.selectEffect(object, toggleSelected);
-            return;
-        }
-        const { type } = object;
-        if (type === DefinitionType.Mash) {
-            this.selectMash();
-            return;
-        }
-        this.selectClip(object, toggleSelected);
-    }
-    selectClip(clip, toggleSelected) {
-        const array = [];
-        if (clip) {
-            if (toggleSelected) {
-                array.push(...this.selectedClips);
-                const index = this.selectedClips.indexOf(clip);
-                if (index > -1)
-                    array.splice(index, 1);
-                else
-                    array.push(clip);
-            }
-            else if (this.selectedClips.includes(clip))
-                array.push(...this.selectedClips);
-            else
-                array.push(clip);
-        }
-        this.selectedClips = array;
-    }
-    selectEffect(effect, toggleSelected) {
-        const array = [];
-        if (effect) {
-            if (toggleSelected) {
-                array.push(...this.selectedEffects);
-                const index = this.selectedEffects.indexOf(effect);
-                if (index > -1)
-                    array.splice(index, 1);
-                else
-                    array.push(effect);
-            }
-            else
-                array.push(effect);
-        }
-        this.selectedEffects = array;
-    }
-    selectMash() {
-        this.selectedClips = [];
-    }
-    selected(object) {
-        if (object instanceof EffectClass)
-            return this.selectedEffects.includes(object);
-        return this.selectedClips.includes(object);
-    }
-    get selectedClip() {
-        if (this._selectedClips.length === 1)
-            return this.selectedClipOrThrow;
-        return this.selectedClipObject;
-    }
-    set selectedClip(value) {
-        if (value && Is.populatedObject(value)) {
-            const clip = value;
-            const { type } = clip;
-            const clipType = String(type);
-            if (!ClipTypes.includes(clipType)) {
-                console.warn(this.constructor.name, "set selectedClip invalid type", value);
-                return;
-            }
-            this.selectedClips = [clip];
-        }
-        else
-            this.selectedClips = [];
-    }
-    get selectedClipOrMash() {
-        const value = this.selectedClip;
-        if (Is.populatedObject(value))
-            return this.selectedClipOrThrow;
-        return this.mash;
-    }
-    get selectedClipOrThrow() {
-        if (this._selectedClips.length !== 1)
-            throw Errors.selection;
-        return this._selectedClips[0];
-    }
-    get selectedClips() { return this._selectedClips; }
-    set selectedClips(value) {
-        this._selectedClips = this.filterClipSelection(value);
-        this._pristine = this.selectedClipOrMash.propertyValues;
-        this.selectedEffects = [];
-    }
-    get selectedEffect() {
-        if (this._selectedEffects.length !== 1)
-            return;
-        return this._selectedEffects[0];
-    }
-    set selectedEffect(value) {
-        if (value)
-            this.selectedEffects = [value];
-        else
-            this.selectedEffects = [];
-    }
-    get selectedEffects() { return this._selectedEffects; }
-    set selectedEffects(value) {
-        const { effects } = this.selectedClipOrMash;
-        if (!effects) { // mash or multiple clips selected, or no effects
-            this._selectedEffects = [];
-            this._pristineEffect = {};
-            return;
-        }
-        const array = effects;
-        this._selectedEffects = value.filter(effect => array.includes(effect));
-        this._pristineEffect = (this.selectedEffect && this.selectedEffect.propertyValues) || {};
-    }
-    get silenced() { return this._paused || this.muted || !this.gain; }
-    split() {
-        const splitClip = this.selectedClipOrThrow;
-        if (!this.clipCanBeSplit(splitClip, this.time, this.mash.quantize)) {
-            throw Errors.invalid.action;
-        }
-        const scaled = this.time.scale(this.mash.quantize);
-        const undoFrames = splitClip.frames;
-        const redoFrames = scaled.frame - splitClip.frame;
-        const insertClip = splitClip.copy;
-        insertClip.frames = undoFrames - redoFrames;
-        insertClip.frame = scaled.frame;
-        if (splitClip.propertyNames.includes("trim")) {
-            insertClip.trim += redoFrames;
-        }
-        const trackClips = this.mash.clipTrack(splitClip).clips;
-        const options = {
-            type: ActionType.Split,
-            splitClip,
-            insertClip,
-            trackClips,
-            redoFrames,
-            undoFrames,
-            index: 1 + trackClips.indexOf(splitClip),
-            redoSelectedClips: [insertClip],
-            undoSelectedClips: [splitClip],
-        };
-        this.actionCreate(options);
-    }
-    get stalling() { return !this.__moving && !this.paused; }
-    get time() { return this.mash.time; }
-    set time(value) { this.mash.seekToTime(value); }
-    undo() { if (this.actions.canUndo)
-        this.actions.undo(); }
-    get visibleContext() {
-        if (!this._visibleContext) {
-            if (typeof this._context2D === "undefined") {
-                this._visibleContext = ContextFactoryInstance.visible();
-            }
-            else
-                this._visibleContext = ContextFactoryInstance.fromContext2D(this._context2D);
-            if (this._mash)
-                this.mash.visibleContext = this._visibleContext;
-        }
-        return this._visibleContext;
-    }
-    set visibleContext(value) {
-        if (this._visibleContext !== value) {
-            this._visibleContext = value;
-            if (this._mash)
-                this.mash.visibleContext = value;
-        }
-    }
-    get volume() { return this._volume; }
-    set volume(value) {
-        if (this._volume !== value) {
-            if (!Is.positive(value))
-                throw Errors.invalid.volume;
-            this._volume = value;
-            if (Is.aboveZero(value))
-                this.muted = false;
-            this.handleGainChange();
-        }
+    get audibleContext() { return this._audibleContext; }
+    set audibleContext(value) { this._audibleContext = value; }
+    process(_url, buffer) {
+        return this.audibleContext.decode(buffer);
     }
 }
 
-class Parameter {
-    constructor({ name, value }) {
-        if (!name)
-            throw Errors.invalid.name;
+class FontProcessor extends Processor {
+    process(url, buffer) {
+        const family = Cache.key(url);
+        const face = new FontFace(family, buffer);
+        const promise = face.load().then(() => {
+            document.fonts.add(face);
+            return { family };
+        });
+        return promise;
+    }
+}
+
+class ModuleProcessor extends Processor {
+    process(_url, _buffer) {
+        return Promise.resolve();
+    }
+}
+
+class Loader {
+    async loadUrl(url) {
+        if (Cache.cached(url)) {
+            const promiseOrCached = Cache.get(url);
+            if (promiseOrCached instanceof Promise)
+                return promiseOrCached;
+            return Promise.resolve();
+        }
+        const promise = this.requestUrl(url);
+        Cache.add(url, promise);
+        const processed = await promise;
+        Cache.add(url, processed);
+        return processed;
+    }
+    requestUrl(_url) { return Promise.resolve(); }
+}
+
+const Capitalize = (value) => {
+    if (!isPopulatedString(value))
+        return value;
+    return `${value[0].toUpperCase()}${value.substr(1)}`;
+};
+
+const classes$2 = {
+    Audio: AudioProcessor,
+    Font: FontProcessor,
+    Module: ModuleProcessor,
+};
+class ProcessorClass {
+    audio(object) {
+        return new classes$2.Audio(object);
+    }
+    font() { return new classes$2.Font(); }
+    install(type, loader) {
+        classes$2[Capitalize(type)] = loader;
+    }
+    module() { return new classes$2.Module(); }
+}
+const ProcessorFactory = new ProcessorClass();
+
+class AudioLoader extends Loader {
+    constructor(object) {
+        super();
+        this.type = LoadType.Audio;
+        if (object && object.audibleContext) {
+            this._audibleContext = object.audibleContext;
+        }
+        else
+            this._audibleContext = ContextFactoryInstance.audible();
+    }
+    get audibleContext() { return this._audibleContext; }
+    set audibleContext(value) { this._audibleContext = value; }
+    async requestUrl(url) {
+        return fetch(url).then(response => {
+            return response.arrayBuffer();
+        }).then(loaded => {
+            const options = { audibleContext: this.audibleContext };
+            const processor = ProcessorFactory.audio(options);
+            return processor.process(url, loaded);
+        });
+    }
+}
+
+class FontLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = LoadType.Font;
+    }
+    requestUrl(url) {
+        return fetch(url)
+            .then(response => response.arrayBuffer())
+            .then(buffer => ProcessorFactory.font().process(url, buffer));
+    }
+}
+
+class ImageLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = LoadType.Image;
+    }
+    requestUrl(url) {
+        const image = new Image();
+        image.crossOrigin = "Anonymous";
+        image.src = url;
+        return image.decode().then(() => Promise.resolve(image));
+    }
+}
+
+class ModuleLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = LoadType.Module;
+    }
+    async requestUrl(url) { return import(url); }
+}
+
+class InstanceClass {
+    constructor(...args) {
+        const [object] = args;
+        if (!Is.populatedObject(object))
+            throw Errors.invalid.object + 'InstanceClass';
+        const { definition, id, label } = object;
+        if (!definition)
+            throw Errors.invalid.definition.object + 'InstanceClass';
+        this.definition = definition;
+        if (id && id !== definition.id)
+            this._id = id;
+        if (label && label !== definition.label)
+            this._label = label;
+    }
+    get copy() {
+        return this.definition.instanceFromObject(this.toJSON());
+    }
+    get definitions() { return [this.definition]; }
+    definitionTime(quantize, time) {
+        return time.scaleToFps(quantize); // may have fps higher than quantize and time.fps
+    }
+    get id() { return this._id || this.definition.id; }
+    get label() { return this._label || this.definition.label || this.id; }
+    set label(value) { this._label = value; }
+    load(quantize, start, end) {
+        const startTime = this.definitionTime(quantize, start);
+        const endTime = end ? this.definitionTime(quantize, end) : end;
+        return this.definition.load(startTime, endTime);
+    }
+    loaded(quantize, start, end) {
+        const startTime = this.definitionTime(quantize, start);
+        const endTime = end ? this.definitionTime(quantize, end) : end;
+        return this.definition.loaded(startTime, endTime);
+    }
+    get propertyNames() {
+        return this.definition.properties.map(property => property.name);
+    }
+    get propertyValues() {
+        return Object.fromEntries(this.definition.properties.map(property => {
+            return [property.name, this.value(property.name)];
+        }));
+    }
+    get type() { return this.definition.type; }
+    toJSON() { return this.propertyValues; }
+    value(key) {
+        const value = this[key];
         if (typeof value === "undefined")
-            throw Errors.invalid.value;
-        this.name = String(name);
-        this.value = value;
-    }
-    toJSON() {
-        return { name: this.name, value: this.value };
+            throw Errors.property + "value " + this.propertyNames.includes(key) + " " + this[key];
+        return value;
     }
 }
 
+const boolean = {
+  value: false
+};
 const direction4 = {
   values: [
     {
@@ -2539,7 +1275,7 @@ const rgb = {
 const hex = {
   value: "#000000"
 };
-const rgba = {
+const rgba$1 = {
   value: "rgba(0, 0, 0, 1)"
 };
 const string = {
@@ -2549,6 +1285,7 @@ const text = {
   value: ""
 };
 var dataTypesJson = {
+  boolean: boolean,
   direction4: direction4,
   direction8: direction8,
   font: font,
@@ -2559,7 +1296,7 @@ var dataTypesJson = {
   pixel: pixel,
   rgb: rgb,
   hex: hex,
-  rgba: rgba,
+  rgba: rgba$1,
   string: string,
   text: text
 };
@@ -2640,18 +1377,394 @@ class Property {
     }
 }
 
+const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
+const rgbNumeric = (rgb) => ({
+    r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
+});
+const yuvNumeric = (rgb) => ({
+    y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
+});
+const yuv2rgb = (yuv) => {
+    const floats = yuvNumeric(yuv);
+    return rgbNumeric({
+        r: floats.y + 1.4075 * (floats.v - 128),
+        g: floats.y - 0.3455 * (floats.u - 128) - (0.7169 * (floats.v - 128)),
+        b: floats.y + 1.7790 * (floats.u - 128)
+    });
+};
+const rgb2hex = (rgb) => {
+    let r = rgb.r.toString(16);
+    let g = rgb.g.toString(16);
+    let b = rgb.b.toString(16);
+    if (r.length < 2)
+        r = `0${r}`;
+    if (g.length < 2)
+        g = `0${g}`;
+    if (b.length < 2)
+        b = `0${b}`;
+    return `#${r}${g}${b}`;
+};
+const yuvBlend = (yuvs, yuv, match, blend) => {
+    let diff = 0.0;
+    const blendYuv = yuvNumeric(yuv);
+    yuvs.forEach(yuvObject => {
+        const numericYuv = yuvNumeric(yuvObject);
+        const du = numericYuv.u - blendYuv.u;
+        const dv = numericYuv.v - blendYuv.v;
+        diff += Math.sqrt((du * du + dv * dv) / (255.0 * 255.0));
+    });
+    diff /= yuvs.length;
+    if (blend > 0.0001) {
+        return Math.min(1.0, Math.max(0.0, (diff - match) / blend)) * 255.0;
+    }
+    return (diff > match) ? 255 : 0;
+};
+const rgb2yuv = (rgb) => {
+    const ints = rgbNumeric(rgb);
+    return {
+        y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
+        u: ints.r * -0.168736 + ints.g * -0.331264 + ints.b * 0.500000 + 128,
+        v: ints.r * 0.500000 + ints.g * -0.418688 + ints.b * -0.081312 + 128
+    };
+};
+const Color = {
+    yuvBlend,
+    rgb2yuv,
+    yuv2rgb,
+    rgb2hex, // unused after 4.1 refactor, but perhaps needed?
+};
+
+const Id = () => {
+    return `${Date.now().toString(36)}${Math.random().toString(36).substr(2)}`;
+};
+
+const fromPoint = (pt, width) => pt.y * width + pt.x;
+const toPoint = (index, width) => ({ x: index % width, y: Math.floor(index / width) });
+const toIndex = (pixel) => pixel * 4;
+const rgbaAtIndex = (index, pixels) => ({
+    r: pixels[index],
+    g: pixels[index + 1],
+    b: pixels[index + 2],
+    a: pixels[index + 3],
+});
+const rgba = (pixel, data) => rgbaAtIndex(toIndex(pixel), data);
+const safePixel = (pixel, offsetPoint, size) => {
+    const { x, y } = offsetPoint;
+    const { width, height } = size;
+    const pt = toPoint(pixel, width);
+    pt.x = Math.max(0, Math.min(width - 1, pt.x + x));
+    pt.y = Math.max(0, Math.min(height - 1, pt.y + y));
+    return fromPoint(pt, width);
+};
+const safePixels = (pixel, size) => {
+    const depth = 3; // should be 4, no?
+    const pixels = [];
+    const halfSize = Math.floor(depth / 2);
+    for (let y = 0; y < depth; y += 1) {
+        for (let x = 0; x < depth; x += 1) {
+            const offsetPoint = { x: x - halfSize, y: y - halfSize };
+            pixels.push(safePixel(pixel, offsetPoint, size));
+        }
+    }
+    return pixels;
+};
+const surroundingRgbas = (pixel, data, size) => (safePixels(pixel, size).map(p => rgba(p, data)));
+const color = (value) => {
+    const string = String(value);
+    if (string.slice(0, 2) === "0x")
+        return `#${string.slice(2)}`;
+    return string;
+};
+const Pixel = {
+    color,
+    rgbaAtIndex,
+    surroundingRgbas,
+};
+
+const byFrame = (a, b) => a.frame - b.frame;
+const byTrack = (a, b) => a.track - b.track;
+const byLabel = (a, b) => {
+    if (a.label < b.label)
+        return -1;
+    if (a.label > b.label)
+        return 1;
+    return 0;
+};
+const Sort = { byFrame, byLabel, byTrack };
+
+const KEYS_SIZED = ['mm_width', 'mm_height'];
+const KEYS_GETTERS = [
+    "mm_dimensions",
+    "mm_duration",
+    "mm_fps",
+    "mm_height",
+    "mm_t",
+    "mm_width",
+    "t",
+];
+const KEYS = [
+    "ceil",
+    "floor",
+    "mm_cmp",
+    "mm_horz",
+    "mm_max",
+    "mm_min",
+    "mm_vert",
+    ...KEYS_GETTERS,
+    ...KEYS_SIZED
+];
+const $evaluator = "evaluator";
+const arrayFromElements = (elements) => {
+    if (typeof elements === "string")
+        return String(elements).split(',');
+    return elements;
+};
+const conditionalExpression = (conditional) => {
+    const { condition } = conditional;
+    // not strict equality, since we may have strings and numbers
+    if (Is.defined(conditional.is))
+        return `${condition}==${conditional.is}`;
+    const elements = conditional.in;
+    if (Is.undefined(elements))
+        return String(condition);
+    // support supplying values as array or comma-delimited string
+    const array = arrayFromElements(elements);
+    const strings = Is.string(array[0]);
+    const values = array.map(element => (strings ? `"${element}"` : element));
+    const type = strings ? 'String' : 'Number';
+    const expression = `([${values.join(',')}].includes(${type}(${condition})))`;
+    return expression;
+};
+const replaceOperators = (string) => (string.replaceAll(' or ', ' || ').replaceAll(' and ', ' && '));
+class Evaluator {
+    constructor(timeRange, context, size, mergeContext) {
+        this.ceil = Math.ceil;
+        this.floor = Math.floor;
+        this.map = new Map();
+        this.mm_max = Math.max;
+        this.mm_min = Math.min;
+        this.timeRange = timeRange;
+        this.context = context;
+        this.mergeContext = mergeContext;
+        this.size = size;
+        this.setInputSize(this.size);
+    }
+    conditionalValue(conditionals) {
+        // console.log(this.constructor.name, "conditionalValue", conditionals)
+        const trueConditional = conditionals.find((conditional) => {
+            const expression = replaceOperators(conditionalExpression(conditional));
+            const result = this.evaluateExpression(expression);
+            // console.log(this.constructor.name, "conditionalValue", expression, "=", result)
+            return result;
+        });
+        if (typeof trueConditional === "undefined")
+            throw Errors.eval.conditionTruth;
+        const { value } = trueConditional;
+        if (typeof value === "undefined")
+            throw Errors.eval.conditionValue;
+        // console.log(this.constructor.name, "conditionalValue", value.constructor.name, value)
+        return value;
+    }
+    get duration() { return this.timeRange.lengthSeconds; }
+    evaluate(value) {
+        // console.log(this.constructor.name, "evaluate", value)
+        if (typeof value === "number")
+            return value;
+        const expression = (typeof value === "string") ? String(value) : this.conditionalValue(value);
+        if (typeof expression === "number")
+            return expression;
+        const result = this.evaluateExpression(expression);
+        // console.log(this.constructor.name, "evaluate", expression, "=", result)
+        return result;
+    }
+    evaluateExpression(expression) {
+        const script = `return ${this.replaceKeys(expression)}`;
+        try {
+            // eslint-disable-next-line no-new-func
+            const method = new Function($evaluator, script);
+            const result = method(this);
+            // console.log(this.constructor.name, "evaluateExpression", expression, result)
+            return result;
+        }
+        catch (exception) {
+            //console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map)
+            return expression;
+        }
+    }
+    get(key) {
+        if (this.map.has(key)) {
+            // console.log("Evaluator.get returning value from map", key, this.map.get(key))
+            return this.map.get(key);
+        }
+        if (!KEYS.includes(key))
+            throw Errors.eval.get + key;
+        const value = this[key];
+        if (KEYS_GETTERS.includes(key))
+            return value;
+        if (typeof value === "function") {
+            // console.log("Evaluator.get returning method", key)
+            return value.bind(this);
+        }
+        throw Errors.eval.get + key;
+        // return // unknown key
+    }
+    has(key) { return KEYS.includes(key) || this.map.has(key); }
+    initialize(key, value) {
+        if (this.has(key))
+            return false;
+        this.set(key, value);
+        return true;
+    }
+    get inputSize() {
+        return {
+            width: Number(this.get("mm_input_width")),
+            height: Number(this.get("mm_input_height"))
+        };
+    }
+    get keys() { return [...new Set([...this.map.keys(), ...KEYS])]; }
+    mm_cmp(a, b, x, y) {
+        return ((a > b) ? x : y);
+    }
+    get mm_dimensions() { return `${this.mm_width}x${this.mm_height}`; }
+    get mm_duration() { return this.duration; }
+    get mm_fps() { return this.timeRange.fps; }
+    get mm_height() { return this.size.height; }
+    mm_horz(size, proud) {
+        return this.sized(0, size, proud);
+    }
+    get mm_t() { return this.position; }
+    mm_vert(size, proud) {
+        return this.sized(1, size, proud);
+    }
+    get mm_width() { return this.size.width; }
+    get position() { return this.timeRange.position; }
+    replaceKeys(value) {
+        let expression = value;
+        const expressions = Object.fromEntries(this.keys.map(key => ([
+            key, new RegExp(`\\b${key}\\b`, 'g')
+        ])));
+        Object.entries(expressions).forEach(([key, regExp]) => {
+            expression = expression.replaceAll(regExp, `${$evaluator}.get("${key}")`);
+        });
+        return expression;
+    }
+    set(key, value) { this.map.set(key, value); }
+    setInputSize({ width, height }) {
+        this.set("in_h", height);
+        this.set("mm_input_height", height);
+        this.set("in_w", width);
+        this.set("mm_input_width", width);
+    }
+    sized(vertical, size, proud) {
+        const scale = Is.float(size) ? Number(size) : parseFloat(String(size));
+        if (Is.nan(scale))
+            throw Errors.eval.number + 'scale';
+        const sizedKey = KEYS_SIZED[vertical];
+        const sizedValue = this.get(sizedKey);
+        const value = parseFloat(String(sizedValue));
+        if (Is.nan(value))
+            throw Errors.eval.number + `value ${sizedKey}=>${sizedValue}`;
+        const scaled = value * scale;
+        if (!proud)
+            return scaled;
+        const otherSizedKey = KEYS_SIZED[Math.abs(vertical - 1)];
+        const otherValue = this.get(otherSizedKey);
+        if (typeof otherValue === "undefined")
+            throw Errors.internal + 'otherValue';
+        const other = parseFloat(String(otherValue));
+        if (Is.nan(other))
+            throw Errors.eval.number + 'other';
+        if (other <= value)
+            return scaled;
+        return value + (scale - 1.0) * other;
+    }
+    get t() { return this.mm_duration; }
+}
+
+class TimeRange extends Time {
+    constructor(frame = 0, fps = 1, frames = 1) {
+        if (!(Is.integer(frames) && frames >= 0)) {
+            throw Errors.argument + 'frames';
+        }
+        super(frame, fps);
+        this.frames = frames;
+    }
+    get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
+    get end() { return this.frame + this.frames; }
+    get endTime() { return Time.fromArgs(this.end, this.fps); }
+    equalsTimeRange(timeRange) {
+        const [range1, range2] = scaleTimes(this, timeRange);
+        return range1.frame === range2.frame && range1.frames === range2.frames;
+    }
+    get lengthSeconds() { return Number(this.frames) / Number(this.fps); }
+    get position() { return Number(this.frame) / Number(this.frames); }
+    get startTime() { return Time.fromArgs(this.frame, this.fps); }
+    get copy() {
+        return new TimeRange(this.frame, this.fps, this.frames);
+    }
+    scale(fps = 1, rounding = "") {
+        if (this.fps === fps)
+            return this.copy;
+        const value = Number(this.frames) / (Number(this.fps) / Number(fps));
+        const time = super.scale(fps, rounding);
+        const frames = Math.max(1, roundWithMethod(value, rounding));
+        return new TimeRange(time.frame, time.fps, frames);
+    }
+    intersects(timeRange) {
+        const [range1, range2] = scaleTimes(this, timeRange);
+        if (range1.frame >= range2.end)
+            return false;
+        return range1.end > range2.frame;
+    }
+    intersectsTime(time) {
+        const [time1, scaledTime] = scaleTimes(this, time);
+        const scaledRange = time1;
+        return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end;
+    }
+    minEndTime(endTime) {
+        const [range, time] = scaleTimes(this, endTime);
+        range.frames = Math.min(range.frames, time.frame);
+        return range;
+    }
+    withFrame(frame) {
+        const range = this.copy;
+        range.frame = frame;
+        return range;
+    }
+    withFrames(frames) {
+        const range = this.copy;
+        range.frames = frames;
+        return range;
+    }
+    static fromArgs(frame = 0, fps = 1, frames = 1) {
+        return new TimeRange(frame, fps, frames);
+    }
+    static fromSeconds(start = 0, duration = 1) {
+        return this.fromArgs(start, 1, duration);
+    }
+    static fromTime(time, frames = 1) {
+        return this.fromArgs(time.frame, time.fps, frames);
+    }
+    static fromTimes(startTime, endTime) {
+        const [time1, time2] = scaleTimes(startTime, endTime);
+        if (time2.frame <= time1.frame)
+            throw Errors.argument;
+        const frames = time2.frame - time1.frame;
+        return this.fromArgs(time1.frame, time1.fps, frames);
+    }
+}
+
 class DefinitionClass {
     constructor(...args) {
         this.properties = [];
         this.retain = false;
         const [object] = args;
-        if (!Is.populatedObject(object))
-            throw Errors.unknown.definition;
         const { id, label, icon } = object;
-        if (!id)
-            throw Errors.id;
+        if (!(id && Is.populatedString(id)))
+            throw Errors.invalid.definition.id + JSON.stringify(object);
         this.id = id;
-        this.label = label || id;
+        if (label)
+            this.label = label;
         if (icon)
             this.icon = icon;
         this.properties.push(new Property({ name: "label", type: DataType.String, value: "" }));
@@ -2680,9 +1793,11 @@ class DefinitionClass {
         return this.properties.find(property => property.name === name);
     }
     toJSON() {
-        const object = { id: this.id, type: this.type, label: this.label };
+        const object = { id: this.id, type: this.type };
         if (this.icon)
             object.icon = this.icon;
+        if (this.label)
+            object.label = this.label;
         return object;
     }
     unload(_times = []) { }
@@ -2694,6 +1809,50 @@ class DefinitionClass {
     }
 }
 
+const Default = {
+    label: "Unlabeled",
+    masher: {
+        buffer: 10,
+        fps: 30,
+        loop: true,
+        volume: 0.75,
+        precision: 3,
+        autoplay: false,
+    },
+    mash: {
+        label: "Unlabeled Mash",
+        quantize: 10,
+        backcolor: "#00000000",
+        gain: 0.75,
+        buffer: 10,
+    },
+    instance: {
+        audio: { gain: 1.0, trim: 0 },
+        video: { speed: 1.0 }
+    },
+    definition: {
+        frame: { duration: 2 },
+        image: { duration: 2 },
+        theme: { duration: 3 },
+        transition: { duration: 1 },
+        video: { pattern: '%.jpg', fps: 30, increment: 1, begin: 1 },
+    },
+};
+
+class Parameter {
+    constructor({ name, value }) {
+        if (!name)
+            throw Errors.invalid.name;
+        if (typeof value === "undefined")
+            throw Errors.invalid.value;
+        this.name = String(name);
+        this.value = value;
+    }
+    toJSON() {
+        return { name: this.name, value: this.value };
+    }
+}
+
 const AudibleGainDelimiter = ',';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function AudibleMixin(Base) {
@@ -2701,9 +1860,9 @@ function AudibleMixin(Base) {
         constructor(...args) {
             super(...args);
             this.audible = true;
-            this.gain = Default.clip.audio.gain;
+            this.gain = Default.instance.audio.gain;
             this.gainPairs = [];
-            this.trim = Default.clip.audio.trim;
+            this.trim = Default.instance.audio.trim;
             const [object] = args;
             const { gain, trim } = object;
             if (typeof gain !== "undefined") {
@@ -2744,40 +1903,11 @@ function AudibleMixin(Base) {
             const space = trim ? trim : this.trim;
             return Math.floor(this.definition.duration * quantize) - space;
         }
-        mediaTime(time, addOneFrame = false) {
-            const { fps } = time;
-            const endFrame = this.frame + this.frames;
-            const endTime = Time.fromArgs(endFrame, fps);
-            const limitedTime = time.min(endTime);
-            const startTime = Time.fromArgs(this.frame, fps);
-            let mediaTime = limitedTime.subtract(startTime);
-            if (addOneFrame) {
-                const addTime = Time.fromArgs(1, fps);
-                mediaTime = mediaTime.add(addTime);
-            }
-            if (this.trim === Default.clip.audio.trim)
-                return mediaTime;
-            const addTime = Time.fromArgs(this.trim, fps);
-            return mediaTime.add(addTime);
-        }
-        mediaTimeRange(timeRange) {
-            const addOneFrame = (timeRange.frames > 1);
-            return TimeRange.fromTimes(this.mediaTime(timeRange.startTime), this.mediaTime(timeRange.endTime, addOneFrame));
-        }
-        // timeRangeRelative(time : Time, quantize : number) : TimeRange {
-        //   const range = super.timeRangeRelative(time, quantize)
-        //   return this.mediaTimeRange(range)
-        //   // this.timeRange(quantize).scale(time.fps)
-        //   // const trimTime = Time.fromArgs(this.trim, quantize).scale(time.fps)
-        //   // const frame = time.frame + trimTime.frame - range.frame
-        //   // const frames = range.frames - trimTime.frame
-        //   // return TimeRange.fromArgs(frame, range.fps, frames)
-        // }
         toJSON() {
             const object = super.toJSON();
-            if (this.trim !== Default.clip.audio.trim)
+            if (this.trim !== Default.instance.audio.trim)
                 object.trim = this.trim;
-            if (this.gain !== Default.clip.audio.gain)
+            if (this.gain !== Default.instance.audio.gain)
                 object.gain = this.gain;
             return object;
         }
@@ -2817,15 +1947,13 @@ function ClipMixin(Base) {
             return Time.fromArgs(this.endFrame, quantize);
         }
         maxFrames(_quantize, _trim) { return 0; }
-        mediaTime(time) { return time; }
-        mediaTimeRange(timeRange) { return timeRange; }
         time(quantize) { return Time.fromArgs(this.frame, quantize); }
         timeRange(quantize) {
             return TimeRange.fromArgs(this.frame, quantize, this.frames);
         }
         timeRangeRelative(time, quantize) {
             const range = this.timeRange(quantize).scale(time.fps);
-            const frame = time.frame - range.frame;
+            const frame = Math.max(0, time.frame - range.frame);
             return range.withFrame(frame);
         }
         toJSON() {
@@ -2862,179 +1990,13 @@ function ClipDefinitionMixin(Base) {
         }
         get duration() {
             if (!this._duration) {
-                const object = Default.media;
+                const object = Default.definition;
                 this._duration = Number(object[this.type].duration);
             }
             return this._duration;
         }
         set duration(value) { this._duration = value; }
     };
-}
-
-const CacheKeyPrefix = 'cachekey';
-class CacheClass {
-    constructor() {
-        this.cachedByKey = new Map();
-        this.urlsByKey = new Map();
-    }
-    add(url, value) {
-        console.log(this.constructor.name, "add", url, value.constructor.name);
-        const key = this.key(url);
-        this.cachedByKey.set(key, value);
-        this.urlsByKey.set(key, url);
-    }
-    cached(url) {
-        if (!Is.populatedString(url))
-            throw Errors.argument + 'url';
-        return this.cachedByKey.has(this.key(url));
-    }
-    get(url) {
-        return this.cachedByKey.get(this.key(url));
-    }
-    key(url) {
-        if (!Is.populatedString(url)) {
-            console.trace();
-            throw Errors.argument + 'url';
-        }
-        return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '');
-    }
-    remove(url) {
-        console.log(this.constructor.name, "remove", url);
-        const key = this.key(url);
-        this.cachedByKey.delete(key);
-        this.urlsByKey.delete(key);
-    }
-}
-const Cache = new CacheClass();
-
-class Processor {
-    process(_url, _buffer) {
-        return Promise.resolve();
-    }
-}
-
-class AudioProcessor extends Processor {
-    constructor(object) {
-        super();
-        if (object && object.audibleContext) {
-            this._audibleContext = object.audibleContext;
-        }
-        else
-            this._audibleContext = ContextFactoryInstance.audible();
-    }
-    get audibleContext() { return this._audibleContext; }
-    set audibleContext(value) { this._audibleContext = value; }
-    process(_url, buffer) {
-        return this.audibleContext.decode(buffer);
-    }
-}
-
-class FontProcessor extends Processor {
-    process(url, buffer) {
-        const family = Cache.key(url);
-        const face = new FontFace(family, buffer);
-        const promise = face.load().then(() => {
-            document.fonts.add(face);
-            return { family };
-        });
-        return promise;
-    }
-}
-
-class ModuleProcessor extends Processor {
-    process(_url, _buffer) {
-        return Promise.resolve();
-    }
-}
-
-class Loader {
-    async loadUrl(url) {
-        if (Cache.cached(url)) {
-            const promiseOrCached = Cache.get(url);
-            if (promiseOrCached instanceof Promise)
-                return promiseOrCached;
-            return Promise.resolve();
-        }
-        const promise = this.requestUrl(url);
-        Cache.add(url, promise);
-        const processed = await promise;
-        Cache.add(url, processed);
-        return processed;
-    }
-    requestUrl(_url) { return Promise.resolve(); }
-}
-
-const classes$2 = {
-    Audio: AudioProcessor,
-    Font: FontProcessor,
-    Module: ModuleProcessor,
-};
-class ProcessorClass {
-    audio(object) {
-        return new classes$2.Audio(object);
-    }
-    font() { return new classes$2.Font(); }
-    install(type, loader) {
-        classes$2[Capitalize(type)] = loader;
-    }
-    module() { return new classes$2.Module(); }
-}
-const ProcessorFactory = new ProcessorClass();
-
-class AudioLoader extends Loader {
-    constructor(object) {
-        super();
-        this.type = LoadType.Audio;
-        if (object && object.audibleContext) {
-            this._audibleContext = object.audibleContext;
-        }
-        else
-            this._audibleContext = ContextFactoryInstance.audible();
-    }
-    get audibleContext() { return this._audibleContext; }
-    set audibleContext(value) { this._audibleContext = value; }
-    async requestUrl(url) {
-        return fetch(url).then(response => {
-            return response.arrayBuffer();
-        }).then(loaded => {
-            const options = { audibleContext: this.audibleContext };
-            const processor = ProcessorFactory.audio(options);
-            return processor.process(url, loaded);
-        });
-    }
-}
-
-class FontLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = LoadType.Font;
-    }
-    requestUrl(url) {
-        return fetch(url)
-            .then(response => response.arrayBuffer())
-            .then(buffer => ProcessorFactory.font().process(url, buffer));
-    }
-}
-
-class ImageLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = LoadType.Image;
-    }
-    requestUrl(url) {
-        const image = new Image();
-        image.crossOrigin = "Anonymous";
-        image.src = url;
-        return image.decode().then(() => Promise.resolve(image));
-    }
-}
-
-class ModuleLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = LoadType.Module;
-    }
-    async requestUrl(url) { return import(url); }
 }
 
 const classes$1 = {
@@ -3124,6 +2086,65 @@ function AudibleDefinitionMixin(Base) {
     };
 }
 
+const definitionsMap = new Map();
+const DefinitionsByType = new Map();
+const definitionsByType = (type) => {
+    const list = DefinitionsByType.get(type);
+    if (list)
+        return list;
+    const definitionsList = [];
+    DefinitionsByType.set(type, definitionsList);
+    return definitionsList;
+};
+const definitionsClear = () => { definitionsMap.clear(); };
+const definitionsFont = definitionsByType(DefinitionType.Font);
+const definitionsFromId = (id) => {
+    if (!definitionsInstalled(id)) {
+        console.trace(id);
+        throw Errors.unknown.definition + 'definitionsFromId ' + id;
+    }
+    const definition = definitionsMap.get(id);
+    if (!definition)
+        throw Errors.internal;
+    return definition;
+};
+const definitionsInstall = (definition) => {
+    const { type, id } = definition;
+    // console.log("definitionsInstall", type, id)
+    definitionsMap.set(id, definition);
+    definitionsByType(type).push(definition);
+};
+const definitionsInstalled = (id) => definitionsMap.has(id);
+const definitionsMerger = definitionsByType(DefinitionType.Merger);
+const definitionsScaler = definitionsByType(DefinitionType.Scaler);
+const definitionsUninstall = (id) => {
+    if (!definitionsInstalled(id)) {
+        console.log("definitionsUninstall", id);
+        return;
+    }
+    const definition = definitionsFromId(id);
+    definitionsMap.delete(id);
+    const { type } = definition;
+    const definitions = definitionsByType(type);
+    const index = definitions.indexOf(definition);
+    if (index < 0)
+        throw Errors.internal + 'definitionsUninstall';
+    definitions.splice(index, 1);
+    // console.log("uninstalled", id)
+};
+const Definitions = {
+    byType: definitionsByType,
+    clear: definitionsClear,
+    font: definitionsFont,
+    fromId: definitionsFromId,
+    install: definitionsInstall,
+    installed: definitionsInstalled,
+    map: definitionsMap,
+    merger: definitionsMerger,
+    scaler: definitionsScaler,
+    uninstall: definitionsUninstall,
+};
+
 const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionClass);
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip);
 class AudioDefinitionClass extends AudioDefinitionWithAudible {
@@ -3142,6 +2163,11 @@ class AudioDefinitionClass extends AudioDefinitionWithAudible {
     }
 }
 
+const Factories = {};
+
+/**
+ * @internal
+ */
 const audioDefinition = (object) => {
     const { id } = object;
     if (!id)
@@ -3150,18 +2176,33 @@ const audioDefinition = (object) => {
         return Definitions.fromId(id);
     return new AudioDefinitionClass(object);
 };
+/**
+ * @internal
+ */
 const audioDefinitionFromId = (id) => {
     return audioDefinition({ id });
 };
+/**
+ * @internal
+ */
 const audioInstance = (object) => {
     const definition = audioDefinition(object);
     const instance = definition.instanceFromObject(object);
     return instance;
 };
+/**
+ * @internal
+ */
 const audioFromId = (id) => {
     return audioInstance({ id });
 };
+/**
+ * @internal
+ */
 const audioInitialize = () => { };
+/**
+ * @internal
+ */
 const audioDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
@@ -3247,10 +2288,6 @@ class FilterDefinitionClass extends DefinitionClass {
 }
 
 class BlendFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'blend';
-    }
     // eslint-disable-next-line camelcase
     draw(evaluator, evaluated) {
         const { context, mergeContext } = evaluator;
@@ -3263,7 +2300,7 @@ class BlendFilter extends FilterDefinitionClass {
         if (typeof mode === "undefined")
             throw Errors.unknown.mode;
         const { identifier } = mode;
-        mergeContext.drawWithComposite(context.imageSource, identifier);
+        mergeContext.drawWithComposite(context.drawingSource, identifier);
         return mergeContext;
     }
 }
@@ -3271,7 +2308,7 @@ class BlendFilter extends FilterDefinitionClass {
 class ChromaKeyFilter extends FilterDefinitionClass {
     constructor() {
         super(...arguments);
-        this.id = 'chromakey';
+        // id = 'chromakey'
         this.parameters = [
             new Parameter({ name: "color", value: "color" }),
             new Parameter({ name: "similarity", value: "similarity" }),
@@ -3294,7 +2331,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
         const pixelsYuv = accurate ? (this.yuvsFromPixelsAccurate(pixelsRgb, width, height) // slow!
         ) : this.yuvsFromPixels(pixelsRgb);
         let offset = 0;
-        pixelsYuv.forEach(matrix => {
+        pixelsYuv.reverse().forEach(matrix => {
             pixelsRgb[offset + 3] = Color.yuvBlend(matrix, yuv, similarity, blend);
             offset += 4;
         });
@@ -3312,8 +2349,8 @@ class ChromaKeyFilter extends FilterDefinitionClass {
         const array = [];
         for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
             const size = { width, height };
-            const rgbs = Pixel.rgbs(index * 4, pixels, size);
-            array.push(rgbs.map(rgb => Color.rgb2yuv(rgb)));
+            const surroundingRgbas = Pixel.surroundingRgbas(index * 4, pixels, size);
+            array.push(surroundingRgbas.map(rgb => Color.rgb2yuv(rgb)));
         }
         return array;
     }
@@ -3322,7 +2359,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
 class ColorFilter extends FilterDefinitionClass {
     constructor() {
         super(...arguments);
-        this.id = 'color';
+        // id = 'color'
         this.parameters = [
             new Parameter({ name: "color", value: "color" }),
             new Parameter({ name: "size", value: "mm_dimensions" }),
@@ -3341,10 +2378,6 @@ class ColorFilter extends FilterDefinitionClass {
 }
 
 class ColorChannelMixerFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'colorchannelmixer';
-    }
     draw(evaluator, evaluated) {
         const map = Object.fromEntries(Object.entries(evaluated).map(entry => {
             const [key, value] = entry;
@@ -3395,10 +2428,6 @@ const parse = (evaluated) => {
     return result;
 };
 class ConvolutionFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'convolution';
-    }
     draw(evaluator, evaluated) {
         const options = parse(evaluated);
         const { context } = evaluator;
@@ -3411,14 +2440,14 @@ class ConvolutionFilter extends FilterDefinitionClass {
         const outputData = output.data;
         const area = width * height;
         for (let pixel = 0; pixel < area; pixel += 1) {
-            const rgbs = Pixel.rgbs(pixel, inputData, size);
+            const rgbas = Pixel.surroundingRgbas(pixel, inputData, size);
             RBGA.split('').forEach((channel, index) => {
                 const rdiv = options.rdiv[channel];
                 const matrix = options.matrix[channel];
                 const bias = options.bias[channel];
                 let sum = 0;
                 for (let y = 0; y < 9; y += 1)
-                    sum += rgbs[y][channel] * matrix[y];
+                    sum += rgbas[y][channel] * matrix[y];
                 sum = Math.floor(sum * rdiv + bias + 0.5);
                 outputData[pixel * 4 + index] = sum;
             });
@@ -3429,10 +2458,6 @@ class ConvolutionFilter extends FilterDefinitionClass {
 }
 
 class CropFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'crop';
-    }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
         const x = evaluated.x || 0;
@@ -3451,9 +2476,10 @@ class CropFilter extends FilterDefinitionClass {
         const inRect = { x, y, ...fromSize };
         const drawing = ContextFactoryInstance.toSize(fromSize);
         // console.log(this.constructor.name, "draw", inRect, fromSize)
-        drawing.drawInRectFromSize(context.imageSource, inRect, fromSize);
+        drawing.drawInRectFromSize(context.drawingSource, inRect, fromSize);
         return drawing;
     }
+    // id = 'crop'
     scopeSet(evaluator) {
         evaluator.setInputSize(evaluator.context.size);
         evaluator.initialize("x", '((in_w - out_w) / 2)');
@@ -3462,10 +2488,6 @@ class CropFilter extends FilterDefinitionClass {
 }
 
 class DrawBoxFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'drawbox';
-    }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
         const color = isPopulatedString(evaluated.color) ? evaluated.color : 'black';
@@ -3478,17 +2500,15 @@ class DrawBoxFilter extends FilterDefinitionClass {
     }
 }
 
-const label$i = "Blackout Two AM";
-const id$i = "com.moviemasher.font.default";
-const type$i = "font";
-const source = "../examples/javascript/media/font/blackout/theleagueof-blackout/webfonts/blackout_two_am-webfont.ttf";
-const family = "Blackout Two AM";
+const label$j = "Baloo Tammudu 2";
+const id$j = "com.moviemasher.font.default";
+const type$j = "font";
+const source = "Assets/BlackoutTwoAM.ttf";
 var fontDefaultJson = {
-  label: label$i,
-  id: id$i,
-  type: type$i,
-  source: source,
-  family: family
+  label: label$j,
+  id: id$j,
+  type: type$j,
+  source: source
 };
 
 class FontClass extends InstanceClass {
@@ -3580,7 +2600,7 @@ const mmFontFamily = (id) => Cache.key(mmFontFile(id));
 class DrawTextFilter extends FilterDefinitionClass {
     constructor() {
         super(...arguments);
-        this.id = 'drawtext';
+        // id = 'drawtext'
         this.parameters = [
             new Parameter({ name: "fontcolor", value: "#000000" }),
             new Parameter({ name: "shadowcolor", value: "#FFFFFF" }),
@@ -3627,31 +2647,27 @@ class DrawTextFilter extends FilterDefinitionClass {
 }
 
 class FadeFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'fade';
-    }
     draw(evaluator) {
         const { context } = evaluator;
         const drawing = ContextFactoryInstance.toSize(context.size);
-        drawing.drawWithAlpha(context.imageSource, evaluator.position);
+        const alpha = Number(evaluator.get('alpha') || evaluator.position);
+        const type = String(evaluator.get('type') || 'in');
+        const typedAlpha = type === 'in' ? alpha : 1.0 - alpha;
+        drawing.drawWithAlpha(context.drawingSource, typedAlpha);
         return drawing;
     }
 }
 
 class OverlayFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'overlay';
-    }
     draw(evaluator, evaluated) {
         const { x, y } = evaluated;
         const { context, mergeContext } = evaluator;
         if (typeof mergeContext === "undefined")
             throw Errors.internal + 'OverlayFilter mergeContext';
-        mergeContext.drawAtPoint(context.imageSource, { x: x || 0, y: y || 0 });
+        mergeContext.drawAtPoint(context.drawingSource, { x: x || 0, y: y || 0 });
         return mergeContext;
     }
+    // id = 'overlay'
     scopeSet(evaluator) {
         const { width, height } = evaluator.context.size;
         evaluator.set("overlay_w", width);
@@ -3660,10 +2676,6 @@ class OverlayFilter extends FilterDefinitionClass {
 }
 
 class ScaleFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'scale';
-    }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
         let outWidth = evaluated.w || evaluated.width || 0;
@@ -3680,9 +2692,10 @@ class ScaleFilter extends FilterDefinitionClass {
         const fromSize = { width: outWidth, height: outHeight };
         const drawing = ContextFactoryInstance.toSize(fromSize);
         // console.log(this.constructor.name, "draw", inSize, fromSize)
-        drawing.drawInSizeFromSize(context.imageSource, inSize, fromSize);
+        drawing.drawInSizeFromSize(context.drawingSource, inSize, fromSize);
         return drawing;
     }
+    // id = 'scale'
     scopeSet(evaluator) {
         const { width, height } = evaluator.context.size;
         evaluator.set("in_h", height);
@@ -3693,56 +2706,45 @@ class ScaleFilter extends FilterDefinitionClass {
 }
 
 class SetSarFilter extends FilterDefinitionClass {
-    constructor() {
-        super(...arguments);
-        this.id = 'setsar';
-    }
     draw(evaluator, _evaluated) {
         return evaluator.context;
     }
 }
 
-const Classes = {
-    setsar: SetSarFilter,
-    blend: BlendFilter,
-    chromakey: ChromaKeyFilter,
-    color: ColorFilter,
-    colorchannelmixer: ColorChannelMixerFilter,
-    convolution: ConvolutionFilter,
-    crop: CropFilter,
-    drawbox: DrawBoxFilter,
-    drawtext: DrawTextFilter,
-    fade: FadeFilter,
-    overlay: OverlayFilter,
-    scale: ScaleFilter,
-};
 const filterDefinition = (object) => {
     const { id } = object;
-    if (!(id && typeof id === "string" && id.length))
+    if (!(id && Is.populatedString(id)))
         throw Errors.id;
     if (Definitions.installed(id))
         return Definitions.fromId(id);
-    if (!Classes[id])
-        throw Errors.unknown.filter;
-    return new Classes[id]({ id, type: DefinitionType.Filter });
+    console.trace("WTF");
+    throw Errors.invalid.definition.id + ' filterDefinition ' + id;
 };
 const filterDefinitionFromId = (id) => {
     return filterDefinition({ id });
 };
 const filterInstance = (object) => {
-    const { id } = object;
-    if (!id)
-        throw Errors.id;
-    return filterDefinition({ id }).instanceFromObject(object);
+    return filterDefinition(object).instanceFromObject(object);
 };
-const filterFromId = (id) => {
-    return filterInstance({ id });
+const filterFromId = (id) => { return filterInstance({ id }); };
+const filterInitialize = () => {
+    new ConvolutionFilter({ id: 'convolution', type: DefinitionType.Filter });
+    new SetSarFilter({ id: 'setsar', type: DefinitionType.Filter });
+    new BlendFilter({ id: 'blend', type: DefinitionType.Filter });
+    new ChromaKeyFilter({ id: 'chromakey', type: DefinitionType.Filter });
+    new ColorFilter({ id: 'color', type: DefinitionType.Filter });
+    new ColorChannelMixerFilter({ id: 'colorchannelmixer', type: DefinitionType.Filter });
+    new CropFilter({ id: 'crop', type: DefinitionType.Filter });
+    new DrawBoxFilter({ id: 'drawbox', type: DefinitionType.Filter });
+    new DrawTextFilter({ id: 'drawtext', type: DefinitionType.Filter });
+    new FadeFilter({ id: 'fade', type: DefinitionType.Filter });
+    new OverlayFilter({ id: 'overlay', type: DefinitionType.Filter });
+    new ScaleFilter({ id: 'scale', type: DefinitionType.Filter });
 };
-const filterInitialize = () => { };
 const filterDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.invalid.definition.id + 'filterDefine';
     Definitions.uninstall(id);
     return filterDefinition(object);
 };
@@ -3762,6 +2764,7 @@ function ModularDefinitionMixin(Base) {
         constructor(...args) {
             super(...args);
             this.filters = [];
+            this.retain = true;
             const [object] = args;
             const { properties, filters } = object;
             if (properties) {
@@ -3817,6 +2820,60 @@ function ModularDefinitionMixin(Base) {
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function ModularMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            const [object] = args;
+            this.constructProperties(object);
+        }
+        constructProperties(object = {}) {
+            // console.log(this.constructor.name, "constructProperties", object, this.propertyNames)
+            this.definition.properties.forEach(property => {
+                const { name } = property;
+                if (typeof object[name] !== "undefined")
+                    this[name] = object[name];
+                else if (typeof this[name] === "undefined")
+                    this[name] = property.value;
+            });
+        }
+        get definitions() {
+            return [...super.definitions, ...this.modularDefinitions];
+        }
+        load(quantize, start, end) {
+            const promises = [super.load(quantize, start, end)];
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            this.modularDefinitions.forEach(definition => {
+                promises.push(definition.load(startTime, endTime));
+            });
+            return Promise.all(promises).then();
+        }
+        loaded(quantize, start, end) {
+            if (!super.load(quantize, start, end))
+                return false;
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            return this.modularDefinitions.every(definition => definition.loaded(startTime, endTime));
+        }
+        get modularDefinitions() {
+            const modular = this.definition.propertiesModular;
+            const ids = modular.map(property => String(this.value(property.name)));
+            return ids.map(id => Definitions.fromId(id));
+        }
+    };
+}
+
+const EffectWithModular = ModularMixin(InstanceClass);
+class EffectClass extends EffectWithModular {
+    toJSON() {
+        const object = super.toJSON();
+        object.id = this.id;
+        return object;
+    }
+}
+
 const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
 class EffectDefinitionClass extends EffectDefinitionWithModular {
     constructor(...args) {
@@ -3830,12 +2887,12 @@ class EffectDefinitionClass extends EffectDefinitionWithModular {
     }
 }
 
-const label$h = "Blur";
-const type$h = "effect";
-const id$h = "com.moviemasher.effect.blur";
-const properties$d = {
+const label$i = "Blur";
+const type$i = "effect";
+const id$i = "com.moviemasher.effect.blur";
+const properties$e = {
 };
-const filters$g = [
+const filters$h = [
   {
     id: "convolution",
     parameters: [
@@ -3875,17 +2932,21 @@ const filters$g = [
   }
 ];
 var effectBlurJson = {
-  label: label$h,
-  type: type$h,
-  id: id$h,
-  properties: properties$d,
-  filters: filters$g
+  label: label$i,
+  type: type$i,
+  id: id$i,
+  properties: properties$e,
+  filters: filters$h
 };
 
-const label$g = "Chromakey";
-const type$g = "effect";
-const id$g = "com.moviemasher.effect.chromakey";
-const properties$c = {
+const label$h = "Chromakey";
+const type$h = "effect";
+const id$h = "com.moviemasher.effect.chromakey";
+const properties$d = {
+  accurate: {
+    type: "number",
+    value: 0
+  },
   chroma_blend: {
     type: "number",
     value: 0.01
@@ -3899,7 +2960,7 @@ const properties$c = {
     value: "rgb(0,255,0)"
   }
 };
-const filters$f = [
+const filters$g = [
   {
     id: "chromakey",
     parameters: [
@@ -3919,19 +2980,19 @@ const filters$f = [
   }
 ];
 var effectChromaKeyJson = {
-  label: label$g,
-  type: type$g,
-  id: id$g,
-  properties: properties$c,
-  filters: filters$f
+  label: label$h,
+  type: type$h,
+  id: id$h,
+  properties: properties$d,
+  filters: filters$g
 };
 
-const label$f = "Emboss";
-const type$f = "effect";
-const id$f = "com.moviemasher.effect.emboss";
-const properties$b = {
+const label$g = "Emboss";
+const type$g = "effect";
+const id$g = "com.moviemasher.effect.emboss";
+const properties$c = {
 };
-const filters$e = [
+const filters$f = [
   {
     id: "convolution",
     parameters: [
@@ -3955,19 +3016,19 @@ const filters$e = [
   }
 ];
 var effectEmbossJson = {
-  label: label$f,
-  type: type$f,
-  id: id$f,
-  properties: properties$b,
-  filters: filters$e
+  label: label$g,
+  type: type$g,
+  id: id$g,
+  properties: properties$c,
+  filters: filters$f
 };
 
-const label$e = "Grayscale";
-const type$e = "effect";
-const id$e = "com.moviemasher.effect.grayscale";
-const properties$a = {
+const label$f = "Grayscale";
+const type$f = "effect";
+const id$f = "com.moviemasher.effect.grayscale";
+const properties$b = {
 };
-const filters$d = [
+const filters$e = [
   {
     id: "colorchannelmixer",
     parameters: [
@@ -4039,19 +3100,19 @@ const filters$d = [
   }
 ];
 var effectGrayscaleJson = {
-  label: label$e,
-  type: type$e,
-  id: id$e,
-  properties: properties$a,
-  filters: filters$d
+  label: label$f,
+  type: type$f,
+  id: id$f,
+  properties: properties$b,
+  filters: filters$e
 };
 
-const label$d = "Sepia";
-const type$d = "effect";
-const id$d = "com.moviemasher.effect.sepia";
-const properties$9 = {
+const label$e = "Sepia";
+const type$e = "effect";
+const id$e = "com.moviemasher.effect.sepia";
+const properties$a = {
 };
-const filters$c = [
+const filters$d = [
   {
     id: "colorchannelmixer",
     parameters: [
@@ -4123,19 +3184,19 @@ const filters$c = [
   }
 ];
 var effectSepiaJson = {
-  label: label$d,
-  type: type$d,
-  id: id$d,
-  properties: properties$9,
-  filters: filters$c
+  label: label$e,
+  type: type$e,
+  id: id$e,
+  properties: properties$a,
+  filters: filters$d
 };
 
-const label$c = "Sharpen";
-const type$c = "effect";
-const id$c = "com.moviemasher.effect.sharpen";
-const properties$8 = {
+const label$d = "Sharpen";
+const type$d = "effect";
+const id$d = "com.moviemasher.effect.sharpen";
+const properties$9 = {
 };
-const filters$b = [
+const filters$c = [
   {
     id: "convolution",
     parameters: [
@@ -4159,17 +3220,17 @@ const filters$b = [
   }
 ];
 var effectSharpenJson = {
-  label: label$c,
-  type: type$c,
-  id: id$c,
-  properties: properties$8,
-  filters: filters$b
+  label: label$d,
+  type: type$d,
+  id: id$d,
+  properties: properties$9,
+  filters: filters$c
 };
 
-const label$b = "Text Box";
-const type$b = "effect";
-const id$b = "com.moviemasher.effect.textbox";
-const properties$7 = {
+const label$c = "Text Box";
+const type$c = "effect";
+const id$c = "com.moviemasher.effect.textbox";
+const properties$8 = {
   string: {
     type: "string",
     value: "Text Box"
@@ -4207,7 +3268,7 @@ const properties$7 = {
     value: 0
   }
 };
-const filters$a = [
+const filters$b = [
   {
     id: "drawtext",
     parameters: [
@@ -4251,34 +3312,20 @@ const filters$a = [
   }
 ];
 var effectTextJson = {
-  label: label$b,
-  type: type$b,
-  id: id$b,
-  properties: properties$7,
-  filters: filters$a
+  label: label$c,
+  type: type$c,
+  id: id$c,
+  properties: properties$8,
+  filters: filters$b
 };
 
-const Objects$1 = {
-    "com.moviemasher.effect.blur": effectBlurJson,
-    "com.moviemasher.effect.chromakey": effectChromaKeyJson,
-    "com.moviemasher.effect.emboss": effectEmbossJson,
-    "com.moviemasher.effect.grayscale": effectGrayscaleJson,
-    "com.moviemasher.effect.sepia": effectSepiaJson,
-    "com.moviemasher.effect.sharpen": effectSharpenJson,
-    "com.moviemasher.effect.text": effectTextJson,
-};
 const effectDefinition = (object) => {
     const { id } = object;
-    if (!(id && id.length))
+    if (!(id && Is.populatedString(id)))
         throw Errors.id;
-    if (!Definitions.installed(id)) {
-        const options = { type: DefinitionType.Effect };
-        if (Objects$1[id])
-            Object.assign(options, Objects$1[id]);
-        Object.assign(options, object);
-        new EffectDefinitionClass(options);
-    }
-    return Definitions.fromId(id);
+    if (Definitions.installed(id))
+        return Definitions.fromId(id);
+    return new EffectDefinitionClass({ ...object, type: DefinitionType.Effect });
 };
 const effectDefinitionFromId = (id) => {
     return effectDefinition({ id });
@@ -4291,7 +3338,15 @@ const effectInstance = (object) => {
 const effectFromId = (id) => {
     return effectInstance({ id });
 };
-const effectInitialize = () => { };
+const effectInitialize = () => {
+    new EffectDefinitionClass(effectBlurJson);
+    new EffectDefinitionClass(effectChromaKeyJson);
+    new EffectDefinitionClass(effectEmbossJson);
+    new EffectDefinitionClass(effectGrayscaleJson);
+    new EffectDefinitionClass(effectSepiaJson);
+    new EffectDefinitionClass(effectSharpenJson);
+    new EffectDefinitionClass(effectTextJson);
+};
 const effectDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
@@ -4309,11 +3364,87 @@ const EffectFactoryImplementation = {
 };
 Factories.effect = EffectFactoryImplementation;
 
+class MovieMasher {
+    static get [DefinitionType.Audio]() {
+        const factory = Factories[DefinitionType.Audio];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Audio;
+        return factory;
+    }
+    static get [DefinitionType.Effect]() {
+        const factory = Factories[DefinitionType.Effect];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Effect;
+        return factory;
+    }
+    static get [DefinitionType.Filter]() {
+        const factory = Factories[DefinitionType.Filter];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Filter;
+        return factory;
+    }
+    static get [DefinitionType.Font]() {
+        const factory = Factories[DefinitionType.Font];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Font;
+        return factory;
+    }
+    static get [DefinitionType.Image]() {
+        const factory = Factories[DefinitionType.Image];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Image;
+        return factory;
+    }
+    static get [DefinitionType.Mash]() {
+        const factory = Factories[DefinitionType.Mash];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Mash;
+        return factory;
+    }
+    static get [DefinitionType.Masher]() {
+        const factory = Factories[DefinitionType.Masher];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Masher;
+        return factory;
+    }
+    static get [DefinitionType.Merger]() {
+        const factory = Factories[DefinitionType.Merger];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Merger;
+        return factory;
+    }
+    static get [DefinitionType.Scaler]() {
+        const factory = Factories[DefinitionType.Scaler];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Scaler;
+        return factory;
+    }
+    static get [DefinitionType.Theme]() {
+        const factory = Factories[DefinitionType.Theme];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Theme;
+        return factory;
+    }
+    static get [DefinitionType.Transition]() {
+        const factory = Factories[DefinitionType.Transition];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Transition;
+        return factory;
+    }
+    static get [DefinitionType.Video]() {
+        const factory = Factories[DefinitionType.Video];
+        if (!factory)
+            throw Errors.invalid.factory + DefinitionType.Video;
+        return factory;
+    }
+    constructor() { }
+}
+
 const MergerWithModular = ModularMixin(InstanceClass);
 class MergerClass extends MergerWithModular {
     get id() { return this.definition.id; }
     set id(value) {
-        this.definition = Factory.merger.definitionFromId(value);
+        this.definition = MovieMasher.merger.definitionFromId(value);
         this.constructProperties();
     }
 }
@@ -4336,16 +3467,16 @@ class MergerDefinitionClass extends MergerDefinitionWithModular {
     }
 }
 
-const label$a = "Blend";
-const id$a = "com.moviemasher.merger.blend";
-const type$a = "merger";
-const properties$6 = {
+const label$b = "Blend";
+const id$b = "com.moviemasher.merger.blend";
+const type$b = "merger";
+const properties$7 = {
   mode: {
     type: "mode",
     value: "normal"
   }
 };
-const filters$9 = [
+const filters$a = [
   {
     id: "blend",
     parameters: [
@@ -4361,17 +3492,17 @@ const filters$9 = [
   }
 ];
 var mergerBlendJson = {
-  label: label$a,
-  id: id$a,
-  type: type$a,
-  properties: properties$6,
-  filters: filters$9
+  label: label$b,
+  id: id$b,
+  type: type$b,
+  properties: properties$7,
+  filters: filters$a
 };
 
-const label$9 = "Center";
-const id$9 = "com.moviemasher.merger.center";
-const type$9 = "merger";
-const filters$8 = [
+const label$a = "Center";
+const id$a = "com.moviemasher.merger.center";
+const type$a = "merger";
+const filters$9 = [
   {
     id: "overlay",
     parameters: [
@@ -4387,16 +3518,16 @@ const filters$8 = [
   }
 ];
 var mergerCenterJson = {
-  label: label$9,
-  id: id$9,
-  type: type$9,
-  filters: filters$8
+  label: label$a,
+  id: id$a,
+  type: type$a,
+  filters: filters$9
 };
 
-const label$8 = "Constrained";
-const type$8 = "merger";
-const id$8 = "com.moviemasher.merger.constrained";
-const properties$5 = {
+const label$9 = "Constrained";
+const type$9 = "merger";
+const id$9 = "com.moviemasher.merger.constrained";
+const properties$6 = {
   left: {
     type: "pixel",
     value: 0
@@ -4406,7 +3537,7 @@ const properties$5 = {
     value: 0
   }
 };
-const filters$7 = [
+const filters$8 = [
   {
     id: "overlay",
     parameters: [
@@ -4422,17 +3553,17 @@ const filters$7 = [
   }
 ];
 var mergerConstrainedJson = {
-  label: label$8,
-  type: type$8,
-  id: id$8,
-  properties: properties$5,
-  filters: filters$7
+  label: label$9,
+  type: type$9,
+  id: id$9,
+  properties: properties$6,
+  filters: filters$8
 };
 
-const label$7 = "Top Left";
-const id$7 = "com.moviemasher.merger.default";
-const type$7 = "merger";
-const filters$6 = [
+const label$8 = "Top Left";
+const id$8 = "com.moviemasher.merger.default";
+const type$8 = "merger";
+const filters$7 = [
   {
     id: "overlay",
     parameters: [
@@ -4448,16 +3579,16 @@ const filters$6 = [
   }
 ];
 var mergerDefaultJson = {
-  label: label$7,
-  id: id$7,
-  type: type$7,
-  filters: filters$6
+  label: label$8,
+  id: id$8,
+  type: type$8,
+  filters: filters$7
 };
 
-const label$6 = "Overlay";
-const id$6 = "com.moviemasher.merger.overlay";
-const type$6 = "merger";
-const properties$4 = {
+const label$7 = "Overlay";
+const id$7 = "com.moviemasher.merger.overlay";
+const type$7 = "merger";
+const properties$5 = {
   left: {
     type: "pixel",
     value: 0.5
@@ -4467,7 +3598,7 @@ const properties$4 = {
     value: 0.5
   }
 };
-const filters$5 = [
+const filters$6 = [
   {
     id: "overlay",
     parameters: [
@@ -4483,21 +3614,20 @@ const filters$5 = [
   }
 ];
 var mergerOverlayJson = {
-  label: label$6,
-  id: id$6,
-  type: type$6,
-  properties: properties$4,
-  filters: filters$5
+  label: label$7,
+  id: id$7,
+  type: type$7,
+  properties: properties$5,
+  filters: filters$6
 };
 
 const mergerDefaultId = "com.moviemasher.merger.default";
 const mergerDefinition = (object) => {
     const { id } = object;
     const idString = id && Is.populatedString(id) ? id : mergerDefaultId;
-    if (!Definitions.installed(idString)) {
-        new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString });
-    }
-    return Definitions.fromId(idString);
+    if (Definitions.installed(idString))
+        return Definitions.fromId(idString);
+    return new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString });
 };
 const mergerDefinitionFromId = (id) => {
     return mergerDefinition({ id });
@@ -4511,11 +3641,11 @@ const mergerFromId = (id) => {
     return mergerInstance({ id });
 };
 const mergerInitialize = () => {
-    mergerDefinition(mergerBlendJson);
-    mergerDefinition(mergerCenterJson);
-    mergerDefinition(mergerConstrainedJson);
-    mergerDefinition(mergerDefaultJson);
-    mergerDefinition(mergerOverlayJson);
+    new MergerDefinitionClass(mergerBlendJson);
+    new MergerDefinitionClass(mergerCenterJson);
+    new MergerDefinitionClass(mergerConstrainedJson);
+    new MergerDefinitionClass(mergerDefaultJson);
+    new MergerDefinitionClass(mergerOverlayJson);
 };
 const mergerDefine = (object) => {
     const { id } = object;
@@ -4537,7 +3667,7 @@ const ScalerWithModular = ModularMixin(InstanceClass);
 class ScalerClass extends ScalerWithModular {
     get id() { return this.definition.id; }
     set id(value) {
-        this.definition = Factory.scaler.definitionFromId(value);
+        this.definition = MovieMasher.scaler.definitionFromId(value);
         this.constructProperties();
     }
 }
@@ -4560,10 +3690,10 @@ class ScalerDefinitionClass extends ScalerDefinitionWithModular {
     }
 }
 
-const label$5 = "Stretch";
-const id$5 = "com.moviemasher.scaler.default";
-const type$5 = "scaler";
-const filters$4 = [
+const label$6 = "Stretch";
+const id$6 = "com.moviemasher.scaler.default";
+const type$6 = "scaler";
+const filters$5 = [
   {
     id: "scale",
     parameters: [
@@ -4592,16 +3722,16 @@ const filters$4 = [
   }
 ];
 var scalerDefaultJson = {
-  label: label$5,
-  id: id$5,
-  type: type$5,
-  filters: filters$4
+  label: label$6,
+  id: id$6,
+  type: type$6,
+  filters: filters$5
 };
 
-const label$4 = "Pan";
-const type$4 = "scaler";
-const id$4 = "com.moviemasher.scaler.pan";
-const properties$3 = {
+const label$5 = "Pan";
+const type$5 = "scaler";
+const id$5 = "com.moviemasher.scaler.pan";
+const properties$4 = {
   scale: {
     type: "number",
     value: 1.25
@@ -4611,7 +3741,7 @@ const properties$3 = {
     value: 1
   }
 };
-const filters$3 = [
+const filters$4 = [
   {
     id: "crop",
     description: "crop down diagonals and center",
@@ -4791,23 +3921,23 @@ const filters$3 = [
   }
 ];
 var scalerPanJson = {
-  label: label$4,
-  type: type$4,
-  id: id$4,
-  properties: properties$3,
-  filters: filters$3
+  label: label$5,
+  type: type$5,
+  id: id$5,
+  properties: properties$4,
+  filters: filters$4
 };
 
-const label$3 = "Scale";
-const type$3 = "scaler";
-const id$3 = "com.moviemasher.scaler.scale";
-const properties$2 = {
+const label$4 = "Scale";
+const type$4 = "scaler";
+const id$4 = "com.moviemasher.scaler.scale";
+const properties$3 = {
   scale: {
     type: "number",
     value: 1
   }
 };
-const filters$2 = [
+const filters$3 = [
   {
     id: "scale",
     parameters: [
@@ -4836,21 +3966,20 @@ const filters$2 = [
   }
 ];
 var scalerScaleJson = {
-  label: label$3,
-  type: type$3,
-  id: id$3,
-  properties: properties$2,
-  filters: filters$2
+  label: label$4,
+  type: type$4,
+  id: id$4,
+  properties: properties$3,
+  filters: filters$3
 };
 
 const scalerDefaultId = "com.moviemasher.scaler.default";
 const scalerDefinition = (object) => {
     const { id } = object;
-    const idString = id && typeof id === "string" && id.length ? id : scalerDefaultId;
-    if (!Definitions.installed(idString)) {
-        new ScalerDefinitionClass({ ...object, type: DefinitionType.Scaler, id: idString });
-    }
-    return Definitions.fromId(idString);
+    const idString = id && Is.populatedString(id) ? id : scalerDefaultId;
+    if (Definitions.installed(idString))
+        return Definitions.fromId(idString);
+    return new ScalerDefinitionClass({ ...object, type: DefinitionType.Scaler, id: idString });
 };
 const scalerDefinitionFromId = (id) => {
     return scalerDefinition({ id });
@@ -4862,9 +3991,9 @@ const scalerFromId = (id) => {
     return scalerInstance({ id });
 };
 const scalerInitialize = () => {
-    scalerDefinition(scalerDefaultJson);
-    scalerDefinition(scalerPanJson);
-    scalerDefinition(scalerScaleJson);
+    new ScalerDefinitionClass(scalerDefaultJson);
+    new ScalerDefinitionClass(scalerPanJson);
+    new ScalerDefinitionClass(scalerScaleJson);
 };
 const scalerDefine = (object) => {
     const { id } = object;
@@ -5107,15 +4236,7 @@ class TrackClass {
         if (type)
             this.type = type;
         if (clips)
-            this.clips.push(...clips.map(clip => {
-                const { id } = clip;
-                if (!id)
-                    throw Errors.id;
-                const definition = Definitions.fromId(id);
-                const clipWithTrack = { track: this.index, ...clip };
-                const instance = definition.instanceFromObject(clipWithTrack);
-                return instance;
-            }));
+            this.clips.push(...clips);
     }
     get frames() {
         if (!this.clips.length)
@@ -5198,12 +4319,12 @@ class TrackClass {
 
 class Composition {
     constructor(object) {
-        this.buffer = Default.buffer;
+        this.buffer = Default.mash.buffer;
         this.contextSeconds = 0;
-        this._gain = Default.volume;
+        this._gain = Default.mash.gain;
         this.mashSeconds = 0;
         this.playing = false;
-        this.quantize = Default.fps;
+        this.quantize = Default.mash.quantize;
         this.sourcesByClip = new Map();
         const { audibleContext, backcolor, buffer, gain, quantize, visibleContext } = object;
         if (backcolor)
@@ -5409,13 +4530,14 @@ class MashClass extends InstanceClass {
         super(...args);
         this.audio = [];
         this._backcolor = Default.mash.backcolor;
-        this._buffer = Default.buffer;
-        this._gain = Default.volume;
+        this._buffer = Default.mash.buffer;
+        this._gain = Default.mash.gain;
         this.loop = false;
         this._paused = true;
         this._playing = false;
         this.quantize = Default.mash.quantize;
         this.video = [];
+        this._id ||= Id();
         const object = args[0] || {};
         const { audio, backcolor, events, label, loop, media, quantize, video, audibleContext, buffer, gain, visibleContext, } = object;
         this._events = events;
@@ -5431,21 +4553,21 @@ class MashClass extends InstanceClass {
             media.forEach(definition => {
                 const { id: definitionId, type } = definition;
                 if (!(type && Is.populatedString(type)))
-                    throw Errors.type;
+                    throw Errors.type + 'Mash.constructor media';
                 const definitionType = type;
                 if (!DefinitionTypes.includes(definitionType))
                     throw Errors.type + definitionType;
                 if (!(definitionId && Is.populatedString(definitionId))) {
                     throw Errors.invalid.definition.id + JSON.stringify(definition);
                 }
-                return Factory[definitionType].definition(definition);
+                return MovieMasher[definitionType].definition(definition);
             });
         if (audio)
-            this.audio.push(...audio.map(track => new TrackClass(track)));
+            this.audio.push(...audio.map((track, index) => new TrackClass(this.trackOptions(track, index, TrackType.Audio))));
         else
             this.audio.push(new TrackClass({ type: TrackType.Audio }));
         if (video)
-            this.video.push(...video.map(track => new TrackClass(track)));
+            this.video.push(...video.map((track, index) => new TrackClass(this.trackOptions(track, index, TrackType.Video))));
         else
             this.video.push(new TrackClass({ type: TrackType.Video }));
         if (buffer && Is.aboveZero(buffer))
@@ -5459,12 +4581,8 @@ class MashClass extends InstanceClass {
     }
     addClipsToTrack(clips, trackIndex = 0, insertIndex = 0) {
         // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
+        this.assureClipsHaveFrames(clips);
         const [clip] = clips;
-        clips.filter(clip => !Is.positive(clip.frames)).forEach(clip => {
-            const definition = clip.definition;
-            const duration = definition.duration;
-            clip.frames = Time.fromSeconds(duration).scale(this.quantize, 'floor').frame;
-        });
         const newTrack = this.clipTrackAtIndex(clip, trackIndex);
         if (!newTrack)
             throw Errors.invalid.track;
@@ -5484,6 +4602,13 @@ class MashClass extends InstanceClass {
         const track = new TrackClass(options);
         array.push(track);
         return track;
+    }
+    assureClipsHaveFrames(clips) {
+        clips.filter(clip => !Is.positive(clip.frames)).forEach(clip => {
+            const definition = clip.definition;
+            const duration = definition.duration;
+            clip.frames = Time.fromSeconds(duration, this.quantize, 'floor').frame;
+        });
     }
     get audibleContext() {
         if (!this._audibleContext) {
@@ -5729,7 +4854,7 @@ class MashClass extends InstanceClass {
             }
         }
         // console.log(this.constructor.name, "handleEvent", event.type)
-        this.stopAndLoad();
+        this.stopLoadAndDraw();
     }
     get startAndEnd() {
         const { time } = this;
@@ -5740,6 +4865,7 @@ class MashClass extends InstanceClass {
     }
     load() {
         const [start, end] = this.startAndEnd;
+        // console.log(this.constructor.name, "load", start, end)
         const promises = this.clips(start, end).map(clip => clip.load(this.quantize, start, end));
         return Promise.all(promises).then();
     }
@@ -5820,26 +4946,30 @@ class MashClass extends InstanceClass {
         const array = this[trackType];
         this.emitIfFramesChange(() => { array.pop(); });
     }
-    async seekToTime(time) {
-        if (this.seekTime === time)
-            return;
-        this.seekTime = time;
-        return this.stopAndLoad();
+    seekToTime(time) {
+        if (this.seekTime !== time)
+            this.seekTime = time;
+        return this.stopLoadAndDraw();
     }
     get stalled() { return !this.paused && !this.playing; }
-    async stopAndLoad() {
+    stopLoadAndDraw() {
         const { time } = this;
+        // console.log(this.constructor.name, "stopLoadAndDraw", time)
         const paused = this.paused;
         if (this.playing)
             this.playing = false;
-        await this.load();
-        if (time !== this.time)
-            return; // we must have gotten a seek call
-        this.drawTime(time);
-        if (!paused) {
-            this.composition.startContext();
-            this.playing = true;
-        }
+        return this.load().then(() => {
+            if (time !== this.time) {
+                // we must have gotten a seek call
+                // console.log(this.constructor.name, "stopLoadAndDraw", time, "!==", this.time)
+                return;
+            }
+            this.drawTime(time);
+            if (!paused) {
+                this.composition.startContext();
+                this.playing = true;
+            }
+        });
     }
     get time() {
         return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize);
@@ -5874,6 +5004,21 @@ class MashClass extends InstanceClass {
         // console.log("trackOfTypeAtIndex", type, index)
         return this[type][index];
     }
+    trackOptions(object, index, type) {
+        const { clips } = object;
+        if (!(clips && Is.populatedArray(clips)))
+            return { type, index };
+        const objects = clips.map(clip => {
+            const { id } = clip;
+            if (!id)
+                throw Errors.id;
+            const definition = Definitions.fromId(id);
+            const clipWithTrack = { track: index, ...clip };
+            return definition.instanceFromObject(clipWithTrack);
+        });
+        this.assureClipsHaveFrames(objects);
+        return { type, index, clips: objects };
+    }
     get tracks() { return Object.values(TrackType).map(av => this[av]).flat(); }
     get visibleContext() {
         if (!this._visibleContext) {
@@ -5895,9 +5040,9 @@ class MashClass extends InstanceClass {
 class MashDefinitionClass extends DefinitionClass {
     constructor(...args) {
         super(...args);
+        this.id = "com.moviemasher.mash.default";
+        this.retain = true;
         this.type = DefinitionType.Mash;
-        // this.properties.push(new Property({ name: "id", type: DataType.String, value: "" }))
-        // this.properties.push(new Property({ name: "label", type: DataType.String, value: "Untitled" }))
         this.properties.push(new Property({ name: "backcolor", type: DataType.Rgba, value: "#00000000" }));
         Definitions.install(this);
     }
@@ -5910,13 +5055,11 @@ class MashDefinitionClass extends DefinitionClass {
     }
 }
 
+const MashDefaultId = "com.moviemasher.mash.default";
 const mashDefinition = (object) => {
     const { id } = object;
-    if (!id)
-        throw Errors.id + JSON.stringify(object);
-    if (Definitions.installed(id))
-        return Definitions.fromId(id);
-    return new MashDefinitionClass(object);
+    const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MashDefaultId;
+    return Definitions.fromId(idString);
 };
 const mashDefinitionFromId = (id) => {
     return mashDefinition({ id });
@@ -5929,7 +5072,9 @@ const mashInstance = (object) => {
 const mashFromId = (id) => {
     return mashInstance({ id });
 };
-const mashInitialize = () => { };
+const mashInitialize = () => {
+    new MashDefinitionClass({ id: MashDefaultId });
+};
 const mashDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
@@ -5946,6 +5091,972 @@ const MashFactoryImplementation = {
     instance: mashInstance,
 };
 Factories.mash = MashFactoryImplementation;
+
+const classes = {
+    AddTrack: AddTrackAction,
+    AddClipsToTrack: AddClipToTrackAction,
+    MoveClips: MoveClipsAction,
+    AddEffect: AddEffectAction,
+    Change: ChangeAction,
+    ChangeFrames: ChangeFramesAction,
+    ChangeTrim: ChangeTrimAction,
+    Split: SplitAction,
+    Freeze: FreezeAction,
+    MoveEffects: MoveEffectsAction,
+    RemoveClips: RemoveClipsAction,
+};
+class ActionFactoryClass {
+    createFromObject(object) {
+        const { type } = object;
+        if (typeof type !== "string")
+            throw Errors.type + JSON.stringify(object);
+        return new classes[Capitalize(type)](object);
+    }
+}
+const ActionFactory = new ActionFactoryClass();
+
+class MasherClass extends InstanceClass {
+    constructor(...args) {
+        super(...args);
+        this.autoplay = Default.masher.autoplay;
+        this._buffer = Default.masher.buffer;
+        this._fps = Default.masher.fps;
+        this._loop = Default.masher.loop;
+        this._muted = false;
+        this._paused = true;
+        this.precision = Default.masher.precision;
+        this.selectedClipObject = {};
+        this._selectedClips = [];
+        this._selectedEffects = [];
+        this._volume = Default.masher.volume;
+        this._id ||= Id();
+        const [object] = args;
+        const { autoplay, precision, loop, fps, volume, buffer, audibleContext, visibleContext, mash, canvas, } = object;
+        if (typeof autoplay !== "undefined")
+            this.autoplay = autoplay;
+        if (typeof precision !== "undefined")
+            this.precision = precision;
+        if (typeof loop !== "undefined")
+            this._loop = loop;
+        if (typeof audibleContext !== "undefined")
+            this._audibleContext = audibleContext;
+        if (typeof visibleContext !== "undefined")
+            this._visibleContext = visibleContext;
+        if (canvas) {
+            const context = canvas.getContext("2d");
+            if (context)
+                this._context2D = context;
+        }
+        this.events.addListener(this.handleMasher.bind(this));
+        if (typeof fps !== "undefined")
+            this._fps = fps;
+        if (typeof volume !== "undefined")
+            this._volume = volume;
+        if (typeof buffer !== "undefined")
+            this._buffer = buffer;
+        this.mash = mash || MovieMasher.mash.instance(this.mashOptions());
+    }
+    actionCreate(object) {
+        const mash = object.mash || this.mash;
+        const actions = object.actions || this.actions;
+        const undoSelectedClips = object.undoSelectedClips || this.selectedClips;
+        const undoSelectedEffects = object.undoSelectedEffects || this.selectedEffects;
+        const redoSelectedClips = object.redoSelectedClips || this.selectedClips;
+        const redoSelectedEffects = object.redoSelectedEffects || this.selectedEffects;
+        const clone = {
+            ...object,
+            actions,
+            mash,
+            undoSelectedClips,
+            undoSelectedEffects,
+            redoSelectedClips,
+            redoSelectedEffects,
+        };
+        this.actions.do(ActionFactory.createFromObject(clone));
+    }
+    get actions() {
+        if (!this._actions) {
+            this._actions = new Actions({ mash: this.mash });
+        }
+        return this._actions;
+    }
+    add(object, frameOrIndex = 0, trackIndex = 0) {
+        if (!Is.populatedObject(object))
+            throw Errors.argument + 'add';
+        const { id } = object;
+        const definitionFromId = id && Definitions.installed(id) ? Definitions.fromId(id) : false;
+        const type = object.type || (definitionFromId && definitionFromId.type);
+        if (!type)
+            throw Errors.type + 'Masher.add ' + id + JSON.stringify(definitionFromId);
+        if (type === DefinitionType.Effect) {
+            const effectDefinition = MovieMasher.effect.definition(object);
+            const effect = effectDefinition.instance;
+            return this.addEffect(effect, frameOrIndex).then(() => effect);
+        }
+        const clipType = type;
+        if (!ClipTypes.includes(clipType))
+            throw Errors.type + type;
+        const definitionType = type;
+        const definition = MovieMasher[definitionType].definition(object);
+        const clip = definition.instance;
+        return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip);
+    }
+    addClip(clip, frameOrIndex = 0, trackIndex = 0) {
+        const { trackType } = clip;
+        const clips = [clip];
+        const options = {
+            clip,
+            type: ActionType.AddClipsToTrack,
+            redoSelectedClips: clips,
+            trackType,
+        };
+        const track = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
+        const trackCount = this.mash[trackType].length;
+        if (track.isMainVideo) {
+            options.insertIndex = frameOrIndex;
+            options.createTracks = Math.min(1, Math.max(0, 1 - trackCount));
+        }
+        else {
+            options.trackIndex = trackIndex;
+            clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex);
+            options.createTracks = Math.max(0, trackIndex + 1 - trackCount);
+        }
+        this.actionCreate(options);
+        return this.loadMashAndDraw();
+    }
+    addEffect(effect, insertIndex = 0) {
+        // console.log(this.constructor.name, "addEffect", object, index)
+        const { effects } = this.selectedClipOrThrow;
+        if (!effects)
+            throw Errors.selection;
+        const undoEffects = [...effects];
+        const redoEffects = [...effects];
+        const redoSelectedEffects = [effect];
+        redoEffects.splice(insertIndex, 0, effect);
+        const options = {
+            effects,
+            undoEffects,
+            redoEffects,
+            redoSelectedEffects,
+            type: ActionType.MoveEffects
+        };
+        this.actionCreate(options);
+        return this.loadMashAndDraw();
+    }
+    addTrack(trackType = TrackType.Video) {
+        this.actionCreate({ trackType, type: ActionType.AddTrack });
+    }
+    get audibleContext() {
+        if (!this._audibleContext) {
+            this._audibleContext = ContextFactoryInstance.audible();
+            if (this._mash)
+                this.mash.audibleContext = this._audibleContext;
+        }
+        return this._audibleContext;
+    }
+    set audibleContext(value) {
+        if (this._audibleContext !== value) {
+            this._audibleContext = value;
+            if (this._mash)
+                this.mash.audibleContext = value;
+        }
+    }
+    get buffer() { return this._buffer; }
+    set buffer(value) {
+        if (this._buffer !== value) {
+            this._buffer = value;
+            this.mash.buffer = value;
+        }
+    }
+    can(method) {
+        const z = this._selectedClips.length;
+        switch (method) {
+            case 'save': return this.actions.canSave;
+            case 'undo': return this.actions.canUndo;
+            case 'redo': return this.actions.canRedo;
+            case 'copy': return z > 0;
+            case 'cut':
+            case 'remove': return !!z; // TODO: check removing won't create transition problem
+            case 'split': return z === 1 && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize);
+            case 'freeze': return (z === 1
+                && DefinitionType.Video === this.selectedClipOrThrow.type
+                && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize));
+            default: throw Errors.argument;
+        }
+    }
+    get canvas() { return this.visibleContext.canvas; }
+    set canvas(value) {
+        // console.log(this.constructor.name, "set canvas")
+        const context2d = value.getContext("2d");
+        if (!context2d)
+            throw Errors.internal + 'context2d';
+        this.events.target = value;
+        this.context2d = context2d;
+    }
+    change(property, value) {
+        if (Is.populatedObject(this.selectedClip)) {
+            if (Is.populatedObject(this.selectedEffect))
+                this.changeEffect(property, value, this.selectedEffect);
+            else
+                this.changeClip(property, value, this.selectedClipOrThrow);
+        }
+        else
+            this.changeMash(property, value);
+    }
+    changeClip(property, value, clip) {
+        // console.log(this.constructor.name, "changeClip", property)
+        if (!Is.populatedString(property))
+            throw Errors.property + "changeClip " + property;
+        const [transform, transformProperty] = property.split(".");
+        if (transformProperty) {
+            this.changeTransformer(transform, transformProperty, value);
+            return;
+        }
+        const target = clip || this.selectedClipOrThrow;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            return;
+        }
+        const undoValue = typeof value === "undefined" ? this.pristineOrThrow[property] : target.value(property);
+        const options = { property, target, redoValue, undoValue };
+        switch (options.property) {
+            case 'frames': {
+                options.type = ActionType.ChangeFrames;
+                break;
+            }
+            case 'trim': {
+                options.type = ActionType.ChangeTrim;
+                // TODO: make sure there's a test for this
+                // not sure where this was derived from - using original clip??
+                options.frames = target.frames + options.undoValue;
+                break;
+            }
+            default: options.type = ActionType.Change;
+        }
+        this.actionCreate(options);
+    }
+    changeEffect(property, value, effect) {
+        // console.log(this.constructor.name, "changeEffect", property)
+        if (!Is.populatedString(property))
+            throw Errors.property;
+        const target = effect || this.selectedEffectOrThrow;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            return;
+        }
+        const undoValue = typeof value === "undefined" ? this.pristineEffectOrThrow[property] : target.value(property);
+        const options = {
+            type: ActionType.Change, target, property, redoValue, undoValue
+        };
+        this.actionCreate(options);
+    }
+    changeMash(property, value) {
+        if (!this.mash.propertyNames.includes(property))
+            throw Errors.unknownMash;
+        if (!this._pristine)
+            throw Errors.internal;
+        const target = this.mash;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            return changeAction.updateAction(redoValue);
+        }
+        const undoValue = typeof value === "undefined" ? this._pristine[property] : target.value(property);
+        const options = {
+            target,
+            property,
+            redoValue,
+            undoValue,
+            type: ActionType.Change,
+        };
+        this.actionCreate(options);
+    }
+    changeTransformer(type, property, value) {
+        console.log(this.constructor.name, "changeTransformer", type, property);
+        if (!Is.populatedString(type))
+            throw Errors.type + "changeTransformer " + type;
+        if (!Is.populatedString(property))
+            throw Errors.property + "changeTransformer " + property;
+        if (!this._pristine)
+            throw Errors.internal + "changeTransformer _pristine";
+        const target = this.selectedClipOrThrow;
+        const transformType = type;
+        const transformable = target;
+        // make sure first component is merger or scaler
+        if (!TransformTypes.includes(transformType))
+            throw Errors.property + "type " + type;
+        const transformTarget = transformable[transformType];
+        const redoValue = typeof value === "undefined" ? transformTarget.value(property) : value;
+        const pristineTarget = this._pristine[transformType];
+        if (typeof pristineTarget !== "object")
+            throw Errors.internal + JSON.stringify(this._pristine);
+        const undoValue = pristineTarget[property];
+        if (typeof undoValue === "undefined")
+            throw Errors.property + 'pristine ' + property + JSON.stringify(pristineTarget);
+        const options = { property, target: transformTarget, redoValue, undoValue, type: ActionType.Change };
+        if (this.currentActionReusable(transformTarget, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            return;
+        }
+        this.actionCreate(options);
+    }
+    clipCanBeSplit(clip, time, quantize) {
+        if (!Is.object(clip))
+            return false;
+        // true if now intersects clip time, but is not start or end frame
+        const range = TimeRange.fromTime(time);
+        const clipRange = clip.timeRange(quantize);
+        // ranges must intersect
+        if (!clipRange.intersects(range))
+            return false;
+        const scaled = range.scale(clipRange.fps);
+        if (scaled.frame === clipRange.frame)
+            return false;
+        if (scaled.end === clipRange.end)
+            return false;
+        return true;
+    }
+    get context2d() {
+        return this.visibleContext.context2d;
+    }
+    set context2d(value) {
+        // console.log(this.constructor.name, "set context2d")
+        if (this._context2D !== value) {
+            this._context2D = value;
+            if (this._visibleContext) {
+                this.visibleContext.context2d = value;
+                this.mash.compositeVisible();
+            }
+        }
+    }
+    currentActionReusable(target, property) {
+        if (!this.actions.currentActionLast)
+            return false;
+        const action = this.actions.currentAction;
+        if (!(action instanceof ChangeAction))
+            return false;
+        return action.target === target && action.property === property;
+    }
+    get currentTime() { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0; }
+    get definitions() { return this.mash.media; }
+    // call when player removed from DOM
+    destroy() { MovieMasher.masher.destroy(this); }
+    draw() { this.mash.compositeVisible(); }
+    get duration() { return this.mash.duration; }
+    get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
+    get events() {
+        if (!this._events) {
+            this._events = new Events({ target: this.canvas });
+        }
+        return this._events;
+    }
+    filterClipSelection(value) {
+        const clips = Array.isArray(value) ? value : [value];
+        const [firstClip] = clips;
+        if (!firstClip)
+            return [];
+        const { trackType, track } = firstClip;
+        // selected clips must all be on same track
+        const trackClips = clips.filter(clip => (clip.track === track && clip.trackType === trackType)).sort(byFrame);
+        if (track || trackType === TrackType.Audio)
+            return trackClips;
+        // selected clips on main track must be abutting each other
+        let abutting = true;
+        return trackClips.filter((clip, index) => {
+            if (!abutting)
+                return false;
+            if (index === trackClips.length - 1)
+                return true;
+            abutting = clip.frame + clip.frames === trackClips[index + 1].frame;
+            return true;
+        });
+    }
+    get fps() { return this._fps; }
+    set fps(value) {
+        if (!Is.aboveZero(value))
+            throw Errors.fps;
+        if (this._fps !== value) {
+            this._fps = value;
+            this.time = this.time.scale(value);
+        }
+    }
+    get frame() { return this.time.frame; }
+    set frame(value) { this.goToTime(Time.fromArgs(value, this.fps)); }
+    get frames() { return this.endTime.frame; }
+    freeze() {
+        const clip = this.selectedClipOrThrow;
+        if (!this.clipCanBeSplit(clip, this.time, this.mash.quantize)) {
+            throw Errors.invalid.action;
+        }
+        if (DefinitionType.Video !== clip.type) {
+            throw Errors.invalid.action;
+        }
+        const freezeClip = clip;
+        const scaled = this.time.scale(this.mash.quantize);
+        const trackClips = this.mash.clipTrack(freezeClip).clips;
+        const insertClip = freezeClip.copy;
+        const frozenClip = freezeClip.copy;
+        const options = {
+            frames: freezeClip.frames - (scaled.frame - freezeClip.frame),
+            freezeClip,
+            frozenClip,
+            insertClip,
+            trackClips,
+            redoSelectedClips: [frozenClip],
+            index: 1 + trackClips.indexOf(freezeClip),
+            type: ActionType.Freeze,
+        };
+        frozenClip.frame = scaled.frame;
+        frozenClip.frames = 1;
+        frozenClip.trim = freezeClip.trim + (scaled.frame - freezeClip.frame);
+        insertClip.frame = scaled.frame + 1;
+        insertClip.frames = options.frames - 1;
+        insertClip.trim = frozenClip.trim + 1;
+        this.actionCreate(options);
+    }
+    get gain() { return this.muted ? 0.0 : this.volume; }
+    goToTime(value) {
+        // console.log(this.constructor.name, "goToTime", value)
+        return this.mash.seekToTime(value.scaleToFps(this.fps));
+    }
+    handleMasher(event) {
+        // console.log("handleMasher", event.type)
+        if (event.type !== Events.type)
+            return;
+        const { detail } = event;
+        // console.log("handleMasher", detail.type)
+        if (detail.type === EventType.Action) {
+            const { action } = detail;
+            if (!action)
+                throw Errors.internal + 'action';
+            this.selectedClips = action.selectedClips;
+            this.selectedEffects = action.selectedEffects;
+        }
+    }
+    loadMash() { return this.mash.load(); }
+    loadMashAndDraw() { return this.loadMash().then(() => { this.draw(); }); }
+    get loadedDefinitions() { return this.mash.loadedDefinitions; }
+    get loop() { return this._loop; }
+    set loop(value) {
+        this._loop = value;
+        if (this._mash)
+            this.mash.loop = value;
+    }
+    get mash() {
+        if (!this._mash)
+            throw Errors.internal;
+        return this._mash;
+    }
+    set mash(object) {
+        if (this._mash === object)
+            return;
+        this.paused = true;
+        if (this._mash)
+            this._mash.destroy();
+        this._selectedEffects = [];
+        this._mash = object;
+        this._mash.events = this.events;
+        this._mash.visibleContext = this.visibleContext;
+        this._mash.audibleContext = this.audibleContext;
+        this._mash.buffer = this.buffer;
+        this._mash.gain = this.gain;
+        this._mash.loop = this.loop;
+        if (this._actions) {
+            this._actions.destroy();
+            this._actions.mash = this._mash;
+        }
+        this.selectedClips = []; // so mash gets copied into _pristine
+        this.goToTime(Time.fromArgs(0, this.fps));
+        if (this.autoplay)
+            this.paused = false;
+    }
+    mashOptions(mashObject = {}) {
+        return {
+            ...mashObject,
+            audibleContext: this.audibleContext,
+            buffer: this.buffer,
+            events: this.events,
+            gain: this.gain,
+            loop: this.loop,
+            visibleContext: this.visibleContext,
+        };
+    }
+    move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
+        if (!Is.object(objectOrArray))
+            throw Errors.argument + 'move';
+        if (moveType === MoveType.Effect) {
+            this.moveEffects(objectOrArray, frameOrIndex);
+            return;
+        }
+        this.moveClips(objectOrArray, frameOrIndex, trackIndex);
+    }
+    moveClips(clipOrArray, frameOrIndex = 0, trackIndex = 0) {
+        // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+        if (!Is.positive(frameOrIndex))
+            throw Errors.argument + 'moveClips frameOrIndex';
+        if (!Is.positive(trackIndex))
+            throw Errors.argument + 'moviClips trackIndex';
+        const clips = this.filterClipSelection(clipOrArray);
+        if (!Is.populatedArray(clips))
+            throw Errors.argument + 'moviClips clips';
+        const [firstClip] = clips;
+        const { trackType, track: undoTrackIndex } = firstClip;
+        const options = {
+            clips,
+            trackType,
+            trackIndex,
+            undoTrackIndex,
+            type: ActionType.MoveClips
+        };
+        const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
+        const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex);
+        const currentIndex = redoTrack.clips.indexOf(firstClip);
+        if (redoTrack.isMainVideo)
+            options.insertIndex = frameOrIndex;
+        if (undoTrack.isMainVideo) {
+            options.undoInsertIndex = currentIndex;
+            if (frameOrIndex < currentIndex)
+                options.undoInsertIndex += clips.length;
+        }
+        if (!(redoTrack.isMainVideo && undoTrack.isMainVideo)) {
+            const frames = clips.map(clip => clip.frame);
+            const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex);
+            const offset = insertFrame - firstClip.frame;
+            if (!offset)
+                return; // because there would be no change
+            options.undoFrames = frames;
+            options.redoFrames = frames.map(frame => frame + offset);
+        }
+        this.actionCreate(options);
+    }
+    moveEffects(effectOrArray, index = 0) {
+        // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
+        if (!Is.positive(index))
+            throw Errors.argument;
+        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
+        const moveEffects = array.filter(effect => effect instanceof EffectClass);
+        if (!Is.populatedArray(moveEffects))
+            throw Errors.argument;
+        const { effects } = this.selectedClipOrThrow;
+        const undoEffects = [...effects];
+        const redoEffects = [];
+        undoEffects.forEach((effect, i) => {
+            if (i === index)
+                redoEffects.push(...moveEffects);
+            if (moveEffects.includes(effect))
+                return;
+            redoEffects.push(effect);
+        });
+        const options = {
+            effects, undoEffects, redoEffects, type: ActionType.MoveEffects
+        };
+        // console.log(this.constructor.name, "moveEffects", options)
+        this.actionCreate(options);
+    }
+    get muted() { return this._muted; }
+    set muted(value) {
+        if (this._muted !== value) {
+            this._muted = value;
+            this.mash.gain = this.gain;
+        }
+    }
+    pause() { this.paused = true; }
+    get paused() { return this.mash.paused; }
+    set paused(value) { if (this._mash)
+        this.mash.paused = value; }
+    play() { this.paused = false; }
+    get position() {
+        let per = 0;
+        if (this.time.frame) {
+            per = this.time.seconds / this.duration;
+            if (per !== 1)
+                per = parseFloat(per.toFixed(this.precision));
+        }
+        return per;
+    }
+    set position(value) {
+        this.goToTime(Time.fromSeconds(this.duration * value, this.fps));
+    }
+    get positionStep() {
+        return parseFloat(`0.${"0".repeat(this.precision - 1)}1`);
+    }
+    get pristineOrThrow() {
+        if (!this._pristine)
+            throw Errors.internal;
+        return this._pristine;
+    }
+    get pristineEffectOrThrow() {
+        if (!this._pristineEffect)
+            throw Errors.internal;
+        return this._pristineEffect;
+    }
+    redo() { if (this.actions.canRedo)
+        this.actions.redo(); }
+    remove(objectOrArray, moveType) {
+        if (!Is.object(objectOrArray))
+            throw Errors.argument;
+        if (moveType === MoveType.Effect) {
+            this.removeEffects(objectOrArray);
+            return;
+        }
+        this.removeClips(objectOrArray);
+    }
+    removeClips(clipOrArray) {
+        const clips = this.filterClipSelection(clipOrArray);
+        if (!Is.populatedArray(clips))
+            throw Errors.argument;
+        const [firstClip] = clips;
+        const track = this.mash.clipTrack(firstClip);
+        const options = {
+            redoSelectedClips: [],
+            clips,
+            track,
+            index: track.clips.indexOf(firstClip),
+            type: ActionType.RemoveClips
+        };
+        this.actionCreate(options);
+    }
+    removeEffects(effectOrArray) {
+        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
+        const removeEffects = array.filter(effect => effect instanceof EffectClass);
+        if (!Is.populatedArray(removeEffects))
+            throw Errors.argument;
+        const { effects } = this.selectedClipOrThrow;
+        const undoEffects = [...effects];
+        const redoEffects = effects.filter(effect => !removeEffects.includes(effect));
+        const options = {
+            redoSelectedEffects: [],
+            effects,
+            undoEffects,
+            redoEffects,
+            type: ActionType.MoveEffects
+        };
+        this.actionCreate(options);
+    }
+    save() { this.actions.save(); }
+    select(object, toggleSelected = false) {
+        if (!object) {
+            this.selectedClips = [];
+            return;
+        }
+        if (object instanceof EffectClass) {
+            this.selectEffect(object, toggleSelected);
+            return;
+        }
+        const { type } = object;
+        if (type === DefinitionType.Mash) {
+            this.selectMash();
+            return;
+        }
+        this.selectClip(object, toggleSelected);
+    }
+    selectClip(clip, toggleSelected) {
+        const array = [];
+        if (clip) {
+            if (toggleSelected) {
+                array.push(...this.selectedClips);
+                const index = this.selectedClips.indexOf(clip);
+                if (index > -1)
+                    array.splice(index, 1);
+                else
+                    array.push(clip);
+            }
+            else if (this.selectedClips.includes(clip))
+                array.push(...this.selectedClips);
+            else
+                array.push(clip);
+        }
+        this.selectedClips = array;
+    }
+    selectEffect(effect, toggleSelected) {
+        const array = [];
+        if (effect) {
+            if (toggleSelected) {
+                array.push(...this.selectedEffects);
+                const index = this.selectedEffects.indexOf(effect);
+                if (index > -1)
+                    array.splice(index, 1);
+                else
+                    array.push(effect);
+            }
+            else
+                array.push(effect);
+        }
+        this.selectedEffects = array;
+    }
+    selectMash() {
+        this.selectedClips = [];
+    }
+    selected(object) {
+        if (object instanceof EffectClass)
+            return this.selectedEffects.includes(object);
+        return this.selectedClips.includes(object);
+    }
+    get selectedClip() {
+        if (this._selectedClips.length === 1)
+            return this.selectedClipOrThrow;
+        return this.selectedClipObject;
+    }
+    set selectedClip(value) {
+        if (value && Is.populatedObject(value)) {
+            const clip = value;
+            const { type } = clip;
+            const clipType = String(type);
+            if (!ClipTypes.includes(clipType)) {
+                console.warn(this.constructor.name, "set selectedClip invalid type", value);
+                return;
+            }
+            this.selectedClips = [clip];
+        }
+        else
+            this.selectedClips = [];
+    }
+    get selectedClipOrMash() {
+        const value = this.selectedClip;
+        if (Is.populatedObject(value))
+            return this.selectedClipOrThrow;
+        return this.mash;
+    }
+    get selectedClipOrThrow() {
+        const clip = this._selectedClips[0];
+        if (!clip)
+            throw Errors.selection;
+        return clip;
+    }
+    get selectedClips() { return this._selectedClips; }
+    set selectedClips(value) {
+        this._selectedClips = this.filterClipSelection(value);
+        this._pristine = this.selectedClipOrMash.propertyValues;
+        this.selectedEffects = [];
+    }
+    get selectedEffect() {
+        if (this._selectedEffects.length !== 1)
+            return;
+        return this._selectedEffects[0];
+    }
+    set selectedEffect(value) {
+        if (value)
+            this.selectedEffects = [value];
+        else
+            this.selectedEffects = [];
+    }
+    get selectedEffectOrThrow() {
+        const effect = this.selectedEffect;
+        if (!effect)
+            throw Errors.selection;
+        return effect;
+    }
+    get selectedEffects() { return this._selectedEffects; }
+    set selectedEffects(value) {
+        const { effects } = this.selectedClipOrMash;
+        if (!effects) { // mash or multiple clips selected, or no effects
+            this._selectedEffects = [];
+            this._pristineEffect = {};
+            return;
+        }
+        const array = effects;
+        this._selectedEffects = value.filter(effect => array.includes(effect));
+        this._pristineEffect = (this.selectedEffect && this.selectedEffect.propertyValues) || {};
+    }
+    get silenced() { return this._paused || this.muted || !this.gain; }
+    split() {
+        const splitClip = this.selectedClipOrThrow;
+        if (!this.clipCanBeSplit(splitClip, this.time, this.mash.quantize)) {
+            throw Errors.invalid.action;
+        }
+        const scaled = this.time.scale(this.mash.quantize);
+        const undoFrames = splitClip.frames;
+        const redoFrames = scaled.frame - splitClip.frame;
+        const insertClip = splitClip.copy;
+        insertClip.frames = undoFrames - redoFrames;
+        insertClip.frame = scaled.frame;
+        if (splitClip.propertyNames.includes("trim")) {
+            insertClip.trim += redoFrames;
+        }
+        const trackClips = this.mash.clipTrack(splitClip).clips;
+        const options = {
+            type: ActionType.Split,
+            splitClip,
+            insertClip,
+            trackClips,
+            redoFrames,
+            undoFrames,
+            index: 1 + trackClips.indexOf(splitClip),
+            redoSelectedClips: [insertClip],
+            undoSelectedClips: [splitClip],
+        };
+        this.actionCreate(options);
+    }
+    get time() { return this.mash.time; }
+    set time(value) { this.goToTime(value); }
+    undo() { if (this.actions.canUndo)
+        this.actions.undo(); }
+    get visibleContext() {
+        if (!this._visibleContext) {
+            if (typeof this._context2D === "undefined") {
+                this._visibleContext = ContextFactoryInstance.visible();
+            }
+            else
+                this._visibleContext = ContextFactoryInstance.fromContext2D(this._context2D);
+            if (this._mash)
+                this.mash.visibleContext = this._visibleContext;
+        }
+        return this._visibleContext;
+    }
+    set visibleContext(value) {
+        if (this._visibleContext !== value) {
+            this._visibleContext = value;
+            if (this._mash)
+                this.mash.visibleContext = value;
+        }
+    }
+    get volume() { return this._volume; }
+    set volume(value) {
+        if (this._volume !== value) {
+            if (!Is.positive(value))
+                throw Errors.invalid.volume;
+            this._volume = value;
+            if (Is.aboveZero(value))
+                this.muted = false;
+            this.mash.gain = this.gain;
+        }
+    }
+}
+
+class MasherDefinitionClass extends DefinitionClass {
+    constructor(...args) {
+        super(...args);
+        this.id = "com.moviemasher.masher.default";
+        this.retain = true;
+        this.type = DefinitionType.Masher;
+        this.properties.push(new Property({ name: "autoplay", type: DataType.Boolean, value: Default.masher.autoplay }));
+        this.properties.push(new Property({ name: "precision", type: DataType.Number, value: Default.masher.precision }));
+        this.properties.push(new Property({ name: "loop", type: DataType.Boolean, value: Default.masher.loop }));
+        this.properties.push(new Property({ name: "fps", type: DataType.Number, value: Default.masher.fps }));
+        this.properties.push(new Property({ name: "volume", type: DataType.Number, value: Default.masher.volume }));
+        this.properties.push(new Property({ name: "buffer", type: DataType.Number, value: Default.masher.buffer }));
+        Definitions.install(this);
+    }
+    get instance() {
+        return this.instanceFromObject(this.instanceObject);
+    }
+    instanceFromObject(object) {
+        const instance = new MasherClass({ ...this.instanceObject, ...object });
+        return instance;
+    }
+}
+
+const MasherIntervalTics = 10 * 1000;
+const MasherDefaultId = "com.moviemasher.masher.default";
+let MasherInterval;
+const mashers = [];
+const addMasher = (masher) => {
+    if (!mashers.length)
+        masherStart();
+    mashers.push(masher);
+};
+const masherDestroy = (masher) => {
+    const index = mashers.indexOf(masher);
+    if (index < 0)
+        return;
+    mashers.splice(index, 1);
+    if (!mashers.length)
+        masherStop();
+};
+const handleInterval = () => {
+    // console.log(constructor.name, "handleInterval")
+    const map = new Map();
+    const definitions = new Set();
+    mashers.forEach(masher => {
+        masher.definitions.forEach(definition => { definitions.add(definition); });
+        const masherMap = masher.loadedDefinitions;
+        masherMap.forEach((times, definition) => {
+            if (!map.has(definition))
+                map.set(definition, []);
+            const definitionTimes = map.get(definition);
+            if (!definitionTimes)
+                throw Errors.internal;
+            definitionTimes.push(...times);
+        });
+    });
+    map.forEach((times, definition) => {
+        definition.unload(times);
+    });
+    Definitions.map.forEach(definition => {
+        if (definitions.has(definition)) {
+            // definition used in a masher (masher.mash.media)
+            if (map.has(definition)) {
+                // definition needs to be at least partially loaded
+                definition.unload(map.get(definition));
+            }
+            else {
+                // definition can be completely unloaded, but not uninstalled
+                definition.unload();
+            }
+        }
+        else {
+            // definition is not used anywhere - unload, and uninstall if not retained
+            definition.unload();
+            if (!definition.retain)
+                Definitions.uninstall(definition.id);
+        }
+    });
+};
+const masherStart = () => {
+    // console.log(constructor.name, "masherStart")
+    if (MasherInterval)
+        return;
+    MasherInterval = setInterval(handleInterval, MasherIntervalTics);
+};
+const masherStop = () => {
+    // console.log(constructor.name, "masherStop")
+    if (!MasherInterval)
+        return;
+    clearInterval(MasherInterval);
+    MasherInterval = undefined;
+};
+const masherDefinition = (object) => {
+    const { id } = object;
+    const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MasherDefaultId;
+    return Definitions.fromId(idString);
+};
+const masherDefinitionFromId = (id) => {
+    return masherDefinition({ id });
+};
+const masherInstance = (object = {}) => {
+    const definition = masherDefinition(object);
+    const instance = definition.instanceFromObject(object);
+    addMasher(instance);
+    return instance;
+};
+const masherFromId = (id) => {
+    return masherInstance({ id });
+};
+const masherInitialize = () => {
+    new MasherDefinitionClass({ id: MasherDefaultId });
+};
+const masherDefine = (object) => {
+    const { id } = object;
+    if (!(id && Is.populatedString(id)))
+        throw Errors.invalid.definition.id + 'masherDefine';
+    Definitions.uninstall(id);
+    return masherDefinition(object);
+};
+const MasherFactoryImplementation = {
+    define: masherDefine,
+    definition: masherDefinition,
+    definitionFromId: masherDefinitionFromId,
+    destroy: masherDestroy,
+    fromId: masherFromId,
+    initialize: masherInitialize,
+    instance: masherInstance,
+};
+Factories.masher = MasherFactoryImplementation;
 
 const ThemeWithModular = ModularMixin(InstanceClass);
 const ThemeWithClip = ClipMixin(ThemeWithModular);
@@ -5979,21 +6090,113 @@ class ThemeDefinitionClass extends ThemeDefinitionWithVisible {
     }
 }
 
-const label$2 = "Color";
-const type$2 = "theme";
-const id$2 = "com.moviemasher.theme.color";
-const properties$1 = {
+const label$3 = "Color";
+const type$3 = "theme";
+const id$3 = "com.moviemasher.theme.color";
+const properties$2 = {
   color: {
     type: "rgb",
     value: "#FFFF00"
   }
 };
-const filters$1 = [
+const filters$2 = [
   {
     id: "color"
   }
 ];
 var themeColorJson = {
+  label: label$3,
+  type: type$3,
+  id: id$3,
+  properties: properties$2,
+  filters: filters$2
+};
+
+const label$2 = "Text";
+const type$2 = "theme";
+const id$2 = "com.moviemasher.theme.text";
+const properties$1 = {
+  string: {
+    type: "string",
+    value: "Text"
+  },
+  size: {
+    type: "fontsize",
+    value: 0.3
+  },
+  x: {
+    type: "number",
+    value: 0
+  },
+  y: {
+    type: "number",
+    value: 0
+  },
+  color: {
+    type: "rgba",
+    value: "rgba(255,0,0,1)"
+  },
+  shadowcolor: {
+    type: "rgba",
+    value: "rgba(0,0,0,0)"
+  },
+  shadowx: {
+    type: "number",
+    value: 0.015
+  },
+  shadowy: {
+    type: "number",
+    value: 0.015
+  },
+  fontface: {
+    type: "font",
+    value: "com.moviemasher.font.default"
+  }
+};
+const filters$1 = [
+  {
+    id: "drawtext",
+    parameters: [
+      {
+        name: "fontcolor",
+        value: "color"
+      },
+      {
+        name: "shadowcolor",
+        value: "shadowcolor"
+      },
+      {
+        name: "fontsize",
+        value: "mm_vert(size)"
+      },
+      {
+        name: "x",
+        value: "mm_horz(x)"
+      },
+      {
+        name: "y",
+        value: "mm_vert(y)"
+      },
+      {
+        name: "shadowx",
+        value: "mm_horz(shadowx)"
+      },
+      {
+        name: "shadowy",
+        value: "mm_vert(shadowy)"
+      },
+      {
+        name: "fontfile",
+        value: "mm_fontfile(fontface)"
+      },
+      {
+        name: "textfile",
+        value: "mm_textfile(string)"
+      }
+    ]
+  }
+];
+var themeTextJson = {
   label: label$2,
   type: type$2,
   id: id$2,
@@ -6003,7 +6206,7 @@ var themeColorJson = {
 
 const label$1 = "Title";
 const type$1 = "theme";
-const id$1 = "com.moviemasher.theme.text";
+const id$1 = "com.moviemasher.theme.title";
 const properties = {
   string: {
     type: "string",
@@ -6110,7 +6313,7 @@ const filters = [
     ]
   }
 ];
-var themeTextJson = {
+var themeTitleJson = {
   label: label$1,
   type: type$1,
   id: id$1,
@@ -6118,23 +6321,13 @@ var themeTextJson = {
   filters: filters
 };
 
-const Objects = {
-    "com.moviemasher.theme.color": themeColorJson,
-    "com.moviemasher.theme.text": themeTextJson,
-};
 const themeDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
         throw Errors.id;
-    if (!Definitions.installed(id)) {
-        const options = {};
-        if (Objects[id])
-            Object.assign(options, Objects[id]);
-        Object.assign(options, object);
-        Object.assign(options, { type: DefinitionType.Theme, id: id });
-        new ThemeDefinitionClass(options);
-    }
-    return Definitions.fromId(id);
+    if (Definitions.installed(id))
+        return Definitions.fromId(id);
+    return new ThemeDefinitionClass({ ...object, type: DefinitionType.Theme });
 };
 const themeDefinitionFromId = (id) => {
     return themeDefinition({ id });
@@ -6147,7 +6340,11 @@ const themeInstance = (object) => {
 const themeFromId = (id) => {
     return themeInstance({ id });
 };
-const themeInitialize = () => { };
+const themeInitialize = () => {
+    new ThemeDefinitionClass(themeColorJson);
+    new ThemeDefinitionClass(themeTextJson);
+    new ThemeDefinitionClass(themeTitleJson);
+};
 const themeDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
@@ -6177,6 +6374,7 @@ class TransitionClass extends TransitionWithVisible {
         return;
     }
     mergeClipsIntoContextAtTime(clips, context, time, quantize, color) {
+        // console.log(this.constructor.name, "mergeClipsIntoContextAtTime", clips.length, time, quantize, color)
         if (!Is.aboveZero(clips.length))
             return;
         this.definition.drawVisibleFilters(clips, this, time, quantize, context, color);
@@ -6190,49 +6388,65 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible {
     constructor(...args) {
         super(...args);
         this.fromFilters = [];
+        this.fromMerger = mergerInstance({});
+        this.fromScaler = scalerInstance({});
         this.toFilters = [];
+        this.toMerger = mergerInstance({});
+        this.toScaler = scalerInstance({});
         this.type = DefinitionType.Transition;
         const [object] = args;
         const { to, from } = object;
         if (to) {
-            const { filters } = to;
+            const { filters, merger, scaler } = to;
             if (filters) {
                 this.toFilters.push(...filters.map(filter => filterInstance(filter)));
             }
+            if (merger)
+                this.toMerger = mergerInstance(merger);
+            if (scaler)
+                this.toScaler = scalerInstance(scaler);
         }
         if (from) {
-            const { filters } = from;
+            const { filters, merger, scaler } = from;
             if (filters) {
                 this.fromFilters.push(...filters.map(filter => filterInstance(filter)));
             }
+            if (merger)
+                this.fromMerger = mergerInstance(merger);
+            if (scaler)
+                this.fromScaler = scalerInstance(scaler);
         }
         Definitions.install(this);
     }
-    drawVisibleFilters(clips, modular, time, quantize, context, color) {
+    drawVisibleFilters(clips, transition, time, quantize, context, color) {
+        // console.log(this.constructor.name, "drawVisibleFilters", clips.length, transition.id)
         const { size } = context;
         const sorted = [...clips].sort(byFrame);
-        const [fromClip, toClip] = sorted;
-        const range = TimeRange.fromTime(time);
-        const fromRange = fromClip.timeRange(time.fps);
-        if (color)
-            context.drawFill(color);
-        if (fromRange.intersects(range)) {
-            fromClip.mergeContextAtTime(time, quantize, context);
-            this.filters = this.fromFilters;
-            this.drawFilters(modular, range, context, size);
+        let fromClip = sorted[0];
+        let toClip = sorted[1];
+        if (!toClip && fromClip.frame >= transition.frame) {
+            toClip = fromClip;
+            fromClip = undefined;
         }
-        if (!toClip)
-            return;
-        const toRange = toClip.timeRangeRelative(time, quantize);
-        if (!toRange.intersects(range))
-            return;
-        const drawing = ContextFactoryInstance.toSize(size);
-        if (color)
-            drawing.drawFill(color);
-        toClip.mergeContextAtTime(time, quantize, drawing);
+        let fromDrawing = ContextFactoryInstance.toSize(size);
+        let toDrawing = ContextFactoryInstance.toSize(size);
+        if (color) {
+            fromDrawing.drawFill(color);
+            toDrawing.drawFill(color);
+        }
+        const range = transition.timeRangeRelative(time, quantize);
+        if (fromClip)
+            fromClip.mergeContextAtTime(time, quantize, fromDrawing);
+        this.filters = this.fromFilters;
+        fromDrawing = this.drawFilters(transition, range, fromDrawing, size);
+        if (toClip)
+            toClip.mergeContextAtTime(time, quantize, toDrawing);
         this.filters = this.toFilters;
-        this.drawFilters(modular, range, drawing, size);
-        context.draw(drawing.imageSource);
+        toDrawing = this.drawFilters(transition, range, toDrawing, size);
+        fromDrawing = this.fromScaler.definition.drawFilters(this.fromScaler, range, fromDrawing, size);
+        this.fromMerger.definition.drawFilters(this.fromMerger, range, fromDrawing, size, context);
+        toDrawing = this.toScaler.definition.drawFilters(this.toScaler, range, toDrawing, size);
+        this.toMerger.definition.drawFilters(this.toMerger, range, toDrawing, size, context);
     }
     get instance() { return this.instanceFromObject(this.instanceObject); }
     instanceFromObject(object) {
@@ -6257,7 +6471,7 @@ const to = {
       parameters: [
         {
           name: "alpha",
-          value: "1"
+          value: "mm_t"
         },
         {
           name: "type",
@@ -6324,7 +6538,7 @@ const VideoWithTransformable = TransformableMixin(VideoWithVisible);
 class VideoClass extends VideoWithTransformable {
     constructor(...args) {
         super(...args);
-        this.speed = Default.clip.video.speed;
+        this.speed = Default.instance.video.speed;
         const [object] = args;
         const { speed } = object;
         if (speed && Is.aboveZero(speed))
@@ -6333,13 +6547,13 @@ class VideoClass extends VideoWithTransformable {
     get copy() { return super.copy; }
     definitionTime(quantize, time) {
         const scaledTime = super.definitionTime(quantize, time);
-        if (this.speed === Default.clip.video.speed)
+        if (this.speed === Default.instance.video.speed)
             return scaledTime;
         return scaledTime.divide(this.speed); //, 'ceil')
     }
     toJSON() {
         const object = super.toJSON();
-        if (this.speed !== Default.clip.video.speed)
+        if (this.speed !== Default.instance.video.speed)
             object.speed = this.speed;
         return object;
     }
@@ -6351,9 +6565,9 @@ const VideoDefinitionWithVisible = VisibleDefinitionMixin(VideoDefinitionWithAud
 class VideoDefinitionClass extends VideoDefinitionWithVisible {
     constructor(...args) {
         super(...args);
-        this.begin = Default.media.video.begin;
-        this.fps = Default.media.video.fps;
-        this.increment = Default.media.video.increment;
+        this.begin = Default.definition.video.begin;
+        this.fps = Default.definition.video.fps;
+        this.increment = Default.definition.video.increment;
         this.pattern = '%.jpg';
         this.source = '';
         this.trackType = TrackType.Video;
@@ -6425,13 +6639,13 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
         object.url = this.url;
         if (this.source)
             object.source = this.source;
-        if (this.pattern !== Default.media.video.pattern)
+        if (this.pattern !== Default.definition.video.pattern)
             object.pattern = this.pattern;
-        if (this.increment !== Default.media.video.increment)
+        if (this.increment !== Default.definition.video.increment)
             object.increment = this.increment;
-        if (this.begin !== Default.media.video.begin)
+        if (this.begin !== Default.definition.video.begin)
             object.begin = this.begin;
-        if (this.fps !== Default.media.video.fps)
+        if (this.fps !== Default.definition.video.fps)
             object.fps = this.fps;
         return object;
     }
@@ -6505,95 +6719,10 @@ const VideoFactoryImplementation = {
 };
 Factories.video = VideoFactoryImplementation;
 
-const MasherTypes = ["masher"];
-const MasherType = Object.fromEntries(MasherTypes.map(type => [type, type]));
-const INTERVAL_TICS = 10 * 1000;
-const classes = {
-    Masher: MasherClass // Editor, Player
-};
-class MasherFactory {
-    constructor() {
-        this.mashers = [];
-    }
-    create(object = {}) {
-        const masher = new classes.Masher(object);
-        this.addMasher(masher);
-        return masher;
-    }
-    addMasher(masher) {
-        if (!this.mashers.length)
-            this.start();
-        this.mashers.push(masher);
-    }
-    destroy(masher) {
-        const index = this.mashers.indexOf(masher);
-        if (index < 0)
-            return;
-        this.mashers.splice(index, 1);
-        if (!this.mashers.length)
-            this.stop();
-    }
-    handleInterval() {
-        // console.log(this.constructor.name, "handleInterval")
-        const map = new Map();
-        const definitions = new Set();
-        this.mashers.forEach(masher => {
-            masher.definitions.forEach(definition => { definitions.add(definition); });
-            const masherMap = masher.loadedDefinitions;
-            masherMap.forEach((times, definition) => {
-                if (!map.has(definition))
-                    map.set(definition, []);
-                const definitionTimes = map.get(definition);
-                if (!definitionTimes)
-                    throw Errors.internal;
-                definitionTimes.push(...times);
-            });
-        });
-        map.forEach((times, definition) => {
-            definition.unload(times);
-        });
-        Definitions.map.forEach(definition => {
-            if (definitions.has(definition)) {
-                // definition used in a masher (masher.mash.media)
-                if (map.has(definition)) {
-                    // definition needs to be at least partially loaded
-                    definition.unload(map.get(definition));
-                }
-                else {
-                    // definition can be completely unloaded, but not uninstalled
-                    definition.unload();
-                }
-            }
-            else {
-                // definition is not used anywhere - unload, and uninstall if not retained
-                definition.unload();
-                if (!definition.retain)
-                    Definitions.uninstall(definition.id);
-            }
-        });
-    }
-    start() {
-        // console.log(this.constructor.name, "start")
-        if (this.interval)
-            return;
-        this.interval = setInterval(this.handleInterval.bind(this), INTERVAL_TICS);
-    }
-    stop() {
-        // console.log(this.constructor.name, "stop")
-        if (!this.interval)
-            return;
-        clearInterval(this.interval);
-        delete this.interval;
-    }
-    get type() { return MasherType; }
-    get types() { return MasherTypes; }
-}
-const MasherFactoryInstance = new MasherFactory();
+DefinitionTypes.forEach(type => {
+    // console.log("initializing!", type)
+    MovieMasher[type].initialize();
+});
 
-mergerInitialize();
-scalerInitialize();
-fontInitialize();
-transitionInitialize();
-
-export { Action, ActionType, Actions, AddClipToTrackAction, AddEffectAction, AddTrackAction, AudibleContext, AudioClass, AudioDefinitionClass, AudioFactoryImplementation, AudioLoader, AudioProcessor, Cache, Capitalize, ChangeAction, ChangeFramesAction, ChangeTrimAction, ClipType, ClipTypes, Color, ContextFactoryInstance as ContextFactory, DataType, DataTypes, Default, DefinitionClass, DefinitionType, DefinitionTypes, Definitions, EffectClass, EffectDefinitionClass, EffectFactoryImplementation, Errors, Evaluator, EventType, Events, Factories, Factory, FilterClass, FilterDefinitionClass, FilterFactoryImplementation, FontClass, FontDefinitionClass, FontFactoryImplementation, FontLoader, FontProcessor, FreezeAction, ImageClass, ImageDefinitionClass, ImageFactoryImplementation, ImageLoader, Is, LoadType, Loader, MashClass, MashDefinitionClass, MashFactoryImplementation, MashType, MashTypes, MasherClass, MasherFactoryInstance as MasherFactory, MergerClass, MergerDefinitionClass, MergerFactoryImplementation, ModuleLoader, ModuleProcessor, ModuleType, ModuleTypes, MoveClipsAction, MoveEffectsAction, MoveType, Parameter, Pixel, Processor, Property, RemoveClipsAction, Sort, SplitAction, ThemeClass, ThemeDefinitionClass, ThemeFactoryImplementation, Time, TimeRange, TrackClass, TrackType, TransformType, TransformTypes, TransitionClass, TransitionDefinitionClass, TransitionFactoryImplementation, Type, TypeValue, TypesInstance as Types, VideoClass, VideoDefinitionClass, VideoFactoryImplementation, VisibleContext, audioDefine, audioDefinition, audioDefinitionFromId, audioFromId, audioInitialize, audioInstance, byFrame, byLabel, byTrack, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, effectDefine, effectDefinition, effectDefinitionFromId, effectFromId, effectInitialize, effectInstance, filterDefine, filterDefinition, filterDefinitionFromId, filterFromId, filterInitialize, filterInstance, fontDefine, fontDefinition, fontDefinitionFromId, fontFromId, fontInitialize, fontInstance, imageDefine, imageDefinition, imageDefinitionFromId, imageFromId, imageInitialize, imageInstance, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, mashDefine, mashDefinition, mashDefinitionFromId, mashFromId, mashInitialize, mashInstance, mergerDefaultId, mergerDefine, mergerDefinition, mergerDefinitionFromId, mergerFromId, mergerInitialize, mergerInstance, roundWithMethod, scaleTimes, themeDefine, themeDefinition, themeDefinitionFromId, themeFromId, themeInitialize, themeInstance, transitionDefine, transitionDefinition, transitionDefinitionFromId, transitionFromId, transitionInitialize, transitionInstance, videoDefine, videoDefinition, videoDefinitionFromId, videoFromId, videoInitialize, videoInstance };
+export { Action, ActionType, Actions, AddClipToTrackAction, AddEffectAction, AddTrackAction, AudibleContext, AudibleDefinitionMixin, AudibleMixin, AudioClass, AudioDefinitionClass, AudioFactoryImplementation, AudioLoader, AudioProcessor, Cache, Capitalize, ChangeAction, ChangeFramesAction, ChangeTrimAction, ClipDefinitionMixin, ClipMixin, ClipType, ClipTypes, Color, ContextFactoryInstance as ContextFactory, DataType, DataTypes, Default, DefinitionClass, DefinitionType, DefinitionTypes, Definitions, EffectClass, EffectDefinitionClass, EffectFactoryImplementation, Errors, Evaluator, EventType, Events, Factories, FilterClass, FilterDefinitionClass, FilterFactoryImplementation, FontClass, FontDefinitionClass, FontFactoryImplementation, FontLoader, FontProcessor, FreezeAction, Id, ImageClass, ImageDefinitionClass, ImageFactoryImplementation, ImageLoader, InstanceClass, Is, LoadType, Loader, MashClass, MashDefinitionClass, MashFactoryImplementation, MashType, MashTypes, MasherClass, MasherDefinitionClass, MasherFactoryImplementation, MergerClass, MergerDefinitionClass, MergerFactoryImplementation, ModularDefinitionMixin, ModularMixin, ModuleLoader, ModuleProcessor, ModuleType, ModuleTypes, MoveClipsAction, MoveEffectsAction, MoveType, MovieMasher, Parameter, Pixel, Processor, Property, RemoveClipsAction, ScalerClass, ScalerDefinitionClass, ScalerFactoryImplementation, Sort, SplitAction, ThemeClass, ThemeDefinitionClass, ThemeFactoryImplementation, Time, TimeRange, TrackClass, TrackType, TransformType, TransformTypes, TransformableMixin, TransitionClass, TransitionDefinitionClass, TransitionFactoryImplementation, Type, TypeValue, TypesInstance as Types, VideoClass, VideoDefinitionClass, VideoFactoryImplementation, VisibleContext, VisibleDefinitionMixin, VisibleMixin, audioDefine, audioDefinition, audioDefinitionFromId, audioFromId, audioInitialize, audioInstance, byFrame, byLabel, byTrack, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, effectDefine, effectDefinition, effectDefinitionFromId, effectFromId, effectInitialize, effectInstance, filterDefine, filterDefinition, filterDefinitionFromId, filterFromId, filterInitialize, filterInstance, fontDefine, fontDefinition, fontDefinitionFromId, fontFromId, fontInitialize, fontInstance, imageDefine, imageDefinition, imageDefinitionFromId, imageFromId, imageInitialize, imageInstance, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, mashDefine, mashDefinition, mashDefinitionFromId, mashFromId, mashInitialize, mashInstance, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, masherFromId, masherInitialize, masherInstance, mergerDefaultId, mergerDefine, mergerDefinition, mergerDefinitionFromId, mergerFromId, mergerInitialize, mergerInstance, roundWithMethod, scaleTimes, scalerDefaultId, scalerDefine, scalerDefinition, scalerDefinitionFromId, scalerFromId, scalerInitialize, scalerInstance, themeDefine, themeDefinition, themeDefinitionFromId, themeFromId, themeInitialize, themeInstance, transitionDefine, transitionDefinition, transitionDefinitionFromId, transitionFromId, transitionInitialize, transitionInstance, videoDefine, videoDefinition, videoDefinitionFromId, videoFromId, videoInitialize, videoInstance };
 //# sourceMappingURL=index.js.map

@@ -1,4 +1,6 @@
 {
+
+  "boolean": { "value": false },
   "direction4": {
     "values": [
       { "id": 0, "identifier": "top", "label": "Top" },

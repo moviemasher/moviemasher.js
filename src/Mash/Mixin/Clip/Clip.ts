@@ -1,4 +1,3 @@
-import { Any } from "../../../Setup/declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time } from "../../../Utilities/Time"
 import { TimeRange } from "../../../Utilities/TimeRange"
@@ -17,8 +16,6 @@ interface Clip extends Instance {
   frame : number
   frames : number
   maxFrames(quantize : number, trim? : number) : number
-  mediaTime(time : Time) : Time
-  mediaTimeRange(timeRange : TimeRange) : TimeRange
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : Time, quantize : number) : TimeRange
@@ -27,9 +24,7 @@ interface Clip extends Instance {
   visible : boolean
 }
 
-interface ClipDefinitionObject extends DefinitionObject {
-
-}
+interface ClipDefinitionObject extends DefinitionObject {}
 
 interface ClipDefinition extends Definition {
   visible : boolean

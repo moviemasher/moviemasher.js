@@ -41,8 +41,7 @@ const safePixels = (pixel : number, size : Size) : number[] => {
   return pixels
 }
 
-// TODO: this is not correctly converting from rgba to rgb!! (size??)
-const rgbs = (pixel : number, data : Pixels, size : Size) : Rgba[] => (
+const surroundingRgbas = (pixel : number, data : Pixels, size : Size) : Rgba[] => (
   safePixels(pixel, size).map(p => rgba(p, data))
 )
 
@@ -56,5 +55,5 @@ const color = (value : ScalarValue) : string => {
 export const Pixel = {
   color,
   rgbaAtIndex,
-  rgbs,
+  surroundingRgbas,
 }

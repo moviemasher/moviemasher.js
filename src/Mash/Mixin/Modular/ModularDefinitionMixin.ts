@@ -65,6 +65,8 @@ function ModularDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBa
       return this.properties.filter(property => property.custom)
     }
 
+    retain = true
+
     toJSON() : JsonObject {
       const object = super.toJSON()
       if (this.filters.length) object.filters = this.filters

@@ -6,6 +6,9 @@ import { Audio, AudioObject } from "./Audio"
 import { Factories } from "../Factories/Factories"
 import { Is } from "../../Utilities/Is"
 
+/**
+ * @internal
+ */
 const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
   const { id } = object
   if (!id) throw Errors.id
@@ -15,22 +18,37 @@ const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
   return new AudioDefinitionClass(object)
 }
 
+/**
+ * @internal
+ */
 const audioDefinitionFromId = (id : string) : AudioDefinition => {
   return audioDefinition({ id })
 }
 
+/**
+ * @internal
+ */
 const audioInstance = (object : AudioObject) : Audio => {
   const definition = audioDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
+/**
+ * @internal
+ */
 const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
+/**
+ * @internal
+ */
 const audioInitialize = () : void => {}
 
+/**
+ * @internal
+ */
 const audioDefine = (object : AudioDefinitionObject) : AudioDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
@@ -49,6 +67,7 @@ const AudioFactoryImplementation = {
 }
 
 Factories.audio = AudioFactoryImplementation
+
 
 export {
   audioDefine,

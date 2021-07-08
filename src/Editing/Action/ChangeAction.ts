@@ -2,13 +2,14 @@
 import { Effect } from "../../Mash/Effect/Effect"
 import { Mash } from "../../Mash/Mash"
 import { Clip } from "../../Mash/Mixin/Clip/Clip"
+import { SelectionValue } from "../../Setup/declarations"
 import { Action, ActionObject } from "./Action"
 
 interface ChangeActionObject extends ActionObject {
   property : string
-  redoValue : string | number
+  redoValue : SelectionValue
   target : Mash | Clip | Effect
-  undoValue : string | number
+  undoValue : SelectionValue
 }
 
 class ChangeAction extends Action {
@@ -23,11 +24,11 @@ class ChangeAction extends Action {
 
   property : string
 
-  redoValue : string | number
+  redoValue : SelectionValue
 
   target : Mash | Clip | Effect
 
-  undoValue : string | number
+  undoValue : SelectionValue
 
   get redoValueNumeric() : number { return Number(this.redoValue) }
 
@@ -41,7 +42,7 @@ class ChangeAction extends Action {
     this.target[this.property] = this.undoValue
   }
 
-  updateAction(value : string | number) : void {
+  updateAction(value : SelectionValue) : void {
     this.redoValue = value
     this.redo()
   }

@@ -11,11 +11,11 @@ class OverlayFilter extends FilterDefinitionClass {
     const { context, mergeContext } = evaluator
     if (typeof mergeContext === "undefined") throw Errors.internal + 'OverlayFilter mergeContext'
 
-    mergeContext.drawAtPoint(context.imageSource, { x: x || 0, y: y || 0 })
+    mergeContext.drawAtPoint(context.drawingSource, { x: x || 0, y: y || 0 })
     return mergeContext
   }
 
-  id = 'overlay'
+  // id = 'overlay'
 
   scopeSet(evaluator : Evaluator) : void {
     const { width, height } = evaluator.context.size

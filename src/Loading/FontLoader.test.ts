@@ -2,7 +2,7 @@ import { LoaderFactory } from "./LoaderFactory"
 import { FontLoader } from "./FontLoader"
 
 describe("FontLoader", () => {
-  const url = "../examples/javascript/media/font/blackout/theleagueof-blackout/webfonts/blackout_two_am-webfont.ttf"
+  const url = "Assets/BlackoutTwoAM.ttf"
   const loader = LoaderFactory.font()
 
   describe("constructor", () => {

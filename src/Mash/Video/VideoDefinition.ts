@@ -38,9 +38,9 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
     Definitions.install(this)
   }
 
-  begin = Default.media.video.begin
+  begin = Default.definition.video.begin
 
-  fps = Default.media.video.fps
+  fps = Default.definition.video.fps
 
   private frames(start : Time, end? : Time) : number[] {
     const frames : number[] = []
@@ -56,7 +56,7 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
 
   private get framesMax() : number { return Math.floor(this.fps * this.duration) - 2 }
 
-  increment = Default.media.video.increment
+  increment = Default.definition.video.increment
 
   get instance() : Video { return this.instanceFromObject(this.instanceObject) }
 
@@ -101,10 +101,10 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
     const object = super.toJSON()
     object.url = this.url
     if (this.source) object.source = this.source
-    if (this.pattern !== Default.media.video.pattern) object.pattern = this.pattern
-    if (this.increment !== Default.media.video.increment) object.increment = this.increment
-    if (this.begin !== Default.media.video.begin) object.begin = this.begin
-    if (this.fps !== Default.media.video.fps) object.fps = this.fps
+    if (this.pattern !== Default.definition.video.pattern) object.pattern = this.pattern
+    if (this.increment !== Default.definition.video.increment) object.increment = this.increment
+    if (this.begin !== Default.definition.video.begin) object.begin = this.begin
+    if (this.fps !== Default.definition.video.fps) object.fps = this.fps
     return object
   }
 

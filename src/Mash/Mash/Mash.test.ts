@@ -1,21 +1,28 @@
 import { DefinitionType, TrackType } from "../../Setup/Enums"
-// import { TimeRange } from "../../Utilities"
 import { Definition } from "../Definition/Definition"
 import themeColorJson from "../Theme/DefinitionObjects/color.json"
-import { Factory } from "../Factory/Factory"
+import { MovieMasher } from "../../MovieMasher/MovieMasher"
 import { MashClass } from "./MashInstance"
 import { Clip } from "../Mixin/Clip/Clip"
 import { TrackClass, TrackObject } from "../Track"
 import { InstanceClass } from "../Instance"
 import { ThemeDefinition } from "../Theme/Theme"
-import { createId } from "../../../test/createId"
+import { createId } from "../../Test/createId"
 import { Mash } from "./Mash"
-import { expectEmptyArray } from "../../../test/expectEmptyArray"
-import { expectArrayOf } from "../../../test/expectArrayOf"
+import { expectEmptyArray } from "../../Test/expectEmptyArray"
+import { expectArrayOf } from "../../Test/expectArrayOf"
 import { Errors } from "../../Setup"
 
+describe("MashFactory", () => {
+  describe("instance", () => {
+    test("returns MashClass instance", () => {
+      const mash = MovieMasher.mash.instance({ id: createId() })
+      expect(mash).toBeInstanceOf(MashClass)
+    })
+  })
+})
 describe("Mash", () => {
-  const definition = <ThemeDefinition> Factory.theme.definition(themeColorJson)
+  const definition = () => <ThemeDefinition> MovieMasher.theme.definition(themeColorJson)
   describe("addClipsToTrack", () => {
     const addNewClip = (mash : Mash, definition : Definition, track = 0) : Clip => {
       const clip = <Clip> definition.instance
@@ -26,10 +33,10 @@ describe("Mash", () => {
     }
 
     test("correctly moves to new track and removes from old", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MovieMasher.mash.instance({ id: createId() })
       const firstTrack = mash.addTrack(TrackType.Video)
       const secondTrack = mash.addTrack(TrackType.Video)
-      const clip = addNewClip(mash, definition, 1)
+      const clip = addNewClip(mash, definition(), 1)
       expect(firstTrack.clips.includes(clip)).toBeTruthy()
       expect(secondTrack.clips.includes(clip)).toBeFalsy()
       const clipTrack = mash.clipTrack(clip)
@@ -43,11 +50,11 @@ describe("Mash", () => {
     })
 
     test("correctly moves to new position on main track", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MovieMasher.mash.instance({ id: createId() })
       const trackClips = mash.video[0].clips
       const array = new Array(4).fill(null)
       const objects = array.map(() => {
-        const clip = addNewClip(mash, definition)
+        const clip = addNewClip(mash, definition())
         expect(clip).toBeTruthy()
         expect(clip).toBeInstanceOf(InstanceClass)
         return clip
@@ -77,8 +84,8 @@ describe("Mash", () => {
     })
 
     test("correctly places clip in track clips", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const clip = addNewClip(mash, definition)
+      const mash = MovieMasher.mash.instance({ id: createId() })
+      const clip = addNewClip(mash, definition())
 
       expect(mash.video.length).toEqual(1)
       const track = mash.video[0]
@@ -89,10 +96,10 @@ describe("Mash", () => {
     })
 
     test("correctly sorts clips", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MovieMasher.mash.instance({ id: createId() })
       expect(mash.quantize).toEqual(10)
-      const clip1 = definition.instance
-      const clip2 = definition.instance
+      const clip1 = definition().instance
+      const clip2 = definition().instance
       mash.addClipsToTrack([clip1], 0)
       mash.addClipsToTrack([clip2], 0, 1)
 
@@ -107,25 +114,17 @@ describe("Mash", () => {
     })
 
     test("updates definition", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const clip = definition.instance
+      const mash = MovieMasher.mash.instance({ id: createId() })
+      const clip = definition().instance
       mash.addClipsToTrack([clip], 0)
       // console.log("mash.definition", mash.definition)
-      expect(mash.media.includes(definition)).toBeTruthy()
-    })
-  })
-
-  describe("constructor", () => {
-    test("returns MashClass instance", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      expect(mash).toBeInstanceOf(MashClass)
+      expect(mash.media.includes(definition())).toBeTruthy()
     })
   })
 
   describe("addTrack", () => {
-    const mash = Factory.mash.instance({ id: createId() })
-
     test.each(Object.values(TrackType))("returns new %s track", (type) => {
+      const mash = MovieMasher.mash.instance({ id: createId() })
       const addedTrack = mash.addTrack(type)
       expect(addedTrack).toBeInstanceOf(TrackClass)
       expect(addedTrack.type).toEqual(type)
@@ -140,7 +139,7 @@ describe("Mash", () => {
 
   // describe("clipsVisibleInTimeRange", () => {
   //   test("returns expected clip", () => {
-  //     const mash = Factory.mash.instance({ id: createId() })
+  //     const mash = MovieMasher.mash.instance({ id: createId() })
   //     const clip1 = definition.instance
   //     clip1.label = "CLIP 1"
   //     const clip2 = definition.instance
@@ -157,33 +156,32 @@ describe("Mash", () => {
 
   describe("frames", () => {
     test("returns 0 from empty mash", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MovieMasher.mash.instance({ id: createId() })
       expect(mash.frames).toEqual(0)
     })
   })
 
   describe("id", () => {
-    test("returns ID provided", () => {
+    test("returns what is provided to constructor", () => {
       const id = createId()
-      const mash = Factory.mash.instance({ id })
+      const mash = MovieMasher.mash.instance({ id })
       expect(mash.id).toEqual(id)
     })
 
   })
 
   describe("removeTrack", () => {
-    const mash = Factory.mash.instance({ id: createId() })
-    test.each(Object.values(TrackType))("returns removed %s track", (type) => {
+    test.each(Object.values(TrackType))("correctly removes just %s track", (type) => {
+      const mash = MovieMasher.mash.instance({ id: createId() })
       mash.removeTrack(type)
       expect(mash[type].length).toEqual(0)
-      expect(mash.tracks.length).toBeLessThan(2)
+      expect(mash.tracks.length).toBe(1)
     })
   })
 
   describe("tracks", () => {
     test("returns 2 for empty mash", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-
+      const mash = MovieMasher.mash.instance({ id: createId() })
       const { tracks } = mash
       expect(tracks.length).toEqual(2)
       Object.values(TrackType).forEach((type, index) => {
@@ -196,8 +194,8 @@ describe("Mash", () => {
   describe("toJSON", () => {
     test("returns expected object", () => {
       const id = createId()
-      const mash = Factory.mash.instance({ id })
-      const clip = definition.instance
+      const mash = MovieMasher.mash.instance({ id })
+      const clip = definition().instance
       mash.addTrack(TrackType.Video)
       mash.addClipsToTrack([clip], 1)
       expect(clip.track).toEqual(1)
@@ -213,7 +211,7 @@ describe("Mash", () => {
 
       const themeDefinition = array.find(media => media.type === DefinitionType.Theme)
       expect(themeDefinition).toBeInstanceOf(Object)
-      expect(themeDefinition.id).toEqual(definition.id)
+      expect(themeDefinition.id).toEqual(definition().id)
 
       // console.log("themeDefinition", themeDefinition)
       // console.log("themeColorJson", themeColorJson)

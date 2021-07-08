@@ -22,11 +22,11 @@ class ScaleFilter extends FilterDefinitionClass {
     const drawing = ContextFactory.toSize(fromSize)
     // console.log(this.constructor.name, "draw", inSize, fromSize)
 
-    drawing.drawInSizeFromSize(context.imageSource, inSize, fromSize)
+    drawing.drawInSizeFromSize(context.drawingSource, inSize, fromSize)
     return drawing
   }
 
-  id = 'scale'
+  // id = 'scale'
 
   scopeSet(evaluator : Evaluator) : void {
     const { width, height } = evaluator.context.size

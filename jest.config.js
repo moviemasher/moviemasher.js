@@ -1,5 +1,5 @@
 module.exports = {
-  // bail: 1,
+  "automock": false,
   roots: ["./src"],
   coverageDirectory: "./test/coverage",
   setupFilesAfterEnv: ["./test/jest.setup.js"],

@@ -32,8 +32,8 @@ export type ScalarMethod = (_? : ScalarValue) => ScalarValue
 
 export type JsonValue = Scalar
 export type JsonObject = Record<string, JsonValue | JsonValue[]>
-export type SelectionValue = ScalarValue | ValueObject
 export type SelectionObject = Record<string, SelectionValue>
+export type SelectionValue = ScalarRaw | ValueObject
 export type EvaluatorValue = ScalarValue | ScalarMethod
 
 export interface WithFrame {

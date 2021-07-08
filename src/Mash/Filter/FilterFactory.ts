@@ -12,36 +12,19 @@ import { ScaleFilter } from "./Definitions/ScaleFilter"
 import { SetSarFilter } from "./Definitions/SetSarFilter"
 import { Definitions } from "../Definitions"
 import { Errors } from "../../Setup/Errors"
-import { DefinitionType } from "../../Setup/Enums"
-import { FilterDefinitionClass } from "./FilterDefinition"
 import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
+import { DefinitionType } from "../../Setup"
 
-const Classes : {[index : string] : typeof FilterDefinitionClass } = {
-  setsar: SetSarFilter,
-  blend: BlendFilter,
-  chromakey: ChromaKeyFilter,
-  color: ColorFilter,
-  colorchannelmixer: ColorChannelMixerFilter,
-  convolution: ConvolutionFilter,
-  crop: CropFilter,
-  drawbox: DrawBoxFilter,
-  drawtext: DrawTextFilter,
-  fade: FadeFilter,
-  overlay: OverlayFilter,
-  scale: ScaleFilter,
-}
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
-  if (!(id && typeof id === "string" && id.length)) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id
 
   if (Definitions.installed(id)) return <FilterDefinition> Definitions.fromId(id)
-
-  if (!Classes[id]) throw Errors.unknown.filter
-
-  return new Classes[id]({ id, type: DefinitionType.Filter })
+  console.trace("WTF")
+  throw Errors.invalid.definition.id + ' filterDefinition ' + id
 }
 
 const filterDefinitionFromId = (id : string) : FilterDefinition => {
@@ -49,21 +32,29 @@ const filterDefinitionFromId = (id : string) : FilterDefinition => {
 }
 
 const filterInstance = (object : FilterDefinitionObject) : Filter => {
-  const { id } = object
-  if (!id) throw Errors.id
-
-  return filterDefinition({ id }).instanceFromObject(object)
+  return filterDefinition(object).instanceFromObject(object)
 }
 
-const filterFromId = (id : string) : Filter => {
-  return filterInstance({ id })
-}
+const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 
-const filterInitialize = () : void => {}
+const filterInitialize = () : void => {
+  new ConvolutionFilter({ id: 'convolution', type: DefinitionType.Filter })
+  new SetSarFilter({ id: 'setsar', type: DefinitionType.Filter })
+  new BlendFilter({ id: 'blend', type: DefinitionType.Filter })
+  new ChromaKeyFilter({ id: 'chromakey', type: DefinitionType.Filter })
+  new ColorFilter({ id: 'color', type: DefinitionType.Filter })
+  new ColorChannelMixerFilter({ id: 'colorchannelmixer', type: DefinitionType.Filter })
+  new CropFilter({ id: 'crop', type: DefinitionType.Filter })
+  new DrawBoxFilter({ id: 'drawbox', type: DefinitionType.Filter })
+  new DrawTextFilter({ id: 'drawtext', type: DefinitionType.Filter })
+  new FadeFilter({ id: 'fade', type: DefinitionType.Filter })
+  new OverlayFilter({ id: 'overlay', type: DefinitionType.Filter })
+  new ScaleFilter({ id: 'scale', type: DefinitionType.Filter })
+}
 
 const filterDefine = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + 'filterDefine'
 
   Definitions.uninstall(id)
   return filterDefinition(object)

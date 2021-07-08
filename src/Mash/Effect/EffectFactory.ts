@@ -15,27 +15,14 @@ import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
 
-const Objects : {[index : string] : UnknownObject } = {
-  "com.moviemasher.effect.blur": effectBlurJson,
-  "com.moviemasher.effect.chromakey": effectChromaKeyJson,
-  "com.moviemasher.effect.emboss": effectEmbossJson,
-  "com.moviemasher.effect.grayscale": effectGrayscaleJson,
-  "com.moviemasher.effect.sepia": effectSepiaJson,
-  "com.moviemasher.effect.sharpen": effectSharpenJson,
-  "com.moviemasher.effect.text": effectTextJson,
-}
 
 const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
-  if (!(id && id.length)) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id
 
-  if (!Definitions.installed(id)) {
-    const options = { type: DefinitionType.Effect }
-    if (Objects[id]) Object.assign(options, Objects[id])
-    Object.assign(options, object)
-    new EffectDefinitionClass(options)
-  }
-  return <EffectDefinition> Definitions.fromId(id)
+  if (Definitions.installed(id)) return <EffectDefinition> Definitions.fromId(id)
+
+  return new EffectDefinitionClass({...object, type: DefinitionType.Effect })
 }
 
 const effectDefinitionFromId = (id : string) : EffectDefinition => {
@@ -52,7 +39,16 @@ const effectFromId = (id : string) : Effect => {
   return effectInstance({ id })
 }
 
-const effectInitialize = () : void => {}
+const effectInitialize = () : void => {
+  new EffectDefinitionClass(effectBlurJson)
+  new EffectDefinitionClass(effectChromaKeyJson)
+  new EffectDefinitionClass(effectEmbossJson)
+  new EffectDefinitionClass(effectGrayscaleJson)
+  new EffectDefinitionClass(effectSepiaJson)
+  new EffectDefinitionClass(effectSharpenJson)
+  new EffectDefinitionClass(effectTextJson)
+
+}
 
 const effectDefine = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object

@@ -24,20 +24,20 @@ class VideoClass extends VideoWithTransformable {
 
   get copy() : Video { return <Video> super.copy }
 
-  definition! : VideoDefinition
+  declare definition : VideoDefinition
 
   definitionTime(quantize : number, time : Time) : Time {
     const scaledTime = super.definitionTime(quantize, time)
-    if (this.speed === Default.clip.video.speed) return scaledTime
+    if (this.speed === Default.instance.video.speed) return scaledTime
 
     return scaledTime.divide(this.speed) //, 'ceil')
   }
 
-  speed = Default.clip.video.speed
+  speed = Default.instance.video.speed
 
   toJSON() : JsonObject {
     const object = super.toJSON()
-    if (this.speed !== Default.clip.video.speed) object.speed = this.speed
+    if (this.speed !== Default.instance.video.speed) object.speed = this.speed
     return object
   }
 

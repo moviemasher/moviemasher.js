@@ -1,21 +1,25 @@
 const Default = {
-  buffer: 10,
-  fps: 30,
-  loop: true,
-  volume: 0.75,
-  precision: 3,
-  autoplay: false,
+  label: "Unlabeled",
+  masher: {
+    buffer: 10,
+    fps: 30,
+    loop: true,
+    volume: 0.75,
+    precision: 3,
+    autoplay: false,
+  },
   mash: {
-    label: "Untitled Mash",
+    label: "Unlabeled Mash",
     quantize: 10,
     backcolor: "#00000000",
+    gain: 0.75,
+    buffer: 10,
   },
-  clip: {
+  instance: {
     audio: { gain: 1.0, trim: 0 },
     video: { speed: 1.0 }
   },
-  media: {
-
+  definition: {
     frame: { duration: 2 },
     image: { duration: 2 },
     theme: { duration: 3 },

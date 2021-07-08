@@ -1,4 +1,4 @@
-import { JsonObject, ScalarValue } from "./declarations"
+import { JsonObject, ScalarRaw } from "./declarations"
 import { Errors } from "./Errors"
 import { DataType } from "./Enums"
 import { Type } from "../Mash/Type/Type"
@@ -7,7 +7,7 @@ import { Types } from "../Mash/Types/Types"
 interface PropertyObject {
   type? : DataType
   name? : string
-  value? : ScalarValue
+  value? : ScalarRaw
   custom? : boolean
 }
 
@@ -34,7 +34,7 @@ class Property {
 
   type : Type
 
-  value : ScalarValue
+  value : ScalarRaw
 }
 
 export { Property, PropertyObject }

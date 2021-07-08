@@ -1,16 +1,16 @@
 import { ScalerDefinition } from "./Scaler"
 import { InstanceClass } from "../Instance/Instance"
 import { ModularMixin } from "../Mixin/Modular/ModularMixin"
-import { Factory } from "../Factory"
+import { MovieMasher } from "../../MovieMasher"
 
 const ScalerWithModular = ModularMixin(InstanceClass)
 class ScalerClass extends ScalerWithModular {
-  definition! : ScalerDefinition
+  declare definition : ScalerDefinition
 
   get id() : string { return this.definition.id }
 
   set id(value : string) {
-    this.definition = Factory.scaler.definitionFromId(value)
+    this.definition = MovieMasher.scaler.definitionFromId(value)
     this.constructProperties()
   }
 }

@@ -7,25 +7,16 @@ import { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeObject } from "./Th
 import { Definitions } from "../Definitions/Definitions"
 import themeColorJson from "./DefinitionObjects/color.json"
 import themeTextJson from "./DefinitionObjects/text.json"
+import themeTitleJson from "./DefinitionObjects/title.json"
 import { Factories } from "../Factories"
-
-const Objects : {[index : string] : UnknownObject } = {
-  "com.moviemasher.theme.color": themeColorJson,
-  "com.moviemasher.theme.text": themeTextJson,
-}
 
 const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
-  if (!Definitions.installed(id)) {
-    const options = {}
-    if (Objects[id]) Object.assign(options, Objects[id])
-    Object.assign(options, object)
-    Object.assign(options, { type: DefinitionType.Theme, id: id })
-    new ThemeDefinitionClass(options)
-  }
-  return <ThemeDefinition> Definitions.fromId(id)
+  if (Definitions.installed(id)) return <ThemeDefinition> Definitions.fromId(id)
+
+  return new ThemeDefinitionClass({...object, type: DefinitionType.Theme })
 }
 
 const themeDefinitionFromId = (id : string) : ThemeDefinition => {
@@ -42,7 +33,11 @@ const themeFromId = (id : string) : Theme => {
   return themeInstance({ id })
 }
 
-const themeInitialize = () : void => {}
+const themeInitialize = () : void => {
+  new ThemeDefinitionClass(themeColorJson)
+  new ThemeDefinitionClass(themeTextJson)
+  new ThemeDefinitionClass(themeTitleJson)
+}
 
 const themeDefine = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object

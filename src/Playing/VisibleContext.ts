@@ -11,6 +11,9 @@ import {
 import { Errors } from "../Setup/Errors"
 import { Is } from "../Utilities/Is"
 
+
+const blah = ""
+
 const $canvas = 'canvas'
 const $2d = '2d'
 const Point0 = { x: 0, y: 0 }
@@ -202,8 +205,7 @@ export class VisibleContext {
     return this.imageDataFromRect({ ...Point0, ...size })
   }
 
-  // TODO: rename method to match return type
-  get imageSource() : DrawingSource { return this.canvas }
+  get drawingSource() : DrawingSource { return this.canvas }
 
   get shadow() : string { return this.context2d.shadowColor }
 

@@ -19,7 +19,7 @@ class FilterClass extends InstanceClass {
     }
   }
 
-  definition! : FilterDefinition
+  declare definition : FilterDefinition
 
   drawFilter(evaluator : Evaluator) : VisibleContext {
     this.definition.scopeSet(evaluator)

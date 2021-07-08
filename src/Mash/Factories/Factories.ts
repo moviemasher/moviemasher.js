@@ -10,14 +10,16 @@ import { ScalerFactory } from "../Scaler/Scaler"
 import { ThemeFactory } from "../Theme/Theme"
 import { TransitionFactory } from "../Transition/Transition"
 import { VideoFactory } from "../Video/Video"
+import { MasherFactory } from "../Masher/Masher"
 
 type FactoryObject = {
+  [DefinitionType.Filter]?: FilterFactory
   [DefinitionType.Audio]?: AudioFactory
   [DefinitionType.Effect]?: EffectFactory
-  [DefinitionType.Filter]?: FilterFactory
   [DefinitionType.Font]?: FontFactory
   [DefinitionType.Image]?: ImageFactory
   [DefinitionType.Mash]?: MashFactory
+  [DefinitionType.Masher]?: MasherFactory
   [DefinitionType.Merger]?: MergerFactory
   [DefinitionType.Scaler]?: ScalerFactory
   [DefinitionType.Theme]?: ThemeFactory

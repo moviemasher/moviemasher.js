@@ -22,7 +22,7 @@ class DrawBoxFilter extends FilterDefinitionClass {
     return context
   }
 
-  id = 'drawbox'
+  // id = 'drawbox'
 
 }
 
