@@ -3,9 +3,10 @@ import { ThemeClass } from "./ThemeInstance"
 import { DefinitionClass } from "../Definition/Definition"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
 import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { Any, DefinitionType } from "../../Setup"
+import { Any } from "../../declarations"
 import { Definitions } from "../Definitions/Definitions"
 import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
+import { DefinitionType } from "../../Setup/Enums"
 
 
 const ThemeDefinitionWithModular = ModularDefinitionMixin(DefinitionClass)

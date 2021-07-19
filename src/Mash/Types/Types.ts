@@ -1,7 +1,7 @@
 
 import { Is } from "../../Utilities/Is";
 import dataTypesJson from "../../Setup/dataTypes.json"
-import { ScalarRaw } from "../../Setup/declarations"
+import { ScalarRaw } from "../../declarations"
 import { DataType, DataTypes } from "../../Setup/Enums";
 import { Errors } from "../../Setup/Errors";
 import { Type, TypeObject } from "../Type/Type";
@@ -24,10 +24,7 @@ class TypesClass {
 
   propertyType(type : DataType) : Type {
     const instance = this.propertyTypes.get(type)
-    if (!instance) {
-      console.trace('propertyType ' + type)
-      throw Errors.type + 'propertyType ' + type
-    }
+    if (!instance) throw Errors.type + 'propertyType ' + type
 
     return instance
   }

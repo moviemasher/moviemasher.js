@@ -1,4 +1,4 @@
-import { Any } from "../Setup/declarations"
+import { Any } from "../declarations"
 import { expectArray } from "./expectArray"
 
 const expectEmptyArray = (value : Any) : Any[] => {

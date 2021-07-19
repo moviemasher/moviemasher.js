@@ -11,7 +11,7 @@ import { createId } from "../../Test/createId"
 import { Mash } from "./Mash"
 import { expectEmptyArray } from "../../Test/expectEmptyArray"
 import { expectArrayOf } from "../../Test/expectArrayOf"
-import { Errors } from "../../Setup"
+import { Errors } from "../../Setup/Errors"
 
 describe("MashFactory", () => {
   describe("instance", () => {
@@ -59,18 +59,11 @@ describe("Mash", () => {
         expect(clip).toBeInstanceOf(InstanceClass)
         return clip
       }).reverse()
-      expect(mash.clipsInTracks).toEqual(objects)
+      expect(mash.clips()).toEqual(objects)
       expect(trackClips).toEqual(objects)
 
       const a2z = "abcdefg" // efghijklmnopqrstuvwxyz"
       const clips = Object.fromEntries(objects.map((clip, i) => [a2z[i], clip]))
-
-      // const logOrder = () => {
-      //   const characters = trackClips.map((clip) => a2z[objects.indexOf(clip)])
-      //   console.log("clip order", characters)
-      // }
-
-      // logOrder()
 
       const moveClips = objects.slice(2)
       mash.addClipsToTrack(moveClips, 0, 1)
@@ -80,7 +73,7 @@ describe("Mash", () => {
       expect(mash.video[0].clips).toEqual([clips.a, clips.c, clips.d, clips.b])
 
       mash.addClipsToTrack(moveClips, 0, 2)
-      expect(mash.clipsInTracks).toEqual([clips.a, clips.c, clips.d, clips.b])
+      expect(mash.clips()).toEqual([clips.a, clips.c, clips.d, clips.b])
     })
 
     test("correctly places clip in track clips", () => {

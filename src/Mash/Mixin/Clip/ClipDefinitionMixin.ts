@@ -1,6 +1,6 @@
 
 import { Property } from "../../../Setup/Property"
-import { Any, Constrained, ObjectUnknown } from "../../../Setup/declarations"
+import { Any, Constrained, ObjectUnknown } from "../../../declarations"
 import { DataType } from "../../../Setup/Enums"
 import { Definition } from "../../Definition/Definition"
 import { Default } from "../../../Setup/Default"

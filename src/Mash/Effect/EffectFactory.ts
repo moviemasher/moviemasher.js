@@ -1,5 +1,5 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { UnknownObject } from "../../Setup/declarations"
+import { UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { EffectDefinitionClass } from "./EffectDefinition"
 import { Definitions } from "../Definitions"

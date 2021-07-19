@@ -1,4 +1,4 @@
-import { JsonObject } from "../../Setup/declarations"
+import { JsonObject } from "../../declarations"
 import { TrackType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { byFrame } from "../../Utilities"

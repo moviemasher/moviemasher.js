@@ -1,5 +1,6 @@
 import { Is } from "./Is"
-import { Time, scaleTimes, roundWithMethod } from "./Time"
+import { Time, timeEqualizeRates } from "./Time"
+import { roundWithMethod } from "./Round"
 import { Errors } from "../Setup/Errors"
 
 class TimeRange extends Time {
@@ -20,7 +21,7 @@ class TimeRange extends Time {
   get endTime() : Time { return Time.fromArgs(this.end, this.fps) }
 
   equalsTimeRange(timeRange : TimeRange) : boolean {
-    const [range1, range2] = <TimeRange[]> scaleTimes(this, timeRange)
+    const [range1, range2] = <TimeRange[]> timeEqualizeRates(this, timeRange)
     return range1.frame === range2.frame && range1.frames === range2.frames
   }
 
@@ -44,7 +45,7 @@ class TimeRange extends Time {
   }
 
   intersects(timeRange : TimeRange) : boolean {
-    const [range1, range2] = <TimeRange[]> scaleTimes(this, timeRange)
+    const [range1, range2] = <TimeRange[]> timeEqualizeRates(this, timeRange)
 
     if (range1.frame >= range2.end) return false
 
@@ -52,14 +53,14 @@ class TimeRange extends Time {
   }
 
   intersectsTime(time : Time) : boolean {
-    const [time1, scaledTime] = scaleTimes(this, time)
+    const [time1, scaledTime] = timeEqualizeRates(this, time)
     const scaledRange = <TimeRange> time1
     return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end
 
   }
 
   minEndTime(endTime : Time) : TimeRange {
-    const [range, time] = <TimeRange[]> scaleTimes(this, endTime)
+    const [range, time] = <TimeRange[]> timeEqualizeRates(this, endTime)
     range.frames = Math.min(range.frames, time.frame)
     return range
   }
@@ -89,7 +90,7 @@ class TimeRange extends Time {
   }
 
   static fromTimes(startTime : Time, endTime : Time) : TimeRange {
-    const [time1, time2] = <TimeRange[]> scaleTimes(startTime, endTime)
+    const [time1, time2] = <TimeRange[]> timeEqualizeRates(startTime, endTime)
     if (time2.frame <= time1.frame) throw Errors.argument
 
     const frames = time2.frame - time1.frame

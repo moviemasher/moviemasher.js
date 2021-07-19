@@ -1,4 +1,4 @@
-import { Any } from "../Setup/declarations"
+import { Any } from "../declarations"
 import { Processor } from "./Processor"
 
 class ModuleProcessor extends Processor {

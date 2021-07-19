@@ -1,4 +1,4 @@
-import { Context2D, ContextElement, DrawingSource, GenericFactory, LoadPromise, SelectionValue, UnknownObject } from "../../Setup/declarations"
+import { Context2D, ContextElement, DrawingSource, GenericFactory, LoadPromise, SelectionObject, SelectionValue, UnknownObject } from "../../declarations"
 import { Mash } from "../Mash/Mash"
 import { Clip } from "../Mixin/Clip/Clip"
 import { AudibleContext, VisibleContext } from "../../Playing"
@@ -6,7 +6,7 @@ import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Def
 import { Effect } from "../Effect/Effect"
 import { Instance, InstanceObject } from "../Instance"
 import { MoveType, TrackType } from "../../Setup/Enums"
-import { Time } from "../../Utilities"
+import { Time, TimeRange, TrackRange } from "../../Utilities"
 
 
 interface MasherObject extends InstanceObject {
@@ -18,7 +18,6 @@ interface MasherObject extends InstanceObject {
   loop?: boolean
   mash? : Mash
   precision?: number
-  visibleContext? : VisibleContext
   volume?: number
 }
 
@@ -39,18 +38,19 @@ interface Masher extends Instance {
   change(property : string, value? : SelectionValue) : void
   changeClip(property : string, value? : SelectionValue, clip? : Clip) : void
   changeEffect(property : string, value? : SelectionValue, effect? : Effect) : void
-  changeMash(property : string, value? : SelectionValue) : void
-  context2d : Context2D
+  changeMash(property: string, value?: SelectionValue): void
+  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[]
   currentTime : number
   definitions : Definition[]
   destroy() : void
   draw() : void
   duration : number
   fps : number
-  frame : number
-  frames : number
+  // frame : number
+  // frames : number
   freeze() : void
   goToTime(value : Time) : LoadPromise
+  isSelected(object : ClipOrEffect) : boolean
   loadedDefinitions : DefinitionTimes
   loop : boolean
   mash : Mash
@@ -71,18 +71,20 @@ interface Masher extends Instance {
   save() : void
   select(object : ClipOrEffect | undefined, toggleSelected? : boolean) : void
   selectClip(clip : Clip | undefined, toggleSelected : boolean) : void
-  selected(object : ClipOrEffect) : boolean
+  selectEffect(effect : Effect | undefined, toggleSelected : boolean) : void
+  selectMash() : void
+  selectedClipsOrEffects : Clip[] | Effect[]
   selectedClip : Clip | UnknownObject
   selectedClipOrMash : Clip | Mash
   selectedClips : Clip[]
   selectedEffect : Effect | undefined
   selectedEffects : Effect[]
-  selectEffect(effect : Effect | undefined, toggleSelected : boolean) : void
-  selectMash() : void
+  selectionObjects : SelectionObject[]
   split() : void
-  time : Time
+  time: Time
+  timeRange : TimeRange
   undo() : void
-  visibleContext : VisibleContext
+  visibleContext : VisibleContext // for tests
   volume : number
 }
 

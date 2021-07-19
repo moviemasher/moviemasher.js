@@ -2,7 +2,7 @@ import { AudibleDefinition, AudibleDefinitionObject } from "../Mixin/Audible/Aud
 import { VisibleDefinition, VisibleObject } from "../Mixin/Visible/Visible"
 import { Transformable } from "../Mixin/Transformable/Transformable"
 import { Audible, AudibleObject } from "../Mixin/Audible/Audible"
-import { GenericFactory, ScalarValue } from "../../Setup/declarations"
+import { GenericFactory, ScalarValue } from "../../declarations"
 import { Time } from "../../Utilities"
 
 interface VideoObject extends AudibleObject, VisibleObject {

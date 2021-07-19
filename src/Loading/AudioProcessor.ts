@@ -1,5 +1,5 @@
 import { AudibleContext, ContextFactory } from "../Playing"
-import { Any, LoadPromise, UnknownObject } from "../Setup/declarations"
+import { Any, LoadPromise, UnknownObject } from "../declarations"
 import { Processor } from "./Processor"
 
 class AudioProcessor extends Processor {

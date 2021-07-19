@@ -1,4 +1,4 @@
-import { Any, JsonObject } from "../../Setup/declarations"
+import { Any, JsonObject } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Time } from "../../Utilities/Time"
 import { byFrame } from "../../Utilities/Sort"

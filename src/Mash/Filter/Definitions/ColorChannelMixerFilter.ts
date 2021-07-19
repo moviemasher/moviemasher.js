@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../../Playing"
-import { ValueObject } from "../../../Setup/declarations"
+import { ValueObject } from "../../../declarations"
 import { Evaluator } from "../../../Utilities"
 import { FilterDefinitionClass } from "../FilterDefinition"
 

@@ -15,7 +15,7 @@ import {
 } from "../Action"
 import { Capitalize } from "../../Utilities"
 import { Errors } from "../../Setup/Errors"
-import { UnknownObject } from "../../Setup/declarations"
+import { UnknownObject } from "../../declarations"
 
 
 const classes : { [index: string] : typeof Action}= {

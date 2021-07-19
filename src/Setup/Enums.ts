@@ -50,11 +50,20 @@ const DefinitionTypes = Object.values(DefinitionType)
 
 enum EventType {
   Action = 'action',
-  Add = 'add',
-  Duration = 'duration',
-  Redo = 'redo',
-  Truncate = 'truncate',
-  Undo = 'undo',
+  Canvas = 'canvaschange',
+  Ended = 'ended',
+  Duration = 'durationchange',
+  Fps = 'ratechange',
+  Loaded = 'loadeddata',
+  Pause = 'pause',
+  Play = 'play',
+  Playing = 'playing',
+  Seeking = 'seeking',
+  Seeked = 'seeked',
+  Time = 'timeupdate',
+  Track = 'track',
+  Volume = 'volumechange',
+  Waiting = 'waiting',
 }
 
 enum MashType {

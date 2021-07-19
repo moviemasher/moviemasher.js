@@ -1,10 +1,9 @@
 import { Time  } from "../../../Utilities/Time"
 import { Is } from "../../../Utilities/Is"
-import { TimeRange } from "../../../Utilities/TimeRange"
-import { Any, Constrained, JsonObject } from "../../../Setup/declarations"
+import { Any, Constrained, JsonObject } from "../../../declarations"
 import { Clip } from "../Clip/Clip"
 import { AudibleDefinition, AudibleObject } from "./Audible"
-import { Default } from "../../../Setup"
+import { Default } from "../../../Setup/Default"
 
 const AudibleGainDelimiter = ','
 

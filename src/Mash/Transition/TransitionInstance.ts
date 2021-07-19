@@ -7,7 +7,7 @@ import { ModularMixin } from "../Mixin/Modular/ModularMixin"
 import { Visible } from "../Mixin/Visible"
 import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
 import { ClipMixin } from "../Mixin/Clip/ClipMixin"
-import { Size } from "../../Setup/declarations"
+import { Size } from "../../declarations"
 
 const TransitionWithModular = ModularMixin(InstanceClass)
 const TransitionWithClip = ClipMixin(TransitionWithModular)

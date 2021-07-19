@@ -1,6 +1,6 @@
 import { Mash } from "../../Mash"
 import { Action } from "../Action"
-
+import { Is } from "../../Utilities";
 
 interface ActionsObject {
   mash : Mash
@@ -28,13 +28,11 @@ class Actions  {
     this.instances.splice(0, this.instances.length)
   }
 
-  do(action : Action) : Action[] {
+  add(action : Action) : void {
     const remove = this.instances.length - (this.index + 1)
-    const removed = remove ? this.instances.splice(this.index + 1, remove) : []
+    if (Is.positive(remove)) this.instances.splice(this.index + 1, remove)
 
     this.instances.push(action)
-    this.redo()
-    return removed
   }
 
   index = -1
@@ -47,6 +45,7 @@ class Actions  {
     this.index += 1
     const action = this.currentAction
     action.redo()
+
     return action
   }
 

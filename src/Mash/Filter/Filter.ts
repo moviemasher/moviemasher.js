@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../Playing/VisibleContext";
-import { GenericFactory, ValueObject } from "../../Setup/declarations";
+import { GenericFactory, ValueObject } from "../../declarations";
 import { Parameter, ParameterObject } from "../../Setup/Parameter";
 import { Evaluator } from "../../Utilities/Evaluator";
 import { Definition, DefinitionObject } from "../Definition/Definition";

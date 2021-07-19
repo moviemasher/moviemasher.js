@@ -1,4 +1,4 @@
-import { Rgb, RgbObject, Yuv, YuvObject } from "../Setup/declarations"
+import { Rgb, RgbObject, Yuv, YuvObject } from "../declarations"
 
 const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))

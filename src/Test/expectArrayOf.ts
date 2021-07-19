@@ -1,5 +1,5 @@
 import { expectArray } from "./expectArray"
-import { Any, Constructor } from "../Setup/declarations"
+import { Any, Constructor } from "../declarations"
 
 const expectArrayOf = (value : Any, klass : Constructor, length? : number) : Any[] => {
   const array = expectArray(value)

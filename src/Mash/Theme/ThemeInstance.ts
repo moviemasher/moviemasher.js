@@ -1,4 +1,4 @@
-import { Size } from "../../Setup/declarations"
+import { Size } from "../../declarations"
 import { Time } from "../../Utilities/Time"
 import { ContextFactory, VisibleContext } from "../../Playing"
 import { ThemeDefinition } from "./Theme"

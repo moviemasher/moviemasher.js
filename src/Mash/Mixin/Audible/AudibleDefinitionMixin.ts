@@ -1,5 +1,5 @@
 import { DataType } from "../../../Setup/Enums"
-import { Any, Constrained, JsonObject, LoadPromise } from "../../../Setup/declarations"
+import { Any, Constrained, JsonObject, LoadPromise } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { AudibleDefinitionObject } from "./Audible"
 import { ClipDefinition } from "../Clip/Clip"

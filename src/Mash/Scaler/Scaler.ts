@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../Setup/declarations"
+import { GenericFactory } from "../../declarations"
 import {
   Modular,
   ModularDefinition,

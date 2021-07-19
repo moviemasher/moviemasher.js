@@ -1,8 +1,12 @@
+export * from "./declarations"
+export * from "./Setup"
+export * from "./Utilities"
+
 export * from "./Editing"
 export * from "./Loading"
 export * from "./Mash"
 export * from "./Playing"
-export * from "./Setup"
-export * from "./Utilities"
-export * from "./MovieMasher"
+
+// must be last
 export * from "./Factories"
+export * from "./MovieMasher"

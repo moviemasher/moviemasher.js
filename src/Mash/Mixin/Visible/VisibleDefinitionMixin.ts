@@ -1,5 +1,5 @@
 import { TrackType } from "../../../Setup/Enums"
-import { Constrained } from "../../../Setup/declarations"
+import { Constrained } from "../../../declarations"
 import { ClipDefinition } from "../Clip/Clip"
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

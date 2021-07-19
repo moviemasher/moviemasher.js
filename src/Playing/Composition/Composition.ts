@@ -1,7 +1,7 @@
 import { Errors} from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { DefinitionType } from "../../Setup/Enums"
-import { Pixel } from "../../Utilities/Pixel"
+import { DefinitionType, EventType } from "../../Setup/Enums"
+import { pixelColor } from "../../Utilities/Pixel"
 import { byTrack } from "../../Utilities/Sort"
 import { Is } from "../../Utilities/Is"
 import { Time } from "../../Utilities/Time"
@@ -33,6 +33,7 @@ interface CompositionObject {
 
 class Composition {
   constructor(object : CompositionObject) {
+    // console.trace("Composition constructor")
     const {
       audibleContext,
       backcolor,
@@ -125,6 +126,8 @@ class Composition {
   }
 
   compositeVisible(time : Time, clips : Visible[]) : void {
+    // console.trace(this.constructor.name, "compositeVisible", this.visibleContext.size)
+
     // console.log(this.constructor.name, "compositeVisible", time, clips.length)
     const main = clips.filter(clip => clip.track === 0)
     this.drawBackground() // clear and fill with mash background color if defined
@@ -199,7 +202,7 @@ class Composition {
     this.visibleContext.clear()
     if (!this.backcolor) return
 
-    this.visibleContext.drawFill(Pixel.color(this.backcolor))
+    this.visibleContext.drawFill(pixelColor(this.backcolor))
   }
 
   private _gain = Default.mash.gain
@@ -207,12 +210,14 @@ class Composition {
   get gain() : number { return this._gain }
 
   set gain(value : number) {
-    if (this._gain !== value) {
-      this._gain = value
-      if (!this.playing) return
+    if (this._gain === value) return
 
+    this._gain = value
+
+    if (this.playing) {
       [...this.sourcesByClip.keys()].forEach(clip => this.adjustSourceGain(clip))
     }
+    this.visibleContext.emit(EventType.Volume)
   }
 
   private mashSeconds = 0

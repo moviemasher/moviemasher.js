@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../Playing/VisibleContext"
-import { GenericFactory } from "../../Setup/declarations"
+import { GenericFactory } from "../../declarations"
 import { Time } from "../../Utilities/Time"
 import { FilterObject } from "../Filter/Filter"
 import { MergerObject } from "../Merger"

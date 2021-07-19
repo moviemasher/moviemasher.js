@@ -3,7 +3,7 @@ import { AudioLoader } from "../Loading/AudioLoader"
 import { FontLoader } from "../Loading/FontLoader"
 import { ImageLoader } from "../Loading/ImageLoader"
 import { ModuleLoader } from "../Loading/ModuleLoader"
-import { UnknownObject } from "../Setup/declarations"
+import { UnknownObject } from "../declarations"
 import { Capitalize } from "../Utilities"
 
 type LoaderClassType = typeof Loader

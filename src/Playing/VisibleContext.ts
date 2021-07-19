@@ -6,22 +6,23 @@ import {
   Point,
   Rect,
   Size,
-  TextStyle
-} from "../Setup/declarations"
+  TextStyle,
+  UnknownObject
+} from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { Is } from "../Utilities/Is"
-
-
-const blah = ""
+import { Action } from "../Editing/Action/Action"
+import { EventType } from "../Setup/Enums"
 
 const $canvas = 'canvas'
 const $2d = '2d'
 const Point0 = { x: 0, y: 0 }
 
-export class VisibleContext {
+class VisibleContext {
   constructor(object : { context2d? : Context2D } = {}) {
-    // console.trace("VisibleContext", "constructor")
-    if (object.context2d) this.__context2d = object.context2d
+    const { context2d } = object
+    // console.trace("VisibleContext", "constructor", context2d)
+    if (context2d) this._context2d = context2d
   }
 
   get alpha() : number { return this.context2d.globalAlpha }
@@ -29,6 +30,18 @@ export class VisibleContext {
   set alpha(value : number) { this.context2d.globalAlpha = value }
 
   get canvas() : ContextElement { return this.context2d.canvas }
+
+  set canvas(value: ContextElement) {
+    const { canvas } = this
+    const context2d = value.getContext("2d")
+    if (!context2d) throw Errors.invalid.canvas
+
+    this.context2d = context2d
+
+    // have both the old and new canvas broadcast event
+    this.emit(EventType.Canvas, {}, canvas)
+    this.emit(EventType.Canvas)
+  }
 
   clear() : VisibleContext {
     return this.clearSize(this.size)
@@ -48,21 +61,21 @@ export class VisibleContext {
 
   set composite(value : string) { this.context2d.globalCompositeOperation = value }
 
-  get context2d() : Context2D {
-    if (!this.__context2d) {
+  private get context2d() : Context2D {
+    if (!this._context2d) {
       // console.trace(this.constructor.name, "get context2d creating canvas")
       const canvas = globalThis.document.createElement($canvas)
       const context = canvas.getContext($2d)
       if (!context) throw Errors.internal
 
-      this.__context2d = context
+      this._context2d = context
     }
-    return this.__context2d
+    return this._context2d
   }
 
-  set context2d(value : Context2D) {
+  private set context2d(value : Context2D) {
     // console.log(this.constructor.name, "set context2d", value)
-    this.__context2d = value
+    this._context2d = value
   }
 
   get dataUrl() : string { return this.canvas.toDataURL() }
@@ -181,6 +194,13 @@ export class VisibleContext {
     return result
   }
 
+  emit(type: EventType, detail: UnknownObject = {}, target?: ContextElement): void {
+    const element = target ? target : this.canvas
+    const event = { detail }
+    // console.log("emit", type, this.canvas)
+    element.dispatchEvent(new CustomEvent(type, event))
+  }
+
   get fill() : string { return String(this.context2d.fillStyle) }
 
   set fill(value : string) { this.context2d.fillStyle = value }
@@ -228,5 +248,12 @@ export class VisibleContext {
     if (Is.aboveZero(height)) this.canvas.height = height
   }
 
-  private __context2d? : Context2D
+  private _context2d? : Context2D
 }
+
+interface EventsDetail {
+  action? : Action
+}
+type EventsType = CustomEvent<EventsDetail>
+
+export { VisibleContext, EventsType, EventsDetail}

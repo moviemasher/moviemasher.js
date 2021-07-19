@@ -3,7 +3,7 @@ import { DefinitionClass } from "../Definition/Definition"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Definitions } from "../Definitions/Definitions"
-import { Any } from "../../Setup/declarations"
+import { Any } from "../../declarations"
 import { ScalerClass } from "./ScalerInstance"
 import { Property } from "../../Setup/Property"
 

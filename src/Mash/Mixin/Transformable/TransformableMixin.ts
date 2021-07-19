@@ -1,4 +1,4 @@
-import { Any, Constrained, JsonObject, LoadPromise, SelectionObject, Size, ValueObject } from "../../../Setup/declarations"
+import { Any, Constrained, JsonObject, LoadPromise, SelectionObject, Size, ValueObject } from "../../../declarations"
 import { Merger } from "../../Merger/Merger"
 import { Effect } from "../../Effect/Effect"
 import { Scaler } from "../../Scaler/Scaler"

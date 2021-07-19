@@ -1,4 +1,4 @@
-import { LoadFontPromise } from "../Setup/declarations"
+import { LoadFontPromise } from "../declarations"
 import { Cache } from "./Cache"
 import { Processor } from "./Processor"
 

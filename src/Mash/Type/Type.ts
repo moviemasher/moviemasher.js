@@ -1,5 +1,5 @@
 
-import { ScalarRaw } from "../../Setup/declarations"
+import { ScalarRaw } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { TypeValue, TypeValueObject } from "../TypeValue/TypeValue"
 import { Errors } from "../../Setup/Errors"

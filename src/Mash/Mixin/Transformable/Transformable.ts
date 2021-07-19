@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../../Playing/VisibleContext"
-import { Size } from "../../../Setup/declarations"
+import { Size } from "../../../declarations"
 import { Time } from "../../../Utilities/Time"
 import { Effect, EffectObject } from "../../Effect/Effect"
 import { Merger, MergerObject } from "../../Merger/Merger"

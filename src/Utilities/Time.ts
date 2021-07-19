@@ -1,5 +1,6 @@
 import { Errors } from "../Setup/Errors"
 import { Is } from "./Is"
+import { roundWithMethod } from "./Round"
 
 const greatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1
@@ -17,7 +18,7 @@ const lowestCommonMultiplier = (a : number, b : number) : number => (
   (a * b) / greatestCommonDenominator(a, b)
 )
 
-const scaleTimes = (time1 : Time, time2 : Time, rounding = '') : Time[] => {
+const timeEqualizeRates = (time1 : Time, time2 : Time, rounding = '') : Time[] => {
   if (time1.fps === time2.fps) return [time1, time2]
 
   const gcf = lowestCommonMultiplier(time1.fps, time2.fps)
@@ -26,18 +27,6 @@ const scaleTimes = (time1 : Time, time2 : Time, rounding = '') : Time[] => {
     time2.scale(gcf, rounding)
   ]
 }
-
-const roundingMethod = (rounding = '') => {
-  switch (rounding) {
-    case 'ceil': return Math.ceil
-    case 'floor': return Math.floor
-    default: return Math.round
-  }
-}
-
-const roundWithMethod = (number : number, method = '') : number => (
-  roundingMethod(method)(number)
-)
 
 class Time implements Time {
   frame : number
@@ -53,7 +42,7 @@ class Time implements Time {
   }
 
   add(time : Time) : Time {
-    const [time1, time2] = scaleTimes(this, time)
+    const [time1, time2] = timeEqualizeRates(this, time)
     return new Time(time1.frame + time2.frame, time1.fps)
   }
 
@@ -73,12 +62,12 @@ class Time implements Time {
   }
 
   equalsTime(time : Time) : boolean {
-    const [time1, time2] = scaleTimes(this, time)
+    const [time1, time2] = timeEqualizeRates(this, time)
     return time1.frame === time2.frame
   }
 
   min(time : Time) : Time {
-    const [time1, time2] = scaleTimes(this, time)
+    const [time1, time2] = timeEqualizeRates(this, time)
     return new Time(Math.min(time1.frame, time2.frame), time1.fps)
   }
 
@@ -92,12 +81,12 @@ class Time implements Time {
   scaleToFps(fps : number) : Time { return this.scaleToTime(new Time(0, fps)) }
 
   scaleToTime(time : Time) : Time {
-    return scaleTimes(this, time)[0]
+    return timeEqualizeRates(this, time)[0]
   }
   get seconds() : number { return Number(this.frame) / Number(this.fps) }
 
   subtract(time : Time) : Time {
-    const [time1, time2] = scaleTimes(this, time)
+    const [time1, time2] = timeEqualizeRates(this, time)
 
     let subtracted = time2.frame
     if (subtracted > time1.frame) {
@@ -134,4 +123,4 @@ class Time implements Time {
 }
 type Times = Time[]
 
-export { Time, Times, scaleTimes, roundWithMethod }
+export { Time, Times, timeEqualizeRates }

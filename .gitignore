@@ -1,5 +1,8 @@
 .DS_Store
 node_modules*
+public*
+log*
+vendor*
 coverage*
 **/__image_snapshots__*
 *.cache/*

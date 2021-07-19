@@ -1,4 +1,4 @@
-import { ScalarValue } from "../../Setup/declarations";
+import { ScalarValue } from "../../declarations";
 
 interface TypeValueObject {
   id : ScalarValue

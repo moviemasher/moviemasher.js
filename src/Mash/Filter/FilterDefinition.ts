@@ -1,11 +1,12 @@
-import { Any, ValueObject } from "../../Setup/declarations"
+import { Any, ValueObject } from "../../declarations"
 import { Parameter } from "../../Setup/Parameter"
 import { Evaluator } from "../../Utilities/Evaluator"
 import { DefinitionClass } from "../Definition/Definition"
 import { VisibleContext } from "../../Playing"
 import { Filter, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterInstance"
-import { DefinitionType, Errors } from "../../Setup"
+import { DefinitionType } from "../../Setup/Enums"
+import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../Definitions/Definitions"
 
 

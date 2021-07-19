@@ -1,14 +1,18 @@
 import { Track, TrackObject } from "../Track"
 import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Definition"
 import { VisibleContext } from "../../Playing/VisibleContext"
-import { Events } from "../../Editing/Events/Events"
 import { Time } from "../../Utilities/Time"
 import { Instance, InstanceObject } from "../Instance"
 import { AudibleContext } from "../../Playing/AudibleContext"
-import { GenericFactory, LoadPromise } from "../../Setup/declarations"
+import { GenericFactory, LoadPromise } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Clip } from "../Mixin/Clip/Clip"
 import { Audible } from "../Mixin/Audible/Audible"
+import { Action } from "../../Editing/Action/Action";
+import { Composition } from "../../Playing/Composition";
+import { Visible } from "../Mixin/Visible/Visible";
+import { TrackRange } from "../../Utilities/TrackRange"
+import { TimeRange } from "../../Utilities/TimeRange"
 
 interface MashObject extends InstanceObject {
   audio? : TrackObject[]
@@ -23,7 +27,6 @@ interface MashObject extends InstanceObject {
 interface MashOptions extends MashObject {
   audibleContext? : AudibleContext
   buffer? : number
-  events? : Events
   gain? : number
   loop? : boolean
   time? : Time
@@ -43,15 +46,17 @@ interface Mash extends Instance {
   backcolor? : string
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
-  clipsInTracks : Clip[]
-  clipTrack(clip : Clip) : Track
+  clipTrack(clip: Clip): Track
+  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[]
+  clipsVisibleSlice(frame: number, frames: number): Visible[]
   compositeVisible() : void
+  composition : Composition
   definition : MashDefinition
   destroy() : void
   drawnTime? : Time
   duration : number
   endTime : Time
-  events : Events
+  handleAction(action : Action) : void
   load() : LoadPromise
   loadedDefinitions : DefinitionTimes
   loop : boolean
@@ -61,7 +66,8 @@ interface Mash extends Instance {
   removeClipsFromTrack(clips : Clip[]) : void
   removeTrack(trackType : TrackType) : void
   seekToTime(time: Time) : LoadPromise
-  time : Time
+  time: Time
+  timeRange: TimeRange
   trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
   video: Track[]

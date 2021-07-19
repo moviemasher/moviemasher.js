@@ -1,6 +1,6 @@
 import { InstanceClass } from "../Instance/Instance"
 import { VisibleContext } from "../../Playing"
-import { Any, JsonObject, ValueObject } from "../../Setup/declarations"
+import { Any, JsonObject, ValueObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Evaluator, Is } from "../../Utilities"
 import { FilterDefinition } from "./Filter"

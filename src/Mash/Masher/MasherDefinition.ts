@@ -1,11 +1,11 @@
 import { DefinitionClass } from "../Definition/Definition"
 import { Masher, MasherObject } from "./Masher"
 import { MasherClass } from "./MasherInstance"
-import { Any } from "../../Setup/declarations"
+import { Any } from "../../declarations"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
-import { Default } from "../../Setup"
+import { Default } from "../../Setup/Default"
 
 class MasherDefinitionClass extends DefinitionClass {
   constructor(...args : Any[]) {

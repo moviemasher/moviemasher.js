@@ -1,5 +1,5 @@
 
-import { EvaluatedSize, Size } from "../../../Setup/declarations"
+import { EvaluatedSize, Size } from "../../../declarations"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { ContextFactory, VisibleContext } from "../../../Playing"
 import { FilterDefinitionClass } from "../FilterDefinition"

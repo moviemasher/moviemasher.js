@@ -2,16 +2,17 @@ import { DefinitionType, TrackType, DataType } from "../../Setup/Enums"
 import { Time, Times} from "../../Utilities"
 import { Cache } from "../../Loading"
 import { DefinitionClass } from "../Definition/Definition"
-import { VideoClass } from "./VideoInstance";
-import { Video, VideoDefinitionObject, VideoObject } from "./Video";
+import { VideoClass } from "./VideoInstance"
+import { Video, VideoDefinitionObject, VideoObject } from "./Video"
 import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
 import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
-import { Any, DrawingSource, JsonObject, LoadPromise } from "../../Setup/declarations";
-import { Errors } from "../../Setup/Errors";
-import { Definitions } from "../Definitions/Definitions";
-import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin";
-import { Default, Property } from "../../Setup";
-import { LoaderFactory } from "../../Loading/LoaderFactory";
+import { Any, DrawingSource, JsonObject, LoadPromise } from "../../declarations"
+import { Errors } from "../../Setup/Errors"
+import { Definitions } from "../Definitions/Definitions"
+import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
+import { Default } from "../../Setup/Default"
+import { Property } from "../../Setup/Property"
+import { LoaderFactory } from "../../Loading/LoaderFactory"
 
 const VideoDefinitionWithClip = ClipDefinitionMixin(DefinitionClass)
 const VideoDefinitionWithAudible = AudibleDefinitionMixin(VideoDefinitionWithClip)

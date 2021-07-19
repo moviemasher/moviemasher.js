@@ -1,4 +1,4 @@
-import { JsonObject, ScalarValue, ValueObject } from "./declarations"
+import { JsonObject, ScalarValue, ValueObject } from "../declarations"
 import { Errors } from "./Errors"
 
 interface ParameterObject {

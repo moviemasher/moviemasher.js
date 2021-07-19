@@ -7,7 +7,7 @@ import {
 } from "../Mixin/Modular/Modular"
 import { VisibleDefinition } from "../Mixin/Visible/Visible"
 import { Transformable, TransformableObject } from "../Mixin/Transformable/Transformable"
-import { GenericFactory } from "../../Setup/declarations"
+import { GenericFactory } from "../../declarations"
 
 type ThemeObject = ModularObject & TransformableObject
 

@@ -4,12 +4,12 @@ import { ContextFactory } from "../../Playing/ContextFactory"
 import { MovieMasher } from "../../MovieMasher"
 import { Mash } from "../Mash/Mash"
 import { createId } from "../../Test/createId"
-import { expectContext } from "../../Test/expectContext"
+import { expectCanvas } from "../../Test/expectCanvas"
 
 const expectMashTimeContext = async (mash : Mash, time : Time) : Promise<void> => {
   await mash.seekToTime(time)
   mash.compositeVisible()
-  expectContext(mash.visibleContext)
+  expectCanvas(mash.visibleContext.canvas)
 }
 describe("Transition", () => {
   describe("CrossFade", () => {

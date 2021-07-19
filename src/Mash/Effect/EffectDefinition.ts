@@ -1,9 +1,10 @@
 import { DefinitionClass } from "../Definition/Definition"
 import { Effect, EffectObject } from "./Effect"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
-import { Any, DefinitionType } from "../../Setup"
+import { Any } from "../../declarations"
 import { Definitions } from "../Definitions/Definitions"
 import { EffectClass } from "./EffectInstance"
+import { DefinitionType } from "../../Setup/Enums"
 
 const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionClass)
 class EffectDefinitionClass extends EffectDefinitionWithModular {

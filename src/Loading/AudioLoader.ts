@@ -2,7 +2,7 @@ import { ProcessorFactory } from "./ProcessorFactory"
 import { AudibleContext, ContextFactory } from "../Playing"
 import { Loader } from "./Loader"
 
-import { Any, LoadPromise, UnknownObject } from "../Setup/declarations"
+import { Any, LoadPromise, UnknownObject } from "../declarations"
 import { LoadType} from "../Setup/Enums"
 
 class AudioLoader extends Loader {

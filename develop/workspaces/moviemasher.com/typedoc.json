@@ -1,0 +1,16 @@
+{
+  "entryPoints": ["../../src/index.ts"],
+  "name": "moviemasher.js",
+  "exclude": [
+    "**/test/**/*.*",
+    "**/index.ts"
+  ],
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "categorizeByGroup": true
+
+
+}

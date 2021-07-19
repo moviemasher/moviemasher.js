@@ -1,7 +1,7 @@
 import { Cache } from "../../../Loading"
 import { ContextFactory } from "../../../Playing/ContextFactory"
 import { VisibleContext } from "../../../Playing/VisibleContext"
-import { Any, Constrained, Size } from "../../../Setup/declarations"
+import { Any, Constrained, Size } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time  } from "../../../Utilities/Time"
 import { Clip } from "../Clip/Clip"

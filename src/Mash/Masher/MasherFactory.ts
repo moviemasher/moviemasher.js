@@ -1,5 +1,5 @@
 import { Masher, MasherDefinition, MasherDefinitionObject, MasherObject } from "./Masher"
-import { Interval } from "../../Setup/declarations"
+import { Interval } from "../../declarations"
 import { Definition, DefinitionTimes } from "../Definition/Definition"
 import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../Definitions/Definitions"

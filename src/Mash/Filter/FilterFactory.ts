@@ -15,7 +15,7 @@ import { Errors } from "../../Setup/Errors"
 import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
-import { DefinitionType } from "../../Setup"
+import { DefinitionType } from "../../Setup/Enums"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
@@ -23,7 +23,7 @@ const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition =>
   if (!(id && Is.populatedString(id))) throw Errors.id
 
   if (Definitions.installed(id)) return <FilterDefinition> Definitions.fromId(id)
-  console.trace("WTF")
+
   throw Errors.invalid.definition.id + ' filterDefinition ' + id
 }
 

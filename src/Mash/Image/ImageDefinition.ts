@@ -1,5 +1,5 @@
 import { DefinitionClass } from "../Definition/Definition"
-import { Any, DrawingSource, JsonObject, LoadPromise } from "../../Setup/declarations"
+import { Any, DrawingSource, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Image, ImageDefinitionObject, ImageObject } from "./Image"

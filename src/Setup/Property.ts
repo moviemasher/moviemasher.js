@@ -1,4 +1,4 @@
-import { JsonObject, ScalarRaw } from "./declarations"
+import { JsonObject, ScalarRaw } from "../declarations"
 import { Errors } from "./Errors"
 import { DataType } from "./Enums"
 import { Type } from "../Mash/Type/Type"

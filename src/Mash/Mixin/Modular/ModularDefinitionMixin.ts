@@ -1,6 +1,6 @@
 import { Modular, ModularDefinitionObject } from "./Modular"
 import { Property, PropertyObject } from "../../../Setup/Property"
-import { Any, Constrained, JsonObject, ScalarValue, Size } from "../../../Setup/declarations"
+import { Any, Constrained, JsonObject, ScalarValue, Size } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { TimeRange } from "../../../Utilities/TimeRange"
 import { Is } from "../../../Utilities/Is"

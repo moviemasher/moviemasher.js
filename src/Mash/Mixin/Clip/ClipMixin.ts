@@ -1,4 +1,4 @@
-import { Any, Constrained, JsonObject, LoadPromise } from "../../../Setup/declarations"
+import { Any, Constrained, JsonObject, LoadPromise } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time  } from "../../../Utilities/Time"
 import { Is } from "../../../Utilities/Is"

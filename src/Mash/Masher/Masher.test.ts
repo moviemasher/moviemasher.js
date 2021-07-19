@@ -4,7 +4,7 @@ import { Time } from "../../Utilities/Time"
 import { MasherClass } from "./MasherInstance"
 import { MovieMasher } from "../../MovieMasher"
 import { ThemeClass } from "../Theme/ThemeInstance"
-import { expectContext } from "../../Test/expectContext"
+import { expectCanvas } from "../../Test/expectCanvas"
 import { createId } from "../../Test/createId"
 import themeTextJson from "../Theme/DefinitionObjects/text.json"
 
@@ -49,7 +49,7 @@ describe("Masher", () => {
       const clip = await masher.add(themeTextJson)
       expect(clip).toBeInstanceOf(ThemeClass)
       masher.draw()
-      expectContext(masher.visibleContext)
+      expectCanvas(masher.canvas)
     })
   })
 

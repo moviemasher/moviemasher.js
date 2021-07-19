@@ -1,8 +1,8 @@
 module.exports = {
   "automock": false,
   roots: ["./src"],
-  coverageDirectory: "./test/coverage",
-  setupFilesAfterEnv: ["./test/jest.setup.js"],
+  coverageDirectory: "./develop/test/coverage",
+  setupFilesAfterEnv: ["./develop/test/jest.setup.js"],
   globals: {
     'ts-jest': {
       tsconfig: {

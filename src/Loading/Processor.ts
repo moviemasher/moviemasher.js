@@ -1,4 +1,4 @@
-import { Any } from "../Setup/declarations"
+import { Any } from "../declarations"
 
 class Processor {
   process(_url : string, _buffer : ArrayBuffer) : Promise<Any> {

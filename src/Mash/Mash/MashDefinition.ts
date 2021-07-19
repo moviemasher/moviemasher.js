@@ -1,7 +1,7 @@
 import { DefinitionClass } from "../Definition/Definition"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashInstance"
-import { Any } from "../../Setup/declarations"
+import { Any } from "../../declarations"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"

@@ -6,7 +6,7 @@ import { TransformableMixin } from "../Mixin/Transformable/TransformableMixin"
 import { AudibleMixin } from "../Mixin/Audible/AudibleMixin"
 import { Is } from "../../Utilities/Is"
 import { Default } from "../../Setup/Default"
-import { Any, JsonObject } from "../../Setup/declarations"
+import { Any, JsonObject } from "../../declarations"
 import { Time } from "../../Utilities/Time"
 
 const VideoWithClip = ClipMixin(InstanceClass)

@@ -2,7 +2,7 @@ import { MergerClass } from "./MergerInstance"
 import { DefinitionClass } from "../Definition/Definition"
 import { Merger, MergerObject } from "./Merger"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
-import { Any } from "../../Setup/declarations"
+import { Any } from "../../declarations"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 

@@ -1,10 +1,9 @@
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Any, JsonObject, LoadPromise, SelectionValue, UnknownObject } from "../../Setup/declarations"
+import { Any, JsonObject, LoadPromise, SelectionValue, UnknownObject } from "../../declarations"
 import { Instance, InstanceClass, InstanceObject } from "../Instance/Instance"
 import { Property } from "../../Setup/Property"
 import { Time, Times } from "../../Utilities/Time"
-import { Default } from "../../Setup"
 import { Is } from "../../Utilities"
 
 interface DefinitionObject {

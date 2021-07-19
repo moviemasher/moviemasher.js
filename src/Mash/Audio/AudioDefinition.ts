@@ -5,7 +5,7 @@ import { Audio, AudioObject } from "./Audio"
 import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
 import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
 import { Definitions } from "../Definitions/Definitions"
-import { Any } from "../../Setup/declarations"
+import { Any } from "../../declarations"
 
 const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionClass)
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip)

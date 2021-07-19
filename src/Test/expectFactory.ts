@@ -1,6 +1,6 @@
 import { Definition, DefinitionObject } from "../Mash/Definition/Definition"
 import { Instance, InstanceObject } from "../Mash/Instance"
-import { GenericFactory } from "../Setup/declarations"
+import { GenericFactory } from "../declarations"
 import { Errors } from "../Setup/Errors"
 
 const expectFactory = (object : unknown | undefined) :void => {

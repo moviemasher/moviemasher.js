@@ -1,6 +1,6 @@
 
 import { VisibleContext } from "../../../Playing"
-import { EvaluatedPoint } from "../../../Setup/declarations"
+import { EvaluatedPoint } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Utilities"
 import { FilterDefinitionClass } from "../FilterDefinition"

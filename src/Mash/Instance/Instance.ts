@@ -1,9 +1,10 @@
-import { Any, JsonObject, LoadPromise, SelectionObject, SelectionValue } from "../../Setup/declarations"
+import { Any, JsonObject, LoadPromise, SelectionObject, SelectionValue } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Definition } from "../Definition/Definition"
 import { Time } from "../../Utilities/Time"
+import { Id } from "../../Utilities";
 
 interface InstanceObject {
   [index: string]: unknown
@@ -42,6 +43,10 @@ class InstanceClass {
   protected _id? : string
 
   get id() : string { return this._id || this.definition.id }
+
+  private _identifier?: string
+
+  get identifier() : string { return this._identifier || Id() }
 
   protected _label? : string
 

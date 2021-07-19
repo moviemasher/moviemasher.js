@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../Setup"
+import { GenericFactory } from "../../declarations"
 import {
   Audible,
   AudibleObject,

@@ -1,7 +1,7 @@
 import { LoadType } from "../Setup/Enums"
 import { ProcessorFactory } from "./ProcessorFactory"
 import { Loader } from "./Loader"
-import { LoadFontPromise } from "../Setup/declarations"
+import { LoadFontPromise } from "../declarations"
 
 class FontLoader extends Loader {
   type = LoadType.Font

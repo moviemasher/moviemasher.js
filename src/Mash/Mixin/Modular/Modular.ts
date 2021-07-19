@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../../Playing/VisibleContext"
-import { ObjectUnknown, Size, UnknownObject } from "../../../Setup/declarations"
+import { ObjectUnknown, Size, UnknownObject } from "../../../declarations"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { TimeRange } from "../../../Utilities/TimeRange"
 import { Definition, DefinitionObject } from "../../Definition/Definition"

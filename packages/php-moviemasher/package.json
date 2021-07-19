@@ -1,0 +1,9 @@
+{
+  "name": "php-moviemasher",
+  "description": "PHP Movie Masher",
+  "version": "5.0.0",
+  "license": "MPL-2.0",
+  "scripts": {
+    "develop": "docker compose up"
+  }
+}

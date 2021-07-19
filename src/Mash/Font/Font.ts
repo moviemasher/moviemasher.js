@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../Setup/declarations"
+import { GenericFactory } from "../../declarations"
 import { Definition, DefinitionObject } from "../Definition/Definition"
 import { Instance, InstanceObject } from "../Instance/Instance"
 

@@ -1,8 +1,6 @@
 import { Mash } from "../../Mash"
 import { Actions } from "../Actions"
-import { Events } from "../Events"
 import { Clip } from "../../Mash/Mixin/Clip/Clip"
-import { EventType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Effect } from "../../Mash/Effect/Effect"
 
@@ -52,8 +50,6 @@ class Action {
 
   done =  false
 
-  get events() : Events | undefined { return this.mash.events }
-
   get selectedClips() : Clip[] {
     if (this.done) return this.redoSelectedClips
 
@@ -69,9 +65,6 @@ class Action {
   redo() : void {
     this.redoAction()
     this.done = true
-    if (!this.events) return
-
-    this.events.emit(EventType.Action, { action: this })
   }
 
   redoAction() : void {
@@ -83,9 +76,6 @@ class Action {
   undo() : void {
     this.undoAction()
     this.done = false
-    if (!this.events) return
-
-    this.events.emit(EventType.Action, { action: this })
   }
 
   undoAction() : void {

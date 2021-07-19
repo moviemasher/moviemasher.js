@@ -1,4 +1,4 @@
-import { Any } from "../Setup/declarations"
+import { Any } from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { Time } from "../Utilities/Time"
 

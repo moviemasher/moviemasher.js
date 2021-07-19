@@ -1,4 +1,4 @@
-import { ScalarArray, UnknownObject } from "../Setup/declarations"
+import { ScalarArray, UnknownObject } from "../declarations"
 
 const objectType = (value : unknown) : boolean => typeof value === 'object'
 

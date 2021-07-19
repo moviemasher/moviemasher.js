@@ -1,4 +1,4 @@
-import { WithFrame, WithLabel, WithTrack } from "../Setup/declarations"
+import { WithFrame, WithLabel, WithTrack } from "../declarations"
 
 const byFrame = (a : WithFrame, b : WithFrame) : number => a.frame - b.frame
 const byTrack = (a : WithTrack, b : WithTrack) : number => a.track - b.track

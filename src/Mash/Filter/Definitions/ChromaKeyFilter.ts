@@ -1,5 +1,5 @@
 import { Evaluator, Color, Pixel } from "../../../Utilities"
-import { Pixels, ValueObject, Yuv } from "../../../Setup/declarations"
+import { Pixels, ValueObject, Yuv } from "../../../declarations"
 import { Parameter } from "../../../Setup/Parameter"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Playing"
@@ -53,8 +53,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
     const array = []
     for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
       const size = { width, height }
-      const surroundingRgbas = Pixel.surroundingRgbas(index * 4, pixels, size)
-      array.push(surroundingRgbas.map(rgb => Color.rgb2yuv(rgb)))
+      array.push(Pixel.neighboringRgbas(index * 4, pixels, size).map(rgb => Color.rgb2yuv(rgb)))
     }
     return array
   }

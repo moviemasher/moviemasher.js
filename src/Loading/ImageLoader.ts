@@ -1,4 +1,4 @@
-import { LoadImagePromise } from "../Setup/declarations"
+import { LoadImagePromise } from "../declarations"
 import { LoadType } from "../Setup/Enums"
 import { Loader } from "./Loader"
 

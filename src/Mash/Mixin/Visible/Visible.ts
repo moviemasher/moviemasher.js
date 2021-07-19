@@ -1,5 +1,5 @@
 import { VisibleContext } from "../../../Playing/VisibleContext"
-import { DrawingSource, Size } from "../../../Setup/declarations"
+import { DrawingSource, Size } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time } from "../../../Utilities/Time"
 import { DefinitionObject } from "../../Definition/Definition"

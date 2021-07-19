@@ -1,7 +1,7 @@
 import { VisibleContext } from "../../../Playing"
-import { UnknownObject, ValueObject } from "../../../Setup/declarations"
+import { UnknownObject, ValueObject } from "../../../declarations"
 import { Evaluator } from "../../../Utilities/Evaluator"
-import { Pixel } from "../../../Utilities/Pixel"
+import { pixelNeighboringRgbas } from "../../../Utilities/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
 const RBGA = 'rgba'
@@ -36,7 +36,7 @@ class ConvolutionFilter extends FilterDefinitionClass {
     const outputData = output.data
     const area = width * height
     for (let pixel = 0; pixel < area; pixel += 1) {
-      const rgbas = Pixel.surroundingRgbas(pixel, inputData, size)
+      const rgbas = pixelNeighboringRgbas(pixel, inputData, size)
       RBGA.split('').forEach((channel, index) => {
         const rdiv = <number> options.rdiv[channel]
         const matrix = <number[]> options.matrix[channel]

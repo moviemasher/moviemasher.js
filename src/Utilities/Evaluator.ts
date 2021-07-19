@@ -6,7 +6,7 @@ import {
   ScalarValue,
   Size,
   ValueObject
-} from "../Setup/declarations"
+} from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { Is } from "./Is"
 import { TimeRange } from "./TimeRange"

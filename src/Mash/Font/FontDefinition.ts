@@ -1,4 +1,4 @@
-import { Any, JsonObject, LoadPromise } from "../../Setup/declarations"
+import { Any, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { DefinitionType } from "../../Setup/Enums"
 import { DefinitionClass } from "../Definition/Definition"

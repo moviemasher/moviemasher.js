@@ -4,6 +4,7 @@ import pkg from "./package.json";
 import { builtinModules } from "module";
 import path from "path"
 import json from "@rollup/plugin-json"
+
 const jsonOptions = { preferConst: true, indent: "  ", namedExports: true }
 
 const tsconfigPath = "./tsconfig.json"
@@ -65,4 +66,4 @@ const umd = {
   ]
 }
 
-export default [umd, esm, cjs]
+export default [esm, umd, cjs]

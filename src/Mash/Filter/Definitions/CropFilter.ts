@@ -1,5 +1,5 @@
 import { ContextFactory, VisibleContext } from "../../../Playing"
-import { EvaluatedRect } from "../../../Setup/declarations"
+import { EvaluatedRect } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"

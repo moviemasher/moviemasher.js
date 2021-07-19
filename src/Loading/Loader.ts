@@ -1,4 +1,4 @@
-import { Any, LoadPromise, UnknownObject } from "../Setup/declarations"
+import { Any, LoadPromise, UnknownObject } from "../declarations"
 import { Cache } from "./Cache"
 
 class Loader  {

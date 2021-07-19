@@ -1,5 +1,7 @@
 /// <reference types="node" />
 /* eslint-disable @typescript-eslint/no-namespace */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Any = any;
 declare global {
     interface Window {
         webkitAudioContext: typeof AudioContext;
@@ -14,21 +16,24 @@ type Timeout = ReturnType<typeof setTimeout>;
 type Interval = ReturnType<typeof setInterval>;
 type EventsTarget = EventTarget;
 type EventsCallback = EventHandlerNonNull;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Any = any;
 type ScalarValue = number | string;
 type ScalarArray = unknown[];
+type NumberObject = Record<string, number>;
 type UnknownObject = Record<string, unknown>;
 type ObjectUnknown = Record<string, UnknownObject>;
 type ValueObject = Record<string, ScalarValue>;
 type ScalarRaw = boolean | ScalarValue;
 type Scalar = ScalarRaw | ScalarArray | UnknownObject;
-type ScalarMethod = (_?: ScalarValue) => ScalarValue;
+type ScalarConverter = (value?: ScalarValue) => ScalarValue;
+type NumberConverter = (value: number) => number;
+type StringSetter = (value: string) => void;
+type NumberSetter = (value: number) => void;
+type BooleanSetter = (value: boolean) => void;
 type JsonValue = Scalar;
 type JsonObject = Record<string, JsonValue | JsonValue[]>;
 type SelectionObject = Record<string, SelectionValue>;
 type SelectionValue = ScalarRaw | ValueObject;
-type EvaluatorValue = ScalarValue | ScalarMethod;
+type EvaluatorValue = ScalarValue | ScalarConverter;
 interface WithFrame {
     frame: number;
 }
@@ -199,6 +204,7 @@ declare const Errors: {
     internal: string;
     argument: string;
     invalid: {
+        canvas: string;
         definition: {
             duration: string;
             audio: string;
@@ -317,11 +323,20 @@ declare enum DefinitionType {
 declare const DefinitionTypes: DefinitionType[];
 declare enum EventType {
     Action = "action",
-    Add = "add",
-    Duration = "duration",
-    Redo = "redo",
-    Truncate = "truncate",
-    Undo = "undo"
+    Canvas = "canvaschange",
+    Ended = "ended",
+    Duration = "durationchange",
+    Fps = "ratechange",
+    Loaded = "loadeddata",
+    Pause = "pause",
+    Play = "play",
+    Playing = "playing",
+    Seeking = "seeking",
+    Seeked = "seeked",
+    Time = "timeupdate",
+    Track = "track",
+    Volume = "volumechange",
+    Waiting = "waiting"
 }
 declare enum MashType {
     Mash = "mash"
@@ -408,8 +423,18 @@ declare class Property {
     type: Type;
     value: ScalarRaw;
 }
-declare const scaleTimes: (time1: Time, time2: Time, rounding?: string) => Time[];
-declare const roundWithMethod: (number: number, method?: string) => number;
+declare const Capitalize: (value: string) => string;
+declare const Color: {
+    yuvBlend: (yuvs: YuvObject[], yuv: YuvObject, match: number, blend: number) => number;
+    rgb2yuv: (rgb: RgbObject) => Yuv;
+    yuv2rgb: (yuv: YuvObject) => Rgb;
+    rgb2hex: (rgb: RgbObject) => string;
+};
+declare const elementScrollMetrics: (element?: Element | null | undefined) => NumberObject | undefined;
+declare const Element: {
+    scrollMetrics: (element?: Element | null | undefined) => NumberObject | undefined;
+};
+declare const timeEqualizeRates: (time1: Time, time2: Time, rounding?: string) => Time[];
 declare class Time implements Time {
     frame: number;
     fps: number;
@@ -455,6 +480,17 @@ declare class TimeRange extends Time {
     static fromTime(time: Time, frames?: number): TimeRange;
     static fromTimes(startTime: Time, endTime: Time): TimeRange;
 }
+declare class AudibleContext {
+    __context?: AudioContext;
+    get context(): AudioContext;
+    createBuffer(seconds: number): AudioBuffer;
+    createBufferSource(): AudioBufferSourceNode;
+    createGain(): GainNode;
+    decode(buffer: ArrayBuffer): Promise<AudioBuffer>;
+    get destination(): AudioDestinationNode;
+    get time(): Time;
+    get currentTime(): number;
+}
 interface InstanceObject {
     [index: string]: unknown;
     definition?: Definition;
@@ -470,6 +506,8 @@ declare class InstanceClass {
     definitionTime(quantize: number, time: Time): Time;
     protected _id?: string;
     get id(): string;
+    private _identifier?;
+    get identifier(): string;
     protected _label?: string;
     get label(): string;
     set label(value: string);
@@ -694,6 +732,8 @@ declare const AudioWithAudible: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -725,6 +765,8 @@ declare const AudioWithAudible: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -762,113 +804,6 @@ declare const Definitions: {
     scaler: DefinitionsList;
     uninstall: (id: string) => void;
 };
-declare class VisibleContext {
-    constructor(object?: {
-        context2d?: Context2D;
-    });
-    get alpha(): number;
-    set alpha(value: number);
-    get canvas(): ContextElement;
-    clear(): VisibleContext;
-    clearSize(size: Size): VisibleContext;
-    clearRect(rect: Rect): VisibleContext;
-    get composite(): string;
-    set composite(value: string);
-    get context2d(): Context2D;
-    set context2d(value: Context2D);
-    get dataUrl(): string;
-    draw(source: DrawingSource): VisibleContext;
-    drawAtPoint(source: DrawingSource, point: Point): VisibleContext;
-    drawFill(fill: string): VisibleContext;
-    drawFillInRect(fill: string, rect: Rect): VisibleContext;
-    drawFillToSize(fill: string, size: Size): VisibleContext;
-    drawImageData(data: ImageData): VisibleContext;
-    drawImageDataAtPoint(data: ImageData, point: Point): VisibleContext;
-    drawInRect(source: DrawingSource, rect: Rect): VisibleContext;
-    drawInRectFromRect(source: DrawingSource, inRect: Rect, fromRect: Rect): VisibleContext;
-    drawInRectFromSize(source: DrawingSource, rect: Rect, size: Size): VisibleContext;
-    drawInSizeFromSize(source: DrawingSource, inSize: Size, fromSize: Size): VisibleContext;
-    drawText(text: string, style: TextStyle): VisibleContext;
-    drawTextAtPoint(text: string, style: TextStyle, point: Point): VisibleContext;
-    drawToSize(source: DrawingSource, size: Size): VisibleContext;
-    drawWithAlpha(source: DrawingSource, alpha: number): VisibleContext;
-    drawWithComposite(source: DrawingSource, composite: string): VisibleContext;
-    get fill(): string;
-    set fill(value: string);
-    get font(): string;
-    set font(value: string);
-    get imageData(): ContextData;
-    get imageDataFresh(): ContextData;
-    imageDataFromRect(rect: Rect): ContextData;
-    imageDataFromSize(size: Size): ContextData;
-    get drawingSource(): DrawingSource;
-    get shadow(): string;
-    set shadow(value: string);
-    get shadowPoint(): Point;
-    set shadowPoint(point: Point);
-    get size(): Size;
-    set size(value: Size);
-    private __context2d?;
-}
-declare class AudibleContext {
-    __context?: AudioContext;
-    get context(): AudioContext;
-    createBuffer(seconds: number): AudioBuffer;
-    createBufferSource(): AudioBufferSourceNode;
-    createGain(): GainNode;
-    decode(buffer: ArrayBuffer): Promise<AudioBuffer>;
-    get destination(): AudioDestinationNode;
-    get time(): Time;
-    get currentTime(): number;
-}
-declare class ContextFactory {
-    toSize(size: Size): VisibleContext;
-    audible(): AudibleContext;
-    fromContext2D(context2d: Context2D): VisibleContext;
-    get type(): {
-        [k: string]: string;
-    };
-    get types(): string[];
-    visible(): VisibleContext;
-}
-declare const ContextFactoryInstance: ContextFactory;
-declare class Evaluator {
-    [index: string]: unknown;
-    constructor(timeRange: TimeRange, context: VisibleContext, size: Size, mergeContext?: VisibleContext);
-    ceil: (x: number) => number;
-    conditionalValue(conditionals: ValueObject[]): ScalarValue;
-    context: VisibleContext;
-    get duration(): number;
-    evaluate(value: ScalarValue | ValueObject[]): ScalarValue;
-    private evaluateExpression;
-    floor: (x: number) => number;
-    get(key: string): EvaluatorValue | undefined;
-    has(key: string): boolean;
-    initialize(key: string, value: EvaluatorValue): boolean;
-    get inputSize(): Size;
-    get keys(): string[];
-    private map;
-    mergeContext?: VisibleContext;
-    mm_cmp(a: number, b: number, x: number, y: number): number;
-    get mm_dimensions(): string;
-    get mm_duration(): number;
-    get mm_fps(): number;
-    get mm_height(): number;
-    mm_horz(size: ScalarValue, proud: ScalarRaw): number;
-    mm_max: (...values: number[]) => number;
-    mm_min: (...values: number[]) => number;
-    get mm_t(): number;
-    mm_vert(size: ScalarValue, proud: ScalarRaw): number;
-    get mm_width(): number;
-    get position(): number;
-    replaceKeys(value: string): string;
-    set(key: string, value: EvaluatorValue): void;
-    setInputSize({ width, height }: Size): void;
-    size: Size;
-    sized(vertical: number, size: ScalarValue, proud: ScalarRaw): number;
-    get t(): number;
-    timeRange: TimeRange;
-}
 interface FilterDefinitionObject extends DefinitionObject {
 }
 interface FilterDefinition extends Definition {
@@ -958,6 +893,8 @@ declare const EffectWithModular: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -1083,24 +1020,61 @@ declare class TrackClass {
 }
 interface Track extends TrackClass {
 }
-declare class Events {
-    constructor(object?: {
-        target?: EventsTarget;
-    });
-    methods: Set<EventsCallback>;
-    get target(): EventsTarget | undefined;
-    set target(value: EventsTarget | undefined);
-    addListener(method: EventsCallback): void;
-    emit(type: string, info?: UnknownObject): void;
-    removeListener(method: EventsCallback): void;
-    static get type(): string;
-    __target?: EventsTarget;
+interface CompositionObject {
+    audibleContext?: AudibleContext;
+    buffer?: number;
+    gain?: number;
+    quantize?: number;
+    backcolor?: string;
+    visibleContext?: VisibleContext;
 }
-interface EventsDetail {
-    action?: Action;
-    type: string;
+declare class Composition {
+    constructor(object: CompositionObject);
+    adjustSourceGain(clip: Audible): void;
+    private _audibleContext;
+    get audibleContext(): AudibleContext;
+    set audibleContext(value: AudibleContext);
+    backcolor?: string;
+    buffer: number;
+    private bufferSource?;
+    private clipTiming;
+    compositeAudible(clips: Audible[]): boolean;
+    compositeVisible(time: Time, clips: Visible[]): void;
+    compositeVisibleRequest(time: Time, clips: Visible[]): void;
+    private contextSeconds;
+    private createSources;
+    private destroySources;
+    private drawBackground;
+    private _gain;
+    get gain(): number;
+    set gain(value: number);
+    private mashSeconds;
+    playing: boolean;
+    quantize: number;
+    get seconds(): number;
+    private sourcesByClip;
+    startContext(): void;
+    startPlaying(time: Time, clips: Audible[]): boolean;
+    stopPlaying(): void;
+    private _visibleContext;
+    get visibleContext(): VisibleContext;
+    set visibleContext(value: VisibleContext);
 }
-type EventsType = CustomEvent<EventsDetail>;
+declare class TrackRange {
+    constructor(first?: number, last?: number, type?: TrackType);
+    get count(): number;
+    last: number;
+    get relative(): boolean;
+    equals(trackRange: TrackRange): boolean;
+    first: number;
+    get tracks(): number[];
+    toString(): string;
+    type?: TrackType;
+    withEnd(last: number): TrackRange;
+    withMax(max: number): TrackRange;
+    static ofType(type: TrackType, last?: number, first?: number): TrackRange;
+    static fromArgs(first?: number, last?: number, type?: TrackType): TrackRange;
+}
 interface MashObject extends InstanceObject {
     audio?: TrackObject[];
     backcolor?: string;
@@ -1113,7 +1087,6 @@ interface MashObject extends InstanceObject {
 interface MashOptions extends MashObject {
     audibleContext?: AudibleContext;
     buffer?: number;
-    events?: Events;
     gain?: number;
     loop?: boolean;
     time?: Time;
@@ -1131,15 +1104,17 @@ interface Mash extends Instance {
     backcolor?: string;
     changeClipFrames(clip: Clip, value: number): void;
     changeClipTrimAndFrames(clip: Audible, value: number, frames: number): void;
-    clipsInTracks: Clip[];
     clipTrack(clip: Clip): Track;
+    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    clipsVisibleSlice(frame: number, frames: number): Visible[];
     compositeVisible(): void;
+    composition: Composition;
     definition: MashDefinition;
     destroy(): void;
     drawnTime?: Time;
     duration: number;
     endTime: Time;
-    events: Events;
+    handleAction(action: Action): void;
     load(): LoadPromise;
     loadedDefinitions: DefinitionTimes;
     loop: boolean;
@@ -1150,6 +1125,7 @@ interface Mash extends Instance {
     removeTrack(trackType: TrackType): void;
     seekToTime(time: Time): LoadPromise;
     time: Time;
+    timeRange: TimeRange;
     trackOfTypeAtIndex(type: TrackType, index?: number): Track;
     tracks: Track[];
     video: Track[];
@@ -1222,6 +1198,8 @@ declare const MergerWithModular: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -1297,6 +1275,8 @@ declare const ScalerWithModular: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -1331,61 +1311,6 @@ interface TransitionDefinition extends Omit<ModularDefinition, "loadedVisible">,
     instanceFromObject(object: TransitionObject): Transition;
 }
 type TransitionFactory = GenericFactory<Transition, TransitionObject, TransitionDefinition, TransitionDefinitionObject>;
-declare const Color: {
-    yuvBlend: (yuvs: YuvObject[], yuv: YuvObject, match: number, blend: number) => number;
-    rgb2yuv: (rgb: RgbObject) => Yuv;
-    yuv2rgb: (yuv: YuvObject) => Rgb;
-    rgb2hex: (rgb: RgbObject) => string;
-};
-declare const Id: () => string;
-declare const objectType: (value: unknown) => boolean;
-declare const stringType: (value: unknown) => boolean;
-declare const undefinedType: (value: unknown) => boolean;
-declare const numberType: (value: unknown) => boolean;
-declare const booleanType: (value: unknown) => boolean;
-declare const methodType: (value: unknown) => boolean;
-declare const isDefined: (value: unknown) => boolean;
-declare const isNan: (value: unknown) => boolean;
-declare const isInteger: (value: unknown) => boolean;
-declare const isFloat: (value: unknown) => boolean;
-declare const isPositive: (value: unknown) => boolean;
-declare const isAboveZero: (value: unknown) => boolean;
-declare const isArray: (value: unknown) => boolean;
-declare const isPopulatedString: (value: unknown) => boolean;
-declare const isPopulatedObject: (value: unknown) => boolean;
-declare const isPopulatedArray: (value: unknown) => boolean;
-declare const Is: {
-    aboveZero: (value: unknown) => boolean;
-    array: (value: unknown) => boolean;
-    boolean: (value: unknown) => boolean;
-    defined: (value: unknown) => boolean;
-    float: (value: unknown) => boolean;
-    integer: (value: unknown) => boolean;
-    method: (value: unknown) => boolean;
-    nan: (value: unknown) => boolean;
-    number: (value: unknown) => boolean;
-    object: (value: unknown) => boolean;
-    populatedArray: (value: unknown) => boolean;
-    populatedObject: (value: unknown) => boolean;
-    populatedString: (value: unknown) => boolean;
-    positive: (value: unknown) => boolean;
-    string: (value: unknown) => boolean;
-    undefined: (value: unknown) => boolean;
-};
-declare const Pixel: {
-    color: (value: ScalarValue) => string;
-    rgbaAtIndex: (index: number, pixels: Pixels) => Rgba;
-    surroundingRgbas: (pixel: number, data: Pixels, size: Size) => Rgba[];
-};
-declare const byFrame: (a: WithFrame, b: WithFrame) => number;
-declare const byTrack: (a: WithTrack, b: WithTrack) => number;
-declare const byLabel: (a: WithLabel, b: WithLabel) => number;
-declare const Sort: {
-    byFrame: (a: WithFrame, b: WithFrame) => number;
-    byLabel: (a: WithLabel, b: WithLabel) => number;
-    byTrack: (a: WithTrack, b: WithTrack) => number;
-};
-declare const Capitalize: (value: string) => string;
 interface VideoObject extends AudibleObject, VisibleObject {
     speed?: number;
 }
@@ -1418,7 +1343,6 @@ interface MasherObject extends InstanceObject {
     loop?: boolean;
     mash?: Mash;
     precision?: number;
-    visibleContext?: VisibleContext;
     volume?: number;
 }
 type ClipOrEffect = Clip | Effect;
@@ -1437,17 +1361,18 @@ interface Masher extends Instance {
     changeClip(property: string, value?: SelectionValue, clip?: Clip): void;
     changeEffect(property: string, value?: SelectionValue, effect?: Effect): void;
     changeMash(property: string, value?: SelectionValue): void;
-    context2d: Context2D;
+    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
     currentTime: number;
     definitions: Definition[];
     destroy(): void;
     draw(): void;
     duration: number;
     fps: number;
-    frame: number;
-    frames: number;
+    // frame : number
+    // frames : number
     freeze(): void;
     goToTime(value: Time): LoadPromise;
+    isSelected(object: ClipOrEffect): boolean;
     loadedDefinitions: DefinitionTimes;
     loop: boolean;
     mash: Mash;
@@ -1468,18 +1393,20 @@ interface Masher extends Instance {
     save(): void;
     select(object: ClipOrEffect | undefined, toggleSelected?: boolean): void;
     selectClip(clip: Clip | undefined, toggleSelected: boolean): void;
-    selected(object: ClipOrEffect): boolean;
+    selectEffect(effect: Effect | undefined, toggleSelected: boolean): void;
+    selectMash(): void;
+    selectedClipsOrEffects: Clip[] | Effect[];
     selectedClip: Clip | UnknownObject;
     selectedClipOrMash: Clip | Mash;
     selectedClips: Clip[];
     selectedEffect: Effect | undefined;
     selectedEffects: Effect[];
-    selectEffect(effect: Effect | undefined, toggleSelected: boolean): void;
-    selectMash(): void;
+    selectionObjects: SelectionObject[];
     split(): void;
     time: Time;
+    timeRange: TimeRange;
     undo(): void;
-    visibleContext: VisibleContext;
+    visibleContext: VisibleContext; // for tests
     volume: number;
 }
 interface MasherDefinition extends Definition {
@@ -1674,6 +1601,8 @@ declare const ImageWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         loaded(quantize: number, start: Time, end?: Time | undefined): boolean;
@@ -1703,6 +1632,8 @@ declare const ImageWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -1735,6 +1666,8 @@ declare const ImageWithTransformable: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -1747,46 +1680,6 @@ declare const ImageWithTransformable: {
 } & typeof InstanceClass;
 declare class ImageClass extends ImageWithTransformable {
     definition: ImageDefinition;
-}
-interface CompositionObject {
-    audibleContext?: AudibleContext;
-    buffer?: number;
-    gain?: number;
-    quantize?: number;
-    backcolor?: string;
-    visibleContext?: VisibleContext;
-}
-declare class Composition {
-    constructor(object: CompositionObject);
-    adjustSourceGain(clip: Audible): void;
-    private _audibleContext;
-    get audibleContext(): AudibleContext;
-    set audibleContext(value: AudibleContext);
-    backcolor?: string;
-    buffer: number;
-    private bufferSource?;
-    private clipTiming;
-    compositeAudible(clips: Audible[]): boolean;
-    compositeVisible(time: Time, clips: Visible[]): void;
-    compositeVisibleRequest(time: Time, clips: Visible[]): void;
-    private contextSeconds;
-    private createSources;
-    private destroySources;
-    private drawBackground;
-    private _gain;
-    get gain(): number;
-    set gain(value: number);
-    private mashSeconds;
-    playing: boolean;
-    quantize: number;
-    get seconds(): number;
-    private sourcesByClip;
-    startContext(): void;
-    startPlaying(time: Time, clips: Audible[]): boolean;
-    stopPlaying(): void;
-    private _visibleContext;
-    get visibleContext(): VisibleContext;
-    set visibleContext(value: VisibleContext);
 }
 declare class MashClass extends InstanceClass implements Mash {
     constructor(...args: Any[]);
@@ -1805,20 +1698,23 @@ declare class MashClass extends InstanceClass implements Mash {
     set buffer(value: number);
     get bufferFrames(): number;
     private get bufferTime();
-    private __bufferTimer?;
+    private _bufferTimer?;
     changeClipFrames(clip: Clip, value: number): void;
     changeClipTrimAndFrames(clip: Audible, value: number, frames: number): void;
     clipIntersects(clip: Clip, range: TimeRange): boolean;
     clipTrack(clip: Clip): Track;
     clipTrackAtIndex(clip: Clip, index?: number): Track;
-    private clips;
-    get clipsInTracks(): Clip[];
+    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    private clipsAtTimes;
     private clipsAudible;
+    private clipsInTracks;
+    private filterIntersecting;
     private get clipsAudibleInTracks();
     private clipsAudibleInTimeRange;
     private get clipsVideo();
     private clipsVisible;
     private clipsVisibleAtTime;
+    clipsVisibleSlice(frame: number, frames: number): Visible[];
     private clipsVisibleInTimeRange;
     compositeAudible(): boolean;
     private _composition?;
@@ -1832,23 +1728,20 @@ declare class MashClass extends InstanceClass implements Mash {
     drawnTime?: Time;
     private drawTime;
     get duration(): number;
-    private emitDuration;
     private emitIfFramesChange;
     get endTime(): Time;
-    private _events?;
-    get events(): Events;
-    set events(value: Events);
     get frame(): number;
     get frames(): number;
     private _gain;
     get gain(): number;
     set gain(value: number);
-    handleEvent(event: Event): void;
+    handleAction(action: Action): void;
     get startAndEnd(): Time[];
     load(): LoadPromise;
     loadAndComposite(): void;
     get loadedDefinitions(): DefinitionTimes;
     loop: boolean;
+    maxTracks(type?: TrackType): number;
     get media(): Definition[];
     private _paused;
     get paused(): boolean;
@@ -1864,11 +1757,13 @@ declare class MashClass extends InstanceClass implements Mash {
     get stalled(): boolean;
     private stopLoadAndDraw;
     get time(): Time;
+    get timeRange(): TimeRange;
     get timeRangeToBuffer(): TimeRange;
     toJSON(): JsonObject;
     trackOfTypeAtIndex(type: TrackType, index?: number): Track;
     private trackOptions;
     get tracks(): Track[];
+    tracksInRange(trackRange?: TrackRange): Track[] | undefined;
     video: Track[];
     private _visibleContext?;
     get visibleContext(): VisibleContext;
@@ -1946,9 +1841,7 @@ declare class MasherClass extends InstanceClass implements Masher {
     changeMash(property: string, value?: SelectionValue): void;
     changeTransformer(type: string, property: string, value?: SelectionValue): void;
     private clipCanBeSplit;
-    private _context2D?;
-    get context2d(): Context2D;
-    set context2d(value: Context2D);
+    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
     private currentActionReusable;
     get currentTime(): number;
     get definitions(): Definition[];
@@ -1957,8 +1850,6 @@ declare class MasherClass extends InstanceClass implements Masher {
     draw(): void;
     get duration(): number;
     private get endTime();
-    private _events?;
-    private get events();
     private filterClipSelection;
     private _fps;
     get fps(): number;
@@ -1969,7 +1860,8 @@ declare class MasherClass extends InstanceClass implements Masher {
     freeze(): void;
     private get gain();
     goToTime(value: Time): LoadPromise;
-    private handleMasher;
+    isSelected(object: ClipOrEffect): boolean;
+    private handleAction;
     private loadMash;
     private loadMashAndDraw;
     get loadedDefinitions(): DefinitionTimes;
@@ -2005,10 +1897,10 @@ declare class MasherClass extends InstanceClass implements Masher {
     removeEffects(effectOrArray: Effect | Effect[]): void;
     save(): void;
     select(object: ClipOrEffect | undefined, toggleSelected?: boolean): void;
+    get selectedClipsOrEffects(): Clip[] | Effect[];
     selectClip(clip: Clip | undefined, toggleSelected: boolean): void;
     selectEffect(effect: Effect | undefined, toggleSelected: boolean): void;
     selectMash(): void;
-    selected(object: ClipOrEffect): boolean;
     get selectedClip(): Clip | UnknownObject;
     set selectedClip(value: Clip | UnknownObject);
     private selectedClipObject;
@@ -2023,14 +1915,14 @@ declare class MasherClass extends InstanceClass implements Masher {
     private _selectedEffects;
     get selectedEffects(): Effect[];
     set selectedEffects(value: Effect[]);
+    get selectionObjects(): SelectionObject[];
     private get silenced();
     split(): void;
     get time(): Time;
     set time(value: Time);
+    get timeRange(): TimeRange;
     undo(): void;
-    private _visibleContext?;
-    get visibleContext(): VisibleContext;
-    set visibleContext(value: VisibleContext);
+    visibleContext: VisibleContext;
     private _volume;
     get volume(): number;
     set volume(value: number);
@@ -2092,6 +1984,8 @@ declare function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase): {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2152,6 +2046,8 @@ declare function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase): {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2176,6 +2072,8 @@ declare function ModularMixin<TBase extends Constrained<Instance>>(Base: TBase):
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -2243,6 +2141,8 @@ declare function TransformableMixin<TBase extends Constrained<Visible>>(Base: TB
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         loaded(quantize: number, start: Time, end?: Time | undefined): boolean;
@@ -2301,6 +2201,8 @@ declare function VisibleMixin<TBase extends Constrained<Clip>>(Base: TBase): {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2438,6 +2340,8 @@ declare const ThemeWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         loaded(quantize: number, start: Time, end?: Time | undefined): boolean;
@@ -2467,6 +2371,8 @@ declare const ThemeWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2499,6 +2405,8 @@ declare const ThemeWithTransformable: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2521,6 +2429,8 @@ declare const ThemeWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -2660,6 +2570,8 @@ declare const TransitionWithVisible: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2692,6 +2604,8 @@ declare const TransitionWithVisible: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2714,6 +2628,8 @@ declare const TransitionWithVisible: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         readonly propertyNames: string[];
@@ -2886,6 +2802,8 @@ declare const VideoWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         loaded(quantize: number, start: Time, end?: Time | undefined): boolean;
@@ -2915,6 +2833,8 @@ declare const VideoWithTransformable: {
         definitionTime(quantize: number, time: Time): Time;
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2951,6 +2871,8 @@ declare const VideoWithTransformable: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2982,6 +2904,8 @@ declare const VideoWithTransformable: {
         readonly definitions: Definition[];
         _id?: string | undefined;
         readonly id: string;
+        _identifier?: string | undefined;
+        readonly identifier: string;
         _label?: string | undefined;
         label: string;
         load(quantize: number, start: Time, end?: Time | undefined): LoadPromise;
@@ -2999,54 +2923,6 @@ declare class VideoClass extends VideoWithTransformable {
     definitionTime(quantize: number, time: Time): Time;
     speed: number;
     toJSON(): JsonObject;
-}
-interface ActionsObject {
-    mash: Mash;
-}
-declare class Actions {
-    constructor(object: ActionsObject);
-    get canRedo(): boolean;
-    get canSave(): boolean;
-    get canUndo(): boolean;
-    get currentAction(): Action;
-    get currentActionLast(): boolean;
-    destroy(): void;
-    do(action: Action): Action[];
-    index: number;
-    instances: Action[];
-    mash: Mash;
-    redo(): Action;
-    save(): void;
-    undo(): Action;
-}
-interface ActionObject {
-    actions: Actions;
-    mash: Mash;
-    redoSelectedClips: Clip[];
-    redoSelectedEffects: Effect[];
-    type: string;
-    undoSelectedClips: Clip[];
-    undoSelectedEffects: Effect[];
-    redoAction(): void;
-    undoAction(): void;
-}
-declare class Action {
-    constructor(object: ActionObject);
-    actions: Actions;
-    mash: Mash;
-    undoSelectedClips: Clip[];
-    redoSelectedClips: Clip[];
-    undoSelectedEffects: Effect[];
-    redoSelectedEffects: Effect[];
-    done: boolean;
-    get events(): Events | undefined;
-    get selectedClips(): Clip[];
-    get selectedEffects(): Effect[];
-    redo(): void;
-    redoAction(): void;
-    type: string;
-    undo(): void;
-    undoAction(): void;
 }
 interface AddTrackActionObject extends ActionObject {
     trackType: TrackType;
@@ -3209,6 +3085,220 @@ declare class MoveEffectsAction extends Action {
     redoAction(): void;
     undoAction(): void;
 }
+interface ActionsObject {
+    mash: Mash;
+}
+declare class Actions {
+    constructor(object: ActionsObject);
+    get canRedo(): boolean;
+    get canSave(): boolean;
+    get canUndo(): boolean;
+    get currentAction(): Action;
+    get currentActionLast(): boolean;
+    destroy(): void;
+    add(action: Action): void;
+    index: number;
+    instances: Action[];
+    mash: Mash;
+    redo(): Action;
+    save(): void;
+    undo(): Action;
+}
+interface ActionObject {
+    actions: Actions;
+    mash: Mash;
+    redoSelectedClips: Clip[];
+    redoSelectedEffects: Effect[];
+    type: string;
+    undoSelectedClips: Clip[];
+    undoSelectedEffects: Effect[];
+    redoAction(): void;
+    undoAction(): void;
+}
+declare class Action {
+    constructor(object: ActionObject);
+    actions: Actions;
+    mash: Mash;
+    undoSelectedClips: Clip[];
+    redoSelectedClips: Clip[];
+    undoSelectedEffects: Effect[];
+    redoSelectedEffects: Effect[];
+    done: boolean;
+    get selectedClips(): Clip[];
+    get selectedEffects(): Effect[];
+    redo(): void;
+    redoAction(): void;
+    type: string;
+    undo(): void;
+    undoAction(): void;
+}
+declare class VisibleContext {
+    constructor(object?: {
+        context2d?: Context2D;
+    });
+    get alpha(): number;
+    set alpha(value: number);
+    get canvas(): ContextElement;
+    set canvas(value: ContextElement);
+    clear(): VisibleContext;
+    clearSize(size: Size): VisibleContext;
+    clearRect(rect: Rect): VisibleContext;
+    get composite(): string;
+    set composite(value: string);
+    private get context2d();
+    private set context2d(value);
+    get dataUrl(): string;
+    draw(source: DrawingSource): VisibleContext;
+    drawAtPoint(source: DrawingSource, point: Point): VisibleContext;
+    drawFill(fill: string): VisibleContext;
+    drawFillInRect(fill: string, rect: Rect): VisibleContext;
+    drawFillToSize(fill: string, size: Size): VisibleContext;
+    drawImageData(data: ImageData): VisibleContext;
+    drawImageDataAtPoint(data: ImageData, point: Point): VisibleContext;
+    drawInRect(source: DrawingSource, rect: Rect): VisibleContext;
+    drawInRectFromRect(source: DrawingSource, inRect: Rect, fromRect: Rect): VisibleContext;
+    drawInRectFromSize(source: DrawingSource, rect: Rect, size: Size): VisibleContext;
+    drawInSizeFromSize(source: DrawingSource, inSize: Size, fromSize: Size): VisibleContext;
+    drawText(text: string, style: TextStyle): VisibleContext;
+    drawTextAtPoint(text: string, style: TextStyle, point: Point): VisibleContext;
+    drawToSize(source: DrawingSource, size: Size): VisibleContext;
+    drawWithAlpha(source: DrawingSource, alpha: number): VisibleContext;
+    drawWithComposite(source: DrawingSource, composite: string): VisibleContext;
+    emit(type: EventType, detail?: UnknownObject, target?: ContextElement): void;
+    get fill(): string;
+    set fill(value: string);
+    get font(): string;
+    set font(value: string);
+    get imageData(): ContextData;
+    get imageDataFresh(): ContextData;
+    imageDataFromRect(rect: Rect): ContextData;
+    imageDataFromSize(size: Size): ContextData;
+    get drawingSource(): DrawingSource;
+    get shadow(): string;
+    set shadow(value: string);
+    get shadowPoint(): Point;
+    set shadowPoint(point: Point);
+    get size(): Size;
+    set size(value: Size);
+    private _context2d?;
+}
+interface EventsDetail {
+    action?: Action;
+}
+type EventsType = CustomEvent<EventsDetail>;
+declare class ContextFactory {
+    audible(): AudibleContext;
+    fromCanvas(canvas: ContextElement): VisibleContext;
+    fromContext2D(context2d: Context2D): VisibleContext;
+    toSize(size: Size): VisibleContext;
+    get type(): {
+        [k: string]: string;
+    };
+    get types(): string[];
+    visible(): VisibleContext;
+}
+declare const ContextFactoryInstance: ContextFactory;
+declare class Evaluator {
+    [index: string]: unknown;
+    constructor(timeRange: TimeRange, context: VisibleContext, size: Size, mergeContext?: VisibleContext);
+    ceil: (x: number) => number;
+    conditionalValue(conditionals: ValueObject[]): ScalarValue;
+    context: VisibleContext;
+    get duration(): number;
+    evaluate(value: ScalarValue | ValueObject[]): ScalarValue;
+    private evaluateExpression;
+    floor: (x: number) => number;
+    get(key: string): EvaluatorValue | undefined;
+    has(key: string): boolean;
+    initialize(key: string, value: EvaluatorValue): boolean;
+    get inputSize(): Size;
+    get keys(): string[];
+    private map;
+    mergeContext?: VisibleContext;
+    mm_cmp(a: number, b: number, x: number, y: number): number;
+    get mm_dimensions(): string;
+    get mm_duration(): number;
+    get mm_fps(): number;
+    get mm_height(): number;
+    mm_horz(size: ScalarValue, proud: ScalarRaw): number;
+    mm_max: (...values: number[]) => number;
+    mm_min: (...values: number[]) => number;
+    get mm_t(): number;
+    mm_vert(size: ScalarValue, proud: ScalarRaw): number;
+    get mm_width(): number;
+    get position(): number;
+    replaceKeys(value: string): string;
+    set(key: string, value: EvaluatorValue): void;
+    setInputSize({ width, height }: Size): void;
+    size: Size;
+    sized(vertical: number, size: ScalarValue, proud: ScalarRaw): number;
+    get t(): number;
+    timeRange: TimeRange;
+}
+declare const Id: () => string;
+declare const objectType: (value: unknown) => boolean;
+declare const stringType: (value: unknown) => boolean;
+declare const undefinedType: (value: unknown) => boolean;
+declare const numberType: (value: unknown) => boolean;
+declare const booleanType: (value: unknown) => boolean;
+declare const methodType: (value: unknown) => boolean;
+declare const isDefined: (value: unknown) => boolean;
+declare const isNan: (value: unknown) => boolean;
+declare const isInteger: (value: unknown) => boolean;
+declare const isFloat: (value: unknown) => boolean;
+declare const isPositive: (value: unknown) => boolean;
+declare const isAboveZero: (value: unknown) => boolean;
+declare const isArray: (value: unknown) => boolean;
+declare const isPopulatedString: (value: unknown) => boolean;
+declare const isPopulatedObject: (value: unknown) => boolean;
+declare const isPopulatedArray: (value: unknown) => boolean;
+declare const Is: {
+    aboveZero: (value: unknown) => boolean;
+    array: (value: unknown) => boolean;
+    boolean: (value: unknown) => boolean;
+    defined: (value: unknown) => boolean;
+    float: (value: unknown) => boolean;
+    integer: (value: unknown) => boolean;
+    method: (value: unknown) => boolean;
+    nan: (value: unknown) => boolean;
+    number: (value: unknown) => boolean;
+    object: (value: unknown) => boolean;
+    populatedArray: (value: unknown) => boolean;
+    populatedObject: (value: unknown) => boolean;
+    populatedString: (value: unknown) => boolean;
+    positive: (value: unknown) => boolean;
+    string: (value: unknown) => boolean;
+    undefined: (value: unknown) => boolean;
+};
+declare const pixelRgbaAtIndex: (index: number, pixels: Pixels) => Rgba;
+declare const pixelNeighboringRgbas: (pixel: number, data: Pixels, size: Size) => Rgba[];
+declare const pixelColor: (value: ScalarValue) => string;
+declare const pixelPerFrame: (frames: number, width: number, zoom: number) => number;
+declare const pixelFromFrame: (frame: number, perFrame: number, rounding?: string) => number;
+declare const pixelToFrame: (pixels: number, perFrame: number, rounding?: string) => number;
+declare const Pixel: {
+    color: (value: ScalarValue) => string;
+    fromFrame: (frame: number, perFrame: number, rounding?: string) => number;
+    neighboringRgbas: (pixel: number, data: Pixels, size: Size) => Rgba[];
+    perFrame: (frames: number, width: number, zoom: number) => number;
+    rgbaAtIndex: (index: number, pixels: Pixels) => Rgba;
+    toFrame: (pixels: number, perFrame: number, rounding?: string) => number;
+};
+declare const roundMethod: (rounding?: string) => NumberConverter;
+declare const roundWithMethod: (number: number, method?: string) => number;
+declare const Round: {
+    method: (rounding?: string) => NumberConverter;
+    withMethod: (number: number, method?: string) => number;
+};
+declare const Seconds: (seconds: number, fps: number, duration: number) => string;
+declare const byFrame: (a: WithFrame, b: WithFrame) => number;
+declare const byTrack: (a: WithTrack, b: WithTrack) => number;
+declare const byLabel: (a: WithLabel, b: WithLabel) => number;
+declare const Sort: {
+    byFrame: (a: WithFrame, b: WithFrame) => number;
+    byLabel: (a: WithLabel, b: WithLabel) => number;
+    byTrack: (a: WithTrack, b: WithTrack) => number;
+};
 declare class CacheClass {
     add(url: string, value: Any): void;
     cached(url: string): boolean;
@@ -3259,9 +3349,28 @@ declare class ModuleLoader extends Loader {
     type: LoadType;
     requestUrl(url: string): Promise<Any>;
 }
+/**
+ * Provides access to factory objects that create all other object definitions and instances.
+ *
+ * @example Create {@link Masher} instance and bind to a CANVAS element
+ * ```ts
+ * const canvas : ContextElement = document.getElementById('moviemasher-canvas')
+ * const masher : Masher = MovieMasher.masher.instance({ canvas })
+ * ```
+ * @sealed
+ */
 declare class MovieMasher {
+    /**
+     * Object with methods to create audio definitions and instances
+     */
     static get [DefinitionType.Audio](): AudioFactory;
+    /**
+     * Object with methods to create effect definitions and instances
+     */
     static get [DefinitionType.Effect](): EffectFactory;
+    /**
+     * Object with methods to create audio definitions and instances
+     */
     static get [DefinitionType.Filter](): FilterFactory;
     static get [DefinitionType.Font](): FontFactory;
     static get [DefinitionType.Image](): ImageFactory;
@@ -3274,5 +3383,5 @@ declare class MovieMasher {
     static get [DefinitionType.Video](): VideoFactory;
     private constructor();
 }
-export { Action, ActionObject, AddTrackAction, AddTrackActionObject, ChangeAction, ChangeActionObject, FreezeAction, ChangeFramesAction, ChangeTrimAction, AddEffectAction, AddEffectActionObject, AddClipToTrackAction, MoveClipsAction, RemoveClipsAction, SplitAction, MoveEffectsAction, Actions, Events, EventsType, EventsDetail, Cache, AudioProcessor, FontProcessor, ModuleProcessor, Loader, AudioLoader, FontLoader, ImageLoader, ModuleLoader, Processor, Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory, AudioDefinitionClass, audioDefine, audioDefinition, audioDefinitionFromId, AudioFactoryImplementation, audioFromId, audioInitialize, audioInstance, AudioClass, Definition, DefinitionClass, DefinitionObject, DefinitionTimes, Definitions, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, EffectDefinitionClass, EffectClass, effectDefine, effectDefinition, effectDefinitionFromId, EffectFactoryImplementation, effectFromId, effectInitialize, effectInstance, Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject, Factories, FactoryObject, Filter, FilterDefinition, FilterDefinitionObject, FilterFactory, FilterObject, FilterDefinitionClass, filterDefine, filterDefinition, filterDefinitionFromId, FilterFactoryImplementation, filterFromId, filterInitialize, filterInstance, FilterClass, Font, FontDefinition, FontDefinitionObject, FontFactory, FontObject, FontDefinitionClass, fontDefine, fontDefinition, fontDefinitionFromId, FontFactoryImplementation, fontFromId, fontInitialize, fontInstance, FontClass, Image, ImageDefinition, ImageDefinitionObject, ImageFactory, ImageObject, ImageDefinitionClass, imageDefine, imageDefinition, imageDefinitionFromId, ImageFactoryImplementation, imageFromId, imageInitialize, imageInstance, ImageClass, Instance, InstanceClass, InstanceObject, MashClass, mashDefine, mashDefinition, mashDefinitionFromId, MashFactoryImplementation, mashFromId, mashInitialize, mashInstance, MashDefinitionClass, Mash, MashObject, MashOptions, MashFactory, MashDefinition, MashDefinitionObject, Masher, MasherFactory, MasherDefinition, MasherObject, MasherDefinitionObject, MasherAddPromise, ClipOrEffect, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, MasherFactoryImplementation, masherFromId, masherInitialize, masherInstance, MasherDefinitionClass, MasherClass, Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject, MergerDefinitionClass, mergerDefine, mergerDefaultId, mergerDefinition, mergerDefinitionFromId, MergerFactoryImplementation, mergerFromId, mergerInitialize, mergerInstance, MergerClass, Audible, AudibleDefinition, AudibleDefinitionObject, AudibleObject, AudibleDefinitionMixin, AudibleMixin, Clip, ClipDefinition, ClipDefinitionObject, ClipObject, ClipDefinitionMixin, ClipMixin, Modular, ModularDefinition, ModularDefinitionObject, ModularObject, ModularMixin, ModularDefinitionMixin, Transformable, TransformableObject, TransformableMixin, Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject, VisibleDefinitionMixin, VisibleMixin, Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerFactory, ScalerObject, ScalerDefinitionClass, scalerDefine, scalerDefaultId, scalerDefinition, scalerDefinitionFromId, ScalerFactoryImplementation, scalerFromId, scalerInitialize, scalerInstance, ScalerClass, Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject, ThemeDefinitionClass, themeDefine, themeDefinition, themeDefinitionFromId, ThemeFactoryImplementation, themeFromId, themeInitialize, themeInstance, ThemeClass, Track, TrackClass, TrackObject, TrackOptions, Transition, TransitionDefinition, TransitionDefinitionObject, TransitionDefinitionTransformObject, TransitionFactory, TransitionObject, TransitionDefinitionClass, transitionDefine, transitionDefinition, transitionDefinitionFromId, TransitionFactoryImplementation, transitionFromId, transitionInitialize, transitionInstance, TransitionClass, Type, TypeObject, TypesInstance as Types, TypeValue, TypeValueObject, Video, VideoDefinition, VideoDefinitionObject, VideoFactory, VideoObject, VideoDefinitionClass, videoDefine, videoDefinition, videoDefinitionFromId, VideoFactoryImplementation, videoFromId, videoInitialize, videoInstance, VideoClass, AudibleContext, VisibleContext, ContextFactoryInstance as ContextFactory, Context2D, ContextElement, DrawingSource, ContextData, Pixels, Timeout, Interval, EventsTarget, EventsCallback, Any, ScalarValue, ScalarArray, UnknownObject, ObjectUnknown, ValueObject, ScalarRaw, Scalar, ScalarMethod, JsonValue, JsonObject, SelectionObject, SelectionValue, EvaluatorValue, WithFrame, WithTrack, WithLabel, Rgb, Rgba, WithType, WithId, WithTypeAndId, WithTypeAndValue, Size, EvaluatedSize, EvaluatedPoint, Point, EvaluatedRect, Rect, TextStyle, RgbObject, YuvObject, Yuv, Constructor, Constrained, GenericFactory, LoadPromise, LoadFontPromise, LoadImagePromise, Default, Errors, Parameter, ParameterObject, Property, PropertyObject, ActionType, ClipType, ClipTypes, DataType, DataTypes, DefinitionType, DefinitionTypes, EventType, LoadType, MashType, MashTypes, ModuleType, ModuleTypes, MoveType, TrackType, TransformType, TransformTypes, Color, Id, Is, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, Pixel, Sort, byFrame, byLabel, byTrack, Evaluator, Time, Times, scaleTimes, roundWithMethod, TimeRange, Capitalize, MovieMasher };
+export { Any, Context2D, ContextElement, DrawingSource, ContextData, Pixels, Timeout, Interval, EventsTarget, EventsCallback, ScalarValue, ScalarArray, NumberObject, UnknownObject, ObjectUnknown, ValueObject, ScalarRaw, Scalar, ScalarConverter, NumberConverter, StringSetter, NumberSetter, BooleanSetter, JsonValue, JsonObject, SelectionObject, SelectionValue, EvaluatorValue, WithFrame, WithTrack, WithLabel, Rgb, Rgba, WithType, WithId, WithTypeAndId, WithTypeAndValue, Size, EvaluatedSize, EvaluatedPoint, Point, EvaluatedRect, Rect, TextStyle, RgbObject, YuvObject, Yuv, Constructor, Constrained, GenericFactory, LoadPromise, LoadFontPromise, LoadImagePromise, Default, Errors, Parameter, ParameterObject, Property, PropertyObject, ActionType, ClipType, ClipTypes, DataType, DataTypes, DefinitionType, DefinitionTypes, EventType, LoadType, MashType, MashTypes, ModuleType, ModuleTypes, MoveType, TrackType, TransformType, TransformTypes, Capitalize, Color, Element, elementScrollMetrics, Evaluator, Id, Is, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, Pixel, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, Round, roundMethod, roundWithMethod, Seconds, Sort, byFrame, byLabel, byTrack, Time, Times, timeEqualizeRates, TimeRange, TrackRange, Action, ActionObject, AddTrackAction, AddTrackActionObject, ChangeAction, ChangeActionObject, FreezeAction, ChangeFramesAction, ChangeTrimAction, AddEffectAction, AddEffectActionObject, AddClipToTrackAction, MoveClipsAction, RemoveClipsAction, SplitAction, MoveEffectsAction, Actions, Cache, AudioProcessor, FontProcessor, ModuleProcessor, Loader, AudioLoader, FontLoader, ImageLoader, ModuleLoader, Processor, Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory, AudioDefinitionClass, audioDefine, audioDefinition, audioDefinitionFromId, AudioFactoryImplementation, audioFromId, audioInitialize, audioInstance, AudioClass, Definition, DefinitionClass, DefinitionObject, DefinitionTimes, Definitions, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, EffectDefinitionClass, EffectClass, effectDefine, effectDefinition, effectDefinitionFromId, EffectFactoryImplementation, effectFromId, effectInitialize, effectInstance, Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject, Factories, FactoryObject, Filter, FilterDefinition, FilterDefinitionObject, FilterFactory, FilterObject, FilterDefinitionClass, filterDefine, filterDefinition, filterDefinitionFromId, FilterFactoryImplementation, filterFromId, filterInitialize, filterInstance, FilterClass, Font, FontDefinition, FontDefinitionObject, FontFactory, FontObject, FontDefinitionClass, fontDefine, fontDefinition, fontDefinitionFromId, FontFactoryImplementation, fontFromId, fontInitialize, fontInstance, FontClass, Image, ImageDefinition, ImageDefinitionObject, ImageFactory, ImageObject, ImageDefinitionClass, imageDefine, imageDefinition, imageDefinitionFromId, ImageFactoryImplementation, imageFromId, imageInitialize, imageInstance, ImageClass, Instance, InstanceClass, InstanceObject, MashClass, mashDefine, mashDefinition, mashDefinitionFromId, MashFactoryImplementation, mashFromId, mashInitialize, mashInstance, MashDefinitionClass, Mash, MashObject, MashOptions, MashFactory, MashDefinition, MashDefinitionObject, Masher, MasherFactory, MasherDefinition, MasherObject, MasherDefinitionObject, MasherAddPromise, ClipOrEffect, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, MasherFactoryImplementation, masherFromId, masherInitialize, masherInstance, MasherDefinitionClass, MasherClass, Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject, MergerDefinitionClass, mergerDefine, mergerDefaultId, mergerDefinition, mergerDefinitionFromId, MergerFactoryImplementation, mergerFromId, mergerInitialize, mergerInstance, MergerClass, Audible, AudibleDefinition, AudibleDefinitionObject, AudibleObject, AudibleDefinitionMixin, AudibleMixin, Clip, ClipDefinition, ClipDefinitionObject, ClipObject, ClipDefinitionMixin, ClipMixin, Modular, ModularDefinition, ModularDefinitionObject, ModularObject, ModularMixin, ModularDefinitionMixin, Transformable, TransformableObject, TransformableMixin, Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject, VisibleDefinitionMixin, VisibleMixin, Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerFactory, ScalerObject, ScalerDefinitionClass, scalerDefine, scalerDefaultId, scalerDefinition, scalerDefinitionFromId, ScalerFactoryImplementation, scalerFromId, scalerInitialize, scalerInstance, ScalerClass, Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject, ThemeDefinitionClass, themeDefine, themeDefinition, themeDefinitionFromId, ThemeFactoryImplementation, themeFromId, themeInitialize, themeInstance, ThemeClass, Track, TrackClass, TrackObject, TrackOptions, Transition, TransitionDefinition, TransitionDefinitionObject, TransitionDefinitionTransformObject, TransitionFactory, TransitionObject, TransitionDefinitionClass, transitionDefine, transitionDefinition, transitionDefinitionFromId, TransitionFactoryImplementation, transitionFromId, transitionInitialize, transitionInstance, TransitionClass, Type, TypeObject, TypesInstance as Types, TypeValue, TypeValueObject, Video, VideoDefinition, VideoDefinitionObject, VideoFactory, VideoObject, VideoDefinitionClass, videoDefine, videoDefinition, videoDefinitionFromId, VideoFactoryImplementation, videoFromId, videoInitialize, videoInstance, VideoClass, AudibleContext, VisibleContext, EventsType, EventsDetail, ContextFactoryInstance as ContextFactory, MovieMasher };
 //# sourceMappingURL=index.d.ts.map

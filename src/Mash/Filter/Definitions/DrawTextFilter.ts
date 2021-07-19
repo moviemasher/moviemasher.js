@@ -1,7 +1,7 @@
 import { Cache } from "../../../Loading"
 import { Evaluator, Is } from "../../../Utilities"
 import { Parameter } from "../../../Setup/Parameter"
-import { ScalarValue, TextStyle, ValueObject } from "../../../Setup/declarations"
+import { ScalarValue, TextStyle, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Playing"

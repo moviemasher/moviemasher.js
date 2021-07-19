@@ -1,4 +1,4 @@
-import { Any, Constrained, LoadPromise } from "../../../Setup/declarations"
+import { Any, Constrained, LoadPromise } from "../../../declarations"
 import { Definition } from "../../Definition/Definition"
 import { ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions"

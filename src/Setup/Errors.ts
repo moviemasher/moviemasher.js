@@ -23,6 +23,7 @@ const Errors = {
   internal: $internal,
   argument: `${$invalidArgument} `,
   invalid: {
+    canvas: `${$invalidArgument} canvas `,
     definition: {
       duration: `${$invalidDefinitionProperty} duration`,
       audio: `${$invalidDefinitionProperty} audio|url`,

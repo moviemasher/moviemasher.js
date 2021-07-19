@@ -1,4 +1,4 @@
-import { ScalarValue } from "../../../Setup/declarations";
+import { ScalarValue } from "../../../declarations";
 import { Time } from "../../../Utilities/Time";
 import { ClipDefinition, ClipDefinitionObject } from "../Clip/Clip";
 import { Clip, ClipObject } from "../Clip/Clip";

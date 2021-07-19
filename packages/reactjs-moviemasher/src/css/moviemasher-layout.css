@@ -1,0 +1,191 @@
+.moviemasher-controls {
+  background-color: var(--moviemasher-back-tertiary);
+  grid-area: controls;
+  display: grid;
+  padding: var(--moviemasher-padding-controls);
+  column-gap: var(--moviemasher-spacing-controls);
+}
+
+.moviemasher-content {
+  background-color: var(--moviemasher-back-secondary);
+  grid-area: content;
+}
+
+.moviemasher-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: var(--moviemasher-back-secondary);
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+}
+
+
+.moviemasher-browser {
+  grid-area: browser;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr var(--moviemasher-height-preview);
+  grid-template-areas: "controls" "content";
+}
+
+.moviemasher-audio {
+  grid-area: audio;
+}
+
+.moviemasher-effect {
+  grid-area: effect;
+}
+
+.moviemasher-image {
+  grid-area: image;
+}
+
+.moviemasher-theme {
+  grid-area: theme;
+}
+
+.moviemasher-transition {
+  grid-area: transition;
+}
+
+.moviemasher-video {
+  grid-area: video;
+}
+
+.moviemasher-browser .moviemasher-controls {
+  border-bottom: var(--moviemasher-border);
+  grid-template-areas: "theme image audio video effect transition";
+  grid-auto-columns: var(--moviemasher-icon-size);
+}
+
+.moviemasher-browser .moviemasher-content {
+  padding: var(--moviemasher-padding-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  grid-auto-rows: 90px;
+  gap: var(--moviemasher-spacing-content);
+  overflow-y: auto;
+}
+
+.moviemasher-definition {
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+  padding: var(--moviemasher-padding-controls);
+}
+
+.moviemasher-inspector {
+  grid-area: inspector;
+}
+
+.moviemasher-timeline {
+  grid-area: timeline;
+  grid-template-areas: "controls" "scrub" "content" "footer";
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    calc(var(--moviemasher-button-size) + (2 * var(--moviemasher-padding-button-factor) * var(--moviemasher-padding-controls)))
+    var(--moviemasher-height-scrub)
+    1fr
+    calc(var(--moviemasher-icon-size) + (2 * var(--moviemasher-padding-controls)))
+    ;
+}
+
+.moviemasher-timeline .moviemasher-controls-footer {
+  grid-area: footer
+}
+
+.moviemasher-timeline .moviemasher-content {
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+}
+.moviemasher-timeline .moviemasher-clip label:after {
+  content: var(--clip-label);
+}
+
+.moviemasher-timeline .moviemasher-controls {
+  padding: calc(var(--moviemasher-padding-controls) * var(--moviemasher-padding-button-factor));
+  grid-template-columns: repeat(9, auto) 1fr;
+  grid-template-areas: "undo redo cut copy paste delete split save render";
+  border-bottom: var(--moviemasher-border);
+}
+
+.moviemasher-timeline .moviemasher-controls-scrub {
+  position: relative;
+  grid-area: scrub;
+  overflow: hidden;
+}
+
+.moviemasher-timeline .moviemasher-controls-scrub .moviemasher-scrub {
+  position: absolute;
+  left: -1;
+}
+
+.moviemasher-timeline .moviemasher-clip {
+  display: inline-block;
+  padding: var(--moviemasher-padding-controls);
+  background-color: var(--moviemasher-back-tertiary);
+  position: absolute;
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+}
+
+.moviemasher-player {
+  grid-area: player;
+  grid-template-areas: "content" "controls";
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--moviemasher-height-preview) 1fr;
+}
+
+.moviemasher-player .moviemasher-controls {
+  border-top: var(--moviemasher-border);
+  grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
+  grid-template-areas: "paused frame volume";
+}
+
+.moviemasher-paused {
+  grid-area: paused;
+}
+
+.moviemasher-canvas {
+  background: repeating-conic-gradient(var(--moviemasher-back-primary) 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+  background-position: top left;
+  width: var(--moviemasher-width-preview);
+  height: var(--moviemasher-height-preview);
+}
+
+.moviemasher-copy { grid-area: copy; }
+
+.moviemasher-cut {
+  grid-area: cut;
+}
+
+.moviemasher-delete {
+  grid-area: delete;
+}
+
+.moviemasher-frame {
+  grid-area: frame;
+}
+
+.moviemasher-paste {
+  grid-area: paste;
+}
+
+.moviemasher-redo {
+  grid-area: redo;
+}
+
+.moviemasher-render {
+  grid-area: render;
+}
+
+.moviemasher-save {
+  grid-area: save;
+}
+
+.moviemasher-split {
+  grid-area: split;
+}
+
+.moviemasher-undo {
+  grid-area: undo;
+}

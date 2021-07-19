@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../Setup/declarations"
+import { GenericFactory } from "../../declarations"
 import { DefinitionObject } from "../Definition/Definition"
 import { Transformable, TransformableObject } from "../Mixin/Transformable/Transformable"
 import { VisibleDefinition } from "../Mixin/Visible/Visible"

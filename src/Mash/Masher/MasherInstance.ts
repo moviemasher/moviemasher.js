@@ -1,37 +1,59 @@
-import { ActionFactory } from "../../Editing/Action/ActionFactory";
-import { ChangeAction } from "../../Editing/Action/ChangeAction";
-import { Actions } from "../../Editing/Actions/Actions";
-import { Events, EventsType } from "../../Editing/Events/Events";
-import { MovieMasher } from "../../MovieMasher/MovieMasher";
-import { AudibleContext } from "../../Playing/AudibleContext";
-import { ContextFactory } from "../../Playing/ContextFactory";
-import { VisibleContext } from "../../Playing/VisibleContext";
-import { Any, Context2D, ContextElement, LoadPromise, SelectionValue, ScalarValue, SelectionObject, UnknownObject } from "../../Setup/declarations";
-import { Default } from "../../Setup/Default";
-import { ActionType, ClipType, ClipTypes, DefinitionType, EventType, MoveType, TrackType, TransformType, TransformTypes } from "../../Setup/Enums";
-import { Errors } from "../../Setup/Errors";
-import { Id } from "../../Utilities";
-import { Is } from "../../Utilities/Is";
-import { byFrame } from "../../Utilities/Sort";
-import { Time } from "../../Utilities/Time";
-import { TimeRange } from "../../Utilities/TimeRange";
-import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Definition";
-import { Definitions } from "../Definitions";
-import { Effect } from "../Effect/Effect";
-import { EffectClass } from "../Effect/EffectInstance";
-import { InstanceClass } from "../Instance/Instance";
-import { Mash, MashObject, MashOptions } from "../Mash/Mash";
-import { Audible } from "../Mixin/Audible/Audible";
-import { Clip } from "../Mixin/Clip/Clip";
-import { Transformable } from "../Mixin/Transformable/Transformable";
-import { Video } from "../Video/Video";
+import {
+  Any,
+  ContextElement,
+  LoadPromise,
+  SelectionValue,
+  ScalarValue,
+  SelectionObject,
+  UnknownObject
+} from "../../declarations"
+import {
+  ActionType,
+  ClipType,
+  ClipTypes,
+  DefinitionType,
+  EventType,
+  MoveType,
+  TrackType,
+  TransformType,
+  TransformTypes
+} from "../../Setup/Enums"
+import { Errors } from "../../Setup/Errors"
+import { Id } from "../../Utilities/Id"
+import { Is } from "../../Utilities/Is"
+import { byFrame } from "../../Utilities/Sort"
+import { Time } from "../../Utilities/Time"
+import { TimeRange } from "../../Utilities/TimeRange"
+import { Action } from "../../Editing/Action/Action"
+import { ActionFactory } from "../../Editing/Action/ActionFactory"
+import { ChangeAction } from "../../Editing/Action/ChangeAction"
+import { Actions } from "../../Editing/Actions/Actions"
+import { MovieMasher } from "../../MovieMasher/MovieMasher"
+import { AudibleContext } from "../../Playing/AudibleContext"
+import { ContextFactory } from "../../Playing/ContextFactory"
+import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Definition"
+import { Definitions } from "../Definitions"
+import { Effect } from "../Effect/Effect"
+import { EffectClass } from "../Effect/EffectInstance"
+import { InstanceClass } from "../Instance/Instance"
+import { Mash, MashObject, MashOptions } from "../Mash/Mash"
+import { Audible } from "../Mixin/Audible/Audible"
+import { Clip } from "../Mixin/Clip/Clip"
+import { Transformable } from "../Mixin/Transformable/Transformable"
+import { Video } from "../Video/Video"
 import { ClipOrEffect, Masher, MasherAddPromise, MasherObject } from "./Masher"
+import { Default } from "../../Setup/Default";
+import { VisibleContext } from "../../Playing";
+import { TrackRange } from "../../Utilities"
+import { Visible } from "../Mixin/Visible/Visible"
 
 class MasherClass extends InstanceClass implements Masher {
   [index : string] : unknown
   constructor(...args : Any[]) {
     super(...args)
     this._id ||= Id()
+
+    // console.log("Masher constructor", this.id)
     const [object] = args
     const {
       autoplay,
@@ -41,7 +63,6 @@ class MasherClass extends InstanceClass implements Masher {
       volume,
       buffer,
       audibleContext,
-      visibleContext,
       mash,
       canvas,
     } = <MasherObject> object
@@ -50,20 +71,14 @@ class MasherClass extends InstanceClass implements Masher {
     if (typeof loop !== "undefined") this._loop = loop
 
     if (typeof audibleContext !== "undefined") this._audibleContext = audibleContext
-    if (typeof visibleContext !== "undefined") this._visibleContext = visibleContext
 
-    if (canvas) {
-      const context = canvas.getContext("2d")
-      if (context) this._context2D = context
-    }
-
-    this.events.addListener(this.handleMasher.bind(this))
+    if (canvas) this.visibleContext = ContextFactory.fromCanvas(canvas)
+    else this.visibleContext = ContextFactory.visible()
 
     if (typeof fps !== "undefined") this._fps = fps
     if (typeof volume !== "undefined") this._volume = volume
     if (typeof buffer !== "undefined") this._buffer = buffer
-
-    this.mash = mash || MovieMasher.mash.instance(this.mashOptions())
+    if (mash) this.mash = mash
   }
 
   private actionCreate(object : UnknownObject) : void {
@@ -83,7 +98,9 @@ class MasherClass extends InstanceClass implements Masher {
       redoSelectedClips,
       redoSelectedEffects,
     }
-    this.actions.do(ActionFactory.createFromObject(clone))
+    const action = ActionFactory.createFromObject(clone)
+    this.actions.add(action)
+    this.handleAction(this.actions.redo())
   }
 
   private _actions? : Actions
@@ -220,12 +237,23 @@ class MasherClass extends InstanceClass implements Masher {
   get canvas() : ContextElement { return this.visibleContext.canvas }
 
   set canvas(value : ContextElement) {
-    // console.log(this.constructor.name, "set canvas")
-    const context2d = value.getContext("2d")
-    if (!context2d) throw Errors.internal + 'context2d'
+    if (!value) throw Errors.invalid.canvas
 
-    this.events.target = value
-    this.context2d = context2d
+    // make sure canvas hasn't been stretched
+    const style = window.getComputedStyle(value)
+    const { width, height } = style
+    if (!(width && height)) throw Errors.invalid.canvas
+
+    const widthTrimmed = Number(width.slice(0, -2))
+    const heightTrimmed = Number(height.slice(0, -2))
+    if (Is.nan(widthTrimmed) || Is.nan(heightTrimmed)) throw Errors.invalid.canvas
+
+    value.width = widthTrimmed
+    value.height = heightTrimmed
+
+    // console.log("set canvas", widthTrimmed, 'x', heightTrimmed, value)
+    this.visibleContext.canvas = value
+    this.mash.compositeVisible()
   }
 
   change(property : string, value? : SelectionValue) : void {
@@ -250,6 +278,7 @@ class MasherClass extends InstanceClass implements Masher {
     if (this.currentActionReusable(target, property)) {
       const changeAction = <ChangeAction> this.actions.currentAction
       changeAction.updateAction(<ScalarValue> redoValue)
+      this.handleAction(changeAction)
       return
     }
     const undoValue = typeof value === "undefined" ? this.pristineOrThrow[property] : target.value(property)
@@ -283,6 +312,7 @@ class MasherClass extends InstanceClass implements Masher {
     if (this.currentActionReusable(target, property)) {
       const changeAction = <ChangeAction> this.actions.currentAction
       changeAction.updateAction(redoValue)
+      this.handleAction(changeAction)
       return
     }
     const undoValue = typeof value === "undefined" ? this.pristineEffectOrThrow[property] : target.value(property)
@@ -300,7 +330,9 @@ class MasherClass extends InstanceClass implements Masher {
     const redoValue = typeof value === "undefined" ? target.value(property) : value
     if (this.currentActionReusable(target, property)) {
       const changeAction = <ChangeAction> this.actions.currentAction
-      return changeAction.updateAction(redoValue)
+      changeAction.updateAction(redoValue)
+      this.handleAction(changeAction)
+      return
     }
 
     const undoValue = typeof value === "undefined" ? this._pristine[property] : target.value(property)
@@ -315,7 +347,7 @@ class MasherClass extends InstanceClass implements Masher {
   }
 
   changeTransformer(type : string, property : string, value?: SelectionValue) : void {
-    console.log(this.constructor.name, "changeTransformer", type, property)
+    // console.log(this.constructor.name, "changeTransformer", type, property)
     if (!Is.populatedString(type)) throw Errors.type + "changeTransformer " + type
     if (!Is.populatedString(property)) throw Errors.property + "changeTransformer " + property
     if (!this._pristine) throw Errors.internal + "changeTransformer _pristine"
@@ -342,6 +374,7 @@ class MasherClass extends InstanceClass implements Masher {
     if (this.currentActionReusable(transformTarget, property)) {
       const changeAction = <ChangeAction> this.actions.currentAction
       changeAction.updateAction(redoValue)
+      this.handleAction(changeAction)
       return
     }
     this.actionCreate(options)
@@ -364,22 +397,10 @@ class MasherClass extends InstanceClass implements Masher {
     return true
   }
 
-  private _context2D? : Context2D
-
-  get context2d() : Context2D {
-    return this.visibleContext.context2d
+  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[] {
+    return this.mash.clips(timeRange, trackRange)
   }
 
-  set context2d(value : Context2D) {
-    // console.log(this.constructor.name, "set context2d")
-    if (this._context2D !== value) {
-      this._context2D = value
-      if (this._visibleContext) {
-        this.visibleContext.context2d = value
-        this.mash.compositeVisible()
-      }
-    }
-  }
 
   private currentActionReusable(target : unknown, property : string) : boolean {
     if (!this.actions.currentActionLast) return false
@@ -403,15 +424,6 @@ class MasherClass extends InstanceClass implements Masher {
 
   private get endTime() : Time { return this.mash.endTime.scale(this.fps, 'floor') }
 
-  private _events? : Events
-
-  private get events() : Events {
-    if (!this._events) {
-      this._events = new Events({ target: this.canvas })
-    }
-    return this._events
-  }
-
   private filterClipSelection(value : Clip | Clip[]) : Clip[] {
     const clips : Clip[] = Array.isArray(value) ? value : [value]
 
@@ -420,14 +432,14 @@ class MasherClass extends InstanceClass implements Masher {
 
     const { trackType, track } = firstClip
 
-    // selected clips must all be on same track
+    //  must all be on same track
     const trackClips = clips.filter(clip => (
       clip.track === track && clip.trackType === trackType
     )).sort(byFrame)
 
     if (track || trackType === TrackType.Audio) return trackClips
 
-    // selected clips on main track must be abutting each other
+    // must be abutting each other on main track
     let abutting = true
     return trackClips.filter((clip : Clip, index : number) => {
       if (!abutting) return false
@@ -448,6 +460,7 @@ class MasherClass extends InstanceClass implements Masher {
 
     if (this._fps !== value) {
       this._fps = value
+      this.visibleContext.emit(EventType.Fps)
       this.time = this.time.scale(value)
     }
   }
@@ -494,25 +507,20 @@ class MasherClass extends InstanceClass implements Masher {
 
   private get gain() : number { return this.muted ? 0.0 : this.volume }
 
-  goToTime(value : Time) : LoadPromise {
-    // console.log(this.constructor.name, "goToTime", value)
+  goToTime(value: Time): LoadPromise {
     return this.mash.seekToTime(value.scaleToFps(this.fps))
   }
 
-  private handleMasher(event : Event) : Any {
-    // console.log("handleMasher", event.type)
-    if (event.type !== Events.type) return
+  isSelected(object : ClipOrEffect) : boolean {
+    if (object instanceof EffectClass) return this.selectedEffects.includes(object)
 
-    const { detail } = <EventsType> event
-    // console.log("handleMasher", detail.type)
+    return this.selectedClips.includes(<Clip> object)
+  }
 
-    if (detail.type === EventType.Action) {
-      const { action } = detail
-      if (!action) throw Errors.internal + 'action'
-
-      this.selectedClips = action.selectedClips
-      this.selectedEffects = action.selectedEffects
-    }
+  private handleAction(action : Action) : void {
+    this.mash.handleAction(action)
+    this.selectedClips = action.selectedClips
+    this.selectedEffects = action.selectedEffects
   }
 
   private loadMash() : LoadPromise { return this.mash.load() }
@@ -520,7 +528,6 @@ class MasherClass extends InstanceClass implements Masher {
   private loadMashAndDraw() : LoadPromise { return this.loadMash().then(() => { this.draw() }) }
 
   get loadedDefinitions() : DefinitionTimes { return this.mash.loadedDefinitions }
-
 
   private _loop = Default.masher.loop
 
@@ -534,7 +541,10 @@ class MasherClass extends InstanceClass implements Masher {
   private _mash? : Mash
 
   get mash() : Mash {
-    if (!this._mash) throw Errors.internal
+    if (!this._mash) {
+      // console.trace("get mash")
+      this._mash = MovieMasher.mash.instance(this.mashOptions())
+    }
     return this._mash
   }
 
@@ -546,8 +556,11 @@ class MasherClass extends InstanceClass implements Masher {
 
     this._selectedEffects = []
     this._mash = object
-    this._mash.events = this.events
+    // console.log("set mash getting visibleContext...")
     this._mash.visibleContext = this.visibleContext
+    // console.log("creating composition", this._mash.composition)
+    // console.log("set mash got visibleContext!", this._visibleContext)
+
     this._mash.audibleContext = this.audibleContext
     this._mash.buffer = this.buffer
     this._mash.gain = this.gain
@@ -564,11 +577,11 @@ class MasherClass extends InstanceClass implements Masher {
   }
 
   private mashOptions(mashObject : MashObject = {}) : MashOptions {
+    // console.log("mashOptions")
     return {
       ...mashObject,
       audibleContext: this.audibleContext,
       buffer: this.buffer,
-      events: this.events,
       gain: this.gain,
       loop: this.loop,
       visibleContext: this.visibleContext,
@@ -706,7 +719,7 @@ class MasherClass extends InstanceClass implements Masher {
     return this._pristineEffect
   }
 
-  redo() : void { if (this.actions.canRedo) this.actions.redo() }
+  redo() : void { if (this.actions.canRedo) this.handleAction(this.actions.redo()) }
 
   remove(objectOrArray : ClipOrEffect | ClipOrEffect[], moveType : MoveType) : void {
     if (!Is.object(objectOrArray)) throw Errors.argument
@@ -777,6 +790,10 @@ class MasherClass extends InstanceClass implements Masher {
     this.selectClip(<Clip> object, toggleSelected)
   }
 
+  get selectedClipsOrEffects() : Clip[] | Effect[] {
+    return this.selectedEffects.length ? this.selectedEffects : this.selectedClips
+  }
+
   selectClip(clip : Clip | undefined, toggleSelected : boolean) : void {
     const array : Clip[] = []
     if (clip) {
@@ -808,12 +825,6 @@ class MasherClass extends InstanceClass implements Masher {
     this.selectedClips = []
   }
 
-  selected(object : ClipOrEffect) : boolean {
-    if (object instanceof EffectClass) return this.selectedEffects.includes(object)
-
-    return this.selectedClips.includes(<Clip> object)
-  }
-
 
   get selectedClip() : Clip | UnknownObject {
     if (this._selectedClips.length === 1) return this.selectedClipOrThrow
@@ -828,7 +839,7 @@ class MasherClass extends InstanceClass implements Masher {
       const clipType = <ClipType> String(type)
 
       if (!ClipTypes.includes(clipType)) {
-        console.warn(this.constructor.name, "set selectedClip invalid type", value)
+        // console.warn(this.constructor.name, "set selectedClip invalid type", value)
         return
       }
       this.selectedClips = [clip]
@@ -884,7 +895,7 @@ class MasherClass extends InstanceClass implements Masher {
 
   set selectedEffects(value : Effect[]) {
     const { effects } = this.selectedClipOrMash
-    if (!effects) { // mash or multiple clips selected, or no effects
+    if (!effects) { // mash or multiple clips, or no effects
       this._selectedEffects = []
       this._pristineEffect = {}
       return
@@ -892,6 +903,12 @@ class MasherClass extends InstanceClass implements Masher {
     const array = <Effect[]> effects
     this._selectedEffects = value.filter(effect => array.includes(effect))
     this._pristineEffect = (this.selectedEffect && this.selectedEffect.propertyValues) || {}
+  }
+
+  get selectionObjects() : SelectionObject[] {
+    const selectedObjects = this.selectedClipsOrEffects
+    const object = selectedObjects.map((object : ClipOrEffect) => object.propertyValues)
+    return object
   }
 
   private get silenced() : boolean { return this._paused || this.muted || !this.gain }
@@ -929,29 +946,17 @@ class MasherClass extends InstanceClass implements Masher {
 
   get time() : Time { return this.mash.time }
 
-  set time(value: Time) { this.goToTime(value) }
+  set time(value: Time) {
+    if (value.equalsTime(this.time)) return
 
-  undo() : void { if (this.actions.canUndo) this.actions.undo() }
-
-  private _visibleContext? : VisibleContext
-
-  get visibleContext() : VisibleContext {
-    if (!this._visibleContext) {
-      if (typeof this._context2D === "undefined") {
-        this._visibleContext = ContextFactory.visible()
-      } else this._visibleContext = ContextFactory.fromContext2D(this._context2D)
-
-      if (this._mash) this.mash.visibleContext = this._visibleContext
-    }
-    return this._visibleContext
+    this.goToTime(value)
   }
 
-  set visibleContext(value : VisibleContext) {
-    if (this._visibleContext !== value) {
-      this._visibleContext = value
-      if (this._mash) this.mash.visibleContext = value
-    }
-  }
+  get timeRange() : TimeRange { return this.mash.timeRange }
+
+  undo() : void { if (this.actions.canUndo) this.handleAction(this.actions.undo()) }
+
+  visibleContext : VisibleContext
 
   private _volume = Default.masher.volume
 

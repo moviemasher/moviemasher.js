@@ -11,7 +11,7 @@ import { ThemeDefinition } from "../Mash/Theme"
 import { TransitionClass } from "../Mash/Transition/TransitionInstance"
 import { VideoClass } from "../Mash/Video/VideoInstance"
 import { MovieMasher } from "./MovieMasher"
-import { expectContext } from "../Test/expectContext"
+import { expectCanvas } from "../Test/expectCanvas"
 import { expectFactory } from "../Test/expectFactory"
 import { createId } from "../Test/createId"
 
@@ -107,7 +107,7 @@ describe("MovieMasher", () => {
         expect(context).toBeDefined()
         if (!context) throw Errors.internal
 
-        expectContext(context)
+        expectCanvas(context.canvas)
       })
     })
 
@@ -161,7 +161,7 @@ describe("MovieMasher", () => {
         expect(context).toBeDefined()
         if (!context) throw Errors.internal
 
-        expectContext(context)
+        expectCanvas(context.canvas)
       })
     })
 
