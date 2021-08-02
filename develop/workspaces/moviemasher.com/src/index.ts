@@ -1,9 +1,9 @@
 
-class Wtf {
+class Exported {
   constructor() {
 
     console.log("hello")
   }
 
 }
-export { Wtf }
+export { Exported }

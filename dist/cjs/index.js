@@ -917,10 +917,14 @@ const pixelColor = (value) => {
 const pixelPerFrame = (frames, width, zoom) => {
     if (!(frames && width))
         return 0;
-    const factor = (1.01 - Math.max(0.01, Math.min(1.0, zoom)));
-    const factoredFrames = frames * factor;
-    const perFrame = width / factoredFrames;
-    return perFrame;
+    const widthFrames = width / frames;
+    const min = Math.min(1, widthFrames);
+    const max = Math.max(1, widthFrames);
+    if (zoom === 1)
+        return max;
+    if (!zoom)
+        return min;
+    return min + ((max - min) * zoom);
 };
 const pixelFromFrame = (frame, perFrame, rounding = 'ceil') => {
     if (!(frame && perFrame))
@@ -5136,7 +5140,10 @@ class MashClass extends InstanceClass {
     get time() {
         return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize);
     }
-    get timeRange() { return TimeRange.fromTime(this.time, this.frames); }
+    get timeRange() {
+        const time = Time.fromArgs(this.frames, this.quantize);
+        return TimeRange.fromTime(this.time, time.scale(this.time.fps).frame);
+    }
     get timeRangeToBuffer() {
         const { time, quantize, buffer, paused } = this;
         if (paused) {
@@ -5196,7 +5203,7 @@ class MashClass extends InstanceClass {
         if (type !== exports.TrackType.Audio) {
             inRange.push(...this.video.slice(range.first, range.count));
         }
-        console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length);
+        // console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length)
         return inRange;
     }
     get visibleContext() {

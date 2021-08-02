@@ -39,6 +39,7 @@ import { PlayButton } from './Components/PlayButton'
 import { App } from './App'
 import { TimeSlider } from './Components/TimeSlider'
 import { Timeline } from './Components/Timeline'
+import { ZoomSlider } from './Components/ZoomSlider'
 
 // define fonts available
 MovieMasher.font.define({
@@ -85,7 +86,7 @@ const application = <StrictMode>
       <Preview className="moviemasher-canvas" />
       <View className='moviemasher-controls'>
         <PlayButton play={<PlayIcon />} control={<MovieMasherButton />} pause={<PauseIcon />} className='moviemasher-paused moviemasher-button' />
-        <TimeSlider control={<MovieMasherSlider className='moviemasher-frame moviemasher-slider' />}  />
+        <TimeSlider control={<MovieMasherSlider className='moviemasher-frame moviemasher-slider' />} />
       </View>
     </View>
     <View className='moviemasher-panel moviemasher-timeline'>
@@ -102,9 +103,8 @@ const application = <StrictMode>
         </View>
       </Timeline>
       <View className='moviemasher-footer'>
-
+        <ZoomSlider control={<MovieMasherSlider className='moviemasher-zoom moviemasher-slider' />} />
       </View>
-
     </View>
   </App>
 </StrictMode>

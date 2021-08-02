@@ -1,33 +1,31 @@
-import React, { FC, useEffect, useRef, ReactElement, useContext } from 'react'
+import React, { FC, ReactElement, useContext } from 'react'
 import { UnknownObject } from '@moviemasher/moviemasher.js'
 import { SliderChangeHandler } from "../declarations"
 import { AppContext } from '../AppContext'
 
-interface TimeSliderProps extends UnknownObject{
+interface ZoomSliderProps extends UnknownObject{
   control: ReactElement
 }
 
-const TimeSlider : FC<TimeSliderProps> = (props) => {
+const ZoomSlider : FC<ZoomSliderProps> = (props) => {
   const context = useContext(AppContext)
   const { control, ...rest } = props
 
   const handleChange : SliderChangeHandler = (_event, value) => {
     const number = typeof value === "number" ? value : value[0]
-    if (context.timeRange.frame !== number) {
-      context.setTime(context.timeRange.withFrame(number))
-    }
+    if (context.zoom !== number) context.setZoom(number)
   }
 
   const frameOptions = {
     key: 'time-slider',
-    value: context.timeRange.frame,
-    min: 0,
-    max: context.timeRange.frames,
-    step: 1,
+    value: context.zoom,
+    min: 0.0,
+    max: 1.0,
+    step: 0.01,
     onChange: handleChange,
     ...rest
   }
   return React.cloneElement(control, frameOptions)
 }
 
-export { TimeSlider, TimeSliderProps }
+export { ZoomSlider, ZoomSliderProps }

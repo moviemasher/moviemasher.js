@@ -53,12 +53,17 @@ const pixelColor = (value : ScalarValue) : string => {
   return string
 }
 
-const pixelPerFrame = (frames: number, width: number, zoom : number): number => {
+const pixelPerFrame = (frames: number, width: number, zoom: number): number => {
   if (!(frames && width)) return 0
-  const factor = (1.01 - Math.max(0.01, Math.min(1.0, zoom)))
-  const factoredFrames = frames * factor
-  const perFrame = width / factoredFrames
-  return perFrame
+
+  const widthFrames = width / frames
+
+  const min = Math.min(1, widthFrames)
+  const max = Math.max(1, widthFrames)
+  if (zoom === 1) return max
+  if (!zoom) return min
+
+  return min + ((max - min) * zoom)
 }
 
 const pixelFromFrame = (frame: number, perFrame : number, rounding = 'ceil'): number => {

@@ -9,8 +9,18 @@ interface AppProps {}
 const createMash = (): Mash => {
   console.warn("TODO: remove mash content")
   const clips = [
-    { id: "com.moviemasher.theme.text", frame: 0, frames: 10, string: "Fuck yeah!" },
-    { id: "com.moviemasher.theme.color", frame: 10, frames: 5, color: "blue"}
+    { id: "com.moviemasher.theme.text", frame: 0, frames: 100, string: "Fuck yeah!" },
+    { id: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
+    { id: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "Woot woot!" },
+    { id: "com.moviemasher.theme.color", frame: 250, frames: 50, color: "green"},
+    { id: "com.moviemasher.theme.text", frame: 300, frames: 100, string: "Love it!" },
+    { id: "com.moviemasher.theme.color", frame: 400, frames: 50, color: "red"},
+    { id: "com.moviemasher.theme.text", frame: 450, frames: 100, string: "Juicy!" },
+    { id: "com.moviemasher.theme.color", frame: 550, frames: 50, color: "yellow"},
+    { id: "com.moviemasher.theme.text", frame: 600, frames: 100, string: "Gorgeous!" },
+    { id: "com.moviemasher.theme.color", frame: 700, frames: 50, color: "violet"},
+    { id: "com.moviemasher.theme.text", frame: 750, frames: 100, string: "Joy!" },
+    { id: "com.moviemasher.theme.color", frame: 850, frames: 50, color: "orange"},
   ]
   return MovieMasher.mash.instance({ id: uuid(), video: [{ clips }] })
 }

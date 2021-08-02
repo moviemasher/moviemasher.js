@@ -548,7 +548,10 @@ class MashClass extends InstanceClass implements Mash {
     return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize)
   }
 
-  get timeRange() : TimeRange { return TimeRange.fromTime(this.time, this.frames) }
+  get timeRange(): TimeRange {
+    const time = Time.fromArgs(this.frames, this.quantize)
+    return TimeRange.fromTime(this.time, time.scale(this.time.fps).frame)
+  }
 
   get timeRangeToBuffer() : TimeRange {
     const { time, quantize, buffer, paused } = this
@@ -618,7 +621,7 @@ class MashClass extends InstanceClass implements Mash {
       inRange.push(...this.video.slice(range.first, range.count))
     }
 
-    console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length)
+    // console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length)
     return inRange
   }
 

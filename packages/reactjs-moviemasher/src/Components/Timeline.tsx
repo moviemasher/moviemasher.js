@@ -145,6 +145,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     return Object.values(heights).reduce((previous, value) => previous + value, 0)
   }
 
+
   const trackRanges = (metrics: NumberObject): TrackRange[] | undefined => {
     if (heightDefault) return // we don't know height, so inefficiently draw all tracks
 
@@ -154,6 +155,7 @@ const Timeline: FC<TimelineProps> = (props) => {
     if (heightOfTracks(heights) <= usableHeight) return // we have enough space for tracks
 
     return // TODO: optimize drawing by only including tracks that would be visible
+
     const remaining = scrollTop
     const ranges: TrackRange[] = []
     if (context.videoTracks) {
@@ -162,19 +164,20 @@ const Timeline: FC<TimelineProps> = (props) => {
     return ranges
   }
 
-  // TODO: this is not working when supplying trackRange!!
+
   const clipsByTypeTrack = (timeRange : TimeRange, ranges?: TrackRange[]): TimelineClipsByTrack => {
     const byTrack: TimelineClipsByTrack = { [TrackType.Audio]: {}, [TrackType.Video]: {}}
     const { clips } = context
-    const rangesTrack = ranges ? ranges : [ TrackRange.fromArgs() ]
+    const rangesTrack = ranges ? ranges : [TrackRange.fromArgs()]
 
+    // TODO: support drawing just a segment of track, by using timeRange
+    const range = undefined // timeRange
     rangesTrack.forEach(trackRange => {
-      clips(timeRange, trackRange).forEach(clip => {
+      clips(range, trackRange).forEach(clip => {
         byTrack[clip.trackType][clip.track] ||= []
         byTrack[clip.trackType][clip.track].push(clip)
       })
     })
-    console.log("clipsByTypeTrack", byTrack, rangesTrack)
     return byTrack
   }
 
@@ -189,8 +192,8 @@ const Timeline: FC<TimelineProps> = (props) => {
     // kids.push(<span data-label={label.replace('"', '\\"')} />)
 
     const style: UnknownObject = {
-      left: pixelFromFrame(clip.frame, perFrame),
-      width: pixelFromFrame(clip.frames, perFrame)
+      left: pixelFromFrame(clip.frame, perFrame, 'floor'),
+      width: pixelFromFrame(clip.frames, perFrame, 'floor')
     }
     if (templateChildren) {
       if (templateProps.label) {
@@ -231,17 +234,16 @@ const Timeline: FC<TimelineProps> = (props) => {
     const { width } = metrics
     const { timeRange, zoom, quantize } = context
     const mashTimeRange = timeRange.scale(quantize)
-    const masherPerFrame = pixelPerFrame(mashTimeRange.frames, width, zoom)
-    const contentFrames = pixelToFrame(width, masherPerFrame)
+    const perFrame = pixelPerFrame(mashTimeRange.frames, width, zoom)
+    const contentFrames = pixelToFrame(width, perFrame)
     if (!contentFrames) return childNodes
 
     const { scrollLeft } = metrics
-    const contentFrame = pixelToFrame(scrollLeft, masherPerFrame)
-    const masherTimeRange = TimeRange.fromArgs(contentFrame, timeRange.fps, contentFrames)
-    const perFrame = pixelPerFrame(mashTimeRange.frames, width, zoom)
+    const contentFrame = pixelToFrame(scrollLeft, perFrame)
+    const viewableTimeRange = TimeRange.fromArgs(contentFrame, quantize, contentFrames)
 
     const ranges = trackRanges(metrics)
-    const byType = clipsByTypeTrack(masherTimeRange, ranges)
+    const byType = clipsByTypeTrack(viewableTimeRange, ranges)
     Object.entries(byType).forEach(([type, byTrack]) => {
       Object.entries(byTrack).forEach(([index, trackClips]) => {
         childNodes.push(trackNode(type as TrackType, Number(index), trackClips, perFrame))
@@ -258,21 +260,21 @@ const Timeline: FC<TimelineProps> = (props) => {
         if (heightVideo < 0) {
           const videoMetrics = elementScrollMetrics(current.children[index])
           const videoHeight = videoMetrics ? videoMetrics.height : 0
-          console.log("trackNodes setting heightVideo", videoHeight)
+          // console.log("trackNodes setting heightVideo", videoHeight)
           setHeightVideo(videoHeight)
           index += 1
         }
         if (heightDefault < 0) {
           const defaultMetrics = elementScrollMetrics(current.children[1])
           const defaultHeight = defaultMetrics ? defaultMetrics.height : 0
-          console.log("trackNodes setting heightDefault", defaultHeight)
+          // console.log("trackNodes setting heightDefault", defaultHeight)
           setHeightDefault(defaultHeight)
           index += 1
         }
         if (heightAudio < 0) {
           const audioMetrics = elementScrollMetrics(current.children[2])
           const audioHeight = audioMetrics ? audioMetrics.height : 0
-          console.log("trackNodes setting heightAudio", audioHeight)
+          // console.log("trackNodes setting heightAudio", audioHeight)
           setHeightAudio(audioHeight)
           index += 1
         }

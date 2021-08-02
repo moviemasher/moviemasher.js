@@ -8,13 +8,13 @@
     "declaration": false,
     "strict": true,
     "alwaysStrict": true,
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
   },
   "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"],
-  "exclude": [],
+  "exclude": ["node_modules/*"],
   "debug": true
 }

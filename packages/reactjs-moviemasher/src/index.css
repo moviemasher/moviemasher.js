@@ -1,5 +1,5 @@
 
-/* kjhfjhgasasdfdfadsfcdfafsfsadfdgsdaffadsfjhgf */
+/* kjhfjhgdxafscCVXfsfbsadfddsfaffjdfzcxvzbvjhgf */
 
 body {
   width: 100vw;
@@ -37,7 +37,6 @@ body {
 }
 
 .moviemasher-app * { box-sizing: border-box; }
-
 
 button.moviemasher-control {
   min-width: var(--moviemasher-icon-size);
@@ -91,4 +90,9 @@ button.moviemasher-button-text > .moviemasher-button-icon-end {
   font-weight: 500;
   border: 1px solid var(--moviemasher-color-mute);
   border-radius: 4px;
+}
+
+.moviemasher-timeline .moviemasher-clip {
+  overflow: hidden;
+
 }
