@@ -1,13 +1,25 @@
+.moviemasher-app .MuiSvgIcon-root {
+  font-size: var(--moviemasher-icon-size);
+}
+
 .moviemasher-controls {
   background-color: var(--moviemasher-back-tertiary);
-  grid-area: controls;
   display: grid;
   padding: var(--moviemasher-padding-controls);
   column-gap: var(--moviemasher-spacing-controls);
 }
 
+.moviemasher-head {
+  grid-area: head;
+  border-bottom: var(--moviemasher-border);
+}
+.moviemasher-foot {
+  grid-area: foot;
+  border-top: var(--moviemasher-border);
+}
+
 .moviemasher-content {
-  background-color: var(--moviemasher-back-secondary);
+  /* background-color: var(--moviemasher-back-secondary); */
   grid-area: content;
 }
 
@@ -24,7 +36,7 @@
   grid-area: browser;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr var(--moviemasher-height-preview);
-  grid-template-areas: "controls" "content";
+  grid-template-areas: "head" "content";
 }
 
 .moviemasher-audio {
@@ -52,7 +64,6 @@
 }
 
 .moviemasher-browser .moviemasher-controls {
-  border-bottom: var(--moviemasher-border);
   grid-template-areas: "theme image audio video effect transition";
   grid-auto-columns: var(--moviemasher-icon-size);
 }
@@ -77,66 +88,140 @@
 }
 
 .moviemasher-timeline {
+  isolation: isolate;
+  overflow-x: hidden;
   grid-area: timeline;
-  grid-template-areas: "controls" "scrub" "content" "footer";
+  grid-template-areas: "head" "content" "foot";
   grid-template-columns: 1fr;
   grid-template-rows:
-    calc(var(--moviemasher-button-size) + (2 * var(--moviemasher-padding-button-factor) * var(--moviemasher-padding-controls)))
-    var(--moviemasher-height-scrub)
+    calc(var(--moviemasher-button-size) + var(--moviemasher-border-size) + (2 * var(--moviemasher-padding-button-factor) * var(--moviemasher-padding-controls)))
     1fr
-    calc(var(--moviemasher-icon-size) + (2 * var(--moviemasher-padding-controls)))
+    calc(var(--moviemasher-icon-size) + var(--moviemasher-border-size) + (2 * var(--moviemasher-padding-controls)))
     ;
 }
 
-.moviemasher-timeline .moviemasher-controls-footer {
-  grid-area: footer
-}
-
-.moviemasher-timeline .moviemasher-content {
-  overflow-y: auto;
-  overflow-x: auto;
-  position: relative;
-}
-.moviemasher-timeline .moviemasher-clip label:after {
-  content: var(--clip-label);
-}
-
-.moviemasher-timeline .moviemasher-controls {
+.moviemasher-timeline .moviemasher-head {
   padding: calc(var(--moviemasher-padding-controls) * var(--moviemasher-padding-button-factor));
   grid-template-columns: repeat(9, auto) 1fr;
   grid-template-areas: "undo redo cut copy paste delete split save render";
-  border-bottom: var(--moviemasher-border);
 }
 
-.moviemasher-timeline .moviemasher-controls-scrub {
+.moviemasher-timeline .moviemasher-content {
   position: relative;
-  grid-area: scrub;
-  overflow: hidden;
+  overflow: auto;
+  display: grid;
+  grid-template-areas: "scrub-pad scrub" "tracks tracks";
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+  grid-template-rows:
+    var(--moviemasher-height-scrub)
+    1fr
+  ;
 }
 
-.moviemasher-timeline .moviemasher-controls-scrub .moviemasher-scrub {
-  position: absolute;
-  left: -1;
+.moviemasher-tracks {
+  grid-area: tracks;
 }
 
-.moviemasher-timeline .moviemasher-clip {
+.moviemasher-track {
+  display: grid;
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+
+}
+
+.moviemasher-track .moviemasher-track-icon {
+  background-color: var(--moviemasher-back-secondary);
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  border-right: var(--moviemasher-border);
+}
+
+.moviemasher-clips {
+  white-space: nowrap;
+}
+
+.moviemasher-drop {
+  background-color: var(--moviemasher-color-pop);
+}
+
+.moviemasher-clip {
   display: inline-block;
   padding: var(--moviemasher-padding-controls);
   background-color: var(--moviemasher-back-tertiary);
-  position: absolute;
   border: var(--moviemasher-border);
   border-radius: var(--moviemasher-border-radius);
 }
 
+.moviemasher-clip label:after {
+  content: var(--clip-label);
+}
+
+.moviemasher-scrub-pad,
+.moviemasher-scrub {
+  background-color: var(--moviemasher-back-secondary);
+  border-bottom: var(--moviemasher-border);position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+.moviemasher-scrub-pad {
+  grid-area: scrub-pad;
+  z-index: 2;
+}
+.moviemasher-scrub {
+  grid-area: scrub;
+  z-index: 3;
+}
+.moviemasher-scrub,
+.moviemasher-scrub-bar-container {
+  overflow: hidden;
+}
+.moviemasher-scrub-bar-container {
+  pointer-events: none;
+  position: relative;
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.moviemasher-timeline-sizer {
+  pointer-events: none;
+  position: absolute;
+  left: var(--moviemasher-icon-size);
+  right: 0px;
+  top: var(--moviemasher-height-scrub);
+  bottom: 0px;
+}
+
+.moviemasher-scrub .MuiSvgIcon-root {
+  font-size: var(--moviemasher-height-scrub);
+}
+
+.moviemasher-scrub-bar {
+  position: absolute;
+  width: 1px;
+  top: 0px;
+  bottom: 0px;
+  background-color:var(--moviemasher-color);
+}
+.moviemasher-scrub-icon {
+  margin-left: calc(0px - (var(--moviemasher-height-scrub) / 2));
+  position: absolute;
+  color: var(--moviemasher-color);
+}
+
+.moviemasher-timeline .moviemasher-foot {
+
+}
+
+
+
 .moviemasher-player {
   grid-area: player;
-  grid-template-areas: "content" "controls";
+  grid-template-areas: "content" "foot";
   grid-template-columns: 1fr;
   grid-template-rows: var(--moviemasher-height-preview) 1fr;
 }
 
 .moviemasher-player .moviemasher-controls {
-  border-top: var(--moviemasher-border);
   grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
   grid-template-areas: "paused frame volume";
 }

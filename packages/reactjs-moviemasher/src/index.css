@@ -1,6 +1,4 @@
 
-/* kjhfjhgdxafscCVXfsfbsadfddsfaffjdfzcxvzbvjhgf */
-
 body {
   width: 100vw;
   height: 100vh;
@@ -60,11 +58,11 @@ button.moviemasher-button:hover {
   color: var(--moviemasher-color);
   border-color: var(--moviemasher-color);
 }
-button.moviemasher-button.moviemasher-selected {
+.moviemasher-selected {
   color: var(--moviemasher-color-pop);
   border-color: var(--moviemasher-color-pop);
 }
-button.moviemasher-button.moviemasher-selected:hover {
+.moviemasher-selected:hover {
   color: var(--moviemasher-color-mute);
   border-color: var(--moviemasher-color-mute);
 }
@@ -94,5 +92,4 @@ button.moviemasher-button-text > .moviemasher-button-icon-end {
 
 .moviemasher-timeline .moviemasher-clip {
   overflow: hidden;
-
 }

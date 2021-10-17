@@ -47,7 +47,7 @@ interface Mash extends Instance {
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
   clipTrack(clip: Clip): Track
-  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[]
+  clips: Clip[]
   clipsVisibleSlice(frame: number, frames: number): Visible[]
   compositeVisible() : void
   composition : Composition

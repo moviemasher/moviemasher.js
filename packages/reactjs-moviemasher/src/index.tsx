@@ -13,6 +13,8 @@ import VolumeIcon from '@material-ui/icons/VolumeUp'
 import MuteIcon from '@material-ui/icons/VolumeMute'
 import ScrubIcon from '@material-ui/icons/ArrowDropDown'
 import SaveIcon from '@material-ui/icons/Adjust'
+// const DetailsIcon = require('./svg/scrub.svg')
+import DetailsIcon from '@material-ui/icons/Details'
 import UndoIcon from '@material-ui/icons/Undo'
 import RedoIcon from '@material-ui/icons/Redo'
 
@@ -25,7 +27,7 @@ import IconButton from '@material-ui/core/IconButton'
 
 
 import { Slider as MovieMasherSlider } from './Controls/Slider'
-import { Button as MovieMasherButton } from './Controls/Button'
+// import { Button as MovieMasherButton } from './Controls/Button'
 
 import './css/moviemasher-colors.css'
 import './css/moviemasher-dimensions.css'
@@ -35,11 +37,12 @@ import './css/moviemasher-layout.css'
 
 import { View } from './View'
 import { Preview } from './Components/Preview'
-import { PlayButton } from './Components/PlayButton'
 import { App } from './App'
 import { TimeSlider } from './Components/TimeSlider'
 import { Timeline } from './Components/Timeline'
-import { ZoomSlider } from './Components/ZoomSlider'
+import { ZoomSlider } from './Components/Timeline/ZoomSlider'
+// import { Scrubber } from './Components/Timeline/Scrub'
+import { PlayToggle } from './Components/PlayToggle'
 
 // define fonts available
 MovieMasher.font.define({
@@ -84,29 +87,74 @@ const application = <StrictMode>
   <App>
     <View className='moviemasher-panel moviemasher-player'>
       <Preview className="moviemasher-canvas" />
-      <View className='moviemasher-controls'>
-        <PlayButton play={<PlayIcon />} control={<MovieMasherButton />} pause={<PauseIcon />} className='moviemasher-paused moviemasher-button' />
+      <View className='moviemasher-controls moviemasher-foot'>
+        <PlayToggle className='moviemasher-paused moviemasher-button'>
+          <PlayIcon id='moviemasher-play-false' />
+          <PauseIcon id='moviemasher-play-true' />
+        </PlayToggle>
         <TimeSlider control={<MovieMasherSlider className='moviemasher-frame moviemasher-slider' />} />
       </View>
     </View>
-    <View className='moviemasher-panel moviemasher-timeline'>
-      <View className='moviemasher-controls'>
-
-      </View>
-      <View className='moviemasher-controls-scrub'>
-
+    <Timeline className='moviemasher-panel moviemasher-timeline'>
+      <View className='moviemasher-controls moviemasher-head'>
+        BUTTONS
       </View>
 
-      <Timeline className='moviemasher-content' >
-        <View className='moviemasher-clip' label='--clip-label'>
-          <label />
+      <View className='moviemasher-content'>
+        <View className='moviemasher-scrub-pad'/>
+        <Timeline.Scrub className='moviemasher-scrub'>
+          <Timeline.Scrub.Button className='moviemasher-scrub-icon' >
+            <DetailsIcon/>
+          </Timeline.Scrub.Button>
+        </Timeline.Scrub>
+        <View className='moviemasher-scrub-bar-container'>
+          <Timeline.Scrub.Button className='moviemasher-scrub-bar' />
         </View>
-      </Timeline>
-      <View className='moviemasher-footer'>
-        <ZoomSlider control={<MovieMasherSlider className='moviemasher-zoom moviemasher-slider' />} />
+
+        <Timeline.Tracks className='moviemasher-tracks'>
+          <View className='moviemasher-track'>
+            <View className='moviemasher-track-icon'>
+              <VolumeIcon className='moviemasher-icon' />
+            </View>
+            <Timeline.Clips className='moviemasher-clips'>
+              <View className='moviemasher-clip' label='--clip-label'>
+                <label />
+              </View>
+            </Timeline.Clips>
+          </View>
+        </Timeline.Tracks>
+        <Timeline.Sizer className='moviemasher-timeline-sizer' />
       </View>
-    </View>
+
+      <View className='moviemasher-controls moviemasher-foot'>
+        <Timeline.Zoom control={<MovieMasherSlider className='moviemasher-zoom moviemasher-slider' />} />
+      </View>
+
+    </Timeline>
   </App>
 </StrictMode>
+
+
+//       <View className='moviemasher-content'>
+
+//         <View id='moviemasher-track' className='moviemasher-track'>
+//           <VolumeIcon className='moviemasher-icon' />
+
+//         </View>
+//         <View id='moviemasher-clip' className='moviemasher-clip' label='--clip-label'>
+//           <label />
+//         </View>
+//       </View>
+      // const dragHandler = (event: React.DragEvent) => {
+//   console.log("dragHandler")
+// event.dataTransfer.setData('text/plain', 'Fuck yeah')
+
+// }
+// const pProps = {
+//   children: 'HEY!',
+//   draggable: true,
+//   onDragStart: dragHandler,
+// }
+// const wtf = <p/>
+// const clone = React.cloneElement(wtf, pProps)
 ReactDOM.render(application, element)
-// track={<View className='moviemasher-track' />}

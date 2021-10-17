@@ -138,6 +138,18 @@ type LoadFontPromise = Promise<{
     family: string;
 }>;
 type LoadImagePromise = Promise<DrawingSource>;
+interface ScrollMetrics {
+    height: number;
+    width: number;
+    scrollPaddingleft: number;
+    scrollPaddingRight: number;
+    scrollPaddingTop: number;
+    scrollPaddingBottom: number;
+    scrollLeft: number;
+    scrollTop: number;
+    x: number;
+    y: number;
+}
 declare const Default: {
     label: string;
     masher: {
@@ -333,6 +345,7 @@ declare enum EventType {
     Playing = "playing",
     Seeking = "seeking",
     Seeked = "seeked",
+    Selection = "selection",
     Time = "timeupdate",
     Track = "track",
     Volume = "volumechange",
@@ -430,9 +443,9 @@ declare const Color: {
     yuv2rgb: (yuv: YuvObject) => Rgb;
     rgb2hex: (rgb: RgbObject) => string;
 };
-declare const elementScrollMetrics: (element?: Element | null | undefined) => NumberObject | undefined;
+declare const elementScrollMetrics: (element?: Element | null | undefined) => ScrollMetrics | undefined;
 declare const Element: {
-    scrollMetrics: (element?: Element | null | undefined) => NumberObject | undefined;
+    scrollMetrics: (element?: Element | null | undefined) => ScrollMetrics | undefined;
 };
 declare const timeEqualizeRates: (time1: Time, time2: Time, rounding?: string) => Time[];
 declare class Time implements Time {
@@ -1060,21 +1073,6 @@ declare class Composition {
     get visibleContext(): VisibleContext;
     set visibleContext(value: VisibleContext);
 }
-declare class TrackRange {
-    constructor(first?: number, last?: number, type?: TrackType);
-    get count(): number;
-    last: number;
-    get relative(): boolean;
-    equals(trackRange: TrackRange): boolean;
-    first: number;
-    get tracks(): number[];
-    toString(): string;
-    type?: TrackType;
-    withEnd(last: number): TrackRange;
-    withMax(max: number): TrackRange;
-    static ofType(type: TrackType, last?: number, first?: number): TrackRange;
-    static fromArgs(first?: number, last?: number, type?: TrackType): TrackRange;
-}
 interface MashObject extends InstanceObject {
     audio?: TrackObject[];
     backcolor?: string;
@@ -1105,7 +1103,7 @@ interface Mash extends Instance {
     changeClipFrames(clip: Clip, value: number): void;
     changeClipTrimAndFrames(clip: Audible, value: number, frames: number): void;
     clipTrack(clip: Clip): Track;
-    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    clips: Clip[];
     clipsVisibleSlice(frame: number, frames: number): Visible[];
     compositeVisible(): void;
     composition: Composition;
@@ -1361,7 +1359,7 @@ interface Masher extends Instance {
     changeClip(property: string, value?: SelectionValue, clip?: Clip): void;
     changeEffect(property: string, value?: SelectionValue, effect?: Effect): void;
     changeMash(property: string, value?: SelectionValue): void;
-    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    clips: Clip[];
     currentTime: number;
     definitions: Definition[];
     destroy(): void;
@@ -1392,14 +1390,14 @@ interface Masher extends Instance {
     removeEffects(effectOrArray: Effect | Effect[]): void;
     save(): void;
     select(object: ClipOrEffect | undefined, toggleSelected?: boolean): void;
-    selectClip(clip: Clip | undefined, toggleSelected: boolean): void;
-    selectEffect(effect: Effect | undefined, toggleSelected: boolean): void;
+    selectClip(clip: Clip | undefined, toggleSelected?: boolean): void;
+    selectEffect(effect: Effect | undefined, toggleSelected?: boolean): void;
     selectMash(): void;
     selectedClipsOrEffects: Clip[] | Effect[];
     selectedClip: Clip | UnknownObject;
     selectedClipOrMash: Clip | Mash;
     selectedClips: Clip[];
-    selectedEffect: Effect | undefined;
+    selectedEffect: Effect | UnknownObject;
     selectedEffects: Effect[];
     selectionObjects: SelectionObject[];
     split(): void;
@@ -1704,7 +1702,12 @@ declare class MashClass extends InstanceClass implements Mash {
     clipIntersects(clip: Clip, range: TimeRange): boolean;
     clipTrack(clip: Clip): Track;
     clipTrackAtIndex(clip: Clip, index?: number): Track;
-    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    get clips(): Clip[];
+    //   const rangeTracks = this.tracksInRange(trackRange)
+    //   const inTracks = this.clipsInTracks(rangeTracks)
+    //   if (!timeRange) return inTracks
+    //   return this.filterIntersecting(inTracks, timeRange)
+    // }
     private clipsAtTimes;
     private clipsAudible;
     private clipsInTracks;
@@ -1763,7 +1766,19 @@ declare class MashClass extends InstanceClass implements Mash {
     trackOfTypeAtIndex(type: TrackType, index?: number): Track;
     private trackOptions;
     get tracks(): Track[];
-    tracksInRange(trackRange?: TrackRange): Track[] | undefined;
+    // tracksInRange(trackRange?: TrackRange): Track[] | undefined {
+    //   if (!trackRange) return
+    //   const { type } = trackRange
+    //   const range = trackRange.relative ? trackRange.withMax(this.maxTracks(type)) : trackRange
+    //   const inRange = []
+    //   if (type !== TrackType.Video) {
+    //     inRange.push(...this.audio.slice(range.first, range.last))
+    //   }
+    //   if (type !== TrackType.Audio) {
+    //     inRange.push(...this.video.slice(range.first, range.last))
+    //   }
+    //   return inRange
+    // }
     video: Track[];
     private _visibleContext?;
     get visibleContext(): VisibleContext;
@@ -1841,7 +1856,7 @@ declare class MasherClass extends InstanceClass implements Masher {
     changeMash(property: string, value?: SelectionValue): void;
     changeTransformer(type: string, property: string, value?: SelectionValue): void;
     private clipCanBeSplit;
-    clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[];
+    get clips(): Clip[];
     private currentActionReusable;
     get currentTime(): number;
     get definitions(): Definition[];
@@ -1898,8 +1913,8 @@ declare class MasherClass extends InstanceClass implements Masher {
     save(): void;
     select(object: ClipOrEffect | undefined, toggleSelected?: boolean): void;
     get selectedClipsOrEffects(): Clip[] | Effect[];
-    selectClip(clip: Clip | undefined, toggleSelected: boolean): void;
-    selectEffect(effect: Effect | undefined, toggleSelected: boolean): void;
+    selectClip(clip: Clip | undefined, toggleSelected?: boolean): void;
+    selectEffect(effect: Effect | undefined, toggleSelected?: boolean): void;
     selectMash(): void;
     get selectedClip(): Clip | UnknownObject;
     set selectedClip(value: Clip | UnknownObject);
@@ -1909,8 +1924,8 @@ declare class MasherClass extends InstanceClass implements Masher {
     private _selectedClips;
     get selectedClips(): Clip[];
     set selectedClips(value: Clip[]);
-    get selectedEffect(): Effect | undefined;
-    set selectedEffect(value: Effect | undefined);
+    get selectedEffect(): Effect | UnknownObject;
+    set selectedEffect(value: Effect | UnknownObject);
     get selectedEffectOrThrow(): Effect;
     private _selectedEffects;
     get selectedEffects(): Effect[];
@@ -3299,6 +3314,21 @@ declare const Sort: {
     byLabel: (a: WithLabel, b: WithLabel) => number;
     byTrack: (a: WithTrack, b: WithTrack) => number;
 };
+declare class TrackRange {
+    constructor(first?: number, last?: number, type?: TrackType);
+    get count(): number;
+    last: number;
+    get relative(): boolean;
+    equals(trackRange: TrackRange): boolean;
+    first: number;
+    get tracks(): number[];
+    toString(): string;
+    type?: TrackType;
+    withEnd(last: number): TrackRange;
+    withMax(max: number): TrackRange;
+    static ofType(type: TrackType, last?: number, first?: number): TrackRange;
+    static fromArgs(first?: number, last?: number, type?: TrackType): TrackRange;
+}
 declare class CacheClass {
     add(url: string, value: Any): void;
     cached(url: string): boolean;
@@ -3383,5 +3413,5 @@ declare class MovieMasher {
     static get [DefinitionType.Video](): VideoFactory;
     private constructor();
 }
-export { Any, Context2D, ContextElement, DrawingSource, ContextData, Pixels, Timeout, Interval, EventsTarget, EventsCallback, ScalarValue, ScalarArray, NumberObject, UnknownObject, ObjectUnknown, ValueObject, ScalarRaw, Scalar, ScalarConverter, NumberConverter, StringSetter, NumberSetter, BooleanSetter, JsonValue, JsonObject, SelectionObject, SelectionValue, EvaluatorValue, WithFrame, WithTrack, WithLabel, Rgb, Rgba, WithType, WithId, WithTypeAndId, WithTypeAndValue, Size, EvaluatedSize, EvaluatedPoint, Point, EvaluatedRect, Rect, TextStyle, RgbObject, YuvObject, Yuv, Constructor, Constrained, GenericFactory, LoadPromise, LoadFontPromise, LoadImagePromise, Default, Errors, Parameter, ParameterObject, Property, PropertyObject, ActionType, ClipType, ClipTypes, DataType, DataTypes, DefinitionType, DefinitionTypes, EventType, LoadType, MashType, MashTypes, ModuleType, ModuleTypes, MoveType, TrackType, TransformType, TransformTypes, Capitalize, Color, Element, elementScrollMetrics, Evaluator, Id, Is, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, Pixel, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, Round, roundMethod, roundWithMethod, Seconds, Sort, byFrame, byLabel, byTrack, Time, Times, timeEqualizeRates, TimeRange, TrackRange, Action, ActionObject, AddTrackAction, AddTrackActionObject, ChangeAction, ChangeActionObject, FreezeAction, ChangeFramesAction, ChangeTrimAction, AddEffectAction, AddEffectActionObject, AddClipToTrackAction, MoveClipsAction, RemoveClipsAction, SplitAction, MoveEffectsAction, Actions, Cache, AudioProcessor, FontProcessor, ModuleProcessor, Loader, AudioLoader, FontLoader, ImageLoader, ModuleLoader, Processor, Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory, AudioDefinitionClass, audioDefine, audioDefinition, audioDefinitionFromId, AudioFactoryImplementation, audioFromId, audioInitialize, audioInstance, AudioClass, Definition, DefinitionClass, DefinitionObject, DefinitionTimes, Definitions, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, EffectDefinitionClass, EffectClass, effectDefine, effectDefinition, effectDefinitionFromId, EffectFactoryImplementation, effectFromId, effectInitialize, effectInstance, Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject, Factories, FactoryObject, Filter, FilterDefinition, FilterDefinitionObject, FilterFactory, FilterObject, FilterDefinitionClass, filterDefine, filterDefinition, filterDefinitionFromId, FilterFactoryImplementation, filterFromId, filterInitialize, filterInstance, FilterClass, Font, FontDefinition, FontDefinitionObject, FontFactory, FontObject, FontDefinitionClass, fontDefine, fontDefinition, fontDefinitionFromId, FontFactoryImplementation, fontFromId, fontInitialize, fontInstance, FontClass, Image, ImageDefinition, ImageDefinitionObject, ImageFactory, ImageObject, ImageDefinitionClass, imageDefine, imageDefinition, imageDefinitionFromId, ImageFactoryImplementation, imageFromId, imageInitialize, imageInstance, ImageClass, Instance, InstanceClass, InstanceObject, MashClass, mashDefine, mashDefinition, mashDefinitionFromId, MashFactoryImplementation, mashFromId, mashInitialize, mashInstance, MashDefinitionClass, Mash, MashObject, MashOptions, MashFactory, MashDefinition, MashDefinitionObject, Masher, MasherFactory, MasherDefinition, MasherObject, MasherDefinitionObject, MasherAddPromise, ClipOrEffect, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, MasherFactoryImplementation, masherFromId, masherInitialize, masherInstance, MasherDefinitionClass, MasherClass, Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject, MergerDefinitionClass, mergerDefine, mergerDefaultId, mergerDefinition, mergerDefinitionFromId, MergerFactoryImplementation, mergerFromId, mergerInitialize, mergerInstance, MergerClass, Audible, AudibleDefinition, AudibleDefinitionObject, AudibleObject, AudibleDefinitionMixin, AudibleMixin, Clip, ClipDefinition, ClipDefinitionObject, ClipObject, ClipDefinitionMixin, ClipMixin, Modular, ModularDefinition, ModularDefinitionObject, ModularObject, ModularMixin, ModularDefinitionMixin, Transformable, TransformableObject, TransformableMixin, Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject, VisibleDefinitionMixin, VisibleMixin, Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerFactory, ScalerObject, ScalerDefinitionClass, scalerDefine, scalerDefaultId, scalerDefinition, scalerDefinitionFromId, ScalerFactoryImplementation, scalerFromId, scalerInitialize, scalerInstance, ScalerClass, Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject, ThemeDefinitionClass, themeDefine, themeDefinition, themeDefinitionFromId, ThemeFactoryImplementation, themeFromId, themeInitialize, themeInstance, ThemeClass, Track, TrackClass, TrackObject, TrackOptions, Transition, TransitionDefinition, TransitionDefinitionObject, TransitionDefinitionTransformObject, TransitionFactory, TransitionObject, TransitionDefinitionClass, transitionDefine, transitionDefinition, transitionDefinitionFromId, TransitionFactoryImplementation, transitionFromId, transitionInitialize, transitionInstance, TransitionClass, Type, TypeObject, TypesInstance as Types, TypeValue, TypeValueObject, Video, VideoDefinition, VideoDefinitionObject, VideoFactory, VideoObject, VideoDefinitionClass, videoDefine, videoDefinition, videoDefinitionFromId, VideoFactoryImplementation, videoFromId, videoInitialize, videoInstance, VideoClass, AudibleContext, VisibleContext, EventsType, EventsDetail, ContextFactoryInstance as ContextFactory, MovieMasher };
+export { Any, Context2D, ContextElement, DrawingSource, ContextData, Pixels, Timeout, Interval, EventsTarget, EventsCallback, ScalarValue, ScalarArray, NumberObject, UnknownObject, ObjectUnknown, ValueObject, ScalarRaw, Scalar, ScalarConverter, NumberConverter, StringSetter, NumberSetter, BooleanSetter, JsonValue, JsonObject, SelectionObject, SelectionValue, EvaluatorValue, WithFrame, WithTrack, WithLabel, Rgb, Rgba, WithType, WithId, WithTypeAndId, WithTypeAndValue, Size, EvaluatedSize, EvaluatedPoint, Point, EvaluatedRect, Rect, TextStyle, RgbObject, YuvObject, Yuv, Constructor, Constrained, GenericFactory, LoadPromise, LoadFontPromise, LoadImagePromise, ScrollMetrics, Default, Errors, Parameter, ParameterObject, Property, PropertyObject, ActionType, ClipType, ClipTypes, DataType, DataTypes, DefinitionType, DefinitionTypes, EventType, LoadType, MashType, MashTypes, ModuleType, ModuleTypes, MoveType, TrackType, TransformType, TransformTypes, Capitalize, Color, Element, elementScrollMetrics, Evaluator, Id, Is, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, Pixel, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, Round, roundMethod, roundWithMethod, Seconds, Sort, byFrame, byLabel, byTrack, Time, Times, timeEqualizeRates, TimeRange, TrackRange, Action, ActionObject, AddTrackAction, AddTrackActionObject, ChangeAction, ChangeActionObject, FreezeAction, ChangeFramesAction, ChangeTrimAction, AddEffectAction, AddEffectActionObject, AddClipToTrackAction, MoveClipsAction, RemoveClipsAction, SplitAction, MoveEffectsAction, Actions, Cache, AudioProcessor, FontProcessor, ModuleProcessor, Loader, AudioLoader, FontLoader, ImageLoader, ModuleLoader, Processor, Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory, AudioDefinitionClass, audioDefine, audioDefinition, audioDefinitionFromId, AudioFactoryImplementation, audioFromId, audioInitialize, audioInstance, AudioClass, Definition, DefinitionClass, DefinitionObject, DefinitionTimes, Definitions, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMap, definitionsMerger, definitionsScaler, definitionsUninstall, EffectDefinitionClass, EffectClass, effectDefine, effectDefinition, effectDefinitionFromId, EffectFactoryImplementation, effectFromId, effectInitialize, effectInstance, Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject, Factories, FactoryObject, Filter, FilterDefinition, FilterDefinitionObject, FilterFactory, FilterObject, FilterDefinitionClass, filterDefine, filterDefinition, filterDefinitionFromId, FilterFactoryImplementation, filterFromId, filterInitialize, filterInstance, FilterClass, Font, FontDefinition, FontDefinitionObject, FontFactory, FontObject, FontDefinitionClass, fontDefine, fontDefinition, fontDefinitionFromId, FontFactoryImplementation, fontFromId, fontInitialize, fontInstance, FontClass, Image, ImageDefinition, ImageDefinitionObject, ImageFactory, ImageObject, ImageDefinitionClass, imageDefine, imageDefinition, imageDefinitionFromId, ImageFactoryImplementation, imageFromId, imageInitialize, imageInstance, ImageClass, Instance, InstanceClass, InstanceObject, MashClass, mashDefine, mashDefinition, mashDefinitionFromId, MashFactoryImplementation, mashFromId, mashInitialize, mashInstance, MashDefinitionClass, Mash, MashObject, MashOptions, MashFactory, MashDefinition, MashDefinitionObject, Masher, MasherFactory, MasherDefinition, MasherObject, MasherDefinitionObject, MasherAddPromise, ClipOrEffect, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, MasherFactoryImplementation, masherFromId, masherInitialize, masherInstance, MasherDefinitionClass, MasherClass, Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject, MergerDefinitionClass, mergerDefine, mergerDefaultId, mergerDefinition, mergerDefinitionFromId, MergerFactoryImplementation, mergerFromId, mergerInitialize, mergerInstance, MergerClass, Audible, AudibleDefinition, AudibleDefinitionObject, AudibleObject, AudibleDefinitionMixin, AudibleMixin, Clip, ClipDefinition, ClipDefinitionObject, ClipObject, ClipDefinitionMixin, ClipMixin, Modular, ModularDefinition, ModularDefinitionObject, ModularObject, ModularMixin, ModularDefinitionMixin, Transformable, TransformableObject, TransformableMixin, Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject, VisibleDefinitionMixin, VisibleMixin, Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerFactory, ScalerObject, ScalerDefinitionClass, scalerDefine, scalerDefaultId, scalerDefinition, scalerDefinitionFromId, ScalerFactoryImplementation, scalerFromId, scalerInitialize, scalerInstance, ScalerClass, Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject, ThemeDefinitionClass, themeDefine, themeDefinition, themeDefinitionFromId, ThemeFactoryImplementation, themeFromId, themeInitialize, themeInstance, ThemeClass, Track, TrackClass, TrackObject, TrackOptions, Transition, TransitionDefinition, TransitionDefinitionObject, TransitionDefinitionTransformObject, TransitionFactory, TransitionObject, TransitionDefinitionClass, transitionDefine, transitionDefinition, transitionDefinitionFromId, TransitionFactoryImplementation, transitionFromId, transitionInitialize, transitionInstance, TransitionClass, Type, TypeObject, TypesInstance as Types, TypeValue, TypeValueObject, Video, VideoDefinition, VideoDefinitionObject, VideoFactory, VideoObject, VideoDefinitionClass, videoDefine, videoDefinition, videoDefinitionFromId, VideoFactoryImplementation, videoFromId, videoInitialize, videoInstance, VideoClass, AudibleContext, VisibleContext, EventsType, EventsDetail, ContextFactoryInstance as ContextFactory, MovieMasher };
 //# sourceMappingURL=index.d.ts.map

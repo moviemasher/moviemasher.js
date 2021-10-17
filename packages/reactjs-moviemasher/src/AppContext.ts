@@ -1,56 +1,56 @@
 import { MutableRefObject, createContext } from 'react'
 import {
-  Visible,
   BooleanSetter,
   NumberSetter,
   Time,
   TimeRange,
   TrackRange,
-  Clip
+  Clip,
+  ScrollMetrics,
+  MovieMasher,
+  Masher
 } from '@moviemasher/moviemasher.js'
 
 
+const AppContextDefaultSetters = {
+  number: (value: number) => {},
+  boolean: (value: boolean) => {},
+  time: (value: Time) => {},
+}
+
 interface AppContextInterface {
-  clips: (timeRange? : TimeRange, trackRange? : TrackRange) => Clip[]
+  audioTracks: number
+  counter: number
+  masher : Masher
   paused: boolean,
   previewReference?: MutableRefObject<HTMLCanvasElement | undefined>
   quantize: number
+  selectedClipIdentifier: string
+  selectedEffectIdentifier: string
   setPaused: BooleanSetter
   setTime: (value : Time) => void
   setVolume: NumberSetter
-  setZoom: NumberSetter
-  setTimelineWidth: NumberSetter
-  timeRange : TimeRange
-  timelineWidth: number
-  timelineReference?: MutableRefObject<HTMLDivElement | undefined>
-  audioTracks: number
+  timeRange : TimeRange // in masher fps
   videoTracks: number
   volume: number
-  zoom : number
 }
-const AppContextDefaultSetters = {
-  number: (value: number) => { },
-  boolean: (value: boolean) => { },
-  time: (value: Time) => { },
-}
-const AppContextDefault : AppContextInterface = {
-  clips: (timeRange?, trackRange?) => [],
+const AppContextDefault: AppContextInterface = {
+  audioTracks: 0,
+  counter: 0,
+  masher: MovieMasher.masher.instance(),
   paused: false,
   quantize: 0,
+  selectedClipIdentifier: '',
+  selectedEffectIdentifier: '',
   setPaused: AppContextDefaultSetters.boolean,
-  setVolume: AppContextDefaultSetters.number,
-  setZoom: AppContextDefaultSetters.number,
-  setTimelineWidth: AppContextDefaultSetters.number,
   setTime: AppContextDefaultSetters.time,
-  audioTracks: 0,
-  timelineWidth: 0,
+  setVolume: AppContextDefaultSetters.number,
+  timeRange: TimeRange.fromArgs(),
   videoTracks: 0,
   volume: 0,
-  timeRange: TimeRange.fromArgs(),
-  zoom : 0,
 }
 
 const AppContext = createContext(AppContextDefault)
 const AppContextProvider = AppContext.Provider
 
-export { AppContext, AppContextProvider, AppContextInterface }
+export { AppContext, AppContextProvider, AppContextInterface, AppContextDefault }

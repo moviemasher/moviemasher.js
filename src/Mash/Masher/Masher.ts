@@ -39,7 +39,7 @@ interface Masher extends Instance {
   changeClip(property : string, value? : SelectionValue, clip? : Clip) : void
   changeEffect(property : string, value? : SelectionValue, effect? : Effect) : void
   changeMash(property: string, value?: SelectionValue): void
-  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[]
+  clips: Clip[]
   currentTime : number
   definitions : Definition[]
   destroy() : void
@@ -70,14 +70,14 @@ interface Masher extends Instance {
   removeEffects(effectOrArray : Effect | Effect[]) : void
   save() : void
   select(object : ClipOrEffect | undefined, toggleSelected? : boolean) : void
-  selectClip(clip : Clip | undefined, toggleSelected : boolean) : void
-  selectEffect(effect : Effect | undefined, toggleSelected : boolean) : void
+  selectClip(clip : Clip | undefined, toggleSelected? : boolean) : void
+  selectEffect(effect : Effect | undefined, toggleSelected? : boolean) : void
   selectMash() : void
   selectedClipsOrEffects : Clip[] | Effect[]
   selectedClip : Clip | UnknownObject
   selectedClipOrMash : Clip | Mash
   selectedClips : Clip[]
-  selectedEffect : Effect | undefined
+  selectedEffect : Effect | UnknownObject
   selectedEffects : Effect[]
   selectionObjects : SelectionObject[]
   split() : void

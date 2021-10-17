@@ -206,13 +206,14 @@ class MashClass extends InstanceClass implements Mash {
     return this.trackOfTypeAtIndex(clip.trackType, index)
   }
 
-  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[] {
-    const rangeTracks = this.tracksInRange(trackRange)
-    const inTracks = this.clipsInTracks(rangeTracks)
-    if (!timeRange) return inTracks
+  get clips(): Clip[] { return this.clipsInTracks() }
 
-    return this.filterIntersecting(inTracks, timeRange)
-  }
+  //   const rangeTracks = this.tracksInRange(trackRange)
+  //   const inTracks = this.clipsInTracks(rangeTracks)
+  //   if (!timeRange) return inTracks
+
+  //   return this.filterIntersecting(inTracks, timeRange)
+  // }
 
 
   private clipsAtTimes(start: Time, end?: Time): Clip[] {
@@ -584,8 +585,6 @@ class MashClass extends InstanceClass implements Mash {
       console.error(Errors.invalid.track, index, index?.constructor.name)
       throw Errors.invalid.track
     }
-
-    // console.log("trackOfTypeAtIndex", type, index)
     return this[type][index]
   }
 
@@ -607,23 +606,20 @@ class MashClass extends InstanceClass implements Mash {
 
   get tracks() : Track[] { return Object.values(TrackType).map(av => this[av]).flat() }
 
-  tracksInRange(trackRange?: TrackRange): Track[] | undefined {
-    if (!trackRange) return
-    const { type } = trackRange
-    const tracksMax = this.maxTracks(type)
-    const range = trackRange.relative ? trackRange.withMax(tracksMax) : trackRange
+  // tracksInRange(trackRange?: TrackRange): Track[] | undefined {
+  //   if (!trackRange) return
+  //   const { type } = trackRange
+  //   const range = trackRange.relative ? trackRange.withMax(this.maxTracks(type)) : trackRange
 
-    const inRange = []
-    if (type !== TrackType.Video) {
-      inRange.push(...this.audio.slice(range.first, range.count))
-    }
-    if (type !== TrackType.Audio) {
-      inRange.push(...this.video.slice(range.first, range.count))
-    }
-
-    // console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length)
-    return inRange
-  }
+  //   const inRange = []
+  //   if (type !== TrackType.Video) {
+  //     inRange.push(...this.audio.slice(range.first, range.last))
+  //   }
+  //   if (type !== TrackType.Audio) {
+  //     inRange.push(...this.video.slice(range.first, range.last))
+  //   }
+  //   return inRange
+  // }
 
   video : Track[] = []
 

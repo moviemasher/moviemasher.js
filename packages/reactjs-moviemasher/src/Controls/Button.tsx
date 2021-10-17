@@ -5,6 +5,7 @@ interface KeyClass {
   className: string
 }
 interface ButtonProps extends Partial<KeyClass> {
+  id? : string
   onClick? : (event : MouseEvent<HTMLButtonElement>) => void
   startIcon? : ReactElement
   endIcon? : ReactElement

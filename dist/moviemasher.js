@@ -426,6 +426,7 @@
       EventType["Playing"] = "playing";
       EventType["Seeking"] = "seeking";
       EventType["Seeked"] = "seeked";
+      EventType["Selection"] = "selection";
       EventType["Time"] = "timeupdate";
       EventType["Track"] = "track";
       EventType["Volume"] = "volumechange";
@@ -623,14 +624,10 @@
   };
 
   const ElementScrollProps = [
-      'height',
-      'width',
       'scrollPaddingleft',
       'scrollPaddingRight',
       'scrollPaddingTop',
       'scrollPaddingBottom',
-      'x',
-      'y',
   ];
   const elementScrollMetrics = (element) => {
       if (!element)
@@ -642,8 +639,13 @@
           return [key, isNaN(number) ? 0 : number];
       });
       const { scrollLeft, scrollTop } = element;
+      const { x, y, width, height } = element.getBoundingClientRect();
       entries.push(['scrollLeft', scrollLeft]);
       entries.push(['scrollTop', scrollTop]);
+      entries.push(['x', x]);
+      entries.push(['y', y]);
+      entries.push(['width', width]);
+      entries.push(['height', height]);
       return Object.fromEntries(entries);
   };
   const Element = {
@@ -1907,7 +1909,7 @@
           return time.scaleToFps(quantize); // may have fps higher than quantize and time.fps
       }
       get id() { return this._id || this.definition.id; }
-      get identifier() { return this._identifier || Id(); }
+      get identifier() { return this._identifier ||= Id(); }
       get label() { return this._label || this.definition.label || this.id; }
       set label(value) { this._label = value; }
       load(quantize, start, end) {
@@ -4696,6 +4698,19 @@
           this._paused = true;
           this._playing = false;
           this.quantize = Default.mash.quantize;
+          // tracksInRange(trackRange?: TrackRange): Track[] | undefined {
+          //   if (!trackRange) return
+          //   const { type } = trackRange
+          //   const range = trackRange.relative ? trackRange.withMax(this.maxTracks(type)) : trackRange
+          //   const inRange = []
+          //   if (type !== TrackType.Video) {
+          //     inRange.push(...this.audio.slice(range.first, range.last))
+          //   }
+          //   if (type !== TrackType.Audio) {
+          //     inRange.push(...this.video.slice(range.first, range.last))
+          //   }
+          //   return inRange
+          // }
           this.video = [];
           this._id ||= Id();
           // console.log("Mash constructor", this.id)
@@ -4839,13 +4854,12 @@
       clipTrackAtIndex(clip, index = 0) {
           return this.trackOfTypeAtIndex(clip.trackType, index);
       }
-      clips(timeRange, trackRange) {
-          const rangeTracks = this.tracksInRange(trackRange);
-          const inTracks = this.clipsInTracks(rangeTracks);
-          if (!timeRange)
-              return inTracks;
-          return this.filterIntersecting(inTracks, timeRange);
-      }
+      get clips() { return this.clipsInTracks(); }
+      //   const rangeTracks = this.tracksInRange(trackRange)
+      //   const inTracks = this.clipsInTracks(rangeTracks)
+      //   if (!timeRange) return inTracks
+      //   return this.filterIntersecting(inTracks, timeRange)
+      // }
       clipsAtTimes(start, end) {
           const objects = this.clipsVisible(start, end);
           if (end)
@@ -5153,7 +5167,6 @@
               console.error(Errors.invalid.track, index, index?.constructor.name);
               throw Errors.invalid.track;
           }
-          // console.log("trackOfTypeAtIndex", type, index)
           return this[type][index];
       }
       trackOptions(object, index, type) {
@@ -5172,22 +5185,6 @@
           return { type, index, clips: objects };
       }
       get tracks() { return Object.values(exports.TrackType).map(av => this[av]).flat(); }
-      tracksInRange(trackRange) {
-          if (!trackRange)
-              return;
-          const { type } = trackRange;
-          const tracksMax = this.maxTracks(type);
-          const range = trackRange.relative ? trackRange.withMax(tracksMax) : trackRange;
-          const inRange = [];
-          if (type !== exports.TrackType.Video) {
-              inRange.push(...this.audio.slice(range.first, range.count));
-          }
-          if (type !== exports.TrackType.Audio) {
-              inRange.push(...this.video.slice(range.first, range.count));
-          }
-          // console.log(`tracksInRange ${trackRange} -> ${range}`, tracksMax, type, inRange.length)
-          return inRange;
-      }
       get visibleContext() {
           if (!this._visibleContext) {
               // console.log("Mash get visibleContext creating")
@@ -5475,8 +5472,9 @@
       }
       change(property, value) {
           if (Is.populatedObject(this.selectedClip)) {
-              if (Is.populatedObject(this.selectedEffect))
+              if (Is.populatedObject(this.selectedEffect)) {
                   this.changeEffect(property, value, this.selectedEffect);
+              }
               else
                   this.changeClip(property, value, this.selectedClipOrThrow);
           }
@@ -5606,9 +5604,7 @@
               return false;
           return true;
       }
-      clips(timeRange, trackRange) {
-          return this.mash.clips(timeRange, trackRange);
-      }
+      get clips() { return this.mash.clips; }
       currentActionReusable(target, property) {
           if (!this.actions.currentActionLast)
               return false;
@@ -5772,7 +5768,7 @@
               throw Errors.argument + 'moviClips trackIndex';
           const clips = this.filterClipSelection(clipOrArray);
           if (!Is.populatedArray(clips))
-              throw Errors.argument + 'moviClips clips';
+              throw Errors.argument + 'moveClips clips';
           const [firstClip] = clips;
           const { trackType, track: undoTrackIndex } = firstClip;
           const options = {
@@ -5908,7 +5904,7 @@
           this.actionCreate(options);
       }
       save() { this.actions.save(); }
-      select(object, toggleSelected = false) {
+      select(object, toggleSelected) {
           if (!object) {
               this.selectedClips = [];
               return;
@@ -5997,38 +5993,63 @@
       }
       get selectedClips() { return this._selectedClips; }
       set selectedClips(value) {
-          this._selectedClips = this.filterClipSelection(value);
-          this._pristine = this.selectedClipOrMash.propertyValues;
-          this.selectedEffects = [];
+          const newSelectedClips = this.filterClipSelection(value);
+          const newPristine = this.selectedClipOrMash.propertyValues;
+          const changed = this._selectedClips !== newSelectedClips;
+          if (changed) {
+              this._selectedClips = newSelectedClips;
+              this._pristine = newPristine;
+              if (this.selectedEffects.length) {
+                  this.selectedEffects = [];
+              }
+              else {
+                  this.visibleContext.emit(exports.EventType.Selection);
+              }
+          }
       }
       get selectedEffect() {
           if (this._selectedEffects.length !== 1)
-              return;
+              return {};
           return this._selectedEffects[0];
       }
       set selectedEffect(value) {
-          if (value)
-              this.selectedEffects = [value];
+          if (value && Is.populatedObject(value)) {
+              const effect = value;
+              const { type } = effect;
+              if (type !== exports.DefinitionType.Effect)
+                  return;
+              this.selectedEffects = [effect];
+          }
           else
               this.selectedEffects = [];
       }
       get selectedEffectOrThrow() {
           const effect = this.selectedEffect;
-          if (!effect)
+          if (!Is.populatedObject(effect))
               throw Errors.selection;
           return effect;
       }
       get selectedEffects() { return this._selectedEffects; }
       set selectedEffects(value) {
-          const { effects } = this.selectedClipOrMash;
-          if (!effects) { // mash or multiple clips, or no effects
-              this._selectedEffects = [];
-              this._pristineEffect = {};
-              return;
+          const newSelectedEffects = [];
+          const newPristineEffect = {};
+          if (value.length) {
+              const { effects } = this.selectedClipOrMash;
+              if (effects) {
+                  const array = effects;
+                  // make sure all selected effects are in the effects of the clip or mash
+                  newSelectedEffects.push(...value.filter(effect => array.includes(effect)));
+                  if (newSelectedEffects.length === 1) {
+                      Object.assign(newPristineEffect, newSelectedEffects[0].propertyValues);
+                  }
+              }
           }
-          const array = effects;
-          this._selectedEffects = value.filter(effect => array.includes(effect));
-          this._pristineEffect = (this.selectedEffect && this.selectedEffect.propertyValues) || {};
+          const changed = this._selectedEffects !== newSelectedEffects;
+          if (changed) {
+              this._selectedEffects = newSelectedEffects;
+              this._pristineEffect = newPristineEffect;
+              this.visibleContext.emit(exports.EventType.Selection);
+          }
       }
       get selectionObjects() {
           const selectedObjects = this.selectedClipsOrEffects;

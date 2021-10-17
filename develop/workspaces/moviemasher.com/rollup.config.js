@@ -1,4 +1,4 @@
-import serve from "rollup-plugin-serve"
+// import serve from "rollup-plugin-serve"
 // import livereload from "rollup-plugin-livereload"
 // import html from '@open-wc/rollup-plugin-html'
 
@@ -48,13 +48,13 @@ export default {
       ]
     }),
     // html({inject: true, files: ["src/index.html"]}),
-    serve({
-      open: true,
-      verbose: true,
-      contentBase: [outputDir],
-      host: "localhost",
-      port: 7058,
-    }),
+    // serve({
+    //   open: true,
+    //   verbose: true,
+    //   contentBase: [outputDir],
+    //   host: "localhost",
+    //   port: 7058,
+    // }),
     // livereloadPlugin,
   ]
 }

@@ -46,7 +46,7 @@ class InstanceClass {
 
   private _identifier?: string
 
-  get identifier() : string { return this._identifier || Id() }
+  get identifier() : string { return this._identifier ||= Id() }
 
   protected _label? : string
 

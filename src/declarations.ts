@@ -171,3 +171,17 @@ export type LoadPromise = Promise <void>
 
 export type LoadFontPromise = Promise< { family: string } >
 export type LoadImagePromise = Promise<DrawingSource>
+
+
+export interface ScrollMetrics {
+  height : number
+  width : number
+  scrollPaddingleft : number
+  scrollPaddingRight : number
+  scrollPaddingTop : number
+  scrollPaddingBottom : number
+  scrollLeft : number
+  scrollTop : number
+  x : number
+  y : number
+}

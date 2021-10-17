@@ -1,6 +1,6 @@
 :root {
   --moviemasher-border-size: 1px;
-  --moviemasher-border-radius: calc(3 * var(--moviemasher-border-size));
+  --moviemasher-border-radius: calc(5 * var(--moviemasher-border-size));
   --moviemasher-spacing: 20px;
   --moviemasher-padding: 40px;
   --moviemasher-spacing-controls: 4px;
@@ -12,7 +12,7 @@
   --moviemasher-height-preview: 270px;
   --moviemasher-height-scrub: 16px;
   --moviemasher-width-inspector: 240px;
-  --moviemasher-icon-size: 24px;
+  --moviemasher-icon-size: 32px;
   --moviemasher-button-size: 32px;
   --moviemasher-border: var(--moviemasher-border-size) solid var(--moviemasher-color-pop);
 }

@@ -1,13 +1,11 @@
-import serve from "rollup-plugin-serve"
-import livereload from "rollup-plugin-livereload";
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import css from 'rollup-plugin-css-only'
 import copy from 'rollup-plugin-copy'
 import replace from '@rollup/plugin-replace';
 import svg from 'rollup-plugin-svg'
-import html from '@rollup/plugin-html'
 import ts from "rollup-plugin-ts"
+
 const outputDir = 'public'
 
 export default {
@@ -20,7 +18,7 @@ export default {
   },
   plugins: [
     css({ output: 'moviemasher.css' }),
-    svg(),
+    svg({ base64: true }),
     resolve(),
     replace({
       preventAssignment: true,
@@ -28,19 +26,19 @@ export default {
     }),
     commonjs({ include: /node_modules/ }),
     ts(),
-    html({ title: "ReactJS Movie Masher" }),
     copy({
       targets: [
+        { src: './index.html', dest: outputDir },
         { src: '../../develop/Assets/favicon.png', dest: outputDir, rename: 'favicon.ico' }
       ]
     }),
-    serve({
-      open: true,
-      verbose: false,
-      contentBase: ["", outputDir],
-      host: "localhost",
-      port: 7996,
-    }),
-    livereload({ watch: outputDir }),
+    // serve({
+    //   open: true,
+    //   verbose: false,
+    //   contentBase: ["", outputDir],
+    //   host: "localhost",
+    //   port: 7996,
+    // }),
+    // livereload({ watch: outputDir }),
   ]
 }

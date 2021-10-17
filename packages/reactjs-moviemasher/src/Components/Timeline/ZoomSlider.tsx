@@ -1,14 +1,14 @@
 import React, { FC, ReactElement, useContext } from 'react'
 import { UnknownObject } from '@moviemasher/moviemasher.js'
-import { SliderChangeHandler } from "../declarations"
-import { AppContext } from '../AppContext'
+import { SliderChangeHandler } from "../../declarations"
+import { TimelineContext } from './TimelineContext'
 
 interface ZoomSliderProps extends UnknownObject{
   control: ReactElement
 }
 
 const ZoomSlider : FC<ZoomSliderProps> = (props) => {
-  const context = useContext(AppContext)
+  const context = useContext(TimelineContext)
   const { control, ...rest } = props
 
   const handleChange : SliderChangeHandler = (_event, value) => {

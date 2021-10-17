@@ -258,7 +258,9 @@ class MasherClass extends InstanceClass implements Masher {
 
   change(property : string, value? : SelectionValue) : void {
     if (Is.populatedObject(this.selectedClip)) {
-      if (Is.populatedObject(this.selectedEffect)) this.changeEffect(property, value, this.selectedEffect)
+      if (Is.populatedObject(this.selectedEffect)) {
+        this.changeEffect(property, value, <Effect> this.selectedEffect)
+      }
       else this.changeClip(property, value, this.selectedClipOrThrow)
     } else this.changeMash(property, value)
   }
@@ -397,10 +399,7 @@ class MasherClass extends InstanceClass implements Masher {
     return true
   }
 
-  clips(timeRange?: TimeRange, trackRange?: TrackRange): Clip[] {
-    return this.mash.clips(timeRange, trackRange)
-  }
-
+  get clips(): Clip[] { return this.mash.clips }
 
   private currentActionReusable(target : unknown, property : string) : boolean {
     if (!this.actions.currentActionLast) return false
@@ -605,7 +604,7 @@ class MasherClass extends InstanceClass implements Masher {
     if (!Is.positive(trackIndex)) throw Errors.argument + 'moviClips trackIndex'
 
     const clips = this.filterClipSelection(clipOrArray)
-    if (!Is.populatedArray(clips)) throw Errors.argument + 'moviClips clips'
+    if (!Is.populatedArray(clips)) throw Errors.argument + 'moveClips clips'
 
     const [firstClip] = clips
     const { trackType, track: undoTrackIndex } = firstClip
@@ -769,7 +768,7 @@ class MasherClass extends InstanceClass implements Masher {
 
   save() : void { this.actions.save() }
 
-  select(object : ClipOrEffect | undefined, toggleSelected = false) : void {
+  select(object : ClipOrEffect | undefined, toggleSelected? : boolean) : void {
     if (!object) {
       this.selectedClips = []
       return
@@ -794,7 +793,7 @@ class MasherClass extends InstanceClass implements Masher {
     return this.selectedEffects.length ? this.selectedEffects : this.selectedClips
   }
 
-  selectClip(clip : Clip | undefined, toggleSelected : boolean) : void {
+  selectClip(clip : Clip | undefined, toggleSelected? : boolean) : void {
     const array : Clip[] = []
     if (clip) {
       if (toggleSelected) {
@@ -808,7 +807,7 @@ class MasherClass extends InstanceClass implements Masher {
     this.selectedClips = array
   }
 
-  selectEffect(effect : Effect | undefined, toggleSelected : boolean) : void {
+  selectEffect(effect : Effect | undefined, toggleSelected? : boolean) : void {
     const array : Effect[] = []
     if (effect) {
       if (toggleSelected) {
@@ -866,27 +865,43 @@ class MasherClass extends InstanceClass implements Masher {
 
   get selectedClips() : Clip[] { return this._selectedClips }
 
-  set selectedClips(value : Clip[]) {
-    this._selectedClips = this.filterClipSelection(value)
-    this._pristine = this.selectedClipOrMash.propertyValues
-    this.selectedEffects = []
+  set selectedClips(value: Clip[]) {
+    const newSelectedClips = this.filterClipSelection(value)
+    const newPristine = this.selectedClipOrMash.propertyValues
+
+    const changed = this._selectedClips !== newSelectedClips
+    if (changed) {
+      this._selectedClips = newSelectedClips
+      this._pristine = newPristine
+      if (this.selectedEffects.length) {
+        this.selectedEffects = []
+      } else {
+        this.visibleContext.emit(EventType.Selection)
+      }
+    }
   }
 
-  get selectedEffect() : Effect | undefined {
-    if (this._selectedEffects.length !== 1) return
+  get selectedEffect() : Effect | UnknownObject {
+    if (this._selectedEffects.length !== 1) return {}
 
     return this._selectedEffects[0]
   }
 
-  set selectedEffect(value : Effect | undefined) {
-    if (value) this.selectedEffects = [value]
+  set selectedEffect(value: Effect | UnknownObject) {
+    if (value && Is.populatedObject(value)) {
+      const effect = <Effect>value
+      const { type } = effect
+      if (type !== DefinitionType.Effect) return
+
+      this.selectedEffects = [effect]
+    }
     else this.selectedEffects = []
   }
 
   get selectedEffectOrThrow() : Effect {
     const effect = this.selectedEffect
-    if (!effect) throw Errors.selection
-    return effect
+    if (!Is.populatedObject(effect)) throw Errors.selection
+    return <Effect> effect
   }
 
   private _selectedEffects : Effect[] = []
@@ -894,15 +909,25 @@ class MasherClass extends InstanceClass implements Masher {
   get selectedEffects() : Effect[] { return this._selectedEffects }
 
   set selectedEffects(value : Effect[]) {
-    const { effects } = this.selectedClipOrMash
-    if (!effects) { // mash or multiple clips, or no effects
-      this._selectedEffects = []
-      this._pristineEffect = {}
-      return
+    const newSelectedEffects = []
+    const newPristineEffect = {}
+    if (value.length) {
+      const { effects } = this.selectedClipOrMash
+      if (effects) {
+        const array = <Effect[]>effects
+        // make sure all selected effects are in the effects of the clip or mash
+        newSelectedEffects.push(...value.filter(effect => array.includes(effect)))
+        if (newSelectedEffects.length === 1) {
+          Object.assign(newPristineEffect, newSelectedEffects[0].propertyValues)
+        }
+      }
     }
-    const array = <Effect[]> effects
-    this._selectedEffects = value.filter(effect => array.includes(effect))
-    this._pristineEffect = (this.selectedEffect && this.selectedEffect.propertyValues) || {}
+    const changed = this._selectedEffects !== newSelectedEffects
+    if (changed) {
+      this._selectedEffects = newSelectedEffects
+      this._pristineEffect = newPristineEffect
+      this.visibleContext.emit(EventType.Selection)
+    }
   }
 
   get selectionObjects() : SelectionObject[] {

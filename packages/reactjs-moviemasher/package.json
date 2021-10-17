@@ -1,6 +1,6 @@
 {
   "name": "reactjs-moviemasher",
-  "version": "0.1.0",
+  "version": "5.0.0",
   "main": "public/index.js",
   "author": {
     "name": "Movie Masher",
@@ -8,17 +8,25 @@
   },
   "license": "MPL-2.0",
   "dependencies": {
+    "@material-ui/core": "^4.12.1",
+    "@material-ui/icons": "^4.11.2",
     "@moviemasher/moviemasher.js": "../../",
     "react": "^17.0.2",
+    "react-dnd": "^14.0.3",
+    "react-dnd-html5-backend": "^14.0.1",
     "react-dom": "^17.0.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
     "@types/uuid": "^8.3.1"
   },
   "scripts": {
-    "build": "rollup --config --watch",
-    "test": "jest --watch"
+    "build-watch": "rollup --config --watch",
+    "build-only": "rollup --config",
+    "test": "jest --watch",
+    "serve": "serve --debug --cors --no-port-switching --no-clipboard --listen 7977 public"
   },
   "eslintConfig": {
     "extends": [

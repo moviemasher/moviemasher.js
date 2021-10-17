@@ -60,6 +60,7 @@ enum EventType {
   Playing = 'playing',
   Seeking = 'seeking',
   Seeked = 'seeked',
+  Selection = 'selection',
   Time = 'timeupdate',
   Track = 'track',
   Volume = 'volumechange',

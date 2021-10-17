@@ -59,7 +59,7 @@ describe("Mash", () => {
         expect(clip).toBeInstanceOf(InstanceClass)
         return clip
       }).reverse()
-      expect(mash.clips()).toEqual(objects)
+      expect(mash.clips).toEqual(objects)
       expect(trackClips).toEqual(objects)
 
       const a2z = "abcdefg" // efghijklmnopqrstuvwxyz"
@@ -73,7 +73,7 @@ describe("Mash", () => {
       expect(mash.video[0].clips).toEqual([clips.a, clips.c, clips.d, clips.b])
 
       mash.addClipsToTrack(moveClips, 0, 2)
-      expect(mash.clips()).toEqual([clips.a, clips.c, clips.d, clips.b])
+      expect(mash.clips).toEqual([clips.a, clips.c, clips.d, clips.b])
     })
 
     test("correctly places clip in track clips", () => {
@@ -130,23 +130,17 @@ describe("Mash", () => {
     })
   })
 
-  // describe("clipsVisibleInTimeRange", () => {
-  //   test("returns expected clip", () => {
-  //     const mash = MovieMasher.mash.instance({ id: createId() })
-  //     const clip1 = definition.instance
-  //     clip1.label = "CLIP 1"
-  //     const clip2 = definition.instance
-  //     clip2.label = "CLIP 2"
-
-  //     mash.addClipsToTrack([clip1], 0)
-  //     mash.addClipsToTrack([clip2], 0, 1)
-  //     const range = TimeRange.fromArgs(0, 30, 1)
-  //     const clipsAtStart = mash.clipsVisibleInTimeRange(range)
-  //     expect(clipsAtStart[0]).toStrictEqual(clip1)
-  //     expect(clipsAtStart.length).toEqual(1)
-  //   })
-  // })
-
+  describe("clips", () => {
+    test("returns proper clips", () => {
+      const clips = [
+        { label: 'A', id: "com.moviemasher.theme.text", frame: 0, frames: 100, string: "Fuck yeah!" },
+        { label: 'B', id: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
+        { label: 'C', id: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "Woot woot!" },
+      ]
+      const mash = MovieMasher.mash.instance({ id: createId(), video: [{ clips }, { clips }, { clips }] })
+      expect(mash.clips.length).toEqual(clips.length * 3)
+    })
+  })
   describe("frames", () => {
     test("returns 0 from empty mash", () => {
       const mash = MovieMasher.mash.instance({ id: createId() })
