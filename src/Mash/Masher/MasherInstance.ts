@@ -571,6 +571,8 @@ class MasherClass extends InstanceClass implements Masher {
 
     this.selectedClips = [] // so mash gets copied into _pristine
 
+    this.visibleContext.emit(EventType.Mash)
+
     this.goToTime(Time.fromArgs(0, this.fps))
     if (this.autoplay) this.paused = false
   }

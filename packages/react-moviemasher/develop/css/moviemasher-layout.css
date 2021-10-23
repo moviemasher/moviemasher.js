@@ -1,0 +1,270 @@
+.moviemasher-app .MuiSvgIcon-root {
+  font-size: var(--moviemasher-icon-size);
+}
+
+.moviemasher-controls {
+  background-color: var(--moviemasher-back-tertiary);
+  display: grid;
+  padding: var(--moviemasher-padding-controls);
+  column-gap: var(--moviemasher-spacing-controls);
+}
+
+.moviemasher-head {
+  grid-area: head;
+  border-bottom: var(--moviemasher-border);
+}
+.moviemasher-foot {
+  grid-area: foot;
+  border-top: var(--moviemasher-border);
+}
+
+.moviemasher-content {
+  /* background-color: var(--moviemasher-back-secondary); */
+  grid-area: content;
+}
+
+.moviemasher-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: var(--moviemasher-back-secondary);
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+}
+
+.moviemasher-browser {
+  grid-area: browser;
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--moviemasher-button-size) 1fr var(--moviemasher-button-size);
+  grid-template-areas: "head" "content" "foot";
+}
+
+.moviemasher-audio {
+  grid-area: audio;
+}
+
+.moviemasher-effect {
+  grid-area: effect;
+}
+
+.moviemasher-image {
+  grid-area: image;
+}
+
+.moviemasher-theme {
+  grid-area: theme;
+}
+
+.moviemasher-transition {
+  grid-area: transition;
+}
+
+.moviemasher-video {
+  grid-area: video;
+}
+
+.moviemasher-browser .moviemasher-controls {
+  grid-template-areas: "theme image audio video effect transition";
+  grid-auto-columns: var(--moviemasher-icon-size);
+}
+
+.moviemasher-browser .moviemasher-content {
+  padding: var(--moviemasher-padding-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  grid-auto-rows: 90px;
+  gap: var(--moviemasher-spacing-content);
+  overflow-y: auto;
+}
+
+.moviemasher-definition {
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+  padding: var(--moviemasher-padding-controls);
+}
+
+.moviemasher-inspector {
+  grid-area: inspector;
+}
+
+.moviemasher-timeline {
+  isolation: isolate;
+  overflow-x: hidden;
+  grid-area: timeline;
+  grid-template-areas: "head" "content" "foot";
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    calc(var(--moviemasher-button-size) + var(--moviemasher-border-size) + (2 * var(--moviemasher-padding-button-factor) * var(--moviemasher-padding-controls)))
+    1fr
+    calc(var(--moviemasher-icon-size) + var(--moviemasher-border-size) + (2 * var(--moviemasher-padding-controls)))
+    ;
+}
+
+.moviemasher-timeline .moviemasher-head {
+  padding: calc(var(--moviemasher-padding-controls) * var(--moviemasher-padding-button-factor));
+  grid-template-columns: repeat(9, auto) 1fr;
+  grid-template-areas: "undo redo cut copy paste delete split save render";
+}
+
+.moviemasher-timeline .moviemasher-content {
+  position: relative;
+  overflow: auto;
+  display: grid;
+  grid-template-areas: "scrub-pad scrub" "tracks tracks";
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+  grid-template-rows:
+    var(--moviemasher-height-scrub)
+    1fr
+  ;
+}
+
+.moviemasher-tracks {
+  grid-area: tracks;
+}
+
+.moviemasher-track {
+  display: grid;
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+
+}
+
+.moviemasher-track .moviemasher-track-icon {
+  background-color: var(--moviemasher-back-secondary);
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  border-right: var(--moviemasher-border);
+}
+
+.moviemasher-clips {
+  white-space: nowrap;
+}
+
+.moviemasher-drop {
+  background-color: var(--moviemasher-color-pop);
+}
+
+.moviemasher-clip {
+  display: inline-block;
+  padding: var(--moviemasher-padding-controls);
+  background-color: var(--moviemasher-back-tertiary);
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+}
+
+.moviemasher-clip label:after {
+  content: var(--clip-label);
+}
+
+.moviemasher-scrub-pad,
+.moviemasher-scrub {
+  background-color: var(--moviemasher-back-secondary);
+  border-bottom: var(--moviemasher-border);position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+.moviemasher-scrub-pad {
+  grid-area: scrub-pad;
+  z-index: 2;
+}
+.moviemasher-scrub {
+  grid-area: scrub;
+  z-index: 3;
+}
+/* .moviemasher-scrub,
+.moviemasher-scrub-bar-container {
+  overflow: hidden;
+} */
+.moviemasher-scrub-bar-container {
+  pointer-events: none;
+  position: relative;
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.moviemasher-timeline-sizer {
+  pointer-events: none;
+  position: absolute;
+  left: var(--moviemasher-icon-size);
+  right: 0px;
+  top: var(--moviemasher-height-scrub);
+  bottom: 0px;
+}
+
+.moviemasher-scrub .MuiSvgIcon-root {
+  font-size: var(--moviemasher-height-scrub);
+}
+
+.moviemasher-scrub-bar {
+  position: absolute;
+  width: 1px;
+  top: 0px;
+  bottom: 0px;
+  background-color:var(--moviemasher-color);
+}
+.moviemasher-scrub-icon {
+  margin-left: calc(0px - (var(--moviemasher-height-scrub) / 2));
+  position: absolute;
+  color: var(--moviemasher-color);
+}
+
+
+.moviemasher-player {
+  grid-area: player;
+  grid-template-areas: "content" "foot";
+  grid-template-columns: 1fr;
+  grid-template-rows: var(--moviemasher-height-preview) 1fr;
+}
+
+.moviemasher-player .moviemasher-controls {
+  grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
+  grid-template-areas: "paused frame volume";
+}
+
+.moviemasher-paused {
+  grid-area: paused;
+}
+
+.moviemasher-canvas {
+  background: repeating-conic-gradient(var(--moviemasher-back-primary) 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+  background-position: top left;
+  width: var(--moviemasher-width-preview);
+  height: var(--moviemasher-height-preview);
+}
+
+.moviemasher-copy { grid-area: copy; }
+
+.moviemasher-cut {
+  grid-area: cut;
+}
+
+.moviemasher-delete {
+  grid-area: delete;
+}
+
+.moviemasher-frame {
+  grid-area: frame;
+}
+
+.moviemasher-paste {
+  grid-area: paste;
+}
+
+.moviemasher-redo {
+  grid-area: redo;
+}
+
+.moviemasher-render {
+  grid-area: render;
+}
+
+.moviemasher-save {
+  grid-area: save;
+}
+
+.moviemasher-split {
+  grid-area: split;
+}
+
+.moviemasher-undo {
+  grid-area: undo;
+}

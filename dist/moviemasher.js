@@ -417,15 +417,16 @@
   (function (EventType) {
       EventType["Action"] = "action";
       EventType["Canvas"] = "canvaschange";
-      EventType["Ended"] = "ended";
       EventType["Duration"] = "durationchange";
+      EventType["Ended"] = "ended";
       EventType["Fps"] = "ratechange";
       EventType["Loaded"] = "loadeddata";
+      EventType["Mash"] = "mashchange";
       EventType["Pause"] = "pause";
       EventType["Play"] = "play";
       EventType["Playing"] = "playing";
-      EventType["Seeking"] = "seeking";
       EventType["Seeked"] = "seeked";
+      EventType["Seeking"] = "seeking";
       EventType["Selection"] = "selection";
       EventType["Time"] = "timeupdate";
       EventType["Track"] = "track";
@@ -1370,21 +1371,19 @@
           this.undoInsertIndex = undoInsertIndex;
           this.undoTrackIndex = undoTrackIndex;
       }
-      addClips(trackIndex, insertIndex) {
-          this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex);
+      addClips(trackIndex, insertIndex, frames) {
+          this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames);
       }
-      setFrames(frames) {
-          this.clips.forEach((clip, index) => { clip.frame = frames[index]; });
-      }
+      // setFrames(frames : number[]) : void {
+      //   this.clips.forEach((clip, index) => { clip.frame = frames[index] })
+      // }
       redoAction() {
-          if (this.redoFrames)
-              this.setFrames(this.redoFrames);
-          this.addClips(this.trackIndex, this.insertIndex);
+          // if (this.redoFrames) this.setFrames(this.redoFrames)
+          this.addClips(this.trackIndex, this.insertIndex, this.redoFrames);
       }
       undoAction() {
-          if (this.undoFrames)
-              this.setFrames(this.undoFrames);
-          this.addClips(this.undoTrackIndex, this.undoInsertIndex);
+          // if (this.undoFrames) this.setFrames(this.undoFrames)
+          this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames);
       }
   }
 
@@ -4756,7 +4755,7 @@
               this._visibleContext = visibleContext;
           }
       }
-      addClipsToTrack(clips, trackIndex = 0, insertIndex = 0) {
+      addClipsToTrack(clips, trackIndex = 0, insertIndex = 0, frames) {
           // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
           this.assureClipsHaveFrames(clips);
           const [clip] = clips;
@@ -4769,6 +4768,8 @@
                   // console.log("addClipsToTrack", newTrack.index, oldTrack.index)
                   oldTrack.removeClips(clips);
               }
+              if (frames)
+                  clips.forEach((clip, index) => { clip.frame = frames[index]; });
               newTrack.addClips(clips, insertIndex);
           });
       }
@@ -5736,6 +5737,7 @@
               this._actions.mash = this._mash;
           }
           this.selectedClips = []; // so mash gets copied into _pristine
+          this.visibleContext.emit(exports.EventType.Mash);
           this.goToTime(Time.fromArgs(0, this.fps));
           if (this.autoplay)
               this.paused = false;

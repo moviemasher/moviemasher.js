@@ -17,11 +17,11 @@
     "canvas",
     "composite"
   ],
+  "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
-  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"
   },
@@ -67,8 +67,6 @@
     "rollup": "^2.52.3",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",
@@ -83,8 +81,7 @@
     "dist"
   ],
   "workspaces": [
-    "./develop/workspaces/*",
+    "**/workspaces/*",
     "./packages/*"
-  ],
-  "dependencies": {}
+  ]
 }

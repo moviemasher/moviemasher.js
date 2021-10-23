@@ -8,10 +8,9 @@ import { GenericFactory, LoadPromise } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Clip } from "../Mixin/Clip/Clip"
 import { Audible } from "../Mixin/Audible/Audible"
-import { Action } from "../../Editing/Action/Action";
-import { Composition } from "../../Playing/Composition";
-import { Visible } from "../Mixin/Visible/Visible";
-import { TrackRange } from "../../Utilities/TrackRange"
+import { Action } from "../../Editing/Action/Action"
+import { Composition } from "../../Playing/Composition"
+import { Visible } from "../Mixin/Visible/Visible"
 import { TimeRange } from "../../Utilities/TimeRange"
 
 interface MashObject extends InstanceObject {
@@ -39,7 +38,7 @@ interface MashDefinition extends Definition {
 }
 
 interface Mash extends Instance {
-  addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number) : void
+  addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number, frames? : number[]) : void
   addTrack(trackType : TrackType) : Track
   audibleContext : AudibleContext
   audio: Track[]
@@ -55,7 +54,9 @@ interface Mash extends Instance {
   destroy() : void
   drawnTime? : Time
   duration : number
-  endTime : Time
+  endTime: Time
+  frame: number
+  frames: number
   handleAction(action : Action) : void
   load() : LoadPromise
   loadedDefinitions : DefinitionTimes

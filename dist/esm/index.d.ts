@@ -336,15 +336,16 @@ declare const DefinitionTypes: DefinitionType[];
 declare enum EventType {
     Action = "action",
     Canvas = "canvaschange",
-    Ended = "ended",
     Duration = "durationchange",
+    Ended = "ended",
     Fps = "ratechange",
     Loaded = "loadeddata",
+    Mash = "mashchange",
     Pause = "pause",
     Play = "play",
     Playing = "playing",
-    Seeking = "seeking",
     Seeked = "seeked",
+    Seeking = "seeking",
     Selection = "selection",
     Time = "timeupdate",
     Track = "track",
@@ -1095,7 +1096,7 @@ interface MashDefinition extends Definition {
     instanceFromObject(object: MashObject): Mash;
 }
 interface Mash extends Instance {
-    addClipsToTrack(clips: Clip[], trackIndex?: number, insertIndex?: number): void;
+    addClipsToTrack(clips: Clip[], trackIndex?: number, insertIndex?: number, frames?: number[]): void;
     addTrack(trackType: TrackType): Track;
     audibleContext: AudibleContext;
     audio: Track[];
@@ -1112,6 +1113,8 @@ interface Mash extends Instance {
     drawnTime?: Time;
     duration: number;
     endTime: Time;
+    frame: number;
+    frames: number;
     handleAction(action: Action): void;
     load(): LoadPromise;
     loadedDefinitions: DefinitionTimes;
@@ -1681,7 +1684,7 @@ declare class ImageClass extends ImageWithTransformable {
 }
 declare class MashClass extends InstanceClass implements Mash {
     constructor(...args: Any[]);
-    addClipsToTrack(clips: Clip[], trackIndex?: number, insertIndex?: number): void;
+    addClipsToTrack(clips: Clip[], trackIndex?: number, insertIndex?: number, frames?: number[]): void;
     addTrack(trackType: TrackType): Track;
     private assureClipsHaveFrames;
     private _audibleContext?;
@@ -3049,8 +3052,10 @@ declare class MoveClipsAction extends Action {
     undoInsertIndex: number;
     undoFrames?: number[];
     redoFrames?: number[];
-    addClips(trackIndex: number, insertIndex: number): void;
-    setFrames(frames: number[]): void;
+    addClips(trackIndex: number, insertIndex: number, frames?: number[]): void;
+    // setFrames(frames : number[]) : void {
+    //   this.clips.forEach((clip, index) => { clip.frame = frames[index] })
+    // }
     redoAction(): void;
     undoAction(): void;
 }

@@ -84,7 +84,7 @@ class MashClass extends InstanceClass implements Mash {
     }
   }
 
-  addClipsToTrack(clips: Clip[], trackIndex = 0, insertIndex = 0): void {
+  addClipsToTrack(clips: Clip[], trackIndex = 0, insertIndex = 0, frames? : number[]): void {
     // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
     this.assureClipsHaveFrames(clips)
     const [clip] = clips
@@ -98,6 +98,7 @@ class MashClass extends InstanceClass implements Mash {
         // console.log("addClipsToTrack", newTrack.index, oldTrack.index)
         oldTrack.removeClips(clips)
       }
+      if (frames) clips.forEach((clip, index) => { clip.frame = frames[index] })
       newTrack.addClips(clips, insertIndex)
     })
   }

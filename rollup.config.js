@@ -1,6 +1,6 @@
 import ts from "rollup-plugin-ts"
 import { terser } from 'rollup-plugin-terser'
-import pkg from "./package.json";
+import pkg from "./package.json"
 import { builtinModules } from "module";
 import path from "path"
 import json from "@rollup/plugin-json"

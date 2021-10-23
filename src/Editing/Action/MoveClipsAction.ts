@@ -46,22 +46,22 @@ class MoveClipsAction extends Action {
 
   redoFrames? : number[]
 
-  addClips(trackIndex : number, insertIndex : number) : void {
-    this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex)
+  addClips(trackIndex : number, insertIndex : number, frames?: number[]) : void {
+    this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames)
   }
 
-  setFrames(frames : number[]) : void {
-    this.clips.forEach((clip, index) => { clip.frame = frames[index] })
-  }
+  // setFrames(frames : number[]) : void {
+  //   this.clips.forEach((clip, index) => { clip.frame = frames[index] })
+  // }
 
   redoAction() : void {
-    if (this.redoFrames) this.setFrames(this.redoFrames)
-    this.addClips(this.trackIndex, this.insertIndex)
+    // if (this.redoFrames) this.setFrames(this.redoFrames)
+    this.addClips(this.trackIndex, this.insertIndex, this.redoFrames)
   }
 
   undoAction() : void {
-    if (this.undoFrames) this.setFrames(this.undoFrames)
-    this.addClips(this.undoTrackIndex, this.undoInsertIndex)
+    // if (this.undoFrames) this.setFrames(this.undoFrames)
+    this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames)
   }
 }
 export { MoveClipsAction }
