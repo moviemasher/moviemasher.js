@@ -6,3 +6,4 @@ vendor*
 coverage*
 **/__image_snapshots__*
 *.cache/*
+**/raw/*

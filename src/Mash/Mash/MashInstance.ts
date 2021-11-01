@@ -21,15 +21,13 @@ import { Mash, MashDefinition, MashOptions } from "./Mash"
 import { Id } from "../../Utilities/Id"
 import { Definitions } from "../Definitions/Definitions"
 import { Action } from "../../Editing/Action/Action";
-import { TrackRange } from "../../Utilities/TrackRange"
 
 class MashClass extends InstanceClass implements Mash {
   constructor(...args: Any[]) {
-
     super(...args)
     this._id ||= Id()
 
-    // console.log("Mash constructor", this.id)
+    console.log(this.constructor.name, "constructor", this.id)
 
     const object = args[0] || {}
     const {
@@ -40,7 +38,7 @@ class MashClass extends InstanceClass implements Mash {
       media,
       quantize,
       video,
-      audibleContext,
+      // audibleContext,
       buffer,
       gain,
       visibleContext,
@@ -77,7 +75,7 @@ class MashClass extends InstanceClass implements Mash {
     if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
     if (typeof gain !== "undefined" && Is.positive(gain)) this._gain = gain
 
-    if (audibleContext) this._audibleContext = audibleContext
+    // if (audibleContext) this._audibleContext = audibleContext
     if (visibleContext) {
       // console.log("Mash constructor visibleContext")
       this._visibleContext = visibleContext
@@ -123,20 +121,20 @@ class MashClass extends InstanceClass implements Mash {
 
   private _audibleContext?: AudibleContext
 
-  get audibleContext(): AudibleContext {
-    if (!this._audibleContext) {
-      this._audibleContext = ContextFactory.audible()
-      if (this._composition) this.composition.audibleContext = this._audibleContext
-    }
-    return this._audibleContext
-  }
+  // get audibleContext(): AudibleContext {
+  //   if (!this._audibleContext) {
+  //     this._audibleContext = ContextFactory.audible()
+  //     if (this._composition) this.composition.audibleContext = this._audibleContext
+  //   }
+  //   return this._audibleContext
+  // }
 
-  set audibleContext(value: AudibleContext) {
-    if (this._audibleContext !== value) {
-      this._audibleContext = value
-      if (this._composition) this.composition.audibleContext = value
-    }
-  }
+  // set audibleContext(value: AudibleContext) {
+  //   if (this._audibleContext !== value) {
+  //     this._audibleContext = value
+  //     if (this._composition) this.composition.audibleContext = value
+  //   }
+  // }
 
   audio: Track[] = []
 
@@ -287,7 +285,7 @@ class MashClass extends InstanceClass implements Mash {
   get composition(): Composition {
     if (!this._composition) {
       const options = {
-        audibleContext: this.audibleContext,
+        // audibleContext: this.audibleContext,
         backcolor: this.backcolor,
         buffer: this.buffer,
         gain: this.gain,
@@ -313,7 +311,7 @@ class MashClass extends InstanceClass implements Mash {
 
   destroy(): void {
     delete this._visibleContext
-    delete this._audibleContext
+    // delete this._audibleContext
     delete this._composition
   }
 
@@ -325,7 +323,10 @@ class MashClass extends InstanceClass implements Mash {
     const time = this.time.withFrame(this.time.frame + 1)
     const seconds = this.playing ? this.composition.seconds : time.seconds
     if (seconds < this.endTime.seconds) {
-      if (seconds >= time.seconds) this.drawTime(time)
+      if (seconds >= time.seconds) {
+        this.drawTime(time)
+        this.compositeAudible()
+      }
     } else {
       // console.log(this.constructor.name, "drawAtInterval finished at", seconds, this.endTime.seconds)
       if (this.loop) this.seekToTime(this.time.withFrame(0))

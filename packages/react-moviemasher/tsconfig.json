@@ -5,7 +5,8 @@
     "target": "ES6",
     "module": "ESNext",
     "esModuleInterop": true,
-    "declaration": false,
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
     "alwaysStrict": true,
     "allowJs": false,
@@ -14,7 +15,7 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"],
+  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "develop/workspaces/php/index.jsx"],
   "exclude": ["node_modules/*", "svg/*"],
   "debug": true
 }

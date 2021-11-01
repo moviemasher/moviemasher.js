@@ -5,12 +5,12 @@ import { ScalarValue, TextStyle, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Playing"
-import { FontFactoryImplementation } from "../../Font/FontFactory"
+import { fontDefinitionFromId } from "../../Font/FontFactory"
 
 const mmFontFile = (id? : ScalarValue) : string => {
   if (!Is.populatedString(id)) throw Errors.id
 
-  return FontFactoryImplementation.definitionFromId(<string> id).source
+  return fontDefinitionFromId(<string> id).source
 }
 
 const mmTextFile = (text? : ScalarValue) : string => String(text)
@@ -41,8 +41,6 @@ class DrawTextFilter extends FilterDefinitionClass {
 
     return context
   }
-
-  // id = 'drawtext'
 
   parameters = [
     new Parameter({ name: "fontcolor", value: "#000000" }),

@@ -5,7 +5,6 @@ import {
 
 
 interface TimelineContextInterface {
-  actionNonce: number
   height : number
   setHeight: NumberSetter
   setWidth: NumberSetter
@@ -15,7 +14,6 @@ interface TimelineContextInterface {
 }
 
 const TimelineContextDefault: TimelineContextInterface = {
-  actionNonce: 0,
   height: 0,
   setHeight: () => {},
   setWidth: () => {},

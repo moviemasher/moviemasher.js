@@ -1,5 +1,4 @@
 {
-
   "boolean": { "value": false },
   "direction4": {
     "values": [
@@ -50,7 +49,6 @@
   "number": { "value": 0 },
   "pixel": { "value": 0.0 },
   "rgb": { "value": "rgb(0, 0, 0)" },
-  "hex": { "value": "#000000" },
   "rgba": { "value": "rgba(0, 0, 0, 1)" },
   "string": { "value": "" },
   "text": { "value": "" }

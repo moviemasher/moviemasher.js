@@ -18,7 +18,6 @@ class FontDefinitionClass extends DefinitionClass {
     if (!source) throw Errors.invalid.definition.source + JSON.stringify(object)
 
     this.source = source
-
     Definitions.install(this)
   }
 
@@ -27,10 +26,8 @@ class FontDefinitionClass extends DefinitionClass {
   }
 
   instanceFromObject(object : FontObject) : Font {
-    const instance = new FontClass({ ...this.instanceObject, ...object })
-    return instance
+    return new FontClass({ ...this.instanceObject, ...object })
   }
-
 
   load(start : Time, end? : Time) : LoadPromise {
     const promises = [super.load(start, end)]

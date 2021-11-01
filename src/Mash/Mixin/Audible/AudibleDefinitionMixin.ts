@@ -14,7 +14,7 @@ function AudibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base:
     constructor(...args : Any[]) {
       super(...args)
       const [object] = args
-      const { loops, duration, url, audio, source, waveform } = <AudibleDefinitionObject> object
+      const { stream, loops, duration, url, audio, source, waveform } = <AudibleDefinitionObject> object
       if (!duration) throw Errors.invalid.definition.duration
 
       this.duration = Number(duration)
@@ -24,7 +24,8 @@ function AudibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base:
 
       this.urlAudible = urlAudible
 
-      if (loops) this.loops = !!loops
+      if (stream) this.stream = true
+      if (loops) this.loops = true
       if (source) this.source = source
       if (waveform) this.waveform = waveform
 
@@ -34,6 +35,7 @@ function AudibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base:
 
     audible = true
 
+    // TODO: support streaming audio
     load(start : Time, end? : Time) : LoadPromise {
       const promises = [super.load(start, end)]
       if (end) {
@@ -44,6 +46,7 @@ function AudibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base:
       }
       return Promise.all(promises).then()
     }
+
     loaded(start : Time, end? : Time) : boolean {
       return super.loaded(start, end) && Cache.cached(this.urlAudible)
     }
@@ -55,6 +58,8 @@ function AudibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base:
     loops = false
 
     source? : string
+
+    stream = false
 
     toJSON() : JsonObject {
       const object = super.toJSON()

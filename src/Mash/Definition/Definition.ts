@@ -21,7 +21,7 @@ class DefinitionClass {
     if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + JSON.stringify(object)
     this.id = id
 
-    if (label) this.label = label
+    this.label = label || id
     if (icon) this.icon = icon
 
     this.properties.push(new Property({ name: "label", type: DataType.String, value: "" }))
@@ -49,7 +49,7 @@ class DefinitionClass {
     return object
   }
 
-  label? : string
+  label : string
 
   load(_start : Time, _end? : Time) : LoadPromise { return Promise.resolve() }
 
@@ -72,7 +72,7 @@ class DefinitionClass {
   toJSON() : JsonObject {
     const object : JsonObject = { id: this.id, type: this.type }
     if (this.icon) object.icon = this.icon
-    if (this.label) object.label = this.label
+    if (this.label !== this.id) object.label = this.label
     return object
   }
 

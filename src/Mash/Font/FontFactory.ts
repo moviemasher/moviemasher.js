@@ -40,6 +40,7 @@ const fontDefine = (object : FontDefinitionObject) : FontDefinition => {
 
 const FontFactoryImplementation = {
   define: fontDefine,
+  install: fontDefine,
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
   fromId: fontFromId,
@@ -51,6 +52,7 @@ Factories.font = FontFactoryImplementation
 
 export {
   fontDefine,
+  fontDefine as fontInstall,
   fontDefinition,
   fontDefinitionFromId,
   FontFactoryImplementation,

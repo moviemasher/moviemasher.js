@@ -3,12 +3,9 @@ import livereload from "rollup-plugin-livereload"
 import copy from 'rollup-plugin-copy'
 const outputDir = 'public'
 
-const livereloadOptions = {
-  watch: "src",
-  verbosity: 'debug'
-};
 
-const livereloadPlugin = livereload(livereloadOptions);
+const livereloadPlugin = livereload({ watch: "src", verbosity: 'debug' })
+
 export default {
   input: 'src/index.js',
 
@@ -28,7 +25,7 @@ export default {
     serve({
       open: true,
       verbose: true,
-      contentBase: [outputDir, "../../../dist", "../../Assets"],
+      contentBase: [outputDir, "../../../dist", "../../assets/raw"],
       host: "localhost",
       port: 7057,
     }),

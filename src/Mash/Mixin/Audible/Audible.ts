@@ -17,11 +17,12 @@ interface Audible extends Clip {
 }
 
 interface AudibleDefinitionObject extends ClipDefinitionObject {
-  duration? : ScalarValue
-  url? : string
   audio? : string
+  duration? : ScalarValue
+  loops?: boolean
   source? : string
-  loops? : boolean
+  stream?: boolean
+  url? : string
   waveform? : string
 }
 
@@ -29,7 +30,8 @@ interface AudibleDefinition extends ClipDefinition {
   audible : boolean
   duration : number
   loops : boolean
-  loadedAudible(_time?: Time) : AudioBuffer | undefined
+  loadedAudible(_time?: Time): AudioBuffer | undefined
+  stream: boolean
   waveform? : string
 }
 

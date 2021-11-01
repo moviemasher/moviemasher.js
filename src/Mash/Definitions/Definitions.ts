@@ -44,20 +44,17 @@ const definitionsMerger = definitionsByType(DefinitionType.Merger)
 const definitionsScaler = definitionsByType(DefinitionType.Scaler)
 
 const definitionsUninstall = (id : string) : void => {
-  if (!definitionsInstalled(id)) {
-    console.log("definitionsUninstall", id)
-    return
-  }
-  const definition = definitionsFromId(id)
+  if (!definitionsInstalled(id)) return
 
+  const definition = definitionsFromId(id)
   definitionsMap.delete(id)
   const { type } = definition
   const definitions = definitionsByType(type)
   const index = definitions.indexOf(definition)
   if (index < 0) throw Errors.internal + 'definitionsUninstall'
 
+  // console.log("definitionsUninstall", definition.label || definition.id)
   definitions.splice(index, 1)
-  // console.log("uninstalled", id)
 }
 
 const Definitions = {

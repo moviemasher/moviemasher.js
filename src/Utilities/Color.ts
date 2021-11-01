@@ -12,7 +12,7 @@ const yuvNumeric = (rgb : YuvObject) : Yuv => ({
   y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
 })
 
-const yuv2rgb = (yuv : YuvObject) : Rgb => {
+const colorYuv2rgb = (yuv : YuvObject) : Rgb => {
   const floats = yuvNumeric(yuv)
   return rgbNumeric({
     r: floats.y + 1.4075 * (floats.v - 128),
@@ -21,7 +21,8 @@ const yuv2rgb = (yuv : YuvObject) : Rgb => {
   })
 }
 
-const rgb2hex = (rgb : RgbObject) : string => {
+const colorRgb2hex = (rgb: RgbObject): string => {
+  // unused after 5.0 refactor, but perhaps needed?
   let r = rgb.r.toString(16);
   let g = rgb.g.toString(16);
   let b = rgb.b.toString(16);
@@ -31,7 +32,7 @@ const rgb2hex = (rgb : RgbObject) : string => {
   return `#${r}${g}${b}`;
 }
 
-const yuvBlend = (yuvs : YuvObject[], yuv : YuvObject, match : number, blend : number) : number => {
+const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, match : number, blend : number) : number => {
   let diff = 0.0
   const blendYuv = yuvNumeric(yuv)
   yuvs.forEach(yuvObject => {
@@ -48,7 +49,7 @@ const yuvBlend = (yuvs : YuvObject[], yuv : YuvObject, match : number, blend : n
   return (diff > match) ? 255 : 0
 }
 
-const rgb2yuv = (rgb : RgbObject) : Yuv => {
+const colorRgb2yuv = (rgb : RgbObject) : Yuv => {
   const ints = rgbNumeric(rgb)
   return {
     y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
@@ -57,11 +58,39 @@ const rgb2yuv = (rgb : RgbObject) : Yuv => {
   }
 }
 
-const Color = {
-  yuvBlend,
-  rgb2yuv,
-  yuv2rgb,
-  rgb2hex, // unused after 4.1 refactor, but perhaps needed?
+const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
+
+
+const colorValid = (color: string): boolean => {
+  const colorStripped = colorStrip(color)
+  const style = new Option().style
+  style.color = color
+  const styleStripped = colorStrip(style.color)
+  if (!styleStripped) return false
+
+  if (styleStripped.startsWith('rgb')) return true
+
+  return styleStripped === colorStripped
 }
 
-export { Color }
+const colorTransparent = '#00000000'
+
+const Color = {
+  valid: colorValid,
+  yuvBlend: colorYuvBlend,
+  rgb2yuv: colorRgb2yuv,
+  yuv2rgb: colorYuv2rgb,
+  rgb2hex: colorRgb2hex,
+  transparent: colorTransparent,
+  strip: colorStrip,
+}
+export {
+  Color,
+  colorStrip,
+  colorValid,
+  colorRgb2hex,
+  colorYuv2rgb,
+  colorRgb2yuv,
+  colorYuvBlend,
+  colorTransparent,
+}

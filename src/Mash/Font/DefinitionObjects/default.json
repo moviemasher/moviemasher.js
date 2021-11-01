@@ -1,6 +1,6 @@
 {
-  "label": "Baloo Tammudu 2",
+  "label": "Lobster",
   "id": "com.moviemasher.font.default",
-  "type":"font",
-  "source": "Assets/BlackoutTwoAM.ttf"
+  "type": "font",
+  "source": "https://fonts.gstatic.com/s/lobster/v23/neILzCirqoswsqX9zoKmM4MwWJU.woff2"
 }

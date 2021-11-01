@@ -57,12 +57,22 @@ const audioDefine = (object : AudioDefinitionObject) : AudioDefinition => {
   return audioDefinition(object)
 }
 
+/**
+ * @internal
+ */
+const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
+  const instance = audioDefine(object)
+  instance.retain = true
+  return instance
+}
+
 const AudioFactoryImplementation = {
   define: audioDefine,
   definition: audioDefinition,
   definitionFromId: audioDefinitionFromId,
   fromId: audioFromId,
   initialize: audioInitialize,
+  install: audioInstall,
   instance: audioInstance,
 }
 
@@ -75,6 +85,7 @@ export {
   audioDefinitionFromId,
   AudioFactoryImplementation,
   audioFromId,
+  audioInstall,
   audioInitialize,
   audioInstance,
 }

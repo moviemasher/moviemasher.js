@@ -1,4 +1,4 @@
-import { Context2D, ContextElement, DrawingSource, GenericFactory, LoadPromise, SelectionObject, SelectionValue, UnknownObject } from "../../declarations"
+import { Context2D, ContextElement, DrawingSource, GenericFactory, LoadPromise, MasherChangeHandler, SelectionObject, SelectionValue, UnknownObject } from "../../declarations"
 import { Mash } from "../Mash/Mash"
 import { Clip } from "../Mixin/Clip/Clip"
 import { AudibleContext, VisibleContext } from "../../Playing"
@@ -10,7 +10,7 @@ import { Time, TimeRange, TrackRange } from "../../Utilities"
 
 
 interface MasherObject extends InstanceObject {
-  audibleContext? : AudibleContext
+  // audibleContext? : AudibleContext
   autoplay?: boolean
   buffer?: number
   canvas? : ContextElement
@@ -30,12 +30,12 @@ interface Masher extends Instance {
   addClip(clip : Clip, frameOrIndex? : number, trackIndex? : number) : LoadPromise
   addEffect(effect : Effect, insertIndex? : number) : LoadPromise
   addTrack(trackType : TrackType) : void
-  audibleContext : AudibleContext
+  // audibleContext : AudibleContext
   autoplay : boolean
   buffer : number
   can(method : string) : boolean
   canvas : ContextElement
-  change(property : string, value? : SelectionValue) : void
+  change: MasherChangeHandler
   changeClip(property : string, value? : SelectionValue, clip? : Clip) : void
   changeEffect(property : string, value? : SelectionValue, effect? : Effect) : void
   changeMash(property: string, value?: SelectionValue): void
@@ -72,7 +72,8 @@ interface Masher extends Instance {
   select(object : ClipOrEffect | undefined, toggleSelected? : boolean) : void
   selectClip(clip : Clip | undefined, toggleSelected? : boolean) : void
   selectEffect(effect : Effect | undefined, toggleSelected? : boolean) : void
-  selectMash() : void
+  selectMash(): void
+  selected: Clip | Effect | Mash
   selectedClipsOrEffects : Clip[] | Effect[]
   selectedClip : Clip | UnknownObject
   selectedClipOrMash : Clip | Mash

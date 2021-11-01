@@ -65,27 +65,36 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
     return new VideoClass({ ...this.instanceObject, ...object })
   }
 
-  load(start : Time, end? : Time) : LoadPromise {
-    const promises = [super.load(start, end)]
-    const frames = this.frames(start, end)
-    frames.forEach(frame => {
-      const url = this.urlForFrame(frame)
-      if (Cache.cached(url)) {
-        const cached = Cache.get(url)
-        if (cached instanceof Promise) promises.push(cached)
-      } else promises.push(LoaderFactory.image().loadUrl(url))
-    })
+  load(start: Time, end?: Time): LoadPromise {
+    const promises: LoadPromise[] = []
+    if (!this.stream) promises.push(super.load(start, end))
+
+    if (this.stream) promises.push(LoaderFactory.video().loadUrl(this.url))
+    else {
+      this.frames(start, end).map(frame => this.urlForFrame(frame)).forEach(url => {
+        if (Cache.cached(url)) {
+          const cached = Cache.get(url)
+          if (cached instanceof Promise) promises.push(cached)
+        } else promises.push(LoaderFactory.image().loadUrl(url))
+      })
+    }
     return Promise.all(promises).then()
   }
 
-  loaded(start : Time, end? : Time) : boolean {
-    if (!super.loaded(start, end)) return false
+  loaded(start: Time, end?: Time): boolean {
+    const checkUrls = []
+    if (this.stream) checkUrls.push(this.url)
+    else {
+      if (!super.loaded(start, end)) return false
 
-    return this.frames(start, end).every(frame => Cache.cached(this.urlForFrame(frame)))
+      checkUrls.push(...this.frames(start, end).map(frame => this.urlForFrame(frame)))
+    }
+    return checkUrls.every(url => Cache.cached(url))
   }
 
   loadedVisible(time? : Time) : DrawingSource | undefined {
     if (!time) throw Errors.internal
+    if (this.stream) return Cache.get(this.url)
     const [url] = this.urls(time)
     return Cache.get(url)
   }
@@ -93,6 +102,7 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
   pattern = '%.jpg'
 
   source = ''
+
 
   trackType = TrackType.Video
 
@@ -109,7 +119,13 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
     return object
   }
 
-  unload(times? : Times[]) : void {
+  unload(times?: Times[]): void {
+
+    // TODO: better handle unloading of single stream file
+    if (this.stream) {
+      Cache.remove(this.url)
+      return
+    }
     const zeroTime = Time.fromArgs(0, this.fps)
     const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax))
     const deleting = new Set(allUrls.filter(url => Cache.cached(url)))

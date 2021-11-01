@@ -1,0 +1,410 @@
+/* colors.css */
+
+:root {
+  --moviemasher-back-primary: hsl(0, 0%, 20%);
+  --moviemasher-back-secondary: hsl(0, 0%, 15%);
+  --moviemasher-back-tertiary: hsl(0, 0%, 10%);
+  --moviemasher-fore-primary: #ababab;
+  --moviemasher-fore-secondary: #cfcfcf;
+  --moviemasher-fore-tertiary: #e9e9e9;
+  --moviemasher-color: #758caa;
+  --moviemasher-color-pop: #a2c3ee;
+  --moviemasher-color-mute: #476780;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --moviemasher-back-primary: hsl(0, 0%, 97%);
+    --moviemasher-back-secondary: hsl(0, 0%, 92%);
+    --moviemasher-back-tertiary: hsl(0, 0%, 88%);
+    --moviemasher-fore-primary: #1d1d1d;
+    --moviemasher-fore-secondary: #2c2c2c;
+    --moviemasher-fore-tertiary: #545454;
+    /* --moviemasher-color: #758caa;
+    --moviemasher-color-pop: #a2c3ee;
+    --moviemasher-color-mute: #476780; */
+  }
+}
+/* dimensions.css */
+
+:root {
+  --moviemasher-border-size: 1px;
+  --moviemasher-border-radius: calc(5 * var(--moviemasher-border-size));
+  --moviemasher-spacing: 20px;
+  --moviemasher-padding: 40px;
+  --moviemasher-spacing-controls: 4px;
+  --moviemasher-padding-controls: 2px;
+  --moviemasher-padding-button-factor: 4;
+  --moviemasher-spacing-content: 10px;
+  --moviemasher-padding-content: 20px;
+  --moviemasher-width-preview: 480px;
+  --moviemasher-height-preview: 270px;
+  --moviemasher-height-scrub: 16px;
+  --moviemasher-width-inspector: 240px;
+  --moviemasher-icon-size: 24px;
+  --moviemasher-button-size: 24px;
+  --moviemasher-border: var(--moviemasher-border-size) solid var(--moviemasher-fore-primary);
+}
+/* layout.css */
+
+.moviemasher-app * { box-sizing: border-box; }
+
+.moviemasher-app {
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    "player browser inspector"
+    "timeline timeline inspector";
+  grid-column-gap: var(--moviemasher-spacing);
+  grid-template-columns:
+    calc(
+      var(--moviemasher-width-preview)
+      + (var(--moviemasher-border-size) * 2)
+    )
+    1fr
+    var(--moviemasher-width-inspector);
+  grid-row-gap: var(--moviemasher-spacing);
+  grid-template-rows:
+    calc(
+      var(--moviemasher-height-preview)
+      + var(--moviemasher-icon-size)
+      + (var(--moviemasher-padding-controls) * 2)
+      + (var(--moviemasher-border-size) * 3)
+    )
+    1fr;
+  padding: var(--moviemasher-padding);
+  background-color: var(--moviemasher-back-primary);
+  color: var(--moviemasher-fore-tertiary);
+}
+
+.moviemasher-panel {
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+  background-color: var(--moviemasher-back-secondary);
+}
+
+.moviemasher-head {
+  grid-area: head;
+  border-bottom: var(--moviemasher-border);
+}
+
+.moviemasher-foot {
+  grid-area: foot;
+  border-top: var(--moviemasher-border);
+}
+
+.moviemasher-foot,
+.moviemasher-head {
+  background-color: var(--moviemasher-back-tertiary);
+}
+
+.moviemasher-content { grid-area: content; }
+
+.moviemasher-controls {
+  display: grid;
+  padding: var(--moviemasher-padding-controls);
+  column-gap: var(--moviemasher-spacing-controls);
+}
+
+.moviemasher-control {
+  min-width: var(--moviemasher-icon-size);
+  height: var(--moviemasher-icon-size);
+  background-color: transparent;
+  padding: 0px;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.3rem;
+  border: none;
+}
+
+.moviemasher-button {
+  color: var(--moviemasher-color-mute);
+  margin: 0px;
+  height: var(--moviemasher-icon-size);
+}
+
+.moviemasher-button:hover {
+  color: var(--moviemasher-color);
+  border-color: var(--moviemasher-color);
+}
+
+.moviemasher-button-icon {
+  line-height: var(--moviemasher-button-size);
+  display: inline-block;
+  color: var(--moviemasher-color-mute);
+}
+
+.moviemasher-selected {
+  color: var(--moviemasher-color-pop);
+  border-color: var(--moviemasher-color-pop);
+}
+
+.moviemasher-selected:hover {
+  color: var(--moviemasher-color-mute);
+  border-color: var(--moviemasher-color-mute);
+}
+
+
+button.moviemasher-button-text>.moviemasher-button-icon {
+  font-size: 20px;
+}
+
+button.moviemasher-button-text>.moviemasher-button-icon-start {
+  margin: 0px 8px 0px -4px;
+}
+
+button.moviemasher-button-text>.moviemasher-button-icon-end {
+  margin: 0px -4px 0px 8px;
+}
+
+.moviemasher-timeline button.moviemasher-button {
+  height: var(--moviemasher-button-size);
+  padding: 5px 15px;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--moviemasher-color-mute);
+  border-radius: 4px;
+}
+
+.moviemasher-timeline .moviemasher-clip {
+  overflow: hidden;
+}
+
+
+.moviemasher-browser {
+  grid-area: browser;
+  grid-template-rows: calc(
+    (var(--moviemasher-padding-controls) * 2) + var(--moviemasher-button-size)
+  ) 1fr;
+  grid-template-areas: "head" "content";
+}
+
+.moviemasher-browser .moviemasher-head {
+  padding: var(--moviemasher-padding-controls);
+}
+
+.moviemasher-browser .moviemasher-controls {
+  grid-template-areas: "theme image audio video effect transition";
+  grid-auto-columns: var(--moviemasher-icon-size);
+}
+
+.moviemasher-browser .moviemasher-content {
+  padding: var(--moviemasher-padding-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  grid-auto-rows: 90px;
+  gap: var(--moviemasher-spacing-content);
+  overflow-y: auto;
+}
+
+
+.moviemasher-inspector {
+  grid-area: inspector;
+  grid-template-rows:
+    1fr
+    calc(
+      var(--moviemasher-button-size) +
+      (2 * (var(--moviemasher-padding-controls) + var(--moviemasher-border-size)))
+    );
+  grid-template-areas: "content" "foot";
+}
+.moviemasher-inspector label {
+  text-transform: capitalize;
+
+}
+.moviemasher-inspector label::after {
+  content: ': ';
+}
+
+.moviemasher-inspector .moviemasher-content {
+  overflow-y: auto;
+  padding: var(--moviemasher-padding-content);
+}
+
+.moviemasher-inspector .moviemasher-content > * {
+  margin-bottom: var(--moviemasher-spacing-content);
+}
+
+.moviemasher-input {
+  width: 100%;
+
+}
+
+.moviemasher-input input {
+  width: 100%;
+}
+
+.moviemasher-timeline {
+  isolation: isolate;
+  grid-area: timeline;
+  grid-template-areas: "head" "content" "foot";
+  grid-template-rows:
+    calc(
+      var(--moviemasher-button-size)
+      + var(--moviemasher-border-size)
+      + (
+          2
+          * var(--moviemasher-padding-button-factor)
+          * var(--moviemasher-padding-controls)
+        )
+    )
+    1fr
+    calc(
+      var(--moviemasher-icon-size)
+      + var(--moviemasher-border-size)
+      + (2 * var(--moviemasher-padding-controls))
+    );
+}
+
+.moviemasher-timeline .moviemasher-head {
+  padding: calc(
+    var(--moviemasher-padding-controls)
+    * var(--moviemasher-padding-button-factor)
+  );
+  grid-template-columns: repeat(9, auto) 1fr;
+  grid-template-areas: "undo redo cut copy paste delete split save render";
+}
+
+.moviemasher-timeline .moviemasher-content {
+  position: relative;
+  overflow: auto;
+  display: grid;
+  grid-template-areas: "scrub-pad scrub" "tracks tracks";
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+  grid-template-rows:
+    var(--moviemasher-height-scrub)
+    1fr
+  ;
+}
+
+.moviemasher-tracks {
+  grid-area: tracks;
+}
+
+.moviemasher-track {
+  display: grid;
+  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+
+}
+
+.moviemasher-track .moviemasher-track-icon {
+  background-color: var(--moviemasher-back-secondary);
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  border-right: var(--moviemasher-border);
+}
+
+.moviemasher-clips {
+  white-space: nowrap;
+}
+
+.moviemasher-drop {
+  background-color: var(--moviemasher-color-pop);
+}
+
+.moviemasher-definition,
+.moviemasher-clip {
+  display: inline-block;
+  padding: var(--moviemasher-padding-controls);
+  background-color: var(--moviemasher-back-tertiary);
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+}
+
+.moviemasher-clip label:after,
+.moviemasher-definition label:after {
+  content: var(--clip-label);
+}
+
+.moviemasher-scrub-pad,
+.moviemasher-scrub {
+  background-color: var(--moviemasher-back-secondary);
+  border-bottom: var(--moviemasher-border);position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+.moviemasher-scrub-pad {
+  grid-area: scrub-pad;
+  z-index: 2;
+}
+.moviemasher-scrub {
+  grid-area: scrub;
+  z-index: 3;
+}
+
+.moviemasher-scrub-bar-container {
+  pointer-events: none;
+  position: relative;
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.moviemasher-timeline-sizer {
+  pointer-events: none;
+  position: absolute;
+  left: var(--moviemasher-icon-size);
+  right: 0px;
+  top: var(--moviemasher-height-scrub);
+  bottom: 0px;
+}
+
+.moviemasher-app .MuiSvgIcon-root {
+  font-size: var(--moviemasher-icon-size);
+}
+
+.moviemasher-scrub .MuiSvgIcon-root {
+  font-size: var(--moviemasher-height-scrub);
+}
+.moviemasher-app .MuiSlider-root {
+  color: var(--moviemasher-color-mute);
+  padding: 11px;
+}
+
+.moviemasher-scrub-bar {
+  position: absolute;
+  width: 1px;
+  top: 0px;
+  bottom: 0px;
+  background-color:var(--moviemasher-color);
+}
+.moviemasher-scrub-icon {
+  margin-left: calc(0px - (var(--moviemasher-height-scrub) / 2));
+  position: absolute;
+  background-color: var(--moviemasher-color);
+  width: var(--moviemasher-height-scrub);
+  height: var(--moviemasher-height-scrub);
+  clip-path: polygon(3px 3px, calc(100% - 3px) 3px, 50% calc(100% - 3px));
+}
+
+.moviemasher-player {
+  grid-area: player;
+  grid-template-areas: "content" "foot";
+  /* grid-template-columns: 1fr; */
+  grid-template-rows: var(--moviemasher-height-preview) 1fr;
+}
+
+.moviemasher-player .moviemasher-controls {
+  grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
+  grid-template-areas: "paused frame volume";
+}
+
+.moviemasher-paused {
+  grid-area: paused;
+}
+
+.moviemasher-canvas {
+  background: repeating-conic-gradient(
+    var(--moviemasher-back-primary) 0% 25%, transparent 0% 50%
+  ) 50% / 20px 20px;
+  background-position: top left;
+  width: var(--moviemasher-width-preview);
+  height: var(--moviemasher-height-preview);
+}

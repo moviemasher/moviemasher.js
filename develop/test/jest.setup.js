@@ -2,7 +2,6 @@
 
 import { LoaderFactory } from "../../src/Loading/LoaderFactory"
 import { DefinitionTypes, LoadType } from "../../src/Setup/Enums"
-import { expectCanvas } from "../../src/Test/expectCanvas"
 import { FontLoaderTest } from "./FontLoaderTest"
 import { ImageLoaderTest } from "./ImageLoaderTest"
 import { Definitions } from "../../src/Mash/Definitions/Definitions"
@@ -56,6 +55,7 @@ fetchMock.mockResponse(req => {
 beforeEach(() => {
   Definitions.clear()
   DefinitionTypes.forEach(type => { MovieMasher[type].initialize() })
+  MovieMasher.font.define({ id: 'com.moviemasher.font.default', source: 'assets/raw/BlackoutTwoAM.ttf'})
 })
 
 LoaderFactory.install(LoadType.Font, FontLoaderTest)

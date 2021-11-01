@@ -88,6 +88,7 @@ enum LoadType {
   Font = 'font',
   Image = 'image',
   Module = 'module',
+  Video = 'video',
 }
 
 enum MoveType {
@@ -102,14 +103,12 @@ enum DataType {
   Direction8 = 'direction8',
   Font = 'font',
   Fontsize = 'fontsize',
-  Hex = 'hex',
   Integer = 'integer',
   Mode = 'mode',
   Number = 'number',
   Pixel = 'pixel',
   Rgb = 'rgb',
   Rgba = 'rgba',
-  Scalar = 'scalar',
   String = 'string',
   Text = 'text',
 }

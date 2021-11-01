@@ -8,13 +8,12 @@
     "declaration": false,
     "strict": true,
     "alwaysStrict": true,
-    "allowJs": false,
+    "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules/*", "svg/*"],
-  "debug": true
+  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "index.jsx"],
+  "exclude": ["**/node_modules/*", "svg/*"]
 }

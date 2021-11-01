@@ -3,24 +3,23 @@ import { EventType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../Utilities/View'
 import { TimelineContext, TimelineContextInterface } from './TimelineContext'
-import { MMContext } from '../App/MMContext'
+import { EditorContext } from '../Editor/EditorContext'
+import { Panel } from '../../declarations'
 
-interface TimelineProps extends UnknownObject { children : React.ReactNode }
 
-const MMTimeline: React.FC<TimelineProps> = props => {
+const MMTimeline: Panel = props => {
   const [zoom, setZoom] = React.useState(0)
   const [width, setWidth] = React.useState(0)
   const [height, setHeight] = React.useState(0)
-  const appContext = useContext(MMContext)
+  const appContext = useContext(EditorContext)
   const [canvas, setCanvas] = React.useState<HTMLCanvasElement | null>(null)
-  const [actionNonce, setActionNonce] = React.useState(0)
 
-  const handleAction = () => { setActionNonce(nonce => nonce + 1) }
 
   const listenCanvas = (value?: HTMLCanvasElement) => {
-    if (canvas) canvas.removeEventListener(EventType.Action, handleAction)
+    if (canvas) {
+
+    }
     if (value) {
-      value.addEventListener(EventType.Action, handleAction)
       setCanvas(value)
     }
   }
@@ -32,7 +31,6 @@ const MMTimeline: React.FC<TimelineProps> = props => {
     zoom,
     width,
     height,
-    actionNonce,
   }
   const { previewReference } = appContext
   const { children, ...rest } = props

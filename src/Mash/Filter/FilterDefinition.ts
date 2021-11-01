@@ -31,6 +31,8 @@ class FilterDefinitionClass extends DefinitionClass {
 
   parameters : Parameter[] = []
 
+  retain = true
+
   scopeSet(_evaluator : Evaluator) : void {}
 
   type = DefinitionType.Filter

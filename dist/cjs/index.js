@@ -2,25 +2,79 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
-  var n = Object.create(null);
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () {
-            return e[k];
-          }
-        });
-      }
+const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
+const rgbNumeric = (rgb) => ({
+    r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
+});
+const yuvNumeric = (rgb) => ({
+    y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
+});
+const colorYuv2rgb = (yuv) => {
+    const floats = yuvNumeric(yuv);
+    return rgbNumeric({
+        r: floats.y + 1.4075 * (floats.v - 128),
+        g: floats.y - 0.3455 * (floats.u - 128) - (0.7169 * (floats.v - 128)),
+        b: floats.y + 1.7790 * (floats.u - 128)
     });
-  }
-  n['default'] = e;
-  return Object.freeze(n);
-}
+};
+const colorRgb2hex = (rgb) => {
+    // unused after 5.0 refactor, but perhaps needed?
+    let r = rgb.r.toString(16);
+    let g = rgb.g.toString(16);
+    let b = rgb.b.toString(16);
+    if (r.length < 2)
+        r = `0${r}`;
+    if (g.length < 2)
+        g = `0${g}`;
+    if (b.length < 2)
+        b = `0${b}`;
+    return `#${r}${g}${b}`;
+};
+const colorYuvBlend = (yuvs, yuv, match, blend) => {
+    let diff = 0.0;
+    const blendYuv = yuvNumeric(yuv);
+    yuvs.forEach(yuvObject => {
+        const numericYuv = yuvNumeric(yuvObject);
+        const du = numericYuv.u - blendYuv.u;
+        const dv = numericYuv.v - blendYuv.v;
+        diff += Math.sqrt((du * du + dv * dv) / (255.0 * 255.0));
+    });
+    diff /= yuvs.length;
+    if (blend > 0.0001) {
+        return Math.min(1.0, Math.max(0.0, (diff - match) / blend)) * 255.0;
+    }
+    return (diff > match) ? 255 : 0;
+};
+const colorRgb2yuv = (rgb) => {
+    const ints = rgbNumeric(rgb);
+    return {
+        y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
+        u: ints.r * -0.168736 + ints.g * -0.331264 + ints.b * 0.500000 + 128,
+        v: ints.r * 0.500000 + ints.g * -0.418688 + ints.b * -0.081312 + 128
+    };
+};
+const colorStrip = (color) => color.toLowerCase().replaceAll(/[\s]/g, '');
+const colorValid = (color) => {
+    const colorStripped = colorStrip(color);
+    const style = new Option().style;
+    style.color = color;
+    const styleStripped = colorStrip(style.color);
+    if (!styleStripped)
+        return false;
+    if (styleStripped.startsWith('rgb'))
+        return true;
+    return styleStripped === colorStripped;
+};
+const colorTransparent = '#00000000';
+const Color = {
+    valid: colorValid,
+    yuvBlend: colorYuvBlend,
+    rgb2yuv: colorRgb2yuv,
+    yuv2rgb: colorYuv2rgb,
+    rgb2hex: colorRgb2hex,
+    transparent: colorTransparent,
+    strip: colorStrip,
+};
 
 const Default = {
     label: "Unlabeled",
@@ -35,7 +89,7 @@ const Default = {
     mash: {
         label: "Unlabeled Mash",
         quantize: 10,
-        backcolor: "#00000000",
+        backcolor: colorTransparent,
         gain: 0.75,
         buffer: 10,
     },
@@ -355,9 +409,6 @@ const pixel = {
 const rgb = {
   value: "rgb(0, 0, 0)"
 };
-const hex = {
-  value: "#000000"
-};
 const rgba = {
   value: "rgba(0, 0, 0, 1)"
 };
@@ -378,7 +429,6 @@ var dataTypesJson = {
   number: number,
   pixel: pixel,
   rgb: rgb,
-  hex: hex,
   rgba: rgba,
   string: string,
   text: text
@@ -472,6 +522,7 @@ exports.LoadType = void 0;
     LoadType["Font"] = "font";
     LoadType["Image"] = "image";
     LoadType["Module"] = "module";
+    LoadType["Video"] = "video";
 })(exports.LoadType || (exports.LoadType = {}));
 exports.MoveType = void 0;
 (function (MoveType) {
@@ -486,14 +537,12 @@ exports.DataType = void 0;
     DataType["Direction8"] = "direction8";
     DataType["Font"] = "font";
     DataType["Fontsize"] = "fontsize";
-    DataType["Hex"] = "hex";
     DataType["Integer"] = "integer";
     DataType["Mode"] = "mode";
     DataType["Number"] = "number";
     DataType["Pixel"] = "pixel";
     DataType["Rgb"] = "rgb";
     DataType["Rgba"] = "rgba";
-    DataType["Scalar"] = "scalar";
     DataType["String"] = "string";
     DataType["Text"] = "text";
 })(exports.DataType || (exports.DataType = {}));
@@ -514,6 +563,63 @@ class TypeValue {
     }
 }
 
+const definitionsMap = new Map();
+const DefinitionsByType = new Map();
+const definitionsByType = (type) => {
+    const list = DefinitionsByType.get(type);
+    if (list)
+        return list;
+    const definitionsList = [];
+    DefinitionsByType.set(type, definitionsList);
+    return definitionsList;
+};
+const definitionsClear = () => { definitionsMap.clear(); };
+const definitionsFont = definitionsByType(exports.DefinitionType.Font);
+const definitionsFromId = (id) => {
+    if (!definitionsInstalled(id)) {
+        console.trace(id);
+        throw Errors.unknown.definition + 'definitionsFromId ' + id;
+    }
+    const definition = definitionsMap.get(id);
+    if (!definition)
+        throw Errors.internal;
+    return definition;
+};
+const definitionsInstall = (definition) => {
+    const { type, id } = definition;
+    // console.log("definitionsInstall", type, id)
+    definitionsMap.set(id, definition);
+    definitionsByType(type).push(definition);
+};
+const definitionsInstalled = (id) => definitionsMap.has(id);
+const definitionsMerger = definitionsByType(exports.DefinitionType.Merger);
+const definitionsScaler = definitionsByType(exports.DefinitionType.Scaler);
+const definitionsUninstall = (id) => {
+    if (!definitionsInstalled(id))
+        return;
+    const definition = definitionsFromId(id);
+    definitionsMap.delete(id);
+    const { type } = definition;
+    const definitions = definitionsByType(type);
+    const index = definitions.indexOf(definition);
+    if (index < 0)
+        throw Errors.internal + 'definitionsUninstall';
+    // console.log("definitionsUninstall", definition.label || definition.id)
+    definitions.splice(index, 1);
+};
+const Definitions = {
+    byType: definitionsByType,
+    clear: definitionsClear,
+    font: definitionsFont,
+    fromId: definitionsFromId,
+    install: definitionsInstall,
+    installed: definitionsInstalled,
+    map: definitionsMap,
+    merger: definitionsMerger,
+    scaler: definitionsScaler,
+    uninstall: definitionsUninstall,
+};
+
 class Type {
     constructor(object) {
         this.modular = false;
@@ -529,6 +635,41 @@ class Type {
             this.modular = modular;
         if (values)
             this.values.push(...values.map(value => new TypeValue(value)));
+    }
+    coerce(value) {
+        const string = String(value);
+        const number = Number(value);
+        if (this.modular && !Definitions.fromId(string))
+            return;
+        switch (this.id) {
+            case exports.DataType.Boolean: return !!value;
+            case exports.DataType.Number:
+            case exports.DataType.Fontsize:
+            case exports.DataType.Pixel: {
+                if (isNan(number))
+                    return;
+                return number;
+            }
+            case exports.DataType.Integer: {
+                if (isNan(number))
+                    return;
+                return Math.round(number);
+            }
+            case exports.DataType.Rgb:
+            case exports.DataType.Rgba: {
+                if (!colorValid(string))
+                    return;
+                break;
+            }
+            case exports.DataType.Direction4:
+            case exports.DataType.Direction8:
+            case exports.DataType.Mode: {
+                if (!this.values?.find(object => { object.id === string; }))
+                    return;
+                break;
+            }
+        }
+        return string;
     }
 }
 
@@ -583,63 +724,6 @@ const Capitalize = (value) => {
     if (!isPopulatedString(value))
         return value;
     return `${value[0].toUpperCase()}${value.substr(1)}`;
-};
-
-const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
-const rgbNumeric = (rgb) => ({
-    r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
-});
-const yuvNumeric = (rgb) => ({
-    y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
-});
-const yuv2rgb = (yuv) => {
-    const floats = yuvNumeric(yuv);
-    return rgbNumeric({
-        r: floats.y + 1.4075 * (floats.v - 128),
-        g: floats.y - 0.3455 * (floats.u - 128) - (0.7169 * (floats.v - 128)),
-        b: floats.y + 1.7790 * (floats.u - 128)
-    });
-};
-const rgb2hex = (rgb) => {
-    let r = rgb.r.toString(16);
-    let g = rgb.g.toString(16);
-    let b = rgb.b.toString(16);
-    if (r.length < 2)
-        r = `0${r}`;
-    if (g.length < 2)
-        g = `0${g}`;
-    if (b.length < 2)
-        b = `0${b}`;
-    return `#${r}${g}${b}`;
-};
-const yuvBlend = (yuvs, yuv, match, blend) => {
-    let diff = 0.0;
-    const blendYuv = yuvNumeric(yuv);
-    yuvs.forEach(yuvObject => {
-        const numericYuv = yuvNumeric(yuvObject);
-        const du = numericYuv.u - blendYuv.u;
-        const dv = numericYuv.v - blendYuv.v;
-        diff += Math.sqrt((du * du + dv * dv) / (255.0 * 255.0));
-    });
-    diff /= yuvs.length;
-    if (blend > 0.0001) {
-        return Math.min(1.0, Math.max(0.0, (diff - match) / blend)) * 255.0;
-    }
-    return (diff > match) ? 255 : 0;
-};
-const rgb2yuv = (rgb) => {
-    const ints = rgbNumeric(rgb);
-    return {
-        y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
-        u: ints.r * -0.168736 + ints.g * -0.331264 + ints.b * 0.500000 + 128,
-        v: ints.r * 0.500000 + ints.g * -0.418688 + ints.b * -0.081312 + 128
-    };
-};
-const Color = {
-    yuvBlend,
-    rgb2yuv,
-    yuv2rgb,
-    rgb2hex, // unused after 4.1 refactor, but perhaps needed?
 };
 
 const ElementScrollProps = [
@@ -1280,10 +1364,10 @@ class ChangeAction extends Action {
     get redoValueNumeric() { return Number(this.redoValue); }
     get undoValueNumeric() { return Number(this.undoValue); }
     redoAction() {
-        this.target[this.property] = this.redoValue;
+        this.target.setValue(this.property, this.redoValue);
     }
     undoAction() {
-        this.target[this.property] = this.undoValue;
+        this.target.setValue(this.property, this.undoValue);
     }
     updateAction(value) {
         this.redoValue = value;
@@ -1318,10 +1402,10 @@ class ChangeFramesAction extends ChangeAction {
         this.clip = this.target;
     }
     redoAction() {
-        this.mash.changeClipFrames(this.clip, this.redoValue);
+        this.mash.changeClipFrames(this.clip, this.redoValueNumeric);
     }
     undoAction() {
-        this.mash.changeClipFrames(this.clip, this.undoValue);
+        this.mash.changeClipFrames(this.clip, this.undoValueNumeric);
     }
 }
 
@@ -1333,10 +1417,10 @@ class ChangeTrimAction extends ChangeAction {
         this.audibleClip = target;
     }
     redoAction() {
-        this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValue, this.frames);
+        this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValueNumeric, this.frames);
     }
     undoAction() {
-        this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValue, this.frames);
+        this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames);
     }
 }
 
@@ -1392,15 +1476,10 @@ class MoveClipsAction extends Action {
     addClips(trackIndex, insertIndex, frames) {
         this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames);
     }
-    // setFrames(frames : number[]) : void {
-    //   this.clips.forEach((clip, index) => { clip.frame = frames[index] })
-    // }
     redoAction() {
-        // if (this.redoFrames) this.setFrames(this.redoFrames)
         this.addClips(this.trackIndex, this.insertIndex, this.redoFrames);
     }
     undoAction() {
-        // if (this.undoFrames) this.setFrames(this.undoFrames)
         this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames);
     }
 }
@@ -1499,66 +1578,38 @@ class Actions {
     }
 }
 
-const CacheKeyPrefix = 'cachekey';
-class CacheClass {
-    constructor() {
-        this.cachedByKey = new Map();
-        this.urlsByKey = new Map();
-    }
-    add(url, value) {
-        // console.log(this.constructor.name, "add", url, value.constructor.name)
-        const key = this.key(url);
-        this.cachedByKey.set(key, value);
-        this.urlsByKey.set(key, url);
-    }
-    cached(url) {
-        if (!Is.populatedString(url))
-            throw Errors.argument + 'url';
-        return this.cachedByKey.has(this.key(url));
-    }
-    get(url) {
-        return this.cachedByKey.get(this.key(url));
-    }
-    key(url) {
-        if (!Is.populatedString(url))
-            throw Errors.argument + 'url';
-        return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '');
-    }
-    remove(url) {
-        // console.log(this.constructor.name, "remove", url)
-        const key = this.key(url);
-        this.cachedByKey.delete(key);
-        this.urlsByKey.delete(key);
-    }
-}
-const Cache = new CacheClass();
-
 const AudibleSampleRate = 44100;
 const AudibleChannels = 2;
 class AudibleContext {
+    constructor() {
+        // console.trace(this.constructor.name, "constructor")
+    }
     get context() {
         if (!this.__context) {
             const Klass = AudioContext || window.webkitAudioContext;
             if (!Klass)
                 throw Errors.audibleContext;
-            // console.log("AudibleContext context", Klass.name)
             this.__context = new Klass();
+            // console.trace(this.constructor.name, "context", Klass.name, this.__context)
         }
         return this.__context;
     }
     createBuffer(seconds) {
         const length = AudibleSampleRate * seconds;
-        // console.log(this.constructor.name, "createBuffer", length)
+        // console.log(this.constructor.name, "createBuffer", seconds, length)
         return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate);
     }
-    createBufferSource() { return this.context.createBufferSource(); }
+    createBufferSource() {
+        // console.trace(this.constructor.name, "createBufferSource")
+        return this.context.createBufferSource();
+    }
     createGain() { return this.context.createGain(); }
+    get currentTime() { return this.context.currentTime; }
     decode(buffer) {
         return new Promise((resolve, reject) => (this.context.decodeAudioData(buffer, audioData => resolve(audioData), error => reject(error))));
     }
     get destination() { return this.context.destination; }
     get time() { return Time.fromSeconds(this.currentTime); }
-    get currentTime() { return this.context.currentTime; }
 }
 
 const $canvas = 'canvas';
@@ -1774,45 +1825,42 @@ class ContextFactory {
 }
 const ContextFactoryInstance = new ContextFactory();
 
-class Processor {
-    process(_url, _buffer) {
-        return Promise.resolve();
+const CacheKeyPrefix = 'cachekey';
+class CacheClass {
+    constructor() {
+        this.cachedByKey = new Map();
+        this.urlsByKey = new Map();
+        this.audibleContext = ContextFactoryInstance.audible();
+        // this.audioContext = this.audibleContext.context
+    }
+    add(url, value) {
+        // console.log(this.constructor.name, "add", url, value.constructor.name)
+        const key = this.key(url);
+        this.cachedByKey.set(key, value);
+        this.urlsByKey.set(key, url);
+    }
+    // audioContext: AudioContext
+    cached(url) {
+        if (!Is.populatedString(url))
+            throw Errors.argument + 'url';
+        return this.cachedByKey.has(this.key(url));
+    }
+    get(url) {
+        return this.cachedByKey.get(this.key(url));
+    }
+    key(url) {
+        if (!Is.populatedString(url))
+            throw Errors.argument + 'url';
+        return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '');
+    }
+    remove(url) {
+        // console.log(this.constructor.name, "remove", url)
+        const key = this.key(url);
+        this.cachedByKey.delete(key);
+        this.urlsByKey.delete(key);
     }
 }
-
-class AudioProcessor extends Processor {
-    constructor(object) {
-        super();
-        if (object && object.audibleContext) {
-            this._audibleContext = object.audibleContext;
-        }
-        else
-            this._audibleContext = ContextFactoryInstance.audible();
-    }
-    get audibleContext() { return this._audibleContext; }
-    set audibleContext(value) { this._audibleContext = value; }
-    process(_url, buffer) {
-        return this.audibleContext.decode(buffer);
-    }
-}
-
-class FontProcessor extends Processor {
-    process(url, buffer) {
-        const family = Cache.key(url);
-        const face = new FontFace(family, buffer);
-        const promise = face.load().then(() => {
-            document.fonts.add(face);
-            return { family };
-        });
-        return promise;
-    }
-}
-
-class ModuleProcessor extends Processor {
-    process(_url, _buffer) {
-        return Promise.resolve();
-    }
-}
+const Cache = new CacheClass();
 
 class Loader {
     async loadUrl(url) {
@@ -1831,77 +1879,10 @@ class Loader {
     requestUrl(_url) { return Promise.resolve(); }
 }
 
-const classes$2 = {
-    Audio: AudioProcessor,
-    Font: FontProcessor,
-    Module: ModuleProcessor,
-};
-class ProcessorClass {
-    audio(object) {
-        return new classes$2.Audio(object);
+class Processor {
+    process(_url, _buffer) {
+        return Promise.resolve();
     }
-    font() { return new classes$2.Font(); }
-    install(type, loader) {
-        classes$2[Capitalize(type)] = loader;
-    }
-    module() { return new classes$2.Module(); }
-}
-const ProcessorFactory = new ProcessorClass();
-
-class AudioLoader extends Loader {
-    constructor(object) {
-        super();
-        this.type = exports.LoadType.Audio;
-        if (object && object.audibleContext) {
-            this._audibleContext = object.audibleContext;
-        }
-        else
-            this._audibleContext = ContextFactoryInstance.audible();
-    }
-    get audibleContext() { return this._audibleContext; }
-    set audibleContext(value) { this._audibleContext = value; }
-    async requestUrl(url) {
-        return fetch(url).then(response => {
-            return response.arrayBuffer();
-        }).then(loaded => {
-            const options = { audibleContext: this.audibleContext };
-            const processor = ProcessorFactory.audio(options);
-            return processor.process(url, loaded);
-        });
-    }
-}
-
-class FontLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = exports.LoadType.Font;
-    }
-    requestUrl(url) {
-        return fetch(url)
-            .then(response => response.arrayBuffer())
-            .then(buffer => ProcessorFactory.font().process(url, buffer));
-    }
-}
-
-class ImageLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = exports.LoadType.Image;
-    }
-    requestUrl(url) {
-        const image = new Image();
-        image.crossOrigin = "Anonymous";
-        image.src = url;
-        return image.decode().then(() => Promise.resolve(image));
-    }
-}
-
-class ModuleLoader extends Loader {
-    constructor() {
-        super(...arguments);
-        this.type = exports.LoadType.Module;
-    }
-    async requestUrl(url) { return Promise.resolve().then(function () { return /*#__PURE__*/_interopNamespace(require(url)); }); }
 }
 
 class InstanceClass {
@@ -1947,12 +1928,25 @@ class InstanceClass {
             return [property.name, this.value(property.name)];
         }));
     }
-    get type() { return this.definition.type; }
+    setValue(key, value) {
+        const property = this.definition.property(key);
+        if (!property)
+            throw Errors.property + key;
+        const { type } = property;
+        const coerced = type.coerce(value);
+        if (typeof coerced === 'undefined') {
+            console.error(this.constructor.name, "setValue", key, value);
+            return false;
+        }
+        this[key] = coerced;
+        return true;
+    }
     toJSON() { return this.propertyValues; }
+    get type() { return this.definition.type; }
     value(key) {
         const value = this[key];
         if (typeof value === "undefined")
-            throw Errors.property + "value " + this.propertyNames.includes(key) + " " + this[key];
+            throw Errors.property + key;
         return value;
     }
 }
@@ -1966,8 +1960,7 @@ class DefinitionClass {
         if (!(id && Is.populatedString(id)))
             throw Errors.invalid.definition.id + JSON.stringify(object);
         this.id = id;
-        if (label)
-            this.label = label;
+        this.label = label || id;
         if (icon)
             this.icon = icon;
         this.properties.push(new Property({ name: "label", type: exports.DataType.String, value: "" }));
@@ -1999,7 +1992,7 @@ class DefinitionClass {
         const object = { id: this.id, type: this.type };
         if (this.icon)
             object.icon = this.icon;
-        if (this.label)
+        if (this.label !== this.id)
             object.label = this.label;
         return object;
     }
@@ -2158,22 +2151,145 @@ function ClipDefinitionMixin(Base) {
     };
 }
 
+// import { AudibleContext, ContextFactory } from "../../Playing"
+class AudioProcessor extends Processor {
+    // constructor(object? : UnknownObject | undefined) {
+    //   super()
+    //   if (object && object.audibleContext) {
+    //     this._audibleContext = <AudibleContext> object.audibleContext
+    //   }
+    //   else {
+    //     console.log(this.constructor.name, "constructor initializing audibleContext")
+    //     this._audibleContext = ContextFactory.audible()
+    //   }
+    // }
+    // get audibleContext() : AudibleContext { return this._audibleContext }
+    // set audibleContext(value : AudibleContext) { this._audibleContext = value }
+    process(_url, buffer) {
+        return Cache.audibleContext.decode(buffer);
+    }
+}
+
+class FontProcessor extends Processor {
+    process(url, buffer) {
+        const family = Cache.key(url);
+        const face = new FontFace(family, buffer);
+        const promise = face.load().then(() => {
+            document.fonts.add(face);
+            return { family };
+        });
+        return promise;
+    }
+}
+
+const classes$2 = {
+    Audio: AudioProcessor,
+    Font: FontProcessor,
+};
+class ProcessorClass {
+    audio() { return new classes$2.Audio(); } //object : { audibleContext : AudibleContext}
+    font() { return new classes$2.Font(); }
+    install(type, loader) {
+        classes$2[Capitalize(type)] = loader;
+    }
+}
+const ProcessorFactory = new ProcessorClass();
+
+class AudioLoader extends Loader {
+    constructor() {
+        // constructor(object? : UnknownObject | undefined) {
+        //   super()
+        //   if (object && object.audibleContext) {
+        //     this._audibleContext = <AudibleContext> object.audibleContext
+        //   }
+        //   else this._audibleContext = ContextFactory.audible()
+        // }
+        super(...arguments);
+        this.type = exports.LoadType.Audio;
+        // _audibleContext : AudibleContext
+    }
+    // get audibleContext() : AudibleContext { return this._audibleContext }
+    // set audibleContext(value : AudibleContext) { this._audibleContext = value }
+    async requestUrl(url) {
+        // console.log(this.constructor.name, "requestUrl", url)
+        const promise = new Promise((resolve, reject) => {
+            fetch(url).then(response => {
+                // console.log(this.constructor.name, "requestUrl.fetch", url)
+                return response.arrayBuffer();
+            }).then(loaded => {
+                // console.log(this.constructor.name, "requestUrl.fetch.arrayBuffer", url)
+                const processor = ProcessorFactory.audio(); //  options)
+                resolve(processor.process(url, loaded));
+            }).catch(error => reject(error));
+        });
+        return promise;
+    }
+}
+
+class FontLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = exports.LoadType.Font;
+    }
+    requestUrl(url) {
+        return fetch(url)
+            .then(response => response.arrayBuffer())
+            .then(buffer => ProcessorFactory.font().process(url, buffer));
+    }
+}
+
+class ImageLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = exports.LoadType.Image;
+    }
+    requestUrl(url) {
+        const image = new Image();
+        image.crossOrigin = "Anonymous";
+        image.src = url;
+        return image.decode().then(() => Promise.resolve(image));
+    }
+}
+
+class VideoLoader extends Loader {
+    constructor() {
+        super(...arguments);
+        this.type = exports.LoadType.Video;
+    }
+    requestUrl(url) {
+        const promise = new Promise((resolve, reject) => {
+            const video = document.createElement('video');
+            // document.body.appendChild(video)
+            video.crossOrigin = "Anonymous";
+            video.src = url;
+            video.autoplay = true;
+            video.oncanplay = (...args) => {
+                console.log("oncanplay!", ...args);
+                resolve(video);
+            };
+            // video.onerror = error => {
+            //   console.error(this.constructor.name, "requestUrl onerror", error)
+            //   reject(`Failed to load ${url}`)
+            // }
+        });
+        return promise;
+    }
+}
+
 const classes$1 = {
     Audio: AudioLoader,
     Font: FontLoader,
     Image: ImageLoader,
-    Module: ModuleLoader,
+    Video: VideoLoader,
 };
 class LoaderClass {
-    audio(object) {
-        return new classes$1.Audio(object);
-    }
+    audio() { return new classes$1.Audio(); }
     font() { return new classes$1.Font(); }
     image() { return new classes$1.Image(); }
     install(type, loader) {
         classes$1[Capitalize(type)] = loader;
     }
-    module() { return new classes$1.Module(); }
+    video() { return new classes$1.Video(); }
 }
 const LoaderFactory = new LoaderClass();
 
@@ -2184,8 +2300,9 @@ function AudibleDefinitionMixin(Base) {
             super(...args);
             this.audible = true;
             this.loops = false;
+            this.stream = false;
             const [object] = args;
-            const { loops, duration, url, audio, source, waveform } = object;
+            const { stream, loops, duration, url, audio, source, waveform } = object;
             if (!duration)
                 throw Errors.invalid.definition.duration;
             this.duration = Number(duration);
@@ -2193,8 +2310,10 @@ function AudibleDefinitionMixin(Base) {
             if (!urlAudible)
                 throw Errors.invalid.definition.audio;
             this.urlAudible = urlAudible;
+            if (stream)
+                this.stream = true;
             if (loops)
-                this.loops = !!loops;
+                this.loops = true;
             if (source)
                 this.source = source;
             if (waveform)
@@ -2202,6 +2321,7 @@ function AudibleDefinitionMixin(Base) {
             this.properties.push(new Property({ name: "gain", type: exports.DataType.Number, value: 1.0 }));
             this.properties.push(new Property({ name: "trim", type: exports.DataType.Integer, value: 0 }));
         }
+        // TODO: support streaming audio
         load(start, end) {
             const promises = [super.load(start, end)];
             if (end) {
@@ -2244,65 +2364,6 @@ function AudibleDefinitionMixin(Base) {
         }
     };
 }
-
-const definitionsMap = new Map();
-const DefinitionsByType = new Map();
-const definitionsByType = (type) => {
-    const list = DefinitionsByType.get(type);
-    if (list)
-        return list;
-    const definitionsList = [];
-    DefinitionsByType.set(type, definitionsList);
-    return definitionsList;
-};
-const definitionsClear = () => { definitionsMap.clear(); };
-const definitionsFont = definitionsByType(exports.DefinitionType.Font);
-const definitionsFromId = (id) => {
-    if (!definitionsInstalled(id)) {
-        console.trace(id);
-        throw Errors.unknown.definition + 'definitionsFromId ' + id;
-    }
-    const definition = definitionsMap.get(id);
-    if (!definition)
-        throw Errors.internal;
-    return definition;
-};
-const definitionsInstall = (definition) => {
-    const { type, id } = definition;
-    // console.log("definitionsInstall", type, id)
-    definitionsMap.set(id, definition);
-    definitionsByType(type).push(definition);
-};
-const definitionsInstalled = (id) => definitionsMap.has(id);
-const definitionsMerger = definitionsByType(exports.DefinitionType.Merger);
-const definitionsScaler = definitionsByType(exports.DefinitionType.Scaler);
-const definitionsUninstall = (id) => {
-    if (!definitionsInstalled(id)) {
-        console.log("definitionsUninstall", id);
-        return;
-    }
-    const definition = definitionsFromId(id);
-    definitionsMap.delete(id);
-    const { type } = definition;
-    const definitions = definitionsByType(type);
-    const index = definitions.indexOf(definition);
-    if (index < 0)
-        throw Errors.internal + 'definitionsUninstall';
-    definitions.splice(index, 1);
-    // console.log("uninstalled", id)
-};
-const Definitions = {
-    byType: definitionsByType,
-    clear: definitionsClear,
-    font: definitionsFont,
-    fromId: definitionsFromId,
-    install: definitionsInstall,
-    installed: definitionsInstalled,
-    map: definitionsMap,
-    merger: definitionsMerger,
-    scaler: definitionsScaler,
-    uninstall: definitionsUninstall,
-};
 
 const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionClass);
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip);
@@ -2369,12 +2430,21 @@ const audioDefine = (object) => {
     Definitions.uninstall(id);
     return audioDefinition(object);
 };
+/**
+ * @internal
+ */
+const audioInstall = (object) => {
+    const instance = audioDefine(object);
+    instance.retain = true;
+    return instance;
+};
 const AudioFactoryImplementation = {
     define: audioDefine,
     definition: audioDefinition,
     definitionFromId: audioDefinitionFromId,
     fromId: audioFromId,
     initialize: audioInitialize,
+    install: audioInstall,
     instance: audioInstance,
 };
 Factories.audio = AudioFactoryImplementation;
@@ -2430,6 +2500,7 @@ class FilterDefinitionClass extends DefinitionClass {
     constructor(...args) {
         super(...args);
         this.parameters = [];
+        this.retain = true;
         this.type = exports.DefinitionType.Filter;
         Definitions.install(this);
     }
@@ -2658,10 +2729,10 @@ class DrawBoxFilter extends FilterDefinitionClass {
     }
 }
 
-const label$j = "Baloo Tammudu 2";
+const label$j = "Lobster";
 const id$j = "com.moviemasher.font.default";
 const type$j = "font";
-const source = "Assets/BlackoutTwoAM.ttf";
+const source = "https://fonts.gstatic.com/s/lobster/v23/neILzCirqoswsqX9zoKmM4MwWJU.woff2";
 var fontDefaultJson = {
   label: label$j,
   id: id$j,
@@ -2688,8 +2759,7 @@ class FontDefinitionClass extends DefinitionClass {
         return this.instanceFromObject(this.instanceObject);
     }
     instanceFromObject(object) {
-        const instance = new FontClass({ ...this.instanceObject, ...object });
-        return instance;
+        return new FontClass({ ...this.instanceObject, ...object });
     }
     load(start, end) {
         const promises = [super.load(start, end)];
@@ -2740,6 +2810,7 @@ const fontDefine = (object) => {
 };
 const FontFactoryImplementation = {
     define: fontDefine,
+    install: fontDefine,
     definition: fontDefinition,
     definitionFromId: fontDefinitionFromId,
     fromId: fontFromId,
@@ -2751,14 +2822,13 @@ Factories.font = FontFactoryImplementation;
 const mmFontFile = (id) => {
     if (!Is.populatedString(id))
         throw Errors.id;
-    return FontFactoryImplementation.definitionFromId(id).source;
+    return fontDefinitionFromId(id).source;
 };
 const mmTextFile = (text) => String(text);
 const mmFontFamily = (id) => Cache.key(mmFontFile(id));
 class DrawTextFilter extends FilterDefinitionClass {
     constructor() {
         super(...arguments);
-        // id = 'drawtext'
         this.parameters = [
             new Parameter({ name: "fontcolor", value: "#000000" }),
             new Parameter({ name: "shadowcolor", value: "#FFFFFF" }),
@@ -2907,6 +2977,7 @@ const filterDefine = (object) => {
 };
 const FilterFactoryImplementation = {
     define: filterDefine,
+    install: filterDefine,
     definition: filterDefinition,
     definitionFromId: filterDefinitionFromId,
     fromId: filterFromId,
@@ -3517,6 +3588,7 @@ const EffectFactoryImplementation = {
     definitionFromId: effectDefinitionFromId,
     fromId: effectFromId,
     initialize: effectInitialize,
+    install: effectDefine,
     instance: effectInstance,
 };
 Factories.effect = EffectFactoryImplementation;
@@ -3831,6 +3903,7 @@ const mergerDefine = (object) => {
 };
 const MergerFactoryImplementation = {
     define: mergerDefine,
+    install: mergerDefine,
     definition: mergerDefinition,
     definitionFromId: mergerDefinitionFromId,
     fromId: mergerFromId,
@@ -4179,6 +4252,7 @@ const scalerDefine = (object) => {
 };
 const ScalerFactoryImplementation = {
     define: scalerDefine,
+    install: scalerDefine,
     definitionFromId: scalerDefinitionFromId,
     definition: scalerDefinition,
     instance: scalerInstance,
@@ -4277,10 +4351,13 @@ function VisibleMixin(Base) {
             const definitionTime = this.definitionTime(quantize, mashTime);
             const visibleDefinition = this.definition;
             const image = visibleDefinition.loadedVisible(definitionTime);
-            if (!image)
+            if (!image) {
+                // console.error(this.constructor.name, "contextAtTimeToSize not loaded", this.id)
                 return;
+            }
             const width = Number(image.width);
             const height = Number(image.height);
+            // console.log(this.constructor.name, "contextAtTimeToSize", width, height)
             const context = ContextFactoryInstance.toSize({ width, height });
             context.draw(image);
             return context;
@@ -4391,8 +4468,17 @@ const imageDefine = (object) => {
     Definitions.uninstall(id);
     return imageDefinition(object);
 };
+/**
+ * @internal
+ */
+const imageInstall = (object) => {
+    const instance = imageDefine(object);
+    instance.retain = true;
+    return instance;
+};
 const ImageFactoryImplementation = {
     define: imageDefine,
+    install: imageInstall,
     definition: imageDefinition,
     definitionFromId: imageDefinitionFromId,
     fromId: imageFromId,
@@ -4503,15 +4589,15 @@ class Composition {
         this.quantize = Default.mash.quantize;
         this.sourcesByClip = new Map();
         // console.trace("Composition constructor")
-        const { audibleContext, backcolor, buffer, gain, quantize, visibleContext } = object;
+        const { 
+        // audibleContext,
+        backcolor, buffer, gain, quantize, visibleContext } = object;
         if (backcolor)
             this.backcolor = backcolor;
         if (quantize && Is.aboveZero(quantize))
             this.quantize = quantize;
-        if (audibleContext)
-            this._audibleContext = audibleContext;
-        else
-            this._audibleContext = ContextFactoryInstance.audible();
+        // if (audibleContext) this._audibleContext = audibleContext
+        // else this._audibleContext = ContextFactory.audible()
         if (visibleContext)
             this._visibleContext = visibleContext;
         else
@@ -4523,8 +4609,10 @@ class Composition {
     }
     adjustSourceGain(clip) {
         const source = this.sourcesByClip.get(clip);
-        if (!source)
+        if (!source) {
+            // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
             return;
+        }
         const { gainNode } = source;
         if (this.gain === 0.0) {
             gainNode.gain.value = 0.0;
@@ -4544,8 +4632,6 @@ class Composition {
             gainNode.gain.linearRampToValueAtTime(this.gain * value, start + position * duration);
         });
     }
-    get audibleContext() { return this._audibleContext; }
-    set audibleContext(value) { this._audibleContext = value; }
     clipTiming(clip) {
         const range = clip.timeRange(this.quantize);
         const zeroSeconds = this.contextSeconds - this.mashSeconds;
@@ -4556,7 +4642,7 @@ class Composition {
             range.frame = clip.trim;
             offset = range.seconds;
         }
-        const now = this.audibleContext.currentTime;
+        const now = Cache.audibleContext.currentTime;
         if (now > start) {
             const dif = now - start;
             start = now;
@@ -4566,8 +4652,11 @@ class Composition {
         return { duration, offset, start };
     }
     compositeAudible(clips) {
-        if (!this.createSources(clips))
+        // console.log(this.constructor.name, "compositeAudible", clips.length)
+        if (!this.createSources(clips)) {
+            // if (clips.length) console.log(this.constructor.name, "compositeAudible didn't createSources")
             return false;
+        }
         this.destroySources(clips);
         return true;
     }
@@ -4603,21 +4692,25 @@ class Composition {
         this.drawBackground();
     }
     createSources(clips) {
+        // console.log("Composition.createSources", clips.length)
         const filtered = clips.filter(clip => !this.sourcesByClip.has(clip));
         return filtered.every(clip => {
             const { definition } = clip;
             const buffer = definition.loadedAudible();
-            if (!buffer)
+            if (!buffer) {
+                // console.log("Composition.createSources loadedAudible false", clip.id)
                 return false;
+            }
             const timing = this.clipTiming(clip);
             const { start, duration, offset } = timing;
+            // console.log("Composition.createSources", start, duration, offset)
             if (Is.positive(start) && Is.aboveZero(duration)) {
-                const gainSource = this.audibleContext.createBufferSource();
+                const gainSource = Cache.audibleContext.createBufferSource();
                 gainSource.buffer = buffer;
                 gainSource.loop = clip.definition.loops;
-                const gainNode = this.audibleContext.createGain();
+                const gainNode = Cache.audibleContext.createGain();
                 gainSource.connect(gainNode);
-                gainNode.connect(this.audibleContext.destination);
+                gainNode.connect(Cache.audibleContext.destination);
                 gainSource.start(start, offset, duration);
                 this.sourcesByClip.set(clip, { gainSource, gainNode });
                 this.adjustSourceGain(clip);
@@ -4626,11 +4719,13 @@ class Composition {
         });
     }
     destroySources(clipsToKeep = []) {
+        // console.log("Composition.destroySources", clipsToKeep.length)
         this.sourcesByClip.forEach((source, clip) => {
             if (clipsToKeep.includes(clip))
                 return;
+            // console.log("Composition.destroySources", clip)
             const { gainSource, gainNode } = source;
-            gainNode.disconnect(this.audibleContext.destination);
+            gainNode.disconnect(Cache.audibleContext.destination);
             gainSource.disconnect(gainNode);
             this.sourcesByClip.delete(clip);
         });
@@ -4652,20 +4747,19 @@ class Composition {
         this.visibleContext.emit(exports.EventType.Volume);
     }
     get seconds() {
-        if (!this.audibleContext)
-            throw Errors.internal + 'audibleContext';
-        const ellapsed = this.audibleContext.currentTime - this.contextSeconds;
+        const ellapsed = Cache.audibleContext.currentTime - this.contextSeconds;
         return ellapsed + this.mashSeconds;
     }
     startContext() {
+        // console.log(this.constructor.name, "startContext")
         if (this.bufferSource)
             throw Errors.internal + 'bufferSource';
         if (this.playing)
             throw Errors.internal + 'playing';
-        this.bufferSource = this.audibleContext.createBufferSource();
+        this.bufferSource = Cache.audibleContext.createBufferSource();
         this.bufferSource.loop = true;
-        this.bufferSource.buffer = this.audibleContext.createBuffer(this.buffer);
-        this.bufferSource.connect(this.audibleContext.destination);
+        this.bufferSource.buffer = Cache.audibleContext.createBuffer(this.buffer);
+        this.bufferSource.connect(Cache.audibleContext.destination);
         this.bufferSource.start(0);
     }
     startPlaying(time, clips) {
@@ -4677,7 +4771,7 @@ class Composition {
         const { seconds } = time;
         this.playing = true;
         this.mashSeconds = seconds;
-        this.contextSeconds = this.audibleContext.currentTime;
+        this.contextSeconds = Cache.audibleContext.currentTime;
         if (!this.createSources(clips)) {
             this.stopPlaying();
             return false;
@@ -4697,7 +4791,7 @@ class Composition {
         this.contextSeconds = 0;
         if (!this.bufferSource)
             return;
-        this.bufferSource.disconnect(this.audibleContext.destination);
+        this.bufferSource.disconnect(Cache.audibleContext.destination);
         delete this.bufferSource;
     }
     get visibleContext() { return this._visibleContext; }
@@ -4707,6 +4801,19 @@ class Composition {
 class MashClass extends InstanceClass {
     constructor(...args) {
         super(...args);
+        // get audibleContext(): AudibleContext {
+        //   if (!this._audibleContext) {
+        //     this._audibleContext = ContextFactory.audible()
+        //     if (this._composition) this.composition.audibleContext = this._audibleContext
+        //   }
+        //   return this._audibleContext
+        // }
+        // set audibleContext(value: AudibleContext) {
+        //   if (this._audibleContext !== value) {
+        //     this._audibleContext = value
+        //     if (this._composition) this.composition.audibleContext = value
+        //   }
+        // }
         this.audio = [];
         this._backcolor = Default.mash.backcolor;
         this._buffer = Default.mash.buffer;
@@ -4730,9 +4837,11 @@ class MashClass extends InstanceClass {
         // }
         this.video = [];
         this._id ||= Id();
-        // console.log("Mash constructor", this.id)
+        console.log(this.constructor.name, "constructor", this.id);
         const object = args[0] || {};
-        const { audio, backcolor, label, loop, media, quantize, video, audibleContext, buffer, gain, visibleContext, } = object;
+        const { audio, backcolor, label, loop, media, quantize, video, 
+        // audibleContext,
+        buffer, gain, visibleContext, } = object;
         if (typeof loop === "boolean")
             this.loop = loop;
         if (quantize && Is.aboveZero(quantize))
@@ -4766,8 +4875,7 @@ class MashClass extends InstanceClass {
             this.buffer = buffer;
         if (typeof gain !== "undefined" && Is.positive(gain))
             this._gain = gain;
-        if (audibleContext)
-            this._audibleContext = audibleContext;
+        // if (audibleContext) this._audibleContext = audibleContext
         if (visibleContext) {
             // console.log("Mash constructor visibleContext")
             this._visibleContext = visibleContext;
@@ -4806,21 +4914,6 @@ class MashClass extends InstanceClass {
             const duration = definition.duration;
             clip.frames = Time.fromSeconds(duration, this.quantize, 'floor').frame;
         });
-    }
-    get audibleContext() {
-        if (!this._audibleContext) {
-            this._audibleContext = ContextFactoryInstance.audible();
-            if (this._composition)
-                this.composition.audibleContext = this._audibleContext;
-        }
-        return this._audibleContext;
-    }
-    set audibleContext(value) {
-        if (this._audibleContext !== value) {
-            this._audibleContext = value;
-            if (this._composition)
-                this.composition.audibleContext = value;
-        }
     }
     get backcolor() { return this._backcolor; }
     set backcolor(value) {
@@ -4936,7 +5029,7 @@ class MashClass extends InstanceClass {
     get composition() {
         if (!this._composition) {
             const options = {
-                audibleContext: this.audibleContext,
+                // audibleContext: this.audibleContext,
                 backcolor: this.backcolor,
                 buffer: this.buffer,
                 gain: this.gain,
@@ -4957,7 +5050,7 @@ class MashClass extends InstanceClass {
     }
     destroy() {
         delete this._visibleContext;
-        delete this._audibleContext;
+        // delete this._audibleContext
         delete this._composition;
     }
     drawAtInterval() {
@@ -4967,8 +5060,10 @@ class MashClass extends InstanceClass {
         const time = this.time.withFrame(this.time.frame + 1);
         const seconds = this.playing ? this.composition.seconds : time.seconds;
         if (seconds < this.endTime.seconds) {
-            if (seconds >= time.seconds)
+            if (seconds >= time.seconds) {
                 this.drawTime(time);
+                this.compositeAudible();
+            }
         }
         else {
             // console.log(this.constructor.name, "drawAtInterval finished at", seconds, this.endTime.seconds)
@@ -5268,8 +5363,17 @@ const mashDefine = (object) => {
     Definitions.uninstall(id);
     return mashDefinition(object);
 };
+/**
+ * @internal
+ */
+const mashInstall = (object) => {
+    const instance = mashDefine(object);
+    instance.retain = true;
+    return instance;
+};
 const MashFactoryImplementation = {
     define: mashDefine,
+    install: mashInstall,
     definition: mashDefinition,
     definitionFromId: mashDefinitionFromId,
     fromId: mashFromId,
@@ -5304,6 +5408,21 @@ const ActionFactory = new ActionFactoryClass();
 class MasherClass extends InstanceClass {
     constructor(...args) {
         super(...args);
+        // private _audibleContext? : AudibleContext
+        // get audibleContext() : AudibleContext {
+        //   if (!this._audibleContext) {
+        //     console.log(this.constructor.name, "audibleContext initializing")
+        //     this._audibleContext = ContextFactory.audible()
+        //     if (this._mash) this.mash.audibleContext = this._audibleContext
+        //   }
+        //   return this._audibleContext
+        // }
+        // set audibleContext(value : AudibleContext) {
+        //   if (this._audibleContext !== value) {
+        //     this._audibleContext = value
+        //     if (this._mash) this.mash.audibleContext = value
+        //   }
+        // }
         this.autoplay = Default.masher.autoplay;
         this._buffer = Default.masher.buffer;
         this._fps = Default.masher.fps;
@@ -5316,17 +5435,20 @@ class MasherClass extends InstanceClass {
         this._selectedEffects = [];
         this._volume = Default.masher.volume;
         this._id ||= Id();
-        // console.log("Masher constructor", this.id)
+        console.log(this.constructor.name, "constructor");
         const [object] = args;
-        const { autoplay, precision, loop, fps, volume, buffer, audibleContext, mash, canvas, } = object;
+        const { autoplay, precision, loop, fps, volume, buffer, 
+        // audibleContext,
+        mash, canvas, } = object;
         if (typeof autoplay !== "undefined")
             this.autoplay = autoplay;
         if (typeof precision !== "undefined")
             this.precision = precision;
         if (typeof loop !== "undefined")
             this._loop = loop;
-        if (typeof audibleContext !== "undefined")
-            this._audibleContext = audibleContext;
+        // if (typeof audibleContext !== "undefined") this._audibleContext = audibleContext
+        // else this._audibleContext = ContextFactory.audible()
+        // console.log(this.constructor.name, "constructor created", this.audibleContext.context)
         if (canvas)
             this.visibleContext = ContextFactoryInstance.fromCanvas(canvas);
         else
@@ -5431,21 +5553,6 @@ class MasherClass extends InstanceClass {
     }
     addTrack(trackType = exports.TrackType.Video) {
         this.actionCreate({ trackType, type: exports.ActionType.AddTrack });
-    }
-    get audibleContext() {
-        if (!this._audibleContext) {
-            this._audibleContext = ContextFactoryInstance.audible();
-            if (this._mash)
-                this.mash.audibleContext = this._audibleContext;
-        }
-        return this._audibleContext;
-    }
-    set audibleContext(value) {
-        if (this._audibleContext !== value) {
-            this._audibleContext = value;
-            if (this._mash)
-                this.mash.audibleContext = value;
-        }
     }
     get buffer() { return this._buffer; }
     set buffer(value) {
@@ -5746,7 +5853,7 @@ class MasherClass extends InstanceClass {
         this._mash.visibleContext = this.visibleContext;
         // console.log("creating composition", this._mash.composition)
         // console.log("set mash got visibleContext!", this._visibleContext)
-        this._mash.audibleContext = this.audibleContext;
+        // this._mash.audibleContext = this.audibleContext
         this._mash.buffer = this.buffer;
         this._mash.gain = this.gain;
         this._mash.loop = this.loop;
@@ -5764,7 +5871,7 @@ class MasherClass extends InstanceClass {
         // console.log("mashOptions")
         return {
             ...mashObject,
-            audibleContext: this.audibleContext,
+            // audibleContext: this.audibleContext,
             buffer: this.buffer,
             gain: this.gain,
             loop: this.loop,
@@ -5979,6 +6086,12 @@ class MasherClass extends InstanceClass {
     }
     selectMash() {
         this.selectedClips = [];
+    }
+    get selected() {
+        const effect = this.selectedEffect;
+        if (Is.populatedObject(effect))
+            return effect;
+        return this.selectedClipOrMash;
     }
     get selectedClip() {
         if (this._selectedClips.length === 1)
@@ -6248,6 +6361,7 @@ const masherDefine = (object) => {
 };
 const MasherFactoryImplementation = {
     define: masherDefine,
+    install: masherDefine,
     definition: masherDefinition,
     definitionFromId: masherDefinitionFromId,
     destroy: masherDestroy,
@@ -6440,8 +6554,8 @@ const properties = {
     value: 0.015
   },
   background: {
-    type: "hex",
-    value: "#ffffff"
+    type: "rgba",
+    value: "rgb(255,0,0,1)"
   },
   fontface: {
     type: "font",
@@ -6553,6 +6667,7 @@ const themeDefine = (object) => {
 };
 const ThemeFactoryImplementation = {
     define: themeDefine,
+    install: themeDefine,
     definition: themeDefinition,
     definitionFromId: themeDefinitionFromId,
     fromId: themeFromId,
@@ -6722,6 +6837,7 @@ const transitionDefine = (object) => {
 };
 const TransitionFactoryImplementation = {
     define: transitionDefine,
+    install: transitionDefine,
     definition: transitionDefinition,
     definitionFromId: transitionDefinitionFromId,
     fromId: transitionFromId,
@@ -6808,28 +6924,40 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
         return new VideoClass({ ...this.instanceObject, ...object });
     }
     load(start, end) {
-        const promises = [super.load(start, end)];
-        const frames = this.frames(start, end);
-        frames.forEach(frame => {
-            const url = this.urlForFrame(frame);
-            if (Cache.cached(url)) {
-                const cached = Cache.get(url);
-                if (cached instanceof Promise)
-                    promises.push(cached);
-            }
-            else
-                promises.push(LoaderFactory.image().loadUrl(url));
-        });
+        const promises = [];
+        if (!this.stream)
+            promises.push(super.load(start, end));
+        if (this.stream)
+            promises.push(LoaderFactory.video().loadUrl(this.url));
+        else {
+            this.frames(start, end).map(frame => this.urlForFrame(frame)).forEach(url => {
+                if (Cache.cached(url)) {
+                    const cached = Cache.get(url);
+                    if (cached instanceof Promise)
+                        promises.push(cached);
+                }
+                else
+                    promises.push(LoaderFactory.image().loadUrl(url));
+            });
+        }
         return Promise.all(promises).then();
     }
     loaded(start, end) {
-        if (!super.loaded(start, end))
-            return false;
-        return this.frames(start, end).every(frame => Cache.cached(this.urlForFrame(frame)));
+        const checkUrls = [];
+        if (this.stream)
+            checkUrls.push(this.url);
+        else {
+            if (!super.loaded(start, end))
+                return false;
+            checkUrls.push(...this.frames(start, end).map(frame => this.urlForFrame(frame)));
+        }
+        return checkUrls.every(url => Cache.cached(url));
     }
     loadedVisible(time) {
         if (!time)
             throw Errors.internal;
+        if (this.stream)
+            return Cache.get(this.url);
         const [url] = this.urls(time);
         return Cache.get(url);
     }
@@ -6849,6 +6977,11 @@ class VideoDefinitionClass extends VideoDefinitionWithVisible {
         return object;
     }
     unload(times) {
+        // TODO: better handle unloading of single stream file
+        if (this.stream) {
+            Cache.remove(this.url);
+            return;
+        }
         const zeroTime = Time.fromArgs(0, this.fps);
         const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax));
         const deleting = new Set(allUrls.filter(url => Cache.cached(url)));
@@ -6908,8 +7041,17 @@ const videoDefine = (object) => {
     Definitions.uninstall(id);
     return videoDefinition(object);
 };
+/**
+ * @internal
+ */
+const videoInstall = (object) => {
+    const instance = videoDefine(object);
+    instance.retain = true;
+    return instance;
+};
 const VideoFactoryImplementation = {
     define: videoDefine,
+    install: videoInstall,
     definition: videoDefinition,
     definitionFromId: videoDefinitionFromId,
     fromId: videoFromId,
@@ -6984,8 +7126,6 @@ exports.MergerDefinitionClass = MergerDefinitionClass;
 exports.MergerFactoryImplementation = MergerFactoryImplementation;
 exports.ModularDefinitionMixin = ModularDefinitionMixin;
 exports.ModularMixin = ModularMixin;
-exports.ModuleLoader = ModuleLoader;
-exports.ModuleProcessor = ModuleProcessor;
 exports.ModuleTypes = ModuleTypes;
 exports.MoveClipsAction = MoveClipsAction;
 exports.MoveEffectsAction = MoveEffectsAction;
@@ -7020,6 +7160,7 @@ exports.Types = TypesInstance;
 exports.VideoClass = VideoClass;
 exports.VideoDefinitionClass = VideoDefinitionClass;
 exports.VideoFactoryImplementation = VideoFactoryImplementation;
+exports.VideoLoader = VideoLoader;
 exports.VisibleContext = VisibleContext;
 exports.VisibleDefinitionMixin = VisibleDefinitionMixin;
 exports.VisibleMixin = VisibleMixin;
@@ -7028,10 +7169,18 @@ exports.audioDefinition = audioDefinition;
 exports.audioDefinitionFromId = audioDefinitionFromId;
 exports.audioFromId = audioFromId;
 exports.audioInitialize = audioInitialize;
+exports.audioInstall = audioInstall;
 exports.audioInstance = audioInstance;
 exports.byFrame = byFrame;
 exports.byLabel = byLabel;
 exports.byTrack = byTrack;
+exports.colorRgb2hex = colorRgb2hex;
+exports.colorRgb2yuv = colorRgb2yuv;
+exports.colorStrip = colorStrip;
+exports.colorTransparent = colorTransparent;
+exports.colorValid = colorValid;
+exports.colorYuv2rgb = colorYuv2rgb;
+exports.colorYuvBlend = colorYuvBlend;
 exports.definitionsByType = definitionsByType;
 exports.definitionsClear = definitionsClear;
 exports.definitionsFont = definitionsFont;
@@ -7047,6 +7196,7 @@ exports.effectDefinition = effectDefinition;
 exports.effectDefinitionFromId = effectDefinitionFromId;
 exports.effectFromId = effectFromId;
 exports.effectInitialize = effectInitialize;
+exports.effectInstall = effectDefine;
 exports.effectInstance = effectInstance;
 exports.elementScrollMetrics = elementScrollMetrics;
 exports.filterDefine = filterDefine;
@@ -7054,18 +7204,21 @@ exports.filterDefinition = filterDefinition;
 exports.filterDefinitionFromId = filterDefinitionFromId;
 exports.filterFromId = filterFromId;
 exports.filterInitialize = filterInitialize;
+exports.filterInstall = filterDefine;
 exports.filterInstance = filterInstance;
 exports.fontDefine = fontDefine;
 exports.fontDefinition = fontDefinition;
 exports.fontDefinitionFromId = fontDefinitionFromId;
 exports.fontFromId = fontFromId;
 exports.fontInitialize = fontInitialize;
+exports.fontInstall = fontDefine;
 exports.fontInstance = fontInstance;
 exports.imageDefine = imageDefine;
 exports.imageDefinition = imageDefinition;
 exports.imageDefinitionFromId = imageDefinitionFromId;
 exports.imageFromId = imageFromId;
 exports.imageInitialize = imageInitialize;
+exports.imageInstall = imageInstall;
 exports.imageInstance = imageInstance;
 exports.isAboveZero = isAboveZero;
 exports.isArray = isArray;
@@ -7088,6 +7241,7 @@ exports.mashDefinition = mashDefinition;
 exports.mashDefinitionFromId = mashDefinitionFromId;
 exports.mashFromId = mashFromId;
 exports.mashInitialize = mashInitialize;
+exports.mashInstall = mashInstall;
 exports.mashInstance = mashInstance;
 exports.masherDefine = masherDefine;
 exports.masherDefinition = masherDefinition;
@@ -7095,6 +7249,7 @@ exports.masherDefinitionFromId = masherDefinitionFromId;
 exports.masherDestroy = masherDestroy;
 exports.masherFromId = masherFromId;
 exports.masherInitialize = masherInitialize;
+exports.masherInstall = masherDefine;
 exports.masherInstance = masherInstance;
 exports.mergerDefaultId = mergerDefaultId;
 exports.mergerDefine = mergerDefine;
@@ -7102,6 +7257,7 @@ exports.mergerDefinition = mergerDefinition;
 exports.mergerDefinitionFromId = mergerDefinitionFromId;
 exports.mergerFromId = mergerFromId;
 exports.mergerInitialize = mergerInitialize;
+exports.mergerInstall = mergerDefine;
 exports.mergerInstance = mergerInstance;
 exports.pixelColor = pixelColor;
 exports.pixelFromFrame = pixelFromFrame;
@@ -7117,12 +7273,14 @@ exports.scalerDefinition = scalerDefinition;
 exports.scalerDefinitionFromId = scalerDefinitionFromId;
 exports.scalerFromId = scalerFromId;
 exports.scalerInitialize = scalerInitialize;
+exports.scalerInstall = scalerDefine;
 exports.scalerInstance = scalerInstance;
 exports.themeDefine = themeDefine;
 exports.themeDefinition = themeDefinition;
 exports.themeDefinitionFromId = themeDefinitionFromId;
 exports.themeFromId = themeFromId;
 exports.themeInitialize = themeInitialize;
+exports.themeInstall = themeDefine;
 exports.themeInstance = themeInstance;
 exports.timeEqualizeRates = timeEqualizeRates;
 exports.transitionDefine = transitionDefine;
@@ -7130,11 +7288,13 @@ exports.transitionDefinition = transitionDefinition;
 exports.transitionDefinitionFromId = transitionDefinitionFromId;
 exports.transitionFromId = transitionFromId;
 exports.transitionInitialize = transitionInitialize;
+exports.transitionInstall = transitionDefine;
 exports.transitionInstance = transitionInstance;
 exports.videoDefine = videoDefine;
 exports.videoDefinition = videoDefinition;
 exports.videoDefinitionFromId = videoDefinitionFromId;
 exports.videoFromId = videoFromId;
 exports.videoInitialize = videoInitialize;
+exports.videoInstall = videoInstall;
 exports.videoInstance = videoInstance;
 //# sourceMappingURL=index.js.map

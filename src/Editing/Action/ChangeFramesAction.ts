@@ -10,11 +10,11 @@ class ChangeFramesAction extends ChangeAction {
   clip : Clip
 
   redoAction() : void {
-    this.mash.changeClipFrames(this.clip, <number> this.redoValue)
+    this.mash.changeClipFrames(this.clip, this.redoValueNumeric)
   }
 
   undoAction() : void {
-    this.mash.changeClipFrames(this.clip, <number> this.undoValue)
+    this.mash.changeClipFrames(this.clip, this.undoValueNumeric)
   }
 }
 

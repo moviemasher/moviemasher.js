@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:lucid="lucid" width="200"
+  height="160">
+  <g transform="translate(20 20)" lucid:page-tab-id="0_0">
+    <path d="M0 6c0-3.3 2.7-6 6-6h148c3.3 0 6 2.7 6 6v108c0 3.3-2.7 6-6 6H6c-3.3 0-6-2.7-6-6z" stroke="#5e5e5e"
+      stroke-width="3" fill="none" />
+    <path d="M50 76c0-3.3 2.7-6 6-6h88c3.3 0 6 2.7 6 6v8c0 3.3-2.7 6-6 6H56c-3.3 0-6-2.7-6-6z" stroke="#000"
+      stroke-opacity="0" stroke-width="3" fill="#fff" fill-opacity="0" />
+    <use xlink:href="#a" transform="matrix(1,0,0,1,55,75) translate(22.19135802469136 17.77777777777778)" />
+    <defs>
+      <path fill="#333" d="M205 0l-28-72H64L36 0H1l101-248h38L239 0h-34zm-38-99l-47-123c-12 45-31 82-46 123h93"
+        id="b" />
+      <path fill="#333"
+        d="M160-131c35 5 61 23 61 61C221 17 115-2 30 0v-248c76 3 177-17 177 60 0 33-19 50-47 57zm-97-11c50-1 110 9 110-42 0-47-63-36-110-37v79zm0 115c55-2 124 14 124-45 0-56-70-42-124-44v89"
+        id="c" />
+      <path fill="#333"
+        d="M212-179c-10-28-35-45-73-45-59 0-87 40-87 99 0 60 29 101 89 101 43 0 62-24 78-52l27 14C228-24 195 4 139 4 59 4 22-46 18-125c-6-104 99-153 187-111 19 9 31 26 39 46"
+        id="d" />
+      <g id="a">
+        <use transform="matrix(0.06172839506172839,0,0,0.06172839506172839,0,0)" xlink:href="#b" />
+        <use transform="matrix(0.06172839506172839,0,0,0.06172839506172839,14.814814814814813,0)" xlink:href="#c" />
+        <use transform="matrix(0.06172839506172839,0,0,0.06172839506172839,29.629629629629626,0)" xlink:href="#d" />
+      </g>
+    </defs>
+  </g>
+</svg>

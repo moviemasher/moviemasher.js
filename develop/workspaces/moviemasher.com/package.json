@@ -6,7 +6,7 @@
   "version": "5.0.0",
   "license": "MPL-2.0",
   "scripts": {
-    "build-only": "rollup --config",
+    "build": "rollup --config",
     "develop": "rollup --watch --config",
     "document-help": "typedoc --help",
     "document": "typedoc --json develop/reflections.json",

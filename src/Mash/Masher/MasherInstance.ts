@@ -42,10 +42,8 @@ import { Clip } from "../Mixin/Clip/Clip"
 import { Transformable } from "../Mixin/Transformable/Transformable"
 import { Video } from "../Video/Video"
 import { ClipOrEffect, Masher, MasherAddPromise, MasherObject } from "./Masher"
-import { Default } from "../../Setup/Default";
-import { VisibleContext } from "../../Playing";
-import { TrackRange } from "../../Utilities"
-import { Visible } from "../Mixin/Visible/Visible"
+import { Default } from "../../Setup/Default"
+import { VisibleContext } from "../../Playing"
 
 class MasherClass extends InstanceClass implements Masher {
   [index : string] : unknown
@@ -53,7 +51,7 @@ class MasherClass extends InstanceClass implements Masher {
     super(...args)
     this._id ||= Id()
 
-    // console.log("Masher constructor", this.id)
+    console.log(this.constructor.name, "constructor")
     const [object] = args
     const {
       autoplay,
@@ -62,7 +60,7 @@ class MasherClass extends InstanceClass implements Masher {
       fps,
       volume,
       buffer,
-      audibleContext,
+      // audibleContext,
       mash,
       canvas,
     } = <MasherObject> object
@@ -70,7 +68,9 @@ class MasherClass extends InstanceClass implements Masher {
     if (typeof precision !== "undefined") this.precision = precision
     if (typeof loop !== "undefined") this._loop = loop
 
-    if (typeof audibleContext !== "undefined") this._audibleContext = audibleContext
+    // if (typeof audibleContext !== "undefined") this._audibleContext = audibleContext
+    // else this._audibleContext = ContextFactory.audible()
+    // console.log(this.constructor.name, "constructor created", this.audibleContext.context)
 
     if (canvas) this.visibleContext = ContextFactory.fromCanvas(canvas)
     else this.visibleContext = ContextFactory.visible()
@@ -185,22 +185,23 @@ class MasherClass extends InstanceClass implements Masher {
     this.actionCreate({ trackType, type: ActionType.AddTrack })
   }
 
-  private _audibleContext? : AudibleContext
+  // private _audibleContext? : AudibleContext
 
-  get audibleContext() : AudibleContext {
-    if (!this._audibleContext) {
-      this._audibleContext = ContextFactory.audible()
-      if (this._mash) this.mash.audibleContext = this._audibleContext
-    }
-    return this._audibleContext
-  }
+  // get audibleContext() : AudibleContext {
+  //   if (!this._audibleContext) {
+  //     console.log(this.constructor.name, "audibleContext initializing")
+  //     this._audibleContext = ContextFactory.audible()
+  //     if (this._mash) this.mash.audibleContext = this._audibleContext
+  //   }
+  //   return this._audibleContext
+  // }
 
-  set audibleContext(value : AudibleContext) {
-    if (this._audibleContext !== value) {
-      this._audibleContext = value
-      if (this._mash) this.mash.audibleContext = value
-    }
-  }
+  // set audibleContext(value : AudibleContext) {
+  //   if (this._audibleContext !== value) {
+  //     this._audibleContext = value
+  //     if (this._mash) this.mash.audibleContext = value
+  //   }
+  // }
 
   autoplay = Default.masher.autoplay
 
@@ -560,7 +561,7 @@ class MasherClass extends InstanceClass implements Masher {
     // console.log("creating composition", this._mash.composition)
     // console.log("set mash got visibleContext!", this._visibleContext)
 
-    this._mash.audibleContext = this.audibleContext
+    // this._mash.audibleContext = this.audibleContext
     this._mash.buffer = this.buffer
     this._mash.gain = this.gain
     this._mash.loop = this.loop
@@ -581,7 +582,7 @@ class MasherClass extends InstanceClass implements Masher {
     // console.log("mashOptions")
     return {
       ...mashObject,
-      audibleContext: this.audibleContext,
+      // audibleContext: this.audibleContext,
       buffer: this.buffer,
       gain: this.gain,
       loop: this.loop,
@@ -826,6 +827,12 @@ class MasherClass extends InstanceClass implements Masher {
     this.selectedClips = []
   }
 
+  get selected(): Clip | Effect | Mash {
+    const effect = this.selectedEffect
+    if (Is.populatedObject(effect)) return <Effect> effect
+
+    return this.selectedClipOrMash
+  }
 
   get selectedClip() : Clip | UnknownObject {
     if (this._selectedClips.length === 1) return this.selectedClipOrThrow

@@ -24,7 +24,7 @@ interface MashObject extends InstanceObject {
 }
 
 interface MashOptions extends MashObject {
-  audibleContext? : AudibleContext
+  // audibleContext? : AudibleContext
   buffer? : number
   gain? : number
   loop? : boolean
@@ -40,7 +40,7 @@ interface MashDefinition extends Definition {
 interface Mash extends Instance {
   addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number, frames? : number[]) : void
   addTrack(trackType : TrackType) : Track
-  audibleContext : AudibleContext
+  // audibleContext : AudibleContext
   audio: Track[]
   backcolor? : string
   changeClipFrames(clip : Clip, value : number) : void

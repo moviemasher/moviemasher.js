@@ -1,10 +1,10 @@
 import React from 'react'
 import { UnknownObject } from '@moviemasher/moviemasher.js'
-import { MMContext } from '../App/MMContext'
+import { EditorContext } from '../Editor/EditorContext'
 import { CanvasView } from '../../Utilities/CanvasView'
 
 const Preview : React.FunctionComponent<UnknownObject> = (props) => {
-  const context = React.useContext(MMContext)
+  const context = React.useContext(EditorContext)
   const canvasProps : UnknownObject = {
     key: 'preview',
     ...props,

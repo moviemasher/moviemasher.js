@@ -79,7 +79,7 @@ describe("MovieMasher", () => {
   describe("image", () => {
     const mediaObject = {
       id: 'image-id',
-      url: "Assets/globe.jpg",
+      url: "assets/globe.jpg",
       type: DefinitionType.Image,
     }
     const imageDefinition = () => <ImageDefinition> MovieMasher.image.definition(mediaObject)

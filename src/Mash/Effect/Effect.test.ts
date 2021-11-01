@@ -8,8 +8,8 @@ describe("Effect", () => {
   describe("ChromaKey", () => {
     test("returns expected context", async () => {
       const effectObject = { id : "com.moviemasher.effect.chromakey", type: "effect" }
-      const matteObject =  { id: createId(), url: 'Assets/green-text-on-white.png' }
-      const imageObject = { id: createId(), url: 'Assets/cable.jpg' }
+      const matteObject =  { id: createId(), url: 'assets/green-text-on-white.png' }
+      const imageObject = { id: createId(), url: 'assets/cable.jpg' }
       const context = ContextFactory.toSize({ width: 640, height: 480 })
       const masher = MovieMasher.masher.instance({ canvas: context.canvas })
       masher.addTrack(TrackType.Video)

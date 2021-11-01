@@ -5,11 +5,12 @@ import { pixelColor } from "../../Utilities/Pixel"
 import { byTrack } from "../../Utilities/Sort"
 import { Is } from "../../Utilities/Is"
 import { Time } from "../../Utilities/Time"
-import { AudibleContext, VisibleContext } from "../../Playing"
+import { VisibleContext } from "../../Playing"
 import { ContextFactory } from "../ContextFactory"
 import { Audible } from "../../Mash/Mixin/Audible/Audible"
 import { Visible } from "../../Mash/Mixin/Visible/Visible"
 import { Transition } from "../../Mash/Transition/Transition"
+import { Cache } from "../../Loading/Cache"
 
 interface ClipTiming {
   start : number
@@ -23,7 +24,7 @@ interface Source {
 }
 
 interface CompositionObject {
-  audibleContext? : AudibleContext
+  // audibleContext? : AudibleContext
   buffer? : number
   gain? : number
   quantize? : number
@@ -35,7 +36,7 @@ class Composition {
   constructor(object : CompositionObject) {
     // console.trace("Composition constructor")
     const {
-      audibleContext,
+      // audibleContext,
       backcolor,
       buffer,
       gain,
@@ -47,8 +48,8 @@ class Composition {
 
     if (quantize && Is.aboveZero(quantize)) this.quantize = quantize
 
-    if (audibleContext) this._audibleContext = audibleContext
-    else this._audibleContext = ContextFactory.audible()
+    // if (audibleContext) this._audibleContext = audibleContext
+    // else this._audibleContext = ContextFactory.audible()
 
     if (visibleContext) this._visibleContext = visibleContext
     else this._visibleContext = ContextFactory.visible()
@@ -60,7 +61,10 @@ class Composition {
 
   adjustSourceGain(clip : Audible) : void {
     const source = this.sourcesByClip.get(clip)
-    if (!source) return
+    if (!source) {
+      // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
+      return
+    }
 
     const { gainNode } = source
     if (this.gain === 0.0) {
@@ -85,11 +89,11 @@ class Composition {
     })
   }
 
-  private _audibleContext : AudibleContext
+  // private _audibleContext : AudibleContext
 
-  get audibleContext() : AudibleContext { return this._audibleContext }
+  // get audibleContext() : AudibleContext { return this._audibleContext }
 
-  set audibleContext(value : AudibleContext) { this._audibleContext = value }
+  // set audibleContext(value : AudibleContext) { this._audibleContext = value }
 
   backcolor? : string
 
@@ -108,7 +112,7 @@ class Composition {
       range.frame = clip.trim
       offset = range.seconds
     }
-    const now = this.audibleContext.currentTime
+    const now = Cache.audibleContext.currentTime
     if (now > start) {
       const dif = now - start
       start = now
@@ -118,8 +122,12 @@ class Composition {
     return { duration, offset, start }
   }
 
-  compositeAudible(clips : Audible[]) : boolean {
-    if (!this.createSources(clips)) return false
+  compositeAudible(clips: Audible[]): boolean {
+    // console.log(this.constructor.name, "compositeAudible", clips.length)
+    if (!this.createSources(clips)) {
+      // if (clips.length) console.log(this.constructor.name, "compositeAudible didn't createSources")
+      return false
+    }
 
     this.destroySources(clips)
     return true
@@ -162,22 +170,28 @@ class Composition {
 
   private contextSeconds = 0
 
-  private createSources(clips : Audible[]) : boolean {
+  private createSources(clips: Audible[]): boolean {
+    // console.log("Composition.createSources", clips.length)
+
     const filtered = clips.filter(clip => !this.sourcesByClip.has(clip))
     return filtered.every(clip => {
       const { definition } = clip
       const buffer = definition.loadedAudible()
-      if (!buffer) return false
+      if (!buffer) {
+        // console.log("Composition.createSources loadedAudible false", clip.id)
+        return false
+      }
 
       const timing = this.clipTiming(clip)
       const { start, duration, offset } = timing
+      // console.log("Composition.createSources", start, duration, offset)
       if (Is.positive(start) && Is.aboveZero(duration)) {
-        const gainSource = this.audibleContext.createBufferSource()
+        const gainSource = Cache.audibleContext.createBufferSource()
         gainSource.buffer = buffer
         gainSource.loop = clip.definition.loops
-        const gainNode = this.audibleContext.createGain()
+        const gainNode = Cache.audibleContext.createGain()
         gainSource.connect(gainNode)
-        gainNode.connect(this.audibleContext.destination)
+        gainNode.connect(Cache.audibleContext.destination)
         gainSource.start(start, offset, duration)
 
         this.sourcesByClip.set(clip, { gainSource, gainNode })
@@ -187,12 +201,14 @@ class Composition {
     })
   }
 
-  private destroySources(clipsToKeep : Audible[] = []) : void {
+  private destroySources(clipsToKeep: Audible[] = []): void {
+    // console.log("Composition.destroySources", clipsToKeep.length)
     this.sourcesByClip.forEach((source, clip) => {
       if (clipsToKeep.includes(clip)) return
 
+      // console.log("Composition.destroySources", clip)
       const { gainSource, gainNode } = source
-      gainNode.disconnect(this.audibleContext.destination)
+      gainNode.disconnect(Cache.audibleContext.destination)
       gainSource.disconnect(gainNode)
       this.sourcesByClip.delete(clip)
     })
@@ -227,21 +243,20 @@ class Composition {
   quantize = Default.mash.quantize
 
   get seconds() : number {
-    if (!this.audibleContext) throw Errors.internal + 'audibleContext'
-
-    const ellapsed = this.audibleContext.currentTime - this.contextSeconds
+    const ellapsed = Cache.audibleContext.currentTime - this.contextSeconds
     return ellapsed + this.mashSeconds
   }
 
   private sourcesByClip = new Map<Audible, Source>()
 
-  startContext() : void {
+  startContext(): void {
+    // console.log(this.constructor.name, "startContext")
     if (this.bufferSource) throw Errors.internal + 'bufferSource'
     if (this.playing) throw Errors.internal + 'playing'
-    this.bufferSource = this.audibleContext.createBufferSource()
+    this.bufferSource = Cache.audibleContext.createBufferSource()
     this.bufferSource.loop = true
-    this.bufferSource.buffer = this.audibleContext.createBuffer(this.buffer)
-    this.bufferSource.connect(this.audibleContext.destination)
+    this.bufferSource.buffer = Cache.audibleContext.createBuffer(this.buffer)
+    this.bufferSource.connect(Cache.audibleContext.destination)
     this.bufferSource.start(0)
   }
 
@@ -254,7 +269,7 @@ class Composition {
     this.playing = true
     this.mashSeconds = seconds
 
-    this.contextSeconds = this.audibleContext.currentTime
+    this.contextSeconds = Cache.audibleContext.currentTime
 
     if (!this.createSources(clips)) {
       this.stopPlaying()
@@ -277,7 +292,7 @@ class Composition {
 
     if (!this.bufferSource) return
 
-    this.bufferSource.disconnect(this.audibleContext.destination)
+    this.bufferSource.disconnect(Cache.audibleContext.destination)
     delete this.bufferSource
   }
 

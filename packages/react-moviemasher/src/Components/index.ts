@@ -1,4 +1,5 @@
-export * from "./App"
+export * from "./Editor"
 export * from "./Browser"
 export * from "./Player"
 export * from "./Timeline"
+export * from "./ReactMovieMasher"

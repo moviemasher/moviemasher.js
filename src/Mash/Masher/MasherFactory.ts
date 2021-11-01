@@ -117,6 +117,7 @@ const masherDefine = (object : MasherDefinitionObject) : MasherDefinition => {
 
 const MasherFactoryImplementation = {
   define: masherDefine,
+  install: masherDefine,
   definition: masherDefinition,
   definitionFromId: masherDefinitionFromId,
   destroy: masherDestroy,
@@ -128,6 +129,7 @@ const MasherFactoryImplementation = {
 Factories.masher = MasherFactoryImplementation
 
 export {
+  masherDefine as masherInstall,
   masherDefine,
   masherDefinition,
   masherDefinitionFromId,

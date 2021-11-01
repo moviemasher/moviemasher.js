@@ -17,19 +17,18 @@ interface Video extends Audible, Transformable {
 
 interface VideoDefinitionObject extends AudibleDefinitionObject {
   begin?: number
-  video_rate? : ScalarValue
-  fps? : ScalarValue
-  increment? : number
-  pattern? : string
-  source? : string
-  url? : string
+  video_rate?: ScalarValue
+  fps?: ScalarValue
+  increment?: number
+  pattern?: string
+  source?: string
+  url?: string
 }
 
 interface VideoDefinition extends Omit <AudibleDefinition, "loadedVisible">, Omit <VisibleDefinition, "loadedAudible"> {
   instance : Video
-  instanceFromObject(object : VideoObject) : Video
-  urls(start : Time, end? : Time) : string[]
-
+  instanceFromObject(object: VideoObject): Video
+  urls(start : Time, end?: Time) : string[]
 }
 
 type VideoFactory = GenericFactory<Video, VideoObject, VideoDefinition, VideoDefinitionObject>

@@ -38,8 +38,20 @@ const imageDefine = (object : ImageDefinitionObject) : ImageDefinition => {
   return imageDefinition(object)
 }
 
+
+/**
+ * @internal
+ */
+const imageInstall = (object: ImageDefinitionObject): ImageDefinition => {
+  const instance = imageDefine(object)
+  instance.retain = true
+  return instance
+}
+
+
 const ImageFactoryImplementation = {
   define: imageDefine,
+  install: imageInstall,
   definition: imageDefinition,
   definitionFromId: imageDefinitionFromId,
   fromId: imageFromId,
@@ -50,6 +62,7 @@ const ImageFactoryImplementation = {
 Factories.image = ImageFactoryImplementation
 
 export {
+  imageInstall,
   imageDefine,
   imageDefinition,
   imageDefinitionFromId,

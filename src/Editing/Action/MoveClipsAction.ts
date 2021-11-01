@@ -1,4 +1,3 @@
-
 import { Clip } from "../../Mash/Mixin/Clip/Clip"
 import { Action, ActionObject } from "./Action"
 
@@ -50,17 +49,11 @@ class MoveClipsAction extends Action {
     this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames)
   }
 
-  // setFrames(frames : number[]) : void {
-  //   this.clips.forEach((clip, index) => { clip.frame = frames[index] })
-  // }
-
   redoAction() : void {
-    // if (this.redoFrames) this.setFrames(this.redoFrames)
     this.addClips(this.trackIndex, this.insertIndex, this.redoFrames)
   }
 
   undoAction() : void {
-    // if (this.undoFrames) this.setFrames(this.undoFrames)
     this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames)
   }
 }

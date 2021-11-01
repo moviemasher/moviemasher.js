@@ -2,15 +2,15 @@ import React from "react"
 import { pixelFromFrame, pixelToFrame, UnknownObject } from "@moviemasher/moviemasher.js"
 import { View } from "../../Utilities/View"
 import { useMashScale } from "./useMashScale"
-import { MasherContext } from "../App/MasherContext"
+import { EditorContext } from '../Editor/EditorContext'
 
 const Scrub: React.FC<UnknownObject> = (props) => {
   const ref = React.useRef<HTMLDivElement>(null)
-  const masherContext = React.useContext(MasherContext)
+  const editorContext = React.useContext(EditorContext)
   const [down, setDown] = React.useState(() => false)
   const scale = useMashScale()
 
-  const { frames, setFrame } = masherContext
+  const { frames, setFrame } = editorContext
   const width = pixelFromFrame(frames, scale)
 
   const handleEvent = (event: React.MouseEvent<HTMLDivElement>) => {

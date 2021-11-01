@@ -16,11 +16,11 @@ class ChangeTrimAction extends ChangeAction {
   frames : number
 
   redoAction() : void {
-    this.mash.changeClipTrimAndFrames(this.audibleClip, <number> this.redoValue, this.frames)
+    this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValueNumeric, this.frames)
   }
 
   undoAction() : void {
-    this.mash.changeClipTrimAndFrames(this.audibleClip, <number> this.undoValue, this.frames)
+    this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames)
   }
 }
 

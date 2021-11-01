@@ -62,6 +62,7 @@ const filterDefine = (object : FilterDefinitionObject) : FilterDefinition => {
 
 const FilterFactoryImplementation = {
   define: filterDefine,
+  install: filterDefine,
   definition: filterDefinition,
   definitionFromId: filterDefinitionFromId,
   fromId: filterFromId,
@@ -73,6 +74,7 @@ Factories.filter = FilterFactoryImplementation
 
 export {
   filterDefine,
+  filterDefine as filterInstall,
   filterDefinition,
   filterDefinitionFromId,
   FilterFactoryImplementation,

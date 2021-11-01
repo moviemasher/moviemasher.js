@@ -39,8 +39,20 @@ const mashDefine = (object : MashDefinitionObject) : MashDefinition => {
   return mashDefinition(object)
 }
 
+
+/**
+ * @internal
+ */
+const mashInstall = (object: MashDefinitionObject): MashDefinition => {
+  const instance = mashDefine(object)
+  instance.retain = true
+  return instance
+}
+
+
 const MashFactoryImplementation = {
   define: mashDefine,
+  install: mashInstall,
   definition: mashDefinition,
   definitionFromId: mashDefinitionFromId,
   fromId: mashFromId,
@@ -51,6 +63,7 @@ const MashFactoryImplementation = {
 Factories.mash = MashFactoryImplementation
 
 export {
+  mashInstall,
   mashDefine,
   mashDefinition,
   mashDefinitionFromId,

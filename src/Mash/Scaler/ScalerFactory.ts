@@ -52,6 +52,7 @@ const scalerDefine = (object : ScalerDefinitionObject) : ScalerDefinition => {
 
 const ScalerFactoryImplementation = {
   define: scalerDefine,
+  install: scalerDefine,
   definitionFromId: scalerDefinitionFromId,
   definition: scalerDefinition,
   instance: scalerInstance,
@@ -63,6 +64,7 @@ Factories.scaler = ScalerFactoryImplementation
 
 export {
   scalerDefine,
+  scalerDefine as scalerInstall,
   scalerDefaultId,
   scalerDefinition,
   scalerDefinitionFromId,

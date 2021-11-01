@@ -27,12 +27,12 @@ export default {
     copy({
       targets: [
         {
-          src: '../Assets/LogoSquare.png',
+          src: '../assets/LogoSquare.png',
           dest: outputDir,
           rename: 'apple-touch-icon.png'
         },
-        { src: '../Assets/favicon.png', dest: outputDir },
-        { src: '../Assets/c.gif', dest: imageDir },
+        { src: '../assets/favicon.png', dest: outputDir },
+        { src: '../assets/c.gif', dest: imageDir },
         {
           src: 'src/Logos/*.png',
           dest: imageDir,

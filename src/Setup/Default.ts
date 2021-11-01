@@ -1,3 +1,5 @@
+import { colorTransparent } from "../Utilities/Color"
+
 const Default = {
   label: "Unlabeled",
   masher: {
@@ -11,7 +13,7 @@ const Default = {
   mash: {
     label: "Unlabeled Mash",
     quantize: 10,
-    backcolor: "#00000000",
+    backcolor: colorTransparent,
     gain: 0.75,
     buffer: 10,
   },

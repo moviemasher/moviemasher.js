@@ -4,12 +4,12 @@ import { TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 import { View } from '../../Utilities/View'
 import { TimelineTrack } from './TimelineTrack'
 
-import { MMContext } from '../App/MMContext'
+import { EditorContext } from '../Editor/EditorContext'
 import { useMashScale } from './useMashScale'
 
 const TimelineTracks: React.FC<UnknownObject> = props => {
   // console.log("TimelineTracks")
-  const appContext = React.useContext(MMContext)
+  const appContext = React.useContext(EditorContext)
   const scale = useMashScale()
 
   const { children, ...rest } = props

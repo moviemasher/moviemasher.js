@@ -1,5 +1,22 @@
+import { MovieMasher, EventType, Time, DataType, DefinitionTypes, definitionsByType, pixelPerFrame, pixelFromFrame, pixelToFrame, TrackType, DefinitionType, elementScrollMetrics } from '@moviemasher/moviemasher.js';
+export * from '@moviemasher/moviemasher.js';
 import React, { createContext, useContext } from 'react';
-import { MovieMasher, EventType, Time, pixelPerFrame, pixelFromFrame, pixelToFrame, TrackType, DefinitionType, elementScrollMetrics } from '@moviemasher/moviemasher.js';
+import PlayIcon from '@material-ui/icons/PlayCircleFilled';
+import PauseIcon from '@material-ui/icons/PauseCircleFilled';
+import PhotoSizeSelectLarge from '@material-ui/icons/PhotoSizeSelectLarge';
+import Theaters from '@material-ui/icons/Theaters';
+import MovieFilter from '@material-ui/icons/MovieFilter';
+import LibraryMusic from '@material-ui/icons/LibraryMusic';
+import VolumeIcon from '@material-ui/icons/VolumeUp';
+import FolderTransferFillIcon from 'remixicon-react/FolderTransferFillIcon';
+import Music2FillIcon from 'remixicon-react/Music2FillIcon';
+import FolderSettingsFillIcon from 'remixicon-react/FolderSettingsFillIcon';
+import FilmFillIcon from 'remixicon-react/FilmFillIcon';
+import PlayCircleFillIcon from 'remixicon-react/PlayCircleFillIcon';
+import PauseCircleFillIcon from 'remixicon-react/PauseCircleFillIcon';
+import FolderChartFillIcon from 'remixicon-react/FolderChartFillIcon';
+import ImageFillIcon from 'remixicon-react/ImageFillIcon';
+import MvFillIcon from 'remixicon-react/MvFillIcon';
 
 const DragTypeSuffix = '/x-moviemasher';
 const Constants = {
@@ -13,29 +30,24 @@ const DragType = {
 };
 const DragTypes = Object.values(DragType);
 
-const MMContextDefault = {
+const EditorContextDefault = {
+    actionNonce: 0,
     audioTracks: 0,
-    paused: false,
-    quantize: 0,
-    setPaused: () => { },
-    setVolume: () => { },
-    videoTracks: 0,
-    volume: 0,
-};
-const MMContext = createContext(MMContextDefault);
-
-const MasherContextDefault = {
     frame: 0,
     frames: 0,
+    quantize: 0,
     selectedClipIdentifier: '',
     selectedEffectIdentifier: '',
     setFrame: () => { },
+    videoTracks: 0,
 };
-const MasherContext = React.createContext(MasherContextDefault);
-const MasherContextProvider = MasherContext.Provider;
+const EditorContext = createContext(EditorContextDefault);
 
-const MMApp = (props) => {
+const View = React.forwardRef((props, ref) => React.createElement("div", Object.assign({ ref: ref }, props)));
+
+const Editor = (props) => {
     const previewReference = React.useRef();
+    const [actionNonce, setActionNonce] = React.useState(0);
     const [mash, setMash] = React.useState(() => {
         console.warn("TODO: remove mash content");
         const clips = [
@@ -63,8 +75,6 @@ const MMApp = (props) => {
     });
     const [quantize, setQuantize] = React.useState(mash.quantize);
     const [masher] = React.useState(() => MovieMasher.masher.instance({ mash }));
-    const [paused, setPaused] = React.useState(masher.paused);
-    const [volume, setVolume] = React.useState(masher.volume);
     const [frame, setFrame] = React.useState(masher.mash.frame);
     const [frames, setFrames] = React.useState(masher.mash.frames);
     const [selectedClipIdentifier, setSelectedClipIdentifier] = React.useState('');
@@ -73,11 +83,7 @@ const MMApp = (props) => {
     const [videoTracks, setVisibleTracks] = React.useState(mash.video.length);
     const [canvas, setCanvas] = React.useState(masher.canvas);
     const changeFrame = (value) => { masher.time = Time.fromArgs(value, quantize); }; //masher.time.withFrame(value) }
-    const changePaused = (value) => { masher.paused = value; };
-    const changeVolume = (value) => { masher.volume = value; };
     const handleCanvas = () => { listenCanvas(masher.canvas); };
-    const handleVolume = () => { setVolume(masher.volume); };
-    const handlePaused = () => { setPaused(masher.paused); };
     const handleSelection = () => {
         setSelectedClipIdentifier(String(masher.selectedClip.identifier));
         setSelectedEffectIdentifier(String(masher.selectedEffect.identifier));
@@ -86,71 +92,118 @@ const MMApp = (props) => {
         setFrame(masher.mash.frame);
     };
     const handleDuration = () => {
-        console.log("MMApp.handleDuration frames", masher.mash.frames);
+        console.log("Editor.handleDuration frames", masher.mash.frames);
         setFrames(masher.mash.frames);
     };
     const handleTrack = () => {
         setAudibleTracks(mash.audio.length);
         setVisibleTracks(mash.video.length);
     };
+    const handleAction = () => { setActionNonce(nonce => nonce + 1); };
     const listenCanvas = (value) => {
         if (canvas) {
             canvas.removeEventListener(EventType.Canvas, handleCanvas);
             canvas.removeEventListener(EventType.Duration, handleDuration);
-            canvas.removeEventListener(EventType.Pause, handlePaused);
-            canvas.removeEventListener(EventType.Play, handlePaused);
             canvas.removeEventListener(EventType.Time, handleTime);
             canvas.removeEventListener(EventType.Track, handleTrack);
-            canvas.removeEventListener(EventType.Volume, handleVolume);
             canvas.removeEventListener(EventType.Selection, handleSelection);
+            canvas.removeEventListener(EventType.Action, handleAction);
         }
         if (value) {
             value.addEventListener(EventType.Canvas, handleCanvas);
             value.addEventListener(EventType.Duration, handleDuration);
-            value.addEventListener(EventType.Pause, handlePaused);
-            value.addEventListener(EventType.Play, handlePaused);
             value.addEventListener(EventType.Time, handleTime);
             value.addEventListener(EventType.Track, handleTrack);
-            value.addEventListener(EventType.Volume, handleVolume);
             value.addEventListener(EventType.Selection, handleSelection);
+            value.addEventListener(EventType.Action, handleAction);
             setCanvas(value);
         }
     };
-    const appContext = {
-        // canvas,
+    const editorContext = {
         audioTracks,
         masher,
-        paused,
         previewReference,
         quantize,
-        setPaused: changePaused,
-        setVolume: changeVolume,
         videoTracks,
-        volume,
-    };
-    const masherContext = {
         frame,
         frames,
         setFrame: changeFrame,
         selectedClipIdentifier,
         selectedEffectIdentifier,
+        actionNonce,
     };
     React.useEffect(() => {
-        const { current: currentPreview } = previewReference || {};
-        if (currentPreview) {
+        const { current } = previewReference || {};
+        if (current) {
             listenCanvas(canvas);
-            masher.canvas = currentPreview;
+            masher.canvas = current;
         }
-        else
-            console.log("MMApp.useEffect", previewReference);
         return () => { listenCanvas(); };
     }, []);
-    return (React.createElement(MMContext.Provider, { value: appContext },
-        React.createElement(MasherContextProvider, { value: masherContext, children: props.children })));
+    return (React.createElement(EditorContext.Provider, { value: editorContext },
+        React.createElement(View, Object.assign({}, props))));
 };
 
-const BrowserButton = () => {
-    return React.createElement("div", null, "fuck yeah");
+const MaterialIcons = {
+    browserAudio: React.createElement(LibraryMusic, null),
+    browserEffect: React.createElement(Theaters, null),
+    browserImage: React.createElement(PhotoSizeSelectLarge, null),
+    browserTheme: React.createElement(PhotoSizeSelectLarge, null),
+    browserVideo: React.createElement(MovieFilter, null),
+    playerPause: React.createElement(PauseIcon, null),
+    playerPlay: React.createElement(PlayIcon, null),
+    timelineAudio: React.createElement(VolumeIcon, null),
+};
+
+const RemixIcons = {
+    browserAudio: React.createElement(Music2FillIcon, null),
+    browserEffect: React.createElement(FolderSettingsFillIcon, null),
+    browserImage: React.createElement(ImageFillIcon, null),
+    browserTheme: React.createElement(FolderChartFillIcon, null),
+    browserTransition: React.createElement(FolderTransferFillIcon, null),
+    browserVideo: React.createElement(FilmFillIcon, null),
+    playerPause: React.createElement(PauseCircleFillIcon, null),
+    playerPlay: React.createElement(PlayCircleFillIcon, null),
+    timelineAudio: React.createElement(MvFillIcon, null),
+};
+
+const InputContextDefault = {
+    property: '',
+    value: '',
+    // actionNonce: '',
+    changeHandler: () => { },
+};
+const InputContext = React.createContext(InputContextDefault);
+
+const DefaultTextInput = () => {
+    const inputContext = React.useContext(InputContext);
+    const { changeHandler, property, value } = inputContext;
+    const onChange = (event) => {
+        changeHandler(property, event.target.value);
+    };
+    const inputProps = {
+        type: 'text',
+        name: property,
+        value: String(value),
+        onChange,
+    };
+    return React.createElement("input", Object.assign({}, inputProps));
+};
+
+const DefaultInputs = {
+    [DataType.Boolean]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Direction4]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Direction8]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Font]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Fontsize]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Integer]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Mode]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Number]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Pixel]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Rgb]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Rgba]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.String]: React.createElement(DefaultTextInput, { key: 'input' }),
+    [DataType.Text]: React.createElement(DefaultTextInput, { key: 'input' }),
 };
 
 /*! *****************************************************************************
@@ -180,112 +233,214 @@ function __rest(s, e) {
     return t;
 }
 
-const View = React.forwardRef((props, ref) => React.createElement("div", Object.assign({ ref: ref }, props)));
+const BrowserContextDefault = {
+    definitions: [],
+    definitionId: '',
+    setDefinitions: () => { },
+    setDefinitionId: () => { },
+    setSourceId: () => { },
+    sourceId: '',
+};
+const BrowserContext = React.createContext(BrowserContextDefault);
 
-const MMBrowser = props => {
-    const { children } = props, rest = __rest(props, ["children"]);
-    return React.createElement(View, Object.assign({}, rest), children);
+const Browser = props => {
+    const { sourceId: initialSourceId } = props, rest = __rest(props, ["sourceId"]);
+    const [definitions, setDefinitions] = React.useState(undefined);
+    const [definitionId, setDefinitionId] = React.useState('');
+    const [sourceId, setSourceId] = React.useState('');
+    const browserContext = {
+        definitions,
+        definitionId,
+        setDefinitions,
+        setDefinitionId,
+        setSourceId,
+        sourceId,
+    };
+    React.useEffect(() => {
+        setDefinitions(undefined);
+        setSourceId(initialSourceId || 'theme');
+    }, [initialSourceId]);
+    return (React.createElement(BrowserContext.Provider, { value: browserContext },
+        React.createElement(View, Object.assign({}, rest))));
 };
 
-const MMBrowserSource = props => {
-    return React.createElement(View, Object.assign({}, props));
+const BrowserDefinition = props => {
+    const ref = React.useRef(null);
+    const browserContext = React.useContext(BrowserContext);
+    const [clickOffset, setClickOffset] = React.useState(0);
+    const { label: labelVar, children, selectClass, definition } = props; __rest(props, ["label", "children", "selectClass", "definition"]);
+    const { definitionId, setDefinitionId } = browserContext;
+    const { id, label } = definition;
+    const labelOrId = label || id;
+    const kid = React.Children.only(children);
+    if (!React.isValidElement(kid))
+        throw `BrowserDefinition expects single child element`;
+    const classNamesState = () => {
+        const classes = [];
+        const { className } = kid.props;
+        if (className)
+            classes.push(className);
+        if (selectClass && definitionId === id)
+            classes.push(selectClass);
+        return classes.join(' ');
+    };
+    const onMouseDown = (event) => {
+        console.log("onMouseDown");
+        const { current } = ref;
+        if (!current)
+            return;
+        const rect = current.getBoundingClientRect();
+        const { left } = rect;
+        const { clientX } = event;
+        setClickOffset(clientX - left);
+        setDefinitionId(id);
+    };
+    const onDragStart = event => {
+        console.log("onDragStart");
+        onMouseDown(event);
+        const data = { offset: clickOffset, definition };
+        const json = JSON.stringify(data);
+        const { dataTransfer } = event;
+        dataTransfer.effectAllowed = 'copy';
+        dataTransfer.setData(definition.type + DragTypeSuffix, json);
+    };
+    const style = {};
+    if (labelVar)
+        style[labelVar] = `'${labelOrId.replace("'", "\\'")}'`;
+    const clipProps = Object.assign(Object.assign({}, kid.props), { style, className: classNamesState(), onDragStart,
+        onMouseDown, draggable: true, ref });
+    return React.cloneElement(kid, clipProps);
 };
 
-const MMBrowserView = props => {
-    return React.createElement(View, Object.assign({}, props));
-};
-
-const nodesArray = (children) => React.Children.toArray(children);
-const nodesFindChild = (nodes, id) => {
-    const found = nodes.find(node => {
-        if (!React.isValidElement(node))
-            return false;
-        return node.props.id === id;
+const BrowserContent = props => {
+    const { className, children } = props, rest = __rest(props, ["className", "children"]);
+    const browserContext = React.useContext(BrowserContext);
+    const { definitions } = browserContext;
+    const objects = definitions || [];
+    const kid = React.Children.only(children);
+    if (!React.isValidElement(kid))
+        throw `BrowserContent expects single child element`;
+    const viewChildren = objects.map(definition => {
+        const definitionProps = Object.assign(Object.assign({}, rest), { definition, children: kid, key: definition.id });
+        return React.createElement(BrowserDefinition, Object.assign({}, definitionProps));
     });
-    if (found && React.isValidElement(found))
-        return found;
-};
-const nodesFind = (children, id) => {
-    return nodesFindChild(nodesArray(children), id);
+    const viewProps = { className, children: viewChildren };
+    return React.createElement(View, Object.assign({}, viewProps));
 };
 
-const ButtonCloneElement = (element, values) => {
-    const { props } = element;
-    const { className } = props, rest = __rest(props, ["className"]);
-    const { className: valuesClassName } = values, valuesRest = __rest(values, ["className"]);
-    const classes = [valuesClassName];
-    if (className)
-        classes.push(className);
-    const options = Object.assign(Object.assign(Object.assign({}, rest), valuesRest), { className: classes.join(' ') });
-    return React.cloneElement(element, options);
-};
-const ButtonCloneOptions = (key) => ({
-    key, className: `${ButtonIconClass} ${ButtonIconClass}-${key}`
-});
-const ButtonClass = 'moviemasher-button';
-const ButtonIconClass = `${ButtonClass}-icon`;
-const Button = (props) => {
-    const { startIcon, endIcon, children, className } = props, rest = __rest(props, ["startIcon", "endIcon", "children", "className"]);
-    const classes = ['moviemasher-control'];
-    if (className)
-        classes.push(className);
-    const kids = [];
-    if (children) {
-        if (typeof children === 'string' || typeof children === 'number') {
-            if (startIcon)
-                kids.push(ButtonCloneElement(startIcon, ButtonCloneOptions('start')));
-            kids.push(children);
-            if (endIcon)
-                kids.push(ButtonCloneElement(endIcon, ButtonCloneOptions('end')));
-            if (startIcon || endIcon)
-                classes.push(`${ButtonClass}-text`);
+const BrowserSource = props => {
+    const { className, id, definitionType, promiseProvider } = props, rest = __rest(props, ["className", "id", "definitionType", "promiseProvider"]);
+    const type = definitionType || id;
+    if (!promiseProvider) {
+        if (!definitionType) {
+            if (!DefinitionTypes.map(String).includes(id)) {
+                throw "BrowserSource requires definitionType or promiseProvider";
+            }
         }
-        else
-            kids.push(ButtonCloneElement(children, ButtonCloneOptions('child')));
     }
-    return React.createElement("button", Object.assign({ children: kids, className: classes.join(' ') }, rest));
+    const browserContext = React.useContext(BrowserContext);
+    const { definitions, sourceId, setDefinitions, setSourceId, setDefinitionId } = browserContext;
+    const classes = [];
+    if (className)
+        classes.push(className);
+    if (sourceId === id) {
+        // TODO: get from props or context
+        classes.push('moviemasher-selected');
+        if (typeof definitions === 'undefined') {
+            if (promiseProvider) {
+                promiseProvider().then(definitions => setDefinitions(definitions));
+            }
+            else {
+                setTimeout(() => {
+                    const definitions = definitionsByType(type);
+                    // console.log("BrowserSource", id, "setDefinitions", type, definitions.map(d => d.label || d.id))
+                    setDefinitions(definitions);
+                }, 1);
+            }
+        }
+    }
+    const onClick = () => {
+        setDefinitions(undefined);
+        setDefinitionId('');
+        setSourceId(id);
+    };
+    const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), onClick });
+    return React.createElement(View, Object.assign({}, viewProps));
 };
 
-const PlayToggle = (props) => {
-    const appContext = React.useContext(MMContext);
-    const { paused, setPaused } = appContext;
-    const { children } = props, rest = __rest(props, ["children"]);
+const PlayerContextDefault = {
+    paused: false,
+    setPaused: () => { },
+    setVolume: () => { },
+    volume: 0,
+};
+const PlayerContext = React.createContext(PlayerContextDefault);
+
+const Paused = props => {
+    const playerContext = React.useContext(PlayerContext);
+    if (!playerContext.paused)
+        return null;
+    return React.createElement(React.Fragment, null, props.children);
+};
+
+const PlayButton = (props) => {
+    const playerContext = React.useContext(PlayerContext);
+    const { paused, setPaused } = playerContext;
     const handleClick = () => { setPaused(!paused); };
-    const kids = nodesArray(children);
-    const control = nodesFind(kids, 'moviemasher-play-control');
-    const pausedOptions = Object.assign({ key: 'moviemasher-play', onClick: handleClick, children: nodesFind(kids, `moviemasher-play-${paused ? 'false' : 'true'}`) }, rest);
-    if (control)
-        return React.cloneElement(control, pausedOptions);
-    return React.createElement(Button, Object.assign({}, pausedOptions));
+    const pausedOptions = Object.assign(Object.assign({}, props), { key: 'moviemasher-play', onClick: handleClick });
+    return React.createElement(View, Object.assign({}, pausedOptions));
+};
+
+const Playing = props => {
+    const playerContext = React.useContext(PlayerContext);
+    if (playerContext.paused)
+        return null;
+    return React.createElement(React.Fragment, null, props.children);
 };
 
 const CanvasView = React.forwardRef((props, reference) => (React.createElement("canvas", Object.assign({}, props, { ref: reference }))));
 
 const Preview = (props) => {
-    const context = React.useContext(MMContext);
+    const context = React.useContext(EditorContext);
     const canvasProps = Object.assign({ key: 'preview' }, props);
     if (context.previewReference)
         canvasProps.ref = context.previewReference;
     return React.createElement(CanvasView, Object.assign({}, canvasProps));
 };
 
+// React.ChangeEventHandler<HTMLInputElement>
+const Slider = (props) => {
+    const { className, onChange } = props;
+    const options = Object.assign({}, props);
+    const classes = ['moviemasher-slider'];
+    if (className)
+        classes.push(className);
+    options.className = classes.join(' ');
+    if (onChange) {
+        const handleChange = (event) => {
+            onChange(event, event.currentTarget.valueAsNumber);
+        };
+        options.onChange = handleChange;
+    }
+    const input = React.createElement("input", Object.assign({ type: 'range' }, options));
+    return input;
+};
+
 const TimeSlider = (props) => {
-    const masherContext = React.useContext(MasherContext);
-    const { frame, frames, setFrame } = masherContext;
-    const { control } = props, rest = __rest(props, ["control"]);
+    const editorContext = React.useContext(EditorContext);
+    const { frame, frames, setFrame } = editorContext;
     const handleChange = (_event, value) => {
         const number = typeof value === "number" ? value : value[0];
-        console.log("handleChange", number, frame);
+        // console.log("handleChange", number, frame)
         if (frame !== number)
             setFrame(number);
     };
     const onChange = React.useCallback(handleChange, [frame]);
-    const frameOptions = Object.assign({ value: frame, min: 0, max: frames, step: 1, onChange }, rest);
-    return React.cloneElement(control, frameOptions);
+    const sliderProps = Object.assign({ value: frame, min: 0, max: frames, step: 1, onChange }, props);
+    return React.createElement(Slider, Object.assign({ className: 'moviemasher-frame moviemasher-slider' }, sliderProps));
 };
 
 const TimelineContextDefault = {
-    actionNonce: 0,
     height: 0,
     setHeight: () => { },
     setWidth: () => { },
@@ -299,15 +454,10 @@ const MMTimeline = props => {
     const [zoom, setZoom] = React.useState(0);
     const [width, setWidth] = React.useState(0);
     const [height, setHeight] = React.useState(0);
-    const appContext = useContext(MMContext);
+    const appContext = useContext(EditorContext);
     const [canvas, setCanvas] = React.useState(null);
-    const [actionNonce, setActionNonce] = React.useState(0);
-    const handleAction = () => { setActionNonce(nonce => nonce + 1); };
     const listenCanvas = (value) => {
-        if (canvas)
-            canvas.removeEventListener(EventType.Action, handleAction);
         if (value) {
-            value.addEventListener(EventType.Action, handleAction);
             setCanvas(value);
         }
     };
@@ -318,7 +468,6 @@ const MMTimeline = props => {
         zoom,
         width,
         height,
-        actionNonce,
     };
     const { previewReference } = appContext;
     const { children } = props, rest = __rest(props, ["children"]);
@@ -332,28 +481,22 @@ const MMTimeline = props => {
         React.createElement(TimelineContext.Provider, { value: timelineContext, children: children }));
 };
 
-// import React from "react"
 const useMashScale = () => {
     const timelineContext = React.useContext(TimelineContext);
-    // const appContext = React.useContext(MMContext)
-    const masherContext = React.useContext(MasherContext);
+    const editorContext = React.useContext(EditorContext);
     const { width, zoom } = timelineContext;
     if (!width)
         return 0;
-    const { frames } = masherContext;
-    // const { quantize, masher } = appContext
-    // const { fps } = masher
-    // const time = Time.fromArgs(frames, fps)
-    // const scaled = time.scale(quantize)
+    const { frames } = editorContext;
     return pixelPerFrame(frames, width, zoom);
 };
 
 const Scrub = (props) => {
     const ref = React.useRef(null);
-    const masherContext = React.useContext(MasherContext);
+    const editorContext = React.useContext(EditorContext);
     const [down, setDown] = React.useState(() => false);
     const scale = useMashScale();
-    const { frames, setFrame } = masherContext;
+    const { frames, setFrame } = editorContext;
     const width = pixelFromFrame(frames, scale);
     const handleEvent = (event) => {
         const { current } = ref;
@@ -386,35 +529,37 @@ const Scrub = (props) => {
 };
 
 const ScrubButton = (props) => {
-    const masherContext = React.useContext(MasherContext);
+    const editorContext = React.useContext(EditorContext);
     const scale = useMashScale();
     if (!scale)
         return null;
-    const { frame } = masherContext;
+    const { frame } = editorContext;
     const left = pixelFromFrame(frame, scale);
     const iconProps = Object.assign(Object.assign({}, props), { key: 'timeline-icon', style: { left } });
     return React.createElement(View, Object.assign({}, iconProps));
 };
 
 const TimelineClip = props => {
-    const { clip, className, selectClass, children } = props, propsRest = __rest(props, ["clip", "className", "selectClass", "children"]);
     const ref = React.useRef(null);
-    const appContext = React.useContext(MMContext);
-    const masherContext = React.useContext(MasherContext);
-    const { selectedClipIdentifier } = masherContext;
+    const editorContext = React.useContext(EditorContext);
+    const [clickOffset, setClickOffset] = React.useState(0);
+    const scale = useMashScale();
+    const { selectedClipIdentifier } = editorContext;
+    const { label: labelVar, clip, prevClipEnd, selectClass, children } = props; __rest(props, ["label", "clip", "prevClipEnd", "selectClass", "children"]);
+    const { label, identifier, type, frame, frames } = clip;
+    const kid = React.Children.only(children);
+    if (!React.isValidElement(kid))
+        throw `TimelineClip expects single child element`;
     const classNamesState = () => {
         const classes = [];
+        const { className } = kid.props;
         if (className)
             classes.push(className);
-        if (selectClass && clip.identifier === selectedClipIdentifier) {
+        if (selectClass && identifier === selectedClipIdentifier) {
             classes.push(selectClass);
         }
-        const names = classes.join(' ');
-        return names;
+        return classes.join(' ');
     };
-    const [classNames, setClassNames] = React.useState(classNamesState);
-    const [clickOffset, setClickOffset] = React.useState(0);
-    const handleSelectedClip = () => { setClassNames(classNamesState()); };
     const onMouseDown = (event) => {
         var _a;
         const { current } = ref;
@@ -422,9 +567,9 @@ const TimelineClip = props => {
             return;
         const rect = current.getBoundingClientRect();
         const { left } = rect;
-        const { clientX } = event; // , shiftKey
+        const { clientX } = event;
         setClickOffset(clientX - left);
-        (_a = appContext.masher) === null || _a === void 0 ? void 0 : _a.selectClip(clip); //, shiftKey)
+        (_a = editorContext.masher) === null || _a === void 0 ? void 0 : _a.selectClip(clip);
     };
     const onDragStart = event => {
         onMouseDown(event);
@@ -432,12 +577,18 @@ const TimelineClip = props => {
         const json = JSON.stringify(data);
         const { dataTransfer } = event;
         dataTransfer.effectAllowed = 'move';
-        dataTransfer.setData(clip.type + DragTypeSuffix, json);
+        dataTransfer.setData(type + DragTypeSuffix, json);
     };
-    React.useEffect(handleSelectedClip, [selectedClipIdentifier]);
-    const clipProps = Object.assign(Object.assign({}, propsRest), { className: classNames, onMouseDown,
+    const width = pixelFromFrame(frames, scale, 'floor');
+    const style = { width };
+    if (labelVar)
+        style[labelVar] = `'${label.replace("'", "\\'")}'`;
+    if (prevClipEnd > -1) {
+        style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor');
+    }
+    const clipProps = Object.assign(Object.assign({}, kid.props), { style, className: classNamesState(), onMouseDown,
         onDragStart, draggable: true, ref });
-    return React.cloneElement(children, clipProps);
+    return React.cloneElement(kid, clipProps);
 };
 
 const TrackContextDefault = {
@@ -448,7 +599,7 @@ const TrackContext = React.createContext(TrackContextDefault);
 const TrackContextProvider = TrackContext.Provider;
 
 const TimelineClips = props => {
-    const appContext = React.useContext(MMContext);
+    const appContext = React.useContext(EditorContext);
     const trackContext = React.useContext(TrackContext);
     const [isOver, setIsOver] = React.useState(false);
     const ref = React.useRef(null);
@@ -456,31 +607,20 @@ const TimelineClips = props => {
     const { masher } = appContext;
     if (!masher)
         return null;
-    const { label: labelVar, dropClass, selectClass, className, children } = props, rest = __rest(props, ["label", "dropClass", "selectClass", "className", "children"]);
+    const { dropClass, className, children } = props, rest = __rest(props, ["dropClass", "className", "children"]);
     const kid = React.Children.only(children);
     if (!React.isValidElement(kid))
         throw `TimelineClips`;
     const { mash } = masher;
     const { type, index } = trackContext;
     const track = mash.trackOfTypeAtIndex(type, index);
-    const { clips } = track;
-    const main = track.isMainVideo;
+    const { clips, isMainVideo } = track;
     const childNodes = () => {
-        // console.log("TimelineClips.childNodes")
-        let frame = 0;
+        let prevClipEnd = isMainVideo ? -1 : 0;
         return clips.map(clip => {
-            const kidRest = __rest(kid.props, []);
-            const { label } = clip;
-            const width = pixelFromFrame(clip.frames, scale, 'floor');
-            const style = { width };
-            if (labelVar)
-                style[labelVar] = `'${label.replace("'", "\\'")}'`;
-            if (!main) {
-                style.marginLeft = pixelFromFrame(clip.frame - frame, scale, 'floor');
-                frame = clip.frames + clip.frame;
-            }
-            const clipProps = Object.assign(Object.assign({}, kidRest), { key: clip.identifier, style,
-                clip, children: kid, selectClass });
+            const clipProps = Object.assign(Object.assign({}, rest), { prevClipEnd, key: clip.identifier, clip, children: kid });
+            if (!isMainVideo)
+                prevClipEnd = clip.frames + clip.frame;
             return React.createElement(TimelineClip, Object.assign({}, clipProps));
         });
     };
@@ -496,7 +636,7 @@ const TimelineClips = props => {
         const [definitionType] = type.split('/');
         const clipIsTransition = definitionType === DefinitionType.Transition;
         if (clipIsTransition)
-            return main; // transitions only allowed on main track
+            return isMainVideo; // transitions only allowed on main track
         const clipIsAudio = definitionType === DefinitionType.Audio;
         const trackIsAudio = track.type === TrackType.Audio;
         return clipIsAudio === trackIsAudio; // audio clips only allowed on audio tracks
@@ -505,11 +645,16 @@ const TimelineClips = props => {
         const type = dropType(dataTransfer);
         const json = dataTransfer.getData(type);
         const data = JSON.parse(json);
-        const clip = masher.selectedClips[0];
-        const { offset } = data;
+        const { offset, definition } = data;
         const frame = pixelToFrame(offsetDrop - offset, scale);
-        const frameOrIndex = main ? frameToIndex(frame, track.clips) : frame;
-        masher.moveClips(clip, frameOrIndex, index);
+        const frameOrIndex = isMainVideo ? frameToIndex(frame, track.clips) : frame;
+        if (typeof definition === 'undefined') {
+            const clip = masher.selectedClips[0];
+            masher.moveClips(clip, frameOrIndex, index);
+        }
+        else {
+            masher.add(definition, frameOrIndex, index);
+        }
     };
     const dropOffset = (clientX) => {
         const { current } = ref;
@@ -554,10 +699,14 @@ const TimelineClips = props => {
         classes.push(className);
     if (isOver && dropClass)
         classes.push(dropClass);
-    const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), children: childNodes(), ref,
+    const viewProps = {
+        className: classes.join(' '),
+        children: childNodes(),
+        ref,
         onDragLeave,
         onDragOver,
-        onDrop });
+        onDrop,
+    };
     // console.log("TimelineClips")
     return React.createElement(View, Object.assign({}, viewProps));
 };
@@ -600,7 +749,7 @@ const TimelineTrack = (props) => {
 
 const TimelineTracks = props => {
     // console.log("TimelineTracks")
-    const appContext = React.useContext(MMContext);
+    const appContext = React.useContext(EditorContext);
     const scale = useMashScale();
     const { children } = props, rest = __rest(props, ["children"]);
     const { audioTracks, videoTracks } = appContext;
@@ -627,16 +776,276 @@ const TimelineTracks = props => {
 };
 
 const ZoomSlider = (props) => {
-    const context = useContext(TimelineContext);
-    const { control } = props, rest = __rest(props, ["control"]);
+    const context = React.useContext(TimelineContext);
     const handleChange = (_event, value) => {
         const number = typeof value === "number" ? value : value[0];
         if (context.zoom !== number)
             context.setZoom(number);
     };
-    const frameOptions = Object.assign({ key: 'time-slider', value: context.zoom, min: 0.0, max: 1.0, step: 0.01, onChange: handleChange }, rest);
-    return React.cloneElement(control, frameOptions);
+    const sliderProps = Object.assign({ key: 'time-slider', value: context.zoom, min: 0.0, max: 1.0, step: 0.01, onChange: handleChange }, props);
+    return React.createElement(Slider, Object.assign({ className: 'moviemasher-zoom moviemasher-slider' }, sliderProps));
 };
 
-export { BrowserButton, Constants, DragType, DragTypeSuffix, DragTypes, MMApp, MMBrowser, MMBrowserSource, MMBrowserView, MMTimeline, PlayToggle, Preview, Scrub, ScrubButton, TimeSlider, TimelineClip, TimelineClips, TimelineContext, TimelineContextDefault, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextDefault, TrackContextProvider, ZoomSlider, useMashScale };
+const PlayerPanel = props => {
+    const appContext = useContext(EditorContext);
+    const { masher, previewReference } = appContext;
+    if (!masher)
+        throw 'No Masher';
+    const [paused, setPaused] = React.useState(masher.paused);
+    const [volume, setVolume] = React.useState(masher.volume);
+    const [canvas, setCanvas] = React.useState(null);
+    const changePaused = (value) => { masher.paused = value; };
+    const changeVolume = (value) => { masher.volume = value; };
+    const handleVolume = () => { setVolume(masher.volume); };
+    const handlePaused = () => { setPaused(masher.paused); };
+    const listenCanvas = (value) => {
+        if (canvas) {
+            canvas.removeEventListener(EventType.Pause, handlePaused);
+            canvas.removeEventListener(EventType.Play, handlePaused);
+            canvas.removeEventListener(EventType.Volume, handleVolume);
+        }
+        if (value) {
+            value.addEventListener(EventType.Pause, handlePaused);
+            value.addEventListener(EventType.Play, handlePaused);
+            value.addEventListener(EventType.Volume, handleVolume);
+            setCanvas(value);
+        }
+    };
+    React.useEffect(() => {
+        const { current: currentPreview } = previewReference || {};
+        if (currentPreview)
+            listenCanvas(currentPreview);
+        return () => { listenCanvas(); };
+    }, []);
+    const playerContext = {
+        paused,
+        setPaused: changePaused,
+        setVolume: changeVolume,
+        volume,
+    };
+    return (React.createElement(PlayerContext.Provider, { value: playerContext },
+        React.createElement(View, Object.assign({}, props))));
+};
+
+const InspectorContextDefault = {
+    definitionType: DefinitionType.Mash
+};
+const InspectorContext = React.createContext(InspectorContextDefault);
+
+const InspectorPanel = props => {
+    const editorContext = useContext(EditorContext);
+    const [definitionType, setDefinitionType] = React.useState(DefinitionType.Mash);
+    const [canvas, setCanvas] = React.useState(null);
+    const { masher, previewReference } = editorContext;
+    if (!masher)
+        throw 'No Masher';
+    const handleSelection = () => { setDefinitionType(masher.selected.type); };
+    const listenCanvas = (value) => {
+        if (canvas) {
+            canvas.removeEventListener(EventType.Selection, handleSelection);
+        }
+        if (value) {
+            value.addEventListener(EventType.Selection, handleSelection);
+            setCanvas(value);
+        }
+    };
+    React.useEffect(() => {
+        const { current: currentPreview } = previewReference || {};
+        if (currentPreview)
+            listenCanvas(currentPreview);
+        return () => { listenCanvas(); };
+    }, []);
+    const inspectorContext = {
+        definitionType
+    };
+    return (React.createElement(InspectorContext.Provider, { value: inspectorContext },
+        React.createElement(View, Object.assign({}, props))));
+};
+
+const Defined = props => {
+    const { property, properties } = props, rest = __rest(props, ["property", "properties"]);
+    const editorContext = React.useContext(EditorContext);
+    const masher = editorContext.masher;
+    const { selected } = masher;
+    const strings = properties || [property];
+    const found = strings.filter(string => selected.propertyNames.includes(string));
+    if (found.length !== strings.length)
+        return null;
+    const changeHandler = (property, value) => {
+        masher.change(property, value);
+    };
+    const inputContext = { property, value: selected.value(property), changeHandler };
+    return (React.createElement(InputContext.Provider, { value: inputContext },
+        React.createElement(View, Object.assign({}, rest))));
+};
+
+const propsStringArray = (string, array, properties) => {
+    if (string)
+        return [string];
+    if (!array)
+        return properties ? properties.map(property => property.name) : [];
+    if (typeof array === 'string')
+        return array.split(',').map(string => string.trim());
+    return array;
+};
+
+const PropertyContainer = props => {
+    const { contained, className, property, children } = props;
+    const templateElements = React.Children.toArray(children);
+    const kids = [];
+    if (templateElements.length) {
+        const [first, second, ...rest] = templateElements;
+        if (React.isValidElement(first)) {
+            kids.push(React.cloneElement(first, { key: `label-${property}`, children: property }));
+            if (second) {
+                if (React.isValidElement(second)) {
+                    kids.push(React.cloneElement(second, { key: `contained-${property}`, children: contained }));
+                }
+                else
+                    kids.push(second, contained);
+            }
+            else
+                kids.push(contained);
+        }
+        else
+            kids.push(property, ...templateElements, contained);
+    }
+    else
+        kids.push(property, contained);
+    const viewProps = { children: kids, key: property, className };
+    return React.createElement(View, Object.assign({}, viewProps));
+};
+
+const PropertyInspector = props => {
+    const { inputs, className, property, children } = props;
+    const editorContext = React.useContext(EditorContext);
+    const masher = editorContext.masher;
+    const { selected } = masher;
+    const { definition } = selected;
+    const definitionProperty = definition.property(property);
+    if (!definitionProperty)
+        return null;
+    const { type, name } = definitionProperty;
+    const value = selected.value(name);
+    const input = inputs[type.id];
+    const changeHandler = (property, value) => {
+        masher.change(property, value);
+    };
+    const inputContext = { property, value, changeHandler };
+    const inputWithContext = (React.createElement(InputContext.Provider, { key: 'context', value: inputContext }, input));
+    const containerProps = {
+        className,
+        children,
+        property: name,
+        contained: inputWithContext,
+    };
+    return React.createElement(PropertyContainer, Object.assign({}, containerProps));
+};
+
+const useSelected = () => {
+    const editorContext = React.useContext(EditorContext);
+    return editorContext.masher.selected;
+};
+
+const Inspector = props => {
+    const { inputs, className, property, properties, children } = props;
+    const selected = useSelected();
+    const strings = propsStringArray(property, properties, selected.definition.properties);
+    const kids = strings.map(property => {
+        const propertyProps = {
+            key: `inspector-${property}`, inputs, className, property, children
+        };
+        return React.createElement(PropertyInspector, Object.assign({}, propertyProps));
+    });
+    return React.createElement(React.Fragment, null, kids);
+};
+
+const TypeNotSelected = props => {
+    const editorContext = React.useContext(EditorContext);
+    const { children } = props;
+    if (!children)
+        return null;
+    const masher = editorContext.masher;
+    if (masher.selected.type === DefinitionType.Mash)
+        return null;
+    return React.createElement(React.Fragment, null, children);
+};
+
+const PropertyInformer = props => {
+    const { className, property, children } = props;
+    const editorContext = React.useContext(EditorContext);
+    const masher = editorContext.masher;
+    const { selected } = masher;
+    const value = String(selected.value(property));
+    const containerProps = { className, children, property, contained: value };
+    return React.createElement(PropertyContainer, Object.assign({}, containerProps));
+};
+
+const Informer = props => {
+    const { className, property, properties, children } = props;
+    const selected = useSelected();
+    const strings = propsStringArray(property, properties, selected.definition.properties);
+    const kids = strings.map(property => {
+        const propertyProps = { key: `inspector-${property}`, className, property, children };
+        return React.createElement(PropertyInformer, Object.assign({}, propertyProps));
+    });
+    return React.createElement(React.Fragment, null, kids);
+};
+
+const ReactMovieMasher = props => {
+    const { icons, inputs } = props;
+    return (React.createElement(Editor, { className: 'moviemasher-app' },
+        React.createElement(PlayerPanel, { className: 'moviemasher-panel moviemasher-player' },
+            React.createElement(Preview, { className: "moviemasher-canvas" }),
+            React.createElement("div", { className: 'moviemasher-controls moviemasher-foot' },
+                React.createElement(PlayButton, { className: 'moviemasher-paused moviemasher-button' },
+                    React.createElement(Playing, null, icons.playerPause),
+                    React.createElement(Paused, null, icons.playerPlay)),
+                React.createElement(TimeSlider, null))),
+        React.createElement(Browser, { className: 'moviemasher-panel moviemasher-browser' },
+            React.createElement("div", { className: 'moviemasher-head' },
+                React.createElement(BrowserSource, { id: 'video', className: 'moviemasher-button-icon', children: icons.browserVideo }),
+                React.createElement(BrowserSource, { id: 'audio', className: 'moviemasher-button-icon', children: icons.browserAudio }),
+                React.createElement(BrowserSource, { id: 'image', className: 'moviemasher-button-icon', children: icons.browserImage }),
+                React.createElement(BrowserSource, { id: 'theme', className: 'moviemasher-button-icon', children: icons.browserTheme }),
+                React.createElement(BrowserSource, { id: 'effect', className: 'moviemasher-button-icon', children: icons.browserEffect }),
+                React.createElement(BrowserSource, { id: 'transition', className: 'moviemasher-button-icon', children: icons.browserTransition })),
+            React.createElement(BrowserContent, { selectClass: 'moviemasher-selected', label: '--clip-label', className: 'moviemasher-content' },
+                React.createElement("div", { className: 'moviemasher-definition' },
+                    React.createElement("label", null))),
+            React.createElement("div", { className: 'moviemasher-foot' })),
+        React.createElement(MMTimeline, { className: 'moviemasher-panel moviemasher-timeline' },
+            React.createElement("div", { className: 'moviemasher-controls moviemasher-head' }, "BUTTONS"),
+            React.createElement("div", { className: 'moviemasher-content' },
+                React.createElement("div", { className: 'moviemasher-scrub-pad' }),
+                React.createElement(Scrub, { className: 'moviemasher-scrub' },
+                    React.createElement(ScrubButton, { className: 'moviemasher-scrub-icon' })),
+                React.createElement("div", { className: 'moviemasher-scrub-bar-container' },
+                    React.createElement(ScrubButton, { className: 'moviemasher-scrub-bar' })),
+                React.createElement(TimelineTracks, { className: 'moviemasher-tracks' },
+                    React.createElement("div", { className: 'moviemasher-track' },
+                        React.createElement("div", { className: 'moviemasher-track-icon', children: icons.timelineAudio }),
+                        React.createElement(TimelineClips, { className: 'moviemasher-clips', dropClass: 'moviemasher-drop', selectClass: 'moviemasher-selected', label: '--clip-label' },
+                            React.createElement("div", { className: 'moviemasher-clip' },
+                                React.createElement("label", null))))),
+                React.createElement(TimelineSizer, { className: 'moviemasher-timeline-sizer' })),
+            React.createElement("div", { className: 'moviemasher-controls moviemasher-foot' },
+                React.createElement(ZoomSlider, null))),
+        React.createElement(InspectorPanel, { className: 'moviemasher-panel moviemasher-inspector' },
+            React.createElement("div", { className: 'moviemasher-content' },
+                React.createElement(Inspector, { properties: 'label,backcolor', inputs: inputs },
+                    React.createElement("label", null)),
+                React.createElement(TypeNotSelected, { type: 'mash' },
+                    React.createElement(Defined, { property: 'color', className: 'moviemasher-input' },
+                        React.createElement("label", null, "Color"),
+                        " ",
+                        inputs[DataType.Text]),
+                    React.createElement(Inspector, { inputs: inputs, className: 'moviemasher-input' },
+                        React.createElement("label", null))),
+                React.createElement(Informer, null,
+                    React.createElement("label", null))),
+            React.createElement("div", { className: 'moviemasher-foot' }))));
+};
+
+export { Browser, BrowserContent, BrowserContext, BrowserContextDefault, BrowserDefinition, BrowserSource, Constants, DefaultInputs, DragType, DragTypeSuffix, DragTypes, Editor, EditorContext, EditorContextDefault, MMTimeline, MaterialIcons, Paused, PlayButton, Playing, Preview, ReactMovieMasher, RemixIcons, Scrub, ScrubButton, TimeSlider, TimelineClip, TimelineClips, TimelineContext, TimelineContextDefault, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextDefault, TrackContextProvider, ZoomSlider, useMashScale };
 //# sourceMappingURL=index.js.map

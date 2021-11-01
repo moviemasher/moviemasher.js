@@ -64,6 +64,7 @@ const EffectFactoryImplementation = {
   definitionFromId: effectDefinitionFromId,
   fromId: effectFromId,
   initialize: effectInitialize,
+  install: effectDefine,
   instance: effectInstance,
 }
 
@@ -75,6 +76,7 @@ export {
   effectDefinitionFromId,
   EffectFactoryImplementation,
   effectFromId,
+  effectDefine as effectInstall,
   effectInitialize,
   effectInstance,
 }

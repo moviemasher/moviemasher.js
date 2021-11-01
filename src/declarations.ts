@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Any = any
 
@@ -17,7 +18,6 @@ export type Timeout = ReturnType<typeof setTimeout>
 export type Interval = ReturnType<typeof setInterval>
 
 export type EventsTarget = EventTarget
-export type EventsCallback = EventHandlerNonNull
 
 export type ScalarValue = number | string
 export type ScalarArray = unknown[]
@@ -65,7 +65,6 @@ export interface Rgb {
 export interface Rgba extends Rgb {
   a : number
 }
-
 
 export interface WithType {
   type: string
@@ -158,20 +157,19 @@ export type Constructor = new (...args: any[]) => any
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
 export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
-  // [index : string] : (...args: Any[]) => Any
   define(object : DEFINITIONOBJECT) : DEFINITION
   definitionFromId(id : string) : DEFINITION
-  definition(object : DEFINITIONOBJECT) : DEFINITION
+  definition(object: DEFINITIONOBJECT): DEFINITION
+  install(object : DEFINITIONOBJECT) : DEFINITION
   instance(object : INSTANCEOBJECT) : INSTANCE
   initialize() : void
   fromId(id : string) : INSTANCE
 }
 
 export type LoadPromise = Promise <void>
-
 export type LoadFontPromise = Promise< { family: string } >
 export type LoadImagePromise = Promise<DrawingSource>
-
+export type LoadVideoPromise = Promise<DrawingSource>
 
 export interface ScrollMetrics {
   height : number
@@ -185,3 +183,4 @@ export interface ScrollMetrics {
   x : number
   y : number
 }
+export type MasherChangeHandler = (property: string, value?: SelectionValue) => void

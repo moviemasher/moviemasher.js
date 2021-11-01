@@ -1,10 +1,9 @@
-import { Loader } from "."
-import { AudioLoader } from "../Loading/AudioLoader"
-import { FontLoader } from "../Loading/FontLoader"
-import { ImageLoader } from "../Loading/ImageLoader"
-import { ModuleLoader } from "../Loading/ModuleLoader"
-import { UnknownObject } from "../declarations"
-import { Capitalize } from "../Utilities"
+import { Loader } from "./Loader"
+import { AudioLoader } from "../Mash/Audio/AudioLoader"
+import { FontLoader } from "../Mash/Font/FontLoader"
+import { ImageLoader } from "../Mash/Image/ImageLoader"
+import { VideoLoader } from "../Mash/Video/VideoLoader"
+import { Capitalize } from "../Utilities/Capitalize"
 
 type LoaderClassType = typeof Loader
 
@@ -12,13 +11,11 @@ const classes : {[index : string] : LoaderClassType } = {
   Audio: AudioLoader,
   Font: FontLoader,
   Image: ImageLoader,
-  Module: ModuleLoader,
+  Video: VideoLoader,
 }
 
 class LoaderClass {
-  audio(object? : UnknownObject | undefined) : AudioLoader {
-    return new (<typeof AudioLoader> classes.Audio)(object)
-  }
+  audio() { return new classes.Audio() }
 
   font() { return new classes.Font() }
 
@@ -28,7 +25,7 @@ class LoaderClass {
     classes[Capitalize(type)] = loader
   }
 
-  module() { return new classes.Module() }
+  video() { return new classes.Video()}
 }
 
 const LoaderFactory = new LoaderClass()

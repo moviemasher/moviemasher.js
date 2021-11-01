@@ -1,4 +1,4 @@
-import { ImageLoader } from "../../src/Loading"
+import { ImageLoader } from "../../src/Mash/Image/ImageLoader"
 import { Any } from "../../src/declarations";
 import path from 'path';
 import { loadImage } from 'canvas';

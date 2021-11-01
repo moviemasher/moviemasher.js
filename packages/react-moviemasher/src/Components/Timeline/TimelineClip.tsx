@@ -1,41 +1,41 @@
 import React from 'react'
-import {
-  UnknownObject,
-  Clip,
-} from '@moviemasher/moviemasher.js'
+import { UnknownObject, Clip, pixelFromFrame } from '@moviemasher/moviemasher.js'
 
-import { MMContext } from '../App/MMContext'
-import { MasherContext } from '../App/MasherContext'
 import { DragClipObject } from '../../declarations'
 import { DragTypeSuffix } from '../../Setup/Constants'
+import { EditorContext } from '../Editor/EditorContext'
+import { useMashScale } from './useMashScale'
 
 interface TimelineClipProps extends UnknownObject {
   clip: Clip
   children: React.ReactElement
   selectClass?: string
+  prevClipEnd: number
+  label?: string
 }
 
 const TimelineClip: React.FC<TimelineClipProps> = props => {
-  const { clip, className, selectClass, children, ...propsRest } = props
   const ref = React.useRef<HTMLDivElement>(null)
-  const appContext = React.useContext(MMContext)
-  const masherContext = React.useContext(MasherContext)
+  const editorContext = React.useContext(EditorContext)
+  const [clickOffset, setClickOffset] = React.useState(0)
+  const scale = useMashScale()
 
-  const { selectedClipIdentifier  } = masherContext
+  const { selectedClipIdentifier } = editorContext
+  const { label: labelVar, clip, prevClipEnd, selectClass, children, ...rest } = props
+  const { label, identifier, type, frame, frames } = clip
+
+  const kid = React.Children.only(children)
+  if (!React.isValidElement(kid)) throw `TimelineClip expects single child element`
+
   const classNamesState = () => {
     const classes = []
+    const { className } = kid.props
     if (className) classes.push(className)
-    if (selectClass && clip.identifier === selectedClipIdentifier) {
+    if (selectClass && identifier === selectedClipIdentifier) {
       classes.push(selectClass)
     }
-    const names = classes.join(' ')
-    return names
+    return classes.join(' ')
   }
-
-  const [classNames, setClassNames] = React.useState(classNamesState)
-  const [clickOffset, setClickOffset] = React.useState(0)
-
-  const handleSelectedClip = () => { setClassNames(classNamesState()) }
 
   const onMouseDown = (event: React.MouseEvent) => {
     const { current } = ref
@@ -43,34 +43,38 @@ const TimelineClip: React.FC<TimelineClipProps> = props => {
 
     const rect = current.getBoundingClientRect()
     const { left } = rect
-    const { clientX } = event // , shiftKey
-
+    const { clientX } = event
     setClickOffset(clientX - left)
-
-    appContext.masher?.selectClip(clip) //, shiftKey)
+    editorContext.masher?.selectClip(clip)
   }
 
   const onDragStart: React.DragEventHandler = event => {
     onMouseDown(event)
-    const data: DragClipObject = { offset: clickOffset }
+    const data = { offset: clickOffset }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(clip.type + DragTypeSuffix, json)
+    dataTransfer.setData(type + DragTypeSuffix, json)
   }
 
-  React.useEffect(handleSelectedClip, [selectedClipIdentifier])
+  const width = pixelFromFrame(frames, scale, 'floor')
+  const style: UnknownObject = { width }
+  if (labelVar) style[labelVar] = `'${label.replace("'", "\\'")}'`
+  if (prevClipEnd > -1) {
+    style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor')
+  }
 
   const clipProps = {
-    ...propsRest,
-    className: classNames,
+    ...kid.props,
+    style,
+    className: classNamesState(),
     onMouseDown,
     onDragStart,
     draggable: true,
     ref,
   }
 
-  return React.cloneElement(children, clipProps)
+  return React.cloneElement(kid, clipProps)
 }
 
 export { TimelineClip }

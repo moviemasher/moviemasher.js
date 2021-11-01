@@ -58,6 +58,7 @@ const mergerDefine = (object : MergerDefinitionObject) : MergerDefinition => {
 
 const MergerFactoryImplementation : MergerFactory = {
   define: mergerDefine,
+  install: mergerDefine,
   definition: mergerDefinition,
   definitionFromId: mergerDefinitionFromId,
   fromId: mergerFromId,
@@ -69,6 +70,7 @@ Factories.merger = MergerFactoryImplementation
 
 export {
   mergerDefine,
+  mergerDefine as mergerInstall,
   mergerDefaultId,
   mergerDefinition,
   mergerDefinitionFromId,

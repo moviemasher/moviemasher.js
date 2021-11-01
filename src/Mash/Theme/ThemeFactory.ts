@@ -49,6 +49,7 @@ const themeDefine = (object : ThemeDefinitionObject) : ThemeDefinition => {
 
 const ThemeFactoryImplementation = {
   define: themeDefine,
+  install: themeDefine,
   definition: themeDefinition,
   definitionFromId: themeDefinitionFromId,
   fromId: themeFromId,
@@ -60,6 +61,7 @@ Factories.theme = ThemeFactoryImplementation
 
 export {
   themeDefine,
+  themeDefine as themeInstall,
   themeDefinition,
   themeDefinitionFromId,
   ThemeFactoryImplementation,

@@ -1,36 +1,32 @@
 import React from 'react'
-import { UnknownObject } from '@moviemasher/moviemasher.js'
+
 import { SliderChangeHandler } from "../../declarations"
-import { MasherContext } from '../App/MasherContext'
+import { EditorContext } from '../Editor/EditorContext'
+import { Slider } from '../../Utilities/Slider'
 
-interface TimeSliderProps extends UnknownObject {
-  control: React.ReactElement
-}
 
-const TimeSlider : React.FC<TimeSliderProps> = (props) => {
-  const masherContext = React.useContext(MasherContext)
+const TimeSlider : React.FunctionComponent = (props) => {
+  const editorContext = React.useContext(EditorContext)
 
-  const { frame, frames, setFrame } = masherContext
-  const { control, ...rest } = props
+  const { frame, frames, setFrame } = editorContext
 
   const handleChange: SliderChangeHandler = (_event, value) => {
     const number = typeof value === "number" ? value : value[0]
-    console.log("handleChange", number, frame)
+    // console.log("handleChange", number, frame)
     if (frame !== number) setFrame(number)
   }
 
   const onChange = React.useCallback(handleChange, [frame])
 
-  const frameOptions = {
+  const sliderProps = {
     value: frame,
     min: 0,
     max: frames,
     step: 1,
     onChange,
-    ...rest
+    ...props
   }
-
-  return React.cloneElement(control, frameOptions)
+  return <Slider className='moviemasher-frame moviemasher-slider' {...sliderProps} />
 }
 
-export { TimeSlider, TimeSliderProps }
+export { TimeSlider }

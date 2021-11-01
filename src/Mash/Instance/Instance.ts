@@ -75,20 +75,33 @@ class InstanceClass {
     }))
   }
 
-  get type() : DefinitionType { return this.definition.type }
+  setValue(key: string, value: SelectionValue): boolean {
+    const property = this.definition.property(key)
+    if (!property) throw Errors.property + key
+
+    const { type } = property
+    const coerced = type.coerce(value)
+    if (typeof coerced === 'undefined') {
+      console.error(this.constructor.name, "setValue", key, value)
+      return false
+    }
+
+    this[key] = coerced
+    return true
+  }
 
   toJSON() : JsonObject { return this.propertyValues }
 
+  get type() : DefinitionType { return this.definition.type }
+
   value(key : string) : SelectionValue {
     const value = this[key]
-    if (typeof value === "undefined") throw Errors.property + "value " + this.propertyNames.includes(key) + " " + this[key]
+    if (typeof value === "undefined") throw Errors.property + key
 
     return <SelectionValue> value
   }
 }
 
-interface Instance extends InstanceClass {
-
-}
+interface Instance extends InstanceClass {}
 
 export { Instance, InstanceClass, InstanceObject }

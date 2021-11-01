@@ -3,6 +3,7 @@
   "version": "5.0.0",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -19,12 +20,19 @@
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "^5.0.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "@material-ui/core": "^4.12.1",
+    "@material-ui/icons": "^4.11.2",
+    "remixicon-react": "^1.0.0"
   },
-  "devDependencies": {},
   "scripts": {
-    "build-watch": "rollup --config --watch",
-    "build": "rollup --config",
+    "build-watch": "rollup --config develop/rollup/esm.config.js --watch",
+    "css-copy": "cp -r ../../develop/css dist",
+    "css-cat": "cat ../../develop/css/* > dist/css/editor.css",
+    "build-css": "run-s css-copy css-cat",
+    "build-esm": "run-s rollup-esm build-css",
+    "rollup-esm": "rollup --config ./develop/rollup/esm.config.js",
+    "build": "run-s clean build-esm",
     "clean": "rimraf dist"
   },
   "eslintConfig": {

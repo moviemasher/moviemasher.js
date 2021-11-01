@@ -1,7 +1,7 @@
 import { DefinitionType, TrackType } from "../../Setup/Enums"
 import { DefinitionClass } from "../Definition/Definition"
 import { AudioClass } from "./AudioInstance"
-import { Audio, AudioObject } from "./Audio"
+import { Audio, AudioDefinitionObject, AudioObject } from "./Audio"
 import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
 import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
 import { Definitions } from "../Definitions/Definitions"

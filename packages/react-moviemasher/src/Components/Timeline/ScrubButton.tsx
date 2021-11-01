@@ -1,16 +1,16 @@
 import React from "react"
 import { pixelFromFrame, UnknownObject } from "@moviemasher/moviemasher.js"
-import { MasherContext } from "../App/MasherContext"
+import { EditorContext } from '../Editor/EditorContext'
 import { View } from "../../Utilities/View"
 import { useMashScale } from "./useMashScale"
 
 const ScrubButton: React.FC<UnknownObject> = (props) => {
-  const masherContext = React.useContext(MasherContext)
+  const editorContext = React.useContext(EditorContext)
 
   const scale = useMashScale()
   if (!scale) return null
 
-  const { frame } = masherContext
+  const { frame } = editorContext
 
 
   const left = pixelFromFrame(frame, scale)

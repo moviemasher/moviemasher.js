@@ -48,6 +48,7 @@ const transitionDefine = (object : TransitionDefinitionObject) : TransitionDefin
 
 const TransitionFactoryImplementation = {
   define: transitionDefine,
+  install: transitionDefine,
   definition: transitionDefinition,
   definitionFromId: transitionDefinitionFromId,
   fromId: transitionFromId,
@@ -59,6 +60,7 @@ Factories.transition = TransitionFactoryImplementation
 
 export {
   transitionDefine,
+  transitionDefine as transitionInstall,
   transitionDefinition,
   transitionDefinitionFromId,
   TransitionFactoryImplementation,

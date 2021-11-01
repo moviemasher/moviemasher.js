@@ -38,8 +38,21 @@ const videoDefine = (object : VideoDefinitionObject) : VideoDefinition => {
   return videoDefinition(object)
 }
 
+
+/**
+ * @internal
+ */
+const videoInstall = (object: VideoDefinitionObject): VideoDefinition => {
+  const instance = videoDefine(object)
+  instance.retain = true
+  return instance
+}
+
+
+
 const VideoFactoryImplementation = {
   define: videoDefine,
+  install: videoInstall,
   definition: videoDefinition,
   definitionFromId: videoDefinitionFromId,
   fromId: videoFromId,
@@ -50,6 +63,7 @@ const VideoFactoryImplementation = {
 Factories.video = VideoFactoryImplementation
 
 export {
+  videoInstall,
   videoDefine,
   videoDefinition,
   videoDefinitionFromId,

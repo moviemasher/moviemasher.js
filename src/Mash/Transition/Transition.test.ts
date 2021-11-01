@@ -20,8 +20,8 @@ describe("Transition", () => {
       const mashObject = { id, visibleContext, backcolor }
       const mash = MovieMasher.mash.instance(mashObject)
       const { quantize } = mash
-      const globeImage = MovieMasher.image.instance({ id: createId(), url: 'Assets/globe.jpg' })
-      const cableImage = MovieMasher.image.instance({ id: createId(), url: 'Assets/cable.jpg' })
+      const globeImage = MovieMasher.image.instance({ id: createId(), url: 'assets/globe.jpg' })
+      const cableImage = MovieMasher.image.instance({ id: createId(), url: 'assets/cable.jpg' })
       const transition = MovieMasher.transition.fromId("com.moviemasher.transition.crossfade")
 
       mash.addClipsToTrack([transition, cableImage])

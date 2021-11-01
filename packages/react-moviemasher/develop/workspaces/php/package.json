@@ -1,13 +1,17 @@
 {
-  "name": "@moviemasher/react-moviemasher-example-php",
+  "name": "php",
   "version": "5.0.0",
   "description": "Combines moviemasher.js, react-moviemasher, and php-moviemasher",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build-watch": "rollup --config --watch",
-    "build": "rollup --config",
-    "serve": "serve --debug --cors --no-port-switching --no-clipboard --listen 7977 dist/esm",
+    "build-watch": "rollup --config develop/rollup/iife.config.js --watch",
+    "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 7977 dist",
+    "serve-help": "serve --help",
+    "build-css": "cp -r ../../../dist/css dist",
+    "copy-html": "cp -r ../../../../../develop/index.html dist",
+    "link-assets": "ln -s $(cd ../../../../../develop/assets/raw ; pwd) dist",
+    "rollup-iife": "rollup --config develop/rollup/iife.config.js",
+    "build": "run-s clean rollup-iife link-assets build-css copy-html",
     "clean": "rimraf dist"
   },
   "author": {
@@ -20,6 +24,7 @@
     "@material-ui/icons": "^4.11.2",
     "@moviemasher/react-moviemasher": "^5.0.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "remixicon-react": "^1.0.0"
   }
 }

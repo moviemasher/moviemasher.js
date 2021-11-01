@@ -5,5 +5,4 @@ class FontClass extends InstanceClass {
   declare definition : FontDefinition
 }
 
-
 export { FontClass }
