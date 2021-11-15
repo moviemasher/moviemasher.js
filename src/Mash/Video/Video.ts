@@ -1,36 +1,41 @@
-import { AudibleDefinition, AudibleDefinitionObject } from "../Mixin/Audible/Audible"
-import { VisibleDefinition, VisibleObject } from "../Mixin/Visible/Visible"
-import { Transformable } from "../Mixin/Transformable/Transformable"
-import { Audible, AudibleObject } from "../Mixin/Audible/Audible"
-import { GenericFactory, ScalarValue } from "../../declarations"
-import { Time } from "../../Utilities"
+import { Constrained, GenericFactory } from "../../declarations"
+import {
+  AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
+} from "../Mixin/AudibleFile/AudibleFile"
+import {
+  Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
+} from "../Mixin/Transformable/Transformable"
 
-interface VideoObject extends AudibleObject, VisibleObject {
+interface VideoObject extends AudibleFileObject, TransformableObject {
   speed?: number
 }
 
-interface Video extends Audible, Transformable {
+interface Video extends AudibleFile, Transformable {
   definition : VideoDefinition
   copy : Video
   speed : number
 }
 
-interface VideoDefinitionObject extends AudibleDefinitionObject {
-  begin?: number
-  video_rate?: ScalarValue
-  fps?: ScalarValue
-  increment?: number
-  pattern?: string
+interface VideoDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
+  fps?: number
   source?: string
   url?: string
 }
 
-interface VideoDefinition extends Omit <AudibleDefinition, "loadedVisible">, Omit <VisibleDefinition, "loadedAudible"> {
+interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition {
+  absoluteUrl: string
   instance : Video
   instanceFromObject(object: VideoObject): Video
-  urls(start : Time, end?: Time) : string[]
 }
 
 type VideoFactory = GenericFactory<Video, VideoObject, VideoDefinition, VideoDefinitionObject>
 
-export { Video, VideoDefinition, VideoDefinitionObject, VideoFactory, VideoObject }
+
+type VideoClass = Constrained<Video>
+
+type VideoDefinitionClass = Constrained<VideoDefinition>
+
+export {
+  Video, VideoClass, VideoDefinition, VideoDefinitionClass, VideoDefinitionObject,
+  VideoFactory, VideoObject
+}

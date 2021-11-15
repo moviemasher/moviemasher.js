@@ -1,5 +1,5 @@
 import { MergerClass } from "./MergerInstance"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { Merger, MergerObject } from "./Merger"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
 import { Any } from "../../declarations"
@@ -8,7 +8,7 @@ import { Property } from "../../Setup/Property"
 
 import { Definitions } from "../Definitions/Definitions"
 
-const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionClass)
+const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 class MergerDefinitionClass extends MergerDefinitionWithModular {
   constructor(...args : Any[]) {
     super(...args)

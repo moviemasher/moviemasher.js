@@ -1,11 +1,11 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { MergerDefinitionClass } from "../Merger/MergerDefinition"
 import { Definitions } from "../Definitions"
-import mergerBlendJson from "../Merger/DefinitionObjects/blend.json"
-import mergerCenterJson from "../Merger/DefinitionObjects/center.json"
-import mergerConstrainedJson from "../Merger/DefinitionObjects/constrained.json"
-import mergerDefaultJson from "../Merger/DefinitionObjects/default.json"
-import mergerOverlayJson from "../Merger/DefinitionObjects/overlay.json"
+import mergerBlendJson from "../../DefinitionObjects/merger/blend.json"
+import mergerCenterJson from "../../DefinitionObjects/merger/center.json"
+import mergerConstrainedJson from "../../DefinitionObjects/merger/constrained.json"
+import mergerDefaultJson from "../../DefinitionObjects/merger/default.json"
+import mergerOverlayJson from "../../DefinitionObjects/merger/overlay.json"
 import {
   Merger,
   MergerObject,
@@ -66,7 +66,7 @@ const MergerFactoryImplementation : MergerFactory = {
   instance: mergerInstance,
 }
 
-Factories.merger = MergerFactoryImplementation
+Factories[DefinitionType.Merger] = MergerFactoryImplementation
 
 export {
   mergerDefine,

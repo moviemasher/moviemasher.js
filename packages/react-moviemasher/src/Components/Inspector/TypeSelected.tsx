@@ -1,20 +1,24 @@
 import React from 'react'
-import { DefinitionType } from '@moviemasher/moviemasher.js'
-import { EditorContext } from '../Editor/EditorContext'
+
+import { propsDefinitionTypes } from '../../Utilities/Props'
+import { InspectorContext } from './InspectorContext'
 
 interface TypeSelectedProps {
-  type: DefinitionType | string
+  type?: string
+  types?: string | string[]
 }
+
 const TypeSelected: React.FunctionComponent<TypeSelectedProps> = props => {
-  const editorContext = React.useContext(EditorContext)
-  const { type, children } = props
+  const inspectorContext = React.useContext(InspectorContext)
+
+  const { type, types, children } = props
   if (!children) return null
 
-  const masher = editorContext.masher!
-  if (masher.selected.type !== type as DefinitionType) return null
+  const { definitionType } = inspectorContext
+  const definitionTypes = propsDefinitionTypes(type, types)
+  if (!definitionTypes.includes(definitionType)) return null
 
   return <>{children}</>
-
 }
 
 export { TypeSelected }

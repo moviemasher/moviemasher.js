@@ -11,6 +11,8 @@ import { ThemeFactory } from "../Theme/Theme"
 import { TransitionFactory } from "../Transition/Transition"
 import { VideoFactory } from "../Video/Video"
 import { MasherFactory } from "../Masher/Masher"
+import { VideoStreamFactory } from "../VideoStream/VideoStream"
+import { VideoSequenceFactory } from "../VideoSequence/VideoSequence"
 
 type FactoryObject = {
   [DefinitionType.Filter]?: FilterFactory
@@ -25,6 +27,8 @@ type FactoryObject = {
   [DefinitionType.Theme]?: ThemeFactory
   [DefinitionType.Transition]?: TransitionFactory
   [DefinitionType.Video]?: VideoFactory
+  [DefinitionType.VideoSequence]?: VideoSequenceFactory
+  [DefinitionType.VideoStream]?: VideoStreamFactory
 }
 
 const Factories : FactoryObject = {}

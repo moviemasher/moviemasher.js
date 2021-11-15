@@ -4,6 +4,7 @@ import { MasherChangeHandler, UnknownObject } from '@moviemasher/moviemasher.js'
 import { EditorContext } from '../Editor/EditorContext'
 import { View } from '../../Utilities/View'
 import { InputContext } from './InputContext'
+import { useSelected } from './useSelected'
 
 interface PropertyDefinedProps extends UnknownObject {
   property: string
@@ -12,11 +13,9 @@ interface PropertyDefinedProps extends UnknownObject {
 
 const Defined: React.FunctionComponent<React.PropsWithChildren<PropertyDefinedProps>> = props => {
   const { property, properties, ...rest } = props
-  const editorContext = React.useContext(EditorContext)
+  const selected = useSelected()
+  const { masher } = React.useContext(EditorContext)
 
-  const masher = editorContext.masher!
-
-  const { selected } = masher
   const strings = properties || [property]
   const found = strings.filter(string => selected.propertyNames.includes(string))
   if (found.length !== strings.length) return null

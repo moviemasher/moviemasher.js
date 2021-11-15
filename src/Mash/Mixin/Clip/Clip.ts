@@ -1,3 +1,4 @@
+import { Constrained, LoadPromise } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time } from "../../../Utilities/Time"
 import { TimeRange } from "../../../Utilities/TimeRange"
@@ -11,10 +12,13 @@ interface ClipObject extends InstanceObject {
 }
 
 interface Clip extends Instance {
-  audible : boolean
+  audible: boolean
+  clipUrls(quantize : number, start : Time, end? : Time) : string[]
+  definition: ClipDefinition
   endFrame : number
   frame : number
-  frames : number
+  frames: number
+  loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
@@ -29,8 +33,14 @@ interface ClipDefinitionObject extends DefinitionObject {}
 interface ClipDefinition extends Definition {
   visible : boolean
   audible : boolean
-  duration : number
+  streamable : boolean
+  duration: number
+  frames(quantize:number): number
 }
 
+type ClipClass = Constrained<Clip>
+type ClipDefinitionClass = Constrained<ClipDefinition>
 
-export { Clip, ClipDefinition, ClipDefinitionObject, ClipObject }
+export {
+  Clip, ClipClass, ClipDefinition, ClipDefinitionClass, ClipDefinitionObject, ClipObject
+}

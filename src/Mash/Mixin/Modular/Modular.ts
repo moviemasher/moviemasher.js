@@ -1,15 +1,19 @@
 import { VisibleContext } from "../../../Playing/VisibleContext"
-import { ObjectUnknown, Size, UnknownObject } from "../../../declarations"
+import { Any, Constrained, LoadPromise, ObjectUnknown, Size, UnknownObject } from "../../../declarations"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { TimeRange } from "../../../Utilities/TimeRange"
 import { Definition, DefinitionObject } from "../../Definition/Definition"
 import { Filter } from "../../Filter/Filter"
 import { Instance, InstanceObject } from "../../Instance/Instance"
+import { Time } from "../../../Utilities/Time"
 
 type ModularObject = InstanceObject
 
 interface Modular extends Instance {
-  definition : ModularDefinition
+  definition: ModularDefinition
+  constructProperties(object?: Any): void
+  loadModular(quantize: number, start: Time, end?: Time): LoadPromise | void
+  modularUrls(quantize : number, start : Time, end? : Time) : string[]
 }
 
 // JSON is hash { PROPERTY_NAME: PROPERTY_OBJECT }
@@ -26,4 +30,14 @@ interface ModularDefinition extends Definition {
   evaluator(modular: Modular, range : TimeRange, context : VisibleContext, size : Size, mergerContext? : VisibleContext) : Evaluator
 }
 
-export { Modular, ModularDefinition, ModularDefinitionObject, ModularObject }
+type ModularClass = Constrained<Modular>
+type ModularDefinitionClass = Constrained<ModularDefinition>
+
+export {
+  Modular,
+  ModularClass,
+  ModularDefinition,
+  ModularDefinitionClass,
+  ModularDefinitionObject,
+  ModularObject,
+}

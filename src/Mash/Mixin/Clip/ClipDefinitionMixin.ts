@@ -1,9 +1,11 @@
 
 import { Property } from "../../../Setup/Property"
-import { Any, Constrained, ObjectUnknown } from "../../../declarations"
+import { Any, ObjectUnknown } from "../../../declarations"
 import { DataType } from "../../../Setup/Enums"
-import { Definition } from "../../Definition/Definition"
+import { DefinitionClass } from "../../Definition/Definition"
 import { Default } from "../../../Setup/Default"
+import { ClipDefinitionClass } from "./Clip"
+import { Time } from "../../../Utilities/Time"
 
 const ClipPropertyObjects = [
   { name: "frame", type: DataType.Integer, value: 0 },
@@ -11,8 +13,7 @@ const ClipPropertyObjects = [
   { name: "track", type: DataType.Integer, value: -1 },
 ]
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function ClipDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBase) {
+function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
@@ -22,6 +23,7 @@ function ClipDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBase)
 
     audible = false
 
+    // TODO: determine if this is needed!
     // used by theme, image, frame, transition
     private _duration? : number
 
@@ -34,6 +36,12 @@ function ClipDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBase)
     }
 
     set duration(value : number) { this._duration = value }
+
+    frames(quantize: number): number {
+      return Time.fromSeconds(this.duration, quantize, 'floor').frame
+    }
+
+    streamable = false
 
     visible = false
   }

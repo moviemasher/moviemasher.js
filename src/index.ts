@@ -9,4 +9,4 @@ export * from "./Playing"
 
 // must be last
 export * from "./Factories"
-export * from "./MovieMasher"
+export * from "./Factory"

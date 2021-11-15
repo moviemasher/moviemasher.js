@@ -1,7 +1,9 @@
 import { GenericFactory } from "../../declarations"
-import { DefinitionObject } from "../Definition/Definition"
-import { Transformable, TransformableObject } from "../Mixin/Transformable/Transformable"
-import { VisibleDefinition } from "../Mixin/Visible/Visible"
+
+import {
+  Transformable, TransformableDefinition, TransformableDefinitionObject,
+  TransformableObject
+} from "../Mixin/Transformable/Transformable"
 
 type ImageObject = TransformableObject
 
@@ -9,12 +11,12 @@ interface Image extends Transformable {
   definition : ImageDefinition
 }
 
-interface ImageDefinitionObject extends DefinitionObject {
+interface ImageDefinitionObject extends TransformableDefinitionObject {
   url? : string
   source? : string
  }
 
- interface ImageDefinition extends VisibleDefinition {
+ interface ImageDefinition extends TransformableDefinition {
    instance : Image
    instanceFromObject(object : ImageObject) : Image
 }

@@ -1,3 +1,4 @@
+import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions"
@@ -59,7 +60,7 @@ const ImageFactoryImplementation = {
   instance: imageInstance,
 }
 
-Factories.image = ImageFactoryImplementation
+Factories[DefinitionType.Image] = ImageFactoryImplementation
 
 export {
   imageInstall,

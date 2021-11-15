@@ -1,17 +1,16 @@
-import { Modular, ModularDefinitionObject } from "./Modular"
+import { Modular, ModularDefinitionClass, ModularDefinitionObject } from "./Modular"
 import { Property, PropertyObject } from "../../../Setup/Property"
-import { Any, Constrained, JsonObject, ScalarValue, Size } from "../../../declarations"
+import { Any, JsonObject, ScalarValue, Size } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { TimeRange } from "../../../Utilities/TimeRange"
 import { Is } from "../../../Utilities/Is"
 import { VisibleContext } from "../../../Playing"
-import { Definition } from "../../Definition/Definition"
+import { DefinitionClass } from "../../Definition/Definition"
 import { Filter } from "../../Filter/Filter"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { filterInstance } from "../../Filter"
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function ModularDefinitionMixin<TBase extends Constrained<Definition>>(Base: TBase) {
+function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)

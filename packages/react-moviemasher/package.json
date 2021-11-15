@@ -26,12 +26,12 @@
     "remixicon-react": "^1.0.0"
   },
   "scripts": {
-    "build-watch": "rollup --config develop/rollup/esm.config.js --watch",
-    "css-copy": "cp -r ../../develop/css dist",
-    "css-cat": "cat ../../develop/css/* > dist/css/editor.css",
+    "develop": "rollup --config dev/rollup/esm.config.js --watch",
+    "css-copy": "cp -r ../../dev/css dist",
+    "css-cat": "cat ../../dev/css/* > dist/css/editor.css",
     "build-css": "run-s css-copy css-cat",
     "build-esm": "run-s rollup-esm build-css",
-    "rollup-esm": "rollup --config ./develop/rollup/esm.config.js",
+    "rollup-esm": "rollup --config ./dev/rollup/esm.config.js",
     "build": "run-s clean build-esm",
     "clean": "rimraf dist"
   },
@@ -54,6 +54,6 @@
     ]
   },
   "workspaces": [
-    "./develop/workspaces/*"
+    "./dev/workspaces/*"
   ]
 }

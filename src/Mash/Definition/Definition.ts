@@ -1,7 +1,7 @@
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Any, JsonObject, LoadPromise, SelectionValue, UnknownObject } from "../../declarations"
-import { Instance, InstanceClass, InstanceObject } from "../Instance/Instance"
+import { Any, Constrained, JsonObject, LoadPromise, SelectionValue, UnknownObject } from "../../declarations"
+import { Instance, InstanceBase, InstanceObject } from "../Instance/Instance"
 import { Property } from "../../Setup/Property"
 import { Time, Times } from "../../Utilities/Time"
 import { Is } from "../../Utilities"
@@ -14,7 +14,7 @@ interface DefinitionObject {
   icon? : string
 }
 
-class DefinitionClass {
+class DefinitionBase {
   constructor(...args : Any[]) {
     const [object] = args
     const { id, label, icon } = <DefinitionObject> object
@@ -36,7 +36,7 @@ class DefinitionClass {
   }
 
   instanceFromObject(object : InstanceObject) : Instance {
-    const instance = new InstanceClass({ ...this.instanceObject, ...object })
+    const instance = new InstanceBase({ ...this.instanceObject, ...object })
     return instance
   }
 
@@ -51,13 +51,9 @@ class DefinitionClass {
 
   label : string
 
-  load(_start : Time, _end? : Time) : LoadPromise { return Promise.resolve() }
+  loadDefinition(_quantize: number, _start : Time, _end? : Time) : LoadPromise | void { }
 
-  loaded(_start : Time, _end? : Time) : boolean { return true }
-
-  loadedAudible(_time?: Time) : Any {}
-
-  loadedVisible(_time?: Time) : Any {}
+  definitionUrls(_start: Time, _end?: Time): string[] { return [] }
 
   properties : Property[] = []
 
@@ -88,8 +84,10 @@ class DefinitionClass {
   }
 }
 
-interface Definition extends DefinitionClass {}
+interface Definition extends DefinitionBase {}
 
 type DefinitionTimes = Map<Definition, Times[]>
 
-export { Definition, DefinitionClass, DefinitionObject, DefinitionTimes }
+type DefinitionClass = Constrained<DefinitionBase>
+
+export { Definition, DefinitionClass, DefinitionBase, DefinitionObject, DefinitionTimes }

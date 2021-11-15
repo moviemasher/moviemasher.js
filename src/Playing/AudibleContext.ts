@@ -1,3 +1,5 @@
+import { AudibleSource } from "../declarations"
+import { EventType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Time } from "../Utilities/Time"
 
@@ -5,9 +7,6 @@ const AudibleSampleRate = 44100
 const AudibleChannels = 2
 
 export class AudibleContext {
-  constructor() {
-    // console.trace(this.constructor.name, "constructor")
-  }
   __context? : AudioContext
 
   get context() : AudioContext {
@@ -16,20 +15,20 @@ export class AudibleContext {
       if (!Klass) throw Errors.audibleContext
 
       this.__context = new Klass()
-      // console.trace(this.constructor.name, "context", Klass.name, this.__context)
     }
     return this.__context
   }
 
   createBuffer(seconds : number) : AudioBuffer {
     const length = AudibleSampleRate * seconds
-    // console.log(this.constructor.name, "createBuffer", seconds, length)
     return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate)
   }
 
-  createBufferSource(): AudioBufferSourceNode {
+  createBufferSource(buffer?: AudioBuffer): AudibleSource {
     // console.trace(this.constructor.name, "createBufferSource")
-    return this.context.createBufferSource()
+    const sourceNode = this.context.createBufferSource()
+    if (buffer) sourceNode.buffer = buffer
+    return sourceNode
   }
 
   createGain() : GainNode { return this.context.createGain() }
@@ -47,6 +46,8 @@ export class AudibleContext {
   }
 
   get destination() : AudioDestinationNode { return this.context.destination }
+
+  emit(type: EventType): void { this.context.dispatchEvent(new CustomEvent(type)) }
 
   get time() : Time { return Time.fromSeconds(this.currentTime) }
 }

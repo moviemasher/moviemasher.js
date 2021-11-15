@@ -1,10 +1,12 @@
+import { VisibleSource } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
-import { Constrained } from "../../../declarations"
-import { ClipDefinition } from "../Clip/Clip"
+import { ClipDefinitionClass } from "../Clip/Clip"
+import { VisibleDefinitionClass } from "./Visible"
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function VisibleDefinitionMixin<TBase extends Constrained<ClipDefinition>>(Base: TBase) {
+function VisibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : VisibleDefinitionClass & T {
   return class extends Base {
+    loadedVisible(): VisibleSource | undefined { return }
+
     trackType = TrackType.Video
 
     visible = true

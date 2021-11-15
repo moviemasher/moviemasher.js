@@ -1,27 +1,45 @@
-import { LoadVideoPromise, DrawingSource } from "../../declarations"
+import { LoadedVideo, LoadVideoPromise } from "../../declarations"
 import { LoadType } from "../../Setup/Enums"
 import { Loader } from "../../Loading/Loader"
 
 class VideoLoader extends Loader {
-  type = LoadType.Video
-
-  requestUrl(url : string) : LoadVideoPromise {
-    const promise = new Promise<DrawingSource>((resolve, reject) => {
-      const video = document.createElement('video')
-      // document.body.appendChild(video)
-      video.crossOrigin = "Anonymous"
-      video.src = url
-      video.autoplay = true
-      video.oncanplay = (...args) => {
-        console.log("oncanplay!", ...args)
-        resolve(video)
-      }
-      // video.onerror = error => {
-      //   console.error(this.constructor.name, "requestUrl onerror", error)
-      //   reject(`Failed to load ${url}`)
-      // }
+  requestUrl(url: string): LoadVideoPromise {
+    const promise: LoadVideoPromise = new Promise((resolve, reject) => {
+      return this.videoPromiseFromUrl(url).then(video => {
+        return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
+          return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
+            resolve({ video, audio: audioBuffer, sequence: [] })
+          })
+        })
+      })
+      .catch(reject)
     })
     return promise
+  }
+
+  type = LoadType.Video
+
+  videoPromiseFromUrl(url: string): Promise<LoadedVideo> {
+    return new Promise<LoadedVideo>((resolve, reject) => {
+      const video = this.videoFromUrl(url)
+
+      video.ondurationchange = () => {
+        video.ondurationchange = null
+        video.width = video.videoWidth
+        video.height = video.videoHeight
+        // console.debug(this.constructor.name, "videoPromiseFromUrl", 'ondurationchange', video.width, video.height)
+        resolve(video)
+      }
+      video.onerror = reject
+      video.load()
+    })
+  }
+
+  videoFromUrl(url: string): HTMLVideoElement {
+    const video = document.createElement('video')
+    video.crossOrigin = 'anonymous'
+    video.src = url
+    return video
   }
 }
 

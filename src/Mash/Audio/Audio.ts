@@ -1,20 +1,20 @@
 import { GenericFactory } from "../../declarations"
 import {
-  Audible,
-  AudibleObject,
-  AudibleDefinition,
-  AudibleDefinitionObject
-} from "../Mixin/Audible/Audible"
+  AudibleFile,
+  AudibleFileObject,
+  AudibleFileDefinition,
+  AudibleFileDefinitionObject
+} from "../Mixin/AudibleFile/AudibleFile"
 
-type AudioObject = AudibleObject
+type AudioObject = AudibleFileObject
 
-interface Audio extends Audible {
+interface Audio extends AudibleFile {
   definition : AudioDefinition
 }
 
-type AudioDefinitionObject = AudibleDefinitionObject
+type AudioDefinitionObject = AudibleFileDefinitionObject
 
-interface AudioDefinition extends AudibleDefinition {
+interface AudioDefinition extends AudibleFileDefinition {
   instance: Audio
   instanceFromObject(object: AudioObject): Audio
 }

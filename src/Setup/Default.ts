@@ -4,7 +4,7 @@ const Default = {
   label: "Unlabeled",
   masher: {
     buffer: 10,
-    fps: 30,
+    fps: 0,
     loop: true,
     volume: 0.75,
     precision: 3,
@@ -18,7 +18,7 @@ const Default = {
     buffer: 10,
   },
   instance: {
-    audio: { gain: 1.0, trim: 0 },
+    audio: { gain: 1.0, trim: 0, loop: 1 },
     video: { speed: 1.0 }
   },
   definition: {
@@ -26,7 +26,9 @@ const Default = {
     image: { duration: 2 },
     theme: { duration: 3 },
     transition: { duration: 1 },
-    video: { pattern: '%.jpg', fps: 30, increment: 1, begin: 1  },
+    video: { fps: 0 },
+    videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
+    videostream: { duration: 10 },
   },
 }
 

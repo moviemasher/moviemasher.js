@@ -1,4 +1,4 @@
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { Masher, MasherObject } from "./Masher"
 import { MasherClass } from "./MasherInstance"
 import { Any } from "../../declarations"
@@ -7,7 +7,7 @@ import { Property } from "../../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
 import { Default } from "../../Setup/Default"
 
-class MasherDefinitionClass extends DefinitionClass {
+class MasherDefinitionClass extends DefinitionBase {
   constructor(...args : Any[]) {
     super(...args)
     this.properties.push(new Property({ name: "autoplay", type: DataType.Boolean, value: Default.masher.autoplay }))

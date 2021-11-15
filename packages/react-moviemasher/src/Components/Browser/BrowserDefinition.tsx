@@ -34,7 +34,7 @@ const BrowserDefinition: React.FunctionComponent<BrowserDefinitionProps> = props
   }
 
   const onMouseDown = (event: React.MouseEvent) => {
-    console.log("onMouseDown")
+    // console.log("onMouseDown")
     const { current } = ref
     if (!current) return
 
@@ -46,7 +46,7 @@ const BrowserDefinition: React.FunctionComponent<BrowserDefinitionProps> = props
   }
 
   const onDragStart: React.DragEventHandler = event => {
-    console.log("onDragStart")
+    // console.log("onDragStart")
     onMouseDown(event)
     const data = { offset: clickOffset, definition }
     const json = JSON.stringify(data)

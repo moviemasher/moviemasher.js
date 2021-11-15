@@ -1,6 +1,5 @@
 
 import { Any } from "../declarations"
-import { AudibleContext } from "../Playing/AudibleContext"
 import { ContextFactory } from "../Playing/ContextFactory"
 import { Errors } from "../Setup/Errors"
 import { Is } from "../Utilities/Is"
@@ -8,10 +7,7 @@ import { Is } from "../Utilities/Is"
 const CacheKeyPrefix = 'cachekey'
 
 class CacheClass {
-  constructor() {
-    this.audibleContext = ContextFactory.audible()
-    // this.audioContext = this.audibleContext.context
-  }
+
   add(url : string, value : Any) : void {
     // console.log(this.constructor.name, "add", url, value.constructor.name)
     const key = this.key(url)
@@ -19,19 +15,41 @@ class CacheClass {
     this.urlsByKey.set(key, url)
   }
 
-  audibleContext: AudibleContext
-  // audioContext: AudioContext
+  audibleContext = ContextFactory.audible()
 
-  cached(url : string) : boolean {
-    if (!Is.populatedString(url)) throw Errors.argument + 'url'
+  cached(url: string): boolean {
+    const object = this.getObject(url)
+    return object && ! (object instanceof Promise)
+  }
 
-    return this.cachedByKey.has(this.key(url))
+  caching(url: string): boolean {
+    const object = this.getObject(url)
+    return object && object instanceof Promise
   }
 
   private cachedByKey = new Map<string, Any>()
 
-  get(url : string) : Any | undefined {
+  flush(retainUrls: string[]) {
+    const keys = [...this.urlsByKey.keys()]
+    const retainKeys = retainUrls.map(url => this.key(url))
+    const removeKeys = keys.filter(key => !retainKeys.includes(key))
+    removeKeys.forEach(key => {
+      const url = this.urlsByKey.get(key)
+      if (url) this.remove(url)
+    })
+  }
+
+  get(url : string) : Any {
     return this.cachedByKey.get(this.key(url))
+  }
+
+  getObject(url: string): Any {
+     if (!Is.populatedString(url)) throw Errors.argument + 'url'
+
+    const key = this.key(url)
+    if (!this.cachedByKey.has(key)) return
+
+     return this.cachedByKey.get(key)
   }
 
   key(url : string) : string {
@@ -41,13 +59,15 @@ class CacheClass {
   }
 
   remove(url : string) : void {
-    // console.log(this.constructor.name, "remove", url)
+    // console.trace(this.constructor.name, "remove", url)
     const key = this.key(url)
     this.cachedByKey.delete(key)
     this.urlsByKey.delete(key)
   }
 
   private urlsByKey = new Map<string, string>()
+
+  visibleContext = ContextFactory.visible()
 }
 
 const Cache = new CacheClass()

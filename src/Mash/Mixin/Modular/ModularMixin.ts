@@ -1,12 +1,12 @@
-import { Any, Constrained, LoadPromise } from "../../../declarations"
+import { Any, LoadPromise } from "../../../declarations"
 import { Definition } from "../../Definition/Definition"
-import { ModularDefinition } from "./Modular"
+import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions"
-import { Instance } from "../../Instance"
+import { InstanceClass } from "../../Instance"
 import { Time } from "../../../Utilities/Time"
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function ModularMixin<TBase extends Constrained<Instance>>(Base: TBase) {
+
+function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
@@ -29,23 +29,22 @@ function ModularMixin<TBase extends Constrained<Instance>>(Base: TBase) {
       return [...super.definitions, ...this.modularDefinitions]
     }
 
-    load(quantize : number, start : Time, end? : Time) : LoadPromise {
-      const promises = [super.load(quantize, start, end)]
+    loadModular(quantize : number, start : Time, end? : Time) : LoadPromise | void {
+      const promises: LoadPromise[] = []
       const startTime = this.definitionTime(quantize, start)
       const endTime = end ? this.definitionTime(quantize, end) : end
       this.modularDefinitions.forEach(definition => {
-        promises.push(definition.load(startTime, endTime))
+        const promise = definition.loadDefinition(quantize, startTime, endTime)
+        if (promise) promises.push(promise)
       })
       return Promise.all(promises).then()
     }
 
-    loaded(quantize : number, start : Time, end? : Time) : boolean {
-      if (!super.load(quantize, start, end)) return false
-
+    modularUrls(quantize : number, start : Time, end? : Time) : string[] {
       const startTime = this.definitionTime(quantize, start)
       const endTime = end ? this.definitionTime(quantize, end) : end
-      return this.modularDefinitions.every(definition =>
-        definition.loaded(startTime, endTime)
+      return this.modularDefinitions.flatMap(definition =>
+        definition.definitionUrls(startTime, endTime)
       )
     }
 

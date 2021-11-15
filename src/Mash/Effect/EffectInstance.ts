@@ -1,9 +1,9 @@
 import { EffectDefinition } from "./Effect"
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { ModularMixin } from "../Mixin/Modular/ModularMixin"
 import { JsonObject } from "../../declarations"
 
-const EffectWithModular = ModularMixin(InstanceClass)
+const EffectWithModular = ModularMixin(InstanceBase)
 class EffectClass extends EffectWithModular {
   declare definition : EffectDefinition
 

@@ -1,15 +1,17 @@
+import { Any } from "../../declarations"
 import { DefinitionType, TrackType } from "../../Setup/Enums"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { AudioClass } from "./AudioInstance"
-import { Audio, AudioDefinitionObject, AudioObject } from "./Audio"
+import { Audio, AudioObject } from "./Audio"
 import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
 import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
 import { Definitions } from "../Definitions/Definitions"
-import { Any } from "../../declarations"
+import { AudibleFileDefinitionMixin } from "../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 
-const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionClass)
+const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionBase)
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip)
-class AudioDefinitionClass extends AudioDefinitionWithAudible {
+const AudioDefinitionWithAudibleFile = AudibleFileDefinitionMixin(AudioDefinitionWithAudible)
+class AudioDefinitionClass extends AudioDefinitionWithAudibleFile {
   constructor(...args : Any[]) {
     super(...args)
     Definitions.install(this)

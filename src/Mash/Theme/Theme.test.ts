@@ -4,8 +4,8 @@ import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
 import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
-import themeColorJson from "./DefinitionObjects/color.json"
-import { MovieMasher } from "../../MovieMasher"
+import themeColorJson from "../../DefinitionObjects/theme/color.json"
+import { Factory } from "../../Factory"
 
 
 describe("Theme", () => {
@@ -37,7 +37,7 @@ describe("Theme", () => {
       properties: { foo: "bar" }
     }
     const colorId = "com.moviemasher.theme.color"
-    const colorThemeDefinition = () => MovieMasher.theme.definition(themeColorJson)
+    const colorThemeDefinition = () => Factory.theme.definition(themeColorJson)
     describe("constructor", () => {
       test("returns expected instance", () => {
         expect(colorThemeDefinition()).toBeInstanceOf(ThemeDefinitionClass)

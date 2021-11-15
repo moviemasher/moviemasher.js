@@ -1,12 +1,14 @@
 import { TrackType } from "../../Setup/Enums"
 import { AudioDefinition } from "./Audio"
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { AudibleMixin } from "../Mixin/Audible/AudibleMixin"
 import { ClipMixin } from "../Mixin/Clip/ClipMixin"
+import { AudibleFileMixin } from "../Mixin/AudibleFile/AudibleFileMixin"
 
-const AudioWithClip = ClipMixin(InstanceClass)
+const AudioWithClip = ClipMixin(InstanceBase)
 const AudioWithAudible = AudibleMixin(AudioWithClip)
-class AudioClass extends AudioWithAudible {
+const AudioWithAudibleFile = AudibleFileMixin(AudioWithAudible)
+class AudioClass extends AudioWithAudibleFile {
   declare definition : AudioDefinition
 
   trackType = TrackType.Audio

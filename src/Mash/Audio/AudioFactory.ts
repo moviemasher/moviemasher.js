@@ -1,10 +1,10 @@
 import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../Definitions/Definitions"
 import { AudioDefinitionClass } from "./AudioDefinition"
-import { AudioDefinition, AudioDefinitionObject } from "./Audio"
-import { Audio, AudioObject } from "./Audio"
+import { AudioDefinition, AudioDefinitionObject, Audio, AudioObject } from "./Audio"
 import { Factories } from "../Factories/Factories"
 import { Is } from "../../Utilities/Is"
+import { DefinitionType } from "../../Setup/Enums"
 
 /**
  * @internal
@@ -76,7 +76,7 @@ const AudioFactoryImplementation = {
   instance: audioInstance,
 }
 
-Factories.audio = AudioFactoryImplementation
+Factories[DefinitionType.Audio] = AudioFactoryImplementation
 
 
 export {

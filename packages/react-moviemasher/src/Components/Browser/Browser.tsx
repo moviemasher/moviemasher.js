@@ -35,4 +35,4 @@ const Browser: React.FunctionComponent<BrowserProps> = props => {
   )
 }
 
-export { Browser }
+export { Browser, BrowserProps }

@@ -1,25 +1,26 @@
-import { Any, Constrained, JsonObject, LoadPromise, SelectionObject, Size, ValueObject } from "../../../declarations"
+import {
+  Any, JsonObject, LoadPromise, SelectionObject, Size, ValueObject
+} from "../../../declarations"
 import { Merger } from "../../Merger/Merger"
 import { Effect } from "../../Effect/Effect"
 import { Scaler } from "../../Scaler/Scaler"
-import { Visible } from "../Visible/Visible"
+import { VisibleClass } from "../Visible/Visible"
 import { VisibleContext } from "../../../Playing/VisibleContext"
 import { Definition } from "../../Definition/Definition"
-import { TransformableObject } from "./Transformable"
+import { TransformableClass, TransformableObject } from "./Transformable"
 import { mergerInstance } from "../../Merger/MergerFactory"
 import { Time } from "../../../Utilities/Time"
 import { Is } from "../../../Utilities/Is"
 import { effectInstance } from "../../Effect"
 import { scalerInstance } from "../../Scaler"
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
+function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass & T {
   return class extends Base {
-    constructor(...args : Any[]) {
+    constructor(...args: Any[]) {
       super(...args)
       const [object] = args
 
-      const { merger, effects, scaler } = <TransformableObject> object
+      const { merger, effects, scaler } = <TransformableObject>object
 
       this.merger = mergerInstance(merger || {})
       this.scaler = scalerInstance(scaler || {})
@@ -30,7 +31,7 @@ function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
       }
     }
 
-    get definitions() : Definition[] {
+    get definitions(): Definition[] {
       return [
         ...super.definitions,
         ...this.merger.definitions,
@@ -39,7 +40,7 @@ function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
       ]
     }
 
-    effectedContextAtTimeToSize(mashTime : Time, quantize: number, dimensions : Size) : VisibleContext | undefined {
+    effectedContextAtTimeToSize(mashTime: Time, quantize: number, dimensions: Size): VisibleContext | undefined {
       const scaledContext = this.scaledContextAtTimeToSize(mashTime, quantize, dimensions)
       if (!scaledContext) return
 
@@ -55,20 +56,36 @@ function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
       return context
     }
 
-    effects : Effect[] = []
+    effects: Effect[] = []
 
-
-    load(quantize : number, start : Time, end? : Time) : LoadPromise {
-      const promises = [super.load(quantize, start, end)]
-      promises.push(this.merger.load(quantize, start, end))
-      promises.push(this.scaler.load(quantize, start, end))
-      this.effects.forEach(effect => {
-        promises.push(effect.load(quantize, start, end))
-      })
-      return Promise.all(promises).then()
+    loadClip(quantize: number, start: Time, end?: Time): LoadPromise | void {
+      const loads = [
+        super.loadClip(quantize, start, end),
+        this.loadTransformable(quantize, start, end)
+      ]
+      const promises = loads.filter(Boolean)
+      switch (promises.length) {
+        case 0: return
+        case 1: return promises[0]
+        default: return Promise.all(promises).then()
+      }
     }
 
-    mergeContextAtTime(mashTime : Time, quantize: number, context : VisibleContext) : void {
+    loadTransformable(quantize: number, start: Time, end?: Time): LoadPromise | void {
+      const loads = [
+        this.merger.loadModular(quantize, start, end),
+        this.scaler.loadModular(quantize, start, end),
+        ...this.effects.map(effect => effect.loadModular(quantize, start, end))
+      ]
+      const promises = loads.filter(Boolean)
+      switch (promises.length) {
+        case 0: return
+        case 1: return promises[0]
+        default: return Promise.all(promises).then()
+      }
+    }
+
+    mergeContextAtTime(mashTime: Time, quantize: number, context: VisibleContext): void {
       const effected = this.effectedContextAtTimeToSize(mashTime, quantize, context.size)
       if (!effected) return
 
@@ -76,17 +93,17 @@ function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
       this.merger.definition.drawFilters(this.merger, range, effected, context.size, context)
     }
 
-    merger : Merger
+    merger: Merger
 
-    get propertyValues() : SelectionObject {
-      const merger = <ValueObject> this.merger.propertyValues
-      const scaler = <ValueObject> this.scaler.propertyValues
+    get propertyValues(): SelectionObject {
+      const merger = <ValueObject>this.merger.propertyValues
+      const scaler = <ValueObject>this.scaler.propertyValues
       const combined = { merger, scaler, ...super.propertyValues }
       // console.log(this.constructor.name, "get propertyValues", combined)
       return combined
     }
 
-    scaledContextAtTimeToSize(mashTime : Time, quantize: number, dimensions : Size) : VisibleContext | undefined {
+    scaledContextAtTimeToSize(mashTime: Time, quantize: number, dimensions: Size): VisibleContext | undefined {
       const context = this.contextAtTimeToSize(mashTime, quantize, dimensions)
       if (!context) return
 
@@ -96,9 +113,9 @@ function TransformableMixin<TBase extends Constrained<Visible>>(Base: TBase) {
       return this.scaler.definition.drawFilters(this.scaler, clipTimeRange, context, dimensions)
     }
 
-    scaler : Scaler
+    scaler: Scaler
 
-    toJSON() : JsonObject {
+    toJSON(): JsonObject {
       const object = super.toJSON() // gets merger and scaler from propertyValues
       if (this.effects.length) object.effects = this.effects
       return object

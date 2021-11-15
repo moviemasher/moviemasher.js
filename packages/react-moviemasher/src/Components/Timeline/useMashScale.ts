@@ -1,15 +1,18 @@
 import React from "react"
-import { pixelPerFrame } from '@moviemasher/moviemasher.js'
-import { EditorContext } from "../Editor/EditorContext"
+import { EventType, pixelPerFrame } from '@moviemasher/moviemasher.js'
 import { TimelineContext } from "./TimelineContext"
+import { useListeners } from "../../Hooks"
 
 const useMashScale = () => {
   const timelineContext = React.useContext(TimelineContext)
-  const editorContext = React.useContext(EditorContext)
+  const { masher } = useListeners({
+    [EventType.Duration]: masher => { setFrames(masher.mash.frames) }
+  })
+
+  const [frames, setFrames] = React.useState(masher.mash.frames)
   const { width, zoom } = timelineContext
   if (!width) return 0
 
-  const { frames } = editorContext
   return pixelPerFrame(frames, width, zoom)
 }
 

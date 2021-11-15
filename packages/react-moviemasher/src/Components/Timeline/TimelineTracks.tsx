@@ -1,29 +1,27 @@
 import React from 'react'
-import { TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { EventType, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../Utilities/View'
 import { TimelineTrack } from './TimelineTrack'
+import { useListeners } from '../../Hooks/useListeners'
 
-import { EditorContext } from '../Editor/EditorContext'
-import { useMashScale } from './useMashScale'
-
-const TimelineTracks: React.FC<UnknownObject> = props => {
-  // console.log("TimelineTracks")
-  const appContext = React.useContext(EditorContext)
-  const scale = useMashScale()
+const TimelineTracks: React.FunctionComponent<UnknownObject> = props => {
+  const { masher } = useListeners({
+    [EventType.Track]: masher => {
+      setAudioTracks(masher.mash.audio.length)
+      setVideoTracks(masher.mash.video.length)
+    }
+  })
+  const [audioTracks, setAudioTracks] = React.useState(masher.mash.audio.length)
+  const [videoTracks, setVideoTracks] = React.useState(masher.mash.video.length)
 
   const { children, ...rest } = props
 
-  const { audioTracks, videoTracks} = appContext
-
   const childNodes = (): React.ReactElement[] => {
-    // console.log("TimelineTracks.childNodes")
     const childNodes: React.ReactElement[] = []
-    if (!scale) return childNodes
 
     const kid = React.Children.only(children)
     if (!React.isValidElement(kid)) throw `Timeline.Tracks`
-
 
     for (let i = videoTracks - 1; i >= 0; i--) {
       const trackProps = {
@@ -49,11 +47,7 @@ const TimelineTracks: React.FC<UnknownObject> = props => {
     return childNodes
   }
 
-  const viewProps : UnknownObject = {
-    ...rest,
-    children: childNodes(),
-  }
-
+  const viewProps = { ...rest, children: childNodes() }
   return <View {...viewProps}/>
 }
 

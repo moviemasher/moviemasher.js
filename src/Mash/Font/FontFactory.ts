@@ -1,10 +1,10 @@
-import fontDefaultJson from "./DefinitionObjects/default.json"
 import { Definitions } from "../Definitions"
 import { DefinitionType } from "../../Setup/Enums"
 import { FontDefinitionClass } from "./FontDefinition"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
+import fontDefaultJson from "../../DefinitionObjects/font/default.json"
 
 const fontDefaultId = "com.moviemasher.font.default"
 
@@ -48,7 +48,7 @@ const FontFactoryImplementation = {
   instance: fontInstance,
 }
 
-Factories.font = FontFactoryImplementation
+Factories[DefinitionType.Font] = FontFactoryImplementation
 
 export {
   fontDefine,

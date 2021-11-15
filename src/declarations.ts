@@ -10,8 +10,25 @@ declare global {
 }
 
 export type Context2D = CanvasRenderingContext2D
-export type ContextElement = HTMLCanvasElement
-export type DrawingSource = CanvasImageSource
+export type ContextElement = AudioContext
+export type VisibleContextElement = HTMLCanvasElement
+export type VisibleSource = CanvasImageSource
+
+export type LoadedFont = { family: string } // really a Font, but not in tests
+
+export type LoadedImage = HTMLImageElement
+export type LoadedVideo = HTMLVideoElement
+export type LoadedAudio = AudioBuffer
+
+export type AudibleSource = AudioBufferSourceNode
+export type LoadPromise = Promise <void>
+export type LoadFontPromise = Promise<LoadedFont>
+export type LoadImagePromise = Promise<LoadedImage>
+export type Sequence = LoadPromise | VisibleSource
+export type LoadVideoResult = { video: LoadedVideo, audio: LoadedAudio, sequence: Sequence[] }
+export type LoadVideoPromise = Promise<LoadVideoResult>
+export type LoadAudioPromise = Promise<LoadedAudio>
+
 export type ContextData = ImageData
 export type Pixels = Uint8ClampedArray
 export type Timeout = ReturnType<typeof setTimeout>
@@ -166,11 +183,7 @@ export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITION
   fromId(id : string) : INSTANCE
 }
 
-export type LoadPromise = Promise <void>
-export type LoadFontPromise = Promise< { family: string } >
-export type LoadImagePromise = Promise<DrawingSource>
-export type LoadVideoPromise = Promise<DrawingSource>
-
+// TODO: remove
 export interface ScrollMetrics {
   height : number
   width : number
@@ -184,3 +197,15 @@ export interface ScrollMetrics {
   y : number
 }
 export type MasherChangeHandler = (property: string, value?: SelectionValue) => void
+
+export interface StartOptions {
+  duration: number
+  offset?: number
+  start: number
+}
+
+export interface InputCommand {
+
+}
+
+export type InputCommandPromise = Promise<InputCommand>

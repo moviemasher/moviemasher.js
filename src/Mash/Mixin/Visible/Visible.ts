@@ -1,22 +1,32 @@
-import { VisibleContext } from "../../../Playing/VisibleContext"
-import { DrawingSource, Size } from "../../../declarations"
+import { Constrained, VisibleSource, Size } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time } from "../../../Utilities/Time"
-import { DefinitionObject } from "../../Definition/Definition"
-import { Clip, ClipDefinition, ClipObject } from "../Clip/Clip"
+import { VisibleContext } from "../../../Playing/VisibleContext"
+import { Clip, ClipDefinition, ClipDefinitionObject, ClipObject } from "../Clip/Clip"
 
 interface VisibleObject extends ClipObject {}
 
 interface Visible extends Clip {
   contextAtTimeToSize(time : Time, quantize: number, dimensions : Size) : VisibleContext | undefined
+  loadedVisible(quantize: number, definitionTime : Time) : VisibleSource | undefined
   mergeContextAtTime(time : Time, quantize: number, context : VisibleContext) : void
 }
 
-interface VisibleDefinitionObject extends DefinitionObject {}
+interface VisibleDefinitionObject extends ClipDefinitionObject {}
 
 interface VisibleDefinition extends ClipDefinition {
+  loadedVisible(quantize: number, definitionTime : Time) : VisibleSource | undefined
   trackType : TrackType
-  loadedVisible(_time? : Time) : DrawingSource | undefined
 }
 
-export { Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject }
+type VisibleClass = Constrained<Visible>
+type VisibleDefinitionClass = Constrained<VisibleDefinition>
+
+export {
+  Visible,
+  VisibleClass,
+  VisibleDefinition,
+  VisibleDefinitionClass,
+  VisibleDefinitionObject,
+  VisibleObject,
+}

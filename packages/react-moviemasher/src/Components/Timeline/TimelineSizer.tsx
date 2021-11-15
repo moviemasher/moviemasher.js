@@ -1,46 +1,31 @@
 import React from 'react'
-import {
-  elementScrollMetrics,
-  UnknownObject,
-} from '@moviemasher/moviemasher.js'
+import { UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from "../../Utilities/View"
 import { TimelineContext } from "./TimelineContext"
 
 const TimelineSizer: React.FC<UnknownObject> = props => {
-  const reference = React.useRef<HTMLDivElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
   const timelineContext = React.useContext(TimelineContext)
-  const changeTimelineMetrics = () => {
-    const { current } = reference || {}
-    if (!current) {
-      console.error("TimelineSizer no reference.current")
-      return
-    }
+  const handleResize = () => {
+    const { current } = ref
+    if (!current) throw "TimelineSizer no ref.current"
 
-    const metrics = elementScrollMetrics(current)
-    if (!metrics) {
-      console.error("TimelineSizer no metrics")
-      return
-    }
-    // console.log("TimelineSizer", metrics)
-
+    const rect = current.getBoundingClientRect()
     const { setWidth, setHeight } = timelineContext
-    setWidth(metrics.width)
-    setHeight(metrics.height)
+    setWidth(rect.width)
+    setHeight(rect.height)
   }
 
-  const [resizeObserver] = React.useState(new ResizeObserver(changeTimelineMetrics))
+  const [resizeObserver] = React.useState(new ResizeObserver(handleResize))
 
   React.useEffect(() => {
-    const { current } = reference
+    const { current } = ref
     if (current) resizeObserver.observe(current)
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const viewProps = {
-    ...props,
-    ref: reference
-  }
+  const viewProps = { ...props, ref }
   return <View {...viewProps}/>
 }
 

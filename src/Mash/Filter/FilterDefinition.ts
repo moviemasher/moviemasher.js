@@ -1,7 +1,7 @@
 import { Any, ValueObject } from "../../declarations"
 import { Parameter } from "../../Setup/Parameter"
 import { Evaluator } from "../../Utilities/Evaluator"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { VisibleContext } from "../../Playing"
 import { Filter, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterInstance"
@@ -10,7 +10,7 @@ import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../Definitions/Definitions"
 
 
-class FilterDefinitionClass extends DefinitionClass {
+class FilterDefinitionClass extends DefinitionBase {
   constructor(...args : Any[]) {
     super(...args)
     Definitions.install(this)

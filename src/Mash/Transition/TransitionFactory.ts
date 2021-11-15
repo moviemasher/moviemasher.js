@@ -1,15 +1,14 @@
+import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utilities"
-import { TransitionDefinitionClass } from "./TransitionDefinition"
+import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions/Definitions"
-import transitionCrossfadeJson from "./DefinitionObjects/crossfade.json"
 import { Factories } from "../Factories/Factories"
+import { TransitionDefinitionClass } from "./TransitionDefinition"
 import {
-  Transition,
-  TransitionDefinition,
-  TransitionDefinitionObject,
-  TransitionObject,
+  Transition, TransitionDefinition, TransitionDefinitionObject, TransitionObject
 } from "./Transition"
+
+import transitionCrossfadeJson from "../../DefinitionObjects/transition/crossfade.json"
 
 const transitionDefinition = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
@@ -56,7 +55,7 @@ const TransitionFactoryImplementation = {
   instance: transitionInstance,
 }
 
-Factories.transition = TransitionFactoryImplementation
+Factories[DefinitionType.Transition] = TransitionFactoryImplementation
 
 export {
   transitionDefine,

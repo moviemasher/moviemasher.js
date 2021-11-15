@@ -4,6 +4,7 @@ import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions/Definitions"
 import { MashDefinitionClass } from "./MashDefinition"
+import { DefinitionType } from "../../Setup/Enums"
 
 const MashDefaultId = "com.moviemasher.mash.default"
 
@@ -39,7 +40,6 @@ const mashDefine = (object : MashDefinitionObject) : MashDefinition => {
   return mashDefinition(object)
 }
 
-
 /**
  * @internal
  */
@@ -48,7 +48,6 @@ const mashInstall = (object: MashDefinitionObject): MashDefinition => {
   instance.retain = true
   return instance
 }
-
 
 const MashFactoryImplementation = {
   define: mashDefine,
@@ -60,7 +59,7 @@ const MashFactoryImplementation = {
   instance: mashInstance,
 }
 
-Factories.mash = MashFactoryImplementation
+Factories[DefinitionType.Mash] = MashFactoryImplementation
 
 export {
   mashInstall,

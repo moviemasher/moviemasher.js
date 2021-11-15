@@ -1,0 +1,12 @@
+.bundle*
+.DS_Store
+.git/*
+Changelog
+doc/*
+Gemfile.lock
+LICENSE
+log/*
+Rakefile.rb
+README*
+spec/*
+tmp/*

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="moviemasher.js"></script>
+    <title>Movie Masher UMD</title>
+    <script defer>
+      const handleLoad = () => {
+         if (!MovieMasher) return
+
+        const { Factory, EventType } = MovieMasher
+        const canvas = document.querySelector('canvas')
+        const textarea = document.querySelector('textarea')
+        const range = document.querySelector('input')
+        const play = document.querySelector('a')
+        const elements = document.querySelectorAll('button[data-id]')
+
+        if (!(canvas && textarea && range && play && elements.length)) return
+
+
+        const context = Factory.context.fromCanvas(canvas)
+        const mash = Factory.mash.instance({ backcolor: 'black' })
+        const masher = Factory.masher.instance({ mash })
+        const { eventTarget } = masher
+
+        const updateCanvas = () => context.drawImageData(masher.imageData)
+        const updateTextarea = () => textarea.textContent = JSON.stringify(mash, null, '\t')
+        const handleClick = event => {
+          const definitionsById = {
+            color: { id: "com.moviemasher.theme.color", color: 'red' },
+            text: { id: "com.moviemasher.theme.text", string: 'Hello World!' },
+            image: { label: 'Image', type: 'image', id: 'image', url: 'assets/image.jpg' }
+          }
+          const { id } = event.target.dataset
+          masher.add(definitionsById[id])
+          updateTextarea()
+        }
+
+        range.addEventListener('input', event => masher.frame = event.target.value)
+        play.addEventListener('click', event => {
+          masher.paused = !masher.paused
+          event.target.textContent = masher.paused ? '▶️' : '⏸️'
+        })
+
+        masher.eventTarget.addEventListener(EventType.Draw, updateCanvas)
+        eventTarget.addEventListener(EventType.Duration, () => range.max = masher.frames)
+        eventTarget.addEventListener(EventType.Time, () => range.value = masher.frame)
+
+        elements.forEach(button => button.addEventListener('click', handleClick))
+
+        updateTextarea()
+        updateCanvas()
+      }
+    </script>
+    <style>canvas, textarea { width: 320px; height: 240px; }</style>
+  </head>
+  <body onload='handleLoad()'>
+    <canvas></canvas>
+    <textarea></textarea>
+    <div>
+      <a>▶️</a>
+      <input type="range" value="0" min="0" max="0"/>
+    </div>
+    <div>
+      <button data-id='color'>Add Color</button>
+      <button data-id='text'>Add Text</button>
+      <button data-id='image'>Add Image</button>
+    </div>
+  </body>
+</html>

@@ -1,14 +1,14 @@
-import { Any, Constrained, JsonObject, LoadPromise } from "../../../declarations"
+import { Any, JsonObject, LoadPromise } from "../../../declarations"
 import { TrackType } from "../../../Setup/Enums"
 import { Time  } from "../../../Utilities/Time"
 import { Is } from "../../../Utilities/Is"
 import { TimeRange } from "../../../Utilities/TimeRange"
-import { Instance } from "../../Instance"
-import { ClipObject } from "./Clip"
+import { InstanceClass } from "../../Instance"
+import { ClipClass, ClipObject, ClipDefinition } from "./Clip"
 
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase) {
+
+function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
@@ -22,11 +22,14 @@ function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase) {
 
     audible = false
 
+    declare definition: ClipDefinition
+
     definitionTime(quantize : number, time : Time) : Time {
       const scaledTime = super.definitionTime(quantize, time)
       const startTime = this.time(quantize).scale(scaledTime.fps)
       const endTime = this.endTime(quantize).scale(scaledTime.fps)
-      const frame = Math.max(Math.min(time.frame, endTime.frame), startTime.frame)
+
+      const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
       return scaledTime.withFrame(frame - startTime.frame)
     }
 
@@ -39,6 +42,18 @@ function ClipMixin<TBase extends Constrained<Instance>>(Base: TBase) {
     frame = 0
 
     frames = -1
+
+    loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void {
+      const startTime = this.definitionTime(quantize, start)
+      const endTime = end ? this.definitionTime(quantize, end) : end
+      return this.definition.loadDefinition(quantize, startTime, endTime)
+    }
+
+    clipUrls(quantize : number, start : Time, end? : Time) : string[] {
+      const startTime = this.definitionTime(quantize, start)
+      const endTime = end ? this.definitionTime(quantize, end) : end
+      return this.definition.definitionUrls(startTime, endTime)
+    }
 
     maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 

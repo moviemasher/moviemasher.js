@@ -1,4 +1,4 @@
-import { MovieMasher } from "../MovieMasher"
+import { Factory } from "../Factory"
 import { DefinitionTypes } from "../Setup/Enums"
 
-DefinitionTypes.forEach(type => { MovieMasher[type].initialize() })
+DefinitionTypes.forEach(type => { Factory[type].initialize() })

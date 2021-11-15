@@ -10,7 +10,7 @@ import { fontDefinitionFromId } from "../../Font/FontFactory"
 const mmFontFile = (id? : ScalarValue) : string => {
   if (!Is.populatedString(id)) throw Errors.id
 
-  return fontDefinitionFromId(<string> id).source
+  return fontDefinitionFromId(<string> id).absoluteUrl
 }
 
 const mmTextFile = (text? : ScalarValue) : string => String(text)

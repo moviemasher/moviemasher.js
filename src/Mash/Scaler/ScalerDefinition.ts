@@ -1,5 +1,5 @@
 import { Scaler, ScalerObject } from "./Scaler"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Definitions } from "../Definitions/Definitions"
@@ -7,7 +7,7 @@ import { Any } from "../../declarations"
 import { ScalerClass } from "./ScalerInstance"
 import { Property } from "../../Setup/Property"
 
-const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionClass)
+const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 class ScalerDefinitionClass extends ScalerDefinitionWithModular {
   constructor(...args : Any[]) {
     super(...args)

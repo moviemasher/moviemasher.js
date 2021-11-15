@@ -1,20 +1,20 @@
 import React from 'react'
 
-import { DataType } from '@moviemasher/moviemasher.js'
+import { DataType, Mash, UnknownObject } from '@moviemasher/moviemasher.js'
 import { Editor } from './Editor/Editor'
-import { Preview } from './Player/Preview'
+import { PlayerContent } from './Player/PlayerContent'
 import { PlayButton } from './Player/PlayButton'
 import { TimeSlider } from './Player/TimeSlider'
 import { Browser } from './Browser/Browser'
 import { BrowserContent } from './Browser/BrowserContent'
 import { BrowserSource } from './Browser/BrowserSource'
-import { MMTimeline } from './Timeline/MMTimeline'
-import { ScrubButton } from './Timeline/ScrubButton'
+import { TimelinePanel } from './Timeline/TimelinePanel'
+import { ScrubberElement } from './Timeline/ScrubberElement'
 import { TimelineClips } from './Timeline/TimelineClips'
 import { TimelineSizer } from './Timeline/TimelineSizer'
-import { ZoomSlider } from './Timeline/ZoomSlider'
+import { Zoomer } from './Timeline/Zoomer'
 import { TimelineTracks } from './Timeline/TimelineTracks'
-import { Scrub } from './Timeline/Scrub'
+import { Scrubber } from './Timeline/Scrubber'
 import { PlayerPanel } from './Player/PlayerPanel'
 import { Playing } from './Player/Playing'
 import { Paused } from './Player/Paused'
@@ -24,97 +24,246 @@ import { Defined } from './Inspector/Defined'
 import { Inspector } from './Inspector/Inspector'
 import { TypeNotSelected } from './Inspector/TypeNotSelected'
 import { Informer } from './Inspector/Informer'
+import { View } from '../Utilities/View'
+import { TimelineContent } from './Timeline/TimelineContent'
+import { InspectorContent } from './Inspector/InspectorContent'
+
+interface ContentOptions {
+  className?: string
+  children?: React.ReactChild
+}
+
+interface BarOptions {
+  className?: string
+  left?: React.ReactChildren
+  right?: React.ReactChildren
+  middle?: React.ReactFragment
+}
+
+interface PanelOptionsStrict {
+  className? : string
+  header: BarOptions
+  content: ContentOptions
+  footer: BarOptions
+}
+
+type PanelOptions = Partial<PanelOptionsStrict>
+type PanelsOptionsOrFalse = PanelOptions | false
+type PanelOptionsStrictOrFalse = PanelOptionsStrict | false
+
+interface UiOptions {
+  [index:string]: PanelsOptionsOrFalse
+  browser: PanelsOptionsOrFalse
+  player: PanelsOptionsOrFalse
+  inspector: PanelsOptionsOrFalse
+  timeline: PanelsOptionsOrFalse
+}
+
+interface UiOptionsStrict {
+  [index:string]: PanelOptionsStrictOrFalse
+  browser: PanelOptionsStrictOrFalse
+  player: PanelOptionsStrictOrFalse
+  inspector: PanelOptionsStrictOrFalse
+  timeline: PanelOptionsStrictOrFalse
+}
 
 interface ReactMovieMasherProps {
+  className?: string
+  selectClass?: string
+  dropClass?: string
   icons: EditorIcons
   inputs: EditorInputs
+  mash?: Mash
+  panels?: Partial<UiOptions>
+  children: never
+}
+
+const Bar: React.FunctionComponent<BarOptions> = props => {
+  const { className, left, middle, right } = props
+  if (!(left || middle || right)) return null
+
+  const children = [left, middle, right].filter(Boolean)
+
+  const viewProps: UnknownObject = {
+    className, children,
+  }
+  return <View {...viewProps}/>
 }
 
 const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props => {
-  const { icons, inputs } = props
+  const { mash, icons, inputs, className, selectClass, dropClass, panels } = props
 
-  return (
-    <Editor className='moviemasher-app'>
-      <PlayerPanel className='moviemasher-panel moviemasher-player'>
-        <Preview className="moviemasher-canvas" />
-        <div className='moviemasher-controls moviemasher-foot'>
-          <PlayButton className='moviemasher-paused moviemasher-button'>
-            <Playing>{icons.playerPause}</Playing>
-            <Paused>{icons.playerPlay}</Paused>
-          </PlayButton>
-          <TimeSlider />
-        </div>
-      </PlayerPanel>
-      <Browser className='moviemasher-panel moviemasher-browser'>
-        <div className='moviemasher-head'>
-          <BrowserSource id='video' className='moviemasher-button-icon' children={icons.browserVideo}/>
-          <BrowserSource id='audio' className='moviemasher-button-icon' children={icons.browserAudio}/>
-          <BrowserSource id='image' className='moviemasher-button-icon' children={icons.browserImage}/>
-          <BrowserSource id='theme' className='moviemasher-button-icon' children={icons.browserTheme}/>
-          <BrowserSource id='effect' className='moviemasher-button-icon' children={icons.browserEffect}/>
-          <BrowserSource id='transition' className='moviemasher-button-icon' children={icons.browserTransition}/>
-        </div>
-        <BrowserContent
-          selectClass='moviemasher-selected'
-          label='--clip-label'
-          className='moviemasher-content'
-        >
-          <div className='moviemasher-definition'>
-            <label />
-          </div>
-        </BrowserContent>
-        <div className='moviemasher-foot'></div>
-      </Browser>
+  const classNameEditor = className || 'moviemasher-app'
+  const classNameDrop = dropClass || 'moviemasher-drop'
+  const classNameSelect = selectClass || 'moviemasher-selected'
 
-      <MMTimeline className='moviemasher-panel moviemasher-timeline'>
-        <div className='moviemasher-controls moviemasher-head'>
-          BUTTONS
-        </div>
-        <div className='moviemasher-content'>
-          <div className='moviemasher-scrub-pad' />
-          <Scrub className='moviemasher-scrub'>
-            <ScrubButton className='moviemasher-scrub-icon'/>
-          </Scrub>
-          <div className='moviemasher-scrub-bar-container'>
-            <ScrubButton className='moviemasher-scrub-bar' />
-          </div>
-          <TimelineTracks className='moviemasher-tracks'>
-            <div className='moviemasher-track'>
-              <div className='moviemasher-track-icon' children={icons.timelineAudio} />
-              <TimelineClips
-                className='moviemasher-clips'
-                dropClass='moviemasher-drop'
-                selectClass='moviemasher-selected'
-                label='--clip-label'
-              >
-                <div className='moviemasher-clip'>
-                  <label />
-                </div>
-              </TimelineClips>
-            </div>
-          </TimelineTracks>
-          <TimelineSizer className='moviemasher-timeline-sizer' />
-        </div>
-        <div className='moviemasher-controls moviemasher-foot'>
-          <ZoomSlider/>
-        </div>
-      </MMTimeline>
-      <InspectorPanel className='moviemasher-panel moviemasher-inspector'>
-        <div className='moviemasher-content'>
-          <Inspector properties='label,backcolor' inputs={inputs}><label/></Inspector>
+  const panelOptions = panels || {}
+  const optionsLoose: UiOptions = {
+    browser: typeof panelOptions.browser === 'undefined' ? {} : panelOptions.browser,
+    player: typeof panelOptions.player === 'undefined' ? {} : panelOptions.player,
+    inspector: typeof panelOptions.inspector === 'undefined' ? {} : panelOptions.inspector,
+    timeline: typeof panelOptions.timeline === 'undefined' ? {} : panelOptions.timeline,
+  }
 
-          <TypeNotSelected type='mash'>
-            <Defined property='color' className='moviemasher-input'>
-              <label>Color</label> {inputs[DataType.Text]}
-            </Defined>
-            <Inspector inputs={inputs} className='moviemasher-input'><label/></Inspector>
+  Object.values(optionsLoose).forEach(options => {
+    if (!options) return
 
-          </TypeNotSelected>
-          <Informer><label/></Informer>
-        </div>
-        <div className='moviemasher-foot'/>
-      </InspectorPanel>
-    </Editor>
-  )
+    options.header ||= {}
+    options.header.className ||= 'moviemasher-head'
+
+    options.content ||= {}
+    options.content.className ||= 'moviemasher-content'
+
+    options.footer ||= {}
+    options.footer.className ||= 'moviemasher-foot'
+  })
+
+  const options = optionsLoose as UiOptionsStrict
+
+  const browserNode = (panelOptions : PanelOptionsStrict) => {
+    panelOptions.className ||= 'moviemasher-panel moviemasher-browser'
+    panelOptions.header.middle ||= <>
+      <BrowserSource id='video' types='video,videosequence' className='moviemasher-button-icon' children={icons.browserVideo} />
+      <BrowserSource id='videostream' className='moviemasher-button-icon' children={icons.browserVideoStream} />
+      <BrowserSource id='audio' className='moviemasher-button-icon' children={icons.browserAudio} />
+      <BrowserSource id='image' className='moviemasher-button-icon' children={icons.browserImage} />
+      <BrowserSource id='theme' className='moviemasher-button-icon' children={icons.browserTheme} />
+      <BrowserSource id='effect' className='moviemasher-button-icon' children={icons.browserEffect} />
+      <BrowserSource id='transition' className='moviemasher-button-icon' children={icons.browserTransition} />
+    </>
+    panelOptions.content.children ||= (
+      <View className='moviemasher-definition'><label /></View>
+    )
+    const contentProps = {
+      selectClass: {classNameSelect},
+      label: '--clip-label',
+      children: panelOptions.content.children,
+      className: panelOptions.content.className,
+    }
+    const children = <>
+      <Bar {...panelOptions.header} />
+      <BrowserContent {...contentProps} />
+      <Bar {...panelOptions.footer} />
+    </>
+    const panelProps = { children, className: panelOptions.className }
+    return <Browser {...panelProps} />
+  }
+
+  const inspectorNode = (panelOptions:PanelOptionsStrict) => {
+    panelOptions.className ||= 'moviemasher-panel moviemasher-inspector'
+
+    panelOptions.content.children ||= <>
+      <Inspector properties='label,backcolor' inputs={inputs}><label/></Inspector>
+      <TypeNotSelected type='mash'>
+        <Defined property='color' className='moviemasher-input'>
+          <label>Color</label> {inputs[DataType.Text]}
+        </Defined>
+        <Inspector inputs={inputs} className='moviemasher-input'><label/></Inspector>
+      </TypeNotSelected>
+      <Informer><label/></Informer>
+    </>
+    const contentProps = {
+      selectClass: {classNameSelect},
+      label: '--clip-label',
+      children: panelOptions.content.children,
+      className: panelOptions.content.className,
+    }
+    const children = <>
+      <Bar {...panelOptions.header} />
+      <InspectorContent {...contentProps} />
+      <Bar {...panelOptions.footer} />
+    </>
+
+    const panelProps = { children, className: panelOptions.className }
+    return <InspectorPanel {...panelProps} />
+  }
+
+  const playerNode = (panelOptions: PanelOptionsStrict) => {
+    panelOptions.className ||= 'moviemasher-panel moviemasher-player'
+    panelOptions.content.children ||= (
+      <PlayerContent className="moviemasher-canvas" />
+    )
+    panelOptions.footer.middle ||= <>
+      <PlayButton className='moviemasher-paused moviemasher-button'>
+        <Playing>{icons.playerPause}</Playing>
+        <Paused>{icons.playerPlay}</Paused>
+      </PlayButton>
+      <TimeSlider />
+    </>
+    const contentProps = {
+      selectClass: {classNameSelect},
+      children: panelOptions.content.children,
+      className: panelOptions.content.className,
+    }
+    const children = <>
+      <Bar {...panelOptions.header} />
+      <PlayerContent {...contentProps} />
+      <Bar {...panelOptions.footer} />
+    </>
+
+    const panelProps = { children, className: panelOptions.className }
+    return <PlayerPanel {...panelProps} />
+  }
+
+  const timelineNode = (panelOptions: PanelOptionsStrict) => {
+    panelOptions.className ||= 'moviemasher-panel moviemasher-timeline'
+    panelOptions.content.children ||= <>
+      <View className='moviemasher-scrub-pad' />
+      <Scrubber className='moviemasher-scrub'>
+        <ScrubberElement className='moviemasher-scrub-icon'/>
+      </Scrubber>
+      <View className='moviemasher-scrub-bar-container'>
+        <ScrubberElement className='moviemasher-scrub-bar' />
+      </View>
+      <TimelineTracks className='moviemasher-tracks'>
+        <View className='moviemasher-track'>
+          <View className='moviemasher-track-icon' children={icons.timelineAudio} />
+          <TimelineClips
+            className='moviemasher-clips'
+            dropClass={classNameDrop}
+            selectClass={classNameSelect}
+            label='--clip-label'
+          >
+            <View className='moviemasher-clip'>
+              <label />
+            </View>
+          </TimelineClips>
+        </View>
+      </TimelineTracks>
+      <TimelineSizer className='moviemasher-timeline-sizer' />
+    </>
+
+    panelOptions.header.middle ||= <>
+      BUTTONS!
+    </>
+
+    panelOptions.footer.middle ||= <>
+      <Zoomer />
+    </>
+
+    const contentProps = {
+      selectClass: {classNameSelect},
+      children: panelOptions.content.children,
+      className: panelOptions.content.className,
+
+    }
+    const children = <>
+      <Bar {...panelOptions.header} />
+      <TimelineContent {...contentProps} />
+      <Bar {...panelOptions.footer} />
+    </>
+
+    const panelProps = { children, className: panelOptions.className }
+
+    return <TimelinePanel {...panelProps} />
+  }
+
+  const children = []
+  if (options.browser) children.push(browserNode(options.browser))
+  if (options.inspector) children.push(inspectorNode(options.inspector))
+  if (options.player) children.push(playerNode(options.player))
+  if (options.timeline) children.push(timelineNode(options.timeline))
+  const editorProps = { className: classNameEditor, mash, children }
+  return <Editor {...editorProps} />
 }
 export { ReactMovieMasher }

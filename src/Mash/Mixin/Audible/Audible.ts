@@ -1,38 +1,45 @@
-import { ScalarValue } from "../../../declarations";
-import { Time } from "../../../Utilities/Time";
-import { ClipDefinition, ClipDefinitionObject } from "../Clip/Clip";
-import { Clip, ClipObject } from "../Clip/Clip";
+import {
+  AudibleSource, Constrained, ScalarValue, StartOptions
+} from "../../../declarations"
+import { ClipDefinition, ClipDefinitionObject, Clip, ClipObject } from "../Clip/Clip"
 
 interface AudibleObject extends ClipObject {
   gain?: ScalarValue
-  trim?: number
 }
 
 interface Audible extends Clip {
   definition : AudibleDefinition
   gain: number
   gainPairs: number[][]
+  loadedAudible(): AudibleSource | undefined
   muted: boolean
-  trim: number
+  startOptions(seconds: number, quantize: number): StartOptions
 }
 
 interface AudibleDefinitionObject extends ClipDefinitionObject {
   audio? : string
-  duration? : ScalarValue
-  loops?: boolean
   source? : string
   stream?: boolean
-  url? : string
+  url?: string
   waveform? : string
 }
 
 interface AudibleDefinition extends ClipDefinition {
-  audible : boolean
-  duration : number
-  loops : boolean
-  loadedAudible(_time?: Time): AudioBuffer | undefined
+  audible: boolean
+  loadedAudible(): AudibleSource | undefined
+  loops: boolean
   stream: boolean
-  waveform? : string
+  waveform?: string
 }
 
-export { Audible, AudibleDefinition, AudibleDefinitionObject, AudibleObject }
+type AudibleClass = Constrained<Audible>
+type AudibleDefinitionClass = Constrained<AudibleDefinition>
+
+export {
+  Audible,
+  AudibleClass,
+  AudibleDefinition,
+  AudibleDefinitionClass,
+  AudibleDefinitionObject,
+  AudibleObject,
+}

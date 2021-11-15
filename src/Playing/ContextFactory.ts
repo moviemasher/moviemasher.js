@@ -1,4 +1,4 @@
-import { Size, Context2D, ContextElement } from "../declarations"
+import { Size, Context2D, VisibleContextElement } from "../declarations"
 import { AudibleContext } from "./AudibleContext"
 import { VisibleContext } from "./VisibleContext"
 
@@ -8,7 +8,7 @@ const ContextType = Object.fromEntries(ContextTypes.map(type => [type, type]))
 class ContextFactory {
   audible() : AudibleContext { return new AudibleContext() }
 
-  fromCanvas(canvas : ContextElement) : VisibleContext {
+  fromCanvas(canvas : VisibleContextElement) : VisibleContext {
     const context = this.visible()
     context.canvas = canvas
     return context

@@ -1,7 +1,7 @@
-import { DefinitionClass } from "../Definition/Definition"
-import { Any, DrawingSource, JsonObject, LoadPromise } from "../../declarations"
+import { DefinitionBase } from "../Definition/Definition"
+import { Any, VisibleSource, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
-import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { Image, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageInstance"
 import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
@@ -10,12 +10,14 @@ import { Definitions } from "../Definitions/Definitions"
 import { Time, Times } from "../../Utilities/Time"
 import { Cache } from "../../Loading"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
+import { urlAbsolute } from "../../Utilities/Url"
 
 
-const ImageDefinitionWithClip = ClipDefinitionMixin(DefinitionClass)
+const ImageDefinitionWithClip = ClipDefinitionMixin(DefinitionBase)
 const ImageDefinitionWithVisible = VisibleDefinitionMixin(ImageDefinitionWithClip)
+const ImageDefinitionWithTransformable = VisibleDefinitionMixin(ImageDefinitionWithVisible)
 
-class ImageDefinitionClass  extends ImageDefinitionWithVisible {
+class ImageDefinitionClass extends ImageDefinitionWithTransformable {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -30,6 +32,8 @@ class ImageDefinitionClass  extends ImageDefinitionWithVisible {
     Definitions.install(this)
   }
 
+  get absoluteUrl(): string { return urlAbsolute(this.urlVisible) }
+
   get instance() : Image {
     return this.instanceFromObject(this.instanceObject)
   }
@@ -39,21 +43,25 @@ class ImageDefinitionClass  extends ImageDefinitionWithVisible {
     return instance
   }
 
-  load(start : Time, end? : Time) : LoadPromise {
-    const promises = [super.load(start, end)]
-    if (Cache.cached(this.urlVisible)) {
-      const cached = Cache.get(this.urlVisible)
-      if (cached instanceof Promise) promises.push(cached)
-    } else promises.push(LoaderFactory.image().loadUrl(this.urlVisible))
-    return Promise.all(promises).then()
+  loadDefinition(quantize: number, start: Time, end?: Time): LoadPromise | void {
+    const promises: LoadPromise[] = []
+    const definitionPromise = super.loadDefinition(quantize, start, end)
+    if (definitionPromise) promises.push(definitionPromise)
+    const url = this.absoluteUrl
+    if (!Cache.cached(url)) {
+      if (Cache.caching(url)) promises.push(Cache.get(url))
+      else promises.push(LoaderFactory.image().loadUrl(url))
+    }
+    switch (promises.length) {
+      case 0: return
+      case 1: return promises[0]
+      default: return Promise.all(promises).then()
+    }
   }
 
-  loaded(start : Time, end? : Time) : boolean {
-    return super.loaded(start, end) && Cache.cached(this.urlVisible)
-  }
+  definitionUrls(_start : Time, _end? : Time) : string[] { return [this.absoluteUrl] }
 
-  loadedVisible(_time? : Time) : DrawingSource | undefined { return Cache.get(this.urlVisible) }
-
+  loadedVisible(): VisibleSource | undefined { return Cache.get(this.absoluteUrl) }
 
   source = ''
 

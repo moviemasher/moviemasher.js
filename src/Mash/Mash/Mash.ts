@@ -1,11 +1,9 @@
 import { Track, TrackObject } from "../Track"
 import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Definition"
-import { VisibleContext } from "../../Playing/VisibleContext"
 import { Time } from "../../Utilities/Time"
 import { Instance, InstanceObject } from "../Instance"
-import { AudibleContext } from "../../Playing/AudibleContext"
-import { GenericFactory, LoadPromise } from "../../declarations"
-import { TrackType } from "../../Setup/Enums"
+import { GenericFactory, InputCommandPromise, LoadPromise } from "../../declarations"
+import { CommandType, TrackType } from "../../Setup/Enums"
 import { Clip } from "../Mixin/Clip/Clip"
 import { Audible } from "../Mixin/Audible/Audible"
 import { Action } from "../../Editing/Action/Action"
@@ -24,12 +22,10 @@ interface MashObject extends InstanceObject {
 }
 
 interface MashOptions extends MashObject {
-  // audibleContext? : AudibleContext
   buffer? : number
   gain? : number
   loop? : boolean
   time? : Time
-  visibleContext? : VisibleContext
 }
 
 interface MashDefinition extends Definition {
@@ -40,14 +36,14 @@ interface MashDefinition extends Definition {
 interface Mash extends Instance {
   addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number, frames? : number[]) : void
   addTrack(trackType : TrackType) : Track
-  // audibleContext : AudibleContext
   audio: Track[]
   backcolor? : string
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
   clipTrack(clip: Clip): Track
   clips: Clip[]
-  clipsVisibleSlice(frame: number, frames: number): Visible[]
+  clipsVisible(start: Time, end?: Time): Visible[]
+  inputCommandPromise(type: CommandType, start: Time, end?: Time): InputCommandPromise
   compositeVisible() : void
   composition : Composition
   definition : MashDefinition
@@ -58,7 +54,8 @@ interface Mash extends Instance {
   frame: number
   frames: number
   handleAction(action : Action) : void
-  load() : LoadPromise
+  loadPromise?: LoadPromise
+  loadUrls: string[]
   loadedDefinitions : DefinitionTimes
   loop : boolean
   media : Definition[]
@@ -66,13 +63,12 @@ interface Mash extends Instance {
   quantize : number
   removeClipsFromTrack(clips : Clip[]) : void
   removeTrack(trackType : TrackType) : void
-  seekToTime(time: Time) : LoadPromise
+  seekToTime(time: Time) : LoadPromise | undefined
   time: Time
   timeRange: TimeRange
   trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
   video: Track[]
-  visibleContext : VisibleContext
 }
 
 type MashDefinitionObject = DefinitionObject

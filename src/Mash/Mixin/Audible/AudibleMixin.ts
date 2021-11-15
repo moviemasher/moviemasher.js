@@ -1,19 +1,19 @@
-import { Time  } from "../../../Utilities/Time"
 import { Is } from "../../../Utilities/Is"
-import { Any, Constrained, JsonObject } from "../../../declarations"
-import { Clip } from "../Clip/Clip"
-import { AudibleDefinition, AudibleObject } from "./Audible"
+import { Any, AudibleSource, JsonObject, StartOptions } from "../../../declarations"
+import { ClipClass } from "../Clip/Clip"
+import { AudibleClass, AudibleDefinition, AudibleObject } from "./Audible"
 import { Default } from "../../../Setup/Default"
+import { Cache } from "../../../Loading/Cache"
+import { Time } from "../../../Utilities/Time"
 
 const AudibleGainDelimiter = ','
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
+function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
       const [object] = args
-      const { gain, trim } = <AudibleObject> object
+      const { gain } = <AudibleObject> object
 
       if (typeof gain !== "undefined") {
         if (typeof gain === "string") {
@@ -27,26 +27,20 @@ function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
           } else this.gain = Number(gain)
         } else this.gain = gain
       }
-      // cnsole.log("AudibleMixin gain", typeof gain, gain, this.gain)
-
-      if (typeof trim !== "undefined" && Is.integer(trim)) this.trim = trim
     }
 
     audible = true
 
     declare definition : AudibleDefinition
 
-    definitionTime(quantize : number, time : Time) : Time {
-      const scaledTime = super.definitionTime(quantize, time)
-      if (!Is.aboveZero(this.trim)) return scaledTime
-
-      const trimTime = this.trimTime(quantize).scale(scaledTime.fps)
-      return scaledTime.withFrame(scaledTime.frame + trimTime.frame)
-    }
-
     gain = Default.instance.audio.gain
 
     gainPairs : number[][] = []
+
+
+    loadedAudible():AudibleSource | undefined {
+      return this.definition.loadedAudible()
+    }
 
     get muted() : boolean {
       if (this.gain === 0) return true
@@ -55,21 +49,26 @@ function AudibleMixin<TBase extends Constrained<Clip>>(Base: TBase) {
       return this.gainPairs === [[0, 0], [1, 0]]
     }
 
-    maxFrames(quantize : number, trim? : number) : number {
-      const space = trim ? trim : this.trim
-      return Math.floor(this.definition.duration * quantize) - space
+    startOptions(seconds: number, quantize: number): StartOptions {
+        const range = this.timeRange(quantize)
+
+        let start = seconds + range.seconds
+        let duration = range.lengthSeconds
+
+        const now = Cache.audibleContext.currentTime
+        if (now > start) {
+          const dif = now - start
+          start = now
+          duration -= dif
+        }
+        return { start, duration }
     }
 
     toJSON() : JsonObject {
       const object = super.toJSON()
-      if (this.trim !== Default.instance.audio.trim) object.trim = this.trim
       if (this.gain !== Default.instance.audio.gain) object.gain = this.gain
       return object
     }
-
-    trim = Default.instance.audio.trim
-
-    trimTime(quantize : number) : Time { return Time.fromArgs(this.trim, quantize) }
   }
 }
 

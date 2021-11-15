@@ -27,6 +27,9 @@ enum ClipType {
   Theme = 'theme',
   Transition = 'transition',
   Video = 'video',
+  VideoSequence = 'videosequence',
+  VideoStream = 'videostream',
+  // AudioStream = 'audiostream',
 }
 
 const ClipTypes = Object.values(ClipType)
@@ -37,21 +40,24 @@ enum DefinitionType {
   Merger = 'merger',
   Scaler = 'scaler',
   Effect = 'effect',
-  Audio = 'audio',
   Font = 'font',
-  Image = 'image',
   Mash = 'mash',
   Masher = 'masher',
   Theme = 'theme',
   Transition = 'transition',
+  Image = 'image',
   Video = 'video',
+  Audio = 'audio',
+  VideoStream = 'videostream',
+  VideoSequence = 'videosequence',
+  // AudioStream = 'audiostream',
 }
 const DefinitionTypes = Object.values(DefinitionType)
 
 enum EventType {
   Action = 'action',
-  Canvas = 'canvaschange',
   Duration = 'durationchange',
+  Draw = 'draw',
   Ended = 'ended',
   Fps = 'ratechange',
   Loaded = 'loadeddata',
@@ -121,10 +127,19 @@ enum TransformType {
 
 const TransformTypes = Object.values(TransformType)
 
+enum CommandType {
+  File = 'file',
+  Stream = 'stream'
+}
+
+const CommandTypes = Object.values(CommandType)
+
 export {
   ActionType,
   ClipType,
   ClipTypes,
+  CommandType,
+  CommandTypes,
   DataType,
   DataTypes,
   DefinitionType,

@@ -1,10 +1,9 @@
 import React from 'react'
-import { UnknownObject, Clip, pixelFromFrame } from '@moviemasher/moviemasher.js'
+import { UnknownObject, Clip, pixelFromFrame, EventType } from '@moviemasher/moviemasher.js'
 
-import { DragClipObject } from '../../declarations'
 import { DragTypeSuffix } from '../../Setup/Constants'
-import { EditorContext } from '../Editor/EditorContext'
 import { useMashScale } from './useMashScale'
+import { useListeners } from '../../Hooks/useListeners'
 
 interface TimelineClipProps extends UnknownObject {
   clip: Clip
@@ -16,12 +15,17 @@ interface TimelineClipProps extends UnknownObject {
 
 const TimelineClip: React.FC<TimelineClipProps> = props => {
   const ref = React.useRef<HTMLDivElement>(null)
-  const editorContext = React.useContext(EditorContext)
   const [clickOffset, setClickOffset] = React.useState(0)
+  const [selectedClipIdentifier, setSelectedClipIdentifier] = React.useState('')
   const scale = useMashScale()
+  const { masher } = useListeners({
+    [EventType.Selection]: masher => {
+      setSelectedClipIdentifier(String(masher.selectedClip.identifier))
+    }
+  })
 
-  const { selectedClipIdentifier } = editorContext
-  const { label: labelVar, clip, prevClipEnd, selectClass, children, ...rest } = props
+
+  const { label: labelVar, clip, prevClipEnd, selectClass, children } = props
   const { label, identifier, type, frame, frames } = clip
 
   const kid = React.Children.only(children)
@@ -45,7 +49,7 @@ const TimelineClip: React.FC<TimelineClipProps> = props => {
     const { left } = rect
     const { clientX } = event
     setClickOffset(clientX - left)
-    editorContext.masher?.selectClip(clip)
+    masher.selectClip(clip)
   }
 
   const onDragStart: React.DragEventHandler = event => {

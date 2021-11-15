@@ -1,14 +1,13 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utilities"
+import { Is } from "../../Utilities/Is"
+import { Definitions } from "../Definitions/Definitions"
+import { Factories } from "../Factories"
 import { ThemeDefinitionClass } from "./ThemeDefinition"
 import { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeObject } from "./Theme"
-import { Definitions } from "../Definitions/Definitions"
-import themeColorJson from "./DefinitionObjects/color.json"
-import themeTextJson from "./DefinitionObjects/text.json"
-import themeTitleJson from "./DefinitionObjects/title.json"
-import { Factories } from "../Factories"
+
+import themeColorJson from "../../DefinitionObjects/theme/color.json"
+import themeTextJson from "../../DefinitionObjects/theme/text.json"
 
 const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
@@ -36,7 +35,6 @@ const themeFromId = (id : string) : Theme => {
 const themeInitialize = () : void => {
   new ThemeDefinitionClass(themeColorJson)
   new ThemeDefinitionClass(themeTextJson)
-  new ThemeDefinitionClass(themeTitleJson)
 }
 
 const themeDefine = (object : ThemeDefinitionObject) : ThemeDefinition => {
@@ -57,7 +55,7 @@ const ThemeFactoryImplementation = {
   instance: themeInstance,
 }
 
-Factories.theme = ThemeFactoryImplementation
+Factories[DefinitionType.Theme] = ThemeFactoryImplementation
 
 export {
   themeDefine,

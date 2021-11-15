@@ -80,7 +80,7 @@ const Default = {
     label: "Unlabeled",
     masher: {
         buffer: 10,
-        fps: 30,
+        fps: 0,
         loop: true,
         volume: 0.75,
         precision: 3,
@@ -94,7 +94,7 @@ const Default = {
         buffer: 10,
     },
     instance: {
-        audio: { gain: 1.0, trim: 0 },
+        audio: { gain: 1.0, trim: 0, loop: 1 },
         video: { speed: 1.0 }
     },
     definition: {
@@ -102,7 +102,9 @@ const Default = {
         image: { duration: 2 },
         theme: { duration: 3 },
         transition: { duration: 1 },
-        video: { pattern: '%.jpg', fps: 30, increment: 1, begin: 1 },
+        video: { fps: 0 },
+        videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
+        videostream: { duration: 10 },
     },
 };
 
@@ -112,7 +114,6 @@ const $expected = "Expected";
 const $invalidArgument = `${$invalid} argument`;
 const $invalidProperty = `${$invalid} property`;
 const $invalidDefinitionProperty = `${$invalid} definition property`;
-const $deprecated = "deprecated in 4.1";
 const $internal = "Internal Error ";
 const Errors = {
     eval: {
@@ -140,6 +141,7 @@ const Errors = {
             id: `${$invalidDefinitionProperty} id`,
             object: `${$invalidProperty} definition`,
         },
+        size: `${$invalid} size `,
         track: `${$invalid} track `,
         trackType: `${$invalidProperty} trackType `,
         action: `${$invalid} action `,
@@ -181,18 +183,6 @@ const Errors = {
     unknownMash: `${$unknown} Mash property `,
     unimplemented: `${$expected} method to be overridden`,
     property: `${$invalidArgument} property `,
-    deprecation: {
-        property_types: `property_types ${$deprecated} - please get MovieMasher.Property.types instead`,
-        addModulesOfType: `addModulesOfType ${$deprecated} for unsupported type `,
-        configure: {
-            get: `configure ${$deprecated} - please get MovieMasher.defaults instead`,
-            set: `configure ${$deprecated} - please supply mash.quantize and media.duration instead`,
-        },
-        canvas_context: {
-            get: `canvas_context ${$deprecated} - please get visibleContext instead`,
-            set: `canvas_context ${$deprecated} - please set visibleContext instead`,
-        }
-    },
     wrongClass: `${$expected} instance of `,
 };
 
@@ -462,6 +452,9 @@ exports.ClipType = void 0;
     ClipType["Theme"] = "theme";
     ClipType["Transition"] = "transition";
     ClipType["Video"] = "video";
+    ClipType["VideoSequence"] = "videosequence";
+    ClipType["VideoStream"] = "videostream";
+    // AudioStream = 'audiostream',
 })(exports.ClipType || (exports.ClipType = {}));
 const ClipTypes = Object.values(exports.ClipType);
 // NOTE: order important here - determines initialization
@@ -471,21 +464,24 @@ exports.DefinitionType = void 0;
     DefinitionType["Merger"] = "merger";
     DefinitionType["Scaler"] = "scaler";
     DefinitionType["Effect"] = "effect";
-    DefinitionType["Audio"] = "audio";
     DefinitionType["Font"] = "font";
-    DefinitionType["Image"] = "image";
     DefinitionType["Mash"] = "mash";
     DefinitionType["Masher"] = "masher";
     DefinitionType["Theme"] = "theme";
     DefinitionType["Transition"] = "transition";
+    DefinitionType["Image"] = "image";
     DefinitionType["Video"] = "video";
+    DefinitionType["Audio"] = "audio";
+    DefinitionType["VideoStream"] = "videostream";
+    DefinitionType["VideoSequence"] = "videosequence";
+    // AudioStream = 'audiostream',
 })(exports.DefinitionType || (exports.DefinitionType = {}));
 const DefinitionTypes = Object.values(exports.DefinitionType);
 exports.EventType = void 0;
 (function (EventType) {
     EventType["Action"] = "action";
-    EventType["Canvas"] = "canvaschange";
     EventType["Duration"] = "durationchange";
+    EventType["Draw"] = "draw";
     EventType["Ended"] = "ended";
     EventType["Fps"] = "ratechange";
     EventType["Loaded"] = "loadeddata";
@@ -563,7 +559,7 @@ class TypeValue {
     }
 }
 
-const definitionsMap = new Map();
+const DefinitionsMap = new Map();
 const DefinitionsByType = new Map();
 const definitionsByType = (type) => {
     const list = DefinitionsByType.get(type);
@@ -573,38 +569,39 @@ const definitionsByType = (type) => {
     DefinitionsByType.set(type, definitionsList);
     return definitionsList;
 };
-const definitionsClear = () => { definitionsMap.clear(); };
+const definitionsClear = () => {
+    DefinitionsMap.clear();
+    DefinitionsByType.clear();
+};
 const definitionsFont = definitionsByType(exports.DefinitionType.Font);
 const definitionsFromId = (id) => {
     if (!definitionsInstalled(id)) {
         console.trace(id);
-        throw Errors.unknown.definition + 'definitionsFromId ' + id;
+        throw Errors.unknown.definition + id;
     }
-    const definition = definitionsMap.get(id);
+    const definition = DefinitionsMap.get(id);
     if (!definition)
-        throw Errors.internal;
+        throw Errors.internal + id;
     return definition;
 };
 const definitionsInstall = (definition) => {
     const { type, id } = definition;
-    // console.log("definitionsInstall", type, id)
-    definitionsMap.set(id, definition);
+    DefinitionsMap.set(id, definition);
     definitionsByType(type).push(definition);
 };
-const definitionsInstalled = (id) => definitionsMap.has(id);
+const definitionsInstalled = (id) => DefinitionsMap.has(id);
 const definitionsMerger = definitionsByType(exports.DefinitionType.Merger);
 const definitionsScaler = definitionsByType(exports.DefinitionType.Scaler);
 const definitionsUninstall = (id) => {
     if (!definitionsInstalled(id))
         return;
     const definition = definitionsFromId(id);
-    definitionsMap.delete(id);
+    DefinitionsMap.delete(id);
     const { type } = definition;
     const definitions = definitionsByType(type);
     const index = definitions.indexOf(definition);
     if (index < 0)
-        throw Errors.internal + 'definitionsUninstall';
-    // console.log("definitionsUninstall", definition.label || definition.id)
+        throw Errors.internal;
     definitions.splice(index, 1);
 };
 const Definitions = {
@@ -614,7 +611,7 @@ const Definitions = {
     fromId: definitionsFromId,
     install: definitionsInstall,
     installed: definitionsInstalled,
-    map: definitionsMap,
+    map: DefinitionsMap,
     merger: definitionsMerger,
     scaler: definitionsScaler,
     uninstall: definitionsUninstall,
@@ -1160,7 +1157,8 @@ class Time {
     scale(fps, rounding = '') {
         if (this.fps === fps)
             return this;
-        const frame = Number(this.frame / this.fps) * Number(fps);
+        const frame = (Number(this.frame) / Number(this.fps)) * Number(fps);
+        // console.debug(this.constructor.name, "scale", frame, "=", this.frame, "/", this.fps, "*", fps)
         return new Time(roundWithMethod(frame, rounding), fps);
     }
     scaleToFps(fps) { return this.scaleToTime(new Time(0, fps)); }
@@ -1245,6 +1243,10 @@ class TimeRange extends Time {
         range.frames = Math.min(range.frames, time.frame);
         return range;
     }
+    get times() {
+        const { frames, frame, fps } = this;
+        return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps));
+    }
     withFrame(frame) {
         const range = this.copy;
         range.frame = frame;
@@ -1303,6 +1305,9 @@ class TrackRange {
         return new TrackRange(first, last, type);
     }
 }
+
+const urlAbsolute = (url) => (new URL(url, document.baseURI)).href;
+const Url = { absolute: urlAbsolute };
 
 class Action {
     constructor(object) {
@@ -1581,27 +1586,25 @@ class Actions {
 const AudibleSampleRate = 44100;
 const AudibleChannels = 2;
 class AudibleContext {
-    constructor() {
-        // console.trace(this.constructor.name, "constructor")
-    }
     get context() {
         if (!this.__context) {
             const Klass = AudioContext || window.webkitAudioContext;
             if (!Klass)
                 throw Errors.audibleContext;
             this.__context = new Klass();
-            // console.trace(this.constructor.name, "context", Klass.name, this.__context)
         }
         return this.__context;
     }
     createBuffer(seconds) {
         const length = AudibleSampleRate * seconds;
-        // console.log(this.constructor.name, "createBuffer", seconds, length)
         return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate);
     }
-    createBufferSource() {
+    createBufferSource(buffer) {
         // console.trace(this.constructor.name, "createBufferSource")
-        return this.context.createBufferSource();
+        const sourceNode = this.context.createBufferSource();
+        if (buffer)
+            sourceNode.buffer = buffer;
+        return sourceNode;
     }
     createGain() { return this.context.createGain(); }
     get currentTime() { return this.context.currentTime; }
@@ -1609,6 +1612,7 @@ class AudibleContext {
         return new Promise((resolve, reject) => (this.context.decodeAudioData(buffer, audioData => resolve(audioData), error => reject(error))));
     }
     get destination() { return this.context.destination; }
+    emit(type) { this.context.dispatchEvent(new CustomEvent(type)); }
     get time() { return Time.fromSeconds(this.currentTime); }
 }
 
@@ -1626,14 +1630,10 @@ class VisibleContext {
     set alpha(value) { this.context2d.globalAlpha = value; }
     get canvas() { return this.context2d.canvas; }
     set canvas(value) {
-        const { canvas } = this;
         const context2d = value.getContext("2d");
         if (!context2d)
             throw Errors.invalid.canvas;
         this.context2d = context2d;
-        // have both the old and new canvas broadcast event
-        this.emit(exports.EventType.Canvas, {}, canvas);
-        this.emit(exports.EventType.Canvas);
     }
     clear() {
         return this.clearSize(this.size);
@@ -1760,12 +1760,6 @@ class VisibleContext {
         this.composite = original;
         return result;
     }
-    emit(type, detail = {}, target) {
-        const element = target ? target : this.canvas;
-        const event = { detail };
-        // console.log("emit", type, this.canvas)
-        element.dispatchEvent(new CustomEvent(type, event));
-    }
     get fill() { return String(this.context2d.fillStyle); }
     set fill(value) { this.context2d.fillStyle = value; }
     get font() { return this.context2d.font; }
@@ -1828,10 +1822,10 @@ const ContextFactoryInstance = new ContextFactory();
 const CacheKeyPrefix = 'cachekey';
 class CacheClass {
     constructor() {
+        this.audibleContext = ContextFactoryInstance.audible();
         this.cachedByKey = new Map();
         this.urlsByKey = new Map();
-        this.audibleContext = ContextFactoryInstance.audible();
-        // this.audioContext = this.audibleContext.context
+        this.visibleContext = ContextFactoryInstance.visible();
     }
     add(url, value) {
         // console.log(this.constructor.name, "add", url, value.constructor.name)
@@ -1839,14 +1833,34 @@ class CacheClass {
         this.cachedByKey.set(key, value);
         this.urlsByKey.set(key, url);
     }
-    // audioContext: AudioContext
     cached(url) {
-        if (!Is.populatedString(url))
-            throw Errors.argument + 'url';
-        return this.cachedByKey.has(this.key(url));
+        const object = this.getObject(url);
+        return object && !(object instanceof Promise);
+    }
+    caching(url) {
+        const object = this.getObject(url);
+        return object && object instanceof Promise;
+    }
+    flush(retainUrls) {
+        const keys = [...this.urlsByKey.keys()];
+        const retainKeys = retainUrls.map(url => this.key(url));
+        const removeKeys = keys.filter(key => !retainKeys.includes(key));
+        removeKeys.forEach(key => {
+            const url = this.urlsByKey.get(key);
+            if (url)
+                this.remove(url);
+        });
     }
     get(url) {
         return this.cachedByKey.get(this.key(url));
+    }
+    getObject(url) {
+        if (!Is.populatedString(url))
+            throw Errors.argument + 'url';
+        const key = this.key(url);
+        if (!this.cachedByKey.has(key))
+            return;
+        return this.cachedByKey.get(key);
     }
     key(url) {
         if (!Is.populatedString(url))
@@ -1854,7 +1868,7 @@ class CacheClass {
         return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '');
     }
     remove(url) {
-        // console.log(this.constructor.name, "remove", url)
+        // console.trace(this.constructor.name, "remove", url)
         const key = this.key(url);
         this.cachedByKey.delete(key);
         this.urlsByKey.delete(key);
@@ -1863,6 +1877,20 @@ class CacheClass {
 const Cache = new CacheClass();
 
 class Loader {
+    arrayBufferPromiseFromUrl(url) {
+        return fetch(url).then(response => response.arrayBuffer());
+    }
+    arrayBufferPromiseFromBlob(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => { resolve(reader.result); };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+    audioBufferPromiseFromArrayBuffer(arrayBuffer) {
+        return Cache.audibleContext.decode(arrayBuffer);
+    }
     async loadUrl(url) {
         if (Cache.cached(url)) {
             const promiseOrCached = Cache.get(url);
@@ -1879,20 +1907,14 @@ class Loader {
     requestUrl(_url) { return Promise.resolve(); }
 }
 
-class Processor {
-    process(_url, _buffer) {
-        return Promise.resolve();
-    }
-}
-
-class InstanceClass {
+class InstanceBase {
     constructor(...args) {
         const [object] = args;
         if (!Is.populatedObject(object))
-            throw Errors.invalid.object + 'InstanceClass';
+            throw Errors.invalid.object + 'InstanceBase';
         const { definition, id, label } = object;
         if (!definition)
-            throw Errors.invalid.definition.object + 'InstanceClass';
+            throw Errors.invalid.definition.object + 'InstanceBase';
         this.definition = definition;
         if (id && id !== definition.id)
             this._id = id;
@@ -1910,16 +1932,6 @@ class InstanceClass {
     get identifier() { return this._identifier ||= Id(); }
     get label() { return this._label || this.definition.label || this.id; }
     set label(value) { this._label = value; }
-    load(quantize, start, end) {
-        const startTime = this.definitionTime(quantize, start);
-        const endTime = end ? this.definitionTime(quantize, end) : end;
-        return this.definition.load(startTime, endTime);
-    }
-    loaded(quantize, start, end) {
-        const startTime = this.definitionTime(quantize, start);
-        const endTime = end ? this.definitionTime(quantize, end) : end;
-        return this.definition.loaded(startTime, endTime);
-    }
     get propertyNames() {
         return this.definition.properties.map(property => property.name);
     }
@@ -1951,7 +1963,7 @@ class InstanceClass {
     }
 }
 
-class DefinitionClass {
+class DefinitionBase {
     constructor(...args) {
         this.properties = [];
         this.retain = false;
@@ -1969,7 +1981,7 @@ class DefinitionClass {
         return this.instanceFromObject(this.instanceObject);
     }
     instanceFromObject(object) {
-        const instance = new InstanceClass({ ...this.instanceObject, ...object });
+        const instance = new InstanceBase({ ...this.instanceObject, ...object });
         return instance;
     }
     get instanceObject() {
@@ -1980,10 +1992,8 @@ class DefinitionClass {
         });
         return object;
     }
-    load(_start, _end) { return Promise.resolve(); }
-    loaded(_start, _end) { return true; }
-    loadedAudible(_time) { }
-    loadedVisible(_time) { }
+    loadDefinition(_quantize, _start, _end) { }
+    definitionUrls(_start, _end) { return []; }
     get propertiesModular() { return this.properties.filter(property => property.type.modular); }
     property(name) {
         return this.properties.find(property => property.name === name);
@@ -2006,7 +2016,6 @@ class DefinitionClass {
 }
 
 const AudibleGainDelimiter = ',';
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function AudibleMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -2014,9 +2023,8 @@ function AudibleMixin(Base) {
             this.audible = true;
             this.gain = Default.instance.audio.gain;
             this.gainPairs = [];
-            this.trim = Default.instance.audio.trim;
             const [object] = args;
-            const { gain, trim } = object;
+            const { gain } = object;
             if (typeof gain !== "undefined") {
                 if (typeof gain === "string") {
                     if (gain.includes(AudibleGainDelimiter)) {
@@ -2033,16 +2041,9 @@ function AudibleMixin(Base) {
                 else
                     this.gain = gain;
             }
-            // cnsole.log("AudibleMixin gain", typeof gain, gain, this.gain)
-            if (typeof trim !== "undefined" && Is.integer(trim))
-                this.trim = trim;
         }
-        definitionTime(quantize, time) {
-            const scaledTime = super.definitionTime(quantize, time);
-            if (!Is.aboveZero(this.trim))
-                return scaledTime;
-            const trimTime = this.trimTime(quantize).scale(scaledTime.fps);
-            return scaledTime.withFrame(scaledTime.frame + trimTime.frame);
+        loadedAudible() {
+            return this.definition.loadedAudible();
         }
         get muted() {
             if (this.gain === 0)
@@ -2051,23 +2052,27 @@ function AudibleMixin(Base) {
                 return false;
             return this.gainPairs === [[0, 0], [1, 0]];
         }
-        maxFrames(quantize, trim) {
-            const space = trim ? trim : this.trim;
-            return Math.floor(this.definition.duration * quantize) - space;
+        startOptions(seconds, quantize) {
+            const range = this.timeRange(quantize);
+            let start = seconds + range.seconds;
+            let duration = range.lengthSeconds;
+            const now = Cache.audibleContext.currentTime;
+            if (now > start) {
+                const dif = now - start;
+                start = now;
+                duration -= dif;
+            }
+            return { start, duration };
         }
         toJSON() {
             const object = super.toJSON();
-            if (this.trim !== Default.instance.audio.trim)
-                object.trim = this.trim;
             if (this.gain !== Default.instance.audio.gain)
                 object.gain = this.gain;
             return object;
         }
-        trimTime(quantize) { return Time.fromArgs(this.trim, quantize); }
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function ClipMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -2091,12 +2096,22 @@ function ClipMixin(Base) {
             const scaledTime = super.definitionTime(quantize, time);
             const startTime = this.time(quantize).scale(scaledTime.fps);
             const endTime = this.endTime(quantize).scale(scaledTime.fps);
-            const frame = Math.max(Math.min(time.frame, endTime.frame), startTime.frame);
+            const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame);
             return scaledTime.withFrame(frame - startTime.frame);
         }
         get endFrame() { return this.frame + this.frames; }
         endTime(quantize) {
             return Time.fromArgs(this.endFrame, quantize);
+        }
+        loadClip(quantize, start, end) {
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            return this.definition.loadDefinition(quantize, startTime, endTime);
+        }
+        clipUrls(quantize, start, end) {
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            return this.definition.definitionUrls(startTime, endTime);
         }
         maxFrames(_quantize, _trim) { return 0; }
         time(quantize) { return Time.fromArgs(this.frame, quantize); }
@@ -2116,9 +2131,64 @@ function ClipMixin(Base) {
     };
 }
 
-const AudioWithClip = ClipMixin(InstanceClass);
+function AudibleFileMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.loop = Default.instance.audio.loop;
+            this.trim = Default.instance.audio.trim;
+            const [object] = args;
+            const { loop, trim } = object;
+            if (typeof trim !== "undefined" && Is.integer(trim))
+                this.trim = trim;
+            if (typeof loop !== "undefined" && Is.integer(loop))
+                this.loop = loop;
+        }
+        definitionTime(quantize, time) {
+            const scaledTime = super.definitionTime(quantize, time);
+            if (!Is.aboveZero(this.trim))
+                return scaledTime;
+            const trimTime = this.trimTime(quantize).scale(scaledTime.fps);
+            return scaledTime.withFrame(scaledTime.frame + trimTime.frame);
+        }
+        maxFrames(quantize, trim) {
+            const space = trim ? trim : this.trim;
+            return Math.floor(this.definition.duration * quantize) - space;
+        }
+        startOptions(seconds, quantize) {
+            const range = this.timeRange(quantize);
+            let offset = 0;
+            let start = seconds + range.seconds;
+            let duration = range.lengthSeconds;
+            if (this.trim) {
+                range.frame = this.trim;
+                offset = range.seconds;
+            }
+            const now = Cache.audibleContext.currentTime;
+            if (now > start) {
+                const dif = now - start;
+                start = now;
+                offset += dif;
+                duration -= dif;
+            }
+            return { start, offset, duration };
+        }
+        trimTime(quantize) { return Time.fromArgs(this.trim, quantize); }
+        toJSON() {
+            const object = super.toJSON();
+            if (this.trim !== Default.instance.audio.trim)
+                object.trim = this.trim;
+            if (this.loop !== Default.instance.audio.loop)
+                object.loop = this.loop;
+            return object;
+        }
+    };
+}
+
+const AudioWithClip = ClipMixin(InstanceBase);
 const AudioWithAudible = AudibleMixin(AudioWithClip);
-class AudioClass extends AudioWithAudible {
+const AudioWithAudibleFile = AudibleFileMixin(AudioWithAudible);
+class AudioClass extends AudioWithAudibleFile {
     constructor() {
         super(...arguments);
         this.trackType = exports.TrackType.Audio;
@@ -2130,12 +2200,12 @@ const ClipPropertyObjects = [
     { name: "frames", type: exports.DataType.Integer, value: -1 },
     { name: "track", type: exports.DataType.Integer, value: -1 },
 ];
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function ClipDefinitionMixin(Base) {
     return class extends Base {
         constructor(...args) {
             super(...args);
             this.audible = false;
+            this.streamable = false;
             this.visible = false;
             const properties = ClipPropertyObjects.map(object => new Property(object));
             this.properties.push(...properties);
@@ -2148,79 +2218,23 @@ function ClipDefinitionMixin(Base) {
             return this._duration;
         }
         set duration(value) { this._duration = value; }
+        frames(quantize) {
+            return Time.fromSeconds(this.duration, quantize, 'floor').frame;
+        }
     };
 }
 
-// import { AudibleContext, ContextFactory } from "../../Playing"
-class AudioProcessor extends Processor {
-    // constructor(object? : UnknownObject | undefined) {
-    //   super()
-    //   if (object && object.audibleContext) {
-    //     this._audibleContext = <AudibleContext> object.audibleContext
-    //   }
-    //   else {
-    //     console.log(this.constructor.name, "constructor initializing audibleContext")
-    //     this._audibleContext = ContextFactory.audible()
-    //   }
-    // }
-    // get audibleContext() : AudibleContext { return this._audibleContext }
-    // set audibleContext(value : AudibleContext) { this._audibleContext = value }
-    process(_url, buffer) {
-        return Cache.audibleContext.decode(buffer);
-    }
-}
-
-class FontProcessor extends Processor {
-    process(url, buffer) {
-        const family = Cache.key(url);
-        const face = new FontFace(family, buffer);
-        const promise = face.load().then(() => {
-            document.fonts.add(face);
-            return { family };
-        });
-        return promise;
-    }
-}
-
-const classes$2 = {
-    Audio: AudioProcessor,
-    Font: FontProcessor,
-};
-class ProcessorClass {
-    audio() { return new classes$2.Audio(); } //object : { audibleContext : AudibleContext}
-    font() { return new classes$2.Font(); }
-    install(type, loader) {
-        classes$2[Capitalize(type)] = loader;
-    }
-}
-const ProcessorFactory = new ProcessorClass();
-
 class AudioLoader extends Loader {
     constructor() {
-        // constructor(object? : UnknownObject | undefined) {
-        //   super()
-        //   if (object && object.audibleContext) {
-        //     this._audibleContext = <AudibleContext> object.audibleContext
-        //   }
-        //   else this._audibleContext = ContextFactory.audible()
-        // }
         super(...arguments);
         this.type = exports.LoadType.Audio;
-        // _audibleContext : AudibleContext
     }
-    // get audibleContext() : AudibleContext { return this._audibleContext }
-    // set audibleContext(value : AudibleContext) { this._audibleContext = value }
     async requestUrl(url) {
-        // console.log(this.constructor.name, "requestUrl", url)
         const promise = new Promise((resolve, reject) => {
-            fetch(url).then(response => {
-                // console.log(this.constructor.name, "requestUrl.fetch", url)
-                return response.arrayBuffer();
-            }).then(loaded => {
-                // console.log(this.constructor.name, "requestUrl.fetch.arrayBuffer", url)
-                const processor = ProcessorFactory.audio(); //  options)
-                resolve(processor.process(url, loaded));
-            }).catch(error => reject(error));
+            this.arrayBufferPromiseFromUrl(url)
+                .then(arrayBuffer => this.audioBufferPromiseFromArrayBuffer(arrayBuffer))
+                .then(resolve)
+                .catch(reject);
         });
         return promise;
     }
@@ -2232,9 +2246,19 @@ class FontLoader extends Loader {
         this.type = exports.LoadType.Font;
     }
     requestUrl(url) {
-        return fetch(url)
-            .then(response => response.arrayBuffer())
-            .then(buffer => ProcessorFactory.font().process(url, buffer));
+        const promise = new Promise((resolve, reject) => {
+            console.debug(this.constructor.name, "requestUrl", url);
+            const family = Cache.key(url);
+            this.arrayBufferPromiseFromUrl(url)
+                .then(buffer => {
+                const face = new FontFace(family, buffer);
+                return face.load();
+            }).then(face => {
+                document.fonts.add(face);
+                resolve(face);
+            }).catch(reason => reject(reason));
+        });
+        return promise;
     }
 }
 
@@ -2258,21 +2282,36 @@ class VideoLoader extends Loader {
     }
     requestUrl(url) {
         const promise = new Promise((resolve, reject) => {
-            const video = document.createElement('video');
-            // document.body.appendChild(video)
-            video.crossOrigin = "Anonymous";
-            video.src = url;
-            video.autoplay = true;
-            video.oncanplay = (...args) => {
-                console.log("oncanplay!", ...args);
-                resolve(video);
-            };
-            // video.onerror = error => {
-            //   console.error(this.constructor.name, "requestUrl onerror", error)
-            //   reject(`Failed to load ${url}`)
-            // }
+            return this.videoPromiseFromUrl(url).then(video => {
+                return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
+                    return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
+                        resolve({ video, audio: audioBuffer, sequence: [] });
+                    });
+                });
+            })
+                .catch(reject);
         });
         return promise;
+    }
+    videoPromiseFromUrl(url) {
+        return new Promise((resolve, reject) => {
+            const video = this.videoFromUrl(url);
+            video.ondurationchange = () => {
+                video.ondurationchange = null;
+                video.width = video.videoWidth;
+                video.height = video.videoHeight;
+                // console.debug(this.constructor.name, "videoPromiseFromUrl", 'ondurationchange', video.width, video.height)
+                resolve(video);
+            };
+            video.onerror = reject;
+            video.load();
+        });
+    }
+    videoFromUrl(url) {
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.src = url;
+        return video;
     }
 }
 
@@ -2293,7 +2332,6 @@ class LoaderClass {
 }
 const LoaderFactory = new LoaderClass();
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function AudibleDefinitionMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -2302,51 +2340,41 @@ function AudibleDefinitionMixin(Base) {
             this.loops = false;
             this.stream = false;
             const [object] = args;
-            const { stream, loops, duration, url, audio, source, waveform } = object;
-            if (!duration)
-                throw Errors.invalid.definition.duration;
-            this.duration = Number(duration);
+            const { stream, url, audio, source, waveform } = object;
             const urlAudible = audio || url || source || "";
             if (!urlAudible)
                 throw Errors.invalid.definition.audio;
             this.urlAudible = urlAudible;
             if (stream)
                 this.stream = true;
-            if (loops)
-                this.loops = true;
             if (source)
                 this.source = source;
             if (waveform)
                 this.waveform = waveform;
             this.properties.push(new Property({ name: "gain", type: exports.DataType.Number, value: 1.0 }));
-            this.properties.push(new Property({ name: "trim", type: exports.DataType.Integer, value: 0 }));
         }
-        // TODO: support streaming audio
-        load(start, end) {
-            const promises = [super.load(start, end)];
-            if (end) {
-                if (Cache.cached(this.urlAudible)) {
-                    const cached = Cache.get(this.urlAudible);
-                    if (cached instanceof Promise)
-                        promises.push(cached);
-                }
-                else
-                    promises.push(LoaderFactory.audio().loadUrl(this.urlAudible));
-            }
-            return Promise.all(promises).then();
+        get absoluteUrl() { return urlAbsolute(this.urlAudible); }
+        loadDefinition(_quantize, _start, end) {
+            if (!end)
+                return;
+            const url = this.absoluteUrl;
+            if (Cache.cached(url))
+                return;
+            if (Cache.caching(url))
+                return Cache.get(url);
+            return LoaderFactory.audio().loadUrl(url);
         }
-        loaded(start, end) {
-            return super.loaded(start, end) && Cache.cached(this.urlAudible);
-        }
-        loadedAudible(_time) {
-            return Cache.get(this.urlAudible);
+        definitionUrls() { return [this.absoluteUrl]; }
+        loadedAudible() {
+            const cached = Cache.get(this.absoluteUrl);
+            if (!cached || cached instanceof Promise)
+                return;
+            console.debug(this.constructor.name, "loadedAudible", cached.constructor.name);
+            return Cache.audibleContext.createBufferSource(cached);
         }
         toJSON() {
             const object = super.toJSON();
-            object.duration = this.duration;
             object.audio = this.urlAudible;
-            if (this.loops)
-                object.loops = true;
             if (this.source)
                 object.source = this.source;
             if (this.waveform)
@@ -2358,16 +2386,43 @@ function AudibleDefinitionMixin(Base) {
             if (times.length && times.some(maybePair => maybePair.length === 2)) {
                 return; // don't unload if any times indicate audio needed
             }
-            if (!Cache.cached(this.urlAudible))
+            if (!Cache.cached(this.absoluteUrl))
                 return;
-            Cache.remove(this.urlAudible);
+            Cache.remove(this.absoluteUrl);
         }
     };
 }
 
-const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionClass);
+function AudibleFileDefinitionMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.loops = false;
+            const [object] = args;
+            const { loops, duration } = object;
+            if (!duration)
+                throw Errors.invalid.definition.duration;
+            this.duration = Number(duration);
+            if (loops) {
+                this.properties.push(new Property({ name: "loop", type: exports.DataType.Integer, value: 1 }));
+                this.loops = true;
+            }
+            this.properties.push(new Property({ name: "trim", type: exports.DataType.Integer, value: 0 }));
+        }
+        toJSON() {
+            const object = super.toJSON();
+            object.duration = this.duration;
+            if (this.loops)
+                object.loops = true;
+            return object;
+        }
+    };
+}
+
+const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionBase);
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip);
-class AudioDefinitionClass extends AudioDefinitionWithAudible {
+const AudioDefinitionWithAudibleFile = AudibleFileDefinitionMixin(AudioDefinitionWithAudible);
+class AudioDefinitionClass extends AudioDefinitionWithAudibleFile {
     constructor(...args) {
         super(...args);
         this.trackType = exports.TrackType.Audio;
@@ -2447,9 +2502,9 @@ const AudioFactoryImplementation = {
     install: audioInstall,
     instance: audioInstance,
 };
-Factories.audio = AudioFactoryImplementation;
+Factories[exports.DefinitionType.Audio] = AudioFactoryImplementation;
 
-class FilterClass extends InstanceClass {
+class FilterClass extends InstanceBase {
     constructor(...args) {
         super(...args);
         this.parameters = [];
@@ -2496,7 +2551,7 @@ class FilterClass extends InstanceClass {
     }
 }
 
-class FilterDefinitionClass extends DefinitionClass {
+class FilterDefinitionClass extends DefinitionBase {
     constructor(...args) {
         super(...args);
         this.parameters = [];
@@ -2729,21 +2784,10 @@ class DrawBoxFilter extends FilterDefinitionClass {
     }
 }
 
-const label$j = "Lobster";
-const id$j = "com.moviemasher.font.default";
-const type$j = "font";
-const source = "https://fonts.gstatic.com/s/lobster/v23/neILzCirqoswsqX9zoKmM4MwWJU.woff2";
-var fontDefaultJson = {
-  label: label$j,
-  id: id$j,
-  type: type$j,
-  source: source
-};
-
-class FontClass extends InstanceClass {
+class FontClass extends InstanceBase {
 }
 
-class FontDefinitionClass extends DefinitionClass {
+class FontDefinitionClass extends DefinitionBase {
     constructor(...args) {
         super(...args);
         this.retain = true;
@@ -2755,31 +2799,40 @@ class FontDefinitionClass extends DefinitionClass {
         this.source = source;
         Definitions.install(this);
     }
+    get absoluteUrl() { return urlAbsolute(this.source); }
     get instance() {
         return this.instanceFromObject(this.instanceObject);
     }
     instanceFromObject(object) {
         return new FontClass({ ...this.instanceObject, ...object });
     }
-    load(start, end) {
-        const promises = [super.load(start, end)];
-        if (Cache.cached(this.source)) {
-            const cached = Cache.get(this.source);
-            if (cached instanceof Promise)
-                promises.push(cached);
-        }
-        else
-            promises.push(LoaderFactory.font().loadUrl(this.source));
-        return Promise.all(promises).then();
+    loadDefinition() {
+        const url = this.absoluteUrl;
+        if (Cache.cached(url))
+            return;
+        if (Cache.caching(url))
+            return Cache.get(url);
+        return LoaderFactory.font().loadUrl(url);
     }
-    loaded(start, end) {
-        return super.loaded(start, end) && Cache.cached(this.source);
+    definitionUrls(_start, _end) {
+        return [urlAbsolute(this.source)];
     }
-    loadedVisible(_time) { return Cache.get(this.source); }
+    loadedVisible() { return Cache.get(urlAbsolute(this.source)); }
     toJSON() {
         return { ...super.toJSON(), source: this.source };
     }
 }
+
+const label$i = "Lobster";
+const id$i = "com.moviemasher.font.default";
+const type$i = "font";
+const source = "https://fonts.gstatic.com/s/lobster/v23/neILzCirqoswsqX9zoKmM4MwWJU.woff2";
+var fontDefaultJson = {
+  label: label$i,
+  id: id$i,
+  type: type$i,
+  source: source
+};
 
 const fontDefaultId = "com.moviemasher.font.default";
 const fontDefinition = (object) => {
@@ -2817,12 +2870,12 @@ const FontFactoryImplementation = {
     initialize: fontInitialize,
     instance: fontInstance,
 };
-Factories.font = FontFactoryImplementation;
+Factories[exports.DefinitionType.Font] = FontFactoryImplementation;
 
 const mmFontFile = (id) => {
     if (!Is.populatedString(id))
         throw Errors.id;
-    return fontDefinitionFromId(id).source;
+    return fontDefinitionFromId(id).absoluteUrl;
 };
 const mmTextFile = (text) => String(text);
 const mmFontFamily = (id) => Cache.key(mmFontFile(id));
@@ -2984,9 +3037,8 @@ const FilterFactoryImplementation = {
     initialize: filterInitialize,
     instance: filterInstance,
 };
-Factories.filter = FilterFactoryImplementation;
+Factories[exports.DefinitionType.Filter] = FilterFactoryImplementation;
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function ModularDefinitionMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -3048,7 +3100,6 @@ function ModularDefinitionMixin(Base) {
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function ModularMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -3069,21 +3120,21 @@ function ModularMixin(Base) {
         get definitions() {
             return [...super.definitions, ...this.modularDefinitions];
         }
-        load(quantize, start, end) {
-            const promises = [super.load(quantize, start, end)];
+        loadModular(quantize, start, end) {
+            const promises = [];
             const startTime = this.definitionTime(quantize, start);
             const endTime = end ? this.definitionTime(quantize, end) : end;
             this.modularDefinitions.forEach(definition => {
-                promises.push(definition.load(startTime, endTime));
+                const promise = definition.loadDefinition(quantize, startTime, endTime);
+                if (promise)
+                    promises.push(promise);
             });
             return Promise.all(promises).then();
         }
-        loaded(quantize, start, end) {
-            if (!super.load(quantize, start, end))
-                return false;
+        modularUrls(quantize, start, end) {
             const startTime = this.definitionTime(quantize, start);
             const endTime = end ? this.definitionTime(quantize, end) : end;
-            return this.modularDefinitions.every(definition => definition.loaded(startTime, endTime));
+            return this.modularDefinitions.flatMap(definition => definition.definitionUrls(startTime, endTime));
         }
         get modularDefinitions() {
             const modular = this.definition.propertiesModular;
@@ -3093,7 +3144,7 @@ function ModularMixin(Base) {
     };
 }
 
-const EffectWithModular = ModularMixin(InstanceClass);
+const EffectWithModular = ModularMixin(InstanceBase);
 class EffectClass extends EffectWithModular {
     toJSON() {
         const object = super.toJSON();
@@ -3102,7 +3153,7 @@ class EffectClass extends EffectWithModular {
     }
 }
 
-const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
+const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 class EffectDefinitionClass extends EffectDefinitionWithModular {
     constructor(...args) {
         super(...args);
@@ -3115,12 +3166,12 @@ class EffectDefinitionClass extends EffectDefinitionWithModular {
     }
 }
 
-const label$i = "Blur";
-const type$i = "effect";
-const id$i = "com.moviemasher.effect.blur";
-const properties$e = {
+const label$h = "Blur";
+const type$h = "effect";
+const id$h = "com.moviemasher.effect.blur";
+const properties$d = {
 };
-const filters$h = [
+const filters$g = [
   {
     id: "convolution",
     parameters: [
@@ -3160,17 +3211,17 @@ const filters$h = [
   }
 ];
 var effectBlurJson = {
-  label: label$i,
-  type: type$i,
-  id: id$i,
-  properties: properties$e,
-  filters: filters$h
+  label: label$h,
+  type: type$h,
+  id: id$h,
+  properties: properties$d,
+  filters: filters$g
 };
 
-const label$h = "Chromakey";
-const type$h = "effect";
-const id$h = "com.moviemasher.effect.chromakey";
-const properties$d = {
+const label$g = "Chromakey";
+const type$g = "effect";
+const id$g = "com.moviemasher.effect.chromakey";
+const properties$c = {
   accurate: {
     type: "number",
     value: 0
@@ -3188,7 +3239,7 @@ const properties$d = {
     value: "rgb(0,255,0)"
   }
 };
-const filters$g = [
+const filters$f = [
   {
     id: "chromakey",
     parameters: [
@@ -3208,19 +3259,19 @@ const filters$g = [
   }
 ];
 var effectChromaKeyJson = {
-  label: label$h,
-  type: type$h,
-  id: id$h,
-  properties: properties$d,
-  filters: filters$g
+  label: label$g,
+  type: type$g,
+  id: id$g,
+  properties: properties$c,
+  filters: filters$f
 };
 
-const label$g = "Emboss";
-const type$g = "effect";
-const id$g = "com.moviemasher.effect.emboss";
-const properties$c = {
+const label$f = "Emboss";
+const type$f = "effect";
+const id$f = "com.moviemasher.effect.emboss";
+const properties$b = {
 };
-const filters$f = [
+const filters$e = [
   {
     id: "convolution",
     parameters: [
@@ -3244,19 +3295,19 @@ const filters$f = [
   }
 ];
 var effectEmbossJson = {
-  label: label$g,
-  type: type$g,
-  id: id$g,
-  properties: properties$c,
-  filters: filters$f
+  label: label$f,
+  type: type$f,
+  id: id$f,
+  properties: properties$b,
+  filters: filters$e
 };
 
-const label$f = "Grayscale";
-const type$f = "effect";
-const id$f = "com.moviemasher.effect.grayscale";
-const properties$b = {
+const label$e = "Grayscale";
+const type$e = "effect";
+const id$e = "com.moviemasher.effect.grayscale";
+const properties$a = {
 };
-const filters$e = [
+const filters$d = [
   {
     id: "colorchannelmixer",
     parameters: [
@@ -3328,19 +3379,19 @@ const filters$e = [
   }
 ];
 var effectGrayscaleJson = {
-  label: label$f,
-  type: type$f,
-  id: id$f,
-  properties: properties$b,
-  filters: filters$e
+  label: label$e,
+  type: type$e,
+  id: id$e,
+  properties: properties$a,
+  filters: filters$d
 };
 
-const label$e = "Sepia";
-const type$e = "effect";
-const id$e = "com.moviemasher.effect.sepia";
-const properties$a = {
+const label$d = "Sepia";
+const type$d = "effect";
+const id$d = "com.moviemasher.effect.sepia";
+const properties$9 = {
 };
-const filters$d = [
+const filters$c = [
   {
     id: "colorchannelmixer",
     parameters: [
@@ -3412,19 +3463,19 @@ const filters$d = [
   }
 ];
 var effectSepiaJson = {
-  label: label$e,
-  type: type$e,
-  id: id$e,
-  properties: properties$a,
-  filters: filters$d
+  label: label$d,
+  type: type$d,
+  id: id$d,
+  properties: properties$9,
+  filters: filters$c
 };
 
-const label$d = "Sharpen";
-const type$d = "effect";
-const id$d = "com.moviemasher.effect.sharpen";
-const properties$9 = {
+const label$c = "Sharpen";
+const type$c = "effect";
+const id$c = "com.moviemasher.effect.sharpen";
+const properties$8 = {
 };
-const filters$c = [
+const filters$b = [
   {
     id: "convolution",
     parameters: [
@@ -3448,17 +3499,17 @@ const filters$c = [
   }
 ];
 var effectSharpenJson = {
-  label: label$d,
-  type: type$d,
-  id: id$d,
-  properties: properties$9,
-  filters: filters$c
+  label: label$c,
+  type: type$c,
+  id: id$c,
+  properties: properties$8,
+  filters: filters$b
 };
 
-const label$c = "Text Box";
-const type$c = "effect";
-const id$c = "com.moviemasher.effect.textbox";
-const properties$8 = {
+const label$b = "Text Box";
+const type$b = "effect";
+const id$b = "com.moviemasher.effect.text";
+const properties$7 = {
   string: {
     type: "string",
     value: "Text Box"
@@ -3496,7 +3547,7 @@ const properties$8 = {
     value: 0
   }
 };
-const filters$b = [
+const filters$a = [
   {
     id: "drawtext",
     parameters: [
@@ -3540,11 +3591,11 @@ const filters$b = [
   }
 ];
 var effectTextJson = {
-  label: label$c,
-  type: type$c,
-  id: id$c,
-  properties: properties$8,
-  filters: filters$b
+  label: label$b,
+  type: type$b,
+  id: id$b,
+  properties: properties$7,
+  filters: filters$a
 };
 
 const effectDefinition = (object) => {
@@ -3591,19 +3642,18 @@ const EffectFactoryImplementation = {
     install: effectDefine,
     instance: effectInstance,
 };
-Factories.effect = EffectFactoryImplementation;
+Factories[exports.DefinitionType.Effect] = EffectFactoryImplementation;
 
 /**
  * Provides access to factory objects that create all other object definitions and instances.
  *
- * @example Create {@link Masher} instance and bind to a CANVAS element
+ * @example Create {@link Masher} instance
  * ```ts
- * const canvas : ContextElement = document.getElementById('moviemasher-canvas')
- * const masher : Masher = MovieMasher.masher.instance({ canvas })
+ * const masher : Masher = Factory.masher.instance()
  * ```
  * @sealed
  */
-class MovieMasher {
+class Factory {
     /**
      * Object with methods to create audio definitions and instances
      */
@@ -3613,6 +3663,7 @@ class MovieMasher {
             throw Errors.invalid.factory + exports.DefinitionType.Audio;
         return factory;
     }
+    static get context() { return ContextFactoryInstance; }
     /**
      * Object with methods to create effect definitions and instances
      */
@@ -3685,19 +3736,31 @@ class MovieMasher {
             throw Errors.invalid.factory + exports.DefinitionType.Video;
         return factory;
     }
+    static get [exports.DefinitionType.VideoSequence]() {
+        const factory = Factories[exports.DefinitionType.VideoSequence];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.VideoSequence;
+        return factory;
+    }
+    static get [exports.DefinitionType.VideoStream]() {
+        const factory = Factories[exports.DefinitionType.VideoStream];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.VideoStream;
+        return factory;
+    }
     constructor() { }
 }
 
-const MergerWithModular = ModularMixin(InstanceClass);
+const MergerWithModular = ModularMixin(InstanceBase);
 class MergerClass extends MergerWithModular {
     get id() { return this.definition.id; }
     set id(value) {
-        this.definition = MovieMasher.merger.definitionFromId(value);
+        this.definition = Factory.merger.definitionFromId(value);
         this.constructProperties();
     }
 }
 
-const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
+const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 class MergerDefinitionClass extends MergerDefinitionWithModular {
     constructor(...args) {
         super(...args);
@@ -3715,16 +3778,16 @@ class MergerDefinitionClass extends MergerDefinitionWithModular {
     }
 }
 
-const label$b = "Blend";
-const id$b = "com.moviemasher.merger.blend";
-const type$b = "merger";
-const properties$7 = {
+const label$a = "Blend";
+const id$a = "com.moviemasher.merger.blend";
+const type$a = "merger";
+const properties$6 = {
   mode: {
     type: "mode",
     value: "normal"
   }
 };
-const filters$a = [
+const filters$9 = [
   {
     id: "blend",
     parameters: [
@@ -3740,17 +3803,17 @@ const filters$a = [
   }
 ];
 var mergerBlendJson = {
-  label: label$b,
-  id: id$b,
-  type: type$b,
-  properties: properties$7,
-  filters: filters$a
+  label: label$a,
+  id: id$a,
+  type: type$a,
+  properties: properties$6,
+  filters: filters$9
 };
 
-const label$a = "Center";
-const id$a = "com.moviemasher.merger.center";
-const type$a = "merger";
-const filters$9 = [
+const label$9 = "Center";
+const id$9 = "com.moviemasher.merger.center";
+const type$9 = "merger";
+const filters$8 = [
   {
     id: "overlay",
     parameters: [
@@ -3766,16 +3829,16 @@ const filters$9 = [
   }
 ];
 var mergerCenterJson = {
-  label: label$a,
-  id: id$a,
-  type: type$a,
-  filters: filters$9
+  label: label$9,
+  id: id$9,
+  type: type$9,
+  filters: filters$8
 };
 
-const label$9 = "Constrained";
-const type$9 = "merger";
-const id$9 = "com.moviemasher.merger.constrained";
-const properties$6 = {
+const label$8 = "Constrained";
+const type$8 = "merger";
+const id$8 = "com.moviemasher.merger.constrained";
+const properties$5 = {
   left: {
     type: "pixel",
     value: 0
@@ -3785,7 +3848,7 @@ const properties$6 = {
     value: 0
   }
 };
-const filters$8 = [
+const filters$7 = [
   {
     id: "overlay",
     parameters: [
@@ -3801,17 +3864,17 @@ const filters$8 = [
   }
 ];
 var mergerConstrainedJson = {
-  label: label$9,
-  type: type$9,
-  id: id$9,
-  properties: properties$6,
-  filters: filters$8
+  label: label$8,
+  type: type$8,
+  id: id$8,
+  properties: properties$5,
+  filters: filters$7
 };
 
-const label$8 = "Top Left";
-const id$8 = "com.moviemasher.merger.default";
-const type$8 = "merger";
-const filters$7 = [
+const label$7 = "Top Left";
+const id$7 = "com.moviemasher.merger.default";
+const type$7 = "merger";
+const filters$6 = [
   {
     id: "overlay",
     parameters: [
@@ -3827,16 +3890,16 @@ const filters$7 = [
   }
 ];
 var mergerDefaultJson = {
-  label: label$8,
-  id: id$8,
-  type: type$8,
-  filters: filters$7
+  label: label$7,
+  id: id$7,
+  type: type$7,
+  filters: filters$6
 };
 
-const label$7 = "Overlay";
-const id$7 = "com.moviemasher.merger.overlay";
-const type$7 = "merger";
-const properties$5 = {
+const label$6 = "Overlay";
+const id$6 = "com.moviemasher.merger.overlay";
+const type$6 = "merger";
+const properties$4 = {
   left: {
     type: "pixel",
     value: 0.5
@@ -3846,7 +3909,7 @@ const properties$5 = {
     value: 0.5
   }
 };
-const filters$6 = [
+const filters$5 = [
   {
     id: "overlay",
     parameters: [
@@ -3862,11 +3925,11 @@ const filters$6 = [
   }
 ];
 var mergerOverlayJson = {
-  label: label$7,
-  id: id$7,
-  type: type$7,
-  properties: properties$5,
-  filters: filters$6
+  label: label$6,
+  id: id$6,
+  type: type$6,
+  properties: properties$4,
+  filters: filters$5
 };
 
 const mergerDefaultId = "com.moviemasher.merger.default";
@@ -3910,18 +3973,18 @@ const MergerFactoryImplementation = {
     initialize: mergerInitialize,
     instance: mergerInstance,
 };
-Factories.merger = MergerFactoryImplementation;
+Factories[exports.DefinitionType.Merger] = MergerFactoryImplementation;
 
-const ScalerWithModular = ModularMixin(InstanceClass);
+const ScalerWithModular = ModularMixin(InstanceBase);
 class ScalerClass extends ScalerWithModular {
     get id() { return this.definition.id; }
     set id(value) {
-        this.definition = MovieMasher.scaler.definitionFromId(value);
+        this.definition = Factory.scaler.definitionFromId(value);
         this.constructProperties();
     }
 }
 
-const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
+const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 class ScalerDefinitionClass extends ScalerDefinitionWithModular {
     constructor(...args) {
         super(...args);
@@ -3939,10 +4002,10 @@ class ScalerDefinitionClass extends ScalerDefinitionWithModular {
     }
 }
 
-const label$6 = "Stretch";
-const id$6 = "com.moviemasher.scaler.default";
-const type$6 = "scaler";
-const filters$5 = [
+const label$5 = "Stretch";
+const id$5 = "com.moviemasher.scaler.default";
+const type$5 = "scaler";
+const filters$4 = [
   {
     id: "scale",
     parameters: [
@@ -3971,16 +4034,16 @@ const filters$5 = [
   }
 ];
 var scalerDefaultJson = {
-  label: label$6,
-  id: id$6,
-  type: type$6,
-  filters: filters$5
+  label: label$5,
+  id: id$5,
+  type: type$5,
+  filters: filters$4
 };
 
-const label$5 = "Pan";
-const type$5 = "scaler";
-const id$5 = "com.moviemasher.scaler.pan";
-const properties$4 = {
+const label$4 = "Pan";
+const type$4 = "scaler";
+const id$4 = "com.moviemasher.scaler.pan";
+const properties$3 = {
   scale: {
     type: "number",
     value: 1.25
@@ -3990,7 +4053,7 @@ const properties$4 = {
     value: 1
   }
 };
-const filters$4 = [
+const filters$3 = [
   {
     id: "crop",
     description: "crop down diagonals and center",
@@ -4170,23 +4233,23 @@ const filters$4 = [
   }
 ];
 var scalerPanJson = {
-  label: label$5,
-  type: type$5,
-  id: id$5,
-  properties: properties$4,
-  filters: filters$4
+  label: label$4,
+  type: type$4,
+  id: id$4,
+  properties: properties$3,
+  filters: filters$3
 };
 
-const label$4 = "Scale";
-const type$4 = "scaler";
-const id$4 = "com.moviemasher.scaler.scale";
-const properties$3 = {
+const label$3 = "Scale";
+const type$3 = "scaler";
+const id$3 = "com.moviemasher.scaler.scale";
+const properties$2 = {
   scale: {
     type: "number",
     value: 1
   }
 };
-const filters$3 = [
+const filters$2 = [
   {
     id: "scale",
     parameters: [
@@ -4215,11 +4278,11 @@ const filters$3 = [
   }
 ];
 var scalerScaleJson = {
-  label: label$4,
-  type: type$4,
-  id: id$4,
-  properties: properties$3,
-  filters: filters$3
+  label: label$3,
+  type: type$3,
+  id: id$3,
+  properties: properties$2,
+  filters: filters$2
 };
 
 const scalerDefaultId = "com.moviemasher.scaler.default";
@@ -4259,9 +4322,8 @@ const ScalerFactoryImplementation = {
     fromId: scalerFromId,
     initialize: scalerInitialize,
 };
-Factories.scaler = ScalerFactoryImplementation;
+Factories[exports.DefinitionType.Scaler] = ScalerFactoryImplementation;
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function TransformableMixin(Base) {
     return class extends Base {
         constructor(...args) {
@@ -4297,14 +4359,30 @@ function TransformableMixin(Base) {
             this.effects.reverse().every(effect => (context = effect.definition.drawFilters(effect, clipTimeRange, context, dimensions)));
             return context;
         }
-        load(quantize, start, end) {
-            const promises = [super.load(quantize, start, end)];
-            promises.push(this.merger.load(quantize, start, end));
-            promises.push(this.scaler.load(quantize, start, end));
-            this.effects.forEach(effect => {
-                promises.push(effect.load(quantize, start, end));
-            });
-            return Promise.all(promises).then();
+        loadClip(quantize, start, end) {
+            const loads = [
+                super.loadClip(quantize, start, end),
+                this.loadTransformable(quantize, start, end)
+            ];
+            const promises = loads.filter(Boolean);
+            switch (promises.length) {
+                case 0: return;
+                case 1: return promises[0];
+                default: return Promise.all(promises).then();
+            }
+        }
+        loadTransformable(quantize, start, end) {
+            const loads = [
+                this.merger.loadModular(quantize, start, end),
+                this.scaler.loadModular(quantize, start, end),
+                ...this.effects.map(effect => effect.loadModular(quantize, start, end))
+            ];
+            const promises = loads.filter(Boolean);
+            switch (promises.length) {
+                case 0: return;
+                case 1: return promises[0];
+                default: return Promise.all(promises).then();
+            }
         }
         mergeContextAtTime(mashTime, quantize, context) {
             const effected = this.effectedContextAtTimeToSize(mashTime, quantize, context.size);
@@ -4339,7 +4417,6 @@ function TransformableMixin(Base) {
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function VisibleMixin(Base) {
     return class extends Base {
         constructor() {
@@ -4349,30 +4426,31 @@ function VisibleMixin(Base) {
         }
         contextAtTimeToSize(mashTime, quantize, _dimensions) {
             const definitionTime = this.definitionTime(quantize, mashTime);
-            const visibleDefinition = this.definition;
-            const image = visibleDefinition.loadedVisible(definitionTime);
+            // console.debug(this.constructor.name, "contextAtTimeToSize", definitionTime.toString(), mashTime.toString())
+            const image = this.loadedVisible(quantize, definitionTime);
             if (!image) {
-                // console.error(this.constructor.name, "contextAtTimeToSize not loaded", this.id)
+                console.error(this.constructor.name, "contextAtTimeToSize not loaded", this.id);
                 return;
             }
             const width = Number(image.width);
             const height = Number(image.height);
-            // console.log(this.constructor.name, "contextAtTimeToSize", width, height)
             const context = ContextFactoryInstance.toSize({ width, height });
             context.draw(image);
             return context;
+        }
+        loadedVisible(quantize, definitionTime) {
+            return this.definition.loadedVisible(quantize, definitionTime);
         }
         mergeContextAtTime(_time, _quantize, _context) { }
     };
 }
 
-const ImageWithClip = ClipMixin(InstanceClass);
+const ImageWithClip = ClipMixin(InstanceBase);
 const ImageWithVisible = VisibleMixin(ImageWithClip);
 const ImageWithTransformable = TransformableMixin(ImageWithVisible);
 class ImageClass extends ImageWithTransformable {
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function VisibleDefinitionMixin(Base) {
     return class extends Base {
         constructor() {
@@ -4380,12 +4458,14 @@ function VisibleDefinitionMixin(Base) {
             this.trackType = exports.TrackType.Video;
             this.visible = true;
         }
+        loadedVisible() { return; }
     };
 }
 
-const ImageDefinitionWithClip = ClipDefinitionMixin(DefinitionClass);
+const ImageDefinitionWithClip = ClipDefinitionMixin(DefinitionBase);
 const ImageDefinitionWithVisible = VisibleDefinitionMixin(ImageDefinitionWithClip);
-class ImageDefinitionClass extends ImageDefinitionWithVisible {
+const ImageDefinitionWithTransformable = VisibleDefinitionMixin(ImageDefinitionWithVisible);
+class ImageDefinitionClass extends ImageDefinitionWithTransformable {
     constructor(...args) {
         super(...args);
         this.source = '';
@@ -4402,6 +4482,7 @@ class ImageDefinitionClass extends ImageDefinitionWithVisible {
             this.source = source;
         Definitions.install(this);
     }
+    get absoluteUrl() { return urlAbsolute(this.urlVisible); }
     get instance() {
         return this.instanceFromObject(this.instanceObject);
     }
@@ -4409,21 +4490,26 @@ class ImageDefinitionClass extends ImageDefinitionWithVisible {
         const instance = new ImageClass({ ...this.instanceObject, ...object });
         return instance;
     }
-    load(start, end) {
-        const promises = [super.load(start, end)];
-        if (Cache.cached(this.urlVisible)) {
-            const cached = Cache.get(this.urlVisible);
-            if (cached instanceof Promise)
-                promises.push(cached);
+    loadDefinition(quantize, start, end) {
+        const promises = [];
+        const definitionPromise = super.loadDefinition(quantize, start, end);
+        if (definitionPromise)
+            promises.push(definitionPromise);
+        const url = this.absoluteUrl;
+        if (!Cache.cached(url)) {
+            if (Cache.caching(url))
+                promises.push(Cache.get(url));
+            else
+                promises.push(LoaderFactory.image().loadUrl(url));
         }
-        else
-            promises.push(LoaderFactory.image().loadUrl(this.urlVisible));
-        return Promise.all(promises).then();
+        switch (promises.length) {
+            case 0: return;
+            case 1: return promises[0];
+            default: return Promise.all(promises).then();
+        }
     }
-    loaded(start, end) {
-        return super.loaded(start, end) && Cache.cached(this.urlVisible);
-    }
-    loadedVisible(_time) { return Cache.get(this.urlVisible); }
+    definitionUrls(_start, _end) { return [this.absoluteUrl]; }
+    loadedVisible() { return Cache.get(this.absoluteUrl); }
     toJSON() {
         const object = super.toJSON();
         object.url = this.urlVisible;
@@ -4485,7 +4571,7 @@ const ImageFactoryImplementation = {
     initialize: imageInitialize,
     instance: imageInstance,
 };
-Factories.image = ImageFactoryImplementation;
+Factories[exports.DefinitionType.Image] = ImageFactoryImplementation;
 
 class TrackClass {
     constructor(object) {
@@ -4582,26 +4668,19 @@ class TrackClass {
 class Composition {
     constructor(object) {
         this.buffer = Default.mash.buffer;
-        this.contextSeconds = 0;
         this._gain = Default.mash.gain;
-        this.mashSeconds = 0;
         this.playing = false;
         this.quantize = Default.mash.quantize;
         this.sourcesByClip = new Map();
-        // console.trace("Composition constructor")
-        const { 
-        // audibleContext,
-        backcolor, buffer, gain, quantize, visibleContext } = object;
+        // position of masher (in seconds) when startPlaying called
+        this.startedMashAt = 0;
+        // currentTime of context (in seconds) was created when startPlaying called
+        this.startedContextAt = 0;
+        const { backcolor, buffer, gain, quantize } = object;
         if (backcolor)
             this.backcolor = backcolor;
         if (quantize && Is.aboveZero(quantize))
             this.quantize = quantize;
-        // if (audibleContext) this._audibleContext = audibleContext
-        // else this._audibleContext = ContextFactory.audible()
-        if (visibleContext)
-            this._visibleContext = visibleContext;
-        else
-            this._visibleContext = ContextFactoryInstance.visible();
         if (typeof gain !== "undefined" && Is.positive(gain))
             this._gain = gain;
         if (buffer && Is.aboveZero(buffer))
@@ -4624,32 +4703,14 @@ class Composition {
             return;
         }
         // position/gain pairs...
-        const timing = this.clipTiming(clip);
+        const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize);
         const { start, duration } = timing;
+        console.log(this.constructor.name, "adjustSourceGain", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize);
         gainNode.gain.cancelScheduledValues(0);
         clip.gainPairs.forEach(pair => {
             const [position, value] = pair;
             gainNode.gain.linearRampToValueAtTime(this.gain * value, start + position * duration);
         });
-    }
-    clipTiming(clip) {
-        const range = clip.timeRange(this.quantize);
-        const zeroSeconds = this.contextSeconds - this.mashSeconds;
-        let offset = 0;
-        let start = zeroSeconds + range.seconds;
-        let duration = range.lengthSeconds;
-        if (clip.trim) {
-            range.frame = clip.trim;
-            offset = range.seconds;
-        }
-        const now = Cache.audibleContext.currentTime;
-        if (now > start) {
-            const dif = now - start;
-            start = now;
-            offset += dif;
-            duration -= dif;
-        }
-        return { duration, offset, start };
     }
     compositeAudible(clips) {
         // console.log(this.constructor.name, "compositeAudible", clips.length)
@@ -4661,8 +4722,6 @@ class Composition {
         return true;
     }
     compositeVisible(time, clips) {
-        // console.trace(this.constructor.name, "compositeVisible", this.visibleContext.size)
-        // console.log(this.constructor.name, "compositeVisible", time, clips.length)
         const main = clips.filter(clip => clip.track === 0);
         this.drawBackground(); // clear and fill with mash background color if defined
         if (main.length > 1) {
@@ -4671,17 +4730,18 @@ class Composition {
                 throw Errors.mainTrackOverlap;
             const transitioned = main.filter(clip => clip.type !== exports.DefinitionType.Transition);
             const transition = transitionClip;
-            transition.mergeClipsIntoContextAtTime(transitioned, this.visibleContext, time, this.quantize, this.backcolor);
+            transition.mergeClipsIntoContextAtTime(transitioned, Cache.visibleContext, time, this.quantize, this.backcolor);
         }
         else {
             const [mainClip] = main;
             if (mainClip)
-                mainClip.mergeContextAtTime(time, this.quantize, this.visibleContext);
+                mainClip.mergeContextAtTime(time, this.quantize, Cache.visibleContext);
         }
         const tracked = clips.filter(clip => !main.includes(clip)).sort(byTrack);
         tracked.forEach(clip => {
-            clip.mergeContextAtTime(time, this.quantize, this.visibleContext);
+            clip.mergeContextAtTime(time, this.quantize, Cache.visibleContext);
         });
+        Cache.audibleContext.emit(exports.EventType.Draw);
     }
     compositeVisibleRequest(time, clips) {
         if (Is.populatedArray(clips)) {
@@ -4695,46 +4755,44 @@ class Composition {
         // console.log("Composition.createSources", clips.length)
         const filtered = clips.filter(clip => !this.sourcesByClip.has(clip));
         return filtered.every(clip => {
-            const { definition } = clip;
-            const buffer = definition.loadedAudible();
-            if (!buffer) {
-                // console.log("Composition.createSources loadedAudible false", clip.id)
+            const sourceNode = clip.loadedAudible();
+            if (!sourceNode) {
+                console.debug(this.constructor.name, "createSources loadedAudible undefined", clip.id);
                 return false;
             }
-            const timing = this.clipTiming(clip);
+            const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize);
             const { start, duration, offset } = timing;
-            // console.log("Composition.createSources", start, duration, offset)
+            console.log(this.constructor.name, "createSources", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize);
             if (Is.positive(start) && Is.aboveZero(duration)) {
-                const gainSource = Cache.audibleContext.createBufferSource();
-                gainSource.buffer = buffer;
-                gainSource.loop = clip.definition.loops;
+                sourceNode.loop = clip.definition.loops;
                 const gainNode = Cache.audibleContext.createGain();
-                gainSource.connect(gainNode);
+                sourceNode.connect(gainNode);
                 gainNode.connect(Cache.audibleContext.destination);
-                gainSource.start(start, offset, duration);
-                this.sourcesByClip.set(clip, { gainSource, gainNode });
+                sourceNode.start(start, offset, duration);
+                this.sourcesByClip.set(clip, { gainSource: sourceNode, gainNode });
                 this.adjustSourceGain(clip);
             }
             return true;
         });
     }
     destroySources(clipsToKeep = []) {
-        // console.log("Composition.destroySources", clipsToKeep.length)
-        this.sourcesByClip.forEach((source, clip) => {
-            if (clipsToKeep.includes(clip))
+        const sourceClips = [...this.sourcesByClip.keys()];
+        const clipsToRemove = sourceClips.filter(clip => !clipsToKeep.includes(clip));
+        clipsToRemove.forEach(clip => {
+            const source = this.sourcesByClip.get(clip);
+            if (!source)
                 return;
-            // console.log("Composition.destroySources", clip)
             const { gainSource, gainNode } = source;
             gainNode.disconnect(Cache.audibleContext.destination);
             gainSource.disconnect(gainNode);
-            this.sourcesByClip.delete(clip);
         });
+        clipsToRemove.forEach(clip => this.sourcesByClip.delete(clip));
     }
     drawBackground() {
-        this.visibleContext.clear();
+        Cache.visibleContext.clear();
         if (!this.backcolor)
             return;
-        this.visibleContext.drawFill(pixelColor(this.backcolor));
+        Cache.visibleContext.drawFill(pixelColor(this.backcolor));
     }
     get gain() { return this._gain; }
     set gain(value) {
@@ -4744,39 +4802,39 @@ class Composition {
         if (this.playing) {
             [...this.sourcesByClip.keys()].forEach(clip => this.adjustSourceGain(clip));
         }
-        this.visibleContext.emit(exports.EventType.Volume);
+        Cache.audibleContext.emit(exports.EventType.Volume);
     }
     get seconds() {
-        const ellapsed = Cache.audibleContext.currentTime - this.contextSeconds;
-        return ellapsed + this.mashSeconds;
+        const ellapsed = Cache.audibleContext.currentTime - this.startedContextAt;
+        return ellapsed + this.startedMashAt;
     }
     startContext() {
         // console.log(this.constructor.name, "startContext")
         if (this.bufferSource)
-            throw Errors.internal + 'bufferSource';
+            throw Errors.internal + 'bufferSource startContext';
         if (this.playing)
             throw Errors.internal + 'playing';
-        this.bufferSource = Cache.audibleContext.createBufferSource();
+        const buffer = Cache.audibleContext.createBuffer(1);
+        this.bufferSource = Cache.audibleContext.createBufferSource(buffer);
         this.bufferSource.loop = true;
-        this.bufferSource.buffer = Cache.audibleContext.createBuffer(this.buffer);
         this.bufferSource.connect(Cache.audibleContext.destination);
         this.bufferSource.start(0);
     }
     startPlaying(time, clips) {
-        // console.log(this.constructor.name, "startPlaying")
         if (!this.bufferSource)
-            throw Errors.internal + 'bufferSource';
+            throw Errors.internal + 'bufferSource startPlaying';
         if (this.playing)
             throw Errors.internal + 'playing';
         const { seconds } = time;
         this.playing = true;
-        this.mashSeconds = seconds;
-        this.contextSeconds = Cache.audibleContext.currentTime;
+        this.startedMashAt = seconds;
+        this.startedContextAt = Cache.audibleContext.currentTime;
+        console.log(this.constructor.name, "startPlaying startedContextAt", this.startedContextAt);
         if (!this.createSources(clips)) {
             this.stopPlaying();
             return false;
         }
-        // console.log(this.constructor.name, "startPlaying", this.mashSeconds, this.contextSeconds)
+        // console.log(this.constructor.name, "startPlaying", this.startedMashAt, this.startedContextAt)
         return true;
     }
     stopPlaying() {
@@ -4787,61 +4845,31 @@ class Composition {
         if (this.bufferSource)
             this.bufferSource.stop();
         this.destroySources();
-        this.mashSeconds = 0;
-        this.contextSeconds = 0;
+        this.startedMashAt = 0;
+        this.startedContextAt = 0;
         if (!this.bufferSource)
             return;
         this.bufferSource.disconnect(Cache.audibleContext.destination);
         delete this.bufferSource;
     }
-    get visibleContext() { return this._visibleContext; }
-    set visibleContext(value) { this._visibleContext = value; }
 }
 
-class MashClass extends InstanceClass {
+class MashClass extends InstanceBase {
     constructor(...args) {
         super(...args);
-        // get audibleContext(): AudibleContext {
-        //   if (!this._audibleContext) {
-        //     this._audibleContext = ContextFactory.audible()
-        //     if (this._composition) this.composition.audibleContext = this._audibleContext
-        //   }
-        //   return this._audibleContext
-        // }
-        // set audibleContext(value: AudibleContext) {
-        //   if (this._audibleContext !== value) {
-        //     this._audibleContext = value
-        //     if (this._composition) this.composition.audibleContext = value
-        //   }
-        // }
         this.audio = [];
         this._backcolor = Default.mash.backcolor;
         this._buffer = Default.mash.buffer;
+        this.drawnSeconds = 0;
         this._gain = Default.mash.gain;
         this.loop = false;
         this._paused = true;
         this._playing = false;
         this.quantize = Default.mash.quantize;
-        // tracksInRange(trackRange?: TrackRange): Track[] | undefined {
-        //   if (!trackRange) return
-        //   const { type } = trackRange
-        //   const range = trackRange.relative ? trackRange.withMax(this.maxTracks(type)) : trackRange
-        //   const inRange = []
-        //   if (type !== TrackType.Video) {
-        //     inRange.push(...this.audio.slice(range.first, range.last))
-        //   }
-        //   if (type !== TrackType.Audio) {
-        //     inRange.push(...this.video.slice(range.first, range.last))
-        //   }
-        //   return inRange
-        // }
         this.video = [];
         this._id ||= Id();
-        console.log(this.constructor.name, "constructor", this.id);
         const object = args[0] || {};
-        const { audio, backcolor, label, loop, media, quantize, video, 
-        // audibleContext,
-        buffer, gain, visibleContext, } = object;
+        const { audio, backcolor, label, loop, media, quantize, video, buffer, gain, } = object;
         if (typeof loop === "boolean")
             this.loop = loop;
         if (quantize && Is.aboveZero(quantize))
@@ -4861,7 +4889,7 @@ class MashClass extends InstanceClass {
                 if (!(definitionId && Is.populatedString(definitionId))) {
                     throw Errors.invalid.definition.id + JSON.stringify(definition);
                 }
-                return MovieMasher[definitionType].definition(definition);
+                return Factory[definitionType].definition(definition);
             });
         if (audio)
             this.audio.push(...audio.map((track, index) => new TrackClass(this.trackOptions(track, index, exports.TrackType.Audio))));
@@ -4875,11 +4903,8 @@ class MashClass extends InstanceClass {
             this.buffer = buffer;
         if (typeof gain !== "undefined" && Is.positive(gain))
             this._gain = gain;
-        // if (audibleContext) this._audibleContext = audibleContext
-        if (visibleContext) {
-            // console.log("Mash constructor visibleContext")
-            this._visibleContext = visibleContext;
-        }
+        this.setDrawInterval();
+        // console.debug(this.constructor.name, "constructor", this.identifier, this)
     }
     addClipsToTrack(clips, trackIndex = 0, insertIndex = 0, frames) {
         // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
@@ -4905,14 +4930,13 @@ class MashClass extends InstanceClass {
         const options = { type: trackType, index: array.length };
         const track = new TrackClass(options);
         array.push(track);
-        this.visibleContext.emit(exports.EventType.Track);
+        Cache.audibleContext.emit(exports.EventType.Track);
         return track;
     }
     assureClipsHaveFrames(clips) {
         clips.filter(clip => !Is.positive(clip.frames)).forEach(clip => {
             const definition = clip.definition;
-            const duration = definition.duration;
-            clip.frames = Time.fromSeconds(duration, this.quantize, 'floor').frame;
+            clip.frames = definition.frames(this.quantize);
         });
     }
     get backcolor() { return this._backcolor; }
@@ -4932,6 +4956,20 @@ class MashClass extends InstanceClass {
         }
     }
     get bufferFrames() { return this.buffer * this.quantize; }
+    bufferStart() {
+        if (this._bufferTimer)
+            return;
+        this._bufferTimer = setInterval(() => {
+            // console.debug(this.constructor.name, "bufferTimer calling load")
+            this.load();
+        }, Math.round((this.buffer * 1000) / 2));
+    }
+    bufferStop() {
+        if (!this._bufferTimer)
+            return;
+        clearInterval(this._bufferTimer);
+        delete this._bufferTimer;
+    }
     get bufferTime() { return Time.fromSeconds(this.buffer); }
     changeClipFrames(clip, value) {
         let limitedValue = Math.max(1, value); // frames value must be > 0
@@ -4957,6 +4995,12 @@ class MashClass extends InstanceClass {
             track.sortClips(track.clips);
         });
     }
+    clearDrawInterval() {
+        if (this.drawInterval) {
+            clearInterval(this.drawInterval);
+            this.drawInterval = undefined;
+        }
+    }
     clipIntersects(clip, range) {
         return clip.timeRange(this.quantize).intersects(range);
     }
@@ -4967,11 +5011,6 @@ class MashClass extends InstanceClass {
         return this.trackOfTypeAtIndex(clip.trackType, index);
     }
     get clips() { return this.clipsInTracks(); }
-    //   const rangeTracks = this.tracksInRange(trackRange)
-    //   const inTracks = this.clipsInTracks(rangeTracks)
-    //   if (!timeRange) return inTracks
-    //   return this.filterIntersecting(inTracks, timeRange)
-    // }
     clipsAtTimes(start, end) {
         const objects = this.clipsVisible(start, end);
         if (end)
@@ -5022,19 +5061,17 @@ class MashClass extends InstanceClass {
         const range = timeRange.scale(this.quantize);
         return this.clipsVideo.filter(clip => this.clipIntersects(clip, range));
     }
-    compositeAudible() {
-        const clips = this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
-        return this.composition.compositeAudible(clips);
+    compositeAudible(clips) {
+        const audibleClips = clips || this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
+        return this.composition.compositeAudible(audibleClips);
     }
     get composition() {
         if (!this._composition) {
             const options = {
-                // audibleContext: this.audibleContext,
                 backcolor: this.backcolor,
                 buffer: this.buffer,
                 gain: this.gain,
                 quantize: this.quantize,
-                visibleContext: this.visibleContext,
             };
             this._composition = new Composition(options);
         }
@@ -5044,50 +5081,71 @@ class MashClass extends InstanceClass {
         const { time } = this;
         this.composition.compositeVisible(time, this.clipsVisibleAtTime(time));
     }
-    compositeVisibleRequest() {
-        const { time } = this;
-        this.composition.compositeVisibleRequest(time, this.clipsVisibleAtTime(time));
+    compositeVisibleRequest(clips) {
+        const { time, composition } = this;
+        composition.compositeVisibleRequest(time, clips || this.clipsVisibleAtTime(time));
     }
     destroy() {
-        delete this._visibleContext;
-        // delete this._audibleContext
+        this.paused = true;
+        this.clearDrawInterval();
         delete this._composition;
-    }
-    drawAtInterval() {
-        // console.log(this.constructor.name, "drawAtInterval playing: ", this._playing)
-        if (!this._playing)
-            return;
-        const time = this.time.withFrame(this.time.frame + 1);
-        const seconds = this.playing ? this.composition.seconds : time.seconds;
-        if (seconds < this.endTime.seconds) {
-            if (seconds >= time.seconds) {
-                this.drawTime(time);
-                this.compositeAudible();
-            }
-        }
-        else {
-            // console.log(this.constructor.name, "drawAtInterval finished at", seconds, this.endTime.seconds)
-            if (this.loop)
-                this.seekToTime(this.time.withFrame(0));
-            else {
-                this.paused = true;
-                this.visibleContext.emit(exports.EventType.Ended);
-            }
-        }
     }
     drawTime(time) {
         const timeChange = time !== this.time;
         this.drawnTime = time;
         this.compositeVisibleRequest();
-        this.visibleContext.emit(timeChange ? exports.EventType.Time : exports.EventType.Loaded);
+        Cache.audibleContext.emit(timeChange ? exports.EventType.Time : exports.EventType.Loaded);
     }
-    get duration() { return Time.fromArgs(this.frames, this.quantize).seconds; }
+    drawWhileNotPlaying() {
+        const now = performance.now();
+        const ellapsed = now - this.drawnSeconds;
+        if (ellapsed < 1.0 / this.quantize)
+            return;
+        this.drawnSeconds = now;
+        const { time } = this;
+        const clips = this.clipsVisible(time);
+        const streamableClips = clips.filter(clip => clip.definition.streamable);
+        if (!streamableClips.length)
+            return;
+        const loading = clips.some(clip => clip.clipUrls(this.quantize, time).some(url => !Cache.cached(url)));
+        if (loading)
+            return;
+        this.compositeVisibleRequest();
+    }
+    drawWhilePlaying() {
+        // what time does the audio context think it is?
+        const { seconds } = this.composition;
+        // what time would masher consider to be in next frame?
+        const nextFrameTime = this.time.withFrame(this.time.frame + 1);
+        // are we beyond the end of mash?
+        if (seconds >= this.endTime.seconds) {
+            // should we loop back to beginning?
+            if (this.loop)
+                this.seekToTime(this.time.withFrame(0));
+            else {
+                this.paused = true;
+                Cache.audibleContext.emit(exports.EventType.Ended);
+            }
+        }
+        else {
+            // are we at or beyond the next frame?
+            if (seconds >= nextFrameTime.seconds) {
+                const compositionTime = Time.fromSeconds(seconds, this.time.fps);
+                const difference = compositionTime.frame - this.time.frame;
+                if (difference > 1)
+                    console.debug(this.constructor.name, "drawWhilePlaying dropped frames", difference - 1);
+                // go to where the audio context thinks we are
+                this.drawTime(compositionTime);
+            }
+        }
+    }
+    get duration() { return this.endTime.seconds; }
     emitIfFramesChange(method) {
         const origFrames = this.frames;
         method();
         const { frames } = this;
         if (origFrames !== frames) {
-            this.visibleContext.emit(exports.EventType.Duration);
+            Cache.audibleContext.emit(exports.EventType.Duration);
             if (this.frame > frames)
                 this.seekToTime(Time.fromArgs(frames, this.quantize));
         }
@@ -5107,7 +5165,7 @@ class MashClass extends InstanceClass {
         }
     }
     handleAction(action) {
-        this.visibleContext.emit(exports.EventType.Action, { action });
+        Cache.audibleContext.emit(exports.EventType.Action);
         if (action instanceof ChangeAction) {
             const changeAction = action;
             const { property } = changeAction;
@@ -5120,20 +5178,36 @@ class MashClass extends InstanceClass {
         }
         this.stopLoadAndDraw();
     }
-    get startAndEnd() {
-        const { time } = this;
-        const times = [time];
-        if (!this.paused)
-            times.push(time.add(this.bufferTime));
-        return times;
+    handleDrawInterval() {
+        if (this._playing)
+            this.drawWhilePlaying();
+        else
+            this.drawWhileNotPlaying();
     }
     load() {
         const [start, end] = this.startAndEnd;
         // console.log(this.constructor.name, "load", start, end)
-        const promises = this.clipsAtTimes(start, end).map(clip => clip.load(this.quantize, start, end));
-        return Promise.all(promises).then();
+        const clips = this.clipsAtTimes(start, end);
+        const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
+        const promises = loads.filter(Boolean);
+        if (!promises.length)
+            promises.push(Promise.resolve());
+        return Promise.all(promises).then(() => {
+            if (!this._paused) {
+                const audibleClips = clips.filter(clip => clip.audible && !clip.muted);
+                if (audibleClips.length)
+                    this.compositeAudible(audibleClips);
+            }
+        });
     }
-    loadAndComposite() { this.load().then(() => { this.compositeVisibleRequest(); }); }
+    get loadUrls() {
+        const [start, end] = this.startAndEnd;
+        // console.log(this.constructor.name, "load", start, end)
+        const clips = this.clipsAtTimes(start, end);
+        const urls = clips.flatMap(clip => clip.clipUrls(this.quantize, start, end));
+        // console.trace(this.constructor.name, "loadUrls", this.identifier, start, end, urls)
+        return urls;
+    }
     get loadedDefinitions() {
         const map = new Map();
         const [start, end] = this.startAndEnd;
@@ -5168,45 +5242,41 @@ class MashClass extends InstanceClass {
         this._paused = forcedValue;
         if (forcedValue) {
             this.playing = false;
+            this.bufferStop();
             if (this._bufferTimer) {
                 clearInterval(this._bufferTimer);
                 delete this._bufferTimer;
             }
-            // console.log("Mash emit", EventType.Pause)
-            this.visibleContext.emit(exports.EventType.Pause);
+            Cache.audibleContext.emit(exports.EventType.Pause);
         }
         else {
             this.composition.startContext();
-            if (!this._bufferTimer) {
-                this._bufferTimer = setInterval(() => { this.load(); }, Math.round(this.buffer / 2));
-            }
-            this.load().then(() => { this.playing = true; });
+            this.bufferStart();
+            this.load().then(() => {
+                console.debug(this.constructor.name, "paused enabling playing");
+                this.playing = true;
+            });
             // console.log("Mash emit", EventType.Play)
-            this.visibleContext.emit(exports.EventType.Play);
+            Cache.audibleContext.emit(exports.EventType.Play);
         }
     }
     get playing() { return this._playing; }
     set playing(value) {
-        // console.log(this.constructor.name, "set playing", value)
+        // console.trace(this.constructor.name, "set playing", value)
         if (this._playing !== value) {
+            this._playing = value;
             if (value) {
                 const clips = this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
                 if (!this.composition.startPlaying(this.time, clips)) {
                     // console.log(this.constructor.name, "set playing", value, "audio not cached", this.time, clips.length)
                     // audio was not cached
+                    this._playing = false;
                     return;
                 }
-                this._drawAtInterval = setInterval(() => { this.drawAtInterval(); }, 500 / this.time.fps);
-                this.visibleContext.emit(exports.EventType.Playing);
+                Cache.audibleContext.emit(exports.EventType.Playing);
             }
-            else {
+            else
                 this.composition.stopPlaying();
-                if (this._drawAtInterval) {
-                    clearInterval(this._drawAtInterval);
-                    delete this._drawAtInterval;
-                }
-            }
-            this._playing = value;
         }
     }
     removeClipsFromTrack(clips) {
@@ -5217,18 +5287,29 @@ class MashClass extends InstanceClass {
     removeTrack(trackType) {
         const array = this[trackType];
         this.emitIfFramesChange(() => { array.pop(); });
-        this.visibleContext.emit(exports.EventType.Track);
+        Cache.audibleContext.emit(exports.EventType.Track);
     }
     seekToTime(time) {
+        // console.debug(this.constructor.name, "seekToTime", time)
         if (this.seekTime !== time) {
             this.seekTime = time;
-            // console.log("seekToTime", time)
-            this.visibleContext.emit(exports.EventType.Seeking);
-            this.visibleContext.emit(exports.EventType.Time);
+            Cache.audibleContext.emit(exports.EventType.Seeking);
+            Cache.audibleContext.emit(exports.EventType.Time);
         }
         return this.stopLoadAndDraw(true);
     }
+    setDrawInterval() {
+        this.clearDrawInterval();
+        this.drawInterval = setInterval(() => { this.handleDrawInterval(); }, 500 / this.time.fps);
+    }
     get stalled() { return !this.paused && !this.playing; }
+    get startAndEnd() {
+        const { time } = this;
+        const times = [time];
+        if (!this.paused)
+            times.push(time.add(this.bufferTime));
+        return times;
+    }
     stopLoadAndDraw(seeking) {
         const { time, paused, playing } = this;
         if (playing)
@@ -5237,7 +5318,7 @@ class MashClass extends InstanceClass {
             if (time === this.time) { // otherwise we must have gotten a seek call
                 if (seeking) {
                     delete this.seekTime;
-                    this.visibleContext.emit(exports.EventType.Seeked);
+                    Cache.audibleContext.emit(exports.EventType.Seeked);
                 }
                 this.drawTime(time);
                 if (!paused) {
@@ -5251,8 +5332,7 @@ class MashClass extends InstanceClass {
         return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize);
     }
     get timeRange() {
-        const time = Time.fromArgs(this.frames, this.quantize);
-        return TimeRange.fromTime(this.time, time.scale(this.time.fps).frame);
+        return TimeRange.fromTime(this.time, this.endTime.scale(this.time.fps).frame);
     }
     get timeRangeToBuffer() {
         const { time, quantize, buffer, paused } = this;
@@ -5299,26 +5379,9 @@ class MashClass extends InstanceClass {
         return { type, index, clips: objects };
     }
     get tracks() { return Object.values(exports.TrackType).map(av => this[av]).flat(); }
-    get visibleContext() {
-        if (!this._visibleContext) {
-            // console.log("Mash get visibleContext creating")
-            this._visibleContext = ContextFactoryInstance.visible();
-            if (this._composition)
-                this.composition.visibleContext = this._visibleContext;
-        }
-        return this._visibleContext;
-    }
-    set visibleContext(value) {
-        // console.log("Mash set visibleContext", value)
-        if (this._visibleContext !== value) {
-            this._visibleContext = value;
-            if (this._composition)
-                this.composition.visibleContext = value;
-        }
-    }
 }
 
-class MashDefinitionClass extends DefinitionClass {
+class MashDefinitionClass extends DefinitionBase {
     constructor(...args) {
         super(...args);
         this.id = "com.moviemasher.mash.default";
@@ -5380,7 +5443,7 @@ const MashFactoryImplementation = {
     initialize: mashInitialize,
     instance: mashInstance,
 };
-Factories.mash = MashFactoryImplementation;
+Factories[exports.DefinitionType.Mash] = MashFactoryImplementation;
 
 const classes = {
     AddTrack: AddTrackAction,
@@ -5405,24 +5468,9 @@ class ActionFactoryClass {
 }
 const ActionFactory = new ActionFactoryClass();
 
-class MasherClass extends InstanceClass {
+class MasherClass extends InstanceBase {
     constructor(...args) {
         super(...args);
-        // private _audibleContext? : AudibleContext
-        // get audibleContext() : AudibleContext {
-        //   if (!this._audibleContext) {
-        //     console.log(this.constructor.name, "audibleContext initializing")
-        //     this._audibleContext = ContextFactory.audible()
-        //     if (this._mash) this.mash.audibleContext = this._audibleContext
-        //   }
-        //   return this._audibleContext
-        // }
-        // set audibleContext(value : AudibleContext) {
-        //   if (this._audibleContext !== value) {
-        //     this._audibleContext = value
-        //     if (this._mash) this.mash.audibleContext = value
-        //   }
-        // }
         this.autoplay = Default.masher.autoplay;
         this._buffer = Default.masher.buffer;
         this._fps = Default.masher.fps;
@@ -5435,24 +5483,14 @@ class MasherClass extends InstanceClass {
         this._selectedEffects = [];
         this._volume = Default.masher.volume;
         this._id ||= Id();
-        console.log(this.constructor.name, "constructor");
         const [object] = args;
-        const { autoplay, precision, loop, fps, volume, buffer, 
-        // audibleContext,
-        mash, canvas, } = object;
+        const { autoplay, precision, loop, fps, volume, buffer, mash, } = object;
         if (typeof autoplay !== "undefined")
             this.autoplay = autoplay;
         if (typeof precision !== "undefined")
             this.precision = precision;
         if (typeof loop !== "undefined")
             this._loop = loop;
-        // if (typeof audibleContext !== "undefined") this._audibleContext = audibleContext
-        // else this._audibleContext = ContextFactory.audible()
-        // console.log(this.constructor.name, "constructor created", this.audibleContext.context)
-        if (canvas)
-            this.visibleContext = ContextFactoryInstance.fromCanvas(canvas);
-        else
-            this.visibleContext = ContextFactoryInstance.visible();
         if (typeof fps !== "undefined")
             this._fps = fps;
         if (typeof volume !== "undefined")
@@ -5497,7 +5535,7 @@ class MasherClass extends InstanceClass {
         if (!type)
             throw Errors.type + 'Masher.add ' + id + JSON.stringify(definitionFromId);
         if (type === exports.DefinitionType.Effect) {
-            const effectDefinition = MovieMasher.effect.definition(object);
+            const effectDefinition = Factory.effect.definition(object);
             const effect = effectDefinition.instance;
             return this.addEffect(effect, frameOrIndex).then(() => effect);
         }
@@ -5505,8 +5543,8 @@ class MasherClass extends InstanceClass {
         if (!ClipTypes.includes(clipType))
             throw Errors.type + type;
         const definitionType = type;
-        const definition = MovieMasher[definitionType].definition(object);
-        const clip = definition.instance;
+        const definition = Factory[definitionType].definition(object);
+        const clip = definition.instanceFromObject(object);
         return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip);
     }
     addClip(clip, frameOrIndex = 0, trackIndex = 0) {
@@ -5556,9 +5594,10 @@ class MasherClass extends InstanceClass {
     }
     get buffer() { return this._buffer; }
     set buffer(value) {
-        if (this._buffer !== value) {
-            this._buffer = value;
-            this.mash.buffer = value;
+        const number = Number(value);
+        if (this._buffer !== number) {
+            this._buffer = number;
+            this.mash.buffer = number;
         }
     }
     can(method) {
@@ -5576,25 +5615,6 @@ class MasherClass extends InstanceClass {
                 && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize));
             default: throw Errors.argument;
         }
-    }
-    get canvas() { return this.visibleContext.canvas; }
-    set canvas(value) {
-        if (!value)
-            throw Errors.invalid.canvas;
-        // make sure canvas hasn't been stretched
-        const style = window.getComputedStyle(value);
-        const { width, height } = style;
-        if (!(width && height))
-            throw Errors.invalid.canvas;
-        const widthTrimmed = Number(width.slice(0, -2));
-        const heightTrimmed = Number(height.slice(0, -2));
-        if (Is.nan(widthTrimmed) || Is.nan(heightTrimmed))
-            throw Errors.invalid.canvas;
-        value.width = widthTrimmed;
-        value.height = heightTrimmed;
-        // console.log("set canvas", widthTrimmed, 'x', heightTrimmed, value)
-        this.visibleContext.canvas = value;
-        this.mash.compositeVisible();
     }
     change(property, value) {
         if (Is.populatedObject(this.selectedClip)) {
@@ -5714,6 +5734,10 @@ class MasherClass extends InstanceClass {
         }
         this.actionCreate(options);
     }
+    get clip() {
+        return Is.populatedObject(this.selectedClip) ? this.selectedClip : undefined;
+    }
+    set clip(value) { this.selectedClips = value ? [value] : []; }
     clipCanBeSplit(clip, time, quantize) {
         if (!Is.object(clip))
             return false;
@@ -5742,10 +5766,15 @@ class MasherClass extends InstanceClass {
     get currentTime() { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0; }
     get definitions() { return this.mash.media; }
     // call when player removed from DOM
-    destroy() { MovieMasher.masher.destroy(this); }
+    destroy() { Factory.masher.destroy(this); }
     draw() { this.mash.compositeVisible(); }
     get duration() { return this.mash.duration; }
+    get effect() {
+        return Is.populatedObject(this.selectedEffect) ? this.selectedEffect : undefined;
+    }
+    set effect(value) { this.selectedEffects = value ? [value] : []; }
     get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
+    get eventTarget() { return Cache.audibleContext.context; }
     filterClipSelection(value) {
         const clips = Array.isArray(value) ? value : [value];
         const [firstClip] = clips;
@@ -5767,18 +5796,18 @@ class MasherClass extends InstanceClass {
             return true;
         });
     }
-    get fps() { return this._fps; }
+    get fps() { return this._fps || this.mash.quantize; }
     set fps(value) {
-        if (!Is.aboveZero(value))
-            throw Errors.fps;
-        if (this._fps !== value) {
-            this._fps = value;
-            this.visibleContext.emit(exports.EventType.Fps);
-            this.time = this.time.scale(value);
+        const number = Number(value);
+        // setting to zero means fallback to mash rate
+        if (this._fps !== number) {
+            this._fps = number;
+            Cache.audibleContext.emit(exports.EventType.Fps);
+            this.time = this.time.scale(this.fps);
         }
     }
     get frame() { return this.time.frame; }
-    set frame(value) { this.goToTime(Time.fromArgs(value, this.fps)); }
+    set frame(value) { this.goToTime(Time.fromArgs(Number(value), this.fps)); }
     get frames() { return this.endTime.frame; }
     freeze() {
         const clip = this.selectedClipOrThrow;
@@ -5813,47 +5842,58 @@ class MasherClass extends InstanceClass {
     }
     get gain() { return this.muted ? 0.0 : this.volume; }
     goToTime(value) {
-        return this.mash.seekToTime(value.scaleToFps(this.fps));
-    }
-    isSelected(object) {
-        if (object instanceof EffectClass)
-            return this.selectedEffects.includes(object);
-        return this.selectedClips.includes(object);
+        const { fps } = this;
+        const time = value ? value.scaleToFps(fps) : Time.fromArgs(0, fps);
+        const min = time.min(this.endTime);
+        if (value && min.equalsTime(this.time))
+            return Promise.resolve();
+        return this.mash.seekToTime(min);
     }
     handleAction(action) {
         this.mash.handleAction(action);
         this.selectedClips = action.selectedClips;
         this.selectedEffects = action.selectedEffects;
     }
+    get imageData() { return Cache.visibleContext.imageData; }
+    get imageSize() { return Cache.visibleContext.size; }
+    set imageSize(value) {
+        const { width, height } = value;
+        if (!(Is.aboveZero(width) && Is.aboveZero(height)))
+            throw Errors.invalid.size;
+        Cache.visibleContext.size = value;
+        this.loadMashAndDraw().then();
+    }
+    isSelected(object) {
+        if (object instanceof EffectClass)
+            return this.selectedEffects.includes(object);
+        return this.selectedClips.includes(object);
+    }
     loadMash() { return this.mash.load(); }
     loadMashAndDraw() { return this.loadMash().then(() => { this.draw(); }); }
     get loadedDefinitions() { return this.mash.loadedDefinitions; }
     get loop() { return this._loop; }
     set loop(value) {
-        this._loop = value;
+        const boolean = !!value;
+        this._loop = boolean;
         if (this._mash)
-            this.mash.loop = value;
+            this.mash.loop = boolean;
     }
     get mash() {
         if (!this._mash) {
             // console.trace("get mash")
-            this._mash = MovieMasher.mash.instance(this.mashOptions());
+            this._mash = Factory.mash.instance(this.mashOptions());
         }
         return this._mash;
     }
     set mash(object) {
         if (this._mash === object)
             return;
+        console.log(this.constructor.name, "mash=", object.identifier);
         this.paused = true;
         if (this._mash)
             this._mash.destroy();
         this._selectedEffects = [];
         this._mash = object;
-        // console.log("set mash getting visibleContext...")
-        this._mash.visibleContext = this.visibleContext;
-        // console.log("creating composition", this._mash.composition)
-        // console.log("set mash got visibleContext!", this._visibleContext)
-        // this._mash.audibleContext = this.audibleContext
         this._mash.buffer = this.buffer;
         this._mash.gain = this.gain;
         this._mash.loop = this.loop;
@@ -5862,20 +5902,20 @@ class MasherClass extends InstanceClass {
             this._actions.mash = this._mash;
         }
         this.selectedClips = []; // so mash gets copied into _pristine
-        this.visibleContext.emit(exports.EventType.Mash);
-        this.goToTime(Time.fromArgs(0, this.fps));
+        Cache.audibleContext.emit(exports.EventType.Mash);
+        Cache.audibleContext.emit(exports.EventType.Track);
+        Cache.audibleContext.emit(exports.EventType.Duration);
+        Cache.audibleContext.emit(exports.EventType.Action);
+        this.goToTime();
         if (this.autoplay)
             this.paused = false;
     }
     mashOptions(mashObject = {}) {
-        // console.log("mashOptions")
         return {
             ...mashObject,
-            // audibleContext: this.audibleContext,
             buffer: this.buffer,
             gain: this.gain,
             loop: this.loop,
-            visibleContext: this.visibleContext,
         };
     }
     move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
@@ -5952,15 +5992,16 @@ class MasherClass extends InstanceClass {
     }
     get muted() { return this._muted; }
     set muted(value) {
-        if (this._muted !== value) {
-            this._muted = value;
+        const boolean = !!value;
+        if (this._muted !== boolean) {
+            this._muted = boolean;
             this.mash.gain = this.gain;
         }
     }
     pause() { this.paused = true; }
     get paused() { return this.mash.paused; }
     set paused(value) { if (this._mash)
-        this.mash.paused = value; }
+        this.mash.paused = !!value; }
     play() { this.paused = false; }
     get position() {
         let per = 0;
@@ -5972,7 +6013,7 @@ class MasherClass extends InstanceClass {
         return per;
     }
     set position(value) {
-        this.goToTime(Time.fromSeconds(this.duration * value, this.fps));
+        this.goToTime(Time.fromSeconds(this.duration * Number(value), this.fps));
     }
     get positionStep() {
         return parseFloat(`0.${"0".repeat(this.precision - 1)}1`);
@@ -6136,7 +6177,7 @@ class MasherClass extends InstanceClass {
                 this.selectedEffects = [];
             }
             else {
-                this.visibleContext.emit(exports.EventType.Selection);
+                Cache.audibleContext.emit(exports.EventType.Selection);
             }
         }
     }
@@ -6181,7 +6222,7 @@ class MasherClass extends InstanceClass {
         if (changed) {
             this._selectedEffects = newSelectedEffects;
             this._pristineEffect = newPristineEffect;
-            this.visibleContext.emit(exports.EventType.Selection);
+            Cache.audibleContext.emit(exports.EventType.Selection);
         }
     }
     get selectionObjects() {
@@ -6189,7 +6230,6 @@ class MasherClass extends InstanceClass {
         const object = selectedObjects.map((object) => object.propertyValues);
         return object;
     }
-    get silenced() { return this._paused || this.muted || !this.gain; }
     split() {
         const splitClip = this.selectedClipOrThrow;
         if (!this.clipCanBeSplit(splitClip, this.time, this.mash.quantize)) {
@@ -6219,28 +6259,25 @@ class MasherClass extends InstanceClass {
         this.actionCreate(options);
     }
     get time() { return this.mash.time; }
-    set time(value) {
-        if (value.equalsTime(this.time))
-            return;
-        this.goToTime(value);
-    }
+    set time(value) { this.goToTime(value); }
     get timeRange() { return this.mash.timeRange; }
     undo() { if (this.actions.canUndo)
         this.handleAction(this.actions.undo()); }
     get volume() { return this._volume; }
     set volume(value) {
-        if (this._volume !== value) {
-            if (!Is.positive(value))
+        const number = Number(value);
+        if (this._volume !== number) {
+            if (!Is.positive(number))
                 throw Errors.invalid.volume;
-            this._volume = value;
-            if (Is.aboveZero(value))
+            this._volume = number;
+            if (Is.aboveZero(number))
                 this.muted = false;
             this.mash.gain = this.gain;
         }
     }
 }
 
-class MasherDefinitionClass extends DefinitionClass {
+class MasherDefinitionClass extends DefinitionBase {
     constructor(...args) {
         super(...args);
         this.id = "com.moviemasher.masher.default";
@@ -6266,67 +6303,36 @@ class MasherDefinitionClass extends DefinitionClass {
 const MasherIntervalTics = 10 * 1000;
 const MasherDefaultId = "com.moviemasher.masher.default";
 let MasherInterval;
-const mashers = [];
+const MasherFactoryMashers = [];
 const addMasher = (masher) => {
-    if (!mashers.length)
+    if (!MasherFactoryMashers.length)
         masherStart();
-    mashers.push(masher);
+    MasherFactoryMashers.push(masher);
 };
 const masherDestroy = (masher) => {
-    const index = mashers.indexOf(masher);
+    const index = MasherFactoryMashers.indexOf(masher);
     if (index < 0)
         return;
-    mashers.splice(index, 1);
-    if (!mashers.length)
+    MasherFactoryMashers.splice(index, 1);
+    if (!MasherFactoryMashers.length)
         masherStop();
 };
 const handleInterval = () => {
-    // console.log(constructor.name, "handleInterval")
-    const map = new Map();
-    const definitions = new Set();
-    mashers.forEach(masher => {
-        masher.definitions.forEach(definition => { definitions.add(definition); });
-        const masherMap = masher.loadedDefinitions;
-        masherMap.forEach((times, definition) => {
-            if (!map.has(definition))
-                map.set(definition, []);
-            const definitionTimes = map.get(definition);
-            if (!definitionTimes)
-                throw Errors.internal;
-            definitionTimes.push(...times);
-        });
-    });
-    map.forEach((times, definition) => {
-        definition.unload(times);
-    });
+    const urls = MasherFactoryMashers.flatMap(masher => masher.mash.loadUrls);
+    Cache.flush(urls);
+    const definitions = MasherFactoryMashers.flatMap(masher => masher.mash.media);
     Definitions.map.forEach(definition => {
-        if (definitions.has(definition)) {
-            // definition used in a masher (masher.mash.media)
-            if (map.has(definition)) {
-                // definition needs to be at least partially loaded
-                definition.unload(map.get(definition));
-            }
-            else {
-                // definition can be completely unloaded, but not uninstalled
-                definition.unload();
-            }
-        }
-        else {
-            // definition is not used anywhere - unload, and uninstall if not retained
-            definition.unload();
-            if (!definition.retain)
-                Definitions.uninstall(definition.id);
-        }
+        if (definitions.includes(definition) || definition.retain)
+            return;
+        Definitions.uninstall(definition.id);
     });
 };
 const masherStart = () => {
-    // console.log(constructor.name, "masherStart")
     if (MasherInterval)
         return;
-    MasherInterval = setInterval(handleInterval, MasherIntervalTics);
+    MasherInterval = setInterval(() => handleInterval(), MasherIntervalTics);
 };
 const masherStop = () => {
-    // console.log(constructor.name, "masherStop")
     if (!MasherInterval)
         return;
     clearInterval(MasherInterval);
@@ -6341,6 +6347,7 @@ const masherDefinitionFromId = (id) => {
     return masherDefinition({ id });
 };
 const masherInstance = (object = {}) => {
+    // console.log("masherInstance", object)
     const definition = masherDefinition(object);
     const instance = definition.instanceFromObject(object);
     addMasher(instance);
@@ -6369,9 +6376,9 @@ const MasherFactoryImplementation = {
     initialize: masherInitialize,
     instance: masherInstance,
 };
-Factories.masher = MasherFactoryImplementation;
+Factories[exports.DefinitionType.Masher] = MasherFactoryImplementation;
 
-const ThemeWithModular = ModularMixin(InstanceClass);
+const ThemeWithModular = ModularMixin(InstanceBase);
 const ThemeWithClip = ClipMixin(ThemeWithModular);
 const ThemeWithVisible = VisibleMixin(ThemeWithClip);
 const ThemeWithTransformable = TransformableMixin(ThemeWithVisible);
@@ -6381,9 +6388,28 @@ class ThemeClass extends ThemeWithTransformable {
         const clipTimeRange = this.timeRangeRelative(mashTime, quantize);
         return this.definition.drawFilters(this, clipTimeRange, context, dimensions);
     }
+    clipUrls(quantize, start) {
+        const urls = super.clipUrls(quantize, start); // urls from my effects, etc.
+        urls.push(...this.modularUrls(quantize, start)); // urls from my modular properties
+        return urls;
+    }
+    loadClip(quantize, start, end) {
+        const promises = [];
+        const transformablePromise = super.loadClip(quantize, start, end); // my effects, etc.
+        if (transformablePromise)
+            promises.push(transformablePromise);
+        const modularPromise = this.loadModular(quantize, start, end); // my modular properties
+        if (modularPromise)
+            promises.push(modularPromise);
+        switch (promises.length) {
+            case 0: return;
+            case 1: return promises[0];
+            default: return Promise.all(promises).then();
+        }
+    }
 }
 
-const ThemeDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
+const ThemeDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 const ThemeDefinitionWithClip = ClipDefinitionMixin(ThemeDefinitionWithModular);
 const ThemeDefinitionWithVisible = VisibleDefinitionMixin(ThemeDefinitionWithClip);
 class ThemeDefinitionClass extends ThemeDefinitionWithVisible {
@@ -6403,32 +6429,32 @@ class ThemeDefinitionClass extends ThemeDefinitionWithVisible {
     }
 }
 
-const label$3 = "Color";
-const type$3 = "theme";
-const id$3 = "com.moviemasher.theme.color";
-const properties$2 = {
+const label$2 = "Color";
+const type$2 = "theme";
+const id$2 = "com.moviemasher.theme.color";
+const properties$1 = {
   color: {
     type: "rgb",
     value: "#FFFF00"
   }
 };
-const filters$2 = [
+const filters$1 = [
   {
     id: "color"
   }
 ];
 var themeColorJson = {
-  label: label$3,
-  type: type$3,
-  id: id$3,
-  properties: properties$2,
-  filters: filters$2
+  label: label$2,
+  type: type$2,
+  id: id$2,
+  properties: properties$1,
+  filters: filters$1
 };
 
-const label$2 = "Text";
-const type$2 = "theme";
-const id$2 = "com.moviemasher.theme.text";
-const properties$1 = {
+const label$1 = "Text";
+const type$1 = "theme";
+const id$1 = "com.moviemasher.theme.text";
+const properties = {
   string: {
     type: "string",
     value: "Text"
@@ -6461,101 +6487,9 @@ const properties$1 = {
     type: "number",
     value: 0.015
   },
-  fontface: {
-    type: "font",
-    value: "com.moviemasher.font.default"
-  }
-};
-const filters$1 = [
-  {
-    id: "drawtext",
-    parameters: [
-      {
-        name: "fontcolor",
-        value: "color"
-      },
-      {
-        name: "shadowcolor",
-        value: "shadowcolor"
-      },
-      {
-        name: "fontsize",
-        value: "mm_vert(size)"
-      },
-      {
-        name: "x",
-        value: "mm_horz(x)"
-      },
-      {
-        name: "y",
-        value: "mm_vert(y)"
-      },
-      {
-        name: "shadowx",
-        value: "mm_horz(shadowx)"
-      },
-      {
-        name: "shadowy",
-        value: "mm_vert(shadowy)"
-      },
-      {
-        name: "fontfile",
-        value: "mm_fontfile(fontface)"
-      },
-      {
-        name: "textfile",
-        value: "mm_textfile(string)"
-      }
-    ]
-  }
-];
-var themeTextJson = {
-  label: label$2,
-  type: type$2,
-  id: id$2,
-  properties: properties$1,
-  filters: filters$1
-};
-
-const label$1 = "Title";
-const type$1 = "theme";
-const id$1 = "com.moviemasher.theme.title";
-const properties = {
-  string: {
-    type: "string",
-    value: "Title"
-  },
-  size: {
-    type: "fontsize",
-    value: 0.3
-  },
-  x: {
-    type: "number",
-    value: 0
-  },
-  y: {
-    type: "number",
-    value: 0
-  },
-  color: {
-    type: "rgba",
-    value: "rgba(255,0,0,1)"
-  },
-  shadowcolor: {
-    type: "rgba",
-    value: "rgba(0,0,0,0)"
-  },
-  shadowx: {
-    type: "number",
-    value: 0.015
-  },
-  shadowy: {
-    type: "number",
-    value: 0.015
-  },
   background: {
     type: "rgba",
-    value: "rgb(255,0,0,1)"
+    value: "rgba(0,0,0,0)"
   },
   fontface: {
     type: "font",
@@ -6626,7 +6560,7 @@ const filters = [
     ]
   }
 ];
-var themeTitleJson = {
+var themeTextJson = {
   label: label$1,
   type: type$1,
   id: id$1,
@@ -6656,7 +6590,6 @@ const themeFromId = (id) => {
 const themeInitialize = () => {
     new ThemeDefinitionClass(themeColorJson);
     new ThemeDefinitionClass(themeTextJson);
-    new ThemeDefinitionClass(themeTitleJson);
 };
 const themeDefine = (object) => {
     const { id } = object;
@@ -6674,9 +6607,9 @@ const ThemeFactoryImplementation = {
     initialize: themeInitialize,
     instance: themeInstance,
 };
-Factories.theme = ThemeFactoryImplementation;
+Factories[exports.DefinitionType.Theme] = ThemeFactoryImplementation;
 
-const TransitionWithModular = ModularMixin(InstanceClass);
+const TransitionWithModular = ModularMixin(InstanceBase);
 const TransitionWithClip = ClipMixin(TransitionWithModular);
 const TransitionWithVisible = VisibleMixin(TransitionWithClip);
 class TransitionClass extends TransitionWithVisible {
@@ -6695,7 +6628,7 @@ class TransitionClass extends TransitionWithVisible {
     }
 }
 
-const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionClass);
+const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 const TransitionDefinitionWithClip = ClipDefinitionMixin(TransitionDefinitionWithModular);
 const TransitionDefinitionWithVisible = VisibleDefinitionMixin(TransitionDefinitionWithClip);
 class TransitionDefinitionClass extends TransitionDefinitionWithVisible {
@@ -6785,7 +6718,7 @@ const to = {
       parameters: [
         {
           name: "alpha",
-          value: "mm_t"
+          value: "1"
         },
         {
           name: "type",
@@ -6844,13 +6777,15 @@ const TransitionFactoryImplementation = {
     initialize: transitionInitialize,
     instance: transitionInstance,
 };
-Factories.transition = TransitionFactoryImplementation;
+Factories[exports.DefinitionType.Transition] = TransitionFactoryImplementation;
 
-const VideoWithClip = ClipMixin(InstanceClass);
-const VideoWithAudible = AudibleMixin(VideoWithClip);
-const VideoWithVisible = VisibleMixin(VideoWithAudible);
-const VideoWithTransformable = TransformableMixin(VideoWithVisible);
-class VideoClass extends VideoWithTransformable {
+// import { Errors } from "../../Setup/Errors"
+const WithClip$5 = ClipMixin(InstanceBase);
+const WithAudible$5 = AudibleMixin(WithClip$5);
+const WithAudibleFile$3 = AudibleFileMixin(WithAudible$5);
+const WithVisible$5 = VisibleMixin(WithAudibleFile$3);
+const WithTransformable$2 = TransformableMixin(WithVisible$5);
+const VideoClassImplementation = class extends WithTransformable$2 {
     constructor(...args) {
         super(...args);
         this.speed = Default.instance.video.speed;
@@ -6859,6 +6794,7 @@ class VideoClass extends VideoWithTransformable {
         if (speed && Is.aboveZero(speed))
             this.speed = speed;
     }
+    // private loadedAudio? : LoadedAudio
     get copy() { return super.copy; }
     definitionTime(quantize, time) {
         const scaledTime = super.definitionTime(quantize, time);
@@ -6872,147 +6808,198 @@ class VideoClass extends VideoWithTransformable {
             object.speed = this.speed;
         return object;
     }
-}
+};
 
-const VideoDefinitionWithClip = ClipDefinitionMixin(DefinitionClass);
-const VideoDefinitionWithAudible = AudibleDefinitionMixin(VideoDefinitionWithClip);
-const VideoDefinitionWithVisible = VisibleDefinitionMixin(VideoDefinitionWithAudible);
-class VideoDefinitionClass extends VideoDefinitionWithVisible {
+const WithClip$4 = ClipDefinitionMixin(DefinitionBase);
+const WithAudible$4 = AudibleDefinitionMixin(WithClip$4);
+const WithAudibleFile$2 = AudibleFileDefinitionMixin(WithAudible$4);
+const WithVisible$4 = VisibleDefinitionMixin(WithAudibleFile$2);
+const VideoDefinitionClassImplementation = class extends WithVisible$4 {
     constructor(...args) {
         super(...args);
-        this.begin = Default.definition.video.begin;
         this.fps = Default.definition.video.fps;
-        this.increment = Default.definition.video.increment;
         this.pattern = '%.jpg';
         this.source = '';
         this.trackType = exports.TrackType.Video;
         this.type = exports.DefinitionType.Video;
         const [object] = args;
-        const { url, begin, fps, increment, pattern, video_rate, source } = object;
+        const { url, fps, source } = object;
         if (!url)
             throw Errors.invalid.definition.url;
         this.url = url;
         if (source)
             this.source = source;
-        if (typeof begin !== "undefined")
-            this.begin = begin;
-        if (fps || video_rate)
-            this.fps = Number(fps || video_rate); // deprecated string
-        if (increment)
-            this.increment = increment;
-        if (pattern)
-            this.pattern = pattern;
+        if (fps)
+            this.fps = fps;
         this.properties.push(new Property({ name: "speed", type: exports.DataType.Number, value: 1.0 }));
         Definitions.install(this);
     }
-    frames(start, end) {
-        const frames = [];
-        const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame);
-        if (end) {
-            const endFrame = Math.min(this.framesMax, end.scale(this.fps, "ceil").frame);
-            for (let frame = startFrame; frame <= endFrame; frame += 1) {
-                frames.push(frame);
-            }
-        }
-        else
-            frames.push(startFrame);
-        return frames;
+    get absoluteUrl() { return urlAbsolute(this.url); }
+    get cachedOrThrow() {
+        const cached = Cache.get(this.absoluteUrl);
+        if (!cached)
+            throw Errors.internal;
+        return cached;
     }
-    get framesMax() { return Math.floor(this.fps * this.duration) - 2; }
+    definitionUrls(_start, _end) { return [this.absoluteUrl]; }
+    // private framesArray(start: Time, end?: Time): number[] {
+    //   const frames: number[] = []
+    //   const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame)
+    //   if (end) {
+    //     const endFrame = Math.min(this.framesMax, end.scale(this.fps, "ceil").frame)
+    //     for (let frame = startFrame; frame <= endFrame; frame += 1) {
+    //       frames.push(frame)
+    //     }
+    //   } else frames.push(startFrame)
+    //   return frames
+    // }
+    // private get framesMax(): number { return Math.floor(this.fps * this.duration) - 2 }
     get instance() { return this.instanceFromObject(this.instanceObject); }
     instanceFromObject(object) {
-        return new VideoClass({ ...this.instanceObject, ...object });
+        return new VideoClassImplementation({ ...this.instanceObject, ...object });
     }
-    load(start, end) {
-        const promises = [];
-        if (!this.stream)
-            promises.push(super.load(start, end));
-        if (this.stream)
-            promises.push(LoaderFactory.video().loadUrl(this.url));
-        else {
-            this.frames(start, end).map(frame => this.urlForFrame(frame)).forEach(url => {
-                if (Cache.cached(url)) {
-                    const cached = Cache.get(url);
-                    if (cached instanceof Promise)
-                        promises.push(cached);
-                }
-                else
-                    promises.push(LoaderFactory.image().loadUrl(url));
-            });
-        }
-        return Promise.all(promises).then();
+    framePromise(time, cached) {
+        const { video, sequence } = cached;
+        const sourceOrPromise = sequence[time.frame];
+        if (sourceOrPromise instanceof Promise)
+            return sourceOrPromise;
+        if (sourceOrPromise)
+            return Promise.resolve();
+        // console.debug(this.constructor.name, "framePromise", time)
+        const promise = this.seekPromise(time, video).then(() => {
+            // make sure we don't already have this frame
+            if (sequence[time.frame] && !(sequence[time.frame] instanceof Promise)) {
+                console.debug(this.constructor.name, "framePromise already captured", time.toString());
+                return;
+            }
+            const context = ContextFactoryInstance.toSize(video);
+            context.draw(video);
+            sequence[time.frame] = context.canvas;
+            console.debug(this.constructor.name, "framePromise capturing", time.toString());
+        });
+        sequence[time.frame] = promise;
+        return promise;
     }
-    loaded(start, end) {
-        const checkUrls = [];
-        if (this.stream)
-            checkUrls.push(this.url);
-        else {
-            if (!super.loaded(start, end))
-                return false;
-            checkUrls.push(...this.frames(start, end).map(frame => this.urlForFrame(frame)));
-        }
-        return checkUrls.every(url => Cache.cached(url));
+    needTimes(cached, start, end) {
+        const { sequence } = cached;
+        const times = end ? TimeRange.fromTimes(start, end).times : [start];
+        return times.filter(time => !sequence[time.frame] || sequence[time.frame] instanceof Promise);
     }
-    loadedVisible(time) {
+    framesPromise(start, end) {
+        const cached = this.cachedOrThrow;
+        const timesNeeded = this.needTimes(cached, start, end);
+        return this.timesPromise(timesNeeded);
+    }
+    timesPromise(timesNeeded) {
+        if (!timesNeeded.length)
+            return Promise.resolve();
+        const cached = this.cachedOrThrow;
+        // const promises:LoadPromise[] = timesNeeded.map(time => this.framePromise(time, cached))
+        // return Promise.all(promises).then(() => {})
+        const time = timesNeeded.shift();
         if (!time)
             throw Errors.internal;
-        if (this.stream)
-            return Cache.get(this.url);
-        const [url] = this.urls(time);
-        return Cache.get(url);
+        const first = this.framePromise(time, cached);
+        let framePromise = first;
+        timesNeeded.forEach(time => {
+            framePromise = framePromise.then(() => this.framePromise(time, cached));
+        });
+        return framePromise;
+    }
+    loadDefinition(quantize, startTime, endTime) {
+        const rate = this.fps || quantize;
+        const start = startTime.scale(rate);
+        const end = endTime ? endTime.scale(rate) : endTime;
+        // console.trace(start)
+        const url = this.absoluteUrl;
+        if (Cache.cached(url)) {
+            const cached = this.cachedOrThrow;
+            const times = this.needTimes(cached, start, end);
+            if (!times.length) {
+                // console.debug(this.constructor.name, "loadDefinition cached and no times needed")
+                return;
+            }
+            console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '));
+            return this.timesPromise(times);
+        }
+        const promise = Cache.caching(url) ? Cache.get(url) : LoaderFactory.video().loadUrl(url);
+        if (Cache.caching(url))
+            console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end);
+        else
+            console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end);
+        return promise.then(() => this.framesPromise(start, end));
+    }
+    loadedAudible() {
+        const cached = Cache.get(this.absoluteUrl);
+        if (!cached)
+            return;
+        const { audio } = cached;
+        return Cache.audibleContext.createBufferSource(audio);
+    }
+    loadedVisible(quantize, startTime) {
+        const rate = this.fps || quantize;
+        const time = startTime.scale(rate);
+        console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString());
+        const cached = Cache.get(this.absoluteUrl);
+        if (!cached) {
+            console.debug(this.constructor.name, "loadedVisible no cached");
+            return;
+        }
+        const { sequence } = cached;
+        const source = sequence[time.frame];
+        if (!source || source instanceof Promise) {
+            console.debug(this.constructor.name, "loadedVisible source issue", source);
+            return;
+        }
+        return source;
+    }
+    seek(definitionTime, video) {
+        if (!video)
+            throw Errors.internal;
+        video.currentTime = definitionTime.seconds;
+    }
+    seekNeeded(definitionTime, video) {
+        const { currentTime } = video;
+        const videoTime = Time.fromSeconds(currentTime, definitionTime.fps);
+        return !videoTime.equalsTime(definitionTime);
+    }
+    seekPromise(definitionTime, video) {
+        const promise = new Promise(resolve => {
+            if (!this.seekNeeded(definitionTime, video))
+                return resolve();
+            video.onseeked = () => {
+                video.onseeked = null;
+                resolve();
+            };
+            this.seek(definitionTime, video);
+        });
+        return promise;
     }
     toJSON() {
         const object = super.toJSON();
         object.url = this.url;
         if (this.source)
             object.source = this.source;
-        if (this.pattern !== Default.definition.video.pattern)
-            object.pattern = this.pattern;
-        if (this.increment !== Default.definition.video.increment)
-            object.increment = this.increment;
-        if (this.begin !== Default.definition.video.begin)
-            object.begin = this.begin;
         if (this.fps !== Default.definition.video.fps)
             object.fps = this.fps;
         return object;
     }
     unload(times) {
-        // TODO: better handle unloading of single stream file
-        if (this.stream) {
-            Cache.remove(this.url);
-            return;
-        }
-        const zeroTime = Time.fromArgs(0, this.fps);
-        const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax));
-        const deleting = new Set(allUrls.filter(url => Cache.cached(url)));
-        if (times) {
-            times.forEach(maybePair => {
-                const [start, end] = maybePair;
-                const frames = this.frames(start, end);
-                const urls = frames.map(frame => this.urlForFrame(frame));
-                const needed = urls.filter(url => deleting.has(url));
-                needed.forEach(url => { deleting.delete(url); });
-            });
-        }
-        deleting.forEach(url => { Cache.remove(url); });
+        // const zeroTime = Time.fromArgs(0, this.fps)
+        // const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax))
+        // const deleting = new Set(allUrls.filter(url => Cache.cached(url)))
+        // if (times) {
+        //   times.forEach(maybePair => {
+        //     const [start, end] = maybePair
+        //     const frames = this.framesArray(start, end)
+        //     const urls = frames.map(frame => this.urlForFrame(frame))
+        //     const needed = urls.filter(url => deleting.has(url))
+        //     needed.forEach(url => { deleting.delete(url) })
+        //   })
+        // }
+        // deleting.forEach(url => { Cache.remove(url) })
     }
-    urlForFrame(frame) {
-        let s = String((frame * this.increment) + this.begin);
-        if (this.zeropadding)
-            s = s.padStart(this.zeropadding, '0');
-        return (this.url + this.pattern).replaceAll('%', s);
-    }
-    urls(start, end) {
-        return this.frames(start, end).map(frame => this.urlForFrame(frame));
-    }
-    get zeropadding() {
-        if (!this.__zeropadding) {
-            const lastFrame = this.begin + (this.increment * this.framesMax - this.begin);
-            this.__zeropadding = String(lastFrame).length;
-        }
-        return this.__zeropadding;
-    }
-}
+};
 
 const videoDefinition = (object) => {
     const { id } = object;
@@ -7020,7 +7007,7 @@ const videoDefinition = (object) => {
         throw Errors.id;
     if (Definitions.installed(id))
         return Definitions.fromId(id);
-    return new VideoDefinitionClass(object);
+    return new VideoDefinitionClassImplementation(object);
 };
 const videoDefinitionFromId = (id) => {
     return videoDefinition({ id });
@@ -7058,9 +7045,366 @@ const VideoFactoryImplementation = {
     initialize: videoInitialize,
     instance: videoInstance,
 };
-Factories.video = VideoFactoryImplementation;
+Factories[exports.DefinitionType.Video] = VideoFactoryImplementation;
 
-DefinitionTypes.forEach(type => { MovieMasher[type].initialize(); });
+function StreamableMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            const [object] = args;
+            const { something } = object;
+            if (something)
+                this.something = something;
+        }
+        maxFrames(_quantize, _trim) { return 0; }
+        toJSON() {
+            const object = super.toJSON();
+            if (this.something)
+                object.something = this.something;
+            return object;
+        }
+    };
+}
+
+const WithClip$3 = ClipMixin(InstanceBase);
+const WithAudible$3 = AudibleMixin(WithClip$3);
+const WithStreamable$1 = StreamableMixin(WithAudible$3);
+const WithVisible$3 = VisibleMixin(WithStreamable$1);
+const WithTransformable$1 = TransformableMixin(WithVisible$3);
+class VideoStreamClass extends WithTransformable$1 {
+    constructor(...args) {
+        super(...args);
+        // const [object] = args
+        // const { speed } = <VideoStreamObject> object
+    }
+    get copy() { return super.copy; }
+    toJSON() {
+        const object = super.toJSON();
+        // if (this.speed !== Default.instance.video.speed) object.speed = this.speed
+        return object;
+    }
+}
+
+// import { DataType } from "../../../Setup/Enums"
+// import { Property } from "../../../Setup/Property"
+function StreamableDefinitionMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.format = 'hls';
+            this.streamable = true;
+            const [object] = args;
+            const { format } = object;
+            if (format)
+                this.format = format;
+            //  this.properties.push(new Property({ name: "something", type: DataType.String, value: '' }))
+        }
+        toJSON() {
+            const object = super.toJSON();
+            object.format = true;
+            return object;
+        }
+    };
+}
+
+const WithClip$2 = ClipDefinitionMixin(DefinitionBase);
+const WithAudible$2 = AudibleDefinitionMixin(WithClip$2);
+const WithVisible$2 = VisibleDefinitionMixin(WithAudible$2);
+const WithStreamable = StreamableDefinitionMixin(WithVisible$2);
+class VideoStreamDefinitionClass extends WithStreamable {
+    constructor(...args) {
+        super(...args);
+        this.source = '';
+        this.trackType = exports.TrackType.Video;
+        this.type = exports.DefinitionType.VideoStream;
+        const [object] = args;
+        const { url, source } = object;
+        if (!url)
+            throw Errors.invalid.definition.url;
+        this.url = url;
+        if (source)
+            this.source = source;
+        // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
+        Definitions.install(this);
+    }
+    get absoluteUrl() { return urlAbsolute(this.url); }
+    frames(quantize) {
+        return Time.fromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame;
+    }
+    get instance() { return this.instanceFromObject(this.instanceObject); }
+    instanceFromObject(object) {
+        return new VideoStreamClass({ ...this.instanceObject, ...object });
+    }
+    loadDefinition() {
+        const url = this.absoluteUrl;
+        if (Cache.cached(url))
+            return;
+        if (Cache.caching(url))
+            return Cache.get(url);
+        return LoaderFactory.video().loadUrl(url);
+    }
+    definitionUrls(_start, _end) { return [this.absoluteUrl]; }
+    loadedVisible() { return Cache.get(this.absoluteUrl); }
+    toJSON() {
+        const object = super.toJSON();
+        object.url = this.url;
+        if (this.source)
+            object.source = this.source;
+        return object;
+    }
+    unload(times) {
+        if (!times && Cache.cached(this.url))
+            Cache.remove(this.url);
+    }
+}
+
+const videoStreamDefinition = (object) => {
+    const { id } = object;
+    if (!(id && Is.populatedString(id)))
+        throw Errors.id;
+    if (Definitions.installed(id))
+        return Definitions.fromId(id);
+    return new VideoStreamDefinitionClass(object);
+};
+const videoStreamDefinitionFromId = (id) => {
+    return videoStreamDefinition({ id });
+};
+const videoStreamInstance = (object) => {
+    const definition = videoStreamDefinition(object);
+    const instance = definition.instanceFromObject(object);
+    return instance;
+};
+const videoStreamFromId = (id) => {
+    return videoStreamInstance({ id });
+};
+const videoStreamInitialize = () => { };
+const videoStreamDefine = (object) => {
+    const { id } = object;
+    if (!(id && Is.populatedString(id)))
+        throw Errors.id;
+    Definitions.uninstall(id);
+    return videoStreamDefinition(object);
+};
+/**
+ * @internal
+ */
+const videoStreamInstall = (object) => {
+    const instance = videoStreamDefine(object);
+    instance.retain = true;
+    return instance;
+};
+const VideoStreamFactoryImplementation = {
+    define: videoStreamDefine,
+    install: videoStreamInstall,
+    definition: videoStreamDefinition,
+    definitionFromId: videoStreamDefinitionFromId,
+    fromId: videoStreamFromId,
+    initialize: videoStreamInitialize,
+    instance: videoStreamInstance,
+};
+Factories[exports.DefinitionType.VideoStream] = VideoStreamFactoryImplementation;
+
+const WithClip$1 = ClipMixin(InstanceBase);
+const WithAudible$1 = AudibleMixin(WithClip$1);
+const WithAudibleFile$1 = AudibleFileMixin(WithAudible$1);
+const WithVisible$1 = VisibleMixin(WithAudibleFile$1);
+const WithTransformable = TransformableMixin(WithVisible$1);
+class VideoSequenceClass extends WithTransformable {
+    constructor(...args) {
+        super(...args);
+        this.speed = Default.instance.video.speed;
+        const [object] = args;
+        const { speed } = object;
+        if (speed && Is.aboveZero(speed))
+            this.speed = speed;
+    }
+    get copy() { return super.copy; }
+    definitionTime(quantize, time) {
+        const scaledTime = super.definitionTime(quantize, time);
+        if (this.speed === Default.instance.video.speed)
+            return scaledTime;
+        return scaledTime.divide(this.speed); //, 'ceil')
+    }
+    toJSON() {
+        const object = super.toJSON();
+        if (this.speed !== Default.instance.video.speed)
+            object.speed = this.speed;
+        return object;
+    }
+}
+
+const WithClip = ClipDefinitionMixin(DefinitionBase);
+const WithAudible = AudibleDefinitionMixin(WithClip);
+const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible);
+const WithVisible = VisibleDefinitionMixin(WithAudibleFile);
+class VideoSequenceDefinitionClass extends WithVisible {
+    constructor(...args) {
+        super(...args);
+        this.begin = Default.definition.videosequence.begin;
+        this.fps = Default.definition.videosequence.fps;
+        this.increment = Default.definition.videosequence.increment;
+        this.pattern = '%.jpg';
+        this.source = '';
+        this.trackType = exports.TrackType.Video;
+        this.type = exports.DefinitionType.VideoSequence;
+        const [object] = args;
+        const { padding, url, begin, fps, increment, pattern, source } = object;
+        if (!url)
+            throw Errors.invalid.definition.url;
+        this.url = url;
+        if (source)
+            this.source = source;
+        if (typeof begin !== "undefined")
+            this.begin = begin;
+        if (fps)
+            this.fps = fps;
+        if (increment)
+            this.increment = increment;
+        if (pattern)
+            this.pattern = pattern;
+        if (padding)
+            this.padding = padding;
+        else {
+            const lastFrame = this.begin + (this.increment * this.framesMax - this.begin);
+            this.padding = String(lastFrame).length;
+        }
+        this.properties.push(new Property({ name: "speed", type: exports.DataType.Number, value: 1.0 }));
+        Definitions.install(this);
+    }
+    definitionUrls(start, end) {
+        return this.framesArray(start, end).map(frame => this.urlForFrame(frame));
+    }
+    framesArray(start, end) {
+        const frames = [];
+        const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame);
+        if (end) {
+            const endFrame = Math.min(this.framesMax, end.scale(this.fps, "ceil").frame);
+            for (let frame = startFrame; frame <= endFrame; frame += 1) {
+                frames.push(frame);
+            }
+        }
+        else
+            frames.push(startFrame);
+        return frames;
+    }
+    get framesMax() { return Math.floor(this.fps * this.duration) - 2; }
+    get instance() { return this.instanceFromObject(this.instanceObject); }
+    instanceFromObject(object) {
+        return new VideoSequenceClass({ ...this.instanceObject, ...object });
+    }
+    loadDefinition(quantize, start, end) {
+        const promises = [];
+        const clipDefinitionPromise = end ? super.loadDefinition(quantize, start, end) : null;
+        if (clipDefinitionPromise)
+            promises.push(clipDefinitionPromise);
+        const urls = this.definitionUrls(start, end);
+        const uncachedUrls = urls.filter(url => !Cache.cached(url));
+        uncachedUrls.forEach(url => {
+            if (Cache.caching(url))
+                promises.push(Cache.get(url));
+            else
+                promises.push(LoaderFactory.image().loadUrl(url));
+        });
+        switch (promises.length) {
+            case 0: return;
+            case 1: return promises[0];
+            default: return Promise.all(promises).then();
+        }
+    }
+    loadedVisible(_quantize, time) {
+        const [url] = this.urls(time);
+        return Cache.get(url);
+    }
+    toJSON() {
+        const object = super.toJSON();
+        object.url = this.url;
+        if (this.source)
+            object.source = this.source;
+        if (this.pattern !== Default.definition.videosequence.pattern)
+            object.pattern = this.pattern;
+        if (this.increment !== Default.definition.videosequence.increment)
+            object.increment = this.increment;
+        if (this.begin !== Default.definition.videosequence.begin)
+            object.begin = this.begin;
+        if (this.fps !== Default.definition.videosequence.fps)
+            object.fps = this.fps;
+        if (this.padding !== Default.definition.videosequence.padding)
+            object.padding = this.padding;
+        return object;
+    }
+    unload(times) {
+        const zeroTime = Time.fromArgs(0, this.fps);
+        const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax));
+        const deleting = new Set(allUrls.filter(url => Cache.cached(url)));
+        if (times) {
+            times.forEach(maybePair => {
+                const [start, end] = maybePair;
+                const frames = this.framesArray(start, end);
+                const urls = frames.map(frame => this.urlForFrame(frame));
+                const needed = urls.filter(url => deleting.has(url));
+                needed.forEach(url => { deleting.delete(url); });
+            });
+        }
+        deleting.forEach(url => { Cache.remove(url); });
+    }
+    urlForFrame(frame) {
+        let s = String((frame * this.increment) + this.begin);
+        if (this.padding)
+            s = s.padStart(this.padding, '0');
+        return urlAbsolute((this.url + this.pattern).replaceAll('%', s));
+    }
+    urls(start, end) {
+        return this.framesArray(start, end).map(frame => this.urlForFrame(frame));
+    }
+}
+
+const videoSequenceDefinition = (object) => {
+    const { id } = object;
+    if (!(id && Is.populatedString(id)))
+        throw Errors.id;
+    if (Definitions.installed(id))
+        return Definitions.fromId(id);
+    return new VideoSequenceDefinitionClass(object);
+};
+const videoSequenceDefinitionFromId = (id) => {
+    return videoSequenceDefinition({ id });
+};
+const videoSequenceInstance = (object) => {
+    const definition = videoSequenceDefinition(object);
+    const instance = definition.instanceFromObject(object);
+    return instance;
+};
+const videoSequenceFromId = (id) => {
+    return videoSequenceInstance({ id });
+};
+const videoSequenceInitialize = () => { };
+const videoSequenceDefine = (object) => {
+    const { id } = object;
+    if (!(id && Is.populatedString(id)))
+        throw Errors.id;
+    Definitions.uninstall(id);
+    return videoSequenceDefinition(object);
+};
+/**
+ * @internal
+ */
+const videoSequenceInstall = (object) => {
+    const instance = videoSequenceDefine(object);
+    instance.retain = true;
+    return instance;
+};
+const VideoSequenceFactoryImplementation = {
+    define: videoSequenceDefine,
+    install: videoSequenceInstall,
+    definition: videoSequenceDefinition,
+    definitionFromId: videoSequenceDefinitionFromId,
+    fromId: videoSequenceFromId,
+    initialize: videoSequenceInitialize,
+    instance: videoSequenceInstance,
+};
+Factories[exports.DefinitionType.VideoSequence] = VideoSequenceFactoryImplementation;
+
+DefinitionTypes.forEach(type => { Factory[type].initialize(); });
 
 exports.Action = Action;
 exports.Actions = Actions;
@@ -7069,12 +7413,13 @@ exports.AddEffectAction = AddEffectAction;
 exports.AddTrackAction = AddTrackAction;
 exports.AudibleContext = AudibleContext;
 exports.AudibleDefinitionMixin = AudibleDefinitionMixin;
+exports.AudibleFileDefinitionMixin = AudibleFileDefinitionMixin;
+exports.AudibleFileMixin = AudibleFileMixin;
 exports.AudibleMixin = AudibleMixin;
 exports.AudioClass = AudioClass;
 exports.AudioDefinitionClass = AudioDefinitionClass;
 exports.AudioFactoryImplementation = AudioFactoryImplementation;
 exports.AudioLoader = AudioLoader;
-exports.AudioProcessor = AudioProcessor;
 exports.Cache = Cache;
 exports.Capitalize = Capitalize;
 exports.ChangeAction = ChangeAction;
@@ -7087,9 +7432,10 @@ exports.Color = Color;
 exports.ContextFactory = ContextFactoryInstance;
 exports.DataTypes = DataTypes;
 exports.Default = Default;
-exports.DefinitionClass = DefinitionClass;
+exports.DefinitionBase = DefinitionBase;
 exports.DefinitionTypes = DefinitionTypes;
 exports.Definitions = Definitions;
+exports.DefinitionsMap = DefinitionsMap;
 exports.EffectClass = EffectClass;
 exports.EffectDefinitionClass = EffectDefinitionClass;
 exports.EffectFactoryImplementation = EffectFactoryImplementation;
@@ -7097,6 +7443,7 @@ exports.Element = Element;
 exports.Errors = Errors;
 exports.Evaluator = Evaluator;
 exports.Factories = Factories;
+exports.Factory = Factory;
 exports.FilterClass = FilterClass;
 exports.FilterDefinitionClass = FilterDefinitionClass;
 exports.FilterFactoryImplementation = FilterFactoryImplementation;
@@ -7104,14 +7451,13 @@ exports.FontClass = FontClass;
 exports.FontDefinitionClass = FontDefinitionClass;
 exports.FontFactoryImplementation = FontFactoryImplementation;
 exports.FontLoader = FontLoader;
-exports.FontProcessor = FontProcessor;
 exports.FreezeAction = FreezeAction;
 exports.Id = Id;
 exports.ImageClass = ImageClass;
 exports.ImageDefinitionClass = ImageDefinitionClass;
 exports.ImageFactoryImplementation = ImageFactoryImplementation;
 exports.ImageLoader = ImageLoader;
-exports.InstanceClass = InstanceClass;
+exports.InstanceBase = InstanceBase;
 exports.Is = Is;
 exports.Loader = Loader;
 exports.MashClass = MashClass;
@@ -7129,10 +7475,8 @@ exports.ModularMixin = ModularMixin;
 exports.ModuleTypes = ModuleTypes;
 exports.MoveClipsAction = MoveClipsAction;
 exports.MoveEffectsAction = MoveEffectsAction;
-exports.MovieMasher = MovieMasher;
 exports.Parameter = Parameter;
 exports.Pixel = Pixel;
-exports.Processor = Processor;
 exports.Property = Property;
 exports.RemoveClipsAction = RemoveClipsAction;
 exports.Round = Round;
@@ -7157,10 +7501,17 @@ exports.TransitionFactoryImplementation = TransitionFactoryImplementation;
 exports.Type = Type;
 exports.TypeValue = TypeValue;
 exports.Types = TypesInstance;
-exports.VideoClass = VideoClass;
-exports.VideoDefinitionClass = VideoDefinitionClass;
+exports.Url = Url;
+exports.VideoClassImplementation = VideoClassImplementation;
+exports.VideoDefinitionClassImplementation = VideoDefinitionClassImplementation;
 exports.VideoFactoryImplementation = VideoFactoryImplementation;
 exports.VideoLoader = VideoLoader;
+exports.VideoSequenceClass = VideoSequenceClass;
+exports.VideoSequenceDefinitionClass = VideoSequenceDefinitionClass;
+exports.VideoSequenceFactoryImplementation = VideoSequenceFactoryImplementation;
+exports.VideoStreamClass = VideoStreamClass;
+exports.VideoStreamDefinitionClass = VideoStreamDefinitionClass;
+exports.VideoStreamFactoryImplementation = VideoStreamFactoryImplementation;
 exports.VisibleContext = VisibleContext;
 exports.VisibleDefinitionMixin = VisibleDefinitionMixin;
 exports.VisibleMixin = VisibleMixin;
@@ -7187,7 +7538,6 @@ exports.definitionsFont = definitionsFont;
 exports.definitionsFromId = definitionsFromId;
 exports.definitionsInstall = definitionsInstall;
 exports.definitionsInstalled = definitionsInstalled;
-exports.definitionsMap = definitionsMap;
 exports.definitionsMerger = definitionsMerger;
 exports.definitionsScaler = definitionsScaler;
 exports.definitionsUninstall = definitionsUninstall;
@@ -7290,6 +7640,7 @@ exports.transitionFromId = transitionFromId;
 exports.transitionInitialize = transitionInitialize;
 exports.transitionInstall = transitionDefine;
 exports.transitionInstance = transitionInstance;
+exports.urlAbsolute = urlAbsolute;
 exports.videoDefine = videoDefine;
 exports.videoDefinition = videoDefinition;
 exports.videoDefinitionFromId = videoDefinitionFromId;
@@ -7297,4 +7648,18 @@ exports.videoFromId = videoFromId;
 exports.videoInitialize = videoInitialize;
 exports.videoInstall = videoInstall;
 exports.videoInstance = videoInstance;
+exports.videoSequenceDefine = videoSequenceDefine;
+exports.videoSequenceDefinition = videoSequenceDefinition;
+exports.videoSequenceDefinitionFromId = videoSequenceDefinitionFromId;
+exports.videoSequenceFromId = videoSequenceFromId;
+exports.videoSequenceInitialize = videoSequenceInitialize;
+exports.videoSequenceInstall = videoSequenceInstall;
+exports.videoSequenceInstance = videoSequenceInstance;
+exports.videoStreamDefine = videoStreamDefine;
+exports.videoStreamDefinition = videoStreamDefinition;
+exports.videoStreamDefinitionFromId = videoStreamDefinitionFromId;
+exports.videoStreamFromId = videoStreamFromId;
+exports.videoStreamInitialize = videoStreamInitialize;
+exports.videoStreamInstall = videoStreamInstall;
+exports.videoStreamInstance = videoStreamInstance;
 //# sourceMappingURL=index.js.map

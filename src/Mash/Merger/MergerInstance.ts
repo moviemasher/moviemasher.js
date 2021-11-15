@@ -1,17 +1,17 @@
 import { MergerDefinition } from "./Merger"
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { ModularMixin } from "../Mixin/Modular/ModularMixin"
-import { MovieMasher } from "../../MovieMasher/MovieMasher"
+import { Factory } from "../../Factory/Factory"
 
 
-const MergerWithModular = ModularMixin(InstanceClass)
+const MergerWithModular = ModularMixin(InstanceBase)
 class MergerClass extends MergerWithModular {
   declare definition : MergerDefinition
 
   get id() : string { return this.definition.id }
 
   set id(value : string) {
-    this.definition = MovieMasher.merger.definitionFromId(value)
+    this.definition = Factory.merger.definitionFromId(value)
     this.constructProperties()
   }
 }

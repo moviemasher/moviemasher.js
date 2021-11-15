@@ -1,17 +1,15 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { ScalerDefinitionClass } from "../Scaler/ScalerDefinition"
-import {
-  Scaler,
-  ScalerDefinition,
-  ScalerDefinitionObject,
-  ScalerObject
-} from "../Scaler/Scaler"
+import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions"
 import { Factories } from "../Factories"
-import scalerDefaultJson from "../Scaler/DefinitionObjects/default.json"
-import scalerPanJson from "../Scaler/DefinitionObjects/pan.json"
-import scalerScaleJson from "../Scaler/DefinitionObjects/scale.json"
-import { Is } from "../../Utilities/Is"
+import { ScalerDefinitionClass } from "../Scaler/ScalerDefinition"
+import {
+  Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerObject
+} from "../Scaler/Scaler"
+
+import scalerDefaultJson from "../../DefinitionObjects/scaler/default.json"
+import scalerPanJson from "../../DefinitionObjects/scaler/pan.json"
+import scalerScaleJson from "../../DefinitionObjects/scaler/scale.json"
 
 const scalerDefaultId = "com.moviemasher.scaler.default"
 
@@ -60,7 +58,7 @@ const ScalerFactoryImplementation = {
   initialize: scalerInitialize,
 }
 
-Factories.scaler = ScalerFactoryImplementation
+Factories[DefinitionType.Scaler] = ScalerFactoryImplementation
 
 export {
   scalerDefine,

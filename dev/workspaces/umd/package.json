@@ -1,0 +1,17 @@
+{
+  "name": "umd-moviemasher",
+  "description": "UMD Test",
+  "version": "5.0.0",
+  "license": "MPL-2.0",
+  "scripts": {
+    "copy-html": "cp -r index.html dist",
+    "copy-js": "cp -r ../../../dist/moviemasher.* dist",
+    "copy-icon": "cp -r ../../assets/graphics/favicon.ico dist",
+    "link-assets": "ln -s $(cd ../../assets ; pwd) dist",
+    "build": "run-s clean link-assets copy-html copy-icon copy-js",
+    "destroy": "rimraf dist",
+    "create": "mkdir dist",
+    "clean": "run-s destroy create",
+    "serve": "serve --debug --cors --no-port-switching --no-clipboard --listen 8571 dist"
+  }
+}

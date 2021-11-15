@@ -1,10 +1,10 @@
 import React from "react"
 
-import { EditorContext } from "../Editor/EditorContext"
+import { InspectorContext } from "./InspectorContext"
 
 const useSelected = () => {
-  const editorContext = React.useContext(EditorContext)
-  return editorContext.masher!.selected
+  const inspectorContext = React.useContext(InspectorContext)
+  return inspectorContext.clip || inspectorContext.mash
 }
 
 export { useSelected }

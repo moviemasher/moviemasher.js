@@ -17,7 +17,7 @@ interface Theme extends Modular, Transformable {
 
 type ThemeDefinitionObject = ModularDefinitionObject & ClipDefinitionObject
 
-interface ThemeDefinition extends Omit <ModularDefinition, "loadedVisible">, VisibleDefinition {
+interface ThemeDefinition extends ModularDefinition, VisibleDefinition {
   instance : Theme
   instanceFromObject(object : ThemeObject) : Theme
 }

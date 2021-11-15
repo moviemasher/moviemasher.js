@@ -1,5 +1,7 @@
 import React from 'react'
-import { DataType, Definition, DefinitionObject, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import {
+  DataType, Definition, DefinitionObject, EventType, Masher, TrackType, UnknownObject
+} from '@moviemasher/moviemasher.js'
 
 export type UnknownChangeEvent = React.ChangeEvent<{}>
 export type SliderChangeHandler = (event: UnknownChangeEvent, value: number | number[]) => void
@@ -43,3 +45,6 @@ export interface SourceCallbackOptions extends UnknownObject {
   terms?: string
 }
 export type SourceCallback = (options?:SourceCallbackOptions) => DefinitionsPromise
+
+export type ListenerCallback = (masher: Masher) => void
+export type ListenerEvents = Partial<Record<EventType, ListenerCallback>>

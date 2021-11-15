@@ -1,16 +1,16 @@
 import { Any, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { DefinitionType } from "../../Setup/Enums"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { Font, FontDefinitionObject, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
 import { Definitions } from "../Definitions/Definitions"
 import { Time } from "../../Utilities/Time"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
 import { Cache } from "../../Loading/Cache"
+import { urlAbsolute } from "../../Utilities/Url"
 
-
-class FontDefinitionClass extends DefinitionClass {
+class FontDefinitionClass extends DefinitionBase {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -20,6 +20,7 @@ class FontDefinitionClass extends DefinitionClass {
     this.source = source
     Definitions.install(this)
   }
+  get absoluteUrl(): string { return urlAbsolute(this.source) }
 
   get instance() : Font {
     return this.instanceFromObject(this.instanceObject)
@@ -29,20 +30,20 @@ class FontDefinitionClass extends DefinitionClass {
     return new FontClass({ ...this.instanceObject, ...object })
   }
 
-  load(start : Time, end? : Time) : LoadPromise {
-    const promises = [super.load(start, end)]
-    if (Cache.cached(this.source)) {
-      const cached = Cache.get(this.source)
-      if (cached instanceof Promise) promises.push(cached)
-    } else promises.push(LoaderFactory.font().loadUrl(this.source))
-    return Promise.all(promises).then()
+  loadDefinition(): LoadPromise | void {
+    const url = this.absoluteUrl
+    if (Cache.cached(url)) return
+
+    if (Cache.caching(url)) return Cache.get(url)
+
+    return LoaderFactory.font().loadUrl(url)
   }
 
-  loaded(start : Time, end? : Time) : boolean {
-    return super.loaded(start, end) && Cache.cached(this.source)
+  definitionUrls(_start : Time, _end? : Time) : string[] {
+    return [urlAbsolute(this.source)]
   }
 
-  loadedVisible(_time?: Time) : Any { return Cache.get(this.source) }
+  loadedVisible() : Any { return Cache.get(urlAbsolute(this.source)) }
 
   retain = true
 

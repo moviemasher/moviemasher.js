@@ -1,7 +1,24 @@
 import { Any, LoadPromise } from "../declarations"
 import { Cache } from "./Cache"
 
-class Loader  {
+class Loader {
+  arrayBufferPromiseFromUrl(url: string): Promise<ArrayBuffer> {
+    return fetch(url).then(response => response.arrayBuffer())
+  }
+
+  arrayBufferPromiseFromBlob(blob: Blob):Promise<ArrayBuffer> {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => { resolve(<ArrayBuffer> reader.result) }
+      reader.onerror = reject
+      reader.readAsArrayBuffer(blob)
+    })
+  }
+
+  audioBufferPromiseFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
+    return Cache.audibleContext.decode(arrayBuffer)
+  }
+
   async loadUrl(url : string) : LoadPromise {
     if (Cache.cached(url)) {
       const promiseOrCached = Cache.get(url)

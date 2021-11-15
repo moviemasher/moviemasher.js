@@ -2,14 +2,14 @@ import { TrackType } from "../../Setup/Enums"
 import { Is, Time } from "../../Utilities"
 import { VisibleContext } from "../../Playing"
 import { TransitionDefinition } from "./Transition"
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { ModularMixin } from "../Mixin/Modular/ModularMixin"
 import { Visible } from "../Mixin/Visible"
 import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
 import { ClipMixin } from "../Mixin/Clip/ClipMixin"
 import { Size } from "../../declarations"
 
-const TransitionWithModular = ModularMixin(InstanceClass)
+const TransitionWithModular = ModularMixin(InstanceBase)
 const TransitionWithClip = ClipMixin(TransitionWithModular)
 const TransitionWithVisible = VisibleMixin(TransitionWithClip)
 

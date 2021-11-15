@@ -1,35 +1,28 @@
 import React from "react"
-import { definitionsByType, DefinitionType, DefinitionTypes, UnknownObject } from '@moviemasher/moviemasher.js'
+import { definitionsByType, UnknownObject } from '@moviemasher/moviemasher.js'
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "./BrowserContext"
 import { SourceCallback } from "../../declarations"
+import { propsDefinitionTypes } from "../../Utilities/Props"
 
 interface BrowserSourceProps extends UnknownObject {
   id: string
   children: React.ReactNode
   className?: string
-  definitionType?: DefinitionType
   promiseProvider?: SourceCallback
+  type?: string
+  types?: string | string[]
 }
 
+
 const BrowserSource: React.FC<BrowserSourceProps> = props => {
-  const { className, id, definitionType, promiseProvider, ...rest } = props
-  const type = definitionType || id as DefinitionType
-
-  if (!promiseProvider) {
-    if (!definitionType) {
-      if (!DefinitionTypes.map(String).includes(id)) {
-        throw "BrowserSource requires definitionType or promiseProvider"
-      }
-    }
-  }
-
   const browserContext = React.useContext(BrowserContext)
+
+  const { type, types, className, id, definitionType, promiseProvider, ...rest } = props
   const { definitions, sourceId, setDefinitions, setSourceId, setDefinitionId } = browserContext
 
   const classes = []
   if (className) classes.push(className)
-
 
   if (sourceId === id) {
     // TODO: get from props or context
@@ -40,8 +33,11 @@ const BrowserSource: React.FC<BrowserSourceProps> = props => {
         promiseProvider().then(definitions => setDefinitions(definitions))
       } else {
         setTimeout(() => {
-          const definitions = definitionsByType(type)
-          // console.log("BrowserSource", id, "setDefinitions", type, definitions.map(d => d.label || d.id))
+          const definitionTypes = propsDefinitionTypes(type, types, id)
+          const lists = definitionTypes.map(type => definitionsByType(type))
+          if (!lists.length) throw "definition type or promiseProvider required"
+
+          const definitions = lists.length === 1 ? lists[0] : lists.flat()
           setDefinitions(definitions)
         }, 1)
       }

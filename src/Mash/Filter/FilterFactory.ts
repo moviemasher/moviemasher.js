@@ -70,7 +70,7 @@ const FilterFactoryImplementation = {
   instance: filterInstance,
 }
 
-Factories.filter = FilterFactoryImplementation
+Factories[DefinitionType.Filter] = FilterFactoryImplementation
 
 export {
   filterDefine,

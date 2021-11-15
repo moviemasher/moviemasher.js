@@ -5,57 +5,30 @@ import { pixelColor } from "../../Utilities/Pixel"
 import { byTrack } from "../../Utilities/Sort"
 import { Is } from "../../Utilities/Is"
 import { Time } from "../../Utilities/Time"
-import { VisibleContext } from "../../Playing"
-import { ContextFactory } from "../ContextFactory"
 import { Audible } from "../../Mash/Mixin/Audible/Audible"
 import { Visible } from "../../Mash/Mixin/Visible/Visible"
 import { Transition } from "../../Mash/Transition/Transition"
 import { Cache } from "../../Loading/Cache"
-
-interface ClipTiming {
-  start : number
-  duration : number
-  offset : number
-}
+import { AudibleSource } from "../.."
 
 interface Source {
   gainNode: GainNode
-  gainSource: AudioBufferSourceNode
+  gainSource: AudibleSource
 }
 
 interface CompositionObject {
-  // audibleContext? : AudibleContext
   buffer? : number
   gain? : number
   quantize? : number
   backcolor? : string
-  visibleContext? : VisibleContext
 }
 
 class Composition {
   constructor(object : CompositionObject) {
-    // console.trace("Composition constructor")
-    const {
-      // audibleContext,
-      backcolor,
-      buffer,
-      gain,
-      quantize,
-      visibleContext
-    } = object
-
+    const { backcolor, buffer, gain, quantize } = object
     if (backcolor) this.backcolor = backcolor
-
     if (quantize && Is.aboveZero(quantize)) this.quantize = quantize
-
-    // if (audibleContext) this._audibleContext = audibleContext
-    // else this._audibleContext = ContextFactory.audible()
-
-    if (visibleContext) this._visibleContext = visibleContext
-    else this._visibleContext = ContextFactory.visible()
-
     if (typeof gain !== "undefined" && Is.positive(gain)) this._gain = gain
-
     if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
   }
 
@@ -80,8 +53,12 @@ class Composition {
     }
 
     // position/gain pairs...
-    const timing = this.clipTiming(clip)
+    const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize)
     const { start, duration } = timing
+
+    console.log(this.constructor.name, "adjustSourceGain", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize)
+
+
     gainNode.gain.cancelScheduledValues(0)
     clip.gainPairs.forEach(pair => {
       const [position, value] = pair
@@ -89,38 +66,12 @@ class Composition {
     })
   }
 
-  // private _audibleContext : AudibleContext
-
-  // get audibleContext() : AudibleContext { return this._audibleContext }
-
-  // set audibleContext(value : AudibleContext) { this._audibleContext = value }
-
   backcolor? : string
 
   buffer = Default.mash.buffer
 
   private bufferSource? : AudioBufferSourceNode
 
-  private clipTiming(clip : Audible) : ClipTiming {
-    const range = clip.timeRange(this.quantize)
-    const zeroSeconds = this.contextSeconds - this.mashSeconds
-    let offset = 0
-    let start = zeroSeconds + range.seconds
-    let duration = range.lengthSeconds
-
-    if (clip.trim) {
-      range.frame = clip.trim
-      offset = range.seconds
-    }
-    const now = Cache.audibleContext.currentTime
-    if (now > start) {
-      const dif = now - start
-      start = now
-      offset += dif
-      duration -= dif
-    }
-    return { duration, offset, start }
-  }
 
   compositeAudible(clips: Audible[]): boolean {
     // console.log(this.constructor.name, "compositeAudible", clips.length)
@@ -134,9 +85,6 @@ class Composition {
   }
 
   compositeVisible(time : Time, clips : Visible[]) : void {
-    // console.trace(this.constructor.name, "compositeVisible", this.visibleContext.size)
-
-    // console.log(this.constructor.name, "compositeVisible", time, clips.length)
     const main = clips.filter(clip => clip.track === 0)
     this.drawBackground() // clear and fill with mash background color if defined
     if (main.length > 1) {
@@ -147,16 +95,17 @@ class Composition {
       const transition = <Transition> transitionClip
 
       transition.mergeClipsIntoContextAtTime(
-        transitioned, this.visibleContext, time, this.quantize, this.backcolor
+        transitioned, Cache.visibleContext, time, this.quantize, this.backcolor
       )
     } else {
       const [mainClip] = main
-      if (mainClip) mainClip.mergeContextAtTime(time, this.quantize, this.visibleContext)
+      if (mainClip) mainClip.mergeContextAtTime(time, this.quantize, Cache.visibleContext)
     }
     const tracked = clips.filter(clip => !main.includes(clip)).sort(byTrack)
     tracked.forEach(clip => {
-      clip.mergeContextAtTime(time, this.quantize, this.visibleContext)
+      clip.mergeContextAtTime(time, this.quantize, Cache.visibleContext)
     })
+    Cache.audibleContext.emit(EventType.Draw)
   }
 
   compositeVisibleRequest(time : Time, clips : Visible[]) : void {
@@ -168,33 +117,29 @@ class Composition {
     this.drawBackground()
   }
 
-  private contextSeconds = 0
 
   private createSources(clips: Audible[]): boolean {
     // console.log("Composition.createSources", clips.length)
 
     const filtered = clips.filter(clip => !this.sourcesByClip.has(clip))
     return filtered.every(clip => {
-      const { definition } = clip
-      const buffer = definition.loadedAudible()
-      if (!buffer) {
-        // console.log("Composition.createSources loadedAudible false", clip.id)
+      const sourceNode = clip.loadedAudible()
+      if (!sourceNode) {
+        console.debug(this.constructor.name, "createSources loadedAudible undefined", clip.id)
         return false
       }
 
-      const timing = this.clipTiming(clip)
+      const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize)
       const { start, duration, offset } = timing
-      // console.log("Composition.createSources", start, duration, offset)
+      console.log(this.constructor.name, "createSources", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize)
       if (Is.positive(start) && Is.aboveZero(duration)) {
-        const gainSource = Cache.audibleContext.createBufferSource()
-        gainSource.buffer = buffer
-        gainSource.loop = clip.definition.loops
+        sourceNode.loop = clip.definition.loops
         const gainNode = Cache.audibleContext.createGain()
-        gainSource.connect(gainNode)
+        sourceNode.connect(gainNode)
         gainNode.connect(Cache.audibleContext.destination)
-        gainSource.start(start, offset, duration)
+        sourceNode.start(start, offset, duration)
 
-        this.sourcesByClip.set(clip, { gainSource, gainNode })
+        this.sourcesByClip.set(clip, { gainSource: sourceNode, gainNode })
         this.adjustSourceGain(clip)
       }
       return true
@@ -202,23 +147,24 @@ class Composition {
   }
 
   private destroySources(clipsToKeep: Audible[] = []): void {
-    // console.log("Composition.destroySources", clipsToKeep.length)
-    this.sourcesByClip.forEach((source, clip) => {
-      if (clipsToKeep.includes(clip)) return
+    const sourceClips = [...this.sourcesByClip.keys()]
+    const clipsToRemove = sourceClips.filter(clip => !clipsToKeep.includes(clip))
+    clipsToRemove.forEach(clip => {
+      const source = this.sourcesByClip.get(clip)
+      if (!source) return
 
-      // console.log("Composition.destroySources", clip)
       const { gainSource, gainNode } = source
       gainNode.disconnect(Cache.audibleContext.destination)
       gainSource.disconnect(gainNode)
-      this.sourcesByClip.delete(clip)
     })
+    clipsToRemove.forEach(clip => this.sourcesByClip.delete(clip))
   }
 
   private drawBackground() : void {
-    this.visibleContext.clear()
+    Cache.visibleContext.clear()
     if (!this.backcolor) return
 
-    this.visibleContext.drawFill(pixelColor(this.backcolor))
+    Cache.visibleContext.drawFill(pixelColor(this.backcolor))
   }
 
   private _gain = Default.mash.gain
@@ -233,53 +179,59 @@ class Composition {
     if (this.playing) {
       [...this.sourcesByClip.keys()].forEach(clip => this.adjustSourceGain(clip))
     }
-    this.visibleContext.emit(EventType.Volume)
+    Cache.audibleContext.emit(EventType.Volume)
   }
 
-  private mashSeconds = 0
 
   playing = false
 
   quantize = Default.mash.quantize
 
   get seconds() : number {
-    const ellapsed = Cache.audibleContext.currentTime - this.contextSeconds
-    return ellapsed + this.mashSeconds
+    const ellapsed = Cache.audibleContext.currentTime - this.startedContextAt
+    return ellapsed + this.startedMashAt
   }
 
   private sourcesByClip = new Map<Audible, Source>()
 
   startContext(): void {
     // console.log(this.constructor.name, "startContext")
-    if (this.bufferSource) throw Errors.internal + 'bufferSource'
+    if (this.bufferSource) throw Errors.internal + 'bufferSource startContext'
     if (this.playing) throw Errors.internal + 'playing'
-    this.bufferSource = Cache.audibleContext.createBufferSource()
+
+    const buffer = Cache.audibleContext.createBuffer(1)
+    this.bufferSource = Cache.audibleContext.createBufferSource(buffer)
     this.bufferSource.loop = true
-    this.bufferSource.buffer = Cache.audibleContext.createBuffer(this.buffer)
     this.bufferSource.connect(Cache.audibleContext.destination)
     this.bufferSource.start(0)
   }
 
   startPlaying(time : Time, clips: Audible[]) : boolean {
-    // console.log(this.constructor.name, "startPlaying")
-    if (!this.bufferSource) throw Errors.internal + 'bufferSource'
+    if (!this.bufferSource) throw Errors.internal + 'bufferSource startPlaying'
     if (this.playing) throw Errors.internal + 'playing'
 
     const { seconds } = time
     this.playing = true
-    this.mashSeconds = seconds
+    this.startedMashAt = seconds
 
-    this.contextSeconds = Cache.audibleContext.currentTime
+    this.startedContextAt = Cache.audibleContext.currentTime
+    console.log(this.constructor.name, "startPlaying startedContextAt", this.startedContextAt)
 
     if (!this.createSources(clips)) {
       this.stopPlaying()
       return false
     }
-    // console.log(this.constructor.name, "startPlaying", this.mashSeconds, this.contextSeconds)
+    // console.log(this.constructor.name, "startPlaying", this.startedMashAt, this.startedContextAt)
     return true
   }
 
-  stopPlaying() : void {
+  // position of masher (in seconds) when startPlaying called
+  private startedMashAt = 0
+
+  // currentTime of context (in seconds) was created when startPlaying called
+  private startedContextAt = 0
+
+  stopPlaying(): void {
     // console.log(this.constructor.name, "stopPlaying")
     if (!this.playing) return
 
@@ -287,21 +239,14 @@ class Composition {
     if (this.bufferSource) this.bufferSource.stop()
 
     this.destroySources()
-    this.mashSeconds = 0
-    this.contextSeconds = 0
+    this.startedMashAt = 0
+    this.startedContextAt = 0
 
     if (!this.bufferSource) return
 
     this.bufferSource.disconnect(Cache.audibleContext.destination)
     delete this.bufferSource
   }
-
-  private _visibleContext : VisibleContext
-
-  get visibleContext() : VisibleContext { return this._visibleContext }
-
-  set visibleContext(value : VisibleContext) { this._visibleContext = value }
-
 }
 
 export { Composition }

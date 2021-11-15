@@ -5,7 +5,7 @@ import { byFrame } from "../../Utilities/Sort"
 import { ContextFactory, VisibleContext } from "../../Playing"
 import { TransitionClass } from "./TransitionInstance"
 import { Transition, TransitionObject } from "./Transition"
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { Filter } from "../Filter/Filter"
 import { Visible } from "../Mixin/Visible/Visible"
 import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
@@ -17,7 +17,7 @@ import { filterInstance } from "../Filter"
 import { mergerInstance } from "../Merger/MergerFactory"
 import { scalerInstance } from "../Scaler/ScalerFactory"
 
-const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionClass)
+const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 const TransitionDefinitionWithClip = ClipDefinitionMixin(TransitionDefinitionWithModular)
 const TransitionDefinitionWithVisible = VisibleDefinitionMixin(TransitionDefinitionWithClip)
 class TransitionDefinitionClass extends TransitionDefinitionWithVisible {

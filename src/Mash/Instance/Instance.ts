@@ -1,27 +1,26 @@
-import { Any, JsonObject, LoadPromise, SelectionObject, SelectionValue } from "../../declarations"
+import { Any, Constrained, JsonObject, LoadPromise, SelectionObject, SelectionValue, UnknownObject } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Definition } from "../Definition/Definition"
 import { Time } from "../../Utilities/Time"
-import { Id } from "../../Utilities";
+import { Id } from "../../Utilities"
 
-interface InstanceObject {
-  [index: string]: unknown
+interface InstanceObject extends UnknownObject {
   definition? : Definition
   id? : string
   label? : string
 }
 
-class InstanceClass {
+class InstanceBase {
   [index: string]: unknown
 
   constructor(...args : Any[]) {
     const [object] = args
-    if (!Is.populatedObject(object)) throw Errors.invalid.object + 'InstanceClass'
+    if (!Is.populatedObject(object)) throw Errors.invalid.object + 'InstanceBase'
 
     const { definition, id, label } = <InstanceObject> object
-    if (!definition) throw Errors.invalid.definition.object + 'InstanceClass'
+    if (!definition) throw Errors.invalid.definition.object + 'InstanceBase'
 
     this.definition = definition
     if (id && id !== definition.id) this._id = id
@@ -54,21 +53,10 @@ class InstanceClass {
 
   set label(value : string) { this._label = value }
 
-  load(quantize : number, start : Time, end? : Time) : LoadPromise {
-    const startTime = this.definitionTime(quantize, start)
-    const endTime = end ? this.definitionTime(quantize, end) : end
-    return this.definition.load(startTime, endTime)
-  }
-
-  loaded(quantize : number, start : Time, end? : Time) : boolean {
-    const startTime = this.definitionTime(quantize, start)
-    const endTime = end ? this.definitionTime(quantize, end) : end
-    return this.definition.loaded(startTime, endTime)
-  }
-
   get propertyNames() : string[] {
     return this.definition.properties.map(property => property.name)
   }
+
   get propertyValues() : SelectionObject {
     return Object.fromEntries(this.definition.properties.map(property => {
       return [property.name, this.value(property.name)]
@@ -102,6 +90,8 @@ class InstanceClass {
   }
 }
 
-interface Instance extends InstanceClass {}
+interface Instance extends InstanceBase {}
 
-export { Instance, InstanceClass, InstanceObject }
+type InstanceClass = Constrained<InstanceBase>
+
+export { Instance, InstanceClass, InstanceBase, InstanceObject }

@@ -1,80 +1,53 @@
 import { Masher, MasherDefinition, MasherDefinitionObject, MasherObject } from "./Masher"
 import { Interval } from "../../declarations"
-import { Definition, DefinitionTimes } from "../Definition/Definition"
 import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../Definitions/Definitions"
 import { Factories } from "../Factories/Factories"
 import { Is } from "../../Utilities/Is"
 import { MasherDefinitionClass } from "./MasherDefinition"
+import { Cache } from "../../Loading/Cache"
+import { DefinitionType } from "../../Setup/Enums"
 
 const MasherIntervalTics = 10 * 1000
 const MasherDefaultId = "com.moviemasher.masher.default"
 
 let MasherInterval : Interval | undefined
 
-const mashers : Masher[] = []
+const MasherFactoryMashers : Masher[] = []
 
 const addMasher = (masher : Masher) => {
-  if (!mashers.length) masherStart()
-  mashers.push(masher)
+  if (!MasherFactoryMashers.length) masherStart()
+  MasherFactoryMashers.push(masher)
 }
 
 const masherDestroy = (masher : Masher) : void => {
-  const index = mashers.indexOf(masher)
+  const index = MasherFactoryMashers.indexOf(masher)
   if (index < 0) return
 
-  mashers.splice(index, 1)
-  if (!mashers.length) masherStop()
+  MasherFactoryMashers.splice(index, 1)
+  if (!MasherFactoryMashers.length) masherStop()
 }
 
 const handleInterval = () => {
-  // console.log(constructor.name, "handleInterval")
-  const map = <DefinitionTimes> new Map()
-  const definitions = new Set<Definition>()
+  const urls = MasherFactoryMashers.flatMap(masher => masher.mash.loadUrls)
+  Cache.flush(urls)
 
-  mashers.forEach(masher => {
-    masher.definitions.forEach(definition => { definitions.add(definition) })
-
-    const masherMap = masher.loadedDefinitions
-    masherMap.forEach((times, definition) => {
-      if (!map.has(definition)) map.set(definition, [])
-      const definitionTimes = map.get(definition)
-      if (!definitionTimes) throw Errors.internal
-
-      definitionTimes.push(...times)
-    })
-  })
-  map.forEach((times, definition) => {
-    definition.unload(times)
-  })
+  const definitions = MasherFactoryMashers.flatMap(masher => masher.mash.media)
 
   Definitions.map.forEach(definition => {
-    if (definitions.has(definition)) {
-      // definition used in a masher (masher.mash.media)
-      if (map.has(definition)) {
-        // definition needs to be at least partially loaded
-        definition.unload(map.get(definition))
-      } else {
-        // definition can be completely unloaded, but not uninstalled
-        definition.unload()
-      }
-    } else {
-      // definition is not used anywhere - unload, and uninstall if not retained
-      definition.unload()
-      if (!definition.retain) Definitions.uninstall(definition.id)
-    }
+    if (definitions.includes(definition) || definition.retain) return
+
+    Definitions.uninstall(definition.id)
   })
 }
 
 const masherStart = () => {
-  // console.log(constructor.name, "masherStart")
   if (MasherInterval) return
 
-  MasherInterval = setInterval(handleInterval, MasherIntervalTics)
+  MasherInterval = setInterval(() => handleInterval(), MasherIntervalTics)
 }
 
 const masherStop = () => {
-  // console.log(constructor.name, "masherStop")
   if (!MasherInterval) return
 
   clearInterval(MasherInterval)
@@ -92,7 +65,8 @@ const masherDefinitionFromId = (id : string) : MasherDefinition => {
   return masherDefinition({ id })
 }
 
-const masherInstance = (object : MasherObject = {}) : Masher => {
+const masherInstance = (object: MasherObject = {}): Masher => {
+  // console.log("masherInstance", object)
   const definition = masherDefinition(object)
   const instance = definition.instanceFromObject(object)
   addMasher(instance)
@@ -126,7 +100,7 @@ const MasherFactoryImplementation = {
   instance: masherInstance,
 }
 
-Factories.masher = MasherFactoryImplementation
+Factories[DefinitionType.Masher] = MasherFactoryImplementation
 
 export {
   masherDefine as masherInstall,

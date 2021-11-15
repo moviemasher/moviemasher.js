@@ -15,7 +15,7 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "develop/workspaces/php/index.jsx"],
+  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules/*", "svg/*"],
   "debug": true
 }

@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { Definition } from "../Definition/Definition"
 
 type DefinitionsList = Definition[]
-const definitionsMap = new Map<string, Definition>()
+const DefinitionsMap = new Map<string, Definition>()
 const DefinitionsByType = new Map <DefinitionType, DefinitionsList>()
 
 const definitionsByType = (type : DefinitionType) : DefinitionsList => {
@@ -14,30 +14,32 @@ const definitionsByType = (type : DefinitionType) : DefinitionsList => {
   DefinitionsByType.set(type, definitionsList)
   return definitionsList
 }
-const definitionsClear = () : void => { definitionsMap.clear() }
+const definitionsClear = (): void => {
+  DefinitionsMap.clear()
+  DefinitionsByType.clear()
+}
 
 const definitionsFont = definitionsByType(DefinitionType.Font)
 
 const definitionsFromId = (id : string) : Definition => {
   if (!definitionsInstalled(id)) {
     console.trace(id)
-    throw Errors.unknown.definition + 'definitionsFromId ' + id
+    throw Errors.unknown.definition + id
   }
 
-  const definition = definitionsMap.get(id)
-  if (!definition) throw Errors.internal
+  const definition = DefinitionsMap.get(id)
+  if (!definition) throw Errors.internal + id
 
   return definition
 }
 
 const definitionsInstall = (definition : Definition) : void => {
   const { type, id } = definition
-  // console.log("definitionsInstall", type, id)
-  definitionsMap.set(id, definition)
+  DefinitionsMap.set(id, definition)
   definitionsByType(type).push(definition)
 }
 
-const definitionsInstalled = (id : string) : boolean => definitionsMap.has(id)
+const definitionsInstalled = (id : string) : boolean => DefinitionsMap.has(id)
 
 const definitionsMerger = definitionsByType(DefinitionType.Merger)
 
@@ -47,13 +49,12 @@ const definitionsUninstall = (id : string) : void => {
   if (!definitionsInstalled(id)) return
 
   const definition = definitionsFromId(id)
-  definitionsMap.delete(id)
+  DefinitionsMap.delete(id)
   const { type } = definition
   const definitions = definitionsByType(type)
   const index = definitions.indexOf(definition)
-  if (index < 0) throw Errors.internal + 'definitionsUninstall'
+  if (index < 0) throw Errors.internal
 
-  // console.log("definitionsUninstall", definition.label || definition.id)
   definitions.splice(index, 1)
 }
 
@@ -64,7 +65,7 @@ const Definitions = {
   fromId: definitionsFromId,
   install: definitionsInstall,
   installed: definitionsInstalled,
-  map: definitionsMap,
+  map: DefinitionsMap,
   merger: definitionsMerger,
   scaler: definitionsScaler,
   uninstall: definitionsUninstall,
@@ -78,7 +79,7 @@ export {
   definitionsFromId,
   definitionsInstall,
   definitionsInstalled,
-  definitionsMap,
+  DefinitionsMap,
   definitionsMerger,
   definitionsScaler,
   definitionsUninstall,

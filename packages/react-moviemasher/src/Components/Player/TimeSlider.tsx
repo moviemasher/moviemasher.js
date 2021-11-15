@@ -1,22 +1,23 @@
 import React from 'react'
+import { EventType, Time } from '@moviemasher/moviemasher.js'
 
 import { SliderChangeHandler } from "../../declarations"
-import { EditorContext } from '../Editor/EditorContext'
 import { Slider } from '../../Utilities/Slider'
-
+import { useListeners } from '../../Hooks/useListeners'
 
 const TimeSlider : React.FunctionComponent = (props) => {
-  const editorContext = React.useContext(EditorContext)
+  const { masher } = useListeners({
+    [EventType.Time]: masher => { setFrame(masher.mash.frame) },
+    [EventType.Duration]: masher => { setFrames(masher.mash.frames) }
+  })
 
-  const { frame, frames, setFrame } = editorContext
+  const [frames, setFrames] = React.useState(masher.mash.frames)
+  const [frame, setFrame] = React.useState(masher.mash.frame)
 
-  const handleChange: SliderChangeHandler = (_event, value) => {
+  const onChange: SliderChangeHandler = (_event, value) => {
     const number = typeof value === "number" ? value : value[0]
-    // console.log("handleChange", number, frame)
-    if (frame !== number) setFrame(number)
+    masher.time = Time.fromArgs(number, masher.mash.quantize)
   }
-
-  const onChange = React.useCallback(handleChange, [frame])
 
   const sliderProps = {
     value: frame,

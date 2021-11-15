@@ -1,7 +1,7 @@
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { FontDefinition } from "./Font"
 
-class FontClass extends InstanceClass {
+class FontClass extends InstanceBase {
   declare definition : FontDefinition
 }
 

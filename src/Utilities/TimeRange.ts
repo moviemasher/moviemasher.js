@@ -14,6 +14,12 @@ class TimeRange extends Time {
     this.frames = frames
   }
 
+  addFrames(frames : number) : TimeRange {
+    const time = this.copy
+    time.frames += frames
+    return time
+  }
+
   get description() : string { return `${this.frame}-${this.frames}@${this.fps}` }
 
   get end() : number { return this.frame + this.frames }
@@ -63,6 +69,11 @@ class TimeRange extends Time {
     const [range, time] = <TimeRange[]> timeEqualizeRates(this, endTime)
     range.frames = Math.min(range.frames, time.frame)
     return range
+  }
+
+  get times(): Time[] {
+    const { frames, frame, fps } = this
+    return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps))
   }
 
   withFrame(frame : number) : TimeRange {

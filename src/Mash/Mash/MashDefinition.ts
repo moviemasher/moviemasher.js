@@ -1,4 +1,4 @@
-import { DefinitionClass } from "../Definition/Definition"
+import { DefinitionBase } from "../Definition/Definition"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashInstance"
 import { Any } from "../../declarations"
@@ -6,7 +6,7 @@ import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
 
-class MashDefinitionClass extends DefinitionClass {
+class MashDefinitionClass extends DefinitionBase {
   constructor(...args : Any[]) {
     super(...args)
     this.properties.push(new Property({ name: "backcolor", type: DataType.Rgba, value: "#00000000" }))

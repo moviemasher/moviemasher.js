@@ -1,28 +1,30 @@
 import { Time } from "../../Utilities/Time"
 import { TimeRange } from "../../Utilities/TimeRange"
-import { ContextFactory } from "../../Playing/ContextFactory"
-import { MovieMasher } from "../../MovieMasher"
+import { Factory } from "../../Factory"
 import { Mash } from "../Mash/Mash"
 import { createId } from "../../Test/createId"
 import { expectCanvas } from "../../Test/expectCanvas"
+import { Cache } from "../../Loading/Cache"
 
-const expectMashTimeContext = async (mash : Mash, time : Time) : Promise<void> => {
-  await mash.seekToTime(time)
+const expectMashTimeContext = async (mash: Mash, time: Time): Promise<void> => {
+  const promise = mash.seekToTime(time)
+  if (promise) await promise
   mash.compositeVisible()
-  expectCanvas(mash.visibleContext.canvas)
+  expectCanvas()
 }
+
 describe("Transition", () => {
+  Cache.visibleContext.size = { width: 640, height: 480 }
   describe("CrossFade", () => {
     const backcolors = ['rgba(255, 255, 255, 0)', 'rgb(0, 0, 0)']
     test.each(backcolors)("draws expected context atop %s", async (backcolor) => {
       const id = createId()
-      const visibleContext = ContextFactory.toSize({ width: 640, height: 480 })
-      const mashObject = { id, visibleContext, backcolor }
-      const mash = MovieMasher.mash.instance(mashObject)
+      const mashObject = { id, backcolor }
+      const mash = Factory.mash.instance(mashObject)
       const { quantize } = mash
-      const globeImage = MovieMasher.image.instance({ id: createId(), url: 'assets/globe.jpg' })
-      const cableImage = MovieMasher.image.instance({ id: createId(), url: 'assets/cable.jpg' })
-      const transition = MovieMasher.transition.fromId("com.moviemasher.transition.crossfade")
+      const globeImage = Factory.image.instance({ id: createId(), url: 'assets/globe.jpg' })
+      const cableImage = Factory.image.instance({ id: createId(), url: 'assets/cable.jpg' })
+      const transition = Factory.transition.fromId("com.moviemasher.transition.crossfade")
 
       mash.addClipsToTrack([transition, cableImage])
       expect(transition.timeRange(quantize)).toEqual(TimeRange.fromArgs(0, quantize, 10))

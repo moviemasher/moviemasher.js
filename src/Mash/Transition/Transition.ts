@@ -30,7 +30,7 @@ interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefini
   from? : TransitionDefinitionTransformObject
 }
 
-interface TransitionDefinition extends Omit <ModularDefinition, "loadedVisible">, VisibleDefinition {
+interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
   drawVisibleFilters(clips : Visible[], modular : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void
   instance : Transition
   instanceFromObject(object : TransitionObject) : Transition

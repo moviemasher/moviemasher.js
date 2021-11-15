@@ -5,12 +5,10 @@ interface InputContextInterface {
   property: string
   value: SelectionValue
   changeHandler: MasherChangeHandler
-  // actionNonce: string
 }
 const InputContextDefault: InputContextInterface = {
   property: '',
   value: '',
-  // actionNonce: '',
   changeHandler: () => {},
 }
 

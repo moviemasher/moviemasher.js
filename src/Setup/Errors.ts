@@ -32,6 +32,7 @@ const Errors = {
       id: `${$invalidDefinitionProperty} id`,
       object: `${$invalidProperty} definition`,
     },
+    size: `${$invalid} size `,
     track: `${$invalid} track `,
     trackType: `${$invalidProperty} trackType `,
     action: `${$invalid} action `,
@@ -73,18 +74,6 @@ const Errors = {
   unknownMash: `${$unknown} Mash property `,
   unimplemented: `${$expected} method to be overridden`,
   property: `${$invalidArgument} property `,
-  deprecation: {
-    property_types: `property_types ${$deprecated} - please get MovieMasher.Property.types instead`,
-    addModulesOfType: `addModulesOfType ${$deprecated} for unsupported type `,
-    configure: {
-      get: `configure ${$deprecated} - please get MovieMasher.defaults instead`,
-      set: `configure ${$deprecated} - please supply mash.quantize and media.duration instead`,
-    },
-    canvas_context: {
-      get: `canvas_context ${$deprecated} - please get visibleContext instead`,
-      set: `canvas_context ${$deprecated} - please set visibleContext instead`,
-    }
-  },
   wrongClass: `${$expected} instance of `,
 }
 

@@ -1,4 +1,4 @@
-import { InstanceClass } from "../Instance/Instance"
+import { InstanceBase } from "../Instance/Instance"
 import { VisibleContext } from "../../Playing"
 import { Any, JsonObject, ValueObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
@@ -7,7 +7,7 @@ import { FilterDefinition } from "./Filter"
 import { Parameter } from "../../Setup/Parameter"
 import { FilterObject } from "./Filter"
 
-class FilterClass extends InstanceClass {
+class FilterClass extends InstanceBase {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -23,7 +23,9 @@ class FilterClass extends InstanceClass {
 
   drawFilter(evaluator : Evaluator) : VisibleContext {
     this.definition.scopeSet(evaluator)
-    return this.definition.draw(evaluator, this.evaluated(evaluator))
+    const evaluated = this.evaluated(evaluator)
+    console.log(this.constructor.name, "drawFilter", evaluated)
+    return this.definition.draw(evaluator, evaluated)
   }
 
   evaluated(evaluator : Evaluator) : ValueObject {

@@ -6,7 +6,8 @@ import FolderSettingsFillIcon from 'remixicon-react/FolderSettingsFillIcon'
 import FilmFillIcon from 'remixicon-react/FilmFillIcon'
 import PlayCircleFillIcon from 'remixicon-react/PlayCircleFillIcon'
 import PauseCircleFillIcon from 'remixicon-react/PauseCircleFillIcon'
-import ArrowDownSFillIcon from 'remixicon-react/ArrowDownSFillIcon'
+import ChatVoiceFillIcon from 'remixicon-react/ChatVoiceFillIcon'
+import VideoChatFillIcon from 'remixicon-react/VideoChatFillIcon'
 import FolderChartFillIcon from 'remixicon-react/FolderChartFillIcon'
 import ImageFillIcon from 'remixicon-react/ImageFillIcon'
 import MvFillIcon from 'remixicon-react/MvFillIcon'
@@ -20,6 +21,8 @@ const RemixIcons : EditorIcons = {
   browserTheme: <FolderChartFillIcon />,
   browserTransition: <FolderTransferFillIcon />,
   browserVideo: <FilmFillIcon />,
+  browserVideoStream: <VideoChatFillIcon />,
+  browserAudioStream: <ChatVoiceFillIcon />,
   playerPause: <PauseCircleFillIcon />,
   playerPlay: <PlayCircleFillIcon />,
   timelineAudio: <MvFillIcon />,

@@ -46,7 +46,7 @@ class Time implements Time {
     return new Time(time1.frame + time2.frame, time1.fps)
   }
 
-  addFrames(frames : number) : Time {
+  addFrame(frames : number) : Time {
     const time = this.copy
     time.frame += frames
     return time
@@ -74,7 +74,8 @@ class Time implements Time {
   scale(fps : number, rounding = '') : Time {
     if (this.fps === fps) return this
 
-    const frame = Number(this.frame / this.fps) * Number(fps)
+    const frame = (Number(this.frame) / Number(this.fps)) * Number(fps)
+    // console.debug(this.constructor.name, "scale", frame, "=", this.frame, "/", this.fps, "*", fps)
     return new Time(roundWithMethod(frame, rounding), fps)
   }
 

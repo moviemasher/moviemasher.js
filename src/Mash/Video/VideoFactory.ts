@@ -1,8 +1,9 @@
+import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Definitions } from "../Definitions"
 import { Factories } from "../Factories"
-import { VideoDefinitionClass } from "../Video/VideoDefinition"
+import { VideoDefinitionClassImplementation } from "../Video/VideoDefinition"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 
 const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
@@ -11,7 +12,7 @@ const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
 
   if (Definitions.installed(id)) return <VideoDefinition> Definitions.fromId(id)
 
-  return new VideoDefinitionClass(object)
+  return new VideoDefinitionClassImplementation(object)
 }
 
 const videoDefinitionFromId = (id : string) : VideoDefinition => {
@@ -60,7 +61,7 @@ const VideoFactoryImplementation = {
   instance: videoInstance,
 }
 
-Factories.video = VideoFactoryImplementation
+Factories[DefinitionType.Video] = VideoFactoryImplementation
 
 export {
   videoInstall,

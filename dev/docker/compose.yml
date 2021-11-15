@@ -1,0 +1,17 @@
+version: "3"
+services:
+  moviemasher:
+    build:
+      dockerfile: ./dev/docker/Dockerfile.cnf
+      context: ../../
+    image: moviemasher/moviemasher.js:5.0.0
+    container_name: moviemasher
+    entrypoint: npm
+    command: run serve --port=${PORT:-8570}
+    # command: "ffmpeg -y -filter_complex gradients=c0=red:c1=blue:d=10:size=512x288:x0=1:x1=100 -t 10.0 -an -s 512x288 /temporary/test.mov"
+    working_dir: /node-moviemasher/packages/node-moviemasher
+    ports:
+      - "${PORT:-8570}:${PORT:-8570}"
+    volumes:
+      - ../..:/node-moviemasher
+      - ../../tmp:/temporary

@@ -5,6 +5,7 @@ import { EditorInputs } from '../../declarations'
 import { EditorContext } from "../Editor/EditorContext"
 import { InputContext } from './InputContext'
 import { PropertyContainer } from './PropertyContainer'
+import { useSelected } from './useSelected'
 
 interface PropertyInspectorProps {
   property: string
@@ -14,10 +15,9 @@ interface PropertyInspectorProps {
 
 const PropertyInspector: React.FunctionComponent<PropertyInspectorProps> = props => {
   const { inputs, className, property, children } = props
-  const editorContext = React.useContext(EditorContext)
-  const masher = editorContext.masher!
+  const { masher } = React.useContext(EditorContext)
+  const selected = useSelected()
 
-  const { selected } = masher
   const { definition } = selected
   const definitionProperty = definition.property(property)
   if (!definitionProperty) return null
@@ -31,7 +31,9 @@ const PropertyInspector: React.FunctionComponent<PropertyInspectorProps> = props
   }
   const inputContext = { property, value, changeHandler }
   const inputWithContext = (
-    <InputContext.Provider key='context' value={inputContext}>{input}</InputContext.Provider>
+    <InputContext.Provider key='context' value={inputContext}>
+      {input}
+    </InputContext.Provider>
   )
   const containerProps = {
     className,

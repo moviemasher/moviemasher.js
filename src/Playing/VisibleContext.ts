@@ -1,18 +1,16 @@
 import {
   Context2D,
   ContextData,
-  ContextElement,
-  DrawingSource,
+  VisibleContextElement,
+  VisibleSource,
   Point,
   Rect,
   Size,
   TextStyle,
-  UnknownObject
 } from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { Is } from "../Utilities/Is"
 import { Action } from "../Editing/Action/Action"
-import { EventType } from "../Setup/Enums"
 
 const $canvas = 'canvas'
 const $2d = '2d'
@@ -29,18 +27,12 @@ class VisibleContext {
 
   set alpha(value : number) { this.context2d.globalAlpha = value }
 
-  get canvas() : ContextElement { return this.context2d.canvas }
+  get canvas() : VisibleContextElement { return this.context2d.canvas }
 
-  set canvas(value: ContextElement) {
-    const { canvas } = this
+  set canvas(value: VisibleContextElement) {
     const context2d = value.getContext("2d")
     if (!context2d) throw Errors.invalid.canvas
-
     this.context2d = context2d
-
-    // have both the old and new canvas broadcast event
-    this.emit(EventType.Canvas, {}, canvas)
-    this.emit(EventType.Canvas)
   }
 
   clear() : VisibleContext {
@@ -80,11 +72,11 @@ class VisibleContext {
 
   get dataUrl() : string { return this.canvas.toDataURL() }
 
-  draw(source : DrawingSource) : VisibleContext {
+  draw(source : VisibleSource) : VisibleContext {
     return this.drawAtPoint(source, Point0)
   }
 
-  drawAtPoint(source : DrawingSource, point: Point) : VisibleContext {
+  drawAtPoint(source : VisibleSource, point: Point) : VisibleContext {
     const { x, y } = point
     this.context2d.drawImage(source, x, y)
     return this
@@ -117,13 +109,13 @@ class VisibleContext {
     return this
   }
 
-  drawInRect(source : DrawingSource, rect: Rect) : VisibleContext {
+  drawInRect(source : VisibleSource, rect: Rect) : VisibleContext {
     const { x, y, width, height } = rect
     this.context2d.drawImage(source, x, y, width, height)
     return this
   }
 
-  drawInRectFromRect(source : DrawingSource, inRect: Rect, fromRect: Rect) : VisibleContext {
+  drawInRectFromRect(source : VisibleSource, inRect: Rect, fromRect: Rect) : VisibleContext {
     const { x: xIn, y: yIn, width: wIn, height: hIn } = inRect
     const { x, y, width: w, height: h } = fromRect
     const { width: sourceWidth, height: sourceHeight } = source
@@ -133,11 +125,11 @@ class VisibleContext {
     return this
   }
 
-  drawInRectFromSize(source : DrawingSource, rect: Rect, size: Size) : VisibleContext {
+  drawInRectFromSize(source : VisibleSource, rect: Rect, size: Size) : VisibleContext {
     return this.drawInRectFromRect(source, rect, { ...Point0, ...size })
   }
 
-  drawInSizeFromSize(source : DrawingSource, inSize : Size, fromSize : Size) : VisibleContext {
+  drawInSizeFromSize(source : VisibleSource, inSize : Size, fromSize : Size) : VisibleContext {
     const inRect = { ...Point0, ...inSize }
     const fromRect = { ...Point0, ...fromSize }
     return this.drawInRectFromRect(source, inRect, fromRect)
@@ -174,11 +166,11 @@ class VisibleContext {
     return this
   }
 
-  drawToSize(source : DrawingSource, size: Size) : VisibleContext {
+  drawToSize(source : VisibleSource, size: Size) : VisibleContext {
     return this.drawInRect(source, { ...Point0, ...size })
   }
 
-  drawWithAlpha(source : DrawingSource, alpha: number) : VisibleContext {
+  drawWithAlpha(source : VisibleSource, alpha: number) : VisibleContext {
     const original = this.alpha
     this.alpha = alpha
     const result = this.draw(source)
@@ -186,7 +178,7 @@ class VisibleContext {
     return result
   }
 
-  drawWithComposite(source : DrawingSource, composite: string) : VisibleContext {
+  drawWithComposite(source : VisibleSource, composite: string) : VisibleContext {
     const original = this.composite
     this.composite = composite
     const result = this.draw(source)
@@ -194,12 +186,6 @@ class VisibleContext {
     return result
   }
 
-  emit(type: EventType, detail: UnknownObject = {}, target?: ContextElement): void {
-    const element = target ? target : this.canvas
-    const event = { detail }
-    // console.log("emit", type, this.canvas)
-    element.dispatchEvent(new CustomEvent(type, event))
-  }
 
   get fill() : string { return String(this.context2d.fillStyle) }
 
@@ -225,7 +211,7 @@ class VisibleContext {
     return this.imageDataFromRect({ ...Point0, ...size })
   }
 
-  get drawingSource() : DrawingSource { return this.canvas }
+  get drawingSource() : VisibleSource { return this.canvas }
 
   get shadow() : string { return this.context2d.shadowColor }
 

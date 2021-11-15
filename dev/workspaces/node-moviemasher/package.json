@@ -1,0 +1,24 @@
+{
+  "name": "@moviemasher/node-moviemasher",
+  "version": "5.0.0",
+  "description": "Movie Masher Middleware for Node",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MPL-2.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon server.js $npm_config_port",
+    "blah": "echo \"Port: '$npm_config_port'\" && exit 1"
+  },
+  "dependencies": {
+    "@moviemasher/moviemasher.js": "^5.0.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.15"
+  }
+}

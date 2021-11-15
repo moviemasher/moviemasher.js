@@ -1,19 +1,18 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { EffectDefinitionClass } from "./EffectDefinition"
 import { Definitions } from "../Definitions"
-
-import effectBlurJson from "./DefinitionObjects/blur.json"
-import effectChromaKeyJson from "./DefinitionObjects/chromakey.json"
-import effectEmbossJson from "./DefinitionObjects/emboss.json"
-import effectGrayscaleJson from "./DefinitionObjects/grayscale.json"
-import effectSepiaJson from "./DefinitionObjects/sepia.json"
-import effectSharpenJson from "./DefinitionObjects/sharpen.json"
-import effectTextJson from "./DefinitionObjects/text.json"
-import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
 import { Factories } from "../Factories"
 import { Is } from "../../Utilities/Is"
+import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
+
+import effectBlurJson from "../../DefinitionObjects/effect/blur.json"
+import effectChromaKeyJson from "../../DefinitionObjects/effect/chromakey.json"
+import effectEmbossJson from "../../DefinitionObjects/effect/emboss.json"
+import effectGrayscaleJson from "../../DefinitionObjects/effect/grayscale.json"
+import effectSepiaJson from "../../DefinitionObjects/effect/sepia.json"
+import effectSharpenJson from "../../DefinitionObjects/effect/sharpen.json"
+import effectTextJson from "../../DefinitionObjects/effect/text.json"
 
 
 const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
@@ -47,7 +46,6 @@ const effectInitialize = () : void => {
   new EffectDefinitionClass(effectSepiaJson)
   new EffectDefinitionClass(effectSharpenJson)
   new EffectDefinitionClass(effectTextJson)
-
 }
 
 const effectDefine = (object : EffectDefinitionObject) : EffectDefinition => {
@@ -68,7 +66,7 @@ const EffectFactoryImplementation = {
   instance: effectInstance,
 }
 
-Factories.effect = EffectFactoryImplementation
+Factories[DefinitionType.Effect] = EffectFactoryImplementation
 
 export {
   effectDefine,
