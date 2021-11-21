@@ -89,6 +89,16 @@ function __rest(s, e) {
     return t;
 }
 
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
 const ButtonCloneElement = (element, values) => {
     const { props } = element;
     const { className } = props, rest = __rest(props, ["className"]);
@@ -168,6 +178,8 @@ const Slider = (props) => {
     const input = React.createElement("input", Object.assign({ type: 'range' }, options));
     return input;
 };
+
+const VideoView = React.forwardRef((props, ref) => React.createElement("video", Object.assign({}, props, { ref: ref })));
 
 const View = React.forwardRef((props, ref) => React.createElement("div", Object.assign({ ref: ref }, props)));
 
@@ -253,7 +265,7 @@ const BrowserContextDefault = {
 };
 const BrowserContext = React.createContext(BrowserContextDefault);
 
-const Browser = props => {
+const BrowserPanel = props => {
     const { sourceId: initialSourceId } = props, rest = __rest(props, ["sourceId"]);
     const [definitions, setDefinitions] = React.useState(undefined);
     const [definitionId, setDefinitionId] = React.useState('');
@@ -381,7 +393,7 @@ const PlayerContextDefault = {
 };
 const PlayerContext = React.createContext(PlayerContextDefault);
 
-const Paused = props => {
+const NotPlaying = props => {
     const playerContext = React.useContext(PlayerContext);
     if (!playerContext.paused)
         return null;
@@ -459,6 +471,170 @@ const TimeSlider = (props) => {
     };
     const sliderProps = Object.assign({ value: frame, min: 0, max: frames, step: 1, onChange }, props);
     return React.createElement(Slider, Object.assign({ className: 'moviemasher-frame moviemasher-slider' }, sliderProps));
+};
+
+function enableStereoOpus(sdp) {
+    return sdp.replace(/a=fmtp:111/, 'a=fmtp:111 stereo=1\r\na=fmtp:111');
+}
+class WebcamClient {
+    constructor(options = {}) {
+        this.host = '';
+        this.prefix = '.';
+        if (options.host)
+            this.host = options.host;
+        if (options.prefix)
+            this.prefix = options.prefix;
+        // this.localVideo.autoplay = true
+        // this.localVideo.muted = true
+    }
+    beforeAnswer(peerConnection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.localStream = yield window.navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true
+            });
+            if (!this.localStream)
+                return;
+            this.localStream.getTracks().forEach(track => {
+                if (!this.localStream)
+                    return;
+                peerConnection.addTrack(track, this.localStream);
+            });
+            // this.localVideo.srcObject = this.localStream
+            // NOTE(mroberts): This is a hack so that we can get a callback when the
+            // RTCPeerConnection is closed. In the future, we can subscribe to
+            // "connectionstatechange" events.
+            const { close } = peerConnection;
+            peerConnection.close = (...args) => {
+                // this.localVideo.srcObject = null
+                if (!this.localStream)
+                    return;
+                this.localStream.getTracks().forEach(track => { track.stop(); });
+                return close.apply(peerConnection, args);
+            };
+        });
+    }
+    closeConnection() {
+        var _a;
+        // console.log(this.constructor.name, "closeConnection", !!this.localPeerConnection)
+        (_a = this.localPeerConnection) === null || _a === void 0 ? void 0 : _a.close();
+    }
+    get connectionsUrl() { return `${this.host}${this.prefix}`; }
+    createConnection(options = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { stereo } = options;
+            const response1 = yield fetch(this.connectionsUrl, { method: 'POST' });
+            const remotePeerConnection = yield response1.json();
+            // console.log(this.constructor.name, "createConnection", remotePeerConnection)
+            const { id, localDescription } = remotePeerConnection;
+            const rtcConfiguration = {}; //sdpSemantics: 'unified-plan'
+            this.localPeerConnection = new RTCPeerConnection(rtcConfiguration);
+            // NOTE(mroberts): This is a hack so that we can get a callback when the
+            // RTCPeerConnection is closed. In the future, we can subscribe to
+            // "connectionstatechange" events.
+            this.localPeerConnection.close = () => {
+                // console.trace(this.constructor.name, "close HACK!", id)
+                fetch(`${this.connectionsUrl}/${id}`, { method: 'delete' }).catch(() => { });
+                return RTCPeerConnection.prototype.close.apply(this.localPeerConnection);
+            };
+            try {
+                // console.log("trying to setRemoteDescription")
+                yield this.localPeerConnection.setRemoteDescription(localDescription);
+                // console.log("trying to beforeAnswer")
+                yield this.beforeAnswer(this.localPeerConnection);
+                // console.log("trying to createAnswer")
+                const originalAnswer = yield this.localPeerConnection.createAnswer();
+                const updatedAnswer = new RTCSessionDescription({
+                    type: 'answer',
+                    sdp: stereo ? enableStereoOpus(originalAnswer.sdp) : originalAnswer.sdp
+                });
+                // console.log("trying to setLocalDescription")
+                yield this.localPeerConnection.setLocalDescription(updatedAnswer);
+                // console.log("trying to fetch")
+                yield fetch(`${this.connectionsUrl}/${id}/remote-description`, {
+                    method: 'POST',
+                    body: JSON.stringify(this.localPeerConnection.localDescription),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                return this.localPeerConnection;
+            }
+            catch (error) {
+                console.trace(this.constructor.name, "createConnection", error);
+                this.localPeerConnection.close();
+                throw error;
+            }
+        });
+    }
+}
+
+const WebcamContextDefault = {
+    streamerClient: new WebcamClient(),
+    streaming: false, setStreaming: () => { }
+};
+const WebcamContext = React.createContext(WebcamContextDefault);
+
+const NotStreaming = props => {
+    const streamerContext = React.useContext(WebcamContext);
+    if (streamerContext.streaming)
+        return null;
+    return React.createElement(React.Fragment, null, props.children);
+};
+
+const StreamButton = (props) => {
+    const streamerContext = React.useContext(WebcamContext);
+    const { streaming, setStreaming, streamerClient } = streamerContext;
+    const onClick = () => {
+        if (streaming) {
+            streamerClient.closeConnection();
+            setStreaming(false);
+        }
+        else {
+            streamerClient.createConnection().then(() => {
+                setStreaming(true);
+            });
+        }
+    };
+    const streamingOptions = Object.assign(Object.assign({}, props), { onClick });
+    return React.createElement(View, Object.assign({}, streamingOptions));
+};
+
+const WebcamPanel = props => {
+    const { remoteServer } = props, rest = __rest(props, ["remoteServer"]);
+    const [streaming, setStreaming] = React.useState(false);
+    const { streamerClient } = WebcamContextDefault;
+    const protocol = remoteServer.protocol || 'http';
+    const host = remoteServer.host || 'localhost';
+    const port = remoteServer.port || 8570;
+    streamerClient.host = `${protocol}://${host}:${port}`;
+    streamerClient.prefix = remoteServer.prefix || '/webrtc';
+    const streamerContext = Object.assign(Object.assign({}, WebcamContextDefault), { streaming, setStreaming });
+    return (React.createElement(WebcamContext.Provider, { value: streamerContext },
+        React.createElement(View, Object.assign({}, rest))));
+};
+
+const WebcamContent = (props) => {
+    const ref = React.useRef(null);
+    const streamerContext = React.useContext(WebcamContext);
+    const { streamerClient, streaming } = streamerContext;
+    const addListeners = () => {
+        // const { eventTarget } = streamerClient
+        // eventTarget.addEventListener(EventType.Draw, handleDraw)
+        return () => { };
+    };
+    const { current } = ref;
+    if (current)
+        current.srcObject = streaming ? streamerClient.localStream || null : null;
+    React.useEffect(() => addListeners(), []);
+    const rest = __rest(props, ["children", "selectClass"]);
+    const videoProps = Object.assign(Object.assign({}, rest), { ref, autoPlay: true, muted: true });
+    return React.createElement(VideoView, Object.assign({}, videoProps));
+};
+
+const Streaming = props => {
+    const streamerContext = React.useContext(WebcamContext);
+    if (!streamerContext.streaming)
+        return null;
+    return React.createElement(React.Fragment, null, props.children);
 };
 
 const TimelineContextDefault = {
@@ -609,7 +785,7 @@ const TimelineClip = props => {
         style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor');
     }
     const clipProps = Object.assign(Object.assign({}, kid.props), { style, className: classNamesState(), onMouseDown,
-        onDragStart, draggable: true, ref });
+        onDragStart, onClick: (event) => event.stopPropagation(), draggable: true, ref });
     return React.cloneElement(kid, clipProps);
 };
 
@@ -792,7 +968,10 @@ const TimelineTracks = props => {
         }
         return childNodes;
     };
-    const viewProps = Object.assign(Object.assign({}, rest), { children: childNodes() });
+    const onClick = event => {
+        masher.selectedClips = [];
+    };
+    const viewProps = Object.assign(Object.assign({}, rest), { children: childNodes(), onClick });
     return React.createElement(View, Object.assign({}, viewProps));
 };
 
@@ -941,7 +1120,7 @@ const Inspector = props => {
     return React.createElement(React.Fragment, null, kids);
 };
 
-const TypeNotSelected = props => {
+const NotInspectingType = props => {
     const inspectorContext = React.useContext(InspectorContext);
     const { type, types, children } = props;
     if (!children)
@@ -1032,7 +1211,7 @@ const ReactMovieMasher = props => {
             React.createElement(BrowserContent, Object.assign({}, contentProps)),
             React.createElement(Bar, Object.assign({}, panelOptions.footer)));
         const panelProps = { children, className: panelOptions.className };
-        return React.createElement(Browser, Object.assign({}, panelProps));
+        return React.createElement(BrowserPanel, Object.assign({}, panelProps));
     };
     const inspectorNode = (panelOptions) => {
         var _a;
@@ -1040,7 +1219,7 @@ const ReactMovieMasher = props => {
         (_a = panelOptions.content).children || (_a.children = React.createElement(React.Fragment, null,
             React.createElement(Inspector, { properties: 'label,backcolor', inputs: inputs },
                 React.createElement("label", null)),
-            React.createElement(TypeNotSelected, { type: 'mash' },
+            React.createElement(NotInspectingType, { type: 'mash' },
                 React.createElement(Defined, { property: 'color', className: 'moviemasher-input' },
                     React.createElement("label", null, "Color"),
                     " ",
@@ -1065,20 +1244,19 @@ const ReactMovieMasher = props => {
     const playerNode = (panelOptions) => {
         var _a, _b;
         panelOptions.className || (panelOptions.className = 'moviemasher-panel moviemasher-player');
-        (_a = panelOptions.content).children || (_a.children = React.createElement(PlayerContent, { className: "moviemasher-canvas" }));
-        (_b = panelOptions.footer).middle || (_b.middle = React.createElement(React.Fragment, null,
-            React.createElement(PlayButton, { className: 'moviemasher-paused moviemasher-button' },
-                React.createElement(Playing, null, icons.playerPause),
-                React.createElement(Paused, null, icons.playerPlay)),
-            React.createElement(TimeSlider, null)));
         const contentProps = {
             selectClass: { classNameSelect },
-            children: panelOptions.content.children,
             className: panelOptions.content.className,
         };
+        (_a = panelOptions.content).children || (_a.children = React.createElement(PlayerContent, Object.assign({}, contentProps)));
+        (_b = panelOptions.footer).middle || (_b.middle = React.createElement(React.Fragment, null,
+            React.createElement(PlayButton, { className: 'moviemasher-button' },
+                React.createElement(Playing, null, icons.playerPause),
+                React.createElement(NotPlaying, null, icons.playerPlay)),
+            React.createElement(TimeSlider, null)));
         const children = React.createElement(React.Fragment, null,
             React.createElement(Bar, Object.assign({}, panelOptions.header)),
-            React.createElement(PlayerContent, Object.assign({}, contentProps)),
+            panelOptions.content.children,
             React.createElement(Bar, Object.assign({}, panelOptions.footer)));
         const panelProps = { children, className: panelOptions.className };
         return React.createElement(PlayerPanel, Object.assign({}, panelProps));
@@ -1127,5 +1305,5 @@ const ReactMovieMasher = props => {
     return React.createElement(Editor, Object.assign({}, editorProps));
 };
 
-export { Browser, BrowserContent, BrowserContext, BrowserContextDefault, BrowserDefinition, BrowserSource, Button, CanvasView, Constants, DefaultInputs, DragType, DragTypeSuffix, DragTypes, Editor, EditorContext, EditorContextDefault, MaterialIcons, Paused, PlayButton, PlayerContent, Playing, Props, ReactMovieMasher, RemixIcons, Scrubber, ScrubberElement, Slider, TimeSlider, TimelineClip, TimelineClips, TimelineContent, TimelineContext, TimelineContextDefault, TimelinePanel, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextDefault, TrackContextProvider, View, Zoomer, propsDefinitionTypes, propsStringArray, useListeners, useMashScale };
+export { BrowserContent, BrowserContext, BrowserContextDefault, BrowserDefinition, BrowserPanel, BrowserSource, Button, CanvasView, Constants, DefaultInputs, DragType, DragTypeSuffix, DragTypes, Editor, EditorContext, EditorContextDefault, MaterialIcons, NotPlaying, NotStreaming, PlayButton, PlayerContent, Playing, Props, ReactMovieMasher, RemixIcons, Scrubber, ScrubberElement, Slider, StreamButton, Streaming, TimeSlider, TimelineClip, TimelineClips, TimelineContent, TimelineContext, TimelineContextDefault, TimelinePanel, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextDefault, TrackContextProvider, VideoView, View, WebcamClient, WebcamContent, WebcamContext, WebcamContextDefault, WebcamPanel, Zoomer, propsDefinitionTypes, propsStringArray, useListeners, useMashScale };
 //# sourceMappingURL=index.js.map

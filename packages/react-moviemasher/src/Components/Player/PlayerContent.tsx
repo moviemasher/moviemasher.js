@@ -1,9 +1,13 @@
 import React from 'react'
 import { UnknownObject, ContextFactory, EventType, Errors } from '@moviemasher/moviemasher.js'
 import { EditorContext } from '../Editor/EditorContext'
-import { CanvasView } from '../../Utilities/CanvasView'
+import { CanvasView, CanvasViewProps } from '../../Utilities/CanvasView'
 
-const PlayerContent : React.FunctionComponent<UnknownObject> = (props) => {
+interface PlayerContentProps extends UnknownObject {
+  children?: never
+}
+
+const PlayerContent : React.FunctionComponent<PlayerContentProps> = (props) => {
   const ref = React.useRef<HTMLCanvasElement>(null)
 
   const context = React.useContext(EditorContext)
@@ -48,8 +52,8 @@ const PlayerContent : React.FunctionComponent<UnknownObject> = (props) => {
   }
 
   React.useEffect(() => addListeners(), [])
-  const { children, selectClass: _, ...rest } = props
-  const canvasProps = { ...rest, ref }
+  const { children, selectClass, ...rest } = props
+  const canvasProps:CanvasViewProps = { ...rest, ref }
   return <CanvasView { ...canvasProps } />
 }
 

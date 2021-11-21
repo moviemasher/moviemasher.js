@@ -48,3 +48,10 @@ export type SourceCallback = (options?:SourceCallbackOptions) => DefinitionsProm
 
 export type ListenerCallback = (masher: Masher) => void
 export type ListenerEvents = Partial<Record<EventType, ListenerCallback>>
+
+export interface RemoteServer {
+  protocol?: string
+  prefix?: string
+  host?: string
+  port?: string | number
+}

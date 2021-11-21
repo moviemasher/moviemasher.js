@@ -14,7 +14,6 @@ interface BrowserSourceProps extends UnknownObject {
   types?: string | string[]
 }
 
-
 const BrowserSource: React.FC<BrowserSourceProps> = props => {
   const browserContext = React.useContext(BrowserContext)
 

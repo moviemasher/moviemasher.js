@@ -7,7 +7,7 @@ export default {
   input: './index.ts',
   output: {
     format: 'esm',
-    dir: path.dirname(pkg.module),
+    file: pkg.module,
     sourcemap: true,
   },
   plugins: [peerDepsExternal(), ts({

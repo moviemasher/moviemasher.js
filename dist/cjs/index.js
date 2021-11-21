@@ -92,6 +92,9 @@ const Default = {
         backcolor: colorTransparent,
         gain: 0.75,
         buffer: 10,
+        output: {
+            size: '320x240',
+        }
     },
     instance: {
         audio: { gain: 1.0, trim: 0, loop: 1 },
@@ -549,6 +552,12 @@ exports.TransformType = void 0;
     TransformType["Scaler"] = "scaler";
 })(exports.TransformType || (exports.TransformType = {}));
 const TransformTypes = Object.values(exports.TransformType);
+exports.CommandType = void 0;
+(function (CommandType) {
+    CommandType["File"] = "file";
+    CommandType["Stream"] = "stream";
+})(exports.CommandType || (exports.CommandType = {}));
+const CommandTypes = Object.values(exports.CommandType);
 
 class TypeValue {
     constructor(object) {
@@ -1134,7 +1143,7 @@ class Time {
         const [time1, time2] = timeEqualizeRates(this, time);
         return new Time(time1.frame + time2.frame, time1.fps);
     }
-    addFrames(frames) {
+    addFrame(frames) {
         const time = this.copy;
         time.frame += frames;
         return time;
@@ -1205,6 +1214,11 @@ class TimeRange extends Time {
         }
         super(frame, fps);
         this.frames = frames;
+    }
+    addFrames(frames) {
+        const time = this.copy;
+        time.frames += frames;
+        return time;
     }
     get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
     get end() { return this.frame + this.frames; }
@@ -1580,6 +1594,13 @@ class Actions {
         this.index -= 1;
         action.undo();
         return action;
+    }
+}
+
+class Job {
+    constructor() {
+        this.inputs = [];
+        this.outputs = [];
     }
 }
 
@@ -2518,7 +2539,9 @@ class FilterClass extends InstanceBase {
     }
     drawFilter(evaluator) {
         this.definition.scopeSet(evaluator);
-        return this.definition.draw(evaluator, this.evaluated(evaluator));
+        const evaluated = this.evaluated(evaluator);
+        console.log(this.constructor.name, "drawFilter", evaluated);
+        return this.definition.draw(evaluator, evaluated);
     }
     evaluated(evaluator) {
         const evaluated = {};
@@ -4961,7 +4984,7 @@ class MashClass extends InstanceBase {
             return;
         this._bufferTimer = setInterval(() => {
             // console.debug(this.constructor.name, "bufferTimer calling load")
-            this.load();
+            this.loadPromise;
         }, Math.round((this.buffer * 1000) / 2));
     }
     bufferStop() {
@@ -5053,10 +5076,6 @@ class MashClass extends InstanceBase {
     clipsVisibleAtTime(time) {
         return this.clipsVisibleInTimeRange(TimeRange.fromTime(time));
     }
-    clipsVisibleSlice(frame, frames) {
-        const range = TimeRange.fromArgs(frame, this.quantize, frames);
-        return this.clipsVisibleInTimeRange(range);
-    }
     clipsVisibleInTimeRange(timeRange) {
         const range = timeRange.scale(this.quantize);
         return this.clipsVideo.filter(clip => this.clipIntersects(clip, range));
@@ -5064,6 +5083,13 @@ class MashClass extends InstanceBase {
     compositeAudible(clips) {
         const audibleClips = clips || this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
         return this.composition.compositeAudible(audibleClips);
+    }
+    compositeAudibleClips(clips) {
+        if (this._paused)
+            return;
+        const audibleClips = clips.filter(clip => clip.audible && !clip.muted);
+        if (audibleClips.length)
+            this.compositeAudible(audibleClips);
     }
     get composition() {
         if (!this._composition) {
@@ -5184,21 +5210,64 @@ class MashClass extends InstanceBase {
         else
             this.drawWhileNotPlaying();
     }
-    load() {
+    seqmentsAtTimes(type, start, end) {
+        const fullRangeClips = this.clipsAtTimes(start, end);
+        const startTime = start.scale(this.quantize);
+        if (!end)
+            return [{ clips: fullRangeClips, timeRange: TimeRange.fromTime(startTime) }];
+        const result = [];
+        const endTime = end.scale(this.quantize);
+        const fullRange = TimeRange.fromTimes(startTime, endTime);
+        const { times } = fullRange;
+        let identifiers = '~';
+        let timeRangeClips;
+        times.forEach(time => {
+            const timeRange = TimeRange.fromTime(time);
+            const clips = this.filterIntersecting(fullRangeClips, timeRange);
+            const ids = clips.map(clip => clip.identifier).join('~');
+            if (identifiers === ids) {
+                timeRangeClips.timeRange = timeRangeClips.timeRange.addFrames(1);
+            }
+            else {
+                identifiers = ids;
+                timeRangeClips = { timeRange, clips };
+                result.push(timeRangeClips);
+            }
+        });
+        return result;
+    }
+    inputCommand(type, start, end) {
+        const segments = this.seqmentsAtTimes(type, start, end);
+        return segments.map(({ clips, timeRange }) => {
+            const inputCommand = { inputs: [] };
+            return inputCommand;
+        });
+    }
+    inputCommandPromise(type, start, end) {
+        const promise = new Promise(resolve => {
+            const clips = this.clipsAtTimes(start, end);
+            const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
+            const promises = loads.filter(Boolean);
+            if (promises.length)
+                Promise.all(promises).then(() => {
+                    resolve(this.inputCommand(type, start, end));
+                });
+            else
+                resolve(this.inputCommand(type, start, end));
+        });
+        return promise;
+    }
+    get loadPromise() {
         const [start, end] = this.startAndEnd;
         // console.log(this.constructor.name, "load", start, end)
         const clips = this.clipsAtTimes(start, end);
         const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
         const promises = loads.filter(Boolean);
-        if (!promises.length)
-            promises.push(Promise.resolve());
-        return Promise.all(promises).then(() => {
-            if (!this._paused) {
-                const audibleClips = clips.filter(clip => clip.audible && !clip.muted);
-                if (audibleClips.length)
-                    this.compositeAudible(audibleClips);
-            }
-        });
+        if (promises.length)
+            return Promise.all(promises).then(() => {
+                this.compositeAudibleClips(clips);
+            });
+        this.compositeAudibleClips(clips);
     }
     get loadUrls() {
         const [start, end] = this.startAndEnd;
@@ -5252,10 +5321,11 @@ class MashClass extends InstanceBase {
         else {
             this.composition.startContext();
             this.bufferStart();
-            this.load().then(() => {
-                console.debug(this.constructor.name, "paused enabling playing");
+            const promise = this.loadPromise;
+            if (promise)
+                promise.then(() => { this.playing = true; });
+            else
                 this.playing = true;
-            });
             // console.log("Mash emit", EventType.Play)
             Cache.audibleContext.emit(exports.EventType.Play);
         }
@@ -5289,6 +5359,19 @@ class MashClass extends InstanceBase {
         this.emitIfFramesChange(() => { array.pop(); });
         Cache.audibleContext.emit(exports.EventType.Track);
     }
+    restartAfterStop(time, paused, seeking) {
+        if (time === this.time) { // otherwise we must have gotten a seek call
+            if (seeking) {
+                delete this.seekTime;
+                Cache.audibleContext.emit(exports.EventType.Seeked);
+            }
+            this.drawTime(time);
+            if (!paused) {
+                this.composition.startContext();
+                this.playing = true;
+            }
+        }
+    }
     seekToTime(time) {
         // console.debug(this.constructor.name, "seekToTime", time)
         if (this.seekTime !== time) {
@@ -5314,19 +5397,10 @@ class MashClass extends InstanceBase {
         const { time, paused, playing } = this;
         if (playing)
             this.playing = false;
-        return this.load().then(() => {
-            if (time === this.time) { // otherwise we must have gotten a seek call
-                if (seeking) {
-                    delete this.seekTime;
-                    Cache.audibleContext.emit(exports.EventType.Seeked);
-                }
-                this.drawTime(time);
-                if (!paused) {
-                    this.composition.startContext();
-                    this.playing = true;
-                }
-            }
-        });
+        const promise = this.loadPromise;
+        if (promise)
+            return promise.then(() => { this.restartAfterStop(time, paused, seeking); });
+        this.restartAfterStop(time, paused, seeking);
     }
     get time() {
         return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize);
@@ -5767,7 +5841,6 @@ class MasherClass extends InstanceBase {
     get definitions() { return this.mash.media; }
     // call when player removed from DOM
     destroy() { Factory.masher.destroy(this); }
-    draw() { this.mash.compositeVisible(); }
     get duration() { return this.mash.duration; }
     get effect() {
         return Is.populatedObject(this.selectedEffect) ? this.selectedEffect : undefined;
@@ -5847,7 +5920,10 @@ class MasherClass extends InstanceBase {
         const min = time.min(this.endTime);
         if (value && min.equalsTime(this.time))
             return Promise.resolve();
-        return this.mash.seekToTime(min);
+        const promise = this.mash.seekToTime(min);
+        if (promise)
+            return promise;
+        return Promise.resolve();
     }
     handleAction(action) {
         this.mash.handleAction(action);
@@ -5861,15 +5937,22 @@ class MasherClass extends InstanceBase {
         if (!(Is.aboveZero(width) && Is.aboveZero(height)))
             throw Errors.invalid.size;
         Cache.visibleContext.size = value;
-        this.loadMashAndDraw().then();
+        this.loadMashAndDraw();
     }
     isSelected(object) {
         if (object instanceof EffectClass)
             return this.selectedEffects.includes(object);
         return this.selectedClips.includes(object);
     }
-    loadMash() { return this.mash.load(); }
-    loadMashAndDraw() { return this.loadMash().then(() => { this.draw(); }); }
+    loadMashAndDraw() {
+        const promise = this.mash.loadPromise;
+        if (promise)
+            return promise.then(() => {
+                this.mash.compositeVisible();
+            });
+        this.mash.compositeVisible();
+        return Promise.resolve();
+    }
     get loadedDefinitions() { return this.mash.loadedDefinitions; }
     get loop() { return this._loop; }
     set loop(value) {
@@ -7429,6 +7512,7 @@ exports.ClipDefinitionMixin = ClipDefinitionMixin;
 exports.ClipMixin = ClipMixin;
 exports.ClipTypes = ClipTypes;
 exports.Color = Color;
+exports.CommandTypes = CommandTypes;
 exports.ContextFactory = ContextFactoryInstance;
 exports.DataTypes = DataTypes;
 exports.Default = Default;
@@ -7459,6 +7543,7 @@ exports.ImageFactoryImplementation = ImageFactoryImplementation;
 exports.ImageLoader = ImageLoader;
 exports.InstanceBase = InstanceBase;
 exports.Is = Is;
+exports.Job = Job;
 exports.Loader = Loader;
 exports.MashClass = MashClass;
 exports.MashDefinitionClass = MashDefinitionClass;

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Definition, UnknownObject } from "@moviemasher/moviemasher.js"
 import { BrowserContext } from './BrowserContext'
-import { DragClipObject } from '../../declarations'
 import { DragTypeSuffix } from '../../Setup/Constants'
 
 

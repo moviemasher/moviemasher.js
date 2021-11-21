@@ -3,12 +3,12 @@ import React from 'react'
 import { propsDefinitionTypes } from '../../Utilities/Props'
 import { InspectorContext } from './InspectorContext'
 
-interface TypeSelectedProps {
+interface InspectingTypeProps {
   type?: string
   types?: string | string[]
 }
 
-const TypeNotSelected: React.FunctionComponent<TypeSelectedProps> = props => {
+const InspectingType: React.FunctionComponent<InspectingTypeProps> = props => {
   const inspectorContext = React.useContext(InspectorContext)
 
   const { type, types, children } = props
@@ -16,9 +16,9 @@ const TypeNotSelected: React.FunctionComponent<TypeSelectedProps> = props => {
 
   const { definitionType } = inspectorContext
   const definitionTypes = propsDefinitionTypes(type, types)
-  if (definitionTypes.includes(definitionType)) return null
+  if (!definitionTypes.includes(definitionType)) return null
 
   return <>{children}</>
 }
 
-export { TypeNotSelected }
+export { InspectingType }

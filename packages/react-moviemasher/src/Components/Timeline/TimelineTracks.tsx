@@ -46,8 +46,11 @@ const TimelineTracks: React.FunctionComponent<UnknownObject> = props => {
     }
     return childNodes
   }
+  const onClick: React.MouseEventHandler = event => {
+    masher.selectedClips = []
+  }
 
-  const viewProps = { ...rest, children: childNodes() }
+  const viewProps = { ...rest, children: childNodes(), onClick }
   return <View {...viewProps}/>
 }
 

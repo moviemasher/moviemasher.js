@@ -74,6 +74,7 @@ const TimelineClip: React.FC<TimelineClipProps> = props => {
     className: classNamesState(),
     onMouseDown,
     onDragStart,
+    onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,
   }

@@ -16,6 +16,9 @@ const Default = {
     backcolor: colorTransparent,
     gain: 0.75,
     buffer: 10,
+    output: {
+      size: '320x240',
+    }
   },
   instance: {
     audio: { gain: 1.0, trim: 0, loop: 1 },

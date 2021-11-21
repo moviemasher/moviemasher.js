@@ -386,11 +386,6 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 
 .moviemasher-player .moviemasher-foot {
   grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
-  grid-template-areas: "paused frame volume";
-}
-
-.moviemasher-paused {
-  grid-area: paused;
 }
 
 .moviemasher-player .moviemasher-content {

@@ -8,7 +8,7 @@ interface BrowserProps extends UnknownObject {
   children: React.ReactNode
 }
 
-const Browser: React.FunctionComponent<BrowserProps> = props => {
+const BrowserPanel: React.FunctionComponent<BrowserProps> = props => {
   const { sourceId: initialSourceId, ...rest } = props
   const [ definitions, setDefinitions] = React.useState<Definition[] | undefined>(undefined)
   const [ definitionId, setDefinitionId] = React.useState('')
@@ -35,4 +35,4 @@ const Browser: React.FunctionComponent<BrowserProps> = props => {
   )
 }
 
-export { Browser, BrowserProps }
+export { BrowserPanel, BrowserProps }

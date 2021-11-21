@@ -15,7 +15,7 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"],
+  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "*.js"],
   "exclude": ["node_modules/*", "svg/*"],
   "debug": true
 }

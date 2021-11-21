@@ -5,7 +5,7 @@ import { Editor } from './Editor/Editor'
 import { PlayerContent } from './Player/PlayerContent'
 import { PlayButton } from './Player/PlayButton'
 import { TimeSlider } from './Player/TimeSlider'
-import { Browser } from './Browser/Browser'
+import { BrowserPanel } from './Browser/BrowserPanel'
 import { BrowserContent } from './Browser/BrowserContent'
 import { BrowserSource } from './Browser/BrowserSource'
 import { TimelinePanel } from './Timeline/TimelinePanel'
@@ -17,12 +17,12 @@ import { TimelineTracks } from './Timeline/TimelineTracks'
 import { Scrubber } from './Timeline/Scrubber'
 import { PlayerPanel } from './Player/PlayerPanel'
 import { Playing } from './Player/Playing'
-import { Paused } from './Player/Paused'
+import { NotPlaying } from './Player/NotPlaying'
 import { EditorIcons, EditorInputs } from '../declarations'
 import { InspectorPanel } from './Inspector/InspectorPanel'
 import { Defined } from './Inspector/Defined'
 import { Inspector } from './Inspector/Inspector'
-import { TypeNotSelected } from './Inspector/TypeNotSelected'
+import { NotInspectingType } from './Inspector/NotInspectingType'
 import { Informer } from './Inspector/Informer'
 import { View } from '../Utilities/View'
 import { TimelineContent } from './Timeline/TimelineContent'
@@ -75,7 +75,7 @@ interface ReactMovieMasherProps {
   inputs: EditorInputs
   mash?: Mash
   panels?: Partial<UiOptions>
-  children: never
+  children?: never
 }
 
 const Bar: React.FunctionComponent<BarOptions> = props => {
@@ -146,20 +146,21 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
       <Bar {...panelOptions.footer} />
     </>
     const panelProps = { children, className: panelOptions.className }
-    return <Browser {...panelProps} />
+    return <BrowserPanel {...panelProps} />
   }
 
   const inspectorNode = (panelOptions:PanelOptionsStrict) => {
     panelOptions.className ||= 'moviemasher-panel moviemasher-inspector'
 
     panelOptions.content.children ||= <>
-      <Inspector properties='label,backcolor' inputs={inputs}><label/></Inspector>
-      <TypeNotSelected type='mash'>
+      <Inspector properties='label,backcolor' inputs={inputs}><label /></Inspector>
+
+      <NotInspectingType type='mash'>
         <Defined property='color' className='moviemasher-input'>
           <label>Color</label> {inputs[DataType.Text]}
         </Defined>
         <Inspector inputs={inputs} className='moviemasher-input'><label/></Inspector>
-      </TypeNotSelected>
+      </NotInspectingType>
       <Informer><label/></Informer>
     </>
     const contentProps = {
@@ -180,24 +181,24 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
 
   const playerNode = (panelOptions: PanelOptionsStrict) => {
     panelOptions.className ||= 'moviemasher-panel moviemasher-player'
+    const contentProps = {
+      selectClass: {classNameSelect},
+      className: panelOptions.content.className,
+    }
     panelOptions.content.children ||= (
-      <PlayerContent className="moviemasher-canvas" />
+      <PlayerContent {...contentProps} />
     )
     panelOptions.footer.middle ||= <>
-      <PlayButton className='moviemasher-paused moviemasher-button'>
+      <PlayButton className='moviemasher-button'>
         <Playing>{icons.playerPause}</Playing>
-        <Paused>{icons.playerPlay}</Paused>
+        <NotPlaying>{icons.playerPlay}</NotPlaying>
       </PlayButton>
       <TimeSlider />
     </>
-    const contentProps = {
-      selectClass: {classNameSelect},
-      children: panelOptions.content.children,
-      className: panelOptions.content.className,
-    }
+
     const children = <>
       <Bar {...panelOptions.header} />
-      <PlayerContent {...contentProps} />
+      {panelOptions.content.children}
       <Bar {...panelOptions.footer} />
     </>
 

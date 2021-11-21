@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import React from "react";
-import { DataType, Definition, DefinitionObject, EventType, Masher, TrackType, UnknownObject, DefinitionType, Property, Mash, StringSetter, Clip, NumberSetter } from "@moviemasher/moviemasher.js";
+import { DataType, Definition, DefinitionObject, EventType, Masher, TrackType, UnknownObject, DefinitionType, Property, Mash, Clip, NumberSetter } from "@moviemasher/moviemasher.js";
 type UnknownChangeEvent = React.ChangeEvent<{}>;
 type SliderChangeHandler = (event: UnknownChangeEvent, value: number | number[]) => void;
 type NodeObject = Exclude<React.ReactNode, boolean | null | undefined>;
@@ -38,6 +38,12 @@ interface SourceCallbackOptions extends UnknownObject {
 type SourceCallback = (options?: SourceCallbackOptions) => DefinitionsPromise;
 type ListenerCallback = (masher: Masher) => void;
 type ListenerEvents = Partial<Record<EventType, ListenerCallback>>;
+interface RemoteServer {
+    protocol?: string;
+    prefix?: string;
+    host?: string;
+    port?: string | number;
+}
 interface EditorContextInterface {
     masher: Masher;
 }
@@ -66,7 +72,10 @@ interface ButtonProps extends Partial<KeyClass> {
     children?: React.ReactElement | React.ReactText;
 }
 declare const Button: React.FunctionComponent<ButtonProps>;
-declare const CanvasView: React.ForwardRefExoticComponent<Pick<UnknownObject, string> & React.RefAttributes<HTMLCanvasElement>>;
+interface CanvasViewProps extends UnknownObject {
+    children?: never;
+}
+declare const CanvasView: React.ForwardRefExoticComponent<Pick<CanvasViewProps, string | number> & React.RefAttributes<HTMLCanvasElement>>;
 declare const propsStringArray: (string?: string | undefined, array?: string | string[] | undefined, properties?: Property[] | undefined) => string[];
 declare const propsDefinitionTypes: (type?: string | undefined, types?: string | string[] | undefined, id?: string | undefined) => DefinitionType[];
 declare const Props: {
@@ -83,6 +92,10 @@ interface SliderProps {
 }
 // React.ChangeEventHandler<HTMLInputElement>
 declare const Slider: React.FC<SliderProps>;
+interface VideoViewProps extends UnknownObject {
+    children?: never;
+}
+declare const VideoView: React.ForwardRefExoticComponent<Pick<VideoViewProps, string | number> & React.RefAttributes<HTMLVideoElement>>;
 declare const View: React.ForwardRefExoticComponent<Pick<UnknownObject, string> & React.RefAttributes<HTMLDivElement>>;
 interface EditorProps {
     mash?: Mash;
@@ -92,46 +105,13 @@ declare const Editor: React.FunctionComponent<EditorProps>;
 declare const MaterialIcons: EditorIcons;
 declare const RemixIcons: EditorIcons;
 declare const DefaultInputs: EditorInputs;
-interface BrowserProps extends UnknownObject {
-    sourceId?: string;
-    children: React.ReactNode;
-}
-declare const Browser: React.FunctionComponent<BrowserProps>;
-interface BrowserContentProps extends UnknownObject {
-    children: React.ReactNode;
-    className?: string;
-}
-declare const BrowserContent: React.FC<BrowserContentProps>;
-interface BrowserContextInterface {
-    definitions?: Definition[];
-    definitionId: string;
-    setDefinitions: (value?: Definition[]) => void;
-    setDefinitionId: StringSetter;
-    setSourceId: StringSetter;
-    sourceId: string;
-}
-declare const BrowserContextDefault: BrowserContextInterface;
-declare const BrowserContext: React.Context<BrowserContextInterface>;
-interface BrowserDefinitionProps extends UnknownObject {
-    definition: Definition;
-    children: React.ReactElement;
-    selectClass?: string;
-    label?: string;
-}
-declare const BrowserDefinition: React.FunctionComponent<BrowserDefinitionProps>;
-interface BrowserSourceProps extends UnknownObject {
-    id: string;
-    children: React.ReactNode;
-    className?: string;
-    promiseProvider?: SourceCallback;
-    type?: string;
-    types?: string | string[];
-}
-declare const BrowserSource: React.FC<BrowserSourceProps>;
-declare const Paused: React.FunctionComponent;
+declare const NotPlaying: React.FunctionComponent;
 declare const PlayButton: React.FunctionComponent<UnknownObject>;
 declare const Playing: React.FunctionComponent;
-declare const PlayerContent: React.FunctionComponent<UnknownObject>;
+interface PlayerContentProps extends UnknownObject {
+    children?: never;
+}
+declare const PlayerContent: React.FunctionComponent<PlayerContentProps>;
 declare const TimeSlider: React.FunctionComponent;
 declare const TimelinePanel: Panel;
 declare const Scrubber: React.FC<UnknownObject>;
@@ -213,9 +193,11 @@ interface ReactMovieMasherProps {
     inputs: EditorInputs;
     mash?: Mash;
     panels?: Partial<UiOptions>;
-    children: never;
+    children?: never;
 }
 declare const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps>;
 export * from "@moviemasher/moviemasher.js";
-export { UnknownChangeEvent, SliderChangeHandler, NodeObject, NodesArray, DragClipObject, DropClipsResult, DragClipProps, DropClipsProps, Panel, UnknownElement, EditorIcons, EditorInputs, DefinitionsPromise, SourceCallbackOptions, SourceCallback, ListenerCallback, ListenerEvents, useListeners, Constants, DragTypeSuffix, DragType, DragTypes, Button, ButtonProps, CanvasView, Props, propsStringArray, propsDefinitionTypes, Slider, View, Editor, EditorContext, EditorContextInterface, EditorContextDefault, MaterialIcons, RemixIcons, DefaultInputs, Browser, BrowserProps, BrowserContent, BrowserContext, BrowserContextInterface, BrowserContextDefault, BrowserDefinition, BrowserSource, Paused, PlayButton, Playing, PlayerContent, TimeSlider, TimelinePanel, Scrubber, ScrubberElement, TimelineClip, TimelineClips, TimelineContent, TimelineContext, TimelineContextInterface, TimelineContextDefault, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextProvider, TrackContextInterface, TrackContextDefault, useMashScale, Zoomer, ReactMovieMasher };
+export { UnknownChangeEvent, SliderChangeHandler, NodeObject, NodesArray, DragClipObject, DropClipsResult, DragClipProps, DropClipsProps, Panel, UnknownElement, EditorIcons, EditorInputs, DefinitionsPromise, SourceCallbackOptions, SourceCallback, ListenerCallback, ListenerEvents, RemoteServer, useListeners, Constants, DragTypeSuffix, DragType, DragTypes, Button, ButtonProps, CanvasView, CanvasViewProps, Props, propsStringArray, propsDefinitionTypes, Slider, VideoView, VideoViewProps, View, Editor, EditorContext, EditorContextInterface, EditorContextDefault, MaterialIcons, RemixIcons, DefaultInputs, NotPlaying, PlayButton, Playing, PlayerContent, TimeSlider, TimelinePanel, Scrubber, ScrubberElement, TimelineClip, TimelineClips, TimelineContent, TimelineContext, TimelineContextInterface, TimelineContextDefault, TimelineSizer, TimelineTrack, TimelineTracks, TrackContext, TrackContextProvider, TrackContextInterface, TrackContextDefault, useMashScale, Zoomer, ReactMovieMasher };
+export * from "src/Components/Browser/index";
+export * from "src/Components/Webcam/index";
 //# sourceMappingURL=index.d.ts.map

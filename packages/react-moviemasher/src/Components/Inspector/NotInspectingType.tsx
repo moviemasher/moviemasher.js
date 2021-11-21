@@ -8,7 +8,7 @@ interface TypeSelectedProps {
   types?: string | string[]
 }
 
-const TypeSelected: React.FunctionComponent<TypeSelectedProps> = props => {
+const NotInspectingType: React.FunctionComponent<TypeSelectedProps> = props => {
   const inspectorContext = React.useContext(InspectorContext)
 
   const { type, types, children } = props
@@ -16,9 +16,9 @@ const TypeSelected: React.FunctionComponent<TypeSelectedProps> = props => {
 
   const { definitionType } = inspectorContext
   const definitionTypes = propsDefinitionTypes(type, types)
-  if (!definitionTypes.includes(definitionType)) return null
+  if (definitionTypes.includes(definitionType)) return null
 
   return <>{children}</>
 }
 
-export { TypeSelected }
+export { NotInspectingType }

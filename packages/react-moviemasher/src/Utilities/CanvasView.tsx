@@ -1,8 +1,11 @@
 import React from "react"
 import { UnknownObject } from "@moviemasher/moviemasher.js"
 
-const CanvasView = React.forwardRef<HTMLCanvasElement, UnknownObject>((props, ref) =>
+interface CanvasViewProps extends UnknownObject {
+  children?: never
+}
+const CanvasView = React.forwardRef<HTMLCanvasElement, CanvasViewProps>((props, ref) =>
   <canvas { ...props } ref={ref} />
 )
 
-export { CanvasView }
+export { CanvasView, CanvasViewProps }

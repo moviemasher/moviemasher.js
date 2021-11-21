@@ -88,6 +88,9 @@ const Default = {
         backcolor: colorTransparent,
         gain: 0.75,
         buffer: 10,
+        output: {
+            size: '320x240',
+        }
     },
     instance: {
         audio: { gain: 1.0, trim: 0, loop: 1 },
@@ -545,6 +548,12 @@ var TransformType;
     TransformType["Scaler"] = "scaler";
 })(TransformType || (TransformType = {}));
 const TransformTypes = Object.values(TransformType);
+var CommandType;
+(function (CommandType) {
+    CommandType["File"] = "file";
+    CommandType["Stream"] = "stream";
+})(CommandType || (CommandType = {}));
+const CommandTypes = Object.values(CommandType);
 
 class TypeValue {
     constructor(object) {
@@ -1130,7 +1139,7 @@ class Time {
         const [time1, time2] = timeEqualizeRates(this, time);
         return new Time(time1.frame + time2.frame, time1.fps);
     }
-    addFrames(frames) {
+    addFrame(frames) {
         const time = this.copy;
         time.frame += frames;
         return time;
@@ -1201,6 +1210,11 @@ class TimeRange extends Time {
         }
         super(frame, fps);
         this.frames = frames;
+    }
+    addFrames(frames) {
+        const time = this.copy;
+        time.frames += frames;
+        return time;
     }
     get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
     get end() { return this.frame + this.frames; }
@@ -1576,6 +1590,13 @@ class Actions {
         this.index -= 1;
         action.undo();
         return action;
+    }
+}
+
+class Job {
+    constructor() {
+        this.inputs = [];
+        this.outputs = [];
     }
 }
 
@@ -5051,10 +5072,6 @@ class MashClass extends InstanceBase {
     clipsVisibleAtTime(time) {
         return this.clipsVisibleInTimeRange(TimeRange.fromTime(time));
     }
-    // private clipsVisibleSlice(frame: number, frames: number): Visible[] {
-    //   const range = TimeRange.fromArgs(frame, this.quantize, frames)
-    //   return this.clipsVisibleInTimeRange(range)
-    // }
     clipsVisibleInTimeRange(timeRange) {
         const range = timeRange.scale(this.quantize);
         return this.clipsVideo.filter(clip => this.clipIntersects(clip, range));
@@ -5189,6 +5206,53 @@ class MashClass extends InstanceBase {
         else
             this.drawWhileNotPlaying();
     }
+    seqmentsAtTimes(type, start, end) {
+        const fullRangeClips = this.clipsAtTimes(start, end);
+        const startTime = start.scale(this.quantize);
+        if (!end)
+            return [{ clips: fullRangeClips, timeRange: TimeRange.fromTime(startTime) }];
+        const result = [];
+        const endTime = end.scale(this.quantize);
+        const fullRange = TimeRange.fromTimes(startTime, endTime);
+        const { times } = fullRange;
+        let identifiers = '~';
+        let timeRangeClips;
+        times.forEach(time => {
+            const timeRange = TimeRange.fromTime(time);
+            const clips = this.filterIntersecting(fullRangeClips, timeRange);
+            const ids = clips.map(clip => clip.identifier).join('~');
+            if (identifiers === ids) {
+                timeRangeClips.timeRange = timeRangeClips.timeRange.addFrames(1);
+            }
+            else {
+                identifiers = ids;
+                timeRangeClips = { timeRange, clips };
+                result.push(timeRangeClips);
+            }
+        });
+        return result;
+    }
+    inputCommand(type, start, end) {
+        const segments = this.seqmentsAtTimes(type, start, end);
+        return segments.map(({ clips, timeRange }) => {
+            const inputCommand = { inputs: [] };
+            return inputCommand;
+        });
+    }
+    inputCommandPromise(type, start, end) {
+        const promise = new Promise(resolve => {
+            const clips = this.clipsAtTimes(start, end);
+            const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
+            const promises = loads.filter(Boolean);
+            if (promises.length)
+                Promise.all(promises).then(() => {
+                    resolve(this.inputCommand(type, start, end));
+                });
+            else
+                resolve(this.inputCommand(type, start, end));
+        });
+        return promise;
+    }
     get loadPromise() {
         const [start, end] = this.startAndEnd;
         // console.log(this.constructor.name, "load", start, end)
@@ -5291,6 +5355,19 @@ class MashClass extends InstanceBase {
         this.emitIfFramesChange(() => { array.pop(); });
         Cache.audibleContext.emit(EventType.Track);
     }
+    restartAfterStop(time, paused, seeking) {
+        if (time === this.time) { // otherwise we must have gotten a seek call
+            if (seeking) {
+                delete this.seekTime;
+                Cache.audibleContext.emit(EventType.Seeked);
+            }
+            this.drawTime(time);
+            if (!paused) {
+                this.composition.startContext();
+                this.playing = true;
+            }
+        }
+    }
     seekToTime(time) {
         // console.debug(this.constructor.name, "seekToTime", time)
         if (this.seekTime !== time) {
@@ -5316,19 +5393,10 @@ class MashClass extends InstanceBase {
         const { time, paused, playing } = this;
         if (playing)
             this.playing = false;
-        return (this.loadPromise || Promise.resolve()).then(() => {
-            if (time === this.time) { // otherwise we must have gotten a seek call
-                if (seeking) {
-                    delete this.seekTime;
-                    Cache.audibleContext.emit(EventType.Seeked);
-                }
-                this.drawTime(time);
-                if (!paused) {
-                    this.composition.startContext();
-                    this.playing = true;
-                }
-            }
-        });
+        const promise = this.loadPromise;
+        if (promise)
+            return promise.then(() => { this.restartAfterStop(time, paused, seeking); });
+        this.restartAfterStop(time, paused, seeking);
     }
     get time() {
         return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize);
@@ -5848,7 +5916,10 @@ class MasherClass extends InstanceBase {
         const min = time.min(this.endTime);
         if (value && min.equalsTime(this.time))
             return Promise.resolve();
-        return this.mash.seekToTime(min);
+        const promise = this.mash.seekToTime(min);
+        if (promise)
+            return promise;
+        return Promise.resolve();
     }
     handleAction(action) {
         this.mash.handleAction(action);
@@ -7414,5 +7485,5 @@ Factories[DefinitionType.VideoSequence] = VideoSequenceFactoryImplementation;
 
 DefinitionTypes.forEach(type => { Factory[type].initialize(); });
 
-export { Action, ActionType, Actions, AddClipToTrackAction, AddEffectAction, AddTrackAction, AudibleContext, AudibleDefinitionMixin, AudibleFileDefinitionMixin, AudibleFileMixin, AudibleMixin, AudioClass, AudioDefinitionClass, AudioFactoryImplementation, AudioLoader, Cache, Capitalize, ChangeAction, ChangeFramesAction, ChangeTrimAction, ClipDefinitionMixin, ClipMixin, ClipType, ClipTypes, Color, ContextFactoryInstance as ContextFactory, DataType, DataTypes, Default, DefinitionBase, DefinitionType, DefinitionTypes, Definitions, DefinitionsMap, EffectClass, EffectDefinitionClass, EffectFactoryImplementation, Element, Errors, Evaluator, EventType, Factories, Factory, FilterClass, FilterDefinitionClass, FilterFactoryImplementation, FontClass, FontDefinitionClass, FontFactoryImplementation, FontLoader, FreezeAction, Id, ImageClass, ImageDefinitionClass, ImageFactoryImplementation, ImageLoader, InstanceBase, Is, LoadType, Loader, MashClass, MashDefinitionClass, MashFactoryImplementation, MashType, MashTypes, MasherClass, MasherDefinitionClass, MasherFactoryImplementation, MergerClass, MergerDefinitionClass, MergerFactoryImplementation, ModularDefinitionMixin, ModularMixin, ModuleType, ModuleTypes, MoveClipsAction, MoveEffectsAction, MoveType, Parameter, Pixel, Property, RemoveClipsAction, Round, ScalerClass, ScalerDefinitionClass, ScalerFactoryImplementation, Seconds, Sort, SplitAction, ThemeClass, ThemeDefinitionClass, ThemeFactoryImplementation, Time, TimeRange, TrackClass, TrackRange, TrackType, TransformType, TransformTypes, TransformableMixin, TransitionClass, TransitionDefinitionClass, TransitionFactoryImplementation, Type, TypeValue, TypesInstance as Types, Url, VideoClassImplementation, VideoDefinitionClassImplementation, VideoFactoryImplementation, VideoLoader, VideoSequenceClass, VideoSequenceDefinitionClass, VideoSequenceFactoryImplementation, VideoStreamClass, VideoStreamDefinitionClass, VideoStreamFactoryImplementation, VisibleContext, VisibleDefinitionMixin, VisibleMixin, audioDefine, audioDefinition, audioDefinitionFromId, audioFromId, audioInitialize, audioInstall, audioInstance, byFrame, byLabel, byTrack, colorRgb2hex, colorRgb2yuv, colorStrip, colorTransparent, colorValid, colorYuv2rgb, colorYuvBlend, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMerger, definitionsScaler, definitionsUninstall, effectDefine, effectDefinition, effectDefinitionFromId, effectFromId, effectInitialize, effectDefine as effectInstall, effectInstance, elementScrollMetrics, filterDefine, filterDefinition, filterDefinitionFromId, filterFromId, filterInitialize, filterDefine as filterInstall, filterInstance, fontDefine, fontDefinition, fontDefinitionFromId, fontFromId, fontInitialize, fontDefine as fontInstall, fontInstance, imageDefine, imageDefinition, imageDefinitionFromId, imageFromId, imageInitialize, imageInstall, imageInstance, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, mashDefine, mashDefinition, mashDefinitionFromId, mashFromId, mashInitialize, mashInstall, mashInstance, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, masherFromId, masherInitialize, masherDefine as masherInstall, masherInstance, mergerDefaultId, mergerDefine, mergerDefinition, mergerDefinitionFromId, mergerFromId, mergerInitialize, mergerDefine as mergerInstall, mergerInstance, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, roundMethod, roundWithMethod, scalerDefaultId, scalerDefine, scalerDefinition, scalerDefinitionFromId, scalerFromId, scalerInitialize, scalerDefine as scalerInstall, scalerInstance, themeDefine, themeDefinition, themeDefinitionFromId, themeFromId, themeInitialize, themeDefine as themeInstall, themeInstance, timeEqualizeRates, transitionDefine, transitionDefinition, transitionDefinitionFromId, transitionFromId, transitionInitialize, transitionDefine as transitionInstall, transitionInstance, urlAbsolute, videoDefine, videoDefinition, videoDefinitionFromId, videoFromId, videoInitialize, videoInstall, videoInstance, videoSequenceDefine, videoSequenceDefinition, videoSequenceDefinitionFromId, videoSequenceFromId, videoSequenceInitialize, videoSequenceInstall, videoSequenceInstance, videoStreamDefine, videoStreamDefinition, videoStreamDefinitionFromId, videoStreamFromId, videoStreamInitialize, videoStreamInstall, videoStreamInstance };
+export { Action, ActionType, Actions, AddClipToTrackAction, AddEffectAction, AddTrackAction, AudibleContext, AudibleDefinitionMixin, AudibleFileDefinitionMixin, AudibleFileMixin, AudibleMixin, AudioClass, AudioDefinitionClass, AudioFactoryImplementation, AudioLoader, Cache, Capitalize, ChangeAction, ChangeFramesAction, ChangeTrimAction, ClipDefinitionMixin, ClipMixin, ClipType, ClipTypes, Color, CommandType, CommandTypes, ContextFactoryInstance as ContextFactory, DataType, DataTypes, Default, DefinitionBase, DefinitionType, DefinitionTypes, Definitions, DefinitionsMap, EffectClass, EffectDefinitionClass, EffectFactoryImplementation, Element, Errors, Evaluator, EventType, Factories, Factory, FilterClass, FilterDefinitionClass, FilterFactoryImplementation, FontClass, FontDefinitionClass, FontFactoryImplementation, FontLoader, FreezeAction, Id, ImageClass, ImageDefinitionClass, ImageFactoryImplementation, ImageLoader, InstanceBase, Is, Job, LoadType, Loader, MashClass, MashDefinitionClass, MashFactoryImplementation, MashType, MashTypes, MasherClass, MasherDefinitionClass, MasherFactoryImplementation, MergerClass, MergerDefinitionClass, MergerFactoryImplementation, ModularDefinitionMixin, ModularMixin, ModuleType, ModuleTypes, MoveClipsAction, MoveEffectsAction, MoveType, Parameter, Pixel, Property, RemoveClipsAction, Round, ScalerClass, ScalerDefinitionClass, ScalerFactoryImplementation, Seconds, Sort, SplitAction, ThemeClass, ThemeDefinitionClass, ThemeFactoryImplementation, Time, TimeRange, TrackClass, TrackRange, TrackType, TransformType, TransformTypes, TransformableMixin, TransitionClass, TransitionDefinitionClass, TransitionFactoryImplementation, Type, TypeValue, TypesInstance as Types, Url, VideoClassImplementation, VideoDefinitionClassImplementation, VideoFactoryImplementation, VideoLoader, VideoSequenceClass, VideoSequenceDefinitionClass, VideoSequenceFactoryImplementation, VideoStreamClass, VideoStreamDefinitionClass, VideoStreamFactoryImplementation, VisibleContext, VisibleDefinitionMixin, VisibleMixin, audioDefine, audioDefinition, audioDefinitionFromId, audioFromId, audioInitialize, audioInstall, audioInstance, byFrame, byLabel, byTrack, colorRgb2hex, colorRgb2yuv, colorStrip, colorTransparent, colorValid, colorYuv2rgb, colorYuvBlend, definitionsByType, definitionsClear, definitionsFont, definitionsFromId, definitionsInstall, definitionsInstalled, definitionsMerger, definitionsScaler, definitionsUninstall, effectDefine, effectDefinition, effectDefinitionFromId, effectFromId, effectInitialize, effectDefine as effectInstall, effectInstance, elementScrollMetrics, filterDefine, filterDefinition, filterDefinitionFromId, filterFromId, filterInitialize, filterDefine as filterInstall, filterInstance, fontDefine, fontDefinition, fontDefinitionFromId, fontFromId, fontInitialize, fontDefine as fontInstall, fontInstance, imageDefine, imageDefinition, imageDefinitionFromId, imageFromId, imageInitialize, imageInstall, imageInstance, isAboveZero, isArray, booleanType as isBoolean, isDefined, isFloat, isInteger, methodType as isMethod, isNan, numberType as isNumber, objectType as isObject, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, stringType as isString, undefinedType as isUndefined, mashDefine, mashDefinition, mashDefinitionFromId, mashFromId, mashInitialize, mashInstall, mashInstance, masherDefine, masherDefinition, masherDefinitionFromId, masherDestroy, masherFromId, masherInitialize, masherDefine as masherInstall, masherInstance, mergerDefaultId, mergerDefine, mergerDefinition, mergerDefinitionFromId, mergerFromId, mergerInitialize, mergerDefine as mergerInstall, mergerInstance, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, roundMethod, roundWithMethod, scalerDefaultId, scalerDefine, scalerDefinition, scalerDefinitionFromId, scalerFromId, scalerInitialize, scalerDefine as scalerInstall, scalerInstance, themeDefine, themeDefinition, themeDefinitionFromId, themeFromId, themeInitialize, themeDefine as themeInstall, themeInstance, timeEqualizeRates, transitionDefine, transitionDefinition, transitionDefinitionFromId, transitionFromId, transitionInitialize, transitionDefine as transitionInstall, transitionInstance, urlAbsolute, videoDefine, videoDefinition, videoDefinitionFromId, videoFromId, videoInitialize, videoInstall, videoInstance, videoSequenceDefine, videoSequenceDefinition, videoSequenceDefinitionFromId, videoSequenceFromId, videoSequenceInitialize, videoSequenceInstall, videoSequenceInstance, videoStreamDefine, videoStreamDefinition, videoStreamDefinitionFromId, videoStreamFromId, videoStreamInitialize, videoStreamInstall, videoStreamInstance };
 //# sourceMappingURL=index.js.map

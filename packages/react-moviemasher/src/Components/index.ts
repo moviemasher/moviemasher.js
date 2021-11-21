@@ -1,5 +1,6 @@
 export * from "./Editor"
 export * from "./Browser"
 export * from "./Player"
+export * from "./Webcam"
 export * from "./Timeline"
 export * from "./ReactMovieMasher"

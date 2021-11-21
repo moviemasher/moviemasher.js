@@ -1,4 +1,4 @@
-export * from "./Paused"
+export * from "./NotPlaying"
 export * from "./PlayButton"
 export * from "./Playing"
 export * from "./PlayerContent"
