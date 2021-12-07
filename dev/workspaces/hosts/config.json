@@ -1,0 +1,45 @@
+{
+  "cors": { "origin": "*" },
+  "port": 8570,
+  "index": "../client/dist/index.html",
+  "servers": {
+    "hosts": { "prefix": "/hosts" },
+    "render": { "prefix": "/render" },
+    "rtmp": {
+      "app": "rtmp",
+      "prefix": "/rtmp",
+      "outputPrefix": "./temporary/streams",
+      "outputOptions": {},
+      "inputOptions": {
+        "port": 1935,
+        "chunk_size": 60000,
+        "gop_cache": true,
+        "ping": 30,
+        "ping_timeout": 60
+      },
+      "httpOptions": {
+        "port": 8579,
+        "mediaroot": "./temporary/streams/rtmp",
+        "allow_origin": "*"
+      }
+    },
+    "stream": { "prefix": "/stream" },
+    "cms": {
+      "prefix": "/cms",
+      "dbPath": "./temporary/cms.db",
+      "dbMigrationsPrefix": "./dev/cms/migrations",
+
+      "authentication": { "type": "http" }
+    },
+    "webrtc": {
+      "port": 8570,
+      "prefix": "/webrtc",
+      "outputPrefix": "./temporary/streams/webrtc",
+      "outputOptions": {}
+    },
+    "hls": {
+      "prefix": "/hls",
+      "inputPrefix": "./temporary/streams"
+    }
+  }
+}

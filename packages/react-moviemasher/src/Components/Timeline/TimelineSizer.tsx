@@ -2,7 +2,7 @@ import React from 'react'
 import { UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from "../../Utilities/View"
-import { TimelineContext } from "./TimelineContext"
+import { TimelineContext } from "../../Contexts/TimelineContext"
 
 const TimelineSizer: React.FC<UnknownObject> = props => {
   const ref = React.useRef<HTMLDivElement>(null)

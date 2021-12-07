@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { View } from '../../Utilities/View'
-import { TimelineContext, TimelineContextInterface } from './TimelineContext'
+import { TimelineContext, TimelineContextInterface } from '../../Contexts/TimelineContext'
 import { Panel } from '../../declarations'
 
 const TimelinePanel: Panel = props => {

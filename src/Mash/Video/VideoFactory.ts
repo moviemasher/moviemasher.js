@@ -1,14 +1,14 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
-import { Definitions } from "../Definitions"
-import { Factories } from "../Factories"
+import { Definitions } from "../../Definitions"
+import { Factories } from "../../Definitions/Factories"
 import { VideoDefinitionClassImplementation } from "../Video/VideoDefinition"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 
 const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   if (Definitions.installed(id)) return <VideoDefinition> Definitions.fromId(id)
 
@@ -33,7 +33,7 @@ const videoInitialize = () : void => {}
 
 const videoDefine = (object : VideoDefinitionObject) : VideoDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
   return videoDefinition(object)

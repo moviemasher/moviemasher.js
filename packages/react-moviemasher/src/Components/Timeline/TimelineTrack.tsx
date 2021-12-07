@@ -1,21 +1,18 @@
 import React from 'react'
-import {
-  UnknownObject,
-  TrackType,
-} from '@moviemasher/moviemasher.js'
+import { UnknownObject, TrackType } from '@moviemasher/moviemasher.js'
 
-import { TrackContextInterface, TrackContextProvider } from './TrackContext'
+import { TrackContextInterface, TrackContext } from '../../Contexts/TrackContext'
+import { OnlyChildProps } from '../../declarations'
 
-interface TimelineTrackProps extends UnknownObject {
-  index: number
-  type: TrackType
-  children: React.ReactElement
+interface TimelineTrackProps extends UnknownObject, OnlyChildProps {
+  layer: number
+  trackType: TrackType
 }
 
 const TimelineTrack = (props: TimelineTrackProps) => {
-  const { index, type, children } = props
-  const context : TrackContextInterface = { index, type }
-  return <TrackContextProvider value={context} children={children} />
+  const { layer, trackType, children } = props
+  const context : TrackContextInterface = { layer, trackType }
+  return <TrackContext.Provider value={context} children={children} />
 }
 
 export { TimelineTrack }

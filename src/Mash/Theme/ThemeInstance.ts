@@ -1,12 +1,12 @@
-import { Size } from "../../declarations"
+import { InputCommand, Size } from "../../declarations"
 import { Time } from "../../Utilities/Time"
 import { ContextFactory, VisibleContext } from "../../Playing"
 import { ThemeDefinition } from "./Theme"
-import { InstanceBase } from "../Instance/Instance"
-import { ModularMixin } from "../Mixin/Modular/ModularMixin"
-import { ClipMixin } from "../Mixin/Clip/ClipMixin"
-import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
-import { TransformableMixin } from "../Mixin/Transformable/TransformableMixin"
+import { InstanceBase } from "../../Base/Instance"
+import { ModularMixin } from "../../Mixin/Modular/ModularMixin"
+import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
+import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
+import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
 import { LoadPromise } from "../.."
 
 
@@ -15,6 +15,12 @@ const ThemeWithClip = ClipMixin(ThemeWithModular)
 const ThemeWithVisible = VisibleMixin(ThemeWithClip)
 const ThemeWithTransformable = TransformableMixin(ThemeWithVisible)
 class ThemeClass extends ThemeWithTransformable {
+  commandAtTimeToSize(mashTime: Time, quantize: number, dimensions: Size): InputCommand | undefined {
+    const source = this.definition.inputSource
+    const inputCommand: InputCommand = { sources: { source }, filters: []}
+    return inputCommand
+  }
+
   contextAtTimeToSize(mashTime : Time, quantize: number, dimensions : Size) : VisibleContext | undefined {
     const context = ContextFactory.toSize(dimensions)
     const clipTimeRange = this.timeRangeRelative(mashTime, quantize)
@@ -28,6 +34,18 @@ class ThemeClass extends ThemeWithTransformable {
   }
 
   declare definition: ThemeDefinition
+
+  inputCommandAtTimeToSize(mashTime: Time, quantize: number, dimensions: Size): InputCommand | undefined {
+    // console.log(this.constructor.name, "inputCommandAtTimeToSize", this.id)
+    const inputCommand = super.inputCommandAtTimeToSize(mashTime, quantize, dimensions)
+    if (!inputCommand) return inputCommand
+
+    const clipTimeRange = this.timeRangeRelative(mashTime, quantize)
+
+    inputCommand.filters = this.definition.inputFilters(this, clipTimeRange, dimensions)
+
+    return inputCommand
+  }
 
   loadClip(quantize: number, start: Time, end?: Time): LoadPromise | void {
     const promises: LoadPromise[] = []

@@ -3,14 +3,16 @@ import { ThemeClass } from "./ThemeInstance"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
-import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
-import themeColorJson from "../../DefinitionObjects/theme/color.json"
-import { Factory } from "../../Factory"
+import { themeDefinitionFromId, themeFromId, themeInstance } from "./ThemeFactory"
+import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
+import { Factory } from "../../Definitions/Factory"
+import { Time } from "../../Utilities/Time"
+import { Size } from "../.."
 
 
 describe("Theme", () => {
+  const colorId = "com.moviemasher.theme.color"
   describe("ThemeFactory", () => {
-    const colorId = "com.moviemasher.theme.color"
     describe("definitionFromId", () => {
       test("returns expected instance", () => {
         const definition = themeDefinitionFromId(colorId)
@@ -36,7 +38,6 @@ describe("Theme", () => {
       ...themeDefinitionObject,
       properties: { foo: "bar" }
     }
-    const colorId = "com.moviemasher.theme.color"
     const colorThemeDefinition = () => Factory.theme.definition(themeColorJson)
     describe("constructor", () => {
       test("returns expected instance", () => {
@@ -71,12 +72,46 @@ describe("Theme", () => {
         const colorProperties = colorThemeDefinition().properties
         expect(colorProperties).toBeInstanceOf(Array)
         expect(colorProperties.length).toBeGreaterThan(0)
-        const [labelProperty, colorProperty] = colorProperties
+        const labelProperty = colorProperties.find(property => property.name === 'label')
+        const colorProperty = colorProperties.find(property => property.name === 'color')
+        // const [labelProperty, colorProperty] = colorProperties
+        expect(colorProperty).toBeDefined()
+        expect(labelProperty).toBeDefined()
         expect(labelProperty).toBeInstanceOf(Property)
         expect(colorProperty).toBeInstanceOf(Property)
+        if (!(labelProperty && colorProperty)) throw Errors.internal
+
         expect(colorProperty.name).toEqual("color")
         expect(labelProperty.name).toEqual("label")
       })
     })
+  })
+
+  describe("ThemeInstance", () => {
+    // describe("inputCommandAtTimeToSize", () => {
+    //   test("returns expected command", () => {
+    //     const instance = themeFromId(colorId)
+    //     instance.frames = 10
+    //     const time = Time.fromArgs(0, 30)
+    //     const quantize = 10
+    //     const dimensions:Size = { width: 640, height: 480 }
+
+    //     const inputCommand = instance.inputCommandAtTimeToSize(time, quantize, dimensions)
+    //     expect(inputCommand).toBeDefined()
+    //     if (!inputCommand) throw Errors.internal
+
+    //     const { sources, filters, merger } = inputCommand
+    //     expect(sources).toEqual([''])
+    //     expect(filters.length).toEqual(1)
+    //     const [filter] = filters
+    //     expect(filter.filter).toEqual('color')
+    //     const { options } = filter
+    //     expect(options.length).toEqual(4)
+    //     expect(options.map(p => p.key)).toEqual(['color', 'size', 'duration', 'rate'])
+    //     expect(merger).toBeDefined()
+    //     expect(merger?.filter).toEqual('overlay')
+    //     expect(merger?.options.length).toEqual(2) // x, y
+    //   })
+    // })
   })
 })

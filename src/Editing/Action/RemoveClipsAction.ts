@@ -1,5 +1,5 @@
 import { Track } from "../../Mash"
-import { Clip } from "../../Mash/Mixin/Clip/Clip"
+import { Clip } from "../../Mixin/Clip/Clip"
 import { Action, ActionObject } from "./Action"
 
 interface RemoveClipsActionObject extends ActionObject {
@@ -22,7 +22,7 @@ class RemoveClipsAction extends Action {
 
   index : number
 
-  get trackIndex() : number { return this.track.index }
+  get trackIndex() : number { return this.track.layer }
 
   redoAction() : void {
     this.mash.removeClipsFromTrack(this.clips)

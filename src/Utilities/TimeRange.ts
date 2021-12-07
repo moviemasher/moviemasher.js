@@ -8,6 +8,7 @@ class TimeRange extends Time {
 
   constructor(frame = 0, fps = 1, frames = 1) {
     if (!(Is.integer(frames) && frames >= 0)) {
+      console.trace("TimeRange with frames", frames, frames.constructor.name)
       throw Errors.argument + 'frames'
     }
     super(frame, fps)

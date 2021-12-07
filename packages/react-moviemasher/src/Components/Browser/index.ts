@@ -1,5 +1,4 @@
 export * from "./BrowserPanel"
 export * from "./BrowserContent"
-export * from "./BrowserContext"
 export * from "./BrowserDefinition"
 export * from "./BrowserSource"

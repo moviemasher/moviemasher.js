@@ -1,14 +1,14 @@
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceObject } from "./VideoSequence"
-import { InstanceBase } from "../Instance/Instance"
-import { ClipMixin } from "../Mixin/Clip/ClipMixin"
-import { TransformableMixin } from "../Mixin/Transformable/TransformableMixin"
-import { AudibleMixin } from "../Mixin/Audible/AudibleMixin"
+import { InstanceBase } from "../../Base/Instance"
+import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
+import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
+import { AudibleMixin } from "../../Mixin/Audible/AudibleMixin"
 import { Is } from "../../Utilities/Is"
 import { Default } from "../../Setup/Default"
 import { Any, JsonObject } from "../../declarations"
 import { Time } from "../../Utilities/Time"
-import { AudibleFileMixin } from "../Mixin/AudibleFile/AudibleFileMixin"
-import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
+import { AudibleFileMixin } from "../../Mixin/AudibleFile/AudibleFileMixin"
+import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
 
 const WithClip = ClipMixin(InstanceBase)
 const WithAudible = AudibleMixin(WithClip)
@@ -16,7 +16,7 @@ const WithAudibleFile = AudibleFileMixin(WithAudible)
 const WithVisible = VisibleMixin(WithAudibleFile)
 const WithTransformable = TransformableMixin(WithVisible)
 
-class VideoSequenceClass extends WithTransformable {
+class VideoSequenceClassImplementation extends WithTransformable {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -44,4 +44,4 @@ class VideoSequenceClass extends WithTransformable {
   }
 }
 
-export { VideoSequenceClass }
+export { VideoSequenceClassImplementation }

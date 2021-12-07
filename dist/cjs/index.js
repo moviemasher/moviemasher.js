@@ -2,6 +2,295 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+const $invalid = "Invalid";
+const $unknown = "Unknown";
+const $expected = "Expected";
+const $invalidArgument = `${$invalid} argument`;
+const $invalidProperty = `${$invalid} property`;
+const $invalidDefinitionProperty = `${$invalid} definition property`;
+const $internal = "Internal Error ";
+const Errors = {
+    eval: {
+        sourceRect: `${$invalid} evaluation of source rect `,
+        outputSize: `${$invalid} evaluation of output size `,
+        conditionTruth: `${$expected} at least one condition to evaluate to true `,
+        conditionValue: `${$expected} condition to have a value `,
+        number: `${$expected} evaluated value to be a number `,
+        get: `${$expected} to get evaluated value `,
+    },
+    composition: { mashUndefined: `${$internal}composition.mash undefined` },
+    audibleContext: `${$expected} AudioContext`,
+    mash: `${$expected} mash`,
+    action: `${$expected} Action`,
+    actions: `${$expected} Actions`,
+    internal: $internal,
+    argument: `${$invalidArgument} `,
+    invalid: {
+        canvas: `${$invalidProperty} canvas `,
+        context: `${$invalidProperty} context `,
+        definition: {
+            duration: `${$invalidDefinitionProperty} duration`,
+            audio: `${$invalidDefinitionProperty} audio|url`,
+            url: `${$invalidDefinitionProperty} url`,
+            source: `${$invalidDefinitionProperty} source`,
+            id: `${$invalidDefinitionProperty} id`,
+            object: `${$invalidProperty} definition`,
+        },
+        size: `${$invalid} size `,
+        track: `${$invalid} track `,
+        trackType: `${$invalidProperty} trackType `,
+        action: `${$invalid} action `,
+        name: `${$invalidProperty} name `,
+        value: `${$invalidProperty} value `,
+        type: `${$invalidProperty} type `,
+        url: `${$invalidProperty} url `,
+        property: $invalidProperty,
+        argument: $invalidArgument,
+        object: `${$invalidArgument} object `,
+        factory: `${$invalid} factory `,
+        volume: `${$invalidArgument} volume`,
+    },
+    type: `${$unknown} type `,
+    selection: `${$invalid} selection `,
+    unknown: {
+        type: `${$unknown} type `,
+        merger: `${$unknown} merger `,
+        effect: `${$unknown} effect `,
+        filter: `${$unknown} filter `,
+        font: `${$unknown} font `,
+        scaler: `${$unknown} scalar `,
+        mode: `${$unknown} mode `,
+        definition: `${$unknown} definition `,
+    },
+    uncached: "Uncached URL ",
+    object: `${$invalidArgument} object `,
+    array: `${$invalidArgument} array `,
+    media: `${$invalidArgument} media `,
+    id: `${$invalidArgument} id `,
+    frame: `${$invalidArgument} frame `,
+    frames: `${$invalidProperty} frames `,
+    fps: `${$invalidArgument} fps `,
+    seconds: `${$invalidArgument} seconds `,
+    url: `${$invalidArgument} url `,
+    time: `${$invalidArgument} Time`,
+    timeRange: `${$invalidArgument} TimeRange`,
+    mainTrackOverlap: `${$internal}: main track clips overlap without transition`,
+    unknownMash: `${$unknown} Mash property `,
+    unimplemented: `${$expected} method to be overridden`,
+    property: `${$invalidArgument} property `,
+    wrongClass: `${$expected} instance of `,
+};
+
+const objectType = (value) => typeof value === 'object';
+const stringType = (value) => (typeof value === 'string');
+const undefinedType = (value) => typeof value === 'undefined';
+const numberType = (value) => typeof value === 'number';
+const booleanType = (value) => typeof value === 'boolean';
+const methodType = (value) => typeof value === 'function';
+const isDefined = (value) => !undefinedType(value);
+const isNan = (value) => numberType(value) && Number.isNaN(value);
+const isNumber = (value) => numberType(value) && !Number.isNaN(value);
+const isInteger = (value) => Number.isInteger(value);
+const isFloat = (value) => numberType(value) && !isInteger(value);
+const isPositive = (value) => numberType(value) && Number(value) >= 0;
+const isAboveZero = (value) => isNumber(value) && Number(value) > 0;
+const isArray = (value) => (isDefined(Array.isArray) ? Array.isArray(value) : value instanceof Array);
+const length = (value) => !!value.length;
+const isPopulatedString = (value) => stringType(value) && length(String(value));
+const isPopulatedObject = (value) => (objectType(value) && length(Object.keys(value)));
+const isPopulatedArray = (value) => isArray(value) && length(value);
+const Is = {
+    aboveZero: isAboveZero,
+    array: isArray,
+    boolean: booleanType,
+    defined: isDefined,
+    float: isFloat,
+    integer: isInteger,
+    method: methodType,
+    nan: isNan,
+    number: numberType,
+    object: objectType,
+    populatedArray: isPopulatedArray,
+    populatedObject: isPopulatedObject,
+    populatedString: isPopulatedString,
+    positive: isPositive,
+    string: stringType,
+    undefined: undefinedType,
+};
+
+// eslint-disable-next-line prefer-const
+exports.idPrefix = '';
+const idGenerate = () => {
+    const components = [];
+    if (exports.idPrefix)
+        components.push(exports.idPrefix);
+    components.push(Date.now().toString(36));
+    components.push(Math.random().toString(36).substr(2));
+    return components.join('-');
+};
+const idPrefixSet = (prefix) => { exports.idPrefix = prefix; };
+const Id = {
+    generate: idGenerate,
+    prefix: exports.idPrefix,
+    prefixSet: idPrefixSet
+};
+
+exports.ActionType = void 0;
+(function (ActionType) {
+    ActionType["AddTrack"] = "addTrack";
+    ActionType["AddClipsToTrack"] = "addClipsToTrack";
+    ActionType["MoveClips"] = "moveClips";
+    ActionType["AddEffect"] = "addEffect";
+    ActionType["Change"] = "change";
+    ActionType["ChangeFrames"] = "changeFrames";
+    ActionType["ChangeTrim"] = "changeTrim";
+    ActionType["ChangeGain"] = "changeGain";
+    ActionType["MoveEffects"] = "moveEffects";
+    ActionType["Split"] = "split";
+    ActionType["Freeze"] = "freeze";
+    ActionType["RemoveClips"] = "removeClips";
+})(exports.ActionType || (exports.ActionType = {}));
+exports.TrackType = void 0;
+(function (TrackType) {
+    TrackType["Audio"] = "audio";
+    TrackType["Transition"] = "transition";
+    TrackType["Video"] = "video";
+})(exports.TrackType || (exports.TrackType = {}));
+const TrackTypes = Object.values(exports.TrackType);
+exports.ClipType = void 0;
+(function (ClipType) {
+    ClipType["Audio"] = "audio";
+    ClipType["Frame"] = "frame";
+    ClipType["Image"] = "image";
+    ClipType["Theme"] = "theme";
+    ClipType["Transition"] = "transition";
+    ClipType["Video"] = "video";
+    ClipType["VideoSequence"] = "videosequence";
+    ClipType["VideoStream"] = "videostream";
+    // AudioStream = 'audiostream',
+})(exports.ClipType || (exports.ClipType = {}));
+const ClipTypes = Object.values(exports.ClipType);
+// NOTE: order important here - determines initialization
+exports.DefinitionType = void 0;
+(function (DefinitionType) {
+    DefinitionType["Filter"] = "filter";
+    DefinitionType["Merger"] = "merger";
+    DefinitionType["Scaler"] = "scaler";
+    DefinitionType["Effect"] = "effect";
+    DefinitionType["Font"] = "font";
+    DefinitionType["Theme"] = "theme";
+    DefinitionType["Transition"] = "transition";
+    DefinitionType["Image"] = "image";
+    DefinitionType["Video"] = "video";
+    DefinitionType["Audio"] = "audio";
+    DefinitionType["VideoStream"] = "videostream";
+    DefinitionType["VideoSequence"] = "videosequence";
+    // Track = 'track',
+    // AudioStream = 'audiostream',
+})(exports.DefinitionType || (exports.DefinitionType = {}));
+const DefinitionTypes = Object.values(exports.DefinitionType);
+exports.EventType = void 0;
+(function (EventType) {
+    EventType["Action"] = "action";
+    EventType["Duration"] = "durationchange";
+    EventType["Draw"] = "draw";
+    EventType["Ended"] = "ended";
+    EventType["Fps"] = "ratechange";
+    EventType["Loaded"] = "loadeddata";
+    EventType["Mash"] = "mashchange";
+    EventType["Pause"] = "pause";
+    EventType["Play"] = "play";
+    EventType["Playing"] = "playing";
+    EventType["Seeked"] = "seeked";
+    EventType["Seeking"] = "seeking";
+    EventType["Selection"] = "selection";
+    EventType["Time"] = "timeupdate";
+    EventType["Track"] = "track";
+    EventType["Volume"] = "volumechange";
+    EventType["Waiting"] = "waiting";
+})(exports.EventType || (exports.EventType = {}));
+exports.ModuleType = void 0;
+(function (ModuleType) {
+    ModuleType["Effect"] = "effect";
+    ModuleType["Font"] = "font";
+    ModuleType["Merger"] = "merger";
+    ModuleType["Scaler"] = "scaler";
+    ModuleType["Theme"] = "theme";
+    ModuleType["Transition"] = "transition";
+})(exports.ModuleType || (exports.ModuleType = {}));
+const ModuleTypes = Object.values(exports.ModuleType);
+exports.LoadType = void 0;
+(function (LoadType) {
+    LoadType["Audio"] = "audio";
+    LoadType["Font"] = "font";
+    LoadType["Image"] = "image";
+    LoadType["Module"] = "module";
+    LoadType["Video"] = "video";
+})(exports.LoadType || (exports.LoadType = {}));
+exports.MoveType = void 0;
+(function (MoveType) {
+    MoveType["Audio"] = "audio";
+    MoveType["Effect"] = "effect";
+    MoveType["Video"] = "video";
+})(exports.MoveType || (exports.MoveType = {}));
+exports.DataType = void 0;
+(function (DataType) {
+    DataType["Boolean"] = "boolean";
+    DataType["Direction4"] = "direction4";
+    DataType["Direction8"] = "direction8";
+    DataType["Font"] = "font";
+    DataType["Fontsize"] = "fontsize";
+    DataType["Integer"] = "integer";
+    DataType["Mode"] = "mode";
+    DataType["Number"] = "number";
+    DataType["Pixel"] = "pixel";
+    DataType["Rgb"] = "rgb";
+    DataType["Rgba"] = "rgba";
+    DataType["String"] = "string";
+    DataType["Text"] = "text";
+})(exports.DataType || (exports.DataType = {}));
+const DataTypes = Object.values(exports.DataType);
+exports.TransformType = void 0;
+(function (TransformType) {
+    TransformType["Merger"] = "merger";
+    TransformType["Scaler"] = "scaler";
+})(exports.TransformType || (exports.TransformType = {}));
+const TransformTypes = Object.values(exports.TransformType);
+exports.MasherAction = void 0;
+(function (MasherAction) {
+    MasherAction["Freeze"] = "freeze";
+    MasherAction["Redo"] = "redo";
+    MasherAction["Remove"] = "remove";
+    MasherAction["Save"] = "save";
+    MasherAction["Split"] = "split";
+    MasherAction["Undo"] = "undo";
+})(exports.MasherAction || (exports.MasherAction = {}));
+const MasherActions = Object.values(exports.MasherAction);
+exports.CommandType = void 0;
+(function (CommandType) {
+    CommandType["File"] = "file";
+    CommandType["Stream"] = "stream";
+})(exports.CommandType || (exports.CommandType = {}));
+const CommandTypes = Object.values(exports.CommandType);
+exports.OutputFormat = void 0;
+(function (OutputFormat) {
+    OutputFormat["Flv"] = "flv";
+    OutputFormat["Hls"] = "hls";
+    OutputFormat["Mdash"] = "mdash";
+    OutputFormat["Rtmp"] = "rtmp";
+    OutputFormat["Rtmps"] = "rtmps";
+})(exports.OutputFormat || (exports.OutputFormat = {}));
+const OutputFormats = Object.values(exports.OutputFormat);
+
+class TypeValue {
+    constructor(object) {
+        const { id, identifier, label } = object;
+        this.id = id;
+        this.identifier = identifier;
+        this.label = label;
+    }
+}
+
 const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
 const rgbNumeric = (rgb) => ({
     r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
@@ -76,169 +365,116 @@ const Color = {
     strip: colorStrip,
 };
 
-const Default = {
-    label: "Unlabeled",
-    masher: {
-        buffer: 10,
-        fps: 0,
-        loop: true,
-        volume: 0.75,
-        precision: 3,
-        autoplay: false,
-    },
-    mash: {
-        label: "Unlabeled Mash",
-        quantize: 10,
-        backcolor: colorTransparent,
-        gain: 0.75,
-        buffer: 10,
-        output: {
-            size: '320x240',
-        }
-    },
-    instance: {
-        audio: { gain: 1.0, trim: 0, loop: 1 },
-        video: { speed: 1.0 }
-    },
-    definition: {
-        frame: { duration: 2 },
-        image: { duration: 2 },
-        theme: { duration: 3 },
-        transition: { duration: 1 },
-        video: { fps: 0 },
-        videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
-        videostream: { duration: 10 },
-    },
+const DefinitionsMap = new Map();
+const DefinitionsByType = new Map();
+const definitionsByType = (type) => {
+    const list = DefinitionsByType.get(type);
+    if (list)
+        return list;
+    const definitionsList = [];
+    DefinitionsByType.set(type, definitionsList);
+    return definitionsList;
 };
-
-const $invalid = "Invalid";
-const $unknown = "Unknown";
-const $expected = "Expected";
-const $invalidArgument = `${$invalid} argument`;
-const $invalidProperty = `${$invalid} property`;
-const $invalidDefinitionProperty = `${$invalid} definition property`;
-const $internal = "Internal Error ";
-const Errors = {
-    eval: {
-        sourceRect: `${$invalid} evaluation of source rect `,
-        outputSize: `${$invalid} evaluation of output size `,
-        conditionTruth: `${$expected} at least one condition to evaluate to true `,
-        conditionValue: `${$expected} condition to have a value `,
-        number: `${$expected} evaluated value to be a number `,
-        get: `${$expected} to get evaluated value `,
-    },
-    composition: { mashUndefined: `${$internal}composition.mash undefined` },
-    audibleContext: `${$expected} AudioContext`,
-    mash: `${$expected} mash`,
-    action: `${$expected} Action`,
-    actions: `${$expected} Actions`,
-    internal: $internal,
-    argument: `${$invalidArgument} `,
-    invalid: {
-        canvas: `${$invalidArgument} canvas `,
-        definition: {
-            duration: `${$invalidDefinitionProperty} duration`,
-            audio: `${$invalidDefinitionProperty} audio|url`,
-            url: `${$invalidDefinitionProperty} url`,
-            source: `${$invalidDefinitionProperty} source`,
-            id: `${$invalidDefinitionProperty} id`,
-            object: `${$invalidProperty} definition`,
-        },
-        size: `${$invalid} size `,
-        track: `${$invalid} track `,
-        trackType: `${$invalidProperty} trackType `,
-        action: `${$invalid} action `,
-        name: `${$invalidProperty} name `,
-        value: `${$invalidProperty} value `,
-        type: `${$invalidProperty} type `,
-        url: `${$invalidProperty} url `,
-        property: $invalidProperty,
-        argument: $invalidArgument,
-        object: `${$invalidArgument} object `,
-        factory: `${$invalid} factory `,
-        volume: `${$invalidArgument} volume`,
-    },
-    type: `${$unknown} type `,
-    selection: `${$invalid} selection `,
-    unknown: {
-        type: `${$unknown} type `,
-        merger: `${$unknown} merger `,
-        effect: `${$unknown} effect `,
-        filter: `${$unknown} filter `,
-        font: `${$unknown} font `,
-        scaler: `${$unknown} scalar `,
-        mode: `${$unknown} mode `,
-        definition: `${$unknown} definition `,
-    },
-    uncached: "Uncached URL ",
-    object: `${$invalidArgument} object `,
-    array: `${$invalidArgument} array `,
-    media: `${$invalidArgument} media `,
-    id: `${$invalidArgument} id `,
-    frame: `${$invalidArgument} frame `,
-    frames: `${$invalidProperty} frames `,
-    fps: `${$invalidArgument} fps `,
-    seconds: `${$invalidArgument} seconds `,
-    url: `${$invalidArgument} url `,
-    time: `${$invalidArgument} Time`,
-    timeRange: `${$invalidArgument} TimeRange`,
-    mainTrackOverlap: `${$internal}: main track clips overlap without transition`,
-    unknownMash: `${$unknown} Mash property `,
-    unimplemented: `${$expected} method to be overridden`,
-    property: `${$invalidArgument} property `,
-    wrongClass: `${$expected} instance of `,
+const definitionsClear = () => {
+    DefinitionsMap.clear();
+    DefinitionsByType.clear();
 };
-
-class Parameter {
-    constructor({ name, value }) {
-        if (!name)
-            throw Errors.invalid.name;
-        if (typeof value === "undefined")
-            throw Errors.invalid.value;
-        this.name = String(name);
-        this.value = value;
+const definitionsFont = definitionsByType(exports.DefinitionType.Font);
+const definitionsFromId = (id) => {
+    if (!definitionsInstalled(id)) {
+        console.trace("definitionsFromId !definitionsInstalled", id);
+        throw Errors.unknown.definition + id;
     }
-    toJSON() {
-        return { name: this.name, value: this.value };
+    const definition = DefinitionsMap.get(id);
+    if (!definition)
+        throw Errors.internal + id;
+    return definition;
+};
+const definitionsInstall = (definition) => {
+    const { type, id } = definition;
+    DefinitionsMap.set(id, definition);
+    definitionsByType(type).push(definition);
+};
+const definitionsInstalled = (id) => DefinitionsMap.has(id);
+const definitionsMerger = definitionsByType(exports.DefinitionType.Merger);
+const definitionsScaler = definitionsByType(exports.DefinitionType.Scaler);
+const definitionsUninstall = (id) => {
+    if (!definitionsInstalled(id))
+        return;
+    const definition = definitionsFromId(id);
+    DefinitionsMap.delete(id);
+    const { type } = definition;
+    const definitions = definitionsByType(type);
+    const index = definitions.indexOf(definition);
+    if (index < 0)
+        throw Errors.internal;
+    definitions.splice(index, 1);
+};
+const Definitions = {
+    byType: definitionsByType,
+    clear: definitionsClear,
+    font: definitionsFont,
+    fromId: definitionsFromId,
+    install: definitionsInstall,
+    installed: definitionsInstalled,
+    map: DefinitionsMap,
+    merger: definitionsMerger,
+    scaler: definitionsScaler,
+    uninstall: definitionsUninstall,
+};
+
+class Type {
+    constructor(object) {
+        this.modular = false;
+        this.values = [];
+        const { value, values, modular, id } = object;
+        if (!id)
+            throw Errors.id + JSON.stringify(object);
+        if (typeof value === "undefined")
+            throw Errors.invalid.value + JSON.stringify(object);
+        this.value = value;
+        this.id = id;
+        if (modular)
+            this.modular = modular;
+        if (values)
+            this.values.push(...values.map(value => new TypeValue(value)));
+    }
+    coerce(value) {
+        const string = String(value);
+        const number = Number(value);
+        if (this.modular && !Definitions.fromId(string))
+            return;
+        switch (this.id) {
+            case exports.DataType.Boolean: return !!value;
+            case exports.DataType.Number:
+            case exports.DataType.Fontsize:
+            case exports.DataType.Pixel: {
+                if (isNan(number))
+                    return;
+                return number;
+            }
+            case exports.DataType.Integer: {
+                if (isNan(number))
+                    return;
+                return Math.round(number);
+            }
+            case exports.DataType.Rgb:
+            case exports.DataType.Rgba: {
+                if (!colorValid(string))
+                    return;
+                break;
+            }
+            case exports.DataType.Direction4:
+            case exports.DataType.Direction8:
+            case exports.DataType.Mode: {
+                if (!this.values?.find(object => { object.id === string; }))
+                    return;
+                break;
+            }
+        }
+        return string;
     }
 }
-
-const objectType = (value) => typeof value === 'object';
-const stringType = (value) => (typeof value === 'string');
-const undefinedType = (value) => typeof value === 'undefined';
-const numberType = (value) => typeof value === 'number';
-const booleanType = (value) => typeof value === 'boolean';
-const methodType = (value) => typeof value === 'function';
-const isDefined = (value) => !undefinedType(value);
-const isNan = (value) => numberType(value) && Number.isNaN(value);
-const isNumber = (value) => numberType(value) && !Number.isNaN(value);
-const isInteger = (value) => Number.isInteger(value);
-const isFloat = (value) => numberType(value) && !isInteger(value);
-const isPositive = (value) => numberType(value) && Number(value) >= 0;
-const isAboveZero = (value) => isNumber(value) && Number(value) > 0;
-const isArray = (value) => (isDefined(Array.isArray) ? Array.isArray(value) : value instanceof Array);
-const length = (value) => !!value.length;
-const isPopulatedString = (value) => stringType(value) && length(String(value));
-const isPopulatedObject = (value) => (objectType(value) && length(Object.keys(value)));
-const isPopulatedArray = (value) => isArray(value) && length(value);
-const Is = {
-    aboveZero: isAboveZero,
-    array: isArray,
-    boolean: booleanType,
-    defined: isDefined,
-    float: isFloat,
-    integer: isInteger,
-    method: methodType,
-    nan: isNan,
-    number: numberType,
-    object: objectType,
-    populatedArray: isPopulatedArray,
-    populatedObject: isPopulatedObject,
-    populatedString: isPopulatedString,
-    positive: isPositive,
-    string: stringType,
-    undefined: undefinedType,
-};
 
 const boolean = {
   value: false
@@ -427,258 +663,6 @@ var dataTypesJson = {
   text: text
 };
 
-exports.ActionType = void 0;
-(function (ActionType) {
-    ActionType["AddTrack"] = "addTrack";
-    ActionType["AddClipsToTrack"] = "addClipsToTrack";
-    ActionType["MoveClips"] = "moveClips";
-    ActionType["AddEffect"] = "addEffect";
-    ActionType["Change"] = "change";
-    ActionType["ChangeFrames"] = "changeFrames";
-    ActionType["ChangeTrim"] = "changeTrim";
-    ActionType["ChangeGain"] = "changeGain";
-    ActionType["MoveEffects"] = "moveEffects";
-    ActionType["Split"] = "split";
-    ActionType["Freeze"] = "freeze";
-    ActionType["RemoveClips"] = "removeClips";
-})(exports.ActionType || (exports.ActionType = {}));
-exports.TrackType = void 0;
-(function (TrackType) {
-    TrackType["Audio"] = "audio";
-    TrackType["Video"] = "video";
-})(exports.TrackType || (exports.TrackType = {}));
-exports.ClipType = void 0;
-(function (ClipType) {
-    ClipType["Audio"] = "audio";
-    ClipType["Frame"] = "frame";
-    ClipType["Image"] = "image";
-    ClipType["Theme"] = "theme";
-    ClipType["Transition"] = "transition";
-    ClipType["Video"] = "video";
-    ClipType["VideoSequence"] = "videosequence";
-    ClipType["VideoStream"] = "videostream";
-    // AudioStream = 'audiostream',
-})(exports.ClipType || (exports.ClipType = {}));
-const ClipTypes = Object.values(exports.ClipType);
-// NOTE: order important here - determines initialization
-exports.DefinitionType = void 0;
-(function (DefinitionType) {
-    DefinitionType["Filter"] = "filter";
-    DefinitionType["Merger"] = "merger";
-    DefinitionType["Scaler"] = "scaler";
-    DefinitionType["Effect"] = "effect";
-    DefinitionType["Font"] = "font";
-    DefinitionType["Mash"] = "mash";
-    DefinitionType["Masher"] = "masher";
-    DefinitionType["Theme"] = "theme";
-    DefinitionType["Transition"] = "transition";
-    DefinitionType["Image"] = "image";
-    DefinitionType["Video"] = "video";
-    DefinitionType["Audio"] = "audio";
-    DefinitionType["VideoStream"] = "videostream";
-    DefinitionType["VideoSequence"] = "videosequence";
-    // AudioStream = 'audiostream',
-})(exports.DefinitionType || (exports.DefinitionType = {}));
-const DefinitionTypes = Object.values(exports.DefinitionType);
-exports.EventType = void 0;
-(function (EventType) {
-    EventType["Action"] = "action";
-    EventType["Duration"] = "durationchange";
-    EventType["Draw"] = "draw";
-    EventType["Ended"] = "ended";
-    EventType["Fps"] = "ratechange";
-    EventType["Loaded"] = "loadeddata";
-    EventType["Mash"] = "mashchange";
-    EventType["Pause"] = "pause";
-    EventType["Play"] = "play";
-    EventType["Playing"] = "playing";
-    EventType["Seeked"] = "seeked";
-    EventType["Seeking"] = "seeking";
-    EventType["Selection"] = "selection";
-    EventType["Time"] = "timeupdate";
-    EventType["Track"] = "track";
-    EventType["Volume"] = "volumechange";
-    EventType["Waiting"] = "waiting";
-})(exports.EventType || (exports.EventType = {}));
-exports.MashType = void 0;
-(function (MashType) {
-    MashType["Mash"] = "mash";
-})(exports.MashType || (exports.MashType = {}));
-const MashTypes = Object.values(exports.MashType);
-exports.ModuleType = void 0;
-(function (ModuleType) {
-    ModuleType["Effect"] = "effect";
-    ModuleType["Font"] = "font";
-    ModuleType["Merger"] = "merger";
-    ModuleType["Scaler"] = "scaler";
-    ModuleType["Theme"] = "theme";
-    ModuleType["Transition"] = "transition";
-})(exports.ModuleType || (exports.ModuleType = {}));
-const ModuleTypes = Object.values(exports.ModuleType);
-exports.LoadType = void 0;
-(function (LoadType) {
-    LoadType["Audio"] = "audio";
-    LoadType["Font"] = "font";
-    LoadType["Image"] = "image";
-    LoadType["Module"] = "module";
-    LoadType["Video"] = "video";
-})(exports.LoadType || (exports.LoadType = {}));
-exports.MoveType = void 0;
-(function (MoveType) {
-    MoveType["Audio"] = "audio";
-    MoveType["Effect"] = "effect";
-    MoveType["Video"] = "video";
-})(exports.MoveType || (exports.MoveType = {}));
-exports.DataType = void 0;
-(function (DataType) {
-    DataType["Boolean"] = "boolean";
-    DataType["Direction4"] = "direction4";
-    DataType["Direction8"] = "direction8";
-    DataType["Font"] = "font";
-    DataType["Fontsize"] = "fontsize";
-    DataType["Integer"] = "integer";
-    DataType["Mode"] = "mode";
-    DataType["Number"] = "number";
-    DataType["Pixel"] = "pixel";
-    DataType["Rgb"] = "rgb";
-    DataType["Rgba"] = "rgba";
-    DataType["String"] = "string";
-    DataType["Text"] = "text";
-})(exports.DataType || (exports.DataType = {}));
-const DataTypes = Object.values(exports.DataType);
-exports.TransformType = void 0;
-(function (TransformType) {
-    TransformType["Merger"] = "merger";
-    TransformType["Scaler"] = "scaler";
-})(exports.TransformType || (exports.TransformType = {}));
-const TransformTypes = Object.values(exports.TransformType);
-exports.CommandType = void 0;
-(function (CommandType) {
-    CommandType["File"] = "file";
-    CommandType["Stream"] = "stream";
-})(exports.CommandType || (exports.CommandType = {}));
-const CommandTypes = Object.values(exports.CommandType);
-
-class TypeValue {
-    constructor(object) {
-        const { id, identifier, label } = object;
-        this.id = id;
-        this.identifier = identifier;
-        this.label = label;
-    }
-}
-
-const DefinitionsMap = new Map();
-const DefinitionsByType = new Map();
-const definitionsByType = (type) => {
-    const list = DefinitionsByType.get(type);
-    if (list)
-        return list;
-    const definitionsList = [];
-    DefinitionsByType.set(type, definitionsList);
-    return definitionsList;
-};
-const definitionsClear = () => {
-    DefinitionsMap.clear();
-    DefinitionsByType.clear();
-};
-const definitionsFont = definitionsByType(exports.DefinitionType.Font);
-const definitionsFromId = (id) => {
-    if (!definitionsInstalled(id)) {
-        console.trace(id);
-        throw Errors.unknown.definition + id;
-    }
-    const definition = DefinitionsMap.get(id);
-    if (!definition)
-        throw Errors.internal + id;
-    return definition;
-};
-const definitionsInstall = (definition) => {
-    const { type, id } = definition;
-    DefinitionsMap.set(id, definition);
-    definitionsByType(type).push(definition);
-};
-const definitionsInstalled = (id) => DefinitionsMap.has(id);
-const definitionsMerger = definitionsByType(exports.DefinitionType.Merger);
-const definitionsScaler = definitionsByType(exports.DefinitionType.Scaler);
-const definitionsUninstall = (id) => {
-    if (!definitionsInstalled(id))
-        return;
-    const definition = definitionsFromId(id);
-    DefinitionsMap.delete(id);
-    const { type } = definition;
-    const definitions = definitionsByType(type);
-    const index = definitions.indexOf(definition);
-    if (index < 0)
-        throw Errors.internal;
-    definitions.splice(index, 1);
-};
-const Definitions = {
-    byType: definitionsByType,
-    clear: definitionsClear,
-    font: definitionsFont,
-    fromId: definitionsFromId,
-    install: definitionsInstall,
-    installed: definitionsInstalled,
-    map: DefinitionsMap,
-    merger: definitionsMerger,
-    scaler: definitionsScaler,
-    uninstall: definitionsUninstall,
-};
-
-class Type {
-    constructor(object) {
-        this.modular = false;
-        this.values = [];
-        const { value, values, modular, id } = object;
-        if (!id)
-            throw Errors.id;
-        if (typeof value === "undefined")
-            throw Errors.invalid.value + JSON.stringify(object);
-        this.value = value;
-        this.id = id;
-        if (modular)
-            this.modular = modular;
-        if (values)
-            this.values.push(...values.map(value => new TypeValue(value)));
-    }
-    coerce(value) {
-        const string = String(value);
-        const number = Number(value);
-        if (this.modular && !Definitions.fromId(string))
-            return;
-        switch (this.id) {
-            case exports.DataType.Boolean: return !!value;
-            case exports.DataType.Number:
-            case exports.DataType.Fontsize:
-            case exports.DataType.Pixel: {
-                if (isNan(number))
-                    return;
-                return number;
-            }
-            case exports.DataType.Integer: {
-                if (isNan(number))
-                    return;
-                return Math.round(number);
-            }
-            case exports.DataType.Rgb:
-            case exports.DataType.Rgba: {
-                if (!colorValid(string))
-                    return;
-                break;
-            }
-            case exports.DataType.Direction4:
-            case exports.DataType.Direction8:
-            case exports.DataType.Mode: {
-                if (!this.values?.find(object => { object.id === string; }))
-                    return;
-                break;
-            }
-        }
-        return string;
-    }
-}
-
 class TypesClass {
     constructor(object) {
         this.propertyTypes = new Map();
@@ -697,15 +681,15 @@ class TypesClass {
         return instance;
     }
     propertyTypeDefault(type) {
-        if (!(Is.populatedString(type) && DataTypes.includes(type)))
+        if (!(isPopulatedString(type) && DataTypes.includes(type)))
             throw Errors.type + 'propertyTypeDefault ' + type;
         const propertyType = this.propertyType(type);
-        if (!Is.object(propertyType))
+        if (!objectType(propertyType))
             return "";
         return propertyType.value;
     }
 }
-const TypesInstance = new TypesClass(dataTypesJson);
+const Types = new TypesClass(dataTypesJson);
 
 class Property {
     constructor(object) {
@@ -716,7 +700,7 @@ class Property {
             throw Errors.invalid.name;
         if (typeof value === "undefined")
             throw Errors.invalid.value + JSON.stringify(object);
-        this.type = TypesInstance.propertyType(type);
+        this.type = Types.propertyType(type);
         this.name = name;
         this.value = value;
         this.custom = !!custom;
@@ -725,896 +709,161 @@ class Property {
         return { value: this.value, type: this.type.id };
     }
 }
-
-const Capitalize = (value) => {
-    if (!isPopulatedString(value))
-        return value;
-    return `${value[0].toUpperCase()}${value.substr(1)}`;
-};
-
-const ElementScrollProps = [
-    'scrollPaddingleft',
-    'scrollPaddingRight',
-    'scrollPaddingTop',
-    'scrollPaddingBottom',
-];
-const elementScrollMetrics = (element) => {
-    if (!element)
-        return;
-    const style = getComputedStyle(element);
-    const entries = ElementScrollProps.map(key => {
-        const value = style.getPropertyValue(key) || '0px';
-        const number = Number(value.slice(0, -2));
-        return [key, isNaN(number) ? 0 : number];
-    });
-    const { scrollLeft, scrollTop } = element;
-    const { x, y, width, height } = element.getBoundingClientRect();
-    entries.push(['scrollLeft', scrollLeft]);
-    entries.push(['scrollTop', scrollTop]);
-    entries.push(['x', x]);
-    entries.push(['y', y]);
-    entries.push(['width', width]);
-    entries.push(['height', height]);
-    return Object.fromEntries(entries);
-};
-const Element = {
-    scrollMetrics: elementScrollMetrics,
-};
-
-const KEYS_SIZED = ['mm_width', 'mm_height'];
-const KEYS_GETTERS = [
-    "mm_dimensions",
-    "mm_duration",
-    "mm_fps",
-    "mm_height",
-    "mm_t",
-    "mm_width",
-    "t",
-];
-const KEYS = [
-    "ceil",
-    "floor",
-    "mm_cmp",
-    "mm_horz",
-    "mm_max",
-    "mm_min",
-    "mm_vert",
-    ...KEYS_GETTERS,
-    ...KEYS_SIZED
-];
-const $evaluator = "evaluator";
-const arrayFromElements = (elements) => {
-    if (typeof elements === "string")
-        return String(elements).split(',');
-    return elements;
-};
-const conditionalExpression = (conditional) => {
-    const { condition } = conditional;
-    // not strict equality, since we may have strings and numbers
-    if (Is.defined(conditional.is))
-        return `${condition}==${conditional.is}`;
-    const elements = conditional.in;
-    if (Is.undefined(elements))
-        return String(condition);
-    // support supplying values as array or comma-delimited string
-    const array = arrayFromElements(elements);
-    const strings = Is.string(array[0]);
-    const values = array.map(element => (strings ? `"${element}"` : element));
-    const type = strings ? 'String' : 'Number';
-    const expression = `([${values.join(',')}].includes(${type}(${condition})))`;
-    return expression;
-};
-const replaceOperators = (string) => (string.replaceAll(' or ', ' || ').replaceAll(' and ', ' && '));
-class Evaluator {
-    constructor(timeRange, context, size, mergeContext) {
-        this.ceil = Math.ceil;
-        this.floor = Math.floor;
-        this.map = new Map();
-        this.mm_max = Math.max;
-        this.mm_min = Math.min;
-        this.timeRange = timeRange;
-        this.context = context;
-        this.mergeContext = mergeContext;
-        this.size = size;
-        this.setInputSize(this.size);
+class PropertiedClass {
+    constructor(..._args) {
+        this._properties = [];
     }
-    conditionalValue(conditionals) {
-        // console.log(this.constructor.name, "conditionalValue", conditionals)
-        const trueConditional = conditionals.find((conditional) => {
-            const expression = replaceOperators(conditionalExpression(conditional));
-            const result = this.evaluateExpression(expression);
-            // console.log(this.constructor.name, "conditionalValue", expression, "=", result)
-            return result;
-        });
-        if (typeof trueConditional === "undefined")
-            throw Errors.eval.conditionTruth;
-        const { value } = trueConditional;
-        if (typeof value === "undefined")
-            throw Errors.eval.conditionValue;
-        // console.log(this.constructor.name, "conditionalValue", value.constructor.name, value)
-        return value;
+    property(name) {
+        return this.properties.find(property => property.name === name);
     }
-    get duration() { return this.timeRange.lengthSeconds; }
-    evaluate(value) {
-        // console.log(this.constructor.name, "evaluate", value)
-        if (typeof value === "number")
-            return value;
-        const expression = (typeof value === "string") ? String(value) : this.conditionalValue(value);
-        if (typeof expression === "number")
-            return expression;
-        const result = this.evaluateExpression(expression);
-        // console.log(this.constructor.name, "evaluate", expression, "=", result)
-        return result;
+    get properties() {
+        return this._properties;
     }
-    evaluateExpression(expression) {
-        const script = `return ${this.replaceKeys(expression)}`;
-        try {
-            // eslint-disable-next-line no-new-func
-            const method = new Function($evaluator, script);
-            const result = method(this);
-            // console.log(this.constructor.name, "evaluateExpression", expression, result)
-            return result;
-        }
-        catch (exception) {
-            //console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map)
-            return expression;
-        }
+    set properties(value) {
+        this._properties = value;
     }
-    get(key) {
-        if (this.map.has(key)) {
-            // console.log("Evaluator.get returning value from map", key, this.map.get(key))
-            return this.map.get(key);
-        }
-        if (!KEYS.includes(key))
-            throw Errors.eval.get + key;
-        const value = this[key];
-        if (KEYS_GETTERS.includes(key))
-            return value;
-        if (typeof value === "function") {
-            // console.log("Evaluator.get returning method", key)
-            return value.bind(this);
-        }
-        throw Errors.eval.get + key;
-        // return // unknown key
-    }
-    has(key) { return KEYS.includes(key) || this.map.has(key); }
-    initialize(key, value) {
-        if (this.has(key))
+    setValue(key, value) {
+        const property = this.property(key);
+        if (!property)
+            throw Errors.property + key;
+        const { type } = property;
+        const coerced = type.coerce(value);
+        if (typeof coerced === 'undefined') {
+            console.error(this.constructor.name, "setValue", key, value);
             return false;
-        this.set(key, value);
+        }
+        this[key] = coerced;
         return true;
     }
-    get inputSize() {
-        return {
-            width: Number(this.get("mm_input_width")),
-            height: Number(this.get("mm_input_height"))
-        };
-    }
-    get keys() { return [...new Set([...this.map.keys(), ...KEYS])]; }
-    mm_cmp(a, b, x, y) {
-        return ((a > b) ? x : y);
-    }
-    get mm_dimensions() { return `${this.mm_width}x${this.mm_height}`; }
-    get mm_duration() { return this.duration; }
-    get mm_fps() { return this.timeRange.fps; }
-    get mm_height() { return this.size.height; }
-    mm_horz(size, proud) {
-        return this.sized(0, size, proud);
-    }
-    get mm_t() { return this.position; }
-    mm_vert(size, proud) {
-        return this.sized(1, size, proud);
-    }
-    get mm_width() { return this.size.width; }
-    get position() { return this.timeRange.position; }
-    replaceKeys(value) {
-        let expression = value;
-        const expressions = Object.fromEntries(this.keys.map(key => ([
-            key, new RegExp(`\\b${key}\\b`, 'g')
-        ])));
-        Object.entries(expressions).forEach(([key, regExp]) => {
-            expression = expression.replaceAll(regExp, `${$evaluator}.get("${key}")`);
-        });
-        return expression;
-    }
-    set(key, value) { this.map.set(key, value); }
-    setInputSize({ width, height }) {
-        this.set("in_h", height);
-        this.set("mm_input_height", height);
-        this.set("in_w", width);
-        this.set("mm_input_width", width);
-    }
-    sized(vertical, size, proud) {
-        const scale = Is.float(size) ? Number(size) : parseFloat(String(size));
-        if (Is.nan(scale))
-            throw Errors.eval.number + 'scale';
-        const sizedKey = KEYS_SIZED[vertical];
-        const sizedValue = this.get(sizedKey);
-        const value = parseFloat(String(sizedValue));
-        if (Is.nan(value))
-            throw Errors.eval.number + `value ${sizedKey}=>${sizedValue}`;
-        const scaled = value * scale;
-        if (!proud)
-            return scaled;
-        const otherSizedKey = KEYS_SIZED[Math.abs(vertical - 1)];
-        const otherValue = this.get(otherSizedKey);
-        if (typeof otherValue === "undefined")
-            throw Errors.internal + 'otherValue';
-        const other = parseFloat(String(otherValue));
-        if (Is.nan(other))
-            throw Errors.eval.number + 'other';
-        if (other <= value)
-            return scaled;
-        return value + (scale - 1.0) * other;
-    }
-    get t() { return this.mm_duration; }
-}
-
-const Id = () => {
-    return `${Date.now().toString(36)}${Math.random().toString(36).substr(2)}`;
-};
-
-const roundMethod = (rounding = '') => {
-    switch (rounding) {
-        case 'ceil': return Math.ceil;
-        case 'floor': return Math.floor;
-        default: return Math.round;
-    }
-};
-const roundWithMethod = (number, method = '') => {
-    const func = roundMethod(method);
-    return func(number);
-};
-const Round = {
-    method: roundMethod,
-    withMethod: roundWithMethod,
-};
-
-const pixelFromPoint = (pt, width) => pt.y * width + pt.x;
-const pixelToPoint = (index, width) => ({ x: index % width, y: Math.floor(index / width) });
-const pixelToIndex = (pixel) => pixel * 4;
-const pixelRgbaAtIndex = (index, pixels) => ({
-    r: pixels[index],
-    g: pixels[index + 1],
-    b: pixels[index + 2],
-    a: pixels[index + 3],
-});
-const pixelRgba = (pixel, data) => pixelRgbaAtIndex(pixelToIndex(pixel), data);
-const pixelSafe = (pixel, offsetPoint, size) => {
-    const { x, y } = offsetPoint;
-    const { width, height } = size;
-    const pt = pixelToPoint(pixel, width);
-    pt.x = Math.max(0, Math.min(width - 1, pt.x + x));
-    pt.y = Math.max(0, Math.min(height - 1, pt.y + y));
-    return pixelFromPoint(pt, width);
-};
-const pixelNeighboringPixels = (pixel, size) => {
-    const depth = 3; // should be 4, no?
-    const pixels = [];
-    const halfSize = Math.floor(depth / 2);
-    for (let y = 0; y < depth; y += 1) {
-        for (let x = 0; x < depth; x += 1) {
-            const offsetPoint = { x: x - halfSize, y: y - halfSize };
-            pixels.push(pixelSafe(pixel, offsetPoint, size));
-        }
-    }
-    return pixels;
-};
-const pixelNeighboringRgbas = (pixel, data, size) => (pixelNeighboringPixels(pixel, size).map(p => pixelRgba(p, data)));
-const pixelColor = (value) => {
-    const string = String(value);
-    if (string.slice(0, 2) === "0x")
-        return `#${string.slice(2)}`;
-    return string;
-};
-const pixelPerFrame = (frames, width, zoom) => {
-    if (!(frames && width))
-        return 0;
-    const widthFrames = width / frames;
-    const min = Math.min(1, widthFrames);
-    const max = Math.max(1, widthFrames);
-    if (zoom === 1)
-        return max;
-    if (!zoom)
-        return min;
-    return min + ((max - min) * zoom);
-};
-const pixelFromFrame = (frame, perFrame, rounding = 'ceil') => {
-    if (!(frame && perFrame))
-        return 0;
-    const pixels = frame * perFrame;
-    return roundWithMethod(pixels, rounding);
-};
-const pixelToFrame = (pixels, perFrame, rounding = 'round') => {
-    if (!(pixels && perFrame))
-        return 0;
-    return roundWithMethod(pixels / perFrame, rounding);
-};
-const Pixel = {
-    color: pixelColor,
-    fromFrame: pixelFromFrame,
-    neighboringRgbas: pixelNeighboringRgbas,
-    perFrame: pixelPerFrame,
-    rgbaAtIndex: pixelRgbaAtIndex,
-    toFrame: pixelToFrame,
-};
-
-const Seconds = (seconds, fps, duration) => {
-    let time, pad, do_rest, s = '';
-    if (!duration)
-        duration = seconds;
-    time = 60 * 60; // an hour
-    pad = 2;
-    if (duration >= time) {
-        if (seconds >= time) {
-            s += String(Math.floor(seconds / time)).padStart(pad, '0');
-            do_rest = true;
-            seconds = seconds % time;
-        }
-        else
-            s += '00:';
-    }
-    time = 60; // a minute
-    if (do_rest || (duration >= time)) {
-        if (do_rest)
-            s += ':';
-        if (seconds >= time) {
-            s += String(Math.floor(seconds / time)).padStart(pad, '0');
-            do_rest = true;
-            seconds = seconds % time;
-        }
-        else
-            s += '00:';
-    }
-    time = 1; // a second
-    if (do_rest || (duration >= time)) {
-        if (do_rest)
-            s += ':';
-        if (seconds >= time) {
-            s += String(Math.floor(seconds / time)).padStart(pad, '0');
-            do_rest = true;
-            seconds = seconds % time;
-        }
-        else
-            s += '00';
-    }
-    else
-        s += '00';
-    if (fps > 1) {
-        if (fps === 10)
-            pad = 1;
-        s += '.';
-        if (seconds) {
-            if (pad === 1)
-                seconds = Math.floor(seconds * 10) / 10;
-            else
-                seconds = Math.floor(100 * seconds) / 100;
-            seconds = Number(String(seconds).substr(2, 2));
-            s += String(seconds).padStart(pad, '0');
-        }
-        else
-            s += '0'.padStart(pad, '0');
-    }
-    return s;
-};
-
-const byFrame = (a, b) => a.frame - b.frame;
-const byTrack = (a, b) => a.track - b.track;
-const byLabel = (a, b) => {
-    if (a.label < b.label)
-        return -1;
-    if (a.label > b.label)
-        return 1;
-    return 0;
-};
-const Sort = { byFrame, byLabel, byTrack };
-
-const greatestCommonDenominator = (fps1, fps2) => {
-    let a = fps1;
-    let b = fps2;
-    let t = 0;
-    while (b !== 0) {
-        t = b;
-        b = a % b;
-        a = t;
-    }
-    return a;
-};
-const lowestCommonMultiplier = (a, b) => ((a * b) / greatestCommonDenominator(a, b));
-const timeEqualizeRates = (time1, time2, rounding = '') => {
-    if (time1.fps === time2.fps)
-        return [time1, time2];
-    const gcf = lowestCommonMultiplier(time1.fps, time2.fps);
-    return [
-        time1.scale(gcf, rounding),
-        time2.scale(gcf, rounding)
-    ];
-};
-class Time {
-    constructor(frame = 0, fps = 1) {
-        if (!Is.integer(frame) || frame < 0)
-            throw Errors.frame;
-        if (!Is.integer(fps) || fps < 1)
-            throw Errors.fps;
-        this.frame = frame;
-        this.fps = fps;
-    }
-    add(time) {
-        const [time1, time2] = timeEqualizeRates(this, time);
-        return new Time(time1.frame + time2.frame, time1.fps);
-    }
-    addFrame(frames) {
-        const time = this.copy;
-        time.frame += frames;
-        return time;
-    }
-    get copy() { return new Time(this.frame, this.fps); }
-    get description() { return `${this.frame}@${this.fps}`; }
-    divide(number, rounding = '') {
-        if (!Is.number(number))
-            throw Errors.argument + 'divide';
-        return new Time(roundWithMethod(Number(this.frame) / number, rounding), this.fps);
-    }
-    equalsTime(time) {
-        const [time1, time2] = timeEqualizeRates(this, time);
-        return time1.frame === time2.frame;
-    }
-    min(time) {
-        const [time1, time2] = timeEqualizeRates(this, time);
-        return new Time(Math.min(time1.frame, time2.frame), time1.fps);
-    }
-    scale(fps, rounding = '') {
-        if (this.fps === fps)
-            return this;
-        const frame = (Number(this.frame) / Number(this.fps)) * Number(fps);
-        // console.debug(this.constructor.name, "scale", frame, "=", this.frame, "/", this.fps, "*", fps)
-        return new Time(roundWithMethod(frame, rounding), fps);
-    }
-    scaleToFps(fps) { return this.scaleToTime(new Time(0, fps)); }
-    scaleToTime(time) {
-        return timeEqualizeRates(this, time)[0];
-    }
-    get seconds() { return Number(this.frame) / Number(this.fps); }
-    subtract(time) {
-        const [time1, time2] = timeEqualizeRates(this, time);
-        let subtracted = time2.frame;
-        if (subtracted > time1.frame) {
-            subtracted -= subtracted - time1.frame;
-        }
-        return new Time(time1.frame - subtracted, time1.fps);
-    }
-    subtractFrames(frames) {
-        const time = this.copy;
-        time.frame -= frames;
-        return time;
-    }
-    toString() { return `[${this.description}]`; }
-    withFrame(frame) {
-        const time = this.copy;
-        time.frame = frame;
-        return time;
-    }
-    static fromArgs(frame = 0, fps = 1) {
-        return new Time(frame, fps);
-    }
-    static fromSeconds(seconds = 0, fps = 1, rounding = '') {
-        if (!Is.number(seconds) || seconds < 0)
-            throw Errors.seconds;
-        if (!Is.integer(fps) || fps < 1)
-            throw Errors.fps;
-        const rounded = roundWithMethod(seconds * fps, rounding);
-        return this.fromArgs(rounded, fps);
+    value(key) {
+        const value = this[key];
+        if (typeof value === "undefined")
+            throw Errors.property + key;
+        // console.trace(this.constructor.name, "value", key, value)
+        return value;
     }
 }
 
-class TimeRange extends Time {
-    constructor(frame = 0, fps = 1, frames = 1) {
-        if (!(Is.integer(frames) && frames >= 0)) {
-            throw Errors.argument + 'frames';
-        }
-        super(frame, fps);
-        this.frames = frames;
+class InstanceBase extends PropertiedClass {
+    constructor(...args) {
+        super(...args);
+        const [object] = args;
+        if (!Is.populatedObject(object))
+            throw Errors.invalid.object + 'InstanceBase';
+        const { definitionId = '', definition, id, label } = object;
+        const definitionObject = definition || Definitions.fromId(definitionId);
+        if (!definitionObject)
+            throw Errors.invalid.definition.object;
+        this.definition = definitionObject;
+        if (id)
+            this._id = id;
+        if (label && label !== this.definition.label)
+            this._label = label;
     }
-    addFrames(frames) {
-        const time = this.copy;
-        time.frames += frames;
-        return time;
-    }
-    get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
-    get end() { return this.frame + this.frames; }
-    get endTime() { return Time.fromArgs(this.end, this.fps); }
-    equalsTimeRange(timeRange) {
-        const [range1, range2] = timeEqualizeRates(this, timeRange);
-        return range1.frame === range2.frame && range1.frames === range2.frames;
-    }
-    get lengthSeconds() { return Number(this.frames) / Number(this.fps); }
-    get position() { return Number(this.frame) / Number(this.frames); }
-    get startTime() { return Time.fromArgs(this.frame, this.fps); }
     get copy() {
-        return new TimeRange(this.frame, this.fps, this.frames);
+        return this.definition.instanceFromObject(this.toJSON());
     }
-    scale(fps = 1, rounding = "") {
-        if (this.fps === fps)
-            return this.copy;
-        const value = Number(this.frames) / (Number(this.fps) / Number(fps));
-        const time = super.scale(fps, rounding);
-        const frames = Math.max(1, roundWithMethod(value, rounding));
-        return new TimeRange(time.frame, time.fps, frames);
+    get definitionId() { return this.definition.id; }
+    get definitions() { return [this.definition]; }
+    definitionTime(quantize, time) {
+        return time.scaleToFps(quantize); // may have fps higher than quantize and time.fps
     }
-    intersects(timeRange) {
-        const [range1, range2] = timeEqualizeRates(this, timeRange);
-        if (range1.frame >= range2.end)
-            return false;
-        return range1.end > range2.frame;
+    get id() { return this._id ||= idGenerate(); }
+    get label() { return this._label || this.definition.label || this.id; }
+    set label(value) { this._label = value; }
+    get properties() { return this.definition.properties; }
+    property(key) { return this.definition.property(key); }
+    get propertyNames() {
+        return this.properties.map(property => property.name);
     }
-    intersectsTime(time) {
-        const [time1, scaledTime] = timeEqualizeRates(this, time);
-        const scaledRange = time1;
-        return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end;
+    get propertyValues() {
+        return Object.fromEntries(this.properties.map(property => {
+            return [property.name, this.value(property.name)];
+        }));
     }
-    minEndTime(endTime) {
-        const [range, time] = timeEqualizeRates(this, endTime);
-        range.frames = Math.min(range.frames, time.frame);
-        return range;
+    toJSON() {
+        // console.debug(this.constructor.name, "toJSON")
+        const object = {
+            definitionId: this.definitionId,
+            id: this.id,
+            type: this.type,
+            ...this.propertyValues
+        };
+        return object;
     }
-    get times() {
-        const { frames, frame, fps } = this;
-        return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps));
+    get type() { return this.definition.type; }
+}
+
+class DefinitionBase {
+    constructor(...args) {
+        this.properties = [];
+        this.retain = false;
+        const [object] = args;
+        const { id, label, icon } = object;
+        if (!(id && Is.populatedString(id)))
+            throw Errors.invalid.definition.id + JSON.stringify(object);
+        this.id = id;
+        this.label = label || id;
+        if (icon)
+            this.icon = icon;
     }
-    withFrame(frame) {
-        const range = this.copy;
-        range.frame = frame;
-        return range;
+    get instance() {
+        return this.instanceFromObject(this.instanceObject);
     }
-    withFrames(frames) {
-        const range = this.copy;
-        range.frames = frames;
-        return range;
+    instanceFromObject(object) {
+        const instance = new InstanceBase({ ...this.instanceObject, ...object });
+        return instance;
     }
-    static fromArgs(frame = 0, fps = 1, frames = 1) {
-        return new TimeRange(frame, fps, frames);
+    get instanceObject() {
+        const object = {};
+        object.definition = this;
+        this.properties.forEach(property => { object[property.name] = property.value; });
+        return object;
     }
-    static fromSeconds(start = 0, duration = 1) {
-        return this.fromArgs(start, 1, duration);
+    loadDefinition(_quantize, _start, _end) { }
+    definitionUrls(_start, _end) { return []; }
+    get propertiesModular() { return this.properties.filter(property => property.type.modular); }
+    property(name) {
+        return this.properties.find(property => property.name === name);
     }
-    static fromTime(time, frames = 1) {
-        return this.fromArgs(time.frame, time.fps, frames);
+    toJSON() {
+        const object = { id: this.id, type: this.type };
+        if (this.icon)
+            object.icon = this.icon;
+        if (this.label !== this.id)
+            object.label = this.label;
+        return object;
     }
-    static fromTimes(startTime, endTime) {
-        const [time1, time2] = timeEqualizeRates(startTime, endTime);
-        if (time2.frame <= time1.frame)
-            throw Errors.argument;
-        const frames = time2.frame - time1.frame;
-        return this.fromArgs(time1.frame, time1.fps, frames);
+    unload(_times = []) { }
+    value(name) {
+        const property = this.property(name);
+        if (!property)
+            return;
+        return property.value;
     }
 }
 
-class TrackRange {
-    constructor(first = 0, last = -1, type) {
-        this.last = -1;
-        this.first = 0;
-        this.first = first;
-        this.last = last;
-        this.type = type;
-    }
-    get count() { return 1 + this.last - this.first; }
-    get relative() { return this.last < 0; }
-    equals(trackRange) {
-        return this.last === trackRange.last && this.first === trackRange.first;
-    }
-    get tracks() {
-        if (this.last < 0)
-            return [];
-        return Array(this.last - this.first + 1).fill(0).map((_, idx) => this.first + idx);
-    }
-    toString() { return `[${this.type || 'av'}-${this.first}-${this.last}]`; }
-    withEnd(last) {
-        return TrackRange.fromArgs(this.first, last, this.type);
-    }
-    withMax(max) { return this.withEnd(max + this.last); }
-    static ofType(type, last = -1, first = 0) {
-        return this.fromArgs(first, last, type);
-    }
-    static fromArgs(first = 0, last = -1, type) {
-        return new TrackRange(first, last, type);
-    }
-}
-
-const urlAbsolute = (url) => (new URL(url, document.baseURI)).href;
-const Url = { absolute: urlAbsolute };
-
-class Action {
-    constructor(object) {
-        this.done = false;
-        const { actions, mash, redoSelectedClips, redoSelectedEffects, type, undoSelectedClips, undoSelectedEffects, } = object;
-        this.actions = actions;
-        this.type = type;
-        this.mash = mash;
-        this.undoSelectedClips = undoSelectedClips;
-        this.redoSelectedClips = redoSelectedClips;
-        this.undoSelectedEffects = undoSelectedEffects;
-        this.redoSelectedEffects = redoSelectedEffects;
-    }
-    get selectedClips() {
-        if (this.done)
-            return this.redoSelectedClips;
-        return this.undoSelectedClips;
-    }
-    get selectedEffects() {
-        if (this.done)
-            return this.redoSelectedEffects;
-        return this.undoSelectedEffects;
-    }
-    redo() {
-        this.redoAction();
-        this.done = true;
-    }
-    redoAction() {
-        throw Errors.internal + 'redoAction';
-    }
-    undo() {
-        this.undoAction();
-        this.done = false;
-    }
-    undoAction() {
-        throw Errors.internal + 'undoAction';
-    }
-}
-
-class AddTrackAction extends Action {
-    constructor(object) {
-        super(object);
-        const { trackType } = object;
-        this.trackType = trackType;
-    }
-    redoAction() { this.mash.addTrack(this.trackType); }
-    undoAction() { this.mash.removeTrack(this.trackType); }
-}
-
-class ChangeAction extends Action {
-    constructor(object) {
-        super(object);
-        const { property, redoValue, target, undoValue } = object;
-        this.property = property;
-        this.redoValue = redoValue;
-        this.target = target;
-        this.undoValue = undoValue;
-    }
-    get redoValueNumeric() { return Number(this.redoValue); }
-    get undoValueNumeric() { return Number(this.undoValue); }
-    redoAction() {
-        this.target.setValue(this.property, this.redoValue);
-    }
-    undoAction() {
-        this.target.setValue(this.property, this.undoValue);
-    }
-    updateAction(value) {
-        this.redoValue = value;
-        this.redo();
-    }
-}
-
-class FreezeAction extends Action {
-    constructor(object) {
-        super(object);
-        const { frames, freezeClip, frozenClip, index, insertClip, trackClips } = object;
-        this.frames = frames;
-        this.freezeClip = freezeClip;
-        this.frozenClip = frozenClip;
-        this.index = index;
-        this.insertClip = insertClip;
-        this.trackClips = trackClips;
-    }
-    redoAction() {
-        this.trackClips.splice(this.index, 0, this.insertClip, this.frozenClip);
-        this.freezeClip.frames -= this.frames;
-    }
-    undoAction() {
-        this.freezeClip.frames += this.frames;
-        this.trackClips.splice(this.index, 2);
-    }
-}
-
-class ChangeFramesAction extends ChangeAction {
-    constructor(object) {
-        super(object);
-        this.clip = this.target;
-    }
-    redoAction() {
-        this.mash.changeClipFrames(this.clip, this.redoValueNumeric);
-    }
-    undoAction() {
-        this.mash.changeClipFrames(this.clip, this.undoValueNumeric);
-    }
-}
-
-class ChangeTrimAction extends ChangeAction {
-    constructor(object) {
-        super(object);
-        const { frames, target } = object;
-        this.frames = frames;
-        this.audibleClip = target;
-    }
-    redoAction() {
-        this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValueNumeric, this.frames);
-    }
-    undoAction() {
-        this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames);
-    }
-}
-
-class AddEffectAction extends Action {
-    constructor(object) {
-        super(object);
-        const { effect, effects, index } = object;
-        this.effect = effect;
-        this.effects = effects;
-        this.index = index;
-    }
-    redoAction() { this.effects.splice(this.index, 0, this.effect); }
-    undoAction() { this.effects.splice(this.index, 1); }
-}
-
-class AddClipToTrackAction extends AddTrackAction {
-    constructor(object) {
-        super(object);
-        const { clip, createTracks, insertIndex, trackIndex } = object;
-        this.clip = clip;
-        this.createTracks = createTracks;
-        this.insertIndex = insertIndex;
-        this.trackIndex = trackIndex;
-    }
-    get clips() { return this.track.clips; }
-    get track() { return this.mash[this.trackType][this.trackIndex]; }
-    redoAction() {
-        for (let i = 0; i < this.createTracks; i += 1) {
-            super.redoAction();
-        }
-        this.mash.addClipsToTrack([this.clip], this.trackIndex, this.insertIndex);
-    }
-    undoAction() {
-        this.mash.removeClipsFromTrack([this.clip]);
-        for (let i = 0; i < this.createTracks; i += 1) {
-            super.undoAction();
-        }
-    }
-}
-
-class MoveClipsAction extends Action {
-    constructor(object) {
-        super(object);
-        const { clips, insertIndex, redoFrames, trackIndex, undoFrames, undoInsertIndex, undoTrackIndex } = object;
-        this.clips = clips;
-        this.insertIndex = insertIndex;
-        this.redoFrames = redoFrames;
-        this.trackIndex = trackIndex;
-        this.undoFrames = undoFrames;
-        this.undoInsertIndex = undoInsertIndex;
-        this.undoTrackIndex = undoTrackIndex;
-    }
-    addClips(trackIndex, insertIndex, frames) {
-        this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames);
-    }
-    redoAction() {
-        this.addClips(this.trackIndex, this.insertIndex, this.redoFrames);
-    }
-    undoAction() {
-        this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames);
-    }
-}
-
-class RemoveClipsAction extends Action {
-    constructor(object) {
-        super(object);
-        const { clips, index, track } = object;
-        this.clips = clips;
-        this.index = index;
-        this.track = track;
-    }
-    get trackIndex() { return this.track.index; }
-    redoAction() {
-        this.mash.removeClipsFromTrack(this.clips);
-    }
-    undoAction() {
-        this.mash.addClipsToTrack(this.clips, this.trackIndex, this.index);
-    }
-}
-
-class SplitAction extends Action {
-    constructor(object) {
-        super(object);
-        const { index, insertClip, redoFrames, splitClip, trackClips, undoFrames } = object;
-        this.index = index;
-        this.insertClip = insertClip;
-        this.redoFrames = redoFrames;
-        this.splitClip = splitClip;
-        this.trackClips = trackClips;
-        this.undoFrames = undoFrames;
-    }
-    redoAction() {
-        this.trackClips.splice(this.index, 0, this.insertClip);
-        this.splitClip.frames = this.redoFrames;
-    }
-    undoAction() {
-        this.splitClip.frames = this.undoFrames;
-        this.trackClips.splice(this.index, 1);
-    }
-}
-
-class MoveEffectsAction extends Action {
-    constructor(object) {
-        super(object);
-        const { effects, redoEffects, undoEffects } = object;
-        this.effects = effects;
-        this.redoEffects = redoEffects;
-        this.undoEffects = undoEffects;
-    }
-    redoAction() {
-        this.effects.splice(0, this.effects.length, ...this.redoEffects);
-    }
-    undoAction() {
-        this.effects.splice(0, this.effects.length, ...this.undoEffects);
-    }
-}
-
-class Actions {
-    constructor(object) {
-        this.index = -1;
-        this.instances = [];
-        const { mash } = object;
-        this.mash = mash;
-    }
-    get canRedo() { return this.index < this.instances.length - 1; }
-    get canSave() { return this.canUndo; }
-    get canUndo() { return this.index > -1; }
-    get currentAction() { return this.instances[this.index]; }
-    get currentActionLast() { return this.canUndo && !this.canRedo; }
-    destroy() {
-        this.index = -1;
-        this.instances.splice(0, this.instances.length);
-    }
-    add(action) {
-        const remove = this.instances.length - (this.index + 1);
-        if (Is.positive(remove))
-            this.instances.splice(this.index + 1, remove);
-        this.instances.push(action);
-    }
-    redo() {
-        this.index += 1;
-        const action = this.currentAction;
-        action.redo();
-        return action;
-    }
-    save() {
-        this.instances.splice(0, this.index + 1);
-        this.index = -1;
-    }
-    undo() {
-        const action = this.currentAction;
-        this.index -= 1;
-        action.undo();
-        return action;
-    }
-}
-
-class Job {
-    constructor() {
-        this.inputs = [];
-        this.outputs = [];
-    }
-}
+const Factories = {};
 
 const AudibleSampleRate = 44100;
 const AudibleChannels = 2;
+// singleton owned by Cache
 class AudibleContext {
+    constructor() {
+        this.sourcesByClipId = new Map();
+    }
+    addSource(id, source) {
+        // console.log("addSource", id)
+        this.sourcesByClipId.set(id, source);
+    }
     get context() {
-        if (!this.__context) {
+        if (!this._context) {
             const Klass = AudioContext || window.webkitAudioContext;
             if (!Klass)
                 throw Errors.audibleContext;
-            this.__context = new Klass();
+            this._context = new Klass();
         }
-        return this.__context;
+        return this._context;
     }
     createBuffer(seconds) {
         const length = AudibleSampleRate * seconds;
@@ -1632,9 +881,30 @@ class AudibleContext {
     decode(buffer) {
         return new Promise((resolve, reject) => (this.context.decodeAudioData(buffer, audioData => resolve(audioData), error => reject(error))));
     }
+    deleteSource(id) {
+        // console.log("deleteSource", id)
+        const source = this.getSource(id);
+        if (!source)
+            return;
+        this.sourcesByClipId.delete(id);
+        const { gainSource, gainNode } = source;
+        gainNode.disconnect(this.destination);
+        gainSource.disconnect(gainNode);
+        gainSource.stop();
+    }
     get destination() { return this.context.destination; }
-    emit(type) { this.context.dispatchEvent(new CustomEvent(type)); }
-    get time() { return Time.fromSeconds(this.currentTime); }
+    getSource(id) {
+        return this.sourcesByClipId.get(id);
+    }
+    hasSource(id) { return this.sourcesByClipId.has(id); }
+    startAt(clipId, source, start, duration, offset, loops = false) {
+        const gainNode = this.createGain();
+        source.loop = loops;
+        source.connect(gainNode);
+        gainNode.connect(this.destination);
+        source.start(this.currentTime + start, offset, duration);
+        this.addSource(clipId, { gainSource: source, gainNode });
+    }
 }
 
 const $canvas = 'canvas';
@@ -1819,7 +1089,7 @@ class VisibleContext {
 
 const ContextTypes = ["audible", "visible"];
 const ContextType = Object.fromEntries(ContextTypes.map(type => [type, type]));
-class ContextFactory {
+class ContextFactoryImplementation {
     audible() { return new AudibleContext(); }
     fromCanvas(canvas) {
         const context = this.visible();
@@ -1838,15 +1108,1109 @@ class ContextFactory {
     get types() { return ContextTypes; }
     visible() { return new VisibleContext(); }
 }
-const ContextFactoryInstance = new ContextFactory();
+const ContextFactory = new ContextFactoryImplementation();
+
+const sortByFrame = (a, b) => a.frame - b.frame;
+const sortByLayer = (a, b) => a.layer - b.layer;
+const sortByTrack = (a, b) => a.track - b.track;
+const sortByLabel = (a, b) => {
+    if (a.label < b.label)
+        return -1;
+    if (a.label > b.label)
+        return 1;
+    return 0;
+};
+const Sort = {
+    byFrame: sortByFrame, byLabel: sortByLabel, byTrack: sortByTrack, byLayer: sortByLayer
+};
+
+class TrackClass extends PropertiedClass {
+    constructor(...args) {
+        super(...args);
+        this.clips = [];
+        this.dense = false;
+        this.layer = 0;
+        this.trackType = exports.TrackType.Video;
+        const [object] = args;
+        const { id, clips, layer, trackType, dense } = object;
+        if (id)
+            this._id = id;
+        if (layer)
+            this.layer = layer;
+        if (trackType)
+            this.trackType = trackType;
+        if (clips)
+            this.clips.push(...clips.map(clip => {
+                const { definitionId } = clip;
+                if (!definitionId)
+                    throw Errors.id + JSON.stringify(clip);
+                const definition = Definitions.fromId(definitionId);
+                const clipWithTrack = { track: this.layer, ...clip };
+                return definition.instanceFromObject(clipWithTrack);
+            }));
+        if (typeof dense === 'undefined') {
+            this.dense = !this.layer && this.trackType === exports.TrackType.Video;
+            // console.log(this.constructor.name, "dense", this.dense, "=", !this.layer, "&&", this.trackType === TrackType.Video)
+        }
+        else {
+            this.dense = !!dense;
+            // console.log(this.constructor.name, "dense", this.dense, "=", dense)
+        }
+        this.properties.push(new Property({ name: "dense", type: exports.DataType.Boolean, value: false }));
+    }
+    addClips(clips, insertIndex = 0) {
+        // console.log("addClips", clips.length, insertIndex, this.layer)
+        let clipIndex = insertIndex || 0;
+        if (!this.dense)
+            clipIndex = 0; // ordered by clip.frame values
+        const origIndex = clipIndex; // note original, since it may decrease...
+        const movingClips = []; // build array of clips already in this.clips
+        // build array of my clips excluding the clips we're inserting
+        const spliceClips = this.clips.filter((clip, index) => {
+            const moving = clips.includes(clip);
+            if (moving)
+                movingClips.push(clip);
+            // insert index should be decreased when clip is moving and comes before
+            if (origIndex && moving && index < origIndex)
+                clipIndex -= 1;
+            return !moving;
+        });
+        // insert the clips we're adding at the correct index, then sort properly
+        spliceClips.splice(clipIndex, 0, ...clips);
+        this.sortClips(spliceClips);
+        // set the track of clips we aren't moving
+        const newClips = clips.filter(clip => !movingClips.includes(clip));
+        newClips.forEach(clip => {
+            // console.log(this.constructor.name, "addClips", this.layer)
+            clip.track = this.layer;
+        });
+        // remove all my current clips and replace with new ones in one step
+        this.clips.splice(0, this.clips.length, ...spliceClips);
+    }
+    frameForClipsNearFrame(clips, frame = 0) {
+        if (this.dense)
+            return frame;
+        const others = this.clips.filter(clip => !clips.includes(clip) && clip.endFrame > frame);
+        if (!others.length)
+            return frame;
+        const startFrame = Math.min(...clips.map(clip => clip.frame));
+        const endFrame = Math.max(...clips.map(clip => clip.endFrame));
+        const frames = endFrame - startFrame;
+        let lastFrame = frame;
+        others.find(clip => {
+            if (clip.frame >= lastFrame + frames)
+                return true;
+            lastFrame = clip.endFrame;
+        });
+        return lastFrame;
+    }
+    get frames() {
+        if (!this.clips.length)
+            return 0;
+        const clip = this.clips[this.clips.length - 1];
+        return clip.frame + clip.frames;
+    }
+    get id() { return this._id ||= idGenerate(); }
+    removeClips(clips) {
+        const spliceClips = this.clips.filter(clip => !clips.includes(clip));
+        if (spliceClips.length === this.clips.length) {
+            // console.trace("removeClips", this.trackType, this.layer, this.clips)
+            throw Errors.internal + 'removeClips';
+        }
+        clips.forEach(clip => { clip.track = -1; });
+        this.sortClips(spliceClips);
+        this.clips.splice(0, this.clips.length, ...spliceClips);
+    }
+    sortClips(clips) {
+        if (this.dense) {
+            let frame = 0;
+            clips.forEach((clip, i) => {
+                const isTransition = clip.type === exports.DefinitionType.Transition;
+                if (i && isTransition)
+                    frame -= clip.frames;
+                clip.frame = frame;
+                if (!isTransition)
+                    frame += clip.frames;
+            });
+        }
+        clips.sort(sortByFrame);
+    }
+    toJSON() {
+        return {
+            id: this.id,
+            dense: this.dense,
+            trackType: this.trackType,
+            layer: this.layer,
+            clips: this.clips,
+        };
+    }
+}
+
+const trackInstance = (object) => {
+    return new TrackClass(object);
+};
+const TrackFactory = {
+    instance: trackInstance,
+};
+
+class Factory {
+    static get [exports.DefinitionType.Audio]() {
+        const factory = Factories[exports.DefinitionType.Audio];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Audio;
+        return factory;
+    }
+    static get context() { return ContextFactory; }
+    static get [exports.DefinitionType.Effect]() {
+        const factory = Factories[exports.DefinitionType.Effect];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Effect;
+        return factory;
+    }
+    static get [exports.DefinitionType.Filter]() {
+        const factory = Factories[exports.DefinitionType.Filter];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Filter;
+        return factory;
+    }
+    static get [exports.DefinitionType.Font]() {
+        const factory = Factories[exports.DefinitionType.Font];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Font;
+        return factory;
+    }
+    static get [exports.DefinitionType.Image]() {
+        const factory = Factories[exports.DefinitionType.Image];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Image;
+        return factory;
+    }
+    static get [exports.DefinitionType.Merger]() {
+        const factory = Factories[exports.DefinitionType.Merger];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Merger;
+        return factory;
+    }
+    static get [exports.DefinitionType.Scaler]() {
+        const factory = Factories[exports.DefinitionType.Scaler];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Scaler;
+        return factory;
+    }
+    static get [exports.DefinitionType.Theme]() {
+        const factory = Factories[exports.DefinitionType.Theme];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Theme;
+        return factory;
+    }
+    static get [exports.DefinitionType.Transition]() {
+        const factory = Factories[exports.DefinitionType.Transition];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Transition;
+        return factory;
+    }
+    static get track() { return TrackFactory; }
+    static get [exports.DefinitionType.Video]() {
+        const factory = Factories[exports.DefinitionType.Video];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.Video;
+        return factory;
+    }
+    static get [exports.DefinitionType.VideoSequence]() {
+        const factory = Factories[exports.DefinitionType.VideoSequence];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.VideoSequence;
+        return factory;
+    }
+    static get [exports.DefinitionType.VideoStream]() {
+        const factory = Factories[exports.DefinitionType.VideoStream];
+        if (!factory)
+            throw Errors.invalid.factory + exports.DefinitionType.VideoStream;
+        return factory;
+    }
+    constructor() { }
+}
+
+class Action {
+    constructor(object) {
+        this.done = false;
+        const { actions, mash, redoSelection, type, undoSelection } = object;
+        this.actions = actions;
+        this.mash = mash;
+        this.redoSelection = redoSelection;
+        this.type = type;
+        this.undoSelection = undoSelection;
+    }
+    redo() {
+        this.redoAction();
+        this.done = true;
+    }
+    redoAction() { throw Errors.unimplemented; }
+    get selection() {
+        if (this.done)
+            return this.redoSelection;
+        return this.undoSelection;
+    }
+    undo() {
+        this.undoAction();
+        this.done = false;
+    }
+    undoAction() { throw Errors.unimplemented; }
+}
+
+const Capitalize = (value) => {
+    if (!isPopulatedString(value))
+        return value;
+    return `${value[0].toUpperCase()}${value.substr(1)}`;
+};
+
+class AddTrackAction extends Action {
+    constructor(object) {
+        super(object);
+        const { trackType } = object;
+        this.trackType = trackType;
+    }
+    redoAction() { this.mash.addTrack(this.trackType); }
+    undoAction() { this.mash.removeTrack(this.trackType); }
+}
+
+class AddClipToTrackAction extends AddTrackAction {
+    constructor(object) {
+        super(object);
+        const { clip, createTracks, insertIndex, trackIndex } = object;
+        this.clip = clip;
+        this.createTracks = createTracks;
+        this.insertIndex = insertIndex;
+        this.trackIndex = trackIndex;
+    }
+    get clips() { return this.track.clips; }
+    get track() { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex); }
+    redoAction() {
+        for (let i = 0; i < this.createTracks; i += 1) {
+            super.redoAction();
+        }
+        this.mash.addClipsToTrack([this.clip], this.trackIndex, this.insertIndex);
+    }
+    undoAction() {
+        this.mash.removeClipsFromTrack([this.clip]);
+        for (let i = 0; i < this.createTracks; i += 1) {
+            super.undoAction();
+        }
+    }
+}
+
+class MoveClipsAction extends Action {
+    constructor(object) {
+        super(object);
+        const { clips, insertIndex, redoFrames, trackIndex, undoFrames, undoInsertIndex, undoTrackIndex } = object;
+        this.clips = clips;
+        this.insertIndex = insertIndex;
+        this.redoFrames = redoFrames;
+        this.trackIndex = trackIndex;
+        this.undoFrames = undoFrames;
+        this.undoInsertIndex = undoInsertIndex;
+        this.undoTrackIndex = undoTrackIndex;
+    }
+    addClips(trackIndex, insertIndex, frames) {
+        this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames);
+    }
+    redoAction() {
+        this.addClips(this.trackIndex, this.insertIndex, this.redoFrames);
+    }
+    undoAction() {
+        this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames);
+    }
+}
+
+class AddEffectAction extends Action {
+    constructor(object) {
+        super(object);
+        const { effect, effects, index } = object;
+        this.effect = effect;
+        this.effects = effects;
+        this.index = index;
+    }
+    redoAction() { this.effects.splice(this.index, 0, this.effect); }
+    undoAction() { this.effects.splice(this.index, 1); }
+}
+
+class ChangeAction extends Action {
+    constructor(object) {
+        super(object);
+        const { property, redoValue, target, undoValue } = object;
+        this.property = property;
+        this.redoValue = redoValue;
+        this.target = target;
+        this.undoValue = undoValue;
+    }
+    get redoValueNumeric() { return Number(this.redoValue); }
+    get undoValueNumeric() { return Number(this.undoValue); }
+    redoAction() {
+        this.target.setValue(this.property, this.redoValue);
+    }
+    undoAction() {
+        this.target.setValue(this.property, this.undoValue);
+    }
+    updateAction(value) {
+        this.redoValue = value;
+        this.redo();
+    }
+}
+
+class ChangeFramesAction extends ChangeAction {
+    constructor(object) {
+        super(object);
+        this.clip = this.target;
+    }
+    redoAction() {
+        this.mash.changeClipFrames(this.clip, this.redoValueNumeric);
+    }
+    undoAction() {
+        this.mash.changeClipFrames(this.clip, this.undoValueNumeric);
+    }
+}
+
+class ChangeTrimAction extends ChangeAction {
+    constructor(object) {
+        super(object);
+        const { frames, target } = object;
+        this.frames = frames;
+        this.audibleClip = target;
+    }
+    redoAction() {
+        this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValueNumeric, this.frames);
+    }
+    undoAction() {
+        this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames);
+    }
+}
+
+class SplitAction extends Action {
+    constructor(object) {
+        super(object);
+        const { index, insertClip, redoFrames, splitClip, trackClips, undoFrames } = object;
+        this.index = index;
+        this.insertClip = insertClip;
+        this.redoFrames = redoFrames;
+        this.splitClip = splitClip;
+        this.trackClips = trackClips;
+        this.undoFrames = undoFrames;
+    }
+    redoAction() {
+        this.trackClips.splice(this.index, 0, this.insertClip);
+        this.splitClip.frames = this.redoFrames;
+    }
+    undoAction() {
+        this.splitClip.frames = this.undoFrames;
+        this.trackClips.splice(this.index, 1);
+    }
+}
+
+class FreezeAction extends Action {
+    constructor(object) {
+        super(object);
+        const { frames, freezeClip, frozenClip, index, insertClip, trackClips } = object;
+        this.frames = frames;
+        this.freezeClip = freezeClip;
+        this.frozenClip = frozenClip;
+        this.index = index;
+        this.insertClip = insertClip;
+        this.trackClips = trackClips;
+    }
+    redoAction() {
+        this.trackClips.splice(this.index, 0, this.insertClip, this.frozenClip);
+        this.freezeClip.frames -= this.frames;
+    }
+    undoAction() {
+        this.freezeClip.frames += this.frames;
+        this.trackClips.splice(this.index, 2);
+    }
+}
+
+class MoveEffectsAction extends Action {
+    constructor(object) {
+        super(object);
+        const { effects, redoEffects, undoEffects } = object;
+        this.effects = effects;
+        this.redoEffects = redoEffects;
+        this.undoEffects = undoEffects;
+    }
+    redoAction() {
+        this.effects.splice(0, this.effects.length, ...this.redoEffects);
+    }
+    undoAction() {
+        this.effects.splice(0, this.effects.length, ...this.undoEffects);
+    }
+}
+
+class RemoveClipsAction extends Action {
+    constructor(object) {
+        super(object);
+        const { clips, index, track } = object;
+        this.clips = clips;
+        this.index = index;
+        this.track = track;
+    }
+    get trackIndex() { return this.track.layer; }
+    redoAction() {
+        this.mash.removeClipsFromTrack(this.clips);
+    }
+    undoAction() {
+        this.mash.addClipsToTrack(this.clips, this.trackIndex, this.index);
+    }
+}
+
+const classes$1 = {
+    AddTrack: AddTrackAction,
+    AddClipsToTrack: AddClipToTrackAction,
+    MoveClips: MoveClipsAction,
+    AddEffect: AddEffectAction,
+    Change: ChangeAction,
+    ChangeFrames: ChangeFramesAction,
+    ChangeTrim: ChangeTrimAction,
+    Split: SplitAction,
+    Freeze: FreezeAction,
+    MoveEffects: MoveEffectsAction,
+    RemoveClips: RemoveClipsAction,
+};
+class ActionFactoryClass {
+    createFromObject(object) {
+        const { type } = object;
+        if (typeof type !== "string")
+            throw Errors.type + JSON.stringify(object);
+        return new classes$1[Capitalize(type)](object);
+    }
+}
+const ActionFactory = new ActionFactoryClass();
+
+const ElementScrollProps = [
+    'scrollPaddingleft',
+    'scrollPaddingRight',
+    'scrollPaddingTop',
+    'scrollPaddingBottom',
+];
+const elementScrollMetrics = (element) => {
+    if (!element)
+        return;
+    const style = getComputedStyle(element);
+    const entries = ElementScrollProps.map(key => {
+        const value = style.getPropertyValue(key) || '0px';
+        const number = Number(value.slice(0, -2));
+        return [key, isNaN(number) ? 0 : number];
+    });
+    const { scrollLeft, scrollTop } = element;
+    const { x, y, width, height } = element.getBoundingClientRect();
+    entries.push(['scrollLeft', scrollLeft]);
+    entries.push(['scrollTop', scrollTop]);
+    entries.push(['x', x]);
+    entries.push(['y', y]);
+    entries.push(['width', width]);
+    entries.push(['height', height]);
+    return Object.fromEntries(entries);
+};
+const Element = {
+    scrollMetrics: elementScrollMetrics,
+};
+
+class Emitter extends EventTarget {
+    emit(type) { this.dispatchEvent(new CustomEvent(type)); }
+}
+
+const KEYS_SIZED = ['mm_width', 'mm_height'];
+const KEYS_GETTERS = [
+    "mm_dimensions",
+    "mm_duration",
+    "mm_fps",
+    "mm_height",
+    "mm_t",
+    "mm_width",
+    "t",
+];
+const KEYS = [
+    "ceil",
+    "floor",
+    "mm_cmp",
+    "mm_horz",
+    "mm_max",
+    "mm_min",
+    "mm_vert",
+    ...KEYS_GETTERS,
+    ...KEYS_SIZED
+];
+const $evaluator = "evaluator";
+const arrayFromElements = (elements) => {
+    if (typeof elements === "string")
+        return String(elements).split(',');
+    return elements;
+};
+const conditionalExpression = (conditional) => {
+    const { condition } = conditional;
+    // not strict equality, since we may have strings and numbers
+    if (Is.defined(conditional.is))
+        return `${condition}==${conditional.is}`;
+    const elements = conditional.in;
+    if (Is.undefined(elements))
+        return String(condition);
+    // support supplying values as array or comma-delimited string
+    const array = arrayFromElements(elements);
+    const strings = Is.string(array[0]);
+    const values = array.map(element => (strings ? `"${element}"` : element));
+    const type = strings ? 'String' : 'Number';
+    const expression = `([${values.join(',')}].includes(${type}(${condition})))`;
+    return expression;
+};
+const replaceOperators = (string) => (string.replaceAll(' or ', ' || ').replaceAll(' and ', ' && '));
+class Evaluator {
+    constructor(timeRange, size, context, mergeContext) {
+        this.ceil = Math.ceil;
+        this.floor = Math.floor;
+        this.map = new Map();
+        this.mm_max = Math.max;
+        this.mm_min = Math.min;
+        this.timeRange = timeRange;
+        this.context = context;
+        this.mergeContext = mergeContext;
+        this.size = size;
+        this.setInputSize(this.size);
+    }
+    conditionalValue(conditionals) {
+        // console.log(this.constructor.name, "conditionalValue", conditionals)
+        const trueConditional = conditionals.find((conditional) => {
+            const expression = replaceOperators(conditionalExpression(conditional));
+            const result = this.evaluateExpression(expression);
+            // console.log(this.constructor.name, "conditionalValue", expression, "=", result)
+            return result;
+        });
+        if (typeof trueConditional === "undefined")
+            throw Errors.eval.conditionTruth;
+        const { value } = trueConditional;
+        if (typeof value === "undefined")
+            throw Errors.eval.conditionValue;
+        // console.log(this.constructor.name, "conditionalValue", value.constructor.name, value)
+        return value;
+    }
+    get duration() { return this.timeRange.lengthSeconds; }
+    evaluate(value) {
+        // console.log(this.constructor.name, "evaluate", value)
+        if (typeof value === "number")
+            return value;
+        const expression = (typeof value === "string") ? String(value) : this.conditionalValue(value);
+        if (typeof expression === "number")
+            return expression;
+        const result = this.evaluateExpression(expression);
+        // console.log(this.constructor.name, "evaluate", expression, "=", result)
+        return result;
+    }
+    evaluateExpression(expression) {
+        const script = `return ${this.replaceKeys(expression)}`;
+        try {
+            // eslint-disable-next-line no-new-func
+            const method = new Function($evaluator, script);
+            const result = method(this);
+            // console.log(this.constructor.name, "evaluateExpression", expression, result)
+            return result;
+        }
+        catch (exception) {
+            //console.warn(`Evaluator.evaluateExpression`, exception, expression, this.map)
+            return expression;
+        }
+    }
+    get(key) {
+        if (this.map.has(key)) {
+            // console.log("Evaluator.get returning value from map", key, this.map.get(key))
+            return this.map.get(key);
+        }
+        if (!KEYS.includes(key))
+            throw Errors.eval.get + key;
+        const value = this[key];
+        if (KEYS_GETTERS.includes(key))
+            return value;
+        if (typeof value === "function") {
+            // console.log("Evaluator.get returning method", key)
+            return value.bind(this);
+        }
+        throw Errors.eval.get + key;
+        // return // unknown key
+    }
+    has(key) { return KEYS.includes(key) || this.map.has(key); }
+    initialize(key, value) {
+        if (this.has(key))
+            return false;
+        this.set(key, value);
+        return true;
+    }
+    get inputSize() {
+        return {
+            width: Number(this.get("mm_input_width")),
+            height: Number(this.get("mm_input_height"))
+        };
+    }
+    get keys() { return [...new Set([...this.map.keys(), ...KEYS])]; }
+    mm_cmp(a, b, x, y) {
+        return ((a > b) ? x : y);
+    }
+    get mm_dimensions() { return `${this.mm_width}x${this.mm_height}`; }
+    get mm_duration() { return this.duration; }
+    get mm_fps() { return this.timeRange.fps; }
+    get mm_height() { return this.size.height; }
+    mm_horz(size, proud) {
+        return this.sized(0, size, proud);
+    }
+    get mm_t() { return this.position; }
+    mm_vert(size, proud) {
+        return this.sized(1, size, proud);
+    }
+    get mm_width() { return this.size.width; }
+    get position() { return this.timeRange.position; }
+    replaceKeys(value) {
+        let expression = value;
+        const expressions = Object.fromEntries(this.keys.map(key => ([
+            key, new RegExp(`\\b${key}\\b`, 'g')
+        ])));
+        Object.entries(expressions).forEach(([key, regExp]) => {
+            expression = expression.replaceAll(regExp, `${$evaluator}.get("${key}")`);
+        });
+        return expression;
+    }
+    set(key, value) { this.map.set(key, value); }
+    setInputSize({ width, height }) {
+        this.set("in_h", height);
+        this.set("mm_input_height", height);
+        this.set("in_w", width);
+        this.set("mm_input_width", width);
+    }
+    sized(vertical, size, proud) {
+        const scale = Is.float(size) ? Number(size) : parseFloat(String(size));
+        if (Is.nan(scale))
+            throw Errors.eval.number + 'scale';
+        const sizedKey = KEYS_SIZED[vertical];
+        const sizedValue = this.get(sizedKey);
+        const value = parseFloat(String(sizedValue));
+        if (Is.nan(value))
+            throw Errors.eval.number + `value ${sizedKey}=>${sizedValue}`;
+        const scaled = value * scale;
+        if (!proud)
+            return scaled;
+        const otherSizedKey = KEYS_SIZED[Math.abs(vertical - 1)];
+        const otherValue = this.get(otherSizedKey);
+        if (typeof otherValue === "undefined")
+            throw Errors.internal + 'otherValue';
+        const other = parseFloat(String(otherValue));
+        if (Is.nan(other))
+            throw Errors.eval.number + 'other';
+        if (other <= value)
+            return scaled;
+        return value + (scale - 1.0) * other;
+    }
+    get t() { return this.mm_t; }
+}
+
+const roundMethod = (rounding = '') => {
+    switch (rounding) {
+        case 'ceil': return Math.ceil;
+        case 'floor': return Math.floor;
+        default: return Math.round;
+    }
+};
+const roundWithMethod = (number, method = '') => {
+    const func = roundMethod(method);
+    return func(number);
+};
+const Round = {
+    method: roundMethod,
+    withMethod: roundWithMethod,
+};
+
+const pixelFromPoint = (pt, width) => pt.y * width + pt.x;
+const pixelToPoint = (index, width) => ({ x: index % width, y: Math.floor(index / width) });
+const pixelToIndex = (pixel) => pixel * 4;
+const pixelRgbaAtIndex = (index, pixels) => ({
+    r: pixels[index],
+    g: pixels[index + 1],
+    b: pixels[index + 2],
+    a: pixels[index + 3],
+});
+const pixelRgba = (pixel, data) => pixelRgbaAtIndex(pixelToIndex(pixel), data);
+const pixelSafe = (pixel, offsetPoint, size) => {
+    const { x, y } = offsetPoint;
+    const { width, height } = size;
+    const pt = pixelToPoint(pixel, width);
+    pt.x = Math.max(0, Math.min(width - 1, pt.x + x));
+    pt.y = Math.max(0, Math.min(height - 1, pt.y + y));
+    return pixelFromPoint(pt, width);
+};
+const pixelNeighboringPixels = (pixel, size) => {
+    const depth = 3; // should be 4, no?
+    const pixels = [];
+    const halfSize = Math.floor(depth / 2);
+    for (let y = 0; y < depth; y += 1) {
+        for (let x = 0; x < depth; x += 1) {
+            const offsetPoint = { x: x - halfSize, y: y - halfSize };
+            pixels.push(pixelSafe(pixel, offsetPoint, size));
+        }
+    }
+    return pixels;
+};
+const pixelNeighboringRgbas = (pixel, data, size) => (pixelNeighboringPixels(pixel, size).map(p => pixelRgba(p, data)));
+const pixelColor = (value) => {
+    const string = String(value);
+    if (string.slice(0, 2) === "0x")
+        return `#${string.slice(2)}`;
+    return string;
+};
+const pixelPerFrame = (frames, width, zoom) => {
+    if (!(frames && width))
+        return 0;
+    const widthFrames = width / frames;
+    const min = Math.min(1, widthFrames);
+    const max = Math.max(1, widthFrames);
+    if (zoom === 1)
+        return max;
+    if (!zoom)
+        return min;
+    return min + ((max - min) * zoom);
+};
+const pixelFromFrame = (frame, perFrame, rounding = 'ceil') => {
+    if (!(frame && perFrame))
+        return 0;
+    const pixels = frame * perFrame;
+    return roundWithMethod(pixels, rounding);
+};
+const pixelToFrame = (pixels, perFrame, rounding = 'round') => {
+    if (!(pixels && perFrame))
+        return 0;
+    return roundWithMethod(pixels / perFrame, rounding);
+};
+const Pixel = {
+    color: pixelColor,
+    fromFrame: pixelFromFrame,
+    neighboringRgbas: pixelNeighboringRgbas,
+    perFrame: pixelPerFrame,
+    rgbaAtIndex: pixelRgbaAtIndex,
+    toFrame: pixelToFrame,
+};
+
+const Seconds = (seconds, fps, duration) => {
+    let time, pad, do_rest, s = '';
+    if (!duration)
+        duration = seconds;
+    time = 60 * 60; // an hour
+    pad = 2;
+    if (duration >= time) {
+        if (seconds >= time) {
+            s += String(Math.floor(seconds / time)).padStart(pad, '0');
+            do_rest = true;
+            seconds = seconds % time;
+        }
+        else
+            s += '00:';
+    }
+    time = 60; // a minute
+    if (do_rest || (duration >= time)) {
+        if (do_rest)
+            s += ':';
+        if (seconds >= time) {
+            s += String(Math.floor(seconds / time)).padStart(pad, '0');
+            do_rest = true;
+            seconds = seconds % time;
+        }
+        else
+            s += '00:';
+    }
+    time = 1; // a second
+    if (do_rest || (duration >= time)) {
+        if (do_rest)
+            s += ':';
+        if (seconds >= time) {
+            s += String(Math.floor(seconds / time)).padStart(pad, '0');
+            do_rest = true;
+            seconds = seconds % time;
+        }
+        else
+            s += '00';
+    }
+    else
+        s += '00';
+    if (fps > 1) {
+        if (fps === 10)
+            pad = 1;
+        s += '.';
+        if (seconds) {
+            if (pad === 1)
+                seconds = Math.floor(seconds * 10) / 10;
+            else
+                seconds = Math.floor(100 * seconds) / 100;
+            seconds = Number(String(seconds).substr(2, 2));
+            s += String(seconds).padStart(pad, '0');
+        }
+        else
+            s += '0'.padStart(pad, '0');
+    }
+    return s;
+};
+
+const greatestCommonDenominator = (fps1, fps2) => {
+    let a = fps1;
+    let b = fps2;
+    let t = 0;
+    while (b !== 0) {
+        t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+};
+const lowestCommonMultiplier = (a, b) => ((a * b) / greatestCommonDenominator(a, b));
+const timeEqualizeRates = (time1, time2, rounding = '') => {
+    if (time1.fps === time2.fps)
+        return [time1, time2];
+    const gcf = lowestCommonMultiplier(time1.fps, time2.fps);
+    return [
+        time1.scale(gcf, rounding),
+        time2.scale(gcf, rounding)
+    ];
+};
+class Time {
+    constructor(frame = 0, fps = 1) {
+        if (!Is.integer(frame) || frame < 0)
+            throw Errors.frame;
+        if (!Is.integer(fps) || fps < 1)
+            throw Errors.fps;
+        this.frame = frame;
+        this.fps = fps;
+    }
+    add(time) {
+        const [time1, time2] = timeEqualizeRates(this, time);
+        return new Time(time1.frame + time2.frame, time1.fps);
+    }
+    addFrame(frames) {
+        const time = this.copy;
+        time.frame += frames;
+        return time;
+    }
+    get copy() { return new Time(this.frame, this.fps); }
+    get description() { return `${this.frame}@${this.fps}`; }
+    divide(number, rounding = '') {
+        if (!Is.number(number))
+            throw Errors.argument + 'divide';
+        return new Time(roundWithMethod(Number(this.frame) / number, rounding), this.fps);
+    }
+    equalsTime(time) {
+        const [time1, time2] = timeEqualizeRates(this, time);
+        return time1.frame === time2.frame;
+    }
+    min(time) {
+        const [time1, time2] = timeEqualizeRates(this, time);
+        return new Time(Math.min(time1.frame, time2.frame), time1.fps);
+    }
+    scale(fps, rounding = '') {
+        if (this.fps === fps)
+            return this;
+        const frame = (Number(this.frame) / Number(this.fps)) * Number(fps);
+        // console.debug(this.constructor.name, "scale", frame, "=", this.frame, "/", this.fps, "*", fps)
+        return new Time(roundWithMethod(frame, rounding), fps);
+    }
+    scaleToFps(fps) { return this.scaleToTime(new Time(0, fps)); }
+    scaleToTime(time) {
+        return timeEqualizeRates(this, time)[0];
+    }
+    get seconds() { return Number(this.frame) / Number(this.fps); }
+    subtract(time) {
+        const [time1, time2] = timeEqualizeRates(this, time);
+        let subtracted = time2.frame;
+        if (subtracted > time1.frame) {
+            subtracted -= subtracted - time1.frame;
+        }
+        return new Time(time1.frame - subtracted, time1.fps);
+    }
+    subtractFrames(frames) {
+        const time = this.copy;
+        time.frame -= frames;
+        return time;
+    }
+    toString() { return `[${this.description}]`; }
+    withFrame(frame) {
+        const time = this.copy;
+        time.frame = frame;
+        return time;
+    }
+    static fromArgs(frame = 0, fps = 1) {
+        return new Time(frame, fps);
+    }
+    static fromSeconds(seconds = 0, fps = 1, rounding = '') {
+        if (!Is.number(seconds) || seconds < 0)
+            throw Errors.seconds;
+        if (!Is.integer(fps) || fps < 1)
+            throw Errors.fps;
+        const rounded = roundWithMethod(seconds * fps, rounding);
+        return this.fromArgs(rounded, fps);
+    }
+}
+
+class TimeRange extends Time {
+    constructor(frame = 0, fps = 1, frames = 1) {
+        if (!(Is.integer(frames) && frames >= 0)) {
+            console.trace("TimeRange with frames", frames, frames.constructor.name);
+            throw Errors.argument + 'frames';
+        }
+        super(frame, fps);
+        this.frames = frames;
+    }
+    addFrames(frames) {
+        const time = this.copy;
+        time.frames += frames;
+        return time;
+    }
+    get description() { return `${this.frame}-${this.frames}@${this.fps}`; }
+    get end() { return this.frame + this.frames; }
+    get endTime() { return Time.fromArgs(this.end, this.fps); }
+    equalsTimeRange(timeRange) {
+        const [range1, range2] = timeEqualizeRates(this, timeRange);
+        return range1.frame === range2.frame && range1.frames === range2.frames;
+    }
+    get lengthSeconds() { return Number(this.frames) / Number(this.fps); }
+    get position() { return Number(this.frame) / Number(this.frames); }
+    get startTime() { return Time.fromArgs(this.frame, this.fps); }
+    get copy() {
+        return new TimeRange(this.frame, this.fps, this.frames);
+    }
+    scale(fps = 1, rounding = "") {
+        if (this.fps === fps)
+            return this.copy;
+        const value = Number(this.frames) / (Number(this.fps) / Number(fps));
+        const time = super.scale(fps, rounding);
+        const frames = Math.max(1, roundWithMethod(value, rounding));
+        return new TimeRange(time.frame, time.fps, frames);
+    }
+    intersects(timeRange) {
+        const [range1, range2] = timeEqualizeRates(this, timeRange);
+        if (range1.frame >= range2.end)
+            return false;
+        return range1.end > range2.frame;
+    }
+    intersectsTime(time) {
+        const [time1, scaledTime] = timeEqualizeRates(this, time);
+        const scaledRange = time1;
+        return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end;
+    }
+    minEndTime(endTime) {
+        const [range, time] = timeEqualizeRates(this, endTime);
+        range.frames = Math.min(range.frames, time.frame);
+        return range;
+    }
+    get times() {
+        const { frames, frame, fps } = this;
+        return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps));
+    }
+    withFrame(frame) {
+        const range = this.copy;
+        range.frame = frame;
+        return range;
+    }
+    withFrames(frames) {
+        const range = this.copy;
+        range.frames = frames;
+        return range;
+    }
+    static fromArgs(frame = 0, fps = 1, frames = 1) {
+        return new TimeRange(frame, fps, frames);
+    }
+    static fromSeconds(start = 0, duration = 1) {
+        return this.fromArgs(start, 1, duration);
+    }
+    static fromTime(time, frames = 1) {
+        return this.fromArgs(time.frame, time.fps, frames);
+    }
+    static fromTimes(startTime, endTime) {
+        const [time1, time2] = timeEqualizeRates(startTime, endTime);
+        if (time2.frame <= time1.frame)
+            throw Errors.argument;
+        const frames = time2.frame - time1.frame;
+        return this.fromArgs(time1.frame, time1.fps, frames);
+    }
+}
+
+const urlRemoteServer = () => {
+    const url = new URL(document.baseURI);
+    const { protocol, host, pathname, port } = url;
+    return {
+        protocol, host, prefix: pathname, port
+    };
+};
+const urlAbsolute = (url) => (new URL(url, document.baseURI)).href;
+const urlForRemoteServer = (remoteServer, suffix) => {
+    const bits = [];
+    if (remoteServer) {
+        const { host, port, protocol, prefix } = remoteServer;
+        if (host) {
+            bits.push(protocol || 'http');
+            bits.push('://');
+            bits.push(host);
+            if (port) {
+                bits.push(':');
+                bits.push(String(port));
+            }
+        }
+        if (prefix)
+            bits.push(prefix);
+    }
+    if (suffix)
+        bits.push(suffix);
+    return urlAbsolute(bits.join(''));
+};
+const Url = {
+    absolute: urlAbsolute,
+    forRemoteServer: urlForRemoteServer,
+    remoteServer: urlRemoteServer
+};
+
+class Actions {
+    constructor(object) {
+        this.index = -1;
+        this.instances = [];
+        const { mash } = object;
+        this.mash = mash;
+    }
+    get canRedo() { return this.index < this.instances.length - 1; }
+    get canSave() { return this.canUndo; }
+    get canUndo() { return this.index > -1; }
+    get currentAction() { return this.instances[this.index]; }
+    get currentActionLast() { return this.canUndo && !this.canRedo; }
+    destroy() {
+        this.index = -1;
+        this.instances.splice(0, this.instances.length);
+    }
+    add(action) {
+        const remove = this.instances.length - (this.index + 1);
+        if (Is.positive(remove))
+            this.instances.splice(this.index + 1, remove);
+        this.instances.push(action);
+    }
+    redo() {
+        this.index += 1;
+        const action = this.currentAction;
+        action.redo();
+        return action;
+    }
+    save() {
+        this.instances.splice(0, this.index + 1);
+        this.index = -1;
+    }
+    undo() {
+        const action = this.currentAction;
+        this.index -= 1;
+        action.undo();
+        return action;
+    }
+}
 
 const CacheKeyPrefix = 'cachekey';
 class CacheClass {
     constructor() {
-        this.audibleContext = ContextFactoryInstance.audible();
+        this.audibleContext = ContextFactory.audible();
         this.cachedByKey = new Map();
         this.urlsByKey = new Map();
-        this.visibleContext = ContextFactoryInstance.visible();
+        this.visibleContext = ContextFactory.visible();
     }
     add(url, value) {
         // console.log(this.constructor.name, "add", url, value.constructor.name)
@@ -1928,323 +2292,6 @@ class Loader {
     requestUrl(_url) { return Promise.resolve(); }
 }
 
-class InstanceBase {
-    constructor(...args) {
-        const [object] = args;
-        if (!Is.populatedObject(object))
-            throw Errors.invalid.object + 'InstanceBase';
-        const { definition, id, label } = object;
-        if (!definition)
-            throw Errors.invalid.definition.object + 'InstanceBase';
-        this.definition = definition;
-        if (id && id !== definition.id)
-            this._id = id;
-        if (label && label !== definition.label)
-            this._label = label;
-    }
-    get copy() {
-        return this.definition.instanceFromObject(this.toJSON());
-    }
-    get definitions() { return [this.definition]; }
-    definitionTime(quantize, time) {
-        return time.scaleToFps(quantize); // may have fps higher than quantize and time.fps
-    }
-    get id() { return this._id || this.definition.id; }
-    get identifier() { return this._identifier ||= Id(); }
-    get label() { return this._label || this.definition.label || this.id; }
-    set label(value) { this._label = value; }
-    get propertyNames() {
-        return this.definition.properties.map(property => property.name);
-    }
-    get propertyValues() {
-        return Object.fromEntries(this.definition.properties.map(property => {
-            return [property.name, this.value(property.name)];
-        }));
-    }
-    setValue(key, value) {
-        const property = this.definition.property(key);
-        if (!property)
-            throw Errors.property + key;
-        const { type } = property;
-        const coerced = type.coerce(value);
-        if (typeof coerced === 'undefined') {
-            console.error(this.constructor.name, "setValue", key, value);
-            return false;
-        }
-        this[key] = coerced;
-        return true;
-    }
-    toJSON() { return this.propertyValues; }
-    get type() { return this.definition.type; }
-    value(key) {
-        const value = this[key];
-        if (typeof value === "undefined")
-            throw Errors.property + key;
-        return value;
-    }
-}
-
-class DefinitionBase {
-    constructor(...args) {
-        this.properties = [];
-        this.retain = false;
-        const [object] = args;
-        const { id, label, icon } = object;
-        if (!(id && Is.populatedString(id)))
-            throw Errors.invalid.definition.id + JSON.stringify(object);
-        this.id = id;
-        this.label = label || id;
-        if (icon)
-            this.icon = icon;
-        this.properties.push(new Property({ name: "label", type: exports.DataType.String, value: "" }));
-    }
-    get instance() {
-        return this.instanceFromObject(this.instanceObject);
-    }
-    instanceFromObject(object) {
-        const instance = new InstanceBase({ ...this.instanceObject, ...object });
-        return instance;
-    }
-    get instanceObject() {
-        const object = {};
-        object.definition = this;
-        this.properties.forEach(property => {
-            object[property.name] = property.value;
-        });
-        return object;
-    }
-    loadDefinition(_quantize, _start, _end) { }
-    definitionUrls(_start, _end) { return []; }
-    get propertiesModular() { return this.properties.filter(property => property.type.modular); }
-    property(name) {
-        return this.properties.find(property => property.name === name);
-    }
-    toJSON() {
-        const object = { id: this.id, type: this.type };
-        if (this.icon)
-            object.icon = this.icon;
-        if (this.label !== this.id)
-            object.label = this.label;
-        return object;
-    }
-    unload(_times = []) { }
-    value(name) {
-        const property = this.property(name);
-        if (!property)
-            return;
-        return property.value;
-    }
-}
-
-const AudibleGainDelimiter = ',';
-function AudibleMixin(Base) {
-    return class extends Base {
-        constructor(...args) {
-            super(...args);
-            this.audible = true;
-            this.gain = Default.instance.audio.gain;
-            this.gainPairs = [];
-            const [object] = args;
-            const { gain } = object;
-            if (typeof gain !== "undefined") {
-                if (typeof gain === "string") {
-                    if (gain.includes(AudibleGainDelimiter)) {
-                        const floats = gain.split(AudibleGainDelimiter).map(string => parseFloat(string));
-                        const z = floats.length / 2;
-                        for (let i = 0; i < z; i += 1) {
-                            this.gainPairs.push([floats[i * 2], floats[i * 2 + 1]]);
-                        }
-                        this.gain = -1;
-                    }
-                    else
-                        this.gain = Number(gain);
-                }
-                else
-                    this.gain = gain;
-            }
-        }
-        loadedAudible() {
-            return this.definition.loadedAudible();
-        }
-        get muted() {
-            if (this.gain === 0)
-                return true;
-            if (Is.positive(this.gain))
-                return false;
-            return this.gainPairs === [[0, 0], [1, 0]];
-        }
-        startOptions(seconds, quantize) {
-            const range = this.timeRange(quantize);
-            let start = seconds + range.seconds;
-            let duration = range.lengthSeconds;
-            const now = Cache.audibleContext.currentTime;
-            if (now > start) {
-                const dif = now - start;
-                start = now;
-                duration -= dif;
-            }
-            return { start, duration };
-        }
-        toJSON() {
-            const object = super.toJSON();
-            if (this.gain !== Default.instance.audio.gain)
-                object.gain = this.gain;
-            return object;
-        }
-    };
-}
-
-function ClipMixin(Base) {
-    return class extends Base {
-        constructor(...args) {
-            super(...args);
-            this.audible = false;
-            this.frame = 0;
-            this.frames = -1;
-            this.track = -1;
-            this.trackType = exports.TrackType.Video;
-            this.visible = false;
-            const [object] = args;
-            const { frame, frames, track } = object;
-            if (typeof frame !== "undefined" && Is.positive(frame))
-                this.frame = frame;
-            if (frames && Is.aboveZero(frames))
-                this.frames = frames;
-            if (typeof track !== "undefined")
-                this.track = track;
-        }
-        definitionTime(quantize, time) {
-            const scaledTime = super.definitionTime(quantize, time);
-            const startTime = this.time(quantize).scale(scaledTime.fps);
-            const endTime = this.endTime(quantize).scale(scaledTime.fps);
-            const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame);
-            return scaledTime.withFrame(frame - startTime.frame);
-        }
-        get endFrame() { return this.frame + this.frames; }
-        endTime(quantize) {
-            return Time.fromArgs(this.endFrame, quantize);
-        }
-        loadClip(quantize, start, end) {
-            const startTime = this.definitionTime(quantize, start);
-            const endTime = end ? this.definitionTime(quantize, end) : end;
-            return this.definition.loadDefinition(quantize, startTime, endTime);
-        }
-        clipUrls(quantize, start, end) {
-            const startTime = this.definitionTime(quantize, start);
-            const endTime = end ? this.definitionTime(quantize, end) : end;
-            return this.definition.definitionUrls(startTime, endTime);
-        }
-        maxFrames(_quantize, _trim) { return 0; }
-        time(quantize) { return Time.fromArgs(this.frame, quantize); }
-        timeRange(quantize) {
-            return TimeRange.fromArgs(this.frame, quantize, this.frames);
-        }
-        timeRangeRelative(time, quantize) {
-            const range = this.timeRange(quantize).scale(time.fps);
-            const frame = Math.max(0, time.frame - range.frame);
-            return range.withFrame(frame);
-        }
-        toJSON() {
-            const object = super.toJSON();
-            object.id = this.id;
-            return object;
-        }
-    };
-}
-
-function AudibleFileMixin(Base) {
-    return class extends Base {
-        constructor(...args) {
-            super(...args);
-            this.loop = Default.instance.audio.loop;
-            this.trim = Default.instance.audio.trim;
-            const [object] = args;
-            const { loop, trim } = object;
-            if (typeof trim !== "undefined" && Is.integer(trim))
-                this.trim = trim;
-            if (typeof loop !== "undefined" && Is.integer(loop))
-                this.loop = loop;
-        }
-        definitionTime(quantize, time) {
-            const scaledTime = super.definitionTime(quantize, time);
-            if (!Is.aboveZero(this.trim))
-                return scaledTime;
-            const trimTime = this.trimTime(quantize).scale(scaledTime.fps);
-            return scaledTime.withFrame(scaledTime.frame + trimTime.frame);
-        }
-        maxFrames(quantize, trim) {
-            const space = trim ? trim : this.trim;
-            return Math.floor(this.definition.duration * quantize) - space;
-        }
-        startOptions(seconds, quantize) {
-            const range = this.timeRange(quantize);
-            let offset = 0;
-            let start = seconds + range.seconds;
-            let duration = range.lengthSeconds;
-            if (this.trim) {
-                range.frame = this.trim;
-                offset = range.seconds;
-            }
-            const now = Cache.audibleContext.currentTime;
-            if (now > start) {
-                const dif = now - start;
-                start = now;
-                offset += dif;
-                duration -= dif;
-            }
-            return { start, offset, duration };
-        }
-        trimTime(quantize) { return Time.fromArgs(this.trim, quantize); }
-        toJSON() {
-            const object = super.toJSON();
-            if (this.trim !== Default.instance.audio.trim)
-                object.trim = this.trim;
-            if (this.loop !== Default.instance.audio.loop)
-                object.loop = this.loop;
-            return object;
-        }
-    };
-}
-
-const AudioWithClip = ClipMixin(InstanceBase);
-const AudioWithAudible = AudibleMixin(AudioWithClip);
-const AudioWithAudibleFile = AudibleFileMixin(AudioWithAudible);
-class AudioClass extends AudioWithAudibleFile {
-    constructor() {
-        super(...arguments);
-        this.trackType = exports.TrackType.Audio;
-    }
-}
-
-const ClipPropertyObjects = [
-    { name: "frame", type: exports.DataType.Integer, value: 0 },
-    { name: "frames", type: exports.DataType.Integer, value: -1 },
-    { name: "track", type: exports.DataType.Integer, value: -1 },
-];
-function ClipDefinitionMixin(Base) {
-    return class extends Base {
-        constructor(...args) {
-            super(...args);
-            this.audible = false;
-            this.streamable = false;
-            this.visible = false;
-            const properties = ClipPropertyObjects.map(object => new Property(object));
-            this.properties.push(...properties);
-        }
-        get duration() {
-            if (!this._duration) {
-                const object = Default.definition;
-                this._duration = Number(object[this.type].duration);
-            }
-            return this._duration;
-        }
-        set duration(value) { this._duration = value; }
-        frames(quantize) {
-            return Time.fromSeconds(this.duration, quantize, 'floor').frame;
-        }
-    };
-}
-
 class AudioLoader extends Loader {
     constructor() {
         super(...arguments);
@@ -2268,7 +2315,6 @@ class FontLoader extends Loader {
     }
     requestUrl(url) {
         const promise = new Promise((resolve, reject) => {
-            console.debug(this.constructor.name, "requestUrl", url);
             const family = Cache.key(url);
             this.arrayBufferPromiseFromUrl(url)
                 .then(buffer => {
@@ -2336,22 +2382,289 @@ class VideoLoader extends Loader {
     }
 }
 
-const classes$1 = {
+const classes = {
     Audio: AudioLoader,
     Font: FontLoader,
     Image: ImageLoader,
     Video: VideoLoader,
 };
 class LoaderClass {
-    audio() { return new classes$1.Audio(); }
-    font() { return new classes$1.Font(); }
-    image() { return new classes$1.Image(); }
+    audio() { return new classes.Audio(); }
+    font() { return new classes.Font(); }
+    image() { return new classes.Image(); }
     install(type, loader) {
-        classes$1[Capitalize(type)] = loader;
+        classes[Capitalize(type)] = loader;
     }
-    video() { return new classes$1.Video(); }
+    video() { return new classes.Video(); }
 }
 const LoaderFactory = new LoaderClass();
+
+const Default = {
+    label: "Unlabeled",
+    masher: {
+        buffer: 10,
+        fps: 0,
+        loop: true,
+        volume: 0.75,
+        precision: 3,
+        autoplay: false,
+    },
+    mash: {
+        label: "Unlabeled Mash",
+        quantize: 10,
+        backcolor: colorTransparent,
+        gain: 0.75,
+        buffer: 10,
+        output: {
+            width: 320,
+            height: 240,
+            fps: 30,
+            videoBitrate: 2000,
+            audioBitrate: 160,
+            audioCodec: 'aac',
+            videoCodec: 'libx264',
+            audioChannels: 2,
+            audioFrequency: 44100,
+        }
+    },
+    instance: {
+        audio: { gain: 1.0, trim: 0, loop: 1 },
+        video: { speed: 1.0 }
+    },
+    definition: {
+        frame: { duration: 2 },
+        image: { duration: 2 },
+        theme: { duration: 3 },
+        transition: { duration: 1 },
+        video: { fps: 0 },
+        videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
+        videostream: { duration: 10 },
+    },
+};
+
+const AudibleGainDelimiter = ',';
+function AudibleMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.audible = true;
+            this.gain = Default.instance.audio.gain;
+            this.gainPairs = [];
+            const [object] = args;
+            const { gain } = object;
+            if (typeof gain !== "undefined") {
+                if (typeof gain === "string") {
+                    if (gain.includes(AudibleGainDelimiter)) {
+                        const floats = gain.split(AudibleGainDelimiter).map(string => parseFloat(string));
+                        const z = floats.length / 2;
+                        for (let i = 0; i < z; i += 1) {
+                            this.gainPairs.push([floats[i * 2], floats[i * 2 + 1]]);
+                        }
+                        this.gain = -1;
+                    }
+                    else
+                        this.gain = Number(gain);
+                }
+                else
+                    this.gain = gain;
+            }
+        }
+        loadedAudible() {
+            return this.definition.loadedAudible();
+        }
+        get muted() {
+            if (this.gain === 0)
+                return true;
+            if (Is.positive(this.gain))
+                return false;
+            return this.gainPairs === [[0, 0], [1, 0]];
+        }
+        startOptions(seconds, quantize) {
+            const range = this.timeRange(quantize);
+            let offset = 0;
+            let start = range.seconds - seconds;
+            let duration = range.lengthSeconds;
+            if (start < 0) {
+                offset -= start;
+                duration += start;
+                start = 0;
+            }
+            return { start, offset, duration };
+        }
+        toJSON() {
+            const object = super.toJSON();
+            if (this.gain !== Default.instance.audio.gain)
+                object.gain = this.gain;
+            return object;
+        }
+    };
+}
+
+function ClipMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.audible = false;
+            this.frame = 0;
+            this.frames = -1;
+            // toJSON() : JsonObject {
+            //   const object = super.toJSON()
+            //   object.id = this.id
+            //   return object
+            // }
+            this.track = -1;
+            this.trackType = exports.TrackType.Video;
+            this.visible = false;
+            const [object] = args;
+            const { frame, frames, track } = object;
+            if (typeof frame !== "undefined" && Is.positive(frame))
+                this.frame = frame;
+            if (frames && Is.aboveZero(frames))
+                this.frames = frames;
+            if (typeof track !== "undefined")
+                this.track = track;
+        }
+        clipState(quantize, time, dimensions) {
+            const clipState = this.inputCommandAtTimeToSize(time, quantize, dimensions);
+            if (!clipState)
+                throw Errors.internal;
+            return clipState;
+        }
+        commandAtTimeToSize(mashTime, quantize, dimensions) {
+            const source = this.definition.inputSource;
+            const inputCommand = { sources: { source }, filters: [] };
+            return inputCommand;
+        }
+        definitionTime(quantize, time) {
+            const scaledTime = super.definitionTime(quantize, time);
+            const startTime = this.time(quantize).scale(scaledTime.fps);
+            const endTime = this.endTime(quantize).scale(scaledTime.fps);
+            const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame);
+            return scaledTime.withFrame(frame - startTime.frame);
+        }
+        get endFrame() { return this.frame + this.frames; }
+        endTime(quantize) {
+            return Time.fromArgs(this.endFrame, quantize);
+        }
+        inputCommandAtTimeToSize(mashTime, quantize, dimensions) {
+            return;
+        }
+        loadClip(quantize, start, end) {
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            return this.definition.loadDefinition(quantize, startTime, endTime);
+        }
+        clipUrls(quantize, start, end) {
+            const startTime = this.definitionTime(quantize, start);
+            const endTime = end ? this.definitionTime(quantize, end) : end;
+            return this.definition.definitionUrls(startTime, endTime);
+        }
+        maxFrames(_quantize, _trim) { return 0; }
+        time(quantize) { return Time.fromArgs(this.frame, quantize); }
+        timeRange(quantize) {
+            return TimeRange.fromArgs(this.frame, quantize, this.frames);
+        }
+        timeRangeRelative(time, quantize) {
+            const range = this.timeRange(quantize).scale(time.fps);
+            const frame = Math.max(0, time.frame - range.frame);
+            return range.withFrame(frame);
+        }
+    };
+}
+
+function AudibleFileMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.loop = Default.instance.audio.loop;
+            this.trim = Default.instance.audio.trim;
+            const [object] = args;
+            const { loop, trim } = object;
+            if (typeof trim !== "undefined" && Is.integer(trim))
+                this.trim = trim;
+            if (typeof loop !== "undefined" && Is.integer(loop))
+                this.loop = loop;
+        }
+        definitionTime(quantize, time) {
+            const scaledTime = super.definitionTime(quantize, time);
+            if (!Is.aboveZero(this.trim))
+                return scaledTime;
+            const trimTime = this.trimTime(quantize).scale(scaledTime.fps);
+            return scaledTime.withFrame(scaledTime.frame + trimTime.frame);
+        }
+        maxFrames(quantize, trim) {
+            const space = trim ? trim : this.trim;
+            return Math.floor(this.definition.duration * quantize) - space;
+        }
+        startOptions(seconds, quantize) {
+            const range = this.timeRange(quantize);
+            let offset = 0;
+            let start = range.seconds - seconds;
+            let duration = range.lengthSeconds;
+            if (this.trim) {
+                offset = Time.fromArgs(this.trim, quantize).seconds;
+            }
+            if (start < 0) {
+                offset -= start;
+                duration += start;
+                start = 0;
+            }
+            const result = { start, offset, duration };
+            // console.log("startOptions", seconds, quantize, result)
+            return result;
+        }
+        trimTime(quantize) { return Time.fromArgs(this.trim, quantize); }
+        toJSON() {
+            const object = super.toJSON();
+            if (this.trim !== Default.instance.audio.trim)
+                object.trim = this.trim;
+            if (this.loop !== Default.instance.audio.loop)
+                object.loop = this.loop;
+            return object;
+        }
+    };
+}
+
+const AudioWithClip = ClipMixin(InstanceBase);
+const AudioWithAudible = AudibleMixin(AudioWithClip);
+const AudioWithAudibleFile = AudibleFileMixin(AudioWithAudible);
+class AudioClass extends AudioWithAudibleFile {
+    constructor() {
+        super(...arguments);
+        this.trackType = exports.TrackType.Audio;
+    }
+}
+
+const ClipPropertyObjects = [
+    { name: "frame", type: exports.DataType.Integer, value: 0 },
+    { name: "frames", type: exports.DataType.Integer, value: -1 },
+    { name: "label", type: exports.DataType.String, value: "" },
+    // { name: "track", type: DataType.Integer, value: -1 },
+];
+function ClipDefinitionMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            this.audible = false;
+            this.streamable = false;
+            this.visible = false;
+            const properties = ClipPropertyObjects.map(object => new Property(object));
+            this.properties.push(...properties);
+        }
+        get duration() {
+            if (!this._duration) {
+                const object = Default.definition;
+                this._duration = Number(object[this.type].duration);
+            }
+            return this._duration;
+        }
+        set duration(value) { this._duration = value; }
+        frames(quantize) {
+            return Time.fromSeconds(this.duration, quantize, 'floor').frame;
+        }
+        get inputSource() { return ''; }
+    };
+}
 
 function AudibleDefinitionMixin(Base) {
     return class extends Base {
@@ -2368,13 +2681,13 @@ function AudibleDefinitionMixin(Base) {
             this.urlAudible = urlAudible;
             if (stream)
                 this.stream = true;
-            if (source)
-                this.source = source;
+            this.source = source || urlAudible;
             if (waveform)
                 this.waveform = waveform;
             this.properties.push(new Property({ name: "gain", type: exports.DataType.Number, value: 1.0 }));
         }
         get absoluteUrl() { return urlAbsolute(this.urlAudible); }
+        get inputSource() { return urlAbsolute(this.source); }
         loadDefinition(_quantize, _start, end) {
             if (!end)
                 return;
@@ -2390,7 +2703,7 @@ function AudibleDefinitionMixin(Base) {
             const cached = Cache.get(this.absoluteUrl);
             if (!cached || cached instanceof Promise)
                 return;
-            console.debug(this.constructor.name, "loadedAudible", cached.constructor.name);
+            // console.debug(this.constructor.name, "loadedAudible", cached.constructor.name)
             return Cache.audibleContext.createBufferSource(cached);
         }
         toJSON() {
@@ -2459,8 +2772,6 @@ class AudioDefinitionClass extends AudioDefinitionWithAudibleFile {
     }
 }
 
-const Factories = {};
-
 /**
  * @internal
  */
@@ -2525,6 +2836,20 @@ const AudioFactoryImplementation = {
 };
 Factories[exports.DefinitionType.Audio] = AudioFactoryImplementation;
 
+class Parameter {
+    constructor({ name, value }) {
+        if (!name)
+            throw Errors.invalid.name;
+        if (typeof value === "undefined")
+            throw Errors.invalid.value;
+        this.name = String(name);
+        this.value = value;
+    }
+    toJSON() {
+        return { name: this.name, value: this.value };
+    }
+}
+
 class FilterClass extends InstanceBase {
     constructor(...args) {
         super(...args);
@@ -2540,7 +2865,6 @@ class FilterClass extends InstanceBase {
     drawFilter(evaluator) {
         this.definition.scopeSet(evaluator);
         const evaluated = this.evaluated(evaluator);
-        console.log(this.constructor.name, "drawFilter", evaluated);
         return this.definition.draw(evaluator, evaluated);
     }
     evaluated(evaluator) {
@@ -2566,6 +2890,13 @@ class FilterClass extends InstanceBase {
         });
         return evaluated;
     }
+    inputFilter(evaluator) {
+        this.definition.scopeSet(evaluator);
+        const evaluated = this.evaluated(evaluator);
+        const input = this.definition.input(evaluator, evaluated);
+        // console.log(this.constructor.name, "inputFilter", input)
+        return input;
+    }
     toJSON() {
         const object = { id: this.id };
         if (this.parameters.length)
@@ -2583,7 +2914,10 @@ class FilterDefinitionClass extends DefinitionBase {
         Definitions.install(this);
     }
     draw(_evaluator, _evaluated) {
-        throw Errors.unimplemented;
+        throw Errors.unimplemented + this.id;
+    }
+    input(_evaluator, _evaluated) {
+        throw Errors.unimplemented + this.id;
     }
     get instance() {
         return this.instanceFromObject(this.instanceObject);
@@ -2599,9 +2933,9 @@ class BlendFilter extends FilterDefinitionClass {
     // eslint-disable-next-line camelcase
     draw(evaluator, evaluated) {
         const { context, mergeContext } = evaluator;
-        if (typeof mergeContext === "undefined")
-            throw Errors.internal + 'BlendFilter mergeContext';
-        const modes = TypesInstance.propertyType(exports.DataType.Mode).values;
+        if (!(context && mergeContext))
+            throw Errors.invalid.context;
+        const modes = Types.propertyType(exports.DataType.Mode).values;
         if (typeof modes === "undefined")
             throw Errors.unknown.mode;
         const mode = modes.find(object => object.id === evaluated.all_mode);
@@ -2625,6 +2959,8 @@ class ChromaKeyFilter extends FilterDefinitionClass {
     }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const { width, height } = context.size;
         const { accurate } = evaluated;
         const similarity = Number(evaluated.similarity);
@@ -2666,21 +3002,33 @@ class ChromaKeyFilter extends FilterDefinitionClass {
 class ColorFilter extends FilterDefinitionClass {
     constructor() {
         super(...arguments);
-        // id = 'color'
         this.parameters = [
             new Parameter({ name: "color", value: "color" }),
             new Parameter({ name: "size", value: "mm_dimensions" }),
-            new Parameter({ name: "duration", value: "mm_duration" }),
+            // new Parameter({ name: "duration", value: "mm_duration" }),
             new Parameter({ name: "rate", value: "mm_fps" }),
         ];
     }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const { color } = evaluated;
         if (!isPopulatedString(color))
             return context;
-        context.drawFill(Pixel.color(color));
+        context.drawFill(pixelColor(color));
         return context;
+    }
+    input(evaluator, evaluated) {
+        const inputFilter = {
+            filter: this.id,
+            options: Object.fromEntries(this.parameters.map(parameter => [
+                parameter.name,
+                evaluated[parameter.name] || String(evaluator.get(parameter.name) || '')
+            ]))
+        };
+        // inputFilter.options.loop = 1
+        return inputFilter;
     }
 }
 
@@ -2691,6 +3039,8 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
             return [key, Number(value)];
         }));
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const rgbas = 'rgba'.split('');
         rgbas.forEach(first => {
             rgbas.forEach(second => {
@@ -2738,6 +3088,8 @@ class ConvolutionFilter extends FilterDefinitionClass {
     draw(evaluator, evaluated) {
         const options = parse(evaluated);
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const { size } = context;
         const { width, height } = size;
         const input = context.imageData;
@@ -2767,6 +3119,8 @@ class ConvolutionFilter extends FilterDefinitionClass {
 class CropFilter extends FilterDefinitionClass {
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const x = evaluated.x || 0;
         const y = evaluated.y || 0;
         const inSize = evaluator.inputSize;
@@ -2781,14 +3135,17 @@ class CropFilter extends FilterDefinitionClass {
             height = inSize.height * (width / inSize.width);
         const fromSize = { width, height };
         const inRect = { x, y, ...fromSize };
-        const drawing = ContextFactoryInstance.toSize(fromSize);
+        const drawing = ContextFactory.toSize(fromSize);
         // console.log(this.constructor.name, "draw", inRect, fromSize)
         drawing.drawInRectFromSize(context.drawingSource, inRect, fromSize);
         return drawing;
     }
     // id = 'crop'
     scopeSet(evaluator) {
-        evaluator.setInputSize(evaluator.context.size);
+        const { context } = evaluator;
+        if (!context)
+            return;
+        evaluator.setInputSize(context.size);
         evaluator.initialize("x", '((in_w - out_w) / 2)');
         evaluator.initialize("y", '((in_h - out_h) / 2)');
     }
@@ -2797,12 +3154,14 @@ class CropFilter extends FilterDefinitionClass {
 class DrawBoxFilter extends FilterDefinitionClass {
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const color = isPopulatedString(evaluated.color) ? evaluated.color : 'black';
         const x = evaluated.x || 0;
         const y = evaluated.y || 0;
         const width = evaluated.width || context.size.width;
         const height = evaluated.height || context.size.height;
-        context.drawFillInRect(Pixel.color(color), { x, y, width, height });
+        context.drawFillInRect(pixelColor(color), { x, y, width, height });
         return context;
     }
 }
@@ -2816,10 +3175,10 @@ class FontDefinitionClass extends DefinitionBase {
         this.retain = true;
         this.type = exports.DefinitionType.Font;
         const [object] = args;
-        const { source } = object;
-        if (!source)
-            throw Errors.invalid.definition.source + JSON.stringify(object);
-        this.source = source;
+        const { source, url } = object;
+        if (!(source || url))
+            throw Errors.invalid.definition.source;
+        this.source = source || url || '';
         Definitions.install(this);
     }
     get absoluteUrl() { return urlAbsolute(this.source); }
@@ -2897,7 +3256,7 @@ Factories[exports.DefinitionType.Font] = FontFactoryImplementation;
 
 const mmFontFile = (id) => {
     if (!Is.populatedString(id))
-        throw Errors.id;
+        throw Errors.id + id;
     return fontDefinitionFromId(id).absoluteUrl;
 };
 const mmTextFile = (text) => String(text);
@@ -2919,6 +3278,8 @@ class DrawTextFilter extends FilterDefinitionClass {
     }
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         const fontface = String(evaluator.get("fontface"));
         const family = mmFontFamily(fontface);
         const { x, y, fontsize, fontcolor, text, textfile, shadowcolor, shadowx, shadowy } = evaluated;
@@ -2937,6 +3298,15 @@ class DrawTextFilter extends FilterDefinitionClass {
         context.drawTextAtPoint(string, textStyle, point);
         return context;
     }
+    input(_evaluator, evaluated) {
+        const outWidth = evaluated.w || evaluated.width || 0;
+        const outHeight = evaluated.h || evaluated.height || 0;
+        const inputFilter = {
+            filter: this.id,
+            options: { width: outWidth, height: outHeight }
+        };
+        return inputFilter;
+    }
     scopeSet(evaluator) {
         evaluator.set("text_w", 0); // width of the text to draw
         evaluator.set("text_h", 0); // height of the text to draw
@@ -2953,7 +3323,9 @@ class DrawTextFilter extends FilterDefinitionClass {
 class FadeFilter extends FilterDefinitionClass {
     draw(evaluator) {
         const { context } = evaluator;
-        const drawing = ContextFactoryInstance.toSize(context.size);
+        if (!context)
+            throw Errors.invalid.context;
+        const drawing = ContextFactory.toSize(context.size);
         const alpha = Number(evaluator.get('alpha') || evaluator.position);
         const type = String(evaluator.get('type') || 'in');
         const typedAlpha = type === 'in' ? alpha : 1.0 - alpha;
@@ -2966,14 +3338,23 @@ class OverlayFilter extends FilterDefinitionClass {
     draw(evaluator, evaluated) {
         const { x, y } = evaluated;
         const { context, mergeContext } = evaluator;
-        if (typeof mergeContext === "undefined")
-            throw Errors.internal + 'OverlayFilter mergeContext';
+        if (!(context && mergeContext))
+            throw Errors.invalid.context;
         mergeContext.drawAtPoint(context.drawingSource, { x: x || 0, y: y || 0 });
         return mergeContext;
     }
-    // id = 'overlay'
+    input(_evaluator, evaluated) {
+        const { x, y } = evaluated;
+        return {
+            filter: this.id,
+            options: { x, y }
+        };
+    }
     scopeSet(evaluator) {
-        const { width, height } = evaluator.context.size;
+        const { context } = evaluator;
+        if (!context)
+            return;
+        const { width, height } = context.size;
         evaluator.set("overlay_w", width);
         evaluator.set("overlay_h", height);
     }
@@ -2982,26 +3363,39 @@ class OverlayFilter extends FilterDefinitionClass {
 class ScaleFilter extends FilterDefinitionClass {
     draw(evaluator, evaluated) {
         const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
         let outWidth = evaluated.w || evaluated.width || 0;
         let outHeight = evaluated.h || evaluated.height || 0;
         if (outWidth + outHeight < 2)
             return context;
         const inSize = {
             width: Number(evaluator.get("mm_in_w")), height: Number(evaluator.get("mm_in_h"))
-        }; //evaluator.inputSize
+        };
         if (outWidth === -1)
             outWidth = inSize.width * (outHeight / inSize.height);
         else if (outHeight === -1)
             outHeight = inSize.height * (outWidth / inSize.width);
         const fromSize = { width: outWidth, height: outHeight };
-        const drawing = ContextFactoryInstance.toSize(fromSize);
+        const drawing = ContextFactory.toSize(fromSize);
         // console.log(this.constructor.name, "draw", inSize, fromSize)
         drawing.drawInSizeFromSize(context.drawingSource, inSize, fromSize);
         return drawing;
     }
-    // id = 'scale'
+    input(_evaluator, evaluated) {
+        const outWidth = evaluated.w || evaluated.width || 0;
+        const outHeight = evaluated.h || evaluated.height || 0;
+        const inputFilter = {
+            filter: this.id,
+            options: { width: outWidth, height: outHeight }
+        };
+        return inputFilter;
+    }
     scopeSet(evaluator) {
-        const { width, height } = evaluator.context.size;
+        const { context } = evaluator;
+        if (!context)
+            return;
+        const { width, height } = context.size;
         evaluator.set("in_h", height);
         evaluator.set("mm_in_h", height);
         evaluator.set("in_w", width);
@@ -3011,14 +3405,20 @@ class ScaleFilter extends FilterDefinitionClass {
 
 class SetSarFilter extends FilterDefinitionClass {
     draw(evaluator, _evaluated) {
-        return evaluator.context;
+        const { context } = evaluator;
+        if (!context)
+            throw Errors.invalid.context;
+        return context;
+    }
+    input(_evaluator, evaluated) {
+        return { filter: this.id, options: { sar: 1, max: 1 } };
     }
 }
 
 const filterDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     throw Errors.invalid.definition.id + ' filterDefinition ' + id;
@@ -3079,13 +3479,12 @@ function ModularDefinitionMixin(Base) {
                     return new Property(property);
                 });
                 this.properties.push(...propertyInstances);
-                //console.log("ModularDefinition", this.id, "properties", this.properties.map(p => `${p.name} => ${p.value}`))
             }
             if (filters) {
                 const filterInstances = filters.map(filter => {
                     const { id } = filter;
                     if (!id)
-                        throw Errors.id;
+                        throw Errors.id + JSON.stringify(filter);
                     return filterInstance(filter);
                 });
                 this.filters.push(...filterInstances);
@@ -3095,18 +3494,27 @@ function ModularDefinitionMixin(Base) {
             // range's frame is offset of draw time in clip = frames is duration
             let contextFiltered = context;
             this.filters.forEach(filter => {
-                const evaluator = this.evaluator(modular, range, contextFiltered, size, outContext);
+                const evaluator = this.evaluator(modular, range, size, contextFiltered, outContext);
                 contextFiltered = filter.drawFilter(evaluator);
             });
             return contextFiltered;
         }
-        evaluator(modular, range, context, size, mergerContext) {
-            const instance = new Evaluator(range, context, size, mergerContext);
+        evaluator(modular, range, size, context, mergerContext) {
+            const instance = new Evaluator(range, size, context, mergerContext);
             this.propertiesCustom.forEach(property => {
                 const value = modular.value(property.name);
                 instance.set(property.name, value);
             });
             return instance;
+        }
+        inputFilters(modular, range, size) {
+            // range's frame is offset of draw time in clip = frames is duration
+            const inputFilters = this.filters.map(filter => {
+                const evaluator = this.evaluator(modular, range, size);
+                return filter.inputFilter(evaluator);
+            });
+            // console.log(this.constructor.name, "inputFilters", this.id, inputFilters)
+            return inputFilters;
         }
         get propertiesCustom() {
             return this.properties.filter(property => property.custom);
@@ -3169,11 +3577,6 @@ function ModularMixin(Base) {
 
 const EffectWithModular = ModularMixin(InstanceBase);
 class EffectClass extends EffectWithModular {
-    toJSON() {
-        const object = super.toJSON();
-        object.id = this.id;
-        return object;
-    }
 }
 
 const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
@@ -3181,6 +3584,7 @@ class EffectDefinitionClass extends EffectDefinitionWithModular {
     constructor(...args) {
         super(...args);
         this.type = exports.DefinitionType.Effect;
+        this.properties.push(new Property({ name: "label", type: exports.DataType.String, value: "" }));
         Definitions.install(this);
     }
     get instance() { return this.instanceFromObject(this.instanceObject); }
@@ -3624,7 +4028,7 @@ var effectTextJson = {
 const effectDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new EffectDefinitionClass({ ...object, type: exports.DefinitionType.Effect });
@@ -3667,120 +4071,8 @@ const EffectFactoryImplementation = {
 };
 Factories[exports.DefinitionType.Effect] = EffectFactoryImplementation;
 
-/**
- * Provides access to factory objects that create all other object definitions and instances.
- *
- * @example Create {@link Masher} instance
- * ```ts
- * const masher : Masher = Factory.masher.instance()
- * ```
- * @sealed
- */
-class Factory {
-    /**
-     * Object with methods to create audio definitions and instances
-     */
-    static get [exports.DefinitionType.Audio]() {
-        const factory = Factories[exports.DefinitionType.Audio];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Audio;
-        return factory;
-    }
-    static get context() { return ContextFactoryInstance; }
-    /**
-     * Object with methods to create effect definitions and instances
-     */
-    static get [exports.DefinitionType.Effect]() {
-        const factory = Factories[exports.DefinitionType.Effect];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Effect;
-        return factory;
-    }
-    /**
-     * Object with methods to create audio definitions and instances
-     */
-    static get [exports.DefinitionType.Filter]() {
-        const factory = Factories[exports.DefinitionType.Filter];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Filter;
-        return factory;
-    }
-    static get [exports.DefinitionType.Font]() {
-        const factory = Factories[exports.DefinitionType.Font];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Font;
-        return factory;
-    }
-    static get [exports.DefinitionType.Image]() {
-        const factory = Factories[exports.DefinitionType.Image];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Image;
-        return factory;
-    }
-    static get [exports.DefinitionType.Mash]() {
-        const factory = Factories[exports.DefinitionType.Mash];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Mash;
-        return factory;
-    }
-    static get [exports.DefinitionType.Masher]() {
-        const factory = Factories[exports.DefinitionType.Masher];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Masher;
-        return factory;
-    }
-    static get [exports.DefinitionType.Merger]() {
-        const factory = Factories[exports.DefinitionType.Merger];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Merger;
-        return factory;
-    }
-    static get [exports.DefinitionType.Scaler]() {
-        const factory = Factories[exports.DefinitionType.Scaler];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Scaler;
-        return factory;
-    }
-    static get [exports.DefinitionType.Theme]() {
-        const factory = Factories[exports.DefinitionType.Theme];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Theme;
-        return factory;
-    }
-    static get [exports.DefinitionType.Transition]() {
-        const factory = Factories[exports.DefinitionType.Transition];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Transition;
-        return factory;
-    }
-    static get [exports.DefinitionType.Video]() {
-        const factory = Factories[exports.DefinitionType.Video];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.Video;
-        return factory;
-    }
-    static get [exports.DefinitionType.VideoSequence]() {
-        const factory = Factories[exports.DefinitionType.VideoSequence];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.VideoSequence;
-        return factory;
-    }
-    static get [exports.DefinitionType.VideoStream]() {
-        const factory = Factories[exports.DefinitionType.VideoStream];
-        if (!factory)
-            throw Errors.invalid.factory + exports.DefinitionType.VideoStream;
-        return factory;
-    }
-    constructor() { }
-}
-
 const MergerWithModular = ModularMixin(InstanceBase);
 class MergerClass extends MergerWithModular {
-    get id() { return this.definition.id; }
-    set id(value) {
-        this.definition = Factory.merger.definitionFromId(value);
-        this.constructProperties();
-    }
 }
 
 const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
@@ -3789,7 +4081,7 @@ class MergerDefinitionClass extends MergerDefinitionWithModular {
         super(...args);
         this.retain = true;
         this.type = exports.DefinitionType.Merger;
-        this.properties.push(new Property({ name: "id", type: exports.DataType.String, value: "" }));
+        // this.properties.push(new Property({ name: "id", type: DataType.String, value: "" }))
         Definitions.install(this);
     }
     get instance() {
@@ -3967,12 +4259,12 @@ const mergerDefinitionFromId = (id) => {
     return mergerDefinition({ id });
 };
 const mergerInstance = (object) => {
-    const definition = mergerDefinition(object);
-    const instance = definition.instanceFromObject(object);
-    return instance;
+    const { definitionId } = object;
+    const definition = mergerDefinition({ id: definitionId });
+    return definition.instanceFromObject(object);
 };
-const mergerFromId = (id) => {
-    return mergerInstance({ id });
+const mergerFromId = (definitionId) => {
+    return mergerInstance({ definitionId });
 };
 const mergerInitialize = () => {
     new MergerDefinitionClass(mergerBlendJson);
@@ -4000,20 +4292,16 @@ Factories[exports.DefinitionType.Merger] = MergerFactoryImplementation;
 
 const ScalerWithModular = ModularMixin(InstanceBase);
 class ScalerClass extends ScalerWithModular {
-    get id() { return this.definition.id; }
-    set id(value) {
-        this.definition = Factory.scaler.definitionFromId(value);
-        this.constructProperties();
-    }
 }
 
+// import { Property } from "../../Setup/Property"
 const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
 class ScalerDefinitionClass extends ScalerDefinitionWithModular {
     constructor(...args) {
         super(...args);
         this.retain = true;
         this.type = exports.DefinitionType.Scaler;
-        this.properties.push(new Property({ name: "id", type: exports.DataType.String, value: "" }));
+        // this.properties.push(new Property({ name: "id", type: DataType.String, value: "" }))
         Definitions.install(this);
     }
     get instance() {
@@ -4320,10 +4608,12 @@ const scalerDefinitionFromId = (id) => {
     return scalerDefinition({ id });
 };
 const scalerInstance = (object) => {
-    return scalerDefinition(object).instanceFromObject(object);
+    const { definitionId } = object;
+    const definition = scalerDefinition({ id: definitionId });
+    return definition.instanceFromObject(object);
 };
-const scalerFromId = (id) => {
-    return scalerInstance({ id });
+const scalerFromId = (definitionId) => {
+    return scalerInstance({ definitionId });
 };
 const scalerInitialize = () => {
     new ScalerDefinitionClass(scalerDefaultJson);
@@ -4353,6 +4643,7 @@ function TransformableMixin(Base) {
             super(...args);
             this.effects = [];
             const [object] = args;
+            // console.log("TransformableMixin", object)
             const { merger, effects, scaler } = object;
             this.merger = mergerInstance(merger || {});
             this.scaler = scalerInstance(scaler || {});
@@ -4369,6 +4660,22 @@ function TransformableMixin(Base) {
                 ...this.effects.flatMap(effect => effect.definitions)
             ];
         }
+        effectedCommandAtTimeToSize(mashTime, quantize, dimensions) {
+            const scaledCommand = this.scaledCommandAtTimeToSize(mashTime, quantize, dimensions);
+            if (!scaledCommand) {
+                // console.log(this.constructor.name, "effectedCommandAtTimeToSize scaledCommandAtTimeToSize falsey")
+                return;
+            }
+            if (!this.effects)
+                return scaledCommand;
+            const clipTimeRange = this.timeRangeRelative(mashTime, quantize);
+            if (!clipTimeRange) {
+                // console.log(this.constructor.name, "effectedCommandAtTimeToSize timeRangeRelative falsey")
+                return;
+            }
+            this.effects.reverse().every(effect => (scaledCommand.filters.push(...effect.definition.inputFilters(effect, clipTimeRange, dimensions))));
+            return scaledCommand;
+        }
         effectedContextAtTimeToSize(mashTime, quantize, dimensions) {
             const scaledContext = this.scaledContextAtTimeToSize(mashTime, quantize, dimensions);
             if (!scaledContext)
@@ -4381,6 +4688,17 @@ function TransformableMixin(Base) {
                 return;
             this.effects.reverse().every(effect => (context = effect.definition.drawFilters(effect, clipTimeRange, context, dimensions)));
             return context;
+        }
+        inputCommandAtTimeToSize(mashTime, quantize, dimensions) {
+            const effected = this.effectedCommandAtTimeToSize(mashTime, quantize, dimensions);
+            if (!effected) {
+                // console.log(this.constructor.name, "inputCommandAtTimeToSize effectedCommandAtTimeToSize falsey")
+                return;
+            }
+            const range = this.timeRangeRelative(mashTime, quantize);
+            effected.merger = this.merger.definition.inputFilters(this.merger, range, dimensions)[0];
+            // console.log(this.constructor.name, "inputCommandAtTimeToSize", effected)
+            return effected;
         }
         loadClip(quantize, start, end) {
             const loads = [
@@ -4414,12 +4732,21 @@ function TransformableMixin(Base) {
             const range = this.timeRangeRelative(mashTime, quantize);
             this.merger.definition.drawFilters(this.merger, range, effected, context.size, context);
         }
-        get propertyValues() {
-            const merger = this.merger.propertyValues;
-            const scaler = this.scaler.propertyValues;
-            const combined = { merger, scaler, ...super.propertyValues };
-            // console.log(this.constructor.name, "get propertyValues", combined)
-            return combined;
+        scaledCommandAtTimeToSize(mashTime, quantize, dimensions) {
+            const command = this.commandAtTimeToSize(mashTime, quantize, dimensions);
+            if (!command) {
+                // console.log(this.constructor.name, "scaledCommandAtTimeToSize super falsey")
+                return;
+            }
+            // console.log(this.constructor.name, "scaledCommandAtTimeToSize command", command)
+            const clipTimeRange = this.timeRangeRelative(mashTime, quantize);
+            if (Is.undefined(clipTimeRange)) {
+                // console.log(this.constructor.name, "scaledCommandAtTimeToSize timeRangeRelative falsey")
+                return command;
+            }
+            command.filters.push(...this.scaler.definition.inputFilters(this.scaler, clipTimeRange, dimensions));
+            // console.log(this.constructor.name, "scaledCommandAtTimeToSize", command)
+            return command;
         }
         scaledContextAtTimeToSize(mashTime, quantize, dimensions) {
             const context = this.contextAtTimeToSize(mashTime, quantize, dimensions);
@@ -4432,9 +4759,11 @@ function TransformableMixin(Base) {
             return this.scaler.definition.drawFilters(this.scaler, clipTimeRange, context, dimensions);
         }
         toJSON() {
-            const object = super.toJSON(); // gets merger and scaler from propertyValues
-            if (this.effects.length)
-                object.effects = this.effects;
+            const object = super.toJSON();
+            // console.log(this.constructor.name, "toJSON", object)
+            object.merger = this.merger;
+            object.scaler = this.scaler;
+            object.effects = this.effects;
             return object;
         }
     };
@@ -4457,7 +4786,7 @@ function VisibleMixin(Base) {
             }
             const width = Number(image.width);
             const height = Number(image.height);
-            const context = ContextFactoryInstance.toSize({ width, height });
+            const context = ContextFactory.toSize({ width, height });
             context.draw(image);
             return context;
         }
@@ -4501,11 +4830,11 @@ class ImageDefinitionClass extends ImageDefinitionWithTransformable {
         if (!url)
             throw Errors.invalid.definition.url;
         this.urlVisible = url;
-        if (source)
-            this.source = source;
+        this.source = source || url;
         Definitions.install(this);
     }
     get absoluteUrl() { return urlAbsolute(this.urlVisible); }
+    get inputSource() { return urlAbsolute(this.source); }
     get instance() {
         return this.instanceFromObject(this.instanceObject);
     }
@@ -4553,7 +4882,7 @@ class ImageDefinitionClass extends ImageDefinitionWithTransformable {
 const imageDefinition = (object) => {
     const { id } = object;
     if (!id)
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new ImageDefinitionClass(object);
@@ -4596,110 +4925,18 @@ const ImageFactoryImplementation = {
 };
 Factories[exports.DefinitionType.Image] = ImageFactoryImplementation;
 
-class TrackClass {
-    constructor(object) {
-        this.clips = [];
-        this.index = 0;
-        this.type = exports.TrackType.Video;
-        const { clips, index, type } = object;
-        if (index)
-            this.index = index;
-        if (type)
-            this.type = type;
-        if (clips)
-            this.clips.push(...clips);
-    }
-    get frames() {
-        if (!this.clips.length)
-            return 0;
-        const clip = this.clips[this.clips.length - 1];
-        return clip.frame + clip.frames;
-    }
-    get isMainVideo() { return !this.index && this.type === exports.TrackType.Video; }
-    addClips(clips, insertIndex = 0) {
-        // console.log("addClips", clips.length, insertIndex, this.index)
-        let clipIndex = insertIndex || 0;
-        if (!this.isMainVideo)
-            clipIndex = 0; // ordered by clip.frame values
-        const origIndex = clipIndex; // note original, since it may decrease...
-        const movingClips = []; // build array of clips already in this.clips
-        // build array of my clips excluding the clips we're inserting
-        const spliceClips = this.clips.filter((clip, index) => {
-            const moving = clips.includes(clip);
-            if (moving)
-                movingClips.push(clip);
-            // insert index should be decreased when clip is moving and comes before
-            if (origIndex && moving && index < origIndex)
-                clipIndex -= 1;
-            return !moving;
-        });
-        // insert the clips we're adding at the correct index, then sort properly
-        spliceClips.splice(clipIndex, 0, ...clips);
-        this.sortClips(spliceClips);
-        // set the track of clips we aren't moving
-        const newClips = clips.filter(clip => !movingClips.includes(clip));
-        newClips.forEach(clip => { clip.track = this.index; });
-        // remove all my current clips and replace with new ones in one step
-        this.clips.splice(0, this.clips.length, ...spliceClips);
-    }
-    frameForClipsNearFrame(clips, frame = 0) {
-        if (this.isMainVideo)
-            return frame;
-        const others = this.clips.filter(clip => !clips.includes(clip) && clip.endFrame > frame);
-        if (!others.length)
-            return frame;
-        const startFrame = Math.min(...clips.map(clip => clip.frame));
-        const endFrame = Math.max(...clips.map(clip => clip.endFrame));
-        const frames = endFrame - startFrame;
-        let lastFrame = frame;
-        others.find(clip => {
-            if (clip.frame >= lastFrame + frames)
-                return true;
-            lastFrame = clip.endFrame;
-        });
-        return lastFrame;
-    }
-    removeClips(clips) {
-        const spliceClips = this.clips.filter(clip => !clips.includes(clip));
-        if (spliceClips.length === this.clips.length) {
-            // console.trace("removeClips", this.type, this.index, this.clips)
-            throw Errors.internal + 'removeClips';
-        }
-        clips.forEach(clip => { clip.track = -1; });
-        this.sortClips(spliceClips);
-        this.clips.splice(0, this.clips.length, ...spliceClips);
-    }
-    sortClips(clips) {
-        if (this.isMainVideo) {
-            let frame = 0;
-            clips.forEach((clip, i) => {
-                const isTransition = clip.type === exports.DefinitionType.Transition;
-                if (i && isTransition)
-                    frame -= clip.frames;
-                clip.frame = frame;
-                if (!isTransition)
-                    frame += clip.frames;
-            });
-        }
-        clips.sort(byFrame);
-    }
-    toJSON() {
-        return { type: this.type, index: this.index, clips: this.clips };
-    }
-}
-
 class Composition {
     constructor(object) {
         this.buffer = Default.mash.buffer;
         this._gain = Default.mash.gain;
         this.playing = false;
+        this.playingClips = [];
         this.quantize = Default.mash.quantize;
-        this.sourcesByClip = new Map();
         // position of masher (in seconds) when startPlaying called
         this.startedMashAt = 0;
         // currentTime of context (in seconds) was created when startPlaying called
-        this.startedContextAt = 0;
-        const { backcolor, buffer, gain, quantize } = object;
+        this.contextSecondsWhenStarted = 0;
+        const { emitter, backcolor, buffer, gain, quantize } = object;
         if (backcolor)
             this.backcolor = backcolor;
         if (quantize && Is.aboveZero(quantize))
@@ -4708,9 +4945,11 @@ class Composition {
             this._gain = gain;
         if (buffer && Is.aboveZero(buffer))
             this.buffer = buffer;
+        if (emitter)
+            this.emitter = emitter;
     }
     adjustSourceGain(clip) {
-        const source = this.sourcesByClip.get(clip);
+        const source = Cache.audibleContext.getSource(clip.id);
         if (!source) {
             // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
             return;
@@ -4726,9 +4965,8 @@ class Composition {
             return;
         }
         // position/gain pairs...
-        const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize);
+        const timing = clip.startOptions(this.seconds, this.quantize);
         const { start, duration } = timing;
-        console.log(this.constructor.name, "adjustSourceGain", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize);
         gainNode.gain.cancelScheduledValues(0);
         clip.gainPairs.forEach(pair => {
             const [position, value] = pair;
@@ -4745,71 +4983,102 @@ class Composition {
         return true;
     }
     compositeVisible(time, clips) {
-        const main = clips.filter(clip => clip.track === 0);
         this.drawBackground(); // clear and fill with mash background color if defined
-        if (main.length > 1) {
-            const transitionClip = main.find(clip => clip.type === exports.DefinitionType.Transition);
-            if (!transitionClip)
-                throw Errors.mainTrackOverlap;
-            const transitioned = main.filter(clip => clip.type !== exports.DefinitionType.Transition);
-            const transition = transitionClip;
-            transition.mergeClipsIntoContextAtTime(transitioned, Cache.visibleContext, time, this.quantize, this.backcolor);
-        }
-        else {
-            const [mainClip] = main;
-            if (mainClip)
-                mainClip.mergeContextAtTime(time, this.quantize, Cache.visibleContext);
-        }
-        const tracked = clips.filter(clip => !main.includes(clip)).sort(byTrack);
-        tracked.forEach(clip => {
-            clip.mergeContextAtTime(time, this.quantize, Cache.visibleContext);
+        const clipsByTrack = new Map();
+        const transitionsByTrack = {};
+        const transitioningTracks = [];
+        const visibleTracks = [];
+        clips.sort(sortByTrack).forEach(clip => {
+            const { type } = clip;
+            if (type === exports.DefinitionType.Transition) {
+                const transition = clip;
+                transitionsByTrack[transition.fromTrack] = transition;
+                transitionsByTrack[transition.toTrack] = transition;
+                transitioningTracks.push(transition.fromTrack, transition.toTrack);
+            }
+            else {
+                visibleTracks.push(clip.track);
+                clipsByTrack.set(clip.track, clip);
+            }
         });
-        Cache.audibleContext.emit(exports.EventType.Draw);
+        visibleTracks.forEach(track => {
+            if (transitioningTracks.includes(track)) {
+                const transition = transitionsByTrack[track];
+                const { fromTrack, toTrack } = transition;
+                const transitioned = [];
+                const fromClip = clipsByTrack.get(fromTrack);
+                if (fromClip)
+                    transitioned.push(fromClip);
+                const toClip = clipsByTrack.get(toTrack);
+                if (toClip)
+                    transitioned.push(toClip);
+                if (!transitioned.length)
+                    return;
+                // console.log("drawing clips at track", transitioned.map(clip => clip.track), track)
+                transition.mergeClipsIntoContextAtTime(transitioned, Cache.visibleContext, time, this.quantize, this.backcolor);
+                clipsByTrack.delete(fromTrack);
+                clipsByTrack.delete(toTrack);
+                return;
+            }
+            const clip = clipsByTrack.get(track);
+            if (clip) {
+                // console.log("drawing clip at track", clip.track, track)
+                clip.mergeContextAtTime(time, this.quantize, Cache.visibleContext);
+            }
+        });
+        // const main = clips.filter(clip => clip.track === 0)
+        // if (main.length > 1) {
+        //   const transitionClip = main.find(clip => clip.type === DefinitionType.Transition)
+        //   if (!transitionClip) throw Errors.mainTrackOverlap
+        //   const transitioned = main.filter(clip => clip.type !== DefinitionType.Transition)
+        //   const transition = <Transition> transitionClip
+        //   transition.mergeClipsIntoContextAtTime(
+        //     transitioned, Cache.visibleContext, time, this.quantize, this.backcolor
+        //   )
+        // } else {
+        //   const [mainClip] = main
+        //   if (mainClip) mainClip.mergeContextAtTime(time, this.quantize, Cache.visibleContext)
+        // }
+        // const tracked = clips.filter(clip => !main.includes(clip)).sort(sortByTrack)
+        // tracked.forEach(clip => {
+        //   clip.mergeContextAtTime(time, this.quantize, Cache.visibleContext)
+        // })
+        this.emitter?.emit(exports.EventType.Draw);
     }
     compositeVisibleRequest(time, clips) {
-        if (Is.populatedArray(clips)) {
-            // console.log(this.constructor.name, "compositeVisibleRequest calling requestAnimationFrame", time, clips.length)
-            requestAnimationFrame(() => this.compositeVisible(time, clips));
-            return;
-        }
-        this.drawBackground();
+        requestAnimationFrame(() => this.compositeVisible(time, clips));
     }
-    createSources(clips) {
-        // console.log("Composition.createSources", clips.length)
-        const filtered = clips.filter(clip => !this.sourcesByClip.has(clip));
+    createSources(clips, time) {
+        const filtered = clips.filter(clip => !Cache.audibleContext.hasSource(clip.id));
+        // if (filtered.length) console.log("Composition.createSources", filtered.length, "of", clips.length, "need audio source")
         return filtered.every(clip => {
             const sourceNode = clip.loadedAudible();
             if (!sourceNode) {
                 console.debug(this.constructor.name, "createSources loadedAudible undefined", clip.id);
                 return false;
             }
-            const timing = clip.startOptions(this.startedContextAt - this.startedMashAt, this.quantize);
+            if (!this.playing && !time)
+                return;
+            const startSeconds = this.playing ? this.seconds : time?.seconds || 0;
+            const timing = clip.startOptions(startSeconds, this.quantize);
             const { start, duration, offset } = timing;
-            console.log(this.constructor.name, "createSources", clip.label, timing, this.startedContextAt - this.startedMashAt, this.quantize);
+            // console.log(this.constructor.name, "createSources", clip.label, timing, this.contextSecondsWhenStarted - this.startedMashAt, this.quantize)
             if (Is.positive(start) && Is.aboveZero(duration)) {
-                sourceNode.loop = clip.definition.loops;
-                const gainNode = Cache.audibleContext.createGain();
-                sourceNode.connect(gainNode);
-                gainNode.connect(Cache.audibleContext.destination);
-                sourceNode.start(start, offset, duration);
-                this.sourcesByClip.set(clip, { gainSource: sourceNode, gainNode });
+                const { definition, id } = clip;
+                const { loops } = definition;
+                Cache.audibleContext.startAt(id, sourceNode, start, duration, offset, loops);
+                this.playingClips.push(clip);
                 this.adjustSourceGain(clip);
             }
             return true;
         });
     }
     destroySources(clipsToKeep = []) {
-        const sourceClips = [...this.sourcesByClip.keys()];
+        const sourceClips = [...this.playingClips];
         const clipsToRemove = sourceClips.filter(clip => !clipsToKeep.includes(clip));
-        clipsToRemove.forEach(clip => {
-            const source = this.sourcesByClip.get(clip);
-            if (!source)
-                return;
-            const { gainSource, gainNode } = source;
-            gainNode.disconnect(Cache.audibleContext.destination);
-            gainSource.disconnect(gainNode);
-        });
-        clipsToRemove.forEach(clip => this.sourcesByClip.delete(clip));
+        clipsToRemove.forEach(clip => Cache.audibleContext.deleteSource(clip.id));
+        this.playingClips = clipsToKeep;
+        // console.log(this.constructor.name, "destroySources removed", clipsToRemove.length, "kept", this.playingClips.length)
     }
     drawBackground() {
         Cache.visibleContext.clear();
@@ -4823,13 +5092,15 @@ class Composition {
             return;
         this._gain = value;
         if (this.playing) {
-            [...this.sourcesByClip.keys()].forEach(clip => this.adjustSourceGain(clip));
+            this.playingClips.forEach(clip => this.adjustSourceGain(clip));
         }
-        Cache.audibleContext.emit(exports.EventType.Volume);
+        this.emitter?.emit(exports.EventType.Volume);
     }
     get seconds() {
-        const ellapsed = Cache.audibleContext.currentTime - this.startedContextAt;
-        return ellapsed + this.startedMashAt;
+        const ellapsed = Cache.audibleContext.currentTime - this.contextSecondsWhenStarted;
+        const started = ellapsed + this.startedMashAt;
+        // console.log("seconds", started, "=", this.startedMashAt, "+", ellapsed, '=', Cache.audibleContext.currentTime, '-', this.contextSecondsWhenStarted)
+        return started;
     }
     startContext() {
         // console.log(this.constructor.name, "startContext")
@@ -4837,12 +5108,13 @@ class Composition {
             throw Errors.internal + 'bufferSource startContext';
         if (this.playing)
             throw Errors.internal + 'playing';
-        const buffer = Cache.audibleContext.createBuffer(1);
+        const buffer = Cache.audibleContext.createBuffer(this.buffer);
         this.bufferSource = Cache.audibleContext.createBufferSource(buffer);
         this.bufferSource.loop = true;
         this.bufferSource.connect(Cache.audibleContext.destination);
         this.bufferSource.start(0);
     }
+    // called when playhead starts moving
     startPlaying(time, clips) {
         if (!this.bufferSource)
             throw Errors.internal + 'bufferSource startPlaying';
@@ -4851,13 +5123,13 @@ class Composition {
         const { seconds } = time;
         this.playing = true;
         this.startedMashAt = seconds;
-        this.startedContextAt = Cache.audibleContext.currentTime;
-        console.log(this.constructor.name, "startPlaying startedContextAt", this.startedContextAt);
-        if (!this.createSources(clips)) {
+        this.contextSecondsWhenStarted = Cache.audibleContext.currentTime;
+        // console.log(this.constructor.name, "startPlaying", "startedMashAt", this.startedMashAt, "contextSecondsWhenStarted", this.contextSecondsWhenStarted)
+        if (!this.createSources(clips, time)) {
             this.stopPlaying();
             return false;
         }
-        // console.log(this.constructor.name, "startPlaying", this.startedMashAt, this.startedContextAt)
+        // console.log(this.constructor.name, "startPlaying", this.startedMashAt, this.contextSecondsWhenStarted)
         return true;
     }
     stopPlaying() {
@@ -4869,7 +5141,7 @@ class Composition {
             this.bufferSource.stop();
         this.destroySources();
         this.startedMashAt = 0;
-        this.startedContextAt = 0;
+        this.contextSecondsWhenStarted = 0;
         if (!this.bufferSource)
             return;
         this.bufferSource.disconnect(Cache.audibleContext.destination);
@@ -4877,57 +5149,48 @@ class Composition {
     }
 }
 
-class MashClass extends InstanceBase {
+class MashClass {
     constructor(...args) {
-        super(...args);
-        this.audio = [];
         this._backcolor = Default.mash.backcolor;
         this._buffer = Default.mash.buffer;
+        this.createdAt = '';
+        this.data = {};
         this.drawnSeconds = 0;
         this._gain = Default.mash.gain;
+        this._id = '';
+        this.label = '';
         this.loop = false;
         this._paused = true;
         this._playing = false;
         this.quantize = Default.mash.quantize;
-        this.video = [];
-        this._id ||= Id();
+        this.tracks = [];
         const object = args[0] || {};
-        const { audio, backcolor, label, loop, media, quantize, video, buffer, gain, } = object;
-        if (typeof loop === "boolean")
-            this.loop = loop;
+        const { createdAt, tracks, backcolor, id, label, media, quantize, ...rest } = object;
+        if (id)
+            this._id = id;
+        Object.assign(this.data, rest);
         if (quantize && Is.aboveZero(quantize))
             this.quantize = quantize;
         if (label && Is.populatedString(label))
             this.label = label;
         if (backcolor && Is.populatedString(backcolor))
             this._backcolor = backcolor;
-        if (media)
-            media.forEach(definition => {
-                const { id: definitionId, type } = definition;
-                if (!(type && Is.populatedString(type)))
-                    throw Errors.type + 'Mash.constructor media';
-                const definitionType = type;
-                if (!DefinitionTypes.includes(definitionType))
-                    throw Errors.type + definitionType;
-                if (!(definitionId && Is.populatedString(definitionId))) {
-                    throw Errors.invalid.definition.id + JSON.stringify(definition);
-                }
-                return Factory[definitionType].definition(definition);
-            });
-        if (audio)
-            this.audio.push(...audio.map((track, index) => new TrackClass(this.trackOptions(track, index, exports.TrackType.Audio))));
-        else
-            this.audio.push(new TrackClass({ type: exports.TrackType.Audio }));
-        if (video)
-            this.video.push(...video.map((track, index) => new TrackClass(this.trackOptions(track, index, exports.TrackType.Video))));
-        else
-            this.video.push(new TrackClass({ type: exports.TrackType.Video }));
-        if (buffer && Is.aboveZero(buffer))
-            this.buffer = buffer;
-        if (typeof gain !== "undefined" && Is.positive(gain))
-            this._gain = gain;
+        if (createdAt)
+            this.createdAt = createdAt;
+        if (tracks)
+            this.tracks.push(...tracks.map((track, index) => {
+                const instance = Factory.track.instance(this.trackOptions(track, index));
+                this.assureClipsHaveFrames(instance.clips);
+                return instance;
+            }));
+        if (!this.trackCount(exports.TrackType.Video)) {
+            this.tracks.push(Factory.track.instance({ trackType: exports.TrackType.Video }));
+        }
+        if (!this.trackCount(exports.TrackType.Audio)) {
+            this.tracks.push(Factory.track.instance({ trackType: exports.TrackType.Audio }));
+        }
+        this.tracks.sort(sortByLayer);
         this.setDrawInterval();
-        // console.debug(this.constructor.name, "constructor", this.identifier, this)
     }
     addClipsToTrack(clips, trackIndex = 0, insertIndex = 0, frames) {
         // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
@@ -4936,6 +5199,7 @@ class MashClass extends InstanceBase {
         const newTrack = this.clipTrackAtIndex(clip, trackIndex);
         if (!newTrack)
             throw Errors.invalid.track;
+        // console.log(this.constructor.name, "addClipsToTrack", newTrack)
         const oldTrack = Is.positive(clip.track) && this.clipTrack(clip);
         this.emitIfFramesChange(() => {
             if (oldTrack && oldTrack !== newTrack) {
@@ -4948,12 +5212,11 @@ class MashClass extends InstanceBase {
         });
     }
     addTrack(trackType) {
-        const array = this[trackType];
-        // console.log("addTrack", trackType, array.length)
-        const options = { type: trackType, index: array.length };
-        const track = new TrackClass(options);
-        array.push(track);
-        Cache.audibleContext.emit(exports.EventType.Track);
+        const options = { trackType: trackType, layer: this.trackCount(trackType) };
+        const track = Factory.track.instance(options);
+        this.tracks.push(track);
+        this.tracks.sort(sortByLayer);
+        this.emitter?.emit(exports.EventType.Track);
         return track;
     }
     assureClipsHaveFrames(clips) {
@@ -5063,7 +5326,10 @@ class MashClass extends InstanceBase {
     clipsAudibleInTimeRange(timeRange) {
         return this.filterIntersecting(this.clipsAudibleInTracks, timeRange);
     }
-    get clipsVideo() { return this.video.flatMap(track => track.clips); }
+    get clipsVideo() {
+        const tracks = this.tracks.filter(track => track.trackType !== exports.TrackType.Audio);
+        return tracks.flatMap(track => track.clips);
+    }
     clipsVisible(start, end) {
         const range = end && TimeRange.fromTimes(start, end);
         return this.clipsVideo.filter(clip => {
@@ -5080,16 +5346,13 @@ class MashClass extends InstanceBase {
         const range = timeRange.scale(this.quantize);
         return this.clipsVideo.filter(clip => this.clipIntersects(clip, range));
     }
-    compositeAudible(clips) {
-        const audibleClips = clips || this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
-        return this.composition.compositeAudible(audibleClips);
-    }
     compositeAudibleClips(clips) {
         if (this._paused)
             return;
         const audibleClips = clips.filter(clip => clip.audible && !clip.muted);
-        if (audibleClips.length)
-            this.compositeAudible(audibleClips);
+        if (audibleClips.length) {
+            this.composition.compositeAudible(audibleClips);
+        }
     }
     get composition() {
         if (!this._composition) {
@@ -5098,6 +5361,7 @@ class MashClass extends InstanceBase {
                 buffer: this.buffer,
                 gain: this.gain,
                 quantize: this.quantize,
+                emitter: this.emitter,
             };
             this._composition = new Composition(options);
         }
@@ -5107,9 +5371,12 @@ class MashClass extends InstanceBase {
         const { time } = this;
         this.composition.compositeVisible(time, this.clipsVisibleAtTime(time));
     }
-    compositeVisibleRequest(clips) {
+    compositeVisibleRequest() {
         const { time, composition } = this;
-        composition.compositeVisibleRequest(time, clips || this.clipsVisibleAtTime(time));
+        composition.compositeVisibleRequest(time, this.clipsVisibleAtTime(time));
+    }
+    get definitions() {
+        return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))];
     }
     destroy() {
         this.paused = true;
@@ -5120,7 +5387,7 @@ class MashClass extends InstanceBase {
         const timeChange = time !== this.time;
         this.drawnTime = time;
         this.compositeVisibleRequest();
-        Cache.audibleContext.emit(timeChange ? exports.EventType.Time : exports.EventType.Loaded);
+        this.emitter?.emit(timeChange ? exports.EventType.Time : exports.EventType.Loaded);
     }
     drawWhileNotPlaying() {
         const now = performance.now();
@@ -5150,16 +5417,15 @@ class MashClass extends InstanceBase {
                 this.seekToTime(this.time.withFrame(0));
             else {
                 this.paused = true;
-                Cache.audibleContext.emit(exports.EventType.Ended);
+                this.emitter?.emit(exports.EventType.Ended);
             }
         }
         else {
             // are we at or beyond the next frame?
             if (seconds >= nextFrameTime.seconds) {
                 const compositionTime = Time.fromSeconds(seconds, this.time.fps);
-                const difference = compositionTime.frame - this.time.frame;
-                if (difference > 1)
-                    console.debug(this.constructor.name, "drawWhilePlaying dropped frames", difference - 1);
+                // const difference = compositionTime.frame - this.time.frame
+                // if (difference > 1) console.debug(this.constructor.name, "drawWhilePlaying dropped frames", difference - 1)
                 // go to where the audio context thinks we are
                 this.drawTime(compositionTime);
             }
@@ -5171,10 +5437,16 @@ class MashClass extends InstanceBase {
         method();
         const { frames } = this;
         if (origFrames !== frames) {
-            Cache.audibleContext.emit(exports.EventType.Duration);
+            this.emitter?.emit(exports.EventType.Duration);
             if (this.frame > frames)
                 this.seekToTime(Time.fromArgs(frames, this.quantize));
         }
+    }
+    get emitter() { return this._emitter; }
+    set emitter(value) {
+        this._emitter = value;
+        if (this._composition)
+            this._composition.emitter = value;
     }
     get endTime() { return Time.fromArgs(this.frames, this.quantize); }
     get frame() { return this.time.scale(this.quantize, "floor").frame; }
@@ -5187,11 +5459,12 @@ class MashClass extends InstanceBase {
             throw Errors.invalid.argument + 'gain ' + value;
         if (this._gain !== value) {
             this._gain = value;
-            this.composition.gain = value;
+            if (this._composition)
+                this.composition.gain = value;
         }
     }
     handleAction(action) {
-        Cache.audibleContext.emit(exports.EventType.Action);
+        this.emitter?.emit(exports.EventType.Action);
         if (action instanceof ChangeAction) {
             const changeAction = action;
             const { property } = changeAction;
@@ -5224,7 +5497,7 @@ class MashClass extends InstanceBase {
         times.forEach(time => {
             const timeRange = TimeRange.fromTime(time);
             const clips = this.filterIntersecting(fullRangeClips, timeRange);
-            const ids = clips.map(clip => clip.identifier).join('~');
+            const ids = clips.map(clip => clip.id).join('~');
             if (identifiers === ids) {
                 timeRangeClips.timeRange = timeRangeClips.timeRange.addFrames(1);
             }
@@ -5236,26 +5509,42 @@ class MashClass extends InstanceBase {
         });
         return result;
     }
-    inputCommand(type, start, end) {
+    get id() {
+        // console.trace(this.constructor.name, "id")
+        return this._id ||= idGenerate();
+    }
+    inputCommand(type, size, start, end) {
         const segments = this.seqmentsAtTimes(type, start, end);
         return segments.map(({ clips, timeRange }) => {
-            const inputCommand = { inputs: [] };
-            return inputCommand;
+            return clips.map(clip => {
+                const inputCommand = clip.inputCommandAtTimeToSize(timeRange.startTime, this.quantize, size);
+                if (!inputCommand)
+                    throw Errors.invalid.object;
+                return inputCommand;
+            });
         });
     }
-    inputCommandPromise(type, start, end) {
+    inputCommandPromise(type, size, start, end) {
         const promise = new Promise(resolve => {
             const clips = this.clipsAtTimes(start, end);
             const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
             const promises = loads.filter(Boolean);
             if (promises.length)
                 Promise.all(promises).then(() => {
-                    resolve(this.inputCommand(type, start, end));
+                    resolve(this.inputCommand(type, size, start, end));
                 });
             else
-                resolve(this.inputCommand(type, start, end));
+                resolve(this.inputCommand(type, size, start, end));
         });
         return promise;
+    }
+    get job() {
+        return {
+            definitions: this.definitions,
+            mash: this,
+            remoteServer: urlRemoteServer(),
+            outputs: []
+        };
     }
     get loadPromise() {
         const [start, end] = this.startAndEnd;
@@ -5268,14 +5557,26 @@ class MashClass extends InstanceBase {
                 this.compositeAudibleClips(clips);
             });
         this.compositeAudibleClips(clips);
+        // switch (promises.length) {
+        //   case 0: return
+        //   case 1: return promises[0] || undefined
+        //   default: return Promise.all(promises).then()
+        // }
+    }
+    loadPromiseAtTimes(start, end) {
+        const clips = this.clipsAtTimes(start, end);
+        const loads = clips.map(clip => clip.loadClip(this.quantize, start, end));
+        const promises = loads.filter(Boolean);
+        switch (promises.length) {
+            case 0: return;
+            case 1: return promises[0] || undefined;
+            default: return Promise.all(promises).then();
+        }
     }
     get loadUrls() {
         const [start, end] = this.startAndEnd;
-        // console.log(this.constructor.name, "load", start, end)
         const clips = this.clipsAtTimes(start, end);
-        const urls = clips.flatMap(clip => clip.clipUrls(this.quantize, start, end));
-        // console.trace(this.constructor.name, "loadUrls", this.identifier, start, end, urls)
-        return urls;
+        return clips.flatMap(clip => clip.clipUrls(this.quantize, start, end));
     }
     get loadedDefinitions() {
         const map = new Map();
@@ -5296,11 +5597,20 @@ class MashClass extends InstanceBase {
         });
         return map;
     }
-    maxTracks(type) {
-        return type ? this[type].length : this.audio.length + this.video.length;
+    mashState(time, dimensions) {
+        const state = [];
+        const size = `${dimensions.width}x${dimensions.height}`;
+        const colorFilter = { filter: 'color', options: { color: this.backcolor, size } };
+        const clipState = { filters: [colorFilter] };
+        state.push(clipState);
+        state.push(...this.clipsAtTimes(time).map(clip => clip.clipState(this.quantize, time, dimensions)));
+        return state;
     }
-    get media() {
-        return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))];
+    mashStatePromise(time, dimensions) {
+        const promise = this.loadPromiseAtTimes(time);
+        if (promise)
+            return promise.then(() => this.mashState(time, dimensions));
+        return Promise.resolve(this.mashState(time, dimensions));
     }
     get paused() { return this._paused; }
     set paused(value) {
@@ -5316,7 +5626,7 @@ class MashClass extends InstanceBase {
                 clearInterval(this._bufferTimer);
                 delete this._bufferTimer;
             }
-            Cache.audibleContext.emit(exports.EventType.Pause);
+            this.emitter?.emit(exports.EventType.Pause);
         }
         else {
             this.composition.startContext();
@@ -5327,7 +5637,7 @@ class MashClass extends InstanceBase {
             else
                 this.playing = true;
             // console.log("Mash emit", EventType.Play)
-            Cache.audibleContext.emit(exports.EventType.Play);
+            this.emitter?.emit(exports.EventType.Play);
         }
     }
     get playing() { return this._playing; }
@@ -5337,13 +5647,14 @@ class MashClass extends InstanceBase {
             this._playing = value;
             if (value) {
                 const clips = this.clipsAudibleInTimeRange(this.timeRangeToBuffer);
+                // console.log("playing", value, this.time)
                 if (!this.composition.startPlaying(this.time, clips)) {
                     // console.log(this.constructor.name, "set playing", value, "audio not cached", this.time, clips.length)
                     // audio was not cached
                     this._playing = false;
                     return;
                 }
-                Cache.audibleContext.emit(exports.EventType.Playing);
+                this.emitter?.emit(exports.EventType.Playing);
             }
             else
                 this.composition.stopPlaying();
@@ -5355,15 +5666,18 @@ class MashClass extends InstanceBase {
         this.emitIfFramesChange(() => { track.removeClips(clips); });
     }
     removeTrack(trackType) {
-        const array = this[trackType];
-        this.emitIfFramesChange(() => { array.pop(); });
-        Cache.audibleContext.emit(exports.EventType.Track);
+        const track = this.trackOfTypeAtIndex(trackType, this.trackCount(trackType) - 1);
+        const index = this.tracks.indexOf(track);
+        if (!Is.positive(index))
+            throw Errors.internal;
+        this.emitIfFramesChange(() => { this.tracks.splice(index, 1); });
+        this.emitter?.emit(exports.EventType.Track);
     }
     restartAfterStop(time, paused, seeking) {
         if (time === this.time) { // otherwise we must have gotten a seek call
             if (seeking) {
                 delete this.seekTime;
-                Cache.audibleContext.emit(exports.EventType.Seeked);
+                this.emitter?.emit(exports.EventType.Seeked);
             }
             this.drawTime(time);
             if (!paused) {
@@ -5376,8 +5690,8 @@ class MashClass extends InstanceBase {
         // console.debug(this.constructor.name, "seekToTime", time)
         if (this.seekTime !== time) {
             this.seekTime = time;
-            Cache.audibleContext.emit(exports.EventType.Seeking);
-            Cache.audibleContext.emit(exports.EventType.Time);
+            this.emitter?.emit(exports.EventType.Seeking);
+            this.emitter?.emit(exports.EventType.Time);
         }
         return this.stopLoadAndDraw(true);
     }
@@ -5423,1051 +5737,66 @@ class MashClass extends InstanceBase {
         return {
             label: this.label,
             quantize: this.quantize,
-            backcolor: this.backcolor || "",
+            backcolor: this.backcolor,
             id: this.id,
-            media: this.media,
-            audio: this.audio,
-            video: this.video,
+            tracks: this.tracks,
+            createdAt: this.createdAt,
+            ...this.data,
         };
+    }
+    trackCount(type) {
+        if (type)
+            return this.tracksOfType(type).length;
+        return this.tracks.length;
     }
     trackOfTypeAtIndex(type, index = 0) {
         if (!Is.positive(index)) {
             console.error(Errors.invalid.track, index, index?.constructor.name);
             throw Errors.invalid.track;
         }
-        return this[type][index];
+        return this.tracksOfType(type)[index];
     }
-    trackOptions(object, index, type) {
-        const { clips } = object;
-        if (!(clips && Is.populatedArray(clips)))
-            return { type, index };
-        const objects = clips.map(clip => {
-            const { id } = clip;
-            if (!id)
-                throw Errors.id;
-            const definition = Definitions.fromId(id);
-            const clipWithTrack = { track: index, ...clip };
-            return definition.instanceFromObject(clipWithTrack);
-        });
-        this.assureClipsHaveFrames(objects);
-        return { type, index, clips: objects };
+    trackOptions(object, index) {
+        return { ...object, layer: index };
     }
-    get tracks() { return Object.values(exports.TrackType).map(av => this[av]).flat(); }
-}
-
-class MashDefinitionClass extends DefinitionBase {
-    constructor(...args) {
-        super(...args);
-        this.id = "com.moviemasher.mash.default";
-        this.retain = true;
-        this.type = exports.DefinitionType.Mash;
-        this.properties.push(new Property({ name: "backcolor", type: exports.DataType.Rgba, value: "#00000000" }));
-        Definitions.install(this);
-    }
-    get instance() {
-        return this.instanceFromObject(this.instanceObject);
-    }
-    instanceFromObject(object) {
-        const instance = new MashClass({ ...this.instanceObject, ...object });
-        return instance;
+    tracksOfType(trackType) {
+        return this.tracks.filter(track => track.trackType === trackType);
     }
 }
 
-const MashDefaultId = "com.moviemasher.mash.default";
-const mashDefinition = (object) => {
-    const { id } = object;
-    const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MashDefaultId;
-    return Definitions.fromId(idString);
-};
-const mashDefinitionFromId = (id) => {
-    return mashDefinition({ id });
-};
-const mashInstance = (object) => {
-    const definition = mashDefinition(object);
-    const instance = definition.instanceFromObject(object);
-    return instance;
-};
-const mashFromId = (id) => {
-    return mashInstance({ id });
-};
-const mashInitialize = () => {
-    new MashDefinitionClass({ id: MashDefaultId });
-};
-const mashDefine = (object) => {
-    const { id } = object;
-    if (!(id && Is.populatedString(id)))
-        throw Errors.id;
-    Definitions.uninstall(id);
-    return mashDefinition(object);
-};
-/**
- * @internal
- */
-const mashInstall = (object) => {
-    const instance = mashDefine(object);
-    instance.retain = true;
-    return instance;
-};
-const MashFactoryImplementation = {
-    define: mashDefine,
-    install: mashInstall,
-    definition: mashDefinition,
-    definitionFromId: mashDefinitionFromId,
-    fromId: mashFromId,
-    initialize: mashInitialize,
-    instance: mashInstance,
-};
-Factories[exports.DefinitionType.Mash] = MashFactoryImplementation;
-
-const classes = {
-    AddTrack: AddTrackAction,
-    AddClipsToTrack: AddClipToTrackAction,
-    MoveClips: MoveClipsAction,
-    AddEffect: AddEffectAction,
-    Change: ChangeAction,
-    ChangeFrames: ChangeFramesAction,
-    ChangeTrim: ChangeTrimAction,
-    Split: SplitAction,
-    Freeze: FreezeAction,
-    MoveEffects: MoveEffectsAction,
-    RemoveClips: RemoveClipsAction,
-};
-class ActionFactoryClass {
-    createFromObject(object) {
-        const { type } = object;
-        if (typeof type !== "string")
-            throw Errors.type + JSON.stringify(object);
-        return new classes[Capitalize(type)](object);
-    }
-}
-const ActionFactory = new ActionFactoryClass();
-
-class MasherClass extends InstanceBase {
-    constructor(...args) {
-        super(...args);
-        this.autoplay = Default.masher.autoplay;
-        this._buffer = Default.masher.buffer;
-        this._fps = Default.masher.fps;
-        this._loop = Default.masher.loop;
-        this._muted = false;
-        this._paused = true;
-        this.precision = Default.masher.precision;
-        this.selectedClipObject = {};
-        this._selectedClips = [];
-        this._selectedEffects = [];
-        this._volume = Default.masher.volume;
-        this._id ||= Id();
-        const [object] = args;
-        const { autoplay, precision, loop, fps, volume, buffer, mash, } = object;
-        if (typeof autoplay !== "undefined")
-            this.autoplay = autoplay;
-        if (typeof precision !== "undefined")
-            this.precision = precision;
-        if (typeof loop !== "undefined")
-            this._loop = loop;
-        if (typeof fps !== "undefined")
-            this._fps = fps;
-        if (typeof volume !== "undefined")
-            this._volume = volume;
-        if (typeof buffer !== "undefined")
-            this._buffer = buffer;
-        if (mash)
-            this.mash = mash;
-    }
-    actionCreate(object) {
-        const mash = object.mash || this.mash;
-        const actions = object.actions || this.actions;
-        const undoSelectedClips = object.undoSelectedClips || this.selectedClips;
-        const undoSelectedEffects = object.undoSelectedEffects || this.selectedEffects;
-        const redoSelectedClips = object.redoSelectedClips || this.selectedClips;
-        const redoSelectedEffects = object.redoSelectedEffects || this.selectedEffects;
-        const clone = {
-            ...object,
-            actions,
-            mash,
-            undoSelectedClips,
-            undoSelectedEffects,
-            redoSelectedClips,
-            redoSelectedEffects,
-        };
-        const action = ActionFactory.createFromObject(clone);
-        this.actions.add(action);
-        this.handleAction(this.actions.redo());
-    }
-    get actions() {
-        if (!this._actions) {
-            this._actions = new Actions({ mash: this.mash });
-        }
-        return this._actions;
-    }
-    add(object, frameOrIndex = 0, trackIndex = 0) {
-        if (!Is.populatedObject(object))
-            throw Errors.argument + 'add';
-        const { id } = object;
-        const definitionFromId = id && Definitions.installed(id) ? Definitions.fromId(id) : false;
-        const type = object.type || (definitionFromId && definitionFromId.type);
-        if (!type)
-            throw Errors.type + 'Masher.add ' + id + JSON.stringify(definitionFromId);
-        if (type === exports.DefinitionType.Effect) {
-            const effectDefinition = Factory.effect.definition(object);
-            const effect = effectDefinition.instance;
-            return this.addEffect(effect, frameOrIndex).then(() => effect);
-        }
-        const clipType = type;
-        if (!ClipTypes.includes(clipType))
-            throw Errors.type + type;
-        const definitionType = type;
-        const definition = Factory[definitionType].definition(object);
-        const clip = definition.instanceFromObject(object);
-        return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip);
-    }
-    addClip(clip, frameOrIndex = 0, trackIndex = 0) {
-        const { trackType } = clip;
-        const clips = [clip];
-        const options = {
-            clip,
-            type: exports.ActionType.AddClipsToTrack,
-            redoSelectedClips: clips,
-            trackType,
-        };
-        const track = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
-        const trackCount = this.mash[trackType].length;
-        if (track.isMainVideo) {
-            options.insertIndex = frameOrIndex;
-            options.createTracks = Math.min(1, Math.max(0, 1 - trackCount));
-        }
-        else {
-            options.trackIndex = trackIndex;
-            clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex);
-            options.createTracks = Math.max(0, trackIndex + 1 - trackCount);
-        }
-        this.actionCreate(options);
-        return this.loadMashAndDraw();
-    }
-    addEffect(effect, insertIndex = 0) {
-        // console.log(this.constructor.name, "addEffect", object, index)
-        const { effects } = this.selectedClipOrThrow;
-        if (!effects)
-            throw Errors.selection;
-        const undoEffects = [...effects];
-        const redoEffects = [...effects];
-        const redoSelectedEffects = [effect];
-        redoEffects.splice(insertIndex, 0, effect);
-        const options = {
-            effects,
-            undoEffects,
-            redoEffects,
-            redoSelectedEffects,
-            type: exports.ActionType.MoveEffects
-        };
-        this.actionCreate(options);
-        return this.loadMashAndDraw();
-    }
-    addTrack(trackType = exports.TrackType.Video) {
-        this.actionCreate({ trackType, type: exports.ActionType.AddTrack });
-    }
-    get buffer() { return this._buffer; }
-    set buffer(value) {
-        const number = Number(value);
-        if (this._buffer !== number) {
-            this._buffer = number;
-            this.mash.buffer = number;
-        }
-    }
-    can(method) {
-        const z = this._selectedClips.length;
-        switch (method) {
-            case 'save': return this.actions.canSave;
-            case 'undo': return this.actions.canUndo;
-            case 'redo': return this.actions.canRedo;
-            case 'copy': return z > 0;
-            case 'cut':
-            case 'remove': return !!z; // TODO: check removing won't create transition problem
-            case 'split': return z === 1 && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize);
-            case 'freeze': return (z === 1
-                && exports.DefinitionType.Video === this.selectedClipOrThrow.type
-                && this.clipCanBeSplit(this.selectedClipOrThrow, this.time, this.mash.quantize));
-            default: throw Errors.argument;
-        }
-    }
-    change(property, value) {
-        if (Is.populatedObject(this.selectedClip)) {
-            if (Is.populatedObject(this.selectedEffect)) {
-                this.changeEffect(property, value, this.selectedEffect);
-            }
-            else
-                this.changeClip(property, value, this.selectedClipOrThrow);
-        }
-        else
-            this.changeMash(property, value);
-    }
-    changeClip(property, value, clip) {
-        // console.log(this.constructor.name, "changeClip", property)
-        if (!Is.populatedString(property))
-            throw Errors.property + "changeClip " + property;
-        const [transform, transformProperty] = property.split(".");
-        if (transformProperty) {
-            this.changeTransformer(transform, transformProperty, value);
-            return;
-        }
-        const target = clip || this.selectedClipOrThrow;
-        const redoValue = typeof value === "undefined" ? target.value(property) : value;
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(redoValue);
-            this.handleAction(changeAction);
-            return;
-        }
-        const undoValue = typeof value === "undefined" ? this.pristineOrThrow[property] : target.value(property);
-        const options = { property, target, redoValue, undoValue };
-        switch (options.property) {
-            case 'frames': {
-                options.type = exports.ActionType.ChangeFrames;
-                break;
-            }
-            case 'trim': {
-                options.type = exports.ActionType.ChangeTrim;
-                // TODO: make sure there's a test for this
-                // not sure where this was derived from - using original clip??
-                options.frames = target.frames + options.undoValue;
-                break;
-            }
-            default: options.type = exports.ActionType.Change;
-        }
-        this.actionCreate(options);
-    }
-    changeEffect(property, value, effect) {
-        // console.log(this.constructor.name, "changeEffect", property)
-        if (!Is.populatedString(property))
-            throw Errors.property;
-        const target = effect || this.selectedEffectOrThrow;
-        const redoValue = typeof value === "undefined" ? target.value(property) : value;
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(redoValue);
-            this.handleAction(changeAction);
-            return;
-        }
-        const undoValue = typeof value === "undefined" ? this.pristineEffectOrThrow[property] : target.value(property);
-        const options = {
-            type: exports.ActionType.Change, target, property, redoValue, undoValue
-        };
-        this.actionCreate(options);
-    }
-    changeMash(property, value) {
-        if (!this.mash.propertyNames.includes(property))
-            throw Errors.unknownMash;
-        if (!this._pristine)
-            throw Errors.internal;
-        const target = this.mash;
-        const redoValue = typeof value === "undefined" ? target.value(property) : value;
-        if (this.currentActionReusable(target, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(redoValue);
-            this.handleAction(changeAction);
-            return;
-        }
-        const undoValue = typeof value === "undefined" ? this._pristine[property] : target.value(property);
-        const options = {
-            target,
-            property,
-            redoValue,
-            undoValue,
-            type: exports.ActionType.Change,
-        };
-        this.actionCreate(options);
-    }
-    changeTransformer(type, property, value) {
-        // console.log(this.constructor.name, "changeTransformer", type, property)
-        if (!Is.populatedString(type))
-            throw Errors.type + "changeTransformer " + type;
-        if (!Is.populatedString(property))
-            throw Errors.property + "changeTransformer " + property;
-        if (!this._pristine)
-            throw Errors.internal + "changeTransformer _pristine";
-        const target = this.selectedClipOrThrow;
-        const transformType = type;
-        const transformable = target;
-        // make sure first component is merger or scaler
-        if (!TransformTypes.includes(transformType))
-            throw Errors.property + "type " + type;
-        const transformTarget = transformable[transformType];
-        const redoValue = typeof value === "undefined" ? transformTarget.value(property) : value;
-        const pristineTarget = this._pristine[transformType];
-        if (typeof pristineTarget !== "object")
-            throw Errors.internal + JSON.stringify(this._pristine);
-        const undoValue = pristineTarget[property];
-        if (typeof undoValue === "undefined")
-            throw Errors.property + 'pristine ' + property + JSON.stringify(pristineTarget);
-        const options = { property, target: transformTarget, redoValue, undoValue, type: exports.ActionType.Change };
-        if (this.currentActionReusable(transformTarget, property)) {
-            const changeAction = this.actions.currentAction;
-            changeAction.updateAction(redoValue);
-            this.handleAction(changeAction);
-            return;
-        }
-        this.actionCreate(options);
-    }
-    get clip() {
-        return Is.populatedObject(this.selectedClip) ? this.selectedClip : undefined;
-    }
-    set clip(value) { this.selectedClips = value ? [value] : []; }
-    clipCanBeSplit(clip, time, quantize) {
-        if (!Is.object(clip))
-            return false;
-        // true if now intersects clip time, but is not start or end frame
-        const range = TimeRange.fromTime(time);
-        const clipRange = clip.timeRange(quantize);
-        // ranges must intersect
-        if (!clipRange.intersects(range))
-            return false;
-        const scaled = range.scale(clipRange.fps);
-        if (scaled.frame === clipRange.frame)
-            return false;
-        if (scaled.end === clipRange.end)
-            return false;
-        return true;
-    }
-    get clips() { return this.mash.clips; }
-    currentActionReusable(target, property) {
-        if (!this.actions.currentActionLast)
-            return false;
-        const action = this.actions.currentAction;
-        if (!(action instanceof ChangeAction))
-            return false;
-        return action.target === target && action.property === property;
-    }
-    get currentTime() { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0; }
-    get definitions() { return this.mash.media; }
-    // call when player removed from DOM
-    destroy() { Factory.masher.destroy(this); }
-    get duration() { return this.mash.duration; }
-    get effect() {
-        return Is.populatedObject(this.selectedEffect) ? this.selectedEffect : undefined;
-    }
-    set effect(value) { this.selectedEffects = value ? [value] : []; }
-    get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
-    get eventTarget() { return Cache.audibleContext.context; }
-    filterClipSelection(value) {
-        const clips = Array.isArray(value) ? value : [value];
-        const [firstClip] = clips;
-        if (!firstClip)
-            return [];
-        const { trackType, track } = firstClip;
-        //  must all be on same track
-        const trackClips = clips.filter(clip => (clip.track === track && clip.trackType === trackType)).sort(byFrame);
-        if (track || trackType === exports.TrackType.Audio)
-            return trackClips;
-        // must be abutting each other on main track
-        let abutting = true;
-        return trackClips.filter((clip, index) => {
-            if (!abutting)
-                return false;
-            if (index === trackClips.length - 1)
-                return true;
-            abutting = clip.frame + clip.frames === trackClips[index + 1].frame;
-            return true;
-        });
-    }
-    get fps() { return this._fps || this.mash.quantize; }
-    set fps(value) {
-        const number = Number(value);
-        // setting to zero means fallback to mash rate
-        if (this._fps !== number) {
-            this._fps = number;
-            Cache.audibleContext.emit(exports.EventType.Fps);
-            this.time = this.time.scale(this.fps);
-        }
-    }
-    get frame() { return this.time.frame; }
-    set frame(value) { this.goToTime(Time.fromArgs(Number(value), this.fps)); }
-    get frames() { return this.endTime.frame; }
-    freeze() {
-        const clip = this.selectedClipOrThrow;
-        if (!this.clipCanBeSplit(clip, this.time, this.mash.quantize)) {
-            throw Errors.invalid.action;
-        }
-        if (exports.DefinitionType.Video !== clip.type) {
-            throw Errors.invalid.action;
-        }
-        const freezeClip = clip;
-        const scaled = this.time.scale(this.mash.quantize);
-        const trackClips = this.mash.clipTrack(freezeClip).clips;
-        const insertClip = freezeClip.copy;
-        const frozenClip = freezeClip.copy;
-        const options = {
-            frames: freezeClip.frames - (scaled.frame - freezeClip.frame),
-            freezeClip,
-            frozenClip,
-            insertClip,
-            trackClips,
-            redoSelectedClips: [frozenClip],
-            index: 1 + trackClips.indexOf(freezeClip),
-            type: exports.ActionType.Freeze,
-        };
-        frozenClip.frame = scaled.frame;
-        frozenClip.frames = 1;
-        frozenClip.trim = freezeClip.trim + (scaled.frame - freezeClip.frame);
-        insertClip.frame = scaled.frame + 1;
-        insertClip.frames = options.frames - 1;
-        insertClip.trim = frozenClip.trim + 1;
-        this.actionCreate(options);
-    }
-    get gain() { return this.muted ? 0.0 : this.volume; }
-    goToTime(value) {
-        const { fps } = this;
-        const time = value ? value.scaleToFps(fps) : Time.fromArgs(0, fps);
-        const min = time.min(this.endTime);
-        if (value && min.equalsTime(this.time))
-            return Promise.resolve();
-        const promise = this.mash.seekToTime(min);
-        if (promise)
-            return promise;
-        return Promise.resolve();
-    }
-    handleAction(action) {
-        this.mash.handleAction(action);
-        this.selectedClips = action.selectedClips;
-        this.selectedEffects = action.selectedEffects;
-    }
-    get imageData() { return Cache.visibleContext.imageData; }
-    get imageSize() { return Cache.visibleContext.size; }
-    set imageSize(value) {
-        const { width, height } = value;
-        if (!(Is.aboveZero(width) && Is.aboveZero(height)))
-            throw Errors.invalid.size;
-        Cache.visibleContext.size = value;
-        this.loadMashAndDraw();
-    }
-    isSelected(object) {
-        if (object instanceof EffectClass)
-            return this.selectedEffects.includes(object);
-        return this.selectedClips.includes(object);
-    }
-    loadMashAndDraw() {
-        const promise = this.mash.loadPromise;
-        if (promise)
-            return promise.then(() => {
-                this.mash.compositeVisible();
-            });
-        this.mash.compositeVisible();
-        return Promise.resolve();
-    }
-    get loadedDefinitions() { return this.mash.loadedDefinitions; }
-    get loop() { return this._loop; }
-    set loop(value) {
-        const boolean = !!value;
-        this._loop = boolean;
-        if (this._mash)
-            this.mash.loop = boolean;
-    }
-    get mash() {
-        if (!this._mash) {
-            // console.trace("get mash")
-            this._mash = Factory.mash.instance(this.mashOptions());
-        }
-        return this._mash;
-    }
-    set mash(object) {
-        if (this._mash === object)
-            return;
-        console.log(this.constructor.name, "mash=", object.identifier);
-        this.paused = true;
-        if (this._mash)
-            this._mash.destroy();
-        this._selectedEffects = [];
-        this._mash = object;
-        this._mash.buffer = this.buffer;
-        this._mash.gain = this.gain;
-        this._mash.loop = this.loop;
-        if (this._actions) {
-            this._actions.destroy();
-            this._actions.mash = this._mash;
-        }
-        this.selectedClips = []; // so mash gets copied into _pristine
-        Cache.audibleContext.emit(exports.EventType.Mash);
-        Cache.audibleContext.emit(exports.EventType.Track);
-        Cache.audibleContext.emit(exports.EventType.Duration);
-        Cache.audibleContext.emit(exports.EventType.Action);
-        this.goToTime();
-        if (this.autoplay)
-            this.paused = false;
-    }
-    mashOptions(mashObject = {}) {
-        return {
-            ...mashObject,
-            buffer: this.buffer,
-            gain: this.gain,
-            loop: this.loop,
-        };
-    }
-    move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
-        if (!Is.object(objectOrArray))
-            throw Errors.argument + 'move';
-        if (moveType === exports.MoveType.Effect) {
-            this.moveEffects(objectOrArray, frameOrIndex);
-            return;
-        }
-        this.moveClips(objectOrArray, frameOrIndex, trackIndex);
-    }
-    moveClips(clipOrArray, frameOrIndex = 0, trackIndex = 0) {
-        // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
-        if (!Is.positive(frameOrIndex))
-            throw Errors.argument + 'moveClips frameOrIndex';
-        if (!Is.positive(trackIndex))
-            throw Errors.argument + 'moviClips trackIndex';
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument + 'moveClips clips';
-        const [firstClip] = clips;
-        const { trackType, track: undoTrackIndex } = firstClip;
-        const options = {
-            clips,
-            trackType,
-            trackIndex,
-            undoTrackIndex,
-            type: exports.ActionType.MoveClips
-        };
-        const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
-        const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex);
-        const currentIndex = redoTrack.clips.indexOf(firstClip);
-        if (redoTrack.isMainVideo)
-            options.insertIndex = frameOrIndex;
-        if (undoTrack.isMainVideo) {
-            options.undoInsertIndex = currentIndex;
-            if (frameOrIndex < currentIndex)
-                options.undoInsertIndex += clips.length;
-        }
-        if (!(redoTrack.isMainVideo && undoTrack.isMainVideo)) {
-            const frames = clips.map(clip => clip.frame);
-            const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex);
-            const offset = insertFrame - firstClip.frame;
-            if (!offset)
-                return; // because there would be no change
-            options.undoFrames = frames;
-            options.redoFrames = frames.map(frame => frame + offset);
-        }
-        this.actionCreate(options);
-    }
-    moveEffects(effectOrArray, index = 0) {
-        // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
-        if (!Is.positive(index))
-            throw Errors.argument;
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const moveEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(moveEffects))
-            throw Errors.argument;
-        const { effects } = this.selectedClipOrThrow;
-        const undoEffects = [...effects];
-        const redoEffects = [];
-        undoEffects.forEach((effect, i) => {
-            if (i === index)
-                redoEffects.push(...moveEffects);
-            if (moveEffects.includes(effect))
-                return;
-            redoEffects.push(effect);
-        });
-        const options = {
-            effects, undoEffects, redoEffects, type: exports.ActionType.MoveEffects
-        };
-        // console.log(this.constructor.name, "moveEffects", options)
-        this.actionCreate(options);
-    }
-    get muted() { return this._muted; }
-    set muted(value) {
-        const boolean = !!value;
-        if (this._muted !== boolean) {
-            this._muted = boolean;
-            this.mash.gain = this.gain;
-        }
-    }
-    pause() { this.paused = true; }
-    get paused() { return this.mash.paused; }
-    set paused(value) { if (this._mash)
-        this.mash.paused = !!value; }
-    play() { this.paused = false; }
-    get position() {
-        let per = 0;
-        if (this.time.frame) {
-            per = this.time.seconds / this.duration;
-            if (per !== 1)
-                per = parseFloat(per.toFixed(this.precision));
-        }
-        return per;
-    }
-    set position(value) {
-        this.goToTime(Time.fromSeconds(this.duration * Number(value), this.fps));
-    }
-    get positionStep() {
-        return parseFloat(`0.${"0".repeat(this.precision - 1)}1`);
-    }
-    get pristineOrThrow() {
-        if (!this._pristine)
-            throw Errors.internal;
-        return this._pristine;
-    }
-    get pristineEffectOrThrow() {
-        if (!this._pristineEffect)
-            throw Errors.internal;
-        return this._pristineEffect;
-    }
-    redo() { if (this.actions.canRedo)
-        this.handleAction(this.actions.redo()); }
-    remove(objectOrArray, moveType) {
-        if (!Is.object(objectOrArray))
-            throw Errors.argument;
-        if (moveType === exports.MoveType.Effect) {
-            this.removeEffects(objectOrArray);
-            return;
-        }
-        this.removeClips(objectOrArray);
-    }
-    removeClips(clipOrArray) {
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument;
-        const [firstClip] = clips;
-        const track = this.mash.clipTrack(firstClip);
-        const options = {
-            redoSelectedClips: [],
-            clips,
-            track,
-            index: track.clips.indexOf(firstClip),
-            type: exports.ActionType.RemoveClips
-        };
-        this.actionCreate(options);
-    }
-    removeEffects(effectOrArray) {
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const removeEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(removeEffects))
-            throw Errors.argument;
-        const { effects } = this.selectedClipOrThrow;
-        const undoEffects = [...effects];
-        const redoEffects = effects.filter(effect => !removeEffects.includes(effect));
-        const options = {
-            redoSelectedEffects: [],
-            effects,
-            undoEffects,
-            redoEffects,
-            type: exports.ActionType.MoveEffects
-        };
-        this.actionCreate(options);
-    }
-    save() { this.actions.save(); }
-    select(object, toggleSelected) {
-        if (!object) {
-            this.selectedClips = [];
-            return;
-        }
-        if (object instanceof EffectClass) {
-            this.selectEffect(object, toggleSelected);
-            return;
-        }
-        const { type } = object;
-        if (type === exports.DefinitionType.Mash) {
-            this.selectMash();
-            return;
-        }
-        this.selectClip(object, toggleSelected);
-    }
-    get selectedClipsOrEffects() {
-        return this.selectedEffects.length ? this.selectedEffects : this.selectedClips;
-    }
-    selectClip(clip, toggleSelected) {
-        const array = [];
-        if (clip) {
-            if (toggleSelected) {
-                array.push(...this.selectedClips);
-                const index = this.selectedClips.indexOf(clip);
-                if (index > -1)
-                    array.splice(index, 1);
-                else
-                    array.push(clip);
-            }
-            else if (this.selectedClips.includes(clip))
-                array.push(...this.selectedClips);
-            else
-                array.push(clip);
-        }
-        this.selectedClips = array;
-    }
-    selectEffect(effect, toggleSelected) {
-        const array = [];
-        if (effect) {
-            if (toggleSelected) {
-                array.push(...this.selectedEffects);
-                const index = this.selectedEffects.indexOf(effect);
-                if (index > -1)
-                    array.splice(index, 1);
-                else
-                    array.push(effect);
-            }
-            else
-                array.push(effect);
-        }
-        this.selectedEffects = array;
-    }
-    selectMash() {
-        this.selectedClips = [];
-    }
-    get selected() {
-        const effect = this.selectedEffect;
-        if (Is.populatedObject(effect))
-            return effect;
-        return this.selectedClipOrMash;
-    }
-    get selectedClip() {
-        if (this._selectedClips.length === 1)
-            return this.selectedClipOrThrow;
-        return this.selectedClipObject;
-    }
-    set selectedClip(value) {
-        if (value && Is.populatedObject(value)) {
-            const clip = value;
-            const { type } = clip;
-            const clipType = String(type);
-            if (!ClipTypes.includes(clipType)) {
-                // console.warn(this.constructor.name, "set selectedClip invalid type", value)
-                return;
-            }
-            this.selectedClips = [clip];
-        }
-        else
-            this.selectedClips = [];
-    }
-    get selectedClipOrMash() {
-        const value = this.selectedClip;
-        if (Is.populatedObject(value))
-            return this.selectedClipOrThrow;
-        return this.mash;
-    }
-    get selectedClipOrThrow() {
-        const clip = this._selectedClips[0];
-        if (!clip)
-            throw Errors.selection;
-        return clip;
-    }
-    get selectedClips() { return this._selectedClips; }
-    set selectedClips(value) {
-        const newSelectedClips = this.filterClipSelection(value);
-        const newPristine = this.selectedClipOrMash.propertyValues;
-        const changed = this._selectedClips !== newSelectedClips;
-        if (changed) {
-            this._selectedClips = newSelectedClips;
-            this._pristine = newPristine;
-            if (this.selectedEffects.length) {
-                this.selectedEffects = [];
-            }
-            else {
-                Cache.audibleContext.emit(exports.EventType.Selection);
-            }
-        }
-    }
-    get selectedEffect() {
-        if (this._selectedEffects.length !== 1)
-            return {};
-        return this._selectedEffects[0];
-    }
-    set selectedEffect(value) {
-        if (value && Is.populatedObject(value)) {
-            const effect = value;
-            const { type } = effect;
-            if (type !== exports.DefinitionType.Effect)
-                return;
-            this.selectedEffects = [effect];
-        }
-        else
-            this.selectedEffects = [];
-    }
-    get selectedEffectOrThrow() {
-        const effect = this.selectedEffect;
-        if (!Is.populatedObject(effect))
-            throw Errors.selection;
-        return effect;
-    }
-    get selectedEffects() { return this._selectedEffects; }
-    set selectedEffects(value) {
-        const newSelectedEffects = [];
-        const newPristineEffect = {};
-        if (value.length) {
-            const { effects } = this.selectedClipOrMash;
-            if (effects) {
-                const array = effects;
-                // make sure all selected effects are in the effects of the clip or mash
-                newSelectedEffects.push(...value.filter(effect => array.includes(effect)));
-                if (newSelectedEffects.length === 1) {
-                    Object.assign(newPristineEffect, newSelectedEffects[0].propertyValues);
+class MashFactoryImplementation {
+    instance(object = {}, definitions) {
+        if (definitions)
+            definitions.forEach(definition => {
+                const { id: definitionId, type } = definition;
+                if (!(type && isPopulatedString(type)))
+                    throw Errors.type;
+                const definitionType = type;
+                if (!DefinitionTypes.includes(definitionType))
+                    throw Errors.type + definitionType;
+                if (!(definitionId && isPopulatedString(definitionId))) {
+                    throw Errors.invalid.definition.id + JSON.stringify(definition);
                 }
-            }
-        }
-        const changed = this._selectedEffects !== newSelectedEffects;
-        if (changed) {
-            this._selectedEffects = newSelectedEffects;
-            this._pristineEffect = newPristineEffect;
-            Cache.audibleContext.emit(exports.EventType.Selection);
-        }
-    }
-    get selectionObjects() {
-        const selectedObjects = this.selectedClipsOrEffects;
-        const object = selectedObjects.map((object) => object.propertyValues);
-        return object;
-    }
-    split() {
-        const splitClip = this.selectedClipOrThrow;
-        if (!this.clipCanBeSplit(splitClip, this.time, this.mash.quantize)) {
-            throw Errors.invalid.action;
-        }
-        const scaled = this.time.scale(this.mash.quantize);
-        const undoFrames = splitClip.frames;
-        const redoFrames = scaled.frame - splitClip.frame;
-        const insertClip = splitClip.copy;
-        insertClip.frames = undoFrames - redoFrames;
-        insertClip.frame = scaled.frame;
-        if (splitClip.propertyNames.includes("trim")) {
-            insertClip.trim += redoFrames;
-        }
-        const trackClips = this.mash.clipTrack(splitClip).clips;
-        const options = {
-            type: exports.ActionType.Split,
-            splitClip,
-            insertClip,
-            trackClips,
-            redoFrames,
-            undoFrames,
-            index: 1 + trackClips.indexOf(splitClip),
-            redoSelectedClips: [insertClip],
-            undoSelectedClips: [splitClip],
-        };
-        this.actionCreate(options);
-    }
-    get time() { return this.mash.time; }
-    set time(value) { this.goToTime(value); }
-    get timeRange() { return this.mash.timeRange; }
-    undo() { if (this.actions.canUndo)
-        this.handleAction(this.actions.undo()); }
-    get volume() { return this._volume; }
-    set volume(value) {
-        const number = Number(value);
-        if (this._volume !== number) {
-            if (!Is.positive(number))
-                throw Errors.invalid.volume;
-            this._volume = number;
-            if (Is.aboveZero(number))
-                this.muted = false;
-            this.mash.gain = this.gain;
-        }
+                // installs our definition
+                Factory[definitionType].definition(definition);
+            });
+        return new MashClass(object);
     }
 }
-
-class MasherDefinitionClass extends DefinitionBase {
-    constructor(...args) {
-        super(...args);
-        this.id = "com.moviemasher.masher.default";
-        this.retain = true;
-        this.type = exports.DefinitionType.Masher;
-        this.properties.push(new Property({ name: "autoplay", type: exports.DataType.Boolean, value: Default.masher.autoplay }));
-        this.properties.push(new Property({ name: "precision", type: exports.DataType.Number, value: Default.masher.precision }));
-        this.properties.push(new Property({ name: "loop", type: exports.DataType.Boolean, value: Default.masher.loop }));
-        this.properties.push(new Property({ name: "fps", type: exports.DataType.Number, value: Default.masher.fps }));
-        this.properties.push(new Property({ name: "volume", type: exports.DataType.Number, value: Default.masher.volume }));
-        this.properties.push(new Property({ name: "buffer", type: exports.DataType.Number, value: Default.masher.buffer }));
-        Definitions.install(this);
-    }
-    get instance() {
-        return this.instanceFromObject(this.instanceObject);
-    }
-    instanceFromObject(object) {
-        const instance = new MasherClass({ ...this.instanceObject, ...object });
-        return instance;
-    }
-}
-
-const MasherIntervalTics = 10 * 1000;
-const MasherDefaultId = "com.moviemasher.masher.default";
-let MasherInterval;
-const MasherFactoryMashers = [];
-const addMasher = (masher) => {
-    if (!MasherFactoryMashers.length)
-        masherStart();
-    MasherFactoryMashers.push(masher);
-};
-const masherDestroy = (masher) => {
-    const index = MasherFactoryMashers.indexOf(masher);
-    if (index < 0)
-        return;
-    MasherFactoryMashers.splice(index, 1);
-    if (!MasherFactoryMashers.length)
-        masherStop();
-};
-const handleInterval = () => {
-    const urls = MasherFactoryMashers.flatMap(masher => masher.mash.loadUrls);
-    Cache.flush(urls);
-    const definitions = MasherFactoryMashers.flatMap(masher => masher.mash.media);
-    Definitions.map.forEach(definition => {
-        if (definitions.includes(definition) || definition.retain)
-            return;
-        Definitions.uninstall(definition.id);
-    });
-};
-const masherStart = () => {
-    if (MasherInterval)
-        return;
-    MasherInterval = setInterval(() => handleInterval(), MasherIntervalTics);
-};
-const masherStop = () => {
-    if (!MasherInterval)
-        return;
-    clearInterval(MasherInterval);
-    MasherInterval = undefined;
-};
-const masherDefinition = (object) => {
-    const { id } = object;
-    const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MasherDefaultId;
-    return Definitions.fromId(idString);
-};
-const masherDefinitionFromId = (id) => {
-    return masherDefinition({ id });
-};
-const masherInstance = (object = {}) => {
-    // console.log("masherInstance", object)
-    const definition = masherDefinition(object);
-    const instance = definition.instanceFromObject(object);
-    addMasher(instance);
-    return instance;
-};
-const masherFromId = (id) => {
-    return masherInstance({ id });
-};
-const masherInitialize = () => {
-    new MasherDefinitionClass({ id: MasherDefaultId });
-};
-const masherDefine = (object) => {
-    const { id } = object;
-    if (!(id && Is.populatedString(id)))
-        throw Errors.invalid.definition.id + 'masherDefine';
-    Definitions.uninstall(id);
-    return masherDefinition(object);
-};
-const MasherFactoryImplementation = {
-    define: masherDefine,
-    install: masherDefine,
-    definition: masherDefinition,
-    definitionFromId: masherDefinitionFromId,
-    destroy: masherDestroy,
-    fromId: masherFromId,
-    initialize: masherInitialize,
-    instance: masherInstance,
-};
-Factories[exports.DefinitionType.Masher] = MasherFactoryImplementation;
+const MashFactory = new MashFactoryImplementation();
 
 const ThemeWithModular = ModularMixin(InstanceBase);
 const ThemeWithClip = ClipMixin(ThemeWithModular);
 const ThemeWithVisible = VisibleMixin(ThemeWithClip);
 const ThemeWithTransformable = TransformableMixin(ThemeWithVisible);
 class ThemeClass extends ThemeWithTransformable {
+    commandAtTimeToSize(mashTime, quantize, dimensions) {
+        const source = this.definition.inputSource;
+        const inputCommand = { sources: { source }, filters: [] };
+        return inputCommand;
+    }
     contextAtTimeToSize(mashTime, quantize, dimensions) {
-        const context = ContextFactoryInstance.toSize(dimensions);
+        const context = ContextFactory.toSize(dimensions);
         const clipTimeRange = this.timeRangeRelative(mashTime, quantize);
         return this.definition.drawFilters(this, clipTimeRange, context, dimensions);
     }
@@ -6475,6 +5804,15 @@ class ThemeClass extends ThemeWithTransformable {
         const urls = super.clipUrls(quantize, start); // urls from my effects, etc.
         urls.push(...this.modularUrls(quantize, start)); // urls from my modular properties
         return urls;
+    }
+    inputCommandAtTimeToSize(mashTime, quantize, dimensions) {
+        // console.log(this.constructor.name, "inputCommandAtTimeToSize", this.id)
+        const inputCommand = super.inputCommandAtTimeToSize(mashTime, quantize, dimensions);
+        if (!inputCommand)
+            return inputCommand;
+        const clipTimeRange = this.timeRangeRelative(mashTime, quantize);
+        inputCommand.filters = this.definition.inputFilters(this, clipTimeRange, dimensions);
+        return inputCommand;
     }
     loadClip(quantize, start, end) {
         const promises = [];
@@ -6492,10 +5830,21 @@ class ThemeClass extends ThemeWithTransformable {
     }
 }
 
-const ThemeDefinitionWithModular = ModularDefinitionMixin(DefinitionBase);
-const ThemeDefinitionWithClip = ClipDefinitionMixin(ThemeDefinitionWithModular);
-const ThemeDefinitionWithVisible = VisibleDefinitionMixin(ThemeDefinitionWithClip);
-class ThemeDefinitionClass extends ThemeDefinitionWithVisible {
+function TransformableDefinitionMixin(Base) {
+    return class extends Base {
+        constructor(...args) {
+            super(...args);
+            // this.properties.push(new Property({ name: "scaler", type: DataType.Object, value: {} }))
+            // this.properties.push(new Property({ name: "merger", type: DataType.Object, value: {} }))
+        }
+    };
+}
+
+const WithModular = ModularDefinitionMixin(DefinitionBase);
+const WithClip$6 = ClipDefinitionMixin(WithModular);
+const WithVisible$6 = VisibleDefinitionMixin(WithClip$6);
+const WithTransformable$3 = TransformableDefinitionMixin(WithVisible$6);
+class ThemeDefinitionClass extends WithTransformable$3 {
     constructor(...args) {
         super(...args);
         this.type = exports.DefinitionType.Theme;
@@ -6505,8 +5854,9 @@ class ThemeDefinitionClass extends ThemeDefinitionWithVisible {
         return this.instanceFromObject(this.instanceObject);
     }
     instanceFromObject(object) {
-        const options = { ...this.instanceObject, ...object };
-        // console.log("instanceFromObject", options)
+        const { instanceObject } = this;
+        const options = { ...instanceObject, ...object };
+        // console.log(this.constructor.name, "instanceFromObject", instanceObject, object)
         const instance = new ThemeClass(options);
         return instance;
     }
@@ -6654,7 +6004,7 @@ var themeTextJson = {
 const themeDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new ThemeDefinitionClass({ ...object, type: exports.DefinitionType.Theme });
@@ -6677,7 +6027,7 @@ const themeInitialize = () => {
 const themeDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     Definitions.uninstall(id);
     return themeDefinition(object);
 };
@@ -6696,9 +6046,17 @@ const TransitionWithModular = ModularMixin(InstanceBase);
 const TransitionWithClip = ClipMixin(TransitionWithModular);
 const TransitionWithVisible = VisibleMixin(TransitionWithClip);
 class TransitionClass extends TransitionWithVisible {
-    constructor() {
-        super(...arguments);
-        this.trackType = exports.TrackType.Video;
+    constructor(...args) {
+        super(...args);
+        this.fromTrack = 0;
+        this.toTrack = 1;
+        this.trackType = exports.TrackType.Transition;
+        const [object] = args;
+        const { fromTrack, toTrack } = object;
+        if (typeof fromTrack !== 'undefined')
+            this.fromTrack = fromTrack;
+        if (typeof toTrack !== 'undefined')
+            this.toTrack = toTrack;
     }
     contextAtTimeToSize(_time, _quantize, _dimensions) {
         return;
@@ -6746,20 +6104,21 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible {
             if (scaler)
                 this.fromScaler = scalerInstance(scaler);
         }
+        this.properties.push(new Property({ name: "fromTrack", type: exports.DataType.Number, value: 0 }), new Property({ name: "toTrack", type: exports.DataType.Number, value: 1 }));
         Definitions.install(this);
     }
     drawVisibleFilters(clips, transition, time, quantize, context, color) {
         // console.log(this.constructor.name, "drawVisibleFilters", clips.length, transition.id)
         const { size } = context;
-        const sorted = [...clips].sort(byFrame);
+        const sorted = [...clips].sort(sortByFrame);
         let fromClip = sorted[0];
         let toClip = sorted[1];
         if (!toClip && fromClip.frame >= transition.frame) {
             toClip = fromClip;
             fromClip = undefined;
         }
-        let fromDrawing = ContextFactoryInstance.toSize(size);
-        let toDrawing = ContextFactoryInstance.toSize(size);
+        let fromDrawing = ContextFactory.toSize(size);
+        let toDrawing = ContextFactory.toSize(size);
         if (color) {
             fromDrawing.drawFill(color);
             toDrawing.drawFill(color);
@@ -6801,7 +6160,7 @@ const to = {
       parameters: [
         {
           name: "alpha",
-          value: "1"
+          value: "t"
         },
         {
           name: "type",
@@ -6825,7 +6184,7 @@ var transitionCrossfadeJson = {
 const transitionDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new TransitionDefinitionClass(object);
@@ -6847,7 +6206,7 @@ const transitionInitialize = () => {
 const transitionDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     Definitions.uninstall(id);
     return transitionDefinition(object);
 };
@@ -6910,8 +6269,7 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
         if (!url)
             throw Errors.invalid.definition.url;
         this.url = url;
-        if (source)
-            this.source = source;
+        this.source = source || url;
         if (fps)
             this.fps = fps;
         this.properties.push(new Property({ name: "speed", type: exports.DataType.Number, value: 1.0 }));
@@ -6925,18 +6283,7 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
         return cached;
     }
     definitionUrls(_start, _end) { return [this.absoluteUrl]; }
-    // private framesArray(start: Time, end?: Time): number[] {
-    //   const frames: number[] = []
-    //   const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame)
-    //   if (end) {
-    //     const endFrame = Math.min(this.framesMax, end.scale(this.fps, "ceil").frame)
-    //     for (let frame = startFrame; frame <= endFrame; frame += 1) {
-    //       frames.push(frame)
-    //     }
-    //   } else frames.push(startFrame)
-    //   return frames
-    // }
-    // private get framesMax(): number { return Math.floor(this.fps * this.duration) - 2 }
+    get inputSource() { return urlAbsolute(this.source); }
     get instance() { return this.instanceFromObject(this.instanceObject); }
     instanceFromObject(object) {
         return new VideoClassImplementation({ ...this.instanceObject, ...object });
@@ -6952,13 +6299,13 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
         const promise = this.seekPromise(time, video).then(() => {
             // make sure we don't already have this frame
             if (sequence[time.frame] && !(sequence[time.frame] instanceof Promise)) {
-                console.debug(this.constructor.name, "framePromise already captured", time.toString());
+                // console.debug(this.constructor.name, "framePromise already captured", time.toString())
                 return;
             }
-            const context = ContextFactoryInstance.toSize(video);
+            const context = ContextFactory.toSize(video);
             context.draw(video);
             sequence[time.frame] = context.canvas;
-            console.debug(this.constructor.name, "framePromise capturing", time.toString());
+            // console.debug(this.constructor.name, "framePromise capturing", time.toString())
         });
         sequence[time.frame] = promise;
         return promise;
@@ -7002,14 +6349,12 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
                 // console.debug(this.constructor.name, "loadDefinition cached and no times needed")
                 return;
             }
-            console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '));
+            // console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '))
             return this.timesPromise(times);
         }
         const promise = Cache.caching(url) ? Cache.get(url) : LoaderFactory.video().loadUrl(url);
-        if (Cache.caching(url))
-            console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end);
-        else
-            console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end);
+        // if (Cache.caching(url)) console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end)
+        // else console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end)
         return promise.then(() => this.framesPromise(start, end));
     }
     loadedAudible() {
@@ -7022,16 +6367,16 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
     loadedVisible(quantize, startTime) {
         const rate = this.fps || quantize;
         const time = startTime.scale(rate);
-        console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString());
+        // console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString())
         const cached = Cache.get(this.absoluteUrl);
         if (!cached) {
-            console.debug(this.constructor.name, "loadedVisible no cached");
+            // console.debug(this.constructor.name, "loadedVisible no cached")
             return;
         }
         const { sequence } = cached;
         const source = sequence[time.frame];
         if (!source || source instanceof Promise) {
-            console.debug(this.constructor.name, "loadedVisible source issue", source);
+            // console.debug(this.constructor.name, "loadedVisible source issue", source)
             return;
         }
         return source;
@@ -7087,7 +6432,7 @@ const VideoDefinitionClassImplementation = class extends WithVisible$4 {
 const videoDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new VideoDefinitionClassImplementation(object);
@@ -7107,7 +6452,7 @@ const videoInitialize = () => { };
 const videoDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     Definitions.uninstall(id);
     return videoDefinition(object);
 };
@@ -7205,8 +6550,7 @@ class VideoStreamDefinitionClass extends WithStreamable {
         if (!url)
             throw Errors.invalid.definition.url;
         this.url = url;
-        if (source)
-            this.source = source;
+        this.source = source || url;
         // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
         Definitions.install(this);
     }
@@ -7214,6 +6558,7 @@ class VideoStreamDefinitionClass extends WithStreamable {
     frames(quantize) {
         return Time.fromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame;
     }
+    get inputSource() { return urlAbsolute(this.source); }
     get instance() { return this.instanceFromObject(this.instanceObject); }
     instanceFromObject(object) {
         return new VideoStreamClass({ ...this.instanceObject, ...object });
@@ -7244,7 +6589,7 @@ class VideoStreamDefinitionClass extends WithStreamable {
 const videoStreamDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
     return new VideoStreamDefinitionClass(object);
@@ -7264,7 +6609,7 @@ const videoStreamInitialize = () => { };
 const videoStreamDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     Definitions.uninstall(id);
     return videoStreamDefinition(object);
 };
@@ -7292,7 +6637,7 @@ const WithAudible$1 = AudibleMixin(WithClip$1);
 const WithAudibleFile$1 = AudibleFileMixin(WithAudible$1);
 const WithVisible$1 = VisibleMixin(WithAudibleFile$1);
 const WithTransformable = TransformableMixin(WithVisible$1);
-class VideoSequenceClass extends WithTransformable {
+class VideoSequenceClassImplementation extends WithTransformable {
     constructor(...args) {
         super(...args);
         this.speed = Default.instance.video.speed;
@@ -7320,7 +6665,7 @@ const WithClip = ClipDefinitionMixin(DefinitionBase);
 const WithAudible = AudibleDefinitionMixin(WithClip);
 const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible);
 const WithVisible = VisibleDefinitionMixin(WithAudibleFile);
-class VideoSequenceDefinitionClass extends WithVisible {
+class VideoSequenceDefinitionClassImplementation extends WithVisible {
     constructor(...args) {
         super(...args);
         this.begin = Default.definition.videosequence.begin;
@@ -7371,9 +6716,10 @@ class VideoSequenceDefinitionClass extends WithVisible {
         return frames;
     }
     get framesMax() { return Math.floor(this.fps * this.duration) - 2; }
+    get inputSource() { return urlAbsolute(this.source); }
     get instance() { return this.instanceFromObject(this.instanceObject); }
     instanceFromObject(object) {
-        return new VideoSequenceClass({ ...this.instanceObject, ...object });
+        return new VideoSequenceClassImplementation({ ...this.instanceObject, ...object });
     }
     loadDefinition(quantize, start, end) {
         const promises = [];
@@ -7444,10 +6790,10 @@ class VideoSequenceDefinitionClass extends WithVisible {
 const videoSequenceDefinition = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     if (Definitions.installed(id))
         return Definitions.fromId(id);
-    return new VideoSequenceDefinitionClass(object);
+    return new VideoSequenceDefinitionClassImplementation(object);
 };
 const videoSequenceDefinitionFromId = (id) => {
     return videoSequenceDefinition({ id });
@@ -7464,7 +6810,7 @@ const videoSequenceInitialize = () => { };
 const videoSequenceDefine = (object) => {
     const { id } = object;
     if (!(id && Is.populatedString(id)))
-        throw Errors.id;
+        throw Errors.id + JSON.stringify(object);
     Definitions.uninstall(id);
     return videoSequenceDefinition(object);
 };
@@ -7487,9 +6833,724 @@ const VideoSequenceFactoryImplementation = {
 };
 Factories[exports.DefinitionType.VideoSequence] = VideoSequenceFactoryImplementation;
 
+class MasherClass {
+    constructor(...args) {
+        this.autoplay = Default.masher.autoplay;
+        this._buffer = Default.masher.buffer;
+        this.eventTarget = new Emitter();
+        this._fps = Default.masher.fps;
+        this._loop = Default.masher.loop;
+        this._muted = false;
+        this.precision = Default.masher.precision;
+        this._selection = {};
+        this._volume = Default.masher.volume;
+        const [object] = args;
+        const { autoplay, precision, loop, fps, volume, buffer, mash, } = object;
+        if (typeof autoplay !== "undefined")
+            this.autoplay = autoplay;
+        if (typeof precision !== "undefined")
+            this.precision = precision;
+        if (typeof loop !== "undefined")
+            this._loop = loop;
+        if (typeof fps !== "undefined")
+            this._fps = fps;
+        if (typeof volume !== "undefined")
+            this._volume = volume;
+        if (typeof buffer !== "undefined")
+            this._buffer = buffer;
+        if (mash)
+            this.mash = mash;
+    }
+    actionCreate(object) {
+        const mash = object.mash || this.mash;
+        const actions = object.actions || this.actions;
+        const undoSelection = object.undoSelection || { ...this.selection };
+        const redoSelection = object.redoSelection || { ...this.selection };
+        const clone = {
+            ...object,
+            actions,
+            mash,
+            undoSelection,
+            redoSelection,
+        };
+        const action = ActionFactory.createFromObject(clone);
+        this.actions.add(action);
+        this.handleAction(this.actions.redo());
+    }
+    get actions() {
+        if (!this._actions) {
+            this._actions = new Actions({ mash: this.mash });
+        }
+        return this._actions;
+    }
+    add(object, frameOrIndex = 0, trackIndex = 0) {
+        if (!Is.populatedObject(object))
+            throw Errors.argument + 'add';
+        const { id } = object;
+        const definitionFromId = id && Definitions.installed(id) ? Definitions.fromId(id) : false;
+        const type = object.type || (definitionFromId && definitionFromId.type);
+        if (!type)
+            throw Errors.type + 'Masher.add ' + id + JSON.stringify(definitionFromId);
+        if (type === exports.DefinitionType.Effect) {
+            const effectDefinition = Factory.effect.definition(object);
+            const effect = effectDefinition.instance;
+            return this.addEffect(effect, frameOrIndex).then(() => effect);
+        }
+        const clipType = type;
+        if (!ClipTypes.includes(clipType))
+            throw Errors.type + type;
+        const definitionType = type;
+        const definition = Factory[definitionType].definition(object);
+        const clip = definition.instance; //FromObject(object)
+        return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip);
+    }
+    addClip(clip, frameOrIndex = 0, trackIndex = 0) {
+        const { trackType } = clip;
+        const clips = [clip];
+        const options = {
+            clip,
+            type: exports.ActionType.AddClipsToTrack,
+            redoSelection: { clip: clip },
+            trackType,
+        };
+        const tracksOfType = this.mash.tracks.filter(track => track.trackType === trackType);
+        const track = tracksOfType[trackIndex];
+        const trackCount = tracksOfType.length;
+        if (track.dense) {
+            options.insertIndex = frameOrIndex;
+            options.createTracks = Math.min(1, Math.max(0, 1 - trackCount));
+        }
+        else {
+            options.trackIndex = trackIndex;
+            clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex);
+            options.createTracks = Math.max(0, trackIndex + 1 - trackCount);
+        }
+        this.actionCreate(options);
+        return this.loadMashAndDraw();
+    }
+    addEffect(effect, insertIndex = 0) {
+        // console.log(this.constructor.name, "addEffect", object, index)
+        const { clip } = this.selection;
+        if (!clip)
+            throw Errors.selection;
+        const { effects } = clip;
+        if (!effects)
+            throw Errors.selection;
+        const undoEffects = [...effects];
+        const redoEffects = [...effects];
+        const redoSelectedEffects = [effect];
+        redoEffects.splice(insertIndex, 0, effect);
+        const options = {
+            effects,
+            undoEffects,
+            redoEffects,
+            redoSelectedEffects,
+            type: exports.ActionType.MoveEffects
+        };
+        this.actionCreate(options);
+        return this.loadMashAndDraw();
+    }
+    addTrack(trackType = exports.TrackType.Video) {
+        this.actionCreate({ trackType, type: exports.ActionType.AddTrack });
+    }
+    get buffer() { return this._buffer; }
+    set buffer(value) {
+        const number = Number(value);
+        if (this._buffer !== number) {
+            this._buffer = number;
+            this.mash.buffer = number;
+        }
+    }
+    can(method) {
+        // const z = this._selectedClips.length
+        const { track, clip, effect } = this.selection;
+        switch (method) {
+            case exports.MasherAction.Save: return this.actions.canSave;
+            case exports.MasherAction.Undo: return this.actions.canUndo;
+            case exports.MasherAction.Redo: return this.actions.canRedo;
+            case exports.MasherAction.Remove: return !!(effect
+                || clip
+                || (track && this.mash.trackCount(track.trackType) === track.layer + 1));
+            case exports.MasherAction.Split: return !!clip && this.clipCanBeSplit(clip, this.time, this.mash.quantize);
+            case exports.MasherAction.Freeze: return (!!clip
+                && exports.DefinitionType.Video === clip.type
+                && this.clipCanBeSplit(clip, this.time, this.mash.quantize));
+            default: throw Errors.argument;
+        }
+    }
+    change(property, value) {
+        if (this.selection.track) {
+            if (this.selection.clip) {
+                if (this.selection.effect) {
+                    this.changeEffect(property, value, this.selection.effect);
+                }
+                else
+                    this.changeClip(property, value, this.selection.clip);
+            }
+            else
+                this.changeTrack(property, value, this.selection.track);
+        }
+        else
+            throw Errors.selection;
+        //else this.changeMash(property, value)
+    }
+    changeClip(property, value, clip) {
+        // console.log(this.constructor.name, "changeClip", property)
+        if (!Is.populatedString(property))
+            throw Errors.property + "changeClip " + property;
+        const [transform, transformProperty] = property.split(".");
+        if (transformProperty) {
+            this.changeTransformer(transform, transformProperty, value);
+            return;
+        }
+        const target = clip || this.selection.clip;
+        if (!target)
+            throw Errors.selection;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            this.handleAction(changeAction);
+            return;
+        }
+        const undoValue = target.value(property); //typeof value === "undefined" ? this.pristineOrThrow[property] : target.value(property)
+        const options = { property, target, redoValue, undoValue };
+        switch (options.property) {
+            case 'frames': {
+                options.type = exports.ActionType.ChangeFrames;
+                break;
+            }
+            case 'trim': {
+                options.type = exports.ActionType.ChangeTrim;
+                // TODO: make sure there's a test for this
+                // not sure where this was derived from - using original clip??
+                options.frames = target.frames + options.undoValue;
+                break;
+            }
+            default: options.type = exports.ActionType.Change;
+        }
+        this.actionCreate(options);
+    }
+    changeEffect(property, value, effect) {
+        // console.log(this.constructor.name, "changeEffect", property)
+        if (!Is.populatedString(property))
+            throw Errors.property;
+        const target = effect || this.selection.effect;
+        if (!target)
+            throw Errors.selection;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            this.handleAction(changeAction);
+            return;
+        }
+        const undoValue = target.value(property); // typeof value === "undefined" ? this.pristineEffectOrThrow[property] : target.value(property)
+        const options = {
+            type: exports.ActionType.Change, target, property, redoValue, undoValue
+        };
+        this.actionCreate(options);
+    }
+    changeTrack(property, value, track) {
+        if (!Is.populatedString(property))
+            throw Errors.property;
+        const target = track || this.selection.track;
+        if (!target)
+            throw Errors.selection;
+        const redoValue = typeof value === "undefined" ? target.value(property) : value;
+        if (this.currentActionReusable(target, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            this.handleAction(changeAction);
+            return;
+        }
+        const undoValue = target.value(property); // typeof value === "undefined" ? this.pristineEffectOrThrow[property] : target.value(property)
+        const options = {
+            type: exports.ActionType.Change, target, property, redoValue, undoValue
+        };
+        this.actionCreate(options);
+    }
+    changeTransformer(type, property, value) {
+        // console.log(this.constructor.name, "changeTransformer", type, property)
+        if (!Is.populatedString(type))
+            throw Errors.type + "changeTransformer " + type;
+        if (!Is.populatedString(property))
+            throw Errors.property + "changeTransformer " + property;
+        // if (!this._pristine) throw Errors.internal + "changeTransformer _pristine"
+        const target = this.selection.clip;
+        if (!target)
+            throw Errors.selection;
+        const transformType = type;
+        const transformable = target;
+        // make sure first component is merger or scaler
+        if (!TransformTypes.includes(transformType))
+            throw Errors.property + "type " + type;
+        const transformTarget = transformable[transformType];
+        const redoValue = typeof value === "undefined" ? transformTarget.value(property) : value;
+        // const pristineTarget = this._pristine[transformType] ! replaced with transformTarget
+        if (typeof transformTarget !== "object")
+            throw Errors.internal + JSON.stringify(this._pristine);
+        const undoValue = transformTarget[property];
+        if (typeof undoValue === "undefined")
+            throw Errors.property + 'pristine ' + property + JSON.stringify(transformTarget);
+        const options = { property, target: transformTarget, redoValue, undoValue, type: exports.ActionType.Change };
+        if (this.currentActionReusable(transformTarget, property)) {
+            const changeAction = this.actions.currentAction;
+            changeAction.updateAction(redoValue);
+            this.handleAction(changeAction);
+            return;
+        }
+        this.actionCreate(options);
+    }
+    clipCanBeSplit(clip, time, quantize) {
+        if (!Is.object(clip))
+            return false;
+        // true if now intersects clip time, but is not start or end frame
+        const range = TimeRange.fromTime(time);
+        const clipRange = clip.timeRange(quantize);
+        // ranges must intersect
+        if (!clipRange.intersects(range))
+            return false;
+        const scaled = range.scale(clipRange.fps);
+        if (scaled.frame === clipRange.frame)
+            return false;
+        if (scaled.end === clipRange.end)
+            return false;
+        return true;
+    }
+    get clips() { return this.mash.clips; }
+    currentActionReusable(target, property) {
+        if (!this.actions.currentActionLast)
+            return false;
+        const action = this.actions.currentAction;
+        if (!(action instanceof ChangeAction))
+            return false;
+        return action.target === target && action.property === property;
+    }
+    get currentTime() { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0; }
+    get duration() { return this.mash.duration; }
+    get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
+    filterClipSelection(value) {
+        const clips = Array.isArray(value) ? value : [value];
+        const [firstClip] = clips;
+        if (!firstClip)
+            return [];
+        const { trackType, track } = firstClip;
+        //  must all be on same track
+        const trackClips = clips.filter(clip => (clip.track === track && clip.trackType === trackType)).sort(sortByFrame);
+        if (track || trackType === exports.TrackType.Audio)
+            return trackClips;
+        // must be abutting each other on main track
+        let abutting = true;
+        return trackClips.filter((clip, index) => {
+            if (!abutting)
+                return false;
+            if (index === trackClips.length - 1)
+                return true;
+            abutting = clip.frame + clip.frames === trackClips[index + 1].frame;
+            return true;
+        });
+    }
+    get fps() { return this._fps || this.mash.quantize; }
+    set fps(value) {
+        const number = Number(value);
+        // setting to zero means fallback to mash rate
+        if (this._fps !== number) {
+            this._fps = number;
+            this.eventTarget.emit(exports.EventType.Fps);
+            this.time = this.time.scale(this.fps);
+        }
+    }
+    get frame() { return this.time.frame; }
+    set frame(value) { this.goToTime(Time.fromArgs(Number(value), this.fps)); }
+    get frames() { return this.endTime.frame; }
+    freeze() {
+        const { clip } = this.selection;
+        if (!clip)
+            throw Errors.selection;
+        if (!this.clipCanBeSplit(clip, this.time, this.mash.quantize)) {
+            throw Errors.invalid.action;
+        }
+        if (exports.DefinitionType.Video !== clip.type) {
+            throw Errors.invalid.action;
+        }
+        const freezeClip = clip;
+        const scaled = this.time.scale(this.mash.quantize);
+        const trackClips = this.mash.clipTrack(freezeClip).clips;
+        const insertClip = freezeClip.copy;
+        const frozenClip = freezeClip.copy;
+        const options = {
+            frames: freezeClip.frames - (scaled.frame - freezeClip.frame),
+            freezeClip,
+            frozenClip,
+            insertClip,
+            trackClips,
+            redoSelection: { clip: frozenClip },
+            index: 1 + trackClips.indexOf(freezeClip),
+            type: exports.ActionType.Freeze,
+        };
+        frozenClip.frame = scaled.frame;
+        frozenClip.frames = 1;
+        frozenClip.trim = freezeClip.trim + (scaled.frame - freezeClip.frame);
+        insertClip.frame = scaled.frame + 1;
+        insertClip.frames = options.frames - 1;
+        insertClip.trim = frozenClip.trim + 1;
+        this.actionCreate(options);
+    }
+    get gain() { return this.muted ? 0.0 : this.volume; }
+    goToTime(value) {
+        const { fps } = this;
+        const time = value ? value.scaleToFps(fps) : Time.fromArgs(0, fps);
+        const min = time.min(this.endTime);
+        if (value && min.equalsTime(this.time))
+            return Promise.resolve();
+        const promise = this.mash.seekToTime(min);
+        if (promise)
+            return promise;
+        return Promise.resolve();
+    }
+    handleAction(action) {
+        this.selection = action.selection;
+        this.mash.handleAction(action);
+    }
+    get imageData() { return Cache.visibleContext.imageData; }
+    get imageSize() { return Cache.visibleContext.size; }
+    set imageSize(value) {
+        const { width, height } = value;
+        if (!(Is.aboveZero(width) && Is.aboveZero(height)))
+            throw Errors.invalid.size;
+        Cache.visibleContext.size = value;
+        this.loadMashAndDraw();
+    }
+    loadMashAndDraw() {
+        const promise = this.mash.loadPromise;
+        if (promise)
+            return promise.then(() => {
+                this.mash.compositeVisible();
+            });
+        this.mash.compositeVisible();
+        return Promise.resolve();
+    }
+    get loadedDefinitions() { return this.mash.loadedDefinitions; }
+    get loop() { return this._loop; }
+    set loop(value) {
+        const boolean = !!value;
+        this._loop = boolean;
+        if (this._mash)
+            this.mash.loop = boolean;
+    }
+    get mash() {
+        if (this._mash)
+            return this._mash;
+        const instance = MashFactory.instance();
+        this.mash = instance;
+        return instance;
+    }
+    set mash(object) {
+        if (this._mash === object)
+            return;
+        this.paused = true;
+        if (this._mash)
+            this._mash.destroy();
+        this._selectedEffects = [];
+        this._mash = object;
+        this._mash.buffer = this.buffer;
+        this._mash.gain = this.gain;
+        this._mash.loop = this.loop;
+        this._mash.emitter = this.eventTarget;
+        if (this._actions) {
+            this._actions.destroy();
+            this._actions.mash = this._mash;
+        }
+        this.selectedClips = []; // so mash gets copied into _pristine
+        this.eventTarget.emit(exports.EventType.Mash);
+        this.eventTarget.emit(exports.EventType.Track);
+        this.eventTarget.emit(exports.EventType.Duration);
+        this.eventTarget.emit(exports.EventType.Action);
+        this.goToTime();
+        if (this.autoplay)
+            this.paused = false;
+    }
+    move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
+        if (!Is.object(objectOrArray))
+            throw Errors.argument + 'move';
+        if (moveType === exports.MoveType.Effect) {
+            this.moveEffects(objectOrArray, frameOrIndex);
+            return;
+        }
+        this.moveClips(objectOrArray, frameOrIndex, trackIndex);
+    }
+    moveClips(clipOrArray, frameOrIndex = 0, trackIndex = 0) {
+        // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+        if (!Is.positive(frameOrIndex))
+            throw Errors.argument + 'moveClips frameOrIndex';
+        if (!Is.positive(trackIndex))
+            throw Errors.argument + 'moviClips trackIndex';
+        const clips = this.filterClipSelection(clipOrArray);
+        if (!Is.populatedArray(clips))
+            throw Errors.argument + 'moveClips clips';
+        const [firstClip] = clips;
+        const { trackType, track: undoTrackIndex } = firstClip;
+        const options = {
+            clips,
+            trackType,
+            trackIndex,
+            undoTrackIndex,
+            type: exports.ActionType.MoveClips
+        };
+        const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
+        const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex);
+        const currentIndex = redoTrack.clips.indexOf(firstClip);
+        if (redoTrack.dense)
+            options.insertIndex = frameOrIndex;
+        if (undoTrack.dense) {
+            options.undoInsertIndex = currentIndex;
+            if (frameOrIndex < currentIndex)
+                options.undoInsertIndex += clips.length;
+        }
+        if (!(redoTrack.dense && undoTrack.dense)) {
+            const frames = clips.map(clip => clip.frame);
+            const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex);
+            const offset = insertFrame - firstClip.frame;
+            if (!offset)
+                return; // because there would be no change
+            options.undoFrames = frames;
+            options.redoFrames = frames.map(frame => frame + offset);
+        }
+        this.actionCreate(options);
+    }
+    moveEffects(effectOrArray, index = 0) {
+        // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
+        if (!Is.positive(index))
+            throw Errors.argument;
+        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
+        const moveEffects = array.filter(effect => effect instanceof EffectClass);
+        if (!Is.populatedArray(moveEffects))
+            throw Errors.argument;
+        const { clip } = this.selection;
+        if (!clip)
+            throw Errors.selection;
+        const { effects } = clip;
+        const undoEffects = [...effects];
+        const redoEffects = [];
+        undoEffects.forEach((effect, i) => {
+            if (i === index)
+                redoEffects.push(...moveEffects);
+            if (moveEffects.includes(effect))
+                return;
+            redoEffects.push(effect);
+        });
+        const options = {
+            effects, undoEffects, redoEffects, type: exports.ActionType.MoveEffects
+        };
+        // console.log(this.constructor.name, "moveEffects", options)
+        this.actionCreate(options);
+    }
+    get muted() { return this._muted; }
+    set muted(value) {
+        const boolean = !!value;
+        if (this._muted !== boolean) {
+            this._muted = boolean;
+            this.mash.gain = this.gain;
+        }
+    }
+    pause() { this.paused = true; }
+    get paused() { return this.mash.paused; }
+    set paused(value) { if (this._mash)
+        this.mash.paused = !!value; }
+    play() { this.paused = false; }
+    get position() {
+        let per = 0;
+        if (this.time.frame) {
+            per = this.time.seconds / this.duration;
+            if (per !== 1)
+                per = parseFloat(per.toFixed(this.precision));
+        }
+        return per;
+    }
+    set position(value) {
+        this.goToTime(Time.fromSeconds(this.duration * Number(value), this.fps));
+    }
+    get positionStep() {
+        return parseFloat(`0.${"0".repeat(this.precision - 1)}1`);
+    }
+    redo() { if (this.actions.canRedo)
+        this.handleAction(this.actions.redo()); }
+    remove() {
+        if (this.selection.effect)
+            this.removeEffects(this.selection.effect);
+        else if (this.selection.clip)
+            this.removeClips(this.selection.clip);
+        else if (this.selection.track)
+            this.mash.removeTrack(this.selection.track.trackType);
+        else
+            throw Errors.selection;
+    }
+    removeClips(clipOrArray) {
+        const clips = this.filterClipSelection(clipOrArray);
+        if (!Is.populatedArray(clips))
+            throw Errors.argument;
+        const [firstClip] = clips;
+        const track = this.mash.clipTrack(firstClip);
+        const options = {
+            redoSelection: {},
+            clips,
+            track,
+            index: track.clips.indexOf(firstClip),
+            type: exports.ActionType.RemoveClips
+        };
+        this.actionCreate(options);
+    }
+    removeEffects(effectOrArray) {
+        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
+        const removeEffects = array.filter(effect => effect instanceof EffectClass);
+        if (!Is.populatedArray(removeEffects))
+            throw Errors.argument;
+        const { clip } = this.selection;
+        if (!clip)
+            throw Errors.selection;
+        const { effects } = clip;
+        const undoEffects = [...effects];
+        const redoEffects = effects.filter(effect => !removeEffects.includes(effect));
+        const options = {
+            redoSelectedEffects: [],
+            effects,
+            undoEffects,
+            redoEffects,
+            type: exports.ActionType.MoveEffects
+        };
+        this.actionCreate(options);
+    }
+    save() { this.actions.save(); }
+    selectClip(clip) {
+        const track = clip ? this.mash.clipTrack(clip) : this.selection.track;
+        this.selection = { track, clip };
+    }
+    selectEffect(effect) {
+        this.selection = { ...this.selection, effect };
+    }
+    selectTrack(track) {
+        this.selection = { track };
+    }
+    get selection() { return this._selection; }
+    set selection(value) {
+        if (!value) {
+            console.trace(this.constructor.name, "selection with no value");
+            throw Errors.internal;
+        }
+        const { clip, track, effect } = value;
+        this.selection.effect = effect;
+        this.selection.clip = clip;
+        this.selection.track = track || (clip ? this.mash.clipTrack(clip) : undefined);
+        this.eventTarget.emit(exports.EventType.Selection);
+    }
+    split() {
+        const splitClip = this.selection.clip;
+        if (!splitClip)
+            throw Errors.selection;
+        if (!this.clipCanBeSplit(splitClip, this.time, this.mash.quantize)) {
+            throw Errors.invalid.action;
+        }
+        const scaled = this.time.scale(this.mash.quantize);
+        const undoFrames = splitClip.frames;
+        const redoFrames = scaled.frame - splitClip.frame;
+        const insertClip = splitClip.copy;
+        insertClip.frames = undoFrames - redoFrames;
+        insertClip.frame = scaled.frame;
+        if (splitClip.propertyNames.includes("trim")) {
+            insertClip.trim += redoFrames;
+        }
+        const trackClips = this.mash.clipTrack(splitClip).clips;
+        const options = {
+            type: exports.ActionType.Split,
+            splitClip,
+            insertClip,
+            trackClips,
+            redoFrames,
+            undoFrames,
+            index: 1 + trackClips.indexOf(splitClip),
+            redoSelection: { clip: insertClip },
+            undoSelection: { clip: splitClip },
+        };
+        this.actionCreate(options);
+    }
+    get time() { return this.mash.time; }
+    set time(value) { this.goToTime(value); }
+    get timeRange() { return this.mash.timeRange; }
+    undo() { if (this.actions.canUndo)
+        this.handleAction(this.actions.undo()); }
+    get volume() { return this._volume; }
+    set volume(value) {
+        const number = Number(value);
+        if (this._volume !== number) {
+            if (!Is.positive(number))
+                throw Errors.invalid.volume;
+            this._volume = number;
+            if (Is.aboveZero(number))
+                this.muted = false;
+            this.mash.gain = this.gain;
+        }
+    }
+}
+
+const MasherFactoryTics = 10 * 1000;
+class MasherFactoryImplementation {
+    constructor() {
+        this.mashers = [];
+    }
+    addMasher(masher) {
+        if (!this.mashers.length)
+            this.masherStart();
+        this.mashers.push(masher);
+    }
+    // call when masher removed
+    destroy(masher) {
+        const index = this.mashers.indexOf(masher);
+        if (index < 0)
+            return;
+        this.mashers.splice(index, 1);
+        if (!this.mashers.length)
+            this.masherStop();
+    }
+    handleInterval() {
+        const urls = this.mashers.flatMap(masher => masher.mash.loadUrls);
+        Cache.flush(urls);
+        const definitions = this.mashers.flatMap(masher => masher.mash.definitions);
+        Definitions.map.forEach(definition => {
+            if (definitions.includes(definition) || definition.retain)
+                return;
+            Definitions.uninstall(definition.id);
+        });
+    }
+    instance(object = {}) {
+        object.autoplay ||= Default.masher.autoplay;
+        object.precision ||= Default.masher.precision;
+        object.loop ||= Default.masher.loop;
+        object.fps ||= Default.masher.fps;
+        object.volume ||= Default.masher.volume;
+        object.buffer ||= Default.masher.buffer;
+        const instance = new MasherClass(object);
+        this.addMasher(instance);
+        return instance;
+    }
+    masherStart() {
+        if (this.interval)
+            return;
+        this.interval = setInterval(() => this.handleInterval(), MasherFactoryTics);
+    }
+    masherStop() {
+        if (!this.interval)
+            return;
+        clearInterval(this.interval);
+        this.interval = undefined;
+    }
+}
+const MasherFactory = new MasherFactoryImplementation();
+
 DefinitionTypes.forEach(type => { Factory[type].initialize(); });
 
 exports.Action = Action;
+exports.ActionFactory = ActionFactory;
 exports.Actions = Actions;
 exports.AddClipToTrackAction = AddClipToTrackAction;
 exports.AddEffectAction = AddEffectAction;
@@ -7513,7 +7574,8 @@ exports.ClipMixin = ClipMixin;
 exports.ClipTypes = ClipTypes;
 exports.Color = Color;
 exports.CommandTypes = CommandTypes;
-exports.ContextFactory = ContextFactoryInstance;
+exports.Composition = Composition;
+exports.ContextFactory = ContextFactory;
 exports.DataTypes = DataTypes;
 exports.Default = Default;
 exports.DefinitionBase = DefinitionBase;
@@ -7524,6 +7586,7 @@ exports.EffectClass = EffectClass;
 exports.EffectDefinitionClass = EffectDefinitionClass;
 exports.EffectFactoryImplementation = EffectFactoryImplementation;
 exports.Element = Element;
+exports.Emitter = Emitter;
 exports.Errors = Errors;
 exports.Evaluator = Evaluator;
 exports.Factories = Factories;
@@ -7543,15 +7606,13 @@ exports.ImageFactoryImplementation = ImageFactoryImplementation;
 exports.ImageLoader = ImageLoader;
 exports.InstanceBase = InstanceBase;
 exports.Is = Is;
-exports.Job = Job;
 exports.Loader = Loader;
+exports.LoaderFactory = LoaderFactory;
 exports.MashClass = MashClass;
-exports.MashDefinitionClass = MashDefinitionClass;
-exports.MashFactoryImplementation = MashFactoryImplementation;
-exports.MashTypes = MashTypes;
+exports.MashFactory = MashFactory;
+exports.MasherActions = MasherActions;
 exports.MasherClass = MasherClass;
-exports.MasherDefinitionClass = MasherDefinitionClass;
-exports.MasherFactoryImplementation = MasherFactoryImplementation;
+exports.MasherFactory = MasherFactory;
 exports.MergerClass = MergerClass;
 exports.MergerDefinitionClass = MergerDefinitionClass;
 exports.MergerFactoryImplementation = MergerFactoryImplementation;
@@ -7560,8 +7621,10 @@ exports.ModularMixin = ModularMixin;
 exports.ModuleTypes = ModuleTypes;
 exports.MoveClipsAction = MoveClipsAction;
 exports.MoveEffectsAction = MoveEffectsAction;
+exports.OutputFormats = OutputFormats;
 exports.Parameter = Parameter;
 exports.Pixel = Pixel;
+exports.PropertiedClass = PropertiedClass;
 exports.Property = Property;
 exports.RemoveClipsAction = RemoveClipsAction;
 exports.Round = Round;
@@ -7571,28 +7634,32 @@ exports.ScalerFactoryImplementation = ScalerFactoryImplementation;
 exports.Seconds = Seconds;
 exports.Sort = Sort;
 exports.SplitAction = SplitAction;
+exports.StreamableDefinitionMixin = StreamableDefinitionMixin;
+exports.StreamableMixin = StreamableMixin;
 exports.ThemeClass = ThemeClass;
 exports.ThemeDefinitionClass = ThemeDefinitionClass;
 exports.ThemeFactoryImplementation = ThemeFactoryImplementation;
 exports.Time = Time;
 exports.TimeRange = TimeRange;
 exports.TrackClass = TrackClass;
-exports.TrackRange = TrackRange;
+exports.TrackFactory = TrackFactory;
+exports.TrackTypes = TrackTypes;
 exports.TransformTypes = TransformTypes;
+exports.TransformableDefinitionMixin = TransformableDefinitionMixin;
 exports.TransformableMixin = TransformableMixin;
 exports.TransitionClass = TransitionClass;
 exports.TransitionDefinitionClass = TransitionDefinitionClass;
 exports.TransitionFactoryImplementation = TransitionFactoryImplementation;
 exports.Type = Type;
 exports.TypeValue = TypeValue;
-exports.Types = TypesInstance;
+exports.Types = Types;
 exports.Url = Url;
 exports.VideoClassImplementation = VideoClassImplementation;
 exports.VideoDefinitionClassImplementation = VideoDefinitionClassImplementation;
 exports.VideoFactoryImplementation = VideoFactoryImplementation;
 exports.VideoLoader = VideoLoader;
-exports.VideoSequenceClass = VideoSequenceClass;
-exports.VideoSequenceDefinitionClass = VideoSequenceDefinitionClass;
+exports.VideoSequenceClassImplementation = VideoSequenceClassImplementation;
+exports.VideoSequenceDefinitionClassImplementation = VideoSequenceDefinitionClassImplementation;
 exports.VideoSequenceFactoryImplementation = VideoSequenceFactoryImplementation;
 exports.VideoStreamClass = VideoStreamClass;
 exports.VideoStreamDefinitionClass = VideoStreamDefinitionClass;
@@ -7607,9 +7674,6 @@ exports.audioFromId = audioFromId;
 exports.audioInitialize = audioInitialize;
 exports.audioInstall = audioInstall;
 exports.audioInstance = audioInstance;
-exports.byFrame = byFrame;
-exports.byLabel = byLabel;
-exports.byTrack = byTrack;
 exports.colorRgb2hex = colorRgb2hex;
 exports.colorRgb2yuv = colorRgb2yuv;
 exports.colorStrip = colorStrip;
@@ -7648,6 +7712,8 @@ exports.fontFromId = fontFromId;
 exports.fontInitialize = fontInitialize;
 exports.fontInstall = fontDefine;
 exports.fontInstance = fontInstance;
+exports.idGenerate = idGenerate;
+exports.idPrefixSet = idPrefixSet;
 exports.imageDefine = imageDefine;
 exports.imageDefinition = imageDefinition;
 exports.imageDefinitionFromId = imageDefinitionFromId;
@@ -7671,21 +7737,6 @@ exports.isPopulatedString = isPopulatedString;
 exports.isPositive = isPositive;
 exports.isString = stringType;
 exports.isUndefined = undefinedType;
-exports.mashDefine = mashDefine;
-exports.mashDefinition = mashDefinition;
-exports.mashDefinitionFromId = mashDefinitionFromId;
-exports.mashFromId = mashFromId;
-exports.mashInitialize = mashInitialize;
-exports.mashInstall = mashInstall;
-exports.mashInstance = mashInstance;
-exports.masherDefine = masherDefine;
-exports.masherDefinition = masherDefinition;
-exports.masherDefinitionFromId = masherDefinitionFromId;
-exports.masherDestroy = masherDestroy;
-exports.masherFromId = masherFromId;
-exports.masherInitialize = masherInitialize;
-exports.masherInstall = masherDefine;
-exports.masherInstance = masherInstance;
 exports.mergerDefaultId = mergerDefaultId;
 exports.mergerDefine = mergerDefine;
 exports.mergerDefinition = mergerDefinition;
@@ -7710,6 +7761,10 @@ exports.scalerFromId = scalerFromId;
 exports.scalerInitialize = scalerInitialize;
 exports.scalerInstall = scalerDefine;
 exports.scalerInstance = scalerInstance;
+exports.sortByFrame = sortByFrame;
+exports.sortByLabel = sortByLabel;
+exports.sortByLayer = sortByLayer;
+exports.sortByTrack = sortByTrack;
 exports.themeDefine = themeDefine;
 exports.themeDefinition = themeDefinition;
 exports.themeDefinitionFromId = themeDefinitionFromId;
@@ -7726,6 +7781,8 @@ exports.transitionInitialize = transitionInitialize;
 exports.transitionInstall = transitionDefine;
 exports.transitionInstance = transitionInstance;
 exports.urlAbsolute = urlAbsolute;
+exports.urlForRemoteServer = urlForRemoteServer;
+exports.urlRemoteServer = urlRemoteServer;
 exports.videoDefine = videoDefine;
 exports.videoDefinition = videoDefinition;
 exports.videoDefinitionFromId = videoDefinitionFromId;

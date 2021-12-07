@@ -1,11 +1,15 @@
 
-import { ContextFactory, VisibleContext } from "../../../Playing"
-import { Evaluator } from "../../../Utilities"
+import { ContextFactory } from "../../../Playing/ContextFactory"
+import { VisibleContext } from "../../../Playing/VisibleContext"
+import { Errors } from "../../../Setup/Errors"
+import { Evaluator } from "../../../Utilities/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
 class FadeFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const drawing = ContextFactory.toSize(context.size)
     const alpha = Number(evaluator.get('alpha') || evaluator.position)
     const type = String(evaluator.get('type') || 'in')
@@ -13,8 +17,6 @@ class FadeFilter extends FilterDefinitionClass {
     drawing.drawWithAlpha(context.drawingSource, typedAlpha)
     return drawing
   }
-
-  // id = 'fade'
 }
 
 export { FadeFilter }

@@ -1,7 +1,7 @@
-import { InstanceBase } from "../Instance/Instance"
-import { ClipMixin } from "../Mixin/Clip/ClipMixin"
-import { TransformableMixin } from "../Mixin/Transformable/TransformableMixin"
-import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
+import { InstanceBase } from "../../Base/Instance"
+import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
+import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
+import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
 import { ImageDefinition } from "./Image"
 
 const ImageWithClip = ClipMixin(InstanceBase)

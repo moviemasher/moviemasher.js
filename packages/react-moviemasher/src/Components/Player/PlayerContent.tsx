@@ -1,6 +1,6 @@
 import React from 'react'
 import { UnknownObject, ContextFactory, EventType, Errors } from '@moviemasher/moviemasher.js'
-import { EditorContext } from '../Editor/EditorContext'
+import { EditorContext } from '../../Contexts/EditorContext'
 import { CanvasView, CanvasViewProps } from '../../Utilities/CanvasView'
 
 interface PlayerContentProps extends UnknownObject {

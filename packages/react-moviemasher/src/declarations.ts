@@ -30,6 +30,7 @@ export interface DropClipsProps {
 export type Panel = React.FunctionComponent<React.PropsWithChildren<UnknownObject>>
 
 export type UnknownElement = React.ReactElement<UnknownObject>
+
 export type EditorIcons = {
   [key: string]: UnknownElement
 }
@@ -49,9 +50,4 @@ export type SourceCallback = (options?:SourceCallbackOptions) => DefinitionsProm
 export type ListenerCallback = (masher: Masher) => void
 export type ListenerEvents = Partial<Record<EventType, ListenerCallback>>
 
-export interface RemoteServer {
-  protocol?: string
-  prefix?: string
-  host?: string
-  port?: string | number
-}
+export interface OnlyChildProps { children: React.ReactElement }

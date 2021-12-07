@@ -1,6 +1,6 @@
 import { GenericFactory } from "../../declarations"
-import { Modular, ModularObject } from "../Mixin/Modular/Modular"
-import { ModularDefinition, ModularDefinitionObject } from "../Mixin/Modular/Modular"
+import { Modular, ModularObject } from "../../Mixin/Modular/Modular"
+import { ModularDefinition, ModularDefinitionObject } from "../../Mixin/Modular/Modular"
 
 type EffectObject = ModularObject
 

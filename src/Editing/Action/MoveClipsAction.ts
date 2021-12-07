@@ -1,4 +1,4 @@
-import { Clip } from "../../Mash/Mixin/Clip/Clip"
+import { Clip } from "../../Mixin/Clip/Clip"
 import { Action, ActionObject } from "./Action"
 
 interface MoveClipsActionObject extends ActionObject {

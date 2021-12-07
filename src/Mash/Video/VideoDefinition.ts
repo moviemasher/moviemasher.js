@@ -8,14 +8,14 @@ import { TimeRange } from "../../Utilities/TimeRange"
 import { urlAbsolute } from "../../Utilities/Url"
 import { Cache } from "../../Loading/Cache"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
-import { DefinitionBase } from "../Definition/Definition"
-import { Definitions } from "../Definitions/Definitions"
+import { DefinitionBase } from "../../Base/Definition"
+import { Definitions } from "../../Definitions/Definitions"
 import { VideoClassImplementation } from "./VideoInstance"
 import { Video, VideoDefinitionClass, VideoDefinitionObject, VideoObject } from "./Video"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
-import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
-import { AudibleFileDefinitionMixin } from "../Mixin/AudibleFile/AudibleFileDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
+import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
+import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 import { ContextFactory } from "../../Playing/ContextFactory"
 
 
@@ -33,7 +33,7 @@ const VideoDefinitionClassImplementation: VideoDefinitionClass = class extends W
 
     this.url = url
 
-    if (source) this.source = source
+    this.source = source || url
     if (fps) this.fps = fps
 
     this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
@@ -54,19 +54,7 @@ const VideoDefinitionClassImplementation: VideoDefinitionClass = class extends W
 
   fps = Default.definition.video.fps
 
-  // private framesArray(start: Time, end?: Time): number[] {
-  //   const frames: number[] = []
-  //   const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame)
-  //   if (end) {
-  //     const endFrame = Math.min(this.framesMax, end.scale(this.fps, "ceil").frame)
-  //     for (let frame = startFrame; frame <= endFrame; frame += 1) {
-  //       frames.push(frame)
-  //     }
-  //   } else frames.push(startFrame)
-  //   return frames
-  // }
-
-  // private get framesMax(): number { return Math.floor(this.fps * this.duration) - 2 }
+  get inputSource(): string { return urlAbsolute(this.source) }
 
   get instance(): Video { return this.instanceFromObject(this.instanceObject) }
 
@@ -86,14 +74,14 @@ const VideoDefinitionClassImplementation: VideoDefinitionClass = class extends W
     const promise = this.seekPromise(time, video).then(() => {
       // make sure we don't already have this frame
       if (sequence[time.frame] && !(sequence[time.frame] instanceof Promise)) {
-        console.debug(this.constructor.name, "framePromise already captured", time.toString())
+        // console.debug(this.constructor.name, "framePromise already captured", time.toString())
         return
       }
 
       const context = ContextFactory.toSize(video)
       context.draw(video)
       sequence[time.frame] = context.canvas
-      console.debug(this.constructor.name, "framePromise capturing", time.toString())
+      // console.debug(this.constructor.name, "framePromise capturing", time.toString())
     })
     sequence[time.frame] = promise
     return promise
@@ -148,13 +136,13 @@ const VideoDefinitionClassImplementation: VideoDefinitionClass = class extends W
         // console.debug(this.constructor.name, "loadDefinition cached and no times needed")
         return
       }
-      console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '))
+      // console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '))
       return this.timesPromise(times)
     }
 
     const promise: LoadPromise = Cache.caching(url) ? Cache.get(url) : LoaderFactory.video().loadUrl(url)
-    if (Cache.caching(url)) console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end)
-    else console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end)
+    // if (Cache.caching(url)) console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end)
+    // else console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end)
 
     return promise.then(() => this.framesPromise(start, end))
   }
@@ -171,18 +159,18 @@ const VideoDefinitionClassImplementation: VideoDefinitionClass = class extends W
     const rate = this.fps || quantize
     const time = startTime.scale(rate)
 
-    console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString())
+    // console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString())
 
     const cached: LoadVideoResult | undefined = Cache.get(this.absoluteUrl)
     if (!cached) {
-      console.debug(this.constructor.name, "loadedVisible no cached")
+      // console.debug(this.constructor.name, "loadedVisible no cached")
       return
     }
 
     const { sequence } = cached
     const source = sequence[time.frame]
     if (!source || source instanceof Promise) {
-      console.debug(this.constructor.name, "loadedVisible source issue", source)
+      // console.debug(this.constructor.name, "loadedVisible source issue", source)
       return
     }
 

@@ -1,28 +1,48 @@
-import { DefinitionType, TrackType } from "../../Setup/Enums"
-import { Definition } from "../Definition/Definition"
-import themeColorJson from "../..//DefinitionObjects/theme/color.json"
-import { Factory } from "../../Factory/Factory"
-import { MashClass } from "./MashInstance"
-import { Clip } from "../Mixin/Clip/Clip"
-import { TrackClass, TrackObject } from "../Track"
-import { InstanceBase } from "../Instance"
-import { ThemeDefinition } from "../Theme/Theme"
-import { createId } from "../../Test/createId"
-import { Mash } from "./Mash"
-import { expectEmptyArray } from "../../Test/expectEmptyArray"
-import { expectArrayOf } from "../../Test/expectArrayOf"
+import { TrackType, TrackTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
+import { Definition } from "../../Base/Definition"
+import { Factory } from "../../Definitions/Factory/Factory"
+import { Clip } from "../../Mixin/Clip/Clip"
+import { TrackClass, TrackObject } from "../Track"
+import { InstanceBase } from "../../Base/Instance"
+import { idGenerate } from "../../Utilities/Id"
+import { Mash } from "./Mash"
+import { MashClass } from "./MashInstance"
+import { expectEmptyArray } from "../../../dev/test/Utilities/expectEmptyArray"
+import { expectArrayOf } from "../../../dev/test/Utilities/expectArrayOf"
+
+import themeColorJson from "../..//Definitions/DefinitionObjects/theme/color.json"
+import { Time } from "../../Utilities/Time"
+import { MashFactory } from "./MashFactory"
 
 describe("MashFactory", () => {
   describe("instance", () => {
     test("returns MashClass instance", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MashFactory.instance()
       expect(mash).toBeInstanceOf(MashClass)
     })
   })
 })
 describe("Mash", () => {
-  const definition = () => <ThemeDefinition> Factory.theme.definition(themeColorJson)
+
+
+  const colorDefinition = () => Factory.theme.definition(themeColorJson)
+  describe("addTrack", () => {
+    test.each(TrackTypes)("returns new %s track", (trackType) => {
+      const mash = MashFactory.instance()
+      const addedTrack = mash.addTrack(trackType)
+      expect(addedTrack.dense).toBe(false)
+      expect(addedTrack).toBeInstanceOf(TrackClass)
+      expect(addedTrack.trackType).toEqual(trackType)
+      expect(mash.trackCount(trackType)).toEqual(trackType === TrackType.Transition ? 1 : 2)
+      expect(mash.tracks.length).toBeGreaterThan(2)
+      const track = mash.trackOfTypeAtIndex(trackType, mash.trackCount(trackType) - 1)
+      expect(track).toBeInstanceOf(TrackClass)
+      expect(track.trackType).toEqual(trackType)
+      expect(addedTrack).toStrictEqual(track)
+    })
+  })
+
   describe("addClipsToTrack", () => {
     const addNewClip = (mash : Mash, definition : Definition, track = 0) : Clip => {
       const clip = <Clip> definition.instance
@@ -33,10 +53,12 @@ describe("Mash", () => {
     }
 
     test("correctly moves to new track and removes from old", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MashFactory.instance()
       const firstTrack = mash.addTrack(TrackType.Video)
+      expect(firstTrack.layer).toEqual(1)
       const secondTrack = mash.addTrack(TrackType.Video)
-      const clip = addNewClip(mash, definition(), 1)
+      expect(secondTrack.layer).toEqual(2)
+      const clip = addNewClip(mash, colorDefinition(), 1)
       expect(firstTrack.clips.includes(clip)).toBeTruthy()
       expect(secondTrack.clips.includes(clip)).toBeFalsy()
       const clipTrack = mash.clipTrack(clip)
@@ -50,11 +72,11 @@ describe("Mash", () => {
     })
 
     test("correctly moves to new position on main track", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const trackClips = mash.video[0].clips
+      const mash = MashFactory.instance()
+      const trackClips = mash.trackOfTypeAtIndex(TrackType.Video, 0).clips
       const array = new Array(4).fill(null)
       const objects = array.map(() => {
-        const clip = addNewClip(mash, definition())
+        const clip = addNewClip(mash, colorDefinition())
         expect(clip).toBeTruthy()
         expect(clip).toBeInstanceOf(InstanceBase)
         return clip
@@ -68,20 +90,18 @@ describe("Mash", () => {
       const moveClips = objects.slice(2)
       mash.addClipsToTrack(moveClips, 0, 1)
       // logOrder()
-
-
-      expect(mash.video[0].clips).toEqual([clips.a, clips.c, clips.d, clips.b])
+      expect(trackClips).toEqual([clips.a, clips.c, clips.d, clips.b])
 
       mash.addClipsToTrack(moveClips, 0, 2)
       expect(mash.clips).toEqual([clips.a, clips.c, clips.d, clips.b])
     })
 
     test("correctly places clip in track clips", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const clip = addNewClip(mash, definition())
+      const mash = MashFactory.instance()
+      const clip = addNewClip(mash, colorDefinition())
 
-      expect(mash.video.length).toEqual(1)
-      const track = mash.video[0]
+      expect(mash.trackCount(TrackType.Video)).toEqual(1)
+      const track = mash.trackOfTypeAtIndex(TrackType.Video, 0)
 
       expect(track.clips.length).toEqual(1)
       expect(track.clips[0]).toStrictEqual(clip)
@@ -89,100 +109,97 @@ describe("Mash", () => {
     })
 
     test("correctly sorts clips", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MashFactory.instance()
       expect(mash.quantize).toEqual(10)
-      const clip1 = definition().instance
-      const clip2 = definition().instance
+      const clip1 = colorDefinition().instance
+      const clip2 = colorDefinition().instance
       mash.addClipsToTrack([clip1], 0)
       mash.addClipsToTrack([clip2], 0, 1)
+      const track = mash.trackOfTypeAtIndex(TrackType.Video, 0)
+
+      expect(track.dense).toBeTruthy()
 
       expect(clip1.frame).not.toEqual(clip2.frame)
 
       expect(mash.frames).toEqual(60)
 
-      const track = mash.video[0]
       expect(track.clips.length).toEqual(2)
       expect(track.clips[0]).toStrictEqual(clip1)
       expect(track.clips[1]).toStrictEqual(clip2)
     })
 
     test("updates definition", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const clip = definition().instance
+      const mash = MashFactory.instance()
+      const clip = colorDefinition().instance
       mash.addClipsToTrack([clip], 0)
       // console.log("mash.definition", mash.definition)
-      expect(mash.media.includes(definition())).toBeTruthy()
-    })
-  })
-
-  describe("addTrack", () => {
-    test.each(Object.values(TrackType))("returns new %s track", (type) => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const addedTrack = mash.addTrack(type)
-      expect(addedTrack).toBeInstanceOf(TrackClass)
-      expect(addedTrack.type).toEqual(type)
-      expect(mash[type].length).toEqual(2)
-      expect(mash.tracks.length).toBeGreaterThan(2) // with audio track
-      const track = mash[type][1]
-      expect(track).toBeInstanceOf(TrackClass)
-      expect(track.type).toEqual(type)
-      expect(addedTrack).toStrictEqual(track)
+      expect(mash.definitions.includes(colorDefinition())).toBeTruthy()
     })
   })
 
   describe("clips", () => {
     test("returns proper clips", () => {
       const clips = [
-        { label: 'A', id: "com.moviemasher.theme.text", frame: 0, frames: 100, string: "Fuck yeah!" },
-        { label: 'B', id: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
-        { label: 'C', id: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "Woot woot!" },
+        { label: 'A', definitionId: "com.moviemasher.theme.text", frame: 0, frames: 100, string: "Fuck yeah!" },
+        { label: 'B', definitionId: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
+        { label: 'C', definitionId: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "Woot woot!" },
       ]
-      const mash = Factory.mash.instance({ id: createId(), video: [{ clips }, { clips }, { clips }] })
+      const mash = MashFactory.instance({ tracks: [{ clips }, { clips }, { clips }] })
       expect(mash.clips.length).toEqual(clips.length * 3)
     })
   })
   describe("frames", () => {
     test("returns 0 from empty mash", () => {
-      const mash = Factory.mash.instance({ id: createId() })
+      const mash = MashFactory.instance()
       expect(mash.frames).toEqual(0)
     })
   })
 
   describe("id", () => {
     test("returns what is provided to constructor", () => {
-      const id = createId()
-      const mash = Factory.mash.instance({ id })
+      const id = idGenerate()
+      const mash = MashFactory.instance({ id })
       expect(mash.id).toEqual(id)
     })
 
   })
 
   describe("removeTrack", () => {
-    test.each(Object.values(TrackType))("correctly removes just %s track", (type) => {
-      const mash = Factory.mash.instance({ id: createId() })
+    test.each(TrackTypes)("correctly removes just %s track", (type) => {
+      if (type === TrackType.Transition) return
+      const mash = MashFactory.instance()
+
       mash.removeTrack(type)
-      expect(mash[type].length).toEqual(0)
+      expect(mash.trackCount(type)).toEqual(0)
       expect(mash.tracks.length).toBe(1)
     })
   })
 
-  describe("tracks", () => {
-    test("returns 2 for empty mash", () => {
-      const mash = Factory.mash.instance({ id: createId() })
-      const { tracks } = mash
-      expect(tracks.length).toEqual(2)
-      Object.values(TrackType).forEach((type, index) => {
-        const track = tracks[index]
-        expect(track).toBeInstanceOf(TrackClass)
-        expect(track.type).toEqual(type)
+  describe("trackOfTypeAtIndex", () => {
+    test("returns expected track", () => {
+      const mash = MashFactory.instance()
+      TrackTypes.forEach((type) => {
+        const track = mash.trackOfTypeAtIndex(type, 0)
+        if (type === TrackType.Transition) expect(track).toBeUndefined()
+        else expect(track.trackType).toEqual(type)
       })
     })
   })
+
+  describe("tracks", () => {
+    test("returns two tracks", () => {
+      const mash = MashFactory.instance()
+      const { tracks } = mash
+      expect(tracks.length).toBe(2)
+      tracks.forEach(track => expect(track).toBeInstanceOf(TrackClass))
+    })
+  })
+
   describe("toJSON", () => {
     test("returns expected object", () => {
-      const id = createId()
-      const mash = Factory.mash.instance({ id })
-      const clip = definition().instance
+      const id = idGenerate()
+      const mash = MashFactory.instance({ id })
+      const clip = colorDefinition().instance
       mash.addTrack(TrackType.Video)
       mash.addClipsToTrack([clip], 1)
       expect(clip.track).toEqual(1)
@@ -191,18 +208,9 @@ describe("Mash", () => {
       // console.log(mashString)
       const mashObject = JSON.parse(mashString)
       expect(mashObject.id).toEqual(id)
-      const { audio, video, media } = mashObject
-      const array = expectArrayOf(media, Object, 3)
-      const object = array[0]
-      expect(object.type).toBeDefined()
-
-      const themeDefinition = array.find(media => media.type === DefinitionType.Theme)
-      expect(themeDefinition).toBeInstanceOf(Object)
-      expect(themeDefinition.id).toEqual(definition().id)
-
-      // console.log("themeDefinition", themeDefinition)
-      // console.log("themeColorJson", themeColorJson)
-      // expect(themeDefinition).toEqual(themeColorJson)
+      const { tracks } = mashObject
+      const audio = tracks.filter((track:TrackObject) => track.trackType === TrackType.Audio)
+      const video = tracks.filter((track:TrackObject) => track.trackType === TrackType.Video)
 
       expectArrayOf(audio, Object, 1)
       let track = <TrackObject> audio[0]
@@ -225,6 +233,18 @@ describe("Mash", () => {
       // expect(clipObject.type).toEqual(clip.type)
       expect(clipObject.id).toEqual(clip.id)
       expect(clipObject.color).toEqual(clip.color)
+    })
+  })
+  describe("mashStatePromise", () => {
+    test("returns expected promise", async () => {
+      const mash = MashFactory.instance({
+        tracks: [{ clips: [{ definitionId: 'com.moviemasher.theme.text' }] }]
+      })
+      const time = Time.fromArgs(0, 10)
+      const size = { width: 320, height: 240 }
+      const result = await mash.mashStatePromise(time, size)
+      expect(result).toBeInstanceOf(Object)
+      // console.log("mashStatePromise", JSON.stringify(result))
     })
   })
 })

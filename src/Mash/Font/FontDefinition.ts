@@ -1,10 +1,10 @@
 import { Any, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { DefinitionType } from "../../Setup/Enums"
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { Font, FontDefinitionObject, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
-import { Definitions } from "../Definitions/Definitions"
+import { Definitions } from "../../Definitions/Definitions"
 import { Time } from "../../Utilities/Time"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
 import { Cache } from "../../Loading/Cache"
@@ -14,10 +14,10 @@ class FontDefinitionClass extends DefinitionBase {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
-    const { source } = <FontDefinitionObject> object
-    if (!source) throw Errors.invalid.definition.source + JSON.stringify(object)
+    const { source, url } = <FontDefinitionObject> object
+    if (!(source || url)) throw Errors.invalid.definition.source
 
-    this.source = source
+    this.source = source || url || ''
     Definitions.install(this)
   }
   get absoluteUrl(): string { return urlAbsolute(this.source) }

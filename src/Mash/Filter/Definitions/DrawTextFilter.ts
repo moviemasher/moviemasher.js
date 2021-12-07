@@ -1,14 +1,14 @@
 import { Cache } from "../../../Loading"
 import { Evaluator, Is } from "../../../Utilities"
 import { Parameter } from "../../../Setup/Parameter"
-import { ScalarValue, TextStyle, ValueObject } from "../../../declarations"
+import { InputFilter, ScalarValue, TextStyle, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Playing"
 import { fontDefinitionFromId } from "../../Font/FontFactory"
 
 const mmFontFile = (id? : ScalarValue) : string => {
-  if (!Is.populatedString(id)) throw Errors.id
+  if (!Is.populatedString(id)) throw Errors.id + id
 
   return fontDefinitionFromId(<string> id).absoluteUrl
 }
@@ -20,6 +20,8 @@ const mmFontFamily = (id? : ScalarValue) : string => Cache.key(mmFontFile(id))
 class DrawTextFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const fontface = String(evaluator.get("fontface"))
     const family = mmFontFamily(fontface)
     const {
@@ -40,6 +42,17 @@ class DrawTextFilter extends FilterDefinitionClass {
     context.drawTextAtPoint(string, textStyle, point)
 
     return context
+  }
+
+  input(_evaluator: Evaluator, evaluated: ValueObject): InputFilter {
+    const outWidth = evaluated.w || evaluated.width || 0
+    const outHeight = evaluated.h || evaluated.height || 0
+    const inputFilter: InputFilter = {
+      filter: this.id,
+      options: { width: outWidth, height: outHeight }
+    }
+
+    return inputFilter
   }
 
   parameters = [

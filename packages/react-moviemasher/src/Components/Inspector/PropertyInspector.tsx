@@ -1,40 +1,39 @@
 import React from 'react'
-import { MasherChangeHandler } from "@moviemasher/moviemasher.js"
+import { Instance, MasherChangeHandler } from "@moviemasher/moviemasher.js"
 
 import { EditorInputs } from '../../declarations'
-import { EditorContext } from "../Editor/EditorContext"
-import { InputContext } from './InputContext'
+import { InputContext } from '../../Contexts/InputContext'
 import { PropertyContainer } from './PropertyContainer'
-import { useSelected } from './useSelected'
 
 interface PropertyInspectorProps {
   property: string
+  instance: Instance
   className?: string
   inputs: EditorInputs
+  changeHandler: MasherChangeHandler
 }
 
 const PropertyInspector: React.FunctionComponent<PropertyInspectorProps> = props => {
-  const { inputs, className, property, children } = props
-  const { masher } = React.useContext(EditorContext)
-  const selected = useSelected()
+  const {
+    changeHandler, inputs, className, property: propertyId, instance, children
+  } = props
 
-  const { definition } = selected
-  const definitionProperty = definition.property(property)
-  if (!definitionProperty) return null
+  const property = instance.property(propertyId)
+  if (!property) return null
 
-  const { type, name } = definitionProperty
-  const value = selected.value(name)
-  const input = inputs[type.id]
+  const { type, name } = property
+  const { id } = type
+  const value = instance.value(name)
+  const input = inputs[id]
 
-  const changeHandler: MasherChangeHandler = (property, value) => {
-    masher.change(property, value)
-  }
-  const inputContext = { property, value, changeHandler }
+  const inputContext = { property: propertyId, value, changeHandler }
+
   const inputWithContext = (
     <InputContext.Provider key='context' value={inputContext}>
       {input}
     </InputContext.Provider>
   )
+
   const containerProps = {
     className,
     children,

@@ -4,10 +4,8 @@ import { LoaderFactory } from "../../src/Loading/LoaderFactory"
 import { DefinitionTypes, LoadType } from "../../src/Setup/Enums"
 import { FontLoaderTest } from "./FontLoaderTest"
 import { ImageLoaderTest } from "./ImageLoaderTest"
-import { Definitions } from "../../src/Mash/Definitions/Definitions"
-import { Factory } from "../../src/Factory/Factory"
-import { MashFactoryImplementation } from "../../src/Mash/Mash/MashFactory"
-import { MasherFactoryImplementation } from "../../src/Mash/Masher/MasherFactory"
+import { Definitions } from "../../src/Definitions/Definitions"
+import { Factory } from "../../src/Definitions/Factory/Factory"
 import { AudioFactoryImplementation } from "../../src/Mash/Audio"
 import { EffectFactoryImplementation } from "../../src/Mash/Effect"
 import { FilterFactoryImplementation } from "../../src/Mash/Filter"
@@ -26,8 +24,6 @@ export default [
   FilterFactoryImplementation,
   FontFactoryImplementation,
   ImageFactoryImplementation,
-  MashFactoryImplementation,
-  MasherFactoryImplementation,
   MergerFactoryImplementation,
   ScalerFactoryImplementation,
   ThemeFactoryImplementation,
@@ -36,7 +32,6 @@ export default [
   VideoStreamFactoryImplementation,
   VideoSequenceFactoryImplementation,
 ]
-global.AudioContext = class { dispatchEvent() { } }
 
 const fs = require('fs')
 const path = require('path')

@@ -1,7 +1,7 @@
 import React from "react"
 import { definitionsByType, UnknownObject } from '@moviemasher/moviemasher.js'
 import { View } from "../../Utilities/View"
-import { BrowserContext } from "./BrowserContext"
+import { BrowserContext } from "../../Contexts/BrowserContext"
 import { SourceCallback } from "../../declarations"
 import { propsDefinitionTypes } from "../../Utilities/Props"
 

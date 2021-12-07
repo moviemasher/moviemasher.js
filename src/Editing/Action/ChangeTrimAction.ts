@@ -1,4 +1,4 @@
-import { Audible } from "../../Mash/Mixin/Audible/Audible"
+import { Audible } from "../../Mixin/Audible/Audible"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 interface ChangeTrimActionObject extends ChangeActionObject {

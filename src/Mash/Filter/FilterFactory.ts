@@ -10,17 +10,17 @@ import { FadeFilter } from "./Definitions/FadeFilter"
 import { OverlayFilter } from "./Definitions/OverlayFilter"
 import { ScaleFilter } from "./Definitions/ScaleFilter"
 import { SetSarFilter } from "./Definitions/SetSarFilter"
-import { Definitions } from "../Definitions"
+import { Definitions } from "../../Definitions"
 import { Errors } from "../../Setup/Errors"
 import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
-import { Factories } from "../Factories"
+import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utilities/Is"
 import { DefinitionType } from "../../Setup/Enums"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   if (Definitions.installed(id)) return <FilterDefinition> Definitions.fromId(id)
 

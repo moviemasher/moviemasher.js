@@ -3,21 +3,26 @@ import { GenericFactory } from "../../declarations"
 import { Time } from "../../Utilities/Time"
 import { FilterObject } from "../Filter/Filter"
 import { MergerObject } from "../Merger"
-import { ClipDefinitionObject } from "../Mixin/Clip/Clip"
+import { ClipDefinitionObject } from "../../Mixin/Clip/Clip"
 import {
   Modular,
   ModularDefinition,
   ModularDefinitionObject,
   ModularObject
-} from "../Mixin/Modular/Modular"
-import { Visible, VisibleDefinition, VisibleObject } from "../Mixin/Visible/Visible"
+} from "../../Mixin/Modular/Modular"
+import { Visible, VisibleDefinition, VisibleObject } from "../../Mixin/Visible/Visible"
 import { ScalerObject } from "../Scaler"
 
-type TransitionObject = ModularObject & VisibleObject
+interface TransitionObject extends ModularObject, VisibleObject {
+  fromTrack?: number
+  toTrack?: number
+}
 
 interface Transition extends Modular, Visible {
   definition : TransitionDefinition
   mergeClipsIntoContextAtTime(clips : Visible[], context : VisibleContext, time : Time, quantize: number, color? : string) : void
+  fromTrack: number
+  toTrack: number
 }
 
 interface TransitionDefinitionTransformObject {

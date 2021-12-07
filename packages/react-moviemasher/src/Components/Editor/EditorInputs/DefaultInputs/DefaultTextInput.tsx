@@ -1,5 +1,5 @@
 import React from 'react'
-import { InputContext } from '../../../Inspector/InputContext'
+import { InputContext } from '../../../../Contexts/InputContext'
 
 const DefaultTextInput: React.FunctionComponent = () => {
   const inputContext = React.useContext(InputContext)

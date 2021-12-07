@@ -1,3 +1,4 @@
 export * from "./AudibleContext"
-export * from "./VisibleContext"
+export * from "./Composition"
 export * from "./ContextFactory"
+export * from "./VisibleContext"

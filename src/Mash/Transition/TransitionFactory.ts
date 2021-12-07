@@ -1,18 +1,18 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
-import { Definitions } from "../Definitions/Definitions"
-import { Factories } from "../Factories/Factories"
+import { Definitions } from "../../Definitions/Definitions"
+import { Factories } from "../../Definitions/Factories"
 import { TransitionDefinitionClass } from "./TransitionDefinition"
 import {
   Transition, TransitionDefinition, TransitionDefinitionObject, TransitionObject
 } from "./Transition"
 
-import transitionCrossfadeJson from "../../DefinitionObjects/transition/crossfade.json"
+import transitionCrossfadeJson from "../../Definitions/DefinitionObjects/transition/crossfade.json"
 
 const transitionDefinition = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   if (Definitions.installed(id)) return <TransitionDefinition> Definitions.fromId(id)
 
@@ -39,7 +39,7 @@ const transitionInitialize = () : void => {
 
 const transitionDefine = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
   return transitionDefinition(object)

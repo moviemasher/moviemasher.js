@@ -1,15 +1,15 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Is } from "../../Utilities/Is"
-import { Definitions } from "../Definitions"
-import { Factories } from "../Factories"
+import { Definitions } from "../../Definitions"
+import { Factories } from "../../Definitions/Factories"
 import { ScalerDefinitionClass } from "../Scaler/ScalerDefinition"
 import {
   Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerObject
 } from "../Scaler/Scaler"
 
-import scalerDefaultJson from "../../DefinitionObjects/scaler/default.json"
-import scalerPanJson from "../../DefinitionObjects/scaler/pan.json"
-import scalerScaleJson from "../../DefinitionObjects/scaler/scale.json"
+import scalerDefaultJson from "../../Definitions/DefinitionObjects/scaler/default.json"
+import scalerPanJson from "../../Definitions/DefinitionObjects/scaler/pan.json"
+import scalerScaleJson from "../../Definitions/DefinitionObjects/scaler/scale.json"
 
 const scalerDefaultId = "com.moviemasher.scaler.default"
 
@@ -25,12 +25,15 @@ const scalerDefinitionFromId = (id : string) : ScalerDefinition => {
   return scalerDefinition({ id })
 }
 
-const scalerInstance = (object : ScalerObject) : Scaler => {
-  return scalerDefinition(object).instanceFromObject(object)
+const scalerInstance = (object: ScalerObject): Scaler => {
+  const { definitionId } = object
+
+  const definition = scalerDefinition({ id: definitionId })
+  return definition.instanceFromObject(object)
 }
 
-const scalerFromId = (id : string) : Scaler => {
-  return scalerInstance({ id })
+const scalerFromId = (definitionId : string) : Scaler => {
+  return scalerInstance({ definitionId })
 }
 
 const scalerInitialize = () : void => {
@@ -46,7 +49,6 @@ const scalerDefine = (object : ScalerDefinitionObject) : ScalerDefinition => {
   Definitions.uninstall(idString)
   return scalerDefinition(object)
 }
-
 
 const ScalerFactoryImplementation = {
   define: scalerDefine,

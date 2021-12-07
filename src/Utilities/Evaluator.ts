@@ -70,7 +70,7 @@ const replaceOperators = (string : string) : string => (
 class Evaluator {
   [index: string] : unknown
 
-  constructor(timeRange : TimeRange, context : VisibleContext, size : Size, mergeContext? : VisibleContext) {
+  constructor(timeRange : TimeRange, size : Size, context? : VisibleContext, mergeContext? : VisibleContext) {
     this.timeRange = timeRange
     this.context = context
     this.mergeContext = mergeContext
@@ -97,7 +97,7 @@ class Evaluator {
     return value
   }
 
-  context : VisibleContext
+  context? : VisibleContext
 
   get duration() : number { return this.timeRange.lengthSeconds }
 
@@ -247,7 +247,7 @@ class Evaluator {
     return value + (scale - 1.0) * other
   }
 
-  get t() : number { return this.mm_duration }
+  get t() : number { return this.mm_t }
 
   timeRange : TimeRange
 }

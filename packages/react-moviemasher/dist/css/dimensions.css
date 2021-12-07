@@ -1,20 +1,31 @@
 /* dimensions.css */
 
-:root {
+.moviemasher-app {
+  --padding: 40px;
+  --spacing: 20px;
+  --header-height: 38px;
+  --footer-height: 48px;
+
   --moviemasher-border-size: 1px;
   --moviemasher-border-radius: calc(5 * var(--moviemasher-border-size));
-  --moviemasher-spacing: 20px;
-  --moviemasher-padding: 40px;
-  --moviemasher-spacing-controls: 4px;
-  --moviemasher-padding-controls: 2px;
-  --moviemasher-padding-button-factor: 4;
-  --moviemasher-spacing-content: 10px;
-  --moviemasher-padding-content: 20px;
   --moviemasher-width-preview: 480px;
   --moviemasher-height-preview: 270px;
   --moviemasher-height-scrub: 16px;
   --moviemasher-width-inspector: 240px;
+  --moviemasher-width-track: 34px;
+  --moviemasher-height-track: 84px;
   --moviemasher-icon-size: 24px;
   --moviemasher-button-size: 24px;
   --moviemasher-border: var(--moviemasher-border-size) solid var(--moviemasher-fore-primary);
+}
+
+.moviemasher-content {
+  --padding: 20px;
+  --spacing: 10px;
+}
+
+.moviemasher-foot,
+.moviemasher-head {
+  --padding: 5px;
+  --spacing: 5px;
 }

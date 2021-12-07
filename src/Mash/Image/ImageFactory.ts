@@ -1,14 +1,14 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
-import { Definitions } from "../Definitions"
-import { Factories } from "../Factories"
+import { Definitions } from "../../Definitions"
+import { Factories } from "../../Definitions/Factories"
 import { ImageDefinitionClass } from "../Image/ImageDefinition"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 
 const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   const { id } = object
-  if (!id) throw Errors.id
+  if (!id) throw Errors.id + JSON.stringify(object)
 
   if (Definitions.installed(id)) return <ImageDefinition> Definitions.fromId(id)
 

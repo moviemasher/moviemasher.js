@@ -1,74 +1,47 @@
-import { Mash } from "../../Mash"
-import { Actions } from "../Actions"
-import { Clip } from "../../Mash/Mixin/Clip/Clip"
 import { Errors } from "../../Setup/Errors"
-import { Effect } from "../../Mash/Effect/Effect"
+import { Actions } from "../Actions"
+import { Mash } from "../../Mash/Mash/Mash"
+import { Selection } from "../../Masher/Masher"
 
 interface ActionObject {
   actions : Actions
   mash : Mash
-  redoSelectedClips : Clip[]
-  redoSelectedEffects : Effect[]
-  type : string
-  undoSelectedClips : Clip[]
-  undoSelectedEffects : Effect[]
   redoAction() : void
-  undoAction() : void
+  redoSelection: Selection
+  type : string
+  undoAction(): void
+  undoSelection: Selection
 }
 
 class Action {
   constructor(object : ActionObject) {
-    const {
-      actions,
-      mash,
-      redoSelectedClips,
-      redoSelectedEffects,
-      type,
-      undoSelectedClips,
-      undoSelectedEffects,
-    } = object
+    const { actions, mash, redoSelection, type, undoSelection } = object
     this.actions = actions
-    this.type = type
     this.mash = mash
-    this.undoSelectedClips = undoSelectedClips
-    this.redoSelectedClips = redoSelectedClips
-    this.undoSelectedEffects = undoSelectedEffects
-    this.redoSelectedEffects = redoSelectedEffects
+    this.redoSelection = redoSelection
+    this.type = type
+    this.undoSelection = undoSelection
   }
 
   actions : Actions
 
-  mash : Mash
-
-  undoSelectedClips : Clip[]
-
-  redoSelectedClips : Clip[]
-
-  undoSelectedEffects : Effect[]
-
-  redoSelectedEffects : Effect[]
-
   done =  false
 
-  get selectedClips() : Clip[] {
-    if (this.done) return this.redoSelectedClips
-
-    return this.undoSelectedClips
-  }
-
-  get selectedEffects() : Effect[] {
-    if (this.done) return this.redoSelectedEffects
-
-    return this.undoSelectedEffects
-  }
+  mash : Mash
 
   redo() : void {
     this.redoAction()
     this.done = true
   }
 
-  redoAction() : void {
-    throw Errors.internal + 'redoAction'
+  redoAction() : void { throw Errors.unimplemented }
+
+  redoSelection: Selection
+
+  get selection(): Selection {
+    if (this.done) return this.redoSelection
+
+    return this.undoSelection
   }
 
   type : string
@@ -78,9 +51,9 @@ class Action {
     this.done = false
   }
 
-  undoAction() : void {
-    throw Errors.internal + 'undoAction'
-  }
+  undoAction() : void { throw Errors.unimplemented }
+
+  undoSelection: Selection
 }
 
 export { Action, ActionObject }

@@ -1,13 +1,13 @@
-import { Any, ValueObject } from "../../declarations"
+import { Any, InputFilter, ValueObject } from "../../declarations"
 import { Parameter } from "../../Setup/Parameter"
 import { Evaluator } from "../../Utilities/Evaluator"
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { VisibleContext } from "../../Playing"
 import { Filter, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterInstance"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Definitions } from "../Definitions/Definitions"
+import { Definitions } from "../../Definitions/Definitions"
 
 
 class FilterDefinitionClass extends DefinitionBase {
@@ -17,7 +17,11 @@ class FilterDefinitionClass extends DefinitionBase {
   }
 
   draw(_evaluator : Evaluator, _evaluated : ValueObject) : VisibleContext {
-    throw Errors.unimplemented
+    throw Errors.unimplemented + this.id
+  }
+
+  input(_evaluator: Evaluator, _evaluated: ValueObject): InputFilter {
+    throw Errors.unimplemented + this.id
   }
 
   get instance() : Filter {

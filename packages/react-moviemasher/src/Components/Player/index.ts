@@ -1,5 +1,6 @@
 export * from "./NotPlaying"
 export * from "./PlayButton"
-export * from "./Playing"
 export * from "./PlayerContent"
+export * from "./PlayerPanel"
+export * from "./Playing"
 export * from "./TimeSlider"

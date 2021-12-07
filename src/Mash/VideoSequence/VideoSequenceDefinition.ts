@@ -3,25 +3,25 @@ import { Any, VisibleSource, JsonObject, LoadPromise } from "../../declarations"
 import { Time, Times } from "../../Utilities/Time"
 import { urlAbsolute} from "../../Utilities/Url"
 import { Cache } from "../../Loading/Cache"
-import { DefinitionBase } from "../Definition/Definition"
-import { VideoSequenceClass } from "./VideoSequenceInstance"
+import { DefinitionBase } from "../../Base/Definition"
+import { VideoSequenceClassImplementation } from "./VideoSequenceInstance"
 import { VideoSequence, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
 import { Errors } from "../../Setup/Errors"
-import { Definitions } from "../Definitions/Definitions"
-import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
+import { Definitions } from "../../Definitions/Definitions"
+import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { Default } from "../../Setup/Default"
 import { Property } from "../../Setup/Property"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
-import { AudibleFileDefinitionMixin } from "../Mixin/AudibleFile/AudibleFileDefinitionMixin"
+import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 
 const WithClip = ClipDefinitionMixin(DefinitionBase)
 const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible)
 const WithVisible = VisibleDefinitionMixin(WithAudibleFile)
 
-class VideoSequenceDefinitionClass extends WithVisible {
+class VideoSequenceDefinitionClassImplementation extends WithVisible {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -69,10 +69,12 @@ class VideoSequenceDefinitionClass extends WithVisible {
 
   increment = Default.definition.videosequence.increment
 
+  get inputSource(): string { return urlAbsolute(this.source) }
+
   get instance() : VideoSequence { return this.instanceFromObject(this.instanceObject) }
 
   instanceFromObject(object : VideoSequenceObject) : VideoSequence {
-    return new VideoSequenceClass({ ...this.instanceObject, ...object })
+    return new VideoSequenceClassImplementation({ ...this.instanceObject, ...object })
   }
 
   loadDefinition(quantize:number, start: Time, end?: Time): LoadPromise | void {
@@ -148,4 +150,4 @@ class VideoSequenceDefinitionClass extends WithVisible {
   padding : number
 }
 
-export { VideoSequenceDefinitionClass }
+export { VideoSequenceDefinitionClassImplementation }

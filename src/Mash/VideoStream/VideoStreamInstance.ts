@@ -1,11 +1,11 @@
 import { VideoStream, VideoStreamDefinition, VideoStreamObject } from "./VideoStream"
-import { InstanceBase } from "../Instance/Instance"
-import { ClipMixin } from "../Mixin/Clip/ClipMixin"
-import { TransformableMixin } from "../Mixin/Transformable/TransformableMixin"
-import { AudibleMixin } from "../Mixin/Audible/AudibleMixin"
+import { InstanceBase } from "../../Base/Instance"
+import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
+import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
+import { AudibleMixin } from "../../Mixin/Audible/AudibleMixin"
 import { Any, JsonObject } from "../../declarations"
-import { VisibleMixin } from "../Mixin/Visible/VisibleMixin"
-import { StreamableMixin } from "../Mixin/Streamable/StreamableMixin"
+import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
+import { StreamableMixin } from "../../Mixin/Streamable/StreamableMixin"
 
 const WithClip = ClipMixin(InstanceBase)
 const WithAudible = AudibleMixin(WithClip)

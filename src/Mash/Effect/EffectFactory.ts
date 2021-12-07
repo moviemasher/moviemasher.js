@@ -1,23 +1,23 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { EffectDefinitionClass } from "./EffectDefinition"
-import { Definitions } from "../Definitions"
-import { Factories } from "../Factories"
+import { Definitions } from "../../Definitions"
+import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utilities/Is"
 import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
 
-import effectBlurJson from "../../DefinitionObjects/effect/blur.json"
-import effectChromaKeyJson from "../../DefinitionObjects/effect/chromakey.json"
-import effectEmbossJson from "../../DefinitionObjects/effect/emboss.json"
-import effectGrayscaleJson from "../../DefinitionObjects/effect/grayscale.json"
-import effectSepiaJson from "../../DefinitionObjects/effect/sepia.json"
-import effectSharpenJson from "../../DefinitionObjects/effect/sharpen.json"
-import effectTextJson from "../../DefinitionObjects/effect/text.json"
+import effectBlurJson from "../../Definitions/DefinitionObjects/effect/blur.json"
+import effectChromaKeyJson from "../../Definitions/DefinitionObjects/effect/chromakey.json"
+import effectEmbossJson from "../../Definitions/DefinitionObjects/effect/emboss.json"
+import effectGrayscaleJson from "../../Definitions/DefinitionObjects/effect/grayscale.json"
+import effectSepiaJson from "../../Definitions/DefinitionObjects/effect/sepia.json"
+import effectSharpenJson from "../../Definitions/DefinitionObjects/effect/sharpen.json"
+import effectTextJson from "../../Definitions/DefinitionObjects/effect/text.json"
 
 
 const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
+  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   if (Definitions.installed(id)) return <EffectDefinition> Definitions.fromId(id)
 

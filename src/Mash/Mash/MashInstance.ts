@@ -1,81 +1,72 @@
-import { CommandType, DefinitionType, DefinitionTypes, EventType, TrackType } from "../../Setup/Enums"
+import {
+  Any, InputCommandsPromise, InputCommands, Interval, JsonObject, LoadPromise, Size,
+  MashState, MashStatePromise, ClipState, InputFilter, UnknownObject
+} from "../../declarations"
+import { CommandType, EventType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Any, InputCommand, InputCommandPromise, Interval, JsonObject, LoadPromise } from "../../declarations"
 import { Default } from "../../Setup/Default"
 import { Is } from "../../Utilities/Is"
 import { TimeRange } from "../../Utilities/TimeRange"
 import { Time } from "../../Utilities/Time"
-import { Track, TrackClass, TrackObject, TrackOptions } from "../Track"
-import { Definition, DefinitionTimes } from "../Definition/Definition"
-import { Clip, ClipDefinition } from "../Mixin/Clip/Clip"
-import { Visible } from "../Mixin/Visible/Visible"
-import { Audible } from "../Mixin/Audible/Audible"
-import { Factory } from "../../Factory"
-import { Composition } from "../../Playing/Composition/Composition"
+import { Track, TrackObject } from "../Track/Track"
+import { Definition, DefinitionTimes } from "../../Base/Definition"
+import { Clip, ClipDefinition } from "../../Mixin/Clip/Clip"
+import { Visible } from "../../Mixin/Visible/Visible"
+import { Audible } from "../../Mixin/Audible/Audible"
+import { Composition } from "../../Playing/Composition"
 import { ChangeAction } from "../../Editing/Action/ChangeAction"
-import { InstanceBase } from "../Instance"
-import { Mash, MashDefinition, MashOptions } from "./Mash"
-import { Id } from "../../Utilities/Id"
-import { Definitions } from "../Definitions/Definitions"
+import { Mash, MashObject } from "./Mash"
+import { idGenerate } from "../../Utilities/Id"
 import { Action } from "../../Editing/Action/Action"
 import { Cache } from "../../Loading/Cache"
+import { Emitter } from "../../Utilities/Emitter"
+import { sortByLayer } from "../../Utilities/Sort"
+import { Job } from "../../Job/Job"
+import { urlRemoteServer } from "../../Utilities/Url"
+import { Factory } from "../../Definitions/Factory/Factory"
 
 interface TimeRangeClips {
   clips: Clip[]
   timeRange: TimeRange
 }
-class MashClass extends InstanceBase implements Mash {
+
+class MashClass implements Mash {
   constructor(...args: Any[]) {
-    super(...args)
-    this._id ||= Id()
-
-
     const object = args[0] || {}
     const {
-      audio,
+      createdAt,
+      tracks,
       backcolor,
+      id,
       label,
-      loop,
       media,
       quantize,
-      video,
-      buffer,
-      gain,
-    } = <MashOptions>object
+      ...rest
+    } = <MashObject>object
 
-    if (typeof loop === "boolean") this.loop = loop
+    if (id) this._id = id
+    Object.assign(this.data, rest)
+
     if (quantize && Is.aboveZero(quantize)) this.quantize = quantize
     if (label && Is.populatedString(label)) this.label = label
     if (backcolor && Is.populatedString(backcolor)) this._backcolor = backcolor
+    if (createdAt) this.createdAt = createdAt
 
-    if (media) media.forEach(definition => {
-      const { id: definitionId, type } = definition
-      if (!(type && Is.populatedString(type))) throw Errors.type + 'Mash.constructor media'
 
-      const definitionType = <DefinitionType>type
-      if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
-
-      if (!(definitionId && Is.populatedString(definitionId))) {
-        throw Errors.invalid.definition.id + JSON.stringify(definition)
-      }
-
-      return Factory[definitionType].definition(definition)
-    })
-
-    if (audio) this.audio.push(...audio.map((track, index) =>
-      new TrackClass(this.trackOptions(track, index, TrackType.Audio))
-    ))
-    else this.audio.push(new TrackClass({ type: TrackType.Audio }))
-    if (video) this.video.push(...video.map((track, index) =>
-      new TrackClass(this.trackOptions(track, index, TrackType.Video))
-    ))
-    else this.video.push(new TrackClass({ type: TrackType.Video }))
-
-    if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
-    if (typeof gain !== "undefined" && Is.positive(gain)) this._gain = gain
+    if (tracks) this.tracks.push(...tracks.map((track, index) => {
+      const instance = Factory.track.instance(this.trackOptions(track, index))
+      this.assureClipsHaveFrames(instance.clips)
+      return instance
+    }))
+    if (!this.trackCount(TrackType.Video)) {
+      this.tracks.push(Factory.track.instance({ trackType: TrackType.Video }))
+    }
+    if (!this.trackCount(TrackType.Audio)) {
+      this.tracks.push(Factory.track.instance({ trackType: TrackType.Audio }))
+    }
+    this.tracks.sort(sortByLayer)
 
     this.setDrawInterval()
-    // console.debug(this.constructor.name, "constructor", this.identifier, this)
   }
 
   addClipsToTrack(clips: Clip[], trackIndex = 0, insertIndex = 0, frames? : number[]): void {
@@ -84,6 +75,7 @@ class MashClass extends InstanceBase implements Mash {
     const [clip] = clips
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     if (!newTrack) throw Errors.invalid.track
+    // console.log(this.constructor.name, "addClipsToTrack", newTrack)
 
     const oldTrack = Is.positive(clip.track) && this.clipTrack(clip)
 
@@ -98,12 +90,11 @@ class MashClass extends InstanceBase implements Mash {
   }
 
   addTrack(trackType: TrackType): Track {
-    const array = this[trackType]
-    // console.log("addTrack", trackType, array.length)
-    const options = { type: trackType, index: array.length }
-    const track = new TrackClass(options)
-    array.push(track)
-    Cache.audibleContext.emit(EventType.Track)
+    const options : TrackObject = { trackType: trackType, layer: this.trackCount(trackType) }
+    const track = Factory.track.instance(options)
+    this.tracks.push(track)
+    this.tracks.sort(sortByLayer)
+    this.emitter?.emit(EventType.Track)
     return track
   }
 
@@ -114,8 +105,6 @@ class MashClass extends InstanceBase implements Mash {
     })
   }
 
-  audio: Track[] = []
-
   private _backcolor = Default.mash.backcolor
 
   get backcolor(): string { return this._backcolor }
@@ -124,6 +113,7 @@ class MashClass extends InstanceBase implements Mash {
     this._backcolor = value
     if (this._composition) this.composition.backcolor = value
   }
+
   private _buffer = Default.mash.buffer
 
   get buffer(): number { return this._buffer }
@@ -242,7 +232,10 @@ class MashClass extends InstanceBase implements Mash {
     return <Audible[]> this.filterIntersecting(this.clipsAudibleInTracks, timeRange)
   }
 
-  private get clipsVideo(): Visible[] { return <Visible[]>this.video.flatMap(track => track.clips) }
+  private get clipsVideo(): Visible[] {
+    const tracks = this.tracks.filter(track => track.trackType !== TrackType.Audio)
+    return <Visible[]>tracks.flatMap(track => track.clips)
+  }
 
   clipsVisible(start: Time, end?: Time): Visible[] {
     const range = end && TimeRange.fromTimes(start, end)
@@ -263,16 +256,13 @@ class MashClass extends InstanceBase implements Mash {
     return this.clipsVideo.filter(clip => this.clipIntersects(clip, range))
   }
 
-  private compositeAudible(clips? : Audible[]): boolean {
-    const audibleClips = clips || this.clipsAudibleInTimeRange(this.timeRangeToBuffer)
-    return this.composition.compositeAudible(audibleClips)
-  }
-
   private compositeAudibleClips(clips: Clip[]): void {
     if (this._paused) return
 
     const audibleClips = clips.filter(clip => clip.audible && !clip.muted)
-    if (audibleClips.length) this.compositeAudible(<Audible[]> audibleClips)
+    if (audibleClips.length) {
+      this.composition.compositeAudible(<Audible[]>audibleClips)
+    }
   }
 
   private _composition?: Composition
@@ -284,6 +274,7 @@ class MashClass extends InstanceBase implements Mash {
         buffer: this.buffer,
         gain: this.gain,
         quantize: this.quantize,
+        emitter: this.emitter,
       }
       this._composition = new Composition(options)
     }
@@ -295,12 +286,18 @@ class MashClass extends InstanceBase implements Mash {
     this.composition.compositeVisible(time, this.clipsVisibleAtTime(time))
   }
 
-  compositeVisibleRequest(clips?: Visible[]): void {
+  compositeVisibleRequest(): void {
     const { time, composition } = this
-    composition.compositeVisibleRequest(time, clips || this.clipsVisibleAtTime(time))
+    composition.compositeVisibleRequest(time, this.clipsVisibleAtTime(time))
   }
 
-  declare definition: MashDefinition
+  createdAt = ''
+
+  data: UnknownObject = {}
+
+  get definitions() : Definition[] {
+    return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
+  }
 
   destroy(): void {
     this.paused = true
@@ -314,7 +311,7 @@ class MashClass extends InstanceBase implements Mash {
     const timeChange = time !== this.time
     this.drawnTime = time
     this.compositeVisibleRequest()
-    Cache.audibleContext.emit(timeChange ? EventType.Time : EventType.Loaded)
+    this.emitter?.emit(timeChange ? EventType.Time : EventType.Loaded)
   }
 
   private drawWhileNotPlaying() {
@@ -350,7 +347,7 @@ class MashClass extends InstanceBase implements Mash {
       if (this.loop) this.seekToTime(this.time.withFrame(0))
       else {
         this.paused = true
-        Cache.audibleContext.emit(EventType.Ended)
+        this.emitter?.emit(EventType.Ended)
       }
     } else {
 
@@ -358,8 +355,8 @@ class MashClass extends InstanceBase implements Mash {
       if (seconds >= nextFrameTime.seconds) {
 
         const compositionTime = Time.fromSeconds(seconds, this.time.fps)
-        const difference = compositionTime.frame - this.time.frame
-        if (difference > 1) console.debug(this.constructor.name, "drawWhilePlaying dropped frames", difference - 1)
+        // const difference = compositionTime.frame - this.time.frame
+        // if (difference > 1) console.debug(this.constructor.name, "drawWhilePlaying dropped frames", difference - 1)
         // go to where the audio context thinks we are
         this.drawTime(compositionTime)
       }
@@ -377,9 +374,18 @@ class MashClass extends InstanceBase implements Mash {
     method()
     const { frames } = this
     if (origFrames !== frames) {
-      Cache.audibleContext.emit(EventType.Duration)
+      this.emitter?.emit(EventType.Duration)
       if (this.frame > frames) this.seekToTime(Time.fromArgs(frames, this.quantize))
     }
+  }
+
+  _emitter?: Emitter
+
+  get emitter(): Emitter | undefined { return this._emitter }
+
+  set emitter(value: Emitter | undefined) {
+    this._emitter = value
+    if (this._composition) this._composition.emitter = value
   }
 
   get endTime(): Time { return Time.fromArgs(this.frames, this.quantize) }
@@ -399,12 +405,12 @@ class MashClass extends InstanceBase implements Mash {
 
     if (this._gain !== value) {
       this._gain = value
-      this.composition.gain = value
+      if (this._composition) this.composition.gain = value
     }
   }
 
   handleAction(action: Action): void {
-    Cache.audibleContext.emit(EventType.Action)
+    this.emitter?.emit(EventType.Action)
 
     if (action instanceof ChangeAction) {
       const changeAction = <ChangeAction>action
@@ -440,7 +446,7 @@ class MashClass extends InstanceBase implements Mash {
     times.forEach(time => {
       const timeRange = TimeRange.fromTime(time)
       const clips = this.filterIntersecting(fullRangeClips, timeRange)
-      const ids = clips.map(clip => clip.identifier).join('~')
+      const ids = clips.map(clip => clip.id).join('~')
       if (identifiers === ids) {
         timeRangeClips.timeRange = timeRangeClips.timeRange.addFrames(1)
       } else {
@@ -449,53 +455,86 @@ class MashClass extends InstanceBase implements Mash {
         result.push(timeRangeClips)
       }
     })
-
-
     return result
   }
 
-  private inputCommand(type: CommandType, start: Time, end?: Time): InputCommand {
-    const segments = this.seqmentsAtTimes(type, start, end)
-    return segments.map(({clips, timeRange}) => {
-      const inputCommand: InputCommand = { inputs: []}
+  private _id = ''
 
-      return inputCommand
+  get id(): string {
+    // console.trace(this.constructor.name, "id")
+    return this._id ||= idGenerate()
+  }
+
+  private inputCommand(type: CommandType, size: Size, start: Time, end?: Time): InputCommands[] {
+    const segments = this.seqmentsAtTimes(type, start, end)
+    return segments.map(({ clips, timeRange }) => {
+      return clips.map(clip => {
+        const inputCommand = clip.inputCommandAtTimeToSize(timeRange.startTime, this.quantize, size)
+        if (!inputCommand) throw Errors.invalid.object
+
+        return inputCommand
+      })
     })
   }
 
-  inputCommandPromise(type: CommandType, start: Time, end?: Time): InputCommandPromise {
-    const promise: InputCommandPromise = new Promise(resolve => {
+  inputCommandPromise(type: CommandType, size: Size, start: Time, end?: Time): InputCommandsPromise {
+    const promise: InputCommandsPromise = new Promise(resolve => {
       const clips = this.clipsAtTimes(start, end)
       const loads = clips.map(clip => clip.loadClip(this.quantize, start, end))
       const promises = loads.filter(Boolean)
       if (promises.length) Promise.all(promises).then(() => {
-        resolve(this.inputCommand(type, start, end))
+        resolve(this.inputCommand(type, size, start, end))
       })
-      else resolve(this.inputCommand(type, start, end))
+      else resolve(this.inputCommand(type, size, start, end))
     })
     return promise
   }
+
+  get job(): Job {
+    return {
+      definitions: this.definitions,
+      mash: this,
+      remoteServer: urlRemoteServer(),
+      outputs: []
+    }
+  }
+
+  label = ''
+
   get loadPromise(): LoadPromise | undefined {
     const [start, end] = this.startAndEnd
     // console.log(this.constructor.name, "load", start, end)
     const clips = this.clipsAtTimes(start, end)
     const loads = clips.map(clip => clip.loadClip(this.quantize, start, end))
     const promises = loads.filter(Boolean)
+
     if (promises.length) return Promise.all(promises).then(() => {
       this.compositeAudibleClips(clips)
     })
-
     this.compositeAudibleClips(clips)
+
+    // switch (promises.length) {
+    //   case 0: return
+    //   case 1: return promises[0] || undefined
+    //   default: return Promise.all(promises).then()
+    // }
+  }
+
+  loadPromiseAtTimes(start: Time, end?: Time): LoadPromise | undefined {
+    const clips = this.clipsAtTimes(start, end)
+    const loads = clips.map(clip => clip.loadClip(this.quantize, start, end))
+    const promises = loads.filter(Boolean)
+    switch (promises.length) {
+      case 0: return
+      case 1: return promises[0] || undefined
+      default: return Promise.all(promises).then()
+    }
   }
 
   get loadUrls(): string[] {
     const [start, end] = this.startAndEnd
-    // console.log(this.constructor.name, "load", start, end)
     const clips = this.clipsAtTimes(start, end)
-    const urls = clips.flatMap(clip => clip.clipUrls(this.quantize, start, end))
-
-    // console.trace(this.constructor.name, "loadUrls", this.identifier, start, end, urls)
-    return urls
+    return clips.flatMap(clip => clip.clipUrls(this.quantize, start, end))
   }
 
   get loadedDefinitions(): DefinitionTimes {
@@ -519,12 +558,21 @@ class MashClass extends InstanceBase implements Mash {
 
   loop = false
 
-  maxTracks(type?: TrackType): number {
-    return type ? this[type].length : this.audio.length + this.video.length
+  mashState(time: Time, dimensions: Size): MashState {
+    const state: MashState = []
+    const size = `${dimensions.width}x${dimensions.height}`
+    const colorFilter: InputFilter = { filter: 'color', options: { color: this.backcolor, size }}
+
+    const clipState: ClipState = { filters:[ colorFilter ]}
+    state.push(clipState)
+    state.push(...this.clipsAtTimes(time).map(clip => clip.clipState(this.quantize, time, dimensions)))
+    return state
   }
 
-  get media() : Definition[] {
-    return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
+  mashStatePromise(time: Time, dimensions: Size): MashStatePromise {
+    const promise = this.loadPromiseAtTimes(time)
+    if (promise) return promise.then(() => this.mashState(time, dimensions))
+    return Promise.resolve(this.mashState(time, dimensions))
   }
 
   private _paused = true
@@ -544,7 +592,7 @@ class MashClass extends InstanceBase implements Mash {
         clearInterval(this._bufferTimer)
         delete this._bufferTimer
       }
-      Cache.audibleContext.emit(EventType.Pause)
+      this.emitter?.emit(EventType.Pause)
     } else {
       this.composition.startContext()
       this.bufferStart()
@@ -552,7 +600,7 @@ class MashClass extends InstanceBase implements Mash {
       if (promise) promise.then(() => { this.playing = true })
       else this.playing = true
       // console.log("Mash emit", EventType.Play)
-      Cache.audibleContext.emit(EventType.Play)
+      this.emitter?.emit(EventType.Play)
     }
   }
 
@@ -566,6 +614,7 @@ class MashClass extends InstanceBase implements Mash {
       this._playing = value
       if (value) {
         const clips = this.clipsAudibleInTimeRange(this.timeRangeToBuffer)
+        // console.log("playing", value, this.time)
         if (!this.composition.startPlaying(this.time, clips)) {
           // console.log(this.constructor.name, "set playing", value, "audio not cached", this.time, clips.length)
           // audio was not cached
@@ -573,7 +622,7 @@ class MashClass extends InstanceBase implements Mash {
           this._playing = false
           return
         }
-        Cache.audibleContext.emit(EventType.Playing)
+        this.emitter?.emit(EventType.Playing)
       } else this.composition.stopPlaying()
     }
   }
@@ -584,17 +633,20 @@ class MashClass extends InstanceBase implements Mash {
     this.emitIfFramesChange(() => { track.removeClips(clips) })
   }
 
-  removeTrack(trackType : TrackType) : void {
-    const array = this[trackType]
-    this.emitIfFramesChange(() => { array.pop() })
-    Cache.audibleContext.emit(EventType.Track)
+  removeTrack(trackType: TrackType): void {
+    const track = this.trackOfTypeAtIndex(trackType, this.trackCount(trackType) - 1)
+    const index = this.tracks.indexOf(track)
+    if (!Is.positive(index)) throw Errors.internal
+
+    this.emitIfFramesChange(() => { this.tracks.splice(index, 1) })
+    this.emitter?.emit(EventType.Track)
   }
 
   private restartAfterStop(time:Time, paused:boolean, seeking?: boolean): void {
      if (time === this.time) { // otherwise we must have gotten a seek call
         if (seeking) {
           delete this.seekTime
-          Cache.audibleContext.emit(EventType.Seeked)
+          this.emitter?.emit(EventType.Seeked)
         }
         this.drawTime(time)
         if (!paused) {
@@ -612,8 +664,8 @@ class MashClass extends InstanceBase implements Mash {
     // console.debug(this.constructor.name, "seekToTime", time)
     if (this.seekTime !== time) {
       this.seekTime = time
-      Cache.audibleContext.emit(EventType.Seeking)
-      Cache.audibleContext.emit(EventType.Time)
+      this.emitter?.emit(EventType.Seeking)
+      this.emitter?.emit(EventType.Time)
     }
     return this.stopLoadAndDraw(true)
   }
@@ -667,12 +719,18 @@ class MashClass extends InstanceBase implements Mash {
     return {
       label: this.label,
       quantize: this.quantize,
-      backcolor: this.backcolor || "",
+      backcolor: this.backcolor,
       id: this.id,
-      media: this.media,
-      audio: this.audio,
-      video: this.video,
+      tracks: this.tracks,
+      createdAt: this.createdAt,
+      ...this.data,
     }
+  }
+
+  trackCount(type?: TrackType): number {
+    if (type) return this.tracksOfType(type).length
+
+    return this.tracks.length
   }
 
   trackOfTypeAtIndex(type : TrackType, index = 0) : Track {
@@ -680,28 +738,19 @@ class MashClass extends InstanceBase implements Mash {
       console.error(Errors.invalid.track, index, index?.constructor.name)
       throw Errors.invalid.track
     }
-    return this[type][index]
+
+    return this.tracksOfType(type)[index]
   }
 
-  private trackOptions(object : TrackObject, index : number, type : TrackType) : TrackOptions {
-    const { clips } = object
-    if (!(clips && Is.populatedArray(clips))) return { type, index }
-
-    const objects = clips.map(clip => {
-      const { id } = clip
-      if (!id) throw Errors.id
-
-      const definition = Definitions.fromId(id)
-      const clipWithTrack = { track: index, ...clip }
-      return <Clip> definition.instanceFromObject(clipWithTrack)
-    })
-    this.assureClipsHaveFrames(objects)
-    return { type, index, clips: objects }
+  private trackOptions(object: TrackObject, index: number): TrackObject {
+    return { ...object, layer: index }
   }
 
-  get tracks() : Track[] { return Object.values(TrackType).map(av => this[av]).flat() }
+  tracks: Track[] = []
 
-  video : Track[] = []
+  private tracksOfType(trackType: TrackType): Track[] {
+    return this.tracks.filter(track => track.trackType === trackType)
+  }
 }
 
 export { MashClass }

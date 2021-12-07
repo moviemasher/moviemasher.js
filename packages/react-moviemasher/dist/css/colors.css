@@ -1,6 +1,6 @@
 /* colors.css */
 
-:root {
+.moviemasher-app {
   --moviemasher-back-primary: hsl(0, 0%, 20%);
   --moviemasher-back-secondary: hsl(0, 0%, 15%);
   --moviemasher-back-tertiary: hsl(0, 0%, 10%);
@@ -13,7 +13,7 @@
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  .moviemasher-app {
     --moviemasher-back-primary: hsl(0, 0%, 97%);
     --moviemasher-back-secondary: hsl(0, 0%, 92%);
     --moviemasher-back-tertiary: hsl(0, 0%, 88%);

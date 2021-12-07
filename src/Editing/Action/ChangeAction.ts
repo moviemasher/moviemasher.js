@@ -1,13 +1,12 @@
 import { Effect } from "../../Mash/Effect/Effect"
-import { Mash } from "../../Mash/Mash"
-import { Clip } from "../../Mash/Mixin/Clip/Clip"
+import { Clip } from "../../Mixin/Clip/Clip"
 import { SelectionValue } from "../../declarations"
 import { Action, ActionObject } from "./Action"
 
 interface ChangeActionObject extends ActionObject {
   property : string
   redoValue : SelectionValue
-  target : Mash | Clip | Effect
+  target : Clip | Effect
   undoValue : SelectionValue
 }
 
@@ -25,7 +24,7 @@ class ChangeAction extends Action {
 
   redoValue : SelectionValue
 
-  target : Mash | Clip | Effect
+  target : Clip | Effect
 
   undoValue : SelectionValue
 

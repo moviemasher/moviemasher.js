@@ -1,73 +1,32 @@
-import { Mash, MashDefinition, MashDefinitionObject, MashOptions } from "./Mash"
-import { Factories } from "../Factories/Factories"
+import { Factory } from "../../Definitions/Factory/Factory"
+import { DefinitionType, DefinitionTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utilities/Is"
-import { Definitions } from "../Definitions/Definitions"
-import { MashDefinitionClass } from "./MashDefinition"
-import { DefinitionType } from "../../Setup/Enums"
+import { isPopulatedString } from "../../Utilities/Is"
+import { DefinitionObject } from "../../Base/Definition"
+import { Mash, MashObject } from "./Mash"
+import { MashClass } from "./MashInstance"
 
-const MashDefaultId = "com.moviemasher.mash.default"
 
-const mashDefinition = (object : MashDefinitionObject) : MashDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) && Definitions.installed(id) ? id : MashDefaultId
-  return <MashDefinition> Definitions.fromId(idString)
+class MashFactoryImplementation {
+  instance(object: MashObject = {}, definitions?: DefinitionObject[]): Mash {
+    if (definitions) definitions.forEach(definition => {
+      const { id: definitionId, type } = definition
+      if (!(type && isPopulatedString(type))) throw Errors.type
+
+      const definitionType = <DefinitionType>type
+      if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
+
+      if (!(definitionId && isPopulatedString(definitionId))) {
+        throw Errors.invalid.definition.id + JSON.stringify(definition)
+      }
+      // installs our definition
+      Factory[definitionType].definition(definition)
+    })
+
+    return new MashClass(object)
+  }
 }
 
-const mashDefinitionFromId = (id : string) : MashDefinition => {
-  return mashDefinition({ id })
-}
+const MashFactory = new MashFactoryImplementation()
 
-const mashInstance = (object : MashOptions) : Mash => {
-  const definition = mashDefinition(object)
-  const instance = definition.instanceFromObject(object)
-  return instance
-}
-
-const mashFromId = (id : string) : Mash => {
-  return mashInstance({ id })
-}
-
-const mashInitialize = () : void => {
-  new MashDefinitionClass({ id: MashDefaultId })
-}
-
-const mashDefine = (object : MashDefinitionObject) : MashDefinition => {
-  const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
-
-  Definitions.uninstall(id)
-  return mashDefinition(object)
-}
-
-/**
- * @internal
- */
-const mashInstall = (object: MashDefinitionObject): MashDefinition => {
-  const instance = mashDefine(object)
-  instance.retain = true
-  return instance
-}
-
-const MashFactoryImplementation = {
-  define: mashDefine,
-  install: mashInstall,
-  definition: mashDefinition,
-  definitionFromId: mashDefinitionFromId,
-  fromId: mashFromId,
-  initialize: mashInitialize,
-  instance: mashInstance,
-}
-
-Factories[DefinitionType.Mash] = MashFactoryImplementation
-
-export {
-  mashInstall,
-  mashDefine,
-  mashDefinition,
-  mashDefinitionFromId,
-  MashFactoryImplementation,
-  mashFromId,
-  mashInitialize,
-  mashInstance,
-}
+export { MashFactory }

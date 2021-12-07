@@ -2,8 +2,8 @@ import React from "react"
 
 import { EditorInputs } from "../../declarations"
 import { propsStringArray } from "../../Utilities/Props"
-import { PropertyInspector } from "./PropertyInspector"
-import { useSelected } from "./useSelected"
+import { SelectionInspector } from "./SelectionInspector"
+import { useSelected } from "../../Hooks/useSelected"
 
 interface InspectorProps {
   property?: string
@@ -15,12 +15,15 @@ interface InspectorProps {
 const Inspector: React.FunctionComponent<InspectorProps> = props => {
   const { inputs, className, property, properties, children } = props
   const selected = useSelected()
-  const strings = propsStringArray(property, properties, selected.definition.properties)
+
+  if (!selected) return null
+
+  const strings = propsStringArray(property, properties, selected.properties)
   const kids = strings.map(property => {
     const propertyProps = {
       key: `inspector-${property}`, inputs, className, property, children
     }
-    return <PropertyInspector {...propertyProps} />
+    return <SelectionInspector {...propertyProps} />
   })
   return <>{kids}</>
 }

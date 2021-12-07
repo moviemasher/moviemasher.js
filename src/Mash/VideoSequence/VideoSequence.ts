@@ -1,10 +1,10 @@
-import { GenericFactory, ScalarValue } from "../../declarations"
+import { Constrained, GenericFactory } from "../../declarations"
 import {
   AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../Mixin/AudibleFile/AudibleFile"
+} from "../../Mixin/AudibleFile/AudibleFile"
 import {
   Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../Mixin/Transformable/Transformable"
+} from "../../Mixin/Transformable/Transformable"
 
 interface VideoSequenceObject extends AudibleFileObject, TransformableObject {
   speed?: number
@@ -33,6 +33,20 @@ interface VideoSequenceDefinition extends AudibleOmitted, TransformableDefinitio
   instanceFromObject(object: VideoSequenceObject): VideoSequence
 }
 
+
+type VideoSequenceClass = Constrained<VideoSequence>
+
+type VideoSequenceDefinitionClass = Constrained<VideoSequenceDefinition>
+
+
 type VideoSequenceFactory = GenericFactory<VideoSequence, VideoSequenceObject, VideoSequenceDefinition, VideoSequenceDefinitionObject>
 
-export { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceFactory, VideoSequenceObject }
+export {
+  VideoSequence,
+  VideoSequenceClass,
+  VideoSequenceDefinition,
+  VideoSequenceDefinitionClass,
+  VideoSequenceDefinitionObject,
+  VideoSequenceFactory,
+  VideoSequenceObject,
+}

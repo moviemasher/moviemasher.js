@@ -2,17 +2,17 @@ import { DefinitionType, TrackType } from "../../Setup/Enums"
 import { Time, Times} from "../../Utilities/Time"
 import { urlAbsolute} from "../../Utilities/Url"
 import { Cache } from "../../Loading/Cache"
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { VideoStreamClass } from "./VideoStreamInstance"
 import { VideoStream, VideoStreamDefinitionObject, VideoStreamObject } from "./VideoStream"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
 import { Any, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
-import { Definitions } from "../Definitions/Definitions"
-import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
+import { Definitions } from "../../Definitions/Definitions"
+import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
-import { StreamableDefinitionMixin } from "../Mixin/Streamable/StreamableDefinitionMixin"
+import { StreamableDefinitionMixin } from "../../Mixin/Streamable/StreamableDefinitionMixin"
 import { Default } from "../../Setup/Default"
 
 const WithClip = ClipDefinitionMixin(DefinitionBase)
@@ -27,7 +27,7 @@ class VideoStreamDefinitionClass extends WithStreamable {
     if (!url) throw Errors.invalid.definition.url
 
     this.url = url
-    if (source) this.source = source
+    this.source = source || url
 
     // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
     Definitions.install(this)
@@ -38,6 +38,8 @@ class VideoStreamDefinitionClass extends WithStreamable {
   frames(quantize: number): number {
     return Time.fromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame
   }
+
+  get inputSource(): string { return urlAbsolute(this.source) }
 
   get instance() : VideoStream { return this.instanceFromObject(this.instanceObject) }
 

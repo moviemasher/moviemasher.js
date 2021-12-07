@@ -1,12 +1,12 @@
 import { Any } from "../../declarations"
 import { DefinitionType, TrackType } from "../../Setup/Enums"
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { AudioClass } from "./AudioInstance"
 import { Audio, AudioObject } from "./Audio"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { AudibleDefinitionMixin } from "../Mixin/Audible/AudibleDefinitionMixin"
-import { Definitions } from "../Definitions/Definitions"
-import { AudibleFileDefinitionMixin } from "../Mixin/AudibleFile/AudibleFileDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
+import { Definitions } from "../../Definitions/Definitions"
+import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 
 const AudioDefinitionWithClip = ClipDefinitionMixin(DefinitionBase)
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip)

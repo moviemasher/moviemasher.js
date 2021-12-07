@@ -8,7 +8,6 @@ class FontLoader extends Loader {
 
   requestUrl(url: string): LoadFontPromise {
     const promise : LoadFontPromise = new Promise((resolve, reject) => {
-      console.debug(this.constructor.name, "requestUrl", url)
       const family = Cache.key(url)
       this.arrayBufferPromiseFromUrl(url)
         .then(buffer => {

@@ -1,12 +1,12 @@
 import React from 'react'
-import { Clip, DefinitionType, DefinitionTypes, pixelFromFrame, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { Clip, DefinitionType, DefinitionTypes, isPopulatedObject, pixelFromFrame, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../Utilities/View'
-import { EditorContext } from '../Editor/EditorContext'
-import { TrackContext } from './TrackContext'
+import { EditorContext } from '../../Contexts/EditorContext'
+import { TrackContext } from '../../Contexts/TrackContext'
 import { TimelineClip } from './TimelineClip'
 import { DragClipObject } from '../../declarations'
-import { useMashScale } from './useMashScale'
+import { useMashScale } from '../../Hooks/useMashScale'
 import { DragTypeSuffix } from '../../Setup/Constants'
 
 interface TimelineClipsProps extends UnknownObject {
@@ -32,22 +32,22 @@ const TimelineClips: React.FC<TimelineClipsProps> = props => {
   if (!React.isValidElement(kid)) throw `TimelineClips`
 
   const { mash } = masher
-  const { type, index } = trackContext
+  const { trackType, layer } = trackContext
 
-  const track = mash.trackOfTypeAtIndex(type, index)
-  const { clips, isMainVideo } = track
+  const track = mash.trackOfTypeAtIndex(trackType, layer)
+  const { clips, dense } = track
 
   const childNodes = (): React.ReactElement[] => {
-    let prevClipEnd = isMainVideo ? -1 : 0
+    let prevClipEnd = dense ? -1 : 0
     return clips.map(clip => {
       const clipProps = {
         ...rest,
         prevClipEnd,
-        key: clip.identifier,
+        key: clip.id,
         clip,
         children: kid,
       }
-      if (!isMainVideo) prevClipEnd = clip.frames + clip.frame
+      if (!dense) prevClipEnd = clip.frames + clip.frame
       return <TimelineClip {...clipProps} />
     })
   }
@@ -58,35 +58,36 @@ const TimelineClips: React.FC<TimelineClipsProps> = props => {
 
   const dropAllowed = (dataTransfer: DataTransfer): boolean => {
     const type = dropType(dataTransfer)
+    console.log("dropAllowed", trackType, type)
     if (!type) return false
 
     if (!type.endsWith(DragTypeSuffix)) return true
 
     const [definitionType] = type.split('/')
-    const clipIsTransition = definitionType === DefinitionType.Transition
-    if (clipIsTransition) return isMainVideo // transitions only allowed on main track
+    if (definitionType === String(trackType)) return true
 
-    const clipIsAudio = definitionType === DefinitionType.Audio
-    const trackIsAudio = track.type === TrackType.Audio
-    return clipIsAudio === trackIsAudio // audio clips only allowed on audio tracks
+    if (trackType !== TrackType.Video) return false
+
+    return ![TrackType.Transition, TrackType.Audio].map(String).includes(definitionType)
   }
 
   const dropClip = (dataTransfer: DataTransfer, offsetDrop: number) => {
     const type = dropType(dataTransfer)!
 
-
     const json = dataTransfer.getData(type)
     const data: DragClipObject = JSON.parse(json)
 
     const { offset, definition } = data
-    const frame = pixelToFrame(offsetDrop - offset, scale)
-    const frameOrIndex = isMainVideo ? frameToIndex(frame, track.clips) : frame
+    const frame = pixelToFrame(Math.max(0, offsetDrop - offset), scale)
+    const frameOrIndex = dense ? frameToIndex(frame, track.clips) : frame
 
     if (typeof definition === 'undefined') {
-      const clip = masher.selectedClips[0]
-      masher.moveClips(clip, frameOrIndex, index)
+      const clip = masher.selection.clip
+      if (!clip) return
+
+      masher.moveClips(clip, frameOrIndex, layer)
     } else {
-      masher.add(definition, frameOrIndex, index)
+      masher.add(definition, frameOrIndex, layer)
     }
   }
 
@@ -104,6 +105,7 @@ const TimelineClips: React.FC<TimelineClipsProps> = props => {
 
     const foundIndex = clips.findIndex(clip => frame < clip.frame + clip.frames)
     if (foundIndex > -1) return foundIndex
+
     return length
   }
 

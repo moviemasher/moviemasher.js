@@ -4,7 +4,7 @@ import {
   AudibleFileObject,
   AudibleFileDefinition,
   AudibleFileDefinitionObject
-} from "../Mixin/AudibleFile/AudibleFile"
+} from "../../Mixin/AudibleFile/AudibleFile"
 
 type AudioObject = AudibleFileObject
 

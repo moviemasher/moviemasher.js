@@ -2,7 +2,7 @@ import React from 'react'
 import { EventType } from '@moviemasher/moviemasher.js'
 import { ListenerCallback, Panel } from '../../declarations'
 
-import { PlayerContext, PlayerContextInterface } from './PlayerContext'
+import { PlayerContext, PlayerContextInterface } from '../../Contexts/PlayerContext'
 import { useListeners } from '../../Hooks/useListeners'
 
 const PlayerPanel: Panel = props => {

@@ -1,11 +1,11 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { MergerDefinitionClass } from "../Merger/MergerDefinition"
-import { Definitions } from "../Definitions"
-import mergerBlendJson from "../../DefinitionObjects/merger/blend.json"
-import mergerCenterJson from "../../DefinitionObjects/merger/center.json"
-import mergerConstrainedJson from "../../DefinitionObjects/merger/constrained.json"
-import mergerDefaultJson from "../../DefinitionObjects/merger/default.json"
-import mergerOverlayJson from "../../DefinitionObjects/merger/overlay.json"
+import { Definitions } from "../../Definitions"
+import mergerBlendJson from "../../Definitions/DefinitionObjects/merger/blend.json"
+import mergerCenterJson from "../../Definitions/DefinitionObjects/merger/center.json"
+import mergerConstrainedJson from "../../Definitions/DefinitionObjects/merger/constrained.json"
+import mergerDefaultJson from "../../Definitions/DefinitionObjects/merger/default.json"
+import mergerOverlayJson from "../../Definitions/DefinitionObjects/merger/overlay.json"
 import {
   Merger,
   MergerObject,
@@ -13,8 +13,9 @@ import {
   MergerDefinitionObject,
   MergerFactory
 } from "../Merger/Merger"
-import { Factories } from "../Factories"
+import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utilities/Is"
+
 
 const mergerDefaultId = "com.moviemasher.merger.default"
 
@@ -30,14 +31,15 @@ const mergerDefinitionFromId = (id : string) : MergerDefinition => {
   return mergerDefinition({ id })
 }
 
-const mergerInstance = (object : MergerObject) : Merger => {
-  const definition = mergerDefinition(object)
-  const instance = definition.instanceFromObject(object)
-  return instance
+const mergerInstance = (object: MergerObject): Merger => {
+  const { definitionId } = object
+
+  const definition = mergerDefinition({ id: definitionId })
+  return definition.instanceFromObject(object)
 }
 
-const mergerFromId = (id : string) : Merger => {
-  return mergerInstance({ id })
+const mergerFromId = (definitionId : string) : Merger => {
+  return mergerInstance({ definitionId })
 }
 
 const mergerInitialize = () : void => {

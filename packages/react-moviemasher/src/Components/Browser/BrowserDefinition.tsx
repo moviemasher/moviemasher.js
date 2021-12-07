@@ -1,12 +1,12 @@
 import React from 'react'
 import { Definition, UnknownObject } from "@moviemasher/moviemasher.js"
-import { BrowserContext } from './BrowserContext'
+import { BrowserContext } from '../../Contexts/BrowserContext'
 import { DragTypeSuffix } from '../../Setup/Constants'
+import { OnlyChildProps } from '../../declarations'
 
 
-interface BrowserDefinitionProps extends UnknownObject {
+interface BrowserDefinitionProps extends UnknownObject, OnlyChildProps {
   definition: Definition
-  children: React.ReactElement
   selectClass?: string
   label? : string
 }

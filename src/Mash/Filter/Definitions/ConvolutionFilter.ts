@@ -3,6 +3,7 @@ import { UnknownObject, ValueObject } from "../../../declarations"
 import { Evaluator } from "../../../Utilities/Evaluator"
 import { pixelNeighboringRgbas } from "../../../Utilities/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
+import { Errors } from "../../../Setup/Errors"
 
 const RBGA = 'rgba'
 
@@ -27,6 +28,8 @@ class ConvolutionFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const options = parse(evaluated)
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const { size } = context
     const { width, height } = size
     const input = context.imageData

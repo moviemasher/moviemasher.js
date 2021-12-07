@@ -5,4 +5,17 @@ const DragType = {
 }
 const DragTypes = Object.values(DragType)
 
-export { DragType, DragTypes }
+const ServerType = {
+  STREAM: 'stream',
+  RENDER: 'render',
+  HOSTS: 'hosts',
+  HLS: 'hls',
+  WEBRTC: 'webrtc',
+}
+const ServerTypes = Object.values(ServerType)
+
+
+export {
+  DragType, DragTypes,
+  ServerType, ServerTypes
+}

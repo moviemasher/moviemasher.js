@@ -1,7 +1,7 @@
 import { UnknownObject } from "@moviemasher/moviemasher.js"
 import React from "react"
 import { View } from "../../Utilities/View"
-import { PlayerContext } from "./PlayerContext"
+import { PlayerContext } from "../../Contexts/PlayerContext"
 
 const PlayButton : React.FunctionComponent<UnknownObject> = (props) => {
   const playerContext = React.useContext(PlayerContext)

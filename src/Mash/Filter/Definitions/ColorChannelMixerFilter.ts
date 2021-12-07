@@ -1,7 +1,8 @@
-import { VisibleContext } from "../../../Playing"
+import { VisibleContext } from "../../../Playing/VisibleContext"
 import { ValueObject } from "../../../declarations"
-import { Evaluator } from "../../../Utilities"
+import { Evaluator } from "../../../Utilities/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
+import { Errors } from "../../../Setup/Errors"
 
 class ColorChannelMixerFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
@@ -10,6 +11,8 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
       return [key, Number(value)]
     }))
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const rgbas = 'rgba'.split('')
     rgbas.forEach(first => {
       rgbas.forEach(second => {
@@ -31,9 +34,6 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
     context.drawImageData(imageData)
     return context
   }
-
-  // id = 'colorchannelmixer'
-
 }
 
 export { ColorChannelMixerFilter }

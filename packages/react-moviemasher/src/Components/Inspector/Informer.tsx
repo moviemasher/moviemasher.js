@@ -1,8 +1,8 @@
 import React from "react"
 
 import { propsStringArray } from "../../Utilities/Props"
-import { PropertyInformer } from "./PropertyInformer"
-import { useSelected } from "./useSelected"
+import { SelectionInformer } from "./SelectionInformer"
+import { useSelected } from "../../Hooks/useSelected"
 
 interface InformerProps {
   property?: string
@@ -16,7 +16,7 @@ const Informer: React.FunctionComponent<InformerProps> = props => {
   const strings = propsStringArray(property, properties, selected.definition.properties)
   const kids = strings.map(property => {
     const propertyProps = { key: `inspector-${property}`, className, property, children }
-    return <PropertyInformer {...propertyProps} />
+    return <SelectionInformer {...propertyProps} />
   })
   return <>{kids}</>
 }

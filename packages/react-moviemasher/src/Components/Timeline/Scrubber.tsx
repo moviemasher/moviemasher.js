@@ -2,7 +2,7 @@ import React from "react"
 import { EventType, pixelFromFrame, pixelToFrame, Time, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { View } from "../../Utilities/View"
-import { useMashScale } from "./useMashScale"
+import { useMashScale } from "../../Hooks/useMashScale"
 import { useListeners } from "../../Hooks/useListeners"
 
 const Scrubber: React.FC<UnknownObject> = (props) => {

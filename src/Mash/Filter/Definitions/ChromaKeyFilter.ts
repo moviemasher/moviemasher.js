@@ -1,12 +1,17 @@
-import { Evaluator, Color, Pixel } from "../../../Utilities"
 import { Pixels, ValueObject, Yuv } from "../../../declarations"
+import { Errors } from "../../../Setup/Errors"
 import { Parameter } from "../../../Setup/Parameter"
+import { Evaluator } from "../../../Utilities/Evaluator"
+import { Color } from "../../../Utilities/Color"
+import { Pixel } from "../../../Utilities/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
-import { VisibleContext } from "../../../Playing"
+import { VisibleContext } from "../../../Playing/VisibleContext"
 
 class ChromaKeyFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const { width, height } = context.size
     const { accurate } = evaluated
     const similarity = Number(evaluated.similarity)

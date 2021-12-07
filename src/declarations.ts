@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Any = any
 
@@ -40,6 +41,7 @@ export type ScalarValue = number | string
 export type ScalarArray = unknown[]
 export type NumberObject = Record<string, number>
 export type UnknownObject = Record<string, unknown>
+export type StringObject = Record<string, string>
 export type ObjectUnknown = Record<string, UnknownObject>
 
 export type ValueObject = Record<string, ScalarValue>
@@ -56,12 +58,16 @@ export type BooleanSetter = (value: boolean) => void
 
 export type JsonValue = Scalar
 export type JsonObject = Record<string, JsonValue | JsonValue[]>
-export type SelectionObject = Record<string, SelectionValue>
 export type SelectionValue = ScalarRaw | ValueObject
+export type SelectionObject = Record<string, SelectionValue>
 export type EvaluatorValue = ScalarValue | ScalarConverter
 
 export interface WithFrame {
   frame : number
+}
+
+export interface WithLayer {
+  layer : number
 }
 
 export interface WithTrack {
@@ -144,9 +150,9 @@ export interface TextStyle {
 }
 
 export interface RgbObject {
-  r: string | number
-  g: string | number
-  b: string | number
+  r: ScalarValue
+  g: ScalarValue
+  b: ScalarValue
 }
 
 export interface Rgb {
@@ -156,9 +162,9 @@ export interface Rgb {
 }
 
 export interface YuvObject {
-  y: string | number
-  u: string | number
-  v: string | number
+  y: ScalarValue
+  u: ScalarValue
+  v: ScalarValue
 }
 
 export interface Yuv {
@@ -204,8 +210,61 @@ export interface StartOptions {
   start: number
 }
 
-export interface InputCommand {
-
+export interface InputParameter {
+  key: string
+  value: ScalarValue
 }
 
-export type InputCommandPromise = Promise<InputCommand>
+export interface InputFilter {
+  filter: string
+  inputs?: string[]
+  outputs?: string[]
+  options: ValueObject
+}
+
+export interface InputOverlay extends Point {
+  z?: number
+}
+
+export interface InputCommand {
+  sources?: StringObject
+  filters: InputFilter[]
+  merger?: InputFilter
+}
+
+export type InputCommands = InputCommand[]
+
+export type InputCommandsPromise = Promise<InputCommands[]>
+
+export interface RemoteServer {
+  protocol?: string
+  prefix?: string
+  host?: string
+  port?: ScalarValue
+}
+
+export interface RemoteServerProps {
+  remoteServer?: RemoteServer
+}
+
+export type ClipState = InputCommand
+export type MashStatePromise = Promise<MashState>
+export type MashState = ClipState[]
+
+export type Options = string[] | ValueObject
+export interface OutputOptions {
+  options?: Options
+  audioCodec?: string
+  audioBitrate?: ScalarValue
+  audioChannels?: number
+  audioFrequency?: number
+  videoCodec?: string
+  width?: number
+  height?: number
+  videoBitrate?: ScalarValue
+  maxRate?: ScalarValue
+  bufSize?: ScalarValue
+  g?: number
+  fps?: number
+  format?: string
+}

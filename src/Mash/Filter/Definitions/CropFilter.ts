@@ -1,4 +1,5 @@
-import { ContextFactory, VisibleContext } from "../../../Playing"
+import { VisibleContext } from "../../../Playing/VisibleContext"
+import { ContextFactory } from "../../../Playing/ContextFactory"
 import { EvaluatedRect } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Utilities/Evaluator"
@@ -7,6 +8,8 @@ import { FilterDefinitionClass } from "../FilterDefinition"
 class CropFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : EvaluatedRect) : VisibleContext {
     const { context } = evaluator
+    if (!context) throw Errors.invalid.context
+
     const x = evaluated.x || 0
     const y = evaluated.y || 0
     const inSize = evaluator.inputSize
@@ -30,8 +33,11 @@ class CropFilter extends FilterDefinitionClass {
 
   // id = 'crop'
 
-  scopeSet(evaluator : Evaluator) : void {
-    evaluator.setInputSize(evaluator.context.size)
+  scopeSet(evaluator: Evaluator): void {
+    const { context } = evaluator
+    if (!context) return
+
+    evaluator.setInputSize(context.size)
     evaluator.initialize("x", '((in_w - out_w) / 2)')
     evaluator.initialize("y", '((in_h - out_h) / 2)')
   }

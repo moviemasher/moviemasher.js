@@ -1,12 +1,12 @@
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { Any, VisibleSource, JsonObject, LoadPromise } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { DefinitionType } from "../../Setup/Enums"
 import { Image, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageInstance"
-import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { Definitions } from "../Definitions/Definitions"
+import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { Definitions } from "../../Definitions/Definitions"
 import { Time, Times } from "../../Utilities/Time"
 import { Cache } from "../../Loading"
 import { LoaderFactory } from "../../Loading/LoaderFactory"
@@ -27,12 +27,14 @@ class ImageDefinitionClass extends ImageDefinitionWithTransformable {
     if (!url) throw Errors.invalid.definition.url
 
     this.urlVisible = url
-    if (source) this.source = source
+    this.source = source || url
 
     Definitions.install(this)
   }
 
   get absoluteUrl(): string { return urlAbsolute(this.urlVisible) }
+
+  get inputSource(): string { return urlAbsolute(this.source) }
 
   get instance() : Image {
     return this.instanceFromObject(this.instanceObject)

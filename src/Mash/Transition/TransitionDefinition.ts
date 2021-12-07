@@ -1,21 +1,22 @@
 import { Any, JsonObject } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Time } from "../../Utilities/Time"
-import { byFrame } from "../../Utilities/Sort"
+import { sortByFrame } from "../../Utilities/Sort"
 import { ContextFactory, VisibleContext } from "../../Playing"
 import { TransitionClass } from "./TransitionInstance"
 import { Transition, TransitionObject } from "./Transition"
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { Filter } from "../Filter/Filter"
-import { Visible } from "../Mixin/Visible/Visible"
-import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
-import { ClipDefinitionMixin } from "../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../Mixin/Visible/VisibleDefinitionMixin"
-import { Definitions } from "../Definitions/Definitions"
+import { Visible } from "../../Mixin/Visible/Visible"
+import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
+import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
+import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
+import { Definitions } from "../../Definitions/Definitions"
 import { TransitionDefinitionObject } from "./Transition"
 import { filterInstance } from "../Filter"
 import { mergerInstance } from "../Merger/MergerFactory"
 import { scalerInstance } from "../Scaler/ScalerFactory"
+import { Property } from "../../Setup/Property"
 
 const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 const TransitionDefinitionWithClip = ClipDefinitionMixin(TransitionDefinitionWithModular)
@@ -44,14 +45,17 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible {
       if (merger) this.fromMerger = mergerInstance(merger)
       if (scaler) this.fromScaler = scalerInstance(scaler)
     }
-
+    this.properties.push(
+      new Property({ name: "fromTrack", type: DataType.Number, value: 0 }),
+      new Property({ name: "toTrack", type: DataType.Number, value: 1 }),
+    )
     Definitions.install(this)
   }
 
   drawVisibleFilters(clips : Visible[], transition : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void {
     // console.log(this.constructor.name, "drawVisibleFilters", clips.length, transition.id)
     const { size } = context
-    const sorted = [...clips].sort(byFrame)
+    const sorted = [...clips].sort(sortByFrame)
     let fromClip : Visible | undefined = sorted[0]
     let toClip : Visible | undefined = sorted[1]
 

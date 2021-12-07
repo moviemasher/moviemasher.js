@@ -1,6 +1,6 @@
 
 import { Track } from "../../Mash"
-import { Clip } from "../../Mash/Mixin/Clip/Clip"
+import { Clip } from "../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
 interface AddClipToTrackActionObject extends AddTrackActionObject {
@@ -30,7 +30,7 @@ class AddClipToTrackAction extends AddTrackAction {
 
   get clips() : Clip[] { return this.track.clips }
 
-  get track() : Track { return this.mash[this.trackType][this.trackIndex] }
+  get track() : Track { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex) }
 
   redoAction() : void {
     for (let i = 0; i < this.createTracks; i += 1) { super.redoAction() }

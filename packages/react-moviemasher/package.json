@@ -9,14 +9,14 @@
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moviemasher/react-moviemasher.git"
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
-  "bugs": {
-    "url": "https://github.com/moviemasher/react-moviemasher/issues"
-  },
-  "homepage": "https://github.com/moviemasher/react-moviemasher#readme",
+  "homepage": "https://moviemasher.com",
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "^5.0.0",
     "react": "^17.0.2",

@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlayerContext } from './PlayerContext'
+import { PlayerContext } from '../../Contexts/PlayerContext'
 
 const NotPlaying: React.FunctionComponent = props => {
   const playerContext = React.useContext(PlayerContext)

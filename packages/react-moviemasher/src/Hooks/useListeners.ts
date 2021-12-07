@@ -1,8 +1,8 @@
 import React from "react"
-import { EventType, Masher } from "@moviemasher/moviemasher.js"
+import { EventType } from "@moviemasher/moviemasher.js"
 
-import { EditorContext, EditorContextInterface } from "../Components/Editor/EditorContext"
 import { ListenerEvents } from "../declarations"
+import { EditorContext, EditorContextInterface } from "../Contexts/EditorContext"
 
 const useListeners = (events: ListenerEvents) : EditorContextInterface => {
   const editorContext = React.useContext(EditorContext)

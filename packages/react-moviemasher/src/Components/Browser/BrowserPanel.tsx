@@ -1,7 +1,7 @@
 import React from "react"
 import { Definition, UnknownObject } from '@moviemasher/moviemasher.js'
 import { View } from "../../Utilities/View"
-import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
+import { BrowserContext, BrowserContextInterface } from "../../Contexts/BrowserContext"
 
 interface BrowserProps extends UnknownObject {
   sourceId?: string

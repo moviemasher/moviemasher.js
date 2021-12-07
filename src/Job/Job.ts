@@ -1,19 +1,19 @@
+import { OutputOptions, RemoteServer } from "../declarations"
+import { Definition, DefinitionObject } from "../Base/Definition"
+import { Mash, MashObject } from "../Mash/Mash/Mash"
 
-class Input {
-
+interface Job {
+  definitions: Definition[]
+  mash: Mash
+  remoteServer?: RemoteServer
+  outputs: OutputOptions[]
 }
 
-class Output {
-
+interface JobObject {
+  definitions: DefinitionObject[]
+  mash: MashObject
+  remoteServer?: RemoteServer
+  outputs: OutputOptions[]
 }
 
-class Job {
-  constructor() {
-
-  }
-
-  inputs : Input[] = []
-  outputs : Output[] = []
-}
-
-export { Job }
+export { Job, JobObject }

@@ -17,8 +17,10 @@ enum ActionType {
 
 enum TrackType {
   Audio = 'audio',
+  Transition = 'transition',
   Video = 'video',
 }
+const TrackTypes = Object.values(TrackType)
 
 enum ClipType {
   Audio = 'audio',
@@ -41,8 +43,6 @@ enum DefinitionType {
   Scaler = 'scaler',
   Effect = 'effect',
   Font = 'font',
-  Mash = 'mash',
-  Masher = 'masher',
   Theme = 'theme',
   Transition = 'transition',
   Image = 'image',
@@ -50,6 +50,7 @@ enum DefinitionType {
   Audio = 'audio',
   VideoStream = 'videostream',
   VideoSequence = 'videosequence',
+  // Track = 'track',
   // AudioStream = 'audiostream',
 }
 const DefinitionTypes = Object.values(DefinitionType)
@@ -73,11 +74,6 @@ enum EventType {
   Volume = 'volumechange',
   Waiting = 'waiting',
 }
-
-enum MashType {
-  Mash = DefinitionType.Mash,
-}
-const MashTypes = Object.values(MashType)
 
 enum ModuleType {
   Effect ='effect',
@@ -122,17 +118,38 @@ const DataTypes = Object.values(DataType)
 
 enum TransformType {
   Merger = 'merger',
-  Scaler = 'scaler'
+  Scaler = 'scaler',
 }
 
 const TransformTypes = Object.values(TransformType)
 
+enum MasherAction {
+  Freeze = 'freeze',
+  Redo = 'redo',
+  Remove = 'remove',
+  Save = 'save',
+  Split = 'split',
+  Undo = 'undo',
+}
+
+const MasherActions = Object.values(MasherAction)
+
 enum CommandType {
   File = 'file',
-  Stream = 'stream'
+  Stream = 'stream',
 }
 
 const CommandTypes = Object.values(CommandType)
+
+enum OutputFormat {
+  Flv = 'flv',
+  Hls = 'hls',
+  Mdash = 'mdash',
+  Rtmp = 'rtmp',
+  Rtmps = 'rtmps',
+}
+
+const OutputFormats = Object.values(OutputFormat)
 
 export {
   ActionType,
@@ -146,12 +163,15 @@ export {
   DefinitionTypes,
   EventType,
   LoadType,
-  MashType,
-  MashTypes,
+  MasherAction,
+  MasherActions,
   ModuleType,
   ModuleTypes,
   MoveType,
+  OutputFormat,
+  OutputFormats,
   TrackType,
+  TrackTypes,
   TransformType,
   TransformTypes,
 }

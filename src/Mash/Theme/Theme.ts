@@ -1,12 +1,12 @@
-import { ClipDefinitionObject } from "../Mixin/Clip/Clip"
+import { ClipDefinitionObject } from "../../Mixin/Clip/Clip"
 import {
   Modular,
   ModularDefinition,
   ModularDefinitionObject,
   ModularObject
-} from "../Mixin/Modular/Modular"
-import { VisibleDefinition } from "../Mixin/Visible/Visible"
-import { Transformable, TransformableObject } from "../Mixin/Transformable/Transformable"
+} from "../../Mixin/Modular/Modular"
+import { VisibleDefinition } from "../../Mixin/Visible/Visible"
+import { Transformable, TransformableObject } from "../../Mixin/Transformable/Transformable"
 import { GenericFactory } from "../../declarations"
 
 type ThemeObject = ModularObject & TransformableObject

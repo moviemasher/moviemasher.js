@@ -1,6 +1,6 @@
-import { InstanceBase } from "../Instance/Instance"
+import { InstanceBase } from "../../Base/Instance"
 import { VisibleContext } from "../../Playing"
-import { Any, JsonObject, ValueObject } from "../../declarations"
+import { Any, InputFilter, JsonObject, ValueObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Evaluator, Is } from "../../Utilities"
 import { FilterDefinition } from "./Filter"
@@ -24,7 +24,6 @@ class FilterClass extends InstanceBase {
   drawFilter(evaluator : Evaluator) : VisibleContext {
     this.definition.scopeSet(evaluator)
     const evaluated = this.evaluated(evaluator)
-    console.log(this.constructor.name, "drawFilter", evaluated)
     return this.definition.draw(evaluator, evaluated)
   }
 
@@ -51,6 +50,16 @@ class FilterClass extends InstanceBase {
       return `${name}=>${evaluatedValue}`
     })
     return evaluated
+  }
+
+
+  inputFilter(evaluator: Evaluator): InputFilter {
+    this.definition.scopeSet(evaluator)
+    const evaluated = this.evaluated(evaluator)
+    const input = this.definition.input(evaluator, evaluated)
+
+    // console.log(this.constructor.name, "inputFilter", input)
+    return input
   }
 
   parameters : Parameter[] = []

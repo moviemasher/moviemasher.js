@@ -1,54 +1,58 @@
 import React from 'react'
-import { EventType, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { EventType, TrackType } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../Utilities/View'
 import { TimelineTrack } from './TimelineTrack'
 import { useListeners } from '../../Hooks/useListeners'
 
-const TimelineTracks: React.FunctionComponent<UnknownObject> = props => {
+interface TimelineTracksProps {
+  className?: string
+}
+
+const TimelineTracks: React.FunctionComponent<TimelineTracksProps> = props => {
+
   const { masher } = useListeners({
     [EventType.Track]: masher => {
-      setAudioTracks(masher.mash.audio.length)
-      setVideoTracks(masher.mash.video.length)
-    }
+      setAudioTracks(masher.mash.trackCount(TrackType.Audio))
+      setVideoTracks(masher.mash.trackCount(TrackType.Video))
+      setTransitionTracks(masher.mash.trackCount(TrackType.Transition))
+    },
+
+    [EventType.Action]: () => { setActionCount(nonce => nonce + 1) },
+
   })
-  const [audioTracks, setAudioTracks] = React.useState(masher.mash.audio.length)
-  const [videoTracks, setVideoTracks] = React.useState(masher.mash.video.length)
+
+  const [actionCount, setActionCount] = React.useState(() => 0)
+  const [audioTracks, setAudioTracks] = React.useState(masher.mash.trackCount(TrackType.Audio))
+  const [videoTracks, setVideoTracks] = React.useState(masher.mash.trackCount(TrackType.Video))
+  const [transitionTracks, setTransitionTracks] = React.useState(masher.mash.trackCount(TrackType.Transition))
 
   const { children, ...rest } = props
+  const kid = React.Children.only(children)
+  if (!React.isValidElement(kid)) throw `Timeline.Tracks`
+
+  const childNode = (layer: number, trackType: TrackType): React.ReactElement => {
+    const trackProps = {
+      ...props,
+      key: `${trackType}-track-${layer}`,
+      layer,
+      trackType,
+      children: React.cloneElement(kid),
+    }
+    return <TimelineTrack {...trackProps} />
+  }
 
   const childNodes = (): React.ReactElement[] => {
     const childNodes: React.ReactElement[] = []
-
-    const kid = React.Children.only(children)
-    if (!React.isValidElement(kid)) throw `Timeline.Tracks`
-
-    for (let i = videoTracks - 1; i >= 0; i--) {
-      const trackProps = {
-        ...props,
-        key: `video-track-${i}`,
-        index: i,
-        type: TrackType.Video,
-        children: React.cloneElement(kid),
-      }
-      childNodes.push(<TimelineTrack {...trackProps} />)
+    const highestTrack = Math.max(videoTracks, transitionTracks)
+    for (let i = highestTrack - 1; i >= 0; i--) {
+      if (i < transitionTracks) childNodes.push(childNode(i, TrackType.Transition))
+      if (i < videoTracks) childNodes.push(childNode(i, TrackType.Video))
     }
-
-    for (let i = 0; i < audioTracks; i++) {
-      const trackProps = {
-        ...props,
-        key: `audio-track-${i}`,
-        index: i,
-        type: TrackType.Audio,
-        children: React.cloneElement(kid),
-      }
-      childNodes.push(<TimelineTrack {...trackProps} />)
-    }
+    for (let i = 0; i < audioTracks; i++) childNodes.push(childNode(i, TrackType.Audio))
     return childNodes
   }
-  const onClick: React.MouseEventHandler = event => {
-    masher.selectedClips = []
-  }
+  const onClick: React.MouseEventHandler = () => { masher.selectTrack(undefined) }
 
   const viewProps = { ...rest, children: childNodes(), onClick }
   return <View {...viewProps}/>

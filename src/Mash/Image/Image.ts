@@ -3,7 +3,7 @@ import { GenericFactory } from "../../declarations"
 import {
   Transformable, TransformableDefinition, TransformableDefinitionObject,
   TransformableObject
-} from "../Mixin/Transformable/Transformable"
+} from "../../Mixin/Transformable/Transformable"
 
 type ImageObject = TransformableObject
 

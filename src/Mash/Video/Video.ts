@@ -1,10 +1,10 @@
 import { Constrained, GenericFactory } from "../../declarations"
 import {
   AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../Mixin/AudibleFile/AudibleFile"
+} from "../../Mixin/AudibleFile/AudibleFile"
 import {
   Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../Mixin/Transformable/Transformable"
+} from "../../Mixin/Transformable/Transformable"
 
 interface VideoObject extends AudibleFileObject, TransformableObject {
   speed?: number

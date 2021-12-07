@@ -5,7 +5,7 @@ import { VisibleContext } from "./VisibleContext"
 const ContextTypes = ["audible", "visible"]
 const ContextType = Object.fromEntries(ContextTypes.map(type => [type, type]))
 
-class ContextFactory {
+class ContextFactoryImplementation {
   audible() : AudibleContext { return new AudibleContext() }
 
   fromCanvas(canvas : VisibleContextElement) : VisibleContext {
@@ -31,6 +31,6 @@ class ContextFactory {
   visible() { return new VisibleContext() }
 }
 
-const ContextFactoryInstance = new ContextFactory()
+const ContextFactory = new ContextFactoryImplementation()
 
-export { ContextFactoryInstance as ContextFactory }
+export { ContextFactory }

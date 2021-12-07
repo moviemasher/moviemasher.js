@@ -1,15 +1,19 @@
-import { DefinitionBase } from "../Definition/Definition"
+import { DefinitionBase } from "../../Base/Definition"
 import { Effect, EffectObject } from "./Effect"
-import { ModularDefinitionMixin } from "../Mixin/Modular/ModularDefinitionMixin"
+import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
 import { Any } from "../../declarations"
-import { Definitions } from "../Definitions/Definitions"
+import { Definitions } from "../../Definitions/Definitions"
 import { EffectClass } from "./EffectInstance"
-import { DefinitionType } from "../../Setup/Enums"
+import { DataType, DefinitionType } from "../../Setup/Enums"
+import { Property } from "../../Setup/Property"
 
 const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 class EffectDefinitionClass extends EffectDefinitionWithModular {
   constructor(...args : Any[]) {
     super(...args)
+
+    this.properties.push(new Property({ name: "label", type: DataType.String, value: "" }))
+
     Definitions.install(this)
   }
 

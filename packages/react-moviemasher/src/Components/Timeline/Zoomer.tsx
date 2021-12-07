@@ -1,6 +1,6 @@
 import React from 'react'
 import { SliderChangeHandler } from "../../declarations"
-import { TimelineContext } from './TimelineContext'
+import { TimelineContext } from '../../Contexts/TimelineContext'
 import { Slider } from '../../Utilities/Slider'
 
 const Zoomer : React.FunctionComponent = (props) => {

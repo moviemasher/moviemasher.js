@@ -4,7 +4,6 @@ const $expected = "Expected"
 const $invalidArgument = `${$invalid} argument`
 const $invalidProperty = `${$invalid} property`
 const $invalidDefinitionProperty = `${$invalid} definition property`
-const $deprecated = "deprecated in 4.1"
 const $internal = "Internal Error "
 const Errors = {
   eval: {
@@ -23,7 +22,8 @@ const Errors = {
   internal: $internal,
   argument: `${$invalidArgument} `,
   invalid: {
-    canvas: `${$invalidArgument} canvas `,
+    canvas: `${$invalidProperty} canvas `,
+    context: `${$invalidProperty} context `,
     definition: {
       duration: `${$invalidDefinitionProperty} duration`,
       audio: `${$invalidDefinitionProperty} audio|url`,

@@ -1,13 +1,13 @@
 import React from 'react'
-import { UnknownObject, Clip, pixelFromFrame, EventType } from '@moviemasher/moviemasher.js'
+import { UnknownObject, Clip, pixelFromFrame, EventType, Masher } from '@moviemasher/moviemasher.js'
 
 import { DragTypeSuffix } from '../../Setup/Constants'
-import { useMashScale } from './useMashScale'
+import { useMashScale } from '../../Hooks/useMashScale'
 import { useListeners } from '../../Hooks/useListeners'
+import { OnlyChildProps } from '../../declarations'
 
-interface TimelineClipProps extends UnknownObject {
+interface TimelineClipProps extends UnknownObject, OnlyChildProps {
   clip: Clip
-  children: React.ReactElement
   selectClass?: string
   prevClipEnd: number
   label?: string
@@ -16,17 +16,18 @@ interface TimelineClipProps extends UnknownObject {
 const TimelineClip: React.FC<TimelineClipProps> = props => {
   const ref = React.useRef<HTMLDivElement>(null)
   const [clickOffset, setClickOffset] = React.useState(0)
-  const [selectedClipIdentifier, setSelectedClipIdentifier] = React.useState('')
   const scale = useMashScale()
+  // const selectedId = (masher: Masher): string => masher.selection.clip?.id || ''
   const { masher } = useListeners({
     [EventType.Selection]: masher => {
-      setSelectedClipIdentifier(String(masher.selectedClip.identifier))
+      setSelectedClipIdentifier(masher.selection.clip?.id || '')
     }
   })
 
+  const [selectedClipIdentifier, setSelectedClipIdentifier] = React.useState(() => masher.selection.clip?.id || '')
 
   const { label: labelVar, clip, prevClipEnd, selectClass, children } = props
-  const { label, identifier, type, frame, frames } = clip
+  const { label, id, type, frame, frames } = clip
 
   const kid = React.Children.only(children)
   if (!React.isValidElement(kid)) throw `TimelineClip expects single child element`
@@ -35,7 +36,7 @@ const TimelineClip: React.FC<TimelineClipProps> = props => {
     const classes = []
     const { className } = kid.props
     if (className) classes.push(className)
-    if (selectClass && identifier === selectedClipIdentifier) {
+    if (selectClass && id === selectedClipIdentifier) {
       classes.push(selectClass)
     }
     return classes.join(' ')

@@ -4,7 +4,7 @@ import {
   ModularDefinition,
   ModularDefinitionObject,
   ModularObject
-} from "../Mixin/Modular/Modular"
+} from "../../Mixin/Modular/Modular"
 
 type ScalerObject = ModularObject
 

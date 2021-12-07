@@ -1,9 +1,9 @@
-import { AudibleDefinition, AudibleDefinitionObject } from "../Mixin/Audible/Audible"
-import { VisibleDefinition, VisibleObject } from "../Mixin/Visible/Visible"
-import { Transformable } from "../Mixin/Transformable/Transformable"
-import { Audible } from "../Mixin/Audible/Audible"
+import { AudibleDefinition, AudibleDefinitionObject } from "../../Mixin/Audible/Audible"
+import { VisibleDefinition, VisibleObject } from "../../Mixin/Visible/Visible"
+import { Transformable } from "../../Mixin/Transformable/Transformable"
+import { Audible } from "../../Mixin/Audible/Audible"
 import { GenericFactory, ScalarValue } from "../../declarations"
-import { Streamable, StreamableDefinition, StreamableDefinitionObject } from "../Mixin/Streamable/Streamable"
+import { Streamable, StreamableDefinition, StreamableDefinitionObject } from "../../Mixin/Streamable/Streamable"
 
 interface VideoStreamObject extends VisibleObject {
   gain?: ScalarValue

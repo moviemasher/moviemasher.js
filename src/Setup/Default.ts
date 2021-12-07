@@ -17,7 +17,15 @@ const Default = {
     gain: 0.75,
     buffer: 10,
     output: {
-      size: '320x240',
+      width: 320,
+      height: 240,
+      fps: 30,
+      videoBitrate: 2000,
+      audioBitrate: 160,
+      audioCodec: 'aac',
+      videoCodec: 'libx264',
+      audioChannels: 2,
+      audioFrequency: 44100,
     }
   },
   instance: {

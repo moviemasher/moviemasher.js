@@ -1,64 +1,58 @@
 import { Track, TrackObject } from "../Track"
-import { Definition, DefinitionObject, DefinitionTimes } from "../Definition/Definition"
+import { Definition, DefinitionObject, DefinitionTimes } from "../../Base/Definition"
 import { Time } from "../../Utilities/Time"
-import { Instance, InstanceObject } from "../Instance"
-import { GenericFactory, InputCommandPromise, LoadPromise } from "../../declarations"
+import { InputCommandsPromise, LoadPromise, MashState, MashStatePromise, Size } from "../../declarations"
 import { CommandType, TrackType } from "../../Setup/Enums"
-import { Clip } from "../Mixin/Clip/Clip"
-import { Audible } from "../Mixin/Audible/Audible"
+import { Clip } from "../../Mixin/Clip/Clip"
+import { Audible } from "../../Mixin/Audible/Audible"
 import { Action } from "../../Editing/Action/Action"
 import { Composition } from "../../Playing/Composition"
-import { Visible } from "../Mixin/Visible/Visible"
+import { Visible } from "../../Mixin/Visible/Visible"
 import { TimeRange } from "../../Utilities/TimeRange"
+import { Emitter } from "../../Utilities/Emitter"
+import { UnknownObject } from "../../declarations"
+import { Job } from "../../Job/Job"
 
-interface MashObject extends InstanceObject {
-  audio? : TrackObject[]
+interface MashObject extends UnknownObject {
   backcolor? : string
   id? : string
   label? : string
-  media? : DefinitionObject[]
   quantize? : number
-  video? : TrackObject[]
+  tracks?: TrackObject[]
+  createdAt?: string
 }
 
-interface MashOptions extends MashObject {
-  buffer? : number
-  gain? : number
-  loop? : boolean
-  time? : Time
-}
-
-interface MashDefinition extends Definition {
-  instance : Mash
-  instanceFromObject(object : MashObject) : Mash
-}
-
-interface Mash extends Instance {
+interface Mash {
   addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number, frames? : number[]) : void
   addTrack(trackType : TrackType) : Track
-  audio: Track[]
-  backcolor? : string
+  backcolor?: string
+  buffer: number
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
   clipTrack(clip: Clip): Track
   clips: Clip[]
   clipsVisible(start: Time, end?: Time): Visible[]
-  inputCommandPromise(type: CommandType, start: Time, end?: Time): InputCommandPromise
+  inputCommandPromise(type: CommandType, size: Size, start: Time, end?: Time): InputCommandsPromise
   compositeVisible() : void
   composition : Composition
-  definition : MashDefinition
+  definitions : Definition[]
   destroy() : void
   drawnTime? : Time
-  duration : number
+  duration: number
+  emitter?: Emitter
   endTime: Time
   frame: number
   frames: number
-  handleAction(action : Action) : void
+  gain: number
+  handleAction(action: Action): void
+  id: string
+  job: Job
   loadPromise?: LoadPromise
   loadUrls: string[]
   loadedDefinitions : DefinitionTimes
-  loop : boolean
-  media : Definition[]
+  loop: boolean
+  mashState(time:Time, dimensions:Size): MashState
+  mashStatePromise(time:Time, dimensions:Size): MashStatePromise
   paused : boolean
   quantize : number
   removeClipsFromTrack(clips : Clip[]) : void
@@ -66,13 +60,10 @@ interface Mash extends Instance {
   seekToTime(time: Time) : LoadPromise | undefined
   time: Time
   timeRange: TimeRange
+  toJSON(): UnknownObject
+  trackCount(type?: TrackType): number
   trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
-  video: Track[]
 }
 
-type MashDefinitionObject = DefinitionObject
-
-type MashFactory = GenericFactory<Mash, MashObject, MashDefinition, MashDefinitionObject>
-
-export { Mash, MashObject, MashOptions, MashFactory, MashDefinition, MashDefinitionObject }
+export { Mash, MashObject }

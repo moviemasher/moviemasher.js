@@ -3,6 +3,7 @@ node_modules*
 dist*
 log*
 tmp*
+temporary*
 vendor*
 coverage*
 **/__image_snapshots__*

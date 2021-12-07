@@ -22,15 +22,23 @@ import { EditorIcons, EditorInputs } from '../declarations'
 import { InspectorPanel } from './Inspector/InspectorPanel'
 import { Defined } from './Inspector/Defined'
 import { Inspector } from './Inspector/Inspector'
-import { NotInspectingType } from './Inspector/NotInspectingType'
-import { Informer } from './Inspector/Informer'
 import { View } from '../Utilities/View'
 import { TimelineContent } from './Timeline/TimelineContent'
 import { InspectorContent } from './Inspector/InspectorContent'
+import { Hosts } from './Hosts/Hosts'
+import { TrackIsType } from './Timeline/TrackIsType'
+import { AddTrackButton } from '../Controls/AddTrackButton'
+import { NoSelection } from './Inspector/NoSelection'
+import { UndoButton } from '../Controls/UndoButton'
+import { Button } from '../Utilities/Button'
+import { RedoButton } from '../Controls/RedoButton'
+import { RemoveButton } from '../Controls/RemoveButton'
+import { SplitButton } from '../Controls/SplitButton'
 
 interface ContentOptions {
   className?: string
   children?: React.ReactChild
+  child?: React.ReactChild
 }
 
 interface BarOptions {
@@ -48,15 +56,15 @@ interface PanelOptionsStrict {
 }
 
 type PanelOptions = Partial<PanelOptionsStrict>
-type PanelsOptionsOrFalse = PanelOptions | false
+type PanelOptionsOrFalse = PanelOptions | false
 type PanelOptionsStrictOrFalse = PanelOptionsStrict | false
 
 interface UiOptions {
-  [index:string]: PanelsOptionsOrFalse
-  browser: PanelsOptionsOrFalse
-  player: PanelsOptionsOrFalse
-  inspector: PanelsOptionsOrFalse
-  timeline: PanelsOptionsOrFalse
+  [index:string]: PanelOptionsOrFalse
+  browser: PanelOptionsOrFalse
+  player: PanelOptionsOrFalse
+  inspector: PanelOptionsOrFalse
+  timeline: PanelOptionsOrFalse
 }
 
 interface UiOptionsStrict {
@@ -151,18 +159,25 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
 
   const inspectorNode = (panelOptions:PanelOptionsStrict) => {
     panelOptions.className ||= 'moviemasher-panel moviemasher-inspector'
-
-    panelOptions.content.children ||= <>
-      <Inspector properties='label,backcolor' inputs={inputs}><label /></Inspector>
-
-      <NotInspectingType type='mash'>
-        <Defined property='color' className='moviemasher-input'>
-          <label>Color</label> {inputs[DataType.Text]}
-        </Defined>
-        <Inspector inputs={inputs} className='moviemasher-input'><label/></Inspector>
-      </NotInspectingType>
-      <Informer><label/></Informer>
+    panelOptions.header.middle ||= <>
+      <NoSelection>
+        <View>Select something</View>
+      </NoSelection>
     </>
+    panelOptions.footer.middle ||= <>
+    </>
+
+    const { child } = panelOptions.content
+    const defaultChild = child ? <NoSelection children={child}/> : null
+    panelOptions.content.children ||= <>
+      {defaultChild}
+      <Inspector properties='label,backcolor' inputs={inputs}><label /></Inspector>
+      <Defined property='color' className='moviemasher-input'>
+        <label>Color</label> {inputs[DataType.Text]}
+      </Defined>
+      <Inspector inputs={inputs} className='moviemasher-input'><label/></Inspector>
+    </>
+
     const contentProps = {
       selectClass: {classNameSelect},
       label: '--clip-label',
@@ -188,6 +203,10 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
     panelOptions.content.children ||= (
       <PlayerContent {...contentProps} />
     )
+    panelOptions.header.middle ||= <>
+
+    </>
+
     panelOptions.footer.middle ||= <>
       <PlayButton className='moviemasher-button'>
         <Playing>{icons.playerPause}</Playing>
@@ -218,11 +237,13 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
       </View>
       <TimelineTracks className='moviemasher-tracks'>
         <View className='moviemasher-track'>
-          <View className='moviemasher-track-icon' children={icons.timelineAudio} />
+          <TrackIsType type='audio'><View className='moviemasher-track-icon' children={icons.timelineTrackAudio}/></TrackIsType>
+          <TrackIsType type='video'><View className='moviemasher-track-icon' children={icons.timelineTrackVideo}/></TrackIsType>
+          <TrackIsType type='transition'><View className='moviemasher-track-icon' children={icons.timelineTrackTransition}/></TrackIsType>
           <TimelineClips
             className='moviemasher-clips'
-            dropClass={classNameDrop}
             selectClass={classNameSelect}
+            dropClass={classNameDrop}
             label='--clip-label'
           >
             <View className='moviemasher-clip'>
@@ -235,11 +256,17 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
     </>
 
     panelOptions.header.middle ||= <>
-      BUTTONS!
+      <UndoButton><Button startIcon={icons.undo}>Undo</Button></UndoButton>
+      <RedoButton><Button startIcon={icons.redo}>Redo</Button></RedoButton>
+      <RemoveButton><Button startIcon={icons.remove}>Remove</Button></RemoveButton>
+      <SplitButton><Button startIcon={icons.split}>Split</Button></SplitButton>
     </>
 
     panelOptions.footer.middle ||= <>
       <Zoomer />
+      <AddTrackButton trackType='video' children={icons.timelineAddVideo}/>
+      <AddTrackButton trackType='audio' children={icons.timelineAddAudio}/>
+      <AddTrackButton trackType='transition' children={icons.timelineAddTransition}/>
     </>
 
     const contentProps = {
@@ -260,11 +287,11 @@ const ReactMovieMasher: React.FunctionComponent<ReactMovieMasherProps> = props =
   }
 
   const children = []
+  if (options.player) children.push(playerNode(options.player))
   if (options.browser) children.push(browserNode(options.browser))
   if (options.inspector) children.push(inspectorNode(options.inspector))
-  if (options.player) children.push(playerNode(options.player))
   if (options.timeline) children.push(timelineNode(options.timeline))
   const editorProps = { className: classNameEditor, mash, children }
-  return <Editor {...editorProps} />
+  return <Hosts><Editor {...editorProps} /></Hosts>
 }
 export { ReactMovieMasher }
