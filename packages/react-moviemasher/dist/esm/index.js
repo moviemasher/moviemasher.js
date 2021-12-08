@@ -125,11 +125,15 @@ const RemoveButton = props => {
     const { children } = props, rest = __rest(props, ["children"]);
     const { masher } = editorContext;
     const onClick = () => {
-        const { clip, effect } = masher.selection;
+        if (disabled)
+            return;
+        const { clip, effect, track } = masher.selection;
         if (effect)
-            masher.removeEffects(effect);
+            masher.removeEffect(effect);
         else if (clip)
-            masher.removeClips(clip);
+            masher.removeClip(clip);
+        else if (track)
+            masher.removeTrack(track);
     };
     const buttonOptions = Object.assign(Object.assign({}, rest), { onClick, disabled });
     return React.cloneElement(React.Children.only(children), buttonOptions);
@@ -1120,7 +1124,7 @@ const TimelineClips = props => {
             const clip = masher.selection.clip;
             if (!clip)
                 return;
-            masher.moveClips(clip, frameOrIndex, layer);
+            masher.moveClip(clip, frameOrIndex, layer);
         }
         else {
             masher.add(definition, frameOrIndex, layer);

@@ -43,12 +43,11 @@ describe("Mash", () => {
     })
   })
 
-  describe("addClipsToTrack", () => {
+  describe("addClipToTrack", () => {
     const addNewClip = (mash : Mash, definition : Definition, track = 0) : Clip => {
       const clip = <Clip> definition.instance
       expect(clip).toBeTruthy()
-      mash.addClipsToTrack([clip], track)
-      expect(clip.track).toEqual(track)
+      mash.addClipToTrack(clip, track)
       return clip
     }
 
@@ -62,38 +61,13 @@ describe("Mash", () => {
       expect(firstTrack.clips.includes(clip)).toBeTruthy()
       expect(secondTrack.clips.includes(clip)).toBeFalsy()
       const clipTrack = mash.clipTrack(clip)
-      if (clipTrack !== firstTrack) console.log("clip.track", clip.track)
+
       expect(clipTrack).toEqual(firstTrack)
 
-      mash.addClipsToTrack([clip], 2)
+      mash.addClipToTrack(clip, 2)
       expect(mash.clipTrack(clip)).toStrictEqual(secondTrack)
       expect(secondTrack.clips.includes(clip)).toBeTruthy()
       expect(firstTrack.clips.includes(clip)).toBeFalsy()
-    })
-
-    test("correctly moves to new position on main track", () => {
-      const mash = MashFactory.instance()
-      const trackClips = mash.trackOfTypeAtIndex(TrackType.Video, 0).clips
-      const array = new Array(4).fill(null)
-      const objects = array.map(() => {
-        const clip = addNewClip(mash, colorDefinition())
-        expect(clip).toBeTruthy()
-        expect(clip).toBeInstanceOf(InstanceBase)
-        return clip
-      }).reverse()
-      expect(mash.clips).toEqual(objects)
-      expect(trackClips).toEqual(objects)
-
-      const a2z = "abcdefg" // efghijklmnopqrstuvwxyz"
-      const clips = Object.fromEntries(objects.map((clip, i) => [a2z[i], clip]))
-
-      const moveClips = objects.slice(2)
-      mash.addClipsToTrack(moveClips, 0, 1)
-      // logOrder()
-      expect(trackClips).toEqual([clips.a, clips.c, clips.d, clips.b])
-
-      mash.addClipsToTrack(moveClips, 0, 2)
-      expect(mash.clips).toEqual([clips.a, clips.c, clips.d, clips.b])
     })
 
     test("correctly places clip in track clips", () => {
@@ -113,8 +87,8 @@ describe("Mash", () => {
       expect(mash.quantize).toEqual(10)
       const clip1 = colorDefinition().instance
       const clip2 = colorDefinition().instance
-      mash.addClipsToTrack([clip1], 0)
-      mash.addClipsToTrack([clip2], 0, 1)
+      mash.addClipToTrack(clip1, 0)
+      mash.addClipToTrack(clip2, 0, 1)
       const track = mash.trackOfTypeAtIndex(TrackType.Video, 0)
 
       expect(track.dense).toBeTruthy()
@@ -131,7 +105,7 @@ describe("Mash", () => {
     test("updates definition", () => {
       const mash = MashFactory.instance()
       const clip = colorDefinition().instance
-      mash.addClipsToTrack([clip], 0)
+      mash.addClipToTrack(clip, 0)
       // console.log("mash.definition", mash.definition)
       expect(mash.definitions.includes(colorDefinition())).toBeTruthy()
     })
@@ -201,8 +175,7 @@ describe("Mash", () => {
       const mash = MashFactory.instance({ id })
       const clip = colorDefinition().instance
       mash.addTrack(TrackType.Video)
-      mash.addClipsToTrack([clip], 1)
-      expect(clip.track).toEqual(1)
+      mash.addClipToTrack(clip, 1)
 
       const mashString = JSON.stringify(mash.toJSON())
       // console.log(mashString)

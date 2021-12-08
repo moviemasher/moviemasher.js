@@ -17,6 +17,16 @@ class TrackClass extends PropertiedClass {
     if (id) this._id = id
     if (layer) this.layer = layer
     if (trackType) this.trackType = trackType
+
+
+    if (typeof dense === 'undefined') {
+      this.dense = !this.layer && this.trackType === TrackType.Video
+    } else this.dense = !!dense
+
+    this.properties.push(
+      new Property({ name: "dense", type: DataType.Boolean, value: false })
+    )
+
     if (clips) this.clips.push(...clips.map(clip => {
       const { definitionId } = clip
       if (!definitionId) throw Errors.id + JSON.stringify(clip)
@@ -25,45 +35,27 @@ class TrackClass extends PropertiedClass {
       const clipWithTrack = { track: this.layer, ...clip }
       return <Clip> definition.instanceFromObject(clipWithTrack)
     }))
-
-    if (typeof dense === 'undefined') {
-      this.dense = !this.layer && this.trackType === TrackType.Video
-      // console.log(this.constructor.name, "dense", this.dense, "=", !this.layer, "&&", this.trackType === TrackType.Video)
-    } else {
-      this.dense = !!dense
-      // console.log(this.constructor.name, "dense", this.dense, "=", dense)
-    }
-
-    this.properties.push(
-      new Property({ name: "dense", type: DataType.Boolean, value: false })
-    )
   }
 
-  addClips(clips : Clip[], insertIndex = 0) : void {
-    // console.log("addClips", clips.length, insertIndex, this.layer)
+  addClip(clip : Clip, insertIndex = 0) : void {
     let clipIndex = insertIndex || 0
     if (!this.dense) clipIndex = 0 // ordered by clip.frame values
 
     const origIndex = clipIndex // note original, since it may decrease...
     const movingClips : Clip[] = [] // build array of clips already in this.clips
     // build array of my clips excluding the clips we're inserting
-    const spliceClips = this.clips.filter((clip, index) => {
-      const moving = clips.includes(clip)
-      if (moving) movingClips.push(clip)
+    const spliceClips = this.clips.filter((other, index) => {
+      const moving = other === clip
+      if (moving) movingClips.push(other)
       // insert index should be decreased when clip is moving and comes before
       if (origIndex && moving && index < origIndex) clipIndex -= 1
       return !moving
     })
     // insert the clips we're adding at the correct index, then sort properly
-    spliceClips.splice(clipIndex, 0, ...clips)
+    spliceClips.splice(clipIndex, 0, clip)
     this.sortClips(spliceClips)
 
-    // set the track of clips we aren't moving
-    const newClips = clips.filter(clip => !movingClips.includes(clip))
-    newClips.forEach(clip => {
-      // console.log(this.constructor.name, "addClips", this.layer)
-      clip.track = this.layer
-    })
+    clip.track = this.layer
 
     // remove all my current clips and replace with new ones in one step
     this.clips.splice(0, this.clips.length, ...spliceClips)
@@ -73,14 +65,14 @@ class TrackClass extends PropertiedClass {
 
   dense = false
 
-  frameForClipsNearFrame(clips : Clip[], frame = 0) : number {
+  frameForClipNearFrame(clip : Clip, frame = 0) : number {
     if (this.dense) return frame
 
-    const others = this.clips.filter(clip => !clips.includes(clip) && clip.endFrame > frame)
+    const others = this.clips.filter(other => clip !== other && other.endFrame > frame)
     if (!others.length) return frame
 
-    const startFrame = Math.min(...clips.map(clip => clip.frame))
-    const endFrame = Math.max(...clips.map(clip => clip.endFrame))
+    const startFrame = clip.frame
+    const endFrame = clip.endFrame
     const frames = endFrame - startFrame
 
     let lastFrame = frame
@@ -105,13 +97,13 @@ class TrackClass extends PropertiedClass {
 
   layer = 0
 
-  removeClips(clips : Clip[]) : void {
-    const spliceClips = this.clips.filter(clip => !clips.includes(clip))
+  removeClip(clip : Clip) : void {
+    const spliceClips = this.clips.filter(other => clip !== other)
     if (spliceClips.length === this.clips.length) {
-      // console.trace("removeClips", this.trackType, this.layer, this.clips)
-      throw Errors.internal + 'removeClips'
+      // console.trace("removeClip", this.trackType, this.layer, this.clips)
+      throw Errors.internal + ' removeClip'
     }
-    clips.forEach(clip => { clip.track = -1 })
+    clip.track = -1
     this.sortClips(spliceClips)
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }

@@ -23,7 +23,7 @@ interface MashObject extends UnknownObject {
 }
 
 interface Mash {
-  addClipsToTrack(clips : Clip[], trackIndex? : number, insertIndex? : number, frames? : number[]) : void
+  addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(trackType : TrackType) : Track
   backcolor?: string
   buffer: number
@@ -55,7 +55,7 @@ interface Mash {
   mashStatePromise(time:Time, dimensions:Size): MashStatePromise
   paused : boolean
   quantize : number
-  removeClipsFromTrack(clips : Clip[]) : void
+  removeClipFromTrack(clip : Clip) : void
   removeTrack(trackType : TrackType) : void
   seekToTime(time: Time) : LoadPromise | undefined
   time: Time

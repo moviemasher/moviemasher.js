@@ -14,13 +14,12 @@ import {
   DefinitionType,
   EventType,
   MasherAction,
-  MoveType,
   TrackType,
   TransformType,
   TransformTypes,
 } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { Is, isPopulatedObject } from "../Utilities/Is"
+import { Is } from "../Utilities/Is"
 import { sortByFrame } from "../Utilities/Sort"
 import { Time } from "../Utilities/Time"
 import { TimeRange } from "../Utilities/TimeRange"
@@ -67,8 +66,6 @@ class MasherClass implements Masher {
     if (typeof volume !== "undefined") this._volume = volume
     if (typeof buffer !== "undefined") this._buffer = buffer
     if (mash) this.mash = mash
-
-
   }
 
   private actionCreate(object : UnknownObject) : void {
@@ -126,10 +123,9 @@ class MasherClass implements Masher {
   addClip(clip : Clip, frameOrIndex = 0, trackIndex = 0) : LoadPromise {
     const { trackType } = clip
 
-    const clips = [clip]
     const options : UnknownObject = {
       clip,
-      type: ActionType.AddClipsToTrack,
+      type: ActionType.AddClipToTrack,
       redoSelection: { clip: clip },
       trackType,
     }
@@ -141,7 +137,7 @@ class MasherClass implements Masher {
       options.createTracks = Math.min(1, Math.max(0, 1 - trackCount))
     } else {
       options.trackIndex = trackIndex
-      clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex)
+      clip.frame = track.frameForClipNearFrame(clip, frameOrIndex)
       options.createTracks = Math.max(0, trackIndex + 1 - trackCount)
     }
     this.actionCreate(options)
@@ -158,14 +154,13 @@ class MasherClass implements Masher {
 
     const undoEffects = [...effects]
     const redoEffects = [...effects]
-    const redoSelectedEffects = [effect]
     redoEffects.splice(insertIndex, 0, effect)
     const options = {
       effects,
       undoEffects,
       redoEffects,
-      redoSelectedEffects,
-      type: ActionType.MoveEffects
+      redoSelection: { ...this.selection, effect },
+      type: ActionType.MoveEffect
     }
     this.actionCreate(options)
     return this.loadMashAndDraw()
@@ -375,33 +370,6 @@ class MasherClass implements Masher {
 
   eventTarget  = new Emitter()
 
-  private filterClipSelection(value : Clip | Clip[]) : Clip[] {
-    const clips : Clip[] = Array.isArray(value) ? value : [value]
-
-    const [firstClip] = clips
-    if (!firstClip) return []
-
-    const { trackType, track } = firstClip
-
-    //  must all be on same track
-    const trackClips = clips.filter(clip => (
-      clip.track === track && clip.trackType === trackType
-    )).sort(sortByFrame)
-
-    if (track || trackType === TrackType.Audio) return trackClips
-
-    // must be abutting each other on main track
-    let abutting = true
-    return trackClips.filter((clip : Clip, index : number) => {
-      if (!abutting) return false
-
-      if (index === trackClips.length - 1) return true
-
-      abutting = clip.frame + clip.frames === trackClips[index + 1].frame
-      return true
-    })
-  }
-
   private _fps = Default.masher.fps
 
   get fps() : number { return this._fps || this.mash.quantize }
@@ -549,82 +517,73 @@ class MasherClass implements Masher {
     if (this.autoplay) this.paused = false
   }
 
-  move(objectOrArray : ClipOrEffect | ClipOrEffect[], moveType : MoveType, frameOrIndex = 0, trackIndex = 0) : void {
-    if (!Is.object(objectOrArray)) throw Errors.argument + 'move'
-
-    if (moveType === MoveType.Effect) {
-      this.moveEffects(<Effect | Effect[]> objectOrArray, frameOrIndex)
+  move(object: ClipOrEffect, frameOrIndex = 0, trackIndex = 0) : void {
+    if (!Is.object(object)) throw Errors.argument
+    const { type } = object
+    if (type === DefinitionType.Effect) {
+      this.moveEffect(<Effect> object, frameOrIndex)
       return
     }
 
-    this.moveClips(<Clip | Clip[]>objectOrArray, frameOrIndex, trackIndex)
+    this.moveClip(<Clip>object, frameOrIndex, trackIndex)
   }
 
-  moveClips(clipOrArray : Clip | Clip[], frameOrIndex = 0, trackIndex = 0) : void {
-    // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
-    if (!Is.positive(frameOrIndex)) throw Errors.argument + 'moveClips frameOrIndex'
-    if (!Is.positive(trackIndex)) throw Errors.argument + 'moviClips trackIndex'
+  moveClip(clip: Clip, frameOrIndex = 0, trackIndex = 0) : void {
+    // console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+    if (!Is.positive(frameOrIndex)) throw Errors.argument + 'moveClip frameOrIndex'
+    if (!Is.positive(trackIndex)) throw Errors.argument + 'moveClip trackIndex'
 
-    const clips = this.filterClipSelection(clipOrArray)
-    if (!Is.populatedArray(clips)) throw Errors.argument + 'moveClips clips'
-
-    const [firstClip] = clips
-    const { trackType, track: undoTrackIndex } = firstClip
+    const { trackType, track: undoTrackIndex } = clip
     const options : Any = {
-      clips,
+      clip,
       trackType,
       trackIndex,
       undoTrackIndex,
-      type: ActionType.MoveClips
+      type: ActionType.MoveClip
     }
 
     const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex)
     const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex)
-    const currentIndex = redoTrack.clips.indexOf(firstClip)
+    const currentIndex = redoTrack.clips.indexOf(clip)
 
     if (redoTrack.dense) options.insertIndex = frameOrIndex
     if (undoTrack.dense) {
       options.undoInsertIndex = currentIndex
-      if (frameOrIndex < currentIndex) options.undoInsertIndex += clips.length
+      if (frameOrIndex < currentIndex) options.undoInsertIndex += 1
     }
 
     if (!(redoTrack.dense && undoTrack.dense)) {
-      const frames = clips.map(clip => clip.frame)
-      const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex)
-      const offset = insertFrame - firstClip.frame
+      const { frame } = clip
+      const insertFrame = redoTrack.frameForClipNearFrame(clip, frameOrIndex)
+      const offset = insertFrame - frame
       if (!offset) return // because there would be no change
 
-      options.undoFrames = frames
-      options.redoFrames = frames.map(frame => frame + offset)
+      options.undoFrame = frame
+      options.redoFrame = frame + offset
     }
     this.actionCreate(options)
   }
 
-  moveEffects(effectOrArray : Effect | Effect[], index = 0) : void {
+  moveEffect(effect: Effect, index = 0) : void {
     // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
     if (!Is.positive(index)) throw Errors.argument
 
-    const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray]
-    const moveEffects = array.filter(effect => effect instanceof EffectClass)
-    if (!Is.populatedArray(moveEffects)) throw Errors.argument
-
     const { clip } = this.selection
     if (!clip) throw Errors.selection
-
 
     const { effects } = <Transformable> clip
     const undoEffects = [...effects]
 
     const redoEffects : Effect[] = []
-    undoEffects.forEach((effect, i) => {
-      if (i === index) redoEffects.push(...moveEffects)
-      if (moveEffects.includes(effect)) return
+    undoEffects.forEach((other, i) => {
+      if (i === index) redoEffects.push(effect)
+      if (effect === other) return
 
-      redoEffects.push(effect)
+      redoEffects.push(other)
     })
 
     const options = {
-      effects, undoEffects, redoEffects, type: ActionType.MoveEffects
+      effects, undoEffects, redoEffects, type: ActionType.MoveEffect
     }
     // console.log(this.constructor.name, "moveEffects", options)
     this.actionCreate(options)
@@ -672,48 +631,45 @@ class MasherClass implements Masher {
   redo() : void { if (this.actions.canRedo) this.handleAction(this.actions.redo()) }
 
   remove(): void {
-    if (this.selection.effect) this.removeEffects(this.selection.effect)
-    else if (this.selection.clip) this.removeClips(this.selection.clip)
-    else if (this.selection.track) this.mash.removeTrack(this.selection.track.trackType)
+    if (this.selection.effect) this.removeEffect(this.selection.effect)
+    else if (this.selection.clip) this.removeClip(this.selection.clip)
+    else if (this.selection.track) this.removeTrack(this.selection.track)
     else throw Errors.selection
   }
 
-  removeClips(clipOrArray : Clip | Clip[]) : void {
-    const clips = this.filterClipSelection(clipOrArray)
-    if (!Is.populatedArray(clips)) throw Errors.argument
-
-    const [firstClip] = clips
-    const track = this.mash.clipTrack(firstClip)
+  removeClip(clip : Clip) : void {
+    const track = this.mash.clipTrack(clip)
     const options = {
       redoSelection: {},
-      clips,
+      clip,
       track,
-      index: track.clips.indexOf(firstClip),
-      type: ActionType.RemoveClips
+      index: track.clips.indexOf(clip),
+      type: ActionType.RemoveClip
     }
     this.actionCreate(options)
   }
 
-  removeEffects(effectOrArray : Effect | Effect[]) : void {
-    const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray]
-    const removeEffects = array.filter(effect => effect instanceof EffectClass)
-    if (!Is.populatedArray(removeEffects)) throw Errors.argument
-
+  removeEffect(effect: Effect) : void {
     const { clip } = this.selection
     if (!clip) throw Errors.selection
 
     const { effects } = <Transformable> clip
     const undoEffects = [...effects]
-    const redoEffects = effects.filter(effect => !removeEffects.includes(effect))
+    const redoEffects = effects.filter(other => other !== effect)
 
     const options = {
-      redoSelectedEffects: [],
+      redoSelection: { clip: this.selection.clip },
       effects,
       undoEffects,
       redoEffects,
-      type: ActionType.MoveEffects
+      type: ActionType.MoveEffect
     }
     this.actionCreate(options)
+  }
+
+  removeTrack(track: Track): void {
+    // TODO: create remove track action...
+    console.debug(this.constructor.name, "removeTrack coming soon...")
   }
 
   save() : void { this.actions.save() }

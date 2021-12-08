@@ -2,17 +2,17 @@
 
 enum ActionType {
   AddTrack = 'addTrack',
-  AddClipsToTrack = 'addClipsToTrack',
-  MoveClips = 'moveClips',
+  AddClipToTrack = 'addClipToTrack',
+  MoveClip = 'moveClip',
   AddEffect = 'addEffect',
   Change = 'change',
   ChangeFrames = 'changeFrames',
   ChangeTrim = 'changeTrim',
   ChangeGain = 'changeGain',
-  MoveEffects = 'moveEffects',
+  MoveEffect = 'moveEffect',
   Split = 'split',
   Freeze ='freeze',
-  RemoveClips = 'removeClips',
+  RemoveClip = 'removeClip',
 }
 
 enum TrackType {

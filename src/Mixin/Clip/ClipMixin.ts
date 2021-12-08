@@ -4,10 +4,8 @@ import { Time  } from "../../Utilities/Time"
 import { Is } from "../../Utilities/Is"
 import { TimeRange } from "../../Utilities/TimeRange"
 import { InstanceClass } from "../../Base/Instance"
-import { ClipClass, ClipObject, ClipDefinition } from "./Clip"
+import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
 import { Errors } from "../../Setup/Errors"
-
-
 
 function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
   return class extends Base {
@@ -29,10 +27,18 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
       return clipState
     }
+
     commandAtTimeToSize(mashTime: Time, quantize: number, dimensions: Size): InputCommand | undefined {
       const source = this.definition.inputSource
       const inputCommand: InputCommand = { sources: { source }, filters: []}
       return inputCommand
+    }
+
+    get copy(): Clip {
+      const clipObject: ClipObject = this.toJSON()
+      clipObject.id = ''
+      clipObject.track = this.track
+      return <Clip> this.definition.instanceFromObject(clipObject)
     }
 
     declare definition: ClipDefinition

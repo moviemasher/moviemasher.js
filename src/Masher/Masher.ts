@@ -55,9 +55,9 @@ interface Masher extends UnknownObject {
   loadedDefinitions : DefinitionTimes
   loop : boolean
   mash : Mash
-  move(objectOrArray : ClipOrEffect | ClipOrEffect[], moveType : MoveType, frameOrIndex? : number, trackIndex? : number) : void
-  moveClips(clipOrArray : Clip | Clip[], frameOrIndex? : number, trackIndex? : number) : void
-  moveEffects(effectOrArray : Effect | Effect[], index? : number) : void
+  move(object: ClipOrEffect, frameOrIndex? : number, trackIndex? : number) : void
+  moveClip(clip: Clip, frameOrIndex? : number, trackIndex? : number) : void
+  moveEffect(effect: Effect, index? : number) : void
   muted : boolean
   pause() : void
   paused : boolean
@@ -67,8 +67,9 @@ interface Masher extends UnknownObject {
   precision : number
   redo() : void
   remove() : void
-  removeClips(clipOrArray : Clip | Clip[]) : void
-  removeEffects(effectOrArray : Effect | Effect[]) : void
+  removeClip(clip: Clip) : void
+  removeEffect(effect: Effect): void
+  removeTrack(track: Track): void
   save() : void
   selectClip(clip : Clip | undefined) : void
   selectEffect(effect : Effect | undefined) : void

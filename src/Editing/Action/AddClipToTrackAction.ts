@@ -34,11 +34,11 @@ class AddClipToTrackAction extends AddTrackAction {
 
   redoAction() : void {
     for (let i = 0; i < this.createTracks; i += 1) { super.redoAction() }
-    this.mash.addClipsToTrack([this.clip], this.trackIndex, this.insertIndex)
+    this.mash.addClipToTrack(this.clip, this.trackIndex, this.insertIndex)
   }
 
   undoAction() : void {
-    this.mash.removeClipsFromTrack([this.clip])
+    this.mash.removeClipFromTrack(this.clip)
     for (let i = 0; i < this.createTracks; i += 1) { super.undoAction() }
   }
 }

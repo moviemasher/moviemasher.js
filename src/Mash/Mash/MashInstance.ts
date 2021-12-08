@@ -53,45 +53,43 @@ class MashClass implements Mash {
     if (createdAt) this.createdAt = createdAt
 
 
-    if (tracks) this.tracks.push(...tracks.map((track, index) => {
-      const instance = Factory.track.instance(this.trackOptions(track, index))
+    if (tracks) tracks.forEach(track => {
+      track.layer = this.trackCount(track.trackType)
+      const instance = Factory.track.instance(track)
       this.assureClipsHaveFrames(instance.clips)
-      return instance
-    }))
-    if (!this.trackCount(TrackType.Video)) {
-      this.tracks.push(Factory.track.instance({ trackType: TrackType.Video }))
-    }
-    if (!this.trackCount(TrackType.Audio)) {
-      this.tracks.push(Factory.track.instance({ trackType: TrackType.Audio }))
-    }
+      this.tracks.push(instance)
+    })
+
+    this.assureTrackOfType(TrackType.Video)
+    this.assureTrackOfType(TrackType.Audio)
     this.tracks.sort(sortByLayer)
 
     this.setDrawInterval()
   }
 
-  addClipsToTrack(clips: Clip[], trackIndex = 0, insertIndex = 0, frames? : number[]): void {
-    // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
-    this.assureClipsHaveFrames(clips)
-    const [clip] = clips
+  addClipToTrack(clip: Clip, trackIndex = 0, insertIndex = 0, frame? : number): void {
+    console.log(this.constructor.name, "addClipToTrack", trackIndex, insertIndex)
+    this.assureClipsHaveFrames([clip])
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     if (!newTrack) throw Errors.invalid.track
-    // console.log(this.constructor.name, "addClipsToTrack", newTrack)
+    // console.log(this.constructor.name, "addClipToTrack", newTrack)
 
     const oldTrack = Is.positive(clip.track) && this.clipTrack(clip)
 
+    console.log("addClipToTrack", newTrack.layer, oldTrack && oldTrack.layer )
     this.emitIfFramesChange(() => {
       if (oldTrack && oldTrack !== newTrack) {
-        // console.log("addClipsToTrack", newTrack.index, oldTrack.index)
-        oldTrack.removeClips(clips)
+        oldTrack.removeClip(clip)
       }
-      if (frames) clips.forEach((clip, index) => { clip.frame = frames[index] })
-      newTrack.addClips(clips, insertIndex)
+      if (frame) clip.frame = frame
+      newTrack.addClip(clip, insertIndex)
     })
   }
 
   addTrack(trackType: TrackType): Track {
     const options : TrackObject = { trackType: trackType, layer: this.trackCount(trackType) }
     const track = Factory.track.instance(options)
+    console.log(this.constructor.name, "addTrack", track)
     this.tracks.push(track)
     this.tracks.sort(sortByLayer)
     this.emitter?.emit(EventType.Track)
@@ -103,6 +101,12 @@ class MashClass implements Mash {
       const definition = <ClipDefinition>clip.definition
       clip.frames = definition.frames(this.quantize)
     })
+  }
+
+  private assureTrackOfType(trackType: TrackType): void {
+     if (!this.trackCount(trackType)) {
+      this.tracks.push(Factory.track.instance({ trackType: trackType }))
+    }
   }
 
   private _backcolor = Default.mash.backcolor
@@ -627,10 +631,9 @@ class MashClass implements Mash {
     }
   }
 
-  removeClipsFromTrack(clips : Clip[]) : void {
-    const [clip] = clips
+  removeClipFromTrack(clip : Clip) : void {
     const track = this.clipTrack(clip)
-    this.emitIfFramesChange(() => { track.removeClips(clips) })
+    this.emitIfFramesChange(() => { track.removeClip(clip) })
   }
 
   removeTrack(trackType: TrackType): void {
@@ -740,10 +743,6 @@ class MashClass implements Mash {
     }
 
     return this.tracksOfType(type)[index]
-  }
-
-  private trackOptions(object: TrackObject, index: number): TrackObject {
-    return { ...object, layer: index }
   }
 
   tracks: Track[] = []

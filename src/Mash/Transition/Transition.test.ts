@@ -32,15 +32,15 @@ describe("Transition", () => {
       const transitionDefinition = Factory.transition.definitionFromId("com.moviemasher.transition.crossfade")
       const transition = transitionDefinition.instance
       mash.addTrack(TrackType.Transition)
-      mash.addClipsToTrack([cableImage])
-      mash.addClipsToTrack([transition], 0, 0, [10])
+      mash.addClipToTrack(cableImage)
+      mash.addClipToTrack(transition, 0, 0, 10)
       expect(transition.timeRange(quantize)).toEqual(TimeRange.fromArgs(10, quantize, 10))
       expect(cableImage.timeRange(quantize)).toEqual(TimeRange.fromArgs(0, quantize, 20))
       await expectMashTimeContext(mash, Time.fromArgs(3, quantize))
       await expectMashTimeContext(mash, Time.fromArgs(7, quantize))
 
       mash.addTrack(TrackType.Video)
-      mash.addClipsToTrack([globeImage], 1)
+      mash.addClipToTrack(globeImage, 1)
       cableImage.frame = 10
       transition.frame = 10
       expect(globeImage.timeRange(quantize)).toEqual(TimeRange.fromArgs(0, quantize, 20))
@@ -49,7 +49,7 @@ describe("Transition", () => {
       await expectMashTimeContext(mash, Time.fromArgs(13, quantize))
       await expectMashTimeContext(mash, Time.fromArgs(17, quantize))
 
-      mash.removeClipsFromTrack([cableImage])
+      mash.removeClipFromTrack(cableImage)
       expect(globeImage.timeRange(quantize)).toEqual(TimeRange.fromArgs(0, quantize, 20))
       expect(transition.timeRange(quantize)).toEqual(TimeRange.fromArgs(10, quantize, 10))
       await expectMashTimeContext(mash, Time.fromArgs(13, quantize))

@@ -83,7 +83,6 @@ class CmsServer implements Server {
     return this.db.get(sql, userId).then(row => row?.id || '')
   }
 
-
   getMash(userId: string, mashId: string): Promise<MashObject> {
     return this.rowExists('mash', mashId, userId).then(exists => {
       if (!exists) return {}
@@ -327,16 +326,25 @@ class CmsServer implements Server {
       `
       return this.db.run(sql, quantize, label, backcolor, data, id).then(() => existingIds)
     })
-    const deletePromise = updatePromise.then(existingIds => {
-      const promises: Promise<void>[] = []
-      tracks?.forEach(track => {
-        const { id: trackId = '' } = track
-        promises.push(this.writeTrack(track, userId, id))
-        const existingIndex = existingIds.indexOf(trackId)
-        if (isPositive(existingIndex)) existingIds.splice(existingIndex, 1)
+    let promise = updatePromise
+    const trackIds: string[] = []
+    tracks?.forEach(track => {
+      if (track.id) trackIds.push(track.id)
+      promise = promise.then(existingIds => {
+        return this.writeTrack(track, userId, id).then(() => existingIds)
       })
-      existingIds.forEach(trackId => { promises.push(this.deleteTrack(trackId))})
-      return Promise.all(promises).then(Noop)
+    })
+
+    const deletePromise = promise.then(existingIds => {
+      const promises: Promise<void>[] = []
+      existingIds.forEach(trackId => {
+        if (!trackIds.includes(trackId)) promises.push(this.deleteTrack(trackId))
+      })
+      switch (promises.length) {
+        case 0: return
+        case 1: return promises[0].then(Noop)
+        default: return Promise.all(promises).then(Noop)
+      }
     })
     return deletePromise
   }

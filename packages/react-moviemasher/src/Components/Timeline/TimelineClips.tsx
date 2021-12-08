@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clip, DefinitionType, DefinitionTypes, isPopulatedObject, pixelFromFrame, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { Clip, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../Utilities/View'
 import { EditorContext } from '../../Contexts/EditorContext'
@@ -85,7 +85,7 @@ const TimelineClips: React.FC<TimelineClipsProps> = props => {
       const clip = masher.selection.clip
       if (!clip) return
 
-      masher.moveClips(clip, frameOrIndex, layer)
+      masher.moveClip(clip, frameOrIndex, layer)
     } else {
       masher.add(definition, frameOrIndex, layer)
     }

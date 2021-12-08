@@ -10,6 +10,7 @@ import { Visible } from "../Mixin/Visible/Visible"
 import { Transition } from "../Mash/Transition/Transition"
 import { Cache } from "../Loading/Cache"
 import { Emitter } from "../Utilities/Emitter"
+import { Track } from "../Mash/Track/Track"
 
 interface CompositionObject {
   buffer? : number
@@ -81,7 +82,7 @@ class Composition {
     this.drawBackground() // clear and fill with mash background color if defined
 
     const clipsByTrack = new Map<number, Visible>()
-    const transitionsByTrack: Record<number, Transition> = {}
+    const transitionsByTrack = new Map<number, Transition>()
     const transitioningTracks: number[] = []
 
     const transitionClips: Transition[] = []
@@ -90,8 +91,8 @@ class Composition {
       const { type } = clip
       if (type === DefinitionType.Transition) {
         const transition = <Transition>clip
-        transitionsByTrack[transition.fromTrack] = transition
-        transitionsByTrack[transition.toTrack] = transition
+        transitionsByTrack.set(transition.fromTrack, transition)
+        transitionsByTrack.set(transition.toTrack, transition)
 
         transitioningTracks.push(transition.fromTrack, transition.toTrack)
         transitionClips.push(transition)
@@ -103,7 +104,9 @@ class Composition {
 
     visibleTracks.forEach(track => {
       if (transitioningTracks.includes(track)) {
-        const transition = transitionsByTrack[track]
+        const transition = transitionsByTrack.get(track)
+        if (!transition) throw Errors.internal
+
         const { fromTrack, toTrack } = transition
         const transitioned: Visible[] = []
         const fromClip = clipsByTrack.get(fromTrack)

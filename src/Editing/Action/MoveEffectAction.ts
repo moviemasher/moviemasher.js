@@ -1,13 +1,13 @@
 import { Effect } from "../../Mash/Effect/Effect"
 import { Action, ActionObject } from "./Action"
 
-interface MoveEffectsActionObject extends ActionObject {
+interface MoveEffectActionObject extends ActionObject {
   effects : Effect[]
   redoEffects : Effect[]
   undoEffects : Effect[]
 }
-class MoveEffectsAction extends Action {
-  constructor(object : MoveEffectsActionObject) {
+class MoveEffectAction extends Action {
+  constructor(object : MoveEffectActionObject) {
     super(object)
     const { effects, redoEffects, undoEffects } = object
     this.effects = effects
@@ -30,4 +30,4 @@ class MoveEffectsAction extends Action {
   }
 }
 
-export { MoveEffectsAction }
+export { MoveEffectAction }

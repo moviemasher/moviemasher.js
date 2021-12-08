@@ -13,13 +13,13 @@ interface TrackObject extends UnknownObject {
 }
 
 interface Track extends Propertied {
-  addClips(clips : Clip[], insertIndex?: number) : void
+  addClip(clip : Clip, insertIndex?: number) : void
   clips: Clip[]
   dense: boolean
-  frameForClipsNearFrame(clips: Clip[], frame?: number): number
+  frameForClipNearFrame(clip: Clip, frame?: number): number
   frames: number
   layer: number
-  removeClips(clips: Clip[]): void
+  removeClip(clip: Clip): void
   sortClips(clips: Clip[]): void
   trackType: TrackType
 }
