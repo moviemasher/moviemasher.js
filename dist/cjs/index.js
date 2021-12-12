@@ -138,17 +138,17 @@ const Id = {
 exports.ActionType = void 0;
 (function (ActionType) {
     ActionType["AddTrack"] = "addTrack";
-    ActionType["AddClipsToTrack"] = "addClipsToTrack";
-    ActionType["MoveClips"] = "moveClips";
+    ActionType["AddClipToTrack"] = "addClipToTrack";
+    ActionType["MoveClip"] = "moveClip";
     ActionType["AddEffect"] = "addEffect";
     ActionType["Change"] = "change";
     ActionType["ChangeFrames"] = "changeFrames";
     ActionType["ChangeTrim"] = "changeTrim";
     ActionType["ChangeGain"] = "changeGain";
-    ActionType["MoveEffects"] = "moveEffects";
+    ActionType["MoveEffect"] = "moveEffect";
     ActionType["Split"] = "split";
     ActionType["Freeze"] = "freeze";
-    ActionType["RemoveClips"] = "removeClips";
+    ActionType["RemoveClip"] = "removeClip";
 })(exports.ActionType || (exports.ActionType = {}));
 exports.TrackType = void 0;
 (function (TrackType) {
@@ -1139,6 +1139,12 @@ class TrackClass extends PropertiedClass {
             this.layer = layer;
         if (trackType)
             this.trackType = trackType;
+        if (typeof dense === 'undefined') {
+            this.dense = !this.layer && this.trackType === exports.TrackType.Video;
+        }
+        else
+            this.dense = !!dense;
+        this.properties.push(new Property({ name: "dense", type: exports.DataType.Boolean, value: false }));
         if (clips)
             this.clips.push(...clips.map(clip => {
                 const { definitionId } = clip;
@@ -1148,53 +1154,35 @@ class TrackClass extends PropertiedClass {
                 const clipWithTrack = { track: this.layer, ...clip };
                 return definition.instanceFromObject(clipWithTrack);
             }));
-        if (typeof dense === 'undefined') {
-            this.dense = !this.layer && this.trackType === exports.TrackType.Video;
-            // console.log(this.constructor.name, "dense", this.dense, "=", !this.layer, "&&", this.trackType === TrackType.Video)
-        }
-        else {
-            this.dense = !!dense;
-            // console.log(this.constructor.name, "dense", this.dense, "=", dense)
-        }
-        this.properties.push(new Property({ name: "dense", type: exports.DataType.Boolean, value: false }));
     }
-    addClips(clips, insertIndex = 0) {
-        // console.log("addClips", clips.length, insertIndex, this.layer)
+    addClip(clip, insertIndex = 0) {
         let clipIndex = insertIndex || 0;
         if (!this.dense)
             clipIndex = 0; // ordered by clip.frame values
         const origIndex = clipIndex; // note original, since it may decrease...
-        const movingClips = []; // build array of clips already in this.clips
         // build array of my clips excluding the clips we're inserting
-        const spliceClips = this.clips.filter((clip, index) => {
-            const moving = clips.includes(clip);
-            if (moving)
-                movingClips.push(clip);
+        const spliceClips = this.clips.filter((other, index) => {
+            const moving = other === clip;
             // insert index should be decreased when clip is moving and comes before
             if (origIndex && moving && index < origIndex)
                 clipIndex -= 1;
             return !moving;
         });
         // insert the clips we're adding at the correct index, then sort properly
-        spliceClips.splice(clipIndex, 0, ...clips);
+        spliceClips.splice(clipIndex, 0, clip);
         this.sortClips(spliceClips);
-        // set the track of clips we aren't moving
-        const newClips = clips.filter(clip => !movingClips.includes(clip));
-        newClips.forEach(clip => {
-            // console.log(this.constructor.name, "addClips", this.layer)
-            clip.track = this.layer;
-        });
+        clip.track = this.layer;
         // remove all my current clips and replace with new ones in one step
         this.clips.splice(0, this.clips.length, ...spliceClips);
     }
-    frameForClipsNearFrame(clips, frame = 0) {
+    frameForClipNearFrame(clip, frame = 0) {
         if (this.dense)
             return frame;
-        const others = this.clips.filter(clip => !clips.includes(clip) && clip.endFrame > frame);
+        const others = this.clips.filter(other => clip !== other && other.endFrame > frame);
         if (!others.length)
             return frame;
-        const startFrame = Math.min(...clips.map(clip => clip.frame));
-        const endFrame = Math.max(...clips.map(clip => clip.endFrame));
+        const startFrame = clip.frame;
+        const endFrame = clip.endFrame;
         const frames = endFrame - startFrame;
         let lastFrame = frame;
         others.find(clip => {
@@ -1211,13 +1199,13 @@ class TrackClass extends PropertiedClass {
         return clip.frame + clip.frames;
     }
     get id() { return this._id ||= idGenerate(); }
-    removeClips(clips) {
-        const spliceClips = this.clips.filter(clip => !clips.includes(clip));
+    removeClip(clip) {
+        const spliceClips = this.clips.filter(other => clip !== other);
         if (spliceClips.length === this.clips.length) {
-            // console.trace("removeClips", this.trackType, this.layer, this.clips)
-            throw Errors.internal + 'removeClips';
+            // console.trace("removeClip", this.trackType, this.layer, this.clips)
+            throw Errors.internal + ' removeClip';
         }
-        clips.forEach(clip => { clip.track = -1; });
+        clip.track = -1;
         this.sortClips(spliceClips);
         this.clips.splice(0, this.clips.length, ...spliceClips);
     }
@@ -1246,12 +1234,8 @@ class TrackClass extends PropertiedClass {
     }
 }
 
-const trackInstance = (object) => {
-    return new TrackClass(object);
-};
-const TrackFactory = {
-    instance: trackInstance,
-};
+const trackInstance = (object) => new TrackClass(object);
+const TrackFactory = { instance: trackInstance };
 
 class Factory {
     static get [exports.DefinitionType.Audio]() {
@@ -1389,36 +1373,36 @@ class AddClipToTrackAction extends AddTrackAction {
         for (let i = 0; i < this.createTracks; i += 1) {
             super.redoAction();
         }
-        this.mash.addClipsToTrack([this.clip], this.trackIndex, this.insertIndex);
+        this.mash.addClipToTrack(this.clip, this.trackIndex, this.insertIndex);
     }
     undoAction() {
-        this.mash.removeClipsFromTrack([this.clip]);
+        this.mash.removeClipFromTrack(this.clip);
         for (let i = 0; i < this.createTracks; i += 1) {
             super.undoAction();
         }
     }
 }
 
-class MoveClipsAction extends Action {
+class MoveClipAction extends Action {
     constructor(object) {
         super(object);
-        const { clips, insertIndex, redoFrames, trackIndex, undoFrames, undoInsertIndex, undoTrackIndex } = object;
-        this.clips = clips;
+        const { clip, insertIndex, redoFrame, trackIndex, undoFrame, undoInsertIndex, undoTrackIndex } = object;
+        this.clip = clip;
         this.insertIndex = insertIndex;
-        this.redoFrames = redoFrames;
+        this.redoFrame = redoFrame;
         this.trackIndex = trackIndex;
-        this.undoFrames = undoFrames;
+        this.undoFrame = undoFrame;
         this.undoInsertIndex = undoInsertIndex;
         this.undoTrackIndex = undoTrackIndex;
     }
-    addClips(trackIndex, insertIndex, frames) {
-        this.mash.addClipsToTrack(this.clips, trackIndex, insertIndex, frames);
+    addClip(trackIndex, insertIndex, frame) {
+        this.mash.addClipToTrack(this.clip, trackIndex, insertIndex, frame);
     }
     redoAction() {
-        this.addClips(this.trackIndex, this.insertIndex, this.redoFrames);
+        this.addClip(this.trackIndex, this.insertIndex, this.redoFrame);
     }
     undoAction() {
-        this.addClips(this.undoTrackIndex, this.undoInsertIndex, this.undoFrames);
+        this.addClip(this.undoTrackIndex, this.undoInsertIndex, this.undoFrame);
     }
 }
 
@@ -1527,7 +1511,7 @@ class FreezeAction extends Action {
     }
 }
 
-class MoveEffectsAction extends Action {
+class MoveEffectAction extends Action {
     constructor(object) {
         super(object);
         const { effects, redoEffects, undoEffects } = object;
@@ -1543,35 +1527,35 @@ class MoveEffectsAction extends Action {
     }
 }
 
-class RemoveClipsAction extends Action {
+class RemoveClipAction extends Action {
     constructor(object) {
         super(object);
-        const { clips, index, track } = object;
-        this.clips = clips;
+        const { clip, index, track } = object;
+        this.clip = clip;
         this.index = index;
         this.track = track;
     }
     get trackIndex() { return this.track.layer; }
     redoAction() {
-        this.mash.removeClipsFromTrack(this.clips);
+        this.mash.removeClipFromTrack(this.clip);
     }
     undoAction() {
-        this.mash.addClipsToTrack(this.clips, this.trackIndex, this.index);
+        this.mash.addClipToTrack(this.clip, this.trackIndex, this.index);
     }
 }
 
 const classes$1 = {
     AddTrack: AddTrackAction,
-    AddClipsToTrack: AddClipToTrackAction,
-    MoveClips: MoveClipsAction,
+    AddClipToTrack: AddClipToTrackAction,
+    MoveClip: MoveClipAction,
     AddEffect: AddEffectAction,
     Change: ChangeAction,
     ChangeFrames: ChangeFramesAction,
     ChangeTrim: ChangeTrimAction,
     Split: SplitAction,
     Freeze: FreezeAction,
-    MoveEffects: MoveEffectsAction,
-    RemoveClips: RemoveClipsAction,
+    MoveEffect: MoveEffectAction,
+    RemoveClip: RemoveClipAction,
 };
 class ActionFactoryClass {
     createFromObject(object) {
@@ -2534,6 +2518,12 @@ function ClipMixin(Base) {
             const source = this.definition.inputSource;
             const inputCommand = { sources: { source }, filters: [] };
             return inputCommand;
+        }
+        get copy() {
+            const clipObject = this.toJSON();
+            clipObject.id = '';
+            clipObject.track = this.track;
+            return this.definition.instanceFromObject(clipObject);
         }
         definitionTime(quantize, time) {
             const scaledTime = super.definitionTime(quantize, time);
@@ -4985,15 +4975,15 @@ class Composition {
     compositeVisible(time, clips) {
         this.drawBackground(); // clear and fill with mash background color if defined
         const clipsByTrack = new Map();
-        const transitionsByTrack = {};
+        const transitionsByTrack = new Map();
         const transitioningTracks = [];
         const visibleTracks = [];
         clips.sort(sortByTrack).forEach(clip => {
             const { type } = clip;
             if (type === exports.DefinitionType.Transition) {
                 const transition = clip;
-                transitionsByTrack[transition.fromTrack] = transition;
-                transitionsByTrack[transition.toTrack] = transition;
+                transitionsByTrack.set(transition.fromTrack, transition);
+                transitionsByTrack.set(transition.toTrack, transition);
                 transitioningTracks.push(transition.fromTrack, transition.toTrack);
             }
             else {
@@ -5003,7 +4993,9 @@ class Composition {
         });
         visibleTracks.forEach(track => {
             if (transitioningTracks.includes(track)) {
-                const transition = transitionsByTrack[track];
+                const transition = transitionsByTrack.get(track);
+                if (!transition)
+                    throw Errors.internal;
                 const { fromTrack, toTrack } = transition;
                 const transitioned = [];
                 const fromClip = clipsByTrack.get(fromTrack);
@@ -5178,42 +5170,39 @@ class MashClass {
         if (createdAt)
             this.createdAt = createdAt;
         if (tracks)
-            this.tracks.push(...tracks.map((track, index) => {
-                const instance = Factory.track.instance(this.trackOptions(track, index));
+            tracks.forEach(track => {
+                track.layer = this.trackCount(track.trackType);
+                const instance = Factory.track.instance(track);
                 this.assureClipsHaveFrames(instance.clips);
-                return instance;
-            }));
-        if (!this.trackCount(exports.TrackType.Video)) {
-            this.tracks.push(Factory.track.instance({ trackType: exports.TrackType.Video }));
-        }
-        if (!this.trackCount(exports.TrackType.Audio)) {
-            this.tracks.push(Factory.track.instance({ trackType: exports.TrackType.Audio }));
-        }
+                this.tracks.push(instance);
+            });
+        this.assureTrackOfType(exports.TrackType.Video);
+        this.assureTrackOfType(exports.TrackType.Audio);
         this.tracks.sort(sortByLayer);
         this.setDrawInterval();
     }
-    addClipsToTrack(clips, trackIndex = 0, insertIndex = 0, frames) {
-        // console.log(this.constructor.name, "addClipsToTrack", trackIndex, insertIndex)
-        this.assureClipsHaveFrames(clips);
-        const [clip] = clips;
+    addClipToTrack(clip, trackIndex = 0, insertIndex = 0, frame) {
+        // console.log(this.constructor.name, "addClipToTrack", trackIndex, insertIndex, frame)
+        this.assureClipsHaveFrames([clip]);
         const newTrack = this.clipTrackAtIndex(clip, trackIndex);
         if (!newTrack)
             throw Errors.invalid.track;
-        // console.log(this.constructor.name, "addClipsToTrack", newTrack)
+        // console.log(this.constructor.name, "addClipToTrack", newTrack)
         const oldTrack = Is.positive(clip.track) && this.clipTrack(clip);
+        console.log("addClipToTrack", newTrack.layer, oldTrack && oldTrack.layer);
         this.emitIfFramesChange(() => {
             if (oldTrack && oldTrack !== newTrack) {
-                // console.log("addClipsToTrack", newTrack.index, oldTrack.index)
-                oldTrack.removeClips(clips);
+                oldTrack.removeClip(clip);
             }
-            if (frames)
-                clips.forEach((clip, index) => { clip.frame = frames[index]; });
-            newTrack.addClips(clips, insertIndex);
+            if (typeof frame !== 'undefined')
+                clip.frame = frame;
+            newTrack.addClip(clip, insertIndex);
         });
     }
     addTrack(trackType) {
         const options = { trackType: trackType, layer: this.trackCount(trackType) };
         const track = Factory.track.instance(options);
+        console.log(this.constructor.name, "addTrack", track);
         this.tracks.push(track);
         this.tracks.sort(sortByLayer);
         this.emitter?.emit(exports.EventType.Track);
@@ -5224,6 +5213,11 @@ class MashClass {
             const definition = clip.definition;
             clip.frames = definition.frames(this.quantize);
         });
+    }
+    assureTrackOfType(trackType) {
+        if (!this.trackCount(trackType)) {
+            this.tracks.push(Factory.track.instance({ trackType: trackType }));
+        }
     }
     get backcolor() { return this._backcolor; }
     set backcolor(value) {
@@ -5660,10 +5654,9 @@ class MashClass {
                 this.composition.stopPlaying();
         }
     }
-    removeClipsFromTrack(clips) {
-        const [clip] = clips;
+    removeClipFromTrack(clip) {
         const track = this.clipTrack(clip);
-        this.emitIfFramesChange(() => { track.removeClips(clips); });
+        this.emitIfFramesChange(() => { track.removeClip(clip); });
     }
     removeTrack(trackType) {
         const track = this.trackOfTypeAtIndex(trackType, this.trackCount(trackType) - 1);
@@ -5755,9 +5748,6 @@ class MashClass {
             throw Errors.invalid.track;
         }
         return this.tracksOfType(type)[index];
-    }
-    trackOptions(object, index) {
-        return { ...object, layer: index };
     }
     tracksOfType(trackType) {
         return this.tracks.filter(track => track.trackType === trackType);
@@ -6906,10 +6896,9 @@ class MasherClass {
     }
     addClip(clip, frameOrIndex = 0, trackIndex = 0) {
         const { trackType } = clip;
-        const clips = [clip];
         const options = {
             clip,
-            type: exports.ActionType.AddClipsToTrack,
+            type: exports.ActionType.AddClipToTrack,
             redoSelection: { clip: clip },
             trackType,
         };
@@ -6922,7 +6911,7 @@ class MasherClass {
         }
         else {
             options.trackIndex = trackIndex;
-            clip.frame = track.frameForClipsNearFrame(clips, frameOrIndex);
+            clip.frame = track.frameForClipNearFrame(clip, frameOrIndex);
             options.createTracks = Math.max(0, trackIndex + 1 - trackCount);
         }
         this.actionCreate(options);
@@ -6938,14 +6927,13 @@ class MasherClass {
             throw Errors.selection;
         const undoEffects = [...effects];
         const redoEffects = [...effects];
-        const redoSelectedEffects = [effect];
         redoEffects.splice(insertIndex, 0, effect);
         const options = {
             effects,
             undoEffects,
             redoEffects,
-            redoSelectedEffects,
-            type: exports.ActionType.MoveEffects
+            redoSelection: { ...this.selection, effect },
+            type: exports.ActionType.MoveEffect
         };
         this.actionCreate(options);
         return this.loadMashAndDraw();
@@ -7130,27 +7118,6 @@ class MasherClass {
     get currentTime() { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0; }
     get duration() { return this.mash.duration; }
     get endTime() { return this.mash.endTime.scale(this.fps, 'floor'); }
-    filterClipSelection(value) {
-        const clips = Array.isArray(value) ? value : [value];
-        const [firstClip] = clips;
-        if (!firstClip)
-            return [];
-        const { trackType, track } = firstClip;
-        //  must all be on same track
-        const trackClips = clips.filter(clip => (clip.track === track && clip.trackType === trackType)).sort(sortByFrame);
-        if (track || trackType === exports.TrackType.Audio)
-            return trackClips;
-        // must be abutting each other on main track
-        let abutting = true;
-        return trackClips.filter((clip, index) => {
-            if (!abutting)
-                return false;
-            if (index === trackClips.length - 1)
-                return true;
-            abutting = clip.frame + clip.frames === trackClips[index + 1].frame;
-            return true;
-        });
-    }
     get fps() { return this._fps || this.mash.quantize; }
     set fps(value) {
         const number = Number(value);
@@ -7271,61 +7238,54 @@ class MasherClass {
         if (this.autoplay)
             this.paused = false;
     }
-    move(objectOrArray, moveType, frameOrIndex = 0, trackIndex = 0) {
-        if (!Is.object(objectOrArray))
-            throw Errors.argument + 'move';
-        if (moveType === exports.MoveType.Effect) {
-            this.moveEffects(objectOrArray, frameOrIndex);
+    move(object, frameOrIndex = 0, trackIndex = 0) {
+        if (!Is.object(object))
+            throw Errors.argument;
+        const { type } = object;
+        if (type === exports.DefinitionType.Effect) {
+            this.moveEffect(object, frameOrIndex);
             return;
         }
-        this.moveClips(objectOrArray, frameOrIndex, trackIndex);
+        this.moveClip(object, frameOrIndex, trackIndex);
     }
-    moveClips(clipOrArray, frameOrIndex = 0, trackIndex = 0) {
-        // console.log("moveClips", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+    moveClip(clip, frameOrIndex = 0, trackIndex = 0) {
+        // console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
         if (!Is.positive(frameOrIndex))
-            throw Errors.argument + 'moveClips frameOrIndex';
+            throw Errors.argument + 'moveClip frameOrIndex';
         if (!Is.positive(trackIndex))
-            throw Errors.argument + 'moviClips trackIndex';
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument + 'moveClips clips';
-        const [firstClip] = clips;
-        const { trackType, track: undoTrackIndex } = firstClip;
+            throw Errors.argument + 'moveClip trackIndex';
+        const { trackType, track: undoTrackIndex } = clip;
         const options = {
-            clips,
+            clip,
             trackType,
             trackIndex,
             undoTrackIndex,
-            type: exports.ActionType.MoveClips
+            type: exports.ActionType.MoveClip
         };
         const redoTrack = this.mash.trackOfTypeAtIndex(trackType, trackIndex);
         const undoTrack = this.mash.trackOfTypeAtIndex(trackType, undoTrackIndex);
-        const currentIndex = redoTrack.clips.indexOf(firstClip);
+        const currentIndex = redoTrack.clips.indexOf(clip);
         if (redoTrack.dense)
             options.insertIndex = frameOrIndex;
         if (undoTrack.dense) {
             options.undoInsertIndex = currentIndex;
             if (frameOrIndex < currentIndex)
-                options.undoInsertIndex += clips.length;
+                options.undoInsertIndex += 1;
         }
         if (!(redoTrack.dense && undoTrack.dense)) {
-            const frames = clips.map(clip => clip.frame);
-            const insertFrame = redoTrack.frameForClipsNearFrame(clips, frameOrIndex);
-            const offset = insertFrame - firstClip.frame;
+            const { frame } = clip;
+            const insertFrame = redoTrack.frameForClipNearFrame(clip, frameOrIndex);
+            const offset = insertFrame - frame;
             if (!offset)
                 return; // because there would be no change
-            options.undoFrames = frames;
-            options.redoFrames = frames.map(frame => frame + offset);
+            options.undoFrame = frame;
+            options.redoFrame = frame + offset;
         }
         this.actionCreate(options);
     }
-    moveEffects(effectOrArray, index = 0) {
+    moveEffect(effect, index = 0) {
         // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
         if (!Is.positive(index))
-            throw Errors.argument;
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const moveEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(moveEffects))
             throw Errors.argument;
         const { clip } = this.selection;
         if (!clip)
@@ -7333,15 +7293,15 @@ class MasherClass {
         const { effects } = clip;
         const undoEffects = [...effects];
         const redoEffects = [];
-        undoEffects.forEach((effect, i) => {
+        undoEffects.forEach((other, i) => {
             if (i === index)
-                redoEffects.push(...moveEffects);
-            if (moveEffects.includes(effect))
+                redoEffects.push(effect);
+            if (effect === other)
                 return;
-            redoEffects.push(effect);
+            redoEffects.push(other);
         });
         const options = {
-            effects, undoEffects, redoEffects, type: exports.ActionType.MoveEffects
+            effects, undoEffects, redoEffects, type: exports.ActionType.MoveEffect
         };
         // console.log(this.constructor.name, "moveEffects", options)
         this.actionCreate(options);
@@ -7378,48 +7338,44 @@ class MasherClass {
         this.handleAction(this.actions.redo()); }
     remove() {
         if (this.selection.effect)
-            this.removeEffects(this.selection.effect);
+            this.removeEffect(this.selection.effect);
         else if (this.selection.clip)
-            this.removeClips(this.selection.clip);
+            this.removeClip(this.selection.clip);
         else if (this.selection.track)
-            this.mash.removeTrack(this.selection.track.trackType);
+            this.removeTrack(this.selection.track);
         else
             throw Errors.selection;
     }
-    removeClips(clipOrArray) {
-        const clips = this.filterClipSelection(clipOrArray);
-        if (!Is.populatedArray(clips))
-            throw Errors.argument;
-        const [firstClip] = clips;
-        const track = this.mash.clipTrack(firstClip);
+    removeClip(clip) {
+        const track = this.mash.clipTrack(clip);
         const options = {
             redoSelection: {},
-            clips,
+            clip,
             track,
-            index: track.clips.indexOf(firstClip),
-            type: exports.ActionType.RemoveClips
+            index: track.clips.indexOf(clip),
+            type: exports.ActionType.RemoveClip
         };
         this.actionCreate(options);
     }
-    removeEffects(effectOrArray) {
-        const array = Array.isArray(effectOrArray) ? effectOrArray : [effectOrArray];
-        const removeEffects = array.filter(effect => effect instanceof EffectClass);
-        if (!Is.populatedArray(removeEffects))
-            throw Errors.argument;
+    removeEffect(effect) {
         const { clip } = this.selection;
         if (!clip)
             throw Errors.selection;
         const { effects } = clip;
         const undoEffects = [...effects];
-        const redoEffects = effects.filter(effect => !removeEffects.includes(effect));
+        const redoEffects = effects.filter(other => other !== effect);
         const options = {
-            redoSelectedEffects: [],
+            redoSelection: { clip: this.selection.clip },
             effects,
             undoEffects,
             redoEffects,
-            type: exports.ActionType.MoveEffects
+            type: exports.ActionType.MoveEffect
         };
         this.actionCreate(options);
+    }
+    removeTrack(track) {
+        // TODO: create remove track action...
+        console.debug(this.constructor.name, "removeTrack coming soon...");
     }
     save() { this.actions.save(); }
     selectClip(clip) {
@@ -7619,14 +7575,14 @@ exports.MergerFactoryImplementation = MergerFactoryImplementation;
 exports.ModularDefinitionMixin = ModularDefinitionMixin;
 exports.ModularMixin = ModularMixin;
 exports.ModuleTypes = ModuleTypes;
-exports.MoveClipsAction = MoveClipsAction;
-exports.MoveEffectsAction = MoveEffectsAction;
+exports.MoveClipAction = MoveClipAction;
+exports.MoveEffectAction = MoveEffectAction;
 exports.OutputFormats = OutputFormats;
 exports.Parameter = Parameter;
 exports.Pixel = Pixel;
 exports.PropertiedClass = PropertiedClass;
 exports.Property = Property;
-exports.RemoveClipsAction = RemoveClipsAction;
+exports.RemoveClipAction = RemoveClipAction;
 exports.Round = Round;
 exports.ScalerClass = ScalerClass;
 exports.ScalerDefinitionClass = ScalerDefinitionClass;

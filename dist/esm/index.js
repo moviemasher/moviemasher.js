@@ -5178,7 +5178,7 @@ class MashClass {
         this.setDrawInterval();
     }
     addClipToTrack(clip, trackIndex = 0, insertIndex = 0, frame) {
-        console.log(this.constructor.name, "addClipToTrack", trackIndex, insertIndex);
+        // console.log(this.constructor.name, "addClipToTrack", trackIndex, insertIndex, frame)
         this.assureClipsHaveFrames([clip]);
         const newTrack = this.clipTrackAtIndex(clip, trackIndex);
         if (!newTrack)
@@ -5190,7 +5190,7 @@ class MashClass {
             if (oldTrack && oldTrack !== newTrack) {
                 oldTrack.removeClip(clip);
             }
-            if (frame)
+            if (typeof frame !== 'undefined')
                 clip.frame = frame;
             newTrack.addClip(clip, insertIndex);
         });

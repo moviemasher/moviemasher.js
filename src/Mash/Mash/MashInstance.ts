@@ -68,20 +68,17 @@ class MashClass implements Mash {
   }
 
   addClipToTrack(clip: Clip, trackIndex = 0, insertIndex = 0, frame? : number): void {
-    console.log(this.constructor.name, "addClipToTrack", trackIndex, insertIndex)
     this.assureClipsHaveFrames([clip])
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     if (!newTrack) throw Errors.invalid.track
-    // console.log(this.constructor.name, "addClipToTrack", newTrack)
 
     const oldTrack = Is.positive(clip.track) && this.clipTrack(clip)
 
-    console.log("addClipToTrack", newTrack.layer, oldTrack && oldTrack.layer )
     this.emitIfFramesChange(() => {
       if (oldTrack && oldTrack !== newTrack) {
         oldTrack.removeClip(clip)
       }
-      if (frame) clip.frame = frame
+      if (typeof frame !== 'undefined') clip.frame = frame
       newTrack.addClip(clip, insertIndex)
     })
   }

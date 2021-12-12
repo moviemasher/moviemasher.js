@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "5.0.0",
-  "description": "Example Client",
+  "description": "Client",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -9,20 +9,20 @@
   "license": "MPL-2.0",
   "main": "dist/index.js",
   "scripts": {
-    "develop": "rollup --config dev/rollup/iife.config.js --watch",
-    "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8573 dist",
-    "build-css": "cp -r ../../../packages/react-moviemasher/dist/css dist",
-    "copy-icon": "cp -r ../../assets/graphics/favicon.ico dist",
-    "copy-html": "cp -r ../../index.html dist",
+    "build-rollup": "rollup --config",
+    "build": "run-s clean build-rollup link-assets copy-html copy-icon",
+    "clean": "rimraf dist",
+    "copy-html": "cp ../../index.html dist",
+    "copy-icon": "cp ../../assets/graphics/favicon.ico dist",
+    "develop": "rollup --config --watch",
     "link-assets": "ln -s $(cd ../../assets ; pwd) dist",
-    "rollup-iife": "rollup --config dev/rollup/iife.config.js",
-    "build": "run-s clean rollup-iife link-assets build-css copy-html copy-icon",
-    "clean": "rimraf dist"
+    "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8573 dist"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.1",
     "@material-ui/icons": "^4.11.2",
     "@moviemasher/react-moviemasher": "^5.0.0",
+    "@moviemasher/moviemasher.js": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remixicon-react": "^1.0.0"

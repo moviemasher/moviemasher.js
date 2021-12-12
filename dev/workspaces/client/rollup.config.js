@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
 import css from 'rollup-plugin-css-only'
-import pkg from "../../package.json"
+import pkg from "./package.json"
 
 const { main } = pkg
 
@@ -12,7 +12,6 @@ export default {
   output: {
     file: main,
     format: "iife",
-    name: "ReactMovieMasher",
     sourcemap: true,
   },
   plugins: [

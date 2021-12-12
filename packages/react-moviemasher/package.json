@@ -27,11 +27,9 @@
   },
   "scripts": {
     "develop": "rollup --config dev/rollup/esm.config.js --watch",
-    "css-copy": "cp -r ../../dev/css dist",
-    "css-cat": "cat ../../dev/css/* > dist/css/editor.css",
-    "build-css": "run-s css-copy css-cat",
-    "build-esm": "run-s rollup-esm build-css",
-    "rollup-esm": "rollup --config ./dev/rollup/esm.config.js",
+    "build-css": "cat ../../dev/css/* > dist/moviemasher.css",
+    "build-esm": "run-s build-rollup build-css",
+    "build-rollup": "rollup --config ./dev/rollup/esm.config.js",
     "build": "run-s clean build-esm",
     "clean": "rimraf dist"
   },

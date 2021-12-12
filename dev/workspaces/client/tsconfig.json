@@ -12,8 +12,8 @@
     "checkJs": false,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx", "index.jsx"],
-  "exclude": ["**/node_modules/*", "svg/*"]
+  "include": ["*.ts", "*.tsx", "*.jsx"],
+  "exclude": ["node_modules/*"]
 }

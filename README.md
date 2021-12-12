@@ -16,22 +16,21 @@ _Browser based video and audio editor - version 5.0.0_
 The following shell command installs the library to your NPM project, saving the current version number to the `dependencies` array in your **package.json** file.
 
 ```shell
-npm install react react-dom @moviemasher/react-moviemasher --save
+npm install @moviemasher/react-moviemasher --save
 ```
 
 ## Usage
 
 ---
 
-Along with our compiled JavaScript file, we need to the CSS file that corresponds to the
-Editor we want to display. Since most of interface elements scroll both horizontally and
-vertically, the Editor is also typically rendered into a node that is styled to fill the
-whole window.
+In our HTML file we link to our compiled JavaScript and CSS files.
+Since most of interface elements scroll both horizontally and
+vertically, the Editor is also typically rendered into a node
+that is styled to fill the whole window.
 
 <fieldset>
 <legend>index.html</legend>
-amazing
-<!-- MAGIC:START (TRIMCODE:src=dev/index.html) -->
+<!-- MAGIC:START (TRIMCODE:src=dev//workspaces/client/dist/index.html) -->
 
 ```html
 <!DOCTYPE html>
@@ -39,12 +38,12 @@ amazing
   <head>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href='moviemasher.css' rel='stylesheet'>
+    <script src='index.js' defer></script>
     <style>
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #app { width: 100vw; height: 100vh; display: flex; }
     </style>
-    <link href='css/editor.css' rel='stylesheet'>
-    <script src='index.js' defer></script>
     <title>Movie Masher</title>
   </head>
   <body>
@@ -60,100 +59,46 @@ appear within the Browser Panel. Several Themes and Effects are predefined, as
 well as a single Font - but no Images, Video, or Audio will appear in the Browser by default.
 
 <fieldset>
-<legend>index.jsx</legend>
+<legend>basic.jsx</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=dev/workspaces/react-moviemasher/index.jsx) -->
+<!-- MAGIC:START (TRIMCODE:src=dev/workspaces/client/basic.jsx) -->
 
 ```jsx
 import React, { StrictMode } from 'react'
-import { render } from 'react-dom'
-import { DefinitionType, Factory, ReactMovieMasher, RemixIcons, DefaultInputs } from "@moviemasher/react-moviemasher"
+import ReactDOM from 'react-dom'
+import { ReactMovieMasher, RemixIcons, DefaultInputs } from "@moviemasher/react-moviemasher"
+import { Factory } from "@moviemasher/moviemasher.js"
 
-Factory[DefinitionType.Image].install({
+import "@moviemasher/react-moviemasher/dist/moviemasher.css"
+
+Factory.image.install({
   label: "Image", id: "id-image",
   url: "assets/image.jpg",
 })
 
-Factory[DefinitionType.Audio].install({
-  label: "Loop", id: "id-loop-audio",
-  url: "assets/raw/loop.mp3", loops: true, duration: 5,
-})
-
-Factory[DefinitionType.Audio].install({
+Factory.audio.install({
   label: "Monster Mash", id: "id-monster-mash",
   url: "assets/raw/monster-mash.mp3", duration: 180,
 })
 
-Factory[DefinitionType.VideoSequence].install({
-  label: "Sequence", id: "id-video-sequence", source: 'assets/raw/video/original.mp4',
-  audio: "assets/raw/video/audio.mp3",
-  url: "assets/raw/video/256x144x10/", duration: 79, fps: 10,
-})
-
-Factory[DefinitionType.Video].install({
+Factory.video.install({
   label: "Video", id: "id-video", url: 'assets/raw/timing.mp4',
   duration: 3, fps: 10,
 })
 
-Factory[DefinitionType.VideoStream].install({
-  label: "Stream", id: "id-video-stream",
-  duration: 10,
-  url: 'https://68751d6f4c50.us-east-1.playback.live-video.net/api/video/v1/us-east-1.216119970089.channel.mrSPHVtl3IFY.m3u8',
-})
-
-Factory[DefinitionType.Font].install({
+Factory.font.install({
   label: "BlackoutTwoAM", id: "com.moviemasher.font.default",
   source: "assets/raw/BlackoutTwoAM.ttf",
 })
 
-const testMashObject = () => {
-  console.warn("TODO: remove mash content")
-
-  const clips = [
-    { id: "id-image", frame: 0, frames: 100 },
-    { id: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
-    { id: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "Woot woot!" },
-    { id: "com.moviemasher.theme.color", frame: 250, frames: 50, color: "green"},
-    { id: "com.moviemasher.theme.text", frame: 300, frames: 100, string: "Love it!" },
-    { id: "com.moviemasher.theme.color", frame: 400, frames: 50, color: "red"},
-    { id: "com.moviemasher.theme.text", frame: 450, frames: 100, string: "Juicy!" },
-    { id: "com.moviemasher.theme.color", frame: 550, frames: 50, color: "yellow"},
-    { id: "com.moviemasher.theme.text", frame: 600, frames: 100, string: "Gorgeous!" },
-    { id: "com.moviemasher.theme.color", frame: 700, frames: 50, color: "violet"},
-    { id: "com.moviemasher.theme.text", frame: 750, frames: 1100, string: "Joy!" },
-    { id: "com.moviemasher.theme.color", frame: 1850, frames: 1000, color: "orange"},
-  ]
-  const clips1 = clips.slice(0, 5).map(clip => ({
-    ...clip, label: clip.string || clip.color,
-  }))
-  const clips2 = clips.map(clip => ({
-    ...clip, label: clip.string || clip.color,
-  }))
-  const clips3 = clips.filter((clip, index) => index % 2).map(clip => ({
-    ...clip, label: clip.string || clip.color,
-  }))
-  // const video = [{ clips: clips1 }, { clips: clips3 }, { clips: clips2 }]
-  const video = [{ clips: [{ id: "id-video", frame: 0, frames: 30 }] }]
-  return {
-    id: 'mash-id',
-    backcolor: '#00FF0066',
-    video
-  }
-}
-const urlParams = new URLSearchParams(window.location.search)
-const server = urlParams.get('server')
-
 const applicationOptions = {
-  server,
-  mash: Factory.mash.instance(testMashObject()),
-  icons: RemixIcons, inputs: DefaultInputs,
-  panels: {browser:{header: {right: RemixIcons.browserVideo}}},
+  icons: RemixIcons,
+  inputs: DefaultInputs,
 }
-
 
 const application = <ReactMovieMasher {...applicationOptions} />
 
-render(<StrictMode>{application}</StrictMode>, document.getElementById('app'))
+ReactDOM.render(<StrictMode>{application}</StrictMode>, document.getElementById('app'))
 ```
 <!-- MAGIC:END -->
 </fieldset>
@@ -162,7 +107,7 @@ render(<StrictMode>{application}</StrictMode>, document.getElementById('app'))
 
 ---
 
-Modern CSS techniques like grid layout and root variables provide a relatively simple means to powerfully affect graphical appearance of the Editor. If just a few changes are needed, it's easiest to just redefine select styles from the _css/editor.css_ file we included in _index.html_ above. This file is a concatenation of the other files within that directory, shown below. An alternative approach for more elaborate changes would be to replace one or more of these files and include them individually.
+Modern CSS techniques like flexbox, grid, and variables provide a relatively simple means to powerfully affect the graphical appearance of the Editor. If only a few changes are needed, it's easiest to just redefine select styles from the _moviemasher.css_ file we included in _index.html_ above. This file is a concatenation of the other files within that directory, shown below. An alternative approach for more elaborate changes would be to replace one or more of these files and include them individually.
 
 <details>
 <summary>Coloring</summary>
@@ -175,7 +120,7 @@ Blah...
 <!-- MAGIC:START (TRIMCODE:src=dev/css/colors.css&stripComments=1) -->
 
 ```css
-:root {
+.moviemasher-app {
   --moviemasher-back-primary: hsl(0, 0%, 20%);
   --moviemasher-back-secondary: hsl(0, 0%, 15%);
   --moviemasher-back-tertiary: hsl(0, 0%, 10%);
@@ -188,7 +133,7 @@ Blah...
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  .moviemasher-app {
     --moviemasher-back-primary: hsl(0, 0%, 97%);
     --moviemasher-back-secondary: hsl(0, 0%, 92%);
     --moviemasher-back-tertiary: hsl(0, 0%, 88%);
@@ -214,23 +159,34 @@ Blah...
 <!-- MAGIC:START (TRIMCODE:src=dev/css/dimensions.css&stripComments=1) -->
 
 ```css
-:root {
+.moviemasher-app {
+  --padding: 40px;
+  --spacing: 20px;
+  --header-height: 38px;
+  --footer-height: 48px;
+
   --moviemasher-border-size: 1px;
   --moviemasher-border-radius: calc(5 * var(--moviemasher-border-size));
-  --moviemasher-spacing: 20px;
-  --moviemasher-padding: 40px;
-  --moviemasher-spacing-controls: 4px;
-  --moviemasher-padding-controls: 2px;
-  --moviemasher-padding-button-factor: 4;
-  --moviemasher-spacing-content: 10px;
-  --moviemasher-padding-content: 20px;
   --moviemasher-width-preview: 480px;
   --moviemasher-height-preview: 270px;
   --moviemasher-height-scrub: 16px;
   --moviemasher-width-inspector: 240px;
+  --moviemasher-width-track: 34px;
+  --moviemasher-height-track: 84px;
   --moviemasher-icon-size: 24px;
   --moviemasher-button-size: 24px;
   --moviemasher-border: var(--moviemasher-border-size) solid var(--moviemasher-fore-primary);
+}
+
+.moviemasher-content {
+  --padding: 20px;
+  --spacing: 10px;
+}
+
+.moviemasher-foot,
+.moviemasher-head {
+  --padding: 5px;
+  --spacing: 5px;
 }
 ```
 <!-- MAGIC:END -->
@@ -250,6 +206,103 @@ Blah...
 ```css
 .moviemasher-app * { box-sizing: border-box; }
 
+.moviemasher-app {
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    "player browser inspector"
+    "timeline timeline inspector";
+  grid-column-gap: var(--spacing);
+  grid-row-gap: var(--spacing);
+  grid-template-columns:
+    calc(
+      var(--moviemasher-width-preview)
+      + (var(--moviemasher-border-size) * 2)
+    )
+    1fr
+    var(--moviemasher-width-inspector);
+  grid-template-rows:
+    calc(
+      var(--moviemasher-height-preview)
+      + var(--header-height)
+      + var(--footer-height)
+    )
+    1fr;
+  padding: var(--padding);
+  background-color: var(--moviemasher-back-primary);
+  color: var(--moviemasher-fore-tertiary);
+}
+
+.moviemasher-panel {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: var(--header-height) 1fr var(--footer-height);
+  grid-template-columns: 1fr;
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+  background-color: var(--moviemasher-back-secondary);
+}
+
+.moviemasher-head {
+  border-bottom: var(--moviemasher-border);
+  padding: var(--padding);
+  column-gap: var(--spacing);
+}
+
+.moviemasher-foot {
+  border-top: var(--moviemasher-border);
+  padding: var(--padding);
+  column-gap: var(--spacing);
+}
+
+.moviemasher-foot,
+.moviemasher-head {
+  background-color: var(--moviemasher-back-tertiary);
+  display: grid;
+}
+
+.moviemasher-head > *,
+.moviemasher-foot > * {
+  margin-block: auto;
+}
+
+.moviemasher-app button:hover {
+  color: var(--moviemasher-color-pop);
+  border-color: var(--moviemasher-color-pop);
+}
+
+.moviemasher-app button,
+.moviemasher-app button:disabled {
+  display: inline-flex;
+  min-width: var(--moviemasher-icon-size);
+  height: var(--moviemasher-icon-size);
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: var(--moviemasher-border);
+  border-radius: var(--moviemasher-border-radius);
+  border: 1px solid var(--moviemasher-color-mute);
+  border-radius: 4px;
+  color: var(--moviemasher-color-mute);
+  background-color: var(--moviemasher-back-tertiary);
+}
+
+.moviemasher-app button:disabled {
+  background-color: var(--moviemasher-back-secondary);
+  color: var(--moviemasher-back-primary);
+  border-color: var(--moviemasher-back-primary);
+}
+
+
+.moviemasher-app button > svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0px 5px;
+}
+
 .moviemasher-selected {
   color: var(--moviemasher-color-pop);
   border-color: var(--moviemasher-color-pop);
@@ -260,121 +313,13 @@ Blah...
   border-color: var(--moviemasher-color-mute);
 }
 
+
 .moviemasher-drop {
   background-color: var(--moviemasher-color-pop);
 }
 
-.moviemasher-app {
-  width: 100%;
-  display: grid;
-  grid-template-areas:
-    "player browser inspector"
-    "timeline timeline inspector";
-  grid-column-gap: var(--moviemasher-spacing);
-  grid-template-columns:
-    calc(
-      var(--moviemasher-width-preview)
-      + (var(--moviemasher-border-size) * 2)
-    )
-    1fr
-    var(--moviemasher-width-inspector);
-  grid-row-gap: var(--moviemasher-spacing);
-  grid-template-rows:
-    calc(
-      var(--moviemasher-height-preview)
-      + var(--moviemasher-icon-size)
-      + (var(--moviemasher-padding-controls) * 2)
-      + (var(--moviemasher-border-size) * 3)
-    )
-    1fr;
-  padding: var(--moviemasher-padding);
-  background-color: var(--moviemasher-back-primary);
-  color: var(--moviemasher-fore-tertiary);
-}
-
-.moviemasher-panel {
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr;
-  border: var(--moviemasher-border);
-  border-radius: var(--moviemasher-border-radius);
-  background-color: var(--moviemasher-back-secondary);
-}
-
-.moviemasher-head {
-  grid-area: head;
-  border-bottom: var(--moviemasher-border);
-}
-
-.moviemasher-foot {
-  grid-area: foot;
-  border-top: var(--moviemasher-border);
-}
-
-.moviemasher-foot,
-.moviemasher-head {
-  background-color: var(--moviemasher-back-tertiary);
-  display: grid;
-  padding: var(--moviemasher-padding-controls);
-  column-gap: var(--moviemasher-spacing-controls);
-}
-
-.moviemasher-content { grid-area: content; }
-
-.moviemasher-control {
-  min-width: var(--moviemasher-icon-size);
-  height: var(--moviemasher-icon-size);
-  background-color: transparent;
-  padding: 0px;
-  cursor: pointer;
-  appearance: none;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  font-size: 1.3rem;
-  border: none;
-}
-
-.moviemasher-button {
-  color: var(--moviemasher-color-mute);
-  margin: 0px;
-  height: var(--moviemasher-icon-size);
-}
-
-.moviemasher-button:hover {
-  color: var(--moviemasher-color);
-  border-color: var(--moviemasher-color);
-}
-
-.moviemasher-button-icon {
-  line-height: var(--moviemasher-button-size);
-  display: inline-block;
-  color: var(--moviemasher-color-mute);
-}
-
-
-button.moviemasher-button-text>.moviemasher-button-icon {
-  font-size: 20px;
-}
-
-button.moviemasher-button-text>.moviemasher-button-icon-start {
-  margin: 0px 8px 0px -4px;
-}
-
-button.moviemasher-button-text>.moviemasher-button-icon-end {
-  margin: 0px -4px 0px 8px;
-}
-
 .moviemasher-browser {
   grid-area: browser;
-  grid-template-rows: calc(
-    (var(--moviemasher-padding-controls) * 2) + var(--moviemasher-button-size)
-  ) 1fr;
-  grid-template-areas: "head" "content";
-}
-
-.moviemasher-browser .moviemasher-head {
-  padding: var(--moviemasher-padding-controls);
 }
 
 .moviemasher-browser .moviemasher-head {
@@ -383,24 +328,17 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 }
 
 .moviemasher-browser .moviemasher-content {
-  padding: var(--moviemasher-padding-content);
+  padding: var(--padding);
   display: grid;
-  grid-template-columns: repeat(auto-fit, 160px);
-  grid-auto-rows: 90px;
-  gap: var(--moviemasher-spacing-content);
+  grid-template-columns: repeat(auto-fit, calc(var(--moviemasher-width-preview) / 3));
+  grid-auto-rows: calc(var(--moviemasher-height-preview) / 3);
+  gap: var(--spacing);
   overflow-y: auto;
 }
 
 
 .moviemasher-inspector {
   grid-area: inspector;
-  grid-template-rows:
-    1fr
-    calc(
-      var(--moviemasher-button-size) +
-      (2 * (var(--moviemasher-padding-controls) + var(--moviemasher-border-size)))
-    );
-  grid-template-areas: "content" "foot";
 }
 .moviemasher-inspector label {
   text-transform: capitalize;
@@ -412,11 +350,11 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 
 .moviemasher-inspector .moviemasher-content {
   overflow-y: auto;
-  padding: var(--moviemasher-padding-content);
+  padding: var(--padding);
 }
 
 .moviemasher-inspector .moviemasher-content > * {
-  margin-bottom: var(--moviemasher-spacing-content);
+  margin-bottom: var(--spacing);
 }
 
 .moviemasher-input {
@@ -431,32 +369,10 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 .moviemasher-timeline {
   isolation: isolate;
   grid-area: timeline;
-  grid-template-areas: "head" "content" "foot";
-  grid-template-rows:
-    calc(
-      var(--moviemasher-button-size)
-      + var(--moviemasher-border-size)
-      + (
-          2
-          * var(--moviemasher-padding-button-factor)
-          * var(--moviemasher-padding-controls)
-        )
-    )
-    1fr
-    calc(
-      var(--moviemasher-icon-size)
-      + var(--moviemasher-border-size)
-      + (2 * var(--moviemasher-padding-controls))
-    );
 }
 
 .moviemasher-timeline .moviemasher-head {
-  padding: calc(
-    var(--moviemasher-padding-controls)
-    * var(--moviemasher-padding-button-factor)
-  );
   grid-template-columns: repeat(9, auto) 1fr;
-  grid-template-areas: "undo redo cut copy paste delete split save render";
 }
 
 .moviemasher-timeline .moviemasher-content {
@@ -464,31 +380,15 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
   overflow: auto;
   display: grid;
   grid-template-areas: "scrubber-icon scrubber" "tracks-icon tracks";
-  grid-template-columns: var(--moviemasher-icon-size) 1fr;
+  grid-template-columns: var(--moviemasher-width-track) 1fr;
   grid-template-rows: var(--moviemasher-height-scrub) 1fr;
-}
-
-.moviemasher-timeline button.moviemasher-button {
-  height: var(--moviemasher-button-size);
-  padding: 5px 15px;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid var(--moviemasher-color-mute);
-  border-radius: 4px;
-}
-
-.moviemasher-timeline .moviemasher-clip { overflow: hidden; }
-
-.moviemasher-tracks {
-  grid-area: tracks;
-  grid-column-start: tracks-icon;
 }
 
 .moviemasher-scrub-pad,
 .moviemasher-scrub {
   background-color: var(--moviemasher-back-secondary);
-  border-bottom: var(--moviemasher-border);position: -webkit-sticky;
+  border-bottom: var(--moviemasher-border);
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
 }
@@ -505,15 +405,6 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
   pointer-events: none;
   position: relative;
   grid-area: tracks;
-}
-
-.moviemasher-timeline-sizer {
-  pointer-events: none;
-  position: absolute;
-  left: var(--moviemasher-icon-size);
-  right: 0px;
-  top: var(--moviemasher-height-scrub);
-  bottom: 0px;
 }
 
 .moviemasher-scrub-bar {
@@ -533,31 +424,70 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 }
 
 
-.moviemasher-track {
-  display: grid;
-  grid-template-columns: var(--moviemasher-icon-size) 1fr;
-
+.moviemasher-tracks {
+  grid-area: tracks;
+  grid-column-start: tracks-icon;
 }
 
-.moviemasher-track .moviemasher-track-icon {
-  background-color: var(--moviemasher-back-secondary);
+.moviemasher-timeline .moviemasher-foot {
+  grid-template-columns: 50% repeat(auto-fill, var(--moviemasher-button-size));
+}
+
+.moviemasher-timeline-sizer {
+  pointer-events: none;
+  position: absolute;
+  left: var(--moviemasher-width-track);
+  right: 0px;
+  top: var(--moviemasher-height-scrub);
+  bottom: 0px;
+}
+
+
+.moviemasher-track {
+  display: grid;
+  grid-template-columns: var(--moviemasher-width-track) 1fr;
+  border-bottom: var(--moviemasher-border);
+  height: var(--moviemasher-height-track);
+  overflow-y: hidden;
+}
+
+.moviemasher-track-icon {
+  background-color: var(--moviemasher-back-tertiary);
+
   position: -webkit-sticky;
   position: sticky;
   left: 0;
 }
 
-.moviemasher-clips {
-  white-space: nowrap;
+.moviemasher-track-icon {
+  display: grid;
 }
 
+.moviemasher-track-icon svg {
+  margin: auto;
+}
+
+.moviemasher-clips {
+  white-space: nowrap;
+  margin-block: auto;
+}
+
+.moviemasher-clips,
+.moviemasher-clip {
+  height: calc(var(--moviemasher-height-track) - (2 * var(--padding)));
+}
 
 .moviemasher-definition,
 .moviemasher-clip {
-  display: inline-block;
-  padding: var(--moviemasher-padding-controls);
+  display: inline-flex;
   background-color: var(--moviemasher-back-tertiary);
   border: var(--moviemasher-border);
   border-radius: var(--moviemasher-border-radius);
+}
+
+.moviemasher-clip {
+  overflow-x: hidden;
+  padding: 0px;
 }
 
 .moviemasher-clip label:after,
@@ -580,18 +510,10 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 
 .moviemasher-player {
   grid-area: player;
-  grid-template-areas: "content" "foot";
-  
-  grid-template-rows: var(--moviemasher-height-preview) 1fr;
 }
 
 .moviemasher-player .moviemasher-foot {
   grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
-  grid-template-areas: "paused frame volume";
-}
-
-.moviemasher-paused {
-  grid-area: paused;
 }
 
 .moviemasher-player .moviemasher-content {
@@ -612,20 +534,33 @@ button.moviemasher-button-text>.moviemasher-button-icon-end {
 ---
 
 <fieldset>
-<legend>MaterialIcons.tsx</legend>
+<legend>RemixIcons.tsx</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=packages/react-moviemasher/src/Components/Editor/EditorIcons/MaterialIcons.tsx&stripImports=1&stripExports=1) -->
+<!-- MAGIC:START (TRIMCODE:src=packages/react-moviemasher/src/Components/Editor/EditorIcons/RemixIcons.tsx&stripImports=1&stripExports=1) -->
 
 ```tsx
-const MaterialIcons : EditorIcons = {
-  browserAudio: <LibraryMusic />,
-  browserEffect: <Theaters />,
-  browserImage: <PhotoSizeSelectLarge />,
-  browserTheme: <PhotoSizeSelectLarge />,
-  browserVideo: <MovieFilter />,
-  playerPause: <PauseIcon />,
-  playerPlay: <PlayIcon />,
-  timelineAudio: <VolumeIcon />,
+const RemixIcons: EditorIcons = {
+  browserAudio: <Music2FillIcon />,
+  browserEffect: <FolderSettingsFillIcon />,
+  browserImage: <ImageFillIcon />,
+  browserTheme: <FolderChartFillIcon />,
+  browserTransition: <FolderTransferFillIcon />,
+  browserVideo: <FilmFillIcon />,
+  browserVideoStream: <VideoChatFillIcon />,
+  browserAudioStream: <ChatVoiceFillIcon />,
+  playerPause: <PauseCircleFillIcon />,
+  playerPlay: <PlayCircleFillIcon />,
+  timelineAddTransition: <SwapBoxLineIcon />,
+  timelineAddAudio: <MvLineIcon />,
+  timelineAddVideo: <VideoLineIcon />,
+  timelineTrackTransition: <ArrowLeftRightLineIcon />,
+  timelineTrackAudio: <MusicLineIcon />,
+  timelineTrackVideo: <ArrowRightSLineIcon />,
+  upload: <UploadCloud2LineIcon />,
+  undo: <ArrowGoBackLineIcon />,
+  redo: <ArrowGoForwardLineIcon />,
+  remove: <DeleteBin7LineIcon />,
+  split: <SplitCellsHorizontalIcon />,
 }
 ```
 <!-- MAGIC:END -->
