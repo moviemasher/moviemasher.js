@@ -1,0 +1,24 @@
+{
+  "label": "Overlay",
+  "id": "com.moviemasher.merger.overlay",
+  "type": "merger",
+  "properties": {
+    "left": { "type": "number", "value": 0.5 },
+    "top": { "type": "number", "value": 0.5 }
+  },
+  "filters": [
+    {
+      "id": "overlay",
+      "parameters": [
+        {
+          "name": "x",
+          "value": "((mm_width + overlay_w) * left) - overlay_w"
+        },
+        {
+          "name": "y",
+          "value": "((mm_height + overlay_h) * top) - overlay_h"
+        }
+      ]
+    }
+  ]
+}

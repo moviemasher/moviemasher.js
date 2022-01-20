@@ -18,9 +18,7 @@
         const range = document.querySelector('input')
         const play = document.querySelector('a')
         const elements = document.querySelectorAll('button[data-id]')
-
         if (!(canvas && textarea && range && play && elements.length)) return
-
 
         const context = Factory.context.fromCanvas(canvas)
         const mash = Factory.mash.instance({ backcolor: 'black' })

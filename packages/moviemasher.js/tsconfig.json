@@ -1,0 +1,19 @@
+{
+  "include": ["src/**/*.ts", "../server-node/src/Command/Ffmpeg.ts", "../server-node/src/Utilities/Segment.ts"],
+  "exclude": ["node_modules/*", "dev/test/*"],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "declaration": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  }
+}

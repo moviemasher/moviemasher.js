@@ -1,27 +1,26 @@
 /* colors.css */
-
-.moviemasher-app {
-  --moviemasher-back-primary: hsl(0, 0%, 20%);
-  --moviemasher-back-secondary: hsl(0, 0%, 15%);
-  --moviemasher-back-tertiary: hsl(0, 0%, 10%);
-  --moviemasher-fore-primary: #ababab;
-  --moviemasher-fore-secondary: #cfcfcf;
-  --moviemasher-fore-tertiary: #e9e9e9;
-  --moviemasher-color: #758caa;
-  --moviemasher-color-pop: #a2c3ee;
-  --moviemasher-color-mute: #476780;
+.moviemasher {
+  --back-primary: hsl(0, 0%, 100%);
+  --back-secondary: hsl(0, 0%, 90%);
+  --back-tertiary: hsl(0, 0%, 85%);
+  --fore-primary: #545454;
+  --fore-secondary: #2c2c2c;
+  --fore-tertiary: #1d1d1d;
+  --color-primary: #4c5a6d;
+  --color-secondary: #4a586b;
+  --color-tertiary: #22313b;
 }
 
-@media (prefers-color-scheme: light) {
-  .moviemasher-app {
-    --moviemasher-back-primary: hsl(0, 0%, 97%);
-    --moviemasher-back-secondary: hsl(0, 0%, 92%);
-    --moviemasher-back-tertiary: hsl(0, 0%, 88%);
-    --moviemasher-fore-primary: #1d1d1d;
-    --moviemasher-fore-secondary: #2c2c2c;
-    --moviemasher-fore-tertiary: #545454;
-    /* --moviemasher-color: #758caa;
-    --moviemasher-color-pop: #a2c3ee;
-    --moviemasher-color-mute: #476780; */
+@media (prefers-color-scheme: dark) {
+  .moviemasher {
+    --back-primary: hsl(0, 0%, 5%);
+    --back-secondary: hsl(0, 0%, 10%);
+    --back-tertiary: hsl(0, 0%, 15%);
+    --fore-primary: #ababab;
+    --fore-secondary: #cfcfcf;
+    --fore-tertiary: #e9e9e9;
+    --color-primary: #476780;
+    --color-secondary: #758caa;
+    --color-tertiary: #a2c3ee;
   }
 }

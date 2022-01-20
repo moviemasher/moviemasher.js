@@ -1,0 +1,13 @@
+{
+  "label": "Color",
+  "type": "theme",
+  "id": "com.moviemasher.theme.color",
+  "properties": {
+    "color": { "type": "rgba", "value": "#ffff00ff" }
+  },
+  "filters": [
+    {
+      "id": "color"
+    }
+  ]
+}

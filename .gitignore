@@ -9,3 +9,4 @@ coverage*
 **/__image_snapshots__*
 *.cache/*
 **/raw/*
+dev/assets/*

@@ -6,7 +6,7 @@
   "scripts": {
     "copy-html": "cp -r index.html dist",
     "copy-js": "cp -r ../../../dist/moviemasher.* dist",
-    "copy-icon": "cp -r ../../assets/graphics/favicon.ico dist",
+    "copy-icon": "cp -r ../../img/favicon.ico dist",
     "link-assets": "ln -s $(cd ../../assets ; pwd) dist",
     "build": "run-s clean link-assets copy-html copy-icon copy-js",
     "destroy": "rimraf dist",

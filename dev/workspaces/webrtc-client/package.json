@@ -12,8 +12,8 @@
   "scripts": {
     "develop": "rollup --config dev/rollup/iife.config.js --watch",
     "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8576 dist",
-    "build-css": "cp -r ../../../packages/react-moviemasher/dist/css dist",
-    "copy-icon": "cp -r ../../assets/graphics/favicon.ico dist",
+    "build-css": "cp -r ../../../packages/client-react/dist/css dist",
+    "copy-icon": "cp -r ../../img/favicon.ico dist",
     "copy-html": "cp -r ../../index.html dist",
     "link-assets": "ln -s $(cd ../../assets ; pwd) dist",
     "rollup-iife": "rollup --config dev/rollup/iife.config.js",
@@ -21,7 +21,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@moviemasher/react-moviemasher": "^5.0.0",
+    "@moviemasher/client-react": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remixicon-react": "^1.0.0"

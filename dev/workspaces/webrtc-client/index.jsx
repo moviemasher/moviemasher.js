@@ -1,21 +1,20 @@
 import React, { StrictMode } from 'react'
-import { render } from 'react-dom'
+import ReactDOM from 'react-dom'
 import {
   RemixIcons, WebrtcView, BroadcastButton, Broadcasting, NotBroadcasting, WebrtcContent,
-  BroadcastingStatus, Hosts
-} from "@moviemasher/react-moviemasher"
+  BroadcastingStatus, Api
+} from "@moviemasher/client-react"
 
 
-const application = (
-  <Hosts>
-    <WebrtcView>
-      <BroadcastButton>
-        <Broadcasting>{RemixIcons.playerPause}</Broadcasting>
-        <NotBroadcasting>{RemixIcons.playerPlay}</NotBroadcasting>
-      </BroadcastButton>
-      <WebrtcContent/>
-      <BroadcastingStatus/>
-    </WebrtcView>
-  </Hosts>)
+const application = <Api>
+  <WebrtcView>
+    <BroadcastButton>
+      <Broadcasting>{RemixIcons.playerPause}</Broadcasting>
+      <NotBroadcasting>{RemixIcons.playerPlay}</NotBroadcasting>
+    </BroadcastButton>
+    <WebrtcContent/>
+    <BroadcastingStatus/>
+  </WebrtcView>
+</Api>
 
-render(<StrictMode>{application}</StrictMode>, document.getElementById('app'))
+ReactDOM.render(<StrictMode>{application}</StrictMode>, document.getElementById('app'))

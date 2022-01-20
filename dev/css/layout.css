@@ -1,322 +1,356 @@
 /* layout.css */
 
-.moviemasher-app * { box-sizing: border-box; }
+.moviemasher .editor * {
+  box-sizing: border-box;
+}
 
-.moviemasher-app {
+.moviemasher .editor {
   width: 100%;
   display: grid;
-  grid-template-areas:
-    "player browser inspector"
-    "timeline timeline inspector";
   grid-column-gap: var(--spacing);
   grid-row-gap: var(--spacing);
   grid-template-columns:
     calc(
-      var(--moviemasher-width-preview)
-      + (var(--moviemasher-border-size) * 2)
+      var(--preview-width)
+      + (var(--border-size) * 2)
     )
     1fr
-    var(--moviemasher-width-inspector);
+    var(--inspector-width);
   grid-template-rows:
     calc(
-      var(--moviemasher-height-preview)
+      var(--preview-height)
       + var(--header-height)
       + var(--footer-height)
     )
     1fr;
   padding: var(--padding);
-  background-color: var(--moviemasher-back-primary);
-  color: var(--moviemasher-fore-tertiary);
+  background-color: var(--back-primary);
+  color: var(--fore-tertiary);
+}
+.moviemasher .masher {
+  grid-template-areas:
+    "player browser inspector"
+    "timeline timeline inspector";
+
+}
+.moviemasher .streamer {
+  grid-template-areas:
+    "player browser inspector"
+    "timeline timeline inspector";
+
+}
+@media (max-width: 999px) {
+  .moviemasher .editor {
+    display: block;
+    grid-template-areas: "player" "timeline" "inspector" "browser";
+  }
+  .moviemasher .editor .panel {
+    margin-bottom: var(--spacing);
+  }
 }
 
-.moviemasher-panel {
+.moviemasher .editor input[type=file] {
+  visibility: hidden;
+  vertical-align: bottom;
+  width: 0px;
+}
+
+.moviemasher .editor label {
+  height: var(--icon-size);
+}
+
+.moviemasher .editor .panel {
   overflow: hidden;
   display: grid;
   grid-template-rows: var(--header-height) 1fr var(--footer-height);
   grid-template-columns: 1fr;
-  border: var(--moviemasher-border);
-  border-radius: var(--moviemasher-border-radius);
-  background-color: var(--moviemasher-back-secondary);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--back-primary);
 }
 
-.moviemasher-head {
-  border-bottom: var(--moviemasher-border);
+.moviemasher .editor .panel .head {
+  border-bottom: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
 }
 
-.moviemasher-foot {
-  border-top: var(--moviemasher-border);
+.moviemasher .editor .panel .foot {
+  border-top: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
 }
 
-.moviemasher-foot,
-.moviemasher-head {
-  background-color: var(--moviemasher-back-tertiary);
+.moviemasher .editor .timeline .track-icon,
+.moviemasher .editor .panel .foot,
+.moviemasher .editor .panel .head {
+  background-color: var(--back-secondary);
+  color: var(--fore-secondary);
   display: grid;
 }
 
-.moviemasher-head > *,
-.moviemasher-foot > * {
+.moviemasher .editor .panel .head>*,
+.moviemasher .editor .panel .foot>* {
   margin-block: auto;
 }
 
-.moviemasher-app button:hover {
-  color: var(--moviemasher-color-pop);
-  border-color: var(--moviemasher-color-pop);
+.moviemasher .editor .panel button:hover {
+  color: var(--fore-tertiary);
+  border-color: var(--fore-tertiary);
+  background-color: var(--back-tertiary);
 }
 
-.moviemasher-app button,
-.moviemasher-app button:disabled {
+.moviemasher .editor .panel button,
+.moviemasher .editor .panel button:disabled {
   display: inline-flex;
-  min-width: var(--moviemasher-icon-size);
-  height: var(--moviemasher-icon-size);
+  min-width: var(--icon-size);
+  height: var(--icon-size);
   cursor: pointer;
   appearance: none;
   outline: none;
   align-items: center;
   font-size: 0.875rem;
   font-weight: 500;
-  border: var(--moviemasher-border);
-  border-radius: var(--moviemasher-border-radius);
-  border: 1px solid var(--moviemasher-color-mute);
-  border-radius: 4px;
-  color: var(--moviemasher-color-mute);
-  background-color: var(--moviemasher-back-tertiary);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--back-secondary);
+  color: var(--fore-secondary);
+  border-color: var(--fore-secondary);
 }
 
-.moviemasher-app button:disabled {
-  background-color: var(--moviemasher-back-secondary);
-  color: var(--moviemasher-back-primary);
-  border-color: var(--moviemasher-back-primary);
+.moviemasher .editor .panel button:disabled {
+  background-color: var(--back-secondary);
+  color: var(--back-primary);
+  border-color: var(--back-primary);
 }
 
+.moviemasher .editor .panel button {
+  transition:
+    background-color 0.25s ease-in-out,
+    border-color 0.25s ease-in-out,
+    color 0.25s ease-in-out;
+}
 
-.moviemasher-app button > svg {
+.moviemasher .editor .panel button > svg {
   width: 0.75rem;
   height: 0.75rem;
   margin: 0px 5px;
 }
 
-.moviemasher-selected {
-  color: var(--moviemasher-color-pop);
-  border-color: var(--moviemasher-color-pop);
-}
-
-.moviemasher-selected:hover {
-  color: var(--moviemasher-color-mute);
-  border-color: var(--moviemasher-color-mute);
-}
-
-
-.moviemasher-drop {
-  background-color: var(--moviemasher-color-pop);
-}
-
-.moviemasher-browser {
+.moviemasher .editor .browser {
   grid-area: browser;
 }
 
-.moviemasher-browser .moviemasher-head {
-  grid-template-columns: repeat(auto-fit, var(--moviemasher-icon-size));
+.moviemasher .editor .browser .head {
+  grid-template-columns: repeat(auto-fit, var(--icon-size));
   overflow: hidden;
 }
 
-.moviemasher-browser .moviemasher-content {
+.moviemasher .editor .browser .content {
   padding: var(--padding);
   display: grid;
-  grid-template-columns: repeat(auto-fit, calc(var(--moviemasher-width-preview) / 3));
-  grid-auto-rows: calc(var(--moviemasher-height-preview) / 3);
+  grid-template-columns: repeat(auto-fit, calc(var(--preview-width) / 3));
+  grid-auto-rows: calc(var(--preview-height) / 3);
   gap: var(--spacing);
   overflow-y: auto;
 }
 
 
-.moviemasher-inspector {
+.moviemasher .editor .inspector {
   grid-area: inspector;
 }
-.moviemasher-inspector label {
+
+.moviemasher .editor .inspector label {
   text-transform: capitalize;
 
 }
-.moviemasher-inspector label::after {
+
+.moviemasher .editor .inspector label::after {
   content: ': ';
 }
 
-.moviemasher-inspector .moviemasher-content {
+.moviemasher .editor .inspector .content {
   overflow-y: auto;
   padding: var(--padding);
 }
 
-.moviemasher-inspector .moviemasher-content > * {
+.moviemasher .editor .inspector .content>* {
   margin-bottom: var(--spacing);
 }
 
-.moviemasher-input {
-  width: 100%;
-
-}
-
-.moviemasher-input input {
+.moviemasher .editor input {
   width: 100%;
 }
 
-.moviemasher-timeline {
+.moviemasher .editor .timeline {
   isolation: isolate;
   grid-area: timeline;
 }
 
-.moviemasher-timeline .moviemasher-head {
+.moviemasher .editor .timeline .head {
   grid-template-columns: repeat(9, auto) 1fr;
 }
 
-.moviemasher-timeline .moviemasher-content {
+.moviemasher .editor .timeline .content {
   position: relative;
   overflow: auto;
   display: grid;
   grid-template-areas: "scrubber-icon scrubber" "tracks-icon tracks";
-  grid-template-columns: var(--moviemasher-width-track) 1fr;
-  grid-template-rows: var(--moviemasher-height-scrub) 1fr;
+  grid-template-columns: var(--track-width) 1fr;
+  grid-template-rows: var(--scrubber-height) 1fr;
 }
 
-.moviemasher-scrub-pad,
-.moviemasher-scrub {
-  background-color: var(--moviemasher-back-secondary);
-  border-bottom: var(--moviemasher-border);
+.moviemasher .editor .timeline .scrub-pad,
+.moviemasher .editor .timeline .scrub {
+  background-color: var(--back-secondary);
+  border-bottom: var(--border);
   position: -webkit-sticky;
   position: sticky;
   top: 0;
 }
-.moviemasher-scrub-pad {
+
+.moviemasher .editor .timeline .scrub-pad {
   grid-area: scrubber-icon;
   z-index: 2;
 }
-.moviemasher-scrub {
+
+.moviemasher .editor .timeline .scrub {
   grid-area: scrubber;
   z-index: 3;
 }
 
-.moviemasher-scrub-bar-container {
+.moviemasher .editor .timeline .scrub-bar-container {
   pointer-events: none;
   position: relative;
   grid-area: tracks;
 }
 
-.moviemasher-scrub-bar {
+.moviemasher .editor .timeline .scrub-bar {
   position: absolute;
   width: 1px;
   top: 0px;
   bottom: 0px;
-  background-color:var(--moviemasher-color);
+  background-color:var(--color-secondary);
 }
-.moviemasher-scrub-icon {
-  margin-left: calc(0px - (var(--moviemasher-height-scrub) / 2));
+
+.moviemasher .editor .timeline .scrub-icon {
+  margin-left: calc(0px - (var(--scrubber-height) / 2));
   position: absolute;
-  background-color: var(--moviemasher-color);
-  width: var(--moviemasher-height-scrub);
-  height: var(--moviemasher-height-scrub);
+  background-color: var(--color-secondary);
+  width: var(--scrubber-height);
+  height: var(--scrubber-height);
   clip-path: polygon(3px 3px, calc(100% - 3px) 3px, 50% calc(100% - 3px));
 }
 
 
-.moviemasher-tracks {
+.moviemasher .editor .timeline .tracks {
   grid-area: tracks;
   grid-column-start: tracks-icon;
 }
 
-.moviemasher-timeline .moviemasher-foot {
-  grid-template-columns: 50% repeat(auto-fill, var(--moviemasher-button-size));
+.moviemasher .editor .timeline .foot {
+  grid-template-columns: 50% repeat(auto-fill, var(--button-size));
 }
 
-.moviemasher-timeline-sizer {
+.moviemasher .editor .timeline-sizer {
   pointer-events: none;
   position: absolute;
-  left: var(--moviemasher-width-track);
+  left: var(--track-width);
   right: 0px;
-  top: var(--moviemasher-height-scrub);
+  top: var(--scrubber-height);
   bottom: 0px;
 }
 
 
-.moviemasher-track {
+.moviemasher .editor .timeline .track {
   display: grid;
-  grid-template-columns: var(--moviemasher-width-track) 1fr;
-  border-bottom: var(--moviemasher-border);
-  height: var(--moviemasher-height-track);
+  grid-template-columns: var(--track-width) 1fr;
+  border-bottom: var(--border);
+  height: var(--track-height);
   overflow-y: hidden;
 }
 
-.moviemasher-track-icon {
-  background-color: var(--moviemasher-back-tertiary);
-
+.moviemasher .editor .timeline .track-icon {
   position: -webkit-sticky;
   position: sticky;
   left: 0;
 }
 
-.moviemasher-track-icon {
-  display: grid;
-}
-
-.moviemasher-track-icon svg {
+.moviemasher .editor .timeline .track-icon svg {
   margin: auto;
 }
 
-.moviemasher-clips {
+.moviemasher .editor .timeline .clips {
   white-space: nowrap;
   margin-block: auto;
 }
 
-.moviemasher-clips,
-.moviemasher-clip {
-  height: calc(var(--moviemasher-height-track) - (2 * var(--padding)));
+.moviemasher .editor .timeline .clips,
+.moviemasher .editor .timeline .clip {
+  height: calc(var(--track-height) - (2 * var(--padding)));
 }
 
-.moviemasher-definition,
-.moviemasher-clip {
+.moviemasher .editor .browser .definition,
+.moviemasher .editor .timeline .clip {
   display: inline-flex;
-  background-color: var(--moviemasher-back-tertiary);
-  border: var(--moviemasher-border);
-  border-radius: var(--moviemasher-border-radius);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--fore-secondary);
+  color: var(--fore-secondary);
+  background-color: var(--back-secondary);
 }
 
-.moviemasher-clip {
+.moviemasher .editor .timeline .clip {
   overflow-x: hidden;
   padding: 0px;
 }
 
-.moviemasher-clip label:after,
-.moviemasher-definition label:after {
+.moviemasher .editor .timeline .clip label:after,
+.moviemasher .editor .browser .definition label:after {
   content: var(--clip-label);
 }
 
-.moviemasher-app .MuiSvgIcon-root {
-  font-size: var(--moviemasher-icon-size);
+.moviemasher .editor .MuiSvgIcon-root {
+  font-size: var(--icon-size);
 }
 
-.moviemasher-scrub .MuiSvgIcon-root {
-  font-size: var(--moviemasher-height-scrub);
+.moviemasher .editor .timeline .scrub .MuiSvgIcon-root {
+  font-size: var(--scrubber-height);
 }
-.moviemasher-app .MuiSlider-root {
-  color: var(--moviemasher-color-mute);
+
+.moviemasher .editor .MuiSlider-root {
+  color: var(--color-primary);
   padding: 11px;
 }
 
-
-.moviemasher-player {
+.moviemasher .editor .player {
   grid-area: player;
 }
 
-.moviemasher-player .moviemasher-foot {
-  grid-template-columns: var(--moviemasher-icon-size) 1fr 1fr;
+.moviemasher .editor .player .foot {
+  grid-template-columns: var(--icon-size) 1fr 1fr;
 }
 
-.moviemasher-player .moviemasher-content {
+.moviemasher .editor .player .content {
   background: repeating-conic-gradient(
-    var(--moviemasher-back-primary) 0% 25%, transparent 0% 50%
+    var(--back-secondary) 0% 25%, transparent 0% 50%
   ) 50% / 20px 20px;
   background-position: top left;
-  width: var(--moviemasher-width-preview);
-  height: var(--moviemasher-height-preview);
+  width: var(--preview-width);
+  height: var(--preview-height);
+  margin-inline: auto;
+}
+
+.moviemasher .editor .selected {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.moviemasher .editor .selected:hover {
+  color: var(--color-tertiary);
+  border-color: var(--color-tertiary);
+}
+
+.moviemasher .editor .drop {
+  background-color: var(--color-tertiary);
 }

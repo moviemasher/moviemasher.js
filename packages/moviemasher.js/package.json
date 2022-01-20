@@ -1,0 +1,69 @@
+{
+  "name": "@moviemasher/moviemasher.js",
+  "description": "JavaScript ES6 module for fast, browser-based video and audio editing",
+  "homepage": "https://moviemasher.com",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "source": "index.ts",
+  "version": "5.0.0",
+  "keywords": [
+    "video editor",
+    "audio editor",
+    "esm",
+    "cjs",
+    "umd",
+    "module",
+    "canvas",
+    "composite"
+  ],
+  "license": "MPL-2.0",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "scripts": {
+    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
+    "build-esm": "rollup --config dev/rollup/esm.config.js",
+    "build-umd": "rollup --config dev/rollup/umd.config.js",
+    "build-full": "run-s lint-verbose test-verbose clean build-esm build-umd build-cjs",
+    "build": "run-s clean build-esm build-umd build-cjs",
+    "clean": "rimraf dist",
+    "develop": "rollup --watch --config dev/rollup/esm.config.js",
+    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
+    "lint": "eslint src/**/*.ts",
+    "start": "docker-compose --file dev/docker/compose.yml up -d",
+    "logs": "docker-compose --file dev/docker/compose.yml logs -f",
+    "stop": "docker-compose --file dev/docker/compose.yml down -v",
+    "test-help": "jest -h",
+    "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
+    "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
+    "test": "jest --config dev/test/jest.config.js"
+  },
+  "peerDependencies": {
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/jest-image-snapshot": "^4.3.1",
+    "canvas": "^2.8.0",
+    "jest": "^27.4.5",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-image-snapshot": "^4.5.1",
+    "ts-jest": "^27.1.2"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/css-font-loading-module": "^0.0.7"
+  }
+}
