@@ -3,7 +3,7 @@ import ffmpeg from 'fluent-ffmpeg'
 
 import internal from 'stream'
 import {
-  GraphFilter, ValueObject, OutputObject
+  GraphFilter, ValueObject, OutputOptions
 } from '@moviemasher/moviemasher.js'
 import { CommandProcess } from '../CommandProcess/CommandProcess'
 import EventEmitter from 'events'
@@ -20,7 +20,7 @@ interface CommandInput {
 
 interface CommandOptions {
   inputs?: CommandInput[]
-  output?: OutputObject
+  output?: OutputOptions
   destination?: CommandDestination
   complexFilter?: GraphFilter[]
 }
@@ -40,6 +40,7 @@ const commandInputOptions = (args: ValueObject): string[] => Object.entries(args
 
 interface Command extends EventEmitter{
   run: () => void
+  runPromise: () => CommandPromise
   commandProcess: CommandProcess
   kill: () => void
 }

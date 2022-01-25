@@ -4,7 +4,7 @@ import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time"
 import { MashEditorClass } from "./MashEditorClass"
 import { ThemeClass } from "../../Media/Theme/ThemeInstance"
-import { expectCanvas } from "../../../dev/test/Utilities/expectCanvas"
+import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { Emitter } from "../../Helpers/Emitter"
 import { MashEditorFactory } from "./MashEditorFactory"
 

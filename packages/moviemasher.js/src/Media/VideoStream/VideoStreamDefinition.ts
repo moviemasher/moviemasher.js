@@ -41,7 +41,7 @@ class VideoStreamDefinitionClass extends WithTransformable implements VideoStrea
     return Time.fromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame
   }
 
-  get inputSource(): string { return urlAbsolute(this.source) }
+  get inputSource(): string { return this.source }
 
   get instance() : VideoStream { return this.instanceFromObject(this.instanceObject) }
 

@@ -3,10 +3,9 @@ import express from "express"
 const uuid = require('uuid').v4
 //import { v4 as uuid } from 'uuid'
 import {
-  outputHls, outputMp4,
-  EncodeStreamRequest, EncodeStreamResponse,
+  outputHls, outputMp4, EncodeStreamResponse,
   EncodeUpdateRequest, EncodeUpdateResponse,
-  EditType, EncodeOptionsRequest, EncodeOptionsResponse, JsonObject,
+  EditType, EncodeOptionsRequest, EncodeOptionsResponse, JsonObject, OutputObject,
 } from "@moviemasher/moviemasher.js"
 
 import { Server, EncodeServerArgs, EditOutputObject, ServerHandler } from "../declaration"
@@ -45,23 +44,27 @@ class EncodeServer implements Server {
 
   start(app:express.Application):void {
     app.post(`${this.prefix}/options`, this.options)
-    app.post(`${this.prefix}/stream`, this.stream)
+    app.get(`${this.prefix}/stream`, this.stream)
     app.post(`${this.prefix}/update`, this.update)
   }
 
   stop(): void { }
 
-  stream:ServerHandler<EncodeStreamResponse, EncodeStreamRequest> = (req, res) => {
-    const { body } = req
+  stream: ServerHandler<EncodeStreamResponse> = (_, res) => {
+    const body: OutputObject = outputHls()
     const { options, format } = body
 
     const id = uuid()
 
     const connection = EncodeConnection.create(id, this.outputPrefix, body)
     const segment = connection.defaultSegment(body)
-    console.log(this.constructor.name, "stream", segment.layers[0].inputs)
+    console.log(this.constructor.name, "stream")
     connection.update(segment)
-    const response: EncodeStreamResponse = { id, readySeconds: 10 }
+
+    // TODO: construct streamUrl
+    const response: EncodeStreamResponse = {
+      id, readySeconds: 10, streamUrl: `http://localhost:8570/hls/${id}/index.m3u8`
+    }
     switch (format) {
       case 'hls': {
         const { hls_time } = options

@@ -1,6 +1,6 @@
 
 import { JsonObject, ServerOptions, StringObject, UploadDescription } from "../declarations"
-import { RenderPostRequest } from "./Encode"
+import { EncodeMashRequest } from "./Encode"
 
 export interface ContentInit extends JsonObject {
   uuid: string
@@ -25,5 +25,5 @@ export interface ContentGetStoreResponse {
  * @category API
  */
 export interface ContentGetStoredResponse {
-  renderRequests: RenderPostRequest[]
+  renderRequests: EncodeMashRequest[]
 }

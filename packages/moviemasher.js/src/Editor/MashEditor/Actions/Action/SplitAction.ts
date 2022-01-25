@@ -10,6 +10,10 @@ interface SplitActionObject extends ActionOptions {
   undoFrames : number
 }
 
+
+/**
+ * @category Action
+ */
 class SplitAction extends Action {
   constructor(object : SplitActionObject) {
     super(object)

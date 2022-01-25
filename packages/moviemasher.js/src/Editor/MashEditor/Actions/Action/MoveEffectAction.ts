@@ -6,6 +6,10 @@ interface MoveEffectActionObject extends ActionOptions {
   redoEffects : Effect[]
   undoEffects : Effect[]
 }
+
+/**
+ * @category Action
+ */
 class MoveEffectAction extends Action {
   constructor(object : MoveEffectActionObject) {
     super(object)

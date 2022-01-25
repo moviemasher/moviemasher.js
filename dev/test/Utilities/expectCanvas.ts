@@ -1,4 +1,4 @@
-import { VisibleContextElement } from "../../../src/declarations"
+import { VisibleContextElement } from "../../../packages/moviemasher.js/src/declarations"
 
 export const expectCanvas = (element: VisibleContextElement): void => {
   const dataUrl = element.toDataURL()

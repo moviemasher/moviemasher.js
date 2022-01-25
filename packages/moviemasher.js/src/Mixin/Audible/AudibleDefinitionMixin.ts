@@ -32,7 +32,7 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
 
     audible = true
 
-    get inputSource(): string { return urlAbsolute(this.source) }
+    get inputSource(): string { return this.source }
 
     loadDefinition(_quantize: number, _start: Time, end?: Time): LoadPromise | void {
       if (!end) return

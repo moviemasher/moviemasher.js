@@ -24,6 +24,9 @@ const parse = (evaluated : ValueObject) => {
   return result
 }
 
+/**
+ * @category Filter
+ */
 class ConvolutionFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const options = parse(evaluated)

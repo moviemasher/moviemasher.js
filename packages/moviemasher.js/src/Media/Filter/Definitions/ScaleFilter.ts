@@ -1,11 +1,14 @@
 
-import { EvaluatedSize, GraphFilter, Size, ValueObject } from "../../../declarations"
+import { EvaluatedSize, GraphFilter, LayerArgs, Size, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
+/**
+ * @category Filter
+ */
 class ScaleFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : EvaluatedSize) : VisibleContext {
     const { context } = evaluator
@@ -30,10 +33,18 @@ class ScaleFilter extends FilterDefinitionClass {
     return drawing
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject): GraphFilter {
+  input(_evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
+    const inputs: string[] = []
+    const { prevFilter, inputCount } = args
+    if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
+    else inputs.push(`${inputCount}:v`)
+
+
     const outWidth = evaluated.w || evaluated.width || 0
     const outHeight = evaluated.h || evaluated.height || 0
     const graphFilter: GraphFilter = {
+      outputs: ['SCALE'],
+      inputs,
       filter: this.id,
       options: { width: outWidth, height: outHeight }
     }

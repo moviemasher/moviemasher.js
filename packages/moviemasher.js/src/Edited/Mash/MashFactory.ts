@@ -13,7 +13,7 @@ const MashFactory = {
   instance: (object: MashObject = {}, definitions?: DefinitionObject[]): Mash => {
     if (definitions) definitions.forEach(definition => {
       const { id: definitionId, type } = definition
-      if (!(type && isPopulatedString(type))) throw Errors.type
+      if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
 
       const definitionType = <DefinitionType>type
       if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType

@@ -1,4 +1,4 @@
-import { GraphFilter, ValueObject } from "../../../declarations"
+import { GraphFilter, LayerArgs, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Parameter } from "../../../Setup/Parameter"
 import { Evaluator } from "../../../Helpers/Evaluator"
@@ -7,6 +7,9 @@ import { pixelColor } from "../../../Utilities/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context/VisibleContext"
 
+/**
+ * @category Filter
+ */
 class ColorFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const { context } = evaluator
@@ -19,8 +22,9 @@ class ColorFilter extends FilterDefinitionClass {
     return context
   }
 
-  input(evaluator: Evaluator, evaluated: ValueObject): GraphFilter {
+  input(evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
     const graphFilter: GraphFilter = {
+      outputs: ['COLOR'],
       filter: this.id,
       options: Object.fromEntries(this.parameters.map(parameter => [
         parameter.name,

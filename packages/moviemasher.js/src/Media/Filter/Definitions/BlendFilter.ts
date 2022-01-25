@@ -5,6 +5,9 @@ import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { Types } from "../../../Setup/Types"
 
+/**
+ * @category Filter
+ */
 class BlendFilter extends FilterDefinitionClass {
 
   // eslint-disable-next-line camelcase

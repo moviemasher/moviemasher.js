@@ -1,8 +1,8 @@
 import path from 'path'
 import { registerFont } from "canvas"
-import { LoadFontPromise } from "../../src/declarations"
-import { cacheKey } from "../../src/Loader/Cache"
-import { FontLoader } from "../../src/Media/Font/FontLoader"
+import { LoadFontPromise } from "../../packages/moviemasher.js/src/declarations"
+import { cacheKey } from "../../packages/moviemasher.js/src/Loader/Cache"
+import { FontLoader } from "../../packages/moviemasher.js/src/Media/Font/FontLoader"
 
 
 export class FontLoaderTest extends FontLoader {

@@ -5,6 +5,9 @@ import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
+/**
+ * @category Filter
+ */
 class FadeFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator

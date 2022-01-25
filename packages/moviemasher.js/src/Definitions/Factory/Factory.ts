@@ -1,4 +1,4 @@
-import { DefinitionType } from "../../Setup/Enums"
+import { DefinitionType, DefinitionTypes } from "../../Setup/Enums"
 import { Factories } from "../../Definitions/Factories"
 import { Errors } from "../../Setup/Errors"
 import { AudioFactory } from "../../Media/Audio/Audio"
@@ -15,6 +15,8 @@ import { VideoStreamFactory } from "../../Media/VideoStream/VideoStream"
 import { VideoSequenceFactory } from "../../Media/VideoSequence/VideoSequence"
 import { ContextFactory } from "../../Context/ContextFactory"
 import { TrackFactory } from "../../Media/Track/TrackFactory"
+import { Definition, DefinitionObject } from "../../Base/Definition"
+import { isPopulatedString } from "../../Utilities/Is"
 
 class Factory {
   static get [DefinitionType.Audio]() : AudioFactory {
@@ -25,6 +27,24 @@ class Factory {
   }
 
   static get context(): typeof ContextFactory { return ContextFactory }
+
+  static definitionFromObject(object: DefinitionObject): Definition {
+    const { id: definitionId, type } = object
+    if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
+
+    const definitionType = <DefinitionType>type
+    if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
+
+    if (!(definitionId && isPopulatedString(definitionId))) {
+      throw Errors.invalid.definition.id + JSON.stringify(object)
+    }
+    return this[definitionType].definition(object)
+  }
+
+  static definitionsFromObjects(objects: DefinitionObject[]): Definition[] {
+    return objects.map(object => this.definitionFromObject(object))
+  }
+
 
   static get [DefinitionType.Effect]() : EffectFactory {
     const factory = Factories[DefinitionType.Effect]

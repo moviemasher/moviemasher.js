@@ -10,6 +10,10 @@ interface MoveClipActionObject extends ActionOptions {
   undoInsertIndex : number
   undoTrackIndex : number
 }
+
+/**
+ * @category Action
+ */
 class MoveClipAction extends Action {
   constructor(object : MoveClipActionObject) {
     super(object)

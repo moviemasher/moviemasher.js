@@ -20,6 +20,10 @@ enum EditType {
   Stream = 'stream',
 }
 
+enum AVType {
+  Audio = 'audio',
+  Video = 'video',
+}
 
 enum TrackType {
   Audio = 'audio',
@@ -40,6 +44,14 @@ enum ClipType {
   // AudioStream = 'audiostream',
 }
 
+enum OutputType {
+  Audio = 'audio',
+  Video = 'video',
+  Waveform = 'waveform',
+  Image = 'image',
+  VideoSequence = 'videosequence',
+  VideoStream = 'videostream',
+}
 const ClipTypes = Object.values(ClipType)
 
 // NOTE: order important here - determines initialization
@@ -176,6 +188,7 @@ const OutputFormats = Object.values(OutputFormat)
 
 export {
   ActionType,
+  AVType,
   ClipType,
   ClipTypes,
   RenderType,
@@ -192,6 +205,7 @@ export {
   MoveType,
   OutputFormat,
   OutputFormats,
+  OutputType,
   ServerType,
   ServerTypes,
   TrackType,

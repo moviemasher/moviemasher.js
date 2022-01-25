@@ -4,6 +4,10 @@ import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 interface ChangeTrimActionObject extends ChangeActionObject {
   frames : number
 }
+
+/**
+ * @category Action
+ */
 class ChangeTrimAction extends ChangeAction {
   constructor(object : ChangeTrimActionObject) {
     super(object)

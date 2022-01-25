@@ -9,6 +9,7 @@ const urlServerOptions = (): ServerOptions => {
 }
 
 const urlAbsolute = (url: string): string => (new URL(url, document.baseURI)).href
+
 const urlForServerOptions = (serverOptions?: ServerOptions, suffix? : string):string => {
   const bits: string[] = []
   if (serverOptions) {

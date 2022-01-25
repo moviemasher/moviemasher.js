@@ -1,4 +1,4 @@
-import { Any, GraphFilter, ValueObject } from "../../declarations"
+import { Any, GraphFilter, LayerArgs, ValueObject } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Parameter } from "../../Setup/Parameter"
@@ -20,7 +20,7 @@ class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
     throw Errors.unimplemented + this.id
   }
 
-  input(_evaluator: Evaluator, _evaluated: ValueObject): GraphFilter {
+  input(_evaluator: Evaluator, _evaluated: ValueObject, _args: LayerArgs): GraphFilter {
     throw Errors.unimplemented + this.id
   }
 

@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  RemixIcons, WebrtcView, BroadcastButton, Broadcasting, NotBroadcasting, WebrtcContent,
+  DefaultIcons, WebrtcView, BroadcastButton, Broadcasting, NotBroadcasting, WebrtcContent,
   BroadcastingStatus, Api
 } from "@moviemasher/client-react"
 
@@ -9,8 +9,8 @@ import {
 const application = <Api>
   <WebrtcView>
     <BroadcastButton>
-      <Broadcasting>{RemixIcons.playerPause}</Broadcasting>
-      <NotBroadcasting>{RemixIcons.playerPlay}</NotBroadcasting>
+      <Broadcasting>{DefaultIcons.playerPause}</Broadcasting>
+      <NotBroadcasting>{DefaultIcons.playerPlay}</NotBroadcasting>
     </BroadcastButton>
     <WebrtcContent/>
     <BroadcastingStatus/>

@@ -2,7 +2,7 @@
   "name": "@moviemasher/monorepo",
   "description": "browser-based online video editor and encoding api",
   "homepage": "https://moviemasher.com",
-  "type": "module",
+  "type": "commonjs",
   "source": "index",
   "version": "5.0.0",
   "license": "MPL-2.0",
@@ -34,11 +34,21 @@
     "build": "run-s build-core build-client build-server",
     "develop": "rollup --watch --config dev/rollup/esm.config.js",
     "start": "npm run serve -w example-server-node",
-    "test-verbose": "npm run test-verbose -w @moviemasher/moviemasher.js",
-    "test-watch": "npm run test-watch -w @moviemasher/moviemasher.js",
-    "test": "npm run test -w @moviemasher/moviemasher.js"
+    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
+    "lint": "eslint src/**/*.ts",
+    "test-help": "jest -h",
+    "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
+    "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
+    "test": "jest --config dev/test/jest.config.js"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/jest-image-snapshot": "^4.3.1",
+    "canvas": "^2.8.0",
+    "jest": "^27.4.5",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-image-snapshot": "^4.5.1",
+    "ts-jest": "^27.1.2",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.1.1",
@@ -56,8 +66,9 @@
     "uuid": "^8.3.2"
   },
   "dependencies": {
-    "@types/body-parser": "^1.19.2",
+    "@types/fluent-ffmpeg": "^2.1.20",
     "@types/css-font-loading-module": "^0.0.7",
+    "@types/body-parser": "^1.19.2",
     "@types/node": "^16.11.19"
   },
   "workspaces": [

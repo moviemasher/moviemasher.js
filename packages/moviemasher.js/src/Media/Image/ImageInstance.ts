@@ -15,9 +15,9 @@ class ImageClass extends ImageWithTransformable implements Image {
     const layer = super.layerBase(args)
     if (!layer) return
 
-    const { inputs } = layer
-    if (inputs) {
-      const [input] = inputs
+    const { layerInputs: inputs } = layer
+    const [input] = inputs
+    if (input) {
       input.options ||= {}
       input.options.loop = 1
     }

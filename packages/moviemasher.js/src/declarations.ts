@@ -1,5 +1,5 @@
-import { RenderType } from "./Setup/Enums"
-import { Time } from "./Helpers/Time"
+import { AVType, RenderType } from "./Setup/Enums"
+
 import { TimeRange } from "./Helpers/TimeRange"
 
 // TODO: remove
@@ -220,6 +220,12 @@ export interface ServerOptions {
   port?: number
 }
 
+export interface ServerCallback {
+  server: ServerOptions
+  request: RequestInit
+}
+
+
 
 export interface UploadDescription {
   name: string
@@ -243,22 +249,27 @@ export interface GraphFilter {
   options: ValueObject
 }
 
-export interface InputOverlay extends Point {
-  z?: number
-}
-
 export interface GraphInput {
   source: string
   options?: ValueObject
 }
 
+export interface GraphFile {
+  type: string
+  source?: string
+  content?: string
+}
+
 export interface Layer {
-  inputs?: GraphInput[]
+  files: GraphFile[]
+  layerInputs: GraphInput[]
   filters: GraphFilter[]
   merger?: GraphFilter
 }
 
 export interface Segment {
+  avType?: AVType
+  duration?: number
   layers: Layer[]
 }
 
@@ -269,13 +280,17 @@ export type SegmentsPromise = Promise<Segments>
 
 export interface SegmentOptions {
   type: RenderType
-  size: Size,
-  timeRange?: TimeRange,
-  rate: number
+  size: Size
+  timeRange?: TimeRange
+  videoRate: number
 }
 
 export interface SegmentArgs extends Required<SegmentOptions> { }
 
 export interface LayerArgs extends SegmentArgs {
-  quantize: number
+  layerIndex: number
+  prevLayer: Layer
+  clipTimeRange: TimeRange
+  inputCount: number
+  prevFilter?: GraphFilter,
 }

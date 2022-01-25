@@ -1,6 +1,6 @@
 import { InstanceBase } from "../../Base/Instance"
 import { VisibleContext } from "../../Context"
-import { Any, GraphFilter, UnknownObject, ValueObject } from "../../declarations"
+import { Any, GraphFilter, LayerArgs, UnknownObject, ValueObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utilities/Is"
 import { Evaluator } from "../../Helpers/Evaluator"
@@ -51,10 +51,10 @@ class FilterClass extends InstanceBase implements Filter {
     return evaluated
   }
 
-  inputFilter(evaluator: Evaluator): GraphFilter {
+  inputFilter(evaluator: Evaluator, args: LayerArgs): GraphFilter {
     this.definition.scopeSet(evaluator)
     const evaluated = this.evaluated(evaluator)
-    return this.definition.input(evaluator, evaluated)
+    return this.definition.input(evaluator, evaluated, args)
   }
 
   parameters : Parameter[] = []

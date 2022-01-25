@@ -1,4 +1,4 @@
-[![Image](dev/img/logo.png "Movie Masher")](https://moviemasher.com)
+[![Image](dev/img/logo.svg "Movie Masher")](https://moviemasher.com)
 
 ---
 
@@ -11,6 +11,14 @@ _Browser based video and audio editor - version 5.0.0_
 
 ## Documentation
 
+---
+
+In addition to this Quick Start, there is a simple
+[Demo](https://moviemasher.com/demo/index.html) of the system and
+[more extensive documentation](https://moviemasher.com/doc/index.html) available on
+[MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
+also available when using a code editor that supports TypeScript and IntelliSense.
+
 ## Installation
 
 ---
@@ -22,14 +30,13 @@ saving them to the `dependencies` array in your **package.json** file.
 npm install @moviemasher/server-node --save
 ```
 
-## Usage
+## Inclusion
 
 ---
 
-In our HTML file we link to our compiled JavaScript and CSS files.
-Since most of interface elements scroll both horizontally and
-vertically, the Masher is also typically rendered into a node
-that is styled to fill the whole window.
+To support the widest variety of workflows and tooling, the Cascading Style Sheets
+required to layout the client user interface are kept separate from JavaScript code.
+From our HTML file we link to both our compiled JavaScript and CSS files:
 
 <fieldset>
 <legend>index.html</legend>
@@ -44,16 +51,8 @@ that is styled to fill the whole window.
     <script src='index.js' defer></script>
     <link href='index.css' rel='stylesheet'>
     <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-        font-family: sans-serif;
-      }
-      body, #app {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-      }
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
     </style>
     <title>Movie Masher</title>
   </head>
@@ -65,8 +64,18 @@ that is styled to fill the whole window.
 <!-- MAGIC:END -->
 </fieldset>
 
-Within our code we render the editor, and can optionally define media assets that will
-appear within the Browser Panel. Several Themes and Effects are predefined, as
+Since most of the interface elements scroll and stretch both horizontally and
+vertically, we are rendering into a node that is styled to fill the whole window. We also
+apply the `moviemasher` class to the node, so the additional styles in the CSS file are engaged.
+Learn more about coloring and sizing the user interface using CSS in the
+[Style Guide](https://moviemasher.com/doc/Style.html).
+
+## Usage
+
+---
+
+Within our JavaScript code we render the editor, and can optionally define media assets that will
+appear within the Browser. Several Themes and Effects are predefined, as
 well as a single Font - but no Images, Video, or Audio will appear in the Browser by default.
 
 <fieldset>
@@ -80,7 +89,7 @@ import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import { Factory } from "@moviemasher/moviemasher.js"
 import {
-  MasherDefaults, Masher, RemixIcons
+  MasherDefaults, Masher, DefaultIcons
 } from "@moviemasher/client-react"
 
 import "@moviemasher/client-react/dist/moviemasher.css"
@@ -101,7 +110,7 @@ Factory.video.install({
   duration: 3, fps: 10,
 })
 
-const options = { icons: RemixIcons }
+const options = { icons: DefaultIcons }
 const editor = <Masher {...MasherDefaults(options)} />
 const mode = <StrictMode>{editor}</StrictMode>
 ReactDOM.render(mode, document.getElementById('app'))
@@ -109,36 +118,61 @@ ReactDOM.render(mode, document.getElementById('app'))
 <!-- MAGIC:END -->
 </fieldset>
 
-## Feedback
+In this example we're using the
+[MasherDefaults](https://moviemasher.com/doc/function/MasherDefaults.html) function to
+populate the [Masher](https://moviemasher.com/doc/component/Masher.html) component with
+preconfigured children, utilizing icons specified in the
+[DefaultIcons](https://moviemasher.com/doc/variable/DefaultIcons.html) object.
 
-If any problems arise while utilizing this repository, a [GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed.
+Alternatively, child components like
+[Player](https://moviemasher.com/doc/component/Player.html),
+[Browser](https://moviemasher.com/doc/component/Browser.html),
+[Timeline](https://moviemasher.com/doc/component/Timeline.html), and
+[Inspector](https://moviemasher.com/doc/component/Inspector.html) can be
+selectively provided, and manually configured with a selection of available child controls.
+Learn more about icon sets and component usage in the
+[Layout Guide](https://moviemasher.com/doc/Layout.html).
 
-## Contributing
+## Development
 
-The following command will copy the entire Git project to your local machine, complete with examples, tests, and documentation:
+---
+
+The following Git command will copy the entire Git project to your local machine,
+complete with examples, tests, and documentation:
 
 ```shell
 git clone https://github.com/moviemasher/moviemasher.js.git
 ```
 
-Please join in the shareable economy by gifting your efforts towards improving this project in any way you feel inclined. Pull requests for fixes, features and refactorings are always appreciated, as are documentation updates. Creative help with graphics, video and the web site is also needed. Please contact through [MovieMasher.com](https://moviemasher.com) to discuss your ideas, or donate to the project.
+The following NPM commands can be executed to install all needed dependencies, build
+JavaScript from the TypeScript codebase, and launch a local development server:
 
-#### Developer Setup
+```shell
+npm install
+npm run build
+npm start
+```
 
-Due to the security mechanisms used, this project can only be viewed in a web browser if delivered through a web server - simply viewing index.html locally in a browser will not work. If you are not running a web server on your local machine, [Docker](http://docker.com) is a safe and recommended way to do so. Once installed and running, `cd` into the _config/docker/development_ directory and:
+You can then load Movie Masher by navigating your web browser to
+[http://localhost:8570](http://localhost:8570) and supplying any username/password
+combination when prompted. Learn more about building your own customized server in the
+[Integration Guide](https://moviemasher.com/doc/Integration.html).
 
-- execute `docker-compose up -d` to launch apache web server
-- load [http://localhost:8090/app](http://localhost:8090/app) in a web browser
-- execute `docker-compose down -v` to terminate apache web server
+## Contributing
 
-[Docker](http://docker.com) is required for working on the project itself. Once installed and running, `cd` into the _config/docker/node_ directory and:
+---
 
-- execute `docker-compose run --rm npm` to update node modules
-- execute `docker-compose run --rm grunt` to rebuild JavaScript files
+Please join in the shareable economy by gifting your efforts towards improving this
+project in any way you feel inclined. Pull requests for fixes, features and refactorings
+are always appreciated, as are documentation updates. Creative help with graphics, video
+and the web site is also needed - please [send an email](mailto:connect27@moviemasher.com)
+to discuss your ideas.
 
-#### Known issues in this version
+## Feedback
 
-- new convolution filter is very beta - does not always match ffmpeg output
-- little documentation - see angular-moviemasher for usage and moviemasher.rb for mash syntax
-- video file playback not yet supported - they must be converted to image sequences and MP3 soundtracks
-- audio filters not yet supported
+---
+
+If any problems arise while utilizing the Movie Masher repository, a
+[GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed.
+Further support is occassionally provided to particular projects on an hourly basis - please
+[send an email](mailto:connect27@moviemasher.com) describing your intended usage.

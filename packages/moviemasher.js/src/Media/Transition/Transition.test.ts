@@ -3,7 +3,7 @@ import { TimeRange } from "../../Helpers/TimeRange"
 import { Factory } from "../../Definitions/Factory"
 import { idGenerate } from "../../Utilities/Id"
 
-import { expectCanvas } from "../../../dev/test/Utilities/expectCanvas"
+import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { TrackType } from "../../Setup/Enums"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"

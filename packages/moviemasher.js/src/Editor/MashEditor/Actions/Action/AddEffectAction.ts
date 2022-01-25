@@ -8,6 +8,10 @@ interface AddEffectActionObject extends ActionOptions {
 
   index : number
 }
+
+/**
+ * @category Action
+ */
 class AddEffectAction extends Action {
   constructor(object : AddEffectActionObject) {
     super(object)

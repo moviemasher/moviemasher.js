@@ -1,8 +1,3 @@
-/**
- * @module Is
- * @category Utility
- */
-
 import { ScalarArray, UnknownObject } from "../declarations"
 
 const objectType = (value : unknown) : boolean => typeof value === 'object'

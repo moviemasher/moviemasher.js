@@ -70,7 +70,7 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
 
   increment = Default.definition.videosequence.increment
 
-  get inputSource(): string { return urlAbsolute(this.source) }
+  get inputSource(): string { return this.source }
 
   get instance() : VideoSequence { return this.instanceFromObject(this.instanceObject) }
 

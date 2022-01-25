@@ -12,17 +12,16 @@ const MashEditorDefaults: MashEditorOptions = {
   autoplay: false,
 }
 const DefaultOutput: OutputObject = {
-  backcolor: colorTransparent,
   options: {},
   width: 320,
   height: 240,
-  fps: 30,
+  videoRate: 30,
   videoBitrate: 2000,
   audioBitrate: 160,
   audioCodec: 'aac',
   videoCodec: 'libx264',
   audioChannels: 2,
-  audioFrequency: 44100,
+  audioRate: 44100,
   g: 0,
   format: '',
 }

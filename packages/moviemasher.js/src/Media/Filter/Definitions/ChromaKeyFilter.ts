@@ -7,6 +7,9 @@ import { Pixel } from "../../../Utilities/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context/VisibleContext"
 
+/**
+ * @category Filter
+ */
 class ChromaKeyFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const { context } = evaluator

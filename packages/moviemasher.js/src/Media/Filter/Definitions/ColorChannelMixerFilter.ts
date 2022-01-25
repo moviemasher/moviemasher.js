@@ -4,6 +4,9 @@ import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { Errors } from "../../../Setup/Errors"
 
+/**
+ * @category Filter
+ */
 class ColorChannelMixerFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const map = Object.fromEntries(Object.entries(evaluated).map(entry => {

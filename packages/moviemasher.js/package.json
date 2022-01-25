@@ -37,28 +37,14 @@
     "build": "run-s clean build-esm build-umd build-cjs",
     "clean": "rimraf dist",
     "develop": "rollup --watch --config dev/rollup/esm.config.js",
-    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
-    "lint": "eslint src/**/*.ts",
     "start": "docker-compose --file dev/docker/compose.yml up -d",
     "logs": "docker-compose --file dev/docker/compose.yml logs -f",
-    "stop": "docker-compose --file dev/docker/compose.yml down -v",
-    "test-help": "jest -h",
-    "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
-    "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
-    "test": "jest --config dev/test/jest.config.js"
+    "stop": "docker-compose --file dev/docker/compose.yml down -v"
   },
   "peerDependencies": {
     "fluent-ffmpeg": "^2.1.2"
   },
-  "devDependencies": {
-    "@types/jest": "^27.0.3",
-    "@types/jest-image-snapshot": "^4.3.1",
-    "canvas": "^2.8.0",
-    "jest": "^27.4.5",
-    "jest-fetch-mock": "^3.0.3",
-    "jest-image-snapshot": "^4.5.1",
-    "ts-jest": "^27.1.2"
-  },
+  "devDependencies": {},
   "files": [
     "dist"
   ],

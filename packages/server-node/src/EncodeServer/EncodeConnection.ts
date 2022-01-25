@@ -5,12 +5,13 @@ import path from 'path'
 import { PassThrough } from 'stream'
 import {
   outputHls, Errors, GraphFilter, Segment, UnknownObject, OutputObject, WithError,
-  Layer, GraphInput, segmentToCommandOptions
+  Layer, GraphInput, MashFactory, DefinitionObject, MashObject, SegmentOptions, RenderType, VideoDefinition, Factory, VideoDefinitionObject, ImageDefinitionObject, TrackType, MergerDefinitionObject, MergerObject, ClipObject
 } from '@moviemasher/moviemasher.js'
 
 import { StreamOutput } from '../UnixStream/SocketStreams'
-import { Command, CommandArgs, CommandInput, CommandOptions } from '../Command/Command'
+import { Command, CommandInput, CommandOptions } from '../Command/Command'
 import { CommandFactory } from '../Command/CommandFactory'
+import { segmentToCommandArgs } from '../Utilities/Segment'
 
 interface StreamConnectionCommand {
   command: Command
@@ -34,26 +35,43 @@ class EncodeConnection extends EventEmitter {
   }
 
   defaultSegment(outputObject: OutputObject): Segment {
-    const { width, height, fps } = outputObject
+    const width = outputObject.width!
+    const height = outputObject.height!
+    const videoRate = outputObject.videoRate!
 
     const source = './dist/favicon.ico'
-    const colorFilter: GraphFilter = {
-      filter: 'color',
-      options: { color: '#000000', size: `${width}x${height}`, rate: fps },
-      outputs: ['COLOR']
+    const definitionId = 'image'
+    const definitionObject: ImageDefinitionObject = {
+      source, id: definitionId
     }
-    const filters: GraphFilter[] = [colorFilter]
-    const options = {
-      x: 'floor((main_w - overlay_w) / 2)',
-      y: 'floor((main_h - overlay_h) / 2)'
+    const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
+    const clip: ClipObject = { definitionId, merger }
+    const mashObject: MashObject = {
+      tracks: [{ trackType: TrackType.Video, clips: [clip] }]
     }
-    const merger: GraphFilter = { options, filter: 'overlay', inputs: ['COLOR', '0:v']}
-    const input: GraphInput = { source, options: { loop: 1 } }
+    const definitionObjects: DefinitionObject[] = [definitionObject]
+    const mash = MashFactory.instance(mashObject, definitionObjects)
+    const segmentOptions: SegmentOptions = {
+      type: RenderType.Stream, size: { width, height }, videoRate
+    }
+    return mash.segment(segmentOptions)
+    // const colorFilter: GraphFilter = {
+    //   filter: 'color',
+    //   options: { color: '#000000', size: `${width}x${height}`, rate: videoRate },
+    //   outputs: ['COLOR']
+    // }
+    // const filters: GraphFilter[] = [colorFilter]
+    // const options = {
+    //   x: 'floor((main_w - overlay_w) / 2)',
+    //   y: 'floor((main_h - overlay_h) / 2)'
+    // }
+    // const merger: GraphFilter = { options, filter: 'overlay', inputs: ['COLOR', '0:v']}
+    // const input: GraphInput = { source, options: { loop: 1, re: '' } }
 
-    const layer: Layer = { filters, merger, inputs: [input] }
-    const layers: Layer[] = [layer]
-    const segment: Segment = { layers }
-    return segment
+    // const layer: Layer = { filters, merger, layerInputs: [input], files: [] }
+    // const layers: Layer[] = [layer]
+    // const segment: Segment = { layers }
+    // return segment
   }
 
   get destination(): string {
@@ -79,9 +97,8 @@ class EncodeConnection extends EventEmitter {
 
   update(segment: Segment): WithError {
     const { outputObject, pathPrefix, destination } = this
-    const { fps } = outputObject
+    const videoRate = outputObject.videoRate!
     fs.mkdirSync(pathPrefix, { recursive: true })
-
     // TODO: migrate to constructor args
 
     try {
@@ -91,62 +108,17 @@ class EncodeConnection extends EventEmitter {
         CommandFactory.delete(this.id)
       }
 
-      // const { layers } = segment
+      const options: CommandOptions = segmentToCommandArgs(segment, outputObject, destination)
 
-      // const commandInputs: CommandInput[] = []
-      // const complexFilter = layers.flatMap((layer, track) => {
-      //   const { merger, filters, inputs } = layer
-      //   if (!inputs) console.log(this.constructor.name, "update layer with no inputs", layer)
-      //   inputs?.forEach(input => {
-      //     const { source, options } = input
-      //     if (!source) throw 'no source'
-
-      //     const absolute = source.startsWith('http')
-      //     const localPath = absolute ? source : path.resolve(prefix, source)
-      //     const exists = absolute || fs.existsSync(localPath)
-      //     if (!exists) {
-      //       console.error(this.constructor.name, "update could not find", source)
-      //       throw `NOT FOUND ${localPath}`
-      //     }
-      //     console.log(this.constructor.name, "update found", localPath)
-
-
-      //     const object: ValueObject = options || {}
-      //     object.r = fps
-      //     object.loop = 1
-
-      //     const commandInput: GraphInput = {
-      //       source: localPath,
-      //       options: object
-      //     }
-      //     commandInputs.push(commandInput)
-      //   })
-
-      //   const array = filters
-      //   if (merger) array.push(merger)
-      //   return array
-      // })
-
-      // if (!commandInputs.length) {
-      //   console.log(this.constructor.name, "update with no commandInputs", commandInputs)
-
-      //   const input: CommandInput = {
-      //     source: './dist/img/c.png',
-      //     options: { r: fps, loop: 1 }
-      //   }
-      //   commandInputs.push(input)
-      // }
-
-      // const options: CommandArgs = {
-      //   inputs: commandInputs,
-      //   complexFilter,
-      //   output: outputObject,
-      //   destination
-      // }
-
-      const options = segmentToCommandOptions(segment)
-
-      const command = CommandFactory.instance(this.id, options)
+      // streams require at least one real input
+      if (!options.inputs?.length) {
+        const input: CommandInput = {
+          source: './dist/img/c.png', options: { r: videoRate, loop: 1 }
+        }
+        options.inputs = [input]
+      }
+      const serverOptions = { prefix: '../dev/workspaces/example-client-react' }
+      const command = CommandFactory.instance(this.id, options, serverOptions)
       command.addListener('error', (...args:any[]) => {
         console.error("EncodeConnection", ...args)
         this.update(this.defaultSegment(outputObject))

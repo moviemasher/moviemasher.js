@@ -13,6 +13,9 @@ interface EvaluatedBox {
   height? : number
 }
 
+/**
+ * @category Filter
+ */
 class DrawBoxFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : EvaluatedBox) : VisibleContext {
     const { context } = evaluator

@@ -1,2 +1,2 @@
 export * from "./MaterialIcons"
-export * from "./RemixIcons"
+export * from "./DefaultIcons"

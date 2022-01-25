@@ -10,6 +10,10 @@ interface FreezeActionObject extends ActionOptions {
   trackClips : Clip[]
 }
 
+
+/**
+ * @category Action
+ */
 class FreezeAction extends Action {
   constructor(object : FreezeActionObject) {
     super(object)

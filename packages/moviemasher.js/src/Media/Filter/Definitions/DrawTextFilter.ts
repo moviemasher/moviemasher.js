@@ -1,7 +1,7 @@
 import { cacheKey } from "../../../Loader"
 import { Is } from "../../../Utilities/Is"
 import { Parameter } from "../../../Setup/Parameter"
-import { GraphFilter, Value, TextStyle, ValueObject } from "../../../declarations"
+import { GraphFilter, Value, TextStyle, ValueObject, LayerArgs } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context"
@@ -16,8 +16,11 @@ const mmFontFile = (id? : Value) : string => {
 
 const mmTextFile = (text? : Value) : string => String(text)
 
-const mmFontFamily = (id? : Value) : string => cacheKey(mmFontFile(id))
+const mmFontFamily = (id?: Value): string => cacheKey(mmFontFile(id))
 
+/**
+ * @category Filter
+ */
 class DrawTextFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
     const { context } = evaluator
@@ -41,18 +44,17 @@ class DrawTextFilter extends FilterDefinitionClass {
     const point = { x: Number(x || 0), y: Number(y || 0) }
     const string = String(text || textfile)
     context.drawTextAtPoint(string, textStyle, point)
-
     return context
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject): GraphFilter {
+  input(_evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
     const outWidth = evaluated.w || evaluated.width || 0
     const outHeight = evaluated.h || evaluated.height || 0
     const graphFilter: GraphFilter = {
+      outputs: ['TEXT'],
       filter: this.id,
       options: { width: outWidth, height: outHeight }
     }
-
     return graphFilter
   }
 

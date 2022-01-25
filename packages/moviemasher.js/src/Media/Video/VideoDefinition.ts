@@ -54,7 +54,7 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
 
   fps = Default.definition.video.fps
 
-  get inputSource(): string { return urlAbsolute(this.source) }
+  get inputSource(): string { return this.source }
 
   get instance(): Video { return this.instanceFromObject(this.instanceObject) }
 

@@ -26,13 +26,11 @@ interface ModularDefinitionObject extends DefinitionObject {
 
 // but Definition uses an array of properties to ease filtering/sorting
 interface ModularDefinition extends Definition {
-  filters : Filter[]
-  drawFilters(modular: Modular, range : TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext
-
+  drawFilters(modular: Modular, range : TimeRange, clipRange : TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext
   evaluator(modular: Modular, range : TimeRange, size : Size, context? : VisibleContext, mergerContext? : VisibleContext) : Evaluator
-
+  filters: Filter[]
   filtrateLayer(layer: Layer, modular: Modular, args: LayerArgs): void
-  graphFilters(modular: Modular, args: LayerArgs): GraphFilter[]
+  graphFilters(layer: Layer, modular: Modular, args: LayerArgs): GraphFilter[]
 }
 
 type ModularClass = Constrained<Modular>

@@ -1,4 +1,4 @@
-import { Any, GraphFilter, GraphInput, Layer, LayerArgs, LoadPromise, Size, StringObject } from "../../declarations"
+import { Any, GraphFile, GraphFilter, GraphInput, Layer, LayerArgs, LoadPromise, Size, StringObject } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time  } from "../../Helpers/Time"
 import { Is } from "../../Utilities/Is"
@@ -53,15 +53,13 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     layer(_: LayerArgs): Layer | undefined { return }
 
     layerBase(_: LayerArgs): Layer | undefined {
-      const merger = { filter: 'overlay', options: { x: 0, y: 0 } }
-      const filters: GraphFilter[] = []
       const source = this.definition.inputSource
-      const layer: Layer = { merger, filters }
-
-      if (source) {
-        const input: GraphInput = { source }
-        layer.inputs = [input]
-      }
+      // const merger = { filter: 'overlay', options: { x: 0, y: 0 } }
+      const filters: GraphFilter[] = []
+      const inputs: GraphInput[] = []
+      const files: GraphFile[] = []
+      if (source) inputs.push({ source })
+      const layer: Layer = { filters, layerInputs: inputs, files }
       return layer
     }
 

@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  MasherDefaults, Masher, RemixIcons, Api, Process, ProcessStatus, ProcessActive,
+  MasherDefaults, Masher, DefaultIcons, Api, Process, ProcessStatus, ProcessActive,
   UploadControl, SaveControl, RenderControl, Button, MasherDefaultsOptions,
 } from "@moviemasher/client-react"
 import { Factory } from "@moviemasher/moviemasher.js"
@@ -49,7 +49,7 @@ Factory.font.install({
 const uploadProcess = (
   <Process key='upload-process' id='content'>
     <UploadControl>
-      {RemixIcons.upload}
+      {DefaultIcons.upload}
     </UploadControl>
     <ProcessActive><ProcessStatus/></ProcessActive>
   </Process>
@@ -68,7 +68,7 @@ const renderProcess = (
 )
 
 const applicationOptions: MasherDefaultsOptions = {
-  icons: RemixIcons,
+  icons: DefaultIcons,
   panels: {
     player: { header: { content: <img key='mm' src="img/mm.svg"/> }},
     browser: { footer: { before: uploadProcess } },

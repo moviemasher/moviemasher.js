@@ -73,18 +73,19 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible implemen
 
     const range = transition.timeRangeRelative(time, quantize)
 
+    const clipRange = transition.timeRange(quantize)
     if (fromClip) fromClip.mergeContextAtTime(time, quantize, fromDrawing)
     this.filters = this.fromFilters
-    fromDrawing = this.drawFilters(transition, range, fromDrawing, size)
+    fromDrawing = this.drawFilters(transition, range, clipRange, fromDrawing, size)
 
     if (toClip) toClip.mergeContextAtTime(time, quantize, toDrawing)
     this.filters = this.toFilters
-    toDrawing = this.drawFilters(transition, range, toDrawing, size)
+    toDrawing = this.drawFilters(transition, range, clipRange, toDrawing, size)
 
-    fromDrawing = this.fromScaler.definition.drawFilters(this.fromScaler, range, fromDrawing, size)
-    this.fromMerger.definition.drawFilters(this.fromMerger, range, fromDrawing, size, context)
-    toDrawing = this.toScaler.definition.drawFilters(this.toScaler, range, toDrawing, size)
-    this.toMerger.definition.drawFilters(this.toMerger, range, toDrawing, size, context)
+    fromDrawing = this.fromScaler.definition.drawFilters(this.fromScaler, range, clipRange, fromDrawing, size)
+    this.fromMerger.definition.drawFilters(this.fromMerger, range, clipRange, fromDrawing, size, context)
+    toDrawing = this.toScaler.definition.drawFilters(this.toScaler, range, clipRange, toDrawing, size)
+    this.toMerger.definition.drawFilters(this.toMerger, range, clipRange, toDrawing, size, context)
   }
 
   private fromFilters : Filter[] = []

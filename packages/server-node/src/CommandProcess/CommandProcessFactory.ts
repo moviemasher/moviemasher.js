@@ -9,9 +9,9 @@ const commandProcessInstance = (args: CommandArgs): CommandProcess => {
   const { inputs, output, destination, complexFilter } = args
 
   inputs.forEach(({ source, options }) => {
-    console.log("commandProcessInstance adding", source)
+    // console.log("commandProcessInstance adding", source)
     instance.addInput(source)
-    instance.addInputOption('-re')
+    // instance.addInputOption('-re')
     if (options) instance.addInputOptions(commandInputOptions(options))
   })
 
@@ -20,14 +20,15 @@ const commandProcessInstance = (args: CommandArgs): CommandProcess => {
   }
 
   const options: ValueObject = output.options || {}
-
   if (output.audioCodec) instance.audioCodec(output.audioCodec)
   if (output.audioBitrate) instance.audioBitrate(output.audioBitrate)
   if (output.audioChannels) instance.audioChannels(output.audioChannels)
-  if (output.audioFrequency) instance.audioFrequency(output.audioFrequency)
+  if (output.audioRate) instance.audioFrequency(output.audioRate)
+
   if (output.videoCodec) instance.videoCodec(output.videoCodec)
   // if (output.width && output.height) instance.size(`${output.width}x${output.height}`)
-  if (output.fps) instance.fpsOutput(output.fps)
+  if (output.videoRate) instance.fpsOutput(output.videoRate)
+
   if (output.format) {
     instance.format(output.format)
     if (output.format === 'hls' && typeof destination === 'string') {

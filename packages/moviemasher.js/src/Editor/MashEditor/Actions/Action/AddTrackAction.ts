@@ -4,6 +4,10 @@ import { Action, ActionOptions } from "./Action"
 interface AddTrackActionObject extends ActionOptions {
   trackType : TrackType
 }
+
+/**
+ * @category Action
+ */
 class AddTrackAction extends Action {
   constructor(object : AddTrackActionObject) {
     super(object)

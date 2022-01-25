@@ -24,7 +24,7 @@ import DeleteBin7LineIcon from 'remixicon-react/DeleteBin7LineIcon'
 import SplitCellsHorizontalIcon from 'remixicon-react/SplitCellsHorizontalIcon'
 import { EditorIcons } from '../../../declarations'
 
-const RemixIcons: EditorIcons = {
+const DefaultIcons: EditorIcons = {
   browserAudio: <Music2FillIcon />,
   browserEffect: <FolderSettingsFillIcon />,
   browserImage: <ImageFillIcon />,
@@ -48,4 +48,4 @@ const RemixIcons: EditorIcons = {
   split: <SplitCellsHorizontalIcon />,
 }
 
-export { RemixIcons }
+export { DefaultIcons }

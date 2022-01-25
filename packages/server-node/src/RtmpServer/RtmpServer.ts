@@ -73,15 +73,15 @@ class RtmpServer implements Server {
       }
     }
 
-    const { audioCodec, audioBitrate, audioChannels, audioFrequency, } = outputOptions
+    const { audioCodec, audioBitrate, audioChannels, audioRate, } = outputOptions
     if (audioCodec) task.ac = audioCodec
     const acParam:string[] = []
     if (audioBitrate) acParam.push('-ab', String(audioBitrate))
     if (audioChannels) acParam.push('-ac', String(audioChannels))
-    if (audioFrequency) acParam.push('-ar', String(audioFrequency))
+    if (audioRate) acParam.push('-ar', String(audioRate))
     task.acParam = acParam
 
-    const { videoCodec, width, height, fps } = outputOptions
+    const { videoCodec, width, height } = outputOptions
     if (videoCodec) task.vc = videoCodec
     const vcParam:string[] = []
     if (width && height) vcParam.push('-s', `${width}x${height}`)

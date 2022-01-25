@@ -10,6 +10,9 @@ interface AddClipToTrackActionObject extends AddTrackActionObject {
   trackIndex : number
 }
 
+/**
+ * @category Action
+ */
 class AddClipToTrackAction extends AddTrackAction {
   constructor(object : AddClipToTrackActionObject) {
     super(object)

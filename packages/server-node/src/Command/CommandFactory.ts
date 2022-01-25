@@ -1,3 +1,4 @@
+import { ServerOptions } from "@moviemasher/moviemasher.js"
 import { Command, CommandOptions } from "./Command"
 import { CommandClass } from './CommandClass'
 
@@ -14,8 +15,8 @@ const commandFactoryDelete = (id: string): void => {
 }
 
 
-const commandFactoryInstance = (id: string, options: CommandOptions): Command => {
-  const command = new CommandClass(id, options)
+const commandFactoryInstance = (id: string, options?: CommandOptions, serverOptions?: ServerOptions): Command => {
+  const command = new CommandClass(id, options, serverOptions)
   CommandFactoryInstances[id] = command
   return command
 }

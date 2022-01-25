@@ -36,7 +36,7 @@ class ImageDefinitionClass extends ImageDefinitionWithTransformable implements I
 
   get absoluteUrl(): string { return urlAbsolute(this.urlVisible) }
 
-  get inputSource(): string { return urlAbsolute(this.source) }
+  get inputSource(): string { return this.source }
 
   get instance() : Image {
     return this.instanceFromObject(this.instanceObject)

@@ -4,7 +4,6 @@ import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions/Definitions"
 import { InstanceClass } from "../../Base/Instance"
 import { Time } from "../../Helpers/Time"
-import { TimeRange } from "../../Helpers/TimeRange"
 
 
 function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {

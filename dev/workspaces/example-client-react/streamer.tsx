@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  Streamer, RemixIcons, Api, Process, ProcessStatus, ProcessActive, InspectorOutput,
+  Streamer, DefaultIcons, Api, Process, ProcessStatus, ProcessActive,
   ViewerButton, Button, Webrtc, WebrtcContent, BroadcastButton, ProcessInactive,
   PlayerContent, DefaultInputs, ViewerContent,
 } from "@moviemasher/client-react"
@@ -53,8 +53,8 @@ const application = <Api>
       <div className='panel player'>
         <div className='head'>
           <ViewerButton>
-            <ProcessActive><Button startIcon={RemixIcons.playerPause}>Stop Streaming</Button></ProcessActive>
-            <ProcessInactive><Button startIcon={RemixIcons.playerPlay}>Start Streaming</Button></ProcessInactive>
+            <ProcessActive><Button startIcon={DefaultIcons.playerPause}>Stop Streaming</Button></ProcessActive>
+            <ProcessInactive><Button startIcon={DefaultIcons.playerPlay}>Start Streaming</Button></ProcessInactive>
           </ViewerButton>
         </div>
         <ProcessActive><ViewerContent className="content"/></ProcessActive>
@@ -70,8 +70,8 @@ const application = <Api>
         <div className='panel browser'>
           <div className='head'>
             <BroadcastButton>
-              <ProcessActive>{RemixIcons.playerPause}</ProcessActive>
-              <ProcessInactive>{RemixIcons.playerPlay}</ProcessInactive>
+              <ProcessActive>{DefaultIcons.playerPause}</ProcessActive>
+              <ProcessInactive>{DefaultIcons.playerPlay}</ProcessInactive>
             </BroadcastButton>
           </div>
           <WebrtcContent className='content'/>
@@ -88,7 +88,7 @@ const application = <Api>
         <div className='head'>
         </div>
         <div className='content'>
-          <InspectorOutput><label /></InspectorOutput>
+
         </div>
 
         <div className='foot'>

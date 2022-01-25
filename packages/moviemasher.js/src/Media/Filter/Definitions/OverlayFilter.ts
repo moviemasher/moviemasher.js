@@ -1,10 +1,13 @@
 
 import { VisibleContext } from "../../../Context/VisibleContext"
-import { EvaluatedPoint, GraphFilter, ValueObject } from "../../../declarations"
+import { EvaluatedPoint, GraphFilter, LayerArgs, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
+/**
+ * @category Filter
+ */
 class OverlayFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : EvaluatedPoint) : VisibleContext {
     const { x, y } = evaluated
@@ -15,9 +18,15 @@ class OverlayFilter extends FilterDefinitionClass {
     return mergeContext
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject): GraphFilter {
+  input(_evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
+    const inputs: string[] = []
+    const { prevFilter, inputCount, layerIndex } = args
+    if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
+    else inputs.push(`${inputCount}:v`)
     const { x, y } = evaluated
     return {
+      // outputs: [`L${layerIndex}`],
+      inputs,
       filter: this.id,
       options: { x, y }
     }

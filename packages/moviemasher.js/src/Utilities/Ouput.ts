@@ -1,11 +1,12 @@
-import { CommandInput, CommandOptions } from "../../../server-node/src/Command/Command"
-import { GraphInput, Segment, ValueObject } from "../declarations"
+/**
+ * @module Output
+ * @category Utility
+ */
 import { OutputObject, OutputOptions } from "../Output/Output"
 import { Default } from "../Setup/Default"
-import { OutputFormat } from "../Setup/Enums"
+import { OutputFormat, OutputType } from "../Setup/Enums"
 
 const OutputSegmentPadding = 6
-
 
 const optionsOutput = (overrides?: OutputOptions): OutputObject => {
     const object = overrides || {}
@@ -15,13 +16,12 @@ const optionsOutput = (overrides?: OutputOptions): OutputObject => {
     }
 }
 
-
-const outputHls = (overrides?: OutputObject): OutputObject => {
+const outputHls = (overrides?: OutputOptions): OutputObject => {
   const object = overrides || {}
-  const baseOptions = { ...object, format: OutputFormat.Hls }
+  const baseOptions = { ...object, format: OutputFormat.Hls, type: OutputType.VideoStream }
   const outputOptions = optionsOutput(baseOptions)
 
-  const { fps = Default.mash.output.fps } = outputOptions
+  const videoRate = outputOptions.videoRate || Default.mash.output.videoRate!
   const { options = {} } = outputOptions
 
   return {
@@ -40,30 +40,31 @@ const outputHls = (overrides?: OutputObject): OutputObject => {
       hls_time: 6,
       hls_list_size: 10,
       hls_flags: 'delete_segments',
-      g: fps * 2, // key frame every two seconds
+      g: videoRate * 2, // key frame every two seconds
       ...options
     },
   }
 }
 
-const outputFlv = (overrides?: OutputObject): OutputObject => {
+const outputFlv = (overrides?: OutputOptions): OutputObject => {
   const object = overrides || {}
   const baseOptions: OutputOptions = { ...object, format: 'flv' }
   return optionsOutput(baseOptions)
 }
 
-const outputMp4 = (overrides?: OutputObject): OutputObject => {
+const outputMp4 = (overrides?: OutputOptions): OutputObject => {
   const object = overrides || {}
   const baseOptions: OutputOptions = { ...object, format: 'mp4' }
   return optionsOutput(baseOptions)
 }
-const outputMp3 = (overrides?: OutputObject): OutputObject => {
+
+const outputMp3 = (overrides?: OutputOptions): OutputObject => {
   const object = overrides || {}
   const baseOptions: OutputOptions = { ...object, format: 'mp3' }
   return optionsOutput(baseOptions)
 }
 
-const outputRtmp = (overrides?: OutputObject): OutputObject => {
+const outputRtmp = (overrides?: OutputOptions): OutputObject => {
   // IVS suggests, but it currently fails:
   // '-profile:v main', '-preset veryfast', '-x264opts "nal-hrd=cbr:no-scenecut"',
   // '-minrate 3000', '-maxrate 3000', '-g 60'

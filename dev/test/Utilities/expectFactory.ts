@@ -1,7 +1,7 @@
-import { GenericFactory } from "../../../src/declarations"
-import { Definition, DefinitionObject } from "../../../src/Base/Definition"
-import { Instance, InstanceObject } from "../../../src/Base/Instance"
-import { Errors } from "../../../src/Setup/Errors"
+import { GenericFactory } from "../../../packages/moviemasher.js/src/declarations"
+import { Definition, DefinitionObject } from "../../../packages/moviemasher.js/src/Base/Definition"
+import { Instance, InstanceObject } from "../../../packages/moviemasher.js/src/Base/Instance"
+import { Errors } from "../../../packages/moviemasher.js/src/Setup/Errors"
 
 const expectFactory = (object : unknown | undefined) :void => {
   expect(object).toBeDefined()

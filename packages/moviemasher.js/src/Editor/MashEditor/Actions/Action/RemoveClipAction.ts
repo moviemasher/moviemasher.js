@@ -7,6 +7,10 @@ interface RemoveClipActionObject extends ActionOptions {
   index : number
   track : Track
 }
+
+/**
+ * @category Action
+ */
 class RemoveClipAction extends Action {
   constructor(object : RemoveClipActionObject) {
     super(object)

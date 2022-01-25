@@ -3,8 +3,10 @@ import { DefinitionBase } from "../../Base/Definition"
 import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
 import { DefinitionType } from "../../Setup/Enums"
 import { Definitions } from "../../Definitions/Definitions"
-import { Any } from "../../declarations"
+import { Any, Layer, LayerArgs } from "../../declarations"
 import { ScalerClass } from "./ScalerInstance"
+import { layerLastLabel } from "../../Utilities/Layer"
+import { Modular } from "../../Mixin/Modular/Modular"
 // import { Property } from "../../Setup/Property"
 
 const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)

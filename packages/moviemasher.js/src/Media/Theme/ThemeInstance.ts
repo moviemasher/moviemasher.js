@@ -17,7 +17,9 @@ class ThemeClass extends ThemeWithTransformable {
   contextAtTimeToSize(mashTime : Time, quantize: number, dimensions : Size) : VisibleContext | undefined {
     const context = ContextFactory.toSize(dimensions)
     const range = this.timeRangeRelative(mashTime, quantize)
-    return this.definition.drawFilters(this, range, context, dimensions)
+
+      const clipRange = this.timeRange(quantize)
+    return this.definition.drawFilters(this, range, clipRange, context, dimensions)
   }
 
   clipUrls(quantize: number, start: Time): string[] {
@@ -32,10 +34,7 @@ class ThemeClass extends ThemeWithTransformable {
     const layer = super.layerBase(args)
     if (!layer) return
 
-    const { timeRange, quantize } = args
-    const { startTime } = timeRange
-    const range = this.timeRangeRelative(startTime, quantize)
-    this.modulateLayer(layer, { ...args, timeRange: range })
+    this.modulateLayer(layer, args)
     return layer
   }
 

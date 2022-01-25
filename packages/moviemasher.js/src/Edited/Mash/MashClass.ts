@@ -2,7 +2,7 @@ import {
   Any, SegmentsPromise, Interval, LoadPromise, Size,
   Segment, SegmentPromise, Layer, GraphFilter, UnknownObject, VisibleContextData, Segments, SegmentArgs, SegmentOptions, LayerArgs
 } from "../../declarations"
-import { EventType, TrackType } from "../../Setup/Enums"
+import { AVType, EventType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { isAboveZero, isPopulatedString, isPositive } from "../../Utilities/Is"
@@ -20,8 +20,6 @@ import { Action } from "../../Editor/MashEditor/Actions/Action/Action"
 import { cacheCached } from "../../Loader/Cache"
 import { Emitter } from "../../Helpers/Emitter"
 import { sortByLayer } from "../../Utilities/Sort"
-import { Job } from "../../Job/Job"
-import { urlServerOptions } from "../../Utilities/Url"
 import { Factory } from "../../Definitions/Factory/Factory"
 import { colorValid } from "../../Utilities/Color"
 import { Track, TrackObject } from "../../Media/Track/Track"
@@ -455,14 +453,6 @@ class MashClass implements Mash {
 
   get id(): string { return this._id ||= idGenerate() }
 
-  get job(): Job {
-    return {
-      definitions: this.definitions,
-      mash: this,
-      serverOptions: urlServerOptions(),
-      outputs: []
-    }
-  }
 
   label = ''
 
@@ -618,28 +608,43 @@ class MashClass implements Mash {
     return this.stopLoadAndDraw(true)
   }
 
-
   segment(options: SegmentOptions): Segment {
     const { size, timeRange } = options
+    const { quantize, backcolor } = this
     const segmentTime = timeRange || TimeRange.fromTime(this.time)
-    const segment: Segment = { layers: [] }
+    const segment: Segment = {
+      avType: AVType.Video,
+      duration: segmentTime.lengthSeconds,
+      layers: []
+    }
     const sizeString = `${size.width}x${size.height}`
     const colorFilter: GraphFilter = {
-      filter: 'color', options: { color: this.backcolor, size: sizeString }
+      filter: 'color', options: { color: backcolor, size: sizeString },
+      outputs: ['L0']
     }
-    const layer: Layer = {
-      merger: { filter: 'overlay', options: { x: 0, y: 0 } },
+    let layer: Layer = {
+      files: [],
+      layerInputs: [],
       filters: [colorFilter],
     }
     segment.layers.push(layer)
     const { frames, startTime, endTime } = segmentTime
 
     const clips = this.clipsAtTimes(startTime, frames > 1 ? endTime : undefined)
-    const layerArgs: LayerArgs = {
-      ...options, timeRange: segmentTime, quantize: this.quantize
-    }
-
-    segment.layers.push(...clips.map(clip => clip.layerOrThrow(layerArgs)))
+    let inputCount = 0
+    const layers = clips.map((clip, index) => {
+      const layerArgs: LayerArgs = {
+        ...options,
+        layerIndex: index + 1,
+        clipTimeRange: clip.timeRange(quantize),
+        timeRange: segmentTime,
+        inputCount, prevLayer: layer
+      }
+      layer = clip.layerOrThrow(layerArgs)
+      inputCount += layer.layerInputs.length
+      return layer
+    })
+    segment.layers.push(...layers)
     return segment
   }
 
@@ -655,12 +660,8 @@ class MashClass implements Mash {
   }
 
   segments(args: SegmentArgs): Segments {
-    return this.segmentsAtTimes(args).map(({ clips, timeRange }) => {
-      const layerArgs: LayerArgs = {
-      ...args, timeRange, quantize: this.quantize
-      }
-
-      return { layers: clips.map(clip => clip.layerOrThrow(layerArgs) )}
+    return this.segmentsAtTimes(args).map(({ timeRange }) => {
+      return this.segment({ ...args, timeRange })
     })
   }
 

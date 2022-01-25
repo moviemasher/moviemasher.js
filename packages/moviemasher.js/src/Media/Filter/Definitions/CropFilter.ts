@@ -5,6 +5,9 @@ import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
+/**
+ * @category Filter
+ */
 class CropFilter extends FilterDefinitionClass {
   draw(evaluator : Evaluator, evaluated : EvaluatedRect) : VisibleContext {
     const { context } = evaluator

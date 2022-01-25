@@ -1,22 +1,17 @@
 
-import { JsonObject, Segment, ServerOptions, AndId, WithError } from "../declarations"
-import { DefinitionObject } from "../Base/Definition"
-import { OutputOptions, OutputObject } from "../Output/Output"
+import { JsonObject, Segment, AndId, WithError } from "../declarations"
+import { OutputObject } from "../Output/Output"
 import { EditType } from "../Setup/Enums"
-import { MashObject } from "../Edited/Mash/Mash"
+import { JobOptions } from "../Job/Job"
 
 export interface EncodeInit extends JsonObject {}
+
 
 
 /**
  * @category API
  */
-export interface RenderPostRequest {
-  server?: ServerOptions
-  mash: MashObject
-  definitions?: DefinitionObject[]
-  output: OutputOptions
-}
+export interface EncodeMashRequest extends JobOptions {}
 
 /**
  * @category API
@@ -32,9 +27,8 @@ export interface EncodeOptionsResponse extends OutputObject {
 
 }
 
-export interface EncodeStreamRequest extends OutputObject { }
-
 export interface EncodeStreamResponse extends AndId {
+  streamUrl: string
   readySeconds: number
 }
 

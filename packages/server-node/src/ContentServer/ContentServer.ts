@@ -7,7 +7,7 @@ import path from 'path'
 const uuid = require('uuid').v4
 
 import {
-  ClipObject, Errors, isPositive, MashObject, TrackObject, UnknownObject,
+  ClipObject, Errors, isPositive, MashObject, TrackObject,
   ContentGetStoreRequest, ContentGetStoreResponse, NumberObject, ContentGetStoredResponse,
   OutputOptions, DefinitionObject, Factory, DefinitionType, Definition, StreamObject, ContentInit,
 } from "@moviemasher/moviemasher.js"
@@ -297,9 +297,9 @@ class ContentServer implements Server {
 
           const definitions: DefinitionObject[] = [media]
           const output: OutputOptions = {}
-          const server = {}
+          const serverOptions = {}
           const response: ContentGetStoredResponse = {
-            renderRequests: [{ mash, output, server, definitions }]
+            renderRequests: [{ mash, outputs: [output], serverOptions, definitions }]
           }
           res.send(response)
         })
@@ -313,7 +313,7 @@ class ContentServer implements Server {
       const request: ContentGetStoreRequest = req.body
       try {
         const user = this.userFromRequest(req)
-        const { size, name, type } = request
+        const { name, type } = request
 
         // check that size and type are acceptable
         // create database item
@@ -338,12 +338,8 @@ class ContentServer implements Server {
             headers: { 'Content-Type': type },
             id
           }
-
           res.send(response)
         })
-
-
-
       } catch (error) {
         console.error(error)
         res.sendStatus(500)
@@ -510,7 +506,7 @@ class ContentServer implements Server {
 
   writeMash(mash: MashObject, userId: string): Promise<void> {
     const { id } = mash
-     if (!id) return Promise.reject(401)
+    if (!id) return Promise.reject(401)
 
     return this.rowExists('mash', id, userId).then(existing => {
       if (existing) {

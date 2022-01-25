@@ -88,32 +88,4 @@ describe("Theme", () => {
     })
   })
 
-  describe("ThemeInstance", () => {
-    describe("layer", () => {
-      test("returns expected command", () => {
-        const instance = themeFromId(colorId)
-        instance.frames = 10
-        const timeRange = TimeRange.fromArgs(0, 30)
-        const quantize = 10
-        const size:Size = { width: 640, height: 480 }
-        const rate = Default.mash.output.fps
-        const type = RenderType.Stream
-        const layer = instance.layerOrThrow({ type, quantize, timeRange, size, rate })
-
-        const { inputs, filters, merger } = layer
-        expect(inputs).toBeUndefined()
-        expect(filters.length).toBeGreaterThan(0)
-        const [filter] = filters
-        expect(filter.filter).toEqual('color')
-        const { options } = filter
-        const keys = Object.keys(options).sort()
-        expect(keys).toEqual(['color', 'rate', 'size'])//'duration',
-        expect(merger).toBeDefined()
-        if (!merger) throw 'merger'
-
-        expect(merger.filter).toEqual('overlay')
-        expect(Object.keys(merger.options).length).toEqual(2) // x, y
-      })
-    })
-  })
 })

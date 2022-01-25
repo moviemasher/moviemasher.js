@@ -10,6 +10,10 @@ interface ChangeActionObject extends ActionOptions {
   undoValue : SelectionValue
 }
 
+
+/**
+ * @category Action
+ */
 class ChangeAction extends Action {
   constructor(object : ChangeActionObject) {
     super(object)

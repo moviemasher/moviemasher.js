@@ -1,25 +1,27 @@
-import { RenderType, TrackType, TrackTypes } from "../../Setup/Enums"
+import fs from 'fs'
+
+import { AVType, RenderType, TrackType, TrackTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Definition } from "../../Base/Definition"
 import { Factory } from "../../Definitions/Factory/Factory"
-import { Clip, ClipObject } from "../../Mixin/Clip/Clip"
+import { Clip } from "../../Mixin/Clip/Clip"
 import { idGenerate } from "../../Utilities/Id"
-import { Mash } from "./Mash"
+import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashClass"
-import { expectEmptyArray } from "../../../dev/test/Utilities/expectEmptyArray"
-import { expectArrayOf } from "../../../dev/test/Utilities/expectArrayOf"
-import { expectRender } from "../../../dev/test/Utilities/expectRender"
+import { expectEmptyArray } from "../../../../../dev/test/Utilities/expectEmptyArray"
+import { expectArrayOf } from "../../../../../dev/test/Utilities/expectArrayOf"
+import { expectRender } from "../../../../../dev/test/Utilities/expectRender"
 
 import themeColorJson from "../..//Definitions/DefinitionObjects/theme/color.json"
 import { MashFactory } from "./MashFactory"
 import { TrackClass } from "../../Media/Track/TrackClass"
 import { TrackObject } from "../../Media/Track/Track"
-import { CommandArgs, CommandDestination, CommandInput, CommandOptions } from "../../../../server-node/src/Command/Command"
-import { segmentToCommandOptions } from "../../../../server-node/src/Utilities/Segment"
 import { Default } from "../../Setup/Default"
-import { OutputObject } from "../../Output/Output"
-import { SegmentArgs } from "../../declarations"
-import { outputMp4 } from "../../Utilities/Ouput"
+import path from 'path/posix'
+import { SegmentOptions } from '../../declarations'
+import { segmentToCommandArgs } from '../../../../server-node/src/Utilities/Segment'
+import { CommandArgs } from '../../../../server-node/src/Command/Command'
+import { outputMp4 } from '../../Utilities/Ouput'
 
 describe("MashFactory", () => {
   describe("instance", () => {
@@ -32,35 +34,6 @@ describe("MashFactory", () => {
 describe("Mash", () => {
   const colorDefinition = () => Factory.theme.definition(themeColorJson)
 
-  describe("renders", () => {
-    test("video", () => {
-      const output: OutputObject = outputMp4()
-      const trackType = TrackType.Video
-      const clips: ClipObject[] = [{definitionId: 'com.moviemasher.theme.color'}]
-      const mash = MashFactory.instance({tracks: [{trackType, clips}]})
-      // console.log(JSON.stringify(mash))
-      const timeRange = mash.timeRange
-      const args: SegmentArgs = {
-        type: RenderType.File, size: { width: output.width, height: output.height },
-        rate: output.fps, timeRange
-      }
-      const segments = mash.segments(args)
-      segments.forEach(segment => {
-        const id = idGenerate()
-        const commandOptions = segmentToCommandOptions(segment)
-        console.log(commandOptions)
-        const destination = `../../temporary/${id}.mp4`
-        commandOptions.output = output
-        const commandArgs: CommandArgs = {
-          inputs: commandOptions.inputs!,
-          complexFilter: commandOptions.complexFilter!,
-          destination, output
-        }
-        expectRender(id, commandArgs)
-      })
-
-    })
-  })
   describe("addTrack", () => {
     test.each(TrackTypes)("returns new %s track", (trackType) => {
       const mash = MashFactory.instance()
@@ -242,24 +215,67 @@ describe("Mash", () => {
       expect(clipObject.color).toEqual(clip.color)
     })
   })
+  const output = outputMp4() // { avType: AVType.Video }
+  // const { output } = Default.mash
+  // // const time = Time.fromArgs(0, 10)
+  const size = { width: output.width!, height: output.height! }
+  const videoRate = output.videoRate!
+  const type = RenderType.Stream
+  const segmentOptions: SegmentOptions = { type, size, videoRate }
 
   describe("segmentPromise", () => {
     test("returns expected promise", async () => {
+      const videoDefinition = {
+        type: "video",
+        label: "Video", id: "id-video",
+        url: 'assets/video.mp4',
+        source: 'assets/video/original.mp4',
+        duration: 3, fps: 10,
+      }
       const mash = MashFactory.instance({
-        tracks: [{ clips: [{ definitionId: 'com.moviemasher.theme.text' }] }]
-      })
-      const { output } = Default.mash
-      // const time = Time.fromArgs(0, 10)
-      const size = { width: output.width, height: output.height }
-      const rate = output.fps
-      const type = RenderType.Stream
-      const result = await mash.segmentPromise({ type, size, rate })
-      // result.layers.forEach((segment, index) => {
-      //   console.log("segmentPromise segment", index, segment.filters)
-      // })
+        tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30 }] }]
+      }, [videoDefinition])
+      const segment = mash.segment(segmentOptions)
+      expect(segment).toBeInstanceOf(Object)
+      const { layers, duration } = segment
+      expect(duration).toBeGreaterThan(0)
+      expect(layers.length).toEqual(2)
+      const [baseLayer, layer] = layers
+      expect(baseLayer.merger).toBeUndefined()
+      const { filters: baseFilters } = baseLayer
+      expect(baseFilters.length).toBe(1)
+      const [baseFilter] = baseFilters
+      expect(baseFilter.outputs?.length).toBe(1)
+      const { merger } = layer
+      expect(merger).toBeDefined()
+      if (!merger) throw 'merger'
 
+      const { inputs, outputs } = merger
+      expect(inputs).toBeDefined()
+      expect(outputs).toBeUndefined()//.toEqual(['L1'])//
+
+      const id = idGenerate()
+      const destination = `./temporary/${id}.mp4`
+      const commandArgs = segmentToCommandArgs(segment, output, destination)
+      await expectRender(id, commandArgs)
+    })
+  })
+  const dir = './dev/test/MashObjects'
+  const ext = '.json'
+
+  const files = fs.readdirSync(dir)
+
+  const jsonFiles = files.filter(file => file.endsWith(ext))
+  const names = jsonFiles.map(file => path.basename(file, ext))
+
+  describe.each(names)("%s", name => {
+    const mashObject: MashObject = fs.readFileSync(`${dir}/${name}${ext}`).toJSON()
+
+    test("returns something", async () => {
+      const mash = MashFactory.instance(mashObject)
+      const result = await mash.segmentPromise(segmentOptions)
+      // console.log(result.layers.flatMap(layer => layer.filters))
       expect(result).toBeInstanceOf(Object)
     })
   })
-
 })

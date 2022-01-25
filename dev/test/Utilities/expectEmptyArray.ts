@@ -1,5 +1,5 @@
 
-import { Any } from "../../../src/declarations"
+import { Any } from "../../../packages/moviemasher.js/src/declarations"
 import { expectArray } from "./expectArray"
 
 const expectEmptyArray = (value : Any) : Any[] => {

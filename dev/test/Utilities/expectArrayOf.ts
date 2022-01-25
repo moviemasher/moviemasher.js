@@ -1,4 +1,4 @@
-import { Any, Constructor } from "../../../src/declarations"
+import { Any, Constructor } from "../../../packages/moviemasher.js/src/declarations"
 import { expectArray } from "./expectArray"
 
 const expectArrayOf = (value : Any, klass : Constructor, length? : number) : Any[] => {

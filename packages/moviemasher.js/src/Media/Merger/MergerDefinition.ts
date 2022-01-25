@@ -7,7 +7,9 @@ import { DefinitionType } from "../../Setup/Enums"
 
 import { Definitions } from "../../Definitions/Definitions"
 import { Modular } from "../../Mixin/Modular/Modular"
+import { layerLastLabel } from "../../Utilities/Layer"
 
+const MergerDefinitionClassOutput = 'OUT'
 const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 class MergerDefinitionClass extends MergerDefinitionWithModular implements MergerDefinition {
   constructor(...args : Any[]) {
@@ -17,7 +19,25 @@ class MergerDefinitionClass extends MergerDefinitionWithModular implements Merge
   }
 
   filtrateLayer(layer: Layer, modular: Modular, args: LayerArgs): void {
-    layer.merger = this.graphFilters(modular, args)[0]
+    const { prevLayer, layerIndex } = args
+    const prevOutput = layerLastLabel(prevLayer)
+    if (!prevOutput) return
+
+    // const { layerInputs: inputs } = layer
+    const output = layerLastLabel(layer)
+    if (!output) return
+    // if (!inputs.length) return
+
+    const graphFilters = this.graphFilters(layer, modular, args)
+    const merger = graphFilters[0]
+    if (!merger) return
+
+    const mergerInputs = [prevOutput, output]
+    merger.inputs = mergerInputs
+    // merger.outputs = [`L${layerIndex}`]
+    // console.log(this.constructor.name, "filtrateLayer", mergerInputs)
+
+    layer.merger = merger
   }
 
   get instance() : Merger {

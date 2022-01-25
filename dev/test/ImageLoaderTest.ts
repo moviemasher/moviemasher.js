@@ -1,7 +1,7 @@
 import path from 'path'
 import { loadImage } from 'canvas'
-import { ImageLoader } from "../../src/Media/Image/ImageLoader"
-import { Any } from "../../src/declarations"
+import { ImageLoader } from "../../packages/moviemasher.js/src/Media/Image/ImageLoader"
+import { Any } from "../../packages/moviemasher.js/src/declarations"
 
 export class ImageLoaderTest extends ImageLoader {
   protected override requestUrl(url: string): Promise<Any> {

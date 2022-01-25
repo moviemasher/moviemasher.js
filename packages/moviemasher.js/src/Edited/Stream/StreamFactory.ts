@@ -13,7 +13,7 @@ const StreamFactory = {
   instance: (object: StreamObject = {}, definitions?: DefinitionObject[]): Stream => {
     if (definitions) definitions.forEach(definition => {
       const { id: definitionId, type } = definition
-      if (!(type && isPopulatedString(type))) throw Errors.type
+      if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
 
       const definitionType = type as DefinitionType
       if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
