@@ -1,75 +1,57 @@
 import React from 'react'
 import {
-  Mash, MashEditorFactory, MashFactory, ServerType, UnknownObject, urlForServerOptions
+  Endpoints,
+  Mash, MashEditorFactory, MashFactory, ServerType, UnknownObject,
+  DataMashDefaultResponse,
+  DataMashDefaultRequest
 } from '@moviemasher/moviemasher.js'
 
-import { EditorInputs, PropsWithChildren, ReactResult } from '../../declarations'
-import { EditorContext } from '../../Contexts/EditorContext'
+import { PropsWithChildren, ReactResult, WithClassName } from '../../declarations'
+import { MasherContext, MasherContextInterface } from '../../Contexts/MasherContext'
 import { ApiContext } from '../../Contexts/ApiContext'
 import { View } from '../../Utilities/View'
 
-/**
- * TODO: editor option description
- */
-interface MasherOptions extends UnknownObject {
-  /**
-   * Sets the mash associated with the {@link MashEditor} of my {@link EditorContext}.
-   */
+interface MasherOptions extends UnknownObject, WithClassName {
   mash?: Mash
-  className?: string
-  inputs?: EditorInputs
 }
 
-/**
- * TODO: editor props description
- */
 interface MasherProps extends MasherOptions, PropsWithChildren {
 }
 
 /**
- * Main application container supporting {@link Player}, {@link Browser},
- * {@link Timeline}, and {@link Inspector} child components.
- * @example
- * ```
- * const props: MasherProps = { children: [] }
- * const editor: JSX.Element = <Masher { ...props } />
- * ```
- * @parents Api
+ * @parents Api, Caster
  * @children Browser, Timeline, Inspector, Player
- * @returns provided children wrapped in a {@link View} and {@link EditorContext}
+ * @returns provided children wrapped in a {@link View} and {@link MasherContext}
  */
 function Masher(props: MasherProps): ReactResult {
+  const { mash, ...rest } = props
   const apiContext = React.useContext(ApiContext)
   const [requested, setRequested] = React.useState(false)
 
-  const { inputs, mash, ...rest } = props
-  const { enabled, serverOptionsPromise } = apiContext
+  const { enabled, endpointPromise } = apiContext
+  const [mashEditor] = React.useState(() => MashEditorFactory.instance({ fps: 24 }))
 
-  const [editor] = React.useState(() => MashEditorFactory.instance({ fps: 24 }))
-
-  const editorContext = { editor, inputs }
   React.useEffect(() => {
-    if (mash) editor.mash = mash
+    if (mash) mashEditor.mash = mash
     else if (!requested) {
-      if (!enabled.includes(ServerType.Content)) return
+      if (!enabled.includes(ServerType.Data)) return
 
       setRequested(true)
-      serverOptionsPromise(ServerType.Content).then(serverOptions => {
-        const urlString = urlForServerOptions(serverOptions, '/mash')
-        console.debug("GET request", urlString)
-        fetch(urlString).then(response => response.json()).then((json) => {
-          console.debug("GET response", urlString, json)
-          editor.mash = MashFactory.instance(json)
-        })
+      const request: DataMashDefaultRequest = {}
+      console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request)
+      endpointPromise(Endpoints.data.mash.default).then((response: DataMashDefaultResponse) => {
+        console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
+        const { mash, definitions } = response
+        mashEditor.mash = MashFactory.instance(mash, definitions)
       })
     }
   }, [enabled])
 
-
+  const context: MasherContextInterface = { mashEditor }
   return (
-    <EditorContext.Provider value={editorContext}>
-      <View {...rest} />
-    </EditorContext.Provider>
+    <MasherContext.Provider value={context}>
+      <View { ...rest } />
+    </MasherContext.Provider>
   )
 }
 

@@ -1,10 +1,10 @@
 import { Any, Constrained, UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { Is } from "../Utilities/Is"
+import { Is } from "../Utility/Is"
 import { Definition } from "./Definition"
 import { Time } from "../Helpers/Time"
-import { idGenerate } from "../Utilities/Id"
+import { idGenerate } from "../Utility/Id"
 import { Property } from "../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
 import { PropertiedClass } from "./Propertied"
@@ -46,7 +46,6 @@ class InstanceBase extends PropertiedClass {
   }
 
   private _id? : string
-
   get id() : string { return this._id ||= idGenerate() }
 
   protected _label? : string
@@ -64,9 +63,8 @@ class InstanceBase extends PropertiedClass {
   }
 
   toJSON(): UnknownObject {
-    const object: UnknownObject = {
-      definitionId: this.definitionId, type: this.type, id: this.id
-    }
+    const { definitionId, type } = this
+    const object: UnknownObject = { definitionId, type }
     this.propertyNames.forEach(name => { object[name] = this.value(name) })
     return object
   }

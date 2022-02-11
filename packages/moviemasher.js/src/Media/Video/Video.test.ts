@@ -1,5 +1,5 @@
 import { UnknownObject } from "../../declarations"
-import { idGenerate } from "../../Utilities/Id"
+import { idGenerate } from "../../Utility/Id"
 import { Factory } from "../../Definitions/Factory/Factory"
 
 describe("Video", () => {

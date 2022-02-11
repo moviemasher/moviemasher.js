@@ -2,7 +2,7 @@ import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import { Factory } from "@moviemasher/moviemasher.js"
 import {
-  MasherDefaults, Masher, DefaultIcons
+  MasherDefault, Masher, DefaultIcons, MasherDefaultOptions
 } from "@moviemasher/client-react"
 
 import "@moviemasher/client-react/dist/moviemasher.css"
@@ -23,7 +23,7 @@ Factory.video.install({
   duration: 3, fps: 10,
 })
 
-const options = { icons: DefaultIcons }
-const editor = <Masher {...MasherDefaults(options)} />
-const mode = <StrictMode>{editor}</StrictMode>
+const options: MasherDefaultOptions = { icons: DefaultIcons }
+const masher = <Masher {...MasherDefault(options)} />
+const mode = <StrictMode>{masher}</StrictMode>
 ReactDOM.render(mode, document.getElementById('app'))

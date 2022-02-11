@@ -6,9 +6,9 @@
   --fore-primary: #545454;
   --fore-secondary: #2c2c2c;
   --fore-tertiary: #1d1d1d;
-  --color-primary: #4c5a6d;
-  --color-secondary: #4a586b;
-  --color-tertiary: #22313b;
+  --color-primary: #366db8;
+  --color-secondary: #29528b;
+  --color-tertiary: #1e3c66;
 }
 
 @media (prefers-color-scheme: dark) {

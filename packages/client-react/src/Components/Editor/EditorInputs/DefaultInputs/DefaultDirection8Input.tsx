@@ -2,15 +2,17 @@ import React from 'react'
 import { InputContext } from '../../../../Contexts/InputContext'
 import { DataType, Types } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
+import { DataTypeInputs } from './DataTypeInputs'
 
 
 function DefaultDirection8Input(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
+  if (!property) return null
 
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    changeHandler(property, event.target.value)
+    changeHandler(property.name, event.target.value)
   }
 
   const selected = String(value)
@@ -23,14 +25,16 @@ function DefaultDirection8Input(): ReactResult {
 
   const selectProps = {
     children: options,
-    name: property,
+    name: property.name,
     onChange,
     value: selected,
-    key: `${property}-select`,
+    key: `${property.name}-select`,
   }
 
   return <select {...selectProps} />
 
 }
+
+DataTypeInputs[DataType.Direction8] = <DefaultDirection8Input />
 
 export { DefaultDirection8Input }

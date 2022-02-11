@@ -1,67 +1,49 @@
-import { Any, ValueObject, Value } from "../declarations"
-import { Default } from "../Setup/Default"
+import { ValueObject, FilterGraphs } from "../declarations"
 import { Property } from "../Setup/Property"
-import { AVType, DataType } from "../Setup/Enums"
+import { DataType, OutputFormat, OutputType } from "../Setup/Enums"
 import { PropertiedClass } from "../Base/Propertied"
-import { OutputOptions } from "./Output"
+import { OutputConstructorArgs } from "./Output"
+import { Errors } from "../Setup/Errors"
+import { outputDefaultFormatByType, outputDefaultTypeByFormat } from "../Helpers/OutputDefault"
+import { RenderingResult } from "../Api/Rendering"
+import { Mash } from "../Edited/Mash/Mash"
 
 class OutputClass extends PropertiedClass {
-  constructor(...args: Any[]) {
-    super(...args)
-    const [object] = args
-    const {
-      options,
-      audioCodec,
-      audioBitrate,
-      audioChannels,
-      audioRate,
-      videoCodec,
-      width,
-      height,
-      videoBitrate,
-      g,
-      videoRate,
-      format,
-    } = object as OutputOptions
-    if (audioCodec) this.audioCodec = audioCodec
-    if (audioBitrate) this.audioBitrate = audioBitrate
-    if (audioChannels) this.audioChannels = audioChannels
-    if (audioRate) this.audioRate = audioRate
-    if (videoCodec) this.videoCodec = videoCodec
-    if (width) this.width = width
-    if (height) this.height = height
-    if (videoBitrate) this.videoBitrate = videoBitrate
-    if (g) this.g = g
-    if (videoRate) this.videoRate = videoRate
-    if (format) this.format = format
+  constructor(object: OutputConstructorArgs) {
+    super(object.output)
+    const { output, mash, cacheDirectory } = object
+    this.args = object
+    const { options, format, type } = output
+    if (!(format || type)) throw Errors.invalid.type
+
+    this.format = format || outputDefaultFormatByType[type!]
+    this.type = type || outputDefaultTypeByFormat[format!]
     if (options) Object.assign(this.options, options)
 
-    this.properties.push(new Property({ name: "backcolor", type: DataType.String }))
     this.properties.push(new Property({ name: "options", type: DataType.Object }))
-    this.properties.push(new Property({ name: "audioCodec", type: DataType.String }))
-    this.properties.push(new Property({ name: "audioBitrate", type: DataType.Number }))
-    this.properties.push(new Property({ name: "audioChannels", type: DataType.Number }))
-    this.properties.push(new Property({ name: "audioRate", type: DataType.Number }))
-    this.properties.push(new Property({ name: "videoCodec", type: DataType.String }))
-    this.properties.push(new Property({ name: "width", type: DataType.Number }))
-    this.properties.push(new Property({ name: "height", type: DataType.Number }))
-    this.properties.push(new Property({ name: "videoBitrate", type: DataType.Number }))
-    this.properties.push(new Property({ name: "g", type: DataType.Number }))
-    this.properties.push(new Property({ name: "videoRate", type: DataType.Number }))
     this.properties.push(new Property({ name: "format", type: DataType.String }))
+    this.properties.push(new Property({ name: "type", type: DataType.String }))
+
+    this.cacheDirectory = cacheDirectory
+
+    this.mash = mash
   }
+
+  args: OutputConstructorArgs
+
+  cacheDirectory: string
+
+  format: OutputFormat
+
+  mash: Mash
+
   options: ValueObject = {}
-  audioCodec = Default.mash.output.audioCodec
-  audioBitrate: Value = Default.mash.output.audioBitrate!
-  audioChannels = Default.mash.output.audioChannels
-  audioRate = Default.mash.output.audioRate
-  videoCodec = Default.mash.output.videoCodec
-  width = Default.mash.output.width
-  height = Default.mash.output.height
-  videoBitrate: Value = Default.mash.output.videoBitrate!
-  g = Default.mash.output.g
-  videoRate = Default.mash.output.videoRate
-  format = Default.mash.output.format
+
+  filterGraphsPromise(renderingResults?: RenderingResult[]): Promise<FilterGraphs> {
+    throw Errors.unimplemented
+  }
+
+  type: OutputType
 }
 
 export { OutputClass }

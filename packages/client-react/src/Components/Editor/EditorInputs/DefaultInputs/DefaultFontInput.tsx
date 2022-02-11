@@ -1,15 +1,17 @@
 import React from 'react'
 import { InputContext } from '../../../../Contexts/InputContext'
-import { Definitions } from '@moviemasher/moviemasher.js'
+import { DataType, Definitions } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
+import { DataTypeInputs } from './DataTypeInputs'
 
 function DefaultFontInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
+  if (!property) return null
 
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    changeHandler(property, event.target.value)
+    changeHandler(property.name, event.target.value)
   }
 
   const selectedFont = String(value)
@@ -22,14 +24,16 @@ function DefaultFontInput(): ReactResult {
 
   const selectProps = {
     children: options,
-    name: property,
+    name: property.name,
     onChange,
     value: selectedFont,
-    key: `${property}-select`,
+    key: `${property.name}-select`,
   }
 
   return <select {...selectProps} />
 
 }
+
+DataTypeInputs[DataType.Font] = <DefaultFontInput/>
 
 export { DefaultFontInput }

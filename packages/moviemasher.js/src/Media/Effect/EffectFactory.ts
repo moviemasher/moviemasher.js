@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { EffectDefinitionClass } from "./EffectDefinition"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
 
 import effectBlurJson from "../../Definitions/DefinitionObjects/effect/blur.json"

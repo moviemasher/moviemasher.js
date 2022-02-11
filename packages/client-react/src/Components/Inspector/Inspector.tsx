@@ -1,7 +1,7 @@
 import React from 'react'
-import { DefinitionType, EventType, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DefinitionType, EventType, TrackType } from '@moviemasher/moviemasher.js'
 
-import { EditorInputs, PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import {

@@ -1,6 +1,7 @@
 import { MashEditorOptions } from "../Editor/MashEditor/MashEditor"
-import { OutputObject } from "../Output/Output"
-import { colorTransparent } from "../Utilities/Color"
+import { VideoOutputArgs } from "../Output/Output"
+import { colorTransparent } from "../Utility/Color"
+import { OutputFormat, OutputType } from "./Enums"
 
 
 const MashEditorDefaults: MashEditorOptions = {
@@ -11,7 +12,7 @@ const MashEditorDefaults: MashEditorOptions = {
   precision: 3,
   autoplay: false,
 }
-const DefaultOutput: OutputObject = {
+const DefaultOutput: VideoOutputArgs = {
   options: {},
   width: 320,
   height: 240,
@@ -23,10 +24,12 @@ const DefaultOutput: OutputObject = {
   audioChannels: 2,
   audioRate: 44100,
   g: 0,
-  format: '',
+  format: OutputFormat.Mp4,
+  type: OutputType.Video,
+  cover: true,
 }
 
-const MashDefaults = { // MashOptions
+const MashDefaults = {
   label: "Unlabeled Mash",
   quantize: 10,
   backcolor: colorTransparent,

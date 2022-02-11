@@ -1,16 +1,17 @@
 import { Errors} from "../../../Setup/Errors"
 import { Default } from "../../../Setup/Default"
 import { DefinitionType, EventType } from "../../../Setup/Enums"
-import { pixelColor } from "../../../Utilities/Pixel"
-import { sortByTrack } from "../../../Utilities/Sort"
-import { Is } from "../../../Utilities/Is"
+import { pixelColor } from "../../../Utility/Pixel"
+import { sortByTrack } from "../../../Utility/Sort"
+import { Is } from "../../../Utility/Is"
 import { Time } from "../../../Helpers/Time"
 import { Audible } from "../../../Mixin/Audible/Audible"
 import { Visible } from "../../../Mixin/Visible/Visible"
 import { Transition } from "../../../Media/Transition/Transition"
-import { cacheAudibleContext } from "../../../Loader/Cache"
 import { Emitter } from "../../../Helpers/Emitter"
 import { ContextFactory } from "../../../Context/ContextFactory"
+import { Preloader } from "../../../Preloader/Preloader"
+import { AudibleContextInstance } from "../../../Context/AudibleContext"
 
 interface CompositionObject {
   buffer? : number
@@ -18,20 +19,22 @@ interface CompositionObject {
   quantize? : number
   backcolor?: string
   emitter?: Emitter
+  preloader: Preloader
 }
 
 class Composition {
   constructor(object : CompositionObject) {
-    const { emitter, backcolor, buffer, gain, quantize } = object
+    const { emitter, backcolor, buffer, gain, quantize, preloader } = object
     if (backcolor) this.backcolor = backcolor
     if (quantize && Is.aboveZero(quantize)) this.quantize = quantize
     if (typeof gain !== "undefined" && Is.positive(gain)) this._gain = gain
     if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
     if (emitter) this.emitter = emitter
+    this.preloader = preloader
   }
 
   adjustSourceGain(clip : Audible) : void {
-    const source = cacheAudibleContext.getSource(clip.id)
+    const source = AudibleContextInstance.getSource(clip.id)
     if (!source) {
       // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
       return
@@ -79,6 +82,7 @@ class Composition {
   }
 
   compositeVisible(time: Time, clips: Visible[]): void {
+    const { preloader } = this
     this.drawBackground() // clear and fill with mash background color if defined
 
     const clipsByTrack = new Map<number, Visible>()
@@ -105,7 +109,7 @@ class Composition {
     visibleTracks.forEach(track => {
       if (transitioningTracks.includes(track)) {
         const transition = transitionsByTrack.get(track)
-        if (!transition) throw Errors.internal
+        if (!transition) throw Errors.internal + 'transition'
 
         const { fromTrack, toTrack } = transition
         const transitioned: Visible[] = []
@@ -118,7 +122,7 @@ class Composition {
 
         // console.log("drawing clips at track", transitioned.map(clip => clip.track), track)
         transition.mergeClipsIntoContextAtTime(
-          transitioned, this.visibleContext, time, this.quantize, this.backcolor
+          preloader, transitioned, this.visibleContext, time, this.quantize, this.backcolor
         )
         clipsByTrack.delete(fromTrack)
         clipsByTrack.delete(toTrack)
@@ -127,7 +131,7 @@ class Composition {
       const clip = clipsByTrack.get(track)
       if (clip) {
         // console.log("drawing clip at track", clip.track, track)
-        clip.mergeContextAtTime(time, this.quantize, this.visibleContext)
+        clip.mergeContextAtTime(preloader, time, this.quantize, this.visibleContext)
       }
     })
     this.emitter?.emit(EventType.Draw)
@@ -139,10 +143,10 @@ class Composition {
 
 
   private createSources(clips: Audible[], time?:Time): boolean {
-    const filtered = clips.filter(clip => !cacheAudibleContext.hasSource(clip.id))
+    const filtered = clips.filter(clip => !AudibleContextInstance.hasSource(clip.id))
     // if (filtered.length) console.log("Composition.createSources", filtered.length, "of", clips.length, "need audio source")
     return filtered.every(clip => {
-      const sourceNode = clip.loadedAudible()
+      const sourceNode = clip.loadedAudible(this.preloader)
       if (!sourceNode) {
         console.debug(this.constructor.name, "createSources loadedAudible undefined", clip.id)
         return false
@@ -156,7 +160,7 @@ class Composition {
       if (Is.positive(start) && Is.aboveZero(duration)) {
         const { definition, id } = clip
         const { loops } = definition
-        cacheAudibleContext.startAt(id, sourceNode, start, duration, offset, loops)
+        AudibleContextInstance.startAt(id, sourceNode, start, duration, offset, loops)
         this.playingClips.push(clip)
         this.adjustSourceGain(clip)
       }
@@ -168,7 +172,7 @@ class Composition {
     const sourceClips = [...this.playingClips]
     const clipsToRemove = sourceClips.filter(clip => !clipsToKeep.includes(clip))
 
-    clipsToRemove.forEach(clip => cacheAudibleContext.deleteSource(clip.id))
+    clipsToRemove.forEach(clip => AudibleContextInstance.deleteSource(clip.id))
     this.playingClips = clipsToKeep
     // console.log(this.constructor.name, "destroySources removed", clipsToRemove.length, "kept", this.playingClips.length)
   }
@@ -201,10 +205,12 @@ class Composition {
 
   private playingClips: Audible[] = []
 
+  preloader: Preloader
+
   quantize = Default.mash.quantize
 
   get seconds(): number {
-    const ellapsed = cacheAudibleContext.currentTime - this.contextSecondsWhenStarted
+    const ellapsed = AudibleContextInstance.currentTime - this.contextSecondsWhenStarted
     const started = ellapsed + this.startedMashAt
     // console.log("seconds", started, "=", this.startedMashAt, "+", ellapsed, '=', audibleContext.currentTime, '-', this.contextSecondsWhenStarted)
     return started
@@ -215,10 +221,10 @@ class Composition {
     if (this.bufferSource) throw Errors.internal + 'bufferSource startContext'
     if (this.playing) throw Errors.internal + 'playing'
 
-    const buffer = cacheAudibleContext.createBuffer(this.buffer)
-    this.bufferSource = cacheAudibleContext.createBufferSource(buffer)
+    const buffer = AudibleContextInstance.createBuffer(this.buffer)
+    this.bufferSource = AudibleContextInstance.createBufferSource(buffer)
     this.bufferSource.loop = true
-    this.bufferSource.connect(cacheAudibleContext.destination)
+    this.bufferSource.connect(AudibleContextInstance.destination)
     this.bufferSource.start(0)
   }
 
@@ -230,7 +236,7 @@ class Composition {
     const { seconds } = time
     this.playing = true
     this.startedMashAt = seconds
-    this.contextSecondsWhenStarted = cacheAudibleContext.currentTime
+    this.contextSecondsWhenStarted = AudibleContextInstance.currentTime
     // console.log(this.constructor.name, "startPlaying", "startedMashAt", this.startedMashAt, "contextSecondsWhenStarted", this.contextSecondsWhenStarted)
 
     if (!this.createSources(clips, time)) {
@@ -260,7 +266,7 @@ class Composition {
 
     if (!this.bufferSource) return
 
-    this.bufferSource.disconnect(cacheAudibleContext.destination)
+    this.bufferSource.disconnect(AudibleContextInstance.destination)
     delete this.bufferSource
   }
 

@@ -9,6 +9,7 @@ const Errors = {
   eval: {
     sourceRect: `${$invalid} evaluation of source rect `,
     outputSize: `${$invalid} evaluation of output size `,
+    inputSize: `${$invalid} evaluation of input size `,
     conditionTruth: `${$expected} at least one condition to evaluate to true `,
     conditionValue: `${$expected} condition to have a value `,
     number: `${$expected} evaluated value to be a number `,
@@ -40,6 +41,7 @@ const Errors = {
     value: `${$invalidProperty} value `,
     type: `${$invalidProperty} type `,
     url: `${$invalidProperty} url `,
+    user: 'Unauthenticated',
     property: $invalidProperty,
     argument: $invalidArgument,
     object: `${$invalidArgument} object `,

@@ -1,4 +1,4 @@
-import { Any, Layer, LayerArgs, LoadPromise, Size } from "../../declarations"
+import { Any, FilesArgs, FilterChain, FilterChainArgs, GraphFile, LoadPromise, Size } from "../../declarations"
 import { Definition } from "../../Base/Definition"
 import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions/Definitions"
@@ -29,24 +29,30 @@ function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
       return [...super.definitions, ...this.modularDefinitions]
     }
 
-    loadModular(quantize : number, start : Time, end? : Time) : LoadPromise | void {
-      const promises: LoadPromise[] = []
-      const startTime = this.definitionTime(quantize, start)
-      const endTime = end ? this.definitionTime(quantize, end) : end
-      this.modularDefinitions.forEach(definition => {
-        const promise = definition.loadDefinition(quantize, startTime, endTime)
-        if (promise) promises.push(promise)
-      })
-      return Promise.all(promises).then()
-    }
-
-    modularUrls(quantize : number, start : Time, end? : Time) : string[] {
-      const startTime = this.definitionTime(quantize, start)
-      const endTime = end ? this.definitionTime(quantize, end) : end
+    filesModular(args: FilesArgs): GraphFile[] {
       return this.modularDefinitions.flatMap(definition =>
-        definition.definitionUrls(startTime, endTime)
+        definition.files(args)
       )
     }
+
+    // private loadModular(quantize : number, start : Time, end? : Time) : LoadPromise | void {
+    //   const promises: LoadPromise[] = []
+    //   const startTime = this.definitionTime(quantize, start)
+    //   const endTime = end ? this.definitionTime(quantize, end) : end
+    //   this.modularDefinitions.forEach(definition => {
+    //     const promise = definition.loadDefinition(quantize, startTime, endTime)
+    //     if (promise) promises.push(promise)
+    //   })
+    //   return Promise.all(promises).then()
+    // }
+
+    // modularUrls(quantize : number, start : Time, end? : Time) : string[] {
+    //   const startTime = this.definitionTime(quantize, start)
+    //   const endTime = end ? this.definitionTime(quantize, end) : end
+    //   return this.modularDefinitions.flatMap(definition =>
+    //     definition.definitionUrls(startTime, endTime)
+    //   )
+    // }
 
     get modularDefinitions() : Definition[] {
       const modular = this.definition.propertiesModular
@@ -54,8 +60,8 @@ function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
       return ids.map(id => Definitions.fromId(id))
     }
 
-    modulateLayer(layer: Layer, args: LayerArgs): void {
-      this.definition.filtrateLayer(layer, this, args)
+    modulateFilterChain(layer: FilterChain, args: FilterChainArgs): void {
+      this.definition.filtrateFilterChain(layer, this, args)
     }
   }
 }

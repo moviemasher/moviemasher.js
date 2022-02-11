@@ -1,61 +1,69 @@
 import React from 'react'
 import {
-  ServersInit, ApiServerResponse, ApiServerRequest, ServerOptions, urlForServerOptions, idPrefixSet, StringSetter, fetchJson, ApiServersResponse, ServerTypes, ServerType
+  ApiVersion,
+  ApiEndpointResponse,
+  Endpoint, EndpointPromiser, fetchCallback, idPrefixSet,
+  ApiServersRequest, ApiServersResponse, ServerTypes, ServerType,
+  Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback,
 } from '@moviemasher/moviemasher.js'
 
 import { ApiContext, ApiContextInterface } from '../../Contexts/ApiContext'
 import { PropsWithChildren, ReactResult } from '../../declarations'
 
 interface ApiProps extends PropsWithChildren {
-  serverOptions?: ServerOptions
+  endpoint?: Endpoint
+  path?: string
  }
 
-type ServersOptions = {
-  [index in ServerType]?: ApiServerResponse
-}
-
-
 function Api(props: ApiProps): ReactResult {
-  const [options, setOptions] = React.useState<ServersOptions>(() => ({}))
-  const [inits, setInits] = React.useState<ApiServersResponse>(() => ({}))
+  const { endpoint, children, path } = props
+  const callback = { endpoint: endpoint || { prefix: path || Endpoints.api.callbacks } }
+
+  const [callbacks, setCallbacks] = React.useState<ApiCallbacks>(() => (
+    { [Endpoints.api.callbacks]: callback }
+  ))
+  const [_servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
   const [enabled, setEnabled] = React.useState<ServerType[]>(() => ([]))
-  const { serverOptions, children } = props
-  const server = serverOptions || { prefix: '/api' }
 
-  const serverOptionsPromise = (id: ServerType, setStatus?: StringSetter): Promise<ServerOptions> => {
-    const serverOptions = options[id]
-    if (serverOptions) return Promise.resolve(serverOptions)
-
-    const url = urlForServerOptions(server, '/server')
-    const request: ApiServerRequest = { id }
-    const init = fetchJson(request)
-    console.debug("ApiServerRequest", url, request)
-    if (setStatus) setStatus(`Finding ${id} server`)
-    const fetchPromise = fetch(url, init).then(response => response.json())
-    return fetchPromise.then((response: ApiServerResponse) => {
-      console.debug("ApiServerResponse", url, response)
-      if (setStatus) setStatus(`Found ${id} server at ${response.prefix}`)
-      setOptions(servers => ({ ...servers, [id]: response }))
-      return response
+  const endpointPromise: EndpointPromiser = (id, body?) => {
+    return serverPromise(id).then(endpointResponse => {
+      if (isPopulatedObject(body)) {
+        endpointResponse.request ||= {}
+        endpointResponse.request.body = { version: ApiVersion, ...body }
+      }
+      return fetchCallback(endpointResponse)
     })
   }
-  const url = urlForServerOptions(server, '/servers')
+
+  const serverPromise = (id: string): Promise<ApiCallback> => {
+    const previousResponse = callbacks[id]
+    if (previousResponse) {
+      // TODO: check for expires...
+      return Promise.resolve(previousResponse)
+    }
+
+    const promiseCallback: ApiCallback = {
+      endpoint: callback.endpoint, request: { body: { id, version: ApiVersion } }
+    }
+    return fetchCallback(promiseCallback).then((response: ApiEndpointResponse) => {
+      // console.debug("ApiEndpointResponse", callback.endpoint, response)
+      const { apiCallbacks } = response
+      setCallbacks(servers => ({ ...servers, ...apiCallbacks }))
+      return apiCallbacks[id]
+    })
+  }
+
   React.useEffect(() => {
-    if (url) {
-      console.debug("ApiServersRequest", url)
-      const fetchPromise = fetch(url).then(response => response.json())
-      fetchPromise.then((response: ApiServersResponse) => {
-        console.debug("ApiServersResponse", url, response)
+    const request: ApiServersRequest = {}
+    endpointPromise(Endpoints.api.servers, request).then((response: ApiServersResponse) => {
+      // console.debug("ApiServersResponse", response)
+      setServers(response)
+      setEnabled(ServerTypes.filter(type => !!response[type]))
+      if (response.data?.uuid) idPrefixSet(response.data.uuid)
+    })
+  }, [])
 
-        setInits(response)
-
-        setEnabled(ServerTypes.filter(type => !!response[type]))
-        if (response.content?.uuid) idPrefixSet(response.content.uuid)
-      })
-    } else setEnabled([])
-  }, [url])
-
-  const apiContext: ApiContextInterface = { enabled, serverOptionsPromise }
+  const apiContext: ApiContextInterface = { enabled, endpointPromise }
 
   return (
     <ApiContext.Provider value={apiContext}>

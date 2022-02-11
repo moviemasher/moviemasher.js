@@ -16,7 +16,7 @@ import { VideoSequenceFactory } from "../../Media/VideoSequence/VideoSequence"
 import { ContextFactory } from "../../Context/ContextFactory"
 import { TrackFactory } from "../../Media/Track/TrackFactory"
 import { Definition, DefinitionObject } from "../../Base/Definition"
-import { isPopulatedString } from "../../Utilities/Is"
+import { isPopulatedString } from "../../Utility/Is"
 
 class Factory {
   static get [DefinitionType.Audio]() : AudioFactory {
@@ -30,10 +30,10 @@ class Factory {
 
   static definitionFromObject(object: DefinitionObject): Definition {
     const { id: definitionId, type } = object
-    if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
+    if (!(type && isPopulatedString(type))) throw `${Errors.type} Factory.definitionFromObject ${definitionId}`
 
     const definitionType = <DefinitionType>type
-    if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
+    if (!DefinitionTypes.includes(definitionType)) throw `${Errors.type} Factory.definitionFromObject ${definitionType}`
 
     if (!(definitionId && isPopulatedString(definitionId))) {
       throw Errors.invalid.definition.id + JSON.stringify(object)

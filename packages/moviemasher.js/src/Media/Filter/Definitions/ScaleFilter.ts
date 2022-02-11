@@ -1,10 +1,11 @@
 
-import { EvaluatedSize, GraphFilter, LayerArgs, Size, ValueObject } from "../../../declarations"
+import { EvaluatedSize, GraphFilter, FilterChainArgs, Size, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { FilterDefinitionClass } from "../FilterDefinition"
+import { GraphType } from "../../../Setup/Enums"
 
 /**
  * @category Filter
@@ -18,12 +19,14 @@ class ScaleFilter extends FilterDefinitionClass {
     let outHeight = evaluated.h || evaluated.height || 0
     if (outWidth + outHeight < 2) return context
 
+    const inWidth = Number(evaluator.evaluate("in_w"))
+    const inHeight = Number(evaluator.evaluate("in_h"))
+    if (inWidth + inHeight < 2) throw Errors.eval.inputSize
 
-    const inSize : Size = {
-      width: Number(evaluator.get("mm_in_w")), height: Number(evaluator.get("mm_in_h"))
-    }
-    if (outWidth === -1) outWidth = inSize.width * (outHeight / inSize.height)
-    else if (outHeight === -1) outHeight = inSize.height * (outWidth / inSize.width)
+
+    const inSize : Size = { width: inWidth, height: inHeight }
+    if (outWidth === -1) outWidth = inWidth * (outHeight / inHeight)
+    else if (outHeight === -1) outHeight = inHeight * (outWidth / inWidth)
 
     const fromSize = { width: outWidth, height: outHeight }
     const drawing = ContextFactory.toSize(fromSize)
@@ -33,19 +36,18 @@ class ScaleFilter extends FilterDefinitionClass {
     return drawing
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
+  input(_evaluator: Evaluator, evaluated: ValueObject, args: FilterChainArgs): GraphFilter {
     const inputs: string[] = []
     const { prevFilter, inputCount } = args
     if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
     else inputs.push(`${inputCount}:v`)
-
 
     const outWidth = evaluated.w || evaluated.width || 0
     const outHeight = evaluated.h || evaluated.height || 0
     const graphFilter: GraphFilter = {
       outputs: ['SCALE'],
       inputs,
-      filter: this.id,
+      filter: this.ffmpegFilter,
       options: { width: outWidth, height: outHeight }
     }
 
@@ -53,14 +55,17 @@ class ScaleFilter extends FilterDefinitionClass {
   }
 
   scopeSet(evaluator: Evaluator): void {
-    const { context } = evaluator
-    if (!context) return
+    const { graphType, outputSize } = evaluator
 
-    const { width, height } = context.size
-    evaluator.set("in_h", height)
-    evaluator.set("mm_in_h", height)
-    evaluator.set("in_w", width)
-    evaluator.set("mm_in_w", width)
+    const { width: outputWidth, height: outputHeight } = outputSize
+    evaluator.set("out_w", outputWidth)
+    evaluator.set("out_h", outputHeight)
+
+    if (graphType !== GraphType.Canvas) return
+
+    const { width: inputWidth, height: inputHeight } = evaluator.context!.size
+    evaluator.set("in_w", inputWidth)
+    evaluator.set("in_h", inputHeight)
   }
 }
 

@@ -1,8 +1,9 @@
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Any, AudibleSource, UnknownObject, StartOptions } from "../../declarations"
 import { ClipClass } from "../Clip/Clip"
 import { AudibleClass, AudibleDefinition, AudibleObject } from "./Audible"
 import { Default } from "../../Setup/Default"
+import { Preloader } from "../../Preloader/Preloader"
 
 const AudibleGainDelimiter = ','
 
@@ -36,8 +37,8 @@ function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
     gainPairs : number[][] = []
 
 
-    loadedAudible():AudibleSource | undefined {
-      return this.definition.loadedAudible()
+    loadedAudible(preloader: Preloader):AudibleSource | undefined {
+      return this.definition.loadedAudible(preloader)
     }
 
     get muted() : boolean {

@@ -1,19 +1,19 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  DefaultIcons, WebrtcView, BroadcastButton, Broadcasting, NotBroadcasting, WebrtcContent,
-  BroadcastingStatus, Api
+  DefaultIcons, WebrtcView, WebrtcButton, ProcessActive, ProcessInactive, WebrtcContent,
+  ProcessStatus, Api
 } from "@moviemasher/client-react"
 
 
 const application = <Api>
   <WebrtcView>
-    <BroadcastButton>
-      <Broadcasting>{DefaultIcons.playerPause}</Broadcasting>
-      <NotBroadcasting>{DefaultIcons.playerPlay}</NotBroadcasting>
-    </BroadcastButton>
+    <WebrtcButton>
+      <ProcessActive>{DefaultIcons.playerPause}</ProcessActive>
+      <ProcessInactive>{DefaultIcons.playerPlay}</ProcessInactive>
+    </WebrtcButton>
     <WebrtcContent/>
-    <BroadcastingStatus/>
+    <ProcessStatus/>
   </WebrtcView>
 </Api>
 

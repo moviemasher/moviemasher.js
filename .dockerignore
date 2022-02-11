@@ -1,12 +1,10 @@
 .bundle*
 .DS_Store
 .git/*
+node_modules
 Changelog
 doc/*
-Gemfile.lock
 LICENSE
 log/*
-Rakefile.rb
 README*
-spec/*
 tmp/*

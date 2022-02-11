@@ -1,5 +1,9 @@
 import React from "react"
-import { urlForServerOptions, UploadDescription, ContentGetStoreResponse, ContentGetStoredResponse, ServerType } from "@moviemasher/moviemasher.js"
+import {
+  Endpoints, fetchCallback,
+  DataDefinitionPutRequest, DataDefinitionPutResponse,
+  FileStoreResponse, RenderingStartResponse,
+} from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../../declarations"
 import { ApiContext } from "../../../Contexts/ApiContext"
@@ -13,8 +17,8 @@ function UploadControl(props: PropsAndChild): ReactResult {
   const processContext = React.useContext(ProcessContext)
 
   const { children, ...rest } = props
-  const { processing, setProcessing } = processContext
-  const { serverOptionsPromise } = apiContext
+  const { processing, setProcessing, setStatus } = processContext
+  const { endpointPromise } = apiContext
 
   const startProcessing = (file: File) => {
     if (processing) return
@@ -22,44 +26,35 @@ function UploadControl(props: PropsAndChild): ReactResult {
     const { type, name, size } = file
     console.log("startProcessing", file)
     setProcessing(true)
-    serverOptionsPromise(ServerType.Content).then(serverOptions => {
-      const storeUrl = urlForServerOptions(serverOptions, '/store')
-      const decodeJob: UploadDescription = { type, name, size }
-      const storeOptions = {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(decodeJob),
-      }
-      console.log("POST request", storeUrl, JSON.parse(storeOptions.body))
-      fetch(storeUrl, storeOptions).then(response => response.json()).then((json: ContentGetStoreResponse) => {
-        console.log("POST response", storeUrl, json)
-        const { server, headers, method } = json
-        const uploadUrl = urlForServerOptions(server)
-        const uploadOptions = { headers, method, body: file }
-        fetch(uploadUrl, uploadOptions).then(() => {
-          const storedUrl = urlForServerOptions(serverOptions, '/stored')
-          fetch(storedUrl).then(response => response.json()).then((json: ContentGetStoredResponse) => {
-            console.log("json", json)
+    const request: DataDefinitionPutRequest = { type, name, size }
+    console.debug("DataDefinitionPutRequest", Endpoints.data.definition.put, request)
+    endpointPromise(Endpoints.data.definition.put, request).then((response: DataDefinitionPutResponse) => {
+      console.debug("DataDefinitionPutResponse", Endpoints.data.definition.put, response)
+      const { fileCallback, renderingCallback, fileProperty } = response
+      if (fileCallback && fileCallback.request) {
 
-            setProcessing(false)
-          })
+        if (fileProperty) {
+          console.debug(`SETTING body.${fileProperty}`)
+          fileCallback.request.body![fileProperty] = file
+        } else {
+          console.debug("SETTING BODY")
+          fileCallback.request.body = file
+        }
+
+        console.debug("FileStoreRequest", fileCallback)
+        fetchCallback(fileCallback).then((response: FileStoreResponse) => {
+          console.debug("FileStoreResponse", response)
+          if (renderingCallback) {
+            console.debug("RenderingStartRequest", renderingCallback)
+            fetchCallback(renderingCallback).then((response: RenderingStartResponse) => {
+              console.debug("RenderingStartResponse", response)
+              setProcessing(false)
+            })
+          } else setProcessing(false)
         })
-      })
+      } else setProcessing(false)
     })
   }
-
-//   function readVideo(event) {
-//   if (event.target.files && event.target.files[0]) {
-//     var reader = new FileReader();
-
-//     reader.onload = function(e) {
-//       videoSrc.src = e.target.result
-//       videoTag.load()
-//     }.bind(this)
-
-//     reader.readAsDataURL(event.target.files[0]);
-//   }
-// }
 
   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { files } = event.currentTarget
@@ -93,3 +88,16 @@ function UploadControl(props: PropsAndChild): ReactResult {
 }
 
 export { UploadControl }
+
+//   function readVideo(event) {
+//   if (event.target.files && event.target.files[0]) {
+//     var reader = new FileReader();
+
+//     reader.onload = function(e) {
+//       videoSrc.src = e.target.result
+//       videoTag.load()
+//     }.bind(this)
+
+//     reader.readAsDataURL(event.target.files[0]);
+//   }
+// }

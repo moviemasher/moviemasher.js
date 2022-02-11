@@ -1,17 +1,18 @@
+import {
+  Any, GraphFilter, UnknownObject, Value, Size, FilterChain, FilterChainArgs, GraphFile
+} from "../../declarations"
 import { Modular, ModularDefinitionClass, ModularDefinitionObject } from "./Modular"
-import { Property, PropertyObject } from "../../Setup/Property"
-import { Any, GraphFilter, UnknownObject, Value, Size, Layer, LayerArgs, GraphFile } from "../../declarations"
-import { Errors } from "../../Setup/Errors"
+import { Property } from "../../Setup/Property"
 import { TimeRange } from "../../Helpers/TimeRange"
-import { Is } from "../../Utilities/Is"
 import { VisibleContext } from "../../Context"
 import { DefinitionClass } from "../../Base/Definition"
 import { Filter } from "../../Media/Filter/Filter"
-import { Evaluator } from "../../Helpers/Evaluator"
+import { Evaluator, EvaluatorArgs } from "../../Helpers/Evaluator"
 import { filterInstance } from "../../Media/Filter"
 import { Definitions } from "../../Definitions/Definitions"
-import { DefinitionType } from "../../Setup/Enums"
+import { DefinitionType, GraphFileType, LoadType } from "../../Setup/Enums"
 import { FontDefinition } from "../../Media/Font/Font"
+import { Preloader } from "../../Preloader/Preloader"
 
 function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base {
@@ -19,47 +20,28 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
       super(...args)
       const [object] = args
       const { properties, filters } = <ModularDefinitionObject> object
-      if (properties) {
-        const propertyInstances = Object.entries(properties).map(entry => {
-          const [name, propertyObject] = entry
-          if (!Is.object(propertyObject)) throw Errors.invalid.property + "name " + name
-
-          const property : PropertyObject = Object.assign(propertyObject, { name, custom: true })
-          return new Property(property)
-        })
-        this.properties.push(...propertyInstances)
-      }
-      if (filters) {
-        const filterInstances = filters.map(filter => {
-          const { id } = filter
-          if (!id) throw Errors.id + JSON.stringify(filter)
-
-          return filterInstance(filter)
-        })
-        this.filters.push(...filterInstances)
-      }
+      if (properties?.length) this.properties.push(...properties.map(property =>
+        new Property({ ...property, custom: true })
+      ))
+      if (filters) this.filters.push(...filters.map(filter => filterInstance(filter)))
     }
 
-    drawFilters(modular: Modular, range : TimeRange, clipRange: TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext {
+    drawFilters(preloader: Preloader, modular: Modular, range : TimeRange, clipRange: TimeRange, context : VisibleContext, outputSize : Size, outContext?: VisibleContext) : VisibleContext {
      // range's frame is offset of draw time in clip = frames is duration of clip
       let contextFiltered = context
       this.filters.forEach(filter => {
-        const evaluator: Evaluator = this.evaluator(modular, range, size, contextFiltered, outContext)
+        const evaluatorArgs: EvaluatorArgs = {
+          preloader,
+          timeRange: range, outputSize, context: contextFiltered, mergeContext: outContext,
+        }
+        const evaluator = new Evaluator(evaluatorArgs)
+        this.modulateEvaluator(modular, evaluator)
         contextFiltered = filter.drawFilter(evaluator)
       })
       return contextFiltered
     }
 
-    evaluator(modular: Modular, range : TimeRange, size : Size, context? : VisibleContext, mergerContext? : VisibleContext) : Evaluator {
-      const instance = new Evaluator(range, size, context, mergerContext)
-      this.propertiesCustom.forEach(property => {
-        const value = <Value> modular.value(property.name)
-        instance.set(property.name, value)
-      })
-      return instance
-    }
-
-    fileLayer(layer: Layer, modular: Modular) {
+    fileFilterChain(layer: FilterChain, modular: Modular) {
       const modularProperties = this.propertiesModular
       const ids = modularProperties.map(property => String(modular.value(property.name)))
       ids.forEach(id => {
@@ -69,7 +51,7 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
           case DefinitionType.Font: {
             const fontDefinition = definition as FontDefinition
             const graphFile: GraphFile = {
-              type, source: fontDefinition.source
+              type: LoadType.Font, file: fontDefinition.source
             }
             layer.files.push(graphFile)
             break
@@ -79,21 +61,14 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
     }
     filters : Filter[] = []
 
-    filtrateLayer(layer: Layer, modular: Modular, args: LayerArgs): void {
-      this.fileLayer(layer, modular)
-
+    filtrateFilterChain(layer: FilterChain, modular: Modular, args: FilterChainArgs): void {
+      this.fileFilterChain(layer, modular)
       const graphFilters = this.graphFilters(layer, modular, args)
       layer.filters.push(...graphFilters)
-      // const { length } = graphFilters
-      // graphFilters.forEach((graphFilter, index) => {
-      //   console.log(this.constructor.name, "filtrateLayer graphFilter", graphFilter.filter, index + 1, "of", length, "prevFilter", args.prevFilter?.filter, "outputs", args.prevFilter?.outputs?.join(', '))
-
-      //   args.prevFilter = graphFilter
-      // })
     }
 
-    graphFilters(layer: Layer, modular: Modular, args: LayerArgs): GraphFilter[] {
-      const { size, clipTimeRange, timeRange } = args
+    graphFilters(filterChain: FilterChain, modular: Modular, args: FilterChainArgs): GraphFilter[] {
+      const { size: outputSize, clipTimeRange, timeRange } = args
 
       const range = clipTimeRange.scale(timeRange.fps)
       const frame = Math.max(0, timeRange.frame - range.frame)
@@ -101,18 +76,31 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
 
       // range's frame is offset of draw time in clip and frames is duration
       const filtersInput = this.filters.map((filter, index) => {
-        const evaluator: Evaluator = this.evaluator(modular, crazyRange, size)
+
+        const evaluatorArgs: EvaluatorArgs = {
+          timeRange: crazyRange, outputSize, graphType: args.graphType
+        }
+        const evaluator = new Evaluator(evaluatorArgs)
+        this.modulateEvaluator(modular, evaluator)
+
         const graphFilter = filter.inputFilter(evaluator, args)
         if (!graphFilter.inputs?.length) {
           if (args.prevFilter?.outputs?.length) graphFilter.inputs = args.prevFilter.outputs
-          else if (layer.layerInputs.length) graphFilter.inputs = ['0:v']
+          else if (filterChain.inputs.length) graphFilter.inputs = ['0:v']
         }
-        // if (!graphFilter.outputs?.length) graphFilter.outputs = [`F${index}`]
 
         args.prevFilter = graphFilter
         return graphFilter
       })
       return filtersInput
+    }
+
+    private modulateEvaluator(modular: Modular, evaluator: Evaluator): void {
+      this.propertiesCustom.forEach(property => {
+        const { type, name } = property
+        const value = modular.value(property.name) as Value
+        evaluator.set(name, value, type.id)
+      })
     }
 
     get propertiesCustom() : Property[] {
@@ -123,10 +111,9 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
 
     toJSON() : UnknownObject {
       const object = super.toJSON()
+      const custom = this.propertiesCustom
+      if (custom.length) object.properties = custom
       if (this.filters.length) object.filters = this.filters
-      const entries = this.propertiesCustom.map(property => [property.name, property])
-      if (entries.length) object.properties = Object.fromEntries(entries)
-
       return object
     }
   }

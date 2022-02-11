@@ -1,7 +1,7 @@
 import React from 'react'
 import { Definition, UnknownObject } from "@moviemasher/moviemasher.js"
 import { BrowserContext } from '../../Contexts/BrowserContext'
-import { DragTypeSuffix } from '../../Setup/Constants'
+import { DragSuffix } from '../../Setup/Constants'
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
 
 
@@ -55,7 +55,7 @@ function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'copy'
-    dataTransfer.setData(definition.type + DragTypeSuffix, json)
+    dataTransfer.setData(definition.type + DragSuffix, json)
   }
 
   const style: UnknownObject = {}

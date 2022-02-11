@@ -5,21 +5,24 @@ import {
   UnknownObject,
   VisibleContextData,
   Size,
+  FilesOptions,
 } from "../../declarations"
 import {
   ActionType,
+  AVType,
   ClipType,
   ClipTypes,
   DefinitionType,
   EditType,
   EventType,
+  GraphType,
   MasherAction,
   TrackType,
   TransformType,
   TransformTypes,
 } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Time } from "../../Helpers/Time"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Action, ActionObject, ActionOptions } from "./Actions/Action/Action"
@@ -27,7 +30,7 @@ import { ActionFactory } from "./Actions/Action/ActionFactory"
 import { ChangeAction } from "./Actions/Action/ChangeAction"
 import { Actions } from "./Actions/Actions"
 import { Factory } from "../../Definitions/Factory/Factory"
-import { DefinitionObject, DefinitionTimes } from "../../Base/Definition"
+import { DefinitionObject } from "../../Base/Definition"
 import { Definitions } from "../../Definitions"
 import { Effect } from "../../Media/Effect/Effect"
 import { AudibleFile } from "../../Mixin/AudibleFile/AudibleFile"
@@ -201,7 +204,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
         && DefinitionType.Video === clip.type
         && this.clipCanBeSplit(clip, this.time, this.mash.quantize)
       )
-      default: throw Errors.argument
+      default: throw Errors.argument + 'can'
     }
   }
 
@@ -314,7 +317,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (!TransformTypes.includes(transformType)) throw Errors.property + "type " + type
     const transformTarget = transformable[transformType]
     const redoValue = typeof value === "undefined" ? transformTarget.value(property)  : value
-    if (typeof transformTarget !== "object") throw Errors.internal
+    if (typeof transformTarget !== "object") throw Errors.internal + 'transformTarget'
 
     const undoValue = transformTarget[property]
     if (typeof undoValue === "undefined") throw Errors.property + property + JSON.stringify(transformTarget)
@@ -459,8 +462,18 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   private loadMashAndDraw(): LoadPromise {
-    const promise = this.mash.loadPromise
-    if (promise) return promise.then(() => {
+    const timeRange = this.mash.timeRange
+    const options: FilesOptions = {
+      graphType: GraphType.Canvas,
+      timeRange, avType: timeRange.frames > 1 ? undefined : AVType.Video
+    }
+    const graphFiles = this.mash.graphFiles(options)
+    const files = graphFiles.filter(file =>
+      this.preloader.loadedFile(file) || this.preloader.loadingFile(file)
+    )
+
+    const promises = files.map(file => this.preloader.loadFilePromise(file))
+    if (promises.length) return Promise.all(promises).then(() => {
       this.mash.compositeVisible()
     })
 
@@ -468,7 +481,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     return Promise.resolve()
   }
 
-  get loadedDefinitions() : DefinitionTimes { return this.mash.loadedDefinitions }
+  // get loadedDefinitions() : DefinitionTimes { return this.mash.loadedDefinitions }
 
   private _loop = Default.masher.loop
 
@@ -486,20 +499,24 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (this._mash) return this._mash
 
     const instance = MashFactory.instance()
-    this.mash =instance
+    this.mash = instance
     return instance
   }
 
   set mash(object: Mash) {
     if (this._mash === object) return
     this.paused = true
-    if (this._mash) this._mash.destroy()
+    if (this._mash) {
+      this.preloader.flush([])
+      this._mash.destroy()
+    }
 
     this._mash = object
     this._mash.buffer = this.buffer
     this._mash.gain = this.gain
     this._mash.loop = this.loop
     this._mash.emitter = this.eventTarget
+    this._mash.preloader = this.preloader
     // console.log(this.constructor.name, "mash", this._imageSize)
     this._mash.imageSize = this._imageSize
     if (this._actions) {
@@ -517,7 +534,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   move(object: ClipOrEffect, frameOrIndex = 0, trackIndex = 0) : void {
-    if (!Is.object(object)) throw Errors.argument
+    if (!Is.object(object)) throw Errors.argument + 'move'
     const { type } = object
     if (type === DefinitionType.Effect) {
       this.moveEffect(<Effect> object, frameOrIndex)
@@ -565,7 +582,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   moveEffect(effect: Effect, index = 0) : void {
     // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
-    if (!Is.positive(index)) throw Errors.argument
+    if (!Is.positive(index)) throw Errors.argument + 'index'
 
     const { clip } = this.selection
     if (!clip) throw Errors.selection
@@ -597,7 +614,6 @@ class MashEditorClass extends EditorClass implements MashEditor {
       this.mash.gain = this.gain
     }
   }
-
 
   pause() : void { this.paused = true }
 
@@ -690,7 +706,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
   set selection(value: MashEditorSelection) {
     if (!value) {
       console.trace(this.constructor.name, "selection with no value")
-      throw Errors.internal
+      throw Errors.internal + 'set selection'
     }
     const { clip, track, effect } = value
 

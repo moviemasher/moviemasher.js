@@ -1,4 +1,4 @@
-import { Constrained, Layer, LayerArgs, LoadPromise, Size } from "../../declarations"
+import { Constrained, FilesArgs, FilterChain, FilterChainArgs, GraphFile, LoadPromise } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time"
 import { TimeRange } from "../../Helpers/TimeRange"
@@ -29,10 +29,11 @@ interface Clip extends Instance {
   endFrame : number
   frame : number
   frames: number
-  layer(args: LayerArgs) : Layer | undefined
-  layerBase(args: LayerArgs): Layer | undefined
-  layerOrThrow(args: LayerArgs): Layer
-  loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void
+  files(filesArgs: FilesArgs): GraphFile[]
+  filterChain(args: FilterChainArgs) : FilterChain | undefined
+  filterChainBase(args: FilterChainArgs): FilterChain | undefined
+  filterChains(args: FilterChainArgs): FilterChain[]
+  // loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange

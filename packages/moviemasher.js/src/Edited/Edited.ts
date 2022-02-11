@@ -1,11 +1,11 @@
-import { Segment, SegmentOptions, SegmentPromise, Size, VisibleContextData } from "../declarations"
+import {
+  Described, FilterGraph, FilterGraphArgs, Size, VisibleContextData
+} from "../declarations"
 import { Emitter } from "../Helpers/Emitter"
 
-
-interface Edited {
+interface Edited extends Described {
   emitter?: Emitter
-  segment(options: SegmentOptions): Segment
-  segmentPromise(options: SegmentOptions): SegmentPromise
+  filterGraph(args: FilterGraphArgs): FilterGraph
   imageData: VisibleContextData
   imageSize : Size
 }

@@ -1,6 +1,6 @@
-import { Is } from "../Utilities/Is"
+import { Is } from "../Utility/Is"
 import { Time, timeEqualizeRates } from "./Time"
-import { roundWithMethod } from "../Utilities/Round"
+import { roundWithMethod } from "../Utility/Round"
 import { Errors } from "../Setup/Errors"
 
 class TimeRange extends Time {
@@ -21,6 +21,10 @@ class TimeRange extends Time {
     return time
   }
 
+  get copy() : TimeRange {
+    return new TimeRange(this.frame, this.fps, this.frames)
+  }
+
   get description() : string { return `${this.frame}-${this.frames}@${this.fps}` }
 
   get end() : number { return this.frame + this.frames }
@@ -30,25 +34,6 @@ class TimeRange extends Time {
   equalsTimeRange(timeRange : TimeRange) : boolean {
     const [range1, range2] = <TimeRange[]> timeEqualizeRates(this, timeRange)
     return range1.frame === range2.frame && range1.frames === range2.frames
-  }
-
-  get lengthSeconds() : number { return Number(this.frames) / Number(this.fps) }
-
-  get position() : number { return Number(this.frame) / Number(this.frames) }
-
-  get startTime() : Time { return Time.fromArgs(this.frame, this.fps) }
-
-  get copy() : TimeRange {
-    return new TimeRange(this.frame, this.fps, this.frames)
-  }
-
-  scale(fps = 1, rounding = "") : TimeRange {
-    if (this.fps === fps) return this.copy
-
-    const value = Number(this.frames) / (Number(this.fps) / Number(fps))
-    const time = super.scale(fps, rounding)
-    const frames = Math.max(1, roundWithMethod(value, rounding))
-    return new TimeRange(time.frame, time.fps, frames)
   }
 
   intersects(timeRange : TimeRange) : boolean {
@@ -64,6 +49,26 @@ class TimeRange extends Time {
     const scaledRange = <TimeRange> time1
     return scaledTime.frame >= scaledRange.frame && scaledTime.frame < scaledRange.end
 
+  }
+
+  get lengthSeconds() : number { return Number(this.frames) / Number(this.fps) }
+
+  get position(): number { return Number(this.frame) / Number(this.frames) }
+
+  positionTime(position: number, rounding = ''): Time {
+    const frame = roundWithMethod((this.frames - this.frame) * position, rounding)
+    return Time.fromArgs(this.frame + frame, this.fps)
+  }
+
+  get startTime() : Time { return Time.fromArgs(this.frame, this.fps) }
+
+  scale(fps = 1, rounding = "") : TimeRange {
+    if (this.fps === fps) return this.copy
+
+    const value = Number(this.frames) / (Number(this.fps) / Number(fps))
+    const time = super.scale(fps, rounding)
+    const frames = Math.max(1, roundWithMethod(value, rounding))
+    return new TimeRange(time.frame, time.fps, frames)
   }
 
   minEndTime(endTime : Time) : TimeRange {
@@ -103,7 +108,10 @@ class TimeRange extends Time {
 
   static fromTimes(startTime : Time, endTime : Time) : TimeRange {
     const [time1, time2] = <TimeRange[]> timeEqualizeRates(startTime, endTime)
-    if (time2.frame <= time1.frame) throw Errors.argument
+    if (time2.frame <= time1.frame) {
+      console.trace('fromTImes')
+      throw Errors.argument + 'fromTimes ' + time1 + ' ' + time2
+    }
 
     const frames = time2.frame - time1.frame
     return this.fromArgs(time1.frame, time1.fps, frames)

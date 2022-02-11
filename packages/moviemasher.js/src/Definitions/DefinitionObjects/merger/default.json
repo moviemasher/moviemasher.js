@@ -4,12 +4,13 @@
   "type": "merger",
   "filters": [
     {
-      "id": "overlay",
+      "id": "com.moviemasher.filter.overlay",
       "parameters": [
         {
           "name": "x",
           "value": "0"
-        },{
+        },
+        {
           "name": "y",
           "value": "0"
         }

@@ -1,12 +1,7 @@
-import { MashEditor, MashEditorClass } from "@moviemasher/moviemasher.js"
+import React from "react"
+import { MashEditor } from "@moviemasher/moviemasher.js"
+import { MasherContext } from "../Contexts/MasherContext"
 
-import { useEditor } from "./useEditor"
-
-const useMashEditor = (): MashEditor => {
-  const editor = useEditor()
-  if (!(editor instanceof MashEditorClass)) throw editor.constructor.name
-
-  return editor as MashEditor
-}
+const useMashEditor = (): MashEditor => React.useContext(MasherContext).mashEditor!
 
 export { useMashEditor }

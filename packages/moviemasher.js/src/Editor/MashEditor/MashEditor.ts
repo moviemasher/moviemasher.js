@@ -6,7 +6,7 @@ import { MasherAction, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Track } from "../../Media/Track/Track"
-import { Editor } from "../Editor"
+import { Editor, EditorOptions } from "../Editor"
 import { Mash } from "../../Edited/Mash/Mash"
 
 interface MashEditorSelection {
@@ -15,7 +15,7 @@ interface MashEditorSelection {
   effect?: Effect
 }
 
-interface MashEditorOptions extends UnknownObject {
+interface MashEditorOptions extends EditorOptions {
   autoplay: boolean
   buffer: number
   fps: number
@@ -34,21 +34,8 @@ interface MashEditor extends Editor {
   addClip(clip : Clip, frameOrIndex? : number, trackIndex? : number) : LoadPromise
   addEffect(effect : Effect, insertIndex? : number) : LoadPromise
   addTrack(trackType: TrackType): void
-
-  /**
-   * When true, [[`paused`]] is set to false whenever [[`mash`]] is changed.
-   */
   autoplay: boolean
-
-  /**
-   * Number of seconds to preload before playing.
-   */
   buffer: number
-
-  /**
-   * @param masherAction
-   * @returns True when `masherAction` can be taken, given the current selection.
-   */
   can(masherAction : MasherAction) : boolean
   clips: Clip[]
   currentTime : number
@@ -56,7 +43,7 @@ interface MashEditor extends Editor {
   fps : number
   freeze() : void
   goToTime(value: Time): LoadPromise
-  loadedDefinitions : DefinitionTimes
+  // loadedDefinitions : DefinitionTimes
   loop : boolean
   mash : Mash
   move(object: ClipOrEffect, frameOrIndex? : number, trackIndex? : number) : void

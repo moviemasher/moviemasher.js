@@ -2,21 +2,21 @@
   "label": "Constrained",
   "type": "merger",
   "id": "com.moviemasher.merger.constrained",
-  "properties": {
-    "left": { "type": "number", "value": 0 },
-    "top": { "type": "number", "value": 0 }
-  },
+  "properties": [
+    { "name": "left", "type": "number", "value": 0 },
+    { "name": "top", "type": "number", "value": 0 }
+  ],
   "filters": [
     {
-      "id": "overlay",
+      "id": "com.moviemasher.filter.overlay",
       "parameters": [
         {
           "name": "x",
-          "value": "left*(mm_width-overlay_w)"
+          "value": "left*(main_w-overlay_w)"
         },
         {
           "name": "y",
-          "value": "top*(mm_height-overlay_h)"
+          "value": "top*(main_h-overlay_h)"
         }
       ]
     }

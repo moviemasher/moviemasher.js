@@ -1,5 +1,5 @@
 export * from "./Image"
-export * from "./ImageDefinition"
+export * from "./ImageDefinitionClass"
 export * from "./ImageFactory"
-export * from "./ImageInstance"
+export * from "./ImageClass"
 export * from "./ImageLoader"

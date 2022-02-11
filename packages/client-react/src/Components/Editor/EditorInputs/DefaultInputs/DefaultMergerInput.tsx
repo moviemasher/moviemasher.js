@@ -1,14 +1,16 @@
 import React from 'react'
-import { Definitions, Errors, Merger } from '@moviemasher/moviemasher.js'
+import { DataType, Definitions, Errors, Merger } from '@moviemasher/moviemasher.js'
 
 import { InputContext } from '../../../../Contexts/InputContext'
 import { InspectorProperties } from '../../../Inspector/InspectorProperties'
 import { ReactResult } from '../../../../declarations'
+import { DataTypeInputs } from './DataTypeInputs'
 
 function DefaultMergerInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
+  if (!property) return null
   if (typeof value !== 'object' || Array.isArray(value)) return null
 
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -25,7 +27,7 @@ function DefaultMergerInput(): ReactResult {
       instance.setValue(name, value.value(name))
     })
     console.log("DefaultMergerInput instance", instance)
-    changeHandler(property, instance)
+    changeHandler(property.name, instance)
   }
   const { definitionId } = value as Merger
 
@@ -40,15 +42,18 @@ function DefaultMergerInput(): ReactResult {
 
   const mergerProps = {
     children: options,
-    name: property,
+    name: property.name,
     onChange,
     value: definitionId,
-    key: `${property}-select`
+    key: `${property.name}-select`
   }
   return <>
     <select {...mergerProps} />
-    <InspectorProperties propertyPrefix='merger' key={`${property}-inspector`} inspected={value}><label /></InspectorProperties>
+    <InspectorProperties propertyPrefix='merger' key={`${property.name}-inspector`} inspected={value}><label /></InspectorProperties>
   </>
 }
+
+DataTypeInputs[DataType.Merger] = <DefaultMergerInput />
+
 
 export { DefaultMergerInput }

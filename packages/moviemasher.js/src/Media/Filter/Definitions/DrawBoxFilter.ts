@@ -1,8 +1,8 @@
 import { VisibleContext } from "../../../Context"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { isPopulatedString } from "../../../Utilities/Is"
-import { pixelColor } from "../../../Utilities/Pixel"
+import { isPopulatedString } from "../../../Utility/Is"
+import { pixelColor } from "../../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 
 interface EvaluatedBox {
@@ -32,4 +32,4 @@ class DrawBoxFilter extends FilterDefinitionClass {
   }
 }
 
-export { DrawBoxFilter }
+export { DrawBoxFilter, EvaluatedBox }

@@ -9,7 +9,6 @@ interface AudibleContextSource {
   gainSource: AudibleSource
 }
 
-// singleton owned by Cache
 class AudibleContext {
   addSource(id: string, source: AudibleContextSource): void {
     // console.log("addSource", id)
@@ -86,4 +85,6 @@ class AudibleContext {
   }
 }
 
-export { AudibleContext, AudibleContextSource }
+const AudibleContextInstance = new AudibleContext()
+
+export { AudibleContext, AudibleContextSource, AudibleContextInstance }

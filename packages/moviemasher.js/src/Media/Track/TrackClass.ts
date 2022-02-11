@@ -2,8 +2,8 @@ import { Any, UnknownObject } from "../../declarations"
 import { DataType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
-import { idGenerate } from "../../Utilities/Id"
-import { sortByFrame } from "../../Utilities/Sort"
+import { idGenerate } from "../../Utility/Id"
+import { sortByFrame } from "../../Utility/Sort"
 import { Definitions } from "../../Definitions/Definitions"
 import { Clip } from "../../Mixin/Clip/Clip"
 import { PropertiedClass } from "../../Base/Propertied"
@@ -88,7 +88,10 @@ class TrackClass extends PropertiedClass implements Track {
     if (!this.clips.length) return 0
 
     const clip = this.clips[this.clips.length - 1]
-    return clip.frame + clip.frames
+    const { frame, frames } = clip
+    if (frames < 1) return -1
+
+    return frame + frames
   }
 
   private _id? : string
@@ -101,7 +104,7 @@ class TrackClass extends PropertiedClass implements Track {
     const spliceClips = this.clips.filter(other => clip !== other)
     if (spliceClips.length === this.clips.length) {
       // console.trace("removeClip", this.trackType, this.layer, this.clips)
-      throw Errors.internal + ' removeClip'
+      throw Errors.internal + 'removeClip'
     }
     clip.track = -1
     this.sortClips(spliceClips)

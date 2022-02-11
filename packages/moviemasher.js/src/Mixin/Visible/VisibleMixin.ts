@@ -5,15 +5,15 @@ import { TrackType } from "../../Setup/Enums"
 import { Time  } from "../../Helpers/Time"
 import { ClipClass } from "../Clip/Clip"
 import { VisibleClass, VisibleDefinition } from "./Visible"
+import { Preloader } from "../../Preloader/Preloader"
 
 function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
   return class extends Base {
-    contextAtTimeToSize(mashTime : Time, quantize: number, _dimensions : Size) : VisibleContext | undefined {
+    contextAtTimeToSize(preloader: Preloader, mashTime : Time, quantize: number, _dimensions : Size) : VisibleContext | undefined {
       const definitionTime = this.definitionTime(quantize, mashTime)
-      // console.debug(this.constructor.name, "contextAtTimeToSize", definitionTime.toString(), mashTime.toString())
-      const image = this.loadedVisible(quantize, definitionTime)
+      const image = this.loadedVisible(preloader, quantize, definitionTime)
       if (!image) {
-        console.error(this.constructor.name, "contextAtTimeToSize not loaded", this.id)
+        console.trace(this.constructor.name, "contextAtTimeToSize not loaded", this.id)
         return
       }
       const width = Number(image.width)
@@ -26,12 +26,11 @@ function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
 
     declare definition: VisibleDefinition
 
-
-    loadedVisible(quantize: number, definitionTime:Time):VisibleSource | undefined {
-      return this.definition.loadedVisible(quantize, definitionTime)
+    loadedVisible(preloader: Preloader, quantize: number, definitionTime: Time): VisibleSource | undefined {
+      return this.definition.loadedVisible(preloader, quantize, definitionTime)
     }
 
-    mergeContextAtTime(_time : Time, _quantize: number, _context : VisibleContext) : void {}
+    mergeContextAtTime(preloader: Preloader, _time : Time, _quantize: number, _context : VisibleContext) : void {}
 
     trackType = TrackType.Video
 

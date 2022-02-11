@@ -1,7 +1,7 @@
 import { Any, UnknownObject } from "../../declarations"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time"
-import { sortByFrame } from "../../Utilities/Sort"
+import { sortByFrame } from "../../Utility/Sort"
 import { ContextFactory, VisibleContext } from "../../Context"
 import { TransitionClass } from "./TransitionInstance"
 import { Transition, TransitionDefinition, TransitionObject } from "./Transition"
@@ -17,6 +17,7 @@ import { filterInstance } from "../Filter"
 import { mergerInstance } from "../Merger/MergerFactory"
 import { scalerInstance } from "../Scaler/ScalerFactory"
 import { Property } from "../../Setup/Property"
+import { Preloader } from "../../Preloader/Preloader"
 
 const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 const TransitionDefinitionWithClip = ClipDefinitionMixin(TransitionDefinitionWithModular)
@@ -52,9 +53,8 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible implemen
     Definitions.install(this)
   }
 
-  drawVisibleFilters(clips : Visible[], transition : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void {
-    // console.log(this.constructor.name, "drawVisibleFilters", clips.length, transition.id)
-    const { size } = context
+  drawVisibleFilters(preloader: Preloader, clips : Visible[], transition : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void {
+    const { size: outputSize } = context
     const sorted = [...clips].sort(sortByFrame)
     let fromClip : Visible | undefined = sorted[0]
     let toClip : Visible | undefined = sorted[1]
@@ -64,8 +64,8 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible implemen
       fromClip = undefined
     }
 
-    let fromDrawing = ContextFactory.toSize(size)
-    let toDrawing = ContextFactory.toSize(size)
+    let fromDrawing = ContextFactory.toSize(outputSize)
+    let toDrawing = ContextFactory.toSize(outputSize)
     if (color) {
       fromDrawing.drawFill(color)
       toDrawing.drawFill(color)
@@ -74,18 +74,18 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible implemen
     const range = transition.timeRangeRelative(time, quantize)
 
     const clipRange = transition.timeRange(quantize)
-    if (fromClip) fromClip.mergeContextAtTime(time, quantize, fromDrawing)
+    if (fromClip) fromClip.mergeContextAtTime(preloader, time, quantize, fromDrawing)
     this.filters = this.fromFilters
-    fromDrawing = this.drawFilters(transition, range, clipRange, fromDrawing, size)
+    fromDrawing = this.drawFilters(preloader, transition, range, clipRange, fromDrawing, outputSize)
 
-    if (toClip) toClip.mergeContextAtTime(time, quantize, toDrawing)
+    if (toClip) toClip.mergeContextAtTime(preloader, time, quantize, toDrawing)
     this.filters = this.toFilters
-    toDrawing = this.drawFilters(transition, range, clipRange, toDrawing, size)
+    toDrawing = this.drawFilters(preloader, transition, range, clipRange, toDrawing, outputSize)
 
-    fromDrawing = this.fromScaler.definition.drawFilters(this.fromScaler, range, clipRange, fromDrawing, size)
-    this.fromMerger.definition.drawFilters(this.fromMerger, range, clipRange, fromDrawing, size, context)
-    toDrawing = this.toScaler.definition.drawFilters(this.toScaler, range, clipRange, toDrawing, size)
-    this.toMerger.definition.drawFilters(this.toMerger, range, clipRange, toDrawing, size, context)
+    fromDrawing = this.fromScaler.definition.drawFilters(preloader, this.fromScaler, range, clipRange, fromDrawing, outputSize)
+    this.fromMerger.definition.drawFilters(preloader, this.fromMerger, range, clipRange, fromDrawing, outputSize, context)
+    toDrawing = this.toScaler.definition.drawFilters(preloader, this.toScaler, range, clipRange, toDrawing, outputSize)
+    this.toMerger.definition.drawFilters(preloader, this.toMerger, range, clipRange, toDrawing, outputSize, context)
   }
 
   private fromFilters : Filter[] = []

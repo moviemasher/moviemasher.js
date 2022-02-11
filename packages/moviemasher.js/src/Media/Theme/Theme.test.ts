@@ -1,14 +1,11 @@
 import { ThemeDefinitionClass } from "./ThemeDefinition"
 import { ThemeClass } from "./ThemeInstance"
-import { DefinitionType, RenderType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
-import { themeDefinitionFromId, themeFromId, themeInstance } from "./ThemeFactory"
+import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
 import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 import { Factory } from "../../Definitions/Factory"
-import { TimeRange } from "../../Helpers/TimeRange"
-import { Size } from "../../declarations"
-import { Default } from "../../Setup/Default"
 
 
 describe("Theme", () => {
@@ -32,22 +29,10 @@ describe("Theme", () => {
   })
 
   describe("ThemeDefinition", () => {
-    const id = "id"
-    const type = DefinitionType.Theme
-    const themeDefinitionObject = { id, type }
-    const invalidThemeDefinitionObject = {
-      ...themeDefinitionObject,
-      properties: { foo: "bar" }
-    }
     const colorThemeDefinition = () => Factory.theme.definition(themeColorJson)
     describe("constructor", () => {
       test("returns expected instance", () => {
         expect(colorThemeDefinition()).toBeInstanceOf(ThemeDefinitionClass)
-      })
-      test("throws when properties contains invalid value", () => {
-        expect(() => {
-          new ThemeDefinitionClass(invalidThemeDefinitionObject)
-        }).toThrow(Errors.invalid.property)
       })
     })
     describe("id", () => {
@@ -80,7 +65,7 @@ describe("Theme", () => {
         expect(labelProperty).toBeDefined()
         expect(labelProperty).toBeInstanceOf(Property)
         expect(colorProperty).toBeInstanceOf(Property)
-        if (!(labelProperty && colorProperty)) throw Errors.internal
+        if (!(labelProperty && colorProperty)) throw Errors.internal + 'labelProperty'
 
         expect(colorProperty.name).toEqual("color")
         expect(labelProperty.name).toEqual("label")

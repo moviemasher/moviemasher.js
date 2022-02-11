@@ -1,5 +1,4 @@
 export * from './BrowserContext'
-export * from './EditorContext'
 export * from './ApiContext'
 export * from './InspectorContext'
 export * from './PlayerContext'

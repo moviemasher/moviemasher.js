@@ -1,8 +1,7 @@
-import { DefinitionType, TrackType, DataType } from "../../Setup/Enums"
-import { Any, VisibleSource, UnknownObject, LoadPromise } from "../../declarations"
+import { DefinitionType, TrackType, DataType, LoadType, GraphType, AVType } from "../../Setup/Enums"
+import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs } from "../../declarations"
 import { Time, Times } from "../../Helpers/Time"
-import { urlAbsolute} from "../../Utilities/Url"
-import { cacheCached, cacheCaching, cacheGet, cacheRemove } from "../../Loader/Cache"
+import { urlAbsolute} from "../../Utility/Url"
 import { DefinitionBase } from "../../Base/Definition"
 import { VideoSequenceClass } from "./VideoSequenceInstance"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
@@ -13,9 +12,9 @@ import { Definitions } from "../../Definitions/Definitions"
 import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { Default } from "../../Setup/Default"
 import { Property } from "../../Setup/Property"
-import { LoaderFactory } from "../../Loader/LoaderFactory"
 import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
+import { Preloader } from "../../Preloader/Preloader"
 
 const WithClip = ClipDefinitionMixin(DefinitionBase)
 const WithAudible = AudibleDefinitionMixin(WithClip)
@@ -49,7 +48,22 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
   begin = Default.definition.videosequence.begin
 
   definitionUrls(start: Time, end?: Time): string[] {
-    return this.framesArray(start, end).map(frame => this.urlForFrame(frame))
+    return this.framesArray(start, end).map(frame => urlAbsolute(this.urlForFrame(frame)))
+  }
+
+  files(args: FilesArgs): GraphFile[] {
+    const files = super.files(args) // maybe get the audio file
+    const { start, end, graphType, avType } = args
+    if (avType !== AVType.Audio) {
+      if (graphType === GraphType.Canvas) files.push(
+          ...this.framesArray(start, end).map(frame => (
+            { type: LoadType.Image, file: this.urlForFrame(frame) }
+          )
+        )
+      )
+      else files.push({ type: LoadType.Video, file: this.source })
+    }
+    return files
   }
 
   fps = Default.definition.videosequence.fps
@@ -78,26 +92,14 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
     return new VideoSequenceClass({ ...this.instanceObject, ...object })
   }
 
-  loadDefinition(quantize:number, start: Time, end?: Time): LoadPromise | void {
-    const promises: LoadPromise[] = []
-    const clipDefinitionPromise = end ? super.loadDefinition(quantize, start, end) : null
-    if (clipDefinitionPromise) promises.push(clipDefinitionPromise)
-    const urls = this.definitionUrls(start, end)
-    const uncachedUrls = urls.filter(url => !cacheCached(url))
-    uncachedUrls.forEach(url => {
-      if (cacheCaching(url)) promises.push(cacheGet(url))
-      else promises.push(LoaderFactory.image().loadUrl(url))
-    })
-    switch (promises.length) {
-      case 0: return
-      case 1: return promises[0]
-      default: return Promise.all(promises).then()
-    }
-  }
+  loadedVisible(preloader: Preloader, _quantize: number, time: Time): VisibleSource | undefined {
+    const frames = this.framesArray(time)
+    const [frame] = frames
+    const url = this.urlForFrame(frame)
+    const file: GraphFile = { type: LoadType.Image, file: url }
+    if (!preloader.loadedFile(file)) return
 
-  loadedVisible(_quantize: number, time : Time) : VisibleSource | undefined {
-    const [url] = this.urls(time)
-    return cacheGet(url)
+    return preloader.getFile(file)
   }
 
   pattern = '%.jpg'
@@ -120,32 +122,16 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
 
   type = DefinitionType.VideoSequence
 
-  unload(times?: Times[]): void {
-    const zeroTime = Time.fromArgs(0, this.fps)
-    const allUrls = this.urls(zeroTime, zeroTime.withFrame(this.framesMax))
-    const deleting = new Set(allUrls.filter(url => cacheCached(url)))
-    if (times) {
-      times.forEach(maybePair => {
-        const [start, end] = maybePair
-        const frames = this.framesArray(start, end)
-        const urls = frames.map(frame => this.urlForFrame(frame))
-        const needed = urls.filter(url => deleting.has(url))
-        needed.forEach(url => { deleting.delete(url) })
-      })
-    }
-    deleting.forEach(url => { cacheRemove(url) })
-  }
-
   url : string
 
   private urlForFrame(frame : number) : string {
     let s = String((frame * this.increment) + this.begin)
     if (this.padding) s = s.padStart(this.padding, '0')
-    return urlAbsolute((this.url + this.pattern).replaceAll('%', s))
+    return (this.url + this.pattern).replaceAll('%', s)
   }
 
   private urls(start : Time, end? : Time) : string[] {
-    return this.framesArray(start, end).map(frame => this.urlForFrame(frame))
+    return this.framesArray(start, end).map(frame => urlAbsolute(this.urlForFrame(frame)))
   }
 
   padding : number

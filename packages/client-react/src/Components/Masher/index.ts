@@ -1,2 +1,2 @@
 export * from "./Masher"
-export * from "./MasherDefaults"
+export * from "./MasherDefault"

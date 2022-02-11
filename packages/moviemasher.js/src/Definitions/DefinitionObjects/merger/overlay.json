@@ -2,21 +2,21 @@
   "label": "Overlay",
   "id": "com.moviemasher.merger.overlay",
   "type": "merger",
-  "properties": {
-    "left": { "type": "number", "value": 0.5 },
-    "top": { "type": "number", "value": 0.5 }
-  },
+  "properties": [
+    { "name": "left", "type": "number", "value": 0.5 },
+    { "name": "top", "type": "number", "value": 0.5 }
+  ],
   "filters": [
     {
-      "id": "overlay",
+      "id": "com.moviemasher.filter.overlay",
       "parameters": [
         {
           "name": "x",
-          "value": "((mm_width + overlay_w) * left) - overlay_w"
+          "value": "((main_w + overlay_w) * left) - overlay_w"
         },
         {
           "name": "y",
-          "value": "((mm_height + overlay_h) * top) - overlay_h"
+          "value": "((main_h + overlay_h) * top) - overlay_h"
         }
       ]
     }

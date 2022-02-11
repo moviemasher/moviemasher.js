@@ -18,6 +18,12 @@ function Browser(props: BrowserProps): ReactResult {
   const [ definitionId, setDefinitionId] = React.useState('')
   const [ sourceId, setSourceId] = React.useState('')
 
+
+  React.useEffect(() => {
+    setDefinitions(undefined)
+    setSourceId(initialSourceId || 'theme')
+  }, [initialSourceId])
+
   const browserContext: BrowserContextInterface = {
     definitions,
     definitionId,
@@ -26,11 +32,6 @@ function Browser(props: BrowserProps): ReactResult {
     setSourceId,
     sourceId,
   }
-
-  React.useEffect(() => {
-    setDefinitions(undefined)
-    setSourceId(initialSourceId || 'theme')
-  }, [initialSourceId])
 
   return (
     <BrowserContext.Provider value={browserContext}>

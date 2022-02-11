@@ -1,6 +1,6 @@
 import { Errors } from "../Setup/Errors"
-import { Is } from "../Utilities/Is"
-import { roundWithMethod } from "../Utilities/Round"
+import { Is } from "../Utility/Is"
+import { roundWithMethod } from "../Utility/Round"
 
 const greatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1

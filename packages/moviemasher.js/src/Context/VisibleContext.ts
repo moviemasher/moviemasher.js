@@ -9,7 +9,7 @@ import {
   TextStyle,
 } from "../declarations"
 import { Errors } from "../Setup/Errors"
-import { Is } from "../Utilities/Is"
+import { Is } from "../Utility/Is"
 import { Action } from "../Editor/MashEditor/Actions/Action/Action"
 
 const $canvas = 'canvas'
@@ -58,7 +58,7 @@ class VisibleContext {
       // console.trace(this.constructor.name, "get context2d creating canvas")
       const canvas = globalThis.document.createElement($canvas)
       const context = canvas.getContext($2d)
-      if (!context) throw Errors.internal
+      if (!context) throw Errors.internal + 'context'
 
       this._context2d = context
     }

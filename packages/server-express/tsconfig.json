@@ -1,0 +1,19 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["*.node", "**/node_modules/*"],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "declaration": false,
+    "strict": true,
+    "alwaysStrict": true,
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  }
+}

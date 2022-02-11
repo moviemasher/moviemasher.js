@@ -1,27 +1,23 @@
 import { Default } from "../../Setup/Default"
-import { Definitions } from "../../Definitions/Definitions"
 import { MashEditor, MashEditorObject } from "./MashEditor"
 import { MashEditorClass } from "./MashEditorClass"
-
-import { cacheFlush } from "../../Loader/Cache"
 import { Interval } from "../../declarations"
 
+  // TODO: Move to EditorClass...
 const MashEditorFactoryTics = 10 * 1000
-
 const MashEditorFactoryMashers : MashEditor[] = []
 let MashEditorFactoryInterval: Interval | undefined
-
 const MashEditorFactoryHandler = () => {
-  const urls = MashEditorFactoryMashers.flatMap(masher => masher.mash.loadUrls)
-  cacheFlush(urls)
+  // const urls = MashEditorFactoryMashers.flatMap(masher => masher.mash.loadUrls)
+  // cacheFlush(urls)
 
-  const definitions = MashEditorFactoryMashers.flatMap(masher => masher.mash.definitions)
+  // const definitions = MashEditorFactoryMashers.flatMap(masher => masher.mash.definitions)
 
-  Definitions.map.forEach(definition => {
-    if (definitions.includes(definition) || definition.retain) return
+  // Definitions.map.forEach(definition => {
+  //   if (definitions.includes(definition) || definition.retain) return
 
-    Definitions.uninstall(definition.id)
-  })
+  //   Definitions.uninstall(definition.id)
+  // })
 }
 
 /**
@@ -29,14 +25,14 @@ const MashEditorFactoryHandler = () => {
  */
 const MashEditorFactory = {
   destroy: (masher: MashEditor): void => {
-    const index = MashEditorFactoryMashers.indexOf(masher)
-    if (index < 0) return
+    // const index = MashEditorFactoryMashers.indexOf(masher)
+    // if (index < 0) return
 
-    MashEditorFactoryMashers.splice(index, 1)
-    if (!MashEditorFactoryMashers.length && MashEditorFactoryInterval) {
-      clearInterval(MashEditorFactoryInterval)
-      MashEditorFactoryInterval = undefined
-    }
+    // MashEditorFactoryMashers.splice(index, 1)
+    // if (!MashEditorFactoryMashers.length && MashEditorFactoryInterval) {
+    //   clearInterval(MashEditorFactoryInterval)
+    //   MashEditorFactoryInterval = undefined
+    // }
   },
 
   instance: (object: MashEditorObject = {}): MashEditor => {
@@ -48,10 +44,10 @@ const MashEditorFactory = {
     object.buffer ||= Default.masher.buffer
     const instance = new MashEditorClass(object)
 
-    if (!(MashEditorFactoryMashers.length || MashEditorFactoryInterval)) {
-      MashEditorFactoryInterval = setInterval(() => MashEditorFactoryHandler(), MashEditorFactoryTics)
-    }
-    MashEditorFactoryMashers.push(instance)
+    // if (!(MashEditorFactoryMashers.length || MashEditorFactoryInterval)) {
+    //   MashEditorFactoryInterval = setInterval(() => MashEditorFactoryHandler(), MashEditorFactoryTics)
+    // }
+    // MashEditorFactoryMashers.push(instance)
 
     return instance
   }

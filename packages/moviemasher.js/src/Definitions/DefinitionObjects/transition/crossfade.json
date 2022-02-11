@@ -5,7 +5,7 @@
   "to": {
     "filters": [
       {
-        "id": "fade",
+        "id": "com.moviemasher.filter.fade",
         "parameters": [
           {
             "name": "alpha",
@@ -17,7 +17,7 @@
           },
           {
             "name": "duration",
-            "value": "mm_duration"
+            "value": "out_duration"
           }
         ]
       }

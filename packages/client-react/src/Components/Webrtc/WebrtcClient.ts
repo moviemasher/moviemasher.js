@@ -1,12 +1,20 @@
-import { ServerOptions, urlForServerOptions } from "@moviemasher/moviemasher.js"
+import {
+  EndpointPromiser,
+  Endpoints, Errors,
+  StreamingDeleteRequest, StreamingDeleteResponse,
+  StreamingRemoteRequest, StreamingRemoteResponse,
+  StreamingWebrtcRequest, StreamingWebrtcResponse,
+  StringSetter
+} from "@moviemasher/moviemasher.js"
 
 function enableStereoOpus(sdp:string):string {
   return sdp.replace(/a=fmtp:111/, 'a=fmtp:111 stereo=1\r\na=fmtp:111')
 }
 
 class WebrtcClient {
-  constructor(serverOptions: ServerOptions = {}) {
-    this.serverOptions = serverOptions
+  constructor(endpointPromise: EndpointPromiser, setStatus: StringSetter) {
+    this.setStatus = setStatus
+    this.endpointPromise = endpointPromise
   }
 
   async beforeAnswer(peerConnection: RTCPeerConnection) {
@@ -14,7 +22,7 @@ class WebrtcClient {
       audio: true,
       video: true
     }).then(something => something).catch(error => {
-      console.log("beforeAnswer", error)
+      console.error("beforeAnswer", error)
       return undefined
     })
     this.localStream = await promise
@@ -45,68 +53,68 @@ class WebrtcClient {
     this.localPeerConnection?.close()
   }
 
-  connectionsUrl(suffix = ''): string {
-    const url = urlForServerOptions(this.serverOptions, suffix)
-    console.log(this.constructor.name, "connectionsUrl", url, this.serverOptions)
-    return url
-  }
-
-  async createConnection(options: { stereo?: boolean } = {}) {
+  createConnection(options: { stereo?: boolean } = {}) {
     const { stereo } = options
+    const request: StreamingWebrtcRequest = {}
+    console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, request)
+    return this.endpointPromise(Endpoints.streaming.webrtc, request).then((response: StreamingWebrtcResponse) => {
+      console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, response)
+      const { id, localDescription } = response
+      const rtcConfiguration: RTCConfiguration = {} //sdpSemantics: 'unified-plan'
+      const peer = new RTCPeerConnection(rtcConfiguration)
+      this.localPeerConnection = peer
 
-    const response1 = await fetch(this.connectionsUrl())
+      // hack so we can get a callback when RTCPeerConnection is closed
+      // in future, subscribe to connectionstatechange events?
+      peer.close = () => {
+        const request: StreamingDeleteRequest = { id }
+        console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, request)
+        this.endpointPromise(Endpoints.streaming.delete, request).then((response: StreamingDeleteResponse) => {
+          console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, response)
+        })
+        return RTCPeerConnection.prototype.close.apply(peer)
+      }
+      try {
+        console.debug(this.constructor.name, "createConnection setRemoteDescription")
+        peer.setRemoteDescription(localDescription).then(() => {
+          console.debug(this.constructor.name, "createConnection beforeAnswer")
+          this.beforeAnswer(peer).then(() => {
+            console.debug(this.constructor.name, "createConnection createAnswer")
+            peer.createAnswer().then((originalAnswer) => {
+              const updatedAnswer = new RTCSessionDescription({
+                type: 'answer',
+                sdp: stereo ? enableStereoOpus(originalAnswer.sdp!) : originalAnswer.sdp
+              })
+              console.debug(this.constructor.name, "createConnection setLocalDescription")
+              peer.setLocalDescription(updatedAnswer).then(() => {
+                const { localDescription } = peer
+                if (!localDescription) throw Errors.invalid.object + 'localDescription'
 
-    const remotePeerConnection = await response1.json()
-    // console.log(this.constructor.name, "createConnection", remotePeerConnection)
-    const { id, localDescription } = remotePeerConnection
-    const rtcConfiguration:RTCConfiguration = {  } //sdpSemantics: 'unified-plan'
-    this.localPeerConnection = new RTCPeerConnection(rtcConfiguration)
-
-    // NOTE(mroberts): This is a hack so that we can get a callback when the
-    // RTCPeerConnection is closed. In the future, we can subscribe to
-    // "connectionstatechange" events.
-    this.localPeerConnection.close = () => {
-      console.trace(this.constructor.name, "close HACK!", id)
-      fetch(this.connectionsUrl(`/${id}`), { method: 'delete' }).catch(() => {})
-      return RTCPeerConnection.prototype.close.apply(this.localPeerConnection)
-    }
-
-    try {
-      console.log("trying to setRemoteDescription")
-      await this.localPeerConnection.setRemoteDescription(localDescription)
-
-      console.log("trying to beforeAnswer")
-      await this.beforeAnswer(this.localPeerConnection)
-
-      console.log("trying to createAnswer")
-      const originalAnswer = await this.localPeerConnection.createAnswer()
-      const updatedAnswer = new RTCSessionDescription({
-        type: 'answer',
-        sdp: stereo ? enableStereoOpus(originalAnswer.sdp!) : originalAnswer.sdp
-      })
-      console.log("trying to setLocalDescription")
-      await this.localPeerConnection.setLocalDescription(updatedAnswer)
-
-      console.log("trying to fetch")
-      await fetch(this.connectionsUrl(`/${id}/remote-description`), {
-        method: 'POST',
-        body: JSON.stringify(this.localPeerConnection.localDescription),
-        headers: { 'Content-Type': 'application/json' }
-      })
-
-      return this.localPeerConnection
-    } catch (error) {
-      console.trace(this.constructor.name, "createConnection", error)
-      this.localPeerConnection.close()
-      throw error
-    }
+                const request: StreamingRemoteRequest = { id, localDescription }
+                console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
+                this.endpointPromise(Endpoints.streaming.remote, request).then((response: StreamingRemoteResponse) => {
+                  console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
+                })
+              })
+            })
+            return peer
+          })
+        })
+      } catch (error) {
+        console.trace(this.constructor.name, "createConnection", error)
+        this.localPeerConnection.close()
+        throw error
+      }
+    })
   }
+
+  endpointPromise: EndpointPromiser
 
   localPeerConnection?: RTCPeerConnection
 
   localStream?: MediaStream
 
-  serverOptions?: ServerOptions
+  setStatus: StringSetter
 }
 
 export { WebrtcClient }

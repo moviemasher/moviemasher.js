@@ -1,6 +1,8 @@
-import { AVType, RenderType } from "./Setup/Enums"
+import { AVType, GraphFileType, GraphType, LoadType } from "./Setup/Enums"
 
 import { TimeRange } from "./Helpers/TimeRange"
+import { Time } from "./Helpers/Time"
+import { Preloader } from "./Preloader/Preloader"
 
 // TODO: remove
 export interface ScrollMetrics {
@@ -32,7 +34,9 @@ export type Scalar = boolean | Value
 export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
 export interface UnknownObject extends Record<string, unknown> {}
-export interface StringObject extends Record<string, string> {}
+export interface StringObject extends Record<string, string> { }
+export interface RegExpObject extends Record<string, RegExp> {}
+
 export interface ObjectUnknown extends Record<string, UnknownObject> {}
 
 export interface VisibleContextData extends ImageData {}
@@ -151,9 +155,7 @@ export interface EvaluatedRect {
   y? : number
   w? : number
   h? : number
-  // eslint-disable-next-line camelcase
   out_w? : number
-  // eslint-disable-next-line camelcase
   out_h? : number
 }
 
@@ -213,26 +215,19 @@ export interface StartOptions {
   start: number
 }
 
-export interface ServerOptions {
+// TODO: rename prefix to path and add query string parameters?
+export interface Endpoint {
   protocol?: string
   prefix?: string
   host?: string
   port?: number
 }
 
-export interface ServerCallback {
-  server: ServerOptions
-  request: RequestInit
-}
-
-
-
 export interface UploadDescription {
   name: string
   type: string
   size: number
 }
-
 
 export interface InputParameter {
   key: string
@@ -255,42 +250,60 @@ export interface GraphInput {
 }
 
 export interface GraphFile {
-  type: string
-  source?: string
-  content?: string
+  type: GraphFileType | LoadType
+  file: string
 }
 
-export interface Layer {
+export interface FilterChain {
   files: GraphFile[]
-  layerInputs: GraphInput[]
+  inputs: GraphInput[]
   filters: GraphFilter[]
   merger?: GraphFilter
 }
 
-export interface Segment {
-  avType?: AVType
+export interface FilterGraph {
+  avType: AVType
   duration?: number
-  layers: Layer[]
+  filterChains: FilterChain[]
 }
 
-export type Segments = Segment[]
+export type FilterGraphs = FilterGraph[]
 
-export type SegmentPromise = Promise<Segment>
-export type SegmentsPromise = Promise<Segments>
-
-export interface SegmentOptions {
-  type: RenderType
+export interface FilterGraphsArgs {
+  avType: AVType
+  graphType: GraphType
   size: Size
   timeRange?: TimeRange
   videoRate: number
 }
 
-export interface SegmentArgs extends Required<SegmentOptions> { }
+export interface FilterGraphArgs extends Required<FilterGraphsArgs> { }
 
-export interface LayerArgs extends SegmentArgs {
+export interface FilterChainArgs extends FilterGraphArgs {
   layerIndex: number
-  prevLayer: Layer
+  prevFilterChain: FilterChain
   clipTimeRange: TimeRange
   inputCount: number
   prevFilter?: GraphFilter,
+}
+
+export interface FilesOptions {
+  avType?: AVType
+  graphType?: GraphType
+  timeRange?: TimeRange
+}
+
+export interface FilesArgs {
+  avType?: AVType
+  graphType: GraphType
+  quantize: number
+  start: Time
+  end?: Time
+}
+
+export interface Described {
+  createdAt: string
+  icon?: string
+  id : string
+  label: string
 }

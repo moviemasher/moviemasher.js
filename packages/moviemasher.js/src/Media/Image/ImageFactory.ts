@@ -1,9 +1,9 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { ImageDefinitionClass } from "./ImageDefinition"
+import { ImageDefinitionClass } from "./ImageDefinitionClass"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 
 const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {

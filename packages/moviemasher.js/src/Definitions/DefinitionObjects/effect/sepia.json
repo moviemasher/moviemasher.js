@@ -2,11 +2,11 @@
   "label": "Sepia",
   "type": "effect",
   "id": "com.moviemasher.effect.sepia",
-  "properties": {},
+  "properties": [],
   "filters": [
     {
-      "id": "colorchannelmixer",
-      "parameters":[
+      "id": "com.moviemasher.filter.colorchannelmixer",
+      "parameters": [
         {
           "name": "rr",
           "value": 0.393

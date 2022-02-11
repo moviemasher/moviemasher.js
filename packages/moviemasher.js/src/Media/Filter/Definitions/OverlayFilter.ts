@@ -1,9 +1,11 @@
 
 import { VisibleContext } from "../../../Context/VisibleContext"
-import { EvaluatedPoint, GraphFilter, LayerArgs, ValueObject } from "../../../declarations"
+import { EvaluatedPoint, GraphFilter, FilterChainArgs, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
+import { GraphType } from "../../../Setup/Enums"
+
 
 /**
  * @category Filter
@@ -18,27 +20,31 @@ class OverlayFilter extends FilterDefinitionClass {
     return mergeContext
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
+  input(_evaluator: Evaluator, evaluated: ValueObject, args: FilterChainArgs): GraphFilter {
     const inputs: string[] = []
-    const { prevFilter, inputCount, layerIndex } = args
+    const { prevFilter, inputCount } = args
     if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
     else inputs.push(`${inputCount}:v`)
     const { x, y } = evaluated
     return {
-      // outputs: [`L${layerIndex}`],
       inputs,
-      filter: this.id,
+      filter: this.ffmpegFilter,
       options: { x, y }
     }
   }
 
   scopeSet(evaluator: Evaluator): void {
-    const { context } = evaluator
-    if (!context) return
+    const { graphType, outputSize } = evaluator
+    const { width: outputWidth, height: outputHeight } = outputSize
+    evaluator.set("main_w", outputWidth)
+    evaluator.set("main_h", outputHeight)
 
-    const { width, height } = context.size
-    evaluator.set("overlay_w", width)
-    evaluator.set("overlay_h", height)
+    if (graphType !== GraphType.Canvas) return
+
+
+    const { width: inputWidth, height: inputHeight } = evaluator.context!.size
+    evaluator.set("overlay_w", inputWidth)
+    evaluator.set("overlay_h", inputHeight)
   }
 }
 

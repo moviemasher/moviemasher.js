@@ -2,20 +2,24 @@
   "label": "Text Box",
   "type": "effect",
   "id": "com.moviemasher.effect.text",
-  "properties": {
-    "string": { "type": "string", "value": "Text Box" },
-    "size": { "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
-    "color": { "type": "rgba", "value": "rgba(255,0,0,1)" },
-    "fontface": { "type": "font", "value": "com.moviemasher.font.default" },
-    "shadowcolor": { "type": "rgba", "value": "rgba(0,0,0,0)" },
-    "shadowx": { "type": "number", "value": 0.015 },
-    "shadowy": { "type": "number", "value": 0.015 },
-    "x": { "type": "number", "value": 0 },
-    "y": { "type": "number", "value": 0 }
-  },
+  "properties": [
+    { "name": "string", "type": "string", "value": "Text Box" },
+    { "name": "size", "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
+    { "name": "color", "type": "rgba", "value": "rgba(255,0,0,1)" },
+    {
+      "name": "fontface",
+      "type": "font",
+      "value": "com.moviemasher.font.default"
+    },
+    { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    { "name": "shadowx", "type": "number", "value": 0.015 },
+    { "name": "shadowy", "type": "number", "value": 0.015 },
+    { "name": "x", "type": "number", "value": 0 },
+    { "name": "y", "type": "number", "value": 0 }
+  ],
   "filters": [
     {
-      "id": "drawtext",
+      "id": "com.moviemasher.filter.drawtext",
       "parameters": [
         {
           "name": "fontcolor",
@@ -27,23 +31,23 @@
         },
         {
           "name": "fontsize",
-          "value": "mm_vert(size)"
+          "value": "out_height * size"
         },
         {
           "name": "x",
-          "value": "mm_horz(x)"
+          "value": "out_width * x"
         },
         {
           "name": "y",
-          "value": "mm_vert(y)"
+          "value": "(out_height * y)"
         },
         {
           "name": "shadowx",
-          "value": "mm_horz(shadowx)"
+          "value": "out_width * shadowx"
         },
         {
           "name": "shadowy",
-          "value": "mm_vert(shadowy)"
+          "value": "out_height * shadowy"
         },
         {
           "name": "fontfile",

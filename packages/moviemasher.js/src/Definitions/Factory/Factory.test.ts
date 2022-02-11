@@ -5,7 +5,7 @@ import { Time } from "../../Helpers/Time"
 import { AudioDefinition } from "../../Media/Audio/Audio"
 import { AudioClass } from "../../Media/Audio/AudioInstance"
 import { ImageDefinition } from "../../Media/Image"
-import { ImageClass } from "../../Media/Image/ImageInstance"
+import { ImageClass } from "../../Media/Image/ImageClass"
 import { ScalerClass } from "../../Media/Scaler/ScalerInstance"
 import { ThemeDefinition } from "../../Media/Theme"
 import { TransitionClass } from "../../Media/Transition/TransitionInstance"
@@ -13,7 +13,7 @@ import { VideoClass } from "../../Media/Video/VideoInstance"
 import { Factory } from "./Factory"
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { expectFactory } from "../../../../../dev/test/Utilities/expectFactory"
-import { idGenerate } from "../../Utilities/Id"
+import { idGenerate } from "../../Utility/Id"
 import { VideoSequenceClass } from "../../Media/VideoSequence/VideoSequenceInstance"
 import { VideoSequenceDefinitionClass } from "../../Media/VideoSequence/VideoSequenceDefinition"
 
@@ -138,18 +138,18 @@ describe("Factory", () => {
       })
     })
 
-    describe("contextAtTimeToSize", () => {
-      test("returns expected context", async () => {
-        const time = Time.fromArgs(0, 1)
-        const clip = imageDefinition().instanceFromObject({ frames: 1 })
-        await clip.loadClip(time.fps, time)
-        const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
-        expect(context).toBeDefined()
-        if (!context) throw Errors.internal
+    // describe("contextAtTimeToSize", () => {
+    //   test("returns expected context", async () => {
+    //     const time = Time.fromArgs(0, 1)
+    //     const clip = imageDefinition().instanceFromObject({ frames: 1 })
+    //     await clip.loadClip(time.fps, time)
+    //     const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
+    //     expect(context).toBeDefined()
+    //     if (!context) throw Errors.internal
 
-        expectCanvas(context.canvas)
-      })
-    })
+    //     expectCanvas(context.canvas)
+    //   })
+    // })
 
     describe("toJSON", () => {
       test("returns expected clip", () => {
@@ -189,19 +189,19 @@ describe("Factory", () => {
       })
     })
 
-    describe("contextAtTimeToSize", () => {
-      const time = Time.fromArgs()
-      test("returns expected context after proper evaluation", async () => {
-        const clip = themeDefinition().instanceFromObject({ frames: 1 })
-        await clip.loadClip(time.fps, time)
+    // describe("contextAtTimeToSize", () => {
+    //   const time = Time.fromArgs()
+    //   test("returns expected context after proper evaluation", async () => {
+    //     const clip = themeDefinition().instanceFromObject({ frames: 1 })
+    //     await clip.loadClip(time.fps, time)
 
-        const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
-        expect(context).toBeDefined()
-        if (!context) throw Errors.internal
+    //     const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
+    //     expect(context).toBeDefined()
+    //     if (!context) throw Errors.internal
 
-        expectCanvas(context.canvas)
-      })
-    })
+    //     expectCanvas(context.canvas)
+    //   })
+    // })
 
     test("toJSON", () => {
       const clip = themeDefinition().instance
@@ -233,13 +233,13 @@ describe("Factory", () => {
       })
     })
 
-    describe("contextAtTimeToSize", () => {
-      const time = Time.fromArgs(0)
-      test("returns undefined for transitions", () => {
-        const context = transitionDefinition().instance.contextAtTimeToSize(time, time.fps, dimensions) //, color)
-        expect(context).toBeUndefined()
+    // describe("contextAtTimeToSize", () => {
+    //   const time = Time.fromArgs(0)
+    //   test("returns undefined for transitions", () => {
+    //     const context = transitionDefinition().instance.contextAtTimeToSize(time, time.fps, dimensions) //, color)
+    //     expect(context).toBeUndefined()
 
-      })
-    })
+    //   })
+    // })
   })
 })

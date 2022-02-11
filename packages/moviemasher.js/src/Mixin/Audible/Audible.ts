@@ -1,6 +1,7 @@
 import {
   AudibleSource, Constrained, Value, StartOptions
 } from "../../declarations"
+import { Preloader } from "../../Preloader/Preloader"
 import { ClipDefinition, ClipDefinitionObject, Clip, ClipObject } from "../Clip/Clip"
 
 interface AudibleObject extends ClipObject {
@@ -11,7 +12,7 @@ interface Audible extends Clip {
   definition : AudibleDefinition
   gain: number
   gainPairs: number[][]
-  loadedAudible(): AudibleSource | undefined
+  loadedAudible(preloader: Preloader): AudibleSource | undefined
   muted: boolean
   startOptions(seconds: number, quantize: number): StartOptions
 }
@@ -26,7 +27,7 @@ interface AudibleDefinitionObject extends ClipDefinitionObject {
 
 interface AudibleDefinition extends ClipDefinition {
   audible: boolean
-  loadedAudible(): AudibleSource | undefined
+  loadedAudible(preloader: Preloader): AudibleSource | undefined
   loops: boolean
   stream: boolean
   waveform?: string

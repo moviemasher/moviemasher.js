@@ -1,13 +1,12 @@
-import { Any, UnknownObject, LoadPromise, AudibleSource, LoadedAudio } from "../../declarations"
-import { DataType } from "../../Setup/Enums"
+import { Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs } from "../../declarations"
+import { AVType, DataType, GraphType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { AudibleDefinitionClass, AudibleDefinitionObject } from "./Audible"
 import { ClipDefinitionClass } from "../Clip/Clip"
 import { Property } from "../../Setup/Property"
-import { Time, Times } from "../../Helpers/Time"
-import { cacheAudibleContext, cacheCached, cacheCaching, cacheGet, cacheRemove } from "../../Loader/Cache"
-import { LoaderFactory } from "../../Loader/LoaderFactory"
-import { urlAbsolute } from "../../Utilities/Url"
+import { urlAbsolute } from "../../Utility/Url"
+import { AudibleContextInstance } from "../../Context/AudibleContext"
+import { Preloader } from "../../Preloader/Preloader"
 
 function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : AudibleDefinitionClass & T {
   return class extends Base {
@@ -32,28 +31,27 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
 
     audible = true
 
-    get inputSource(): string { return this.source }
-
-    loadDefinition(_quantize: number, _start: Time, end?: Time): LoadPromise | void {
-      if (!end) return
-
-      const url = this.absoluteUrl
-      if (cacheCached(url)) return
-
-      if (cacheCaching(url)) return cacheGet(url)
-
-      return LoaderFactory.audio().loadUrl(url)
-    }
-
     definitionUrls() : string[] { return [this.absoluteUrl] }
 
-    loadedAudible(): AudibleSource | undefined {
+    files(args: FilesArgs): GraphFile[] {
+      const { avType, graphType, end } = args
+      if (avType === AVType.Video) return []
+      if (graphType === GraphType.Canvas && !end) return []
 
-      const cached: LoadPromise | LoadedAudio | undefined = cacheGet(this.absoluteUrl)
-      if (!cached || cached instanceof Promise) return
+      const graphFile: GraphFile = { type: LoadType.Audio, file: this.urlAudible }
+      return [graphFile]
+    }
+
+    get inputSource(): string { return this.source }
+
+    loadedAudible(preloader: Preloader): AudibleSource | undefined {
+      const graphFile: GraphFile = { file: this.urlAudible, type: LoadType.Audio }
+      if (!preloader.loadedFile(graphFile)) return
+      const cached: LoadedAudio = preloader.getFile(graphFile)
+      if (!cached) return
 
       // console.debug(this.constructor.name, "loadedAudible", cached.constructor.name)
-      return cacheAudibleContext.createBufferSource(cached)
+      return AudibleContextInstance.createBufferSource(cached)
     }
 
     loops = false
@@ -68,16 +66,6 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
       if (this.source) object.source = this.source
       if (this.waveform) object.waveform = this.waveform
       return object
-    }
-
-    unload(times : Times[] = []) : void {
-      super.unload(times)
-      if (times.length && times.some(maybePair => maybePair.length === 2)) {
-        return // don't unload if any times indicate audio needed
-      }
-      if (!cacheCached(this.absoluteUrl)) return
-
-      cacheRemove(this.absoluteUrl)
     }
 
     urlAudible : string

@@ -1,7 +1,7 @@
 import { VisibleContext } from "../../../Context"
 import { UnknownObject, ValueObject } from "../../../declarations"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { pixelNeighboringRgbas } from "../../../Utilities/Pixel"
+import { pixelNeighboringRgbas } from "../../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { Errors } from "../../../Setup/Errors"
 

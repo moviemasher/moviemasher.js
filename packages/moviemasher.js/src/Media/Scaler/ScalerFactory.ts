@@ -1,5 +1,5 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
 import { ScalerDefinitionClass } from "./ScalerDefinition"

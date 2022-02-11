@@ -1,63 +1,42 @@
 import React from 'react'
-import {
-  ServerType,
-  Stream, StreamEditorFactory, StreamFactory, UnknownObject,
-  urlForServerOptions
-} from '@moviemasher/moviemasher.js'
 
-import { EditorContext } from '../../Contexts/EditorContext'
-import { ApiContext } from '../../Contexts/ApiContext'
+import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+import { ViewerContext, ViewerContextInterface } from '../../Contexts/ViewerContext'
 import { View } from '../../Utilities/View'
-import { EditorInputs, PropsWithChildren, ReactResult } from '../../declarations'
 
-interface StreamerOptions extends UnknownObject {
-  stream?: Stream
-  className?: string
-  inputs: EditorInputs
-}
-
-interface StreamerProps extends StreamerOptions, PropsWithChildren {}
+interface StreamerProps extends PropsAndChildren, WithClassName {}
 
 /**
- * @example
- * ```
- * const props: StreamerProps = { children: [] }
- * const editor: JSX.Element = <Streamer { ...props } />
- * ```
- * @parents Api
- * @returns provided children wrapped in a {@link View} and {@link EditorContext}
+ * @parents Masher, Caster
+ * @children StreamerContent, StreamerControl, StreamerPreloadControl, StreamerUpdateControl
  */
 function Streamer(props: StreamerProps): ReactResult {
-  const apiContext = React.useContext(ApiContext)
-  const [requested, setRequested] = React.useState(false)
+  const [streaming, setStreaming] = React.useState(false)
+  const [preloading, setPreloading] = React.useState(false)
+  const [updating, setUpdating] = React.useState(false)
+  const [id, setId] = React.useState('')
+  const [url, setUrl] = React.useState('')
+  const [width, setWidth] = React.useState(0)
+  const [height, setHeight] = React.useState(0)
+  const [videoRate, setVideoRate] = React.useState(0)
 
-  const { stream, inputs, ...rest } = props
-  const { enabled, serverOptionsPromise } = apiContext
-
-  const [editor] = React.useState(() => StreamEditorFactory.instance({ fps: 24 }))
-
-  const context = { editor, inputs }
-
-  React.useEffect(() => {
-    if (stream) editor.stream = stream
-    else if (!requested && enabled.includes(ServerType.Content)) {
-      setRequested(true)
-      serverOptionsPromise(ServerType.Content).then(serverOptions => {
-        const contentUrl = urlForServerOptions(serverOptions, '/stream')
-        console.debug("GET request", contentUrl)
-        fetch(contentUrl).then(response => response.json()).then((json) => {
-          console.debug("GET response", contentUrl, json)
-          editor.stream = StreamFactory.instance(json)
-        })
-      })
-    }
-  }, [enabled])
+  const context: ViewerContextInterface = {
+    updating, setUpdating,
+    videoRate, setVideoRate,
+    height, setHeight,
+    width, setWidth,
+    url, setUrl,
+    streaming,
+    setStreaming,
+    preloading, setPreloading,
+    id, setId,
+  }
 
   return (
-    <EditorContext.Provider value={context}>
-      <View {...rest} />
-    </EditorContext.Provider>
+    <ViewerContext.Provider value={context}>
+      <View {...props}/>
+    </ViewerContext.Provider>
   )
 }
 
-export { Streamer, StreamerProps, StreamerOptions }
+export { Streamer, StreamerProps }

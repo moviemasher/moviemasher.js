@@ -1,4 +1,3 @@
-const package = 'moviemasher\\.js/'//
 module.exports = {
   projects: [
     {
@@ -23,7 +22,7 @@ module.exports = {
         }
       },
       testEnvironment: 'jsdom',
-      testRegex: `packages/${package}.*\\.test?\\.ts$`,
+      testRegex: `packages/.*\\.test?\\.ts$`,
       moduleFileExtensions: ['ts', 'js'],
       transform: { "^.+\\.[jt]s?$": 'ts-jest' }
     }

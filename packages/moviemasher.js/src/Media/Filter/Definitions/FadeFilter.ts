@@ -14,8 +14,8 @@ class FadeFilter extends FilterDefinitionClass {
     if (!context) throw Errors.invalid.context
 
     const drawing = ContextFactory.toSize(context.size)
-    const alpha = Number(evaluator.get('alpha') || evaluator.position)
-    const type = String(evaluator.get('type') || 'in')
+    const alpha = Number(evaluator.evaluate('alpha') || evaluator.position)
+    const type = String(evaluator.evaluate('type') || 'in')
     const typedAlpha = type === 'in' ? alpha : 1.0 - alpha
     drawing.drawWithAlpha(context.drawingSource, typedAlpha)
     return drawing

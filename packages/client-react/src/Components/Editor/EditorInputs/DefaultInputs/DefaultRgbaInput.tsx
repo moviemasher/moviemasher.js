@@ -1,15 +1,18 @@
 import React from 'react'
-import { colorAlphaColor, colorRgbaToHex, colorToRgb } from '@moviemasher/moviemasher.js'
+import { colorAlphaColor, colorRgbaToHex, colorToRgb, DataType } from '@moviemasher/moviemasher.js'
 import { InputContext } from '../../../../Contexts/InputContext'
 import { View } from '../../../../Utilities/View'
 import { ReactResult } from '../../../../declarations'
+import { DataTypeInputs } from './DataTypeInputs'
 
 function DefaultRgbaInput(): ReactResult {
-    const colorInputRef = React.useRef<HTMLInputElement>(null)
+  const colorInputRef = React.useRef<HTMLInputElement>(null)
   const alphaInputRef = React.useRef<HTMLInputElement>(null)
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
+  if (!property) return null
+
   const { alpha, color } = colorAlphaColor(String(value))
 
   const onChange = () => {
@@ -19,13 +22,13 @@ function DefaultRgbaInput(): ReactResult {
     const rgb = colorToRgb(colorValue)
     const rgba = { a: Number(alphaValue), ...rgb }
     const value = colorRgbaToHex(rgba)
-    changeHandler(property, value)
+    changeHandler(property.name, value)
   }
 
   const colorProps = {
     type: 'color',
-    name: `${property}-color`,
-    key: `${property}-color`,
+    name: `${property.name}-color`,
+    key: `${property.name}-color`,
     value: color,
     onChange,
     ref: colorInputRef,
@@ -36,15 +39,16 @@ function DefaultRgbaInput(): ReactResult {
     min: 0.0,
     max: 1.0,
     step: 0.01,
-    name: `${property}-alpha`,
-    key: `${property}-alpha`,
+    name: `${property.name}-alpha`,
+    key: `${property.name}-alpha`,
     value: alpha,
     onChange,
     ref: alphaInputRef,
   }
 
   return <View><input {...colorProps} /><input {...alphaProps} /></View>
-
 }
+
+DataTypeInputs[DataType.Rgba] = <DefaultRgbaInput />
 
 export { DefaultRgbaInput }

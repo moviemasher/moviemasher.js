@@ -12,6 +12,7 @@ import {
 } from "../../Mixin/Modular/Modular"
 import { Visible, VisibleDefinition, VisibleObject } from "../../Mixin/Visible/Visible"
 import { ScalerObject } from "../Scaler"
+import { Preloader } from "../../Preloader/Preloader"
 
 interface TransitionObject extends ModularObject, VisibleObject {
   fromTrack?: number
@@ -20,7 +21,7 @@ interface TransitionObject extends ModularObject, VisibleObject {
 
 interface Transition extends Modular, Visible {
   definition : TransitionDefinition
-  mergeClipsIntoContextAtTime(clips : Visible[], context : VisibleContext, time : Time, quantize: number, color? : string) : void
+  mergeClipsIntoContextAtTime(preloader: Preloader, clips : Visible[], context : VisibleContext, time : Time, quantize: number, color? : string) : void
   fromTrack: number
   toTrack: number
 }
@@ -36,7 +37,7 @@ interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefini
 }
 
 interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
-  drawVisibleFilters(clips : Visible[], modular : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void
+  drawVisibleFilters(preloader: Preloader, clips : Visible[], modular : Transition, time : Time, quantize: number, context : VisibleContext, color? : string) : void
   instance : Transition
   instanceFromObject(object : TransitionObject) : Transition
 }

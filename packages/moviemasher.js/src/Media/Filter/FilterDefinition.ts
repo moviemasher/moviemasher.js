@@ -1,4 +1,4 @@
-import { Any, GraphFilter, LayerArgs, ValueObject } from "../../declarations"
+import { Any, GraphFilter, FilterChainArgs, ValueObject } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Parameter } from "../../Setup/Parameter"
@@ -7,7 +7,7 @@ import { Evaluator } from "../../Helpers/Evaluator"
 import { DefinitionBase } from "../../Base/Definition"
 import { VisibleContext } from "../../Context/VisibleContext"
 import { Filter, FilterDefinition, FilterObject } from "./Filter"
-import { FilterClass } from "./FilterInstance"
+import { FilterClass } from "./FilterClass"
 
 
 class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
@@ -20,7 +20,16 @@ class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
     throw Errors.unimplemented + this.id
   }
 
-  input(_evaluator: Evaluator, _evaluated: ValueObject, _args: LayerArgs): GraphFilter {
+  _ffmpegFilter?: string
+  get ffmpegFilter(): string {
+    if (this._ffmpegFilter) return this._ffmpegFilter
+
+    const prefix = 'com.moviemasher.filter.'
+    const filter = this.id.startsWith(prefix) ? this.id.slice(prefix.length) : this.id
+    return this._ffmpegFilter = filter
+  }
+
+  input(_evaluator: Evaluator, _evaluated: ValueObject, _args: FilterChainArgs): GraphFilter {
     throw Errors.unimplemented + this.id
   }
 

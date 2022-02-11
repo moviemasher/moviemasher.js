@@ -1,5 +1,5 @@
 import { Action } from "./Action"
-import { Is } from "../../../Utilities/Is"
+import { Is } from "../../../Utility/Is"
 import { Mash } from "../../../Edited/Mash/Mash"
 
 interface ActionsObject {

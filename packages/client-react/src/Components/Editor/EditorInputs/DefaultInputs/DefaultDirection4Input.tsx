@@ -1,15 +1,18 @@
 import React from 'react'
-import { InputContext } from '../../../../Contexts/InputContext'
 import { DataType, Types } from '@moviemasher/moviemasher.js'
+
 import { PropsWithoutChild, ReactResult } from '../../../../declarations'
+import { InputContext } from '../../../../Contexts/InputContext'
+import { DataTypeInputs } from './DataTypeInputs'
 
 function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
+  if (!property) return null
 
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    changeHandler(property, event.target.value)
+    changeHandler(property.name, event.target.value)
   }
 
   const selected = String(value)
@@ -22,14 +25,17 @@ function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
 
   const selectProps = {
     children: options,
-    name: property,
+    name: property.name,
     onChange,
     value: selected,
-    key: `${property}-select`,
+    key: `${property.name}-select`,
   }
 
   return <select {...selectProps} />
 
 }
+
+DataTypeInputs[DataType.Direction4] = <DefaultDirection4Input />
+
 
 export { DefaultDirection4Input }

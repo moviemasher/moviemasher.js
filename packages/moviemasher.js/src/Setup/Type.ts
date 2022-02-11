@@ -1,9 +1,9 @@
 import { Scalar, Value } from "../declarations"
 import { DataType } from "./Enums"
 import { Errors } from "./Errors"
-import { colorValid } from "../Utilities/Color"
+import { colorValid } from "../Utility/Color"
 import { Definitions } from "../Definitions/Definitions"
-import { isNan } from "../Utilities/Is"
+import { isNan } from "../Utility/Is"
 
 import { SelectionValue } from "../Base/Propertied"
 

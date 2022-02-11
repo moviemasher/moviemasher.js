@@ -1,5 +1,8 @@
 import React from "react"
-import { fetchJson, ServerType, urlForServerOptions } from "@moviemasher/moviemasher.js"
+import {
+  RenderingStartRequest, RenderingStartResponse,
+  Endpoints,
+  OutputType} from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../../declarations"
 import { ProcessContext } from "../../../Contexts/ProcessContext"
@@ -13,22 +16,24 @@ function RenderControl(props: PropsAndChild): ReactResult {
 
   const { children, ...rest } = props
   const { processing, setProcessing } = processContext
-  const { serverOptionsPromise } = apiContext
+  const { endpointPromise } = apiContext
   const masher = useMashEditor()
 
   const onClick = () => {
     if (processing) return
 
     setProcessing(true)
-    serverOptionsPromise(ServerType.Encode).then(serverOptions => {
-      const urlString = urlForServerOptions(serverOptions)
-      const job = { input: { type: 'mash', mash: masher.mash } }
-      const fetchOptions = fetchJson(job)
-      console.debug("POST request", urlString)
-      fetch(urlString, fetchOptions).then(response => response.json()).then(json => {
-        console.debug("POST response", urlString, json)
-        setProcessing(false)
-      })
+    const request: RenderingStartRequest = {
+      mash: masher.mash.toJSON(),
+      definitions: masher.mash.definitions.map(definition => definition.toJSON()),
+      input: { type: 'mash', mash: masher.mash },
+      outputs: [{type: OutputType.Video}],
+    }
+    console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
+    endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {
+      console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
+      const { id } = response
+      setProcessing(false)
     })
   }
   const buttonOptions = { ...rest, onClick, disabled: processing }

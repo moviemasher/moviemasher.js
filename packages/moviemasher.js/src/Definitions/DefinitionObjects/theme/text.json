@@ -2,21 +2,25 @@
   "label": "Text",
   "type": "theme",
   "id": "com.moviemasher.theme.text",
-  "properties": {
-    "string": { "type": "string", "value": "Text" },
-    "size": { "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
-    "x": { "type": "number", "value": 0 },
-    "y": { "type": "number", "value": 0 },
-    "color": { "type": "rgba", "value": "rgba(255,0,0,1)" },
-    "shadowcolor": { "type": "rgba", "value": "rgba(0,0,0,0)" },
-    "shadowx": { "type": "number", "value": 0.015 },
-    "shadowy": { "type": "number", "value": 0.015 },
-    "background": { "type": "rgba", "value": "rgba(0,0,0,0)" },
-    "fontface": { "type": "font", "value": "com.moviemasher.font.default" }
-  },
+  "properties": [
+    { "name": "string", "type": "string", "value": "Text" },
+    { "name": "size", "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
+    { "name": "x", "type": "number", "value": 0 },
+    { "name": "y", "type": "number", "value": 0 },
+    { "name": "color", "type": "rgba", "value": "rgba(255,0,0,1)" },
+    { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    { "name": "shadowx", "type": "number", "value": 0.015 },
+    { "name": "shadowy", "type": "number", "value": 0.015 },
+    { "name": "background", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    {
+      "name": "fontface",
+      "type": "font",
+      "value": "com.moviemasher.font.default"
+    }
+  ],
   "filters": [
     {
-      "id": "color",
+      "id": "com.moviemasher.filter.color",
       "parameters": [
         {
           "name": "color",
@@ -24,20 +28,20 @@
         },
         {
           "name": "size",
-          "value": "mm_dimensions"
+          "value": "out_size"
         },
         {
           "name": "duration",
-          "value": "mm_duration"
+          "value": "out_duration"
         },
         {
           "name": "rate",
-          "value": "mm_fps"
+          "value": "out_rate"
         }
       ]
     },
     {
-      "id": "drawtext",
+      "id": "com.moviemasher.filter.drawtext",
       "parameters": [
         {
           "name": "fontcolor",
@@ -49,23 +53,23 @@
         },
         {
           "name": "fontsize",
-          "value": "mm_vert(size)"
+          "value": "out_height * size"
         },
         {
           "name": "x",
-          "value": "mm_horz(x)"
+          "value": "out_width * x"
         },
         {
           "name": "y",
-          "value": "mm_vert(y)"
+          "value": "out_height * y"
         },
         {
           "name": "shadowx",
-          "value": "mm_horz(shadowx)"
+          "value": "out_width * shadowx"
         },
         {
           "name": "shadowy",
-          "value": "mm_vert(shadowy)"
+          "value": "out_height * shadowy"
         },
         {
           "name": "fontfile",

@@ -1,8 +1,8 @@
 import {
-  SegmentsPromise, LoadPromise, UnknownObject, Value, SegmentArgs, Segments
+  LoadPromise, UnknownObject, Value, FilterGraphs, Described, FilterGraphsArgs, Size, GraphFile, FilesOptions
 } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
-import { Definition, DefinitionTimes } from "../../Base/Definition"
+import { Definition } from "../../Base/Definition"
 import { Time } from "../../Helpers/Time"
 import { Clip } from "../../Mixin/Clip/Clip"
 import { Audible } from "../../Mixin/Audible/Audible"
@@ -12,19 +12,16 @@ import { Visible } from "../../Mixin/Visible/Visible"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Edited } from "../../Edited/Edited"
 import { Track, TrackObject } from "../../Media/Track/Track"
+import { Preloader } from "../../Preloader/Preloader"
 
-interface MashOptions extends UnknownObject {
-  backcolor : string
-  id? : string
-  label: string
+interface MashDescription extends UnknownObject, Described {}
+interface MashObject extends Partial<MashDescription> {
+  backcolor? : string
   buffer?: number
   gain?: Value
-  quantize : number
+  quantize? : number
   tracks?: TrackObject[]
-  createdAt?: string
 }
-
-type MashObject = Partial<MashOptions>
 
 interface Mash extends Edited {
   addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
@@ -51,22 +48,23 @@ interface Mash extends Edited {
   drawnTime? : Time
   duration: number
   endTime: Time
+  graphFiles(args: FilesOptions): GraphFile[]
+  filterGraphs(args: FilterGraphsArgs): FilterGraphs
   frame: number
   frames: number
   gain: number
   handleAction(action: Action): void
-  id: string
-  loadPromise?: LoadPromise
-  loadUrls: string[]
-  loadedDefinitions : DefinitionTimes
+  // loadPromise: (timeOrRange: Time, avType?: AVType)=> LoadPromise
+  // loadUrls: string[]
+  // loadedDefinitions : DefinitionTimes
   loop: boolean
-  paused : boolean
+  paused: boolean
+  preloader: Preloader
   quantize : number
   removeClipFromTrack(clip : Clip) : void
   removeTrack(trackType : TrackType) : void
-  seekToTime(time: Time) : LoadPromise | undefined
-  segments(args: SegmentArgs): Segments
-  segmentsPromise(args: SegmentArgs): SegmentsPromise
+  seekToTime(time: Time): LoadPromise | undefined
+  size(time?: Time): Size | undefined
   time: Time
   timeRange: TimeRange
   toJSON(): UnknownObject
@@ -75,4 +73,4 @@ interface Mash extends Edited {
   tracks: Track[]
 }
 
-export { Mash, MashObject, MashOptions }
+export { Mash, MashObject, MashDescription }

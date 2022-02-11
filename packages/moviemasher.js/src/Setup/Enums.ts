@@ -17,14 +17,20 @@ enum ActionType {
 
 enum EditType {
   Mash = 'mash',
-  Stream = 'stream',
+  Cast = 'cast',
 }
 
 enum AVType {
   Audio = 'audio',
+  Both = 'both',
   Video = 'video',
 }
 
+enum RawType {
+  Audio = 'audio',
+  Video = 'video',
+  Image = 'image',
+}
 enum TrackType {
   Audio = 'audio',
   Transition = 'transition',
@@ -44,13 +50,29 @@ enum ClipType {
   // AudioStream = 'audiostream',
 }
 
+
+enum OutputFormat {
+  AudioConcat = 'wav',
+  Dash = 'mdash',
+  Flv = 'flv',
+  Hls = 'hls',
+  Jpeg = 'jpeg',
+  Mp3 = 'mp3',
+  Mp4 = 'mp4',
+  Pipe = 'yuv4mpegpipe', // really an import format
+  Png = 'png',
+  Rtmp = 'rtmp',
+  Rtmps = 'rtmps',
+  VideoConcat = 'mpg',
+}
+
+
 enum OutputType {
   Audio = 'audio',
-  Video = 'video',
-  Waveform = 'waveform',
   Image = 'image',
+  Video = 'video',
   VideoSequence = 'videosequence',
-  VideoStream = 'videostream',
+  Waveform = 'waveform',
 }
 const ClipTypes = Object.values(ClipType)
 
@@ -87,7 +109,7 @@ enum EventType {
   Seeked = 'seeked',
   Seeking = 'seeking',
   Selection = 'selection',
-  Stream = 'stream',
+  Cast = 'cast',
   Time = 'timeupdate',
   Track = 'track',
   Volume = 'volumechange',
@@ -104,13 +126,19 @@ enum ModuleType {
 }
 const ModuleTypes = Object.values(ModuleType)
 
+enum GraphFileType {
+  Svg = 'svg',
+  Png = 'png',
+  Txt = 'txt',
+}
+
 enum LoadType {
   Audio = 'audio',
   Font = 'font',
   Image = 'image',
-  Module = 'module',
   Video = 'video',
 }
+const LoadTypes = Object.values(LoadType)
 
 enum MoveType {
   Audio = 'audio',
@@ -157,48 +185,39 @@ enum MasherAction {
   Undo = 'undo',
 }
 
-enum RenderType {
+enum GraphType {
   Canvas = 'canvas',
-  File = 'file',
-  Stream = 'stream',
+  Mash = 'mash',
+  Cast = 'cast',
 }
 
-enum OutputFormat {
-  Flv = 'flv',
-  Hls = 'hls',
-  Mdash = 'mdash',
-  Rtmp = 'rtmp',
-  Rtmps = 'rtmps',
-  Mp4 = 'mp4',
-  Mp3 = 'mp3',
-}
+const OutputFormats = Object.values(OutputFormat)
 
 enum ServerType {
   Api = 'api',
-  Content = 'content',
-  Encode = 'encode',
-  Hls = 'hls',
-  Rtmp = 'rtmp',
-  Storage = 'storage',
-  Webrtc = 'webrtc',
+  Data = 'data',
+  File = 'file',
+  Rendering = 'rendering',
+  Streaming = 'streaming',
+  Web = 'web',
 }
 const ServerTypes = Object.values(ServerType)
-
-const OutputFormats = Object.values(OutputFormat)
 
 export {
   ActionType,
   AVType,
   ClipType,
   ClipTypes,
-  RenderType,
+  GraphType,
   DataType,
   DataTypes,
   DefinitionType,
   DefinitionTypes,
   EditType,
   EventType,
+  GraphFileType,
   LoadType,
+  LoadTypes,
   MasherAction,
   ModuleType,
   ModuleTypes,
@@ -206,6 +225,7 @@ export {
   OutputFormat,
   OutputFormats,
   OutputType,
+  RawType,
   ServerType,
   ServerTypes,
   TrackType,

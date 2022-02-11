@@ -1,87 +1,79 @@
+import { RenderingResult } from "../Api/Rendering"
 import { Propertied } from "../Base/Propertied"
-import { ValueObject, Value } from "../declarations"
-import { OutputType } from "../Setup/Enums"
+import { ValueObject, Value, UnknownObject, FilterGraphs, Endpoint } from "../declarations"
+import { Mash } from "../Edited/Mash/Mash"
+import { Preloader } from "../Preloader/Preloader"
+import { OutputFormat, OutputType } from "../Setup/Enums"
 
-interface BaseOutput {
-  type: OutputType
+export interface OutputObject extends UnknownObject {
+  type?: OutputType
+  format?: OutputFormat
   options?: ValueObject
-  extension?: string
-  name?: string
-  prefix?: string
+}
+export interface OutputArgs extends Required<OutputObject> { }
+export interface Output extends OutputArgs, Propertied {
+  filterGraphsPromise: (renderingResults?: RenderingResult[]) => Promise<FilterGraphs>
 }
 
-interface AVBaseOutput extends BaseOutput {
-  precision?: number
-}
-
-interface VBaseOutput extends BaseOutput {
+export interface DimensionalOutput {
   width?: number
   height?: number
 }
 
-interface AudioOptions {
+export interface VisualOutput extends DimensionalOutput {
+  cover?: boolean
+}
+
+export interface AudioOptions {
   audioBitrate?: Value
   audioChannels?: number
   audioCodec?: string
   audioRate?: number
 }
-interface AudioOutput extends AVBaseOutput, AudioOptions {
-  type: OutputType.Audio
-}
 
-// ffmpeg -i input.mp3 -af "afade=enable='between(t,0,3)':t=in:ss=0:d=3,afade=enable='between(t,7,10)':t=out:st=7:d=3,afade=enable='between(t,10,13)':t=in:st=10:d=3,afade=enable='between(t,13,16)':t=out:st=13:d=3" -t 16 output.mp3
-
-
-interface ImageOutput extends VBaseOutput {
-  type: OutputType.Image
+export interface ImageOptions extends VisualOutput {
   offset?: number
 }
 
-interface WaveformOutput extends AVBaseOutput {
-  type: OutputType.Waveform
-  backcolor?: string
-  forecolor: string
-}
-
-interface SequenceOutput extends VBaseOutput {
-  type: OutputType.VideoSequence
-  videoRate?: number
-  quality?: number
-  audioOutput?: AudioOutput
-}
-
-interface VideoOptions {
+export interface VideoOptions extends VisualOutput {
   videoBitrate?: Value
   videoCodec?: string
   videoRate?: number
-  width?: number
-  height?: number
   g?: number
 }
 
+export interface ImageOutputObject extends OutputObject, ImageOptions {}
+export interface ImageOutput extends Output, Required<ImageOutputObject> {}
 
-interface VideoOutput extends AVBaseOutput, VideoOptions {
-  type: OutputType.Video
-  audioOutput?: AudioOutput
+export interface AudioOutputObject extends OutputObject, AudioOptions {}
+export interface AudioOutput extends Output, Required<AudioOutputObject> {}
+
+export interface VideoOutputObject extends AudioOutputObject, VideoOptions { }
+export interface VideoOutputArgs extends Required<VideoOutputObject> {}
+export interface VideoOutput extends Output, VideoOutputArgs {}
+
+export interface VideoSequenceOptions extends VisualOutput, AudioOptions {
+  videoRate?: number
+  quality?: number
+}
+export interface VideoSequenceOutputObject extends OutputObject, VideoSequenceOptions {}
+export interface VideoSequenceOutput extends Output, Required<VideoSequenceOutputObject> { }
+
+
+export interface VideoStreamOutputObject extends VideoOutputObject {}
+export interface VideoStreamOutput extends VideoOutput {}
+
+export interface WaveformOutputObject extends OutputObject, DimensionalOutput {
+  backcolor?: string
+  forecolor: string
+}
+export interface WaveformOutput extends Output, Required<WaveformOutputObject> { }
+
+export interface OutputConstructorArgs {
+  mash: Mash
+  output: OutputObject
+  cacheDirectory: string
+  preloader: Preloader
 }
 
-
-interface OutputOptions extends AudioOptions, VideoOptions {
-  // type: OutputType.VideoStream
-  format?: string
-  options?: ValueObject,
-}
-
-// interface OutputOptions extends Partial<OutputObject> {}
-interface OutputObject extends Required<OutputOptions> {}
-
-interface Output extends OutputObject, Propertied {}
-
-export {
-  VideoOutput,
-  AudioOutput,
-  ImageOutput,
-  WaveformOutput,
-  SequenceOutput,
-  OutputOptions, Output, OutputObject
-}
+export interface OutputOptions extends OutputObject, AudioOptions, VideoOptions { }

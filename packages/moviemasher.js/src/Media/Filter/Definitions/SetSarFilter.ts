@@ -1,4 +1,4 @@
-import { GraphFilter, LayerArgs, ValueObject } from "../../../declarations"
+import { GraphFilter, FilterChainArgs, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { Evaluator } from "../../../Helpers/Evaluator"
@@ -15,10 +15,10 @@ class SetSarFilter extends FilterDefinitionClass {
     return context
   }
 
-  input(evaluator: Evaluator, evaluated: ValueObject, args: LayerArgs): GraphFilter {
+  input(evaluator: Evaluator, evaluated: ValueObject, args: FilterChainArgs): GraphFilter {
     return {
       outputs: ['SAR'],
-      filter: this.id,
+      filter: this.ffmpegFilter,
       options: { sar: 1, max: 1 }
     }
   }

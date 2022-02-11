@@ -36,20 +36,13 @@
     "build-full": "run-s lint-verbose test-verbose clean build-esm build-umd build-cjs",
     "build": "run-s clean build-esm build-umd build-cjs",
     "clean": "rimraf dist",
-    "develop": "rollup --watch --config dev/rollup/esm.config.js",
-    "start": "docker-compose --file dev/docker/compose.yml up -d",
-    "logs": "docker-compose --file dev/docker/compose.yml logs -f",
-    "stop": "docker-compose --file dev/docker/compose.yml down -v"
-  },
-  "peerDependencies": {
-    "fluent-ffmpeg": "^2.1.2"
+    "develop": "rollup --watch --config dev/rollup/esm.config.js"
   },
   "devDependencies": {},
   "files": [
     "dist"
   ],
   "dependencies": {
-    "@types/fluent-ffmpeg": "^2.1.20",
     "@types/css-font-loading-module": "^0.0.7"
   }
 }

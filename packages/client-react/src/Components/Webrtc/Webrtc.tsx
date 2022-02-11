@@ -1,41 +1,26 @@
 import React from "react"
-import { ServerOptions, ServerType } from "@moviemasher/moviemasher.js"
+import { ServerType } from "@moviemasher/moviemasher.js"
 
-import { View } from "../../Utilities/View"
-import { WebrtcContext, WebrtcContextDefault } from "../../Contexts/WebrtcContext"
+import { PropsAndChildren, WithClassName } from "../../declarations"
+import { WebrtcContext, WebrtcContextInterface } from "../../Contexts/WebrtcContext"
 import { ApiContext } from "../../Contexts/ApiContext"
-import { PropsWithChildren } from "../../declarations"
+import { View } from "../../Utilities/View"
+import { WebrtcClient } from "./WebrtcClient"
 
-interface WebrtcProps extends PropsWithChildren {
-  serverOptions?: ServerOptions
-}
+interface WebrtcProps extends PropsAndChildren, WithClassName {}
 
 function Webrtc(props: WebrtcProps) {
-  const [broadcasting, setBroadcasting] = React.useState(false)
-  const [status, setStatus] = React.useState('')
+  const [client, setClient] = React.useState<WebrtcClient | undefined>()
   const apiContext = React.useContext(ApiContext)
+
   const { enabled } = apiContext
-  if (!enabled.includes(ServerType.Webrtc)) return null
+  if (!enabled.includes(ServerType.Streaming)) return null
 
-  const { serverOptions, ...rest } = props
-  const { serverOptionsPromise } = apiContext
-  const serverPromise = (id: ServerType): Promise<ServerOptions> => {
-    if (serverOptions) return Promise.resolve(serverOptions)
-
-    return serverOptionsPromise(id)
-  }
-
-  const { webrtcClient } = WebrtcContextDefault
-  const webrtcContext = {
-    webrtcClient,
-    broadcasting, setBroadcasting,
-    serverOptionsPromise: serverPromise,
-    status, setStatus,
-  }
+  const context: WebrtcContextInterface = { client, setClient }
 
   return (
-    <WebrtcContext.Provider value={webrtcContext}>
-      <View {...rest} />
+    <WebrtcContext.Provider value={context}>
+      <View {...props} />
     </WebrtcContext.Provider>
   )
 }

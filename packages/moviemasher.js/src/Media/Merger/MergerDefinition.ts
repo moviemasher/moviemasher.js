@@ -2,14 +2,13 @@ import { MergerClass } from "./MergerInstance"
 import { DefinitionBase } from "../../Base/Definition"
 import { Merger, MergerDefinition, MergerObject } from "./Merger"
 import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
-import { Any, Layer, LayerArgs } from "../../declarations"
+import { Any, FilterChain, FilterChainArgs } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 
 import { Definitions } from "../../Definitions/Definitions"
 import { Modular } from "../../Mixin/Modular/Modular"
-import { layerLastLabel } from "../../Utilities/Layer"
+import { filterChainLastLabel } from "../../Helpers/FilterChain"
 
-const MergerDefinitionClassOutput = 'OUT'
 const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 class MergerDefinitionClass extends MergerDefinitionWithModular implements MergerDefinition {
   constructor(...args : Any[]) {
@@ -18,26 +17,21 @@ class MergerDefinitionClass extends MergerDefinitionWithModular implements Merge
     Definitions.install(this)
   }
 
-  filtrateLayer(layer: Layer, modular: Modular, args: LayerArgs): void {
-    const { prevLayer, layerIndex } = args
-    const prevOutput = layerLastLabel(prevLayer)
+  filtrateFilterChain(filterChain: FilterChain, modular: Modular, args: FilterChainArgs): void {
+    const { prevFilterChain } = args
+    const prevOutput = filterChainLastLabel(prevFilterChain)
     if (!prevOutput) return
 
-    // const { layerInputs: inputs } = layer
-    const output = layerLastLabel(layer)
+    const output = filterChainLastLabel(filterChain)
     if (!output) return
-    // if (!inputs.length) return
 
-    const graphFilters = this.graphFilters(layer, modular, args)
+    const graphFilters = this.graphFilters(filterChain, modular, args)
     const merger = graphFilters[0]
     if (!merger) return
 
     const mergerInputs = [prevOutput, output]
     merger.inputs = mergerInputs
-    // merger.outputs = [`L${layerIndex}`]
-    // console.log(this.constructor.name, "filtrateLayer", mergerInputs)
-
-    layer.merger = merger
+    filterChain.merger = merger
   }
 
   get instance() : Merger {

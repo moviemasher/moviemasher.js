@@ -1,13 +1,13 @@
 import React from 'react'
-import { SelectionValue, PropertiedChangeHandler } from "@moviemasher/moviemasher.js"
+import { SelectionValue, PropertiedChangeHandler, Property } from "@moviemasher/moviemasher.js"
 
 interface InputContextInterface {
-  property: string
+  property?: Property
   value: SelectionValue
   changeHandler: PropertiedChangeHandler
 }
 const InputContextDefault: InputContextInterface = {
-  property: '', value: '', changeHandler: () => {},
+  value: '', changeHandler: () => {},
 }
 
 const InputContext = React.createContext(InputContextDefault)

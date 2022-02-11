@@ -1,11 +1,11 @@
 import { UnknownObject, Scalar } from "../declarations"
 import { Errors } from "./Errors"
-import { DataType } from "./Enums"
+import { DataType, DataTypes } from "./Enums"
 import { Type } from "./Type"
 import { Types } from "./Types"
 
 interface PropertyObject {
-  type? : DataType
+  type? : DataType | string
   name? : string
   value? : Scalar
   custom? : boolean
@@ -15,10 +15,10 @@ interface PropertyObject {
 class Property {
   constructor(object: PropertyObject) {
     const { type, name, value, custom } = object
-    if (!type) throw Errors.invalid.type
+    if (!(type && DataTypes.map(String).includes(type))) throw Errors.invalid.type
     if (!name) throw Errors.invalid.name
 
-    this.type = Types.propertyType(type)
+    this.type = Types.propertyType(type as DataType)
     this.name = name
     this.value = typeof value === "undefined" ? this.type.value : value
     this.custom = !!custom

@@ -2,30 +2,31 @@
   "label": "Scale",
   "type": "scaler",
   "id": "com.moviemasher.scaler.scale",
-  "properties": {
-    "scale": { "type": "number", "value": 1 }
-  },
+  "properties": [{ "name": "scale", "type": "number", "value": 1 }],
   "filters": [
     {
-      "id": "scale",
+      "id": "com.moviemasher.filter.scale",
       "parameters": [
         {
           "name": "width",
-          "value":"scale * mm_input_width * mm_max(mm_width / mm_input_width, mm_height / mm_input_height)"
-        },{
+          "value": "scale * in_w * max(out_w / in_w, out_h / in_h)"
+        },
+        {
           "name": "height",
-          "value":"scale * mm_input_height * mm_max(mm_width / mm_input_width, mm_height / mm_input_height)"
+          "value": "scale * in_h * max(out_w / in_w, out_h / in_h)"
         }
       ]
-    },{
-      "id": "setsar",
+    },
+    {
+      "id": "com.moviemasher.filter.setsar",
       "parameters": [
         {
           "name": "sar",
-          "value":"1"
-        },{
+          "value": "1"
+        },
+        {
           "name": "max",
-          "value":"1"
+          "value": "1"
         }
       ]
     }

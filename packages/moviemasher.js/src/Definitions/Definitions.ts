@@ -52,7 +52,7 @@ const definitionsUninstall = (id : string) : void => {
   const { type } = definition
   const definitions = definitionsByType(type)
   const index = definitions.indexOf(definition)
-  if (index < 0) throw Errors.internal
+  if (index < 0) throw Errors.internal + 'definitionsUninstall'
 
   definitions.splice(index, 1)
 }

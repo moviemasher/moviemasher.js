@@ -1,0 +1,6 @@
+
+class LayerClass {
+
+}
+
+export { LayerClass }

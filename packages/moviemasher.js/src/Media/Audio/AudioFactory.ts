@@ -3,7 +3,7 @@ import { Definitions } from "../../Definitions/Definitions"
 import { AudioDefinitionClass } from "./AudioDefinition"
 import { AudioDefinition, AudioDefinitionObject, Audio, AudioObject } from "./Audio"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { DefinitionType } from "../../Setup/Enums"
 
 /**

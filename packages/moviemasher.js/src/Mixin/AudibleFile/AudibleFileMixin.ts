@@ -1,6 +1,6 @@
 import { Any, UnknownObject, StartOptions } from "../../declarations"
 import { Default } from "../../Setup/Default"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 import { Time } from "../../Helpers/Time"
 import { AudibleClass } from "../Audible/Audible"
 import { AudibleFileClass, AudibleFileDefinition, AudibleFileObject } from "./AudibleFile"

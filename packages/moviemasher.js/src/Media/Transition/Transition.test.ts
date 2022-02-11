@@ -1,12 +1,13 @@
 import { Time } from "../../Helpers/Time"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Factory } from "../../Definitions/Factory"
-import { idGenerate } from "../../Utilities/Id"
+import { idGenerate } from "../../Utility/Id"
 
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { TrackType } from "../../Setup/Enums"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"
+import { PreloaderClass } from "../../Preloader/PreloaderClass"
 
 const expectMashTimeContext = async (mash: Mash, time: Time): Promise<void> => {
   mash.imageSize = { width: 640, height: 480 }
@@ -23,6 +24,7 @@ describe("Transition", () => {
       // const [] = backcolors
       const mashObject = { backcolor }
       const mash = MashFactory.instance(mashObject)
+      mash.preloader = new PreloaderClass()
       const { quantize } = mash
       const globeDefinition = Factory.image.definition({ id: idGenerate(), url: 'globe.jpg' })
       const globeImage = globeDefinition.instance

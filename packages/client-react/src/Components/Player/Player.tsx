@@ -1,18 +1,19 @@
 import React from 'react'
 import { EventType } from '@moviemasher/moviemasher.js'
-import { ListenerCallback, PropsAndChildren, ReactResult } from '../../declarations'
+import { ListenerCallback, PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 
 import { PlayerContext, PlayerContextInterface } from '../../Contexts/PlayerContext'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import { useMashEditor } from '../../Hooks/useMashEditor'
 
+interface PlayerProps extends PropsAndChildren, WithClassName {}
 
 /**
- * @parents Masher, Streamer
+ * @parents Masher, Caster
  * @children PlayerContent, Playing, PlayerNotPlaying, TimeSlider, PlayerButton
  */
-function Player(props: PropsAndChildren): ReactResult {
+function Player(props: PlayerProps): ReactResult {
   const masher = useMashEditor()
   const handlePaused : ListenerCallback = () => { setPaused(masher.paused) }
   useListeners({
@@ -41,4 +42,4 @@ function Player(props: PropsAndChildren): ReactResult {
   )
 }
 
-export { Player }
+export { Player, PlayerProps }

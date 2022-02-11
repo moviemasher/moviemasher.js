@@ -1,3 +1,3 @@
 export * from "./Editor"
 export * from "./MashEditor"
-export * from "./StreamEditor"
+export * from "./CastEditor"

@@ -2,25 +2,27 @@
   "label": "Chromakey",
   "type": "effect",
   "id": "com.moviemasher.effect.chromakey",
-  "properties": {
-    "accurate": { "type": "number", "value": 0 },
-    "chroma_blend": { "type": "number", "value": 0.01 },
-    "chroma_similarity": { "type": "number", "value": 0.5 },
-    "chroma_color": { "type": "rgb", "value": "rgb(0,255,0)" }
-  },
+  "properties": [
+    { "name": "accurate", "type": "number", "value": 0 },
+    { "name": "chroma_blend", "type": "number", "value": 0.01 },
+    { "name": "chroma_similarity", "type": "number", "value": 0.5 },
+    { "name": "chroma_color", "type": "rgb", "value": "rgb(0,255,0)" }
+  ],
   "filters": [
     {
-      "id": "chromakey",
+      "id": "com.moviemasher.filter.chromakey",
       "parameters": [
         {
           "name": "color",
-          "value":"chroma_color"
-        },{
+          "value": "chroma_color"
+        },
+        {
           "name": "blend",
-          "value":"chroma_blend"
-        },{
+          "value": "chroma_blend"
+        },
+        {
           "name": "similarity",
-          "value":"chroma_similarity"
+          "value": "chroma_similarity"
         }
       ]
     }

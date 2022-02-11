@@ -1,13 +1,13 @@
 import React from "react"
 import {
-  fetchJson, MasherAction, urlForServerOptions, EventType, ServerType
+  MasherAction, EventType, Endpoints, DataMashPutRequest, DataMashPutResponse
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../../declarations"
-import { useListeners } from "../../../Hooks/useListeners"
 import { ApiContext } from "../../../Contexts/ApiContext"
 import { ProcessContext } from "../../../Contexts/ProcessContext"
 import { useMashEditor } from "../../../Hooks/useMashEditor"
+import { useListeners } from "../../../Hooks/useListeners"
 
 function SaveControl(props:PropsAndChild): ReactResult {
   const apiContext = React.useContext(ApiContext)
@@ -20,19 +20,20 @@ function SaveControl(props:PropsAndChild): ReactResult {
     [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Save)) }
   })
   const { children, ...rest } = props
-  const { serverOptionsPromise } = apiContext
+  const { endpointPromise } = apiContext
   const onClick = () => {
     if (processing || disabled) return
 
     setProcessing(true)
-    serverOptionsPromise(ServerType.Content).then(serverOptions => {
-      const urlString = urlForServerOptions(serverOptions, '/mash')
-      const fetchOptions = fetchJson(masher.mash)
-      console.debug("POST request", urlString)
-      fetch(urlString, fetchOptions).then(response => response.json()).then((json) => {
-        console.debug("POST response", urlString, json)
-        setProcessing(false)
-      })
+    const { mash } = masher
+    const request: DataMashPutRequest = {
+      mash: mash.toJSON(),
+      definitionIds: mash.definitions.map(definition => definition.id)
+    }
+    console.debug("DataMashPutRequest", Endpoints.data.mash.put, request)
+    endpointPromise(Endpoints.data.mash.put, request).then((response: DataMashPutResponse) => {
+      console.debug("DataMashPutResponse", Endpoints.data.mash.put, response)
+      setProcessing(false)
     })
   }
   const buttonOptions = { ...rest, onClick, disabled: processing || disabled }

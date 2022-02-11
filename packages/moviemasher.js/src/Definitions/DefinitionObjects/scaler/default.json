@@ -4,23 +4,26 @@
   "type": "scaler",
   "filters": [
     {
-      "id": "scale",
+      "id": "com.moviemasher.filter.scale",
       "parameters": [
         {
           "name": "width",
-          "value": "mm_width"
-        },{
+          "value": "out_w"
+        },
+        {
           "name": "height",
-          "value": "mm_height"
+          "value": "out_h"
         }
       ]
-    },{
-      "id": "setsar",
+    },
+    {
+      "id": "com.moviemasher.filter.setsar",
       "parameters": [
         {
           "name": "sar",
           "value": "1"
-        },{
+        },
+        {
           "name": "max",
           "value": "1"
         }

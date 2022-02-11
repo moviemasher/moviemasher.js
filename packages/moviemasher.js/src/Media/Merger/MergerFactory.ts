@@ -14,7 +14,7 @@ import {
   MergerFactory
 } from "./Merger"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utilities/Is"
+import { Is } from "../../Utility/Is"
 
 
 const mergerDefaultId = "com.moviemasher.merger.default"

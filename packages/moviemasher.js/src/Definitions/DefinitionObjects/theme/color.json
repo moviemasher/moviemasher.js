@@ -2,12 +2,10 @@
   "label": "Color",
   "type": "theme",
   "id": "com.moviemasher.theme.color",
-  "properties": {
-    "color": { "type": "rgba", "value": "#ffff00ff" }
-  },
+  "properties": [{ "name": "color", "type": "rgba", "value": "#ffff00ff" }],
   "filters": [
     {
-      "id": "color"
+      "id": "com.moviemasher.filter.color"
     }
   ]
 }

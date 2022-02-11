@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*.ts", "../server-node/src/Command/Ffmpeg.ts", "../server-node/src/Utilities/Segment.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules/*", "dev/test/*"],
   "compilerOptions": {
     "jsx": "preserve",

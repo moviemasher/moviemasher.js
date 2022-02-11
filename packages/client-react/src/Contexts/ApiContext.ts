@@ -1,14 +1,14 @@
 import React from 'react'
-import { ServerOptions, ServerType, StringSetter } from '@moviemasher/moviemasher.js'
+import { JsonObject, ServerType, StringSetter } from '@moviemasher/moviemasher.js'
 
 interface ApiContextInterface {
   enabled: ServerType[]
-  serverOptionsPromise: (id: ServerType, setStatus?: StringSetter) => Promise<ServerOptions>
+  endpointPromise: (id: string, body?: JsonObject, setStatus?: StringSetter) => Promise<any>
 }
 
 const ApiContextDefault: ApiContextInterface = {
   enabled: [],
-  serverOptionsPromise: () => Promise.resolve({})
+  endpointPromise: () => Promise.resolve({})
 }
 
 const ApiContext = React.createContext(ApiContextDefault)

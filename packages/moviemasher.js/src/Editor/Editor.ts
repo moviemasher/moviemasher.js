@@ -1,16 +1,21 @@
-import { Size, VisibleContextData } from "../declarations"
+import { Endpoint, Size, VisibleContextData } from "../declarations"
 import { Emitter } from "../Helpers/Emitter"
 import { PropertiedChangeHandler } from "../Base/Propertied"
-import { Output } from "../Output/Output"
 import { EditType } from "../Setup/Enums"
+import { Preloader } from "../Preloader/Preloader"
+
+interface EditorOptions {
+  endpoint?: Endpoint
+}
 
 interface Editor {
   change: PropertiedChangeHandler
+  editType: EditType
   eventTarget: Emitter
   imageData: VisibleContextData
   imageSize: Size
-  output?: Output
-  editType: EditType
+  preloader: Preloader
+  // output?: Output
 }
 
-export { Editor }
+export { Editor, EditorOptions }
