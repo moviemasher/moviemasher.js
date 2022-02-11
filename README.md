@@ -1,4 +1,4 @@
-![Movie Masher](./dev/assets/moviemasher.svg)
+![Movie Masher](./dev/img/moviemasher.svg)
 
 _JavaScript video editor, encoder, and streamer - version 5.0.0_
 
