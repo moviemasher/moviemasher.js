@@ -16,7 +16,6 @@ import {
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
 
-
 const mergerDefaultId = "com.moviemasher.merger.default"
 
 const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition => {
@@ -32,7 +31,7 @@ const mergerDefinitionFromId = (id : string) : MergerDefinition => {
 }
 
 const mergerInstance = (object: MergerObject): Merger => {
-  const { definitionId } = object
+  const { definitionId = mergerDefaultId } = object
 
   const definition = mergerDefinition({ id: definitionId })
   return definition.instanceFromObject(object)
@@ -43,23 +42,26 @@ const mergerFromId = (definitionId : string) : Merger => {
 }
 
 const mergerInitialize = () : void => {
-  new MergerDefinitionClass(mergerBlendJson)
-  new MergerDefinitionClass(mergerCenterJson)
-  new MergerDefinitionClass(mergerConstrainedJson)
-  new MergerDefinitionClass(mergerDefaultJson)
-  new MergerDefinitionClass(mergerOverlayJson)
+  [
+    mergerBlendJson,
+    mergerCenterJson,
+    mergerConstrainedJson,
+    mergerDefaultJson,
+    mergerOverlayJson,
+  ].forEach(object => mergerInstall(object))
 }
 
-const mergerDefine = (object : MergerDefinitionObject) : MergerDefinition => {
+const mergerInstall = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : mergerDefaultId
   Definitions.uninstall(idString)
-  return mergerDefinition(object)
+  const instance = mergerDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const MergerFactoryImplementation : MergerFactory = {
-  define: mergerDefine,
-  install: mergerDefine,
+  install: mergerInstall,
   definition: mergerDefinition,
   definitionFromId: mergerDefinitionFromId,
   fromId: mergerFromId,
@@ -70,8 +72,7 @@ const MergerFactoryImplementation : MergerFactory = {
 Factories[DefinitionType.Merger] = MergerFactoryImplementation
 
 export {
-  mergerDefine,
-  mergerDefine as mergerInstall,
+  mergerInstall,
   mergerDefaultId,
   mergerDefinition,
   mergerDefinitionFromId,

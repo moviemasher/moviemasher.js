@@ -14,7 +14,6 @@ interface FontDefinitionObject extends DefinitionObject {
 }
 
 interface FontDefinition extends Definition {
-  absoluteUrl: string
   instance : Font
   instanceFromObject(object : FontObject) : Font
   source : string

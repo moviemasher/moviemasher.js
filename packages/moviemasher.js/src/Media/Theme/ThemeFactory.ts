@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions/Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { ThemeDefinitionClass } from "./ThemeDefinition"
+import { ThemeDefinitionClass } from "./ThemeDefinitionClass"
 import { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeObject } from "./Theme"
 
 import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
@@ -32,22 +32,25 @@ const themeFromId = (id : string) : Theme => {
   return themeInstance({ id })
 }
 
-const themeInitialize = () : void => {
-  new ThemeDefinitionClass(themeColorJson)
-  new ThemeDefinitionClass(themeTextJson)
+const themeInitialize = (): void => {
+  [
+    themeColorJson,
+    themeTextJson,
+  ].forEach(object => themeInstall(object))
 }
 
-const themeDefine = (object : ThemeDefinitionObject) : ThemeDefinition => {
+const themeInstall = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
-  return themeDefinition(object)
+  const instance = themeDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const ThemeFactoryImplementation = {
-  define: themeDefine,
-  install: themeDefine,
+  install: themeInstall,
   definition: themeDefinition,
   definitionFromId: themeDefinitionFromId,
   fromId: themeFromId,
@@ -58,8 +61,7 @@ const ThemeFactoryImplementation = {
 Factories[DefinitionType.Theme] = ThemeFactoryImplementation
 
 export {
-  themeDefine,
-  themeDefine as themeInstall,
+  themeInstall,
   themeDefinition,
   themeDefinitionFromId,
   ThemeFactoryImplementation,

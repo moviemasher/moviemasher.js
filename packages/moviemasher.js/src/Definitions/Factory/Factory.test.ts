@@ -8,7 +8,7 @@ import { ImageDefinition } from "../../Media/Image"
 import { ImageClass } from "../../Media/Image/ImageClass"
 import { ScalerClass } from "../../Media/Scaler/ScalerInstance"
 import { ThemeDefinition } from "../../Media/Theme"
-import { TransitionClass } from "../../Media/Transition/TransitionInstance"
+import { TransitionClass } from "../../Media/Transition/TransitionClass"
 import { VideoClass } from "../../Media/Video/VideoInstance"
 import { Factory } from "./Factory"
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
@@ -138,19 +138,6 @@ describe("Factory", () => {
       })
     })
 
-    // describe("contextAtTimeToSize", () => {
-    //   test("returns expected context", async () => {
-    //     const time = Time.fromArgs(0, 1)
-    //     const clip = imageDefinition().instanceFromObject({ frames: 1 })
-    //     await clip.loadClip(time.fps, time)
-    //     const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
-    //     expect(context).toBeDefined()
-    //     if (!context) throw Errors.internal
-
-    //     expectCanvas(context.canvas)
-    //   })
-    // })
-
     describe("toJSON", () => {
       test("returns expected clip", () => {
         const expected = {}
@@ -232,14 +219,5 @@ describe("Factory", () => {
         expect(transitionDefinition().instance.copy).not.toEqual(expected)
       })
     })
-
-    // describe("contextAtTimeToSize", () => {
-    //   const time = Time.fromArgs(0)
-    //   test("returns undefined for transitions", () => {
-    //     const context = transitionDefinition().instance.contextAtTimeToSize(time, time.fps, dimensions) //, color)
-    //     expect(context).toBeUndefined()
-
-    //   })
-    // })
   })
 })

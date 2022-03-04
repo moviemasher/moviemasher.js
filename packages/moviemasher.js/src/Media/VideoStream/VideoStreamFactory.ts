@@ -31,25 +31,18 @@ const videoStreamFromId = (id : string) : VideoStream => {
 
 const videoStreamInitialize = (): void => {}
 
-const videoStreamDefine = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
+const videoStreamInstall = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
-  return videoStreamDefinition(object)
-}
-
-/**
- * @internal
- */
-const videoStreamInstall = (object: VideoStreamDefinitionObject): VideoStreamDefinition => {
-  const instance = videoStreamDefine(object)
+  const instance = videoStreamDefinition(object)
   instance.retain = true
+  Definitions.install(instance)
   return instance
 }
 
 const VideoStreamFactoryImplementation = {
-  define: videoStreamDefine,
   install: videoStreamInstall,
   definition: videoStreamDefinition,
   definitionFromId: videoStreamDefinitionFromId,
@@ -62,7 +55,7 @@ Factories[DefinitionType.VideoStream] = VideoStreamFactoryImplementation
 
 export {
   videoStreamInstall,
-  videoStreamDefine,
+  videoStreamInstall as videoStreamDefine,
   videoStreamDefinition,
   videoStreamDefinitionFromId,
   VideoStreamFactoryImplementation,

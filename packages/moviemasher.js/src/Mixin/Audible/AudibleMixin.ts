@@ -37,8 +37,8 @@ function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
     gainPairs : number[][] = []
 
 
-    loadedAudible(preloader: Preloader):AudibleSource | undefined {
-      return this.definition.loadedAudible(preloader)
+    audibleSource(preloader: Preloader):AudibleSource | undefined {
+      return this.definition.audibleSource(preloader)
     }
 
     get muted() : boolean {

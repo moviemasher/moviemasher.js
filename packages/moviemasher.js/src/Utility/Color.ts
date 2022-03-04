@@ -1,4 +1,4 @@
-import { AlphaColor, Rgb, Rgba, RgbObject, Yuv, YuvObject } from "../declarations"
+import { AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject } from "../declarations"
 
 const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))
@@ -31,11 +31,11 @@ const colorRgbToHex = (rgb: RgbObject): string => {
   return `#${r}${g}${b}`
 }
 
-const colorRgbaToHex = (rgba: Rgba): string => {
+const colorRgbaToHex = (rgba: RgbaObject): string => {
   let r = rgba.r.toString(16)
   let g = rgba.g.toString(16)
   let b = rgba.b.toString(16)
-  let a = Math.round(255 * rgba.a).toString(16)
+  let a = Math.round(255 * Number(rgba.a)).toString(16)
   if (r.length < 2) r = `0${r}`
   if (g.length < 2) g = `0${g}`
   if (b.length < 2) b = `0${b}`
@@ -123,6 +123,9 @@ const colorHexToRgb = (hex: string): Rgb => {
   return { r, g, b }
 }
 const colorTransparent = '#00000000'
+const colorBlack = '#000000'
+const colorGreen = '#00FF00'
+const colorYellow = '#FFFF00'
 
 const colorRgbaToRgba = (value: string): Rgba => {
   const color = colorStrip(value)
@@ -216,8 +219,10 @@ const Color = {
 export {
   Color,
   colorAlphaColor,
+  colorBlack,
   colorFromRgb,
   colorFromRgba,
+  colorGreen,
   colorHexRegex,
   colorHexToRgb,
   colorHexToRgba,
@@ -236,6 +241,7 @@ export {
   colorValidHex,
   colorValidRgb,
   colorValidRgba,
+  colorYellow,
   colorYuvBlend,
   colorYuvToRgb,
 }

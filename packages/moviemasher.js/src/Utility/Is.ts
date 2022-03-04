@@ -2,11 +2,11 @@ import { ScalarArray, UnknownObject } from "../declarations"
 
 const objectType = (value : unknown) : boolean => typeof value === 'object'
 
-const stringType = (value : unknown) : boolean => (
+const isString = (value : unknown) : boolean => (
   typeof value === 'string'
 )
 
-const undefinedType = (value : unknown) : boolean => typeof value === 'undefined'
+const isUndefined = (value : unknown) : boolean => typeof value === 'undefined'
 
 const numberType = (value : unknown) : boolean => typeof value === 'number'
 
@@ -14,7 +14,7 @@ const booleanType = (value : unknown) : boolean => typeof value === 'boolean'
 
 const methodType = (value : unknown) : boolean => typeof value === 'function'
 
-const isDefined = (value : unknown) : boolean => !undefinedType(value)
+const isDefined = (value : unknown) : boolean => !isUndefined(value)
 
 const isNan = (value : unknown) : boolean => numberType(value) && Number.isNaN(value)
 
@@ -34,7 +34,7 @@ const isArray = (value : unknown) : boolean => (
 
 const length = (value : string | ScalarArray) : boolean => !!value.length
 
-const isPopulatedString = (value : unknown) : boolean => stringType(value) && length(String(value))
+const isPopulatedString = (value : unknown) : boolean => isString(value) && length(String(value))
 
 const isPopulatedObject = (value : unknown) : boolean => (
   objectType(value) && length(Object.keys(<UnknownObject> value))
@@ -42,6 +42,7 @@ const isPopulatedObject = (value : unknown) : boolean => (
 
 const isPopulatedArray = (value: unknown): boolean => isArray(value) && length(<ScalarArray>value)
 
+const isNumeric = (value: unknown): boolean => isNumber(value) || !isNan(Number(value))
 /**
  * @category Utility
  */
@@ -60,8 +61,8 @@ const Is = {
   populatedObject: isPopulatedObject,
   populatedString: isPopulatedString,
   positive: isPositive,
-  string: stringType,
-  undefined: undefinedType,
+  string: isString,
+  undefined: isUndefined,
 }
 
 export {
@@ -80,6 +81,7 @@ export {
   isPopulatedObject,
   isPopulatedString,
   isPositive,
-  stringType as isString,
-  undefinedType as isUndefined,
+  isString,
+  isUndefined,
+  isNumeric,
 }

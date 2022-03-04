@@ -1,3 +1,4 @@
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 import { GenericFactory } from "../../declarations"
 
 import {
@@ -16,7 +17,7 @@ interface ImageDefinitionObject extends TransformableDefinitionObject {
   source? : string
  }
 
- interface ImageDefinition extends TransformableDefinition {
+ interface ImageDefinition extends TransformableDefinition, PreloadableDefinition {
    instance : Image
    instanceFromObject(object : ImageObject) : Image
 }

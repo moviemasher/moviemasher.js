@@ -15,7 +15,7 @@ import { VideoStreamFactory } from "../../Media/VideoStream/VideoStream"
 import { VideoSequenceFactory } from "../../Media/VideoSequence/VideoSequence"
 import { ContextFactory } from "../../Context/ContextFactory"
 import { TrackFactory } from "../../Media/Track/TrackFactory"
-import { Definition, DefinitionObject } from "../../Base/Definition"
+import { Definition, DefinitionObject, DefinitionObjects } from "../../Base/Definition"
 import { isPopulatedString } from "../../Utility/Is"
 
 class Factory {
@@ -41,7 +41,7 @@ class Factory {
     return this[definitionType].definition(object)
   }
 
-  static definitionsFromObjects(objects: DefinitionObject[]): Definition[] {
+  static definitionsFromObjects(objects: DefinitionObjects): Definition[] {
     return objects.map(object => this.definitionFromObject(object))
   }
 

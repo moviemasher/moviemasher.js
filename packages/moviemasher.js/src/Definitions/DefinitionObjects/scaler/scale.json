@@ -17,18 +17,6 @@
         }
       ]
     },
-    {
-      "id": "com.moviemasher.filter.setsar",
-      "parameters": [
-        {
-          "name": "sar",
-          "value": "1"
-        },
-        {
-          "name": "max",
-          "value": "1"
-        }
-      ]
-    }
+    { "id": "com.moviemasher.filter.setsar" }
   ]
 }

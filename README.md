@@ -25,7 +25,7 @@ npm install @moviemasher/server-express --save
 
 ## Inclusion
 
-From our HTML file we link to both our compiled JavaScript and CSS files.
+From your HTML file link to both our compiled JavaScript and CSS files.
 To support the widest variety of workflows and tooling, the Cascading Style Sheets
 required to layout the client user interface are kept separate from JavaScript code:
 
@@ -35,33 +35,23 @@ required to layout the client user interface are kept separate from JavaScript c
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="index.js" defer></script>
-    <link href="index.css" rel="stylesheet" />
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='index.js' defer></script>
+    <link href='index.css' rel='stylesheet'>
     <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-        font-family: sans-serif;
-      }
-      body,
-      #app {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-      }
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
     </style>
     <title>Movie Masher</title>
   </head>
   <body>
-    <div id="app" class="moviemasher"></div>
+    <div id='app' class='moviemasher'></div>
   </body>
 </html>
 ```
-
 <!-- MAGIC:END -->
 </fieldset>
 
@@ -84,45 +74,36 @@ well as a single Font - but no Images, Video, or Audio will appear in the Browse
 <!-- MAGIC:START (TRIMCODE:src=dev/workspaces/example-react/index.tsx) -->
 
 ```tsx
-import React, { StrictMode } from "react";
-import ReactDOM from "react-dom";
-import { Factory } from "@moviemasher/moviemasher.js";
+import React, { StrictMode } from 'react'
+import ReactDOM from 'react-dom'
+import { Factory } from "@moviemasher/moviemasher.js"
 import {
-  MasherDefault,
-  Masher,
-  DefaultIcons,
-  MasherDefaultOptions,
-} from "@moviemasher/client-react";
+  MasherDefault, Masher, DefaultIcons, MasherDefaultOptions
+} from "@moviemasher/client-react"
 
-import "@moviemasher/client-react/dist/moviemasher.css";
+import "@moviemasher/client-react/dist/moviemasher.css"
 
 Factory.image.install({
-  label: "Image",
-  id: "id-image",
+  label: "Image", id: "id-image",
   url: "assets/image.jpg",
-});
+})
 
 Factory.audio.install({
-  label: "Soundtrack",
-  id: "id-audio",
-  url: "assets/soundtrack.mp3",
-  duration: 180,
-});
+  label: "Soundtrack", id: "id-audio",
+  url: "assets/soundtrack.mp3", duration: 180,
+})
 
 Factory.video.install({
-  label: "Video",
-  id: "id-video",
-  url: "assets/video.mp4",
-  duration: 3,
-  fps: 10,
-});
+  label: "Video", id: "id-video",
+  url: 'assets/video.mp4',
+  duration: 3, fps: 10,
+})
 
-const options: MasherDefaultOptions = { icons: DefaultIcons };
-const masher = <Masher {...MasherDefault(options)} />;
-const mode = <StrictMode>{masher}</StrictMode>;
-ReactDOM.render(mode, document.getElementById("app"));
+const options: MasherDefaultOptions = { icons: DefaultIcons }
+const masher = <Masher {...MasherDefault(options)} />
+const mode = <StrictMode>{masher}</StrictMode>
+ReactDOM.render(mode, document.getElementById('app'))
 ```
-
 <!-- MAGIC:END -->
 </fieldset>
 

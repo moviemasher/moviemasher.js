@@ -29,11 +29,16 @@ class TimeRange extends Time {
 
   get end() : number { return this.frame + this.frames }
 
-  get endTime() : Time { return Time.fromArgs(this.end, this.fps) }
+  get endTime() : Time { return Time.fromArgs(this.end - 1, this.fps) }
 
   equalsTimeRange(timeRange : TimeRange) : boolean {
     const [range1, range2] = <TimeRange[]> timeEqualizeRates(this, timeRange)
     return range1.frame === range2.frame && range1.frames === range2.frames
+  }
+
+  get frameTimes(): Time[] {
+    const { frames, frame, fps } = this
+    return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps))
   }
 
   intersects(timeRange : TimeRange) : boolean {
@@ -71,15 +76,16 @@ class TimeRange extends Time {
     return new TimeRange(time.frame, time.fps, frames)
   }
 
+  get times(): Time[] {
+    const array = [this.startTime]
+    if (this.frames > 1) array.push(this.endTime)
+    return array
+  }
+
   minEndTime(endTime : Time) : TimeRange {
     const [range, time] = <TimeRange[]> timeEqualizeRates(this, endTime)
     range.frames = Math.min(range.frames, time.frame)
     return range
-  }
-
-  get times(): Time[] {
-    const { frames, frame, fps } = this
-    return Array.from({ length: frames + 1 }, (_, i) => Time.fromArgs(frame + i, fps))
   }
 
   withFrame(frame : number) : TimeRange {
@@ -109,7 +115,7 @@ class TimeRange extends Time {
   static fromTimes(startTime : Time, endTime : Time) : TimeRange {
     const [time1, time2] = <TimeRange[]> timeEqualizeRates(startTime, endTime)
     if (time2.frame <= time1.frame) {
-      console.trace('fromTImes')
+      console.trace('fromTimes')
       throw Errors.argument + 'fromTimes ' + time1 + ' ' + time2
     }
 

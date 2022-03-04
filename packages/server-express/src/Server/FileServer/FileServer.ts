@@ -5,7 +5,7 @@ import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
   ApiCallback, UploadDescription, Endpoints, Errors, NumberObject,
-  FileStoreRequest, FileStoreResponse, DefinitionType,
+  FileStoreRequest, FileStoreResponse, RawType,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
@@ -20,15 +20,16 @@ interface FileServerArgs extends ServerArgs {
 }
 
 const FileServerMeg = 1024 * 1024
+const FileServerFilename = 'original'
 
 class FileServer extends ServerClass {
   declare args: FileServerArgs
 
-  constructCallback(uploadDescription: UploadDescription, userId: string, id: string, definitionType: DefinitionType): ApiCallback {
-    const request: FileStoreRequest = { id, type: definitionType }
+  constructCallback(uploadDescription: UploadDescription, userId: string, id: string): ApiCallback {
+    const request: FileStoreRequest = { id }
     const callback: ApiCallback = {
       endpoint: { prefix: Endpoints.file.store },
-      request: { body: request, headers: {"Content-Type": "multipart/form-data"} }
+      request: { body: request, headers: { "Content-Type": "multipart/form-data" } }
     }
     return callback
   }
@@ -55,11 +56,11 @@ class FileServer extends ServerClass {
         }
       },
       filename: function (req, file, cb) {
-        const { id, type } = req.body
+        // const { id, type } = req.body
         const { originalname } = file
         const ext = path.extname(originalname).slice(1).toLowerCase()
         if (!extensions.includes(ext)) cb(new Error(`Invalid extension ${ext}`), '')
-        else cb(null, `${type || id}.${ext}`)
+        else cb(null, `${FileServerFilename}.${ext}`)
       }
     })
     const multerOptions = { storage, limits: { fileSize } }
@@ -83,11 +84,12 @@ class FileServer extends ServerClass {
     res.send(response)
   }
 
-  userSourcePrefix(userId: string, id: string): string {
+  userSourceSuffix(userId: string, id: string, rawType: RawType, extension: string): string {
     if (!userId) throw Errors.invalid.user
     if (!id) throw Errors.id
-//this.args.uploadsPrefix,
-    return path.join(userId, id)
+    if (!extension) throw Errors.invalid.type
+
+    return path.join(userId, id, `${FileServerFilename}.${extension}`)
   }
 
   withinLimits(size: number, type: string): boolean {

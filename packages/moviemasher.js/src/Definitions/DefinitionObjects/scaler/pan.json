@@ -36,14 +36,6 @@
               "value": "out_height_scaled / max(out_width_scaled / in_w, out_height_scaled / in_h)"
             }
           ]
-        },
-        {
-          "name": "x",
-          "value": "(in_w-out_w)/2"
-        },
-        {
-          "name": "y",
-          "value": "(in_h-out_h)/2"
         }
       ]
     },
@@ -52,7 +44,7 @@
       "description": "scale (proudly for diagonals)",
       "parameters": [
         {
-          "name": "w",
+          "name": "width",
           "value": [
             {
               "condition": "direction < 4",
@@ -65,7 +57,7 @@
           ]
         },
         {
-          "name": "h",
+          "name": "height",
           "value": [
             {
               "condition": "direction < 4",
@@ -83,14 +75,6 @@
       "id": "com.moviemasher.filter.crop",
       "description": "crop down and position over time",
       "parameters": [
-        {
-          "name": "w",
-          "value": "out_width"
-        },
-        {
-          "name": "h",
-          "value": "out_height"
-        },
         {
           "name": "x",
           "value": [
@@ -153,18 +137,6 @@
         }
       ]
     },
-    {
-      "id": "com.moviemasher.filter.setsar",
-      "parameters": [
-        {
-          "name": "sar",
-          "value": "1"
-        },
-        {
-          "name": "max",
-          "value": "1"
-        }
-      ]
-    }
+    { "id": "com.moviemasher.filter.setsar" }
   ]
 }

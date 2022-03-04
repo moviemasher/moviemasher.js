@@ -1,4 +1,4 @@
-import { Constrained, FilesArgs, FilterChain, FilterChainArgs, GraphFile, LoadPromise } from "../../declarations"
+import { Constrained, FilesArgs, FilterChain, FilterChainArgs, FilterChains, GraphFile, GraphFiles, LoadPromise } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time"
 import { TimeRange } from "../../Helpers/TimeRange"
@@ -11,7 +11,6 @@ interface ClipDefinition extends Definition {
   audible: boolean
   duration: number
   frames(quantize:number): number
-  inputSource: string
   streamable : boolean
   visible : boolean
 }
@@ -24,16 +23,13 @@ interface ClipObject extends InstanceObject {
 
 interface Clip extends Instance {
   audible: boolean
-  clipUrls(quantize : number, start : Time, end? : Time) : string[]
   definition: ClipDefinition
   endFrame : number
   frame : number
   frames: number
-  files(filesArgs: FilesArgs): GraphFile[]
-  filterChain(args: FilterChainArgs) : FilterChain | undefined
-  filterChainBase(args: FilterChainArgs): FilterChain | undefined
-  filterChains(args: FilterChainArgs): FilterChain[]
-  // loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void
+  files(filesArgs: FilesArgs): GraphFiles
+  filterChain(args: FilterChainArgs) : FilterChain
+  filterChainBase(args: FilterChainArgs): FilterChain
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
@@ -42,6 +38,8 @@ interface Clip extends Instance {
   trackType : TrackType
   visible : boolean
 }
+
+export type Clips = Clip[]
 
 type ClipClass = Constrained<Clip>
 type ClipDefinitionClass = Constrained<ClipDefinition>

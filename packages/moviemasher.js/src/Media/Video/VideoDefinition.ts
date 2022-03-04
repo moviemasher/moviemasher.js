@@ -1,12 +1,9 @@
-import { AudibleSource, VisibleSource, Any, UnknownObject, LoadPromise, LoadVideoResult, FilesArgs, GraphFile, Size } from "../../declarations"
+import { AudibleSource, VisibleSource, Any, UnknownObject, LoadPromise, LoadVideoResult, FilesArgs, GraphFile, GraphFiles } from "../../declarations"
 import { DefinitionType, TrackType, DataType, LoadType, AVType, GraphType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { Property } from "../../Setup/Property"
 import { Time } from "../../Helpers/Time"
-import { urlAbsolute } from "../../Utility/Url"
-import { DefinitionBase } from "../../Base/Definition"
-import { Definitions } from "../../Definitions/Definitions"
 import { VideoClass } from "./VideoInstance"
 import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
 import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
@@ -16,8 +13,9 @@ import { TransformableDefinitionMixin } from "../../Mixin/Transformable/Transfor
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 import { Preloader } from "../../Preloader/Preloader"
 import { AudibleContextInstance } from "../../Context/AudibleContext"
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
-const WithClip = ClipDefinitionMixin(DefinitionBase)
+const WithClip = ClipDefinitionMixin(PreloadableDefinition)
 const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible)
 const WithVisible = VisibleDefinitionMixin(WithAudibleFile)
@@ -26,29 +24,15 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
-    const { url, fps, source } = <VideoDefinitionObject>object
-    if (!url) throw Errors.invalid.definition.url
-
-    this.url = url
-
-    this.source = source || url
+    const { url, fps } = <VideoDefinitionObject>object
+    if (url) {
+      this.url = url
+      this.source ||= url
+    }
     if (fps) this.fps = fps
 
     this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
-
-    Definitions.install(this)
   }
-
-  get absoluteUrl(): string { return urlAbsolute(this.url) }
-
-  // private get cachedOrThrow(): LoadVideoResult {
-  //   const cached = cacheGet(this.absoluteUrl)
-  //   if (!cached) throw Errors.internal
-
-  //   return <LoadVideoResult> cached
-  // }
-
-  definitionUrls(start: Time, end?: Time): string[] { return [this.absoluteUrl] }
 
   file(args: FilesArgs): GraphFile | undefined {
     const { avType, graphType } = args
@@ -56,11 +40,12 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
 
     return {
       type: LoadType.Video,
-      file:  graphType === GraphType.Canvas ? this.url : this.source,
+      file: graphType === GraphType.Canvas ? this.url : this.source,
+      definition: this
     }
   }
 
-  files(args: FilesArgs): GraphFile[] {
+  files(args: FilesArgs): GraphFiles {
     const files = super.files(args)
     const file = this.file(args)
     if (file) files.push(file)
@@ -70,99 +55,13 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
 
   fps = Default.definition.video.fps
 
-  get inputSource(): string { return this.source }
-
   get instance(): Video { return this.instanceFromObject(this.instanceObject) }
 
   instanceFromObject(object: VideoObject): Video {
     return new VideoClass({ ...this.instanceObject, ...object })
   }
 
-  // private framePromise(time: Time, cached: LoadVideoResult): LoadPromise {
-  //   const { video, sequence } = cached
-  //   const sourceOrPromise = sequence[time.frame]
-  //   if (sourceOrPromise instanceof Promise) return sourceOrPromise
-
-  //   if (sourceOrPromise) return Promise.resolve()
-
-  //   // console.debug(this.constructor.name, "framePromise", time)
-
-  //   const promise = this.seekPromise(time, video).then(() => {
-  //     // make sure we don't already have this frame
-  //     if (sequence[time.frame] && !(sequence[time.frame] instanceof Promise)) {
-  //       // console.debug(this.constructor.name, "framePromise already captured", time.toString())
-  //       return
-  //     }
-
-  //     const context = ContextFactory.toSize(video)
-  //     context.draw(video)
-  //     sequence[time.frame] = context.canvas
-  //     // console.debug(this.constructor.name, "framePromise capturing", time.toString())
-  //   })
-  //   sequence[time.frame] = promise
-  //   return promise
-  // }
-
-  // private needTimes(cached: LoadVideoResult, start: Time, end?: Time): Time[] {
-  //   const { sequence } = cached
-  //   const times = end ? TimeRange.fromTimes(start, end).times : [start]
-  //   return times.filter(time =>
-  //     !sequence[time.frame] || sequence[time.frame] instanceof Promise
-  //   )
-  // }
-
-  // private framesPromise(start: Time, end?: Time): LoadPromise {
-  //   const cached = this.cachedOrThrow
-  //   const timesNeeded = this.needTimes(cached, start, end)
-  //   return this.timesPromise(timesNeeded)
-  // }
-
-  // private timesPromise(timesNeeded: Time[]): LoadPromise {
-  //   if (!timesNeeded.length) return Promise.resolve()
-
-  //   const cached = this.cachedOrThrow
-  //   // const promises:LoadPromise[] = timesNeeded.map(time => this.framePromise(time, cached))
-
-
-  //   // return Promise.all(promises).then(() => {})
-  //   const time = timesNeeded.shift()
-  //   if (!time) throw Errors.internal
-
-  //   const first = this.framePromise(time, cached)
-  //   let framePromise = first
-
-  //   timesNeeded.forEach(time => {
-  //     framePromise = framePromise.then(() => this.framePromise(time, cached))
-  //   })
-  //   return framePromise
-  // }
-
-  // loadDefinition(quantize: number, startTime: Time, endTime?: Time): LoadPromise | void {
-  //   const rate = this.fps || quantize
-  //   const start = startTime.scale(rate)
-  //   const end = endTime ? endTime.scale(rate) : endTime
-
-  //   // console.trace(start)
-  //   const url = this.absoluteUrl
-  //   if (cacheCached(url)) {
-  //     const cached = this.cachedOrThrow
-  //     const times = this.needTimes(cached, start, end)
-  //     if (!times.length) {
-  //       // console.debug(this.constructor.name, "loadDefinition cached and no times needed")
-  //       return
-  //     }
-  //     // console.debug(this.constructor.name, "loadDefinition cached and returning promises", times.join(', '))
-  //     return this.timesPromise(times)
-  //   }
-
-  //   const promise = this.preloader.loadFile()//: LoadPromise = cacheCaching(url) ? cacheGet(url) : LoaderFactory.video().loadUrl(url)
-  //   // if (caching(url)) console.debug(this.constructor.name, "loadDefinition caching and returning framesPromise", start, end)
-  //   // else console.debug(this.constructor.name, "loadDefinition uncached and returning framesPromise", start, end)
-
-  //   return promise.then(() => this.framesPromise(start, end))
-  // }
-
-  loadedAudible(preloader: Preloader): AudibleSource | undefined {
+  audibleSource(preloader: Preloader): AudibleSource | undefined {
     const graphFile: GraphFile = {
       type: LoadType.Video, file: this.url
     }
@@ -177,13 +76,8 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
     const rate = this.fps || quantize
     const time = startTime.scale(rate)
 
-    // console.debug(this.constructor.name, "loadedVisible", time.toString(), startTime.toString())
-
     const cached: LoadVideoResult | undefined = preloader.getFile({ type: LoadType.Video, file: this.url })
-    if (!cached) {
-      // console.debug(this.constructor.name, "loadedVisible no cached")
-      return
-    }
+    if (!cached) return
 
     const { sequence } = cached
     const source = sequence[time.frame]
@@ -223,19 +117,6 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
   }
 
 
-  size(preloader: Preloader): Size | undefined {
-    const file: GraphFile = {
-      file: this.source,
-      type: LoadType.Video
-    }
-    if (!preloader.loadedFile(file)) return { width: 0, height: 0 }
-
-    const visibleSource = preloader.getFile(file)
-    if (!visibleSource) throw Errors.internal + 'size'
-
-    const { height, width } = visibleSource
-    return { height: Number(height), width: Number(width) }
-  }
   source = ''
 
   toJSON() : UnknownObject {
@@ -250,18 +131,7 @@ class VideoDefinitionClass extends WithTransformable implements VideoDefinition 
 
   type = DefinitionType.Video
 
-  url : string
-
-  // private urlForFrame(frame : number) : string {
-  //   let s = String((frame * this.increment) + this.begin)
-  //   if (this.padding) s = s.padStart(this.padding, '0')
-  //   return (this.url + this.pattern).replaceAll('%', s)
-  // }
-
-  // private urls(start : Time, end? : Time) : string[] {
-  //   return this.framesArray(start, end).map(frame => this.urlForFrame(frame))
-  // }
-
+  url = ''
 }
 
 export { VideoDefinitionClass }

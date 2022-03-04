@@ -5,16 +5,21 @@ import { Errors } from "./Errors"
 interface ParameterObject {
   name : string
   value: Value | ValueObject[]
+  values?: Value[]
   dataType?: DataType | string
 }
 
 class Parameter {
-  constructor({ name, value, dataType } : ParameterObject) {
+  constructor({ name, value, dataType, values }: ParameterObject) {
     if (!name) throw Errors.invalid.name
-    if (typeof value === "undefined") throw Errors.invalid.value
 
-    this.name = String(name)
-    this.value = value
+    this.values = values
+    this.name = name
+    if (typeof value === "undefined") {
+      if (this.values?.length) this.value = this.values[0]
+      else throw Errors.invalid.value
+    } else this.value = value
+
     if (dataType && DataTypes.map(String).includes(dataType)) {
       this.dataType = dataType as DataType
     }
@@ -28,7 +33,9 @@ class Parameter {
     return { name: this.name, value: this.value }
   }
 
-  value : Value | ValueObject[]
+  value: Value | ValueObject[]
+
+  values?: Value[]
 }
 
 export { Parameter, ParameterObject }

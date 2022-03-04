@@ -1,2 +1,3 @@
 export * from "./StreamingServer"
-export * from './EncodeConnection'
+export * from './StreamingProcess'
+export * from './WebrtcConnection'

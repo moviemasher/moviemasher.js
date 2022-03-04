@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clip, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { Clip, Clips, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../../Utilities/View'
 import { TrackContext } from '../../../Contexts/TrackContext'
@@ -101,7 +101,7 @@ function TimelineClips(props: TimelineClipsProps): ReactResult {
     return clientX - rect.x
   }
 
-  const frameToIndex = (frame: number, clips: Clip[]) => {
+  const frameToIndex = (frame: number, clips: Clips) => {
     const { length } = clips
     if (!length) return 0
 

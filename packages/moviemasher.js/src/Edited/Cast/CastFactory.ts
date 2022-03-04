@@ -2,7 +2,7 @@ import { Factory } from "../../Definitions/Factory/Factory"
 import { DefinitionType, DefinitionTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { isPopulatedString } from "../../Utility/Is"
-import { DefinitionObject } from "../../Base/Definition"
+import { DefinitionObjects } from "../../Base/Definition"
 import { Cast, CastObject } from "./Cast"
 import { CastClass } from "./CastClass"
 
@@ -10,7 +10,7 @@ import { CastClass } from "./CastClass"
  * @category Factory
  */
 const CastFactory = {
-  instance: (object: CastObject = {}, definitions?: DefinitionObject[]): Cast => {
+  instance: (object: CastObject = {}, definitions?: DefinitionObjects): Cast => {
     if (definitions) definitions.forEach(definition => {
       const { id: definitionId, type } = definition
       if (!(type && isPopulatedString(type))) throw Errors.type + definitionId

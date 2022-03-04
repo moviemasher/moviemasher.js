@@ -3,9 +3,7 @@ import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
 import { ScalerDefinitionClass } from "./ScalerDefinition"
-import {
-  Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerObject
-} from "./Scaler"
+import { Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerObject } from "./Scaler"
 
 import scalerDefaultJson from "../../Definitions/DefinitionObjects/scaler/default.json"
 import scalerPanJson from "../../Definitions/DefinitionObjects/scaler/pan.json"
@@ -26,33 +24,36 @@ const scalerDefinitionFromId = (id : string) : ScalerDefinition => {
 }
 
 const scalerInstance = (object: ScalerObject): Scaler => {
-  const { definitionId } = object
-
+  const { definitionId = scalerDefaultId } = object
   const definition = scalerDefinition({ id: definitionId })
-  return definition.instanceFromObject(object)
+
+  const args = { ...object, definitionId }
+  return definition.instanceFromObject(args)
 }
 
 const scalerFromId = (definitionId : string) : Scaler => {
   return scalerInstance({ definitionId })
 }
 
-const scalerInitialize = () : void => {
-  new ScalerDefinitionClass(scalerDefaultJson)
-  new ScalerDefinitionClass(scalerPanJson)
-  new ScalerDefinitionClass(scalerScaleJson)
+const scalerInitialize = (): void => {
+  [
+    scalerDefaultJson,
+    scalerPanJson,
+    scalerScaleJson,
+  ].forEach(object => scalerInstall(object))
 }
 
-const scalerDefine = (object : ScalerDefinitionObject) : ScalerDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) ? id : scalerDefaultId
-
-  Definitions.uninstall(idString)
-  return scalerDefinition(object)
+const scalerInstall = (object : ScalerDefinitionObject) : ScalerDefinition => {
+  const { id = scalerDefaultId } = object
+  Definitions.uninstall(id)
+  const args = { ...object, id }
+  const instance = scalerDefinition(args)
+  Definitions.install(instance)
+  return instance
 }
 
 const ScalerFactoryImplementation = {
-  define: scalerDefine,
-  install: scalerDefine,
+  install: scalerInstall,
   definitionFromId: scalerDefinitionFromId,
   definition: scalerDefinition,
   instance: scalerInstance,
@@ -63,8 +64,7 @@ const ScalerFactoryImplementation = {
 Factories[DefinitionType.Scaler] = ScalerFactoryImplementation
 
 export {
-  scalerDefine,
-  scalerDefine as scalerInstall,
+  scalerInstall,
   scalerDefaultId,
   scalerDefinition,
   scalerDefinitionFromId,

@@ -1,0 +1,10 @@
+{
+  "options": {},
+  "width": 320,
+  "height": 240,
+  "videoRate": 30,
+  "videoCodec": "libx264",
+  "extension": "jpg",
+  "outputType": "videosequence",
+  "cover": false
+}

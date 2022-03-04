@@ -1,4 +1,4 @@
 export * from "./Transition"
-export * from "./TransitionDefinition"
+export * from "./TransitionDefinitionClass"
 export * from "./TransitionFactory"
-export * from "./TransitionInstance"
+export * from "./TransitionClass"

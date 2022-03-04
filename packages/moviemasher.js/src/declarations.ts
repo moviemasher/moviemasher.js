@@ -2,7 +2,10 @@ import { AVType, GraphFileType, GraphType, LoadType } from "./Setup/Enums"
 
 import { TimeRange } from "./Helpers/TimeRange"
 import { Time } from "./Helpers/Time"
+import { Clip } from "./Mixin/Clip/Clip"
+import { Definition } from "./Base/Definition"
 import { Preloader } from "./Preloader/Preloader"
+
 
 // TODO: remove
 export interface ScrollMetrics {
@@ -46,11 +49,11 @@ export interface AudibleContextData extends AudioContext {}
 export interface Context2D extends CanvasRenderingContext2D {}
 
 export interface Pixels extends Uint8ClampedArray {}
-export interface LoadedImage extends HTMLImageElement {}
+export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
 export interface LoadedAudio extends AudioBuffer {}
 export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio, sequence: Sequence[] }
-export interface LoadedFont { family: string } // really a Font, but not in tests
+export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
 export type VisibleSource = CanvasImageSource
 
@@ -64,7 +67,6 @@ export type LoadVideoPromise = Promise<LoadVideoResult>
 export type LoadAudioPromise = Promise<LoadedAudio>
 export type Sequence = LoadPromise | VisibleSource
 
-export interface ScalarConverter { (value?: Value): Value }
 export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
@@ -73,8 +75,6 @@ export interface BooleanSetter { (value: boolean): void }
 export type ScalarArray = unknown[]
 export type JsonValue = Scalar | ScalarArray | UnknownObject
 export interface JsonObject extends Record<string, JsonValue | JsonValue[]> {}
-
-export type EvaluatorValue = Value | ScalarConverter
 
 export interface WithFrame {
   frame : number
@@ -175,6 +175,10 @@ export interface RgbObject {
   b: Value
 }
 
+export interface RgbaObject extends RgbObject {
+  a: Value
+}
+
 export interface Rgb {
   r: number
   g: number
@@ -200,7 +204,6 @@ export interface Constructor { new (...args: any[]): any }
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
 export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
-  define(object : DEFINITIONOBJECT) : DEFINITION
   definitionFromId(id : string) : DEFINITION
   definition(object: DEFINITIONOBJECT): DEFINITION
   install(object : DEFINITIONOBJECT) : DEFINITION
@@ -243,6 +246,13 @@ export interface GraphFilter {
   outputs?: string[]
   options: ValueObject
 }
+export type GraphFilters = GraphFilter[]
+
+export interface ModularGraphFilter extends GraphFilter {
+  graphFiles?: GraphFiles
+}
+
+export type ModularGraphFilters = ModularGraphFilter[]
 
 export interface GraphInput {
   source: string
@@ -252,39 +262,48 @@ export interface GraphInput {
 export interface GraphFile {
   type: GraphFileType | LoadType
   file: string
+  options?: ValueObject
+  input?: boolean
+  definition?: Definition
 }
 
+
+export type GraphFiles = GraphFile[]
 export interface FilterChain {
-  files: GraphFile[]
-  inputs: GraphInput[]
-  filters: GraphFilter[]
-  merger?: GraphFilter
+  graphFiles: GraphFiles
+  graphFilters: GraphFilters
+  graphFilter?: GraphFilter
 }
+
+export type FilterChains = FilterChain[]
 
 export interface FilterGraph {
   avType: AVType
   duration?: number
-  filterChains: FilterChain[]
+  filterChains: FilterChains
 }
 
 export type FilterGraphs = FilterGraph[]
 
-export interface FilterGraphsArgs {
+export interface FilterGraphOptions {
+  justGraphFiles?: boolean
   avType: AVType
-  graphType: GraphType
+  graphType?: GraphType
   size: Size
   timeRange?: TimeRange
   videoRate: number
 }
 
-export interface FilterGraphArgs extends Required<FilterGraphsArgs> { }
+export interface FilterGraphArgs extends Required<FilterGraphOptions> { }
 
 export interface FilterChainArgs extends FilterGraphArgs {
-  layerIndex: number
-  prevFilterChain: FilterChain
-  clipTimeRange: TimeRange
-  inputCount: number
-  prevFilter?: GraphFilter,
+  index: number
+  length: number
+  clip: Clip
+  filterGraph: FilterGraph
+  quantize: number
+  prevFilter?: GraphFilter
+  preloader: Preloader
 }
 
 export interface FilesOptions {

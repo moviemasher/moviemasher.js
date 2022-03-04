@@ -1,4 +1,4 @@
-import { Clip } from "../../../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
 interface SplitActionObject extends ActionOptions {
@@ -6,7 +6,7 @@ interface SplitActionObject extends ActionOptions {
   insertClip : Clip
   redoFrames : number
   splitClip : Clip
-  trackClips : Clip[]
+  trackClips : Clips
   undoFrames : number
 }
 
@@ -34,7 +34,7 @@ class SplitAction extends Action {
 
   splitClip : Clip
 
-  trackClips : Clip[]
+  trackClips : Clips
 
   undoFrames : number
 

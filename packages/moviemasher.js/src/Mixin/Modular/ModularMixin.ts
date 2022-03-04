@@ -1,9 +1,8 @@
-import { Any, FilesArgs, FilterChain, FilterChainArgs, GraphFile, LoadPromise, Size } from "../../declarations"
+import { Any, FilesArgs, FilterChain, FilterChainArgs, GraphFiles } from "../../declarations"
 import { Definition } from "../../Base/Definition"
 import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions/Definitions"
 import { InstanceClass } from "../../Base/Instance"
-import { Time } from "../../Helpers/Time"
 
 
 function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
@@ -29,32 +28,13 @@ function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
       return [...super.definitions, ...this.modularDefinitions]
     }
 
-    filesModular(args: FilesArgs): GraphFile[] {
-      return this.modularDefinitions.flatMap(definition =>
-        definition.files(args)
-      )
-    }
-
-    // private loadModular(quantize : number, start : Time, end? : Time) : LoadPromise | void {
-    //   const promises: LoadPromise[] = []
-    //   const startTime = this.definitionTime(quantize, start)
-    //   const endTime = end ? this.definitionTime(quantize, end) : end
-    //   this.modularDefinitions.forEach(definition => {
-    //     const promise = definition.loadDefinition(quantize, startTime, endTime)
-    //     if (promise) promises.push(promise)
-    //   })
-    //   return Promise.all(promises).then()
-    // }
-
-    // modularUrls(quantize : number, start : Time, end? : Time) : string[] {
-    //   const startTime = this.definitionTime(quantize, start)
-    //   const endTime = end ? this.definitionTime(quantize, end) : end
+    // filesModular(args: FilesArgs): GraphFiles {
     //   return this.modularDefinitions.flatMap(definition =>
-    //     definition.definitionUrls(startTime, endTime)
+    //     definition.files(args)
     //   )
     // }
 
-    get modularDefinitions() : Definition[] {
+    private get modularDefinitions() : Definition[] {
       const modular = this.definition.propertiesModular
       const ids = modular.map(property => String(this.value(property.name)))
       return ids.map(id => Definitions.fromId(id))

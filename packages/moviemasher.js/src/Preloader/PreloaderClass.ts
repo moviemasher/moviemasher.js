@@ -1,121 +1,101 @@
-
-import { LoadPromise } from ".."
-import { Any, Endpoint, GraphFile } from "../declarations"
-import { LoaderFactory } from "../Loader/LoaderFactory"
-import { GraphType, LoadType } from "../Setup/Enums"
+import { Any, GraphFile, GraphFiles } from "../declarations"
+import { GraphType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { isPopulatedString } from "../Utility/Is"
-import { urlForEndpoint } from "../Utility/Url"
-import { Preloader } from "./Preloader"
-
-const CacheKeyPrefix = 'cachekey'
+import { LoadedInfo, Preloader, PreloaderFile, PreloaderSource } from "./Preloader"
+import { PreloadableDefinition } from "../Base/PreloadableDefinition"
+import { Definition } from "../Base/Definition"
 
 class PreloaderClass implements Preloader {
-  constructor(endpoint?: Endpoint) {
-    this.endpoint = endpoint || {}
+  fileInfoPromise(graphFile: GraphFile): Promise<LoadedInfo> {
+    if (!this.loadedFile(graphFile)) throw Errors.uncached
+
+    const gotFile = this.getFile(graphFile)
+    if (!gotFile) throw Errors.internal + 'fileInfoPromise'
+
+    const { height, width, duration } = gotFile
+
+    const loadedInfo: LoadedInfo = {}
+    if (height && width) {
+      loadedInfo.height = Number(height)
+      loadedInfo.width = Number(width)
+    }
+    if (duration) loadedInfo.duration = Number(duration)
+
+    return Promise.resolve(loadedInfo)
   }
 
-  add(url : string, value : Any): void {
-    const key = this.urlKey(url)
-    this.cacheByKey.set(key, value)
-    this.cacheUrlsByKey.set(key, url)
+  protected filePromise(key: string, graphFile: GraphFile): PreloaderFile {
+    throw Errors.unimplemented + 'filePromise'
   }
 
-  private cacheByKey = new Map<string, Any>()
+  protected files = new Map<string, PreloaderFile>()
 
-  private cacheUrlsByKey = new Map<string, string>()
-
-  private cached(url: string): boolean {
-    const object = this.getObject(url)
-    return object && ! (object instanceof Promise)
-  }
-
-  private caching(url: string): boolean {
-    const object = this.getObject(url)
-    return object && object instanceof Promise
-  }
-
-  private fileUrl(graphFile: GraphFile): string {
-    const { file } = graphFile
-    const url = urlForEndpoint(this.endpoint, file)
-    return url
-  }
-
-  flush(retainUrls: string[]): void {
-    const keys = [...this.cacheUrlsByKey.keys()]
-    const retainKeys = retainUrls.map(url => this.urlKey(url))
+  flushFilesExcept(graphFiles: GraphFiles = []): void {
+    const retainKeys = graphFiles.map(graphFile => this.key(graphFile))
+    const keys = [...this.files.keys()]
     const removeKeys = keys.filter(key => !retainKeys.includes(key))
     removeKeys.forEach(key => {
-      const url = this.cacheUrlsByKey.get(key)
-      if (url) this.remove(url)
+      const preloaderFile = this.files.get(key)
+      if (preloaderFile) this.files.delete(key)
     })
   }
 
   getFile(graphFile: GraphFile): Any {
-    const url = this.fileUrl(graphFile)
-    return this.getObject(url)
-  }
-
-  private getObject(url: string): Any {
-      if (!isPopulatedString(url)) throw Errors.argument + 'url'
-
-    const key = this.urlKey(url)
-    if (!this.cacheByKey.has(key)) return
-
-    return this.cacheByKey.get(key)
+    const key = this.key(graphFile)
+    const preloaderFile = this.files.get(key)
+    return preloaderFile?.result
   }
 
   graphType = GraphType.Canvas
 
-  loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
-    if (this.loadedFile(graphFile)) return Promise.resolve(graphFile)
-    if (this.loadingFile(graphFile)) return this.loadingFilePromise(graphFile).then(() => graphFile)
+  key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
 
-    const { type } = graphFile
-    const url = this.fileUrl(graphFile)
-    const loadType = type as LoadType
-    const loader = LoaderFactory[loadType](this)
-    return loader.loadFilePromise({ ...graphFile, file: url })
+  loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
+    const key = this.key(graphFile)
+    const { definition } = graphFile
+    let file = this.files.get(key)
+    const definitions = file?.definitions || new Map<string, Definition>()
+    if (definition) definitions.set(definition.id, definition)
+
+    if (!file) {
+      file = this.filePromise(key, graphFile)
+      this.files.set(key, file)
+    }
+    return file.promise.then(() => graphFile)
   }
 
-  loadFilesPromise(files: GraphFile[]): Promise<GraphFile[]> {
-    return Promise.all(files.map(file => this.loadFilePromise(file)))
+  loadFilesPromise(graphFiles: GraphFiles): Promise<GraphFiles> {
+    return Promise.all(graphFiles.map(graphFile => this.loadFilePromise(graphFile)))
   }
 
   loadedFile(graphFile: GraphFile): boolean {
-    return this.cached(this.fileUrl(graphFile))
+    const key = this.key(graphFile)
+    const file = this.files.get(key)
+    if (!file) return false
+
+    return !!file.loaded
   }
 
   loadingFile(graphFile: GraphFile): boolean {
-    return this.caching(this.fileUrl(graphFile))
+    const key = this.key(graphFile)
+    const file = this.files.get(key)
+    if (!file) return false
+
+    return !file.loaded
   }
 
-  loadingFilePromise(graphFile: GraphFile): LoadPromise {
-    if (this.loadedFile(graphFile)) return Promise.resolve()
-
-    if (!this.loadingFile(graphFile)) throw Errors.internal + 'loadingFilePromise'
-
-    return this.getObject(this.fileUrl(graphFile))
+  protected updateSources(key: string, preloaderSource: PreloaderSource): void {
+    if (!preloaderSource) {
+      console.warn(this.constructor.name, "updateSources no PreloaderSource", key)
+      return
+    }
+    preloaderSource.loaded = true
+    preloaderSource.definitions.forEach(definition => {
+      if (definition instanceof PreloadableDefinition) {
+        if (!definition.source.startsWith('http')) definition.source = key
+      } else console.warn(this.constructor.name, "updateSources definition not preloadable", key)
+    })
   }
-
-  key(graphFile: GraphFile): string {
-    const url = this.fileUrl(graphFile)
-    return this.urlKey(url)
-  }
-
-  urlKey(url: string): string {
-    if (!isPopulatedString(url)) throw Errors.argument + 'url'
-
-    return CacheKeyPrefix + url.replaceAll(/[^a-z0-9]/gi, '')
-  }
-
-  remove(url : string): void {
-    const key = this.urlKey(url)
-    this.cacheByKey.delete(key)
-    this.cacheUrlsByKey.delete(key)
-  }
-
-  endpoint: Endpoint = {}
 }
 
 export { PreloaderClass }

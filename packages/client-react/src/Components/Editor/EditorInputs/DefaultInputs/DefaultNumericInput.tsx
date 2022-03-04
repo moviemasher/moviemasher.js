@@ -10,6 +10,7 @@ function DefaultNumericInput(): ReactResult {
   const { changeHandler, property, value } = inputContext
   if (!property) return null
 
+  const {} = property
   const onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
     changeHandler(property.name, event.target.value)
   }
@@ -28,5 +29,6 @@ function DefaultNumericInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Number] = <DefaultNumericInput />
+
 
 export { DefaultNumericInput }

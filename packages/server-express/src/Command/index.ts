@@ -1,3 +1,2 @@
-export * from "./Command"
-export * from "./CommandClass"
-export * from "./CommandFactory"
+export * from './Command'
+export * from './CommandFactory'

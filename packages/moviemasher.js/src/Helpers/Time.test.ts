@@ -80,15 +80,15 @@ describe("Time", () => {
   })
   describe("equalsTime", () => {
     const mins = [
-      ["times equal", [times1[0], times10[0], times30[0]]],
-      ["times equal", [times1[1], times10[10], times30[30]]],
+      ["equal", [times1[0], times10[0], times30[0]]],
+      ["equal", [times1[1], times10[10], times30[30]]],
       ["callee is earlier", [times10[0], times10[1], times10[0]]],
       ["callee is earlier", [times10[1], times1[1], times10[1]]],
       ["callee is later", [times10[1], times10[0], times10[0]]],
       ["callee is later", [times1[1], times10[1], times10[1]]],
     ]
-    describe.each(mins)("when %s", (_, times) => {
-      const [time1, time2, expected] = <Time[]> times
+    describe.each(mins)("when %s", (_, examples) => {
+      const [time1, time2, expected] = examples as Time[]
       test(`${time1}.min(${time2}) returns ${expected}`, () => {
         expect(time1.min(time2).equalsTime(expected)).toBeTruthy()
       })

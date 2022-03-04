@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions/Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { TransitionDefinitionClass } from "./TransitionDefinition"
+import { TransitionDefinitionClass } from "./TransitionDefinitionClass"
 import {
   Transition, TransitionDefinition, TransitionDefinitionObject, TransitionObject
 } from "./Transition"
@@ -34,20 +34,21 @@ const transitionFromId = (id : string) : Transition => {
 }
 
 const transitionInitialize = () : void => {
-  transitionDefinition(transitionCrossfadeJson)
+  transitionInstall(transitionCrossfadeJson)
 }
 
-const transitionDefine = (object : TransitionDefinitionObject) : TransitionDefinition => {
+const transitionInstall = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
-  return transitionDefinition(object)
+  const instance = transitionDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const TransitionFactoryImplementation = {
-  define: transitionDefine,
-  install: transitionDefine,
+  install: transitionInstall,
   definition: transitionDefinition,
   definitionFromId: transitionDefinitionFromId,
   fromId: transitionFromId,
@@ -58,8 +59,7 @@ const TransitionFactoryImplementation = {
 Factories[DefinitionType.Transition] = TransitionFactoryImplementation
 
 export {
-  transitionDefine,
-  transitionDefine as transitionInstall,
+  transitionInstall,
   transitionDefinition,
   transitionDefinitionFromId,
   TransitionFactoryImplementation,

@@ -1,98 +1,140 @@
 import fs from 'fs'
 import https from 'https'
+import http from 'http'
 import path from 'path'
 import md5 from 'md5'
-import { loadImage } from 'canvas'
+import Ffmpeg from 'fluent-ffmpeg'
+import {
+  Any, EmptyMethod, GraphFile, GraphType, LoadedInfo,
+  LoadTypes, Errors, PreloaderClass, GraphFileType, PreloaderFile, Definition, PreloaderSource
+} from '@moviemasher/moviemasher.js'
+
+import { commandProcess } from '../Command/CommandFactory'
+import { BasenameCache } from '../Setup/Constants'
 
 
-import { Any, GraphFile, GraphType, LoadPromise, Preloader } from '@moviemasher/moviemasher.js'
-
-class NodePreloader implements Preloader {
+class NodePreloader extends PreloaderClass {
   constructor(cacheDirectory: string, fileDirectory: string) {
+    super()
     this.cacheDirectory = cacheDirectory
     this.fileDirectory = fileDirectory
   }
-
-  private cacheByKey = new Map<string, Any>()
 
   cacheDirectory: string
 
   fileDirectory: string
 
-  getFile(graphFile: GraphFile): Any {
-    const cachePath = this.key(graphFile)
-    const something = this.cacheByKey.get(cachePath)
-    console.log(this.constructor.name, "getFile", cachePath, something)
-    return something
+  fileInfoPromise(graphFile: GraphFile): Promise<LoadedInfo> {
+    const key = this.key(graphFile)
+    const preloaderFile = this.files.get(key)
+    if (!preloaderFile) throw Errors.internal + 'fileInfoPromise' + key + ' ' + [...this.files.keys()]
+
+    if (preloaderFile.loadedInfo) return Promise.resolve(preloaderFile.loadedInfo)
+
+    const process = commandProcess()
+    process.addInput(key)
+    return new Promise((resolve, reject) => {
+      process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
+        if (error) {
+          console.error(process._getArguments(), error)
+          reject(error)
+          return
+        }
+        const info: LoadedInfo = {}
+        const { streams, format } = data
+        const { duration } = format
+        if (duration) info.duration = duration
+        for (const stream of streams) {
+          const { width, height } = stream
+          if (width && height) {
+            info.width = width
+            info.height = height
+            break
+          }
+        }
+        // console.log(this.constructor.name, "fileInfoPromise", info)
+        preloaderFile.loadedInfo = info
+        resolve(info)
+      })
+    })
   }
+
+  protected override filePromise(key: string, graphFile: GraphFile): PreloaderFile {
+    const { definition } = graphFile
+    const definitions = new Map<string, Definition>()
+    if (definition) definitions.set(definition.id, definition)
+    const preloaderSource: PreloaderSource = { loaded: false, definitions }
+
+    if (fs.existsSync(key)) {
+      // console.log(this.constructor.name, "filePromise existent", key)
+      this.updateSources(key, preloaderSource)
+      preloaderSource.promise = Promise.resolve()
+    } else {
+      // console.log(this.constructor.name, "filePromise nonexistent", key)
+      const { fileDirectory } = this
+      if (key.startsWith(fileDirectory)) throw Errors.uncached + ' filePromise ' + key
+
+      preloaderSource.promise = this.writePromise(graphFile, key).then(() => {
+        this.updateSources(key, preloaderSource)
+      })
+    }
+    return preloaderSource as PreloaderFile
+  }
+
+  getFile(_graphFile: GraphFile): Any { throw Errors.unimplemented + 'getFile' }
 
   graphType = GraphType.Mash
 
   key(graphFile: GraphFile): string {
-    const { file } = graphFile
-    const local = !file.startsWith('http')
-    if (local) return file // path.resolve(this.fileDirectory, file)
+    const { type, file } = graphFile
+    const { cacheDirectory, fileDirectory } = this
+    if (LoadTypes.includes(type)) {
+      if (file.includes('://')) {
+        return path.resolve(cacheDirectory, md5(file), `${BasenameCache}${path.extname(file)}`)
+      }
+      if (file.includes('./')) throw Errors.invalid.url + file
 
-    const extension = path.extname(file)
-    const base = path.basename(file, extension)
-    const directory = path.dirname(file)
-    const urlBase = `${directory}/${base}`
-    const fileMd5 = md5(urlBase)
-    const fileName = `${fileMd5}${extension}`
-    return path.join(this.cacheDirectory, fileName)
+      return path.resolve(fileDirectory, file)
+    }
+    if (file.startsWith('/')) console.trace(this.constructor.name, "key", file, type, md5(file))
+    return path.resolve(cacheDirectory, md5(file), `${BasenameCache}.${type}`)
   }
 
-  loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
-    const { file, type } = graphFile
-
-    const local = !file.startsWith('http')
-    const cachePath = this.key(graphFile)
-
-    let promise: Promise<void> = local ? Promise.resolve() : new Promise((resolve, reject) => {
-      console.log(this.constructor.name, 'requesting', file)
-      https.get(file, (res) => {
-        console.log(this.constructor.name, 'requested', file)
-        const stream = fs.createWriteStream(cachePath)
+  private remotePromise(key: string, url: string): Promise<void> {
+    const promise: Promise<void> = new Promise((resolve, reject) => {
+      const callback = (res: http.IncomingMessage) => {
+        const stream = fs.createWriteStream(key)
         res.pipe(stream)
         stream.on('finish', () => {
-          console.log(this.constructor.name, 'loadFilePromise finish', cachePath)
           stream.close()
           resolve()
         })
-        stream.on('error', () => { reject() })
-      })
+        stream.on('error', (error) => { reject(error) })
+      }
+      if (url.startsWith('https://')) https.get(url, callback)
+      else http.get(url, callback)
     })
-
-    return promise.then(() => {
-      console.log("loadFilePromise loadImage...")
-      const promise = loadImage(cachePath)
-      // new Promise((resolve) => {
-      //   const image = new canvas.Image()
-      //   image.src = cachePath
-      //   image.onload = () => {
-      //     console.log(this.constructor.name, 'loadFilePromise onload', cachePath)
-      //     this.cacheByKey.set(cachePath, image)
-      //     resolve()
-      //   }
-      // })
-      return promise.then((image) => {
-        this.cacheByKey.set(cachePath, image)
-        console.log("loadFilePromise loadImage", cachePath, image.constructor.name)
-        return graphFile
-      })
-    })
+    return promise
   }
 
-  loadFilesPromise(files: GraphFile[]): Promise<GraphFile[]> {
-    return Promise.all(files.map(file => this.loadFilePromise(file)))
-  }
+  private writePromise(graphFile: GraphFile, key: string): Promise<void> {
+    const { file, type } = graphFile
+    const loadable = LoadTypes.includes(String(type))
 
-  loadedFile(graphFile: GraphFile): boolean {
-    return true
-  }
-  loadingFile(graphFile: GraphFile): boolean { return false }
+    const dirname = path.dirname(key)
+    let promise = fs.promises.mkdir(dirname, { recursive: true }).then(EmptyMethod)
 
-  loadingFilePromise(graphFile: GraphFile): LoadPromise { return Promise.resolve() }
+    if (loadable) {
+      if (file.startsWith('http')) {
+        promise = promise.then(() => this.remotePromise(key, file))
+      } else throw Errors.uncached + file // local files should already exist!
+    } else {
+      // console.log(this.constructor.name, "writePromise writeFile", key, file)
+      const data = type === GraphFileType.Png ? Buffer.from(file, 'base64') : file
+      promise = promise.then(() => fs.promises.writeFile(key, data))
+    }
+    return promise
+  }
 }
 
 export { NodePreloader }

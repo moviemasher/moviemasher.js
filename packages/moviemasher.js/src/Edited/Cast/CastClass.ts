@@ -1,4 +1,4 @@
-import { Any, FilterGraph, FilterGraphArgs, Size, UnknownObject, VisibleContextData } from "../../declarations"
+import { Any, FilesOptions, FilterGraph, FilterGraphArgs, FilterGraphOptions, GraphFiles, Size, UnknownObject, VisibleContextData } from "../../declarations"
 import { Emitter } from "../../Helpers/Emitter"
 
 import { idGenerate } from "../../Utility/Id"
@@ -23,9 +23,9 @@ class CastClass implements Cast {
     if (label && isPopulatedString(label)) this.label = label
 
     Object.assign(this.data, rest)
-    this.mash = MashFactory.instance({
+    this.mashes.push(MashFactory.instance({
       tracks: [{ clips: [{ definitionId: 'id-image' }] }]
-    })
+    }))
   }
 
   createdAt = ''
@@ -54,19 +54,24 @@ class CastClass implements Cast {
 
   layers: Layer[] = []
 
-  mash: Mash
+  get mash(): Mash { return this.mashes[0] }
 
   mashes: Mash[] = []
 
-  filterGraph(options: FilterGraphArgs): FilterGraph { return this.mash.filterGraph(options) }
+  graphFiles(args: FilterGraphOptions): GraphFiles  {
+    const graphFiles = this.mashes.flatMap(mash => mash.graphFiles(args))
+    return graphFiles
+  }
 
   toJSON(): UnknownObject {
-    return {
+     const json: UnknownObject = {
       label: this.label,
-      id: this.id,
       createdAt: this.createdAt,
       ...this.data,
     }
+    if (this._id) json.id = this.id
+    return json
+
   }
 }
 

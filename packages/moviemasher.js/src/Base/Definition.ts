@@ -1,8 +1,8 @@
-import { Any, Constrained, Described, FilesArgs, GraphFile, UnknownObject } from "../declarations"
+import { Any, Constrained, Described, FilesArgs, GraphFiles, UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
-import { Time, Times } from "../Helpers/Time"
+import { Times } from "../Helpers/Time"
 import { Is } from "../Utility/Is"
 import { Instance, InstanceBase, InstanceObject } from "./Instance"
 import { SelectionValue } from "./Propertied"
@@ -13,6 +13,8 @@ interface DefinitionDescription extends UnknownObject, Described {
 interface DefinitionObject extends Partial<DefinitionDescription> {
   source?: string
 }
+
+export type DefinitionObjects = DefinitionObject[]
 
 class DefinitionBase {
   constructor(...args : Any[]) {
@@ -26,9 +28,7 @@ class DefinitionBase {
 
   }
 
-  definitionUrls(start: Time, end?: Time): string[] { return [] }
-
-  files(args: FilesArgs): GraphFile[] { return [] }
+  files(_args: FilesArgs): GraphFiles { return [] }
 
   icon? : string
 
@@ -51,8 +51,6 @@ class DefinitionBase {
   }
 
   label : string
-
-  // loadDefinition(quantize: number, start : Time, end? : Time) : LoadPromise | void { }
 
   properties : Property[] = []
 

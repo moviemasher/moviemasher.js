@@ -1,20 +1,20 @@
 import path from 'path'
 import fs from 'fs'
-import { CommandArgs } from "../../../packages/server-express/src/Command/Command"
-import { CommandFactory } from "../../../packages/server-express/src/Command/CommandFactory"
+import { RunningCommandFactory } from "../../../packages/server-express/src/RunningCommand/RunningCommandFactory"
+import { CommandArgs } from '@moviemasher/moviemasher.js'
 
-const expectRender = async (id: string, options: CommandArgs) => {
+const expectRender = async (id: string, commandArgs: CommandArgs) => {
   const prefix = './dev/workspaces/example-client-react/dist'
 
 
-  options.inputs.forEach(input => {
+  commandArgs.inputs.forEach(input => {
     const { source } = input
     if (!source) throw 'no source'
     if (typeof source !== 'string') return
     if (source.includes('://')) return
 
     const resolved = path.resolve(prefix, source)
-    const url = `file://{resolved}`
+    const url = `file://${resolved}`
     console.log("expectRender resolved", source, 'to', url)
 
     const exists = fs.existsSync(url)
@@ -27,12 +27,12 @@ const expectRender = async (id: string, options: CommandArgs) => {
 
 
 
-  const render = CommandFactory.instance(id, options)
+  const render = RunningCommandFactory.instance(id, commandArgs)
   render.addListener('error', error => {
-    console.error(options)
+    console.error(commandArgs)
     throw String(error)
   })
-  const { error } = await render.runPromise()
+  const { error } = await render.runPromise('')
   expect(error).toBeUndefined()
 }
 

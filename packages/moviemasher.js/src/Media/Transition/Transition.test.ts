@@ -7,13 +7,13 @@ import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { TrackType } from "../../Setup/Enums"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"
-import { PreloaderClass } from "../../Preloader/PreloaderClass"
+import { JestPreloader } from '../../../../../dev/test/JestPreloader'
 
 const expectMashTimeContext = async (mash: Mash, time: Time): Promise<void> => {
   mash.imageSize = { width: 640, height: 480 }
   const promise = mash.seekToTime(time)
   if (promise) await promise
-  mash.compositeVisible()
+  mash.draw()
   expectCanvas(mash.composition.visibleContext.canvas)
 }
 
@@ -23,8 +23,7 @@ describe("Transition", () => {
     test.each(backcolors)("draws expected context atop %s", async (backcolor) => {
       // const [] = backcolors
       const mashObject = { backcolor }
-      const mash = MashFactory.instance(mashObject)
-      mash.preloader = new PreloaderClass()
+      const mash = MashFactory.instance(mashObject, [], new JestPreloader())
       const { quantize } = mash
       const globeDefinition = Factory.image.definition({ id: idGenerate(), url: 'globe.jpg' })
       const globeImage = globeDefinition.instance

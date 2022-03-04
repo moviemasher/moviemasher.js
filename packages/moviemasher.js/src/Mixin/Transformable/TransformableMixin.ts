@@ -1,4 +1,4 @@
-import { Any, FilterChain, UnknownObject, LoadPromise, FilterChainArgs, GraphFile, FilesArgs } from "../../declarations"
+import { Any, FilterChain, UnknownObject, LoadPromise, FilterChainArgs, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
 import { Merger } from "../../Media/Merger/Merger"
 import { Effect } from "../../Media/Effect/Effect"
 import { Scaler } from "../../Media/Scaler/Scaler"
@@ -11,6 +11,7 @@ import { Time } from "../../Helpers/Time"
 import { effectInstance } from "../../Media/Effect"
 import { scalerInstance } from "../../Media/Scaler"
 import { Preloader } from "../../Preloader/Preloader"
+import { Errors } from "../../Setup/Errors"
 
 function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass & T {
   return class extends Base {
@@ -40,80 +41,46 @@ function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass
 
     effects: Effect[] = []
 
-    files(args: FilesArgs): GraphFile[] {
-      const files = super.files(args)
-      files.push(...this.merger.filesModular(args))
-      files.push(...this.scaler.filesModular(args))
-      files.push(...this.effects.flatMap(effect => effect.filesModular(args)))
-      return files
-    }
+    // files(args: FilesArgs): GraphFiles {
+    //   const files = super.files(args)
+    //   files.push(...this.merger.filesModular(args))
+    //   files.push(...this.scaler.filesModular(args))
+    //   files.push(...this.effects.flatMap(effect => effect.filesModular(args)))
+    //   return files
+    // }
 
-    filterChain(args: FilterChainArgs): FilterChain | undefined {
+    filterChain(args: FilterChainArgs): FilterChain {
       const layer = this.filterChainBase(args)
-      if (!layer) return
+
       // console.log(this.constructor.name, "layer", layer)
 
       this.scaler.modulateFilterChain(layer, args)
-      args.prevFilter = layer.filters[layer.filters.length - 1]
+      args.prevFilter = layer.graphFilters[layer.graphFilters.length - 1]
       this.effects.reverse().forEach(effect => (effect.modulateFilterChain(layer, args)))
       this.merger.modulateFilterChain(layer, args)
       return layer
     }
 
-
-    // loadClip(quantize: number, start: Time, end?: Time): LoadPromise | void {
-    //   const loads = [
-    //     super.loadClip(quantize, start, end),
-    //     this.loadTransformable(quantize, start, end)
-    //   ]
-    //   const promises = loads.filter(Boolean)
-    //   switch (promises.length) {
-    //     case 0: return
-    //     case 1: return promises[0]
-    //     default: return Promise.all(promises).then()
-    //   }
-    // }
-
-    // private loadTransformable(quantize: number, start: Time, end?: Time): LoadPromise | void {
-    //   const loads = [
-    //     this.merger.loadModular(quantize, start, end),
-    //     this.scaler.loadModular(quantize, start, end),
-    //     ...this.effects.map(effect => effect.loadModular(quantize, start, end))
-    //   ]
-    //   const promises = loads.filter(Boolean)
-    //   switch (promises.length) {
-    //     case 0: return
-    //     case 1: return promises[0]
-    //     default: return Promise.all(promises).then()
-    //   }
-    // }
-
     mergeContextAtTime(preloader: Preloader, mashTime: Time, quantize: number, context: VisibleContext): void {
-      const { size: outputSize} = context
+      const { size: outputSize } = context
       const contextBase = this.contextAtTimeToSize(preloader, mashTime, quantize, outputSize)
       if (!contextBase) return
 
       const range = this.timeRangeRelative(mashTime, quantize)
-      const clipRange = this.timeRange(quantize)
-      const scaledContext = this.scaler.definition.drawFilters(preloader, this.scaler, range, clipRange, contextBase, outputSize)
+      const scaledContext = this.scaler.definition.drawFilters(preloader, this.scaler, range, contextBase, outputSize)
 
       if (!this.effects) return
 
       let effected = scaledContext
       this.effects.reverse().every(effect => (
-        effected = effect.definition.drawFilters(preloader, effect, range, clipRange, effected, outputSize)
+        effected = effect.definition.drawFilters(preloader, effect, range, effected, outputSize)
       ))
-      this.merger.definition.drawFilters(preloader, this.merger, range, clipRange, effected, outputSize, context)
+      this.merger.definition.drawFilters(preloader, this.merger, range, effected, outputSize, context)
     }
 
     merger: Merger
 
     scaler: Scaler
-
-    toJSON(): UnknownObject {
-      const object = super.toJSON()
-      return object
-    }
   }
 }
 

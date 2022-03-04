@@ -1,6 +1,6 @@
-import { LoadPromise, UnknownObject } from "../../declarations"
-import { Clip } from "../../Mixin/Clip/Clip"
-import { DefinitionObject, DefinitionTimes } from "../../Base/Definition"
+import { LoadPromise } from "../../declarations"
+import { Clip, Clips } from "../../Mixin/Clip/Clip"
+import { DefinitionObject } from "../../Base/Definition"
 import { Effect } from "../../Media/Effect/Effect"
 import { MasherAction, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time"
@@ -37,7 +37,7 @@ interface MashEditor extends Editor {
   autoplay: boolean
   buffer: number
   can(masherAction : MasherAction) : boolean
-  clips: Clip[]
+  clips: Clips
   currentTime : number
   duration: number
   fps : number

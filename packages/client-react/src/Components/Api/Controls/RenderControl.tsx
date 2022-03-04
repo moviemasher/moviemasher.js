@@ -27,7 +27,7 @@ function RenderControl(props: PropsAndChild): ReactResult {
       mash: masher.mash.toJSON(),
       definitions: masher.mash.definitions.map(definition => definition.toJSON()),
       input: { type: 'mash', mash: masher.mash },
-      outputs: [{type: OutputType.Video}],
+      outputs: [{outputType: OutputType.Video}],
     }
     console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {

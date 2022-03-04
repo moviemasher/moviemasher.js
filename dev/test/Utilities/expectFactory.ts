@@ -11,7 +11,6 @@ const expectFactory = (object : unknown | undefined) :void => {
   if (!(object instanceof Object)) throw Errors.internal
 
   const factory = <GenericFactory <Instance, InstanceObject, Definition, DefinitionObject>> object
-  expect(factory.define).toBeInstanceOf(Function)
   expect(factory.definition).toBeInstanceOf(Function)
   expect(factory.definitionFromId).toBeInstanceOf(Function)
   expect(factory.fromId).toBeInstanceOf(Function)

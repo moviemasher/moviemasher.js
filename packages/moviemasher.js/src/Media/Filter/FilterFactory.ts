@@ -37,32 +37,35 @@ const filterInstance = (object : FilterDefinitionObject) : Filter => {
 
 const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 
-const filterInitialize = () : void => {
-  new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter })
-  new SetSarFilter({ id: 'com.moviemasher.filter.setsar', type: DefinitionType.Filter })
-  new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter })
-  new ChromaKeyFilter({ id: 'com.moviemasher.filter.chromakey', type: DefinitionType.Filter })
-  new ColorFilter({ id: 'com.moviemasher.filter.color', type: DefinitionType.Filter })
-  new ColorChannelMixerFilter({ id: 'com.moviemasher.filter.colorchannelmixer', type: DefinitionType.Filter })
-  new CropFilter({ id: 'com.moviemasher.filter.crop', type: DefinitionType.Filter })
-  new DrawBoxFilter({ id: 'com.moviemasher.filter.drawbox', type: DefinitionType.Filter })
-  new DrawTextFilter({ id: 'com.moviemasher.filter.drawtext', type: DefinitionType.Filter })
-  new FadeFilter({ id: 'com.moviemasher.filter.fade', type: DefinitionType.Filter })
-  new OverlayFilter({ id: 'com.moviemasher.filter.overlay', type: DefinitionType.Filter })
-  new ScaleFilter({ id: 'com.moviemasher.filter.scale', type: DefinitionType.Filter })
+const filterInitialize = (): void => {
+  [
+    new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter }),
+    new SetSarFilter({ id: 'com.moviemasher.filter.setsar', type: DefinitionType.Filter }),
+    new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
+    new ChromaKeyFilter({ id: 'com.moviemasher.filter.chromakey', type: DefinitionType.Filter }),
+    new ColorFilter({ id: 'com.moviemasher.filter.color', type: DefinitionType.Filter }),
+    new ColorChannelMixerFilter({ id: 'com.moviemasher.filter.colorchannelmixer', type: DefinitionType.Filter }),
+    new CropFilter({ id: 'com.moviemasher.filter.crop', type: DefinitionType.Filter }),
+    new DrawBoxFilter({ id: 'com.moviemasher.filter.drawbox', type: DefinitionType.Filter }),
+    new DrawTextFilter({ id: 'com.moviemasher.filter.drawtext', type: DefinitionType.Filter }),
+    new FadeFilter({ id: 'com.moviemasher.filter.fade', type: DefinitionType.Filter }),
+    new OverlayFilter({ id: 'com.moviemasher.filter.overlay', type: DefinitionType.Filter }),
+    new ScaleFilter({ id: 'com.moviemasher.filter.scale', type: DefinitionType.Filter }),
+  ].forEach(instance => Definitions.install(instance))
 }
 
-const filterDefine = (object : FilterDefinitionObject) : FilterDefinition => {
+const filterInstall = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + 'filterDefine'
+  if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + 'filterInstall'
 
   Definitions.uninstall(id)
-  return filterDefinition(object)
+  const instance = filterDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const FilterFactoryImplementation = {
-  define: filterDefine,
-  install: filterDefine,
+  install: filterInstall,
   definition: filterDefinition,
   definitionFromId: filterDefinitionFromId,
   fromId: filterFromId,
@@ -73,8 +76,7 @@ const FilterFactoryImplementation = {
 Factories[DefinitionType.Filter] = FilterFactoryImplementation
 
 export {
-  filterDefine,
-  filterDefine as filterInstall,
+  filterInstall,
   filterDefinition,
   filterDefinitionFromId,
   FilterFactoryImplementation,

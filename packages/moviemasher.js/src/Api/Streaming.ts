@@ -1,17 +1,23 @@
-import { FilterGraph, AndId, GraphFile, AndType } from "../declarations"
-import { OutputFormat } from "../Setup/Enums"
+import { DefinitionObjects } from "../Base/Definition"
+import { AndId, GraphFile, GraphFiles } from "../declarations"
+import { MashObject } from "../Edited/Mash/Mash"
+import { StreamingFormat } from "../Setup/Enums"
 import { ApiRequest, ApiResponse } from "./Api"
 
 
 export interface StreamingStartRequest extends ApiRequest {
+  format?: StreamingFormat
   width?: number
   height?: number
+  videoRate?: number
 }
 export interface StreamingStartResponse extends ApiResponse, AndId {
   readySeconds: number
   width: number
   height: number
   videoRate: number
+  format: StreamingFormat
+
 }
 
 export interface StreamingStatusRequest extends ApiRequest, AndId {}
@@ -20,13 +26,13 @@ export interface StreamingStatusResponse  extends ApiRequest   {
 }
 
 export interface StreamingPreloadRequest extends ApiRequest, AndId {
-  files: GraphFile[]
+  files: GraphFiles
 }
 export interface StreamingPreloadResponse extends ApiResponse  {}
 
-
 export interface StreamingCutRequest extends ApiRequest {
-  filterGraph: FilterGraph
+  mashObjects: MashObject[]
+  definitionObjects: DefinitionObjects
 }
 export interface StreamingCutResponse extends ApiResponse {}
 

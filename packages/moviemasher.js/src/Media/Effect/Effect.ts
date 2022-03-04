@@ -8,6 +8,8 @@ interface Effect extends Modular {
   definition : EffectDefinition
 }
 
+export type Effects = Effect[]
+
 type EffectDefinitionObject = ModularDefinitionObject
 
 interface EffectDefinition extends ModularDefinition {

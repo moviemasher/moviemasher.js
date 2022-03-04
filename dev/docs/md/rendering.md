@@ -1,32 +1,135 @@
 ## Rendering
 
-Previews are built using interfaces similar to those provided by
-[FFmpeg's Filters](https://www.ffmpeg.org/ffmpeg-filters.html):
+At the lowest level, [FFmpeg](https://www.ffmpeg.org) is used server-side through the
+[fluent-ffmpeg](https://www.npmjs.com/package/fluent-ffmpeg) library to render
+a [[Mash]] into files of various types. Movie Masher wraps this library
+with the [[Command]] class:
 
-- {@link FilterGraph}
-- {@link FilterChain}
-- {@link GraphFilter}
-- {@link Filter}
-
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../moviemasher/dev/graphics/media.svg) -->
-<svg width="900" height="900" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 900 900">
-<path d="M 361.00 292.89 L 515.29 292.89 L 515.29 342.89 L 361.00 342.89 Z M 361.00 292.89" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="366.84" y="327.37" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Definition]]</text>
-<path d="M 322.34 421.73 L 322.34 448.01 M 320.22 438.01 L 322.34 448.01 L 324.47 438.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 438.14 342.89 L 438.14 395.45 L 322.34 395.45 L 322.34 448.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 215.91 448.01 L 428.78 448.01 L 428.78 498.01 L 215.91 498.01 Z M 215.91 448.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="228.37" y="482.49" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[ClipDefinition]]</text>
-<path d="M 215.91 150.82 L 428.78 150.82 L 428.78 200.82 L 215.91 200.82 Z M 215.91 150.82" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="225.05" y="185.30" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[FontDefinition]]</text>
-<path d="M 487.99 150.82 L 716.23 150.82 L 716.23 200.82 L 487.99 200.82 Z M 487.99 150.82" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="501.47" y="185.30" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[FilterDefinition]]</text>
-<path d="M 454.98 448.01 L 716.23 448.01 L 716.23 498.01 L 454.98 498.01 Z M 454.98 448.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="467.63" y="482.49" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[ModularDefinition]]</text>
-<path d="M 585.61 421.73 L 585.61 448.01 M 583.48 438.01 L 585.61 448.01 L 587.73 438.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 438.14 342.89 L 438.14 395.45 L 585.61 395.45 L 585.61 448.01" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 322.34 223.84 L 322.34 200.82 M 324.47 210.82 L 322.34 200.82 L 320.22 210.82" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 322.34 200.82 L 322.34 246.86 L 438.14 246.86 L 438.14 292.89" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 602.11 223.84 L 602.11 200.82 M 604.24 210.82 L 602.11 200.82 L 599.99 210.82" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M 438.14 292.89 L 438.14 246.86 L 602.11 246.86 L 602.11 200.82" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../../../../moviemasher/dev/graphics/ffmpeg-abstraction.svg) -->
+<svg width="640" height="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 40">
+<path d="M 240.00 0.00 L 430.00 0.00 L 430.00 40.00 L 240.00 40.00 Z M 240.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="245.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >fluent-ffmpeg</text>
+<path d="M 0.10 0.00 L 170.10 0.00 L 170.10 40.00 L 0.10 40.00 Z M 0.10 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="5.35" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Command]]</text>
+<path d="M 500.00 0.00 L 640.00 0.00 L 640.00 40.00 L 500.00 40.00 Z M 500.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="505.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >FFmpeg</text>
+<path d="M 465.00 20.00 L 500.00 20.00 M 490.00 22.13 L 500.00 20.00 L 490.00 17.87" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 430.00 20.00 L 500.00 20.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 205.05 20.00 L 240.00 20.00 M 230.00 22.13 L 240.00 20.00 L 230.00 17.87" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 170.10 20.00 L 240.00 20.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 </svg>
 <!-- MAGIC:END -->
+
+Its constructor takes [[CommandArgs]] that closely match
+the underlying FFmpeg options:
+
+- zero or more [[CommandInputs]], each describing a source file and related options
+- zero or more [[GraphFilters]], AKA an [FFmpeg Filtergraph](https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description)
+- a single [[CommandOutput]] that specifies rendering options
+
+In Movie Masher, rendering essentially converts a [[Mash]] into
+[[CommandArgs]] that are then sent to FFmpeg to produce output files.
+
+## Outputs
+
+Movie Masher supports five [[RenderingOutput]] interfaces that essentially convert a
+[[Mash]] into the [[CommandArgs]] that will render its file(s):
+
+- [[AudioOutput]]: a single audio file
+- [[ImageOutput]]: a single image file
+- [[VideoOutput]]: a single video file
+- [[VideoSequenceOutput]]: a single audio file, and an image file per frame
+- [[WaveformOutput]]: a single image file, representing audio content
+
+Each output caches any [[Mash]] assets it requires before generating its [[CommandArgs]].
+Assets might be probed if need after caching to, for instance, determine the duration
+of an [[AudioDefinitionObject]] or [[VideoDefinitionObject]].
+
+## Processing
+
+The [[RenderingProcess]] interface greatly simplifies generating
+multiple files from a raw JSON [[MashObject]], [[DefinitionObjects]], and [[CommandOutputs]].
+It's used by the [[RenderingServer]] when handling client requests.
+
+The interface provides a promise that resolves by processing each
+of the supplied [[CommandOutputs]] in turn. First a [[Mash]] is created from the supplied
+JSON objects and then for each output the [[RenderingProcess]] will:
+
+1. create a corresponding [[RenderingOutput]] instance
+1. have it cache whatever assets it requires
+1. pass its [[CommandArgs]] to a new [[RunningCommand]] instance
+1. wait until its [[Command]] completes
+
+Sometimes the files generated by one output can be utilized by others, so it can be
+more efficient to batch outputs together within a single [[RenderingProcess]].
+
+## Mash Conversion
+
+Each [[RenderingOutput]] will return different [[CommandArgs]] for the same [[Mash]]
+content. For instance, those returned by an [[AudioOutput]] will only contain audio files
+in their inputs and might specify MP3 for an output format.
+
+Additionally, the number of [[CommandArgs]] returned is undefined, and varies both by
+output type and by the combination of outputs being rendered at once. Specifically, a
+video-based output may return more than one, based on the
+number of [[FilterGraphs]] its [[Mash]] returns for the rendered [[TimeRange]].
+
+Each [[FilterGraph]] describes a section of the [[Mash]] that can be conveniently
+rendered together, including all [[Clips]] from all relevant and populated [[Tracks]].
+It includes a set of [[FilterChains]], one per [[Track]], each describing the content
+there and how to merge it atop the others.
+
+Each [[FilterChain]] describes a [[Clip]] and any associated [[Merger]], [[Scaler]], and
+[[Effects]] as a collection of [[GraphFilters]] and [[GraphFiles]]. Outputs essentially
+combine the [[GraphFilters]] from all [[FilterChains]] and cache their [[GraphFiles]],
+some of which might be converted to [[CommandInputs]].
+
+A single [[Clip]] can result in multiple [[GraphFiles]] which may or may not be converted
+to [[CommandInputs]].
+For instance, a [[Theme]] that utilizes the [[DrawTextFilter]] will include
+a [[GraphFile]] for its referenced [[FontDefinition]], but also one for its text content.
+Neither will be converted because FFmpeg's underlying
+[drawtext](https://ffmpeg.org/ffmpeg-filters.html#drawtext)
+filter expects paths to these files to be specified as option values.
+
+## Caching
+
+A [[GraphFile]] describes a file on disk that is made available to FFmpeg during
+[[Command]] execution. Typically this is the raw asset associated with [[Video]],
+[[Image]], or [[Audio]] clips but other resources are also supported.
+FFmpeg requires files to be specified either as a [[CommandInput]] or [[GraphFilter]] option
+value.
+
+The [[RenderingOutput]] handles all the complexity of caching each [[GraphFile]]
+locally and correctly specifying it within the [[CommandArgs]].
+Caching a [[GraphFile]] triggers different processing, depending on its `type` property
+which can be either a [[GraphFileType]] or [[LoadType]].
+
+In the simplest case, the `type` property is a [[GraphFileType]] which implies the `file`
+property will be the actual file content. This is simply saved to the `cacheDirectory` of
+the [[RenderingOutput]] as, for instance, a TEXT, SVG or PNG file. Binary files must be
+Base64 encoded.
+
+In cases where the `type` property is a [[LoadType]], the `file` property will be a
+relative or absolute URL. This will be preloaded
+normally by the [[Mash]] through the [[Preloader]] interface. The [[RenderingProcess]]
+sets the `preloader` property of the [[Mash]] to an instance of the [[NodePreloader]]
+class, configured to download absolute URLs, but resolve relative ones to a local
+directory. Typically, the [[RenderingServer]] specifies this as the user's upload
+directory.
+
+## Filtering
+
+The [[FilterChain]] that describes a [[Clip]] has a `graphFilters` property that includes
+all the [[GraphFilters]] provided by its [[Effects]] modules, followed by the one from
+its [[Scaler]] module which is responsible for sizing the others. The `graphFilter` property
+includes the single [[GraphFilter]] provided by its [[Merger]] module which is responsible
+for positioning and compositing this output onto output from the previous [[FilterChain]].
+
+Each of the modules consist of a collection of
+
+## File Output
+
+The [[RenderingProcess]] automatically creates a separate [[RunningCommand]] for each of
+the [[CommandArgs]] returned by the [[RenderingOutput]]. If more than one is returned
+another is then created that concatenates the resultant files into a single one.

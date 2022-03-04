@@ -1,5 +1,5 @@
 import { JsonObject, UploadDescription, AndId, AndType } from "../declarations"
-import { DefinitionObject } from "../Base/Definition"
+import { DefinitionObject, DefinitionObjects } from "../Base/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
 import { ApiCallback, ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
@@ -24,7 +24,7 @@ export interface DataDefinitionPutResponse extends ApiResponse {
 
 export interface DataDefinitionRetrieveRequest extends ApiRequest, AndType, DataRetrieve {}
 export interface DataDefinitionRetrieveResponse extends ApiResponse {
-  definitions: DefinitionObject[]
+  definitions: DefinitionObjects
 }
 
 export interface DataDefinitionDeleteRequest extends ApiRequest, AndId {}
@@ -38,7 +38,7 @@ export interface DataDefinitionDeleteResponse extends ApiResponse {
 export interface DataCastRelations {
 
   mashes: MashObject[]
-  definitions: DefinitionObject[]
+  definitions: DefinitionObjects
 }
 export interface DataCastDefaultRequest extends ApiRequest {}
 export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
@@ -48,7 +48,7 @@ export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations 
 export interface DataMashDefaultRequest extends ApiRequest {}
 export interface DataMashDefaultResponse extends ApiResponse {
   mash: MashObject
-  definitions: DefinitionObject[]
+  definitions: DefinitionObjects
 }
 
 export interface DataMashPutRequest extends ApiRequest {

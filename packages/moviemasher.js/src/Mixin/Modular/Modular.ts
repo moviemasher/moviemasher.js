@@ -1,22 +1,21 @@
 import { VisibleContext } from "../../Context/VisibleContext"
-import { Any, Constrained, GraphFilter, FilterChain, FilterChainArgs, LoadPromise, Size, UnknownObject, FilesArgs, GraphFile } from "../../declarations"
+import { Any, Constrained, FilterChain, FilterChainArgs, GraphFilters, Size, UnknownObject } from "../../declarations"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Definition, DefinitionObject } from "../../Base/Definition"
 import { Filter } from "../../Media/Filter/Filter"
 import { Instance, InstanceObject } from "../../Base/Instance"
-// import { Time } from "../../Helpers/Time"
 import { PropertyObject } from "../../Setup/Property"
 import { Preloader } from "../../Preloader/Preloader"
 
 
-type ModularObject = InstanceObject
+export interface ModularObject extends InstanceObject {
+  id?: string
+}
 
 interface Modular extends Instance {
   definition: ModularDefinition
   constructProperties(object?: Any): void
-  filesModular(args: FilesArgs): GraphFile[]
-  // loadModular(quantize: number, start: Time, end?: Time): LoadPromise | void
-  // modularUrls(quantize: number, start: Time, end?: Time): string[]
+  // filesModular(args: FilesArgs): GraphFiles
   modulateFilterChain(layer: FilterChain, args: FilterChainArgs): void
 }
 
@@ -25,12 +24,11 @@ interface ModularDefinitionObject extends DefinitionObject {
   properties? : PropertyObject[]
 }
 
-// but Definition uses an array of properties to ease filtering/sorting
 interface ModularDefinition extends Definition {
-  drawFilters(preloader: Preloader, modular: Modular, range : TimeRange, clipRange : TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext
+  drawFilters(preloader: Preloader, modular: Modular, range : TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext
   filters: Filter[]
   filtrateFilterChain(layer: FilterChain, modular: Modular, args: FilterChainArgs): void
-  graphFilters(layer: FilterChain, modular: Modular, args: FilterChainArgs): GraphFilter[]
+  graphFilters(layer: FilterChain, modular: Modular, args: FilterChainArgs): GraphFilters
 }
 
 type ModularClass = Constrained<Modular>
@@ -42,5 +40,4 @@ export {
   ModularDefinition,
   ModularDefinitionClass,
   ModularDefinitionObject,
-  ModularObject,
 }

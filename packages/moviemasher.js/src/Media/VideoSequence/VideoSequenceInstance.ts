@@ -17,12 +17,12 @@ const WithVisible = VisibleMixin(WithAudibleFile)
 const WithTransformable = TransformableMixin(WithVisible)
 
 class VideoSequenceClass extends WithTransformable {
-  constructor(...args : Any[]) {
-    super(...args)
-    const [object] = args
-    const { speed } = <VideoSequenceObject> object
-    if (speed && Is.aboveZero(speed)) this.speed = speed
-  }
+  // constructor(...args : Any[]) {
+  //   super(...args)
+  //   const [object] = args
+  //   const { speed } = <VideoSequenceObject> object
+  //   if (speed && Is.aboveZero(speed)) this.speed = speed
+  // }
 
   get copy() : VideoSequence { return <VideoSequence> super.copy }
 

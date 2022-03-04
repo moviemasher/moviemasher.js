@@ -1,22 +1,25 @@
-
-import { EvaluatedSize, GraphFilter, FilterChainArgs, Size, ValueObject } from "../../../declarations"
+import { EvaluatedSize, ModularGraphFilter, FilterChainArgs, Size, ValueObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { FilterDefinitionClass } from "../FilterDefinition"
-import { GraphType } from "../../../Setup/Enums"
+import { DataType } from "../../../Setup/Enums"
+import { Parameter } from "../../../Setup"
 
 /**
  * @category Filter
  */
 class ScaleFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator, evaluated : EvaluatedSize) : VisibleContext {
+  draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator
     if (!context) throw Errors.invalid.context
 
-    let outWidth = evaluated.w || evaluated.width || 0
-    let outHeight = evaluated.h || evaluated.height || 0
+
+
+    let outWidth = Number(evaluator.evaluateParameter('width'))
+    let outHeight = Number(evaluator.evaluateParameter('height'))
+
     if (outWidth + outHeight < 2) return context
 
     const inWidth = Number(evaluator.evaluate("in_w"))
@@ -30,42 +33,31 @@ class ScaleFilter extends FilterDefinitionClass {
 
     const fromSize = { width: outWidth, height: outHeight }
     const drawing = ContextFactory.toSize(fromSize)
-    // console.log(this.constructor.name, "draw", inSize, fromSize)
 
     drawing.drawInSizeFromSize(context.drawingSource, inSize, fromSize)
     return drawing
   }
 
-  input(_evaluator: Evaluator, evaluated: ValueObject, args: FilterChainArgs): GraphFilter {
-    const inputs: string[] = []
-    const { prevFilter, inputCount } = args
-    if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
-    else inputs.push(`${inputCount}:v`)
-
-    const outWidth = evaluated.w || evaluated.width || 0
-    const outHeight = evaluated.h || evaluated.height || 0
-    const graphFilter: GraphFilter = {
+  modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
+    const width = evaluator.evaluateParameter('width')
+    const height = evaluator.evaluateParameter('height')
+    const graphFilter: ModularGraphFilter = {
+      inputs: [],
       outputs: ['SCALE'],
-      inputs,
       filter: this.ffmpegFilter,
-      options: { width: outWidth, height: outHeight }
+      options: { width, height }
     }
-
     return graphFilter
   }
 
+  parameters: Parameter[] = [
+    new Parameter({ name: "width", value: "out_w", dataType: DataType.Number }),
+    new Parameter({ name: "height", value: "out_h", dataType: DataType.Number }),
+  ]
+
   scopeSet(evaluator: Evaluator): void {
-    const { graphType, outputSize } = evaluator
-
-    const { width: outputWidth, height: outputHeight } = outputSize
-    evaluator.set("out_w", outputWidth)
-    evaluator.set("out_h", outputHeight)
-
-    if (graphType !== GraphType.Canvas) return
-
-    const { width: inputWidth, height: inputHeight } = evaluator.context!.size
-    evaluator.set("in_w", inputWidth)
-    evaluator.set("in_h", inputHeight)
+    evaluator.setInputDimensions()
+    evaluator.setOutputDimensions()
   }
 }
 

@@ -12,7 +12,7 @@ interface Audible extends Clip {
   definition : AudibleDefinition
   gain: number
   gainPairs: number[][]
-  loadedAudible(preloader: Preloader): AudibleSource | undefined
+  audibleSource(preloader: Preloader): AudibleSource | undefined
   muted: boolean
   startOptions(seconds: number, quantize: number): StartOptions
 }
@@ -27,7 +27,7 @@ interface AudibleDefinitionObject extends ClipDefinitionObject {
 
 interface AudibleDefinition extends ClipDefinition {
   audible: boolean
-  loadedAudible(preloader: Preloader): AudibleSource | undefined
+  audibleSource(preloader: Preloader): AudibleSource | undefined
   loops: boolean
   stream: boolean
   waveform?: string

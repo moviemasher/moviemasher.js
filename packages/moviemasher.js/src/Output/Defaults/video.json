@@ -1,0 +1,19 @@
+{
+  "options": {
+    "g": 60
+  },
+  "width": 320,
+  "height": 240,
+  "videoRate": 30,
+  "videoBitrate": 2000,
+  "audioBitrate": 160,
+  "audioCodec": "aac",
+  "videoCodec": "libx264",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "g": 0,
+  "format": "mp4",
+  "extension": "mp4",
+  "outputType": "video",
+  "cover": false
+}

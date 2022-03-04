@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { AVType, DefinitionType, GraphType, TrackType, TrackTypes } from "../../Setup/Enums"
+import { AVType, DefinitionType, GraphFileType, GraphType, LoadType, TrackType, TrackTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Definition } from "../../Base/Definition"
 import { Factory } from "../../Definitions/Factory/Factory"
@@ -11,18 +11,19 @@ import { MashClass } from "./MashClass"
 import { expectEmptyArray } from "../../../../../dev/test/Utilities/expectEmptyArray"
 import { expectArrayOf } from "../../../../../dev/test/Utilities/expectArrayOf"
 
-import themeColorJson from "../..//Definitions/DefinitionObjects/theme/color.json"
+import themeTextJson from "../../Definitions/DefinitionObjects/theme/text.json"
+import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 import { MashFactory } from "./MashFactory"
 import { TrackClass } from "../../Media/Track/TrackClass"
 import { TrackObject } from "../../Media/Track/Track"
 import path from 'path/posix'
-import { FilterGraphArgs, FilterGraphsArgs } from '../../declarations'
-import { filterGraphToCommandArgs } from '../../../../server-express/src/Utilities/FilterGraph'
-import { outputDefaultMp4 } from '../../Helpers/OutputDefault'
+import { FilterGraphArgs } from '../../declarations'
+import { outputDefaultVideo } from '../../Output/OutputDefault'
 import { ImageDefinitionObject } from '../../Media/Image/Image'
 import { MergerObject } from '../../Media/Merger/Merger'
 import { TimeRange } from '../../Helpers/TimeRange'
-import { VideoOutputObject } from '../../Output/Output'
+import { ThemeDefinitionObject } from '../../Media/Theme/Theme'
+import { JestPreloader } from '../../../../../dev/test/JestPreloader'
 
 describe("MashFactory", () => {
   describe("instance", () => {
@@ -34,6 +35,7 @@ describe("MashFactory", () => {
 })
 describe("Mash", () => {
   const colorDefinition = () => Factory.theme.definition(themeColorJson)
+  const textDefinition = () => Factory.theme.definition(themeTextJson)
 
   describe("addTrack", () => {
     test.each(TrackTypes)("returns new %s track", (trackType) => {
@@ -214,19 +216,20 @@ describe("Mash", () => {
       expect(clipObject.color).toEqual(clip.color)
     })
   })
-  const output = outputDefaultMp4() as VideoOutputObject // { avType: AVType.Video }
+  const output = outputDefaultVideo() //as VideoOutputObject // { avType: AVType.Video }
   // const { output } = Default.mash
   const timeRange = TimeRange.fromArgs(0, 10)
   const size = { width: output.width!, height: output.height! }
   const videoRate = output.videoRate!
   const graphType = GraphType.Cast
   const segmentOptions: FilterGraphArgs = {
+    justGraphFiles: false,
     avType: AVType.Both,
     graphType, size, videoRate, timeRange
   }
 
-  describe("segmentPromise", () => {
-    test("returns object without mm_", () => {
+  describe("filterGraphs", () => {
+    test("returns properly for image", () => {
       const source = 'image.jpg'
       const definitionId = 'image'
       const definitionObject: ImageDefinitionObject = {
@@ -237,16 +240,65 @@ describe("Mash", () => {
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
-      const mash = MashFactory.instance(mashObject, [definitionObject])
-      const segment = mash.filterGraph(segmentOptions)
-      expect(segment).toBeInstanceOf(Object)
+      const mash = MashFactory.instance(mashObject, [definitionObject], new JestPreloader())
+      const filterGraphs = mash.filterGraphs(segmentOptions)
+      expect(filterGraphs.length).toEqual(1)
+      const filterGraph = filterGraphs[0]
+      expect(filterGraph).toBeInstanceOf(Object)
+      const { filterChains } = filterGraph
+      expect(filterChains.length).toEqual(2)
+      const [filterChain1, filterChain2] = filterChains
+      const { graphFiles: graphFiles1 } = filterChain1
+      expect(graphFiles1.length).toBe(0)
+      const { graphFiles: graphFiles2 } = filterChain2
+      expect(graphFiles2.length).toBe(1)
+      const [graphFile] = graphFiles2
+      const { type, file, input, options } = graphFile
+      expect(type).toEqual(LoadType.Image)
+      expect(file).toEqual(source)
+      expect(input).toEqual(true)
+      expect(options).toBeDefined()
 
-      const segmentJson = JSON.stringify(segment)
+      const segmentJson = JSON.stringify(filterGraph)
       // console.log("segmentJson", segmentJson)
       expect(segmentJson).not.toContain('mm_')
       expect(segmentJson).toContain('loop')
     })
-    test("returns expected segment", () => {
+
+    test("returns properly for text theme", () => {
+
+      const definitionObject: ThemeDefinitionObject = themeTextJson
+      const source = definitionObject.source
+      const definitionId = definitionObject.id
+
+      const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
+      const clip: ClipObject = { definitionId, merger }
+      const mashObject: MashObject = {
+        tracks: [{ trackType: TrackType.Video, clips: [clip] }]
+      }
+      const mash = MashFactory.instance(mashObject, [definitionObject], new JestPreloader())
+      const filterGraphs = mash.filterGraphs(segmentOptions)
+      expect(filterGraphs.length).toEqual(1)
+      const filterGraph = filterGraphs[0]
+      expect(filterGraph).toBeInstanceOf(Object)
+      const { filterChains } = filterGraph
+      expect(filterChains.length).toEqual(2)
+      const [filterChain1, filterChain2] = filterChains
+      const { graphFiles: graphFiles1 } = filterChain1
+      expect(graphFiles1.length).toBe(0)
+      const { graphFiles: graphFiles2 } = filterChain2
+      expect(graphFiles2.length).toBe(2)
+      const [graphFile2, graphFile1] = graphFiles2
+      expect(graphFile1.type).toEqual(GraphFileType.Txt)
+      expect(graphFile2.type).toEqual(LoadType.Font)
+      expect(graphFile1.input).toBeFalsy()
+      expect(graphFile2.input).toBeFalsy()
+      const segmentJson = JSON.stringify(filterGraph)
+      // console.log("segmentJson", segmentJson)
+      expect(segmentJson).not.toContain('mm_')
+    })
+
+    test("returns expected FilterGraphs", () => {
       const videoDefinition = {
         type: "video",
         label: "Video", id: "id-video",
@@ -256,30 +308,25 @@ describe("Mash", () => {
       }
       const mash = MashFactory.instance({
         tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30 }] }]
-      }, [videoDefinition])
-      const segment = mash.filterGraph(segmentOptions)
-      expect(segment).toBeInstanceOf(Object)
-      const { filterChains, duration } = segment
+      }, [videoDefinition], new JestPreloader())
+      const filterGraph = mash.filterGraphs(segmentOptions)[0]
+      expect(filterGraph).toBeInstanceOf(Object)
+      const { filterChains, duration } = filterGraph
       expect(duration).toBeGreaterThan(0)
       expect(filterChains.length).toEqual(2)
       const [baseFilterChain, layer] = filterChains
-      expect(baseFilterChain.merger).toBeUndefined()
-      const { filters: baseFilters } = baseFilterChain
+      expect(baseFilterChain.graphFilter).toBeUndefined()
+      const { graphFilters: baseFilters } = baseFilterChain
       expect(baseFilters.length).toBe(1)
       const [baseFilter] = baseFilters
       expect(baseFilter.outputs?.length).toBe(1)
-      const { merger } = layer
+      const { graphFilter: merger } = layer
       expect(merger).toBeDefined()
       if (!merger) throw 'merger'
 
       const { inputs, outputs } = merger
       expect(inputs).toBeDefined()
-      expect(outputs).toBeUndefined()//.toEqual(['L1'])//
-
-      const id = idGenerate()
-      const destination = `./temporary/${id}.mp4`
-      const commandArgs = filterGraphToCommandArgs(segment, output, destination, graphType)
-      // await expectRender(id, commandArgs)
+      expect(outputs).toBeUndefined()
     })
   })
   const dir = './dev/test/MashObjects'
@@ -294,10 +341,10 @@ describe("Mash", () => {
     const mashObject: MashObject = fs.readFileSync(`${dir}/${name}${ext}`).toJSON()
 
     test("returns something", () => {
-      const mash = MashFactory.instance(mashObject)
-      const result = mash.filterGraph(segmentOptions)
+      const mash = MashFactory.instance(mashObject, [], new JestPreloader({prefix: dir}))
+      const result = mash.filterGraphs(segmentOptions)
       // console.log(result.filterChains.flatMap(layer => layer.filters))
-      expect(result).toBeInstanceOf(Object)
+      expect(result).toBeInstanceOf(Array)
     })
   })
 })

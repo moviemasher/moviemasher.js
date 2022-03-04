@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-import { LoaderFactoryClasses } from "../../packages/moviemasher.js/src/Loader/LoaderFactory"
 import { DefinitionTypes } from "../../packages/moviemasher.js/src/Setup/Enums"
-import { FontLoaderTest } from "./FontLoaderTest"
-import { ImageLoaderTest } from "./ImageLoaderTest"
 import { Definitions } from "../../packages/moviemasher.js/src/Definitions/Definitions"
 import { Factory } from "../../packages/moviemasher.js/src/Definitions/Factory/Factory"
 import { AudioFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Audio"
@@ -36,9 +33,23 @@ import fs from 'fs'
 import path from 'path'
 
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
+
 require('jest-fetch-mock').enableMocks()
 
+// const toMatchVideoSnapshot = (...args: any[]): CustomMatcherResult => {
+
+//   return {
+//     message: (something) => {
+//       console.log("message", something)
+//     },
+//     pass: false,
+//   }
+//   console.log("toMatchVideoSnapshot", ...args)
+// }
 expect.extend({ toMatchImageSnapshot })
+// expect.extend({ toMatchVideoSnapshot })
+
+
 jest.setTimeout(30 * 1000)
 fetchMock.mockResponse(req => {
   const promise = new Promise((resolve, reject) => {
@@ -54,10 +65,7 @@ fetchMock.mockResponse(req => {
 beforeEach(() => {
   Definitions.clear()
   DefinitionTypes.forEach(type => { Factory[type].initialize() })
-  Factory.font.define({
+  Factory.font.install({
     id: 'com.moviemasher.font.default', source: 'BlackoutTwoAM.ttf'
   })
 })
-
-LoaderFactoryClasses.font = FontLoaderTest
-LoaderFactoryClasses.image = ImageLoaderTest

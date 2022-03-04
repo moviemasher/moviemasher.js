@@ -49,25 +49,18 @@ const audioInitialize = () : void => {}
 /**
  * @internal
  */
-const audioDefine = (object : AudioDefinitionObject) : AudioDefinition => {
+const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
   Definitions.uninstall(id)
-  return audioDefinition(object)
-}
-
-/**
- * @internal
- */
-const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
-  const instance = audioDefine(object)
+  const instance = audioDefinition(object)
   instance.retain = true
+  Definitions.install(instance)
   return instance
 }
 
 const AudioFactoryImplementation = {
-  define: audioDefine,
   definition: audioDefinition,
   definitionFromId: audioDefinitionFromId,
   fromId: audioFromId,
@@ -80,7 +73,6 @@ Factories[DefinitionType.Audio] = AudioFactoryImplementation
 
 
 export {
-  audioDefine,
   audioDefinition,
   audioDefinitionFromId,
   AudioFactoryImplementation,

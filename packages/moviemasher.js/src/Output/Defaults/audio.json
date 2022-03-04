@@ -1,0 +1,9 @@
+{
+  "options": {},
+  "audioBitrate": 160,
+  "audioCodec": "aac",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "extension": "mp3",
+  "outputType": "audio"
+}

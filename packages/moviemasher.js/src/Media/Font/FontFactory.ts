@@ -12,7 +12,7 @@ const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : fontDefaultId
   if (!Definitions.installed(idString)) {
-    new FontDefinitionClass({ ...object, type: DefinitionType.Font, id: idString })
+    return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id: idString })
   }
   return <FontDefinition> Definitions.fromId(idString)
 }
@@ -29,18 +29,19 @@ const fontFromId = (id : string) : Font => {
 }
 
 const fontInitialize = () : void => {
-  fontDefinition(fontDefaultJson)
+  fontInstall(fontDefaultJson)
 }
-const fontDefine = (object : FontDefinitionObject) : FontDefinition => {
+const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : fontDefaultId
   Definitions.uninstall(idString)
-  return fontDefinition(object)
+  const instance = fontDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const FontFactoryImplementation = {
-  define: fontDefine,
-  install: fontDefine,
+  install: fontInstall,
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
   fromId: fontFromId,
@@ -51,8 +52,7 @@ const FontFactoryImplementation = {
 Factories[DefinitionType.Font] = FontFactoryImplementation
 
 export {
-  fontDefine,
-  fontDefine as fontInstall,
+  fontInstall,
   fontDefinition,
   fontDefinitionFromId,
   FontFactoryImplementation,

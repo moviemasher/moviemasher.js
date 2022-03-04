@@ -1,20 +1,15 @@
 import { Any } from "../declarations"
-import { Output } from "../Output/Output"
-import { PreloaderClass } from "../Preloader/PreloaderClass"
+import { BrowserPreloaderClass } from "../Preloader/BrowserPreloaderClass"
 import { EditorOptions } from "./Editor"
 
 class EditorClass {
   constructor(...args: Any[]) {
     const [object] = args
-    const { endpoint } = object as EditorOptions
-
-    this.preloader = new PreloaderClass(endpoint)
+    const { endpoint, preloader } = object as EditorOptions
+    this.preloader = preloader || new BrowserPreloaderClass(endpoint)
   }
 
-
-  output?: Output
-
-  preloader: PreloaderClass
+  preloader: BrowserPreloaderClass
 }
 
 export { EditorClass }

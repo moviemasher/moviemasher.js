@@ -12,7 +12,6 @@ import { PropertiedClass } from "./Propertied"
 interface InstanceObject extends UnknownObject {
   definition?: Definition
   definitionId?: string
-  id?: string
   label?: string
 }
 
@@ -22,13 +21,20 @@ class InstanceBase extends PropertiedClass {
     const [object] = args
     if (!Is.populatedObject(object)) throw Errors.invalid.object + 'InstanceBase'
 
-    const { definitionId = '', definition, id, label } = <InstanceObject>object
+    const { definitionId = '', definition, label } = object as InstanceObject
     const definitionObject = definition || Definitions.fromId(definitionId)
     if (!definitionObject) throw Errors.invalid.definition.object
 
     this.definition = definitionObject
-    if (id) this._id = id
     if (label && label !== this.definition.label) this._label = label
+
+    this.properties.forEach(property => {
+      const propertyName = property.name
+      const propertyValue = object[propertyName]
+      if (typeof propertyValue === "undefined") return
+
+      this[propertyName] = property.type.coerce(propertyValue)
+    })
   }
 
   get copy() : Instance {
@@ -45,7 +51,7 @@ class InstanceBase extends PropertiedClass {
     return time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
   }
 
-  private _id? : string
+  protected _id? : string
   get id() : string { return this._id ||= idGenerate() }
 
   protected _label? : string

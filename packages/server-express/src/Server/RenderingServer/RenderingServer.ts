@@ -1,22 +1,23 @@
 import Express from "express"
 import {
-  ApiCallback, ClipObject, DefinitionObject, Endpoints, Errors, MashObject, OutputOptions,
-  OutputType, RenderingStartRequest, RenderingStartResponse
+  ApiCallback, DefinitionObject, Endpoints, Errors, OutputType, RenderingStartRequest,
+  RenderingStartResponse,
+  DefinitionType, CommandOutputs,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
 import { ServerClass } from "../ServerClass"
 import { ServerArgs } from "../Server"
 import { HostServers } from "../../Host/Host"
-import { JobOptions } from "./Job/Job"
-import { JobFactory } from "./Job/JobFactory"
+import { RenderingProcessArgs } from "./RenderingProcess/RenderingProcess"
+import { renderingProcessInstance } from "./RenderingProcess/RenderingProcessFactory"
 import { FileServer } from "../FileServer/FileServer"
 import path from "path"
+import { renderingInputFromDefinition } from "../../Utilities/RenderingInput"
 
 const uuid = require('uuid').v4
 
 interface RenderingServerArgs extends ServerArgs {
-  outputDefault: OutputOptions
   renderingDirectory: string
   cacheDirectory: string
 }
@@ -25,18 +26,32 @@ class RenderingServer extends ServerClass {
   declare args: RenderingServerArgs
 
   constructCallback(definitionObject: DefinitionObject): ApiCallback {
-    const { id } = definitionObject
+    const { id, type } = definitionObject
     if (!id) throw Errors.id
+    if (!type) throw Errors.type
 
-    const clip: ClipObject = { definitionId: id }
+    const outputs: CommandOutputs = []
+    switch (type) {
+      case DefinitionType.Audio: {
+        outputs.push({ outputType: OutputType.Audio })
+        outputs.push({ outputType: OutputType.Waveform })
+        break
+      }
+      case DefinitionType.Image: {
+        outputs.push({ outputType: OutputType.Image })
+        break
+      }
+      case DefinitionType.VideoSequence: {
+        outputs.push({ outputType: OutputType.Audio })
+        outputs.push({ outputType: OutputType.Waveform })
+        outputs.push({ outputType: OutputType.VideoSequence })
+        break
+      }
+    }
 
-    const mash: MashObject = { tracks: [{ clips: [clip] }] }
+    const renderingInput = renderingInputFromDefinition(definitionObject)
 
-    const definitions: DefinitionObject[] = [definitionObject]
-    const output: OutputOptions = { type: OutputType.Image }
-    const outputs: OutputOptions[] = [output]
-
-    const request: RenderingStartRequest = { mash, outputs, definitions }
+    const request: RenderingStartRequest = { ...renderingInput, outputs }
 
     const callback: ApiCallback = {
       endpoint: { prefix: Endpoints.rendering.start },
@@ -55,15 +70,21 @@ class RenderingServer extends ServerClass {
     const { id } = request
     const jobId = id || uuid()
     const response: RenderingStartResponse = { id: jobId }
-    const { renderingDirectory, cacheDirectory } = this.args
-    const fileDirectory = path.resolve(this.fileServer!.args.uploadsPrefix)
-    const jobOptions: JobOptions = {
-      ...request, ...response, renderingDirectory, cacheDirectory, fileDirectory
-    }
     try {
-      const jobArgs = JobFactory.args(jobOptions)
-      const job = JobFactory.instance(jobArgs)
-      job.renderPromise()
+      const user = this.userFromRequest(req)
+      const { renderingDirectory, cacheDirectory } = this.args
+      const fileDirectory = this.fileServer!.args.uploadsPrefix
+      // const userFileDirectory = path.resolve(fileDirectory, user)
+      const userRenderingDirectory = path.resolve(renderingDirectory, user)
+      const renderingOptions: RenderingProcessArgs = {
+        definitions: [],
+        ...request, ...response,
+        cacheDirectory,
+        renderingDirectory: userRenderingDirectory,
+        fileDirectory
+      }
+      const job = renderingProcessInstance(renderingOptions)
+      job.runPromise()
     } catch (error) { response.error = String(error) }
     res.send(response)
   }

@@ -1,13 +1,11 @@
 import { Errors} from "../../../Setup/Errors"
 import { Default } from "../../../Setup/Default"
-import { DefinitionType, EventType } from "../../../Setup/Enums"
+import { EventType } from "../../../Setup/Enums"
 import { pixelColor } from "../../../Utility/Pixel"
-import { sortByTrack } from "../../../Utility/Sort"
 import { Is } from "../../../Utility/Is"
 import { Time } from "../../../Helpers/Time"
 import { Audible } from "../../../Mixin/Audible/Audible"
-import { Visible } from "../../../Mixin/Visible/Visible"
-import { Transition } from "../../../Media/Transition/Transition"
+import { VisibleContents } from "../../../Mixin/Visible/Visible"
 import { Emitter } from "../../../Helpers/Emitter"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { Preloader } from "../../../Preloader/Preloader"
@@ -81,64 +79,25 @@ class Composition {
     return true
   }
 
-  compositeVisible(time: Time, clips: Visible[]): void {
+  compositeVisible(time: Time, visibleContents: VisibleContents): void {
     const { preloader } = this
     this.drawBackground() // clear and fill with mash background color if defined
 
-    const clipsByTrack = new Map<number, Visible>()
-    const transitionsByTrack = new Map<number, Transition>()
-    const transitioningTracks: number[] = []
-
-    const transitionClips: Transition[] = []
-    const visibleTracks: number[] = []
-    clips.sort(sortByTrack).forEach(clip => {
-      const { type } = clip
-      if (type === DefinitionType.Transition) {
-        const transition = <Transition>clip
-        transitionsByTrack.set(transition.fromTrack, transition)
-        transitionsByTrack.set(transition.toTrack, transition)
-
-        transitioningTracks.push(transition.fromTrack, transition.toTrack)
-        transitionClips.push(transition)
-      } else {
-        visibleTracks.push(clip.track)
-        clipsByTrack.set(clip.track, clip)
-      }
-    })
-
-    visibleTracks.forEach(track => {
-      if (transitioningTracks.includes(track)) {
-        const transition = transitionsByTrack.get(track)
-        if (!transition) throw Errors.internal + 'transition'
-
-        const { fromTrack, toTrack } = transition
-        const transitioned: Visible[] = []
-        const fromClip = clipsByTrack.get(fromTrack)
-        if (fromClip) transitioned.push(fromClip)
-        const toClip = clipsByTrack.get(toTrack)
-        if (toClip) transitioned.push(toClip)
-
-        if (!transitioned.length) return
-
-        // console.log("drawing clips at track", transitioned.map(clip => clip.track), track)
+    visibleContents.forEach(visibleContent => {
+      const { transition, visible, from, to } = visibleContent
+      if (transition) {
         transition.mergeClipsIntoContextAtTime(
-          preloader, transitioned, this.visibleContext, time, this.quantize, this.backcolor
+          preloader, this.visibleContext, time, this.quantize, from, to, this.backcolor
         )
-        clipsByTrack.delete(fromTrack)
-        clipsByTrack.delete(toTrack)
-        return
-      }
-      const clip = clipsByTrack.get(track)
-      if (clip) {
-        // console.log("drawing clip at track", clip.track, track)
-        clip.mergeContextAtTime(preloader, time, this.quantize, this.visibleContext)
+      } else {
+        visible.mergeContextAtTime(preloader, time, this.quantize, this.visibleContext)
       }
     })
     this.emitter?.emit(EventType.Draw)
   }
 
-  compositeVisibleRequest(time : Time, clips : Visible[]) : void {
-    requestAnimationFrame(() => this.compositeVisible(time, clips))
+  compositeVisibleRequest(time : Time, visibleContents: VisibleContents) : void {
+    requestAnimationFrame(() => this.compositeVisible(time, visibleContents))
   }
 
 
@@ -146,9 +105,9 @@ class Composition {
     const filtered = clips.filter(clip => !AudibleContextInstance.hasSource(clip.id))
     // if (filtered.length) console.log("Composition.createSources", filtered.length, "of", clips.length, "need audio source")
     return filtered.every(clip => {
-      const sourceNode = clip.loadedAudible(this.preloader)
-      if (!sourceNode) {
-        console.debug(this.constructor.name, "createSources loadedAudible undefined", clip.id)
+      const audibleSource = clip.audibleSource(this.preloader)
+      if (!audibleSource) {
+        console.debug(this.constructor.name, "createSources audibleSource undefined", clip.id)
         return false
       }
       if (!this.playing && !time) return
@@ -160,7 +119,7 @@ class Composition {
       if (Is.positive(start) && Is.aboveZero(duration)) {
         const { definition, id } = clip
         const { loops } = definition
-        AudibleContextInstance.startAt(id, sourceNode, start, duration, offset, loops)
+        AudibleContextInstance.startAt(id, audibleSource, start, duration, offset, loops)
         this.playingClips.push(clip)
         this.adjustSourceGain(clip)
       }

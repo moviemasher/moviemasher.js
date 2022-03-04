@@ -1,7 +1,7 @@
 import React from "react"
 import {
   StreamingPreloadRequest, StreamingPreloadResponse,
-  GraphType, FilterGraphsArgs, Endpoints, FilterGraphArgs, TimeRange, AVType
+  GraphType, Endpoints, TimeRange, AVType, FilesOptions, FilterGraphArgs, FilterGraphOptions, GraphFiles
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
@@ -10,7 +10,6 @@ import { ProcessContext } from "../../Contexts/ProcessContext"
 import { ApiContext } from "../../Contexts/ApiContext"
 import { useCastEditor } from "../../Hooks/useCastEditor"
 import { ViewerContext } from "../../Contexts/ViewerContext"
-import { GraphFile } from "@moviemasher/moviemasher.js"
 
 interface StreamerPreloadControlProps extends PropsAndChildren, WithClassName { }
 
@@ -19,21 +18,19 @@ function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
   const viewerContext = React.useContext(ViewerContext)
-  const { id, setPreloading, width, height, videoRate, preloading, updating, streaming } = viewerContext
+  const { id, setPreloading, preloading, updating, streaming } = viewerContext
   const { setStatus } = processContext
   const { endpointPromise } = apiContext
 
   const preload = () => {
-    const graphType = GraphType.Cast
-    const size = { width, height }
-    const { cast } = editor
-    const timeRange = TimeRange.fromArgs()
-    const filterGraphArgs: FilterGraphArgs = {
-      avType: AVType.Both,
-      graphType, size, videoRate, timeRange
-    }
-    const filterGraph = cast.filterGraph(filterGraphArgs)
-    const files: GraphFile[] = filterGraph.filterChains.flatMap(chain => chain.files)
+  //   const graphType = GraphType.Cast
+  //   const { cast } = editor
+  //   const timeRange = TimeRange.fromArgs()
+    // const filterGraphArgs: FilterGraphOptions = {
+    //   avType: AVType.Both, graphType, timeRange
+
+    // }
+    const files: GraphFiles = [] // cast.graphFiles(filterGraphArgs)
 
     const request: StreamingPreloadRequest = {
       files, id

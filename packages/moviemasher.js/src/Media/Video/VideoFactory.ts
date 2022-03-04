@@ -31,28 +31,19 @@ const videoFromId = (id : string) : Video => {
 
 const videoInitialize = () : void => {}
 
-const videoDefine = (object : VideoDefinitionObject) : VideoDefinition => {
+const videoInstall = (object : VideoDefinitionObject) : VideoDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
   Definitions.uninstall(id)
-  return videoDefinition(object)
-}
-
-
-/**
- * @internal
- */
-const videoInstall = (object: VideoDefinitionObject): VideoDefinition => {
-  const instance = videoDefine(object)
+  const instance = videoDefinition(object)
   instance.retain = true
+  Definitions.install(instance)
   return instance
 }
 
 
-
 const VideoFactoryImplementation = {
-  define: videoDefine,
   install: videoInstall,
   definition: videoDefinition,
   definitionFromId: videoDefinitionFromId,
@@ -65,7 +56,6 @@ Factories[DefinitionType.Video] = VideoFactoryImplementation
 
 export {
   videoInstall,
-  videoDefine,
   videoDefinition,
   videoDefinitionFromId,
   VideoFactoryImplementation,

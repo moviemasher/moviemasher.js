@@ -3,7 +3,9 @@ to powerfully affect the graphical appearance of the Editor. If only a few chang
 needed, it's typically easiest to just redefine select styles from the CSS file we
 included in the HTML file above.
 
-This file is a concatenation of the other files within that directory, shown below. An alternative approach for more elaborate changes would be to replace one or more of these files and include them individually.
+This file is a concatenation of the other files within that directory, shown below.
+An alternative approach for more elaborate changes would be to replace one or more
+of these files and include them individually.
 
 ## Coloring
 

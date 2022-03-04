@@ -31,27 +31,22 @@ const imageFromId = (id : string) : Image => {
 
 const imageInitialize = () : void => {}
 
-const imageDefine = (object : ImageDefinitionObject) : ImageDefinition => {
-  const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id
-
-  Definitions.uninstall(id)
-  return imageDefinition(object)
-}
-
-
 /**
  * @internal
  */
 const imageInstall = (object: ImageDefinitionObject): ImageDefinition => {
-  const instance = imageDefine(object)
+  const { id } = object
+  if (!(id && Is.populatedString(id))) throw Errors.id
+
+  Definitions.uninstall(id)
+  const instance = imageDefinition(object)
   instance.retain = true
+  Definitions.install(instance)
   return instance
 }
 
 
 const ImageFactoryImplementation = {
-  define: imageDefine,
   install: imageInstall,
   definition: imageDefinition,
   definitionFromId: imageDefinitionFromId,
@@ -64,7 +59,6 @@ Factories[DefinitionType.Image] = ImageFactoryImplementation
 
 export {
   imageInstall,
-  imageDefine,
   imageDefinition,
   imageDefinitionFromId,
   ImageFactoryImplementation,

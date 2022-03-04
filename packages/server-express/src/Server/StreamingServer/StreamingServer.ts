@@ -6,7 +6,7 @@ const NodeMediaServer = require('node-media-server')
 const uuid = require('uuid').v4
 
 import {
-  outputDefaultHls, UnknownObject, OutputFormat,
+  UnknownObject,
   StreamingStartResponse,
   StreamingPreloadResponse, StreamingPreloadRequest,
   StreamingCutRequest, StreamingCutResponse,
@@ -15,34 +15,40 @@ import {
   StreamingRemoteRequest, StreamingRemoteResponse,
   StreamingLocalRequest, StreamingLocalResponse,
   StreamingWebrtcRequest, StreamingWebrtcResponse, WithError, StreamingStartRequest,
-  OutputOptions, VideoOutputArgs
-
+  CommandOutput, StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs
 } from "@moviemasher/moviemasher.js"
 
-import { EditOutputOptions, ServerHandler } from "../../declaration"
-import { EncodeConnection } from "./EncodeConnection"
+import { ServerHandler } from "../../declaration"
 import { WebrtcConnection } from './WebrtcConnection'
 import { ServerClass } from '../ServerClass'
 import { ServerArgs } from '../Server'
 import { HostServers } from '../../Host/Host'
+import { streamingProcessCreate, streamingProcessGet } from './StreamingProcess/StreamingProcessFactory'
+import { StreamingProcessArgs, StreamingProcessCutArgs } from './StreamingProcess/StreamingProcess'
+import { FileServer } from '../FileServer/FileServer'
+import { directoryLatest } from '../../Utilities/Directory'
 
-const ExtHls = 'm3u8'
-const ExtTs = 'ts'
+
+export interface FormatOptions {
+  commandOutput: CommandOutput
+  file: string
+  segmentFile: string
+  url: string
+  directory: string
+}
+export type StreamingFormatOptions = {
+  [index in StreamingFormat]: FormatOptions
+}
+
 
 interface StreamingServerArgs extends ServerArgs {
-  output: EditOutputOptions
+  streamingOptions: StreamingFormatOptions
   app: string
   httpOptions: UnknownObject
   rtmpOptions: UnknownObject
-  outputOptions: OutputOptions
-  rtmpStreamingDir: string
-  rtmpStreamingUrl: string
-  rtmpStreamingFile: string
-  hlsStreamingDir: string
-  hlsStreamingUrl: string
-  hlsStreamingFile: string
+  commandOutput: CommandOutput
   webrtcStreamingDir: string
-  hlsFile: string
+  cacheDirectory: string
 }
 
 
@@ -50,16 +56,19 @@ class StreamingServer extends ServerClass {
   declare args: StreamingServerArgs
 
   cut: ServerHandler<StreamingCutResponse, StreamingCutRequest> = (req, res) => {
-    const { body } = req
-    const { id, filterGraph } = body
-    const connection = EncodeConnection.get(id)
-    if (!connection) {
+    const request = req.body
+
+    const { id, mashObjects, definitionObjects } = request
+
+    const streamingProcess = streamingProcessGet(id)
+    if (!streamingProcess) {
       res.send({ error: 'stream not found' })
       return
     }
     try {
-      console.log(Endpoints.streaming.cut, 'request', body)
-      const updated = connection.update(filterGraph, this.hlsOutput(id))
+      console.log(Endpoints.streaming.cut, 'request', request)
+      const cutArgs: StreamingProcessCutArgs = { definitionObjects, mashObjects }
+      const updated = streamingProcess.cut(cutArgs)
       const response: StreamingCutResponse = updated
       console.log(Endpoints.streaming.cut, 'response', response)
       res.send(response)
@@ -81,6 +90,9 @@ class StreamingServer extends ServerClass {
     const response: StreamingDeleteResponse = {}
     res.send(response)
   }
+
+
+  fileServer?: FileServer
 
   remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async(req, res) => {
     const { id, localDescription } = req.body
@@ -125,84 +137,64 @@ class StreamingServer extends ServerClass {
     res.send(response)
   }
 
-  hlsOutput(id: string): VideoOutputArgs {
-    const output = outputDefaultHls() as VideoOutputArgs
-    const { options } = output
-    const destination = this.args.hlsStreamingDir
-
-    if (options) {
-      const hlsFile = this.latestHlsFile(id)
-      if (hlsFile) {
-        options.hls_flags ||= ''
-        options.hls_flags += `${options.hls_flags ? '+' : ''}append_list`
-
-        const number = this.latestTsNumber(id)
-        if (typeof number !== 'undefined') options.start_number = number + 1
-      }
-      const { hls_segment_filename } = options
-      if (typeof hls_segment_filename === 'string') {
-        if (!hls_segment_filename.includes('/')) {
-          options.hls_segment_filename = `${destination}/${id}/${hls_segment_filename}`
-        }
-      }
-    }
-    return output
-  }
 
   id = 'streaming'
 
-  private latestHlsFile(id: string, ext = ExtHls): string | undefined {
-    const streamDir = `${this.args.hlsStreamingDir}/${id}`
-    if (!fs.existsSync(streamDir)) return
-
-    const files = fs.readdirSync(streamDir)
-    const filesWithExt = files.filter(file => file.endsWith(ext)).sort()
-    const count = filesWithExt.length
-    const file = count && filesWithExt[count - 1]
-    if (!file) return
-
-    return `${streamDir}/${file}`
-  }
-
-  latestTsNumber(id: string): number | undefined {
-    const file = this.latestHlsFile(id, ExtTs)
-    if (!file) return
-
-    return Number(path.basename(file, `.${ExtTs}`))
-  }
 
   preload: ServerHandler<StreamingPreloadResponse, StreamingPreloadRequest> = (req, res) => {
     const { id, files } = req.body
-
-
     const response: StreamingPreloadResponse = {}
     res.send(response)
   }
 
   // TODO: support other output besides HLS file
   start: ServerHandler<StreamingStartResponse, StreamingStartRequest> = (req, res) => {
-    const { version } = req.body
-
-    console.log(Endpoints.streaming.start)
+    const request = req.body
+    const { width, height, videoRate, format } = request
+    const streamingFormat = format || StreamingFormat.Hls
     const id = uuid()
-    const output = this.hlsOutput(id)
-    const connection = EncodeConnection.create(id, this.args.hlsStreamingDir, output)
-    const segment = connection.defaultFilterGraph(output)
-    connection.update(segment)
+    const formatOptions = this.args.streamingOptions[streamingFormat]
 
-    const { height, width, options, format, videoRate } = output
+    const { commandOutput, directory, file } = formatOptions
+    const overrides = { ...commandOutput }
+    if (width) overrides.width = width
+    if (height) overrides.height = height
+    if (videoRate) overrides.videoRate = videoRate
+
+    const streamingCommandOutput = outputDefaultStreaming(overrides)
+
+    const {
+      width: outputWidth,
+      height: outputHeight,
+      videoRate: outputVideoRate,
+      options,
+    } = streamingCommandOutput
 
     const response: StreamingStartResponse = {
-      height, width, videoRate,
+      width: outputWidth,
+      height: outputHeight,
+      videoRate: outputVideoRate,
+      format: streamingFormat,
       id, readySeconds: 10
     }
-    switch (format) {
-      case 'hls': {
+    switch (streamingFormat) {
+      case StreamingFormat.Hls: {
         const { hls_time } = options
         if (typeof hls_time !== 'undefined') response.readySeconds = Number(hls_time)
       }
     }
-    console.log(Endpoints.streaming.start, 'response', response)
+    try {
+      const user = this.userFromRequest(req)
+      const { cacheDirectory } = this.args
+      const fileDirectory = path.resolve(this.fileServer!.args.uploadsPrefix, user)
+      const streamingDirectory = directory
+      const streamingProcessArgs: StreamingProcessArgs = {
+        fileDirectory, cacheDirectory, id, directory: streamingDirectory,
+        file, commandOutput: streamingCommandOutput
+      }
+      const connection = streamingProcessCreate(streamingProcessArgs)
+      connection.cut(connection.defaultContent())
+    } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
@@ -211,8 +203,8 @@ class StreamingServer extends ServerClass {
 
     const {
       videoCodec, width, height, audioCodec, audioBitrate, audioChannels,
-      audioRate, options, format
-    } = this.args.output[OutputFormat.Hls]!
+      audioRate, format
+    } = this.args.streamingOptions[StreamingFormat.Hls].commandOutput
     // const flags = options && `[${Object.entries(options).map(([k, v]) => `${k}=${v}`).join(':')}]`
 
     switch (format) {
@@ -221,7 +213,7 @@ class StreamingServer extends ServerClass {
         // if (flags) task.hlsFlags = flags
         break
       }
-      // case OutputFormat.Rtmp: {
+      // case StreamingFormat.Rtmp: {
       //   task.rtmp = true
       //   task.rtmpApp = 'stream'
       //   break
@@ -262,6 +254,8 @@ class StreamingServer extends ServerClass {
 
   startServer(app: Express.Application, activeServers: HostServers): void {
     super.startServer(app, activeServers)
+    this.fileServer = activeServers.file
+
     app.post(Endpoints.streaming.start, this.start)
     app.post(Endpoints.streaming.preload, this.preload)
     app.post(Endpoints.streaming.status, this.status)
@@ -284,24 +278,12 @@ class StreamingServer extends ServerClass {
       res.send(connection)
     })
 
-    // app.get('/webrtc/:id/remote-description', (req, res) => {
-    //   console.log('GET webrtc/:id/remote-description')
-    //   const { id } = req.params
-    //   const connection = WebrtcConnection.getConnection(id)
-    //   if (!connection) {
-    //     res.send({ error: `no connection ${id}` })
-    //     return
-    //   }
-    //   res.send(connection.toJSON().remoteDescription)
-    // })
-
-    // app.post('/webrtc/:id/remote-description', )
-
     app.get(`/hls/:id/*.${ExtTs}`, async (req, res) => {
+      const hlsFormatOptions = this.args.streamingOptions.hls
       const { params, path: requestPath } = req
       const fileName = path.basename(requestPath)
       const { id } = params
-      const file = `${this.args.hlsStreamingDir}/${id}/${fileName}`
+      const file = `${hlsFormatOptions.directory}/${id}/${fileName}`
 
       // console.log("file", file)
       try { res.send(fs.readFileSync(file)) }
@@ -313,8 +295,10 @@ class StreamingServer extends ServerClass {
 
     app.get(`/hls/:id/*.${ExtHls}`, async (req, res) => {
       const { id } = req.params
+      const hlsFormatOptions = this.args.streamingOptions.hls
       try {
-        const filePath = this.latestHlsFile(id)
+
+        const filePath = directoryLatest(path.join(hlsFormatOptions.directory, id), ExtHls)
         if (!filePath) {
           console.error(`404 /hls/:id/*.${ExtHls}`, id)
           res.sendStatus(404)
@@ -334,14 +318,13 @@ class StreamingServer extends ServerClass {
     const { body } = req
     const { id } = body
     const response: StreamingStatusResponse = {}
-    const connection = EncodeConnection.get(id)
-    if (connection) {
+    const streamingProcess = streamingProcessGet(id)
+    if (streamingProcess) {
+      const { format } = streamingProcess.args.commandOutput
+      const streamingFormat = format as string as StreamingFormat
 
-      const { format } = connection.outputObject
-      const serverType = format === 'hls' ? OutputFormat.Hls : OutputFormat.Rtmp
-
-      if (this.streamReady(id, serverType)) {
-        response.streamUrl = this.streamUrl(id, serverType)
+      if (this.streamReady(id, streamingFormat)) {
+        response.streamUrl = this.streamUrl(id, streamingFormat)
       }
     } else {
       response.error = 'stream not found'
@@ -351,21 +334,18 @@ class StreamingServer extends ServerClass {
 
   stopServer(): void { WebrtcConnection.close() }
 
-  streamReady(id: string, outputFormat: OutputFormat): boolean {
-    if (!(outputFormat === OutputFormat.Hls || outputFormat === OutputFormat.Rtmp)) return false
-
+  streamReady(id: string, streamingFormat: StreamingFormat): boolean {
+    const formatOptions: FormatOptions = this.args.streamingOptions[streamingFormat]
     const paths: string[] = []
-
-    switch (outputFormat) {
-      case OutputFormat.Hls: {
-        paths.push(path.resolve(this.args.hlsStreamingDir, id, this.args.hlsStreamingFile))
-        paths.push(path.resolve(this.args.hlsStreamingDir, id, this.args.hlsFile))
-
+    switch (streamingFormat) {
+      case StreamingFormat.Hls: {
+        paths.push(path.resolve(formatOptions.directory, id, formatOptions.segmentFile))
+        paths.push(path.resolve(formatOptions.directory, id, formatOptions.file))
         break
       }
-      case OutputFormat.Rtmp: {
-        paths.push(path.resolve(this.args.rtmpStreamingDir, id, this.args.rtmpStreamingFile))
-
+      case StreamingFormat.Rtmp:
+      default: {
+        paths.push(path.resolve(formatOptions.directory, id, formatOptions.file))
         break
       }
     }
@@ -374,32 +354,17 @@ class StreamingServer extends ServerClass {
     return paths.every(file => fs.existsSync(file))
   }
 
-  streamUrl(id: string, outputFormat: OutputFormat): string | undefined {
-    if (!(outputFormat === OutputFormat.Hls || outputFormat === OutputFormat.Rtmp)) return
-
-    let url = ''
-    let file = ''
-    switch (outputFormat) {
-      case OutputFormat.Hls: {
-        url = this.args.hlsStreamingUrl
-        file = this.args.hlsFile
-        break
-      }
-      case OutputFormat.Rtmp: {
-        url = this.args.rtmpStreamingUrl
-        file = this.args.rtmpStreamingFile
-        break
-      }
-    }
-    if (!(url && file)) return
-
+  streamUrl(id: string, streamingFormat: StreamingFormat): string | undefined {
+    const formatOptions: FormatOptions = this.args.streamingOptions[streamingFormat]
+    const { url, file } = formatOptions
     return `${url}/${id}/${file}`
   }
 
   webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (_, res) => {
     try {
       // const { localDescription } = req.body
-      const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, this.args.output[OutputFormat.Hls])
+      const hlsFormatOptions = this.args.streamingOptions[StreamingFormat.Hls]
+      const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
 
       await connection.doOffer()
 

@@ -1,6 +1,5 @@
-import { ThemeDefinitionClass } from "./ThemeDefinition"
-import { ThemeClass } from "./ThemeInstance"
-import { DefinitionType } from "../../Setup/Enums"
+import { ThemeDefinitionClass } from "./ThemeDefinitionClass"
+import { ThemeClass } from "./ThemeClass"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
 import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
@@ -22,7 +21,7 @@ describe("Theme", () => {
       test("returns expected instance", () => {
         const colorThemeObject = { frame: 10, id: colorId }
         const colorThemeInstance = themeInstance(colorThemeObject)
-        expect(colorThemeInstance.id).toEqual(colorId)
+        expect(colorThemeInstance.definition.id).toEqual(colorId)
         expect(colorThemeInstance.frame).toEqual(10)
       })
     })

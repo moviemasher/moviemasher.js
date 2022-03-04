@@ -31,6 +31,9 @@ enum RawType {
   Video = 'video',
   Image = 'image',
 }
+
+const RawTypes = Object.values(RawType).map(String)
+
 enum TrackType {
   Audio = 'audio',
   Transition = 'transition',
@@ -49,11 +52,11 @@ enum ClipType {
   VideoStream = 'videostream',
   // AudioStream = 'audiostream',
 }
-
+const ClipTypes = Object.values(ClipType)
 
 enum OutputFormat {
   AudioConcat = 'wav',
-  Dash = 'mdash',
+  Mdash = 'mdash',
   Flv = 'flv',
   Hls = 'hls',
   Jpeg = 'jpeg',
@@ -62,10 +65,16 @@ enum OutputFormat {
   Pipe = 'yuv4mpegpipe', // really an import format
   Png = 'png',
   Rtmp = 'rtmp',
-  Rtmps = 'rtmps',
   VideoConcat = 'mpg',
 }
 
+enum StreamingFormat {
+  Hls = 'hls',
+  Rtmp = 'rtmp',
+  Mdash = 'mdash',
+}
+
+// const StreamingFormats = Object.values(StreamingFormat).map(String)
 
 enum OutputType {
   Audio = 'audio',
@@ -74,8 +83,6 @@ enum OutputType {
   VideoSequence = 'videosequence',
   Waveform = 'waveform',
 }
-const ClipTypes = Object.values(ClipType)
-
 // NOTE: order important here - determines initialization
 enum DefinitionType {
   Filter = 'filter',
@@ -124,7 +131,6 @@ enum ModuleType {
   Theme = 'theme',
   Transition = 'transition',
 }
-const ModuleTypes = Object.values(ModuleType)
 
 enum GraphFileType {
   Svg = 'svg',
@@ -138,7 +144,7 @@ enum LoadType {
   Image = 'image',
   Video = 'video',
 }
-const LoadTypes = Object.values(LoadType)
+const LoadTypes = Object.values(LoadType).map(String)
 
 enum MoveType {
   Audio = 'audio',
@@ -149,6 +155,7 @@ enum MoveType {
 enum DataType {
   String = 'string',
   Number = 'number',
+
   Numbers = 'numbers',
 
   Frame = 'frame',
@@ -159,13 +166,14 @@ enum DataType {
 
   Scaler = 'scaler',
   Merger = 'merger',
-  Font = 'font',
+  Object = 'object',
   Effects = 'effects',
+
+  Font = 'font',
   Boolean = 'boolean',
   Direction4 = 'direction4',
   Direction8 = 'direction8',
   Mode = 'mode',
-  Object = 'object'
 }
 const DataTypes = Object.values(DataType)
 
@@ -191,8 +199,6 @@ enum GraphType {
   Cast = 'cast',
 }
 
-const OutputFormats = Object.values(OutputFormat)
-
 enum ServerType {
   Api = 'api',
   Data = 'data',
@@ -208,7 +214,6 @@ export {
   AVType,
   ClipType,
   ClipTypes,
-  GraphType,
   DataType,
   DataTypes,
   DefinitionType,
@@ -216,18 +221,20 @@ export {
   EditType,
   EventType,
   GraphFileType,
+  GraphType,
   LoadType,
   LoadTypes,
   MasherAction,
   ModuleType,
-  ModuleTypes,
   MoveType,
   OutputFormat,
-  OutputFormats,
   OutputType,
   RawType,
+  RawTypes,
   ServerType,
   ServerTypes,
+  StreamingFormat,
+  // StreamingFormats,
   TrackType,
   TrackTypes,
   TransformType,

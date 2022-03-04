@@ -39,42 +39,44 @@ const effectFromId = (id : string) : Effect => {
 }
 
 const effectInitialize = () : void => {
-  new EffectDefinitionClass(effectBlurJson)
-  new EffectDefinitionClass(effectChromaKeyJson)
-  new EffectDefinitionClass(effectEmbossJson)
-  new EffectDefinitionClass(effectGrayscaleJson)
-  new EffectDefinitionClass(effectSepiaJson)
-  new EffectDefinitionClass(effectSharpenJson)
-  new EffectDefinitionClass(effectTextJson)
+  [
+    effectBlurJson,
+    effectChromaKeyJson,
+    effectEmbossJson,
+    effectGrayscaleJson,
+    effectSepiaJson,
+    effectSharpenJson,
+    effectTextJson,
+  ].forEach(instance => effectInstall(instance))
 }
 
-const effectDefine = (object : EffectDefinitionObject) : EffectDefinition => {
+const effectInstall = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
   Definitions.uninstall(id)
-  return effectDefinition(object)
+  const instance = effectDefinition(object)
+  Definitions.install(instance)
+  return instance
 }
 
 const EffectFactoryImplementation = {
-  define: effectDefine,
   definition: effectDefinition,
   definitionFromId: effectDefinitionFromId,
   fromId: effectFromId,
   initialize: effectInitialize,
-  install: effectDefine,
+  install: effectInstall,
   instance: effectInstance,
 }
 
 Factories[DefinitionType.Effect] = EffectFactoryImplementation
 
 export {
-  effectDefine,
   effectDefinition,
   effectDefinitionFromId,
   EffectFactoryImplementation,
   effectFromId,
-  effectDefine as effectInstall,
+  effectInstall,
   effectInitialize,
   effectInstance,
 }

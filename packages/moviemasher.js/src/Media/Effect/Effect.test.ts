@@ -4,6 +4,7 @@ import { idGenerate } from "../../Utility/Id"
 
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { MashEditorFactory } from "../../Editor/MashEditor/MashEditorFactory"
+import { JestPreloader } from "../../../../../dev/test/JestPreloader"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -11,7 +12,7 @@ describe("Effect", () => {
       const effectObject = { id : "com.moviemasher.effect.chromakey", type: "effect" }
       const matteObject =  { id: idGenerate(), url: 'green-text-on-white.png' }
       const imageObject = { id: idGenerate(), url: 'cable.jpg' }
-      const masher = MashEditorFactory.instance()
+      const masher = MashEditorFactory.instance({ preloader: new JestPreloader()})
       masher.imageSize = { width: 640, height: 480 }
       masher.addTrack(TrackType.Video)
       expect(masher.mash.tracks.length).toBe(3)

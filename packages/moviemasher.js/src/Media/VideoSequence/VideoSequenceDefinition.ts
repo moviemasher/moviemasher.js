@@ -1,22 +1,21 @@
 import { DefinitionType, TrackType, DataType, LoadType, GraphType, AVType } from "../../Setup/Enums"
-import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs } from "../../declarations"
-import { Time, Times } from "../../Helpers/Time"
+import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
+import { Time } from "../../Helpers/Time"
 import { urlAbsolute} from "../../Utility/Url"
-import { DefinitionBase } from "../../Base/Definition"
 import { VideoSequenceClass } from "./VideoSequenceInstance"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
 import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
 import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
 import { Errors } from "../../Setup/Errors"
-import { Definitions } from "../../Definitions/Definitions"
 import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { Default } from "../../Setup/Default"
 import { Property } from "../../Setup/Property"
 import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
 import { Preloader } from "../../Preloader/Preloader"
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
-const WithClip = ClipDefinitionMixin(DefinitionBase)
+const WithClip = ClipDefinitionMixin(PreloadableDefinition)
 const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible)
 const WithVisible = VisibleDefinitionMixin(WithAudibleFile)
@@ -26,12 +25,11 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
     super(...args)
     const [object] = args
     const {
-      padding, url, begin, fps, increment, pattern, source
+      padding, url, begin, fps, increment, pattern
     } = <VideoSequenceDefinitionObject>object
-    if (!url) throw Errors.invalid.definition.url
+    if (!url) throw Errors.invalid.definition.url + 'VIDEOSEQUENCE'
     this.url = url
 
-    if (source) this.source = source
     if (typeof begin !== "undefined") this.begin = begin
     if (fps) this.fps = fps
     if (increment) this.increment = increment
@@ -42,16 +40,11 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
       this.padding = String(lastFrame).length
     }
     this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
-    Definitions.install(this)
   }
 
   begin = Default.definition.videosequence.begin
 
-  definitionUrls(start: Time, end?: Time): string[] {
-    return this.framesArray(start, end).map(frame => urlAbsolute(this.urlForFrame(frame)))
-  }
-
-  files(args: FilesArgs): GraphFile[] {
+  files(args: FilesArgs): GraphFiles {
     const files = super.files(args) // maybe get the audio file
     const { start, end, graphType, avType } = args
     if (avType !== AVType.Audio) {
@@ -84,8 +77,6 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
 
   increment = Default.definition.videosequence.increment
 
-  get inputSource(): string { return this.source }
-
   get instance() : VideoSequence { return this.instanceFromObject(this.instanceObject) }
 
   instanceFromObject(object : VideoSequenceObject) : VideoSequence {
@@ -96,7 +87,7 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
     const frames = this.framesArray(time)
     const [frame] = frames
     const url = this.urlForFrame(frame)
-    const file: GraphFile = { type: LoadType.Image, file: url }
+    const file: GraphFile = { type: LoadType.Image, file: url, definition: this }
     if (!preloader.loadedFile(file)) return
 
     return preloader.getFile(file)

@@ -1,15 +1,14 @@
-import { Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs } from "../../declarations"
+import { Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
 import { AVType, DataType, GraphType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { AudibleDefinitionClass, AudibleDefinitionObject } from "./Audible"
+import { AudibleDefinition, AudibleDefinitionClass, AudibleDefinitionObject } from "./Audible"
 import { ClipDefinitionClass } from "../Clip/Clip"
 import { Property } from "../../Setup/Property"
-import { urlAbsolute } from "../../Utility/Url"
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { Preloader } from "../../Preloader/Preloader"
 
 function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : AudibleDefinitionClass & T {
-  return class extends Base {
+  return class extends Base implements AudibleDefinition {
     constructor(...args: Any[]) {
       super(...args)
       const [object] = args
@@ -27,30 +26,28 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
       this.properties.push(new Property({ name: "gain", type: DataType.Number, value: 1.0 }))
     }
 
-    get absoluteUrl(): string { return urlAbsolute(this.urlAudible) }
-
     audible = true
 
-    definitionUrls() : string[] { return [this.absoluteUrl] }
-
-    files(args: FilesArgs): GraphFile[] {
+    files(args: FilesArgs): GraphFiles {
       const { avType, graphType, end } = args
       if (avType === AVType.Video) return []
       if (graphType === GraphType.Canvas && !end) return []
 
-      const graphFile: GraphFile = { type: LoadType.Audio, file: this.urlAudible }
+      const graphFile: GraphFile = {
+        type: LoadType.Audio, file: this.urlAudible, definition: this
+      }
       return [graphFile]
     }
 
-    get inputSource(): string { return this.source }
-
-    loadedAudible(preloader: Preloader): AudibleSource | undefined {
-      const graphFile: GraphFile = { file: this.urlAudible, type: LoadType.Audio }
+    audibleSource(preloader: Preloader): AudibleSource | undefined {
+      const graphFile: GraphFile = {
+        file: this.urlAudible, type: LoadType.Audio, definition: this
+      }
       if (!preloader.loadedFile(graphFile)) return
       const cached: LoadedAudio = preloader.getFile(graphFile)
       if (!cached) return
 
-      // console.debug(this.constructor.name, "loadedAudible", cached.constructor.name)
+      // console.debug(this.constructor.name, "audibleSource", cached.constructor.name)
       return AudibleContextInstance.createBufferSource(cached)
     }
 

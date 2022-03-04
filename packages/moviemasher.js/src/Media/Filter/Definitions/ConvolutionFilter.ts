@@ -4,6 +4,7 @@ import { Evaluator } from "../../../Helpers/Evaluator"
 import { pixelNeighboringRgbas } from "../../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { Errors } from "../../../Setup/Errors"
+import { Parameter } from "../../../Setup"
 
 const RBGA = 'rgba'
 
@@ -28,8 +29,8 @@ const parse = (evaluated : ValueObject) => {
  * @category Filter
  */
 class ConvolutionFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
-    const options = parse(evaluated)
+  draw(evaluator : Evaluator) : VisibleContext {
+    const options = parse(evaluator.valueObject)
     const { context } = evaluator
     if (!context) throw Errors.invalid.context
 
@@ -58,8 +59,16 @@ class ConvolutionFilter extends FilterDefinitionClass {
     return context
   }
 
-  // id = 'convolution'
-
+  parameters: Parameter[] = [
+    new Parameter({ "name": "0m", "value": "1 1 1 1 1 1 1 1 1" }),
+    new Parameter({ "name": "1m", "value": "1 1 1 1 1 1 1 1 1" }),
+    new Parameter({ "name": "2m", "value": "1 1 1 1 1 1 1 1 1" }),
+    new Parameter({ "name": "3m", "value": "1 1 1 1 1 1 1 1 1" }),
+    new Parameter({ "name": "0rdiv", "value": "1/9" }),
+    new Parameter({ "name": "1rdiv", "value": "1/9" }),
+    new Parameter({ "name": "2rdiv", "value": "1/9" }),
+    new Parameter({ "name": "3rdiv", "value": "1/9" }),
+  ]
 }
 
 export { ConvolutionFilter }

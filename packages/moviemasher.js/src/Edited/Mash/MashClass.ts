@@ -1,38 +1,39 @@
 import {
-  Any, Interval, LoadPromise, Size,
-  FilterGraph, FilterChain, GraphFilter, UnknownObject, VisibleContextData, FilterGraphs, FilterGraphArgs, FilterGraphsArgs, FilterChainArgs, GraphFile, FilesArgs, FilesOptions
-} from "../../declarations"
-import { AVType, EventType, GraphType, TrackType } from "../../Setup/Enums"
+  Interval, LoadPromise, Size,
+  FilterGraph, FilterChain, GraphFilter, UnknownObject, VisibleContextData,
+  FilterGraphs, FilterGraphArgs, FilterGraphOptions, FilterChainArgs,
+  FilesArgs, GraphFiles, FilterChains} from "../../declarations"
+import { AVType, DefinitionType, EventType, GraphType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { isAboveZero, isPopulatedString, isPositive } from "../../Utility/Is"
 import { TimeRange } from "../../Helpers/TimeRange"
 import { Time } from "../../Helpers/Time"
 import { Definition } from "../../Base/Definition"
-import { Clip, ClipDefinition } from "../../Mixin/Clip/Clip"
-import { Visible } from "../../Mixin/Visible/Visible"
+import { Clip, ClipDefinition, Clips } from "../../Mixin/Clip/Clip"
+import { Visible, VisibleContent, VisibleContents } from "../../Mixin/Visible/Visible"
 import { Audible } from "../../Mixin/Audible/Audible"
 import { Composition } from "../../Editor/MashEditor/Composition"
 import { ChangeAction } from "../../Editor/MashEditor/Actions/Action/ChangeAction"
-import { Mash, MashObject } from "./Mash"
+import { Mash, MashArgs } from "./Mash"
 import { idGenerate } from "../../Utility/Id"
 import { Action } from "../../Editor/MashEditor/Actions/Action/Action"
 import { Emitter } from "../../Helpers/Emitter"
-import { sortByLayer } from "../../Utility/Sort"
+import { sortByLayer, sortByTrack } from "../../Utility/Sort"
 import { Factory } from "../../Definitions/Factory/Factory"
 import { colorValid } from "../../Utility/Color"
-import { Track, TrackObject } from "../../Media/Track/Track"
+import { Track, TrackArgs, TrackObject } from "../../Media/Track/Track"
 import { Preloader } from "../../Preloader/Preloader"
 import { EmptyMethod } from "../../Setup/Constants"
+import { Transition } from "../../Media/Transition/Transition"
 
 interface TimeRangeClips {
-  clips: Clip[]
+  clips: Clips
   timeRange: TimeRange
 }
 
 class MashClass implements Mash {
-  constructor(...args: Any[]) {
-    const object = args[0] || {}
+  constructor(args: MashArgs) {
     const {
       createdAt,
       tracks,
@@ -40,8 +41,10 @@ class MashClass implements Mash {
       id,
       label,
       quantize,
+      frame,
+      definitions,
       ...rest
-    } = <MashObject>object
+    } = args
 
     if (id) this._id = id
     Object.assign(this.data, rest)
@@ -50,18 +53,18 @@ class MashClass implements Mash {
     if (label && isPopulatedString(label)) this.label = label
     if (backcolor && isPopulatedString(backcolor)) this._backcolor = backcolor
     if (createdAt) this.createdAt = createdAt
-
+    if (frame) this._frame = frame
     if (tracks) tracks.forEach(track => {
-      track.layer = this.trackCount(track.trackType)
-      const instance = Factory.track.instance(track)
+      const trackArgs: TrackArgs = {
+        ...track, definitions, layer: this.trackCount(track.trackType)
+      }
+      const instance = Factory.track.instance(trackArgs)
       this.assureClipsHaveFrames(instance.clips)
       this.tracks.push(instance)
     })
-
     this.assureTrackOfType(TrackType.Video)
     this.assureTrackOfType(TrackType.Audio)
     this.tracks.sort(sortByLayer)
-
   }
 
   addClipToTrack(clip: Clip, trackIndex = 0, insertIndex = 0, frame? : number): void {
@@ -90,7 +93,7 @@ class MashClass implements Mash {
     return track
   }
 
-  private assureClipsHaveFrames(clips: Clip[]): void {
+  private assureClipsHaveFrames(clips: Clips): void {
     clips.filter(clip => !isPositive(clip.frames)).forEach(clip => {
       const definition = <ClipDefinition>clip.definition
       clip.frames = definition.frames(this.quantize)
@@ -185,6 +188,8 @@ class MashClass implements Mash {
   }
 
   clipIntersects(clip: Clip, range: TimeRange): boolean {
+    if (!clip.frames) return true
+
     return clip.timeRange(this.quantize).intersects(range)
   }
 
@@ -196,10 +201,45 @@ class MashClass implements Mash {
     return this.trackOfTypeAtIndex(clip.trackType, index)
   }
 
-  get clips(): Clip[] { return this.clipsInTracks() }
+  get clips(): Clips { return this.clipsInTracks() }
 
-  private clipsAtTimes(start: Time, end?: Time): Clip[] {
-    const objects: Clip[] = this.clipsVisible(start, end)
+  private visibleContents(timeRange: TimeRange): VisibleContents {
+    const scaled = timeRange.scale(this.quantize)
+    const both = this.clipsVisibleInTimeRange(scaled)
+    const videos = both.filter(clip => clip.type !== DefinitionType.Transition)
+    const videosByTrack = Object.fromEntries(videos.map(video => ([video.track, video])))
+    const transitionTypes = both.filter(clip => clip.type === DefinitionType.Transition)
+    const transitions = transitionTypes.map(clip => clip as Transition)
+
+    const contents: VisibleContents = []
+    const tracks: string[] = []
+    transitions.forEach(transition => {
+      const { fromTrack, toTrack } = transition
+      const from = videosByTrack[fromTrack]
+      const to = videosByTrack[toTrack]
+      const fromOrTo = from || to
+      if (!fromOrTo) return
+
+      const someTracks: number[] = []
+      if (to) someTracks.push(to.track)
+      if (from) someTracks.push(from.track)
+      tracks.push(...someTracks.map(String))
+      const track = Math.min(...someTracks)
+      const visibleTransition: VisibleContent = {
+        visible: transition, track, from, to, transition
+      }
+      contents.push(visibleTransition)
+    })
+    const others = Object.keys(videosByTrack).filter(track => !tracks.includes(track))
+    contents.push(...others.map(track => (
+      { track: Number(track), visible: videosByTrack[track] }
+    )))
+    return contents.sort(sortByTrack)
+  }
+
+
+  private clipsAtTimes(start: Time, end?: Time): Clips {
+    const objects: Clips = this.clipsVisible(start, end)
     if (end) objects.push(...this.clipsAudible(start, end))
     return [...new Set(objects)]
   }
@@ -214,16 +254,22 @@ class MashClass implements Mash {
     })
   }
 
-  private clipsInTracks(tracks?: Track[]): Clip[] {
+  clipsInTimeRange(timeRange?: TimeRange, avType = AVType.Both): Clip[] {
+    const range = timeRange || this.timeRange
+    const [start, end] = range.times
+
+    const clips: Clips = []
+    if (avType !== AVType.Audio) clips.push(...this.clipsVisible(start, end))
+    if (avType !== AVType.Video) clips.push(...this.clipsAudible(start, end))
+
+    return clips
+  }
+
+  private clipsInTracks(tracks?: Track[]): Clips {
     const clipTracks = tracks || this.tracks
     return clipTracks.map(track => track.clips).flat()
   }
 
-  private filterIntersecting(clips: Clip[], timeRange: TimeRange): Clip[] {
-    const range = timeRange.scale(this.quantize)
-    return clips.filter(clip => this.clipIntersects(clip, range))
-
-  }
   private get clipsAudibleInTracks(): Audible[] {
     return <Audible[]> this.clipsInTracks().filter(clip => clip.audible && !clip.muted)
   }
@@ -240,6 +286,8 @@ class MashClass implements Mash {
   clipsVisible(start: Time, end?: Time): Visible[] {
     const range = end && TimeRange.fromTimes(start, end)
     return this.clipsVideo.filter(clip => {
+      if (!clip.frames) return true
+
       const clipRange = clip.timeRange(this.quantize)
       if (range) return clipRange.intersects(range)
 
@@ -256,7 +304,7 @@ class MashClass implements Mash {
     return this.clipsVideo.filter(clip => this.clipIntersects(clip, range))
   }
 
-  private compositeAudibleClips(clips: Clip[]): void {
+  private compositeAudibleClips(clips: Clips): void {
     if (this._paused) return
 
     const audibleClips = clips.filter(clip => clip.audible && !clip.muted)
@@ -282,18 +330,6 @@ class MashClass implements Mash {
     return this._composition
   }
 
-  compositeVisible(): void {
-    const { time, composition } = this
-    const clips = this.clipsVisibleAtTime(time)
-    composition.compositeVisible(time, clips)
-  }
-
-  compositeVisibleRequest(): void {
-    const { time, composition } = this
-    const clips = this.clipsVisibleAtTime(time)
-    composition.compositeVisibleRequest(time, clips)
-  }
-
   createdAt = ''
 
   data: UnknownObject = {}
@@ -308,12 +344,22 @@ class MashClass implements Mash {
     delete this._composition
   }
 
+  draw(): void {
+    const { time, composition } = this
+    composition.compositeVisible(time, this.visibleContents(TimeRange.fromTime(time)))
+  }
+
   private drawInterval?: Interval
+
+  private drawRequest(): void {
+    const { time, composition } = this
+    composition.compositeVisibleRequest(time, this.visibleContents(TimeRange.fromTime(time)))
+  }
 
   private drawTime(time: Time): void {
     const timeChange = time !== this.time
     this.drawnTime = time
-    this.compositeVisibleRequest()
+    this.drawRequest()
     this.emitter?.emit(timeChange ? EventType.Time : EventType.Loaded)
   }
 
@@ -328,12 +374,13 @@ class MashClass implements Mash {
     const streamableClips = clips.filter(clip => clip.definition.streamable)
     if (!streamableClips.length) return
 
-    const files = this.unloadedGraphFiles({ timeRange: TimeRange.fromTime(time) })
+    const filterGraphArgs = this.filterGraphsArgs(TimeRange.fromTime(time))
+    const files = this.unloadedGraphFiles(filterGraphArgs)
 
     const loading = files.length
     if (loading) return
 
-    this.compositeVisibleRequest()
+    this.drawRequest()
   }
 
   private drawWhilePlaying() {
@@ -393,57 +440,82 @@ class MashClass implements Mash {
 
   get endTime(): Time { return Time.fromArgs(this.frames, this.quantize) }
 
-  filterGraph(args: FilterGraphArgs): FilterGraph {
-    const { size, timeRange, avType } = args
+  private filterGraph(args: FilterGraphArgs): FilterGraph {
+    const { size, timeRange, avType, justGraphFiles } = args
     const { quantize, backcolor } = this
-    const types = new Set<AVType>()
+    const avTypes = new Set<AVType>()
+    const filterChains: FilterChains = []
 
     const filterGraph: FilterGraph = {
       avType,
       duration: timeRange.lengthSeconds,
-      filterChains: []
+      filterChains
     }
-    const sizeString = `${size.width}x${size.height}`
-    const colorFilter: GraphFilter = {
-      filter: 'color', options: { color: backcolor, size: sizeString },
-      outputs: ['L0']
-    }
-    let filterChain: FilterChain = {
-      files: [],
-      inputs: [],
-      filters: [colorFilter],
-    }
-    filterGraph.filterChains.push(filterChain)
-    const { frames, startTime, endTime } = timeRange
-
-    const clips = this.clipsAtTimes(startTime, frames > 1 ? endTime : undefined)
-    let inputCount = 0
-    const filterChains = clips.flatMap((clip, index) => {
-      if (clip.audible) types.add(AVType.Audio)
-      if (clip.visible) types.add(AVType.Video)
-
-      const layerArgs: FilterChainArgs = {
-        ...args,
-        layerIndex: index + 1,
-        clipTimeRange: clip.timeRange(quantize),
-        timeRange,
-        inputCount, prevFilterChain: filterChain
+    if (avType !== AVType.Audio) {
+      if (!justGraphFiles) {
+        const sizeString = `${size.width}x${size.height}`
+        const colorFilter: GraphFilter = {
+          filter: 'color', options: { color: backcolor, size: sizeString },
+          outputs: ['BACK']
+        }
+        let filterChain: FilterChain = {
+          graphFiles: [],
+          graphFilters: [colorFilter],
+        }
+        filterChains.push(filterChain)
       }
-      const chains = clip.filterChains(layerArgs)
-      chains.forEach(chain => { inputCount += chain.inputs.length })
 
-      return chains
-    })
-    filterGraph.filterChains.push(...filterChains)
-    if (types.size === 1) filterGraph.avType = [...types][0]
+      const visibleContents = this.visibleContents(timeRange)
+      const { length } = visibleContents
+      visibleContents.forEach((visibleContent, index) => {
+        const { visible, transition, to, from } = visibleContent
+        const layerArgs: FilterChainArgs = {
+          index, length,
+          preloader: this.preloader,
+          ...args,
+          filterGraph,
+          clip: visible,
+          quantize,
+        }
+
+        if (transition) {
+          if (to?.audible || from?.audible) avTypes.add(AVType.Audio)
+          if (to?.visible || from?.visible) avTypes.add(AVType.Video)
+          filterChains.push(transition.transitionFilterChains(layerArgs, from, to, backcolor))
+        } else {
+          if (visible.audible) avTypes.add(AVType.Audio)
+          if (visible.visible) avTypes.add(AVType.Video)
+          filterChains.push(visible.filterChain(layerArgs))
+        }
+      })
+    }
+    if (avType !== AVType.Video) {
+      // TODO: add audio
+
+    }
+
+    if (avTypes.size === 1) filterGraph.avType = [...avTypes][0]
     return filterGraph
   }
 
-  filterGraphs(args: FilterGraphsArgs): FilterGraphs {
-    return this.timeRangeClipsAtTimes(args).map(({ timeRange }) => {
-      return this.filterGraph({ ...args, timeRange })
+  filterGraphs(args: FilterGraphOptions): FilterGraphs {
+
+    return this.timeRanges(args).map(timeRange => {
+      const filterGraphArgs: FilterGraphArgs = {
+        justGraphFiles: false,
+        graphType: GraphType.Canvas,
+        ...args, timeRange
+      }
+      return this.filterGraph(filterGraphArgs)
     })
   }
+
+  private filterIntersecting(clips: Clips, timeRange: TimeRange): Clips {
+    const range = timeRange.scale(this.quantize)
+    return clips.filter(clip => this.clipIntersects(clip, range))
+  }
+
+  private _frame = 0 // initial frame supplied to constructor
 
   get frame(): number { return this.time.scale(this.quantize, "floor").frame }
 
@@ -469,26 +541,12 @@ class MashClass implements Mash {
     }
   }
 
-  graphFiles(options: FilesOptions): GraphFile[] {
-    const { timeRange, graphType, avType } = options
-
-    const range = timeRange || this.timeRange
-    const start = range.startTime
-    const end = range.endTime
-
-    const args: FilesArgs = {
-      start, end,
-      quantize: this.quantize,
-      graphType: graphType || GraphType.Canvas,
-      avType: avType || AVType.Video
-    }
-
-    const clips: Clip[] = []
-    if (avType !== AVType.Audio) clips.push(...this.clipsVisible(start, end))
-    if (avType !== AVType.Video) clips.push(...this.clipsAudible(start, end))
-
-
-    return clips.flatMap(clip => clip.files(args))
+  graphFiles(options: FilterGraphOptions): GraphFiles {
+    options.justGraphFiles = true
+    const filterGraphs = this.filterGraphs(options)
+    const filterChains = filterGraphs.flatMap(filterGraph => filterGraph.filterChains)
+    const graphFiles = filterChains.flatMap(filterChain => filterChain.graphFiles)
+    return graphFiles
   }
 
   handleAction(action: Action): void {
@@ -521,50 +579,18 @@ class MashClass implements Mash {
     if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
 
     this.composition.visibleContext.size = value
-
-    // console.log("Mash.imageSize", value, this.composition.visibleContext.size)
-
     const promise = this.preloadPromise
-    if (promise) promise.then(() => { this.compositeVisible() })
-    else this.compositeVisible()
+    if (promise) promise.then(() => { this.draw() })
+    else this.draw()
   }
 
   private _id = ''
 
   get id(): string { return this._id ||= idGenerate() }
 
-
   label = ''
 
-  // private oldloadPromise(timeOrRange: Time, avType?: AVType): LoadPromise  {
-  //   const range = timeOrRange instanceof TimeRange
-  //   const start = range ? timeOrRange.startTime : timeOrRange
-  //   const end = range ? timeOrRange.endTime : undefined
-
-  //   const loading: Clip[] = []
-  //   if (avType !== AVType.Audio) loading.push(...this.clipsVisible(start, end))
-  //   if (avType !== AVType.Video) loading.push(...this.clipsAudible(start, end))
-
-  //   const clips = [... new Set(loading)]
-  //   const voidOrPromises = clips.map(clip => clip.loadClip(this.quantize, start, end))
-  //   const promises = voidOrPromises.filter(Boolean)
-  //   switch (promises.length) {
-  //     case 0: return Promise.resolve()
-  //     case 1: {
-  //       const [promise] = promises
-  //       return promise!
-  //     }
-  //     default: return Promise.all(promises).then()
-  //   }
-  // }
-
-
-  unloadedGraphFiles(options: FilesOptions): GraphFile[]{
-
-    options.timeRange ||= this.timeRange
-    options.graphType ||= GraphType.Canvas
-    if (!options.avType && options.timeRange!.frames === 1) options.avType = AVType.Video
-
+  private unloadedGraphFiles(options: FilterGraphOptions): GraphFiles {
     const graphFiles = this.graphFiles(options)
     if (!graphFiles.length) return []
 
@@ -573,38 +599,6 @@ class MashClass implements Mash {
     const files = graphFiles.filter(file => !preloader.loadedFile(file))
     return files
   }
-
-  loadPromise(options: FilesOptions): LoadPromise {
-    const files = this.unloadedGraphFiles(options)
-    if (!files.length) return Promise.resolve()
-
-    return this.preloader.loadFilesPromise(files).then(EmptyMethod)
-  }
-
-  // private get loadUrls(): string[] {
-  //   const [start, end] = this.startAndEnd
-  //   const clips = this.clipsAtTimes(start, end)
-  //   return clips.flatMap(clip => clip.clipUrls(this.quantize, start, end))
-  // }
-
-  // private get loadedDefinitions(): DefinitionTimes {
-  //   const map = <DefinitionTimes>new Map()
-  //   const [start, end] = this.startAndEnd
-  //   this.clipsAtTimes(start, end).forEach(clip => {
-  //     const { definitions } = clip
-  //     const times = [clip.definitionTime(this.quantize, start)]
-  //     if (end) times.push(clip.definitionTime(this.quantize, end))
-
-  //     definitions.forEach(definition => {
-  //       if (!map.has(definition)) map.set(definition, [])
-  //       const definitionTimes = map.get(definition)
-  //       if (!definitionTimes) throw Errors.internal
-
-  //       definitionTimes.push(times)
-  //     })
-  //   })
-  //   return map
-  // }
 
   loop = false
 
@@ -660,7 +654,7 @@ class MashClass implements Mash {
     }
   }
 
-  _preloader?: Preloader
+  private _preloader?: Preloader
   get preloader(): Preloader {
     if (!this._preloader) throw Errors.internal + 'mash preloader false'
 
@@ -668,38 +662,27 @@ class MashClass implements Mash {
   }
   set preloader(value: Preloader) { this._preloader = value }
 
+  private filterGraphsArgs(timeRange: TimeRange, avType = AVType.Both): FilterGraphOptions {
+    const filterGraphsArgs: FilterGraphOptions = {
+      timeRange,
+      avType,
+      graphType: GraphType.Canvas,
+      size: this.imageSize,
+      videoRate: this.quantize
+}
+    return filterGraphsArgs
+  }
+
   private get preloadPromise(): LoadPromise | undefined {
     const [start, end] = this.startAndEnd
     const timeRange = end ? TimeRange.fromTimes(start, end) : TimeRange.fromTime(start)
-
-    const options: FilesOptions = { timeRange }
-    if (this.paused) options.avType = AVType.Video
-    const files = this.unloadedGraphFiles(options)
+    const avType = (this.paused || timeRange.frames === 1) ? AVType.Video : AVType.Both
+    const filterGraphsArgs = this.filterGraphsArgs(timeRange, avType)
+    const files = this.unloadedGraphFiles(filterGraphsArgs)
     if (!files.length) return
 
     return this.preloader.loadFilesPromise(files).then(EmptyMethod)
   }
-
-
-
-  //   // console.log(this.constructor.name, "load", start, end)
-
-
-  //   const clips = this.clipsAtTimes(start, end)
-  //   const loads = clips.map(clip => clip.loadClip(this.quantize, start, end))
-  //   const promises = loads.filter(Boolean)
-
-  //   if (promises.length) return Promise.all(promises).then(() => {
-  //     this.compositeAudibleClips(clips)
-  //   })
-  //   this.compositeAudibleClips(clips)
-
-  //   // switch (promises.length) {
-  //   //   case 0: return
-  //   //   case 1: return promises[0] || undefined
-  //   //   default: return Promise.all(promises).then()
-  //   // }
-  // }
 
   removeClipFromTrack(clip : Clip) : void {
     const track = this.clipTrack(clip)
@@ -716,34 +699,20 @@ class MashClass implements Mash {
   }
 
   private restartAfterStop(time:Time, paused:boolean, seeking?: boolean): void {
-     if (time === this.time) { // otherwise we must have gotten a seek call
-        if (seeking) {
-          delete this.seekTime
-          this.emitter?.emit(EventType.Seeked)
-        }
-        this.drawTime(time)
-        if (!paused) {
-          this.composition.startContext()
-          this.playing = true
-        }
+    if (time === this.time) { // otherwise we must have gotten a seek call
+      if (seeking) {
+        delete this.seekTime
+        this.emitter?.emit(EventType.Seeked)
       }
+      this.drawTime(time)
+      if (!paused) {
+        this.composition.startContext()
+        this.playing = true
+      }
+    }
   }
 
   quantize = Default.mash.quantize
-
-  size(time?: Time): Size | undefined {
-    const visibleTime = time || this.time
-    const visibleClips = this.clipsVisibleAtTime(visibleTime)
-    const sizes = visibleClips.map(clip => clip.definition.size(this.preloader)).filter(Boolean) as Size[]
-    if (!sizes.length) return
-
-    if (sizes.some(size => size.width === 0 || size.height === 0)) return { width: 0, height: 0 }
-
-    return {
-      width: Math.max(...sizes.map(size => size.width)),
-      height: Math.max(...sizes.map(size => size.height))
-    }
-  }
 
   private seekTime? : Time
 
@@ -758,39 +727,6 @@ class MashClass implements Mash {
     return this.stopLoadAndDraw(true)
   }
 
-  private timeRangeClipsAtTimes(args: FilterGraphsArgs): TimeRangeClips[] {
-    const { timeRange } = args
-    const range = timeRange || this.timeRange
-    const start = range.startTime
-    const end = range.endTime
-
-    const fullRangeClips = this.clipsAtTimes(start, end)
-    const startTime = start.scale(this.quantize)
-    if (!end) return [{ clips: fullRangeClips, timeRange: TimeRange.fromTime(startTime) }]
-
-    const result: TimeRangeClips[] = []
-
-    const endTime = end.scale(this.quantize)
-    const fullRange = TimeRange.fromTimes(startTime, endTime)
-    const { times } = fullRange
-    let identifiers = '~'
-    let timeRangeClips: TimeRangeClips
-
-    times.forEach(time => {
-      const timeRange = TimeRange.fromTime(time)
-      const clips = this.filterIntersecting(fullRangeClips, timeRange)
-      const ids = clips.map(clip => clip.id).join('~')
-      if (identifiers === ids) {
-        timeRangeClips.timeRange = timeRangeClips.timeRange.addFrames(1)
-      } else {
-        identifiers = ids
-        timeRangeClips = { timeRange, clips }
-        result.push(timeRangeClips)
-      }
-    })
-    return result
-  }
-
   setDrawInterval():void {
     this.clearDrawInterval()
     this.drawInterval = setInterval(() => { this.handleDrawInterval()}, 500 / this.time.fps)
@@ -800,9 +736,9 @@ class MashClass implements Mash {
 
   get startAndEnd(): Time[] {
     const { time } = this
-    const times = [time]
-    if (!this.paused) times.push(time.add(this.bufferTime))
-    return times
+    const array = [time]
+    if (!this.paused) array.push(time.add(this.bufferTime))
+    return array
   }
 
   private stopLoadAndDraw(seeking? : boolean) : LoadPromise | undefined {
@@ -815,11 +751,41 @@ class MashClass implements Mash {
   }
 
   get time() : Time {
-    return this.seekTime || this.drawnTime || Time.fromArgs(0, this.quantize)
+    return this.seekTime || this.drawnTime || Time.fromArgs(this._frame, this.quantize)
   }
 
   get timeRange(): TimeRange {
     return TimeRange.fromTime(this.time, this.endTime.scale(this.time.fps).frame)
+  }
+
+  private timeRanges(args: FilterGraphOptions): TimeRange[] {
+    const { timeRange } = args
+    const range = timeRange || this.timeRange
+    const [start, end] = range.times
+
+    const fullRangeClips = this.clipsAtTimes(start, end)
+    const startTime = start.scale(this.quantize)
+    if (!end) return [TimeRange.fromTime(startTime)]
+
+    const result: TimeRange[] = []
+
+    const endTime = end.scale(this.quantize)
+    const fullRange = TimeRange.fromTimes(startTime, endTime)
+    const { frameTimes } = fullRange
+    let identifiers = '~'
+
+    frameTimes.forEach(time => {
+      let timeRange = TimeRange.fromTime(time)
+      const clips = this.filterIntersecting(fullRangeClips, timeRange)
+      const ids = clips.map(clip => clip.id).join('~')
+      if (identifiers === ids) {
+        timeRange = timeRange.addFrames(1)
+      } else {
+        identifiers = ids
+        result.push(timeRange)
+      }
+    })
+    return result
   }
 
   get timeRangeToBuffer() : TimeRange {
@@ -836,16 +802,17 @@ class MashClass implements Mash {
     return frames
   }
 
-  toJSON() : UnknownObject {
-    return {
+  toJSON(): UnknownObject {
+    const json: UnknownObject = {
       label: this.label,
       quantize: this.quantize,
       backcolor: this.backcolor,
-      id: this.id,
       tracks: this.tracks,
       createdAt: this.createdAt,
       ...this.data,
     }
+    if (this._id) json.id = this.id
+    return json
   }
 
   trackCount(type?: TrackType): number {

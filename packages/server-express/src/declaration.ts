@@ -1,5 +1,5 @@
 import Express from 'express'
-import { UnknownObject, OutputFormat, OutputOptions } from "@moviemasher/moviemasher.js"
+import { UnknownObject, OutputFormat, CommandOutput } from "@moviemasher/moviemasher.js"
 
 export interface ConnectionJson {
   iceConnectionState: RTCIceConnectionState,
@@ -10,8 +10,5 @@ export interface ConnectionJson {
   state: string,
 }
 
-export type EditOutputOptions = {
-  [index in OutputFormat]?: OutputOptions
-}
 
 export type ServerHandler<T1, T2 = UnknownObject> = Express.RequestHandler<UnknownObject, T1, T2, UnknownObject, UnknownObject>

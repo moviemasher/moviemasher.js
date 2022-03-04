@@ -1,6 +1,6 @@
 
 import { Track } from "../../../../Media"
-import { Clip } from "../../../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
 interface AddClipToTrackActionObject extends AddTrackActionObject {
@@ -31,7 +31,7 @@ class AddClipToTrackAction extends AddTrackAction {
 
   trackIndex : number
 
-  get clips() : Clip[] { return this.track.clips }
+  get clips() : Clips { return this.track.clips }
 
   get track() : Track { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex) }
 

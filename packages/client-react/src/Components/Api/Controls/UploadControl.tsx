@@ -34,10 +34,10 @@ function UploadControl(props: PropsAndChild): ReactResult {
       if (fileCallback && fileCallback.request) {
 
         if (fileProperty) {
-          console.debug(`SETTING body.${fileProperty}`)
+          // console.debug(`SETTING body.${fileProperty}`)
           fileCallback.request.body![fileProperty] = file
         } else {
-          console.debug("SETTING BODY")
+          // console.debug("SETTING BODY")
           fileCallback.request.body = file
         }
 

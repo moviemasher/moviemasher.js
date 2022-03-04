@@ -2,7 +2,6 @@ import { Any } from "../../declarations"
 import { DataType, DefinitionType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { DefinitionBase } from "../../Base/Definition"
-import { Definitions } from "../../Definitions/Definitions"
 import { Effect, EffectDefinition, EffectObject } from "./Effect"
 import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
 import { EffectClass } from "./EffectInstance"
@@ -12,7 +11,6 @@ class EffectDefinitionClass extends EffectDefinitionWithModular implements Effec
   constructor(...args : Any[]) {
     super(...args)
     this.properties.push(new Property({ name: "label", type: DataType.String, value: "" }))
-    Definitions.install(this)
   }
 
   get instance() : Effect { return this.instanceFromObject(this.instanceObject) }

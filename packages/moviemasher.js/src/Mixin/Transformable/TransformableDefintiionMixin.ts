@@ -2,10 +2,10 @@ import { Any } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { VisibleDefinitionClass } from "../Visible/Visible"
-import { TransformableDefinitionClass } from "./Transformable"
+import { TransformableDefinition, TransformableDefinitionClass } from "./Transformable"
 
 function TransformableDefinitionMixin<T extends VisibleDefinitionClass>(Base: T): TransformableDefinitionClass & T {
-  return class extends Base {
+  return class extends Base implements TransformableDefinition {
     constructor(...args: Any[]) {
       super(...args)
       this.properties.push(new Property({ name: "scaler", type: DataType.Scaler, value: 'com.moviemasher.scaler.default' }))

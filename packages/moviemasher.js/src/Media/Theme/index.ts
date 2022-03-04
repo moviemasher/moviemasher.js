@@ -1,4 +1,4 @@
 export * from "./Theme"
-export * from "./ThemeDefinition"
+export * from "./ThemeDefinitionClass"
 export * from "./ThemeFactory"
-export * from "./ThemeInstance"
+export * from "./ThemeClass"

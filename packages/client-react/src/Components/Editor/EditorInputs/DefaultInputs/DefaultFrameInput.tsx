@@ -40,7 +40,7 @@ function DefaultFrameInput(props: DefaultFrameInputProps): ReactResult {
 
 }
 
-DataTypeInputs[DataType.Frame] = <DefaultFrameInput />
+// DataTypeInputs[DataType.Frame] = <DefaultFrameInput />
 
 
 export { DefaultFrameInput, DefaultFrameInputProps }

@@ -1,8 +1,7 @@
-import { Any, GraphFilter, FilterChainArgs, ValueObject } from "../../declarations"
+import { ModularGraphFilter, FilterChainArgs, ValueObject } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Parameter } from "../../Setup/Parameter"
-import { Definitions } from "../../Definitions/Definitions"
 import { Evaluator } from "../../Helpers/Evaluator"
 import { DefinitionBase } from "../../Base/Definition"
 import { VisibleContext } from "../../Context/VisibleContext"
@@ -11,13 +10,8 @@ import { FilterClass } from "./FilterClass"
 
 
 class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
-  constructor(...args : Any[]) {
-    super(...args)
-    Definitions.install(this)
-  }
-
-  draw(_evaluator : Evaluator, _evaluated : ValueObject) : VisibleContext {
-    throw Errors.unimplemented + this.id
+  draw(_evaluator : Evaluator) : VisibleContext {
+    throw Errors.unimplemented + 'draw' + this.id
   }
 
   _ffmpegFilter?: string
@@ -29,16 +23,21 @@ class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
     return this._ffmpegFilter = filter
   }
 
-  input(_evaluator: Evaluator, _evaluated: ValueObject, _args: FilterChainArgs): GraphFilter {
-    throw Errors.unimplemented + this.id
+  modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
+    const graphFilter: ModularGraphFilter = {
+      inputs: [],
+      outputs: [this.ffmpegFilter.toUpperCase()],
+      filter: this.ffmpegFilter,
+      options: evaluator.valueObject
+    }
+    return graphFilter
   }
 
-  get instance() : Filter {
-    return this.instanceFromObject(this.instanceObject)
-  }
+  get instance(): Filter { return this.instanceFromObject({}) }
 
-  instanceFromObject(object : FilterObject) : Filter {
-    const instance = new FilterClass({ ...this.instanceObject, ...object })
+  instanceFromObject(object: FilterObject): Filter {
+    const { instanceObject } = this
+    const instance = new FilterClass({ ...instanceObject, ...object })
     return instance
   }
 

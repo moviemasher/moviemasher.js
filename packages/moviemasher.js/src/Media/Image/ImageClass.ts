@@ -1,9 +1,9 @@
 import { InstanceBase } from "../../Base/Instance"
-import { FilterChain, FilterChainArgs, GraphFile, GraphInput, ValueObject } from "../../declarations"
+import { FilterChain, FilterChainArgs, GraphFile, ValueObject } from "../../declarations"
 import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
 import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
 import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
-import { GraphFileType, GraphType, LoadType } from "../../Setup/Enums"
+import { GraphType, LoadType } from "../../Setup/Enums"
 import { ImageDefinition, Image } from "./Image"
 
 const ImageWithClip = ClipMixin(InstanceBase)
@@ -12,21 +12,24 @@ const ImageWithTransformable = TransformableMixin(ImageWithVisible)
 class ImageClass extends ImageWithTransformable implements Image {
   declare definition: ImageDefinition
 
-  override filterChainBase(args: FilterChainArgs): FilterChain | undefined {
-    const { inputCount } = args
+  override filterChainBase(args: FilterChainArgs): FilterChain  {
     const filterChain = super.filterChainBase(args)
-    if (!filterChain) return
+    const { graphType } = args
 
-    const { files, inputs: inputs } = filterChain
-    const source = this.definition.inputSource
+    const { graphFiles } = filterChain
+    const source = this.definition.preloadableSource(graphType)
     if (source) {
       const options: ValueObject = { loop: 1 }
-      if (args.graphType === GraphType.Cast) options.re = ''
-      const input: GraphInput = { source, options }
-      inputs.push(input)
-      const graphFile: GraphFile = { type: LoadType.Image, file: source }
-      files.push(graphFile)
+      if (graphType === GraphType.Cast) options.re = ''
+
+      const graphFile: GraphFile = {
+        type: LoadType.Image, file: source, options,
+        input: true,
+        definition: this.definition
+      }
+      graphFiles.push(graphFile)
     }
+
     return filterChain
   }
 }

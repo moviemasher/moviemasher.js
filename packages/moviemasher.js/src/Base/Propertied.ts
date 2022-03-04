@@ -21,6 +21,7 @@ class PropertiedClass implements Propertied {
   [index: string]: unknown
 
   constructor(..._args: Any[]) {
+
   }
 
   getPropertiedProperty(key: string): Property | undefined {
@@ -42,6 +43,7 @@ class PropertiedClass implements Propertied {
 
     return propertied.value(propertiedProperty)
   }
+
   property(key: string): Property | undefined {
     if (key.includes('.')) return this.getPropertiedProperty(key)
 
@@ -76,7 +78,7 @@ class PropertiedClass implements Propertied {
 
     const { type } = property
     const coerced = type.coerce(value)
-    console.log(this.constructor.name, "setValue", key, value, coerced)
+    // console.log(this.constructor.name, "setValue", key, value, coerced)
     if (typeof coerced === 'undefined') {
       console.error(this.constructor.name, "setValue", key, value)
       return false

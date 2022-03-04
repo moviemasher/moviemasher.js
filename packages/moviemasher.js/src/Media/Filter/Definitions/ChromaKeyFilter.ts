@@ -1,27 +1,36 @@
-import { Pixels, ValueObject, Yuv } from "../../../declarations"
+import { Any, Pixels, ValueObject, Yuv } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Parameter } from "../../../Setup/Parameter"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { colorRgbToYuv, colorToRgb, colorYuvBlend } from "../../../Utility/Color"
+import { colorGreen, colorRgbToYuv, colorToRgb, colorYuvBlend } from "../../../Utility/Color"
 import { pixelNeighboringRgbas, pixelRgbaAtIndex } from "../../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { DataType } from "../../../Setup/Enums"
+import { Property } from "../../../Setup/Property"
 
 /**
  * @category Filter
  */
 class ChromaKeyFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
+  constructor(...args: Any[]) {
+    super(...args)
+    this.properties.push(new Property({
+      name: "accurate", type: DataType.Boolean, value: false
+    }))
+  }
+
+  draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator
     if (!context) throw Errors.invalid.context
 
+    const accurate = evaluator.filter.value('accurate')
+    const similarity = Number(evaluator.evaluateParameter('similarity'))
+    const color = String(evaluator.evaluateParameter('color'))
+    const blend = Number(evaluator.evaluateParameter('blend'))
     const { width, height } = context.size
-    const { accurate } = evaluated
-    const similarity = Number(evaluated.similarity)
-    const blend = Number(evaluated.blend)
 
-    const color = String(evaluated.color)
+
     const rgb = colorToRgb(color)
     const yuv = colorRgbToYuv(rgb)
     const frame = context.imageData
@@ -41,9 +50,9 @@ class ChromaKeyFilter extends FilterDefinitionClass {
   }
 
   parameters = [
-    new Parameter({ name: "color", value: "color", dataType: DataType.Rgb }),
-    new Parameter({ name: "similarity", value: "similarity" }),
-    new Parameter({ name: "blend", value: "blend" }),
+    new Parameter({ name: "color", value: colorGreen, dataType: DataType.Rgb }),
+    new Parameter({ name: "similarity", value: 0.5, dataType: DataType.Number }),
+    new Parameter({ name: "blend", value: 0.01, dataType: DataType.Number }),
   ]
 
   yuvsFromPixels(pixels : Pixels) : Yuv[][] {

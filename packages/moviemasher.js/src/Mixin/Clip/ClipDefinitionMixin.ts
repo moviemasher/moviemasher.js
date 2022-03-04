@@ -4,7 +4,7 @@ import { Any, ObjectUnknown } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { DefinitionClass } from "../../Base/Definition"
 import { Default } from "../../Setup/Default"
-import { ClipDefinitionClass } from "./Clip"
+import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 import { Time } from "../../Helpers/Time"
 
 const ClipPropertyObjects = [
@@ -14,7 +14,7 @@ const ClipPropertyObjects = [
 ]
 
 function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
-  return class extends Base {
+  return class extends Base implements ClipDefinition {
     constructor(...args : Any[]) {
       super(...args)
       const properties = ClipPropertyObjects.map(object => new Property(object))
@@ -38,10 +38,10 @@ function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitio
     set duration(value : number) { this._duration = value }
 
     frames(quantize: number): number {
+      if (!this.duration) return 0
+
       return Time.fromSeconds(this.duration, quantize, 'floor').frame
     }
-
-    get inputSource(): string { return '' }
 
     streamable = false
 

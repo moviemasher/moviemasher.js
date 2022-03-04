@@ -23,16 +23,18 @@ to load. It supplies a [[CasterContext]] to its children which simply contains a
 reference to subscribe to its events, access its properties, and call its methods.
 It typically contains the following children:
 
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../moviemasher/dev/graphics/caster.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../../../../moviemasher/dev/graphics/caster.svg) -->
 <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360">
 <path d="M 190.00 184.63 L 409.76 184.63 L 409.76 360.00 L 190.00 360.00 Z M 190.00 184.63" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<path d="M -0.00 0.00 L 180.00 0.00 L 180.00 360.00 L -0.00 360.00 Z M -0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 0.00 0.00 L 180.00 0.00 L 180.00 175.00 L 0.00 175.00 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 418.82 184.63 L 640.00 184.63 L 640.00 360.00 L 418.82 360.00 Z M 418.82 184.63" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 190.00 0.00 L 640.00 0.00 L 640.00 175.00 L 190.00 175.00 Z M 190.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <text x="213.01" y="219.11" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Inspector]]</text>
 <text x="441.83" y="219.11" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Browser]]</text>
 <text x="213.01" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Switcher]]</text>
 <text x="23.01" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Layers]]</text>
+<path d="M -0.00 185.00 L 180.00 185.00 L 180.00 360.00 L -0.00 360.00 Z M -0.00 185.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="23.01" y="219.11" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Streamer]]</text>
 </svg>
 <!-- MAGIC:END -->
 
@@ -47,7 +49,7 @@ The user interface presented on the [Demo](demo/index.html) page uses the
 [[MasherDefault]] method to suppy default props to this component.
 It supplies the following children:
 
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../moviemasher/dev/graphics/masher.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../../../../moviemasher/dev/graphics/masher.svg) -->
 <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360">
 <path d="M 0.00 0.00 L 219.76 0.00 L 219.76 175.37 L 0.00 175.37 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 460.00 0.00 L 640.00 0.00 L 640.00 360.00 L 460.00 360.00 Z M 460.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />

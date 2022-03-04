@@ -1,10 +1,10 @@
 import {
-  LoadPromise, UnknownObject, Value, FilterGraphs, Described, FilterGraphsArgs, Size, GraphFile, FilesOptions
+  LoadPromise, UnknownObject, Value, FilterGraphs, Described, FilterGraphOptions, FilesOptions, GraphFiles
 } from "../../declarations"
-import { TrackType } from "../../Setup/Enums"
+import { AVType, TrackType } from "../../Setup/Enums"
 import { Definition } from "../../Base/Definition"
 import { Time } from "../../Helpers/Time"
-import { Clip } from "../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { Audible } from "../../Mixin/Audible/Audible"
 import { Action } from "../../Editor/MashEditor/Actions/Action/Action"
 import { Composition } from "../../Editor/MashEditor/Composition"
@@ -21,42 +21,37 @@ interface MashObject extends Partial<MashDescription> {
   gain?: Value
   quantize? : number
   tracks?: TrackObject[]
+  frame?: number
+}
+
+export interface MashArgs extends MashObject {
+  definitions: Definition[]
 }
 
 interface Mash extends Edited {
   addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(trackType: TrackType): Track
-
-  /**
-   * @defaultValue {@link MashDefaults}.backcolor
-   * @example
-   * ```
-   * mash.backcolor = 'red'
-   * ```
-   */
   backcolor: string
   buffer: number
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
-  clipTrack(clip: Clip): Track
-  clips: Clip[]
+  clips: Clips
+  clipsInTimeRange(timeRange?: TimeRange, avType?: AVType): Clip[]
   clipsVisible(start: Time, end?: Time): Visible[]
-  compositeVisible() : void
+  clipTrack(clip: Clip): Track
   composition : Composition
   definitions : Definition[]
   destroy() : void
+  draw() : void
   drawnTime? : Time
   duration: number
   endTime: Time
-  graphFiles(args: FilesOptions): GraphFile[]
-  filterGraphs(args: FilterGraphsArgs): FilterGraphs
+  filterGraphs(args: FilterGraphOptions): FilterGraphs
   frame: number
   frames: number
   gain: number
+  graphFiles(args: FilterGraphOptions): GraphFiles
   handleAction(action: Action): void
-  // loadPromise: (timeOrRange: Time, avType?: AVType)=> LoadPromise
-  // loadUrls: string[]
-  // loadedDefinitions : DefinitionTimes
   loop: boolean
   paused: boolean
   preloader: Preloader
@@ -64,7 +59,6 @@ interface Mash extends Edited {
   removeClipFromTrack(clip : Clip) : void
   removeTrack(trackType : TrackType) : void
   seekToTime(time: Time): LoadPromise | undefined
-  size(time?: Time): Size | undefined
   time: Time
   timeRange: TimeRange
   toJSON(): UnknownObject

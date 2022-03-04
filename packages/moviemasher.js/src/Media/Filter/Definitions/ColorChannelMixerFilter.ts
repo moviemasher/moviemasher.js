@@ -3,13 +3,14 @@ import { ValueObject } from "../../../declarations"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { Errors } from "../../../Setup/Errors"
+import { Parameter } from "../../../Setup"
 
 /**
  * @category Filter
  */
 class ColorChannelMixerFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator, evaluated : ValueObject) : VisibleContext {
-    const map = Object.fromEntries(Object.entries(evaluated).map(entry => {
+  draw(evaluator : Evaluator) : VisibleContext {
+    const map = Object.fromEntries(Object.entries(evaluator.valueObject).map(entry => {
       const [key, value] = entry
       return [key, Number(value)]
     }))
@@ -37,6 +38,25 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
     context.drawImageData(imageData)
     return context
   }
+
+  parameters: Parameter[] = [
+    new Parameter({ "name": "rr", "value": 0.3 }),
+    new Parameter({ "name": "rg", "value": 0.4 }),
+    new Parameter({ "name": "rb", "value": 0.3 }),
+    new Parameter({ "name": "ra", "value": 0 }),
+    new Parameter({ "name": "gr", "value": 0.3 }),
+    new Parameter({ "name": "gg", "value": 0.4 }),
+    new Parameter({ "name": "gb", "value": 0.3 }),
+    new Parameter({ "name": "ga", "value": 0 }),
+    new Parameter({ "name": "br", "value": 0.3 }),
+    new Parameter({ "name": "bg", "value": 0.4 }),
+    new Parameter({ "name": "bb", "value": 0.3 }),
+    new Parameter({ "name": "ba", "value": 0 }),
+    new Parameter({ "name": "ar", "value": 0 }),
+    new Parameter({ "name": "ag", "value": 0 }),
+    new Parameter({ "name": "ab", "value": 0 }),
+    new Parameter({ "name": "aa", "value": 1 }),
+  ]
 }
 
 export { ColorChannelMixerFilter }

@@ -48,14 +48,6 @@
         {
           "name": "shadowy",
           "value": "out_height * shadowy"
-        },
-        {
-          "name": "fontfile",
-          "value": "mm_fontfile(fontface)"
-        },
-        {
-          "name": "textfile",
-          "value": "mm_textfile(string)"
         }
       ]
     }

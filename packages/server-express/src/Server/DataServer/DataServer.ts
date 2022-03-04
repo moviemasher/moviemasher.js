@@ -7,7 +7,7 @@ const uuid = require('uuid').v4
 
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
-  DefinitionObject, DefinitionType, CastObject, DataServerInit, Endpoints, EmptyMethod,
+  DefinitionObject, DefinitionObjects, CastObject, DataServerInit, Endpoints, EmptyMethod,
   DataCastRelations,
   DataCastDefaultResponse, DataCastDefaultRequest,
   DataMashDefaultRequest, DataMashDefaultResponse,
@@ -23,7 +23,8 @@ import {
   DataDefinitionGetResponse, DataDefinitionGetRequest,
   DataDefinitionUpdateResponse, DataDefinitionUpdateRequest,
   DataCastRetrieveResponse, DataCastRetrieveRequest,
-  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest
+  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
+  RawType, RawTypes,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
@@ -32,6 +33,7 @@ import { ServerArgs } from "../Server"
 import { HostServers } from "../../Host/Host"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
 import { FileServer } from "../FileServer/FileServer"
+import { definitionFromRaw } from "../../Utilities/RenderingInput"
 
 interface DataServerArgs extends ServerArgs {
   dbMigrationsPrefix: string
@@ -39,19 +41,6 @@ interface DataServerArgs extends ServerArgs {
 }
 
 const DataServerNow = () => (new Date()).toISOString()
-
-const DataServerTypeMap: Record<string, DefinitionType> = {
-  video: DefinitionType.VideoSequence,
-  image: DefinitionType.Image,
-  audio: DefinitionType.Audio,
-}
-const DataServerType = (mimeType: string): DefinitionType | undefined => {
-  const [type] = mimeType.split('/') // hopefully audio, video, image
-  const mapped = DataServerTypeMap[type]
-  if (mapped) return mapped
-
-  return
-}
 
 const DataServerSelect = (quotedTable: string, columns = DataServerColumnsDefault): string => {
   return `SELECT ${columns.join(', ')} FROM ${quotedTable} WHERE id = ?`
@@ -73,6 +62,7 @@ const DataServerInsert = (quotedTable: string, columns: string[]): string => {
     VALUES(${Array(columns.length).fill('?').join(', ')})
   `
 }
+
 const DataServerUpdate = (quotedTable: string, columns: string[]): string => {
   return `
     UPDATE ${quotedTable}
@@ -319,38 +309,22 @@ class DataServer extends ServerClass {
       const user = this.userFromRequest(req)
       if (!(this.fileServer && this.renderingServer)) throw Errors.internal + 'servers'
 
-      const definitionType = DataServerType(type)
-      if (!definitionType) response.error = 'Could not determine type of file'
-      else if (!this.fileServer.withinLimits(size, definitionType)) response.error = 'Size exceeds limit'
+      const [raw] = type.split('/') // hopefully audio, video, image
+
+      if (!RawTypes.includes(raw)) response.error = `Unacceptable type ${type}`
+      else if (!this.fileServer.withinLimits(size, raw)) response.error = 'Size exceeds limit'
       else {
+        const rawType = raw as RawType
         const extension = path.extname(name).slice(1).toLowerCase()
         const id = requestId || uuid()
-        const sourcePrefix = this.fileServer.userSourcePrefix(user, id)
-        const source = path.join(sourcePrefix, `${definitionType}.${extension}`)
-        const definition: DefinitionObject = {
-          id, label: name,
-          type: definitionType,
-          source, processing: 1
-        }
+        const source = this.fileServer.userSourceSuffix(user, id, rawType, extension)
 
-        // TODO: properly populate based on type
-        switch (definitionType) {
-          case DefinitionType.Audio: {
-            break
-          }
-          case DefinitionType.VideoSequence: {
-            break
-          }
-          case DefinitionType.Image: {
-            definition.url = definition.icon = source
-            break
-          }
-        }
+        const definition = definitionFromRaw(rawType, source, id, name)
 
         await this.insertDefinitionPromise(user, definition)
         response.id = id
         response.fileProperty = this.fileServer.property
-        response.fileCallback = this.fileServer.constructCallback(request, user, id, definitionType)
+        response.fileCallback = this.fileServer.constructCallback(request, user, id)
         response.renderingCallback = this.renderingServer.constructCallback(definition)
       }
     } catch (error) { response.error = String(error) }
@@ -438,7 +412,7 @@ class DataServer extends ServerClass {
     return this.db.all(sql, type, userId).then(DataServerJsons)
   }
 
-  private selectMashRelationsPromise(id: string): Promise<DefinitionObject[]> {
+  private selectMashRelationsPromise(id: string): Promise<DefinitionObjects> {
     const sql = `
       SELECT definition.*
       FROM mash_definition

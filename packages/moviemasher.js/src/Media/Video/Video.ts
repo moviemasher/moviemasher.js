@@ -1,3 +1,4 @@
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 import { Constrained, GenericFactory } from "../../declarations"
 import {
   AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
@@ -22,8 +23,7 @@ interface VideoDefinitionObject extends AudibleFileDefinitionObject, Transformab
   url?: string
 }
 
-interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition {
-  absoluteUrl: string
+interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition, PreloadableDefinition {
   instance : Video
   instanceFromObject(object: VideoObject): Video
 }

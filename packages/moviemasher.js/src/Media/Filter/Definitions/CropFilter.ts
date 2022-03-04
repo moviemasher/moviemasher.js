@@ -4,27 +4,24 @@ import { EvaluatedRect } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
-import { GraphType } from "../../../Setup/Enums"
 import { Parameter } from "../../../Setup/Parameter"
 
 /**
  * @category Filter
  */
 class CropFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator, evaluated : EvaluatedRect) : VisibleContext {
+  draw(evaluator : Evaluator) : VisibleContext {
     const { context } = evaluator
     if (!context) throw Errors.invalid.context
 
-    const x = evaluated.x || 0
-    const y = evaluated.y || 0
+    const x = Number(evaluator.evaluateParameter('x'))
+    const y = Number(evaluator.evaluateParameter('y'))
     const inWidth = Number(evaluator.evaluate("in_w"))
     const inHeight = Number(evaluator.evaluate("in_h"))
     if (inWidth + inHeight < 2) throw Errors.eval.inputSize
 
-    let outWidth = evaluated.w || evaluated.out_w || 0
-    let outHeight = evaluated.h || evaluated.out_h || 0
-    // console.log(this.constructor.name, outWidth, outHeight, evaluated)
-
+    let outWidth = Number(evaluator.evaluateParameter('out_w'))
+    let outHeight = Number(evaluator.evaluateParameter('out_h'))
     if (outWidth + outHeight < 2) throw Errors.eval.outputSize
 
     if (outWidth === -1) outWidth = inWidth * (outHeight / inHeight)
@@ -33,8 +30,6 @@ class CropFilter extends FilterDefinitionClass {
     const fromSize = { width: outWidth, height: outHeight }
     const inRect = { x, y, ...fromSize }
     const drawing = ContextFactory.toSize(fromSize)
-    // console.log(this.constructor.name, "draw", inRect, fromSize)
-
     drawing.drawInRectFromSize(context.drawingSource, inRect, fromSize)
     return drawing
   }
@@ -47,12 +42,7 @@ class CropFilter extends FilterDefinitionClass {
   ]
 
   scopeSet(evaluator: Evaluator): void {
-    const { graphType } = evaluator
-    if (graphType !== GraphType.Canvas) return
-
-    const { width: inputWidth, height: inputHeight } = evaluator.context!.size
-    evaluator.set("in_w", inputWidth)
-    evaluator.set("in_h", inputHeight)
+    evaluator.setInputDimensions()
   }
 }
 

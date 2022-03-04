@@ -2,12 +2,12 @@ import fs from 'fs'
 import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
-import { Any, OutputOptions, outputDefaultHls, OutputFormat } from '@moviemasher/moviemasher.js'
+import { Any, CommandOutput, outputDefaultHls, OutputFormat, CommandInput } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declaration'
 import { StreamInput, StreamOutput } from '../../UnixStream/SocketStreams'
-import { Command, CommandInput } from '../../Command/Command'
-import { CommandFactory } from '../../Command/CommandFactory'
+import { RunningCommand } from '../../RunningCommand/RunningCommand'
+import { RunningCommandFactory } from '../../RunningCommand/RunningCommandFactory'
 
 const wrtc = require('wrtc')
 const { RTCPeerConnection } = wrtc
@@ -16,7 +16,7 @@ const FilterGraphPadding = 6
 const StreamPadding = 4
 
 interface WebrtcStream {
-  command: Command
+  command: RunningCommand
   destination: string
   size: string
   video: PassThrough
@@ -43,11 +43,11 @@ const TIME_TO_HOST_CANDIDATES = 2000
 const TIME_TO_RECONNECTED = 10000
 
 class WebrtcConnection extends EventEmitter {
-  constructor(id: string, outputPrefix?: string, outputOptions?: OutputOptions) {
+  constructor(id: string, outputPrefix?: string, commandOutput?: CommandOutput) {
     super()
     this.id = id
     this.state = 'open'
-    if (outputOptions) this.outputOptions = outputOptions
+    if (commandOutput) this.commandOutput = commandOutput
     if (outputPrefix) this.outputPrefix = outputPrefix
     this.onIceConnectionStateChange = this.onIceConnectionStateChange.bind(this)
     this.onAudioData = this.onAudioData.bind(this)
@@ -212,7 +212,7 @@ class WebrtcConnection extends EventEmitter {
     // console.log(this.constructor.name, "onIceConnectionStateChange!")
   }
 
-  outputOptions: OutputOptions = outputDefaultHls()
+  commandOutput: CommandOutput = outputDefaultHls()
 
   outputPrefix = './temporary/streams/webrtc'
 
@@ -256,14 +256,14 @@ class WebrtcConnection extends EventEmitter {
 
     let destination = ''
 
-    const { outputOptions } = this
+    const { commandOutput } = this
 
     const streamsPrefix = String(this.streams.length).padStart(StreamPadding, '0')
 
-    switch (outputOptions.format) {
+    switch (commandOutput.format) {
       case OutputFormat.Hls: {
         destination = `${prefix}/${streamsPrefix}-${size}.m3u8`
-        const { options } = outputOptions
+        const { options } = commandOutput
         if (options && !Array.isArray(options)) {
           options.hls_segment_filename = `${prefix}/${size}-%0${FilterGraphPadding}d.ts`
         }
@@ -283,10 +283,10 @@ class WebrtcConnection extends EventEmitter {
       }
     }
 
-    const command = CommandFactory.instance(this.id, {
-      inputs: [this.inputVideo(video, size), this.inputAudio(audio) ],
-      output: outputOptions,
-      destination
+    const command = RunningCommandFactory.instance(this.id, {
+      inputs: [this.inputVideo(video, size), this.inputAudio(audio)],
+      graphFilters: [],
+      output: commandOutput
     })
 
     const webrtcStream = {
@@ -299,7 +299,7 @@ class WebrtcConnection extends EventEmitter {
 
     this.streams.unshift(webrtcStream)
 
-    webrtcStream.command.run()
+    webrtcStream.command.run(destination)
 
     return webrtcStream
   }
@@ -346,8 +346,8 @@ class WebrtcConnection extends EventEmitter {
 
   static callbacksByConnection = new Map<WebrtcConnection, () => void>()
 
-  static create(id: string, outputPrefix?: string, outputOptions?: OutputOptions): WebrtcConnection {
-    const connection = new WebrtcConnection(id, outputPrefix, outputOptions)
+  static create(id: string, outputPrefix?: string, commandOutput?: CommandOutput): WebrtcConnection {
+    const connection = new WebrtcConnection(id, outputPrefix, commandOutput)
     console.log(this.constructor.name, "createConnection", connection.constructor.name, id)
 
     const closedListener = () => { this.deleteConnection(connection) }

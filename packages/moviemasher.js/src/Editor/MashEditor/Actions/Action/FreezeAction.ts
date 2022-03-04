@@ -1,4 +1,4 @@
-import { Clip } from "../../../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
 interface FreezeActionObject extends ActionOptions {
@@ -7,7 +7,7 @@ interface FreezeActionObject extends ActionOptions {
   frozenClip : Clip
   index : number
   insertClip : Clip
-  trackClips : Clip[]
+  trackClips : Clips
 }
 
 
@@ -30,7 +30,7 @@ class FreezeAction extends Action {
 
   index : number
 
-  trackClips : Clip[]
+  trackClips : Clips
 
   insertClip : Clip
 

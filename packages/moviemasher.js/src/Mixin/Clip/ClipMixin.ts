@@ -1,4 +1,4 @@
-import { Any, GraphFile, GraphFilter, GraphInput, FilterChain, FilterChainArgs, LoadPromise, Size, StringObject, FilesArgs } from "../../declarations"
+import { Any, FilterChain, FilterChainArgs, FilesArgs, GraphFilters, GraphFiles } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time  } from "../../Helpers/Time"
 import { Is } from "../../Utility/Is"
@@ -21,12 +21,6 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     }
 
     audible = false
-
-    clipUrls(quantize : number, start : Time, end? : Time) : string[] {
-      const startTime = this.definitionTime(quantize, start)
-      const endTime = end ? this.definitionTime(quantize, end) : end
-      return this.definition.definitionUrls(startTime, endTime)
-    }
 
     get copy(): Clip {
       const clipObject: ClipObject = this.toJSON()
@@ -56,7 +50,7 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     frames = -1
 
-    files(args: FilesArgs): GraphFile[] {
+    files(args: FilesArgs): GraphFiles {
       const { quantize, start, end } = args
       const startTime = this.definitionTime(quantize, start)
       const endTime = end ? this.definitionTime(quantize, end) : end
@@ -64,30 +58,16 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
       return this.definition.files(definitionArgs)
     }
 
-    filterChain(_: FilterChainArgs): FilterChain | undefined { return }
-
-    filterChainBase(_: FilterChainArgs): FilterChain | undefined {
-      const filters: GraphFilter[] = []
-      const inputs: GraphInput[] = []
-      const files: GraphFile[] = []
-
-      const layer: FilterChain = { filters, inputs, files }
-      return layer
+    filterChain(_: FilterChainArgs): FilterChain {
+      throw Errors.unimplemented + 'filterChain'
     }
 
-    filterChains(args: FilterChainArgs): FilterChain[] {
-      // TODO: add audio chain to
-      const layer = this.filterChain(args)
-      if (!layer) throw Errors.internal + 'layer'
-
-      return [layer]
+    filterChainBase(_: FilterChainArgs): FilterChain {
+      const filters: GraphFilters = []
+      const files: GraphFiles = []
+      const filterChain: FilterChain = { graphFilters: filters, graphFiles: files }
+      return filterChain
     }
-
-    // loadClip(quantize : number, start : Time, end? : Time) : LoadPromise | void {
-    //   const startTime = this.definitionTime(quantize, start)
-    //   const endTime = end ? this.definitionTime(quantize, end) : end
-    //   return this.definition.loadDefinition(quantize, startTime, endTime)
-    // }
 
     maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 

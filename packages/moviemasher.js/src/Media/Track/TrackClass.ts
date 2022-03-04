@@ -1,20 +1,18 @@
-import { Any, UnknownObject } from "../../declarations"
+import { UnknownObject } from "../../declarations"
 import { DataType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
-import { idGenerate } from "../../Utility/Id"
 import { sortByFrame } from "../../Utility/Sort"
-import { Definitions } from "../../Definitions/Definitions"
-import { Clip } from "../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { PropertiedClass } from "../../Base/Propertied"
-import { Track, TrackObject } from "./Track"
+import { Track, TrackArgs } from "./Track"
+import { Definitions } from "../../Definitions/Definitions"
 
 class TrackClass extends PropertiedClass implements Track {
-  constructor(...args : Any[]) {
-    super(...args)
-    const [object] = args
-    const { id, clips, layer, trackType, dense } = <TrackObject> object
-    if (id) this._id = id
+  constructor(args: TrackArgs) {
+    super()
+
+    const { clips, layer, trackType, dense, definitions } =  args
     if (layer) this.layer = layer
     if (trackType) this.trackType = trackType
 
@@ -27,13 +25,16 @@ class TrackClass extends PropertiedClass implements Track {
       new Property({ name: "dense", type: DataType.Boolean, value: false })
     )
 
-    if (clips) this.clips.push(...clips.map(clip => {
+    if (clips && definitions) this.clips.push(...clips.map(clip => {
       const { definitionId } = clip
       if (!definitionId) throw Errors.id + JSON.stringify(clip)
 
-      const definition = Definitions.fromId(definitionId)
+      let definition = definitions.find(definition => definition.id === definitionId)
+      definition ||= Definitions.fromId(definitionId)
+      if (!definition) throw Errors.invalid.definition + definitionId
+
       const clipWithTrack = { track: this.layer, ...clip }
-      return <Clip> definition.instanceFromObject(clipWithTrack)
+      return definition.instanceFromObject(clipWithTrack) as Clip
     }))
   }
 
@@ -42,7 +43,7 @@ class TrackClass extends PropertiedClass implements Track {
     if (!this.dense) clipIndex = 0 // ordered by clip.frame values
 
     const origIndex = clipIndex // note original, since it may decrease...
-    const movingClips : Clip[] = [] // build array of clips already in this.clips
+    const movingClips : Clips = [] // build array of clips already in this.clips
     // build array of my clips excluding the clips we're inserting
     const spliceClips = this.clips.filter((other, index) => {
       const moving = other === clip
@@ -61,7 +62,7 @@ class TrackClass extends PropertiedClass implements Track {
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
-  clips: Clip[] = []
+  clips: Clips = []
 
   dense = false
 
@@ -94,10 +95,6 @@ class TrackClass extends PropertiedClass implements Track {
     return frame + frames
   }
 
-  private _id? : string
-
-  get id() : string { return this._id ||= idGenerate() }
-
   layer = 0
 
   removeClip(clip : Clip) : void {
@@ -111,7 +108,7 @@ class TrackClass extends PropertiedClass implements Track {
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
-  sortClips(clips : Clip[]) : void {
+  sortClips(clips : Clips) : void {
     if (this.dense) {
       let frame = 0
       clips.forEach((clip, i) => {
@@ -126,7 +123,6 @@ class TrackClass extends PropertiedClass implements Track {
 
   toJSON() : UnknownObject {
     return {
-      id: this.id,
       dense: this.dense,
       trackType: this.trackType,
       layer: this.layer,

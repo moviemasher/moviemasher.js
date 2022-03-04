@@ -6,6 +6,7 @@ import {
   VisibleContextData,
   Size,
   FilesOptions,
+  FilterGraphOptions,
 } from "../../declarations"
 import {
   ActionType,
@@ -34,7 +35,7 @@ import { DefinitionObject } from "../../Base/Definition"
 import { Definitions } from "../../Definitions"
 import { Effect } from "../../Media/Effect/Effect"
 import { AudibleFile } from "../../Mixin/AudibleFile/AudibleFile"
-import { Clip } from "../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { Transformable } from "../../Mixin/Transformable/Transformable"
 import { Video } from "../../Media/Video/Video"
 import { ClipOrEffect, MashEditor, MashEditorObject, MashEditorSelection } from "./MashEditor"
@@ -351,7 +352,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     return true
   }
 
-  get clips(): Clip[] { return this.mash.clips }
+  get clips(): Clips { return this.mash.clips }
 
   private currentActionReusable(target : unknown, property : string) : boolean {
     if (!this.actions.currentActionLast) return false
@@ -463,9 +464,12 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   private loadMashAndDraw(): LoadPromise {
     const timeRange = this.mash.timeRange
-    const options: FilesOptions = {
+    const options: FilterGraphOptions = {
+      size: this.imageSize,
+      videoRate: this.fps,
       graphType: GraphType.Canvas,
-      timeRange, avType: timeRange.frames > 1 ? undefined : AVType.Video
+      timeRange,
+      avType: timeRange.frames > 1 ? AVType.Both : AVType.Video
     }
     const graphFiles = this.mash.graphFiles(options)
     const files = graphFiles.filter(file =>
@@ -474,10 +478,10 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
     const promises = files.map(file => this.preloader.loadFilePromise(file))
     if (promises.length) return Promise.all(promises).then(() => {
-      this.mash.compositeVisible()
+      this.mash.draw()
     })
 
-    this.mash.compositeVisible()
+    this.mash.draw()
     return Promise.resolve()
   }
 
@@ -507,7 +511,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (this._mash === object) return
     this.paused = true
     if (this._mash) {
-      this.preloader.flush([])
+      this.preloader.flushFilesExcept()
       this._mash.destroy()
     }
 

@@ -3,31 +3,7 @@
   "id": "com.moviemasher.scaler.default",
   "type": "scaler",
   "filters": [
-    {
-      "id": "com.moviemasher.filter.scale",
-      "parameters": [
-        {
-          "name": "width",
-          "value": "out_w"
-        },
-        {
-          "name": "height",
-          "value": "out_h"
-        }
-      ]
-    },
-    {
-      "id": "com.moviemasher.filter.setsar",
-      "parameters": [
-        {
-          "name": "sar",
-          "value": "1"
-        },
-        {
-          "name": "max",
-          "value": "1"
-        }
-      ]
-    }
+    { "id": "com.moviemasher.filter.scale" },
+    { "id": "com.moviemasher.filter.setsar" }
   ]
 }
