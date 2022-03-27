@@ -21,7 +21,7 @@ And the
 [Movie Masher AMI](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
 in the AWS Marketplace does the same within their hosted environment.
 
-[![Image](./dev/img/third-party.svg "Logos")]
+[Image](./dev/docs/img/third-party.svg "Third Party Logos")
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../moviemasher/dev/graphics/third-party.svg) -->
 <svg width="640" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 48">
