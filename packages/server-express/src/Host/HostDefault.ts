@@ -1,6 +1,7 @@
+import path from 'path'
 import {
   ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
-  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput
+  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput, LoadType
 } from "@moviemasher/moviemasher.js"
 
 import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
@@ -16,36 +17,55 @@ const OpenAuthentication: ServerAuthentication = { type: "http" }
 
 interface HostDefaultOptions {
   port?: number
+  host?: string
   outputWidth?: number
   outputHeight?: number
   outputRate?: number
   auth?: ServerAuthentication
   temporaryDirectory?: string
-  home?: string
+  fileUploadDirectory?: string
+  dataMigrationsDirectory?: string
+  renderingCacheDirectory?: string
+  dataBaseFile?: string
+  webServerHome?: string
+  version?: string
 }
 
 const HostDefaultPort = 8570
 const HostDefault = (args: HostDefaultOptions): HostOptions => {
   const {
     outputHeight, outputWidth, outputRate,
-    port, auth, home, temporaryDirectory
+    port, auth, webServerHome,
+    temporaryDirectory, fileUploadDirectory,
+    dataMigrationsDirectory, dataBaseFile,
+    renderingCacheDirectory, host, version
   } = args
+  const definedHost = host || '0.0.0.0'
   const commandOutput: CommandOutput = {}
   const basePort = port || HostDefaultPort
   if (outputWidth) commandOutput.width = outputWidth
   if (outputHeight) commandOutput.height = outputHeight
   if (outputRate) commandOutput.videoRate = outputRate
+  const temporary = temporaryDirectory || './temporary'
+  const cacheDirectory = renderingCacheDirectory || `${temporary}/cache`
+  const migrations = dataMigrationsDirectory || "./workspaces/example-express-react/dev/data/migrations"
+  const home = webServerHome || "./workspaces/example-express-react/dist/public/masher.html"
+  const homeDirectory = path.dirname(home)
+  const baseFile = dataBaseFile || `${path.dirname(homeDirectory)}/data.db`
+  const upload = fileUploadDirectory || `${homeDirectory}/media`
 
+  if (!upload.startsWith(homeDirectory)) throw 'fileUploadDirectory must be under webServerHome'
 
-  const temporary = temporaryDirectory || '../../../temporary'
+  const uploadsRelative = path.relative(homeDirectory, upload)
+
   const authentication = auth || OpenAuthentication
-  const source = home || "../example-client-react/dist/masher.html"
-
-  const api: ApiServerArgs = {}
+  const api: ApiServerArgs = {
+    authentication
+  }
   const data: DataServerArgs = {
     prefix: "/data",
-    dbPath: `${temporary}/data.db`,
-    dbMigrationsPrefix: "./dev/data/migrations",
+    dbPath: baseFile,
+    dbMigrationsPrefix: migrations,
     authentication
   }
 
@@ -55,25 +75,37 @@ const HostDefault = (args: HostDefaultOptions): HostOptions => {
       audio: 50,
       image: 5,
     },
-    uploadsPrefix: `${temporary}/uploads`,
-    extensions: [
-      'aiff',
-      'jpeg',
-      'jpg',
-      'mov',
-      'mp3',
-      'mp4',
-      'mpeg',
-      'mpg',
-      'png',
-      'svg',
-    ],
+    uploadsPrefix: upload,
+    uploadsRelative,
+    extensions: {
+      [LoadType.Audio]: [
+        'aiff',
+        'mp3',
+      ],
+
+      [LoadType.Font]: [
+        'ttf',
+      ],
+
+      [LoadType.Image]: [
+        'jpeg',
+        'jpg',
+        'png',
+        'svg',
+      ],
+
+      [LoadType.Video]: [
+        'mov',
+        'mp4',
+        'mpeg',
+        'mpg',
+      ],
+    },
     authentication
   }
 
   const rendering: RenderingServerArgs = {
-    cacheDirectory: `${temporary}/cache`,
-    renderingDirectory: `${temporary}/rendering`,
+    cacheDirectory,
     authentication
   }
 
@@ -122,14 +154,14 @@ const HostDefault = (args: HostDefaultOptions): HostOptions => {
   }
 
   const web: WebServerArgs = {
-    sources: { '/': source },
+    sources: { '/': home, '/docs/': './docs/index.html', '/docs/shared/': './dev/shared/' },
     authentication
   }
 
   const options = {
-    port: basePort,
+    port: basePort, host: definedHost, version,
     corsOptions: { origin: "*" },
-    api,data, file, rendering, streaming, web,
+    api, data, file, rendering, streaming, web
   }
 
   return options

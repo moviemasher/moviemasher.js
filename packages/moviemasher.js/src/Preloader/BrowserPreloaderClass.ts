@@ -1,10 +1,13 @@
-import { Definition } from "../Base/Definition"
-import { AudibleContextInstance } from "../Context/AudibleContext"
-import { Any, Endpoint, GraphFile, LoadAudioPromise, LoadedVideo, LoadFontPromise, LoadImagePromise, LoadVideoPromise } from "../declarations"
+import {
+  Any, Endpoint, GraphFile, ValueObject,
+  LoadAudioPromise, LoadedVideo, LoadFontPromise, LoadImagePromise, LoadVideoPromise
+} from "../declarations"
 import { EmptyMethod } from "../Setup/Constants"
 import { GraphFileType, LoadType, LoadTypes } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { urlForEndpoint } from "../Utility/Url"
+import { Definition } from "../Base/Definition"
+import { AudibleContextInstance } from "../Context/AudibleContext"
 import { PreloaderFile, PreloaderSource } from "./Preloader"
 import { PreloaderClass } from "./PreloaderClass"
 
@@ -31,59 +34,49 @@ class BrowserPreloaderClass extends PreloaderClass {
     return AudibleContextInstance.decode(arrayBuffer)
   }
 
-
-  requestPromise(graphFile: GraphFile, url: string): Promise<Any> {
-    const { type } = graphFile
-    // console.log(this.constructor.name, "requestPromise", type, url)
-    switch (type) {
-      case LoadType.Audio: return this.requestAudio(url)
-      case LoadType.Font: return this.requestFont(url)
-      case LoadType.Image: return this.requestImage(url)
-      case LoadType.Video: return this.requestVideo(url)
-      default: throw Errors.invalid.type + type
-    }
-  }
-
-  graphPromise(graphFile: GraphFile, key: string, preloaderSource: PreloaderSource): Promise<void> {
-    const { file, type } = graphFile
-
-    const data = type === GraphFileType.Png ? Buffer.from(file, 'base64') : file
-
-    // TODO: handle base64 decode and conversion to Image...
-    preloaderSource.result = file
-    this.updateSources(key, preloaderSource)
-    return Promise.resolve()
-  }
-
-  loadablePromise(graphFile: GraphFile, url: string, preloaderSource: PreloaderSource): Promise<void> {
-    const promise = this.requestPromise(graphFile, url).then(result => {
-      preloaderSource.result = result
-      this.updateSources(url, preloaderSource)
-    }).then(EmptyMethod)
-    return promise
-  }
-
   endpoint: Endpoint = {}
 
   protected override filePromise(key: string, graphFile: GraphFile): PreloaderFile {
     const { type, definition } = graphFile
     const definitions = new Map<string, Definition>()
     if (definition) definitions.set(definition.id, definition)
-    const loadable = LoadTypes.includes(String(type))
+    const stringLoadTypes = LoadTypes.map(String)
+    const loadable = stringLoadTypes.includes(type)
     const preloaderSource: PreloaderSource = { loaded: false, definitions }
     const promise = loadable ? this.loadablePromise(graphFile, key, preloaderSource) : this.graphPromise(graphFile, key, preloaderSource)
     preloaderSource.promise = promise
     return preloaderSource as PreloaderFile
   }
 
+
+  protected graphPromise(graphFile: GraphFile, key: string, preloaderSource: PreloaderSource): Promise<void> {
+    const { file, type } = graphFile
+
+    const data = type === GraphFileType.Png ? Buffer.from(file, 'base64') : file
+
+    // TODO: handle base64 decode and conversion to Image...
+    preloaderSource.result = file
+    preloaderSource.loaded = true
+    return Promise.resolve()
+  }
+
+  protected loadablePromise(graphFile: GraphFile, url: string, preloaderSource: PreloaderSource): Promise<void> {
+    const promise = this.requestPromise(graphFile, url).then(result => {
+      preloaderSource.result = result
+      preloaderSource.loaded = true
+    }).then(EmptyMethod)
+    return promise
+  }
+
   key(graphFile: GraphFile): string {
     const { file, type } = graphFile
-    if (LoadTypes.includes(String(type))) return urlForEndpoint(this.endpoint, file)
+    const stringLoadTypes = LoadTypes.map(String)
+    if (stringLoadTypes.includes(type)) return urlForEndpoint(this.endpoint, file)
 
     return file
   }
 
-  remove(url: string): void {
+  protected remove(url: string): void {
     this.files.delete(url)
   }
 
@@ -97,7 +90,7 @@ class BrowserPreloaderClass extends PreloaderClass {
     return promise
   }
 
-  fontFamily(url: string): string {
+  protected fontFamily(url: string): string {
     return url.replaceAll(/[^a-z0-9]/gi, '_')
   }
 
@@ -124,7 +117,19 @@ class BrowserPreloaderClass extends PreloaderClass {
     return image.decode().then(() => Promise.resolve(image))
   }
 
-  protected requestVideo(url: string): LoadVideoPromise {
+  protected requestPromise(graphFile: GraphFile, url: string): Promise<Any> {
+    const { type } = graphFile
+    // console.log(this.constructor.name, "requestPromise", type, url)
+    switch (type) {
+      case LoadType.Audio: return this.requestAudio(url)
+      case LoadType.Font: return this.requestFont(url)
+      case LoadType.Image: return this.requestImage(url)
+      case LoadType.Video: return this.requestVideo(url, graphFile.options)
+      default: throw Errors.invalid.type + type
+    }
+  }
+
+  protected requestVideo(url: string, options?: ValueObject): LoadVideoPromise {
     const promise: LoadVideoPromise = new Promise((resolve, reject) => {
       return this.videoPromiseFromUrl(url).then(video => {
         return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {

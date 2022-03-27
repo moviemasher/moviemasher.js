@@ -1,27 +1,49 @@
 import { DefinitionObjects } from "../Base/Definition"
-import { AndId, GraphFilters, ValueObject } from "../declarations"
+import { AndId, GraphFilters, UploadDescription, ValueObject } from "../declarations"
 import { MashObject } from "../Edited/Mash/Mash"
-import { CommandOutput, CommandOutputs } from "../Output/Output"
+import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
 import { OutputType } from "../Setup/Enums"
-import { ApiCallback, ApiRequest, ApiResponse } from "./Api"
+import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
 export interface CommandInput {
   source: string
   options?: ValueObject
 }
 export type CommandInputs = CommandInput[]
-export interface CommandOptions {
+
+
+export interface CommandOptions extends CommandDescription {
+  output: CommandOutput
+}
+
+export interface CommandDescription {
+  duration?: number
   inputs?: CommandInputs
-  output?: CommandOutput
   graphFilters?: GraphFilters
 }
 
-export interface CommandArgs extends Required<CommandOptions> {}
 
 export interface RenderingResult {
   error?: string
   outputType: OutputType
   destination: string
+}
+
+export interface RenderingDescription {
+  audibleCommandDescription?: CommandDescription
+  visibleCommandDescriptions?: CommandDescriptions
+  commandOutput: RenderingCommandOutput
+}
+
+export type CommandDescriptions = CommandDescription[]
+
+export interface RenderingState {
+  total: number
+  completed: number
+}
+
+export type RenderingStatus = {
+  [index in OutputType]?: RenderingState
 }
 
 export interface RenderingInput {
@@ -33,9 +55,19 @@ export interface RenderingOptions extends RenderingInput {
   outputs: CommandOutputs
 }
 
-export interface RenderingStartRequest extends ApiRequest, RenderingOptions {
-  callback?: ApiCallback
-  id?: string
-}
+export interface RenderingStartRequest extends ApiRequest, RenderingOptions {}
 
-export interface RenderingStartResponse extends ApiResponse, AndId {}
+export interface RenderingStartResponse extends ApiCallbackResponse {}
+
+export interface RenderingStatusRequest extends ApiRequest, AndId {
+  renderingId: string
+}
+export interface RenderingStatusResponse extends ApiCallbackResponse, RenderingStatus {}
+
+export interface RenderingUploadRequest extends ApiRequest, UploadDescription {
+}
+export interface RenderingUploadResponse extends ApiCallbackResponse {
+  id?: string
+  fileProperty?: string
+  fileApiCallback?: ApiCallback
+}

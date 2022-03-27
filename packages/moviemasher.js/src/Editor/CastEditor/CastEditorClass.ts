@@ -1,12 +1,7 @@
-
-import {
-  Any, Size, VisibleContextData
-} from "../../declarations"
-
+import { Any, Size, VisibleContextData } from "../../declarations"
 import { Emitter } from "../../Helpers/Emitter"
 import { SelectionValue } from "../../Base/Propertied"
 import { CastEditor, CastEditorOptions } from "./CastEditor"
-
 import { EditType, EventType } from "../../Setup/Enums"
 import { EditorClass } from "../EditorClass"
 import { Cast } from "../../Edited/Cast/Cast"

@@ -3,7 +3,7 @@ const uuid = require('uuid').v4
 import {
   ClipObject, DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, MergerObject, OutputFormat, ScalerObject, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, MashFactory, ExtTs, ExtHls,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, MashFactory, ExtTs, ExtHls, CommandOptions,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -37,9 +37,9 @@ class StreamingProcessClass extends EventEmitter {
   command?: RunningCommand
 
   cut(args: StreamingProcessCutArgs): WithError {
-    const { cacheDirectory, fileDirectory } = this.args
+    const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this.args
     const { mashObjects, definitionObjects } = args
-    const preloader = new NodePreloader(cacheDirectory, fileDirectory)
+    const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
       const mash = MashFactory.instance(mashObject, definitionObjects)
       mash.preloader = preloader
@@ -60,20 +60,20 @@ class StreamingProcessClass extends EventEmitter {
         // this.command.removeAllListeners('error')
       }
 
-      output.commandArgPromise().then(renderCommandArgs => {
-
+      output.streamingDescription().then(streamingDescription => {
+        const { commandOutput, inputs } = streamingDescription
         // streams require at least one real input
-        if (!renderCommandArgs.inputs?.length) {
+        if (!inputs?.length) {
           const input: CommandInput = {
             source: './img/c.png', options: { r: videoRate, loop: 1 }
           }
-          renderCommandArgs.inputs = [input]
+          streamingDescription.inputs = [input]
         }
 
         // TODO: there shouldn't be any relative paths at this point, but we added one above!
-        const prefix = '../example-client-react/dist'
+        const prefix = '../example-express-react/dist'
 
-        renderCommandArgs.inputs.forEach(input => {
+        streamingDescription.inputs?.forEach(input => {
           const { source } = input
           if (!source) throw 'no source'
           if (typeof source !== 'string') return
@@ -90,8 +90,10 @@ class StreamingProcessClass extends EventEmitter {
           }
           input.source = url
         })
-
-        this.command = RunningCommandFactory.instance(uuid(), renderCommandArgs)
+        const commandOptions: CommandOptions = {
+          ...streamingDescription, output: commandOutput
+        }
+        this.command = RunningCommandFactory.instance(uuid(), commandOptions)
         this.command.addListener('error', this.error.bind(this))
         this.command.run(destination)
       })
@@ -109,7 +111,7 @@ class StreamingProcessClass extends EventEmitter {
       source, id: definitionId, type: DefinitionType.Image, url: source
     }
     const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
-    const scaler: ScalerObject = { definitionId: 'com.moviemasher.scaler.scale', scale: 0.2 }
+    const scaler: ScalerObject = { definitionId: 'com.moviemasher.scaler.default', scale: 0.2 }
     const clip: ClipObject = { definitionId, merger, scaler }
     const mashObject: MashObject = {
       backcolor: "#000000",

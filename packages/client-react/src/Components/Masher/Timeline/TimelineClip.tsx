@@ -13,6 +13,7 @@ interface TimelineClipProps extends UnknownObject, PropsAndChild {
   selectClass?: string
   prevClipEnd: number
   label?: string
+  icon?: string
 }
 
 /**
@@ -31,7 +32,7 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
 
   const [selectedClipIdentifier, setSelectedClipIdentifier] = React.useState(() => masher.selection.clip?.id || '')
 
-  const { label: labelVar, clip, prevClipEnd, selectClass, children } = props
+  const { icon: iconVar, label: labelVar, clip, prevClipEnd, selectClass, children } = props
   const { label, id, type, frame, frames } = clip
 
   const kid = React.Children.only(children)
@@ -69,7 +70,14 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
 
   const width = pixelFromFrame(frames, scale, 'floor')
   const style: UnknownObject = { width }
-  if (labelVar) style[labelVar] = `'${label.replace("'", "\\'")}'`
+  if (labelVar) style[labelVar] = `'${label.replaceAll("'", "\\'")}'`
+  if (iconVar) {
+
+    const { preloader } = masher
+    const url = clip.iconUrl(preloader)
+    if (url) style[iconVar] = `url('${url}')`
+  }
+
   if (prevClipEnd > -1) {
     style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor')
   }

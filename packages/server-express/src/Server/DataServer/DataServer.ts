@@ -21,10 +21,8 @@ import {
   DataMashGetResponse, DataMashGetRequest,
   DataCastGetResponse, DataCastGetRequest,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
-  DataDefinitionUpdateResponse, DataDefinitionUpdateRequest,
   DataCastRetrieveResponse, DataCastRetrieveRequest,
   DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
-  RawType, RawTypes,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
@@ -33,7 +31,6 @@ import { ServerArgs } from "../Server"
 import { HostServers } from "../../Host/Host"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
 import { FileServer } from "../FileServer/FileServer"
-import { definitionFromRaw } from "../../Utilities/RenderingInput"
 
 interface DataServerArgs extends ServerArgs {
   dbMigrationsPrefix: string
@@ -72,7 +69,7 @@ const DataServerUpdate = (quotedTable: string, columns: string[]): string => {
 }
 
 const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObject => {
-  const { processing, type, createdAt, icon, label, id, ...rest } = data
+  const { type, createdAt, icon, label, id, ...rest } = data
   const json = JSON.stringify(rest)
   const record: StringObject = { json, userId }
   if (id) record.id = String(id)
@@ -80,7 +77,6 @@ const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObje
   if (icon) record.icon = String(icon)
   if (label) record.label = String(label)
   // for definitions
-  if (processing) record.processing = String(processing)
   if (type) record.type = String(type)
   return record
 }
@@ -125,6 +121,7 @@ class DataServer extends ServerClass {
       values.push(value)
     })
     const sql = DataServerInsert(quotedTable, keys)
+    console.log(sql, ...values)
     return this.db.run(sql, ...values).then(() => id)
   }
 
@@ -157,7 +154,7 @@ class DataServer extends ServerClass {
       const { id } = mash
       if (id) {
         const relations = await this.selectMashRelationsPromise(String(id))
-        Object.assign(response, relations, { mash })
+        Object.assign(response, { mash, definitions: relations })
       }
     } catch (error) { response.error = String(error) }
     res.send(response)
@@ -215,6 +212,7 @@ class DataServer extends ServerClass {
 
   private deletePromise(quotedTable: string, id: string): Promise<void> {
     const sql = `DELETE FROM ${quotedTable} WHERE id = ?`
+    console.log(sql, id)
     return this.db.run(sql, id).then(EmptyMethod)
   }
 
@@ -299,40 +297,19 @@ class DataServer extends ServerClass {
     res.send(response)
   }
 
-  putDefinition: ServerHandler<DataDefinitionPutResponse, DataDefinitionPutRequest> = async (req, res) => {
-    const request = req.body
-    const { id: requestId, name, type, size } = request
-    console.log(this.constructor.name, "putDefinition", name, type, size)
-    const response: DataDefinitionPutResponse = { }
-
+  putDefinition: ServerHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest> = async (req, res) => {
+    const { definition } = req.body
+    const response: DataDefinitionPutResponse = { id: '' }
     try {
       const user = this.userFromRequest(req)
-      if (!(this.fileServer && this.renderingServer)) throw Errors.internal + 'servers'
-
-      const [raw] = type.split('/') // hopefully audio, video, image
-
-      if (!RawTypes.includes(raw)) response.error = `Unacceptable type ${type}`
-      else if (!this.fileServer.withinLimits(size, raw)) response.error = 'Size exceeds limit'
-      else {
-        const rawType = raw as RawType
-        const extension = path.extname(name).slice(1).toLowerCase()
-        const id = requestId || uuid()
-        const source = this.fileServer.userSourceSuffix(user, id, rawType, extension)
-
-        const definition = definitionFromRaw(rawType, source, id, name)
-
-        await this.insertDefinitionPromise(user, definition)
-        response.id = id
-        response.fileProperty = this.fileServer.property
-        response.fileCallback = this.fileServer.constructCallback(request, user, id)
-        response.renderingCallback = this.renderingServer.constructCallback(definition)
-      }
+      response.id = await this.writeDefinitionPromise(user, definition)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
   putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest> = async (req, res) => {
     const { mash, definitionIds } = req.body
+    console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
     const response: DataMashPutResponse = { id: '' }
 
     try {
@@ -356,12 +333,14 @@ class DataServer extends ServerClass {
   }
 
   retrieveDefinition: ServerHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest> = async (req, res) => {
-    const { partial, type } = req.body
+    const request = req.body
+    const { partial, types } = request
     const response: DataDefinitionRetrieveResponse = { definitions: [] }
     try {
       const user = this.userFromRequest(req)
+      // console.log(this.constructor.name, "retrieveDefinition", types, partial)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.definitions = await this.selectDefinitionsPromise(user, type, columns)
+      response.definitions = await this.selectDefinitionsPromise(user, types, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -400,16 +379,16 @@ class DataServer extends ServerClass {
     })
   }
 
-  private selectDefinitionsPromise(userId: string, type: string, columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectDefinitionsPromise(userId: string, types: string[], columns = DataServerColumnsDefault): Promise<MashObject[]> {
     const table = '`definition`'
     const sql = `
       SELECT ${columns.join(', ')}
       FROM ${table}
-      WHERE type = ?
-      AND userId = ?
+      WHERE (${Array(types.length).fill('type = ?').join(' OR ')})
+      AND (userId = '' OR userId = ?)
     `
-
-    return this.db.all(sql, type, userId).then(DataServerJsons)
+    // console.log(this.constructor.name, sql, types, userId)
+    return this.db.all(sql, ...types, userId).then(DataServerJsons)
   }
 
   private selectMashRelationsPromise(id: string): Promise<DefinitionObjects> {
@@ -454,9 +433,7 @@ class DataServer extends ServerClass {
     super.startServer(app, activeServers)
     this.fileServer = activeServers.file
     this.renderingServer = activeServers.rendering
-    if (this.fileServer && this.renderingServer) {
-      app.post(Endpoints.data.definition.put, this.putDefinition)
-    }
+
     app.post(Endpoints.data.cast.default, this.defaultCast)
     app.post(Endpoints.data.cast.delete, this.deleteCast)
     app.post(Endpoints.data.cast.get, this.getCast)
@@ -465,7 +442,6 @@ class DataServer extends ServerClass {
     app.post(Endpoints.data.definition.delete, this.deleteDefinition)
     app.post(Endpoints.data.definition.get, this.getDefinition)
     app.post(Endpoints.data.definition.retrieve, this.retrieveDefinition)
-    app.post(Endpoints.data.definition.update, this.updateDefinition)
     app.post(Endpoints.data.definition.put, this.putDefinition)
     app.post(Endpoints.data.mash.default, this.defaultMash)
     app.post(Endpoints.data.mash.delete, this.deleteMash)
@@ -487,6 +463,8 @@ class DataServer extends ServerClass {
       values.push(value)
     })
     const sql = DataServerUpdate(quotedTable, keys)
+    console.log(sql, ...values, id)
+
     return this.db.run(sql, ...values, id).then(EmptyMethod)
   }
 
@@ -503,25 +481,6 @@ class DataServer extends ServerClass {
     return this.updatePromise('`cast`', data).then(() => {
       this.updateCastMashesPromise(id, mashIds)
     })
-  }
-
-  updateDefinition: ServerHandler<DataDefinitionUpdateResponse | WithError, DataDefinitionUpdateRequest> = async (req, res) => {
-    const { definition } = req.body
-    const { id } = definition
-    const response: DataDefinitionUpdateResponse = {}
-    try {
-      const user = this.userFromRequest(req)
-      if (id) {
-        const existing = await this.jsonPromise('`definition`', id)
-        if (!existing.id || (existing.userId && existing.userId !== user)) {
-          response.error = `Could not find definition ${id}`
-        } else {
-          Object.assign(existing, definition)
-          await this.updateDefinitionPromise(existing)
-        }
-      } else response.error = 'Required key empty: id'
-    } catch (error) { response.error = String(error) }
-    res.send(response)
   }
 
   private updateDefinitionPromise(definition: DefinitionObject): Promise<void> {
@@ -555,7 +514,7 @@ class DataServer extends ServerClass {
     const sql = `SELECT * FROM ${quotedTable} WHERE ${fromId} = ?`
     return this.db.all(sql, id).then(rows => {
       const existing = Object.fromEntries(rows.map((row) => [row[toId], row.id]))
-      const defined = Object.keys(existing).filter(id => definitionIds.includes(id))
+      const defined = Object.keys(existing).filter(id => !definitionIds.includes(id))
       const deleting = defined.map(id => existing[id])
       const creating = definitionIds.filter(id => !defined.includes(id))
       const promises: Promise<void>[] = [
@@ -588,6 +547,16 @@ class DataServer extends ServerClass {
     })
   }
 
+  private writeDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
+    const { id } = definition
+    if (!id) return this.insertDefinitionPromise(userId, definition)
+
+    return this.rowExists('`definition`', id, userId).then(existing => {
+      if (!existing) return this.insertDefinitionPromise(userId, definition)
+
+      return this.updateDefinitionPromise(definition).then(() => id)
+    })
+  }
   private writeMashPromise(userId: string, mash: MashObject, definitionIds: string[]): Promise<string> {
     const { id } = mash
     if (!id) return this.insertMashPromise(userId, mash, definitionIds)

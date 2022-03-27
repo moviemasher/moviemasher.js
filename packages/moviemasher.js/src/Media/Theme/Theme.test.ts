@@ -3,9 +3,8 @@ import { ThemeClass } from "./ThemeClass"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
 import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
-import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 import { Factory } from "../../Definitions/Factory"
-
+import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 
 describe("Theme", () => {
   const colorId = "com.moviemasher.theme.color"

@@ -2,12 +2,12 @@ import Express from "express"
 import {
   ApiServerInit,
   ApiEndpointRequest, ApiEndpointResponse,
-  ApiServersRequest, ApiServersResponse, Endpoints,
+  ApiServersRequest, ApiServersResponse, Endpoints, ServerType,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
 import { ServerClass } from "../ServerClass"
-import { Server, ServerArgs } from "../Server"
+import { ServerArgs } from "../Server"
 import { HostServers } from "../../Host/Host"
 
 interface ApiServerArgs extends ServerArgs {}
@@ -31,12 +31,19 @@ class ApiServer  extends ServerClass {
     res.send(response)
   }
 
-  servers: ServerHandler<ApiServersResponse, ApiServersRequest> = (_, res) => {
-    const response: ApiServersResponse = Object.fromEntries(
-      Object.entries(this.activeServers).map(([serverType, server]) => (
-        [serverType, server.init()]
-      ))
-    )
+  servers: ServerHandler<ApiServersResponse, ApiServersRequest> = (req, res) => {
+
+    // const { cast, mashIds } = req.body
+    const response: ApiServersResponse = {}
+    try {
+      const user = this.userFromRequest(req)
+
+
+      Object.entries(this.activeServers).forEach(([serverType, server]) => {
+        response[serverType as ServerType] = server.init(user)
+      })
+
+    } catch (error) { response.error = String(error) }
     res.send(response)
   }
 

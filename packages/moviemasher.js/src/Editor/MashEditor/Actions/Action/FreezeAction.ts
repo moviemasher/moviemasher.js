@@ -10,7 +10,6 @@ interface FreezeActionObject extends ActionOptions {
   trackClips : Clips
 }
 
-
 /**
  * @category Action
  */
@@ -24,24 +23,24 @@ class FreezeAction extends Action {
     this.index = index
     this.insertClip = insertClip
     this.trackClips = trackClips
-
   }
+
   frames : number
-
-  index : number
-
-  trackClips : Clips
-
-  insertClip : Clip
 
   freezeClip : Clip
 
   frozenClip : Clip
 
+  index : number
+
+  insertClip : Clip
+
   redoAction() : void {
     this.trackClips.splice(this.index, 0, this.insertClip, this.frozenClip)
     this.freezeClip.frames -= this.frames
   }
+
+  trackClips : Clips
 
   undoAction() : void {
     this.freezeClip.frames += this.frames

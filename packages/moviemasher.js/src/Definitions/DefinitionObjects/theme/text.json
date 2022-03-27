@@ -11,7 +11,7 @@
     { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
     { "name": "shadowx", "type": "number", "value": 0.015 },
     { "name": "shadowy", "type": "number", "value": 0.015 },
-    { "name": "background", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    { "name": "background", "type": "rgba", "value": "rgba(0,0,255,0)" },
     {
       "name": "fontface",
       "type": "font",
@@ -40,6 +40,7 @@
         }
       ]
     },
+    { "id": "format", "parameters": [{ "name": "pix_fmts", "value": "rgba" }] },
     {
       "id": "com.moviemasher.filter.drawtext",
       "parameters": [

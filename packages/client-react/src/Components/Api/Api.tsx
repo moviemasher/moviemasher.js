@@ -22,7 +22,7 @@ function Api(props: ApiProps): ReactResult {
   const [callbacks, setCallbacks] = React.useState<ApiCallbacks>(() => (
     { [Endpoints.api.callbacks]: callback }
   ))
-  const [_servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
+  const [servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
   const [enabled, setEnabled] = React.useState<ServerType[]>(() => ([]))
 
   const endpointPromise: EndpointPromiser = (id, body?) => {
@@ -63,7 +63,7 @@ function Api(props: ApiProps): ReactResult {
     })
   }, [])
 
-  const apiContext: ApiContextInterface = { enabled, endpointPromise }
+  const apiContext: ApiContextInterface = { enabled, endpointPromise, servers }
 
   return (
     <ApiContext.Provider value={apiContext}>

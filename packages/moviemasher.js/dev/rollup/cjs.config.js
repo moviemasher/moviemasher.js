@@ -32,12 +32,12 @@ const tsWithDeclarations = [
         if (kind === "declaration") return path.resolve(pkg.types)
       }
     },
-    ...overrideConfigFile({ declarationMap: true, declaration: true })
+    ...overrideConfigFile({ declarationMap: false, declaration: false, allowJs: false })
   })
 ]
 
 export default {
   ...shared,
   plugins: tsWithDeclarations,
-  output: { format: "cjs", file: "dist/cjs/index.js", sourcemap: true }
+  output: { format: "cjs", file: "dist/cjs/index.js", sourcemap: false }
 }

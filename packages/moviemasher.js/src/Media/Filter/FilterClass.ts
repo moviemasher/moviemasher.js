@@ -1,9 +1,7 @@
 import { InstanceBase } from "../../Base/Instance"
-import { VisibleContext } from "../../Context"
-import { Any, FilterChainArgs, UnknownObject, ValueObject, ModularGraphFilter } from "../../declarations"
+import { Any, UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
-import { Evaluator } from "../../Helpers/Evaluator"
 import { Filter, FilterDefinition } from "./Filter"
 import { Parameter } from "../../Setup/Parameter"
 import { FilterObject } from "./Filter"
@@ -14,7 +12,7 @@ class FilterClass extends InstanceBase implements Filter {
     const [object] = args
     if (!Is.populatedObject(object)) throw Errors.invalid.object + 'filter'
 
-    const { parameters } = <FilterObject> object
+    const { parameters } = object as FilterObject
     if (parameters?.length) this.parameters.push(...parameters.map(parameter => {
       const { name, dataType } = parameter
 
@@ -28,16 +26,6 @@ class FilterClass extends InstanceBase implements Filter {
   }
 
   declare definition : FilterDefinition
-
-  drawFilter(evaluator : Evaluator) : VisibleContext {
-    this.definition.scopeSet(evaluator)
-    return this.definition.draw(evaluator)
-  }
-
-  inputFilter(evaluator: Evaluator): ModularGraphFilter {
-    this.definition.scopeSet(evaluator)
-    return this.definition.modularGraphFilter(evaluator)
-  }
 
   parameters : Parameter[] = []
 
@@ -53,7 +41,7 @@ class FilterClass extends InstanceBase implements Filter {
   }
 
   toJSON() : UnknownObject {
-    const object : UnknownObject = { id: this.id }
+    const object : UnknownObject = { id: this.definitionId }
     if (this.parameters.length) object.parameters = this.parameters
     return object
   }

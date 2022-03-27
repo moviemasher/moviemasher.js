@@ -1,9 +1,10 @@
 import { Any, UnknownObject, StartOptions } from "../../declarations"
 import { Default } from "../../Setup/Default"
 import { Is } from "../../Utility/Is"
-import { Time } from "../../Helpers/Time"
+import { Time } from "../../Helpers/Time/Time"
 import { AudibleClass } from "../Audible/Audible"
 import { AudibleFileClass, AudibleFileDefinition, AudibleFileObject } from "./AudibleFile"
+import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
 function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T {
@@ -35,13 +36,12 @@ function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T
     }
 
     startOptions(seconds: number, quantize: number): StartOptions {
-
       const range = this.timeRange(quantize)
       let offset = 0
       let start = range.seconds - seconds
       let duration = range.lengthSeconds
 
-      if (this.trim) { offset = Time.fromArgs(this.trim, quantize).seconds }
+      if (this.trim) { offset = timeFromArgs(this.trim, quantize).seconds }
 
       if (start < 0) {
         offset -= start
@@ -56,7 +56,7 @@ function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T
 
     trim = Default.instance.audio.trim
 
-    trimTime(quantize: number): Time { return Time.fromArgs(this.trim, quantize) }
+    trimTime(quantize: number): Time { return timeFromArgs(this.trim, quantize) }
 
     toJSON() : UnknownObject {
       const object = super.toJSON()

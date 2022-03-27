@@ -4,8 +4,8 @@ import { View } from "./View"
 
 interface BarOptions {
   className?: string
-  before?: React.ReactChild
-  after?: React.ReactChild
+  before?: React.ReactChild[]
+  after?: React.ReactChild[]
   content?: React.ReactChild | React.ReactChild[]
 }
 

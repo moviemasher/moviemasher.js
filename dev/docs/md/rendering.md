@@ -24,7 +24,7 @@ Its constructor takes [[CommandArgs]] that closely match
 the underlying FFmpeg options:
 
 - zero or more [[CommandInputs]], each describing a source file and related options
-- zero or more [[GraphFilters]], AKA an [FFmpeg Filtergraph](https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description)
+- one or more [[GraphFilters]], AKA an [FFmpeg Filtergraph](https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description)
 - a single [[CommandOutput]] that specifies rendering options
 
 In Movie Masher, rendering essentially converts a [[Mash]] into
@@ -38,7 +38,7 @@ Movie Masher supports five [[RenderingOutput]] interfaces that essentially conve
 - [[AudioOutput]]: a single audio file
 - [[ImageOutput]]: a single image file
 - [[VideoOutput]]: a single video file
-- [[VideoSequenceOutput]]: a single audio file, and an image file per frame
+- [[ImageSequenceOutput]]: a single audio file, and an image file per frame
 - [[WaveformOutput]]: a single image file, representing audio content
 
 Each output caches any [[Mash]] assets it requires before generating its [[CommandArgs]].

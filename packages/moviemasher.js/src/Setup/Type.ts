@@ -2,11 +2,9 @@ import { Scalar, Value } from "../declarations"
 import { DataType } from "./Enums"
 import { Errors } from "./Errors"
 import { colorValid } from "../Utility/Color"
-import { Definitions } from "../Definitions/Definitions"
 import { isNan } from "../Utility/Is"
-
+import { Definitions } from "../Definitions/Definitions"
 import { SelectionValue } from "../Base/Propertied"
-
 
 interface TypeValuesObject {
   id : Value
@@ -59,7 +57,7 @@ class Type {
       }
       case DataType.Direction4:
       case DataType.Direction8: {
-        console.log(this.constructor.name, this.id, "coerce", number)
+        // console.log(this.constructor.name, this.id, "coerce", number)
         if (!this.values?.find(object => Number(object.id) === number )) {
           return
         }

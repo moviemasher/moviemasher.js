@@ -1,4 +1,4 @@
-export * from "./EffectDefinition"
-export * from "./EffectInstance"
+export * from "./EffectDefinitionClass"
+export * from "./EffectClass"
 export * from "./EffectFactory"
 export * from "./Effect"

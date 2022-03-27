@@ -20,7 +20,7 @@ export default {
     resolve(),
     replace(replaceOptions),
     commonjs({ include: /node_modules/ }),
-    ts({tsconfig: '../../config/tsconfig.json'}),
+    ts({tsconfig: '../../dev/config/tsconfig.json'}),
     css({ output: 'index.css' }),
   ]
 }

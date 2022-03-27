@@ -2,5 +2,6 @@
   "label": "Lobster",
   "id": "com.moviemasher.font.default",
   "type": "font",
-  "source": "http://127.0.0.1:8570/Lobster-Regular.ttf"
+  "source": "../shared/font/lobster/lobster.ttf",
+  "url": "../shared/font/lobster/lobster.woff2"
 }

@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { VideoDefinitionClass } from "./VideoDefinition"
+import { VideoDefinitionClass } from "./VideoDefinitionClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 
 const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {

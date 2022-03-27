@@ -2,7 +2,9 @@ import fs from 'fs'
 import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
-import { Any, CommandOutput, outputDefaultHls, OutputFormat, CommandInput } from '@moviemasher/moviemasher.js'
+import {
+  Any, CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout
+} from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declaration'
 import { StreamInput, StreamOutput } from '../../UnixStream/SocketStreams'
@@ -115,7 +117,7 @@ class WebrtcConnection extends EventEmitter {
     this.emit('closed')
   }
 
-  connectionTimer?: NodeJS.Timeout = setTimeout(() => {
+  connectionTimer?: Timeout = setTimeout(() => {
     if (this.peerConnection.iceConnectionState !== 'connected'
       && this.peerConnection.iceConnectionState !== 'completed') {
       this.close()
@@ -227,7 +229,7 @@ class WebrtcConnection extends EventEmitter {
     return connection
   }
 
-  reconnectionTimer?:NodeJS.Timeout
+  reconnectionTimer?: Timeout
 
   get remoteDescription(): RTCSessionDescription | null {
     return this.peerConnection.remoteDescription
@@ -277,10 +279,10 @@ class WebrtcConnection extends EventEmitter {
         destination = 'rtmps://...'
         break
       }
-      case OutputFormat.Pipe: {
-        const combined = new PassThrough()
-        destination = StreamOutput(combined, this.id).url
-      }
+      // case OutputFormat.Pipe: {
+      //   const combined = new PassThrough()
+      //   destination = StreamOutput(combined, this.id).url
+      // }
     }
 
     const command = RunningCommandFactory.instance(this.id, {

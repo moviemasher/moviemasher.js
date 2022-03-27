@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Endpoints, ServerType,
-  Cast, CastEditorFactory, CastFactory,
+  Cast, castEditorInstance, CastFactory,
   DataCastDefaultRequest, DataCastDefaultResponse
 } from '@moviemasher/moviemasher.js'
 
@@ -26,7 +26,7 @@ interface CasterProps extends PropsWithChildren, WithClassName {
 function Caster(props: CasterProps): ReactResult {
   const { cast, ...rest } = props
   const [requested, setRequested] = React.useState(false)
-  const [castEditor] = React.useState(() => CastEditorFactory.instance({}))
+  const [castEditor] = React.useState(() => castEditorInstance({}))
   const apiContext = React.useContext(ApiContext)
 
   const { enabled, endpointPromise } = apiContext

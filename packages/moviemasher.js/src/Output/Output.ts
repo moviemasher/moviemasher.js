@@ -1,8 +1,9 @@
-import { CommandArgs, RenderingResult } from "../Api/Rendering"
 import { ValueObject, Value, UnknownObject } from "../declarations"
+import { AVType, OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
+import { RenderingDescription, RenderingResult } from "../Api/Rendering"
 import { Mash } from "../Edited/Mash/Mash"
-import { OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
-
+import { StreamingDescription } from "../Api/Streaming"
+import { Time } from "../Helpers/Time/Time"
 
 export interface CommandOutput extends UnknownObject {
   extension?: string
@@ -21,10 +22,10 @@ export interface CommandOutput extends UnknownObject {
 
 export interface RenderingCommandOutput extends CommandOutput {
   outputType: OutputType
+  basename?: string
 }
 
 export type CommandOutputs = RenderingCommandOutput[]
-
 
 export interface StreamingCommandOutput extends Required<CommandOutput> { // always singular
   streamingFormat: StreamingFormat
@@ -42,15 +43,24 @@ export interface StreamingOutputArgs extends OutputConstructorArgs {
 export interface RenderingOutputArgs extends OutputConstructorArgs {
   commandOutput: RenderingCommandOutput
   mash: Mash
+  startTime?: Time
+  endTime?: Time
 }
 
 export interface RenderingOutput {
-  commandArgsPromise: (renderingResults?: RenderingResult[]) => Promise<CommandArgs[]>
+  renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription>
+  /** seconds between startTime and endTime, but zero for image outputs */
   duration: number
   outputType: OutputType
+  avType: AVType
+  /** supplied time, or mash.time */
+  startTime: Time
+  /** supplied time or mash.endTime, but undefined for image outputs  */
+  endTime?: Time
 }
+
 export interface StreamingOutput {
-  commandArgPromise: (renderingResults?: RenderingResult[]) => Promise<CommandArgs>
+  streamingDescription(renderingResults?: RenderingResult[]): Promise<StreamingDescription>
 }
 
 export interface ImageOutputArgs extends RenderingOutputArgs {
@@ -75,12 +85,10 @@ export interface VideoOutputArgs extends RenderingOutputArgs {
 }
 export interface VideoOutput extends RenderingOutput {}
 
-
-export interface VideoSequenceOutputArgs extends RenderingOutputArgs {
+export interface ImageSequenceOutputArgs extends RenderingOutputArgs {
   cover?: boolean
 }
-export interface VideoSequenceOutput extends RenderingOutput {}
-
+export interface ImageSequenceOutput extends RenderingOutput {}
 
 export interface VideoStreamOutputArgs extends StreamingOutputArgs {}
 

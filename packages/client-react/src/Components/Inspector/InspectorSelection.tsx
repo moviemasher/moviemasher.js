@@ -25,13 +25,7 @@ function InspectorSelection(props: InspectorSelectionProps): ReactResult {
     const propertyPath = propertyPrefix ? `${propertyPrefix}.${property}` : property
     editor.change(propertyPath, value)
   }
-
-  const containerProps: InspectorPropertyProps = {
-    instance,
-    changeHandler,
-    ...rest,
-  }
-
+  const containerProps: InspectorPropertyProps = { instance, changeHandler, ...rest }
   return <InspectorProperty {...containerProps} />
 }
 

@@ -26,7 +26,7 @@ function DefaultMergerInput(): ReactResult {
       if (!existing.includes(name)) return
       instance.setValue(name, value.value(name))
     })
-    console.log("DefaultMergerInput instance", instance)
+    // console.log("DefaultMergerInput instance", instance)
     changeHandler(property.name, instance)
   }
   const { definitionId } = value as Merger

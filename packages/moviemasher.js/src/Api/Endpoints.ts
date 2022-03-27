@@ -13,7 +13,7 @@ const EndpointsEncode: StringObject = {
   stop: '',
 }
 
-const EndpointsEncoding: StringObject = { ...EndpointsEncode }
+const EndpointsRendering: StringObject = { ...EndpointsEncode, upload: '' }
 
 const EndpointsCrud: StringObject = {
   delete: '',
@@ -25,7 +25,7 @@ const EndpointsCrud: StringObject = {
 const EndpointsData: Record<string, StringObject> = {
   cast: { ...EndpointsCrud, default: '' },
   mash: { ...EndpointsCrud, default: '' },
-  definition: { ...EndpointsCrud, update: '' },
+  definition: { ...EndpointsCrud },
 }
 
 const EndpointsStreaming:StringObject = {
@@ -46,7 +46,7 @@ const Endpoints = {
   [ServerType.Api]: EndpointsApi,
   [ServerType.Data]: EndpointsData,
   [ServerType.File]: EndpointsFile,
-  [ServerType.Rendering]: EndpointsEncoding,
+  [ServerType.Rendering]: EndpointsRendering,
   [ServerType.Streaming]: EndpointsStreaming,
 }
 // populate Endpoints with key paths...

@@ -3,7 +3,7 @@ import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
-import { VideoSequenceDefinitionClass } from "./VideoSequenceDefinition"
+import { VideoSequenceDefinitionClass } from "./VideoSequenceDefinitionClass"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
 
 const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
@@ -42,8 +42,6 @@ const videoSequenceInstall = (object : VideoSequenceDefinitionObject) : VideoSeq
   return instance
 
 }
-
-
 
 const VideoSequenceFactoryImplementation = {
   install: videoSequenceInstall,

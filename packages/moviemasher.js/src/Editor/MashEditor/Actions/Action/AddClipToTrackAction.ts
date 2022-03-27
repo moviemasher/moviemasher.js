@@ -1,4 +1,3 @@
-
 import { Track } from "../../../../Media"
 import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"

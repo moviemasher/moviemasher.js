@@ -1,9 +1,8 @@
-import { Any, FilesArgs, FilterChain, FilterChainArgs, GraphFiles } from "../../declarations"
+import { Any } from "../../declarations"
 import { Definition } from "../../Base/Definition"
 import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions/Definitions"
 import { InstanceClass } from "../../Base/Instance"
-
 
 function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
   return class extends Base {
@@ -28,20 +27,10 @@ function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
       return [...super.definitions, ...this.modularDefinitions]
     }
 
-    // filesModular(args: FilesArgs): GraphFiles {
-    //   return this.modularDefinitions.flatMap(definition =>
-    //     definition.files(args)
-    //   )
-    // }
-
     private get modularDefinitions() : Definition[] {
       const modular = this.definition.propertiesModular
       const ids = modular.map(property => String(this.value(property.name)))
       return ids.map(id => Definitions.fromId(id))
-    }
-
-    modulateFilterChain(layer: FilterChain, args: FilterChainArgs): void {
-      this.definition.filtrateFilterChain(layer, this, args)
     }
   }
 }

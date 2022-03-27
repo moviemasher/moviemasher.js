@@ -1,0 +1,164 @@
+{
+  "id": "video-from-colors-fade-json",
+  "outputs": [
+    {
+      "outputType": "video"
+    }
+  ],
+  "mash": {
+    "label": "",
+    "quantize": 10,
+    "backcolor": "#00000000",
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "video",
+        "layer": 0,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.theme.color",
+            "type": "theme",
+            "color": "#4d22b3ff",
+            "frame": 0,
+            "frames": 30,
+            "label": "Color",
+            "scaler": {
+              "definitionId": "com.moviemasher.scaler.default",
+              "type": "scaler"
+            },
+            "merger": {
+              "definitionId": "com.moviemasher.merger.default",
+              "type": "merger"
+            },
+            "effects": []
+          }
+        ]
+      },
+      {
+        "dense": false,
+        "trackType": "audio",
+        "layer": 0,
+        "clips": []
+      },
+      {
+        "dense": false,
+        "trackType": "transition",
+        "layer": 0,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.transition.crossfade",
+            "type": "transition",
+            "frame": 0,
+            "frames": 30,
+            "label": "Crossfade"
+          }
+        ]
+      },
+      {
+        "dense": false,
+        "trackType": "video",
+        "layer": 1,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.theme.color",
+            "type": "theme",
+            "color": "#94e3feff",
+            "frame": 0,
+            "frames": 30,
+            "label": "Color",
+            "scaler": {
+              "definitionId": "com.moviemasher.scaler.default",
+              "type": "scaler"
+            },
+            "merger": {
+              "definitionId": "com.moviemasher.merger.default",
+              "type": "merger"
+            },
+            "effects": []
+          }
+        ]
+      }
+    ],
+    "createdAt": "2022-03-10T15:53:55.623Z",
+    "userId": "doug",
+    "icon": null,
+    "id": "09a7cb26-4c84-436d-82d3-aac6e36445c5"
+  },
+  "definitions": [
+    {
+      "id": "com.moviemasher.theme.color",
+      "type": "theme",
+      "label": "Color",
+      "properties": [
+        {
+          "value": "#ffff00ff",
+          "type": "rgba"
+        }
+      ],
+      "filters": [
+        {
+          "id": "com.moviemasher.filter.color",
+          "parameters": [
+            {
+              "name": "color",
+              "value": "color"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "com.moviemasher.merger.default",
+      "type": "merger",
+      "label": "Top Left",
+      "filters": [
+        {
+          "id": "com.moviemasher.filter.overlay",
+          "parameters": [
+            {
+              "name": "x",
+              "value": "0"
+            },
+            {
+              "name": "y",
+              "value": "0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "com.moviemasher.scaler.default",
+      "type": "scaler",
+      "label": "Stretch",
+      "filters": [
+        {
+          "id": "com.moviemasher.filter.scale"
+        },
+        {
+          "id": "com.moviemasher.filter.setsar"
+        }
+      ]
+    },
+    {
+      "id": "com.moviemasher.transition.crossfade",
+      "type": "transition",
+      "label": "Crossfade",
+      "filters": [
+        {
+          "id": "com.moviemasher.filter.fade"
+        }
+      ],
+      "to": {
+        "filters": [
+          {
+            "id": "com.moviemasher.filter.fade"
+          }
+        ]
+      },
+      "from": {
+        "filters": []
+      }
+    }
+  ]
+}

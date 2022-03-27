@@ -5,7 +5,7 @@ import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
   ApiCallback, UploadDescription, Endpoints, Errors, NumberObject,
-  FileStoreRequest, FileStoreResponse, RawType,
+  FileStoreRequest, FileStoreResponse, JsonObject, LoadTypes, LoadType,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
@@ -13,10 +13,15 @@ import { HostServers } from "../../Host/Host"
 import { ServerArgs } from "../Server"
 import { ServerClass } from "../ServerClass"
 
+export type LoadTypeExtensions = {
+  [index in LoadType]: string[]
+}
+
 interface FileServerArgs extends ServerArgs {
   uploadsPrefix: string
+  uploadsRelative: string
   uploadLimits: NumberObject
-  extensions: string[]
+  extensions: LoadTypeExtensions
 }
 
 const FileServerMeg = 1024 * 1024
@@ -34,6 +39,26 @@ class FileServer extends ServerClass {
     return callback
   }
 
+  init(userId: string): JsonObject {
+    const prefix = `/${path.join(this.args.uploadsRelative, userId)}/`
+    const typesAndExtensions: string[] = []
+    const extensions: string[] = Object.values(this.args.extensions).flat()
+    typesAndExtensions.push(...extensions.map(extension => `.${extension}`))
+    typesAndExtensions.push(...LoadTypes.map(loadType => `${loadType}/*`))
+    const accept = typesAndExtensions.join(',')
+    return { prefix, accept }
+  }
+
+  get extensions(): string[] {
+    return Object.values(this.args.extensions).flat()
+  }
+
+  extensionLoadType(extension: string): LoadType | undefined {
+    return LoadTypes.find(loadType =>
+      this.args.extensions[loadType].includes(extension)
+    )
+  }
+
   id = 'file'
 
   property = 'file'
@@ -41,10 +66,12 @@ class FileServer extends ServerClass {
   startServer(app: Express.Application, activeServers: HostServers): void {
     super.startServer(app, activeServers)
     const fileSize = FileServerMeg * Math.max(...Object.values(this.args.uploadLimits))
-    const { uploadsPrefix, extensions } = this.args
+
+    const { uploadsPrefix } = this.args
+    const { extensions } = this
 
     const storage = multer.diskStorage({
-      destination: function (req, file, cb) {
+      destination: function (req, _file, cb) {
         const { id } = req.body
         const request = req as basicAuth.IBasicAuthedRequest
         const { user } = request.auth
@@ -55,8 +82,7 @@ class FileServer extends ServerClass {
           cb(null, filePath)
         }
       },
-      filename: function (req, file, cb) {
-        // const { id, type } = req.body
+      filename: function (_req, file, cb) {
         const { originalname } = file
         const ext = path.extname(originalname).slice(1).toLowerCase()
         if (!extensions.includes(ext)) cb(new Error(`Invalid extension ${ext}`), '')
@@ -84,12 +110,11 @@ class FileServer extends ServerClass {
     res.send(response)
   }
 
-  userSourceSuffix(userId: string, id: string, rawType: RawType, extension: string): string {
-    if (!userId) throw Errors.invalid.user
+  userSourceSuffix(id: string, extension: string, loadType?: LoadType, user?: string): string {
     if (!id) throw Errors.id
     if (!extension) throw Errors.invalid.type
 
-    return path.join(userId, id, `${FileServerFilename}.${extension}`)
+    return path.join(id, `${FileServerFilename}.${extension}`)
   }
 
   withinLimits(size: number, type: string): boolean {

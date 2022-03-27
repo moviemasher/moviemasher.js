@@ -1,5 +1,5 @@
 import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
-import { Constrained, GenericFactory } from "../../declarations"
+import { GenericFactory } from "../../declarations"
 import {
   AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
 } from "../../Mixin/AudibleFile/AudibleFile"
@@ -34,8 +34,6 @@ interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition
 interface VideoFactory extends GenericFactory<
   Video, VideoObject, VideoDefinition, VideoDefinitionObject
 > {}
-
-
 
 export {
   Video, VideoDefinition, VideoDefinitionObject,

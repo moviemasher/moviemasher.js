@@ -13,10 +13,10 @@ class ServerClass implements Server {
 
   id = ''
 
-  init(): JsonObject { return {} }
+  init(userId: string): JsonObject { return {} }
 
   startServer(app: Express.Application, _activeServers: HostServers): void {
-    console.log(this.constructor.name, "startServer")
+    // console.log(this.constructor.name, "startServer")
 
     const { authentication } = this.args
     if (authentication?.type === 'http') {

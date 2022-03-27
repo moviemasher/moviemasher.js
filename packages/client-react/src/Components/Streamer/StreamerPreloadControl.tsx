@@ -1,7 +1,6 @@
 import React from "react"
 import {
-  StreamingPreloadRequest, StreamingPreloadResponse,
-  GraphType, Endpoints, TimeRange, AVType, FilesOptions, FilterGraphArgs, FilterGraphOptions, GraphFiles
+  StreamingPreloadRequest, StreamingPreloadResponse, Endpoints, GraphFiles
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
@@ -23,14 +22,7 @@ function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult
   const { endpointPromise } = apiContext
 
   const preload = () => {
-  //   const graphType = GraphType.Cast
-  //   const { cast } = editor
-  //   const timeRange = TimeRange.fromArgs()
-    // const filterGraphArgs: FilterGraphOptions = {
-    //   avType: AVType.Both, graphType, timeRange
-
-    // }
-    const files: GraphFiles = [] // cast.graphFiles(filterGraphArgs)
+    const files: GraphFiles = []
 
     const request: StreamingPreloadRequest = {
       files, id

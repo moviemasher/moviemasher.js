@@ -3,22 +3,20 @@ import {
   UnknownObject,
   Value,
   Size,
-  ValueObject
+  ValueObject,
 } from "../declarations"
 import { AVType, DataType, GraphType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { isDefined, isNumber, isNumeric, isString, isUndefined } from "../Utility/Is"
-import { TimeRange } from "./TimeRange"
+import { isDefined, isNan, isNumeric, isString, isUndefined } from "../Utility/Is"
+import { TimeRange } from "./Time/Time"
 import { VisibleContext } from "../Context/VisibleContext"
 import { Preloader } from "../Preloader/Preloader"
-import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
 import { Filter } from "../Media/Filter/Filter"
 import { Modular } from "../Mixin/Modular/Modular"
 import { Parameter } from "../Setup/Parameter"
-
-const EvaluatorRegExp = (key: string): RegExp => {
-  return new RegExp(`\\b${key}\\b`, 'g')
-}
+import { ContextFactory } from "../Context/ContextFactory"
+import { Property } from "../Setup/Property"
+import { Evaluation } from "./Evaluation"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
   if (typeof elements === "string") return String(elements).split(',')
@@ -29,111 +27,84 @@ const EvaluatorArray = (elements : JsonValue) : Value[] => {
 const EvaluatorConditional = (conditional : UnknownObject) : string => {
   const { condition } = conditional
 
-  // not strict equality, since we may have strings and numbers
   if (isDefined(conditional.is)) return `${condition}==${conditional.is}`
 
   const elements = conditional.in
-  if (isUndefined(elements)) return String(condition)
+  if (isUndefined(elements)) return String(condition).trim()
 
   // support supplying values as array or comma-delimited string
   const array = EvaluatorArray(<JsonValue> elements)
-
   const strings = isString(array[0])
   const escaped = array.map(element => (strings ? `"${element}"` : element))
-  const type = strings ? 'String' : 'Number'
-  const expression = `([${escaped.join(',')}].includes(${type}(${condition})))`
+  const type = strings ? 'string' : 'number'
+  const expression = `(includes(${type}(${condition}),${escaped.join(',')}))`
   return expression
 }
 
-interface EvaluatorExpanding {
-  code: Value
-  args: UnknownObject
+const dataTypeIsString = (dataType: DataType): boolean => {
+  switch (dataType) {
+    case DataType.Frame:
+    case DataType.Direction4:
+    case DataType.Direction8:
+    case DataType.Number: return false
+  }
+  return true
 }
 
 interface EvaluatorArgs {
-  modular: Modular
+  preloading: boolean
+  modular?: Modular
   preloader: Preloader
-  timeRange: TimeRange
+  timeRange?: TimeRange
   outputSize: Size
   context?: VisibleContext
-  mergeContext?: VisibleContext
   graphType: GraphType
   avType: AVType
-  filter: Filter
+  filter?: Filter
 }
 
-interface EvaluatorMethod {
-  (...args: any[]): any
+const EvaluatorExpessions = {
+  out_height_scaled: 'if(gt(out_width, out_height), scale * out_height, out_height + ((scale - 1.0) * out_width))',
+  out_width_scaled: 'if(gt(out_height, out_width), scale * out_width, out_width + ((scale - 1.0) * out_height))',
 }
-
-interface EvaluatorMethodObject {
-  [index:string]: EvaluatorMethod
-}
-
-interface EvaluatorDebug {
-  method: string
-  expanded?: string[]
-  input: Value | ValueObject[]
-  output?: Value
-}
-
-const EvaluatorMethods: EvaluatorMethodObject = {
-  if: (tf: boolean, tv: Value, fv: Value): Value => tf ? tv : fv,
-  gt: (a: Value, b: Value): boolean => Number(a) > Number(b),
-  gte: (a: Value, b: Value): boolean => Number(a) >= Number(b),
-  eq: (a: Value, b: Value): boolean => Number(a) === Number(b),
-  lt: (a: Value, b: Value): boolean => Number(a) < Number(b),
-  lte: (a: Value, b: Value): boolean => Number(a) <= Number(b),
-  rgb: (r: Value, g: Value, b: Value): string => colorRgbToHex({ r, g, b }),
-  rgba: (r: Value, g: Value, b: Value, a: Value): string => colorRgbaToHex({ r, g, b, a }),
-  ceil: Math.ceil,
-  floor: Math.floor,
-  max: Math.max,
-  min: Math.min,
-  round: Math.round,
-  abs: Math.abs,
-}
-
-const EvaluatorMethodKeys = Object.keys(EvaluatorMethods)
-
 
 class Evaluator {
   constructor(args: EvaluatorArgs) {
-    const { graphType, avType, modular } = args
-    this.modular = modular
+    const { timeRange, graphType, avType, modular, preloading, filter, context } = args
+    if (context) this._visibleContext = context
+    if (preloading) this.preloading = preloading
     this.graphType = graphType
     this.avType = avType
-    this.timeRange = args.timeRange
-    this.context = args.context
-    this.mergeContext = args.mergeContext
     this.outputSize = args.outputSize
     this.preloader = args.preloader
-    this.filter = args.filter
-    this.set('out_height_scaled', 'if(gt(out_width, out_height), scale * out_height, out_height + ((scale - 1.0) * out_width))')
-    this.set('out_width_scaled', 'if(gt(out_height, out_width), scale * out_width, out_width + ((scale - 1.0) * out_height))')
-    this.set('out_height', this.outputSize.height)
-    this.set('out_width', this.outputSize.width)
-    this.setVariable('out_size', `${this.outputSize.width}x${this.outputSize.height}`)
-    this.set('out_duration', this.timeRange.lengthSeconds)
-    this.set('out_rate', this.timeRange.fps)
-    if (this.graphType === GraphType.Canvas) this.set('t', this.position)
+
+    Object.entries(EvaluatorExpessions).forEach(([k, v]) => { this.setExpression(k, v) })
+
+    const { height, width } = this.outputSize
+    this.setExpression('out_size', `${width}x${height}`)
+
+    if (timeRange) this.timeRange = timeRange
+    if (modular) this.modular = modular
+    if (filter) this.filter = filter
   }
 
   avType = AVType.Both
-
-  private evaluateIfConditional(conditionals: Value | ValueObject[]): Value {
-    if (!Array.isArray(conditionals)) return conditionals
-
-    // console.log(this.constructor.name, "conditionalValue", conditionals)
-
+  private evaluateConditionals(evaluation: Evaluation, conditionals: ValueObject[]): Value {
     const trueConditional = conditionals.find(conditional => {
-      const exp = EvaluatorConditional(conditional)
-      const expression = exp.replaceAll(' or ', ' || ').replaceAll(' and ', ' && ')
-      const debug: EvaluatorDebug = { input: expression, method: 'evaluateIfConditional' }
-      this.debugs.push(debug)
-      const result = this.evaluateExpressionUnlessNumber(expression)
-      debug.output = result
-      return result
+      const expression = EvaluatorConditional(conditional)
+      if (isNumeric(expression)) return !!Number(expression)
+
+      switch (expression) {
+        case 'true': return true
+        case 'false':
+        case '': return false
+      }
+
+      const childEvaluation = new Evaluation(expression, evaluation)
+
+      this.evaluateEvaluation(childEvaluation)
+      const { result } = childEvaluation
+      return !!result
     })
     if (typeof trueConditional === "undefined") throw Errors.eval.conditionTruth
     if (typeof trueConditional.value === "undefined") throw Errors.eval.conditionValue
@@ -141,284 +112,316 @@ class Evaluator {
     return trueConditional.value
   }
 
-  context?: VisibleContext
-
-  debugs: EvaluatorDebug[] = []
-
-  evaluate(value: Value | ValueObject[]): Value {
-    return this.evaluateExpressionUnlessNumber(this.evaluateIfConditional(value))
+  private evaluateEvaluation(evaluation: Evaluation): void {
+    this.expandEvaluation(evaluation)
+    evaluation.execute()
   }
 
-  private evaluateExpression(expression: string): Value {
-    const { args, code } = this.expandExpression(expression)
-    return this.evaluateCodeUnlessNumber(code, args)
-  }
+  private expandParameter(evaluation: Evaluation, parameter: Parameter): boolean {
+    let expanded = false
 
-  private evaluateExpressionUnlessNumber(value: Value): Value {
-    return isNumeric(value) ? Number(value) : this.evaluateExpression(String(value))
-  }
+    const { name } = parameter
+    evaluation.replaceAll(name, evaluation => {
+      expanded = true
+      const value = this.parameterConditionalValue(evaluation, parameter)
+      // console.log(this.constructor.name, "expandParameter", name, value)
+      return value
+    }, 'expandParameter')
 
-  private evaluateCode(code: string, args: UnknownObject): string {
-    const debug: EvaluatorDebug = { input: code, method: 'evaluateCode' }
-    this.debugs.push(debug)
-
-    const keys: string[] = []
-    const unknowns: unknown[] = []
-    Object.entries(args).forEach(([key, value]) => {
-      keys.push(key)
-      unknowns.push(value)
-    })
-
-    const expression = `return ${code}`
-    try {
-      // eslint-disable-next-line no-new-func
-      const compiledFunction = new Function(...keys, expression)
-      const result = compiledFunction(...unknowns)
-      debug.output = result
-      return result
-    } catch (exception) {
-      const underKeys = keys.filter(key => key.startsWith('_'))
-      let string = code
-      underKeys.forEach(key => {
-        string = string.replaceAll(EvaluatorRegExp(key), key.slice(1))
-      })
-      debug.output = string
-      return string
+    if (expanded) {
+      this.expandEvaluationProperties(evaluation)
     }
+    return expanded
   }
 
-  private evaluateCodeUnlessNumber(value: Value, args: UnknownObject): Value {
-    return isNumeric(value) ? Number(value) : this.evaluateCode(String(value), args)
+  private expandEvaluation(evaluation: Evaluation): void {
+    this.exampleEvaluationParameters(evaluation)
+    this.expandEvaluationExpressions(evaluation)
+    this.expandEvaluationNumbers(evaluation)
+    this.populateEvaluationArgs(evaluation)
+    this.expandEvaluationMethods(evaluation)
   }
 
-  evaluateParameter(key: string): Value {
-    const parameter = this.parameter(key)
-    if (!parameter) return ''
+  private expandEvaluationExpressions(evaluation: Evaluation): void {
+    if (evaluation.resolved) return
 
-    const value = this.evaluateIfConditional(parameter.value)
-    if (isNumeric(value)) return Number(value)
-    if (!value) return value
-
-    const { values } = parameter
-    const found = values?.find(test => test === value)
-    if (found) return found
-
-    return this.evaluate(value)
-  }
-
-  get valueObject() : ValueObject {
-    const evaluated : ValueObject = {}
-    const parameters = this.filter.parametersDefined
-
-    parameters.forEach(parameter => {
-      const { name } = parameter
-      evaluated[name] = this.evaluateParameter(name)
-    })
-    return evaluated
-  }
-
-  private expandVariablesUnlessNumber(object: EvaluatorExpanding): void {
-    if (isNumeric(object.code)) return
-
-    const expanded: string[] = []
-    const debug: EvaluatorDebug = { input: object.code, method: 'expandVariablesUnlessNumber', expanded }
-
-    for (const entry of this.variables.entries()) {
+    for (const entry of this.expressions.entries()) {
       const [key, value] = entry
-      if (key === object.code) {
-        expanded.push(key)
-        object.code = value
-        break
-      }
-      const regExp = EvaluatorRegExp(key)
-      if (regExp.test(String(object.code))) {
-        expanded.push(key)
-        object.args[key] = value
-      }
-    }
-    if (expanded.length) {
-      debug.output = object.code
-      this.debugs.push(debug)
+      evaluation.replaceAll(key, () => value, 'expandEvaluationExpressions')
     }
   }
 
-  private expandValues(expression: string): EvaluatorExpanding {
+  private expandEvaluationMethods(evaluation: Evaluation): void {
+    if (evaluation.resolved) return
+
+    evaluation.replaceMethods()
+  }
+
+  private expandEvaluationNumbers(evaluation: Evaluation): void {
+    if (evaluation.resolved) return
+
+    for (const property of this.properties) {
+      const { name, type } = property
+
+      if (!dataTypeIsString(type.id)) {
+        if (evaluation.replaceAll(name, () => this.modular.value(name) as Value, 'expandEvaluationNumbers.properties')) break
+      } //else console.log(this.constructor.name, "expandEvaluationNumbers dataTypeIsString", type.id)
+    }
+    for (const entry of this.numbers.entries()) {
+      const [key, value] = entry
+      if (evaluation.replaceAll(key, () => value, 'expandEvaluationNumbers.numbers')) break
+    }
+  }
+
+  private exampleEvaluationParameters(evaluation: Evaluation): void {
+    if (evaluation.resolved) return
+
     const expanded: string[] = []
-    const debug: EvaluatorDebug = { input: expression, method: 'expandValues', expanded }
-    let finding = true
-    let code = expression.trim()
-    while (finding) {
-      finding = false
+    for (const parameter of this.parameterInstances) {
+      const { name } = parameter
+      const notRoot = evaluation.rootExpression !== name
 
-      for (const entry of this.numbers.entries()) {
-        const [key, value] = entry
-        if (key === code) { // expression IS number
-          // expanded.push(key)
-          // debug.output = value
-          // this.debugs.push(debug)
-          return { args: {}, code: value }
-        }
-
-        // if expression CONTAINS number, just replace it
-        const regExp = EvaluatorRegExp(key)
-        if (regExp.test(code)) {
-          code = code.replaceAll(regExp, String(value))
-
-          finding = true
-        }
-      }
-      if (finding) continue
-
-      for (const entry of this.strings.entries()) {
-        const [key, value] = entry
-        if (key === code) {
-          // expression IS reference
-          expanded.push(key)
-          finding = true
-          code = String(value)
-        } else {
-          const regExp = EvaluatorRegExp(key)
-          if (regExp.test(code)) {
-            // expression CONTAINS reference
-            expanded.push(key)
-            finding = true
-            code = code.replaceAll(regExp, String(value))
-          }
-        }
-        if (finding) break
+      const expand = notRoot && !expanded.includes(name)
+      // if (!expand) console.log(this.constructor.name, "exampleEvaluationParameters NOT EXPANDING", name, notRoot)
+      if (expand && this.expandParameter(evaluation, parameter)) {
+        expanded.push(name)
       }
     }
-    if (expanded.length) {
-      debug.output = code
-      this.debugs.push(debug)
+  }
+
+  private expandEvaluationProperties(evaluation: Evaluation): void {
+    for (const property of this.properties) {
+      const { name } = property
+      evaluation.replaceAll(name, () => {
+        const value = this.modular.value(name) as Value
+        // console.log(this.constructor.name, "expandEvaluationProperties", name, value)
+        return value
+      }, 'expandEvaluationProperties')
     }
-    return { args: {}, code }
   }
 
-  private expandMethodsUnlessNumber(object: EvaluatorExpanding): void {
-    if (isNumeric(object.code)) return
+  private expressions = new Map<string, string>()
 
-    const changedKeys: string[] = []
-    EvaluatorMethodKeys.forEach(key => {
-      const regExp = EvaluatorRegExp(key)
-      if (regExp.test(String(object.code))) {
-        changedKeys.push(key)
-        const underKey = `_${key}`
-        object.args[underKey] = EvaluatorMethods[key]
-        object.code = String(object.code).replaceAll(regExp, underKey)
-      }
-    })
-    // if (changedKeys.length) console.log(this.constructor.name, "expandMethods", changedKeys.join(', '), "\n", expression, "\n", object.code)
+  private _filter?: Filter
+  get filter(): Filter { return this._filter! }
+  set filter(value: Filter) {
+    if (!value) return
+
+    this._filter = value
+    this.parameterInstances = this.filter.parametersDefined
+    this.numbersInitialize()
   }
 
-  private expandExpression(expression: string): EvaluatorExpanding {
-    const object: EvaluatorExpanding = this.expandValues(expression)
-    this.expandVariablesUnlessNumber(object)
-    this.expandMethodsUnlessNumber(object)
-    return object
+  get(key: string): Value {
+    if (this.numbers.has(key)) return this.numbers.get(key)!
+    if (this.strings.has(key)) return this.strings.get(key)!
+    return ''
   }
-
-  filter: Filter
 
   graphType = GraphType.Canvas
 
-  has(key : string) : boolean { return this.keys.includes(key) }
+  preloading = false
 
-  private get keys(): string[] {
-    return [...this.numbers.keys(), ...this.strings.keys(), ...EvaluatorMethodKeys]
+  private logDebug(evaluation: Evaluation) {
+    console.log(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`)
   }
 
+  get createVisibleContext(): VisibleContext {
+    const size = this._visibleContext ? this.visibleContext.size : this.outputSize
 
-  logDebug() {
-    if (!this.debugs.length) return
-
-    const strings = this.debugs.map(debug => {
-      const { input, output, expanded, method } = debug
-      return `${method}: ${input} (${typeof input}) => ${output} (${typeof output}) ${expanded?.join(', ') || ''}`
-    })
-    // console.log(this.filter.definitionId, `\n${strings.join("\n")}`)
+    return ContextFactory.toSize(size)
   }
 
-  mergeContext?: VisibleContext
-
-  modular: Modular
-
-  modularValue(key: string): Value {
-    const value = this.modular.value(key)
-    if (typeof value === "boolean") return value ? 1 : 0
-
-    if (typeof value === "number" || typeof value === "string") {
-      return value
-    }
-    throw Errors.invalid.property + key
+  private _modular?: Modular
+  get modular(): Modular { return this._modular! }
+  set modular(value: Modular) {
+    this._modular = value
+    this.properties = this.modular.definition.propertiesCustom
   }
 
   private numbers = new Map<string, number>()
 
-  outputSize: Size
-
-  parameter(key: string): Parameter | undefined {
-    return this.filter.parametersDefined.find(parameter => parameter.name === key)
+  private numbersInitialize() {
+    this.numbers.clear()
+    const { height, width } = this.outputSize
+    const { lengthSeconds, fps } = this.timeRange
+    this.setNumber('out_height', height)
+    this.setNumber('out_width', width)
+    this.setNumber('out_duration', lengthSeconds)
+    this.setNumber('out_rate', fps)
+    if (this.graphType === GraphType.Canvas) this.setNumber('t', this.position)
   }
 
-  parameterValue(key: string): Value {
-    const parameter = this.parameter(key)
-    if (!parameter) return ''
+  private outputSize: Size
 
-    const { value } = parameter
-    return this.evaluateIfConditional(value)
+  private parameterInstance(key: string): Parameter | undefined {
+    return this.parameterInstances.find(parameter => parameter.name === key)
   }
 
-  get position(): number { return this.timeRange.position }
+  parameterNumber(key: string): number {
+    const value = this.parameter(key)
+    const number = Number(value)
+    if (isNan(number)) throw Errors.eval.number + `${key} ≠ ${value}`
 
-  preloader: Preloader
+    return number
+  }
 
-  set(key: string, value: Value, dataType = DataType.Number): void {
-    switch (dataType) {
-      case DataType.Mode:
-      case DataType.Rgb:
-      case DataType.Rgba:
-      case DataType.Font:
-      case DataType.String: {
-        this.setVariable(key, value)
-        break
-      }
-      case DataType.Frame:
-      case DataType.Direction4:
-      case DataType.Direction8:
-      case DataType.Number: {
-        this.numbers.set(key, Number(value))
-        break
-      }
+  parameter(key: string, debug?: boolean): Value {
+    const parameter = this.parameterInstance(key)
+    if (!parameter) throw Errors.eval.string + key
+
+    const evaluation = new Evaluation(key)
+    this.expandParameter(evaluation, parameter)
+    this.evaluateEvaluation(evaluation)
+    if (debug) this.logDebug(evaluation)
+    return evaluation.result
+  }
+
+  parameterValue(key: string, debug?: boolean): Value {
+    const parameter = this.parameterInstance(key)
+    if (!parameter) throw Errors.eval.string + key
+
+    const evaluation = new Evaluation(key)
+    this.expandParameter(evaluation, parameter)
+    if (debug) this.logDebug(evaluation)
+    return evaluation.result
+  }
+
+  get parameters(): ValueObject {
+    const evaluated: ValueObject = {}
+    this.parameterInstances.forEach(parameter => {
+      const { name } = parameter
+      evaluated[name] = this.parameter(name)
+    })
+    return evaluated
+  }
+
+  get parameterValues(): ValueObject {
+    const evaluated: ValueObject = {}
+    this.parameterInstances.forEach(parameter => {
+      const { name } = parameter
+      evaluated[name] = this.parameterValue(name)
+    })
+    return evaluated
+  }
+
+  private parameterConditionalValue(evaluation: Evaluation, parameter: Parameter): Value {
+    let value = parameter.value
+    if (Array.isArray(value)) {
+      value = this.evaluateConditionals(evaluation, value)
+    }
+
+    if (isNumeric(value)) return Number(value)
+
+    if (!value) return value // empty string
+
+    const { values } = parameter
+    const found = values?.find(test => test === value)
+    if (found) return found // one of a set of supported vales
+
+    return value
+  }
+
+  private parameterInstances: Parameter[] = []
+
+  private populateEvaluationArgs(evaluation: Evaluation): void {
+    if (evaluation.resolved) return
+
+    const { args } = evaluation
+    const expanded: string[] = []
+    for (const property of this.properties) {
+      const { name } = property
+      evaluation.replaceAll(name, () => {
+        expanded.push(name)
+        const underKey = `_${name}`
+        args[underKey] = this.modular.value(property.name) as Value
+        return underKey
+      }, 'populateEvaluationArgs.properties')
+    }
+    for (const entry of this.strings.entries()) {
+      const [key, value] = entry
+      evaluation.replaceAll(key, () => {
+        expanded.push(key)
+        const underKey = `_${key}`
+        args[underKey] = String(value)
+        return underKey
+      }, 'populateEvaluationArgs.strings')
     }
   }
 
-  setInputDimensions(prefix = 'in'): void {
-    const { context } = this
-    if (!context) return
+  private get position(): number { return this.timeRange.position }
 
-    const { width, height } = context.size
-    this.set(`${prefix}_w`, width)
-    this.set(`${prefix}_h`, height)
+  preloader: Preloader
+
+  private properties: Property[] = []
+
+  propertyValue(key: string): Value {
+    const selectionValue = this.modular.value(key)
+    switch (typeof selectionValue) {
+      case 'boolean': return selectionValue ? 1 : 0
+      case 'number':
+      case 'string': return selectionValue
+    }
+    throw Errors.invalid.property + key
+  }
+
+  set(key: string, value: Value, dataType = DataType.Number): void {
+    if (dataTypeIsString(dataType)) this.setExpression(key, String(value))
+    else this.setNumber(key, Number(value))
+  }
+
+  setInputDimensions(prefix = 'in'): void {
+    const { preloading, graphType } = this
+    if (preloading || graphType !== GraphType.Canvas) return
+
+    const key_w = `${prefix}_w`
+    const key_h = `${prefix}_h`
+    const { width, height } = this.visibleContext.size
+    this.setNumber(key_w, width)
+    this.setNumber(key_h, height)
   }
 
   setOutputDimensions(prefix = 'out'): void {
     const { outputSize } = this
     const { width, height } = outputSize
-    this.set(`${prefix}_w`, width)
-    this.set(`${prefix}_h`, height)
+    this.setNumber(`${prefix}_w`, width)
+    this.setNumber(`${prefix}_h`, height)
   }
 
-  setVariable(key: string, value: Value): void {
-    // console.log(this.constructor.name, "setVariable", key, value)
-    this.variables.set(key, value)
+  setExpression(key: string, expression: string): void {
+    // console.log(this.constructor.name, "setExpression", key, expression)
+    this.expressions.set(key, expression)
   }
 
-  private strings = new Map<string, string>()
+  setNumber(key: string, number: number): void {
+    this.numbers.set(key, number)
+  }
 
-  timeRange : TimeRange
+  setString(key: string, string: string): void {
+    this.strings.set(key, string)
+  }
 
-  private variables = new Map<string, Value>()
+  strings = new Map<string, string>()
+
+  private _timeRange?: TimeRange
+  get timeRange(): TimeRange { return this._timeRange! }
+  set timeRange(value: TimeRange) { this._timeRange = value }
+
+  private _visibleContext?: VisibleContext
+  get visibleContext(): VisibleContext {
+    if (this._visibleContext) return this._visibleContext
+
+    // console.trace(this.modular.definitionId, this.filter.definitionId, this.constructor.name, "get context", this.outputSize)
+
+    return this._visibleContext = this.createVisibleContext
+  }
+  set visibleContext(value: VisibleContext) {
+    // console.log(this.constructor.name, this.modular.definitionId, this.filter.definitionId, "set context", value.size)
+    this._visibleContext = value
+  }
+
+  get visibleContextUpdated(): Boolean { return !!this._visibleContext }
+
 }
 
 export { Evaluator, EvaluatorArgs }

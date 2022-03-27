@@ -1,3 +1,3 @@
 export * from "./Directory"
 export * from "./NodePreloader"
-export * from "./RenderingInput"
+export * from "./Rendering"

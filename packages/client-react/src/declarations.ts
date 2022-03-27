@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  DataType, Definition, DefinitionObject, EventType, JsonObject, StringSetter, TrackType, UnknownObject
+  DataType, Definition, DefinitionObject, EventType, TrackType, UnknownObject
 } from '@moviemasher/moviemasher.js'
 
 

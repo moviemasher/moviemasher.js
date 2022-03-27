@@ -1,18 +1,22 @@
 {
-  "label": "Top Left",
-  "id": "com.moviemasher.merger.default",
+  "label": "Constrained",
   "type": "merger",
+  "id": "com.moviemasher.merger.default",
+  "properties": [
+    { "name": "left", "type": "number", "value": 0.5 },
+    { "name": "top", "type": "number", "value": 0.5 }
+  ],
   "filters": [
     {
       "id": "com.moviemasher.filter.overlay",
       "parameters": [
         {
           "name": "x",
-          "value": "0"
+          "value": "left*(main_w-overlay_w)"
         },
         {
           "name": "y",
-          "value": "0"
+          "value": "top*(main_h-overlay_h)"
         }
       ]
     }

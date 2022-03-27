@@ -1,103 +1,67 @@
-import { CommandArgs, CommandInputs, RenderingResult } from "../Api/Rendering"
-import { FilesArgs, FilterChain, FilterGraph, FilterGraphArgs, FilterGraphOptions, GraphFile, GraphFiles, GraphFilters, GraphInput, Size, ValueObject } from "../declarations"
-import { Time } from "../Helpers/Time"
-import { TimeRange } from "../Helpers/TimeRange"
+import { GraphFile, GraphFiles, Size, ValueObject } from "../declarations"
+import { EmptyMethod } from "../Setup/Constants"
+import { AVType, GraphType, OutputType } from "../Setup/Enums"
+import { Errors } from "../Setup/Errors"
+import { Time } from "../Helpers/Time/Time"
+import { TimeRange } from "../Helpers/Time/Time"
 import { Clip, ClipDefinition, Clips } from "../Mixin/Clip/Clip"
 import { VisibleDefinition } from "../Mixin/Visible/Visible"
+import { CommandDescription, RenderingDescription, RenderingResult } from "../Api/Rendering"
 import { LoadedInfo } from "../Preloader/Preloader"
-import { EmptyMethod } from "../Setup/Constants"
-import { AVType, DefinitionType, GraphType, LoadType, LoadTypes, OutputType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
-import { RenderingOutput, RenderingOutputArgs } from "./Output"
+import { RenderingCommandOutput, RenderingOutput, RenderingOutputArgs } from "./Output"
+import { FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
+import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from "../Helpers/Time/TimeUtilities"
 
 class RenderingOutputClass implements RenderingOutput {
   constructor(args: RenderingOutputArgs) {
     this.args = args
   }
+
+  private applyLoadedInfo(graphFile: GraphFile, loadedInfo: LoadedInfo): void {
+    const { definition } = graphFile
+    if (!definition) throw Errors.invalid.object
+
+    const clipDefinition = definition as ClipDefinition
+    const { duration, width, height } = loadedInfo
+    if (duration) {
+      clipDefinition.duration = duration
+      // console.log(this.constructor.name, "applyLoadedInfo duration", duration, clipDefinition.toJSON())
+    } // else console.log(this.constructor.name, "applyLoadedInfo no duration for", clipDefinition.toJSON())
+    if (clipDefinition.visible) {
+      if (width && height) {
+        const visibleDefinition = clipDefinition as VisibleDefinition
+        visibleDefinition.width = width
+        visibleDefinition.height = height
+        // console.log(this.constructor.name, "applyLoadedInfo dimensions", width, "x", height, clipDefinition.toJSON())
+      } // else console.log(this.constructor.name, "applyLoadedInfo no dimensions", width, height, clipDefinition.visible)
+    }
+  }
+
   args: RenderingOutputArgs
+
+  protected assureClipFrames(): void {
+    const { durationClips, args } = this
+    const { quantize } = args.mash
+    durationClips.forEach(clip => {
+      const { definition } = clip
+      const frames = definition.frames(quantize)
+        // console.log(this.constructor.name, "assureClipFrames", clip.label, frames)
+      if (frames) clip.frames = frames
+    })
+  }
 
   avType = AVType.Both
 
-  protected commandArgs(filterGraph: FilterGraph): CommandArgs {
-    const { filterChains, duration, avType } = filterGraph
-    const commandInputs: CommandInputs = []
-    const graphFilters: GraphFilters = []
-    if (!duration) throw 'duration'
+  _commandOutput?: RenderingCommandOutput
+  get commandOutput(): RenderingCommandOutput {
+    if (this._commandOutput) return this._commandOutput
 
     const options: ValueObject = { ...this.args.commandOutput.options }
-    const commandOutput = { ...this.args.commandOutput, options }
-    // console.log(this.constructor.name, "commandArgs", commandOutput)
-    const { outputType } = this
-    switch (outputType) {
-      case OutputType.Image:
-      case OutputType.Waveform: {
-        options['frames:v'] = 1
-        break
-      }
-      default: options.t ||= duration
-    }
-    if (avType === AVType.Audio) {
-      delete commandOutput.videoCodec
-      delete commandOutput.videoRate
-    } else if (avType === AVType.Video) {
-      delete commandOutput.audioCodec
-      delete commandOutput.audioBitrate
-      delete commandOutput.audioChannels
-      delete commandOutput.audioRate
-    }
-
-    filterChains.forEach((filterChain: FilterChain) => {
-      const { graphFilter, graphFilters: filters, graphFiles } = filterChain
-      graphFiles.forEach(graphFile => {
-        const { type, file, input, options } = graphFile
-        if (!input) return
-
-        switch (type) {
-          case LoadType.Video:
-          case LoadType.Image: {
-            const input: GraphInput = { source: file, options }
-            commandInputs.push(input)
-            break
-          }
-        }
-      })
-
-      graphFilters.push(...filters)
-      if (graphFilter) graphFilters.push(graphFilter)
-    })
-    const commandOptions: CommandArgs = {
-      inputs: commandInputs, graphFilters, output: commandOutput
-    }
-    return commandOptions
+    const commandOutput: RenderingCommandOutput = { ...this.args.commandOutput, options }
+    return this._commandOutput = commandOutput
   }
 
-  commandArgsPromise(renderingResults?: RenderingResult[]): Promise<CommandArgs[]> {
-    // console.log(JSON.stringify(this.args.mash))
-    let promise = this.durationPromise
-    promise = promise.then(() => this.sizePromise)
-    promise = promise.then(() => this.preloadPromise)
-
-    const { mash } = this.args
-    return promise.then(() => {
-      // console.log("SIZE", size)
-      const args = this.filterGraphArgs
-
-      const filterGraphs = mash.filterGraphs(args)
-      // if (filterGraphs.length > 1)
-      // console.log('commandArgsPromise', filterGraphs.flatMap(f => f.filterChains.flatMap(c => c.graphFilters.map(g => g.options))))
-      const commandArgs = filterGraphs.map(filterGraph => this.commandArgs(filterGraph))
-      // console.log('commandArgsPromise', commandArgs)
-      return commandArgs
-    })
-  }
-
-  private _duration = 0
-  get duration(): number {
-    if (!this._duration) {
-      this._duration = this.args.mash.duration
-    }
-    return this._duration
-  }
+  get duration(): number { return this.timeRange.lengthSeconds }
 
   protected get durationClips(): Clips {
     const { mash } = this.args
@@ -106,104 +70,68 @@ class RenderingOutputClass implements RenderingOutput {
     return mash.clips.filter(clip => clip.frames < 1)
   }
 
-  protected loadableGraphFiles(clips: Clips): GraphFiles {
-    const { quantize } = this.args.mash
-    const time = Time.fromArgs(0, quantize)
-    const { avType, graphType } = this
-    const graphFiles: GraphFiles = clips.flatMap(clip => {
-      const args = { avType, graphType, quantize, start: time.withFrame(clip.frame) }
-      return clip.files(args).filter(file => LoadTypes.includes(file.type))
-    })
-    return graphFiles
+  get endTime(): Time | undefined {
+    return this.args.endTime || this.args.mash.endTime
   }
 
-
-  private applyLoadedInfo(graphFile: GraphFile, loadedInfo: LoadedInfo): void {
-    const { definition } = graphFile
-    if (!definition) throw Errors.invalid.object
-
-    const clipDefinition = definition as ClipDefinition
-
-    const { duration, width, height } = loadedInfo
-    if (duration) clipDefinition.duration = duration
-
-    if (width && height && clipDefinition.visible) {
-      // console.log(this.constructor.name, "applyLoadedInfo", width, height, clipDefinition.toJSON())
-      const visibleDefinition = clipDefinition as VisibleDefinition
-      visibleDefinition.width = width
-      visibleDefinition.height = height
-    } else console.log(this.constructor.name, "applyLoadedInfo", width, height, clipDefinition.visible)
-  }
-
-  protected assureClipFrames(): void {
-    const { durationClips, args } = this
-    const { quantize } = args.mash
-    durationClips.forEach(clip => {
-      const { definition } = clip
-      clip.frames = definition.frames(quantize)
-    })
-  }
-
-  get sizePromise(): Promise<void> {
-    const { outputCover, args, visibleGraphFiles } = this
-    if (!outputCover) return Promise.resolve()
-
-    const graphFiles = visibleGraphFiles.filter(graphFile => {
-      const { definition } = graphFile
-      const visibleDefinition = definition as VisibleDefinition
-      return !(visibleDefinition.width && visibleDefinition.height)
-    })
-    return this.loadAndApplyPromise(graphFiles)
-  }
-
-  private loadAndApplyPromise(graphFiles: GraphFiles): Promise<void> {
-    if (!graphFiles.length) {
-      // console.log(this.constructor.name, "loadAndApplyPromise no graphFiles")
-      return Promise.resolve()
+  get filterGraphOptions(): FilterGraphOptions {
+    const { timeRange: time, graphType, avType, videoRate } = this
+    const filterGraphOptions: FilterGraphOptions = {
+      time,
+      preloading: false,
+      size: this.sizeCovered(), videoRate,
+      graphType, avType
     }
-    const { preloader } = this.args.mash
-    const promises = graphFiles.map(graphFile =>
-      preloader.loadFilePromise(graphFile).then(graphFile =>
-        preloader.fileInfoPromise(graphFile).then(loadedInfo =>
-          this.applyLoadedInfo(graphFile, loadedInfo)
-        )
-      )
-    )
-    return Promise.all(promises).then(EmptyMethod)
-  }
-
-  protected get durationPromise(): Promise<void> {
-    const clips = this.durationClips
-    if (!clips.length) return Promise.resolve() // all clips have valid frames property
-
-    const graphFiles = this.loadableGraphFiles(clips)
-    if (!graphFiles.length) throw Errors.invalid.duration + 'durationPromise'
-
-    return this.loadAndApplyPromise(graphFiles).then(() => { this.assureClipFrames() })
-  }
-
-  protected get endTime(): Time | undefined {
-    const { quantize, frames } = this.args.mash
-    return Time.fromArgs(frames, quantize)
-  }
-
-  get filterGraphArgs(): FilterGraphArgs {
-    const { args, renderTimeRange, graphType, avType } = this
-    const { quantize } = args.mash
-    const filterGraphArgs: FilterGraphArgs = {
-      justGraphFiles: false,
-      size: this.sizeCovered(), videoRate: quantize,
-      timeRange: renderTimeRange,
-      graphType,
-      avType
-    }
-    return filterGraphArgs
+    return filterGraphOptions
   }
 
   graphType = GraphType.Mash
 
+  private loadWithInfoPromise(graphFiles: GraphFiles): Promise<void> {
+    if (!graphFiles.length) return Promise.resolve()
+
+    const { preloader } = this.args.mash
+    const promises = graphFiles.map(graphFile => {
+      return preloader.loadFilePromise(graphFile).then(graphFile =>{
+        return preloader.fileInfoPromise(graphFile).then(loadedInfo => {
+          this.applyLoadedInfo(graphFile, loadedInfo)
+        })
+      })
+    })
+    return Promise.all(promises).then(EmptyMethod)
+  }
+
+  protected get mashDurationPromise(): Promise<void> {
+    const clips = this.durationClips
+    if (!clips.length) {
+      // console.log(this.constructor.name, "mashDurationPromise with no duration clips")
+      return Promise.resolve()
+    }
+
+    const startFrames = clips.map(clip => clip.frame)
+    const startFrame = Math.min(...startFrames)
+    const endFrame = Math.max(...startFrames)
+    const { mash } =  this.args
+    const { quantize } = mash
+    const time = timeRangeFromArgs(startFrame, quantize, endFrame + 1)
+
+    const { avType, graphType, outputSize: size, videoRate } = this
+    const filterGraphOptions: FilterGraphOptions = {
+      time, avType, graphType, size, videoRate, preloading: true
+    }
+    const files = mash.filterGraphs(filterGraphOptions).graphFilesLoadable
+
+    // console.log(this.constructor.name, "mashDurationPromise loading", files.length, "file(s) for ", clips.length, "clip(s)", filterGraphOptions)
+    const { preloader } = mash
+    return preloader.loadFilesPromise(files).then(() => {
+      return this.loadWithInfoPromise(files).then(() => { this.assureClipFrames() })
+    })
+  }
+
   get mashSize(): Size | undefined {
-    const definitions = this.visibleDefinitions()
+    const { visibleGraphFiles } = this
+    const visible = visibleGraphFiles.map(graphFile => graphFile.definition).filter(Boolean)
+    const definitions = [...new Set(visible.map(definition => definition as VisibleDefinition))]
     const sized = definitions.filter(definition => definition.width && definition.height)
     if (!sized.length) return
 
@@ -216,95 +144,131 @@ class RenderingOutputClass implements RenderingOutput {
     }
   }
 
-  get renderTimeRange(): TimeRange {
-    const { timeRange } = this.args.mash
-    return timeRange
-  }
-
-  get renderingClips(): Clip[] {
-    return this.args.mash.clipsInTimeRange(this.renderTimeRange)
-  }
-
   get outputCover(): boolean { return false }
-
-  outputType!: OutputType
 
   get outputSize(): Size {
     const { width, height } = this.args.commandOutput
-    if (!(width && height)) throw Errors.invalid.size + 'outputSize'
+    if (!(width && height)) {
+      if (this.avType === AVType.Audio) return { width: 0, height: 0 }
 
+      console.error(this.constructor.name, "outputSize", this.args.commandOutput)
+      throw Errors.invalid.size + this.outputType + '.outputSize for avType ' + this.avType
+    }
     return { width, height }
   }
 
-  sizeCovered(): Size {
-    const outputSize = this.outputSize
-    if (!this.outputCover) {
-      // console.log(this.constructor.name, "sizeCovered using output size", outputSize)
-      return outputSize
+  outputType!: OutputType
+
+  get preloadPromise(): Promise<void> {
+    const { timeRange, avType, graphType, videoRate } = this
+    const args: FilterGraphOptions = {
+      time: timeRange, avType, graphType, size: this.outputSize, videoRate
     }
 
-    // console.log(this.constructor.name, "sizeCovered", this.outputCover, this.args.commandOutput)
+        // console.log(this.constructor.name, "preloadPromise", args)
+    return this.args.mash.loadPromise(args)
+  }
+
+  get renderingClips(): Clip[] {
+    return this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
+  }
+
+  renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription> {
+    const { avType, args } = this
+    const { mash } = args
+    let promise = this.mashDurationPromise
+    promise = promise.then(() => this.sizePromise)
+    promise = promise.then(() => this.preloadPromise)
+    return promise.then(() => {
+      const { commandOutput, filterGraphOptions } = this
+      const filterGraphs = mash.filterGraphs(filterGraphOptions)
+      const renderingDescription: RenderingDescription = { commandOutput }
+      const { duration } = filterGraphs
+      if (avType !== AVType.Audio) {
+        const { filterGraphsVisible } = filterGraphs
+        const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
+          const { graphFilters, commandInputs: inputs, duration } = filterGraph
+          const commandDescription: CommandDescription = { inputs, graphFilters, duration }
+          return commandDescription
+        })
+        renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
+      }
+      if (avType !== AVType.Video) {
+        const { filterGraphAudible } = filterGraphs
+        if (filterGraphAudible) {
+          const { graphFilters, commandInputs: inputs } = filterGraphAudible
+          const commandDescription: CommandDescription = {
+            inputs, graphFilters, duration
+          }
+          renderingDescription.audibleCommandDescription = commandDescription
+        }
+      }
+      return renderingDescription
+    })
+  }
+
+  get startTime(): Time {
+    if (this.args.startTime) return this.args.startTime
+
+    const { quantize, frame } = this.args.mash
+    return timeFromArgs(frame, quantize)
+  }
+
+  sizeCovered(): Size {
+    const { outputSize } = this
+    if (!this.outputCover) return outputSize
+
     const sizeMash = this.mashSize
-    if (!sizeMash) {
-      // console.log(this.constructor.name, "sizeCovered mash has no dimensions", outputSize)
-      return outputSize // mash doesn't care about size
-    }
+    if (!sizeMash) return outputSize // mash doesn't care about size
+
     if (sizeMash.width === 0 || sizeMash.height == 0) throw Errors.internal + 'sizeCovered'
 
     const horzRatio = outputSize.width / sizeMash.width
     const vertRatio = outputSize.height / sizeMash.height
     const scale = Math.max(horzRatio, vertRatio)
-    if (scale >= 1.0) {
-      // console.log(this.constructor.name, "sizeCovered won't scale up from", sizeMash)
+    if (scale >= 1.0) return sizeMash
 
-      return sizeMash
-    }
+    if (horzRatio > vertRatio) outputSize.height = Math.round(scale * sizeMash.height)
+    else outputSize.width = Math.round(scale * sizeMash.width)
 
-    if (horzRatio > vertRatio) {
-      outputSize.height = Math.round(scale * sizeMash.height)
-      // console.log(this.constructor.name, "sizeCovered preferring horizontal", outputSize, scale, vertRatio)
-    }
-    else {
-      outputSize.width = Math.round(scale * sizeMash.width)
-      // console.log(this.constructor.name, "sizeCovered preferring horizontal", outputSize, scale, vertRatio)
-    }
     return outputSize
   }
 
-  get preloadPromise(): Promise<void> {
-    const { avType, graphType, args } = this
-    const { mash } = args
-    const filterGraphArgs: FilterGraphOptions = {
-      avType, graphType, timeRange: this.renderTimeRange,
-      size: this.sizeCovered(), videoRate: this.args.commandOutput.videoRate || 0
+  get sizePromise(): Promise<void> {
+    if (!this.outputCover) return Promise.resolve()
+
+    const { timeRange: time, graphType, videoRate } = this
+
+    const filterGraphOptions: FilterGraphOptions = {
+      avType: AVType.Video, graphType, time,
+      size: this.outputSize, videoRate
     }
-    const graphFiles = mash.graphFiles(filterGraphArgs)
-    return mash.preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
+    const visibleGraphFiles = this.args.mash.graphFiles(filterGraphOptions)
+    if (!visibleGraphFiles.length) return Promise.resolve()
+
+    const graphFiles = visibleGraphFiles.filter(graphFile => {
+      const { definition } = graphFile
+      const visibleDefinition = definition as VisibleDefinition
+      return !(visibleDefinition.width && visibleDefinition.height)
+    })
+    if (!graphFiles.length) return Promise.resolve()
+
+    return this.loadWithInfoPromise(graphFiles)
   }
 
-  get renderStartTime(): Time {
-    const { mash } = this.args
-    return Time.fromArgs(0, mash.quantize)
-  }
+  get timeRange(): TimeRange { return timeRangeFromTimes(this.startTime, this.endTime) }
+
+  get videoRate(): number { return this.args.commandOutput.videoRate || 0 }
 
   get visibleGraphFiles(): GraphFiles {
-    const { args, graphType } = this
-    const { mash } = args
+    const { timeRange: time, graphType, videoRate } = this
 
-    const avType = AVType.Video
-    const filterGraphArgs: FilterGraphOptions = {
-      avType, graphType, timeRange: this.renderTimeRange,
-      size: this.outputSize, videoRate: this.args.commandOutput.videoRate || 0
+    const filterGraphOptions: FilterGraphOptions = {
+      avType: AVType.Video, graphType, time,
+      size: this.outputSize, videoRate
     }
-    const graphFiles = mash.graphFiles(filterGraphArgs)
+    const graphFiles = this.args.mash.graphFiles(filterGraphOptions)
     return graphFiles
-  }
-
-  visibleDefinitions(): VisibleDefinition[] {
-    const graphFiles = this.visibleGraphFiles
-    const visible = graphFiles.map(graphFile => graphFile.definition).filter(Boolean)
-    const definitions = [...new Set(visible.map(definition => definition as VisibleDefinition))]
-    return definitions
   }
 }
 

@@ -1,12 +1,9 @@
 .DS_Store
 node_modules*
-dist*
-log*
-tmp*
+**/dist*
 temporary*
-vendor*
-coverage*
+*.test.*
 **/__image_snapshots__*
 *.cache/*
 **/raw/*
-dev/assets/*
+.vscode/*

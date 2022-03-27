@@ -1,8 +1,10 @@
 import { DefinitionObjects } from "../Base/Definition"
-import { AndId, GraphFile, GraphFiles } from "../declarations"
+import { AndId, GraphFiles } from "../declarations"
 import { MashObject } from "../Edited/Mash/Mash"
+import { CommandOutput } from "../Output/Output"
 import { StreamingFormat } from "../Setup/Enums"
 import { ApiRequest, ApiResponse } from "./Api"
+import { CommandDescription } from "./Rendering"
 
 
 export interface StreamingStartRequest extends ApiRequest {
@@ -66,4 +68,8 @@ export interface StreamingLocalRequest extends ApiRequest, AndId {
 }
 export interface StreamingLocalResponse extends ApiResponse {
   localDescription: RTCSessionDescription
+}
+
+export interface StreamingDescription extends CommandDescription {
+  commandOutput: CommandOutput
 }

@@ -1,7 +1,7 @@
 import { CommandOutput } from "./Output"
 import { OutputFormat, OutputType } from "../Setup/Enums"
 import { outputDefaultRendering } from "./OutputDefault"
-import { ExtJpeg } from "../Setup/Constants"
+import { ExtJpeg, ExtPng } from "../Setup/Constants"
 
 const expectNoVideoKeys = (args: CommandOutput) => {
   expect(args.videoBitrate).toBeUndefined()
@@ -74,7 +74,7 @@ describe("outputDefaultRendering", () => {
   })
 
   test("OutputType.VideoSequence", () => {
-    const args = outputDefaultRendering(OutputType.VideoSequence)
+    const args = outputDefaultRendering(OutputType.ImageSequence)
     // console.log('VideoSequence', args)
     expect(args.extension).toEqual(ExtJpeg)
     expectDimensionKeys(args)
@@ -85,7 +85,8 @@ describe("outputDefaultRendering", () => {
   test("OutputType.Waveform", () => {
     const args = outputDefaultRendering(OutputType.Waveform)
     // console.log('Waveform', args)
-    expect(args.extension).toEqual(OutputFormat.Png)
+    expect(args.format).toBeUndefined()
+    expect(args.extension).toEqual(ExtPng)
     expectDimensionKeys(args)
     expect(args.options?.g).toBeUndefined()
   })

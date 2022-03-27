@@ -1,48 +1,51 @@
 import { VisibleContext } from "../../../Context/VisibleContext"
-import { EvaluatedPoint, ModularGraphFilter, FilterChainArgs, ValueObject } from "../../../declarations"
+import { ModularGraphFilter } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { isNan } from "../../../Utility/Is"
-import { Parameter } from "../../../Setup"
+import { GraphType, Parameter } from "../../../Setup"
 
 
 /**
  * @category Filter
  */
 class OverlayFilter extends FilterDefinitionClass {
-  draw(evaluator: Evaluator): VisibleContext {
-    const x = Number(evaluator.evaluateParameter('x'))
-    const y = Number(evaluator.evaluateParameter('y'))
+  protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {
+    const x = Number(evaluator.parameter('x'))
+    const y = Number(evaluator.parameter('y'))
     if (isNan(x)) throw Errors.invalid.property + 'x'
     if (isNan(y)) throw Errors.invalid.property + 'y'
 
-    const { context, mergeContext } = evaluator
-    if (!(context && mergeContext)) throw Errors.invalid.context
+    const { visibleContext: context, createVisibleContext: mergeContext } = evaluator
+    if (!(context && mergeContext)) throw Errors.invalid.context + this.id
 
     mergeContext.drawAtPoint(context.drawingSource, { x, y })
     return mergeContext
   }
 
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
-    const x = Number(evaluator.evaluateParameter('x'))
-    const y = Number(evaluator.evaluateParameter('y'))
-    return {
-      inputs: [],
-      filter: this.ffmpegFilter,
-      options: { x, y }
+    const { graphType, preloading } = evaluator
+    const graphFilter: ModularGraphFilter = {
+      inputs: [], filter: this.ffmpegFilter, options: {}
     }
+    evaluator.setOutputDimensions('main')
+    if (!preloading) {
+      if (graphType === GraphType.Canvas) {
+        evaluator.setInputDimensions('overlay')
+        evaluator.visibleContext = this.drawFilterDefinition(evaluator)
+      } else {
+        graphFilter.options.x = evaluator.parameter('x')
+        graphFilter.options.y = evaluator.parameter('y')
+      }
+    }
+    return graphFilter
   }
 
   parameters: Parameter[] = [
     new Parameter({ name: "x", value: 0 }),
     new Parameter({ name: "y", value: 0 }),
   ]
-
-  scopeSet(evaluator: Evaluator): void {
-    evaluator.setInputDimensions('overlay')
-    evaluator.setOutputDimensions('main')
-  }
 }
 
 export { OverlayFilter }

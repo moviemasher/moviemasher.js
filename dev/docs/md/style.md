@@ -345,6 +345,26 @@ const DefaultIcons: EditorIcons = {
   width: 100%;
 }
 
+.moviemasher .editor .inspector .effects {
+  background-color: var(--back-secondary);
+  width: 100%;
+  height: calc((3 * var(--icon-size)) + (4 * var(--spacing)));
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+}
+
+.moviemasher .editor .inspector .effects .effect {
+  color: var(--fore-tertiary);
+  background-color: var(--back-tertiary);
+  width: 100%;
+  height: var(--icon-size);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing);
+  padding: var(--border-radius);
+}
+
 .moviemasher .editor .timeline {
   isolation: isolate;
   grid-area: timeline;
@@ -455,22 +475,37 @@ const DefaultIcons: EditorIcons = {
 
 .moviemasher .editor .browser .definition,
 .moviemasher .editor .timeline .clip {
-  display: inline-flex;
   border: var(--border);
   border-radius: var(--border-radius);
   border-color: var(--fore-secondary);
   color: var(--fore-secondary);
   background-color: var(--back-secondary);
+  overflow-x: hidden;
+  background-size: cover;
+  background-image: var(--clip-icon);
 }
 
 .moviemasher .editor .timeline .clip {
-  overflow-x: hidden;
   padding: 0px;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.moviemasher .editor .timeline .clip label,
+.moviemasher .editor .browser .definition label {
+  display: inline-block;
+  width: 100%;
+  background-color: var(--back-tertiary);
+  opacity: 0.75;
+  height: calc(var(--icon-size) + var(--spacing));
 }
 
 .moviemasher .editor .timeline .clip label:after,
 .moviemasher .editor .browser .definition label:after {
   content: var(--clip-label);
+  padding: var(--spacing);
+  display: inline-block;
 }
 
 .moviemasher .editor .MuiSvgIcon-root {

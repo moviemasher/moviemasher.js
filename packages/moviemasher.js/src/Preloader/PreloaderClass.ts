@@ -93,7 +93,7 @@ class PreloaderClass implements Preloader {
     preloaderSource.definitions.forEach(definition => {
       if (definition instanceof PreloadableDefinition) {
         if (!definition.source.startsWith('http')) definition.source = key
-      } else console.warn(this.constructor.name, "updateSources definition not preloadable", key)
+      } // else console.warn(this.constructor.name, "updateSources definition not preloadable", key)
     })
   }
 }

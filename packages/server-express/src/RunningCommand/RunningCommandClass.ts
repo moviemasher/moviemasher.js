@@ -2,38 +2,36 @@ import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
 import {
-  CommandArgs, CommandOutput, CommandInputs, GraphFilters
+  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors
 } from "@moviemasher/moviemasher.js"
 
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
-import {
-  RunningCommand, CommandDestination, CommandResult
-} from "./RunningCommand"
+import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
 
 class RunningCommandClass extends EventEmitter implements RunningCommand {
-  constructor(id: string, args: CommandArgs) {
+  constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
-    this.graphFilters = args.graphFilters
-    this.commandInputs = args.inputs
-    this.output = args.output
+    const { graphFilters, inputs, output } = args
+    if (graphFilters) this.graphFilters = graphFilters
+    if (inputs) this.commandInputs = inputs
+    if (!(this.commandInputs.length || this.graphFilters.length)) {
+      console.trace(this.constructor.name, "with no inputs or graphFilters")
+      throw Errors.invalid.argument + 'inputs'
+    }
+    this.output = output
   }
 
   private _commandProcess?: Command
   get command(): Command {
     if (this._commandProcess) return this._commandProcess
 
-    return this._commandProcess = commandInstance({
-      inputs: this.commandInputs,
-      output: this.output,
-      graphFilters: this.graphFilters
-    })
+    const { commandInputs: inputs, graphFilters, output } = this
+    return this._commandProcess = commandInstance({ graphFilters, inputs, output })
   }
 
   graphFilters: GraphFilters = []
-
-  destination: CommandDestination = ''
 
   id: string
 
@@ -44,13 +42,17 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     this._commandProcess?.kill('SIGKILL')
   }
 
-  output: CommandOutput = {} //outputDefaultHls()
+  makeDirectory(destination: string): void {
+    fs.mkdirSync(path.dirname(destination), { recursive: true })
+  }
+
+  output: CommandOutput = {}
 
   run(destination: CommandDestination): void {
     // console.log(this.constructor.name, "run")
 
     this.command.on('error', (...args: any[]) => {
-      // console.log(this.constructor.name, "run received error", this.runError(...args))
+      console.log(this.constructor.name, "run received error", this.runError(...args))
       this.emit('error', this.runError(...args))
     })
     this.command.on('start', (...args: any[]) => {
@@ -60,8 +62,9 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
       this.emit('end', ...args)
     })
     if (typeof destination === 'string') {
-      // console.log(this.constructor.name, "run", destination)
-      fs.mkdirSync(path.dirname(destination), { recursive: true })
+      console.log(this.constructor.name, "run", destination)
+      this.makeDirectory(destination)
+
     }
     try {
       this.command.run()
@@ -78,7 +81,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     // console.log(this.constructor.name, "runPromise", destination)
     const promise = new Promise<CommandResult>(resolve => {
       this.command.on('error', (...args: any[]) => {
-        console.log(this.constructor.name, "runPromise received error event")
+        console.log(this.constructor.name, "runPromise received error event", ...args)
         resolve({ error: this.runError(...args) })
       })
       this.command.on('end', () => {
@@ -89,12 +92,10 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
       })
       try {
         if (typeof destination === 'string') {
-          // const dir = path.dirname(destination)
-          // fs.mkdir(dir, { recursive: true }, () => {
-            // console.log(this.constructor.name, "runPromise calling save", destination)
-            this.command.save(destination)
-          // })
-        } else console.log(this.constructor.name, "runPromise destination not string", destination)
+          this.makeDirectory(destination)
+          this.command.save(destination)
+        }
+        else console.log(this.constructor.name, "runPromise destination not string", destination)
       }
       catch (error) {
         console.error(this.constructor.name, "runPromise resolving during catch")

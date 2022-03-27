@@ -1,0 +1,106 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><title>Movie Masher : Rendering</title><link rel="stylesheet" href="assets/highlight.css"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="media/css/colors.css"/><link rel="stylesheet" href="media/css/styles.css"/><link rel="stylesheet" href="media/css/sizes.css"/><link rel="stylesheet" href="media/css/layout.css"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="color-scheme" content="dark light"/><link rel="icon" href="/favicon.png?v=5.0.0"/><link rel="apple-touch-icon" href="/apple-touch-icon.png?v=5.0.0"/><meta name="description" content="JavaScript video editor, encoder, and streamer - version 5.0.0"/><meta name="wot-verification" content="6e8112b54b30e750517c"/><meta name="og:title" content="Movie Masher : Rendering"/><meta name="og:description" content="JavaScript video editor, encoder, and streamer - version 5.0.0"/><meta name="og:type" content="website"/><meta name="og:image" content="//www.moviemasher.com/apple-touch-icon.png"/><meta name="og:url" content="//www.moviemasher.com/"/><meta name="og:site_name" content="Movie Masher"/><meta name="fb:app_id" content="9967461435"/><meta name="fb:admins" content="1052005972"/><meta name="twitter:card" content="summary"/><meta name="twitter:site" content="@MovieMasherJS"/><meta name="twitter:title" content="Movie Masher : Rendering"/><meta name="twitter:description" content="JavaScript video editor, encoder, and streamer - version 5.0.0"/><meta name="twitter:image" content="//www.moviemasher.com/apple-touch-icon.png"/><script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v11.0&appId=9967461435&autoLogAppEvents=1" nonce="I9c4iyYA"></script><script async src="https://platform.twitter.com/widgets.js"></script></head><body class="moviemasher"><header><div class="header"><a href="https://moviemasher.com/"><img src="media/img/tube.svg" height=19/><img src="media/img/movie.svg" height=28/><img src="media/img/masher.svg" height=28/></a><label for="nav-toggle" class="nav-button"><img src="media/img/menu.svg" width=36 height=36/></label><h1>JavaScript video editor, encoder, and streamer - version 5.0.0</h1></div></header><main><input type="checkbox" id="nav-toggle" class="nav-toggle"/><nav class="nav-left"><h2><a class="" href="index.html">README</a></h2><h2><a class="" href="demo/index.html">Demo</a></h2><details open><summary>Guides</summary><h2><a class="" href="Architecture.html">Architecture</a></h2><h2><a class="" href="Style.html">Style</a></h2><h2><a class="" href="Layout.html">Layout</a></h2><h2><a class="" href="Intergration.html">Intergration</a></h2><h2><a class="current" href="Rendering.html">Rendering</a></h2><h2><a class="" href="Streaming.html">Streaming</a></h2></details><details><summary>Core</summary><h2><a class="" href="interface/Mash.html">Mash</a></h2><h2><a class="" href="interface/MashEditor.html">MashEditor</a></h2><h2><a class="" href="interface/Filter.html">Filter</a></h2><h2><a class="" href="class/Factory.html">Factory</a></h2><h2><a class="" href="Utility.html">Utility</a></h2><h2><a class="" href="class/Action.html">Action</a></h2><h2><a class="" href="interface/Font.html">Font</a></h2><h2><a class="" href="enum.html">Enumerations</a></h2><h2><a class="" href="type.html">Types</a></h2></details><details><summary>Client</summary><h2><a class="" href="component/Masher.html">Masher</a></h2><h2><a class="" href="component/Player.html">Player</a></h2><h2><a class="" href="component/Browser.html">Browser</a></h2><h2><a class="" href="component/Inspector.html">Inspector</a></h2><h2><a class="" href="component/Timeline.html">Timeline</a></h2></details><details><summary>Server</summary><h2><a class="" href="api/Api.html">API</a></h2><h2><a class="" href="api/Content.html">Content</a></h2><h2><a class="" href="api/Hls.html">HLS</a></h2><h2><a class="" href="api/Encode.html">Encode</a></h2><h2><a class="" href="api/Rtmp.html">RTMP</a></h2><h2><a class="" href="api/Storage.html">Storage</a></h2><h2><a class="" href="api/Stream.html">Stream</a></h2><h2><a class="" href="api/Webrtc.html">WebRTC</a></h2></details><h2><a class="" href="modules.html">Index</a></h2></nav><article><div class="scrollable"><section class=""><a id="Rendering"><h2>Rendering</h2></a><div class="section"><p>At the lowest level, <a href="https://www.ffmpeg.org">FFmpeg</a> is used server-side through the
+<a href="https://www.npmjs.com/package/fluent-ffmpeg">fluent-ffmpeg</a> library to render
+a <a href="interface/Mash.html">Mash</a> into files of various types. Movie Masher wraps this library
+with the <a href="interface/Command.html">Command</a> class:</p>
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../../../../moviemasher/dev/graphics/ffmpeg-abstraction.svg) -->
+<svg width="640" height="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 40">
+<path d="M 240.00 0.00 L 430.00 0.00 L 430.00 40.00 L 240.00 40.00 Z M 240.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="245.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >fluent-ffmpeg</text>
+<path d="M 0.10 0.00 L 170.10 0.00 L 170.10 40.00 L 0.10 40.00 Z M 0.10 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="5.35" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" ><a href="interface/Command.html">Command</a></text>
+<path d="M 500.00 0.00 L 640.00 0.00 L 640.00 40.00 L 500.00 40.00 Z M 500.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="505.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >FFmpeg</text>
+<path d="M 465.00 20.00 L 500.00 20.00 M 490.00 22.13 L 500.00 20.00 L 490.00 17.87" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 430.00 20.00 L 500.00 20.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 205.05 20.00 L 240.00 20.00 M 230.00 22.13 L 240.00 20.00 L 230.00 17.87" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 170.10 20.00 L 240.00 20.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+</svg>
+<!-- MAGIC:END -->
+
+<p>Its constructor takes [[CommandArgs]] that closely match
+the underlying FFmpeg options:</p>
+<ul>
+<li>zero or more <a href="type.html#CommandInputs">CommandInputs</a>, each describing a source file and related options</li>
+<li>one or more <a href="type.html#GraphFilters">GraphFilters</a>, AKA an <a href="https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description">FFmpeg Filtergraph</a></li>
+<li>a single <a href="interface/CommandOutput.html">CommandOutput</a> that specifies rendering options</li>
+</ul>
+<p>In Movie Masher, rendering essentially converts a <a href="interface/Mash.html">Mash</a> into
+[[CommandArgs]] that are then sent to FFmpeg to produce output files.</p>
+</div></section><section class=""><a id="Outputs"><h2>Outputs</h2></a><div class="section"><p>Movie Masher supports five <a href="interface/RenderingOutput.html">RenderingOutput</a> interfaces that essentially convert a
+<a href="interface/Mash.html">Mash</a> into the [[CommandArgs]] that will render its file(s):</p>
+<ul>
+<li><a href="interface/AudioOutput.html">AudioOutput</a>: a single audio file</li>
+<li><a href="interface/ImageOutput.html">ImageOutput</a>: a single image file</li>
+<li><a href="interface/VideoOutput.html">VideoOutput</a>: a single video file</li>
+<li><a href="interface/ImageSequenceOutput.html">ImageSequenceOutput</a>: a single audio file, and an image file per frame</li>
+<li><a href="interface/WaveformOutput.html">WaveformOutput</a>: a single image file, representing audio content</li>
+</ul>
+<p>Each output caches any <a href="interface/Mash.html">Mash</a> assets it requires before generating its [[CommandArgs]].
+Assets might be probed if need after caching to, for instance, determine the duration
+of an <a href="type.html#AudioDefinitionObject">AudioDefinitionObject</a> or <a href="interface/VideoDefinitionObject.html">VideoDefinitionObject</a>.</p>
+</div></section><section class=""><a id="Processing"><h2>Processing</h2></a><div class="section"><p>The <a href="interface/RenderingProcess.html">RenderingProcess</a> interface greatly simplifies generating
+multiple files from a raw JSON <a href="interface/MashObject.html">MashObject</a>, <a href="type.html#DefinitionObjects">DefinitionObjects</a>, and <a href="type.html#CommandOutputs">CommandOutputs</a>.
+It&#39;s used by the <a href="class/RenderingServer.html">RenderingServer</a> when handling client requests.</p>
+<p>The interface provides a promise that resolves by processing each
+of the supplied <a href="type.html#CommandOutputs">CommandOutputs</a> in turn. First a <a href="interface/Mash.html">Mash</a> is created from the supplied
+JSON objects and then for each output the <a href="interface/RenderingProcess.html">RenderingProcess</a> will:</p>
+<ol>
+<li>create a corresponding <a href="interface/RenderingOutput.html">RenderingOutput</a> instance</li>
+<li>have it cache whatever assets it requires</li>
+<li>pass its [[CommandArgs]] to a new <a href="interface/RunningCommand.html">RunningCommand</a> instance</li>
+<li>wait until its <a href="interface/Command.html">Command</a> completes</li>
+</ol>
+<p>Sometimes the files generated by one output can be utilized by others, so it can be
+more efficient to batch outputs together within a single <a href="interface/RenderingProcess.html">RenderingProcess</a>.</p>
+</div></section><section class=""><a id="Mash Conversion"><h2>Mash Conversion</h2></a><div class="section"><p>Each <a href="interface/RenderingOutput.html">RenderingOutput</a> will return different [[CommandArgs]] for the same <a href="interface/Mash.html">Mash</a>
+content. For instance, those returned by an <a href="interface/AudioOutput.html">AudioOutput</a> will only contain audio files
+in their inputs and might specify MP3 for an output format.</p>
+<p>Additionally, the number of [[CommandArgs]] returned is undefined, and varies both by
+output type and by the combination of outputs being rendered at once. Specifically, a
+video-based output may return more than one, based on the
+number of <a href="interface/FilterGraphs.html">FilterGraphs</a> its <a href="interface/Mash.html">Mash</a> returns for the rendered <a href="interface/TimeRange.html">TimeRange</a>.</p>
+<p>Each <a href="interface/FilterGraph.html">FilterGraph</a> describes a section of the <a href="interface/Mash.html">Mash</a> that can be conveniently
+rendered together, including all <a href="type.html#Clips">Clips</a> from all relevant and populated <a href="type.html#Tracks">Tracks</a>.
+It includes a set of <a href="type.html#FilterChains">FilterChains</a>, one per <a href="interface/Track.html">Track</a>, each describing the content
+there and how to merge it atop the others.</p>
+<p>Each <a href="interface/FilterChain.html">FilterChain</a> describes a <a href="interface/Clip.html">Clip</a> and any associated <a href="interface/Merger.html">Merger</a>, <a href="interface/Scaler.html">Scaler</a>, and
+<a href="type.html#Effects">Effects</a> as a collection of <a href="type.html#GraphFilters">GraphFilters</a> and <a href="type.html#GraphFiles">GraphFiles</a>. Outputs essentially
+combine the <a href="type.html#GraphFilters">GraphFilters</a> from all <a href="type.html#FilterChains">FilterChains</a> and cache their <a href="type.html#GraphFiles">GraphFiles</a>,
+some of which might be converted to <a href="type.html#CommandInputs">CommandInputs</a>.</p>
+<p>A single <a href="interface/Clip.html">Clip</a> can result in multiple <a href="type.html#GraphFiles">GraphFiles</a> which may or may not be converted
+to <a href="type.html#CommandInputs">CommandInputs</a>.
+For instance, a <a href="interface/Theme.html">Theme</a> that utilizes the <a href="interface/Filter.html#DrawTextFilter">DrawTextFilter</a> will include
+a <a href="interface/GraphFile.html">GraphFile</a> for its referenced <a href="interface/FontDefinition.html">FontDefinition</a>, but also one for its text content.
+Neither will be converted because FFmpeg&#39;s underlying
+<a href="https://ffmpeg.org/ffmpeg-filters.html#drawtext">drawtext</a>
+filter expects paths to these files to be specified as option values.</p>
+</div></section><section class=""><a id="Caching"><h2>Caching</h2></a><div class="section"><p>A <a href="interface/GraphFile.html">GraphFile</a> describes a file on disk that is made available to FFmpeg during
+<a href="interface/Command.html">Command</a> execution. Typically this is the raw asset associated with <a href="interface/Video.html">Video</a>,
+<a href="interface/Image.html">Image</a>, or <a href="interface/Audio.html">Audio</a> clips but other resources are also supported.
+FFmpeg requires files to be specified either as a <a href="interface/CommandInput.html">CommandInput</a> or <a href="interface/GraphFilter.html">GraphFilter</a> option
+value.</p>
+<p>The <a href="interface/RenderingOutput.html">RenderingOutput</a> handles all the complexity of caching each <a href="interface/GraphFile.html">GraphFile</a>
+locally and correctly specifying it within the [[CommandArgs]].
+Caching a <a href="interface/GraphFile.html">GraphFile</a> triggers different processing, depending on its <code>type</code> property
+which can be either a <a href="enum.html#GraphFileType">GraphFileType</a> or <a href="enum.html#LoadType">LoadType</a>.</p>
+<p>In the simplest case, the <code>type</code> property is a <a href="enum.html#GraphFileType">GraphFileType</a> which implies the <code>file</code>
+property will be the actual file content. This is simply saved to the <code>cacheDirectory</code> of
+the <a href="interface/RenderingOutput.html">RenderingOutput</a> as, for instance, a TEXT, SVG or PNG file. Binary files must be
+Base64 encoded.</p>
+<p>In cases where the <code>type</code> property is a <a href="enum.html#LoadType">LoadType</a>, the <code>file</code> property will be a
+relative or absolute URL. This will be preloaded
+normally by the <a href="interface/Mash.html">Mash</a> through the <a href="interface/Preloader.html">Preloader</a> interface. The <a href="interface/RenderingProcess.html">RenderingProcess</a>
+sets the <code>preloader</code> property of the <a href="interface/Mash.html">Mash</a> to an instance of the <a href="class/NodePreloader.html">NodePreloader</a>
+class, configured to download absolute URLs, but resolve relative ones to a local
+directory. Typically, the <a href="class/RenderingServer.html">RenderingServer</a> specifies this as the user&#39;s upload
+directory.</p>
+</div></section><section class=""><a id="Filtering"><h2>Filtering</h2></a><div class="section"><p>The <a href="interface/FilterChain.html">FilterChain</a> that describes a <a href="interface/Clip.html">Clip</a> has a <code>graphFilters</code> property that includes
+all the <a href="type.html#GraphFilters">GraphFilters</a> provided by its <a href="type.html#Effects">Effects</a> modules, followed by the one from
+its <a href="interface/Scaler.html">Scaler</a> module which is responsible for sizing the others. The <code>graphFilter</code> property
+includes the single <a href="interface/GraphFilter.html">GraphFilter</a> provided by its <a href="interface/Merger.html">Merger</a> module which is responsible
+for positioning and compositing this output onto output from the previous <a href="interface/FilterChain.html">FilterChain</a>.</p>
+<p>Each of the modules consist of a collection of</p>
+</div></section><section class=""><a id="File Output"><h2>File Output</h2></a><div class="section"><p>The <a href="interface/RenderingProcess.html">RenderingProcess</a> automatically creates a separate <a href="interface/RunningCommand.html">RunningCommand</a> for each of
+the [[CommandArgs]] returned by the <a href="interface/RenderingOutput.html">RenderingOutput</a>. If more than one is returned
+another is then created that concatenates the resultant files into a single one.</p>
+</div></section></div></article><nav class="nav-right"><h2><a class="tsd-kind-icon" href="#Rendering">Rendering</a></h2><hr/><h2><a class="tsd-kind-icon" href="#Outputs">Outputs</a></h2><h2><a class="tsd-kind-icon" href="#Processing">Processing</a></h2><h2><a class="tsd-kind-icon" href="#Mash Conversion">Mash Conversion</a></h2><h2><a class="tsd-kind-icon" href="#Caching">Caching</a></h2><h2><a class="tsd-kind-icon" href="#Filtering">Filtering</a></h2><h2><a class="tsd-kind-icon" href="#File Output">File Output</a></h2></nav></main><footer><div id="fb-root"></div><div class="footer"><div><form action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="75YQHMFEATLCL"/><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!"/><img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width=1 height=1/></form></div><div><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="open source online video editor and encoding api" data-url="https://www.moviemasher.com" data-via="MovieMasherJS" data-dnt="true" data-show-count="false">Tweet</a></div><div class="fb-share-button" data-href="//www.moviemasher.com" data-layout="button" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u&src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div><div class="fb-like" data-href="//www.moviemasher.com" data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="false"></div></div></footer></body></html>

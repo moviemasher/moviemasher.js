@@ -8,6 +8,8 @@ class AudioOutputClass extends RenderingOutputClass implements AudioOutput {
   avType = AVType.Audio
 
   outputType = OutputType.Audio
+
+  get sizePromise(): Promise<void> { return Promise.resolve() }
 }
 
 export { AudioOutputClass }

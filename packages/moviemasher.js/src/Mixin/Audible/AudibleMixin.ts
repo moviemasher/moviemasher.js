@@ -1,9 +1,12 @@
 import { Is } from "../../Utility/Is"
-import { Any, AudibleSource, UnknownObject, StartOptions } from "../../declarations"
+import { Any, AudibleSource, UnknownObject, StartOptions, GraphFile } from "../../declarations"
 import { ClipClass } from "../Clip/Clip"
 import { AudibleClass, AudibleDefinition, AudibleObject } from "./Audible"
 import { Default } from "../../Setup/Default"
 import { Preloader } from "../../Preloader/Preloader"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { AVType, GraphType, LoadType } from "../../Setup/Enums"
+import { Errors } from "../../Setup/Errors"
 
 const AudibleGainDelimiter = ','
 
@@ -32,9 +35,49 @@ function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
 
     declare definition : AudibleDefinition
 
+    filterChain(filterChain: FilterChain): void {
+      // TODO: audio effects
+      // this.effects.reverse().forEach(effect => (
+      //   effect.definition.populateFilterChain(filterChain, effect)
+      // ))
+    }
+
     gain = Default.instance.audio.gain
 
     gainPairs : number[][] = []
+
+    override initializeFilterChain(filterChain: FilterChain): void  {
+      const { filterGraph } = filterChain
+      const { graphType, avType, preloading } = filterGraph
+      // console.log(this.constructor.name, "initializeFilterChain", preloading)
+      if (avType === AVType.Video) throw Errors.internal + 'initializeFilterChain Video'
+
+      const source = this.definition.urlAudible
+      if (!source) throw Errors.invalid.url
+
+      // console.log(this.constructor.name, "initializeFilterChain addGraphFile", source, preloading)
+      const graphFile: GraphFile = {
+        type: LoadType.Audio, file: source,
+        input: true,
+        definition: this.definition
+      }
+
+      filterChain.addGraphFile(graphFile)
+      if (!preloading) {
+        switch (graphType) {
+          case GraphType.Cast: {
+            // ??
+            graphFile.options = { loop: 1 }
+            graphFile.options.re = ''
+            break
+          }
+          case GraphType.Canvas: {
+
+            break
+          }
+        }
+      }
+     }
 
 
     audibleSource(preloader: Preloader):AudibleSource | undefined {

@@ -5,7 +5,6 @@ import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
 function DefaultTextInput(): ReactResult {
-
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value } = inputContext
   if (!property) return null

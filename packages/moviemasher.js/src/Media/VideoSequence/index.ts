@@ -1,4 +1,4 @@
 export * from "./VideoSequence"
-export * from "./VideoSequenceDefinition"
+export * from "./VideoSequenceDefinitionClass"
 export * from "./VideoSequenceFactory"
-export * from "./VideoSequenceInstance"
+export * from "./VideoSequenceClass"

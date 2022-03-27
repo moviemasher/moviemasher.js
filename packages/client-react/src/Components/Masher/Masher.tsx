@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Endpoints,
-  Mash, MashEditorFactory, MashFactory, ServerType, UnknownObject,
+  Mash, mashEditorInstance, MashFactory, ServerType, UnknownObject,
   DataMashDefaultResponse,
   DataMashDefaultRequest
 } from '@moviemasher/moviemasher.js'
@@ -28,20 +28,23 @@ function Masher(props: MasherProps): ReactResult {
   const apiContext = React.useContext(ApiContext)
   const [requested, setRequested] = React.useState(false)
 
-  const { enabled, endpointPromise } = apiContext
-  const [mashEditor] = React.useState(() => MashEditorFactory.instance({ fps: 24 }))
+  const { enabled, endpointPromise, servers } = apiContext
+  const [mashEditor] = React.useState(() => mashEditorInstance())
 
   React.useEffect(() => {
     if (mash) mashEditor.mash = mash
     else if (!requested) {
       if (!enabled.includes(ServerType.Data)) return
-
       setRequested(true)
       const request: DataMashDefaultRequest = {}
       console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request)
       endpointPromise(Endpoints.data.mash.default).then((response: DataMashDefaultResponse) => {
         console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
         const { mash, definitions } = response
+        if (servers.file?.prefix) {
+          // console.log("Masher servers.file.prefix", servers.file.prefix)
+          mashEditor.preloader.endpoint.prefix = String(servers.file.prefix)
+        }
         mashEditor.mash = MashFactory.instance(mash, definitions)
       })
     }

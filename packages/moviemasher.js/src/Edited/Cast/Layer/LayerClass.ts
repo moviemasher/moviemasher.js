@@ -1,6 +1,0 @@
-
-class LayerClass {
-
-}
-
-export { LayerClass }

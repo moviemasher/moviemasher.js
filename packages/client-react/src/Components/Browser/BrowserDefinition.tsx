@@ -1,14 +1,16 @@
 import React from 'react'
-import { Definition, UnknownObject } from "@moviemasher/moviemasher.js"
+import { Definition, UnknownObject, urlForEndpoint } from "@moviemasher/moviemasher.js"
 import { BrowserContext } from '../../Contexts/BrowserContext'
 import { DragSuffix } from '../../Setup/Constants'
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
+import { useMashEditor } from '../../Hooks'
 
 
 interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
   definition: Definition
   selectClass?: string
   label?: string
+  icon?: string
 }
 
 
@@ -18,11 +20,12 @@ interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
 function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const browserContext = React.useContext(BrowserContext)
+  const mashEditor = useMashEditor()
   const [clickOffset, setClickOffset] = React.useState(0)
 
-  const { label: labelVar, children, selectClass, definition, ...rest } = props
+  const { icon: iconVar, label: labelVar, children, selectClass, definition, ...rest } = props
   const { definitionId, setDefinitionId } = browserContext
-  const { id, label } = definition
+  const { id, label, icon } = definition
   const labelOrId = label || id
 
   const kid = React.Children.only(children)
@@ -59,7 +62,12 @@ function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   }
 
   const style: UnknownObject = {}
-  if (labelVar) style[labelVar] = `'${labelOrId.replace("'", "\\'")}'`
+  if (labelVar) style[labelVar] = `'${labelOrId.replaceAll("'", "\\'")}'`
+  if (iconVar && icon) {
+    const { preloader } = mashEditor
+    const url = urlForEndpoint(preloader.endpoint, icon)
+    style[iconVar] = `url('${url}')`
+  }
 
   const clipProps = {
     ...kid.props,

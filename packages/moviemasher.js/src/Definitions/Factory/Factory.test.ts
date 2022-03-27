@@ -1,24 +1,20 @@
 import { ClipType, DefinitionType, ModuleType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { TimeRange } from "../../Helpers/TimeRange"
-import { Time } from "../../Helpers/Time"
 import { AudioDefinition } from "../../Media/Audio/Audio"
-import { AudioClass } from "../../Media/Audio/AudioInstance"
+import { AudioClass } from "../../Media/Audio/AudioClass"
 import { ImageDefinition } from "../../Media/Image"
 import { ImageClass } from "../../Media/Image/ImageClass"
 import { ScalerClass } from "../../Media/Scaler/ScalerInstance"
 import { ThemeDefinition } from "../../Media/Theme"
 import { TransitionClass } from "../../Media/Transition/TransitionClass"
-import { VideoClass } from "../../Media/Video/VideoInstance"
+import { VideoClass } from "../../Media/Video/VideoClass"
 import { Factory } from "./Factory"
-import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { expectFactory } from "../../../../../dev/test/Utilities/expectFactory"
 import { idGenerate } from "../../Utility/Id"
-import { VideoSequenceClass } from "../../Media/VideoSequence/VideoSequenceInstance"
-import { VideoSequenceDefinitionClass } from "../../Media/VideoSequence/VideoSequenceDefinition"
+import { VideoSequenceClass } from "../../Media/VideoSequence/VideoSequenceClass"
+import { VideoSequenceDefinitionClass } from "../../Media/VideoSequence/VideoSequenceDefinitionClass"
+import { timeFromArgs, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
 
 describe("Factory", () => {
-  const dimensions = { width: 640, height: 480 }
   test.each(Object.values(DefinitionType))(".%s", (type : DefinitionType) => {
     expectFactory(Factory[type])
   })
@@ -38,30 +34,15 @@ describe("Factory", () => {
         expect(videoDefinition().instance).toBeInstanceOf(VideoClass)
       })
     })
-    // describe("definition", () => {
-    //   test("returns instance whose urls reflect duration", () => {
-    //     const definition = videoDefinition()
-    //     const instance = definition.instanceFromObject({ frames: 300 })
-    //     const time = Time.fromArgs(0, definitionObject.fps)
-    //     const definitionTime = instance.definitionTime(time.fps, time)
-    //     const urls = definition.urls(definitionTime)
-    //     expect(urls.length).toBe(1)
-    //     const url = urls[0]
-    //     expect(url).toEqual(`${definitionObject.url}001.jpg`)
-    //     const outer = Time.fromArgs(100000, definitionObject.fps)
-    //     const outputTime = instance.definitionTime(outer.fps, outer)
-    //     const outerUrl = definition.urls(outputTime)[0]
-    //     expect(outerUrl).toEqual(`${definitionObject.url}299.jpg`)
-    //   })
-    // })
   })
-  describe(ClipType.VideoSequence, () => {
+
+  describe(DefinitionType.VideoSequence, () => {
     test("returns factory", () => expectFactory(Factory.videosequence) )
 
     const definitionObject = {
       id: idGenerate(),
       url: "frames/",
-      type: ClipType.VideoSequence,
+      type: DefinitionType.VideoSequence,
       fps: 30, duration: 10
     }
 
@@ -71,21 +52,8 @@ describe("Factory", () => {
        test("returns VideoSequenceDefinitionClass instance", () => {
         expect(definition()).toBeInstanceOf(VideoSequenceDefinitionClass)
       })
-    //   test("returns instance whose urls reflect duration", () => {
-    //     const definitionInstance = definition()
-    //     const instance = definitionInstance.instanceFromObject({ frames: 300 })
-    //     const time = Time.fromArgs(0, definitionObject.fps)
-    //     const definitionTime = instance.definitionTime(time.fps, time)
-    //     const urls = definitionInstance.urls(definitionTime)
-    //     expect(urls.length).toBe(1)
-    //     const url = urls[0]
-    //     expect(url).toEqual(`${definitionObject.url}001.jpg`)
-    //     const outer = Time.fromArgs(100000, definitionObject.fps)
-    //     const outputTime = instance.definitionTime(outer.fps, outer)
-    //     const outerUrl = definitionInstance.urls(outputTime)[0]
-    //     expect(outerUrl).toEqual(`${definitionObject.url}299.jpg`)
-    //   })
     })
+
     describe("instance", () => {
       test("returns VideoClass instance", () => {
         expect(definition().instance).toBeInstanceOf(VideoSequenceClass)
@@ -119,7 +87,7 @@ describe("Factory", () => {
   describe("image", () => {
     const mediaObject = {
       id: 'image-id',
-      url: "globe.jpg",
+      url: "../shared/image/globe.jpg",
       type: DefinitionType.Image,
     }
     const imageDefinition = () => <ImageDefinition> Factory.image.definition(mediaObject)
@@ -169,26 +137,12 @@ describe("Factory", () => {
 
     describe("timeRangeRelative", () => {
       test("returns expected range", () => {
-        const time = Time.fromArgs()
+        const time = timeFromArgs()
         const clip = themeDefinition().instanceFromObject({ frames: 1 })
-        const range = TimeRange.fromTime(time, clip.frames)
-        expect(clip.timeRangeRelative(time, time.fps)).toEqual(range)
+        const range = timeRangeFromTime(time, clip.frames)
+        expect(clip.timeRangeRelative(timeRangeFromTime(time), time.fps)).toEqual(range)
       })
     })
-
-    // describe("contextAtTimeToSize", () => {
-    //   const time = Time.fromArgs()
-    //   test("returns expected context after proper evaluation", async () => {
-    //     const clip = themeDefinition().instanceFromObject({ frames: 1 })
-    //     await clip.loadClip(time.fps, time)
-
-    //     const context = clip.contextAtTimeToSize(time, time.fps, dimensions)
-    //     expect(context).toBeDefined()
-    //     if (!context) throw Errors.internal
-
-    //     expectCanvas(context.canvas)
-    //   })
-    // })
 
     test("toJSON", () => {
       const clip = themeDefinition().instance

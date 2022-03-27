@@ -39,7 +39,9 @@ export interface ApiEndpointResponse extends ApiResponse {
   apiCallbacks: ApiCallbacks
 }
 
-
+export interface ApiCallbackResponse extends ApiResponse {
+  apiCallback?: ApiCallback
+}
 export interface ApiServersRequest extends ApiRequest {}
 
 

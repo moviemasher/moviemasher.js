@@ -1,6 +1,6 @@
 import { Errors } from "../../Setup/Errors"
 import { Definitions } from "../../Definitions/Definitions"
-import { AudioDefinitionClass } from "./AudioDefinition"
+import { AudioDefinitionClass } from "./AudioDefinitionClass"
 import { AudioDefinition, AudioDefinitionObject, Audio, AudioObject } from "./Audio"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"

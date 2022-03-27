@@ -178,7 +178,8 @@ class VisibleContext {
     return result
   }
 
-  drawWithComposite(source : VisibleSource, composite: string) : VisibleContext {
+  drawWithComposite(source: VisibleSource, composite: string): VisibleContext {
+    // console.log(this.constructor.name, "drawWithComposite", composite)
     const original = this.composite
     this.composite = composite
     const result = this.draw(source)

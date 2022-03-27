@@ -1,24 +1,18 @@
-
 import internal from 'stream'
-import { Command } from '../Command/Command'
 import EventEmitter from 'events'
 
+import { Command } from '../Command/Command'
 
 export type CommandDestination = string | internal.Writable
 
-interface CommandResult {
+export interface CommandResult {
   error?: string
 }
 
-interface RunningCommand extends EventEmitter{
+export interface RunningCommand extends EventEmitter{
   id: string
-  run: (destination: CommandDestination) => void
-  runPromise: (destination: CommandDestination) => Promise<CommandResult>
+  run(destination: CommandDestination): void
+  runPromise(destination: CommandDestination): Promise<CommandResult>
   command: Command
-  kill: () => void
-}
-
-export {
-  CommandResult,
-  RunningCommand,
+  kill(): void
 }

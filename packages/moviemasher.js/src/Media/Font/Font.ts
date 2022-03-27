@@ -1,6 +1,7 @@
 import { GenericFactory } from "../../declarations"
-import { Definition, DefinitionObject } from "../../Base/Definition"
+import { DefinitionObject } from "../../Base/Definition"
 import { Instance, InstanceObject } from "../../Base/Instance"
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
 type FontObject = InstanceObject
 
@@ -8,15 +9,11 @@ interface Font extends Instance {
   definition : FontDefinition
 }
 
-interface FontDefinitionObject extends DefinitionObject {
-  source?: string
-  url?: string
-}
+interface FontDefinitionObject extends DefinitionObject {}
 
-interface FontDefinition extends Definition {
+interface FontDefinition extends PreloadableDefinition {
   instance : Font
   instanceFromObject(object : FontObject) : Font
-  source : string
 }
 
 /**

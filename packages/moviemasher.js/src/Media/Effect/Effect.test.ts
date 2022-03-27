@@ -1,18 +1,17 @@
 import { TrackType } from "../../Setup/Enums"
 import { Factory } from "../../Definitions/Factory"
-import { idGenerate } from "../../Utility/Id"
 
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
-import { MashEditorFactory } from "../../Editor/MashEditor/MashEditorFactory"
-import { JestPreloader } from "../../../../../dev/test/JestPreloader"
+import { mashEditorInstance } from "../../Editor/MashEditor/MashEditorFactory"
+import { JestPreloader } from "../../../../../dev/test/Utilities/JestPreloader"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
     test("returns expected context", async () => {
       const effectObject = { id : "com.moviemasher.effect.chromakey", type: "effect" }
-      const matteObject =  { id: idGenerate(), url: 'green-text-on-white.png' }
-      const imageObject = { id: idGenerate(), url: 'cable.jpg' }
-      const masher = MashEditorFactory.instance({ preloader: new JestPreloader()})
+      const matteObject =  { id: 'text-matte', url: '../shared/image/green-text-on-white.png' }
+      const imageObject = { id: 'cable-image', url: '../shared/image/cable.jpg' }
+      const masher = mashEditorInstance({ preloader: new JestPreloader()})
       masher.imageSize = { width: 640, height: 480 }
       masher.addTrack(TrackType.Video)
       expect(masher.mash.tracks.length).toBe(3)

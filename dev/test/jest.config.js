@@ -1,9 +1,10 @@
 module.exports = {
   projects: [
     {
+      cache: false,
       automock: false,
       rootDir: "./",
-      coverageDirectory: "./dev/test/coverage",
+      coverageDirectory: "./temporary/test/coverage",
       collectCoverageFrom: ["./src/**/*.ts"],
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.setup.js"],
       globals: {

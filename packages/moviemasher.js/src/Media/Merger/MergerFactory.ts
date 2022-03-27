@@ -1,9 +1,9 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { MergerDefinitionClass } from "./MergerDefinition"
 import { Definitions } from "../../Definitions"
-import mergerBlendJson from "../../Definitions/DefinitionObjects/merger/blend.json"
+// import mergerBlendJson from "../../Definitions/DefinitionObjects/merger/blend.json"
 import mergerCenterJson from "../../Definitions/DefinitionObjects/merger/center.json"
-import mergerConstrainedJson from "../../Definitions/DefinitionObjects/merger/constrained.json"
+import mergerAbsoluteJson from "../../Definitions/DefinitionObjects/merger/absolute.json"
 import mergerDefaultJson from "../../Definitions/DefinitionObjects/merger/default.json"
 import mergerOverlayJson from "../../Definitions/DefinitionObjects/merger/overlay.json"
 import {
@@ -43,9 +43,9 @@ const mergerFromId = (definitionId : string) : Merger => {
 
 const mergerInitialize = () : void => {
   [
-    mergerBlendJson,
+    // mergerBlendJson,
     mergerCenterJson,
-    mergerConstrainedJson,
+    mergerAbsoluteJson,
     mergerDefaultJson,
     mergerOverlayJson,
   ].forEach(object => mergerInstall(object))

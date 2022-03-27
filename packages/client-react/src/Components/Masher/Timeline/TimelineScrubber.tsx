@@ -1,5 +1,5 @@
 import React from "react"
-import { EventType, pixelFromFrame, pixelToFrame, Time, UnknownObject } from "@moviemasher/moviemasher.js"
+import { EventType, pixelFromFrame, pixelToFrame, Time, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { View } from "../../../Utilities/View"
 import { useMashScale } from "../../../Hooks/useMashScale"
@@ -35,7 +35,7 @@ function TimelineScrubber(props: PropsWithChildren): ReactResult {
     const rect = current.getBoundingClientRect()
     const pixel = Math.max(0, Math.min(rect.width, clientX - rect.x))
     const frame = pixelToFrame(pixel, scale, 'floor')
-    masher.time = Time.fromArgs(frame, masher.mash.quantize)
+    masher.time = timeFromArgs(frame, masher.mash.quantize)
   }
 
   const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {

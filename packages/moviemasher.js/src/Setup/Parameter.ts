@@ -1,4 +1,5 @@
 import { UnknownObject, Value, ValueObject } from "../declarations"
+import { isNumeric } from "../Utility/Is"
 import { DataType, DataTypes } from "./Enums"
 import { Errors } from "./Errors"
 
@@ -22,10 +23,17 @@ class Parameter {
 
     if (dataType && DataTypes.map(String).includes(dataType)) {
       this.dataType = dataType as DataType
+    } else {
+      let numeric = false
+      if (Array.isArray(this.value)) {
+        numeric = this.value.every(condition => isNumeric(condition.value))
+      }
+      else numeric = isNumeric(this.value)
+      if (numeric) this.dataType = DataType.Number
     }
   }
 
-  dataType = DataType.Number
+  dataType = DataType.String
 
   name : string
 

@@ -3,10 +3,13 @@ import { DataType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Property } from "../../Setup/Property"
 import { sortByFrame } from "../../Utility/Sort"
-import { Clip, Clips } from "../../Mixin/Clip/Clip"
+import { Clip, ClipDefinition, Clips } from "../../Mixin/Clip/Clip"
 import { PropertiedClass } from "../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
 import { Definitions } from "../../Definitions/Definitions"
+import { isPositive } from "../../Utility/Is"
+import { TimeRange } from "../../Helpers/Time/Time"
+import { Time } from "../../Helpers/Time/Time"
 
 class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -62,6 +65,35 @@ class TrackClass extends PropertiedClass implements Track {
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
+
+  assureFrame(clips?: Clips): boolean {
+    const clipsArray = clips || this.clips
+    let changed = false
+    let endFrame = 0
+    const ranges: TimeRange[] = []
+    const { dense } = this
+    clipsArray.forEach(clip => {
+      const { frame } = clip
+      if (dense ? frame !== endFrame : ranges.some(range => range.includes(frame))) {
+        changed = true
+        clip.frame = endFrame
+      }
+      endFrame = clip.frame + clip.frames
+      if (!dense) ranges.push(clip.timeRange(1))
+    })
+    return changed
+  }
+
+  assureFrames(quantize: number, clips?: Clips): boolean {
+    const clipsArray = clips || this.clips
+    const clipsWithoutFrames = clipsArray.filter(clip => !isPositive(clip.frames))
+    if (!clipsWithoutFrames.length) return false
+
+    clipsWithoutFrames.forEach(clip => { clip.frames = clip.definition.frames(quantize) })
+    return true
+  }
+
+
   clips: Clips = []
 
   dense = false
@@ -108,17 +140,11 @@ class TrackClass extends PropertiedClass implements Track {
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
-  sortClips(clips : Clips) : void {
-    if (this.dense) {
-      let frame = 0
-      clips.forEach((clip, i) => {
-        const isTransition = clip.type === DefinitionType.Transition
-        if (i && isTransition) frame -= clip.frames
-        clip.frame = frame
-        if (!isTransition) frame += clip.frames
-      })
-    }
-    clips.sort(sortByFrame)
+  sortClips(clips?: Clips): boolean {
+    const sortClips = clips || this.clips
+    const changed = this.assureFrame(sortClips)
+    sortClips.sort(sortByFrame)
+    return changed
   }
 
   toJSON() : UnknownObject {
@@ -131,6 +157,8 @@ class TrackClass extends PropertiedClass implements Track {
   }
 
   trackType = TrackType.Video
+
+
 }
 
 export { TrackClass }

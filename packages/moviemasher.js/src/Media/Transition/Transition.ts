@@ -1,37 +1,33 @@
-import { VisibleContext } from "../../Context/VisibleContext"
-import { FilterChain, FilterChainArgs, GenericFactory } from "../../declarations"
-import { Time } from "../../Helpers/Time"
-import { FilterObject } from "../Filter/Filter"
-import { MergerObject } from "../Merger"
+import { GenericFactory } from "../../declarations"
+import { FilterDefinitionObject } from "../Filter/Filter"
+import { MergerDefinitionObject } from "../Merger"
 import { ClipDefinitionObject } from "../../Mixin/Clip/Clip"
 import {
-  Modular,
-  ModularDefinition,
-  ModularDefinitionObject,
-  ModularObject
+  Modular, ModularDefinition, ModularDefinitionObject, ModularObject
 } from "../../Mixin/Modular/Modular"
 import { Visible, VisibleDefinition, VisibleObject } from "../../Mixin/Visible/Visible"
-import { ScalerObject } from "../Scaler"
-import { Preloader } from "../../Preloader/Preloader"
+import { ScalerDefinitionObject } from "../Scaler"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 
-interface TransitionObject extends ModularObject, VisibleObject {
-  fromTrack?: number
-  toTrack?: number
+interface TransitionObject extends ModularObject, VisibleObject {}
+
+export interface TransitionFilterChainArgs {
+  filterChain: FilterChain
+  from?: boolean
+  backcolor: string
+  transition: Transition
 }
 
 interface Transition extends Modular, Visible {
-  definition : TransitionDefinition
-  mergeClipsIntoContextAtTime(preloader: Preloader, context: VisibleContext, time: Time, quantize: number, fromClip?: Visible, toClip?: Visible, color?: string): void
-  transitionFilterChains(layerArgs: FilterChainArgs, from?: Visible, to?: Visible, backcolor?: string): FilterChain
-  fromTrack: number
-  toTrack: number
+  definition: TransitionDefinition
+  filterChain(filterChain: FilterChain): void
 }
 
 interface TransitionDefinitionTransformObject {
-  filters? : FilterObject[]
-  merger? : MergerObject
-  scaler? : ScalerObject
+  filters? : FilterDefinitionObject[]
+  merger? : MergerDefinitionObject
+  scaler? : ScalerDefinitionObject
 }
 interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefinitionObject {
   to? : TransitionDefinitionTransformObject
@@ -39,8 +35,7 @@ interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefini
 }
 
 interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
-  mergeFilterChain(transition: Transition, args: FilterChainArgs, from?: Visible, to?: Visible, backcolor?: string): FilterChain
-  mergeClips(transition: Transition, preloader: Preloader, time : Time, quantize: number, context : VisibleContext, fromClip?: Visible, toClip?: Visible, color? : string) : void
+  transitionFilterChain(args: TransitionFilterChainArgs): void
   instance : Transition
   instanceFromObject(object : TransitionObject) : Transition
 }

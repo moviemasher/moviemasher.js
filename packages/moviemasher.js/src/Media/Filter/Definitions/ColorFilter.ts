@@ -1,31 +1,36 @@
-import { ModularGraphFilter, ValueObject } from "../../../declarations"
+import { ModularGraphFilter } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Parameter } from "../../../Setup/Parameter"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { pixelColor } from "../../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context/VisibleContext"
-import { DataType } from "../../../Setup/Enums"
-import { colorYellow } from "../../../Utility/Color"
+import { DataType, GraphType } from "../../../Setup/Enums"
+import { colorServer, colorYellow } from "../../../Utility/Color"
 
 /**
  * @category Filter
  */
 class ColorFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator) : VisibleContext {
-    const { context } = evaluator
-    if (!context) throw Errors.invalid.context
+  protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
+    const { visibleContext: context } = evaluator
+    if (!context) throw Errors.invalid.context + this.id
 
-    const color = evaluator.evaluateParameter('color')
+    const color = evaluator.parameter('color')
     context.drawFill(pixelColor(color))
     return context
   }
 
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
-    const graphFilter: ModularGraphFilter = {
-      outputs: ['COLOR'],
-      filter: this.ffmpegFilter,
-      options: evaluator.valueObject
+    const { graphType, preloading } = evaluator
+    const graphFilter: ModularGraphFilter = { filter: this.ffmpegFilter, options: {} }
+    if (!preloading) {
+      if (graphType === GraphType.Canvas) {
+        evaluator.visibleContext = this.drawFilterDefinition(evaluator)
+      } else {
+        graphFilter.options = evaluator.parameters
+        graphFilter.options.color = colorServer(String(graphFilter.options.color))
+      }
     }
     return graphFilter
    }

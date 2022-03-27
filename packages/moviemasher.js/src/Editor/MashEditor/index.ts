@@ -1,5 +1,4 @@
 export * from "./Actions"
-export * from "./Composition"
 export * from "./MashEditor"
 export * from "./MashEditorClass"
 export * from "./MashEditorFactory"

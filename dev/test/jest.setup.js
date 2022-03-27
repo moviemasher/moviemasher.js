@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import fs from 'fs'
+import path from 'path'
 
 import { DefinitionTypes } from "../../packages/moviemasher.js/src/Setup/Enums"
 import { Definitions } from "../../packages/moviemasher.js/src/Definitions/Definitions"
@@ -15,6 +17,8 @@ import { TransitionFactoryImplementation } from "../../packages/moviemasher.js/s
 import { VideoFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Video/VideoFactory"
 import { VideoStreamFactoryImplementation } from "../../packages/moviemasher.js/src/Media/VideoStream/VideoStreamFactory"
 import { VideoSequenceFactoryImplementation } from "../../packages/moviemasher.js/src/Media/VideoSequence/VideoSequenceFactory"
+
+import { TestRenderOutput } from "./Setup/Constants"
 export default [
   AudioFactoryImplementation,
   EffectFactoryImplementation,
@@ -29,25 +33,15 @@ export default [
   VideoStreamFactoryImplementation,
   VideoSequenceFactoryImplementation,
 ]
-import fs from 'fs'
-import path from 'path'
 
+if (fs.existsSync(TestRenderOutput)) {
+  fs.rmSync(TestRenderOutput, { recursive: true, force: true })
+}
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
 
 require('jest-fetch-mock').enableMocks()
 
-// const toMatchVideoSnapshot = (...args: any[]): CustomMatcherResult => {
-
-//   return {
-//     message: (something) => {
-//       console.log("message", something)
-//     },
-//     pass: false,
-//   }
-//   console.log("toMatchVideoSnapshot", ...args)
-// }
 expect.extend({ toMatchImageSnapshot })
-// expect.extend({ toMatchVideoSnapshot })
 
 
 jest.setTimeout(30 * 1000)
@@ -65,7 +59,9 @@ fetchMock.mockResponse(req => {
 beforeEach(() => {
   Definitions.clear()
   DefinitionTypes.forEach(type => { Factory[type].initialize() })
+
+  // woff2 doesn't seem to be supported by canvas's registerFont, so just allow ttf
   Factory.font.install({
-    id: 'com.moviemasher.font.default', source: 'BlackoutTwoAM.ttf'
+    id: 'com.moviemasher.font.default', source: '../shared/font/lobster/lobster.ttf'
   })
 })

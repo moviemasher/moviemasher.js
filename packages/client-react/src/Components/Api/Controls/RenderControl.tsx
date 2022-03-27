@@ -32,7 +32,8 @@ function RenderControl(props: PropsAndChild): ReactResult {
     console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {
       console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
-      const { id } = response
+      const { apiCallback } = response
+
       setProcessing(false)
     })
   }

@@ -1,9 +1,11 @@
 {
   "options": {
-    "g": 60
+    "g": 60,
+    "level": 41,
+    "movflags": "faststart"
   },
-  "width": 320,
-  "height": 240,
+  "width": 1920,
+  "height": 1080,
   "videoRate": 30,
   "videoBitrate": 2000,
   "audioBitrate": 160,

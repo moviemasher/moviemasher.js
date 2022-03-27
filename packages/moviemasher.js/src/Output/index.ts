@@ -5,7 +5,7 @@ export * from './OutputFactory'
 export * from './RenderingOutputClass'
 export * from './StreamingOutputClass'
 export * from './VideoOutputClass'
-export * from './VideoSequenceOutputClass'
+export * from './ImageSequenceOutputClass'
 export * from './VideoStreamOutputClass'
 export * from './WaveformOutputClass'
 export * from "./OutputDefault"

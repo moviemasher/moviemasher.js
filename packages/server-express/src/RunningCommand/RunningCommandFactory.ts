@@ -1,4 +1,4 @@
-import { CommandArgs } from "@moviemasher/moviemasher.js"
+import { CommandOptions } from "@moviemasher/moviemasher.js"
 import { RunningCommand } from "./RunningCommand"
 import { RunningCommandClass } from './RunningCommandClass'
 
@@ -14,7 +14,7 @@ const commandFactoryDelete = (id: string): void => {
   existing.kill()
 }
 
-const commandFactoryInstance = (id: string, options: CommandArgs): RunningCommand => {
+const commandFactoryInstance = (id: string, options: CommandOptions): RunningCommand => {
   const command = new RunningCommandClass(id, options)
   CommandFactoryInstances[id] = command
   return command

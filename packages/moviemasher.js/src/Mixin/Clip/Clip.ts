@@ -1,9 +1,11 @@
-import { Constrained, FilesArgs, FilterChain, FilterChainArgs, FilterChains, GraphFile, GraphFiles, LoadPromise } from "../../declarations"
+import { Constrained, FilesArgs, GraphFiles } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
-import { Time } from "../../Helpers/Time"
-import { TimeRange } from "../../Helpers/TimeRange"
+import { Time } from "../../Helpers/Time/Time"
+import { TimeRange } from "../../Helpers/Time/Time"
 import { Definition, DefinitionObject } from "../../Base/Definition"
 import { Instance, InstanceObject } from "../../Base/Instance"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { Preloader } from "../../Preloader/Preloader"
 
 interface ClipDefinitionObject extends DefinitionObject {}
 
@@ -27,13 +29,14 @@ interface Clip extends Instance {
   endFrame : number
   frame : number
   frames: number
-  files(filesArgs: FilesArgs): GraphFiles
-  filterChain(args: FilterChainArgs) : FilterChain
-  filterChainBase(args: FilterChainArgs): FilterChain
+  clipFiles(filesArgs: FilesArgs): GraphFiles
+  filterChain(args: FilterChain): void
+  iconUrl(preloader: Preloader): string | undefined
+  initializeFilterChain(args: FilterChain): void
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
-  timeRangeRelative(mashTime : Time, quantize : number) : TimeRange
+  timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
   track : number
   trackType : TrackType
   visible : boolean

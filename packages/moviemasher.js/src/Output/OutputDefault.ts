@@ -1,19 +1,14 @@
-
+import { OutputFormat, OutputType } from "../Setup/Enums"
 import { CommandOutput, RenderingCommandOutput, StreamingCommandOutput } from "./Output"
-import { ExtDash, ExtRtmp, ExtHls, ExtTs, OutputFilterGraphPadding, ExtJpeg } from "../Setup/Constants"
-import { Default } from "../Setup/Default"
-import { OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
 
 import outputDefaultAudioJson from './Defaults/audio.json'
 import outputDefaultImageJson from './Defaults/image.json'
 import outputDefaultVideoJson from './Defaults/video.json'
-import outputDefaultVideoSequenceJson from './Defaults/videosequence.json'
+import outputDefaultImageSequenceJson from './Defaults/imagesequence.json'
 import outputDefaultWaveformJson from './Defaults/waveform.json'
-
 import outputDefaultDashJson from './Defaults/dash.json'
 import outputDefaultHlsJson from './Defaults/hls.json'
 import outputDefaultRtmpJson from './Defaults/rtmp.json'
-
 
 const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
@@ -26,9 +21,9 @@ const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput =
   const commandOutput = outputDefaultVideoJson as RenderingCommandOutput
   return { ...commandOutput,  ...object }
 }
-const outputDefaultSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
+const outputDefaultImageSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
-  const commandOutput = outputDefaultVideoSequenceJson as RenderingCommandOutput
+  const commandOutput = outputDefaultImageSequenceJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
 const outputDefaultWaveform = (overrides?: CommandOutput): RenderingCommandOutput => {
@@ -54,7 +49,7 @@ const outputDefaultPopulate = (overrides: RenderingCommandOutput): RenderingComm
     case OutputType.Audio: return outputDefaultAudio(overrides)
     case OutputType.Image: return outputDefaultImage(overrides)
     case OutputType.Video: return outputDefaultVideo(overrides)
-    case OutputType.VideoSequence: return outputDefaultSequence(overrides)
+    case OutputType.ImageSequence: return outputDefaultImageSequence(overrides)
     case OutputType.Waveform: return outputDefaultWaveform(overrides)
   }
 }
@@ -71,7 +66,6 @@ const outputDefaultTypeByFormat = {
   [OutputFormat.Jpeg]: OutputType.Image,
   [OutputFormat.Mp3]: OutputType.Audio,
   [OutputFormat.Mp4]: OutputType.Video,
-  [OutputFormat.Pipe]: OutputType.Video,
   [OutputFormat.Png]: OutputType.Image,
   [OutputFormat.Rtmp]: OutputType.Video,
   [OutputFormat.VideoConcat]: OutputType.Video,
@@ -81,10 +75,9 @@ const outputDefaultFormatByType = {
   [OutputType.Audio]: OutputFormat.Mp3,
   [OutputType.Image]: OutputFormat.Png,
   [OutputType.Video]: OutputFormat.Mp4,
-  [OutputType.VideoSequence]: OutputFormat.Jpeg,
+  [OutputType.ImageSequence]: OutputFormat.Jpeg,
   [OutputType.Waveform]: OutputFormat.Png,
 }
-
 
 const outputDefaultStreaming = (overrides: CommandOutput): StreamingCommandOutput => {
   const { format } = overrides
@@ -96,13 +89,11 @@ const outputDefaultStreaming = (overrides: CommandOutput): StreamingCommandOutpu
   }
 }
 
-
 const outputDefaultHls = (overrides?: CommandOutput): StreamingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultHlsJson as StreamingCommandOutput
   return { ...commandOutput, ...object }
 }
-
 
 const outputDefaultDash = (overrides?: CommandOutput): StreamingCommandOutput => {
   const object = overrides || {}
@@ -135,7 +126,7 @@ export {
   outputDefaultAudio,
   outputDefaultVideo,
   outputDefaultWaveform,
-  outputDefaultSequence,
+  outputDefaultImageSequence,
 
   outputDefaultRtmp,
   outputDefaultDash,

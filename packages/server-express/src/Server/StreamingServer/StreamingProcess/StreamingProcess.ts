@@ -14,9 +14,11 @@ export interface StreamingProcessArgs {
   id: string,
   directory: string
   file: string
-  fileDirectory: string
   commandOutput: StreamingCommandOutput
   cacheDirectory: string
+  filePrefix: string
+  defaultDirectory: string
+  validDirectories: string[]
 }
 
 export interface StreamingProcessCutArgs {

@@ -1,16 +1,16 @@
-import { UnknownObject, FilesArgs, GraphFile, GraphFiles } from "../../declarations"
+import { FilesArgs, GraphFile, GraphFiles } from "../../declarations"
 import { AVType, DefinitionType, LoadType } from "../../Setup/Enums"
 import { Font, FontDefinition, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
 import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
 class FontDefinitionClass extends PreloadableDefinition implements FontDefinition {
-  files(args: FilesArgs): GraphFiles {
-    const { avType } = args
+  definitionFiles(args: FilesArgs): GraphFiles {
+    const { avType, graphType } = args
     if (avType === AVType.Audio) return []
 
     const graphFile: GraphFile = {
-      type: LoadType.Font, file: this.source, definition: this
+      type: this.loadType, file: this.preloadableSource(graphType), definition: this
     }
     return [graphFile]
   }
@@ -23,11 +23,9 @@ class FontDefinitionClass extends PreloadableDefinition implements FontDefinitio
     return new FontClass({ ...this.instanceObject, ...object })
   }
 
-  retain = true
+  loadType = LoadType.Font
 
-  toJSON() : UnknownObject {
-    return { ...super.toJSON(), source: this.source }
-  }
+  retain = true
 
   type = DefinitionType.Font
 }

@@ -1,12 +1,11 @@
+import {
+  Any, Constrained, ModularGraphFilter} from "../../declarations"
 import { VisibleContext } from "../../Context/VisibleContext"
-import { Any, Constrained, FilterChain, FilterChainArgs, GraphFilters, Size, UnknownObject } from "../../declarations"
-import { TimeRange } from "../../Helpers/TimeRange"
 import { Definition, DefinitionObject } from "../../Base/Definition"
-import { Filter } from "../../Media/Filter/Filter"
+import { Filter, FilterDefinitionObject } from "../../Media/Filter/Filter"
 import { Instance, InstanceObject } from "../../Base/Instance"
-import { PropertyObject } from "../../Setup/Property"
-import { Preloader } from "../../Preloader/Preloader"
-
+import { Property, PropertyObject } from "../../Setup/Property"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 export interface ModularObject extends InstanceObject {
   id?: string
@@ -15,20 +14,18 @@ export interface ModularObject extends InstanceObject {
 interface Modular extends Instance {
   definition: ModularDefinition
   constructProperties(object?: Any): void
-  // filesModular(args: FilesArgs): GraphFiles
-  modulateFilterChain(layer: FilterChain, args: FilterChainArgs): void
 }
 
 interface ModularDefinitionObject extends DefinitionObject {
-  filters? : UnknownObject[]
+  filters? : FilterDefinitionObject[]
   properties? : PropertyObject[]
 }
 
 interface ModularDefinition extends Definition {
-  drawFilters(preloader: Preloader, modular: Modular, range : TimeRange, context : VisibleContext, size : Size, outContext?: VisibleContext) : VisibleContext
   filters: Filter[]
-  filtrateFilterChain(layer: FilterChain, modular: Modular, args: FilterChainArgs): void
-  graphFilters(layer: FilterChain, modular: Modular, args: FilterChainArgs): GraphFilters
+  modularGraphFilters(modular: Modular, filterChain: FilterChain, visibleContext?: VisibleContext ): ModularGraphFilter[]
+  populateFilterChain(filterChain: FilterChain, modular: Modular): void
+  propertiesCustom: Property[]
 }
 
 type ModularClass = Constrained<Modular>

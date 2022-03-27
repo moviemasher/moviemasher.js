@@ -10,7 +10,6 @@ interface SplitActionObject extends ActionOptions {
   undoFrames : number
 }
 
-
 /**
  * @category Action
  */
@@ -36,8 +35,6 @@ class SplitAction extends Action {
 
   trackClips : Clips
 
-  undoFrames : number
-
   redoAction() : void {
     this.trackClips.splice(this.index, 0, this.insertClip)
     this.splitClip.frames = this.redoFrames
@@ -47,6 +44,8 @@ class SplitAction extends Action {
     this.splitClip.frames = this.undoFrames
     this.trackClips.splice(this.index, 1)
   }
+
+  undoFrames : number
 }
 
 export { SplitAction, SplitActionObject }

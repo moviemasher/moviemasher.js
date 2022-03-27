@@ -1,10 +1,12 @@
+import { GraphFile, GraphFilter } from "../../declarations"
+import { AVType, GraphType, LoadType } from "../../Setup/Enums"
+import { Errors } from "../../Setup/Errors"
 import { InstanceBase } from "../../Base/Instance"
-import { FilterChain, FilterChainArgs, GraphFile, ValueObject } from "../../declarations"
 import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
 import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
 import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
-import { GraphType, LoadType } from "../../Setup/Enums"
 import { ImageDefinition, Image } from "./Image"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 const ImageWithClip = ClipMixin(InstanceBase)
 const ImageWithVisible = VisibleMixin(ImageWithClip)
@@ -12,25 +14,46 @@ const ImageWithTransformable = TransformableMixin(ImageWithVisible)
 class ImageClass extends ImageWithTransformable implements Image {
   declare definition: ImageDefinition
 
-  override filterChainBase(args: FilterChainArgs): FilterChain  {
-    const filterChain = super.filterChainBase(args)
-    const { graphType } = args
+  override initializeFilterChain(filterChain: FilterChain): void  {
+    const { filterGraph } = filterChain
+    const { graphType, avType, preloading, time: startTime, quantize, preloader } = filterGraph
+    // console.log(this.constructor.name, "initializeFilterChain", preloading)
+    if (avType === AVType.Audio) throw Errors.internal + 'initializeFilterChain Audio'
 
-    const { graphFiles } = filterChain
     const source = this.definition.preloadableSource(graphType)
-    if (source) {
-      const options: ValueObject = { loop: 1 }
-      if (graphType === GraphType.Cast) options.re = ''
+    if (!source) throw Errors.invalid.url
 
-      const graphFile: GraphFile = {
-        type: LoadType.Image, file: source, options,
-        input: true,
-        definition: this.definition
-      }
-      graphFiles.push(graphFile)
+    // console.log(this.constructor.name, "initializeFilterChain addGraphFile", source, preloading)
+    const graphFile: GraphFile = {
+      type: LoadType.Image, file: source,
+      input: true,
+      definition: this.definition
     }
+    const inputId = filterChain.addGraphFile(graphFile)
 
-    return filterChain
+    if (!preloading) {
+      graphFile.options = { loop: 1 }
+      switch (graphType) {
+        case GraphType.Cast: {
+          graphFile.options.re = ''
+          break
+        }
+        case GraphType.Canvas: {
+          const definitionTime = this.definitionTime(quantize, startTime)
+          const context = this.contextAtTimeToSize(preloader, definitionTime, quantize)
+          if (!context) throw Errors.invalid.context + ' ' + this.constructor.name + '.initializeFilterChain'
+
+          filterChain.visibleContext = context
+          break
+        }
+        default: {
+          const setptsFilter: GraphFilter = {
+            filter: 'setpts', options: { expr: 'PTS-STARTPTS', }, inputs: [inputId]
+          }
+          filterChain.addGraphFilter(setptsFilter)
+        }
+      }
+    }
   }
 }
 

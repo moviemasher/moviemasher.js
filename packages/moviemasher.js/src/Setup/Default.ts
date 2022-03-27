@@ -3,7 +3,7 @@ import { colorTransparent } from "../Utility/Color"
 
 const MashEditorDefaults: MashEditorOptions = {
   buffer: 10,
-  fps: 0,
+  fps: 30,
   loop: true,
   volume: 0.75,
   precision: 3,

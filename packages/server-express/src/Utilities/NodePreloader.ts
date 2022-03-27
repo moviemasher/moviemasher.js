@@ -3,26 +3,27 @@ import https from 'https'
 import http from 'http'
 import path from 'path'
 import md5 from 'md5'
-import Ffmpeg from 'fluent-ffmpeg'
 import {
   Any, EmptyMethod, GraphFile, GraphType, LoadedInfo,
   LoadTypes, Errors, PreloaderClass, GraphFileType, PreloaderFile, Definition, PreloaderSource
 } from '@moviemasher/moviemasher.js'
 
-import { commandProcess } from '../Command/CommandFactory'
-import { BasenameCache } from '../Setup/Constants'
+import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
+import { probingInfoPromise } from '../Command/Probing'
 
 
 class NodePreloader extends PreloaderClass {
-  constructor(cacheDirectory: string, fileDirectory: string) {
+  constructor(
+    public cacheDirectory: string,
+    public filePrefix: string,
+    public defaultDirectory: string,
+    public validDirectories: string[]
+  ) {
     super()
-    this.cacheDirectory = cacheDirectory
-    this.fileDirectory = fileDirectory
+    if (!cacheDirectory) throw Errors.invalid.url + 'cacheDirectory'
+    if (!filePrefix) throw Errors.invalid.url + 'filePrefix'
+    if (!defaultDirectory) throw Errors.invalid.url + 'defaultDirectory'
   }
-
-  cacheDirectory: string
-
-  fileDirectory: string
 
   fileInfoPromise(graphFile: GraphFile): Promise<LoadedInfo> {
     const key = this.key(graphFile)
@@ -31,31 +32,10 @@ class NodePreloader extends PreloaderClass {
 
     if (preloaderFile.loadedInfo) return Promise.resolve(preloaderFile.loadedInfo)
 
-    const process = commandProcess()
-    process.addInput(key)
-    return new Promise((resolve, reject) => {
-      process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
-        if (error) {
-          console.error(process._getArguments(), error)
-          reject(error)
-          return
-        }
-        const info: LoadedInfo = {}
-        const { streams, format } = data
-        const { duration } = format
-        if (duration) info.duration = duration
-        for (const stream of streams) {
-          const { width, height } = stream
-          if (width && height) {
-            info.width = width
-            info.height = height
-            break
-          }
-        }
-        // console.log(this.constructor.name, "fileInfoPromise", info)
-        preloaderFile.loadedInfo = info
-        resolve(info)
-      })
+    const infoPath = path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
+    return probingInfoPromise(key, infoPath).then(info => {
+      preloaderFile.loadedInfo = info
+      return info
     })
   }
 
@@ -71,8 +51,8 @@ class NodePreloader extends PreloaderClass {
       preloaderSource.promise = Promise.resolve()
     } else {
       // console.log(this.constructor.name, "filePromise nonexistent", key)
-      const { fileDirectory } = this
-      if (key.startsWith(fileDirectory)) throw Errors.uncached + ' filePromise ' + key
+      const { filePrefix } = this
+      if (key.startsWith(filePrefix)) throw Errors.uncached + ' filePromise ' + key
 
       preloaderSource.promise = this.writePromise(graphFile, key).then(() => {
         this.updateSources(key, preloaderSource)
@@ -87,14 +67,21 @@ class NodePreloader extends PreloaderClass {
 
   key(graphFile: GraphFile): string {
     const { type, file } = graphFile
-    const { cacheDirectory, fileDirectory } = this
-    if (LoadTypes.includes(type)) {
-      if (file.includes('://')) {
-        return path.resolve(cacheDirectory, md5(file), `${BasenameCache}${path.extname(file)}`)
-      }
-      if (file.includes('./')) throw Errors.invalid.url + file
+    if (!file) throw Errors.invalid.property + 'file'
 
-      return path.resolve(fileDirectory, file)
+    const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this
+    if (LoadTypes.map(String).includes(type)) {
+      if (file.includes('://')) return path.resolve(
+        cacheDirectory, md5(file), `${BasenameCache}${path.extname(file)}`
+      )
+
+      const resolved = path.resolve(filePrefix, defaultDirectory, file)
+      const directories = [defaultDirectory, ...validDirectories]
+      const prefixes = [path.resolve(cacheDirectory), ...directories.map(dir => path.resolve(filePrefix, dir))]
+      const valid = prefixes.some(prefix => resolved.startsWith(prefix))
+      if (!valid) throw Errors.invalid.url + resolved
+
+      return resolved
     }
     if (file.startsWith('/')) console.trace(this.constructor.name, "key", file, type, md5(file))
     return path.resolve(cacheDirectory, md5(file), `${BasenameCache}.${type}`)
@@ -119,9 +106,9 @@ class NodePreloader extends PreloaderClass {
 
   private writePromise(graphFile: GraphFile, key: string): Promise<void> {
     const { file, type } = graphFile
-    const loadable = LoadTypes.includes(String(type))
-
+    const loadable = LoadTypes.map(String).includes(type)
     const dirname = path.dirname(key)
+    // console.log(this.constructor.name, "writePromise", dirname)
     let promise = fs.promises.mkdir(dirname, { recursive: true }).then(EmptyMethod)
 
     if (loadable) {

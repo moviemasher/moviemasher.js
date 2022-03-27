@@ -9,6 +9,9 @@
   "license": "MPL-2.0",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "develop": "rollup --config --watch",
     "serve": "nodemon --experimental-specifier-resolution=node dist/index.js",
@@ -18,23 +21,23 @@
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "^5.0.0",
+    "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
-    "@types/md5": "^2.3.2",
     "@types/fluent-ffmpeg": "^2.1.20",
-    "@types/node": "^16.11.14",
+    "@types/md5": "^2.3.2",
+    "@types/multer": "^1.4.7",
     "cors": "^2.8.5",
-    "express": "^4.17.2",
-    "multer": "^1.4.4",
     "express-basic-auth": "^1.2.1",
+    "express": "^4.17.2",
     "fluent-ffmpeg": "^2.1.2",
+    "md5": "^2.3.0",
+    "multer": "^1.4.4",
     "node-media-server": "^2.3.8",
     "nodemon": "^2.0.15",
-    "md5": "^2.3.0",
-    "canvas": "^2.8.0",
-    "@types/multer": "^1.4.7",
     "sqlite": "^4.0.23",
     "sqlite3": "^4.2.0",
+    "uuid": "^8.3.2",
     "wrtc": "^0.4.7"
   }
 }

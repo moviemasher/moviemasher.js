@@ -1,11 +1,10 @@
-
 import { Property } from "../../Setup/Property"
 import { Any, ObjectUnknown } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { DefinitionClass } from "../../Base/Definition"
 import { Default } from "../../Setup/Default"
 import { ClipDefinition, ClipDefinitionClass } from "./Clip"
-import { Time } from "../../Helpers/Time"
+import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 
 const ClipPropertyObjects = [
   { name: "frame", type: DataType.Frame, value: 0 },
@@ -29,8 +28,9 @@ function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitio
 
     get duration() : number {
       if (!this._duration) {
-        const object = <ObjectUnknown> Default.definition
-        this._duration = Number(object[this.type].duration)
+        const object = Default.definition as ObjectUnknown
+        const value = object ? object[this.type] : undefined
+        this._duration = value ? Number(value.duration) : 0
       }
       return this._duration
     }
@@ -40,7 +40,7 @@ function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitio
     frames(quantize: number): number {
       if (!this.duration) return 0
 
-      return Time.fromSeconds(this.duration, quantize, 'floor').frame
+      return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
 
     streamable = false

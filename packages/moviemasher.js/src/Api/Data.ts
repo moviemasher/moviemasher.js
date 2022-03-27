@@ -1,7 +1,7 @@
-import { JsonObject, UploadDescription, AndId, AndType } from "../declarations"
+import { JsonObject, AndId } from "../declarations"
 import { DefinitionObject, DefinitionObjects } from "../Base/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
-import { ApiCallback, ApiRequest, ApiResponse } from "./Api"
+import { ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
 
 export interface DataServerInit extends JsonObject {
@@ -10,19 +10,17 @@ export interface DataServerInit extends JsonObject {
 
 export interface DataRetrieve {
   partial?: boolean
+  types: string[]
 }
 
-export interface DataDefinitionPutRequest extends ApiRequest, UploadDescription {}
-
-
-export interface DataDefinitionPutResponse extends ApiResponse {
-  id?: string
-  fileProperty?: string
-  fileCallback?: ApiCallback
-  renderingCallback?: ApiCallback
+export interface DataDefinitionPutRequest extends ApiRequest {
+  definition: DefinitionObject
 }
 
-export interface DataDefinitionRetrieveRequest extends ApiRequest, AndType, DataRetrieve {}
+export interface DataDefinitionPutResponse extends ApiResponse, AndId {
+}
+
+export interface DataDefinitionRetrieveRequest extends ApiRequest, DataRetrieve {}
 export interface DataDefinitionRetrieveResponse extends ApiResponse {
   definitions: DefinitionObjects
 }
@@ -83,11 +81,6 @@ export interface DataDefinitionGetRequest extends ApiRequest, AndId {}
 export interface DataDefinitionGetResponse extends ApiResponse {
   definition: DefinitionObject
 }
-
-export interface DataDefinitionUpdateRequest extends ApiRequest, AndId {
-  definition: DefinitionObject
-}
-export interface DataDefinitionUpdateResponse extends ApiResponse {}
 
 export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
 export interface DataMashRetrieveResponse extends ApiResponse {

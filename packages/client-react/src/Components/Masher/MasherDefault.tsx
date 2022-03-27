@@ -113,20 +113,24 @@ const MasherDefault: PropsMethod<MasherDefaultOptions, MasherProps> = function(o
   const browserNode = (panelOptions : PanelOptionsStrict) => {
     panelOptions.className ||= 'panel browser'
     panelOptions.header.content ||= [
-      <BrowserSource key='video' id='video' types='video,videosequence' className='button-icon' children={icons.browserVideo} />,
-      <BrowserSource key='videostream' id='videostream' className='button-icon' children={icons.browserVideoStream} />,
-      <BrowserSource key='audio' id='audio' className='button-icon' children={icons.browserAudio} />,
-      <BrowserSource key='image' id='image' className='button-icon' children={icons.browserImage} />,
       <BrowserSource key='theme' id='theme' className='button-icon' children={icons.browserTheme} />,
       <BrowserSource key='effect' id='effect' className='button-icon' children={icons.browserEffect} />,
       <BrowserSource key='transition' id='transition' className='button-icon' children={icons.browserTransition} />
     ]
+
+    panelOptions.header.before ||= [
+      <BrowserSource key='video' id='videosequence' className='button-icon' children={icons.browserVideo} />,
+      <BrowserSource key='audio' id='audio' className='button-icon' children={icons.browserAudio} />,
+      <BrowserSource key='image' id='image' className='button-icon' children={icons.browserImage} />,
+    ]
+
     panelOptions.content.children ||= (
       <View className='definition'><label /></View>
     )
     const contentProps = {
-      selectClass: {classNameSelect},
+      selectClass: classNameSelect,
       label: '--clip-label',
+      icon: '--clip-icon',
       children: panelOptions.content.children,
       className: panelOptions.content.className,
     }
@@ -228,6 +232,7 @@ const MasherDefault: PropsMethod<MasherDefaultOptions, MasherProps> = function(o
             selectClass={classNameSelect}
             dropClass={classNameDrop}
             label='--clip-label'
+            icon='--clip-icon'
           >
             <View className='clip'>
               <label />

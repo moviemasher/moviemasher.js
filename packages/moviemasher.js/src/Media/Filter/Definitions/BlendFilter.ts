@@ -10,24 +10,17 @@ import { Parameter } from "../../../Setup"
  * @category Filter
  */
 class BlendFilter extends FilterDefinitionClass {
-
-  // eslint-disable-next-line camelcase
-  draw(evaluator : Evaluator) : VisibleContext {
-    const { context, mergeContext } = evaluator
-    if (!(context && mergeContext)) throw Errors.invalid.context
-
-    const all_mode = evaluator.evaluateParameter('all_mode')
-
+  protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
+    const { visibleContext, createVisibleContext } = evaluator
+    const all_mode = evaluator.parameter('all_mode')
     const modes = Types.propertyType(DataType.Mode).values
     if (typeof modes === "undefined") throw Errors.unknown.mode
 
     const mode = modes.find(object => object.id === all_mode)
     if (typeof mode === "undefined") throw Errors.unknown.mode
-
     const { identifier } = mode
-
-    mergeContext.drawWithComposite(context.drawingSource, identifier)
-    return mergeContext
+    createVisibleContext.drawWithComposite(visibleContext.drawingSource, identifier)
+    return createVisibleContext
   }
 
   parameters: Parameter[] = [

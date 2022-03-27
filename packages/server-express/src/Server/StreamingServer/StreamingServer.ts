@@ -137,9 +137,7 @@ class StreamingServer extends ServerClass {
     res.send(response)
   }
 
-
   id = 'streaming'
-
 
   preload: ServerHandler<StreamingPreloadResponse, StreamingPreloadRequest> = (req, res) => {
     const { id, files } = req.body
@@ -186,10 +184,11 @@ class StreamingServer extends ServerClass {
     try {
       const user = this.userFromRequest(req)
       const { cacheDirectory } = this.args
-      const fileDirectory = path.resolve(this.fileServer!.args.uploadsPrefix, user)
+      const filePrefix = this.fileServer!.args.uploadsPrefix
       const streamingDirectory = directory
       const streamingProcessArgs: StreamingProcessArgs = {
-        fileDirectory, cacheDirectory, id, directory: streamingDirectory,
+        filePrefix, defaultDirectory: user, validDirectories: ['shared'],
+        cacheDirectory, id, directory: streamingDirectory,
         file, commandOutput: streamingCommandOutput
       }
       const connection = streamingProcessCreate(streamingProcessArgs)

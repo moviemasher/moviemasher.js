@@ -1,45 +1,35 @@
-import { DefinitionType, LoadType, TrackType } from "../../Setup/Enums"
-import { Time} from "../../Helpers/Time"
-import { DefinitionBase } from "../../Base/Definition"
+import { AVType, DefinitionType, LoadType, TrackType } from "../../Setup/Enums"
 import { VideoStreamClass } from "./VideoStreamInstance"
-import { VideoStream, VideoStreamDefinition, VideoStreamDefinitionObject, VideoStreamObject } from "./VideoStream"
+import { VideoStream, VideoStreamDefinition, VideoStreamObject } from "./VideoStream"
 import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
 import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
-import { Any, UnknownObject, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
-import { Errors } from "../../Setup/Errors"
+import { GraphFile, FilesArgs, GraphFiles } from "../../declarations"
 import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { StreamableDefinitionMixin } from "../../Mixin/Streamable/StreamableDefinitionMixin"
 import { Default } from "../../Setup/Default"
 import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
 import { Preloader } from "../../Preloader/Preloader"
+import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 
-const WithClip = ClipDefinitionMixin(DefinitionBase)
+const WithClip = ClipDefinitionMixin(PreloadableDefinition)
 const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithVisible = VisibleDefinitionMixin(WithAudible)
 const WithStreamable = StreamableDefinitionMixin(WithVisible)
 const WithTransformable = TransformableDefinitionMixin(WithStreamable)
 class VideoStreamDefinitionClass extends WithTransformable implements VideoStreamDefinition {
-  constructor(...args : Any[]) {
-    super(...args)
-    const [object] = args
-    const { url } = <VideoStreamDefinitionObject> object
-    if (!url) throw Errors.invalid.definition.url + 'VIDEOSTREAM'
-
-    this.url = url
-    this.source ||= url
-
-    // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
-  }
-
   frames(quantize: number): number {
-    return Time.fromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame
+    return timeFromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame
   }
 
   get file(): GraphFile {
-    return { type: LoadType.Video, file: this.url, definition: this }
+    const graphFile: GraphFile = {
+      type: LoadType.Video, file: this.url, definition: this
+    }
+    return graphFile
   }
 
-  files(args: FilesArgs): GraphFiles {
+  definitionFiles(args: FilesArgs): GraphFiles {
     return [this.file]
   }
 
@@ -53,20 +43,9 @@ class VideoStreamDefinitionClass extends WithTransformable implements VideoStrea
     return preloader.getFile(this.file)
   }
 
-  source = ''
-
   trackType = TrackType.Video
 
   type = DefinitionType.VideoStream
-
-  toJSON() : UnknownObject {
-    const object = super.toJSON()
-    object.url = this.url
-    if (this.source) object.source = this.source
-    return object
-  }
-
-  url : string
 }
 
 export { VideoStreamDefinitionClass }

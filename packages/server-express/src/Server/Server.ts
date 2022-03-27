@@ -1,5 +1,8 @@
 import Express from "express"
-import { Endpoint, JsonObject, StringObject, UnknownObject } from "@moviemasher/moviemasher.js"
+import {
+  Endpoint, JsonObject, StringObject, UnknownObject
+} from "@moviemasher/moviemasher.js"
+
 import { HostServers } from "../Host/Host"
 
 interface ServerAuthentication extends UnknownObject {
@@ -15,7 +18,7 @@ interface ServerArgs extends Endpoint {
 interface Server {
   stopServer(): void
   startServer(app: Express.Application, activeServers: HostServers): void
-  init(): JsonObject
+  init(userId: string): JsonObject
   id: string
 }
 

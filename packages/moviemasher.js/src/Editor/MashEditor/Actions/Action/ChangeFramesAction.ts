@@ -1,7 +1,6 @@
 import { Clip } from "../../../../Mixin/Clip/Clip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
-
 /**
  * @category Action
  */

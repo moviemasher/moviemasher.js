@@ -7,7 +7,7 @@ import { Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerObject } from "
 
 import scalerDefaultJson from "../../Definitions/DefinitionObjects/scaler/default.json"
 import scalerPanJson from "../../Definitions/DefinitionObjects/scaler/pan.json"
-import scalerScaleJson from "../../Definitions/DefinitionObjects/scaler/scale.json"
+import scalerStretchJson from "../../Definitions/DefinitionObjects/scaler/stretch.json"
 
 const scalerDefaultId = "com.moviemasher.scaler.default"
 
@@ -39,7 +39,7 @@ const scalerInitialize = (): void => {
   [
     scalerDefaultJson,
     scalerPanJson,
-    scalerScaleJson,
+    scalerStretchJson,
   ].forEach(object => scalerInstall(object))
 }
 

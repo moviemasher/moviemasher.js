@@ -11,7 +11,6 @@ interface PropertyObject {
   custom? : boolean
 }
 
-
 class Property {
   constructor(object: PropertyObject) {
     const { type, name, value, custom } = object

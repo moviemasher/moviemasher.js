@@ -1,12 +1,13 @@
-import { Any, FilesOptions, FilterGraph, FilterGraphArgs, FilterGraphOptions, GraphFiles, Size, UnknownObject, VisibleContextData } from "../../declarations"
+import {
+  Any, GraphFiles, Size, UnknownObject, VisibleContextData
+} from "../../declarations"
 import { Emitter } from "../../Helpers/Emitter"
-
 import { idGenerate } from "../../Utility/Id"
 import { isPopulatedString } from "../../Utility/Is"
 import { Mash } from "../Mash/Mash"
 import { MashFactory } from "../Mash/MashFactory"
-import { Layer } from "./Layer/Layer"
 import { CastObject, Cast } from "./Cast"
+import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
 
 class CastClass implements Cast {
   constructor(...args: Any[]) {
@@ -51,8 +52,6 @@ class CastClass implements Cast {
   set imageSize(value : Size) {this.mash.imageSize = value }
 
   label = ''
-
-  layers: Layer[] = []
 
   get mash(): Mash { return this.mashes[0] }
 

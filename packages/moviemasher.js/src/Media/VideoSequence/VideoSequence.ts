@@ -1,4 +1,4 @@
-import { Constrained, GenericFactory } from "../../declarations"
+import { GenericFactory } from "../../declarations"
 import {
   AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
 } from "../../Mixin/AudibleFile/AudibleFile"

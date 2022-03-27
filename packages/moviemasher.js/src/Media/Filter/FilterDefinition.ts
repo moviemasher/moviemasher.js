@@ -1,6 +1,5 @@
-import { ModularGraphFilter, FilterChainArgs, ValueObject } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
+import { ModularGraphFilter } from "../../declarations"
+import { DefinitionType, GraphType } from "../../Setup/Enums"
 import { Parameter } from "../../Setup/Parameter"
 import { Evaluator } from "../../Helpers/Evaluator"
 import { DefinitionBase } from "../../Base/Definition"
@@ -8,29 +7,12 @@ import { VisibleContext } from "../../Context/VisibleContext"
 import { Filter, FilterDefinition, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
 
-
 class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
-  draw(_evaluator : Evaluator) : VisibleContext {
-    throw Errors.unimplemented + 'draw' + this.id
-  }
+  protected drawFilterDefinition(evaluator : Evaluator) : VisibleContext { return evaluator.visibleContext! }
 
   _ffmpegFilter?: string
   get ffmpegFilter(): string {
-    if (this._ffmpegFilter) return this._ffmpegFilter
-
-    const prefix = 'com.moviemasher.filter.'
-    const filter = this.id.startsWith(prefix) ? this.id.slice(prefix.length) : this.id
-    return this._ffmpegFilter = filter
-  }
-
-  modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
-    const graphFilter: ModularGraphFilter = {
-      inputs: [],
-      outputs: [this.ffmpegFilter.toUpperCase()],
-      filter: this.ffmpegFilter,
-      options: evaluator.valueObject
-    }
-    return graphFilter
+    return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
   }
 
   get instance(): Filter { return this.instanceFromObject({}) }
@@ -41,11 +23,21 @@ class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
     return instance
   }
 
+  modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
+    const { graphType, preloading } = evaluator
+
+    const graphFilter: ModularGraphFilter = { inputs: [], filter: this.ffmpegFilter, options: {} }
+    if (!preloading) {
+      if (graphType === GraphType.Canvas) {
+        evaluator.visibleContext = this.drawFilterDefinition(evaluator)
+      } else graphFilter.options = evaluator.parameters
+    }
+    return graphFilter
+  }
+
   parameters : Parameter[] = []
 
   retain = true
-
-  scopeSet(_evaluator : Evaluator) : void {}
 
   type = DefinitionType.Filter
 }

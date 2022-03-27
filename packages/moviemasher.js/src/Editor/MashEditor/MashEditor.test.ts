@@ -1,28 +1,30 @@
 import { UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { Time } from "../../Helpers/Time"
+import { Time } from "../../Helpers/Time/Time"
 import { MashEditorClass } from "./MashEditorClass"
 import { ThemeClass } from "../../Media/Theme/ThemeClass"
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
 import { Emitter } from "../../Helpers/Emitter"
-import { MashEditorFactory } from "./MashEditorFactory"
-
-import themeTextJson from "../../Definitions/DefinitionObjects/theme/text.json"
-import { JestPreloader } from "../../../../../dev/test/JestPreloader"
+import { mashEditorInstance } from "./MashEditorFactory"
+import { JestPreloader } from "../../../../../dev/test/Utilities/JestPreloader"
 import { MashEditor } from "./MashEditor"
 
-const mashEditorInstance = (): MashEditor => {
-  return MashEditorFactory.instance({ preloader: new JestPreloader()})
+import themeTextJson from "../../Definitions/DefinitionObjects/theme/text.json"
+import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
+
+const editorInstance = (): MashEditor => {
+  return mashEditorInstance({ preloader: new JestPreloader()})
 }
 describe("MashEditorFactory", () => {
 
   describe("instance", () => {
     test("returns MashEditorClass instance", () => {
-      expect(MashEditorFactory.instance({})).toBeInstanceOf(MashEditorClass)
+      expect(mashEditorInstance({})).toBeInstanceOf(MashEditorClass)
     })
   })
 })
+
 describe("MashEditor", () => {
   const values = Object.entries({
     loop: false,
@@ -36,15 +38,15 @@ describe("MashEditor", () => {
 
   describe.each(defaults)("%s getter", (key, value) => {
     test("returns default", () => {
-      const masher = <UnknownObject> <unknown> mashEditorInstance()
-      if (key === 'fps') expect(masher[key]).toEqual(Default.mash.quantize)
+      const masher = <UnknownObject> <unknown> editorInstance()
+      if (key === 'fps') expect(masher[key]).toEqual(Default.masher.fps)
       else expect(masher[key]).toEqual(value)
     })
   })
 
   describe.each(values)("%s setter", (key, value) => {
     test("updates value", () => {
-      const masher = <UnknownObject> <unknown> mashEditorInstance()
+      const masher = <UnknownObject> <unknown> editorInstance()
       expect(masher[key]).not.toEqual(value)
       masher[key] = value
       if (masher[key] !== value) throw new Error(`${key} ${value} ${masher[key]}`)
@@ -54,7 +56,7 @@ describe("MashEditor", () => {
 
   describe("add", () => {
     test("returns promise that loads clip", async () => {
-      const masher = mashEditorInstance()
+      const masher = editorInstance()
       const clip = await masher.add(themeTextJson)
       expect(clip).toBeInstanceOf(ThemeClass)
       expectCanvas(masher.mash.composition.visibleContext.canvas)
@@ -63,27 +65,27 @@ describe("MashEditor", () => {
 
   describe("eventTarget", () => {
     test("returns Emitter instance", () => {
-      const masher = mashEditorInstance()
+      const masher = editorInstance()
       const canvas = masher.eventTarget
       expect(canvas).toBeInstanceOf(Emitter)
     })
   })
   describe("change", () => {
     test("throws when property blank", () => {
-      const masher = mashEditorInstance()
+      const masher = editorInstance()
       expect(() => masher.change("")).toThrowError(Errors.selection)
     })
     test("throws when there's no selected effect", () => {
-      const masher = mashEditorInstance()
+      const masher = editorInstance()
       expect(() => masher.change("a")).toThrowError(Errors.selection)
     })
   })
 
   describe("goToTime", () => {
     test("returns what is set after resolving promise", async () => {
-      const masher = mashEditorInstance()
+      const masher = editorInstance()
       await masher.add(themeTextJson)
-      const time = Time.fromSeconds(2, masher.fps)
+      const time = timeFromSeconds(2, masher.fps)
       await masher.goToTime(time)
       expect(masher.time).toEqual(time)
     })

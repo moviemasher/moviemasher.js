@@ -1,4 +1,6 @@
-import { Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
+import {
+  Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs, GraphFiles
+} from "../../declarations"
 import { AVType, DataType, GraphType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { AudibleDefinition, AudibleDefinitionClass, AudibleDefinitionObject } from "./Audible"
@@ -28,20 +30,20 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
 
     audible = true
 
-    files(args: FilesArgs): GraphFiles {
-      const { avType, graphType, end } = args
+    definitionFiles(args: FilesArgs): GraphFiles {
+      const { avType, graphType, time } = args
       if (avType === AVType.Video) return []
-      if (graphType === GraphType.Canvas && !end) return []
+      if (graphType === GraphType.Canvas && !time.isRange) return []
 
       const graphFile: GraphFile = {
-        type: LoadType.Audio, file: this.urlAudible, definition: this
+        type: LoadType.Audio, file: this.urlAudible, definition: this, input: true,
       }
       return [graphFile]
     }
 
     audibleSource(preloader: Preloader): AudibleSource | undefined {
       const graphFile: GraphFile = {
-        file: this.urlAudible, type: LoadType.Audio, definition: this
+        file: this.urlAudible, type: LoadType.Audio, definition: this, input: true
       }
       if (!preloader.loadedFile(graphFile)) return
       const cached: LoadedAudio = preloader.getFile(graphFile)
@@ -50,6 +52,8 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
       // console.debug(this.constructor.name, "audibleSource", cached.constructor.name)
       return AudibleContextInstance.createBufferSource(cached)
     }
+
+    loadType = LoadType.Audio
 
     loops = false
 
@@ -60,7 +64,6 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
     toJSON() : UnknownObject {
       const object = super.toJSON()
       object.audio = this.urlAudible
-      if (this.source) object.source = this.source
       if (this.waveform) object.waveform = this.waveform
       return object
     }

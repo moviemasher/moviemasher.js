@@ -1,11 +1,7 @@
 import { AVType, GraphFileType, GraphType, LoadType } from "./Setup/Enums"
-
-import { TimeRange } from "./Helpers/TimeRange"
-import { Time } from "./Helpers/Time"
-import { Clip } from "./Mixin/Clip/Clip"
+import { TimeRange } from "./Helpers/Time/Time"
+import { Time } from "./Helpers/Time/Time"
 import { Definition } from "./Base/Definition"
-import { Preloader } from "./Preloader/Preloader"
-
 
 // TODO: remove
 export interface ScrollMetrics {
@@ -20,7 +16,6 @@ export interface ScrollMetrics {
   x : number
   y : number
 }
-
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
@@ -57,8 +52,8 @@ export interface LoadedFont extends FontFace { } // just { family: string } in t
 export interface AudibleSource extends AudioBufferSourceNode {}
 export type VisibleSource = CanvasImageSource
 
-export interface Timeout extends ReturnType<typeof setTimeout> {}
-export interface Interval extends ReturnType<typeof setInterval> {}
+export type Timeout = ReturnType<typeof setTimeout>
+export type Interval = ReturnType<typeof setInterval>
 
 export type LoadPromise = Promise <void>
 export type LoadFontPromise = Promise<LoadedFont>
@@ -238,9 +233,10 @@ export interface InputParameter {
 }
 
 /**
- * matched by fluent-ffmpeg's FilterSpecification
+ * matches fluent-ffmpeg's FilterSpecification
  */
 export interface GraphFilter {
+  avType?: AVType
   filter: string
   inputs?: string[]
   outputs?: string[]
@@ -254,57 +250,15 @@ export interface ModularGraphFilter extends GraphFilter {
 
 export type ModularGraphFilters = ModularGraphFilter[]
 
-export interface GraphInput {
-  source: string
-  options?: ValueObject
-}
-
 export interface GraphFile {
   type: GraphFileType | LoadType
   file: string
   options?: ValueObject
   input?: boolean
-  definition?: Definition
+  definition: Definition
 }
-
 
 export type GraphFiles = GraphFile[]
-export interface FilterChain {
-  graphFiles: GraphFiles
-  graphFilters: GraphFilters
-  graphFilter?: GraphFilter
-}
-
-export type FilterChains = FilterChain[]
-
-export interface FilterGraph {
-  avType: AVType
-  duration?: number
-  filterChains: FilterChains
-}
-
-export type FilterGraphs = FilterGraph[]
-
-export interface FilterGraphOptions {
-  justGraphFiles?: boolean
-  avType: AVType
-  graphType?: GraphType
-  size: Size
-  timeRange?: TimeRange
-  videoRate: number
-}
-
-export interface FilterGraphArgs extends Required<FilterGraphOptions> { }
-
-export interface FilterChainArgs extends FilterGraphArgs {
-  index: number
-  length: number
-  clip: Clip
-  filterGraph: FilterGraph
-  quantize: number
-  prevFilter?: GraphFilter
-  preloader: Preloader
-}
 
 export interface FilesOptions {
   avType?: AVType
@@ -313,11 +267,11 @@ export interface FilesOptions {
 }
 
 export interface FilesArgs {
+  preloading?: boolean
   avType?: AVType
   graphType: GraphType
   quantize: number
-  start: Time
-  end?: Time
+  time: Time
 }
 
 export interface Described {
@@ -325,4 +279,10 @@ export interface Described {
   icon?: string
   id : string
   label: string
+}
+
+export interface GraphFileIconArgs {
+  size: Size
+  mashSize: Size
+  position?: number
 }

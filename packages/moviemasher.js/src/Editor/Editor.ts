@@ -16,6 +16,7 @@ interface Editor {
   imageData: VisibleContextData
   imageSize: Size
   preloader: BrowserPreloaderClass
+  // definitions: Definitions
 }
 
 export { Editor, EditorOptions }

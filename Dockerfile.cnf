@@ -1,6 +1,13 @@
-FROM amazonlinux
+FROM amazonlinux:2.0.20220316.0
 
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
+
+EXPOSE 8570
+EXPOSE 8571
+
+ENTRYPOINT ["npm"]
+CMD ["start"]
+WORKDIR /home/node/app
 
 # DEFINE DIRECTORIES
 ARG DIR_BINARY=/usr/bin
@@ -15,65 +22,58 @@ ARG VERSION_LAME=3.100
 ARG VERSION_OPUS=1.3.1
 ARG VERSION_SOX=14.4.1
 ARG VERSION_XVID=1.3.5
-ARG NODE_VERSION=16.13.0
+ARG VERSION_NPM=7.19.0
+ARG VERSION_NODE=15.13.0
 
 # DEFINE TOOLS AND LIBRARIES
 ARG DEPENDENCIES="git dpkg tar gzip xz gcc cmake make gcc-c++ libtool bzip2 bzip2-devel yasm yasm-devel nasm nasm-devel freetype-devel fontconfig-devel fribidi-devel frei0r-devel libogg-devel libsamplerate-devel libsndfile-devel speex-devel libtheora-devel libvorbis-devel libmad-devel libid3tag-devel"
 
-## TODO: make into one large command
 RUN set -e ; \
   yum update -y ; \
   amazon-linux-extras install -y epel ; \
-  yum install -y $DEPENDENCIES ;
-RUN set -e ; \
+  yum install -y $DEPENDENCIES ;\
   cd $DIR_SOURCE ; \
   yasm --version ; \
   git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git ; \
   cd libvpx ; \
   ./configure --prefix=$DIR_BUILD --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm ; \
   make ; \
-  make install ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L https://downloads.sourceforge.net/project/lame/lame/$VERSION_LAME/lame-$VERSION_LAME.tar.gz ; \
   tar -xzf lame-$VERSION_LAME.tar.gz ; \
   cd lame-$VERSION_LAME ; \
   ./configure --prefix=$DIR_BUILD --bindir=$DIR_BINARY --disable-shared --enable-yasm ; \
   make ; \
-  make install ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L https://archive.mozilla.org/pub/opus/opus-$VERSION_OPUS.tar.gz ; \
   tar -xzf opus-$VERSION_OPUS.tar.gz ; \
   cd opus-$VERSION_OPUS ; \
   ./configure --prefix=$DIR_BUILD --disable-shared ; \
   make ; \
-  make install ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L http://downloads.xvid.org/downloads/xvidcore-$VERSION_XVID.tar.gz ; \
   tar -zxf xvidcore-$VERSION_XVID.tar.gz ; \
   cd xvidcore/build/generic ; \
   ./configure --prefix=$DIR_BUILD ; \
   make ; \
-  make install ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L http://downloads.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-$VERSION_AMR.tar.gz ; \
   tar -xf opencore-amr-$VERSION_AMR.tar.gz ; \
   cd opencore-amr-$VERSION_AMR ; \
   ./configure --prefix=$DIR_BUILD --disable-shared ; \
   make ; \
-  make install ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   git clone --depth 1 https://code.videolan.org/videolan/x264.git ; \
   cd x264 ; \
   ./configure --prefix=$DIR_BUILD --bindir=$DIR_BINARY --enable-static ; \
   make ; \
   make install ; \
-  whereis x264 ;
-RUN set -e ; \
+  whereis x264 ;\
   cd $DIR_SOURCE ; \
   git clone https://github.com/uclouvain/openjpeg.git ; \
   mkdir openjpeg/build ; \
@@ -81,8 +81,7 @@ RUN set -e ; \
   cmake .. -DCMAKE_INSTALL_PREFIX=$DIR_BUILD -DCMAKE_BUILD_TYPE=Release ; \
   make ; \
   make install ; \
-  ldconfig ;
-RUN set -e ; \
+  ldconfig ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L https://ffmpeg.org/releases/ffmpeg-$VERSION_FFMPEG.tar.gz ; \
   tar -xzf ffmpeg-$VERSION_FFMPEG.tar.gz ; \
@@ -119,25 +118,14 @@ RUN set -e ; \
   --enable-gpl ; \
   make ; \
   make install ; \
-  whereis ffmpeg ;
-RUN set -e ; \
+  whereis ffmpeg ;\
   cd $DIR_SOURCE ; \
   curl --silent -O -L http://sourceforge.net/projects/sox/files/sox/$VERSION_SOX/sox-$VERSION_SOX.tar.gz ; \
   tar -zxf sox-$VERSION_SOX.tar.gz ; \
   cd sox-$VERSION_SOX ; \
   ./configure --disable-shared --prefix=$DIR_BUILD --bindir=$DIR_BINARY ; \
   make -s ; \
-  make install ;
-RUN set -e ; \
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L http://ecasound.seul.org/download/ecasound-$VERSION_ECA.tar.gz ; \
-  tar -xzf ecasound-$VERSION_ECA.tar.gz ; \
-  cd ecasound-$VERSION_ECA ; \
-  ./configure --prefix=$DIR_BUILD --bindir=$DIR_BINARY --enable-rubyecasound=no --enable-pyecasound=none ; \
-  make ; \
-  make install ; \
-  whereis ecasound ;
-RUN set -e ; \
+  make install ;\
   cd $DIR_SOURCE ; \
   ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
@@ -167,30 +155,28 @@ RUN set -e ; \
   gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
   gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
   done \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+  && curl -fsSLO --compressed "https://nodejs.org/dist/v$VERSION_NODE/node-v$VERSION_NODE-linux-$ARCH.tar.xz" \
+  && curl -fsSLO --compressed "https://nodejs.org/dist/v$VERSION_NODE/SHASUMS256.txt.asc" \
   && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-  && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs ;
-RUN set -e ; \
+  && grep " node-v$VERSION_NODE-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+  && tar -xJf "node-v$VERSION_NODE-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+  && rm "node-v$VERSION_NODE-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs ;\
+  npm install -g "npm@${VERSION_NPM}" ;\
   yum clean all ; \
-  rm -rf /tmp/* /var/tmp/* /var/cache/* $DIR_SOURCE/*
+  rm -rf /tmp/* /var/tmp/* /var/cache/* $DIR_SOURCE/* ;
+
+COPY package.json /home/node/app/package.json
+COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
+COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
+COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
+
+RUN npm install
+
+COPY dev/ /home/node/app/dev/
+COPY docs/ /home/node/app/docs/
+COPY packages/ /home/node/app/packages/
+COPY workspaces/ /home/node/app/workspaces/
 
 
-# RUN nasm --version ; \
-# 	node --version ; \
-# 	npm --version ; \
-# 	yasm --version ; \
-# 	sox --version ; \
-# 	x264 --version ; \
-# 	ecasound --version ; \
-# 	ffmpeg -version
-
-ENTRYPOINT ["npm"]
-CMD ["start"]
-
-COPY ./dev/workspaces/server-express /home/node/app
-
-WORKDIR /home/node/app
+RUN npm run build

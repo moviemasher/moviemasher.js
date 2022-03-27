@@ -1,6 +1,4 @@
-import {
-  AudibleSource, Constrained, Value, StartOptions
-} from "../../declarations"
+import { AudibleSource, Constrained, Value, StartOptions } from "../../declarations"
 import { Preloader } from "../../Preloader/Preloader"
 import { ClipDefinition, ClipDefinitionObject, Clip, ClipObject } from "../Clip/Clip"
 
@@ -30,11 +28,19 @@ interface AudibleDefinition extends ClipDefinition {
   audibleSource(preloader: Preloader): AudibleSource | undefined
   loops: boolean
   stream: boolean
+  urlAudible: string
   waveform?: string
 }
 
 type AudibleClass = Constrained<Audible>
 type AudibleDefinitionClass = Constrained<AudibleDefinition>
+
+export interface AudibleContent {
+  track: number
+  audible?: Audible
+}
+
+export type AudibleContents = AudibleContent[]
 
 export {
   Audible,

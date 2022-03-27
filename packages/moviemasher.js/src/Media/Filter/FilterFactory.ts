@@ -1,4 +1,4 @@
-import { BlendFilter } from "./Definitions/BlendFilter"
+// import { BlendFilter } from "./Definitions/BlendFilter"
 import { ChromaKeyFilter } from "./Definitions/ChromaKeyFilter"
 import { ColorFilter } from "./Definitions/ColorFilter"
 import { ColorChannelMixerFilter } from "./Definitions/ColorChannelMixerFilter"
@@ -9,13 +9,13 @@ import { DrawTextFilter } from "./Definitions/DrawTextFilter"
 import { FadeFilter } from "./Definitions/FadeFilter"
 import { OverlayFilter } from "./Definitions/OverlayFilter"
 import { ScaleFilter } from "./Definitions/ScaleFilter"
-import { SetSarFilter } from "./Definitions/SetSarFilter"
 import { Definitions } from "../../Definitions"
 import { Errors } from "../../Setup/Errors"
 import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
 import { DefinitionType } from "../../Setup/Enums"
+import { FilterDefinitionClass } from "./FilterDefinition"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
@@ -24,7 +24,8 @@ const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition =>
 
   if (Definitions.installed(id)) return <FilterDefinition> Definitions.fromId(id)
 
-  throw Errors.invalid.definition.id + ' filterDefinition ' + id
+  return new FilterDefinitionClass(object)
+//  throw Errors.invalid.definition.id + ' filterDefinition ' + id
 }
 
 const filterDefinitionFromId = (id : string) : FilterDefinition => {
@@ -40,8 +41,7 @@ const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 const filterInitialize = (): void => {
   [
     new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter }),
-    new SetSarFilter({ id: 'com.moviemasher.filter.setsar', type: DefinitionType.Filter }),
-    new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
+    // new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
     new ChromaKeyFilter({ id: 'com.moviemasher.filter.chromakey', type: DefinitionType.Filter }),
     new ColorFilter({ id: 'com.moviemasher.filter.color', type: DefinitionType.Filter }),
     new ColorChannelMixerFilter({ id: 'com.moviemasher.filter.colorchannelmixer', type: DefinitionType.Filter }),

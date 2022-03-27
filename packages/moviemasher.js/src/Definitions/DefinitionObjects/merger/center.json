@@ -1,6 +1,6 @@
 {
   "label": "Center",
-  "id": "merger.center",
+  "id": "com.moviemasher.merger.center",
   "type": "merger",
   "filters": [
     {

@@ -8,6 +8,8 @@ export interface LoadedInfo {
   height?: number
   audible?: boolean
   fps?: number
+  label?: string
+  error?: string
 }
 
 export interface PreloaderSource {
@@ -25,13 +27,13 @@ export interface PreloaderFile {
 }
 
 export interface Preloader {
-  graphType: GraphType
-  getFile(file: GraphFile): Any
-  fileInfoPromise(file: GraphFile): Promise<LoadedInfo>
+  fileInfoPromise(graphFile: GraphFile): Promise<LoadedInfo>
   flushFilesExcept(graphFiles?: GraphFiles): void
-  key(file : GraphFile): string
-  loadFilePromise(file : GraphFile): Promise<GraphFile>
-  loadFilesPromise(files : GraphFiles): Promise<GraphFiles>
-  loadedFile(file : GraphFile): boolean
-  loadingFile(file : GraphFile): boolean
+  getFile(graphFile: GraphFile): Any
+  graphType: GraphType
+  key(graphFile: GraphFile): string
+  loadedFile(graphFile: GraphFile): boolean
+  loadFilePromise(graphFile: GraphFile): Promise<GraphFile>
+  loadFilesPromise(files: GraphFiles): Promise<GraphFiles>
+  loadingFile(graphFile: GraphFile): boolean
 }

@@ -1,13 +1,15 @@
 import React from "react"
 import {
   Endpoints, fetchCallback,
-  DataDefinitionPutRequest, DataDefinitionPutResponse,
-  FileStoreResponse, RenderingStartResponse,
+  FileStoreResponse, RenderingStartResponse, ServerType,
+  RenderingStatusRequest, RenderingStatusResponse, OutputTypes,
+  RenderingUploadRequest, RenderingUploadResponse, ApiCallback, ApiCallbackResponse
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../../declarations"
 import { ApiContext } from "../../../Contexts/ApiContext"
 import { ProcessContext } from "../../../Contexts/ProcessContext"
+import { BrowserContext } from "../../../Contexts/BrowserContext"
 
 const UploadControlId = 'upload-control-id'
 
@@ -15,44 +17,68 @@ function UploadControl(props: PropsAndChild): ReactResult {
   const fileInput = React.useRef<HTMLInputElement>(null)
   const apiContext = React.useContext(ApiContext)
   const processContext = React.useContext(ProcessContext)
+  const browserContext = React.useContext(BrowserContext)
+
+  const { endpointPromise, servers, enabled } = apiContext
+  const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
+  if (!required.every(serverType => enabled.includes(serverType))) return null
 
   const { children, ...rest } = props
-  const { processing, setProcessing, setStatus } = processContext
-  const { endpointPromise } = apiContext
+  const { processing, setProcessing } = processContext
+
+  const handleApiCallback = (apiCallback?: ApiCallback) => {
+    if (!apiCallback) {
+      // TODO: somehow refresh browser view...
+      // const { sourceId, setSourceId } = browserContext
+      // if (sourceId === )
+      // setDefinitions(undefined)
+      setProcessing(false)
+      return
+    }
+    setTimeout(() => {
+      console.debug("handleApiCallback request", apiCallback)
+      fetchCallback(apiCallback).then((response: ApiCallbackResponse) => {
+        const { apiCallback } = response
+        console.debug("handleApiCallback request", response)
+        handleApiCallback(apiCallback)
+      })
+    }, 2000)
+  }
+  const handleError = (endpoint: string, error: string) => {
+    setProcessing(false)
+    console.error(endpoint, error)
+  }
 
   const startProcessing = (file: File) => {
     if (processing) return
 
     const { type, name, size } = file
-    console.log("startProcessing", file)
+    // console.log("startProcessing", file)
     setProcessing(true)
-    const request: DataDefinitionPutRequest = { type, name, size }
-    console.debug("DataDefinitionPutRequest", Endpoints.data.definition.put, request)
-    endpointPromise(Endpoints.data.definition.put, request).then((response: DataDefinitionPutResponse) => {
-      console.debug("DataDefinitionPutResponse", Endpoints.data.definition.put, response)
-      const { fileCallback, renderingCallback, fileProperty } = response
-      if (fileCallback && fileCallback.request) {
+    const request: RenderingUploadRequest = { type, name, size }
+    console.debug("RenderingUploadRequest", Endpoints.rendering.upload, request)
+    endpointPromise(Endpoints.rendering.upload, request).then((response: RenderingUploadResponse) => {
+      console.debug("RenderingUploadResponse", Endpoints.rendering.upload, response)
+      const { error, fileApiCallback, apiCallback, fileProperty } = response
+      if (error) return handleError(Endpoints.rendering.upload, error)
 
+      if (fileApiCallback && fileApiCallback.request) {
         if (fileProperty) {
           // console.debug(`SETTING body.${fileProperty}`)
-          fileCallback.request.body![fileProperty] = file
+          fileApiCallback.request.body![fileProperty] = file
         } else {
           // console.debug("SETTING BODY")
-          fileCallback.request.body = file
+          fileApiCallback.request.body = file
         }
-
-        console.debug("FileStoreRequest", fileCallback)
-        fetchCallback(fileCallback).then((response: FileStoreResponse) => {
+        console.debug("FileStoreRequest", fileApiCallback)
+        fetchCallback(fileApiCallback).then((response: FileStoreResponse) => {
           console.debug("FileStoreResponse", response)
-          if (renderingCallback) {
-            console.debug("RenderingStartRequest", renderingCallback)
-            fetchCallback(renderingCallback).then((response: RenderingStartResponse) => {
-              console.debug("RenderingStartResponse", response)
-              setProcessing(false)
-            })
-          } else setProcessing(false)
+          const { error } = response
+          if (error) return handleError(fileApiCallback.endpoint.prefix!, error)
+
+          handleApiCallback(apiCallback)
         })
-      } else setProcessing(false)
+      } else handleApiCallback(apiCallback)
     })
   }
 
@@ -64,7 +90,7 @@ function UploadControl(props: PropsAndChild): ReactResult {
   }
 
   const inputProps = {
-    accept: 'audio/*,video/*,image/*',
+    accept: String(servers.file?.accept),
     id: UploadControlId,
     onChange,
     type: 'file',

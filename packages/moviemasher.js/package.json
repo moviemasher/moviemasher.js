@@ -5,6 +5,9 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "source": "index.ts",
   "version": "5.0.0",
   "keywords": [
@@ -38,11 +41,7 @@
     "clean": "rimraf dist",
     "develop": "rollup --watch --config dev/rollup/esm.config.js"
   },
-  "devDependencies": {},
-  "files": [
-    "dist"
-  ],
-  "dependencies": {
+  "devDependencies": {
     "@types/css-font-loading-module": "^0.0.7"
   }
 }

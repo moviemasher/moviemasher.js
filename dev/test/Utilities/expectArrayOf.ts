@@ -1,7 +1,7 @@
 import { Any, Constructor } from "../../../packages/moviemasher.js/src/declarations"
 import { expectArray } from "./expectArray"
 
-const expectArrayOf = (value : Any, klass : Constructor, length? : number) : Any[] => {
+const expectArrayOf = (value: Any, constructor: Constructor, length?: number): Any[] => {
   const array = expectArray(value)
   if (array.length === 0) {
     console.error("expectArrayOf with zero length", array)
@@ -11,9 +11,9 @@ const expectArrayOf = (value : Any, klass : Constructor, length? : number) : Any
   const element = array[0]
   if (!element) throw 'expectArrayOf'
 
-  const is = element instanceof klass
+  const is = element instanceof constructor
   if (!is) console.error('expectArrayOf', typeof element, element.constructor.name)
-  expect(element).toBeInstanceOf(klass)
+  expect(element).toBeInstanceOf(constructor)
 
   return array
 }

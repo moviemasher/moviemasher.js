@@ -1,5 +1,4 @@
 
-
 enum ActionType {
   AddTrack = 'addTrack',
   AddClipToTrack = 'addClipToTrack',
@@ -26,14 +25,6 @@ enum AVType {
   Video = 'video',
 }
 
-enum RawType {
-  Audio = 'audio',
-  Video = 'video',
-  Image = 'image',
-}
-
-const RawTypes = Object.values(RawType).map(String)
-
 enum TrackType {
   Audio = 'audio',
   Transition = 'transition',
@@ -54,6 +45,11 @@ enum ClipType {
 }
 const ClipTypes = Object.values(ClipType)
 
+export enum Extension {
+  Mpg = 'mpg',
+
+}
+
 enum OutputFormat {
   AudioConcat = 'wav',
   Mdash = 'mdash',
@@ -62,10 +58,9 @@ enum OutputFormat {
   Jpeg = 'jpeg',
   Mp3 = 'mp3',
   Mp4 = 'mp4',
-  Pipe = 'yuv4mpegpipe', // really an import format
-  Png = 'png',
+  VideoConcat = 'yuv4mpegpipe',
+  Png = 'image2',
   Rtmp = 'rtmp',
-  VideoConcat = 'mpg',
 }
 
 enum StreamingFormat {
@@ -80,9 +75,12 @@ enum OutputType {
   Audio = 'audio',
   Image = 'image',
   Video = 'video',
-  VideoSequence = 'videosequence',
+  ImageSequence = 'imagesequence',
   Waveform = 'waveform',
 }
+
+const OutputTypes = Object.values(OutputType)
+
 // NOTE: order important here - determines initialization
 enum DefinitionType {
   Filter = 'filter',
@@ -144,7 +142,7 @@ enum LoadType {
   Image = 'image',
   Video = 'video',
 }
-const LoadTypes = Object.values(LoadType).map(String)
+const LoadTypes = Object.values(LoadType)
 
 enum MoveType {
   Audio = 'audio',
@@ -229,12 +227,10 @@ export {
   MoveType,
   OutputFormat,
   OutputType,
-  RawType,
-  RawTypes,
+  OutputTypes,
   ServerType,
   ServerTypes,
   StreamingFormat,
-  // StreamingFormats,
   TrackType,
   TrackTypes,
   TransformType,

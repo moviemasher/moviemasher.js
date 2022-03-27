@@ -9,62 +9,64 @@ import { FilterDefinitionClass } from "../FilterDefinition"
 import { VisibleContext } from "../../../Context"
 import { fontDefinitionFromId } from "../../Font/FontFactory"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { colorBlack } from "../../../Utility/Color"
+import { colorBlack, colorServer } from "../../../Utility/Color"
 
 /**
  * @category Filter
  */
 class DrawTextFilter extends FilterDefinitionClass {
-  draw(evaluator : Evaluator) : VisibleContext {
-    const { context, preloader } = evaluator
-    if (!context) throw Errors.invalid.context
+  protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
+    const { visibleContext: context, preloader, graphType } = evaluator
+    if (!context) throw Errors.invalid.context + this.id
 
-    const fontface = evaluator.evaluateParameter('fontface')
-    const x = evaluator.evaluateParameter('x')
-    const y = evaluator.evaluateParameter('y')
-    const fontsize = evaluator.evaluateParameter('fontsize')
-    const fontcolor = evaluator.evaluateParameter('fontcolor')
-    const shadowcolor = evaluator.evaluateParameter('shadowcolor')
-    const shadowx = evaluator.evaluateParameter('shadowx')
-    const shadowy = evaluator.evaluateParameter('shadowy')
+    const fontface = evaluator.parameter('fontface')
+    const x = evaluator.parameter('x')
+    const y = evaluator.parameter('y')
+    const fontsize = evaluator.parameter('fontsize')
+    const fontcolor = evaluator.parameter('fontcolor')
+    const shadowcolor = evaluator.parameter('shadowcolor')
+    const shadowx = evaluator.parameter('shadowx')
+    const shadowy = evaluator.parameter('shadowy')
 
     if (!(fontsize && Is.aboveZero(fontsize))) throw Errors.eval.number + " fontsize"
 
     const definition = fontDefinitionFromId(String(fontface))
-    const {source} = definition
-    const graphFile: GraphFile = { type: LoadType.Font, file: source }
+    const file = definition.preloadableSource(graphType)
+    const graphFile: GraphFile = {
+      type: LoadType.Font, file, definition
+    }
     const fontFace = preloader.getFile(graphFile)
     const height = Number(fontsize)
     const { family } = fontFace
     const textStyle : TextStyle =  {
       height,
       family,
-      color: String(fontcolor || colorBlack),
-      shadow: String(shadowcolor || ""),
-      shadowPoint: { x: Number(shadowx || 0), y: Number(shadowy || 0) },
+      color: String(fontcolor),
+      shadow: String(shadowcolor),
+      shadowPoint: { x: Number(shadowx), y: Number(shadowy) },
     }
-    const point = { x: Number(x || 0), y: Number(y || 0) }
-    context.drawTextAtPoint(String(evaluator.modularValue('string')), textStyle, point)
+    const point = { x: Number(x), y: Number(y) }
+    context.drawTextAtPoint(String(evaluator.propertyValue('string')), textStyle, point)
     return context
   }
 
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
-    const { avType, graphType } = evaluator
+    const { avType, graphType, preloading } = evaluator
     const graphFiles: GraphFiles = []
     const options: ValueObject = {}
-    const justAudio = avType && avType === AVType.Audio
+    const justAudio = avType === AVType.Audio
     if (!justAudio) {
-      const fontface = evaluator.evaluateParameter('fontface')
-      const x = evaluator.evaluateParameter('x')
-      const y = evaluator.evaluateParameter('y')
-      const fontsize = evaluator.evaluateParameter('fontsize')
-      const fontcolor = evaluator.evaluateParameter('fontcolor')
-      const shadowcolor = evaluator.evaluateParameter('shadowcolor')
-      const shadowx = evaluator.evaluateParameter('shadowx')
-      const shadowy = evaluator.evaluateParameter('shadowy')
+      const fontface = evaluator.parameter('fontface')
+      const x = evaluator.parameter('x')
+      const y = evaluator.parameter('y')
+      const fontsize = evaluator.parameter('fontsize')
+      const fontcolor = evaluator.parameter('fontcolor')
+      const shadowcolor = evaluator.parameter('shadowcolor')
+      const shadowx = evaluator.parameter('shadowx')
+      const shadowy = evaluator.parameter('shadowy')
       const canvasGraph = graphType === GraphType.Canvas
 
-      if (fontcolor) options.fontcolor = fontcolor
+      if (fontcolor) options.fontcolor = canvasGraph ? fontcolor : colorServer(String(fontcolor))
       if (fontsize) options.fontsize = fontsize
       if (x || y) {
         options.x = x || 0
@@ -76,23 +78,27 @@ class DrawTextFilter extends FilterDefinitionClass {
         options.shadowy = shadowy || 0
       }
       const definition = fontDefinitionFromId(String(fontface))
-      const graphFile: GraphFile = {
-        type: LoadType.Font, file: definition.source, definition
-      }
+
+      const file = definition.preloadableSource(graphType)
+
+      const graphFile: GraphFile = { type: LoadType.Font, file, definition }
       graphFiles.push(graphFile)
-      if (!canvasGraph) {
-        const { preloader } = evaluator
-        const textGraphFile: GraphFile = {
-          type: GraphFileType.Txt, file: String(evaluator.modularValue('string'))
-        }
-        graphFiles.push(textGraphFile)
-        options.textfile = preloader.key(textGraphFile)
-        options.fontfile = preloader.key(graphFile)
+
+      const { preloader } = evaluator
+      const textGraphFile: GraphFile = {
+        definition: this,
+        type: GraphFileType.Txt, file: String(evaluator.propertyValue('string'))
+      }
+      graphFiles.push(textGraphFile)
+      options.textfile = preloader.key(textGraphFile)
+      options.fontfile = preloader.key(graphFile)
+
+      if (!preloading && canvasGraph) {
+        evaluator.visibleContext = this.drawFilterDefinition(evaluator)
       }
     }
     const graphFilter: ModularGraphFilter = {
       inputs: [],
-      outputs: ['TEXT'],
       filter: this.ffmpegFilter,
       options, graphFiles
     }

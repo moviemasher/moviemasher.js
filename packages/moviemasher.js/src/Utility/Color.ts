@@ -1,4 +1,6 @@
-import { AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject } from "../declarations"
+import {
+  AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject
+} from "../declarations"
 
 const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))
@@ -43,7 +45,7 @@ const colorRgbaToHex = (rgba: RgbaObject): string => {
   return `#${r}${g}${b}${a}`
 }
 
-const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, match : number, blend : number) : number => {
+const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, similarity : number, blend : number) : number => {
   let diff = 0.0
   const blendYuv = yuvNumeric(yuv)
   yuvs.forEach(yuvObject => {
@@ -55,9 +57,9 @@ const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, match : number, blen
   diff /= yuvs.length
 
   if (blend > 0.0001) {
-    return Math.min(1.0, Math.max(0.0, (diff - match) / blend)) * 255.0
+    return Math.min(1.0, Math.max(0.0, (diff - similarity) / blend)) * 255.0
   }
-  return (diff > match) ? 255 : 0
+  return (diff > similarity) ? 255 : 0
 }
 
 const colorRgbToYuv = (rgb : RgbObject) : Yuv => {
@@ -76,15 +78,17 @@ const colorHexRegex = /^#([A-Fa-f0-9]{3,4}){1,2}$/
 const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
 
 const colorValid = (color: string): boolean => {
-  const colorStripped = colorStrip(color)
+  const stripped = colorStrip(color)
+  if (colorValidHex(stripped) || colorValidRgba(stripped) || colorValidRgb(stripped)) return true
+
   const style = new Option().style
   style.color = color
   const styleStripped = colorStrip(style.color)
   if (!styleStripped) return false
 
-  if (styleStripped.startsWith('rgb')) return true
+  if (colorValidRgba(stripped) || colorValidRgb(stripped)) return true
 
-  return styleStripped === colorStripped
+  return styleStripped === stripped
 }
 
 const colorValidHex = (value: string): boolean => colorHexRegex.test(value)
@@ -187,6 +191,14 @@ const colorRgba: Rgba = { r: 0, g: 0, b: 0, a: 1.0 }
 
 const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
 
+
+const colorServer = (color: string): string => {
+  if (!colorValidHex(color)) return color
+
+  return `${color.slice(0, 7)}@0x${color.slice(-2)}`
+}
+
+
 /**
  * @category Utility
  */
@@ -222,6 +234,7 @@ export {
   colorBlack,
   colorFromRgb,
   colorFromRgba,
+  colorServer,
   colorGreen,
   colorHexRegex,
   colorHexToRgb,

@@ -1,4 +1,4 @@
 export * from "./Audio"
-export * from "./AudioDefinition"
+export * from "./AudioDefinitionClass"
 export * from "./AudioFactory"
-export * from "./AudioInstance"
+export * from "./AudioClass"

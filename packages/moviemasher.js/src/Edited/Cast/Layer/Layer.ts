@@ -1,6 +1,0 @@
-
-interface Layer {
-
-}
-
-export { Layer }

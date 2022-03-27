@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, Time } from '@moviemasher/moviemasher.js'
+import { EventType, Time, timeFromArgs } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult, SliderChangeHandler, WithClassName } from "../../declarations"
 import { Slider } from '../../Utilities/Slider'
@@ -20,7 +20,7 @@ function TimeSlider(props: TimeSliderProps): ReactResult {
 
   const onChange: SliderChangeHandler = (_event, value) => {
     const number = typeof value === "number" ? value : value[0]
-    masher.time = Time.fromArgs(number, masher.mash.quantize)
+    masher.time = timeFromArgs(number, masher.mash.quantize)
   }
 
   const sliderProps = {

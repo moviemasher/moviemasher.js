@@ -2,13 +2,13 @@ import { OutputType } from "../Setup/Enums"
 import { AudioOutputClass } from "./AudioOutputClass"
 import { ImageOutputClass } from "./ImageOutputClass"
 import { VideoOutputClass } from "./VideoOutputClass"
-import { VideoSequenceOutputClass } from "./VideoSequenceOutputClass"
+import { ImageSequenceOutputClass } from "./ImageSequenceOutputClass"
 import { WaveformOutputClass } from "./WaveformOutputClass"
 import {
   AudioOutputArgs,
   ImageOutputArgs,
   VideoOutputArgs,
-  VideoSequenceOutputArgs,
+  ImageSequenceOutputArgs,
   WaveformOutputArgs
 } from "./Output"
 
@@ -24,8 +24,8 @@ const outputInstanceVideo = (object: VideoOutputArgs) => {
   return new VideoOutputClass(object)
 }
 
-const outputInstanceVideoSequence = (object: VideoSequenceOutputArgs) => {
-  return new VideoSequenceOutputClass(object)
+const outputInstanceVideoSequence = (object: ImageSequenceOutputArgs) => {
+  return new ImageSequenceOutputClass(object)
 }
 
 const outputInstanceWaveform = (object: WaveformOutputArgs) => {
@@ -39,8 +39,15 @@ const OutputFactory = {
   [OutputType.Audio]: outputInstanceAudio,
   [OutputType.Image]: outputInstanceImage,
   [OutputType.Video]: outputInstanceVideo,
-  [OutputType.VideoSequence]: outputInstanceVideoSequence,
+  [OutputType.ImageSequence]: outputInstanceVideoSequence,
   [OutputType.Waveform]: outputInstanceWaveform,
 }
 
-export { OutputFactory }
+export {
+  OutputFactory,
+  outputInstanceAudio,
+  outputInstanceImage,
+  outputInstanceVideo,
+  outputInstanceVideoSequence,
+  outputInstanceWaveform,
+}

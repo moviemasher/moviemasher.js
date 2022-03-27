@@ -14,7 +14,7 @@ const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
   if (!Definitions.installed(idString)) {
     return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id: idString })
   }
-  return <FontDefinition> Definitions.fromId(idString)
+  return Definitions.fromId(idString) as FontDefinition
 }
 const fontDefinitionFromId = (id : string) : FontDefinition => {
   return fontDefinition({ id })

@@ -1,8 +1,9 @@
 import React from "react"
 import { Definition } from '@moviemasher/moviemasher.js'
+
+import { PropsWithChildren, ReactResult } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { BrowserContext, BrowserContextInterface } from "../../Contexts/BrowserContext"
-import { PropsWithChildren, ReactResult } from "../../declarations"
 
 interface BrowserProps extends PropsWithChildren {
   sourceId?: string
@@ -16,13 +17,7 @@ function Browser(props: BrowserProps): ReactResult {
   const { sourceId: initialSourceId, ...rest } = props
   const [ definitions, setDefinitions] = React.useState<Definition[] | undefined>(undefined)
   const [ definitionId, setDefinitionId] = React.useState('')
-  const [ sourceId, setSourceId] = React.useState('')
-
-
-  React.useEffect(() => {
-    setDefinitions(undefined)
-    setSourceId(initialSourceId || 'theme')
-  }, [initialSourceId])
+  const [ sourceId, setSourceId] = React.useState(initialSourceId || 'theme')
 
   const browserContext: BrowserContextInterface = {
     definitions,

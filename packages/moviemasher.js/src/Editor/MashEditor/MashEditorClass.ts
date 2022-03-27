@@ -5,18 +5,14 @@ import {
   UnknownObject,
   VisibleContextData,
   Size,
-  FilesOptions,
-  FilterGraphOptions,
 } from "../../declarations"
 import {
   ActionType,
-  AVType,
   ClipType,
   ClipTypes,
   DefinitionType,
   EditType,
   EventType,
-  GraphType,
   MasherAction,
   TrackType,
   TransformType,
@@ -24,8 +20,8 @@ import {
 } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
-import { Time } from "../../Helpers/Time"
-import { TimeRange } from "../../Helpers/TimeRange"
+import { Time } from "../../Helpers/Time/Time"
+import { TimeRange } from "../../Helpers/Time/Time"
 import { Action, ActionObject, ActionOptions } from "./Actions/Action/Action"
 import { ActionFactory } from "./Actions/Action/ActionFactory"
 import { ChangeAction } from "./Actions/Action/ChangeAction"
@@ -46,6 +42,7 @@ import { SelectionValue } from "../../Base/Propertied"
 import { EditorClass } from "../EditorClass"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"
+import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
 
 class MashEditorClass extends EditorClass implements MashEditor {
   // [index : string] : unknown
@@ -117,8 +114,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
     const definitionType = <DefinitionType> type
     const definition = Factory[definitionType].definition(object)
-
-    const clip = <Clip> definition.instance //FromObject(object)
+    const clip = <Clip> definition.instance
 
     return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip)
   }
@@ -212,9 +208,10 @@ class MashEditorClass extends EditorClass implements MashEditor {
   change(property: string, value?: SelectionValue): void {
     if (this.selection.track) {
       if (this.selection.clip) {
-        if (this.selection.effect) {
-          this.changeEffect(property, value, this.selection.effect)
-        } else this.changeClip(property, value, this.selection.clip)
+        // if (this.selection.effect) {
+        //   this.changeEffect(property, value, this.selection.effect)
+        // } else
+        this.changeClip(property, value, this.selection.clip)
       } else this.changeTrack(property, value, this.selection.track)
     } else throw Errors.selection
     //else this.changeMash(property, value)
@@ -339,7 +336,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (!Is.object(clip)) return false
 
     // true if now intersects clip time, but is not start or end frame
-    const range = TimeRange.fromTime(time)
+    const range = timeRangeFromTime(time)
     const clipRange = clip.timeRange(quantize)
 
     // ranges must intersect
@@ -389,7 +386,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   get frame() : number { return this.time.frame }
 
-  set frame(value : number) { this.goToTime(Time.fromArgs(Number(value), this.fps)) }
+  set frame(value : number) { this.goToTime(timeFromArgs(Number(value), this.fps)) }
 
   get frames() : number { return this.endTime.frame }
 
@@ -434,7 +431,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   goToTime(value?: Time): LoadPromise {
     const { fps } = this
-    const time = value ? value.scaleToFps(fps) : Time.fromArgs(0, fps)
+    const time = value ? value.scaleToFps(fps) : timeFromArgs(0, fps)
     const min = time.min(this.endTime)
     if (value && min.equalsTime(this.time)) return Promise.resolve()
 
@@ -463,29 +460,8 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   private loadMashAndDraw(): LoadPromise {
-    const timeRange = this.mash.timeRange
-    const options: FilterGraphOptions = {
-      size: this.imageSize,
-      videoRate: this.fps,
-      graphType: GraphType.Canvas,
-      timeRange,
-      avType: timeRange.frames > 1 ? AVType.Both : AVType.Video
-    }
-    const graphFiles = this.mash.graphFiles(options)
-    const files = graphFiles.filter(file =>
-      this.preloader.loadedFile(file) || this.preloader.loadingFile(file)
-    )
-
-    const promises = files.map(file => this.preloader.loadFilePromise(file))
-    if (promises.length) return Promise.all(promises).then(() => {
-      this.mash.draw()
-    })
-
-    this.mash.draw()
-    return Promise.resolve()
+    return this.mash.loadPromise().then(() => { this.mash.draw() })
   }
-
-  // get loadedDefinitions() : DefinitionTimes { return this.mash.loadedDefinitions }
 
   private _loop = Default.masher.loop
 
@@ -549,7 +525,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   moveClip(clip: Clip, frameOrIndex = 0, trackIndex = 0) : void {
-    // console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+    console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
     if (!Is.positive(frameOrIndex)) throw Errors.argument + 'moveClip frameOrIndex'
     if (!Is.positive(trackIndex)) throw Errors.argument + 'moveClip trackIndex'
 
@@ -576,7 +552,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
       const { frame } = clip
       const insertFrame = redoTrack.frameForClipNearFrame(clip, frameOrIndex)
       const offset = insertFrame - frame
-      if (!offset) return // because there would be no change
+      if (!offset && trackIndex === undoTrackIndex) return // no change
 
       options.undoFrame = frame
       options.redoFrame = frame + offset
@@ -635,7 +611,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     return per
   }
   set position(value : number) {
-    this.goToTime(Time.fromSeconds(this.duration * Number(value), this.fps))
+    this.goToTime(timeFromSeconds(this.duration * Number(value), this.fps))
   }
 
   get positionStep() : number {

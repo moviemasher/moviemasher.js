@@ -1,4 +1,3 @@
-
 import { UnknownObject } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Clips, ClipObject, Clip } from "../../Mixin/Clip/Clip"
@@ -17,14 +16,16 @@ export interface TrackArgs extends TrackObject {
 }
 
 export interface Track extends Propertied {
-  addClip(clip : Clip, insertIndex?: number) : void
+  addClip(clip: Clip, insertIndex?: number): void
+  assureFrame(clips?: Clips): boolean
+  assureFrames(quantize: number, clips?: Clips): boolean
   clips: Clips
   dense: boolean
   frameForClipNearFrame(clip: Clip, frame?: number): number
   frames: number
   layer: number
   removeClip(clip: Clip): void
-  sortClips(clips: Clips): void
+  sortClips(clips?: Clips): boolean
   trackType: TrackType
 }
 

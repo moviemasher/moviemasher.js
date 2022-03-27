@@ -1,15 +1,19 @@
-import { Any, FilterChain, FilterChainArgs, FilesArgs, GraphFilters, GraphFiles } from "../../declarations"
+import { Any, FilesArgs, GraphFiles } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
-import { Time  } from "../../Helpers/Time"
+import { Time, TimeRange  } from "../../Helpers/Time/Time"
 import { Is } from "../../Utility/Is"
-import { TimeRange } from "../../Helpers/TimeRange"
 import { InstanceClass } from "../../Base/Instance"
 import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
 import { Errors } from "../../Setup/Errors"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { urlForEndpoint } from "../../Utility/Url"
+import { Preloader } from "../../Preloader/Preloader"
+import { BrowserPreloaderClass } from "../../Preloader/BrowserPreloaderClass"
+import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
 function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
-  return class extends Base {
+  return class extends Base implements Clip {
     constructor(...args : Any[]) {
       super(...args)
       const [object] = args
@@ -43,44 +47,51 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     get endFrame() { return this.frame + this.frames }
 
     endTime(quantize : number) : Time {
-      return Time.fromArgs(this.endFrame, quantize)
+      return timeFromArgs(this.endFrame, quantize)
     }
 
     frame = 0
 
     frames = -1
 
-    files(args: FilesArgs): GraphFiles {
-      const { quantize, start, end } = args
-      const startTime = this.definitionTime(quantize, start)
-      const endTime = end ? this.definitionTime(quantize, end) : end
-      const definitionArgs: FilesArgs = { ...args, start: startTime, end: endTime }
-      return this.definition.files(definitionArgs)
+    clipFiles(args: FilesArgs): GraphFiles {
+      const { quantize, time } = args
+      const definitionTime = this.definitionTime(quantize, time)
+
+      const definitionArgs: FilesArgs = { ...args, time: definitionTime }
+      return this.definition.definitionFiles(definitionArgs)
     }
 
-    filterChain(_: FilterChainArgs): FilterChain {
+    filterChain(_: FilterChain): void {
       throw Errors.unimplemented + 'filterChain'
     }
 
-    filterChainBase(_: FilterChainArgs): FilterChain {
-      const filters: GraphFilters = []
-      const files: GraphFiles = []
-      const filterChain: FilterChain = { graphFilters: filters, graphFiles: files }
-      return filterChain
+    iconUrl(preloader: Preloader): string | undefined {
+      const { icon } = this.definition
+      if (!icon) return
+
+      const browserPreloaderClass = preloader as BrowserPreloaderClass
+      const url = urlForEndpoint(browserPreloaderClass.endpoint, icon)
+      return url
+    }
+
+    initializeFilterChain(_: FilterChain): void {
+      throw Errors.unimplemented + 'initializeFilterChain'
     }
 
     maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
-    time(quantize : number) : Time { return Time.fromArgs(this.frame, quantize) }
+    time(quantize : number) : Time { return timeFromArgs(this.frame, quantize) }
 
     timeRange(quantize : number) : TimeRange {
-      return TimeRange.fromArgs(this.frame, quantize, this.frames)
+      return timeRangeFromArgs(this.frame, quantize, this.frames)
     }
 
-    timeRangeRelative(time : Time, quantize : number) : TimeRange {
-      const range = this.timeRange(quantize).scale(time.fps)
-      const frame = Math.max(0, time.frame - range.frame)
-      return range.withFrame(frame)
+    timeRangeRelative(timeRange : TimeRange, quantize : number) : TimeRange {
+      const range = this.timeRange(quantize).scale(timeRange.fps)
+      const frame = Math.max(0, timeRange.frame - range.frame)
+
+      return timeRange.withFrame(frame)
     }
 
     track = -1

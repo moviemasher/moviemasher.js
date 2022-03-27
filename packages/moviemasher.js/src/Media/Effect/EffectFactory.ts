@@ -1,6 +1,6 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { EffectDefinitionClass } from "./EffectDefinition"
+import { EffectDefinitionClass } from "./EffectDefinitionClass"
 import { Definitions } from "../../Definitions"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
@@ -28,15 +28,28 @@ const effectDefinitionFromId = (id : string) : EffectDefinition => {
   return effectDefinition({ id })
 }
 
-const effectInstance = (object : EffectObject) : Effect => {
-  const definition = effectDefinition(object)
-  const instance = definition.instanceFromObject(object)
-  return instance
+const effectInstance = (object: EffectObject): Effect => {
+  const { definitionId = '' } = object
+  const definition = effectDefinition({ id: definitionId })
+
+  const args = { ...object, definitionId }
+  return definition.instanceFromObject(args)
 }
 
-const effectFromId = (id : string) : Effect => {
-  return effectInstance({ id })
+const effectFromId = (definitionId : string) : Effect => {
+  return effectInstance({ definitionId })
 }
+
+
+// const effectInstance = (object : EffectObject) : Effect => {
+//   const definition = effectDefinition(object)
+//   const instance = definition.instanceFromObject(object)
+//   return instance
+// }
+
+// const effectFromId = (id : string) : Effect => {
+//   return effectInstance({ id })
+// }
 
 const effectInitialize = () : void => {
   [

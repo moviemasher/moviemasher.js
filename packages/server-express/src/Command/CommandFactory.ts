@@ -1,5 +1,8 @@
-import { CommandArgs, GraphFilters, isPopulatedObject, OutputFormat, ValueObject } from '@moviemasher/moviemasher.js'
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
+import {
+  CommandOptions, GraphFilters, isPopulatedObject, OutputFormat, ValueObject
+} from '@moviemasher/moviemasher.js'
+
 import { Command } from './Command'
 
 const commandInputOptions = (args: ValueObject): string[] => Object.entries(args).map(
@@ -14,7 +17,7 @@ const commandInputOptions = (args: ValueObject): string[] => Object.entries(args
 const commandComplexFilter = (args: GraphFilters): ffmpeg.FilterSpecification[] => args.map(
   graphFilter => {
     const options = Object.entries(graphFilter.options).map(([key, value]) => {
-      const valueString = String(value)
+      const valueString = String(value).replaceAll(',', '\\,')
       if (valueString.length) return `${key}=${valueString}`
 
       return key
@@ -22,7 +25,8 @@ const commandComplexFilter = (args: GraphFilters): ffmpeg.FilterSpecification[] 
     return { ...graphFilter, options }
   }
 )
-const commandProcess = (): ffmpeg.FfmpegCommand => {
+
+export const commandProcess = (): ffmpeg.FfmpegCommand => {
    const logger: FfmpegCommandLogger = {
     warn: console.warn,
     error: console.error,
@@ -33,18 +37,19 @@ const commandProcess = (): ffmpeg.FfmpegCommand => {
   const instance: ffmpeg.FfmpegCommand = ffmpeg(ffmpegOptions)
   return instance
 }
-const commandInstance = (args: CommandArgs): Command => {
+
+export const commandInstance = (args: CommandOptions): Command => {
   const instance: ffmpeg.FfmpegCommand = commandProcess()
   const { inputs, output, graphFilters } = args
 
-  inputs.forEach(({ source, options }) => {
+  inputs?.forEach(({ source, options }) => {
     // console.log("commandInstance adding", source)
     instance.addInput(source)
     // instance.addInputOption('-re')
     if (options) instance.addInputOptions(commandInputOptions(options))
   })
   // console.log("commandInstance GRAPHFILTERS", graphFilters)
-  if (graphFilters.length) instance.complexFilter(commandComplexFilter(graphFilters))
+  if (graphFilters?.length) instance.complexFilter(commandComplexFilter(graphFilters))
 
   if (output.audioCodec) instance.audioCodec(output.audioCodec)
   if (output.audioBitrate) instance.audioBitrate(output.audioBitrate)
@@ -61,6 +66,5 @@ const commandInstance = (args: CommandArgs): Command => {
   if (isPopulatedObject(options)) instance.addOptions(commandInputOptions(options))
   return instance
 }
-const commandPath = (path = 'ffmpeg') => { ffmpeg.setFfmpegPath(path) }
 
-export { commandInstance, commandProcess, commandPath }
+export const commandPath = (path = 'ffmpeg') => { ffmpeg.setFfmpegPath(path) }

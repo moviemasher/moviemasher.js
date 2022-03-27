@@ -1,5 +1,5 @@
 import Express from 'express'
-import { UnknownObject, OutputFormat, CommandOutput } from "@moviemasher/moviemasher.js"
+import { UnknownObject } from "@moviemasher/moviemasher.js"
 
 export interface ConnectionJson {
   iceConnectionState: RTCIceConnectionState,
