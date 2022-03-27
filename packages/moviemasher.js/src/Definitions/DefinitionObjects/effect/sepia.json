@@ -1,0 +1,48 @@
+{
+  "label": "Sepia",
+  "type": "effect",
+  "id": "com.moviemasher.effect.sepia",
+  "filters": [
+    {
+      "id": "com.moviemasher.filter.colorchannelmixer",
+      "parameters": [
+        {
+          "name": "rr",
+          "value": 0.393
+        },
+        {
+          "name": "rg",
+          "value": 0.769
+        },
+        {
+          "name": "rb",
+          "value": 0.189
+        },
+        {
+          "name": "gr",
+          "value": 0.349
+        },
+        {
+          "name": "gg",
+          "value": 0.686
+        },
+        {
+          "name": "gb",
+          "value": 0.168
+        },
+        {
+          "name": "br",
+          "value": 0.272
+        },
+        {
+          "name": "bg",
+          "value": 0.534
+        },
+        {
+          "name": "bb",
+          "value": 0.131
+        }
+      ]
+    }
+  ]
+}

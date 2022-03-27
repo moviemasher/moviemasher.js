@@ -1,0 +1,18 @@
+{
+  "label": "Blend",
+  "id": "com.moviemasher.merger.blend",
+  "type": "merger",
+  "properties": [{ "name": "mode", "type": "mode", "value": "normal" }],
+  "filters": [
+    {
+      "id": "com.moviemasher.filter.blend",
+      "parameters": [
+        {
+          "name": "all_mode",
+          "value": "mode",
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

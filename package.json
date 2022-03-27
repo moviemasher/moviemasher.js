@@ -1,26 +1,82 @@
 {
-  "name": "@moviemasher/moviemasher.js",
-  "description": "JavaScript library for realtime, browser-based video and audio editing",
-  "version": "4.0.25",
-  "keywords": [
-    "video editor",
-    "audio editor"
-  ],
+  "name": "@moviemasher/moviemasher",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.0",
+  "homepage": "https://moviemasher.com",
+  "type": "commonjs",
+  "source": "index",
+  "main": "workspaces/example-express-react/dist/server.js",
+  "version": "5.0.0",
+  "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
-  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/moviemasher/moviemasher.js/issues"
   },
-  "homepage": "https://github.com/moviemasher/moviemasher.js#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moviemasher/moviemasher.js.git"
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
-  "dependencies": {
-    "opentype.js": "=1.3.3",
-    "scriptjs": "=2.5.9"
-  }
+  "scripts": {
+    "build-cjs": "npm run build-cjs -w @moviemasher/moviemasher.js",
+    "build-client-example": "run-s build-client build-example-client",
+    "build-client": "npm run build -w @moviemasher/client-react",
+    "build-core-client-example": "run-s build-core-client build-example-client",
+    "build-core-client": "run-s build-esm build-client",
+    "build-core-server-example": "run-s build-core-server build-example-server",
+    "build-core-server": "run-s build-cjs build-server",
+    "build-core": "npm run build -w @moviemasher/moviemasher.js",
+    "build-css-client": "npm run build-css -w @moviemasher/client-react",
+    "build-css": "run-s build-css-client build-example-client",
+    "build-esm": "npm run build-esm -w @moviemasher/moviemasher.js",
+    "build-example-client": "npm run build-client -w example-express-react",
+    "build-example-react": "npm run build -w example-react",
+    "build-example-server": "npm run build-server -w example-express-react",
+    "build-example": "npm run build -w example-express-react",
+    "build-server-example": "run-s build-server build-example-server",
+    "build-server": "npm run build -w @moviemasher/server-express",
+    "build": "run-s build-core build-client build-server build-example build-example-react",
+    "docker-build": "docker build -f Dockerfile.cnf -t moviemasher/moviemasher.js:5.0.0 .",
+    "docker-down": "docker-compose --file dev/docker/docker-compose.yml down -v",
+    "docker-logs": "docker-compose --file dev/docker/docker-compose.yml logs -f",
+    "docker-up": "docker-compose --file dev/docker/docker-compose.yml up -d",
+    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
+    "lint": "eslint src/**/*.ts",
+    "publish-client": "npm publish --access public --workspace @moviemasher/client-react",
+    "publish-core": "npm publish --access public --workspace @moviemasher/moviemasher.js",
+    "publish-server": "npm publish --access public --workspace @moviemasher/server-express",
+    "start": "nodemon --watch workspaces/example-express-react/dist/server-config.json --watch packages/server-express/dist/index.js",
+    "test-help": "jest -h",
+    "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
+    "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
+    "test": "jest --config dev/test/jest.config.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.1",
+    "@rollup/plugin-replace": "^3.0.0",
+    "@types/jest-image-snapshot": "^4.3.1",
+    "@types/jest": "^27.0.3",
+    "@types/node": "15.6.1",
+    "canvas": "^2.9.1",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-image-snapshot": "^4.5.1",
+    "jest": "^27.4.5",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-ts": "^2.0.4",
+    "rollup": "^2.61.1",
+    "ts-jest": "^27.1.2",
+    "typescript": "4.5.5"
+  },
+  "workspaces": [
+    "workspaces/*",
+    "packages/*"
+  ]
 }

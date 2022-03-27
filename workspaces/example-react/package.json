@@ -1,0 +1,27 @@
+{
+  "name": "example-react",
+  "version": "5.0.0",
+  "description": "Movie Masher React Example",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MPL-2.0",
+  "main": "dist/index.js",
+  "source": "index.tsx",
+  "scripts": {
+    "build-rollup": "rollup --file dist/index.js --config ../../dev/config/rollup.config.js ./index.tsx",
+    "build": "run-s clean build-rollup link-shared link-img copy-html copy-icon",
+    "clean": "rimraf dist",
+    "copy-icon": "cp ../../dev/img/favicon.ico dist",
+    "copy-html": "cp ../../dev/index.html dist",
+    "develop": "rollup --config --watch",
+    "link-img": "ln -s $(cd ../../dev/img ; pwd) dist",
+    "link-shared": "ln -s $(cd ../../dev/shared ; pwd) dist",
+    "link-assets": "ln -s $(cd ../../dev/assets ; pwd) dist",
+    "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8576 dist"
+  },
+  "dependencies": {
+    "@moviemasher/client-react": "^5.0.0"
+  }
+}

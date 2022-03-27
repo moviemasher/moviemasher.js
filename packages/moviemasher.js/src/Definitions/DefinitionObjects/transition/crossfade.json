@@ -1,0 +1,6 @@
+{
+  "label": "Crossfade",
+  "type": "transition",
+  "id": "com.moviemasher.transition.crossfade",
+  "to": { "filters": [{ "id": "com.moviemasher.filter.fade" }] }
+}

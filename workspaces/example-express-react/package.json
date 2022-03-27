@@ -1,0 +1,31 @@
+{
+  "name": "example-express-react",
+  "version": "5.0.0",
+  "description": "Movie Masher React Client Example",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MPL-2.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "build-client": "rollup --config ./rollup.config.js",
+    "build-server": "tsc --build",
+    "build": "run-s clean link-shared copy build-server build-client",
+    "clean-create": "mkdir -p dist/public/media",
+    "clean-delete": "rimraf dist",
+    "clean": "run-s clean-delete clean-create",
+    "copy-icons": "cp ../../dev/img/* dist/public",
+    "copy-json": "cp ./src/server-config.json dist",
+    "copy": "run-s copy-icons copy-json",
+    "develop": "rollup --config --watch",
+    "link-shared": "ln -s $(cd ../../dev/shared ; pwd) dist/public/media/shared",
+    "start": "nodemon --watch ./dist/server-config.json --watch ../../packages/server-express/dist/index.js"
+  },
+  "dependencies": {
+    "@moviemasher/client-react": "^5.0.0",
+    "@moviemasher/server-express": "^5.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}

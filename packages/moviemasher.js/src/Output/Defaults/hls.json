@@ -1,0 +1,22 @@
+{
+  "width": 320,
+  "height": 240,
+  "videoRate": 30,
+  "videoBitrate": 2000,
+  "audioBitrate": 160,
+  "audioCodec": "aac",
+  "videoCodec": "libx264",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "format": "hls",
+  "extension": "m3u8",
+  "streamingFormat": "hls",
+  "options": {
+    "hls_segment_filename": "06d.ts",
+    "hls_time": 6,
+    "hls_list_size": 10,
+    "hls_flags": "delete_segments",
+    "hls_delete_threshold": 10,
+    "g": 60
+  }
+}

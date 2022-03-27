@@ -1,0 +1,83 @@
+const $invalid = "Invalid"
+const $unknown = "Unknown"
+const $expected = "Expected"
+const $invalidArgument = `${$invalid} argument `
+const $invalidProperty = `${$invalid} property `
+const $invalidDefinitionProperty = `${$invalid} definition property`
+const $internal = "Internal Error "
+const Errors = {
+  eval: {
+    sourceRect: `${$invalid} evaluation of source rect `,
+    outputSize: `${$invalid} evaluation of output size `,
+    inputSize: `${$invalid} evaluation of input size `,
+    conditionTruth: `${$expected} at least one condition to evaluate to true `,
+    conditionValue: `${$expected} condition to have a value `,
+    number: `${$expected} evaluated number for `,
+    get: `${$expected} to get evaluated value `,
+    string: `${$invalid} evaluation string `,
+  },
+  composition: { mashUndefined: `${$internal}composition.mash undefined` },
+  audibleContext: `${$expected} AudioContext`,
+  mash: `${$expected} mash`,
+  action: `${$expected} Action`,
+  actions: `${$expected} Actions`,
+  internal: $internal,
+  argument: `${$invalidArgument}`,
+  invalid: {
+    canvas: `${$invalidProperty}canvas `,
+    context: `${$invalidProperty}context `,
+    duration: `${$invalid} duration`,
+    definition: {
+      audio: `${$invalidDefinitionProperty} audio|url`,
+      url: `${$invalidDefinitionProperty} url`,
+      source: `${$invalidDefinitionProperty} source`,
+      id: `${$invalidDefinitionProperty} id`,
+      object: `${$invalidProperty}definition`,
+    },
+    size: `${$invalid} size `,
+    track: `${$invalid} track `,
+    trackType: `${$invalidProperty}trackType `,
+    action: `${$invalid} action `,
+    name: `${$invalidProperty}name `,
+    value: `${$invalidProperty}value `,
+    type: `${$invalidProperty}type `,
+    url: `${$invalidProperty}url `,
+    user: 'Unauthenticated',
+    property: $invalidProperty,
+    argument: $invalidArgument,
+    object: `${$invalidArgument}object `,
+    factory: `${$invalid} factory `,
+    volume: `${$invalidArgument}volume`,
+  },
+  type: `${$unknown} type `,
+  selection: `${$invalid} selection `,
+  unknown: {
+    type: `${$unknown} type `,
+    merger: `${$unknown} merger `,
+    effect: `${$unknown} effect `,
+    filter: `${$unknown} filter `,
+    font: `${$unknown} font `,
+    scaler: `${$unknown} scalar `,
+    mode: `${$unknown} mode `,
+    definition: `${$unknown} definition `,
+  },
+  uncached: "Uncached URL ",
+  object: `${$invalidArgument}object `,
+  array: `${$invalidArgument}array `,
+  media: `${$invalidArgument}media `,
+  id: `${$invalidArgument}id `,
+  frame: `${$invalidArgument}frame `,
+  frames: `${$invalidProperty}frames `,
+  fps: `${$invalidArgument}fps `,
+  seconds: `${$invalidArgument}seconds `,
+  url: `${$invalidArgument}url `,
+  time: `${$invalidArgument}Time`,
+  timeRange: `${$invalidArgument}TimeRange`,
+  mainTrackOverlap: `${$internal}: main track clips overlap without transition`,
+  unknownMash: `${$unknown} Mash property `,
+  unimplemented: `${$expected} method to be overridden `,
+  property: `${$invalidArgument}property `,
+  wrongClass: `${$expected} instance of `,
+}
+
+export { Errors }

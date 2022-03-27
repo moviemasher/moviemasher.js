@@ -1,0 +1,9 @@
+{
+  "label": "Stretch",
+  "id": "com.moviemasher.scaler.stretch",
+  "type": "scaler",
+  "filters": [
+    { "id": "com.moviemasher.filter.scale" },
+    { "id": "com.moviemasher.filter.setsar" }
+  ]
+}

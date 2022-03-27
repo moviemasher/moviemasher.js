@@ -1,0 +1,78 @@
+{
+  "label": "Text",
+  "type": "theme",
+  "id": "com.moviemasher.theme.text",
+  "properties": [
+    { "name": "string", "type": "string", "value": "Text" },
+    { "name": "size", "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
+    { "name": "x", "type": "number", "value": 0 },
+    { "name": "y", "type": "number", "value": 0 },
+    { "name": "color", "type": "rgba", "value": "rgba(255,0,0,1)" },
+    { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    { "name": "shadowx", "type": "number", "value": 0.015 },
+    { "name": "shadowy", "type": "number", "value": 0.015 },
+    { "name": "background", "type": "rgba", "value": "rgba(0,0,255,0)" },
+    {
+      "name": "fontface",
+      "type": "font",
+      "value": "com.moviemasher.font.default"
+    }
+  ],
+  "filters": [
+    {
+      "id": "com.moviemasher.filter.color",
+      "parameters": [
+        {
+          "name": "color",
+          "value": "background"
+        },
+        {
+          "name": "size",
+          "value": "out_size"
+        },
+        {
+          "name": "duration",
+          "value": "out_duration"
+        },
+        {
+          "name": "rate",
+          "value": "out_rate"
+        }
+      ]
+    },
+    { "id": "format", "parameters": [{ "name": "pix_fmts", "value": "rgba" }] },
+    {
+      "id": "com.moviemasher.filter.drawtext",
+      "parameters": [
+        {
+          "name": "fontcolor",
+          "value": "color"
+        },
+        {
+          "name": "shadowcolor",
+          "value": "shadowcolor"
+        },
+        {
+          "name": "fontsize",
+          "value": "out_height * size"
+        },
+        {
+          "name": "x",
+          "value": "out_width * x"
+        },
+        {
+          "name": "y",
+          "value": "out_height * y"
+        },
+        {
+          "name": "shadowx",
+          "value": "out_width * shadowx"
+        },
+        {
+          "name": "shadowy",
+          "value": "out_height * shadowy"
+        }
+      ]
+    }
+  ]
+}

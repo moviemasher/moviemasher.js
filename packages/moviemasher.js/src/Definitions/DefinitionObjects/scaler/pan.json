@@ -1,0 +1,142 @@
+{
+  "label": "Pan",
+  "type": "scaler",
+  "id": "com.moviemasher.scaler.pan",
+  "properties": [
+    { "name": "scale", "type": "number", "value": 1.25 },
+    { "name": "direction", "type": "direction8", "value": 1 }
+  ],
+  "filters": [
+    {
+      "id": "com.moviemasher.filter.crop",
+      "description": "crop down diagonals and center",
+      "parameters": [
+        {
+          "name": "out_w",
+          "value": [
+            {
+              "condition": "direction < 4",
+              "value": "in_w"
+            },
+            {
+              "condition": "true",
+              "value": "out_width_scaled / max(out_width_scaled / in_w, out_height_scaled / in_h)"
+            }
+          ]
+        },
+        {
+          "name": "out_h",
+          "value": [
+            {
+              "condition": "direction < 4",
+              "value": "in_h"
+            },
+            {
+              "condition": "true",
+              "value": "out_height_scaled / max(out_width_scaled / in_w, out_height_scaled / in_h)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "com.moviemasher.filter.scale",
+      "description": "scale (proudly for diagonals)",
+      "parameters": [
+        {
+          "name": "width",
+          "value": [
+            {
+              "condition": "direction < 4",
+              "value": "in_w * max((out_width * scale) / in_w, (scale * out_height) / in_h)"
+            },
+            {
+              "condition": "true",
+              "value": "out_width_scaled"
+            }
+          ]
+        },
+        {
+          "name": "height",
+          "value": [
+            {
+              "condition": "direction < 4",
+              "value": "in_h * max((out_width * scale) / in_w, (scale * out_height) / in_h)"
+            },
+            {
+              "condition": "true",
+              "value": "out_height_scaled"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "com.moviemasher.filter.crop",
+      "description": "crop down and position over time",
+      "parameters": [
+        {
+          "name": "x",
+          "value": [
+            {
+              "condition": "direction",
+              "in": [0, 2],
+              "value": "(in_w-out_width)/2"
+            },
+            {
+              "condition": "direction",
+              "in": [1, 5],
+              "value": "(in_w-out_width)*t"
+            },
+            {
+              "condition": "direction",
+              "is": 4,
+              "value": "(in_w-out_width)*t"
+            },
+            {
+              "condition": "direction",
+              "in": [3, 7],
+              "value": "(in_w-out_width)-((in_w-out_width)*t)"
+            },
+            {
+              "condition": "direction",
+              "is": 6,
+              "value": "floor(((in_w-out_width)*(1.0-t)))"
+            }
+          ]
+        },
+        {
+          "name": "y",
+          "value": [
+            {
+              "condition": "direction",
+              "in": [1, 3],
+              "value": "(in_h-out_height)/2"
+            },
+            {
+              "condition": "direction",
+              "in": [2, 5],
+              "value": "(in_h-out_height)*t"
+            },
+            {
+              "condition": "direction",
+              "is": 6,
+              "value": "ceil((in_h-out_height)*t)"
+            },
+            {
+              "condition": "direction",
+              "in": [0, 7],
+              "value": "(in_h-out_height)-((in_h-out_height)*t)"
+            },
+            {
+              "condition": "direction",
+              "is": 4,
+              "value": "(in_h-out_height)-((in_h-out_height) * t)"
+            }
+          ]
+        }
+      ]
+    },
+    { "id": "com.moviemasher.filter.setsar" }
+  ]
+}

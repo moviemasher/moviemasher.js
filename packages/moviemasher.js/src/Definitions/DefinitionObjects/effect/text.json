@@ -1,0 +1,55 @@
+{
+  "label": "Text Box",
+  "type": "effect",
+  "id": "com.moviemasher.effect.text",
+  "properties": [
+    { "name": "string", "type": "string", "value": "Text Box" },
+    { "name": "size", "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
+    { "name": "color", "type": "rgba", "value": "rgba(255,0,0,1)" },
+    {
+      "name": "fontface",
+      "type": "font",
+      "value": "com.moviemasher.font.default"
+    },
+    { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
+    { "name": "shadowx", "type": "number", "value": 0.015 },
+    { "name": "shadowy", "type": "number", "value": 0.015 },
+    { "name": "x", "type": "number", "value": 0 },
+    { "name": "y", "type": "number", "value": 0 }
+  ],
+  "filters": [
+    {
+      "id": "com.moviemasher.filter.drawtext",
+      "parameters": [
+        {
+          "name": "fontcolor",
+          "value": "color"
+        },
+        {
+          "name": "shadowcolor",
+          "value": "shadowcolor"
+        },
+        {
+          "name": "fontsize",
+          "value": "out_height * size"
+        },
+        {
+          "name": "x",
+          "value": "out_width * x"
+        },
+        {
+          "name": "y",
+          "value": "(out_height * y)"
+        },
+        {
+          "name": "shadowx",
+          "value": "out_width * shadowx"
+        },
+        {
+          "name": "shadowy",
+          "value": "out_height * shadowy"
+        }
+      ]
+    }
+  ]
+}
