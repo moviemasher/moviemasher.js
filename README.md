@@ -21,6 +21,8 @@ And the
 [Movie Masher AMI](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
 in the AWS Marketplace does the same within their hosted environment.
 
+[![Image](./dev/img/third-party.svg "Logos")]
+
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../moviemasher/dev/graphics/third-party.svg) -->
 <svg width="640" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 48">
 <path d="M 129.45 0.00 C 115.98 0.00 105.06 10.89 105.06 24.33 L 105.06 24.33 C 105.05 34.81 111.77 44.11 121.74 47.42 C 122.96 47.63 123.42 46.90 123.42 46.26 C 123.42 45.68 123.38 43.77 123.38 41.73 C 117.26 42.86 115.67 40.24 115.18 38.87 C 114.91 38.17 113.72 36.01 112.68 35.43 C 111.83 34.98 110.61 33.85 112.65 33.82 C 114.57 33.79 115.94 35.59 116.40 36.32 C 118.60 40.00 122.11 38.96 123.51 38.32 C 123.72 36.74 124.36 35.68 125.06 35.07 C 119.63 34.46 113.96 32.36 113.96 23.06 C 113.96 20.41 114.91 18.22 116.46 16.51 C 116.22 15.91 115.37 13.41 116.71 10.07 C 116.71 10.07 118.75 9.43 123.42 12.56 L 123.42 12.56 C 125.40 12.01 127.45 11.74 129.52 11.74 C 131.59 11.74 133.66 12.01 135.61 12.56 C 140.28 9.40 142.32 10.07 142.32 10.07 C 143.66 13.41 142.81 15.91 142.57 16.52 C 144.12 18.22 145.07 20.38 145.07 23.06 C 145.07 32.39 139.37 34.46 133.94 35.07 C 134.82 35.83 135.58 37.29 135.58 39.57 C 135.58 42.83 135.55 45.44 135.55 46.26 C 135.55 46.90 136.01 47.66 137.23 47.42 L 137.23 47.42 C 147.16 44.07 153.85 34.79 153.85 24.33 C 153.85 10.89 142.93 0.00 129.45 0.00 Z M 129.45 0.00" stroke="none" fill="currentColor"  />
@@ -69,23 +71,33 @@ required to layout the client user interface are kept separate from JavaScript c
 
 ```html
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
   <head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='index.js' defer></script>
-    <link href='index.css' rel='stylesheet'>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="index.js" defer></script>
+    <link href="index.css" rel="stylesheet" />
     <style>
-      body { margin: 0px; padding: 0px; font-family: sans-serif; }
-      body, #app { width: 100vw; height: 100vh; display: flex; }
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+      body,
+      #app {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+      }
     </style>
     <title>Movie Masher</title>
   </head>
   <body>
-    <div id='app' class='moviemasher'></div>
+    <div id="app" class="moviemasher"></div>
   </body>
 </html>
 ```
+
 <!-- MAGIC:END -->
 </fieldset>
 
@@ -108,20 +120,24 @@ well as a single Font - but no Images, Video, or Audio will appear in the Browse
 <!-- MAGIC:START (TRIMCODE:src=workspaces/example-react/index.tsx) -->
 
 ```tsx
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom";
 
 import {
-  DefaultIcons, Masher, MasherDefault, MasherDefaultOptions
-} from "@moviemasher/client-react"
+  DefaultIcons,
+  Masher,
+  MasherDefault,
+  MasherDefaultOptions,
+} from "@moviemasher/client-react";
 
-import "@moviemasher/client-react/dist/moviemasher.css"
+import "@moviemasher/client-react/dist/moviemasher.css";
 
-const options: MasherDefaultOptions = { icons: DefaultIcons }
-const masher = <Masher {...MasherDefault(options)} />
-const mode = <StrictMode>{masher}</StrictMode>
-ReactDOM.render(mode, document.getElementById('app'))
+const options: MasherDefaultOptions = { icons: DefaultIcons };
+const masher = <Masher {...MasherDefault(options)} />;
+const mode = <StrictMode>{masher}</StrictMode>;
+ReactDOM.render(mode, document.getElementById("app"));
 ```
+
 <!-- MAGIC:END -->
 </fieldset>
 
