@@ -12,7 +12,7 @@ Movie Masher is offered through a variety of popular platforms. The entire
 [moviemasher/moviemasher.js](https://github.com/moviemasher/moviemasher.js)
 project repository can of course be cloned or forked from Github. The core
 [@moviemasher/moviemasher.js](https://www.npmjs.com/package/@moviemasher/moviemasher.js) library can be installed through NPM, as can the
-[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react)
+[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) and
 [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express)
 add-ons. The
 [moviemasher/moviemasher.js](https://hub.docker.com/r/moviemasher/moviemasher.js/)
@@ -50,23 +50,33 @@ required to layout the client user interface are kept separate from JavaScript c
 
 ```html
 <!DOCTYPE html>
-<html lang='en'>
+<html lang="en">
   <head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='index.js' defer></script>
-    <link href='index.css' rel='stylesheet'>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="index.js" defer></script>
+    <link href="index.css" rel="stylesheet" />
     <style>
-      body { margin: 0px; padding: 0px; font-family: sans-serif; }
-      body, #app { width: 100vw; height: 100vh; display: flex; }
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+      body,
+      #app {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+      }
     </style>
     <title>Movie Masher</title>
   </head>
   <body>
-    <div id='app' class='moviemasher'></div>
+    <div id="app" class="moviemasher"></div>
   </body>
 </html>
 ```
+
 <!-- MAGIC:END -->
 </fieldset>
 
@@ -89,20 +99,24 @@ well as a single Font - but no Images, Video, or Audio will appear in the Browse
 <!-- MAGIC:START (TRIMCODE:src=workspaces/example-react/index.tsx) -->
 
 ```tsx
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom";
 
 import {
-  DefaultIcons, Masher, MasherDefault, MasherDefaultOptions
-} from "@moviemasher/client-react"
+  DefaultIcons,
+  Masher,
+  MasherDefault,
+  MasherDefaultOptions,
+} from "@moviemasher/client-react";
 
-import "@moviemasher/client-react/dist/moviemasher.css"
+import "@moviemasher/client-react/dist/moviemasher.css";
 
-const options: MasherDefaultOptions = { icons: DefaultIcons }
-const masher = <Masher {...MasherDefault(options)} />
-const mode = <StrictMode>{masher}</StrictMode>
-ReactDOM.render(mode, document.getElementById('app'))
+const options: MasherDefaultOptions = { icons: DefaultIcons };
+const masher = <Masher {...MasherDefault(options)} />;
+const mode = <StrictMode>{masher}</StrictMode>;
+ReactDOM.render(mode, document.getElementById("app"));
 ```
+
 <!-- MAGIC:END -->
 </fieldset>
 
