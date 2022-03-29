@@ -20,7 +20,7 @@ interface CasterProps extends PropsWithChildren, WithClassName {
  * const props: CasterProps = { children: [] }
  * const editor: JSX.Element = <Caster { ...props } />
  * ```
- * @parents Api
+ * @parents ApiClient
  * @returns provided children wrapped in a {@link View} and {@link CasterContext}
  */
 function Caster(props: CasterProps): ReactResult {
@@ -36,9 +36,9 @@ function Caster(props: CasterProps): ReactResult {
     else if (!requested && enabled.includes(ServerType.Data)) {
       setRequested(true)
       const request: DataCastDefaultRequest = {}
-      console.debug("DataCastDefaultRequest", Endpoints.streaming.start, request)
+      // console.debug("DataCastDefaultRequest", Endpoints.streaming.start, request)
       endpointPromise(Endpoints.streaming.start, request).then((response: DataCastDefaultResponse) => {
-        console.debug("DataCastDefaultResponse", Endpoints.streaming.start, response)
+        // console.debug("DataCastDefaultResponse", Endpoints.streaming.start, response)
         const { cast } = response
         castEditor.cast = CastFactory.instance(cast)
       })

@@ -4,7 +4,7 @@ import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
 import { isNumeric } from "../Utility/Is"
 
 
-interface EvaluationCallback { (evaluation: Evaluation): Value }
+export interface EvaluationCallback { (evaluation: Evaluation): Value }
 
 interface EvaluatorMethod {
   (...args: any[]): any

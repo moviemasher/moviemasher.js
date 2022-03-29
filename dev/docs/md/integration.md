@@ -1,8 +1,6 @@
-Integration...
+Movie Masher is available as source code, a set of bundle modules, or as a prebuilt server image, so there are many ways to integrate it into a given project. Which is chosen can depend on developer preference or familiarity with the tooling. Different mechanisms may even be utilized as a project is developed and deployed in different environments.
 
-## Saving
-
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../img/third-party.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/third-party.svg) -->
 <svg width="640" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 48">
 <path d="M 129.45 0.00 C 115.98 0.00 105.06 10.89 105.06 24.33 L 105.06 24.33 C 105.05 34.81 111.77 44.11 121.74 47.42 C 122.96 47.63 123.42 46.90 123.42 46.26 C 123.42 45.68 123.38 43.77 123.38 41.73 C 117.26 42.86 115.67 40.24 115.18 38.87 C 114.91 38.17 113.72 36.01 112.68 35.43 C 111.83 34.98 110.61 33.85 112.65 33.82 C 114.57 33.79 115.94 35.59 116.40 36.32 C 118.60 40.00 122.11 38.96 123.51 38.32 C 123.72 36.74 124.36 35.68 125.06 35.07 C 119.63 34.46 113.96 32.36 113.96 23.06 C 113.96 20.41 114.91 18.22 116.46 16.51 C 116.22 15.91 115.37 13.41 116.71 10.07 C 116.71 10.07 118.75 9.43 123.42 12.56 L 123.42 12.56 C 125.40 12.01 127.45 11.74 129.52 11.74 C 131.59 11.74 133.66 12.01 135.61 12.56 C 140.28 9.40 142.32 10.07 142.32 10.07 C 143.66 13.41 142.81 15.91 142.57 16.52 C 144.12 18.22 145.07 20.38 145.07 23.06 C 145.07 32.39 139.37 34.46 133.94 35.07 C 134.82 35.83 135.58 37.29 135.58 39.57 C 135.58 42.83 135.55 45.44 135.55 46.26 C 135.55 46.90 136.01 47.66 137.23 47.42 L 137.23 47.42 C 147.16 44.07 153.85 34.79 153.85 24.33 C 153.85 10.89 142.93 0.00 129.45 0.00 Z M 129.45 0.00" stroke="none" fill="currentColor"  />
 <path d="M 184.91 21.46 L 175.09 21.46 C 174.84 21.46 174.63 21.67 174.63 21.92 L 174.63 26.71 C 174.63 26.96 174.84 27.17 175.09 27.17 L 178.92 27.17 L 178.92 33.11 C 178.92 33.11 178.06 33.41 175.69 33.41 C 172.88 33.41 168.96 32.38 168.96 23.79 C 168.96 15.20 173.04 14.07 176.87 14.07 C 180.19 14.07 181.62 14.65 182.53 14.93 C 182.81 15.01 183.08 14.73 183.08 14.48 L 184.17 9.85 C 184.17 9.73 184.13 9.59 184.00 9.50 C 183.63 9.23 181.37 7.98 175.69 7.98 C 169.13 7.98 162.41 10.76 162.41 24.13 C 162.41 37.50 170.11 39.49 176.59 39.49 C 181.96 39.49 185.22 37.20 185.22 37.20 C 185.35 37.13 185.37 36.94 185.37 36.85 L 185.37 21.92 C 185.37 21.67 185.16 21.46 184.91 21.46" stroke="none" fill="currentColor"  />
@@ -21,18 +19,87 @@ Integration...
 </svg>
 <!-- MAGIC:END -->
 
-## Rendering
+## Functional Demos
 
-...
+Since the online demos only include the client-side components of the system, the first step is typically to launch a fully functional one either locally or in the cloud to test out the rendering features.
+
+Non-developers or anyone with an Amazon account may find launching Movie Masher within their
+[AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6) to be the simplest option. The image available there can be used to launch an EC2 instance of any size, to which you have full access. You can even make your own images based on it, including any custom changes or additions.
+
+Developers familar with Docker may instead want to launch the image available on
+[DockerHub](https://hub.docker.com/r/moviemasher/moviemasher.js/), either locally or within a cloud-based container service. This option provides the same ability to access the instance and build atop the image.
+
+Other developers and those ready to start integrating will want to clone the repository from
+[GitHub](https://github.com/moviemasher/moviemasher.js) to their local machine. Learn more about installing dependencies, building the example deployment, and starting the demo in the [README](index.html#Development).
+
+## API Configuration
+
+The interface between client and server is highly structured, with both requests and responses consisting of strongly typed JSON objects that effectively constitute the API betwen them. Communication is funneled through the [[ApiClient]] component on the client and the [[ApiServer]] class on the server.
+
+To create these instances in the example deployment, both the client and server utilize functions that provide them with default configuration. In the case of the client this function is [[MasherDefaultProps]] which returns a [[MasherProps]] object, while the server calls [[HostDefaultOptions]] which returns a [[HostOptions]] object.
+
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/client-server-options.svg) -->
+<svg width="640" height="280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 280">
+<path d="M 145.00 60.00 L 145.00 63.10 M 141.41 63.10 L 148.59 63.10 L 145.00 80.00 Z M 141.41 63.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 145.00 40.00 L 145.00 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 370.00 0.00 L 640.00 0.00 L 640.00 40.00 L 370.00 40.00 Z M 370.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="375.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[HostDefaultOptions]]()</text>
+<path d="M 400.17 80.00 L 610.00 80.00 L 610.00 120.00 L 400.17 120.00 Z M 400.17 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="405.42" y="109.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >{[[HostOptions]]}</text>
+<path d="M 460.00 160.00 L 550.00 160.00 L 550.00 200.00 L 460.00 200.00 Z M 460.00 160.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="465.25" y="189.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Host]]</text>
+<path d="M 80.33 160.00 L 209.67 160.00 L 209.67 200.00 L 80.33 200.00 Z M 80.33 160.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="85.58" y="189.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Masher]]</text>
+<path d="M 425.00 240.00 L 585.00 240.00 L 585.00 280.00 L 425.00 280.00 Z M 425.00 240.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="430.25" y="269.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[ApiServer]]</text>
+<path d="M 145.00 220.00 L 145.00 223.10 M 141.41 223.10 L 148.59 223.10 L 145.00 240.00 Z M 141.41 223.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 145.00 200.00 L 145.00 240.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 0.00 0.00 L 290.00 0.00 L 290.00 40.00 L 0.00 40.00 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[MasherDefaultProps]]()</text>
+<path d="M 37.54 80.00 L 252.46 80.00 L 252.46 120.00 L 37.54 120.00 Z M 37.54 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >{[[MasherProps]]}</text>
+<path d="M 505.00 220.00 L 505.00 223.10 M 501.41 223.10 L 508.59 223.10 L 505.00 240.00 Z M 501.41 223.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 505.00 200.00 L 505.00 240.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 145.00 140.00 L 145.00 143.10 M 141.41 143.10 L 148.59 143.10 L 145.00 160.00 Z M 141.41 143.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 145.00 120.00 L 145.00 160.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 505.04 60.00 L 505.05 63.10 M 501.46 63.11 L 508.64 63.09 L 505.08 80.00 Z M 501.46 63.11" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 505.00 40.00 L 505.08 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 505.04 140.00 L 505.04 143.10 M 501.44 143.09 L 508.63 143.11 L 505.00 160.00 Z M 501.44 143.09" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 505.08 120.00 L 505.00 160.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 70.00 240.00 L 220.00 240.00 L 220.00 280.00 L 70.00 280.00 Z M 70.00 240.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="75.25" y="269.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[ApiClient]]</text>
+<path d="M 392.40 260.00 L 408.10 260.00 M 408.10 263.59 L 408.10 256.41 L 425.00 260.00 Z M 408.10 263.59" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 252.60 260.00 L 236.90 260.00 M 236.90 256.41 L 236.90 263.59 L 220.00 260.00 Z M 236.90 256.41" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
+<path d="M 425.00 260.00 L 220.00 260.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+</svg>
+<!-- MAGIC:END -->
+
+The server creates a [[Host]] instance from its configuration and calls its `start` method to create the ExpressJs instance that utimately creates the [[ApiServer]]. The client creates a [[Masher]] component instance from its configuration which will, by default, be wrapped in an [[ApiClient]] component instance.
+
+<!--
+explain overlaps in configuation - eg. preview dimensions
+
+## Server Hosting
+
+[[Server]]
+
+- [[ApiServer]]
+- [[DataServer]]
+- [[FileServer]]
+- [[RenderingServer]]
+- [[StreamingServer]]
+- [[WebServer]]
+
+Learn more about ... in the [Architecture Guide](architecture.html).
 
 ## Searching
 
 ...
 
-## Uploading
+## Uploads
 
 ...
 
-## Streaming
+## Renderings
 
-...
+... -->

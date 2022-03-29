@@ -118,3 +118,18 @@ to [FFmpeg](https://www.ffmpeg.org) arguments, so subclassing is possible.
 Learn more about server encoding in the
 [Rendering Guide](rendering.html) and
 [Streaming Guide](streaming.html).
+
+## Repository Structure
+
+- dev - shared configuration and assets
+- docs - a local copy of this documentation
+- node_modules - installed module depedencies
+- packages - published NPM modules
+  - client-react
+  - moviemasher.js
+  - server-express
+- workspaces - example deployents
+  - example-express-react
+  - example-react
+- Dockerfile.cnf - Docker image configuration
+- package.json - shared dependecies and scripts

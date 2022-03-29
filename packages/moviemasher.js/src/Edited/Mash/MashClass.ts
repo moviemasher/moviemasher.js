@@ -711,7 +711,6 @@ class MashClass implements Mash {
   private seekTime? : Time
 
   seekToTime(time: Time): LoadPromise | undefined {
-    // console.debug(this.constructor.name, "seekToTime", time)
     if (this.seekTime !== time) {
       this.seekTime = time
       this.emitter?.emit(EventType.Seeking)

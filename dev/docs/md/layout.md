@@ -1,7 +1,8 @@
-Laying out a Movie Masher application involves creating a tagging structure that properly
+Laying out a Movie Masher client application involves creating a tagging structure that properly
 nests components within a functional hierarchy. A given child component may have to be
 positioned under a particular parent component in order to access the context it needs
 to fully function.
+
 Here we discuss each of the components that supply context to their children, in the
 order they usually appear within the hierarchy.
 
@@ -10,9 +11,10 @@ order they usually appear within the hierarchy.
 The [[Api]] component is typically the root component wrapping the entire application,
 which allows all child components that require server interaction to share its [[ApiContext]].
 This contains an `enabled` array containing a [[ServerType]] for each supported server,
-and an `endpointPromise` method returning a fetch promise for each request. Some child components use the array to
-hide themselves if their required server is unsupported, or use the method to post
-requests to it.
+and an `endpointPromise` method returning a fetch-based promise for each request.
+
+Some child components use the array to automatically hide themselves if their required server is unsupported, so the server can ultimately control the visibility of certain client functionality. All child components use the promise method to post
+requests to their server(s). Learn more about the server side of these same interactions in the [Integration Guide](integration.html).
 
 ## Caster
 
@@ -62,35 +64,11 @@ It supplies the following children:
 </svg>
 <!-- MAGIC:END -->
 
-## Streamer
+<!-- ## Streamer
 
 The [[Streamer]] component can be the root component or appear anywhere within the
 hierarchy.
 
 ## Webrtc
 
-The [[Webrtc]] component
-
-## Player
-
-The [[Player]] component
-
-## Browser
-
-The [[Browser]] component
-
-## Timeline
-
-The [[Timeline]] component
-
-## Inspector
-
-The [[Inspector]] component
-
-## Layers
-
-The [[Layers]] component
-
-## Switcher
-
-The [[Switcher]] component
+The [[Webrtc]] component... -->

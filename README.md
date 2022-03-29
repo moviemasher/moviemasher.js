@@ -2,32 +2,46 @@
 
 _JavaScript video editor, encoder, and streamer - version 5.0.0_
 
-- **visual compositing** through Canvas API
-- **audio mixing** through WebAudio API
-- **encoding** and **streaming** through FFmpeg
+- _visual compositing_ through **Canvas API**
+- _audio mixing_ through **WebAudio API**
+- _encoding_ and _streaming_ through **FFmpeg**
+- _client_ implemented in **ReactJS**
+- _server_ implemented in **ExpressJS**
 
 ## Availability
 
 Movie Masher is offered through a variety of popular platforms. The entire
-[moviemasher/moviemasher.js](https://github.com/moviemasher/moviemasher.js)
-project repository can of course be cloned or forked from Github. The core
-[@moviemasher/moviemasher.js](https://www.npmjs.com/package/@moviemasher/moviemasher.js) library can be installed through NPM, as can the
-[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) and
-[@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express)
+[repository](https://github.com/moviemasher/moviemasher.js)
+can of course be cloned or forked from Github. The
+[core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js)
+can be installed through NPM, as can the
+[client](https://www.npmjs.com/package/@moviemasher/client-react) and
+[server](https://www.npmjs.com/package/@moviemasher/server-express)
 add-ons. The
-[moviemasher/moviemasher.js](https://hub.docker.com/r/moviemasher/moviemasher.js/)
-Docker image combines these into a fully functional application for running locally.
+[image](https://hub.docker.com/r/moviemasher/moviemasher.js/) in DockerHub
+combines these into a fully functional application for running locally.
 And the
-[Movie Masher AMI](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
-in the AWS Marketplace does the same within their hosted environment.
+[image](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
+in AWS Marketplace does the same within their hosted environment.
 
 ## Documentation
 
 In addition to this README, there is a simple
-[Demo](https://moviemasher.com/docs/demo/index.html) of the system and
+[Demo](https://moviemasher.com/docs/demo/index.html) of the client and
 [more extensive documentation](https://moviemasher.com/docs/index.html) available on
 [MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
 also available when using a code editor that supports TypeScript and IntelliSense.
+
+## Docker Usage
+
+A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
+
+```shell
+docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.0
+```
+
+Then navigate to http://localhost:8570 in your browser, supplying any username/password
+combination when prompted.
 
 ## Installation
 
@@ -38,102 +52,138 @@ saving them to the `dependencies` array in your **package.json** file.
 npm install @moviemasher/client-react @moviemasher/server-express --save
 ```
 
-## Inclusion
+Alternatively, if you're wanting to build your own client and server you can just install and build off the core @moviemasher/moviemasher.js library instead.
 
-From your HTML file link to both the compiled JavaScript and CSS files.
+Learn more about how the codebase is structured in the
+[Architecture Guide](https://moviemasher.com/docs/architecture.html).
+
+## Client Example
+
+From our HTML file we link to both the compiled JavaScript and CSS files.
 To support the widest variety of workflows and tooling, the Cascading Style Sheets
 required to layout the client user interface are kept separate from JavaScript code:
 
 <fieldset>
-<legend>index.html</legend>
-<!-- MAGIC:START (TRIMCODE:src=workspaces/example-react/dist/index.html) -->
+<legend>masher.html</legend>
+<!-- MAGIC:START (TRIMCODE:src=workspaces/example-express-react/dist/public/masher.html) -->
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="index.js" defer></script>
-    <link href="index.css" rel="stylesheet" />
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='masher.js' defer></script>
+    <link href='masher.css' rel='stylesheet'>
     <style>
-      body {
-        margin: 0px;
-        padding: 0px;
-        font-family: sans-serif;
-      }
-      body,
-      #app {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-      }
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
+      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
     </style>
     <title>Movie Masher</title>
   </head>
   <body>
-    <div id="app" class="moviemasher"></div>
+    <div id='app' class='moviemasher'></div>
   </body>
 </html>
 ```
-
 <!-- MAGIC:END -->
 </fieldset>
 
 Since most of the interface elements scroll and stretch both horizontally and
 vertically, we are rendering into a node that is styled to fill the whole window. We also
 apply the `moviemasher` class to the node, so the additional styles in the CSS file are engaged.
+
+We also use this opportunity to set the dimensions of the video preview in the editor through CSS variables - to their default values, in this case. There are a few ways to override these dimensions, but doing so in the CSS is best practice.
+
 Learn more about coloring and sizing the user interface using CSS in the
-[Style Guide](https://moviemasher.com/docs/Style.html).
-
-## Usage
-
-Within our JavaScript code we render the editor, and can optionally define media assets that will
-appear within the Browser. Several Themes and Effects are predefined, as
-well as a single Font - but no Images, Video, or Audio will appear in the Browser by default.
+[Style Guide](https://moviemasher.com/docs/style.html).
 
 <fieldset>
 
-<legend>index.tsx</legend>
+<legend>masher.tsx</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=workspaces/example-react/index.tsx) -->
+<!-- MAGIC:START (TRIMCODE:src=workspaces/example-express-react/src/masher.tsx) -->
 
 ```tsx
-import React, { StrictMode } from "react";
-import ReactDOM from "react-dom";
+import React, { StrictMode } from 'react'
+import ReactDOM from 'react-dom'
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
+import "@moviemasher/client-react/dist/moviemasher.css"
 
-import {
-  DefaultIcons,
-  Masher,
-  MasherDefault,
-  MasherDefaultOptions,
-} from "@moviemasher/client-react";
-
-import "@moviemasher/client-react/dist/moviemasher.css";
-
-const options: MasherDefaultOptions = { icons: DefaultIcons };
-const masher = <Masher {...MasherDefault(options)} />;
-const mode = <StrictMode>{masher}</StrictMode>;
-ReactDOM.render(mode, document.getElementById("app"));
+const applicationOptions = { previewSize: { width: 480, height: 270 } }
+const options = MasherDefaultProps(applicationOptions)
+const masher = <Masher {...options} />
+const editor = <ApiClient>{masher}</ApiClient>
+const strictMode = <StrictMode>{editor}</StrictMode>
+ReactDOM.render(strictMode, document.getElementById('app'))
 ```
-
 <!-- MAGIC:END -->
 </fieldset>
 
 In this example we're using the
 [MasherDefault](https://moviemasher.com/docs/function/MasherDefault.html) function to
 populate the [Masher](https://moviemasher.com/docs/component/Masher.html) component with
-preconfigured children, utilizing icons specified in the
-[DefaultIcons](https://moviemasher.com/docs/variable/DefaultIcons.html) object.
-
-Alternatively, child components like
+preconfigured children. Alternatively, child components like
 [Player](https://moviemasher.com/docs/component/Player.html),
 [Browser](https://moviemasher.com/docs/component/Browser.html),
 [Timeline](https://moviemasher.com/docs/component/Timeline.html), and
 [Inspector](https://moviemasher.com/docs/component/Inspector.html) can be
 selectively provided, and manually configured with a selection of available child controls.
-Learn more about building a fully customized video application in the
-[Layout Guide](https://moviemasher.com/docs/Layout.html).
+
+We are also setting the preview dimensions here, again to their defaults for demonstration purposes. As mentioned above, overriding the defaults from JavaScript is sub-optimal - a visible resizing will occur as the CSS variables are updated - but helpful if supplying custom CSS is impractical.
+
+Learn more about building a fully customized video editing client in the
+[Layout Guide](https://moviemasher.com/docs/layout.html).
+
+## Server Example
+
+<fieldset>
+
+<legend>server.ts</legend>
+
+<!-- MAGIC:START (TRIMCODE:src=workspaces/example-express-react/src/server.ts) -->
+
+```ts
+import fs from 'fs'
+import path from 'path'
+import { Host, HostDefaultOptions } from '@moviemasher/server-express'
+
+const resolved = path.resolve(__dirname, './server-config.json')
+const json = fs.readFileSync(resolved).toString()
+const options = JSON.parse(json)
+const host = new Host(HostDefaultOptions(options))
+host.start()
+```
+<!-- MAGIC:END -->
+</fieldset>
+
+In this example we're using the
+[HostDefault](https://moviemasher.com/docs/function/HostDefault.html) function to
+create the [Host](https://moviemasher.com/docs/component/Host.html) constructor arguments from a JSON file with the following structure:
+
+<fieldset>
+
+<legend>server-config.json</legend>
+
+<!-- MAGIC:START (TRIMCODE:src=workspaces/example-express-react/src/server-config.json) -->
+
+```json
+{
+  "port": 8570,
+  "previewSize": { "width": 480, "height": 270 },
+  "outputSize": { "width": 1920, "height": 1080 }
+}
+```
+<!-- MAGIC:END -->
+</fieldset>
+
+Once again we are setting the preview dimensions to their default for demonstration purposes. The server will pass these to the client and the client will apply them, but only after the CSS is applied so a resize will be visible if they differ. Preview dimensions should be overridden either in the client, or better still, in the CSS. If the defaults are overidden there they should be here too, since the client does NOT pass them to the server. The rendering server uses them to optimally size previews of uploaded video and images.
+
+We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. Please note: they should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
+
+Learn more about building your own customized server in the
+[Integration Guide](https://moviemasher.com/docs/integration.html).
 
 ## Development
 
@@ -153,22 +203,24 @@ npm run build
 npm start
 ```
 
-You can then load Movie Masher by navigating your web browser to
+If running these commands proves daunting, perhaps due to architectural issues related to dependency installation, it's also possible to run them within Docker with the following commands:
+
+```shell
+npm run docker-build
+npm run docker-up
+```
+
+Either way, you can then load Movie Masher by navigating your web browser to
 [http://localhost:8570](http://localhost:8570) and supplying any username/password
-combination when prompted. Learn more about building your own customized server in the
-[Integration Guide](https://moviemasher.com/docs/Integration.html).
-
-## Contributing
-
-Please join in the shareable economy by gifting your efforts towards improving this
-project in any way you feel inclined. Pull requests for fixes, features and refactorings
-are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed - please [send an email](mailto:connect27@moviemasher.com)
-to discuss your ideas.
+combination when prompted.
 
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a
 [GitHub Issue Ticket](https://github.com/moviemasher/moviemasher.js/issues) should be filed.
-Further support is occassionally provided to particular projects on an hourly basis - please
-[send an email](mailto:connect27@moviemasher.com) describing your intended usage.
+Further support is occassionally offered to particular projects on an hourly consulting basis.
+
+Pull requests for fixes, features, and refactorings
+are always appreciated, as are documentation updates. Creative help with graphics, video
+and the web site is also needed. Please [send an email](mailto:connect27@moviemasher.com)
+to discuss ways to contribute to the project.

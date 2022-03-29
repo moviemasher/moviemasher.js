@@ -1,13 +1,14 @@
 {
   "name": "@moviemasher/client-react",
   "version": "5.0.0",
-  "type": "module",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
-  "source": "index.ts",
+  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.0",
   "files": [
     "dist"
   ],
+  "module": "dist/esm/index.js",
+  "source": "src/index.ts",
+  "type": "module",
+  "types": "dist/esm/index.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -32,10 +33,10 @@
     "@types/react": "^17.0.2"
   },
   "scripts": {
-    "develop": "rollup --config rollup.config.js --watch",
+    "develop": "rollup --config dev/rollup/esm.config.js --watch",
     "build-css": "cat ../../dev/css/* > dist/moviemasher.css",
     "build-esm": "run-s build-rollup build-css",
-    "build-rollup": "rollup --config rollup.config.js",
+    "build-rollup": "rollup --config dev/rollup/esm.config.js",
     "build": "run-s clean build-esm",
     "clean": "rimraf dist"
   },

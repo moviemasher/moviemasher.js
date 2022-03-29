@@ -1,4 +1,4 @@
-import { JsonObject, AndId } from "../declarations"
+import { JsonObject, AndId, Size } from "../declarations"
 import { DefinitionObject, DefinitionObjects } from "../Base/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
@@ -47,6 +47,7 @@ export interface DataMashDefaultRequest extends ApiRequest {}
 export interface DataMashDefaultResponse extends ApiResponse {
   mash: MashObject
   definitions: DefinitionObjects
+  previewSize?: Size
 }
 
 export interface DataMashPutRequest extends ApiRequest {

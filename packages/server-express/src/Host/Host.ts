@@ -10,7 +10,7 @@ import { StreamingServer, StreamingServerArgs } from "../Server/StreamingServer/
 import { WebServer, WebServerArgs } from "../Server/WebServer/WebServer"
 import { Server } from '../Server/Server'
 
-interface HostOptions {
+export interface HostOptions {
   api?: ApiServerArgs | false
   corsOptions?: StringObject | false
   data?: DataServerArgs | false
@@ -23,7 +23,7 @@ interface HostOptions {
   version?: string
 }
 
-interface HostServers {
+export interface HostServers {
   [ServerType.Api]?: ApiServer
   [ServerType.Data]?: DataServer
   [ServerType.File]?: FileServer
@@ -32,7 +32,7 @@ interface HostServers {
   [ServerType.Web]?: WebServer
 }
 
-class Host {
+export class Host {
   constructor(object: HostOptions) { this.args = object }
 
   args: HostOptions
@@ -61,5 +61,3 @@ class Host {
     server.once('close', () => { servers.forEach(server => server.stopServer()) })
   }
 }
-
-export { Host, HostOptions, HostServers }

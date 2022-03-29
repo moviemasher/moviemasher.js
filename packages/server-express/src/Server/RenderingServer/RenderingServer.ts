@@ -7,7 +7,7 @@ import {
   DefinitionType, CommandOutputs,
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
   LoadType, DefinitionTypes, Endpoint, ApiRequestInit, outputDefaultPopulate,
-  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, RenderingOutput, LoadedInfo, ExtJson,
+  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, RenderingOutput, LoadedInfo, ExtJson, OutputTypes, Size, CommandOutput,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerHandler } from "../../declaration"
@@ -26,9 +26,12 @@ const uuid = require('uuid').v4
 
 interface RenderingServerArgs extends ServerArgs {
   cacheDirectory: string
+  commandOutputs?: RenderingCommandOutputs
+  previewSize?: Size
+  outputSize?: Size
 }
 
-type RenderingCommandOutputObject = {
+export type RenderingCommandOutputs = {
   [index in OutputType]?: RenderingCommandOutput
 }
 
@@ -82,7 +85,7 @@ class RenderingServer extends ServerClass {
     }
 
     const has = wants.filter(want => commandOutputs.find(output => output.outputType === want))
-    const lastOutputByType: RenderingCommandOutputObject = Object.fromEntries(has.map(type => {
+    const lastOutputByType: RenderingCommandOutputs = Object.fromEntries(has.map(type => {
       const outputs = commandOutputs.filter(output => output.outputType === type)
       const commandOutput = outputs[outputs.length - 1]
       return [type, commandOutput]
@@ -150,11 +153,47 @@ class RenderingServer extends ServerClass {
     return path.resolve(...components)
   }
 
+  _renderingCommandOutputs?: RenderingCommandOutputs
+  get renderingCommandOutputs(): RenderingCommandOutputs {
+    if (this._renderingCommandOutputs) return this._renderingCommandOutputs
+
+    const { previewSize, outputSize } = this.args
+    const provided = this.args.commandOutputs || {}
+    const outputs = Object.fromEntries(OutputTypes.map(outputType => {
+      const base: RenderingCommandOutput = { outputType }
+      switch (outputType) {
+        case OutputType.Image:
+        case OutputType.ImageSequence: {
+          if (previewSize) {
+            base.videoWidth = previewSize.width
+            base.videoHeight = previewSize.height
+          }
+          break
+        }
+        case OutputType.Video: {
+          if (outputSize) {
+            base.videoWidth = outputSize.width
+            base.videoHeight = outputSize.height
+          }
+          break
+        }
+      }
+      const commandOutput: CommandOutput = provided[outputType] || {}
+      const renderingCommandOutput: RenderingCommandOutput = { ...base, commandOutput }
+      return [outputType, renderingCommandOutput]
+    }))
+    return this._renderingCommandOutputs = outputs
+  }
+
   start: ServerHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
     const { mash, outputs } = request
     // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
-    const commandOutputs = outputs.map(output => outputDefaultPopulate(output))
+    const commandOutputs = outputs.map(output => {
+      const { outputType } = output
+      const commandOutput = {...this.renderingCommandOutputs[outputType], ...output}
+      return outputDefaultPopulate(commandOutput)
+    })
 
     const id = mash.id || uuid()
     const renderingId = uuid()
@@ -283,6 +322,3 @@ class RenderingServer extends ServerClass {
 }
 
 export { RenderingServer, RenderingServerArgs }
-function definitionTypeFromRaw(loadType: LoadType): DefinitionType {
-  throw new Error("Function not implemented.")
-}

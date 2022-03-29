@@ -42,7 +42,7 @@ export type StreamingFormatOptions = {
 
 
 interface StreamingServerArgs extends ServerArgs {
-  streamingOptions: StreamingFormatOptions
+  streamingFormatOptions: StreamingFormatOptions
   app: string
   httpOptions: UnknownObject
   rtmpOptions: UnknownObject
@@ -151,7 +151,7 @@ class StreamingServer extends ServerClass {
     const { width, height, videoRate, format } = request
     const streamingFormat = format || StreamingFormat.Hls
     const id = uuid()
-    const formatOptions = this.args.streamingOptions[streamingFormat]
+    const formatOptions = this.args.streamingFormatOptions[streamingFormat]
 
     const { commandOutput, directory, file } = formatOptions
     const overrides = { ...commandOutput }
@@ -203,7 +203,7 @@ class StreamingServer extends ServerClass {
     const {
       videoCodec, width, height, audioCodec, audioBitrate, audioChannels,
       audioRate, format
-    } = this.args.streamingOptions[StreamingFormat.Hls].commandOutput
+    } = this.args.streamingFormatOptions[StreamingFormat.Hls].commandOutput
     // const flags = options && `[${Object.entries(options).map(([k, v]) => `${k}=${v}`).join(':')}]`
 
     switch (format) {
@@ -278,7 +278,7 @@ class StreamingServer extends ServerClass {
     })
 
     app.get(`/hls/:id/*.${ExtTs}`, async (req, res) => {
-      const hlsFormatOptions = this.args.streamingOptions.hls
+      const hlsFormatOptions = this.args.streamingFormatOptions.hls
       const { params, path: requestPath } = req
       const fileName = path.basename(requestPath)
       const { id } = params
@@ -294,7 +294,7 @@ class StreamingServer extends ServerClass {
 
     app.get(`/hls/:id/*.${ExtHls}`, async (req, res) => {
       const { id } = req.params
-      const hlsFormatOptions = this.args.streamingOptions.hls
+      const hlsFormatOptions = this.args.streamingFormatOptions.hls
       try {
 
         const filePath = directoryLatest(path.join(hlsFormatOptions.directory, id), ExtHls)
@@ -334,7 +334,7 @@ class StreamingServer extends ServerClass {
   stopServer(): void { WebrtcConnection.close() }
 
   streamReady(id: string, streamingFormat: StreamingFormat): boolean {
-    const formatOptions: FormatOptions = this.args.streamingOptions[streamingFormat]
+    const formatOptions: FormatOptions = this.args.streamingFormatOptions[streamingFormat]
     const paths: string[] = []
     switch (streamingFormat) {
       case StreamingFormat.Hls: {
@@ -354,7 +354,7 @@ class StreamingServer extends ServerClass {
   }
 
   streamUrl(id: string, streamingFormat: StreamingFormat): string | undefined {
-    const formatOptions: FormatOptions = this.args.streamingOptions[streamingFormat]
+    const formatOptions: FormatOptions = this.args.streamingFormatOptions[streamingFormat]
     const { url, file } = formatOptions
     return `${url}/${id}/${file}`
   }
@@ -362,7 +362,7 @@ class StreamingServer extends ServerClass {
   webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (_, res) => {
     try {
       // const { localDescription } = req.body
-      const hlsFormatOptions = this.args.streamingOptions[StreamingFormat.Hls]
+      const hlsFormatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
       const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
 
       await connection.doOffer()

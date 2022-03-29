@@ -147,16 +147,18 @@ class DataServer extends ServerClass {
   }
 
   defaultMash: ServerHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
-    const response: DataMashDefaultResponse = { mash: {}, definitions: [] }
+    const previewSize = this.renderingServer?.args.previewSize
+    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
       const mash = await this.getLatestPromise(user, '`mash`')
       const { id } = mash
       if (id) {
-        const relations = await this.selectMashRelationsPromise(String(id))
-        Object.assign(response, { mash, definitions: relations })
+        response.mash = mash
+        response.definitions = await this.selectMashRelationsPromise(String(id))
       }
     } catch (error) { response.error = String(error) }
+    // console.log("defaultMash", response)
     res.send(response)
   }
 
@@ -212,7 +214,7 @@ class DataServer extends ServerClass {
 
   private deletePromise(quotedTable: string, id: string): Promise<void> {
     const sql = `DELETE FROM ${quotedTable} WHERE id = ?`
-    console.log(sql, id)
+    // console.log(sql, id)
     return this.db.run(sql, id).then(EmptyMethod)
   }
 
@@ -309,7 +311,7 @@ class DataServer extends ServerClass {
 
   putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest> = async (req, res) => {
     const { mash, definitionIds } = req.body
-    console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
+    // console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
     const response: DataMashPutResponse = { id: '' }
 
     try {

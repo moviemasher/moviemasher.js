@@ -1,13 +1,9 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-
-import {
-  DefaultIcons, Masher, MasherDefault, MasherDefaultOptions
-} from "@moviemasher/client-react"
-
+import { Masher, MasherDefaultProps } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const options: MasherDefaultOptions = { icons: DefaultIcons }
-const masher = <Masher {...MasherDefault(options)} />
-const mode = <StrictMode>{masher}</StrictMode>
-ReactDOM.render(mode, document.getElementById('app'))
+const options = { noApi: true }
+const masher = <Masher {...MasherDefaultProps(options)} />
+const strictMode = <StrictMode>{masher}</StrictMode>
+ReactDOM.render(strictMode, document.getElementById('app'))

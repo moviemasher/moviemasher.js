@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import {
-  Caster, DefaultIcons, Api, Process, ProcessStatus, ProcessActive,
+  Caster, DefaultIcons, ApiClient, Process, ProcessStatus, ProcessActive,
   StreamerControl, Button, Webrtc, WebrtcContent, WebrtcButton, ProcessInactive,
   PlayerContent, StreamerContent, Streamer, StreamerPreloadControl,
   StreamerUpdateControl, Layers,
@@ -9,7 +9,7 @@ import {
 
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const application = <Api>
+const application = <ApiClient>
   <Caster className="editor caster">
     <Layers className="panel layers">
       <div className='head'></div>
@@ -61,7 +61,7 @@ const application = <Api>
       </Webrtc>
     </Process>
   </Caster>
-</Api>
+</ApiClient>
 
 const mode = <StrictMode>{application}</StrictMode>
 ReactDOM.render(mode, document.getElementById('app'))

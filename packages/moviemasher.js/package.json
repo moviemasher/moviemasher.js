@@ -1,25 +1,14 @@
 {
   "name": "@moviemasher/moviemasher.js",
-  "description": "JavaScript ES6 module for fast, browser-based video and audio editing",
-  "homepage": "https://moviemasher.com",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "version": "5.0.0",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.0",
   "files": [
     "dist"
   ],
-  "source": "index.ts",
-  "version": "5.0.0",
-  "keywords": [
-    "video editor",
-    "audio editor",
-    "esm",
-    "cjs",
-    "umd",
-    "module",
-    "canvas",
-    "composite"
-  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "source": "src/index.ts",
+  "types": "dist/esm/index.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -32,6 +21,17 @@
     "type": "git",
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
+  "homepage": "https://moviemasher.com",
+  "keywords": [
+    "video editor",
+    "audio editor",
+    "esm",
+    "cjs",
+    "umd",
+    "module",
+    "canvas",
+    "composite"
+  ],
   "scripts": {
     "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-esm": "rollup --config dev/rollup/esm.config.js",
