@@ -1,10 +1,11 @@
 {
   "name": "@moviemasher/client-react",
-  "version": "5.0.0",
-  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.0",
+  "version": "5.0.1",
+  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.1",
   "files": [
     "dist"
   ],
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
   "type": "module",
@@ -23,7 +24,7 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "^5.0.0",
+    "@moviemasher/moviemasher.js": "^5.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "@material-ui/icons": "^4.11.2",
@@ -36,8 +37,9 @@
     "develop": "rollup --config dev/rollup/esm.config.js --watch",
     "build-css": "cat ../../dev/css/* > dist/moviemasher.css",
     "build-esm": "run-s build-rollup build-css",
+    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-rollup": "rollup --config dev/rollup/esm.config.js",
-    "build": "run-s clean build-esm",
+    "build": "run-s clean build-esm build-cjs",
     "clean": "rimraf dist"
   },
   "eslintConfig": {

@@ -1,4 +1,4 @@
-export * from './declaration'
+export * from './declarations'
 export * from './Authenticator'
 export * from './Command'
 export * from './Helpers'

@@ -6,7 +6,7 @@ import {
   Any, CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout
 } from '@moviemasher/moviemasher.js'
 
-import { ConnectionJson } from '../../declaration'
+import { ConnectionJson } from '../../declarations'
 import { StreamInput, StreamOutput } from '../../UnixStream/SocketStreams'
 import { RunningCommand } from '../../RunningCommand/RunningCommand'
 import { RunningCommandFactory } from '../../RunningCommand/RunningCommandFactory'

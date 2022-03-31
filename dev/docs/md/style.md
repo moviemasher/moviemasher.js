@@ -1,11 +1,8 @@
 Modern CSS techniques like flexbox, grid, and variables provide a relatively simple means
 to powerfully affect the graphical appearance of the Editor. If only a few changes are
-needed, it's typically easiest to just redefine select styles from the CSS file we
-included in the HTML file above.
+needed, it's typically easiest to just redefine select styles, as demonstrated in the README.
 
-This file is a concatenation of the other files within that directory, shown below.
-An alternative approach for more elaborate changes would be to replace one or more
-of these files and include them individually.
+For more elaborate changes, you will want to generate your own CSS file. The one used in the demos is a concatenation of all the files in the _dev/css_ directory, which are shown below.
 
 ## Coloring
 
@@ -79,41 +76,6 @@ of these files and include them individually.
 .moviemasher .editor .panel .head {
   --padding: 5px;
   --spacing: 5px;
-}
-```
-<!-- MAGIC:END -->
-</fieldset>
-
-## Icons
-
-<fieldset>
-<legend>DefaultIcons.tsx</legend>
-
-<!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/src/Components/Editor/EditorIcons/DefaultIcons.tsx&stripImports=1&stripExports=1) -->
-
-```tsx
-const DefaultIcons: EditorIcons = {
-  browserAudio: <Music2FillIcon />,
-  browserEffect: <FolderSettingsFillIcon />,
-  browserImage: <ImageFillIcon />,
-  browserTheme: <FolderChartFillIcon />,
-  browserTransition: <FolderTransferFillIcon />,
-  browserVideo: <FilmFillIcon />,
-  browserVideoStream: <VideoChatFillIcon />,
-  browserAudioStream: <ChatVoiceFillIcon />,
-  playerPause: <PauseCircleFillIcon />,
-  playerPlay: <PlayCircleFillIcon />,
-  timelineAddTransition: <SwapBoxLineIcon />,
-  timelineAddAudio: <MvLineIcon />,
-  timelineAddVideo: <VideoLineIcon />,
-  timelineTrackTransition: <ArrowLeftRightLineIcon />,
-  timelineTrackAudio: <MusicLineIcon />,
-  timelineTrackVideo: <ArrowRightSLineIcon />,
-  upload: <UploadCloud2LineIcon />,
-  undo: <ArrowGoBackLineIcon />,
-  redo: <ArrowGoForwardLineIcon />,
-  remove: <DeleteBin7LineIcon />,
-  split: <SplitCellsHorizontalIcon />,
 }
 ```
 <!-- MAGIC:END -->
@@ -551,6 +513,41 @@ const DefaultIcons: EditorIcons = {
 
 .moviemasher .editor .drop {
   background-color: var(--color-tertiary);
+}
+```
+<!-- MAGIC:END -->
+</fieldset>
+
+## Icons
+
+<fieldset>
+<legend>DefaultIcons.tsx</legend>
+
+<!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/src/Components/Editor/EditorIcons/DefaultIcons.tsx&stripImports=1&stripExports=1) -->
+
+```tsx
+const DefaultIcons: EditorIcons = {
+  browserAudio: <Music2FillIcon />,
+  browserEffect: <FolderSettingsFillIcon />,
+  browserImage: <ImageFillIcon />,
+  browserTheme: <FolderChartFillIcon />,
+  browserTransition: <FolderTransferFillIcon />,
+  browserVideo: <FilmFillIcon />,
+  browserVideoStream: <VideoChatFillIcon />,
+  browserAudioStream: <ChatVoiceFillIcon />,
+  playerPause: <PauseCircleFillIcon />,
+  playerPlay: <PlayCircleFillIcon />,
+  timelineAddTransition: <SwapBoxLineIcon />,
+  timelineAddAudio: <MvLineIcon />,
+  timelineAddVideo: <VideoLineIcon />,
+  timelineTrackTransition: <ArrowLeftRightLineIcon />,
+  timelineTrackAudio: <MusicLineIcon />,
+  timelineTrackVideo: <ArrowRightSLineIcon />,
+  upload: <UploadCloud2LineIcon />,
+  undo: <ArrowGoBackLineIcon />,
+  redo: <ArrowGoForwardLineIcon />,
+  remove: <DeleteBin7LineIcon />,
+  split: <SplitCellsHorizontalIcon />,
 }
 ```
 <!-- MAGIC:END -->

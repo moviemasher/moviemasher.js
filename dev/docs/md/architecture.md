@@ -31,6 +31,21 @@ libraries are imported as peer dependencies to simplify bundling.
 Any modern JavaScript transpiler should be able to treeshake, split, or otherwise repackage
 the code to produce a bundle best optimized for final delivery.
 
+## Repository Structure
+
+- dev - shared configuration and assets
+- docs - a local copy of this documentation
+- node_modules - installed module depedencies
+- packages - published NPM modules
+  - client-react
+  - moviemasher.js
+  - server-express
+- workspaces - example deployents
+  - example-express-react
+  - example-react
+- Dockerfile.cnf - Docker image configuration
+- package.json - shared dependecies and scripts
+
 ## moviemasher.js
 
 The core moviemasher.js NPM package has no dependencies, though portions do rely on
@@ -118,18 +133,3 @@ to [FFmpeg](https://www.ffmpeg.org) arguments, so subclassing is possible.
 Learn more about server encoding in the
 [Rendering Guide](rendering.html) and
 [Streaming Guide](streaming.html).
-
-## Repository Structure
-
-- dev - shared configuration and assets
-- docs - a local copy of this documentation
-- node_modules - installed module depedencies
-- packages - published NPM modules
-  - client-react
-  - moviemasher.js
-  - server-express
-- workspaces - example deployents
-  - example-express-react
-  - example-react
-- Dockerfile.cnf - Docker image configuration
-- package.json - shared dependecies and scripts

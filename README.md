@@ -1,6 +1,6 @@
 [![Image](./dev/img/moviemasher.svg "Movie Masher")](http://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.0_
+_JavaScript video editor, encoder, and streamer - version 5.0.1_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -37,7 +37,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.0
+docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.1
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
@@ -55,7 +55,7 @@ npm install @moviemasher/client-react @moviemasher/server-express --save
 Alternatively, if you're wanting to build your own client and server you can just install and build off the core @moviemasher/moviemasher.js library instead.
 
 Learn more about how the codebase is structured in the
-[Architecture Guide](https://moviemasher.com/docs/architecture.html).
+[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
 
 ## Client Example
 
@@ -97,7 +97,7 @@ apply the `moviemasher` class to the node, so the additional styles in the CSS f
 We also use this opportunity to set the dimensions of the video preview in the editor through CSS variables - to their default values, in this case. There are a few ways to override these dimensions, but doing so in the CSS is best practice.
 
 Learn more about coloring and sizing the user interface using CSS in the
-[Style Guide](https://moviemasher.com/docs/style.html).
+[Style Guide](https://moviemasher.com/docs/Style.html).
 
 <fieldset>
 
@@ -108,11 +108,11 @@ Learn more about coloring and sizing the user interface using CSS in the
 ```tsx
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
+import { ApiClient, Masher, DefaultMasherProps } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
 const applicationOptions = { previewSize: { width: 480, height: 270 } }
-const options = MasherDefaultProps(applicationOptions)
+const options = DefaultMasherProps(applicationOptions)
 const masher = <Masher {...options} />
 const editor = <ApiClient>{masher}</ApiClient>
 const strictMode = <StrictMode>{editor}</StrictMode>
@@ -134,7 +134,7 @@ selectively provided, and manually configured with a selection of available chil
 We are also setting the preview dimensions here, again to their defaults for demonstration purposes. As mentioned above, overriding the defaults from JavaScript is sub-optimal - a visible resizing will occur as the CSS variables are updated - but helpful if supplying custom CSS is impractical.
 
 Learn more about building a fully customized video editing client in the
-[Layout Guide](https://moviemasher.com/docs/layout.html).
+[Layout Guide](https://moviemasher.com/docs/Layout.html).
 
 ## Server Example
 
@@ -147,12 +147,12 @@ Learn more about building a fully customized video editing client in the
 ```ts
 import fs from 'fs'
 import path from 'path'
-import { Host, HostDefaultOptions } from '@moviemasher/server-express'
+import { Host, DefaultHostOptions } from '@moviemasher/server-express'
 
 const resolved = path.resolve(__dirname, './server-config.json')
 const json = fs.readFileSync(resolved).toString()
 const options = JSON.parse(json)
-const host = new Host(HostDefaultOptions(options))
+const host = new Host(DefaultHostOptions(options))
 host.start()
 ```
 <!-- MAGIC:END -->
@@ -183,7 +183,7 @@ Once again we are setting the preview dimensions to their default for demonstrat
 We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. Please note: they should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
 
 Learn more about building your own customized server in the
-[Integration Guide](https://moviemasher.com/docs/integration.html).
+[Integration Guide](https://moviemasher.com/docs/Integration.html).
 
 ## Development
 

@@ -1,13 +1,14 @@
 import React from 'react'
-import { Clip, Clips, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { Clips, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { View } from '../../../Utilities/View'
 import { TrackContext } from '../../../Contexts/TrackContext'
 import { TimelineClip } from './TimelineClip'
-import { DragClipObject, ReactResult } from '../../../declarations'
+import { ReactResult } from '../../../declarations'
 import { useMashScale } from '../../../Hooks/useMashScale'
 import { DragSuffix } from '../../../Setup/Constants'
 import { useMashEditor } from '../../../Hooks/useMashEditor'
+import { DragClipObject } from '../../../Helpers/DragDrop'
 
 interface TimelineClipsProps extends UnknownObject {
   children: React.ReactNode

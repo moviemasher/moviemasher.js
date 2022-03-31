@@ -1,6 +1,6 @@
 {
   "name": "example-express-react",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Movie Masher React Client Example",
   "author": {
     "name": "Movie Masher",
@@ -23,8 +23,8 @@
     "start": "nodemon --watch ./dist/server-config.json --watch ../../packages/server-express/dist/index.js"
   },
   "dependencies": {
-    "@moviemasher/client-react": "^5.0.0",
-    "@moviemasher/server-express": "^5.0.0",
+    "@moviemasher/client-react": "^5.0.1",
+    "@moviemasher/server-express": "^5.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

@@ -1,7 +1,8 @@
 import { DataType, DefinitionType, Effects, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
 import { InputContext } from '../../../../Contexts/InputContext'
-import { DragClipObject, ReactResult } from "../../../../declarations"
+import { ReactResult } from "../../../../declarations"
+import { DragClipObject } from '../../../../Helpers/DragDrop'
 import { useMashEditor } from '../../../../Hooks/useMashEditor'
 import { DragSuffix } from '../../../../Setup/Constants'
 import { View } from '../../../../Utilities/View'

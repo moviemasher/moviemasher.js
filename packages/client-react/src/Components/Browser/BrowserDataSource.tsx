@@ -1,7 +1,7 @@
 import React from "react"
 import {
   DataDefinitionRetrieveRequest, DataDefinitionRetrieveResponse,
-  Endpoints, Factory, ServerType
+  DefinitionBase, Endpoints, ServerType
 } from '@moviemasher/moviemasher.js'
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "../../Contexts/BrowserContext"
@@ -48,7 +48,7 @@ function BrowserDataSource(props: BrowserSourceProps): ReactResult {
       // console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
       const { definitions } = response
       setDefinitions(
-        definitions.map(definition => Factory.definitionFromObject(definition))
+        definitions.map(definition => DefinitionBase.fromObject(definition))
       )
       setRequested(false)
     })

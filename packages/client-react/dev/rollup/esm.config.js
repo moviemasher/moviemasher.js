@@ -1,27 +1,15 @@
-import path from 'path'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import ts from 'rollup-plugin-ts'
+
 import pkg from '../../package.json'
 
-const { peerDependencies } = pkg
-const external = Object.keys(peerDependencies)
+const { peerDependencies, module, source } = pkg
 
 export default {
-  input: pkg.source,
-  output: {
-    format: 'esm',
-    file: pkg.module,
-    sourcemap: true,
-  },
-  external,
+  external: Object.keys(peerDependencies),
+  input: source,
+  output: { format: "esm", file: module, sourcemap: true },
   plugins: [
-    peerDepsExternal(),
-    ts({
-      hook: {
-        outputPath: (_, kind) => {
-          if (kind === "declaration") return path.resolve(pkg.types)
-        }
-      },
-    })
+    peerDepsExternal(), ts({ tsconfig: "./dev/tsconfig.json" })
   ]
 }

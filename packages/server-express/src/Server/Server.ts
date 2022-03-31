@@ -23,3 +23,6 @@ interface Server {
 }
 
 export { Server, ServerArgs, ServerAuthentication }
+
+
+export type ServerHandler<T1, T2 = UnknownObject> = Express.RequestHandler<UnknownObject, T1, T2, UnknownObject, UnknownObject>

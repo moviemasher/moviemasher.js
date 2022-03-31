@@ -1,7 +1,4 @@
 import React from 'react'
-import {
-  DataType, Definition, DefinitionObject, EventType, TrackType, UnknownObject
-} from '@moviemasher/moviemasher.js'
 
 
 // TODO: determine if we really need to repeat this
@@ -16,37 +13,13 @@ export type SliderChangeHandler = (event: UnknownChangeEvent, value: number | nu
 export type NodeObject = Exclude<React.ReactNode, boolean | null | undefined>
 export type NodesArray = Array<NodeObject>
 
-export interface DragClipObject extends UnknownObject {
-  offset: number
-  definition?: DefinitionObject
-}
-
-export interface DropClipsResult {
-  index: number
-  pixels: number
-  type: TrackType
-}
-
-export interface DragClipProps {
-  isDragging: boolean
-  initialSourceClientOffset: number
-}
-export interface DropClipsProps {
-  isOver: boolean
-}
-
-export type UnknownElement = React.ReactElement<UnknownObject>
+export type UnknownElement = React.ReactElement<Record<string, unknown>>
 
 export interface EditorIcons {
   [key: string]: UnknownElement
 }
 
-export type EditorInputs = {
-  [key in DataType]: UnknownElement
-}
-
-export interface DefinitionsPromise extends Promise<Definition[]> {}
-export interface SourceCallbackOptions extends UnknownObject {
+export interface SourceCallbackOptions extends Record<string, unknown> {
   page?: number
   perPage?: number
   terms?: string
@@ -55,40 +28,33 @@ export interface SourceCallbackOptions extends UnknownObject {
 /**
  * @category Callback
  */
-export interface SourceCallback {
- (options?: SourceCallbackOptions): DefinitionsPromise
-}
-/**
- * @category Callback
- */
 export interface ListenerCallback { (): void }
-export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
 
 /**
  * must be a single element
  */
-export interface PropsAndChild extends UnknownObject {
+export interface PropsAndChild extends Record<string, unknown> {
   /**
    * @required
    */
-  children: React.ReactElement<UnknownObject>
+  children: React.ReactElement<Record<string, unknown>>
 }
 
-export interface PropsWithoutChild extends UnknownObject {
+export interface PropsWithoutChild extends Record<string, unknown> {
   children?: never
 }
 
-export interface PropsWithChildren extends UnknownObject {
+export interface PropsWithChildren extends Record<string, unknown> {
   children?: React.ReactNode
 }
 
-export interface PropsAndChildren extends UnknownObject {
+export interface PropsAndChildren extends Record<string, unknown> {
   children: React.ReactNode
 }
 export type ReactResult = React.ReactElement<any, any> | null
 
 export type PropsMethod<I, O> = (input: I) => O
 
-export interface WithClassName extends UnknownObject {
+export interface WithClassName extends Record<string, unknown> {
   className?: string
 }

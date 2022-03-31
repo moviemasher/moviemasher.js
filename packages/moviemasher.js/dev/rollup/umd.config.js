@@ -1,32 +1,11 @@
 import ts from "rollup-plugin-ts"
 import { terser } from 'rollup-plugin-terser'
-import pkg from "../../../../package.json"
 import { builtinModules } from "module"
 import json from "@rollup/plugin-json"
 
-const jsonOptions = { preferConst: true, indent: "  ", namedExports: true }
+import pkg from "../../package.json"
 
-const tsconfigPath = "./tsconfig.json"
-const overrideConfigFile = (options) => {
-  return {
-    tsconfig: {
-      fileName: tsconfigPath, hook: config => ({ ...config, ...options })
-    }
-  }
-}
-
-const shared = {
-  input: "src/index.ts",
-  external: [
-		...builtinModules,
-		...(pkg.devDependencies ? Object.keys(pkg.devDependencies) : []),
-	]
-}
-const sharedPlugins = [json(jsonOptions)]
-const tsWithoutDeclarations = [
-  ...sharedPlugins,
-  ts(overrideConfigFile({ declaration: false }))
-]
+const { devDependencies, source } = pkg
 
 const outputUmd = {
   format: "umd",
@@ -36,10 +15,14 @@ const outputUmd = {
 }
 
 export default {
-  ...shared,
-  plugins: tsWithoutDeclarations,
+  external: [...builtinModules, ...Object.keys(devDependencies || {})],
+  input: source,
   output: [
     { ...outputUmd, file: "dist/moviemasher.js" },
     { ...outputUmd, file: "dist/moviemasher.min.js", plugins: [terser()] },
+  ],
+  plugins: [
+    json({ preferConst: true, indent: "  ", namedExports: true }),
+    ts({ tsconfig: "./dev/tsconfig.json" })
   ]
 }

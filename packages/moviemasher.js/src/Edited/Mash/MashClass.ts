@@ -32,6 +32,7 @@ import {
 import { FilterGraphs, FilterGraphsArgs } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphsClass } from "./FilterGraphs/FilterGraphsClass"
 import { timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
+import { TrackFactory } from "../../Media/Track/TrackFactory"
 
 
 class MashClass implements Mash {
@@ -68,7 +69,7 @@ class MashClass implements Mash {
       if (typeof track.dense === 'undefined') {
         trackArgs.dense = videoTrackCount === 1
       }
-      const instance = Factory.track.instance(trackArgs)
+      const instance = TrackFactory.instance(trackArgs)
       instance.assureFrames(this.quantize)
       instance.sortClips()
 
@@ -97,7 +98,7 @@ class MashClass implements Mash {
 
   addTrack(trackType: TrackType): Track {
     const options : TrackObject = { trackType: trackType, layer: this.trackCount(trackType) }
-    const track = Factory.track.instance(options)
+    const track = TrackFactory.instance(options)
     // console.log(this.constructor.name, "addTrack", track)
     this.tracks.push(track)
     this.tracks.sort(sortByLayer)
@@ -107,7 +108,7 @@ class MashClass implements Mash {
 
   private assureTrackOfType(trackType: TrackType): void {
      if (!this.trackCount(trackType)) {
-      this.tracks.push(Factory.track.instance({ trackType: trackType }))
+      this.tracks.push(TrackFactory.instance({ trackType: trackType }))
     }
   }
 

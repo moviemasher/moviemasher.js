@@ -1,14 +1,14 @@
 {
   "name": "@moviemasher/moviemasher.js",
-  "version": "5.0.0",
-  "description": "JavaScript video editor, encoder, and streamer - version 5.0.0",
+  "version": "5.0.1",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.1",
   "files": [
     "dist"
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
-  "types": "dist/esm/index.d.ts",
+  "types": "dist/moviemasher.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -37,11 +37,8 @@
     "build-esm": "rollup --config dev/rollup/esm.config.js",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
     "build-full": "run-s lint-verbose test-verbose clean build-esm build-umd build-cjs",
-    "build": "run-s clean build-esm build-umd build-cjs",
+    "build": "run-s clean build-esm build-cjs build-umd",
     "clean": "rimraf dist",
     "develop": "rollup --watch --config dev/rollup/esm.config.js"
-  },
-  "devDependencies": {
-    "@types/css-font-loading-module": "^0.0.7"
   }
 }

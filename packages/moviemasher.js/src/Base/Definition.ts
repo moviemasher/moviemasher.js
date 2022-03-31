@@ -1,13 +1,14 @@
 import {
   Any, Constrained, Described, FilesArgs, GraphFile, GraphFileIconArgs, GraphFiles, UnknownObject
 } from "../declarations"
-import { DefinitionType, GraphFileType, GraphType, LoadType } from "../Setup/Enums"
+import { DefinitionType, DefinitionTypes, GraphFileType, GraphType, LoadType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 import { Times } from "../Helpers/Time/Time"
-import { Is } from "../Utility/Is"
+import { Is, isPopulatedString } from "../Utility/Is"
 import { Instance, InstanceBase, InstanceObject } from "./Instance"
 import { SelectionValue } from "./Propertied"
+import { Factory } from "../Definitions/Factory/Factory"
 
 export class DefinitionBase {
   constructor(...args: Any[]) {
@@ -72,6 +73,21 @@ export class DefinitionBase {
   type!: DefinitionType
 
   value(name: string): SelectionValue | undefined { return this.property(name)?.value }
+
+  static fromObject(object: DefinitionObject): Definition {
+    const { id: definitionId, type } = object
+    if (!(type && isPopulatedString(type))) throw `${Errors.type} fromObject ${definitionId}`
+
+    const definitionType = <DefinitionType>type
+    if (!DefinitionTypes.includes(definitionType)) throw `${Errors.type} fromObject ${definitionType}`
+
+    if (!(definitionId && isPopulatedString(definitionId))) {
+      throw Errors.invalid.definition.id + JSON.stringify(object)
+    }
+    const factory = Factory[definitionType]
+
+    return factory.definition(object)
+  }
 }
 
 export type DefinitionClass = Constrained<DefinitionBase>

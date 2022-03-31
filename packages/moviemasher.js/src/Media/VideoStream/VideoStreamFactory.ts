@@ -55,7 +55,6 @@ Factories[DefinitionType.VideoStream] = VideoStreamFactoryImplementation
 
 export {
   videoStreamInstall,
-  videoStreamInstall as videoStreamDefine,
   videoStreamDefinition,
   videoStreamDefinitionFromId,
   VideoStreamFactoryImplementation,

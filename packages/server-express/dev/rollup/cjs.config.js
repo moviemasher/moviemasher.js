@@ -1,15 +1,16 @@
+
 import resolve from '@rollup/plugin-node-resolve'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
 import pkg from "../../package.json"
-import path from 'path'
 
-const { main } = pkg
+const { main, source } = pkg
+const tsconfigPath = "./dev/tsconfig.json"
 
 export default {
-  input: pkg.source,
+  input: source,
   output: {
     file: main,
     format: "cjs",
@@ -24,12 +25,6 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({
-      hook: {
-        outputPath: (_, kind) => {
-          if (kind === "declaration") return path.resolve(pkg.types)
-        }
-      }
-    }),
+    ts({ tsconfig: tsconfigPath }),
   ]
 }

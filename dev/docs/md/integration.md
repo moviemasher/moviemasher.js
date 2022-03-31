@@ -43,7 +43,7 @@ To create these instances in the example deployment, both the client and server 
 <path d="M 145.00 60.00 L 145.00 63.10 M 141.41 63.10 L 148.59 63.10 L 145.00 80.00 Z M 141.41 63.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
 <path d="M 145.00 40.00 L 145.00 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 370.00 0.00 L 640.00 0.00 L 640.00 40.00 L 370.00 40.00 Z M 370.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="375.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[HostDefaultOptions]]()</text>
+<text x="375.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[DefaultHostOptions]]()</text>
 <path d="M 400.17 80.00 L 610.00 80.00 L 610.00 120.00 L 400.17 120.00 Z M 400.17 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <text x="405.42" y="109.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >{[[HostOptions]]}</text>
 <path d="M 460.00 160.00 L 550.00 160.00 L 550.00 200.00 L 460.00 200.00 Z M 460.00 160.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
@@ -55,7 +55,7 @@ To create these instances in the example deployment, both the client and server 
 <path d="M 145.00 220.00 L 145.00 223.10 M 141.41 223.10 L 148.59 223.10 L 145.00 240.00 Z M 141.41 223.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />
 <path d="M 145.00 200.00 L 145.00 240.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 0.00 0.00 L 290.00 0.00 L 290.00 40.00 L 0.00 40.00 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
-<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[MasherDefaultProps]]()</text>
+<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[DefaultMasherProps]]()</text>
 <path d="M 37.54 80.00 L 252.46 80.00 L 252.46 120.00 L 37.54 120.00 Z M 37.54 80.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >{[[MasherProps]]}</text>
 <path d="M 505.00 220.00 L 505.00 223.10 M 501.41 223.10 L 508.59 223.10 L 505.00 240.00 Z M 501.41 223.10" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"  />

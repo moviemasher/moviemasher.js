@@ -1,43 +1,34 @@
-import ts from "rollup-plugin-ts"
-import pkg from "../../package.json"
 import { builtinModules } from "module"
 import path from "path"
+import ts from "rollup-plugin-ts"
 import json from "@rollup/plugin-json"
 
-const jsonOptions = { preferConst: true, indent: "  ", namedExports: true }
+import pkg from "../../package.json"
 
-const tsconfigPath = "./tsconfig.json"
-const overrideConfigFile = (options) => {
-  return {
-    tsconfig: {
-      fileName: tsconfigPath, hook: config => ({ ...config, ...options })
-    }
-  }
-}
+const { source, devDependencies } = pkg
 
-const shared = {
-  input: "src/index.ts",
+export default {
+  input: source,
   external: [
 		...builtinModules,
-		...(pkg.devDependencies ? Object.keys(pkg.devDependencies) : []),
-	]
-}
-const sharedPlugins = [json(jsonOptions)]
-
-const tsWithDeclarations = [
-  ...sharedPlugins,
+		...(devDependencies ? Object.keys(devDependencies) : []),
+	],
+  plugins: [
+  json({ preferConst: true, indent: "  ", namedExports: true }),
   ts({
     hook: {
       outputPath: (_, kind) => {
-        if (kind === "declaration") return path.resolve(pkg.types)
+        switch (kind) {
+          case 'declarationMap': return path.resolve('./dist/moviemasher.d.ts.map')
+          case 'declaration': return path.resolve('./dist/moviemasher.d.ts')
+        }
       }
     },
-    ...overrideConfigFile({ declarationMap: true, declaration: true })
+    tsconfig: {
+      fileName: "./dev/tsconfig.json",
+      hook: config => ({ ...config, declarationMap: true, declaration: true })
+    }
   })
-]
-
-export default {
-  ...shared,
-  plugins: tsWithDeclarations,
+],
   output: { format: "esm", file: "dist/esm/index.js", sourcemap: true }
 }
