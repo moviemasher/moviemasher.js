@@ -1,3 +1,3 @@
-export * from "./packages/moviemasher.js"
-export * from "./packages/client-react"
-export * from "./packages/server-express"
+export * from "@moviemasher/moviemasher.js"
+export * from "@moviemasher/client-react"
+export * from "@moviemasher/server-express"

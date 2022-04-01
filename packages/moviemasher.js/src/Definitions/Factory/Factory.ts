@@ -1,130 +1,122 @@
-import { DefinitionType, DefinitionTypes } from "../../Setup/Enums"
-import { Factories } from "../../Definitions/Factories"
-import { Errors } from "../../Setup/Errors"
-import { AudioFactory } from "../../Media/Audio/Audio"
-import { EffectFactory } from "../../Media/Effect/Effect"
-import { FilterFactory } from "../../Media/Filter/Filter"
-import { FontFactory } from "../../Media/Font/Font"
-import { ImageFactory } from "../../Media/Image/Image"
-import { MergerFactory } from "../../Media/Merger/Merger"
-import { ScalerFactory } from "../../Media/Scaler/Scaler"
-import { ThemeFactory } from "../../Media/Theme/Theme"
-import { TransitionFactory } from "../../Media/Transition/Transition"
-import { VideoFactory } from "../../Media/Video/Video"
-import { VideoStreamFactory } from "../../Media/VideoStream/VideoStream"
-import { VideoSequenceFactory } from "../../Media/VideoSequence/VideoSequence"
-import { ContextFactory } from "../../Context/ContextFactory"
-import { TrackFactory } from "../../Media/Track/TrackFactory"
-import { Definition, DefinitionObject, DefinitionObjects } from "../../Base/Definition"
-import { isPopulatedString } from "../../Utility/Is"
+import { Factories, FactoryObject } from "../../Definitions/Factories"
 
-class Factory {
-  static get [DefinitionType.Audio]() : AudioFactory {
-    const factory = Factories[DefinitionType.Audio]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Audio
+export const Factory = Factories as Required<FactoryObject>
 
-    return factory
-  }
+// // export const factoryAudio = () : AudioFactory => {
+// //   const factory = Factories[DefinitionType.Audio]
+// //   if (!factory) throw Errors.invalid.factory + DefinitionType.Audio
 
-  static get context(): typeof ContextFactory { return ContextFactory }
+// //   return factory
+// // }
 
-  static definitionFromObject(object: DefinitionObject): Definition {
-    const { id: definitionId, type } = object
-    if (!(type && isPopulatedString(type))) throw `${Errors.type} Factory.definitionFromObject ${definitionId}`
+// export const factoryDefinitionFromObject = (object: DefinitionObject): Definition => {
+//   const { id: definitionId, type } = object
+//   if (!(type && isPopulatedString(type))) throw `${Errors.type} Factory.definitionFromObject ${definitionId}`
 
-    const definitionType = <DefinitionType>type
-    if (!DefinitionTypes.includes(definitionType)) throw `${Errors.type} Factory.definitionFromObject ${definitionType}`
+//   const definitionType = <DefinitionType>type
+//   if (!DefinitionTypes.includes(definitionType)) throw `${Errors.type} Factory.definitionFromObject ${definitionType}`
 
-    if (!(definitionId && isPopulatedString(definitionId))) {
-      throw Errors.invalid.definition.id + JSON.stringify(object)
-    }
-    return this[definitionType].definition(object)
-  }
+//   if (!(definitionId && isPopulatedString(definitionId))) {
+//     throw Errors.invalid.definition.id + JSON.stringify(object)
+//   }
+//   const factory = Factory[definitionType]
 
-  static definitionsFromObjects(objects: DefinitionObjects): Definition[] {
-    return objects.map(object => this.definitionFromObject(object))
-  }
+//   return factory.definition(object)
+// }
 
 
-  static get [DefinitionType.Effect]() : EffectFactory {
-    const factory = Factories[DefinitionType.Effect]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Effect
 
-    return factory
-  }
+// export const factoryEffect = () : EffectFactory => {
+//   const factory = Factories[DefinitionType.Effect]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Effect
 
-  static get [DefinitionType.Filter]() : FilterFactory {
-    const factory = Factories[DefinitionType.Filter]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Filter
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryFilter = () : FilterFactory => {
+//   const factory = Factories[DefinitionType.Filter]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Filter
 
-  static get [DefinitionType.Font]() : FontFactory {
-    const factory = Factories[DefinitionType.Font]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Font
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryFont = () : FontFactory => {
+//   const factory = Factories[DefinitionType.Font]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Font
 
-  static get [DefinitionType.Image]() : ImageFactory {
-    const factory = Factories[DefinitionType.Image]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Image
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryImage = () : ImageFactory => {
+//   const factory = Factories[DefinitionType.Image]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Image
 
-  static get [DefinitionType.Merger]() : MergerFactory {
-    const factory = Factories[DefinitionType.Merger]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Merger
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryMerger = () : MergerFactory => {
+//   const factory = Factories[DefinitionType.Merger]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Merger
 
-  static get [DefinitionType.Scaler]() : ScalerFactory {
-    const factory = Factories[DefinitionType.Scaler]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Scaler
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryScaler = () : ScalerFactory => {
+//   const factory = Factories[DefinitionType.Scaler]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Scaler
 
-  static get [DefinitionType.Theme]() : ThemeFactory {
-    const factory = Factories[DefinitionType.Theme]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Theme
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryTheme = () : ThemeFactory => {
+//   const factory = Factories[DefinitionType.Theme]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Theme
 
-  static get [DefinitionType.Transition]() : TransitionFactory {
-    const factory = Factories[DefinitionType.Transition]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Transition
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryTransition = () : TransitionFactory => {
+//   const factory = Factories[DefinitionType.Transition]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Transition
 
-  static get track(): typeof TrackFactory { return TrackFactory }
+//   return factory
+// }
 
-  static get [DefinitionType.Video]() : VideoFactory {
-    const factory = Factories[DefinitionType.Video]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.Video
 
-    return factory
-  }
+// export const factoryVideo = () : VideoFactory => {
+//   const factory = Factories[DefinitionType.Video]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.Video
 
-  static get [DefinitionType.VideoSequence]() : VideoSequenceFactory {
-    const factory = Factories[DefinitionType.VideoSequence]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.VideoSequence
+//   return factory
+// }
 
-    return factory
-  }
+// export const factoryVideoSequence = () : VideoSequenceFactory => {
+//   const factory = Factories[DefinitionType.VideoSequence]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.VideoSequence
 
-  static get [DefinitionType.VideoStream]() : VideoStreamFactory {
-    const factory = Factories[DefinitionType.VideoStream]
-    if (!factory) throw Errors.invalid.factory + DefinitionType.VideoStream
+//   return factory
+// }
 
-    return factory
-  }
-  private constructor() {}
-}
+// export const factoryVideoStream = () : VideoStreamFactory => {
+//   const factory = Factories[DefinitionType.VideoStream]
+//   if (!factory) throw Errors.invalid.factory + DefinitionType.VideoStream
 
-export { Factory }
+//   return factory
+// }
+
+
+  // definitionFromObject: factoryDefinitionFromObject,
+// {
+//   [DefinitionType.Audio]: factoryAudio,
+//   [DefinitionType.Effect]: factoryEffect,
+//   [DefinitionType.Filter]: factoryFilter,
+//   [DefinitionType.Font]: factoryFont,
+//   [DefinitionType.Image]: factoryImage,
+//   [DefinitionType.Merger]: factoryMerger,
+//   [DefinitionType.Scaler]: factoryScaler,
+//   [DefinitionType.Theme]: factoryTheme,
+//   [DefinitionType.Transition]: factoryTransition,
+//   [DefinitionType.Video]: factoryVideo,
+//   [DefinitionType.VideoSequence]: factoryVideoSequence,
+//   [DefinitionType.VideoStream]: factoryVideoStream,
+// }

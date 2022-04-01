@@ -1,6 +1,6 @@
 {
   "name": "example-react",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
@@ -22,6 +22,6 @@
     "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8576 dist"
   },
   "dependencies": {
-    "@moviemasher/client-react": "^5.0.0"
+    "@moviemasher/client-react": "^5.0.1"
   }
 }

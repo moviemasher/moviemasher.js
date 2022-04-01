@@ -1,26 +1,35 @@
 {
   "name": "@moviemasher/server-express",
-  "version": "5.0.0",
-  "description": "Movie Masher Server",
+  "version": "5.0.1",
+  "description": "Movie Masher Server Plugin implemented in ExpressJS - version 5.0.1",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "source": "src/index.ts",
+  "type": "commonjs",
+  "types": "dist/cjs/index.d.ts",
+  "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
-  "license": "MPL-2.0",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
   "scripts": {
-    "develop": "rollup --config --watch",
-    "serve": "nodemon --experimental-specifier-resolution=node dist/index.js",
-    "build-rollup": "rollup --config",
+    "develop": "rollup --watch --config dev/rollup/cjs.config.js",
+    "build-rollup": "rollup --config dev/rollup/cjs.config.js",
     "build": "run-s clean build-rollup",
     "clean": "rimraf dist"
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "^5.0.0",
+    "@moviemasher/moviemasher.js": "^5.0.1",
     "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",

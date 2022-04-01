@@ -250,6 +250,9 @@ section .section {
   padding: var(--pad);
 }
 
+fieldset > pre {
+  min-width: max-content;
+}
 /* :is(p, pre, fieldset, dl, ol, ul, div) */
 section .section > *, fieldset, dl {
   margin: 0px;

@@ -99,7 +99,7 @@ class Composition {
         if (!audibleSource) {
           if (!start) {
             // wanted to start immediately but it's not loaded
-            console.debug(this.constructor.name, "createSources audibleSource undefined", clip.definitionId)
+            // console.debug(this.constructor.name, "createSources audibleSource undefined", clip.definitionId)
             return false
           }
           return true

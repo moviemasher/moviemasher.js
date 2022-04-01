@@ -28,9 +28,9 @@ function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult
       files, id
     }
     setStatus(`Preloading...`)
-    console.debug("StreamingPreloadRequest", Endpoints.streaming.preload, request)
+    // console.debug("StreamingPreloadRequest", Endpoints.streaming.preload, request)
     endpointPromise(Endpoints.streaming.preload, request).then((response:StreamingPreloadResponse) => {
-      console.debug("StreamingPreloadResponse", Endpoints.streaming.preload, response)
+      // console.debug("StreamingPreloadResponse", Endpoints.streaming.preload, response)
       setStatus(`Preloaded`)
       setPreloading(false)
     })

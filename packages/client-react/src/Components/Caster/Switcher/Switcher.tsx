@@ -1,6 +1,6 @@
 import { PropsWithoutChild, ReactResult, WithClassName } from "../../../declarations"
 
-interface SwitcherProps extends PropsWithoutChild, WithClassName {
+export interface SwitcherProps extends PropsWithoutChild, WithClassName {
 
 }
 

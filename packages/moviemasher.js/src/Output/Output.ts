@@ -6,18 +6,18 @@ import { StreamingDescription } from "../Api/Streaming"
 import { Time } from "../Helpers/Time/Time"
 
 export interface CommandOutput extends UnknownObject {
-  extension?: string
-  format?: OutputFormat
-  options?: ValueObject
   audioBitrate?: Value
   audioChannels?: number
   audioCodec?: string
   audioRate?: number
+  extension?: string
+  format?: OutputFormat
+  height?: number
+  options?: ValueObject
   videoBitrate?: Value
   videoCodec?: string
   videoRate?: number
   width?: number
-  height?: number
 }
 
 export interface RenderingCommandOutput extends CommandOutput {
@@ -58,6 +58,7 @@ export interface RenderingOutput {
   /** supplied time or mash.endTime, but undefined for image outputs  */
   endTime?: Time
 }
+
 
 export interface StreamingOutput {
   streamingDescription(renderingResults?: RenderingResult[]): Promise<StreamingDescription>

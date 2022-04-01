@@ -49,7 +49,6 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
       const cached: LoadedAudio = preloader.getFile(graphFile)
       if (!cached) return
 
-      // console.debug(this.constructor.name, "audibleSource", cached.constructor.name)
       return AudibleContextInstance.createBufferSource(cached)
     }
 

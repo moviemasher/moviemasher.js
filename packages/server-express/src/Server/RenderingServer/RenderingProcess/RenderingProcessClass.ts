@@ -18,7 +18,7 @@ import { renderingCommandOutputs, renderingOutputFile } from '../../../Utilities
 
 
 
-type ConcatFileDuration = [string, number]
+export type RenderingProcessConcatFileDuration = [string, number]
 
 class RenderingProcessClass implements RenderingProcess {
   constructor(args: RenderingProcessArgs) { this.args = args }
@@ -169,7 +169,7 @@ class RenderingProcessClass implements RenderingProcess {
     commandDescription.duration = Math.max(...durations)
     return commandDescription
   }
-  concatFile(fileDurations: ConcatFileDuration[]): string {
+  concatFile(fileDurations: RenderingProcessConcatFileDuration[]): string {
     const lines = ['ffconcat version 1.0']
     lines.push(...fileDurations.flatMap(fileDuration => {
       const [file, duration] = fileDuration
@@ -261,7 +261,7 @@ class RenderingProcessClass implements RenderingProcess {
         const renderPromise = this.renderResultPromise(destinationPath, cmdPath, infoPath, output, description).then(EmptyMethod)
         return renderPromise
       })
-      const concatFileDuration: ConcatFileDuration = [fileName, duration]
+      const concatFileDuration: RenderingProcessConcatFileDuration = [fileName, duration]
       return concatFileDuration
     })
 

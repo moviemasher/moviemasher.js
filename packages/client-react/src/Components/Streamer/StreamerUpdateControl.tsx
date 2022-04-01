@@ -10,7 +10,7 @@ import { ApiContext } from "../../Contexts/ApiContext"
 import { useCastEditor } from "../../Hooks/useCastEditor"
 import { ViewerContext } from "../../Contexts/ViewerContext"
 
-interface StreamerUpdateControlProps extends PropsAndChildren, WithClassName { }
+export interface StreamerUpdateControlProps extends PropsAndChildren, WithClassName { }
 
 function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
   const caster = useCastEditor()
@@ -30,10 +30,10 @@ function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
     const definitionObjects = definitions.map(definition => definition.toJSON())
     const mashObjects = mashes.map(mash => mash.toJSON())
     const request: StreamingCutRequest = { definitionObjects, mashObjects, id }
-    console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)
+    // console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)
     setStatus(`Updating stream`)
     endpointPromise(Endpoints.streaming.cut, request).then((response:StreamingCutResponse) => {
-      console.debug("StreamingCutResponse", Endpoints.streaming.cut, response)
+      // console.debug("StreamingCutResponse", Endpoints.streaming.cut, response)
       setStatus(`Updated stream`)
       setUpdating(false)
     })

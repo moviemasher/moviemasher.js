@@ -12,7 +12,7 @@ import { VideoFactory } from "../Media/Video/Video"
 import { VideoStreamFactory } from "../Media/VideoStream/VideoStream"
 import { VideoSequenceFactory } from "../Media/VideoSequence/VideoSequence"
 
-type FactoryObject = {
+export type FactoryObject = {
   [DefinitionType.Filter]?: FilterFactory
   [DefinitionType.Audio]?: AudioFactory
   [DefinitionType.Effect]?: EffectFactory
@@ -27,6 +27,4 @@ type FactoryObject = {
   [DefinitionType.VideoStream]?: VideoStreamFactory
 }
 
-const Factories : FactoryObject = {}
-
-export { Factories, FactoryObject }
+export const Factories : FactoryObject = {}

@@ -151,7 +151,6 @@ class BrowserPreloaderClass extends PreloaderClass {
         video.ondurationchange = null
         video.width = video.videoWidth
         video.height = video.videoHeight
-        // console.debug(this.constructor.name, "videoPromiseFromUrl", 'ondurationchange', video.width, video.height)
         resolve(video)
       }
       video.onerror = reject

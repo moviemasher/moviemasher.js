@@ -4,7 +4,9 @@ import { RunningCommandClass } from './RunningCommandClass'
 
 const CommandFactoryInstances: Record<string, RunningCommand> = {}
 
-const commandFactoryGet = (id: string): RunningCommand | undefined => CommandFactoryInstances[id]
+const commandFactoryGet = (id: string): RunningCommand | undefined => {
+  return CommandFactoryInstances[id]
+}
 
 const commandFactoryDelete = (id: string): void => {
   const existing = commandFactoryGet(id)

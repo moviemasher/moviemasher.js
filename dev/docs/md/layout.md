@@ -1,22 +1,24 @@
-Laying out a Movie Masher application involves creating a tagging structure that properly
+Laying out a Movie Masher client application involves creating a tagging structure that properly
 nests components within a functional hierarchy. A given child component may have to be
 positioned under a particular parent component in order to access the context it needs
 to fully function.
+
 Here we discuss each of the components that supply context to their children, in the
 order they usually appear within the hierarchy.
 
 ## API
 
-The [[Api]] component is typically the root component wrapping the entire application,
+The [[ApiClient]] component is typically the root component wrapping the entire application,
 which allows all child components that require server interaction to share its [[ApiContext]].
 This contains an `enabled` array containing a [[ServerType]] for each supported server,
-and an `endpointPromise` method returning a fetch promise for each request. Some child components use the array to
-hide themselves if their required server is unsupported, or use the method to post
-requests to it.
+and an `endpointPromise` method returning a fetch-based promise for each request.
+
+Some child components use the array to automatically hide themselves if their required server is unsupported, so the server can ultimately control the visibility of certain client functionality. All child components use the promise method to post
+requests to their server(s). Learn more about the server side of these same interactions in the [Integration Guide](integration.html).
 
 ## Caster
 
-The [[Caster]] component can be the root component or a descendent of [[Api]].
+The [[Caster]] component can be the root component or a descendent of [[ApiClient]].
 In the later case, it will make a [[DataCastDefaultRequest]] to retrieve a [[Cast]]
 to load. It supplies a [[CasterContext]] to its children which simply contains a
 `castEditor` reference to the underlying [[CastEditor]]. Some child components use this
@@ -40,13 +42,13 @@ It typically contains the following children:
 
 ## Masher
 
-The [[Masher]] component can be the root component or placed under an [[Api]] or [[Caster]]
-component. When under an [[Api]] component it will make a [[DataMashDefaultRequest]] to retrieve a
-a [[Mash]] to load. When under a [[Caster]] component it will instead load its selected one.
+The [[Masher]] component can be the root component or placed under either an [[ApiClient]] or a [[Caster]]
+component. When under an [[ApiClient]] component, it will make a [[DataMashDefaultRequest]] to retrieve a
+a [[MashObject]] to load. When under a [[Caster]] component, it will instead load its selected [[Mash]].
 It supplies a [[MasherContext]] to its children which simply contains a
 `mashEditor` reference to the underlying [[MashEditor]].
 The user interface presented on the [Demo](demo/index.html) page uses the
-[[MasherDefault]] method to suppy default props to this component.
+[[DefaultMasherProps]] method to suppy default props to this component.
 It supplies the following children:
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../../../../moviemasher/dev/graphics/masher.svg) -->
@@ -61,36 +63,3 @@ It supplies the following children:
 <text x="480.00" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Inspector]]</text>
 </svg>
 <!-- MAGIC:END -->
-
-## Streamer
-
-The [[Streamer]] component can be the root component or appear anywhere within the
-hierarchy.
-
-## Webrtc
-
-The [[Webrtc]] component
-
-## Player
-
-The [[Player]] component
-
-## Browser
-
-The [[Browser]] component
-
-## Timeline
-
-The [[Timeline]] component
-
-## Inspector
-
-The [[Inspector]] component
-
-## Layers
-
-The [[Layers]] component
-
-## Switcher
-
-The [[Switcher]] component

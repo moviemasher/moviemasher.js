@@ -15,7 +15,6 @@ const propsDefinitionTypes = (type?:string, types?: string | string[], id?: stri
   if (id && !strings.length) strings.push(id)
   const definitionTypes = DefinitionTypes.map(String)
   const validStrings = strings.filter(string => definitionTypes.includes(string))
-  // console.debug("propsDefinitionTypes", validStrings)
   return validStrings.map(string => string as DefinitionType)
 }
 

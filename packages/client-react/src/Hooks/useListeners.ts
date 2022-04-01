@@ -1,8 +1,11 @@
 import React from "react"
 import { EventType } from "@moviemasher/moviemasher.js"
 
-import { ListenerEvents } from "../declarations"
 import { useEditor } from "./useEditor"
+import { ListenerCallback } from "../declarations"
+
+export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
+
 
 const useListeners = (events: ListenerEvents): void => {
   const editor = useEditor()

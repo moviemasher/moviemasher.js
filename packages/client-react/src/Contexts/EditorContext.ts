@@ -1,6 +1,6 @@
 import React from 'react'
 import { Editor } from '@moviemasher/moviemasher.js'
-import { EditorInputs } from '../declarations'
+import { EditorInputs } from '../Components/Editor/EditorInputs/EditorInputs'
 
 interface EditorContextInterface {
   editor?: Editor

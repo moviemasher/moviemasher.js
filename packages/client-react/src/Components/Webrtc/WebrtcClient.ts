@@ -56,9 +56,9 @@ class WebrtcClient {
   createConnection(options: { stereo?: boolean } = {}) {
     const { stereo } = options
     const request: StreamingWebrtcRequest = {}
-    console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, request)
+    // console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, request)
     return this.endpointPromise(Endpoints.streaming.webrtc, request).then((response: StreamingWebrtcResponse) => {
-      console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, response)
+      // console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, response)
       const { id, localDescription } = response
       const rtcConfiguration: RTCConfiguration = {} //sdpSemantics: 'unified-plan'
       const peer = new RTCPeerConnection(rtcConfiguration)
@@ -68,32 +68,32 @@ class WebrtcClient {
       // in future, subscribe to connectionstatechange events?
       peer.close = () => {
         const request: StreamingDeleteRequest = { id }
-        console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, request)
+        // console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, request)
         this.endpointPromise(Endpoints.streaming.delete, request).then((response: StreamingDeleteResponse) => {
-          console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, response)
+          // console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, response)
         })
         return RTCPeerConnection.prototype.close.apply(peer)
       }
       try {
-        console.debug(this.constructor.name, "createConnection setRemoteDescription")
+        // console.debug(this.constructor.name, "createConnection setRemoteDescription")
         peer.setRemoteDescription(localDescription).then(() => {
-          console.debug(this.constructor.name, "createConnection beforeAnswer")
+          // console.debug(this.constructor.name, "createConnection beforeAnswer")
           this.beforeAnswer(peer).then(() => {
-            console.debug(this.constructor.name, "createConnection createAnswer")
+            // console.debug(this.constructor.name, "createConnection createAnswer")
             peer.createAnswer().then((originalAnswer) => {
               const updatedAnswer = new RTCSessionDescription({
                 type: 'answer',
                 sdp: stereo ? enableStereoOpus(originalAnswer.sdp!) : originalAnswer.sdp
               })
-              console.debug(this.constructor.name, "createConnection setLocalDescription")
+              // console.debug(this.constructor.name, "createConnection setLocalDescription")
               peer.setLocalDescription(updatedAnswer).then(() => {
                 const { localDescription } = peer
                 if (!localDescription) throw Errors.invalid.object + 'localDescription'
 
                 const request: StreamingRemoteRequest = { id, localDescription }
-                console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
+                // console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
                 this.endpointPromise(Endpoints.streaming.remote, request).then((response: StreamingRemoteResponse) => {
-                  console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
+                  // console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
                 })
               })
             })

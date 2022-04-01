@@ -25182,7 +25182,7 @@
 	    ServerType["Streaming"] = "streaming";
 	    ServerType["Web"] = "web";
 	})(ServerType || (ServerType = {}));
-	Object.values(ServerType);
+	const ServerTypes = Object.values(ServerType);
 	const EndpointsApi = {
 	    servers: '',
 	    callbacks: '',
@@ -25537,6 +25537,94 @@
 	    }
 	    get type() { return this.definition.type; }
 	}
+	const Factories = {};
+	const Factory = Factories;
+	// // export const factoryAudio = () : AudioFactory => {
+	// //   const factory = Factories[DefinitionType.Audio]
+	// //   if (!factory) throw Errors.invalid.factory + DefinitionType.Audio
+	// //   return factory
+	// // }
+	// export const factoryDefinitionFromObject = (object: DefinitionObject): Definition => {
+	//   const { id: definitionId, type } = object
+	//   if (!(type && isPopulatedString(type))) throw `${Errors.type} Factory.definitionFromObject ${definitionId}`
+	//   const definitionType = <DefinitionType>type
+	//   if (!DefinitionTypes.includes(definitionType)) throw `${Errors.type} Factory.definitionFromObject ${definitionType}`
+	//   if (!(definitionId && isPopulatedString(definitionId))) {
+	//     throw Errors.invalid.definition.id + JSON.stringify(object)
+	//   }
+	//   const factory = Factory[definitionType]
+	//   return factory.definition(object)
+	// }
+	// export const factoryEffect = () : EffectFactory => {
+	//   const factory = Factories[DefinitionType.Effect]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Effect
+	//   return factory
+	// }
+	// export const factoryFilter = () : FilterFactory => {
+	//   const factory = Factories[DefinitionType.Filter]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Filter
+	//   return factory
+	// }
+	// export const factoryFont = () : FontFactory => {
+	//   const factory = Factories[DefinitionType.Font]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Font
+	//   return factory
+	// }
+	// export const factoryImage = () : ImageFactory => {
+	//   const factory = Factories[DefinitionType.Image]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Image
+	//   return factory
+	// }
+	// export const factoryMerger = () : MergerFactory => {
+	//   const factory = Factories[DefinitionType.Merger]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Merger
+	//   return factory
+	// }
+	// export const factoryScaler = () : ScalerFactory => {
+	//   const factory = Factories[DefinitionType.Scaler]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Scaler
+	//   return factory
+	// }
+	// export const factoryTheme = () : ThemeFactory => {
+	//   const factory = Factories[DefinitionType.Theme]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Theme
+	//   return factory
+	// }
+	// export const factoryTransition = () : TransitionFactory => {
+	//   const factory = Factories[DefinitionType.Transition]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Transition
+	//   return factory
+	// }
+	// export const factoryVideo = () : VideoFactory => {
+	//   const factory = Factories[DefinitionType.Video]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.Video
+	//   return factory
+	// }
+	// export const factoryVideoSequence = () : VideoSequenceFactory => {
+	//   const factory = Factories[DefinitionType.VideoSequence]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.VideoSequence
+	//   return factory
+	// }
+	// export const factoryVideoStream = () : VideoStreamFactory => {
+	//   const factory = Factories[DefinitionType.VideoStream]
+	//   if (!factory) throw Errors.invalid.factory + DefinitionType.VideoStream
+	//   return factory
+	// }
+	// definitionFromObject: factoryDefinitionFromObject,
+	// {
+	//   [DefinitionType.Audio]: factoryAudio,
+	//   [DefinitionType.Effect]: factoryEffect,
+	//   [DefinitionType.Filter]: factoryFilter,
+	//   [DefinitionType.Font]: factoryFont,
+	//   [DefinitionType.Image]: factoryImage,
+	//   [DefinitionType.Merger]: factoryMerger,
+	//   [DefinitionType.Scaler]: factoryScaler,
+	//   [DefinitionType.Theme]: factoryTheme,
+	//   [DefinitionType.Transition]: factoryTransition,
+	//   [DefinitionType.Video]: factoryVideo,
+	//   [DefinitionType.VideoSequence]: factoryVideoSequence,
+	//   [DefinitionType.VideoStream]: factoryVideoStream,
+	// }
 	class DefinitionBase {
 	    constructor(...args) {
 	        const [object] = args;
@@ -25588,6 +25676,19 @@
 	    }
 	    type;
 	    value(name) { return this.property(name)?.value; }
+	    static fromObject(object) {
+	        const { id: definitionId, type } = object;
+	        if (!(type && isPopulatedString(type)))
+	            throw `${Errors.type} fromObject ${definitionId}`;
+	        const definitionType = type;
+	        if (!DefinitionTypes.includes(definitionType))
+	            throw `${Errors.type} fromObject ${definitionType}`;
+	        if (!(definitionId && isPopulatedString(definitionId))) {
+	            throw Errors.invalid.definition.id + JSON.stringify(object);
+	        }
+	        const factory = Factory[definitionType];
+	        return factory.definition(object);
+	    }
 	}
 	class PreloadableDefinition extends DefinitionBase {
 	    constructor(...args) {
@@ -25881,7 +25982,6 @@
 	    toSize: createContextOfSize,
 	    visible: createContextVisible,
 	};
-	const Factories = {};
 	const rgbValue = (value) => (Math.min(255, Math.max(0, Math.floor(Number(value)))));
 	const rgbNumeric = (rgb) => ({
 	    r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
@@ -26038,514 +26138,6 @@
 	        return color;
 	    return `${color.slice(0, 7)}@0x${color.slice(-2)}`;
 	};
-	class Type {
-	    constructor(object) {
-	        const { value, values, modular, id } = object;
-	        if (!id)
-	            throw Errors.id + JSON.stringify(object);
-	        if (typeof value !== "undefined")
-	            this.value = value;
-	        this.id = id;
-	        if (modular)
-	            this.modular = modular;
-	        if (values)
-	            this.values.push(...values);
-	    }
-	    coerce(value) {
-	        const string = String(value);
-	        const number = Number(value);
-	        if (this.modular && !Definitions.fromId(string))
-	            return;
-	        switch (this.id) {
-	            case DataType.Merger:
-	            case DataType.Scaler: return value;
-	            case DataType.Boolean: return !!value;
-	            case DataType.Number: {
-	                if (isNan(number))
-	                    return;
-	                return number;
-	            }
-	            case DataType.Frame: {
-	                if (isNan(number))
-	                    return;
-	                return Math.round(number);
-	            }
-	            case DataType.Rgb:
-	            case DataType.Rgba: {
-	                if (!colorValid(string))
-	                    return;
-	                break;
-	            }
-	            case DataType.Direction4:
-	            case DataType.Direction8: {
-	                // console.log(this.constructor.name, this.id, "coerce", number)
-	                if (!this.values?.find(object => Number(object.id) === number)) {
-	                    return;
-	                }
-	                return number;
-	            }
-	            case DataType.Mode: {
-	                if (!this.values?.find(object => String(object.id) === string))
-	                    return;
-	                break;
-	            }
-	        }
-	        return string;
-	    }
-	    id;
-	    modular = false;
-	    value = '';
-	    values = [];
-	}
-	const rgb = {
-	    value: "rgb(0, 0, 0)"
-	};
-	const rgba = {
-	    value: "rgba(0, 0, 0, 1)"
-	};
-	const number = {
-	    value: 0
-	};
-	const mode$1 = {
-	    value: "normal",
-	    values: [
-	        {
-	            id: "burn",
-	            identifier: "color-burn",
-	            label: "Color Burn"
-	        },
-	        {
-	            id: "dodge",
-	            identifier: "color-dodge",
-	            label: "Color Dodge"
-	        },
-	        {
-	            id: "darken",
-	            identifier: "darken",
-	            label: "Darken"
-	        },
-	        {
-	            id: "difference",
-	            identifier: "difference",
-	            label: "Difference"
-	        },
-	        {
-	            id: "exclusion",
-	            identifier: "exclusion",
-	            label: "Exclusion"
-	        },
-	        {
-	            id: "hardlight",
-	            identifier: "hard-light",
-	            label: "Hard Light"
-	        },
-	        {
-	            id: "lighten",
-	            identifier: "lighter",
-	            label: "Lighten"
-	        },
-	        {
-	            id: "multiply",
-	            identifier: "multiply",
-	            label: "Multiply"
-	        },
-	        {
-	            id: "normal",
-	            identifier: "normal",
-	            label: "Normal"
-	        },
-	        {
-	            id: "overlay",
-	            identifier: "overlay",
-	            label: "Overlay"
-	        },
-	        {
-	            id: "screen",
-	            identifier: "screen",
-	            label: "Screen"
-	        },
-	        {
-	            id: "softlight",
-	            identifier: "soft-light",
-	            label: "Soft Light"
-	        },
-	        {
-	            id: "xor",
-	            identifier: "xor",
-	            label: "Xor"
-	        }
-	    ]
-	};
-	const direction4 = {
-	    values: [
-	        {
-	            id: 0,
-	            identifier: "top",
-	            label: "Top"
-	        },
-	        {
-	            id: 1,
-	            identifier: "right",
-	            label: "Right"
-	        },
-	        {
-	            id: 2,
-	            identifier: "bottom",
-	            label: "Bottom"
-	        },
-	        {
-	            id: 3,
-	            identifier: "left",
-	            label: "Left"
-	        }
-	    ],
-	    value: 0
-	};
-	const direction8 = {
-	    values: [
-	        {
-	            id: 0,
-	            identifier: "top",
-	            label: "Top"
-	        },
-	        {
-	            id: 1,
-	            identifier: "right",
-	            label: "Right"
-	        },
-	        {
-	            id: 2,
-	            identifier: "bottom",
-	            label: "Bottom"
-	        },
-	        {
-	            id: 3,
-	            identifier: "left",
-	            label: "Left"
-	        },
-	        {
-	            id: 4,
-	            identifier: "top_right",
-	            label: "Top Right"
-	        },
-	        {
-	            id: 5,
-	            identifier: "bottom_right",
-	            label: "Bottom Right"
-	        },
-	        {
-	            id: 6,
-	            identifier: "bottom_left",
-	            label: "Bottom Left"
-	        },
-	        {
-	            id: 7,
-	            identifier: "top_left",
-	            label: "Top Left"
-	        }
-	    ],
-	    value: 0
-	};
-	const scaler = {
-	    value: "com.moviemasher.scaler.default"
-	};
-	const merger = {
-	    value: "com.moviemasher.merger.default"
-	};
-	const font = {
-	    modular: true,
-	    value: "com.moviemasher.font.default"
-	};
-	const frame = {
-	    value: 0
-	};
-	const boolean = {
-	    value: false
-	};
-	const string = {
-	    value: ""
-	};
-	const effects = {};
-	const object = {};
-	var dataTypesJson = {
-	    rgb: rgb,
-	    rgba: rgba,
-	    number: number,
-	    mode: mode$1,
-	    direction4: direction4,
-	    direction8: direction8,
-	    scaler: scaler,
-	    merger: merger,
-	    font: font,
-	    frame: frame,
-	    boolean: boolean,
-	    string: string,
-	    effects: effects,
-	    object: object
-	};
-	const propertyTypes = new Map(Object.entries(dataTypesJson).map(entry => {
-	    const [key, value] = entry;
-	    const dataType = key;
-	    if (!DataTypes.includes(dataType))
-	        throw Errors.type + key;
-	    return [dataType, new Type({ ...value, id: dataType })];
-	}));
-	const Types = {
-	    propertyType: (type) => {
-	        const instance = propertyTypes.get(type);
-	        if (!instance)
-	            throw Errors.type + 'propertyType ' + type;
-	        return instance;
-	    }
-	};
-	class Property {
-	    constructor(object) {
-	        const { type, name, value, custom } = object;
-	        if (!(type && DataTypes.map(String).includes(type)))
-	            throw Errors.invalid.type;
-	        if (!name)
-	            throw Errors.invalid.name;
-	        this.type = Types.propertyType(type);
-	        this.name = name;
-	        this.value = typeof value === "undefined" ? this.type.value : value;
-	        this.custom = !!custom;
-	    }
-	    custom;
-	    name;
-	    toJSON() {
-	        return { value: this.value, type: this.type.id };
-	    }
-	    type;
-	    value;
-	}
-	const sortByFrame = (a, b) => a.frame - b.frame;
-	const sortByLayer = (a, b) => a.layer - b.layer;
-	const sortByTrack = (a, b) => a.track - b.track;
-	class TrackClass extends PropertiedClass {
-	    constructor(args) {
-	        super();
-	        const { clips, layer, trackType, dense, definitions } = args;
-	        if (layer)
-	            this.layer = layer;
-	        if (trackType)
-	            this.trackType = trackType;
-	        if (typeof dense === 'undefined') {
-	            this.dense = !this.layer && this.trackType === TrackType.Video;
-	        }
-	        else
-	            this.dense = !!dense;
-	        this.properties.push(new Property({ name: "dense", type: DataType.Boolean, value: false }));
-	        if (clips && definitions)
-	            this.clips.push(...clips.map(clip => {
-	                const { definitionId } = clip;
-	                if (!definitionId)
-	                    throw Errors.id + JSON.stringify(clip);
-	                let definition = definitions.find(definition => definition.id === definitionId);
-	                definition ||= Definitions.fromId(definitionId);
-	                if (!definition)
-	                    throw Errors.invalid.definition + definitionId;
-	                const clipWithTrack = { track: this.layer, ...clip };
-	                return definition.instanceFromObject(clipWithTrack);
-	            }));
-	    }
-	    addClip(clip, insertIndex = 0) {
-	        let clipIndex = insertIndex || 0;
-	        if (!this.dense)
-	            clipIndex = 0; // ordered by clip.frame values
-	        const origIndex = clipIndex; // note original, since it may decrease...
-	        // build array of my clips excluding the clips we're inserting
-	        const spliceClips = this.clips.filter((other, index) => {
-	            const moving = other === clip;
-	            // insert index should be decreased when clip is moving and comes before
-	            if (origIndex && moving && index < origIndex)
-	                clipIndex -= 1;
-	            return !moving;
-	        });
-	        // insert the clips we're adding at the correct index, then sort properly
-	        spliceClips.splice(clipIndex, 0, clip);
-	        this.sortClips(spliceClips);
-	        clip.track = this.layer;
-	        // remove all my current clips and replace with new ones in one step
-	        this.clips.splice(0, this.clips.length, ...spliceClips);
-	    }
-	    assureFrame(clips) {
-	        const clipsArray = clips || this.clips;
-	        let changed = false;
-	        let endFrame = 0;
-	        const ranges = [];
-	        const { dense } = this;
-	        clipsArray.forEach(clip => {
-	            const { frame } = clip;
-	            if (dense ? frame !== endFrame : ranges.some(range => range.includes(frame))) {
-	                changed = true;
-	                clip.frame = endFrame;
-	            }
-	            endFrame = clip.frame + clip.frames;
-	            if (!dense)
-	                ranges.push(clip.timeRange(1));
-	        });
-	        return changed;
-	    }
-	    assureFrames(quantize, clips) {
-	        const clipsArray = clips || this.clips;
-	        const clipsWithoutFrames = clipsArray.filter(clip => !isPositive(clip.frames));
-	        if (!clipsWithoutFrames.length)
-	            return false;
-	        clipsWithoutFrames.forEach(clip => { clip.frames = clip.definition.frames(quantize); });
-	        return true;
-	    }
-	    clips = [];
-	    dense = false;
-	    frameForClipNearFrame(clip, frame = 0) {
-	        if (this.dense)
-	            return frame;
-	        const others = this.clips.filter(other => clip !== other && other.endFrame > frame);
-	        if (!others.length)
-	            return frame;
-	        const startFrame = clip.frame;
-	        const endFrame = clip.endFrame;
-	        const frames = endFrame - startFrame;
-	        let lastFrame = frame;
-	        others.find(clip => {
-	            if (clip.frame >= lastFrame + frames)
-	                return true;
-	            lastFrame = clip.endFrame;
-	        });
-	        return lastFrame;
-	    }
-	    get frames() {
-	        if (!this.clips.length)
-	            return 0;
-	        const clip = this.clips[this.clips.length - 1];
-	        const { frame, frames } = clip;
-	        if (frames < 1)
-	            return -1;
-	        return frame + frames;
-	    }
-	    layer = 0;
-	    removeClip(clip) {
-	        const spliceClips = this.clips.filter(other => clip !== other);
-	        if (spliceClips.length === this.clips.length) {
-	            // console.trace("removeClip", this.trackType, this.layer, this.clips)
-	            throw Errors.internal + 'removeClip';
-	        }
-	        clip.track = -1;
-	        this.sortClips(spliceClips);
-	        this.clips.splice(0, this.clips.length, ...spliceClips);
-	    }
-	    sortClips(clips) {
-	        const sortClips = clips || this.clips;
-	        const changed = this.assureFrame(sortClips);
-	        sortClips.sort(sortByFrame);
-	        return changed;
-	    }
-	    toJSON() {
-	        return {
-	            dense: this.dense,
-	            trackType: this.trackType,
-	            layer: this.layer,
-	            clips: this.clips,
-	        };
-	    }
-	    trackType = TrackType.Video;
-	}
-	const trackInstance = (object) => new TrackClass(object);
-	/**
-	 * @category Factory
-	 */
-	const TrackFactory = { instance: trackInstance };
-	class Factory {
-	    static get [DefinitionType.Audio]() {
-	        const factory = Factories[DefinitionType.Audio];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Audio;
-	        return factory;
-	    }
-	    static get context() { return ContextFactory; }
-	    static definitionFromObject(object) {
-	        const { id: definitionId, type } = object;
-	        if (!(type && isPopulatedString(type)))
-	            throw `${Errors.type} Factory.definitionFromObject ${definitionId}`;
-	        const definitionType = type;
-	        if (!DefinitionTypes.includes(definitionType))
-	            throw `${Errors.type} Factory.definitionFromObject ${definitionType}`;
-	        if (!(definitionId && isPopulatedString(definitionId))) {
-	            throw Errors.invalid.definition.id + JSON.stringify(object);
-	        }
-	        return this[definitionType].definition(object);
-	    }
-	    static definitionsFromObjects(objects) {
-	        return objects.map(object => this.definitionFromObject(object));
-	    }
-	    static get [DefinitionType.Effect]() {
-	        const factory = Factories[DefinitionType.Effect];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Effect;
-	        return factory;
-	    }
-	    static get [DefinitionType.Filter]() {
-	        const factory = Factories[DefinitionType.Filter];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Filter;
-	        return factory;
-	    }
-	    static get [DefinitionType.Font]() {
-	        const factory = Factories[DefinitionType.Font];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Font;
-	        return factory;
-	    }
-	    static get [DefinitionType.Image]() {
-	        const factory = Factories[DefinitionType.Image];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Image;
-	        return factory;
-	    }
-	    static get [DefinitionType.Merger]() {
-	        const factory = Factories[DefinitionType.Merger];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Merger;
-	        return factory;
-	    }
-	    static get [DefinitionType.Scaler]() {
-	        const factory = Factories[DefinitionType.Scaler];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Scaler;
-	        return factory;
-	    }
-	    static get [DefinitionType.Theme]() {
-	        const factory = Factories[DefinitionType.Theme];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Theme;
-	        return factory;
-	    }
-	    static get [DefinitionType.Transition]() {
-	        const factory = Factories[DefinitionType.Transition];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Transition;
-	        return factory;
-	    }
-	    static get track() { return TrackFactory; }
-	    static get [DefinitionType.Video]() {
-	        const factory = Factories[DefinitionType.Video];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.Video;
-	        return factory;
-	    }
-	    static get [DefinitionType.VideoSequence]() {
-	        const factory = Factories[DefinitionType.VideoSequence];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.VideoSequence;
-	        return factory;
-	    }
-	    static get [DefinitionType.VideoStream]() {
-	        const factory = Factories[DefinitionType.VideoStream];
-	        if (!factory)
-	            throw Errors.invalid.factory + DefinitionType.VideoStream;
-	        return factory;
-	    }
-	    constructor() { }
-	}
 	const MashEditorDefaults = {
 	    buffer: 10,
 	    fps: 30,
@@ -26719,7 +26311,7 @@
 	                if (!audibleSource) {
 	                    if (!start) {
 	                        // wanted to start immediately but it's not loaded
-	                        console.debug(this.constructor.name, "createSources audibleSource undefined", clip.definitionId);
+	                        // console.debug(this.constructor.name, "createSources audibleSource undefined", clip.definitionId)
 	                        return false;
 	                    }
 	                    return true;
@@ -26855,6 +26447,286 @@
 	    }
 	    value;
 	    values;
+	}
+	class Type {
+	    constructor(object) {
+	        const { value, values, modular, id } = object;
+	        if (!id)
+	            throw Errors.id + JSON.stringify(object);
+	        if (typeof value !== "undefined")
+	            this.value = value;
+	        this.id = id;
+	        if (modular)
+	            this.modular = modular;
+	        if (values)
+	            this.values.push(...values);
+	    }
+	    coerce(value) {
+	        const string = String(value);
+	        const number = Number(value);
+	        if (this.modular && !Definitions.fromId(string))
+	            return;
+	        switch (this.id) {
+	            case DataType.Merger:
+	            case DataType.Scaler: return value;
+	            case DataType.Boolean: return !!value;
+	            case DataType.Number: {
+	                if (isNan(number))
+	                    return;
+	                return number;
+	            }
+	            case DataType.Frame: {
+	                if (isNan(number))
+	                    return;
+	                return Math.round(number);
+	            }
+	            case DataType.Rgb:
+	            case DataType.Rgba: {
+	                if (!colorValid(string))
+	                    return;
+	                break;
+	            }
+	            case DataType.Direction4:
+	            case DataType.Direction8: {
+	                // console.log(this.constructor.name, this.id, "coerce", number)
+	                if (!this.values?.find(object => Number(object.id) === number)) {
+	                    return;
+	                }
+	                return number;
+	            }
+	            case DataType.Mode: {
+	                if (!this.values?.find(object => String(object.id) === string))
+	                    return;
+	                break;
+	            }
+	        }
+	        return string;
+	    }
+	    id;
+	    modular = false;
+	    value = '';
+	    values = [];
+	}
+	const rgb = {
+	    value: "rgb(0, 0, 0)"
+	};
+	const rgba = {
+	    value: "rgba(0, 0, 0, 1)"
+	};
+	const number = {
+	    value: 0
+	};
+	const mode = {
+	    value: "normal",
+	    values: [
+	        {
+	            id: "burn",
+	            identifier: "color-burn",
+	            label: "Color Burn"
+	        },
+	        {
+	            id: "dodge",
+	            identifier: "color-dodge",
+	            label: "Color Dodge"
+	        },
+	        {
+	            id: "darken",
+	            identifier: "darken",
+	            label: "Darken"
+	        },
+	        {
+	            id: "difference",
+	            identifier: "difference",
+	            label: "Difference"
+	        },
+	        {
+	            id: "exclusion",
+	            identifier: "exclusion",
+	            label: "Exclusion"
+	        },
+	        {
+	            id: "hardlight",
+	            identifier: "hard-light",
+	            label: "Hard Light"
+	        },
+	        {
+	            id: "lighten",
+	            identifier: "lighter",
+	            label: "Lighten"
+	        },
+	        {
+	            id: "multiply",
+	            identifier: "multiply",
+	            label: "Multiply"
+	        },
+	        {
+	            id: "normal",
+	            identifier: "normal",
+	            label: "Normal"
+	        },
+	        {
+	            id: "overlay",
+	            identifier: "overlay",
+	            label: "Overlay"
+	        },
+	        {
+	            id: "screen",
+	            identifier: "screen",
+	            label: "Screen"
+	        },
+	        {
+	            id: "softlight",
+	            identifier: "soft-light",
+	            label: "Soft Light"
+	        },
+	        {
+	            id: "xor",
+	            identifier: "xor",
+	            label: "Xor"
+	        }
+	    ]
+	};
+	const direction4 = {
+	    values: [
+	        {
+	            id: 0,
+	            identifier: "top",
+	            label: "Top"
+	        },
+	        {
+	            id: 1,
+	            identifier: "right",
+	            label: "Right"
+	        },
+	        {
+	            id: 2,
+	            identifier: "bottom",
+	            label: "Bottom"
+	        },
+	        {
+	            id: 3,
+	            identifier: "left",
+	            label: "Left"
+	        }
+	    ],
+	    value: 0
+	};
+	const direction8 = {
+	    values: [
+	        {
+	            id: 0,
+	            identifier: "top",
+	            label: "Top"
+	        },
+	        {
+	            id: 1,
+	            identifier: "right",
+	            label: "Right"
+	        },
+	        {
+	            id: 2,
+	            identifier: "bottom",
+	            label: "Bottom"
+	        },
+	        {
+	            id: 3,
+	            identifier: "left",
+	            label: "Left"
+	        },
+	        {
+	            id: 4,
+	            identifier: "top_right",
+	            label: "Top Right"
+	        },
+	        {
+	            id: 5,
+	            identifier: "bottom_right",
+	            label: "Bottom Right"
+	        },
+	        {
+	            id: 6,
+	            identifier: "bottom_left",
+	            label: "Bottom Left"
+	        },
+	        {
+	            id: 7,
+	            identifier: "top_left",
+	            label: "Top Left"
+	        }
+	    ],
+	    value: 0
+	};
+	const scaler = {
+	    value: "com.moviemasher.scaler.default"
+	};
+	const merger = {
+	    value: "com.moviemasher.merger.default"
+	};
+	const font = {
+	    modular: true,
+	    value: "com.moviemasher.font.default"
+	};
+	const frame = {
+	    value: 0
+	};
+	const boolean = {
+	    value: false
+	};
+	const string = {
+	    value: ""
+	};
+	const effects = {};
+	const object = {};
+	var dataTypesJson = {
+	    rgb: rgb,
+	    rgba: rgba,
+	    number: number,
+	    mode: mode,
+	    direction4: direction4,
+	    direction8: direction8,
+	    scaler: scaler,
+	    merger: merger,
+	    font: font,
+	    frame: frame,
+	    boolean: boolean,
+	    string: string,
+	    effects: effects,
+	    object: object
+	};
+	const propertyTypes = new Map(Object.entries(dataTypesJson).map(entry => {
+	    const [key, value] = entry;
+	    const dataType = key;
+	    if (!DataTypes.includes(dataType))
+	        throw Errors.type + key;
+	    return [dataType, new Type({ ...value, id: dataType })];
+	}));
+	const Types = {
+	    propertyType: (type) => {
+	        const instance = propertyTypes.get(type);
+	        if (!instance)
+	            throw Errors.type + 'propertyType ' + type;
+	        return instance;
+	    }
+	};
+	class Property {
+	    constructor(object) {
+	        const { type, name, value, custom } = object;
+	        if (!(type && DataTypes.map(String).includes(type)))
+	            throw Errors.invalid.type;
+	        if (!name)
+	            throw Errors.invalid.name;
+	        this.type = Types.propertyType(type);
+	        this.name = name;
+	        this.value = typeof value === "undefined" ? this.type.value : value;
+	        this.custom = !!custom;
+	    }
+	    custom;
+	    name;
+	    toJSON() {
+	        return { value: this.value, type: this.type.id };
+	    }
+	    type;
+	    value;
 	}
 	class FilterChainClass {
 	    args;
@@ -27909,6 +27781,9 @@
 	    }
 	    time;
 	}
+	const sortByFrame = (a, b) => a.frame - b.frame;
+	const sortByLayer = (a, b) => a.layer - b.layer;
+	const sortByTrack = (a, b) => a.track - b.track;
 	class Action {
 	    constructor(object) {
 	        const { actions, mash, redoSelection, type, undoSelection } = object;
@@ -27969,6 +27844,139 @@
 	        this.redo();
 	    }
 	}
+	class TrackClass extends PropertiedClass {
+	    constructor(args) {
+	        super();
+	        const { clips, layer, trackType, dense, definitions } = args;
+	        if (layer)
+	            this.layer = layer;
+	        if (trackType)
+	            this.trackType = trackType;
+	        if (typeof dense === 'undefined') {
+	            this.dense = !this.layer && this.trackType === TrackType.Video;
+	        }
+	        else
+	            this.dense = !!dense;
+	        this.properties.push(new Property({ name: "dense", type: DataType.Boolean, value: false }));
+	        if (clips && definitions)
+	            this.clips.push(...clips.map(clip => {
+	                const { definitionId } = clip;
+	                if (!definitionId)
+	                    throw Errors.id + JSON.stringify(clip);
+	                let definition = definitions.find(definition => definition.id === definitionId);
+	                definition ||= Definitions.fromId(definitionId);
+	                if (!definition)
+	                    throw Errors.invalid.definition + definitionId;
+	                const clipWithTrack = { track: this.layer, ...clip };
+	                return definition.instanceFromObject(clipWithTrack);
+	            }));
+	    }
+	    addClip(clip, insertIndex = 0) {
+	        let clipIndex = insertIndex || 0;
+	        if (!this.dense)
+	            clipIndex = 0; // ordered by clip.frame values
+	        const origIndex = clipIndex; // note original, since it may decrease...
+	        // build array of my clips excluding the clips we're inserting
+	        const spliceClips = this.clips.filter((other, index) => {
+	            const moving = other === clip;
+	            // insert index should be decreased when clip is moving and comes before
+	            if (origIndex && moving && index < origIndex)
+	                clipIndex -= 1;
+	            return !moving;
+	        });
+	        // insert the clips we're adding at the correct index, then sort properly
+	        spliceClips.splice(clipIndex, 0, clip);
+	        this.sortClips(spliceClips);
+	        clip.track = this.layer;
+	        // remove all my current clips and replace with new ones in one step
+	        this.clips.splice(0, this.clips.length, ...spliceClips);
+	    }
+	    assureFrame(clips) {
+	        const clipsArray = clips || this.clips;
+	        let changed = false;
+	        let endFrame = 0;
+	        const ranges = [];
+	        const { dense } = this;
+	        clipsArray.forEach(clip => {
+	            const { frame } = clip;
+	            if (dense ? frame !== endFrame : ranges.some(range => range.includes(frame))) {
+	                changed = true;
+	                clip.frame = endFrame;
+	            }
+	            endFrame = clip.frame + clip.frames;
+	            if (!dense)
+	                ranges.push(clip.timeRange(1));
+	        });
+	        return changed;
+	    }
+	    assureFrames(quantize, clips) {
+	        const clipsArray = clips || this.clips;
+	        const clipsWithoutFrames = clipsArray.filter(clip => !isPositive(clip.frames));
+	        if (!clipsWithoutFrames.length)
+	            return false;
+	        clipsWithoutFrames.forEach(clip => { clip.frames = clip.definition.frames(quantize); });
+	        return true;
+	    }
+	    clips = [];
+	    dense = false;
+	    frameForClipNearFrame(clip, frame = 0) {
+	        if (this.dense)
+	            return frame;
+	        const others = this.clips.filter(other => clip !== other && other.endFrame > frame);
+	        if (!others.length)
+	            return frame;
+	        const startFrame = clip.frame;
+	        const endFrame = clip.endFrame;
+	        const frames = endFrame - startFrame;
+	        let lastFrame = frame;
+	        others.find(clip => {
+	            if (clip.frame >= lastFrame + frames)
+	                return true;
+	            lastFrame = clip.endFrame;
+	        });
+	        return lastFrame;
+	    }
+	    get frames() {
+	        if (!this.clips.length)
+	            return 0;
+	        const clip = this.clips[this.clips.length - 1];
+	        const { frame, frames } = clip;
+	        if (frames < 1)
+	            return -1;
+	        return frame + frames;
+	    }
+	    layer = 0;
+	    removeClip(clip) {
+	        const spliceClips = this.clips.filter(other => clip !== other);
+	        if (spliceClips.length === this.clips.length) {
+	            // console.trace("removeClip", this.trackType, this.layer, this.clips)
+	            throw Errors.internal + 'removeClip';
+	        }
+	        clip.track = -1;
+	        this.sortClips(spliceClips);
+	        this.clips.splice(0, this.clips.length, ...spliceClips);
+	    }
+	    sortClips(clips) {
+	        const sortClips = clips || this.clips;
+	        const changed = this.assureFrame(sortClips);
+	        sortClips.sort(sortByFrame);
+	        return changed;
+	    }
+	    toJSON() {
+	        return {
+	            dense: this.dense,
+	            trackType: this.trackType,
+	            layer: this.layer,
+	            clips: this.clips,
+	        };
+	    }
+	    trackType = TrackType.Video;
+	}
+	const trackInstance = (object) => new TrackClass(object);
+	/**
+	 * @category Factory
+	 */
+	const TrackFactory = { instance: trackInstance };
 	class MashClass {
 	    constructor(args) {
 	        const { createdAt, tracks, backcolor, id, label, quantize, frame, definitions, ...rest } = args;
@@ -27998,7 +28006,7 @@
 	                if (typeof track.dense === 'undefined') {
 	                    trackArgs.dense = videoTrackCount === 1;
 	                }
-	                const instance = Factory.track.instance(trackArgs);
+	                const instance = TrackFactory.instance(trackArgs);
 	                instance.assureFrames(this.quantize);
 	                instance.sortClips();
 	                this.tracks.push(instance);
@@ -28024,7 +28032,7 @@
 	    }
 	    addTrack(trackType) {
 	        const options = { trackType: trackType, layer: this.trackCount(trackType) };
-	        const track = Factory.track.instance(options);
+	        const track = TrackFactory.instance(options);
 	        // console.log(this.constructor.name, "addTrack", track)
 	        this.tracks.push(track);
 	        this.tracks.sort(sortByLayer);
@@ -28033,7 +28041,7 @@
 	    }
 	    assureTrackOfType(trackType) {
 	        if (!this.trackCount(trackType)) {
-	            this.tracks.push(Factory.track.instance({ trackType: trackType }));
+	            this.tracks.push(TrackFactory.instance({ trackType: trackType }));
 	        }
 	    }
 	    _backcolor = Default.mash.backcolor;
@@ -28061,7 +28069,7 @@
 	        if (this._bufferTimer)
 	            return;
 	        this._bufferTimer = setInterval(() => {
-	            this.loadPromise;
+	            this.loadPromiseUnlessBuffered;
 	            this.compositeAudibleClips(this.clipsAudibleInTimeRange(this.timeToBuffer));
 	        }, Math.round((this.buffer * 1000) / 2));
 	    }
@@ -28303,7 +28311,7 @@
 	        if (!streamableClips.length)
 	            return;
 	        const filterGraphArgs = this.filterGraphsOptions({ time });
-	        const files = this.unloadedGraphFiles(filterGraphArgs);
+	        const files = this.graphFilesUnloaded(filterGraphArgs);
 	        const loading = files.length;
 	        if (loading)
 	            return;
@@ -28357,6 +28365,7 @@
 	    filterGraphs(args) {
 	        // console.log(this.constructor.name, "filterGraphs", args)
 	        const times = this.timeRanges(args);
+	        // console.log(this.constructor.name, "filterGraphs", ...times)
 	        const filterGraphsArgs = {
 	            preloading: false,
 	            graphType: GraphType.Canvas,
@@ -28365,6 +28374,24 @@
 	            mash: this,
 	        };
 	        return new FilterGraphsClass(filterGraphsArgs);
+	    }
+	    filterGraphsOptions(args) {
+	        const { time, avType, graphType, size, videoRate, ...rest } = args;
+	        const definedTime = time || this.time;
+	        const definedAVType = avType || (definedTime.isRange ? AVType.Both : AVType.Video);
+	        const defindedGraphType = graphType || GraphType.Canvas;
+	        const definedSize = size || this.imageSize;
+	        const definedRate = videoRate || definedTime.fps;
+	        // console.log(this.constructor.name, "filterGraphsOptions", avType, "->", definedAVType)
+	        const filterGraphsOptions = {
+	            ...rest,
+	            time: definedTime,
+	            avType: definedAVType,
+	            graphType: defindedGraphType,
+	            size: definedSize,
+	            videoRate: definedRate,
+	        };
+	        return filterGraphsOptions;
 	    }
 	    filterIntersecting(clips, time) {
 	        const scaled = time.scale(this.quantize);
@@ -28398,6 +28425,13 @@
 	        // console.log(this.constructor.name, "graphFiles", graphFiles.length, overridden)
 	        return graphFiles;
 	    }
+	    graphFilesUnloaded(options) {
+	        const graphFiles = this.graphFiles(options);
+	        if (!graphFiles.length)
+	            return [];
+	        const { preloader } = this;
+	        return graphFiles.filter(file => !preloader.loadedFile(file));
+	    }
 	    handleAction(action) {
 	        this.emitter?.emit(EventType.Action);
 	        if (action instanceof ChangeAction) {
@@ -28425,7 +28459,7 @@
 	        if (!(isAboveZero(width) && isAboveZero(height)))
 	            throw Errors.invalid.size;
 	        this.composition.visibleContext.size = value;
-	        const promise = this.loadPromise;
+	        const promise = this.loadPromiseUnlessBuffered;
 	        if (promise)
 	            promise.then(() => { this.draw(); });
 	        else
@@ -28434,6 +28468,25 @@
 	    _id = '';
 	    get id() { return this._id ||= idGenerate(); }
 	    label = '';
+	    loadPromise(args = {}) {
+	        const { time, ...rest } = args;
+	        const preloadTime = time || this.timeToBuffer;
+	        const object = { ...rest, time: preloadTime };
+	        const filterGraphsOptions = this.filterGraphsOptions(object);
+	        const files = this.graphFilesUnloaded(filterGraphsOptions);
+	        if (!files.length)
+	            return Promise.resolve();
+	        return this.preloader.loadFilesPromise(files).then(EmptyMethod);
+	    }
+	    get loadPromiseUnlessBuffered() {
+	        const args = { time: this.timeToBuffer };
+	        const filterGraphsOptions = this.filterGraphsOptions(args);
+	        const files = this.graphFilesUnloaded(filterGraphsOptions);
+	        if (!files.length)
+	            return;
+	        // console.log(this.constructor.name, "loadPromiseUnlessBuffered files:", ...files)
+	        return this.preloader.loadFilesPromise(files).then(EmptyMethod);
+	    }
 	    loop = false;
 	    _paused = true;
 	    get paused() { return this._paused; }
@@ -28455,7 +28508,7 @@
 	        else {
 	            this.composition.startContext();
 	            this.bufferStart();
-	            const promise = this.loadPromise;
+	            const promise = this.loadPromiseUnlessBuffered;
 	            if (promise)
 	                promise.then(() => { this.playing = true; });
 	            else
@@ -28492,49 +28545,6 @@
 	        return this._preloader;
 	    }
 	    set preloader(value) { this._preloader = value; }
-	    filterGraphsOptions(args) {
-	        const { time, avType, graphType, size, videoRate, ...rest } = args;
-	        const definedTime = time || this.time;
-	        const definedAVType = avType || (definedTime.isRange ? AVType.Both : AVType.Video);
-	        const defindedGraphType = graphType || GraphType.Canvas;
-	        const definedSize = size || this.imageSize;
-	        const definedRate = videoRate || definedTime.fps;
-	        // console.log(this.constructor.name, "filterGraphsOptions", avType, "->", definedAVType)
-	        const filterGraphsOptions = {
-	            ...rest,
-	            time: definedTime,
-	            avType: definedAVType,
-	            graphType: defindedGraphType,
-	            size: definedSize,
-	            videoRate: definedRate,
-	        };
-	        return filterGraphsOptions;
-	    }
-	    unloadedGraphFiles(options) {
-	        const graphFiles = this.graphFiles(options);
-	        if (!graphFiles.length)
-	            return [];
-	        const { preloader } = this;
-	        return graphFiles.filter(file => !preloader.loadedFile(file));
-	    }
-	    get loadPromise() {
-	        const args = { time: this.timeToBuffer };
-	        const files = this.unloadedGraphFiles(this.filterGraphsOptions(args));
-	        if (!files.length)
-	            return;
-	        return this.preloader.loadFilesPromise(files).then(EmptyMethod);
-	    }
-	    preloadPromise(args = {}) {
-	        const { time, ...rest } = args;
-	        const preloadTime = time || this.timeToBuffer;
-	        const object = { ...rest, time: preloadTime };
-	        const filterGraphsOptions = this.filterGraphsOptions(object);
-	        // console.log(this.constructor.name, "preloadPromise", object, filterGraphsOptions)
-	        const files = this.unloadedGraphFiles(filterGraphsOptions);
-	        if (!files.length)
-	            return Promise.resolve();
-	        return this.preloader.loadFilesPromise(files).then(EmptyMethod);
-	    }
 	    removeClipFromTrack(clip) {
 	        const track = this.clipTrack(clip);
 	        this.emitIfFramesChange(() => { track.removeClip(clip); });
@@ -28563,7 +28573,6 @@
 	    quantize = Default.mash.quantize;
 	    seekTime;
 	    seekToTime(time) {
-	        // console.debug(this.constructor.name, "seekToTime", time)
 	        if (this.seekTime !== time) {
 	            this.seekTime = time;
 	            this.emitter?.emit(EventType.Seeking);
@@ -28589,7 +28598,7 @@
 	        const { time, paused, playing } = this;
 	        if (playing)
 	            this.playing = false;
-	        const promise = this.loadPromise;
+	        const promise = this.loadPromiseUnlessBuffered;
 	        if (promise)
 	            return promise.then(() => { this.restartAfterStop(time, paused, seeking); });
 	        this.restartAfterStop(time, paused, seeking);
@@ -28674,7 +28683,7 @@
 	 */
 	const MashFactory = {
 	    instance: (object = {}, definitionObjects = [], preloader) => {
-	        const definitions = definitionObjects.map(definition => Factory.definitionFromObject(definition));
+	        const definitions = definitionObjects.map(definition => DefinitionBase.fromObject(definition));
 	        const mashArgs = { ...object, definitions };
 	        const instance = new MashClass(mashArgs);
 	        if (preloader)
@@ -29210,7 +29219,6 @@
 	                video.ondurationchange = null;
 	                video.width = video.videoWidth;
 	                video.height = video.videoHeight;
-	                // console.debug(this.constructor.name, "videoPromiseFromUrl", 'ondurationchange', video.width, video.height)
 	                resolve(video);
 	            };
 	            video.onerror = reject;
@@ -29597,7 +29605,7 @@
 	        // console.log(this.constructor.name, "imageSize", size)
 	    }
 	    loadMashAndDraw() {
-	        return this.mash.preloadPromise().then(() => { this.mash.draw(); });
+	        return this.mash.loadPromise().then(() => { this.mash.draw(); });
 	    }
 	    _loop = Default.masher.loop;
 	    get loop() { return this._loop; }
@@ -29875,6 +29883,35 @@
 	    object.buffer ||= Default.masher.buffer;
 	    const instance = new MashEditorClass(object);
 	    return instance;
+	};
+	const fetchCallback = (apiCallback) => {
+	    const { endpoint, request } = apiCallback;
+	    const init = request || {};
+	    const typeKey = 'Content-Type';
+	    const jsonType = 'application/json';
+	    const formType = 'multipart/form-data';
+	    init.method ||= 'POST';
+	    init.headers ||= {};
+	    init.headers[typeKey] ||= jsonType;
+	    switch (init.headers[typeKey]) {
+	        case jsonType: {
+	            init.body = JSON.stringify(init.body);
+	            break;
+	        }
+	        case formType: {
+	            const formData = new FormData();
+	            Object.entries(init.body).forEach(([key, value]) => {
+	                if (typeof value === 'undefined')
+	                    return;
+	                formData.set(key, value instanceof Blob ? value : String(value));
+	            });
+	            init.body = formData;
+	            delete init.headers[typeKey];
+	            break;
+	        }
+	    }
+	    const url = urlForEndpoint(endpoint);
+	    return fetch(url, init).then(response => response.json());
 	};
 	const AudibleGainDelimiter = ',';
 	function AudibleMixin(Base) {
@@ -30167,7 +30204,6 @@
 	            const cached = preloader.getFile(graphFile);
 	            if (!cached)
 	                return;
-	            // console.debug(this.constructor.name, "audibleSource", cached.constructor.name)
 	            return AudibleContextInstance.createBufferSource(cached);
 	        }
 	        loadType = LoadType.Audio;
@@ -30402,7 +30438,6 @@
 	        return array;
 	    }
 	}
-	// ffmpeg -y -loop 1 -i /Users/doug/GitHub/moviemasher.js/workspaces/example-express-react/dist/public/media/doug/8100308d-b9f7-4f3c-aa6d-9bbba94cb251/original.jpg -loop 1 -i /Users/doug/GitHub/moviemasher.js/workspaces/example-express-react/dist/public/media/doug/b148dd4a-c611-4d12-9347-272ef22bf631/original.png -filter_complex 'color=rate=30:color=#00000000:size=1920x1080:duration=2[COLORBACK];[0:v]setpts=expr=PTS-STARTPTS[SETPTS0];[SETPTS0]scale=width=1*in_w*max(1920/in_w\,1080/in_h):height=1*in_h*max(1920/in_w\,1080/in_h)[SCALE0];[SCALE0]setsar[SETSAR0];[SETSAR0]drawtext=fontcolor=#ff0000@0xff:fontsize=324:shadowcolor=#00000000:shadowx=28.799999999999997:shadowy=16.2:textfile=/Users/doug/GitHub/moviemasher.js/temporary/cache/89b443c0521ebde32c547e9519c84316/cached.txt:fontfile=/Users/doug/GitHub/moviemasher.js/workspaces/example-express-react/dist/public/media/shared/font/lobster/lobster.ttf[DRAWTEXT0];[DRAWTEXT0]convolution=0m=-2 -1 0 -1 1 1 0 1 2:1m=-2 -1 0 -1 1 1 0 1 2:2m=-2 -1 0 -1 1 1 0 1 2:3m=-2 -1 0 -1 1 1 0 1 2:0bias=0:1bias=0:2bias=0:3bias=0:0rdiv=1:1rdiv=1:2rdiv=1:3rdiv=1[CONVOLUTION0];[COLORBACK][CONVOLUTION0]overlay=x=0.5*(1920-overlay_w):y=0.5*(1080-overlay_h)[OVERLAY0];[1:v]setpts=expr=PTS-STARTPTS[SETPTS0];[SETPTS0]scale=width=1*in_w*max(1920/in_w\,1080/in_h):height=1*in_h*max(1920/in_w\,1080/in_h)[SCALE0];[SCALE0]setsar[SETSAR0];[SETSAR0]chromakey=color=#00ff00:blend=0.01:similarity=0.5[CHROMAKEY0];[OVERLAY0][CHROMAKEY0]overlay=x=0.5*(1920-overlay_w):y=0.5*(1080-overlay_h)' -acodec aac -b:a 160k -ac 2 -ar 44100 -vcodec libx264 -r 30 -f mp4 -g 60 -level 41 -movflags faststart -t 2 -an -qp 0 /Users/doug/GitHub/moviemasher.js/workspaces/example-express-react/dist/public/media/doug/392d5b05-4cf9-4203-94e0-397ded9be7bf/87816fa6-12ff-4aa3-b6f4-8ae0aed8b964/video.concat/concat-0.mpg
 	/**
 	 * @category Filter
 	 */
@@ -33190,7 +33225,7 @@
 	            time: timeRange, avType, graphType, size: this.outputSize, videoRate
 	        };
 	        // console.log(this.constructor.name, "preloadPromise", args)
-	        return this.args.mash.preloadPromise(args);
+	        return this.args.mash.loadPromise(args);
 	    }
 	    get renderingClips() {
 	        return this.args.mash.clipsInTimeOfType(this.timeRange, this.avType);
@@ -40698,9 +40733,12 @@
 	var SplitCellsHorizontalIcon$1 = React__default['default'].memo ? React__default['default'].memo(SplitCellsHorizontalIcon) : SplitCellsHorizontalIcon;
 	var SplitCellsHorizontalIcon_1 = SplitCellsHorizontalIcon$1;
 
-	function ConstEmptyElementFunction(props) { return null; }
-	const EmptyElement = React$s.createElement(ConstEmptyElementFunction, null);
-	const DragSuffix = '/x-moviemasher';
+	const ApiContextDefault = {
+	    enabled: [],
+	    servers: {},
+	    endpointPromise: () => Promise.resolve({})
+	};
+	const ApiContext = React$s.createContext(ApiContextDefault);
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation.
 
@@ -40728,66 +40766,6 @@
 	    return t;
 	}
 	const View = React$s.forwardRef((props, ref) => React$s.createElement("div", Object.assign({ ref: ref }, props)));
-	function Bar(props) {
-	    const { before, content, after } = props, rest = __rest(props, ["before", "content", "after"]);
-	    if (!(before || content || after))
-	        return null;
-	    const children = [before, content, after].filter(Boolean);
-	    const viewProps = Object.assign(Object.assign({}, rest), { children });
-	    return React$s.createElement(View, Object.assign({}, viewProps));
-	}
-	function Button(props) {
-	    const { startIcon, endIcon, children } = props, rest = __rest(props, ["startIcon", "endIcon", "children"]);
-	    const kids = [];
-	    if (children) {
-	        if (typeof children === 'string' || typeof children === 'number') {
-	            if (startIcon)
-	                kids.push(React$s.cloneElement(startIcon, { key: 'start' }));
-	            kids.push(children);
-	            if (endIcon)
-	                kids.push(React$s.cloneElement(endIcon, { key: 'end' }));
-	        }
-	        else
-	            kids.push(React$s.cloneElement(children, { key: 'child' }));
-	    }
-	    return React$s.createElement("button", Object.assign({ children: kids }, rest));
-	}
-	const CanvasView = React$s.forwardRef((props, ref) => React$s.createElement("canvas", Object.assign({}, props, { ref: ref })));
-	const propsStringArray = (string, array, properties) => {
-	    if (string)
-	        return [string];
-	    if (!array)
-	        return properties ? properties.map(property => property.name) : [];
-	    if (typeof array === 'string')
-	        return array.split(',').map(string => string.trim());
-	    return array;
-	};
-	const propsDefinitionTypes = (type, types, id) => {
-	    const strings = propsStringArray(type, types);
-	    if (id && !strings.length)
-	        strings.push(id);
-	    const definitionTypes = DefinitionTypes.map(String);
-	    const validStrings = strings.filter(string => definitionTypes.includes(string));
-	    // console.debug("propsDefinitionTypes", validStrings)
-	    return validStrings.map(string => string);
-	};
-	function Slider(props) {
-	    const { className, onChange } = props;
-	    const options = Object.assign({}, props);
-	    const classes = ['slider'];
-	    if (className)
-	        classes.push(className);
-	    options.className = classes.join(' ');
-	    if (onChange) {
-	        const handleChange = (event) => {
-	            onChange(event, event.currentTarget.valueAsNumber);
-	        };
-	        options.onChange = handleChange;
-	    }
-	    const input = React$s.createElement("input", Object.assign({ type: 'range' }, options));
-	    return input;
-	}
-	React$s.forwardRef((props, ref) => React$s.createElement("video", Object.assign({}, props, { ref: ref })));
 	const BrowserContextDefault = {
 	    definitions: [],
 	    definitionId: '',
@@ -40797,59 +40775,28 @@
 	    sourceId: '',
 	};
 	const BrowserContext = React$s.createContext(BrowserContextDefault);
-	const ApiContextDefault = {
-	    enabled: [],
-	    servers: {},
-	    endpointPromise: () => Promise.resolve({})
-	};
-	const ApiContext = React$s.createContext(ApiContextDefault);
-	const InspectorContextDefault = {
-	    definitionType: '',
-	    trackType: '',
-	    actionCount: 0,
-	};
-	const InspectorContext = React$s.createContext(InspectorContextDefault);
-	const PlayerContextDefault = {
-	    paused: false,
-	    setPaused: () => { },
-	    setVolume: () => { },
-	    volume: 0,
-	};
-	const PlayerContext = React$s.createContext(PlayerContextDefault);
-	const ProcessContextDefault = {
-	    error: '',
-	    processing: false,
-	    progress: 0,
-	    setError: () => { },
-	    setProcessing: () => { },
-	    setProgress: () => { },
-	    setStatus: () => { },
-	    status: '',
-	};
-	React$s.createContext(ProcessContextDefault);
-	const TimelineContextDefault = {
-	    height: 0,
-	    setHeight: () => { },
-	    setWidth: () => { },
-	    setZoom: () => { },
-	    width: 0,
-	    zoom: 0,
-	};
-	const TimelineContext = React$s.createContext(TimelineContextDefault);
-	const TrackContextDefault = {
-	    trackType: TrackType.Video,
-	    layer: 0,
-	};
-	const TrackContext = React$s.createContext(TrackContextDefault);
-	TrackContext.Provider;
-	const WebrtcContextDefault = {
-	    setClient: () => { }
-	};
-	React$s.createContext(WebrtcContextDefault);
-	const InputContextDefault = {
-	    value: '', changeHandler: () => { },
-	};
-	const InputContext = React$s.createContext(InputContextDefault);
+	/**
+	 * @parents Masher
+	 * @children BrowserContent
+	 */
+	function Browser(props) {
+	    const { sourceId: initialSourceId } = props, rest = __rest(props, ["sourceId"]);
+	    const [definitions, setDefinitions] = React$s.useState(undefined);
+	    const [definitionId, setDefinitionId] = React$s.useState('');
+	    const [sourceId, setSourceId] = React$s.useState(initialSourceId || 'theme');
+	    const browserContext = {
+	        definitions,
+	        definitionId,
+	        setDefinitions,
+	        setDefinitionId,
+	        setSourceId,
+	        sourceId,
+	    };
+	    return (React$s.createElement(BrowserContext.Provider, { value: browserContext }, React$s.createElement(View, Object.assign({}, rest))));
+	}
+	function ConstEmptyElementFunction(props) { return null; }
+	const EmptyElement = React$s.createElement(ConstEmptyElementFunction, null);
+	const DragSuffix = '/x-moviemasher';
 	const CasterContextDefault = {};
 	const CasterContext = React$s.createContext(CasterContextDefault);
 	const MasherContextDefault = {};
@@ -40891,6 +40838,15 @@
 	    React$s.useEffect(() => addListeners(), []);
 	};
 	const useMashEditor = () => React$s.useContext(MasherContext).mashEditor;
+	const TimelineContextDefault = {
+	    height: 0,
+	    setHeight: () => { },
+	    setWidth: () => { },
+	    setZoom: () => { },
+	    width: 0,
+	    zoom: 0,
+	};
+	const TimelineContext = React$s.createContext(TimelineContextDefault);
 	const useMashScale = () => {
 	    const timelineContext = React$s.useContext(TimelineContext);
 	    const masher = useMashEditor();
@@ -40903,31 +40859,18 @@
 	        return 0;
 	    return pixelPerFrame(frames, width, zoom);
 	};
+	const InspectorContextDefault = {
+	    definitionType: '',
+	    trackType: '',
+	    actionCount: 0,
+	};
+	const InspectorContext = React$s.createContext(InspectorContextDefault);
 	const useSelected = (propertied) => {
 	    if (propertied)
 	        return propertied;
 	    const inspectorContext = React$s.useContext(InspectorContext);
 	    return inspectorContext.clip;
 	};
-	/**
-	 * @parents Masher
-	 * @children BrowserContent
-	 */
-	function Browser(props) {
-	    const { sourceId: initialSourceId } = props, rest = __rest(props, ["sourceId"]);
-	    const [definitions, setDefinitions] = React$s.useState(undefined);
-	    const [definitionId, setDefinitionId] = React$s.useState('');
-	    const [sourceId, setSourceId] = React$s.useState(initialSourceId || 'theme');
-	    const browserContext = {
-	        definitions,
-	        definitionId,
-	        setDefinitions,
-	        setDefinitionId,
-	        setSourceId,
-	        sourceId,
-	    };
-	    return (React$s.createElement(BrowserContext.Provider, { value: browserContext }, React$s.createElement(View, Object.assign({}, rest))));
-	}
 	/**
 	 * @parents BrowserContent
 	 */
@@ -41004,6 +40947,23 @@
 	    const viewProps = { className, children: viewChildren };
 	    return React$s.createElement(View, Object.assign({}, viewProps));
 	}
+	const propsStringArray = (string, array, properties) => {
+	    if (string)
+	        return [string];
+	    if (!array)
+	        return properties ? properties.map(property => property.name) : [];
+	    if (typeof array === 'string')
+	        return array.split(',').map(string => string.trim());
+	    return array;
+	};
+	const propsDefinitionTypes = (type, types, id) => {
+	    const strings = propsStringArray(type, types);
+	    if (id && !strings.length)
+	        strings.push(id);
+	    const definitionTypes = DefinitionTypes.map(String);
+	    const validStrings = strings.filter(string => definitionTypes.includes(string));
+	    return validStrings.map(string => string);
+	};
 	/**
 	 * @parents Browser
 	 */
@@ -41040,6 +41000,213 @@
 	    }, []);
 	    const viewProps = Object.assign(Object.assign({}, rest), { onClick, className: classes.join(' ') });
 	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	/**
+	 * @parents Browser
+	 */
+	function BrowserDataSource(props) {
+	    const browserContext = React$s.useContext(BrowserContext);
+	    const apiContext = React$s.useContext(ApiContext);
+	    const [requested, setRequested] = React$s.useState(false);
+	    const { enabled, endpointPromise } = apiContext;
+	    const { type, types, className, id } = props, rest = __rest(props, ["type", "types", "className", "id"]);
+	    const { sourceId, setDefinitions, setSourceId, setDefinitionId } = browserContext;
+	    const classes = [];
+	    if (className)
+	        classes.push(className);
+	    if (sourceId === id) {
+	        // TODO: get from props or context
+	        classes.push('selected');
+	    }
+	    const onClick = () => {
+	        if (requested)
+	            return;
+	        if (sourceId !== id)
+	            setSourceId(id);
+	        setDefinitionId('');
+	        setDefinitions(undefined);
+	        setRequested(true);
+	        // console.debug("BrowserDataSource onClick")
+	        const definitionTypes = propsDefinitionTypes(type, types, id);
+	        const request = { types: definitionTypes };
+	        // console.debug("DataDefinitionRetrieveRequest", Endpoints.data.definition.retrieve, request)
+	        endpointPromise(Endpoints.data.definition.retrieve, request).then((response) => {
+	            // console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
+	            const { definitions } = response;
+	            setDefinitions(definitions.map(definition => DefinitionBase.fromObject(definition)));
+	            setRequested(false);
+	        });
+	    };
+	    React$s.useEffect(() => {
+	        // console.log("BrowserDataSource useEffect", enabled.includes(ServerType.Data), sourceId, id)
+	        if (enabled.includes(ServerType.Data) && sourceId === id)
+	            onClick();
+	    }, [enabled]);
+	    const viewProps = Object.assign(Object.assign({}, rest), { onClick, className: classes.join(' ') });
+	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	const ProcessContextDefault = {
+	    error: '',
+	    processing: false,
+	    progress: 0,
+	    setError: () => { },
+	    setProcessing: () => { },
+	    setProgress: () => { },
+	    setStatus: () => { },
+	    status: '',
+	};
+	const ProcessContext = React$s.createContext(ProcessContextDefault);
+	const UploadControlId = 'upload-control-id';
+	function UploadControl(props) {
+	    var _a;
+	    const fileInput = React$s.useRef(null);
+	    const apiContext = React$s.useContext(ApiContext);
+	    const processContext = React$s.useContext(ProcessContext);
+	    React$s.useContext(BrowserContext);
+	    const { endpointPromise, servers, enabled } = apiContext;
+	    const required = [ServerType.File, ServerType.Data, ServerType.Rendering];
+	    if (!required.every(serverType => enabled.includes(serverType)))
+	        return null;
+	    const { children } = props, rest = __rest(props, ["children"]);
+	    const { processing, setProcessing } = processContext;
+	    const handleApiCallback = (apiCallback) => {
+	        if (!apiCallback) {
+	            // TODO: somehow refresh browser view...
+	            // const { sourceId, setSourceId } = browserContext
+	            // if (sourceId === )
+	            // setDefinitions(undefined)
+	            setProcessing(false);
+	            return;
+	        }
+	        setTimeout(() => {
+	            // console.debug("handleApiCallback request", apiCallback)
+	            fetchCallback(apiCallback).then((response) => {
+	                const { apiCallback } = response;
+	                // console.debug("handleApiCallback request", response)
+	                handleApiCallback(apiCallback);
+	            });
+	        }, 2000);
+	    };
+	    const handleError = (endpoint, error) => {
+	        setProcessing(false);
+	        console.error(endpoint, error);
+	    };
+	    const startProcessing = (file) => {
+	        if (processing)
+	            return;
+	        const { type, name, size } = file;
+	        // console.log("startProcessing", file)
+	        setProcessing(true);
+	        const request = { type, name, size };
+	        // console.debug("RenderingUploadRequest", Endpoints.rendering.upload, request)
+	        endpointPromise(Endpoints.rendering.upload, request).then((response) => {
+	            // console.debug("RenderingUploadResponse", Endpoints.rendering.upload, response)
+	            const { error, fileApiCallback, apiCallback, fileProperty } = response;
+	            if (error)
+	                return handleError(Endpoints.rendering.upload, error);
+	            if (fileApiCallback && fileApiCallback.request) {
+	                if (fileProperty) {
+	                    // console.debug(`SETTING body.${fileProperty}`)
+	                    fileApiCallback.request.body[fileProperty] = file;
+	                }
+	                else {
+	                    // console.debug("SETTING BODY")
+	                    fileApiCallback.request.body = file;
+	                }
+	                // console.debug("FileStoreRequest", fileApiCallback)
+	                fetchCallback(fileApiCallback).then((response) => {
+	                    // console.debug("FileStoreResponse", response)
+	                    const { error } = response;
+	                    if (error)
+	                        return handleError(fileApiCallback.endpoint.prefix, error);
+	                    handleApiCallback(apiCallback);
+	                });
+	            }
+	            else
+	                handleApiCallback(apiCallback);
+	        });
+	    };
+	    const onChange = (event) => {
+	        const { files } = event.currentTarget;
+	        if (!(files && files.length))
+	            return;
+	        startProcessing(files[0]);
+	    };
+	    const inputProps = Object.assign({ accept: String((_a = servers.file) === null || _a === void 0 ? void 0 : _a.accept), id: UploadControlId, onChange, type: 'file', key: 'upload-input', ref: fileInput, disabled: processing }, rest);
+	    const input = React$s.createElement("input", Object.assign({}, inputProps));
+	    if (!React$s.isValidElement(children))
+	        return input;
+	    const kids = [React$s.Children.only(children), input];
+	    const labelProps = {
+	        children: kids,
+	        key: 'label',
+	        htmlFor: UploadControlId
+	    };
+	    return React$s.createElement("label", Object.assign({}, labelProps));
+	}
+	//   function readVideo(event) {
+	//   if (event.target.files && event.target.files[0]) {
+	//     var reader = new FileReader();
+	//     reader.onload = function(e) {
+	//       videoSrc.src = e.target.result
+	//       videoTag.load()
+	//     }.bind(this)
+	//     reader.readAsDataURL(event.target.files[0]);
+	//   }
+	// }
+	function SaveControl(props) {
+	    const apiContext = React$s.useContext(ApiContext);
+	    const processContext = React$s.useContext(ProcessContext);
+	    const { processing, setProcessing } = processContext;
+	    const [disabled, setDisabled] = React$s.useState(true);
+	    const masher = useMashEditor();
+	    useListeners({
+	        [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Save)); }
+	    });
+	    const { children } = props, rest = __rest(props, ["children"]);
+	    const { endpointPromise } = apiContext;
+	    const onClick = () => {
+	        if (processing || disabled)
+	            return;
+	        setProcessing(true);
+	        const { mash } = masher;
+	        const request = {
+	            mash: mash.toJSON(),
+	            definitionIds: mash.definitions.map(definition => definition.id)
+	        };
+	        // console.debug("DataMashPutRequest", Endpoints.data.mash.put, request)
+	        endpointPromise(Endpoints.data.mash.put, request).then((response) => {
+	            // console.debug("DataMashPutResponse", Endpoints.data.mash.put, response)
+	            setProcessing(false);
+	        });
+	    };
+	    const buttonOptions = Object.assign(Object.assign({}, rest), { onClick, disabled: processing || disabled });
+	    return React$s.cloneElement(React$s.Children.only(children), buttonOptions);
+	}
+	function RenderControl(props) {
+	    const processContext = React$s.useContext(ProcessContext);
+	    const apiContext = React$s.useContext(ApiContext);
+	    const { children } = props, rest = __rest(props, ["children"]);
+	    const { processing, setProcessing } = processContext;
+	    const { endpointPromise } = apiContext;
+	    const masher = useMashEditor();
+	    const onClick = () => {
+	        if (processing)
+	            return;
+	        setProcessing(true);
+	        const request = {
+	            mash: masher.mash.toJSON(),
+	            definitions: masher.mash.definitions.map(definition => definition.toJSON()),
+	            input: { type: 'mash', mash: masher.mash },
+	            outputs: [{ outputType: OutputType.Video }],
+	        };
+	        // console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
+	        endpointPromise(Endpoints.rendering.start, request).then((response) => {
+	            setProcessing(false);
+	        });
+	    };
+	    const buttonOptions = Object.assign(Object.assign({}, rest), { onClick, disabled: processing });
+	    return React$s.cloneElement(React$s.Children.only(children), buttonOptions);
 	}
 	({
 	    browserAudio: React$s.createElement(default_1$1, null),
@@ -41092,6 +41259,10 @@
 	    [DataType.Direction8]: EmptyElement,
 	    [DataType.Object]: EmptyElement,
 	};
+	const InputContextDefault = {
+	    value: '', changeHandler: () => { },
+	};
+	const InputContext = React$s.createContext(InputContextDefault);
 	function DefaultDirection4Input(props) {
 	    const inputContext = React$s.useContext(InputContext);
 	    const { changeHandler, property, value } = inputContext;
@@ -41319,6 +41490,48 @@
 	    return React$s.createElement("input", Object.assign({}, inputProps));
 	}
 	DataTypeInputs[DataType.Number] = React$s.createElement(DefaultNumericInput, null);
+	function Bar(props) {
+	    const { before, content, after } = props, rest = __rest(props, ["before", "content", "after"]);
+	    if (!(before || content || after))
+	        return null;
+	    const children = [before, content, after].filter(Boolean);
+	    const viewProps = Object.assign(Object.assign({}, rest), { children });
+	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	function Button(props) {
+	    const { startIcon, endIcon, children } = props, rest = __rest(props, ["startIcon", "endIcon", "children"]);
+	    const kids = [];
+	    if (children) {
+	        if (typeof children === 'string' || typeof children === 'number') {
+	            if (startIcon)
+	                kids.push(React$s.cloneElement(startIcon, { key: 'start' }));
+	            kids.push(children);
+	            if (endIcon)
+	                kids.push(React$s.cloneElement(endIcon, { key: 'end' }));
+	        }
+	        else
+	            kids.push(React$s.cloneElement(children, { key: 'child' }));
+	    }
+	    return React$s.createElement("button", Object.assign({ children: kids }, rest));
+	}
+	const CanvasView = React$s.forwardRef((props, ref) => React$s.createElement("canvas", Object.assign({}, props, { ref: ref })));
+	function Slider(props) {
+	    const { className, onChange } = props;
+	    const options = Object.assign({}, props);
+	    const classes = ['slider'];
+	    if (className)
+	        classes.push(className);
+	    options.className = classes.join(' ');
+	    if (onChange) {
+	        const handleChange = (event) => {
+	            onChange(event, event.currentTarget.valueAsNumber);
+	        };
+	        options.onChange = handleChange;
+	    }
+	    const input = React$s.createElement("input", Object.assign({ type: 'range' }, options));
+	    return input;
+	}
+	React$s.forwardRef((props, ref) => React$s.createElement("video", Object.assign({}, props, { ref: ref })));
 	/**
 	 * @parents DefaultEffectsInput
 	 */
@@ -41665,29 +41878,37 @@
 	    return React$s.createElement(React$s.Fragment, null, children);
 	}
 	/**
-	 * @parents Api, Caster
+	 * @parents ApiClient, Caster
 	 * @children Browser, Timeline, Inspector, Player
 	 * @returns provided children wrapped in a {@link View} and {@link MasherContext}
 	 */
 	function Masher(props) {
-	    const { mash } = props, rest = __rest(props, ["mash"]);
+	    const { mash, previewSize } = props, rest = __rest(props, ["mash", "previewSize"]);
+	    const viewRef = React$s.useRef(null);
 	    const apiContext = React$s.useContext(ApiContext);
 	    const [requested, setRequested] = React$s.useState(false);
 	    const { enabled, endpointPromise, servers } = apiContext;
 	    const [mashEditor] = React$s.useState(() => mashEditorInstance());
+	    const setPreviewSize = (size) => {
+	        const { current } = viewRef;
+	        if (!(size && current))
+	            return;
+	        const { width, height } = size;
+	        current.style.setProperty('--preview-width', `${width}px`);
+	        current.style.setProperty('--preview-height', `${height}px`);
+	    };
 	    React$s.useEffect(() => {
-	        if (mash)
-	            mashEditor.mash = mash;
-	        else if (!requested) {
+	        if (!requested) {
 	            if (!enabled.includes(ServerType.Data))
 	                return;
 	            setRequested(true);
 	            const request = {};
-	            console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request);
-	            endpointPromise(Endpoints.data.mash.default).then((response) => {
+	            // console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request)
+	            endpointPromise(Endpoints.data.mash.default, request).then((response) => {
 	                var _a;
-	                console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response);
-	                const { mash, definitions } = response;
+	                // console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
+	                const { mash, definitions, previewSize: serverSize } = response;
+	                setPreviewSize(serverSize);
 	                if ((_a = servers.file) === null || _a === void 0 ? void 0 : _a.prefix) {
 	                    // console.log("Masher servers.file.prefix", servers.file.prefix)
 	                    mashEditor.preloader.endpoint.prefix = String(servers.file.prefix);
@@ -41696,75 +41917,10 @@
 	            });
 	        }
 	    }, [enabled]);
+	    React$s.useEffect(() => { setPreviewSize(previewSize); }, [previewSize]);
 	    const context = { mashEditor };
-	    return (React$s.createElement(MasherContext.Provider, { value: context }, React$s.createElement(View, Object.assign({}, rest))));
-	}
-	function PlayerContent(props) {
-	    const editor = useEditor();
-	    const ref = React$s.useRef(null);
-	    const handleResize = () => {
-	        const { current } = ref;
-	        if (!current)
-	            return;
-	        const rect = current.getBoundingClientRect();
-	        current.width = rect.width;
-	        current.height = rect.height;
-	        editor.imageSize = rect;
-	    };
-	    const [resizeObserver] = React$s.useState(new ResizeObserver(handleResize));
-	    React$s.useEffect(() => {
-	        const { current } = ref;
-	        if (current)
-	            resizeObserver.observe(current);
-	        return () => { resizeObserver.disconnect(); };
-	    }, []);
-	    const handleDraw = () => {
-	        const { current } = ref;
-	        if (!current)
-	            return;
-	        const imageData = editor.imageData;
-	        const context = ContextFactory.fromCanvas(current);
-	        context.drawImageData(imageData);
-	    };
-	    const removeListeners = () => {
-	        const { eventTarget } = editor;
-	        eventTarget.removeEventListener(EventType.Draw, handleDraw);
-	    };
-	    const addListeners = () => {
-	        const { eventTarget } = editor;
-	        eventTarget.addEventListener(EventType.Draw, handleDraw);
-	        return () => { removeListeners(); };
-	    };
-	    React$s.useEffect(() => addListeners(), []);
-	    const rest = __rest(props, ["children", "selectClass"]);
-	    const canvasProps = Object.assign(Object.assign({}, rest), { key: 'canvas', ref });
-	    return React$s.createElement(CanvasView, Object.assign({}, canvasProps));
-	}
-	/**
-	 *
-	 * @parents Player
-	 */
-	function PlayerButton(props) {
-	    const playerContext = React$s.useContext(PlayerContext);
-	    const { paused, setPaused } = playerContext;
-	    const handleClick = () => { setPaused(!paused); };
-	    const viewProps = Object.assign(Object.assign({}, props), { key: 'player-button', onClick: handleClick });
-	    return React$s.createElement(View, Object.assign({}, viewProps));
-	}
-	function TimeSlider(props) {
-	    const masher = useMashEditor();
-	    useListeners({
-	        [EventType.Time]: () => { setFrame(masher.mash.frame); },
-	        [EventType.Duration]: () => { setFrames(masher.mash.frames); }
-	    });
-	    const [frames, setFrames] = React$s.useState(masher.mash.frames);
-	    const [frame, setFrame] = React$s.useState(masher.mash.frame);
-	    const onChange = (_event, value) => {
-	        const number = typeof value === "number" ? value : value[0];
-	        masher.time = timeFromArgs(number, masher.mash.quantize);
-	    };
-	    const sliderProps = Object.assign({ value: frame, min: 0, max: frames, step: 1, onChange, className: 'frame slider' }, props);
-	    return React$s.createElement(Slider, Object.assign({}, sliderProps));
+	    const viewProps = Object.assign(Object.assign({}, rest), { ref: viewRef });
+	    return (React$s.createElement(MasherContext.Provider, { value: context }, React$s.createElement(View, Object.assign({}, viewProps))));
 	}
 	/**
 	 * @parents Masher
@@ -41784,20 +41940,6 @@
 	    };
 	    const { children } = props, rest = __rest(props, ["children"]);
 	    return React$s.createElement(View, Object.assign({}, rest), React$s.createElement(TimelineContext.Provider, { value: timelineContext, children: children }));
-	}
-	/**
-	 * @parents Timeline
-	 */
-	function TimelineScrubberElement(props) {
-	    const masher = useMashEditor();
-	    const scale = useMashScale();
-	    useListeners({
-	        [EventType.Time]: () => { setFrame(masher.mash.frame); }
-	    });
-	    const [frame, setFrame] = React$s.useState(masher.mash.frame);
-	    const left = pixelFromFrame(frame, scale);
-	    const iconProps = Object.assign(Object.assign({}, props), { key: 'timeline-icon', style: { left } });
-	    return React$s.createElement(View, Object.assign({}, iconProps));
 	}
 	/**
 	 * @parents TimelineClips
@@ -41864,6 +42006,12 @@
 	        onDragStart, onClick: (event) => event.stopPropagation(), draggable: true, ref });
 	    return React$s.cloneElement(kid, clipProps);
 	}
+	const TrackContextDefault = {
+	    trackType: TrackType.Video,
+	    layer: 0,
+	};
+	const TrackContext = React$s.createContext(TrackContextDefault);
+	TrackContext.Provider;
 	/**
 	 * @parents TimelineContent
 	 */
@@ -41982,92 +42130,11 @@
 	}
 	/**
 	 * @parents Timeline
+	 * @children TimelineClips
 	 */
-	function TimelineSizer(props) {
-	    const ref = React$s.useRef(null);
-	    const timelineContext = React$s.useContext(TimelineContext);
-	    const handleResize = () => {
-	        const { current } = ref;
-	        if (!current)
-	            return;
-	        const rect = current.getBoundingClientRect();
-	        const { setWidth, setHeight } = timelineContext;
-	        setWidth(rect.width);
-	        setHeight(rect.height);
-	    };
-	    const [resizeObserver] = React$s.useState(new ResizeObserver(handleResize));
-	    React$s.useEffect(() => {
-	        const { current } = ref;
-	        if (current)
-	            resizeObserver.observe(current);
-	        return () => { resizeObserver.disconnect(); };
-	    }, []);
-	    const viewProps = Object.assign(Object.assign({}, props), { ref });
-	    return React$s.createElement(View, Object.assign({}, viewProps));
-	}
-	/**
-	 * @parents Timeline
-	 */
-	function TimelineZoomer(props) {
-	    const context = React$s.useContext(TimelineContext);
-	    const handleChange = (_event, value) => {
-	        const number = typeof value === "number" ? value : value[0];
-	        if (context.zoom !== number)
-	            context.setZoom(number);
-	    };
-	    const sliderProps = Object.assign({ key: 'time-slider', value: context.zoom, min: 0.0, max: 1.0, step: 0.01, onChange: handleChange }, props);
-	    return React$s.createElement(Slider, Object.assign({ className: 'zoom slider' }, sliderProps));
-	}
-	/**
-	 * @parents TimelineTracks
-	 */
-	function TimelineTrack(props) {
-	    const { layer, trackType, children } = props;
-	    const context = { layer, trackType };
-	    return React$s.createElement(TrackContext.Provider, { value: context, children: children });
-	}
-	/**
-	 * @parents TimelineContent
-	 */
-	function TimelineTracks(props) {
-	    const masher = useMashEditor();
-	    useListeners({
-	        [EventType.Track]: () => {
-	            setAudioTracks(masher.mash.trackCount(TrackType.Audio));
-	            setVideoTracks(masher.mash.trackCount(TrackType.Video));
-	            setTransitionTracks(masher.mash.trackCount(TrackType.Transition));
-	        },
-	        [EventType.Action]: () => { setActionCount(nonce => nonce + 1); },
-	    });
-	    const [_, setActionCount] = React$s.useState(() => 0);
-	    const [audioTracks, setAudioTracks] = React$s.useState(masher.mash.trackCount(TrackType.Audio));
-	    const [videoTracks, setVideoTracks] = React$s.useState(masher.mash.trackCount(TrackType.Video));
-	    const [transitionTracks, setTransitionTracks] = React$s.useState(masher.mash.trackCount(TrackType.Transition));
-	    const { children } = props, rest = __rest(props, ["children"]);
-	    const kid = React$s.Children.only(children);
-	    if (!React$s.isValidElement(kid))
-	        throw `Timeline.Tracks`;
-	    const childNode = (layer, trackType) => {
-	        const trackProps = Object.assign(Object.assign({}, props), { key: `${trackType}-track-${layer}`, layer,
-	            trackType, children: React$s.cloneElement(kid) });
-	        return React$s.createElement(TimelineTrack, Object.assign({}, trackProps));
-	    };
-	    const childNodes = () => {
-	        const childNodes = [];
-	        const highestTrack = Math.max(videoTracks, transitionTracks);
-	        for (let i = highestTrack - 1; i >= 0; i--) {
-	            if (i < transitionTracks)
-	                childNodes.push(childNode(i, TrackType.Transition));
-	            if (i < videoTracks)
-	                childNodes.push(childNode(i, TrackType.Video));
-	        }
-	        for (let i = 0; i < audioTracks; i++)
-	            childNodes.push(childNode(i, TrackType.Audio));
-	        return childNodes;
-	    };
-	    const onClick = () => { masher.selectTrack(undefined); };
-	    const viewProps = Object.assign(Object.assign({}, rest), { children: childNodes(), onClick });
-	    return React$s.createElement(View, Object.assign({}, viewProps));
+	function TimelineContent(props) {
+	    const rest = __rest(props, ["selectClass"]);
+	    return React$s.createElement("div", Object.assign({}, rest));
 	}
 	/**
 	 * @parents Timeline
@@ -42120,6 +42187,191 @@
 	    return React$s.createElement(View, Object.assign({}, viewProps));
 	}
 	/**
+	 * @parents Timeline
+	 */
+	function TimelineScrubberElement(props) {
+	    const masher = useMashEditor();
+	    const scale = useMashScale();
+	    useListeners({
+	        [EventType.Time]: () => { setFrame(masher.mash.frame); }
+	    });
+	    const [frame, setFrame] = React$s.useState(masher.mash.frame);
+	    const left = pixelFromFrame(frame, scale);
+	    const iconProps = Object.assign(Object.assign({}, props), { key: 'timeline-icon', style: { left } });
+	    return React$s.createElement(View, Object.assign({}, iconProps));
+	}
+	/**
+	 * @parents Timeline
+	 */
+	function TimelineSizer(props) {
+	    const ref = React$s.useRef(null);
+	    const timelineContext = React$s.useContext(TimelineContext);
+	    const handleResize = () => {
+	        const { current } = ref;
+	        if (!current)
+	            return;
+	        const rect = current.getBoundingClientRect();
+	        const { setWidth, setHeight } = timelineContext;
+	        setWidth(rect.width);
+	        setHeight(rect.height);
+	    };
+	    const [resizeObserver] = React$s.useState(new ResizeObserver(handleResize));
+	    React$s.useEffect(() => {
+	        const { current } = ref;
+	        if (current)
+	            resizeObserver.observe(current);
+	        return () => { resizeObserver.disconnect(); };
+	    }, []);
+	    const viewProps = Object.assign(Object.assign({}, props), { ref });
+	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	/**
+	 * @parents TimelineTracks
+	 */
+	function TimelineTrack(props) {
+	    const { layer, trackType, children } = props;
+	    const context = { layer, trackType };
+	    return React$s.createElement(TrackContext.Provider, { value: context, children: children });
+	}
+	/**
+	 * @parents TimelineContent
+	 */
+	function TimelineTrackIsType(props) {
+	    const trackContext = React$s.useContext(TrackContext);
+	    const { type, children } = props;
+	    if (!children)
+	        return null;
+	    const { trackType } = trackContext;
+	    if (trackType !== type)
+	        return null;
+	    return React$s.createElement(React$s.Fragment, null, children);
+	}
+	/**
+	 * @parents TimelineContent
+	 */
+	function TimelineTracks(props) {
+	    const masher = useMashEditor();
+	    useListeners({
+	        [EventType.Track]: () => {
+	            setAudioTracks(masher.mash.trackCount(TrackType.Audio));
+	            setVideoTracks(masher.mash.trackCount(TrackType.Video));
+	            setTransitionTracks(masher.mash.trackCount(TrackType.Transition));
+	        },
+	        [EventType.Action]: () => { setActionCount(nonce => nonce + 1); },
+	    });
+	    const [_, setActionCount] = React$s.useState(() => 0);
+	    const [audioTracks, setAudioTracks] = React$s.useState(masher.mash.trackCount(TrackType.Audio));
+	    const [videoTracks, setVideoTracks] = React$s.useState(masher.mash.trackCount(TrackType.Video));
+	    const [transitionTracks, setTransitionTracks] = React$s.useState(masher.mash.trackCount(TrackType.Transition));
+	    const { children } = props, rest = __rest(props, ["children"]);
+	    const kid = React$s.Children.only(children);
+	    if (!React$s.isValidElement(kid))
+	        throw `Timeline.Tracks`;
+	    const childNode = (layer, trackType) => {
+	        const trackProps = Object.assign(Object.assign({}, props), { key: `${trackType}-track-${layer}`, layer,
+	            trackType, children: React$s.cloneElement(kid) });
+	        return React$s.createElement(TimelineTrack, Object.assign({}, trackProps));
+	    };
+	    const childNodes = () => {
+	        const childNodes = [];
+	        const highestTrack = Math.max(videoTracks, transitionTracks);
+	        for (let i = highestTrack - 1; i >= 0; i--) {
+	            if (i < transitionTracks)
+	                childNodes.push(childNode(i, TrackType.Transition));
+	            if (i < videoTracks)
+	                childNodes.push(childNode(i, TrackType.Video));
+	        }
+	        for (let i = 0; i < audioTracks; i++)
+	            childNodes.push(childNode(i, TrackType.Audio));
+	        return childNodes;
+	    };
+	    const onClick = () => { masher.selectTrack(undefined); };
+	    const viewProps = Object.assign(Object.assign({}, rest), { children: childNodes(), onClick });
+	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	/**
+	 * @parents Timeline
+	 */
+	function TimelineZoomer(props) {
+	    const context = React$s.useContext(TimelineContext);
+	    const handleChange = (_event, value) => {
+	        const number = typeof value === "number" ? value : value[0];
+	        if (context.zoom !== number)
+	            context.setZoom(number);
+	    };
+	    const sliderProps = Object.assign({ key: 'time-slider', value: context.zoom, min: 0.0, max: 1.0, step: 0.01, onChange: handleChange }, props);
+	    return React$s.createElement(Slider, Object.assign({ className: 'zoom slider' }, sliderProps));
+	}
+	const PlayerContextDefault = {
+	    paused: false,
+	    setPaused: () => { },
+	    setVolume: () => { },
+	    volume: 0,
+	};
+	const PlayerContext = React$s.createContext(PlayerContextDefault);
+	/**
+	 *
+	 * @group Player
+	 */
+	function PlayerNotPlaying(props) {
+	    const playerContext = React$s.useContext(PlayerContext);
+	    if (!playerContext.paused)
+	        return null;
+	    return props.children;
+	}
+	/**
+	 *
+	 * @parents Player
+	 */
+	function PlayerButton(props) {
+	    const playerContext = React$s.useContext(PlayerContext);
+	    const { paused, setPaused } = playerContext;
+	    const handleClick = () => { setPaused(!paused); };
+	    const viewProps = Object.assign(Object.assign({}, props), { key: 'player-button', onClick: handleClick });
+	    return React$s.createElement(View, Object.assign({}, viewProps));
+	}
+	function PlayerContent(props) {
+	    const editor = useEditor();
+	    const ref = React$s.useRef(null);
+	    const handleResize = () => {
+	        const { current } = ref;
+	        if (!current)
+	            return;
+	        const rect = current.getBoundingClientRect();
+	        current.width = rect.width;
+	        current.height = rect.height;
+	        editor.imageSize = rect;
+	    };
+	    const [resizeObserver] = React$s.useState(new ResizeObserver(handleResize));
+	    React$s.useEffect(() => {
+	        const { current } = ref;
+	        if (current)
+	            resizeObserver.observe(current);
+	        return () => { resizeObserver.disconnect(); };
+	    }, []);
+	    const handleDraw = () => {
+	        const { current } = ref;
+	        if (!current)
+	            return;
+	        const imageData = editor.imageData;
+	        const context = ContextFactory.fromCanvas(current);
+	        context.drawImageData(imageData);
+	    };
+	    const removeListeners = () => {
+	        const { eventTarget } = editor;
+	        eventTarget.removeEventListener(EventType.Draw, handleDraw);
+	    };
+	    const addListeners = () => {
+	        const { eventTarget } = editor;
+	        eventTarget.addEventListener(EventType.Draw, handleDraw);
+	        return () => { removeListeners(); };
+	    };
+	    React$s.useEffect(() => addListeners(), []);
+	    const rest = __rest(props, ["children", "selectClass"]);
+	    const canvasProps = Object.assign(Object.assign({}, rest), { key: 'canvas', ref });
+	    return React$s.createElement(CanvasView, Object.assign({}, canvasProps));
+	}
+	/**
 	 * @parents Masher, Caster
 	 * @children PlayerContent, Playing, PlayerNotPlaying, TimeSlider, PlayerButton
 	 */
@@ -42153,39 +42405,88 @@
 	        return null;
 	    return props.children;
 	}
-	/**
-	 *
-	 * @group Player
-	 */
-	function PlayerNotPlaying(props) {
-	    const playerContext = React$s.useContext(PlayerContext);
-	    if (!playerContext.paused)
+	function TimeSlider(props) {
+	    const masher = useMashEditor();
+	    useListeners({
+	        [EventType.Time]: () => { setFrame(masher.mash.frame); },
+	        [EventType.Duration]: () => { setFrames(masher.mash.frames); }
+	    });
+	    const [frames, setFrames] = React$s.useState(masher.mash.frames);
+	    const [frame, setFrame] = React$s.useState(masher.mash.frame);
+	    const onChange = (_event, value) => {
+	        const number = typeof value === "number" ? value : value[0];
+	        masher.time = timeFromArgs(number, masher.mash.quantize);
+	    };
+	    const sliderProps = Object.assign({ value: frame, min: 0, max: frames, step: 1, onChange, className: 'frame slider' }, props);
+	    return React$s.createElement(Slider, Object.assign({}, sliderProps));
+	}
+	function Process(props) {
+	    const apiContext = React$s.useContext(ApiContext);
+	    const [processing, setProcessing] = React$s.useState(false);
+	    const [progress, setProgress] = React$s.useState(0);
+	    const [status, setStatus] = React$s.useState('');
+	    const [error, setError] = React$s.useState('');
+	    const { children, id } = props;
+	    const { enabled } = apiContext;
+	    if (!ServerTypes.map(String).includes(id))
 	        return null;
-	    return props.children;
+	    const serverType = id;
+	    if (!enabled.includes(serverType))
+	        return null;
+	    const processContext = {
+	        processing, setProcessing,
+	        status, setStatus,
+	        progress, setProgress,
+	        error, setError,
+	    };
+	    return (React$s.createElement(ProcessContext.Provider, { value: processContext }, children));
 	}
 	/**
-	 * @parents Timeline
-	 * @children TimelineClips
+	 * @parents Process
 	 */
-	function TimelineContent(props) {
-	    const rest = __rest(props, ["selectClass"]);
-	    return React$s.createElement("div", Object.assign({}, rest));
+	function ProcessActive(props) {
+	    const processContext = React$s.useContext(ProcessContext);
+	    if (!processContext.processing)
+	        return null;
+	    return React$s.createElement(React$s.Fragment, null, props.children);
 	}
 	/**
-	 * @parents TimelineContent
+	 * @parents Process
 	 */
-	function TimelineTrackIsType(props) {
-	    const trackContext = React$s.useContext(TrackContext);
-	    const { type, children } = props;
-	    if (!children)
-	        return null;
-	    const { trackType } = trackContext;
-	    if (trackType !== type)
-	        return null;
-	    return React$s.createElement(React$s.Fragment, null, children);
+	function ProcessStatus(_) {
+	    const processContext = React$s.useContext(ProcessContext);
+	    const { status } = processContext;
+	    return React$s.createElement(React$s.Fragment, null, status);
 	}
-	const MasherDefault = function (options) {
-	    const { mash, icons, inputs, className, selectClass, dropClass, panels } = options;
+	const ViewerContextDefault = {
+	    width: 0,
+	    height: 0,
+	    videoRate: 0,
+	    streaming: false,
+	    updating: false,
+	    preloading: false,
+	    setPreloading: () => { },
+	    setStreaming: () => { },
+	    setWidth: () => { },
+	    setHeight: () => { },
+	    setVideoRate: () => { },
+	    setUpdating: () => { },
+	    setId: () => { },
+	    id: '',
+	    setUrl: () => { },
+	    url: '',
+	};
+	React$s.createContext(ViewerContextDefault);
+	const WebrtcContextDefault = {
+	    setClient: () => { }
+	};
+	React$s.createContext(WebrtcContextDefault);
+	const EditorContextDefault = {};
+	React$s.createContext(EditorContextDefault);
+	const DefaultMasherProps = function (options) {
+	    const { icons: suppliedIcons, inputs: suppliedInputs, className, selectClass, dropClass, panels, noApi } = options, rest = __rest(options, ["icons", "inputs", "className", "selectClass", "dropClass", "panels", "noApi"]);
+	    const inputs = suppliedInputs || DataTypeInputs;
+	    const icons = suppliedIcons || DefaultIcons;
 	    const classNameEditor = className || 'editor masher';
 	    const classNameDrop = dropClass || 'drop';
 	    const classNameSelect = selectClass || 'selected';
@@ -42209,19 +42510,25 @@
 	    });
 	    const optionsStrict = optionsLoose;
 	    const browserNode = (panelOptions) => {
-	        var _a, _b, _c;
+	        var _a, _b, _c, _d;
 	        panelOptions.className || (panelOptions.className = 'panel browser');
 	        (_a = panelOptions.header).content || (_a.content = [
 	            React$s.createElement(BrowserSource, { key: 'theme', id: 'theme', className: 'button-icon', children: icons.browserTheme }),
 	            React$s.createElement(BrowserSource, { key: 'effect', id: 'effect', className: 'button-icon', children: icons.browserEffect }),
 	            React$s.createElement(BrowserSource, { key: 'transition', id: 'transition', className: 'button-icon', children: icons.browserTransition })
 	        ]);
+	        const SourceClass = noApi ? BrowserSource : BrowserDataSource;
 	        (_b = panelOptions.header).before || (_b.before = [
-	            React$s.createElement(BrowserSource, { key: 'video', id: 'videosequence', className: 'button-icon', children: icons.browserVideo }),
-	            React$s.createElement(BrowserSource, { key: 'audio', id: 'audio', className: 'button-icon', children: icons.browserAudio }),
-	            React$s.createElement(BrowserSource, { key: 'image', id: 'image', className: 'button-icon', children: icons.browserImage }),
+	            React$s.createElement(SourceClass, { key: 'video', id: 'videosequence', className: 'button-icon', children: icons.browserVideo }),
+	            React$s.createElement(SourceClass, { key: 'audio', id: 'audio', className: 'button-icon', children: icons.browserAudio }),
+	            React$s.createElement(SourceClass, { key: 'image', id: 'image', className: 'button-icon', children: icons.browserImage }),
 	        ]);
-	        (_c = panelOptions.content).children || (_c.children = React$s.createElement(View, { className: 'definition' }, React$s.createElement("label", null)));
+	        if (!noApi) {
+	            (_c = panelOptions.footer).before || (_c.before = [
+	                React$s.createElement(Process, { key: 'upload-process', id: 'data' }, React$s.createElement(UploadControl, null, icons.upload), React$s.createElement(ProcessActive, null, React$s.createElement(ProcessStatus, null)))
+	            ]);
+	        }
+	        (_d = panelOptions.content).children || (_d.children = React$s.createElement(View, { className: 'definition' }, React$s.createElement("label", null)));
 	        const contentProps = {
 	            selectClass: classNameSelect,
 	            label: '--clip-label',
@@ -42287,7 +42594,7 @@
 	        return React$s.createElement(Player, Object.assign({}, panelProps));
 	    };
 	    const timelineNode = (panelOptions) => {
-	        var _a, _b, _c;
+	        var _a, _b, _c, _d, _e;
 	        panelOptions.className || (panelOptions.className = 'panel timeline');
 	        (_a = panelOptions.content).children || (_a.children = React$s.createElement(React$s.Fragment, null, React$s.createElement(View, { className: 'scrub-pad' }), React$s.createElement(TimelineScrubber, { className: 'scrub' }, React$s.createElement(TimelineScrubberElement, { className: 'scrub-icon' })), React$s.createElement(View, { className: 'scrub-bar-container' }, React$s.createElement(TimelineScrubberElement, { className: 'scrub-bar' })), React$s.createElement(TimelineTracks, { className: 'tracks' }, React$s.createElement(View, { className: 'track' }, React$s.createElement(TimelineTrackIsType, { type: 'audio' }, React$s.createElement(View, { className: 'track-icon', children: icons.timelineTrackAudio })), React$s.createElement(TimelineTrackIsType, { type: 'video' }, React$s.createElement(View, { className: 'track-icon', children: icons.timelineTrackVideo })), React$s.createElement(TimelineTrackIsType, { type: 'transition' }, React$s.createElement(View, { className: 'track-icon', children: icons.timelineTrackTransition })), React$s.createElement(TimelineClips, { className: 'clips', selectClass: classNameSelect, dropClass: classNameDrop, label: '--clip-label', icon: '--clip-icon' }, React$s.createElement(View, { className: 'clip' }, React$s.createElement("label", null))))), React$s.createElement(TimelineSizer, { className: 'timeline-sizer' })));
 	        (_b = panelOptions.header).content || (_b.content = [
@@ -42302,6 +42609,14 @@
 	            React$s.createElement(EditorAddTrackButton, { key: 'audio', trackType: 'audio', children: icons.timelineAddAudio }),
 	            React$s.createElement(EditorAddTrackButton, { key: 'transition', trackType: 'transition', children: icons.timelineAddTransition }),
 	        ]);
+	        if (!noApi) {
+	            (_d = panelOptions.header).before || (_d.before = [
+	                React$s.createElement(Process, { key: 'save-process', id: 'data' }, React$s.createElement(SaveControl, null, React$s.createElement(Button, null, "Save")))
+	            ]);
+	            (_e = panelOptions.header).after || (_e.after = [
+	                React$s.createElement(Process, { key: 'render-process', id: 'rendering' }, React$s.createElement(RenderControl, null, React$s.createElement(Button, null, "Render")))
+	            ]);
+	        }
 	        const contentProps = {
 	            selectClass: { classNameSelect },
 	            children: panelOptions.content.children,
@@ -42320,49 +42635,13 @@
 	        children.push(inspectorNode(optionsStrict.inspector));
 	    if (optionsStrict.browser)
 	        children.push(browserNode(optionsStrict.browser));
-	    return { className: classNameEditor, mash, children, inputs: inputs || DataTypeInputs };
+	    return Object.assign(Object.assign({}, rest), { className: classNameEditor, children, inputs, icons });
 	};
-	const ViewerContextDefault = {
-	    width: 0,
-	    height: 0,
-	    videoRate: 0,
-	    streaming: false,
-	    updating: false,
-	    preloading: false,
-	    setPreloading: () => { },
-	    setStreaming: () => { },
-	    setWidth: () => { },
-	    setHeight: () => { },
-	    setVideoRate: () => { },
-	    setUpdating: () => { },
-	    setId: () => { },
-	    id: '',
-	    setUrl: () => { },
-	    url: '',
-	};
-	React$s.createContext(ViewerContextDefault);
 
-	Factory.image.install({
-	    label: "Frog", id: "id-image",
-	    url: "../shared/image/frog.jpg",
-	});
-	Factory.image.install({
-	    label: "Green on White", id: "id-matte",
-	    url: "../shared/image/green-text-on-white.png",
-	});
-	// Factory.audio.install({
-	//   label: "Soundtrack", id: "id-audio",
-	//   url: "../shared/soundtrack.mp3", duration: 180,
-	// })
-	// Factory.video.install({
-	//   label: "Video", id: "id-video",
-	//   url: '../shared/video.mp4',
-	//   duration: 3, fps: 10,
-	// })
-	const options = { icons: DefaultIcons };
-	const masher = React$s.createElement(Masher, { ...MasherDefault(options) });
-	const mode = React$s.createElement(react.exports.StrictMode, null, masher);
-	ReactDOM.render(mode, document.getElementById('app'));
+	const options = { noApi: true };
+	const masher = React$s.createElement(Masher, { ...DefaultMasherProps(options) });
+	const strictMode = React$s.createElement(react.exports.StrictMode, null, masher);
+	ReactDOM.render(strictMode, document.getElementById('app'));
 
 })();
 //# sourceMappingURL=index.js.map

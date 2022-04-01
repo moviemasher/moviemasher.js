@@ -1,7 +1,7 @@
 import { DataType } from '@moviemasher/moviemasher.js'
 
-import { EditorInputs } from '../../../../declarations'
 import { EmptyElement } from '../../../../Setup/Constants'
+import { EditorInputs } from '../EditorInputs'
 
 const DataTypeInputs : EditorInputs = {
   [DataType.Font]: EmptyElement,

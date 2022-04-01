@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg width="640" height="190" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M 380.00 0.00 L 640.00 0.00 L 640.00 190.00 L 380.00 190.00 Z M 380.00 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="385.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[RunningCommand]]</text>
+<path d="M 389.00 40.00 L 630.00 40.00 L 630.00 180.00 L 389.00 180.00 Z M 389.00 40.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="394.25" y="69.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[Command]]</text>
+<path d="M 20.00 80.00 L 260.00 80.00 L 260.00 120.00 L 20.00 120.00 Z M 20.00 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="25.25" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[RenderingOutput]]</text>
+<path d="M 10.00 40.00 L 270.00 40.00 L 270.00 180.00 L 10.00 180.00 Z M 10.00 40.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="15.25" y="69.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[RenderingProcess]]</text>
+<path d="M 347.40 100.00 L 363.10 100.00 M 363.10 103.59 L 363.10 96.41 L 380.00 100.00 Z M 363.10 103.59" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 260.00 100.00 L 380.00 100.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 399.67 80.00 L 620.00 80.00 L 620.00 170.00 L 399.67 170.00 Z M 399.67 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="404.92" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >  fluent-ffmpeg</text>
+<path d="M 409.33 120.00 L 610.00 120.00 L 610.00 160.00 L 409.33 160.00 Z M 409.33 120.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="414.58" y="149.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >  FFmpeg</text>
+<path d="M 0.10 0.00 L 279.90 0.00 L 279.90 190.00 L 0.10 190.00 Z M 0.10 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="5.35" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[RenderingServer]]</text>
+<path d="M 20.00 130.00 L 260.00 130.00 L 260.00 170.00 L 20.00 170.00 Z M 20.00 130.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="25.25" y="159.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >…</text>
+
+</svg>
