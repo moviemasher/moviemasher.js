@@ -36,7 +36,7 @@ Other developers and those ready to start integrating will want to clone the rep
 
 The interface between client and server is highly structured, with both requests and responses consisting of strongly typed JSON objects that effectively constitute the API betwen them. Communication is funneled through the [[ApiClient]] component on the client and the [[ApiServer]] class on the server.
 
-To create these instances in the example deployment, both the client and server utilize functions that provide them with default configuration. In the case of the client this function is [[MasherDefaultProps]] which returns a [[MasherProps]] object, while the server calls [[HostDefaultOptions]] which returns a [[HostOptions]] object.
+To create these instances in the example deployment, both the client and server utilize functions that provide them with default configuration. In the case of the client this function is [[DefaultMasherProps]] which returns a [[MasherProps]] object, while the server calls [[DefaultHostOptions]] which returns a [[HostOptions]] object.
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/client-server-options.svg) -->
 <svg width="640" height="280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 280">
@@ -75,31 +75,3 @@ To create these instances in the example deployment, both the client and server 
 <!-- MAGIC:END -->
 
 The server creates a [[Host]] instance from its configuration and calls its `start` method to create the ExpressJs instance that utimately creates the [[ApiServer]]. The client creates a [[Masher]] component instance from its configuration which will, by default, be wrapped in an [[ApiClient]] component instance.
-
-<!--
-explain overlaps in configuation - eg. preview dimensions
-
-## Server Hosting
-
-[[Server]]
-
-- [[ApiServer]]
-- [[DataServer]]
-- [[FileServer]]
-- [[RenderingServer]]
-- [[StreamingServer]]
-- [[WebServer]]
-
-Learn more about ... in the [Architecture Guide](architecture.html).
-
-## Searching
-
-...
-
-## Uploads
-
-...
-
-## Renderings
-
-... -->

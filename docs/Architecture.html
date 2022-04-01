@@ -70,7 +70,7 @@ When compositing visual content they use patterns and concepts established by
 It defines dozens of interoperable
 <a href="https://reactjs.org">ReactJS</a> function components that can be
 combined to fit a wide variety of uses within a custom video editing application.</p>
-<p>The <a href="Enumerations.html#Api">Api</a> component provides a central mechanism for other components like <a href="function/Webrtc.html">Webrtc</a>
+<p>The <a href="component/ApiClient.html">ApiClient</a> component provides a central mechanism for other components like <a href="function/Webrtc.html">Webrtc</a>
 that interact with a remote <a href="interface/Server.html">Server</a>. It interacts with the <a href="interface/ApiServer.html">ApiServer</a> to determine
 which other servers are supported, and map each <a href="interface/Endpoint.html">Endpoint</a> to an actual <a href="interface/ApiCallback.html">ApiCallback</a>
 request. It provides an <a href="variable/ApiContext.html">ApiContext</a> for child components to quickly see if their server
@@ -99,7 +99,7 @@ and
 <a href="https://www.npmjs.com/package/wrtc">wtrc</a>. It defines a collection of
 <a href="https://expressjs.com">ExpressJS</a> components responsible for housing content on a server
 and transforming it into rendered files and streams.</p>
-<p>The <a href="interface/ApiServer.html">ApiServer</a> is called by the <a href="Enumerations.html#Api">Api</a> client component to map each
+<p>The <a href="interface/ApiServer.html">ApiServer</a> is called by the <a href="component/ApiClient.html">ApiClient</a> component to map each
 <a href="interface/Endpoint.html">Endpoint</a> to an <a href="interface/ApiCallback.html">ApiCallback</a> request before the client actually makes it.
 The base implementation just maps back to the same server, but subclasses can use this
 mechanism to dynamically route traffic to other servers. The client caches mapping based

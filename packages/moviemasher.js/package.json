@@ -40,5 +40,8 @@
     "build": "run-s clean build-esm build-cjs build-umd",
     "clean": "rimraf dist",
     "develop": "rollup --watch --config dev/rollup/esm.config.js"
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.7"
   }
 }

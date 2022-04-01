@@ -78,7 +78,7 @@ It defines dozens of interoperable
 [ReactJS](https://reactjs.org) function components that can be
 combined to fit a wide variety of uses within a custom video editing application.
 
-The [[Api]] component provides a central mechanism for other components like [[Webrtc]]
+The [[ApiClient]] component provides a central mechanism for other components like [[Webrtc]]
 that interact with a remote [[Server]]. It interacts with the [[ApiServer]] to determine
 which other servers are supported, and map each [[Endpoint]] to an actual [[ApiCallback]]
 request. It provides an [[ApiContext]] for child components to quickly see if their server
@@ -113,7 +113,7 @@ and
 [ExpressJS](https://expressjs.com) components responsible for housing content on a server
 and transforming it into rendered files and streams.
 
-The [[ApiServer]] is called by the [[Api]] client component to map each
+The [[ApiServer]] is called by the [[ApiClient]] component to map each
 [[Endpoint]] to an [[ApiCallback]] request before the client actually makes it.
 The base implementation just maps back to the same server, but subclasses can use this
 mechanism to dynamically route traffic to other servers. The client caches mapping based
