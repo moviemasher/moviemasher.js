@@ -7,7 +7,6 @@ import ts from "rollup-plugin-ts"
 import pkg from "../../package.json"
 
 const { main, source } = pkg
-const tsconfigPath = "./dev/tsconfig.json"
 
 export default {
   input: source,
@@ -25,6 +24,6 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({ tsconfig: tsconfigPath }),
+    ts({ tsconfig: "./dev/tsconfig.json" }),
   ]
 }

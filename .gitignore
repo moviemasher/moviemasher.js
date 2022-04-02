@@ -2,8 +2,6 @@
 node_modules*
 **/dist*
 temporary*
-*.test.*
 **/__image_snapshots__*
 *.cache/*
 **/raw/*
-.vscode/*

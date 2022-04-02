@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RenderingProcess renders video-from-color.json 1`] = `
+"SHA256=566d7ff8add67fdb4cebfb8b6ba73450d32b85ad333d6ce3ed1e459a337d1048
+"
+`;
+
+exports[`RenderingProcess renders video-from-colors-fade.json 1`] = `
+"SHA256=b407bec05d718b8dfb36409f213d72cd43a28dc858a878c8dc6e4b3d2f827fb2
+"
+`;
+
+exports[`RenderingProcess renders video-from-image.json 1`] = `
+"SHA256=8a169f737a7476c97d5afe7b034dbe742715d1343ae06908c87e0c659824fa26
+"
+`;
+
+exports[`RenderingProcess renders video-from-image-pan.json 1`] = `
+"SHA256=cf17d76075c487acdd34e78c17aa64c553005349990eefab41cfae98f5da8b94
+"
+`;
+
+exports[`RenderingProcess renders video-from-text.json 1`] = `
+"SHA256=f139af6cd41e8dc00cbdf1656936757b58c30a2cadc03951a4ad686895527221
+"
+`;
+
+exports[`RenderingProcess renders video-from-text-fade.json 1`] = `
+"SHA256=0db64fa6f2961f4b0792fbee16cbbf180986a2350004685c189b4a2bd4fd6c2b
+"
+`;
+
+exports[`RenderingProcess runPromise renders image from image with cover 1`] = `
+"SHA256=56c8c4481c7e7492e2d91e0e1553fcdae0723c7ecccddd690fc709bfb57c2ade
+"
+`;
+
+exports[`RenderingProcess runPromise renders video from image 1`] = `
+"SHA256=295943edc08f17e5a6862d5f9d90b1e4e62f42d8fccc888e937609f26caef933
+"
+`;

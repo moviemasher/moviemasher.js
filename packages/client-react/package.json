@@ -1,10 +1,7 @@
 {
   "name": "@moviemasher/client-react",
-  "version": "5.0.1",
-  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.1",
-  "files": [
-    "dist"
-  ],
+  "version": "5.0.2",
+  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.2",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
@@ -24,18 +21,25 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "^5.0.1",
+    "@moviemasher/moviemasher.js": "^5.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "@material-ui/icons": "^4.11.2",
     "remixicon-react": "^1.0.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.2"
+    "@types/react": "^17.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@types/node": "15.6.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.70.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^2.0.5",
+    "typescript": "4.5.5"
   },
   "scripts": {
     "develop": "rollup --config dev/rollup/esm.config.js --watch",
-    "build-css": "cat ../../dev/css/* > dist/moviemasher.css",
+    "build-css": "cat dev/css/* > dist/moviemasher.css",
     "build-esm": "run-s build-rollup build-css",
     "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-rollup": "rollup --config dev/rollup/esm.config.js",

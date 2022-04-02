@@ -1,6 +1,6 @@
 {
   "name": "example-react",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
@@ -10,18 +10,19 @@
   "main": "dist/index.js",
   "source": "index.tsx",
   "scripts": {
-    "build-rollup": "rollup --file dist/index.js --config ../../dev/config/rollup.config.js ./index.tsx",
-    "build": "run-s clean build-rollup link-shared link-img copy-html copy-icon",
-    "clean": "rimraf dist",
-    "copy-icon": "cp ../../dev/img/favicon.ico dist",
+    "build-rollup": "rollup --config dev/rollup/iife.config.js",
+    "build": "run-s clean copy build-rollup",
+    "clean-create-img": "mkdir -p dist/img",
+    "clean-create-shared": "mkdir -p dist/shared",
+    "clean-delete": "rimraf dist",
+    "clean": "run-s clean-delete clean-create-img clean-create-shared",
     "copy-html": "cp ../../dev/index.html dist",
-    "develop": "rollup --config --watch",
-    "link-img": "ln -s $(cd ../../dev/img ; pwd) dist",
-    "link-shared": "ln -s $(cd ../../dev/shared ; pwd) dist",
-    "link-assets": "ln -s $(cd ../../dev/assets ; pwd) dist",
-    "serve": "serve --debug --symlinks --cors --no-port-switching --no-clipboard --listen 8576 dist"
+    "copy-icon": "cp ../../dev/img/favicon.ico dist",
+    "copy-img": "cp -R ../../dev/img dist/img",
+    "copy-shared": "cp -R ../../dev/shared dist/shared",
+    "copy": "run-s copy-icon copy-shared copy-img copy-html"
   },
   "dependencies": {
-    "@moviemasher/client-react": "^5.0.1"
+    "@moviemasher/client-react": "^5.0.2"
   }
 }

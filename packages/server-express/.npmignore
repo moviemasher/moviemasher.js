@@ -1,0 +1,4 @@
+.DS_Store
+**/*.test.ts
+**/__image_snapshots__*
+**/__snapshots__*

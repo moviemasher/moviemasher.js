@@ -1,4 +1,5 @@
 import { builtinModules } from "module"
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import ts from "rollup-plugin-ts"
 import json from "@rollup/plugin-json"
 
@@ -11,6 +12,7 @@ export default {
   input: source,
   output: { format: "cjs", file: main, sourcemap: true },
   plugins: [
+    peerDepsExternal(),
     json( { preferConst: true, indent: "  ", namedExports: true }),
     ts({ tsconfig: "./dev/tsconfig.json" })
   ],

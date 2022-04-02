@@ -1,182 +1,18 @@
 FROM amazonlinux:2.0.20220316.0
-
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
-
 EXPOSE 8570
 EXPOSE 8571
-
 ENTRYPOINT ["npm"]
 CMD ["start"]
 WORKDIR /home/node/app
 
-# DEFINE DIRECTORIES
-ARG DIR_BINARY=/usr/bin
-ARG DIR_BUILD=/usr
-ARG DIR_SOURCE=/root
-
-# DEFINE VERSIONS
-ARG VERSION_AMR=0.1.3
-ARG VERSION_ECA=2.9.1
-ARG VERSION_FFMPEG=4.4.1
-ARG VERSION_LAME=3.100
-ARG VERSION_OPUS=1.3.1
-ARG VERSION_SOX=14.4.1
-ARG VERSION_XVID=1.3.5
-ARG VERSION_NPM=7.19.0
-ARG VERSION_NODE=15.13.0
-
-# DEFINE TOOLS AND LIBRARIES
-ARG DEPENDENCIES="git dpkg tar gzip xz gcc cmake make gcc-c++ libtool bzip2 bzip2-devel yasm yasm-devel nasm nasm-devel freetype-devel fontconfig-devel fribidi-devel frei0r-devel libogg-devel libsamplerate-devel libsndfile-devel speex-devel libtheora-devel libvorbis-devel libmad-devel libid3tag-devel"
-
-RUN set -e ; \
-  yum update -y ; \
-  amazon-linux-extras install -y epel ; \
-  yum install -y $DEPENDENCIES ;\
-  cd $DIR_SOURCE ; \
-  yasm --version ; \
-  git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git ; \
-  cd libvpx ; \
-  ./configure --prefix=$DIR_BUILD --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm ; \
-  make ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L https://downloads.sourceforge.net/project/lame/lame/$VERSION_LAME/lame-$VERSION_LAME.tar.gz ; \
-  tar -xzf lame-$VERSION_LAME.tar.gz ; \
-  cd lame-$VERSION_LAME ; \
-  ./configure --prefix=$DIR_BUILD --bindir=$DIR_BINARY --disable-shared --enable-yasm ; \
-  make ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L https://archive.mozilla.org/pub/opus/opus-$VERSION_OPUS.tar.gz ; \
-  tar -xzf opus-$VERSION_OPUS.tar.gz ; \
-  cd opus-$VERSION_OPUS ; \
-  ./configure --prefix=$DIR_BUILD --disable-shared ; \
-  make ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L http://downloads.xvid.org/downloads/xvidcore-$VERSION_XVID.tar.gz ; \
-  tar -zxf xvidcore-$VERSION_XVID.tar.gz ; \
-  cd xvidcore/build/generic ; \
-  ./configure --prefix=$DIR_BUILD ; \
-  make ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L http://downloads.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-$VERSION_AMR.tar.gz ; \
-  tar -xf opencore-amr-$VERSION_AMR.tar.gz ; \
-  cd opencore-amr-$VERSION_AMR ; \
-  ./configure --prefix=$DIR_BUILD --disable-shared ; \
-  make ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  git clone --depth 1 https://code.videolan.org/videolan/x264.git ; \
-  cd x264 ; \
-  ./configure --prefix=$DIR_BUILD --bindir=$DIR_BINARY --enable-static ; \
-  make ; \
-  make install ; \
-  whereis x264 ;\
-  cd $DIR_SOURCE ; \
-  git clone https://github.com/uclouvain/openjpeg.git ; \
-  mkdir openjpeg/build ; \
-  cd openjpeg/build ; \
-  cmake .. -DCMAKE_INSTALL_PREFIX=$DIR_BUILD -DCMAKE_BUILD_TYPE=Release ; \
-  make ; \
-  make install ; \
-  ldconfig ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L https://ffmpeg.org/releases/ffmpeg-$VERSION_FFMPEG.tar.gz ; \
-  tar -xzf ffmpeg-$VERSION_FFMPEG.tar.gz ; \
-  cd ffmpeg-$VERSION_FFMPEG ; \
-  PATH="$DIR_BINARY:$PATH" \
-  PKG_CONFIG_PATH=$DIR_BUILD/lib/pkgconfig \
-  ./configure \
-  --prefix=$DIR_BUILD \
-  --pkg-config-flags="--static" \
-  --extra-cflags="-I$DIR_BUILD/include" \
-  --extra-ldflags="-L$DIR_BUILD/lib" \
-  --extra-libs=-lpthread \
-  --extra-libs=-lm \
-  --bindir=$DIR_BINARY \
-  --enable-libopenjpeg \
-  --enable-frei0r \
-  --enable-libfontconfig \
-  --enable-libfreetype \
-  --enable-libfribidi \
-  --enable-libmp3lame \
-  --enable-libopencore-amrnb \
-  --enable-libopencore-amrwb \
-  --enable-libspeex \
-  --enable-libtheora \
-  --enable-libvorbis \
-  --enable-libx264 \
-  --enable-zlib \
-  --enable-libxvid \
-  --enable-libvpx \
-  --enable-libopus \
-  --enable-postproc \
-  --enable-pthreads \
-  --enable-version3 \
-  --enable-gpl ; \
-  make ; \
-  make install ; \
-  whereis ffmpeg ;\
-  cd $DIR_SOURCE ; \
-  curl --silent -O -L http://sourceforge.net/projects/sox/files/sox/$VERSION_SOX/sox-$VERSION_SOX.tar.gz ; \
-  tar -zxf sox-$VERSION_SOX.tar.gz ; \
-  cd sox-$VERSION_SOX ; \
-  ./configure --disable-shared --prefix=$DIR_BUILD --bindir=$DIR_BINARY ; \
-  make -s ; \
-  make install ;\
-  cd $DIR_SOURCE ; \
-  ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-  && case "${dpkgArch##*-}" in \
-  amd64) ARCH='x64';; \
-  ppc64el) ARCH='ppc64le';; \
-  s390x) ARCH='s390x';; \
-  arm64) ARCH='arm64';; \
-  armhf) ARCH='armv7l';; \
-  i386) ARCH='x86';; \
-  *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
-  # gpg keys listed at https://github.com/nodejs/node#release-keys
-  && set -ex \
-  && for key in \
-  4ED778F539E3634C779C87C6D7062848A1AB005C \
-  94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-  74F12602B6F1C4E913FAA37AD3A89613643B6201 \
-  71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-  C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-  DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-  A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-  108F52B48DB57BB0CC439B2997B01419BD92F80A \
-  B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-  ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$VERSION_NODE/node-v$VERSION_NODE-linux-$ARCH.tar.xz" \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$VERSION_NODE/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$VERSION_NODE-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$VERSION_NODE-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-  && rm "node-v$VERSION_NODE-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs ;\
-  npm install -g "npm@${VERSION_NPM}" ;\
-  yum clean all ; \
-  rm -rf /tmp/* /var/tmp/* /var/cache/* $DIR_SOURCE/* ;
+COPY dev/docker/install.sh /home/node/app/dev/docker/install.sh
+RUN bash /home/node/app/dev/docker/install.sh
 
 COPY package.json /home/node/app/package.json
-COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
-COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
-COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
-
-RUN npm install
-
 COPY dev/ /home/node/app/dev/
-COPY docs/ /home/node/app/docs/
 COPY packages/ /home/node/app/packages/
 COPY workspaces/ /home/node/app/workspaces/
-
-
+RUN npm install
 RUN npm run build
+COPY docs/ /home/node/app/docs/

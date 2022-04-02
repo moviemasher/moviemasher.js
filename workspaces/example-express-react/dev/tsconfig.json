@@ -17,7 +17,7 @@
     "strict": true,
     "target": "ESNext",
   },
-  "include": ["src/server.ts"],
+  "include": ["../src/server.ts"],
   "exclude": ["**/node_modules/*"],
   "debug": true
 }

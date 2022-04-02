@@ -5,4 +5,6 @@
 **/dist*
 node_modules
 temporary/*
-**/package-lock.json
+**/*.test.ts
+**/__image_snapshots__*
+**/__snapshots__*

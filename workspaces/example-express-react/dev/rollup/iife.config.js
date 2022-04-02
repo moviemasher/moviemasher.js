@@ -6,6 +6,7 @@ import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
 import css from 'rollup-plugin-css-only'
 import copy from 'rollup-plugin-copy'
+import { terser } from 'rollup-plugin-terser'
 
 const src = './src'
 const dest = './dist/public'
@@ -31,7 +32,7 @@ const clients = names.map(name => ({
     resolve(),
     replace(replaceOptions),
     commonjs({ include: /node_modules/ }),
-    ts({ tsconfig: '../../dev/config/tsconfig.json' }),
+    ts({ tsconfig: '../example-react/dev/tsconfig.json' }),
     css({ output: `${name}.css` }),
     copy({
       targets: [{
@@ -46,6 +47,7 @@ const clients = names.map(name => ({
         },
       }]
     }),
+    terser(),
   ]
 }))
 export default [...clients]

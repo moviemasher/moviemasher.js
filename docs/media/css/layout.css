@@ -381,19 +381,6 @@
   display: inline-block;
 }
 
-.moviemasher .editor .MuiSvgIcon-root {
-  font-size: var(--icon-size);
-}
-
-.moviemasher .editor .timeline .scrub .MuiSvgIcon-root {
-  font-size: var(--scrubber-height);
-}
-
-.moviemasher .editor .MuiSlider-root {
-  color: var(--color-primary);
-  padding: 11px;
-}
-
 .moviemasher .editor .player {
   grid-area: player;
 }

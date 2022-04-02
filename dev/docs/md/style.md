@@ -2,14 +2,14 @@ Modern CSS techniques like flexbox, grid, and variables provide a relatively sim
 to powerfully affect the graphical appearance of the Editor. If only a few changes are
 needed, it's typically easiest to just redefine select styles, as demonstrated in the README.
 
-For more elaborate changes, you will want to generate your own CSS file. The one used in the demos is a concatenation of all the files in the _dev/css_ directory, which are shown below.
+For more elaborate changes, you will want to generate your own CSS file. The one used in the demos is a concatenation of all the files in the _packages/client-react/dev/css_ directory, which are shown below.
 
 ## Coloring
 
 <fieldset>
 <legend>colors.css</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../css/colors.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/dev/css/colors.css&stripComments=1) -->
 
 ```css
 .moviemasher {
@@ -46,7 +46,7 @@ For more elaborate changes, you will want to generate your own CSS file. The one
 <fieldset>
 <legend>sizes.css</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../css/sizes.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/dev/css/sizes.css&stripComments=1) -->
 
 ```css
 .moviemasher .editor {
@@ -86,7 +86,7 @@ For more elaborate changes, you will want to generate your own CSS file. The one
 <fieldset>
 <legend>layout.css</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../css/layout.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/dev/css/layout.css&stripComments=1) -->
 
 ```css
 .moviemasher .editor * {
@@ -468,19 +468,6 @@ For more elaborate changes, you will want to generate your own CSS file. The one
   content: var(--clip-label);
   padding: var(--spacing);
   display: inline-block;
-}
-
-.moviemasher .editor .MuiSvgIcon-root {
-  font-size: var(--icon-size);
-}
-
-.moviemasher .editor .timeline .scrub .MuiSvgIcon-root {
-  font-size: var(--scrubber-height);
-}
-
-.moviemasher .editor .MuiSlider-root {
-  color: var(--color-primary);
-  padding: 11px;
 }
 
 .moviemasher .editor .player {
