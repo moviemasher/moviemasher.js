@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
 [![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.3_
+_JavaScript video editor, encoder, and streamer - version 5.0.4_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -11,16 +11,17 @@ _JavaScript video editor, encoder, and streamer - version 5.0.3_
 - _server_ implemented in **ExpressJS**
 <!-- MAGIC:END -->
 
-## React Client
+## React Client Plug-in
 
 This module is a
 [ReactJS](https://reactjs.org)
 reference implementation of a client plug-in that utilizes the core
 [@moviemasher/moviemasher.js](https://www.npmjs.com/package/@moviemasher/moviemasher.js)
 module.
+
 It exports component functions, contexts, hooks, utility methods, and styles
-that manifest a video editing user interface and interact with a server like
-[@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express).
+that manifest a video editing user interface and interact with a server implementation like
+[@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express). Its imports are all specified as peer dependencies.
 
 <!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/documentation.md) -->
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/documentation.md -->

@@ -1,6 +1,6 @@
 [![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.3_
+_JavaScript video editor, encoder, and streamer - version 5.0.4_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**

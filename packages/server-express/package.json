@@ -42,7 +42,7 @@
     "node-media-server": "^2.3.8",
     "nodemon": "^2.0.15",
     "sqlite": "^4.0.25",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "github:mapbox/node-sqlite3",
     "tar": "^6.1.11",
     "uuid": "^8.3.2",
     "wrtc": "^0.4.7"
