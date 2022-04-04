@@ -2,7 +2,7 @@ version: "3"
 services:
   moviemasher:
     build:
-      dockerfile: ./Dockerfile.cnf
+      dockerfile: ./dev/docker/Dockerfile.cnf
       context: ../../
     image: moviemasher/moviemasher.js:5.0.4
     container_name: moviemasher

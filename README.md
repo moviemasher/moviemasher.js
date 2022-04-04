@@ -1,6 +1,6 @@
 <!-- MAGIC:START (FILE:src=dev/docs/md/snippet/head.md) -->
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
-[![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
+[![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor, encoder, and streamer - version 5.0.4_
 
@@ -37,17 +37,6 @@ combines these into a fully functional application for running locally.
 And the
 [image](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6)
 in AWS Marketplace does the same within their hosted environment.
-
-## Docker Usage
-
-A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
-
-```shell
-docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.4
-```
-
-Then navigate to http://localhost:8570 in your browser, supplying any username/password
-combination when prompted.
 
 ## Installation
 
@@ -188,6 +177,25 @@ Learn more about building your own customized server in the
 [Integration Guide](https://moviemasher.com/docs/Integration.html).
 
 <!-- MAGIC:END -->
+
+
+## Docker Usage
+
+A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
+
+```shell
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.4
+```
+
+Then navigate to http://localhost:8570 in your browser, supplying any username/password
+combination when prompted. When you're done exploring the demo it can be terminated and cleaned up with:
+
+```shell
+docker kill moviemasher
+docker rm moviemasher
+```
+
+The _dev/docker/docker-compose.yml_ file provides some other options to explore and is used by the `docker-up` and `docker-down` npm scripts.
 
 ## Development
 

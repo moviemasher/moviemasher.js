@@ -1,4 +1,4 @@
-[![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
+[![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor, encoder, and streamer - version 5.0.4_
 

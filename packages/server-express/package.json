@@ -40,7 +40,7 @@
     "md5": "^2.3.0",
     "multer": "^1.4.4",
     "node-media-server": "^2.3.8",
-    "nodemon": "^2.0.15",
+    "pm2": "5.2.0",
     "sqlite": "^4.0.25",
     "sqlite3": "github:mapbox/node-sqlite3",
     "tar": "^6.1.11",
