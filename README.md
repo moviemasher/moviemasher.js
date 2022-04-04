@@ -43,7 +43,7 @@ in AWS Marketplace does the same within their hosted environment.
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.3
+docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.4
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
