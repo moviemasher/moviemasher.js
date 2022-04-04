@@ -61,7 +61,7 @@ interface MashEditor extends Editor {
   removeClip(clip: Clip) : void
   removeEffect(effect: Effect): void
   removeTrack(track: Track): void
-  save() : void
+  save(id?: string) : void
   selectClip(clip : Clip | undefined) : void
   selectEffect(effect : Effect | undefined) : void
   selectTrack(track : Track | undefined) : void

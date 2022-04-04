@@ -24,6 +24,7 @@ interface MashObject extends Partial<MashDescription> {
   quantize? : number
   tracks?: TrackObject[]
   frame?: number
+  rendering?: string
 }
 
 export interface MashArgs extends MashObject {
@@ -62,7 +63,8 @@ interface Mash extends Edited {
   loadPromise(args?: FilterGraphObject): LoadPromise
   quantize : number
   removeClipFromTrack(clip : Clip) : void
-  removeTrack(trackType : TrackType) : void
+  removeTrack(trackType: TrackType): void
+  rendering: string
   seekToTime(time: Time): LoadPromise | undefined
   time: Time
   /** this.time -> this.endTime in time's fps */

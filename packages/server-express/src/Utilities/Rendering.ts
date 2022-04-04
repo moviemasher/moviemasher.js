@@ -3,7 +3,7 @@ import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
   DefinitionType, LoadType, TrackType, ValueObject, CommandOutputs, OutputType,
-  RenderingInput, RenderingOutput, RenderingCommandOutput, NumberObject, outputDefaultPopulate,
+  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate,
 } from "@moviemasher/moviemasher.js"
 import { renderingProcessTestArgs } from "../../../../dev/test/Utilities/renderingProcessArgs"
 import { RenderingProcessArgs } from "../Server/RenderingServer/RenderingProcess/RenderingProcess"

@@ -125,7 +125,7 @@ class WebrtcConnection extends EventEmitter {
   }, TIME_TO_CONNECTED)
 
   async doOffer(): Promise<void> {
-    console.log("doOffer")
+    // console.log("doOffer")
     const offer = await this.peerConnection.createOffer()
     await this.peerConnection.setLocalDescription(offer)
     try {
@@ -350,7 +350,7 @@ class WebrtcConnection extends EventEmitter {
 
   static create(id: string, outputPrefix?: string, commandOutput?: CommandOutput): WebrtcConnection {
     const connection = new WebrtcConnection(id, outputPrefix, commandOutput)
-    console.log(this.constructor.name, "createConnection", connection.constructor.name, id)
+    // console.log(this.constructor.name, "createConnection", connection.constructor.name, id)
 
     const closedListener = () => { this.deleteConnection(connection) }
     this.callbacksByConnection.set(connection, closedListener)
@@ -366,7 +366,7 @@ class WebrtcConnection extends EventEmitter {
 
     const closedListener = this.callbacksByConnection.get(connection)
 
-    console.log(this.constructor.name, "deleteConnection", connection.id, !!closedListener)
+    // console.log(this.constructor.name, "deleteConnection", connection.id, !!closedListener)
     if (!closedListener) return
 
     this.callbacksByConnection.delete(connection)

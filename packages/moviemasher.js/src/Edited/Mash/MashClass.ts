@@ -9,13 +9,11 @@ import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { colorValid } from "../../Utility/Color"
-import { idGenerate } from "../../Utility/Id"
 import { isAboveZero, isPopulatedString, isPositive } from "../../Utility/Is"
 import { sortByLayer, sortByTrack } from "../../Utility/Sort"
 import { Emitter } from "../../Helpers/Emitter"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { Preloader } from "../../Preloader/Preloader"
-import { Factory } from "../../Definitions/Factory/Factory"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { Visible } from "../../Mixin/Visible/Visible"
 import { Audible, AudibleContent, AudibleContents } from "../../Mixin/Audible/Audible"
@@ -46,6 +44,7 @@ class MashClass implements Mash {
       quantize,
       frame,
       definitions,
+      rendering,
       ...rest
     } = args
 
@@ -55,6 +54,8 @@ class MashClass implements Mash {
     if (quantize && isAboveZero(quantize)) this.quantize = quantize
     if (label && isPopulatedString(label)) this.label = label
     if (backcolor && isPopulatedString(backcolor)) this._backcolor = backcolor
+    if (rendering && isPopulatedString(rendering)) this._rendering = rendering
+
     if (createdAt) this.createdAt = createdAt
     if (frame) this._frame = frame
     let videoTrackCount = 0
@@ -591,8 +592,11 @@ class MashClass implements Mash {
   }
 
   private _id = ''
-
-  get id(): string { return this._id ||= idGenerate() }
+  get id(): string { return this._id } //||= idGenerate()
+  set id(value: string) {
+    this._id = value
+    this.emitter?.emit(EventType.Mash)
+  }
 
   label = ''
 
@@ -691,6 +695,13 @@ class MashClass implements Mash {
 
     this.emitIfFramesChange(() => { this.tracks.splice(index, 1) })
     this.emitter?.emit(EventType.Track)
+  }
+
+  _rendering = ''
+  get rendering() { return this._rendering }
+  set rendering(value: string) {
+    this._rendering = value
+    this.emitter?.emit(EventType.Render)
   }
 
   private restartAfterStop(time:Time, paused:boolean, seeking?: boolean): void {
@@ -807,6 +818,7 @@ class MashClass implements Mash {
       ...this.data,
     }
     if (this._id) json.id = this.id
+    if (this._rendering) json.rendering = this.rendering
     return json
   }
 

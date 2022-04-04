@@ -98,7 +98,7 @@ a.tsd-source-logo > svg {
 h1 {
   margin: 0;
   font-size: 1em;
-  color: var(--fore-primary);
+  color: var(--fore-secondary);
   font-style: italic;
 }
 
@@ -168,9 +168,9 @@ footer {
 .scrollable {
   padding: var(--pad);
   text-align: center;
-  scroll-snap-type: y proximity;
+  /* scroll-snap-type: y proximity; */
   scroll-padding-top: var(--pad);
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
   overflow-y: scroll;
 }
 
@@ -182,7 +182,7 @@ nav {
   white-space: nowrap;
 }
 summary {
-  color: var(--color-tertiary);
+  color: var(--color-fore-tertiary);
 }
 
 
@@ -226,11 +226,9 @@ summary {
     text-align: right;
   }
 
-
   .nav-button {
     display: none;
   }
-
 }
 
 
@@ -242,7 +240,7 @@ section {
   /* background-color: var(--back-tertiary); */
   margin-bottom: var(--pad);
   text-align: left;
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; */
   max-width: 700px;
 }
 
@@ -367,14 +365,14 @@ ul { padding-left: 1.2em; }
 
 a:link, a:visited {
   text-decoration: none;
-  color: var(--color-secondary);
-  fill: var(--color-secondary);
+  color: var(--color-fore-secondary);
+  fill: var(--color-fore-secondary);
 }
 
 a:hover, a:active {
   text-decoration: underline;
-  color: var(--color-tertiary);
-  fill: var(--color-tertiary);
+  color: var(--color-fore-tertiary);
+  fill: var(--color-fore-tertiary);
 }
 
 a.current:link,

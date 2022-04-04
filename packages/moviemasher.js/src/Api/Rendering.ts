@@ -2,7 +2,7 @@ import { DefinitionObjects } from "../Base/Definition"
 import { AndId, GraphFilters, UploadDescription, ValueObject } from "../declarations"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
-import { OutputType } from "../Setup/Enums"
+import { LoadType, OutputType } from "../Setup/Enums"
 import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
 export interface CommandInput {
@@ -69,5 +69,6 @@ export interface RenderingUploadRequest extends ApiRequest, UploadDescription {
 export interface RenderingUploadResponse extends ApiCallbackResponse {
   id?: string
   fileProperty?: string
+  loadType?: LoadType
   fileApiCallback?: ApiCallback
 }

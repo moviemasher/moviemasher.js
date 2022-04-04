@@ -10,9 +10,14 @@ COPY dev/docker/install.sh /home/node/app/dev/docker/install.sh
 RUN bash /home/node/app/dev/docker/install.sh
 
 COPY package.json /home/node/app/package.json
+COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
+COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
+COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
+RUN npm install
+
 COPY dev/ /home/node/app/dev/
 COPY packages/ /home/node/app/packages/
 COPY workspaces/ /home/node/app/workspaces/
-RUN npm install
 RUN npm run build
+
 COPY docs/ /home/node/app/docs/

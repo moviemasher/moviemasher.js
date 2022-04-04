@@ -49,7 +49,7 @@ class WebrtcClient {
   }
 
   closeConnection() {
-    console.log(this.constructor.name, "closeConnection", !!this.localPeerConnection)
+    // console.log(this.constructor.name, "closeConnection", !!this.localPeerConnection)
     this.localPeerConnection?.close()
   }
 

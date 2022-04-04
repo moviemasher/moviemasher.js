@@ -33,6 +33,7 @@ class NodePreloader extends PreloaderClass {
     if (preloaderFile.loadedInfo) return Promise.resolve(preloaderFile.loadedInfo)
 
     const infoPath = path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
+    // console.log(this.constructor.name, "fileInfoPromise", infoPath)
     return probingInfoPromise(key, infoPath).then(info => {
       preloaderFile.loadedInfo = info
       return info

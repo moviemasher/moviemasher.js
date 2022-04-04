@@ -52,7 +52,7 @@ export interface DataMashDefaultResponse extends ApiResponse {
 
 export interface DataMashPutRequest extends ApiRequest {
   mash: MashObject
-  definitionIds: string[]
+  definitionIds?: string[]
 }
 export interface DataMashPutResponse extends ApiResponse, AndId {}
 

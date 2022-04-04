@@ -17,7 +17,7 @@ const TimelineContextDefault: TimelineContextInterface = {
   setWidth: () => {},
   setZoom: () => {},
   width: 0,
-  zoom : 0,
+  zoom : 1,
 }
 
 const TimelineContext = React.createContext(TimelineContextDefault)

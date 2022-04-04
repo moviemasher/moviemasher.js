@@ -11,7 +11,7 @@ interface PlayerProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents Masher, Caster
- * @children PlayerContent, Playing, PlayerNotPlaying, TimeSlider, PlayerButton
+ * @children PlayerContent, PlayerPlaying, PlayerNotPlaying, PlayerTimeControl, PlayerButton
  */
 function Player(props: PlayerProps): ReactResult {
   const masher = useMashEditor()

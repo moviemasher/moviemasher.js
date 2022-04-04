@@ -1,0 +1,40 @@
+.moviemasher .caster {
+  grid-template-areas:
+    "layers switcher switcher switcher"
+    "layers layouts viewer webrtc";
+  grid-template-columns:
+    var(--inspector-width)
+    1fr
+    repeat(2, calc(
+      var(--preview-width)
+      + (var(--border-size) * 2)
+    ));
+  grid-template-rows:
+    1fr
+    calc(
+      var(--preview-height)
+      + var(--header-height)
+      + var(--footer-height)
+    );
+}
+.moviemasher .caster .webrtc {
+  grid-area: webrtc;
+}
+.moviemasher .caster .layers {
+  grid-area: layers;
+}
+.moviemasher .caster .switcher {
+  grid-area: switcher;
+}
+.moviemasher .caster .layouts {
+  grid-area: layouts;
+}
+.moviemasher .caster .viewer {
+  grid-area: viewer;
+}
+
+.moviemasher .viewer .head,
+.moviemasher .webrtc .head {
+  grid-template-columns: repeat(10, min-content);
+  white-space: nowrap;
+}

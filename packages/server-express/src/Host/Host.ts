@@ -55,7 +55,7 @@ export class Host {
 
     const servers: Server[] = Object.values(HostServers)
     if (!servers.length) {
-      console.log(this.constructor.name, "nothing configured")
+      console.warn(this.constructor.name, "nothing configured")
       return
     }
 

@@ -11,12 +11,10 @@ function PlayerButton(props: PropsWithChildren): ReactResult {
   const playerContext = React.useContext(PlayerContext)
   const { paused, setPaused } = playerContext
 
-  const handleClick = () => { setPaused(!paused) }
+  const onClick = () => { setPaused(!paused) }
 
   const viewProps = {
-    ...props,
-    key: 'player-button',
-    onClick: handleClick,
+    ...props, key: 'player-button', onClick,
   }
   return <View {...viewProps} />
 }

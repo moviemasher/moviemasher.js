@@ -11,39 +11,21 @@ required to layout the client user interface are kept separate from JavaScript c
 ```html
 <!DOCTYPE html>
 <html lang='en'>
-
-<head>
-  <meta charset='utf-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <script src='masher.js' defer></script>
-  <link href='masher.css' rel='stylesheet'>
-  <style>
-    body {
-      margin: 0px;
-      padding: 0px;
-      font-family: sans-serif;
-    }
-
-    body,
-    #app {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-    }
-
-    .moviemasher .editor {
-      --preview-width: 480px;
-      --preview-height: 270px;
-    }
-
-  </style>
-  <title>Movie Masher</title>
-</head>
-
-<body>
-  <div id='app' class='moviemasher'></div>
-</body>
-
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='masher.js' defer></script>
+    <link href='masher.css' rel='stylesheet'>
+    <style>
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
+      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
+    </style>
+    <title>Movie Masher</title>
+  </head>
+  <body>
+    <div id='app' class='moviemasher'></div>
+  </body>
 </html>
 ```
 <!-- MAGIC:END -->

@@ -14,7 +14,7 @@ interface TimelineProps extends UnknownObject {
  * @children TimelineContent, TimelineZoomer, TimelineScrubber, TimelineScrubberElement, TimelineSizer
  */
 function Timeline(props: TimelineProps): ReactResult {
-  const [zoom, setZoom] = React.useState(0)
+  const [zoom, setZoom] = React.useState(1.0)
   const [width, setWidth] = React.useState(0)
   const [height, setHeight] = React.useState(0)
 

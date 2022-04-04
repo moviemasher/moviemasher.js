@@ -44,11 +44,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       return
     }
     try {
-      console.log(Endpoints.streaming.cut, 'request', request)
+      // console.log(Endpoints.streaming.cut, 'request', request)
       const cutArgs: StreamingProcessCutArgs = { definitionObjects, mashObjects }
       const updated = streamingProcess.cut(cutArgs)
       const response: StreamingCutResponse = updated
-      console.log(Endpoints.streaming.cut, 'response', response)
+      // console.log(Endpoints.streaming.cut, 'response', response)
       res.send(response)
     } catch (error) {
       res.send({ error: String(error) })
@@ -244,7 +244,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     app.post(Endpoints.streaming.delete, this.delete)
 
     app.get('/webrtc/:id', (req, res) => {
-      console.log('GET webrtc/:id')
+      // console.log('GET webrtc/:id')
       const { id } = req.params
       const connection = WebrtcConnection.getConnection(id)
       if (!connection) {

@@ -1,0 +1,65 @@
+
+.moviemasher .editor .panel.inspector {
+  grid-area: inspector;
+}
+
+.moviemasher .editor .panel.inspector label {
+  text-transform: capitalize;
+
+}
+
+.moviemasher .editor .panel.inspector label:after {
+  content: ': ';
+}
+
+.moviemasher .editor .panel.inspector .content {
+  overflow-y: auto;
+  padding: var(--padding);
+}
+
+.moviemasher .editor .panel.inspector .content>* {
+  margin-bottom: var(--spacing);
+}
+
+
+.moviemasher .editor .panel.inspector .effects {
+  width: 100%;
+  height: calc((3 * var(--icon-size)) + (4 * var(--spacing)));
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+  color: var(--fore-primary);
+  border-color: var(--fore-primary);
+  background-color: var(--back-primary);
+}
+
+.moviemasher .editor .panel.inspector .effects .effect {
+  width: 100%;
+  height: var(--icon-size);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing);
+  padding: var(--border-radius);
+  color: var(--fore-secondary);
+  border-color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+
+
+.moviemasher .editor .panel.inspector .effects .effect:hover,
+.moviemasher .editor .panel.inspector .effects .selected {
+  color: var(--color-fore-secondary);
+  border-color: var(--color-fore-secondary);
+  background-color: var(--color-back-secondary);
+}
+
+.moviemasher .editor .panel.inspector .effects .selected:hover {
+  color: var(--color-fore-tertiary);
+  border-color: var(--color-fore-tertiary);
+  background-color: var(--color-back-tertiary);
+}
+
+
+.moviemasher .editor .panel.inspector .drop {
+  background-color: var(--color-back-secondary);
+}

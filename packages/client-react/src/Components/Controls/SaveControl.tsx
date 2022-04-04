@@ -32,6 +32,10 @@ function SaveControl(props:PropsAndChild): ReactResult {
     }
     // console.debug("DataMashPutRequest", Endpoints.data.mash.put, request)
     endpointPromise(Endpoints.data.mash.put, request).then((response: DataMashPutResponse) => {
+      const { error, id } = response
+      if (error) console.error(Endpoints.data.mash.put, error)
+      else masher.save(id)
+
       // console.debug("DataMashPutResponse", Endpoints.data.mash.put, response)
       setProcessing(false)
     })

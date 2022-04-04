@@ -1,6 +1,6 @@
 {
   "name": "example-express-react",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Movie Masher React Client Example",
   "author": {
     "name": "Movie Masher",
@@ -18,11 +18,11 @@
     "copy-icons": "cp ../../dev/img/* dist/public",
     "copy-json": "cp ./src/server-config.json dist",
     "copy": "run-s copy-icons copy-shared copy-json",
-    "copy-shared": "cp -R ../../dev/shared dist/public/media/shared"
+    "copy-shared": "cp -R ../../dev/shared dist/public/media"
   },
   "dependencies": {
-    "@moviemasher/client-react": "^5.0.2",
-    "@moviemasher/server-express": "^5.0.2",
+    "@moviemasher/client-react": "5.0.3",
+    "@moviemasher/server-express": "5.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

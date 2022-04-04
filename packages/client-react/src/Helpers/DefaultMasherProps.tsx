@@ -8,7 +8,7 @@ import { Button } from '../Utilities/Button'
 import { Bar, BarOptions } from '../Utilities/Bar'
 import { PlayerContent } from '../Components/Player/PlayerContent'
 import { PlayerButton } from '../Components/Player/PlayerButton'
-import { TimeSlider } from '../Components/Player/TimeSlider'
+import { PlayerTimeControl } from '../Components/Player/PlayerTimeControl'
 import { Browser } from '../Components/Browser/Browser'
 import { BrowserContent } from '../Components/Browser/BrowserContent'
 import { BrowserSource } from '../Components/Browser/BrowserSource'
@@ -20,7 +20,7 @@ import { TimelineZoomer } from '../Components/Masher/Timeline/TimelineZoomer'
 import { TimelineTracks } from '../Components/Masher/Timeline/TimelineTracks'
 import { TimelineScrubber } from '../Components/Masher/Timeline/TimelineScrubber'
 import { Player } from '../Components/Player/Player'
-import { Playing } from '../Components/Player/Playing'
+import { PlayerPlaying } from '../Components/Player/PlayerPlaying'
 import { PlayerNotPlaying } from '../Components/Player/PlayerNotPlaying'
 import { Inspector } from '../Components/Inspector/Inspector'
 import { InspectorProperties } from '../Components/Inspector/InspectorProperties'
@@ -44,6 +44,8 @@ import { SaveControl } from '../Components/Controls/SaveControl'
 import { RenderControl } from '../Components/Controls/RenderControl'
 import { DefaultIcons } from '../Components/Editor/EditorIcons/DefaultIcons'
 import { EditorInputs } from '../Components/Editor/EditorInputs/EditorInputs'
+import { ViewControl } from '../Components/Controls/ViewControl'
+import { ProcessProgress } from '../Components/Process/ProcessProgress'
 
 
 interface ContentOptions {
@@ -128,16 +130,16 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
   const browserNode = (panelOptions : PanelOptionsStrict) => {
     panelOptions.className ||= 'panel browser'
     panelOptions.header.content ||= [
-      <BrowserSource key='theme' id='theme' className='button-icon' children={icons.browserTheme} />,
-      <BrowserSource key='effect' id='effect' className='button-icon' children={icons.browserEffect} />,
-      <BrowserSource key='transition' id='transition' className='button-icon' children={icons.browserTransition} />
+      <BrowserSource key='theme' id='theme' className='icon-button' children={icons.browserTheme} />,
+      <BrowserSource key='effect' id='effect' className='icon-button' children={icons.browserEffect} />,
+      <BrowserSource key='transition' id='transition' className='icon-button' children={icons.browserTransition} />
     ]
 
     const SourceClass = noApi ? BrowserSource : BrowserDataSource
     panelOptions.header.before ||= [
-      <SourceClass key='video' id='videosequence' className='button-icon' children={icons.browserVideo} />,
-      <SourceClass key='audio' id='audio' className='button-icon' children={icons.browserAudio} />,
-      <SourceClass key='image' id='image' className='button-icon' children={icons.browserImage} />,
+      <SourceClass key='video' id='videosequence' className='icon-button' children={icons.browserVideo} />,
+      <SourceClass key='audio' id='audio' className='icon-button' children={icons.browserAudio} />,
+      <SourceClass key='image' id='image' className='icon-button' children={icons.browserImage} />,
     ]
 
     if (!noApi) {
@@ -146,7 +148,10 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
           <UploadControl>
             {icons.upload}
           </UploadControl>
-          <ProcessActive><ProcessStatus/></ProcessActive>
+          <ProcessActive>
+            <ProcessStatus />
+            <ProcessProgress/>
+          </ProcessActive>
         </Process>
       ]
     }
@@ -220,11 +225,11 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
     panelOptions.header.content ||= [<img key='logo' src="mm.svg" />]
 
     panelOptions.footer.content ||= [
-      <PlayerButton key='play-button' className='button'>
-        <Playing key='playing'>{icons.playerPause}</Playing>
+      <PlayerButton key='play-button' className='icon-button'>
+        <PlayerPlaying key='playing'>{icons.playerPause}</PlayerPlaying>
         <PlayerNotPlaying key='not-playing'>{icons.playerPlay}</PlayerNotPlaying>
       </PlayerButton>,
-      <TimeSlider key='time-slider'/>
+      <PlayerTimeControl key='time-slider'/>
     ]
 
     const children = [
@@ -278,9 +283,9 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
 
     panelOptions.footer.content ||= [
       <TimelineZoomer key='zoomer'/>,
-      <EditorAddTrackButton key='video' trackType='video' children={icons.timelineAddVideo}/>,
-      <EditorAddTrackButton key='audio' trackType='audio' children={icons.timelineAddAudio}/>,
-      <EditorAddTrackButton key='transition' trackType='transition' children={icons.timelineAddTransition}/>,
+      <EditorAddTrackButton className='icon-button' key='video' trackType='video' children={icons.timelineAddVideo}/>,
+      <EditorAddTrackButton className='icon-button' key='audio' trackType='audio' children={icons.timelineAddAudio}/>,
+      <EditorAddTrackButton className='icon-button' key='transition' trackType='transition' children={icons.timelineAddTransition}/>,
     ]
 
     if (!noApi) {
@@ -290,9 +295,15 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
         </Process>
       ]
       panelOptions.header.after ||= [
+        <ViewControl key='view-control' ><Button>View</Button></ViewControl>,
         <Process key='render-process' id='rendering'>
           <RenderControl><Button>Render</Button></RenderControl>
-        </Process>
+          <ProcessActive>
+            <ProcessStatus />
+            <ProcessProgress/>
+          </ProcessActive>
+
+        </Process>,
       ]
     }
 

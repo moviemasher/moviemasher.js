@@ -57,7 +57,7 @@ function BrowserDataSource(props: BrowserSourceProps): ReactResult {
   React.useEffect(() => {
     // console.log("BrowserDataSource useEffect", enabled.includes(ServerType.Data), sourceId, id)
     if (enabled.includes(ServerType.Data) && sourceId === id) onClick()
-  }, [enabled])
+  }, [enabled, sourceId])
 
   const viewProps = { ...rest, onClick, className: classes.join(' ') }
   return <View {...viewProps}/>

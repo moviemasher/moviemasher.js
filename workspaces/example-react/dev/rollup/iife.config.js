@@ -20,7 +20,7 @@ export default {
   output: {
     format: "iife",
     file: main,
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     resolve(),

@@ -7,7 +7,7 @@ import {
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
   LoadType, DefinitionTypes, Endpoint, ApiRequestInit, outputDefaultPopulate,
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
-  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput,
+  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -31,14 +31,28 @@ const uuid = require('uuid').v4
 export class RenderingServerClass extends ServerClass implements RenderingServer {
   constructor(public args: RenderingServerArgs) { super(args) }
 
-  private dataDefinitionPutCallback(user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
-    const definitionPath = this.definitionFilePath(user, id!)
-    const definitionString = fs.readFileSync(definitionPath).toString()
-    const definition: DefinitionObject = JSON.parse(definitionString)
-    this.definitionObject(user, renderingId, definition, outputs)
+  private dataPutCallback(user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
+    const definitionPath = this.definitionFilePath(user, id)
+    if (fs.existsSync(definitionPath)) {
+      // it's an upload
+      const definitionString = fs.readFileSync(definitionPath).toString()
+      const definition: DefinitionObject = JSON.parse(definitionString)
+      this.definitionObject(user, renderingId, definition, outputs)
+      const callback: ApiCallback = {
+        endpoint: { prefix: Endpoints.data.definition.put },
+        request: { body: { definition }}
+      }
+      return callback
+    }
+
+    const [output] = outputs
+    // it's a mash render
+    const mash: MashObject = {
+      id, rendering: `${id}/${renderingId}/${output.outputType}.${output.extension || output.format}`
+    }
     const callback: ApiCallback = {
-      endpoint: { prefix: Endpoints.data.definition.put },
-      request: { body: { definition }}
+      endpoint: { prefix: Endpoints.data.mash.put },
+      request: { body: { mash }}
     }
     return callback
   }
@@ -84,7 +98,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       return [type, commandOutput]
     }))
     has.forEach(type => {
-      console.log(this.constructor.name, "definitionObject", has)
+      // console.log(this.constructor.name, "definitionObject", has)
       const commandOutput = lastOutputByType[type]!
       if (type !== OutputType.ImageSequence) {
         const infoFilename = renderingOutputFile(commandOutput, ExtensionLoadedInfo)
@@ -128,7 +142,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const jsonPath = this.definitionFilePath(user, id!)
     const outputDirectory = path.dirname(jsonPath)
 
-    console.log(this.constructor.name, "directoryPromise", outputDirectory)
+    // console.log(this.constructor.name, "directoryPromise", outputDirectory)
     return fs.promises.mkdir(outputDirectory, { recursive: true }).then(() => {
       return fs.promises.writeFile(jsonPath, JSON.stringify(definition, null, 2))
     })
@@ -244,8 +258,13 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
       const filenames = fs.readdirSync(outputDirectory)
       const working = outputs.map(renderingCommandOutput => {
+
+        // console.log(this.constructor.name, "status output", renderingCommandOutput)
         const { outputType } = renderingCommandOutput
-        const state = response[outputType] ||= { total: 0, completed: 0 }
+        if (!response[outputType]) response[outputType] = { total: 0, completed: 0 }
+        const state = response[outputType]!
+
+
         state.total++
 
         const resultFileName = renderingOutputFile(renderingCommandOutput, ExtensionLoadedInfo)
@@ -256,8 +275,9 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         return 1
       })
       if (Math.max(...working)) response.apiCallback = this.statusCallback(id, renderingId)
-      else response.apiCallback = this.dataDefinitionPutCallback(user, id, renderingId, outputs)
+      else response.apiCallback = this.dataPutCallback(user, id, renderingId, outputs)
     } catch (error) { response.error = String(error) }
+    // console.log(this.constructor.name, "status response", response)
     res.send(response)
   }
 
@@ -282,7 +302,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   upload: ServerHandler<RenderingUploadResponse, RenderingUploadRequest> = async (req, res) => {
     const request = req.body
     const { name, type, size } = request
-    console.log(this.constructor.name, "upload", request)
+    // console.log(this.constructor.name, "upload", request)
     const response: RenderingUploadResponse = {}
 
     try {
@@ -298,6 +318,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       else if (!this.fileServer.withinLimits(size, raw)) response.error = Errors.invalid.size
       else {
         const loadType = raw as LoadType
+        response.loadType = loadType
         const definitionId = uuid() // new definition id
         const source = this.fileServer.userSourceSuffix(definitionId, extension, loadType, user)
         const definition = renderingDefinitionObject(loadType, source, definitionId, name)
@@ -309,7 +330,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         response.apiCallback = this.startCallback(definition)
       }
     } catch (error) { response.error = String(error) }
-    console.log(this.constructor.name, "upload response")
+    // console.log(this.constructor.name, "upload response")
     res.send(response)
   }
 }

@@ -38,7 +38,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
   commandInputs: CommandInputs = []
 
   kill() {
-    console.log(this.constructor.name, "kill", this.id)
+    console.debug(this.constructor.name, "kill", this.id)
     this._commandProcess?.kill('SIGKILL')
   }
 
@@ -52,7 +52,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     // console.log(this.constructor.name, "run")
 
     this.command.on('error', (...args: any[]) => {
-      console.log(this.constructor.name, "run received error", this.runError(...args))
+      console.error(this.constructor.name, "run received error", this.runError(...args))
       this.emit('error', this.runError(...args))
     })
     this.command.on('start', (...args: any[]) => {
@@ -62,14 +62,14 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
       this.emit('end', ...args)
     })
     if (typeof destination === 'string') {
-      console.log(this.constructor.name, "run", destination)
+      // console.log(this.constructor.name, "run", destination)
       this.makeDirectory(destination)
 
     }
     try {
       this.command.run()
     } catch (error) {
-      console.log(this.constructor.name, "run received error", error)
+      console.error(this.constructor.name, "run received error", error)
     }
   }
 
@@ -81,7 +81,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     // console.log(this.constructor.name, "runPromise", destination)
     const promise = new Promise<CommandResult>(resolve => {
       this.command.on('error', (...args: any[]) => {
-        console.log(this.constructor.name, "runPromise received error event", ...args)
+        console.error(this.constructor.name, "runPromise received error event", ...args)
         resolve({ error: this.runError(...args) })
       })
       this.command.on('end', () => {

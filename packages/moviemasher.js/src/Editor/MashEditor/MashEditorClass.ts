@@ -45,7 +45,6 @@ import { MashFactory } from "../../Edited/Mash/MashFactory"
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
 
 class MashEditorClass extends EditorClass implements MashEditor {
-  // [index : string] : unknown
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -525,7 +524,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   moveClip(clip: Clip, frameOrIndex = 0, trackIndex = 0) : void {
-    console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
+    // console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
     if (!Is.positive(frameOrIndex)) throw Errors.argument + 'moveClip frameOrIndex'
     if (!Is.positive(trackIndex)) throw Errors.argument + 'moveClip trackIndex'
 
@@ -664,7 +663,11 @@ class MashEditorClass extends EditorClass implements MashEditor {
     console.debug(this.constructor.name, "removeTrack coming soon...")
   }
 
-  save() : void { this.actions.save() }
+  save(id?: string): void {
+    if (id) this.mash.id = id
+    this.actions.save()
+    this.eventTarget.emit(EventType.Action)
+  }
 
   selectClip(clip: Clip | undefined): void {
     const track = clip ? this.mash.clipTrack(clip) : this.selection.track

@@ -126,6 +126,7 @@ class RenderingProcessClass implements RenderingProcess {
           const cmdPath = path.join(outputDirectory, cmdFilename)
           const infoFilename = renderingOutputFile(output, ExtensionLoadedInfo)
           const infoPath = path.join(outputDirectory, infoFilename)
+          // console.log(this.constructor.name, "runPromise", infoPath)
           const renderPromise = this.renderResultPromise(
             destPath, cmdPath, infoPath, output, commandDescription
           )

@@ -4,7 +4,7 @@ interface LayersProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents Masher, Caster
- * @children LayersContent, Playing, LayersNotPlaying, TimeSlider, LayersButton
+ * @children LayersContent, PlayerPlaying, LayersNotPlaying, PlayerTimeControl, LayersButton
  */
 function Layers(props: LayersProps): ReactResult {
   return null

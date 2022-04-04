@@ -22,7 +22,7 @@ export class WebServerClass extends ServerClass implements WebServer {
       const index = directory ? 'index.html' : path.basename(resolved)
       const indexDir = directory ? resolved : path.dirname(resolved)
       app.use(url, Express.static(indexDir, { index }))
-      console.log(this.constructor.name, "serving", url, "from", indexDir, "with", index, "index")
+      console.debug(this.constructor.name, "serving", url, "from", indexDir, "with", index, "index")
     })
   }
 }

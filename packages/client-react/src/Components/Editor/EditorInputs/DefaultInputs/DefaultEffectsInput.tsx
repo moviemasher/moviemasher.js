@@ -70,7 +70,7 @@ function DefaultEffectsInput(): ReactResult {
   }
   const dropClip = (dataTransfer: DataTransfer, offsetDrop: number) => {
     const type = dropType(dataTransfer)!
-    console.log("dropClip", type, offsetDrop)
+    // console.log("dropClip", type, offsetDrop)
 
 
     const json = dataTransfer.getData(type)
@@ -80,7 +80,7 @@ function DefaultEffectsInput(): ReactResult {
     const index = pixelToIndex(Math.max(0, offsetDrop - offset))
 
     if (typeof definition === 'undefined') {
-      console.log('no definition')
+      // console.log('no definition')
       const effect = masher.selection.effect
       if (!effect) return
 

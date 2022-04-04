@@ -57,7 +57,7 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
   const migrations = dataMigrationsDirectory || "./workspaces/example-express-react/dev/data/migrations"
   const home = webServerHome || "./workspaces/example-express-react/dist/public/masher.html"
   const homeDirectory = path.dirname(home)
-  const baseFile = dataBaseFile || `${path.dirname(homeDirectory)}/data.db`
+  const baseFile = dataBaseFile || `${path.dirname(homeDirectory)}/data/sqlite.db`
   const upload = fileUploadDirectory || `${homeDirectory}/media`
   const commandOutputs: RenderingCommandOutputs = renderingCommandOutputs || {}
 

@@ -1,6 +1,6 @@
 {
   "name": "example-react",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
@@ -18,11 +18,11 @@
     "clean": "run-s clean-delete clean-create-img clean-create-shared",
     "copy-html": "cp ../../dev/index.html dist",
     "copy-icon": "cp ../../dev/img/favicon.ico dist",
-    "copy-img": "cp -R ../../dev/img dist/img",
-    "copy-shared": "cp -R ../../dev/shared dist/shared",
+    "copy-img": "cp -R ../../dev/img dist",
+    "copy-shared": "cp -R ../../dev/shared dist",
     "copy": "run-s copy-icon copy-shared copy-img copy-html"
   },
   "dependencies": {
-    "@moviemasher/client-react": "^5.0.2"
+    "@moviemasher/client-react": "5.0.3"
   }
 }

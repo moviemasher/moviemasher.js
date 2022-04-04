@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
 [![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.2_
+_JavaScript video editor, encoder, and streamer - version 5.0.3_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -43,7 +43,7 @@ in AWS Marketplace does the same within their hosted environment.
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.2
+docker run --rm -p '8570:8570' moviemasher/moviemasher.js:5.0.3
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
@@ -76,39 +76,21 @@ required to layout the client user interface are kept separate from JavaScript c
 ```html
 <!DOCTYPE html>
 <html lang='en'>
-
-<head>
-  <meta charset='utf-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <script src='masher.js' defer></script>
-  <link href='masher.css' rel='stylesheet'>
-  <style>
-    body {
-      margin: 0px;
-      padding: 0px;
-      font-family: sans-serif;
-    }
-
-    body,
-    #app {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-    }
-
-    .moviemasher .editor {
-      --preview-width: 480px;
-      --preview-height: 270px;
-    }
-
-  </style>
-  <title>Movie Masher</title>
-</head>
-
-<body>
-  <div id='app' class='moviemasher'></div>
-</body>
-
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='masher.js' defer></script>
+    <link href='masher.css' rel='stylesheet'>
+    <style>
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
+      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
+    </style>
+    <title>Movie Masher</title>
+  </head>
+  <body>
+    <div id='app' class='moviemasher'></div>
+  </body>
 </html>
 ```
 </fieldset>

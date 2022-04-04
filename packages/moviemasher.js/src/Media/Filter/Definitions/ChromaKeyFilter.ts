@@ -68,7 +68,7 @@ class ChromaKeyFilter extends FilterDefinitionClass {
   }
 
   private yuvsFromPixelsAccurate(pixels: Pixels, width: number, height: number): Yuv[][] {
-    console.log(this.constructor.name, "yuvsFromPixelsAccurate")
+    // console.log(this.constructor.name, "yuvsFromPixelsAccurate")
     const array:Yuv[][] = []
     for (let index = pixels.length / 4 - 1; index > 0; index -= 1) {
       const size = { width, height }

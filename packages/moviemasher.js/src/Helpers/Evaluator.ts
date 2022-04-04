@@ -223,7 +223,7 @@ class Evaluator {
   preloading = false
 
   private logDebug(evaluation: Evaluation) {
-    console.log(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`)
+    console.debug(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`)
   }
 
   get createVisibleContext(): VisibleContext {

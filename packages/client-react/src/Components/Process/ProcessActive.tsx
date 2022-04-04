@@ -9,7 +9,8 @@ interface ProcessActiveProps extends PropsWithChildren { }
  */
 function ProcessActive(props: ProcessActiveProps): ReactResult {
   const processContext = React.useContext(ProcessContext)
-  if (!processContext.processing) return null
+  const { processing, error } = processContext
+  if (!(processing || error)) return null
 
   return <>{props.children}</>
 }

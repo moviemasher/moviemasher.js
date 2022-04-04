@@ -6,9 +6,9 @@ import { Slider } from '../../Utilities/Slider'
 import { useListeners } from '../../Hooks/useListeners'
 import { useMashEditor } from '../../Hooks/useMashEditor'
 
-interface TimeSliderProps extends PropsWithChildren, WithClassName { }
+export interface PlayerTimeControlProps extends PropsWithChildren, WithClassName { }
 
-function TimeSlider(props: TimeSliderProps): ReactResult {
+export function PlayerTimeControl(props: PlayerTimeControlProps): ReactResult {
   const masher = useMashEditor()
   useListeners({
     [EventType.Time]: () => { setFrame(masher.mash.frame) },
@@ -34,5 +34,3 @@ function TimeSlider(props: TimeSliderProps): ReactResult {
   }
   return <Slider {...sliderProps} />
 }
-
-export { TimeSlider, TimeSliderProps }

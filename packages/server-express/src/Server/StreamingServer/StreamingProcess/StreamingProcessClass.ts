@@ -55,7 +55,7 @@ class StreamingProcessClass extends EventEmitter {
     fs.mkdirSync(pathPrefix, { recursive: true })
     try {
       if (this.command) {
-        console.log(this.constructor.name, "cut deleting existing command")
+        // console.log(this.constructor.name, "cut deleting existing command")
         RunningCommandFactory.delete(this.command.id)
         // this.command.removeAllListeners('error')
       }
@@ -81,7 +81,7 @@ class StreamingProcessClass extends EventEmitter {
 
           const resolved = path.resolve(prefix, source)
           const url = `file://${resolved}`
-          console.log(this.constructor.name, "update resolved", source, 'to', url)
+          // console.log(this.constructor.name, "update resolved", source, 'to', url)
 
           const exists = fs.existsSync(url)
           if (!exists) {

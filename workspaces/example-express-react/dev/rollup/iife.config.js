@@ -26,7 +26,7 @@ const clients = names.map(name => ({
   output: {
     file: path.join(dest, `${name}${outputExtension}`),
     format: "iife",
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     resolve(),

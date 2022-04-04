@@ -1,10 +1,12 @@
 import React from "react"
 import { TrackType } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
+import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useMashEditor } from "../../Hooks/useMashEditor"
 
-interface EditorAddTrackButtonProps extends PropsAndChild { trackType: string }
+interface EditorAddTrackButtonProps extends PropsAndChild, WithClassName {
+  trackType: string
+}
 
 function EditorAddTrackButton(props:EditorAddTrackButtonProps): ReactResult {
   const masher = useMashEditor()

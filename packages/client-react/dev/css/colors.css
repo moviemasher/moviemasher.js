@@ -1,26 +1,46 @@
 /* colors.css */
+
 .moviemasher {
-  --back-primary: hsl(0, 0%, 100%);
-  --back-secondary: hsl(0, 0%, 90%);
-  --back-tertiary: hsl(0, 0%, 85%);
-  --fore-primary: #545454;
-  --fore-secondary: #2c2c2c;
-  --fore-tertiary: #1d1d1d;
-  --color-primary: #366db8;
-  --color-secondary: #29528b;
-  --color-tertiary: #1e3c66;
+  --button-transition:
+      background-color 0.25s ease-out,
+      border-color 0.25s ease-out,
+      color 0.25s ease-out;
+  --hue-back: 190;
+  --hue-fore: 220;
+  --sat-primary: 60%;
+  --sat-secondary: 75%;
+  --sat-tertiary: 80%;
+  --lum-back-primary: 100%;
+  --lum-back-secondary: 80%;
+  --lum-back-tertiary: 60%;
+  --lum-fore-primary: 50%;
+  --lum-fore-secondary: 30%;
+  --lum-fore-tertiary: 10%;
+  --back-primary: hsl(0, 0%, var(--lum-back-primary));
+  --back-secondary: hsl(0, 0%, var(--lum-back-secondary));
+  --back-tertiary: hsl(0, 0%, var(--lum-back-tertiary));
+  --fore-primary: hsl(0, 0%, var(--lum-fore-primary));
+  --fore-secondary: hsl(0, 0%, var(--lum-fore-secondary));
+  --fore-secondary-promote: var(--color-fore-primary);
+  --fore-secondary-demote: var(---back-tertiary);
+  --fore-tertiary: hsl(0, 0%, var(--lum-fore-tertiary));
+  --color-back-primary: hsl(var(--hue-back), var(--sat-primary), var(--lum-back-primary));
+  --color-back-secondary: hsl(var(--hue-back), var(--sat-secondary), var(--lum-back-secondary));
+  --color-back-tertiary: hsl(var(--hue-back), var(--sat-tertiary), var(--lum-back-tertiary));
+  --color-fore-primary: hsl(var(--hue-fore), var(--sat-primary), var(--lum-fore-primary));
+  --color-fore-secondary: hsl(var(--hue-fore), var(--sat-secondary), var(--lum-fore-secondary));
+  --color-fore-tertiary: hsl(var(--hue-fore), var(--sat-tertiary), var(--lum-fore-tertiary));
 }
 
 @media (prefers-color-scheme: dark) {
   .moviemasher {
-    --back-primary: hsl(0, 0%, 5%);
-    --back-secondary: hsl(0, 0%, 10%);
-    --back-tertiary: hsl(0, 0%, 15%);
-    --fore-primary: #ababab;
-    --fore-secondary: #cfcfcf;
-    --fore-tertiary: #e9e9e9;
-    --color-primary: #476780;
-    --color-secondary: #758caa;
-    --color-tertiary: #a2c3ee;
+    --lum-back-primary: 5%;
+    --lum-back-secondary: 15%;
+    --lum-back-tertiary: 20%;
+    --lum-fore-primary: 30%;
+    --lum-fore-secondary: 70%;
+    --lum-fore-tertiary: 85%;
+    --fore-secondary-promote: var(--color-fore-secondary);
+    --fore-secondary-demote: var(--back-primary);
   }
 }

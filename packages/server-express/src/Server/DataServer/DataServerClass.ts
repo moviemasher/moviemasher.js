@@ -22,7 +22,7 @@ import {
   DataCastGetResponse, DataCastGetRequest,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
   DataCastRetrieveResponse, DataCastRetrieveRequest,
-  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
+  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId, ObjectUnknown,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -79,6 +79,7 @@ const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObje
 
 const DataServerColumns = ['id', 'label', 'icon']
 const DataServerColumnsDefault = ['*']
+export interface DataServerRow extends UnknownObject, AndId { }
 
 export class DataServerClass extends ServerClass implements DataServer {
   constructor(public args: DataServerArgs) { super(args) }
@@ -117,7 +118,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       values.push(value)
     })
     const sql = DataServerInsert(quotedTable, keys)
-    console.log(sql, ...values)
+    // console.log(sql, ...values)
     return this.db.run(sql, ...values).then(() => id)
   }
 
@@ -275,7 +276,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.createPromise('`definition`', DataServerInsertRecord(userId, definition))
   }
 
-  private insertMashPromise(userId: string, mash: MashObject, definitionIds: string[]): Promise<string> {
+  private insertMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<string> {
     return this.createPromise('`mash`', DataServerInsertRecord(userId, mash)).then(id =>
       this.updateMashDefinitionsPromise(id, definitionIds).then()
     )
@@ -414,12 +415,12 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private startDatabase() {
     const { dbPath, dbMigrationsPrefix } = this.args
-    console.log(this.constructor.name, "startDatabase", dbPath)
+    console.debug(this.constructor.name, "startDatabase", dbPath)
     fs.mkdirSync(path.dirname(dbPath), { recursive: true })
     open({ filename: dbPath, driver: sqlite3.Database }).then(db => {
       this._db = db
       if (dbMigrationsPrefix) {
-        console.log(this.constructor.name, "startDatabase migrating...", dbMigrationsPrefix)
+        console.debug(this.constructor.name, "startDatabase migrating...", dbMigrationsPrefix)
         this.db.migrate({ migrationsPath: dbMigrationsPrefix }).catch(err =>
           console.error(this.constructor.name, "startDatabase migration failed", err)
         )
@@ -461,7 +462,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       values.push(value)
     })
     const sql = DataServerUpdate(quotedTable, keys)
-    console.log(sql, ...values, id)
+    // console.log(sql, ...values, id)
 
     return this.db.run(sql, ...values, id).then(EmptyMethod)
   }
@@ -490,11 +491,11 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.updatePromise('`definition`', data).then(EmptyMethod)
   }
 
-  private updateMashDefinitionsPromise(mashId: string, definitionIds: string[]): Promise<string> {
+  private updateMashDefinitionsPromise(mashId: string, definitionIds?: string[]): Promise<string> {
     return this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
   }
 
-  private updateMashPromise(mash: MashObject, definitionIds: string[]): Promise<void> {
+  private updateMashPromise(mash: MashObject, definitionIds?: string[]): Promise<void> {
     const { createdAt, icon, id, label, ...rest } = mash
     if (!id) return Promise.reject(401)
 
@@ -505,13 +506,15 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private updateRelationsPromise(from: string, to: string, id: string, definitionIds: string[]): Promise<string> {
+  private updateRelationsPromise(from: string, to: string, id: string, definitionIds?: string[]): Promise<string> {
+    if (!definitionIds) return Promise.resolve(id)
+
     const quotedTable = `${from}_${to}`
     const fromId = `${from}Id`
     const toId = `${to}Id`
     const sql = `SELECT * FROM ${quotedTable} WHERE ${fromId} = ?`
     return this.db.all(sql, id).then(rows => {
-      const existing = Object.fromEntries(rows.map((row) => [row[toId], row.id]))
+      const existing = Object.fromEntries(rows.map((row: DataServerRow) => [String(row[toId]), row.id]))
       const defined = Object.keys(existing).filter(id => !definitionIds.includes(id))
       const deleting = defined.map(id => existing[id])
       const creating = definitionIds.filter(id => !defined.includes(id))
@@ -555,14 +558,17 @@ export class DataServerClass extends ServerClass implements DataServer {
       return this.updateDefinitionPromise(definition).then(() => id)
     })
   }
-  private writeMashPromise(userId: string, mash: MashObject, definitionIds: string[]): Promise<string> {
+  private writeMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<string> {
     const { id } = mash
     if (!id) return this.insertMashPromise(userId, mash, definitionIds)
 
-    return this.rowExists('`mash`', id, userId).then(existing => {
-      if (!existing) return this.insertMashPromise(userId, mash, definitionIds)
-
-      return this.updateMashPromise(mash, definitionIds).then(() => id)
+    const promiseJson = this.jsonPromise('`mash`', id)
+    return promiseJson.then(something => {
+      if (something) {
+        Object.assign(something, mash)
+        return this.updateMashPromise(something, definitionIds).then(() => id)
+      }
+      return this.insertMashPromise(userId, mash, definitionIds).then(() => id)
     })
   }
 }

@@ -111,6 +111,7 @@ enum EventType {
   Pause = 'pause',
   Play = 'play',
   Playing = 'playing',
+  Render = 'render',
   Seeked = 'seeked',
   Seeking = 'seeking',
   Selection = 'selection',

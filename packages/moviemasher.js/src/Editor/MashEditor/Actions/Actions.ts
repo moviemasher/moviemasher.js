@@ -12,6 +12,13 @@ class Actions  {
     this.mash = mash
   }
 
+  add(action : Action) : void {
+    const remove = this.instances.length - (this.index + 1)
+    if (Is.positive(remove)) this.instances.splice(this.index + 1, remove)
+
+    this.instances.push(action)
+  }
+
   get canRedo() : boolean { return this.index < this.instances.length - 1 }
 
   get canSave() : boolean { return this.canUndo }
@@ -25,13 +32,6 @@ class Actions  {
   destroy() : void {
     this.index = -1
     this.instances.splice(0, this.instances.length)
-  }
-
-  add(action : Action) : void {
-    const remove = this.instances.length - (this.index + 1)
-    if (Is.positive(remove)) this.instances.splice(this.index + 1, remove)
-
-    this.instances.push(action)
   }
 
   index = -1

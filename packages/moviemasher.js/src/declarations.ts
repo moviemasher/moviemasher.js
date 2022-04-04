@@ -255,7 +255,7 @@ export interface GraphFile {
   file: string
   options?: ValueObject
   input?: boolean
-  definition: Definition
+  definition?: Definition
 }
 
 export type GraphFiles = GraphFile[]

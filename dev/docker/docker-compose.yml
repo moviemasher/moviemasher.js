@@ -4,14 +4,15 @@ services:
     build:
       dockerfile: ./Dockerfile.cnf
       context: ../../
-    image: moviemasher/moviemasher.js:5.0.2
+    image: moviemasher/moviemasher.js:5.0.3
     container_name: moviemasher
     ports:
       - "8570:8570"
       - "8571:8571"
     volumes:
       - ./server-config.json:/home/node/app/workspaces/example-express-react/dist/server-config.json
-      # - ../../temporary:/home/node/app/temporary
+      - ../../temporary/media:/home/node/app/workspaces/example-express-react/dist/public/media/username
+      - ../../temporary/data:/home/node/app/workspaces/example-express-react/dist/data
       # - ../../docs/:/home/node/app/docs/
       # - ../../dev/:/home/node/app/dev/
       # - ../../packages/:/home/node/app/packages/

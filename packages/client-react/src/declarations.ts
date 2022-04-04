@@ -25,18 +25,12 @@ export interface SourceCallbackOptions extends Record<string, unknown> {
   terms?: string
 }
 
-/**
- * @category Callback
- */
+export type ReactStateSetter<T = string> = React.Dispatch<React.SetStateAction<T>>
+
 export interface ListenerCallback { (): void }
 
-/**
- * must be a single element
- */
+
 export interface PropsAndChild extends Record<string, unknown> {
-  /**
-   * @required
-   */
   children: React.ReactElement<Record<string, unknown>>
 }
 
