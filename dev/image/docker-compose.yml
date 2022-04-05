@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: ./dev/docker/Dockerfile.cnf
       context: ../../
-    image: moviemasher/moviemasher.js:5.0.4
+    image: moviemasher/moviemasher.js:5.0.5
     container_name: moviemasher
     ports:
       - "8570:8570"

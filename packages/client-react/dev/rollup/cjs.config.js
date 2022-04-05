@@ -10,7 +10,7 @@ const { main, source, devDependencies } = pkg
 export default {
   external: [...builtinModules, ...Object.keys(devDependencies || {})],
   input: source,
-  output: { format: "cjs", file: main, sourcemap: true },
+  output: { format: "cjs", file: main, sourcemap: false },
   plugins: [
     peerDepsExternal(),
     json( { preferConst: true, indent: "  ", namedExports: true }),

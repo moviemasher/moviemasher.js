@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.4_
+_JavaScript video editor, encoder, and streamer - version 5.0.5_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -184,7 +184,7 @@ Learn more about building your own customized server in the
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.4
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.5
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
@@ -195,7 +195,7 @@ docker kill moviemasher
 docker rm moviemasher
 ```
 
-The _dev/docker/docker-compose.yml_ file provides some other options to explore and is used by the `docker-up` and `docker-down` npm scripts.
+The _dev/image/docker-compose.yml_ file provides some other options to explore and is used by the `docker-up` and `docker-down` npm scripts.
 
 ## Development
 

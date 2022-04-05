@@ -5,7 +5,7 @@
     "alwaysStrict": true,
     "checkJs": false,
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "esModuleInterop": true,
     "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
     "module": "ESNext",

@@ -8,7 +8,7 @@ const { peerDependencies, module, source } = pkg
 export default {
   external: Object.keys(peerDependencies),
   input: source,
-  output: { format: "esm", file: module, sourcemap: true },
+  output: { format: "esm", file: module, sourcemap: false },
   plugins: [
     peerDepsExternal(), ts({ tsconfig: "./dev/tsconfig.json" })
   ]

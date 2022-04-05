@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/moviemasher.js",
-  "version": "5.0.4",
-  "description": "JavaScript video editor, encoder, and streamer - version 5.0.4",
+  "version": "5.0.5",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.5",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
