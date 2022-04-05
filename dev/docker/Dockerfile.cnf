@@ -1,9 +1,5 @@
 FROM amazonlinux:2.0.20220316.0
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
-EXPOSE 8570
-EXPOSE 8571
-ENTRYPOINT ["npm"]
-CMD ["start"]
 WORKDIR /home/node/app
 
 COPY dev/docker/install.sh /home/node/app/dev/docker/install.sh
@@ -21,3 +17,9 @@ COPY workspaces/ /home/node/app/workspaces/
 RUN npm run build
 
 COPY docs/ /home/node/app/docs/
+
+ENTRYPOINT ["node_modules/pm2/bin/pm2-docker"]
+CMD ["start", "workspaces/example-express-react/dist/server.js"]
+
+EXPOSE 8570
+EXPOSE 8571

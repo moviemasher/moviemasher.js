@@ -1,8 +1,8 @@
 <!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/head.md) -->
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
-[![Image](./dev/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
+[![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.3_
+_JavaScript video editor, encoder, and streamer - version 5.0.4_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -10,6 +10,23 @@ _JavaScript video editor, encoder, and streamer - version 5.0.3_
 - _client_ implemented in **ReactJS**
 - _server_ implemented in **ExpressJS**
 <!-- MAGIC:END -->
+
+## Express Server Plug-in
+This module is an
+[ExpressJS](https://expressjs.com)
+reference implementation of a server plug-in that utilizes the core
+[@moviemasher/moviemasher.js](https://www.npmjs.com/package/@moviemasher/moviemasher.js)
+module.
+
+It exports classes and interfaces that fulfill half a dozen APIs utilized by a client implementation like
+[@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react).
+Its imports are all specified as peer dependencies.
+
+This server implementation utilizes
+[SQLite](https://www.sqlite.org/index.html),
+[Fluent FFmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg),
+[Node Media Server](https://github.com/illuspas/Node-Media-Server), and
+[WebRTC](https://github.com/node-webrtc/node-webrtc) to support its data, rendering, and streaming APIs.
 
 <!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/documentation.md) -->
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/documentation.md -->

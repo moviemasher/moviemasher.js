@@ -1,6 +1,6 @@
 {
   "name": "example-react",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
@@ -23,6 +23,6 @@
     "copy": "run-s copy-icon copy-shared copy-img copy-html"
   },
   "dependencies": {
-    "@moviemasher/client-react": "5.0.3"
+    "@moviemasher/client-react": "5.0.4"
   }
 }

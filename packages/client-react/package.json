@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/client-react",
-  "version": "5.0.3",
-  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.3",
+  "version": "5.0.4",
+  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.0.4",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
@@ -21,7 +21,7 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.0.3",
+    "@moviemasher/moviemasher.js": "5.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remixicon-react": "^1.0.0"
