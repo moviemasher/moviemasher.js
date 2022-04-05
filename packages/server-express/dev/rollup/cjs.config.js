@@ -13,7 +13,7 @@ export default {
   output: {
     file: main,
     format: "cjs",
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     peerDepsExternal(),

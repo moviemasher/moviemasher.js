@@ -12,8 +12,9 @@ import { ServerAuthentication } from "../Server/Server"
 import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "../Host/Host"
+import { expandCommand } from '../Utilities/Expand'
 
-const OpenAuthentication: ServerAuthentication = { type: "http" }
+const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
 export interface HostOptionsDefault {
   previewSize?: Size
@@ -29,7 +30,7 @@ export interface HostOptionsDefault {
   dataBaseFile?: string
   webServerHome?: string
   version?: string
-  renderingCommandOutputs: RenderingCommandOutputs
+  renderingCommandOutputs?: RenderingCommandOutputs
 }
 
 export const HostDefaultPort = 8570
@@ -66,11 +67,14 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
   const uploadsRelative = path.relative(homeDirectory, upload)
 
   const authentication = auth || OpenAuthentication
+  if (authentication.type === 'basic') {
+    // support grabbing shared password from command or text file
+    authentication.password = expandCommand(authentication.password)
+  }
   const api: ApiServerArgs = {
     authentication
   }
   const data: DataServerArgs = {
-    prefix: "/data",
     dbPath: baseFile,
     dbMigrationsPrefix: migrations,
     authentication

@@ -7,9 +7,7 @@ import { HostServers } from "../Host/Host"
 
 
 class ServerClass implements Server {
-  constructor(args: ServerArgs) { this.args = args }
-
-  args: ServerArgs
+  constructor(public args: ServerArgs) {  }
 
   id = ''
 
@@ -19,17 +17,18 @@ class ServerClass implements Server {
     // console.log(this.constructor.name, "startServer")
 
     const { authentication } = this.args
-    if (authentication?.type === 'http') {
-      const authorizer = (username: string, password: string): boolean => {
-        if (!(username && password)) return false
+    if (authentication?.type === 'basic') {
+      const { password, users } = authentication
 
-        if (!authentication.password) return true
+      const authorizer = (username: string, suppliedPassword: string): boolean => {
+        if (!(username && suppliedPassword)) return false
 
-        return basicAuth.safeCompare(password, authentication.password)
+        if (!password) return true
+
+        return basicAuth.safeCompare(suppliedPassword, password)
       }
       const options: basicAuth.BasicAuthMiddlewareOptions = {
-        users: authentication.users, authorizer,
-        challenge: true, realm: 'moviemashers',
+        users, authorizer, challenge: true, realm: 'moviemasher',
       }
       app.use(`/${this.id}/*`, basicAuth(options), (_req, _res, next) => { next() })
     }

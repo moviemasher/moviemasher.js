@@ -7,5 +7,6 @@ export const ExtDash = 'dash' // ??
 export const ExtJpeg = 'jpg'
 export const ExtPng = 'png'
 export const ExtJson = 'json'
+export const ExtText = 'txt'
 
 export const OutputFilterGraphPadding = 6

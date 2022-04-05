@@ -329,6 +329,6 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
   if (optionsStrict.timeline) children.push(timelineNode(optionsStrict.timeline))
   if (optionsStrict.inspector) children.push(inspectorNode(optionsStrict.inspector))
   if (optionsStrict.browser) children.push(browserNode(optionsStrict.browser))
-  return { ...rest, className: classNameEditor, children, inputs, icons }
+  return { ...rest, className: classNameEditor, children }
 }
 export { ContentOptions, UiOptions, PanelOptionsStrict, PanelOptions, PanelOptionsOrFalse }

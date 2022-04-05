@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.4_
+_JavaScript video editor, encoder, and streamer - version 5.0.5_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -139,13 +139,11 @@ Learn more about building a fully customized video editing client in the
 
 
 ```ts
-import fs from 'fs'
 import path from 'path'
-import { Host, DefaultHostOptions } from '@moviemasher/server-express'
+import { Host, DefaultHostOptions, expandToJson } from '@moviemasher/server-express'
 
-const resolved = path.resolve(__dirname, './server-config.json')
-const json = fs.readFileSync(resolved).toString()
-const options = JSON.parse(json)
+const configuration = process.argv[2] || path.resolve(__dirname, './server-config.json')
+const options = expandToJson(configuration)
 const host = new Host(DefaultHostOptions(options))
 host.start()
 ```
@@ -184,7 +182,7 @@ Learn more about building your own customized server in the
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.4
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.5
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
@@ -195,7 +193,7 @@ docker kill moviemasher
 docker rm moviemasher
 ```
 
-The _dev/docker/docker-compose.yml_ file provides some other options to explore and is used by the `docker-up` and `docker-down` npm scripts.
+The _dev/image/docker-compose.yml_ file provides some other options to explore and is used by the `docker-up` and `docker-down` npm scripts.
 
 ## Development
 
@@ -215,16 +213,15 @@ npm run build
 npm start
 ```
 
-If running these commands proves daunting, perhaps due to architectural issues related to dependency installation, it's also possible to run them within Docker with the following commands:
+You can then load Movie Masher by navigating your web browser to
+[http://localhost:8570](http://localhost:8570) and supplying any username/password
+combination when prompted. When you're done exploring, execute the follow command to stop the server and clean up:
 
 ```shell
-npm run docker-build
-npm run docker-up
+npm install
+npm run build
+npm run stop
 ```
-
-Either way, you can then load Movie Masher by navigating your web browser to
-[http://localhost:8570](http://localhost:8570) and supplying any username/password
-combination when prompted.
 
 <!-- MAGIC:START (FILE:src=dev/docs/md/snippet/foot.md) -->
 <!-- The below content is automatically added from dev/docs/md/snippet/foot.md -->

@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.4_
+_JavaScript video editor, encoder, and streamer - version 5.0.5_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**
@@ -61,13 +61,11 @@ Learn more about how the codebase is structured in the
 
 
 ```ts
-import fs from 'fs'
 import path from 'path'
-import { Host, DefaultHostOptions } from '@moviemasher/server-express'
+import { Host, DefaultHostOptions, expandToJson } from '@moviemasher/server-express'
 
-const resolved = path.resolve(__dirname, './server-config.json')
-const json = fs.readFileSync(resolved).toString()
-const options = JSON.parse(json)
+const configuration = process.argv[2] || path.resolve(__dirname, './server-config.json')
+const options = expandToJson(configuration)
 const host = new Host(DefaultHostOptions(options))
 host.start()
 ```
