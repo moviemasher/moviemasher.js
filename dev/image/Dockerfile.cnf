@@ -2,8 +2,8 @@ FROM amazonlinux:2.0.20220316.0
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
 WORKDIR /home/node/app
 
-COPY dev/docker/install.sh /home/node/app/dev/docker/install.sh
-RUN bash /home/node/app/dev/docker/install.sh
+COPY dev/image/install.sh /home/node/app/dev/image/install.sh
+RUN bash /home/node/app/dev/image/install.sh
 
 COPY package.json /home/node/app/package.json
 COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
