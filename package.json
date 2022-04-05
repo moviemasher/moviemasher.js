@@ -48,7 +48,7 @@
     "publish-core": "npm publish --access public --workspace @moviemasher/moviemasher.js",
     "publish-server": "npm publish --access public --workspace @moviemasher/server-express",
     "start": "pm2 start workspaces/example-express-react/dist/server.js",
-    "stop": "pm2 stop workspaces/example-express-react/dist/server.js",
+    "stop": "pm2 delete workspaces/example-express-react/dist/server.js",
     "test-help": "jest -h",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
     "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",

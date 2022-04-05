@@ -11,6 +11,7 @@ import { renderingProcessTestArgs
 } from "../../../../../../dev/test/Utilities/renderingProcessArgs"
 import { TestRenderingsDir } from '../../../../../../dev/test/Setup/Constants'
 import { renderingInputFromRaw } from '../../../Utilities/Rendering'
+import { expandFile } from '../../../Utilities/Expand'
 
 export function renderingProcessArgs(id?: string): RenderingProcessArgs {
   return {
@@ -31,7 +32,7 @@ describe("RenderingProcess", () => {
   describe("renders", () => {
     const renderingFiles = fs.readdirSync(TestRenderingsDir).filter(p => p.endsWith('.json'))
     test.each(renderingFiles)('%s', async (fileName) => {
-      const json = fs.readFileSync(`${TestRenderingsDir}/${fileName}`).toString()
+      const json = expandFile(`${TestRenderingsDir}/${fileName}`)
       const args = JSON.parse(json) as RenderingProcessArgs
       const { id, outputs } = args
       const renderingArgs = { ...args, ...renderingProcessTestArgs(id) }

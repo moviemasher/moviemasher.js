@@ -215,16 +215,15 @@ npm run build
 npm start
 ```
 
-If running these commands proves daunting, perhaps due to architectural issues related to dependency installation, it's also possible to run them within Docker with the following commands:
+You can then load Movie Masher by navigating your web browser to
+[http://localhost:8570](http://localhost:8570) and supplying any username/password
+combination when prompted. When you're done exploring, execute the follow command to stop the server and clean up:
 
 ```shell
-npm run docker-build
-npm run docker-up
+npm install
+npm run build
+npm run stop
 ```
-
-Either way, you can then load Movie Masher by navigating your web browser to
-[http://localhost:8570](http://localhost:8570) and supplying any username/password
-combination when prompted.
 
 <!-- MAGIC:START (FILE:src=dev/docs/md/snippet/foot.md) -->
 <!-- The below content is automatically added from dev/docs/md/snippet/foot.md -->

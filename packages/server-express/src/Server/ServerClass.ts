@@ -7,9 +7,7 @@ import { HostServers } from "../Host/Host"
 
 
 class ServerClass implements Server {
-  constructor(args: ServerArgs) { this.args = args }
-
-  args: ServerArgs
+  constructor(public args: ServerArgs) {  }
 
   id = ''
 

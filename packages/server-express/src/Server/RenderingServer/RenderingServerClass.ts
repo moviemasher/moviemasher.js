@@ -24,6 +24,7 @@ import {
 } from "../../Setup/Constants"
 import { RenderingCommandOutputs, RenderingServer, RenderingServerArgs } from "./RenderingServer"
 import { FileServer } from "../FileServer/FileServer"
+import { expandFile } from "../../Utilities/Expand"
 
 const uuid = require('uuid').v4
 
@@ -35,7 +36,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const definitionPath = this.definitionFilePath(user, id)
     if (fs.existsSync(definitionPath)) {
       // it's an upload
-      const definitionString = fs.readFileSync(definitionPath).toString()
+      const definitionString = expandFile(definitionPath)
       const definition: DefinitionObject = JSON.parse(definitionString)
       this.definitionObject(user, renderingId, definition, outputs)
       const callback: ApiCallback = {
@@ -104,7 +105,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         const infoFilename = renderingOutputFile(commandOutput, ExtensionLoadedInfo)
         const infoPath = path.join(outputDirectory, renderingId, infoFilename)
         if (fs.existsSync(infoPath)) {
-          const infoString = fs.readFileSync(infoPath).toString()
+          const infoString = expandFile(infoPath)
           const info: LoadedInfo = JSON.parse(infoString)
           if (!info.error) {
             Object.entries(info).forEach(([key, value]) => {
@@ -252,7 +253,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const user = this.userFromRequest(req)
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
-      const jsonString = fs.readFileSync(jsonPath).toString()
+      const jsonString = expandFile(jsonPath)
       const json: RenderingOptions = JSON.parse(jsonString)
       const { outputs } = json
 
