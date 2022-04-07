@@ -182,7 +182,7 @@ Learn more about building your own customized server in the
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.5
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.6
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
