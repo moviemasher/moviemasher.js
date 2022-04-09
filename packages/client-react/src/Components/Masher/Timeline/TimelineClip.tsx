@@ -59,7 +59,6 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     masher.selectClip(clip)
   }
 
-
   const onDragEnd: React.DragEventHandler = event => {
     const { dataTransfer } = event
     const { dropEffect } = dataTransfer

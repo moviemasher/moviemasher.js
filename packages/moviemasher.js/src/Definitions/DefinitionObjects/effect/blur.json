@@ -4,7 +4,7 @@
   "id": "com.moviemasher.effect.blur",
   "filters": [
     {
-      "id": "com.moviemasher.filter.convolution_opencl",
+      "id": "com.moviemasher.filter.convolution",
       "parameters": [
         {
           "name": "matrix",

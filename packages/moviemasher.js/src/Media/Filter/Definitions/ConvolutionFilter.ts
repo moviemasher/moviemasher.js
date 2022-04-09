@@ -156,7 +156,7 @@ const optionsFromObject =(convolutionObject: ConvolutionObject): ValueObject => 
 /**
  * @category Filter
  */
-export class ConvolutionOpenclFilter extends FilterDefinitionClass {
+export class ConvolutionFilter extends FilterDefinitionClass {
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
     const { graphType, preloading } = evaluator
     const graphFilter: ModularGraphFilter = {
