@@ -1,7 +1,7 @@
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { Parameter } from "../../../Setup/Parameter"
 import { DataType } from "../../../Setup/Enums"
 import { ModularGraphFilter } from "../../../declarations"

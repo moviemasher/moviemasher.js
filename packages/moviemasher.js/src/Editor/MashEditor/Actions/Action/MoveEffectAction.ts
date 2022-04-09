@@ -1,10 +1,10 @@
-import { Effect } from "../../../../Media/Effect/Effect"
+import { Effects } from "../../../../Media/Effect/Effect"
 import { Action, ActionOptions } from "./Action"
 
 interface MoveEffectActionObject extends ActionOptions {
-  effects : Effect[]
-  redoEffects : Effect[]
-  undoEffects : Effect[]
+  effects : Effects
+  redoEffects : Effects
+  undoEffects: Effects
 }
 
 /**
@@ -19,19 +19,20 @@ class MoveEffectAction extends Action {
     this.undoEffects = undoEffects
   }
 
-  effects : Effect[]
+  effects : Effects
 
-  redoEffects : Effect[]
+  redoEffects : Effects
 
-  undoEffects : Effect[]
 
-  redoAction() : void {
+  redoAction(): void {
     this.effects.splice(0, this.effects.length, ...this.redoEffects)
   }
 
   undoAction() : void {
     this.effects.splice(0, this.effects.length, ...this.undoEffects)
   }
+
+  undoEffects : Effects
 }
 
 export { MoveEffectAction, MoveEffectActionObject }

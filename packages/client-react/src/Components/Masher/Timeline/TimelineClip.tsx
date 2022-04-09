@@ -59,20 +59,27 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     masher.selectClip(clip)
   }
 
+  const onDragEnd: React.DragEventHandler = event => {
+    const { dataTransfer } = event
+    const { dropEffect } = dataTransfer
+    if (dropEffect === 'none') {
+      masher.removeClip(clip)
+    }
+  }
+
   const onDragStart: React.DragEventHandler = event => {
     onMouseDown(event)
     const data = { offset: clickOffset }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(type + DragSuffix, json)
+    dataTransfer.setData(`${type}${DragSuffix}`, json)
   }
 
   const width = pixelFromFrame(frames, scale, 'floor')
   const style: UnknownObject = { width }
   if (labelVar) style[labelVar] = `'${label.replaceAll("'", "\\'")}'`
   if (iconVar) {
-
     const { preloader } = masher
     const url = clip.iconUrl(preloader)
     if (url) style[iconVar] = `url('${url}')`
@@ -86,8 +93,7 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     ...kid.props,
     style,
     className: classNamesState(),
-    onMouseDown,
-    onDragStart,
+    onMouseDown, onDragStart, onDragEnd,
     onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,

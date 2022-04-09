@@ -8,20 +8,8 @@
       "id": "com.moviemasher.filter.convolution",
       "parameters": [
         {
-          "name": "0m",
-          "value": "0 -1 0 -1 5 -1 0 -1 0"
-        },
-        {
-          "name": "1m",
-          "value": "0 -1 0 -1 5 -1 0 -1 0"
-        },
-        {
-          "name": "2m",
-          "value": "0 -1 0 -1 5 -1 0 -1 0"
-        },
-        {
-          "name": "3m",
-          "value": "0 -1 0 -1 5 -1 0 -1 0"
+          "name": "matrix",
+          "value": "0,-1,0,-1,5,-1,0,-1,0"
         }
       ]
     }

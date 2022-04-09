@@ -84,7 +84,7 @@ class Composition {
     if (!this.playing && !time) return false
 
     const filtered = clips.filter(clip => !AudibleContextInstance.hasSource(clip.id))
-    if (filtered.length) console.log("Composition.createSources", filtered.length, "of", clips.length, "need audio source")
+    // if (filtered.length) console.log("Composition.createSources", filtered.length, "of", clips.length, "need audio source")
 
 
     return filtered.every(clip => {

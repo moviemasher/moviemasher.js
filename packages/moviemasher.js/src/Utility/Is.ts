@@ -42,7 +42,10 @@ const isPopulatedObject = (value : unknown) : boolean => (
 
 const isPopulatedArray = (value: unknown): boolean => isArray(value) && length(<ScalarArray>value)
 
-const isNumeric = (value: unknown): boolean => isNumber(value) || !isNan(Number(value))
+const isNumeric = (value: unknown): boolean => (
+  (isNumber(value) || isPopulatedString(value)) && !isNan(Number(value))
+)
+
 /**
  * @category Utility
  */

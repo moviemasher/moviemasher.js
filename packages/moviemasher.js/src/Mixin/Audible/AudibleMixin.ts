@@ -37,9 +37,6 @@ function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
 
     filterChain(filterChain: FilterChain): void {
       // TODO: audio effects
-      // this.effects.reverse().forEach(effect => (
-      //   effect.definition.populateFilterChain(filterChain, effect)
-      // ))
     }
 
     gain = Default.instance.audio.gain

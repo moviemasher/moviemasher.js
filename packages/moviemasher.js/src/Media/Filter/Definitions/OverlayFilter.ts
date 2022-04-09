@@ -2,7 +2,7 @@ import { VisibleContext } from "../../../Context/VisibleContext"
 import { ModularGraphFilter } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { isNan } from "../../../Utility/Is"
 import { GraphType, Parameter } from "../../../Setup"
 

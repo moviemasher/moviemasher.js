@@ -15,7 +15,7 @@ import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
 import { DefinitionType } from "../../Setup/Enums"
-import { FilterDefinitionClass } from "./FilterDefinition"
+import { FilterDefinitionClass } from "./FilterDefinitionClass"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {

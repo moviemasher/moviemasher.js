@@ -1,6 +1,6 @@
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, Parameter } from "../../../Setup"
 
 /**

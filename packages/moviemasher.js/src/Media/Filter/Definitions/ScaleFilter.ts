@@ -3,7 +3,7 @@ import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { ContextFactory } from "../../../Context/ContextFactory"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, GraphType } from "../../../Setup/Enums"
 import { Parameter } from "../../../Setup"
 
@@ -16,13 +16,13 @@ class ScaleFilter extends FilterDefinitionClass {
     const inHeight = Number(evaluator.get("in_h"))
     if (inWidth + inHeight < 2) throw Errors.eval.inputSize + `${inWidth}x${inHeight}`
 
-    const outWidth = Number(evaluator.parameter('width'))
-    const outHeight = Number(evaluator.parameter('height'))
+    const outWidth = evaluator.parameterNumber('width')
+    const outHeight = evaluator.parameterNumber('height')
     const inSize : Size = { width: inWidth, height: inHeight }
-    const fromSize = { width: outWidth, height: outHeight }
+    const outSize = { width: outWidth, height: outHeight }
     const { visibleContext: context } = evaluator
-    const drawing = ContextFactory.toSize(fromSize)
-    drawing.drawInSizeFromSize(context.drawingSource, inSize, fromSize)
+    const drawing = ContextFactory.toSize(outSize)
+    drawing.drawInSizeFromSize(context.drawingSource, inSize, outSize)
     return drawing
   }
 

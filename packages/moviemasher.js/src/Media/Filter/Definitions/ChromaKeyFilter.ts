@@ -4,7 +4,7 @@ import { Parameter } from "../../../Setup/Parameter"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { colorGreen, colorRgbToYuv, colorToRgb, colorYuvBlend } from "../../../Utility/Color"
 import { pixelNeighboringRgbas, pixelRgbaAtIndex } from "../../../Utility/Pixel"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { DataType } from "../../../Setup/Enums"
 

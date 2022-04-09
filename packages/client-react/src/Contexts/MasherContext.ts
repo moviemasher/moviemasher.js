@@ -1,12 +1,10 @@
 import React from 'react'
 import { MashEditor } from '@moviemasher/moviemasher.js'
 
-interface MasherContextInterface {
+export interface MasherContextInterface {
   mashEditor?: MashEditor
 }
 
-const MasherContextDefault: MasherContextInterface = {}
+export const MasherContextDefault: MasherContextInterface = {}
 
-const MasherContext = React.createContext(MasherContextDefault)
-
-export { MasherContext, MasherContextInterface, MasherContextDefault }
+export const MasherContext = React.createContext(MasherContextDefault)

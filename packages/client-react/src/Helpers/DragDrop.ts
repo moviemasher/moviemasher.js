@@ -5,6 +5,10 @@ export interface DragClipObject extends UnknownObject {
   definition?: DefinitionObject
 }
 
+export interface DragEffectObject extends UnknownObject {
+  index: number
+  definition?: DefinitionObject
+}
 export interface DropClipsResult {
   index: number
   pixels: number
