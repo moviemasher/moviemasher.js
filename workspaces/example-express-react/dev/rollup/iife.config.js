@@ -18,7 +18,7 @@ const names = ['masher'] // files.map(file => path.basename(file, inputExtension
 
 const replaceOptions = {
   preventAssignment: true,
-  'process.env.NODE_ENV': JSON.stringify( 'development' )
+  'process.env.NODE_ENV': JSON.stringify( 'production' )
 }
 
 const clients = names.map(name => ({

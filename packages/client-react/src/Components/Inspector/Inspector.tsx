@@ -18,7 +18,9 @@ interface InspectorProps extends PropsAndChildren, WithClassName {}
 function Inspector(props: InspectorProps): ReactResult {
   const masher = useMashEditor()
   useListeners({
-    [EventType.Action]: () => { setActionCount(value => value + 1) },
+    [EventType.Action]: () => {
+      setActionCount(value => value + 1)
+    },
     [EventType.Selection]: () => {
       setClip(masher.selection.clip)
       setEffect(masher.selection.effect)

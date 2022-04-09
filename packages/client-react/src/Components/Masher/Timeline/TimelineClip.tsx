@@ -65,14 +65,13 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(type + DragSuffix, json)
+    dataTransfer.setData(`${type}${DragSuffix}`, json)
   }
 
   const width = pixelFromFrame(frames, scale, 'floor')
   const style: UnknownObject = { width }
   if (labelVar) style[labelVar] = `'${label.replaceAll("'", "\\'")}'`
   if (iconVar) {
-
     const { preloader } = masher
     const url = clip.iconUrl(preloader)
     if (url) style[iconVar] = `url('${url}')`

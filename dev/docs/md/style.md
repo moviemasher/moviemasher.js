@@ -64,7 +64,7 @@ These HSL variables are not used outside this file, so it's okay to remove them 
       background-color 0.25s ease-out,
       border-color 0.25s ease-out,
       color 0.25s ease-out;
-  --hue-back: 190;
+  --hue-back: 220;
   --hue-fore: 220;
   --sat-primary: 60%;
   --sat-secondary: 75%;
@@ -632,6 +632,7 @@ The icon button currently selected in the browser header is painted with the pro
   color: var(--fore-primary);
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
+  overflow-y: scroll;
 }
 
 .moviemasher .editor .panel.inspector .effects .effect {

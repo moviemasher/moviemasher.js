@@ -43,6 +43,7 @@ import { EditorClass } from "../EditorClass"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
+import { MoveEffectAction } from "./Actions/Action/MoveEffectAction"
 
 class MashEditorClass extends EditorClass implements MashEditor {
   constructor(...args: Any[]) {
@@ -66,7 +67,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (mash) this.mash = mash
   }
 
-  private actionCreate(object : ActionObject) : void {
+  private actionCreate(object : ActionObject): void {
     const mash = object.mash || this.mash
     const actions = object.actions || this.actions
     const undoSelection = object.undoSelection || { ...this.selection }
@@ -566,21 +567,17 @@ class MashEditorClass extends EditorClass implements MashEditor {
     const { clip } = this.selection
     if (!clip) throw Errors.selection
 
-    const { effects } = <Transformable> clip
+    const transformable = clip as Transformable
+    const { effects } = transformable
     const undoEffects = [...effects]
-
-    const redoEffects : Effect[] = []
-    undoEffects.forEach((other, i) => {
-      if (i === index) redoEffects.push(effect)
-      if (effect === other) return
-
-      redoEffects.push(other)
-    })
+    const redoEffects = undoEffects.filter(e => e !== effect)
+    const currentIndex = undoEffects.indexOf(effect)
+    const insertIndex = currentIndex < index ? index - 1 : index
+    redoEffects.splice(insertIndex, 0, effect)
 
     const options = {
-      effects, undoEffects, redoEffects, type: ActionType.MoveEffect
+      effects, undoEffects, redoEffects, type: ActionType.MoveEffect, transformable
     }
-    // console.log(this.constructor.name, "moveEffects", options)
     this.actionCreate(options)
   }
 

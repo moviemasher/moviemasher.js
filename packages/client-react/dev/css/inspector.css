@@ -31,6 +31,7 @@
   color: var(--fore-primary);
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
+  overflow-y: scroll;
 }
 
 .moviemasher .editor .panel.inspector .effects .effect {

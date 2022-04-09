@@ -252,6 +252,7 @@ class MashClass implements Mash {
   }
 
   private compositeVisible(time: Time): void {
+    // console.log("compositeVisible", time)
     const { composition, quantize } = this
     const graphType = GraphType.Canvas
     const args: FilterGraphsArgs = {
@@ -555,7 +556,6 @@ class MashClass implements Mash {
     return graphFiles.filter(file => !preloader.loadedFile(file))
   }
 
-
   handleAction(action: Action): void {
     this.emitter?.emit(EventType.Action)
 
@@ -614,10 +614,13 @@ class MashClass implements Mash {
   private get loadPromiseUnlessBuffered(): LoadPromise | undefined {
     const args: FilterGraphObject = { time: this.timeToBuffer }
     const filterGraphsOptions = this.filterGraphsOptions(args)
+
     const files = this.graphFilesUnloaded(filterGraphsOptions)
     if (!files.length) return
 
-    // console.log(this.constructor.name, "loadPromiseUnlessBuffered files:", ...files)
+    if (files.every(file => this.preloader.loadedFile(file))) return
+
+
     return this.preloader.loadFilesPromise(files).then(EmptyMethod)
   }
 
@@ -711,6 +714,8 @@ class MashClass implements Mash {
         this.emitter?.emit(EventType.Seeked)
       }
       this.drawTime(time)
+
+
       if (!paused) {
         this.composition.startContext()
         this.playing = true
@@ -748,8 +753,8 @@ class MashClass implements Mash {
 
   private stopLoadAndDraw(seeking? : boolean) : LoadPromise | undefined {
     const { time, paused, playing } = this
-
     if (playing) this.playing = false
+
     const promise = this.loadPromiseUnlessBuffered
     if (promise) return promise.then(() => { this.restartAfterStop(time, paused, seeking) })
     this.restartAfterStop(time, paused, seeking)

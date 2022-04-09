@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.5_
+_JavaScript video editor, encoder, and streamer - version 5.0.6_
 
 - _visual compositing_ through **Canvas API**
 - _audio mixing_ through **WebAudio API**

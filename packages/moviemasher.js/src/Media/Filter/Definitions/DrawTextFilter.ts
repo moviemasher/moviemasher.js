@@ -5,7 +5,7 @@ import { AVType, DataType, GraphFileType, GraphType, LoadType } from "../../../S
 import { Is } from "../../../Utility/Is"
 import { Parameter } from "../../../Setup/Parameter"
 import { Errors } from "../../../Setup/Errors"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { VisibleContext } from "../../../Context"
 import { fontDefinitionFromId } from "../../Font/FontFactory"
 import { Evaluator } from "../../../Helpers/Evaluator"

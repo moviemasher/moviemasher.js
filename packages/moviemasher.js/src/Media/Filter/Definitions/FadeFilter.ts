@@ -1,7 +1,7 @@
 import { VisibleContext } from "../../../Context/VisibleContext"
 import { Errors } from "../../../Setup/Errors"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { FilterDefinitionClass } from "../FilterDefinition"
+import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { Parameter } from "../../../Setup/Parameter"
 import { DataType } from "../../../Setup/Enums"
 

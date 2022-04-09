@@ -37,7 +37,8 @@ function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass
 
     filterChain(filterChain: FilterChain): void {
       this.scaler.definition.populateFilterChain(filterChain, this.scaler)
-      this.effects.reverse().forEach(effect => (
+      const effects = [...this.effects].reverse()
+      effects.forEach(effect => (
         effect.definition.populateFilterChain(filterChain, effect)
       ))
       this.merger.definition.populateFilterChain(filterChain, this.merger)

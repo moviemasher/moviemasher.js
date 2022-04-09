@@ -89,10 +89,29 @@ class Evaluator {
   }
 
   avType = AVType.Both
-  private evaluateConditionals(evaluation: Evaluation, conditionals: ValueObject[]): Value {
+
+  private evaluateBooleanValue(value: Value): boolean {
+    switch (typeof value) {
+      case 'boolean': return value
+      case 'number': return !!value
+      case 'string': {
+        switch (value) {
+          case 'true': return true
+          case 'false':
+          case '': return false
+        }
+      }
+    }
+    return false
+  }
+
+  private evaluateConditionals(evaluation: Evaluation, conditionals: ValueObject[], debug?: boolean): Value {
     const trueConditional = conditionals.find(conditional => {
       const expression = EvaluatorConditional(conditional)
-      if (isNumeric(expression)) return !!Number(expression)
+      if (isNumeric(expression)) {
+        console.log("evaluateConditionals isNumeric", expression, Number(expression))
+        return !!Number(expression)
+      }
 
       switch (expression) {
         case 'true': return true
@@ -102,9 +121,13 @@ class Evaluator {
 
       const childEvaluation = new Evaluation(expression, evaluation)
 
-      this.evaluateEvaluation(childEvaluation)
+      this.evaluateEvaluation(childEvaluation, debug)
+
       const { result } = childEvaluation
-      return !!result
+      if (debug) this.logDebug(childEvaluation)
+
+      return this.evaluateBooleanValue(result)
+
     })
     if (typeof trueConditional === "undefined") throw Errors.eval.conditionTruth
     if (typeof trueConditional.value === "undefined") throw Errors.eval.conditionValue
@@ -112,20 +135,18 @@ class Evaluator {
     return trueConditional.value
   }
 
-  private evaluateEvaluation(evaluation: Evaluation): void {
-    this.expandEvaluation(evaluation)
+  private evaluateEvaluation(evaluation: Evaluation, debug?: boolean): void {
+    this.expandEvaluation(evaluation, debug)
     evaluation.execute()
   }
 
-  private expandParameter(evaluation: Evaluation, parameter: Parameter): boolean {
+  private expandParameter(evaluation: Evaluation, parameter: Parameter, debug?: boolean): boolean {
     let expanded = false
 
     const { name } = parameter
     evaluation.replaceAll(name, evaluation => {
       expanded = true
-      const value = this.parameterConditionalValue(evaluation, parameter)
-      // console.log(this.constructor.name, "expandParameter", name, value)
-      return value
+      return this.parameterConditionalValue(evaluation, parameter, debug)
     }, 'expandParameter')
 
     if (expanded) {
@@ -134,8 +155,8 @@ class Evaluator {
     return expanded
   }
 
-  private expandEvaluation(evaluation: Evaluation): void {
-    this.exampleEvaluationParameters(evaluation)
+  private expandEvaluation(evaluation: Evaluation, debug?: boolean): void {
+    this.exampleEvaluationParameters(evaluation, debug)
     this.expandEvaluationExpressions(evaluation)
     this.expandEvaluationNumbers(evaluation)
     this.populateEvaluationArgs(evaluation)
@@ -173,7 +194,7 @@ class Evaluator {
     }
   }
 
-  private exampleEvaluationParameters(evaluation: Evaluation): void {
+  private exampleEvaluationParameters(evaluation: Evaluation, debug?: boolean): void {
     if (evaluation.resolved) return
 
     const expanded: string[] = []
@@ -183,7 +204,7 @@ class Evaluator {
 
       const expand = notRoot && !expanded.includes(name)
       // if (!expand) console.log(this.constructor.name, "exampleEvaluationParameters NOT EXPANDING", name, notRoot)
-      if (expand && this.expandParameter(evaluation, parameter)) {
+      if (expand && this.expandParameter(evaluation, parameter, debug)) {
         expanded.push(name)
       }
     }
@@ -258,8 +279,8 @@ class Evaluator {
     return this.parameterInstances.find(parameter => parameter.name === key)
   }
 
-  parameterNumber(key: string): number {
-    const value = this.parameter(key)
+  parameterNumber(key: string, debug?: boolean): number {
+    const value = this.parameter(key, debug)
     const number = Number(value)
     if (isNan(number)) throw Errors.eval.number + `${key} ≠ ${value}`
 
@@ -271,8 +292,8 @@ class Evaluator {
     if (!parameter) throw Errors.eval.string + key
 
     const evaluation = new Evaluation(key)
-    this.expandParameter(evaluation, parameter)
-    this.evaluateEvaluation(evaluation)
+    this.expandParameter(evaluation, parameter, debug)
+    this.evaluateEvaluation(evaluation, debug)
     if (debug) this.logDebug(evaluation)
     return evaluation.result
   }
@@ -282,7 +303,7 @@ class Evaluator {
     if (!parameter) throw Errors.eval.string + key
 
     const evaluation = new Evaluation(key)
-    this.expandParameter(evaluation, parameter)
+    this.expandParameter(evaluation, parameter, debug)
     if (debug) this.logDebug(evaluation)
     return evaluation.result
   }
@@ -305,12 +326,11 @@ class Evaluator {
     return evaluated
   }
 
-  private parameterConditionalValue(evaluation: Evaluation, parameter: Parameter): Value {
+  private parameterConditionalValue(evaluation: Evaluation, parameter: Parameter, debug?: boolean): Value {
     let value = parameter.value
     if (Array.isArray(value)) {
-      value = this.evaluateConditionals(evaluation, value)
+      value = this.evaluateConditionals(evaluation, value, debug)
     }
-
     if (isNumeric(value)) return Number(value)
 
     if (!value) return value // empty string

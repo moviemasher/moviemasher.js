@@ -4,38 +4,14 @@
   "id": "com.moviemasher.effect.blur",
   "filters": [
     {
-      "id": "com.moviemasher.filter.convolution",
+      "id": "com.moviemasher.filter.convolution_opencl",
       "parameters": [
         {
-          "name": "0m",
-          "value": "1 1 1 1 1 1 1 1 1"
+          "name": "matrix",
+          "value": "1,1,1,1,1,1,1,1,1"
         },
         {
-          "name": "1m",
-          "value": "1 1 1 1 1 1 1 1 1"
-        },
-        {
-          "name": "2m",
-          "value": "1 1 1 1 1 1 1 1 1"
-        },
-        {
-          "name": "3m",
-          "value": "1 1 1 1 1 1 1 1 1"
-        },
-        {
-          "name": "0rdiv",
-          "value": "1/9"
-        },
-        {
-          "name": "1rdiv",
-          "value": "1/9"
-        },
-        {
-          "name": "2rdiv",
-          "value": "1/9"
-        },
-        {
-          "name": "3rdiv",
+          "name": "multiplier",
           "value": "1/9"
         }
       ]

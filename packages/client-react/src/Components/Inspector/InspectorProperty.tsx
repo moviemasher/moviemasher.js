@@ -3,7 +3,9 @@ import { PropertiedChangeHandler, Propertied } from "@moviemasher/moviemasher.js
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { InputContext } from '../../Contexts/InputContext'
-import { InspectorPropertyContainer, InspectorPropertyContainerProps } from './InspectorPropertyContainer'
+import {
+  InspectorPropertyContainer, InspectorPropertyContainerProps
+} from './InspectorPropertyContainer'
 import { DataTypeInputs } from '../Editor/EditorInputs/DefaultInputs/DataTypeInputs'
 
 interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
@@ -20,8 +22,8 @@ function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   const property = instance.property(propertyName)
   if (!property) return null
 
-
   const { type, name } = property
+
   const { id } = type
   const value = instance.value(name)
   const input = DataTypeInputs[id]

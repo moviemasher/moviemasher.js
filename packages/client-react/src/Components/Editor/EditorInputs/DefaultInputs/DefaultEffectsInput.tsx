@@ -1,9 +1,10 @@
-import { DataType, DefinitionType, Effects, TrackType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, DefinitionType, Effects, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
 import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from "../../../../declarations"
-import { DragClipObject } from '../../../../Helpers/DragDrop'
+import { DragEffectObject } from '../../../../Helpers/DragDrop'
 import { useMashEditor } from '../../../../Hooks/useMashEditor'
+import { useSelectedEffect } from '../../../../Hooks/useSelectedEffect'
 import { DragSuffix } from '../../../../Setup/Constants'
 import { View } from '../../../../Utilities/View'
 import { InspectorEffect } from '../../../Inspector/InspectorEffect'
@@ -13,32 +14,23 @@ import { DataTypeInputs } from './DataTypeInputs'
  *
  * @children InspectorEffect
  */
-function DefaultEffectsInput(): ReactResult {
+export function DefaultEffectsInput(): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const [isOver, setIsOver] = React.useState(false)
   const inputContext = React.useContext(InputContext)
+  const selectedEffect = useSelectedEffect()
+  const { property, value } = inputContext
   const masher = useMashEditor()
   if (!masher) return null
-
-  const { changeHandler, property, value } = inputContext
   if (!property) return null
 
-  const onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    changeHandler(property.name, event.target.value)
-  }
-
-   const onDragOver: React.DragEventHandler = event => {
-    const { dataTransfer } = event
-    const allowed = dropAllowed(dataTransfer)
-    setIsOver(allowed)
-    if (allowed) event.preventDefault()
-   }
 
   const childNodes = (): React.ReactElement[] => {
-    const effects = value as Effects
-    return effects.map(effect => {
+    const valueEffects = value as Effects
+    return valueEffects.map((effect, index) => {
       const clipProps = {
         key: effect.id,
+        index,
         effect,
       }
     //   if (!dense) prevClipEnd = clip.frames + clip.frame
@@ -46,70 +38,60 @@ function DefaultEffectsInput(): ReactResult {
     })
   }
 
+  const dropAllowed = (event: React.DragEvent): boolean => {
+    const { dataTransfer } = event
+    const type = dropType(dataTransfer)
+    if (!type) return false
+    if (!type.endsWith(DragSuffix)) return false
+
+    const [definitionType] = type.split('/')
+    return definitionType === String(DefinitionType.Effect)
+  }
+
+  const dropEffect = (event: React.DragEvent) => {
+    const { dataTransfer } = event
+    const type = dropType(dataTransfer)!
+    const json = dataTransfer.getData(type)
+    const data: DragEffectObject = JSON.parse(json)
+    const { definition, index } = data
+    const droppedIndex = dropIndex(event)
+    if (typeof definition === 'undefined') {
+      if (!selectedEffect || droppedIndex === index) return
+
+      masher.moveEffect(selectedEffect, droppedIndex)
+    } else {
+      masher.add(definition, droppedIndex)
+    }
+  }
+
+  const dropIndex = (event: React.DragEvent): number => {
+    const { target } = event
+    if (target && target instanceof HTMLDivElement) {
+      const index = target.getAttribute('index')
+      if (index) return Number(index)
+    }
+    return (value as Effects).length
+  }
+
   const dropType = (dataTransfer: DataTransfer): string | undefined => {
     return dataTransfer.types.find(type => type.endsWith(DragSuffix))
   }
 
-  const dropAllowed = (dataTransfer: DataTransfer): boolean => {
-    const type = dropType(dataTransfer)
-    // console.log("dropAllowed", trackType, type)
-    if (!type) return false
+  const onDragLeave: React.DragEventHandler = () => { setIsOver(false) }
 
-    if (!type.endsWith(DragSuffix)) return true
-
-    const [definitionType] = type.split('/')
-    return (definitionType === String(DefinitionType.Effect))
+  const onDragOver: React.DragEventHandler = event => {
+    const allowed = dropAllowed(event)
+    setIsOver(allowed)
+    if (allowed) event.preventDefault()
   }
-
-  const onDragLeave: React.DragEventHandler = () => {
-    setIsOver(false)
-  }
-
-  const pixelToIndex = (pixel: number): number => {
-    return 0
-  }
-  const dropClip = (dataTransfer: DataTransfer, offsetDrop: number) => {
-    const type = dropType(dataTransfer)!
-    // console.log("dropClip", type, offsetDrop)
-
-
-    const json = dataTransfer.getData(type)
-    const data: DragClipObject = JSON.parse(json)
-
-    const { offset, definition } = data
-    const index = pixelToIndex(Math.max(0, offsetDrop - offset))
-
-    if (typeof definition === 'undefined') {
-      // console.log('no definition')
-      const effect = masher.selection.effect
-      if (!effect) return
-
-      masher.moveEffect(effect, index)
-    } else {
-      masher.add(definition, index)
-    }
-
-  }
-
-    const dropOffset = (clientY: number) => {
-    const { current } = ref
-    if (!current) return 0
-
-    const rect = current.getBoundingClientRect()
-    return clientY - rect.y
-  }
-
 
   const onDrop: React.DragEventHandler = event => {
     setIsOver(false)
-    const { dataTransfer, clientY } = event
+    const { dataTransfer } = event
     const type = dropType(dataTransfer)
     if (!type) return
 
-    const offset = dropOffset(clientY)
-    if (type.endsWith(DragSuffix)) dropClip(dataTransfer, offset)
-
-    // TODO: handle other types
+    dropEffect(event)
     event.preventDefault()
   }
   // TODO: don't hardcode these
@@ -131,6 +113,3 @@ function DefaultEffectsInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Effects] = <DefaultEffectsInput />
-
-
-export { DefaultEffectsInput }

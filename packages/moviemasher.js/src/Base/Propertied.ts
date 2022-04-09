@@ -1,4 +1,5 @@
 import { Any, Scalar } from "../declarations"
+import { Effects } from "../Media/Effect"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 
@@ -94,7 +95,6 @@ class PropertiedClass implements Propertied {
     const value = this[key]
     if (typeof value === "undefined") throw Errors.property + key
 
-    // console.trace(this.constructor.name, "value", key, value)
     return <SelectionValue> value
   }
 }

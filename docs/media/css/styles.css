@@ -98,7 +98,7 @@ a.tsd-source-logo > svg {
 h1 {
   margin: 0;
   font-size: 1em;
-  color: var(--fore-secondary);
+  /* color: var(--fore-secondary); */
   font-style: italic;
 }
 
@@ -291,23 +291,14 @@ header > .header {
   align-items: baseline;
 }
 
-header > .header > a > img {
+header > .header > a > svg {
   vertical-align: baseline;
   margin-right: 6px;
 }
 
-.moviemasher {
-  --svg-filter: invert(32%) sepia(0%) saturate(0%) hue-rotate(159deg) brightness(95%) contrast(86%);
-}
 
-@media (prefers-color-scheme: dark) {
-  .moviemasher {
-    --svg-filter: invert(81%) sepia(0%) saturate(0%) hue-rotate(203deg) brightness(88%) contrast(80%);
-  }
-}
-header>.header>a>img:nth-child(2),
-.nav-button {
-  filter: var(--svg-filter);
+header>.header>a>svg {
+  color: var(--fore-secondary);
 }
 
 header > .header > * {
@@ -414,48 +405,3 @@ div.fb_iframe_widget>span[style] {
 iframe body {
   background-color: transparent !important;
 } */
-
-
-/* UNUSED... */
-
-.contains {
-  background-repeat: no-repeat;
-  background-position: 0px 0px;
-  background-size: contain;
-  display: inline-block;
-  margin: auto 5px;
-}
-
-.marketplace {
-  background-image: url(/media/img/marketplace-light.png)
-}
-
-.npm {
-  background-image: url(/media/img/npm-light.png)
-}
-
-.docker {
-  background-image: url(/media/img/docker-light.png)
-}
-
-.github {
-  background-image: url(/media/img/github-light.png)
-}
-
-@media (prefers-color-scheme: dark) {
-  .marketplace {
-    background-image: url(/media/img/marketplace-dark.png)
-  }
-
-  .npm {
-    background-image: url(/media/img/npm-dark.png)
-  }
-
-  .docker {
-    background-image: url(/media/img/docker-dark.png)
-  }
-
-  .github {
-    background-image: url(/media/img/github-dark.png)
-  }
-}

@@ -2,7 +2,7 @@
 import { ChromaKeyFilter } from "./Definitions/ChromaKeyFilter"
 import { ColorFilter } from "./Definitions/ColorFilter"
 import { ColorChannelMixerFilter } from "./Definitions/ColorChannelMixerFilter"
-import { ConvolutionFilter } from "./Definitions/ConvolutionFilter"
+import { ConvolutionOpenclFilter } from "./Definitions/ConvolutionOpenclFilter"
 import { CropFilter } from "./Definitions/CropFilter"
 import { DrawBoxFilter } from "./Definitions/DrawBoxFilter"
 import { DrawTextFilter } from "./Definitions/DrawTextFilter"
@@ -15,7 +15,7 @@ import { FilterDefinition, Filter, FilterDefinitionObject } from "./Filter"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
 import { DefinitionType } from "../../Setup/Enums"
-import { FilterDefinitionClass } from "./FilterDefinition"
+import { FilterDefinitionClass } from "./FilterDefinitionClass"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
@@ -40,7 +40,7 @@ const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 
 const filterInitialize = (): void => {
   [
-    new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter }),
+    new ConvolutionOpenclFilter({ id: 'com.moviemasher.filter.convolution_opencl', type: DefinitionType.Filter }),
     // new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
     new ChromaKeyFilter({ id: 'com.moviemasher.filter.chromakey', type: DefinitionType.Filter }),
     new ColorFilter({ id: 'com.moviemasher.filter.color', type: DefinitionType.Filter }),
