@@ -26,6 +26,15 @@ function InspectorEffect(props: InspectorEffectProps): ReactResult {
     if (!selected) masher.selectEffect(effect)
   }
 
+
+  const onDragEnd: React.DragEventHandler = event => {
+    const { dataTransfer } = event
+    const { dropEffect } = dataTransfer
+    if (dropEffect === 'none') {
+      masher.removeEffect(effect)
+    }
+  }
+
   const onDragStart: React.DragEventHandler = event => {
     if (!selected) onMouseDown(event)
 
@@ -43,7 +52,7 @@ function InspectorEffect(props: InspectorEffectProps): ReactResult {
     ...rest,
     children: effect.label,
     className: classes.join(' '),
-    onMouseDown, onDragStart,
+    onMouseDown, onDragStart, onDragEnd,
     onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
   }

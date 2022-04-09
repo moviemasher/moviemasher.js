@@ -135,6 +135,12 @@ body {
   grid-template-rows: min-content 1fr min-content;
 }
 
+@supports (-webkit-touch-callout: none) {
+  body {
+    height: -webkit-fill-available;
+  }
+}
+
 header, footer {
   background-color: var(--back-secondary);
   color: var(--fore-secondary);

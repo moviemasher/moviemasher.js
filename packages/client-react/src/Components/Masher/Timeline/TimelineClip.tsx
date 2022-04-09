@@ -59,6 +59,15 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     masher.selectClip(clip)
   }
 
+
+  const onDragEnd: React.DragEventHandler = event => {
+    const { dataTransfer } = event
+    const { dropEffect } = dataTransfer
+    if (dropEffect === 'none') {
+      masher.removeClip(clip)
+    }
+  }
+
   const onDragStart: React.DragEventHandler = event => {
     onMouseDown(event)
     const data = { offset: clickOffset }
@@ -85,8 +94,7 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
     ...kid.props,
     style,
     className: classNamesState(),
-    onMouseDown,
-    onDragStart,
+    onMouseDown, onDragStart, onDragEnd,
     onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,
