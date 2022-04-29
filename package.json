@@ -1,12 +1,12 @@
 {
   "name": "@moviemasher/moviemasher-core",
-  "description": "JavaScript video editor, encoder, and streamer - version 5.0.6",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.7",
   "homepage": "https://moviemasher.com",
   "type": "commonjs",
   "types": "packages/moviemasher.js/dist/cjs/index.d.ts",
   "source": "index",
   "main": "workspaces/example-express-react/dist/server.js",
-  "version": "5.0.6",
+  "version": "5.0.7",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -38,7 +38,7 @@
     "build-server-example": "run-s build-server build-example-server",
     "build-server": "npm run build -w @moviemasher/server-express",
     "build": "run-s build-core build-client build-server build-example build-example-react",
-    "docker-build": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.0.6 .",
+    "docker-build": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.0.7 .",
     "docker-down": "docker-compose --file dev/image/docker-compose.yml down -v",
     "docker-logs": "docker-compose --file dev/image/docker-compose.yml logs -f",
     "docker-up": "docker-compose --file dev/image/docker-compose.yml up -d",
@@ -48,6 +48,7 @@
     "publish-core": "npm publish --access public --workspace @moviemasher/moviemasher.js",
     "publish-server": "npm publish --access public --workspace @moviemasher/server-express",
     "start": "pm2 start workspaces/example-express-react/dist/server.js",
+    "logs": "pm2 logs",
     "stop": "pm2 delete workspaces/example-express-react/dist/server.js",
     "test-help": "jest -h",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
@@ -62,6 +63,7 @@
     "@types/jest": "^27.0.3",
     "@types/jest-image-snapshot": "^4.3.1",
     "@types/node": "15.6.1",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
     "canvas": "^2.9.1",
     "jest": "^27.5.1",
     "jest-fetch-mock": "^3.0.3",
@@ -80,5 +82,9 @@
   "workspaces": [
     "workspaces/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1"
+  }
 }

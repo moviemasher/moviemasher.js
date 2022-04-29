@@ -1,5 +1,5 @@
 
-enum ActionType {
+export enum ActionType {
   AddTrack = 'addTrack',
   AddClipToTrack = 'addClipToTrack',
   MoveClip = 'moveClip',
@@ -14,25 +14,35 @@ enum ActionType {
   RemoveClip = 'removeClip',
 }
 
-enum EditType {
+export enum EditType {
   Mash = 'mash',
   Cast = 'cast',
 }
 
-enum AVType {
+export enum AVType {
   Audio = 'audio',
   Both = 'both',
   Video = 'video',
 }
 
-enum TrackType {
+export enum SelectType {
+  Cast = 'cast',
+  Mash = 'mash',
+  Track = 'track',
+  Clip = 'clip',
+  Effect = 'effect',
+  Merger = 'merger',
+  Scaler = 'scaler',
+}
+
+export enum TrackType {
   Audio = 'audio',
   Transition = 'transition',
   Video = 'video',
 }
-const TrackTypes = Object.values(TrackType)
+export const TrackTypes = Object.values(TrackType)
 
-enum ClipType {
+export enum ClipType {
   Audio = 'audio',
   Frame = 'frame',
   Image = 'image',
@@ -43,14 +53,15 @@ enum ClipType {
   VideoStream = 'videostream',
   // AudioStream = 'audiostream',
 }
-const ClipTypes = Object.values(ClipType)
+export const ClipTypes = Object.values(ClipType)
 
+// TODO: migrate Ext* constants here
 export enum Extension {
   Mpg = 'mpg',
 
 }
 
-enum OutputFormat {
+export enum OutputFormat {
   AudioConcat = 'wav',
   Mdash = 'mdash',
   Flv = 'flv',
@@ -63,15 +74,15 @@ enum OutputFormat {
   Rtmp = 'rtmp',
 }
 
-enum StreamingFormat {
+export enum StreamingFormat {
   Hls = 'hls',
   Rtmp = 'rtmp',
   Mdash = 'mdash',
 }
 
-// const StreamingFormats = Object.values(StreamingFormat).map(String)
+// export const StreamingFormats = Object.values(StreamingFormat).map(String)
 
-enum OutputType {
+export enum OutputType {
   Audio = 'audio',
   Image = 'image',
   Video = 'video',
@@ -79,10 +90,10 @@ enum OutputType {
   Waveform = 'waveform',
 }
 
-const OutputTypes = Object.values(OutputType)
+export const OutputTypes = Object.values(OutputType)
 
 // NOTE: order important here - determines initialization
-enum DefinitionType {
+export enum DefinitionType {
   Filter = 'filter',
   Merger = 'merger',
   Scaler = 'scaler',
@@ -98,12 +109,13 @@ enum DefinitionType {
   // Track = 'track',
   // AudioStream = 'audiostream',
 }
-const DefinitionTypes = Object.values(DefinitionType)
+export const DefinitionTypes = Object.values(DefinitionType)
 
-enum EventType {
+export enum EventType {
   Action = 'action',
-  Duration = 'durationchange',
+  Cast = 'cast',
   Draw = 'draw',
+  Duration = 'durationchange',
   Ended = 'ended',
   Fps = 'ratechange',
   Loaded = 'loadeddata',
@@ -112,17 +124,17 @@ enum EventType {
   Play = 'play',
   Playing = 'playing',
   Render = 'render',
+  Save = 'save',
   Seeked = 'seeked',
   Seeking = 'seeking',
   Selection = 'selection',
-  Cast = 'cast',
   Time = 'timeupdate',
   Track = 'track',
   Volume = 'volumechange',
   Waiting = 'waiting',
 }
 
-enum ModuleType {
+export enum ModuleType {
   Effect ='effect',
   Font = 'font',
   Merger = 'merger',
@@ -131,59 +143,51 @@ enum ModuleType {
   Transition = 'transition',
 }
 
-enum GraphFileType {
+export enum GraphFileType {
   Svg = 'svg',
   Png = 'png',
   Txt = 'txt',
 }
 
-enum LoadType {
+export enum LoadType {
   Audio = 'audio',
   Font = 'font',
   Image = 'image',
   Video = 'video',
 }
-const LoadTypes = Object.values(LoadType)
+export const LoadTypes = Object.values(LoadType)
 
-enum MoveType {
+export enum MoveType {
   Audio = 'audio',
   Effect = 'effect',
   Video = 'video',
 }
 
-enum DataType {
-  String = 'string',
-  Number = 'number',
-
-  Numbers = 'numbers',
-
-  Frame = 'frame',
-  Track = 'track',
-
-  Rgb = 'rgb',
-  Rgba = 'rgba',
-
-  Scaler = 'scaler',
-  Merger = 'merger',
-  Object = 'object',
-  Effects = 'effects',
-
-  Font = 'font',
+export enum DataType {
   Boolean = 'boolean',
   Direction4 = 'direction4',
   Direction8 = 'direction8',
+  Font = 'font',
+  Frame = 'frame',
+  Merger = 'merger',
   Mode = 'mode',
+  Number = 'number',
+  Rgb = 'rgb',
+  Rgba = 'rgba',
+  Scaler = 'scaler',
+  String = 'string',
+  Track = 'track',
 }
-const DataTypes = Object.values(DataType)
+export const DataTypes = Object.values(DataType)
 
-enum TransformType {
+export enum TransformType {
   Merger = 'merger',
   Scaler = 'scaler',
 }
 
-const TransformTypes = Object.values(TransformType)
+export const TransformTypes = Object.values(TransformType)
 
-enum MasherAction {
+export enum MasherAction {
   Freeze = 'freeze',
   Redo = 'redo',
   Remove = 'remove',
@@ -192,13 +196,13 @@ enum MasherAction {
   Undo = 'undo',
 }
 
-enum GraphType {
+export enum GraphType {
   Canvas = 'canvas',
   Mash = 'mash',
   Cast = 'cast',
 }
 
-enum ServerType {
+export enum ServerType {
   Api = 'api',
   Data = 'data',
   File = 'file',
@@ -206,34 +210,4 @@ enum ServerType {
   Streaming = 'streaming',
   Web = 'web',
 }
-const ServerTypes = Object.values(ServerType)
-
-export {
-  ActionType,
-  AVType,
-  ClipType,
-  ClipTypes,
-  DataType,
-  DataTypes,
-  DefinitionType,
-  DefinitionTypes,
-  EditType,
-  EventType,
-  GraphFileType,
-  GraphType,
-  LoadType,
-  LoadTypes,
-  MasherAction,
-  ModuleType,
-  MoveType,
-  OutputFormat,
-  OutputType,
-  OutputTypes,
-  ServerType,
-  ServerTypes,
-  StreamingFormat,
-  TrackType,
-  TrackTypes,
-  TransformType,
-  TransformTypes,
-}
+export const ServerTypes = Object.values(ServerType)

@@ -1,13 +1,13 @@
-import { SelectionValue } from "../../../../Base/Propertied"
+import { Scalar } from "../../../../declarations"
 import { Effect } from "../../../../Media/Effect/Effect"
 import { Clip } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
 interface ChangeActionObject extends ActionOptions {
   property : string
-  redoValue : SelectionValue
+  redoValue : Scalar
   target : Clip | Effect
-  undoValue : SelectionValue
+  undoValue : Scalar
 }
 
 
@@ -26,25 +26,25 @@ class ChangeAction extends Action {
 
   property : string
 
-  redoValue : SelectionValue
+  redoValue : Scalar
 
   target : Clip | Effect
 
-  undoValue : SelectionValue
+  undoValue : Scalar
 
   get redoValueNumeric() : number { return Number(this.redoValue) }
 
   get undoValueNumeric() : number { return Number(this.undoValue) }
 
   redoAction() : void {
-    this.target.setValue(this.property, this.redoValue)
+    this.target.setValue(this.redoValue, this.property)
   }
 
   undoAction() : void {
-    this.target.setValue(this.property, this.undoValue)
+    this.target.setValue(this.undoValue, this.property)
   }
 
-  updateAction(value : SelectionValue) : void {
+  updateAction(value : Scalar) : void {
     this.redoValue = value
     this.redo()
   }

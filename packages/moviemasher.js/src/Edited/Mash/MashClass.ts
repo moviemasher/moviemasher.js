@@ -1,17 +1,15 @@
 import {
-  Interval, LoadPromise, Size, UnknownObject, VisibleContextData, GraphFiles
+  Interval, LoadPromise, Size, UnknownObject, VisibleContextData, GraphFiles, Any
 } from "../../declarations"
 import {
-  AVType, DefinitionType, EventType, GraphType, TrackType
+  AVType, DataType, DefinitionType, EventType, GraphType, TrackType
 } from "../../Setup/Enums"
 import { Definition } from "../../Base/Definition"
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { colorValid } from "../../Utility/Color"
 import { isAboveZero, isPopulatedString, isPositive } from "../../Utility/Is"
 import { sortByLayer, sortByTrack } from "../../Utility/Sort"
-import { Emitter } from "../../Helpers/Emitter"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { Preloader } from "../../Preloader/Preloader"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
@@ -29,31 +27,43 @@ import {
 } from "../../Mixin/Transformable/Transformable"
 import { FilterGraphs, FilterGraphsArgs } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphsClass } from "./FilterGraphs/FilterGraphsClass"
-import { timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
+import {
+  timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, timeRangeFromTimes
+} from "../../Helpers/Time/TimeUtilities"
 import { TrackFactory } from "../../Media/Track/TrackFactory"
+import { EditedClass } from "../EditedClass"
+import { propertyInstance } from "../../Setup/Property"
 
+class MashClass extends EditedClass implements Mash {
+  constructor(...args: Any[]) {
+    super(...args)
+    const [object] = args
+    this.properties.push(
+      propertyInstance(
+        { name: 'backcolor', type: DataType.Rgba, defaultValue: Default.mash.backcolor }
+      )
+    )
+    this.propertiesInitialize(object)
 
-class MashClass implements Mash {
-  constructor(args: MashArgs) {
     const {
       createdAt,
       tracks,
-      backcolor,
       id,
-      label,
       quantize,
       frame,
       definitions,
       rendering,
       ...rest
-    } = args
+    } = object as MashArgs
 
     if (id) this._id = id
-    Object.assign(this.data, rest)
+    Object.entries(rest).forEach(([key, value]) => {
+      if (this.properties.find(property => property.name === key)) return
+      this.data[key] = value
+    })
 
     if (quantize && isAboveZero(quantize)) this.quantize = quantize
-    if (label && isPopulatedString(label)) this.label = label
-    if (backcolor && isPopulatedString(backcolor)) this._backcolor = backcolor
+
     if (rendering && isPopulatedString(rendering)) this._rendering = rendering
 
     if (createdAt) this.createdAt = createdAt
@@ -114,20 +124,14 @@ class MashClass implements Mash {
   }
 
   private _backcolor = Default.mash.backcolor
-
   get backcolor(): string { return this._backcolor }
-
   set backcolor(value: string) {
-    if (!colorValid(value)) throw Errors.invalid.value
-
     this._backcolor = value
     if (this._composition) this.composition.backcolor = value
   }
 
   private _buffer = Default.mash.buffer
-
   get buffer(): number { return this._buffer }
-
   set buffer(value: number) {
     if (!isAboveZero(value)) throw Errors.invalid.argument + 'buffer ' + value
 
@@ -369,10 +373,6 @@ class MashClass implements Mash {
     return contents
   }
 
-  createdAt = ''
-
-  data: UnknownObject = {}
-
   get definitions() : Definition[] {
     return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
   }
@@ -464,13 +464,8 @@ class MashClass implements Mash {
     }
   }
 
-  private _emitter?: Emitter
-
-  get emitter(): Emitter | undefined { return this._emitter }
-
-  set emitter(value: Emitter | undefined) {
-    this._emitter = value
-    if (this._composition) this._composition.emitter = value
+  protected override emitterChanged() {
+    if (this._composition) this._composition.emitter = this._emitter
   }
 
   get endTime(): Time { return timeFromArgs(this.frames, this.quantize) }
@@ -590,15 +585,6 @@ class MashClass implements Mash {
     if (promise) promise.then(() => { this.draw() })
     else this.draw()
   }
-
-  private _id = ''
-  get id(): string { return this._id } //||= idGenerate()
-  set id(value: string) {
-    this._id = value
-    this.emitter?.emit(EventType.Mash)
-  }
-
-  label = ''
 
   loadPromise(args: FilterGraphObject = {}): LoadPromise {
     const { time, ...rest } = args
@@ -814,15 +800,11 @@ class MashClass implements Mash {
   }
 
   toJSON(): UnknownObject {
-    const json: UnknownObject = {
-      label: this.label,
-      quantize: this.quantize,
-      backcolor: this.backcolor,
-      tracks: this.tracks,
-      createdAt: this.createdAt,
-      ...this.data,
-    }
-    if (this._id) json.id = this.id
+    const json: UnknownObject = super.toJSON()
+    json.quantize = this.quantize
+    // json.backcolor = this.backcolor
+    json.tracks = this.tracks
+
     if (this._rendering) json.rendering = this.rendering
     return json
   }

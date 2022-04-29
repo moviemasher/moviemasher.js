@@ -31,7 +31,7 @@ class VideoDefinitionClass extends VideoDefinitionWithTransformable implements V
     const { fps } = object as VideoDefinitionObject
     if (fps) this.fps = fps
     // TODO: support speed
-    // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
+    // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
 
   audibleSource(preloader: Preloader): AudibleSource | undefined {

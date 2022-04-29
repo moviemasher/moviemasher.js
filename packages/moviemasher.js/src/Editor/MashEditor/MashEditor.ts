@@ -1,4 +1,4 @@
-import { LoadPromise } from "../../declarations"
+import { LoadPromise, SelectedProperties } from "../../declarations"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { DefinitionObject } from "../../Base/Definition"
 import { Effect } from "../../Media/Effect/Effect"
@@ -43,7 +43,6 @@ interface MashEditor extends Editor {
   fps : number
   freeze() : void
   goToTime(value: Time): LoadPromise
-  // loadedDefinitions : DefinitionTimes
   loop : boolean
   mash : Mash
   move(object: ClipOrEffect, frameOrIndex? : number, trackIndex? : number) : void
@@ -64,7 +63,7 @@ interface MashEditor extends Editor {
   save(id?: string) : void
   selectClip(clip : Clip | undefined) : void
   selectEffect(effect : Effect | undefined) : void
-  selectTrack(track : Track | undefined) : void
+  selectTrack(track: Track | undefined): void
   selection: MashEditorSelection
   split() : void
   time: Time

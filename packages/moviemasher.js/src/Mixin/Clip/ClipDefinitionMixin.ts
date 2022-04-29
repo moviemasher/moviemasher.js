@@ -1,4 +1,4 @@
-import { Property } from "../../Setup/Property"
+import { propertyInstance } from "../../Setup/Property"
 import { Any, ObjectUnknown } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { DefinitionClass } from "../../Base/Definition"
@@ -7,16 +7,16 @@ import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 
 const ClipPropertyObjects = [
-  { name: "frame", type: DataType.Frame, value: 0 },
+  { name: "frame", type: DataType.Frame },
   { name: "frames", type: DataType.Frame, value: -1 },
-  { name: "label", type: DataType.String, value: "" },
+  { name: "label", value: "" },
 ]
 
 function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
   return class extends Base implements ClipDefinition {
     constructor(...args : Any[]) {
       super(...args)
-      const properties = ClipPropertyObjects.map(object => new Property(object))
+      const properties = ClipPropertyObjects.map(object => propertyInstance(object))
       this.properties.push(...properties)
     }
 

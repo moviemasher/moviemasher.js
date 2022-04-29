@@ -1,9 +1,9 @@
 import React from 'react'
-import { SelectionValue, PropertiedChangeHandler, Property } from "@moviemasher/moviemasher.js"
+import { Scalar, PropertiedChangeHandler, Property } from "@moviemasher/moviemasher.js"
 
 interface InputContextInterface {
   property?: Property
-  value: SelectionValue
+  value: Scalar
   changeHandler: PropertiedChangeHandler
 }
 const InputContextDefault: InputContextInterface = {

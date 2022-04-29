@@ -17,6 +17,7 @@ import { Parameter } from "../Setup/Parameter"
 import { ContextFactory } from "../Context/ContextFactory"
 import { Property } from "../Setup/Property"
 import { Evaluation } from "./Evaluation"
+import { dataTypeIsString } from "./DataType"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
   if (typeof elements === "string") return String(elements).split(',')
@@ -39,16 +40,6 @@ const EvaluatorConditional = (conditional : UnknownObject) : string => {
   const type = strings ? 'string' : 'number'
   const expression = `(includes(${type}(${condition}),${escaped.join(',')}))`
   return expression
-}
-
-const dataTypeIsString = (dataType: DataType): boolean => {
-  switch (dataType) {
-    case DataType.Frame:
-    case DataType.Direction4:
-    case DataType.Direction8:
-    case DataType.Number: return false
-  }
-  return true
 }
 
 interface EvaluatorArgs {
@@ -184,9 +175,9 @@ class Evaluator {
     for (const property of this.properties) {
       const { name, type } = property
 
-      if (!dataTypeIsString(type.id)) {
+      if (!dataTypeIsString(type)) {
         if (evaluation.replaceAll(name, () => this.modular.value(name) as Value, 'expandEvaluationNumbers.properties')) break
-      } //else console.log(this.constructor.name, "expandEvaluationNumbers dataTypeIsString", type.id)
+      }
     }
     for (const entry of this.numbers.entries()) {
       const [key, value] = entry

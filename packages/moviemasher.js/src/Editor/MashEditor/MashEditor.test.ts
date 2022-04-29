@@ -1,7 +1,6 @@
 import { UnknownObject } from "../../declarations"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { Time } from "../../Helpers/Time/Time"
 import { MashEditorClass } from "./MashEditorClass"
 import { ThemeClass } from "../../Media/Theme/ThemeClass"
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
@@ -90,4 +89,16 @@ describe("MashEditor", () => {
       expect(masher.time).toEqual(time)
     })
   })
+
+
+  describe("selectedProperties", () => {
+    test("returns expected properties", () => {
+      const masher = editorInstance()
+      // masher.add(themeTextJson)
+      const selectedProperties = masher.selectedProperties
+      // console.log('selectedProperties', selectedProperties)
+      expect(selectedProperties.length).toEqual(1)
+    })
+  })
+
 })

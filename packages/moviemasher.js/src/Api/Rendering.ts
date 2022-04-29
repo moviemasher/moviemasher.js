@@ -55,6 +55,10 @@ export interface RenderingOptions extends RenderingInput {
   outputs: CommandOutputs
 }
 
+/**
+ * Start rendering a mash object
+ * @swagger rendering/start
+ */
 export interface RenderingStartRequest extends ApiRequest, RenderingOptions {}
 
 export interface RenderingStartResponse extends ApiCallbackResponse {}

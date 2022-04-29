@@ -75,6 +75,7 @@ function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
     className: classNamesState(),
     onDragStart,
     onMouseDown,
+    // onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,
   }

@@ -1,3 +1,4 @@
+export * from "./DataType"
 export * from "./Emitter"
 export * from "./Evaluation"
 export * from "./Evaluator"

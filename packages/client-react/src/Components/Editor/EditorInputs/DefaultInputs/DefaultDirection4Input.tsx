@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, Types } from '@moviemasher/moviemasher.js'
+import { DataType, Directions } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult } from '../../../../declarations'
 import { InputContext } from '../../../../Contexts/InputContext'
@@ -15,24 +15,20 @@ function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
     changeHandler(property.name, event.target.value)
   }
 
-  const selected = String(value)
-
-  const options = Types.propertyType(DataType.Direction4).values.map(object => {
-    const { id, label } = object
-    const optionProps = { value: id, children: label, key: id }
-    return <option {...optionProps}/>
+  const options = Directions.slice(0, 3).map((id, index) => {
+    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+    return <option {...optionProps} />
   })
 
   const selectProps = {
+    class: 'direction4',
     children: options,
     name: property.name,
     onChange,
-    value: selected,
+    value: String(value),
     key: `${property.name}-select`,
   }
-
   return <select {...selectProps} />
-
 }
 
 DataTypeInputs[DataType.Direction4] = <DefaultDirection4Input />

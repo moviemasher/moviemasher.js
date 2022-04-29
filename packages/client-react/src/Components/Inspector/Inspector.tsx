@@ -1,5 +1,5 @@
 import React from 'react'
-import { DefinitionType, EventType, TrackType } from '@moviemasher/moviemasher.js'
+import { DefinitionType, EventType, SelectedProperties, TrackType } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
@@ -27,6 +27,7 @@ function Inspector(props: InspectorProps): ReactResult {
       setTrack(masher.selection.track)
       setDefinitionType(masher.selection.clip ? masher.selection.clip.type : '')
       setTrackType(masher.selection.track ? masher.selection.track.trackType : '')
+      setSelectedProperties(masher.selectedProperties)
     },
   })
 
@@ -36,10 +37,11 @@ function Inspector(props: InspectorProps): ReactResult {
   const [clip, setClip] = React.useState(() => masher.selection.clip)
   const [effect, setEffect] = React.useState(() => masher.selection.effect)
   const [track, setTrack] = React.useState(() => masher.selection.track)
+  const [selectedProperties, setSelectedProperties] = React.useState<SelectedProperties>(() => masher.selectedProperties)
 
   const inspectorContext: InspectorContextInterface = {
     ...InspectorContextDefault,
-    actionCount, clip, effect, track, definitionType, trackType
+    actionCount, clip, effect, track, definitionType, trackType, selectedProperties
   }
 
   return (

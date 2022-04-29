@@ -2,7 +2,7 @@
   "label": "Scale",
   "type": "scaler",
   "id": "com.moviemasher.scaler.default",
-  "properties": [{ "name": "scale", "type": "number", "value": 1 }],
+  "properties": [{ "name": "scale", "defaultValue": 1, "min": 0.001, "max": 2.0, "step": 0.001 }],
   "filters": [
     {
       "id": "com.moviemasher.filter.scale",

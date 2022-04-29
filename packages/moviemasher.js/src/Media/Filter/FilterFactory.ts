@@ -1,4 +1,3 @@
-// import { BlendFilter } from "./Definitions/BlendFilter"
 import { ChromaKeyFilter } from "./Definitions/ChromaKeyFilter"
 import { ColorFilter } from "./Definitions/ColorFilter"
 import { ColorChannelMixerFilter } from "./Definitions/ColorChannelMixerFilter"
@@ -16,6 +15,7 @@ import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
 import { DefinitionType } from "../../Setup/Enums"
 import { FilterDefinitionClass } from "./FilterDefinitionClass"
+import { BlendFilter } from "./Definitions/BlendFilter"
 
 
 const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
@@ -41,7 +41,7 @@ const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 const filterInitialize = (): void => {
   [
     new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter }),
-    // new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
+    new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
     new ChromaKeyFilter({ id: 'com.moviemasher.filter.chromakey', type: DefinitionType.Filter }),
     new ColorFilter({ id: 'com.moviemasher.filter.color', type: DefinitionType.Filter }),
     new ColorChannelMixerFilter({ id: 'com.moviemasher.filter.colorchannelmixer', type: DefinitionType.Filter }),

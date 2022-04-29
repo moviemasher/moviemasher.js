@@ -1,24 +1,24 @@
-import { DataType } from "../../Setup/Enums"
 import { Any, UnknownObject } from "../../declarations"
-import { AudibleFileDefinition, AudibleFileDefinitionClass, AudibleFileDefinitionObject } from "./AudibleFile"
-import { Property } from "../../Setup/Property"
+import { Default } from "../../Setup/Default"
+import { DataType } from "../../Setup/Enums"
+import { propertyInstance } from "../../Setup/Property"
 import { AudibleDefinitionClass } from "../Audible/Audible"
+import {
+  AudibleFileDefinition, AudibleFileDefinitionClass, AudibleFileDefinitionObject
+} from "./AudibleFile"
 
-function AudibleFileDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) : AudibleFileDefinitionClass & T {
+export function AudibleFileDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) : AudibleFileDefinitionClass & T {
   return class extends Base implements AudibleFileDefinition {
     constructor(...args : Any[]) {
       super(...args)
       const [object] = args
-      const { loops, duration } = <AudibleFileDefinitionObject> object
-      // if (!duration) throw Errors.invalid.definition.duration
-
+      const { loops, duration } = object as AudibleFileDefinitionObject
       if (duration) this.duration = Number(duration)
-
       if (loops) {
-        this.properties.push(new Property({ name: "loop", type: DataType.Number, value: 1 }))
+        this.properties.push(propertyInstance({ name: "loop", defaultValue: Default.instance.audio.loop }))
         this.loops = true
       }
-      this.properties.push(new Property({ name: "trim", type: DataType.Frame, value: 0 }))
+      this.properties.push(propertyInstance({ type: DataType.Frame, name: "trim", defaultValue: Default.instance.audio.trim }))
     }
 
     duration = 0
@@ -33,5 +33,3 @@ function AudibleFileDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) :
     }
   }
 }
-
-export { AudibleFileDefinitionMixin }

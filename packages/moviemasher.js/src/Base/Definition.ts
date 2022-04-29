@@ -1,14 +1,14 @@
 import {
-  Any, Constrained, Described, FilesArgs, GraphFile, GraphFileIconArgs, GraphFiles, UnknownObject
+  Any, Constrained, Described, FilesArgs, GraphFiles, UnknownObject
 } from "../declarations"
-import { DefinitionType, DefinitionTypes, GraphFileType, GraphType, LoadType } from "../Setup/Enums"
+import { DefinitionType, DefinitionTypes } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 import { Times } from "../Helpers/Time/Time"
 import { Is, isPopulatedString } from "../Utility/Is"
 import { Instance, InstanceBase, InstanceObject } from "./Instance"
-import { SelectionValue } from "./Propertied"
 import { Factory } from "../Definitions/Factory/Factory"
+import { dataTypeIsDefinitionId } from "../Helpers/DataType"
 
 export class DefinitionBase {
   constructor(...args: Any[]) {
@@ -23,17 +23,6 @@ export class DefinitionBase {
 
   definitionFiles(_args: FilesArgs): GraphFiles { return [] }
 
-  // graphFileIcon(args: GraphFileIconArgs): GraphFile {
-  //   const { size, mashSize } = args
-
-  //   const { icon } = this
-  //   if (icon) {
-  //     const imageGraphFile: GraphFile = { type: LoadType.Image, file: icon }
-  //     return imageGraphFile
-  //   }
-  //   const type = this.icon ?  : GraphFileType.Png
-  //   const file = this.icon ? this.icon : ''
-  // }
   icon?: string
 
   id: string
@@ -45,7 +34,7 @@ export class DefinitionBase {
   }
 
   get instanceObject(): InstanceObject {
-    const entries = this.properties.map(property => ([property.name, property.value]))
+    const entries = this.properties.map(property => ([property.name, property.defaultValue]))
     return Object.fromEntries([...entries, ['definition', this]])
   }
 
@@ -54,12 +43,12 @@ export class DefinitionBase {
   properties: Property[] = []
 
   get propertiesModular(): Property[] {
-    return this.properties.filter(property => property.type.modular)
+    return this.properties.filter(property => dataTypeIsDefinitionId(property.type))
   }
 
-  property(name: string): Property | undefined {
-    return this.properties.find(property => property.name === name)
-  }
+  // property(name: string): Property | undefined {
+  //   return this.properties.find(property => property.name === name)
+  // }
 
   retain = false
 
@@ -72,7 +61,7 @@ export class DefinitionBase {
 
   type!: DefinitionType
 
-  value(name: string): SelectionValue | undefined { return this.property(name)?.value }
+  // value(name: string): Scalar | undefined { return this.property(name)?.value }
 
   static fromObject(object: DefinitionObject): Definition {
     const { id: definitionId, type } = object

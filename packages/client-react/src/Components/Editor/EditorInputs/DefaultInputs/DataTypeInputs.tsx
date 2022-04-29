@@ -10,16 +10,13 @@ const DataTypeInputs : EditorInputs = {
   [DataType.Rgb]: EmptyElement,
   [DataType.Rgba]: EmptyElement,
   [DataType.String]: EmptyElement,
-  [DataType.Numbers]: EmptyElement,
   [DataType.Track]: EmptyElement,
   [DataType.Boolean]: EmptyElement,
   [DataType.Merger]: EmptyElement,
   [DataType.Scaler]: EmptyElement,
-  [DataType.Effects]: EmptyElement,
   [DataType.Mode]: EmptyElement,
   [DataType.Direction4]: EmptyElement,
   [DataType.Direction8]: EmptyElement,
-  [DataType.Object]: EmptyElement,
 }
 
 export { DataTypeInputs }

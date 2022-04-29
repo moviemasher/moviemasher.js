@@ -1,6 +1,7 @@
 import React from 'react'
+import { DataType, Directions } from '@moviemasher/moviemasher.js'
+
 import { InputContext } from '../../../../Contexts/InputContext'
-import { DataType, Types } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
@@ -17,13 +18,13 @@ function DefaultDirection8Input(): ReactResult {
 
   const selected = String(value)
 
-  const options = Types.propertyType(DataType.Direction8).values.map(object => {
-    const { id, label } = object
-    const optionProps = { value: id, children: label, key: id }
-    return <option {...optionProps}/>
+  const options = Directions.map((id, index) => {
+    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+    return <option {...optionProps} />
   })
 
   const selectProps = {
+    class: 'direction8',
     children: options,
     name: property.name,
     onChange,

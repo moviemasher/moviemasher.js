@@ -24,7 +24,7 @@ function DefaultRgbInput(): ReactResult {
   return <input {...colorProps} />
 }
 
-DataTypeInputs[DataType.Direction4] = <DefaultRgbInput />
+DataTypeInputs[DataType.Rgb] = <DefaultRgbInput />
 
 
 export { DefaultRgbInput }

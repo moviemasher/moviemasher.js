@@ -3,8 +3,8 @@
   "type": "scaler",
   "id": "com.moviemasher.scaler.pan",
   "properties": [
-    { "name": "scale", "type": "number", "value": 1.25 },
-    { "name": "direction", "type": "direction8", "value": 1 }
+    { "name": "scale", "defaultValue": 1.25, "min": 0.001, "max": 2.0, "step": 0.001 },
+    { "name": "direction", "type": "direction8" }
   ],
   "filters": [
     {

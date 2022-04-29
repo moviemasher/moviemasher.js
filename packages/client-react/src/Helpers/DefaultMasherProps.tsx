@@ -46,6 +46,8 @@ import { DefaultIcons } from '../Components/Editor/EditorIcons/DefaultIcons'
 import { EditorInputs } from '../Components/Editor/EditorInputs/EditorInputs'
 import { ViewControl } from '../Components/Controls/ViewControl'
 import { ProcessProgress } from '../Components/Process/ProcessProgress'
+import { MashesControl } from '../Components/Controls/MashesControl'
+import { InspectorEffects } from '../Components/Inspector/InspectorEffects'
 
 
 interface ContentOptions {
@@ -188,9 +190,8 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
 
     panelOptions.content.children ||= <>
       {defaultChild}
-      <InspectorProperties><label/></InspectorProperties>
+      <InspectorProperties><label /></InspectorProperties>
     </>
-
 
     const contentProps = {
       selectClass: {classNameSelect},
@@ -223,6 +224,7 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
       <PlayerContent key='content' {...contentProps} />
     )
     panelOptions.header.content ||= [<img key='logo' src="mm.svg" />]
+    if (!noApi) panelOptions.header.after ||= [<MashesControl/>]
 
     panelOptions.footer.content ||= [
       <PlayerButton key='play-button' className='icon-button'>

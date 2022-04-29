@@ -38,7 +38,8 @@ interface Clip extends Instance {
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
   track : number
-  trackType : TrackType
+  trackType: TrackType
+  transformable: boolean
   visible : boolean
 }
 

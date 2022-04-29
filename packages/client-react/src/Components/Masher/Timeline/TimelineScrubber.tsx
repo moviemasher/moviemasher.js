@@ -57,7 +57,10 @@ function TimelineScrubber(props: PropsWithChildren): ReactResult {
   const width = pixelFromFrame(frames, scale, 'ceil')
   if (width) style.minWidth = width
 
-  const viewProps: UnknownObject = { ...props, style, onMouseDown, ref }
+  const viewProps: UnknownObject = {
+    ...props, style, onMouseDown, ref,
+    // onClick: (event: React.MouseEvent) => event.stopPropagation(),
+  }
   if (down) {
     viewProps.onMouseMove = handleMouseMove
     viewProps.onMouseUp = handleMouseUp

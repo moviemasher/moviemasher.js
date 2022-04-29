@@ -1,7 +1,7 @@
 import {
   LoadPromise, UnknownObject, Value, Described, GraphFiles
 } from "../../declarations"
-import { AVType, GraphType, TrackType } from "../../Setup/Enums"
+import { AVType, TrackType } from "../../Setup/Enums"
 import { Definition } from "../../Base/Definition"
 import { Time } from "../../Helpers/Time/Time"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"

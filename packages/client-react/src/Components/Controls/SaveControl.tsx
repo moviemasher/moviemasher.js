@@ -16,8 +16,13 @@ function SaveControl(props:PropsAndChild): ReactResult {
   const { processing, setProcessing } = processContext
   const [disabled, setDisabled] = React.useState(true)
   const masher = useMashEditor()
+  const updateDisabled = () => {
+    const can = masher.can(MasherAction.Save)
+    // console.log("updateDisabled", !can)
+    setDisabled(!can)
+  }
   useListeners({
-    [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Save)) }
+    [EventType.Action]: updateDisabled, [EventType.Save]: updateDisabled,
   })
   const { children, ...rest } = props
   const { endpointPromise } = apiContext
@@ -30,7 +35,7 @@ function SaveControl(props:PropsAndChild): ReactResult {
       mash: mash.toJSON(),
       definitionIds: mash.definitions.map(definition => definition.id)
     }
-    // console.debug("DataMashPutRequest", Endpoints.data.mash.put, request)
+    console.debug("DataMashPutRequest", Endpoints.data.mash.put, JSON.parse(JSON.stringify(request)))
     endpointPromise(Endpoints.data.mash.put, request).then((response: DataMashPutResponse) => {
       const { error, id } = response
       if (error) console.error(Endpoints.data.mash.put, error)

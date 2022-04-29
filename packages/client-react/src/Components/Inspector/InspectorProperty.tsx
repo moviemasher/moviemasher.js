@@ -1,5 +1,5 @@
 import React from 'react'
-import { PropertiedChangeHandler, Propertied } from "@moviemasher/moviemasher.js"
+import { PropertiedChangeHandler, Property, Scalar } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { InputContext } from '../../Contexts/InputContext'
@@ -9,8 +9,8 @@ import {
 import { DataTypeInputs } from '../Editor/EditorInputs/DefaultInputs/DataTypeInputs'
 
 interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
-  property: string
-  instance: Propertied
+  property: Property
+  value: Scalar
   changeHandler: PropertiedChangeHandler
 }
 
@@ -18,15 +18,12 @@ interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
  * @parents InspectorContent
  */
 function InspectorProperty(props: InspectorPropertyProps): ReactResult {
-  const { changeHandler, property: propertyName, instance, ...rest } = props
-  const property = instance.property(propertyName)
-  if (!property) return null
+  const { changeHandler, property, value, ...rest } = props
 
   const { type, name } = property
 
-  const { id } = type
-  const value = instance.value(name)
-  const input = DataTypeInputs[id]
+  // const value = instance.value(name)
+  const input = DataTypeInputs[type]
 
   const inputContext = { property, value, changeHandler }
 
@@ -37,8 +34,8 @@ function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   )
 
   const containerProps: InspectorPropertyContainerProps = {
-    property: propertyName,
-    type: type.id,
+    property: name,
+    type,
     contained: inputWithContext,
     ...rest
   }

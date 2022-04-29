@@ -1,5 +1,4 @@
-import {
-  Any, Constrained, ModularGraphFilter} from "../../declarations"
+import { Constrained, ModularGraphFilter } from "../../declarations"
 import { VisibleContext } from "../../Context/VisibleContext"
 import { Definition, DefinitionObject } from "../../Base/Definition"
 import { Filter, FilterDefinitionObject } from "../../Media/Filter/Filter"
@@ -13,7 +12,6 @@ export interface ModularObject extends InstanceObject {
 
 interface Modular extends Instance {
   definition: ModularDefinition
-  constructProperties(object?: Any): void
 }
 
 interface ModularDefinitionObject extends DefinitionObject {

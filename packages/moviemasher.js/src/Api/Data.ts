@@ -4,13 +4,17 @@ import { MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
 
+export interface DataMashDefinitions {
+  mash: MashObject
+  definitions: DefinitionObjects
+}
+
 export interface DataServerInit extends JsonObject {
   uuid: string
 }
 
 export interface DataRetrieve {
   partial?: boolean
-  types: string[]
 }
 
 export interface DataDefinitionPutRequest extends ApiRequest {
@@ -20,7 +24,9 @@ export interface DataDefinitionPutRequest extends ApiRequest {
 export interface DataDefinitionPutResponse extends ApiResponse, AndId {
 }
 
-export interface DataDefinitionRetrieveRequest extends ApiRequest, DataRetrieve {}
+export interface DataDefinitionRetrieveRequest extends ApiRequest, DataRetrieve {
+  types: string[]
+}
 export interface DataDefinitionRetrieveResponse extends ApiResponse {
   definitions: DefinitionObjects
 }
@@ -34,7 +40,6 @@ export interface DataDefinitionDeleteResponse extends ApiResponse {
 }
 
 export interface DataCastRelations {
-
   mashes: MashObject[]
   definitions: DefinitionObjects
 }
@@ -44,9 +49,7 @@ export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations 
 }
 
 export interface DataMashDefaultRequest extends ApiRequest {}
-export interface DataMashDefaultResponse extends ApiResponse {
-  mash: MashObject
-  definitions: DefinitionObjects
+export interface DataMashDefaultResponse extends ApiResponse, DataMashDefinitions {
   previewSize?: Size
 }
 
@@ -73,7 +76,7 @@ export interface DataCastDeleteRequest extends ApiRequest, AndId {}
 export interface DataCastDeleteResponse extends ApiResponse {}
 
 export interface DataMashGetRequest extends ApiRequest, AndId {}
-export interface DataMashGetResponse extends DataMashDefaultResponse {}
+export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions {}
 
 export interface DataCastGetRequest extends ApiRequest, AndId {}
 export interface DataCastGetResponse extends DataCastDefaultResponse {}
@@ -85,7 +88,7 @@ export interface DataDefinitionGetResponse extends ApiResponse {
 
 export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
 export interface DataMashRetrieveResponse extends ApiResponse {
-  mashes: MashObject[]
+  mashObjects: MashObject[]
 }
 export interface DataCastRetrieveRequest extends ApiRequest, DataRetrieve { }
 export interface DataCastRetrieveResponse extends ApiResponse {

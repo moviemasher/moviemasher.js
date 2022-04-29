@@ -1,5 +1,5 @@
 import path from 'path'
-// import fs from 'fs'
+import fs from 'fs'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
@@ -12,9 +12,9 @@ const src = './src'
 const dest = './dist/public'
 const outputExtension = '.js'
 const inputExtension = '.tsx'
-// const allFiles = fs.readdirSync(path.resolve(src))
-// const files = allFiles.filter(file => path.extname(file) === inputExtension)
-const names = ['masher'] // files.map(file => path.basename(file, inputExtension))
+const allFiles = fs.readdirSync(path.resolve(src))
+const files = allFiles.filter(file => path.extname(file) === inputExtension)
+const names = ['masher'] //files.map(file => path.basename(file, inputExtension)) //
 
 const replaceOptions = {
   preventAssignment: true,

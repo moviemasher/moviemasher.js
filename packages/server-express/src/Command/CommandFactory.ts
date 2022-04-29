@@ -64,6 +64,7 @@ export const commandInstance = (args: CommandOptions): Command => {
 
   const options: ValueObject = output.options || {}
   if (isPopulatedObject(options)) instance.addOptions(commandInputOptions(options))
+
   return instance
 }
 

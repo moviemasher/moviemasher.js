@@ -3,20 +3,16 @@
   "type": "theme",
   "id": "com.moviemasher.theme.text",
   "properties": [
-    { "name": "string", "type": "string", "value": "Text" },
-    { "name": "size", "type": "number", "value": 0.3, "min": 0.1, "max": 2.0 },
-    { "name": "x", "type": "number", "value": 0 },
-    { "name": "y", "type": "number", "value": 0 },
-    { "name": "color", "type": "rgba", "value": "rgba(255,0,0,1)" },
-    { "name": "shadowcolor", "type": "rgba", "value": "rgba(0,0,0,0)" },
-    { "name": "shadowx", "type": "number", "value": 0.015 },
-    { "name": "shadowy", "type": "number", "value": 0.015 },
-    { "name": "background", "type": "rgba", "value": "rgba(0,0,255,0)" },
-    {
-      "name": "fontface",
-      "type": "font",
-      "value": "com.moviemasher.font.default"
-    }
+    { "defaultValue": "Text" },
+    { "name": "size", "defaultValue": 0.3, "min": 0.1, "max": 2.0, "step": 0.01 },
+    { "name": "x", "defaultValue": 0, "min": -1.0, "max": 1.0, "step": 0.01 },
+    { "name": "y", "defaultValue": 0, "min": -1.0, "max": 1.0, "step": 0.01 },
+    { "name": "color", "type": "rgba", "defaultValue": "rgba(255,0,0,1)" },
+    { "name": "shadowcolor", "type": "rgba", "defaultValue": "rgba(0,0,0,0)" },
+    { "name": "shadowx", "defaultValue": 0.015, "min": -0.5, "max": 0.5, "step": 0.0001 },
+    { "name": "shadowy", "defaultValue": 0.015, "min": -0.5, "max": 0.5, "step": 0.0001 },
+    { "name": "background", "type": "rgba", "defaultValue": "rgba(0,0,255,0)" },
+    { "name": "fontface", "type": "font" }
   ],
   "filters": [
     {

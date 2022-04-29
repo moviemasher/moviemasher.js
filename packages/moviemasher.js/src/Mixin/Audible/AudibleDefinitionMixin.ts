@@ -1,11 +1,11 @@
 import {
   Any, UnknownObject, AudibleSource, LoadedAudio, GraphFile, FilesArgs, GraphFiles
 } from "../../declarations"
-import { AVType, DataType, GraphType, LoadType } from "../../Setup/Enums"
+import { AVType, GraphType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { AudibleDefinition, AudibleDefinitionClass, AudibleDefinitionObject } from "./Audible"
 import { ClipDefinitionClass } from "../Clip/Clip"
-import { Property } from "../../Setup/Property"
+import { propertyInstance } from "../../Setup/Property"
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { Preloader } from "../../Preloader/Preloader"
 
@@ -25,7 +25,7 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
       this.source = source || urlAudible
       if (waveform) this.waveform = waveform
 
-      this.properties.push(new Property({ name: "gain", type: DataType.Number, value: 1.0 }))
+      this.properties.push(propertyInstance({ name: "gain", defaultValue: 1.0 }))
     }
 
     audible = true

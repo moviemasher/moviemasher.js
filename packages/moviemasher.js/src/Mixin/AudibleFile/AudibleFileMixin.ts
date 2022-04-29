@@ -1,23 +1,14 @@
-import { Any, UnknownObject, StartOptions } from "../../declarations"
+import { UnknownObject, StartOptions, Any } from "../../declarations"
 import { Default } from "../../Setup/Default"
 import { Is } from "../../Utility/Is"
 import { Time } from "../../Helpers/Time/Time"
 import { AudibleClass } from "../Audible/Audible"
-import { AudibleFileClass, AudibleFileDefinition, AudibleFileObject } from "./AudibleFile"
+import { AudibleFileClass, AudibleFileDefinition } from "./AudibleFile"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
 function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T {
   return class extends Base {
-    constructor(...args: Any[]) {
-      super(...args)
-      const [object] = args
-      const { loop, trim } = <AudibleFileObject>object
-
-      if (typeof trim !== "undefined" && Is.integer(trim)) this.trim = trim
-      if (typeof loop !== "undefined" && Is.integer(loop)) this.loop = loop
-    }
-
     declare definition : AudibleFileDefinition
 
     definitionTime(quantize : number, time : Time) : Time {
@@ -28,7 +19,7 @@ function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T
       return scaledTime.withFrame(scaledTime.frame + trimTime.frame)
     }
 
-    loop = Default.instance.audio.loop
+    declare loop: number// = Default.instance.audio.loop
 
     maxFrames(quantize : number, trim? : number) : number {
       const space = trim ? trim : this.trim
@@ -54,7 +45,7 @@ function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T
       return result
     }
 
-    trim = Default.instance.audio.trim
+    declare trim: number //= Default.instance.audio.trim
 
     trimTime(quantize: number): Time { return timeFromArgs(this.trim, quantize) }
 

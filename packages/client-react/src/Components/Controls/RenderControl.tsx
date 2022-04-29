@@ -32,7 +32,11 @@ function RenderControl(props: PropsAndChild): ReactResult {
   }
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
-  useListeners({ [EventType.Mash]: updateDisabled, [EventType.Action]: updateDisabled })
+  useListeners({
+    [EventType.Save]: updateDisabled,
+    [EventType.Mash]: updateDisabled,
+    [EventType.Action]: updateDisabled
+  })
 
   const handleApiCallback = (callback: ApiCallback) => {
     setTimeout(() => {

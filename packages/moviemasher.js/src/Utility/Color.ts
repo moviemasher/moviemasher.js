@@ -128,6 +128,7 @@ const colorHexToRgb = (hex: string): Rgb => {
 }
 const colorTransparent = '#00000000'
 const colorBlack = '#000000'
+const colorBlackOpaque = '#000000FF'
 const colorGreen = '#00FF00'
 const colorYellow = '#FFFF00'
 
@@ -191,7 +192,6 @@ const colorRgba: Rgba = { r: 0, g: 0, b: 0, a: 1.0 }
 
 const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
 
-
 const colorServer = (color: string): string => {
   if (!colorValidHex(color)) return color
 
@@ -232,6 +232,7 @@ export {
   Color,
   colorAlphaColor,
   colorBlack,
+  colorBlackOpaque,
   colorFromRgb,
   colorFromRgba,
   colorServer,

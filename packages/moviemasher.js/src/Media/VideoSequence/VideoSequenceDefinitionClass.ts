@@ -36,7 +36,7 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
       this.padding = String(lastFrame).length
     }
     // TODO: support speed
-    // this.properties.push(new Property({ name: "speed", type: DataType.Number, value: 1.0 }))
+    // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
 
   begin = Default.definition.videosequence.begin

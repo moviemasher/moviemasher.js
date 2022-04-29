@@ -1,6 +1,6 @@
 import { Any } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
-import { Property } from "../../Setup/Property"
+import { propertyInstance } from "../../Setup/Property"
 import { VisibleDefinitionClass } from "../Visible/Visible"
 import { TransformableDefinition, TransformableDefinitionClass } from "./Transformable"
 
@@ -8,9 +8,8 @@ function TransformableDefinitionMixin<T extends VisibleDefinitionClass>(Base: T)
   return class extends Base implements TransformableDefinition {
     constructor(...args: Any[]) {
       super(...args)
-      this.properties.push(new Property({ name: "scaler", type: DataType.Scaler, value: 'com.moviemasher.scaler.default' }))
-      this.properties.push(new Property({ name: "merger", type: DataType.Merger, value: 'com.moviemasher.merger.default' }))
-      this.properties.push(new Property({ name: "effects", type: DataType.Effects, value: '' }))
+      this.properties.push(propertyInstance({ type: DataType.Scaler }))
+      this.properties.push(propertyInstance({ type: DataType.Merger }))
     }
   }
 }

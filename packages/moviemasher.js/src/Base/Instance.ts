@@ -1,13 +1,14 @@
 import { Any, Constrained, UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { Is } from "../Utility/Is"
+import { Is, isObject, isUndefined } from "../Utility/Is"
 import { Definition } from "./Definition"
 import { Time } from "../Helpers/Time/Time"
 import { idGenerate } from "../Utility/Id"
 import { Property } from "../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
 import { PropertiedClass } from "./Propertied"
+import { dataTypeDefault } from "../Helpers/DataType"
 
 interface InstanceObject extends UnknownObject {
   definition?: Definition
@@ -21,20 +22,13 @@ class InstanceBase extends PropertiedClass {
     const [object] = args
     if (!Is.populatedObject(object)) throw Errors.invalid.object + 'InstanceBase'
 
-    const { definitionId = '', definition, label } = object as InstanceObject
-    const definitionObject = definition || Definitions.fromId(definitionId)
-    if (!definitionObject) throw Errors.invalid.definition.object
+    const { definitionId = '', definition } = object as InstanceObject
+    const definitionInstance = definition || Definitions.fromId(definitionId)
+    if (!definitionInstance) throw Errors.invalid.definition.object
 
-    this.definition = definitionObject
-    if (label && label !== this.definition.label) this._label = label
-
-    this.properties.forEach(property => {
-      const propertyName = property.name
-      const propertyValue = object[propertyName]
-      if (typeof propertyValue === "undefined") return
-
-      this[propertyName] = property.type.coerce(propertyValue)
-    })
+    this.definition = definitionInstance
+    this.properties.push(...this.definition.properties)
+    this.propertiesInitialize(object)
   }
 
   get copy() : Instance {
@@ -60,19 +54,16 @@ class InstanceBase extends PropertiedClass {
 
   set label(value : string) { this._label = value }
 
-  get properties(): Property[] { return this.definition.properties }
-
-  property(key: string): Property | undefined { return this.definition.property(key) }
-
   get propertyNames() : string[] {
     return this.properties.map(property => property.name)
   }
 
   toJSON(): UnknownObject {
+    const json = super.toJSON()
     const { definitionId, type } = this
-    const object: UnknownObject = { definitionId, type }
-    this.propertyNames.forEach(name => { object[name] = this.value(name) })
-    return object
+    json.type = type
+    json.definitionId = definitionId
+    return json
   }
 
   get type() : DefinitionType { return this.definition.type }

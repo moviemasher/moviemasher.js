@@ -2,7 +2,7 @@
   "label": "Blend",
   "id": "com.moviemasher.merger.blend",
   "type": "merger",
-  "properties": [{ "name": "mode", "type": "mode", "value": "normal" }],
+  "properties": [{ "type": "mode" }],
   "filters": [
     {
       "id": "com.moviemasher.filter.blend",

@@ -1,7 +1,6 @@
 import { Any, FilesArgs, GraphFiles } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time, TimeRange  } from "../../Helpers/Time/Time"
-import { Is } from "../../Utility/Is"
 import { InstanceClass } from "../../Base/Instance"
 import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
 import { Errors } from "../../Setup/Errors"
@@ -17,10 +16,7 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     constructor(...args : Any[]) {
       super(...args)
       const [object] = args
-      const { frame, frames, track } = <ClipObject> object
-
-      if (typeof frame !== "undefined" && Is.positive(frame)) this.frame = frame
-      if (frames && Is.aboveZero(frames)) this.frames = frames
+      const { track } = <ClipObject> object
       if (typeof track !== "undefined") this.track = track
     }
 
@@ -50,9 +46,9 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
       return timeFromArgs(this.endFrame, quantize)
     }
 
-    frame = 0
+    declare frame: number // = 0
 
-    frames = -1
+    declare frames: number // = -1
 
     clipFiles(args: FilesArgs): GraphFiles {
       const { quantize, time } = args
@@ -97,6 +93,8 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     track = -1
 
     trackType = TrackType.Video
+
+    transformable = false
 
     visible = false
   }

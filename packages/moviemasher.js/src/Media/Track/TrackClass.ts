@@ -1,15 +1,14 @@
 import { UnknownObject } from "../../declarations"
-import { DataType, DefinitionType, TrackType } from "../../Setup/Enums"
+import { TrackType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Property } from "../../Setup/Property"
+import { propertyInstance } from "../../Setup/Property"
 import { sortByFrame } from "../../Utility/Sort"
-import { Clip, ClipDefinition, Clips } from "../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { PropertiedClass } from "../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
 import { Definitions } from "../../Definitions/Definitions"
 import { isPositive } from "../../Utility/Is"
 import { TimeRange } from "../../Helpers/Time/Time"
-import { Time } from "../../Helpers/Time/Time"
 
 class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -24,9 +23,7 @@ class TrackClass extends PropertiedClass implements Track {
       this.dense = !this.layer && this.trackType === TrackType.Video
     } else this.dense = !!dense
 
-    this.properties.push(
-      new Property({ name: "dense", type: DataType.Boolean, value: false })
-    )
+    this.properties.push(propertyInstance({ name: "dense", defaultValue: false }))
 
     if (clips && definitions) this.clips.push(...clips.map(clip => {
       const { definitionId } = clip

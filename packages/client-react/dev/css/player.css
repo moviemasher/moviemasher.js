@@ -4,6 +4,10 @@
   grid-area: player;
 }
 
+.moviemasher .editor .panel.player .head {
+  grid-template-columns: 1fr 1fr;
+}
+
 .moviemasher .editor .panel.player .foot {
   grid-template-columns: var(--icon-size) 1fr 1fr;
 }

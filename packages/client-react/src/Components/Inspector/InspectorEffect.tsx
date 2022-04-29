@@ -12,7 +12,7 @@ interface InspectorEffectProps extends WithClassName {
 }
 
 /**
- * @parents DefaultEffectsInput
+ * @parents InspectorEffects
  */
 function InspectorEffect(props: InspectorEffectProps): ReactResult {
   const masher = useMashEditor()

@@ -1,16 +1,14 @@
 import {
   Any, UnknownObject, ModularGraphFilter} from "../../declarations"
 import { AVType, GraphType } from "../../Setup/Enums"
-import { Property } from "../../Setup/Property"
-import { Evaluator, EvaluatorArgs } from "../../Helpers/Evaluator"
+import { Property, propertyInstance } from "../../Setup/Property"
 import { DefinitionClass } from "../../Base/Definition"
 import {
   Modular, ModularDefinition, ModularDefinitionClass, ModularDefinitionObject
 } from "./Modular"
 import { Filter } from "../../Media/Filter/Filter"
 import { filterInstance } from "../../Media/Filter"
-import {
-  FilterChain} from "../../Edited/Mash/FilterChain/FilterChain"
+import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base implements ModularDefinition {
@@ -19,7 +17,7 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
       const [object] = args
       const { properties, filters } = object as ModularDefinitionObject
       if (properties?.length) this.properties.push(...properties.map(property =>
-        new Property({ ...property, custom: true })
+        propertyInstance({ ...property, custom: true })
       ))
       if (filters) this.filters.push(...filters.map(filter => filterInstance(filter)))
     }
@@ -29,17 +27,13 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
     modularGraphFilters(modular: Modular, filterChain: FilterChain): ModularGraphFilter[] {
       const { filterGraph } = filterChain
       const { evaluator, graphType, preloading, avType } = filterGraph
-
-
       const modularGraphFilters = this.filters.map(filterInstance => {
         evaluator.modular = modular
         evaluator.filter = filterInstance
-        // if (filterChain.visibleContext)
         evaluator.visibleContext = filterChain.visibleContext
-        const modularGraphFilter: ModularGraphFilter = filterInstance.definition.modularGraphFilter(evaluator)
+        const modularGraphFilter = filterInstance.definition.modularGraphFilter(evaluator)
 
         if (!preloading && graphType === GraphType.Canvas && avType !== AVType.Audio) {
-          // if (evaluator.visibleContextUpdated)
           filterChain.visibleContext = evaluator.visibleContext
         }
         return modularGraphFilter

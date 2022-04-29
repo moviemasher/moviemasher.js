@@ -1,6 +1,6 @@
 import React from 'react'
 import { InputContext } from '../../../../Contexts/InputContext'
-import { DataType, Types } from '@moviemasher/moviemasher.js'
+import { DataType, Modes } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
@@ -14,24 +14,20 @@ function DefaultModeInput(): ReactResult {
     changeHandler(property.name, event.target.value)
   }
 
-  const selected = String(value)
-
-  const options = Types.propertyType(DataType.Mode).values.map(object => {
-    const { id, label } = object
-    const optionProps = { value: id, children: label, key: id }
-    return <option {...optionProps}/>
+  const options = Modes.map((id, index) => {
+    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+    return <option {...optionProps} />
   })
 
   const selectProps = {
+    class: 'mode',
     children: options,
     name: property.name,
     onChange,
-    value: selected,
+    value: String(value),
     key: `${property.name}-select`,
   }
-
   return <select {...selectProps} />
-
 }
 
 DataTypeInputs[DataType.Mode] = <DefaultModeInput />

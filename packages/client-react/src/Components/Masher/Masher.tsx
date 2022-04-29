@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Endpoints,
-  Mash, mashEditorInstance, MashFactory, ServerType, UnknownObject,
+  mashEditorInstance, MashFactory, ServerType, UnknownObject,
   DataMashDefaultResponse,
   DataMashDefaultRequest,
   Size
@@ -48,7 +48,7 @@ function Masher(props: MasherProps): ReactResult {
       const request: DataMashDefaultRequest = {}
       // console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request)
       endpointPromise(Endpoints.data.mash.default, request).then((response: DataMashDefaultResponse) => {
-        // console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
+        console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
         const { mash, definitions, previewSize: serverSize } = response
         setPreviewSize(serverSize)
         if (servers.file?.prefix) {

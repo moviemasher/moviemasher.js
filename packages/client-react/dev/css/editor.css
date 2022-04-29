@@ -1,5 +1,8 @@
 
-
+.moviemasher .editor {
+  user-select: none;
+  -webkit-user-select: none;
+}
 .moviemasher .editor label {
   height: var(--icon-size);
 }

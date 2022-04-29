@@ -1,10 +1,11 @@
 import {
   Any,
   LoadPromise,
-  Value,
   UnknownObject,
   VisibleContextData,
   Size,
+  SelectedProperties,
+  Scalar,
 } from "../../declarations"
 import {
   ActionType,
@@ -14,6 +15,7 @@ import {
   EditType,
   EventType,
   MasherAction,
+  SelectType,
   TrackType,
   TransformType,
   TransformTypes,
@@ -38,12 +40,10 @@ import { ClipOrEffect, MashEditor, MashEditorObject, MashEditorSelection } from 
 import { Default } from "../../Setup/Default"
 import { Emitter } from "../../Helpers/Emitter"
 import { Track } from "../../Media/Track/Track"
-import { SelectionValue } from "../../Base/Propertied"
 import { EditorClass } from "../EditorClass"
 import { Mash } from "../../Edited/Mash/Mash"
 import { MashFactory } from "../../Edited/Mash/MashFactory"
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
-import { MoveEffectAction } from "./Actions/Action/MoveEffectAction"
 
 class MashEditorClass extends EditorClass implements MashEditor {
   constructor(...args: Any[]) {
@@ -183,7 +183,8 @@ class MashEditorClass extends EditorClass implements MashEditor {
     }
   }
 
-  can(masherAction : MasherAction) : boolean {
+  can(masherAction: MasherAction): boolean {
+    // console.log(this.constructor.name, "can", masherAction)
     // const z = this._selectedClips.length
     const { track, clip, effect } = this.selection
     switch (masherAction) {
@@ -205,39 +206,34 @@ class MashEditorClass extends EditorClass implements MashEditor {
     }
   }
 
-  change(property: string, value?: SelectionValue): void {
-    if (this.selection.track) {
-      if (this.selection.clip) {
-        // if (this.selection.effect) {
-        //   this.changeEffect(property, value, this.selection.effect)
-        // } else
-        this.changeClip(property, value, this.selection.clip)
-      } else this.changeTrack(property, value, this.selection.track)
-    } else throw Errors.selection
-    //else this.changeMash(property, value)
-  }
+  // change(property: string, value?: Scalar): void {
+  //   if (this.selection.track) {
+  //     if (this.selection.clip) {
+  //       // if (this.selection.effect) {
+  //       //   this.changeEffect(property, value, this.selection.effect)
+  //       // } else
+  //       this.changeClip(property, value, this.selection.clip)
+  //     } else this.changeTrack(property, value, this.selection.track)
+  //   } else throw Errors.selection
+  //   //else this.changeMash(property, value)
+  // }
 
-  private changeClip(property : string, value? : SelectionValue, clip? : Clip) : void {
+  private changeClip(property : string, value : Scalar) : void {
     // console.log(this.constructor.name, "changeClip", property)
     if (!Is.populatedString(property)) throw Errors.property + "changeClip " + property
 
-    const [transform, transformProperty] = property.split(".")
-    if (transformProperty) {
-      this.changeTransformer(transform, transformProperty, value)
-      return
-    }
-    const target = clip || this.selection.clip
+    const target = this.selection.clip
     if (!target) throw Errors.selection
 
     const redoValue = typeof value === "undefined" ? target.value(property) : value
 
     if (this.currentActionReusable(target, property)) {
-      const changeAction = <ChangeAction> this.actions.currentAction
-      changeAction.updateAction(<Value> redoValue)
+      const changeAction = this.actions.currentAction as ChangeAction
+      changeAction.updateAction(redoValue)
       this.handleAction(changeAction)
       return
     }
-    const undoValue = target.value(property) //typeof value === "undefined" ? this.pristineOrThrow[property] : target.value(property)
+    const undoValue = target.value(property)
     const options : UnknownObject = { property, target, redoValue, undoValue }
 
     switch (options.property) {
@@ -249,7 +245,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
         options.type = ActionType.ChangeTrim
         // TODO: make sure there's a test for this
         // not sure where this was derived from - using original clip??
-        options.frames = target.frames + <number> options.undoValue
+        options.frames = target.frames + Number(options.undoValue)
         break
       }
       default: options.type = ActionType.Change
@@ -257,7 +253,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.actionCreate(options)
   }
 
-  private changeEffect(property : string, value? : SelectionValue, effect? : Effect) : void {
+  private changeEffect(property : string, value : Scalar, effect? : Effect) : void {
     // console.log(this.constructor.name, "changeEffect", property)
     if (!Is.populatedString(property)) throw Errors.property
 
@@ -279,7 +275,37 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.actionCreate(options)
   }
 
-  changeTrack(property: string, value?: SelectionValue, track?: Track): void {
+  private changeMash(property: string, value: Scalar): void {
+    // console.log(this.constructor.name, "changeClip", property)
+    if (!Is.populatedString(property)) throw Errors.property + "changeClip " + property
+
+    const target = this.mash
+
+    const redoValue = typeof value === "undefined" ? target.value(property) : value
+
+    if (this.currentActionReusable(target, property)) {
+      const changeAction = this.actions.currentAction as ChangeAction
+      changeAction.updateAction(redoValue)
+      this.handleAction(changeAction)
+      return
+    }
+    const undoValue = target.value(property)
+    const options: UnknownObject = {
+      property, target, redoValue, undoValue, type: ActionType.Change
+    }
+    this.actionCreate(options)
+  }
+
+  private changeMerger(property: string, value: Scalar): void {
+    this.changeTransformer(TransformType.Merger, property, value)
+  }
+
+
+  private changeScaler(property: string, value: Scalar): void {
+    this.changeTransformer(TransformType.Scaler, property, value)
+  }
+
+  private changeTrack(property: string, value: Scalar, track?: Track): void {
     if (!Is.populatedString(property)) throw Errors.property
 
     const target = track || this.selection.track
@@ -299,7 +325,8 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.actionCreate(options)
   }
 
-  changeTransformer(type : string, property : string, value?: SelectionValue) : void {
+
+  private changeTransformer(type : string, property : string, value: Scalar) : void {
     // console.log(this.constructor.name, "changeTransformer", type, property)
     if (!Is.populatedString(type)) throw Errors.type + "changeTransformer " + type
     if (!Is.populatedString(property)) throw Errors.property + "changeTransformer " + property
@@ -307,9 +334,8 @@ class MashEditorClass extends EditorClass implements MashEditor {
     const target = this.selection.clip
     if (!target) throw Errors.selection
 
-    const transformType = <TransformType> type
-
-    const transformable = <Transformable> target
+    const transformType = type as TransformType
+    const transformable = target as Transformable
 
     // make sure first component is merger or scaler
     if (!TransformTypes.includes(transformType)) throw Errors.property + "type " + type
@@ -321,7 +347,6 @@ class MashEditorClass extends EditorClass implements MashEditor {
     if (typeof undoValue === "undefined") throw Errors.property + property + JSON.stringify(transformTarget)
 
     const options : UnknownObject = { property, target: transformTarget, redoValue, undoValue, type: ActionType.Change }
-
 
     if (this.currentActionReusable(transformTarget, property)) {
       const changeAction = <ChangeAction> this.actions.currentAction
@@ -485,6 +510,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   set mash(object: Mash) {
     if (this._mash === object) return
+
     this.paused = true
     if (this._mash) {
       this.preloader.flushFilesExcept()
@@ -497,7 +523,6 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this._mash.loop = this.loop
     this._mash.emitter = this.eventTarget
     this._mash.preloader = this.preloader
-    // console.log(this.constructor.name, "mash", this._imageSize)
     this._mash.imageSize = this._imageSize
     if (this._actions) {
       this._actions.destroy()
@@ -509,6 +534,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.eventTarget.emit(EventType.Duration)
     this.eventTarget.emit(EventType.Action)
 
+    this.selection = {}
     this.goToTime()
     if (this.autoplay) this.paused = false
   }
@@ -679,6 +705,49 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.selection = { track }
   }
 
+  get selectedProperties(): SelectedProperties {
+    const properties: SelectedProperties = []
+    properties.push(...this.mash.properties.map(property => ({
+      selectType: SelectType.Mash, property, changeHandler: this.changeMash.bind(this),
+      value: this.mash.value(property.name)
+    })))
+    const { clip, effect, track } = this.selection
+    if (track) {
+      properties.push(...track.properties.map(property => ({
+        selectType: SelectType.Track, property, changeHandler: this.changeTrack.bind(this),
+        value: track.value(property.name)
+      })))
+      if (clip) {
+        clip.properties.forEach(property => {
+          if (property.name === 'frame' && track.dense) return // set by track
+
+          properties.push({
+            selectType: SelectType.Clip, property,
+            changeHandler: this.changeClip.bind(this),
+            value: clip.value(property.name)
+          })
+        })
+        if (clip.transformable) {
+          const transformable = clip as Transformable
+          properties.push(...transformable.merger.properties.map(property => ({
+            selectType: SelectType.Merger, property, changeHandler: this.changeMerger.bind(this),
+            value: transformable.merger.value(property.name)
+
+          })))
+          properties.push(...transformable.scaler.properties.map(property => ({
+            selectType: SelectType.Scaler, property, changeHandler: this.changeScaler.bind(this),
+            value: transformable.scaler.value(property.name)
+          })))
+          if (effect) properties.push(...effect.properties.map(property => ({
+            selectType: SelectType.Effect, property, changeHandler: this.changeEffect.bind(this),
+            value: effect.value(property.name)
+          })))
+        }
+      }
+    }
+    return properties
+  }
+
   private _selection: MashEditorSelection = {}
 
   get selection(): MashEditorSelection { return this._selection }
@@ -707,11 +776,11 @@ class MashEditorClass extends EditorClass implements MashEditor {
     const scaled = this.time.scale(this.mash.quantize)
     const undoFrames = splitClip.frames
     const redoFrames = scaled.frame - splitClip.frame
-    const insertClip = <Clip> splitClip.copy
+    const insertClip = splitClip.copy as Clip
     insertClip.frames = undoFrames - redoFrames
     insertClip.frame = scaled.frame
     if (splitClip.propertyNames.includes("trim")) {
-      (<AudibleFile> insertClip).trim += redoFrames
+      (insertClip as AudibleFile).trim += redoFrames
     }
     const trackClips = this.mash.clipTrack(splitClip).clips
     const options = {

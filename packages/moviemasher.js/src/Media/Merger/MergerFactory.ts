@@ -1,7 +1,7 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { MergerDefinitionClass } from "./MergerDefinition"
 import { Definitions } from "../../Definitions"
-// import mergerBlendJson from "../../Definitions/DefinitionObjects/merger/blend.json"
+import mergerBlendJson from "../../Definitions/DefinitionObjects/merger/blend.json"
 import mergerCenterJson from "../../Definitions/DefinitionObjects/merger/center.json"
 import mergerAbsoluteJson from "../../Definitions/DefinitionObjects/merger/absolute.json"
 import mergerDefaultJson from "../../Definitions/DefinitionObjects/merger/default.json"
@@ -14,13 +14,13 @@ import {
   MergerFactory
 } from "./Merger"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utility/Is"
+import { isPopulatedString } from "../../Utility/Is"
 
 const mergerDefaultId = "com.moviemasher.merger.default"
 
 const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
-  const idString = id && Is.populatedString(id) ? id : mergerDefaultId
+  const idString = id && isPopulatedString(id) ? id : mergerDefaultId
   if (Definitions.installed(idString)) return <MergerDefinition> Definitions.fromId(idString)
 
   return new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString })
@@ -43,7 +43,7 @@ const mergerFromId = (definitionId : string) : Merger => {
 
 const mergerInitialize = () : void => {
   [
-    // mergerBlendJson,
+    mergerBlendJson,
     mergerCenterJson,
     mergerAbsoluteJson,
     mergerDefaultJson,
@@ -53,7 +53,7 @@ const mergerInitialize = () : void => {
 
 const mergerInstall = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
-  const idString = id && Is.populatedString(id) ? id : mergerDefaultId
+  const idString = id && isPopulatedString(id) ? id : mergerDefaultId
   Definitions.uninstall(idString)
   const instance = mergerDefinition(object)
   Definitions.install(instance)

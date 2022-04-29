@@ -1,39 +1,50 @@
-import { UnknownObject, Scalar } from "../declarations"
+import { Scalar, UnknownObject } from "../declarations"
 import { Errors } from "./Errors"
 import { DataType, DataTypes } from "./Enums"
-import { Type } from "./Type"
-import { Types } from "./Types"
+import { dataTypeDefault } from "../Helpers/DataType"
+import { isBoolean, isNumber, isPopulatedString, isUndefined } from "../Utility/Is"
 
-interface PropertyObject {
+export interface PropertyObject {
   type? : DataType | string
   name? : string
-  value? : Scalar
+  defaultValue? : Scalar
   custom? : boolean
 }
 
-class Property {
-  constructor(object: PropertyObject) {
-    const { type, name, value, custom } = object
-    if (!(type && DataTypes.map(String).includes(type))) throw Errors.invalid.type
-    if (!name) throw Errors.invalid.name
-
-    this.type = Types.propertyType(type as DataType)
-    this.name = name
-    this.value = typeof value === "undefined" ? this.type.value : value
-    this.custom = !!custom
-  }
-
-  custom: boolean
-
-  name : string
-
-  toJSON() : UnknownObject {
-    return { value: this.value, type: this.type.id }
-  }
-
-  type : Type
-
-  value : Scalar
+export interface Property extends UnknownObject {
+  custom?: boolean
+  name: string
+  type: DataType
+  defaultValue: Scalar
+  min?: number
+  max?: number
+  step?: number
 }
 
-export { Property, PropertyObject }
+const propertyType = (type?: DataType | string, value?: Scalar): DataType => {
+  if (isUndefined(type)) {
+    if (isBoolean(value)) return DataType.Boolean
+    if (isNumber(value)) return DataType.Number
+    return DataType.String
+  }
+  if (!isPopulatedString(type)) throw Errors.invalid.type
+
+  const dataType = type as DataType
+  if (!DataTypes.includes(dataType)) throw Errors.invalid.type + dataType
+
+  return dataType
+}
+
+const propertyValue = (type: DataType, value?: Scalar): Scalar => {
+  if (isUndefined(value)) return dataTypeDefault(type)
+
+  return value!
+}
+
+export const propertyInstance = (object: PropertyObject):Property => {
+  const { type, name, defaultValue, ...rest } = object
+  const dataType = propertyType(type, defaultValue)
+  const dataValue = propertyValue(dataType, defaultValue)
+  const dataName = isPopulatedString(name) ? name! : dataType
+  return { type: dataType, defaultValue: dataValue, name: dataName, ...rest }
+}

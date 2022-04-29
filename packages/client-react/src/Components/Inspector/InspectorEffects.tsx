@@ -1,39 +1,37 @@
-import { DataType, DefinitionType, Effects, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DefinitionType, Transformable, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { InputContext } from '../../../../Contexts/InputContext'
-import { ReactResult } from "../../../../declarations"
-import { DragEffectObject } from '../../../../Helpers/DragDrop'
-import { useMashEditor } from '../../../../Hooks/useMashEditor'
-import { useSelectedEffect } from '../../../../Hooks/useSelectedEffect'
-import { DragSuffix } from '../../../../Setup/Constants'
-import { View } from '../../../../Utilities/View'
-import { InspectorEffect } from '../../../Inspector/InspectorEffect'
-import { DataTypeInputs } from './DataTypeInputs'
+import { ReactResult } from "../../declarations"
+import { DragEffectObject } from '../../Helpers/DragDrop'
+import { useMashEditor } from '../../Hooks/useMashEditor'
+import { useSelectedEffect } from '../../Hooks/useSelectedEffect'
+import { DragSuffix } from '../../Setup/Constants'
+import { View } from '../../Utilities/View'
+import { InspectorEffect } from './InspectorEffect'
+import { useSelected } from '../../Hooks/useSelected'
 
 /**
  *
  * @children InspectorEffect
  */
-export function DefaultEffectsInput(): ReactResult {
+export function InspectorEffects(): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const [isOver, setIsOver] = React.useState(false)
-  const inputContext = React.useContext(InputContext)
+  // const inputContext = React.useContext(InputContext)
   const selectedEffect = useSelectedEffect()
-  const { property, value } = inputContext
+  const selectedClip = useSelected() as Transformable
+  const { effects } = selectedClip
+
+
   const masher = useMashEditor()
   if (!masher) return null
-  if (!property) return null
-
 
   const childNodes = (): React.ReactElement[] => {
-    const valueEffects = value as Effects
-    return valueEffects.map((effect, index) => {
+    return effects.map((effect, index) => {
       const clipProps = {
         key: effect.id,
         index,
         effect,
       }
-    //   if (!dense) prevClipEnd = clip.frames + clip.frame
       return <InspectorEffect {...clipProps} />
     })
   }
@@ -70,7 +68,7 @@ export function DefaultEffectsInput(): ReactResult {
       const index = target.getAttribute('index')
       if (index) return Number(index)
     }
-    return (value as Effects).length
+    return effects.length
   }
 
   const dropType = (dataTransfer: DataTransfer): string | undefined => {
@@ -94,6 +92,8 @@ export function DefaultEffectsInput(): ReactResult {
     dropEffect(event)
     event.preventDefault()
   }
+
+
   // TODO: don't hardcode these
   const className = 'effects'
   const dropClass = 'drop'
@@ -111,5 +111,3 @@ export function DefaultEffectsInput(): ReactResult {
   }
   return <View {...viewProps}/>
 }
-
-DataTypeInputs[DataType.Effects] = <DefaultEffectsInput />

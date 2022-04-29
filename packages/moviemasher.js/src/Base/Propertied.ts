@@ -1,102 +1,67 @@
-import { Any, Scalar } from "../declarations"
-import { Effects } from "../Media/Effect"
+import { Any, Scalar, UnknownObject } from "../declarations"
+import { dataTypeCoerce, dataTypeDefault, dataTypeValid } from "../Helpers/DataType"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
+import { isObject, isUndefined } from "../Utility/Is"
 
-
-interface Propertied {
-  property(key: string): Property | undefined
-  value(key: string): SelectionValue
-  setValue(key: string, value: SelectionValue): boolean
+export interface Propertied {
+  value(key: string): Scalar
+  setValue(value: Scalar, key: string | Property ): void
   properties: Property[]
 }
 
-type SelectionValue = Scalar | Propertied | Propertied[]
-
-interface PropertiedChangeHandler {
-  (property: string, value?: SelectionValue): void
+export interface PropertiedChangeHandler {
+  (property: string, value: Scalar): void
 }
 
-
-class PropertiedClass implements Propertied {
+export class PropertiedClass implements Propertied {
   [index: string]: unknown
 
-  constructor(..._args: Any[]) {
+  constructor(..._args: Any[]) {}
 
-  }
+  properties: Property[] = []
 
-  getPropertiedProperty(key: string): Property | undefined {
-    const [propertiedKey, propertiedProperty] = key.split('.')
-    const propertied = this.value(propertiedKey)
-    if (typeof propertied !== 'object' || Array.isArray(propertied)) {
-      throw Errors.invalid.property + key
+  private property(propertyOrString: Property | string): Property {
+    switch (typeof propertyOrString) {
+      case 'string': return this.properties.find(property => property.name === propertyOrString)!
+      case 'object': return propertyOrString
+      default: throw Errors.invalid.property + propertyOrString + ' ' + (typeof propertyOrString)
     }
-
-    return propertied.property(propertiedProperty)
   }
 
-  getPropertiedValue(key: string): SelectionValue {
-    const [propertiedKey, propertiedProperty] = key.split('.')
-    const propertied = this.value(propertiedKey)
-    if (typeof propertied !== 'object' || Array.isArray(propertied)) {
-      throw Errors.invalid.property + key
+  protected propertiesInitialize(object: Any) {
+    this.properties.forEach(property => {
+      const { name, type } = property
+      const value = object[name]
+      if (isObject(value)) return
+
+      const definedValue = isUndefined(value) ? dataTypeDefault(type) : value
+      this.setValue(definedValue, name)
+    })
+  }
+
+  setValue(value: Scalar, propertyOrString: Property | string): void {
+    const property = this.property(propertyOrString)
+    const { type, name } = property
+    if (!dataTypeValid(value, type)) {
+      console.warn(Errors.invalid.property, name, value)
+      return
     }
-
-    return propertied.value(propertiedProperty)
+    const coerced = dataTypeCoerce(value, type)
+    this[name] = coerced
+    // console.log(this.constructor.name, "setValue", name, value, '=>', coerced, this[name])
   }
 
-  property(key: string): Property | undefined {
-    if (key.includes('.')) return this.getPropertiedProperty(key)
-
-    const found = this.properties.find(property => property.name === key)
-    if (!found) console.error(this.constructor.name, "property", key, this.properties.map(p => p.name))
-    return found
+  toJSON(): UnknownObject {
+    return Object.fromEntries(this.properties.map(property => (
+      [property.name, this.value(property.name)]
+    )))
   }
 
-  private _properties: Property[] = []
-  public get properties(): Property[] {
-    return this._properties
-  }
-  public set properties(value: Property[]) {
-    this._properties = value
-  }
-
-  setPropertiedValue(key: string, value: SelectionValue): boolean {
-    const [propertiedKey, propertiedProperty] = key.split('.')
-    const propertied = this.value(propertiedKey)
-    if (typeof propertied !== 'object' || Array.isArray(propertied)) {
-      throw Errors.invalid.property + key
-    }
-
-    return propertied.setValue(propertiedProperty, value)
-  }
-
-  setValue(key: string, value: SelectionValue): boolean {
-    if (key.includes('.')) return this.setPropertiedValue(key, value)
-
-    const property = this.property(key)
-    if (!property) throw Errors.property + key
-
-    const { type } = property
-    const coerced = type.coerce(value)
-    // console.log(this.constructor.name, "setValue", key, value, coerced)
-    if (typeof coerced === 'undefined') {
-      console.error(this.constructor.name, "setValue", key, value)
-      return false
-    }
-
-    this[key] = coerced
-    return true
-  }
-
-  value(key: string): SelectionValue {
-    if (key.includes('.')) return this.getPropertiedValue(key)
-
+  value(key: string): Scalar {
     const value = this[key]
     if (typeof value === "undefined") throw Errors.property + key
 
-    return <SelectionValue> value
+    return value as Scalar
   }
 }
-
-export { SelectionValue, Propertied, PropertiedClass, PropertiedChangeHandler }

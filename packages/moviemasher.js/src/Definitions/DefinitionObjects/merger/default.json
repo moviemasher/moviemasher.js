@@ -3,8 +3,8 @@
   "type": "merger",
   "id": "com.moviemasher.merger.default",
   "properties": [
-    { "name": "left", "type": "number", "value": 0.5 },
-    { "name": "top", "type": "number", "value": 0.5 }
+    { "name": "left", "defaultValue": 0.5 },
+    { "name": "top", "defaultValue": 0.5 }
   ],
   "filters": [
     {

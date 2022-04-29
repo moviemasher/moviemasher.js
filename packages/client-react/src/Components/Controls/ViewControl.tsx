@@ -11,7 +11,10 @@ function ViewControl(props: PropsAndChild): ReactResult {
   const getDisabled = () => !masher.mash.rendering
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
-  useListeners({ [EventType.Render]: updateDisabled, [EventType.Mash]: updateDisabled })
+  useListeners({
+    [EventType.Render]: updateDisabled,
+    [EventType.Mash]: updateDisabled
+  })
 
   const { children, ...rest } = props
 

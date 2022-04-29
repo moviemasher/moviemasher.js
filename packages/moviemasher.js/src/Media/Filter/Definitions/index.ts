@@ -1,4 +1,4 @@
-// export * from "./BlendFilter"
+export * from "./BlendFilter"
 export * from "./ChromaKeyFilter"
 export * from "./ColorFilter"
 export * from "./ColorChannelMixerFilter"

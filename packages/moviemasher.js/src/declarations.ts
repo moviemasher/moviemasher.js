@@ -1,7 +1,9 @@
-import { AVType, GraphFileType, GraphType, LoadType } from "./Setup/Enums"
+import { AVType, DataType, GraphFileType, GraphType, LoadType, SelectType } from "./Setup/Enums"
 import { TimeRange } from "./Helpers/Time/Time"
 import { Time } from "./Helpers/Time/Time"
 import { Definition } from "./Base/Definition"
+import { PropertiedChangeHandler } from "./Base/Propertied"
+import { Property } from "./Setup/Property"
 
 // TODO: remove
 export interface ScrollMetrics {
@@ -286,3 +288,12 @@ export interface GraphFileIconArgs {
   mashSize: Size
   position?: number
 }
+
+export interface SelectedProperty {
+  selectType: SelectType
+  property: Property
+  changeHandler: PropertiedChangeHandler
+  value: Scalar
+}
+
+export type SelectedProperties = SelectedProperty[]

@@ -4,7 +4,6 @@ import { Errors } from "./Errors"
 import { colorValid } from "../Utility/Color"
 import { isNan } from "../Utility/Is"
 import { Definitions } from "../Definitions/Definitions"
-import { SelectionValue } from "../Base/Propertied"
 
 interface TypeValuesObject {
   id : Value
@@ -29,7 +28,7 @@ class Type {
     if (values) this.values.push(...values)
   }
 
-  coerce(value: SelectionValue): SelectionValue | undefined {
+  coerce(value: Scalar): Scalar | undefined {
     const string = String(value)
     const number = Number(value)
 
@@ -37,7 +36,7 @@ class Type {
 
     switch (this.id) {
       case DataType.Merger:
-      case DataType.Scaler: return value
+      case DataType.Scaler: return string
       case DataType.Boolean: return !!value
       case DataType.Number: {
         if (isNan(number)) return
