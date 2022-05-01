@@ -2,7 +2,7 @@ import { Track } from "../../../../Media"
 import { Clip } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
-interface RemoveClipActionObject extends ActionOptions {
+export interface RemoveClipActionObject extends ActionOptions {
   clip : Clip
   index : number
   track : Track
@@ -11,7 +11,7 @@ interface RemoveClipActionObject extends ActionOptions {
 /**
  * @category Action
  */
-class RemoveClipAction extends Action {
+export class RemoveClipAction extends Action {
   constructor(object : RemoveClipActionObject) {
     super(object)
     const { clip, index, track } = object
@@ -36,5 +36,3 @@ class RemoveClipAction extends Action {
     this.mash.addClipToTrack(this.clip, this.trackIndex, this.index)
   }
 }
-
-export { RemoveClipAction, RemoveClipActionObject }

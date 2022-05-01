@@ -5,7 +5,7 @@ import { View } from '../../../../Utilities/View'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultRgbaInput(): ReactResult {
+export function DefaultRgbaInput(): ReactResult {
   const colorInputRef = React.useRef<HTMLInputElement>(null)
   const alphaInputRef = React.useRef<HTMLInputElement>(null)
   const inputContext = React.useContext(InputContext)
@@ -50,5 +50,3 @@ function DefaultRgbaInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Rgba] = <DefaultRgbaInput />
-
-export { DefaultRgbaInput }

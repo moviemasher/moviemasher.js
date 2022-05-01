@@ -10,7 +10,7 @@ import { GraphType, Parameter } from "../../../Setup"
 /**
  * @category Filter
  */
-class OverlayFilter extends FilterDefinitionClass {
+export class OverlayFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {
     const x = Number(evaluator.parameter('x'))
     const y = Number(evaluator.parameter('y'))
@@ -47,5 +47,3 @@ class OverlayFilter extends FilterDefinitionClass {
     new Parameter({ name: "y", value: 0 }),
   ]
 }
-
-export { OverlayFilter }

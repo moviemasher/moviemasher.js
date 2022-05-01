@@ -4,12 +4,12 @@ import { Errors } from "../Setup/Errors"
 const AudibleSampleRate = 44100
 const AudibleChannels = 2
 
-interface AudibleContextSource {
+export interface AudibleContextSource {
   gainNode: GainNode
   gainSource: AudibleSource
 }
 
-class AudibleContext {
+export class AudibleContext {
   addSource(id: string, source: AudibleContextSource): void {
     // console.log("addSource", id)
     this.sourcesByClipId.set(id, source)
@@ -85,6 +85,4 @@ class AudibleContext {
   }
 }
 
-const AudibleContextInstance = new AudibleContext()
-
-export { AudibleContext, AudibleContextSource, AudibleContextInstance }
+export const AudibleContextInstance = new AudibleContext()

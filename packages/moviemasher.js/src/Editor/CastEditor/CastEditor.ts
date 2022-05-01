@@ -1,13 +1,14 @@
+import { DataCastGetResponse } from "../../Api/Data"
 import { Cast } from "../../Edited/Cast/Cast"
 import { Editor, EditorOptions } from "../Editor"
 
-interface CastEditorOptions extends EditorOptions {}
+export interface CastEditorOptions extends EditorOptions {}
 
-interface CastEditor extends Editor {
+export interface CastEditor extends Editor {
   cast: Cast
+  edited: Cast
+  loadData(data: DataCastGetResponse): void
   streamUrl?: string
   streaming: boolean
   editingMash: boolean
 }
-
-export { CastEditor, CastEditorOptions }

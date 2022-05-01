@@ -10,7 +10,7 @@ import { ScalerDefinitionObject } from "../Scaler"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 
-interface TransitionObject extends ModularObject, VisibleObject {}
+export interface TransitionObject extends ModularObject, VisibleObject {}
 
 export interface TransitionFilterChainArgs {
   filterChain: FilterChain
@@ -19,22 +19,23 @@ export interface TransitionFilterChainArgs {
   transition: Transition
 }
 
-interface Transition extends Modular, Visible {
+export interface Transition extends Modular, Visible {
   definition: TransitionDefinition
   filterChain(filterChain: FilterChain): void
 }
 
-interface TransitionDefinitionTransformObject {
+export interface TransitionDefinitionTransformObject {
   filters? : FilterDefinitionObject[]
   merger? : MergerDefinitionObject
   scaler? : ScalerDefinitionObject
 }
-interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefinitionObject {
+
+export interface TransitionDefinitionObject extends ModularDefinitionObject, ClipDefinitionObject {
   to? : TransitionDefinitionTransformObject
   from? : TransitionDefinitionTransformObject
 }
 
-interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
+export interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
   transitionFilterChain(args: TransitionFilterChainArgs): void
   instance : Transition
   instanceFromObject(object : TransitionObject) : Transition
@@ -43,15 +44,6 @@ interface TransitionDefinition extends ModularDefinition, VisibleDefinition {
 /**
  * @category Factory
  */
-interface TransitionFactory extends GenericFactory<
+export interface TransitionFactory extends GenericFactory<
   Transition, TransitionObject, TransitionDefinition, TransitionDefinitionObject
 > {}
-
-export {
-  Transition,
-  TransitionDefinition,
-  TransitionDefinitionObject,
-  TransitionDefinitionTransformObject,
-  TransitionFactory,
-  TransitionObject
-}

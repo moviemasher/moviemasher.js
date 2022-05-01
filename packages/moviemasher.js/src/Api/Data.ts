@@ -1,8 +1,16 @@
-import { JsonObject, AndId, Size } from "../declarations"
+import { JsonObject, AndId, Size, Described } from "../declarations"
 import { DefinitionObject, DefinitionObjects } from "../Base/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
+
+export interface DataGetRequest extends ApiRequest, AndId {
+}
+
+export interface DataRetrieveResponse extends ApiResponse {
+  described: Described[]
+}
+
 
 export interface DataMashDefinitions {
   mash: MashObject
@@ -75,10 +83,8 @@ export interface DataCastPutResponse extends ApiResponse, AndId { }
 export interface DataCastDeleteRequest extends ApiRequest, AndId {}
 export interface DataCastDeleteResponse extends ApiResponse {}
 
-export interface DataMashGetRequest extends ApiRequest, AndId {}
 export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions {}
 
-export interface DataCastGetRequest extends ApiRequest, AndId {}
 export interface DataCastGetResponse extends DataCastDefaultResponse {}
 
 export interface DataDefinitionGetRequest extends ApiRequest, AndId {}
@@ -86,11 +92,6 @@ export interface DataDefinitionGetResponse extends ApiResponse {
   definition: DefinitionObject
 }
 
+
 export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
-export interface DataMashRetrieveResponse extends ApiResponse {
-  mashObjects: MashObject[]
-}
 export interface DataCastRetrieveRequest extends ApiRequest, DataRetrieve { }
-export interface DataCastRetrieveResponse extends ApiResponse {
-  casts: CastObject[]
-}

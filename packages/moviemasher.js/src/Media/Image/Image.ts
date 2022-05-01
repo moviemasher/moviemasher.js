@@ -6,25 +6,23 @@ import {
   TransformableObject
 } from "../../Mixin/Transformable/Transformable"
 
-type ImageObject = TransformableObject
+export type ImageObject = TransformableObject
 
-interface Image extends Transformable {
+export interface Image extends Transformable {
   definition : ImageDefinition
 }
 
-interface ImageDefinitionObject extends TransformableDefinitionObject {
+export interface ImageDefinitionObject extends TransformableDefinitionObject {
   url? : string
   source? : string
  }
 
- interface ImageDefinition extends TransformableDefinition, PreloadableDefinition {
-   instance : Image
-   instanceFromObject(object : ImageObject) : Image
+export interface ImageDefinition extends TransformableDefinition, PreloadableDefinition {
+  instance : Image
+  instanceFromObject(object : ImageObject) : Image
 }
 
 /**
  * @category Factory
  */
-interface ImageFactory extends GenericFactory<Image, ImageObject, ImageDefinition, ImageDefinitionObject> {}
-
-export { Image, ImageDefinition, ImageDefinitionObject, ImageFactory, ImageObject }
+export interface ImageFactory extends GenericFactory<Image, ImageObject, ImageDefinition, ImageDefinitionObject> {}

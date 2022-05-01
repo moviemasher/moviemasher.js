@@ -4,7 +4,7 @@ import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultBooleanInput(): ReactResult {
+export function DefaultBooleanInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value } = inputContext
   if (!property) return null
@@ -24,5 +24,3 @@ function DefaultBooleanInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Boolean] = <DefaultBooleanInput />
-
-export { DefaultBooleanInput }

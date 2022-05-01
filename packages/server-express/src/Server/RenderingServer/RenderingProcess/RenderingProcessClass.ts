@@ -2,10 +2,9 @@ import fs from 'fs'
 import path from 'path'
 
 import {
-  idGenerate, Mash, MashFactory, OutputFactory,
+  idGenerate, Mash, mashInstance, OutputFactory,
   RenderingOutput, RenderingOutputArgs, Errors,
-  RenderingCommandOutput, RenderingResult, OutputFormat,
-  CommandOutputs, OutputType, EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension, CommandInput, RenderingDescription, CommandOutput, AVType, CommandInputs, GraphFilters,
+  RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType, EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension, CommandInput, RenderingDescription, AVType, CommandInputs, GraphFilters,
 
 } from "@moviemasher/moviemasher.js"
 import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
@@ -20,7 +19,7 @@ import { renderingCommandOutputs, renderingOutputFile } from '../../../Utilities
 
 export type RenderingProcessConcatFileDuration = [string, number]
 
-class RenderingProcessClass implements RenderingProcess {
+export class RenderingProcessClass implements RenderingProcess {
   constructor(args: RenderingProcessArgs) { this.args = args }
 
   args: RenderingProcessArgs
@@ -56,7 +55,7 @@ class RenderingProcessClass implements RenderingProcess {
     if (this._mashInstance) return this._mashInstance
 
     const { definitions, mash } = this.args
-    return this._mashInstance = MashFactory.instance(mash, definitions)
+    return this._mashInstance = mashInstance(mash, definitions)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {
@@ -283,5 +282,3 @@ class RenderingProcessClass implements RenderingProcess {
     })
   }
 }
-
-export { RenderingProcessClass }

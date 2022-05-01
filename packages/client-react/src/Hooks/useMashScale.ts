@@ -4,7 +4,7 @@ import { TimelineContext } from "../Contexts/TimelineContext"
 import { useListeners } from "./useListeners"
 import { useMashEditor } from "./useMashEditor"
 
-const useMashScale = () => {
+export const useMashScale = () => {
   const timelineContext = React.useContext(TimelineContext)
   const masher = useMashEditor()
   const [frames, setFrames] = React.useState(masher.mash.frames)
@@ -16,5 +16,3 @@ const useMashScale = () => {
 
   return pixelPerFrame(frames, width, zoom)
 }
-
-export { useMashScale }

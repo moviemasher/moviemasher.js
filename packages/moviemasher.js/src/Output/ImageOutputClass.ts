@@ -5,7 +5,7 @@ import { AVType, OutputType } from "../Setup/Enums"
 import { ImageOutput, ImageOutputArgs } from "./Output"
 import { RenderingOutputClass } from "./RenderingOutputClass"
 
-class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
+export class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
   declare args: ImageOutputArgs
 
   avType = AVType.Video
@@ -49,6 +49,3 @@ class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
     return mash.timeRange.positionTime(Number(offset || 0), 'ceil')
   }
 }
-
-export { ImageOutputClass }
-// ffmpeg -i /Users/doug/GitHub/moviemasher.js/dev/shared/video.mp4 -y -filter_complex 'color=color=#00000000:size=427x240[COLORBACK];[0:v]trim=start=1[TRIM0];[TRIM0]fps=fps=10[FPS0];[FPS0]setpts=expr=PTS-STARTPTS[SETPTS0];[SETPTS0]setsar=sar=1:max=1[SETSAR0];[SETSAR0]scale=width=427:height=240[SCALE0];[SCALE0]setsar[SETSAR1];[COLORBACK][SETSAR1]overlay=x=0:y=0' -frames:v 1 temporary/test/render/image-from-trimmed-video/image.png

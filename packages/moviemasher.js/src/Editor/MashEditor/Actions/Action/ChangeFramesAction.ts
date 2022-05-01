@@ -4,7 +4,7 @@ import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 /**
  * @category Action
  */
-class ChangeFramesAction extends ChangeAction {
+export class ChangeFramesAction extends ChangeAction {
   constructor(object : ChangeActionObject) {
     super(object)
     this.clip = <Clip> this.target
@@ -20,5 +20,3 @@ class ChangeFramesAction extends ChangeAction {
     this.mash.changeClipFrames(this.clip, this.undoValueNumeric)
   }
 }
-
-export { ChangeFramesAction }

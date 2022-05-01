@@ -12,7 +12,7 @@ import { RenderingCommandOutput, RenderingOutput, RenderingOutputArgs } from "./
 import { FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
 import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from "../Helpers/Time/TimeUtilities"
 
-class RenderingOutputClass implements RenderingOutput {
+export class RenderingOutputClass implements RenderingOutput {
   constructor(args: RenderingOutputArgs) {
     this.args = args
   }
@@ -271,5 +271,3 @@ class RenderingOutputClass implements RenderingOutput {
     return graphFiles
   }
 }
-
-export { RenderingOutputClass }

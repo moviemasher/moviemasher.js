@@ -44,7 +44,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       return
     }
     try {
-      // console.log(Endpoints.streaming.cut, 'request', request)
+      console.log(Endpoints.streaming.cut, 'request', request)
       const cutArgs: StreamingProcessCutArgs = { definitionObjects, mashObjects }
       const updated = streamingProcess.cut(cutArgs)
       const response: StreamingCutResponse = updated
@@ -72,8 +72,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   fileServer?: FileServer
 
-  remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async(req, res) => {
-    const { id, localDescription } = req.body
+  remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
+    const request = req.body
+    console.log(Endpoints.streaming.remote, 'request', request)
+
+    const { id, localDescription } = request
     const connection = WebrtcConnection.getConnection(id)
     if (!connection) {
       res.send({ error: `no connection ${id}` })
@@ -126,6 +129,8 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
   // TODO: support other output besides HLS file
   start: ServerHandler<StreamingStartResponse, StreamingStartRequest> = (req, res) => {
     const request = req.body
+    console.log(Endpoints.streaming.start, 'request', request)
+
     const { width, height, videoRate, format } = request
     const streamingFormat = format || StreamingFormat.Hls
     const id = uuid()
@@ -337,9 +342,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     return `${url}/${id}/${file}`
   }
 
-  webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (_, res) => {
+  webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (req, res) => {
     try {
-      // const { localDescription } = req.body
+
+      const request = req.body
+      console.log(Endpoints.streaming.webrtc, 'request', request)
       const hlsFormatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
       const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
 

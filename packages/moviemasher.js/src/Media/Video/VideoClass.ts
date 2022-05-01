@@ -20,7 +20,7 @@ const WithAudibleFile = AudibleFileMixin(WithAudible)
 const WithVisible = VisibleMixin(WithAudibleFile)
 const WithTransformable = TransformableMixin(WithVisible)
 
-class VideoClass extends WithTransformable implements Video {
+export class VideoClass extends WithTransformable implements Video {
   get copy() : Video { return <Video> super.copy }
 
   declare definition : VideoDefinition
@@ -110,16 +110,3 @@ class VideoClass extends WithTransformable implements Video {
     return object
   }
 }
-
-export { VideoClass }
-
-
-// ffmpeg -y  -i /mnt/moviemasher.rb/tmp/spec/cache/30da29f7a68e9971dbf222647b2bb70937f6c2d89c3c8c3274ead66cca14ca4e/downloaded.mp4
-// -filter_complex
-// [0: v]trim = duration = 2.0: start = 2.0
-// fps = fps = 30
-// setpts = expr =
-// setsar = sar = 1: max = 1
-
-
-// - t 2.0 - an - s 512x288 - c:v libx264 - level 41 - movflags faststart - b:v 2000k - r:v 30 - metadata title\=test - pass 1 - passlogfile / mnt / moviemasher.rb / tmp / spec / temporary / 031cc40a - de8b - 4f07 - b7d5 - cf09daabd9fe / pass - 43bba8d8 - 3fcc - 4919 - bd91 - 6dc23511198a - f mp4 / dev / null

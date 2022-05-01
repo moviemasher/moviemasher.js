@@ -2,10 +2,9 @@ import {
   AudibleSource, VisibleSource, Any, UnknownObject, LoadPromise, LoadVideoResult,
   FilesArgs, GraphFile, GraphFiles
 } from "../../declarations"
-import { DefinitionType, TrackType, DataType, LoadType, AVType } from "../../Setup/Enums"
+import { DefinitionType, TrackType, LoadType, AVType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { Property } from "../../Setup/Property"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoClass } from "./VideoClass"
 import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
@@ -24,7 +23,7 @@ const VideoDefinitionWithAudible = AudibleDefinitionMixin(VideoDefinitionWithCli
 const VideoDefinitionWithAudibleFile = AudibleFileDefinitionMixin(VideoDefinitionWithAudible)
 const VideoDefinitionWithVisible = VisibleDefinitionMixin(VideoDefinitionWithAudibleFile)
 const VideoDefinitionWithTransformable = TransformableDefinitionMixin(VideoDefinitionWithVisible)
-class VideoDefinitionClass extends VideoDefinitionWithTransformable implements VideoDefinition {
+export class VideoDefinitionClass extends VideoDefinitionWithTransformable implements VideoDefinition {
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -127,5 +126,3 @@ class VideoDefinitionClass extends VideoDefinitionWithTransformable implements V
 
   type = DefinitionType.Video
 }
-
-export { VideoDefinitionClass }

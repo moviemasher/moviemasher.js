@@ -22,10 +22,8 @@ const commandFactoryInstance = (id: string, options: CommandOptions): RunningCom
   return command
 }
 
-const RunningCommandFactory = {
+export const RunningCommandFactory = {
   instance: commandFactoryInstance,
   get: commandFactoryGet,
   delete: commandFactoryDelete,
 }
-
-export { RunningCommandFactory }

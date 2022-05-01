@@ -9,13 +9,13 @@ import {
 } from '../../Contexts/InspectorContext'
 import { useMashEditor } from '../../Hooks/useMashEditor'
 
-interface InspectorProps extends PropsAndChildren, WithClassName {}
+export interface InspectorProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents Masher
  * @children InspectorContent
  */
-function Inspector(props: InspectorProps): ReactResult {
+export function Inspector(props: InspectorProps): ReactResult {
   const masher = useMashEditor()
   useListeners({
     [EventType.Action]: () => {
@@ -50,5 +50,3 @@ function Inspector(props: InspectorProps): ReactResult {
     </InspectorContext.Provider>
   )
 }
-
-export { Inspector, InspectorProps }

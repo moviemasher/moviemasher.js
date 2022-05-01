@@ -18,14 +18,7 @@ const WithAudibleFile = AudibleFileMixin(WithAudible)
 const WithVisible = VisibleMixin(WithAudibleFile)
 const WithTransformable = TransformableMixin(WithVisible)
 
-class VideoSequenceClass extends WithTransformable implements VideoSequence {
-  // constructor(...args : Any[]) {
-  //   super(...args)
-  //   const [object] = args
-  //   const { speed } = <VideoSequenceObject> object
-  //   if (speed && Is.aboveZero(speed)) this.speed = speed
-  // }
-
+export class VideoSequenceClass extends WithTransformable implements VideoSequence {
   override initializeFilterChain(filterChain: FilterChain): void  {
     const { filterGraph } = filterChain
     const {
@@ -64,5 +57,3 @@ class VideoSequenceClass extends WithTransformable implements VideoSequence {
     return object
   }
 }
-
-export { VideoSequenceClass }

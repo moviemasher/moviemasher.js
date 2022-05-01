@@ -4,13 +4,13 @@ import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations
 import { ViewerContext, ViewerContextInterface } from '../../Contexts/ViewerContext'
 import { View } from '../../Utilities/View'
 
-interface StreamerProps extends PropsAndChildren, WithClassName {}
+export interface StreamerProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents Masher, Caster
  * @children StreamerContent, StreamerControl, StreamerPreloadControl, StreamerUpdateControl
  */
-function Streamer(props: StreamerProps): ReactResult {
+export function Streamer(props: StreamerProps): ReactResult {
   const [streaming, setStreaming] = React.useState(false)
   const [preloading, setPreloading] = React.useState(false)
   const [updating, setUpdating] = React.useState(false)
@@ -38,5 +38,3 @@ function Streamer(props: StreamerProps): ReactResult {
     </ViewerContext.Provider>
   )
 }
-
-export { Streamer, StreamerProps }

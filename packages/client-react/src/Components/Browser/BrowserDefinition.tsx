@@ -6,7 +6,7 @@ import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
 import { useMashEditor } from '../../Hooks'
 
 
-interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
+export interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
   definition: Definition
   selectClass?: string
   label?: string
@@ -17,7 +17,7 @@ interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
 /**
  * @parents BrowserContent
  */
-function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
+export function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const browserContext = React.useContext(BrowserContext)
   const mashEditor = useMashEditor()
@@ -81,5 +81,3 @@ function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   }
   return React.cloneElement(kid, clipProps)
 }
-
-export { BrowserDefinition, BrowserDefinitionProps }

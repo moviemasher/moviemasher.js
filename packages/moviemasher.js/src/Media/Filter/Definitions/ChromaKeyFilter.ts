@@ -11,7 +11,7 @@ import { DataType } from "../../../Setup/Enums"
 /**
  * @category Filter
  */
-class ChromaKeyFilter extends FilterDefinitionClass {
+export class ChromaKeyFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext: context } = evaluator
     if (!context) throw Errors.invalid.context + this.id
@@ -77,5 +77,3 @@ class ChromaKeyFilter extends FilterDefinitionClass {
     return array
   }
 }
-
-export { ChromaKeyFilter }

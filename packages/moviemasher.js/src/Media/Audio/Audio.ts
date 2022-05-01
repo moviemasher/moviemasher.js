@@ -6,15 +6,15 @@ import {
   AudibleFileDefinitionObject
 } from "../../Mixin/AudibleFile/AudibleFile"
 
-type AudioObject = AudibleFileObject
+export type AudioObject = AudibleFileObject
 
-interface Audio extends AudibleFile {
+export interface Audio extends AudibleFile {
   definition : AudioDefinition
 }
 
-type AudioDefinitionObject = AudibleFileDefinitionObject
+export type AudioDefinitionObject = AudibleFileDefinitionObject
 
-interface AudioDefinition extends AudibleFileDefinition {
+export interface AudioDefinition extends AudibleFileDefinition {
   instance: Audio
   instanceFromObject(object: AudioObject): Audio
 }
@@ -22,8 +22,6 @@ interface AudioDefinition extends AudibleFileDefinition {
 /**
  * @category Factory
  */
-interface AudioFactory extends GenericFactory<
+export interface AudioFactory extends GenericFactory<
   Audio, AudioObject, AudioDefinition, AudioDefinitionObject
 > { }
-
-export { Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory }

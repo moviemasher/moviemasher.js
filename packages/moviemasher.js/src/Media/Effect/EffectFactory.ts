@@ -15,7 +15,7 @@ import effectSharpenJson from "../../Definitions/DefinitionObjects/effect/sharpe
 import effectTextJson from "../../Definitions/DefinitionObjects/effect/text.json"
 
 
-const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
+export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -24,11 +24,11 @@ const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition =>
   return new EffectDefinitionClass({...object, type: DefinitionType.Effect })
 }
 
-const effectDefinitionFromId = (id : string) : EffectDefinition => {
+export const effectDefinitionFromId = (id : string) : EffectDefinition => {
   return effectDefinition({ id })
 }
 
-const effectInstance = (object: EffectObject): Effect => {
+export const effectInstance = (object: EffectObject): Effect => {
   const { definitionId = '' } = object
   const definition = effectDefinition({ id: definitionId })
 
@@ -36,22 +36,11 @@ const effectInstance = (object: EffectObject): Effect => {
   return definition.instanceFromObject(args)
 }
 
-const effectFromId = (definitionId : string) : Effect => {
+export const effectFromId = (definitionId : string) : Effect => {
   return effectInstance({ definitionId })
 }
 
-
-// const effectInstance = (object : EffectObject) : Effect => {
-//   const definition = effectDefinition(object)
-//   const instance = definition.instanceFromObject(object)
-//   return instance
-// }
-
-// const effectFromId = (id : string) : Effect => {
-//   return effectInstance({ id })
-// }
-
-const effectInitialize = () : void => {
+export const effectInitialize = () : void => {
   [
     effectBlurJson,
     effectChromaKeyJson,
@@ -63,7 +52,7 @@ const effectInitialize = () : void => {
   ].forEach(instance => effectInstall(instance))
 }
 
-const effectInstall = (object : EffectDefinitionObject) : EffectDefinition => {
+export const effectInstall = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
@@ -73,7 +62,7 @@ const effectInstall = (object : EffectDefinitionObject) : EffectDefinition => {
   return instance
 }
 
-const EffectFactoryImplementation = {
+export const EffectFactoryImplementation = {
   definition: effectDefinition,
   definitionFromId: effectDefinitionFromId,
   fromId: effectFromId,
@@ -83,13 +72,3 @@ const EffectFactoryImplementation = {
 }
 
 Factories[DefinitionType.Effect] = EffectFactoryImplementation
-
-export {
-  effectDefinition,
-  effectDefinitionFromId,
-  EffectFactoryImplementation,
-  effectFromId,
-  effectInstall,
-  effectInitialize,
-  effectInstance,
-}

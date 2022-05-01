@@ -34,7 +34,6 @@ import { EditorRedoButton } from '../Components/Editor/EditorRedoButton'
 import { EditorRemoveButton } from '../Components/Editor/EditorRemoveButton'
 import { EditorSplitButton } from '../Components/Editor/EditorSplitButton'
 import { MasherOptions, MasherProps } from '../Components/Masher/Masher'
-import { DataTypeInputs } from '../Components/Editor/EditorInputs/DefaultInputs/DataTypeInputs'
 import { BrowserDataSource } from '../Components/Browser/BrowserDataSource'
 import { Process } from '../Components/Process/Process'
 import { UploadControl } from '../Components/Controls/UploadControl'
@@ -46,28 +45,26 @@ import { DefaultIcons } from '../Components/Editor/EditorIcons/DefaultIcons'
 import { EditorInputs } from '../Components/Editor/EditorInputs/EditorInputs'
 import { ViewControl } from '../Components/Controls/ViewControl'
 import { ProcessProgress } from '../Components/Process/ProcessProgress'
-import { MashesControl } from '../Components/Controls/MashesControl'
-import { InspectorEffects } from '../Components/Inspector/InspectorEffects'
+import { SelectEditedControl } from '../Components/Controls/SelectEditedControl'
+import { CreateEditedControl } from '../Components/Controls/CreateEditedControl'
 
-
-interface ContentOptions {
-  className?: string
+export interface ContentOptions {
+  props?: WithClassName
   children?: React.ReactElement<WithClassName>
   child?: React.ReactChild
 }
 
-interface PanelOptionsStrict {
-  className? : string
+export interface PanelOptionsStrict {
+  props?: WithClassName
   header: BarOptions
   content: ContentOptions
   footer: BarOptions
 }
 
-type PanelOptions = Partial<PanelOptionsStrict>
-type PanelOptionsOrFalse = PanelOptions | false
-type PanelOptionsStrictOrFalse = PanelOptionsStrict | false
+export type PanelOptions = Partial<PanelOptionsStrict>
+export type PanelOptionsOrFalse = PanelOptions | false
 
-interface UiOptions {
+export interface UiOptions {
   [index:string]: PanelOptionsOrFalse
   browser: PanelOptionsOrFalse
   player: PanelOptionsOrFalse
@@ -76,11 +73,11 @@ interface UiOptions {
 }
 
 interface UiOptionsStrict {
-  [index:string]: PanelOptionsStrictOrFalse
-  browser: PanelOptionsStrictOrFalse
-  player: PanelOptionsStrictOrFalse
-  inspector: PanelOptionsStrictOrFalse
-  timeline: PanelOptionsStrictOrFalse
+  [index:string]: PanelOptionsStrict
+  browser: PanelOptionsStrict
+  player: PanelOptionsStrict
+  inspector: PanelOptionsStrict
+  timeline: PanelOptionsStrict
 }
 
 interface EditorDefaultsArgs extends MasherOptions {
@@ -100,7 +97,7 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
     className, selectClass, dropClass, panels, noApi,
     ...rest
   } = options
-  const inputs = suppliedInputs || DataTypeInputs
+
   const icons = suppliedIcons || DefaultIcons
   const classNameEditor = className || 'editor masher'
   const classNameDrop = dropClass || 'drop'
@@ -108,229 +105,196 @@ export const DefaultMasherProps: PropsMethod<MasherPropsDefault, MasherProps> = 
 
   const panelOptions = panels || {}
   const optionsLoose: UiOptions = {
-    browser: typeof panelOptions.browser === 'undefined' ? {} : panelOptions.browser,
-    player: typeof panelOptions.player === 'undefined' ? {} : panelOptions.player,
-    inspector: typeof panelOptions.inspector === 'undefined' ? {} : panelOptions.inspector,
-    timeline: typeof panelOptions.timeline === 'undefined' ? {} : panelOptions.timeline,
+    browser: panelOptions.browser || {},
+    player: panelOptions.player || {},
+    inspector: panelOptions.inspector || {},
+    timeline: panelOptions.timeline || {},
   }
 
   Object.values(optionsLoose).forEach(options => {
     if (!options) return
 
     options.header ||= {}
-    options.header.className ||= 'head'
+    options.header!.props ||= { key: 'header', className: 'head' }
 
     options.content ||= {}
-    options.content.className ||= 'content'
+    options.content.props ||= { key: 'content', className: 'content' }
 
     options.footer ||= {}
-    options.footer.className ||= 'foot'
+    options.footer!.props ||= { key: 'footer', className: 'foot' }
   })
 
   const optionsStrict = optionsLoose as UiOptionsStrict
 
-  const browserNode = (panelOptions : PanelOptionsStrict) => {
-    panelOptions.className ||= 'panel browser'
-    panelOptions.header.content ||= [
-      <BrowserSource key='theme' id='theme' className='icon-button' children={icons.browserTheme} />,
-      <BrowserSource key='effect' id='effect' className='icon-button' children={icons.browserEffect} />,
-      <BrowserSource key='transition' id='transition' className='icon-button' children={icons.browserTransition} />
-    ]
 
-    const SourceClass = noApi ? BrowserSource : BrowserDataSource
-    panelOptions.header.before ||= [
-      <SourceClass key='video' id='videosequence' className='icon-button' children={icons.browserVideo} />,
-      <SourceClass key='audio' id='audio' className='icon-button' children={icons.browserAudio} />,
-      <SourceClass key='image' id='image' className='icon-button' children={icons.browserImage} />,
-    ]
+  optionsStrict.browser.props ||= { key: 'browser', className: 'panel browser' }
+  optionsStrict.browser.header.content ||= [
+    <BrowserSource key='theme' id='theme' className='icon-button' children={icons.browserTheme} />,
+    <BrowserSource key='effect' id='effect' className='icon-button' children={icons.browserEffect} />,
+    <BrowserSource key='transition' id='transition' className='icon-button' children={icons.browserTransition} />
+  ]
 
-    if (!noApi) {
-      panelOptions.footer.before ||= [
-        <Process key='upload-process' id='data'>
-          <UploadControl>
-            {icons.upload}
-          </UploadControl>
-          <ProcessActive>
-            <ProcessStatus />
-            <ProcessProgress/>
-          </ProcessActive>
-        </Process>
-      ]
-    }
-    panelOptions.content.children ||= (
-      <View className='definition'><label /></View>
-    )
-    const contentProps = {
-      selectClass: classNameSelect,
-      label: '--clip-label',
-      icon: '--clip-icon',
-      children: panelOptions.content.children,
-      className: panelOptions.content.className,
-    }
-    const children = [
-      <Bar key='header' {...panelOptions.header} />,
-      <BrowserContent key='content' {...contentProps} />,
-      <Bar key='footer' {...panelOptions.footer} />
+  const SourceClass = noApi ? BrowserSource : BrowserDataSource
+  optionsStrict.browser.header.before ||= [
+    <SourceClass key='video' id='videosequence' className='icon-button' children={icons.browserVideo} />,
+    <SourceClass key='audio' id='audio' className='icon-button' children={icons.browserAudio} />,
+    <SourceClass key='image' id='image' className='icon-button' children={icons.browserImage} />,
+  ]
+
+  if (!noApi) {
+    optionsStrict.browser.footer.before ||= [
+      <Process key='upload-process' id='data'>
+        <UploadControl>
+          {icons.upload}
+        </UploadControl>
+        <ProcessActive>
+          <ProcessStatus />
+          <ProcessProgress/>
+        </ProcessActive>
+      </Process>
     ]
-    const panelProps = { key: 'browser', children, className: panelOptions.className }
-    return <Browser {...panelProps} />
   }
+  optionsStrict.browser.content.children ||= (
+    <View className='definition'><label /></View>
+  )
 
-  const inspectorNode = (panelOptions:PanelOptionsStrict) => {
-    panelOptions.className ||= 'panel inspector'
-    panelOptions.header.content ||= [
-      <InspectorNoSelection key='no-selection'>
-        <View>Select something</View>
-      </InspectorNoSelection>
-    ]
-    panelOptions.footer.content ||= []
+  optionsStrict.browser.content.props!.icon ||= '--clip-icon'
+  optionsStrict.browser.content.props!.label ||= '--clip-label'
+  optionsStrict.browser.content.props!.selectClass ||= classNameSelect
+  optionsStrict.inspector.props ||= { key: 'inspector', className: 'panel inspector' }
+  optionsStrict.inspector.header.content ||= [
+    <InspectorNoSelection key='no-selection'>
+      <View>Select something</View>
+    </InspectorNoSelection>
+  ]
+  optionsStrict.inspector.footer.content ||= []
 
-    const { child } = panelOptions.content
-    const defaultChild = child ? <InspectorNoSelection key='no-selection' children={child} /> : null
+  const { child } = optionsStrict.inspector.content
+  const defaultChild = child ? <InspectorNoSelection key='no-selection' children={child} /> : null
 
-    panelOptions.content.children ||= <>
-      {defaultChild}
-      <InspectorProperties><label /></InspectorProperties>
-    </>
+  optionsStrict.inspector.content.children ||= <>
+    {defaultChild}
+    <InspectorProperties><label /></InspectorProperties>
+  </>
 
-    const contentProps = {
-      selectClass: {classNameSelect},
-      label: '--clip-label',
-      children: panelOptions.content.children,
-      className: panelOptions.content.className,
-    }
-    const children = [
-      <Bar key='header' {...panelOptions.header} />,
-      <InspectorContent key='content' {...contentProps} />,
-      <Bar key='footer' {...panelOptions.footer} />
-    ]
-
-    const panelProps = {
-      key: 'inspector',
-      children,
-      className: panelOptions.className
-    }
-
-    return <Inspector {...panelProps} />
-  }
-
-  const playerNode = (panelOptions: PanelOptionsStrict) => {
-    panelOptions.className ||= 'panel player'
-    const contentProps = {
-      selectClass: {classNameSelect},
-      className: panelOptions.content.className,
-    }
-    panelOptions.content.children ||= (
-      <PlayerContent key='content' {...contentProps} />
-    )
-    panelOptions.header.content ||= [<img key='logo' src="mm.svg" />]
-    if (!noApi) panelOptions.header.after ||= [<MashesControl/>]
-
-    panelOptions.footer.content ||= [
-      <PlayerButton key='play-button' className='icon-button'>
-        <PlayerPlaying key='playing'>{icons.playerPause}</PlayerPlaying>
-        <PlayerNotPlaying key='not-playing'>{icons.playerPlay}</PlayerNotPlaying>
-      </PlayerButton>,
-      <PlayerTimeControl key='time-slider'/>
-    ]
-
-    const children = [
-      <Bar key='header' {...panelOptions.header} />,
-      panelOptions.content.children,
-      <Bar key='footer' {...panelOptions.footer} />,
-    ]
+  optionsStrict.inspector.content.props!.label ||= '--clip-label'
+  optionsStrict.inspector.content.props!.selectClass ||= classNameSelect
 
 
-    const panelProps = { key: 'player', children, className: panelOptions.className }
-    return <Player {...panelProps} />
-  }
+  optionsStrict.player.props ||= { key: 'player', className: 'panel player' }
 
-  const timelineNode = (panelOptions: PanelOptionsStrict) => {
-    panelOptions.className ||= 'panel timeline'
-    panelOptions.content.children ||= <>
-      <View className='scrub-pad' />
-      <TimelineScrubber className='scrub'>
-        <TimelineScrubberElement className='scrub-icon'/>
-      </TimelineScrubber>
-      <View className='scrub-bar-container'>
-        <TimelineScrubberElement className='scrub-bar' />
+  optionsStrict.player.content.props!.selectClass ||= classNameSelect
+
+  optionsStrict.player.content.children ||= (
+    <PlayerContent {...optionsStrict.player.content.props} />
+  )
+  optionsStrict.player.header.content ||= [<img key='logo' src="mm.svg" />]
+  if (!noApi) optionsStrict.player.header.after ||= [
+    <SelectEditedControl />,
+    <CreateEditedControl><Button endIcon={icons.add}>New</Button></CreateEditedControl>
+  ]
+
+  optionsStrict.player.footer.content ||= [
+    <PlayerButton key='play-button' className='icon-button'>
+      <PlayerPlaying key='playing'>{icons.playerPause}</PlayerPlaying>
+      <PlayerNotPlaying key='not-playing'>{icons.playerPlay}</PlayerNotPlaying>
+    </PlayerButton>,
+    <PlayerTimeControl key='time-slider'/>
+  ]
+
+
+  optionsStrict.timeline.props ||= { key: 'timeline', className: 'panel timeline' }
+  optionsStrict.timeline.content.children ||= <>
+    <View className='scrub-pad' />
+    <TimelineScrubber className='scrub'>
+      <TimelineScrubberElement className='scrub-icon'/>
+    </TimelineScrubber>
+    <View className='scrub-bar-container'>
+      <TimelineScrubberElement className='scrub-bar' />
+    </View>
+    <TimelineTracks className='tracks'>
+      <View className='track'>
+        <TimelineTrackIsType type='audio'><View className='track-icon' children={icons.timelineTrackAudio}/></TimelineTrackIsType>
+        <TimelineTrackIsType type='video'><View className='track-icon' children={icons.timelineTrackVideo}/></TimelineTrackIsType>
+        <TimelineTrackIsType type='transition'><View className='track-icon' children={icons.timelineTrackTransition}/></TimelineTrackIsType>
+        <TimelineClips
+          className='clips'
+          selectClass={classNameSelect}
+          dropClass={classNameDrop}
+          label='--clip-label'
+          icon='--clip-icon'
+        >
+          <View className='clip'>
+            <label />
+          </View>
+        </TimelineClips>
       </View>
-      <TimelineTracks className='tracks'>
-        <View className='track'>
-          <TimelineTrackIsType type='audio'><View className='track-icon' children={icons.timelineTrackAudio}/></TimelineTrackIsType>
-          <TimelineTrackIsType type='video'><View className='track-icon' children={icons.timelineTrackVideo}/></TimelineTrackIsType>
-          <TimelineTrackIsType type='transition'><View className='track-icon' children={icons.timelineTrackTransition}/></TimelineTrackIsType>
-          <TimelineClips
-            className='clips'
-            selectClass={classNameSelect}
-            dropClass={classNameDrop}
-            label='--clip-label'
-            icon='--clip-icon'
-          >
-            <View className='clip'>
-              <label />
-            </View>
-          </TimelineClips>
-        </View>
-      </TimelineTracks>
-      <TimelineSizer className='timeline-sizer' />
-    </>
+    </TimelineTracks>
+    <TimelineSizer className='timeline-sizer' />
+  </>
 
-    panelOptions.header.content ||= [
-      <EditorUndoButton key='undo'><Button startIcon={icons.undo}>Undo</Button></EditorUndoButton>,
-      <EditorRedoButton key='redo'><Button startIcon={icons.redo}>Redo</Button></EditorRedoButton>,
-      <EditorRemoveButton key='remove'><Button startIcon={icons.remove}>Remove</Button></EditorRemoveButton>,
-      <EditorSplitButton key='split'><Button startIcon={icons.split}>Split</Button></EditorSplitButton>,
+  optionsStrict.timeline.header.content ||= [
+    <EditorUndoButton key='undo'><Button startIcon={icons.undo}>Undo</Button></EditorUndoButton>,
+    <EditorRedoButton key='redo'><Button startIcon={icons.redo}>Redo</Button></EditorRedoButton>,
+    <EditorRemoveButton key='remove'><Button startIcon={icons.remove}>Remove</Button></EditorRemoveButton>,
+    <EditorSplitButton key='split'><Button startIcon={icons.split}>Split</Button></EditorSplitButton>,
+  ]
+
+  optionsStrict.timeline.footer.content ||= [
+    <TimelineZoomer key='zoomer'/>,
+    <EditorAddTrackButton className='icon-button' key='video' trackType='video' children={icons.timelineAddVideo}/>,
+    <EditorAddTrackButton className='icon-button' key='audio' trackType='audio' children={icons.timelineAddAudio}/>,
+    <EditorAddTrackButton className='icon-button' key='transition' trackType='transition' children={icons.timelineAddTransition}/>,
+  ]
+
+  if (!noApi) {
+    optionsStrict.timeline.header.before ||= [
+      <Process key='save-process' id='data'>
+        <SaveControl><Button>Save</Button></SaveControl>
+      </Process>
     ]
+    optionsStrict.timeline.header.after ||= [
+      <ViewControl key='view-control' ><Button>View</Button></ViewControl>,
+      <Process key='render-process' id='rendering'>
+        <RenderControl><Button>Render</Button></RenderControl>
+        <ProcessActive>
+          <ProcessStatus />
+          <ProcessProgress/>
+        </ProcessActive>
 
-    panelOptions.footer.content ||= [
-      <TimelineZoomer key='zoomer'/>,
-      <EditorAddTrackButton className='icon-button' key='video' trackType='video' children={icons.timelineAddVideo}/>,
-      <EditorAddTrackButton className='icon-button' key='audio' trackType='audio' children={icons.timelineAddAudio}/>,
-      <EditorAddTrackButton className='icon-button' key='transition' trackType='transition' children={icons.timelineAddTransition}/>,
+      </Process>,
     ]
-
-    if (!noApi) {
-      panelOptions.header.before ||= [
-        <Process key='save-process' id='data'>
-          <SaveControl><Button>Save</Button></SaveControl>
-        </Process>
-      ]
-      panelOptions.header.after ||= [
-        <ViewControl key='view-control' ><Button>View</Button></ViewControl>,
-        <Process key='render-process' id='rendering'>
-          <RenderControl><Button>Render</Button></RenderControl>
-          <ProcessActive>
-            <ProcessStatus />
-            <ProcessProgress/>
-          </ProcessActive>
-
-        </Process>,
-      ]
-    }
-
-    const contentProps = {
-      selectClass: {classNameSelect},
-      children: panelOptions.content.children,
-      className: panelOptions.content.className,
-
-    }
-    const children = <>
-      <Bar key='header' {...panelOptions.header} />
-      <TimelineContent key='content' {...contentProps} />
-      <Bar key='footer' {...panelOptions.footer} />
-    </>
-
-    const panelProps = { key: 'timeline', children, className: panelOptions.className }
-
-    return <Timeline {...panelProps} />
   }
 
-  const children = []
-  if (optionsStrict.player) children.push(playerNode(optionsStrict.player))
-  if (optionsStrict.timeline) children.push(timelineNode(optionsStrict.timeline))
-  if (optionsStrict.inspector) children.push(inspectorNode(optionsStrict.inspector))
-  if (optionsStrict.browser) children.push(browserNode(optionsStrict.browser))
+  optionsStrict.timeline.content.props!.selectClass ||= classNameSelect
+
+  const children = <>
+    <Player {...optionsStrict.player.props}>
+      <Bar {...optionsStrict.player.header} />
+      {optionsStrict.player.content.children}
+      <Bar {...optionsStrict.player.footer} />
+    </Player>
+    <Browser {...optionsStrict.browser.props}>
+      <Bar {...optionsStrict.browser.header} />
+      <BrowserContent {...optionsStrict.browser.content.props}>
+        {optionsStrict.browser.content.children}
+      </BrowserContent>
+      <Bar {...optionsStrict.browser.footer} />
+    </Browser>
+    <Inspector {...optionsStrict.inspector.props}>
+      <Bar {...optionsStrict.inspector.header} />
+      <InspectorContent {...optionsStrict.inspector.content.props}>
+        {optionsStrict.inspector.content.children}
+      </InspectorContent>
+      <Bar {...optionsStrict.inspector.footer} />
+    </Inspector>
+    <Timeline {...optionsStrict.timeline.props}>
+      <Bar {...optionsStrict.timeline.header} />
+      <TimelineContent {...optionsStrict.timeline.content.props}>
+        {optionsStrict.timeline.content.children}
+      </TimelineContent>
+      <Bar {...optionsStrict.timeline.footer} />
+    </Timeline>
+  </>
   return { ...rest, className: classNameEditor, children }
 }
-export { ContentOptions, UiOptions, PanelOptionsStrict, PanelOptions, PanelOptionsOrFalse }

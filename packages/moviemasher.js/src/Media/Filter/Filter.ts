@@ -4,18 +4,18 @@ import { Evaluator } from "../../Helpers/Evaluator";
 import { Definition, DefinitionObject } from "../../Base/Definition";
 import { Instance, InstanceObject } from "../../Base/Instance";
 
-interface FilterObject extends InstanceObject {
+export interface FilterObject extends InstanceObject {
   parameters? : ParameterObject[]
 }
 
-interface Filter extends Instance {
+export interface Filter extends Instance {
   definition : FilterDefinition
   parametersDefined: Parameter[]
 }
 
-interface FilterDefinitionObject extends DefinitionObject {}
+export interface FilterDefinitionObject extends DefinitionObject {}
 
-interface FilterDefinition extends Definition {
+export interface FilterDefinition extends Definition {
   instance: Filter
   instanceFromObject(object: FilterObject): Filter
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter
@@ -25,8 +25,6 @@ interface FilterDefinition extends Definition {
 /**
  * @category Factory
  */
-interface FilterFactory extends GenericFactory<
+export interface FilterFactory extends GenericFactory<
   Filter, FilterObject, FilterDefinition, FilterDefinitionObject
 > {}
-
-export { Filter, FilterDefinition, FilterDefinitionObject, FilterFactory, FilterObject }

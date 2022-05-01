@@ -7,13 +7,11 @@ import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations
 import { View } from "../../Utilities/View"
 import { ProcessContext } from "../../Contexts/ProcessContext"
 import { ApiContext } from "../../Contexts/ApiContext"
-import { useCastEditor } from "../../Hooks/useCastEditor"
 import { ViewerContext } from "../../Contexts/ViewerContext"
 
-interface StreamerPreloadControlProps extends PropsAndChildren, WithClassName { }
+export interface StreamerPreloadControlProps extends PropsAndChildren, WithClassName { }
 
-function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult {
-  const editor = useCastEditor()
+export function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult {
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
   const viewerContext = React.useContext(ViewerContext)
@@ -28,9 +26,9 @@ function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult
       files, id
     }
     setStatus(`Preloading...`)
-    // console.debug("StreamingPreloadRequest", Endpoints.streaming.preload, request)
-    endpointPromise(Endpoints.streaming.preload, request).then((response:StreamingPreloadResponse) => {
-      // console.debug("StreamingPreloadResponse", Endpoints.streaming.preload, response)
+    console.debug("StreamingPreloadRequest", Endpoints.streaming.preload, request)
+    endpointPromise(Endpoints.streaming.preload, request).then((response: StreamingPreloadResponse) => {
+      console.debug("StreamingPreloadResponse", Endpoints.streaming.preload, response)
       setStatus(`Preloaded`)
       setPreloading(false)
     })
@@ -47,5 +45,3 @@ function StreamerPreloadControl(props: StreamerPreloadControlProps): ReactResult
   const viewProps = { ...props, onClick, disabled }
   return <View {...viewProps} />
 }
-StreamerPreloadControl
-export { StreamerPreloadControl, StreamerPreloadControlProps }

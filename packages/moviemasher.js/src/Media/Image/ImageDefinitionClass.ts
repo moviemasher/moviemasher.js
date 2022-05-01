@@ -17,7 +17,7 @@ const ImageDefinitionWithClip = ClipDefinitionMixin(PreloadableDefinition)
 const ImageDefinitionWithVisible = VisibleDefinitionMixin(ImageDefinitionWithClip)
 const ImageDefinitionWithTransformable = TransformableDefinitionMixin(ImageDefinitionWithVisible)
 
-class ImageDefinitionClass extends ImageDefinitionWithTransformable implements ImageDefinition {
+export class ImageDefinitionClass extends ImageDefinitionWithTransformable implements ImageDefinition {
   private preloadableFile(args: FilesArgs): GraphFile | undefined {
     const { avType, graphType } = args
     if (avType === AVType.Audio) return
@@ -60,5 +60,3 @@ class ImageDefinitionClass extends ImageDefinitionWithTransformable implements I
 
   type = DefinitionType.Image
 }
-
-export { ImageDefinitionClass }

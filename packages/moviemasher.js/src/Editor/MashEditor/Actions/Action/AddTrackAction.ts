@@ -1,14 +1,14 @@
 import { TrackType } from "../../../../Setup/Enums"
 import { Action, ActionOptions } from "./Action"
 
-interface AddTrackActionObject extends ActionOptions {
+export interface AddTrackActionObject extends ActionOptions {
   trackType : TrackType
 }
 
 /**
  * @category Action
  */
-class AddTrackAction extends Action {
+export class AddTrackAction extends Action {
   constructor(object : AddTrackActionObject) {
     super(object)
     const { trackType } = object
@@ -21,5 +21,3 @@ class AddTrackAction extends Action {
 
   undoAction() : void { this.mash.removeTrack(this.trackType) }
 }
-
-export { AddTrackAction, AddTrackActionObject }

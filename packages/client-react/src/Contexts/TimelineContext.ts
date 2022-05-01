@@ -2,7 +2,7 @@ import React from 'react'
 import { NumberSetter } from '@moviemasher/moviemasher.js'
 
 
-interface TimelineContextInterface {
+export interface TimelineContextInterface {
   height : number
   setHeight: NumberSetter
   setWidth: NumberSetter
@@ -11,7 +11,7 @@ interface TimelineContextInterface {
   zoom: number
 }
 
-const TimelineContextDefault: TimelineContextInterface = {
+export const TimelineContextDefault: TimelineContextInterface = {
   height: 0,
   setHeight: () => {},
   setWidth: () => {},
@@ -20,6 +20,4 @@ const TimelineContextDefault: TimelineContextInterface = {
   zoom : 1,
 }
 
-const TimelineContext = React.createContext(TimelineContextDefault)
-
-export { TimelineContext, TimelineContextInterface, TimelineContextDefault }
+export const TimelineContext = React.createContext(TimelineContextDefault)

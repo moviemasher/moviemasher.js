@@ -34,7 +34,7 @@ import { TrackFactory } from "../../Media/Track/TrackFactory"
 import { EditedClass } from "../EditedClass"
 import { propertyInstance } from "../../Setup/Property"
 
-class MashClass extends EditedClass implements Mash {
+export class MashClass extends EditedClass implements Mash {
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -53,14 +53,15 @@ class MashClass extends EditedClass implements Mash {
       frame,
       definitions,
       rendering,
+      label,
+      backcolor,
       ...rest
     } = object as MashArgs
 
-    if (id) this._id = id
-    Object.entries(rest).forEach(([key, value]) => {
-      if (this.properties.find(property => property.name === key)) return
-      this.data[key] = value
-    })
+    // propertiesInitialize doesn't set defaults
+    if (!label) this.label = Default.mash.label
+    if (!backcolor) this.backcolor = Default.mash.backcolor
+    this.dataPopulate(rest)
 
     if (quantize && isAboveZero(quantize)) this.quantize = quantize
 
@@ -575,7 +576,6 @@ class MashClass extends EditedClass implements Mash {
   get imageData() : VisibleContextData { return this.composition.visibleContext.imageData }
 
   get imageSize() : Size { return this.composition.visibleContext.size }
-
   set imageSize(value: Size) {
     const { width, height } = value
     if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
@@ -830,5 +830,3 @@ class MashClass extends EditedClass implements Mash {
     return this.tracks.filter(track => track.trackType === trackType)
   }
 }
-
-export { MashClass }

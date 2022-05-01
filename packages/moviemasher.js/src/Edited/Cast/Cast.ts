@@ -2,14 +2,14 @@ import { Described, GraphFiles, UnknownObject } from "../../declarations"
 import { Edited } from "../Edited"
 import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
 import { Mash } from "../Mash/Mash"
+import { Layers } from "./Layer/Layer"
 
-interface CastDescription extends UnknownObject, Described {}
-interface CastObject extends Partial<CastDescription> {}
+export interface CastDescription extends UnknownObject, Described {}
+export interface CastObject extends Partial<CastDescription> {}
 
-interface Cast extends Edited {
+export interface Cast extends Edited {
+  layers: Layers
   mashes: Mash[]
   toJSON(): UnknownObject
   graphFiles(args: FilterGraphOptions): GraphFiles
 }
-
-export { Cast, CastObject, CastDescription}

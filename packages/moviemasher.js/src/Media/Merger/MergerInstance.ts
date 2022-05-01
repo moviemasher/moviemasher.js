@@ -4,8 +4,6 @@ import { ModularMixin } from "../../Mixin/Modular/ModularMixin"
 
 
 const MergerWithModular = ModularMixin(InstanceBase)
-class MergerClass extends MergerWithModular implements Merger {
+export class MergerClass extends MergerWithModular implements Merger {
   declare definition: MergerDefinition
 }
-
-export { MergerClass }

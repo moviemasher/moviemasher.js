@@ -4,7 +4,7 @@ import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultTextInput(): ReactResult {
+export function DefaultTextInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value } = inputContext
   if (!property) return null
@@ -24,5 +24,3 @@ function DefaultTextInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.String] = <DefaultTextInput />
-
-export { DefaultTextInput }

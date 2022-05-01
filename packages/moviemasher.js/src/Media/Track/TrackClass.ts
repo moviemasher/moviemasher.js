@@ -10,7 +10,7 @@ import { Definitions } from "../../Definitions/Definitions"
 import { isPositive } from "../../Utility/Is"
 import { TimeRange } from "../../Helpers/Time/Time"
 
-class TrackClass extends PropertiedClass implements Track {
+export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
     super()
 
@@ -157,5 +157,3 @@ class TrackClass extends PropertiedClass implements Track {
 
 
 }
-
-export { TrackClass }

@@ -3,9 +3,9 @@
   grid-area: inspector;
 }
 
+.moviemasher .editor .panel.inspector summary,
 .moviemasher .editor .panel.inspector label {
   text-transform: capitalize;
-
 }
 
 .moviemasher .editor .panel.inspector label:after {

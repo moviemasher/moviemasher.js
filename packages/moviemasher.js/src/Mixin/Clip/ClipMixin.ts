@@ -11,7 +11,7 @@ import { BrowserPreloaderClass } from "../../Preloader/BrowserPreloaderClass"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
-function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
+export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
   return class extends Base implements Clip {
     constructor(...args : Any[]) {
       super(...args)
@@ -99,5 +99,3 @@ function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
     visible = false
   }
 }
-
-export { ClipMixin }

@@ -3,7 +3,7 @@ import { OutputFactory } from "./OutputFactory"
 import { renderingProcessTestArgs } from "../../../../dev/test/Utilities/renderingProcessArgs"
 import { outputDefaultPopulate } from "./OutputDefault"
 import { DefinitionType, OutputType, TrackType } from "../Setup/Enums"
-import { MashFactory } from "../Edited/Mash/MashFactory"
+import { mashInstance } from "../Edited/Mash/MashFactory"
 import { MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { Image } from "../Media/Image/Image"
@@ -31,7 +31,7 @@ describe("OutputFactory", () => {
             ]
           }]
       }
-      const mash = MashFactory.instance(mashObject, definitionObjects, new JestPreloader())
+      const mash = mashInstance(mashObject, definitionObjects, new JestPreloader())
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
       const clips = videoTrack.clips as Image[]

@@ -5,8 +5,9 @@ import { useListeners } from "../../Hooks/useListeners"
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useMashEditor } from "../../Hooks/useMashEditor"
 
-interface EditorSplitButtonProps extends PropsAndChild {}
-function EditorSplitButton(props:EditorSplitButtonProps): ReactResult {
+export interface EditorSplitButtonProps extends PropsAndChild {}
+
+export function EditorSplitButton(props: EditorSplitButtonProps): ReactResult {
   const masher = useMashEditor()
   const [disabled, setDisabled] = React.useState(true)
   const resetDisabled = () => {
@@ -24,5 +25,3 @@ function EditorSplitButton(props:EditorSplitButtonProps): ReactResult {
   const buttonOptions = { ...rest, onClick, disabled: disabled }
   return  React.cloneElement(React.Children.only(children), buttonOptions)
 }
-
-export { EditorSplitButton, EditorSplitButtonProps }

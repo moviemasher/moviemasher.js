@@ -3,7 +3,7 @@ import { Editor } from "@moviemasher/moviemasher.js"
 import { CasterContext } from "../Contexts/CasterContext"
 import { MasherContext } from "../Contexts/MasherContext"
 
-const useEditor = (): Editor => {
+export const useEditor = (): Editor => {
   const casterContext = React.useContext(CasterContext)
   const masherContext = React.useContext(MasherContext)
   const { castEditor } = casterContext
@@ -17,5 +17,3 @@ const useEditor = (): Editor => {
 
   return mashEditor
 }
-
-export { useEditor }

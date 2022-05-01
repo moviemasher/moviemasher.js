@@ -1,7 +1,7 @@
 import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
-interface SplitActionObject extends ActionOptions {
+export interface SplitActionObject extends ActionOptions {
   index : number
   insertClip : Clip
   redoFrames : number
@@ -13,7 +13,7 @@ interface SplitActionObject extends ActionOptions {
 /**
  * @category Action
  */
-class SplitAction extends Action {
+export class SplitAction extends Action {
   constructor(object : SplitActionObject) {
     super(object)
     const { index, insertClip, redoFrames, splitClip, trackClips, undoFrames } = object
@@ -47,5 +47,3 @@ class SplitAction extends Action {
 
   undoFrames : number
 }
-
-export { SplitAction, SplitActionObject }

@@ -1,7 +1,7 @@
 import createServer from "connect"
 import { response } from "express"
 
-const Authenticator: createServer.NextHandleFunction = (req, res, next) => {
+export const Authenticator: createServer.NextHandleFunction = (req, res, next) => {
   if (!req.httpVersion) {
     console.warn("Authenticator blocked")
     response.statusCode = 401
@@ -9,5 +9,3 @@ const Authenticator: createServer.NextHandleFunction = (req, res, next) => {
   }
   else next()
 }
-
-export { Authenticator }

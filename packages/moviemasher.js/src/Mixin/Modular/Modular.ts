@@ -10,29 +10,21 @@ export interface ModularObject extends InstanceObject {
   id?: string
 }
 
-interface Modular extends Instance {
+export interface Modular extends Instance {
   definition: ModularDefinition
 }
 
-interface ModularDefinitionObject extends DefinitionObject {
+export interface ModularDefinitionObject extends DefinitionObject {
   filters? : FilterDefinitionObject[]
   properties? : PropertyObject[]
 }
 
-interface ModularDefinition extends Definition {
+export interface ModularDefinition extends Definition {
   filters: Filter[]
   modularGraphFilters(modular: Modular, filterChain: FilterChain, visibleContext?: VisibleContext ): ModularGraphFilter[]
   populateFilterChain(filterChain: FilterChain, modular: Modular): void
   propertiesCustom: Property[]
 }
 
-type ModularClass = Constrained<Modular>
-type ModularDefinitionClass = Constrained<ModularDefinition>
-
-export {
-  Modular,
-  ModularClass,
-  ModularDefinition,
-  ModularDefinitionClass,
-  ModularDefinitionObject,
-}
+export type ModularClass = Constrained<Modular>
+export type ModularDefinitionClass = Constrained<ModularDefinition>

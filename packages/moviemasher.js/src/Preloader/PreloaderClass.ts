@@ -5,7 +5,7 @@ import { LoadedInfo, Preloader, PreloaderFile, PreloaderSource } from "./Preload
 import { PreloadableDefinition } from "../Base/PreloadableDefinition"
 import { Definition } from "../Base/Definition"
 
-class PreloaderClass implements Preloader {
+export class PreloaderClass implements Preloader {
   fileInfoPromise(graphFile: GraphFile): Promise<LoadedInfo> {
     if (!this.loadedFile(graphFile)) throw Errors.uncached
 
@@ -97,5 +97,3 @@ class PreloaderClass implements Preloader {
     })
   }
 }
-
-export { PreloaderClass }

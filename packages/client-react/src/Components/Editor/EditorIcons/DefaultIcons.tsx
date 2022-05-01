@@ -20,11 +20,16 @@ import UploadCloud2LineIcon from 'remixicon-react/UploadCloud2LineIcon'
 import ArrowGoBackLineIcon from 'remixicon-react/ArrowGoBackLineIcon'
 import ArrowGoForwardLineIcon from 'remixicon-react/ArrowGoForwardLineIcon'
 import DeleteBin7LineIcon from 'remixicon-react/DeleteBin7LineIcon'
+import AddLineIcon from 'remixicon-react/AddLineIcon'
+import EyeLineIcon from 'remixicon-react/EyeLineIcon'
+import EyeOffLineIcon from 'remixicon-react/EyeOffLineIcon'
+import VolumeUpLineIcon from 'remixicon-react/VolumeUpLineIcon'
+import VolumeMuteLineIcon from 'remixicon-react/VolumeMuteLineIcon'
 
 import SplitCellsHorizontalIcon from 'remixicon-react/SplitCellsHorizontalIcon'
 import { EditorIcons } from '../../../declarations'
 
-const DefaultIcons: EditorIcons = {
+export const DefaultIcons: EditorIcons = {
   browserAudio: <Music2FillIcon />,
   browserEffect: <FolderSettingsFillIcon />,
   browserImage: <ImageFillIcon />,
@@ -45,7 +50,10 @@ const DefaultIcons: EditorIcons = {
   undo: <ArrowGoBackLineIcon />,
   redo: <ArrowGoForwardLineIcon />,
   remove: <DeleteBin7LineIcon />,
+  add: <AddLineIcon />,
   split: <SplitCellsHorizontalIcon />,
+  visible: <EyeLineIcon />,
+  invisible: <EyeOffLineIcon />,
+  audible: <VolumeUpLineIcon />,
+  inaudible: <VolumeMuteLineIcon />,
 }
-
-export { DefaultIcons }

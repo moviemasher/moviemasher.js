@@ -9,7 +9,7 @@ import { propertyInstance } from "../../Setup/Property"
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { Preloader } from "../../Preloader/Preloader"
 
-function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : AudibleDefinitionClass & T {
+export function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : AudibleDefinitionClass & T {
   return class extends Base implements AudibleDefinition {
     constructor(...args: Any[]) {
       super(...args)
@@ -72,5 +72,3 @@ function AudibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Audibl
     waveform? : string
   }
 }
-
-export { AudibleDefinitionMixin }

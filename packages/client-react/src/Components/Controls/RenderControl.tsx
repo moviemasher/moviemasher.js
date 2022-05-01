@@ -17,7 +17,7 @@ import { ApiContext } from "../../Contexts/ApiContext"
 import { useMashEditor } from "../../Hooks/useMashEditor"
 import { useListeners } from "../../Hooks/useListeners"
 
-function RenderControl(props: PropsAndChild): ReactResult {
+export function RenderControl(props: PropsAndChild): ReactResult {
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
   const { children, ...rest } = props
@@ -84,5 +84,3 @@ function RenderControl(props: PropsAndChild): ReactResult {
   const buttonOptions = { ...rest, onClick, disabled: disabled || processing }
   return React.cloneElement(React.Children.only(children), buttonOptions)
 }
-
-export { RenderControl }

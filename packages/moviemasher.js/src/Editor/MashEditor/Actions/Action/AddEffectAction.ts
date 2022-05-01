@@ -1,18 +1,16 @@
-import { Effect } from "../../../../Media/Effect/Effect"
+import { Effect, Effects } from "../../../../Media/Effect/Effect"
 import { Action, ActionOptions } from "./Action"
 
-interface AddEffectActionObject extends ActionOptions {
-  effect : Effect
-
-  effects : Effect[]
-
+export interface AddEffectActionObject extends ActionOptions {
+  effect: Effect
+  effects: Effects
   index : number
 }
 
 /**
  * @category Action
  */
-class AddEffectAction extends Action {
+export class AddEffectAction extends Action {
   constructor(object : AddEffectActionObject) {
     super(object)
     const { effect, effects, index } = object
@@ -22,7 +20,7 @@ class AddEffectAction extends Action {
   }
   effect : Effect
 
-  effects : Effect[]
+  effects : Effects
 
   index : number
 
@@ -30,5 +28,3 @@ class AddEffectAction extends Action {
 
   undoAction() : void { this.effects.splice(this.index, 1) }
 }
-
-export { AddEffectAction, AddEffectActionObject }

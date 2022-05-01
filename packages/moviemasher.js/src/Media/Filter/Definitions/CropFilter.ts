@@ -9,7 +9,7 @@ import { ModularGraphFilter } from "../../../declarations"
 /**
  * @category Filter
  */
-class CropFilter extends FilterDefinitionClass {
+export class CropFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {
     const width = evaluator.parameterNumber('out_w')
     const height = evaluator.parameterNumber('out_h')
@@ -35,5 +35,3 @@ class CropFilter extends FilterDefinitionClass {
     new Parameter({ name: "out_h", value: "out_height", dataType: DataType.String }),
   ]
 }
-
-export { CropFilter }

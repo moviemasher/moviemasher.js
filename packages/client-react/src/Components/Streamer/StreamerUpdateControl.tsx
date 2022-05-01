@@ -12,7 +12,7 @@ import { ViewerContext } from "../../Contexts/ViewerContext"
 
 export interface StreamerUpdateControlProps extends PropsAndChildren, WithClassName { }
 
-function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
+export function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
   const caster = useCastEditor()
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
@@ -24,16 +24,16 @@ function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
   const { endpointPromise } = apiContext
 
   const update = () => {
-    const { cast } = caster
-    const { mashes } = cast
+    const { edited } = caster
+    const { mashes } = edited
     const definitions = mashes.flatMap(mash => mash.definitions)
     const definitionObjects = definitions.map(definition => definition.toJSON())
     const mashObjects = mashes.map(mash => mash.toJSON())
     const request: StreamingCutRequest = { definitionObjects, mashObjects, id }
-    // console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)
+    console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)
     setStatus(`Updating stream`)
     endpointPromise(Endpoints.streaming.cut, request).then((response:StreamingCutResponse) => {
-      // console.debug("StreamingCutResponse", Endpoints.streaming.cut, response)
+      console.debug("StreamingCutResponse", Endpoints.streaming.cut, response)
       setStatus(`Updated stream`)
       setUpdating(false)
     })
@@ -50,5 +50,3 @@ function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactResult {
   const viewProps = { ...props, onClick, disabled }
   return <View {...viewProps} />
 }
-
-export { StreamerUpdateControl }

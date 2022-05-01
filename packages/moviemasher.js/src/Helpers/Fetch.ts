@@ -1,7 +1,7 @@
 import { ApiCallback } from "../Api/Api"
 import { urlForEndpoint } from "../Utility/Url"
 
-const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
+export const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
   const { endpoint, request } = apiCallback
   const init = request || {}
 
@@ -35,6 +35,3 @@ const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
   const url: string = urlForEndpoint(endpoint)
   return fetch(url, init).then(response => response.json())
 }
-
-
-export { fetchCallback }

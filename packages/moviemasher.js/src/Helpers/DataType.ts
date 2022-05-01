@@ -17,6 +17,7 @@ export const DataTypesNumeric = [
   DataType.Direction4,
   DataType.Direction8,
   DataType.Number,
+  DataType.Mode,
 ]
 
 export const DataTypeBooleans = ['true', 'false', '']
@@ -99,7 +100,6 @@ export const dataTypeValid = (value: Scalar, dataType: DataType): boolean => {
     case DataType.Frame:
     case DataType.Number: return dataTypeValidNumber(value)
     case DataType.Mode: return dataTypeValidNumber(value, Modes.length - 1)
-    // case DataType.Trim: return !!String(value).indexOf(',')
     case DataType.String: return true
   }
   return false

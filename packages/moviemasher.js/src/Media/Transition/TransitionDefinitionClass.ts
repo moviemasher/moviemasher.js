@@ -16,7 +16,7 @@ import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 const TransitionDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 const TransitionDefinitionWithClip = ClipDefinitionMixin(TransitionDefinitionWithModular)
 const TransitionDefinitionWithVisible = VisibleDefinitionMixin(TransitionDefinitionWithClip)
-class TransitionDefinitionClass extends TransitionDefinitionWithVisible implements TransitionDefinition {
+export class TransitionDefinitionClass extends TransitionDefinitionWithVisible implements TransitionDefinition {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -82,5 +82,3 @@ class TransitionDefinitionClass extends TransitionDefinitionWithVisible implemen
 
   type = DefinitionType.Transition
 }
-
-export { TransitionDefinitionClass }

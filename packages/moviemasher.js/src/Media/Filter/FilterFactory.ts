@@ -18,7 +18,7 @@ import { FilterDefinitionClass } from "./FilterDefinitionClass"
 import { BlendFilter } from "./Definitions/BlendFilter"
 
 
-const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
+export const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -28,17 +28,17 @@ const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition =>
 //  throw Errors.invalid.definition.id + ' filterDefinition ' + id
 }
 
-const filterDefinitionFromId = (id : string) : FilterDefinition => {
+export const filterDefinitionFromId = (id : string) : FilterDefinition => {
   return filterDefinition({ id })
 }
 
-const filterInstance = (object : FilterDefinitionObject) : Filter => {
+export const filterInstance = (object : FilterDefinitionObject) : Filter => {
   return filterDefinition(object).instanceFromObject(object)
 }
 
-const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
+export const filterFromId = (id : string) : Filter => { return filterInstance({ id }) }
 
-const filterInitialize = (): void => {
+export const filterInitialize = (): void => {
   [
     new ConvolutionFilter({ id: 'com.moviemasher.filter.convolution', type: DefinitionType.Filter }),
     new BlendFilter({ id: 'com.moviemasher.filter.blend', type: DefinitionType.Filter }),
@@ -54,7 +54,7 @@ const filterInitialize = (): void => {
   ].forEach(instance => Definitions.install(instance))
 }
 
-const filterInstall = (object : FilterDefinitionObject) : FilterDefinition => {
+export const filterInstall = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.invalid.definition.id + 'filterInstall'
 
@@ -64,7 +64,7 @@ const filterInstall = (object : FilterDefinitionObject) : FilterDefinition => {
   return instance
 }
 
-const FilterFactoryImplementation = {
+export const FilterFactoryImplementation = {
   install: filterInstall,
   definition: filterDefinition,
   definitionFromId: filterDefinitionFromId,
@@ -74,13 +74,3 @@ const FilterFactoryImplementation = {
 }
 
 Factories[DefinitionType.Filter] = FilterFactoryImplementation
-
-export {
-  filterInstall,
-  filterDefinition,
-  filterDefinitionFromId,
-  FilterFactoryImplementation,
-  filterFromId,
-  filterInitialize,
-  filterInstance,
-}

@@ -1,12 +1,7 @@
 import React from "react"
-import { UnknownObject } from "@moviemasher/moviemasher.js"
+import { PropsWithoutChild } from "../declarations"
 
-interface VideoViewProps extends UnknownObject {
-  children?: never
-}
 
-const VideoView = React.forwardRef<HTMLVideoElement, VideoViewProps>((props, ref) =>
+export const VideoView = React.forwardRef<HTMLVideoElement, PropsWithoutChild>((props, ref) =>
   <video { ...props } ref={ref} />
 )
-
-export { VideoView, VideoViewProps }

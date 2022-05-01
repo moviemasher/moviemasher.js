@@ -11,7 +11,7 @@ import { AudibleContextInstance } from "../Context/AudibleContext"
 import { PreloaderFile, PreloaderSource } from "./Preloader"
 import { PreloaderClass } from "./PreloaderClass"
 
-class BrowserPreloaderClass extends PreloaderClass {
+export class BrowserPreloaderClass extends PreloaderClass {
   constructor(endpoint?: Endpoint) {
     super()
     this.endpoint = endpoint || {}
@@ -166,5 +166,3 @@ class BrowserPreloaderClass extends PreloaderClass {
   }
 
 }
-
-export { BrowserPreloaderClass }

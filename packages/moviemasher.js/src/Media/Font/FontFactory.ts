@@ -8,7 +8,7 @@ import fontDefaultJson from "../../Definitions/DefinitionObjects/font/default.js
 
 const fontDefaultId = "com.moviemasher.font.default"
 
-const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
+export const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : fontDefaultId
   if (!Definitions.installed(idString)) {
@@ -16,22 +16,24 @@ const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
   }
   return Definitions.fromId(idString) as FontDefinition
 }
-const fontDefinitionFromId = (id : string) : FontDefinition => {
+
+export const fontDefinitionFromId = (id : string) : FontDefinition => {
   return fontDefinition({ id })
 }
 
-const fontInstance = (object : FontObject) : Font => {
+export const fontInstance = (object : FontObject) : Font => {
   return fontDefinition(object).instanceFromObject(object)
 }
 
-const fontFromId = (id : string) : Font => {
+export const fontFromId = (id : string) : Font => {
   return fontInstance({ id })
 }
 
-const fontInitialize = () : void => {
+export const fontInitialize = () : void => {
   fontInstall(fontDefaultJson)
 }
-const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
+
+export const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
   const { id } = object
   const idString = id && Is.populatedString(id) ? id : fontDefaultId
   Definitions.uninstall(idString)
@@ -40,7 +42,7 @@ const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
   return instance
 }
 
-const FontFactoryImplementation = {
+export const FontFactoryImplementation = {
   install: fontInstall,
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
@@ -50,13 +52,3 @@ const FontFactoryImplementation = {
 }
 
 Factories[DefinitionType.Font] = FontFactoryImplementation
-
-export {
-  fontInstall,
-  fontDefinition,
-  fontDefinitionFromId,
-  FontFactoryImplementation,
-  fontFromId,
-  fontInitialize,
-  fontInstance,
-}

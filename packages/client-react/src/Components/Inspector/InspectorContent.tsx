@@ -6,10 +6,8 @@ import { View } from '../../Utilities/View'
 /**
  * @parents Inspector
  */
-function InspectorContent(props: PropsWithChildren): ReactResult {
+export function InspectorContent(props: PropsWithChildren): ReactResult {
 
   const { selectClass: _, ...rest } = props
   return <View {...rest} />
 }
-
-export { InspectorContent }

@@ -1,11 +1,9 @@
-
-
 .moviemasher .editor .panel.player {
   grid-area: player;
 }
 
 .moviemasher .editor .panel.player .head {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr min-content auto;
 }
 
 .moviemasher .editor .panel.player .foot {

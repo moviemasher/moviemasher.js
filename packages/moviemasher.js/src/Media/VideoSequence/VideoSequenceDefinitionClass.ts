@@ -1,4 +1,4 @@
-import { DefinitionType, TrackType, DataType, LoadType, GraphType, AVType } from "../../Setup/Enums"
+import { DefinitionType, TrackType, LoadType, GraphType, AVType } from "../../Setup/Enums"
 import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
@@ -7,7 +7,6 @@ import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
 import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
 import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
 import { Default } from "../../Setup/Default"
-import { Property } from "../../Setup/Property"
 import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
 import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
 import { Preloader } from "../../Preloader/Preloader"
@@ -18,7 +17,7 @@ const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible)
 const WithVisible = VisibleDefinitionMixin(WithAudibleFile)
 const WithTransformable = TransformableDefinitionMixin(WithVisible)
-class VideoSequenceDefinitionClass extends WithTransformable implements VideoSequenceDefinition {
+export class VideoSequenceDefinitionClass extends WithTransformable implements VideoSequenceDefinition {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -136,5 +135,3 @@ class VideoSequenceDefinitionClass extends WithTransformable implements VideoSeq
 
   padding : number
 }
-
-export { VideoSequenceDefinitionClass }

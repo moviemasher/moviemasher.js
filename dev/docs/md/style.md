@@ -251,6 +251,10 @@ The icon button currently selected in the browser header is painted with the pro
 <!-- MAGIC:START (TRIMCODE:src=../../../packages/client-react/dev/css/editor.css&stripComments=1) -->
 
 ```css
+.moviemasher .editor {
+  user-select: none;
+  -webkit-user-select: none;
+}
 .moviemasher .editor label {
   height: var(--icon-size);
 }
@@ -576,6 +580,10 @@ The icon button currently selected in the browser header is painted with the pro
   grid-area: player;
 }
 
+.moviemasher .editor .panel.player .head {
+  grid-template-columns: 1fr 1fr;
+}
+
 .moviemasher .editor .panel.player .foot {
   grid-template-columns: var(--icon-size) 1fr 1fr;
 }
@@ -604,9 +612,9 @@ The icon button currently selected in the browser header is painted with the pro
   grid-area: inspector;
 }
 
+.moviemasher .editor .panel.inspector summary,
 .moviemasher .editor .panel.inspector label {
   text-transform: capitalize;
-
 }
 
 .moviemasher .editor .panel.inspector label:after {

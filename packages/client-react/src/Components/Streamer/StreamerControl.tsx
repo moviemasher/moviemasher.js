@@ -10,10 +10,9 @@ import { ProcessContext } from "../../Contexts/ProcessContext"
 import { ApiContext } from "../../Contexts/ApiContext"
 import { ViewerContext } from "../../Contexts/ViewerContext"
 
-interface StreamerControlProps extends PropsAndChildren, WithClassName {
+export interface StreamerControlProps extends PropsAndChildren, WithClassName {}
 
-}
-function StreamerControl(props: StreamerControlProps): ReactResult {
+export function StreamerControl(props: StreamerControlProps): ReactResult {
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
   const viewerContext = React.useContext(ViewerContext)
@@ -25,9 +24,9 @@ function StreamerControl(props: StreamerControlProps): ReactResult {
 
   const startStreaming = () => {
     const request: StreamingStartRequest = {}
-    // console.debug("StreamingStartRequest", Endpoints.streaming.start, request)
+    console.debug("StreamingStartRequest", Endpoints.streaming.start, request)
     endpointPromise(Endpoints.streaming.start, request).then((response: StreamingStartResponse) => {
-      // console.debug("StreamingStartResponse", Endpoints.streaming.start, response)
+      console.debug("StreamingStartResponse", Endpoints.streaming.start, response)
       setStatus(`Started stream`)
       const { id, readySeconds, width, height, videoRate } = response
       setId(id)
@@ -37,9 +36,9 @@ function StreamerControl(props: StreamerControlProps): ReactResult {
       const monitorStream = () => {
         setTimeout(() => {
           const request: StreamingStatusRequest = { id }
-          // console.debug('StreamingStatusRequest', Endpoints.streaming.status, request)
+          console.debug('StreamingStatusRequest', Endpoints.streaming.status, request)
           endpointPromise(Endpoints.streaming.status, request).then((response: StreamingStatusResponse) => {
-            // console.debug("StreamingStatusResponse", Endpoints.streaming.status, response)
+            console.debug("StreamingStatusResponse", Endpoints.streaming.status, response)
             const { streamUrl } = response
             if (streamUrl) {
               setUrl(streamUrl)
@@ -65,5 +64,3 @@ function StreamerControl(props: StreamerControlProps): ReactResult {
   const viewProps = { ...props, onClick, disabled }
   return <View {...viewProps} />
 }
-
-export { StreamerControl, StreamerControlProps }

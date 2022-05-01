@@ -9,7 +9,7 @@ const pixelToPoint = (index : number, width : number) : Point => (
 
 const pixelToIndex = (pixel : number) => pixel * 4
 
-const pixelRgbaAtIndex = (index : number, pixels : Pixels) : Rgba => (
+export const pixelRgbaAtIndex = (index : number, pixels : Pixels) : Rgba => (
   {
     r: pixels[index],
     g: pixels[index + 1],
@@ -42,18 +42,18 @@ const pixelNeighboringPixels = (pixel : number, size : Size) : number[] => {
   return pixels
 }
 
-const pixelNeighboringRgbas = (pixel : number, data : Pixels, size : Size) : Rgba[] => (
+export const pixelNeighboringRgbas = (pixel : number, data : Pixels, size : Size) : Rgba[] => (
   pixelNeighboringPixels(pixel, size).map(p => pixelRgba(p, data))
 )
 
-const pixelColor = (value : Value) : string => {
+export const pixelColor = (value : Value) : string => {
   const string = String(value)
   if (string.slice(0, 2) === "0x") return `#${string.slice(2)}`
 
   return string
 }
 
-const pixelPerFrame = (frames: number, width: number, zoom: number): number => {
+export const pixelPerFrame = (frames: number, width: number, zoom: number): number => {
   if (!(frames && width)) return 0
 
   const widthFrames = width / frames
@@ -66,37 +66,15 @@ const pixelPerFrame = (frames: number, width: number, zoom: number): number => {
   return min + ((max - min) * zoom)
 }
 
-const pixelFromFrame = (frame: number, perFrame : number, rounding = 'ceil'): number => {
+export const pixelFromFrame = (frame: number, perFrame : number, rounding = 'ceil'): number => {
   if (!(frame && perFrame)) return 0
 
   const pixels = frame * perFrame
   return roundWithMethod(pixels, rounding)
 }
 
-const pixelToFrame = (pixels: number, perFrame : number, rounding = 'round'): number => {
+export const pixelToFrame = (pixels: number, perFrame : number, rounding = 'round'): number => {
   if (!(pixels && perFrame)) return 0
 
   return roundWithMethod(pixels / perFrame, rounding)
-}
-
-/**
- * @category Utility
- */
-const Pixel = {
-  color: pixelColor,
-  fromFrame: pixelFromFrame,
-  neighboringRgbas: pixelNeighboringRgbas,
-  perFrame: pixelPerFrame,
-  rgbaAtIndex: pixelRgbaAtIndex,
-  toFrame: pixelToFrame,
-}
-
-export {
-  Pixel,
-  pixelColor,
-  pixelFromFrame,
-  pixelNeighboringRgbas,
-  pixelPerFrame,
-  pixelRgbaAtIndex,
-  pixelToFrame,
 }

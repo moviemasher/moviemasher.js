@@ -7,7 +7,7 @@ import { PropsWithChildren, ReactResult } from '../../../declarations'
 /**
  * @parents Timeline
  */
-function TimelineSizer(props: PropsWithChildren): ReactResult {
+export function TimelineSizer(props: PropsWithChildren): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const timelineContext = React.useContext(TimelineContext)
   const handleResize = () => {
@@ -31,5 +31,3 @@ function TimelineSizer(props: PropsWithChildren): ReactResult {
   const viewProps = { ...props, ref }
   return <View {...viewProps}/>
 }
-
-export { TimelineSizer }

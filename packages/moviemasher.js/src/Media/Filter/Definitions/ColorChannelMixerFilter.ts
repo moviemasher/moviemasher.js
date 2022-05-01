@@ -8,7 +8,7 @@ import { DataType, Parameter } from "../../../Setup"
  */
 const ColorChannelMixerFilterKeys = 'rgba'.split('').flatMap(c => 'rgba'.split('').map(d => `${c}${d}`))
 
-class ColorChannelMixerFilter extends FilterDefinitionClass {
+export class ColorChannelMixerFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {
 
     const map = Object.fromEntries(ColorChannelMixerFilterKeys.map(key =>
@@ -61,5 +61,3 @@ class ColorChannelMixerFilter extends FilterDefinitionClass {
     new Parameter({ "name": "aa", "value": 1.0, dataType: DataType.Number }),
   ]
 }
-
-export { ColorChannelMixerFilter }

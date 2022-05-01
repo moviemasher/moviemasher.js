@@ -5,7 +5,7 @@ import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultMergerInput(): ReactResult {
+export function DefaultMergerInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -38,6 +38,3 @@ function DefaultMergerInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Merger] = <DefaultMergerInput />
-
-
-export { DefaultMergerInput }

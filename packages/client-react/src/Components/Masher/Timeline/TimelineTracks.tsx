@@ -4,17 +4,15 @@ import { EventType, TrackType } from '@moviemasher/moviemasher.js'
 import { View } from '../../../Utilities/View'
 import { TimelineTrack } from './TimelineTrack'
 import { useListeners } from '../../../Hooks/useListeners'
-import { PropsWithChildren, ReactResult } from '../../../declarations'
+import { PropsWithChildren, ReactResult, WithClassName } from '../../../declarations'
 import { useMashEditor } from '../../../Hooks/useMashEditor'
 
-interface TimelineTracksProps extends PropsWithChildren {
-  className?: string
-}
+export interface TimelineTracksProps extends PropsWithChildren, WithClassName {}
 
 /**
  * @parents TimelineContent
  */
-function TimelineTracks(props: TimelineTracksProps): ReactResult {
+export function TimelineTracks(props: TimelineTracksProps): ReactResult {
   const masher = useMashEditor()
   useListeners({
     [EventType.Track]: () => {
@@ -60,5 +58,3 @@ function TimelineTracks(props: TimelineTracksProps): ReactResult {
   const viewProps = { ...rest, children: childNodes(), onClick }
   return <View {...viewProps}/>
 }
-
-export { TimelineTracks, TimelineTracksProps }

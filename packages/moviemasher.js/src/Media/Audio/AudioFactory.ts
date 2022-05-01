@@ -9,7 +9,7 @@ import { DefinitionType } from "../../Setup/Enums"
 /**
  * @internal
  */
-const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
+export const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
   const { id } = object
   if (!id) throw Errors.id
 
@@ -21,14 +21,14 @@ const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
 /**
  * @internal
  */
-const audioDefinitionFromId = (id : string) : AudioDefinition => {
+export const audioDefinitionFromId = (id : string) : AudioDefinition => {
   return audioDefinition({ id })
 }
 
 /**
  * @internal
  */
-const audioInstance = (object : AudioObject) : Audio => {
+export const audioInstance = (object : AudioObject) : Audio => {
   const definition = audioDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
@@ -37,19 +37,19 @@ const audioInstance = (object : AudioObject) : Audio => {
 /**
  * @internal
  */
-const audioFromId = (id : string) : Audio => {
+export const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
 /**
  * @internal
  */
-const audioInitialize = () : void => {}
+export const audioInitialize = () : void => {}
 
 /**
  * @internal
  */
-const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
+export const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
@@ -60,7 +60,7 @@ const audioInstall = (object: AudioDefinitionObject): AudioDefinition => {
   return instance
 }
 
-const AudioFactoryImplementation = {
+export const AudioFactoryImplementation = {
   definition: audioDefinition,
   definitionFromId: audioDefinitionFromId,
   fromId: audioFromId,
@@ -70,14 +70,3 @@ const AudioFactoryImplementation = {
 }
 
 Factories[DefinitionType.Audio] = AudioFactoryImplementation
-
-
-export {
-  audioDefinition,
-  audioDefinitionFromId,
-  AudioFactoryImplementation,
-  audioFromId,
-  audioInstall,
-  audioInitialize,
-  audioInstance,
-}

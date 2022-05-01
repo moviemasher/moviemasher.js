@@ -9,7 +9,7 @@ import { ProcessContext } from "../../Contexts/ProcessContext"
 import { useMashEditor } from "../../Hooks/useMashEditor"
 import { useListeners } from "../../Hooks/useListeners"
 
-function SaveControl(props:PropsAndChild): ReactResult {
+export function SaveControl(props:PropsAndChild): ReactResult {
   const apiContext = React.useContext(ApiContext)
   const processContext = React.useContext(ProcessContext)
 
@@ -48,5 +48,3 @@ function SaveControl(props:PropsAndChild): ReactResult {
   const buttonOptions = { ...rest, onClick, disabled: processing || disabled }
   return React.cloneElement(React.Children.only(children), buttonOptions)
 }
-
-export { SaveControl }

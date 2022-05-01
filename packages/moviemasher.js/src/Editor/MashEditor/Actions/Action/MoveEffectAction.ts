@@ -1,7 +1,7 @@
 import { Effects } from "../../../../Media/Effect/Effect"
 import { Action, ActionOptions } from "./Action"
 
-interface MoveEffectActionObject extends ActionOptions {
+export interface MoveEffectActionObject extends ActionOptions {
   effects : Effects
   redoEffects : Effects
   undoEffects: Effects
@@ -10,7 +10,7 @@ interface MoveEffectActionObject extends ActionOptions {
 /**
  * @category Action
  */
-class MoveEffectAction extends Action {
+export class MoveEffectAction extends Action {
   constructor(object : MoveEffectActionObject) {
     super(object)
     const { effects, redoEffects, undoEffects } = object
@@ -34,5 +34,3 @@ class MoveEffectAction extends Action {
 
   undoEffects : Effects
 }
-
-export { MoveEffectAction, MoveEffectActionObject }

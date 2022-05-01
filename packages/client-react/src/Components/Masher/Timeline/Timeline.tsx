@@ -5,7 +5,7 @@ import { TimelineContext, TimelineContextInterface } from '../../../Contexts/Tim
 import { UnknownObject } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../declarations'
 
-interface TimelineProps extends UnknownObject {
+export interface TimelineProps extends UnknownObject {
   children: React.ReactNode
 }
 
@@ -13,7 +13,7 @@ interface TimelineProps extends UnknownObject {
  * @parents Masher
  * @children TimelineContent, TimelineZoomer, TimelineScrubber, TimelineScrubberElement, TimelineSizer
  */
-function Timeline(props: TimelineProps): ReactResult {
+export function Timeline(props: TimelineProps): ReactResult {
   const [zoom, setZoom] = React.useState(1.0)
   const [width, setWidth] = React.useState(0)
   const [height, setHeight] = React.useState(0)
@@ -32,6 +32,3 @@ function Timeline(props: TimelineProps): ReactResult {
     <TimelineContext.Provider value={timelineContext} children={children} />
   </View>
 }
-
-
-export { Timeline, TimelineProps }

@@ -2,19 +2,19 @@ import {
   AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject
 } from "../declarations"
 
-const rgbValue = (value : string | number) : number => (
+export const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))
 )
 
-const rgbNumeric = (rgb : RgbObject) : Rgb => ({
+export const rgbNumeric = (rgb : RgbObject) : Rgb => ({
   r: rgbValue(rgb.r), g: rgbValue(rgb.g), b: rgbValue(rgb.b)
 })
 
-const yuvNumeric = (rgb : YuvObject) : Yuv => ({
+export const yuvNumeric = (rgb : YuvObject) : Yuv => ({
   y: rgbValue(rgb.y), u: rgbValue(rgb.u), v: rgbValue(rgb.v)
 })
 
-const colorYuvToRgb = (yuv : YuvObject) : Rgb => {
+export const colorYuvToRgb = (yuv : YuvObject) : Rgb => {
   const floats = yuvNumeric(yuv)
   return rgbNumeric({
     r: floats.y + 1.4075 * (floats.v - 128),
@@ -23,7 +23,7 @@ const colorYuvToRgb = (yuv : YuvObject) : Rgb => {
   })
 }
 
-const colorRgbToHex = (rgb: RgbObject): string => {
+export const colorRgbToHex = (rgb: RgbObject): string => {
   let r = rgb.r.toString(16)
   let g = rgb.g.toString(16)
   let b = rgb.b.toString(16)
@@ -33,7 +33,7 @@ const colorRgbToHex = (rgb: RgbObject): string => {
   return `#${r}${g}${b}`
 }
 
-const colorRgbaToHex = (rgba: RgbaObject): string => {
+export const colorRgbaToHex = (rgba: RgbaObject): string => {
   let r = rgba.r.toString(16)
   let g = rgba.g.toString(16)
   let b = rgba.b.toString(16)
@@ -45,7 +45,7 @@ const colorRgbaToHex = (rgba: RgbaObject): string => {
   return `#${r}${g}${b}${a}`
 }
 
-const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, similarity : number, blend : number) : number => {
+export const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, similarity : number, blend : number) : number => {
   let diff = 0.0
   const blendYuv = yuvNumeric(yuv)
   yuvs.forEach(yuvObject => {
@@ -62,7 +62,7 @@ const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, similarity : number,
   return (diff > similarity) ? 255 : 0
 }
 
-const colorRgbToYuv = (rgb : RgbObject) : Yuv => {
+export const colorRgbToYuv = (rgb : RgbObject) : Yuv => {
   const ints = rgbNumeric(rgb)
   return {
     y: ints.r * 0.299000 + ints.g * 0.587000 + ints.b * 0.114000,
@@ -71,13 +71,13 @@ const colorRgbToYuv = (rgb : RgbObject) : Yuv => {
   }
 }
 
-const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
-const colorRgbaRegex = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(\d*(?:\.\d+)?)\)$/
-const colorHexRegex = /^#([A-Fa-f0-9]{3,4}){1,2}$/
+export const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
+export const colorRgbaRegex = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(\d*(?:\.\d+)?)\)$/
+export const colorHexRegex = /^#([A-Fa-f0-9]{3,4}){1,2}$/
 
-const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
+export const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
 
-const colorValid = (color: string): boolean => {
+export const colorValid = (color: string): boolean => {
   const stripped = colorStrip(color)
   if (colorValidHex(stripped) || colorValidRgba(stripped) || colorValidRgb(stripped)) return true
 
@@ -91,21 +91,21 @@ const colorValid = (color: string): boolean => {
   return styleStripped === stripped
 }
 
-const colorValidHex = (value: string): boolean => colorHexRegex.test(value)
-const colorValidRgba = (value: string): boolean => colorRgbaRegex.test(value)
-const colorValidRgb = (value: string): boolean => colorRgbRegex.test(value)
+export const colorValidHex = (value: string): boolean => colorHexRegex.test(value)
+export const colorValidRgba = (value: string): boolean => colorRgbaRegex.test(value)
+export const colorValidRgb = (value: string): boolean => colorRgbRegex.test(value)
 
-const getChunksFromString = (st: string, chunkSize: number) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
+export const getChunksFromString = (st: string, chunkSize: number) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
 
-const hex256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.length), 16)
+export const hex256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.length), 16)
 
-const colorAlpha = (value?: number) => {
+export const colorAlpha = (value?: number) => {
   if (typeof value === "undefined") return 1.0
 
   return Math.max(0, Math.min(1.0, value / 255))
 }
 
-const colorHexToRgba = (hex: string): Rgba => {
+export const colorHexToRgba = (hex: string): Rgba => {
   if (!colorValidHex(hex)) return colorRgba
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
@@ -116,7 +116,7 @@ const colorHexToRgba = (hex: string): Rgba => {
   return { r, g, b, a: colorAlpha(a) }
 }
 
-const colorHexToRgb = (hex: string): Rgb => {
+export const colorHexToRgb = (hex: string): Rgb => {
   if (!colorValidHex(hex)) return colorRgb
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
@@ -126,13 +126,13 @@ const colorHexToRgb = (hex: string): Rgb => {
   const [r, g, b] = hexArr.map(hex256)
   return { r, g, b }
 }
-const colorTransparent = '#00000000'
-const colorBlack = '#000000'
-const colorBlackOpaque = '#000000FF'
-const colorGreen = '#00FF00'
-const colorYellow = '#FFFF00'
+export const colorTransparent = '#00000000'
+export const colorBlack = '#000000'
+export const colorBlackOpaque = '#000000FF'
+export const colorGreen = '#00FF00'
+export const colorYellow = '#FFFF00'
 
-const colorRgbaToRgba = (value: string): Rgba => {
+export const colorRgbaToRgba = (value: string): Rgba => {
   const color = colorStrip(value)
 
   const rgbaMatch = color.match(colorRgbaRegex)
@@ -146,7 +146,7 @@ const colorRgbaToRgba = (value: string): Rgba => {
   }
 }
 
-const colorToRgb = (value: string): Rgb => {
+export const colorToRgb = (value: string): Rgb => {
   const color = colorStrip(value)
    if (colorValidHex(color)) return colorHexToRgb(color)
 
@@ -160,7 +160,7 @@ const colorToRgb = (value: string): Rgb => {
   }
 }
 
-const colorToRgba = (value: string): Rgba => {
+export const colorToRgba = (value: string): Rgba => {
   if (!colorValid(value)) return colorRgba
 
   const color = colorStrip(value)
@@ -173,26 +173,26 @@ const colorToRgba = (value: string): Rgba => {
   return colorRgba
 }
 
-const colorAlphaColor = (value: string): AlphaColor => {
+export const colorAlphaColor = (value: string): AlphaColor => {
   const rgba = colorToRgba(value)
   return { alpha: rgba.a, color: colorRgbToHex(rgba) }
 }
 
-const colorFromRgb = (rgb: Rgb): string => {
+export const colorFromRgb = (rgb: Rgb): string => {
   const { r, g, b } = rgb
   return `rgb(${r},${g},${b})`
 }
 
-const colorFromRgba = (rgba: Rgba): string => {
+export const colorFromRgba = (rgba: Rgba): string => {
   const { r, g, b, a} = rgba
   return `rgb(${r},${g},${b},${a})`
 }
 
-const colorRgba: Rgba = { r: 0, g: 0, b: 0, a: 1.0 }
+export const colorRgba: Rgba = { r: 0, g: 0, b: 0, a: 1.0 }
 
-const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
+export const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
 
-const colorServer = (color: string): string => {
+export const colorServer = (color: string): string => {
   if (!colorValidHex(color)) return color
 
   return `${color.slice(0, 7)}@0x${color.slice(-2)}`
@@ -202,7 +202,7 @@ const colorServer = (color: string): string => {
 /**
  * @category Utility
  */
-const Color = {
+export const Color = {
   alphaColor: colorAlphaColor,
   fromRgb: colorFromRgb,
   fromRgba: colorFromRgba,
@@ -226,36 +226,4 @@ const Color = {
   validRgba: colorValidRgba,
   yuvBlend: colorYuvBlend,
   yuvToRgb: colorYuvToRgb,
-}
-
-export {
-  Color,
-  colorAlphaColor,
-  colorBlack,
-  colorBlackOpaque,
-  colorFromRgb,
-  colorFromRgba,
-  colorServer,
-  colorGreen,
-  colorHexRegex,
-  colorHexToRgb,
-  colorHexToRgba,
-  colorRgb,
-  colorRgba,
-  colorRgbaRegex,
-  colorRgbaToHex,
-  colorRgbRegex,
-  colorRgbToHex,
-  colorRgbToYuv,
-  colorStrip,
-  colorToRgb,
-  colorToRgba,
-  colorTransparent,
-  colorValid,
-  colorValidHex,
-  colorValidRgb,
-  colorValidRgba,
-  colorYellow,
-  colorYuvBlend,
-  colorYuvToRgb,
 }

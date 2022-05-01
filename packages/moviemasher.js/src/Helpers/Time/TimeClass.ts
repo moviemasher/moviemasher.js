@@ -36,7 +36,7 @@ export class TimeClass implements Time {
 
   constructor(frame = 0, fps = 1) {
     if (!Is.integer(frame) || frame < 0) {
-      // console.trace(Errors.frame, frame)
+      console.trace(Errors.frame, frame)
       throw Errors.frame + frame
     }
     if (!Is.integer(fps) || fps < 1) throw Errors.fps

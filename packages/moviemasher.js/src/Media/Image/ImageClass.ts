@@ -11,7 +11,8 @@ import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 const ImageWithClip = ClipMixin(InstanceBase)
 const ImageWithVisible = VisibleMixin(ImageWithClip)
 const ImageWithTransformable = TransformableMixin(ImageWithVisible)
-class ImageClass extends ImageWithTransformable implements Image {
+
+export class ImageClass extends ImageWithTransformable implements Image {
   declare definition: ImageDefinition
 
   override initializeFilterChain(filterChain: FilterChain): void  {
@@ -56,5 +57,3 @@ class ImageClass extends ImageWithTransformable implements Image {
     }
   }
 }
-
-export { ImageClass }

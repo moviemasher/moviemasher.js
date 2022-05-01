@@ -9,7 +9,7 @@ import { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeObject } from "./Th
 import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 import themeTextJson from "../../Definitions/DefinitionObjects/theme/text.json"
 
-const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
+export const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -18,28 +18,28 @@ const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
   return new ThemeDefinitionClass({...object, type: DefinitionType.Theme })
 }
 
-const themeDefinitionFromId = (id : string) : ThemeDefinition => {
+export const themeDefinitionFromId = (id : string) : ThemeDefinition => {
   return themeDefinition({ id })
 }
 
-const themeInstance = (object : ThemeObject) : Theme => {
+export const themeInstance = (object : ThemeObject) : Theme => {
   const definition = themeDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
-const themeFromId = (id : string) : Theme => {
+export const themeFromId = (id : string) : Theme => {
   return themeInstance({ id })
 }
 
-const themeInitialize = (): void => {
+export const themeInitialize = (): void => {
   [
     themeColorJson,
     themeTextJson,
   ].forEach(object => themeInstall(object))
 }
 
-const themeInstall = (object : ThemeDefinitionObject) : ThemeDefinition => {
+export const themeInstall = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -49,7 +49,7 @@ const themeInstall = (object : ThemeDefinitionObject) : ThemeDefinition => {
   return instance
 }
 
-const ThemeFactoryImplementation = {
+export const ThemeFactoryImplementation = {
   install: themeInstall,
   definition: themeDefinition,
   definitionFromId: themeDefinitionFromId,
@@ -59,13 +59,3 @@ const ThemeFactoryImplementation = {
 }
 
 Factories[DefinitionType.Theme] = ThemeFactoryImplementation
-
-export {
-  themeInstall,
-  themeDefinition,
-  themeDefinitionFromId,
-  ThemeFactoryImplementation,
-  themeFromId,
-  themeInitialize,
-  themeInstance,
-}

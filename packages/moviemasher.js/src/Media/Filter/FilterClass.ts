@@ -6,7 +6,7 @@ import { Filter, FilterDefinition } from "./Filter"
 import { Parameter } from "../../Setup/Parameter"
 import { FilterObject } from "./Filter"
 
-class FilterClass extends InstanceBase implements Filter {
+export class FilterClass extends InstanceBase implements Filter {
   constructor(...args : Any[]) {
     super(...args)
     const [object] = args
@@ -46,5 +46,3 @@ class FilterClass extends InstanceBase implements Filter {
     return object
   }
 }
-
-export { FilterClass }

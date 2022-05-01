@@ -1,36 +1,32 @@
-import {
-  Any, GraphFiles, Size, UnknownObject, VisibleContextData
-} from "../../declarations"
-import { Emitter } from "../../Helpers/Emitter"
-import { isPopulatedString } from "../../Utility/Is"
+import { Any, GraphFiles, Size, VisibleContextData } from "../../declarations"
 import { Mash } from "../Mash/Mash"
-import { MashFactory } from "../Mash/MashFactory"
+import { mashInstance } from "../Mash/MashFactory"
 import { CastObject, Cast } from "./Cast"
 import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
 import { DefinitionType } from "../../Setup/Enums"
 import { BrowserPreloaderClass } from "../../Preloader/BrowserPreloaderClass"
 import { EditedClass } from "../EditedClass"
+import { Default } from "../../Setup/Default"
+import { Layers } from "./Layer/Layer"
 
-
-class CastClass extends EditedClass implements Cast {
+export class CastClass extends EditedClass implements Cast {
   constructor(...args: Any[]) {
-    super()
-    const object = args[0] || {}
+    super(...args)
+    const [object] = args
     const {
       createdAt,
       id,
       label,
       ...rest
-    } = <CastObject>object
+    } = object as CastObject
 
-    if (id) this._id = id
-    if (createdAt) this.createdAt = createdAt
-    if (label && isPopulatedString(label)) this.label = label
+    // propertiesInitialize doesn't set defaults
+    if (!label) this.label = Default.cast.label
+    this.dataPopulate(rest)
 
-    Object.assign(this.data, rest)
     const definitionId = 'id-image'
-    const url = '../shared/image.jpg'
-    this.mashes.push(MashFactory.instance({
+    const url = '../shared/image/globe.jpg'
+    this.mashes.push(mashInstance({
       tracks: [{ clips: [{ definitionId }] }]
     }, [{
       type: DefinitionType.Image, id: definitionId, source: url, url
@@ -45,8 +41,9 @@ class CastClass extends EditedClass implements Cast {
 
   get imageSize() : Size { return this.mash.imageSize }
 
-  set imageSize(value : Size) {this.mash.imageSize = value }
+  set imageSize(value: Size) { this.mash.imageSize = value }
 
+  layers: Layers = []
 
   get mash(): Mash { return this.mashes[0] }
 
@@ -58,5 +55,3 @@ class CastClass extends EditedClass implements Cast {
   }
 
 }
-
-export { CastClass }

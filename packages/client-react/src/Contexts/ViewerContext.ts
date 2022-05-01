@@ -1,7 +1,7 @@
 import React from 'react'
 import { BooleanSetter, NumberSetter, StringSetter } from '@moviemasher/moviemasher.js'
 
-interface ViewerContextInterface {
+export interface ViewerContextInterface {
   streaming: boolean
   preloading: boolean
   updating: boolean
@@ -19,7 +19,8 @@ interface ViewerContextInterface {
   url: string
   setUrl: StringSetter
 }
-const ViewerContextDefault: ViewerContextInterface = {
+
+export const ViewerContextDefault: ViewerContextInterface = {
   width: 0,
   height: 0,
   videoRate: 0,
@@ -38,6 +39,4 @@ const ViewerContextDefault: ViewerContextInterface = {
   url: '',
 }
 
-const ViewerContext = React.createContext(ViewerContextDefault)
-
-export { ViewerContext, ViewerContextInterface, ViewerContextDefault }
+export const ViewerContext = React.createContext(ViewerContextDefault)

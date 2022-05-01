@@ -5,7 +5,7 @@ import { PropsWithoutChild, ReactResult } from '../../../../declarations'
 import { InputContext } from '../../../../Contexts/InputContext'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
+export function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -32,6 +32,3 @@ function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
 }
 
 DataTypeInputs[DataType.Direction4] = <DefaultDirection4Input />
-
-
-export { DefaultDirection4Input }

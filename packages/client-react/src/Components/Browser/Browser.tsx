@@ -5,7 +5,7 @@ import { PropsWithChildren, ReactResult } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { BrowserContext, BrowserContextInterface } from "../../Contexts/BrowserContext"
 
-interface BrowserProps extends PropsWithChildren {
+export interface BrowserProps extends PropsWithChildren {
   sourceId?: string
 }
 
@@ -13,7 +13,7 @@ interface BrowserProps extends PropsWithChildren {
  * @parents Masher
  * @children BrowserContent
  */
-function Browser(props: BrowserProps): ReactResult {
+export function Browser(props: BrowserProps): ReactResult {
   const { sourceId: initialSourceId, ...rest } = props
   const [ definitions, setDefinitions] = React.useState<Definition[] | undefined>(undefined)
   const [ definitionId, setDefinitionId] = React.useState('')
@@ -34,5 +34,3 @@ function Browser(props: BrowserProps): ReactResult {
     </BrowserContext.Provider>
   )
 }
-
-export { Browser, BrowserProps }

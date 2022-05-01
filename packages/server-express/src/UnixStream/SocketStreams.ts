@@ -3,11 +3,11 @@ import fs from 'fs'
 import path from 'path'
 import { Stream, Writable } from 'stream'
 
-interface SocketCallback { (_: Socket): void }
+export interface SocketCallback { (_: Socket): void }
 
 const SocketStreamsDir = "./temporary/streams/Sockets"
 
-class StreamUnix {
+export class StreamUnix {
   constructor(stream: Stream, id: string, onSocket: SocketCallback, type = 'stream') {
     // console.log("UnixStream", id, type)
     this.id = id
@@ -46,14 +46,12 @@ class StreamUnix {
   get url():string{ return  `unix:${this.socketPath}` }
 }
 
-const StreamInput = (stream: Stream, id: string, type = 'input'): StreamUnix => {
+export const StreamInput = (stream: Stream, id: string, type = 'input'): StreamUnix => {
   // console.log("StreamInput", id, type)
   return new StreamUnix(stream, id, (socket:Socket) => { stream.pipe(socket) }, type)
 }
 
-const StreamOutput = (stream:Writable, id: string, type = 'output'):StreamUnix => {
+export const StreamOutput = (stream:Writable, id: string, type = 'output'):StreamUnix => {
   // console.log("StreamOutput", id, type)
   return new StreamUnix(stream, id, (socket:Socket) => { socket.pipe(stream) }, type)
 }
-
-export { StreamInput, StreamOutput, StreamUnix, SocketCallback }

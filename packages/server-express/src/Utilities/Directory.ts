@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-const directoryLatest = (directory: string, extension: string) => {
+export const directoryLatest = (directory: string, extension: string) => {
   if (!fs.existsSync(directory)) return
 
   const files = fs.readdirSync(directory)
@@ -12,8 +12,6 @@ const directoryLatest = (directory: string, extension: string) => {
   return `${directory}/${file}`
 }
 
-const Directory = {
+export const Directory = {
  latest: directoryLatest
 }
-
-export { Directory, directoryLatest }

@@ -11,7 +11,7 @@ interface InspectorDefinedProps extends PropsAndChildren {
 /**
  * @parents InspectorContent
  */
-function InspectorDefined(props: InspectorDefinedProps): ReactResult {
+export function InspectorDefined(props: InspectorDefinedProps): ReactResult {
   const { property, properties, children } = props
   const selected = useSelected()
 
@@ -25,5 +25,3 @@ function InspectorDefined(props: InspectorDefinedProps): ReactResult {
 
   return <>{children}</>
 }
-
-export { InspectorDefined, InspectorDefinedProps }

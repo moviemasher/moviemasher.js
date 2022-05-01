@@ -8,7 +8,7 @@ import { Errors } from "../../Setup/Errors"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
-class MergerDefinitionClass extends MergerDefinitionWithModular implements MergerDefinition {
+export class MergerDefinitionClass extends MergerDefinitionWithModular implements MergerDefinition {
   populateFilterChain(filterChain: FilterChain, modular: Modular): void {
     const { filterGraph } = filterChain
     const { avType, graphType } = filterGraph
@@ -34,5 +34,3 @@ class MergerDefinitionClass extends MergerDefinitionWithModular implements Merge
 
   type = DefinitionType.Merger
 }
-
-export { MergerDefinitionClass }

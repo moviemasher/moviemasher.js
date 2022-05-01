@@ -7,9 +7,9 @@ import { ApiContext } from "../../Contexts/ApiContext"
 import { View } from "../../Utilities/View"
 import { WebrtcClient } from "./WebrtcClient"
 
-interface WebrtcProps extends PropsAndChildren, WithClassName {}
+export interface WebrtcProps extends PropsAndChildren, WithClassName {}
 
-function Webrtc(props: WebrtcProps) {
+export function Webrtc(props: WebrtcProps) {
   const [client, setClient] = React.useState<WebrtcClient | undefined>()
   const apiContext = React.useContext(ApiContext)
 
@@ -24,5 +24,3 @@ function Webrtc(props: WebrtcProps) {
     </WebrtcContext.Provider>
   )
 }
-
-export { Webrtc, WebrtcProps }

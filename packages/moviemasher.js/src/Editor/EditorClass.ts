@@ -2,7 +2,7 @@ import { Any } from "../declarations"
 import { BrowserPreloaderClass } from "../Preloader/BrowserPreloaderClass"
 import { EditorOptions } from "./Editor"
 
-class EditorClass {
+export class EditorClass {
   constructor(...args: Any[]) {
     const [object] = args
     const { endpoint, preloader } = object as EditorOptions
@@ -11,5 +11,3 @@ class EditorClass {
 
   preloader: BrowserPreloaderClass
 }
-
-export { EditorClass }

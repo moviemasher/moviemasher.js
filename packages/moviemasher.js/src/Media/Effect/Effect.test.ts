@@ -14,7 +14,7 @@ describe("Effect", () => {
       const masher = mashEditorInstance({ preloader: new JestPreloader()})
       masher.imageSize = { width: 640, height: 480 }
       masher.addTrack(TrackType.Video)
-      expect(masher.mash.tracks.length).toBe(3)
+      expect(masher.edited.tracks.length).toBe(3)
 
       const matteImage = Factory.image.instance(matteObject)
       const imageImage = Factory.image.instance(imageObject)
@@ -22,9 +22,9 @@ describe("Effect", () => {
       await masher.addClip(matteImage, 0, 1)
       masher.selectClip(matteImage)
       await masher.add(effectObject)
-      expect(masher.mash.trackOfTypeAtIndex(TrackType.Video, 0).clips).toEqual([imageImage])
-      expect(masher.mash.trackOfTypeAtIndex(TrackType.Video, 1).clips).toEqual([matteImage])
-      expectCanvas(masher.mash.composition.visibleContext.canvas)
+      expect(masher.edited.trackOfTypeAtIndex(TrackType.Video, 0).clips).toEqual([imageImage])
+      expect(masher.edited.trackOfTypeAtIndex(TrackType.Video, 1).clips).toEqual([matteImage])
+      expectCanvas(masher.edited.composition.visibleContext.canvas)
     })
   })
 

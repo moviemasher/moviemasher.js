@@ -9,7 +9,7 @@ import { Modes } from "../../../Setup/Modes"
 /**
  * @category Filter
  */
-class BlendFilter extends FilterDefinitionClass {
+export class BlendFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext, createVisibleContext } = evaluator
     const all_mode = evaluator.parameterNumber('all_mode')
@@ -25,5 +25,3 @@ class BlendFilter extends FilterDefinitionClass {
     new Parameter({ name: "repeatlast", value: 0 }),
   ]
 }
-
-export { BlendFilter }

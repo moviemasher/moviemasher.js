@@ -42,10 +42,11 @@ import { Emitter } from "../../Helpers/Emitter"
 import { Track } from "../../Media/Track/Track"
 import { EditorClass } from "../EditorClass"
 import { Mash } from "../../Edited/Mash/Mash"
-import { MashFactory } from "../../Edited/Mash/MashFactory"
+import { mashInstance } from "../../Edited/Mash/MashFactory"
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
+import { DataMashGetResponse } from "../../Api/Data"
 
-class MashEditorClass extends EditorClass implements MashEditor {
+export class MashEditorClass extends EditorClass implements MashEditor {
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -108,13 +109,13 @@ class MashEditorClass extends EditorClass implements MashEditor {
       const effect = Factory.effect.definition(object).instance
       return this.addEffect(effect, frameOrIndex).then(() => effect)
     }
-    const clipType = <ClipType> type
+    const clipType = type as ClipType
 
     if (!ClipTypes.includes(clipType)) throw Errors.type + type
 
     const definitionType = <DefinitionType> type
     const definition = Factory[definitionType].definition(object)
-    const clip = <Clip> definition.instance
+    const clip = definition.instance as Clip
 
     return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip)
   }
@@ -125,7 +126,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     const options : ActionObject = {
       clip,
       type: ActionType.AddClipToTrack,
-      redoSelection: { clip: clip },
+      redoSelection: { clip },
       trackType,
     }
     const tracksOfType = this.mash.tracks.filter(track => track.trackType === trackType)
@@ -357,6 +358,10 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.actionCreate(options)
   }
 
+  clear(): void {
+    this.mash = mashInstance()
+  }
+
   private clipCanBeSplit(clip : Clip, time : Time, quantize : number) : boolean {
     if (!Is.object(clip)) return false
 
@@ -385,19 +390,22 @@ class MashEditorClass extends EditorClass implements MashEditor {
     return action.target === target && action.property === property
   }
 
-  get currentTime() : number { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0 }
+  get currentTime(): number { return this.mash.drawnTime ? this.mash.drawnTime.seconds : 0 }
 
-  get duration() : number { return this.mash.duration }
+  get duration(): number { return this.mash.duration }
 
   editType = EditType.Mash
 
-  private get endTime() : Time { return this.mash.endTime.scale(this.fps, 'floor') }
+  get edited(): Mash { return this.mash }
+  set edited(value: Mash) { this.mash = value }
+
+  private get endTime(): Time { return this.mash.endTime.scale(this.fps, 'floor') }
 
   eventTarget  = new Emitter()
 
   private _fps = Default.masher.fps
 
-  get fps() : number { return this._fps || this.mash.quantize }
+  get fps(): number { return this._fps || this.mash.quantize }
 
   set fps(value: number) {
     const number = Number(value)
@@ -471,7 +479,7 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.mash.handleAction(action)
   }
 
-  get imageData() : VisibleContextData { return this.mash.imageData }
+  get imageData(): VisibleContextData { return this.mash.imageData }
 
   _imageSize: Size = { width: 300, height: 150 }
 
@@ -488,6 +496,12 @@ class MashEditorClass extends EditorClass implements MashEditor {
     return this.mash.loadPromise().then(() => { this.mash.draw() })
   }
 
+  loadData(data: DataMashGetResponse): void {
+    const { mash, definitions } = data
+    this.edited = mashInstance(mash, definitions)
+  }
+
+
   private _loop = Default.masher.loop
 
   get loop() : boolean { return this._loop }
@@ -499,11 +513,10 @@ class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   private _mash? : Mash
-
   get mash() : Mash {
     if (this._mash) return this._mash
 
-    const instance = MashFactory.instance()
+    const instance = mashInstance()
     this.mash = instance
     return instance
   }
@@ -619,8 +632,8 @@ class MashEditorClass extends EditorClass implements MashEditor {
 
   pause() : void { this.paused = true }
 
-  get paused() : boolean { return this.mash.paused }
-  set paused(value : boolean) { if (this._mash) this.mash.paused = !!value }
+  get paused(): boolean { return this.mash.paused }
+  set paused(value: boolean) { if (this._mash) this.mash.paused = !!value }
 
   play() : void { this.paused = false }
 
@@ -797,11 +810,11 @@ class MashEditorClass extends EditorClass implements MashEditor {
     this.actionCreate(options)
   }
 
-  get time() : Time { return this.mash.time }
+  get time(): Time { return this.mash.time }
 
   set time(value: Time) { this.goToTime(value) }
 
-  get timeRange() : TimeRange { return this.mash.timeRange }
+  get timeRange(): TimeRange { return this.mash.timeRange }
 
   undo() : void { if (this.actions.canUndo) this.handleAction(this.actions.undo()) }
 
@@ -820,5 +833,3 @@ class MashEditorClass extends EditorClass implements MashEditor {
     }
   }
 }
-
-export { MashEditorClass }

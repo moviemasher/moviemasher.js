@@ -10,7 +10,7 @@ import { Parameter } from "../../../Setup"
 /**
  * @category Filter
  */
-class ScaleFilter extends FilterDefinitionClass {
+export class ScaleFilter extends FilterDefinitionClass {
   protected override  drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const inWidth = Number(evaluator.get("in_w"))
     const inHeight = Number(evaluator.get("in_h"))
@@ -49,5 +49,3 @@ class ScaleFilter extends FilterDefinitionClass {
     new Parameter({ name: "height", value: "out_h", dataType: DataType.Number }),
   ]
 }
-
-export { ScaleFilter }

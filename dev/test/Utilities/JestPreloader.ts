@@ -5,7 +5,7 @@ import { Any, LoadedFont, LoadedImage, LoadFontPromise, LoadImagePromise } from 
 import { BrowserPreloaderClass } from "../../../packages/moviemasher.js/src/Preloader/BrowserPreloaderClass"
 import { TestFilePrefix } from "../Setup/Constants"
 
-class JestPreloader extends BrowserPreloaderClass {
+export class JestPreloader extends BrowserPreloaderClass {
   protected override requestFont(url: string): LoadFontPromise {
     const family = this.fontFamily(url)
     const { baseURI } = document
@@ -29,5 +29,3 @@ class JestPreloader extends BrowserPreloaderClass {
     return loadImageResult
   }
 }
-
-export { JestPreloader }

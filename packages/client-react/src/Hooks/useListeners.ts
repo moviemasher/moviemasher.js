@@ -7,7 +7,7 @@ import { ListenerCallback } from "../declarations"
 export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
 
 
-const useListeners = (events: ListenerEvents): void => {
+export const useListeners = (events: ListenerEvents): void => {
   const editor = useEditor()
   const { eventTarget } = editor
 
@@ -31,5 +31,3 @@ const useListeners = (events: ListenerEvents): void => {
 
   React.useEffect(() => addListeners(), [])
 }
-
-export { useListeners }

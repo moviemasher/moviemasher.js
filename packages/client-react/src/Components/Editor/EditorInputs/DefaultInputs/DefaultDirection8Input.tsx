@@ -6,7 +6,7 @@ import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
 
-function DefaultDirection8Input(): ReactResult {
+export function DefaultDirection8Input(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -37,5 +37,3 @@ function DefaultDirection8Input(): ReactResult {
 }
 
 DataTypeInputs[DataType.Direction8] = <DefaultDirection8Input />
-
-export { DefaultDirection8Input }

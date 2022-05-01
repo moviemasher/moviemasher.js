@@ -2,7 +2,7 @@ import { Track } from "../../../../Media"
 import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
-interface AddClipToTrackActionObject extends AddTrackActionObject {
+export interface AddClipToTrackActionObject extends AddTrackActionObject {
   clip : Clip
   createTracks : number
   insertIndex : number
@@ -12,7 +12,7 @@ interface AddClipToTrackActionObject extends AddTrackActionObject {
 /**
  * @category Action
  */
-class AddClipToTrackAction extends AddTrackAction {
+export class AddClipToTrackAction extends AddTrackAction {
   constructor(object : AddClipToTrackActionObject) {
     super(object)
     const { clip, createTracks, insertIndex, trackIndex } = object
@@ -44,5 +44,3 @@ class AddClipToTrackAction extends AddTrackAction {
     for (let i = 0; i < this.createTracks; i += 1) { super.undoAction() }
   }
 }
-
-export { AddClipToTrackAction, AddClipToTrackActionObject }

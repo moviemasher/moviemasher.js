@@ -1,6 +1,6 @@
 import { Endpoint } from "../declarations"
 
-const urlEndpoint = (): Endpoint => {
+export const urlEndpoint = (): Endpoint => {
   const url = new URL(document.baseURI)
   const { protocol, host, pathname, port } = url
   const endpoint: Endpoint = { protocol, host, prefix: pathname }
@@ -8,13 +8,13 @@ const urlEndpoint = (): Endpoint => {
   return endpoint
 }
 
-const urlAbsolute = (url: string, base?: string): string => {
+export const urlAbsolute = (url: string, base?: string): string => {
   const baseURI = base || document.baseURI
   const { href } = new URL(url, baseURI)
   return href
 }
 
-const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => {
+export const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => {
   if (suffix?.startsWith('http')) {
     console.trace("urlForEndpoint", suffix)
     return suffix
@@ -41,10 +41,8 @@ const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => {
 /**
  * @category Utility
  */
-const Url = {
+export const Url = {
   absolute: urlAbsolute,
   forEndpoint: urlForEndpoint,
   endpoint: urlEndpoint
 }
-
-export { Url, urlAbsolute, urlForEndpoint, urlEndpoint }

@@ -4,7 +4,7 @@ import { DataType, Modes } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultModeInput(): ReactResult {
+export function DefaultModeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -31,5 +31,3 @@ function DefaultModeInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Mode] = <DefaultModeInput />
-
-export { DefaultModeInput }

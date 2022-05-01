@@ -42,13 +42,14 @@ const EndpointsFile: StringObject = {
   store: '',
 }
 
-const Endpoints = {
+export const Endpoints = {
   [ServerType.Api]: EndpointsApi,
   [ServerType.Data]: EndpointsData,
   [ServerType.File]: EndpointsFile,
   [ServerType.Rendering]: EndpointsRendering,
   [ServerType.Streaming]: EndpointsStreaming,
 }
+
 // populate Endpoints with key paths...
 Object.entries(Endpoints).forEach(([serverType, server]) => {
   if (typeof server === 'object') Object.entries(server).forEach(([key1, value1]) => {
@@ -58,5 +59,3 @@ Object.entries(Endpoints).forEach(([serverType, server]) => {
     })
   })
 })
-
-export { Endpoints }

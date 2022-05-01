@@ -1,8 +1,8 @@
 import React from "react"
 import {
-  Endpoints, fetchCallback,
-  FileStoreResponse, ServerType,
-  RenderingUploadRequest, RenderingUploadResponse, ApiCallback, ApiCallbackResponse, LoadType, DataDefinitionPutRequest, RenderingStatusRequest, RenderingStatusResponse, OutputTypes
+  Endpoints, fetchCallback, FileStoreResponse, ServerType,
+  RenderingUploadRequest, RenderingUploadResponse, ApiCallback, ApiCallbackResponse,
+  DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
@@ -12,7 +12,7 @@ import { BrowserContext } from "../../Contexts/BrowserContext"
 
 const UploadControlId = 'upload-control-id'
 
-function UploadControl(props: PropsAndChild): ReactResult {
+export function UploadControl(props: PropsAndChild): ReactResult {
   const fileInput = React.useRef<HTMLInputElement>(null)
   const apiContext = React.useContext(ApiContext)
   const processContext = React.useContext(ProcessContext)
@@ -136,7 +136,6 @@ function UploadControl(props: PropsAndChild): ReactResult {
   return <label {...labelProps} />
 }
 
-export { UploadControl }
 
 //   function readVideo(event) {
 //   if (event.target.files && event.target.files[0]) {

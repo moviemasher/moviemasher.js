@@ -2,15 +2,13 @@ import React from 'react'
 
 import { WebrtcClient } from '../Components/Webrtc/WebrtcClient'
 
-interface WebrtcContextInterface {
+export interface WebrtcContextInterface {
   client?: WebrtcClient
   setClient: (client: WebrtcClient | undefined) => void
  }
 
-const WebrtcContextDefault: WebrtcContextInterface = {
+export const WebrtcContextDefault: WebrtcContextInterface = {
   setClient: () => {}
 }
 
-const WebrtcContext = React.createContext(WebrtcContextDefault)
-
-export { WebrtcContext, WebrtcContextInterface, WebrtcContextDefault }
+export const WebrtcContext = React.createContext(WebrtcContextDefault)

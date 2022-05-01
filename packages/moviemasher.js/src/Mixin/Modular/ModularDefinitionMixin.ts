@@ -10,7 +10,7 @@ import { Filter } from "../../Media/Filter/Filter"
 import { filterInstance } from "../../Media/Filter"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
-function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
+export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base implements ModularDefinition {
     constructor(...args : Any[]) {
       super(...args)
@@ -62,5 +62,3 @@ function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDef
     }
   }
 }
-
-export { ModularDefinitionMixin }

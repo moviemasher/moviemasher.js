@@ -3,7 +3,7 @@ const uuid = require('uuid').v4
 import {
   ClipObject, DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, MergerObject, OutputFormat, ScalerObject, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, MashFactory, ExtTs, ExtHls, CommandOptions,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -18,7 +18,7 @@ import { directoryLatest } from '../../../Utilities/Directory'
 const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
 
 
-class StreamingProcessClass extends EventEmitter {
+export class StreamingProcessClass extends EventEmitter {
   constructor(args: StreamingProcessArgs) {
     super()
     this.args = args
@@ -41,7 +41,7 @@ class StreamingProcessClass extends EventEmitter {
     const { mashObjects, definitionObjects } = args
     const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
-      const mash = MashFactory.instance(mashObject, definitionObjects)
+      const mash = mashInstance(mashObject, definitionObjects)
       mash.preloader = preloader
       return mash
     })
@@ -83,7 +83,7 @@ class StreamingProcessClass extends EventEmitter {
           const url = `file://${resolved}`
           // console.log(this.constructor.name, "update resolved", source, 'to', url)
 
-          const exists = fs.existsSync(url)
+          const exists = fs.existsSync(source)
           if (!exists) {
             console.error(this.constructor.name, "could not find", source, url)
             throw `NOT FOUND ${url}`
@@ -105,7 +105,7 @@ class StreamingProcessClass extends EventEmitter {
   }
 
   defaultContent(): StreamingProcessCutArgs {
-    const source = './favicon.ico'
+    const source = '../shared/image/favicon.ico'
     const definitionId = 'image'
     const definitionObject: ImageDefinitionObject = {
       source, id: definitionId, type: DefinitionType.Image, url: source
@@ -173,5 +173,3 @@ class StreamingProcessClass extends EventEmitter {
     return { id: this.id, state: this.state }
   }
 }
-
-export { StreamingProcessClass }

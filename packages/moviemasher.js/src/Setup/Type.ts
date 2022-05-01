@@ -5,20 +5,20 @@ import { colorValid } from "../Utility/Color"
 import { isNan } from "../Utility/Is"
 import { Definitions } from "../Definitions/Definitions"
 
-interface TypeValuesObject {
+export interface TypeValuesObject {
   id : Value
   identifier : string
   label : string
 }
 
-interface TypeObject {
+export interface TypeObject {
   id? : DataType
   value? : Scalar
   values? : TypeValuesObject[]
   modular? : boolean
 }
 
-class Type {
+export class Type {
   constructor(object : TypeObject) {
     const { value, values, modular, id } = object
     if (!id) throw Errors.id + JSON.stringify(object)
@@ -80,5 +80,3 @@ class Type {
 
   values : TypeValuesObject[] = []
 }
-
-export { Type, TypeObject, TypeValuesObject }

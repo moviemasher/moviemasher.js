@@ -14,7 +14,7 @@ const outputExtension = '.js'
 const inputExtension = '.tsx'
 const allFiles = fs.readdirSync(path.resolve(src))
 const files = allFiles.filter(file => path.extname(file) === inputExtension)
-const names = ['masher'] //files.map(file => path.basename(file, inputExtension)) //
+const names = files.map(file => path.basename(file, inputExtension)) //['masher'] //['caster'] //
 
 const replaceOptions = {
   preventAssignment: true,

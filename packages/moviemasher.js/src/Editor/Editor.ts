@@ -1,23 +1,24 @@
 import { Endpoint, SelectedProperties, Size, VisibleContextData } from "../declarations"
 import { Emitter } from "../Helpers/Emitter"
-// import { PropertiedChangeHandler } from "../Base/Propertied"
-import { EditType } from "../Setup/Enums"
+import { EditType, MasherAction } from "../Setup/Enums"
 import { BrowserPreloaderClass } from "../Preloader/BrowserPreloaderClass"
 import { Edited } from "../Edited/Edited"
+import { DataCastGetResponse, DataMashGetResponse } from "../Api/Data"
 
-interface EditorOptions {
+export interface EditorOptions {
   preloader?: BrowserPreloaderClass
   endpoint?: Endpoint
 }
 
-interface Editor {
+export interface Editor {
+  can(action: MasherAction): boolean
+  clear(): void
   edited: Edited
   editType: EditType
   eventTarget: Emitter
   imageData: VisibleContextData
   imageSize: Size
+  loadData(data: DataMashGetResponse | DataCastGetResponse): void
   preloader: BrowserPreloaderClass
   selectedProperties: SelectedProperties
 }
-
-export { Editor, EditorOptions }

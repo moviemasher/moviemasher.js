@@ -7,7 +7,7 @@ import { PropsWithChildren, ReactResult } from "../../declarations"
  *
  * @parents Player
  */
-function PlayerButton(props: PropsWithChildren): ReactResult {
+export function PlayerButton(props: PropsWithChildren): ReactResult {
   const playerContext = React.useContext(PlayerContext)
   const { paused, setPaused } = playerContext
 
@@ -18,5 +18,3 @@ function PlayerButton(props: PropsWithChildren): ReactResult {
   }
   return <View {...viewProps} />
 }
-
-export { PlayerButton }

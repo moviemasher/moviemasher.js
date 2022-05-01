@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Endpoints, ServerType,
-  Cast, castEditorInstance, CastFactory,
+  Cast, castEditorInstance, castInstance,
   DataCastDefaultRequest, DataCastDefaultResponse
 } from '@moviemasher/moviemasher.js'
 
@@ -10,7 +10,7 @@ import { ApiContext } from '../../Contexts/ApiContext'
 import { CasterContext, CasterContextInterface } from '../../Contexts/CasterContext'
 import { View } from '../../Utilities/View'
 
-interface CasterProps extends PropsWithChildren, WithClassName {
+export interface CasterProps extends PropsWithChildren, WithClassName {
   cast?: Cast
 }
 
@@ -23,7 +23,7 @@ interface CasterProps extends PropsWithChildren, WithClassName {
  * @parents ApiClient
  * @returns provided children wrapped in a {@link View} and {@link CasterContext}
  */
-function Caster(props: CasterProps): ReactResult {
+export function Caster(props: CasterProps): ReactResult {
   const { cast, ...rest } = props
   const [requested, setRequested] = React.useState(false)
   const [castEditor] = React.useState(() => castEditorInstance({}))
@@ -32,15 +32,15 @@ function Caster(props: CasterProps): ReactResult {
   const { enabled, endpointPromise } = apiContext
 
   React.useEffect(() => {
-    if (cast) castEditor.cast = cast
+    if (cast) castEditor.edited = cast
     else if (!requested && enabled.includes(ServerType.Data)) {
       setRequested(true)
       const request: DataCastDefaultRequest = {}
-      // console.debug("DataCastDefaultRequest", Endpoints.streaming.start, request)
-      endpointPromise(Endpoints.streaming.start, request).then((response: DataCastDefaultResponse) => {
-        // console.debug("DataCastDefaultResponse", Endpoints.streaming.start, response)
+      console.debug("DataCastDefaultRequest", Endpoints.data.cast.default, request)
+      endpointPromise(Endpoints.data.cast.default, request).then((response: DataCastDefaultResponse) => {
+        console.debug("DataCastDefaultResponse", Endpoints.data.cast.default, response)
         const { cast } = response
-        castEditor.cast = CastFactory.instance(cast)
+        castEditor.edited = castInstance(cast)
       })
     }
   }, [enabled])
@@ -52,5 +52,3 @@ function Caster(props: CasterProps): ReactResult {
     </CasterContext.Provider>
   )
 }
-
-export { Caster, CasterProps }

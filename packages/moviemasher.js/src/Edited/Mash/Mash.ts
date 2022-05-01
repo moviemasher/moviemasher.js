@@ -16,8 +16,8 @@ import { FilterGraphObject, FilterGraphOptions } from "./FilterGraph/FilterGraph
 import { TransformableContent } from "../../Mixin/Transformable/Transformable"
 import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
 
-interface MashDescription extends UnknownObject, Described {}
-interface MashObject extends Partial<MashDescription> {
+export interface MashDescription extends UnknownObject, Described {}
+export interface MashObject extends Partial<MashDescription> {
   backcolor? : string
   buffer?: number
   gain?: Value
@@ -33,7 +33,7 @@ export interface MashArgs extends MashObject {
 export type Content = TransformableContent & AudibleContent
 export type Contents = Content[]
 
-interface Mash extends Edited {
+export interface Mash extends Edited {
   addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(trackType: TrackType): Track
   backcolor: string
@@ -74,5 +74,3 @@ interface Mash extends Edited {
   trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
 }
-
-export { Mash, MashObject, MashDescription }

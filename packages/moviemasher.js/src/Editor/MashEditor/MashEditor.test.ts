@@ -58,7 +58,7 @@ describe("MashEditor", () => {
       const masher = editorInstance()
       const clip = await masher.add(themeTextJson)
       expect(clip).toBeInstanceOf(ThemeClass)
-      expectCanvas(masher.mash.composition.visibleContext.canvas)
+      expectCanvas(masher.edited.composition.visibleContext.canvas)
     })
   })
 
@@ -69,16 +69,16 @@ describe("MashEditor", () => {
       expect(canvas).toBeInstanceOf(Emitter)
     })
   })
-  describe("change", () => {
-    test("throws when property blank", () => {
-      const masher = editorInstance()
-      expect(() => masher.change("")).toThrowError(Errors.selection)
-    })
-    test("throws when there's no selected effect", () => {
-      const masher = editorInstance()
-      expect(() => masher.change("a")).toThrowError(Errors.selection)
-    })
-  })
+  // describe("change", () => {
+  //   test("throws when property blank", () => {
+  //     const masher = editorInstance()
+  //     expect(() => masher.change("")).toThrowError(Errors.selection)
+  //   })
+  //   test("throws when there's no selected effect", () => {
+  //     const masher = editorInstance()
+  //     expect(() => masher.change("a")).toThrowError(Errors.selection)
+  //   })
+  // })
 
   describe("goToTime", () => {
     test("returns what is set after resolving promise", async () => {

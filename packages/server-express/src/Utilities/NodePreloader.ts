@@ -12,7 +12,7 @@ import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
 import { probingInfoPromise } from '../Command/Probing'
 
 
-class NodePreloader extends PreloaderClass {
+export class NodePreloader extends PreloaderClass {
   constructor(
     public cacheDirectory: string,
     public filePrefix: string,
@@ -124,5 +124,3 @@ class NodePreloader extends PreloaderClass {
     return promise
   }
 }
-
-export { NodePreloader }

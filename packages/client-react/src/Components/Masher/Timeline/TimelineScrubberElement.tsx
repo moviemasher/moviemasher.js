@@ -7,11 +7,11 @@ import { useListeners } from "../../../Hooks/useListeners"
 import { PropsWithChildren, ReactResult } from "../../../declarations"
 import { useMashEditor } from "../../../Hooks/useMashEditor"
 
-interface TimelineScrubberElementProps extends PropsWithChildren {}
+export interface TimelineScrubberElementProps extends PropsWithChildren {}
 /**
  * @parents Timeline
  */
-function TimelineScrubberElement(props: TimelineScrubberElementProps): ReactResult {
+export function TimelineScrubberElement(props: TimelineScrubberElementProps): ReactResult {
   const masher = useMashEditor()
   const scale = useMashScale()
   useListeners({
@@ -25,5 +25,3 @@ function TimelineScrubberElement(props: TimelineScrubberElementProps): ReactResu
 
   return <View {...iconProps} />
 }
-
-export { TimelineScrubberElement, TimelineScrubberElementProps }

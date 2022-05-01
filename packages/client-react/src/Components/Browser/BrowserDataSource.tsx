@@ -13,7 +13,7 @@ import { BrowserSourceProps } from "./BrowserSource"
 /**
  * @parents Browser
  */
-function BrowserDataSource(props: BrowserSourceProps): ReactResult {
+export function BrowserDataSource(props: BrowserSourceProps): ReactResult {
   const browserContext = React.useContext(BrowserContext)
   const apiContext = React.useContext(ApiContext)
   const [requested, setRequested] = React.useState(false)
@@ -62,5 +62,3 @@ function BrowserDataSource(props: BrowserSourceProps): ReactResult {
   const viewProps = { ...rest, onClick, className: classes.join(' ') }
   return <View {...viewProps}/>
 }
-
-export { BrowserDataSource }

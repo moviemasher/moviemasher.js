@@ -21,11 +21,9 @@ const createContextOfSize = (size: Size) : VisibleContext => {
 /**
  * @category Factory
  */
-const ContextFactory = {
+export const ContextFactory = {
   audible: createContextAudible,
   fromCanvas: createContextFromCanvas,
   toSize: createContextOfSize,
   visible: createContextVisible,
 }
-
-export { ContextFactory }

@@ -4,16 +4,14 @@ import { Clips, pixelToFrame, TrackType, UnknownObject } from '@moviemasher/movi
 import { View } from '../../../Utilities/View'
 import { TrackContext } from '../../../Contexts/TrackContext'
 import { TimelineClip } from './TimelineClip'
-import { ReactResult } from '../../../declarations'
+import { PropsWithChildren, ReactResult, WithClassName } from '../../../declarations'
 import { useMashScale } from '../../../Hooks/useMashScale'
 import { DragSuffix } from '../../../Setup/Constants'
 import { useMashEditor } from '../../../Hooks/useMashEditor'
 import { DragClipObject } from '../../../Helpers/DragDrop'
 
-interface TimelineClipsProps extends UnknownObject {
-  children: React.ReactNode
+export interface TimelineClipsProps extends PropsWithChildren, WithClassName {
   label?: string
-  className?: string
   dropClass?: string
   selectClass?: string
 }
@@ -21,12 +19,11 @@ interface TimelineClipsProps extends UnknownObject {
 /**
  * @parents TimelineContent
  */
-function TimelineClips(props: TimelineClipsProps): ReactResult {
+export function TimelineClips(props: TimelineClipsProps): ReactResult {
   const trackContext = React.useContext(TrackContext)
   const [isOver, setIsOver] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
   const scale = useMashScale()
-
   const masher = useMashEditor()
   if (!masher) return null
 
@@ -150,5 +147,3 @@ function TimelineClips(props: TimelineClipsProps): ReactResult {
   // console.log("TimelineClips")
   return <View {...viewProps}/>
 }
-
-export { TimelineClips, TimelineClipsProps }

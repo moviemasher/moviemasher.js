@@ -3,15 +3,15 @@ import { DefinitionObject } from "../../Base/Definition"
 import { Instance, InstanceObject } from "../../Base/Instance"
 import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
-type FontObject = InstanceObject
+export type FontObject = InstanceObject
 
-interface Font extends Instance {
+export interface Font extends Instance {
   definition : FontDefinition
 }
 
-interface FontDefinitionObject extends DefinitionObject {}
+export interface FontDefinitionObject extends DefinitionObject {}
 
-interface FontDefinition extends PreloadableDefinition {
+export interface FontDefinition extends PreloadableDefinition {
   instance : Font
   instanceFromObject(object : FontObject) : Font
 }
@@ -19,8 +19,6 @@ interface FontDefinition extends PreloadableDefinition {
 /**
  * @category Factory
  */
-interface FontFactory extends GenericFactory<
+export interface FontFactory extends GenericFactory<
   Font, FontObject, FontDefinition, FontDefinitionObject
 > {}
-
-export { Font, FontDefinition, FontDefinitionObject, FontFactory, FontObject }

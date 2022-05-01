@@ -4,7 +4,7 @@ import { Font, FontDefinition, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
 import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 
-class FontDefinitionClass extends PreloadableDefinition implements FontDefinition {
+export class FontDefinitionClass extends PreloadableDefinition implements FontDefinition {
   definitionFiles(args: FilesArgs): GraphFiles {
     const { avType, graphType } = args
     if (avType === AVType.Audio) return []
@@ -29,5 +29,3 @@ class FontDefinitionClass extends PreloadableDefinition implements FontDefinitio
 
   type = DefinitionType.Font
 }
-
-export { FontDefinitionClass }

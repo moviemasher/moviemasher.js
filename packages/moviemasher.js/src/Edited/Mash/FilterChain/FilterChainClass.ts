@@ -11,7 +11,7 @@ export interface FilterChainConstructorArgs {
   filterGraph: FilterGraphInstance
 }
 
-class FilterChainClass implements FilterChain {
+export class FilterChainClass implements FilterChain {
   constructor(public args: FilterChainConstructorArgs) { }
 
   addGraphFile(graphFile: GraphFile): string {
@@ -96,5 +96,3 @@ class FilterChainClass implements FilterChain {
   get visibleContext(): VisibleContext { return this._visibleContext! }
   set visibleContext(value: VisibleContext) { this._visibleContext = value }
 }
-
-export { FilterChainClass }

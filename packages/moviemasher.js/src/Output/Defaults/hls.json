@@ -12,7 +12,7 @@
   "extension": "m3u8",
   "streamingFormat": "hls",
   "options": {
-    "hls_segment_filename": "06d.ts",
+    "hls_segment_filename": "%06d.ts",
     "hls_time": 6,
     "hls_list_size": 10,
     "hls_flags": "delete_segments",

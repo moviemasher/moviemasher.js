@@ -5,8 +5,9 @@ import { useListeners } from "../../Hooks/useListeners"
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useMashEditor } from "../../Hooks/useMashEditor"
 
-interface EditorUndoButtonProps extends PropsAndChild {}
-function EditorUndoButton(props:EditorUndoButtonProps): ReactResult {
+export interface EditorUndoButtonProps extends PropsAndChild {}
+
+export function EditorUndoButton(props: EditorUndoButtonProps): ReactResult {
   const masher = useMashEditor()
   const [disabled, setDisabled] = React.useState(true)
   useListeners({
@@ -19,5 +20,3 @@ function EditorUndoButton(props:EditorUndoButtonProps): ReactResult {
   const buttonOptions = { ...rest, onClick, disabled: disabled }
   return  React.cloneElement(React.Children.only(children), buttonOptions)
 }
-
-export { EditorUndoButton, EditorUndoButtonProps }

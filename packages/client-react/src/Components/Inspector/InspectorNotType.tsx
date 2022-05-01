@@ -4,7 +4,7 @@ import { propsDefinitionTypes } from '../../Utilities/Props'
 import { InspectorContext } from '../../Contexts/InspectorContext'
 import { ReactResult } from '../../declarations'
 
-interface InspectorNotTypeProps {
+export interface InspectorNotTypeProps {
   type?: string
   types?: string | string[]
   children: React.ReactNode
@@ -13,7 +13,7 @@ interface InspectorNotTypeProps {
 /**
  * @parents InspectorContent
  */
-function InspectorNotType(props: InspectorNotTypeProps): ReactResult {
+export function InspectorNotType(props: InspectorNotTypeProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
 
   const { definitionType } = inspectorContext
@@ -27,5 +27,3 @@ function InspectorNotType(props: InspectorNotTypeProps): ReactResult {
 
   return <>{children}</>
 }
-
-export { InspectorNotType, InspectorNotTypeProps }

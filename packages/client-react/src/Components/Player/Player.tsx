@@ -7,13 +7,13 @@ import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import { useMashEditor } from '../../Hooks/useMashEditor'
 
-interface PlayerProps extends PropsAndChildren, WithClassName {}
+export interface PlayerProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents Masher, Caster
  * @children PlayerContent, PlayerPlaying, PlayerNotPlaying, PlayerTimeControl, PlayerButton
  */
-function Player(props: PlayerProps): ReactResult {
+export function Player(props: PlayerProps): ReactResult {
   const masher = useMashEditor()
   const handlePaused : ListenerCallback = () => { setPaused(masher.paused) }
   useListeners({
@@ -41,5 +41,3 @@ function Player(props: PlayerProps): ReactResult {
     </PlayerContext.Provider>
   )
 }
-
-export { Player, PlayerProps }

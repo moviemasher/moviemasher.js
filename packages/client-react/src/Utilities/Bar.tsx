@@ -1,25 +1,23 @@
 import React from "react"
-import { PropsWithoutChild, ReactResult } from "../declarations"
+import { PropsWithoutChild, ReactResult, WithClassName } from "../declarations"
 import { View } from "./View"
 
-interface BarOptions {
-  className?: string
+export interface BarOptions {
+  props?: WithClassName
   before?: React.ReactChild[]
   after?: React.ReactChild[]
   content?: React.ReactChild | React.ReactChild[]
 }
 
-interface BarProps extends BarOptions, PropsWithoutChild {}
+export interface BarProps extends BarOptions, PropsWithoutChild {}
 
-function Bar(props: BarProps): ReactResult {
+export function Bar(props: BarProps): ReactResult {
 
-  const { before, content, after, ...rest } = props
+  const { before, content, after, props: viewProps = {} } = props
   if (!(before || content || after)) return null
 
   const children = [before, content, after].filter(Boolean)
 
-  const viewProps = { ...rest, children }
+  viewProps.children = children
   return <View {...viewProps}/>
 }
-
-export { Bar, BarProps, BarOptions }

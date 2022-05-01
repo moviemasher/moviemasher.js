@@ -1,7 +1,7 @@
 import { Clip } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
-interface MoveClipActionObject extends ActionOptions {
+export interface MoveClipActionObject extends ActionOptions {
   clip : Clip
   insertIndex : number
   redoFrame? : number
@@ -14,7 +14,7 @@ interface MoveClipActionObject extends ActionOptions {
 /**
  * @category Action
  */
-class MoveClipAction extends Action {
+export class MoveClipAction extends Action {
   constructor(object : MoveClipActionObject) {
     super(object)
     const {
@@ -61,4 +61,3 @@ class MoveClipAction extends Action {
     this.addClip(this.undoTrackIndex, this.undoInsertIndex, this.undoFrame)
   }
 }
-export { MoveClipAction, MoveClipActionObject }

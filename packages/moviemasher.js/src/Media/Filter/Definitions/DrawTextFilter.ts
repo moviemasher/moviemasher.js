@@ -14,7 +14,7 @@ import { colorBlack, colorServer } from "../../../Utility/Color"
 /**
  * @category Filter
  */
-class DrawTextFilter extends FilterDefinitionClass {
+export class DrawTextFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext: context, preloader, graphType } = evaluator
     if (!context) throw Errors.invalid.context + this.id
@@ -116,5 +116,3 @@ class DrawTextFilter extends FilterDefinitionClass {
     new Parameter({ name: "fontface", value: "com.moviemasher.font.default", dataType: DataType.String }),
   ]
 }
-
-export { DrawTextFilter }

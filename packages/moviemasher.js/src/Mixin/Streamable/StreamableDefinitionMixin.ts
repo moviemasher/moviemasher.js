@@ -2,7 +2,7 @@ import { Any, UnknownObject } from "../../declarations"
 import { StreamableDefinitionClass, StreamableDefinitionObject } from "./Streamable"
 import { AudibleDefinitionClass } from "../Audible/Audible"
 
-function StreamableDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) : StreamableDefinitionClass & T {
+export function StreamableDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) : StreamableDefinitionClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
@@ -22,5 +22,3 @@ function StreamableDefinitionMixin<T extends AudibleDefinitionClass>(Base: T) : 
     }
   }
 }
-
-export { StreamableDefinitionMixin }

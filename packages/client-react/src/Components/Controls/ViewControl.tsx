@@ -6,7 +6,7 @@ import { useMashEditor } from "../../Hooks/useMashEditor"
 import { useListeners } from "../../Hooks/useListeners"
 
 
-function ViewControl(props: PropsAndChild): ReactResult {
+export function ViewControl(props: PropsAndChild): ReactResult {
   const masher = useMashEditor()
   const getDisabled = () => !masher.mash.rendering
   const [disabled, setDisabled] = React.useState(getDisabled)
@@ -29,5 +29,3 @@ function ViewControl(props: PropsAndChild): ReactResult {
   const buttonOptions = { ...rest, onClick, disabled }
   return React.cloneElement(React.Children.only(children), buttonOptions)
 }
-
-export { ViewControl }

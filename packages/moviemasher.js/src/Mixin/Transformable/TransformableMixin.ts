@@ -10,7 +10,7 @@ import { effectInstance } from "../../Media/Effect/EffectFactory"
 import { scalerFromId, scalerInstance } from "../../Media/Scaler/ScalerFactory"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
-function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass & T {
+export function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass & T {
   return class extends Base {
     constructor(...args: Any[]) {
       super(...args)
@@ -80,5 +80,3 @@ function TransformableMixin<T extends VisibleClass>(Base: T): TransformableClass
     }
   }
 }
-
-export { TransformableMixin }

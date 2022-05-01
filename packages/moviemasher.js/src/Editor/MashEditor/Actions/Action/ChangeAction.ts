@@ -1,20 +1,20 @@
 import { Scalar } from "../../../../declarations"
 import { Effect } from "../../../../Media/Effect/Effect"
 import { Clip } from "../../../../Mixin/Clip/Clip"
+import { ClipOrEffect } from "../../MashEditor"
 import { Action, ActionOptions } from "./Action"
 
-interface ChangeActionObject extends ActionOptions {
-  property : string
-  redoValue : Scalar
-  target : Clip | Effect
-  undoValue : Scalar
+export interface ChangeActionObject extends ActionOptions {
+  property: string
+  redoValue: Scalar
+  target: ClipOrEffect
+  undoValue: Scalar
 }
-
 
 /**
  * @category Action
  */
-class ChangeAction extends Action {
+export class ChangeAction extends Action {
   constructor(object : ChangeActionObject) {
     super(object)
     const { property, redoValue, target, undoValue } = object
@@ -49,5 +49,3 @@ class ChangeAction extends Action {
     this.redo()
   }
 }
-
-export { ChangeAction, ChangeActionObject }

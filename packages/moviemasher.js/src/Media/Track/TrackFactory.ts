@@ -6,6 +6,4 @@ const trackInstance = (object : TrackArgs) : Track => new TrackClass(object)
 /**
  * @category Factory
  */
-const TrackFactory = { instance: trackInstance }
-
-export { TrackFactory }
+export const TrackFactory = { instance: trackInstance }

@@ -5,7 +5,7 @@ import {
 
 import { RunningCommand } from '../../../RunningCommand/RunningCommand'
 
-interface StreamConnectionCommand {
+export interface StreamConnectionCommand {
   command: RunningCommand
   destination: string
 }
@@ -25,6 +25,3 @@ export interface StreamingProcessCutArgs {
   mashObjects: MashObject[]
   definitionObjects: DefinitionObjects
 }
-
-
-export { StreamConnectionCommand }

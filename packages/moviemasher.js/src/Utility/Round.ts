@@ -1,6 +1,6 @@
 import { NumberConverter } from "../declarations"
 
-const roundMethod = (rounding = '') : NumberConverter => {
+export const roundMethod = (rounding = '') : NumberConverter => {
   switch (rounding) {
     case 'ceil': return Math.ceil
     case 'floor': return Math.floor
@@ -8,17 +8,7 @@ const roundMethod = (rounding = '') : NumberConverter => {
   }
 }
 
-const roundWithMethod = (number: number, method = ''): number => {
+export const roundWithMethod = (number: number, method = ''): number => {
   const func = roundMethod(method)
   return func(number)
 }
-
-/**
- * @category Utility
- */
-const Round = {
-  method: roundMethod,
-  withMethod: roundWithMethod,
-}
-
-export { Round, roundMethod, roundWithMethod }

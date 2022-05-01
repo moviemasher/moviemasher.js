@@ -5,7 +5,7 @@ import { BrowserContext } from "../../Contexts/BrowserContext"
 import { PropsWithChildren, ReactResult } from "../../declarations"
 import { propsDefinitionTypes } from "../../Utilities/Props"
 
-interface BrowserSourceProps extends PropsWithChildren {
+export interface BrowserSourceProps extends PropsWithChildren {
   id: string
   className?: string
   type?: string
@@ -15,7 +15,7 @@ interface BrowserSourceProps extends PropsWithChildren {
 /**
  * @parents Browser
  */
-function BrowserSource(props: BrowserSourceProps): ReactResult {
+export function BrowserSource(props: BrowserSourceProps): ReactResult {
   const browserContext = React.useContext(BrowserContext)
 
   const { type, types, className, id, ...rest } = props
@@ -55,5 +55,3 @@ function BrowserSource(props: BrowserSourceProps): ReactResult {
   const viewProps = { ...rest, onClick, className: classes.join(' ') }
   return <View {...viewProps}/>
 }
-
-export { BrowserSource, BrowserSourceProps }

@@ -6,7 +6,7 @@ import { Actions } from "../Actions"
 import { MashEditorSelection } from "../../MashEditor"
 import { Mash } from "../../../../Edited/Mash/Mash"
 
-interface ActionOptions extends UnknownObject {
+export interface ActionOptions extends UnknownObject {
   actions : Actions
   mash : Mash
   redoSelection: MashEditorSelection
@@ -14,9 +14,9 @@ interface ActionOptions extends UnknownObject {
   undoSelection: MashEditorSelection
 }
 
-type ActionObject = Partial<ActionOptions>
+export type ActionObject = Partial<ActionOptions>
 
-class Action {
+export class Action {
   constructor(object : ActionOptions) {
     const { actions, mash, redoSelection, type, undoSelection } = object
     this.actions = actions
@@ -58,5 +58,3 @@ class Action {
 
   undoSelection: MashEditorSelection
 }
-
-export { Action, ActionObject, ActionOptions }

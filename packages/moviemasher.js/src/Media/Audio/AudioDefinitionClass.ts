@@ -9,7 +9,7 @@ import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 const AudioDefinitionWithClip = ClipDefinitionMixin(PreloadableDefinition)
 const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip)
 const AudioDefinitionWithAudibleFile = AudibleFileDefinitionMixin(AudioDefinitionWithAudible)
-class AudioDefinitionClass extends AudioDefinitionWithAudibleFile implements AudioDefinition {
+export class AudioDefinitionClass extends AudioDefinitionWithAudibleFile implements AudioDefinition {
   get instance() : Audio { return this.instanceFromObject(this.instanceObject) }
 
   instanceFromObject(object : AudioObject) : Audio {
@@ -21,5 +21,3 @@ class AudioDefinitionClass extends AudioDefinitionWithAudibleFile implements Aud
 
   type = DefinitionType.Audio
 }
-
-export { AudioDefinitionClass }

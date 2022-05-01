@@ -8,21 +8,21 @@ const uuid = require('uuid').v4
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
   DefinitionObject, DefinitionObjects, CastObject, DataServerInit, Endpoints, EmptyMethod,
-  DataCastRelations, DataMashDefinitions,
+  DataCastRelations,
   DataCastDefaultResponse, DataCastDefaultRequest,
   DataMashDefaultRequest, DataMashDefaultResponse,
   DataCastDeleteResponse, DataCastDeleteRequest,
   DataDefinitionDeleteResponse, DataDefinitionDeleteRequest,
   DataMashDeleteResponse, DataMashDeleteRequest,
   DataCastPutResponse, DataCastPutRequest,
-  DataMashRetrieveRequest, DataMashRetrieveResponse,
+  DataMashRetrieveRequest,
   DataDefinitionPutResponse, DataDefinitionPutRequest,
   DataMashPutRequest, DataMashPutResponse,
-  DataMashGetResponse, DataMashGetRequest,
-  DataCastGetResponse, DataCastGetRequest,
+  DataMashGetResponse, DataGetRequest, DataRetrieveResponse,
+  DataCastGetResponse,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
-  DataCastRetrieveResponse, DataCastRetrieveRequest,
-  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId,
+  DataCastRetrieveRequest,
+  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId, Described,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -223,7 +223,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   fileServer?: FileServer
 
-  getCast: ServerHandler<DataCastGetResponse, DataCastGetRequest> = async (req, res) => {
+  getCast: ServerHandler<DataCastGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataCastGetResponse = { cast: {}, mashes: [], definitions: [] }
     try {
@@ -253,7 +253,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.get(sql, userId).then(DataServerJson)
   }
 
-  getMash: ServerHandler<DataMashGetResponse, DataMashGetRequest> = async (req, res) => {
+  getMash: ServerHandler<DataMashGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataMashGetResponse = { mash: {}, definitions: [] }
     try {
@@ -329,13 +329,13 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   renderingServer?: RenderingServer
 
-  retrieveCast: ServerHandler<DataCastRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
+  retrieveCast: ServerHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
-    const response: DataCastRetrieveResponse = { casts: [] }
+    const response: DataRetrieveResponse = { described: [] }
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.casts = await this.selectCastsPromise(user, columns)
+      response.described = await this.selectCastsPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -353,13 +353,13 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  retrieveMash: ServerHandler<DataMashRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
+  retrieveMash: ServerHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
-    const response: DataMashRetrieveResponse = { mashObjects: [] }
+    const response: DataRetrieveResponse = { described: [] }
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.mashObjects = await this.selectMashesPromise(user, columns)
+      response.described = await this.selectMashesPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -375,7 +375,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     return promise
   }
 
-  private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<Described[]> {
     const table = '`cast`'
     const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
     return this.db.all(sql, userId).then(DataServerJsons)
@@ -404,7 +404,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.all(sql, id).then(DataServerJsons)
   }
 
-  private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<Described[]> {
     const table = '`mash`'
     const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
     return this.db.all(sql, userId).then(DataServerJsons)

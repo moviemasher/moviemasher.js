@@ -4,7 +4,7 @@ import { DataType, Definitions } from '@moviemasher/moviemasher.js'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultFontInput(): ReactResult {
+export function DefaultFontInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -35,5 +35,3 @@ function DefaultFontInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Font] = <DefaultFontInput/>
-
-export { DefaultFontInput }

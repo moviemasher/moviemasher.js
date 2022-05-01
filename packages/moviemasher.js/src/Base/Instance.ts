@@ -1,22 +1,20 @@
 import { Any, Constrained, UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { Is, isObject, isUndefined } from "../Utility/Is"
+import { Is } from "../Utility/Is"
 import { Definition } from "./Definition"
 import { Time } from "../Helpers/Time/Time"
 import { idGenerate } from "../Utility/Id"
-import { Property } from "../Setup/Property"
 import { Definitions } from "../Definitions/Definitions"
 import { PropertiedClass } from "./Propertied"
-import { dataTypeDefault } from "../Helpers/DataType"
 
-interface InstanceObject extends UnknownObject {
+export interface InstanceObject extends UnknownObject {
   definition?: Definition
   definitionId?: string
   label?: string
 }
 
-class InstanceBase extends PropertiedClass {
+export class InstanceBase extends PropertiedClass {
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -69,8 +67,6 @@ class InstanceBase extends PropertiedClass {
   get type() : DefinitionType { return this.definition.type }
 }
 
-interface Instance extends InstanceBase {}
+export interface Instance extends InstanceBase {}
 
-type InstanceClass = Constrained<InstanceBase>
-
-export { Instance, InstanceClass, InstanceBase, InstanceObject }
+export type InstanceClass = Constrained<InstanceBase>

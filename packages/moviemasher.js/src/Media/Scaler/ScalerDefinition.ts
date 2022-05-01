@@ -5,7 +5,7 @@ import { DefinitionType } from "../../Setup/Enums"
 import { ScalerClass } from "./ScalerInstance"
 
 const ScalerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
-class ScalerDefinitionClass extends ScalerDefinitionWithModular implements ScalerDefinition {
+export class ScalerDefinitionClass extends ScalerDefinitionWithModular implements ScalerDefinition {
   get instance() : Scaler {
     return this.instanceFromObject(this.instanceObject)
   }
@@ -19,5 +19,3 @@ class ScalerDefinitionClass extends ScalerDefinitionWithModular implements Scale
 
   type = DefinitionType.Scaler
 }
-
-export { ScalerDefinitionClass }

@@ -6,7 +6,7 @@ import { PropsWithChildren, ReactResult } from '../../declarations'
 /**
  * @parents InspectorContent
  */
-function InspectorNoSelection(props: PropsWithChildren): ReactResult {
+export function InspectorNoSelection(props: PropsWithChildren): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
   const { track } = inspectorContext
 
@@ -15,5 +15,3 @@ function InspectorNoSelection(props: PropsWithChildren): ReactResult {
   const { children } = props
   return <>{children}</>
 }
-
-export { InspectorNoSelection }

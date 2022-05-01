@@ -4,17 +4,16 @@ import { propsDefinitionTypes } from '../../Utilities/Props'
 import { InspectorContext } from '../../Contexts/InspectorContext'
 import { ReactResult } from '../../declarations'
 
-interface InspectorTypeProps {
+export interface InspectorTypeProps {
   type?: string
   types?: string | string[]
   children: React.ReactNode
 }
 
-
 /**
  * @parents InspectorContent
  */
-function InspectorType(props: InspectorTypeProps): ReactResult {
+export function InspectorType(props: InspectorTypeProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
   const { definitionType } = inspectorContext
   if (!definitionType) return null
@@ -27,5 +26,3 @@ function InspectorType(props: InspectorTypeProps): ReactResult {
 
   return <>{children}</>
 }
-
-export { InspectorType, InspectorTypeProps }

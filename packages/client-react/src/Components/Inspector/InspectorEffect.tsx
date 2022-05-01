@@ -7,14 +7,14 @@ import { useMashEditor } from '../../Hooks/useMashEditor'
 import { DragSuffix } from '../../Setup/Constants'
 import { View } from '../../Utilities'
 
-interface InspectorEffectProps extends WithClassName {
+export interface InspectorEffectProps extends WithClassName {
   effect: Effect
 }
 
 /**
  * @parents InspectorEffects
  */
-function InspectorEffect(props: InspectorEffectProps): ReactResult {
+export function InspectorEffect(props: InspectorEffectProps): ReactResult {
   const masher = useMashEditor()
   const selectedEffect = useSelectedEffect()
   const selectedClip = useSelected()
@@ -58,5 +58,3 @@ function InspectorEffect(props: InspectorEffectProps): ReactResult {
   }
   return <View {...viewProps} />
 }
-
-export { InspectorEffect, InspectorEffectProps }

@@ -7,7 +7,7 @@ import { VisibleContext } from "../../Context/VisibleContext"
 import { Filter, FilterDefinition, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
 
-class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
+export class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
   protected drawFilterDefinition(evaluator : Evaluator) : VisibleContext { return evaluator.visibleContext! }
 
   _ffmpegFilter?: string
@@ -41,5 +41,3 @@ class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
 
   type = DefinitionType.Filter
 }
-
-export { FilterDefinitionClass }

@@ -13,7 +13,7 @@ import { idGenerate } from "../../Utility/Id"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashClass"
 
-import { MashFactory } from "./MashFactory"
+import { mashInstance } from "./MashFactory"
 import { TrackClass } from "../../Media/Track/TrackClass"
 import { TrackObject } from "../../Media/Track/Track"
 import { GraphFilter, UnknownObject, ValueObject } from '../../declarations'
@@ -36,7 +36,7 @@ import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '../../Helpe
 describe("MashFactory", () => {
   describe("instance", () => {
     test("returns MashClass instance", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       expect(mash).toBeInstanceOf(MashClass)
     })
     test("returns proper mash with minimal object", () => {
@@ -57,7 +57,7 @@ describe("MashFactory", () => {
             ]
           }]
       }
-      const mash = MashFactory.instance(mashObject, definitionObjects, new JestPreloader())
+      const mash = mashInstance(mashObject, definitionObjects, new JestPreloader())
 
       expect(mash.tracks.length).toBe(2)
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
@@ -72,7 +72,7 @@ describe("MashFactory", () => {
     test("timeRanges", () => {
       const clip1 = { definitionId: 'com.moviemasher.theme.color', frames: 30}
       const clip2 = { definitionId: 'com.moviemasher.theme.color', frames: 40 }
-      const mash = MashFactory.instance({ tracks: [{ clips: [clip1, clip2] }] })
+      const mash = mashInstance({ tracks: [{ clips: [clip1, clip2] }] })
       expect(mash).toBeInstanceOf(MashClass)
       if (!(mash instanceof MashClass)) throw Errors.invalid
       const { time, endTime } = mash
@@ -102,7 +102,7 @@ describe("Mash", () => {
 
   describe("addTrack", () => {
     test.each(TrackTypes)("returns new %s track", (trackType) => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       const addedTrack = mash.addTrack(trackType)
       expect(addedTrack.dense).toBe(false)
       expect(addedTrack).toBeInstanceOf(TrackClass)
@@ -125,7 +125,7 @@ describe("Mash", () => {
     }
 
     test("correctly moves to new track and removes from old", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       const firstTrack = mash.addTrack(TrackType.Video)
       expect(firstTrack.layer).toEqual(1)
       const secondTrack = mash.addTrack(TrackType.Video)
@@ -144,7 +144,7 @@ describe("Mash", () => {
     })
 
     test("correctly places clip in track clips", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       const clip = addNewClip(mash, colorDefinition())
 
       expect(mash.trackCount(TrackType.Video)).toEqual(1)
@@ -156,7 +156,7 @@ describe("Mash", () => {
     })
 
     test("correctly sorts clips", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       expect(mash.quantize).toEqual(10)
       const clip1 = colorDefinition().instance
       const clip2 = colorDefinition().instance
@@ -176,7 +176,7 @@ describe("Mash", () => {
     })
 
     test("updates definition", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       const clip = colorDefinition().instance
       mash.addClipToTrack(clip, 0)
       // console.log("mash.definition", mash.definition)
@@ -191,7 +191,7 @@ describe("Mash", () => {
         { label: 'B', definitionId: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
         { label: 'C', definitionId: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "C" },
       ]
-      const mash = MashFactory.instance({ tracks: [{ clips }, { clips }, { clips }] })
+      const mash = mashInstance({ tracks: [{ clips }, { clips }, { clips }] })
       expect(mash.clips.length).toEqual(clips.length * 3)
     })
   })
@@ -206,7 +206,7 @@ describe("Mash", () => {
     const clip2: ClipObject = { definitionId: cableDefinitionObject.id, frames: 40 }
     const mashObject: MashObject = { tracks: [{ clips: [clip1, clip2] }] }
     const definitionObjects: DefinitionObjects = [globeDefinitionObject, cableDefinitionObject]
-    const mash = MashFactory.instance(mashObject, definitionObjects, new JestPreloader())
+    const mash = mashInstance(mashObject, definitionObjects, new JestPreloader())
     return mash
   }
 
@@ -258,7 +258,7 @@ describe("Mash", () => {
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
-      const mash = MashFactory.instance(mashObject, [definitionObject], new JestPreloader())
+      const mash = mashInstance(mashObject, [definitionObject], new JestPreloader())
       const filterGraphs = mash.filterGraphs(filterGraphArgs)
         const { filterGraphsVisible } = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
@@ -321,7 +321,7 @@ describe("Mash", () => {
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
-      const mash = MashFactory.instance(mashObject, [definitionObject], new JestPreloader())
+      const mash = mashInstance(mashObject, [definitionObject], new JestPreloader())
       const filterGraphs = mash.filterGraphs(filterGraphArgs)
       const {filterGraphsVisible} = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
@@ -349,7 +349,7 @@ describe("Mash", () => {
         audio: 'video/audio.mp3',
         duration: 3, fps: 30,
       }
-      const mash = MashFactory.instance({
+      const mash = mashInstance({
         tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30, ...clip }] }]
       }, [videoDefinition], new JestPreloader())
       const graphArgs = { ...filterGraphArgs, ...args }
@@ -420,7 +420,7 @@ describe("Mash", () => {
         source: 'video/source.mp4',
         duration: 3, fps: 10,
       }
-      const mash = MashFactory.instance({
+      const mash = mashInstance({
         tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30 }] }]
       }, [videoDefinition], new JestPreloader())
       const graphArgs = {...filterGraphArgs, graphType: GraphType.Mash}//, avType: AVType.Audio
@@ -465,7 +465,7 @@ describe("Mash", () => {
 
   describe("frames", () => {
     test("returns 0 from empty mash", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       expect(mash.frames).toEqual(0)
     })
   })
@@ -473,7 +473,7 @@ describe("Mash", () => {
   describe("id", () => {
     test("returns what is provided to constructor", () => {
       const id = idGenerate()
-      const mash = MashFactory.instance({ id })
+      const mash = mashInstance({ id })
       expect(mash.id).toEqual(id)
     })
 
@@ -482,7 +482,7 @@ describe("Mash", () => {
   describe("removeTrack", () => {
     test.each(TrackTypes)("correctly removes just %s track", (type) => {
       if (type === TrackType.Transition) return
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
 
       mash.removeTrack(type)
       expect(mash.trackCount(type)).toEqual(0)
@@ -493,7 +493,7 @@ describe("Mash", () => {
   describe("toJSON", () => {
     test("returns expected object", () => {
       const id = idGenerate()
-      const mash = MashFactory.instance({ id })
+      const mash = mashInstance({ id })
       const clip = colorDefinition().instance
       mash.addTrack(TrackType.Video)
       mash.addClipToTrack(clip, 1)
@@ -530,7 +530,7 @@ describe("Mash", () => {
 
   describe("trackOfTypeAtIndex", () => {
     test("returns expected track", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       TrackTypes.forEach((type) => {
         const track = mash.trackOfTypeAtIndex(type, 0)
         if (type === TrackType.Transition) expect(track).toBeUndefined()
@@ -541,7 +541,7 @@ describe("Mash", () => {
 
   describe("tracks", () => {
     test("returns two tracks", () => {
-      const mash = MashFactory.instance()
+      const mash = mashInstance()
       const { tracks } = mash
       expect(tracks.length).toBe(2)
       tracks.forEach(track => expect(track).toBeInstanceOf(TrackClass))

@@ -2,17 +2,17 @@ import { GenericFactory } from "../../declarations"
 import { Modular, ModularObject } from "../../Mixin/Modular/Modular"
 import { ModularDefinition, ModularDefinitionObject } from "../../Mixin/Modular/Modular"
 
-type EffectObject = ModularObject
+export type EffectObject = ModularObject
 
-interface Effect extends Modular {
+export interface Effect extends Modular {
   definition : EffectDefinition
 }
 
 export type Effects = Effect[]
 
-type EffectDefinitionObject = ModularDefinitionObject
+export type EffectDefinitionObject = ModularDefinitionObject
 
-interface EffectDefinition extends ModularDefinition {
+export interface EffectDefinition extends ModularDefinition {
   instance : Effect
   instanceFromObject(object : EffectObject) : Effect
 }
@@ -20,8 +20,6 @@ interface EffectDefinition extends ModularDefinition {
 /**
  * @category Factory
  */
-interface EffectFactory extends GenericFactory<
+export interface EffectFactory extends GenericFactory<
   Effect, EffectObject, EffectDefinition, EffectDefinitionObject
 > {}
-
-export { Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject }

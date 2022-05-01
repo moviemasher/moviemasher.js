@@ -3,7 +3,7 @@ import { TrackType } from "../../Setup/Enums"
 import { ClipDefinitionClass } from "../Clip/Clip"
 import { VisibleDefinition, VisibleDefinitionClass, VisibleDefinitionObject } from "./Visible"
 
-function VisibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : VisibleDefinitionClass & T {
+export function VisibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : VisibleDefinitionClass & T {
   return class extends Base implements VisibleDefinition {
     constructor(...args: Any[]) {
       super(...args)
@@ -32,5 +32,3 @@ function VisibleDefinitionMixin<T extends ClipDefinitionClass>(Base: T) : Visibl
     width = 0
   }
 }
-
-export { VisibleDefinitionMixin }

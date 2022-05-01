@@ -7,12 +7,12 @@ import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 
 const ClipPropertyObjects = [
-  { name: "frame", type: DataType.Frame },
-  { name: "frames", type: DataType.Frame, value: -1 },
-  { name: "label", value: "" },
+  { type: DataType.Frame },
+  { name: "frames", type: DataType.Frame, defaultValue: -1 },
+  { name: "label", defaultValue: "" },
 ]
 
-function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
+export function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
   return class extends Base implements ClipDefinition {
     constructor(...args : Any[]) {
       super(...args)
@@ -48,5 +48,3 @@ function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitio
     visible = false
   }
 }
-
-export { ClipDefinitionMixin }

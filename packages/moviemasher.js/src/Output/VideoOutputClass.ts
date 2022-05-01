@@ -2,7 +2,7 @@ import { AVType, OutputType } from "../Setup/Enums"
 import { AudioOutputClass } from "./AudioOutputClass"
 import { VideoOutput, VideoOutputArgs } from "./Output"
 
-class VideoOutputClass extends AudioOutputClass implements VideoOutput {
+export class VideoOutputClass extends AudioOutputClass implements VideoOutput {
   declare args: VideoOutputArgs
 
   avType = AVType.Video
@@ -11,5 +11,3 @@ class VideoOutputClass extends AudioOutputClass implements VideoOutput {
 
   outputType = OutputType.Video
 }
-
-export { VideoOutputClass }

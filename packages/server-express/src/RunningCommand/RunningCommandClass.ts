@@ -9,7 +9,7 @@ import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
 
-class RunningCommandClass extends EventEmitter implements RunningCommand {
+export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
@@ -49,7 +49,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
   output: CommandOutput = {}
 
   run(destination: CommandDestination): void {
-    // console.log(this.constructor.name, "run")
+    console.log(this.constructor.name, "run", destination)
 
     this.command.on('error', (...args: any[]) => {
       console.error(this.constructor.name, "run received error", this.runError(...args))
@@ -67,6 +67,7 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
 
     }
     try {
+      this.command.output(destination)
       this.command.run()
     } catch (error) {
       console.error(this.constructor.name, "run received error", error)
@@ -105,5 +106,3 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     return promise
   }
 }
-
-export { RunningCommandClass }

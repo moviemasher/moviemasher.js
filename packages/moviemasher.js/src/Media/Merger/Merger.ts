@@ -6,15 +6,15 @@ import {
   ModularObject
 } from "../../Mixin/Modular/Modular"
 
-type MergerObject = ModularObject
+export type MergerObject = ModularObject
 
-interface Merger extends Modular {
+export interface Merger extends Modular {
   definition : MergerDefinition
 }
 
-type MergerDefinitionObject = ModularDefinitionObject
+export type MergerDefinitionObject = ModularDefinitionObject
 
-interface MergerDefinition extends ModularDefinition {
+export interface MergerDefinition extends ModularDefinition {
   instance : Merger
   instanceFromObject(object : MergerObject) : Merger
 }
@@ -22,7 +22,5 @@ interface MergerDefinition extends ModularDefinition {
 /**
  * @category Factory
  */
-interface MergerFactory extends GenericFactory<Merger, MergerObject, MergerDefinition, MergerDefinitionObject> {
+export interface MergerFactory extends GenericFactory<Merger, MergerObject, MergerDefinition, MergerDefinitionObject> {
 }
-
-export { Merger, MergerDefinition, MergerDefinitionObject, MergerFactory, MergerObject }

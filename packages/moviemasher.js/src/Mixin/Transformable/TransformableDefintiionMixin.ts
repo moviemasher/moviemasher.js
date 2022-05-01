@@ -4,7 +4,7 @@ import { propertyInstance } from "../../Setup/Property"
 import { VisibleDefinitionClass } from "../Visible/Visible"
 import { TransformableDefinition, TransformableDefinitionClass } from "./Transformable"
 
-function TransformableDefinitionMixin<T extends VisibleDefinitionClass>(Base: T): TransformableDefinitionClass & T {
+export function TransformableDefinitionMixin<T extends VisibleDefinitionClass>(Base: T): TransformableDefinitionClass & T {
   return class extends Base implements TransformableDefinition {
     constructor(...args: Any[]) {
       super(...args)
@@ -13,4 +13,3 @@ function TransformableDefinitionMixin<T extends VisibleDefinitionClass>(Base: T)
     }
   }
 }
-export { TransformableDefinitionMixin }

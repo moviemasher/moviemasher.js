@@ -13,7 +13,7 @@ const StreamableVideoStream = StreamableMixin(AudibleVideoStream)
 const VisibleVideoStream = VisibleMixin(StreamableVideoStream)
 const TransformableVideoStream = TransformableMixin(VisibleVideoStream)
 
-class VideoStreamClass extends TransformableVideoStream implements VideoStream {
+export class VideoStreamClass extends TransformableVideoStream implements VideoStream {
   get copy() : VideoStream { return <VideoStream> super.copy }
 
   declare definition : VideoStreamDefinition
@@ -24,5 +24,3 @@ class VideoStreamClass extends TransformableVideoStream implements VideoStream {
     return object
   }
 }
-
-export { VideoStreamClass }

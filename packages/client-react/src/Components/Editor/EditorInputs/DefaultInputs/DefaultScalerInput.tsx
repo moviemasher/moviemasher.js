@@ -5,7 +5,7 @@ import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultScalerInput(): ReactResult {
+export function DefaultScalerInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -38,8 +38,4 @@ function DefaultScalerInput(): ReactResult {
 
 }
 
-
 DataTypeInputs[DataType.Scaler] = <DefaultScalerInput />
-
-
-export { DefaultScalerInput }

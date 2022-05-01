@@ -4,13 +4,13 @@ import { BrowserContext } from "../../Contexts/BrowserContext"
 import { BrowserDefinition } from "./BrowserDefinition"
 import { WithClassName, ReactResult, PropsAndChild } from "../../declarations"
 
-interface BrowserContentProps extends WithClassName, PropsAndChild {}
+export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 
 /**
  * @parents Browser
  * @children BrowserSource
  */
-function BrowserContent(props: BrowserContentProps): ReactResult {
+export function BrowserContent(props: BrowserContentProps): ReactResult {
   const { className, children, ...rest } = props
   const browserContext = React.useContext(BrowserContext)
 
@@ -31,5 +31,3 @@ function BrowserContent(props: BrowserContentProps): ReactResult {
   const viewProps = { className, children: viewChildren }
   return <View {...viewProps} />
 }
-
-export { BrowserContent, BrowserContentProps }

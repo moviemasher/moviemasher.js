@@ -8,7 +8,7 @@ import { DataType } from "../../../Setup/Enums"
 /**
  * @category Filter
  */
-class FadeFilter extends FilterDefinitionClass {
+export class FadeFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext: context } = evaluator
     if (!context) throw Errors.invalid.context + this.id
@@ -34,5 +34,3 @@ class FadeFilter extends FilterDefinitionClass {
     new Parameter({ name: "duration", value: "out_duration", dataType: DataType.String }),
   ]
 }
-
-export { FadeFilter }

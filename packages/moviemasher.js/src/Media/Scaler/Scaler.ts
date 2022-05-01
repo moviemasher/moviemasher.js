@@ -6,15 +6,15 @@ import {
   ModularObject
 } from "../../Mixin/Modular/Modular"
 
-type ScalerObject = ModularObject
+export type ScalerObject = ModularObject
 
-interface Scaler extends Modular {
+export interface Scaler extends Modular {
   definition : ScalerDefinition
 }
 
-interface ScalerDefinitionObject extends ModularDefinitionObject {}
+export interface ScalerDefinitionObject extends ModularDefinitionObject {}
 
-interface ScalerDefinition extends ModularDefinition {
+export interface ScalerDefinition extends ModularDefinition {
   instance : Scaler
   instanceFromObject(object : ScalerObject) : Scaler
 }
@@ -22,8 +22,6 @@ interface ScalerDefinition extends ModularDefinition {
 /**
  * @category Factory
  */
-interface ScalerFactory extends GenericFactory<
+export interface ScalerFactory extends GenericFactory<
   Scaler, ScalerObject, ScalerDefinition, ScalerDefinitionObject
 > {}
-
-export { Scaler, ScalerDefinition, ScalerDefinitionObject, ScalerFactory, ScalerObject }

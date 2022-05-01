@@ -16,7 +16,7 @@ const $canvas = 'canvas'
 const $2d = '2d'
 const Point0 = { x: 0, y: 0 }
 
-class VisibleContext {
+export class VisibleContext {
   constructor(object : { context2d? : Context2D } = {}) {
     const { context2d } = object
     // console.trace("VisibleContext", "constructor", context2d)
@@ -238,9 +238,7 @@ class VisibleContext {
   private _context2d? : Context2D
 }
 
-interface EventsDetail {
+export interface EventsDetail {
   action? : Action
 }
-type EventsType = CustomEvent<EventsDetail>
-
-export { VisibleContext, EventsType, EventsDetail}
+export type EventsType = CustomEvent<EventsDetail>

@@ -2,11 +2,11 @@ import { AudibleSource, Constrained, Value, StartOptions } from "../../declarati
 import { Preloader } from "../../Preloader/Preloader"
 import { ClipDefinition, ClipDefinitionObject, Clip, ClipObject } from "../Clip/Clip"
 
-interface AudibleObject extends ClipObject {
+export interface AudibleObject extends ClipObject {
   gain?: Value
 }
 
-interface Audible extends Clip {
+export interface Audible extends Clip {
   definition : AudibleDefinition
   gain: number
   gainPairs: number[][]
@@ -15,7 +15,7 @@ interface Audible extends Clip {
   startOptions(seconds: number, quantize: number): StartOptions
 }
 
-interface AudibleDefinitionObject extends ClipDefinitionObject {
+export interface AudibleDefinitionObject extends ClipDefinitionObject {
   audio? : string
   source? : string
   stream?: boolean
@@ -23,7 +23,7 @@ interface AudibleDefinitionObject extends ClipDefinitionObject {
   waveform? : string
 }
 
-interface AudibleDefinition extends ClipDefinition {
+export interface AudibleDefinition extends ClipDefinition {
   audible: boolean
   audibleSource(preloader: Preloader): AudibleSource | undefined
   loops: boolean
@@ -32,8 +32,8 @@ interface AudibleDefinition extends ClipDefinition {
   waveform?: string
 }
 
-type AudibleClass = Constrained<Audible>
-type AudibleDefinitionClass = Constrained<AudibleDefinition>
+export type AudibleClass = Constrained<Audible>
+export type AudibleDefinitionClass = Constrained<AudibleDefinition>
 
 export interface AudibleContent {
   track: number
@@ -41,12 +41,3 @@ export interface AudibleContent {
 }
 
 export type AudibleContents = AudibleContent[]
-
-export {
-  Audible,
-  AudibleClass,
-  AudibleDefinition,
-  AudibleDefinitionClass,
-  AudibleDefinitionObject,
-  AudibleObject,
-}

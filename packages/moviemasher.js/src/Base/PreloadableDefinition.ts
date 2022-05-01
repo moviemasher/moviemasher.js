@@ -3,8 +3,7 @@ import { GraphType, LoadType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { DefinitionBase, DefinitionObject } from "./Definition"
 
-
-class PreloadableDefinition extends DefinitionBase {
+export class PreloadableDefinition extends DefinitionBase {
   constructor(...args: Any[]) {
     super(...args)
     const [object] = args
@@ -39,5 +38,3 @@ class PreloadableDefinition extends DefinitionBase {
 
   url: string
 }
-
-export { PreloadableDefinition }

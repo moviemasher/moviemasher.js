@@ -11,7 +11,7 @@ const outputFilePath = (path: string): string => {
   return path
 }
 
-const expectOutputFile = (filePath: string): Promise<void> => {
+export const expectOutputFile = (filePath: string): Promise<void> => {
   const checkPath = outputFilePath(filePath)
   if (!fs.existsSync(checkPath)) throw `expectOutputFile ${checkPath} does not exist`
 
@@ -33,5 +33,3 @@ const expectOutputFile = (filePath: string): Promise<void> => {
     instance.saveToFile(hashPath)
   })
 }
-
-export { expectOutputFile }

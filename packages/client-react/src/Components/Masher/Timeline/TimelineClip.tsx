@@ -8,7 +8,7 @@ import { PropsAndChild, ReactResult } from '../../../declarations'
 import { useMashEditor } from '../../../Hooks/useMashEditor'
 
 
-interface TimelineClipProps extends UnknownObject, PropsAndChild {
+export interface TimelineClipProps extends UnknownObject, PropsAndChild {
   clip: Clip
   selectClass?: string
   prevClipEnd: number
@@ -19,7 +19,7 @@ interface TimelineClipProps extends UnknownObject, PropsAndChild {
 /**
  * @parents TimelineClips
  */
-function TimelineClip(props: TimelineClipProps): ReactResult {
+export function TimelineClip(props: TimelineClipProps): ReactResult {
   const masher = useMashEditor()
   const ref = React.useRef<HTMLDivElement>(null)
   const [clickOffset, setClickOffset] = React.useState(0)
@@ -101,5 +101,3 @@ function TimelineClip(props: TimelineClipProps): ReactResult {
 
   return React.cloneElement(kid, clipProps)
 }
-
-export { TimelineClip, TimelineClipProps }

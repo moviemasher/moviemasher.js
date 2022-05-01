@@ -10,7 +10,7 @@ import { useMashEditor } from "../../../Hooks/useMashEditor"
 /**
  * @parents Timeline
  */
-function TimelineScrubber(props: PropsWithChildren): ReactResult {
+export function TimelineScrubber(props: PropsWithChildren): ReactResult {
   const masher = useMashEditor()
   useListeners({
     [EventType.Duration]: () => { setFrames(masher.mash.frames)}
@@ -68,5 +68,3 @@ function TimelineScrubber(props: PropsWithChildren): ReactResult {
   }
   return <View {...viewProps} />
 }
-
-export { TimelineScrubber }

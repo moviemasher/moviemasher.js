@@ -6,11 +6,9 @@ import { PropsAndChild, ReactResult } from '../../declarations'
  *
  * @group Player
  */
-function PlayerNotPlaying(props: PropsAndChild): ReactResult {
+export function PlayerNotPlaying(props: PropsAndChild): ReactResult {
   const playerContext = React.useContext(PlayerContext)
   if (!playerContext.paused) return null
 
   return props.children
 }
-
-export { PlayerNotPlaying }

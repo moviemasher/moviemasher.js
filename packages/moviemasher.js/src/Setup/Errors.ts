@@ -5,7 +5,7 @@ const $invalidArgument = `${$invalid} argument `
 const $invalidProperty = `${$invalid} property `
 const $invalidDefinitionProperty = `${$invalid} definition property`
 const $internal = "Internal Error "
-const Errors = {
+export const Errors = {
   eval: {
     sourceRect: `${$invalid} evaluation of source rect `,
     outputSize: `${$invalid} evaluation of output size `,
@@ -79,5 +79,3 @@ const Errors = {
   property: `${$invalidArgument}property `,
   wrongClass: `${$expected} instance of `,
 }
-
-export { Errors }

@@ -6,7 +6,7 @@ import { Factories } from "../../Definitions/Factories"
 import { VideoSequenceDefinitionClass } from "./VideoSequenceDefinitionClass"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
 
-const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
+export const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -15,23 +15,23 @@ const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : Video
   return new VideoSequenceDefinitionClass(object)
 }
 
-const videoSequenceDefinitionFromId = (id : string) : VideoSequenceDefinition => {
+export const videoSequenceDefinitionFromId = (id : string) : VideoSequenceDefinition => {
   return videoSequenceDefinition({ id })
 }
 
-const videoSequenceInstance = (object : VideoSequenceObject) : VideoSequence => {
+export const videoSequenceInstance = (object : VideoSequenceObject) : VideoSequence => {
   const definition = videoSequenceDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
-const videoSequenceFromId = (id : string) : VideoSequence => {
+export const videoSequenceFromId = (id : string) : VideoSequence => {
   return videoSequenceInstance({ id })
 }
 
-const videoSequenceInitialize = () : void => {}
+export const videoSequenceInitialize = () : void => {}
 
-const videoSequenceInstall = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
+export const videoSequenceInstall = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -43,7 +43,7 @@ const videoSequenceInstall = (object : VideoSequenceDefinitionObject) : VideoSeq
 
 }
 
-const VideoSequenceFactoryImplementation = {
+export const VideoSequenceFactoryImplementation = {
   install: videoSequenceInstall,
   definition: videoSequenceDefinition,
   definitionFromId: videoSequenceDefinitionFromId,
@@ -53,13 +53,3 @@ const VideoSequenceFactoryImplementation = {
 }
 
 Factories[DefinitionType.VideoSequence] = VideoSequenceFactoryImplementation
-
-export {
-  videoSequenceInstall,
-  videoSequenceDefinition,
-  videoSequenceDefinitionFromId,
-  VideoSequenceFactoryImplementation,
-  videoSequenceFromId,
-  videoSequenceInitialize,
-  videoSequenceInstance,
-}

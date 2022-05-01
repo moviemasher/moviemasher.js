@@ -3,14 +3,14 @@ import React from 'react'
 import { TrackContext } from '../../../Contexts/TrackContext'
 import { PropsWithChildren, ReactResult } from '../../../declarations'
 
-interface TimelineTrackIsTypeProps extends PropsWithChildren {
+export interface TimelineTrackIsTypeProps extends PropsWithChildren {
   type: string
 }
 
 /**
  * @parents TimelineContent
  */
-function TimelineTrackIsType(props: TimelineTrackIsTypeProps): ReactResult {
+export function TimelineTrackIsType(props: TimelineTrackIsTypeProps): ReactResult {
   const trackContext = React.useContext(TrackContext)
 
   const { type, children } = props
@@ -21,5 +21,3 @@ function TimelineTrackIsType(props: TimelineTrackIsTypeProps): ReactResult {
 
   return <>{children}</>
 }
-
-export { TimelineTrackIsType, TimelineTrackIsTypeProps }

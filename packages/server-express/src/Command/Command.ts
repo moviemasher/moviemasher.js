@@ -1,4 +1,5 @@
 import EventEmitter from "events"
+import { CommandDestination } from "../RunningCommand/RunningCommand"
 
 export interface CommandProbeStream {
   [index: string]: any
@@ -7,7 +8,6 @@ export interface CommandProbeStream {
   r_frame_rate?: string
   avg_frame_rate?: string
   duration?: string
-
 }
 
 export interface CommandProbeFormat {
@@ -23,6 +23,7 @@ export interface CommandProbeFunction {
 
 export interface Command extends EventEmitter {
   run(): void
+  output(destination: CommandDestination): Command
   save(output: string): Command
   kill(signal: string): void
   ffprobe(callback: CommandProbeFunction): void

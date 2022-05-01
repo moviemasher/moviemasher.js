@@ -7,24 +7,24 @@ import {
   Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject
 } from "../Visible/Visible"
 
-interface TransformableObject extends VisibleObject {
+export interface TransformableObject extends VisibleObject {
   effects? : EffectObject[]
   merger? : MergerObject
   scaler? : ScalerObject
 }
 
-interface TransformableDefinition extends VisibleDefinition { }
+export interface TransformableDefinition extends VisibleDefinition { }
 
-interface TransformableDefinitionObject extends VisibleDefinitionObject { }
+export interface TransformableDefinitionObject extends VisibleDefinitionObject { }
 
-interface Transformable extends Visible {
+export interface Transformable extends Visible {
   effects : Effect[]
   merger : Merger
   scaler : Scaler
 }
 
-type TransformableClass = Constrained<Transformable>
-type TransformableDefinitionClass = Constrained<TransformableDefinition>
+export type TransformableClass = Constrained<Transformable>
+export type TransformableDefinitionClass = Constrained<TransformableDefinition>
 
 
 export interface TransformableContent {
@@ -35,12 +35,3 @@ export interface TransformableContent {
 }
 
 export type TransformableContents = TransformableContent[]
-
-export {
-  Transformable,
-  TransformableClass,
-  TransformableDefinition,
-  TransformableDefinitionObject,
-  TransformableObject,
-  TransformableDefinitionClass,
-}

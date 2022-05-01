@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Endpoints,
-  mashEditorInstance, MashFactory, ServerType, UnknownObject,
+  mashEditorInstance, mashInstance, ServerType, UnknownObject,
   DataMashDefaultResponse,
   DataMashDefaultRequest,
   Size
@@ -12,11 +12,11 @@ import { MasherContext, MasherContextInterface } from '../../Contexts/MasherCont
 import { ApiContext } from '../../Contexts/ApiContext'
 import { View } from '../../Utilities/View'
 
-interface MasherOptions extends UnknownObject, WithClassName {
+export interface MasherOptions extends UnknownObject, WithClassName {
   previewSize?: Size
 }
 
-interface MasherProps extends MasherOptions, PropsWithChildren {
+export interface MasherProps extends MasherOptions, PropsWithChildren {
 }
 
 /**
@@ -24,7 +24,7 @@ interface MasherProps extends MasherOptions, PropsWithChildren {
  * @children Browser, Timeline, Inspector, Player
  * @returns provided children wrapped in a {@link View} and {@link MasherContext}
  */
-function Masher(props: MasherProps): ReactResult {
+export function Masher(props: MasherProps): ReactResult {
   const { mash, previewSize, ...rest } = props
   const viewRef = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
@@ -55,7 +55,7 @@ function Masher(props: MasherProps): ReactResult {
           // console.log("Masher servers.file.prefix", servers.file.prefix)
           mashEditor.preloader.endpoint.prefix = String(servers.file.prefix)
         }
-        mashEditor.mash = MashFactory.instance(mash, definitions)
+        mashEditor.mash = mashInstance(mash, definitions)
       })
     }
   }, [enabled])
@@ -70,5 +70,3 @@ function Masher(props: MasherProps): ReactResult {
     </MasherContext.Provider>
   )
 }
-
-export { Masher, MasherProps, MasherOptions }

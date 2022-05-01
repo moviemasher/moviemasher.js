@@ -9,15 +9,15 @@ import { VisibleDefinition } from "../../Mixin/Visible/Visible"
 import { Transformable, TransformableObject } from "../../Mixin/Transformable/Transformable"
 import { GenericFactory } from "../../declarations"
 
-type ThemeObject = ModularObject & TransformableObject
+export type ThemeObject = ModularObject & TransformableObject
 
-interface Theme extends Modular, Transformable {
+export interface Theme extends Modular, Transformable {
   definition : ThemeDefinition
 }
 
-type ThemeDefinitionObject = ModularDefinitionObject & ClipDefinitionObject
+export type ThemeDefinitionObject = ModularDefinitionObject & ClipDefinitionObject
 
-interface ThemeDefinition extends ModularDefinition, VisibleDefinition {
+export interface ThemeDefinition extends ModularDefinition, VisibleDefinition {
   instance : Theme
   instanceFromObject(object : ThemeObject) : Theme
 }
@@ -25,6 +25,4 @@ interface ThemeDefinition extends ModularDefinition, VisibleDefinition {
 /**
  * @category Factory
  */
-interface ThemeFactory extends GenericFactory<Theme, ThemeObject, ThemeDefinition, ThemeDefinitionObject> {}
-
-export { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeFactory, ThemeObject }
+export interface ThemeFactory extends GenericFactory<Theme, ThemeObject, ThemeDefinition, ThemeDefinitionObject> {}

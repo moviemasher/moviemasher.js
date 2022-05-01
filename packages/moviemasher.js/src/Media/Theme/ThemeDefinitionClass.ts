@@ -12,8 +12,7 @@ const WithModularDefinition = ModularDefinitionMixin(DefinitionBase)
 const WithClipDefinition = ClipDefinitionMixin(WithModularDefinition)
 const WithVisibleDefinition = VisibleDefinitionMixin(WithClipDefinition)
 const WithTransformableDefinition = TransformableDefinitionMixin(WithVisibleDefinition)
-
-class ThemeDefinitionClass extends WithTransformableDefinition implements ThemeDefinition {
+export class ThemeDefinitionClass extends WithTransformableDefinition implements ThemeDefinition {
   get instance() : Theme {
     return this.instanceFromObject(this.instanceObject)
   }
@@ -26,5 +25,3 @@ class ThemeDefinitionClass extends WithTransformableDefinition implements ThemeD
 
   type = DefinitionType.Theme
 }
-
-export { ThemeDefinitionClass }

@@ -10,12 +10,10 @@ const ThemeWithModular = ModularMixin(InstanceBase)
 const ThemeWithClip = ClipMixin(ThemeWithModular)
 const ThemeWithVisible = VisibleMixin(ThemeWithClip)
 const ThemeWithTransformable = TransformableMixin(ThemeWithVisible)
-class ThemeClass extends ThemeWithTransformable implements Theme {
+export class ThemeClass extends ThemeWithTransformable implements Theme {
   declare definition: ThemeDefinition
 
   override initializeFilterChain(filterChain: FilterChain): void {
     this.definition.populateFilterChain(filterChain, this)
   }
 }
-
-export { ThemeClass }

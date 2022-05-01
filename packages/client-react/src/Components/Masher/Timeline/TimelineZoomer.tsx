@@ -7,7 +7,7 @@ import { Slider } from '../../../Utilities/Slider'
 /**
  * @parents Timeline
  */
-function TimelineZoomer(props: PropsWithChildren): ReactResult {
+export function TimelineZoomer(props: PropsWithChildren): ReactResult {
   const context = React.useContext(TimelineContext)
 
   const handleChange : SliderChangeHandler = (_event, value) => {
@@ -26,5 +26,3 @@ function TimelineZoomer(props: PropsWithChildren): ReactResult {
   }
   return <Slider className='zoom slider' {...sliderProps} />
 }
-
-export { TimelineZoomer }

@@ -10,7 +10,7 @@ import { ContextFactory } from "../../../Context/ContextFactory"
 import { Preloader } from "../../../Preloader/Preloader"
 import { AudibleContextInstance } from "../../../Context/AudibleContext"
 
-interface CompositionObject {
+export interface CompositionObject {
   buffer? : number
   gain? : number
   quantize? : number
@@ -19,7 +19,7 @@ interface CompositionObject {
   preloader: Preloader
 }
 
-class Composition {
+export class Composition {
   constructor(object : CompositionObject) {
     const { emitter, backcolor, buffer, gain, quantize, preloader } = object
     if (backcolor) this.backcolor = backcolor
@@ -219,5 +219,3 @@ class Composition {
 
   visibleContext = ContextFactory.visible()
 }
-
-export { Composition, CompositionObject }

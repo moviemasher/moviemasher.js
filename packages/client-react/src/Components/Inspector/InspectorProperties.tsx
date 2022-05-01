@@ -6,12 +6,12 @@ import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { InspectorEffects } from "./InspectorEffects"
 
-interface InspectorPropertiesProps extends PropsAndChildren, WithClassName {}
+export interface InspectorPropertiesProps extends PropsAndChildren, WithClassName {}
 
 /**
  * @parents InspectorContent
  */
-function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
+export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedProperties } = inspectorContext
 
@@ -61,5 +61,3 @@ function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
 
   return <>{kids}</>
 }
-
-export { InspectorProperties, InspectorPropertiesProps }

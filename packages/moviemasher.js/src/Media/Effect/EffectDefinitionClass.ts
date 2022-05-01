@@ -7,7 +7,7 @@ import { EffectClass } from "./EffectClass"
 import { ModularDefinitionMixin } from "../../Mixin/Modular/ModularDefinitionMixin"
 
 const EffectDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
-class EffectDefinitionClass extends EffectDefinitionWithModular implements EffectDefinition {
+export class EffectDefinitionClass extends EffectDefinitionWithModular implements EffectDefinition {
   constructor(...args : Any[]) {
     super(...args)
     this.properties.push(propertyInstance({ name: "label", defaultValue: "" }))
@@ -21,5 +21,3 @@ class EffectDefinitionClass extends EffectDefinitionWithModular implements Effec
 
   type = DefinitionType.Effect
 }
-
-export { EffectDefinitionClass }

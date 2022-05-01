@@ -3,7 +3,17 @@
   grid-area: inspector;
 }
 
-.moviemasher .editor .panel.inspector summary,
+.moviemasher .editor .panel.inspector details {
+  margin-left: -5px;
+}
+
+.moviemasher .editor .panel.inspector summary {
+  margin-left: -5px;
+  margin-bottom: var(--spacing);
+  border-bottom: var(--border);
+  text-transform: capitalize;
+}
+
 .moviemasher .editor .panel.inspector label {
   text-transform: capitalize;
 }

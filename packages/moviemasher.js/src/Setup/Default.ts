@@ -1,7 +1,7 @@
 import { MashEditorOptions } from "../Editor/MashEditor/MashEditor"
 import { colorTransparent } from "../Utility/Color"
 
-const MashEditorDefaults: MashEditorOptions = {
+export const MashEditorDefaults: MashEditorOptions = {
   buffer: 10,
   fps: 30,
   loop: true,
@@ -10,7 +10,7 @@ const MashEditorDefaults: MashEditorOptions = {
   autoplay: false,
 }
 
-const MashDefaults = {
+export const MashDefaults = {
   label: "Unlabeled Mash",
   quantize: 10,
   backcolor: colorTransparent,
@@ -18,9 +18,18 @@ const MashDefaults = {
   buffer: 10,
 }
 
-const Default = {
+const CastDefaults = {
+  label: "Unlabeled Cast",
+  quantize: 10,
+  backcolor: colorTransparent,
+  gain: 0.75,
+  buffer: 10,
+}
+
+export const Default = {
   label: "Unlabeled",
   masher: MashEditorDefaults,
+  cast: CastDefaults,
   mash: MashDefaults,
   instance: {
     audio: { gain: 1.0, trim: 0, loop: 1 },
@@ -36,5 +45,3 @@ const Default = {
     videostream: { duration: 10 },
   },
 }
-
-export { Default, MashDefaults, MashEditorDefaults }

@@ -17,7 +17,7 @@ const WithAudible = AudibleDefinitionMixin(WithClip)
 const WithVisible = VisibleDefinitionMixin(WithAudible)
 const WithStreamable = StreamableDefinitionMixin(WithVisible)
 const WithTransformable = TransformableDefinitionMixin(WithStreamable)
-class VideoStreamDefinitionClass extends WithTransformable implements VideoStreamDefinition {
+export class VideoStreamDefinitionClass extends WithTransformable implements VideoStreamDefinition {
   frames(quantize: number): number {
     return timeFromSeconds(Default.definition.videostream.duration, quantize, 'floor').frame
   }
@@ -47,5 +47,3 @@ class VideoStreamDefinitionClass extends WithTransformable implements VideoStrea
 
   type = DefinitionType.VideoStream
 }
-
-export { VideoStreamDefinitionClass }

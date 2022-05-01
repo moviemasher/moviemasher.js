@@ -1,7 +1,7 @@
 import { Any, Constructor } from "../../../packages/moviemasher.js/src/declarations"
 import { expectArray } from "./expectArray"
 
-const expectArrayOf = (value: Any, constructor: Constructor, length?: number): Any[] => {
+export const expectArrayOf = (value: Any, constructor: Constructor, length?: number): Any[] => {
   const array = expectArray(value)
   if (array.length === 0) {
     console.error("expectArrayOf with zero length", array)
@@ -17,5 +17,3 @@ const expectArrayOf = (value: Any, constructor: Constructor, length?: number): A
 
   return array
 }
-
-export { expectArrayOf }

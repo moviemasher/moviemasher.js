@@ -2,10 +2,11 @@ import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Definition } from "../Base/Definition"
 
-const DefinitionsMap = new Map<string, Definition>()
-const DefinitionsByType = new Map <DefinitionType, Definition[]>()
+const DefinitionsByType = new Map<DefinitionType, Definition[]>()
 
-const definitionsByType = (type : DefinitionType) : Definition[] => {
+export const DefinitionsMap = new Map<string, Definition>()
+
+export const definitionsByType = (type : DefinitionType) : Definition[] => {
   const list = DefinitionsByType.get(type)
   if (list) return list
 
@@ -13,14 +14,15 @@ const definitionsByType = (type : DefinitionType) : Definition[] => {
   DefinitionsByType.set(type, definitionsList)
   return definitionsList
 }
-const definitionsClear = (): void => {
+
+export const definitionsClear = (): void => {
   DefinitionsMap.clear()
   DefinitionsByType.clear()
 }
 
-const definitionsFont = definitionsByType(DefinitionType.Font)
+export const definitionsFont = definitionsByType(DefinitionType.Font)
 
-const definitionsFromId = (id : string) : Definition => {
+export const definitionsFromId = (id : string) : Definition => {
   if (!definitionsInstalled(id)) {
     console.trace("definitionsFromId !definitionsInstalled", id)
     throw Errors.unknown.definition + id
@@ -32,19 +34,19 @@ const definitionsFromId = (id : string) : Definition => {
   return definition
 }
 
-const definitionsInstall = (definition : Definition) : void => {
+export const definitionsInstall = (definition : Definition) : void => {
   const { type, id } = definition
   DefinitionsMap.set(id, definition)
   definitionsByType(type).push(definition)
 }
 
-const definitionsInstalled = (id : string) : boolean => DefinitionsMap.has(id)
+export const definitionsInstalled = (id : string) : boolean => DefinitionsMap.has(id)
 
-const definitionsMerger = definitionsByType(DefinitionType.Merger)
+export const definitionsMerger = definitionsByType(DefinitionType.Merger)
 
-const definitionsScaler = definitionsByType(DefinitionType.Scaler)
+export const definitionsScaler = definitionsByType(DefinitionType.Scaler)
 
-const definitionsUninstall = (id : string) : void => {
+export const definitionsUninstall = (id : string) : void => {
   if (!definitionsInstalled(id)) return
 
   const definition = definitionsFromId(id)
@@ -57,7 +59,7 @@ const definitionsUninstall = (id : string) : void => {
   definitions.splice(index, 1)
 }
 
-const Definitions = {
+export const Definitions = {
   byType: definitionsByType,
   clear: definitionsClear,
   font: definitionsFont,
@@ -68,18 +70,4 @@ const Definitions = {
   merger: definitionsMerger,
   scaler: definitionsScaler,
   uninstall: definitionsUninstall,
-}
-
-export {
-  Definitions,
-  definitionsByType,
-  definitionsClear,
-  definitionsFont,
-  definitionsFromId,
-  definitionsInstall,
-  definitionsInstalled,
-  DefinitionsMap,
-  definitionsMerger,
-  definitionsScaler,
-  definitionsUninstall,
 }

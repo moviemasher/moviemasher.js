@@ -17,7 +17,7 @@ const { RTCAudioSink, RTCVideoSink } = wrtc.nonstandard
 const FilterGraphPadding = 6
 const StreamPadding = 4
 
-interface WebrtcStream {
+export interface WebrtcStream {
   command: RunningCommand
   destination: string
   size: string
@@ -26,13 +26,13 @@ interface WebrtcStream {
   end?: boolean
 }
 
-interface AudioData {
+export interface AudioData {
   samples: {
     buffer: ArrayBuffer
   }
 }
 
-interface FrameData extends EventListenerObject {
+export interface FrameData extends EventListenerObject {
   frame: {
     width: number
     height: number
@@ -44,7 +44,7 @@ const TIME_TO_CONNECTED = 10000
 const TIME_TO_HOST_CANDIDATES = 2000
 const TIME_TO_RECONNECTED = 10000
 
-class WebrtcConnection extends EventEmitter {
+export class WebrtcConnection extends EventEmitter {
   constructor(id: string, outputPrefix?: string, commandOutput?: CommandOutput) {
     super()
     this.id = id
@@ -248,7 +248,7 @@ class WebrtcConnection extends EventEmitter {
     const currentStream = this.stream
     if (currentStream && currentStream.size === size) return currentStream
 
-    //console.log("streamForDimensions!!", width, height)
+    console.log("streamForDimensions", width, height)
 
     const prefix = path.resolve(this.outputPrefix, this.id)
     fs.mkdirSync(prefix, { recursive: true })
@@ -285,6 +285,7 @@ class WebrtcConnection extends EventEmitter {
       // }
     }
 
+    console.log("streamForDimensions commandOutput", commandOutput)
     const command = RunningCommandFactory.instance(this.id, {
       inputs: [this.inputVideo(video, size), this.inputAudio(audio)],
       graphFilters: [],
@@ -385,5 +386,3 @@ class WebrtcConnection extends EventEmitter {
     return this.getConnections().map(connection => connection.toJSON())
   }
 }
-
-export { WebrtcConnection, WebrtcStream, AudioData, FrameData }

@@ -5,7 +5,7 @@ import { PropsWithChildren, ReactResult } from "../../declarations"
 import { ApiContext } from "../../Contexts/ApiContext"
 import { ProcessContext } from "../../Contexts/ProcessContext"
 
-interface ProcessProps extends PropsWithChildren {
+export interface ProcessProps extends PropsWithChildren {
   id: ServerType | string
 }
 
@@ -13,7 +13,7 @@ interface ProcessProps extends PropsWithChildren {
  * @parents ApiClient
  */
 
-function Process(props:ProcessProps): ReactResult {
+export function Process(props:ProcessProps): ReactResult {
   const apiContext = React.useContext(ApiContext)
   const [processing, setProcessing] = React.useState(false)
   const [progress, setProgress] = React.useState(0.0)
@@ -40,5 +40,3 @@ function Process(props:ProcessProps): ReactResult {
     </ProcessContext.Provider>
   )
 }
-
-export { Process, ProcessProps }

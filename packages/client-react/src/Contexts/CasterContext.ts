@@ -1,12 +1,10 @@
 import React from 'react'
 import { CastEditor } from '@moviemasher/moviemasher.js'
 
-interface CasterContextInterface {
+export interface CasterContextInterface {
   castEditor?: CastEditor
 }
 
-const CasterContextDefault: CasterContextInterface = {}
+export const CasterContextDefault: CasterContextInterface = {}
 
-const CasterContext = React.createContext(CasterContextDefault)
-
-export { CasterContext, CasterContextInterface, CasterContextDefault }
+export const CasterContext = React.createContext(CasterContextDefault)

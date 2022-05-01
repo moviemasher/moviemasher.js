@@ -1,8 +1,8 @@
 
 // eslint-disable-next-line prefer-const
-let idPrefix = ''
+export let idPrefix = ''
 
-const idGenerate = (): string => {
+export const idGenerate = (): string => {
   const components:string[] = []
   if (idPrefix) components.push(idPrefix)
 
@@ -11,15 +11,13 @@ const idGenerate = (): string => {
   return components.join('-')
 }
 
-const idPrefixSet = (prefix: string): void => { idPrefix = prefix }
+export const idPrefixSet = (prefix: string): void => { idPrefix = prefix }
 
 /**
  * @category Utility
  */
-const Id = {
+export const Id = {
   generate: idGenerate,
   prefix: idPrefix,
   prefixSet: idPrefixSet
 }
-
-export { Id, idGenerate, idPrefix, idPrefixSet }

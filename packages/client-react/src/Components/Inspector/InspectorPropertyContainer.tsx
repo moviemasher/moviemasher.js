@@ -3,7 +3,7 @@ import { ReactResult } from '../../declarations'
 
 import { View } from "../../Utilities/View"
 
-interface InspectorPropertyContainerProps {
+export interface InspectorPropertyContainerProps {
   property: string
   type: string
   className?: string
@@ -15,7 +15,7 @@ interface InspectorPropertyContainerProps {
 /**
  * @parents InspectorContent
  */
-function InspectorPropertyContainer(props: InspectorPropertyContainerProps): ReactResult {
+export function InspectorPropertyContainer(props: InspectorPropertyContainerProps): ReactResult {
   const { contained, className, property, children } = props
   const templateElements = React.Children.toArray(children)
   const kids = []
@@ -36,5 +36,3 @@ function InspectorPropertyContainer(props: InspectorPropertyContainerProps): Rea
   const viewProps = { children: kids, key: property, className }
   return <View {...viewProps} />
 }
-
-export { InspectorPropertyContainer, InspectorPropertyContainerProps }

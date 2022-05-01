@@ -2,7 +2,7 @@
 import { Any } from "../../../packages/moviemasher.js/src/declarations"
 import { expectArray } from "./expectArray"
 
-const expectEmptyArray = (value : Any) : Any[] => {
+export const expectEmptyArray = (value : Any) : Any[] => {
   const array = expectArray(value)
 
   if (array.length > 0) {
@@ -12,5 +12,3 @@ const expectEmptyArray = (value : Any) : Any[] => {
 
   return array
 }
-
-export { expectEmptyArray }

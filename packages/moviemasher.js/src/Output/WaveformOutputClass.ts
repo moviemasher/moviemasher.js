@@ -2,7 +2,7 @@ import { AVType, OutputType } from "../Setup"
 import { WaveformOutput, WaveformOutputArgs } from "./Output"
 import { RenderingOutputClass } from "./RenderingOutputClass"
 
-class WaveformOutputClass extends RenderingOutputClass implements WaveformOutput {
+export class WaveformOutputClass extends RenderingOutputClass implements WaveformOutput {
   declare args: WaveformOutputArgs
 
   avType = AVType.Audio
@@ -11,9 +11,6 @@ class WaveformOutputClass extends RenderingOutputClass implements WaveformOutput
 
   get sizePromise(): Promise<void> { return Promise.resolve() }
 }
-
-export { WaveformOutputClass }
-
 
 // layers = []
 // layers << "color=s=#{output[:dimensions]}:c=##{output[:backcolor]}[bg]"

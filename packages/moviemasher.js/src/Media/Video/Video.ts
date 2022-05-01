@@ -7,23 +7,23 @@ import {
   Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
 } from "../../Mixin/Transformable/Transformable"
 
-interface VideoObject extends AudibleFileObject, TransformableObject {
+export interface VideoObject extends AudibleFileObject, TransformableObject {
   speed?: number
 }
 
-interface Video extends AudibleFile, Transformable {
+export interface Video extends AudibleFile, Transformable {
   definition : VideoDefinition
   copy : Video
   speed : number
 }
 
-interface VideoDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
+export interface VideoDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
   fps?: number
   source?: string
   url?: string
 }
 
-interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition, PreloadableDefinition {
+export interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition, PreloadableDefinition {
   instance : Video
   instanceFromObject(object: VideoObject): Video
 }
@@ -31,11 +31,6 @@ interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition
 /**
  * @category Factory
  */
-interface VideoFactory extends GenericFactory<
+export interface VideoFactory extends GenericFactory<
   Video, VideoObject, VideoDefinition, VideoDefinitionObject
 > {}
-
-export {
-  Video, VideoDefinition, VideoDefinitionObject,
-  VideoFactory, VideoObject
-}

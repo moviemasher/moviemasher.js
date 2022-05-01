@@ -10,7 +10,7 @@ import { Errors } from "../../Setup/Errors"
 
 const AudibleGainDelimiter = ','
 
-function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
+export function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
   return class extends Base {
     constructor(...args : Any[]) {
       super(...args)
@@ -109,5 +109,3 @@ function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
     }
   }
 }
-
-export { AudibleMixin }

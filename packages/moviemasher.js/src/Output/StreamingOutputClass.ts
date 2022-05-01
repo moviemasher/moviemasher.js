@@ -2,16 +2,15 @@ import {
   GraphFiles, GraphFilters, LoadPromise, Size, ValueObject
 } from "../declarations"
 import { EmptyMethod } from "../Setup/Constants"
-import { AVType, GraphType, LoadType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
+import { AVType, GraphType } from "../Setup/Enums"
 import { CommandOutput, StreamingOutput, StreamingOutputArgs } from "./Output"
-import { CommandInput, CommandInputs, RenderingResult } from "../Api/Rendering"
+import { CommandInputs, RenderingResult } from "../Api/Rendering"
 import { Mash } from "../Edited/Mash/Mash"
 import { FilterGraph, FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
 import { StreamingDescription } from "../Api/Streaming"
 import { timeFromArgs } from "../Helpers"
 
-class StreamingOutputClass implements StreamingOutput {
+export class StreamingOutputClass implements StreamingOutput {
   constructor(args: StreamingOutputArgs) {
     this.args = args
   }
@@ -93,5 +92,3 @@ class StreamingOutputClass implements StreamingOutput {
     return { width, height }
   }
 }
-
-export { StreamingOutputClass }

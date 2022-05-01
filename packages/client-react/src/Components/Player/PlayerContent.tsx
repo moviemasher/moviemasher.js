@@ -1,14 +1,11 @@
 import React from 'react'
-import { UnknownObject, ContextFactory, EventType, Errors } from '@moviemasher/moviemasher.js'
+import { ContextFactory, EventType } from '@moviemasher/moviemasher.js'
+
+import { PropsWithoutChild, ReactResult } from '../../declarations'
 import { CanvasView, CanvasViewProps } from '../../Utilities/CanvasView'
-import { ReactResult } from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
 
-interface PlayerContentProps extends UnknownObject {
-  children?: never
-}
-
-function PlayerContent(props: PlayerContentProps): ReactResult {
+export function PlayerContent(props: PropsWithoutChild): ReactResult {
   const editor = useEditor()
   const ref = React.useRef<HTMLCanvasElement>(null)
 
@@ -55,5 +52,3 @@ function PlayerContent(props: PlayerContentProps): ReactResult {
   const canvasProps:CanvasViewProps = { ...rest, key: 'canvas', ref }
   return <CanvasView { ...canvasProps } />
 }
-
-export { PlayerContent, PlayerContentProps }

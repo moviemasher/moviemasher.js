@@ -1,7 +1,6 @@
-import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Factory } from "../../Definitions/Factory"
 import { TrackType } from "../../Setup/Enums"
-import { MashFactory } from "../../Edited/Mash/MashFactory"
+import { mashInstance } from "../../Edited/Mash/MashFactory"
 import { JestPreloader } from '../../../../../dev/test/Utilities/JestPreloader'
 import { expectCanvasAtTime } from "../../../../../dev/test/Utilities/expectCanvas"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
@@ -12,7 +11,7 @@ describe("Transition", () => {
     test.each(backcolors)("draws expected context atop %s", async (backcolor) => {
       // const [] = backcolors
       const mashObject = { backcolor }
-      const mash = MashFactory.instance(mashObject, [], new JestPreloader())
+      const mash = mashInstance(mashObject, [], new JestPreloader())
       const { quantize } = mash
       const globeDefinition = Factory.image.definition({ id: 'globe-from', url: '../shared/image/globe.jpg' })
       const globeImage = globeDefinition.instance

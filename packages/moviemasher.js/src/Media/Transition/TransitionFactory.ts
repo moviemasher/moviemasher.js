@@ -10,7 +10,7 @@ import {
 
 import transitionCrossfadeJson from "../../Definitions/DefinitionObjects/transition/crossfade.json"
 
-const transitionDefinition = (object : TransitionDefinitionObject) : TransitionDefinition => {
+export const transitionDefinition = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -19,25 +19,25 @@ const transitionDefinition = (object : TransitionDefinitionObject) : TransitionD
   return new TransitionDefinitionClass(object)
 }
 
-const transitionDefinitionFromId = (id : string) : TransitionDefinition => {
+export const transitionDefinitionFromId = (id : string) : TransitionDefinition => {
   return transitionDefinition({ id })
 }
 
-const transitionInstance = (object : TransitionObject) : Transition => {
+export const transitionInstance = (object : TransitionObject) : Transition => {
   const definition = transitionDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
-const transitionFromId = (id : string) : Transition => {
+export const transitionFromId = (id : string) : Transition => {
   return transitionInstance({ id })
 }
 
-const transitionInitialize = () : void => {
+export const transitionInitialize = () : void => {
   transitionInstall(transitionCrossfadeJson)
 }
 
-const transitionInstall = (object : TransitionDefinitionObject) : TransitionDefinition => {
+export const transitionInstall = (object : TransitionDefinitionObject) : TransitionDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -47,7 +47,7 @@ const transitionInstall = (object : TransitionDefinitionObject) : TransitionDefi
   return instance
 }
 
-const TransitionFactoryImplementation = {
+export const TransitionFactoryImplementation = {
   install: transitionInstall,
   definition: transitionDefinition,
   definitionFromId: transitionDefinitionFromId,
@@ -57,13 +57,3 @@ const TransitionFactoryImplementation = {
 }
 
 Factories[DefinitionType.Transition] = TransitionFactoryImplementation
-
-export {
-  transitionInstall,
-  transitionDefinition,
-  transitionDefinitionFromId,
-  TransitionFactoryImplementation,
-  transitionFromId,
-  transitionInitialize,
-  transitionInstance,
-}

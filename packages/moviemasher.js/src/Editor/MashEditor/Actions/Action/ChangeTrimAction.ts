@@ -1,14 +1,14 @@
 import { Audible } from "../../../../Mixin/Audible/Audible"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
-interface ChangeTrimActionObject extends ChangeActionObject {
+export interface ChangeTrimActionObject extends ChangeActionObject {
   frames : number
 }
 
 /**
  * @category Action
  */
-class ChangeTrimAction extends ChangeAction {
+export class ChangeTrimAction extends ChangeAction {
   constructor(object : ChangeTrimActionObject) {
     super(object)
     const { frames, target } = object
@@ -27,5 +27,3 @@ class ChangeTrimAction extends ChangeAction {
     this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames)
   }
 }
-
-export { ChangeTrimAction, ChangeTrimActionObject }

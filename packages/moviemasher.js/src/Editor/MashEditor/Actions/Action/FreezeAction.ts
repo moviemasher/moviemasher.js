@@ -1,7 +1,7 @@
 import { Clip, Clips } from "../../../../Mixin/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
-interface FreezeActionObject extends ActionOptions {
+export interface FreezeActionObject extends ActionOptions {
   frames : number
   freezeClip : Clip
   frozenClip : Clip
@@ -13,7 +13,7 @@ interface FreezeActionObject extends ActionOptions {
 /**
  * @category Action
  */
-class FreezeAction extends Action {
+export class FreezeAction extends Action {
   constructor(object : FreezeActionObject) {
     super(object)
     const { frames,freezeClip, frozenClip, index, insertClip, trackClips } = object
@@ -47,5 +47,3 @@ class FreezeAction extends Action {
     this.trackClips.splice(this.index, 2)
   }
 }
-
-export { FreezeAction, FreezeActionObject }

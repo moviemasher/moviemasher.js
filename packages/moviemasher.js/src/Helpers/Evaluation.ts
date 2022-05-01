@@ -52,7 +52,7 @@ const EvaluatorMethodRegExp = (key: string): RegExp => {
   return new RegExp(`\\b${key}\\b\\(`, 'g')
 }
 
-class Evaluation {
+export class Evaluation {
   constructor(expression: string, evalution?: Evaluation) {
     this.expressions.push(expression)
     this.evaluation = evalution
@@ -187,5 +187,3 @@ class Evaluation {
     return this._result
   }
 }
-
-export { Evaluation }

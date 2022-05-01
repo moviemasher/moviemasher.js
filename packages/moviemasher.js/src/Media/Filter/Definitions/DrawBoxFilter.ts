@@ -7,18 +7,10 @@ import { colorBlack } from "../../../Utility/Color"
 import { ModularGraphFilter } from "../../../declarations"
 import { DataType, Parameter } from "../../../Setup"
 
-interface EvaluatedBox {
-  x? : number
-  y? : number
-  color? : string
-  width? : number
-  height? : number
-}
-
 /**
  * @category Filter
  */
-class DrawBoxFilter extends FilterDefinitionClass {
+export class DrawBoxFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext: context } = evaluator
     if (!context) throw Errors.invalid.context + this.id
@@ -45,5 +37,3 @@ class DrawBoxFilter extends FilterDefinitionClass {
     new Parameter({ name: "height", value: "in_h", dataType: DataType.String }),
   ]
 }
-
-export { DrawBoxFilter, EvaluatedBox }

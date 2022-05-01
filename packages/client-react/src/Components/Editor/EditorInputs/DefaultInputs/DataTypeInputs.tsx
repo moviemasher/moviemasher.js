@@ -3,7 +3,7 @@ import { DataType } from '@moviemasher/moviemasher.js'
 import { EmptyElement } from '../../../../Setup/Constants'
 import { EditorInputs } from '../EditorInputs'
 
-const DataTypeInputs : EditorInputs = {
+export const DataTypeInputs : EditorInputs = {
   [DataType.Font]: EmptyElement,
   [DataType.Frame]: EmptyElement,
   [DataType.Number]: EmptyElement,
@@ -18,5 +18,3 @@ const DataTypeInputs : EditorInputs = {
   [DataType.Direction4]: EmptyElement,
   [DataType.Direction8]: EmptyElement,
 }
-
-export { DataTypeInputs }

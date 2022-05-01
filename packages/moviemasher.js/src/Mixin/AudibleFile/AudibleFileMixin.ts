@@ -7,7 +7,7 @@ import { AudibleFileClass, AudibleFileDefinition } from "./AudibleFile"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
-function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T {
+export function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T {
   return class extends Base {
     declare definition : AudibleFileDefinition
 
@@ -57,4 +57,3 @@ function AudibleFileMixin<T extends AudibleClass>(Base: T): AudibleFileClass & T
     }
   }
 }
-export { AudibleFileMixin }

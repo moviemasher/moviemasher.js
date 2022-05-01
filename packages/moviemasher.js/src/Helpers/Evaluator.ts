@@ -1,10 +1,4 @@
-import {
-  JsonValue,
-  UnknownObject,
-  Value,
-  Size,
-  ValueObject,
-} from "../declarations"
+import { JsonValue, UnknownObject, Value, Size, ValueObject } from "../declarations"
 import { AVType, DataType, GraphType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { isDefined, isNan, isNumeric, isString, isUndefined } from "../Utility/Is"
@@ -42,7 +36,7 @@ const EvaluatorConditional = (conditional : UnknownObject) : string => {
   return expression
 }
 
-interface EvaluatorArgs {
+export interface EvaluatorArgs {
   preloading: boolean
   modular?: Modular
   preloader: Preloader
@@ -59,7 +53,7 @@ const EvaluatorExpessions = {
   out_width_scaled: 'if(gt(out_height, out_width), scale * out_width, out_width + ((scale - 1.0) * out_height))',
 }
 
-class Evaluator {
+export class Evaluator {
   constructor(args: EvaluatorArgs) {
     const { timeRange, graphType, avType, modular, preloading, filter, context } = args
     if (context) this._visibleContext = context
@@ -434,5 +428,3 @@ class Evaluator {
   get visibleContextUpdated(): Boolean { return !!this._visibleContext }
 
 }
-
-export { Evaluator, EvaluatorArgs }

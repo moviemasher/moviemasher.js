@@ -2,11 +2,11 @@ import { Action } from "./Action"
 import { Is } from "../../../Utility/Is"
 import { Mash } from "../../../Edited/Mash/Mash"
 
-interface ActionsObject {
+export interface ActionsObject {
   mash : Mash
 }
 
-class Actions  {
+export class Actions  {
   constructor(object : ActionsObject) {
     const { mash } = object
     this.mash = mash
@@ -60,5 +60,3 @@ class Actions  {
     return action
   }
 }
-
-export { Actions, ActionsObject }

@@ -7,9 +7,9 @@ import { Instance, InstanceObject } from "../../Base/Instance"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 import { Preloader } from "../../Preloader/Preloader"
 
-interface ClipDefinitionObject extends DefinitionObject {}
+export interface ClipDefinitionObject extends DefinitionObject {}
 
-interface ClipDefinition extends Definition {
+export interface ClipDefinition extends Definition {
   audible: boolean
   duration: number
   frames(quantize:number): number
@@ -17,13 +17,13 @@ interface ClipDefinition extends Definition {
   visible : boolean
 }
 
-interface ClipObject extends InstanceObject {
+export interface ClipObject extends InstanceObject {
   frame? : number
   frames? : number
   track? : number
 }
 
-interface Clip extends Instance {
+export interface Clip extends Instance {
   audible: boolean
   definition: ClipDefinition
   endFrame : number
@@ -45,9 +45,5 @@ interface Clip extends Instance {
 
 export type Clips = Clip[]
 
-type ClipClass = Constrained<Clip>
-type ClipDefinitionClass = Constrained<ClipDefinition>
-
-export {
-  Clip, ClipClass, ClipDefinition, ClipDefinitionClass, ClipDefinitionObject, ClipObject
-}
+export type ClipClass = Constrained<Clip>
+export type ClipDefinitionClass = Constrained<ClipDefinition>

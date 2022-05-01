@@ -6,7 +6,7 @@ const ElementScrollProps = [
   'scrollPaddingTop',
   'scrollPaddingBottom',
 ]
-const elementScrollMetrics = (element?: Element | null): ScrollMetrics | undefined => {
+export const elementScrollMetrics = (element?: Element | null): ScrollMetrics | undefined => {
   if (!element) return
 
   const style: CSSStyleDeclaration = getComputedStyle(element)
@@ -29,8 +29,6 @@ const elementScrollMetrics = (element?: Element | null): ScrollMetrics | undefin
 /**
  * @category Utility
  */
-const Element = {
+export const Element = {
   scrollMetrics: elementScrollMetrics,
 }
-
-export { Element, elementScrollMetrics }

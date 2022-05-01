@@ -18,7 +18,7 @@ import { SplitAction, SplitActionObject } from "./SplitAction"
 /**
  * @category Factory
  */
-const ActionFactory = {
+export const ActionFactory = {
   createFromObject: (object : ActionOptions) : Action => {
     const { type } = object
     if (!isPopulatedString(type)) throw Errors.type + JSON.stringify(object)
@@ -38,5 +38,3 @@ const ActionFactory = {
     }
   }
 }
-
-export { ActionFactory }

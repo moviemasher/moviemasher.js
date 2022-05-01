@@ -1,7 +1,7 @@
 import React from 'react'
 import { BooleanSetter, NumberSetter, StringSetter } from '@moviemasher/moviemasher.js'
 
-interface ProcessContextInterface {
+export interface ProcessContextInterface {
   error: string
   processing: boolean
   progress: number
@@ -12,7 +12,7 @@ interface ProcessContextInterface {
   status: string
 }
 
-const ProcessContextDefault: ProcessContextInterface = {
+export const ProcessContextDefault: ProcessContextInterface = {
   error: '',
   processing: false,
   progress: 0,
@@ -23,6 +23,4 @@ const ProcessContextDefault: ProcessContextInterface = {
   status: '',
 }
 
-const ProcessContext = React.createContext(ProcessContextDefault)
-
-export { ProcessContext, ProcessContextInterface }
+export const ProcessContext = React.createContext(ProcessContextDefault)

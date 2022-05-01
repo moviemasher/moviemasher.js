@@ -6,7 +6,7 @@ import { Factories } from "../../Definitions/Factories"
 import { VideoStreamDefinitionClass } from "./VideoStreamDefinition"
 import { VideoStream, VideoStreamDefinition, VideoStreamDefinitionObject, VideoStreamObject } from "./VideoStream"
 
-const videoStreamDefinition = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
+export const videoStreamDefinition = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -15,23 +15,23 @@ const videoStreamDefinition = (object : VideoStreamDefinitionObject) : VideoStre
   return new VideoStreamDefinitionClass(object)
 }
 
-const videoStreamDefinitionFromId = (id : string) : VideoStreamDefinition => {
+export const videoStreamDefinitionFromId = (id : string) : VideoStreamDefinition => {
   return videoStreamDefinition({ id })
 }
 
-const videoStreamInstance = (object : VideoStreamObject) : VideoStream => {
+export const videoStreamInstance = (object : VideoStreamObject) : VideoStream => {
   const definition = videoStreamDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
-const videoStreamFromId = (id : string) : VideoStream => {
+export const videoStreamFromId = (id : string) : VideoStream => {
   return videoStreamInstance({ id })
 }
 
-const videoStreamInitialize = (): void => {}
+export const videoStreamInitialize = (): void => {}
 
-const videoStreamInstall = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
+export const videoStreamInstall = (object : VideoStreamDefinitionObject) : VideoStreamDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
@@ -42,7 +42,7 @@ const videoStreamInstall = (object : VideoStreamDefinitionObject) : VideoStreamD
   return instance
 }
 
-const VideoStreamFactoryImplementation = {
+export const VideoStreamFactoryImplementation = {
   install: videoStreamInstall,
   definition: videoStreamDefinition,
   definitionFromId: videoStreamDefinitionFromId,
@@ -52,13 +52,3 @@ const VideoStreamFactoryImplementation = {
 }
 
 Factories[DefinitionType.VideoStream] = VideoStreamFactoryImplementation
-
-export {
-  videoStreamInstall,
-  videoStreamDefinition,
-  videoStreamDefinitionFromId,
-  VideoStreamFactoryImplementation,
-  videoStreamFromId,
-  videoStreamInitialize,
-  videoStreamInstance,
-}

@@ -11,7 +11,7 @@ import { RenderingProcessArgs } from "../Server/RenderingServer/RenderingProcess
 const uuid = require('uuid').v4
 
 
-const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = {}): RenderingInput => {
+export const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = {}): RenderingInput => {
   const { type, id } = definition
   const definitionObject = {
     ...definition,
@@ -29,7 +29,7 @@ const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = 
   return { mash, definitions }
 }
 
-const renderingDefinitionTypeCommandOutputs = (definitionType: DefinitionType) => {
+export const renderingDefinitionTypeCommandOutputs = (definitionType: DefinitionType) => {
   const outputs: CommandOutputs = []
 
   // TODO: support waveform generation
@@ -59,7 +59,7 @@ const renderingDefinitionTypeCommandOutputs = (definitionType: DefinitionType) =
   return outputs
 }
 
-const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
+export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
   const counts: NumberObject = {}
   return commandOutputs.map(output => {
     const { outputType } = output
@@ -74,13 +74,13 @@ const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs
   })
 }
 
-const renderingOutputFile = (commandOutput: RenderingCommandOutput, extension?: string): string => {
+export const renderingOutputFile = (commandOutput: RenderingCommandOutput, extension?: string): string => {
   const { basename, format, extension: outputExtension, outputType } = commandOutput
   const ext = extension || outputExtension || format
   return `${basename || outputType}.${ext}`
 }
 
-const renderingSource = (commandOutput?: RenderingCommandOutput): string => {
+export const renderingSource = (commandOutput?: RenderingCommandOutput): string => {
   if (!commandOutput) {
     // console.log("renderingSource with no commandOutput")
     return ''
@@ -128,13 +128,4 @@ export const definitionTypeFromRaw = (loadType: LoadType): DefinitionType => {
     case LoadType.Image: return DefinitionType.Image
     case LoadType.Font: return DefinitionType.Font
   }
-}
-
-
-export {
-  renderingOutputFile,
-  renderingSource,
-  renderingDefinitionTypeCommandOutputs,
-  renderingCommandOutputs,
-  renderingInput,
 }

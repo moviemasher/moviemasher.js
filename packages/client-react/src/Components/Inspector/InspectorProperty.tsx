@@ -8,7 +8,7 @@ import {
 } from './InspectorPropertyContainer'
 import { DataTypeInputs } from '../Editor/EditorInputs/DefaultInputs/DataTypeInputs'
 
-interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
+export interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
   property: Property
   value: Scalar
   changeHandler: PropertiedChangeHandler
@@ -17,7 +17,7 @@ interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
 /**
  * @parents InspectorContent
  */
-function InspectorProperty(props: InspectorPropertyProps): ReactResult {
+export function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   const { changeHandler, property, value, ...rest } = props
 
   const { type, name } = property
@@ -41,5 +41,3 @@ function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   }
   return <InspectorPropertyContainer {...containerProps} />
 }
-
-export { InspectorProperty, InspectorPropertyProps }

@@ -8,14 +8,15 @@ import { TimeRange } from "../../Helpers/Time/Time"
 import { Track } from "../../Media/Track/Track"
 import { Editor, EditorOptions } from "../Editor"
 import { Mash } from "../../Edited/Mash/Mash"
+import { DataMashGetResponse } from "../../Api/Data"
 
-interface MashEditorSelection {
+export interface MashEditorSelection {
   track?: Track
   clip?: Clip
   effect?: Effect
 }
 
-interface MashEditorOptions extends EditorOptions {
+export interface MashEditorOptions extends EditorOptions {
   autoplay: boolean
   buffer: number
   fps: number
@@ -25,11 +26,11 @@ interface MashEditorOptions extends EditorOptions {
   volume: number
 }
 
-interface MashEditorObject extends Partial<MashEditorOptions> {}
+export interface MashEditorObject extends Partial<MashEditorOptions> {}
 
-type ClipOrEffect = Clip | Effect
+export type ClipOrEffect = Clip | Effect
 
-interface MashEditor extends Editor {
+export interface MashEditor extends Editor {
   add(object : DefinitionObject, frameOrIndex? : number, trackIndex? : number) : Promise<ClipOrEffect>
   addClip(clip : Clip, frameOrIndex? : number, trackIndex? : number) : LoadPromise
   addEffect(effect : Effect, insertIndex? : number) : LoadPromise
@@ -40,9 +41,11 @@ interface MashEditor extends Editor {
   clips: Clips
   currentTime : number
   duration: number
+  edited: Mash
   fps : number
   freeze() : void
   goToTime(value: Time): LoadPromise
+  loadData(data: DataMashGetResponse): void
   loop : boolean
   mash : Mash
   move(object: ClipOrEffect, frameOrIndex? : number, trackIndex? : number) : void
@@ -70,12 +73,4 @@ interface MashEditor extends Editor {
   timeRange : TimeRange
   undo() : void
   volume : number
-}
-
-export {
-  ClipOrEffect,
-  MashEditor,
-  MashEditorObject,
-  MashEditorOptions,
-  MashEditorSelection,
 }

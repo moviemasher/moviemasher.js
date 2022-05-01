@@ -6,7 +6,7 @@ import { Factories } from "../../Definitions/Factories"
 import { ImageDefinitionClass } from "./ImageDefinitionClass"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 
-const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
+export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   const { id } = object
   if (!id) throw Errors.id + JSON.stringify(object)
 
@@ -15,26 +15,26 @@ const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   return new ImageDefinitionClass(object)
 }
 
-const imageDefinitionFromId = (id : string) : ImageDefinition => {
+export const imageDefinitionFromId = (id : string) : ImageDefinition => {
   return imageDefinition({ id })
 }
 
-const imageInstance = (object : ImageObject) : Image => {
+export const imageInstance = (object : ImageObject) : Image => {
   const definition = imageDefinition(object)
   const instance = definition.instanceFromObject(object)
   return instance
 }
 
-const imageFromId = (id : string) : Image => {
+export const imageFromId = (id : string) : Image => {
   return imageInstance({ id })
 }
 
-const imageInitialize = () : void => {}
+export const imageInitialize = () : void => {}
 
 /**
  * @internal
  */
-const imageInstall = (object: ImageDefinitionObject): ImageDefinition => {
+export const imageInstall = (object: ImageDefinitionObject): ImageDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id
 
@@ -46,7 +46,7 @@ const imageInstall = (object: ImageDefinitionObject): ImageDefinition => {
 }
 
 
-const ImageFactoryImplementation = {
+export const ImageFactoryImplementation = {
   install: imageInstall,
   definition: imageDefinition,
   definitionFromId: imageDefinitionFromId,
@@ -56,13 +56,3 @@ const ImageFactoryImplementation = {
 }
 
 Factories[DefinitionType.Image] = ImageFactoryImplementation
-
-export {
-  imageInstall,
-  imageDefinition,
-  imageDefinitionFromId,
-  ImageFactoryImplementation,
-  imageFromId,
-  imageInitialize,
-  imageInstance,
-}

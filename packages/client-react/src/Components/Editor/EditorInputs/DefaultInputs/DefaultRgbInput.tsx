@@ -4,7 +4,7 @@ import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 
-function DefaultRgbInput(): ReactResult {
+export function DefaultRgbInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value } = inputContext
@@ -25,6 +25,3 @@ function DefaultRgbInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.Rgb] = <DefaultRgbInput />
-
-
-export { DefaultRgbInput }

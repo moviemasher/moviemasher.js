@@ -4,7 +4,7 @@ import { roundWithMethod } from "../../Utility/Round"
 import { Errors } from "../../Setup/Errors"
 import { Time, TimeRange, TimeRanges, Times } from "./Time"
 
-class TimeRangeClass extends TimeClass implements TimeRange {
+export class TimeRangeClass extends TimeClass implements TimeRange {
   frames : number
 
   constructor(frame = 0, fps = 1, frames = 1) {
@@ -109,5 +109,3 @@ class TimeRangeClass extends TimeClass implements TimeRange {
   }
 
 }
-
-export { TimeRangeClass }

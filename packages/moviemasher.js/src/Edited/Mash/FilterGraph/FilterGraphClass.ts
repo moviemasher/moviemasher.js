@@ -21,7 +21,7 @@ export interface FilterGraphArgs extends Required<FilterGraphOptions> {
   filterGraphs: FilterGraphsInstance
 }
 
-class FilterGraphClass implements FilterGraphInstance {
+export class FilterGraphClass implements FilterGraphInstance {
   constructor(public args: FilterGraphArgs) {}
 
   addGraphFile(graphFile: GraphFile): string {
@@ -243,5 +243,3 @@ class FilterGraphClass implements FilterGraphInstance {
 
   get videoRate(): number { return this.args.videoRate || this.time.fps }
 }
-
-export { FilterGraphClass }

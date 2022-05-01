@@ -1,6 +1,6 @@
 import { isPopulatedString } from "./Is"
 
-const stringSeconds = (seconds : number, fps : number, duration : number) : string => {
+export const stringSeconds = (seconds : number, fps : number, duration : number) : string => {
   let time, pad, do_rest, s = ''
   if (! duration) duration = seconds
   time = 60 * 60 // an hour
@@ -43,18 +43,13 @@ const stringSeconds = (seconds : number, fps : number, duration : number) : stri
   return s
 }
 
-const stringCapitalize = (value : string) : string => {
+export const stringCapitalize = (value : string) : string => {
   if (!isPopulatedString(value)) return value
 
   return `${value[0].toUpperCase()}${value.substr(1)}`
 }
-const stringPluralize = (count: number, value: string, suffix = 's'): string => {
+export const stringPluralize = (count: number, value: string, suffix = 's'): string => {
   if (!isPopulatedString(value)) return value
 
   return `${count} ${value}${count === 1 ? '' : suffix}`
 }
-
-const StringUtility = {
-  seconds: stringSeconds, capitalize: stringCapitalize, pluralize: stringPluralize,
-}
-export { StringUtility as String, stringSeconds, stringCapitalize, stringPluralize }

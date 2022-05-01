@@ -6,7 +6,7 @@ import { ClipClass } from "../Clip/Clip"
 import { Visible, VisibleClass, VisibleDefinition } from "./Visible"
 import { Preloader } from "../../Preloader/Preloader"
 
-function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
+export function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
   return class extends Base implements Visible {
     contextAtTimeToSize(preloader: Preloader, definitionTime : Time, quantize: number) : VisibleContext | undefined {
       const image = this.definition.loadedVisible(preloader, quantize, definitionTime)
@@ -29,4 +29,3 @@ function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
     visible = true
   }
 }
-export { VisibleMixin }

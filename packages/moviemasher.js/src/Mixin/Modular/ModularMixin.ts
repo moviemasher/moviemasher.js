@@ -3,7 +3,7 @@ import { ModularClass, ModularDefinition } from "./Modular"
 import { Definitions } from "../../Definitions/Definitions"
 import { InstanceClass } from "../../Base/Instance"
 
-function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
+export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
   return class extends Base {
     declare definition : ModularDefinition
 
@@ -18,5 +18,3 @@ function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
     }
   }
 }
-
-export { ModularMixin }

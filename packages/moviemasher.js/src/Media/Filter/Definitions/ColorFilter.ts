@@ -11,7 +11,7 @@ import { colorServer, colorYellow } from "../../../Utility/Color"
 /**
  * @category Filter
  */
-class ColorFilter extends FilterDefinitionClass {
+export class ColorFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
     const { visibleContext: context } = evaluator
     if (!context) throw Errors.invalid.context + this.id
@@ -41,5 +41,3 @@ class ColorFilter extends FilterDefinitionClass {
     new Parameter({ name: "rate", value: "out_rate", dataType: DataType.String }),
   ]
 }
-
-export { ColorFilter }

@@ -16,9 +16,9 @@ import {
 import { Factories } from "../../Definitions/Factories"
 import { isPopulatedString } from "../../Utility/Is"
 
-const mergerDefaultId = "com.moviemasher.merger.default"
+export const mergerDefaultId = "com.moviemasher.merger.default"
 
-const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition => {
+export const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
   const idString = id && isPopulatedString(id) ? id : mergerDefaultId
   if (Definitions.installed(idString)) return <MergerDefinition> Definitions.fromId(idString)
@@ -26,22 +26,22 @@ const mergerDefinition = (object : MergerDefinitionObject) : MergerDefinition =>
   return new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString })
 }
 
-const mergerDefinitionFromId = (id : string) : MergerDefinition => {
+export const mergerDefinitionFromId = (id : string) : MergerDefinition => {
   return mergerDefinition({ id })
 }
 
-const mergerInstance = (object: MergerObject): Merger => {
+export const mergerInstance = (object: MergerObject): Merger => {
   const { definitionId = mergerDefaultId } = object
 
   const definition = mergerDefinition({ id: definitionId })
   return definition.instanceFromObject(object)
 }
 
-const mergerFromId = (definitionId : string) : Merger => {
+export const mergerFromId = (definitionId : string) : Merger => {
   return mergerInstance({ definitionId })
 }
 
-const mergerInitialize = () : void => {
+export const mergerInitialize = () : void => {
   [
     mergerBlendJson,
     mergerCenterJson,
@@ -51,7 +51,7 @@ const mergerInitialize = () : void => {
   ].forEach(object => mergerInstall(object))
 }
 
-const mergerInstall = (object : MergerDefinitionObject) : MergerDefinition => {
+export const mergerInstall = (object : MergerDefinitionObject) : MergerDefinition => {
   const { id } = object
   const idString = id && isPopulatedString(id) ? id : mergerDefaultId
   Definitions.uninstall(idString)
@@ -60,7 +60,7 @@ const mergerInstall = (object : MergerDefinitionObject) : MergerDefinition => {
   return instance
 }
 
-const MergerFactoryImplementation : MergerFactory = {
+export const MergerFactoryImplementation : MergerFactory = {
   install: mergerInstall,
   definition: mergerDefinition,
   definitionFromId: mergerDefinitionFromId,
@@ -70,14 +70,3 @@ const MergerFactoryImplementation : MergerFactory = {
 }
 
 Factories[DefinitionType.Merger] = MergerFactoryImplementation
-
-export {
-  mergerInstall,
-  mergerDefaultId,
-  mergerDefinition,
-  mergerDefinitionFromId,
-  MergerFactoryImplementation,
-  mergerFromId,
-  mergerInitialize,
-  mergerInstance,
-}
