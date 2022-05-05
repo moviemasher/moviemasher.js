@@ -5,7 +5,6 @@ import { Is } from "../Utility/Is"
 import { Definition } from "./Definition"
 import { Time } from "../Helpers/Time/Time"
 import { idGenerate } from "../Utility/Id"
-import { Definitions } from "../Definitions/Definitions"
 import { PropertiedClass } from "./Propertied"
 
 export interface InstanceObject extends UnknownObject {
@@ -20,11 +19,10 @@ export class InstanceBase extends PropertiedClass {
     const [object] = args
     if (!Is.populatedObject(object)) throw Errors.invalid.object + 'InstanceBase'
 
-    const { definitionId = '', definition } = object as InstanceObject
-    const definitionInstance = definition || Definitions.fromId(definitionId)
-    if (!definitionInstance) throw Errors.invalid.definition.object
+    const { definition } = object as InstanceObject
 
-    this.definition = definitionInstance
+    if (!definition) throw Errors.invalid.definition.object
+    this.definition = definition
     this.properties.push(...this.definition.properties)
     this.propertiesInitialize(object)
   }
@@ -36,8 +34,6 @@ export class InstanceBase extends PropertiedClass {
   definition : Definition
 
   get definitionId(): string { return this.definition.id }
-
-  get definitions() : Definition[] { return [this.definition] }
 
   definitionTime(quantize : number, time : Time) : Time {
     return time.scaleToFps(quantize) // may have fps higher than quantize and time.fps

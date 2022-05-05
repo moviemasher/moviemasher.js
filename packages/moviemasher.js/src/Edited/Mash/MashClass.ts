@@ -4,7 +4,6 @@ import {
 import {
   AVType, DataType, DefinitionType, EventType, GraphType, TrackType
 } from "../../Setup/Enums"
-import { Definition } from "../../Base/Definition"
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
@@ -374,9 +373,9 @@ export class MashClass extends EditedClass implements Mash {
     return contents
   }
 
-  get definitions() : Definition[] {
-    return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
-  }
+  // get definitions() : Definition[] {
+  //   return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
+  // }
 
   destroy(): void {
     this.paused = true

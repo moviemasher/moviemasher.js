@@ -1,9 +1,9 @@
 import React from "react"
-import { definitionsByType } from '@moviemasher/moviemasher.js'
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "../../Contexts/BrowserContext"
 import { PropsWithChildren, ReactResult } from "../../declarations"
 import { propsDefinitionTypes } from "../../Utilities/Props"
+import { useEditor } from "../../Hooks/useEditor"
 
 export interface BrowserSourceProps extends PropsWithChildren {
   id: string
@@ -16,6 +16,8 @@ export interface BrowserSourceProps extends PropsWithChildren {
  * @parents Browser
  */
 export function BrowserSource(props: BrowserSourceProps): ReactResult {
+  const editor = useEditor()
+
   const browserContext = React.useContext(BrowserContext)
 
   const { type, types, className, id, ...rest } = props
@@ -37,7 +39,7 @@ export function BrowserSource(props: BrowserSourceProps): ReactResult {
 
     setTimeout(() => {
       const definitionTypes = propsDefinitionTypes(type, types, id)
-      const lists = definitionTypes.map(type => definitionsByType(type))
+      const lists = definitionTypes.map(type => editor.definitions.byType(type))
       if (!lists.length) throw "definition type required"
 
       const definitions = lists.length === 1 ? lists[0] : lists.flat()

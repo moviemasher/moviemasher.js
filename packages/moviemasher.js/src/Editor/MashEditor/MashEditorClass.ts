@@ -30,7 +30,6 @@ import { ChangeAction } from "./Actions/Action/ChangeAction"
 import { Actions } from "./Actions/Actions"
 import { Factory } from "../../Definitions/Factory/Factory"
 import { DefinitionObject } from "../../Base/Definition"
-import { Definitions } from "../../Definitions"
 import { Effect } from "../../Media/Effect/Effect"
 import { AudibleFile } from "../../Mixin/AudibleFile/AudibleFile"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
@@ -45,6 +44,7 @@ import { Mash } from "../../Edited/Mash/Mash"
 import { mashInstance } from "../../Edited/Mash/MashFactory"
 import { timeFromArgs, timeFromSeconds, timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
 import { DataMashGetResponse } from "../../Api/Data"
+import { EditorDefinitionsClass } from "../EditorDefinitions/EditorDefinitionsClass"
 
 export class MashEditorClass extends EditorClass implements MashEditor {
   constructor(...args: Any[]) {
@@ -101,7 +101,7 @@ export class MashEditorClass extends EditorClass implements MashEditor {
   add(object : DefinitionObject, frameOrIndex = 0, trackIndex = 0) : Promise<ClipOrEffect> {
     if (!Is.populatedObject(object)) throw Errors.argument + 'add'
     const { id } = object
-    const definitionFromId = id && Definitions.installed(id) ? Definitions.fromId(id) : false
+    const definitionFromId = id && this.definitions.installed(id) ? this.definitions.fromId(id) : false
     const type = object.type || (definitionFromId && definitionFromId.type)
     if (!type) throw Errors.type + 'MashEditor.add ' + id + JSON.stringify(definitionFromId)
 
@@ -497,8 +497,11 @@ export class MashEditorClass extends EditorClass implements MashEditor {
   }
 
   loadData(data: DataMashGetResponse): void {
-    const { mash, definitions } = data
-    this.edited = mashInstance(mash, definitions)
+    const { mash: mashObject, definitions: definitionObjects } = data
+    const definitions = new EditorDefinitionsClass(definitionObjects)
+    const mash = mashInstance(mashObject, definitions)
+    this.definitions = definitions
+    this.edited = mash
   }
 
 

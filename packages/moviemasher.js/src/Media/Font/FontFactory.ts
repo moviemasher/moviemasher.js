@@ -1,53 +1,51 @@
-import { Definitions } from "../../Definitions"
 import { DefinitionType } from "../../Setup/Enums"
 import { FontDefinitionClass } from "./FontDefinition"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { Factories } from "../../Definitions/Factories"
 import { Is } from "../../Utility/Is"
+
 import fontDefaultJson from "../../Definitions/DefinitionObjects/font/default.json"
 
-const fontDefaultId = "com.moviemasher.font.default"
+const fontDefaultId = fontDefaultJson.id
 
 export const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) ? id : fontDefaultId
-  if (!Definitions.installed(idString)) {
-    return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id: idString })
-  }
-  return Definitions.fromId(idString) as FontDefinition
+  const { id: idString } = object
+  const id = idString && Is.populatedString(idString) ? idString : fontDefaultId
+
+  return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id })
 }
 
-export const fontDefinitionFromId = (id : string) : FontDefinition => {
+export const FontDefinitions: { [index: string]: FontDefinition } = {
+  [fontDefaultId]: fontDefinition(fontDefaultJson)
+}
+
+export const fontDefinitionFromId = (id: string): FontDefinition => {
+  const definition = FontDefinitions[id]
+  if (definition) return definition
+
   return fontDefinition({ id })
 }
 
-export const fontInstance = (object : FontObject) : Font => {
-  return fontDefinition(object).instanceFromObject(object)
+export const fontInstance = (object: FontObject): Font => {
+  console.trace("fontInstance", object)
+  throw 'fontInstance'
+
+  // const { definitionId } = object
+  // const definition = FontDefinitions[definitionId!] || fontDefinition(object)
+  // return definition.instanceFromObject(object)
 }
 
-export const fontFromId = (id : string) : Font => {
-  return fontInstance({ id })
-}
-
-export const fontInitialize = () : void => {
-  fontInstall(fontDefaultJson)
-}
-
-export const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) ? id : fontDefaultId
-  Definitions.uninstall(idString)
-  const instance = fontDefinition(object)
-  Definitions.install(instance)
+export const fontFromId = (id: string): Font => {
+  const definition = fontDefinitionFromId(id)
+  const instance = definition.instanceFromObject({ definitionid: id })
   return instance
 }
 
+
 export const FontFactoryImplementation = {
-  install: fontInstall,
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
   fromId: fontFromId,
-  initialize: fontInitialize,
   instance: fontInstance,
 }
 

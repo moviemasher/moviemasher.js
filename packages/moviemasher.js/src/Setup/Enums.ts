@@ -110,6 +110,7 @@ export enum DefinitionType {
   // AudioStream = 'audiostream',
 }
 export const DefinitionTypes = Object.values(DefinitionType)
+export const DefinitionTypeStrings = DefinitionTypes.map(String)
 
 export enum EventType {
   Action = 'action',

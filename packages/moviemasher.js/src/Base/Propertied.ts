@@ -44,7 +44,7 @@ export class PropertiedClass implements Propertied {
     const property = this.property(propertyOrString)
     const { type, name } = property
     if (!dataTypeValid(value, type)) {
-      console.warn(Errors.invalid.property, name, value)
+      console.warn(Errors.invalid.property, name, value, type)
       return
     }
     const coerced = dataTypeCoerce(value, type)

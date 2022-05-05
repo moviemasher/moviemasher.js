@@ -37,7 +37,5 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
 
   parameters : Parameter[] = []
 
-  retain = true
-
   type = DefinitionType.Filter
 }

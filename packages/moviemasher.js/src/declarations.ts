@@ -203,9 +203,9 @@ export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
   definitionFromId(id : string) : DEFINITION
   definition(object: DEFINITIONOBJECT): DEFINITION
-  install(object : DEFINITIONOBJECT) : DEFINITION
+  // install(object : DEFINITIONOBJECT) : DEFINITION
   instance(object : INSTANCEOBJECT) : INSTANCE
-  initialize() : void
+  // initialize() : void
   fromId(id : string) : INSTANCE
 }
 

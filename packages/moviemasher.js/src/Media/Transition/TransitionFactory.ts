@@ -1,7 +1,6 @@
 import { DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Is } from "../../Utility/Is"
-import { Definitions } from "../../Definitions/Definitions"
 import { Factories } from "../../Definitions/Factories"
 import { TransitionDefinitionClass } from "./TransitionDefinitionClass"
 import {
@@ -14,45 +13,35 @@ export const transitionDefinition = (object : TransitionDefinitionObject) : Tran
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
 
-  if (Definitions.installed(id)) return <TransitionDefinition> Definitions.fromId(id)
-
   return new TransitionDefinitionClass(object)
 }
 
-export const transitionDefinitionFromId = (id : string) : TransitionDefinition => {
+const ThemeDefinitions: { [index: string]: TransitionDefinition } = {
+  [transitionCrossfadeJson.id]: transitionDefinition(transitionCrossfadeJson)
+}
+
+export const transitionDefinitionFromId = (id: string): TransitionDefinition => {
+  const definition = ThemeDefinitions[id]
+  if (definition) return definition
+
   return transitionDefinition({ id })
 }
 
-export const transitionInstance = (object : TransitionObject) : Transition => {
-  const definition = transitionDefinition(object)
-  const instance = definition.instanceFromObject(object)
-  return instance
-}
-
-export const transitionFromId = (id : string) : Transition => {
-  return transitionInstance({ id })
-}
-
-export const transitionInitialize = () : void => {
-  transitionInstall(transitionCrossfadeJson)
-}
-
-export const transitionInstall = (object : TransitionDefinitionObject) : TransitionDefinition => {
+export const transitionInstance = (object: TransitionObject): Transition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
+  const definition = transitionDefinitionFromId(id!)
+  return definition.instanceFromObject(object)
+}
 
-  Definitions.uninstall(id)
-  const instance = transitionDefinition(object)
-  Definitions.install(instance)
-  return instance
+export const transitionFromId = (id: string): Transition => {
+  const definition = transitionDefinitionFromId(id)
+  return definition.instanceFromObject({ id })
 }
 
 export const TransitionFactoryImplementation = {
-  install: transitionInstall,
   definition: transitionDefinition,
   definitionFromId: transitionDefinitionFromId,
   fromId: transitionFromId,
-  initialize: transitionInitialize,
   instance: transitionInstance,
 }
 

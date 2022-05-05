@@ -6,7 +6,6 @@ import { sortByFrame } from "../../Utility/Sort"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { PropertiedClass } from "../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
-import { Definitions } from "../../Definitions/Definitions"
 import { isPositive } from "../../Utility/Is"
 import { TimeRange } from "../../Helpers/Time/Time"
 
@@ -25,17 +24,19 @@ export class TrackClass extends PropertiedClass implements Track {
 
     this.properties.push(propertyInstance({ name: "dense", defaultValue: false }))
 
-    if (clips && definitions) this.clips.push(...clips.map(clip => {
-      const { definitionId } = clip
-      if (!definitionId) throw Errors.id + JSON.stringify(clip)
+    if (clips) {
+      if (!definitions) throw Errors.internal + 'definitions'
 
-      let definition = definitions.find(definition => definition.id === definitionId)
-      definition ||= Definitions.fromId(definitionId)
-      if (!definition) throw Errors.invalid.definition + definitionId
+      this.clips.push(...clips.map(clip => {
+        const { definitionId } = clip
+        if (!definitionId) throw Errors.id + JSON.stringify(clip)
 
-      const clipWithTrack = { track: this.layer, ...clip }
-      return definition.instanceFromObject(clipWithTrack) as Clip
-    }))
+        const definition = definitions.fromId(definitionId)
+
+        const clipWithTrack = { track: this.layer, ...clip }
+        return definition.instanceFromObject(clipWithTrack) as Clip
+      }))
+    }
   }
 
   addClip(clip : Clip, insertIndex = 0) : void {

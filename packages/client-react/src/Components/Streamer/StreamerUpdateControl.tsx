@@ -24,10 +24,9 @@ export function StreamerUpdateControl(props: StreamerUpdateControlProps): ReactR
   const { endpointPromise } = apiContext
 
   const update = () => {
-    const { edited } = caster
+    const { edited, definitions } = caster
     const { mashes } = edited
-    const definitions = mashes.flatMap(mash => mash.definitions)
-    const definitionObjects = definitions.map(definition => definition.toJSON())
+    const definitionObjects = definitions.toJSON()
     const mashObjects = mashes.map(mash => mash.toJSON())
     const request: StreamingCutRequest = { definitionObjects, mashObjects, id }
     console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)

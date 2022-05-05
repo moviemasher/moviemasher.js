@@ -2,9 +2,10 @@
 import fs from 'fs'
 import path from 'path'
 
-import { DefinitionTypes } from "../../packages/moviemasher.js/src/Setup/Enums"
-import { Definitions } from "../../packages/moviemasher.js/src/Definitions/Definitions"
-import { Factory } from "../../packages/moviemasher.js/src/Definitions/Factory/Factory"
+import { FontDefinitions } from "../../packages/moviemasher.js/src/Media/Font/FontFactory"
+
+import { TestRenderOutput } from "./Setup/Constants"
+
 import { AudioFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Audio"
 import { EffectFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Effect"
 import { FilterFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Filter"
@@ -17,8 +18,6 @@ import { TransitionFactoryImplementation } from "../../packages/moviemasher.js/s
 import { VideoFactoryImplementation } from "../../packages/moviemasher.js/src/Media/Video/VideoFactory"
 import { VideoStreamFactoryImplementation } from "../../packages/moviemasher.js/src/Media/VideoStream/VideoStreamFactory"
 import { VideoSequenceFactoryImplementation } from "../../packages/moviemasher.js/src/Media/VideoSequence/VideoSequenceFactory"
-
-import { TestRenderOutput } from "./Setup/Constants"
 export default [
   AudioFactoryImplementation,
   EffectFactoryImplementation,
@@ -56,12 +55,4 @@ fetchMock.mockResponse(req => {
   return promise
 })
 
-beforeEach(() => {
-  Definitions.clear()
-  DefinitionTypes.forEach(type => { Factory[type].initialize() })
-
-  // woff2 doesn't seem to be supported by canvas's registerFont, so just allow ttf
-  Factory.font.install({
-    id: 'com.moviemasher.font.default', source: '../shared/font/lobster/lobster.ttf'
-  })
-})
+FontDefinitions['com.moviemasher.font.default'].url = FontDefinitions['com.moviemasher.font.default'].source

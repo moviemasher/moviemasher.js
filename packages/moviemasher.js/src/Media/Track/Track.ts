@@ -2,7 +2,7 @@ import { UnknownObject } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Clips, ClipObject, Clip } from "../../Mixin/Clip/Clip"
 import { Propertied } from "../../Base/Propertied"
-import { Definition } from "../../Base/Definition"
+import { EditorDefinitions } from "../../Editor/EditorDefinitions"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]
@@ -12,7 +12,7 @@ export interface TrackObject extends UnknownObject {
 }
 
 export interface TrackArgs extends TrackObject {
-  definitions?: Definition[]
+  definitions?: EditorDefinitions
 }
 
 export interface Track extends Propertied {

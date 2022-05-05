@@ -14,6 +14,5 @@ export const expectFactory = (object : unknown | undefined) :void => {
   expect(factory.definition).toBeInstanceOf(Function)
   expect(factory.definitionFromId).toBeInstanceOf(Function)
   expect(factory.fromId).toBeInstanceOf(Function)
-  expect(factory.initialize).toBeInstanceOf(Function)
   expect(factory.instance).toBeInstanceOf(Function)
 }

@@ -57,6 +57,7 @@ export class CastEditorClass extends EditorClass implements CastEditor {
   get editingMash(): boolean {
     return false
   }
+
   eventTarget = new Emitter()
 
   get imageData() : VisibleContextData { return this.edited.imageData }

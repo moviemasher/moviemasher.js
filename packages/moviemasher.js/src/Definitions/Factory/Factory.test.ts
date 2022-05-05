@@ -131,7 +131,8 @@ describe("Factory", () => {
     describe("copy", () => {
       test("returns expected clip", () => {
         const expected = {}
-        expect(themeDefinition().instance.copy).not.toEqual(expected)
+        const instance = themeDefinition().instance
+        expect(instance.copy).not.toEqual(expected)
       })
     })
 

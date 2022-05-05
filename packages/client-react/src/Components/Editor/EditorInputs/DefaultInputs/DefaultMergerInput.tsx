@@ -1,12 +1,15 @@
 import React from 'react'
-import { DataType, Definitions } from '@moviemasher/moviemasher.js'
+import { DataType, DefinitionType } from '@moviemasher/moviemasher.js'
 
 import { InputContext } from '../../../../Contexts/InputContext'
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
+import { useEditor } from '../../../../Hooks/useEditor'
 
 export function DefaultMergerInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
+
+  const editor = useEditor()
 
   const { changeHandler, property, value } = inputContext
   if (!property) return null
@@ -18,7 +21,7 @@ export function DefaultMergerInput(): ReactResult {
   }
   const definitionId = String(value)
 
-  const options = Definitions.merger.map(merger => {
+  const options = editor.definitions.byType(DefinitionType.Merger).map(merger => {
     const optionProps = {
       value: merger.id,
       key: merger.id,

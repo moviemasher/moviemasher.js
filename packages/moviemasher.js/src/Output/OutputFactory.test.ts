@@ -7,11 +7,11 @@ import { mashInstance } from "../Edited/Mash/MashFactory"
 import { MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { Image } from "../Media/Image/Image"
+import { EditorDefinitionsClass } from "../Editor"
 
 describe("OutputFactory", () => {
   describe("video", () => {
     test("renderingDescriptionPromise", async () => {
-
       const id = 'video-from-multiple'
       const output = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
       const globeDefinitionObject = {
@@ -31,7 +31,9 @@ describe("OutputFactory", () => {
             ]
           }]
       }
-      const mash = mashInstance(mashObject, definitionObjects, new JestPreloader())
+      const definitions = new EditorDefinitionsClass(definitionObjects)
+      // console.log("definitions ids", definitions.ids)
+      const mash = mashInstance(mashObject, definitions, new JestPreloader())
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
       const clips = videoTrack.clips as Image[]

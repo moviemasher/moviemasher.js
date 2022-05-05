@@ -15,6 +15,7 @@ import { Preloader } from "../../Preloader/Preloader"
 import { FilterGraphObject, FilterGraphOptions } from "./FilterGraph/FilterGraph"
 import { TransformableContent } from "../../Mixin/Transformable/Transformable"
 import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
+import { EditorDefinitions } from "../../Editor/EditorDefinitions"
 
 export interface MashDescription extends UnknownObject, Described {}
 export interface MashObject extends Partial<MashDescription> {
@@ -28,7 +29,7 @@ export interface MashObject extends Partial<MashDescription> {
 }
 
 export interface MashArgs extends MashObject {
-  definitions: Definition[]
+  definitions?: EditorDefinitions
 }
 export type Content = TransformableContent & AudibleContent
 export type Contents = Content[]
@@ -45,7 +46,7 @@ export interface Mash extends Edited {
   clipTrack(clip: Clip): Track
   composition: Composition
   contents(time: Time, avType?: AVType): Contents
-  definitions : Definition[]
+  // definitions : Definition[]
   destroy() : void
   draw() : void
   drawnTime? : Time

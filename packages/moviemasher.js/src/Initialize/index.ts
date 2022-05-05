@@ -1,4 +1,4 @@
-import { Factory } from "../Definitions/Factory"
-import { DefinitionTypes } from "../Setup/Enums"
+// import { Factory } from "../Definitions/Factory"
+// import { DefinitionTypes } from "../Setup/Enums"
 
-DefinitionTypes.forEach(type => { Factory[type].initialize() })
+// // DefinitionTypes.forEach(type => { Factory[type].initialize() })

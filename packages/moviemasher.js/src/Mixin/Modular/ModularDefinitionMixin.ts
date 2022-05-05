@@ -31,7 +31,8 @@ export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : Mod
         evaluator.modular = modular
         evaluator.filter = filterInstance
         evaluator.visibleContext = filterChain.visibleContext
-        const modularGraphFilter = filterInstance.definition.modularGraphFilter(evaluator)
+        const { definition } = filterInstance
+        const modularGraphFilter = definition.modularGraphFilter(evaluator)
 
         if (!preloading && graphType === GraphType.Canvas && avType !== AVType.Audio) {
           filterChain.visibleContext = evaluator.visibleContext
@@ -50,8 +51,6 @@ export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : Mod
     get propertiesCustom() : Property[] {
       return this.properties.filter(property => property.custom)
     }
-
-    retain = true
 
     toJSON() : UnknownObject {
       const object = super.toJSON()

@@ -15,7 +15,5 @@ export class ScalerDefinitionClass extends ScalerDefinitionWithModular implement
     return instance
   }
 
-  retain = true
-
   type = DefinitionType.Scaler
 }

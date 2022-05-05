@@ -4,7 +4,7 @@ import path from 'path'
 import {
   idGenerate, Mash, mashInstance, OutputFactory,
   RenderingOutput, RenderingOutputArgs, Errors,
-  RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType, EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension, CommandInput, RenderingDescription, AVType, CommandInputs, GraphFilters,
+  RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType, EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension, CommandInput, RenderingDescription, AVType, CommandInputs, GraphFilters, EditorDefinitionsClass,
 
 } from "@moviemasher/moviemasher.js"
 import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
@@ -55,7 +55,8 @@ export class RenderingProcessClass implements RenderingProcess {
     if (this._mashInstance) return this._mashInstance
 
     const { definitions, mash } = this.args
-    return this._mashInstance = mashInstance(mash, definitions)
+    const editorDefinitions = new EditorDefinitionsClass(definitions)
+    return this._mashInstance = mashInstance(mash, editorDefinitions)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {

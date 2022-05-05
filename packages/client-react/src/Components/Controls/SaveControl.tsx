@@ -30,10 +30,10 @@ export function SaveControl(props:PropsAndChild): ReactResult {
     if (processing || disabled) return
 
     setProcessing(true)
-    const { mash } = masher
+    const { mash, definitions } = masher
     const request: DataMashPutRequest = {
       mash: mash.toJSON(),
-      definitionIds: mash.definitions.map(definition => definition.id)
+      definitionIds: definitions.ids
     }
     console.debug("DataMashPutRequest", Endpoints.data.mash.put, JSON.parse(JSON.stringify(request)))
     endpointPromise(Endpoints.data.mash.put, request).then((response: DataMashPutResponse) => {

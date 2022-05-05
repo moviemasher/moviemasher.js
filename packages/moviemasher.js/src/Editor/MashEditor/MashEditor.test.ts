@@ -1,5 +1,4 @@
 import { UnknownObject } from "../../declarations"
-import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { MashEditorClass } from "./MashEditorClass"
 import { ThemeClass } from "../../Media/Theme/ThemeClass"
@@ -97,7 +96,7 @@ describe("MashEditor", () => {
       // masher.add(themeTextJson)
       const selectedProperties = masher.selectedProperties
       // console.log('selectedProperties', selectedProperties)
-      expect(selectedProperties.length).toEqual(1)
+      expect(selectedProperties.length).toEqual(2)
     })
   })
 

@@ -3,7 +3,7 @@ const uuid = require('uuid').v4
 import {
   ClipObject, DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, MergerObject, OutputFormat, ScalerObject, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, EditorDefinitionsClass,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -41,7 +41,8 @@ export class StreamingProcessClass extends EventEmitter {
     const { mashObjects, definitionObjects } = args
     const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
-      const mash = mashInstance(mashObject, definitionObjects)
+      const definitions = new EditorDefinitionsClass(definitionObjects)
+      const mash = mashInstance(mashObject, definitions)
       mash.preloader = preloader
       return mash
     })

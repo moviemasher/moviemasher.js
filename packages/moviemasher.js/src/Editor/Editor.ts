@@ -4,6 +4,7 @@ import { EditType, MasherAction } from "../Setup/Enums"
 import { BrowserPreloaderClass } from "../Preloader/BrowserPreloaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse } from "../Api/Data"
+import { EditorDefinitions } from "./EditorDefinitions"
 
 export interface EditorOptions {
   preloader?: BrowserPreloaderClass
@@ -13,6 +14,7 @@ export interface EditorOptions {
 export interface Editor {
   can(action: MasherAction): boolean
   clear(): void
+  definitions: EditorDefinitions
   edited: Edited
   editType: EditType
   eventTarget: Emitter

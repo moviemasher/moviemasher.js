@@ -2,6 +2,7 @@ import { expectCanvasAtTime } from "../../../../../dev/test/Utilities/expectCanv
 import { JestPreloader } from "../../../../../dev/test/Utilities/JestPreloader"
 import { MashObject } from "../../Edited/Mash/Mash"
 import { mashInstance } from "../../Edited/Mash/MashFactory"
+import { EditorDefinitionsClass } from "../../Editor"
 import { ClipObject } from "../../Mixin/Clip/Clip"
 import { DefinitionType, TrackType } from "../../Setup/Enums"
 import { ImageDefinitionObject } from "../Image/Image"
@@ -23,7 +24,8 @@ describe("Merger", () => {
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
-      const mash = mashInstance(mashObject, [definitionObject], new JestPreloader())
+      const definitions = new EditorDefinitionsClass([definitionObject])
+      const mash = mashInstance(mashObject, definitions, new JestPreloader())
       await expectCanvasAtTime(mash)
     })
   })

@@ -46,12 +46,6 @@ export class DefinitionBase {
     return this.properties.filter(property => dataTypeIsDefinitionId(property.type))
   }
 
-  // property(name: string): Property | undefined {
-  //   return this.properties.find(property => property.name === name)
-  // }
-
-  retain = false
-
   toJSON(): UnknownObject {
     const object: UnknownObject = { id: this.id, type: this.type }
     if (this.icon) object.icon = this.icon

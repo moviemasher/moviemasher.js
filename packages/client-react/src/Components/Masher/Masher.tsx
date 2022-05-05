@@ -49,13 +49,13 @@ export function Masher(props: MasherProps): ReactResult {
       // console.debug("DataMashDefaultRequest", Endpoints.data.mash.default, request)
       endpointPromise(Endpoints.data.mash.default, request).then((response: DataMashDefaultResponse) => {
         console.debug("DataMashDefaultResponse", Endpoints.data.mash.default, response)
-        const { mash, definitions, previewSize: serverSize } = response
+        const { previewSize: serverSize, ...rest } = response
         setPreviewSize(serverSize)
         if (servers.file?.prefix) {
           // console.log("Masher servers.file.prefix", servers.file.prefix)
           mashEditor.preloader.endpoint.prefix = String(servers.file.prefix)
         }
-        mashEditor.mash = mashInstance(mash, definitions)
+        mashEditor.loadData(rest)
       })
     }
   }, [enabled])

@@ -25,7 +25,5 @@ export class FontDefinitionClass extends PreloadableDefinition implements FontDe
 
   loadType = LoadType.Font
 
-  retain = true
-
   type = DefinitionType.Font
 }

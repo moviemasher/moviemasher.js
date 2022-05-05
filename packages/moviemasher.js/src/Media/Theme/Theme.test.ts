@@ -1,7 +1,6 @@
 import { ThemeDefinitionClass } from "./ThemeDefinitionClass"
 import { ThemeClass } from "./ThemeClass"
 import { Errors } from "../../Setup/Errors"
-import { Property } from "../../Setup/Property"
 import { themeDefinitionFromId, themeInstance } from "./ThemeFactory"
 import { Factory } from "../../Definitions/Factory"
 import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
@@ -61,8 +60,8 @@ describe("Theme", () => {
         // const [labelProperty, colorProperty] = colorProperties
         expect(colorProperty).toBeDefined()
         expect(labelProperty).toBeDefined()
-        expect(labelProperty).toBeInstanceOf(Property)
-        expect(colorProperty).toBeInstanceOf(Property)
+        expect(labelProperty).toBeInstanceOf(Object)
+        expect(colorProperty).toBeInstanceOf(Object)
         if (!(labelProperty && colorProperty)) throw Errors.internal + 'labelProperty'
 
         expect(colorProperty.name).toEqual("color")

@@ -30,7 +30,6 @@ export class MergerDefinitionClass extends MergerDefinitionWithModular implement
     const instance = new MergerClass({ ...this.instanceObject, ...object, id: this.id })
     return instance
   }
-  retain = true
 
   type = DefinitionType.Merger
 }

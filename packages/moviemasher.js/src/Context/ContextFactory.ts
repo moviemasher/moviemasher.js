@@ -18,9 +18,6 @@ const createContextOfSize = (size: Size) : VisibleContext => {
   return context
 }
 
-/**
- * @category Factory
- */
 export const ContextFactory = {
   audible: createContextAudible,
   fromCanvas: createContextFromCanvas,

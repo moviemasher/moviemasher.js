@@ -1,10 +1,7 @@
 import { Any, GraphFiles, Size, VisibleContextData } from "../../declarations"
 import { Mash } from "../Mash/Mash"
-import { mashInstance } from "../Mash/MashFactory"
 import { CastObject, Cast } from "./Cast"
 import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
-import { DefinitionType } from "../../Setup/Enums"
-import { BrowserPreloaderClass } from "../../Preloader/BrowserPreloaderClass"
 import { EditedClass } from "../EditedClass"
 import { Default } from "../../Setup/Default"
 import { Layers } from "./Layer/Layer"
@@ -23,14 +20,6 @@ export class CastClass extends EditedClass implements Cast {
     // propertiesInitialize doesn't set defaults
     if (!label) this.label = Default.cast.label
     this.dataPopulate(rest)
-
-    const definitionId = 'id-image'
-    const url = '../shared/image/globe.jpg'
-    this.mashes.push(mashInstance({
-      tracks: [{ clips: [{ definitionId }] }]
-    }, [{
-      type: DefinitionType.Image, id: definitionId, source: url, url
-    }], new BrowserPreloaderClass()))
   }
 
   protected override emitterChanged() {

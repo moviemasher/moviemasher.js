@@ -23,14 +23,14 @@ export function TransformableMixin<T extends VisibleClass>(Base: T): Transformab
       if (effects) this.effects.push(...effects.map(effect => effectInstance(effect)))
     }
 
-    get definitions(): Definition[] {
-      return [
-        ...super.definitions,
-        ...this.merger.definitions,
-        ...this.scaler.definitions,
-        ...this.effects.flatMap(effect => effect.definitions)
-      ]
-    }
+    // get definitions(): Definition[] {
+    //   return [
+    //     ...super.definitions,
+    //     ...this.merger.definitions,
+    //     ...this.scaler.definitions,
+    //     ...this.effects.flatMap(effect => effect.definitions)
+    //   ]
+    // }
 
     effects: Effect[] = []
 
