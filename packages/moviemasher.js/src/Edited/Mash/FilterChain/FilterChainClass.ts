@@ -1,6 +1,6 @@
 import { VisibleContext } from "../../../Context"
 import { GraphFile, GraphFilter, GraphFilters, ModularGraphFilter } from "../../../declarations"
-import { AVType, GraphType, LoadType } from "../../../Setup"
+import { GraphType } from "../../../Setup"
 import { Errors } from "../../../Setup/Errors"
 import { FilterGraphInstance } from "../FilterGraph/FilterGraph"
 import { FilterChain } from "./FilterChain"

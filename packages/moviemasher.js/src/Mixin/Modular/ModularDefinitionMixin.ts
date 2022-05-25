@@ -25,6 +25,7 @@ export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : Mod
     filters : Filter[] = []
 
     modularGraphFilters(modular: Modular, filterChain: FilterChain): ModularGraphFilter[] {
+      // console.log(this.constructor.name, "modularGraphFilters")
       const { filterGraph } = filterChain
       const { evaluator, graphType, preloading, avType } = filterGraph
       const modularGraphFilters = this.filters.map(filterInstance => {
@@ -43,6 +44,7 @@ export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : Mod
     }
 
     populateFilterChain(filterChain: FilterChain, modular: Modular): void {
+      // console.log(this.constructor.name, "populateFilterChain")
       // range's frame is offset of draw time in clip and frames is duration
       const modularGraphFilters = this.modularGraphFilters(modular, filterChain)
       modularGraphFilters.forEach(filter => { filterChain.addModularGraphFilter(filter)})

@@ -13,7 +13,7 @@ const ThemeWithTransformable = TransformableMixin(ThemeWithVisible)
 export class ThemeClass extends ThemeWithTransformable implements Theme {
   declare definition: ThemeDefinition
 
-  override initializeFilterChain(filterChain: FilterChain): void {
+  override filterChainInitialize(filterChain: FilterChain): void {
     this.definition.populateFilterChain(filterChain, this)
   }
 }

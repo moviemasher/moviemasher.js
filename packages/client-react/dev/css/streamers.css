@@ -1,0 +1,8 @@
+.moviemasher .caster .streamers {
+  grid-area: streamers;
+}
+
+.moviemasher .streamers .head {
+  grid-template-columns: 1fr repeat(3, min-content);
+  white-space: nowrap;
+}

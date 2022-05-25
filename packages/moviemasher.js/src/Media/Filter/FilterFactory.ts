@@ -17,7 +17,8 @@ import { FilterDefinitionClass } from "./FilterDefinitionClass"
 import { BlendFilter } from "./Definitions/BlendFilter"
 
 const FilterIdPrefix = 'com.moviemasher.filter'
-const Filters = [
+
+export const filterDefaults = [
   new ConvolutionFilter({ id: `${FilterIdPrefix}.convolution`, type: DefinitionType.Filter }),
   new BlendFilter({ id: `${FilterIdPrefix}.blend`, type: DefinitionType.Filter }),
   new ChromaKeyFilter({ id: `${FilterIdPrefix}.chromakey`, type: DefinitionType.Filter }),
@@ -31,8 +32,6 @@ const Filters = [
   new ScaleFilter({ id: `${FilterIdPrefix}.scale`, type: DefinitionType.Filter }),
 ]
 
-const FilterDefinitions = Object.fromEntries(Filters.map(filter => ([filter.id, filter])))
-
 export const filterDefinition = (object : FilterDefinitionObject) : FilterDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
@@ -42,7 +41,7 @@ export const filterDefinition = (object : FilterDefinitionObject) : FilterDefini
 
 export const filterDefinitionFromId = (id: string): FilterDefinition => {
   const qualifiedId = id.includes('.') ? id : `${FilterIdPrefix}.${id}`
-  const definition = FilterDefinitions[qualifiedId]
+  const definition = filterDefaults.find(definition => definition.id === qualifiedId)
   if (definition) return definition
 
   return filterDefinition({ id: qualifiedId })
@@ -60,11 +59,12 @@ export const filterFromId = (id: string): Filter => {
   return definition.instanceFromObject({ id })
 }
 
-export const FilterFactoryImplementation = {
+export const FilterFactoryImplementation =
+
+Factories[DefinitionType.Filter] = {
   definition: filterDefinition,
   definitionFromId: filterDefinitionFromId,
   fromId: filterFromId,
   instance: filterInstance,
+  defaults: filterDefaults,
 }
-
-Factories[DefinitionType.Filter] = FilterFactoryImplementation

@@ -1,59 +1,94 @@
 import React from 'react'
 
-import FolderTransferFillIcon from 'remixicon-react/FolderTransferFillIcon'
-import Music2FillIcon from 'remixicon-react/Music2FillIcon'
-import FolderSettingsFillIcon from 'remixicon-react/FolderSettingsFillIcon'
-import FilmFillIcon from 'remixicon-react/FilmFillIcon'
-import PlayCircleFillIcon from 'remixicon-react/PlayCircleFillIcon'
-import PauseCircleFillIcon from 'remixicon-react/PauseCircleFillIcon'
-import ChatVoiceFillIcon from 'remixicon-react/ChatVoiceFillIcon'
-import VideoChatFillIcon from 'remixicon-react/VideoChatFillIcon'
-import FolderChartFillIcon from 'remixicon-react/FolderChartFillIcon'
-import ImageFillIcon from 'remixicon-react/ImageFillIcon'
-import MvLineIcon from 'remixicon-react/MvLineIcon'
-import MusicLineIcon from 'remixicon-react/MusicLineIcon'
-import VideoLineIcon from 'remixicon-react/VideoLineIcon'
-import SwapBoxLineIcon from 'remixicon-react/SwapBoxLineIcon'
-import ArrowLeftRightLineIcon from 'remixicon-react/ArrowLeftRightLineIcon'
-import ArrowRightSLineIcon from 'remixicon-react/ArrowRightSLineIcon'
-import UploadCloud2LineIcon from 'remixicon-react/UploadCloud2LineIcon'
-import ArrowGoBackLineIcon from 'remixicon-react/ArrowGoBackLineIcon'
-import ArrowGoForwardLineIcon from 'remixicon-react/ArrowGoForwardLineIcon'
-import DeleteBin7LineIcon from 'remixicon-react/DeleteBin7LineIcon'
-import AddLineIcon from 'remixicon-react/AddLineIcon'
-import EyeLineIcon from 'remixicon-react/EyeLineIcon'
-import EyeOffLineIcon from 'remixicon-react/EyeOffLineIcon'
-import VolumeUpLineIcon from 'remixicon-react/VolumeUpLineIcon'
-import VolumeMuteLineIcon from 'remixicon-react/VolumeMuteLineIcon'
-
-import SplitCellsHorizontalIcon from 'remixicon-react/SplitCellsHorizontalIcon'
+import { RiFolderTransferFill } from 'react-icons/ri'
+import { RiMusic2Fill } from 'react-icons/ri'
+import { RiFolderSettingsFill } from 'react-icons/ri'
+import { RiFilmFill } from 'react-icons/ri'
+import { RiPlayCircleFill } from 'react-icons/ri'
+import { RiPauseCircleFill } from 'react-icons/ri'
+import { RiChatVoiceFill } from 'react-icons/ri'
+import { RiVideoChatFill } from 'react-icons/ri'
+import { RiFolderChartFill } from 'react-icons/ri'
+import { RiImageFill } from 'react-icons/ri'
+import { RiMvLine } from 'react-icons/ri'
+import { RiMusicLine } from 'react-icons/ri'
+import { RiVideoLine } from 'react-icons/ri'
+import { RiSwapBoxLine } from 'react-icons/ri'
+import { RiArrowLeftRightLine } from 'react-icons/ri'
+import { RiArrowRightSLine } from 'react-icons/ri'
+import { RiUploadCloud2Line } from 'react-icons/ri'
+import { RiArrowGoBackLine } from 'react-icons/ri'
+import { RiArrowGoForwardLine } from 'react-icons/ri'
+import { RiDeleteBin7Line } from 'react-icons/ri'
+import { RiAddLine } from 'react-icons/ri'
+import { RiEyeLine } from 'react-icons/ri'
+import { RiEyeOffLine } from 'react-icons/ri'
+import { BsReverseLayoutSidebarInsetReverse } from 'react-icons/bs'
+import { RiVolumeUpLine } from 'react-icons/ri'
+import { RiVolumeMuteLine } from 'react-icons/ri'
+import { FaUserCircle } from 'react-icons/fa'
+import { RiBroadcastFill } from 'react-icons/ri'
+import { RiUserSettingsFill } from 'react-icons/ri'
+import { RiStackFill } from 'react-icons/ri'
+import { RiStackLine } from 'react-icons/ri'
+import { RiChat3Fill } from 'react-icons/ri'
+import { RiMessage3Fill } from 'react-icons/ri'
+import { RiEdit2Fill } from 'react-icons/ri'
+import { RiSplitCellsHorizontal } from 'react-icons/ri'
+import { RiFolderLine } from 'react-icons/ri'
+import { RiFolderOpenLine } from 'react-icons/ri'
+import { RiFolderAddFill } from 'react-icons/ri'
+import { MdPermMedia } from 'react-icons/md'
+import { AiOutlineFieldTime } from 'react-icons/ai'
+import { IoInvertMode } from 'react-icons/io5'
 import { EditorIcons } from '../../../declarations'
+import { MMTubeIcon } from '../../Icons/MMTubeIcon'
+import { MMIcon } from '../../Icons/MMIcon'
+
 
 export const DefaultIcons: EditorIcons = {
-  browserAudio: <Music2FillIcon />,
-  browserEffect: <FolderSettingsFillIcon />,
-  browserImage: <ImageFillIcon />,
-  browserTheme: <FolderChartFillIcon />,
-  browserTransition: <FolderTransferFillIcon />,
-  browserVideo: <FilmFillIcon />,
-  browserVideoStream: <VideoChatFillIcon />,
-  browserAudioStream: <ChatVoiceFillIcon />,
-  playerPause: <PauseCircleFillIcon />,
-  playerPlay: <PlayCircleFillIcon />,
-  timelineAddTransition: <SwapBoxLineIcon />,
-  timelineAddAudio: <MvLineIcon />,
-  timelineAddVideo: <VideoLineIcon />,
-  timelineTrackTransition: <ArrowLeftRightLineIcon />,
-  timelineTrackAudio: <MusicLineIcon />,
-  timelineTrackVideo: <ArrowRightSLineIcon />,
-  upload: <UploadCloud2LineIcon />,
-  undo: <ArrowGoBackLineIcon />,
-  redo: <ArrowGoForwardLineIcon />,
-  remove: <DeleteBin7LineIcon />,
-  add: <AddLineIcon />,
-  split: <SplitCellsHorizontalIcon />,
-  visible: <EyeLineIcon />,
-  invisible: <EyeOffLineIcon />,
-  audible: <VolumeUpLineIcon />,
-  inaudible: <VolumeMuteLineIcon />,
+  app: <img key='logo' src="mm.svg" />,
+  add: <RiAddLine key='add' />,
+  administrator: <RiUserSettingsFill key='administrator' />,
+  audible: <RiVolumeUpLine key='audible' />,
+  broadcast: <RiBroadcastFill key='broadcast' />,
+  browser: <MdPermMedia key='browser' />,
+  browserAudio: <RiMusic2Fill />,
+  browserAudioStream: <RiChatVoiceFill />,
+  browserEffect: <RiFolderSettingsFill />,
+  browserImage: <RiImageFill />,
+  browserTheme: <RiFolderChartFill />,
+  browserTransition: <RiFolderTransferFill />,
+  browserVideo: <RiFilmFill />,
+  browserVideoStream: <RiVideoChatFill />,
+  folder: <RiFolderLine key='folder' />,
+  folderOpen: <RiFolderOpenLine key='folderOpen' />,
+  folderAdd: <RiFolderAddFill key='folderAdd' />,
+  chat: <RiChat3Fill key='chat' />,
+  inaudible: <RiVolumeMuteLine key='inaudible' />,
+  inspector: <RiEdit2Fill key='inspector' />,
+  invisible: <RiEyeOffLine key='invisible' />,
+  layer: <RiStackLine key='layer' />,
+  layers: <RiStackFill key='layers' />,
+  mm: <MMIcon />,
+  message: <RiMessage3Fill key='message' />,
+  playerPause: <RiPauseCircleFill key="player-pause" />,
+  playerPlay: <RiPlayCircleFill key="player-play"/>,
+  redo: <RiArrowGoForwardLine />,
+  remove: <RiDeleteBin7Line />,
+  split: <RiSplitCellsHorizontal />,
+  streamers: <FaUserCircle key='streamers' />,
+  matte: <BsReverseLayoutSidebarInsetReverse/>,
+  timeline: <AiOutlineFieldTime key='timeline' />,
+  timelineAddAudio: <RiMvLine />,
+  timelineAddTransition: <RiSwapBoxLine />,
+  timelineAddVideo: <RiVideoLine />,
+  audio: <RiMusicLine />,
+  transition: <RiArrowLeftRightLine />,
+  video: <RiArrowRightSLine />,
+  mmTube: <MMTubeIcon />,
+  undo: <RiArrowGoBackLine />,
+  upload: <RiUploadCloud2Line />,
+  visible: <RiEyeLine key='visible' />,
+
 }

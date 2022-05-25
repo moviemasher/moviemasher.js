@@ -3,12 +3,12 @@
   grid-area: inspector;
 }
 
-.moviemasher .editor .panel.inspector details {
-  margin-left: -5px;
+.moviemasher .editor .panel.inspector .foot {
+  grid-template-columns: 1fr repeat(2, min-content);
 }
 
 .moviemasher .editor .panel.inspector summary {
-  margin-left: -5px;
+  margin-left: -10px;
   margin-bottom: var(--spacing);
   border-bottom: var(--border);
   text-transform: capitalize;

@@ -23,6 +23,10 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     return instance
   }
 
+  inputCountMin = 0
+
+  inputCountMax = 0
+
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
     const { graphType, preloading } = evaluator
 
@@ -34,6 +38,8 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     }
     return graphFilter
   }
+
+  outputCount = 0
 
   parameters : Parameter[] = []
 

@@ -55,7 +55,7 @@ const EvaluatorExpessions = {
 
 export class Evaluator {
   constructor(args: EvaluatorArgs) {
-    const { timeRange, graphType, avType, modular, preloading, filter, context } = args
+    const { timeRange, graphType, avType, modular, preloading, filter, context} = args
     if (context) this._visibleContext = context
     if (preloading) this.preloading = preloading
     this.graphType = graphType
@@ -94,7 +94,7 @@ export class Evaluator {
     const trueConditional = conditionals.find(conditional => {
       const expression = EvaluatorConditional(conditional)
       if (isNumeric(expression)) {
-        console.log("evaluateConditionals isNumeric", expression, Number(expression))
+        // console.log("evaluateConditionals isNumeric", expression, Number(expression))
         return !!Number(expression)
       }
 
@@ -235,8 +235,10 @@ export class Evaluator {
   get createVisibleContext(): VisibleContext {
     const size = this._visibleContext ? this.visibleContext.size : this.outputSize
 
-    return ContextFactory.toSize(size)
+    return ContextFactory.visible({ size, label: `${this.constructor.name} ${this.label}`})
   }
+
+  label = 'createVisibleContext'
 
   private _modular?: Modular
   get modular(): Modular { return this._modular! }
@@ -367,7 +369,6 @@ export class Evaluator {
       case 'number':
       case 'string': return selectionValue
     }
-    throw Errors.invalid.property + key
   }
 
   set(key: string, value: Value, dataType = DataType.Number): void {

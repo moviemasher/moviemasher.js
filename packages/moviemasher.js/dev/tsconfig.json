@@ -7,6 +7,7 @@
     "declaration": false,
     "declarationMap": false,
     "esModuleInterop": true,
+    "isolatedModules": true,
     "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
     "module": "ESNext",
     "moduleResolution": "node",

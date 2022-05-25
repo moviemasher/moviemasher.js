@@ -1,21 +1,23 @@
 import React from "react"
-import { EventType } from "@moviemasher/moviemasher.js"
+import { Emitter, EventType } from "@moviemasher/moviemasher.js"
 
-import { useEditor } from "./useEditor"
 import { ListenerCallback } from "../declarations"
+import { EditorContext } from "../Contexts/EditorContext"
 
 export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
 
 
-export const useListeners = (events: ListenerEvents): void => {
-  const editor = useEditor()
-  const { eventTarget } = editor
+export const useListeners = (events: ListenerEvents, target?: Emitter): void => {
+  const editorContext = React.useContext(EditorContext)
+  const { editor } = editorContext
+  const eventTarget = target || editor!.eventTarget
 
   const handleEvent = (event : Event) => {
     const { type } = event
     const handler = events[type as EventType]
-    if (handler) handler()
+    if (handler) handler(event)
   }
+
   const removeListeners = () => {
     Object.keys(events).forEach(eventType => {
       eventTarget.removeEventListener(eventType, handleEvent)

@@ -14,12 +14,12 @@ export class CropFilter extends FilterDefinitionClass {
     const width = evaluator.parameterNumber('out_w')
     const height = evaluator.parameterNumber('out_h')
     const fromSize = { width, height }
-    const drawing = ContextFactory.toSize(fromSize)
+    const drawing = ContextFactory.visible({ size: fromSize, label: this.id })
     const x = evaluator.parameterNumber('x')
     const y = evaluator.parameterNumber('y')
     const inRect = { x, y, ...fromSize }
     const { visibleContext } = evaluator
-    drawing.drawInRectFromSize(visibleContext.drawingSource, inRect, fromSize)
+    drawing.drawInRectFromSize(visibleContext.canvas, inRect, fromSize)
     return drawing
   }
 

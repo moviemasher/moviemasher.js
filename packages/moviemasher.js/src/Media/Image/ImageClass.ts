@@ -15,7 +15,7 @@ const ImageWithTransformable = TransformableMixin(ImageWithVisible)
 export class ImageClass extends ImageWithTransformable implements Image {
   declare definition: ImageDefinition
 
-  override initializeFilterChain(filterChain: FilterChain): void  {
+  override filterChainInitialize(filterChain: FilterChain): void  {
     const { filterGraph } = filterChain
     const { graphType, avType, preloading, time: startTime, quantize, preloader } = filterGraph
     // console.log(this.constructor.name, "initializeFilterChain", preloading)

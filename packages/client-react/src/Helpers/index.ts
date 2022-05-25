@@ -1,3 +1,2 @@
 export * from './DragDrop'
-export * from './DefaultMasherProps'
-export * from './DefaultCasterProps'
+export * from './DefaultStreamerProps'

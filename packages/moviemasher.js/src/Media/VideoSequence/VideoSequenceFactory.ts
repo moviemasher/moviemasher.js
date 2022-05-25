@@ -25,11 +25,9 @@ export const videoSequenceFromId = (id : string) : VideoSequence => {
   return videoSequenceInstance({ id })
 }
 
-export const VideoSequenceFactoryImplementation = {
+Factories[DefinitionType.VideoSequence] = {
   definition: videoSequenceDefinition,
   definitionFromId: videoSequenceDefinitionFromId,
   fromId: videoSequenceFromId,
   instance: videoSequenceInstance,
 }
-
-Factories[DefinitionType.VideoSequence] = VideoSequenceFactoryImplementation

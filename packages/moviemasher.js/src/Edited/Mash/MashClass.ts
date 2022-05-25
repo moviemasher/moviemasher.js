@@ -1,24 +1,22 @@
 import {
-  Interval, LoadPromise, Size, UnknownObject, VisibleContextData, GraphFiles, Any
-} from "../../declarations"
+  Interval, LoadPromise, UnknownObject, GraphFiles} from "../../declarations"
 import {
   AVType, DataType, DefinitionType, EventType, GraphType, TrackType
 } from "../../Setup/Enums"
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { isAboveZero, isPopulatedString, isPositive } from "../../Utility/Is"
+import { isAboveZero, isPopulatedString, isPositive, isString } from "../../Utility/Is"
 import { sortByLayer, sortByTrack } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
-import { Preloader } from "../../Preloader/Preloader"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
 import { Visible } from "../../Mixin/Visible/Visible"
 import { Audible, AudibleContent, AudibleContents } from "../../Mixin/Audible/Audible"
 import { Track, TrackArgs, TrackObject } from "../../Media/Track/Track"
 import { Transition } from "../../Media/Transition/Transition"
-import { ChangeAction } from "../../Editor/MashEditor/Actions/Action/ChangeAction"
-import { Action } from "../../Editor/MashEditor/Actions/Action/Action"
-import { Composition } from "./Composition/Composition"
+import { ChangeAction } from "../../Editor/Actions/Action/ChangeAction"
+import { Action } from "../../Editor/Actions/Action/Action"
+import { Composition, CompositionObject } from "./Composition/Composition"
 import { Contents, Mash, MashArgs } from "./Mash"
 import { FilterGraphObject, FilterGraphOptions } from "./FilterGraph/FilterGraph"
 import {
@@ -29,43 +27,43 @@ import { FilterGraphsClass } from "./FilterGraphs/FilterGraphsClass"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, timeRangeFromTimes
 } from "../../Helpers/Time/TimeUtilities"
-import { TrackFactory } from "../../Media/Track/TrackFactory"
+import { TrackFactory, trackInstance } from "../../Media/Track/TrackFactory"
 import { EditedClass } from "../EditedClass"
 import { propertyInstance } from "../../Setup/Property"
+import { VisibleContext } from "../../Context/VisibleContext"
 
 export class MashClass extends EditedClass implements Mash {
-  constructor(...args: Any[]) {
-    super(...args)
-    const [object] = args
+  constructor(args: MashArgs) {
+    super(args)
     this.properties.push(
       propertyInstance(
         { name: 'backcolor', type: DataType.Rgba, defaultValue: Default.mash.backcolor }
       )
     )
-    this.propertiesInitialize(object)
-
     const {
       createdAt,
       tracks,
       id,
       quantize,
       frame,
-      definitions,
       rendering,
       label,
       backcolor,
+      icon,
+      preloader,
+      definitions,
       ...rest
-    } = object as MashArgs
+    } = args
 
+    this.propertiesInitialize(args)
     // propertiesInitialize doesn't set defaults
-    if (!label) this.label = Default.mash.label
-    if (!backcolor) this.backcolor = Default.mash.backcolor
+    if (!isString(label)) this.label = Default.mash.label
+    if (!isString(backcolor)) this.backcolor = Default.mash.backcolor
+
     this.dataPopulate(rest)
 
     if (quantize && isAboveZero(quantize)) this.quantize = quantize
-
     if (rendering && isPopulatedString(rendering)) this._rendering = rendering
-
     if (createdAt) this.createdAt = createdAt
     if (frame) this._frame = frame
     let videoTrackCount = 0
@@ -80,7 +78,7 @@ export class MashClass extends EditedClass implements Mash {
       if (typeof track.dense === 'undefined') {
         trackArgs.dense = videoTrackCount === 1
       }
-      const instance = TrackFactory.instance(trackArgs)
+      const instance = trackInstance(trackArgs)
       instance.assureFrames(this.quantize)
       instance.sortClips()
 
@@ -123,13 +121,6 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
-  private _backcolor = Default.mash.backcolor
-  get backcolor(): string { return this._backcolor }
-  set backcolor(value: string) {
-    this._backcolor = value
-    if (this._composition) this.composition.backcolor = value
-  }
-
   private _buffer = Default.mash.buffer
   get buffer(): number { return this._buffer }
   set buffer(value: number) {
@@ -147,7 +138,7 @@ export class MashClass extends EditedClass implements Mash {
     if (this._bufferTimer) return
 
     this._bufferTimer = setInterval(() => {
-      this.loadPromiseUnlessBuffered
+      this.loadPromiseUnlessBuffered()
       this.compositeAudibleClips(this.clipsAudibleInTimeRange(this.timeToBuffer))
 
     }, Math.round((this.buffer * 1000) / 2))
@@ -192,7 +183,7 @@ export class MashClass extends EditedClass implements Mash {
     })
   }
 
-  clearDrawInterval():void {
+  clearDrawInterval(): void {
     if (this.drawInterval) {
       clearInterval(this.drawInterval)
       this.drawInterval = undefined
@@ -255,30 +246,15 @@ export class MashClass extends EditedClass implements Mash {
     })
   }
 
+  private drawingTime?: Time
+
   private compositeVisible(time: Time): void {
-    // console.log("compositeVisible", time)
-    const { composition, quantize } = this
-    const graphType = GraphType.Canvas
-    const args: FilterGraphsArgs = {
-      preloading: false,
-      times: [time],
-      graphType,
-      videoRate: quantize,
-      size: this.imageSize,
-      avType: AVType.Video,
-      mash: this,
-    }
-    const filterGraphs = new FilterGraphsClass(args)
-    const filterGraph = filterGraphs.filterGraphsVisible[0]
-    const { filterChains } = filterGraph
-    composition.drawBackground() // clear and fill with mash background color if defined
-    filterChains.forEach(chain => {
-      composition.visibleContext.draw(chain.visibleContext!.canvas)
-    })
+    this.drawingTime = time
     this.emitter?.emit(EventType.Draw)
   }
 
-  compositeVisibleRequest(time : Time) : void {
+  compositeVisibleRequest(time: Time): void {
+    // console.log(this.constructor.name, "compositeVisibleRequest", time)
     requestAnimationFrame(() => this.compositeVisible(time))
   }
 
@@ -292,17 +268,16 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   private _composition?: Composition
-
   get composition(): Composition {
     if (!this._composition) {
-      const options = {
-        backcolor: this.backcolor,
+      const options: CompositionObject = {
         buffer: this.buffer,
         gain: this.gain,
         quantize: this.quantize,
         emitter: this.emitter,
         preloader: this.preloader,
       }
+      // console.log(this.constructor.name, "composition creating")
       this._composition = new Composition(options)
     }
     return this._composition
@@ -373,14 +348,18 @@ export class MashClass extends EditedClass implements Mash {
     return contents
   }
 
-  // get definitions() : Definition[] {
-  //   return [...new Set(this.clipsInTracks().flatMap(clip => clip.definitions))]
-  // }
+  get definitionIds(): string[] {
+    const { clips } = this
+    const ids = clips.flatMap(clip => clip.definitionIds)
+    const set = [...new Set(ids)]
+
+    // console.log(this.constructor.name, "definitionIds", set.length)
+    return set
+  }
 
   destroy(): void {
     this.paused = true
     this.clearDrawInterval()
-    delete this._composition
   }
 
   draw(): void {
@@ -552,6 +531,7 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   handleAction(action: Action): void {
+    // console.log(this.constructor.name, "handleAction", action.constructor.name)
     this.emitter?.emit(EventType.Action)
 
     if (action instanceof ChangeAction) {
@@ -572,32 +552,16 @@ export class MashClass extends EditedClass implements Mash {
     else this.drawWhilePlayerNotPlaying()
   }
 
-  get imageData() : VisibleContextData { return this.composition.visibleContext.imageData }
-
-  get imageSize() : Size { return this.composition.visibleContext.size }
-  set imageSize(value: Size) {
-    const { width, height } = value
-    if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
-
-    this.composition.visibleContext.size = value
-    const promise = this.loadPromiseUnlessBuffered
-    if (promise) promise.then(() => { this.draw() })
-    else this.draw()
-  }
-
   loadPromise(args: FilterGraphObject = {}): LoadPromise {
-    const { time, ...rest } = args
-    const preloadTime = time || this.timeToBuffer
-    const object: FilterGraphObject = { ...rest, time: preloadTime }
-    const filterGraphsOptions = this.filterGraphsOptions(object)
-    const files = this.graphFilesUnloaded(filterGraphsOptions)
-    if (!files.length) return Promise.resolve()
-
-    return this.preloader.loadFilesPromise(files).then(EmptyMethod)
+    return this.loadPromiseUnlessBuffered(args) || Promise.resolve()
   }
 
-  private get loadPromiseUnlessBuffered(): LoadPromise | undefined {
-    const args: FilterGraphObject = { time: this.timeToBuffer }
+  loadingPromises: LoadPromise[] = []
+
+  get loading(): boolean { return !!this.loadingPromises.length }
+
+  private loadPromiseUnlessBuffered(args: FilterGraphObject = {}): LoadPromise | undefined {
+    args.time ||= this.timeToBuffer
     const filterGraphsOptions = this.filterGraphsOptions(args)
 
     const files = this.graphFilesUnloaded(filterGraphsOptions)
@@ -605,8 +569,15 @@ export class MashClass extends EditedClass implements Mash {
 
     if (files.every(file => this.preloader.loadedFile(file))) return
 
+    const promise = this.preloader.loadFilesPromise(files).then(EmptyMethod)
+    const removedPromise = promise.then(() => {
+      const index = this.loadingPromises.indexOf(promise)
+      if (index < 0) throw Errors.internal + "couldn't find promise~"
 
-    return this.preloader.loadFilesPromise(files).then(EmptyMethod)
+      this.loadingPromises.splice(index, 1)
+    })
+    this.loadingPromises.push(promise)
+    return removedPromise
   }
 
   loop = false
@@ -632,7 +603,7 @@ export class MashClass extends EditedClass implements Mash {
     } else {
       this.composition.startContext()
       this.bufferStart()
-      const promise = this.loadPromiseUnlessBuffered
+      const promise = this.loadPromiseUnlessBuffered()
       if (promise) promise.then(() => { this.playing = true })
       else this.playing = true
       // console.log("Mash emit", EventType.Play)
@@ -663,14 +634,6 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
-  private _preloader?: Preloader
-  get preloader(): Preloader {
-    if (!this._preloader) throw Errors.internal + 'mash preloader false'
-
-    return this._preloader
-  }
-  set preloader(value: Preloader) { this._preloader = value }
-
   removeClipFromTrack(clip : Clip) : void {
     const track = this.clipTrack(clip)
     this.emitIfFramesChange(() => { track.removeClip(clip) })
@@ -692,8 +655,9 @@ export class MashClass extends EditedClass implements Mash {
     this.emitter?.emit(EventType.Render)
   }
 
-  private restartAfterStop(time:Time, paused:boolean, seeking?: boolean): void {
-    if (time === this.time) { // otherwise we must have gotten a seek call
+  private restartAfterStop(time: Time, paused: boolean, seeking?: boolean): void {
+    // console.log(this.constructor.name, "restartAfterStop", time, this.time)
+    if (time.equalsTime(this.time)) { // otherwise we must have gotten a seek call
       if (seeking) {
         delete this.seekTime
         this.emitter?.emit(EventType.Seeked)
@@ -740,7 +704,7 @@ export class MashClass extends EditedClass implements Mash {
     const { time, paused, playing } = this
     if (playing) this.playing = false
 
-    const promise = this.loadPromiseUnlessBuffered
+    const promise = this.loadPromiseUnlessBuffered()
     if (promise) return promise.then(() => { this.restartAfterStop(time, paused, seeking) })
     this.restartAfterStop(time, paused, seeking)
   }
@@ -827,5 +791,31 @@ export class MashClass extends EditedClass implements Mash {
 
   private tracksOfType(trackType: TrackType): Track[] {
     return this.tracks.filter(track => track.trackType === trackType)
+  }
+
+  get visibleContexts(): VisibleContext[] {
+    // console.log(this.constructor.name, "visibleContexts")
+    const { drawingTime, time, backcolor, quantize, backgroundVisibleContext } = this
+    const graphType = GraphType.Canvas
+    const args: FilterGraphsArgs = {
+      preloading: false,
+      times: [drawingTime || time],
+      graphType,
+      videoRate: quantize,
+      size: this.imageSize,
+      avType: AVType.Video,
+      mash: this,
+    }
+    delete this.drawingTime
+    const filterGraphs = new FilterGraphsClass(args)
+    const [filterGraph] = filterGraphs.filterGraphsVisible
+    const { filterChains } = filterGraph
+
+    const contexts: VisibleContext[] = []
+    if (backcolor) contexts.push(backgroundVisibleContext)
+    contexts.push(...filterChains.map(chain => chain.visibleContext))
+
+    // this.emitter?.emit(EventType.Draw)
+    return contexts
   }
 }

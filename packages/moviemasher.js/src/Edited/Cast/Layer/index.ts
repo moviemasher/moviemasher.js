@@ -1,1 +1,5 @@
 export * from "./Layer"
+export * from "./LayerClass"
+export * from "./LayerFolderClass"
+export * from "./LayerMashClass"
+export * from "./LayerFactory"

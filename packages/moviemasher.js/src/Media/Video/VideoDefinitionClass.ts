@@ -1,6 +1,6 @@
 import {
   AudibleSource, VisibleSource, Any, UnknownObject, LoadPromise, LoadVideoResult,
-  FilesArgs, GraphFile, GraphFiles
+  FilesArgs, GraphFile, GraphFiles, CanvasVisibleSource
 } from "../../declarations"
 import { DefinitionType, TrackType, LoadType, AVType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
@@ -70,7 +70,7 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
 
   loadType = LoadType.Video
 
-  loadedVisible(preloader: Preloader, quantize: number, startTime: Time): VisibleSource | undefined {
+  loadedVisible(preloader: Preloader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
     const rate = this.fps || quantize
     const time = startTime.scale(rate)
 
@@ -80,11 +80,12 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
     const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
     if (!cached) return
 
-    const { sequence } = cached
-    const source = sequence[time.frame]
-    if (!source || source instanceof Promise) return
+    const { video } = cached // sequence,
+    return video
+    // const source = sequence[time.frame]
+    // if (!source || source instanceof Promise) return
 
-    return source
+    // return source
   }
 
   pattern = '%.jpg'

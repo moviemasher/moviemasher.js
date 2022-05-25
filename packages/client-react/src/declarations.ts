@@ -1,6 +1,5 @@
 import React from 'react'
 
-
 // TODO: determine if we really need to repeat this
 declare global {
   interface Window {
@@ -27,7 +26,7 @@ export interface SourceCallbackOptions extends Record<string, unknown> {
 
 export type ReactStateSetter<T = string> = React.Dispatch<React.SetStateAction<T>>
 
-export interface ListenerCallback { (): void }
+export interface ListenerCallback { (event: Event): void }
 
 
 export interface PropsAndChild extends Record<string, unknown> {

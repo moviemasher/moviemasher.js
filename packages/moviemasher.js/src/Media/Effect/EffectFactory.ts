@@ -12,6 +12,7 @@ import effectGrayscaleJson from "../../Definitions/DefinitionObjects/effect/gray
 import effectSepiaJson from "../../Definitions/DefinitionObjects/effect/sepia.json"
 import effectSharpenJson from "../../Definitions/DefinitionObjects/effect/sharpen.json"
 import effectTextJson from "../../Definitions/DefinitionObjects/effect/text.json"
+import { EffectClass } from "./EffectClass"
 
 export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
@@ -20,18 +21,18 @@ export const effectDefinition = (object : EffectDefinitionObject) : EffectDefini
   return new EffectDefinitionClass({...object, type: DefinitionType.Effect })
 }
 
-const EffectDefinitions = {
-  [effectBlurJson.id]: effectDefinition(effectBlurJson),
-  [effectChromaKeyJson.id]: effectDefinition(effectChromaKeyJson),
-  [effectEmbossJson.id]: effectDefinition(effectEmbossJson),
-  [effectGrayscaleJson.id]: effectDefinition(effectGrayscaleJson),
-  [effectSepiaJson.id]: effectDefinition(effectSepiaJson),
-  [effectSharpenJson.id]: effectDefinition(effectSharpenJson),
-  [effectTextJson.id]: effectDefinition(effectTextJson),
-}
+export const effectDefaults = [
+  effectDefinition(effectBlurJson),
+  effectDefinition(effectChromaKeyJson),
+  effectDefinition(effectEmbossJson),
+  effectDefinition(effectGrayscaleJson),
+  effectDefinition(effectSepiaJson),
+  effectDefinition(effectSharpenJson),
+  effectDefinition(effectTextJson),
+]
 
 export const effectDefinitionFromId = (id: string): EffectDefinition => {
-  const definition = EffectDefinitions[id]
+  const definition = effectDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return effectDefinition({ id })
@@ -48,11 +49,12 @@ export const effectFromId = (definitionId: string): Effect => {
   return definition.instance
 }
 
-export const EffectFactoryImplementation = {
+export const isEffect = (value?: any): value is Effect => value instanceof EffectClass
+
+Factories[DefinitionType.Effect] = {
   definition: effectDefinition,
   definitionFromId: effectDefinitionFromId,
   fromId: effectFromId,
   instance: effectInstance,
+  defaults: effectDefaults,
 }
-
-Factories[DefinitionType.Effect] = EffectFactoryImplementation

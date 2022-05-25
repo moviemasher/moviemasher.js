@@ -3,7 +3,7 @@
 }
 
 .moviemasher .editor .panel.player .head {
-  grid-template-columns: 1fr min-content auto;
+  grid-template-columns: 1fr repeat(3, min-content);
 }
 
 .moviemasher .editor .panel.player .foot {
@@ -18,4 +18,9 @@
   width: var(--preview-width);
   height: var(--preview-height);
   margin-inline: auto;
+}
+
+
+.moviemasher .editor .panel.player .content > * {
+  position: absolute;
 }

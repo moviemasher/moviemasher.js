@@ -16,7 +16,7 @@ export class BlendFilter extends FilterDefinitionClass {
     const mode = Modes[all_mode]
     if (!mode) throw Errors.unknown.mode
 
-    createVisibleContext.drawWithComposite(visibleContext.drawingSource, mode)
+    createVisibleContext.drawWithComposite(visibleContext.canvas, mode)
     return createVisibleContext
   }
 

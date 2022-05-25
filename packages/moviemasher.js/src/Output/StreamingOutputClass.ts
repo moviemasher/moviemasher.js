@@ -5,7 +5,7 @@ import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType } from "../Setup/Enums"
 import { CommandOutput, StreamingOutput, StreamingOutputArgs } from "./Output"
 import { CommandInputs, RenderingResult } from "../Api/Rendering"
-import { Mash } from "../Edited/Mash/Mash"
+import { Mash, Mashes } from "../Edited/Mash/Mash"
 import { FilterGraph, FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
 import { StreamingDescription } from "../Api/Streaming"
 import { timeFromArgs } from "../Helpers"
@@ -85,7 +85,7 @@ export class StreamingOutputClass implements StreamingOutput {
     return promise
   }
 
-  mashes: Mash[] = []
+  mashes: Mashes = []
 
   get outputSize(): Size {
     const { width, height } = this.args.commandOutput

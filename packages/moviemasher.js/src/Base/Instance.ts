@@ -35,6 +35,12 @@ export class InstanceBase extends PropertiedClass {
 
   get definitionId(): string { return this.definition.id }
 
+  get definitionIds(): string[] {
+    const ids = [this.definitionId]
+    ids.push(...this.definition.instanceDefinitionIds(this))
+    return ids
+  }
+
   definitionTime(quantize : number, time : Time) : Time {
     return time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
   }
@@ -66,3 +72,5 @@ export class InstanceBase extends PropertiedClass {
 export interface Instance extends InstanceBase {}
 
 export type InstanceClass = Constrained<InstanceBase>
+
+export const isInstance = (value?: any): value is Instance => value instanceof InstanceBase

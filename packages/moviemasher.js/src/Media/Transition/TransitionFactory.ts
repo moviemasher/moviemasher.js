@@ -16,12 +16,10 @@ export const transitionDefinition = (object : TransitionDefinitionObject) : Tran
   return new TransitionDefinitionClass(object)
 }
 
-const ThemeDefinitions: { [index: string]: TransitionDefinition } = {
-  [transitionCrossfadeJson.id]: transitionDefinition(transitionCrossfadeJson)
-}
+export const transitionDefaults = [transitionDefinition(transitionCrossfadeJson)]
 
 export const transitionDefinitionFromId = (id: string): TransitionDefinition => {
-  const definition = ThemeDefinitions[id]
+  const definition = transitionDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return transitionDefinition({ id })
@@ -38,11 +36,10 @@ export const transitionFromId = (id: string): Transition => {
   return definition.instanceFromObject({ id })
 }
 
-export const TransitionFactoryImplementation = {
+Factories[DefinitionType.Transition] = {
   definition: transitionDefinition,
   definitionFromId: transitionDefinitionFromId,
   fromId: transitionFromId,
   instance: transitionInstance,
+  defaults: transitionDefaults,
 }
-
-Factories[DefinitionType.Transition] = TransitionFactoryImplementation

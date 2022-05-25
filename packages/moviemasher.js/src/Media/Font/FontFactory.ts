@@ -15,12 +15,10 @@ export const fontDefinition = (object : FontDefinitionObject) : FontDefinition =
   return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id })
 }
 
-export const FontDefinitions: { [index: string]: FontDefinition } = {
-  [fontDefaultId]: fontDefinition(fontDefaultJson)
-}
+export const fontDefaults = [fontDefinition(fontDefaultJson)]
 
 export const fontDefinitionFromId = (id: string): FontDefinition => {
-  const definition = FontDefinitions[id]
+  const definition = fontDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return fontDefinition({ id })
@@ -29,10 +27,6 @@ export const fontDefinitionFromId = (id: string): FontDefinition => {
 export const fontInstance = (object: FontObject): Font => {
   console.trace("fontInstance", object)
   throw 'fontInstance'
-
-  // const { definitionId } = object
-  // const definition = FontDefinitions[definitionId!] || fontDefinition(object)
-  // return definition.instanceFromObject(object)
 }
 
 export const fontFromId = (id: string): Font => {
@@ -41,12 +35,10 @@ export const fontFromId = (id: string): Font => {
   return instance
 }
 
-
-export const FontFactoryImplementation = {
+Factories[DefinitionType.Font] = {
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
   fromId: fontFromId,
   instance: fontInstance,
+  defaults: fontDefaults,
 }
-
-Factories[DefinitionType.Font] = FontFactoryImplementation

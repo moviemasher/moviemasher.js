@@ -20,7 +20,7 @@ export function DefaultModeInput(): ReactResult {
   })
 
   const selectProps = {
-    class: 'mode',
+    className: 'mode',
     children: options,
     name: property.name,
     onChange,

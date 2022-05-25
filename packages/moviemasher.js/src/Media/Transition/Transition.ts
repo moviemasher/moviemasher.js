@@ -21,7 +21,7 @@ export interface TransitionFilterChainArgs {
 
 export interface Transition extends Modular, Visible {
   definition: TransitionDefinition
-  filterChain(filterChain: FilterChain): void
+  filterChainPopulate(filterChain: FilterChain): void
 }
 
 export interface TransitionDefinitionTransformObject {

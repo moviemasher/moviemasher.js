@@ -1,12 +1,10 @@
-import { TrackType } from "../../Setup/Enums"
-import { Factory } from "../../Definitions/Factory"
-
+import { DefinitionType, EditType, TrackType } from "../../Setup/Enums"
 import { expectCanvas } from "../../../../../dev/test/Utilities/expectCanvas"
-import { mashEditorInstance } from "../../Editor/MashEditor/MashEditorFactory"
+import { editorInstance } from "../../Editor/EditorFactory"
 import { JestPreloader } from "../../../../../dev/test/Utilities/JestPreloader"
-import { DefinitionType } from "../../../dist/moviemasher"
 import { Clip } from "../../Mixin/Clip/Clip"
 import { Effect } from "./Effect"
+import { assertMash } from "../../Edited"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -19,24 +17,26 @@ describe("Effect", () => {
         id: 'cable-image', url: '../shared/image/cable.jpg',
         type: DefinitionType.Image
       }
-      const masher = mashEditorInstance({ preloader: new JestPreloader() })
-      const { definitions } = masher
+      const editor = editorInstance({ editType: EditType.Mash, preloader: new JestPreloader() })
+      editor.load({mash: {}})
+      const { definitions, edited } = editor
+      assertMash(edited)
       definitions.define([matteObject, imageObject])
-      masher.imageSize = { width: 640, height: 480 }
-      masher.addTrack(TrackType.Video)
-      expect(masher.edited.tracks.length).toBe(3)
+      editor.imageSize = { width: 640, height: 480 }
+      editor.addTrack(TrackType.Video)
+      expect(edited.tracks.length).toBe(3)
       const matteDefinition = definitions.fromId(matteObject.id)
       const imageDefinition = definitions.fromId(imageObject.id)
       const effectDefinition = definitions.fromId("com.moviemasher.effect.chromakey")
       const matteImage = matteDefinition.instanceFromObject({ definition: matteDefinition }) as Clip
       const imageImage = imageDefinition.instanceFromObject({ definition: imageDefinition }) as Clip
-      await masher.addClip(imageImage)
-      await masher.addClip(matteImage, 0, 1)
-      masher.selectClip(matteImage)
-      await masher.addEffect(effectDefinition.instance as Effect)
-      expect(masher.edited.trackOfTypeAtIndex(TrackType.Video, 0).clips).toEqual([imageImage])
-      expect(masher.edited.trackOfTypeAtIndex(TrackType.Video, 1).clips).toEqual([matteImage])
-      expectCanvas(masher.edited.composition.visibleContext.canvas)
+      await editor.addClip(imageImage)
+      await editor.addClip(matteImage, 0, 1)
+      editor.select(matteImage)
+      await editor.addEffect(effectDefinition.instance as Effect)
+      expect(edited.trackOfTypeAtIndex(TrackType.Video, 0).clips).toEqual([imageImage])
+      expect(edited.trackOfTypeAtIndex(TrackType.Video, 1).clips).toEqual([matteImage])
+      expectCanvas(edited.visibleContext.canvas)
     })
   })
 

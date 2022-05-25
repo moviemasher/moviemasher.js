@@ -42,9 +42,7 @@ export class StreamingProcessClass extends EventEmitter {
     const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
       const definitions = new EditorDefinitionsClass(definitionObjects)
-      const mash = mashInstance(mashObject, definitions)
-      mash.preloader = preloader
-      return mash
+      return mashInstance({ ...mashObject, definitions, preloader })
     })
     const commandOutput = { ...this.args.commandOutput, options: this.currentOptions }
 

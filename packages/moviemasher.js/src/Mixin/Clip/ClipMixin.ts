@@ -31,6 +31,7 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     declare definition: ClipDefinition
 
+
     definitionTime(quantize : number, time : Time) : Time {
       const scaledTime = super.definitionTime(quantize, time)
       const startTime = this.time(quantize).scale(scaledTime.fps)
@@ -50,17 +51,7 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     declare frames: number // = -1
 
-    clipFiles(args: FilesArgs): GraphFiles {
-      const { quantize, time } = args
-      const definitionTime = this.definitionTime(quantize, time)
-
-      const definitionArgs: FilesArgs = { ...args, time: definitionTime }
-      return this.definition.definitionFiles(definitionArgs)
-    }
-
-    filterChain(_: FilterChain): void {
-      throw Errors.unimplemented + 'filterChain'
-    }
+    filterChainPopulate(_: FilterChain): void { throw Errors.unimplemented }
 
     iconUrl(preloader: Preloader): string | undefined {
       const { icon } = this.definition
@@ -71,7 +62,7 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
       return url
     }
 
-    initializeFilterChain(_: FilterChain): void {
+    filterChainInitialize(_: FilterChain): void {
       throw Errors.unimplemented + 'initializeFilterChain'
     }
 

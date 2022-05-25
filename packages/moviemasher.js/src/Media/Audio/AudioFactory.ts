@@ -26,11 +26,9 @@ export const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
-export const AudioFactoryImplementation = {
+Factories[DefinitionType.Audio] = {
   definition: audioDefinition,
   definitionFromId: audioDefinitionFromId,
   fromId: audioFromId,
   instance: audioInstance,
 }
-
-Factories[DefinitionType.Audio] = AudioFactoryImplementation

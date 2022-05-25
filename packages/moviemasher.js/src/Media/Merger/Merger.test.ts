@@ -25,7 +25,7 @@ describe("Merger", () => {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
       const definitions = new EditorDefinitionsClass([definitionObject])
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader() })
       await expectCanvasAtTime(mash)
     })
   })

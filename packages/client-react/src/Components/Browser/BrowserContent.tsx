@@ -3,6 +3,7 @@ import { View } from "../../Utilities/View"
 import { BrowserContext } from "../../Contexts/BrowserContext"
 import { BrowserDefinition } from "./BrowserDefinition"
 import { WithClassName, ReactResult, PropsAndChild } from "../../declarations"
+import { Problems } from "../../Setup/Problems"
 
 export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 
@@ -17,7 +18,7 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const { definitions } = browserContext
   const objects = definitions || []
   const kid = React.Children.only(children)
-  if (!React.isValidElement(kid)) throw `BrowserContent expects single child element`
+  if (!React.isValidElement(kid)) throw Problems.child
 
   const viewChildren = objects.map(definition => {
     const definitionProps = {

@@ -22,7 +22,7 @@ export class FadeFilter extends FilterDefinitionClass {
 
     if (directionAlpha > 0.0) {
       // console.log(this.constructor.name, "drawFilterDefinition", directionAlpha)
-      mergeContext.drawWithAlpha(context.drawingSource, directionAlpha)
+      mergeContext.drawWithAlpha(context.canvas, directionAlpha)
     }
     return mergeContext
     // return context

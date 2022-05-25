@@ -3,7 +3,6 @@ import { Merger } from "../../Media/Merger/Merger"
 import { Effect } from "../../Media/Effect/Effect"
 import { Scaler } from "../../Media/Scaler/Scaler"
 import { VisibleClass } from "../Visible/Visible"
-import { Definition } from "../../Base/Definition"
 import { TransformableClass, TransformableObject } from "./Transformable"
 import { mergerFromId, mergerInstance } from "../../Media/Merger/MergerFactory"
 import { effectInstance } from "../../Media/Effect/EffectFactory"
@@ -23,18 +22,22 @@ export function TransformableMixin<T extends VisibleClass>(Base: T): Transformab
       if (effects) this.effects.push(...effects.map(effect => effectInstance(effect)))
     }
 
-    // get definitions(): Definition[] {
-    //   return [
-    //     ...super.definitions,
-    //     ...this.merger.definitions,
-    //     ...this.scaler.definitions,
-    //     ...this.effects.flatMap(effect => effect.definitions)
-    //   ]
-    // }
+    get definitionIds(): string[] {
+      const ids = super.definitionIds
+      ids.push(...this.merger.definitionIds)
+      ids.push(...this.scaler.definitionIds)
+      ids.push(...this.effects.flatMap(effect => effect.definitionIds))
+
+      return ids
+    }
+
 
     effects: Effect[] = []
 
-    filterChain(filterChain: FilterChain): void {
+    filterChainPopulate(filterChain: FilterChain): void {
+      // console.log(this.constructor.name, "filterChain")
+
+      // super.filterChain(filterChain)
       this.scaler.definition.populateFilterChain(filterChain, this.scaler)
       const effects = [...this.effects].reverse()
       effects.forEach(effect => (
@@ -61,6 +64,14 @@ export function TransformableMixin<T extends VisibleClass>(Base: T): Transformab
 
     scaler!: Scaler
 
+    toJSON(): UnknownObject {
+      const json = super.toJSON()
+      json.scaler = this.scaler
+      json.merger = this.merger
+      json.effects = this.effects
+      return json
+    }
+
     transformable = true
 
     value(key: string): Scalar {
@@ -69,14 +80,6 @@ export function TransformableMixin<T extends VisibleClass>(Base: T): Transformab
         case 'merger': return this.merger.definitionId
       }
       return super.value(key)
-    }
-
-    toJSON(): UnknownObject {
-      const object = super.toJSON()
-      object.scaler = this.scaler
-      object.merger = this.merger
-      object.effects = this.effects
-      return object
     }
   }
 }

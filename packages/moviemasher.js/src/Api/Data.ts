@@ -1,8 +1,15 @@
-import { JsonObject, AndId, Size, Described } from "../declarations"
+import { JsonObject, AndId, Size, Described, StringObject, StringsObject } from "../declarations"
 import { DefinitionObject, DefinitionObjects } from "../Base/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
+import { StreamObject } from "../Edited/Cast/Stream/Stream"
+
+
+export interface DataPutResponse extends ApiResponse {
+  temporaryIdLookup?: StringObject
+}
+
 
 export interface DataGetRequest extends ApiRequest, AndId {
 }
@@ -11,14 +18,8 @@ export interface DataRetrieveResponse extends ApiResponse {
   described: Described[]
 }
 
-
-export interface DataMashDefinitions {
-  mash: MashObject
-  definitions: DefinitionObjects
-}
-
 export interface DataServerInit extends JsonObject {
-  uuid: string
+  temporaryIdPrefix: string
 }
 
 export interface DataRetrieve {
@@ -47,25 +48,27 @@ export interface DataDefinitionDeleteResponse extends ApiResponse {
   mashIds?: string[]
 }
 
-export interface DataCastRelations {
-  mashes: MashObject[]
+// MASH
+
+export interface DataMashPutRequest extends ApiResponse {
+  definitionIds?: string[]
+  mash: MashObject
+}
+export interface DataMashPutResponse extends DataPutResponse { }
+
+export interface DataMashDefinitions {
+  mash: MashObject
   definitions: DefinitionObjects
 }
-export interface DataCastDefaultRequest extends ApiRequest {}
-export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
-  cast: CastObject
-}
+
+export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
+
+export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions { }
 
 export interface DataMashDefaultRequest extends ApiRequest {}
 export interface DataMashDefaultResponse extends ApiResponse, DataMashDefinitions {
   previewSize?: Size
 }
-
-export interface DataMashPutRequest extends ApiRequest {
-  mash: MashObject
-  definitionIds?: string[]
-}
-export interface DataMashPutResponse extends ApiResponse, AndId {}
 
 export interface DataMashDeleteRequest extends ApiRequest, AndId {}
 export interface DataMashDeleteResponse extends ApiResponse {
@@ -75,23 +78,59 @@ export interface DataMashDeleteResponse extends ApiResponse {
   castIds?: string[]
 }
 
-export interface DataCastPutRequest extends ApiRequest {
-  mash: CastObject
+// CAST
+export interface DataCastDefinitions {
+  definitions: DefinitionObjects
 }
-export interface DataCastPutResponse extends ApiResponse, AndId { }
+
+export interface DataCastRelations {
+  cast: CastObject
+  definitions: DefinitionObjects
+}
+export interface DataCastDefaultRequest extends ApiRequest {}
+export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
+  previewSize?: Size
+}
+
+export interface DataCastPutRequest extends ApiResponse {
+  cast: CastObject
+  definitionIds: StringsObject
+}
+export interface DataCastPutResponse extends DataPutResponse {
+}
 
 export interface DataCastDeleteRequest extends ApiRequest, AndId {}
 export interface DataCastDeleteResponse extends ApiResponse {}
 
-export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions {}
-
-export interface DataCastGetResponse extends DataCastDefaultResponse {}
+export interface DataCastGetResponse extends DataCastDefaultResponse {
+  previewSize?: Size
+}
 
 export interface DataDefinitionGetRequest extends ApiRequest, AndId {}
 export interface DataDefinitionGetResponse extends ApiResponse {
   definition: DefinitionObject
 }
 
-
-export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
 export interface DataCastRetrieveRequest extends ApiRequest, DataRetrieve { }
+
+// STREAM
+
+export interface DataStreamDefinitions {
+  stream: StreamObject
+  definitions: DefinitionObjects
+}
+
+export interface DataStreamPutRequest extends ApiRequest {
+  stream: StreamObject
+}
+
+export interface DataStreamPutResponse extends ApiResponse, AndId {
+}
+
+export interface DataStreamGetResponse extends ApiResponse, DataStreamDefinitions {
+}
+
+export interface DataStreamRetrieveRequest extends ApiRequest, DataRetrieve { }
+
+export interface DataStreamDeleteRequest extends ApiRequest, AndId { }
+export interface DataStreamDeleteResponse extends ApiResponse { }

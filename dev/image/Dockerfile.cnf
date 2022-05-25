@@ -3,22 +3,22 @@ LABEL org.opencontainers.image.authors="support@moviemasher.com"
 
 WORKDIR /home/node/app
 
-COPY dev/ /home/node/app/dev/
-COPY packages/ /home/node/app/packages/
-COPY workspaces/ /home/node/app/workspaces/
-COPY package.json /home/node/app/package.json
-COPY package-lock.json /home/node/app/package-lock.json
-RUN sh /home/node/app/dev/image/build-clean.sh
+# COPY dev/ /home/node/app/dev/
+# COPY packages/ /home/node/app/packages/
+# COPY workspaces/ /home/node/app/workspaces/
+# COPY package.json /home/node/app/package.json
+# COPY package-lock.json /home/node/app/package-lock.json
+# RUN sh /home/node/app/dev/image/build-clean.sh
 
-# COPY dev/image/sh/options.sh /home/node/app/dev/image/sh/options.sh
-# COPY dev/image/sh/tools-build.sh /home/node/app/dev/image/sh/tools-build.sh
-# RUN sh /home/node/app/dev/image/sh/tools-build.sh
+COPY dev/image/sh/options.sh /home/node/app/dev/image/sh/options.sh
+COPY dev/image/sh/tools-build.sh /home/node/app/dev/image/sh/tools-build.sh
+RUN sh /home/node/app/dev/image/sh/tools-build.sh
 
-# COPY dev/image/sh/avlibs-build.sh /home/node/app/dev/image/sh/avlibs-build.sh
-# RUN sh /home/node/app/dev/image/sh/avlibs-build.sh
+COPY dev/image/sh/avlibs-build.sh /home/node/app/dev/image/sh/avlibs-build.sh
+RUN sh /home/node/app/dev/image/sh/avlibs-build.sh
 
-# COPY dev/image/sh/ffmpeg-build.sh /home/node/app/dev/image/sh/ffmpeg-build.sh
-# RUN sh /home/node/app/dev/image/sh/ffmpeg-build.sh
+COPY dev/image/sh/ffmpeg-build.sh /home/node/app/dev/image/sh/ffmpeg-build.sh
+RUN sh /home/node/app/dev/image/sh/ffmpeg-build.sh
 
 # COPY dev/image/sh/node-build.sh /home/node/app/dev/image/sh/node-build.sh
 # RUN sh /home/node/app/dev/image/sh/node-build.sh

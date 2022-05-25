@@ -4,7 +4,7 @@ import { renderingProcessTestArgs } from "../../../../dev/test/Utilities/renderi
 import { outputDefaultPopulate } from "./OutputDefault"
 import { DefinitionType, OutputType, TrackType } from "../Setup/Enums"
 import { mashInstance } from "../Edited/Mash/MashFactory"
-import { MashObject } from "../Edited/Mash/Mash"
+import { MashArgs, MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { Image } from "../Media/Image/Image"
 import { EditorDefinitionsClass } from "../Editor"
@@ -31,9 +31,9 @@ describe("OutputFactory", () => {
             ]
           }]
       }
-      const definitions = new EditorDefinitionsClass(definitionObjects)
-      // console.log("definitions ids", definitions.ids)
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+
+      const mashArgs: MashArgs = { ...mashObject, definitions: new EditorDefinitionsClass(definitionObjects), preloader: new JestPreloader() }
+      const mash = mashInstance(mashArgs)
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
       const clips = videoTrack.clips as Image[]

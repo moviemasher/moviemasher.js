@@ -1,0 +1,71 @@
+.moviemasher .editor .composer .depth {
+  display: inline-block;
+  width: var(--icon-size);
+}
+
+.moviemasher .editor .composer {
+  grid-area: composer;
+}
+
+.moviemasher .editor .composer .foot {
+  grid-template-columns: repeat(4, min-content);
+}
+
+.moviemasher .editor .composer .content {
+  display: grid;
+  padding: var(--padding);
+  gap: var(--spacing);
+  grid-template-columns: 1fr;
+  grid-auto-rows: min-content;
+  overflow-y: auto;
+}
+
+.moviemasher .editor .composer .content .layer {
+  display: grid;
+  gap: var(--spacing);
+  padding: var(--padding);
+  grid-template-columns: min-content 1fr min-content;
+  height: calc(var(--icon-size) + 2 * var(--padding));
+  line-height: var(--icon-size);
+  color: var(--fore-secondary);
+  background-color: var(--back-primary);
+}
+.moviemasher .editor .composer .content .layer > div:first-child {
+  display: flex;
+}
+
+.moviemasher .editor .composer .content .layer:hover,
+.moviemasher .editor .composer .content .layer.selected  {
+  background-color: var(--color-back-secondary);
+  color: var(--color-fore-secondary);
+}
+
+.moviemasher .editor .composer .content .layer.selected:hover {
+  background-color: var(--color-back-tertiary);
+  border-color: var(--color-back-tertiary);
+  color: var(--color-fore-tertiary);
+}
+
+.moviemasher .editor .composer .content .layer.dropping,
+.moviemasher .editor .composer .content.dropping {
+  box-shadow: var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+  calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+}
+
+
+
+.moviemasher .editor .composer .content .layer.dropping-before {
+  box-shadow: 0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop);
+}
+.moviemasher .editor .composer .content .layer.dropping-after {
+  box-shadow: 0 var(--drop-size) 0 0 var(--color-drop);
+}
+
+.moviemasher .editor .composer .content .layer .depth  {
+  padding-left: var(--icon-size);
+}
+
+.moviemasher .editor .composer .content .layer label  {
+
+  white-space: nowrap;
+}

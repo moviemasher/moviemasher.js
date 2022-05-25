@@ -2,11 +2,12 @@ import { VisibleContext } from "../../../Context/VisibleContext"
 import { Evaluator } from "../../../Helpers/Evaluator"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, Parameter } from "../../../Setup"
+import { colorRgbaKeys } from "../../../Utility/Color"
 
 /**
  * @category Filter
  */
-const ColorChannelMixerFilterKeys = 'rgba'.split('').flatMap(c => 'rgba'.split('').map(d => `${c}${d}`))
+const ColorChannelMixerFilterKeys = colorRgbaKeys.flatMap(c => colorRgbaKeys.map(d => `${c}${d}`))
 
 export class ColorChannelMixerFilter extends FilterDefinitionClass {
   protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {

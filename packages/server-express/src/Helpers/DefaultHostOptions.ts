@@ -75,6 +75,7 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
     authentication
   }
   const data: DataServerArgs = {
+    temporaryIdPrefix: 'temporary-',
     dbPath: baseFile,
     dbMigrationsPrefix: migrations,
     authentication

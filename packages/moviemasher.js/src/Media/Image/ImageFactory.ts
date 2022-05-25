@@ -25,11 +25,9 @@ export const imageFromId = (id : string) : Image => {
   return imageInstance({ id })
 }
 
-export const ImageFactoryImplementation = {
+Factories[DefinitionType.Image] = {
   definition: imageDefinition,
   definitionFromId: imageDefinitionFromId,
   fromId: imageFromId,
   instance: imageInstance,
 }
-
-Factories[DefinitionType.Image] = ImageFactoryImplementation

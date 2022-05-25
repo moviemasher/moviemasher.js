@@ -1,12 +1,12 @@
 import React from "react"
 import {
-  MasherAction, EventType, Endpoints, DataMashPutRequest, DataMashPutResponse
+  MasherAction, EventType, Endpoints, Errors, isMash, isCast, DataPutResponse, JsonObject,
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { ApiContext } from "../../Contexts/ApiContext"
 import { ProcessContext } from "../../Contexts/ProcessContext"
-import { useMashEditor } from "../../Hooks/useMashEditor"
+import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
 
 export function SaveControl(props:PropsAndChild): ReactResult {
@@ -15,14 +15,15 @@ export function SaveControl(props:PropsAndChild): ReactResult {
 
   const { processing, setProcessing } = processContext
   const [disabled, setDisabled] = React.useState(true)
-  const masher = useMashEditor()
+  const editor = useEditor()
   const updateDisabled = () => {
-    const can = masher.can(MasherAction.Save)
+    const can = editor.can(MasherAction.Save)
     // console.log("updateDisabled", !can)
     setDisabled(!can)
   }
   useListeners({
-    [EventType.Action]: updateDisabled, [EventType.Save]: updateDisabled,
+    [EventType.Action]: updateDisabled,
+    [EventType.Save]: updateDisabled,
   })
   const { children, ...rest } = props
   const { endpointPromise } = apiContext
@@ -30,18 +31,27 @@ export function SaveControl(props:PropsAndChild): ReactResult {
     if (processing || disabled) return
 
     setProcessing(true)
-    const { mash, definitions } = masher
-    const request: DataMashPutRequest = {
-      mash: mash.toJSON(),
-      definitionIds: definitions.ids
-    }
-    console.debug("DataMashPutRequest", Endpoints.data.mash.put, JSON.parse(JSON.stringify(request)))
-    endpointPromise(Endpoints.data.mash.put, request).then((response: DataMashPutResponse) => {
-      const { error, id } = response
-      if (error) console.error(Endpoints.data.mash.put, error)
-      else masher.save(id)
+    const request: JsonObject = {}
+    const { edited, editType } = editor
+    if (!edited) throw new Error(Errors.selection)
 
-      // console.debug("DataMashPutResponse", Endpoints.data.mash.put, response)
+    if (isMash(edited)) {
+      request.mash = edited.toJSON()
+      request.definitionIds = edited.definitionIds
+    } else if (isCast(edited)) {
+      request.cast = edited.toJSON()
+      request.definitionIds = Object.fromEntries(edited.mashes.map(mash => (
+        [mash.id, mash.definitionIds]
+      )))
+    }
+
+    console.debug("DataPutRequest", Endpoints.data[editType].put, JSON.parse(JSON.stringify(request)))
+    endpointPromise(Endpoints.data[editType].put, request).then((response: DataPutResponse) => {
+      console.debug("DataPutResponse", Endpoints.data[editType].put, response)
+      const { error, temporaryIdLookup } = response
+      if (error) console.error(Endpoints.data[editType].put, error)
+      else editor.save(temporaryIdLookup)
+
       setProcessing(false)
     })
   }

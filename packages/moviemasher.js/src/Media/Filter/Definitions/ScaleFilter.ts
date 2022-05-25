@@ -11,18 +11,21 @@ import { Parameter } from "../../../Setup"
  * @category Filter
  */
 export class ScaleFilter extends FilterDefinitionClass {
-  protected override  drawFilterDefinition(evaluator : Evaluator) : VisibleContext {
+  protected override drawFilterDefinition(evaluator: Evaluator): VisibleContext {
     const inWidth = Number(evaluator.get("in_w"))
     const inHeight = Number(evaluator.get("in_h"))
+    const inSize: Size = { width: inWidth, height: inHeight }
+
     if (inWidth + inHeight < 2) throw Errors.eval.inputSize + `${inWidth}x${inHeight}`
 
     const outWidth = evaluator.parameterNumber('width')
     const outHeight = evaluator.parameterNumber('height')
-    const inSize : Size = { width: inWidth, height: inHeight }
     const outSize = { width: outWidth, height: outHeight }
+
     const { visibleContext: context } = evaluator
-    const drawing = ContextFactory.toSize(outSize)
-    drawing.drawInSizeFromSize(context.drawingSource, inSize, outSize)
+    const drawing = ContextFactory.visible({ size: outSize, label: this.id })
+    // console.log(this.constructor.name, "drawFilterDefinition", inSize, outSize)
+    drawing.drawInSizeFromSize(context.canvas, inSize, outSize)
     return drawing
   }
 

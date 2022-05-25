@@ -1,4 +1,6 @@
-import { Point, Rgba, Value, Size, Pixels } from "../declarations"
+import { Point, Rgba, Value, Size, Pixels, Rgb, Yuv } from "../declarations"
+import { colorRgbaKeys, colorRgbaTransparent, colorRgbToYuv, colorYuvBlend, colorYuvDifference } from "./Color"
+import { isPositive } from "./Is"
 import { roundWithMethod } from "./Round"
 
 const pixelFromPoint = (pt : Point, width : number) => pt.y * width + pt.x
@@ -30,7 +32,7 @@ const pixelSafe = (pixel : number, offsetPoint: Point, size : Size) => {
 }
 
 const pixelNeighboringPixels = (pixel : number, size : Size) : number[] => {
-  const depth = 3 // should be 4, no?
+  const depth = 3
   const pixels: number[] = []
   const halfSize = Math.floor(depth / 2)
   for (let y = 0; y < depth; y += 1) {
@@ -77,4 +79,42 @@ export const pixelToFrame = (pixels: number, perFrame : number, rounding = 'roun
   if (!(pixels && perFrame)) return 0
 
   return roundWithMethod(pixels / perFrame, rounding)
+}
+
+
+function pixelsMixRbga(fromRgba: Rgba, toRgba: Rgba, amountToMix = 1.0): Rgba {
+  return Object.fromEntries(colorRgbaKeys.map(key => {
+    return [key, Math.round((fromRgba[key] * amountToMix) + (toRgba[key] * (1 - amountToMix)))]
+  })) as Rgba
+}
+
+export const pixelsRemoveRgba = (pixels: Uint8ClampedArray, size: Size, rgb: Rgb, similarity = 0, blend = 0, accurate = false) => {
+  pixelsReplaceRgba(pixels, size, rgb, colorRgbaTransparent, similarity, blend)
+}
+export const pixelsReplaceRgba = (pixels: Uint8ClampedArray, size: Size, find: Rgb, replace: Rgba, similarity = 0, blend = 0, accurate = false) => {
+  const yuv = colorRgbToYuv(find)
+  let index = pixels.length / 4
+  while (index--) {
+    const pixels_offset = index * 4
+    const rgba = pixelRgbaAtIndex(pixels_offset, pixels)
+    if (isPositive(rgba.a)) {
+
+      const rgbaAsYuv = colorRgbToYuv(rgba)
+      const difference = accurate ? colorYuvBlend(yuvsFromPixelsAccurate(pixels, index, size), yuv, similarity, blend) : colorYuvDifference(rgbaAsYuv, yuv, similarity, blend)
+      const mixed = pixelsMixRbga(rgba, replace, difference)
+      pixels[pixels_offset + 3] = mixed.a
+      if (mixed.a) {
+        pixels[pixels_offset] = mixed.r
+        pixels[pixels_offset + 1] = mixed.g
+        pixels[pixels_offset + 2] = mixed.b
+      }
+    }
+  }
+}
+
+
+const yuvsFromPixelsAccurate = (pixels: Pixels, index: number, size: Size): Yuv[] => {
+  // console.log(this.constructor.name, "yuvsFromPixelsAccurate")
+  return pixelNeighboringRgbas(index * 4, pixels, size).map(rgb => colorRgbToYuv(rgb))
+
 }

@@ -9,6 +9,9 @@ export interface PropertyObject {
   name? : string
   defaultValue? : Scalar
   custom? : boolean
+  min?: number
+  max?: number
+  step?: number
 }
 
 export interface Property extends UnknownObject {
@@ -45,6 +48,6 @@ export const propertyInstance = (object: PropertyObject):Property => {
   const { type, name, defaultValue, ...rest } = object
   const dataType = propertyType(type, defaultValue)
   const dataValue = propertyValue(dataType, defaultValue)
-  const dataName = isPopulatedString(name) ? name! : dataType
+  const dataName = isPopulatedString(name) ? name : dataType
   return { type: dataType, defaultValue: dataValue, name: dataName, ...rest }
 }

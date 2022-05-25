@@ -72,6 +72,24 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   fileServer?: FileServer
 
+  local: ServerHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
+    const { id } = req.body
+    const connection = WebrtcConnection.getConnection(id)
+    if (!connection) {
+      res.send({ error: `no connection ${id}` })
+      return
+    }
+
+    const { localDescription } = connection
+    if (!localDescription) return res.send({ error: `no localDescription for connection ${id}`})
+
+    const description = connection.toJSON().localDescription
+    if (!description) return res.send({ error: `no local description for connection ${id}`})
+
+    const response: StreamingLocalResponse = { localDescription: description }
+    res.send(response)
+  }
+
   remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
     const request = req.body
     console.log(Endpoints.streaming.remote, 'request', request)
@@ -98,24 +116,6 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       res.send({ error: String(error) })
       console.error(error)
     }
-  }
-
-  local: ServerHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
-    const { id } = req.body
-    const connection = WebrtcConnection.getConnection(id)
-    if (!connection) {
-      res.send({ error: `no connection ${id}` })
-      return
-    }
-
-    const { localDescription } = connection
-    if (!localDescription) return res.send({ error: `no localDescription for connection ${id}`})
-
-    const description = connection.toJSON().localDescription
-    if (!description) return res.send({ error: `no local description for connection ${id}`})
-
-    const response: StreamingLocalResponse = { localDescription: description }
-    res.send(response)
   }
 
   id = 'streaming'
@@ -270,8 +270,8 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       // console.log("file", file)
       try { res.send(fs.readFileSync(file)) }
       catch (error) {
-        console.error(error);
-        res.sendStatus(500);
+        // console.error(error)
+        res.sendStatus(500)
       }
     })
 

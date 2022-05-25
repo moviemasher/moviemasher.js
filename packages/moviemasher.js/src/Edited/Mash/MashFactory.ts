@@ -1,13 +1,12 @@
-import { Mash, MashArgs, MashObject } from "./Mash"
+import { Mash, MashArgs } from "./Mash"
 import { MashClass } from "./MashClass"
-import { Preloader } from "../../Preloader/Preloader"
-import { EditorDefinitions } from "../../Editor/EditorDefinitions"
-import { EditorDefinitionsClass } from "../../Editor/EditorDefinitions/EditorDefinitionsClass"
 
-export const mashInstance = (object: MashObject = {}, editorDefinitions?: EditorDefinitions, preloader?: Preloader): Mash => {
-  const definitions = editorDefinitions || new EditorDefinitionsClass()
-  const mashArgs: MashArgs = { ...object, definitions }
-  const instance = new MashClass(mashArgs)
-  if (preloader) instance.preloader = preloader
-  return instance
+export const mashInstance = (object: MashArgs = {}): Mash => {
+  return new MashClass(object)
+}
+
+export const isMash = (value: any): value is Mash => value instanceof MashClass
+
+export function assertMash(value: any): asserts value is MashClass {
+  if (!isMash(value)) throw new Error("expected Mash")
 }

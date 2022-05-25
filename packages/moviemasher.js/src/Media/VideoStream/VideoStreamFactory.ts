@@ -26,11 +26,9 @@ export const videoStreamFromId = (id : string) : VideoStream => {
   return videoStreamInstance({ id })
 }
 
-export const VideoStreamFactoryImplementation = {
+Factories[DefinitionType.VideoStream] = {
   definition: videoStreamDefinition,
   definitionFromId: videoStreamDefinitionFromId,
   fromId: videoStreamFromId,
   instance: videoStreamInstance,
 }
-
-Factories[DefinitionType.VideoStream] = VideoStreamFactoryImplementation

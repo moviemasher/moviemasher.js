@@ -9,7 +9,6 @@ export interface InspectorContextInterface {
   selectedProperties: SelectedProperties
   clip?: Clip
   effect?: Effect
-  track?: Track
 }
 
 export const InspectorContextDefault: InspectorContextInterface = {

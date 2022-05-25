@@ -8,10 +8,11 @@ import { Theme, ThemeDefinition, ThemeDefinitionObject, ThemeObject } from "./Th
 import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
 import themeTextJson from "../../Definitions/DefinitionObjects/theme/text.json"
 
-const ThemeDefinitions = {
-  [themeColorJson.id]: new ThemeDefinitionClass(themeColorJson),
-  [themeTextJson.id]: new ThemeDefinitionClass(themeTextJson),
-}
+
+export const themeDefaults = [
+  new ThemeDefinitionClass(themeColorJson),
+  new ThemeDefinitionClass(themeTextJson),
+]
 export const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinition => {
   const { id } = object
   if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
@@ -20,7 +21,7 @@ export const themeDefinition = (object : ThemeDefinitionObject) : ThemeDefinitio
 }
 
 export const themeDefinitionFromId = (id: string): ThemeDefinition => {
-  const definition = ThemeDefinitions[id]
+  const definition = themeDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return themeDefinition({ id })
@@ -41,11 +42,10 @@ export const themeFromId = (id: string): Theme => {
   return instance
 }
 
-export const ThemeFactoryImplementation = {
+Factories[DefinitionType.Theme] = {
   definition: themeDefinition,
   definitionFromId: themeDefinitionFromId,
   fromId: themeFromId,
   instance: themeInstance,
+  defaults: themeDefaults,
 }
-
-Factories[DefinitionType.Theme] = ThemeFactoryImplementation

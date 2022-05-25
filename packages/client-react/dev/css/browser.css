@@ -3,7 +3,7 @@
 }
 
 .moviemasher .editor .panel.browser .head {
-  grid-template-columns: repeat(auto-fit, var(--icon-size));
+  grid-template-columns: 1fr repeat(6, var(--icon-size));
   overflow: hidden;
 }
 

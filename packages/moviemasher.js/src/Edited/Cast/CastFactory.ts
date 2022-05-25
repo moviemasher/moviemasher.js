@@ -1,21 +1,19 @@
 
-import { Cast, CastObject } from "./Cast"
+import { Cast, CastArgs, CastObject } from "./Cast"
 import { CastClass } from "./CastClass"
 import { EditorDefinitions } from "../../Editor/EditorDefinitions"
+import { Preloader } from "../../Preloader/Preloader"
 
-export const castInstance = (object: CastObject = {}, definitions?: EditorDefinitions): Cast => {
-  // if (definitions) definitions.forEach(definition => {
-  //   const { id: definitionId, type } = definition
-  //   if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
 
-  //   const definitionType = type as DefinitionType
-  //   if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
+export const castInstance = (object: CastObject = {}, definitions?: EditorDefinitions, preloader?: Preloader): Cast => {
+  const castArgs: CastArgs = {
+    ...object, definitions, preloader
+  }
+  return new CastClass(castArgs)
+}
 
-  //   if (!(definitionId && isPopulatedString(definitionId))) {
-  //     throw Errors.invalid.definition.id + JSON.stringify(definition)
-  //   }
-  //   Factory[definitionType].definition(definition)
-  // })
+export const isCast = (value: any): value is Cast => value instanceof CastClass
 
-  return new CastClass(object)
+export function assertCast(value: any): asserts value is Cast {
+  if (!isCast(value)) throw new Error("expected Cast")
 }

@@ -1,5 +1,5 @@
 import { DefinitionType, TrackType, LoadType, GraphType, AVType } from "../../Setup/Enums"
-import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
+import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs, GraphFiles, CanvasVisibleSource } from "../../declarations"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
@@ -98,7 +98,7 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
 
   loadType = LoadType.Image
 
-  loadedVisible(preloader: Preloader, _quantize: number, time: Time): VisibleSource | undefined {
+  loadedVisible(preloader: Preloader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
     const frames = this.framesArray(time)
     const [frame] = frames
     const url = this.urlForFrame(frame)

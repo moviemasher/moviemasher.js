@@ -8,6 +8,7 @@ import { PropertiedClass } from "../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
 import { isPositive } from "../../Utility/Is"
 import { TimeRange } from "../../Helpers/Time/Time"
+import { idGenerate } from "../../Utility/Id"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -32,9 +33,9 @@ export class TrackClass extends PropertiedClass implements Track {
         if (!definitionId) throw Errors.id + JSON.stringify(clip)
 
         const definition = definitions.fromId(definitionId)
-
         const clipWithTrack = { track: this.layer, ...clip }
-        return definition.instanceFromObject(clipWithTrack) as Clip
+        const instance = definition.instanceFromObject(clipWithTrack) as Clip
+        return instance
       }))
     }
   }
@@ -124,6 +125,9 @@ export class TrackClass extends PropertiedClass implements Track {
 
     return frame + frames
   }
+
+  private _identifier?: string
+  get identifier(): string { return this._identifier ||= idGenerate()}
 
   layer = 0
 

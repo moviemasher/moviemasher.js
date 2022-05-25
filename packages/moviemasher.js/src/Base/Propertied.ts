@@ -8,6 +8,7 @@ export interface Propertied {
   value(key: string): Scalar
   setValue(value: Scalar, key: string | Property ): void
   properties: Property[]
+  toJSON(): UnknownObject
 }
 
 export interface PropertiedChangeHandler {
@@ -65,3 +66,7 @@ export class PropertiedClass implements Propertied {
     return value as Scalar
   }
 }
+
+export const isPropertied = (value: any): value is Propertied => (
+  value instanceof PropertiedClass
+)

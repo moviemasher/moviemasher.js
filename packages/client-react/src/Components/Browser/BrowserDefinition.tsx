@@ -1,18 +1,17 @@
 import React from 'react'
 import { Definition, UnknownObject, urlForEndpoint } from "@moviemasher/moviemasher.js"
-import { BrowserContext } from '../../Contexts/BrowserContext'
-import { DragSuffix } from '../../Setup/Constants'
-import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
-import { useMashEditor } from '../../Hooks'
 
+import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
+import { EditorContext } from '../../Contexts/EditorContext'
+import { BrowserContext } from '../../Contexts/BrowserContext'
+import { Problems } from '../../Setup/Problems'
+import { DragSuffix, DragType } from '../../Helpers/DragDrop'
 
 export interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
   definition: Definition
-  selectClass?: string
   label?: string
   icon?: string
 }
-
 
 /**
  * @parents BrowserContent
@@ -20,41 +19,34 @@ export interface BrowserDefinitionProps extends WithClassName, PropsAndChild {
 export function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const browserContext = React.useContext(BrowserContext)
-  const mashEditor = useMashEditor()
-  const [clickOffset, setClickOffset] = React.useState(0)
+  const editorContext = React.useContext(EditorContext)
+  const { editor, selectedClass } = editorContext
+  if (!editor) return null
 
-  const { icon: iconVar, label: labelVar, children, selectClass, definition, ...rest } = props
+  const { icon: iconVar, label: labelVar, children, definition } = props
   const { definitionId, setDefinitionId } = browserContext
   const { id, label, icon } = definition
   const labelOrId = label || id
 
-  const kid = React.Children.only(children)
-  if (!React.isValidElement(kid)) throw `BrowserDefinition expects single child element`
+  const child = React.Children.only(children)
+  if (!React.isValidElement(child)) throw Problems.child
 
   const classNamesState = () => {
     const classes = []
-    const { className } = kid.props
+    const { className } = child.props
     if (className) classes.push(className)
-    if (selectClass && definitionId === id) classes.push(selectClass)
+    if (definitionId === id) classes.push(selectedClass)
     return classes.join(' ')
   }
 
-  const onMouseDown = (event: React.MouseEvent) => {
-    // console.log("onMouseDown")
-    const { current } = ref
-    if (!current) return
-
-    const rect = current.getBoundingClientRect()
-    const { left } = rect
-    const { clientX } = event
-    setClickOffset(clientX - left)
-    setDefinitionId(id)
-  }
+  const onMouseDown = () => { setDefinitionId(id) }
 
   const onDragStart: React.DragEventHandler = event => {
-    // console.log("onDragStart")
-    onMouseDown(event)
-    const data = { offset: clickOffset, definition }
+    onMouseDown()
+    const rect = ref.current!.getBoundingClientRect()
+    const { left } = rect
+    const { clientX } = event
+    const data = { offset: clientX - left, definitionObject: definition }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'copy'
@@ -64,20 +56,20 @@ export function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   const style: UnknownObject = {}
   if (labelVar) style[labelVar] = `'${labelOrId.replaceAll("'", "\\'")}'`
   if (iconVar && icon) {
-    const { preloader } = mashEditor
+    const { preloader } = editor
     const url = urlForEndpoint(preloader.endpoint, icon)
     style[iconVar] = `url('${url}')`
   }
 
+  const className = React.useMemo(classNamesState, [definitionId])
   const clipProps = {
-    ...kid.props,
+    ...child.props,
     style,
-    className: classNamesState(),
+    className,
     onDragStart,
     onMouseDown,
-    // onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,
   }
-  return React.cloneElement(kid, clipProps)
+  return React.cloneElement(child, clipProps)
 }

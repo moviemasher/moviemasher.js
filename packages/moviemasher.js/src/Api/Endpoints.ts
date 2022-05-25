@@ -25,6 +25,7 @@ const EndpointsCrud: StringObject = {
 const EndpointsData: Record<string, StringObject> = {
   cast: { ...EndpointsCrud, default: '' },
   mash: { ...EndpointsCrud, default: '' },
+  stream: { ...EndpointsCrud },
   definition: { ...EndpointsCrud },
 }
 

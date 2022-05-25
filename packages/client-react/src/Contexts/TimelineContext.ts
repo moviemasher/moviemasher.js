@@ -1,23 +1,48 @@
 import React from 'react'
-import { NumberSetter } from '@moviemasher/moviemasher.js'
+import {
+  EmptyRect, EmptyMethod,
+  Clip, DefinitionType, DroppingPosition, NumberSetter, Rect, Track, VoidMethod, Point
+} from '@moviemasher/moviemasher.js'
 
 
 export interface TimelineContextInterface {
-  height : number
-  setHeight: NumberSetter
-  setWidth: NumberSetter
+  dragTypeValid(dataTransfer: DataTransfer, track?: Track): DefinitionType | undefined
+  droppingClip?: Clip
+  droppingPosition?: DroppingPosition | number
+  droppingTrack?: Track
+  onDragLeave: VoidMethod
+  onDrop: React.DragEventHandler
+  rect: Rect
+  refreshed: number
+  refresh: VoidMethod
+  scale: number
+  selectedClip?: Clip
+  selectedTrack?: Track
+  setDroppingClip(_?: Clip): void
+  setDroppingPosition(_: DroppingPosition | number): void
+  setDroppingTrack(_?: Track): void
+  setRect(_:Rect): void
+  setScroll(_:Point): void
   setZoom: NumberSetter
-  width : number
   zoom: number
+  scroll: Point
 }
 
 export const TimelineContextDefault: TimelineContextInterface = {
-  height: 0,
-  setHeight: () => {},
-  setWidth: () => {},
-  setZoom: () => {},
-  width: 0,
-  zoom : 1,
+  dragTypeValid(): DefinitionType | undefined { return },
+  onDragLeave: EmptyMethod,
+  onDrop: EmptyMethod,
+  rect: EmptyRect,
+  scale: 0,
+  setDroppingClip: EmptyMethod,
+  setDroppingPosition: EmptyMethod,
+  setDroppingTrack: EmptyMethod,
+  setRect: EmptyMethod,
+  setScroll: EmptyMethod,
+  setZoom: EmptyMethod,
+  zoom: 1,
+  scroll: { x: 0, y: 0 },
+  refreshed: 0, refresh: EmptyMethod,
 }
 
 export const TimelineContext = React.createContext(TimelineContextDefault)

@@ -1,7 +1,6 @@
 import React from "react"
 import {
-  EventType, MasherAction, mashInstance, Described
-} from "@moviemasher/moviemasher.js"
+  EventType, MasherAction} from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -17,13 +16,14 @@ export function CreateEditedControl(props: PropsAndChild): ReactResult {
   useListeners({
     [EventType.Action]: updateDisabled,
     [EventType.Mash]: updateDisabled,
+    [EventType.Cast]: updateDisabled,
     [EventType.Save]: updateDisabled,
   })
 
   const onClick = () => {
     if (disabled) return
 
-    editor.clear()
+    editor.create()
   }
 
   const buttonOptions = { ...rest, onClick, disabled }

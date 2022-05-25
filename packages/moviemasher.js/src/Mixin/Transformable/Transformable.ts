@@ -3,6 +3,8 @@ import { Effect, EffectObject } from "../../Media/Effect/Effect"
 import { Merger, MergerObject } from "../../Media/Merger/Merger"
 import { Scaler, ScalerObject } from "../../Media/Scaler/Scaler"
 import { Transition } from "../../Media/Transition/Transition"
+import { isClip } from "../Clip/Clip"
+
 import {
   Visible, VisibleDefinition, VisibleDefinitionObject, VisibleObject
 } from "../Visible/Visible"
@@ -35,3 +37,11 @@ export interface TransformableContent {
 }
 
 export type TransformableContents = TransformableContent[]
+
+export const isTransformable = (value?: any): value is Transformable => {
+  return isClip(value) && "effects" in value
+}
+
+export function assertTransformable(value?: any): asserts value is Transformable {
+  if (!isTransformable(value)) throw new Error('expected Transformable')
+}

@@ -1,9 +1,10 @@
-import { AVType, DataType, GraphFileType, GraphType, LoadType, SelectType } from "./Setup/Enums"
+import { AVType, GraphFileType, GraphType, LoadType, SelectType } from "./Setup/Enums"
 import { TimeRange } from "./Helpers/Time/Time"
 import { Time } from "./Helpers/Time/Time"
 import { Definition } from "./Base/Definition"
 import { PropertiedChangeHandler } from "./Base/Propertied"
 import { Property } from "./Setup/Property"
+import { EmptyMethod } from "./Setup/Constants"
 
 // TODO: remove
 export interface ScrollMetrics {
@@ -30,11 +31,12 @@ declare global {
 export type Any = any
 export type Value = number | string
 export type Scalar = boolean | Value
-
+export type PopulatedString = string & { isEmpty: never }
 export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
 export interface UnknownObject extends Record<string, unknown> {}
 export interface StringObject extends Record<string, string> { }
+export interface StringsObject extends Record<string, string[]> { }
 export interface RegExpObject extends Record<string, RegExp> {}
 
 export interface ObjectUnknown extends Record<string, UnknownObject> {}
@@ -52,7 +54,12 @@ export interface LoadedAudio extends AudioBuffer {}
 export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio, sequence: Sequence[] }
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
-export type VisibleSource = CanvasImageSource
+
+
+export type VisibleSource = HTMLVideoElement | HTMLImageElement | HTMLOrSVGImageElement | HTMLCanvasElement // CanvasImageSource //
+export type VisibleSources = VisibleSource[]
+
+export type CanvasVisibleSource = VisibleSource | ImageBitmap // CanvasImageSource // ImageBitmap & VisibleSource // CanvasImageSource //  |
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type Interval = ReturnType<typeof setInterval>
@@ -68,6 +75,8 @@ export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
+export interface BooleanGetter { (): boolean }
+export type VoidMethod = typeof EmptyMethod
 
 export type ScalarArray = unknown[]
 export type JsonValue = Scalar | ScalarArray | UnknownObject
@@ -194,6 +203,8 @@ export interface Yuv {
   v: number
 }
 
+export interface DefinitionRecord extends Record<string, Definition> {}
+
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export interface Constructor { new (...args: any[]): any }
 
@@ -201,11 +212,10 @@ export interface Constructor { new (...args: any[]): any }
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
 export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
+  defaults?: DEFINITION[]
   definitionFromId(id : string) : DEFINITION
   definition(object: DEFINITIONOBJECT): DEFINITION
-  // install(object : DEFINITIONOBJECT) : DEFINITION
   instance(object : INSTANCEOBJECT) : INSTANCE
-  // initialize() : void
   fromId(id : string) : INSTANCE
 }
 
@@ -249,7 +259,6 @@ export type GraphFilters = GraphFilter[]
 export interface ModularGraphFilter extends GraphFilter {
   graphFiles?: GraphFiles
 }
-
 export type ModularGraphFilters = ModularGraphFilter[]
 
 export interface GraphFile {
@@ -283,6 +292,8 @@ export interface Described {
   label: string
 }
 
+export interface DescribedObject extends Partial<Described> {}
+
 export interface GraphFileIconArgs {
   size: Size
   mashSize: Size
@@ -297,3 +308,8 @@ export interface SelectedProperty {
 }
 
 export type SelectedProperties = SelectedProperty[]
+
+
+export const isCustomEvent = (value: any): value is CustomEvent => (
+  value instanceof CustomEvent
+)

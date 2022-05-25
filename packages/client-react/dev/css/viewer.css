@@ -1,0 +1,26 @@
+.moviemasher .editor .panel.viewer {
+  grid-area: viewer;
+}
+
+.moviemasher .editor .panel.viewer .head {
+  grid-template-columns: 1fr repeat(3, min-content);
+}
+
+.moviemasher .editor .panel.viewer .foot {
+  grid-template-columns: repeat(5, min-content);
+}
+
+.moviemasher .editor .panel.viewer .content {
+  background: repeating-conic-gradient(
+    var(--back-secondary) 0% 25%, transparent 0% 50%
+  ) 50% / 20px 20px;
+  background-position: top left;
+  width: var(--preview-width);
+  height: var(--preview-height);
+  margin-inline: auto;
+  isolation: isolate;
+}
+
+.moviemasher .editor .panel.viewer .content > * {
+  position: absolute;
+}

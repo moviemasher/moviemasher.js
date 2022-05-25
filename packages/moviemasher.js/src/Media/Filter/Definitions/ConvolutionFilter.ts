@@ -177,7 +177,7 @@ export class ConvolutionFilter extends FilterDefinitionClass {
     return graphFilter
   }
 
-  convolve(object: ConvolutionObject, pixels: VisibleContextData, output: VisibleContextData) {
+  private convolve(object: ConvolutionObject, pixels: VisibleContextData, output: VisibleContextData) {
     const { multiplier, bias, matrix } = object
     const side = Math.round(Math.sqrt(matrix.a.length))
     const halfSide = Math.floor(side / 2)

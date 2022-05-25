@@ -19,6 +19,7 @@ import {
 import { Server, ServerArgs, ServerHandler } from "../Server"
 
 export interface DataServerArgs extends ServerArgs {
+  temporaryIdPrefix: string
   dbMigrationsPrefix: string
   dbPath: string
 }

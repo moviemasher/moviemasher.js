@@ -21,10 +21,11 @@
   },
   "scripts": {
     "build-cjs": "npm run build-cjs -w @moviemasher/moviemasher.js",
-    "build-client-example": "run-s build-client build-example-client",
+    "build-client-example": "run-s build-client-esm build-example-client",
     "build-client": "npm run build -w @moviemasher/client-react",
+    "build-client-esm": "npm run build-esm -w @moviemasher/client-react",
     "build-core-client-example": "run-s build-core-client build-example-client",
-    "build-core-client": "run-s build-esm build-client",
+    "build-core-client": "run-s build-esm build-client-esm",
     "build-core-server-example": "run-s build-core-server build-example-server",
     "build-core-server": "run-s build-cjs build-server",
     "build-core": "npm run build -w @moviemasher/moviemasher.js",
@@ -35,9 +36,10 @@
     "build-example-react": "npm run build -w example-react",
     "build-example-server": "npm run build-server -w example-express-react",
     "build-example": "npm run build -w example-express-react",
+    "build-icons": "npm run build -w @moviemasher/icons-default",
     "build-server-example": "run-s build-server build-example-server",
     "build-server": "npm run build -w @moviemasher/server-express",
-    "build": "run-s build-core build-client build-server build-example build-example-react",
+    "build": "run-s build-core build-icons build-client build-server build-example build-example-react",
     "docker-build": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.0.7 .",
     "docker-down": "docker-compose --file dev/image/docker-compose.yml down -v",
     "docker-logs": "docker-compose --file dev/image/docker-compose.yml logs -f",
@@ -53,7 +55,8 @@
     "test-help": "jest -h",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
     "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
-    "test": "jest --config dev/test/jest.config.js"
+    "test": "jest --config dev/test/jest.config.js",
+    "ffmpeg": "docker compose --file dev/image/ffmpeg-test-compose.yml run --rm -it ffmpeg"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.3",
@@ -76,15 +79,13 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-ts": "^2.0.5",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
     "ts-jest": "^27.1.4",
     "typescript": "4.5.5"
   },
   "workspaces": [
     "workspaces/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "socket.io": "^4.4.1",
-    "socket.io-client": "^4.4.1"
-  }
+  ]
 }

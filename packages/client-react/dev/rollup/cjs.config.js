@@ -5,6 +5,7 @@ import json from "@rollup/plugin-json"
 
 import pkg from "../../package.json"
 
+
 const { main, source, devDependencies } = pkg
 
 export default {

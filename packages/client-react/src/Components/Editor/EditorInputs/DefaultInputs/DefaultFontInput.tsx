@@ -31,9 +31,7 @@ export function DefaultFontInput(): ReactResult {
     value: selectedFont,
     key: `${property.name}-select`,
   }
-
   return <select {...selectProps} />
-
 }
 
 DataTypeInputs[DataType.Font] = <DefaultFontInput/>

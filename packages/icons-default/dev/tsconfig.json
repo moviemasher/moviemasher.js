@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "checkJs": false,
+    "declaration": true,
+    "esModuleInterop": false,
+    "jsx": "react",
+    "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "ESNext",
+  }
+}

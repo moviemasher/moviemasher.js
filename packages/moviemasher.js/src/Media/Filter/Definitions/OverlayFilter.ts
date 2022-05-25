@@ -20,9 +20,11 @@ export class OverlayFilter extends FilterDefinitionClass {
     const { visibleContext: context, createVisibleContext: mergeContext } = evaluator
     if (!(context && mergeContext)) throw Errors.invalid.context + this.id
 
-    mergeContext.drawAtPoint(context.drawingSource, { x, y })
+    mergeContext.drawAtPoint(context.canvas, { x, y })
     return mergeContext
   }
+  inputCountMax: number = 2
+  inputCountMin: number = 2
 
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter {
     const { graphType, preloading } = evaluator

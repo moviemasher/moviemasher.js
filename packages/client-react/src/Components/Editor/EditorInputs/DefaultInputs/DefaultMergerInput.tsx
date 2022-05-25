@@ -26,7 +26,6 @@ export function DefaultMergerInput(): ReactResult {
       value: merger.id,
       key: merger.id,
       children: merger.label,
-      selected: merger.id === definitionId,
     }
     return <option {...optionProps}/>
   })
@@ -35,6 +34,7 @@ export function DefaultMergerInput(): ReactResult {
     children: options,
     name: property.name,
     onChange,
+    value: definitionId,
     key: `${property.name}-select`
   }
   return <select {...mergerProps} />

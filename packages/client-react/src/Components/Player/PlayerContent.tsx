@@ -1,21 +1,20 @@
 import React from 'react'
-import { ContextFactory, EventType } from '@moviemasher/moviemasher.js'
-
+import { EventType } from '@moviemasher/moviemasher.js'
 import { PropsWithoutChild, ReactResult } from '../../declarations'
-import { CanvasView, CanvasViewProps } from '../../Utilities/CanvasView'
 import { useEditor } from '../../Hooks/useEditor'
+import { useListeners } from '../../Hooks'
+import { View } from '../../Utilities/View'
 
 export function PlayerContent(props: PropsWithoutChild): ReactResult {
   const editor = useEditor()
-  const ref = React.useRef<HTMLCanvasElement>(null)
-
+  const ref = React.useRef<HTMLDivElement>(null)
   const handleResize = () => {
     const { current } = ref
     if (!current) return
 
     const rect = current.getBoundingClientRect()
-    current.width = rect.width
-    current.height = rect.height
+    // current.width = rect.width
+    // current.height = rect.height
     editor.imageSize = rect
   }
 
@@ -31,24 +30,22 @@ export function PlayerContent(props: PropsWithoutChild): ReactResult {
     const { current } = ref
     if (!current) return
 
-    const imageData = editor.imageData
-    const context = ContextFactory.fromCanvas(current)
-    context.drawImageData(imageData)
+    current.replaceChildren(...editor.visibleSources)
+    // while (current.firstChild) current.removeChild(current.firstChild)
+
+    // editor.visibleSources.forEach(node => {
+    //   if (node instanceof HTMLCanvasElement) {
+    //     // console.log("PlayerContent", node.style)
+    //     current.appendChild(node)
+    //   }
+    // })
+    // current.appendChild(current.cr)
   }
 
-  const removeListeners = () => {
-    const { eventTarget } = editor
-    eventTarget.removeEventListener(EventType.Draw, handleDraw)
-  }
+  useListeners({ [EventType.Draw]: handleDraw })
 
-  const addListeners = () => {
-    const { eventTarget } = editor
-    eventTarget.addEventListener(EventType.Draw, handleDraw)
-    return () => { removeListeners() }
+  const viewProps = {
+    ...props, key: 'player-content', ref
   }
-
-  React.useEffect(() => addListeners(), [])
-  const { children, selectClass, ...rest } = props
-  const canvasProps:CanvasViewProps = { ...rest, key: 'canvas', ref }
-  return <CanvasView { ...canvasProps } />
+  return <View { ...viewProps } />
 }

@@ -9,13 +9,14 @@ import { Errors } from "../../../Setup"
 import { AVType, GraphType, LoadType, LoadTypes } from "../../../Setup/Enums"
 import { FilterChain, FilterChains } from "../FilterChain/FilterChain"
 import { FilterChainClass, FilterChainConstructorArgs } from "../FilterChain/FilterChainClass"
-import { FilterGraphs, FilterGraphsInstance } from "../FilterGraphs/FilterGraphs"
+import { FilterGraphsInstance } from "../FilterGraphs/FilterGraphs"
 import { Contents, Mash } from "../Mash"
 import { FilterGraphInstance, FilterGraphOptions } from "./FilterGraph"
 
 export interface FilterGraphArgs extends Required<FilterGraphOptions> {
   backcolor?: string
   contents?: Contents
+  label?: string
   filterChain?: FilterChain
   mash: Mash
   filterGraphs: FilterGraphsInstance
@@ -63,26 +64,27 @@ export class FilterGraphClass implements FilterGraphInstance {
   private _evaluator?: Evaluator
   get evaluator() { return this._evaluator ||= this.evaluatorInitialize }
   get evaluatorInitialize(): Evaluator {
-    const { preloading, avType, size: outputSize, graphType, preloader } = this
+    const { args, preloading, avType, size: outputSize, graphType, preloader } = this
     const evaluatorArgs: EvaluatorArgs = {
-      preloading,
-      avType, outputSize, graphType, preloader,
+      preloading, avType, outputSize, graphType, preloader
     }
     return new Evaluator(evaluatorArgs)
   }
   _filterChain?: FilterChain
-  get filterChain() { return this._filterChain ||= this.filterChainInitialize }
+
+
+  private get filterChain() { return this._filterChain ||= this.filterChainInitialize }
+
   get filterChainInitialize(): FilterChain {
     const { args, duration } = this
     const { filterChain: supplied } = args
     if (supplied) {
-      // console.log(this.constructor.name, 'filterChainInitialize', supplied)
+      // console.log(this.constructor.name, 'filterChainInitialize', this.mash.label, 'supplied', supplied)
       return supplied
     }
-
     const { videoRate, backcolor, size, graphType, preloading } = this
 
-      // console.log(this.constructor.name, 'filterChainInitialize size', size)
+    // console.log(this.constructor.name, 'filterChainInitialize', this.mash.label, 'size', size)
     const outputs = ['COLORBACK']
     const colorFilter: GraphFilter = {
       filter: 'color',
@@ -95,8 +97,8 @@ export class FilterGraphClass implements FilterGraphInstance {
     }
     const filterChain: FilterChain = new FilterChainClass(filterChainConstructorArgs)
     if (graphType === GraphType.Canvas && !preloading) {
-      const visibleContext = ContextFactory.toSize(size)
-      visibleContext.drawFill(backcolor)
+      const visibleContext = ContextFactory.visible({ size, label: `${this.constructor.name} ${backcolor}`})
+      if (backcolor) visibleContext.drawFill(backcolor)
       filterChain.visibleContext = visibleContext
     }
     return filterChain
@@ -130,7 +132,7 @@ export class FilterGraphClass implements FilterGraphInstance {
           filterGraph: filterGraphAudible
         }
         const filterChainAudible = new FilterChainClass(audibleChainArgs)
-        clip.initializeFilterChain(filterChainAudible)
+        clip.filterChainInitialize(filterChainAudible)
 
         // TODO: support gain as audio filter
         // clip.filterChain(filterChainAudible)
@@ -140,8 +142,9 @@ export class FilterGraphClass implements FilterGraphInstance {
       if (transformable && avType !== AVType.Audio) {
         const filterChainArgs: FilterChainConstructorArgs = { filterGraph: this }
         const filterChain: FilterChain = new FilterChainClass(filterChainArgs)
-        transformable.initializeFilterChain(filterChain)
-        transformable.filterChain(filterChain)
+        transformable.filterChainInitialize(filterChain)
+        // console.log(this.constructor.name, "filterChainsInitialize", transformable.type, transformable.definitionId)
+        transformable.filterChainPopulate(filterChain)
         const { transition, from } = content
         if (transition) {
           const transitionFilterChainArgs: TransitionFilterChainArgs = {

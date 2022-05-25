@@ -25,7 +25,6 @@ export function DefaultScalerInput(): ReactResult {
       value: scaler.id,
       key: scaler.id,
       children: scaler.label,
-      selected: scaler.id === definitionId,
     }
     return <option {...optionProps}/>
   })
@@ -34,6 +33,7 @@ export function DefaultScalerInput(): ReactResult {
     children: options,
     name: property.name,
     onChange,
+    value: definitionId,
     key: `${property.name}-select`
   }
   return <select {...scalerProps} />

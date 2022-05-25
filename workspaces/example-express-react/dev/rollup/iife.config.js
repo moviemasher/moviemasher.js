@@ -6,6 +6,8 @@ import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
 import css from 'rollup-plugin-css-only'
 import copy from 'rollup-plugin-copy'
+import json from "@rollup/plugin-json"
+
 import { terser } from 'rollup-plugin-terser'
 
 const src = './src'
@@ -14,23 +16,25 @@ const outputExtension = '.js'
 const inputExtension = '.tsx'
 const allFiles = fs.readdirSync(path.resolve(src))
 const files = allFiles.filter(file => path.extname(file) === inputExtension)
-const names = files.map(file => path.basename(file, inputExtension)) //['masher'] //['caster'] //
+const names = ['caster'] // , 'masher'files.map(file => path.basename(file, inputExtension))
 
 const replaceOptions = {
   preventAssignment: true,
-  'process.env.NODE_ENV': JSON.stringify( 'production' )
+  'process.env.NODE_ENV': JSON.stringify( 'development' )
 }
 
 const clients = names.map(name => ({
+  context: 'this',
   input: `${src}/${name}${inputExtension}`,
   output: {
     file: path.join(dest, `${name}${outputExtension}`),
     format: "iife",
-    sourcemap: false,
+    sourcemap: true,
   },
   plugins: [
     resolve(),
     replace(replaceOptions),
+    json( { preferConst: true, indent: "  ", namedExports: true }),
     commonjs({ include: /node_modules/ }),
     ts({ tsconfig: '../example-react/dev/tsconfig.json' }),
     css({ output: `${name}.css` }),
@@ -47,7 +51,7 @@ const clients = names.map(name => ({
         },
       }]
     }),
-    terser(),
+    // terser(),
   ]
 }))
 export default [...clients]

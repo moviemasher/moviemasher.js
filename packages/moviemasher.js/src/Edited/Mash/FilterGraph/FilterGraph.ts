@@ -40,7 +40,6 @@ export interface FilterGraphInstance extends FilterGraph {
   inputCount: number
   duration: number
   time: Time
-  filterChain: FilterChain
   filterChains: FilterChains
   filterChainsInitialize(): void
   filterGraphs: FilterGraphsInstance

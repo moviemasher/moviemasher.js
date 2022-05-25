@@ -2,6 +2,9 @@ import {
   AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject
 } from "../declarations"
 
+export const colorRgbKeys = 'rgb'.split('')
+export const colorRgbaKeys = [...colorRgbKeys, 'a']
+
 export const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))
 )
@@ -43,6 +46,17 @@ export const colorRgbaToHex = (rgba: RgbaObject): string => {
   if (b.length < 2) b = `0${b}`
   if (a.length < 2) a = `0${a}`
   return `#${r}${g}${b}${a}`
+}
+
+export const colorYuvDifference = (fromYuv: Yuv, toYuv: Yuv, similarity: number, blend: number) => {
+  const du = fromYuv.u - toYuv.u
+  const dv = fromYuv.v - toYuv.v
+  const diff = Math.sqrt((du * du + dv * dv) / (255.0 * 255.0))
+
+  if (blend > 0.0001) {
+    return Math.min(1.0, Math.max(0.0, (diff - similarity) / blend)) * 255.0
+  }
+  return (diff > similarity) ? 255 : 0
 }
 
 export const colorYuvBlend = (yuvs : YuvObject[], yuv : YuvObject, similarity : number, blend : number) : number => {
@@ -188,9 +202,10 @@ export const colorFromRgba = (rgba: Rgba): string => {
   return `rgb(${r},${g},${b},${a})`
 }
 
-export const colorRgba: Rgba = { r: 0, g: 0, b: 0, a: 1.0 }
-
 export const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
+export const colorRgba: Rgba = { ...colorRgb, a: 1.0 }
+
+export const colorRgbaTransparent: Rgba = { ...colorRgb, a: 0.0 }
 
 export const colorServer = (color: string): string => {
   if (!colorValidHex(color)) return color

@@ -10,6 +10,7 @@ import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 const MergerDefinitionWithModular = ModularDefinitionMixin(DefinitionBase)
 export class MergerDefinitionClass extends MergerDefinitionWithModular implements MergerDefinition {
   populateFilterChain(filterChain: FilterChain, modular: Modular): void {
+    // console.log(this.constructor.name, "populateFilterChain")
     const { filterGraph } = filterChain
     const { avType, graphType } = filterGraph
     if (avType === AVType.Audio) return

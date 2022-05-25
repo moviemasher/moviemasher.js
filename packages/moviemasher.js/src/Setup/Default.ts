@@ -1,7 +1,7 @@
-import { MashEditorOptions } from "../Editor/MashEditor/MashEditor"
-import { colorTransparent } from "../Utility/Color"
+import { EditorArgs } from "../Editor/Editor"
+import { colorBlack, colorTransparent } from "../Utility/Color"
 
-export const MashEditorDefaults: MashEditorOptions = {
+export const MashEditorDefaults: EditorArgs = {
   buffer: 10,
   fps: 30,
   loop: true,
@@ -21,12 +21,13 @@ export const MashDefaults = {
 const CastDefaults = {
   label: "Unlabeled Cast",
   quantize: 10,
-  backcolor: colorTransparent,
+  backcolor: colorBlack,
   gain: 0.75,
   buffer: 10,
 }
 
 export const Default = {
+
   label: "Unlabeled",
   masher: MashEditorDefaults,
   cast: CastDefaults,

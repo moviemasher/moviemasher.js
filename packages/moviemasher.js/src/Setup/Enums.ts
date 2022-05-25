@@ -1,23 +1,53 @@
+import { isPopulatedString, isString } from "../Utility/Is"
 
+
+export enum DroppingPosition {
+  At = 'at',
+  After = 'after',
+  Before = 'before',
+  None = 'none'
+}
+
+export enum LayerType {
+  Mash = 'mash',
+  Folder = 'folder',
+}
+export const LayerTypes = Object.values(LayerType)
+
+export const isLayerType = (value: any): value is LayerType => {
+  return isString(value) && LayerTypes.includes(value as LayerType)
+}
+
+export function assertLayerType(value: any): asserts value is LayerType {
+  if (!isLayerType(value)) throw new Error('expected LayerType')
+}
 export enum ActionType {
-  AddTrack = 'addTrack',
   AddClipToTrack = 'addClipToTrack',
-  MoveClip = 'moveClip',
   AddEffect = 'addEffect',
+  AddLayer = 'addLayer',
+  AddTrack = 'addTrack',
   Change = 'change',
   ChangeFrames = 'changeFrames',
-  ChangeTrim = 'changeTrim',
   ChangeGain = 'changeGain',
-  MoveEffect = 'moveEffect',
-  Split = 'split',
+  ChangeTrim = 'changeTrim',
   Freeze ='freeze',
+  MoveClip = 'moveClip',
+  MoveEffect = 'moveEffect',
+  MoveLayer = 'moveLayer',
   RemoveClip = 'removeClip',
+  RemoveLayer = 'removeLayer',
+  Split = 'split',
 }
 
 export enum EditType {
   Mash = 'mash',
   Cast = 'cast',
 }
+export const EditTypes = Object.values(EditType)
+export const isEditType = (value?: any): value is EditType => {
+  return isString(value) && EditTypes.includes(value as EditType)
+}
+
 
 export enum AVType {
   Audio = 'audio',
@@ -29,18 +59,43 @@ export enum SelectType {
   Cast = 'cast',
   Mash = 'mash',
   Track = 'track',
+  Layer = 'layer',
   Clip = 'clip',
   Effect = 'effect',
   Merger = 'merger',
   Scaler = 'scaler',
 }
 
+
+export const SelectTypes = Object.values(SelectType)
+export type SelectTypes = SelectType[]
+export enum SelectionType {
+  Cast = 'cast',
+  Mash = 'mash',
+  Track = 'track',
+  Layer = 'layer',
+  Clip = 'clip',
+  Effect = 'effect',
+}
+
+
+
+export const SelectionTypes = Object.values(SelectionType)
+
+export const isSelectionType = (value?: any): value is SelectionType => {
+  return isString(value) && SelectionTypes.includes(value as SelectionType)
+}
+
 export enum TrackType {
   Audio = 'audio',
   Transition = 'transition',
   Video = 'video',
+  Matte = 'matte',
 }
 export const TrackTypes = Object.values(TrackType)
+export const isTrackType = (value?: any): value is TrackType => {
+  return isString(value) && TrackTypes.includes(value as TrackType)
+}
 
 export enum ClipType {
   Audio = 'audio',
@@ -80,7 +135,6 @@ export enum StreamingFormat {
   Mdash = 'mdash',
 }
 
-// export const StreamingFormats = Object.values(StreamingFormat).map(String)
 
 export enum OutputType {
   Audio = 'audio',
@@ -92,25 +146,39 @@ export enum OutputType {
 
 export const OutputTypes = Object.values(OutputType)
 
-// NOTE: order important here - determines initialization
 export enum DefinitionType {
+  Audio = 'audio',
+  // AudioStream = 'audiostream',
+  Effect = 'effect',
   Filter = 'filter',
+  Font = 'font',
+  Image = 'image',
   Merger = 'merger',
   Scaler = 'scaler',
-  Effect = 'effect',
-  Font = 'font',
   Theme = 'theme',
   Transition = 'transition',
-  Image = 'image',
   Video = 'video',
-  Audio = 'audio',
-  VideoStream = 'videostream',
   VideoSequence = 'videosequence',
-  // Track = 'track',
-  // AudioStream = 'audiostream',
+  VideoStream = 'videostream',
 }
 export const DefinitionTypes = Object.values(DefinitionType)
-export const DefinitionTypeStrings = DefinitionTypes.map(String)
+export const isDefinitionType = (type?: any): type is DefinitionType => {
+  return isPopulatedString(type) && DefinitionTypes.includes(type as DefinitionType)
+}
+
+export function assertDefinitionType(type?: any): asserts type is DefinitionType {
+  if (!isDefinitionType(type)) throw new Error("expected DefinitionType")
+}
+
+export enum TriggerType {
+  Init = 'init',
+  Stop = 'stop',
+  Start = 'start',
+}
+export const TriggerTypes = Object.values(TriggerType)
+export const isTriggerType = (type?: any): type is TriggerType => {
+  return isPopulatedString(type) && TriggerTypes.includes(type as TriggerType)
+}
 
 export enum EventType {
   Action = 'action',
@@ -192,6 +260,7 @@ export enum MasherAction {
   Freeze = 'freeze',
   Redo = 'redo',
   Remove = 'remove',
+  Render = 'render',
   Save = 'save',
   Split = 'split',
   Undo = 'undo',

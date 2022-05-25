@@ -1,7 +1,7 @@
 import { ValueObject, Value, UnknownObject } from "../declarations"
 import { AVType, OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
 import { RenderingDescription, RenderingResult } from "../Api/Rendering"
-import { Mash } from "../Edited/Mash/Mash"
+import { Mash, Mashes } from "../Edited/Mash/Mash"
 import { StreamingDescription } from "../Api/Streaming"
 import { Time } from "../Helpers/Time/Time"
 
@@ -37,7 +37,7 @@ export interface OutputConstructorArgs {
 
 export interface StreamingOutputArgs extends OutputConstructorArgs {
   commandOutput: StreamingCommandOutput
-  mashes: Mash[]
+  mashes: Mashes
 }
 
 export interface RenderingOutputArgs extends OutputConstructorArgs {

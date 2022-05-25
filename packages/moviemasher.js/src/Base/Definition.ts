@@ -5,7 +5,7 @@ import { DefinitionType, DefinitionTypes } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 import { Times } from "../Helpers/Time/Time"
-import { Is, isPopulatedString } from "../Utility/Is"
+import { assertPopulatedString, Is, isPopulatedString } from "../Utility/Is"
 import { Instance, InstanceBase, InstanceObject } from "./Instance"
 import { Factory } from "../Definitions/Factory/Factory"
 import { dataTypeIsDefinitionId } from "../Helpers/DataType"
@@ -28,6 +28,14 @@ export class DefinitionBase {
   id: string
 
   get instance(): Instance { return this.instanceFromObject(this.instanceObject) }
+
+  instanceDefinitionIds(instance: Instance): string[] {
+    return this.propertiesModular.map(property => {
+      const id = instance.value(property.name)
+      assertPopulatedString(id)
+      return id
+    })
+  }
 
   instanceFromObject(object: InstanceObject): Instance {
     return new InstanceBase({ ...this.instanceObject, ...object })

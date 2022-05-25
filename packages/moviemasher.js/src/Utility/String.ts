@@ -36,18 +36,14 @@ export const stringSeconds = (seconds : number, fps : number, duration : number)
     if (seconds) {
       if (pad === 1) seconds = Math.floor(seconds * 10) / 10
       else seconds = Math.floor(100 * seconds) / 100
-      seconds = Number(String(seconds).substr(2, 2))
+      seconds = Number(String(seconds).slice(2, 2))
       s += String(seconds).padStart(pad, '0')
     } else s += '0'.padStart(pad, '0')
   }
   return s
 }
 
-export const stringCapitalize = (value : string) : string => {
-  if (!isPopulatedString(value)) return value
 
-  return `${value[0].toUpperCase()}${value.substr(1)}`
-}
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {
   if (!isPopulatedString(value)) return value
 

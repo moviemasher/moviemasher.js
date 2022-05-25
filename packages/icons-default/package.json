@@ -1,0 +1,66 @@
+{
+  "name": "@moviemasher/icons-default",
+  "version": "5.0.7",
+  "description": "Movie Masher Icon Plugin built with React Icons - version 5.0.7",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "type": "module",
+  "license": "MPL-2.0",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "peerDependencies": {
+    "@moviemasher/client-react": "5.0.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@svgr/rollup": "^6.2.1",
+    "react-icons": "^4.3.1",
+
+    "rollup-plugin-svg": "^2.0.0",
+    "@types/node": "15.6.1",
+    "@types/react-dom": "^17.0.2",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.70.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^2.0.5",
+    "typescript": "4.5.5"
+  },
+  "scripts": {
+    "build-rollup": "rollup --config dev/rollup.config.js",
+    "build": "run-s clean build-rollup",
+    "clean": "rimraf dist"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

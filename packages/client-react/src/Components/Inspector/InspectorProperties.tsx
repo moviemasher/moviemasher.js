@@ -33,7 +33,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
     const index = effectIndex === -1 ? types.length : effectIndex
 
     types.splice(index, 0, 'effects')
-    kidsByType.effects = [<InspectorEffects />]
+    kidsByType.effects = [<InspectorEffects key="inspector-effects" />]
   }
 
 
@@ -53,10 +53,13 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
   })
 
   const kids: React.ReactChild[] = [...new Set(types)].map(type => {
-    return <details open>
-      <summary>{type}</summary>
-      {kidsByType[type]}
-    </details>
+    const summaryProps = { key: `summary-${type}`, children: type }
+    const detailsProps = {
+      key: `details-${type}`,
+      open: true,
+      children: [<summary { ...summaryProps } />, ...kidsByType[type]]
+    }
+    return <details { ...detailsProps } />
   })
 
   return <>{kids}</>

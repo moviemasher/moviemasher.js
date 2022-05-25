@@ -1,25 +1,36 @@
 import { PropertiedClass } from "../../../Base/Propertied"
-import { DataType } from "../../../Setup/Enums"
+import { Errors } from "../../../Setup/Errors"
+import { DataType, LayerType } from "../../../Setup/Enums"
 import { propertyInstance } from "../../../Setup/Property"
-import { Mash } from "../../Mash/Mash"
-import { Layer } from "./Layer"
-
-export interface LayerArgs {
-  mash?: Mash
-  label?: string
-}
+import { Mashes } from "../../Mash/Mash"
+import { Layer, LayerArgs } from "./Layer"
+import { UnknownObject } from "../../../declarations"
+import { idGenerate } from "../../../Utility/Id"
 
 export class LayerClass extends PropertiedClass implements Layer {
   constructor(args: LayerArgs) {
     super()
-    const { mash, label } = args
-    if (mash) this.mash = mash
-    if (label) this.label = label
 
     this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
+
+    this.propertiesInitialize(args)
   }
 
-  label = 'Unlabeled Layer'
+  _id?: string
+  get id(): string { return this._id ||= idGenerate() }
 
-  mash?: Mash
+  get mashes(): Mashes { throw Errors.unimplemented }
+
+  declare label: string
+
+  toJSON(): UnknownObject {
+    const json = super.toJSON()
+    json.type = this.type
+    json.triggers = this.triggers
+    return json
+  }
+
+  triggers = []
+
+  type!: LayerType
 }

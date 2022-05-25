@@ -9,24 +9,26 @@ import { Emitter } from "../../../Helpers/Emitter"
 import { ContextFactory } from "../../../Context/ContextFactory"
 import { Preloader } from "../../../Preloader/Preloader"
 import { AudibleContextInstance } from "../../../Context/AudibleContext"
+import { VisibleContext } from "../../../Context/VisibleContext"
 
 export interface CompositionObject {
   buffer? : number
   gain? : number
   quantize? : number
-  backcolor?: string
   emitter?: Emitter
   preloader: Preloader
 }
 
 export class Composition {
   constructor(object : CompositionObject) {
-    const { emitter, backcolor, buffer, gain, quantize, preloader } = object
-    if (backcolor) this.backcolor = backcolor
+    const {
+      emitter, buffer, gain, quantize, preloader
+    } = object
     if (quantize && Is.aboveZero(quantize)) this.quantize = quantize
     if (typeof gain !== "undefined" && Is.positive(gain)) this._gain = gain
     if (buffer && Is.aboveZero(buffer)) this.buffer = buffer
     if (emitter) this.emitter = emitter
+
     this.preloader = preloader
   }
 
@@ -67,7 +69,7 @@ export class Composition {
 
   private bufferSource? : AudioBufferSourceNode
 
-  clear() {  this.visibleContext.clear() }
+  clear() {  }
 
   compositeAudible(clips: Audible[]): boolean {
     // console.log(this.constructor.name, "compositeAudible", clips.length)
@@ -122,13 +124,6 @@ export class Composition {
     clipsToRemove.forEach(clip => AudibleContextInstance.deleteSource(clip.id))
     this.playingClips = clipsToKeep
     // console.log(this.constructor.name, "destroySources removed", clipsToRemove.length, "kept", this.playingClips.length)
-  }
-
-  drawBackground() : void {
-    this.clear()
-    if (!this.backcolor) return
-
-    this.visibleContext.drawFill(pixelColor(this.backcolor))
   }
 
   emitter?: Emitter
@@ -217,5 +212,4 @@ export class Composition {
     delete this.bufferSource
   }
 
-  visibleContext = ContextFactory.visible()
 }

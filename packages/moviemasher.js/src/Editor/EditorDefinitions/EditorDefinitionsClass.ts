@@ -1,8 +1,8 @@
-
 import { Definition, DefinitionObject, DefinitionObjects } from "../../Base/Definition"
 import { Factory } from "../../Definitions/Factory"
-import { DefinitionType, DefinitionTypeStrings } from "../../Setup/Enums"
+import { assertDefinitionType, DefinitionType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
+import { assertPopulatedString } from "../../Utility/Is"
 import { EditorDefinitions } from "./EditorDefinitions"
 
 const EditorDefinitionsType = (id: string): DefinitionType | undefined => {
@@ -16,74 +16,77 @@ export class EditorDefinitionsClass implements EditorDefinitions {
   constructor(objectOrArray?: DefinitionObject | DefinitionObjects) {
     if (objectOrArray) this.define(objectOrArray)
   }
-  private definitionsByType = new Map<DefinitionType, Definition[]>()
 
-  define(objectOrArray: DefinitionObject | DefinitionObjects) {
-    const objects = Array.isArray(objectOrArray) ? objectOrArray : [objectOrArray]
-    objects.forEach(object => {
-      const { id, type } = object
-      if (!id) throw Errors.invalid.definition.id
-      if (!(type && DefinitionTypeStrings.includes(type))) throw Errors.invalid.definition.type + type
+  byId = new Map<string, Definition>()
 
-      const definitionType = type as DefinitionType
-      const definition = Factory[definitionType].definition(object)
-      this.install(definition)
-    })
+  private byIdAdd(definition: Definition | Definition[]) {
+    const definitions = Array.isArray(definition) ? definition : [definition]
+    definitions.forEach(definition => this.byId.set(definition.id, definition))
   }
 
   byType(type: DefinitionType): Definition[] {
     const list = this.definitionsByType.get(type)
     if (list) return list
 
-    const definitionsList: Definition[] = []
-    this.definitionsByType.set(type, definitionsList)
-    return definitionsList
+    const definitions = Factory[type].defaults || []
+    this.definitionsByType.set(type, definitions)
+    // this.byIdAdd(definitions)
+    return definitions
   }
 
-  definitionsClear(): void {
-    this.byId.clear()
-    this.definitionsByType.clear()
+  define(objectOrArray: DefinitionObject | DefinitionObjects) {
+    const objects = Array.isArray(objectOrArray) ? objectOrArray : [objectOrArray]
+    objects.forEach(object => {
+      const { id, type } = object
+      assertPopulatedString(id)
+      assertDefinitionType(type)
+
+      const definition = Factory[type].definition(object)
+      this.install(definition)
+    })
   }
 
-  fromId(id: string): Definition {
-    if (this.installed(id)) return this.byId.get(id)!
+  private definitionDelete(definition: Definition): void {
+    const { type } = definition
+    const definitions = this.byType(type)
+    const index = definitions.indexOf(definition)
+    if (index < 0) return
 
-    const definitionType = EditorDefinitionsType(id)
-    if (!definitionType) throw Errors.invalid.definition.type + id
-
-    return Factory[definitionType].definitionFromId(id)
+    definitions.splice(index, 1)
   }
-
-  install(definition: Definition): void {
-    const { type, id } = definition
-    const array = this.byType(type)
-    if (this.installed(id)) this.deleteDefinition(definition)
-    this.byId.set(id, definition)
-    array.push(definition)
-  }
-
-  installed(id: string): boolean { return this.byId.has(id) }
-
-  byId = new Map<string, Definition>()
 
   definitionUninstall(id: string): void {
     if (!this.installed(id)) return
 
     const definition = this.fromId(id)
     this.byId.delete(id)
-    this.deleteDefinition(definition)
+    this.definitionDelete(definition)
   }
 
-  private deleteDefinition(definition: Definition): void {
-    const { type } = definition
-    const definitions = this.byType(type)
-    const index = definitions.indexOf(definition)
-    if (index < 0) throw Errors.internal + 'definitionUninstall'
+  private definitionsByType = new Map<DefinitionType, Definition[]>()
 
-    definitions.splice(index, 1)
+  fromId(id: string): Definition {
+    if (this.installed(id)) return this.byId.get(id)!
+
+    const definitionType = EditorDefinitionsType(id)
+    if (!definitionType) {
+      console.trace(Errors.invalid.definition.id, id)
+      throw Errors.invalid.definition.id + id
+    }
+    return Factory[definitionType].definitionFromId(id)
   }
 
   get ids(): string[] { return [...this.byId.keys()] }
+
+  install(definition: Definition): void {
+    const { type, id } = definition
+    if (this.installed(id)) this.definitionDelete(definition)
+
+    this.byIdAdd(definition)
+    this.byType(type).push(definition)
+  }
+
+  installed(id: string): boolean { return this.byId.has(id) }
 
   toJSON(): DefinitionObjects {
     return [...this.byId.values()].map(definition => definition.toJSON())

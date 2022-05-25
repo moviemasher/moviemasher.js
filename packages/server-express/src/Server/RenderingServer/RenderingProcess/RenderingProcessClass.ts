@@ -54,18 +54,24 @@ export class RenderingProcessClass implements RenderingProcess {
   get mashInstance(): Mash {
     if (this._mashInstance) return this._mashInstance
 
-    const { definitions, mash } = this.args
+    const {
+      definitions, mash, cacheDirectory, validDirectories, defaultDirectory, filePrefix
+    } = this.args
     const editorDefinitions = new EditorDefinitionsClass(definitions)
-    return this._mashInstance = mashInstance(mash, editorDefinitions)
+
+    const mashOptions = {
+      ...mash, definitions: editorDefinitions,
+      preloader: new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    }
+    return this._mashInstance = mashInstance(mashOptions)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {
     const { outputType } = commandOutput
-    const { cacheDirectory, validDirectories, defaultDirectory, filePrefix } = this.args
+    const { cacheDirectory } = this.args
     // console.log(this.constructor.name, "outputInstance", cacheDirectory)
-    const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+
     const { mashInstance } = this
-    mashInstance.preloader = preloader
     const args: RenderingOutputArgs = {
       commandOutput, cacheDirectory, mash: mashInstance,
     }

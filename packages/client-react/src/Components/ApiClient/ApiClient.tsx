@@ -56,10 +56,10 @@ export function ApiClient(props: ApiProps): ReactResult {
   React.useEffect(() => {
     const request: ApiServersRequest = {}
     endpointPromise(Endpoints.api.servers, request).then((response: ApiServersResponse) => {
-      // console.debug("ApiServersResponse", response)
+      console.debug("ApiServersResponse", response)
       setServers(response)
       setEnabled(ServerTypes.filter(type => !!response[type]))
-      if (response.data?.uuid) idPrefixSet(response.data.uuid)
+      if (response.data?.temporaryIdPrefix) idPrefixSet(response.data.temporaryIdPrefix)
     })
   }, [])
 

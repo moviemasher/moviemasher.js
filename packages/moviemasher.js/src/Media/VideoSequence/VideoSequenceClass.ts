@@ -1,4 +1,4 @@
-import { FilesArgs, UnknownObject } from "../../declarations"
+import { FilesArgs, GraphFiles, UnknownObject } from "../../declarations"
 import { Default } from "../../Setup/Default"
 import { AVType, GraphType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
@@ -19,7 +19,7 @@ const WithVisible = VisibleMixin(WithAudibleFile)
 const WithTransformable = TransformableMixin(WithVisible)
 
 export class VideoSequenceClass extends WithTransformable implements VideoSequence {
-  override initializeFilterChain(filterChain: FilterChain): void  {
+  override filterChainInitialize(filterChain: FilterChain): void  {
     const { filterGraph } = filterChain
     const {
       graphType, avType, preloading, time, quantize, preloader
@@ -40,6 +40,13 @@ export class VideoSequenceClass extends WithTransformable implements VideoSequen
 
   get copy() : VideoSequence { return super.copy as VideoSequence }
 
+  private clipFiles(args: FilesArgs): GraphFiles {
+    const { quantize, time } = args
+    const definitionTime = this.definitionTime(quantize, time)
+
+    const definitionArgs: FilesArgs = { ...args, time: definitionTime }
+    return this.definition.definitionFiles(definitionArgs)
+  }
   declare definition : VideoSequenceDefinition
 
   definitionTime(quantize : number, time : Time) : Time {

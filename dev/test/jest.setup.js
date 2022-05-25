@@ -2,7 +2,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { FontDefinitions } from "../../packages/moviemasher.js/src/Media/Font/FontFactory"
+import { fontDefaults, FontDefinitions } from "../../packages/moviemasher.js/src/Media/Font/FontFactory"
 
 import { TestRenderOutput } from "./Setup/Constants"
 
@@ -55,4 +55,5 @@ fetchMock.mockResponse(req => {
   return promise
 })
 
-FontDefinitions['com.moviemasher.font.default'].url = FontDefinitions['com.moviemasher.font.default'].source
+const [fontDefault] = fontDefaults
+fontDefault.url = fontDefault.source

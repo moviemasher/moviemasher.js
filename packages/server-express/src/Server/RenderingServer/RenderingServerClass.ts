@@ -2,6 +2,7 @@ import Express from "express"
 import path from "path"
 import fs from 'fs'
 import {
+  assertDefinitionType, assertPopulatedString,
   ApiCallback, DefinitionObject, Endpoints, Errors, OutputType, RenderingStartRequest,
   DefinitionType, CommandOutputs,
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
@@ -61,8 +62,9 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   private definitionObject(user: string, renderingId: string, definition: DefinitionObject, commandOutputs: CommandOutputs): void {
     const id = definition.id!
     const outputDirectory = this.outputDirectory(user, id)
-    const type = definition.type! as DefinitionType
-    const source = definition.source!
+    const { type, source } = definition
+    assertDefinitionType(type)
+    assertPopulatedString(source)
 
     const wants: OutputType[] = []
     switch (type) {
@@ -232,10 +234,10 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   private startCallback(definitionObject: DefinitionObject): ApiCallback {
     const { id, type } = definitionObject
     if (!id) throw Errors.id
-    if (!(type && DefinitionTypes.map(String).includes(type))) throw Errors.type + type
 
-    const definitionType = type as DefinitionType
-    const outputs: CommandOutputs = renderingDefinitionTypeCommandOutputs(definitionType)
+    assertDefinitionType(type)
+
+    const outputs: CommandOutputs = renderingDefinitionTypeCommandOutputs(type)
     const input: RenderingInput = renderingInput(definitionObject)
     const renderingStartRequest: RenderingStartRequest = { ...input, outputs }
     const request: ApiRequestInit = { body: renderingStartRequest }

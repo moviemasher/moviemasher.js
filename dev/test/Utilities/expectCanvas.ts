@@ -14,5 +14,5 @@ export const expectCanvasAtTime = async (mash: Mash, time?: Time): Promise<void>
   const promise = mash.seekToTime(seekTime)
   if (promise) await promise
   mash.draw()
-  expectCanvas(mash.composition.visibleContext.canvas)
+  expectCanvas(mash.visibleContext.canvas)
 }

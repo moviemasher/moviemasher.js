@@ -53,7 +53,7 @@ describe.skip("MashFactory", () => {
             ]
           }]
       }
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
 
       expect(mash.tracks.length).toBe(2)
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
@@ -195,7 +195,7 @@ describe("Mash", () => {
     const clip2: ClipObject = { definitionId: cableDefinitionObject.id, frames: 40 }
     const mashObject: MashObject = { tracks: [{ clips: [clip1, clip2] }] }
     const definitions = new EditorDefinitionsClass([globeDefinitionObject, cableDefinitionObject])
-    const mash = mashInstance(mashObject, definitions, new JestPreloader())
+    const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
     return mash
   }
 
@@ -248,7 +248,7 @@ describe("Mash", () => {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
       const definitions = new EditorDefinitionsClass([definitionObject])
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
       const filterGraphs = mash.filterGraphs(filterGraphArgs)
         const { filterGraphsVisible } = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
@@ -256,10 +256,8 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChain, filterChains, graphFiles } = filterGraph
-      expectBackgroundFilterChain(filterChain)
+      const { filterChains, graphFiles } = filterGraph
       expect(filterChains.length).toEqual(1)
-      const [filterChain2] = filterChains
       expect(graphFiles.length).toBe(1)
       const [graphFile] = graphFiles
       const { type, file, input, options } = graphFile
@@ -312,7 +310,7 @@ describe("Mash", () => {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
       const definitions = new EditorDefinitionsClass()//[definitionObject]
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader() })
       const filterGraphs = mash.filterGraphs(filterGraphArgs)
       const {filterGraphsVisible} = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
@@ -320,8 +318,7 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChain, filterChains, graphFiles } = filterGraph
-      expectBackgroundFilterChain(filterChain)
+      const { filterChains, graphFiles } = filterGraph
       expect(filterChains.length).toEqual(1)
       expect(graphFiles.length).toBe(2)
       const [graphFile2, graphFile1] = graphFiles
@@ -345,7 +342,7 @@ describe("Mash", () => {
       const mashObject = {
         tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30, ...clip }] }]
       }
-      const mash = mashInstance(mashObject, definitions, new JestPreloader())
+      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader() })
       const graphArgs = { ...filterGraphArgs, ...args }
       const filterGraphs = mash.filterGraphs(graphArgs)
       const { filterGraphsVisible } = filterGraphs
@@ -354,12 +351,11 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChain, filterChains, graphFiles, duration, time } = filterGraph
+      const { filterChains, graphFiles, duration, time } = filterGraph
       if (time.isRange) expect(duration).toBeGreaterThan(0)
       else expect(duration).toBe(0)
       expect(filterChains.length).toEqual(1)
       const [clipFilterChain] = filterChains
-      expectBackgroundFilterChain(filterChain)
       const { graphFilter, graphFilters } = clipFilterChain
       expect(graphFilters.length).toBe(2)
       const [scaleFilter, setSarFilter] = graphFilters
@@ -418,8 +414,9 @@ describe("Mash", () => {
       const definitions = new EditorDefinitionsClass([videoDefinition])
 
       const mash = mashInstance({
+        definitions, preloader: new JestPreloader,
         tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30 }] }]
-      }, definitions, new JestPreloader())
+      })
       const graphArgs = {...filterGraphArgs, graphType: GraphType.Mash}//, avType: AVType.Audio
       expect(graphArgs.graphType).toEqual(GraphType.Mash)
       const filterGraphs = mash.filterGraphs(graphArgs)
@@ -428,12 +425,10 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChain, filterChains, graphFiles, duration } = filterGraph
+      const { filterChains, graphFiles, duration } = filterGraph
       expect(duration).toBe(0)
-      expect(filterChain).toBeDefined()
       expect(filterChains.length).toEqual(1)
       const [clipFilterChain] = filterChains
-      expectBackgroundFilterChain(filterChain)
 
       const { graphFilter, graphFilters } = clipFilterChain
       if (graphArgs.avType !== AVType.Audio) expectMergerGraphFilter(graphFilter)

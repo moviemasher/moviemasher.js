@@ -1,4 +1,4 @@
-import { Constrained, VisibleSource, Size } from "../../declarations"
+import { CanvasVisibleSource, Constrained, VisibleSource } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { VisibleContext } from "../../Context/VisibleContext"
@@ -13,15 +13,20 @@ export interface VisibleDefinitionObject extends ClipDefinitionObject {
 export interface VisibleDefinition extends ClipDefinition {
   width: number
   height: number
-  loadedVisible(preloader: Preloader, quantize: number, definitionTime: Time): VisibleSource | undefined
+  loadedVisible(preloader: Preloader, quantize: number, definitionTime: Time): CanvasVisibleSource | undefined
   trackType: TrackType
 }
 
-export interface VisibleObject extends ClipObject {}
+export interface VisibleObject extends ClipObject {
+  opacity?: number
+  mode?: number
+}
 
 export interface Visible extends Clip {
   contextAtTimeToSize(preloader: Preloader, time: Time, quantize: number): VisibleContext | undefined
   definition: VisibleDefinition
+  opacity: number
+  mode: number
 }
 
 export type VisibleClass = Constrained<Visible>

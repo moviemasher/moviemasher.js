@@ -30,7 +30,7 @@ export function WebrtcContent(props: WebrtcContentProps): ReactResult {
   if (current) current.srcObject = processing ? client?.localStream || null : null
 
   React.useEffect(() => addListeners(), [])
-  const { children, selectClass, ...rest } = props
+  const { children:_, ...rest } = props
   const videoProps = {
     ...rest,
     ref, autoPlay: true, muted: true,

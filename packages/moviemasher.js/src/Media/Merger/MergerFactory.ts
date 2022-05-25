@@ -10,7 +10,6 @@ import {
   MergerObject,
   MergerDefinition,
   MergerDefinitionObject,
-  MergerFactory
 } from "./Merger"
 import { Factories } from "../../Definitions/Factories"
 import { isPopulatedString } from "../../Utility/Is"
@@ -24,15 +23,15 @@ export const mergerDefinition = (object : MergerDefinitionObject) : MergerDefini
   return new MergerDefinitionClass({ ...object, type: DefinitionType.Merger, id: idString })
 }
 
-const MergerDefinitions = {
-  [mergerBlendJson.id]: mergerDefinition(mergerBlendJson),
-  [mergerCenterJson.id]: mergerDefinition(mergerCenterJson),
-  [mergerAbsoluteJson.id]: mergerDefinition(mergerAbsoluteJson),
-  [mergerDefaultJson.id]: mergerDefinition(mergerDefaultJson),
-  [mergerOverlayJson.id]: mergerDefinition(mergerOverlayJson),
-}
+export const mergerDefaults = [
+  mergerDefinition(mergerBlendJson),
+  mergerDefinition(mergerCenterJson),
+  mergerDefinition(mergerAbsoluteJson),
+  mergerDefinition(mergerDefaultJson),
+  mergerDefinition(mergerOverlayJson),
+]
 export const mergerDefinitionFromId = (id: string): MergerDefinition => {
-  const definition = MergerDefinitions[id]
+  const definition = mergerDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return mergerDefinition({ id })
@@ -48,11 +47,10 @@ export const mergerFromId = (definitionId: string): Merger => {
   return mergerInstance({ definitionId })
 }
 
-export const MergerFactoryImplementation: MergerFactory = {
+Factories[DefinitionType.Merger] = {
   definition: mergerDefinition,
   definitionFromId: mergerDefinitionFromId,
   fromId: mergerFromId,
   instance: mergerInstance,
+  defaults: mergerDefaults,
 }
-
-Factories[DefinitionType.Merger] = MergerFactoryImplementation

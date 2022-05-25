@@ -35,7 +35,7 @@ export function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
 
     declare definition : AudibleDefinition
 
-    filterChain(filterChain: FilterChain): void {
+    filterChainPopulate(filterChain: FilterChain): void {
       // TODO: audio effects
     }
 
@@ -43,7 +43,7 @@ export function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
 
     gainPairs : number[][] = []
 
-    override initializeFilterChain(filterChain: FilterChain): void  {
+    override filterChainInitialize(filterChain: FilterChain): void  {
       const { filterGraph } = filterChain
       const { graphType, avType, preloading } = filterGraph
       // console.log(this.constructor.name, "initializeFilterChain", preloading)
@@ -74,8 +74,7 @@ export function AudibleMixin<T extends ClipClass>(Base: T) : AudibleClass & T {
           }
         }
       }
-     }
-
+    }
 
     audibleSource(preloader: Preloader):AudibleSource | undefined {
       return this.definition.audibleSource(preloader)

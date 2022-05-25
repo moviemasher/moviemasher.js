@@ -1,10 +1,9 @@
-import { DefinitionType, Transformable, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DefinitionType, assertTransformable, UnknownObject, SelectionType } from '@moviemasher/moviemasher.js'
 import React from 'react'
 import { ReactResult } from "../../declarations"
-import { DragEffectObject } from '../../Helpers/DragDrop'
-import { useMashEditor } from '../../Hooks/useMashEditor'
+import { DragEffectObject, DragSuffix } from '../../Helpers/DragDrop'
+import { useEditor } from '../../Hooks/useEditor'
 import { useSelectedEffect } from '../../Hooks/useSelectedEffect'
-import { DragSuffix } from '../../Setup/Constants'
 import { View } from '../../Utilities/View'
 import { InspectorEffect } from './InspectorEffect'
 import { useSelected } from '../../Hooks/useSelected'
@@ -18,12 +17,12 @@ export function InspectorEffects(): ReactResult {
   const [isOver, setIsOver] = React.useState(false)
   // const inputContext = React.useContext(InputContext)
   const selectedEffect = useSelectedEffect()
-  const selectedClip = useSelected() as Transformable
+  const selectedClip = useSelected()
+  assertTransformable(selectedClip)
+
   const { effects } = selectedClip
 
-
-  const masher = useMashEditor()
-  if (!masher) return null
+  const editor = useEditor()
 
   const childNodes = (): React.ReactElement[] => {
     return effects.map((effect, index) => {
@@ -51,14 +50,14 @@ export function InspectorEffects(): ReactResult {
     const type = dropType(dataTransfer)!
     const json = dataTransfer.getData(type)
     const data: DragEffectObject = JSON.parse(json)
-    const { definition, index } = data
+    const { definitionObject: definition, index } = data
     const droppedIndex = dropIndex(event)
     if (typeof definition === 'undefined') {
       if (!selectedEffect || droppedIndex === index) return
 
-      masher.moveEffect(selectedEffect, droppedIndex)
+      editor.moveEffect(selectedEffect, droppedIndex)
     } else {
-      masher.add(definition, droppedIndex)
+      editor.add(definition, droppedIndex)
     }
   }
 
@@ -94,7 +93,8 @@ export function InspectorEffects(): ReactResult {
   }
 
 
-  // TODO: don't hardcode these
+  const onClick: React.MouseEventHandler = () => { editor.deselect(SelectionType.Effect) }
+
   const className = 'effects'
   const dropClass = 'drop'
   const classes: string[] = []
@@ -108,6 +108,7 @@ export function InspectorEffects(): ReactResult {
     onDragLeave,
     onDragOver,
     onDrop,
+    onClick,
   }
   return <View {...viewProps}/>
 }

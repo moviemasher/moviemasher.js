@@ -17,14 +17,14 @@ export const scalerDefinition = (object : ScalerDefinitionObject) : ScalerDefini
   return new ScalerDefinitionClass({ ...object, type: DefinitionType.Scaler, id })
 }
 
-const ScalerDefinitions = {
-  [scalerDefaultJson.id]: scalerDefinition(scalerDefaultJson),
-  [scalerPanJson.id]: scalerDefinition(scalerPanJson),
-  [scalerStretchJson.id]: scalerDefinition(scalerStretchJson),
-}
+export const scalerDefaults = [
+  scalerDefinition(scalerDefaultJson),
+  scalerDefinition(scalerPanJson),
+  scalerDefinition(scalerStretchJson),
+]
 
 export const scalerDefinitionFromId = (id: string): ScalerDefinition => {
-  const definition = ScalerDefinitions[id]
+  const definition = scalerDefaults.find(definition => definition.id === id)
   if (definition) return definition
 
   return scalerDefinition({ id })
@@ -40,11 +40,10 @@ export const scalerFromId = (definitionId : string) : Scaler => {
   return scalerInstance({ definitionId })
 }
 
-export const ScalerFactoryImplementation = {
+Factories[DefinitionType.Scaler] = {
   definitionFromId: scalerDefinitionFromId,
   definition: scalerDefinition,
   instance: scalerInstance,
   fromId: scalerFromId,
+  defaults: scalerDefaults,
 }
-
-Factories[DefinitionType.Scaler] = ScalerFactoryImplementation

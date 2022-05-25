@@ -11,15 +11,23 @@ export interface FilterObject extends InstanceObject {
 export interface Filter extends Instance {
   definition : FilterDefinition
   parametersDefined: Parameter[]
+
+
 }
 
-export interface FilterDefinitionObject extends DefinitionObject {}
+export interface FilterDefinitionObject extends DefinitionObject {
+
+
+}
 
 export interface FilterDefinition extends Definition {
   instance: Filter
   instanceFromObject(object: FilterObject): Filter
   modularGraphFilter(evaluator: Evaluator): ModularGraphFilter
   parameters: Parameter[]
+  inputCountMin: number
+  inputCountMax: number
+  outputCount: number
 }
 
 /**

@@ -1,4 +1,4 @@
-import { VisibleSource, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
+import { VisibleSource, GraphFile, FilesArgs, GraphFiles, CanvasVisibleSource } from "../../declarations"
 import { AVType, DefinitionType, GraphType, LoadType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
@@ -45,7 +45,7 @@ export class ImageDefinitionClass extends ImageDefinitionWithTransformable imple
     return instance
   }
 
-  loadedVisible(preloader: Preloader, quantize: number, time: Time): VisibleSource | undefined {
+  loadedVisible(preloader: Preloader, quantize: number, time: Time): CanvasVisibleSource | undefined {
     const filesArgs: FilesArgs = {
       avType: AVType.Video, graphType: GraphType.Canvas,
       time: time, quantize

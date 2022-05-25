@@ -1,11 +1,9 @@
 import React from "react"
-import { Effect, Propertied } from "@moviemasher/moviemasher.js"
+import { Effect } from "@moviemasher/moviemasher.js"
 
 import { InspectorContext } from "../Contexts/InspectorContext"
 
-export const useSelectedEffect = (propertied?: Propertied): Effect | undefined => {
-  if (propertied) return propertied as Effect
-
+export const useSelectedEffect = (): Effect | undefined => {
   const inspectorContext = React.useContext(InspectorContext)
-  return inspectorContext.effect as Effect
+  return inspectorContext.effect!
 }

@@ -32,7 +32,7 @@ export class VideoClass extends WithTransformable implements Video {
     return scaledTime.divide(this.speed) //, 'ceil')
   }
 
-  override initializeFilterChain(filterChain: FilterChain): void {
+  override filterChainInitialize(filterChain: FilterChain): void {
     // console.log(this.constructor.name, "initializeFilterChain")
     const { filterGraph } = filterChain
     const {

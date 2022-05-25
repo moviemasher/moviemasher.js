@@ -2,9 +2,9 @@ import { Effect, Transformable } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
 import { ReactResult, WithClassName } from '../../declarations'
+import { DragSuffix } from '../../Helpers/DragDrop'
 import { useSelected, useSelectedEffect } from '../../Hooks'
-import { useMashEditor } from '../../Hooks/useMashEditor'
-import { DragSuffix } from '../../Setup/Constants'
+import { useEditor } from '../../Hooks/useEditor'
 import { View } from '../../Utilities'
 
 export interface InspectorEffectProps extends WithClassName {
@@ -15,7 +15,7 @@ export interface InspectorEffectProps extends WithClassName {
  * @parents InspectorEffects
  */
 export function InspectorEffect(props: InspectorEffectProps): ReactResult {
-  const masher = useMashEditor()
+  const editor = useEditor()
   const selectedEffect = useSelectedEffect()
   const selectedClip = useSelected()
   const { effect, ...rest } = props
@@ -23,7 +23,7 @@ export function InspectorEffect(props: InspectorEffectProps): ReactResult {
   const selected = selectedEffect === effect
 
   const onMouseDown = (event: React.MouseEvent) => {
-    if (!selected) masher.selectEffect(effect)
+    if (!selected) editor.select(effect)
   }
 
 
@@ -31,7 +31,7 @@ export function InspectorEffect(props: InspectorEffectProps): ReactResult {
     const { dataTransfer } = event
     const { dropEffect } = dataTransfer
     if (dropEffect === 'none') {
-      masher.removeEffect(effect)
+      editor.removeEffect(effect)
     }
   }
 
