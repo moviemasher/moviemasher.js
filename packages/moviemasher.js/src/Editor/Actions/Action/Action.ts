@@ -3,17 +3,18 @@ import { Errors } from "../../../Setup/Errors"
 import { ActionType } from "../../../Setup/Enums"
 
 import { Mash } from "../../../Edited/Mash/Mash"
-import { Selection } from "../../Editor"
+import { EditorSelection } from "../../Editor"
 import { Cast } from "../../../Edited/Cast/Cast"
 
 
 export interface ActionOptions extends UnknownObject {
-  redoSelection: Selection
+  redoSelection: EditorSelection
   type : ActionType
-  undoSelection: Selection
+  undoSelection: EditorSelection
 }
 
 export type ActionObject = Partial<ActionOptions>
+export type ActionMethod = (object: ActionObject) => void
 
 export class Action {
   constructor(object : ActionOptions) {
@@ -33,11 +34,11 @@ export class Action {
     this.done = true
   }
 
-  redoAction() : void { throw Errors.unimplemented }
+  redoAction() : void { throw Errors.unimplemented + 'redoAction' }
 
-  redoSelection: Selection
+  redoSelection: EditorSelection
 
-  get selection(): Selection {
+  get selection(): EditorSelection {
     if (this.done) return this.redoSelection
 
     return this.undoSelection
@@ -50,9 +51,9 @@ export class Action {
     this.done = false
   }
 
-  undoAction() : void { throw Errors.unimplemented }
+  undoAction() : void { throw Errors.unimplemented + 'undoAction'}
 
-  undoSelection: Selection
+  undoSelection: EditorSelection
 }
 
 export const isAction = (value: any): value is Action => value instanceof Action

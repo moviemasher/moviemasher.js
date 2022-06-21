@@ -1,5 +1,6 @@
-import { DefinitionObjects } from "../Base/Definition"
-import { AndId, GraphFilters, UploadDescription, ValueObject } from "../declarations"
+import { DefinitionObjects } from "../Definition/Definition"
+import { AndId, UploadDescription, ValueObject } from "../declarations"
+import { CommandFilters, GraphFilters } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
 import { LoadType, OutputType } from "../Setup/Enums"
@@ -19,7 +20,8 @@ export interface CommandOptions extends CommandDescription {
 export interface CommandDescription {
   duration?: number
   inputs?: CommandInputs
-  graphFilters?: GraphFilters
+  commandFilters?: CommandFilters
+  // graphFilters?: GraphFilters
 }
 
 

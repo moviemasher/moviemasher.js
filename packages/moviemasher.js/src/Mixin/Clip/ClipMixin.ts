@@ -1,19 +1,25 @@
-import { Any, FilesArgs, GraphFiles } from "../../declarations"
-import { TrackType } from "../../Setup/Enums"
+import { Scalar, ValueObject } from "../../declarations"
+import { GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { DataType, Phase, TrackType } from "../../Setup/Enums"
 import { Time, TimeRange  } from "../../Helpers/Time/Time"
-import { InstanceClass } from "../../Base/Instance"
+import { InstanceClass } from "../../Instance/Instance"
 import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
-import { Errors } from "../../Setup/Errors"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
-import { urlForEndpoint } from "../../Utility/Url"
-import { Preloader } from "../../Preloader/Preloader"
-import { BrowserPreloaderClass } from "../../Preloader/BrowserPreloaderClass"
+// import { urlForEndpoint } from "../../Utility/Url"
+import { Loader } from "../../Loader/Loader"
+// import { BrowserLoaderClass } from "../../Loader/BrowserLoaderClass"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
+import { PropertyTweenSuffix } from "../../Base"
+import { assertNumber, assertString, isUndefined } from "../../Utility/Is"
+import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba } from "../../Utility/Color"
+import { pixelsMixRbg, pixelsMixRbga } from "../../Utility/Pixel"
+import { assertPropertyTypeColor } from "../../Helpers/PropertyType"
+import { ChainLinks, FilterChainPhase, Filters, ServerFilters } from "../../Filter/Filter"
 
 
 export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
   return class extends Base implements Clip {
-    constructor(...args : Any[]) {
+    constructor(...args : any[]) {
       super(...args)
       const [object] = args
       const { track } = <ClipObject> object
@@ -22,15 +28,14 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     audible = false
 
-    get copy(): Clip {
+    copy(): Clip {
       const clipObject: ClipObject = this.toJSON()
       clipObject.id = ''
       clipObject.track = this.track
-      return <Clip> this.definition.instanceFromObject(clipObject)
+      return this.definition.instanceFromObject(clipObject) as Clip
     }
 
     declare definition: ClipDefinition
-
 
     definitionTime(quantize : number, time : Time) : Time {
       const scaledTime = super.definitionTime(quantize, time)
@@ -47,23 +52,32 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
       return timeFromArgs(this.endFrame, quantize)
     }
 
-    declare frame: number // = 0
+    filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
+      const filterChainPhase: FilterChainPhase = { link: this }
+      return filterChainPhase
+    }
 
-    declare frames: number // = -1
+    filterChainServerFilters(filterChain: FilterChain, values: ValueObject): ServerFilters {
+      return []
+    }
 
-    filterChainPopulate(_: FilterChain): void { throw Errors.unimplemented }
+    chainLinks(): ChainLinks  {
+      return []
+    }
 
-    iconUrl(preloader: Preloader): string | undefined {
+    declare frame: number
+
+    declare frames: number
+
+    graphFiles(args: GraphFileArgs): GraphFiles { return [] }
+
+    iconUrl(preloader: Loader): string | undefined {
       const { icon } = this.definition
       if (!icon) return
 
-      const browserPreloaderClass = preloader as BrowserPreloaderClass
-      const url = urlForEndpoint(browserPreloaderClass.endpoint, icon)
-      return url
-    }
-
-    filterChainInitialize(_: FilterChain): void {
-      throw Errors.unimplemented + 'initializeFilterChain'
+      // const browserLoaderClass = preloader // as BrowserLoaderClass
+      // const url = urlForEndpoint(browserLoaderClass.endpoint, icon)
+      // return url
     }
 
     maxFrames(_quantize : number, _trim? : number) : number { return 0 }
@@ -85,7 +99,43 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     trackType = TrackType.Video
 
-    transformable = false
+    effectable = false
+
+    value(key: string, time?: Time): Scalar {
+      const keyPrefix = key.endsWith(PropertyTweenSuffix) ? key.slice(0, -PropertyTweenSuffix.length) : key
+      const value = super.value(keyPrefix)
+      if (!time) return value
+
+      // time is not a range, and is in our rate
+
+      const property = this.propertyFind(keyPrefix)!
+      const { tweenable, type } = property
+      if (!tweenable) return value
+
+      // console.log(this.constructor.name, "value TWEENABLE", key, time, type)
+
+      const tween = super.value(`${keyPrefix}${PropertyTweenSuffix}`)
+      if (isUndefined(tween)) return value
+      console.log(this.constructor.name, "value tween", tween)
+
+      const { frame, frames } = this
+      const { frame: timeFrame } = time
+
+      const offset = Number(timeFrame - frame) / Number(frames)
+      if (type === DataType.Number) {
+        assertNumber(tween)
+        assertNumber(value)
+        return value + (offset * (tween - value))
+      }
+      assertString(value)
+      assertString(tween)
+      assertPropertyTypeColor(type)
+
+      if (type === DataType.Rgb) {
+        return colorRgbToHex(pixelsMixRbg(colorToRgb(value), colorToRgb(tween), offset))
+      }
+      return colorRgbaToHex(pixelsMixRbga(colorToRgba(value), colorToRgba(tween), offset))
+    }
 
     visible = false
   }

@@ -17,7 +17,6 @@ import { TimelineContent } from './TimelineContent'
 import { TimelineTrackAddControl } from '../Controls/EditorAddTrackButton'
 
 import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
-import { EditorSplitButton } from '../Controls/EditorSplitButton'
 import { Process } from '../Process/Process'
 import { ProcessActive } from '../Process/ProcessActive'
 import { ProcessStatus } from '../Process/ProcessStatus'
@@ -42,14 +41,12 @@ export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelinePro
   optionsStrict.header.content ||= [
     DefaultIcons.timeline,
    <EditorRemoveButton key='remove'><Button startIcon={DefaultIcons.remove}>Remove</Button></EditorRemoveButton>,
-    <EditorSplitButton key='split'><Button startIcon={DefaultIcons.split}>Split</Button></EditorSplitButton>,
   ]
 
   optionsStrict.footer.content ||= [
     <TimelineZoomer key='zoomer'/>,
     <TimelineTrackAddControl className='icon-button' key='video' trackType='video' children={DefaultIcons.timelineAddVideo}/>,
     <TimelineTrackAddControl className='icon-button' key='audio' trackType='audio' children={DefaultIcons.timelineAddAudio}/>,
-    <TimelineTrackAddControl className='icon-button' key='transition' trackType='transition' children={DefaultIcons.timelineAddTransition}/>,
   ]
 
   if (!noApi) {

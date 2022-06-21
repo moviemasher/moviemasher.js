@@ -1,13 +1,12 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utility/Is"
+import { assertPopulatedString } from "../../Utility/Is"
 import { Factories } from "../../Definitions/Factories"
 import { VideoSequenceDefinitionClass } from "./VideoSequenceDefinitionClass"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
 
 export const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
+  assertPopulatedString(id)
 
   return new VideoSequenceDefinitionClass(object)
 }

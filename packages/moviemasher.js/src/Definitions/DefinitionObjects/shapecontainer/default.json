@@ -1,0 +1,8 @@
+{
+  "label": "Rectangle",
+  "type": "shapecontainer",
+  "id": "com.moviemasher.shapecontainer.default",
+  "pathWidth": 480,
+  "pathHeight": 270,
+  "path": "M 0.00 0.00 L 480.00 0.00 L 480.00 270.00 L 0.00 270.00 L 0.00 0.00"
+}

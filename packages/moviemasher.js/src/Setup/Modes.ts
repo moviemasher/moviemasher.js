@@ -1,6 +1,7 @@
 
+export const ModeDefault = "normal"
 export const Modes = [
-  "normal",
+  ModeDefault,
   "color-burn",
   "dodge",
   "darken",

@@ -1,5 +1,7 @@
 import React from 'react'
-import { UnknownObject, Clip, pixelFromFrame, DroppingPosition, isDefined } from '@moviemasher/moviemasher.js'
+import {
+  UnknownObject, Clip, pixelFromFrame, DroppingPosition, ClassSelected
+} from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
 import { Problems } from '../../Setup/Problems'
@@ -28,7 +30,7 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     dragTypeValid, setDroppingPosition, setDroppingClip, setDroppingTrack, onDragLeave
   } = timelineContext
   const { track } = trackContext
-  const { editor, selectedClass, droppingPositionClass } = editorContext
+  const { editor, droppingPositionClass } = editorContext
 
   if (!editor) return null
 
@@ -91,7 +93,7 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     const selected = clip === selectedClip
     const classes: string[] = []
     if (propsClassName) classes.push(propsClassName)
-    if (selected) classes.push(selectedClass)
+    if (selected) classes.push(ClassSelected)
     if (droppingClip === clip) classes.push(droppingPositionClass(droppingPosition))
 
     // console.log("TimelineClip calculatedClassName", classes.join(' '))

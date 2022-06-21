@@ -1,11 +1,12 @@
 import React from "react"
 import {
+  ClassSelected, DefinitionBase, Endpoints, ServerType,
   DataDefinitionRetrieveRequest, DataDefinitionRetrieveResponse,
-  DefinitionBase, Endpoints, ServerType
 } from '@moviemasher/moviemasher.js'
+
+import { ReactResult } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "../../Contexts/BrowserContext"
-import { ReactResult } from "../../declarations"
 import { propsDefinitionTypes } from "../../Utilities/Props"
 import { ApiContext } from "../../Contexts/ApiContext"
 import { BrowserSourceProps } from "./BrowserSource"
@@ -22,14 +23,10 @@ export function BrowserDataSource(props: BrowserSourceProps): ReactResult {
 
   const { type, types, className, id, ...rest } = props
   const { sourceId, setDefinitions, setSourceId, setDefinitionId } = browserContext
-
   const classes = []
   if (className) classes.push(className)
+  if (sourceId === id) classes.push(ClassSelected)
 
-  if (sourceId === id) {
-    // TODO: get from props or context
-    classes.push('selected')
-  }
 
   const onClick = () => {
     if (requested) return

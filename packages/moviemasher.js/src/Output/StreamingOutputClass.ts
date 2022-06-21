@@ -1,14 +1,14 @@
 import {
-  GraphFiles, GraphFilters, LoadPromise, Size, ValueObject
-} from "../declarations"
+  ValueObject} from "../declarations"
+import { Dimensions } from "../Setup/Dimensions"
+import { GraphFiles, CommandFilters, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType } from "../Setup/Enums"
 import { CommandOutput, StreamingOutput, StreamingOutputArgs } from "./Output"
 import { CommandInputs, RenderingResult } from "../Api/Rendering"
-import { Mash, Mashes } from "../Edited/Mash/Mash"
-import { FilterGraph, FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
+import { Mashes } from "../Edited/Mash/Mash"
 import { StreamingDescription } from "../Api/Streaming"
-import { timeFromArgs } from "../Helpers"
+import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 
 export class StreamingOutputClass implements StreamingOutput {
   constructor(args: StreamingOutputArgs) {
@@ -17,77 +17,44 @@ export class StreamingOutputClass implements StreamingOutput {
 
   args: StreamingOutputArgs
 
-  commandArgs(filterGraph: FilterGraph): StreamingDescription {
-    const { graphFilters, commandInputs } = filterGraph
-    const options: ValueObject = { ...this.args.commandOutput.options }
-    const commandOutput: CommandOutput = { ...this.args.commandOutput, options }
-    // if (avType === AVType.Audio) {
-    //   delete commandOutput.videoCodec
-    //   delete commandOutput.videoRate
-    // } else if (avType === AVType.Video) {
-    //   delete commandOutput.audioCodec
-    //   delete commandOutput.audioBitrate
-    //   delete commandOutput.audioChannels
-    //   delete commandOutput.audioRate
-    // }
-
-    const commandOptions: StreamingDescription = {
-      inputs: commandInputs, graphFilters, commandOutput
-    }
-    return commandOptions
-  }
-
   streamingDescription(renderingResults?: RenderingResult[]): Promise<StreamingDescription> {
     const { mashes } = this.args
-    const promises: LoadPromise[] = mashes.map(mash => {
-      const filterGraphArgs: FilterGraphOptions = {
-        preloading: true,
-        graphType: GraphType.Cast,
-        avType: AVType.Both, size: this.outputSize,
-        videoRate: Number(this.args.commandOutput.videoBitrate)
+    const promises: Promise<void>[] = mashes.map(mash => {
+      const options: GraphFileOptions = {
+        audible: true, visible: true, streaming: true,
       }
-      const filterGraphs = mash.filterGraphs(filterGraphArgs)
-      const graphFiles = filterGraphs.graphFiles
+      const graphFiles = mash.graphFiles(options)
       return mash.preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
     })
 
     let promise = Promise.all(promises).then(() => {
-      const avTypes = new Set<AVType>()
       const graphFiles: GraphFiles = []
-      const graphFilters: GraphFilters = []
+      const commandFilters: CommandFilters = []
       const commandInputs: CommandInputs = []
-      let avType = AVType.Both
-
       mashes.forEach(mash => {
-        const args: FilterGraphOptions = {
-          preloading: false,
-          size: this.outputSize,
+        const args: FilterGraphsOptions = {
+          size: this.outputDimensions,
           videoRate: this.args.commandOutput.videoRate!,
           graphType: GraphType.Cast,
           avType: AVType.Both
         }
         const filterGraphs = mash.filterGraphs(args)
         const { filterGraphVisible } = filterGraphs
-
         commandInputs.push(...filterGraphVisible.commandInputs)
         graphFiles.push(...filterGraphs.graphFiles.filter(graphFile => graphFile.input))
-        graphFilters.push(...filterGraphVisible.graphFilters)
-        avTypes.add(filterGraphVisible.avType)
+        commandFilters.push(...filterGraphVisible.commandFilters)
       })
-      if (avTypes.size === 1) avType = [...avTypes][0]
-
-      const combinedFilterGraph: FilterGraph = {
-        duration: 0, time: timeFromArgs(),
-        avType, graphFiles, graphFilters, commandInputs
-      }
-      return this.commandArgs(combinedFilterGraph)
+      const options: ValueObject = { ...this.args.commandOutput.options }
+      const commandOutput: CommandOutput = { ...this.args.commandOutput, options }
+      const commandOptions: StreamingDescription = { inputs: commandInputs, commandFilters, commandOutput }
+      return commandOptions
     })
     return promise
   }
 
   mashes: Mashes = []
 
-  get outputSize(): Size {
+  get outputDimensions(): Dimensions {
     const { width, height } = this.args.commandOutput
     return { width, height }
   }

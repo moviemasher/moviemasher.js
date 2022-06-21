@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
 import {
-  Any, CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout
+  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
@@ -90,13 +90,13 @@ export class WebrtcConnection extends EventEmitter {
     }
   }
 
-  createAudioSink(): Any {
+  createAudioSink(): any {
     const audioTransceiver = this.peerConnection.addTransceiver('audio')
     return new RTCAudioSink(audioTransceiver.receiver.track)
 
   }
 
-  createVideoSink(): Any {
+  createVideoSink(): any {
     const videoTransceiver = this.peerConnection.addTransceiver('video')
     return new RTCVideoSink(videoTransceiver.receiver.track)
   }
@@ -288,7 +288,7 @@ export class WebrtcConnection extends EventEmitter {
     console.log("streamForDimensions commandOutput", commandOutput)
     const command = RunningCommandFactory.instance(this.id, {
       inputs: [this.inputVideo(video, size), this.inputAudio(audio)],
-      graphFilters: [],
+      commandFilters: [],
       output: commandOutput
     })
 

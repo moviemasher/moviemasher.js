@@ -1,9 +1,9 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
 import { EffectDefinitionClass } from "./EffectDefinitionClass"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utility/Is"
 import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
+import { EffectClass } from "./EffectClass"
+import { assertPopulatedString } from "../../Utility/Is"
 
 import effectBlurJson from "../../Definitions/DefinitionObjects/effect/blur.json"
 import effectChromaKeyJson from "../../Definitions/DefinitionObjects/effect/chromakey.json"
@@ -12,12 +12,10 @@ import effectGrayscaleJson from "../../Definitions/DefinitionObjects/effect/gray
 import effectSepiaJson from "../../Definitions/DefinitionObjects/effect/sepia.json"
 import effectSharpenJson from "../../Definitions/DefinitionObjects/effect/sharpen.json"
 import effectTextJson from "../../Definitions/DefinitionObjects/effect/text.json"
-import { EffectClass } from "./EffectClass"
 
 export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
-  if (!(id && Is.populatedString(id))) throw Errors.id + JSON.stringify(object)
-
+  assertPopulatedString(id)
   return new EffectDefinitionClass({...object, type: DefinitionType.Effect })
 }
 
@@ -46,10 +44,8 @@ export const effectInstance = (object: EffectObject): Effect => {
 
 export const effectFromId = (definitionId: string): Effect => {
   const definition = effectDefinitionFromId(definitionId)
-  return definition.instance
+  return definition.instanceFromObject()
 }
-
-export const isEffect = (value?: any): value is Effect => value instanceof EffectClass
 
 Factories[DefinitionType.Effect] = {
   definition: effectDefinition,

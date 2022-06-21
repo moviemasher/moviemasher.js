@@ -1,4 +1,4 @@
-import { Track } from "../../../Media"
+import { Track } from "../../../Edited/Mash/Track/Track"
 import { Clip, Clips } from "../../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 

@@ -9,11 +9,9 @@ import { AddTrackActionObject } from "./AddTrackAction"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 import { ChangeFramesAction } from "./ChangeFramesAction"
 import { ChangeTrimAction, ChangeTrimActionObject } from "./ChangeTrimAction"
-import { FreezeAction, FreezeActionObject } from "./FreezeAction"
 import { MoveClipAction, MoveClipActionObject } from "./MoveClipAction"
 import { MoveEffectAction, MoveEffectActionObject } from "./MoveEffectAction"
 import { RemoveClipAction, RemoveClipActionObject } from "./RemoveClipAction"
-import { SplitAction, SplitActionObject } from "./SplitAction"
 import { AddLayerAction, AddLayerActionObject } from "./AddLayerAction"
 import { RemoveLayerAction } from "./RemoveLayerAction"
 import { MoveLayerAction } from "./MoveLayerAction"
@@ -30,13 +28,11 @@ export const actionInstance = (object : ActionOptions) : Action => {
       case ActionType.Change: return new ChangeAction(<ChangeActionObject> object)
       case ActionType.ChangeFrames: return new ChangeFramesAction(<ChangeActionObject> object)
       case ActionType.ChangeTrim: return new ChangeTrimAction(<ChangeTrimActionObject> object)
-      case ActionType.Freeze: return new FreezeAction(<FreezeActionObject> object)
       case ActionType.MoveClip: return new MoveClipAction(<MoveClipActionObject> object)
       case ActionType.MoveEffect: return new MoveEffectAction(<MoveEffectActionObject> object)
       case ActionType.MoveLayer: return new MoveLayerAction(<AddLayerActionObject>object)
       case ActionType.RemoveClip: return new RemoveClipAction(<RemoveClipActionObject>object)
       case ActionType.RemoveLayer: return new RemoveLayerAction(<ActionOptions>object)
-      case ActionType.Split: return new SplitAction(<SplitActionObject> object)
       default: throw Errors.type + type
     }
   }

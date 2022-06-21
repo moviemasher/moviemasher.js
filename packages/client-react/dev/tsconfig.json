@@ -4,7 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "checkJs": false,
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "esModuleInterop": true,
     "jsx": "react",
@@ -15,5 +15,7 @@
     "strict": true,
     "target": "ES6",
   },
+    "exclude": ["../dist/*", "../src/**/*.test*.ts"],
+
   "include": ["../src/**/*.ts", "../src/**/*.tsx"],
 }

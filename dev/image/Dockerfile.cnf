@@ -20,21 +20,17 @@ RUN sh /home/node/app/dev/image/sh/avlibs-build.sh
 COPY dev/image/sh/ffmpeg-build.sh /home/node/app/dev/image/sh/ffmpeg-build.sh
 RUN sh /home/node/app/dev/image/sh/ffmpeg-build.sh
 
-# COPY dev/image/sh/node-build.sh /home/node/app/dev/image/sh/node-build.sh
-# RUN sh /home/node/app/dev/image/sh/node-build.sh
+COPY dev/image/sh/node-build.sh /home/node/app/dev/image/sh/node-build.sh
+RUN sh /home/node/app/dev/image/sh/node-build.sh
 
-# COPY dev/image/sh/python3-build.sh /home/node/app/dev/image/sh/python3-build.sh
-# RUN sh /home/node/app/dev/image/sh/python3-build.sh
+COPY package.json /home/node/app/package.json
 
-# COPY package.json /home/node/app/package.json
-# COPY package-lock.json /home/node/app/package-lock.json
-# COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
-# COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
-# COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
-# RUN npm install
+COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
+COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
+COPY packages/icons-default/package.json /home/node/app/packages/icons-default/package.json
+COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
+RUN npm install
 
-# COPY dev/image/sh/python3-clean.sh /home/node/app/dev/image/sh/python3-clean.sh
-# RUN sh /home/node/app/dev/image/sh/python3-clean.sh
 
 # COPY dev/image/sh/ffmpeg-clean.sh /home/node/app/dev/image/sh/ffmpeg-clean.sh
 # RUN sh /home/node/app/dev/image/sh/ffmpeg-clean.sh

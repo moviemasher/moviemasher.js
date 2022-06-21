@@ -1,23 +1,16 @@
 import React from 'react'
 import { EventType } from '@moviemasher/moviemasher.js'
+
 import { PropsWithoutChild, ReactResult } from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
-import { useListeners } from '../../Hooks'
+import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 
 export function PlayerContent(props: PropsWithoutChild): ReactResult {
   const editor = useEditor()
   const ref = React.useRef<HTMLDivElement>(null)
-  const handleResize = () => {
-    const { current } = ref
-    if (!current) return
 
-    const rect = current.getBoundingClientRect()
-    // current.width = rect.width
-    // current.height = rect.height
-    editor.imageSize = rect
-  }
-
+  const handleResize = () => { editor.imageSize = ref.current!.getBoundingClientRect() }
   const [resizeObserver] = React.useState(new ResizeObserver(handleResize))
 
   React.useEffect(() => {
@@ -27,25 +20,14 @@ export function PlayerContent(props: PropsWithoutChild): ReactResult {
   }, [])
 
   const handleDraw = () => {
-    const { current } = ref
-    if (!current) return
-
-    current.replaceChildren(...editor.visibleSources)
-    // while (current.firstChild) current.removeChild(current.firstChild)
-
-    // editor.visibleSources.forEach(node => {
-    //   if (node instanceof HTMLCanvasElement) {
-    //     // console.log("PlayerContent", node.style)
-    //     current.appendChild(node)
-    //   }
-    // })
-    // current.appendChild(current.cr)
+    const svg = ref.current!
+    svg.replaceChildren(editor.svg)
   }
 
-  useListeners({ [EventType.Draw]: handleDraw })
+  useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
 
   const viewProps = {
     ...props, key: 'player-content', ref
   }
-  return <View { ...viewProps } />
+  return <View { ...viewProps}></View>
 }

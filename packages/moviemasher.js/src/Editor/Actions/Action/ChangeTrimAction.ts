@@ -1,4 +1,4 @@
-import { Audible } from "../../../Mixin/Audible/Audible"
+import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 export interface ChangeTrimActionObject extends ChangeActionObject {
@@ -13,17 +13,17 @@ export class ChangeTrimAction extends ChangeAction {
     super(object)
     const { frames, target } = object
     this.frames = frames
-    this.audibleClip = <Audible> target
+    this.clip = target as VisibleClip
   }
-  audibleClip : Audible
+  clip: VisibleClip
 
   frames : number
 
   redoAction() : void {
-    this.mash.changeClipTrimAndFrames(this.audibleClip, this.redoValueNumeric, this.frames)
+    this.mash.changeClipTrimAndFrames(this.clip, this.redoValueNumeric, this.frames)
   }
 
   undoAction() : void {
-    this.mash.changeClipTrimAndFrames(this.audibleClip, this.undoValueNumeric, this.frames)
+    this.mash.changeClipTrimAndFrames(this.clip, this.undoValueNumeric, this.frames)
   }
 }

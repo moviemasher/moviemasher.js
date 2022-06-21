@@ -1,5 +1,5 @@
 import {
-  DefinitionObject, UnknownObject, TrackType, MashAndDefinitionsObject,
+  DefinitionObject, UnknownObject, MashAndDefinitionsObject,
   Clip, Effect, Layer, Point, isString, Rect, isObject, isDefinitionType, DefinitionType
 } from "@moviemasher/moviemasher.js"
 import React from "react"
@@ -43,9 +43,13 @@ export const isDragType = (value: any): value is DragType => (
   isString(value) && DragTypes.includes(value as DragType)
 )
 
+export const dropType = (dataTransfer: DataTransfer): string | undefined => {
+  return dataTransfer.types.find(type => type.endsWith(DragSuffix))
+}
+
 
 export const dragType = (dataTransfer: DataTransfer): DragType | DefinitionType | undefined => {
-  const prefix = dataTransfer.types.find(type => type.endsWith(DragSuffix))
+  const prefix = dropType(dataTransfer)
   if (!prefix) return
 
   const [type] = prefix.split('/')
@@ -60,6 +64,5 @@ export const DragElementPoint = (event: React.DragEvent, current: Element | Rect
   const { clientY, clientX } = event
   return { x: clientX - x, y: clientY - y }
 }
-
 
 export const DragSuffix = '/x-moviemasher'

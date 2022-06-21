@@ -1,22 +1,21 @@
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
 import { GenericFactory } from "../../declarations"
-import {
-  AudibleFile,
-  AudibleFileObject,
-  AudibleFileDefinition,
-  AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
+import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 
-export type AudioObject = AudibleFileObject
 
-export interface Audio extends AudibleFile {
+export interface AudioObject extends ContentObject, UpdatableDurationObject {}
+
+export interface Audio extends Content, UpdatableDuration {
   definition : AudioDefinition
 }
+export const isAudio = (value: any): value is Audio => {
+  return isContent(value) && isUpdatableDuration(value)
+}
 
-export type AudioDefinitionObject = AudibleFileDefinitionObject
+export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationObject { }
 
-export interface AudioDefinition extends AudibleFileDefinition {
-  instance: Audio
-  instanceFromObject(object: AudioObject): Audio
+export interface AudioDefinition extends ContentDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: AudioObject): Audio
 }
 
 /**

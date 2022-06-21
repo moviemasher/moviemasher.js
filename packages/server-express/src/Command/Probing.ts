@@ -1,7 +1,7 @@
 import path from "path"
 import fs from 'fs'
 
-import { isPositive, LoadedInfo, Size } from "@moviemasher/moviemasher.js"
+import { isPositive, LoadedInfo, Dimensions } from "@moviemasher/moviemasher.js"
 import { commandProcess } from "./CommandFactory"
 import { CommandProbeData } from "./Command"
 
@@ -9,10 +9,10 @@ export const probingInfoPromise = (src: string, destination?: string): Promise<L
   const dest = destination || path.join(path.dirname(src), `${path.basename(src)}.json`)
   if (fs.existsSync(dest)) {
     // console.log("probingInfoPromise found", dest)
-    return fs.promises.readFile(dest).then(buffer => {
-      const loadedInfo: LoadedInfo = JSON.parse(buffer.toString())
-      return loadedInfo
-    })
+    return fs.promises.readFile(dest).then(buffer => (
+      JSON.parse(buffer.toString()) as LoadedInfo
+
+    ))
   }
 
   const process = commandProcess()
@@ -31,7 +31,7 @@ export const probingInfoPromise = (src: string, destination?: string): Promise<L
         const { duration = 0 } = format
 
         const durations: number[] = []
-        const sizes: Size[] = []
+        const sizes: Dimensions[] = []
 
         for (const stream of streams) {
           const { width, height, duration } = stream

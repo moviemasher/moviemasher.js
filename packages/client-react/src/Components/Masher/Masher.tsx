@@ -4,12 +4,15 @@ import {
   editorInstance, ServerType, UnknownObject,
   DataMashDefaultResponse,
   DataMashDefaultRequest,
-  Size,
+  Dimensions,
   EditType,
   DataCastDefaultResponse,
   DroppingPosition,
   isUndefined,
   EventType,
+  ClassDroppingBefore,
+  ClassDroppingAfter,
+  ClassDropping,
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
@@ -38,13 +41,8 @@ export interface UiOptions {
 }
 
 export interface MasherOptions extends UnknownObject, WithClassName {
-  previewSize?: Size
+  previewDimensions?: Dimensions
   editType?: EditType
-  droppingClass?: string
-  selectedClass?: string
-  disabledClass?: string
-  droppingBeforeClass?: string
-  droppingAfterClass?: string
 }
 
 interface EditorDefaultsArgs extends MasherOptions {
@@ -62,13 +60,8 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {
  */
 export function Masher(props: MasherProps): ReactResult {
   const {
-    disabledClass = 'disabled',
-    selectedClass = 'selected',
-    droppingClass = 'dropping',
-    droppingBeforeClass = 'dropping-before',
-    droppingAfterClass = 'dropping-after',
     editType = EditType.Mash,
-    previewSize,
+    previewDimensions,
     ...rest
   } = props
 
@@ -76,15 +69,22 @@ export function Masher(props: MasherProps): ReactResult {
   const apiContext = React.useContext(ApiContext)
 
   const [editor] = React.useState(() => editorInstance({ editType }))
-  const [frames, setFrames] = React.useState(editor.timeRange.frames)
-  const [frame, setFrame] = React.useState(editor.timeRange.frame)
+
+  const currentFrame = () => { return editor.selection.mash?.frame || 0 }
+  const currentFrames = () => { return editor.selection.mash?.frames || 0 }
+
+  const [frames, setFrames] = React.useState(currentFrames)
+  const [frame, setFrame] = React.useState(currentFrame)
 
   const [requested, setRequested] = React.useState(false)
   const [draggable, setDraggable] = React.useState<Draggable | undefined>()
   const { enabled, endpointPromise, servers } = apiContext
+
+  const updateFrames = () => { setFrames(currentFrames()) }
   useListeners({
-    [EventType.Time]: () => { setFrame(editor.timeRange.frame) },
-    [EventType.Duration]: () => { setFrames(editor.timeRange.frames) }
+    [EventType.Time]: () => { setFrame(currentFrame()) },
+    [EventType.Duration]: updateFrames,
+    [EventType.Mash]: updateFrames,
   }, editor.eventTarget)
 
   React.useEffect(() => {
@@ -94,7 +94,7 @@ export function Masher(props: MasherProps): ReactResult {
       // console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
       endpointPromise(Endpoints.data[editType].default, request).then((response: DataMashDefaultResponse | DataCastDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
-        const { previewSize: serverSize, ...rest } = response
+        const { previewDimensions: serverSize, ...rest } = response
         elementSetPreviewSize(ref.current, serverSize)
         if (servers.file?.prefix) {
           editor.preloader.endpoint.prefix = String(servers.file.prefix)
@@ -104,28 +104,23 @@ export function Masher(props: MasherProps): ReactResult {
     }
   }, [enabled])
 
-  React.useEffect(() => { elementSetPreviewSize(ref.current, previewSize) }, [previewSize])
+  React.useEffect(() => { elementSetPreviewSize(ref.current, previewDimensions) }, [previewDimensions])
 
   const droppingPositionClass = (droppingPosition?: DroppingPosition | number): string => {
     if (isUndefined(droppingPosition)) return ''
 
     switch (droppingPosition) {
-      case DroppingPosition.After: return droppingAfterClass
-      case DroppingPosition.Before: return droppingBeforeClass
+      case DroppingPosition.After: return ClassDroppingAfter
+      case DroppingPosition.Before: return ClassDroppingBefore
       case DroppingPosition.None: return ''
     }
-    return droppingClass
+    return ClassDropping
   }
 
   const editorContext: EditorContextInterface = {
     frames,
     frame,
     editor,
-    disabledClass,
-    selectedClass,
-    droppingClass,
-    droppingBeforeClass,
-    droppingAfterClass,
     draggable, setDraggable, droppingPositionClass
   }
   const viewProps = { ...rest, ref }

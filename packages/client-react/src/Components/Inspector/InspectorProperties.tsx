@@ -1,10 +1,11 @@
 import React from "react"
-import { SelectType, NumberObject } from "@moviemasher/moviemasher.js"
+import { SelectType, NumberObject, SelectedProperty, isVisible } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { InspectorEffects } from "./InspectorEffects"
+import { useSelected } from "../../Hooks/useSelected"
 
 export interface InspectorPropertiesProps extends PropsAndChildren, WithClassName {}
 
@@ -14,11 +15,11 @@ export interface InspectorPropertiesProps extends PropsAndChildren, WithClassNam
 export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedProperties } = inspectorContext
-
+  const selectedClip = useSelected()
 
   const counts: NumberObject = {}
   const types = selectedProperties.map(selectedProperty => {
-    const { selectType } = selectedProperty
+    const { selectType } = selectedProperty as SelectedProperty
     const type = String(selectType)
     counts[type] ||= 0
     counts[type]++
@@ -27,13 +28,13 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
 
   const kidsByType: Record<string, React.ReactChild[]> = {}
 
-  if (counts.merger || counts.scaler) {
-    const effectIndex = types.findIndex(type => type === SelectType.Effect)
-
-    const index = effectIndex === -1 ? types.length : effectIndex
-
-    types.splice(index, 0, 'effects')
-    kidsByType.effects = [<InspectorEffects key="inspector-effects" />]
+  if (counts.clip) {
+    if (isVisible(selectedClip)) {
+      const effectIndex = types.findIndex(type => type === SelectType.Effect)
+      const index = effectIndex === -1 ? types.length : effectIndex
+      types.splice(index, 0, 'effects')
+      kidsByType.effects = [<InspectorEffects key="inspector-effects" />]
+    }
   }
 
 

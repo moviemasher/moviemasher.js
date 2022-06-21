@@ -2,8 +2,16 @@ import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
+import { Defined, DefinitionType } from '@moviemasher/moviemasher.js'
 
-const applicationOptions = { previewSize: { width: 480, height: 270 } }
+Defined.define({
+  type: DefinitionType.Font,
+  id: 'font.valken',
+  label: 'Valken',
+  source: "../shared/font/valken/valken.ttf",
+  url: "../shared/font/valken/valken.woff2",
+})
+const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
 const options = MasherPropsDefault(applicationOptions)
 const masher = <Masher {...options} />
 const editor = <ApiClient>{masher}</ApiClient>

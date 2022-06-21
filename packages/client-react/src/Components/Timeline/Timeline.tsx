@@ -43,7 +43,7 @@ export function Timeline(props: TimelineProps): ReactResult {
     },
   })
 
-  const { frame, frames } = editorContext
+  const { frames } = editorContext
 
   const dragTypeValid = (dataTransfer: DataTransfer, track?: Track): DefinitionType | undefined => {
     // TODO: support auto-creation of tracks
@@ -53,9 +53,9 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (!isDefinitionType(type)) return
 
     const { trackType } = track
-    if (String(type) === String(trackType)) return type // audio, video, transition
+    if (String(type) === String(trackType)) return type // audio, video
 
-    if ([TrackType.Transition, TrackType.Audio].includes(trackType)) return
+    if (trackType === TrackType.Audio) return
 
     return type
   }
@@ -121,15 +121,15 @@ export function Timeline(props: TimelineProps): ReactResult {
     event.stopPropagation()
   }
 
-  const calculatedScale = (): number => {
-    const { width } = rect
-    // console.log("calculatedScale width", width, "frames", frames, 'zoom', zoom)
-    if (!width) return 0
+  const { width } = rect
 
-    return pixelPerFrame(frames, width, zoom)
+  const calculatedScale = (): number => {
+    const scale = width ? pixelPerFrame(frames, width, zoom) : 0
+    // console.log("calculatedScale", scale, "frames", frames, "width", width, 'zoom', zoom)
+    return scale
   }
 
-  const scale = React.useMemo(calculatedScale, [zoom, rect, frame, frames])
+  const scale = React.useMemo(calculatedScale, [zoom, width, frames])
 
   const timelineContext: TimelineContextInterface = {
     scroll, setScroll,

@@ -15,12 +15,12 @@ required to layout the client user interface are kept separate from JavaScript c
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='masher.js' defer></script>
-    <link href='masher.css' rel='stylesheet'>
     <style>
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #app { width: 100vw; height: 100vh; display: flex; }
       .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
     </style>
+    <link href='masher.css' rel='stylesheet'>
     <title>Movie Masher</title>
   </head>
   <body>
@@ -49,11 +49,11 @@ Learn more about coloring and sizing the user interface using CSS in the
 ```tsx
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { ApiClient, Masher, DefaultMasherProps } from "@moviemasher/client-react"
+import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const applicationOptions = { previewSize: { width: 480, height: 270 } }
-const options = DefaultMasherProps(applicationOptions)
+const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
+const options = MasherPropsDefault(applicationOptions)
 const masher = <Masher {...options} />
 const editor = <ApiClient>{masher}</ApiClient>
 const strictMode = <StrictMode>{editor}</StrictMode>

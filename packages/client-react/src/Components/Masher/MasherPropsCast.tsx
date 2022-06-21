@@ -26,18 +26,17 @@ import { EditorProps, MasherProps } from './Masher'
 import { DefaultComposerProps } from '../Composer/ComposerPropsDefault'
 
 import { EditType } from '@moviemasher/moviemasher.js'
-import { EditorContextDefault } from '../../Contexts/EditorContext'
 
 const composerProps = DefaultComposerProps({ props: { className: "panel composer" } })
 const timelineProps = DefaultTimelineProps({ props: { className: "panel timeline" } })
 const inspectorProps = DefaultInspectorProps({ props: { className: "panel inspector" } })
 const browserProps = DefaultBrowserProps({ props: { className: "panel browser" } })
 const playerProps = DefaultPlayerProps({
-  header: { content: DefaultIcons.visible }, props: { className: "panel viewer" }
+  header: { content: DefaultIcons.visible }, props: { className: "panel player" }
 })
 
 const children = <>
-  <Player key="viewer" { ...playerProps } />
+  <Player key="player" { ...playerProps } />
   <Composer key="composer" { ...composerProps }  />
   <Inspector key="inspector" { ...inspectorProps } />
   <Panels key="panels" className='panels'>
@@ -78,13 +77,7 @@ const children = <>
 
 export const MasherPropsCast: PropsMethod<EditorProps, MasherProps> = function (editorProps) {
   const { noApi, panels, ...rest } = editorProps
-  const {
-    disabledClass, selectedClass, droppingClass, droppingBeforeClass, droppingAfterClass
-  } = EditorContextDefault
-
   return {
-    className: 'editor caster',
-    disabledClass, selectedClass, droppingClass, droppingBeforeClass, droppingAfterClass,
-    ...rest, editType: EditType.Cast, children
+    className: 'editor caster', ...rest, editType: EditType.Cast, children
   }
 }

@@ -1,21 +1,34 @@
 import { GenericFactory } from "../../declarations"
-import { DefinitionObject } from "../../Base/Definition"
-import { Instance, InstanceObject } from "../../Base/Instance"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
+import { Instance, InstanceObject } from "../../Instance/Instance"
+import { DefinitionType } from "../../Setup/Enums"
 
 export type FontObject = InstanceObject
 
 export interface Font extends Instance {
-  definition : FontDefinition
+  definition: FontDefinition
+  graphFiles(args: GraphFileArgs): GraphFiles
 }
 
-export interface FontDefinitionObject extends DefinitionObject {}
-
-export interface FontDefinition extends PreloadableDefinition {
-  instance : Font
-  instanceFromObject(object : FontObject) : Font
+export interface FontDefinitionObject extends DefinitionObject {
+  source?: string
+  url?: string
 }
 
+export interface FontDefinition extends Definition {
+  instanceFromObject(object?: FontObject): Font
+  source: string
+  url: string
+  preloadableSource(editing?: boolean): string
+  graphFiles(args: GraphFileArgs): GraphFiles
+}
+export const isFontDefinition = (value: any): value is FontDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Font
+}
+export function assertFontDefinition(value: any): asserts value is FontDefinition {
+  if (!isFontDefinition(value)) throw new Error("expected FontDefinition")
+}
 /**
  * @category Factory
  */

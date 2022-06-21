@@ -8,7 +8,7 @@ const $internal = "Internal Error "
 export const Errors = {
   eval: {
     sourceRect: `${$invalid} evaluation of source rect `,
-    outputSize: `${$invalid} evaluation of output size `,
+    outputDimensions: `${$invalid} evaluation of output size `,
     inputSize: `${$invalid} evaluation of input size `,
     conditionTruth: `${$expected} at least one condition to evaluate to true `,
     conditionValue: `${$expected} condition to have a value `,

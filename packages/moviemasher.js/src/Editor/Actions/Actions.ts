@@ -1,7 +1,13 @@
-import { Action, assertAction } from "./Action"
+import { ActionType } from "../../Setup/Enums"
 import { isPositive } from "../../Utility/Is"
+import { Editor } from "../Editor"
+import { Action, ActionObject, ActionOptions, assertAction } from "./Action/Action"
+import { actionInstance } from "./Action/ActionFactory"
+import { ChangeAction, isChangeAction, isChangeActionObject } from "./Action/ChangeAction"
 
 export class Actions  {
+  constructor(public editor: Editor) { }
+
   add(action : Action) : void {
     const remove = this.instances.length - (this.index + 1)
     if (isPositive(remove)) this.instances.splice(this.index + 1, remove)
@@ -14,6 +20,33 @@ export class Actions  {
   get canSave() : boolean { return this.canUndo }
 
   get canUndo() : boolean { return this.index > -1 }
+
+  create(object: ActionObject): void {
+    const { editor } = this
+    const { undoSelection, redoSelection, type = ActionType.Change, ...rest } = object
+
+    const clone: ActionOptions = {
+      ...rest,
+      type,
+      undoSelection: undoSelection || { ...editor.selection },
+      redoSelection: redoSelection || { ...editor.selection },
+    }
+    if (isChangeActionObject(object) && this.currentActionLast) {
+      const { currentAction } = this
+      if (isChangeAction(currentAction)) {
+        const { target, property, redoValue } = object
+        if (currentAction.target === target && currentAction.property === property) {
+          currentAction.updateAction(redoValue)
+          editor.handleAction(currentAction)
+          return
+        }
+      }
+    }
+    const action = actionInstance(clone)
+    this.add(action)
+    editor.handleAction(this.redo())
+  }
+
 
   get currentAction() : Action | undefined { return this.instances[this.index] }
 
@@ -35,6 +68,16 @@ export class Actions  {
     action.redo()
     return action
   }
+
+  private reusableChangeAction(target: unknown, property: string): ChangeAction | undefined {
+    if (!this.currentActionLast) return
+
+    const action = this.currentAction
+    if (isChangeAction(action) && action.target === target && action.property === property) {
+      return action
+    }
+  }
+
 
   save() : void {
     this.instances.splice(0, this.index + 1)

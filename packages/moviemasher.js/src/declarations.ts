@@ -1,36 +1,10 @@
-import { AVType, GraphFileType, GraphType, LoadType, SelectType } from "./Setup/Enums"
-import { TimeRange } from "./Helpers/Time/Time"
-import { Time } from "./Helpers/Time/Time"
-import { Definition } from "./Base/Definition"
-import { PropertiedChangeHandler } from "./Base/Propertied"
-import { Property } from "./Setup/Property"
-import { EmptyMethod } from "./Setup/Constants"
-
-// TODO: remove
-export interface ScrollMetrics {
-  height : number
-  width : number
-  scrollPaddingleft : number
-  scrollPaddingRight : number
-  scrollPaddingTop : number
-  scrollPaddingBottom : number
-  scrollLeft : number
-  scrollTop : number
-  x : number
-  y : number
-}
+import { Dimensions } from "./Setup/Dimensions"
 
 /* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  interface Window {
-    webkitAudioContext: typeof AudioContext
-  }
-}
+declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Any = any
 export type Value = number | string
-export type Scalar = boolean | Value
+export type Scalar = boolean | Value | undefined
 export type PopulatedString = string & { isEmpty: never }
 export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
@@ -51,35 +25,36 @@ export interface Pixels extends Uint8ClampedArray {}
 export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
 export interface LoadedAudio extends AudioBuffer {}
-export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio, sequence: Sequence[] }
+export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio }
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
 
+export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
+export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement
+export type SvgFilters = SvgFilter[]
+export type SvgContent = SVGMaskElement | SVGImageElement | SVGForeignObjectElement | SVGTextElement | SVGPathElement | SVGGElement
+export type SvgContents = SvgContent[]
 
-export type VisibleSource = HTMLVideoElement | HTMLImageElement | HTMLOrSVGImageElement | HTMLCanvasElement // CanvasImageSource //
-export type VisibleSources = VisibleSource[]
+export type VisibleSource = HTMLVideoElement | HTMLImageElement | SVGImageElement | HTMLCanvasElement
 
-export type CanvasVisibleSource = VisibleSource | ImageBitmap // CanvasImageSource // ImageBitmap & VisibleSource // CanvasImageSource //  |
+export type CanvasVisibleSource = VisibleSource | ImageBitmap | CanvasImageSource
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type Interval = ReturnType<typeof setInterval>
 
-export type LoadPromise = Promise <void>
 export type LoadFontPromise = Promise<LoadedFont>
 export type LoadImagePromise = Promise<LoadedImage>
 export type LoadVideoPromise = Promise<LoadVideoResult>
 export type LoadAudioPromise = Promise<LoadedAudio>
-export type Sequence = LoadPromise | VisibleSource
 
 export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
 export interface BooleanGetter { (): boolean }
-export type VoidMethod = typeof EmptyMethod
 
-export type ScalarArray = unknown[]
-export type JsonValue = Scalar | ScalarArray | UnknownObject
+export type AnyArray = any[]
+export type JsonValue = Scalar | AnyArray | UnknownObject
 export interface JsonObject extends Record<string, JsonValue | JsonValue[]> {}
 
 export interface WithFrame {
@@ -126,29 +101,10 @@ export interface WithError {
   error?: string
 }
 
-export interface AndTypeAndId extends AndType, AndId {
-
-}
+export interface AndTypeAndId extends AndType, AndId {}
 
 export interface AndTypeAndValue extends AndType {
   value : number
-}
-
-export interface Size {
-  width: number
-  height: number
-}
-
-export interface EvaluatedSize {
-  w? : number
-  h? : number
-  width? : number
-  height? : number
-}
-
-export interface EvaluatedPoint {
-  x? : number
-  y? : number
 }
 
 export interface Point {
@@ -156,16 +112,7 @@ export interface Point {
   y: number
 }
 
-export interface EvaluatedRect {
-  x? : number
-  y? : number
-  w? : number
-  h? : number
-  out_w? : number
-  out_h? : number
-}
-
-export interface Rect extends Size, Point {}
+export interface Rect extends Dimensions, Point {}
 
 export interface TextStyle {
   height : number
@@ -203,10 +150,6 @@ export interface Yuv {
   v: number
 }
 
-export interface DefinitionRecord extends Record<string, Definition> {}
-
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export interface Constructor { new (...args: any[]): any }
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
@@ -244,47 +187,6 @@ export interface InputParameter {
   value: Value
 }
 
-/**
- * matches fluent-ffmpeg's FilterSpecification
- */
-export interface GraphFilter {
-  avType?: AVType
-  filter: string
-  inputs?: string[]
-  outputs?: string[]
-  options: ValueObject
-}
-export type GraphFilters = GraphFilter[]
-
-export interface ModularGraphFilter extends GraphFilter {
-  graphFiles?: GraphFiles
-}
-export type ModularGraphFilters = ModularGraphFilter[]
-
-export interface GraphFile {
-  type: GraphFileType | LoadType
-  file: string
-  options?: ValueObject
-  input?: boolean
-  definition?: Definition
-}
-
-export type GraphFiles = GraphFile[]
-
-export interface FilesOptions {
-  avType?: AVType
-  graphType?: GraphType
-  timeRange?: TimeRange
-}
-
-export interface FilesArgs {
-  preloading?: boolean
-  avType?: AVType
-  graphType: GraphType
-  quantize: number
-  time: Time
-}
-
 export interface Described {
   createdAt: string
   icon?: string
@@ -295,21 +197,23 @@ export interface Described {
 export interface DescribedObject extends Partial<Described> {}
 
 export interface GraphFileIconArgs {
-  size: Size
-  mashSize: Size
+  size: Dimensions
+  mashSize: Dimensions
   position?: number
 }
-
-export interface SelectedProperty {
-  selectType: SelectType
-  property: Property
-  changeHandler: PropertiedChangeHandler
-  value: Scalar
-}
-
-export type SelectedProperties = SelectedProperty[]
-
 
 export const isCustomEvent = (value: any): value is CustomEvent => (
   value instanceof CustomEvent
 )
+
+
+
+
+
+
+
+
+
+
+
+

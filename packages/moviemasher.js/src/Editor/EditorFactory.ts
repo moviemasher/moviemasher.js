@@ -1,7 +1,7 @@
 import { Default } from "../Setup/Default"
 import { EditorClass } from "./EditorClass"
 import { Editor, EditorArgs, EditorOptions } from "./Editor"
-
+export let editorSingleton: Editor
 export const editorArgs = (options: EditorOptions = {}): EditorArgs => {
   return {
     autoplay: Default.masher.autoplay,
@@ -14,5 +14,5 @@ export const editorArgs = (options: EditorOptions = {}): EditorArgs => {
   }
 }
 export const editorInstance = (options: EditorOptions = {}): Editor => {
-  return new EditorClass(editorArgs(options))
+  return editorSingleton = new EditorClass(editorArgs(options))
 }

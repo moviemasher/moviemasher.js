@@ -14,6 +14,7 @@ import { ProcessActive } from '../Process/ProcessActive'
 import { ProcessStatus } from '../Process/ProcessStatus'
 import { ProcessProgress } from '../Process/ProcessProgress'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
+import { BrowserDefinition } from './BrowserDefinition'
 
 export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {
   noApi?: boolean
@@ -25,11 +26,13 @@ export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps>
   const optionsStrict = panelOptionsStrict(options)
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
+  optionsStrict.props.sourceId ||= 'text'
 
   optionsStrict.header.content ||= [
-    <BrowserSource key='theme' id='theme' className='icon-button' children={DefaultIcons.browserTheme} />,
+    <BrowserSource key='shapecontainer' id='shapecontainer' className='icon-button' children={DefaultIcons.browserShape} />,
+    <BrowserSource key='textcontainer' id='textcontainer' className='icon-button' children={DefaultIcons.browserText} />,
+    <BrowserSource key='colorcontent' id='colorcontent' className='icon-button' children={DefaultIcons.browserFill} />,
     <BrowserSource key='effect' id='effect' className='icon-button' children={DefaultIcons.browserEffect} />,
-    <BrowserSource key='transition' id='transition' className='icon-button' children={DefaultIcons.browserTransition} />
   ]
 
   const SourceClass = noApi ? BrowserSource : BrowserDataSource
@@ -54,11 +57,8 @@ export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps>
     ]
   }
   optionsStrict.content.children ||= (
-    <View className='definition'><label /></View>
+    <BrowserDefinition className='definition' icon="--clip-icon"></BrowserDefinition>
   )
-
-  optionsStrict.content.props!.icon ||= '--clip-icon'
-  optionsStrict.content.props!.label ||= '--clip-label'
 
   const children = <>
     <Bar {...optionsStrict.header} />

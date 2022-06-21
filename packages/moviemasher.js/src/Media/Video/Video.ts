@@ -1,31 +1,40 @@
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 import { GenericFactory } from "../../declarations"
+import { DefinitionType } from "../../Setup/Enums"
+import { isInstance } from "../../Instance/Instance"
+import { FilterDefinition } from "../../Filter/Filter"
 import {
-  AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
+  UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject
+} from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
 import {
-  Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../../Mixin/Transformable/Transformable"
+  Content, ContentDefinition, ContentDefinitionObject, ContentObject
+} from "../../Content/Content"
+import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "../../Container/Container"
 
-export interface VideoObject extends AudibleFileObject, TransformableObject {
+export interface VideoObject extends ContainerObject, ContentObject, UpdatableDimensionsObject, UpdatableDurationObject {
   speed?: number
 }
 
-export interface Video extends AudibleFile, Transformable {
+export interface Video extends Content, Container, UpdatableDimensions, UpdatableDuration {
   definition : VideoDefinition
-  copy : Video
-  speed : number
 }
 
-export interface VideoDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
+export interface VideoDefinitionObject extends ContainerDefinitionObject, ContentDefinitionObject, UpdatableDimensionsDefinitionObject, UpdatableDurationDefinitionObject {
   fps?: number
-  source?: string
-  url?: string
 }
 
-export interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition, PreloadableDefinition {
-  instance : Video
-  instanceFromObject(object: VideoObject): Video
+export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableDimensionsDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: VideoObject): Video
+  setsarFilterDefinition: FilterDefinition
+  fpsFilterDefinition: FilterDefinition
+}
+
+export const isVideo = (value: any): value is Video => {
+  return isInstance(value) && value.definition.type === DefinitionType.Video
+}
+
+export function assertVideo(value: any): asserts value is Video {
+  if (!isVideo(value)) throw new Error('expected Video')
 }
 
 /**

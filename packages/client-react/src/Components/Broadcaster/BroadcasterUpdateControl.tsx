@@ -26,8 +26,9 @@ export function BroadcasterUpdateControl(props: BroadcasterUpdateControlProps): 
     const { edited, definitions } = editor
     assertCast(edited)
 
-    const mashes = edited.layers.flatMap(layer => layer.mashes)
-    const definitionObjects = definitions.toJSON()
+    const { mashes } = edited
+
+    const definitionObjects = definitions.map(definition => definition.toJSON())
     const mashObjects = mashes.map(mash => mash.toJSON())
     const request: StreamingCutRequest = { definitionObjects, mashObjects, id }
     console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)

@@ -1,39 +1,48 @@
 import {
-  AudibleSource, VisibleSource, Any, UnknownObject, LoadPromise, LoadVideoResult,
-  FilesArgs, GraphFile, GraphFiles, CanvasVisibleSource
-} from "../../declarations"
-import { DefinitionType, TrackType, LoadType, AVType } from "../../Setup/Enums"
+  AudibleSource, UnknownObject, LoadVideoResult,
+  CanvasVisibleSource, SvgContent} from "../../declarations"
+import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
+import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoClass } from "./VideoClass"
-import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
-import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
-import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
-import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
-import { Preloader } from "../../Preloader/Preloader"
+import { Loader } from "../../Loader/Loader"
 import { AudibleContextInstance } from "../../Context/AudibleContext"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
+import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
+import { FilterDefinition } from "../../Filter/Filter"
+import { filterDefinitionFromId } from "../../Filter/FilterFactory"
+import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
+import { NamespaceSvg } from "../../Setup/Constants"
+import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
+import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
+import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
 
-const VideoDefinitionWithClip = ClipDefinitionMixin(PreloadableDefinition)
-const VideoDefinitionWithAudible = AudibleDefinitionMixin(VideoDefinitionWithClip)
-const VideoDefinitionWithAudibleFile = AudibleFileDefinitionMixin(VideoDefinitionWithAudible)
-const VideoDefinitionWithVisible = VisibleDefinitionMixin(VideoDefinitionWithAudibleFile)
-const VideoDefinitionWithTransformable = TransformableDefinitionMixin(VideoDefinitionWithVisible)
-export class VideoDefinitionClass extends VideoDefinitionWithTransformable implements VideoDefinition {
-  constructor(...args: Any[]) {
+const VideoDefinitionWithContent = ContentDefinitionMixin(DefinitionBase)
+const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithContent)
+const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContainer)
+const VideoDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoDefinitionWithPreloadable)
+const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableDimensions)
+export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration implements VideoDefinition {
+  constructor(...args: any[]) {
     super(...args)
     const [object] = args
     const { fps } = object as VideoDefinitionObject
     if (fps) this.fps = fps
+
+    this.fpsFilterDefinition = filterDefinitionFromId('fps')
+
+    this.setsarFilterDefinition = filterDefinitionFromId('setsar')
+
     // TODO: support speed
     // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
 
-  audibleSource(preloader: Preloader): AudibleSource | undefined {
+  audibleSource(preloader: Loader): AudibleSource | undefined {
     const graphFile: GraphFile = {
       type: LoadType.Video, file: this.url, definition: this, input: true
     }
@@ -44,33 +53,34 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
     return AudibleContextInstance.createBufferSource(audio)
   }
 
-  definitionFiles(args: FilesArgs): GraphFiles {
-    const files = super.definitionFiles(args)
+  graphFiles(args: GraphFileArgs): GraphFiles {
+    const files = super.graphFiles(args)
     const file = this.file(args)
     if (file) files.push(file)
     return files
   }
 
-  private file(args: FilesArgs): GraphFile | undefined {
-    const { avType, graphType } = args
-    if (avType === AVType.Audio) return
+  private file(args: GraphFileArgs): GraphFile | undefined {
+    const { editing, visible } = args
+    if (!visible) return
 
     return {
-      definition: this, file: this.preloadableSource(graphType), type: this.loadType
+      definition: this,
+      file: this.preloadableSource(editing), type: this.loadType
     }
   }
 
   fps = Default.definition.video.fps
 
-  get instance(): Video { return this.instanceFromObject(this.instanceObject) }
+  fpsFilterDefinition: FilterDefinition
 
-  instanceFromObject(object: VideoObject): Video {
-    return new VideoClass({ ...this.instanceObject, ...object })
+  instanceFromObject(object: VideoObject = {}): Video {
+    return new VideoClass(this.instanceArgs(object))
   }
 
   loadType = LoadType.Video
 
-  loadedVisible(preloader: Preloader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
+  loadedVisible(preloader: Loader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
     const rate = this.fps || quantize
     const time = startTime.scale(rate)
 
@@ -80,12 +90,8 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
     const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
     if (!cached) return
 
-    const { video } = cached // sequence,
+    const { video } = cached
     return video
-    // const source = sequence[time.frame]
-    // if (!source || source instanceof Promise) return
-
-    // return source
   }
 
   pattern = '%.jpg'
@@ -102,8 +108,8 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
     return !videoTime.equalsTime(definitionTime)
   }
 
-  private seekPromise(definitionTime: Time, video:HTMLVideoElement): LoadPromise {
-    const promise:LoadPromise = new Promise(resolve => {
+  private seekPromise(definitionTime: Time, video:HTMLVideoElement): Promise<void> {
+    const promise:Promise<void> = new Promise(resolve => {
       if (!this.seekNeeded(definitionTime, video)) return resolve()
 
       video.onseeked = () => {
@@ -113,6 +119,21 @@ export class VideoDefinitionClass extends VideoDefinitionWithTransformable imple
       this.seek(definitionTime, video)
     })
     return promise
+  }
+
+  setsarFilterDefinition: FilterDefinition
+
+  svgContent(filterChain: TrackPreview): SvgContent {
+    const { filterGraph } = filterChain
+    const { preloader, size } = filterGraph
+    const { width, height } = size
+    const graphFile = this.file(filterGraph)!
+    const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
+    foreignElement.setAttribute('id', `video-${this.id}`)
+    foreignElement.setAttribute('width', String(width))
+    foreignElement.setAttribute('height', String(height))
+    foreignElement.append(preloader.getFile(graphFile))
+    return foreignElement
   }
 
   toJSON() : UnknownObject {

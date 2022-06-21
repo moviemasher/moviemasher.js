@@ -1,6 +1,6 @@
 import React from "react"
 import {
-  Layer, Layers, SelectionType, isLayerFolder, DroppingPosition
+  Layer, Layers, SelectType, isLayerFolder, DroppingPosition, ClassDropping
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
@@ -10,6 +10,7 @@ import { LayerContext } from "../../Contexts/LayerContext"
 import { ComposerContext } from "../../Contexts/ComposerContext"
 import { EditorContext } from "../../Contexts/EditorContext"
 import { ComposerLayer } from "./ComposerLayer"
+import { useEditor } from "../../Hooks/useEditor"
 
 export interface ComposerContentProps extends PropsAndChild, WithClassName {}
 
@@ -26,8 +27,8 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     droppingPosition, setDroppingPosition,
     onDrop, onDragLeave
   } = composerContext
-  const { editor, droppingClass } = editorContext
-  if (!editor) return null
+  const editor = useEditor()
+
 
   const { className: propsClassName = 'content', children, ...rest } = props
 
@@ -68,7 +69,7 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
   const calculatedClassName = (): string => {
     const classes: string[] = [propsClassName]
     if (droppingPosition !== DroppingPosition.None && !droppingLayer) {
-      classes.push(droppingClass)
+      classes.push(ClassDropping)
     }
     return classes.join(' ')
   }
@@ -77,7 +78,7 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     calculatedClassName, [droppingPosition, droppingLayer, editor.selection.layer]
   )
 
-  const onClick = () => { editor.deselect(SelectionType.Layer) }
+  const onClick = () => { editor.deselect(SelectType.Layer) }
 
   const onDragOver: React.DragEventHandler = event => {
     setDroppingPosition(viewChildren.length)

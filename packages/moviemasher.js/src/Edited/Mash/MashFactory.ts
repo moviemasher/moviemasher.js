@@ -1,12 +1,10 @@
 import { Mash, MashArgs } from "./Mash"
 import { MashClass } from "./MashClass"
 
-export const mashInstance = (object: MashArgs = {}): Mash => {
-  return new MashClass(object)
-}
+export const mashInstance = (object: MashArgs = {}): Mash => new MashClass(object)
 
-export const isMash = (value: any): value is Mash => value instanceof MashClass
+export const isMashClass = (value: any): value is MashClass => value instanceof MashClass
 
-export function assertMash(value: any): asserts value is MashClass {
-  if (!isMash(value)) throw new Error("expected Mash")
+export function assertMashClass(value: any): asserts value is MashClass {
+  if (!isMashClass(value)) throw new Error("expected MashClass")
 }

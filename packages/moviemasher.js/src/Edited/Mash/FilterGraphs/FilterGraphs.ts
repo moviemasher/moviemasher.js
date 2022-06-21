@@ -1,30 +1,34 @@
-import { GraphFiles, Size } from "../../../declarations"
-import { Times } from "../../../Helpers/Time/Time"
+import { Dimensions } from "../../../Setup/Dimensions"
+import { GraphFiles } from "../../../MoveMe"
+import { Time, Times } from "../../../Helpers/Time/Time"
 import { AVType, GraphType } from "../../../Setup/Enums"
-import { FilterGraph, FilterGraphInstance } from "../FilterGraph/FilterGraph"
+import { FilterGraph } from "../FilterGraph/FilterGraph"
 import { Mash } from "../Mash"
 
 
 export interface FilterGraphs {
   duration?: number
-  // filterGraphs: FilterGraph[]
-  filterGraphAudible: FilterGraph
+  filterGraphAudible?: FilterGraph
   filterGraphVisible: FilterGraph
   filterGraphsVisible: FilterGraph[]
   graphFiles: GraphFiles
-  graphFilesLoadable: GraphFiles
 }
 
-export interface FilterGraphsInstance extends FilterGraphs {
-  filterGraphAudible: FilterGraphInstance
+export interface FilterGraphsOptions {
+  avType?: AVType
+  graphType?: GraphType
+  size?: Dimensions
+  time?: Time
+  videoRate?: number
+  backcolor?: string
 }
 
 export interface FilterGraphsArgs {
+  mash: Mash
   times: Times
-  preloading: boolean
   avType: AVType
   graphType: GraphType
-  size: Size
+  size: Dimensions
   videoRate: number
-  mash: Mash
+  backcolor: string
 }

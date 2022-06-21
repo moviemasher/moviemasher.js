@@ -27,7 +27,7 @@ const CastDefaults = {
 }
 
 export const Default = {
-
+  frames: 30,
   label: "Unlabeled",
   masher: MashEditorDefaults,
   cast: CastDefaults,
@@ -37,10 +37,11 @@ export const Default = {
     video: { speed: 1.0 }
   },
   definition: {
-    frame: { duration: 2 },
     image: { duration: 2 },
-    theme: { duration: 3 },
-    transition: { duration: 1 },
+    textcontainer: { duration: 3 },
+    shape: { duration: 3 },
+    visible: { duration: 3 },
+    visibleclip: { duration: 3 },
     video: { fps: 0 },
     videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
     videostream: { duration: 10 },

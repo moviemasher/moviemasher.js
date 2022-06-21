@@ -1,0 +1,6 @@
+{
+  "label": "Text",
+  "type": "text",
+  "id": "com.moviemasher.textcontainer.default",
+  "fontId": "com.moviemasher.font.default"
+}

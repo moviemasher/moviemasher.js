@@ -1,0 +1,16 @@
+version: "3"
+services:
+  builder:
+    build:
+      dockerfile: dev/build/Dockerfile.cnf
+      context: ../../
+    image: moviemasher/moviemasher.builder:5.0.7
+    container_name: moviemasher-builder
+    volumes:
+      - ../../dev/:/home/node/app/dev/
+      - ../../dev/build/package.json:/home/node/app/package.json
+      - ../../packages/:/home/node/app/packages/
+      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
+      - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
+      - ../../dev/tester/:/home/node/app/workspaces/tester/
+      - ../../node_modules/typescript/:/home/node/app/node_modules/typescript/

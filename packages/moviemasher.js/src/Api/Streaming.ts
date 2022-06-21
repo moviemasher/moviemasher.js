@@ -1,5 +1,6 @@
-import { DefinitionObjects } from "../Base/Definition"
-import { AndId, GraphFiles } from "../declarations"
+import { DefinitionObjects } from "../Definition/Definition"
+import { AndId } from "../declarations"
+import { GraphFiles } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput } from "../Output/Output"
 import { StreamingFormat } from "../Setup/Enums"

@@ -3,7 +3,7 @@
 }
 
 .moviemasher .editor .panel.browser .head {
-  grid-template-columns: 1fr repeat(6, var(--icon-size));
+  grid-template-columns: 1fr repeat(7, var(--icon-size));
   overflow: hidden;
 }
 
@@ -35,6 +35,7 @@
   overflow-x: hidden;
   background-size: cover;
   background-image: var(--clip-icon);
+  background-position: center;
   border: var(--border);
   border-radius: var(--border-radius);
   border-color: var(--fore-secondary);

@@ -142,13 +142,13 @@ export const colorHexToRgb = (hex: string): Rgb => {
 }
 export const colorTransparent = '#00000000'
 export const colorBlack = '#000000'
+export const colorWhite = '#FFFFFF'
 export const colorBlackOpaque = '#000000FF'
 export const colorGreen = '#00FF00'
 export const colorYellow = '#FFFF00'
 
 export const colorRgbaToRgba = (value: string): Rgba => {
   const color = colorStrip(value)
-
   const rgbaMatch = color.match(colorRgbaRegex)
   if (!rgbaMatch) return colorRgba
 

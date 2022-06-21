@@ -1,0 +1,7 @@
+{
+  "label": "Visible",
+  "type": "visible",
+  "id": "com.moviemasher.visible.default",
+  "containerId": "com.moviemasher.shapecontainer.default",
+  "contentId": "com.moviemasher.colorcontent.default"
+}

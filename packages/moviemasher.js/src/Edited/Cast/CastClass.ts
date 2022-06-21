@@ -1,19 +1,20 @@
-import { GraphFiles, LoadPromise, Size, UnknownObject } from "../../declarations"
+import { UnknownObject } from "../../declarations"
+import { Dimensions } from "../../Setup/Dimensions"
+import { GraphFiles, GraphFileOptions } from "../../MoveMe"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
 import { DataType, DroppingPosition } from "../../Setup/Enums"
 import { isAboveZero, isNumber, isString } from "../../Utility/Is"
 import { EditedClass } from "../EditedClass"
 import { Mashes } from "../Mash/Mash"
-import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
 import { Cast, CastArgs } from "./Cast"
 import { assertLayer, isLayerFolder, layerInstance } from "./Layer/LayerFactory"
 import {
   Layer, LayerAndPosition, LayerFolder, LayerObject, LayerObjects, Layers, LayersAndIndex
 } from "./Layer/Layer"
 import { propertyInstance } from "../../Setup/Property"
-import { VisibleContext } from "../../Context/VisibleContext"
-import { EmptyMethod } from "../../Setup/Constants"
+import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
+import { PreviewOptions } from "../../Editor/Preview/Preview"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -62,7 +63,7 @@ const CastLayersAndIndex = (layers: Layers, layerAndPosition: LayerAndPosition):
 export class CastClass extends EditedClass implements Cast {
   constructor(args: CastArgs) {
     super(args)
-    this.properties.push(
+    this._properties.push(
       propertyInstance(
         { name: 'backcolor', type: DataType.Rgb, defaultValue: Default.cast.backcolor }
       )
@@ -106,9 +107,9 @@ export class CastClass extends EditedClass implements Cast {
   }
 
   createLayer(layerObject: LayerObject): Layer {
-    const { preloader, definitions, visibleContext } = this
+    const { preloader, visibleContext } = this
     const object = {
-      preloader, definitions, visibleContext,
+      preloader, visibleContext,
       ...layerObject
     }
     const layer = layerInstance(object)
@@ -125,13 +126,12 @@ export class CastClass extends EditedClass implements Cast {
     this.mashes.forEach(mash => mash.emitter = this._emitter)
   }
 
-  graphFiles(args: FilterGraphOptions): GraphFiles {
-    const graphFiles = this.mashes.flatMap(mash => mash.graphFiles(args))
-    return graphFiles
+  graphFiles(args?: GraphFileOptions): GraphFiles {
+    return this.mashes.flatMap(mash => mash.graphFiles(args))
   }
 
-  get imageSize(): Size { return super.imageSize }
-  set imageSize(value: Size) {
+  get imageSize(): Dimensions { return super.imageSize }
+  set imageSize(value: Dimensions) {
     super.imageSize = value
     const { imageSize } = this
     this.mashes.forEach(mash => { mash.imageSize = imageSize })
@@ -145,14 +145,14 @@ export class CastClass extends EditedClass implements Cast {
 
   layersInitialize(layerObjects?: LayerObjects): void {
     if (!layerObjects) return
-    const { definitions, preloader } = this
+    const { preloader } = this
     this.layers.push(...layerObjects.map(layer =>
-      layerInstance({ definitions, preloader, ...layer })
+      layerInstance({ preloader, ...layer })
     ))
   }
 
-  loadPromise(): LoadPromise {
-    return Promise.all(this.mashes.map(mash => mash.loadPromise())).then(EmptyMethod)
+  loadPromise(args?: GraphFileOptions): Promise<void> {
+    return Promise.all(this.mashes.map(mash => mash.loadPromise(args))).then(EmptyMethod)
   }
 
   get loading(): boolean {
@@ -165,6 +165,12 @@ export class CastClass extends EditedClass implements Cast {
     const result = this.removeLayer(layer)
     this.addLayer(layer, layerAndPosition)
     return result
+  }
+
+  reload(): Promise<void> | undefined {
+    // TODO: reload mashes?
+
+    return
   }
 
   removeLayer(layer: Layer): LayerAndPosition {
@@ -180,17 +186,21 @@ export class CastClass extends EditedClass implements Cast {
     return { position: index, layer: layerFolder }
   }
 
+  svgElement(graphArgs: PreviewOptions): SVGSVGElement {
+    const { imageSize: size } = this
+    const svg = globalThis.document.createElementNS(NamespaceSvg, 'svg')
+    svg.setAttribute('height', String(size.height))
+    svg.setAttribute('width', String(size.width))
+    const args: PreviewOptions = {
+      backcolor: this.backcolor, ...graphArgs,
+    }
+    svg.append(...this.mashes.map(mash => mash.svgElement(args)))
+    return svg
+  }
+
   toJSON(): UnknownObject {
     const json = super.toJSON()
     json.layers = this.layers
     return json
-  }
-
-  get visibleContexts(): VisibleContext[] {
-    const contexts: VisibleContext[] = []
-    contexts.push(this.backgroundVisibleContext)
-    this.mashes.reverse().forEach(mash => contexts.push(...mash.visibleContexts))
-    // VisibleContext.debugInstances(contexts)
-    return contexts
   }
 }

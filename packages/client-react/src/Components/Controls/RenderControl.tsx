@@ -72,7 +72,7 @@ export function RenderControl(props: PropsAndChild): ReactResult {
     setProcessing(true)
     const request: RenderingStartRequest = {
       mash: edited.toJSON(),
-      definitions: editor.definitions.toJSON(),
+      definitions: editor.definitions.map(definition => definition.toJSON()),
       outputs: [{outputType: OutputType.Video}],
     }
     // console.debug("RenderingStartRequest", Endpoints.rendering.start, request)

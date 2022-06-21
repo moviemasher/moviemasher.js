@@ -1,4 +1,3 @@
-
 export interface Time {
   add(time: Time): Time
   divide(number: number, rounding?: string): Time

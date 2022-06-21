@@ -1,13 +1,12 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
 import { Factories } from "../../Definitions/Factories"
 import { ImageDefinitionClass } from "./ImageDefinitionClass"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
+import { assertPopulatedString } from "../../Utility/Is"
 
 export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   const { id } = object
-  if (!id) throw Errors.id + JSON.stringify(object)
-
+  assertPopulatedString(id, 'imageDefinition id')
   return new ImageDefinitionClass(object)
 }
 

@@ -1,7 +1,7 @@
-.moviemasher .caster {
+.moviemasher .editor.caster {
   grid-template-areas:
     "composer inspector panels"
-    "viewer inspector panels";
+    "player inspector panels";
   grid-template-columns:
     calc(var(--preview-width) + (var(--border-size) * 2))
     var(--inspector-width)

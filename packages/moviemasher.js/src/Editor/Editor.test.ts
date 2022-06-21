@@ -1,17 +1,18 @@
 import { UnknownObject } from "../declarations"
 import { Default } from "../Setup/Default"
 import { EditorClass } from "./EditorClass"
-import { ThemeClass } from "../Media/Theme/ThemeClass"
-import { expectCanvas } from "../../../../dev/test/Utilities/expectCanvas"
+import { expectCanvasAtTime } from "../../../../dev/test/Utilities/expectMashSvg"
 import { Emitter } from "../Helpers/Emitter"
 import { editorInstance } from "./EditorFactory"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { Editor } from "./Editor"
 
-import themeTextJson from "../Definitions/DefinitionObjects/theme/text.json"
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
-import { assertMash } from "../Edited/Mash/MashFactory"
+import { assertMash } from "../Edited/Mash/Mash"
 import { EditType } from "../Setup/Enums"
+import { VisibleClipClass } from "../Media/VisibleClip/VisibleClipClass"
+
+import visibleDefaultJson from "../Definitions/DefinitionObjects/colorcontent/default.json"
 
 const createEditor = (): Editor => {
   return editorInstance({ editType: EditType.Mash, preloader: new JestPreloader()})
@@ -59,11 +60,11 @@ describe("Editor", () => {
       const editor = createEditor()
       editor.load({ mash: {} })
 
-      const clip = await editor.add(themeTextJson)
-      expect(clip).toBeInstanceOf(ThemeClass)
+      const clip = await editor.add(visibleDefaultJson)
+      expect(clip).toBeInstanceOf(VisibleClipClass)
       const { edited } = editor
       assertMash(edited)
-      expectCanvas(edited.visibleContext.canvas)
+      expectCanvasAtTime(editor)
     })
   })
 
@@ -83,7 +84,7 @@ describe("Editor", () => {
       const { edited } = editor
       assertMash(edited)
 
-      await editor.add(themeTextJson)
+      await editor.add(visibleDefaultJson)
       expect(edited.frames).toEqual(30)
       const time = timeFromSeconds(2, editor.fps)
       await editor.goToTime(time)

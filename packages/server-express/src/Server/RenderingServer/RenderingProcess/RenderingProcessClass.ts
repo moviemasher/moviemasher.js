@@ -3,26 +3,28 @@ import path from 'path'
 
 import {
   idGenerate, Mash, mashInstance, OutputFactory,
-  RenderingOutput, RenderingOutputArgs, Errors,
-  RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType, EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension, CommandInput, RenderingDescription, AVType, CommandInputs, GraphFilters, EditorDefinitionsClass,
-
+  RenderingOutput, RenderingOutputArgs, Errors, CommandFilters,
+  RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType,
+  EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension,
+  CommandInput, RenderingDescription, AVType, CommandInputs,
+  Defined,
 } from "@moviemasher/moviemasher.js"
+import {
+  BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
+} from '../../../Setup/Constants'
 import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
 import { RenderingProcess, RenderingProcessArgs, RunResult } from "./RenderingProcess"
-import { NodePreloader } from '../../../Utilities/NodePreloader'
+import { NodeLoader } from '../../../Utilities/NodeLoader'
 import { CommandResult } from '../../../RunningCommand/RunningCommand'
-import { BasenameRendering, ExtensionCommands, ExtensionLoadedInfo } from '../../../Setup/Constants'
-import { probingInfoPromise } from '../../../Command'
+import { probingInfoPromise } from '../../../Command/Probing'
 import { renderingCommandOutputs, renderingOutputFile } from '../../../Utilities/Rendering'
-
-
 
 export type RenderingProcessConcatFileDuration = [string, number]
 
 export class RenderingProcessClass implements RenderingProcess {
-  constructor(args: RenderingProcessArgs) { this.args = args }
-
-  args: RenderingProcessArgs
+  constructor(public args: RenderingProcessArgs) {
+    Defined.define(...this.args.definitions)
+  }
 
   private createDirectoryPromise(directoryPath: string): Promise<void> {
     return fs.promises.mkdir(directoryPath, { recursive: true }).then(EmptyMethod)
@@ -54,14 +56,14 @@ export class RenderingProcessClass implements RenderingProcess {
   get mashInstance(): Mash {
     if (this._mashInstance) return this._mashInstance
 
+    const { args } = this
     const {
-      definitions, mash, cacheDirectory, validDirectories, defaultDirectory, filePrefix
-    } = this.args
-    const editorDefinitions = new EditorDefinitionsClass(definitions)
+      mash, cacheDirectory, validDirectories, defaultDirectory, filePrefix
+    } = args
 
     const mashOptions = {
-      ...mash, definitions: editorDefinitions,
-      preloader: new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+      ...mash,
+      preloader: new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     }
     return this._mashInstance = mashInstance(mashOptions)
   }
@@ -73,7 +75,7 @@ export class RenderingProcessClass implements RenderingProcess {
 
     const { mashInstance } = this
     const args: RenderingOutputArgs = {
-      commandOutput, cacheDirectory, mash: mashInstance,
+      commandOutput, cacheDirectory, mash: mashInstance
     }
     return OutputFactory[outputType](args)
   }
@@ -162,13 +164,13 @@ export class RenderingProcessClass implements RenderingProcess {
   }
   commandDescriptionsMerged(descriptions: CommandDescriptions): CommandDescription {
     const inputs: CommandInputs = []
-    const graphFilters: GraphFilters = []
+    const commandFilters: CommandFilters = []
     const durations: number[] = []
-    const commandDescription: CommandDescription = { inputs, graphFilters }
+    const commandDescription: CommandDescription = { inputs, commandFilters }
     descriptions.forEach(description => {
-      const { duration, inputs: descriptionInputs, graphFilters: filters } = description
+      const { duration, inputs: descriptionInputs, commandFilters: filters } = description
       if (descriptionInputs) inputs.push(...descriptionInputs)
-      if (filters) graphFilters.push(...filters)
+      if (filters) commandFilters.push(...filters)
       if (duration) durations.push(duration)
 
     })

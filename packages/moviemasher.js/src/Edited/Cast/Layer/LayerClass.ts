@@ -11,7 +11,7 @@ export class LayerClass extends PropertiedClass implements Layer {
   constructor(args: LayerArgs) {
     super()
 
-    this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
+    this._properties.push(propertyInstance({ name: 'label', type: DataType.String }))
 
     this.propertiesInitialize(args)
   }
@@ -19,7 +19,7 @@ export class LayerClass extends PropertiedClass implements Layer {
   _id?: string
   get id(): string { return this._id ||= idGenerate() }
 
-  get mashes(): Mashes { throw Errors.unimplemented }
+  get mashes(): Mashes { throw Errors.unimplemented + 'mashes'}
 
   declare label: string
 

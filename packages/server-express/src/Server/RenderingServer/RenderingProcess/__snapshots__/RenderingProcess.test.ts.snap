@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RenderingProcess render renders audio from trimmed video 1`] = `
+"SHA256=e24dfa97a2bdfa1660de8084f54be754edafcfb85cd0e61533b5e4d19840a6ec
+"
+`;
+
 exports[`RenderingProcess renders video-from-color.json 1`] = `
 "SHA256=566d7ff8add67fdb4cebfb8b6ba73450d32b85ad333d6ce3ed1e459a337d1048
 "
@@ -11,7 +16,7 @@ exports[`RenderingProcess renders video-from-colors-fade.json 1`] = `
 `;
 
 exports[`RenderingProcess renders video-from-image.json 1`] = `
-"SHA256=8a169f737a7476c97d5afe7b034dbe742715d1343ae06908c87e0c659824fa26
+"SHA256=7ae2f870b455577af5bbe11232789b8095d4e3c6fba2540aab3508787d486ab5
 "
 `;
 
@@ -20,13 +25,13 @@ exports[`RenderingProcess renders video-from-image-pan.json 1`] = `
 "
 `;
 
-exports[`RenderingProcess renders video-from-text.json 1`] = `
-"SHA256=f139af6cd41e8dc00cbdf1656936757b58c30a2cadc03951a4ad686895527221
+exports[`RenderingProcess renders video-from-text-fade.json 1`] = `
+"SHA256=0db64fa6f2961f4b0792fbee16cbbf180986a2350004685c189b4a2bd4fd6c2b
 "
 `;
 
-exports[`RenderingProcess renders video-from-text-fade.json 1`] = `
-"SHA256=0db64fa6f2961f4b0792fbee16cbbf180986a2350004685c189b4a2bd4fd6c2b
+exports[`RenderingProcess runPromise renders image from image 1`] = `
+"SHA256=63d0c0066eb6eaf4149130a1c42e5f13c79532649c43dea2e0c21e48df21b847
 "
 `;
 
@@ -35,7 +40,22 @@ exports[`RenderingProcess runPromise renders image from image with cover 1`] = `
 "
 `;
 
+exports[`RenderingProcess runPromise renders image from trimmed video 1`] = `
+"SHA256=2186665f9969418b03710535f624f784d6df5c85cd148c0f4aac24e7e91b5078
+"
+`;
+
+exports[`RenderingProcess runPromise renders image sequence from video with cover 1`] = `
+"SHA256=f50e54fac1449e8b7ae5ab5761784335b0a3a45dc784071e13f2b903e84a9f18
+"
+`;
+
 exports[`RenderingProcess runPromise renders video from image 1`] = `
-"SHA256=295943edc08f17e5a6862d5f9d90b1e4e62f42d8fccc888e937609f26caef933
+"SHA256=9b863fe82883cf0fcd75a7047d567751cbb34cb70093031475b9273f35306665
+"
+`;
+
+exports[`RenderingProcess runPromise renders video from video with cover 1`] = `
+"SHA256=196f7c1dac4b9197939d6edb11fdfa14401ae2ee4e3c7f743bd8f1c67086b3d2
 "
 `;

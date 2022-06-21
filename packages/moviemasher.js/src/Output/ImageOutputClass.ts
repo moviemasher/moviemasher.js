@@ -1,4 +1,4 @@
-import { FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
+import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 import { Time } from "../Helpers/Time/Time"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
 import { AVType, OutputType } from "../Setup/Enums"
@@ -20,21 +20,19 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
 
   override get endTime(): Time | undefined { return }
 
-  override get filterGraphOptions(): FilterGraphOptions {
+  override get filterGraphsOptions(): FilterGraphsOptions {
     const {args, graphType, avType, startTime } = this
     const { mash } = args
     const { quantize } = mash
-    const filterGraphOptions: FilterGraphOptions = {
-      preloading: false,
+    const filterGraphsOptions: FilterGraphsOptions = {
       size: this.sizeCovered(), videoRate: quantize,
       time: startTime,
       graphType, avType
     }
-    return filterGraphOptions
+    return filterGraphsOptions
   }
 
   override get outputCover(): boolean {
-    // console.log(this.constructor.name, "outputCover", this.args.commandOutput)
     return !!this.args.commandOutput.cover
   }
 

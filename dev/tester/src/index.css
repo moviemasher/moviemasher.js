@@ -1,0 +1,31 @@
+#preview {
+  background-color: darkgrey;
+  position: relative;
+}
+.test {
+  position: absolute;
+  background-color: yellow;
+  width: 10px;
+  height: 30px;
+  opacity: 0.5;
+}
+#loaded {
+  position: absolute;
+  background-color: blue;
+  width: 30px;
+  height: 10px;
+  opacity: 0.5;
+}
+#content {
+  background: repeating-conic-gradient(
+    lightgray 0% 25%, transparent 0% 50%
+  ) 50% / 10px 10px;
+  background-position: top left;
+  width: var(--preview-width);
+  height: var(--preview-height);
+}
+
+#content > svg {
+  width: var(--preview-width);
+  height: var(--preview-height);
+}

@@ -1,5 +1,2 @@
-
-export * from "./Definition"
-export * from "./Instance"
+export * from "./Defined"
 export * from "./Propertied"
-export * from './PreloadableDefinition'

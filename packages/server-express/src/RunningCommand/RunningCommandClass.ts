@@ -2,7 +2,7 @@ import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
 import {
-  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors
+  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters
 } from "@moviemasher/moviemasher.js"
 
 import { Command } from "../Command/Command"
@@ -13,11 +13,11 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
-    const { graphFilters, inputs, output } = args
-    if (graphFilters) this.graphFilters = graphFilters
+    const { commandFilters, inputs, output } = args
+    if (commandFilters) this.commandFilters = commandFilters
     if (inputs) this.commandInputs = inputs
-    if (!(this.commandInputs.length || this.graphFilters.length)) {
-      console.trace(this.constructor.name, "with no inputs or graphFilters")
+    if (!(this.commandInputs.length || this.commandFilters.length)) {
+      console.trace(this.constructor.name, "with no inputs or commandFilters")
       throw Errors.invalid.argument + 'inputs'
     }
     this.output = output
@@ -27,11 +27,11 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   get command(): Command {
     if (this._commandProcess) return this._commandProcess
 
-    const { commandInputs: inputs, graphFilters, output } = this
-    return this._commandProcess = commandInstance({ graphFilters, inputs, output })
+    const { commandInputs: inputs, commandFilters, output } = this
+    return this._commandProcess = commandInstance({ commandFilters, inputs, output })
   }
 
-  graphFilters: GraphFilters = []
+  commandFilters: CommandFilters = []
 
   id: string
 
@@ -82,8 +82,9 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     // console.log(this.constructor.name, "runPromise", destination)
     const promise = new Promise<CommandResult>(resolve => {
       this.command.on('error', (...args: any[]) => {
-        console.error(this.constructor.name, "runPromise received error event", ...args)
-        resolve({ error: this.runError(...args) })
+        const error = this.runError(...args)
+        console.error(this.constructor.name, "runPromise received error event", error)
+        resolve({ error })
       })
       this.command.on('end', () => {
         // console.log(this.constructor.name, "runPromise received end event")

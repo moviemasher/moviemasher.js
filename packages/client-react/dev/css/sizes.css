@@ -5,13 +5,14 @@
   --spacing: 20px;
   --header-height: 38px;
   --footer-height: 48px;
+  --preview-aspect-ratio: 16 / 9;
   --preview-width: 480px;
   --preview-height: 270px;
   --scrubber-height: 16px;
   --scrubber-width: 16px;
   --inspector-width: 240px;
   --track-width: 34px;
-  --track-height: 120px;
+  --track-height: 60px;
   --icon-size: 24px;
   --button-size: 24px;
   --border-size: 1px;

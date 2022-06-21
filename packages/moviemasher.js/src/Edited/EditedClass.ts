@@ -1,4 +1,6 @@
-import { Size, UnknownObject, VisibleContextData, VisibleSources } from "../declarations"
+import { UnknownObject } from "../declarations"
+import { Dimensions } from "../Setup/Dimensions"
+import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType } from "../Setup/Enums"
@@ -7,48 +9,37 @@ import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
 import { isAboveZero, isUndefined } from "../Utility/Is"
 import { idGenerate } from "../Utility/Id"
-import { EditorDefinitions } from "../Editor/EditorDefinitions/EditorDefinitions"
-import { Preloader } from "../Preloader/Preloader"
-import { EditorDefinitionsClass } from "../Editor/EditorDefinitions/EditorDefinitionsClass"
-import { VisibleContext } from "../Context/VisibleContext"
-import { ContextFactory } from "../Context/ContextFactory"
-import { pixelColor } from "../Utility/Pixel"
+import { Loader } from "../Loader/Loader"
+import { PreviewOptions } from "../Editor/Preview/Preview"
+import { Default } from "../Setup/Default"
+
 
 export class EditedClass extends PropertiedClass implements Edited {
   constructor(args: EditedArgs) {
     super()
-    const { createdAt, id, label, definitions, preloader } = args
-
+    const { createdAt, id, label, preloader, quantize } = args
     if (preloader) this._preloader = preloader
-
-    this.definitions = definitions || new EditorDefinitionsClass()
-
     if (id) this._id = id
     if (createdAt) this.createdAt = createdAt
     if (label) this.label = label
+    if (isAboveZero(quantize)) this.quantize = quantize
 
-    this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
-
-    this.backgroundVisibleContext = ContextFactory.visible({ label: `${this.constructor.name} ${this.label}` })
+    this._properties.push(propertyInstance({ name: 'label', type: DataType.String }))
   }
 
   declare backcolor: string
 
-  backgroundVisibleContext: VisibleContext
-
-
-  get buffer(): number { throw new Error(Errors.unimplemented) }
-  set buffer(value: number) { throw new Error(Errors.unimplemented) }
+  get buffer(): number { throw new Error(Errors.unimplemented + 'get buffer') }
+  set buffer(value: number) { throw new Error(Errors.unimplemented + 'set buffer') }
 
   createdAt = ''
 
   data: UnknownObject = {}
 
-  definitions: EditorDefinitions
-
   protected dataPopulate(rest: UnknownObject) {
+    const propertyNames = this.properties().map(property => property.name)
     Object.entries(rest).forEach(([key, value]) => {
-      if (this.properties.find(property => property.name === key)) return
+      if (propertyNames.find(name => name === key)) return
       this.data[key] = value
     })
   }
@@ -63,6 +54,8 @@ export class EditedClass extends PropertiedClass implements Edited {
   }
   protected emitterChanged() { }
 
+  graphFiles(args: GraphFileOptions): GraphFiles { return [] }
+
   protected _id = ''
   get id(): string { return this._id ||= idGenerate() }
   set id(value: string) {
@@ -71,26 +64,30 @@ export class EditedClass extends PropertiedClass implements Edited {
   }
 
   private _imageSize = { width: 300, height: 150 }
-  get imageSize(): Size { return this._imageSize }
-  set imageSize(value: Size) {
+  get imageSize(): Dimensions { return this._imageSize }
+  set imageSize(value: Dimensions) {
     const { width, height } = value
     if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
     this._imageSize = value
-    this.backgroundVisibleContext.size = value
   }
   declare label: string
 
+
+  loadPromise(args?: GraphFileOptions): Promise<void> { throw Errors.unimplemented }
+
   get loading(): boolean { return false }
 
-  private _preloader?: Preloader
-  get preloader(): Preloader {
+  private _preloader?: Loader
+  get preloader(): Loader {
     return this._preloader!
   }
 
-  drawBackground() {
-    const { backgroundVisibleContext, backcolor } = this
-    backgroundVisibleContext.clear()
-    if (backcolor) backgroundVisibleContext.drawFill(pixelColor(backcolor))
+  quantize = Default.mash.quantize
+
+  reload(): Promise<void> | undefined { return }
+
+  svgElement(graphArgs: PreviewOptions): SVGSVGElement {
+    throw Errors.unimplemented
   }
 
   toJSON(): UnknownObject {
@@ -103,16 +100,4 @@ export class EditedClass extends PropertiedClass implements Edited {
     })
     return json
   }
-
-  get visibleSources(): VisibleSources {
-    return this.visibleContexts.map(visibleContext => visibleContext.visibleSource)
-  }
-
-  get visibleContext(): VisibleContext {
-    const context = ContextFactory.toSize(this.imageSize)
-    this.visibleSources.forEach(visibleSource => { context.draw(visibleSource) })
-    return context
-  }
-
-  get visibleContexts(): VisibleContext[] { return [] }
 }

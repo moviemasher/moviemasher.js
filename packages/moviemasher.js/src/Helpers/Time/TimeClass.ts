@@ -1,5 +1,5 @@
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utility/Is"
+import { isInteger, isNumber } from "../../Utility/Is"
 import { roundWithMethod } from "../../Utility/Round"
 import { Time, TimeRange } from "./Time"
 
@@ -35,11 +35,11 @@ export class TimeClass implements Time {
   fps : number
 
   constructor(frame = 0, fps = 1) {
-    if (!Is.integer(frame) || frame < 0) {
+    if (!isInteger(frame) || frame < 0) {
       // console.trace(Errors.frame, frame)
       throw Errors.frame + frame
     }
-    if (!Is.integer(fps) || fps < 1) throw Errors.fps
+    if (!isInteger(fps) || fps < 1) throw Errors.fps
 
     this.frame = frame
     this.fps = fps
@@ -61,7 +61,7 @@ export class TimeClass implements Time {
   get description() : string { return `${this.frame}@${this.fps}` }
 
   divide(number : number, rounding = '') : Time {
-    if (!Is.number(number)) throw Errors.argument + 'divide'
+    if (!isNumber(number)) throw Errors.argument + 'divide'
     return new TimeClass(roundWithMethod(Number(this.frame) / number, rounding), this.fps)
   }
 

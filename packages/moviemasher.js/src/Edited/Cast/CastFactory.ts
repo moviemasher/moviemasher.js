@@ -1,14 +1,9 @@
-
 import { Cast, CastArgs, CastObject } from "./Cast"
 import { CastClass } from "./CastClass"
-import { EditorDefinitions } from "../../Editor/EditorDefinitions"
-import { Preloader } from "../../Preloader/Preloader"
+import { Loader } from "../../Loader/Loader"
 
-
-export const castInstance = (object: CastObject = {}, definitions?: EditorDefinitions, preloader?: Preloader): Cast => {
-  const castArgs: CastArgs = {
-    ...object, definitions, preloader
-  }
+export const castInstance = (object: CastObject = {}, preloader?: Loader): Cast => {
+  const castArgs: CastArgs = {  ...object, preloader }
   return new CastClass(castArgs)
 }
 

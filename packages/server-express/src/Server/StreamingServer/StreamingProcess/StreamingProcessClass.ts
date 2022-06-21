@@ -1,21 +1,21 @@
 import fs from 'fs'
 const uuid = require('uuid').v4
 import {
-  ClipObject, DefinitionObjects, DefinitionType, ImageDefinitionObject,
-  MashObject, MergerObject, OutputFormat, ScalerObject, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, EditorDefinitionsClass,
+  DefinitionObjects, DefinitionType, ImageDefinitionObject,
+  MashObject, OutputFormat, TrackType, UnknownObject, CommandInput, ValueObject,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, VisibleClipObject,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
 import { RunningCommand } from "../../../RunningCommand/RunningCommand"
 import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
-import { NodePreloader } from "../../../Utilities/NodePreloader"
+import { NodeLoader } from "../../../Utilities/NodeLoader"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
 
 
-const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
+// const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
 
 
 export class StreamingProcessClass extends EventEmitter {
@@ -39,10 +39,9 @@ export class StreamingProcessClass extends EventEmitter {
   cut(args: StreamingProcessCutArgs): WithError {
     const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this.args
     const { mashObjects, definitionObjects } = args
-    const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    const preloader = new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
-      const definitions = new EditorDefinitionsClass(definitionObjects)
-      return mashInstance({ ...mashObject, definitions, preloader })
+      return mashInstance({ ...mashObject, definitionObjects, preloader })
     })
     const commandOutput = { ...this.args.commandOutput, options: this.currentOptions }
 
@@ -105,13 +104,11 @@ export class StreamingProcessClass extends EventEmitter {
 
   defaultContent(): StreamingProcessCutArgs {
     const source = '../shared/image/favicon.ico'
-    const definitionId = 'image'
+    const contentId = 'image'
     const definitionObject: ImageDefinitionObject = {
-      source, id: definitionId, type: DefinitionType.Image, url: source
+      source, id: contentId, type: DefinitionType.Image, url: source
     }
-    const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
-    const scaler: ScalerObject = { definitionId: 'com.moviemasher.scaler.default', scale: 0.2 }
-    const clip: ClipObject = { definitionId, merger, scaler }
+    const clip: VisibleClipObject = { contentId, width: 0.2 }
     const mashObject: MashObject = {
       backcolor: "#000000",
       tracks: [{ trackType: TrackType.Video, clips: [clip] }]

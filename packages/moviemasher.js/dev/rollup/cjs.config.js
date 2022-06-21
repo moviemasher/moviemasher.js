@@ -7,11 +7,11 @@ import pkg from "../../package.json"
 const { main, source, devDependencies } = pkg
 
 export default {
-  external: [...builtinModules, ...Object.keys(devDependencies || {})],
   input: source,
-  output: { format: "cjs", file: main, sourcemap: true },
+  output: { format: "cjs", file: main },
   plugins: [
     json( { preferConst: true, indent: "  ", namedExports: true }),
-    ts({ tsconfig: "./dev/tsconfig.json" })
+    ts()
   ],
+  external: [...builtinModules, ...Object.keys(devDependencies || {})],
 }

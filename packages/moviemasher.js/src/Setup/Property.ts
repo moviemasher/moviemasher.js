@@ -1,45 +1,49 @@
-import { Scalar, UnknownObject } from "../declarations"
-import { Errors } from "./Errors"
-import { DataType, DataTypes } from "./Enums"
-import { dataTypeDefault } from "../Helpers/DataType"
-import { isBoolean, isNumber, isPopulatedString, isUndefined } from "../Utility/Is"
+import { Scalar } from "../declarations"
+import { assertPropertyType, DataType, isPropertyType, PropertyType } from "./Enums"
+import { propertyTypeDefault } from "../Helpers/PropertyType"
+import {
+  isBoolean, isNumber, isObject, isPopulatedString, isUndefined
+} from "../Utility/Is"
 
 export interface PropertyObject {
-  type? : DataType | string
-  name? : string
-  defaultValue? : Scalar
   custom? : boolean
-  min?: number
+  defaultValue? : Scalar
   max?: number
+  min?: number
+  name? : string
   step?: number
+  tweenable?: boolean
+  type? : PropertyType | string
 }
 
-export interface Property extends UnknownObject {
+export interface Property  {
   custom?: boolean
-  name: string
-  type: DataType
   defaultValue: Scalar
-  min?: number
   max?: number
+  min?: number
+  name: string
   step?: number
+  tweenable?: boolean
+  type: PropertyType
 }
 
-const propertyType = (type?: DataType | string, value?: Scalar): DataType => {
+export const isProperty = (value: any): value is Property => {
+  return isObject(value) && "type" in value && isPropertyType(value.type)
+}
+
+const propertyType = (type?: PropertyType | string, value?: Scalar): PropertyType => {
   if (isUndefined(type)) {
     if (isBoolean(value)) return DataType.Boolean
     if (isNumber(value)) return DataType.Number
     return DataType.String
   }
-  if (!isPopulatedString(type)) throw Errors.invalid.type
+  assertPropertyType(type)
 
-  const dataType = type as DataType
-  if (!DataTypes.includes(dataType)) throw Errors.invalid.type + dataType
-
-  return dataType
+  return type
 }
 
-const propertyValue = (type: DataType, value?: Scalar): Scalar => {
-  if (isUndefined(value)) return dataTypeDefault(type)
+const propertyValue = (type: PropertyType, value?: Scalar): Scalar => {
+  if (isUndefined(value)) return propertyTypeDefault(type)
 
   return value!
 }

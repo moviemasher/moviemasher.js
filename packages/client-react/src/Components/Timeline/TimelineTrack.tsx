@@ -1,5 +1,5 @@
 import React from 'react'
-import { DroppingPosition, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
+import { ClassSelected, DroppingPosition, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult, WithClassName } from '../../declarations'
 import { TimelineContext } from '../../Contexts/TimelineContext'
@@ -21,7 +21,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   const editorContext = React.useContext(EditorContext)
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
-  const { editor, selectedClass, droppingPositionClass } = editorContext
+  const { editor, droppingPositionClass } = editorContext
   const {
     dragTypeValid, onDragLeave, onDrop, droppingTrack, setDroppingTrack,
     droppingPosition, setDroppingPosition, setDroppingClip, selectedTrack,
@@ -64,7 +64,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
     const selected = track === selectedTrack
     const classes: string[] = []
     if (propsClassName) classes.push(propsClassName)
-    if (selected) classes.push(selectedClass)
+    if (selected) classes.push(ClassSelected)
     if (droppingTrack === track) classes.push(droppingPositionClass(droppingPosition))
 
     return classes.join(' ')

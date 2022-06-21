@@ -1,25 +1,22 @@
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { Container, ContainerDefinition } from "../../Container/Container"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
 import { GenericFactory } from "../../declarations"
-
+import { FilterDefinition } from "../../Filter/Filter"
 import {
-  Transformable, TransformableDefinition, TransformableDefinitionObject,
-  TransformableObject
-} from "../../Mixin/Transformable/Transformable"
+  UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject
+} from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
 
-export type ImageObject = TransformableObject
+export interface ImageObject extends ContentObject, UpdatableDimensionsObject {}
 
-export interface Image extends Transformable {
+export interface ImageDefinitionObject extends ContentDefinitionObject, UpdatableDimensionsDefinitionObject {}
+
+export interface Image extends Content, Container, UpdatableDimensions {
   definition : ImageDefinition
 }
 
-export interface ImageDefinitionObject extends TransformableDefinitionObject {
-  url? : string
-  source? : string
- }
-
-export interface ImageDefinition extends TransformableDefinition, PreloadableDefinition {
-  instance : Image
-  instanceFromObject(object : ImageObject) : Image
+export interface ImageDefinition extends ContainerDefinition, ContentDefinition, UpdatableDimensionsDefinition {
+  instanceFromObject(object?: ImageObject): Image
+  setptsFilterDefinition: FilterDefinition
 }
 
 /**

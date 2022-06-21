@@ -1,4 +1,4 @@
-import { Effect, Transformable } from '@moviemasher/moviemasher.js'
+import { assertVisibleClip, Effect } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
 import { ReactResult, WithClassName } from '../../declarations'
@@ -38,7 +38,8 @@ export function InspectorEffect(props: InspectorEffectProps): ReactResult {
   const onDragStart: React.DragEventHandler = event => {
     if (!selected) onMouseDown(event)
 
-    const data = { index: (selectedClip! as Transformable).effects.indexOf(effect)}
+    assertVisibleClip(selectedClip)
+    const data = { index: selectedClip.effects.indexOf(effect)}
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     dataTransfer.effectAllowed = 'move'

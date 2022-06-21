@@ -1,4 +1,10 @@
 module.exports = {
+  globals: {
+    page: true,
+    browser: true,
+    context: true,
+    jestPuppeteer: true,
+  },
   env: {
     browser: true,
     es2021: true,
@@ -39,5 +45,5 @@ module.exports = {
       node: { extensions: [".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "rollup/*.config.js", "dev/test/jest.*.js"],
+  ignorePatterns: ['.eslintrc.js', "**/*.config.js", "dev/test/jest.*.js"],
 };

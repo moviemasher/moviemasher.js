@@ -17,7 +17,7 @@ export function Browser(props: BrowserProps): ReactResult {
   const { sourceId: initialSourceId, ...rest } = props
   const [ definitions, setDefinitions] = React.useState<Definition[] | undefined>(undefined)
   const [ definitionId, setDefinitionId] = React.useState('')
-  const [ sourceId, setSourceId] = React.useState(initialSourceId || 'theme')
+  const [ sourceId, setSourceId] = React.useState(initialSourceId || 'text')
 
   const browserContext: BrowserContextInterface = {
     definitions,

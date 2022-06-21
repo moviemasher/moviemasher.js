@@ -1,21 +1,25 @@
-import { Constrained, FilesArgs, GraphFiles } from "../../declarations"
-import { TrackType } from "../../Setup/Enums"
+import { Constrained, ValueObject } from "../../declarations"
+import { GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { Phase, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { TimeRange } from "../../Helpers/Time/Time"
-import { Definition, DefinitionObject } from "../../Base/Definition"
-import { Instance, InstanceObject, isInstance } from "../../Base/Instance"
+import { Definition, DefinitionObject } from "../../Definition/Definition"
+import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../Instance/Instance"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
-import { Preloader } from "../../Preloader/Preloader"
-import { imageInstance } from "../../Media"
+import { Loader } from "../../Loader/Loader"
+import { ChainLinks, FilterChainPhase, ServerFilters } from "../../Filter/Filter"
+import { Track } from "../../Edited/Mash/Track/Track"
 
 export interface ClipDefinitionObject extends DefinitionObject {}
 
 export interface ClipDefinition extends Definition {
   audible: boolean
   duration: number
-  frames(quantize:number): number
+
+  // instanceFromObject(object?: InstanceObject): Clip
   streamable : boolean
-  visible : boolean
+  visible: boolean
+  trackType: TrackType
 }
 
 export interface ClipObject extends InstanceObject {
@@ -23,31 +27,35 @@ export interface ClipObject extends InstanceObject {
   frames? : number
   track? : number
 }
+export const isClipObject = isInstanceObject
 
 export interface Clip extends Instance {
   audible: boolean
+  chainLinks(): ChainLinks
   definition: ClipDefinition
-  endFrame : number
+  effectable: boolean
+  endFrame: number
+  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined
+  filterChainServerFilters(filterChain: FilterChain, values: ValueObject): ServerFilters
   frame : number
   frames: number
-  filterChainInitialize(args: FilterChain): void
-  filterChainPopulate(args: FilterChain): void
-  iconUrl(preloader: Preloader): string | undefined
+  graphFiles(args: GraphFileArgs): GraphFiles
+  iconUrl(preloader: Loader): string | undefined
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
-  track : number
+  track: number
+  trackInstance?: Track
   trackType: TrackType
-  transformable: boolean
   visible : boolean
 }
+export const isClip = (value?: any): value is Clip => {
+  return isInstance(value) && "trackType" in value
+}
+
 
 export type Clips = Clip[]
 
 export type ClipClass = Constrained<Clip>
 export type ClipDefinitionClass = Constrained<ClipDefinition>
-
-export const isClip = (value?: any): value is Clip => {
-  return isInstance(value) && "audible" in value || "visible" in value
-}

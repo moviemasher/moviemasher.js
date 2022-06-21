@@ -6,11 +6,6 @@ export interface EditorContextInterface {
   frames: number
   frame: number
   editor?: Editor
-  disabledClass: string
-  selectedClass: string
-  droppingClass: string
-  droppingBeforeClass: string
-  droppingAfterClass: string
   draggable?: Draggable
   droppingPositionClass(position?: DroppingPosition | number): string
   setDraggable(draggable?: Draggable): void
@@ -19,11 +14,6 @@ export interface EditorContextInterface {
 export const EditorContextDefault: EditorContextInterface = {
   frames: 0,
   frame: 0,
-  disabledClass: 'disabled',
-  selectedClass: 'selected',
-  droppingClass: 'dropping',
-  droppingBeforeClass: 'dropping-before',
-  droppingAfterClass: 'dropping-after',
   setDraggable: EmptyMethod,
   droppingPositionClass: () => '',
 }

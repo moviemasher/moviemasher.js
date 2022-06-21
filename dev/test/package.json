@@ -1,0 +1,59 @@
+{
+  "name": "@moviemasher/moviemasher-test",
+  "description": "JavaScript video editor, encoder, and streamer - version 5.0.7",
+  "homepage": "https://moviemasher.com",
+  "type": "commonjs",
+  "types": "packages/moviemasher.js/dist/cjs/index.d.ts",
+  "source": "index",
+  "main": "workspaces/tester/dist/server.js",
+  "version": "5.0.7",
+  "license": "MPL-2.0",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "scripts": {
+
+    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
+    "lint": "eslint src/**/*.ts",
+    "start": "pm2 start workspaces/tester/dist/server.js",
+    "logs": "pm2 logs",
+    "stop": "pm2 delete workspaces/tester/dist/server.js",
+    "test-help": "jest -h",
+    "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
+    "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
+    "jest": "jest --config dev/test/jest.config.js",
+    "test": "run-s start \"jest {1}\" --"
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.7",
+    "@types/expect-puppeteer": "^4.4.7",
+    "@types/jest-environment-puppeteer": "^5.0.2",
+    "@types/jest": "^27.5.1",
+    "@types/node": "15.6.1",
+    "@types/jest-image-snapshot": "^4.3.1",
+    "@types/puppeteer": "^5.4.6",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "canvas": "^2.9.1",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-puppeteer": "^6.1.0",
+    "jest": "^27.5.1",
+    "npm-run-all": "^4.1.5",
+    "puppeteer": "^14.1.1",
+    "jest-image-snapshot": "^4.5.1",
+    "serve": "13.0.2",
+    "ts-jest": "^27.1.5",
+    "typescript": "4.6.4"
+  },
+  "workspaces": [
+    "workspaces/*",
+    "packages/*"
+  ]
+}

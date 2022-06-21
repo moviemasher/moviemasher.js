@@ -1,5 +1,6 @@
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import {
+  CommandFilters,
   CommandOptions, GraphFilters, isPopulatedObject, OutputFormat, ValueObject
 } from '@moviemasher/moviemasher.js'
 
@@ -14,17 +15,18 @@ const commandInputOptions = (args: ValueObject): string[] => Object.entries(args
   }
 )
 
-const commandComplexFilter = (args: GraphFilters): ffmpeg.FilterSpecification[] => args.map(
-  graphFilter => {
-    const options = Object.entries(graphFilter.options).map(([key, value]) => {
+const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[] => {
+  return args.map(commandFilter => {
+    const { options, ffmpegFilter, ...rest } = commandFilter
+    const newOptions = Object.entries(options).map(([key, value]) => {
       const valueString = String(value).replaceAll(',', '\\,')
       if (valueString.length) return `${key}=${valueString}`
 
-      return key
+      return key.replaceAll(',', '\\,')
     }).join(':')
-    return { ...graphFilter, options }
-  }
-)
+    return { ...rest, options: newOptions, filter: ffmpegFilter }
+  })
+}
 
 export const commandProcess = (): ffmpeg.FfmpegCommand => {
    const logger: FfmpegCommandLogger = {
@@ -40,7 +42,7 @@ export const commandProcess = (): ffmpeg.FfmpegCommand => {
 
 export const commandInstance = (args: CommandOptions): Command => {
   const instance: ffmpeg.FfmpegCommand = commandProcess()
-  const { inputs, output, graphFilters } = args
+  const { inputs, output, commandFilters } = args
 
   inputs?.forEach(({ source, options }) => {
     // console.log("commandInstance adding", source)
@@ -48,8 +50,8 @@ export const commandInstance = (args: CommandOptions): Command => {
     // instance.addInputOption('-re')
     if (options) instance.addInputOptions(commandInputOptions(options))
   })
-  // console.log("commandInstance GRAPHFILTERS", graphFilters)
-  if (graphFilters?.length) instance.complexFilter(commandComplexFilter(graphFilters))
+  // console.log("commandInstance GRAPHFILTERS", commandFilters)
+  if (commandFilters?.length) instance.complexFilter(commandComplexFilter(commandFilters))
 
   if (output.audioCodec) instance.audioCodec(output.audioCodec)
   if (output.audioBitrate) instance.audioBitrate(output.audioBitrate)

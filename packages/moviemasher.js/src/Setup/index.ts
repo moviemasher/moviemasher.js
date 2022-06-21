@@ -1,5 +1,6 @@
 export * from "./Constants"
 export * from "./Default"
+export * from "./Dimensions"
 export * from "./Directions"
 export * from "./Enums"
 export * from "./Errors"

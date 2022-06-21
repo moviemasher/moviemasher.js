@@ -2,7 +2,7 @@ import { DefinitionType } from "../../Setup/Enums"
 import { FontDefinitionClass } from "./FontDefinition"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utility/Is"
+import { isPopulatedString } from "../../Utility/Is"
 
 import fontDefaultJson from "../../Definitions/DefinitionObjects/font/default.json"
 
@@ -10,12 +10,13 @@ const fontDefaultId = fontDefaultJson.id
 
 export const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
   const { id: idString } = object
-  const id = idString && Is.populatedString(idString) ? idString : fontDefaultId
+  const id = idString && isPopulatedString(idString) ? idString : fontDefaultId
 
   return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id })
 }
 
-export const fontDefaults = [fontDefinition(fontDefaultJson)]
+export const fontDefault = fontDefinition(fontDefaultJson)
+export const fontDefaults = [fontDefault]
 
 export const fontDefinitionFromId = (id: string): FontDefinition => {
   const definition = fontDefaults.find(definition => definition.id === id)
@@ -25,14 +26,14 @@ export const fontDefinitionFromId = (id: string): FontDefinition => {
 }
 
 export const fontInstance = (object: FontObject): Font => {
-  console.trace("fontInstance", object)
-  throw 'fontInstance'
+  const { definitionId = '' } = object
+  const definition = fontDefinitionFromId(definitionId)
+  return definition.instanceFromObject(object)
 }
 
-export const fontFromId = (id: string): Font => {
-  const definition = fontDefinitionFromId(id)
-  const instance = definition.instanceFromObject({ definitionid: id })
-  return instance
+export const fontFromId = (definitionId: string): Font => {
+  const definition = fontDefinitionFromId(definitionId)
+  return definition.instanceFromObject()
 }
 
 Factories[DefinitionType.Font] = {

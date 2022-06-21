@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMash, EventType, GraphFile, LoadType } from "@moviemasher/moviemasher.js"
+import { assertMash, EventType, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -25,8 +25,7 @@ export function ViewControl(props: PropsAndChild): ReactResult {
 
     const { edited } = editor
     assertMash(edited)
-    const graphFile: GraphFile = { file: edited.rendering, type: LoadType.Video }
-    const url = edited.preloader.key(graphFile)
+    const url = urlForEndpoint(editor.preloader.endpoint, edited.rendering)
     window.open(url)
   }
   const buttonOptions = { ...rest, onClick, disabled }

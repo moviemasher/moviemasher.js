@@ -1,17 +1,15 @@
-import { JsonValue, UnknownObject, Value, Size, ValueObject } from "../declarations"
-import { AVType, DataType, GraphType } from "../Setup/Enums"
+import { JsonValue, UnknownObject, Value, ValueObject } from "../declarations"
+import { Dimensions } from "../Setup/Dimensions"
 import { Errors } from "../Setup/Errors"
 import { isDefined, isNan, isNumeric, isString, isUndefined } from "../Utility/Is"
-import { TimeRange } from "./Time/Time"
-import { VisibleContext } from "../Context/VisibleContext"
-import { Preloader } from "../Preloader/Preloader"
-import { Filter } from "../Media/Filter/Filter"
-import { Modular } from "../Mixin/Modular/Modular"
+import { Time, TimeRange } from "./Time/Time"
+
+import { Filter } from "../Filter/Filter"
 import { Parameter } from "../Setup/Parameter"
-import { ContextFactory } from "../Context/ContextFactory"
 import { Property } from "../Setup/Property"
 import { Evaluation } from "./Evaluation"
-import { dataTypeIsString } from "./DataType"
+import { propertyTypeIsString } from "./PropertyType"
+import { Instance } from "../Instance/Instance"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
   if (typeof elements === "string") return String(elements).split(',')
@@ -36,44 +34,45 @@ const EvaluatorConditional = (conditional : UnknownObject) : string => {
   return expression
 }
 
-export interface EvaluatorArgs {
-  preloading: boolean
-  modular?: Modular
-  preloader: Preloader
-  timeRange?: TimeRange
-  outputSize: Size
-  context?: VisibleContext
-  graphType: GraphType
-  avType: AVType
-  filter?: Filter
-}
-
 const EvaluatorExpessions = {
   out_height_scaled: 'if(gt(out_width, out_height), scale * out_height, out_height + ((scale - 1.0) * out_width))',
   out_width_scaled: 'if(gt(out_height, out_width), scale * out_width, out_width + ((scale - 1.0) * out_height))',
 }
 
+export interface EvaluatorArgs {
+  editing?: boolean
+  instance?: Instance
+  timeRange?: TimeRange
+  outputDimensions: Dimensions
+  filter?: Filter
+  tweenTime?: Time
+}
+
 export class Evaluator {
   constructor(args: EvaluatorArgs) {
-    const { timeRange, graphType, avType, modular, preloading, filter, context} = args
-    if (context) this._visibleContext = context
-    if (preloading) this.preloading = preloading
-    this.graphType = graphType
-    this.avType = avType
-    this.outputSize = args.outputSize
-    this.preloader = args.preloader
+    const {
+      tweenTime, timeRange, instance, editing, filter
+    } = args
+    this.tweenTime = tweenTime
+    this.outputDimensions = args.outputDimensions
+    this.editing = !!editing
 
     Object.entries(EvaluatorExpessions).forEach(([k, v]) => { this.setExpression(k, v) })
 
-    const { height, width } = this.outputSize
+    const { height, width } = this.outputDimensions
     this.setExpression('out_size', `${width}x${height}`)
 
     if (timeRange) this.timeRange = timeRange
-    if (modular) this.modular = modular
+    if (instance) this.instance = instance
     if (filter) this.filter = filter
   }
 
-  avType = AVType.Both
+  get customProperties(): Property[] {
+    const record: Record<string, Property> = {} // instance overrides filter
+    this.filterCustomProperties.forEach(property => { record[property.name] = property })
+    this.instanceCustomProperties.forEach(property => { record[property.name] = property })
+    return Object.values(record)
+  }
 
   private evaluateBooleanValue(value: Value): boolean {
     switch (typeof value) {
@@ -166,12 +165,17 @@ export class Evaluator {
   private expandEvaluationNumbers(evaluation: Evaluation): void {
     if (evaluation.resolved) return
 
-    for (const property of this.properties) {
+    for (const property of this.customProperties) {
       const { name, type } = property
+      if (propertyTypeIsString(type)) continue
 
-      if (!dataTypeIsString(type)) {
-        if (evaluation.replaceAll(name, () => this.modular.value(name) as Value, 'expandEvaluationNumbers.properties')) break
-      }
+      if (evaluation.replaceAll(name, () => {
+        if (this.instanceCustomProperties.includes(property)) {
+          return this.instance.value(name, this.tweenTime) as Value
+        }
+        return this.filter.value(name, this.tweenTime) as Value
+      }, 'expandEvaluationNumbers.properties')) break
+
     }
     for (const entry of this.numbers.entries()) {
       const [key, value] = entry
@@ -196,12 +200,14 @@ export class Evaluator {
   }
 
   private expandEvaluationProperties(evaluation: Evaluation): void {
-    for (const property of this.properties) {
+    for (const property of this.customProperties) {
       const { name } = property
       evaluation.replaceAll(name, () => {
-        const value = this.modular.value(name) as Value
-        // console.log(this.constructor.name, "expandEvaluationProperties", name, value)
-        return value
+        if (this.instanceCustomProperties.includes(property)) {
+          return this.instance.value(name, this.tweenTime) as Value
+        }
+        return this.filter.value(name, this.tweenTime) as Value
+
       }, 'expandEvaluationProperties')
     }
   }
@@ -215,52 +221,48 @@ export class Evaluator {
 
     this._filter = value
     this.parameterInstances = this.filter.parametersDefined
+    this.filterCustomProperties = [...this.filter.propertiesCustom]
     this.numbersInitialize()
   }
 
+  editing: boolean
+
+  private filterCustomProperties: Property[] = []
+
+  // TODO: check if needed
   get(key: string): Value {
     if (this.numbers.has(key)) return this.numbers.get(key)!
-    if (this.strings.has(key)) return this.strings.get(key)!
     return ''
   }
-
-  graphType = GraphType.Canvas
-
-  preloading = false
 
   private logDebug(evaluation: Evaluation) {
     console.debug(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`)
   }
 
-  get createVisibleContext(): VisibleContext {
-    const size = this._visibleContext ? this.visibleContext.size : this.outputSize
-
-    return ContextFactory.visible({ size, label: `${this.constructor.name} ${this.label}`})
-  }
-
   label = 'createVisibleContext'
 
-  private _modular?: Modular
-  get modular(): Modular { return this._modular! }
-  set modular(value: Modular) {
-    this._modular = value
-    this.properties = this.modular.definition.propertiesCustom
+  private _instance?: Instance
+  get instance(): Instance { return this._instance! }
+  set instance(value: Instance) {
+    this._instance = value
+    this.instanceCustomProperties = [...this.instance.propertiesCustom]
   }
 
   private numbers = new Map<string, number>()
 
   private numbersInitialize() {
     this.numbers.clear()
-    const { height, width } = this.outputSize
+    const { height, width } = this.outputDimensions
     const { lengthSeconds, fps } = this.timeRange
     this.setNumber('out_height', height)
     this.setNumber('out_width', width)
     this.setNumber('out_duration', lengthSeconds)
     this.setNumber('out_rate', fps)
-    if (this.graphType === GraphType.Canvas) this.setNumber('t', this.position)
+
+    if (this.editing) this.setNumber('t', this.position)
   }
 
-  private outputSize: Size
+  private outputDimensions: Dimensions
 
   private parameterInstance(key: string): Parameter | undefined {
     return this.parameterInstances.find(parameter => parameter.name === key)
@@ -336,96 +338,43 @@ export class Evaluator {
 
     const { args } = evaluation
     const expanded: string[] = []
-    for (const property of this.properties) {
+    for (const property of this.customProperties) {
       const { name } = property
       evaluation.replaceAll(name, () => {
         expanded.push(name)
         const underKey = `_${name}`
-        args[underKey] = this.modular.value(property.name) as Value
+        if (this.instanceCustomProperties.includes(property)) {
+          args[underKey] = this.instance.value(name, this.tweenTime) as Value
+        } else args[underKey] = this.filter.value(name, this.tweenTime) as Value
         return underKey
       }, 'populateEvaluationArgs.properties')
     }
-    for (const entry of this.strings.entries()) {
-      const [key, value] = entry
-      evaluation.replaceAll(key, () => {
-        expanded.push(key)
-        const underKey = `_${key}`
-        args[underKey] = String(value)
-        return underKey
-      }, 'populateEvaluationArgs.strings')
-    }
   }
 
-  private get position(): number { return this.timeRange.position }
+  get position(): number { return this.timeRange.position }
 
-  preloader: Preloader
+  private instanceCustomProperties: Property[] = []
 
-  private properties: Property[] = []
 
   propertyValue(key: string): Value {
-    const selectionValue = this.modular.value(key)
+    const selectionValue = this.instance.value(key, this.tweenTime)!
     switch (typeof selectionValue) {
       case 'boolean': return selectionValue ? 1 : 0
-      case 'number':
-      case 'string': return selectionValue
+      default: return selectionValue
     }
   }
 
-  set(key: string, value: Value, dataType = DataType.Number): void {
-    if (dataTypeIsString(dataType)) this.setExpression(key, String(value))
-    else this.setNumber(key, Number(value))
-  }
-
-  setInputDimensions(prefix = 'in'): void {
-    const { preloading, graphType } = this
-    if (preloading || graphType !== GraphType.Canvas) return
-
-    const key_w = `${prefix}_w`
-    const key_h = `${prefix}_h`
-    const { width, height } = this.visibleContext.size
-    this.setNumber(key_w, width)
-    this.setNumber(key_h, height)
-  }
-
-  setOutputDimensions(prefix = 'out'): void {
-    const { outputSize } = this
-    const { width, height } = outputSize
-    this.setNumber(`${prefix}_w`, width)
-    this.setNumber(`${prefix}_h`, height)
-  }
-
-  setExpression(key: string, expression: string): void {
-    // console.log(this.constructor.name, "setExpression", key, expression)
+  private setExpression(key: string, expression: string): void {
     this.expressions.set(key, expression)
   }
 
-  setNumber(key: string, number: number): void {
+  private setNumber(key: string, number: number): void {
     this.numbers.set(key, number)
   }
-
-  setString(key: string, string: string): void {
-    this.strings.set(key, string)
-  }
-
-  strings = new Map<string, string>()
 
   private _timeRange?: TimeRange
   get timeRange(): TimeRange { return this._timeRange! }
   set timeRange(value: TimeRange) { this._timeRange = value }
 
-  private _visibleContext?: VisibleContext
-  get visibleContext(): VisibleContext {
-    if (this._visibleContext) return this._visibleContext
-
-    // console.trace(this.modular.definitionId, this.filter.definitionId, this.constructor.name, "get context", this.outputSize)
-
-    return this._visibleContext = this.createVisibleContext
-  }
-  set visibleContext(value: VisibleContext) {
-    // console.log(this.constructor.name, this.modular.definitionId, this.filter.definitionId, "set context", value.size)
-    this._visibleContext = value
-  }
-
-  get visibleContextUpdated(): Boolean { return !!this._visibleContext }
-
+  tweenTime?: Time
 }

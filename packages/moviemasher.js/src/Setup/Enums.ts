@@ -1,4 +1,27 @@
-import { isPopulatedString, isString } from "../Utility/Is"
+import { isPopulatedString, throwError } from "../Utility/Is"
+
+export enum Phase {
+  Initialize = 'initialize',
+  Populate = 'populate',
+  Finalize = 'finalize',
+}
+export const Phases = Object.values(Phase)
+export const isPhase = (value: any): value is Phase => {
+  return isPopulatedString(value) && Phases.includes(value as Phase)
+}
+
+export enum Size {
+  Cover = 'cover',
+  Contain = 'contain',
+  Stretch = 'stretch',
+
+}
+export type SizeValue = Size | number
+
+export enum Position {
+  Center = 'center',
+}
+export type PositionValue = Position | string
 
 
 export enum DroppingPosition {
@@ -13,14 +36,13 @@ export enum LayerType {
   Folder = 'folder',
 }
 export const LayerTypes = Object.values(LayerType)
-
 export const isLayerType = (value: any): value is LayerType => {
-  return isString(value) && LayerTypes.includes(value as LayerType)
+  return isPopulatedString(value) && LayerTypes.includes(value as LayerType)
 }
-
 export function assertLayerType(value: any): asserts value is LayerType {
   if (!isLayerType(value)) throw new Error('expected LayerType')
 }
+
 export enum ActionType {
   AddClipToTrack = 'addClipToTrack',
   AddEffect = 'addEffect',
@@ -30,13 +52,11 @@ export enum ActionType {
   ChangeFrames = 'changeFrames',
   ChangeGain = 'changeGain',
   ChangeTrim = 'changeTrim',
-  Freeze ='freeze',
   MoveClip = 'moveClip',
   MoveEffect = 'moveEffect',
   MoveLayer = 'moveLayer',
   RemoveClip = 'removeClip',
   RemoveLayer = 'removeLayer',
-  Split = 'split',
 }
 
 export enum EditType {
@@ -45,9 +65,8 @@ export enum EditType {
 }
 export const EditTypes = Object.values(EditType)
 export const isEditType = (value?: any): value is EditType => {
-  return isString(value) && EditTypes.includes(value as EditType)
+  return isPopulatedString(value) && EditTypes.includes(value as EditType)
 }
-
 
 export enum AVType {
   Audio = 'audio',
@@ -62,53 +81,30 @@ export enum SelectType {
   Layer = 'layer',
   Clip = 'clip',
   Effect = 'effect',
-  Merger = 'merger',
-  Scaler = 'scaler',
+  Content = 'content',
+  Container = 'container',
 }
-
 
 export const SelectTypes = Object.values(SelectType)
-export type SelectTypes = SelectType[]
-export enum SelectionType {
-  Cast = 'cast',
-  Mash = 'mash',
-  Track = 'track',
-  Layer = 'layer',
-  Clip = 'clip',
-  Effect = 'effect',
+export const isSelectType = (value?: any): value is SelectType => {
+  return isPopulatedString(value) && SelectTypes.includes(value as SelectType)
+}
+export type ClipSelectType = SelectType.Content | SelectType.Container
+export const ClipSelectTypes = [SelectType.Content, SelectType.Container]
+export const isClipSelectType = (type?: any): type is ClipSelectType => {
+  return isSelectType(type) && ClipSelectTypes.includes(type)
 }
 
 
-
-export const SelectionTypes = Object.values(SelectionType)
-
-export const isSelectionType = (value?: any): value is SelectionType => {
-  return isString(value) && SelectionTypes.includes(value as SelectionType)
-}
 
 export enum TrackType {
   Audio = 'audio',
-  Transition = 'transition',
   Video = 'video',
-  Matte = 'matte',
 }
 export const TrackTypes = Object.values(TrackType)
 export const isTrackType = (value?: any): value is TrackType => {
-  return isString(value) && TrackTypes.includes(value as TrackType)
+  return isPopulatedString(value) && TrackTypes.includes(value as TrackType)
 }
-
-export enum ClipType {
-  Audio = 'audio',
-  Frame = 'frame',
-  Image = 'image',
-  Theme = 'theme',
-  Transition = 'transition',
-  Video = 'video',
-  VideoSequence = 'videosequence',
-  VideoStream = 'videostream',
-  // AudioStream = 'audiostream',
-}
-export const ClipTypes = Object.values(ClipType)
 
 // TODO: migrate Ext* constants here
 export enum Extension {
@@ -143,31 +139,83 @@ export enum OutputType {
   ImageSequence = 'imagesequence',
   Waveform = 'waveform',
 }
-
 export const OutputTypes = Object.values(OutputType)
+
+export enum FillType {
+  Color = 'color',
+  Fill = 'fill',
+}
+export const FillTypes = Object.values(FillType)
+export const isFillType = (type?: any): type is FillType => {
+  return isPopulatedString(type) && FillTypes.includes(type as FillType)
+}
+
 
 export enum DefinitionType {
   Audio = 'audio',
-  // AudioStream = 'audiostream',
+  ColorContent = 'colorcontent',
   Effect = 'effect',
   Filter = 'filter',
   Font = 'font',
   Image = 'image',
-  Merger = 'merger',
-  Scaler = 'scaler',
-  Theme = 'theme',
-  Transition = 'transition',
+  ShapeContainer = 'shapecontainer',
+  TextContainer = 'textcontainer',
   Video = 'video',
   VideoSequence = 'videosequence',
-  VideoStream = 'videostream',
+  Visible = 'visible',
 }
 export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {
   return isPopulatedString(type) && DefinitionTypes.includes(type as DefinitionType)
 }
+export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
+  if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
+}
 
-export function assertDefinitionType(type?: any): asserts type is DefinitionType {
-  if (!isDefinitionType(type)) throw new Error("expected DefinitionType")
+export type ContainerType = DefinitionType.Image | DefinitionType.ShapeContainer | DefinitionType.Video | DefinitionType.TextContainer | DefinitionType.VideoSequence
+export const ContainerTypes = [DefinitionType.Image, DefinitionType.ShapeContainer, DefinitionType.Video, DefinitionType.TextContainer, DefinitionType.VideoSequence]
+export const isContainerType = (type?: any): type is ContainerType => {
+  return isDefinitionType(type) && ContainerTypes.includes(type)
+}
+export function assertContainerType(type?: any): asserts type is ContainerType {
+  if (!isContainerType(type)) throw new Error("expected ContainerType")
+}
+
+export type ContentType = DefinitionType.ColorContent | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence | DefinitionType.Audio
+export const ContentTypes = [DefinitionType.ColorContent, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence, DefinitionType.Audio]
+export const isContentType = (type?: any): type is ContentType => {
+  return isDefinitionType(type) && ContentTypes.includes(type)
+}
+export function assertContentType(type?: any): asserts type is ContentType {
+  if (!isContentType(type)) throw new Error("expected ContentType")
+}
+export enum DataType {
+  Boolean = 'boolean',
+  Direction4 = 'direction4',
+  Direction8 = 'direction8',
+  FontId = 'fontid',
+  ContainerId = 'containerid',
+  ContentId = 'contentid',
+  DefinitionId = 'definitionid',
+  Frame = 'frame',
+  Mode = 'mode',
+  Number = 'number',
+  Rgb = 'rgb',
+  Rgba = 'rgba',
+  String = 'string',
+  Track = 'track',
+}
+export const DataTypes = Object.values(DataType)
+export const isDataType = (type?: any): type is DataType => {
+  return isPopulatedString(type) && DataTypes.includes(type as DataType)
+}
+
+export type PropertyType = DataType // | DefinitionType
+export const isPropertyType = (value: any): value is PropertyType => {
+  return isDataType(value) //|| isDefinitionType(value)
+}
+export function assertPropertyType(value: any, name?: string): asserts value is PropertyType {
+  if (!isPropertyType(value)) throwError(value, "PropertyType", name)
 }
 
 export enum TriggerType {
@@ -178,6 +226,11 @@ export enum TriggerType {
 export const TriggerTypes = Object.values(TriggerType)
 export const isTriggerType = (type?: any): type is TriggerType => {
   return isPopulatedString(type) && TriggerTypes.includes(type as TriggerType)
+}
+
+export enum TransformType {
+  Scale = 'scale',
+  Translate = 'translate',
 }
 
 export enum EventType {
@@ -203,15 +256,6 @@ export enum EventType {
   Waiting = 'waiting',
 }
 
-export enum ModuleType {
-  Effect ='effect',
-  Font = 'font',
-  Merger = 'merger',
-  Scaler = 'scaler',
-  Theme = 'theme',
-  Transition = 'transition',
-}
-
 export enum GraphFileType {
   Svg = 'svg',
   Png = 'png',
@@ -225,6 +269,9 @@ export enum LoadType {
   Video = 'video',
 }
 export const LoadTypes = Object.values(LoadType)
+export const isLoadType = (type?: any): type is LoadType => {
+  return isPopulatedString(type) && LoadTypes.includes(type as LoadType)
+}
 
 export enum MoveType {
   Audio = 'audio',
@@ -232,42 +279,15 @@ export enum MoveType {
   Video = 'video',
 }
 
-export enum DataType {
-  Boolean = 'boolean',
-  Direction4 = 'direction4',
-  Direction8 = 'direction8',
-  Font = 'font',
-  Frame = 'frame',
-  Merger = 'merger',
-  Mode = 'mode',
-  Number = 'number',
-  Rgb = 'rgb',
-  Rgba = 'rgba',
-  Scaler = 'scaler',
-  String = 'string',
-  Track = 'track',
-}
-export const DataTypes = Object.values(DataType)
-
-export enum TransformType {
-  Merger = 'merger',
-  Scaler = 'scaler',
-}
-
-export const TransformTypes = Object.values(TransformType)
-
 export enum MasherAction {
-  Freeze = 'freeze',
   Redo = 'redo',
   Remove = 'remove',
   Render = 'render',
   Save = 'save',
-  Split = 'split',
   Undo = 'undo',
 }
 
 export enum GraphType {
-  Canvas = 'canvas',
   Mash = 'mash',
   Cast = 'cast',
 }

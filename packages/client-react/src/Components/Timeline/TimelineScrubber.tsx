@@ -27,6 +27,8 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
   if (!editor) return null
 
   const handleEvent = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation()
+    event.preventDefault()
     const { current } = ref
     if (!(current && editor.selection.mash)) return
 
@@ -38,18 +40,20 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
     const rect = current.getBoundingClientRect()
     const pixel = Math.max(0, Math.min(rect.width, clientX - rect.x))
     const frame = pixelToFrame(pixel, scale, 'floor')
-    editor.time = timeFromArgs(frame, editor.fps)
+    editor.time = timeFromArgs(frame, editor.selection.mash!.quantize)
   }
 
   const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     clientXRef.current = -1
     setDown(true)
     handleEvent(event)
+    event.stopPropagation()
   }
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!down) return
     handleEvent(event)
+    event.stopPropagation()
   }
 
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -57,14 +61,15 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
     handleEvent(event)
   }
 
+  const { width, height } = rect
   const calculateViewProps = () => {
     const viewProps: UnknownObject = { ...rest, ref }
     if (styleWidth || styleHeight) {
       const style: UnknownObject = {}
-      if (styleHeight) style.minHeight = rect.height
+      if (styleHeight) style.minHeight = height
       if (styleWidth) {
         const width = pixelFromFrame(frames, scale, 'ceil')
-        style.minWidth = Math.max(width, rect.width)
+        style.minWidth = Math.max(width, width)
       }
       viewProps.style = style
     }
@@ -73,12 +78,13 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
       if (down) {
         viewProps.onMouseMove = handleMouseMove
         viewProps.onMouseUp = handleMouseUp
+        viewProps.onClick = handleMouseUp
         viewProps.onMouseLeave = handleMouseUp
       }
     }
     return viewProps
   }
 
-  const viewProps =  React.useMemo(calculateViewProps, [down, frames, scale, rect])
+  const viewProps = React.useMemo(calculateViewProps, [down, frames, scale, width, height])
   return <View {...viewProps} />
 }

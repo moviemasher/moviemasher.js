@@ -1,4 +1,4 @@
-import { idGenerate } from "@moviemasher/moviemasher.js"
+import { idGenerate } from "../../../packages/moviemasher.js/src/Utility/Id"
 
 import {
   TestRenderOutput, TestRenderCache, TestFilePrefix

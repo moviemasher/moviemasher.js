@@ -14,7 +14,11 @@ export function TimelineScrubberElement(props: PropsWithChildren): ReactResult {
   const timelineContext = React.useContext(TimelineContext)
   const { frame } = editorContext
   const { scale } = timelineContext
-  const viewProps = { ...props, style: { left: pixelFromFrame(frame, scale) } }
+  const calculateViewProps = () => {
+    const viewProps = { ...props, style: { left: pixelFromFrame(frame, scale) } }
+    return viewProps
+  }
 
+  const viewProps = React.useMemo(calculateViewProps, [frame, scale])
   return <View {...viewProps} />
 }

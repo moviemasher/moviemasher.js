@@ -167,23 +167,23 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   get renderingCommandOutputs(): RenderingCommandOutputs {
     if (this._renderingCommandOutputs) return this._renderingCommandOutputs
 
-    const { previewSize, outputSize } = this.args
+    const { previewDimensions, outputDimensions } = this.args
     const provided = this.args.commandOutputs || {}
     const outputs = Object.fromEntries(OutputTypes.map(outputType => {
       const base: RenderingCommandOutput = { outputType }
       switch (outputType) {
         case OutputType.Image:
         case OutputType.ImageSequence: {
-          if (previewSize) {
-            base.videoWidth = previewSize.width
-            base.videoHeight = previewSize.height
+          if (previewDimensions) {
+            base.videoWidth = previewDimensions.width
+            base.videoHeight = previewDimensions.height
           }
           break
         }
         case OutputType.Video: {
-          if (outputSize) {
-            base.videoWidth = outputSize.width
-            base.videoHeight = outputSize.height
+          if (outputDimensions) {
+            base.videoWidth = outputDimensions.width
+            base.videoHeight = outputDimensions.height
           }
           break
         }
@@ -197,7 +197,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
   start: ServerHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
-    const { mash, outputs } = request
+    const { mash, outputs, definitions = [] } = request
     // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
     const commandOutputs = outputs.map(output => {
       const { outputType } = output
@@ -221,7 +221,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         cacheDirectory,
         outputDirectory,
         filePrefix,
-        definitions: [],
+        definitions,
         ...request,
         outputs: commandOutputs
       }

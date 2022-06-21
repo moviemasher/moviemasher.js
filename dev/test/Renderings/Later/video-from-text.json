@@ -1,0 +1,47 @@
+{
+  "id": "video-from-text-json",
+  "outputs": [
+    {
+      "outputType": "video"
+    }
+  ],
+  "mash": {
+    "label": "",
+    "quantize": 10,
+    "backcolor": "#000000",
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "video",
+        "layer": 0,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.visible.default",
+            "containerId": "com.moviemasher.textcontainer.default",
+            "string": "Lobster Font...",
+            "size": 0.3,
+            "x": 0,
+            "y": 0,
+            "color": "rgba(255,0,0,1)",
+            "font": "com.moviemasher.font.default",
+            "frame": 0,
+            "frames": 30,
+            "label": "Text",
+            "effects": []
+          }
+        ]
+      },
+      {
+        "dense": false,
+        "trackType": "audio",
+        "layer": 0,
+        "clips": []
+      }
+    ],
+    "createdAt": "2022-03-10T15:53:55.623Z",
+    "userId": "doug",
+    "icon": null,
+    "id": "09a7cb26-4c84-436d-82d3-aac6e36445c5"
+  },
+  "definitions": []
+}

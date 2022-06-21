@@ -1,36 +1,29 @@
 import { GenericFactory } from "../../declarations"
-import {
-  AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
-import {
-  Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../../Mixin/Transformable/Transformable"
+import { UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject } from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
+import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 
-export interface VideoSequenceObject extends AudibleFileObject, TransformableObject {
+export interface VideoSequenceObject extends ContentObject, UpdatableDimensionsObject, UpdatableDurationObject {
   speed?: number
 }
 
-export interface VideoSequence extends AudibleFile, Transformable {
+export interface VideoSequence extends Content, UpdatableDimensions, UpdatableDuration {
   definition : VideoSequenceDefinition
-  copy : VideoSequence
+  copy() : VideoSequence
   speed : number
 }
 
-export interface VideoSequenceDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
+export interface VideoSequenceDefinitionObject extends ContentDefinitionObject, UpdatableDimensionsDefinitionObject, UpdatableDurationDefinitionObject {
   begin?: number
   fps?: number
   increment?: number
   pattern?: string
-  source?: string
   padding?: number
-  url?: string
+  audio?: string
 }
 
-export type AudibleOmitted = AudibleFileDefinition
-
-export interface VideoSequenceDefinition extends AudibleOmitted, TransformableDefinition {
-  instance : VideoSequence
-  instanceFromObject(object: VideoSequenceObject): VideoSequence
+export interface VideoSequenceDefinition extends ContentDefinition, UpdatableDimensionsDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: VideoSequenceObject): VideoSequence
 }
 
 /**

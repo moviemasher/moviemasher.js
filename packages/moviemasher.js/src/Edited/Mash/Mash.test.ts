@@ -1,35 +1,71 @@
 
 import { expectEmptyArray } from "../../../../../dev/test/Utilities/expectEmptyArray"
-import { expectArrayOf } from "../../../../../dev/test/Utilities/expectArrayOf"
+import { expectArrayLength } from "../../../../../dev/test/Utilities/expectArrayLength"
 
 import { AVType, DefinitionType, GraphFileType, GraphType, LoadType, TrackType, TrackTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Definition } from "../../Base/Definition"
-import { Factory } from "../../Definitions/Factory/Factory"
-import { Clip, ClipObject } from "../../Mixin/Clip/Clip"
+import { ClipObject, isClipObject } from "../../Mixin/Clip/Clip"
 import { idGenerate } from "../../Utility/Id"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashClass"
 
-import { mashInstance } from "./MashFactory"
-import { TrackClass } from "../../Media/Track/TrackClass"
-import { TrackObject } from "../../Media/Track/Track"
-import { GraphFilter, UnknownObject, ValueObject } from '../../declarations'
+import { assertMashClass, mashInstance } from "./MashFactory"
+import { UnknownObject, ValueObject } from '../../declarations'
 import { outputDefaultVideo } from '../../Output/OutputDefault'
 import { ImageDefinitionObject } from '../../Media/Image/Image'
-import { MergerObject } from '../../Media/Merger/Merger'
 import { JestPreloader } from '../../../../../dev/test/Utilities/JestPreloader'
 
-import themeColorJson from "../../Definitions/DefinitionObjects/theme/color.json"
-import { FilterGraphOptions } from './FilterGraph/FilterGraph'
-import { FilterChain } from './FilterChain/FilterChain'
+import { FilterGraphsOptions } from './FilterGraphs/FilterGraphs'
 
-import { Image } from "../../Media/Image/Image"
 import { FilterGraphClass } from './FilterGraph/FilterGraphClass'
 import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities'
-import { EditorDefinitionsClass } from "../../Editor/EditorDefinitions/EditorDefinitionsClass"
+import { Defined } from "../../Base/Defined"
+import { visibleClipDefault } from "../../Media/VisibleClip/VisibleClipFactory"
+import { VisibleClip, VisibleClipObject } from "../../Media/VisibleClip/VisibleClip"
+import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
+import { TrackClass } from "./Track/TrackClass"
+import { isTrackObject } from "./Track/Track"
+import { GraphFileArgs } from "../../MoveMe"
 
-describe.skip("MashFactory", () => {
+
+describe("Mash", () => {
+  const globeDefinitionObject = {
+    id: 'globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
+  }
+  const cableDefinitionObject = {
+    id: 'cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
+  }
+  Defined.define(globeDefinitionObject, cableDefinitionObject)
+
+  const addNewClip = (mash: Mash, track = 0): VisibleClip => {
+    const clip = visibleClipDefault.instanceFromObject()
+    expect(clip).toBeTruthy()
+    mash.addClipToTrack(clip, track)
+    return clip
+  }
+
+  const addNewTextClip = (mash: Mash, track = 0): VisibleClip => {
+    const definitionId = 'com.moviemasher.textcontainer.default'
+    const clipObject: ClipObject = {
+      definitionId: visibleClipDefault.id, containerId: definitionId
+    }
+    const clip = visibleClipDefault.instanceFromObject(clipObject)
+    expect(clip).toBeTruthy()
+    mash.addClipToTrack(clip, track)
+    return clip
+  }
+
+  const createMash = (clips: VisibleClipObject[] = []) => {
+    const mashObject: MashObject = { tracks: [{ clips }] }
+    return mashInstance({ ...mashObject, preloader: new JestPreloader() })
+  }
+
+  const mashWithMultipleImageClips = () => {
+    const clip1: ClipObject = { definitionId: visibleClipDefault.id, contentId: globeDefinitionObject.id, frames: 30 }
+    const clip2: ClipObject = { definitionId: visibleClipDefault.id, contentId: cableDefinitionObject.id, frames: 40 }
+    return createMash([clip1, clip2])
+  }
+
   describe("instance", () => {
     test("returns MashClass instance", () => {
       const mash = mashInstance()
@@ -42,18 +78,17 @@ describe.skip("MashFactory", () => {
       const cableDefinitionObject = {
         id: 'cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
       }
-      const definitions = new EditorDefinitionsClass([globeDefinitionObject, cableDefinitionObject])
+      Defined.define(globeDefinitionObject, cableDefinitionObject)
       const mashObject: MashObject = {
         tracks: [
           {
             clips: [
-              { definitionId: globeDefinitionObject.id },
-              { definitionId: cableDefinitionObject.id },
-
+              { definitionId: visibleClipDefault.id, contentId: globeDefinitionObject.id },
+              { definitionId: visibleClipDefault.id, contentId: cableDefinitionObject.id },
             ]
           }]
       }
-      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
+      const mash = mashInstance({ ...mashObject, preloader: new JestPreloader()})
 
       expect(mash.tracks.length).toBe(2)
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
@@ -61,49 +96,19 @@ describe.skip("MashFactory", () => {
       const { clips } = videoTrack
       expect(clips.length).toBe(2)
       const [globeClip, cableClip] = clips
-      expect(globeClip.frames).toBe(20)
-      expect(cableClip.frame).toBe(20)
-
-    })
-    test("timeRanges", () => {
-      const clip1 = { definitionId: 'com.moviemasher.theme.color', frames: 30}
-      const clip2 = { definitionId: 'com.moviemasher.theme.color', frames: 40 }
-      const mash = mashInstance({ tracks: [{ clips: [clip1, clip2] }] })
-      expect(mash).toBeInstanceOf(MashClass)
-      if (!(mash instanceof MashClass)) throw Errors.invalid
-      const { time, endTime } = mash
-      const { quantize } = mash
-      expect(time).toEqual(timeFromArgs(0, quantize))
-      expect(endTime).toEqual(timeFromArgs(70, quantize))
-
-      const args: FilterGraphOptions = {
-        avType: AVType.Both,
-        size: { width: 640, height: 480 },
-        videoRate: 10,
-        time: mash.timeRange
-      }
-
-      const times = mash.timeRanges(args)
-      expect(times.length).toBe(2)
-      const [time1, time2] = times
-
-      // console.log(times)
+      expect(globeClip.frames).toBe(30)
+      expect(cableClip.frame).toBe(30)
 
     })
   })
-})
-describe("Mash", () => {
-  const colorDefinition = () => Factory.theme.definition(themeColorJson)
-  // const textDefinition = () => Factory.theme.definition(themeTextJson)
-
-  describe.skip("addTrack", () => {
+  describe("addTrack", () => {
     test.each(TrackTypes)("returns new %s track", (trackType) => {
       const mash = mashInstance()
       const addedTrack = mash.addTrack(trackType)
       expect(addedTrack.dense).toBe(false)
       expect(addedTrack).toBeInstanceOf(TrackClass)
       expect(addedTrack.trackType).toEqual(trackType)
-      expect(mash.trackCount(trackType)).toEqual(trackType === TrackType.Transition ? 1 : 2)
+      expect(mash.trackCount(trackType)).toEqual(2)
       expect(mash.tracks.length).toBeGreaterThan(2)
       const track = mash.trackOfTypeAtIndex(trackType, mash.trackCount(trackType) - 1)
       expect(track).toBeInstanceOf(TrackClass)
@@ -112,21 +117,14 @@ describe("Mash", () => {
     })
   })
 
-  describe.skip("addClipToTrack", () => {
-    const addNewClip = (mash : Mash, definition : Definition, track = 0) : Clip => {
-      const clip = <Clip> definition.instance
-      expect(clip).toBeTruthy()
-      mash.addClipToTrack(clip, track)
-      return clip
-    }
-
+  describe("addClipToTrack", () => {
     test("correctly moves to new track and removes from old", () => {
       const mash = mashInstance()
       const firstTrack = mash.addTrack(TrackType.Video)
       expect(firstTrack.layer).toEqual(1)
       const secondTrack = mash.addTrack(TrackType.Video)
       expect(secondTrack.layer).toEqual(2)
-      const clip = addNewClip(mash, colorDefinition(), 1)
+      const clip = addNewClip(mash, 1)
       expect(firstTrack.clips.includes(clip)).toBeTruthy()
       expect(secondTrack.clips.includes(clip)).toBeFalsy()
       const clipTrack = mash.clipTrack(clip)
@@ -141,7 +139,7 @@ describe("Mash", () => {
 
     test("correctly places clip in track clips", () => {
       const mash = mashInstance()
-      const clip = addNewClip(mash, colorDefinition())
+      const clip = addNewClip(mash)
 
       expect(mash.trackCount(TrackType.Video)).toEqual(1)
       const track = mash.trackOfTypeAtIndex(TrackType.Video, 0)
@@ -154,8 +152,8 @@ describe("Mash", () => {
     test("correctly sorts clips", () => {
       const mash = mashInstance()
       expect(mash.quantize).toEqual(10)
-      const clip1 = colorDefinition().instance
-      const clip2 = colorDefinition().instance
+      const clip1 = visibleClipDefault.instanceFromObject()
+      const clip2 = visibleClipDefault.instanceFromObject()
       mash.addClipToTrack(clip1, 0)
       mash.addClipToTrack(clip2, 0, 1)
       const track = mash.trackOfTypeAtIndex(TrackType.Video, 0)
@@ -173,88 +171,96 @@ describe("Mash", () => {
 
   })
 
-  describe.skip("clips", () => {
+  describe("clips", () => {
     test("returns proper clips", () => {
       const clips = [
-        { label: 'A', definitionId: "com.moviemasher.theme.text", frame: 0, frames: 100, string: "A" },
-        { label: 'B', definitionId: "com.moviemasher.theme.color", frame: 100, frames: 50, color: "blue"},
-        { label: 'C', definitionId: "com.moviemasher.theme.text", frame: 150, frames: 100, string: "C" },
+        { label: 'A', definitionId: visibleClipDefault.id, containerId: "com.moviemasher.textcontainer.default", frame: 0, frames: 100, string: "A" },
+        { label: 'B', definitionId: visibleClipDefault.id, frame: 100, frames: 50, color: "blue"},
+        { label: 'C', definitionId: visibleClipDefault.id, containerId: "com.moviemasher.textcontainer.default", frame: 150, frames: 100, string: "C" },
       ]
       const mash = mashInstance({ tracks: [{ clips }, { clips }, { clips }] })
       expect(mash.clips.length).toEqual(clips.length * 3)
     })
   })
-  const mashWithMultipleClips = () => {
-    const globeDefinitionObject = {
-      id: 'globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
-    }
-    const cableDefinitionObject = {
-      id: 'cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
-    }
-    const clip1: ClipObject = { definitionId: globeDefinitionObject.id, frames: 30 }
-    const clip2: ClipObject = { definitionId: cableDefinitionObject.id, frames: 40 }
-    const mashObject: MashObject = { tracks: [{ clips: [clip1, clip2] }] }
-    const definitions = new EditorDefinitionsClass([globeDefinitionObject, cableDefinitionObject])
-    const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
-    return mash
-  }
 
-  describe.skip("clipsInTimeOfType", () => {
+
+  describe("clipsInTimeOfType", () => {
     test("returns expected", () => {
-      const mash = mashWithMultipleClips()
+      const mash = mashWithMultipleImageClips()
       const scaled = timeRangeFromArgs(0, 10, 30)
       const clips = mash.clipsInTimeOfType(scaled)
       expect(clips.length).toBe(1)
     })
   })
 
+  describe("graphFiles", () => {
+    test("returns image file from first frame only", () => {
+      const mash = mashWithMultipleImageClips()
+      const graphFiles = mash.graphFiles()
+      expectArrayLength(graphFiles, 1)
+
+    })
+
+    test("returns font and text file from text container", () => {
+      const mash = createMash()
+      addNewTextClip(mash)
+
+      const graphFiles = mash.graphFiles()
+      expectArrayLength(graphFiles, 2)
+      const [fontGraphFile, textGraphFile] = graphFiles
+      expect(textGraphFile.type).toEqual(GraphFileType.Txt)
+      expect(fontGraphFile.type).toEqual(LoadType.Font)
+      expect(textGraphFile.input).toBeFalsy()
+      expect(fontGraphFile.input).toBeFalsy()
+
+      const editingGraphFiles = mash.graphFiles({ editing: true })
+      expectArrayLength(editingGraphFiles, 1)
+      const [editingFontGraphFile] = editingGraphFiles
+      expect(editingFontGraphFile.type).toEqual(LoadType.Font)
+      expect(editingFontGraphFile.input).toBeFalsy()
+    })
+  })
   describe("filterGraphs", () => {
-    const expectBackgroundFilterChain = (filterChain?: FilterChain) => {
-      expect(filterChain).toBeDefined()
-      expect(filterChain).toBeInstanceOf(Object)
-      const { graphFilters, graphFilter } = filterChain!
-      expect(graphFilter).toBeUndefined()
-      expect(graphFilters.length).toBe(1)
-      const [colorFilter] = graphFilters
-      expect(colorFilter).toBeInstanceOf(Object)
-      const { inputs, outputs, filter, options } = colorFilter!
-      expect(filter).toEqual('color')
-      expect(options).toBeInstanceOf(Object)
-      expect(inputs).toBeUndefined()
-      expect(outputs).toBeInstanceOf(Array)
-      expect(outputs!.length).toBe(1)
-    }
-    const expectMergerGraphFilter = (merger?: GraphFilter) => {
-      expect(merger).toBeDefined()
-      expect(merger).toBeInstanceOf(Object)
-      const { inputs, outputs } = merger!
-      // console.log(inputs)
-      expect(inputs).toBeDefined()
-      expect(inputs).toBeInstanceOf(Array)
-      expect(inputs?.length).toBe(0)
-      expect(outputs).toBeUndefined()
-    }
+    test("filterGraphsVisible returns two for two clips", () => {
+      const clip1 = { definitionId: visibleClipDefault.id, frames: 60}
+      const clip2 = { definitionId: visibleClipDefault.id, frames: 40 }
+      const mash = mashInstance({ tracks: [{ trackType: TrackType.Video, clips: [clip1, clip2] }] })
+      assertMashClass(mash)
+      const { quantize, time, endTime, frames } = mash
+      // console.log("quantize, time, endTime, frames", quantize, time, endTime, frames)
+      expect(time).toEqual(timeFromArgs(0, quantize))
+      expect(endTime).toEqual(timeFromArgs(100, quantize))
 
-
-    test("returns expected FilterGraphs for image", () => {
-      const source = 'image.jpg'
+      const args: FilterGraphsOptions = {
+        avType: AVType.Both,
+        size: { width: 640, height: 480 },
+        videoRate: 10,
+        time: mash.timeRange
+      }
+      const filterGraphs = mash.filterGraphs(args)
+      expect(filterGraphs.filterGraphsVisible.length).toBe(2)
+    })
+    test("returns expected FilterGraphs for image", async () => {
+      const source = '../shared/image/frog.jpg'
       const definitionId = 'image'
       const definitionObject: ImageDefinitionObject = {
         source, id: definitionId, type: DefinitionType.Image, url: source
       }
-      const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
-      const clip: ClipObject = { definitionId, merger }
+      const clip: ClipObject = { definitionId: visibleClipDefault.id, contentId: definitionId }
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
-      const definitions = new EditorDefinitionsClass([definitionObject])
-      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader()})
-      const filterGraphs = mash.filterGraphs(filterGraphArgs)
+      Defined.define(definitionObject)
+      const mash = mashInstance({ ...mashObject, preloader: new JestPreloader()})
+      const filterGraphs = mash.filterGraphs(filterGraphsOptions)
         const { filterGraphsVisible } = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
       const filterGraph = filterGraphsVisible[0]
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+
+
+      await mash.loadPromise(filterGraph)
 
       const { filterChains, graphFiles } = filterGraph
       expect(filterChains.length).toEqual(1)
@@ -267,26 +273,28 @@ describe("Mash", () => {
       expect(options).toBeUndefined()
     })
 
-    test("returns multiple FilterGraphs for images", () => {
-      const mash = mashWithMultipleClips()
+    test("returns multiple FilterGraphs for images", async () => {
+      const mash = mashWithMultipleImageClips()
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
-      const clips = videoTrack.clips as Image[]
-      const filterGraphOptions: FilterGraphOptions = {
-        ...filterGraphArgs, graphType: GraphType.Mash,
-        time: timeRangeFromTimes(filterGraphArgs.time!, mash.endTime),
+      const clips = videoTrack.clips as VisibleClip[]
+      const options: FilterGraphsOptions = {
+        ...filterGraphsOptions, graphType: GraphType.Mash,
+        time: timeRangeFromTimes(filterGraphsOptions.time!, mash.endTime),
       }
-      const filterGraphs = mash.filterGraphs(filterGraphOptions)
+      const filterGraphs = mash.filterGraphs(options)
       const { filterGraphsVisible } = filterGraphs
       // console.log(filterGraphsVisible.map(g => g.time))
       expect(filterGraphsVisible.length).toEqual(2)
-      filterGraphsVisible.forEach((filterGraph, index) => {
+      filterGraphsVisible.forEach(async (filterGraph, index) => {
+
+        await mash.loadPromise(filterGraph)
         expect(filterGraph).toBeInstanceOf(FilterGraphClass)
         if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
         const clip = clips[index]
         const timeRange = clip.timeRange(quantize)
-        const { graphFiles, duration, time } = filterGraph
+        const { graphFiles, duration } = filterGraph
         // console.log(clip.frame, clip.frames, time, timeRange, duration, timeRange.lengthSeconds)
         expect(duration).toBe(timeRange.lengthSeconds)
         expect(graphFiles.length).toBe(1)
@@ -295,40 +303,29 @@ describe("Mash", () => {
         expect(type).toEqual(LoadType.Image)
         expect(input).toEqual(true)
         expect(options).toBeUndefined()
-        expect(file).toBe(clip.definition.source)
+        const { definition } = clip.content
+        assertPreloadableDefinition(definition)
+        expect(file).toBe(definition.source)
       })
     })
 
 
-    test("returns expected FilterGraphs for text theme", () => {
-      // const definitionObject: ThemeDefinitionObject = themeTextJson
-      const definitionId = 'com.moviemasher.theme.text'
-
-      const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
-      const clip: ClipObject = { definitionId, merger }
-      const mashObject: MashObject = {
-        tracks: [{ trackType: TrackType.Video, clips: [clip] }]
-      }
-      const definitions = new EditorDefinitionsClass()//[definitionObject]
-      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader() })
-      const filterGraphs = mash.filterGraphs(filterGraphArgs)
+    test("returns expected FilterGraphs for text", async () => {
+      const mash = createMash()
+      addNewTextClip(mash)
+      const filterGraphs = mash.filterGraphs(filterGraphsOptions)
       const {filterGraphsVisible} = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
-      const filterGraph = filterGraphsVisible[0]
+      const [filterGraph] = filterGraphsVisible
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChains, graphFiles } = filterGraph
+      await mash.loadPromise(filterGraph)
+      const { filterChains } = filterGraph
       expect(filterChains.length).toEqual(1)
-      expect(graphFiles.length).toBe(2)
-      const [graphFile2, graphFile1] = graphFiles
-      expect(graphFile1.type).toEqual(GraphFileType.Txt)
-      expect(graphFile2.type).toEqual(LoadType.Font)
-      expect(graphFile1.input).toBeFalsy()
-      expect(graphFile2.input).toBeFalsy()
     })
 
-    const expectClipGraphFiles = (jpgs: number[] = [], clip: ValueObject = {}, args: UnknownObject = {}) => {
+    const expectClipGraphFiles = async (jpgs: number[] = [], clip: ValueObject = {}, args: UnknownObject = {}) => {
       const videoDefinition = {
         type: "videosequence",
         label: "Video Sequnce", id: "id-videosequence",
@@ -338,12 +335,12 @@ describe("Mash", () => {
         duration: 3, fps: 30,
       }
 
-      const definitions = new EditorDefinitionsClass([videoDefinition])
+      Defined.define(videoDefinition)
       const mashObject = {
-        tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30, ...clip }] }]
+        tracks: [{ clips: [{ definitionId: visibleClipDefault.id, containerId: videoDefinition.id, frames: 30, ...clip }] }]
       }
-      const mash = mashInstance({ ...mashObject, definitions, preloader: new JestPreloader() })
-      const graphArgs = { ...filterGraphArgs, ...args }
+      const mash = mashInstance({ ...mashObject, preloader: new JestPreloader() })
+      const graphArgs = { ...filterGraphsOptions, ...args }
       const filterGraphs = mash.filterGraphs(graphArgs)
       const { filterGraphsVisible } = filterGraphs
       expect(filterGraphsVisible.length).toBe(1)
@@ -351,22 +348,19 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { filterChains, graphFiles, duration, time } = filterGraph
+      await mash.loadPromise(filterGraph)
+      const {  editing, visible, quantize, time } = filterGraph
+      const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
+    
+      const graphFiles = mash.graphFiles(graphFileArgs)
+      const { filterChains, duration } = filterGraph
       if (time.isRange) expect(duration).toBeGreaterThan(0)
       else expect(duration).toBe(0)
       expect(filterChains.length).toEqual(1)
       const [clipFilterChain] = filterChains
-      const { graphFilter, graphFilters } = clipFilterChain
-      expect(graphFilters.length).toBe(2)
-      const [scaleFilter, setSarFilter] = graphFilters
-      expect(scaleFilter.filter).toEqual('scale')
-      expect(setSarFilter.filter).toEqual('setsar')
-      graphFilters.forEach(graphFilter => {
-        const { outputs, inputs } = graphFilter
-        expect(outputs?.length).toBe(1)
-        expect(inputs?.length).toBe(1)
-      })
-      expectMergerGraphFilter(graphFilter)
+      const { graphFilters } = clipFilterChain
+      expect(graphFilters.length).toBe(0)
+      // expectMergerGraphFilter(graphFilter)
       expect(graphFiles).toBeInstanceOf(Array)
       const imageFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Image)
       const audioFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Audio)
@@ -389,7 +383,7 @@ describe("Mash", () => {
         expect(file).toEqual(`${videoDefinition.url}${jpg}.jpg`)
       })
     }
-    test("returns expected GraphFiles for video sequence", () => {
+    test.skip("returns expected GraphFiles for video sequence", () => {
       expectClipGraphFiles([1])
       expectClipGraphFiles([31], { trim: 10 })
       expectClipGraphFiles([34], { trim: 10 }, { time: timeFromArgs(1, 10)})
@@ -397,27 +391,27 @@ describe("Mash", () => {
         [34, 35, 36, 37, 38, 39],
         { trim: 10 },
         {
-          preloading: true, time: timeRangeFromArgs(1, 10, 2)
+          time: timeRangeFromArgs(1, 10, 2)
         }
       )
     })
 
-    test("returns expected FilterGraphs for video", () => {
+    test.skip("returns expected FilterGraphs for video", async () => {
       const videoDefinition = {
         type: "video",
         label: "Video", id: "id-video",
-        url: 'video/url.mp4',
-        source: 'video/source.mp4',
+        url: 'video.mp4',
+        source: 'video.mp4',
         duration: 3, fps: 10,
       }
 
-      const definitions = new EditorDefinitionsClass([videoDefinition])
+      Defined.define(videoDefinition)
 
       const mash = mashInstance({
-        definitions, preloader: new JestPreloader,
-        tracks: [{ clips: [{ definitionId: videoDefinition.id, frames: 30 }] }]
+       preloader: new JestPreloader,
+        tracks: [{ clips: [{ definitionId: visibleClipDefault.id, contentId: videoDefinition.id, frames: 30 }] }]
       })
-      const graphArgs = {...filterGraphArgs, graphType: GraphType.Mash}//, avType: AVType.Audio
+      const graphArgs = {...filterGraphsOptions, graphType: GraphType.Mash }
       expect(graphArgs.graphType).toEqual(GraphType.Mash)
       const filterGraphs = mash.filterGraphs(graphArgs)
       const { filterGraphsVisible } = filterGraphs
@@ -425,13 +419,11 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
+      await mash.loadPromise(filterGraph)
       const { filterChains, graphFiles, duration } = filterGraph
       expect(duration).toBe(0)
       expect(filterChains.length).toEqual(1)
-      const [clipFilterChain] = filterChains
 
-      const { graphFilter, graphFilters } = clipFilterChain
-      if (graphArgs.avType !== AVType.Audio) expectMergerGraphFilter(graphFilter)
       expect(graphFiles).toBeInstanceOf(Array)
       expect(graphFiles.length).toBe(1)
       const [graphFile] = graphFiles
@@ -439,30 +431,17 @@ describe("Mash", () => {
       const { file, input } = graphFile
       expect(input).toBe(true)
       expect(file).toEqual(videoDefinition.source)
-      expect(graphFilters.length).toBe(6)
-      const [trimFilter, fpsFilter, setptsFilter, setsarFilter, scaleFilter, setSarFilter] = graphFilters
-      expect(trimFilter.filter).toEqual('trim')
-      expect(fpsFilter.filter).toEqual('fps')
-      expect(setptsFilter.filter).toEqual('setpts')
-      expect(setsarFilter.filter).toEqual('setsar')
-      expect(scaleFilter.filter).toEqual('scale')
-      expect(setSarFilter.filter).toEqual('setsar')
-      graphFilters.forEach(graphFilter => {
-        const { outputs, inputs } = graphFilter
-        expect(outputs?.length).toBe(1)
-        expect(inputs?.length).toBe(1)
-      })
     })
   })
 
-  describe.skip("frames", () => {
+  describe("frames", () => {
     test("returns 0 from empty mash", () => {
       const mash = mashInstance()
       expect(mash.frames).toEqual(0)
     })
   })
 
-  describe.skip("id", () => {
+  describe("id", () => {
     test("returns what is provided to constructor", () => {
       const id = idGenerate()
       const mash = mashInstance({ id })
@@ -471,9 +450,8 @@ describe("Mash", () => {
 
   })
 
-  describe.skip("removeTrack", () => {
+  describe("removeTrack", () => {
     test.each(TrackTypes)("correctly removes just %s track", (type) => {
-      if (type === TrackType.Transition) return
       const mash = mashInstance()
 
       mash.removeTrack(type)
@@ -482,56 +460,49 @@ describe("Mash", () => {
     })
   })
 
-  describe.skip("toJSON", () => {
+  describe("toJSON", () => {
     test("returns expected object", () => {
       const id = idGenerate()
       const mash = mashInstance({ id })
-      const clip = colorDefinition().instance
       mash.addTrack(TrackType.Video)
-      mash.addClipToTrack(clip, 1)
+      const clip = addNewClip(mash, 1)
 
       const mashString = JSON.stringify(mash)
-      // console.log(mashString)
-      const mashObject = JSON.parse(mashString)
+      const mashObject: MashObject = JSON.parse(mashString)
       expect(mashObject.id).toEqual(id)
-      const { tracks } = mashObject
-      const audio = tracks.filter((track:TrackObject) => track.trackType === TrackType.Audio)
-      const video = tracks.filter((track:TrackObject) => track.trackType === TrackType.Video)
+      const tracks = mashObject.tracks!
 
-      expectArrayOf(audio, Object, 1)
-      let track = <TrackObject> audio[0]
+      tracks.forEach(object => expect(isTrackObject(object)).toBeTruthy())
+      const audio = tracks.filter(track => track.trackType === TrackType.Audio)
+      const video = tracks.filter(track => track.trackType === TrackType.Video)
 
-      expectEmptyArray(track.clips)
+      const [audioTrack] = audio
+      expectEmptyArray(audioTrack.clips)
 
-      expectArrayOf(video, Object, 2)
+      const [videoTrack1, videoTrack2] = video
+      expectEmptyArray(videoTrack1.clips)
+      expectArrayLength(videoTrack2.clips, 1)
+      const clips = videoTrack2.clips!
 
-      track = video[0]
-      expectEmptyArray(track.clips)
+      clips.forEach(object => expect(isClipObject(object)).toBeTruthy())
+      const [clipObject] = clips
+      expect(isClipObject(clipObject)).toBeTruthy()
 
-      track = video[1]
-      expectArrayOf(track.clips, Object, 1)
-      if (!track.clips) throw Errors.internal + 'track.clips'
-
-      const clipObject = track.clips[0]
-      if (!clipObject) throw Errors.internal + 'clipObject'
-
-      expect(clipObject).toBeInstanceOf(Object)
-      expect(clipObject.color).toEqual(clip.color)
+      expect(clipObject.color).toEqual(clip.value('color'))
     })
   })
 
-  describe.skip("trackOfTypeAtIndex", () => {
+  describe("trackOfTypeAtIndex", () => {
     test("returns expected track", () => {
       const mash = mashInstance()
       TrackTypes.forEach((type) => {
         const track = mash.trackOfTypeAtIndex(type, 0)
-        if (type === TrackType.Transition) expect(track).toBeUndefined()
-        else expect(track.trackType).toEqual(type)
+        expect(track.trackType).toEqual(type)
       })
     })
   })
 
-  describe.skip("tracks", () => {
+  describe("tracks", () => {
     test("returns two tracks", () => {
       const mash = mashInstance()
       const { tracks } = mash
@@ -543,10 +514,7 @@ describe("Mash", () => {
   const time = timeFromArgs(0, 10)
   const size = { width: output.width!, height: output.height! }
   const videoRate = output.videoRate!
-  const graphType = GraphType.Canvas
-  const filterGraphArgs: FilterGraphOptions = {
-    preloading: true,
-    avType: AVType.Both,
-    graphType, size, videoRate, time,
+  const filterGraphsOptions: FilterGraphsOptions = {
+    avType: AVType.Video, size, videoRate, time
   }
 })

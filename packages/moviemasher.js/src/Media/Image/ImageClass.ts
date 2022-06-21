@@ -1,59 +1,99 @@
-import { GraphFile, GraphFilter } from "../../declarations"
-import { AVType, GraphType, LoadType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { InstanceBase } from "../../Base/Instance"
-import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
-import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
-import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
+import { LoadedImage, SvgContent } from "../../declarations"
+import { Dimensions } from "../../Setup/Dimensions"
+import { Chain, ContainerChainArgs, ContentChainArgs, GraphFile } from "../../MoveMe"
+import { LoadType, Phase } from "../../Setup/Enums"
+import { InstanceBase } from "../../Instance/InstanceBase"
 import { ImageDefinition, Image } from "./Image"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
+import { UpdatableDimensionsMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsMixin"
+import { ChainLinks, Filter, FilterChainPhase } from "../../Filter/Filter"
+import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
+import { ContentMixin } from "../../Content/ContentMixin"
+import { ContainerMixin } from "../../Container/ContainerMixin"
 
-const ImageWithClip = ClipMixin(InstanceBase)
-const ImageWithVisible = VisibleMixin(ImageWithClip)
-const ImageWithTransformable = TransformableMixin(ImageWithVisible)
 
-export class ImageClass extends ImageWithTransformable implements Image {
+const ImageWithContainer = ContainerMixin(InstanceBase)
+const ImageWithContent = ContentMixin(ImageWithContainer)
+const ImageWithPreloadable = PreloadableMixin(ImageWithContent)
+const ImageWithUpdatable = UpdatableDimensionsMixin(ImageWithPreloadable)
+export class ImageClass extends ImageWithUpdatable implements Image {
+  constructor(...args: any[]) {
+    super(...args)
+    this.setptsFilter = this.definition.setptsFilterDefinition.instanceFromObject()
+  }
+
+  contentChain(args: ContentChainArgs): Chain {
+    const chain = super.contentChain(args)
+    const { commandFiles} = chain
+    const graphFile = this.graphFile(args.editing)
+    const commandFile = { ...graphFile, inputId: this.id }
+    commandFiles.push(commandFile)
+    return chain
+  }
+
+  containerChain(args: ContainerChainArgs): Chain {
+    const chain = super.containerChain(args)
+    const { commandFiles} = chain
+    const graphFile = this.graphFile(args.editing)
+    const commandFile = { ...graphFile, inputId: this.id }
+    commandFiles.push(commandFile)
+    return chain
+  }
+
+  chainLinks(): ChainLinks {
+    const links: ChainLinks = []
+    links.push(this, this.setptsFilter)
+    links.push(...super.chainLinks())
+    return links
+  }
+
   declare definition: ImageDefinition
 
-  override filterChainInitialize(filterChain: FilterChain): void  {
+  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
+    if (phase !== Phase.Initialize) return
+
     const { filterGraph } = filterChain
-    const { graphType, avType, preloading, time: startTime, quantize, preloader } = filterGraph
-    // console.log(this.constructor.name, "initializeFilterChain", preloading)
-    if (avType === AVType.Audio) throw Errors.internal + 'initializeFilterChain Audio'
+    const { streaming, editing, preloader } = filterGraph
+    const graphFile = this.graphFile(editing)
+    let { width, height } = this.definition
+    if (!(isAboveZero(width) && isAboveZero(height))) {
+      const loaded: LoadedImage = preloader.getFile(graphFile)
+      width = loaded.width
+      height = loaded.width
+    }
+    filterChain.size = { width, height }
 
-    const source = this.definition.preloadableSource(graphType)
-    if (!source) throw Errors.invalid.url
 
-    // console.log(this.constructor.name, "initializeFilterChain addGraphFile", source, preloading)
+    if (streaming) graphFile.options!.re = ''
+
+    return { graphFiles: [graphFile], link: this }
+  }
+
+  private graphFile(editing?: boolean): GraphFile {
+    const { definition } = this
+    const file = definition.preloadableSource(editing)
+    assertPopulatedString(file, editing ? 'url' : 'source')
+
     const graphFile: GraphFile = {
-      type: LoadType.Image, file: source,
-      input: true,
-      definition: this.definition
+      input: true, options: {}, type: LoadType.Image, file, definition
     }
-    const inputId = filterChain.addGraphFile(graphFile)
+    return graphFile
+  }
 
-    if (!preloading) {
-      graphFile.options = { loop: 1 }
-      switch (graphType) {
-        case GraphType.Cast: {
-          graphFile.options.re = ''
-          break
-        }
-        case GraphType.Canvas: {
-          const definitionTime = this.definitionTime(quantize, startTime)
-          const context = this.contextAtTimeToSize(preloader, definitionTime, quantize)
-          if (!context) throw Errors.invalid.context + ' ' + this.constructor.name + '.initializeFilterChain'
+  intrinsicDimensions(): Dimensions { return this.size }
 
-          filterChain.visibleContext = context
-          break
-        }
-        default: {
-          const setptsFilter: GraphFilter = {
-            filter: 'setpts', options: { expr: 'PTS-STARTPTS', }, inputs: [inputId]
-          }
-          filterChain.addGraphFilter(setptsFilter)
-        }
-      }
-    }
+
+  private setptsFilter: Filter
+
+  _size?: Dimensions
+  get size(): Dimensions { return this._size! }
+  set size(value: Dimensions) { this._size = value }
+
+  svgContent(filterChain: TrackPreview, dimensions: Dimensions): SvgContent {
+
+    // TODO: consider removing method from definition
+    return this.definition.svgContent(filterChain, dimensions)
   }
 }

@@ -38,15 +38,8 @@ export function TimelineTracks(props: TimelineTracksProps): ReactResult {
     const { mash } = editor.selection
     const audioTracks = mash?.trackCount(TrackType.Audio) || 0
     const videoTracks = mash?.trackCount(TrackType.Video) || 0
-    const transitionTracks = mash?.trackCount(TrackType.Transition) || 0
-
     const childNodes: React.ReactElement[] = []
-    const highestTrack = Math.max(videoTracks, transitionTracks)
-
-    for (let i = highestTrack - 1; i >= 0; i--) {
-      if (i < transitionTracks) childNodes.push(childNode(i, TrackType.Transition))
-      if (i < videoTracks) childNodes.push(childNode(i, TrackType.Video))
-    }
+    for (let i = videoTracks - 1; i >= 0; i--) childNodes.push(childNode(i, TrackType.Video))
     for (let i = 0; i < audioTracks; i++) childNodes.push(childNode(i, TrackType.Audio))
     return childNodes
   }

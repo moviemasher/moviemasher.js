@@ -1,24 +1,31 @@
-import { DefinitionType, TrackType, LoadType, GraphType, AVType } from "../../Setup/Enums"
-import { Any, VisibleSource, UnknownObject, GraphFile, FilesArgs, GraphFiles, CanvasVisibleSource } from "../../declarations"
+import {
+  UnknownObject, CanvasVisibleSource, SvgContent} from "../../declarations"
+import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
+import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
-import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
-import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
-import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
-import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
+import {
+  VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject,
+  VideoSequenceObject
+} from "./VideoSequence"
 import { Default } from "../../Setup/Default"
-import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
-import { TransformableDefinitionMixin } from "../../Mixin/Transformable/TransformableDefintiionMixin"
-import { Preloader } from "../../Preloader/Preloader"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { Loader } from "../../Loader/Loader"
+import {
+  PreloadableDefinitionMixin
+} from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { NamespaceSvg } from "../../Setup/Constants"
+import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
+import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
+import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
+import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
 
-const WithClip = ClipDefinitionMixin(PreloadableDefinition)
-const WithAudible = AudibleDefinitionMixin(WithClip)
-const WithAudibleFile = AudibleFileDefinitionMixin(WithAudible)
-const WithVisible = VisibleDefinitionMixin(WithAudibleFile)
-const WithTransformable = TransformableDefinitionMixin(WithVisible)
-export class VideoSequenceDefinitionClass extends WithTransformable implements VideoSequenceDefinition {
-  constructor(...args : Any[]) {
+const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(DefinitionBase)
+const VideoSequenceDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoSequenceDefinitionWithContent)
+const VideoSequenceDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoSequenceDefinitionWithPreloadable)
+const VideoSequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoSequenceDefinitionWithUpdatableDimensions)
+export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpdatableDuration implements VideoSequenceDefinition {
+  constructor(...args : any[]) {
     super(...args)
     const [object] = args
     const {
@@ -40,16 +47,16 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
 
   begin = Default.definition.videosequence.begin
 
-  definitionFiles(args: FilesArgs): GraphFiles {
-    const files = super.definitionFiles(args) // maybe get the audio file
-    const { time, graphType, avType, preloading } = args
-    // console.log(this.constructor.name, "files", time, graphType, avType, preloading)
-    if (avType !== AVType.Audio) {
-      if (graphType === GraphType.Canvas) {
+  graphFiles(args: GraphFileArgs): GraphFiles {
+    const files = super.graphFiles(args) // maybe get the audio file
+    const { streaming, editing, visible, time } = args
+    if (visible) {
+      if (editing) {
         const frames = this.framesArray(time)
         const graphFiles = frames.map(frame => {
           const graphFile: GraphFile = {
             type: LoadType.Image, file: this.urlForFrame(frame), input: true,
+            localId: LoadType.Image,
             definition: this
           }
           return graphFile
@@ -59,11 +66,9 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
         const graphFile: GraphFile = {
           type: LoadType.Video, file: this.source, definition: this, input: true
         }
-        if (!preloading) {
-          if (graphType === GraphType.Cast) {
-            graphFile.options = { loop: 1 }
-            graphFile.options.re = ''
-          }
+        if (streaming) {
+          graphFile.options = { loop: 1 }
+          graphFile.options.re = ''
         }
         files.push(graphFile)
       }
@@ -90,15 +95,13 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
 
   increment = Default.definition.videosequence.increment
 
-  get instance() : VideoSequence { return this.instanceFromObject(this.instanceObject) }
-
-  instanceFromObject(object : VideoSequenceObject) : VideoSequence {
-    return new VideoSequenceClass({ ...this.instanceObject, ...object })
+  instanceFromObject(object: VideoSequenceObject = {}): VideoSequence {
+    return new VideoSequenceClass(this.instanceArgs(object))
   }
 
   loadType = LoadType.Image
 
-  loadedVisible(preloader: Preloader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
+  loadedVisible(preloader: Loader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
     const frames = this.framesArray(time)
     const [frame] = frames
     const url = this.urlForFrame(frame)
@@ -110,7 +113,27 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
     return preloader.getFile(file)
   }
 
+  padding : number
+
   pattern = '%.jpg'
+
+  svgContent(filterChain: TrackPreview): SvgContent {
+    const { filterGraph } = filterChain
+    const { size } = filterGraph
+    const { preloader, editing, visible, quantize, time } = filterGraph
+    const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
+
+    const { width, height } = size
+    const graphFiles = this.graphFiles(graphFileArgs)
+    const [graphFile] = graphFiles
+    const href = preloader.key(graphFile)
+    const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
+    imageElement.setAttribute('id', `image-${this.id}`)
+    imageElement.setAttribute('width', String(width))
+    imageElement.setAttribute('height', String(height))
+    imageElement.setAttribute('href', href)
+    return imageElement
+  }
 
   toJSON() : UnknownObject {
     const object = super.toJSON()
@@ -131,7 +154,4 @@ export class VideoSequenceDefinitionClass extends WithTransformable implements V
     if (this.padding) s = s.padStart(this.padding, '0')
     return (this.url + this.pattern).replaceAll('%', s)
   }
-
-
-  padding : number
 }

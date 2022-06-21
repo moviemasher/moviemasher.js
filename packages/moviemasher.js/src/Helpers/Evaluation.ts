@@ -1,7 +1,7 @@
 import { UnknownObject, Value } from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
-import { isNumeric } from "../Utility/Is"
+import { isNumeric, isString } from "../Utility/Is"
 
 
 export interface EvaluationCallback { (evaluation: Evaluation): Value }
@@ -84,6 +84,8 @@ export class Evaluation {
         this.resolved = true
         this._result = Number(result)
         this.log(message || 'executed')
+      } else if (!isString(result)) {
+        throw Errors.eval.string
       }
     } catch (exception) {
       const underKeys = keys.filter(key => key.startsWith('_'))

@@ -64,12 +64,12 @@ required to layout the client user interface are kept separate from JavaScript c
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='masher.js' defer></script>
-    <link href='masher.css' rel='stylesheet'>
     <style>
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #app { width: 100vw; height: 100vh; display: flex; }
       .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
     </style>
+    <link href='masher.css' rel='stylesheet'>
     <title>Movie Masher</title>
   </head>
   <body>
@@ -99,7 +99,7 @@ import ReactDOM from 'react-dom'
 import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const applicationOptions = { previewSize: { width: 480, height: 270 } }
+const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
 const options = MasherPropsDefault(applicationOptions)
 const masher = <Masher {...options} />
 const editor = <ApiClient>{masher}</ApiClient>
@@ -109,7 +109,7 @@ ReactDOM.render(strictMode, document.getElementById('app'))
 </fieldset>
 
 In this example we're using the
-[MasherPropsDefault](https://moviemasher.com/docs/function/MasherPropsDefault.html) function to
+[DefaultMasherProps](https://moviemasher.com/docs/function/DefaultMasherProps.html) function to
 populate the [Masher](https://moviemasher.com/docs/component/Masher.html) component with
 preconfigured children. Alternatively, child components like
 [Player](https://moviemasher.com/docs/component/Player.html),

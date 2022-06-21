@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, SelectionType } from '@moviemasher/moviemasher.js'
+import { EventType, SelectType } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
@@ -20,7 +20,7 @@ export function TimelineContent(props: PropsWithChildren): ReactResult {
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
   useListeners({ [EventType.Mash]: resetScroll })
 
-  const onClick = () => { editor.deselect(SelectionType.Track) }
+  const onClick = () => { editor.deselect(SelectType.Track) }
   const onScroll = () => {
     setScroll({ x: ref.current!.scrollLeft, y: ref.current!.scrollTop })
   }

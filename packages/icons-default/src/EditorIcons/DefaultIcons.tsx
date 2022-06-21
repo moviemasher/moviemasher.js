@@ -1,19 +1,17 @@
 import React from 'react'
 
-import { RiFolderTransferFill } from 'react-icons/ri'
 import { RiMusic2Fill } from 'react-icons/ri'
-import { RiFolderSettingsFill } from 'react-icons/ri'
+import { MdInvertColors } from 'react-icons/md'
 import { RiFilmFill } from 'react-icons/ri'
 import { RiPlayCircleFill } from 'react-icons/ri'
 import { RiPauseCircleFill } from 'react-icons/ri'
 import { RiChatVoiceFill } from 'react-icons/ri'
 import { RiVideoChatFill } from 'react-icons/ri'
-import { RiFolderChartFill } from 'react-icons/ri'
+import { IoColorFillSharp } from 'react-icons/io5'
 import { RiImageFill } from 'react-icons/ri'
 import { RiMvLine } from 'react-icons/ri'
 import { RiMusicLine } from 'react-icons/ri'
 import { RiVideoLine } from 'react-icons/ri'
-import { RiSwapBoxLine } from 'react-icons/ri'
 import { RiArrowLeftRightLine } from 'react-icons/ri'
 import { RiArrowRightSLine } from 'react-icons/ri'
 import { RiUploadCloud2Line } from 'react-icons/ri'
@@ -34,13 +32,13 @@ import { RiStackLine } from 'react-icons/ri'
 import { RiChat3Fill } from 'react-icons/ri'
 import { RiMessage3Fill } from 'react-icons/ri'
 import { RiEdit2Fill } from 'react-icons/ri'
-import { RiSplitCellsHorizontal } from 'react-icons/ri'
 import { RiFolderLine } from 'react-icons/ri'
 import { RiFolderOpenLine } from 'react-icons/ri'
 import { RiFolderAddFill } from 'react-icons/ri'
 import { MdPermMedia } from 'react-icons/md'
 import { AiOutlineFieldTime } from 'react-icons/ai'
-import { IoInvertMode } from 'react-icons/io5'
+import { BiShapeTriangle } from 'react-icons/bi'
+import { MdOutlineTextFields } from 'react-icons/md'
 import { EditorIcons } from '@moviemasher/client-react'
 import { MMTubeIcon } from '../Icons/MMTubeIcon'
 import { MMIcon } from '../Icons/MMIcon'
@@ -60,10 +58,11 @@ export const DefaultIcons: EditorIcons = {
   browser: <MdPermMedia key='browser' />,
   browserAudio: <RiMusic2Fill />,
   browserAudioStream: <RiChatVoiceFill />,
-  browserEffect: <RiFolderSettingsFill />,
+  browserEffect: <MdInvertColors />,
+  browserShape: <BiShapeTriangle />,
   browserImage: <RiImageFill />,
-  browserTheme: <RiFolderChartFill />,
-  browserTransition: <RiFolderTransferFill />,
+  browserText: <MdOutlineTextFields />,
+  browserFill: <IoColorFillSharp />,
   browserVideo: <RiFilmFill />,
   browserVideoStream: <RiVideoChatFill />,
   folder: <RiFolderLine key='folder' />,
@@ -81,12 +80,10 @@ export const DefaultIcons: EditorIcons = {
   playerPlay: <RiPlayCircleFill key="player-play"/>,
   redo: <RiArrowGoForwardLine />,
   remove: <RiDeleteBin7Line />,
-  split: <RiSplitCellsHorizontal />,
   streamers: <FaUserCircle key='streamers' />,
   matte: <BsReverseLayoutSidebarInsetReverse/>,
   timeline: <AiOutlineFieldTime key='timeline' />,
   timelineAddAudio: <RiMvLine />,
-  timelineAddTransition: <RiSwapBoxLine />,
   timelineAddVideo: <RiVideoLine />,
   audio: <RiMusicLine />,
   transition: <RiArrowLeftRightLine />,

@@ -1,8 +1,6 @@
 import { Propertied } from "../../../Base/Propertied"
 import { Scalar } from "../../../declarations"
-import { Effect } from "../../../Media/Effect/Effect"
-import { Clip } from "../../../Mixin/Clip/Clip"
-import { ClipOrEffect } from "../../Editor"
+import { isObject } from "../../../Utility/Is"
 import { Action, ActionOptions } from "./Action"
 
 export interface ChangeActionObject extends ActionOptions {
@@ -11,6 +9,10 @@ export interface ChangeActionObject extends ActionOptions {
   target: Propertied
   undoValue: Scalar
 }
+export const isChangeActionObject = (value: any): value is ChangeActionObject => {
+  return isObject(value) && "target" in value && "property" in value
+}
+
 
 /**
  * @category Action
@@ -50,10 +52,7 @@ export class ChangeAction extends Action {
     this.redo()
   }
 }
-
-
 export const isChangeAction = (value: any): value is ChangeAction => value instanceof ChangeAction
-
 export function assertChangeAction(value: any): asserts value is ChangeAction {
   if (!isChangeAction(value)) throw new Error('expected ChangeAction')
 }

@@ -1,12 +1,12 @@
 import React from 'react'
-import { PropertiedChangeHandler, Property, Scalar } from "@moviemasher/moviemasher.js"
+import { isDataType, PropertiedChangeHandler, Property, Scalar } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { InputContext } from '../../Contexts/InputContext'
 import {
   InspectorPropertyContainer, InspectorPropertyContainerProps
 } from './InspectorPropertyContainer'
-import { DataTypeInputs } from '../Editor/EditorInputs/DefaultInputs/DataTypeInputs'
+import { DataTypeInputs, DefinitionTypeInputs } from '../EditorInputs/EditorInputs'
 
 export interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
   property: Property
@@ -20,10 +20,9 @@ export interface InspectorPropertyProps extends PropsAndChildren, WithClassName 
 export function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   const { changeHandler, property, value, ...rest } = props
 
-  const { type, name } = property
+  const { type, name, tweenable } = property
 
-  // const value = instance.value(name)
-  const input = DataTypeInputs[type]
+  const input = isDataType(type) ? DataTypeInputs[type] : DefinitionTypeInputs[type]
 
   const inputContext = { property, value, changeHandler }
 

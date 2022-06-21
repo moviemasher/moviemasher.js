@@ -1,29 +1,50 @@
-import { FilesArgs, GraphFile, GraphFiles } from "../../declarations"
-import { AVType, DefinitionType, LoadType } from "../../Setup/Enums"
-import { Font, FontDefinition, FontObject } from "./Font"
+import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
 
-export class FontDefinitionClass extends PreloadableDefinition implements FontDefinition {
-  definitionFiles(args: FilesArgs): GraphFiles {
-    const { avType, graphType } = args
-    if (avType === AVType.Audio) return []
+
+export class FontDefinitionClass extends DefinitionBase implements FontDefinition {
+  constructor(...args: any[]) {
+    super(...args)
+    const [object] = args
+    const { source, url } = object as FontDefinitionObject
+    const sourceOrUrl = source || url || ''
+
+    this.source = source || sourceOrUrl
+    this.url = url || sourceOrUrl
+  }
+
+  graphFiles(args: GraphFileArgs): GraphFiles {
+    const { visible, editing, streaming } = args
+    if (!visible) return []
 
     const graphFile: GraphFile = {
-      type: this.loadType, file: this.preloadableSource(graphType), definition: this
+      localId: 'font',
+      type: this.loadType,
+      file: this.preloadableSource(editing),
+      definition: this, options: { loop: 1 }
     }
+    if (streaming) graphFile.options!.re = ''
+
     return [graphFile]
   }
-
-  get instance(): Font {
-    return this.instanceFromObject(this.instanceObject)
-  }
-
-  instanceFromObject(object : FontObject) : Font {
-    return new FontClass({ ...this.instanceObject, ...object })
+  instanceFromObject(object: FontObject = {}): Font {
+    return new FontClass(this.instanceArgs(object))
   }
 
   loadType = LoadType.Font
 
+  preloadableSource(editing = false): string {
+    if (!this.url) return this.source
+
+    return editing ? this.url : this.source
+  }
+
+  source = ''
+
   type = DefinitionType.Font
+
+  url = ''
 }

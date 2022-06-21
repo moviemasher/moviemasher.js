@@ -1,6 +1,5 @@
 import { Propertied } from "../../../Base/Propertied"
-import { EditorDefinitions } from "../../../Editor/EditorDefinitions/EditorDefinitions"
-import { Preloader } from "../../../Preloader/Preloader"
+import { Loader } from "../../../Loader/Loader"
 import { DroppingPosition, isLayerType, LayerType } from "../../../Setup/Enums"
 import { isObject } from "../../../Utility/Is"
 import { Mash, Mashes, MashObject } from "../../Mash/Mash"
@@ -12,8 +11,7 @@ export interface LayerObject  {
   label?: string
   mash?: MashObject
   layers?: LayerObjects
-  preloader?: Preloader
-  definitions?: EditorDefinitions
+  preloader?: Loader
 }
 
 export const isLayerObject = (value: any): value is LayerObject => {

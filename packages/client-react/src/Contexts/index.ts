@@ -1,6 +1,7 @@
 export * from './ApiContext'
 export * from './BrowserContext'
 export * from './ComposerContext'
+export * from './DefinitionContext'
 export * from './EditorContext'
 export * from './InputContext'
 export * from './InspectorContext'

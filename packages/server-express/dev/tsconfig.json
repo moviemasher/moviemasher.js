@@ -4,7 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "checkJs": false,
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "esModuleInterop": true,
     "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
@@ -14,5 +14,6 @@
     "strict": true,
     "target": "ESNext",
   },
-  "exclude": ["*.node", "**/node_modules/*"],
+  "exclude": ["../dist/*",  "../src/**/*.test*.ts", "*.node", "**/node_modules/*"],
+  "include": ["../src/**/*.ts", "../src/*.ts"],
 }

@@ -2,7 +2,6 @@
 set -e ;
 source dev/image/sh/options.sh
 
-
 $SUDO amazon-linux-extras enable python$PYTHON_VERSION ;
 $SUDO yum install -y python$PYTHON_VERSION ;
 

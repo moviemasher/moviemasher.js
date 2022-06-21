@@ -1,29 +1,23 @@
+import { ObjectUnknown } from "../../declarations"
 import { propertyInstance } from "../../Setup/Property"
-import { Any, ObjectUnknown } from "../../declarations"
-import { DataType } from "../../Setup/Enums"
-import { DefinitionClass } from "../../Base/Definition"
+import { DataType, TrackType } from "../../Setup/Enums"
 import { Default } from "../../Setup/Default"
-import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
+import { DefinitionClass } from "../../Definition/Definition"
+import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 
-const ClipPropertyObjects = [
-  { type: DataType.Frame },
-  { name: "frames", type: DataType.Frame, defaultValue: -1 },
-  { name: "label", defaultValue: "" },
-]
 
 export function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDefinitionClass & T {
   return class extends Base implements ClipDefinition {
-    constructor(...args : Any[]) {
+    constructor(...args : any[]) {
       super(...args)
-      const properties = ClipPropertyObjects.map(object => propertyInstance(object))
-      this.properties.push(...properties)
+      this.properties.push(propertyInstance({ name: "label", defaultValue: "" }))
+      this.properties.push(propertyInstance({ type: DataType.Frame }))
+      this.properties.push(propertyInstance({ name: "frames", type: DataType.Frame, defaultValue: -1 }))
     }
 
     audible = false
 
-    // TODO: determine if this is needed!
-    // used by theme, image, frame, transition
     private _duration? : number
 
     get duration() : number {
@@ -37,13 +31,10 @@ export function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDe
 
     set duration(value : number) { this._duration = value }
 
-    frames(quantize: number): number {
-      if (!this.duration) return 0
-
-      return timeFromSeconds(this.duration, quantize, 'floor').frame
-    }
 
     streamable = false
+
+    declare trackType: TrackType
 
     visible = false
   }

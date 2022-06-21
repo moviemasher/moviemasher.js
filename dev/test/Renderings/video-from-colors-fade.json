@@ -16,41 +16,14 @@
         "layer": 0,
         "clips": [
           {
-            "definitionId": "com.moviemasher.theme.color",
-            "type": "theme",
-            "color": "#4d22b3ff",
+            "definitionId": "com.moviemasher.visible.default",
+            "content": {
+              "color": "#FF0000"
+            },
             "frame": 0,
             "frames": 30,
-            "label": "Color",
-            "scaler": {
-              "definitionId": "com.moviemasher.scaler.default",
-              "type": "scaler"
-            },
-            "merger": {
-              "definitionId": "com.moviemasher.merger.default",
-              "type": "merger"
-            },
+            "label": "Red",
             "effects": []
-          }
-        ]
-      },
-      {
-        "dense": false,
-        "trackType": "audio",
-        "layer": 0,
-        "clips": []
-      },
-      {
-        "dense": false,
-        "trackType": "transition",
-        "layer": 0,
-        "clips": [
-          {
-            "definitionId": "com.moviemasher.transition.crossfade",
-            "type": "transition",
-            "frame": 0,
-            "frames": 30,
-            "label": "Crossfade"
           }
         ]
       },
@@ -60,20 +33,15 @@
         "layer": 1,
         "clips": [
           {
-            "definitionId": "com.moviemasher.theme.color",
-            "type": "theme",
-            "color": "#94e3feff",
+            "definitionId": "com.moviemasher.visible.default",
+            "opacity": 0.0,
+            "opacityEnd": 1.0,
+            "content": {
+              "color": "#00FF00"
+            },
             "frame": 0,
             "frames": 30,
-            "label": "Color",
-            "scaler": {
-              "definitionId": "com.moviemasher.scaler.default",
-              "type": "scaler"
-            },
-            "merger": {
-              "definitionId": "com.moviemasher.merger.default",
-              "type": "merger"
-            },
+            "label": "Green",
             "effects": []
           }
         ]

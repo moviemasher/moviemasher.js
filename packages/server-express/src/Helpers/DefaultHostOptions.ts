@@ -1,7 +1,7 @@
 import path from 'path'
 import {
   ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
-  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput, LoadType, Size
+  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput, LoadType, Dimensions
 } from "@moviemasher/moviemasher.js"
 
 import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
@@ -17,8 +17,8 @@ import { expandCommand } from '../Utilities/Expand'
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
 export interface HostOptionsDefault {
-  previewSize?: Size
-  outputSize?: Size
+  previewDimensions?: Dimensions
+  outputDimensions?: Dimensions
   port?: number
   host?: string
   outputRate?: number
@@ -36,7 +36,7 @@ export interface HostOptionsDefault {
 export const HostDefaultPort = 8570
 export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
   const {
-    previewSize, outputSize,
+    previewDimensions, outputDimensions,
     outputRate,
     port, auth, webServerHome,
     temporaryDirectory, fileUploadDirectory,
@@ -46,8 +46,8 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
   const definedHost = host || '0.0.0.0'
   const commandOutput: CommandOutput = {}
   const basePort = port || HostDefaultPort
-  if (outputSize) {
-    const { width, height } = outputSize
+  if (outputDimensions) {
+    const { width, height } = outputDimensions
     commandOutput.width = width
     commandOutput.height = height
   }
@@ -118,7 +118,7 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
 
 
   const rendering: RenderingServerArgs = {
-    cacheDirectory, authentication, commandOutputs, previewSize, outputSize
+    cacheDirectory, authentication, commandOutputs, previewDimensions, outputDimensions
   }
 
   const streamingFormatOptions: StreamingFormatOptions = {

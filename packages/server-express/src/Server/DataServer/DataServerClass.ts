@@ -24,7 +24,6 @@ import {
   DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId, Described,
   assertPopulatedString, isLayerMashObject, isLayerFolderObject, LayerObjects,
   StringsObject,
-  isPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -179,8 +178,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   defaultCast: ServerHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest> = async (req, res) => {
-    const previewSize = this.renderingServer?.args.previewSize
-    const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewSize }
+    const previewDimensions = this.renderingServer?.args.previewDimensions
+    const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewDimensions }
     try {
       const user = this.userFromRequest(req)
       const cast = await this.getLatestPromise(user, '`cast`') as CastObject
@@ -194,8 +193,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   defaultMash: ServerHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
-    const previewSize = this.renderingServer?.args.previewSize
-    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
+    const previewDimensions = this.renderingServer?.args.previewDimensions
+    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewDimensions }
     try {
       const user = this.userFromRequest(req)
       const mash = await this.getLatestPromise(user, '`mash`') as MashObject

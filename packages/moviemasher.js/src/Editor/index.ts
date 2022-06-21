@@ -1,5 +1,5 @@
 export * from "./Actions"
 export * from "./Editor"
 export * from "./EditorClass"
-export * from "./EditorDefinitions"
 export * from "./EditorFactory"
+export * from "./Preview"

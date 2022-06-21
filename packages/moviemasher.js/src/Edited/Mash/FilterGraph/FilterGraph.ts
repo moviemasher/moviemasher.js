@@ -1,50 +1,43 @@
-import { CommandInputs } from "../../../Api"
-import { GraphFile, GraphFiles, GraphFilter, GraphFilters, Size } from "../../../declarations"
-import { Evaluator } from "../../../Helpers/Evaluator"
+import { Dimensions } from "../../../Setup/Dimensions"
+import { GraphFiles, CommandFilters } from "../../../MoveMe"
 import { Time } from "../../../Helpers/Time/Time"
-import { Preloader } from "../../../Preloader/Preloader"
-import { AVType, GraphType } from "../../../Setup/Enums"
-import { FilterChain, FilterChains } from "../FilterChain/FilterChain"
-import { FilterGraphsInstance } from "../FilterGraphs/FilterGraphs"
+import { Loader } from "../../../Loader/Loader"
+import { CommandInputs } from "../../../Api"
+import { FilterChains } from "../FilterChain/FilterChain"
+import { Mash } from "../Mash"
 
-export interface FilterGraphOptions {
-  avType: AVType
-  graphType?: GraphType
-  preloading?: boolean
-  size: Size
-  time?: Time
+export interface FilterGraphArgs {
+  streaming?: boolean
+  size: Dimensions
+  time: Time
   videoRate: number
+  backcolor: string
+  mash: Mash
 }
-
-export interface FilterGraphObject extends Partial<FilterGraphOptions> {}
 
 export interface FilterGraph {
-  avType: AVType
+  // addGraphFile(graphFile: GraphFile): string
+  audible: boolean
+  backcolor: string
+  commandFilters: CommandFilters
   commandInputs: CommandInputs
   duration: number
-  graphFiles: GraphFiles
-  graphFilters: GraphFilters
-  time: Time
-}
-
-export interface FilterGraphInstance extends FilterGraph {
-  addGraphFile(graphFile: GraphFile): string
-  evaluator: Evaluator
-  /** the output of my last filterChain */
-  graphFilterOutput: string
-  graphFilterOutputs(graphFilter: GraphFilter): string[]
-  preloading: boolean
-  inputGraphFiles: GraphFiles
-  loadableGraphFiles: GraphFiles
-  preloader: Preloader
-  inputCount: number
-  duration: number
-  time: Time
+  editing: boolean
   filterChains: FilterChains
-  filterChainsInitialize(): void
-  filterGraphs: FilterGraphsInstance
-  graphType: GraphType
+  // filterChainsInitialize(): void
+  // graphFileId(localId: string): string
+  graphFiles: GraphFiles
+  // graphFilesById: Map <string, GraphFile>
+  // graphFilterOutputs(graphFilter: GraphFilter): string[]
+  // inputCount: number
+  // inputGraphFiles: GraphFiles
+  // inputIdsByGraphFileId: Map<string, string>
+  // loadableGraphFiles: GraphFiles
+  preloader: Loader
   quantize: number
-  size: Size
+  size: Dimensions
+  streaming: boolean
+  time: Time
   videoRate: number
+  visible: boolean
 }

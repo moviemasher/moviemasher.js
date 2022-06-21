@@ -6,8 +6,10 @@ import { DefinitionType, OutputType, TrackType } from "../Setup/Enums"
 import { mashInstance } from "../Edited/Mash/MashFactory"
 import { MashArgs, MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
-import { Image } from "../Media/Image/Image"
-import { EditorDefinitionsClass } from "../Editor"
+import { VisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { Defined } from "../Base/Defined"
+import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
+import { assertUpdatableDimensionsDefinition } from "../Mixin/UpdatableDimensions/UpdatableDimensions"
 
 describe("OutputFactory", () => {
   describe("video", () => {
@@ -25,18 +27,19 @@ describe("OutputFactory", () => {
         tracks: [
           {
             clips: [
-              { definitionId: globeDefinitionObject.id, frames: 30 },
-              { definitionId: cableDefinitionObject.id, frames: 40 },
-
+              { definitionId: visibleClipDefault.id, contentId: globeDefinitionObject.id, frames: 30 },
+              { definitionId: visibleClipDefault.id, contentId: cableDefinitionObject.id, frames: 40 },
             ]
-          }]
+          }
+        ]
       }
 
-      const mashArgs: MashArgs = { ...mashObject, definitions: new EditorDefinitionsClass(definitionObjects), preloader: new JestPreloader() }
+      Defined.define(...definitionObjects)
+      const mashArgs: MashArgs = { ...mashObject, preloader: new JestPreloader() }
       const mash = mashInstance(mashArgs)
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
-      const clips = videoTrack.clips as Image[]
+      const clips = videoTrack.clips as VisibleClip[]
       const testArgs = renderingProcessTestArgs(id)
 
       const videoOutputArgs: VideoOutputArgs = {
@@ -44,7 +47,7 @@ describe("OutputFactory", () => {
       }
       const outputVideo = OutputFactory.video(videoOutputArgs)
       const renderingDescription = await outputVideo.renderingDescriptionPromise()
-      const { commandOutput, audibleCommandDescription, visibleCommandDescriptions } = renderingDescription
+      const { commandOutput, visibleCommandDescriptions } = renderingDescription
 
       const { outputType } = commandOutput
       expect(outputType).toEqual(OutputType.Video)
@@ -53,7 +56,7 @@ describe("OutputFactory", () => {
       visibleCommandDescriptions?.forEach((description, index) => {
         const clip = clips[index]
 
-        const { duration, inputs, graphFilters } = description
+        const { duration, inputs } = description
 
         const timeRange = clip.timeRange(quantize)
         // console.log(clip.frames, duration, timeRange.lengthSeconds)
@@ -63,7 +66,11 @@ describe("OutputFactory", () => {
         expect(inputs?.length).toBe(1)
         const [input] = inputs!
         const { source } = input
-        expect(source).toBe(clip.definition.source)
+
+        const { content } = clip
+        const { definition } = content
+        assertUpdatableDimensionsDefinition(definition)
+        expect(source).toBe(definition.source)
       })
     })
   })

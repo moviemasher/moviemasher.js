@@ -1,42 +1,8 @@
 version: "3"
 services:
-  # zmq-client:
-  #   image: moviemasher/moviemasher.js:5.0.7
-  #   volumes:
-  #     - ./zmq-client.js:/home/node/app/zmq-client.js
-  #   entrypoint: node
-  #   links:
-  #     - zmqserver
-  #   command: zmq-client.js
-
-  # zmqserver:
-  #   image: moviemasher/moviemasher.js:5.0.7
-  #   ports:
-  #     - "11235:11235"
-  #   volumes:
-  #     - ./zmq-server.js:/home/node/app/zmq-server.js
-  #   entrypoint: node
-  #   command: zmq-server.js
-
-  # ffmpeg:
-  #   image: moviemasher/moviemasher.js:5.0.7
-  #   container_name: ffmpeg
-  #   ports:
-  #     - "0.0.0.0:11235:11235"
-  #   volumes:
-  #     - ../../temporary/ffmpeg:/home/node/app/output
-  #   entrypoint: ffmpeg
-  #   command: -y -loop 1 -re -i output/original.jpg -filter_complex '[0:v]crop=w=640:h=480[cropped];color=s=20x20:c=red[l];color=s=20x20:c=blue[r];[cropped][l]overlay=x=50:y=50[bg+l];[bg+l][r]overlay@r=y=100:x=100:[overlain];[overlain]zmq=bind_address=tcp\\://0.0.0.0\\:11235[out]' -map '[out]' -s 640x480 -f:v hls -c:v libx264 -hls_time 6 -hls_flags delete_segments -hls_delete_threshold 10 -g 60 -hls_list_size 10 -hls_segment_filename output/%06d.ts output/stream.m3u8
-  # httpd:
-  #   image: httpd
-  #   container_name: httpd
-  #   ports:
-  #     - "8080:80"
-  #   volumes:
-  #     - ../../temporary/ffmpeg:/usr/local/apache2/htdocs
   moviemasher:
     build:
-      dockerfile: ./dev/docker/Dockerfile.cnf
+      dockerfile: ./dev/image/Dockerfile.cnf
       context: ../../
     image: moviemasher/moviemasher.js:5.0.7
     container_name: moviemasher
@@ -47,7 +13,3 @@ services:
       - ./server-config.json:/home/node/app/workspaces/example-express-react/dist/server-config.json
       - ../../temporary/media:/home/node/app/workspaces/example-express-react/dist/public/media/username
       - ../../temporary/data:/home/node/app/workspaces/example-express-react/dist/data
-      # - ../../docs/:/home/node/app/docs/
-      # - ../../dev/:/home/node/app/dev/
-      # - ../../packages/:/home/node/app/packages/
-      # - ../../workspaces/:/home/node/app/workspaces/

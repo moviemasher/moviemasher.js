@@ -1,112 +1,82 @@
 import {
-  GraphFile, GraphFilter, UnknownObject, ValueObject
-} from "../../declarations"
-import { AVType, GraphType, LoadType } from "../../Setup/Enums"
-import { Default } from "../../Setup/Default"
-import { Time } from "../../Helpers/Time/Time"
-import { InstanceBase } from "../../Base/Instance"
-import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
-import { TransformableMixin } from "../../Mixin/Transformable/TransformableMixin"
-import { AudibleMixin } from "../../Mixin/Audible/AudibleMixin"
-import { AudibleFileMixin } from "../../Mixin/AudibleFile/AudibleFileMixin"
-import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
+  LoadedVideo} from "../../declarations"
+import { GraphFile } from "../../MoveMe"
+import { LoadType, Phase } from "../../Setup/Enums"
+import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
-import { Errors } from "../../Setup/Errors"
+import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
+import { assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { UpdatableDimensionsMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsMixin"
+import { ChainLinks, Filter, FilterChainPhase } from "../../Filter/Filter"
 
-const WithClip = ClipMixin(InstanceBase)
-const WithAudible = AudibleMixin(WithClip)
-const WithAudibleFile = AudibleFileMixin(WithAudible)
-const WithVisible = VisibleMixin(WithAudibleFile)
-const WithTransformable = TransformableMixin(WithVisible)
+import { ContentMixin } from "../../Content/ContentMixin"
+import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
+import { ContainerMixin } from "../../Container/ContainerMixin"
 
-export class VideoClass extends WithTransformable implements Video {
-  get copy() : Video { return <Video> super.copy }
+const VideoWithContent = ContentMixin(InstanceBase)
+const VideoWithContainer = ContainerMixin(VideoWithContent)
+const VideoWithPreloadable = PreloadableMixin(VideoWithContainer)
+const VideoWithUpdatableDimensions = UpdatableDimensionsMixin(VideoWithPreloadable)
+const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableDimensions)
+
+export class VideoClass extends VideoWithUpdatableDuration implements Video {
+  constructor(...args: any[]) {
+    super(...args)
+    this.setsarFilter = this.definition.setsarFilterDefinition.instanceFromObject({
+      sar: 1, max: 1
+    })
+    this.fpsFilter = this.definition.fpsFilterDefinition.instanceFromObject()
+  }
+  copy() : Video { return super.copy() as Video }
 
   declare definition : VideoDefinition
 
-  definitionTime(quantize : number, time : Time) : Time {
-    const scaledTime = super.definitionTime(quantize, time)
-    if (this.speed === Default.instance.video.speed) return scaledTime
-
-    return scaledTime.divide(this.speed) //, 'ceil')
+  chainLinks(): ChainLinks {
+    const links: ChainLinks = []
+    links.push(this)
+    links.push(...super.chainLinks())
+    links.push(this.setsarFilter, this.fpsFilter)
+    return links
   }
 
-  override filterChainInitialize(filterChain: FilterChain): void {
-    // console.log(this.constructor.name, "initializeFilterChain")
+  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
+    if (phase !== Phase.Initialize) return
+
     const { filterGraph } = filterChain
-    const {
-      avType, graphType, preloading, preloader, time, quantize, size, videoRate
-    } = filterGraph
+    const { streaming, editing, preloader } = filterGraph
+
+    const graphFile = this.graphFile(editing)
+
+    let { width, height } = this.definition
+    if (!(isAboveZero(width) && isAboveZero(height))) {
+      const graphFile = this.graphFile(editing)
+      const loaded: LoadedVideo = preloader.getFile(graphFile)
+      width = loaded.width
+      height = loaded.width
+    }
+    filterChain.size = { width, height }
+
+    if (streaming) graphFile.options!.re = ''
+
+    return { graphFiles: [graphFile], link: this }
+  }
+
+  graphFile(editing: boolean): GraphFile {
     const { definition } = this
-    const file = definition.preloadableSource(graphType)
-    if (!file) throw Errors.invalid.url
+    const file = definition.preloadableSource(editing)
+    assertPopulatedString(file, editing ? 'url' : 'source')
 
-    const options: ValueObject = {}
     const graphFile: GraphFile = {
-      type: LoadType.Video, file, options, input: true, definition
+      localId: 'video',
+      input: true, options: {}, type: LoadType.Video, file, definition
     }
-    const inputId = filterChain.addGraphFile(graphFile)
-
-    const definitionStartTime = this.definitionTime(quantize, time)
-    switch (graphType) {
-      case GraphType.Cast: {
-        options.re = ''
-        // intentional fallthrough to Mash
-      }
-      case GraphType.Mash: {
-
-        if (avType === AVType.Audio) {
-          // TODO: add trim as options.ss
-        } else {
-          const trimFilter: GraphFilter = {
-            avType: AVType.Both,
-            inputs: [inputId], filter: 'trim', options: { start: definitionStartTime.seconds }
-          }
-          filterChain.addGraphFilter(trimFilter)
-
-          const fpsFilter: GraphFilter = {
-            inputs: [], filter: 'fps', options: { fps: videoRate }
-          }
-          filterChain.addGraphFilter(fpsFilter)
-          const setptsFilter: GraphFilter = {
-            inputs: [], filter: 'setpts', options: { expr: 'PTS-STARTPTS' }
-          }
-          filterChain.addGraphFilter(setptsFilter)
-          const setsarFilter: GraphFilter = {
-            inputs: [], filter: 'setsar', options: { sar: 1, max: 1 }
-          }
-          filterChain.addGraphFilter(setsarFilter)
-        }
-
-        break
-      }
-      case GraphType.Canvas: {
-        options.width = size.width
-        options.height = size.height
-        options.videoRate = videoRate
-        options.firstFrame = definitionStartTime.frame
-
-        options.firstFrame = definitionStartTime.frame
-
-
-        if (!preloading) {
-          const context = this.contextAtTimeToSize(preloader, definitionStartTime, quantize)
-
-          if (!context) throw Errors.invalid.context + ' ' + this.constructor.name + '.initializeFilterChain'
-
-          filterChain.visibleContext = context
-        }
-        break
-      }
-    }
+    return graphFile
   }
 
-  speed = Default.instance.video.speed
+  private fpsFilter: Filter
 
-  toJSON() : UnknownObject {
-    const object = super.toJSON()
-    if (this.speed !== Default.instance.video.speed) object.speed = this.speed
-    return object
-  }
+  mutable = true
+
+  private setsarFilter: Filter
 }

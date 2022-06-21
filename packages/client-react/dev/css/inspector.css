@@ -14,11 +14,11 @@
   text-transform: capitalize;
 }
 
-.moviemasher .editor .panel.inspector label {
+.moviemasher .editor .panel.inspector details>div>label {
   text-transform: capitalize;
 }
 
-.moviemasher .editor .panel.inspector label:after {
+.moviemasher .editor .panel.inspector details>div>label:after {
   content: ': ';
 }
 
@@ -43,6 +43,33 @@
   background-color: var(--back-primary);
   overflow-y: scroll;
 }
+
+
+.moviemasher .editor .panel.inspector .definition-drop {
+  display: grid;
+  width: 100%;
+  aspect-ratio: var(--preview-aspect-ratio);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+  color: var(--fore-primary);
+  border-color: var(--fore-primary);
+  background-color: var(--back-primary);
+}
+
+
+.moviemasher .editor .panel.inspector .definition {
+  overflow-x: hidden;
+  background-size: cover;
+  background-image: var(--clip-icon);
+  background-position: center;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--fore-secondary);
+  color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+
 
 .moviemasher .editor .panel.inspector .effects .effect {
   width: 100%;
@@ -71,6 +98,6 @@
 }
 
 
-.moviemasher .editor .panel.inspector .drop {
+.moviemasher .editor .panel.inspector .dropping {
   background-color: var(--color-back-secondary);
 }

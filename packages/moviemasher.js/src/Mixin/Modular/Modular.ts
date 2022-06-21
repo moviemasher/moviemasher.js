@@ -1,10 +1,10 @@
-import { Constrained, ModularGraphFilter } from "../../declarations"
-import { VisibleContext } from "../../Context/VisibleContext"
-import { Definition, DefinitionObject } from "../../Base/Definition"
-import { Filter, FilterDefinitionObject } from "../../Media/Filter/Filter"
-import { Instance, InstanceObject } from "../../Base/Instance"
-import { Property, PropertyObject } from "../../Setup/Property"
+import { Constrained } from "../../declarations"
+import { Definition, DefinitionObject } from "../../Definition/Definition"
+import { ChainLinks, Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Instance, InstanceObject } from "../../Instance/Instance"
+import { PropertyObject } from "../../Setup/Property"
 import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+
 
 export interface ModularObject extends InstanceObject {
   id?: string
@@ -12,18 +12,19 @@ export interface ModularObject extends InstanceObject {
 
 export interface Modular extends Instance {
   definition: ModularDefinition
+
+  chainLinks(): ChainLinks
 }
 
 export interface ModularDefinitionObject extends DefinitionObject {
+  initializeFilter?: FilterDefinitionObject
+  finalizeFilter?: FilterDefinitionObject
   filters? : FilterDefinitionObject[]
   properties? : PropertyObject[]
 }
 
 export interface ModularDefinition extends Definition {
   filters: Filter[]
-  modularGraphFilters(modular: Modular, filterChain: FilterChain, visibleContext?: VisibleContext ): ModularGraphFilter[]
-  populateFilterChain(filterChain: FilterChain, modular: Modular): void
-  propertiesCustom: Property[]
 }
 
 export type ModularClass = Constrained<Modular>

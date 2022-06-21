@@ -1,4 +1,4 @@
-import { DroppingPosition, isLayerFolder, SelectionType, SelectType } from "@moviemasher/moviemasher.js"
+import { ClassSelected, DroppingPosition, isLayerFolder } from "@moviemasher/moviemasher.js"
 
 import React from "react"
 import { ComposerContext } from "../../Contexts/ComposerContext"
@@ -24,7 +24,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
     validDragType, droppingPosition, setDroppingPosition, onDrop,
     droppingLayer, setDroppingLayer, onDragLeave
   } = composerContext
-  const { editor, selectedClass, setDraggable, droppingPositionClass } = editorContext
+  const { editor, setDraggable, droppingPositionClass } = editorContext
   const { layer } = layerContext
   if (!(editor && layer)) return null
 
@@ -86,7 +86,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
   const calculatedClassName = (): string => {
     const selected = layer === editor.selection.layer
     const classes: string[] = [propsClassName]
-    if (selected) classes.push(selectedClass)
+    if (selected) classes.push(ClassSelected)
     if (droppingLayer === layer) {
       classes.push(droppingPositionClass(droppingPosition))
     }

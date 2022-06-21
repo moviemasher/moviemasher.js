@@ -12,22 +12,22 @@ const LayerFolderDefault = { type: LayerType.Folder, collapsed: false, layers: [
 const LayerMashDefault = { type: LayerType.Mash, mash: {} }
 
 export const layerFolderInstance = (object: LayerFolderObject = LayerFolderDefault): LayerFolder => {
-  const { definitions, preloader } = object
+  const { preloader } = object
   object.layers ||= []
   const args:LayerFolderArgs = {
     ...object,
-    layers: object.layers.map(layer => layerInstance({ definitions, preloader, ...layer }))
+    layers: object.layers.map(layer => layerInstance({ preloader, ...layer }))
   }
   return new LayerFolderClass(args)
 }
 
 export const layerMashInstance = (object: LayerMashObject = LayerMashDefault): LayerMash => {
-  const { definitions, preloader } = object
+  const { preloader } = object
 
   object.mash ||= {}
   const args: LayerMashArgs = {
     ...object,
-    mash: mashInstance({ preloader, definitions, ...object.mash })
+    mash: mashInstance({ preloader, ...object.mash })
   }
   return new LayerMashClass(args)
 }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { ApiClient, Streamer, DefaultStreamerProps } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const applicationOptions = { previewSize: { width: 480, height: 270 } }
+const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
 const options = DefaultStreamerProps(applicationOptions)
 const caster = <Streamer {...options} />
 const editor = <ApiClient>{caster}</ApiClient>

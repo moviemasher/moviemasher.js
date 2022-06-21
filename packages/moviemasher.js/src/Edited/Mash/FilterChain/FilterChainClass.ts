@@ -1,98 +1,143 @@
-import { VisibleContext } from "../../../Context"
-import { GraphFile, GraphFilter, GraphFilters, ModularGraphFilter } from "../../../declarations"
-import { GraphType } from "../../../Setup"
+import { Dimensions } from "../../../Setup/Dimensions"
+import { Evaluator, EvaluatorArgs } from "../../../Helpers/Evaluator"
+import { Clip } from "../../../Mixin/Clip/Clip"
+import { FilterGraph } from "../FilterGraph/FilterGraph"
+import { FilterChain, FilterChainArgs } from "./FilterChain"
+import { Phase } from "../../../Setup/Enums"
+import { ChainLink, ChainLinks, FilterChainPhases } from "../../../Filter/Filter"
+import { CommandFilter, CommandFilters, GraphFileArgs, GraphFiles } from "../../../MoveMe"
 import { Errors } from "../../../Setup/Errors"
-import { FilterGraphInstance } from "../FilterGraph/FilterGraph"
-import { FilterChain } from "./FilterChain"
-
-export interface FilterChainConstructorArgs {
-  graphFilter?: GraphFilter
-  graphFilters?: GraphFilters
-  filterGraph: FilterGraphInstance
-}
 
 export class FilterChainClass implements FilterChain {
-  constructor(public args: FilterChainConstructorArgs) { }
-
-  addGraphFile(graphFile: GraphFile): string {
-    return this.filterGraph.addGraphFile(graphFile)
+  constructor(public args: FilterChainArgs) {
   }
 
-  addGraphFilter(graphFilter: GraphFilter): void {
-    this.assureInputsAndOutputs(graphFilter)
-    const { graphFilters } = this
-    graphFilters.push(graphFilter)
+  _chainLinks?: ChainLinks
+  get chainLinks() { return this._chainLinks ||= this.clip.chainLinks() }
+
+  get clip(): Clip { return this.args.clip }
+
+
+  get commandFilters(): CommandFilters {
+    const commandFilters: CommandFilters = []
+
+    return commandFilters
+
+    // const { duration, videoRate: rate, backcolor, size } = this
+    // const color = backcolor || colorTransparent
+    // const colorCommandFilter: CommandFilter = {
+    //   ffmpegFilter: 'color',
+    //   options: { rate, color, size: `${size.width}x${size.height}` },
+    //   outputs: [FilterGraphInput]
+    // }
+
+    // if (duration) colorCommandFilter.options.duration = duration
+    // commandFilters.push(colorCommandFilter)
+
+    // let prevOutput = ''
+
+    //   const { filterChainPhases } = this
+    //   filterChainPhases.forEach(filterChainPhase => {
+    //     const { link, values } = filterChainPhase
+    //     const commands = link.filterChainServerFilters(this, values || {})
+    //     let prevCommandFilter: CommandFilter | undefined = undefined
+
+    //     const { length } = commands
+    //     commands.forEach((commandFilter, index) => {
+    //       const { inputs, ffmpegFilter } = commandFilter
+    //       commandFilter.outputs ||= [`${ffmpegFilter}${index}`]
+
+    //       if (inputs && !inputs.length) {
+    //         if (prevCommandFilter?.outputs?.length) inputs.push(...prevCommandFilter.outputs)
+    //         else {
+    //           const { inputCount } = this.filterGraph
+    //           if (inputCount) {
+    //             const inputName = `${inputCount - 1}:v`
+    //             // console.log(this.constructor.name, "commandFilters setting inputs", ffmpegFilter, inputName)
+    //             commandFilter.inputs = [inputName]
+    //           }
+    //         }
+    //       }
+    //       commandFilters.push(commandFilter)
+    //       if (index === length - 1) {
+    //         if (!commandFilter.inputs?.length && prevCommandFilter && prevOutput) {
+    //           const { outputs: lastOutputs } = prevCommandFilter
+    //           if (!lastOutputs?.length) throw new Error(Errors.internal + 'lastOutputs')
+
+    //           const lastOutput = lastOutputs[lastOutputs.length - 1]
+    //           commandFilter.inputs = [prevOutput, lastOutput]
+    //         }
+    //       }
+    //       prevOutput = commandFilter.outputs[commandFilter.outputs.length - 1]
+    //       prevCommandFilter = commandFilter
+    //     })
+    //   })
+
+    // return commandFilters
   }
 
-  addModularGraphFilter(modularGraphFilter: ModularGraphFilter): void {
-    const { graphFiles } = modularGraphFilter
-    graphFiles?.forEach(graphFile => { this.addGraphFile(graphFile) })
-    this.addGraphFilter(modularGraphFilter)
-  }
 
-  private assureInputsAndOutputs(graphFilter: GraphFilter): void {
-    const { graphFilters } = this
-    const prevFilter: GraphFilter = graphFilters[graphFilters.length - 1]
-    const { inputs, outputs, filter } = graphFilter
-    if (!outputs) graphFilter.outputs = [this.uniqueFilter(filter)]
-    if (inputs && !inputs.length)  {
-      if (prevFilter?.outputs?.length) inputs.push(...prevFilter.outputs)
-      else {
-        const {inputCount} = this.filterGraph
-        if (inputCount) graphFilter.inputs = [`${inputCount - 1}:v`]
-      }
+  private _evaluator?: Evaluator
+  get evaluator() { return this._evaluator ||= this.evaluatorInitialize }
+  get evaluatorInitialize(): Evaluator {
+    const { filterGraph, args } = this
+    const { timeRange, tweenTime } = args
+    const { size } = filterGraph
+    const evaluatorArgs: EvaluatorArgs = {
+      instance: this.clip, outputDimensions: size, timeRange, tweenTime
     }
+    return new Evaluator(evaluatorArgs)
   }
 
-  private assureMergerInputsAndOutputs(merger: GraphFilter): void {
-    const { filterGraph, graphFilters } = this
-    if (!merger.outputs?.length) merger.outputs = filterGraph.graphFilterOutputs(merger)
-    if (!merger.inputs?.length) {
-      const prevOutput = filterGraph.graphFilterOutput
-      if (!prevOutput) throw Errors.internal + 'graphFilterOutput'
+  get filterGraph(): FilterGraph { return this.args.filterGraph }
 
-      const last = graphFilters[graphFilters.length - 1]
-      if (!last) {
-        console.trace(this.constructor.name, "graphFilter with no last", graphFilters.length)
-        throw Errors.internal + 'last'
-      }
-      const { outputs: lastOutputs } = last
-      if (!lastOutputs?.length) throw Errors.internal + 'lastOutputs'
+  _filterChainPhases?: FilterChainPhases
+  get filterChainPhases() {
+    return this._filterChainPhases ||= this.phasesFromLinks(this.chainLinks)
+  }
+  private phasesFromLinks(chainLinks: ChainLinks): FilterChainPhases {
+    const chainPhases: FilterChainPhases = []
+    // const { chainLinks } = this
+    const filterAdd = (chainLink: ChainLink, phase: Phase): void => {
+      const result = chainLink.filterChainPhase(this, phase)
+      if (!result) return
 
-      const lastOutput = lastOutputs[lastOutputs.length - 1]
-      merger.inputs = [prevOutput, lastOutput]
+      chainPhases.push(result)
     }
+    chainLinks.forEach(filter => {
+      filterAdd(filter, Phase.Initialize)
+      filterAdd(filter, Phase.Populate)
+      filterAdd(filter, Phase.Finalize)
+    })
+    return chainPhases
   }
 
-  get filterGraph(): FilterGraphInstance { return this.args.filterGraph }
+  // graphFile(localId: string): GraphFile {
+  //   return this.filterGraph.graphFilesById.get(this.filterGraph.graphFileId(localId))!
+  // }
 
-  private _graphFilter?: GraphFilter
-  get graphFilter(): GraphFilter | undefined {
-    return this._graphFilter ||= this.args.graphFilter
-  }
-  set graphFilter(merger: GraphFilter | undefined) {
-    if (!merger) throw Errors.invalid.object + 'graphFilter'
 
-    const { filterGraph } = this
-    const { preloading, graphType } = filterGraph
-    if (!preloading && graphType !== GraphType.Canvas) this.assureMergerInputsAndOutputs(merger)
-
-    this._graphFilter = merger
+  private _graphFiles?: GraphFiles
+  get graphFiles() { return this._graphFiles ||= this.graphFilesInitialize }
+  get graphFilesInitialize():GraphFiles {
+    const graphFiles: GraphFiles = []
+    const { quantize, visible, streaming, time } = this.args.filterGraph
+    const graphFileArgs: GraphFileArgs = { quantize, visible, streaming, time }
+    return this.clip.graphFiles(graphFileArgs)
   }
 
-  private _graphFilters?: GraphFilters
-  get graphFilters(): GraphFilters {
-    return this._graphFilters ||= this.args.graphFilters || []
-  }
+  // graphFilters: GraphFilters = []
 
-  uniqueFilter(filter: string): string {
-    const { graphFilters } = this
-    const filters = graphFilters.filter(graphFilter => graphFilter.filter === filter)
-    const { length } = filters
-    return `${filter.toUpperCase()}${length}`
-  }
+  // inputId(localId: string): string {
+  //   return this.filterGraph.inputIdsByGraphFileId.get(this.filterGraph.graphFileId(localId))!
+  // }
 
-  _visibleContext?: VisibleContext
-  get visibleContext(): VisibleContext { return this._visibleContext! }
-  set visibleContext(value: VisibleContext) { this._visibleContext = value }
+  get size(): Dimensions { return this.filterGraph.size  }
+
+  // uniqueFilter(filter: string): string {
+  //   const { graphFilters } = this
+  //   const filters = graphFilters.filter(graphFilter => graphFilter.ffmpegFilter === filter)
+  //   const { length } = filters
+  //   return `${filter.toUpperCase()}${length}`
+  // }
 }
