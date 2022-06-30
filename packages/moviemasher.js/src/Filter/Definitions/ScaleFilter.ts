@@ -1,10 +1,10 @@
-import { ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
-import { ChainBuilder, Transform, Transforms } from "../../MoveMe"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase, TransformType } from "../../Setup/Enums"
+import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertDimensions, assertNumber } from "../../Utility/Is"
+import { assertAboveZero, assertPopulatedString } from "../../Utility/Is"
+import { idGenerate } from "../../Utility/Id"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
 
 /**
  * @category Filter
@@ -14,37 +14,38 @@ export class ScaleFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: 'width', type: DataType.Number,
-      defaultValue: 1.0, step: 0.01 // , min: 0.0, max: 10.0
+      name: 'width', type: DataType.Percent, defaultValue: 1.0, max: 2.0
     }))
     this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: 'height', type: DataType.Number,
-      defaultValue: 1.0, step: 0.01 // , min: 0.0, max: 10.0
+      name: 'height', type: DataType.Percent, defaultValue: 1.0, max: 2.0
+    }))
+    this.properties.push(propertyInstance({
+      name: `width${PropertyTweenSuffix}`, type: DataType.Percent, 
+      defaultValue: 1.0, max: 2.0
+    }))
+    this.properties.push(propertyInstance({
+      name: `height${PropertyTweenSuffix}`, type: DataType.Percent, 
+      defaultValue: 1.0, max: 2.0
     }))
     this.populateParametersFromProperties()
   }
 
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const commandFilters: CommandFilters = []
+    const { filter, duration, filterInput } = args
+    const values = filter.scalarObject(!!duration)
+    const { width, height } = values
+    assertPopulatedString(filterInput)
+    assertAboveZero(width)
+    assertAboveZero(height)
+    const { ffmpegFilter } = this
+  
+    const commandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter, options: { width, height }, outputs: [idGenerate(ffmpegFilter)]
+    }
+    commandFilters.push(commandFilter)
+    return commandFilters
+  }
+
   phase = Phase.Populate
-
-  transforms(dimensions: Dimensions, valueObject: ValueObject): Transforms {
-    assertDimensions(valueObject)
-    const { width: outWidth, height: outHeight } = valueObject
-    const { width: inWidth, height: inHeight } = dimensions
-    assertNumber(inWidth)
-    assertNumber(inHeight)
-    const x = outWidth / inWidth
-    const y = outHeight / inHeight
-    const transform: Transform = { transformType: TransformType.Scale, x, y }
-    return [transform]
-  }
-
-  valueObject(filterChain: ChainBuilder): ValueObject {
-    const { evaluator, size } = filterChain
-    const { width: outWidth, height: outHeight } = size
-
-    const width = evaluator.parameterNumber('width') * outWidth
-    const height = evaluator.parameterNumber('height') * outHeight
-
-    return { width, height }
-  }
 }

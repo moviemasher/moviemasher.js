@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, Directions } from '@moviemasher/moviemasher.js'
+import { DataType, DirectionLabels } from '@moviemasher/moviemasher.js'
 
 import { InputContext } from '../../../Contexts/InputContext'
 import { ReactResult } from '../../../declarations'
@@ -18,8 +18,8 @@ export function DefaultDirection8Input(): ReactResult {
 
   const selected = String(value)
 
-  const options = Directions.map((id, index) => {
-    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+  const options = DirectionLabels.map((id, index) => {
+    const optionProps = { value: index, children: id, key: id }
     return <option {...optionProps} />
   })
 

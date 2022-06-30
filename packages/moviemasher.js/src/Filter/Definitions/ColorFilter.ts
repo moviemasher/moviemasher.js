@@ -1,16 +1,13 @@
-import { SvgContent, ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
-import { Chain, ChainBuilder, CommandFilter } from "../../MoveMe"
+import { SvgContent } from "../../declarations"
+import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { pixelColor } from "../../Utility/Pixel"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, Phase } from "../../Setup/Enums"
-import { colorYellow } from "../../Utility/Color"
 import { propertyInstance } from "../../Setup/Property"
 import { NamespaceSvg } from "../../Setup/Constants"
-import { Filter, ServerFilters } from "../Filter"
-import { assertAboveZero, assertPopulatedString, assertPositive } from "../../Utility/Is"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
-import { Propertied } from "../../Base/Propertied"
+import { assertAboveZero, assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { idGenerate } from "../../Utility/Id"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
 
 /**
  * @category Filter
@@ -19,62 +16,71 @@ export class ColorFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, name: 'color', type: DataType.Rgb, 
-      defaultValue: colorYellow
+      tweenable: true, name: 'color', type: DataType.Rgb
     }))
-    const keys = ['rate', 'width', 'height']
+    
+    const keys = ['x', 'y', 'width', 'height']
     keys.forEach(name => {
-      this.properties.push(propertyInstance({
-        custom: true, name, type: DataType.Number, defaultValue: 0,
+      this.properties.push(propertyInstance({ 
+        tweenable: true, name, type: DataType.Number 
       }))
     })
     this.populateParametersFromProperties()
   }
+
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const commandFilters: CommandFilters = []
+    const { filter, videoRate, duration } = args
+    assertAboveZero(videoRate, 'videoRate')
+
+    const x = filter.value('x')
+    const y = filter.value('y')
+    const width = filter.value('width')
+    const height = filter.value('height')
+    const color = filter.value('color')
+    
+
+    
+    // make larger rect and crop if x/y > 0 or duration
+    // use geq to fade colors
   
-  chain(outputDimensions: Dimensions, filter: Filter, propertied?: Propertied): Chain {
-    const chain = super.chain(outputDimensions, filter, propertied)
-    const { commandFilters } = chain
-    const values = this.chainValues(filter, propertied)
-    const { color, rate, width, height} = values
+
+    if (duration) {
+
+      const xEnd = filter.value(`x${PropertyTweenSuffix}`)
+      const yEnd = filter.value(`y${PropertyTweenSuffix}`)
+      const widthEnd = filter.value(`width${PropertyTweenSuffix}`)
+      const heightEnd = filter.value(`height${PropertyTweenSuffix}`)
+      const colorEnd = filter.value(`color${PropertyTweenSuffix}`)
+    }
+    
+
     assertPopulatedString(color)
-    assertAboveZero(rate)
-    assertAboveZero(width)
-    assertAboveZero(height)
-    const w = Math.round(width * outputDimensions.width)
-    const h = Math.round(width * outputDimensions.height)
+    assertAboveZero(width, 'width')
+    assertAboveZero(height, 'height')
+    
     const { ffmpegFilter } = this
-    const serverFilter: CommandFilter = {
-      ffmpegFilter, options: { color, rate, size: [w, h].join('x') }
+    const commandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter, 
+      options: { color, rate: videoRate, size: [width, height].join('x') },
+      outputs: [idGenerate(ffmpegFilter)]
     }
-    commandFilters.push(serverFilter)
-    return chain
+    if (isAboveZero(duration)) commandFilter.options.duration = duration
+    commandFilters.push(commandFilter)
+    return commandFilters
   }
 
-  serverFilters(filterChain: FilterChain, values: ValueObject): ServerFilters {
-    const { ffmpegFilter } = this
-    const { filterGraph } = filterChain
-    const { videoRate: rate, size } = filterGraph
-    const { width, height } = size
-
-    const serverFilter: CommandFilter = {
-      ffmpegFilter, options: { ...values, rate, size: `${width}x${height}` }
-    }
-    return [serverFilter]
-  }
-
-  valueObject(filterChain: ChainBuilder): ValueObject {
-    const { evaluator } = filterChain
-    return { color: String(evaluator.parameter('color')) }
-  }
-
-  svgContent(dimensions: Dimensions, valueObject: ValueObject): SvgContent {
-    const { color } = valueObject
+  filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent {
+    const { filter } = args
+    const valueObject = filter.scalarObject(false)
+    const { x, y, width, height, color } = valueObject
     assertPopulatedString(color)
 
-    const { width, height } = dimensions
     const rectElement = globalThis.document.createElementNS(NamespaceSvg, 'rect')
     rectElement.setAttribute('width', String(width))
     rectElement.setAttribute('height', String(height))
+    rectElement.setAttribute('x', String(x))
+    rectElement.setAttribute('y', String(y))
     rectElement.setAttribute('fill', pixelColor(color))
     return rectElement
   }

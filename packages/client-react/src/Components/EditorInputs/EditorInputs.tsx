@@ -23,6 +23,7 @@ export const DataTypeInputs: DataTypeElements = {
   [DataType.Track]: EmptyElement,
   [DataType.DefinitionId]: EmptyElement,
   [DataType.FontId]: EmptyElement,
+  [DataType.Percent]: EmptyElement,
   [DataType.ContainerId]: EmptyElement,
   [DataType.ContentId]: EmptyElement,
   [DataType.Boolean]: EmptyElement,

@@ -15,6 +15,6 @@ export default {
   plugins: [
     peerDepsExternal(),
     json( { preferConst: true, indent: "  ", namedExports: true }),
-    ts({ tsconfig: "./dev/tsconfig.json" })
+    ts()
   ],
 }

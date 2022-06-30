@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, Directions } from '@moviemasher/moviemasher.js'
+import { DataType, DirectionLabels } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult } from '../../../declarations'
 import { InputContext } from '../../../Contexts/InputContext'
@@ -15,8 +15,8 @@ export function DefaultDirection4Input(props:PropsWithoutChild): ReactResult {
     changeHandler(property.name, event.target.value)
   }
 
-  const options = Directions.slice(0, 3).map((id, index) => {
-    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+  const options = DirectionLabels.slice(0, 3).map((id, index) => {
+    const optionProps = { value: index, children: id, key: id }
     return <option {...optionProps} />
   })
 

@@ -80,7 +80,6 @@ export class Defined {
 
     this.byIdAdd(definition)
     this.byType(type).push(definition)
-    console.log(this.name, "install", type, id, ...this.byId.keys())
     return definition
   }
 

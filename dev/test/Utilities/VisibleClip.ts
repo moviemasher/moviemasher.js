@@ -3,20 +3,22 @@ import { VisibleClipObject } from "../../../packages/moviemasher.js/src/Media/Vi
 import { visibleClipDefault, visibleClipInstance } from "../../../packages/moviemasher.js/src/Media/VisibleClip/VisibleClipFactory"
 import { imageDefinitionObject } from "./Image"
 
-export const visibleClipObject = (): VisibleClipObject => (
-   { definitionId: visibleClipDefault.id }
-)
+export const visibleClipObject = (object: VisibleClipObject = {}): VisibleClipObject => {
+  object.definitionId ||= visibleClipDefault.id
+  object.frames ||= 10
+  return object
+}
 
 export const visibleClip = (object?: VisibleClipObject) => (
   visibleClipInstance(object || visibleClipObject()) 
 )
 
-export const visibleClipObjectWithImage = (): VisibleClipObject => {
-  const object = imageDefinitionObject()
-  Defined.define(object)
-  return { ...visibleClipObject(), contentId: object.id }
+export const visibleClipObjectWithImage = (object?: VisibleClipObject): VisibleClipObject => {
+  const definitionObject = imageDefinitionObject()
+  Defined.define(definitionObject)
+  return { ...visibleClipObject(object), contentId: definitionObject.id }
 }
 
-export const visibleClipWithImage = () => (
-  visibleClip(visibleClipObjectWithImage())
+export const visibleClipWithImage = (object?: VisibleClipObject) => (
+  visibleClip(visibleClipObjectWithImage(object))
 )

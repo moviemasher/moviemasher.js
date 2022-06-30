@@ -7,6 +7,7 @@ import { FilterGraphsArgs, FilterGraphs } from "./FilterGraphs"
 import { timeFromArgs, timeRangeFromArgs } from "../../../Helpers/Time/TimeUtilities"
 import { Time } from "../../../Helpers/Time/Time"
 import { assertTrue } from "../../../Utility/Is"
+import { EmptyMethod } from "../../../Setup/Constants"
 
 export class FilterGraphsClass implements FilterGraphs {
   constructor(public args: FilterGraphsArgs) {
@@ -47,7 +48,9 @@ export class FilterGraphsClass implements FilterGraphs {
       this.filterGraphAudible = new FilterGraphClass(filterGraphArgs)
     }
     this.filterGraphsVisible.push(...times.map(time => {
-      const filterGraphArgs: FilterGraphArgs = { ...rest, time, mash }
+      const filterGraphArgs: FilterGraphArgs = { 
+        ...rest, time, mash, visible: true 
+      }
       const filterGraph = new FilterGraphClass(filterGraphArgs)
       return filterGraph
     }))
@@ -65,12 +68,14 @@ export class FilterGraphsClass implements FilterGraphs {
   get graphFiles(): GraphFiles {
     const graphs = [...this.filterGraphsVisible]
     if (this.filterGraphAudible) graphs.push(this.filterGraphAudible)
-    return this._graphFiles ||= graphs.flatMap(graph => graph.graphFiles)
+    return this._graphFiles ||= graphs.flatMap(graph => graph.commandFiles)
   }
 
   get graphFilesInput(): GraphFiles {
     return this.graphFiles.filter(graphFile => graphFile.input)
   }
-
+  get loadPromise(): Promise<void> {
+    return this.args.mash.preloader.loadFilesPromise(this.graphFiles).then(EmptyMethod)
+  }
   time: Time
 }

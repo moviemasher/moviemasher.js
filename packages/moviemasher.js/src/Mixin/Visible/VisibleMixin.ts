@@ -1,15 +1,9 @@
-import { SvgContent, SvgFilters, UnknownObject } from "../../declarations"
-import { Errors } from "../../Setup/Errors"
+import { UnknownObject } from "../../declarations"
 import { TrackType } from "../../Setup/Enums"
 import { ClipClass } from "../Clip/Clip"
 import { Visible, VisibleClass, VisibleDefinition, VisibleObject } from "./Visible"
-import { ChainLinks, Filter } from "../../Filter/Filter"
 import { Effects } from "../../Media/Effect/Effect"
 import { effectInstance } from "../../Media/Effect/EffectFactory"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
-import { ChainArgs, Chain } from "../../MoveMe"
-import { chainAppend } from "../../Utility/Chain"
-import { isAboveZero, isBelowOne } from "../../Utility/Is"
 
 
 export function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
@@ -23,16 +17,6 @@ export function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
 
     }
 
-  
-
-    chainLinks(): ChainLinks {
-      const links: ChainLinks = []
-      // links.push(...super.chainLinks())
-      // links.push(this.opacityFilter, this.blendFilter)
-      // links.push(...this.effects.flatMap(effect => effect.chainLinks()))
-      return links
-    }
-
     declare definition: VisibleDefinition
 
     definitionIds(): string[] {
@@ -41,15 +25,7 @@ export function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
       return ids
     }
 
- 
-
-
     effects: Effects = []
-
-    svgFilters(filterChain: TrackPreview): SvgFilters {
-
-      return []
-    }
 
     trackType = TrackType.Video
 
@@ -59,9 +35,5 @@ export function VisibleMixin<T extends ClipClass>(Base: T) : VisibleClass & T {
       return json
     }
     visible = true
-
-    visibleContent(): SvgContent {
-      throw new Error(Errors.unimplemented + 'visibleContent')
-    }
   }
 }

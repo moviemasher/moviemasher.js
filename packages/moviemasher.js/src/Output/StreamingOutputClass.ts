@@ -31,12 +31,14 @@ export class StreamingOutputClass implements StreamingOutput {
       const graphFiles: GraphFiles = []
       const commandFilters: CommandFilters = []
       const commandInputs: CommandInputs = []
+
+      const avType = AVType.Both
       mashes.forEach(mash => {
         const args: FilterGraphsOptions = {
           size: this.outputDimensions,
           videoRate: this.args.commandOutput.videoRate!,
           graphType: GraphType.Cast,
-          avType: AVType.Both
+          avType
         }
         const filterGraphs = mash.filterGraphs(args)
         const { filterGraphVisible } = filterGraphs
@@ -46,7 +48,9 @@ export class StreamingOutputClass implements StreamingOutput {
       })
       const options: ValueObject = { ...this.args.commandOutput.options }
       const commandOutput: CommandOutput = { ...this.args.commandOutput, options }
-      const commandOptions: StreamingDescription = { inputs: commandInputs, commandFilters, commandOutput }
+      const commandOptions: StreamingDescription = { 
+        inputs: commandInputs, commandFilters, commandOutput, avType 
+      }
       return commandOptions
     })
     return promise

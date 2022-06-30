@@ -1,4 +1,4 @@
-import { Point, PopulatedString, Rgb, AnyArray, UnknownObject } from "../declarations"
+import { Point, PopulatedString, Rgb, AnyArray, UnknownObject, Rect, ValueObject, Value } from "../declarations"
 import { Dimensions } from "../Setup/Dimensions"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Size } from "../Setup/Enums"
@@ -17,9 +17,9 @@ export function assertString(value: any, name?: string): asserts value is string
 
 export const isUndefined = (value: any): boolean => typeof value === 'undefined'
 
-export const isNumber = (value: any): value is number => typeof value === 'number'
+export const isNumberOrNaN = (value: any): value is number => typeof value === 'number'
 export function assertNumber(value: any, name?: string): asserts value is number {
-  if (!isNumber(value)) throwError(value, 'Number', name)
+  if (!isNumberOrNaN(value)) throwError(value, 'Number', name)
 }
 
 export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
@@ -28,21 +28,21 @@ export const isMethod = (value: any): boolean => typeof value === 'function'
 
 export const isDefined = (value: any): boolean => !isUndefined(value)
 
-export const isNan = (value: any): boolean => isNumber(value) && Number.isNaN(value)
+export const isNan = (value: any): boolean => isNumberOrNaN(value) && Number.isNaN(value)
 
-const isNotNan = (value: any): value is number => isNumber(value) && !Number.isNaN(value)
+export const isNumber = (value: any): value is number => isNumberOrNaN(value) && !Number.isNaN(value)
 
 export const isInteger = (value: any): boolean => Number.isInteger(value)
 
 export const isFloat = (value: any): boolean => isNumber(value) && !isInteger(value)
 
-export const isPositive = (value: any): value is number => isNumber(value) && Number(value) >= 0
+export const isPositive = (value: any): value is number => isNumber(value) && value >= 0
 export function assertPositive(value: any, name?: string): asserts value is number {
   if (!isPositive(value)) throwError(value, '>= 0', name)
 }
 
-export const isBelowOne = (value: any): value is number => isNotNan(value) && value < 1
-export const isAboveZero = (value: any): value is number => isNotNan(value) && value > 0
+export const isBelowOne = (value: any): value is number => isNumber(value) && value < 1
+export const isAboveZero = (value: any): value is number => isNumber(value) && value > 0
 export function assertAboveZero(value: any, name?: string): asserts value is number {
   if (!isAboveZero(value)) throwError(value, '> zero', name)
 }
@@ -52,7 +52,6 @@ export const isArray = (value: any): value is AnyArray => (
 export function assertArray(value: any, name?: string): asserts value is number {
   if (!isArray(value)) throwError(value, 'Array', name)
 }
-
 
 const length = (value: string | AnyArray): boolean => !!value.length
 
@@ -74,7 +73,7 @@ export const isPopulatedObject = (value: any): boolean => (
 )
 
 export const isNumeric = (value: any): boolean => (
-  (isNotNan(value) || isPopulatedString(value)) && !isNan(Number(value))
+  (isNumber(value) || isPopulatedString(value)) && !isNan(Number(value))
 )
 
 export function assertTrue(value: any, name = 'value'): asserts value is true {
@@ -89,17 +88,24 @@ export function assertRgb(value: any, name?: string): asserts value is Rgb {
 }
 
 export const isPoint = (value: any): value is Point => {
-  return isObject(value) && "x" in value && "y" in value
+  return isObject(value) && isNumber(value.x) && isNumber(value.y) 
 }
 export function assertPoint(value: any, name?: string): asserts value is Point {
   if (!isPoint(value)) throwError(value, 'Point', name)
 }
 export const isDimensions = (value: any): value is Dimensions => {
-  return isObject(value) && "width" in value && "height" in value
+  return isObject(value) && isNumber(value.width) && isNumber(value.height) 
 }
 export function assertDimensions(value: any, name?: string): asserts value is Dimensions {
   if (!isDimensions(value)) throwError(value, 'Dimensions', name)
 }
+export const isRect = (value: any): value is Rect => {
+  return isDimensions(value) && isPoint(value) 
+}
+export function assertRect(value: any, name?: string): asserts value is Rect {
+  if (!isRect(value)) throwError(value, 'Rect', name)
+}
+
 export const isTime = (value: any): value is Time => {
   return isObject(value) && "isRange" in value
 }
@@ -108,29 +114,24 @@ export const isTimeRange = (value: any): value is TimeRange => {
   return isTime(value) && value.isRange
 }
 
+export const isValue = (value: any): value is Value => {
+  return isNumber(value) || isString(value)
+}
+export function assertValue(value: any, name?: string): asserts value is Value {
+  if (!isValue(value)) throwError(value, "Value", name)
+}
+
+export const isValueObject = (value: any): value is ValueObject => {
+  return isObject(value) && Object.values(value).every(value => isValue(value))
+}
+export function assertValueObject(value: any, name?: string): asserts value is ValueObject {
+  if (!isValueObject(value)) throwError(value, "ValueObject", name)
+}
+
 export const throwError = (value: any, expected: string, name = "value") => {
   const type = typeof value
   const typeName = type === 'object' ? value.constructor.name: type
+  console.error("throwError", value)
   throw new Error(`${name} is ${value} (${typeName}) instead of ${expected}`)
 }
-/**
- * @category Utility
- */
-export const Is = {
-  aboveZero: isAboveZero,
-  array: isArray,
-  boolean: isBoolean,
-  defined: isDefined,
-  float: isFloat,
-  integer: isInteger,
-  method: isMethod,
-  nan: isNan,
-  number: isNumber,
-  object: isObject,
-  populatedArray: isPopulatedArray,
-  populatedObject: isPopulatedObject,
-  populatedString: isPopulatedString,
-  positive: isPositive,
-  string: isString,
-  undefined: isUndefined,
-}
+

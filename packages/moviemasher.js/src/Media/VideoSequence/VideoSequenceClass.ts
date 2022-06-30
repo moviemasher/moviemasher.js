@@ -1,63 +1,61 @@
-import { LoadedImage, UnknownObject, ValueObject } from "../../declarations"
-import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { UnknownObject } from "../../declarations"
+import { GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
 import { InstanceBase } from "../../Instance/InstanceBase"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 
-import { ChainLinks, FilterChainPhase } from "../../Filter/Filter"
-import { Phase } from "../../Setup"
-import { isAboveZero } from "../../Utility/Is"
 import { ContentMixin } from "../../Content/ContentMixin"
 import { UpdatableDimensionsMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
+import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 
-const VideoSequenceWithContent = ContentMixin(InstanceBase)
+const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
+const VideoSequenceWithContent = ContentMixin(VideoSequenceWithTweenable)
 const VideoSequenceWithPreloadable = PreloadableMixin(VideoSequenceWithContent)
 const VideoSequenceWithUpdatableDimensions = UpdatableDimensionsMixin(VideoSequenceWithPreloadable)
 const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceWithUpdatableDimensions)
 
 export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration implements VideoSequence {
 
-  chainLinks(): ChainLinks {
-    const links: ChainLinks = [this]
-    links.push(...super.chainLinks())
-    return links
-  }
+  // chainLinks(): ChainLinks {
+  //   const links: ChainLinks = [this]
+  //   links.push(...super.chainLinks())
+  //   return links
+  // }
 
-  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
-    if (phase !== Phase.Initialize) return
+  // filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
+  //   if (phase !== Phase.Initialize) return
 
-    const { filterGraph } = filterChain
-    const { preloader, editing, visible, quantize, time } = filterGraph
-    const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
-    const files = this.graphFiles(graphFileArgs)
-    const graphFiles = files.map((file, index) => {
-      const graphFile: GraphFile = { ...file, localId: `file-${index}` }
-      return graphFile
-    })
+  //   const { filterGraph } = filterChain
+  //   const { preloader, editing, visible, quantize, time } = filterGraph
+  //   const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
+  //   const files = this.graphFiles(graphFileArgs)
+  //   const graphFiles = files.map((file, index) => {
+  //     const graphFile: GraphFile = { ...file }
+  //     return graphFile
+  //   })
 
-    const values: ValueObject = {}
-    const [graphFile] = graphFiles
+  //   const values: ValueObject = {}
+  //   const [graphFile] = graphFiles
 
-    let { width, height } = this.definition
-    if (!(isAboveZero(width) && isAboveZero(height))) {
-      const loaded: LoadedImage = preloader.getFile(graphFile)
+  //   let { width, height } = this.definition
+  //   if (!(isAboveZero(width) && isAboveZero(height))) {
+  //     const loaded: LoadedImage = preloader.getFile(graphFile)
 
-      width = loaded.width
-      height = loaded.width
-    }
-    values.width = width
-    values.height = height
-    values.href = preloader.key(graphFile)
-    filterChain.size = { width, height }
+  //     width = loaded.width
+  //     height = loaded.width
+  //   }
+  //   values.width = width
+  //   values.height = height
+  //   values.href = preloader.key(graphFile)
+  //   filterChain.size = { width, height }
 
-    return { graphFiles, link: this, values }
-  }
+  //   return { graphFiles, link: this, values }
+  // }
 
-  // svgContent(filterChain: ClientFilterChain, dimensions?: Dimensions): SvgContent {
+  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Dimensions): SvgContent {
   //   const { filterGraph } = filterChain
   //   const { preloader, size } = filterGraph
   //   const files = this.graphFiles(filterGraph)

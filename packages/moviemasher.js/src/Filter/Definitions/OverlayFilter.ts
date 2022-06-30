@@ -1,12 +1,11 @@
 import { ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
-import { Transform, Transforms, ChainBuilder, Chain, CommandFilter } from "../../MoveMe"
+import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase, TransformType } from "../../Setup/Enums"
+import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertPoint, assertPositive } from "../../Utility/Is"
-import { Filter } from "../Filter"
-import { Propertied } from "../../Base/Propertied"
+import { assertPopulatedString } from "../../Utility/Is"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { tweenOption } from "../../Utility/Tween"
 
 /**
  * @category Filter
@@ -15,44 +14,32 @@ export class OverlayFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, name: 'x', type: DataType.Number,
-      defaultValue: 0.0, step: 0.01 // , min: 0.0, max: 1.0
+      tweenable: true, custom: true, name: 'x', type: DataType.Percent, defaultValue: 0.5 
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'y', type: DataType.Number,
-      defaultValue: 0.0, step: 0.01 // , min: 0.0, max: 1.0
+      tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
     }))
     this.populateParametersFromProperties()
   }
+  
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const commandFilters: CommandFilters = []
+    const { filter, filterInput, chainInput, duration } = args
+    assertPopulatedString(filterInput)
+    assertPopulatedString(chainInput)
 
-  chain(outputDimensions: Dimensions, filter: Filter, propertied?: Propertied): Chain {
-    const chain = super.chain(outputDimensions, filter, propertied)
-    const { commandFilters } = chain
-    const values = this.chainValues(filter, propertied)
-    const { x, y } = values
-    assertPositive(x)
-    assertPositive(y)
+    const scalars = filter.scalarObject(!!duration)
+    const options: ValueObject = {}
+    options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`])
+    options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`])
+   
     const { ffmpegFilter } = this
-    const serverFilter: CommandFilter = {
-      ffmpegFilter, options: { x, y }, inputs: []
+    const commandFilter: CommandFilter = {
+      inputs: [chainInput, filterInput], ffmpegFilter, options, outputs: []
     }
-    commandFilters.push(serverFilter)
-    return chain
+    commandFilters.push(commandFilter)
+    return commandFilters
   }
   
-
-  transforms(dimensions: Dimensions, valueObject: ValueObject): Transforms {
-    assertPoint(valueObject)
-    const { x, y } = valueObject
-    const transform: Transform = { transformType: TransformType.Translate, x, y }
-    return [transform]
-  }
   phase = Phase.Finalize
-
-  valueObject(filterChain: ChainBuilder): ValueObject {
-    const { evaluator, size } = filterChain
-    const x = evaluator.parameterNumber('x') * size.width
-    const y = evaluator.parameterNumber('y') * size.height
-    return { x, y }
-  }
 }

@@ -1,4 +1,4 @@
-import { Container, ContainerDefinition } from "../../Container/Container"
+import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "../../Container/Container"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
 import { GenericFactory } from "../../declarations"
 import { FilterDefinition } from "../../Filter/Filter"
@@ -6,9 +6,9 @@ import {
   UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject
 } from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
 
-export interface ImageObject extends ContentObject, UpdatableDimensionsObject {}
+export interface ImageObject extends ContentObject, ContainerObject, UpdatableDimensionsObject {}
 
-export interface ImageDefinitionObject extends ContentDefinitionObject, UpdatableDimensionsDefinitionObject {}
+export interface ImageDefinitionObject extends ContentDefinitionObject, ContainerDefinitionObject, UpdatableDimensionsDefinitionObject {}
 
 export interface Image extends Content, Container, UpdatableDimensions {
   definition : ImageDefinition
@@ -16,7 +16,6 @@ export interface Image extends Content, Container, UpdatableDimensions {
 
 export interface ImageDefinition extends ContainerDefinition, ContentDefinition, UpdatableDimensionsDefinition {
   instanceFromObject(object?: ImageObject): Image
-  setptsFilterDefinition: FilterDefinition
 }
 
 /**

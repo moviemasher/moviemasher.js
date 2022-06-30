@@ -1,12 +1,60 @@
-import { SvgFilters, ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
-import { CommandFilter } from "../../MoveMe"
+import { ScalarObject, SvgFilters, ValueObject } from "../../declarations"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isAboveZero, isObject } from "../../Utility/Is"
-import { ServerFilters } from "../Filter"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { idGenerate } from "../../Utility/Id"
+
+
+/**
+ * @category Filter
+ */
+ export class ConvolutionFilter extends FilterDefinitionClass {
+  constructor(...args: any[]) {
+    super(...args)
+    this.properties.push(propertyInstance({
+      custom: true, tweenable: true, name: "bias",
+      defaultValue: 0.0, min: 0.0, max: 100.0, step: 0.01
+    }))
+    this.properties.push(propertyInstance({
+      custom: true, name: "matrix", defaultValue: "0 0 0 0 1 0 0 0 0",
+    }))
+    this.properties.push(propertyInstance({
+      custom: true, tweenable: true, name: "multiplier",
+      defaultValue: 1.0, min: 0.0, max: 100.0, step: 0.01
+    }))
+    this.populateParametersFromProperties()
+  }
+
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const { chainInput, filterInput, filter, duration } = args
+    assertPopulatedString(chainInput, 'chainInput')
+    assertPopulatedString(filterInput, 'filterInput')  
+    const commandFilters:CommandFilters = []
+    const values = filter.scalarObject(!!duration) 
+    assertConvolutionServerFilter(values)
+    const { ffmpegFilter } = this
+    const commandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter,
+      options: optionsFromObject(parse(values)), 
+      outputs: [idGenerate(ffmpegFilter)]
+    }
+    commandFilters.push(commandFilter)
+    return commandFilters
+  }
+
+  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
+    assertConvolutionServerFilter(valueObject)
+    const {matrix, bias, multiplier } = valueObject
+    
+    const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feConvolveMatrix')
+    filterElement.setAttribute('kernelMatrix', String(matrix))
+    filterElement.setAttribute('bias', String(bias))
+    if (isAboveZero(multiplier)) filterElement.setAttribute('divisor', String(multiplier))
+    return [filterElement]
+  }
+}
 
 export type Numbers = number[]
 export type NumbersOrUndefined = Numbers | undefined
@@ -124,8 +172,6 @@ const convolutionMultiplierObject = (stringObject: ConvolutionStringObject): Con
 }
 
 const parse = (convolutionObject: ConvolutionServerFilter) => {
-
-
   const matrixObject = convolutionStringObject(convolutionObject.matrix)
   const multiplierObject = convolutionStringObject(convolutionObject.multiplier)
   const matrix: ConvolutionNumbersObject = convolutionMatrixObject(matrixObject)
@@ -147,44 +193,3 @@ const optionsFromObject =(convolutionObject: ConvolutionObject): ValueObject => 
   return valueObject
 }
 
-/**
- * @category Filter
- */
-export class ConvolutionFilter extends FilterDefinitionClass {
-  constructor(...args: any[]) {
-    super(...args)
-    this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: "bias",
-      defaultValue: 0.0, min: 0.0, max: 100.0, step: 0.01
-    }))
-    this.properties.push(propertyInstance({
-      custom: true, name: "matrix", defaultValue: "0 0 0 0 1 0 0 0 0",
-    }))
-    this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: "multiplier",
-      defaultValue: 1.0, min: 0.0, max: 100.0, step: 0.01
-    }))
-    this.populateParametersFromProperties()
-  }
-
-  serverFilters(_: FilterChain, values: ValueObject): ServerFilters {
-    assertConvolutionServerFilter(values)
-    const commandFilter: CommandFilter = {
-      inputs: [], ffmpegFilter: this.ffmpegFilter,
-      options: optionsFromObject(parse(values))
-    }
-    return [commandFilter]
-  }
-
-  svgFilters(dimensions: Dimensions, valueObject: ValueObject): SvgFilters {
-    assertConvolutionServerFilter(valueObject)
-    const matrix = valueObject.matrix
-    const bias = Number(valueObject.bias)
-    const multiplier = Number(valueObject.multiplier)
-    const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feConvolveMatrix')
-    filterElement.setAttribute('kernelMatrix', String(matrix))
-    filterElement.setAttribute('bias', String(bias))
-    if (isAboveZero(multiplier)) filterElement.setAttribute('divisor', String(multiplier))
-    return [filterElement]
-  }
-}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { timeFromArgs } from '@moviemasher/moviemasher.js'
+import { isArray, timeFromArgs } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult, SliderChangeHandler, WithClassName } from "../../declarations"
 import { Slider } from '../../Utilities/Slider'
@@ -13,8 +13,8 @@ export function PlayerTimeControl(props: PlayerTimeControlProps): ReactResult {
   const { frames, frame } = editorContext
   const editor = useEditor()
 
-  const onChange: SliderChangeHandler = (_event, value) => {
-    const number = typeof value === "number" ? value : value[0]
+  const onChange: SliderChangeHandler = (_event, values) => {
+    const number = isArray(values) ? values[0] : values
     editor.time = timeFromArgs(number, editor.timeRange.fps)
   }
 

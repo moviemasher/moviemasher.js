@@ -7,20 +7,19 @@ import { FilterDefinition } from "../../Filter/Filter"
 import { ContentDefinitionMixin } from "../ContentDefinitionMixin"
 import { isPopulatedString } from "../../Utility/Is"
 import { colorBlack } from "../../Utility/Color"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
-export class ColorContentDefinitionClass extends ContentDefinitionMixin(DefinitionBase) implements ColorContentDefinition {
+const ColorContentDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const ColorContentDefinitionWithContent = ContentDefinitionMixin(ColorContentDefinitionWithTweenable)
+export class ColorContentDefinitionClass extends ColorContentDefinitionWithContent implements ColorContentDefinition {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
     const { color } = object as ColorContentDefinitionObject
     if (isPopulatedString(color)) this.color = color
-    this.colorFilterDefinition = filterDefinitionFromId('color')
-    this.properties.push(...this.colorFilterDefinition.properties)
   }
 
   color = colorBlack
-
-  colorFilterDefinition: FilterDefinition
 
   instanceFromObject(object: ColorContentObject = {}): ColorContent {
     return new ColorContentClass(this.instanceArgs(object))

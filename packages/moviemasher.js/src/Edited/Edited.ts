@@ -23,12 +23,13 @@ export interface Edited extends Described, Propertied {
   buffer: number
   destroy(): void
   emitter?: Emitter
+  graphFiles(args?: GraphFileOptions): GraphFiles
   imageSize: Dimensions
   loading: boolean
-  readonly preloader: Loader
-  svgElement(graphArgs: PreviewOptions): SVGSVGElement
-  reload(): Promise<void> | undefined
-  quantize: number
   loadPromise(args?: GraphFileOptions): Promise<void>
-  graphFiles(args?: GraphFileOptions): GraphFiles
+  putPromise(): Promise<void>
+  quantize: number
+  readonly preloader: Loader
+  reload(): Promise<void> | undefined
+  svgElement(graphArgs: PreviewOptions): SVGSVGElement
 }

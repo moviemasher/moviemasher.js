@@ -1,38 +1,59 @@
-import { SvgFilters, ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
+import { ScalarObject, SvgFilters, ValueObject } from "../../declarations"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertNumber, isPositive } from "../../Utility/Is"
-import { ServerFilters } from "../Filter"
+import { assertNumber, assertPopulatedString, isNumber } from "../../Utility/Is"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { ChainBuilder } from "../../MoveMe"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { idGenerate } from "../../Utility/Id"
 
 export class OpacityFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: 'opacity', type: DataType.Number,
+      tweenable: true, name: 'opacity', 
+      type: DataType.Percent, defaultValue: 1.0
+    }))
+    
+    this.properties.push(propertyInstance({
+      custom: true, name: `opacity${PropertyTweenSuffix}`, type: DataType.Number,
       defaultValue: 1.0, min: 0.0, max: 1.0, step: 0.01
     }))
     this.populateParametersFromProperties()
   }
 
-  _ffmpegFilter = 'geq'
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const { filterInput, filter, duration } = args
+    
+    const opacity = filter.value('opacity')
+    const opacityEnd = filter.value(`opacity${PropertyTweenSuffix}`)
 
-  serverFilters(_: FilterChain, values: ValueObject): ServerFilters {
-    const { opacity, endValue } = values
     assertNumber(opacity)
+    assertPopulatedString(filterInput)
     const options: ValueObject = { r: 'r(X,Y)' }
-    if (isPositive(endValue)) options.a = `${opacity}+((${endValue}-${opacity})*T)`
-    else options.a = opacity
+    if (isNumber(opacityEnd)) {
+      const toValue = opacityEnd - opacity
+      options.a = `(alpha(X,Y)*(${opacity}+(${toValue}*(T/${duration}))))`
+    } else options.a = opacity
 
-    return [this.commandFilter(options)]
+    const formatFilter = 'format'
+    const formatId = idGenerate(formatFilter)
+    const formatCommandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter: formatFilter, 
+      options: { pix_fmts: 'rgba' }, outputs: [formatId]
+    }
+    const { ffmpegFilter } = this
+    const commandFilter: CommandFilter = {
+      inputs: [formatId], ffmpegFilter, 
+      options, outputs: [idGenerate(ffmpegFilter)]
+    }
+    return [formatCommandFilter, commandFilter]
   }
-
-  svgFilters(dimensions: Dimensions, valueObject: ValueObject): SvgFilters {
+  
+  _ffmpegFilter = 'geq'
+  
+  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
     const { opacity } = valueObject
     assertNumber(opacity)
 
@@ -42,16 +63,4 @@ export class OpacityFilter extends FilterDefinitionClass {
     return [filterElement]
   }
 
-  valueObject(filterChain: ChainBuilder): ValueObject {
-    const { evaluator } = filterChain
-
-    const opacity = evaluator.parameterNumber('opacity')
-
-    // const frames = Number(evaluator.propertyValue('frames'))
-    // const { position, filter } = evaluator
-
-    const endValue = evaluator.tweenTime ? evaluator.propertyValue(`opacity${PropertyTweenSuffix}`) : undefined
-
-    return { opacity, endValue: endValue || -1 }
-  }
 }

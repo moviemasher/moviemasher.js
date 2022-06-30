@@ -2,19 +2,22 @@ import { VisibleClip, VisibleClipDefinition, VisibleClipObject } from "./Visible
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
 import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
-import { ChainLinks } from "../../Filter/Filter"
 
 import { assertContainer, Container, ContainerObject } from "../../Container/Container"
 import { Defined } from "../../Base/Defined"
 import { assertContent, Content, ContentObject } from "../../Content/Content"
 import { Property } from "../../Setup/Property"
-import { Scalar, UnknownObject } from "../../declarations"
-import { Chain, ChainArgs, GraphFileArgs, GraphFiles, SelectedProperties, ContainerChainArgs, ContentChainArgs } from "../../MoveMe"
+import { Rect, Scalar, SvgFilters, UnknownObject } from "../../declarations"
+import { GraphFileArgs, GraphFiles, SelectedProperties, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, ContentCommandFileArgs, ContainerCommandFileArgs, ContainerCommandFilterArgs, ContentCommandFilterArgs } from "../../MoveMe"
 import { ActionType, SelectType, SelectTypes, TrackType } from "../../Setup/Enums"
 import { Actions } from "../../Editor/Actions/Actions"
-import { assertTrue, isPopulatedString, isUndefined } from "../../Utility/Is"
+import { assertDimensions, assertPopulatedString, assertTrue, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { isColorContent } from "../../Content"
-import { chainAppend, chainFinalize } from "../../Utility/Chain"
+import { arrayLast } from "../../Utility/Array"
+import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
+import { assert } from "console"
+import { Dimensions, dimensionsEven } from "../../Setup/Dimensions"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
 
 const VisibleClipMixin = VisibleMixin(ClipMixin(InstanceBase))
 export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
@@ -26,48 +29,65 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     if (content) this.contentInitialize(content)
   }
 
-  chainLinks(): ChainLinks {
-    const links: ChainLinks = []
-    links.push(this.content)
-    if (this.container) links.push(this.container)
-    links.push(...super.chainLinks())
-    return links
+  commandFiles(args: CommandFileArgs): CommandFiles {
+    const commandFiles:CommandFiles = []
+    const { visible, quantize, outputDimensions, time } = args
+    const clipTime = this.timeRange(quantize)
+    const { content, container } = this
+    const contentArgs: ContentCommandFileArgs = { ...args, clipTime }
+    if (visible && outputDimensions && container) {
+      contentArgs.containerRects = container.containerRects(outputDimensions, time, clipTime, true)
+      const colors = isColorContent(content) ? content.tweenValues('color', time, clipTime) : undefined
+      if (!colors) {
+        commandFiles.push(...content.contentCommandFiles(contentArgs))
+      }
+      const containerArgs: ContainerCommandFileArgs = { ...contentArgs, colors }
+      commandFiles.push(...container.containerCommandFiles(containerArgs))
+    } else {
+      assertTrue(!visible, 'outputDimensions && container')
+      commandFiles.push(...this.content.contentCommandFiles(contentArgs)) 
+    }
+    return commandFiles
   }
 
+  commandFilters(args: CommandFilterArgs): CommandFilters {
+    const commandFilters:CommandFilters = []
+    const { visible, quantize, outputDimensions, time } = args
+    const clipTime = this.timeRange(quantize)
 
-  chain(args: ChainArgs): Chain {
-    const chain: Chain = { commandFilters: [], commandFiles: [] }
-    const { commandFilters, commandFiles } = chain
-    const { audible, visible } = args
-    let inputCount = args.inputCount
+    let previousOutput = ''
+    const contentArgs: ContentCommandFilterArgs = { ...args, clipTime }
 
     const { content, container } = this
-    if (visible) {
-      assertContainer(container)
-      const color = isColorContent(content) ? content.color : undefined
-      const containerArgs: ContainerChainArgs = { ...args, color, inputCount: inputCount }
-      chainAppend(chain, container.containerChain(containerArgs))
-      if (!color) {
-        const contentArgs: ContentChainArgs = {
-          ...containerArgs, containerDimensions: container.intrinsicDimensions()
-        }
-        chainAppend(chain, content.contentChain(contentArgs))
+    if (visible && outputDimensions && container) {
+      contentArgs.containerRects = container.containerRects(outputDimensions, time, clipTime)
+      
+      const colors = isColorContent(content) ? content.tweenValues('color', time, clipTime) : undefined
+      if (!colors) {
+        commandFilters.push(...content.contentCommandFilters(contentArgs))
+        previousOutput = arrayLast(arrayLast(commandFilters).outputs)
       }
+      const containerArgs: ContainerCommandFilterArgs = { 
+        ...contentArgs, colors, filterInput: previousOutput 
+      }
+      commandFilters.push(...container.containerCommandFilters(containerArgs))
     } else {
-      assertTrue(audible, 'audible')
+      assertTrue(!visible, 'outputDimensions && container')
+      commandFilters.push(...this.content.contentCommandFilters(contentArgs)) 
     }
-    chainFinalize(chain, args)
-    return chain
+    return commandFilters
   }
 
   private _container?: Container
   get container() { return this._container || this.containerInitialize() }
   private containerInitialize(containerObject: ContainerObject = {}): Container | undefined {
     const { containerId } = this
-    // console.log(this.constructor.name, "containerInitialize", containerId, containerObject)
-    if (!isPopulatedString(containerId)) return
+    const definitionId = containerId || containerObject.definitionId
+    if (!isPopulatedString(definitionId)) return
 
-    const instance = Defined.fromId(this.containerId).instanceFromObject(containerObject)
+    const object: ContainerObject  = { ...containerObject, definitionId, container: true }
+    // console.log(this.constructor.name, "containerInitialize", object)
+    const instance = Defined.fromId(definitionId).instanceFromObject(object)
     assertContainer(instance)
     return this._container = instance
   }
@@ -78,8 +98,11 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
   get content() { return this._content || this.contentInitialize() }
   private contentInitialize(contentObject: ContentObject = {}) {
     const { contentId } = this
-    // console.log(this.constructor.name, "contentInitialize", contentId, contentObject)
-    const instance = Defined.fromId(contentId).instanceFromObject(contentObject)
+    const definitionId = contentId || contentObject.definitionId
+    assertPopulatedString(definitionId)
+    const object: ContentObject = { ...contentObject, definitionId, content: true }
+    // console.log(this.constructor.name, "contentInitialize", object)
+    const instance = Defined.fromId(definitionId).instanceFromObject(object)
     assertContent(instance)
     return this._content = instance
   }
@@ -130,7 +153,7 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
       containerId: SelectType.Container,
       contentId: SelectType.Content,
     }
-    this.properties().forEach(property => {
+    this.properties.forEach(property => {
       const { name } = property
        // frame is set by dense tracks
       if (name === 'frame' && dense) return
@@ -191,15 +214,22 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     switch (name) {
       case 'containerId': {
         // console.log(this.constructor.name, "setValue", name, value, !!property)
-        delete this._container
+        if (this._container) this.containerInitialize(this._container.toJSON())
         break
       }
       case 'contentId': {
         // console.log(this.constructor.name, "setValue", name, value, !!property)
-        delete this._content
+        if (this._content) this.contentInitialize(this._content.toJSON())
         break
       }
     }
+  }
+
+  svgFilters(previewDimensions: Dimensions, containerRect: Rect, time: Time, range: TimeRange): SvgFilters { 
+    const svgFilters: SvgFilters = []
+    const { container, content } = this
+    if (container) svgFilters.push(...container.containerSvgFilters(previewDimensions, containerRect, time, range))
+    return svgFilters
   }
 
   toJSON(): UnknownObject {

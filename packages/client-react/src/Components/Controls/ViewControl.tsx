@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMash, EventType, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { assertMash, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -9,8 +9,13 @@ import { useListeners } from "../../Hooks/useListeners"
 export function ViewControl(props: PropsAndChild): ReactResult {
   const editor = useEditor()
 
-  const { mash } = editor.selection
-  const getDisabled = () => mash ? !mash.rendering : true
+  const getDisabled = () => {
+  const { edited } = editor
+    if (!isMash(edited)) return true
+
+    const { rendering } = edited
+    return !rendering
+  }
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
   useListeners({

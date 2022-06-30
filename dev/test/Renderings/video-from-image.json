@@ -1,5 +1,5 @@
 {
-  "id": "video-from-color-json",
+  "id": "video-from-image-json",
   "outputs": [
     {
       "outputType": "video"
@@ -17,25 +17,22 @@
         "clips": [
           {
             "definitionId": "com.moviemasher.visible.default",
-            "color": "#ffff00ff",
+            "contentId": "id-image",
             "frame": 0,
-            "frames": 30,
-            "label": "Color",
+            "frames": 20,
             "effects": []
           }
         ]
-      },
-      {
-        "dense": false,
-        "trackType": "audio",
-        "layer": 0,
-        "clips": []
       }
-    ],
-    "createdAt": "2022-03-10T15:53:55.623Z",
-    "userId": "doug",
-    "icon": null,
-    "id": "09a7cb26-4c84-436d-82d3-aac6e36445c5"
+    ]
   },
-  "definitions": []
+  "definitions": [
+    {
+      "id": "id-image",
+      "type": "image",
+      "label": "Image",
+      "url": "../shared/image/frog.jpg",
+      "source": "../shared/image/frog.jpg"
+    }
+  ]
 }

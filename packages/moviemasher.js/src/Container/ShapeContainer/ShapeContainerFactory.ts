@@ -9,6 +9,7 @@ import defaultShapeContainerJson from "../../Definitions/DefinitionObjects/shape
 import chatShapeContainerJson from "../../Definitions/DefinitionObjects/shapecontainer/chat.json"
 import broadcastShapeContainerJson from "../../Definitions/DefinitionObjects/shapecontainer/broadcast.json"
 import musicShapeContainerJson from "../../Definitions/DefinitionObjects/shapecontainer/music.json"
+import testShapeContainerJson from "../../Definitions/DefinitionObjects/shapecontainer/test.json"
 
 export const shapeContainerDefault = new ShapeContainerDefinitionClass(defaultShapeContainerJson)
 export const shapeContainerDefaults = [
@@ -16,6 +17,7 @@ export const shapeContainerDefaults = [
   new ShapeContainerDefinitionClass(chatShapeContainerJson),
   new ShapeContainerDefinitionClass(broadcastShapeContainerJson),
   new ShapeContainerDefinitionClass(musicShapeContainerJson),
+  new ShapeContainerDefinitionClass(testShapeContainerJson),
 ]
 
 export const shapeContainerDefinition = (object : ShapeContainerDefinitionObject) : ShapeContainerDefinition => {

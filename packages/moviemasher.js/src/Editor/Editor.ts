@@ -5,7 +5,7 @@ import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction, SelectType, TrackType } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
-import { DataCastGetResponse, DataMashGetResponse } from "../Api/Data"
+import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
 import { Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 
 import { Cast } from "../Edited/Cast/Cast"
@@ -98,7 +98,8 @@ export interface Editor {
   removeEffect(effect: Effect): void
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
-  save(temporaryIdLookup?: StringObject): void
+  dataPutRequest(): Promise<DataPutRequest>
+  saved(temporaryIdLookup?: StringObject): void
   select(selectable: Selectable): void
   selectedProperties(selectTypes?: SelectType[]): SelectedProperties
   svg: SVGSVGElement

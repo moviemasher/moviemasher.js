@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
 import {
-  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout
+  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
@@ -289,7 +289,7 @@ export class WebrtcConnection extends EventEmitter {
     const command = RunningCommandFactory.instance(this.id, {
       inputs: [this.inputVideo(video, size), this.inputAudio(audio)],
       commandFilters: [],
-      output: commandOutput
+      output: commandOutput, avType: AVType.Both
     })
 
     const webrtcStream = {

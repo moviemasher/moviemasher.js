@@ -3,36 +3,59 @@ import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { Modes } from "../../Setup/Modes"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { propertyInstance } from "../../Setup/Property"
-import { assertPopulatedString, isNumeric } from "../../Utility/Is"
-import { SvgFilters, Value, ValueObject } from "../../declarations"
+import { assertDimensions, assertNumber, assertPoint, assertPopulatedString, isNumeric } from "../../Utility/Is"
+import { Scalar, ScalarObject, SvgFilters, Value, ValueObject } from "../../declarations"
 import { Dimensions } from "../../Setup/Dimensions"
-import { CommandFilter } from "../../MoveMe"
-import { ModesFfmpeg } from "../../Setup"
-import { ServerFilters } from "../Filter"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { ModesFfmpeg } from "../../Setup/Modes"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { OpacityFilter } from "./OpacityFilter"
+import { OverlayFilter } from "./OverlayFilter"
+import { idGenerate } from "../../Utility/Id"
+import { arrayLast } from "../../Utility/Array"
 
 /**
  * @category Filter
  */
-export class BlendFilter extends FilterDefinitionClass {
+export class BlendFilter extends OverlayFilter {
   constructor(...args: any[]) {
     super(...args)
-    this.properties.push(propertyInstance({
-      custom: true, type: DataType.Mode
-    }))
+    this.properties.push(propertyInstance({ type: DataType.Mode }))
     this.populateParametersFromProperties()
   }
 
-  serverFilters(_: FilterChain, valueObject: ValueObject): ServerFilters {
-    const modeString = this.modeString(valueObject.mode, false)
+
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const { chainInput, filterInput, filter, duration, dimensions, videoRate } = args
+    assertPopulatedString(chainInput, 'chainInput')
+    assertPopulatedString(filterInput, 'filterInput')
+    assertDimensions(dimensions)
+
+    const commandFilters:CommandFilters = []
+    const transparentCommandFilter = this.transparentCommandFilter(dimensions, videoRate, duration)
+    commandFilters.push(transparentCommandFilter)
+    const transparentId = arrayLast(transparentCommandFilter.outputs)
+        
+    const superArgs = { ...args, chainInput: transparentId }
+    commandFilters.push(...super.commandFilters(superArgs))
+    const lastFilter = arrayLast(commandFilters)
+
     const { ffmpegFilter } = this
+    const superId = idGenerate(ffmpegFilter)
+    lastFilter.outputs = [superId]
+   
+    const mode = filter.value('mode')
+    const modeString = this.modeString(mode, false)
     const commandFilter: CommandFilter = {
-      ffmpegFilter, options: { all_mode: modeString , repeatlast: 0}
+      inputs: [superId], ffmpegFilter, 
+      options: { all_mode: modeString, repeatlast: 0 },
+      outputs: []
     }
-    return [commandFilter]
+    commandFilters.push(commandFilter)
+    return commandFilters 
   }
 
-  private modeString(value: Value, editing: Boolean): string {
+  private modeString(value: Scalar, editing: Boolean): string {
     if (!value) return 'normal'
 
     if (!isNumeric(value)) return String(value)
@@ -41,8 +64,9 @@ export class BlendFilter extends FilterDefinitionClass {
     return array[Number(value)]
   }
 
-  svgFilters(_: Dimensions, valueObject: ValueObject): SvgFilters {
-    const modeString = this.modeString(valueObject.mode, true)
+  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
+    const { mode } = valueObject
+    const modeString = this.modeString(mode, true)
     assertPopulatedString(modeString)
 
     const blendElement = globalThis.document.createElementNS(NamespaceSvg, 'feBlend')

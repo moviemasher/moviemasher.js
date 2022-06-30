@@ -1,39 +1,35 @@
-import {
-  Constrained, SvgContent
-} from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
+import { Constrained} from "../../declarations"
 import { GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { LoadType } from "../../Setup/Enums"
-import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
-import { Instance, InstanceObject, isInstance } from "../../Instance/Instance"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Content/Content"
 
-export interface PreloadableObject extends InstanceObject {
+export interface PreloadableObject extends ContentObject {
 }
 
-export interface PreloadableDefinitionObject extends DefinitionObject {
+export interface PreloadableDefinitionObject extends ContentDefinitionObject {
   source?: string
   url?: string
 }
 
-export interface Preloadable extends Instance { }
+export interface Preloadable extends Content { 
+}
 export const isPreloadable = (value?: any): value is Preloadable => {
-  return isInstance(value) && "source" in value || "url" in value
+  return isContentDefinition(value.definition)
 }
 export function assertPreloadable(value?: any): asserts value is Preloadable {
   if (!isPreloadable(value)) throw new Error('expected Preloadable')
 }
 
-export interface PreloadableDefinition extends Definition {
+export interface PreloadableDefinition extends ContentDefinition {
   loadType: LoadType
   preloadableSource(editing?: boolean): string
   graphFiles(args: GraphFileArgs): GraphFiles
-  svgContent(filterChain: TrackPreview, dimensions?: Dimensions): SvgContent
   source: string
   url: string
+  urlAbsolute: string
 }
 export const isPreloadableDefinition = (value?: any): value is PreloadableDefinition => {
-  return isDefinition(value) && "preloadableSource" in value
+  return isContentDefinition(value) && "preloadableSource" in value
 }
 
 export function assertPreloadableDefinition(value?: any): asserts value is PreloadableDefinition {

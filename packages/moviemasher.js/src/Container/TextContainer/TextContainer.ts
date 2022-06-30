@@ -8,6 +8,7 @@ import {
 export interface TextContainerObject extends ContainerObject {
   fontId?: string
   string?: string
+  intrinsicOffset?: number
 }
 
 export interface TextContainerDefinitionObject extends ContainerDefinitionObject {
@@ -29,11 +30,6 @@ export function assertTextContainer(value: any): asserts value is TextContainer 
 
 export interface TextContainerDefinition extends ContainerDefinition {
   instanceFromObject(object?: TextContainerObject): TextContainer
-
-  textFilterDefinition: FilterDefinition
-  alphaColorFilterDefinition: FilterDefinition
-  setptsFilterDefinition: FilterDefinition
-
 }
 
 /**

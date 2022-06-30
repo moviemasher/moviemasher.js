@@ -12,6 +12,7 @@ export interface FilterGraphs {
   filterGraphVisible: FilterGraph
   filterGraphsVisible: FilterGraph[]
   graphFiles: GraphFiles
+  loadPromise: Promise<void>
 }
 
 export interface FilterGraphsOptions {

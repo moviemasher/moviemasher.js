@@ -1,5 +1,5 @@
 {
-  "id": "video-from-text-fade-json",
+  "id": "video-from-text-json",
   "outputs": [
     {
       "outputType": "video"
@@ -8,7 +8,7 @@
   "mash": {
     "label": "",
     "quantize": 10,
-    "backcolor": "#00000000",
+    "backcolor": "#000000",
     "tracks": [
       {
         "dense": true,
@@ -18,15 +18,18 @@
           {
             "definitionId": "com.moviemasher.visible.default",
             "containerId": "com.moviemasher.textcontainer.default",
-            "string": "Lobster Font...",
-            "height": 0.3,
-            "x": 0,
-            "y": 0,
-            "opacity": 0.0,
-            "opacityEnd": 1.0,
-            "color": "rgba(255,0,0,1)",
-            "background": "rgba(0,0,255,0)",
-            "fontId": "com.moviemasher.font.default",
+            "container": {
+              "string": "Lobster",
+              "intrinsicWidth": 234,
+              "intrinsicHeight": 108,
+              "x": 0.5,
+              "y": 0.5,
+              "height": 0.3,
+              "font": "com.moviemasher.font.default"
+            },
+            "content": {
+              "color": "#FF0000"
+            },
             "frame": 0,
             "frames": 30,
             "label": "Text",
@@ -34,11 +37,7 @@
           }
         ]
       }
-    ],
-    "createdAt": "2022-03-10T15:53:55.623Z",
-    "userId": "doug",
-    "icon": null,
-    "id": "09a7cb26-4c84-436d-82d3-aac6e36445c5"
+    ]
   },
   "definitions": []
 }

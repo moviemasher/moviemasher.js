@@ -1,5 +1,6 @@
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import {
+  AVType,
   CommandFilters,
   CommandOptions, GraphFilters, isPopulatedObject, OutputFormat, ValueObject
 } from '@moviemasher/moviemasher.js'
@@ -42,8 +43,9 @@ export const commandProcess = (): ffmpeg.FfmpegCommand => {
 
 export const commandInstance = (args: CommandOptions): Command => {
   const instance: ffmpeg.FfmpegCommand = commandProcess()
-  const { inputs, output, commandFilters } = args
-
+  const { inputs, output, commandFilters, avType } = args
+  if (avType === AVType.Video) instance.noAudio()
+  else if (avType === AVType.Audio) instance.noVideo()
   inputs?.forEach(({ source, options }) => {
     // console.log("commandInstance adding", source)
     instance.addInput(source)
@@ -51,7 +53,14 @@ export const commandInstance = (args: CommandOptions): Command => {
     if (options) instance.addInputOptions(commandInputOptions(options))
   })
   // console.log("commandInstance GRAPHFILTERS", commandFilters)
-  if (commandFilters?.length) instance.complexFilter(commandComplexFilter(commandFilters))
+
+  if (commandFilters?.length) {
+    instance.complexFilter(commandComplexFilter(commandFilters))
+    const last = commandFilters[commandFilters.length - 1]
+    last.outputs.forEach(output => {
+      instance.map(`[${output}]`)
+    })
+  }
 
   if (output.audioCodec) instance.audioCodec(output.audioCodec)
   if (output.audioBitrate) instance.audioBitrate(output.audioBitrate)

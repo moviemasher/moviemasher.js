@@ -31,29 +31,20 @@ export function SaveControl(props:PropsAndChild): ReactResult {
     if (processing || disabled) return
 
     setProcessing(true)
-    const request: JsonObject = {}
     const { edited, editType } = editor
     if (!edited) throw new Error(Errors.selection)
 
-    if (isMash(edited)) {
-      request.mash = edited.toJSON()
-      request.definitionIds = edited.definitionIds
-    } else if (isCast(edited)) {
-      request.cast = edited.toJSON()
-      request.definitionIds = Object.fromEntries(edited.mashes.map(mash => (
-        [mash.id, mash.definitionIds]
-      )))
-    }
-
-    console.debug("DataPutRequest", Endpoints.data[editType].put, JSON.parse(JSON.stringify(request)))
-    endpointPromise(Endpoints.data[editType].put, request).then((response: DataPutResponse) => {
-      console.debug("DataPutResponse", Endpoints.data[editType].put, response)
-      const { error, temporaryIdLookup } = response
-      if (error) console.error(Endpoints.data[editType].put, error)
-      else editor.save(temporaryIdLookup)
-
-      setProcessing(false)
+    editor.dataPutRequest().then(request => {
+      console.debug("DataPutRequest", Endpoints.data[editType].put, JSON.parse(JSON.stringify(request)))
+      endpointPromise(Endpoints.data[editType].put, request).then((response: DataPutResponse) => {
+        console.debug("DataPutResponse", Endpoints.data[editType].put, response)
+        const { error, temporaryIdLookup } = response
+        if (error) console.error(Endpoints.data[editType].put, error)
+        else editor.saved(temporaryIdLookup)
+        setProcessing(false)
+      })
     })
+    
   }
   const buttonOptions = { ...rest, onClick, disabled: processing || disabled }
   return React.cloneElement(React.Children.only(children), buttonOptions)

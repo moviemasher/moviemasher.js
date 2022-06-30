@@ -37,9 +37,6 @@
     "build-css": "run-s build-css-client build-example-client",
     "build-umd": "npm run build-umd -w @moviemasher/moviemasher.js",
     "build-esm": "npm run build-esm -w @moviemasher/moviemasher.js",
-    "watch-core": "npm run watch-esm -w @moviemasher/moviemasher.js",
-    "watch-client": "npm run watch-esm -w @moviemasher/client-react",
-    "watch-example": "npm run watch-client -w example-express-react",
     "build-example-client": "npm run build-client -w example-express-react",
     "build-example-react": "npm run build -w example-react",
     "build-example-server": "npm run build-server -w example-express-react",
@@ -53,7 +50,6 @@
     "build-tester-server": "npm run build-server -w tester",
     "build-tester": "npm run build -w tester",
     "build": "run-s build-core build-icons build-client build-server build-example build-example-react build-tester"
-
   },
   "devDependencies": {
     "rollup-plugin-svg": "^2.0.0",

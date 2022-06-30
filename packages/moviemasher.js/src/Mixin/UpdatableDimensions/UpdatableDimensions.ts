@@ -1,4 +1,5 @@
 import { Constrained } from "../../declarations"
+import { Dimensions } from "../../Setup/Dimensions"
 import {
   isPreloadable, isPreloadableDefinition,
   Preloadable, PreloadableDefinition,
@@ -18,18 +19,19 @@ export const isUpdatableDimensions = (value?: any): value is UpdatableDimensions
   return isPreloadable(value)
 }
 export function assertUpdatableDimensions(value?: any): asserts value is UpdatableDimensions {
-  if (!isUpdatableDimensions(value)) throw new Error('expected Updatable')
+  if (!isUpdatableDimensions(value)) throw new Error('expected UpdatableDimensions')
 }
 
 export interface UpdatableDimensionsDefinition extends PreloadableDefinition {
   width: number
   height: number
+  coverDimensions(dimensions: Dimensions): Dimensions
 }
 export const isUpdatableDimensionsDefinition = (value?: any): value is UpdatableDimensionsDefinition => {
-  return isPreloadableDefinition(value) && "width" in value
+  return isPreloadableDefinition(value) && "coverDimensions" in value
 }
 export function assertUpdatableDimensionsDefinition(value?: any): asserts value is UpdatableDimensionsDefinition {
-  if (!isUpdatableDimensionsDefinition(value)) throw new Error('expected UpdatableDefinition')
+  if (!isUpdatableDimensionsDefinition(value)) throw new Error('expected UpdatableDimensionsDefinition')
 }
 
 export type UpdatableDimensionsClass = Constrained<UpdatableDimensions>

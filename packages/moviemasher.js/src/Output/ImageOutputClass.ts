@@ -39,7 +39,7 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
   outputType = OutputType.Image
 
   override get startTime(): Time {
-     const { commandOutput, mash } = this.args
+    const { commandOutput, mash } = this.args
     const { offset } = commandOutput
     const needDuration = offset || mash.frames < 0
     if (needDuration) return timeFromArgs(0, mash.quantize)

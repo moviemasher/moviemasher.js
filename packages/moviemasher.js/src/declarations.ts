@@ -10,6 +10,7 @@ export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
 export interface UnknownObject extends Record<string, unknown> {}
 export interface StringObject extends Record<string, string> { }
+export interface ScalarObject extends Record<string, Scalar> { }
 export interface StringsObject extends Record<string, string[]> { }
 export interface RegExpObject extends Record<string, RegExp> {}
 

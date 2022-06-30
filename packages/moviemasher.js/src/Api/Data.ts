@@ -15,6 +15,11 @@ export interface DataPutResponse extends ApiResponse {
 export interface DataGetRequest extends ApiRequest, AndId {
 }
 
+
+export interface DataPutRequest extends ApiRequest {
+}
+
+
 export interface DataRetrieveResponse extends ApiResponse {
   described: Described[]
 }
@@ -51,7 +56,7 @@ export interface DataDefinitionDeleteResponse extends ApiResponse {
 
 // MASH
 
-export interface DataMashPutRequest extends ApiResponse {
+export interface DataMashPutRequest extends DataPutRequest {
   definitionIds?: string[]
   mash: MashObject
 }
@@ -93,7 +98,7 @@ export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations 
   previewDimensions?: Dimensions
 }
 
-export interface DataCastPutRequest extends ApiResponse {
+export interface DataCastPutRequest extends DataPutRequest {
   cast: CastObject
   definitionIds: StringsObject
 }

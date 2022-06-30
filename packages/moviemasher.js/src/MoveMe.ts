@@ -1,19 +1,15 @@
 import { AVType, GraphFileType, LoadType, SelectType, TransformType } from "./Setup/Enums"
-import { Time } from "./Helpers/Time/Time"
+import { Time, TimeRange } from "./Helpers/Time/Time"
 import { Definition } from "./Definition/Definition"
-import { PropertiedChangeHandler } from "./Base/Propertied"
+import { Propertied, PropertiedChangeHandler } from "./Base/Propertied"
 import { Property } from "./Setup/Property"
 import { EmptyMethod } from "./Setup/Constants"
 import { Filter } from "./Filter/Filter"
-import { Point, Scalar, ValueObject } from "./declarations"
+import { Point, Rect, Scalar, ValueObject } from "./declarations"
 import { Dimensions } from "./Setup/Dimensions"
 import { Evaluator } from "./Helpers/Evaluator"
 
-export interface Transform extends Point {
-  transformType: TransformType
-}
 
-export type Transforms = Transform[]
 
 export interface SelectedProperty {
   selectType: SelectType
@@ -27,8 +23,8 @@ export type SelectedProperties = SelectedProperty[]
 export interface CommandFilter {
   avType?: AVType
   ffmpegFilter: string
-  inputs?: string[]
-  outputs?: string[]
+  inputs: string[]
+  outputs: string[]
   options: ValueObject
 }
 
@@ -53,43 +49,75 @@ export interface AVEditingArgs {
   time: Time
 }
 
-export interface GraphFileOptions extends Partial<AVEditingArgs> { }
+export interface GraphFileOptions extends Partial<AVEditingArgs> {
+  quantize?: number
+}
 
 export interface GraphFileArgs extends AVEditingArgs {
   quantize: number
 }
 
-export interface GraphState {
-  inputCount: number
-  previousOutput: string
-  outputRequired: boolean
+export interface CommandFileArgs {
   visible?: boolean
-}
-
-export interface ChainArgs extends GraphState, GraphFileArgs {
-  outputDimensions: Dimensions
+  time: Time
+  quantize: number
+  outputDimensions?: Dimensions
+  containerRects?: Rect[]
+  colors?: Scalar[]
   videoRate: number
 }
-export interface ContainerChainArgs extends ChainArgs {
-  color?: string
+
+export interface ContentCommandFileArgs extends CommandFileArgs {
+  clipTime: TimeRange
 }
 
-export interface ContentChainArgs extends ChainArgs {
-  containerDimensions: Dimensions
+export interface ContainerCommandFileArgs extends CommandFileArgs {
+  clipTime: TimeRange
 }
-export interface Chain {
-  commandFilters: CommandFilters
+
+export interface CommandFilterArgs extends CommandFileArgs {
   commandFiles: CommandFiles
+  chainInput: string
+  filterInput?: string
 }
 
+export interface ContentCommandFilterArgs extends CommandFilterArgs {
+  clipTime: TimeRange
+}
+
+
+export interface ContainerCommandFilterArgs extends CommandFilterArgs {
+  filterInput: string
+  clipTime: TimeRange
+}
+
+export interface FilterArgs {
+  propertied?: Propertied
+}
+
+export interface FilterCommandFilterArgs extends FilterArgs {
+  chainInput?: string, 
+  filterInput?: string
+  dimensions?: Dimensions
+  videoRate: number
+  duration: number
+}
+
+export interface FilterDefinitionArgs extends FilterArgs {
+  filter: Filter
+}
+
+export interface FilterDefinitionCommandFilterArgs extends FilterCommandFilterArgs {
+  filter: Filter
+}
 
 export interface GraphFile {
-  localId?: string
   type: GraphFileType | LoadType
   file: string
   options?: ValueObject
   input?: boolean
   definition: Definition
+  resolved?: string
 }
 export type GraphFiles = GraphFile[]
 
@@ -103,10 +131,3 @@ export interface DefinitionRecord extends Record<string, Definition> { }
 
 
 export type VoidMethod = typeof EmptyMethod
-
-
-export interface ChainBuilder {
-  evaluator: Evaluator
-  size: Dimensions
-}
-

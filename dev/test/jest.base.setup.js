@@ -17,8 +17,8 @@ import { imageDefinition } from "../../packages/moviemasher.js/src/Media/Image/I
 import { visibleClipDefinition } from "../../packages/moviemasher.js/src/Media/VisibleClip/VisibleClipFactory"
 import { videoDefinition } from "../../packages/moviemasher.js/src/Media/Video/VideoFactory"
 import { videoSequenceDefinition } from "../../packages/moviemasher.js/src/Media/VideoSequence/VideoSequenceFactory"
-import { idCountReset } from '../../packages/moviemasher.js/src/Utility/Id'
 
+import { Defined } from "../../packages/moviemasher.js/src/Base/Defined"
 
 export default [
   audioDefinition,
@@ -42,8 +42,6 @@ const { toMatchImageSnapshot } = require('jest-image-snapshot')
 
 expect.extend({ toMatchImageSnapshot })
 
-beforeEach(idCountReset)
-
 jest.setTimeout(20 * 1000)
 
 require('jest-fetch-mock').enableMocks()
@@ -57,6 +55,9 @@ fetchMock.mockResponse(req => {
     })
   })
   return promise
+})
+beforeEach(() => {
+  Defined.undefineAll()
 })
 
 fontDefault.url = fontDefault.source

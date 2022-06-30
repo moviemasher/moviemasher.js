@@ -1,23 +1,24 @@
-import { ChainBuilder, GraphFilter, Transforms } from "../../../MoveMe"
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
 import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
-import { Clip } from "../../../Mixin/Clip/Clip"
 import { Preview } from "../Preview"
+import { Evaluator } from "../../../Helpers/Evaluator"
+import { Dimensions } from "../../../Setup/Dimensions"
 
 export interface TrackPreviewArgs {
   clip: VisibleClip
-  filterGraph: Preview
-  graphFilter?: GraphFilter
+  preview: Preview
   timeRange: TimeRange
   tweenTime?: Time,
 }
 
-export interface TrackPreview extends ChainBuilder{
-  clip: Clip
-  filterGraph: Preview
+export interface TrackPreview {
+
+  evaluator: Evaluator
+  size: Dimensions
+  clip: VisibleClip
+  preview: Preview
   selected: boolean
   svg: SVGSVGElement
-  transforms: Transforms
 }
 
 export type TrackPreviews = TrackPreview[]

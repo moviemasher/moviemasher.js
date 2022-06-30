@@ -1,7 +1,12 @@
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { Parameter } from "../../Setup/Parameter"
-import { DataType } from "../../Setup/Enums"
+import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { idGenerate } from "../../Utility/Id"
+import { assertDimensions, assertPopulatedString, assertRect } from "../../Utility/Is"
+import { tweenOption } from "../../Utility/Tween"
+import { ValueObject } from "../../declarations"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
 
 /**
  * @category Filter
@@ -11,25 +16,52 @@ export class CropFilter extends FilterDefinitionClass {
     super(...args)
     this.properties.push(propertyInstance({
       custom: true, name: 'width', type: DataType.Number,
-      defaultValue: 1.0, min: 0.0, max: 2.0, step: 0.01
+      defaultValue: 0, min: 0, step: 1
     }))
     this.properties.push(propertyInstance({
       custom: true, name: 'height', type: DataType.Number,
-      defaultValue: 1.0, min: 0.0, max: 2.0, step: 0.01
+      defaultValue: 0, min: 0, step: 1
     }))
-
-    this.parameters.push(new Parameter({
-      name: "x", value: "((in_w - out_w) / 2)", dataType: DataType.String
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, name: 'x', type: DataType.Number,
+      defaultValue: 0, min: 0, step: 1
     }))
-    this.parameters.push(new Parameter({
-      name: "y", value: "((in_h - out_h) / 2)", dataType: DataType.String
+    this.properties.push(propertyInstance({
+      tweenable: true, custom: true, name: 'y', type: DataType.Number,
+      defaultValue: 0, min: 0, step: 1
     }))
-    this.parameters.push(new Parameter({
-      name: "out_w", value: "out_width", dataType: DataType.String
-    }))
-    this.parameters.push(new Parameter({
-      name: "out_h", value: "out_height", dataType: DataType.String
-    }))
+    this.populateParametersFromProperties()
   }
+
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const { filter, filterInput, duration, videoRate } = args
+    assertPopulatedString(filterInput)
+    
+    const commandFilters: CommandFilters = []
+    const scalars = filter.scalarObject(!!duration)
+    assertDimensions(scalars)
+    // console.log(this.constructor.name, "commandFilters scalars", scalars, !!duration)
+
+    const options: ValueObject = {}
+    const pos = `(n/${videoRate * duration})`
+    options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], pos)
+    options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], pos)
+    options.w = scalars.width
+    options.h = scalars.height
+
+    // console.log(this.constructor.name, "commandFilters options", options)
+
+   
+    const { ffmpegFilter } = this
+    const commandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter, 
+      options, 
+      outputs: [idGenerate(ffmpegFilter)]
+    }
+    commandFilters.push(commandFilter)
+    return commandFilters
+  }
+
+  phase = Phase.Populate
 
 }

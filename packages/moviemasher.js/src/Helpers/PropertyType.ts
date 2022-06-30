@@ -11,6 +11,8 @@ export type ColorDataType = DataType.Rgb | DataType.Rgba
 
 export const PropertyTypesNumeric = [
   DataType.Frame,
+  DataType.Percent,
+  DataType.Track,
   DataType.Direction4,
   DataType.Direction8,
   DataType.Number,
@@ -68,6 +70,7 @@ export const propertyTypeValid = (value: Scalar, dataType: PropertyType): boolea
     case DataType.Direction4: return propertyTypeValidNumber(value, 4)
     case DataType.Direction8: return propertyTypeValidNumber(value, 8)
     case DataType.Frame:
+    case DataType.Percent:
     case DataType.Number: return propertyTypeValidNumber(value)
     case DataType.Mode: return propertyTypeValidNumber(value, Modes.length - 1)
     case DataType.String: return true

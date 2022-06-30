@@ -27,10 +27,10 @@ export class TrackClass extends PropertiedClass implements Track {
       this.dense = !this.layer && this.trackType === TrackType.Video
     } else this.dense = !!dense
 
-    this._properties.push(propertyInstance({ name: "dense", defaultValue: false }))
-
+    this.properties.push(propertyInstance({ name: "dense", defaultValue: false }))
+    this.propertiesInitialize(args)
+    
     if (clips) {
-
       this.clips.push(...clips.map(clip => {
         const { definitionId } = clip
         if (!definitionId) throw Errors.id + JSON.stringify(clip)

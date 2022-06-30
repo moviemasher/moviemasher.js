@@ -21,7 +21,7 @@ export class InstanceBase extends PropertiedClass implements Instance {
     if (!definition)
       throw Errors.invalid.definition.object
     this.definition = definition
-    this._properties.push(...this.definition.properties)
+    this.properties.push(...this.definition.properties)
     this.propertiesInitialize(object)
   }
 
@@ -49,7 +49,7 @@ export class InstanceBase extends PropertiedClass implements Instance {
   set label(value: string) { this._label = value }
 
   get propertyNames(): string[] {
-    return this._properties.map(property => property.name)
+    return this.properties.map(property => property.name)
   }
 
   toJSON(): UnknownObject {

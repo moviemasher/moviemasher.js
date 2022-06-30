@@ -3,6 +3,7 @@ import { ReactResult, SliderChangeHandler, PropsWithChildren } from "../../decla
 import { TimelineContext } from '../../Contexts/TimelineContext'
 import { Slider } from '../../Utilities/Slider'
 import { useEditor } from '../../Hooks/useEditor'
+import { isArray } from '@moviemasher/moviemasher.js'
 
 
 /**
@@ -12,8 +13,8 @@ export function TimelineZoomer(props: PropsWithChildren): ReactResult {
   const editor = useEditor()
   const timelineContext = React.useContext(TimelineContext)
 
-  const handleChange : SliderChangeHandler = (_event, value) => {
-    const number = typeof value === "number" ? value : value[0]
+  const handleChange : SliderChangeHandler = (_event, values) => {
+    const number = isArray(values) ? values[0] : values
     if (timelineContext.zoom !== number) timelineContext.setZoom(number)
   }
 

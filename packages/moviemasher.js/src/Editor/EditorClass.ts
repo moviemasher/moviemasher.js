@@ -4,7 +4,7 @@ import { Dimensions } from "../Setup/Dimensions"
 import { SelectedProperties } from "../MoveMe"
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Edited } from "../Edited/Edited"
-import { assertMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
+import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
@@ -46,6 +46,8 @@ import { isContainerDefinition } from "../Container/Container"
 import { assertVisibleClip, isVisibleClip, VisibleClipObject } from "../Media/VisibleClip/VisibleClip"
 import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
 import { isVisible } from "../Mixin/Visible/Visible"
+import { isContentDefinition } from "../Content/Content"
+import { DataPutRequest } from "../Api/Data"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -89,8 +91,8 @@ export class EditorClass implements Editor {
     // TODO: audio...
 
     const visibleClipObject: VisibleClipObject = { label }
-    if (isContainerDefinition(definition)) visibleClipObject.containerId = id
-    else visibleClipObject.contentId = id
+    if (isContentDefinition(definition)) visibleClipObject.contentId = id
+    else visibleClipObject.containerId = id
 
     const clip = visibleClipDefault.instanceFromObject(visibleClipObject)
 
@@ -347,6 +349,28 @@ export class EditorClass implements Editor {
     const { mash } = this.selection
     if (mash && mash.drawnTime) return mash.drawnTime.seconds
     return 0
+  }
+
+  dataPutRequest(): Promise<DataPutRequest> {
+    const { edited } = this
+    assertTrue(edited, 'edited')
+    return edited.putPromise().then(() => {
+      if (isMash(edited)) {
+        return {
+          mash: edited.toJSON(),
+          definitionIds: edited.definitionIds
+        }
+      } 
+      if (isCast(edited)) {
+        return {
+          cast: edited.toJSON(),
+          definitionIds: Object.fromEntries(edited.mashes.map(mash => (
+            [mash.id, mash.definitionIds]
+          )))
+        }
+      }
+      throw new Error(Errors.internal)
+    })
   }
 
   define(objectOrArray: DefinitionObject | DefinitionObjects) {
@@ -762,7 +786,7 @@ export class EditorClass implements Editor {
     console.debug(this.constructor.name, "removeTrack coming soon...")
   }
 
-  save(temporaryIdLookup?: StringObject): void {
+  saved(temporaryIdLookup?: StringObject): void {
     if (temporaryIdLookup) {
       const { edited } = this
       if (!edited) throw new Error(Errors.internal)
@@ -823,7 +847,7 @@ export class EditorClass implements Editor {
       if (track) {
         if (clip) {
           if (effect && filteredTypes.includes(SelectType.Effect)) {
-            properties.push(...effect.properties().map(property => ({
+            properties.push(...effect.properties.map(property => ({
               selectType: SelectType.Effect, property, changeHandler: this.changeEffect.bind(this),
               value: effect.value(property.name)
             })))
@@ -834,26 +858,26 @@ export class EditorClass implements Editor {
           }
         }
         if (filteredTypes.includes(SelectType.Track)) {
-          properties.push(...track.properties().map(property => ({
+          properties.push(...track.properties.map(property => ({
             selectType: SelectType.Track, property, changeHandler: this.changeTrack.bind(this),
             value: track.value(property.name)
           })))
         }
       }
       if (filteredTypes.includes(SelectType.Mash)) {
-        properties.push(...mash.properties().map(property => ({
+        properties.push(...mash.properties.map(property => ({
           selectType: SelectType.Mash, property, changeHandler: this.changeMash.bind(this),
           value: mash.value(property.name)
         })))
       }
     }
     if (cast && filteredTypes.includes(SelectType.Cast)) {
-      properties.push(...cast.properties().map(property => ({
+      properties.push(...cast.properties.map(property => ({
         selectType: SelectType.Cast, property, changeHandler: this.changeCast.bind(this),
         value: cast.value(property.name)
       })))
       if (layer) {
-        properties.push(...layer.properties().map(property => ({
+        properties.push(...layer.properties.map(property => ({
           selectType: SelectType.Layer, property, changeHandler: this.changeLayer.bind(this),
           value: layer.value(property.name)
         })))

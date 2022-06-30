@@ -3,7 +3,7 @@ import { AndId, UploadDescription, ValueObject } from "../declarations"
 import { CommandFilters, GraphFilters } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
-import { LoadType, OutputType } from "../Setup/Enums"
+import { AVType, LoadType, OutputType } from "../Setup/Enums"
 import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
 export interface CommandInput {
@@ -21,7 +21,7 @@ export interface CommandDescription {
   duration?: number
   inputs?: CommandInputs
   commandFilters?: CommandFilters
-  // graphFilters?: GraphFilters
+  avType: AVType
 }
 
 

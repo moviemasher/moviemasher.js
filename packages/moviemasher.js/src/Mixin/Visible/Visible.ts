@@ -1,13 +1,10 @@
-import { CanvasVisibleSource, Constrained, SvgContent, SvgFilters } from "../../declarations"
+import { CanvasVisibleSource, Constrained } from "../../declarations"
 import { Dimensions } from "../../Setup/Dimensions"
 import { Time } from "../../Helpers/Time/Time"
 import { Clip, ClipDefinition, ClipDefinitionObject, ClipObject, isClip } from "../Clip/Clip"
 import { Loader } from "../../Loader/Loader"
-import { FilterDefinition } from "../../Filter/Filter"
 import { isObject } from "../../Utility/Is"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
 import { EffectObject, Effects } from "../../Media/Effect/Effect"
-import { Chain, ChainArgs } from "../../MoveMe"
 
 export interface VisibleObject extends ClipObject {
   opacity?: number
@@ -23,11 +20,9 @@ export interface VisibleDefinitionObject extends ClipDefinitionObject {
 
 export interface Visible extends Clip {
   effects: Effects
-  visibleContent(args: VisibleContentsArgs): SvgContent
-  svgFilters(filterChain: TrackPreview): SvgFilters
 }
 export const isVisible = (value: any): value is Visible => {
-  return isClip(value) && "visibleContent" in value
+  return isClip(value) && "effects" in value
 }
 
 export interface VisibleDefinition extends ClipDefinition {

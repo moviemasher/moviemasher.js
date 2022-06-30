@@ -5,11 +5,11 @@ import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
 import { LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import {
-  PreloadableDefinition, PreloadableDefinitionClass,
-  PreloadableDefinitionObject
+  PreloadableDefinition, PreloadableDefinitionClass, PreloadableDefinitionObject
 } from "./Preloadable"
+import { ContentDefinitionClass } from "../../Content/Content"
 
-export function PreloadableDefinitionMixin<T extends DefinitionClass>(Base: T): PreloadableDefinitionClass & T {
+export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Base: T): PreloadableDefinitionClass & T {
   return class extends Base implements PreloadableDefinition {
     constructor(...args: any[]) {
       super(...args)
@@ -30,7 +30,7 @@ export function PreloadableDefinitionMixin<T extends DefinitionClass>(Base: T): 
 
     source: string
 
-    svgContent(filterChain: TrackPreview): SvgContent {
+    preloadableSvg(trackPreview: TrackPreview): SvgContent {
       throw new Error(Errors.unimplemented)
     }
 
@@ -42,5 +42,7 @@ export function PreloadableDefinitionMixin<T extends DefinitionClass>(Base: T): 
     }
 
     url: string
+
+    urlAbsolute = ""
   }
 }

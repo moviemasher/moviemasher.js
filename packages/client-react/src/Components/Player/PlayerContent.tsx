@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType } from '@moviemasher/moviemasher.js'
+import { EventType, SelectType } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult } from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
@@ -26,8 +26,13 @@ export function PlayerContent(props: PropsWithoutChild): ReactResult {
 
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
 
+  const onPointerDown = () => {
+    console.log("PlayerContent onPointerDown")
+    editor.deselect(SelectType.Clip)
+  }
+
   const viewProps = {
-    ...props, key: 'player-content', ref
+    ...props, key: 'player-content', ref, onPointerDown
   }
   return <View { ...viewProps}></View>
 }

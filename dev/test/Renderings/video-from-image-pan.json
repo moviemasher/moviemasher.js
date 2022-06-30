@@ -1,5 +1,5 @@
 {
-  "id": "video-from-image-json",
+  "id": "video-from-image-pan-json",
   "outputs": [
     {
       "outputType": "video"
@@ -16,29 +16,26 @@
         "layer": 0,
         "clips": [
           {
-            "definitionId": "id-image",
+            "definitionId": "com.moviemasher.visible.default",
+            "contentId": "globe-image",
+            "content": {
+              "x": 0, "xEnd": 1,
+              "y": 1, "yEnd": 0
+            },
             "frame": 0,
-            "frames": 20,
-            "effects": []
+            "frames": 40
           }
         ]
-      },
-      {
-        "dense": false,
-        "trackType": "audio",
-        "layer": 0,
-        "clips": []
       }
-    ],
-    "createdAt": ""
+    ]
   },
   "definitions": [
     {
-      "id": "id-image",
+      "id": "globe-image",
       "type": "image",
       "label": "Image",
-      "url": "../shared/image/frog.jpg",
-      "source": "../shared/image/frog.jpg"
+      "url": "../shared/image/globe.jpg",
+      "source": "../shared/image/globe.jpg"
     }
   ]
 }

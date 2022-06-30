@@ -5,6 +5,7 @@ import { Time } from "../../Helpers/Time/Time"
 import { Visible } from "../../Mixin/Visible/Visible"
 import { Loader } from "../../Loader/Loader"
 import { Mash } from "../../Edited/Mash/Mash"
+import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
 
 export interface PreviewOptions  {
   editor?: Editor
@@ -13,7 +14,7 @@ export interface PreviewOptions  {
 }
 
 export interface PreviewArgs extends PreviewOptions {
-  selectedClip?: Visible
+  selectedClip?: VisibleClip
   time: Time
   mash: Mash
 }

@@ -11,6 +11,8 @@ export default {
   output: { format: "esm", file: module, sourcemap: false },
   plugins: [
     peerDepsExternal(),
-    ts({ tsconfig: "./dev/tsconfig.json" }),
+    ts({ 
+      tsconfig: config => ({ ...config, declaration: true, declarationMap: true }) 
+    })  
   ]
 }

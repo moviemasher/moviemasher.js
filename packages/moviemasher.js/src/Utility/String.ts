@@ -44,16 +44,17 @@ export const stringSeconds = (seconds : number, fps : number, duration : number)
   return s
 }
 
-export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): number => {
-  if (!(isPopulatedString(string) && isAboveZero(height))) return 0
+export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): [number, number] => {
+  if (!(isPopulatedString(string) && isAboveZero(height))) return [0, 0]
 
   const canvas = globalThis.document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
   ctx.font = `${height}px ${family}`
 
   const text = ctx.measureText(string)
-  console.log("stringWidthForFamilyAtHeight", ctx.font, text)
-  return text.width
+  // console.log("stringWidthForFamilyAtHeight", ctx.font, text)
+  const { actualBoundingBoxLeft, actualBoundingBoxRight } = text
+  return [actualBoundingBoxRight + actualBoundingBoxLeft, actualBoundingBoxLeft]
 }
 
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {

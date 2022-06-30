@@ -1,13 +1,11 @@
-import { Constrained, ValueObject } from "../../declarations"
+import { Constrained } from "../../declarations"
 import { GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { Phase, TrackType } from "../../Setup/Enums"
+import { TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Definition, DefinitionObject } from "../../Definition/Definition"
 import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../Instance/Instance"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 import { Loader } from "../../Loader/Loader"
-import { ChainLinks, FilterChainPhase, ServerFilters } from "../../Filter/Filter"
 import { Track } from "../../Edited/Mash/Track/Track"
 
 export interface ClipDefinitionObject extends DefinitionObject {}
@@ -31,12 +29,10 @@ export const isClipObject = isInstanceObject
 
 export interface Clip extends Instance {
   audible: boolean
-  chainLinks(): ChainLinks
+  // chainLinks(): ChainLinks
   definition: ClipDefinition
   effectable: boolean
   endFrame: number
-  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined
-  filterChainServerFilters(filterChain: FilterChain, values: ValueObject): ServerFilters
   frame : number
   frames: number
   graphFiles(args: GraphFileArgs): GraphFiles

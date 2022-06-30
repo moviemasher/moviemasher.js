@@ -2,7 +2,7 @@ import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
 import {
-  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters
+  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters, AVType
 } from "@moviemasher/moviemasher.js"
 
 import { Command } from "../Command/Command"
@@ -13,7 +13,8 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
-    const { commandFilters, inputs, output } = args
+    const { commandFilters, inputs, output, avType } = args
+    this.avType = avType
     if (commandFilters) this.commandFilters = commandFilters
     if (inputs) this.commandInputs = inputs
     if (!(this.commandInputs.length || this.commandFilters.length)) {
@@ -27,9 +28,12 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   get command(): Command {
     if (this._commandProcess) return this._commandProcess
 
-    const { commandInputs: inputs, commandFilters, output } = this
-    return this._commandProcess = commandInstance({ commandFilters, inputs, output })
+    const { commandInputs: inputs, commandFilters, output, avType } = this
+    const commandOptions: CommandOptions = { commandFilters, inputs, output, avType }
+    return this._commandProcess = commandInstance(commandOptions)
   }
+
+  avType: AVType
 
   commandFilters: CommandFilters = []
 
@@ -49,7 +53,7 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   output: CommandOutput = {}
 
   run(destination: CommandDestination): void {
-    console.log(this.constructor.name, "run", destination)
+    // console.log(this.constructor.name, "run", destination)
 
     this.command.on('error', (...args: any[]) => {
       console.error(this.constructor.name, "run received error", this.runError(...args))
@@ -87,7 +91,7 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
         resolve({ error })
       })
       this.command.on('end', () => {
-        // console.log(this.constructor.name, "runPromise received end event")
+        // console.log(this.constructor.name, "runPromise received end event", this.command._getArguments())
 
         const result: CommandResult = {}
         resolve(result)
@@ -95,6 +99,9 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
       try {
         if (typeof destination === 'string') {
           this.makeDirectory(destination)
+
+          // console.log(this.constructor.name, "runPromise calling save")
+
           this.command.save(destination)
         }
         else console.log(this.constructor.name, "runPromise destination not string", destination)

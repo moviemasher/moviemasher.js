@@ -1,5 +1,5 @@
 import { AudibleSource, StartOptions, UnknownObject } from "../../declarations"
-import { GraphFile } from "../../MoveMe"
+import { CommandFilters, ContentCommandFilterArgs, FilterCommandFilterArgs, GraphFile } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Default } from "../../Setup/Default"
@@ -7,6 +7,12 @@ import { LoadType } from "../../Setup/Enums"
 import { assertPopulatedString, isPositive } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
+import { filterFromId } from "../../Filter/FilterFactory"
+import { Filter } from "../../Filter/Filter"
+import { timeFromArgs } from "../../Helpers"
+import { arrayLast } from "../../Utility/Array"
+import { commandFilesInput } from "../../Utility/CommandFiles"
+import { idGenerate } from "../../Utility"
 
 const AudibleGainDelimiter = ','
 
@@ -35,6 +41,38 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return this.definition.audibleSource(preloader)
     }
 
+    contentCommandFilters(args: ContentCommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { trim } = this
+
+      const { quantize, filterInput: input, visible, commandFiles } = args
+      let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
+      // if (!visible) {
+      //   const aformatFilter = 'aformat'
+      //   const aformatId = idGenerate(aformatFilter)
+      //   commandFilters.push({ 
+      //     ffmpegFilter: aformatFilter, 
+      //     options: { channel_layouts: 'stereo' }, 
+      //     inputs: [filterInput], outputs: [aformatId]
+      //   })
+      //   filterInput = aformatId
+      // }
+      if (trim) {
+        const trimFilter = visible ? 'trim' : 'atrim'
+        const trimId = idGenerate(trimFilter)
+        commandFilters.push({ 
+          ffmpegFilter: trimFilter, 
+          options: { start: timeFromArgs(trim, quantize).seconds }, 
+          inputs: [filterInput], outputs: [trimId]
+        })
+        filterInput = trimId
+      }
+      
+      commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }))
+      return commandFilters
+    }
+
+
     declare definition: UpdatableDurationDefinition
 
     definitionTime(quantize: number, time: Time): Time {
@@ -55,7 +93,6 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       assertPopulatedString(file, editing ? 'url' : 'source')
 
       const graphFile: GraphFile = {
-        localId: 'audio',
         input: true, options: {}, type: LoadType.Audio, file, definition
       }
       return graphFile
@@ -90,5 +127,11 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       if (this.gain !== Default.instance.audio.gain) object.gain = this.gain
       return object
     }
+
+    declare trim: number
+
+    private _trimFilter?: Filter
+    get trimFilter() { return this._trimFilter ||= filterFromId('trim')}
+    
   }
 }

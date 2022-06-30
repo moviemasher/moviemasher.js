@@ -38,9 +38,9 @@ export function RenderControl(props: PropsAndChild): ReactResult {
 
   const handleApiCallback = (callback: ApiCallback, mash: Mash) => {
     setTimeout(() => {
-      // console.debug("handleApiCallback request", callback)
+      console.debug("handleApiCallback request", callback)
       fetchCallback(callback).then((response: ApiCallbackResponse) => {
-      // console.debug("handleApiCallback response", response)
+      console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
         if (error) handleError(callback.endpoint.prefix!, error)
         else if (apiCallback) {
@@ -75,9 +75,9 @@ export function RenderControl(props: PropsAndChild): ReactResult {
       definitions: editor.definitions.map(definition => definition.toJSON()),
       outputs: [{outputType: OutputType.Video}],
     }
-    // console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
+    console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {
-      // console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
+      console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
       const { apiCallback, error } = response
       if (error) handleError(Endpoints.rendering.start, error)
       else handleApiCallback(apiCallback!, edited)

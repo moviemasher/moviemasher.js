@@ -1,14 +1,15 @@
-import { SvgContent, SvgFilters, ValueObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
-import { Chain, ChainBuilder, CommandFilter, GraphFilter, Transforms } from "../MoveMe"
+import { ScalarObject, SvgContent, SvgFilters, ValueObject } from "../declarations"
+import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
 import { DataType, DefinitionType, isPhase, Phase } from "../Setup/Enums"
 import { Parameter } from "../Setup/Parameter"
 import { DefinitionBase } from "../Definition/DefinitionBase"
-import { ChainPhase, Filter, FilterDefinition, FilterDefinitionObject, FilterObject, ServerFilters } from "./Filter"
+import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
-import { FilterChain } from "../Edited/Mash/FilterChain/FilterChain"
 import { Errors } from "../Setup/Errors"
-import { Propertied } from "../Base"
+import { Propertied } from "../Base/Propertied"
+import { idGenerate } from "../Utility/Id"
+import { assertPopulatedString, assertValueObject, isDefined } from "../Utility/Is"
+import { Dimensions } from "../Setup/Dimensions"
 
 export class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
   constructor(...args: any[]) {
@@ -18,21 +19,25 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     if (isPhase(phase)) this.phase = phase
   }
 
-  chain(dimensions: Dimensions, filter: Filter, propertied?: Propertied): Chain {
-    return { commandFiles: [], commandFilters: [] } 
-  }
-  
-  chainValues(filter: Filter, propertied?: Propertied): ValueObject {
-    const entries = this.properties.map(property => {
-      const { name } = property
-      return [name, propertied?.value(name) || filter.value(name)]
-    })
-    return Object.fromEntries(entries)
+  commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
+    const { filter, duration, filterInput } = args
+    assertPopulatedString(filterInput)
+    const commandFilters: CommandFilters = []
+    const options = filter.scalarObject(!!duration)
+    assertValueObject(options)
+    const { ffmpegFilter } = this
+    const commandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter, options, outputs: [idGenerate(ffmpegFilter)]
+    }
+    commandFilters.push(commandFilter)
+    return commandFilters
   }
 
   protected commandFilter(options: ValueObject = {}): CommandFilter {
     const { ffmpegFilter } = this
-    const commandFilter: CommandFilter = { ffmpegFilter, options, inputs: [] }
+    const commandFilter: CommandFilter = { 
+      ffmpegFilter, options, inputs: [], outputs: [idGenerate(ffmpegFilter)] 
+    }
     return commandFilter
   }
 
@@ -40,31 +45,8 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
   get ffmpegFilter(): string {
     return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
   }
-  filterChain(filterChain: FilterChain): ChainPhase | undefined {
-    return { values: filterChain.evaluator.parameters }
-  }
 
-  chainPhase(filterChain: FilterChain, phase: Phase): ChainPhase | undefined {
-    if (this.phase !== phase) return
-
-    return this.filterChain(filterChain)
-  }
-
-  serverFilters(filterChain: FilterChain, values: ValueObject): ServerFilters {
-    return [this.commandFilter(values)]
-  }
-
-  graphFilter(filterChain: FilterChain): GraphFilter {
-    const { ffmpegFilter } = this
-    const { evaluator } = filterChain
-    const { filter } = evaluator
-    const graphFilter: GraphFilter = {
-      ffmpegFilter, filter, options: evaluator.parameters, inputs: []
-    }
-    return graphFilter
-  }
-
-  svgContent(dimensions: Dimensions, valueObject: ValueObject): SvgContent {
+  filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent {
     throw new Error(Errors.unimplemented + 'initialSvgContent')
   }
 
@@ -77,23 +59,32 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
   phase = Phase.Populate
 
   protected populateParametersFromProperties() {
-    this.parameters.push(...this.properties.map(property => {
+    this.parameters = this.properties.map(property => {
       const { name } = property
       return new Parameter({ name, value: name, dataType: DataType.String })
-    }))
+    })
   }
 
-  svgFilters(dimensions: Dimensions, valueObject: ValueObject): SvgFilters {
+  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
     return []
   }
 
-  transforms(dimensions: Dimensions, valueObject: ValueObject): Transforms {
-    return []
+  protected transparentCommandFilter(dimensions: Dimensions, videoRate: number, duration?: number): CommandFilter {
+    const { width, height } = dimensions
+    const transparentFilter = 'color'
+    const transparentId = idGenerate(transparentFilter)
+    const transparentOptions: ValueObject = { 
+      color: '#FFFFFF00', size: `${width}x${height}`, rate: videoRate 
+    }
+    if (duration) transparentOptions.duration = duration
+    const transparentCommandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter: transparentFilter, 
+      options: transparentOptions,
+      outputs: [transparentId]
+    }
+    return transparentCommandFilter
   }
+
   type = DefinitionType.Filter
 
-  valueObject(filterChain: ChainBuilder): ValueObject {
-    const { evaluator } = filterChain
-    return evaluator.parameters
-  }
 }

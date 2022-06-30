@@ -19,8 +19,10 @@ import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
-const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(DefinitionBase)
+const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(VideoSequenceDefinitionWithTweenable)
 const VideoSequenceDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoSequenceDefinitionWithContent)
 const VideoSequenceDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoSequenceDefinitionWithPreloadable)
 const VideoSequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoSequenceDefinitionWithUpdatableDimensions)
@@ -56,7 +58,6 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
         const graphFiles = frames.map(frame => {
           const graphFile: GraphFile = {
             type: LoadType.Image, file: this.urlForFrame(frame), input: true,
-            localId: LoadType.Image,
             definition: this
           }
           return graphFile
@@ -117,8 +118,8 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   pattern = '%.jpg'
 
-  svgContent(filterChain: TrackPreview): SvgContent {
-    const { filterGraph } = filterChain
+  preloadableSvg(trackPreview: TrackPreview): SvgContent {
+    const { preview: filterGraph } = trackPreview
     const { size } = filterGraph
     const { preloader, editing, visible, quantize, time } = filterGraph
     const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }

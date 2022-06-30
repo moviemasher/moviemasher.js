@@ -10,6 +10,5 @@ services:
       - "8570:8570"
       - "8571:8571"
     volumes:
-      - ./server-config.json:/home/node/app/workspaces/example-express-react/dist/server-config.json
-      - ../../temporary/media:/home/node/app/workspaces/example-express-react/dist/public/media/username
-      - ../../temporary/data:/home/node/app/workspaces/example-express-react/dist/data
+      - ../../packages:/home/node/app/packages
+      - ../../workspaces/example-express-react:/home/node/app/workspaces/example-express-react

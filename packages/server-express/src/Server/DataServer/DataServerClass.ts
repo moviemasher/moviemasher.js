@@ -638,9 +638,10 @@ export class DataServerClass extends ServerClass implements DataServer {
 
 
   private updateRelationsPromise(from: string, to: string, id: string, ids?: string[]): Promise<StringObject> {
-    const relatedIds = ids || []
     const temporaryLookup: StringObject = {}
-    const permanentIds = relatedIds.map(id => {
+    if (!ids) return Promise.resolve(temporaryLookup)
+    
+    const permanentIds = ids.map(id => {
       if (id.startsWith(this.args.temporaryIdPrefix)) return temporaryLookup[id] = uuid()
 
       return id

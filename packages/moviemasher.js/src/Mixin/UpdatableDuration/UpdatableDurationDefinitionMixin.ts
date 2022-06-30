@@ -29,6 +29,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       this.urlAudible = urlAudible
       this.properties.push(propertyInstance({ name: "gain", defaultValue: 1.0 }))
       this.properties.push(propertyInstance({ name: "speed", defaultValue: 1.0 }))
+      this.properties.push(propertyInstance({ name: "trim", defaultValue: 0, type: DataType.Frame }))
       this.properties.push(propertyInstance({ name: "muted", type: DataType.Boolean }))
     }
 

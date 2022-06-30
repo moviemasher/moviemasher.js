@@ -1,10 +1,9 @@
-import { Scalar, ValueObject } from "../../declarations"
+import { Scalar } from "../../declarations"
 import { GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { DataType, Phase, TrackType } from "../../Setup/Enums"
+import { DataType, TrackType } from "../../Setup/Enums"
 import { Time, TimeRange  } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
 import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 // import { urlForEndpoint } from "../../Utility/Url"
 import { Loader } from "../../Loader/Loader"
 // import { BrowserLoaderClass } from "../../Loader/BrowserLoaderClass"
@@ -14,7 +13,6 @@ import { assertNumber, assertString, isUndefined } from "../../Utility/Is"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba } from "../../Utility/Color"
 import { pixelsMixRbg, pixelsMixRbga } from "../../Utility/Pixel"
 import { assertPropertyTypeColor } from "../../Helpers/PropertyType"
-import { ChainLinks, FilterChainPhase, Filters, ServerFilters } from "../../Filter/Filter"
 
 
 export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
@@ -50,19 +48,6 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     endTime(quantize : number) : Time {
       return timeFromArgs(this.endFrame, quantize)
-    }
-
-    filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
-      const filterChainPhase: FilterChainPhase = { link: this }
-      return filterChainPhase
-    }
-
-    filterChainServerFilters(filterChain: FilterChain, values: ValueObject): ServerFilters {
-      return []
-    }
-
-    chainLinks(): ChainLinks  {
-      return []
     }
 
     declare frame: number
@@ -101,42 +86,7 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
     effectable = false
 
-    value(key: string, time?: Time): Scalar {
-      const keyPrefix = key.endsWith(PropertyTweenSuffix) ? key.slice(0, -PropertyTweenSuffix.length) : key
-      const value = super.value(keyPrefix)
-      if (!time) return value
-
-      // time is not a range, and is in our rate
-
-      const property = this.propertyFind(keyPrefix)!
-      const { tweenable, type } = property
-      if (!tweenable) return value
-
-      // console.log(this.constructor.name, "value TWEENABLE", key, time, type)
-
-      const tween = super.value(`${keyPrefix}${PropertyTweenSuffix}`)
-      if (isUndefined(tween)) return value
-      console.log(this.constructor.name, "value tween", tween)
-
-      const { frame, frames } = this
-      const { frame: timeFrame } = time
-
-      const offset = Number(timeFrame - frame) / Number(frames)
-      if (type === DataType.Number) {
-        assertNumber(tween)
-        assertNumber(value)
-        return value + (offset * (tween - value))
-      }
-      assertString(value)
-      assertString(tween)
-      assertPropertyTypeColor(type)
-
-      if (type === DataType.Rgb) {
-        return colorRgbToHex(pixelsMixRbg(colorToRgb(value), colorToRgb(tween), offset))
-      }
-      return colorRgbaToHex(pixelsMixRbga(colorToRgba(value), colorToRgba(tween), offset))
-    }
-
+    
     visible = false
   }
 }

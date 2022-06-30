@@ -39,7 +39,6 @@ import { MdPermMedia } from 'react-icons/md'
 import { AiOutlineFieldTime } from 'react-icons/ai'
 import { BiShapeTriangle } from 'react-icons/bi'
 import { MdOutlineTextFields } from 'react-icons/md'
-import { EditorIcons } from '@moviemasher/client-react'
 import { MMTubeIcon } from '../Icons/MMTubeIcon'
 import { MMIcon } from '../Icons/MMIcon'
 
@@ -47,7 +46,7 @@ import { VscTriangleRight } from 'react-icons/vsc'
 import { VscTriangleDown } from 'react-icons/vsc'
 
 
-export const DefaultIcons: EditorIcons = {
+export const DefaultIcons = {
   collapse: <VscTriangleDown/>,
   collapsed: <VscTriangleRight/>,
   app: <img key='logo' src="mm.svg" />,

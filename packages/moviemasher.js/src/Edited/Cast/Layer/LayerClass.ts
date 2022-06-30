@@ -11,7 +11,7 @@ export class LayerClass extends PropertiedClass implements Layer {
   constructor(args: LayerArgs) {
     super()
 
-    this._properties.push(propertyInstance({ name: 'label', type: DataType.String }))
+    this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
 
     this.propertiesInitialize(args)
   }

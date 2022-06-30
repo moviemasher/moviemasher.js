@@ -1,6 +1,6 @@
 import {
   AudibleSource, UnknownObject, LoadVideoResult,
-  CanvasVisibleSource, SvgContent} from "../../declarations"
+  CanvasVisibleSource} from "../../declarations"
 import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
 import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
@@ -16,13 +16,13 @@ import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
 import { FilterDefinition } from "../../Filter/Filter"
 import { filterDefinitionFromId } from "../../Filter/FilterFactory"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
-import { NamespaceSvg } from "../../Setup/Constants"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
-const VideoDefinitionWithContent = ContentDefinitionMixin(DefinitionBase)
+const VideoDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithTweenable)
 const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithContent)
 const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContainer)
 const VideoDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoDefinitionWithPreloadable)
@@ -122,19 +122,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
   }
 
   setsarFilterDefinition: FilterDefinition
-
-  svgContent(filterChain: TrackPreview): SvgContent {
-    const { filterGraph } = filterChain
-    const { preloader, size } = filterGraph
-    const { width, height } = size
-    const graphFile = this.file(filterGraph)!
-    const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
-    foreignElement.setAttribute('id', `video-${this.id}`)
-    foreignElement.setAttribute('width', String(width))
-    foreignElement.setAttribute('height', String(height))
-    foreignElement.append(preloader.getFile(graphFile))
-    return foreignElement
-  }
 
   toJSON() : UnknownObject {
     const object = super.toJSON()

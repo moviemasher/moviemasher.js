@@ -16,6 +16,6 @@
     "sourceMap": true,
   },
   "exclude": ["src/**/*.json", "src/**/*.test*.ts"],
-  "include": ["src/index.ts", "src/types.ts"],
+  "include": ["src/index.ts"],
   
 }

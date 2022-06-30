@@ -53,5 +53,16 @@ export const propertyInstance = (object: PropertyObject):Property => {
   const dataType = propertyType(type, defaultValue)
   const dataValue = propertyValue(dataType, defaultValue)
   const dataName = isPopulatedString(name) ? name : dataType
-  return { type: dataType, defaultValue: dataValue, name: dataName, ...rest }
+  const property: Property = { 
+    type: dataType, defaultValue: dataValue, name: dataName, ...rest 
+  }
+  switch(type) {
+    case DataType.Percent: {
+      if (isUndefined(property.max)) property.max = 1.0
+      if (isUndefined(property.min)) property.min = 0.0
+      if (isUndefined(property.step)) property.step = 0.01
+      break
+    }
+  }
+  return property
 }

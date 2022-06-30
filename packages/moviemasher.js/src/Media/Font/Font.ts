@@ -19,7 +19,9 @@ export interface FontDefinitionObject extends DefinitionObject {
 export interface FontDefinition extends Definition {
   instanceFromObject(object?: FontObject): Font
   source: string
+  family: string
   url: string
+  urlAbsolute: string
   preloadableSource(editing?: boolean): string
   graphFiles(args: GraphFileArgs): GraphFiles
 }

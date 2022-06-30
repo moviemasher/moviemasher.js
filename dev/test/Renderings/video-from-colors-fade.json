@@ -6,7 +6,7 @@
     }
   ],
   "mash": {
-    "label": "",
+    "label": "From Light to Dark Blue",
     "quantize": 10,
     "backcolor": "#00000000",
     "tracks": [
@@ -18,11 +18,11 @@
           {
             "definitionId": "com.moviemasher.visible.default",
             "content": {
-              "color": "#FF0000"
+              "color": "#4d22b3"
             },
             "frame": 0,
             "frames": 30,
-            "label": "Red",
+            "label": "Dark Blue",
             "effects": []
           }
         ]
@@ -34,14 +34,16 @@
         "clips": [
           {
             "definitionId": "com.moviemasher.visible.default",
-            "opacity": 0.0,
-            "opacityEnd": 1.0,
+            "container": {
+              "opacity": 1.0,
+              "opacityEnd": 0.0
+            },
             "content": {
-              "color": "#00FF00"
+              "color": "#94e3fe"
             },
             "frame": 0,
             "frames": 30,
-            "label": "Green",
+            "label": "Light Blue",
             "effects": []
           }
         ]

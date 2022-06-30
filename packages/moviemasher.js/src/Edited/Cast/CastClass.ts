@@ -63,12 +63,11 @@ const CastLayersAndIndex = (layers: Layers, layerAndPosition: LayerAndPosition):
 export class CastClass extends EditedClass implements Cast {
   constructor(args: CastArgs) {
     super(args)
-    this._properties.push(
-      propertyInstance(
+    const property = propertyInstance(
         { name: 'backcolor', type: DataType.Rgb, defaultValue: Default.cast.backcolor }
       )
-    )
-
+    this.properties.push(property)
+  
     const {
       createdAt,
       icon,
@@ -165,6 +164,10 @@ export class CastClass extends EditedClass implements Cast {
     const result = this.removeLayer(layer)
     this.addLayer(layer, layerAndPosition)
     return result
+  }
+
+  putPromise(): Promise<void> { 
+    return Promise.all(this.mashes.map(mash => mash.putPromise())).then(EmptyMethod)
   }
 
   reload(): Promise<void> | undefined {

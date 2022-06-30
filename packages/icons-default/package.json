@@ -20,7 +20,6 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/client-react": "5.0.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

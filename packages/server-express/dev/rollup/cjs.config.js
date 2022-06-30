@@ -24,6 +24,8 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({ tsconfig: "./dev/tsconfig.json" }),
+    ts({ 
+      tsconfig: config => ({ ...config, declaration: true, declarationMap: true }) 
+    })  
   ]
 }

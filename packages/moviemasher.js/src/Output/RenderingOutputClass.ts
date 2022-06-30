@@ -1,5 +1,5 @@
 import { ValueObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Dimensions, dimensionsCover, dimensionsEven } from "../Setup/Dimensions"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
@@ -34,7 +34,7 @@ export class RenderingOutputClass implements RenderingOutput {
       const { definition } = content
       assertUpdatableDurationDefinition(definition)
       const frames = definition.frames(quantize)
-      console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
+      // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
       if (frames) clip.frames = frames
     })
   }
@@ -60,7 +60,7 @@ export class RenderingOutputClass implements RenderingOutput {
     const { clips } = mash
     const zeroClips = clips.filter(clip => !isAboveZero(clip.frames))
 
-    console.log(this.constructor.name, "durationClips", frames, clips.length, zeroClips.length)
+    // console.log(this.constructor.name, "durationClips", frames, clips.length, zeroClips.length)
     return zeroClips
   }
 
@@ -137,14 +137,8 @@ export class RenderingOutputClass implements RenderingOutput {
   outputType!: OutputType
 
   get preloadPromise(): Promise<void> {
-    const { timeRange, avType, graphType } = this
-    const options: GraphFileOptions = {
-      visible: avType !== AVType.Audio,
-      audible: avType !== AVType.Video,
-      streaming: graphType === GraphType.Cast,
-      time: timeRange,
-    }
-    return this.args.mash.loadPromise(options)
+    const { filterGraphsOptions } = this
+    return this.args.mash.filterGraphs(filterGraphsOptions).loadPromise
   }
 
   get renderingClips(): Clip[] {
@@ -166,7 +160,8 @@ export class RenderingOutputClass implements RenderingOutput {
         const { filterGraphsVisible } = filterGraphs
         const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
           const { commandFilters, commandInputs: inputs, duration } = filterGraph
-          const commandDescription: CommandDescription = { inputs, commandFilters, duration }
+          const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
+        // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
           return commandDescription
         })
         renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
@@ -176,7 +171,7 @@ export class RenderingOutputClass implements RenderingOutput {
         if (filterGraphAudible) {
           const { commandFilters, commandInputs: inputs } = filterGraphAudible
           const commandDescription: CommandDescription = {
-            inputs, commandFilters, duration
+            inputs, commandFilters, duration, avType: AVType.Audio
           }
           renderingDescription.audibleCommandDescription = commandDescription
         }
@@ -206,10 +201,10 @@ export class RenderingOutputClass implements RenderingOutput {
     const scale = Math.max(horzRatio, vertRatio)
     if (scale >= 1.0) return sizeMash
 
-    if (horzRatio > vertRatio) outputDimensions.height = Math.round(scale * sizeMash.height)
-    else outputDimensions.width = Math.round(scale * sizeMash.width)
+    if (horzRatio > vertRatio) outputDimensions.height = scale * sizeMash.height
+    else outputDimensions.width = scale * sizeMash.width
 
-    return outputDimensions
+    return dimensionsEven(outputDimensions)
   }
 
   get sizePromise(): Promise<void> {

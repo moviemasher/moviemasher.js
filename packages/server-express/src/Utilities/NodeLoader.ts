@@ -3,15 +3,16 @@ import https from 'https'
 import http from 'http'
 import path from 'path'
 import md5 from 'md5'
+
 import {
   EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
-  LoadTypes, Errors, LoaderClass, GraphFileType, LoaderFile, Definition,
+  Errors, LoaderClass, GraphFileType, LoaderFile, Definition,
   LoaderSource,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableDimensionsDefinition
-} from '@moviemasher/moviemasher.js'
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableDimensionsDefinition, PopulatedString} from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
 import { probingInfoPromise } from '../Command/Probing'
+
 
 export class NodeLoader extends LoaderClass {
   constructor(
@@ -26,19 +27,14 @@ export class NodeLoader extends LoaderClass {
     if (!defaultDirectory) throw Errors.invalid.url + 'defaultDirectory'
   }
 
-
   private applyLoadedInfo(graphFile: GraphFile, loadedInfo: LoadedInfo): void {
     const { definition } = graphFile
     const { duration, width, height } = loadedInfo
-    if (isUpdatableDurationDefinition(definition) && !isAboveZero(definition.duration)) {
-      if (isAboveZero(duration)) definition.duration = duration
-      // console.log(this.constructor.name, "applyLoadedInfo duration", definition.id, definition.duration)
-    }
-    if (isUpdatableDimensionsDefinition(definition) && !isAboveZero(definition.width)) {
-      if (isAboveZero(width)) definition.width = width
-      if (isAboveZero(height)) definition.height = height
-      // console.log(this.constructor.name, "applyLoadedInfo dimensions", definition.id, `${width}x${height}`)
-    }
+
+    const dimensions = { width, height }
+    this.updateDefinitionDimensions(definition, dimensions)
+    this.updateDefinitionDuration(definition, duration)
+    
   }
 
   protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
@@ -64,11 +60,13 @@ export class NodeLoader extends LoaderClass {
   graphType = GraphType.Mash
 
   key(graphFile: GraphFile): string {
-    const { type, file } = graphFile
+    const { type, file, resolved } = graphFile
+    if (resolved) return resolved
+
     assertPopulatedString(file)
 
     const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this
-    if (LoadTypes.map(String).includes(type)) {
+    if (isLoadType(type)) {
       if (file.includes('://')) return path.resolve(
         cacheDirectory, md5(file), `${BasenameCache}${path.extname(file)}`
       )
@@ -77,12 +75,20 @@ export class NodeLoader extends LoaderClass {
       const directories = [defaultDirectory, ...validDirectories]
       const prefixes = [path.resolve(cacheDirectory), ...directories.map(dir => path.resolve(filePrefix, dir))]
       const valid = prefixes.some(prefix => resolved.startsWith(prefix))
+
       if (!valid) throw Errors.invalid.url + resolved
 
       return resolved
     }
-    if (file.startsWith('/')) console.trace(this.constructor.name, "key", file, type, md5(file))
-    return path.resolve(cacheDirectory, md5(file), `${BasenameCache}.${type}`)
+    const fileName = this.graphFileTypeBasename(type, file) 
+    return path.resolve(cacheDirectory, md5(file), fileName) 
+  }
+
+  private graphFileTypeBasename(type: GraphFileType, file: PopulatedString) {
+    if (type !== GraphFileType.SvgSequence) return `${BasenameCache}.${type}`
+    const fileCount = file.split("\n").length
+    const digits = String(fileCount).length
+    return `%0${digits}.svg`
   }
 
   private remotePromise(key: string, url: string): Promise<void> {
@@ -105,7 +111,7 @@ export class NodeLoader extends LoaderClass {
   private updateableDefinitions(preloaderSource: LoaderSource): Definition[] {
     const definitions = [...preloaderSource.definitions.values()]
     const preloadableDefinitions = definitions.filter(definition => {
-      return isPreloadableDefinition(definition)
+      return isPreloadableDefinition(definition) 
     })
 
     return preloadableDefinitions.filter(definition => {
@@ -118,11 +124,15 @@ export class NodeLoader extends LoaderClass {
 
 
   private updateSources(key: string, preloaderSource: LoaderSource, graphFile: GraphFile): Promise<void> {
+    const { definitions, result } = preloaderSource
     preloaderSource.loaded = true
-    preloaderSource.definitions.forEach(definition => {
+    definitions.forEach(definition => {
       if (!isPreloadableDefinition(definition)) return
 
-      if (!definition.source.startsWith('http')) definition.source = key
+      if (!definition.source.startsWith('http')) {
+        definition.source = key
+        definition.urlAbsolute = key
+      }
     })
 
     const { type } = graphFile
@@ -143,20 +153,31 @@ export class NodeLoader extends LoaderClass {
 
   private writePromise(graphFile: GraphFile, key: string): Promise<void> {
     const { file, type } = graphFile
-    const loadable = LoadTypes.map(String).includes(type)
     const dirname = path.dirname(key)
-    // console.log(this.constructor.name, "writePromise", dirname)
     let promise = fs.promises.mkdir(dirname, { recursive: true }).then(EmptyMethod)
 
-    if (loadable) {
+    if (isLoadType(type)) {
       if (file.startsWith('http')) {
-        promise = promise.then(() => this.remotePromise(key, file))
-      } else throw Errors.uncached + file // local files should already exist!
-    } else {
-      // console.log(this.constructor.name, "writePromise writeFile", key, file)
-      const data = type === GraphFileType.Png ? Buffer.from(file, 'base64') : file
-      promise = promise.then(() => fs.promises.writeFile(key, data))
+        return promise.then(() => this.remotePromise(key, file))
+      } 
+      // local files should already exist!
+      throw Errors.uncached + file 
+    } 
+    switch(type) {
+      case GraphFileType.SvgSequence: return promise.then(() => {
+        const svgs = file.split("\n")
+        const { length } = svgs
+        const digits = String(length).length
+        return Promise.all(svgs.map((svg, index) => {
+          const fileName = `${String(index).padStart(digits, '0')}.svg`
+          const filePath = path.join(dirname, fileName)
+          return fs.promises.writeFile(filePath, svg)
+        })).then(EmptyMethod)
+      })
+      case GraphFileType.Png: return promise.then(() => {
+        return fs.promises.writeFile(key, Buffer.from(file, 'base64'))
+      })
     }
-    return promise
+    return promise.then(() => fs.promises.writeFile(key, file))
   }
 }

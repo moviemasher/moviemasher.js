@@ -34,4 +34,4 @@ export const isInstance = (value?: any): value is Instance => {
 }
 
 
-export type InstanceClass = Constrained<InstanceBase>
+export type InstanceClass = Constrained<Instance>

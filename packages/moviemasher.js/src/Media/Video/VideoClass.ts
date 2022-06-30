@@ -1,82 +1,62 @@
-import {
-  LoadedVideo} from "../../declarations"
-import { GraphFile } from "../../MoveMe"
-import { LoadType, Phase } from "../../Setup/Enums"
+import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
-import { assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { assertPopulatedString } from "../../Utility/Is"
 import { UpdatableDimensionsMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsMixin"
-import { ChainLinks, Filter, FilterChainPhase } from "../../Filter/Filter"
 
 import { ContentMixin } from "../../Content/ContentMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
+import { Rect, SvgContent } from "../../declarations"
+import { Dimensions } from "../../Setup/Dimensions"
+import { NamespaceSvg } from "../../Setup/Constants"
+import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 
-const VideoWithContent = ContentMixin(InstanceBase)
+const VideoWithTweenable = TweenableMixin(InstanceBase)
+const VideoWithContent = ContentMixin(VideoWithTweenable)
 const VideoWithContainer = ContainerMixin(VideoWithContent)
 const VideoWithPreloadable = PreloadableMixin(VideoWithContainer)
 const VideoWithUpdatableDimensions = UpdatableDimensionsMixin(VideoWithPreloadable)
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableDimensions)
 
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
-  constructor(...args: any[]) {
-    super(...args)
-    this.setsarFilter = this.definition.setsarFilterDefinition.instanceFromObject({
-      sar: 1, max: 1
-    })
-    this.fpsFilter = this.definition.fpsFilterDefinition.instanceFromObject()
+  svgContent(rect: Rect, stretch?: boolean): SvgContent {
+    const { height, width, x, y } = rect
+    const { foreignElement } = this
+    foreignElement.setAttribute('width', String(width))
+    foreignElement.setAttribute('x', String(x))
+    foreignElement.setAttribute('y', String(y))
+    if (stretch) foreignElement.setAttribute('height', String(height))
+    return foreignElement
   }
-  copy() : Video { return super.copy() as Video }
-
+ 
   declare definition : VideoDefinition
 
-  chainLinks(): ChainLinks {
-    const links: ChainLinks = []
-    links.push(this)
-    links.push(...super.chainLinks())
-    links.push(this.setsarFilter, this.fpsFilter)
-    return links
-  }
-
-  filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
-    if (phase !== Phase.Initialize) return
-
-    const { filterGraph } = filterChain
-    const { streaming, editing, preloader } = filterGraph
-
-    const graphFile = this.graphFile(editing)
-
-    let { width, height } = this.definition
-    if (!(isAboveZero(width) && isAboveZero(height))) {
-      const graphFile = this.graphFile(editing)
-      const loaded: LoadedVideo = preloader.getFile(graphFile)
-      width = loaded.width
-      height = loaded.width
-    }
-    filterChain.size = { width, height }
-
-    if (streaming) graphFile.options!.re = ''
-
-    return { graphFiles: [graphFile], link: this }
-  }
-
-  graphFile(editing: boolean): GraphFile {
+  graphFiles(args: GraphFileArgs): GraphFiles {
+    const { editing } = args
     const { definition } = this
     const file = definition.preloadableSource(editing)
     assertPopulatedString(file, editing ? 'url' : 'source')
 
     const graphFile: GraphFile = {
-      localId: 'video',
       input: true, options: {}, type: LoadType.Video, file, definition
     }
-    return graphFile
+    return [graphFile]
   }
-
-  private fpsFilter: Filter
 
   mutable = true
 
-  private setsarFilter: Filter
+  private _foreignElement?: SVGForeignObjectElement
+  private get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }
+  private get foreignElementInitialize(): SVGForeignObjectElement {
+    const video = globalThis.document.createElement('video')
+    video.crossOrigin = 'anonymous'
+    video.src = this.definition.urlAbsolute
+    const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
+    foreignElement.setAttribute('id', `video-${this.id}`)
+    foreignElement.append(video)
+    return foreignElement
+  }
 }

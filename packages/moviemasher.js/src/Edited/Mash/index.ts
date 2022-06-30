@@ -1,4 +1,3 @@
-export * from "./FilterChain"
 export * from "./FilterGraph"
 export * from "./FilterGraphs"
 export * from "./Mash"

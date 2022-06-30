@@ -6,7 +6,7 @@
   "module": "dist/esm/index.js",
   "source": "src/index.ts",
   "type": "module",
-  "types": "dist/client-react.d.ts",
+  "types": "dist/esm/index.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -37,11 +37,10 @@
     "develop": "rollup --config dev/rollup/esm.config.js --watch",
     "build-css": "cat dev/css/* > dist/moviemasher.css",
     "build-esm": "run-s build-rollup build-css",
-    "build-types": "tsc --project dev/tsconfig.json --declaration --emitDeclarationOnly --declarationMap --outFile dist/client-react.d.ts",
     "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-rollup": "rollup --config dev/rollup/esm.config.js",
     "watch-esm": "rollup --watch --config dev/rollup/esm.config.js",
-    "build": "run-s clean build-types build-esm build-cjs",
+    "build": "run-s clean build-esm build-cjs",
     "clean": "rimraf dist"
   },
   "eslintConfig": {

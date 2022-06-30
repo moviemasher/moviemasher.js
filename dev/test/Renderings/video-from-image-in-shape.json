@@ -1,0 +1,57 @@
+{
+  "id": "video-from-image-in-shape-json",
+  "outputs": [
+    {
+      "outputType": "video"
+    }
+  ],
+  "mash": {
+    "label": "Unlabeled Mash",
+    "backcolor": "#FF00FF",
+    "createdAt": "2022-06-22T22:00:47.479Z",
+    "id": "93aaf171-8982-4993-a0e2-8184d0449e02",
+    "quantize": 10,
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "video",
+        "layer": 0,
+        "clips": [
+          {
+            "label": "Chat",
+            "frame": 0,
+            "frames": 30,
+            "containerId": "com.moviemasher.shapecontainer.chat",
+            "contentId": "id-image",
+            "type": "visible",
+            "definitionId": "com.moviemasher.visible.default",
+            "effects": [],
+            "content": {
+              "mode": 0,
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "type": "image",
+              "definitionId": "id-image"
+            }
+          }
+        ]
+      },
+      {
+        "dense": false,
+        "trackType": "audio",
+        "layer": 0,
+        "clips": []
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "id": "id-image",
+      "type": "image",
+      "label": "Image",
+      "url": "../shared/image/frog.jpg",
+      "source": "../shared/image/frog.jpg"
+    }
+  ]
+}

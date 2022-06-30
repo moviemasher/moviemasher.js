@@ -200,6 +200,7 @@ export enum DataType {
   Frame = 'frame',
   Mode = 'mode',
   Number = 'number',
+  Percent = 'percent',
   Rgb = 'rgb',
   Rgba = 'rgba',
   String = 'string',
@@ -210,6 +211,17 @@ export const isDataType = (type?: any): type is DataType => {
   return isPopulatedString(type) && DataTypes.includes(type as DataType)
 }
 
+export enum Direction {
+  N = 'n',
+  E = 'e',
+  S = 's',
+  W = 'w',
+  NE = 'ne',
+  SE = 'se',
+  SW = 'sw',
+  NW = 'nw',
+}
+export const Directions = Object.values(Direction)
 export type PropertyType = DataType // | DefinitionType
 export const isPropertyType = (value: any): value is PropertyType => {
   return isDataType(value) //|| isDefinitionType(value)
@@ -258,6 +270,7 @@ export enum EventType {
 
 export enum GraphFileType {
   Svg = 'svg',
+  SvgSequence = 'svgsequence',
   Png = 'png',
   Txt = 'txt',
 }

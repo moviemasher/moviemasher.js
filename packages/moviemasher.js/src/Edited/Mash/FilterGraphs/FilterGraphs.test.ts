@@ -29,17 +29,7 @@ describe("FilterGraphs", () => {
       expect(filterGraphVisible).toBeInstanceOf(FilterGraphClass)
       expect(filterGraphsVisible[0]).toEqual(filterGraphVisible)
     })
-    test("its visible FilterGraph contains a single FilterChain", () => {
-      const { filterChains } = filterGraphVisible
-      expectArrayLength(filterChains, 1)
-      const [filterChain] = filterChains
-      expect(filterChain).toBeDefined()
-      const { filterChainPhases } = filterChain
-      
-      console.log(filterChainPhases)
-      expectArrayLength(filterChainPhases, 1)
-
-    })
+    
     test("its visible FilterGraph contains correct CommandFilters", () => {
       const { commandFilters } = filterGraphVisible
       expectArrayLength(commandFilters, 3)

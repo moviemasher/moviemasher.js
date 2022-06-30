@@ -1,6 +1,5 @@
 import { Dimensions } from "../../../Setup/Dimensions"
-import { GraphFiles, CommandFilters, GraphFile, GraphFileOptions, CommandFilter } from "../../../MoveMe"
-import { FilterChainArgs, FilterChains } from "../FilterChain/FilterChain"
+import { CommandFilters, CommandFilter, CommandFiles, CommandFileArgs, CommandFilterArgs } from "../../../MoveMe"
 import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
 import { CommandInput, CommandInputs } from "../../../Api/Rendering"
 import { Loader } from "../../../Loader/Loader"
@@ -8,16 +7,17 @@ import { assertMash, Mash } from "../Mash"
 import { Time } from "../../../Helpers/Time/Time"
 import { assertTrue, isAboveZero } from "../../../Utility/Is"
 import { AVType } from "../../../Setup/Enums"
-import { FilterChainClass } from "../FilterChain/FilterChainClass"
 import { sortByTrack } from "../../../Utility/Sort"
 import { colorTransparent } from "../../../Utility/Color"
-import { Errors } from "../../../Setup/Errors"
+import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { idGenerate } from "../../../Utility/Id"
+import { arrayLast } from "../../../Utility"
 
 export const FilterGraphInput = 'COLORBACK'
 
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
-    const { mash, backcolor, size, time, streaming, videoRate } = args
+    const { mash, backcolor, size, time, streaming, videoRate, visible } = args
     assertMash(mash)
 
     this.mash = mash
@@ -25,120 +25,86 @@ export class FilterGraphClass implements FilterGraph {
     this.videoRate = videoRate 
     this.backcolor = backcolor
     this.size = size
+    if (visible) this.visible = true
     if (streaming) this.streaming = true
-    this.graphFilesById = new Map<string, GraphFile>()
     assertTrue(isAboveZero(this.videoRate), 'videoRate')
     assertTrue(this.time.fps === this.quantize, 'time is in mash rate')
   }
-
-  audible = false
   
   backcolor: string 
 
-  static backgroundOutput = 'COLORBACK'
-
-  get commandInputs(): CommandInputs {
-    return this.inputGraphFiles.map(graphFile => {
-      const { file, options } = graphFile
-      const input: CommandInput = { source: file, options }
-      return input
-    })
-  }
-
-  get commandFilters(): CommandFilters { 
-    const commandFilters: CommandFilters = []
+  private get backCommandFilter(): CommandFilter {
     const { duration, videoRate: rate, backcolor, size } = this
     const color = backcolor || colorTransparent
     const colorCommandFilter: CommandFilter = {
       ffmpegFilter: 'color',
-      options: { rate, color, size: `${size.width}x${size.height}` },
-      outputs: [FilterGraphInput]
+      options: { color, rate, size: `${size.width}x${size.height}` },
+      inputs: [], outputs: [FilterGraphInput]
+    }
+    if (duration) colorCommandFilter.options.duration = duration
+    return colorCommandFilter
+  }
+
+  private _clips?: VisibleClip[]
+  private get clips() { return this._clips ||= this.clipsInitialize }
+  private get clipsInitialize() {
+    const { time, mash } = this
+    return mash.clipsInTimeOfType(time, AVType.Video).sort(sortByTrack)
+  }
+
+  get commandInputs(): CommandInputs {
+    return this.inputCommandFiles.map(commandFile => {
+      const { file, options } = commandFile
+      const input: CommandInput = { source: this.preloader.key(commandFile), options }
+      return input
+    })
+  }
+
+  private _commandFiles?: CommandFiles
+  get commandFiles(): CommandFiles {
+    return this._commandFiles ||= this.commandFilesInitialize
+  }
+  get commandFilesInitialize(): CommandFiles {
+    const commandFiles: CommandFiles = []
+    const { time, videoRate, quantize, size: outputDimensions, clips, visible, preloader } = this
+    const chainArgs: CommandFileArgs = { 
+      time, quantize, visible, outputDimensions, videoRate
+    }
+    commandFiles.push(...clips.flatMap(clip => clip.commandFiles(chainArgs)))
+    commandFiles.forEach(commandFile => {
+      commandFile.resolved = preloader.key(commandFile)
+    })
+    return commandFiles
+  }
+
+  get commandFilters(): CommandFilters { 
+    const commandFilters: CommandFilters = []
+    const { 
+      time, quantize, size: outputDimensions, clips, 
+      visible, videoRate, commandFiles 
+    } = this
+    if (visible) commandFilters.push(this.backCommandFilter)
+    const chainArgs: CommandFilterArgs = { 
+      videoRate, time, quantize, visible, outputDimensions, commandFiles, 
+      chainInput: FilterGraphInput,
     }
 
-    if (duration) colorCommandFilter.options.duration = duration
-    commandFilters.push(colorCommandFilter)
-
-    let prevOutput = ''
-
-    this.filterChains.forEach(chain => {
-      const { filterChainPhases } = chain
-      filterChainPhases.forEach(filterChainPhase => {
-        const { link, values } = filterChainPhase
-        const commands = link.filterChainServerFilters(chain, values || {})
-        let prevCommandFilter: CommandFilter | undefined = undefined
-
-        const { length } = commands
-        commands.forEach((commandFilter, index) => {
-          const { inputs, ffmpegFilter } = commandFilter
-          commandFilter.outputs ||= [`${ffmpegFilter}${index}`]
-
-          if (inputs && !inputs.length) {
-            if (prevCommandFilter?.outputs?.length) inputs.push(...prevCommandFilter.outputs)
-            else {
-              const { inputCount } = this
-              if (inputCount) {
-                const inputName = `${inputCount - 1}:v`
-                // console.log(this.constructor.name, "commandFilters setting inputs", ffmpegFilter, inputName)
-                commandFilter.inputs = [inputName]
-              }
-            }
-          }
-          commandFilters.push(commandFilter)
-          if (index === length - 1) {
-            if (!commandFilter.inputs?.length && prevCommandFilter && prevOutput) {
-              const { outputs: lastOutputs } = prevCommandFilter
-              if (!lastOutputs?.length) throw new Error(Errors.internal + 'lastOutputs')
-
-              const lastOutput = lastOutputs[lastOutputs.length - 1]
-              commandFilter.inputs = [prevOutput, lastOutput]
-            }
-          }
-          prevOutput = commandFilter.outputs[commandFilter.outputs.length - 1]
-          prevCommandFilter = commandFilter
-        })
-      })
+    const { length } = clips
+    clips.forEach((clip, index) => {
+      commandFilters.push(...clip.commandFilters(chainArgs))
+    
+      const lastFilter = arrayLast(commandFilters)
+      if (index < length - 1 ) {
+        if (!lastFilter.outputs.length) lastFilter.outputs.push(idGenerate('clip'))
+      }
+      chainArgs.chainInput = arrayLast(lastFilter.outputs)
     })
     return commandFilters
   }
 
   get duration(): number { return this.time.lengthSeconds }
 
-  editing = false
-  
-  private _filterChains?: FilterChains
-  get filterChains() { return this._filterChains ||= this.filterChainsInitialize }
-  private get filterChainsInitialize(): FilterChains {
-    const filterChains: FilterChains = []
-    const { time, quantize, mash } = this
-    const tweenTime = time.isRange ? undefined : time.scale(quantize)
-    const clips = mash.clipsInTimeOfType(time, AVType.Video).sort(sortByTrack)
-    const { length } = clips
-    clips.forEach((clip, index) => {
-      const clipTimeRange = clip.timeRange(quantize)
-      const range = clipTimeRange.scale(time.fps)
-      const frame = Math.max(0, time.frame - range.frame)
-      const timeRange = range.withFrame(frame)
-      const filterChainArgs: FilterChainArgs = {
-        clip, filterGraph: this, tweenTime, timeRange, 
-        input: FilterGraphInput, track: index, lastTrack: index === length - 1
-      }
-      const filterChain = new FilterChainClass(filterChainArgs)
-      filterChains.push(filterChain)
-    })
-    return filterChains
-  }
-  
-  get graphFiles() {  
-    const { editing, visible, time } = this
-    const graphFileArgs: GraphFileOptions = { editing, visible, time }
-    return this.mash.graphFiles(graphFileArgs) 
-  }
-
-  private graphFilesById: Map<string, GraphFile>
-
-  get inputCount(): number { return this.inputGraphFiles.length }
-
-  get inputGraphFiles(): GraphFiles { return this.graphFiles.filter(file => file.input) }
+  get inputCommandFiles(): CommandFiles { return this.commandFiles.filter(file => file.input) }
   
   mash: Mash
 
@@ -152,7 +118,7 @@ export class FilterGraphClass implements FilterGraph {
 
   time: Time 
 
-  visible = true
+  visible = false
 
   videoRate: number 
 }

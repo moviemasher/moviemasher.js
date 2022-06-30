@@ -108,18 +108,16 @@ export const renderingInputFromRaw = (loadType: LoadType, source: string, clip: 
 
 export const renderingClipFromDefinition = (definition: DefinitionObject, overrides: ValueObject = {}): ClipObject => {
   const { id, type } = definition
+  const { id: _, containerId: suppliedContainerId, ...rest } = overrides
   const contentId = id || type
-  if (type === 'audio') {
-    const clip: ClipObject = { definitionId: contentId, ...overrides }
-    return clip
-  }
+  const supplied = suppliedContainerId ? String(suppliedContainerId) : undefined
+  const containerId = type === 'audio' ? '' : supplied
   const definitionId = visibleClipDefault.id
   const visibleClipObject: VisibleClipObject = {
-    definitionId, contentId, ...overrides
+    definitionId, contentId, content: rest, containerId
   }
-
+  // console.log("renderingClipFromDefinition", overrides, visibleClipObject)
   return visibleClipObject
-
 }
 
 export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId?: string, label?: string): DefinitionObject => {

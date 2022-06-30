@@ -24,7 +24,7 @@ export class EditedClass extends PropertiedClass implements Edited {
     if (label) this.label = label
     if (isAboveZero(quantize)) this.quantize = quantize
 
-    this._properties.push(propertyInstance({ name: 'label', type: DataType.String }))
+    this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
   }
 
   declare backcolor: string
@@ -37,7 +37,7 @@ export class EditedClass extends PropertiedClass implements Edited {
   data: UnknownObject = {}
 
   protected dataPopulate(rest: UnknownObject) {
-    const propertyNames = this.properties().map(property => property.name)
+    const propertyNames = this.properties.map(property => property.name)
     Object.entries(rest).forEach(([key, value]) => {
       if (propertyNames.find(name => name === key)) return
       this.data[key] = value
@@ -81,6 +81,8 @@ export class EditedClass extends PropertiedClass implements Edited {
   get preloader(): Loader {
     return this._preloader!
   }
+  
+  putPromise(): Promise<void> { throw new Error(Errors.unimplemented) }
 
   quantize = Default.mash.quantize
 

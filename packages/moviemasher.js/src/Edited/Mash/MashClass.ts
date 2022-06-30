@@ -11,7 +11,6 @@ import { assertTrue, isAboveZero, isPopulatedString, isPositive, isString } from
 import { sortByLayer } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
-import { isVisible } from "../../Mixin/Visible/Visible"
 import { Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview, AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { Mash, MashArgs } from "./Mash"
@@ -25,18 +24,20 @@ import { EditedClass } from "../EditedClass"
 import { propertyInstance } from "../../Setup/Property"
 import { PreviewArgs, PreviewOptions } from "../../Editor/Preview/Preview"
 import { PreviewClass } from "../../Editor/Preview/PreviewClass"
-import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
+import { isVisibleClip, VisibleClip } from "../../Media/VisibleClip/VisibleClip"
+import { colorBlack } from "../../Utility/Color"
+import { isTextContainer } from "../../Container/TextContainer/TextContainer"
+import { isContainer } from "../../Container/Container"
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
     super(args)
 
-    this._properties.push(
-      propertyInstance(
-        { name: 'backcolor', type: DataType.Rgba, defaultValue: Default.mash.backcolor }
-      )
-    )
-
+    const property = propertyInstance({ 
+      name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack 
+    })
+    this.properties.push(property)
+    
     const {
       createdAt,
       tracks,
@@ -47,13 +48,11 @@ export class MashClass extends EditedClass implements Mash {
       backcolor,
       icon,
       preloader,
-
       ...rest
     } = args
 
     this.propertiesInitialize(args)
-      // console.log(this.constructor.name, "constructor backcolor", this.backcolor, backcolor)
-  // propertiesInitialize doesn't set defaults
+ 
     if (!isString(label)) this.label = Default.mash.label
     if (!isString(backcolor)) this.backcolor = Default.mash.backcolor
 
@@ -456,8 +455,6 @@ export class MashClass extends EditedClass implements Mash {
     })
   }
 
-
-
   private handleDrawInterval(): void {
     if (this._playing) this.drawWhilePlaying()
     else this.drawWhilePlayerNotPlaying()
@@ -548,6 +545,25 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
+  putPromise(): Promise<void> { 
+    const { quantize, preloader } = this
+    const args: GraphFileArgs = {
+      editing: true, visible: true, quantize, time: timeFromArgs()
+    }
+    const graphFiles = this.clips.flatMap(clip => {
+      const { container } = clip
+      if (isContainer(container)) {
+        if (!container.instrinsicsKnown) {
+
+          return container.graphFiles({ ...args, time: clip.time(quantize)})
+        }
+      }
+      return [] 
+    })  
+    return preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
+  }
+
+
   removeClipFromTrack(clip: Clip): void {
     const track = this.clipTrack(clip)
     this.emitIfFramesChange(() => { track.removeClip(clip) })
@@ -631,7 +647,7 @@ export class MashClass extends EditedClass implements Mash {
   svgElement(graphArgs: PreviewOptions): SVGSVGElement {
     const { editor } = graphArgs
     const clip = editor?.selection.clip
-    const selectedClip = isVisible(clip) ? clip : undefined
+    const selectedClip = isVisibleClip(clip) ? clip : undefined
     const { drawingTime, time, quantize } = this
     const svgTime = drawingTime || time
     const args: PreviewArgs = {

@@ -8,13 +8,13 @@ import {
   ShapeContainer, ShapeContainerDefinition,
   ShapeContainerDefinitionObject, ShapeContainerObject
 } from "./ShapeContainer"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
-const ShapeContainerMixin = ContainerDefinitionMixin(DefinitionBase)
-export class ShapeContainerDefinitionClass extends ShapeContainerMixin implements ShapeContainerDefinition {
+const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
+export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithContainer implements ShapeContainerDefinition {
   constructor(...args: any[]) {
     super(...args)
-
-
     const [object] = args
     const { path, pathHeight, pathWidth } = object as ShapeContainerDefinitionObject
     if (path) this.path = path
@@ -22,7 +22,6 @@ export class ShapeContainerDefinitionClass extends ShapeContainerMixin implement
     if (pathHeight) this.pathHeight = pathHeight
     // console.log(this.constructor.name, path, object)
 
-    this.properties.push(...this.scaleFilterDefinition.properties)
 
     this.properties.push(propertyInstance({
       name: 'path', defaultValue: this.path, type: DataType.String

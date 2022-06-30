@@ -1,11 +1,13 @@
-import { Dimensions } from "../Setup/Dimensions"
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { Loader, LoaderFile } from "./Loader"
 import { Definition } from "../Definition/Definition"
-import { isAboveZero } from "../Utility/Is"
+import { assertAboveZero, isAboveZero } from "../Utility/Is"
 import { isUpdatableDimensionsDefinition } from "../Mixin/UpdatableDimensions/UpdatableDimensions"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
+import { UnknownObject } from "../declarations"
+import { isPreloadableDefinition } from "../Mixin"
+import { assertFontDefinition, isFontDefinition } from "../Media/Font/Font"
 
 export class LoaderClass implements Loader {
   protected filePromise(key: string, graphFile: GraphFile): LoaderFile {
@@ -35,6 +37,10 @@ export class LoaderClass implements Loader {
   loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
     const key = this.key(graphFile)
     const { definition } = graphFile
+    if (isPreloadableDefinition(definition) || isFontDefinition(definition)) {
+      definition.urlAbsolute ||= key
+    }
+
     let file = this.files.get(key)
     const definitions = file?.definitions || new Map<string, Definition>()
     definitions.set(definition.id, definition)
@@ -67,19 +73,37 @@ export class LoaderClass implements Loader {
   }
 
 
-  updateDefinitionDuration(definition: Definition, value: number) {
-    if (isUpdatableDurationDefinition(definition)) {
-      const { duration } = definition
-      if (!isAboveZero(duration)) definition.duration = value
+  protected updateDefinitionDuration(definition: Definition, value?: number) {
+    if (!isUpdatableDurationDefinition(definition)) return
+    
+    const { duration } = definition
+    if (!isAboveZero(duration)) {
+      assertAboveZero(value)
+      definition.duration = value
     }
   }
 
-  updateDefinitionDimensions(definition: Definition, size: Dimensions) {
-    if (isUpdatableDimensionsDefinition(definition)) {
-      const { width, height } = definition
-      if (!isAboveZero(width)) definition.width = size.width
-      if (!isAboveZero(height)) definition.height = size.height
+  protected updateDefinitionDimensions(definition: Definition, size: UnknownObject) {
+    if (!isUpdatableDimensionsDefinition(definition)) return 
+    
+    const { width: definitionWidth, height: definitionHeight } = definition
+    const { width: sourceWidth, height: sourceHeight } = size
+
+    // console.log(this.constructor.name, "updateDefinitionDimensions", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
+    if (!isAboveZero(definitionWidth)) {
+      assertAboveZero(sourceWidth, 'source width')
+      definition.width = sourceWidth
+    }
+    
+    if (!isAboveZero(definitionHeight)) {
+      assertAboveZero(sourceHeight, 'source height')
+      definition.height = sourceHeight
     }
   }
 
+  protected updateDefinitionFamily(definition: Definition, family: string) {
+    if (!isFontDefinition(definition)) return
+    
+    definition.family = family
+  }
 }

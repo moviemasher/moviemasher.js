@@ -1,7 +1,6 @@
 import React from "react"
-import { PropsWithoutChild, ReactResult } from "@moviemasher/client-react"
 
-export function MMTubeIcon(_: PropsWithoutChild): ReactResult {
+export function MMTubeIcon() {
   return <svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <clipPath id="tube-m-m">

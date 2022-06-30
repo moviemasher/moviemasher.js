@@ -23,7 +23,6 @@ export const isColorContent = (value: any): value is ColorContent => {
 export interface ColorContentDefinition extends ContentDefinition {
   color: string
   instanceFromObject(object?: ColorContentObject): ColorContent
-  colorFilterDefinition: FilterDefinition
 }
 
 /**

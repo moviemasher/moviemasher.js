@@ -262,8 +262,8 @@ describe("Mash", () => {
 
       await mash.loadPromise(filterGraph)
 
-      const { filterChains, graphFiles } = filterGraph
-      expect(filterChains.length).toEqual(1)
+      const { commandFilters, commandFiles: graphFiles } = filterGraph
+      expect(commandFilters.length).toEqual(1)
       expect(graphFiles.length).toBe(1)
       const [graphFile] = graphFiles
       const { type, file, input, options } = graphFile
@@ -294,7 +294,7 @@ describe("Mash", () => {
 
         const clip = clips[index]
         const timeRange = clip.timeRange(quantize)
-        const { graphFiles, duration } = filterGraph
+        const { commandFiles: graphFiles, duration } = filterGraph
         // console.log(clip.frame, clip.frames, time, timeRange, duration, timeRange.lengthSeconds)
         expect(duration).toBe(timeRange.lengthSeconds)
         expect(graphFiles.length).toBe(1)
@@ -321,8 +321,8 @@ describe("Mash", () => {
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
       await mash.loadPromise(filterGraph)
-      const { filterChains } = filterGraph
-      expect(filterChains.length).toEqual(1)
+      const { commandFilters } = filterGraph
+      expect(commandFilters.length).toEqual(1)
     })
 
     const expectClipGraphFiles = async (jpgs: number[] = [], clip: ValueObject = {}, args: UnknownObject = {}) => {
@@ -349,18 +349,14 @@ describe("Mash", () => {
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
       await mash.loadPromise(filterGraph)
-      const {  editing, visible, quantize, time } = filterGraph
-      const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
+      const { visible, quantize, time } = filterGraph
+      const graphFileArgs: GraphFileArgs = { editing: false, visible, quantize, time }
     
       const graphFiles = mash.graphFiles(graphFileArgs)
-      const { filterChains, duration } = filterGraph
+      const { commandFilters, duration } = filterGraph
       if (time.isRange) expect(duration).toBeGreaterThan(0)
       else expect(duration).toBe(0)
-      expect(filterChains.length).toEqual(1)
-      const [clipFilterChain] = filterChains
-      const { graphFilters } = clipFilterChain
-      expect(graphFilters.length).toBe(0)
-      // expectMergerGraphFilter(graphFilter)
+      expect(commandFilters.length).toEqual(1)
       expect(graphFiles).toBeInstanceOf(Array)
       const imageFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Image)
       const audioFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Audio)
@@ -420,9 +416,9 @@ describe("Mash", () => {
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
       await mash.loadPromise(filterGraph)
-      const { filterChains, graphFiles, duration } = filterGraph
+      const { commandFilters, commandFiles: graphFiles, duration } = filterGraph
       expect(duration).toBe(0)
-      expect(filterChains.length).toEqual(1)
+      expect(commandFilters.length).toEqual(1)
 
       expect(graphFiles).toBeInstanceOf(Array)
       expect(graphFiles.length).toBe(1)

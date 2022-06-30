@@ -16,12 +16,13 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
     this.url = url || sourceOrUrl
   }
 
+  family = ""
+
   graphFiles(args: GraphFileArgs): GraphFiles {
     const { visible, editing, streaming } = args
     if (!visible) return []
 
     const graphFile: GraphFile = {
-      localId: 'font',
       type: this.loadType,
       file: this.preloadableSource(editing),
       definition: this, options: { loop: 1 }
@@ -47,4 +48,6 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
   type = DefinitionType.Font
 
   url = ''
+
+  urlAbsolute = ''
 }

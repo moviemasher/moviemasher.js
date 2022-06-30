@@ -8,6 +8,7 @@ import {
   EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, Extension,
   CommandInput, RenderingDescription, AVType, CommandInputs,
   Defined,
+  assertTrue,
 } from "@moviemasher/moviemasher.js"
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
@@ -26,6 +27,52 @@ export class RenderingProcessClass implements RenderingProcess {
     Defined.define(...this.args.definitions)
   }
 
+  concatFile(fileDurations: RenderingProcessConcatFileDuration[]): string {
+    const lines = ['ffconcat version 1.0']
+    lines.push(...fileDurations.flatMap(fileDuration => {
+      const [file, duration] = fileDuration
+      return [`file '${file}'`, `duration ${duration}`]
+    }))
+    return lines.join("\n")
+  }
+
+  commandDescriptionMerged(flatDescription: RenderingDescription): CommandDescription {
+    const { visibleCommandDescriptions, audibleCommandDescription } = flatDescription
+    const descriptions: CommandDescriptions = []
+    const length = visibleCommandDescriptions?.length
+    if (length) {
+      if (length !== 1) throw Errors.internal + 'not flat'
+
+      const [visibleCommandDescription] = visibleCommandDescriptions
+      descriptions.push(visibleCommandDescription)
+    }
+    if (audibleCommandDescription) descriptions.push(audibleCommandDescription)
+    if (!descriptions.length) throw Errors.internal + 'descriptions'
+
+    const [description] = descriptions
+    const merged = descriptions.length > 1 ? this.commandDescriptionsMerged(descriptions) : description
+    return merged
+  }
+  commandDescriptionsMerged(descriptions: CommandDescriptions): CommandDescription {
+    const inputs: CommandInputs = []
+    const commandFilters: CommandFilters = []
+    const durations: number[] = []
+    const types = new Set<AVType>()
+
+    descriptions.forEach(description => {
+      const { duration, inputs: descriptionInputs, commandFilters: filters, avType } = description
+      types.add(avType)
+      if (descriptionInputs) inputs.push(...descriptionInputs)
+      if (filters) commandFilters.push(...filters)
+      if (duration) durations.push(duration)
+    })
+    const avType = types.size === 1 ? [...types.values()].pop()! : AVType.Both
+    const commandDescription: CommandDescription = { inputs, commandFilters, avType }
+    assertTrue(durations.length !== descriptions.length, 'each description has duration')
+    commandDescription.duration = Math.max(...durations)
+    return commandDescription
+  }
+
   private createDirectoryPromise(directoryPath: string): Promise<void> {
     return fs.promises.mkdir(directoryPath, { recursive: true }).then(EmptyMethod)
   }
@@ -33,6 +80,7 @@ export class RenderingProcessClass implements RenderingProcess {
   private createFilePromise(filePath: string, content: string): Promise<void> {
     return fs.promises.writeFile(filePath, content).then(EmptyMethod)
   }
+
   private directoryPromise(): Promise<void> {
     const { outputsPopulated: outputs, args } = this
     const { id } = this
@@ -43,6 +91,22 @@ export class RenderingProcessClass implements RenderingProcess {
       const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
       return this.createFilePromise(jsonPath, argsJson)
     })
+  }
+
+  private fileName(commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string {
+    const { outputType, videoRate } = commandOutput
+    if (outputType !== OutputType.ImageSequence) return renderingOutputFile(commandOutput)
+    if (!videoRate) throw Errors.internal + 'videoRate'
+
+    const { format, extension, basename } = commandOutput
+    const base = basename || ''
+    const ext = extension || format
+    const { duration } = renderingOutput
+    const framesMax = Math.floor(videoRate * duration) - 2
+    const begin = 1
+    const lastFrame = begin + (framesMax - begin)
+    const padding = String(lastFrame).length
+    return `${base}%0${padding}d.${ext}`
   }
 
   private _id?: string
@@ -85,112 +149,9 @@ export class RenderingProcessClass implements RenderingProcess {
     return this._outputsPopulated ||= renderingCommandOutputs(this.args.outputs)
   }
 
-  private fileName(commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string {
-    const { outputType, videoRate } = commandOutput
-    if (outputType !== OutputType.ImageSequence) return renderingOutputFile(commandOutput)
-    if (!videoRate) throw Errors.internal + 'videoRate'
-
-    const { format, extension, basename } = commandOutput
-    const base = basename || ''
-    const ext = extension || format
-    const { duration } = renderingOutput
-    const framesMax = Math.floor(videoRate * duration) - 2
-    const begin = 1
-    const lastFrame = begin + (framesMax - begin)
-    const padding = String(lastFrame).length
-    return `${base}%0${padding}d.${ext}`
-  }
-
-  runPromise(): Promise<RunResult> {
-    const results: RenderingResult[] = []
-    const runResult: RunResult = { results }
-
-    let promise = this.directoryPromise()
-    const { outputsPopulated } = this
-    outputsPopulated.forEach(output => {
-      const { outputType } = output
-      const expectDuration = outputType !== OutputType.Image
-      // console.log(this.constructor.name, "runPromise", renderingCommandOutput, commandOutput)
-      const renderingOutput = this.outputInstance(output)
-      // console.log("commandOutput", commandOutput)
-
-      promise = promise.then(() => {
-        const outputPromise = renderingOutput.renderingDescriptionPromise(results)
-        const flatPromise = outputPromise.then(renderingDescription => {
-          return this.renderingDescriptionPromise(renderingDescription)
-        })
-        return flatPromise.then(flatDescription => {
-          const commandDescription = this.commandDescriptionMerged(flatDescription)
-
-          if (expectDuration) {
-            const { duration } = commandDescription
-            if (!duration) throw Errors.invalid.duration
-          }
-
-          const { outputDirectory } = this.args
-          const destinationFileName = this.fileName(output, renderingOutput)
-          const destPath = `${outputDirectory}/${destinationFileName}`
-          const cmdFilename = renderingOutputFile(output, ExtensionCommands)
-          const cmdPath = path.join(outputDirectory, cmdFilename)
-          const infoFilename = renderingOutputFile(output, ExtensionLoadedInfo)
-          const infoPath = path.join(outputDirectory, infoFilename)
-          // console.log(this.constructor.name, "runPromise", infoPath)
-          const renderPromise = this.renderResultPromise(
-            destPath, cmdPath, infoPath, output, commandDescription
-          )
-          return renderPromise.then(renderingResult => { results.push(renderingResult) })
-        })
-      })
-    })
-    return promise.then(() => runResult)
-  }
-
-  commandDescriptionMerged(flatDescription: RenderingDescription): CommandDescription {
-    const { visibleCommandDescriptions, audibleCommandDescription } = flatDescription
-    const descriptions: CommandDescriptions = []
-    const length = visibleCommandDescriptions?.length
-    if (length) {
-      if (length !== 1) throw Errors.internal + 'not flat'
-
-      const [visibleCommandDescription] = visibleCommandDescriptions
-      descriptions.push(visibleCommandDescription)
-    }
-    if (audibleCommandDescription) descriptions.push(audibleCommandDescription)
-    if (!descriptions.length) throw Errors.internal + 'descriptions'
-
-    const [description] = descriptions
-    const merged = descriptions.length > 1 ? this.commandDescriptionsMerged(descriptions) : description
-    return merged
-  }
-  commandDescriptionsMerged(descriptions: CommandDescriptions): CommandDescription {
-    const inputs: CommandInputs = []
-    const commandFilters: CommandFilters = []
-    const durations: number[] = []
-    const commandDescription: CommandDescription = { inputs, commandFilters }
-    descriptions.forEach(description => {
-      const { duration, inputs: descriptionInputs, commandFilters: filters } = description
-      if (descriptionInputs) inputs.push(...descriptionInputs)
-      if (filters) commandFilters.push(...filters)
-      if (duration) durations.push(duration)
-
-    })
-    if (durations.length !== descriptions.length) throw Errors.internal + 'durations'
-    commandDescription.duration = Math.max(...durations)
-    return commandDescription
-  }
-  concatFile(fileDurations: RenderingProcessConcatFileDuration[]): string {
-    const lines = ['ffconcat version 1.0']
-    lines.push(...fileDurations.flatMap(fileDuration => {
-      const [file, duration] = fileDuration
-      return [`file '${file}'`, `duration ${duration}`]
-    }))
-    return lines.join("\n")
-  }
-
   renderResultPromise(destinationPath: string, cmdPath: string, infoPath: string, commandOutput: RenderingCommandOutput, commandDescription: CommandDescription): Promise<RenderingResult> {
     const { outputType, avType } = commandOutput
-    const { duration } = commandDescription
-    // console.log(this.constructor.name, 'renderResultPromise duration', duration, inputs?.map(i => path.basename(i.source)))
+    const { duration, inputs } = commandDescription
 
     const commandOptions: CommandOptions = {
       output: commandOutput, ...commandDescription
@@ -222,6 +183,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const commandsText = commands.join(' ')
     return fs.promises.writeFile(cmdPath, commandsText).then(() => {
       return command.runPromise(destinationPath).then((commandResult: CommandResult) => {
+        // console.log(this.constructor.name, "renderResultPromise runPromise", destinationPath, commandResult)
         const renderingResult: RenderingResult = {
           ...commandResult, destination: destinationPath, outputType
         }
@@ -282,12 +244,56 @@ export class RenderingProcessClass implements RenderingProcess {
       const commandInput: CommandInput = { source: concatFilePath }
       const durations = fileDurations.map(([_, duration]) => duration)
       const duration = durations.reduce((total, duration) => total + duration, 0)
-      const description: CommandDescription = { inputs: [commandInput], duration }
+      const description: CommandDescription = { inputs: [commandInput], duration, avType: AVType.Video }
       const renderingDescription: RenderingDescription = {
         commandOutput, audibleCommandDescription,
         visibleCommandDescriptions: [description],
       }
       return renderingDescription
     })
+  }
+
+  runPromise(): Promise<RunResult> {
+    const results: RenderingResult[] = []
+    const runResult: RunResult = { results }
+
+    let promise = this.directoryPromise()
+    const { outputsPopulated } = this
+    outputsPopulated.forEach(output => {
+      const { outputType } = output
+      const expectDuration = outputType !== OutputType.Image
+      // console.log(this.constructor.name, "runPromise", renderingCommandOutput, commandOutput)
+      const renderingOutput = this.outputInstance(output)
+      // console.log("commandOutput", commandOutput)
+
+      promise = promise.then(() => {
+        const outputPromise = renderingOutput.renderingDescriptionPromise(results)
+        const flatPromise = outputPromise.then(renderingDescription => {
+          return this.renderingDescriptionPromise(renderingDescription)
+        })
+        return flatPromise.then(flatDescription => {
+          const commandDescription = this.commandDescriptionMerged(flatDescription)
+
+          if (expectDuration) {
+            const { duration } = commandDescription
+            if (!duration) throw Errors.invalid.duration
+          }
+
+          const { outputDirectory } = this.args
+          const destinationFileName = this.fileName(output, renderingOutput)
+          const destPath = `${outputDirectory}/${destinationFileName}`
+          const cmdFilename = renderingOutputFile(output, ExtensionCommands)
+          const cmdPath = path.join(outputDirectory, cmdFilename)
+          const infoFilename = renderingOutputFile(output, ExtensionLoadedInfo)
+          const infoPath = path.join(outputDirectory, infoFilename)
+          // console.log(this.constructor.name, "runPromise", infoPath)
+          const renderPromise = this.renderResultPromise(
+            destPath, cmdPath, infoPath, output, commandDescription
+          )
+          return renderPromise.then(renderingResult => { results.push(renderingResult) })
+        })
+      })
+    })
+    return promise.then(() => runResult)
   }
 }

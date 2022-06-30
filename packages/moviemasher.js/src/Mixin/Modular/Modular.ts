@@ -1,9 +1,8 @@
 import { Constrained } from "../../declarations"
 import { Definition, DefinitionObject } from "../../Definition/Definition"
-import { ChainLinks, Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
 import { Instance, InstanceObject } from "../../Instance/Instance"
 import { PropertyObject } from "../../Setup/Property"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
 
 
 export interface ModularObject extends InstanceObject {
@@ -13,7 +12,7 @@ export interface ModularObject extends InstanceObject {
 export interface Modular extends Instance {
   definition: ModularDefinition
 
-  chainLinks(): ChainLinks
+  // chainLinks(): ChainLinks
 }
 
 export interface ModularDefinitionObject extends DefinitionObject {

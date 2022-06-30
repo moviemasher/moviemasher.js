@@ -1,8 +1,4 @@
 import fs from 'fs'
-import {
-  RenderingCommandOutput, OutputType, LoadType, RenderingInput, OutputFormat,
-  ExtPng, CommandOutputs, outputDefaultPopulate
-} from "@moviemasher/moviemasher.js"
 
 import { RenderingProcessArgs } from "./RenderingProcess"
 import { renderingProcessInstance } from "./RenderingProcessFactory"
@@ -12,10 +8,15 @@ import { renderingProcessTestArgs
 import { TestRenderingsDir } from '../../../../../../dev/test/Setup/Constants'
 import { renderingInputFromRaw } from '../../../Utilities/Rendering'
 import { expandFile } from '../../../Utilities/Expand'
+import { CommandOutputs, RenderingCommandOutput } from '../../../../../../packages/moviemasher.js/src/Output/Output'
+import { LoadType, OutputFormat, OutputType } from '../../../../../../packages/moviemasher.js/src/Setup/Enums'
+import { ExtPng, ExtJpeg } from '../../../../../../packages/moviemasher.js/src/Setup/Constants'
+import { outputDefaultPopulate } from '../../../../../../packages/moviemasher.js/src/Output/OutputDefault'
+import { RenderingInput } from '../../../../../../packages/moviemasher.js/src/Api/Rendering'
 
 export function renderingProcessArgs(id?: string): RenderingProcessArgs {
   return {
-    ...renderingProcessTestArgs(id), mash: {}, outputs: []
+    ...renderingProcessTestArgs(id), mash: {}, outputs: [], definitions: []
   }
 }
 
@@ -26,7 +27,7 @@ describe("RenderingProcess", () => {
   const baseOutput: RenderingCommandOutput = {
     outputType: OutputType.Image,
     format: OutputFormat.Png,
-    extension: ExtPng,
+    extension: ExtJpeg,
   }
   describe("renders", () => {
     const renderingFiles = fs.readdirSync(TestRenderingsDir).filter(p => p.endsWith('.json'))
@@ -97,10 +98,12 @@ describe("RenderingProcess", () => {
     test("renders image from trimmed video", async () => {
       const output = outputDefaultPopulate({ ...baseOutput })
       const outputs: CommandOutputs = [output]
-      const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl, { trim: 10 })
+      const clip = { id: 'video', trim: 10 }
+      const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl, clip)
       const processArgs: RenderingProcessArgs = {
         ...renderingProcessArgs('image-from-trimmed-video'), outputs, ...renderingInput,
       }
+      console.log("processArgs", processArgs)
       const renderingProcess = renderingProcessInstance(processArgs)
       const result = await renderingProcess.runPromise()
 
@@ -123,7 +126,7 @@ describe("RenderingProcess", () => {
       await expectOutputFile(first.destination)
     })
 
-    test("renders image sequence from video with cover", async () => {
+    test.skip("renders image sequence from video with cover", async () => {
       const output = outputDefaultPopulate({ ...baseOutput, outputType: OutputType.ImageSequence, cover: true })
       // console.log('output', output)
       const outputs: CommandOutputs = [output]

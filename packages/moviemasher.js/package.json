@@ -34,7 +34,6 @@
     "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-esm": "rollup --config dev/rollup/esm.config.js",
     "build-types": "rollup --config dev/rollup/types.config.js",
-    "build-tsc": "tsc --project dev/tsconfig.json --declaration --emitDeclarationOnly --declarationMap false --outFile src/types.ts",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
     "build-full": "run-s lint-verbose test-verbose clean build-esm build-umd build-cjs",
     "build": "run-s clean build-types build-esm build-cjs build-umd",

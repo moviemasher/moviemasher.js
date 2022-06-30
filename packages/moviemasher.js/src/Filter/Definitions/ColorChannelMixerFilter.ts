@@ -3,10 +3,7 @@ import { colorRgbaKeys } from "../../Utility/Color"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { NamespaceSvg } from "../../Setup/Constants"
-import { ChainPhase } from "../Filter"
-import { SvgFilters, ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { SvgFilters, ScalarObject } from "../../declarations"
 
 const ColorChannelMixerFilterKeys = colorRgbaKeys.flatMap(c =>
   colorRgbaKeys.map(d => `${c}${d}`)
@@ -28,15 +25,9 @@ export class ColorChannelMixerFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
-  filterChain(filterChain: FilterChain): ChainPhase | undefined {
-    const { evaluator } = filterChain
-
-    return { values: evaluator.parameters }
-  }
-
-  svgFilters(dimensions: Dimensions, valueObject: ValueObject): SvgFilters {
+  filterDefinitionSvgFilters(object: ScalarObject): SvgFilters {
     const bits = colorRgbaKeys.flatMap(c =>
-      [...colorRgbaKeys.map(d => Number(valueObject[`${c}${d}`])), 0]
+      [...colorRgbaKeys.map(d => Number(object[`${c}${d}`])), 0]
     )
     const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feColorMatrix')
     filterElement.setAttribute('type', 'matrix')

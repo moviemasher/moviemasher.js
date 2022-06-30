@@ -11,6 +11,8 @@ import { Definition } from "../Definition/Definition"
 import { AudibleContextInstance } from "../Context/AudibleContext"
 import { LoaderFile, LoaderSource } from "./Loader"
 import { LoaderClass } from "./LoaderClass"
+import { assert } from "console"
+import { assertFontDefinition } from "../Media"
 
 export class BrowserLoaderClass extends LoaderClass {
   constructor(endpoint?: Endpoint) {
@@ -100,6 +102,8 @@ export class BrowserLoaderClass extends LoaderClass {
   protected requestFont(url: string, graphFile: GraphFile): LoadFontPromise {
     // console.log(this.constructor.name, "requestFont", url, graphFile.file)
     const family = this.fontFamily(url)
+    const { definition } = graphFile
+    this.updateDefinitionFamily(definition, family)
     const promise : LoadFontPromise = new Promise((resolve, reject) => {
       this.arrayBufferPromiseFromUrl(url)
         .then(buffer => {
@@ -119,7 +123,9 @@ export class BrowserLoaderClass extends LoaderClass {
     image.crossOrigin = "Anonymous"
     image.src = url
     return image.decode().then(() => {
-      this.updateDefinitionDimensions(graphFile.definition, image)
+      const { width, height } = image
+      const dimensions = { width, height }
+      this.updateDefinitionDimensions(graphFile.definition, dimensions)
       return Promise.resolve(image)
     })
   }
@@ -139,18 +145,21 @@ export class BrowserLoaderClass extends LoaderClass {
   private requestVideo(url: string, graphFile: GraphFile): LoadVideoPromise {
     const promise: LoadVideoPromise = new Promise((resolve, reject) => {
       return this.videoPromiseFromUrl(url).then(video => {
-        this.updateDefinitionDimensions(graphFile.definition, video)
-        this.updateDefinitionDuration(graphFile.definition, video.duration)
+        const { duration, width, height } = video
+        const { definition } = graphFile
+        const dimensions = { width, height }
+        this.updateDefinitionDimensions(definition, dimensions)
+        this.updateDefinitionDuration(definition, duration)
         return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
           return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
             resolve({ video, audio: audioBuffer })
           })
         })
-      })
-      .catch(reject)
+      }).catch(reject)
     })
     return promise
   }
+
 
   private videoPromiseFromUrl(url: string): Promise<LoadedVideo> {
     return new Promise<LoadedVideo>((resolve, reject) => {

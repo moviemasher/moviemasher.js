@@ -171,9 +171,9 @@ export class Evaluator {
 
       if (evaluation.replaceAll(name, () => {
         if (this.instanceCustomProperties.includes(property)) {
-          return this.instance.value(name, this.tweenTime) as Value
+          return this.instance.value(name) as Value
         }
-        return this.filter.value(name, this.tweenTime) as Value
+        return this.filter.value(name) as Value
       }, 'expandEvaluationNumbers.properties')) break
 
     }
@@ -204,9 +204,9 @@ export class Evaluator {
       const { name } = property
       evaluation.replaceAll(name, () => {
         if (this.instanceCustomProperties.includes(property)) {
-          return this.instance.value(name, this.tweenTime) as Value
+          return this.instance.value(name) as Value
         }
-        return this.filter.value(name, this.tweenTime) as Value
+        return this.filter.value(name) as Value
 
       }, 'expandEvaluationProperties')
     }
@@ -344,8 +344,8 @@ export class Evaluator {
         expanded.push(name)
         const underKey = `_${name}`
         if (this.instanceCustomProperties.includes(property)) {
-          args[underKey] = this.instance.value(name, this.tweenTime) as Value
-        } else args[underKey] = this.filter.value(name, this.tweenTime) as Value
+          args[underKey] = this.instance.value(name) as Value
+        } else args[underKey] = this.filter.value(name) as Value
         return underKey
       }, 'populateEvaluationArgs.properties')
     }
@@ -357,7 +357,7 @@ export class Evaluator {
 
 
   propertyValue(key: string): Value {
-    const selectionValue = this.instance.value(key, this.tweenTime)!
+    const selectionValue = this.instance.value(key)!
     switch (typeof selectionValue) {
       case 'boolean': return selectionValue ? 1 : 0
       default: return selectionValue

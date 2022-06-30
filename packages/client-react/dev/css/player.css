@@ -26,20 +26,45 @@
   color: var(--color-fore-tertiary);
 }
 
-.moviemasher .editor .panel.player .content svg image,
-.moviemasher .editor .panel.player .content svg .bounds {
+.moviemasher .editor .panel.player .content svg .container {
+  cursor: move;
+  pointer-events: visibleFill;
+}
+.moviemasher .editor .panel.player .content svg .contained {
   pointer-events: none;
-
 }
-.moviemasher .editor .panel.player .content svg .bounds.selected {
-  stroke: var(--color-fore-secondary);
+
+.moviemasher .editor .panel.player .content svg .bounds {
   stroke-width: calc(2 * var(--border-size));
+  pointer-events: visibleStroke;
+  /* marker-start: url(#bounds-marker); */
 }
 
-.moviemasher .editor .panel.player .content svg .bounds.marker {
-  marker-mid: url(#bounds-marker);
-  stroke: none;
+.moviemasher .editor .panel.player .content svg .handle.ne {
+  cursor: ne-resize;
 }
+.moviemasher .editor .panel.player .content svg .handle.se {
+  cursor: se-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.nw {
+  cursor: nw-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.sw {
+  cursor: sw-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.n {
+  cursor: n-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.s {
+  cursor: s-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.e {
+  cursor: e-resize;
+}
+.moviemasher .editor .panel.player .content svg .handle.w {
+  cursor: w-resize;
+}
+
 
 .moviemasher .editor .panel.player .content svg .shape.hovering {
   stroke: var(--color-fore-secondary);
@@ -48,5 +73,6 @@
 
 .moviemasher .editor .panel.player .content svg .shape.marker {
   marker-mid: url(#shape-marker);
-  stroke: none;
+  stroke: var(--color-fore-secondary);
+  stroke-width: calc(2 * var(--border-size));
 }

@@ -1,30 +1,37 @@
 import { Dimensions } from "../Setup/Dimensions"
-import { Transforms } from "../MoveMe"
 import { NamespaceSvg } from "../Setup/Constants"
+import { Rect } from "../declarations"
+import { isRect } from "./Is"
 
 export const svgOfDimensions = (dimensions: Dimensions) => {
   const { width, height } = dimensions
-  const svgElement = globalThis.document.createElementNS(NamespaceSvg, 'svg')
-  svgElement.setAttribute('width', String(width))
-  svgElement.setAttribute('height', String(height))
-  svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
-  return svgElement
+  const element = globalThis.document.createElementNS(NamespaceSvg, 'svg')
+  element.setAttribute('width', String(width))
+  element.setAttribute('height', String(height))
+  element.setAttribute('viewBox', `0 0 ${width} ${height}`)
+  return element
 }
 
-export const svgTransformAttribute = (transforms: Transforms): string => {
-  return transforms.reverse().map(transform => {
-    const { transformType, x, y } = transform
-    return `${transformType}(${x},${y})`
-  }).join(' ')
-
+export const svgGroupElement = (dimensions?: Dimensions): SVGGElement => {
+ 
+  const element = globalThis.document.createElementNS(NamespaceSvg, 'g')
+  if (dimensions) {
+    const { width, height } = dimensions
+    element.setAttribute('width', String(width))
+    element.setAttribute('height', String(height))
+  }
+  return element
 }
 
-
-export const svgBoundsElement = (size: Dimensions): SVGPolygonElement => {
+export const svgPolygonElement = (size: Dimensions | Rect, className = '', fill = 'none'): SVGPolygonElement => {
   const { width, height } = size
-  const rectElement = globalThis.document.createElementNS(NamespaceSvg, 'polygon')
-  rectElement.setAttribute('points', `0,0 ${width},0 ${width},${height}, 0,${height}, 0,0`)
-  rectElement.setAttribute('fill', 'none')
-  rectElement.classList.add('bounds')
-  return rectElement
+  const element = globalThis.document.createElementNS(NamespaceSvg, 'polygon')
+  element.setAttribute('points', `0,0 ${width},0 ${width},${height}, 0,${height}, 0,0`)
+  if (isRect(size)) {
+    const { x, y } = size
+    element.setAttribute('transform', `translate(${x}, ${y})`)
+  }
+  if (fill) element.setAttribute('fill', fill)
+  if (className) element.classList.add(className)
+  return element
 }
