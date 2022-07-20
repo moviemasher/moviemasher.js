@@ -2,7 +2,7 @@ import { FilterGraphsClass } from "./FilterGraphsClass"
 import { mashInstance } from "../MashFactory"
 import { visibleClipDefault } from "../../../Media/VisibleClip/VisibleClipFactory"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
-import { expectArrayLength } from "../../../../../../dev/test/Utilities/expectArrayLength"
+import { expectArrayLength } from "../../../../../../dev/test/Utilities/Expect"
 
 
 describe("FilterGraphs", () => {

@@ -1,6 +1,8 @@
 import { assertContainer } from "../../../Container/Container"
-import { Point, Rect, SvgContent } from "../../../declarations"
-import { Dimensions } from "../../../Setup/Dimensions"
+import { SvgContent } from "../../../declarations"
+import { Point } from "../../../Utility/Point"
+import { Rect } from "../../../Utility/Rect"
+import { Size } from "../../../Utility/Size"
 import { Evaluator, EvaluatorArgs } from "../../../Helpers/Evaluator"
 import { assertVisibleClip, VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
 import { ClassHovering, NamespaceSvg } from "../../../Setup/Constants"
@@ -11,6 +13,7 @@ import { assertTrue } from "../../../Utility/Is"
 import { Direction } from "../../../Setup/Enums"
 import { Editor } from "../../Editor"
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
+import { tweenRectsEqual } from "../../../Utility"
 
 export const TrackPreviewHandleSize = 4
 
@@ -34,7 +37,7 @@ export class TrackPreviewClass implements TrackPreview {
     const { timeRange, tweenTime } = args
     const { size, editor } = filterGraph
     const evaluatorArgs: EvaluatorArgs = {
-      instance: this.clip, outputDimensions: size, 
+      instance: this.clip, outputSize: size, 
       editing: !!editor,
       timeRange, tweenTime
     }
@@ -54,12 +57,11 @@ export class TrackPreviewClass implements TrackPreview {
     assertContainer(container)
 
     const containerRects = container.containerRects(size, time, timeRange)
-    assertTrue(containerRects.length === 1, 'single container rect')
-    const [containerRect] = containerRects
+    assertTrue(tweenRectsEqual(...containerRects), 'single container rect')
 
-    // console.log(this.constructor.name, "svg", containerRect)
+    const [containerRect] = containerRects
     evaluator.instance = container
-    const containerSvg = container.containerSvg(containerRect)
+    const containerSvg = container.containerSvg(containerRect, time, timeRange)
 
     evaluator.instance = content
     const contentSvg = content.contentSvg(containerRect, time, timeRange)
@@ -69,6 +71,9 @@ export class TrackPreviewClass implements TrackPreview {
     contentSvg.classList.add('contained')
     const maskElement = globalThis.document.createElementNS(NamespaceSvg, 'mask')
     maskElement.setAttribute('id', maskId)
+    maskElement.setAttribute('width', String(containerRect.width))
+    const polygonElement = svgPolygonElement(containerRect, '', 'transparent')
+    maskElement.appendChild(polygonElement)
     contentSvg.setAttribute('mask', `url(#${maskId})`)
     contentSvg.setAttribute('mask-mode', 'alpha')
 
@@ -76,7 +81,7 @@ export class TrackPreviewClass implements TrackPreview {
     svgElement.append(maskElement)
     svgElement.append(contentSvg)
 
-    if (editing) svgElement.append(this.svgEditingContent(containerRect))
+    if (editing) svgElement.append(this.svgEditingContent(containerRect, time, timeRange))
     
     const svgFilters = clip.svgFilters(size, containerRect, time, timeRange)
     if (svgFilters.length) {
@@ -91,9 +96,12 @@ export class TrackPreviewClass implements TrackPreview {
     return svgElement
   }
 
-  get size(): Dimensions { return this.preview.size }
+  get size(): Size { return this.preview.size }
  
   private svgBoundsElement(directions: Direction[], rect: Rect): SVGGElement {
+
+    // console.log(this.constructor.name, "svgBoundsElement", rect)
+
     const { x, y, width, height } = rect
     const dimensions = { width, height }
     const groupElement = svgGroupElement(dimensions)
@@ -109,7 +117,7 @@ export class TrackPreviewClass implements TrackPreview {
     return groupElement
   }
 
-  private svgBoundsLine(dimensions: Dimensions, direction: Direction): SVGPolygonElement {
+  private svgBoundsLine(dimensions: Size, direction: Direction): SVGPolygonElement {
     const point = this.svgHandlePoint(dimensions, direction)
     const rect = { ...point, width: TrackPreviewHandleSize * 2, height: TrackPreviewHandleSize * 2 }
     const element = svgPolygonElement(rect, 'handle', 'currentColor')
@@ -122,11 +130,12 @@ export class TrackPreviewClass implements TrackPreview {
     return element
   }
 
-  private svgEditingContent(containerRect: Rect): SvgContent {
+  private svgEditingContent(containerRect: Rect, time: Time, range: TimeRange): SvgContent {
     const container = this.clip.container!
     const transformedGroupElement = container.intrinsicGroupElement
     const { clip, selected, editor } = this
-    const pathElement = container.pathElement(containerRect, 'transparent')
+    console.log(this.constructor.name, "svgEditingContent", clip.label, containerRect)
+    const pathElement = container.pathElement(containerRect, time, range, 'transparent')
     pathElement.setAttribute('vector-effect', 'non-scaling-stroke')
 
     pathElement.addEventListener('pointerdown', event => {
@@ -150,7 +159,7 @@ export class TrackPreviewClass implements TrackPreview {
     return transformedGroupElement
   }
 
-  private svgHandlePoint(dimensions: Dimensions, direction: Direction): Point {
+  private svgHandlePoint(dimensions: Size, direction: Direction): Point {
     const { width, height } = dimensions
     const point = { x: 0, y: 0 }
     const [first, second] = String(direction).split('')

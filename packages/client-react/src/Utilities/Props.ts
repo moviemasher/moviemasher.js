@@ -1,6 +1,6 @@
 import { DefinitionType, isDefinitionType, Property } from "@moviemasher/moviemasher.js"
 
-export const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
+const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
   if (string) return [string]
 
   if (!array) return properties ? properties.map(property => property.name) : []
@@ -15,9 +15,4 @@ export const propsDefinitionTypes = (type?:string, types?: string | string[], id
   if (id && !strings.length) strings.push(id)
   const validStrings = strings.filter(string => isDefinitionType(string))
   return validStrings.map(string => string as DefinitionType)
-}
-
-export const Props = {
-  stringArray: propsStringArray,
-  definitionTypes: propsDefinitionTypes,
 }

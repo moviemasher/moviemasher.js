@@ -1,6 +1,6 @@
 import { Constrained} from "../../declarations"
 import { GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { LoadType } from "../../Setup/Enums"
+import { isLoadType, LoadType } from "../../Setup/Enums"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Content/Content"
 
 export interface PreloadableObject extends ContentObject {
@@ -22,14 +22,12 @@ export function assertPreloadable(value?: any): asserts value is Preloadable {
 
 export interface PreloadableDefinition extends ContentDefinition {
   loadType: LoadType
-  preloadableSource(editing?: boolean): string
-  graphFiles(args: GraphFileArgs): GraphFiles
   source: string
   url: string
   urlAbsolute: string
 }
 export const isPreloadableDefinition = (value?: any): value is PreloadableDefinition => {
-  return isContentDefinition(value) && "preloadableSource" in value
+  return isContentDefinition(value) && "loadType" in value //&& isLoadType(value.loadType) 
 }
 
 export function assertPreloadableDefinition(value?: any): asserts value is PreloadableDefinition {

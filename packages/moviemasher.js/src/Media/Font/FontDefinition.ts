@@ -3,6 +3,7 @@ import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { UnknownObject, ValueObject } from "../../declarations"
 
 
 export class FontDefinitionClass extends DefinitionBase implements FontDefinition {
@@ -19,16 +20,14 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
   family = ""
 
   graphFiles(args: GraphFileArgs): GraphFiles {
-    const { visible, editing, streaming } = args
+    const { visible, editing } = args
     if (!visible) return []
 
+    const { url, source } = this
+    const file = editing ? url : source
     const graphFile: GraphFile = {
-      type: this.loadType,
-      file: this.preloadableSource(editing),
-      definition: this, options: { loop: 1 }
+      type: this.loadType, file, definition: this
     }
-    if (streaming) graphFile.options!.re = ''
-
     return [graphFile]
   }
   instanceFromObject(object: FontObject = {}): Font {
@@ -37,12 +36,13 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
 
   loadType = LoadType.Font
 
-  preloadableSource(editing = false): string {
-    if (!this.url) return this.source
-
-    return editing ? this.url : this.source
+  toJSON(): UnknownObject {
+    const json = super.toJSON()
+    const { url, source } = this
+    json.url = url
+    json.source = source
+    return json
   }
-
   source = ''
 
   type = DefinitionType.Font

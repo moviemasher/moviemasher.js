@@ -1,5 +1,5 @@
 import { Endpoint, StringObject, VisibleContextData } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { SelectedProperties } from "../MoveMe"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction, SelectType, TrackType } from "../Setup/Enums"
@@ -75,7 +75,7 @@ export interface Editor {
   fps: number
   goToTime(value: Time): Promise<void>
   handleAction(action: Action): void
-  imageSize: Dimensions
+  imageSize: Size
   load(data: EditedData): Promise<void>
   loop: boolean
   move(object: ClipOrEffect, frameOrIndex?: number, trackIndex?: number): void

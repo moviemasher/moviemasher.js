@@ -112,7 +112,9 @@ export class MashClass extends EditedClass implements Mash {
 
   private assureTrackOfType(trackType: TrackType): void {
     if (!this.trackCount(trackType)) {
-      this.tracks.push(trackInstance({ trackType: trackType }))
+      const dense = trackType === TrackType.Video 
+      const trackArgs = { trackType, dense }
+      this.tracks.push(trackInstance(trackArgs))
     }
   }
 
@@ -377,6 +379,8 @@ export class MashClass extends EditedClass implements Mash {
       mash: this,
       backcolor: definedBackcolor,
     }
+    // console.log(this.constructor.name, "filterGraphs filterGraphsOptions", filterGraphsOptions)
+
     return new FilterGraphsClass(filterGraphsOptions)
   }
 
@@ -440,7 +444,7 @@ export class MashClass extends EditedClass implements Mash {
     const type = audible && visible ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
     const clips = this.clipsInTimeOfType(scaled, type)
     // console.log(this.constructor.name, "graphFiles", args, clips.length, "clip(s)")
-    return clips.flatMap(clip => clip.graphFiles(args))
+    return clips.flatMap(clip => clip.clipGraphFiles(args))
   }
 
   private graphFilesUnloaded(options: GraphFileOptions): GraphFiles {

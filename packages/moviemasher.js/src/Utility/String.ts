@@ -1,4 +1,3 @@
-import { ContextFactory } from "../Context"
 import { isAboveZero, isPopulatedString } from "./Is"
 
 export const stringSeconds = (seconds : number, fps : number, duration : number) : string => {
@@ -47,14 +46,16 @@ export const stringSeconds = (seconds : number, fps : number, duration : number)
 export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): [number, number] => {
   if (!(isPopulatedString(string) && isAboveZero(height))) return [0, 0]
 
+  if (!globalThis.document) throw 'wrong environment'
+  
   const canvas = globalThis.document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
   ctx.font = `${height}px ${family}`
 
   const text = ctx.measureText(string)
-  // console.log("stringWidthForFamilyAtHeight", ctx.font, text)
-  const { actualBoundingBoxLeft, actualBoundingBoxRight } = text
-  return [actualBoundingBoxRight + actualBoundingBoxLeft, actualBoundingBoxLeft]
+  const { actualBoundingBoxLeft, actualBoundingBoxRight, width } = text
+  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft)
+  return [width, actualBoundingBoxLeft]
 }
 
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {

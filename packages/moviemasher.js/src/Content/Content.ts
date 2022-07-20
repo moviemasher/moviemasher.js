@@ -1,6 +1,7 @@
-import { Constrained,  Rect,  SvgContent } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
-import { CommandFiles, CommandFilters, ContentCommandFileArgs, ContentCommandFilterArgs, GraphFileArgs, GraphFiles, SelectedProperties } from "../MoveMe"
+import { Constrained,  GenericFactory,  SvgContent } from "../declarations"
+import { Rect } from "../Utility/Rect"
+import { Size } from "../Utility/Size"
+import { ColorTuple, CommandFilterArgs, CommandFilters, SelectedProperties } from "../MoveMe"
 import { isContentType, SelectType } from "../Setup/Enums"
 import { throwError } from "../Utility/Is"
 import { Actions } from "../Editor/Actions/Actions"
@@ -13,15 +14,12 @@ export interface ContentObject extends TweenableObject {
 export interface ContentDefinitionObject extends TweenableDefinitionObject { }
 
 export interface Content extends Tweenable {
-  contentCommandFiles(args: ContentCommandFileArgs): CommandFiles 
-  contentCommandFilters(args: ContentCommandFilterArgs): CommandFilters 
-  graphFiles(args: GraphFileArgs): GraphFiles
-  intrinsicDimensions(): Dimensions
+  intrinsicSize(): Size
   mutable: boolean
   muted: boolean
   selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties
   contentSvg(containerRect: Rect, time: Time, range: TimeRange): SvgContent
-  svgContent(rect: Rect, stretch?: boolean): SvgContent
+  svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent
 }
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentType(value.type)
@@ -38,3 +36,8 @@ export const isContentDefinition = (value?: any): value is ContentDefinition => 
 export type ContentClass = Constrained<Content>
 export type ContentDefinitionClass = Constrained<ContentDefinition>
 
+
+/**
+ * @category Factory
+ */
+ export interface ContentFactory extends GenericFactory<Content, ContentObject, ContentDefinition, ContentDefinitionObject> { }

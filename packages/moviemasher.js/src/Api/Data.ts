@@ -1,5 +1,5 @@
 import { JsonObject, AndId, Described, StringObject, StringsObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
@@ -73,7 +73,7 @@ export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions { 
 
 export interface DataMashDefaultRequest extends ApiRequest {}
 export interface DataMashDefaultResponse extends ApiResponse, DataMashDefinitions {
-  previewDimensions?: Dimensions
+  previewSize?: Size
 }
 
 export interface DataMashDeleteRequest extends ApiRequest, AndId {}
@@ -95,7 +95,7 @@ export interface DataCastRelations {
 }
 export interface DataCastDefaultRequest extends ApiRequest {}
 export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
-  previewDimensions?: Dimensions
+  previewSize?: Size
 }
 
 export interface DataCastPutRequest extends DataPutRequest {
@@ -109,7 +109,7 @@ export interface DataCastDeleteRequest extends ApiRequest, AndId {}
 export interface DataCastDeleteResponse extends ApiResponse {}
 
 export interface DataCastGetResponse extends DataCastDefaultResponse {
-  previewDimensions?: Dimensions
+  previewSize?: Size
 }
 
 export interface DataDefinitionGetRequest extends ApiRequest, AndId {}

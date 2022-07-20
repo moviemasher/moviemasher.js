@@ -1,5 +1,6 @@
-import { Point, SvgContents } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
+import { SvgContents } from "../../declarations"
+import { Point } from "../../Utility/Point"
+import { Size } from "../../Utility/Size"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
@@ -38,7 +39,7 @@ export class PreviewClass implements Preview {
   get preloader(): Loader { return this.mash.preloader }
 
   get quantize(): number { return this.mash.quantize }
-  size: Dimensions
+  size: Size
 
   selectedClip?: VisibleClip
 

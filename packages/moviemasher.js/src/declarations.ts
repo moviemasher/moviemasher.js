@@ -1,5 +1,3 @@
-import { Dimensions } from "./Setup/Dimensions"
-
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
@@ -108,21 +106,6 @@ export interface AndTypeAndValue extends AndType {
   value : number
 }
 
-export interface Point {
-  x : number
-  y: number
-}
-
-export interface Rect extends Dimensions, Point {}
-
-export interface TextStyle {
-  height : number
-  family : string
-  color : string
-  shadow? : string
-  shadowPoint? : Point
-}
-
 export interface RgbObject {
   r: Value
   g: Value
@@ -196,12 +179,6 @@ export interface Described {
 }
 
 export interface DescribedObject extends Partial<Described> {}
-
-export interface GraphFileIconArgs {
-  size: Dimensions
-  mashSize: Dimensions
-  position?: number
-}
 
 export const isCustomEvent = (value: any): value is CustomEvent => (
   value instanceof CustomEvent

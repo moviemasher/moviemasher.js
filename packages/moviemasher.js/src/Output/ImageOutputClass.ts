@@ -8,7 +8,7 @@ import { RenderingOutputClass } from "./RenderingOutputClass"
 export class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
   declare args: ImageOutputArgs
 
-  avType = AVType.Video
+  _avType = AVType.Video
 
   protected override get mashDurationPromise(): Promise<void> {
     const { args } = this
@@ -21,13 +21,12 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
   override get endTime(): Time | undefined { return }
 
   override get filterGraphsOptions(): FilterGraphsOptions {
-    const {args, graphType, avType, startTime } = this
+    const {args, graphType, avType, startTime: time } = this
     const { mash } = args
-    const { quantize } = mash
+    const { quantize: videoRate } = mash
     const filterGraphsOptions: FilterGraphsOptions = {
-      size: this.sizeCovered(), videoRate: quantize,
-      time: startTime,
-      graphType, avType
+      time, graphType, videoRate, size: this.sizeCovered(), 
+      avType
     }
     return filterGraphsOptions
   }

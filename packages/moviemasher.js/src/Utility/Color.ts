@@ -4,6 +4,40 @@ import {
 
 export const colorRgbKeys = 'rgb'.split('')
 export const colorRgbaKeys = [...colorRgbKeys, 'a']
+export const colorTransparent = '#00000000'
+export const colorBlack = '#000000'
+export const colorWhite = '#FFFFFF'
+export const colorWhiteTransparent = '#FFFFFF00'
+export const colorBlackTransparent = '#00000000'
+export const colorWhiteOpaque = '#FFFFFFFF'
+export const colorBlackOpaque = '#000000FF'
+export const colorGreen = '#00FF00'
+export const colorYellow = '#FFFF00'
+export const colorRed = '#FF0000'
+export const colorBlue = '#0000FF'
+
+export enum Color {
+  Transparent = '#00000000',
+  Black = '#000000',
+  White = '#FFFFFF',
+  WhiteTransparent = '#FFFFFF00',
+  BlackTransparent = '#00000000',
+  WhiteOpaque = '#FFFFFFFF',
+  BlackOpaque = '#000000FF',
+  Green = '#00FF00',
+  Yellow = '#FFFF00',
+  Red = '#FF0000',
+  Blue = '#0000FF',
+}
+export const Colors = Object.values(Color)
+
+export const colorName = (color: string): string => {
+  for (const entry of Object.entries(Color)) {
+    const [key, value] = entry
+    if (value === color) return key
+  }
+  return ''
+}
 
 export const rgbValue = (value : string | number) : number => (
   Math.min(255, Math.max(0, Math.floor(Number(value))))
@@ -140,12 +174,7 @@ export const colorHexToRgb = (hex: string): Rgb => {
   const [r, g, b] = hexArr.map(hex256)
   return { r, g, b }
 }
-export const colorTransparent = '#00000000'
-export const colorBlack = '#000000'
-export const colorWhite = '#FFFFFF'
-export const colorBlackOpaque = '#000000FF'
-export const colorGreen = '#00FF00'
-export const colorYellow = '#FFFF00'
+
 
 export const colorRgbaToRgba = (value: string): Rgba => {
   const color = colorStrip(value)
@@ -213,32 +242,3 @@ export const colorServer = (color: string): string => {
   return `${color.slice(0, 7)}@0x${color.slice(-2)}`
 }
 
-
-/**
- * @category Utility
- */
-export const Color = {
-  alphaColor: colorAlphaColor,
-  fromRgb: colorFromRgb,
-  fromRgba: colorFromRgba,
-  hexRegex: colorHexRegex,
-  hexToRgb: colorHexToRgb,
-  hexToRgba: colorHexToRgba,
-  rgb: colorRgb,
-  rgba: colorRgba,
-  rgbaRegex: colorRgbaRegex,
-  rgbaToHex: colorRgbaToHex,
-  rgbRegex: colorRgbRegex,
-  rgbToHex: colorRgbToHex,
-  rgbToYuv: colorRgbToYuv,
-  strip: colorStrip,
-  toRgb: colorToRgb,
-  toRgba: colorToRgba,
-  transparent: colorTransparent,
-  valid: colorValid,
-  validHex: colorValidHex,
-  validRgb: colorValidRgb,
-  validRgba: colorValidRgba,
-  yuvBlend: colorYuvBlend,
-  yuvToRgb: colorYuvToRgb,
-}

@@ -1,9 +1,8 @@
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "./Size"
 import { NamespaceSvg } from "../Setup/Constants"
-import { Rect } from "../declarations"
-import { isRect } from "./Is"
+import { Rect, isRect } from "../Utility/Rect"
 
-export const svgOfDimensions = (dimensions: Dimensions) => {
+export const svgOfDimensions = (dimensions: Size) => {
   const { width, height } = dimensions
   const element = globalThis.document.createElementNS(NamespaceSvg, 'svg')
   element.setAttribute('width', String(width))
@@ -12,7 +11,7 @@ export const svgOfDimensions = (dimensions: Dimensions) => {
   return element
 }
 
-export const svgGroupElement = (dimensions?: Dimensions): SVGGElement => {
+export const svgGroupElement = (dimensions?: Size): SVGGElement => {
  
   const element = globalThis.document.createElementNS(NamespaceSvg, 'g')
   if (dimensions) {
@@ -23,7 +22,7 @@ export const svgGroupElement = (dimensions?: Dimensions): SVGGElement => {
   return element
 }
 
-export const svgPolygonElement = (size: Dimensions | Rect, className = '', fill = 'none'): SVGPolygonElement => {
+export const svgPolygonElement = (size: Size | Rect, className = '', fill = 'none'): SVGPolygonElement => {
   const { width, height } = size
   const element = globalThis.document.createElementNS(NamespaceSvg, 'polygon')
   element.setAttribute('points', `0,0 ${width},0 ${width},${height}, 0,${height}, 0,0`)

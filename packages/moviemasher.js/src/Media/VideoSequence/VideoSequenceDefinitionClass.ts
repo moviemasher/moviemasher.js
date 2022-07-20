@@ -16,7 +16,7 @@ import {
 import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
-import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
+import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
@@ -24,8 +24,8 @@ import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinit
 const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(VideoSequenceDefinitionWithTweenable)
 const VideoSequenceDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoSequenceDefinitionWithContent)
-const VideoSequenceDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoSequenceDefinitionWithPreloadable)
-const VideoSequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoSequenceDefinitionWithUpdatableDimensions)
+const VideoSequenceDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoSequenceDefinitionWithPreloadable)
+const VideoSequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoSequenceDefinitionWithUpdatableSize)
 export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpdatableDuration implements VideoSequenceDefinition {
   constructor(...args : any[]) {
     super(...args)
@@ -49,37 +49,9 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   begin = Default.definition.videosequence.begin
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
-    const files = super.graphFiles(args) // maybe get the audio file
-    const { streaming, editing, visible, time } = args
-    if (visible) {
-      if (editing) {
-        const frames = this.framesArray(time)
-        const graphFiles = frames.map(frame => {
-          const graphFile: GraphFile = {
-            type: LoadType.Image, file: this.urlForFrame(frame), input: true,
-            definition: this
-          }
-          return graphFile
-        })
-        files.push(...graphFiles)
-      } else {
-        const graphFile: GraphFile = {
-          type: LoadType.Video, file: this.source, definition: this, input: true
-        }
-        if (streaming) {
-          graphFile.options = { loop: 1 }
-          graphFile.options.re = ''
-        }
-        files.push(graphFile)
-      }
-    }
-    return files
-  }
-
   fps = Default.definition.videosequence.fps
 
-  private framesArray(start: Time): number[] {
+  framesArray(start: Time): number[] {
     const frames : number[] = []
     const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame)
     if (start.isRange) {
@@ -102,39 +74,39 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   loadType = LoadType.Image
 
-  loadedVisible(preloader: Loader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
-    const frames = this.framesArray(time)
-    const [frame] = frames
-    const url = this.urlForFrame(frame)
-    const file: GraphFile = {
-      type: LoadType.Image, file: url, definition: this, input: true
-    }
-    if (!preloader.loadedFile(file)) return
+  // loadedVisible(preloader: Loader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
+  //   const frames = this.framesArray(time)
+  //   const [frame] = frames
+  //   const url = this.urlForFrame(frame)
+  //   const file: GraphFile = {
+  //     type: LoadType.Image, file: url, definition: this, input: true
+  //   }
+  //   if (!preloader.loadedFile(file)) return
 
-    return preloader.getFile(file)
-  }
+  //   return preloader.getFile(file)
+  // }
 
   padding : number
 
   pattern = '%.jpg'
 
-  preloadableSvg(trackPreview: TrackPreview): SvgContent {
-    const { preview: filterGraph } = trackPreview
-    const { size } = filterGraph
-    const { preloader, editing, visible, quantize, time } = filterGraph
-    const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
+  // preloadableSvg(trackPreview: TrackPreview): SvgContent {
+  //   const { preview: filterGraph } = trackPreview
+  //   const { size } = filterGraph
+  //   const { preloader, editing, visible, quantize, time } = filterGraph
+  //   const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
 
-    const { width, height } = size
-    const graphFiles = this.graphFiles(graphFileArgs)
-    const [graphFile] = graphFiles
-    const href = preloader.key(graphFile)
-    const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
-    imageElement.setAttribute('id', `image-${this.id}`)
-    imageElement.setAttribute('width', String(width))
-    imageElement.setAttribute('height', String(height))
-    imageElement.setAttribute('href', href)
-    return imageElement
-  }
+  //   const { width, height } = size
+  //   const graphFiles = this.graphFiles(graphFileArgs)
+  //   const [graphFile] = graphFiles
+  //   const href = preloader.key(graphFile)
+  //   const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
+  //   imageElement.setAttribute('id', `image-${this.id}`)
+  //   imageElement.setAttribute('width', String(width))
+  //   imageElement.setAttribute('height', String(height))
+  //   imageElement.setAttribute('href', href)
+  //   return imageElement
+  // }
 
   toJSON() : UnknownObject {
     const object = super.toJSON()
@@ -150,7 +122,7 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   type = DefinitionType.VideoSequence
 
-  private urlForFrame(frame : number) : string {
+  urlForFrame(frame : number): string {
     let s = String((frame * this.increment) + this.begin)
     if (this.padding) s = s.padStart(this.padding, '0')
     return (this.url + this.pattern).replaceAll('%', s)

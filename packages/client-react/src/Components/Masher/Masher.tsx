@@ -4,7 +4,7 @@ import {
   editorInstance, ServerType, UnknownObject,
   DataMashDefaultResponse,
   DataMashDefaultRequest,
-  Dimensions,
+  Size,
   EditType,
   DataCastDefaultResponse,
   DroppingPosition,
@@ -41,7 +41,7 @@ export interface UiOptions {
 }
 
 export interface MasherOptions extends UnknownObject, WithClassName {
-  previewDimensions?: Dimensions
+  previewSize?: Size
   editType?: EditType
 }
 
@@ -61,7 +61,7 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {
 export function Masher(props: MasherProps): ReactResult {
   const {
     editType = EditType.Mash,
-    previewDimensions,
+    previewSize,
     ...rest
   } = props
 
@@ -94,7 +94,7 @@ export function Masher(props: MasherProps): ReactResult {
       // console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
       endpointPromise(Endpoints.data[editType].default, request).then((response: DataMashDefaultResponse | DataCastDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
-        const { previewDimensions: serverSize, ...rest } = response
+        const { previewSize: serverSize, ...rest } = response
         elementSetPreviewSize(ref.current, serverSize)
         if (servers.file?.prefix) {
           editor.preloader.endpoint.prefix = String(servers.file.prefix)
@@ -104,7 +104,7 @@ export function Masher(props: MasherProps): ReactResult {
     }
   }, [enabled])
 
-  React.useEffect(() => { elementSetPreviewSize(ref.current, previewDimensions) }, [previewDimensions])
+  React.useEffect(() => { elementSetPreviewSize(ref.current, previewSize) }, [previewSize])
 
   const droppingPositionClass = (droppingPosition?: DroppingPosition | number): string => {
     if (isUndefined(droppingPosition)) return ''

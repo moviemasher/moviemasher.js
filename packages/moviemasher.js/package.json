@@ -22,11 +22,8 @@
   "keywords": [
     "video editor",
     "audio editor",
-    "esm",
-    "cjs",
-    "umd",
-    "module",
-    "canvas",
+    "video streaming",
+    "svg",
     "composite"
   ],
   "scripts": {

@@ -1,17 +1,35 @@
 import path from "path"
 import fs from 'fs'
 
-import { isPositive, LoadedInfo, Dimensions } from "@moviemasher/moviemasher.js"
+import { isPositive, LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
 import { commandProcess } from "./CommandFactory"
 import { CommandProbeData } from "./Command"
+import { commandArgsString } from "../Utilities/Command"
+const probingFile = (src: string): string => {
+  const match = src.match(/%0([0-9]*)d/)
+  if (!match) return src
 
-export const probingInfoPromise = (src: string, destination?: string): Promise<LoadedInfo> => {
-  const dest = destination || path.join(path.dirname(src), `${path.basename(src)}.json`)
+  const parentDir = path.dirname(src)
+  const ext = path.extname(src)
+  const [_, digit] = match  
+  const zeros = '0'.repeat(Number(digit) - 1)
+  
+
+  return path.join(parentDir, `${zeros}1${ext}`)
+}
+
+export const probingInfoPromise = (file: string, destination?: string): Promise<LoadedInfo> => {
+  const src = probingFile(file)
+  const relative = path.relative('./', file)
+  const parentDir = path.dirname(src)
+  if (!fs.existsSync(src)) return Promise.reject(`${relative} does not exist`)
+  if (!fs.statSync(src).size) return Promise.reject(`${relative} is empty`)
+  
+  const dest = destination || path.join(parentDir, `${path.basename(src)}.json`)
   if (fs.existsSync(dest)) {
     // console.log("probingInfoPromise found", dest)
     return fs.promises.readFile(dest).then(buffer => (
       JSON.parse(buffer.toString()) as LoadedInfo
-
     ))
   }
 
@@ -21,9 +39,8 @@ export const probingInfoPromise = (src: string, destination?: string): Promise<L
     fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
       process.ffprobe((error: any, data: CommandProbeData) => {
         if (error) {
-          console.error(process._getArguments(), error)
-          reject(error)
-          return
+          const errorString = commandArgsString(process._getArguments(), dest, error)
+          return reject(errorString)
         }
         const info: LoadedInfo = {}
         const { streams, format } = data
@@ -31,7 +48,7 @@ export const probingInfoPromise = (src: string, destination?: string): Promise<L
         const { duration = 0 } = format
 
         const durations: number[] = []
-        const sizes: Dimensions[] = []
+        const sizes: Sizes = []
 
         for (const stream of streams) {
           const { width, height, duration } = stream
@@ -143,7 +160,7 @@ export const Probing = {
 //           }
 //         ],
 //         format: {
-//           filename: '/Users/doug/GitHub/moviemasher.js/dev/shared/video.mp4',
+//           filename: '/Users/doug/GitHub/moviemasher.js/dev/shared/video/rgb.mp4',
 //           nb_streams: 2,
 //           nb_programs: 0,
 //           format_name: 'mov,mp4,m4a,3gp,3g2,mj2',

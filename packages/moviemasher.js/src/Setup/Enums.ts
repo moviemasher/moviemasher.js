@@ -10,20 +10,6 @@ export const isPhase = (value: any): value is Phase => {
   return isPopulatedString(value) && Phases.includes(value as Phase)
 }
 
-export enum Size {
-  Cover = 'cover',
-  Contain = 'contain',
-  Stretch = 'stretch',
-
-}
-export type SizeValue = Size | number
-
-export enum Position {
-  Center = 'center',
-}
-export type PositionValue = Position | string
-
-
 export enum DroppingPosition {
   At = 'at',
   After = 'after',
@@ -106,12 +92,6 @@ export const isTrackType = (value?: any): value is TrackType => {
   return isPopulatedString(value) && TrackTypes.includes(value as TrackType)
 }
 
-// TODO: migrate Ext* constants here
-export enum Extension {
-  Mpg = 'mpg',
-
-}
-
 export enum OutputFormat {
   AudioConcat = 'wav',
   Mdash = 'mdash',
@@ -163,6 +143,9 @@ export enum DefinitionType {
   Video = 'video',
   VideoSequence = 'videosequence',
   Visible = 'visible',
+  Container = 'container',
+  Content = 'content',
+  Clip = 'clip',
 }
 export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {

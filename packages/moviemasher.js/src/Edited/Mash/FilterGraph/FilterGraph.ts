@@ -1,4 +1,4 @@
-import { Dimensions } from "../../../Setup/Dimensions"
+import { Size } from "../../../Utility/Size"
 import { CommandFilters, CommandFiles } from "../../../MoveMe"
 import { Time } from "../../../Helpers/Time/Time"
 import { Loader } from "../../../Loader/Loader"
@@ -9,7 +9,7 @@ export interface FilterGraphArgs {
   visible?: boolean
   backcolor: string
   mash: Mash
-  size: Dimensions
+  size: Size
   streaming?: boolean
   time: Time
   videoRate: number
@@ -23,7 +23,7 @@ export interface FilterGraph {
   duration: number
   preloader: Loader
   quantize: number
-  size: Dimensions
+  size: Size
   streaming: boolean
   time: Time
   videoRate: number

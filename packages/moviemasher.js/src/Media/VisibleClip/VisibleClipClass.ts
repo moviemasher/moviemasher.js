@@ -1,79 +1,104 @@
 import { VisibleClip, VisibleClipDefinition, VisibleClipObject } from "./VisibleClip"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
-import { VisibleMixin } from "../../Mixin/Visible/VisibleMixin"
 
 import { assertContainer, Container, ContainerObject } from "../../Container/Container"
 import { Defined } from "../../Base/Defined"
 import { assertContent, Content, ContentObject } from "../../Content/Content"
 import { Property } from "../../Setup/Property"
-import { Rect, Scalar, SvgFilters, UnknownObject } from "../../declarations"
-import { GraphFileArgs, GraphFiles, SelectedProperties, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, ContentCommandFileArgs, ContainerCommandFileArgs, ContainerCommandFilterArgs, ContentCommandFilterArgs } from "../../MoveMe"
+import { Scalar, SvgFilters, UnknownObject } from "../../declarations"
+import { Rect } from "../../Utility/Rect"
+import { GraphFileArgs, GraphFiles, SelectedProperties, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs } from "../../MoveMe"
 import { ActionType, SelectType, SelectTypes, TrackType } from "../../Setup/Enums"
 import { Actions } from "../../Editor/Actions/Actions"
-import { assertDimensions, assertPopulatedString, assertTrue, isPopulatedString, isUndefined } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { isColorContent } from "../../Content"
 import { arrayLast } from "../../Utility/Array"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
-import { assert } from "console"
-import { Dimensions, dimensionsEven } from "../../Setup/Dimensions"
+import { Size } from "../../Utility/Size"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { Effects } from "../Effect/Effect"
+import { effectInstance } from "../Effect/EffectFactory"
 
-const VisibleClipMixin = VisibleMixin(ClipMixin(InstanceBase))
+const VisibleClipMixin = ClipMixin(InstanceBase)
 export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
-    const { container, content } = object as VisibleClipObject
+    const { container, content, effects } = object as VisibleClipObject
     if (container) this.containerInitialize(container)
     if (content) this.contentInitialize(content)
+    if (effects) this.effects.push(...effects.map(effect => effectInstance(effect)))
+
+  }
+
+  get audible(): boolean {
+    return this.mutable
+  }
+
+  clipGraphFiles(args: GraphFileArgs): GraphFiles {
+    const { quantize } = args
+    const clipTime = this.timeRange(quantize)
+    const fileArgs = { ...args, clipTime }
+    const files = this.content.graphFiles(fileArgs)
+    if (this.container) files.push(...this.container.graphFiles(fileArgs))
+    return files
   }
 
   commandFiles(args: CommandFileArgs): CommandFiles {
-    const commandFiles:CommandFiles = []
-    const { visible, quantize, outputDimensions, time } = args
+    const commandFiles: CommandFiles = []
+    const { visible, quantize, outputSize: outputSize, time } = args
     const clipTime = this.timeRange(quantize)
     const { content, container } = this
-    const contentArgs: ContentCommandFileArgs = { ...args, clipTime }
-    if (visible && outputDimensions && container) {
-      contentArgs.containerRects = container.containerRects(outputDimensions, time, clipTime, true)
-      const colors = isColorContent(content) ? content.tweenValues('color', time, clipTime) : undefined
+    const contentArgs: CommandFileArgs = { ...args, clipTime }
+    // console.log(this.constructor.name, "commandFiles", visible, outputSize, container)
+
+    if (visible && outputSize && container) {
+      // console.log("container", typeof container, container?.constructor.name)
+      contentArgs.containerRects = container.containerRects(outputSize, time, clipTime, true)
+      const colors = isColorContent(content) ? content.contentColors(time, clipTime) : undefined
       if (!colors) {
-        commandFiles.push(...content.contentCommandFiles(contentArgs))
+        const contentFiles = content.commandFiles(contentArgs)
+        // console.log(this.constructor.name, "commandFiles content:", contentFiles.length)
+        commandFiles.push(...contentFiles)
       }
-      const containerArgs: ContainerCommandFileArgs = { ...contentArgs, colors }
-      commandFiles.push(...container.containerCommandFiles(containerArgs))
+      const containerArgs: CommandFileArgs = { ...contentArgs, contentColors: colors }
+      const containerFiles = container.commandFiles(containerArgs)
+
+      // console.log(this.constructor.name, "commandFiles container:", containerFiles.length)
+      commandFiles.push(...containerFiles)
     } else {
-      assertTrue(!visible, 'outputDimensions && container')
-      commandFiles.push(...this.content.contentCommandFiles(contentArgs)) 
+      assertTrue(!visible, 'outputSize && container')
+      commandFiles.push(...this.content.commandFiles(contentArgs)) 
     }
     return commandFiles
   }
 
   commandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters:CommandFilters = []
-    const { visible, quantize, outputDimensions, time } = args
+    const { visible, quantize, outputSize: outputSize, time } = args
     const clipTime = this.timeRange(quantize)
 
     let previousOutput = ''
-    const contentArgs: ContentCommandFilterArgs = { ...args, clipTime }
+    const contentArgs: CommandFilterArgs = { ...args, clipTime }
 
     const { content, container } = this
-    if (visible && outputDimensions && container) {
-      contentArgs.containerRects = container.containerRects(outputDimensions, time, clipTime)
+    if (visible && outputSize && container) {
+      contentArgs.containerRects = container.containerRects(outputSize, time, clipTime)
       
-      const colors = isColorContent(content) ? content.tweenValues('color', time, clipTime) : undefined
+      const isColor = isColorContent(content)
+      const colors = isColor ? content.contentColors(time, clipTime) : undefined
+
       if (!colors) {
-        commandFilters.push(...content.contentCommandFilters(contentArgs))
+        commandFilters.push(...content.commandFilters(contentArgs))
         previousOutput = arrayLast(arrayLast(commandFilters).outputs)
       }
-      const containerArgs: ContainerCommandFilterArgs = { 
-        ...contentArgs, colors, filterInput: previousOutput 
+      const containerArgs: CommandFilterArgs = { 
+        ...contentArgs, contentColors: colors, filterInput: previousOutput, container: true
       }
-      commandFilters.push(...container.containerCommandFilters(containerArgs))
+      commandFilters.push(...container.commandFilters(containerArgs))
     } else {
-      assertTrue(!visible, 'outputDimensions && container')
-      commandFilters.push(...this.content.contentCommandFilters(contentArgs)) 
+      assertTrue(!visible, 'outputSize && container')
+      commandFilters.push(...this.content.commandFilters(contentArgs)) 
     }
     return commandFilters
   }
@@ -86,9 +111,10 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     if (!isPopulatedString(definitionId)) return
 
     const object: ContainerObject  = { ...containerObject, definitionId, container: true }
-    // console.log(this.constructor.name, "containerInitialize", object)
     const instance = Defined.fromId(definitionId).instanceFromObject(object)
     assertContainer(instance)
+
+    // console.log(this.constructor.name, "containerInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._container = instance
   }
 
@@ -101,9 +127,9 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     const definitionId = contentId || contentObject.definitionId
     assertPopulatedString(definitionId)
     const object: ContentObject = { ...contentObject, definitionId, content: true }
-    // console.log(this.constructor.name, "contentInitialize", object)
     const instance = Defined.fromId(definitionId).instanceFromObject(object)
     assertContent(instance)
+    // console.log(this.constructor.name, "contentInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._content = instance
   }
 
@@ -116,16 +142,14 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
       ...super.definitionIds(),
       ...this.content.definitionIds(),
     ]
+
+    ids.push(...this.effects.flatMap(effect => effect.definitionIds()))
+
     if (this.container) ids.push(...this.container.definitionIds())
     return ids
   }
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
-    const files = this.content.graphFiles(args)
-    if (this.container) files.push(...this.container.graphFiles(args))
-    return files
-  }
-
+  effects: Effects = []
 
   get mutable(): boolean {
     return this.content.mutable || !!this.container?.mutable
@@ -225,10 +249,10 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     }
   }
 
-  svgFilters(previewDimensions: Dimensions, containerRect: Rect, time: Time, range: TimeRange): SvgFilters { 
+  svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters { 
     const svgFilters: SvgFilters = []
     const { container, content } = this
-    if (container) svgFilters.push(...container.containerSvgFilters(previewDimensions, containerRect, time, range))
+    if (container) svgFilters.push(...container.containerSvgFilters(previewSize, containerRect, time, range))
     return svgFilters
   }
 
@@ -236,6 +260,7 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     const json = super.toJSON()
     const { container, content } = this
     json.content = content
+    json.effects = this.effects
     if (container) json.container = container
     return json
   }
@@ -245,4 +270,8 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
   }
 
   trackType = TrackType.Video
+
+  get visible(): boolean {
+    return !!this.containerId
+  }
 }

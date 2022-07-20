@@ -2,7 +2,7 @@ import { Time, TimeRange } from "../../../Helpers/Time/Time"
 import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
 import { Preview } from "../Preview"
 import { Evaluator } from "../../../Helpers/Evaluator"
-import { Dimensions } from "../../../Setup/Dimensions"
+import { Size } from "../../../Utility/Size"
 
 export interface TrackPreviewArgs {
   clip: VisibleClip
@@ -14,7 +14,7 @@ export interface TrackPreviewArgs {
 export interface TrackPreview {
 
   evaluator: Evaluator
-  size: Dimensions
+  size: Size
   clip: VisibleClip
   preview: Preview
   selected: boolean

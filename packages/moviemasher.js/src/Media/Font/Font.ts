@@ -22,7 +22,6 @@ export interface FontDefinition extends Definition {
   family: string
   url: string
   urlAbsolute: string
-  preloadableSource(editing?: boolean): string
   graphFiles(args: GraphFileArgs): GraphFiles
 }
 export const isFontDefinition = (value: any): value is FontDefinition => {

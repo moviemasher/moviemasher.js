@@ -1,5 +1,6 @@
-import { Point, Rgba, Value, Pixels, Rgb, Yuv } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Rgba, Value, Pixels, Rgb, Yuv } from "../declarations"
+import { Point } from "../Utility/Point"
+import { Size } from "./Size"
 import { colorRgbaKeys, colorRgbaTransparent, colorRgbKeys, colorRgbToYuv, colorYuvBlend, colorYuvDifference } from "./Color"
 import { isPositive } from "./Is"
 import { roundWithMethod } from "./Round"
@@ -23,7 +24,7 @@ export const pixelRgbaAtIndex = (index : number, pixels : Pixels) : Rgba => (
 
 const pixelRgba = (pixel : number, data : Pixels) => pixelRgbaAtIndex(pixelToIndex(pixel), data)
 
-const pixelSafe = (pixel : number, offsetPoint: Point, size : Dimensions) => {
+const pixelSafe = (pixel : number, offsetPoint: Point, size : Size) => {
   const { x, y } = offsetPoint
   const { width, height } = size
   const pt = pixelToPoint(pixel, width)
@@ -32,7 +33,7 @@ const pixelSafe = (pixel : number, offsetPoint: Point, size : Dimensions) => {
   return pixelFromPoint(pt, width)
 }
 
-const pixelNeighboringPixels = (pixel : number, size : Dimensions) : number[] => {
+const pixelNeighboringPixels = (pixel : number, size : Size) : number[] => {
   const depth = 3
   const pixels: number[] = []
   const halfSize = Math.floor(depth / 2)
@@ -45,7 +46,7 @@ const pixelNeighboringPixels = (pixel : number, size : Dimensions) : number[] =>
   return pixels
 }
 
-export const pixelNeighboringRgbas = (pixel : number, data : Pixels, size : Dimensions) : Rgba[] => (
+export const pixelNeighboringRgbas = (pixel : number, data : Pixels, size : Size) : Rgba[] => (
   pixelNeighboringPixels(pixel, size).map(p => pixelRgba(p, data))
 )
 
@@ -90,14 +91,14 @@ export function pixelsMixRbga(fromRgba: Rgba, toRgba: Rgba, amountToMix = 1.0): 
 }
 export function pixelsMixRbg(fromRgb: Rgb, toRgb: Rgb, amountToMix = 1.0): Rgb {
   return Object.fromEntries(colorRgbKeys.map(key => {
-    return [key, Math.round((fromRgb[key] * amountToMix) + (toRgb[key] * (1 - amountToMix)))]
+    return [key, Math.round((fromRgb[key] * (1 - amountToMix)) + (toRgb[key] * amountToMix))]
   })) as Rgb
 }
 
-export const pixelsRemoveRgba = (pixels: Uint8ClampedArray, size: Dimensions, rgb: Rgb, similarity = 0, blend = 0, accurate = false) => {
+export const pixelsRemoveRgba = (pixels: Uint8ClampedArray, size: Size, rgb: Rgb, similarity = 0, blend = 0, accurate = false) => {
   pixelsReplaceRgba(pixels, size, rgb, colorRgbaTransparent, similarity, blend)
 }
-export const pixelsReplaceRgba = (pixels: Uint8ClampedArray, size: Dimensions, find: Rgb, replace: Rgba, similarity = 0, blend = 0, accurate = false) => {
+export const pixelsReplaceRgba = (pixels: Uint8ClampedArray, size: Size, find: Rgb, replace: Rgba, similarity = 0, blend = 0, accurate = false) => {
   const yuv = colorRgbToYuv(find)
   let index = pixels.length / 4
   while (index--) {
@@ -119,7 +120,7 @@ export const pixelsReplaceRgba = (pixels: Uint8ClampedArray, size: Dimensions, f
 }
 
 
-const yuvsFromPixelsAccurate = (pixels: Pixels, index: number, size: Dimensions): Yuv[] => {
+const yuvsFromPixelsAccurate = (pixels: Pixels, index: number, size: Size): Yuv[] => {
   // console.log(this.constructor.name, "yuvsFromPixelsAccurate")
   return pixelNeighboringRgbas(index * 4, pixels, size).map(rgb => colorRgbToYuv(rgb))
 

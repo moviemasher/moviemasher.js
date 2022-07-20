@@ -25,11 +25,12 @@
     "clean": "rimraf dist"
   },
   "peerDependencies": {
+    "@bitjourney/uuid-v4": "^1.0.1",
     "@moviemasher/moviemasher.js": "5.0.7",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",
-    "express": "^4.17.3",
     "express-basic-auth": "^1.2.1",
+    "express": "^4.17.3",
     "fluent-ffmpeg": "^2.1.2",
     "md5": "^2.3.0",
     "multer": "^1.4.5-lts.1",

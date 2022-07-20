@@ -61,7 +61,7 @@ export class PropertiedClass implements Propertied {
 
     const definedValue = isUndefined(value) ? defaultValue : value
     // if (name === 'contentId' || name === 'containerId') 
-    // console.log(this.constructor.name, "propertySetOrDefault", name, definedValue)
+    // console.log(this.constructor.name, "propertySetOrDefault", name, definedValue, object)
     this.setValue(definedValue, name, property)
   }
 
@@ -81,7 +81,10 @@ export class PropertiedClass implements Propertied {
     assertTrue(found, `${propertyName} ${name} ${value}`)
     const type = found.type
     if (!propertyTypeValid(value, type)) {
-      console.warn(Errors.invalid.property, name, value, type)
+      if (propertyName !== name) {
+        // tween end value can be undefined
+        delete this[name]
+      } //else console.warn(this.constructor.name, "setValue invalid!", propertyName, name, type, typeof value, value)
       return
     }
     this[name] = propertyTypeCoerce(value, type)

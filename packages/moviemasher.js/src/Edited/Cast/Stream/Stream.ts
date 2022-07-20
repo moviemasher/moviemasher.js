@@ -1,11 +1,11 @@
-import { Dimensions } from "../../../Setup/Dimensions"
+import { Size } from "../../../Utility/Size"
 
 export type Streams = Stream[]
 
 export interface StreamObject {
-  size?: Dimensions
+  size?: Size
 }
 
 export interface Stream {
-  size: Dimensions
+  size: Size
 }

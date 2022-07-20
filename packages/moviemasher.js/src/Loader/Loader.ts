@@ -32,7 +32,7 @@ export interface Loader {
   getFile(graphFile: GraphFile): any
   key(graphFile: GraphFile): string
   loadedFile(graphFile: GraphFile): boolean
-  loadFilePromise(graphFile: GraphFile): Promise<GraphFile>
+  // loadFilePromise(graphFile: GraphFile): Promise<GraphFile>
   loadFilesPromise(files: GraphFiles): Promise<GraphFiles>
   loadingFile(graphFile: GraphFile): boolean
 }

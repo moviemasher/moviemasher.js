@@ -1,5 +1,5 @@
 import { JsonValue, UnknownObject, Value, ValueObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { Errors } from "../Setup/Errors"
 import { isDefined, isNan, isNumeric, isString, isUndefined } from "../Utility/Is"
 import { Time, TimeRange } from "./Time/Time"
@@ -43,7 +43,7 @@ export interface EvaluatorArgs {
   editing?: boolean
   instance?: Instance
   timeRange?: TimeRange
-  outputDimensions: Dimensions
+  outputSize: Size
   filter?: Filter
   tweenTime?: Time
 }
@@ -54,12 +54,12 @@ export class Evaluator {
       tweenTime, timeRange, instance, editing, filter
     } = args
     this.tweenTime = tweenTime
-    this.outputDimensions = args.outputDimensions
+    this.outputSize = args.outputSize
     this.editing = !!editing
 
     Object.entries(EvaluatorExpessions).forEach(([k, v]) => { this.setExpression(k, v) })
 
-    const { height, width } = this.outputDimensions
+    const { height, width } = this.outputSize
     this.setExpression('out_size', `${width}x${height}`)
 
     if (timeRange) this.timeRange = timeRange
@@ -252,7 +252,7 @@ export class Evaluator {
 
   private numbersInitialize() {
     this.numbers.clear()
-    const { height, width } = this.outputDimensions
+    const { height, width } = this.outputSize
     const { lengthSeconds, fps } = this.timeRange
     this.setNumber('out_height', height)
     this.setNumber('out_width', width)
@@ -262,7 +262,7 @@ export class Evaluator {
     if (this.editing) this.setNumber('t', this.position)
   }
 
-  private outputDimensions: Dimensions
+  private outputSize: Size
 
   private parameterInstance(key: string): Parameter | undefined {
     return this.parameterInstances.find(parameter => parameter.name === key)

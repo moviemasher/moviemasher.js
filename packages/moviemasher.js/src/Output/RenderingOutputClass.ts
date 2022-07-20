@@ -1,13 +1,11 @@
 import { ValueObject } from "../declarations"
-import { Dimensions, dimensionsCover, dimensionsEven } from "../Setup/Dimensions"
+import { Size, dimensionsEven } from "../Utility/Size"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Time } from "../Helpers/Time/Time"
 import { TimeRange } from "../Helpers/Time/Time"
-import { Clip, Clips } from "../Mixin/Clip/Clip"
-import { VisibleDefinition } from "../Mixin/Visible/Visible"
 import {
   CommandDescription, RenderingDescription, RenderingResult
 } from "../Api/Rendering"
@@ -16,9 +14,9 @@ import {
   timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
 import { isAboveZero, isPositive } from "../Utility/Is"
-import { assertVisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { assertVisibleClip, VisibleClip } from "../Media/VisibleClip/VisibleClip"
 import { assertUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
-import { isUpdatableDimensionsDefinition } from "../Mixin/UpdatableDimensions/UpdatableDimensions"
+import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 
 export class RenderingOutputClass implements RenderingOutput {
@@ -39,7 +37,24 @@ export class RenderingOutputClass implements RenderingOutput {
     })
   }
 
-  avType = AVType.Both
+  protected _avType = AVType.Both
+  get avType() { return this._avType }
+
+  get avTypeNeededForClips(): AVType {
+    const { avType } = this
+    if (avType !== AVType.Both) return avType
+
+    const { renderingClips } = this
+    const types = new Set<AVType>()
+    renderingClips.forEach(renderingClip => {
+      if (renderingClip.audible) types.add(AVType.Audio)
+      if (renderingClip.visible) types.add(AVType.Video)
+    })
+    // console.log(this.constructor.name, "avTypeNeededForClips", types)
+    if (types.size === 2) return avType
+    const [type] = types
+    return type
+  }
 
   _commandOutput?: RenderingCommandOutput
   get commandOutput(): RenderingCommandOutput {
@@ -52,10 +67,13 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get duration(): number { return this.timeRange.lengthSeconds }
 
-  private get durationClips(): Clips {
+  private get durationClips(): VisibleClip[] {
     const { mash } = this.args
     const { frames } = mash
-    if (isPositive(frames)) return []
+    if (isPositive(frames)) {
+      // console.log(this.constructor.name, "durationClips mash is", frames, "frames")
+      return []
+    }
 
     const { clips } = mash
     const zeroClips = clips.filter(clip => !isAboveZero(clip.frames))
@@ -68,13 +86,19 @@ export class RenderingOutputClass implements RenderingOutput {
     return this.args.endTime || this.args.mash.endTime
   }
 
+  // private _filterGraphs?: FilterGraphsthis._filterGraphs =
+  get filterGraphs() { 
+    const { filterGraphsOptions } = this
+    // console.log(this.constructor.name, "filterGraphs", filterGraphsOptions)
+    return this.args.mash.filterGraphs(filterGraphsOptions)
+  }
+
   get filterGraphsOptions(): FilterGraphsOptions {
-    const { timeRange: time, graphType, avType, videoRate } = this
+    const { timeRange: time, graphType, videoRate } = this
 
     const filterGraphsOptions: FilterGraphsOptions = {
-      time,
-      size: this.sizeCovered(), videoRate,
-      graphType, avType
+      time, graphType, videoRate, size: this.sizeCovered(), 
+      avType: this.avTypeNeededForClips
     }
     return filterGraphsOptions
   }
@@ -83,6 +107,8 @@ export class RenderingOutputClass implements RenderingOutput {
 
   protected get mashDurationPromise(): Promise<void> {
     const clips = this.durationClips
+    // console.log(this.constructor.name, "mashDurationPromise", clips.length)
+
     if (!clips.length) return Promise.resolve()
 
     const startFrames = clips.map(clip => clip.frame)
@@ -102,13 +128,12 @@ export class RenderingOutputClass implements RenderingOutput {
 
     const { preloader } = mash
     return preloader.loadFilesPromise(files).then(() => { this.assureClipFrames() })
-
   }
 
-  get mashSize(): Dimensions | undefined {
+  get mashSize(): Size | undefined {
     const { visibleGraphFiles } = this
     const visible = visibleGraphFiles.map(graphFile => graphFile.definition).filter(Boolean)
-    const definitions = [...new Set(visible.map(definition => definition as VisibleDefinition))]
+    const definitions = [...new Set(visible.map(definition => definition as UpdatableSizeDefinition))]
     const sized = definitions.filter(definition => definition.width && definition.height)
     if (!sized.length) return
 
@@ -123,39 +148,40 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get outputCover(): boolean { return false }
 
-  get outputDimensions(): Dimensions {
+  get outputSize(): Size {
     const { width, height } = this.args.commandOutput
     if (!(width && height)) {
       if (this.avType === AVType.Audio) return { width: 0, height: 0 }
 
-      console.error(this.constructor.name, "outputDimensions", this.args.commandOutput)
-      throw Errors.invalid.size + this.outputType + '.outputDimensions for avType ' + this.avType
+      console.error(this.constructor.name, "outputSize", this.args.commandOutput)
+      throw Errors.invalid.size + this.outputType + '.outputSize for avType ' + this.avType
     }
     return { width, height }
   }
 
   outputType!: OutputType
 
-  get preloadPromise(): Promise<void> {
-    const { filterGraphsOptions } = this
-    return this.args.mash.filterGraphs(filterGraphsOptions).loadPromise
+  get preloadPromise(): Promise<void> { 
+    // console.log(this.constructor.name, "preloadPromise")
+    return this.filterGraphs.loadPromise 
   }
 
-  get renderingClips(): Clip[] {
+  get renderingClips(): VisibleClip[] {
     return this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
   }
 
   renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription> {
-    const { avType, args } = this
-    const { mash } = args
+    // console.log(this.constructor.name, "renderingDescriptionPromise")
+
     let promise = this.mashDurationPromise
     promise = promise.then(() => this.sizePromise)
     promise = promise.then(() => this.preloadPromise)
     return promise.then(() => {
-      const { commandOutput, filterGraphsOptions } = this
-      const filterGraphs = mash.filterGraphs(filterGraphsOptions)
+      const { commandOutput } = this
       const renderingDescription: RenderingDescription = { commandOutput }
-      const { duration } = filterGraphs
+      const avType = this.avTypeNeededForClips
+      const { filterGraphs } = this
+      // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
       if (avType !== AVType.Audio) {
         const { filterGraphsVisible } = filterGraphs
         const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
@@ -167,9 +193,10 @@ export class RenderingOutputClass implements RenderingOutput {
         renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
       }
       if (avType !== AVType.Video) {
-        const { filterGraphAudible } = filterGraphs
+        const { filterGraphAudible, duration } = filterGraphs
         if (filterGraphAudible) {
           const { commandFilters, commandInputs: inputs } = filterGraphAudible
+         
           const commandDescription: CommandDescription = {
             inputs, commandFilters, duration, avType: AVType.Audio
           }
@@ -187,35 +214,45 @@ export class RenderingOutputClass implements RenderingOutput {
     return timeFromArgs(frame, quantize)
   }
 
-  sizeCovered(): Dimensions {
-    const { outputDimensions } = this
-    if (!this.outputCover) return outputDimensions
+  sizeCovered(): Size {
+    const { outputSize } = this
+    if (!this.outputCover) {
+      // console.log(this.constructor.name, "sizeCovered outputCover false")
+      return outputSize
+    }
 
-    const sizeMash = this.mashSize
-    if (!sizeMash) return outputDimensions // mash doesn't care about size
+    const { mashSize } = this
+    if (!mashSize) {
+      // console.log(this.constructor.name, "sizeCovered mashSize false")
+      return outputSize // mash doesn't care about size
+    }
 
-    if (sizeMash.width === 0 || sizeMash.height == 0) throw Errors.internal + 'sizeCovered'
+    if (mashSize.width === 0 || mashSize.height == 0) throw Errors.internal + 'sizeCovered'
 
-    const horzRatio = outputDimensions.width / sizeMash.width
-    const vertRatio = outputDimensions.height / sizeMash.height
+    const horzRatio = outputSize.width / mashSize.width
+    const vertRatio = outputSize.height / mashSize.height
     const scale = Math.max(horzRatio, vertRatio)
-    if (scale >= 1.0) return sizeMash
+    if (scale >= 1.0) {
+      // console.log(this.constructor.name, "sizeCovered scale >= 1", scale, "mashSize", mashSize)
+      return mashSize
+    }
 
-    if (horzRatio > vertRatio) outputDimensions.height = scale * sizeMash.height
-    else outputDimensions.width = scale * sizeMash.width
+    if (horzRatio > vertRatio) outputSize.height = scale * mashSize.height
+    else outputSize.width = scale * mashSize.width
 
-    return dimensionsEven(outputDimensions)
+    return dimensionsEven(outputSize)
   }
 
   get sizePromise(): Promise<void> {
     if (this.avType === AVType.Audio || !this.outputCover) return Promise.resolve()
 
-    const {visibleGraphFiles} = this
+    const { visibleGraphFiles } = this
+    // console.log(this.constructor.name, "sizePromise", visibleGraphFiles.length)
     if (!visibleGraphFiles.length) return Promise.resolve()
 
     const graphFiles = visibleGraphFiles.filter(graphFile => {
       const { definition } = graphFile
-      if (!isUpdatableDimensionsDefinition(definition)) return false
+      if (!isUpdatableSizeDefinition(definition)) return false
 
       return !(definition.width && definition.height)
     })

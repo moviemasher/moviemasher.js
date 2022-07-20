@@ -1,6 +1,6 @@
 import {
   Scalar, StringObject, Timeout, UnknownObject} from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { SelectedProperties } from "../MoveMe"
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Edited } from "../Edited/Edited"
@@ -42,10 +42,8 @@ import {
 import { Layer, LayerAndPosition, LayerObject } from "../Edited/Cast/Layer/Layer"
 import { NamespaceSvg } from "../Setup/Constants"
 import { Defined } from "../Base/Defined"
-import { isContainerDefinition } from "../Container/Container"
 import { assertVisibleClip, isVisibleClip, VisibleClipObject } from "../Media/VisibleClip/VisibleClip"
 import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
-import { isVisible } from "../Mixin/Visible/Visible"
 import { isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
 
@@ -132,7 +130,7 @@ export class EditorClass implements Editor {
   addEffect(effect: Effect, insertIndex = 0): Promise<void> {
     // console.log(this.constructor.name, "addEffect", object, index)
     const { clip } = this.selection
-    if (!isVisible(clip)) {
+    if (!isVisibleClip(clip)) {
       console.error(this.constructor.name, "addEffect expected effectable selection")
       throw Errors.selection + 'effectable'
     }
@@ -521,9 +519,9 @@ export class EditorClass implements Editor {
 
 
 
-  _imageSize: Dimensions = { width: 300, height: 150 }
-  get imageSize(): Dimensions { return this._imageSize }
-  set imageSize(value: Dimensions) {
+  _imageSize: Size = { width: 300, height: 150 }
+  get imageSize(): Size { return this._imageSize }
+  set imageSize(value: Size) {
     const { width, height } = value
     const size = { width, height }
     Object.assign(this._imageSize, size)

@@ -1,5 +1,7 @@
 import { GenericFactory } from "../../declarations"
 import { FilterDefinition } from "../../Filter/Filter"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { ColorTuple } from "../../MoveMe"
 import {
   Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent
 } from "../Content"
@@ -15,6 +17,8 @@ export interface ColorContentDefinitionObject extends ContentDefinitionObject {
 export interface ColorContent extends Content {
   definition: ColorContentDefinition
   color: string
+
+  contentColors(time: Time, range: TimeRange): ColorTuple
 }
 export const isColorContent = (value: any): value is ColorContent => {
   return isContent(value) && "color" in value

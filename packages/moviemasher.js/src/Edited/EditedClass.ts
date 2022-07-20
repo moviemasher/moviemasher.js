@@ -1,5 +1,5 @@
 import { UnknownObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
@@ -64,8 +64,8 @@ export class EditedClass extends PropertiedClass implements Edited {
   }
 
   private _imageSize = { width: 300, height: 150 }
-  get imageSize(): Dimensions { return this._imageSize }
-  set imageSize(value: Dimensions) {
+  get imageSize(): Size { return this._imageSize }
+  set imageSize(value: Size) {
     const { width, height } = value
     if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
     this._imageSize = value

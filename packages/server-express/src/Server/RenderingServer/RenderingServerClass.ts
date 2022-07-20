@@ -1,6 +1,7 @@
 import Express from "express"
 import path from "path"
 import fs from 'fs'
+
 import {
   assertDefinitionType, assertPopulatedString,
   ApiCallback, DefinitionObject, Endpoints, Errors, OutputType, RenderingStartRequest,
@@ -27,7 +28,7 @@ import { RenderingCommandOutputs, RenderingServer, RenderingServerArgs } from ".
 import { FileServer } from "../FileServer/FileServer"
 import { expandFile } from "../../Utilities/Expand"
 
-const uuid = require('uuid').v4
+import { idUnique } from "../../Utilities/Id"
 
 
 export class RenderingServerClass extends ServerClass implements RenderingServer {
@@ -167,23 +168,23 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   get renderingCommandOutputs(): RenderingCommandOutputs {
     if (this._renderingCommandOutputs) return this._renderingCommandOutputs
 
-    const { previewDimensions, outputDimensions } = this.args
+    const { previewSize, outputSize } = this.args
     const provided = this.args.commandOutputs || {}
     const outputs = Object.fromEntries(OutputTypes.map(outputType => {
       const base: RenderingCommandOutput = { outputType }
       switch (outputType) {
         case OutputType.Image:
         case OutputType.ImageSequence: {
-          if (previewDimensions) {
-            base.videoWidth = previewDimensions.width
-            base.videoHeight = previewDimensions.height
+          if (previewSize) {
+            base.videoWidth = previewSize.width
+            base.videoHeight = previewSize.height
           }
           break
         }
         case OutputType.Video: {
-          if (outputDimensions) {
-            base.videoWidth = outputDimensions.width
-            base.videoHeight = outputDimensions.height
+          if (outputSize) {
+            base.videoWidth = outputSize.width
+            base.videoHeight = outputSize.height
           }
           break
         }
@@ -205,8 +206,8 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       return outputDefaultPopulate(commandOutput)
     })
 
-    const id = mash.id || uuid()
-    const renderingId = uuid()
+    const id = mash.id || idUnique()
+    const renderingId = idUnique()
     const response: RenderingStartResponse = {
       apiCallback: this.statusCallback(id, renderingId)
     }
@@ -322,7 +323,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       else {
         const loadType = raw as LoadType
         response.loadType = loadType
-        const definitionId = uuid() // new definition id
+        const definitionId = idUnique() // new definition id
         const source = this.fileServer.userSourceSuffix(definitionId, extension, loadType, user)
         const definition = renderingDefinitionObject(loadType, source, definitionId, name)
         await this.directoryPromise(user, definition)

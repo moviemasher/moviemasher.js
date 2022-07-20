@@ -7,6 +7,7 @@ import { effectDefinitionFromId } from "./EffectFactory"
 import { imageDefinition } from "../Image/ImageFactory"
 import { ImageDefinitionObject } from "../Image/Image"
 import { Defined } from "../../Base/Defined"
+import { visibleClipInstance } from "../VisibleClip/VisibleClipFactory"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -30,17 +31,17 @@ describe("Effect", () => {
       const matteDefinition = imageDefinition(matteDefinitionObject)
       const cableDefinition = imageDefinition(imageDefinitionObject)
 
-      expect(cableDefinition.preloadableSource(true)).toBe(imageDefinitionObject.url)
-      expect(matteDefinition.preloadableSource(true)).toBe(matteDefinitionObject.url)
       const effectDefinition = effectDefinitionFromId("com.moviemasher.effect.chromakey")
-      const matteImage = matteDefinition.instanceFromObject()
-      const imageImage = cableDefinition.instanceFromObject()
-      await editor.addClip(imageImage)
-      await editor.addClip(matteImage, 0, 1)
-      editor.select(matteImage)
-      await editor.addEffect(effectDefinition.instanceFromObject())
-      expect(edited.trackOfTypeAtIndex(TrackType.Video, 0).clips).toEqual([imageImage])
-      expect(edited.trackOfTypeAtIndex(TrackType.Video, 1).clips).toEqual([matteImage])
+      const clip = visibleClipInstance({ 
+        contentId: cableDefinition.id, 
+        containerId: matteDefinition.id,
+        container: {
+          effects: [
+            { id: effectDefinition.id }
+          ]
+        }
+      })
+      await editor.addClip(clip)
       expectCanvasAtTime(editor)
     })
   })

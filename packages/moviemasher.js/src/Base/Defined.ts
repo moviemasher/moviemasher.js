@@ -88,6 +88,7 @@ export class Defined {
   static predefined(id: string) { return id.startsWith(IdPrefix) }
 
   static undefineAll() {
+    // console.log(this.name, "undefineAll")
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.byId = new Map<string, Definition>()
     this.definitionsByType = new Map<DefinitionType, Definition[]>()

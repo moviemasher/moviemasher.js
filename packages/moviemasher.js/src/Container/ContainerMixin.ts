@@ -1,11 +1,12 @@
-import { Rect, Scalar, SvgContent, SvgFilters, UnknownObject } from "../declarations"
-import { Dimensions, dimensionsTransformToRect } from "../Setup/Dimensions"
-import { CommandFiles, CommandFilters, ContainerCommandFileArgs, ContainerCommandFilterArgs, FilterCommandFilterArgs, GraphFileArgs, GraphFiles, SelectedProperties } from "../MoveMe"
+import { Scalar, SvgContent, SvgFilters, UnknownObject } from "../declarations"
+import { Rect, RectTuple } from "../Utility/Rect"
+import { Size } from "../Utility/Size"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, SelectedProperties } from "../MoveMe"
 import { Actions } from "../Editor/Actions/Actions"
 import { Filter } from "../Filter/Filter"
 import { Directions, SelectType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { assertPopulatedArray, isAboveZero, isBelowOne, isDefined, isNumber, isRect, isTimeRange, isUndefined } from "../Utility/Is"
+import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isBelowOne, isDefined, isNumber, isTimeRange, isUndefined } from "../Utility/Is"
 import { Container, ContainerClass, ContainerDefinition, ContainerObject } from "./Container"
 import { arrayLast } from "../Utility/Array"
 import { filterFromId } from "../Filter/FilterFactory"
@@ -13,6 +14,7 @@ import { svgGroupElement } from "../Utility/Svg"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../Base/Propertied"
+import { tweenMaxSize, tweenOverRect, tweenRectsEqual, tweenScaleSizeToRect } from "../Utility/Tween"
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
@@ -22,61 +24,100 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const [object] = args
       const { intrinsicHeight, intrinsicWidth } = object as ContainerObject
       if (isNumber(intrinsicHeight) && isNumber(intrinsicWidth)) {
-        this._intrinsicDimensions = {
+        this._intrinsicSize = {
           width: intrinsicWidth, height: intrinsicHeight
         }
-        // console.log(this.constructor.name, "intrinsicDimensions", this._intrinsicDimensions, this.id)
+        // console.log(this.constructor.name, "intrinsicSize", this._intrinsicSize, this.id)
       }
     }
 
     private _blendFilter?: Filter
     get blendFilter() { return this._blendFilter ||= filterFromId('blend')}
 
+    private _colorizeFilter?: Filter
+    get colorizeFilter() { return this._colorizeFilter ||= filterFromId('colorize')}
 
-    containerCommandFiles(args: ContainerCommandFileArgs): CommandFiles {
-      return this.graphFiles(args).map(file => ({ ...file, inputId: this.id }))
+    colorizeCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const { contentColors: colors, videoRate, filterInput, time } = args
+      assertPopulatedArray(colors)
+      const duration = isTimeRange(time) ? time.lengthSeconds : 0
+
+      const { colorizeFilter } = this
+      const filterArgs: FilterCommandFilterArgs = {
+        videoRate, duration, filterInput
+      }
+      const [color, colorEnd] = colors
+      colorizeFilter.setValue(color, 'color')
+      colorizeFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
+      
+      return colorizeFilter.commandFilters(filterArgs)
     }
 
-    containerCommandFilters(args: ContainerCommandFilterArgs): CommandFilters {
+    colorMaximize = false
+
+    containerColorCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
-      const { filterInput: input } = args
-      let filterInput = input 
+      const { visible, contentColors, containerRects } = args
+      if (!visible) return commandFilters
 
-      const opacityFilters = this.opacityCommandFilters(args)
-      if (opacityFilters.length) {
-        commandFilters.push(...opacityFilters)
-        filterInput = arrayLast(arrayLast(opacityFilters).outputs)
-      }
+      const { colorMaximize } = this
+      if (!colorMaximize) return super.containerColorCommandFilters(args)
       
+      assertPopulatedArray(contentColors)
+      assertPopulatedArray(containerRects)
 
-      commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
+      // console.log(this.constructor.name, "initialCommandFilters", noContentFilters, contentColors, filterInput)
+      const tweeningSize = !tweenRectsEqual(...containerRects)
+      const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
+      const colorArgs: CommandFilterArgs = { 
+        ...args, outputSize: maxSize
+      }
+      commandFilters.push(...this.colorBackCommandFilters(colorArgs))
+      
       return commandFilters
     }
 
-    containerRects(outputDimensions: Dimensions, time: Time, timeRange: TimeRange, forFiles = false): Rect[] {
-      const rects: Rect[] = []
-      const [x, xEnd] = this.tweenValues('x', time, timeRange)
-      const [y, yEnd] = this.tweenValues('y', time, timeRange)
-      const [width, widthEnd] = this.tweenValues('width', time, timeRange)
-      const [height, heightEnd] = this.tweenValues('height', time, timeRange)
+    
+    containerCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { contentColors, filterInput: input, visible } = args
+      if (!visible) return commandFilters
 
-      const scaleRect = { x, y, width, height }
-      rects.push(dimensionsTransformToRect(outputDimensions, scaleRect))
-      
-      if (isDefined(xEnd) || isDefined(yEnd) || isDefined(widthEnd) || isDefined(heightEnd)) {
-        const tweenRect = { 
-          ...scaleRect, x: xEnd, y: yEnd, width: widthEnd, height: heightEnd 
-        }
-        rects.push(dimensionsTransformToRect(outputDimensions, tweenRect, this.constrainWidth, this.constrainHeight))
-      }
-      return rects
+      // console.log(this.constructor.name, "containerCommandFilters")
+
+      let filterInput = input
+      assertPopulatedString(filterInput, 'filterInput')
+
+      if (!contentColors?.length) {
+        commandFilters.push(...this.alphamergeCommandFilters({ ...args, filterInput }))
+        filterInput = arrayLast(arrayLast(commandFilters).outputs)
+      } 
+      commandFilters.push(...this.finalCommandFilters({ ...args, filterInput }))
+      return commandFilters
     }
 
-    containerSvg(rect: Rect): SvgContent { 
+    containerRects(outputSize: Size, time: Time, timeRange: TimeRange, forFiles = false): RectTuple {
+      const scales = this.tweenRects(time, timeRange)
+      // console.log(this.constructor.name, "containerRects scales", scales, outputSize)
+      const [scale, scaleEnd] = scales
+      const { constrainX, constrainY } = this
+      const transformedRect = tweenScaleSizeToRect(outputSize, scale, constrainX, constrainY)
+
+      if (tweenRectsEqual(scale, scaleEnd)) return [transformedRect, transformedRect]
+
+      const tweenRect = tweenOverRect(scale, scaleEnd)
+      const tweened = tweenScaleSizeToRect(outputSize, tweenRect, constrainX, constrainY)
+
+      const tuple: RectTuple = [transformedRect, tweened]
+      // console.log(this.constructor.name, "containerRects", constrainX, constrainY, tuple, scales)
+      return tuple
+    }
+
+    containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent { 
       throw new Error(Errors.unimplemented) 
     }
 
-    containerSvgFilters(previewDimensions: Dimensions, containerRect: Rect, time: Time, range: TimeRange): SvgFilters {
+    containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters {
       const svgFilters: SvgFilters = []
       const mode = this.value('mode')
       if (isAboveZero(mode)) {
@@ -87,27 +128,44 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return svgFilters
     }
 
-
-
+  
     declare definition: ContainerDefinition
     
     get directions() { return Directions }
+    
+    finalCommandFilters(args: CommandFilterArgs): CommandFilters {
+      // console.log(this.constructor.name, "finalCommandFilters")
+      const commandFilters: CommandFilters = []
+      const { filterInput: input, visible } = args
 
-    graphFiles(args: GraphFileArgs): GraphFiles { return [] }
-
-
-    private _intrinsicDimensions?: Dimensions
-    intrinsicDimensions(): Dimensions { 
-      return this._intrinsicDimensions ||= this.intrinsicDimensionsInitialize 
+      let filterInput = input 
+      assertPopulatedString(filterInput, 'filterInput')
+      if (visible) {
+        const opacityFilters = this.opacityCommandFilters(args)
+        if (opacityFilters.length) {
+          commandFilters.push(...opacityFilters)
+          filterInput = arrayLast(arrayLast(opacityFilters).outputs)
+        }  
+        commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
+      } else {
+        commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
+      }
+      return commandFilters
     }
 
 
-    protected get intrinsicDimensionsInitialize(): Dimensions { 
+    private _intrinsicSize?: Size
+    intrinsicSize(): Size { 
+      return this._intrinsicSize ||= this.intrinsicSizeInitialize 
+    }
+
+
+    protected get intrinsicSizeInitialize(): Size { 
       throw new Error(Errors.unimplemented) 
     }
 
     get intrinsicGroupElement(): SVGGElement {
-      return svgGroupElement(this.intrinsicDimensions())
+      return svgGroupElement(this.intrinsicSize())
     }
 
 
@@ -117,9 +175,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
 
     muted = false
     
-    private _overlayFilter?: Filter
-    get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
-
+ 
     declare height: number
 
     declare mode: number
@@ -127,19 +183,22 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     declare opacity: number
     
 
-    opacityCommandFilters(args: ContainerCommandFilterArgs): CommandFilters {
-      const { outputDimensions, filterInput, clipTime, time, videoRate } = args
+    opacityCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const { outputSize: outputSize, filterInput, clipTime, time, videoRate } = args
+      assertTimeRange(clipTime)
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const commandFilters: CommandFilters = []
       const filterCommandFilterArgs: FilterCommandFilterArgs = {
-        dimensions: outputDimensions, filterInput, videoRate, duration
+        dimensions: outputSize, filterInput, videoRate, duration
       }
       const [opacity, opacityEnd] = this.tweenValues('opacity', time, clipTime)
+      // console.log(this.constructor.name, "opacityCommandFilters", opacity, opacityEnd)
       if (isBelowOne(opacity) || (isDefined(opacityEnd) && isBelowOne(opacityEnd))) {
         const { opacityFilter } = this
         opacityFilter.setValues({ opacity, opacityEnd })
         commandFilters.push(...opacityFilter.commandFilters(filterCommandFilterArgs))
       }
+      
       return commandFilters
     }
 
@@ -147,7 +206,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     private _opacityFilter?: Filter
     get opacityFilter() { return this._opacityFilter ||= filterFromId('opacity')}
 
-    pathElement(previewDimensions: Dimensions, forecolor?: string): SvgContent {
+    pathElement(previewSize: Size, time: Time, range: TimeRange, forecolor?: string): SvgContent {
       throw new Error(Errors.unimplemented)
     }
 
@@ -174,7 +233,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
 
     toJSON(): UnknownObject {
-      const dimensions = this.intrinsicDimensions()
+      const dimensions = this.intrinsicSize()
       const { width, height } = dimensions
       const json = super.toJSON()
       json.intrinsicWidth = width
@@ -182,13 +241,13 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return json
     }
 
-    translateCommandFilters(args: ContainerCommandFilterArgs) {
-
+    translateCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { 
-        outputDimensions, time, containerRects, chainInput, filterInput, videoRate
+        outputSize, time, containerRects, chainInput, filterInput, videoRate
       } = args
       assertPopulatedArray(containerRects)
-      const [rect, rectEnd] = containerRects
+      const [rect, rectEndOrEmpty] = containerRects
+      const rectEnd = rectEndOrEmpty || {}
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
    
       const mode = this.value('mode')
@@ -198,52 +257,16 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       
       filter.setValue(rect.x, 'x')
       filter.setValue(rect.y, 'y')
-      if (duration && isRect(rectEnd)) {
+      if (duration) {
         filter.setValue(rectEnd.x, `x${PropertyTweenSuffix}`)
         filter.setValue(rectEnd.y, `y${PropertyTweenSuffix}`)
       }
-
-      
-      // const { 
-         
-      // } = args
-      // assertDimensions(outputDimensions)
-      // assertRect(rect)
-
-      // const rectTransform = tweenRectTransform(rect, rectEnd)
-
-      // const [x, xEnd] = this.tweenValues('x', time, clipTime)
-      // const [y, yEnd] = this.tweenValues('y', time, clipTime)
-      // assertPositive(x)
-      // assertPositive(y)
-
-      
-      // assertDimensions(outputDimensions)
-      // assertPopulatedArray(containerRects)
-
       const commandFilters: CommandFilters = []
 
-      const filterCommandFilterArgs: FilterCommandFilterArgs = {
-        dimensions: outputDimensions, filterInput, videoRate, duration, chainInput
+      const filterArgs: FilterCommandFilterArgs = {
+        dimensions: outputSize, filterInput, videoRate, duration, chainInput
       }
-      
-
-      
-      // assertPositive(x)
-      // assertPositive(y)
-
-      // filter.setValue(dimensionPad(outputDimensions.width, x, rect.width / outputDimensions.width, this.constrainWidth), 'x')
-      // filter.setValue(dimensionPad(outputDimensions.height, y, rect.height / outputDimensions.height, this.constrainHeight), 'y')
-
-      // if (duration) {
-
-      //   const xDefined = isNumber(xEnd) && rectEnd ? dimensionPad(outputDimensions.width, xEnd, rectEnd.width / outputDimensions.width, this.constrainWidth) : undefined
-      //   const yDefined = isNumber(yEnd) && rectEnd ? dimensionPad(outputDimensions.height, yEnd, rectEnd.height / outputDimensions.height, this.constrainHeight) : undefined
-
-      //   filter.setValue(xDefined, `x${PropertyTweenSuffix}`)
-      //   filter.setValue(yDefined, `y${PropertyTweenSuffix}`)
-      // }
-      commandFilters.push(...filter.commandFilters(filterCommandFilterArgs))
+      commandFilters.push(...filter.commandFilters(filterArgs))
       return commandFilters
     }
 

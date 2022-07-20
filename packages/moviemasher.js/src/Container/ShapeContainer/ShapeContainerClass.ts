@@ -1,22 +1,22 @@
 import { ShapeContainer, ShapeContainerDefinition } from "./ShapeContainer"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { NamespaceSvg } from "../../Setup/Constants"
-import { colorBlack, colorWhite } from "../../Utility/Color"
-import { Filter } from "../../Filter/Filter"
-import { NumberObject, Rect, SvgContent } from "../../declarations"
-import { Dimensions, dimensionsRectTransform } from "../../Setup/Dimensions"
-import { CommandFile, CommandFiles, CommandFilters, ContainerCommandFileArgs, ContainerCommandFilterArgs, FilterCommandFilterArgs } from "../../MoveMe"
+import { colorBlack, colorBlackOpaque, colorWhite } from "../../Utility/Color"
+import { SvgContent, ValueObject } from "../../declarations"
+import { Rect } from "../../Utility/Rect"
+import { Size } from "../../Utility/Size"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
 import { DataType, GraphFileType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
-import { svgGroupElement, svgPolygonElement } from "../../Utility/Svg"
-import { filterFromId } from "../../Filter/FilterFactory"
-import { assertArray, assertRect, isTimeRange } from "../../Utility/Is"
-import { commandFilesInputIndex } from "../../Utility/CommandFiles"
+import { assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isTimeRange } from "../../Utility/Is"
+import { commandFilesInput } from "../../Utility/CommandFiles"
 import { arrayLast } from "../../Utility/Array"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { tweenColors, tweenRects } from "../../Utility/Tween"
+import { tweenMaxSize, tweenRectScale, tweenRectsEqual } from "../../Utility/Tween"
 import { propertyInstance } from "../../Setup/Property"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { idGenerate } from "../../Utility/Id"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
 
 const ShapeContainerWithTweenable = TweenableMixin(InstanceBase)
 const ShapeContainerWithContainer = ContainerMixin(ShapeContainerWithTweenable)
@@ -34,126 +34,294 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     }))
   }
 
-  private _alphamergeFilter?: Filter 
-  private get alphamergeFilter() { return this._alphamergeFilter ||= filterFromId('alphamerge') }
+  canColor(args: CommandFilterArgs): boolean { 
+    const { isDefault } = this
 
-  _colorFilter?: Filter
-  get colorFilter() { return this._colorFilter ||= filterFromId('color') }
+    // default rect has no content to colorize, so needs color filter input
+    if (isDefault) return false
 
-  containerCommandFiles(args: ContainerCommandFileArgs): CommandFiles {
-    const commandFiles: CommandFiles = []
-    const { definitionId, definition } = this
-    if (definitionId === "com.moviemasher.shapecontainer.default") return commandFiles
+    // shape files can only colorize a single color at a single size
+    return !(this.isTweeningColor(args) || this.isTweeningSize(args))
+  }
 
-    const { colors = [], containerRects, time, clipTime, videoRate } = args
-    const [colorOrNot, colorEnd] = colors
-    const color = colorOrNot || colorWhite
-    const backcolor = colorOrNot ? 'none' : colorBlack
-    const duration = isTimeRange(time) ? time.lengthSeconds : 0
-    assertArray(containerRects, 'containerRects')
+  containerColorCommandFilters(args: CommandFilterArgs): CommandFilters {
+    const commandFilters: CommandFilters = [] 
+    // i am either default rect or a shape tweening size or color
+
+    const { colorFilter, isDefault } = this
+    const { contentColors, containerRects, videoRate, time } = args
+
+    assertPopulatedArray(contentColors, 'contentColors')
+    assertPopulatedArray(containerRects, 'containerRects')
+
     const [rect, rectEnd] = containerRects
+    const [color, colorEnd] = contentColors
 
-    const frames = Math.round(duration / videoRate)
-    const doRects = tweenRects(rect, rectEnd, frames)
-    const doColors = tweenColors(color, colorEnd, frames)
+    const maxSize = isDefault ? rect : tweenMaxSize(...containerRects)
 
-    const dimensions = this.intrinsicDimensions()
-    const { width: inWidth, height: inHeight } = dimensions
-    const svgTags = doRects.map((rect, index) => {
-      const forecolor = doColors[index] || color
-      const { width: outwidth, height: outHeight } = rect
-      const transformAttribute = dimensionsRectTransform(dimensions, rect)
+    const duration = isTimeRange(time) ? time.lengthSeconds : 0
+    const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
+   
+    colorFilter.setValue(color || colorWhite, 'color')
+    colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
+    colorFilter.setValue(maxSize.width, 'width')
+    colorFilter.setValue(maxSize.height, 'height')
+    
+    const tweenSize = isDefault 
+    colorFilter.setValue(tweenSize ? rectEnd.width : undefined, `width${PropertyTweenSuffix}`)
+    colorFilter.setValue(tweenSize ? rectEnd.height : undefined, `height${PropertyTweenSuffix}`)
+    commandFilters.push(...colorFilter.commandFilters(colorArgs))
+    return commandFilters
+  }
 
-      const tags: string[] = []
-      tags.push(`<svg viewBox="0 0 ${outwidth} ${outHeight}" xmlns="${NamespaceSvg}">`)
-      tags.push(`<g transform="${transformAttribute}" width="${inWidth}" height="${inHeight}" >`)
-      tags.push(`<rect width="${inWidth}" height="${inHeight}" fill="${backcolor}"/>`)
-      tags.push(`<path d="${this.path}" fill="${forecolor}"/>`)
-      tags.push("</g>")
-      tags.push("</svg>")
-      return tags.join("")
-    })
+  
+  // canColorTween(args: CommandFilterArgs): boolean { 
+  //   const { isDefault } = this
+  //   if (isDefault) return true
+
+  //   return false //!this.isTweeningSize(args)
+  // }
+
+  // colorMaximize = true
+
+  commandFiles(args: CommandFileArgs): CommandFiles {
+    const commandFiles: CommandFiles = []
+    const { isDefault } = this
+    const requiresAlpha = this.requiresAlpha(args)
+    const tweeningColor = this.isTweeningColor(args)
+    if (isDefault && !requiresAlpha) {
+      // console.log(this.constructor.name, "commandFiles NONE", isDefault, requiresAlpha, tweeningColor, tweeningSize)
+      return commandFiles
+    }
+    const { definition, path, id } = this
+    const { contentColors: colors = [], containerRects, time, videoRate } = args
+
+    assertPopulatedArray(containerRects, 'containerRects')
+    const duration = isTimeRange(time) ? time.lengthSeconds : 0
+    const [rect, rectEnd] = containerRects
+    const maxSize = tweenMaxSize(rect, rectEnd)
+    const { width: maxWidth, height: maxHeight} = maxSize
+
+    let [forecolor] = colors
+    if (requiresAlpha) forecolor = colorWhite
+    else if (tweeningColor) forecolor = colorBlack
+   
+    let backcolor = 'none'
+    if (isDefault) backcolor = colorWhite
+    else if (requiresAlpha) backcolor = colorBlack
+    // const backcolor = noContentFilters ? 'none' : colorBlack 
+
+
+    // console.log(this.constructor.name, "commandFiles", forecolor, backcolor, isDefault, requiresAlpha, tweeningColor, tweeningSize)
+
+    const intrinsicSize = this.intrinsicSize()
+    const { width: inWidth, height: inHeight } = intrinsicSize
+    const dimensionsString = `width="${inWidth}" height="${inHeight}"`
+    const transformAttribute = tweenRectScale(intrinsicSize, maxSize)
+
+    // console.log(this.constructor.name, "commandFiles", forecolor, backcolor, tweeningColor, noContentFilters)
+    const tags: string[] = []
+    tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
+    tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
+    tags.push(`<rect ${dimensionsString} fill="${backcolor}"/>`)
+    if (!isDefault) tags.push(`<path d="${path}" fill="${forecolor}"/>`)
+    tags.push("</g>")
+    tags.push("</svg>")
+    const svgTag = tags.join("")
+  
+    const options: ValueObject = {}
+    if (duration) {
+      options.loop = 1
+      options.framerate = videoRate
+      options.t = duration
+      // options.re = ''
+    }
     const commandFile: CommandFile = { 
-      type: svgTags.length > 1 ? GraphFileType.SvgSequence : GraphFileType.Svg, 
-      file: svgTags.join("\n"), 
-      input: true,
-      inputId: this.id, definition,
+      type: GraphFileType.Svg, file: svgTag, 
+      input: true, inputId: id, definition, options
     }
     commandFiles.push(commandFile)
     return commandFiles
   }
   
-  containerCommandFilters(args: ContainerCommandFilterArgs): CommandFilters {
+  containerCommandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = [] 
-    const { colors = [], containerRects, videoRate, filterInput, commandFiles, time } = args
-    let filterOutput = filterInput
-    const duration = isTimeRange(time) ? time.lengthSeconds : 0
-    const filterCommandFilterArgs: FilterCommandFilterArgs = { videoRate, duration } 
+    const { visible, contentColors: colors, containerRects, track, commandFiles, filterInput: input } = args
+    if (!visible) return commandFilters
 
-    assertArray(containerRects, 'containerRects')
-    const [rect, rectEndOrEmpty = {}] = containerRects
-    assertRect(rect)
-    const rectEnd = { ...rect, ...rectEndOrEmpty }
+    let filterInput = input
 
-    if (this.definitionId === "com.moviemasher.shapecontainer.default") {
-      // can just use color filter, with my dimensions
-      const { colorFilter } = this
-      const [color, colorEnd] = colors
-            
-      colorFilter.setValue(color || colorWhite, 'color')
-      colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
-      colorFilter.setValue(rect.x, 'x')
-      colorFilter.setValue(rect.y, 'y')
-      colorFilter.setValue(rect.width, 'width')
-      colorFilter.setValue(rect.height, 'height')
-      
-      colorFilter.setValue(rectEnd.x, `x${PropertyTweenSuffix}`)
-      colorFilter.setValue(rectEnd.y, `y${PropertyTweenSuffix}`)
-      colorFilter.setValue(rectEnd.width, `width${PropertyTweenSuffix}`)
-      colorFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)
-      commandFilters.push(...colorFilter.commandFilters(filterCommandFilterArgs))
-      filterOutput = arrayLast(arrayLast(commandFilters).outputs)
-    } else {
-      const inputIndex = commandFilesInputIndex(commandFiles, this.id) 
-      filterOutput = String(inputIndex)
+    assertPopulatedArray(containerRects)
+
+    const noContentFilters = isPopulatedArray(colors)
+    const requiresAlpha = this.requiresAlpha(args)
+    if (requiresAlpha) {
+      assertPopulatedString(filterInput, 'container input')
+      const { contentColors: _, ...argsWithoutColors } = args
+      const superArgs: CommandFilterArgs = { 
+        ...argsWithoutColors, filterInput
+      }
+      commandFilters.push(...super.containerCommandFilters(superArgs))
+    } else if (this.isDefault || noContentFilters) {
+      filterInput ||= commandFilesInput(commandFiles, this.id, true)
+      assertPopulatedString(filterInput, 'final input')
+      commandFilters.push(...this.finalCommandFilters({ ...args, filterInput}))
     }
-    if (!colors.length) {
-      filterCommandFilterArgs.filterInput = filterOutput
-      filterCommandFilterArgs.chainInput = filterInput
-      commandFilters.push(...this.alphamergeFilter.commandFilters(filterCommandFilterArgs))
-      filterOutput = arrayLast(arrayLast(commandFilters).outputs)
-    } 
-    const superArgs: ContainerCommandFilterArgs = {
-      ...args, filterInput: filterOutput
-    }
-    commandFilters.push(...super.containerCommandFilters(superArgs))
     return commandFilters
   }
 
-  containerSvg(rect: Rect): SvgContent { 
-    return this.pathElement(rect, colorWhite)
-    
+  containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent { 
+    return this.pathElement(rect, time, range, colorWhite)
   }
 
   declare definition: ShapeContainerDefinition
 
-  intrinsicDimensions(): Dimensions {
+  needsColor(args: CommandFilterArgs): boolean {
+    const { isDefault } = this
+    const { contentColors, containerRects} = args
+    assertPopulatedArray(containerRects)
+
+    const tweeningSize = !tweenRectsEqual(...containerRects)
+    const colorContent = isPopulatedArray(contentColors)
+    const tweeningColor = colorContent && this.isTweeningColor(args)
+    if (isDefault) return tweeningSize 
+
+    return tweeningColor || tweeningSize
+  }
+
+
+  initialCommandFilters(args: CommandFilterArgs): CommandFilters {
+    const commandFilters: CommandFilters = [] 
+    const { contentColors, ...argsWithoutColors } = args
+    const { commandFiles, visible, track, filterInput: input, containerRects } = argsWithoutColors
+    if (!visible) return commandFilters
+
+    let filterInput = input 
+    assertPopulatedArray(containerRects)
+    const requiresAlpha = this.requiresAlpha(args)
+    const tweeningSize = !tweenRectsEqual(...containerRects)
+    const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
+
+    const { isDefault } = this
+    const contentInput = `content-${track}`
+    const containerInput = `container-${track}`
+
+    
+    if (isPopulatedString(filterInput)) {
+      if (requiresAlpha && !isDefault) {
+        const formatFilter = 'format'
+        const formatFilterId = idGenerate(formatFilter)
+        const formatCommandFilter: CommandFilter = {
+          inputs: [filterInput], ffmpegFilter: formatFilter, 
+          options: { pix_fmts: 'rgba' },
+          outputs: [formatFilterId]
+        }
+        commandFilters.push(formatCommandFilter)
+        filterInput = formatFilterId
+      } else if (!isDefault) {
+        
+        const colorArgs: CommandFilterArgs = { 
+          ...args, contentColors: [colorBlackOpaque, colorBlackOpaque], outputSize: maxSize
+        }
+        commandFilters.push(...this.colorBackCommandFilters(colorArgs))
+        const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
+      
+        assertPopulatedString(filterInput, 'overlay input')
+        const overlayArgs: CommandFilterArgs = { 
+          ...args, filterInput, chainInput: colorInput
+        }
+        commandFilters.push(...this.mergeCommandFilters(overlayArgs))
+        filterInput = arrayLast(arrayLast(commandFilters).outputs)   
+      }
+    } 
+    
+    if (commandFilters.length) arrayLast(commandFilters).outputs = [contentInput]
+    else if (isPopulatedString(filterInput)) commandFilters.push(this.copyCommandFilter(filterInput, track))
+
+
+    // if (!isDefault) {
+    if (requiresAlpha) {
+      const fileInput = commandFilesInput(commandFiles, this.id, visible)   
+      
+
+      if (tweeningSize) { // scale container
+        const colorArgs: CommandFilterArgs = { 
+          ...args, contentColors: [colorBlackOpaque, colorBlackOpaque], outputSize: maxSize
+        }
+        commandFilters.push(...this.colorBackCommandFilters(colorArgs))
+        const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
+        assertPopulatedString(fileInput, 'scale input')
+        commandFilters.push(...this.scaleCommandFilters({ ...args, filterInput: fileInput }))
+        filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+
+        assertPopulatedString(filterInput, 'overlay input')
+        const overlayArgs: CommandFilterArgs = { 
+          ...args, filterInput, chainInput: colorInput
+        }
+        commandFilters.push(...this.mergeCommandFilters(overlayArgs))
+        filterInput = arrayLast(arrayLast(commandFilters).outputs)         
+      } else filterInput = fileInput
+
+      if (!filterInput) console.log(this.constructor.name, "initialCommandFilters", tweeningSize)
+        // reformat to rgb with or without alpha
+      assertPopulatedString(filterInput, 'format input')
+      const formatFilter = 'format'
+      // const formatFilterId = idGenerate(formatFilter)
+      const formatCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: formatFilter, 
+        options: { pix_fmts: requiresAlpha ? 'rgb24' : 'rgba' },
+        outputs: [containerInput]
+      }
+      commandFilters.push(formatCommandFilter)
+        // filterInput = formatFilterId
+      // } 
+      // if (tweeningSize || requiresAlpha) 
+      // arrayLast(commandFilters).outputs = [containerInput]
+      // else {
+        
+      //   assertPopulatedString(filterInput, 'copy input')
+      //   commandFilters.push(this.copyCommandFilter(filterInput, track, 'container'))
+      // }
+    } 
+    return commandFilters
+  }
+
+  intrinsicSize(): Size {
     return { width: this.pathWidth, height: this.pathHeight }
+  }
+
+  get isDefault() { 
+    return this.definitionId === "com.moviemasher.shapecontainer.default" 
+  }
+
+  isTweeningColor(args: CommandFileArgs): boolean {
+    const { contentColors } = args
+    if (!isPopulatedArray(contentColors)) return false
+
+    let [forecolor, forecolorEnd] = contentColors
+    return forecolor !== forecolorEnd
+  }
+
+  isTweeningSize(args: CommandFileArgs): boolean {
+    const { containerRects } = args
+    if (!isPopulatedArray(containerRects)) return false
+
+    return !tweenRectsEqual(...containerRects)
   }
 
   declare path: string
 
-  pathElement(rect: Dimensions, forecolor = colorWhite): SvgContent {
-    const intrinsicDimensions = this.intrinsicDimensions()
-    // const gElement = svgGroupElement(intrinsicDimensions)
-    // gElement.appendChild(svgPolygonElement(intrinsicDimensions))
+  pathElement(rect: Size, time: Time, range: TimeRange, forecolor = colorWhite): SvgContent {
+    const intrinsicSize = this.intrinsicSize()
+    // const gElement = svgGroupElement(intrinsicSize)
+    // gElement.appendChild(svgPolygonElement(intrinsicSize))
     const pathElement = globalThis.document.createElementNS(NamespaceSvg, 'path')
     pathElement.setAttribute('d', this.path)
     pathElement.setAttribute('fill', forecolor)
     pathElement.classList.add('shape')
 
     // gElement.appendChild(pathElement)
-    const transformAttribute = dimensionsRectTransform(intrinsicDimensions, rect)
+    const transformAttribute = tweenRectScale(intrinsicSize, rect)
     pathElement.setAttribute('transform', transformAttribute)
     pathElement.setAttribute('transform-origin', 'top left')
     return pathElement
@@ -162,6 +330,21 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   declare pathHeight: number
 
   declare pathWidth: number
+
+  requiresAlpha(args: CommandFileArgs): boolean {
+    const { contentColors } = args
+    const colorContent = isPopulatedArray(contentColors)
+    const tweeningSize = this.isTweeningSize(args)
+    if (this.isDefault) {
+      if (colorContent) return false // can always make colored boxes
+
+      return tweeningSize // need mask to dynamically crop content
+    }
+    if (!colorContent) return true // always need to mask content
+
+    return tweeningSize || this.isTweeningColor(args)
+  
+  }
 }
 
 

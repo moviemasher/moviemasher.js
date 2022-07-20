@@ -5,7 +5,7 @@ import { RenderingOutputClass } from "./RenderingOutputClass"
 export class WaveformOutputClass extends RenderingOutputClass implements WaveformOutput {
   declare args: WaveformOutputArgs
 
-  avType = AVType.Audio
+  _avType = AVType.Audio
 
   outputType = OutputType.Waveform
 

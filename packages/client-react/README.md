@@ -99,7 +99,7 @@ import ReactDOM from 'react-dom'
 import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
 import "@moviemasher/client-react/dist/moviemasher.css"
 
-const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
+const applicationOptions = { previewSize: { width: 480, height: 270 } }
 const options = MasherPropsDefault(applicationOptions)
 const masher = <Masher {...options} />
 const editor = <ApiClient>{masher}</ApiClient>

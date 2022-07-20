@@ -1,7 +1,8 @@
-import { Point, PopulatedString, Rgb, AnyArray, UnknownObject, Rect, ValueObject, Value } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { PopulatedString, Rgb, AnyArray, UnknownObject, ValueObject, Value } from "../declarations"
+import { Point } from "../Utility/Point"
+import { Rect } from "../Utility/Rect"
+import { Size } from "./Size"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { Size } from "../Setup/Enums"
 
 export const isObject = (value: any): value is Object => typeof value === 'object'
 
@@ -87,25 +88,6 @@ export function assertRgb(value: any, name?: string): asserts value is Rgb {
   if (!isRgb(value)) throwError(value, 'Rgb', name)
 }
 
-export const isPoint = (value: any): value is Point => {
-  return isObject(value) && isNumber(value.x) && isNumber(value.y) 
-}
-export function assertPoint(value: any, name?: string): asserts value is Point {
-  if (!isPoint(value)) throwError(value, 'Point', name)
-}
-export const isDimensions = (value: any): value is Dimensions => {
-  return isObject(value) && isNumber(value.width) && isNumber(value.height) 
-}
-export function assertDimensions(value: any, name?: string): asserts value is Dimensions {
-  if (!isDimensions(value)) throwError(value, 'Dimensions', name)
-}
-export const isRect = (value: any): value is Rect => {
-  return isDimensions(value) && isPoint(value) 
-}
-export function assertRect(value: any, name?: string): asserts value is Rect {
-  if (!isRect(value)) throwError(value, 'Rect', name)
-}
-
 export const isTime = (value: any): value is Time => {
   return isObject(value) && "isRange" in value
 }
@@ -113,10 +95,21 @@ export const isTime = (value: any): value is Time => {
 export const isTimeRange = (value: any): value is TimeRange => {
   return isTime(value) && value.isRange
 }
+export function assertTimeRange(value: any, name?: string): asserts value is TimeRange {
+  if (!isTimeRange(value)) throwError(value, "TimeRange", name)
+}
 
 export const isValue = (value: any): value is Value => {
   return isNumber(value) || isString(value)
 }
+export const isTrueValue = (value: any): value is Value => {
+  if (!isValue(value)) return false
+
+  if (isNumeric(value)) return !!Number(value)
+
+  return isPopulatedString(value)
+}
+
 export function assertValue(value: any, name?: string): asserts value is Value {
   if (!isValue(value)) throwError(value, "Value", name)
 }
@@ -132,6 +125,6 @@ export const throwError = (value: any, expected: string, name = "value") => {
   const type = typeof value
   const typeName = type === 'object' ? value.constructor.name: type
   console.error("throwError", value)
-  throw new Error(`${name} is ${value} (${typeName}) instead of ${expected}`)
+  throw new Error(`${name} is "${value}" (${typeName}) instead of ${expected}`)
 }
 

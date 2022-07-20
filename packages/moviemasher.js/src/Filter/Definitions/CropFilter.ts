@@ -3,8 +3,8 @@ import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { idGenerate } from "../../Utility/Id"
-import { assertDimensions, assertPopulatedString, assertRect } from "../../Utility/Is"
-import { tweenOption } from "../../Utility/Tween"
+import { assertPopulatedString, isTrueValue } from "../../Utility/Is"
+import { tweenOption, tweenPosition } from "../../Utility/Tween"
 import { ValueObject } from "../../declarations"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 
@@ -15,12 +15,10 @@ export class CropFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, name: 'width', type: DataType.Number,
-      defaultValue: 0, min: 0, step: 1
+      custom: true, name: 'width', type: DataType.String,
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'height', type: DataType.Number,
-      defaultValue: 0, min: 0, step: 1
+      custom: true, name: 'height', type: DataType.String,
     }))
     this.properties.push(propertyInstance({
       tweenable: true, custom: true, name: 'x', type: DataType.Number,
@@ -39,16 +37,17 @@ export class CropFilter extends FilterDefinitionClass {
     
     const commandFilters: CommandFilters = []
     const scalars = filter.scalarObject(!!duration)
-    assertDimensions(scalars)
-    // console.log(this.constructor.name, "commandFilters scalars", scalars, !!duration)
 
     const options: ValueObject = {}
-    const pos = `(n/${videoRate * duration})`
-    options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], pos)
-    options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], pos)
-    options.w = scalars.width
-    options.h = scalars.height
+    const position = tweenPosition(videoRate, duration)
+    options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true)
+    options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], position, true)
 
+    const { width, height } = scalars
+    if (isTrueValue(width)) options.w = width
+    if (isTrueValue(height)) options.h = height
+
+    // if (isString(options.x) || isString(options.y)) console.log(this.constructor.name, "commandFilters scalars", scalars, !!duration)
     // console.log(this.constructor.name, "commandFilters options", options)
 
    

@@ -8,24 +8,24 @@ export interface InspectorPropertyContainerProps {
   type: string
   className?: string
   contained: React.ReactChild
-  children: React.ReactNode
 }
-
 
 /**
  * @parents InspectorContent
  */
 export function InspectorPropertyContainer(props: InspectorPropertyContainerProps): ReactResult {
-  const { contained, className, property, children } = props
-  const templateElements = React.Children.toArray(children)
-  const kids = []
+  const { contained, className, property } = props
+  const templateElements = [<label/>]
+  const kids : React.ReactChild[] = []
   if (templateElements.length) {
     const [first, second] = templateElements
     if (React.isValidElement(first)) {
-      kids.push(React.cloneElement(first, { key: `label-${property}`, children: property }))
+      const firstOptions = { key: `label-${property}`, children: property }
+      kids.push(React.cloneElement(first, firstOptions))
       if (second) {
         if (React.isValidElement(second)) {
-          kids.push(React.cloneElement(second, { key: `contained-${property}`, children: contained }))
+          const secondOptions = { key: `contained-${property}`, children: contained }
+          kids.push(React.cloneElement(second, secondOptions))
         } else kids.push(second, contained)
       } else kids.push(contained)
 

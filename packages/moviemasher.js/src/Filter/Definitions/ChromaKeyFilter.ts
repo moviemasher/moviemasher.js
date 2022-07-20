@@ -13,7 +13,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, name: 'color', type: DataType.Rgb,
+      custom: true, name: 'color', type: DataType.String,
       defaultValue: colorGreen
     }))
     this.properties.push(propertyInstance({

@@ -1,13 +1,14 @@
 import { CommandFiles } from "../MoveMe"
-import { assertPositive } from "./Is"
+import { assertPositive, isPositive } from "./Is"
 
 export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string) => {
   const inputCommandFiles = commandFiles.filter(commandFile => commandFile.input)
   const inputIndex = inputCommandFiles.findIndex(commandFile => commandFile.inputId === id)
-  assertPositive(inputIndex)
+  if (!isPositive(inputIndex)) console.log("commandFilesInputIndex", id, inputCommandFiles)
+  assertPositive(inputIndex, 'commandFilesInputIndex')
   return inputIndex
 }
 
 export const commandFilesInput = (commandFiles: CommandFiles, id: string, visible?: boolean) => (
-  String(commandFilesInputIndex(commandFiles, id))
+  [commandFilesInputIndex(commandFiles, id), visible ? 'v' : 'a'].join(':')
 )

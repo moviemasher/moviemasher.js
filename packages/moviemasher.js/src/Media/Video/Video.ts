@@ -3,27 +3,27 @@ import { DefinitionType } from "../../Setup/Enums"
 import { isInstance } from "../../Instance/Instance"
 import { FilterDefinition } from "../../Filter/Filter"
 import {
-  UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject
-} from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
+  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject
+} from "../../Mixin/UpdatableSize/UpdatableSize"
 import {
   Content, ContentDefinition, ContentDefinitionObject, ContentObject
 } from "../../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "../../Container/Container"
 
-export interface VideoObject extends ContainerObject, ContentObject, UpdatableDimensionsObject, UpdatableDurationObject {
+export interface VideoObject extends ContainerObject, ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
 }
 
-export interface Video extends Content, Container, UpdatableDimensions, UpdatableDuration {
+export interface Video extends Content, Container, UpdatableSize, UpdatableDuration {
   definition : VideoDefinition
 }
 
-export interface VideoDefinitionObject extends ContainerDefinitionObject, ContentDefinitionObject, UpdatableDimensionsDefinitionObject, UpdatableDurationDefinitionObject {
+export interface VideoDefinitionObject extends ContainerDefinitionObject, ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   fps?: number
 }
 
-export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableDimensionsDefinition, UpdatableDurationDefinition {
+export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoObject): Video
   setsarFilterDefinition: FilterDefinition
   fpsFilterDefinition: FilterDefinition

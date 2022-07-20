@@ -1,66 +1,436 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RenderingProcess render renders audio from trimmed video 1`] = `
-"SHA256=ad99ee4b2493dfe87f7667e591de53b6d41df0412ea318e8f1798ab5ec7c8eaf
+exports[`Rendering content in containers BL_in_R 1`] = `
+"SHA256=dea92ecfaa79f0b43da27a2473c064851af48d482ca9f922d27820376d087599
 "
 `;
 
-exports[`RenderingProcess renders video-from-color.json 1`] = `
-"SHA256=566d7ff8add67fdb4cebfb8b6ba73450d32b85ad333d6ce3ed1e459a337d1048
+exports[`Rendering content in containers BL_in_R 2`] = `
+"SHA256=3a03c6f6b95ee50b7c0fa10aaefc6fe702a7929043c5e732518e685a3f6e5585
 "
 `;
 
-exports[`RenderingProcess renders video-from-colors-fade.json 1`] = `
-"SHA256=21c84417c8fafae136cb7f2069550f5711d7b0013ccb5079ef0cd7103c71292f
+exports[`Rendering content in containers BL_in_R 3`] = `
+"SHA256=8cf54005f4117a93eeda261e7ee34a5a5cf33e7bf1aaaf5a601406248fcf743f
 "
 `;
 
-exports[`RenderingProcess renders video-from-image.json 1`] = `
-"SHA256=7600df39228e9eca6cf8d17e189366fbb82cdd4069f94350e6a219f8551fecb1
+exports[`Rendering content in containers BL_in_R 4`] = `
+"SHA256=c4d37697f0299e3b74e71e6d1d2dbbd1e9590be61dec13fa6620414314585e0c
 "
 `;
 
-exports[`RenderingProcess renders video-from-image-in-shape.json 1`] = `
-"SHA256=8debef15fdbb768056f89f141e33a751bba304529d3d3f6ca1d2ce277dc73293
+exports[`Rendering content in containers BL_in_R 5`] = `
+"SHA256=8eca7ae3b7b33a5d6c23da49357b576dce0201238cb5e0438b547d9936ab6613
 "
 `;
 
-exports[`RenderingProcess renders video-from-image-pan.json 1`] = `
-"SHA256=154b1b86b0da2968b70d57260bd8074c4701840caf716e345a82d36a1dfa2287
+exports[`Rendering content in containers BL_in_R 6`] = `
+"SHA256=f4e467ffe8ee12f630d4c99cb81ec48f5340256970077b0de3526e37279f342c
 "
 `;
 
-exports[`RenderingProcess renders video-from-text.json 1`] = `
-"SHA256=2f3bb2fed07800f57a78410ebbd9c5f292b077d007c471ac17ecfdcb2b1c4c5d
+exports[`Rendering content in containers BL_in_R 7`] = `
+"SHA256=cb5e4c3eb72ae36d08b0c7ba3de1fd935a79345ac6adab66e986cd16fea7fa61
 "
 `;
 
-exports[`RenderingProcess renders video-from-text-fade.json 1`] = `
-"SHA256=f06ca5aa0acd58135e21155b9e6b3e868f4a8cb908608b081feb22cf3d0f88e5
+exports[`Rendering content in containers BL_in_R 8`] = `
+"SHA256=c946c72bfd79505f115d64e3d3c92f4be18b13e081f96c2f6d7860f402e85f05
 "
 `;
 
-exports[`RenderingProcess runPromise renders image from image with cover 1`] = `
-"SHA256=16da1c00cc415b0259d3b7b2854ee36a5fe0bc99ecebee65a4ee94eddb5caf4b
+exports[`Rendering content in containers BL_in_R 9`] = `
+"SHA256=7bce228bc5febcfed12992b9e7524ea8983163b06ed378df2328d71a7e3a613a
 "
 `;
 
-exports[`RenderingProcess runPromise renders image from trimmed video 1`] = `
-"SHA256=d714279f26e57859e8d6ed6fd49e17ed3614f46588fc6392b202830fed7b1373
+exports[`Rendering content in containers BL_in_R 10`] = `
+"SHA256=21ec468968529fcd7ad2466bec4b40cd93ccd9662f8833ed8c1bf8f89f03fa71
 "
 `;
 
-exports[`RenderingProcess runPromise renders image sequence from video with cover 1`] = `
-"SHA256=f50e54fac1449e8b7ae5ab5761784335b0a3a45dc784071e13f2b903e84a9f18
+exports[`Rendering content in containers BL_in_R 11`] = `
+"SHA256=77d56147a0278910681ffcca3b64f56201b01ccdbba383793869d5167b738ecd
 "
 `;
 
-exports[`RenderingProcess runPromise renders video from image 1`] = `
-"SHA256=16010a31e6232f4c36802e6dbe68d3ad3ec5ca61f8e420f095a7a2feead9fc42
+exports[`Rendering content in containers BL_in_R 12`] = `
+"SHA256=8185ba85badc35a2a27cc288ea2d27bae583394326226a7827638ffad8ed27aa
 "
 `;
 
-exports[`RenderingProcess runPromise renders video from video with cover 1`] = `
-"SHA256=494cb3b2e77931d397c308891467f1c4a64c3c3bfa2b9604a0f5b7ce026c41de
+exports[`Rendering content in containers BL_in_R 13`] = `
+"SHA256=6f345d2e6f37a65ddbcdd95ab40d20474b1f20d1ca07e119dd44b344280465c6
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 14`] = `
+"SHA256=f66b5d49460d0a1d9261c5b3b04218568cfc95bb83fef5482a25781f5392b817
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 15`] = `
+"SHA256=b926851bc454f9cbfc09e52e7148718724ba564df5cae76acd554bd953e25309
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 16`] = `
+"SHA256=e48eefd56267cc383476b1200d07e352a894bbbdbd056e2b8eda5175820163f5
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 17`] = `
+"SHA256=0789b666e85e12f66147a5c0b91467974ccc967d4712c0c332bff2e2da1df5eb
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 18`] = `
+"SHA256=0e8cd6db12d64d17fd094388f91b94d86e4012f0c8c258b51ec3033cd9caf88f
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 19`] = `
+"SHA256=22501de2df3ace39b117f8c42e821ddb156c56b1ec8c1eb7468ed06df9b8b4c7
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 20`] = `
+"SHA256=b013a6d743af8056f41f7389c8ed7a9204cca77d138861fe4dd3fa359020a5bb
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 21`] = `
+"SHA256=a814d811a021776c5ece84c2865dbc1ead40d184ea71702fdeb993c6e5fed9e6
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 22`] = `
+"SHA256=3efef574f073fb22212bc1f7fb8a6d9067bc243d16c4588579f431ca966d8c29
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 23`] = `
+"SHA256=bd637d995d856f87a62ac2bbc486a2de0b94f4d788e8fc5db8d8ea3156db889a
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 24`] = `
+"SHA256=73f67cc7e1915a33bce606d3e376a0462269406ef644298466655f0b8ca9dcdd
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 25`] = `
+"SHA256=8d8bb6df83b6a64856193bbb0fc5978366f16a214a7365d1f2c0e55aac23be8f
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 26`] = `
+"SHA256=b49d36dfbeced47a38321fbc7b97b974eda994a86d605b610be046379a02f2da
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 27`] = `
+"SHA256=a6d8d39a5393b8f9fe9b168f5a944fbc305c9a191edcfb12c3a5a64b625c3db1
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 28`] = `
+"SHA256=e4b9ed0c7cf01e2cb6a1ba26d4bb5510ebcb93427007cf26bd39050edd38af1d
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 29`] = `
+"SHA256=0c5c1ffe5521fe5be2d2f60651b187910bd8146dd5a5d3e44994ac21fb97ba9d
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 30`] = `
+"SHA256=b479256f8a56306b6470187581c4e62864796c44832643abfc19bf8eadd01801
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 31`] = `
+"SHA256=aa444e55e92ac96477f6ccd0b1e06f3c1817c1ba2d062dd36ef8f4e6c0edd474
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 32`] = `
+"SHA256=76a86829c21dd60bc64639870fd81a840d5577f34e93a68dd809f31a31d8cadf
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 33`] = `
+"SHA256=81f46508dc2f2629e8acef7ece2d84021476816f3765d32f728a91385ebef320
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 34`] = `
+"SHA256=3452c0e01248ee2ee7dc172e6f53d6e847ba92c6b7aa9de1bf6ebfeeb8adfe92
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 35`] = `
+"SHA256=6aace497d2984dea5a83418841214105c8850348c148109925326d2f8135f712
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 36`] = `
+"SHA256=047bc1d314d6cb6c99e37435a4003fd495fadb5f725be2b6e4645a3f1c9e4189
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 37`] = `
+"SHA256=9c03a0c811332ae3d886e8e53c6ae8f787d9f63660234b1f29cf292de8d8a583
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 38`] = `
+"SHA256=d01ce9d9dcc21ef61aaaa86c4dfc71903b2df92cace8f3e620e7fd90ff8484fa
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 39`] = `
+"SHA256=f3b2e51fdd4a338efc59a732a460b2fd6021c3f4a23a8d6fb9947fd30b963697
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 40`] = `
+"SHA256=edb26c9c4b40d983f257ea67f27ef870c08320a71485d2d4a826329d59a9bee7
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 41`] = `
+"SHA256=1a4af5653324e53df963cf1548dd0ccaa51d01a19c3d3cb1fe8316ccb75a3ffc
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 42`] = `
+"SHA256=1919dffece812fb4777b383300db367100e97ad19989d389f75f3ccdc3bde836
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 43`] = `
+"SHA256=044f53a23e1f24ca21558dcfaece917fc2b272a8e1d7d863b7f643ae1d87dc75
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 44`] = `
+"SHA256=c7c633c8f5501d289705717d2a174414395e8397d993b2c2dfdd1262ca475c41
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 45`] = `
+"SHA256=7d992006d1c6fcf05895705d68b2c45a692c0afbc12185f0197ec06dd1c0f1ee
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 46`] = `
+"SHA256=588f6601ec70fab1d8ad5b998843960665843f371a67216aa817112a9a37db09
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 47`] = `
+"SHA256=c7f46322053ecae9cfeadb8c52cc2a49f7037376662dd3ceb1f6b193100d64d2
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 48`] = `
+"SHA256=13ebf10e4d8c7d598625b93f007be806e3f2b8ffcc035403bde0ac5009e0234c
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 49`] = `
+"SHA256=0ad97bc07ed2b6048c0ef1aacc519f7211f7d840cee8694f3662e1d9f097d200
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 50`] = `
+"SHA256=a6dbc6834d252ade360f7cc7e459e1f7ac34056f796b6d8c43de7529b57900ae
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 51`] = `
+"SHA256=b062b78b6ced50413283e8c7f500dfbd9c5ba192af06238718c9c51186411378
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 52`] = `
+"SHA256=c6c91b3514d56e206db6bff62ee2b16907420e6108945ce4f25fd273cc935230
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 53`] = `
+"SHA256=da8ce17fc0182531bff8272e5291287802cdaabc3f5c8b43a108db16056dce69
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 54`] = `
+"SHA256=97c553f164236f862279d5f49f072f8f86a7695da557b2153f4e6ba3d18f4c10
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 55`] = `
+"SHA256=5b01e34db2711a9251967c69dcb8fd430adc25d35f6d93ec2c47a3b50af6b3c1
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 56`] = `
+"SHA256=3a64dfd5811307eb7c793a276f46313c4ace64f6a82e528b0a4baec241d23a8f
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 57`] = `
+"SHA256=91c2f49d0870411563fa4ec93f28997d01861c49d6f10587e8c774812d82ddfc
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 58`] = `
+"SHA256=f28c4706d367c8d0f8838857b92e27d4d060e1fd54d37189e481c6f30a004b4a
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 59`] = `
+"SHA256=265215dd165fac8724064169d89be7e9b3d2a7f866e4ac8c2d3dd0a4131aebaf
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 60`] = `
+"SHA256=9ff53e9309485f17123eebc98c43a1c5415063f783cbb0881253098a2362323d
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 61`] = `
+"SHA256=870f34e9b5789320ac4364170f0b233875b89baa9b0ff804a31363abaf76d3cd
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 62`] = `
+"SHA256=1f9d1d7cbe3acb16d8504ac9bd8712d405afdfcdf134a268f70270db98b11d7d
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 63`] = `
+"SHA256=00634827ca4d717d7157213fe21a4ca4f31f5b759142faff90e3ba38cf6b188a
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 64`] = `
+"SHA256=e8270aedf001b4512e01bd9d36ef7c0044467af652359efe69faf55a857e8cdc
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 65`] = `
+"SHA256=5680079fca2c7bdef11294b84e0a27d7cb700d88eb536e61fe4937fb023ae3c3
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 66`] = `
+"SHA256=5268174da77881ff8e6d2e6b2fce5dd560695f2382ace966a675a377d068101c
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 67`] = `
+"SHA256=78598f9cb1baa97380896b4ffcc42d2d9e1d6498f365eef331ff6c4b0588c2cd
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 68`] = `
+"SHA256=e48a1419e149fff1a14220f02c9269bdf96101c576de6185fa64eac043a90ac4
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 69`] = `
+"SHA256=a914a48b55cb71831b4df8f0ca9cc699e4720f1f82b304350624cdec75286250
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 70`] = `
+"SHA256=740f3356e69351cafbd117cdf96b6196c0850d8e3eb3cc3cec0fc81d9a0a25bb
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 71`] = `
+"SHA256=c5d7b59ff4dd47bb9d561380ca286721e09d7dcbedc80a35d3cd1f396743e27b
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 72`] = `
+"SHA256=86172180a391039a653cb26e17448690cfab28024791215596d2586381a2543e
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 73`] = `
+"SHA256=3df457860595db8d1c253807fc04965099cce390c3da0b1675100109d3e0f630
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 74`] = `
+"SHA256=9832960dc7a7f0542d18a176910fe5bc5c66ebabd3b140b7e62eacbb18bdfe62
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 75`] = `
+"SHA256=164ef8400e62d4c23ec59c5b362bfccfbdd00eb76fe71e2da41e1f320d06a2fd
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 76`] = `
+"SHA256=595b7619ff720e1a38c81876f712e02502c0f69769f43194fb895e082acf70db
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 77`] = `
+"SHA256=7f2101dcc851556920c9d6c37335d9c949dbe95f4c97ec64774d917088a610e8
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 78`] = `
+"SHA256=5d6d125160b42fac4483e0ee347b30adbd93e71e7f011afce883bf8c2ee7edde
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 79`] = `
+"SHA256=fb12b01e6baedc78b23d6fb88b2c58ddeafa9ecd928a22e3b4240298a5e9ca45
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 80`] = `
+"SHA256=87106737724e45939665026557aab0f824209b36d71da91c54ed6138b3e6d845
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 81`] = `
+"SHA256=750e90ab55d74df317d710e0fa737957cbe9a3d5a0cf0aeaa3c768a1d4bd29d3
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 82`] = `
+"SHA256=3256ac07f95a69bd771f21d56a3f91ae994499ae526e8aacc0c05160a3f78ac5
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 83`] = `
+"SHA256=af996d1c03f9c7148cb67724450cb136ed7c30afcb4b7dcbb9de46dee60ee7a3
+"
+`;
+
+exports[`Rendering content in containers BL_in_R 84`] = `
+"SHA256=0e49d8c22b43b34cde39ce023a9dbb9b3ce4e4252f424b963470d9b1722e3929
+"
+`;
+
+exports[`Rendering specific BL-RE_in_K_C_TL_Q-F_100 1`] = `
+"SHA256=a0aa725411c57f5d38aae621d0e883dad77cdfa3d76ba31c91fa68cf0bd86858
+"
+`;
+
+exports[`Rendering specific BL-RE_in_S_C_TL_Q-F_100 1`] = `
+"SHA256=bf55b9d245c0c397d69850fee3cf770b006565dd8ac7d703d3adf59b63a97b3c
+"
+`;
+
+exports[`Rendering specific BL-RE_in_T_C_TL_Q-F_100 1`] = `
+"SHA256=e7926a425e3166551282708d77b327260b416ca00a809017723eb4a6983198ee
 "
 `;

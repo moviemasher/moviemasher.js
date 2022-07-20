@@ -5,7 +5,7 @@ import { RenderingOutputClass } from "./RenderingOutputClass"
 export class AudioOutputClass extends RenderingOutputClass implements AudioOutput {
   declare args: AudioOutputArgs
 
-  avType = AVType.Audio
+  _avType = AVType.Audio
 
   outputType = OutputType.Audio
 }

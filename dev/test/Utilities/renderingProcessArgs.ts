@@ -1,3 +1,4 @@
+import path from "path"
 import { idGenerate } from "../../../packages/moviemasher.js/src/Utility/Id"
 
 import {
@@ -11,6 +12,6 @@ export const renderingProcessTestArgs = (id?: string) => {
     outputDirectory: `${TestRenderOutput}/${definedId}`,
     filePrefix: TestFilePrefix,
     defaultDirectory: 'shared',
-    validDirectories: [],
+    validDirectories: [path.resolve(TestRenderOutput)],
     id: definedId,
 }}

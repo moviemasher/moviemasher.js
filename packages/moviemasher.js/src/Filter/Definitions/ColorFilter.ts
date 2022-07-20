@@ -1,25 +1,29 @@
 import { SvgContent } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { pixelColor } from "../../Utility/Pixel"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { NamespaceSvg } from "../../Setup/Constants"
-import { assertAboveZero, assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { colorWhite, colorWhiteOpaque } from "../../Utility/Color"
+import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
+import { arrayLast } from "../../Utility/Array"
+import { ColorizeFilter } from "./ColorizeFilter"
+import { assertSize } from "../../Utility/Size"
 
 /**
  * @category Filter
  */
-export class ColorFilter extends FilterDefinitionClass {
+export class ColorFilter extends ColorizeFilter {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      tweenable: true, name: 'color', type: DataType.Rgb
+      tweenable: true, name: 'color', type: DataType.String
     }))
     
-    const keys = ['x', 'y', 'width', 'height']
+    const keys = ['width', 'height']
     keys.forEach(name => {
       this.properties.push(propertyInstance({ 
         tweenable: true, name, type: DataType.Number 
@@ -28,59 +32,107 @@ export class ColorFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
+  alpha = false
+
+
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
     const { filter, videoRate, duration } = args
     assertAboveZero(videoRate, 'videoRate')
 
-    const x = filter.value('x')
-    const y = filter.value('y')
-    const width = filter.value('width')
-    const height = filter.value('height')
-    const color = filter.value('color')
-    
-
-    
-    // make larger rect and crop if x/y > 0 or duration
-    // use geq to fade colors
-  
-
-    if (duration) {
-
-      const xEnd = filter.value(`x${PropertyTweenSuffix}`)
-      const yEnd = filter.value(`y${PropertyTweenSuffix}`)
-      const widthEnd = filter.value(`width${PropertyTweenSuffix}`)
-      const heightEnd = filter.value(`height${PropertyTweenSuffix}`)
-      const colorEnd = filter.value(`color${PropertyTweenSuffix}`)
-    }
-    
-
-    assertPopulatedString(color)
-    assertAboveZero(width, 'width')
-    assertAboveZero(height, 'height')
-    
     const { ffmpegFilter } = this
-    const commandFilter: CommandFilter = {
-      inputs: [], ffmpegFilter, 
-      options: { color, rate: videoRate, size: [width, height].join('x') },
-      outputs: [idGenerate(ffmpegFilter)]
+    let filterInput = idGenerate(ffmpegFilter)
+   
+    const color = filter.value('color')
+    assertPopulatedString(color)
+
+    const colorEnd = duration ? filter.value(`color${PropertyTweenSuffix}`) : undefined
+    const tweeningColor = isPopulatedString(colorEnd) && color !== colorEnd
+    const scalars = filter.scalarObject(!!duration)
+    assertSize(scalars)
+
+    const { width, height } = scalars
+  
+    let tweeningSize = false
+    const startSize = { width, height }
+    const endSize = { width, height }
+  
+    if (duration) {
+      const { 
+        [`width${PropertyTweenSuffix}`]: widthEnd = width, 
+        [`height${PropertyTweenSuffix}`]: heightEnd = height, 
+      } = scalars
+      assertNumber(widthEnd)
+      assertNumber(heightEnd)
+      tweeningSize = !(width === widthEnd && height === heightEnd)
+      if (tweeningSize) {
+        endSize.width = widthEnd
+        endSize.height = heightEnd
+      }
     }
-    if (isAboveZero(duration)) commandFilter.options.duration = duration
-    commandFilters.push(commandFilter)
+    const maxSize = tweeningSize ? tweenMaxSize(startSize, endSize) : startSize
+     
+  
+    const colorCommandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter, 
+      options: { 
+        color, rate: videoRate, 
+        size: Object.values(maxSize).join('x') 
+      },
+      outputs: [filterInput]
+    }
+    if (isAboveZero(duration)) colorCommandFilter.options.duration = duration
+    commandFilters.push(colorCommandFilter)
+
+    // console.log(this.constructor.name, "commandFilters", tweeningColor, color, colorEnd, duration)
+
+    if (tweeningColor) {
+      const fadeFilter = 'fade'
+      const fadeFilterId = idGenerate(fadeFilter)
+      const fadeCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: fadeFilter, 
+        options: { 
+          type: 'out',
+          color: colorEnd, duration,
+        },
+        outputs: [fadeFilterId]
+      }
+      commandFilters.push(fadeCommandFilter)
+      filterInput = fadeFilterId
+    }
+
+    if (tweeningSize) {
+      
+
+
+      const scaleFilter = 'scale'
+      const scaleFilterId = idGenerate(scaleFilter)
+      const position = tweenPosition(videoRate, duration)
+      const scaleCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: scaleFilter, 
+        options: { 
+          eval: 'frame',
+          width: tweenOption(startSize.width, endSize.width, position),
+          height: tweenOption(startSize.height, endSize.height, position),
+        },
+        outputs: [scaleFilterId]
+      }
+      commandFilters.push(scaleCommandFilter)
+      // filterInput = scaleFilterId
+    }
     return commandFilters
   }
+  _ffmpegFilter = 'color'
 
   filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent {
     const { filter } = args
     const valueObject = filter.scalarObject(false)
-    const { x, y, width, height, color } = valueObject
+    const { width, height, color } = valueObject
     assertPopulatedString(color)
 
     const rectElement = globalThis.document.createElementNS(NamespaceSvg, 'rect')
     rectElement.setAttribute('width', String(width))
     rectElement.setAttribute('height', String(height))
-    rectElement.setAttribute('x', String(x))
-    rectElement.setAttribute('y', String(y))
     rectElement.setAttribute('fill', pixelColor(color))
     return rectElement
   }

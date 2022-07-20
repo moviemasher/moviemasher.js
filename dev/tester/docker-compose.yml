@@ -1,0 +1,18 @@
+version: "3"
+services:
+  tester:
+    build:
+      dockerfile: dev/test/Dockerfile.cnf
+      context: ../../
+    image: moviemasher/moviemasher.tester:5.0.7
+    container_name: moviemasher-tester
+    command: test.e2e.ts
+    volumes:
+      - ../../dev/:/home/node/app/dev/
+      - ../../packages/:/home/node/app/packages/
+      - ../../temporary/test:/home/node/app/temporary/test
+      - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
+      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
+      - ../tester/:/home/node/app/workspaces/tester/
+      - ./jest-puppeteer.config.js:/home/node/app/jest-puppeteer.config.js
+      - ./package.json:/home/node/app/package.json

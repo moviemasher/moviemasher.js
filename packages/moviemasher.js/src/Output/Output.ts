@@ -4,20 +4,19 @@ import { RenderingDescription, RenderingResult } from "../Api/Rendering"
 import { Mash, Mashes } from "../Edited/Mash/Mash"
 import { StreamingDescription } from "../Api/Streaming"
 import { Time } from "../Helpers/Time/Time"
+import { Size } from "../Utility/Size"
 
-export interface CommandOutput extends UnknownObject {
+export interface CommandOutput extends UnknownObject, Partial<Size> {
   audioBitrate?: Value
   audioChannels?: number
   audioCodec?: string
   audioRate?: number
   extension?: string
   format?: OutputFormat
-  height?: number
   options?: ValueObject
   videoBitrate?: Value
   videoCodec?: string
   videoRate?: number
-  width?: number
 }
 
 export interface RenderingCommandOutput extends CommandOutput {
@@ -83,6 +82,7 @@ export interface WaveformOutput extends RenderingOutput {}
 
 export interface VideoOutputArgs extends RenderingOutputArgs {
   cover?: boolean
+  mute?: boolean
 }
 export interface VideoOutput extends RenderingOutput {}
 

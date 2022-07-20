@@ -1,5 +1,5 @@
 import {
-  OutputType, RenderingCommandOutput, Dimensions,
+  OutputType, RenderingCommandOutput, Size,
   RenderingStartRequest, RenderingStartResponse,
   RenderingStatusResponse, RenderingStatusRequest,
   RenderingUploadRequest, RenderingUploadResponse,
@@ -14,8 +14,8 @@ export type RenderingCommandOutputs = {
 export interface RenderingServerArgs extends ServerArgs {
   cacheDirectory: string
   commandOutputs?: RenderingCommandOutputs
-  previewDimensions?: Dimensions
-  outputDimensions?: Dimensions
+  previewSize?: Size
+  outputSize?: Size
 }
 
 export interface RenderingServer extends Server {

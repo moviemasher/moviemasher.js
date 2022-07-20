@@ -7,6 +7,7 @@ import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { idGenerate } from "../../Utility/Id"
+import { tweenPosition } from "../../Utility/Tween"
 
 export class OpacityFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
@@ -24,18 +25,35 @@ export class OpacityFilter extends FilterDefinitionClass {
   }
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
-    const { filterInput, filter, duration } = args
+    const commandFilters: CommandFilters = []
+    // return commandFilters
+    const { filterInput: input, filter, duration, videoRate } = args
     
     const opacity = filter.value('opacity')
-    const opacityEnd = filter.value(`opacity${PropertyTweenSuffix}`)
-
     assertNumber(opacity)
+    let filterInput = input
+    assertPopulatedString(filterInput, 'filterInput')
     assertPopulatedString(filterInput)
-    const options: ValueObject = { r: 'r(X,Y)' }
-    if (isNumber(opacityEnd)) {
-      const toValue = opacityEnd - opacity
-      options.a = `(alpha(X,Y)*(${opacity}+(${toValue}*(T/${duration}))))`
-    } else options.a = opacity
+
+    // const setptsFilter = 'setpts'
+    // const setptsId = idGenerate(setptsFilter)
+    // const setptsCommandFilter: CommandFilter = {
+    //   inputs: [filterInput], ffmpegFilter: setptsFilter, 
+    //   options: { expr: 'PTS-STARTPTS' }, outputs: [setptsId]
+    // }
+    // commandFilters.push(setptsCommandFilter)
+    // filterInput = setptsId
+ 
+
+    const options: ValueObject = { r: 'r(X,Y)', a: `alpha(X,Y)*${opacity}` }
+    if (duration) {
+      const opacityEnd = filter.value(`opacity${PropertyTweenSuffix}`)
+      if (isNumber(opacityEnd) && opacity != opacityEnd) {
+        const position = tweenPosition(videoRate, duration, 'N')
+        const toValue = opacityEnd - opacity
+        options.a = `alpha(X,Y)*(${opacity}+(${toValue}*${position}))`
+      }
+    }
 
     const formatFilter = 'format'
     const formatId = idGenerate(formatFilter)
@@ -43,12 +61,17 @@ export class OpacityFilter extends FilterDefinitionClass {
       inputs: [filterInput], ffmpegFilter: formatFilter, 
       options: { pix_fmts: 'rgba' }, outputs: [formatId]
     }
+    commandFilters.push(formatCommandFilter)
+    filterInput = formatId
+
+
     const { ffmpegFilter } = this
     const commandFilter: CommandFilter = {
-      inputs: [formatId], ffmpegFilter, 
+      inputs: [filterInput], ffmpegFilter, 
       options, outputs: [idGenerate(ffmpegFilter)]
     }
-    return [formatCommandFilter, commandFilter]
+    commandFilters.push(commandFilter)
+    return commandFilters
   }
   
   _ffmpegFilter = 'geq'

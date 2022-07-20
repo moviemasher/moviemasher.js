@@ -1,5 +1,5 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
-import { AudibleSource, LoadedAudio } from "../../declarations"
+import { AudibleSource, LoadedAudio, ValueObject } from "../../declarations"
 import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { Loader } from "../../Loader/Loader"
@@ -52,26 +52,10 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
 
-
-    graphFiles(args: GraphFileArgs): GraphFiles {
-      const { editing, audible, time } = args
-      if (!audible) return []
-
-      if (editing && !time.isRange) return []
-
-      const graphFile: GraphFile = {
-        type: LoadType.Audio, file: this.urlAudible, definition: this, input: true,
-      }
-      return [graphFile]
-    }
-
     loop = false
 
     urlAudible: string
-
-
+    
     waveform?: string
-
-
   }
 }

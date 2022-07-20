@@ -3,7 +3,7 @@ import { Errors } from "../Setup/Errors"
 import { Loader, LoaderFile } from "./Loader"
 import { Definition } from "../Definition/Definition"
 import { assertAboveZero, isAboveZero } from "../Utility/Is"
-import { isUpdatableDimensionsDefinition } from "../Mixin/UpdatableDimensions/UpdatableDimensions"
+import { isUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { UnknownObject } from "../declarations"
 import { isPreloadableDefinition } from "../Mixin"
@@ -34,7 +34,7 @@ export class LoaderClass implements Loader {
 
   key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
 
-  loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
+  private loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
     const key = this.key(graphFile)
     const { definition } = graphFile
     if (isPreloadableDefinition(definition) || isFontDefinition(definition)) {
@@ -53,6 +53,7 @@ export class LoaderClass implements Loader {
   }
 
   loadFilesPromise(graphFiles: GraphFiles): Promise<GraphFiles> {
+    // console.log(this.constructor.name, "loadFilesPromise", graphFiles.length)
     return Promise.all(graphFiles.map(graphFile => this.loadFilePromise(graphFile)))
   }
 
@@ -83,13 +84,14 @@ export class LoaderClass implements Loader {
     }
   }
 
-  protected updateDefinitionDimensions(definition: Definition, size: UnknownObject) {
-    if (!isUpdatableDimensionsDefinition(definition)) return 
+  protected updateDefinitionSize(definition: Definition, size: UnknownObject) {
+    // console.log(this.constructor.name, "updateDefinitionSize")
+    if (!isUpdatableSizeDefinition(definition)) return 
     
     const { width: definitionWidth, height: definitionHeight } = definition
     const { width: sourceWidth, height: sourceHeight } = size
 
-    // console.log(this.constructor.name, "updateDefinitionDimensions", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
+    // console.log(this.constructor.name, "updateDefinitionSize", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
     if (!isAboveZero(definitionWidth)) {
       assertAboveZero(sourceWidth, 'source width')
       definition.width = sourceWidth

@@ -9,7 +9,7 @@ import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { VisibleClip } from "../Media/VisibleClip/VisibleClip"
 import { Defined } from "../Base/Defined"
 import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
-import { assertUpdatableDimensionsDefinition } from "../Mixin/UpdatableDimensions/UpdatableDimensions"
+import { assertUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 
 describe("OutputFactory", () => {
   describe("video", () => {
@@ -69,7 +69,7 @@ describe("OutputFactory", () => {
 
         const { content } = clip
         const { definition } = content
-        assertUpdatableDimensionsDefinition(definition)
+        assertUpdatableSizeDefinition(definition)
         expect(source).toBe(definition.source)
       })
     })

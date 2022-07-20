@@ -25,6 +25,10 @@ export interface Command extends EventEmitter {
   run(): void
   output(destination: CommandDestination): Command
   save(output: string): Command
+  
+  mergeAdd(file: string): Command
+  mergeToFile(destination: CommandDestination): Command
+
   kill(signal: string): void
   ffprobe(callback: CommandProbeFunction): void
   _getArguments(): string[]

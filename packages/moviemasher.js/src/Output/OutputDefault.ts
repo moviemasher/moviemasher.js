@@ -19,7 +19,7 @@ export const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandO
 export const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultVideoJson as RenderingCommandOutput
-  return { ...commandOutput,  ...object }
+  return { ...commandOutput, ...object }
 }
 export const outputDefaultImageSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}

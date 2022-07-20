@@ -11,7 +11,6 @@ export type DefinitionTypeElements = {
   [key in DefinitionType]?: UnknownElement
 }
 
-
 export const DefinitionTypeInputs: DefinitionTypeElements = {}
 
 export const DataTypeInputs: DataTypeElements = {

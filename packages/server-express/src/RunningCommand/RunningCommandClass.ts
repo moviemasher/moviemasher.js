@@ -2,12 +2,13 @@ import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
 import {
-  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters, AVType
+  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters, AVType, isString, assertPopulatedString, isPopulatedString, assertPopulatedArray
 } from "@moviemasher/moviemasher.js"
 
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
+import { commandArgsString } from "../Utilities/Command"
 
 export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {
@@ -29,6 +30,7 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     if (this._commandProcess) return this._commandProcess
 
     const { commandInputs: inputs, commandFilters, output, avType } = this
+    
     const commandOptions: CommandOptions = { commandFilters, inputs, output, avType }
     return this._commandProcess = commandInstance(commandOptions)
   }
@@ -56,8 +58,10 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     // console.log(this.constructor.name, "run", destination)
 
     this.command.on('error', (...args: any[]) => {
-      console.error(this.constructor.name, "run received error", this.runError(...args))
-      this.emit('error', this.runError(...args))
+      const destinationString = isPopulatedString(destination) ? destination : ''
+      const errorString = this.runError(destinationString, ...args)
+      console.error(this.constructor.name, "run on error", errorString)
+      this.emit('error', errorString)
     })
     this.command.on('start', (...args: any[]) => {
       this.emit('start', ...args)
@@ -66,7 +70,6 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
       this.emit('end', ...args)
     })
     if (typeof destination === 'string') {
-      // console.log(this.constructor.name, "run", destination)
       this.makeDirectory(destination)
 
     }
@@ -78,37 +81,27 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     }
   }
 
-  runError(...args: any[]): string {
-    return [...this.command._getArguments(), ...args].join("\n")
+  runError(destination: string, ...args: any[]): string {
+    return commandArgsString(this.command._getArguments(), destination, ...args) 
   }
 
-  async runPromise(destination: CommandDestination): Promise<CommandResult> {
-    // console.log(this.constructor.name, "runPromise", destination)
-    const promise = new Promise<CommandResult>(resolve => {
-      this.command.on('error', (...args: any[]) => {
-        const error = this.runError(...args)
-        console.error(this.constructor.name, "runPromise received error event", error)
-        resolve({ error })
-      })
-      this.command.on('end', () => {
-        // console.log(this.constructor.name, "runPromise received end event", this.command._getArguments())
 
-        const result: CommandResult = {}
-        resolve(result)
+  runPromise(destination: CommandDestination): Promise<CommandResult> {
+    assertPopulatedString(destination)
+
+    const result: CommandResult = {}
+    const promise = new Promise<CommandResult>((resolve, reject) => {
+      const { command } = this
+      command.on('error', (...args: any[]) => {
+        reject({ error: this.runError(destination, ...args)})
       })
+      command.on('end', () => { resolve(result) })
       try {
-        if (typeof destination === 'string') {
-          this.makeDirectory(destination)
-
-          // console.log(this.constructor.name, "runPromise calling save")
-
-          this.command.save(destination)
-        }
-        else console.log(this.constructor.name, "runPromise destination not string", destination)
+        this.makeDirectory(destination)
+        command.save(destination)
       }
       catch (error) {
-        console.error(this.constructor.name, "runPromise resolving during catch")
-        resolve({ error: this.runError(error) })
+        reject({ error: this.runError(destination, error) })
       }
     })
     return promise

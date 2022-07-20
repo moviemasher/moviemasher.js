@@ -8,7 +8,8 @@ import {
   EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
   Errors, LoaderClass, GraphFileType, LoaderFile, Definition,
   LoaderSource,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableDimensionsDefinition, PopulatedString} from '@moviemasher/moviemasher.js'
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString
+} from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
 import { probingInfoPromise } from '../Command/Probing'
@@ -32,19 +33,24 @@ export class NodeLoader extends LoaderClass {
     const { duration, width, height } = loadedInfo
 
     const dimensions = { width, height }
-    this.updateDefinitionDimensions(definition, dimensions)
+    this.updateDefinitionSize(definition, dimensions)
     this.updateDefinitionDuration(definition, duration)
     
   }
 
   protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
+    // console.log(this.constructor.name, "filePromise", key)
     const { definition } = graphFile
     const definitions = new Map<string, Definition>()
     definitions.set(definition.id, definition)
     const preloaderSource: LoaderSource = { loaded: false, definitions }
     if (fs.existsSync(key)) {
+      // console.log(this.constructor.name, "filePromise existent")
       preloaderSource.promise = this.updateSources(key, preloaderSource, graphFile)
     } else {
+
+      // console.log(this.constructor.name, "filePromise nonexistent")
+
       const { filePrefix } = this
       if (key.startsWith(filePrefix)) throw Errors.uncached + ' filePromise ' + key
 
@@ -61,9 +67,12 @@ export class NodeLoader extends LoaderClass {
 
   key(graphFile: GraphFile): string {
     const { type, file, resolved } = graphFile
+    // console.log(this.constructor.name, "key", type, file, resolved)
     if (resolved) return resolved
 
-    assertPopulatedString(file)
+    const { definition, ...rest } = graphFile
+
+    assertPopulatedString(file, JSON.stringify(rest))
 
     const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this
     if (isLoadType(type)) {
@@ -73,11 +82,14 @@ export class NodeLoader extends LoaderClass {
 
       const resolved = path.resolve(filePrefix, defaultDirectory, file)
       const directories = [defaultDirectory, ...validDirectories]
-      const prefixes = [path.resolve(cacheDirectory), ...directories.map(dir => path.resolve(filePrefix, dir))]
+      const prefixes = [path.resolve(cacheDirectory), 
+        ...directories.map(dir => path.resolve(filePrefix, dir))
+      ]
       const valid = prefixes.some(prefix => resolved.startsWith(prefix))
 
       if (!valid) throw Errors.invalid.url + resolved
 
+      graphFile.resolved = resolved
       return resolved
     }
     const fileName = this.graphFileTypeBasename(type, file) 
@@ -118,7 +130,7 @@ export class NodeLoader extends LoaderClass {
       const trimmable = isUpdatableDurationDefinition(definition)
       if (trimmable && !isAboveZero(definition.duration)) return true
 
-      return isUpdatableDimensionsDefinition(definition) && !isAboveZero(definition.width)
+      return isUpdatableSizeDefinition(definition) && !isAboveZero(definition.width)
     })
   }
 
@@ -139,12 +151,14 @@ export class NodeLoader extends LoaderClass {
     if (!isLoadType(type)) return Promise.resolve()
 
     const neededDefinitions = this.updateableDefinitions(preloaderSource)
+        // console.log(this.constructor.name, "updateSources", neededDefinitions.length)
+
     if (!neededDefinitions.length) return Promise.resolve()
 
     const preloaderFile = preloaderSource as LoaderFile
 
     const infoPath = path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
-    // console.log(this.constructor.name, "fileInfoPromise", infoPath)
+    // console.log(this.constructor.name, "updateSources", infoPath)
     return probingInfoPromise(key, infoPath).then(info => {
       preloaderFile.loadedInfo = info
       return info

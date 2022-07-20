@@ -16,6 +16,7 @@ export class AddClipToTrackAction extends AddTrackAction {
   constructor(object : AddClipToTrackActionObject) {
     super(object)
     const { clip, createTracks, insertIndex, trackIndex } = object
+    // console.log(this.constructor.name, createTracks, trackIndex)
     this.clip = clip
     this.createTracks = createTracks
     this.insertIndex = insertIndex

@@ -1,13 +1,13 @@
-import { AVType, GraphFileType, LoadType, SelectType, TransformType } from "./Setup/Enums"
+import { AVType, GraphFileType, LoadType, SelectType } from "./Setup/Enums"
 import { Time, TimeRange } from "./Helpers/Time/Time"
 import { Definition } from "./Definition/Definition"
 import { Propertied, PropertiedChangeHandler } from "./Base/Propertied"
 import { Property } from "./Setup/Property"
 import { EmptyMethod } from "./Setup/Constants"
 import { Filter } from "./Filter/Filter"
-import { Point, Rect, Scalar, ValueObject } from "./declarations"
-import { Dimensions } from "./Setup/Dimensions"
-import { Evaluator } from "./Helpers/Evaluator"
+import { Scalar, ValueObject } from "./declarations"
+import { Size } from "./Utility/Size"
+import { RectTuple } from "./Utility/Rect"
 
 
 
@@ -55,40 +55,28 @@ export interface GraphFileOptions extends Partial<AVEditingArgs> {
 
 export interface GraphFileArgs extends AVEditingArgs {
   quantize: number
+  clipTime?: TimeRange
 }
+
+export type ColorTuple = [string, string]
 
 export interface CommandFileArgs {
   visible?: boolean
   time: Time
   quantize: number
-  outputDimensions?: Dimensions
-  containerRects?: Rect[]
-  colors?: Scalar[]
+  outputSize?: Size
+  containerRects?: RectTuple
+  contentColors?: ColorTuple
   videoRate: number
-}
-
-export interface ContentCommandFileArgs extends CommandFileArgs {
-  clipTime: TimeRange
-}
-
-export interface ContainerCommandFileArgs extends CommandFileArgs {
-  clipTime: TimeRange
+  clipTime?: TimeRange
 }
 
 export interface CommandFilterArgs extends CommandFileArgs {
+  track: number
+  container?: boolean
   commandFiles: CommandFiles
   chainInput: string
   filterInput?: string
-}
-
-export interface ContentCommandFilterArgs extends CommandFilterArgs {
-  clipTime: TimeRange
-}
-
-
-export interface ContainerCommandFilterArgs extends CommandFilterArgs {
-  filterInput: string
-  clipTime: TimeRange
 }
 
 export interface FilterArgs {
@@ -98,7 +86,7 @@ export interface FilterArgs {
 export interface FilterCommandFilterArgs extends FilterArgs {
   chainInput?: string, 
   filterInput?: string
-  dimensions?: Dimensions
+  dimensions?: Size
   videoRate: number
   duration: number
 }

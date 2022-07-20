@@ -1,6 +1,7 @@
-import { Rect, Scalar, SvgContent } from "../declarations"
-import { Dimensions, dimensionsCover } from "../Setup/Dimensions"
-import { CommandFiles, CommandFilters, ContentCommandFileArgs, ContentCommandFilterArgs, GraphFileArgs, GraphFiles, SelectedProperties } from "../MoveMe"
+import { Scalar, SvgContent } from "../declarations"
+import { Rect } from "../Utility/Rect"
+import { Size, dimensionsCover } from "../Utility/Size"
+import { CommandFilterArgs, CommandFilters, SelectedProperties } from "../MoveMe"
 
 import { Actions } from "../Editor/Actions/Actions"
 import { SelectType } from "../Setup/Enums"
@@ -14,17 +15,7 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
-    contentCommandFilters(args: ContentCommandFilterArgs): CommandFilters {
-      return []
-    }
-
-    contentCommandFiles(args: ContentCommandFileArgs): CommandFiles {
-      return this.graphFiles(args).map(file => ({ ...file, inputId: this.id }))
-    }
-
-    graphFiles(args: GraphFileArgs): GraphFiles { return [] }
-
-    intrinsicDimensions(): Dimensions { return { width: 0, height: 0 }}
+    intrinsicSize(): Size { return { width: 0, height: 0 }}
 
     mutable = false
 
@@ -46,26 +37,21 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     }
 
     contentSvg(containerRect: Rect, time: Time, range: TimeRange): SvgContent {
-      const [x] = this.tweenValues('x', time, range)
-      const [y] = this.tweenValues('y', time, range)
-      assertPositive(x)
-      assertPositive(y)
-      const intrinsicDimensions = this.intrinsicDimensions()
-      const coverDimensions = dimensionsCover(intrinsicDimensions, containerRect)
+      const [point] = this.tweenPoints(time, range)
+      const { x, y } = point
+      
+      const intrinsicSize = this.intrinsicSize()
+      const coverSize = dimensionsCover(intrinsicSize, containerRect)
       const rect = {
-        ...coverDimensions,
-        x: containerRect.x + (x * (containerRect.width - coverDimensions.width)),
-        y: containerRect.y + (y * (containerRect.height - coverDimensions.height)),
+        ...coverSize,
+        x: containerRect.x + (x * (containerRect.width - coverSize.width)),
+        y: containerRect.y + (y * (containerRect.height - coverSize.height)),
       }
-      return this.svgContent(rect)
+      return this.svgContent(rect, time, range)
     }
   
-    svgContent(rect: Rect): SvgContent {
+    svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent {
       throw new Error(Errors.unimplemented) 
     }
-    
-    private _overlayFilter?: Filter
-    get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
-
   }
 }

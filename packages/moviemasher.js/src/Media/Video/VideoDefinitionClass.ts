@@ -1,7 +1,6 @@
 import {
-  AudibleSource, UnknownObject, LoadVideoResult,
-  CanvasVisibleSource} from "../../declarations"
-import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
+  AudibleSource, UnknownObject, LoadVideoResult} from "../../declarations"
+import { GraphFile } from "../../MoveMe"
 import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
@@ -13,7 +12,7 @@ import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
-import { UpdatableDimensionsDefinitionMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsDefinitionMixin"
+import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { FilterDefinition } from "../../Filter/Filter"
 import { filterDefinitionFromId } from "../../Filter/FilterFactory"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
@@ -25,8 +24,8 @@ const VideoDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithTweenable)
 const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithContent)
 const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContainer)
-const VideoDefinitionWithUpdatableDimensions = UpdatableDimensionsDefinitionMixin(VideoDefinitionWithPreloadable)
-const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableDimensions)
+const VideoDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoDefinitionWithPreloadable)
+const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableSize)
 export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration implements VideoDefinition {
   constructor(...args: any[]) {
     super(...args)
@@ -53,23 +52,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
     return AudibleContextInstance.createBufferSource(audio)
   }
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
-    const files = super.graphFiles(args)
-    const file = this.file(args)
-    if (file) files.push(file)
-    return files
-  }
-
-  private file(args: GraphFileArgs): GraphFile | undefined {
-    const { editing, visible } = args
-    if (!visible) return
-
-    return {
-      definition: this,
-      file: this.preloadableSource(editing), type: this.loadType
-    }
-  }
-
   fps = Default.definition.video.fps
 
   fpsFilterDefinition: FilterDefinition
@@ -80,19 +62,19 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
 
   loadType = LoadType.Video
 
-  loadedVisible(preloader: Loader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
-    const rate = this.fps || quantize
-    const time = startTime.scale(rate)
+  // loadedVisible(preloader: Loader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
+  //   const rate = this.fps || quantize
+  //   const time = startTime.scale(rate)
 
-    const graphFile: GraphFile = {
-      type: LoadType.Video, file: this.url, input: true, definition: this
-    }
-    const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
-    if (!cached) return
+  //   const graphFile: GraphFile = {
+  //     type: LoadType.Video, file: this.url, input: true, definition: this
+  //   }
+  //   const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
+  //   if (!cached) return
 
-    const { video } = cached
-    return video
-  }
+  //   const { video } = cached
+  //   return video
+  // }
 
   pattern = '%.jpg'
 

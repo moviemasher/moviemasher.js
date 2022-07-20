@@ -3,18 +3,18 @@ import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } fr
 import { GenericFactory } from "../../declarations"
 import { FilterDefinition } from "../../Filter/Filter"
 import {
-  UpdatableDimensions, UpdatableDimensionsDefinition, UpdatableDimensionsDefinitionObject, UpdatableDimensionsObject
-} from "../../Mixin/UpdatableDimensions/UpdatableDimensions"
+  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject
+} from "../../Mixin/UpdatableSize/UpdatableSize"
 
-export interface ImageObject extends ContentObject, ContainerObject, UpdatableDimensionsObject {}
+export interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {}
 
-export interface ImageDefinitionObject extends ContentDefinitionObject, ContainerDefinitionObject, UpdatableDimensionsDefinitionObject {}
+export interface ImageDefinitionObject extends ContentDefinitionObject, ContainerDefinitionObject, UpdatableSizeDefinitionObject {}
 
-export interface Image extends Content, Container, UpdatableDimensions {
+export interface Image extends Content, Container, UpdatableSize {
   definition : ImageDefinition
 }
 
-export interface ImageDefinition extends ContainerDefinition, ContentDefinition, UpdatableDimensionsDefinition {
+export interface ImageDefinition extends ContainerDefinition, ContentDefinition, UpdatableSizeDefinition {
   instanceFromObject(object?: ImageObject): Image
 }
 

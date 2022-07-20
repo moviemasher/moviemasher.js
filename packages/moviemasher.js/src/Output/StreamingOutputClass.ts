@@ -1,6 +1,6 @@
 import {
   ValueObject} from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { GraphFiles, CommandFilters, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType } from "../Setup/Enums"
@@ -35,7 +35,7 @@ export class StreamingOutputClass implements StreamingOutput {
       const avType = AVType.Both
       mashes.forEach(mash => {
         const args: FilterGraphsOptions = {
-          size: this.outputDimensions,
+          size: this.outputSize,
           videoRate: this.args.commandOutput.videoRate!,
           graphType: GraphType.Cast,
           avType
@@ -58,7 +58,7 @@ export class StreamingOutputClass implements StreamingOutput {
 
   mashes: Mashes = []
 
-  get outputDimensions(): Dimensions {
+  get outputSize(): Size {
     const { width, height } = this.args.commandOutput
     return { width, height }
   }

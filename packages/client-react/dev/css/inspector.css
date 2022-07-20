@@ -13,13 +13,17 @@
   border-bottom: var(--border);
   text-transform: capitalize;
 }
+.moviemasher .editor .panel.inspector details>div.label-input {
+  display: grid;
+
+}
 
 .moviemasher .editor .panel.inspector details>div>label {
   text-transform: capitalize;
 }
 
 .moviemasher .editor .panel.inspector details>div>label:after {
-  content: ': ';
+  content: ':';
 }
 
 .moviemasher .editor .panel.inspector .content {

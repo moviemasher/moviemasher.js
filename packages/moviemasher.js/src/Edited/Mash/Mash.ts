@@ -1,6 +1,6 @@
 import {
   UnknownObject, Value, Described} from "../../declarations"
-import { AVType, TrackType } from "../../Setup/Enums"
+import { AVType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { Clip } from "../../Mixin/Clip/Clip"
 import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
@@ -14,13 +14,22 @@ import { DefinitionObjects } from "../../Definition/Definition"
 import { isObject } from "../../Utility/Is"
 import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
 
+export interface DefinitionReferenceObject {
+  definitionId: string
+  definitionType: DefinitionType
+  label: string
+}
 export interface MashDescription extends UnknownObject, Described {}
+
 export interface MashObject extends EditedObject {
+  definitionReferences?: DefinitionReferenceObjects
   gain?: Value
   tracks?: TrackObject[]
   frame?: number
   rendering?: string
 }
+
+export type DefinitionReferenceObjects = DefinitionReferenceObject[]
 
 export interface MashAndDefinitionsObject {
   mashObject: MashObject

@@ -2,9 +2,11 @@ import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertAboveZero, assertPopulatedString } from "../../Utility/Is"
+import { assertPopulatedString, isNumber } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { ValueObject } from "../../declarations"
+import { tweenOption, tweenPosition } from "../../Utility/Tween"
 
 /**
  * @category Filter
@@ -32,16 +34,27 @@ export class ScaleFilter extends FilterDefinitionClass {
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
-    const { filter, duration, filterInput } = args
+    const { filter, duration, filterInput, videoRate } = args
     const values = filter.scalarObject(!!duration)
-    const { width, height } = values
+    const { 
+      width, height, 
+      [`width${PropertyTweenSuffix}`]: widthEnd,
+      [`height${PropertyTweenSuffix}`]: heightEnd,
+    } = values
     assertPopulatedString(filterInput)
-    assertAboveZero(width)
-    assertAboveZero(height)
+    
     const { ffmpegFilter } = this
   
+    const position = tweenPosition(videoRate, duration)
+    const options: ValueObject = {
+      width: tweenOption(width, widthEnd, position, true),
+      height: tweenOption(height, heightEnd, position, true),
+    }
+    if (!(isNumber(options.width) && isNumber(options.height))) options.eval = 'frame'
+
     const commandFilter: CommandFilter = {
-      inputs: [filterInput], ffmpegFilter, options: { width, height }, outputs: [idGenerate(ffmpegFilter)]
+      inputs: [filterInput], ffmpegFilter, options, 
+      outputs: [idGenerate(ffmpegFilter)]
     }
     commandFilters.push(commandFilter)
     return commandFilters

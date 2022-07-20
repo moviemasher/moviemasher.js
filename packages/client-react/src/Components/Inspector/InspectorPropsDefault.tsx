@@ -43,7 +43,7 @@ export const DefaultInspectorProps: PropsMethod<InspectorPropsDefault, Inspector
   ]
 
 
-  optionsStrict.content.children ||= <InspectorProperties><label /></InspectorProperties>
+  optionsStrict.content.children ||= <InspectorProperties/>
 
   optionsStrict.content.props!.label ||= '--clip-label'
 

@@ -1,21 +1,24 @@
 
 const defaults = {
   verbose: true,
+  bail: 1,
+  maxWorkers: 1, 
   cache: false,
   automock: false,
   rootDir: "./",
   globals: {
     'ts-jest': {
       tsconfig: {
-        "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
-        "target": "ES2015",
-        "esModuleInterop": true,
-        "strict": true,
         "allowJs": true,
-        "checkJs": false,
-        "resolveJsonModule": true,
-        "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "checkJs": false,
+        "esModuleInterop": true,
+        "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "strict": true,
+        "target": "ESNext",
       }
     }
   },
@@ -26,6 +29,7 @@ module.exports = {
   projects: [
     {
       ...defaults,
+      displayName: "Jester",
       coverageDirectory: "./temporary/test/coverage",
       collectCoverageFrom: ["./src/**/*.ts"],
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.setup.js"],
@@ -33,6 +37,7 @@ module.exports = {
       testEnvironment: "jsdom",
     }, {
       ...defaults,
+      displayName: "Tester",
       preset: "jest-puppeteer",
       testRegex: 'packages/.*\\.test\\.e2e\\.ts$',
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.puppeteer.setup.js"],

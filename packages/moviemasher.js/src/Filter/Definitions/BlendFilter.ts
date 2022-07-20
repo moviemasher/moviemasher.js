@@ -1,19 +1,19 @@
 import { DataType } from "../../Setup/Enums"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { Modes } from "../../Setup/Modes"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { propertyInstance } from "../../Setup/Property"
-import { assertDimensions, assertNumber, assertPoint, assertPopulatedString, isNumeric } from "../../Utility/Is"
-import { Scalar, ScalarObject, SvgFilters, Value, ValueObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
+import { assertNumber, assertPopulatedString, assertPositive, isNumeric } from "../../Utility/Is"
+import { Scalar, ScalarObject, SvgFilters } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { ModesFfmpeg } from "../../Setup/Modes"
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { OpacityFilter } from "./OpacityFilter"
 import { OverlayFilter } from "./OverlayFilter"
 import { idGenerate } from "../../Utility/Id"
 import { arrayLast } from "../../Utility/Array"
+import { assertSize } from "../../Utility/Size"
+import { colorBlackOpaque, colorBlackTransparent, colorWhiteTransparent } from "../../Utility/Color"
 
+
+const BlendWhiteModes = [3]
 /**
  * @category Filter
  */
@@ -24,31 +24,54 @@ export class BlendFilter extends OverlayFilter {
     this.populateParametersFromProperties()
   }
 
-
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
-    const { chainInput, filterInput, filter, duration, dimensions, videoRate } = args
+    const { chainInput, filterInput: input, filter, duration, dimensions, videoRate } = args
+    let filterInput = input
     assertPopulatedString(chainInput, 'chainInput')
     assertPopulatedString(filterInput, 'filterInput')
-    assertDimensions(dimensions)
+    assertSize(dimensions)
 
     const commandFilters:CommandFilters = []
-    const transparentCommandFilter = this.transparentCommandFilter(dimensions, videoRate, duration)
-    commandFilters.push(transparentCommandFilter)
-    const transparentId = arrayLast(transparentCommandFilter.outputs)
-        
-    const superArgs = { ...args, chainInput: transparentId }
-    commandFilters.push(...super.commandFilters(superArgs))
-    const lastFilter = arrayLast(commandFilters)
-
-    const { ffmpegFilter } = this
-    const superId = idGenerate(ffmpegFilter)
-    lastFilter.outputs = [superId]
-   
     const mode = filter.value('mode')
+    assertPositive(mode)
     const modeString = this.modeString(mode, false)
+    const color = BlendWhiteModes.includes(mode) ? colorWhiteTransparent : colorBlackTransparent
+    const colorFilter = this.colorCommandFilter(dimensions, videoRate, duration, color)
+    commandFilters.push(colorFilter)
+
+    filterInput = arrayLast(colorFilter.outputs)
+        
+    const overlayId = idGenerate('overlay')
+    const superArgs = { ...args, chainInput: filterInput }
+    commandFilters.push(...super.commandFilters(superArgs))
+
+    arrayLast(commandFilters).outputs = [overlayId]
+    filterInput = overlayId
+
+    const formatFilter = 'format'
+    const formatFilterId = idGenerate(formatFilter)
+    const formatCommandFilter: CommandFilter = {
+      inputs: [filterInput], ffmpegFilter: formatFilter, 
+      options: { pix_fmts: 'rgba' },
+      outputs: [formatFilterId]
+    }
+    commandFilters.push(formatCommandFilter)
+    filterInput = formatFilterId
+    
+    const ffmpegFilter = this.ffmpegFilter
     const commandFilter: CommandFilter = {
-      inputs: [superId], ffmpegFilter, 
-      options: { all_mode: modeString, repeatlast: 0 },
+      inputs: [filterInput, chainInput, ], ffmpegFilter, 
+      options: { 
+        // c0_mode: modeString, 
+        // c1_mode: modeString, 
+        // c2_mode: modeString, 
+        all_mode: modeString,
+        c3_opacity: '0.5',
+        // c0_expr: 'A', 
+        // c1_expr: 'A', 
+        // c2_expr: 'A',  
+        c3_expr: `if(gte(X,240),if(gte(Y,135),B,A))`,
+      },
       outputs: []
     }
     commandFilters.push(commandFilter)
@@ -74,3 +97,5 @@ export class BlendFilter extends OverlayFilter {
     return [blendElement]
   }
 }
+
+

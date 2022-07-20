@@ -1,5 +1,5 @@
 import { GenericFactory } from "../../../packages/moviemasher.js/src/declarations"
-import { Definition, DefinitionObject } from "@moviemasher/moviemasher.js/src/Definition/Definition"
+import { Definition, DefinitionObject } from "../../../packages/moviemasher.js/src/Definition/Definition"
 import { Instance, InstanceObject } from "../../../packages/moviemasher.js/src/Instance/Instance"
 import { Errors } from "../../../packages/moviemasher.js/src/Setup/Errors"
 

@@ -1,16 +1,15 @@
-import { AudibleSource, StartOptions, UnknownObject } from "../../declarations"
-import { CommandFilters, ContentCommandFilterArgs, FilterCommandFilterArgs, GraphFile } from "../../MoveMe"
+import { AudibleSource, StartOptions, UnknownObject, ValueObject } from "../../declarations"
+import { CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Default } from "../../Setup/Default"
 import { LoadType } from "../../Setup/Enums"
-import { assertPopulatedString, isPositive } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isPositive } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Filter } from "../../Filter/Filter"
 import { timeFromArgs } from "../../Helpers"
-import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { idGenerate } from "../../Utility"
 
@@ -41,37 +40,20 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return this.definition.audibleSource(preloader)
     }
 
-    contentCommandFilters(args: ContentCommandFilterArgs): CommandFilters {
+    contentCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
-      const { trim } = this
-
-      const { quantize, filterInput: input, visible, commandFiles } = args
-      let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
-      // if (!visible) {
-      //   const aformatFilter = 'aformat'
-      //   const aformatId = idGenerate(aformatFilter)
-      //   commandFilters.push({ 
-      //     ffmpegFilter: aformatFilter, 
-      //     options: { channel_layouts: 'stereo' }, 
-      //     inputs: [filterInput], outputs: [aformatId]
-      //   })
-      //   filterInput = aformatId
-      // }
-      if (trim) {
-        const trimFilter = visible ? 'trim' : 'atrim'
-        const trimId = idGenerate(trimFilter)
-        commandFilters.push({ 
-          ffmpegFilter: trimFilter, 
-          options: { start: timeFromArgs(trim, quantize).seconds }, 
-          inputs: [filterInput], outputs: [trimId]
-        })
-        filterInput = trimId
-      }
       
-      commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }))
+      const { filterInput: input, visible } = args
+      let filterInput = input 
+      
+      assertPopulatedString(filterInput, 'filterInput')
+      
+      if (!visible) {
+        commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
+      } else commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }))
+
       return commandFilters
     }
-
 
     declare definition: UpdatableDurationDefinition
 
@@ -82,29 +64,96 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return scaledTime.divide(this.speed) //, 'ceil')
     }
 
-
     gain = Default.instance.audio.gain
 
     gainPairs: number[][] = []
 
-    graphFile(editing: boolean): GraphFile {
+
+    graphFiles(args: GraphFileArgs): GraphFiles {
+      const { editing, audible, time } = args
+      if (!audible) return []
+
+      if (editing && !time.isRange) return []
+
       const { definition } = this
-      const file = definition.urlAudible //preloadableSource(editing) // urlAudible
-      assertPopulatedString(file, editing ? 'url' : 'source')
 
+      const options: ValueObject = {}
       const graphFile: GraphFile = {
-        input: true, options: {}, type: LoadType.Audio, file, definition
+        type: LoadType.Audio, file: definition.urlAudible, definition, input: true,
+        options
       }
-      return graphFile
+      return [graphFile]
     }
-
-    // declare muted: boolean
-
+    
     hasGain(): boolean {
       if (this.gain === 0) return true
       if (isPositive(this.gain)) return false
 
       return this.gainPairs === [[0, 0], [1, 0]]
+    }
+
+    initialCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { trim } = this
+      const { time, quantize, visible, commandFiles, clipTime, videoRate } = args
+      // console.log(this.constructor.name, "initialCommandFilters", commandFiles)
+      const timeDuration = time.isRange ? time.lengthSeconds : 0
+      const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
+      
+
+      let filterInput = commandFilesInput(commandFiles, this.id, visible)
+      assertPopulatedString(filterInput, 'filterInput')
+    
+      const trimFilter = visible ? 'trim' : 'atrim'
+      const trimId = idGenerate(trimFilter)
+      const trimOptions: ValueObject = {}
+      if (duration) trimOptions.duration = duration
+      if (trim) trimOptions.start = timeFromArgs(trim, quantize).seconds
+      const commandFilter: CommandFilter = { 
+        inputs: [filterInput], 
+        ffmpegFilter: trimFilter, 
+        options: trimOptions, 
+        outputs: [trimId]
+      }
+      commandFilters.push(commandFilter)
+      filterInput = trimId
+      if (visible && duration) {
+        const fpsFilter = 'fps'
+        const fpsId = idGenerate(fpsFilter)
+        const fpsCommandFilter: CommandFilter = { 
+          ffmpegFilter: fpsFilter, 
+          options: { fps: videoRate }, 
+          inputs: [filterInput], outputs: [fpsId]
+        }
+        commandFilters.push(fpsCommandFilter)
+        filterInput = fpsId
+      } 
+   
+      if (visible) {
+        const setptsFilter = 'setpts'
+        const setptsId = idGenerate(setptsFilter)
+        const setptsCommandFilter: CommandFilter = { 
+          ffmpegFilter: setptsFilter, 
+          options: { expr: 'PTS-STARTPTS' }, 
+          inputs: [filterInput], outputs: [setptsId]
+        }
+        commandFilters.push(setptsCommandFilter) 
+      } else {
+
+        const delays = (clipTime!.seconds - time.seconds) * 1000
+        if (delays) {
+          const adelayFilter = 'adelay'
+          const adelayId = idGenerate(adelayFilter)
+          const adelayCommandFilter: CommandFilter = { 
+            ffmpegFilter: adelayFilter, 
+            options: { delays, all:1 }, 
+            inputs: [filterInput], outputs: [adelayId]
+          }
+          commandFilters.push(adelayCommandFilter) 
+        }
+
+      }
+      return commandFilters
     }
 
     startOptions(seconds: number, timeRange: TimeRange): StartOptions {

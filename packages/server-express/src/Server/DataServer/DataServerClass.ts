@@ -3,7 +3,7 @@ import { Database, open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import fs from 'fs'
 import path from 'path'
-const uuid = require('uuid').v4
+
 
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
@@ -31,6 +31,7 @@ import { ServerHandler } from "../Server"
 import { HostServers } from "../../Host/Host"
 import { DataServer, DataServerArgs } from "./DataServer"
 import { FileServer } from "../FileServer/FileServer"
+import { idUnique } from "../../Utilities/Id"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
 
 export interface DataServerCastRelationUpdate {
@@ -123,8 +124,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   private castInsertPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<StringObject> {
     const lookup: StringObject = {}
     const { id } = cast
-    const temporaryId = id || uuid()
-    const permanentId = temporaryId.startsWith(this.args.temporaryIdPrefix) ? uuid() : temporaryId
+    const temporaryId = id || idUnique()
+    const permanentId = temporaryId.startsWith(this.args.temporaryIdPrefix) ? idUnique() : temporaryId
     if (permanentId !== temporaryId) lookup[temporaryId] = permanentId
     cast.id = permanentId
 
@@ -153,10 +154,10 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private createPromise(quotedTable: string, data: UnknownObject): Promise<string> {
     data.createdAt ||= DataServerNow()
-    const id = data.id || uuid()
+    const id = data.id || idUnique()
     assertPopulatedString(id)
 
-    const permanentId = id.startsWith(this.args.temporaryIdPrefix) ? uuid() : id
+    const permanentId = id.startsWith(this.args.temporaryIdPrefix) ? idUnique() : id
     data.id = permanentId
 
     const keys: string[] = []
@@ -178,8 +179,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   defaultCast: ServerHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest> = async (req, res) => {
-    const previewDimensions = this.renderingServer?.args.previewDimensions
-    const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewDimensions }
+    const previewSize = this.renderingServer?.args.previewSize
+    const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
       const cast = await this.getLatestPromise(user, '`cast`') as CastObject
@@ -193,8 +194,8 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   defaultMash: ServerHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
-    const previewDimensions = this.renderingServer?.args.previewDimensions
-    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewDimensions }
+    const previewSize = this.renderingServer?.args.previewSize
+    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
       const mash = await this.getLatestPromise(user, '`mash`') as MashObject
@@ -343,7 +344,7 @@ export class DataServerClass extends ServerClass implements DataServer {
   private mashInsertPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<StringObject> {
     const temporaryLookup: StringObject = {}
     const { id } = mash
-    const temporaryId = id || uuid()
+    const temporaryId = id || idUnique()
     mash.id = temporaryId
 
     const insertPromise = this.createPromise('`mash`', DataServerInsertRecord(userId, mash))
@@ -582,7 +583,7 @@ export class DataServerClass extends ServerClass implements DataServer {
           const temporaryId = mash.id!
           assertPopulatedString(temporaryId)
 
-          const permanentId = temporaryId.startsWith(temporaryIdPrefix) ? uuid() : temporaryId
+          const permanentId = temporaryId.startsWith(temporaryIdPrefix) ? idUnique() : temporaryId
           if (temporaryId !== permanentId) {
             temporaryIdLookup[temporaryId] = permanentId
             mash.id = permanentId
@@ -642,7 +643,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     if (!ids) return Promise.resolve(temporaryLookup)
     
     const permanentIds = ids.map(id => {
-      if (id.startsWith(this.args.temporaryIdPrefix)) return temporaryLookup[id] = uuid()
+      if (id.startsWith(this.args.temporaryIdPrefix)) return temporaryLookup[id] = idUnique()
 
       return id
     })

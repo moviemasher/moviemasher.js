@@ -1,5 +1,4 @@
 import fs from 'fs'
-const uuid = require('uuid').v4
 import {
   DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, OutputFormat, TrackType, UnknownObject, CommandInput, ValueObject,
@@ -8,12 +7,13 @@ import {
 import EventEmitter from "events"
 import path from "path"
 import { RunningCommand } from "../../../RunningCommand/RunningCommand"
-import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
+import { runningCommandDelete, runningCommandInstance } from "../../../RunningCommand/RunningCommandFactory"
 import { NodeLoader } from "../../../Utilities/NodeLoader"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
 
+import { idUnique } from "../../../Utilities/Id"
 
 // const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
 
@@ -54,7 +54,7 @@ export class StreamingProcessClass extends EventEmitter {
     try {
       if (this.command) {
         // console.log(this.constructor.name, "cut deleting existing command")
-        RunningCommandFactory.delete(this.command.id)
+        runningCommandDelete(this.command.id)
         // this.command.removeAllListeners('error')
       }
 
@@ -91,7 +91,7 @@ export class StreamingProcessClass extends EventEmitter {
         const commandOptions: CommandOptions = {
           ...streamingDescription, output: commandOutput
         }
-        this.command = RunningCommandFactory.instance(uuid(), commandOptions)
+        this.command = runningCommandInstance(idUnique(), commandOptions)
         this.command.addListener('error', this.error.bind(this))
         this.command.run(destination)
       })

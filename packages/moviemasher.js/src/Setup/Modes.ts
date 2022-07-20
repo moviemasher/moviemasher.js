@@ -17,3 +17,4 @@ export const Modes = [
 ]
 
 export const ModesFfmpeg = Modes.map(string => string.replaceAll('-', ''))
+ModesFfmpeg[1] = 'burn'

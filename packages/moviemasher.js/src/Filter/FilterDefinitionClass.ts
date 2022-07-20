@@ -6,10 +6,10 @@ import { DefinitionBase } from "../Definition/DefinitionBase"
 import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
 import { Errors } from "../Setup/Errors"
-import { Propertied } from "../Base/Propertied"
 import { idGenerate } from "../Utility/Id"
-import { assertPopulatedString, assertValueObject, isDefined } from "../Utility/Is"
-import { Dimensions } from "../Setup/Dimensions"
+import { assertPopulatedString, assertValueObject } from "../Utility/Is"
+import { Size } from "../Utility/Size"
+import { colorWhiteTransparent } from "../Utility/Color"
 
 export class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
   constructor(...args: any[]) {
@@ -69,20 +69,19 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     return []
   }
 
-  protected transparentCommandFilter(dimensions: Dimensions, videoRate: number, duration?: number): CommandFilter {
+  protected colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
     const { width, height } = dimensions
     const transparentFilter = 'color'
     const transparentId = idGenerate(transparentFilter)
-    const transparentOptions: ValueObject = { 
-      color: '#FFFFFF00', size: `${width}x${height}`, rate: videoRate 
-    }
-    if (duration) transparentOptions.duration = duration
-    const transparentCommandFilter: CommandFilter = {
+    const object: ValueObject = { color, size: `${width}x${height}` }
+    if (videoRate) object.rate = videoRate
+    if (duration) object.duration = duration
+    const commandFilter: CommandFilter = {
       inputs: [], ffmpegFilter: transparentFilter, 
-      options: transparentOptions,
+      options: object,
       outputs: [transparentId]
     }
-    return transparentCommandFilter
+    return commandFilter
   }
 
   type = DefinitionType.Filter

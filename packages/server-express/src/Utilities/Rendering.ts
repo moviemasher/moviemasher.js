@@ -1,15 +1,12 @@
-
 import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
   DefinitionType, LoadType, TrackType, ValueObject, CommandOutputs, OutputType,
   RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, VisibleClipObject, visibleClipDefault,
 } from "@moviemasher/moviemasher.js"
-import { renderingProcessTestArgs } from "../../../../dev/test/Utilities/renderingProcessArgs"
-import { RenderingProcessArgs } from "../Server/RenderingServer/RenderingProcess/RenderingProcess"
 
-const uuid = require('uuid').v4
 
+import { idUnique } from "./Id"
 
 export const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = {}): RenderingInput => {
   const { type, id } = definition
@@ -93,15 +90,11 @@ export const renderingSource = (commandOutput?: RenderingCommandOutput): string 
   return `${outputType}.${ext}`
 }
 
-export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
-  return {
-    ...renderingProcessTestArgs(id),
-    definitions: [], mash: {}, outputs: []
-  }
-}
+
 
 export const renderingInputFromRaw = (loadType: LoadType, source: string, clip: ValueObject = {}): RenderingInput => {
-  const definition = renderingDefinitionObject(loadType, source, String(clip.id), String(clip.label))
+  const definitionId = clip.id || source 
+  const definition = renderingDefinitionObject(loadType, source, String(definitionId), String(clip.label))
   return renderingInput(definition, clip)
 }
 
@@ -122,7 +115,9 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
 
 export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId?: string, label?: string): DefinitionObject => {
   const type: DefinitionType = definitionTypeFromRaw(loadType)
-  const id = definitionId || uuid()
+  // console.log("renderingDefinitionObject", definitionId, typeof definitionId)
+ 
+  const id = definitionId || idUnique()
   const definition: DefinitionObject = { id, type, source, label }
   return definition
 }

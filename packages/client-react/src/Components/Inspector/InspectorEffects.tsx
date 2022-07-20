@@ -1,4 +1,4 @@
-import { DefinitionType, assertEffect, UnknownObject, SelectType, ClassDropping, isVisible, isVisibleClip } from '@moviemasher/moviemasher.js'
+import { DefinitionType, assertEffect, UnknownObject, SelectType, ClassDropping, isVisibleClip } from '@moviemasher/moviemasher.js'
 import React from 'react'
 import { ReactResult } from "../../declarations"
 import { DragEffectObject, dragType, dropType } from '../../Helpers/DragDrop'

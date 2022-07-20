@@ -13,11 +13,9 @@ export interface ClipDefinitionObject extends DefinitionObject {}
 export interface ClipDefinition extends Definition {
   audible: boolean
   duration: number
-
-  // instanceFromObject(object?: InstanceObject): Clip
   streamable : boolean
-  visible: boolean
   trackType: TrackType
+  visible: boolean
 }
 
 export interface ClipObject extends InstanceObject {
@@ -28,14 +26,12 @@ export interface ClipObject extends InstanceObject {
 export const isClipObject = isInstanceObject
 
 export interface Clip extends Instance {
-  audible: boolean
-  // chainLinks(): ChainLinks
+  clipGraphFiles(args: GraphFileArgs): GraphFiles
   definition: ClipDefinition
   effectable: boolean
   endFrame: number
   frame : number
   frames: number
-  graphFiles(args: GraphFileArgs): GraphFiles
   iconUrl(preloader: Loader): string | undefined
   maxFrames(quantize : number, trim? : number) : number
   time(quantize : number) : Time
@@ -44,12 +40,10 @@ export interface Clip extends Instance {
   track: number
   trackInstance?: Track
   trackType: TrackType
-  visible : boolean
 }
 export const isClip = (value?: any): value is Clip => {
   return isInstance(value) && "trackType" in value
 }
-
 
 export type Clips = Clip[]
 

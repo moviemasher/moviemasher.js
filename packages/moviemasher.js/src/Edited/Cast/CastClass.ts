@@ -1,5 +1,5 @@
 import { UnknownObject } from "../../declarations"
-import { Dimensions } from "../../Setup/Dimensions"
+import { Size } from "../../Utility/Size"
 import { GraphFiles, GraphFileOptions } from "../../MoveMe"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
@@ -129,8 +129,8 @@ export class CastClass extends EditedClass implements Cast {
     return this.mashes.flatMap(mash => mash.graphFiles(args))
   }
 
-  get imageSize(): Dimensions { return super.imageSize }
-  set imageSize(value: Dimensions) {
+  get imageSize(): Size { return super.imageSize }
+  set imageSize(value: Size) {
     super.imageSize = value
     const { imageSize } = this
     this.mashes.forEach(mash => { mash.imageSize = imageSize })

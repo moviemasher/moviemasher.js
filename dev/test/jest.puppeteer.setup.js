@@ -1,3 +1,3 @@
 import 'expect-puppeteer'
 
-export * from './jest.base.setup'
+export * from './jest.setup'

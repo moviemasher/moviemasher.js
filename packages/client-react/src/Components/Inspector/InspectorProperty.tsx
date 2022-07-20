@@ -1,14 +1,14 @@
 import React from 'react'
 import { isDataType, PropertiedChangeHandler, Property, Scalar } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+import { PropsAndChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
 import { InputContext } from '../../Contexts/InputContext'
 import {
   InspectorPropertyContainer, InspectorPropertyContainerProps
 } from './InspectorPropertyContainer'
 import { DataTypeInputs, DefinitionTypeInputs } from '../EditorInputs/EditorInputs'
 
-export interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
+export interface InspectorPropertyProps extends PropsWithoutChild, WithClassName {
   property: Property
   value: Scalar
   changeHandler: PropertiedChangeHandler

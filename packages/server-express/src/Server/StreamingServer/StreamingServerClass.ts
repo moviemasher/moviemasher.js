@@ -3,7 +3,7 @@ import path from "path"
 import Express from "express"
 
 const NodeMediaServer = require('node-media-server')
-const uuid = require('uuid').v4
+
 
 import {
   UnknownObject,
@@ -28,6 +28,7 @@ import { directoryLatest } from '../../Utilities/Directory'
 import { FormatOptions, StreamingServer, StreamingServerArgs } from './StreamingServer'
 import { FileServer } from '../FileServer/FileServer'
 
+import { idUnique } from "../../Utilities/Id"
 
 
 export class StreamingServerClass extends ServerClass implements StreamingServer {
@@ -133,7 +134,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
     const { width, height, videoRate, format } = request
     const streamingFormat = format || StreamingFormat.Hls
-    const id = uuid()
+    const id = idUnique()
     const formatOptions = this.args.streamingFormatOptions[streamingFormat]
 
     const { commandOutput, directory, file } = formatOptions
@@ -348,7 +349,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       const request = req.body
       console.log(Endpoints.streaming.webrtc, 'request', request)
       const hlsFormatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
-      const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
+      const connection = WebrtcConnection.create(idUnique(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
 
       await connection.doOffer()
 

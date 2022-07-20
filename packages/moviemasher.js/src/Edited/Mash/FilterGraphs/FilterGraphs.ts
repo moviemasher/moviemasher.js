@@ -1,4 +1,4 @@
-import { Dimensions } from "../../../Setup/Dimensions"
+import { Size } from "../../../Utility/Size"
 import { GraphFiles } from "../../../MoveMe"
 import { Time, Times } from "../../../Helpers/Time/Time"
 import { AVType, GraphType } from "../../../Setup/Enums"
@@ -18,7 +18,7 @@ export interface FilterGraphs {
 export interface FilterGraphsOptions {
   avType?: AVType
   graphType?: GraphType
-  size?: Dimensions
+  size?: Size
   time?: Time
   videoRate?: number
   backcolor?: string
@@ -29,7 +29,7 @@ export interface FilterGraphsArgs {
   times: Times
   avType: AVType
   graphType: GraphType
-  size: Dimensions
+  size: Size
   videoRate: number
   backcolor: string
 }

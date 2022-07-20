@@ -125,7 +125,7 @@ export class BrowserLoaderClass extends LoaderClass {
     return image.decode().then(() => {
       const { width, height } = image
       const dimensions = { width, height }
-      this.updateDefinitionDimensions(graphFile.definition, dimensions)
+      this.updateDefinitionSize(graphFile.definition, dimensions)
       return Promise.resolve(image)
     })
   }
@@ -148,7 +148,7 @@ export class BrowserLoaderClass extends LoaderClass {
         const { duration, width, height } = video
         const { definition } = graphFile
         const dimensions = { width, height }
-        this.updateDefinitionDimensions(definition, dimensions)
+        this.updateDefinitionSize(definition, dimensions)
         this.updateDefinitionDuration(definition, duration)
         return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
           return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
@@ -177,6 +177,8 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private videoFromUrl(url: string): HTMLVideoElement {
+    if (!globalThis.document) throw 'wrong environment'
+  
     const video = globalThis.document.createElement('video')
     video.crossOrigin = 'anonymous'
     video.src = url

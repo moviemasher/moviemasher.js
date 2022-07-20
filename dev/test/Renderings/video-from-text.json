@@ -19,13 +19,14 @@
             "definitionId": "com.moviemasher.visible.default",
             "containerId": "com.moviemasher.textcontainer.default",
             "container": {
-              "string": "Lobster",
-              "intrinsicWidth": 234,
-              "intrinsicHeight": 108,
+              "string": "Valken",
+              "intrinsicWidth": 33750,
+              "intrinsicHeight": 10000,
+              "intrinsicOffset": 130,
               "x": 0.5,
               "y": 0.5,
               "height": 0.3,
-              "font": "com.moviemasher.font.default"
+              "fontId": "font.valken"
             },
             "content": {
               "color": "#FF0000"
@@ -39,5 +40,13 @@
       }
     ]
   },
-  "definitions": []
+  "definitions": [
+    {
+      "id": "font.valken",
+      "type": "font",
+      "label": "Valken",
+      "url": "../shared/font/valken/valken.woff2",
+      "source": "../shared/font/valken/valken.ttf"
+    }
+  ]
 }

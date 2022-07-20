@@ -5,6 +5,7 @@ export const imageDefinitionObject = (): ImageDefinitionObject => ({
   id: 'image', 
   url: '../shared/image/globe.jpg',
   source: '../shared/image/globe.jpg',
-  type: DefinitionType.Image
+  type: DefinitionType.Image,
+  width: 320, height: 320,
 })
 

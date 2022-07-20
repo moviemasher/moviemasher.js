@@ -1,0 +1,33 @@
+{
+  "id": "audio-from-video-trimmed",
+  "outputs": [
+    {
+      "outputType": "audio"
+    }
+  ],
+  "mash": {
+    "id": "audio-from-video-trimmed",
+    "tracks": [
+      {
+        "trackType": "video",
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.visible.default",
+            "contentId": "video-rgb",
+            "content": {
+              "trim": 10
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "id": "video-rgb",
+      "type": "video",
+      "source": "../shared/video/rgb.mp4",
+      "label": "Video RGB"
+    }
+  ]
+}

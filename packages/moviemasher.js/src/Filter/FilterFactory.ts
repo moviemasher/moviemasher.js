@@ -21,6 +21,7 @@ import { SetptsFilter } from "./Definitions/SetptsFilter"
 import { AlphamergeFilter } from "./Definitions/AlphamergeFilter"
 import { TrimFilter } from "./Definitions/TrimFilter"
 import { TextFilter } from "./Definitions/TextFilter"
+import { ColorizeFilter } from "./Definitions/ColorizeFilter"
 
 export const FilterIdPrefix = `${IdPrefix}filter.`
 
@@ -31,6 +32,7 @@ export const filterDefaults = [
   new ChromaKeyFilter({ id: `${FilterIdPrefix}chromakey` }),
   new ColorChannelMixerFilter({ id: `${FilterIdPrefix}colorchannelmixer` }),
   new ColorFilter({ id: `${FilterIdPrefix}color` }),
+  new ColorizeFilter({ id: `${FilterIdPrefix}colorize` }),
   new ConvolutionFilter({ id: `${FilterIdPrefix}convolution` }),
   new CropFilter({ id: `${FilterIdPrefix}crop` }),
   new FpsFilter({ id: `${FilterIdPrefix}fps` }),

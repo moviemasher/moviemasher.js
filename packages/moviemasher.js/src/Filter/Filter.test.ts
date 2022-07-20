@@ -1,5 +1,4 @@
-import { expectArray } from "../../../../dev/test/Utilities/expectArray"
-import { expectArrayLength } from "../../../../dev/test/Utilities/expectArrayLength"
+import { expectArrayLength, expectArray } from "../../../../dev/test/Utilities/Expect"
 import { FilterCommandFilterArgs } from "../MoveMe"
 
 import { isProperty } from "../Setup/Property"

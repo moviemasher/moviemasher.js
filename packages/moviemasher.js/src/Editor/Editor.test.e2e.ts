@@ -10,13 +10,14 @@ import { PuppeteerHost, PuppeteerPort } from '../../../../dev/tester/src/Setup/C
 import { ClipObject } from '../Mixin/Clip/Clip'
 import { VisibleClipObject } from '../Media/VisibleClip/VisibleClip'
 import { visibleClipDefault } from '../Media/VisibleClip/VisibleClipFactory'
+import { defaultTextId } from '../../../../dev/test/Setup/Constants'
 
 describe('Editor', () => {
   describe("svg", () => {
     test('should display text', async () => {
       const fileName = 'test/text.html'
       const filePath = path.resolve('./workspaces/tester/dist', fileName)
-      const fontUrl = fontDefault.preloadableSource(true)
+      const fontUrl = fontDefault.url
       // console.log("fontUrl", fontUrl)
       const html = `
       <html>
@@ -63,7 +64,7 @@ describe('Editor', () => {
     test('displays Text correctly', async () => {
       const visibleClipObject: VisibleClipObject = {
         definitionId: visibleClipDefault.id,
-        containerId: 'com.moviemasher.textcontainer.default',
+        containerId: defaultTextId,
         string: 'hey!'
       }
       await expectClipDisplays(visibleClipObject)

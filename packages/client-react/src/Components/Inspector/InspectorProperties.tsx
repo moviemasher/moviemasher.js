@@ -1,13 +1,13 @@
 import React from "react"
-import { SelectType, NumberObject, SelectedProperty, isVisible } from "@moviemasher/moviemasher.js"
+import { SelectType, NumberObject, SelectedProperty, isVisibleClip } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+import { PropsAndChildren, PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { InspectorEffects } from "./InspectorEffects"
 import { useSelected } from "../../Hooks/useSelected"
 
-export interface InspectorPropertiesProps extends PropsAndChildren, WithClassName {}
+export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {}
 
 /**
  * @parents InspectorContent
@@ -29,7 +29,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
   const kidsByType: Record<string, React.ReactChild[]> = {}
 
   if (counts.clip) {
-    if (isVisible(selectedClip)) {
+    if (isVisibleClip(selectedClip)) {
       const effectIndex = types.findIndex(type => type === SelectType.Effect)
       const index = effectIndex === -1 ? types.length : effectIndex
       types.splice(index, 0, 'effects')

@@ -2,8 +2,6 @@ import { ColorContent, ColorContentDefinition, ColorContentDefinitionObject, Col
 import { ColorContentClass } from "./ColorContentClass"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { DefinitionType } from "../../Setup/Enums"
-import { filterDefinitionFromId } from "../../Filter/FilterFactory"
-import { FilterDefinition } from "../../Filter/Filter"
 import { ContentDefinitionMixin } from "../ContentDefinitionMixin"
 import { isPopulatedString } from "../../Utility/Is"
 import { colorBlack } from "../../Utility/Color"

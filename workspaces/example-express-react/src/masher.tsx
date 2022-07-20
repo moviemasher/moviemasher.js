@@ -11,9 +11,9 @@ Defined.define({
   source: "../shared/font/valken/valken.ttf",
   url: "../shared/font/valken/valken.woff2",
 })
-const applicationOptions = { previewDimensions: { width: 480, height: 270 } }
-const options = MasherPropsDefault(applicationOptions)
-const masher = <Masher {...options} />
+const options = { previewSize: { width: 480, height: 270 } }
+const props = MasherPropsDefault(options)
+const masher = <Masher {...props} />
 const editor = <ApiClient>{masher}</ApiClient>
 const strictMode = <StrictMode>{editor}</StrictMode>
 ReactDOM.render(strictMode, document.getElementById('app'))

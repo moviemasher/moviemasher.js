@@ -1,0 +1,46 @@
+{
+  "id": "video-from-colors-in-shapes-json",
+  "outputs": [
+    {
+      "outputType": "video",
+      "width": 320, "height": 240
+    }
+  ],
+  "mash": {
+    "label": "Unlabeled Mash",
+    "backcolor": "#666666",
+    "createdAt": "2022-06-22T22:00:47.479Z",
+    "id": "93aaf171-8982-4993-a0e2-8184d0449e02",
+    "quantize": 10,
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "video",
+        "clips": [
+          {
+            "label": "Chat",
+            "frame": 0,
+            "frames": 30,
+            "containerId": "com.moviemasher.shapecontainer.broadcast",
+            "type": "visible",
+            "definitionId": "com.moviemasher.visible.default",
+            "effects": [],
+            "container": {
+              "constrainX": true,
+              "constrainY": true,
+              "x": 0.5, "y": 0.5,
+              "xEnd": 1, "yEnd": 1,
+              "height": 1.5, "width": 1.5,
+              "heightEnd": 0.5, "widthEnd": 0.5
+            },
+            "content": {
+              "color": "#FF0000",
+              "colorEnd": "#0000FF"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "definitions": []
+}

@@ -75,7 +75,9 @@ export class FilterGraphsClass implements FilterGraphs {
     return this.graphFiles.filter(graphFile => graphFile.input)
   }
   get loadPromise(): Promise<void> {
-    return this.args.mash.preloader.loadFilesPromise(this.graphFiles).then(EmptyMethod)
+    const { graphFiles } = this
+    // console.log(this.constructor.name, "loadPromise", graphFiles.map(f => f.file))
+    return this.args.mash.preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
   }
   time: Time
 }

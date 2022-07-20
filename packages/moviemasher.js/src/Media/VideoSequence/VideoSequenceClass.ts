@@ -1,5 +1,5 @@
 import { UnknownObject } from "../../declarations"
-import { GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
@@ -7,15 +7,18 @@ import { InstanceBase } from "../../Instance/InstanceBase"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 
 import { ContentMixin } from "../../Content/ContentMixin"
-import { UpdatableDimensionsMixin } from "../../Mixin/UpdatableDimensions/UpdatableDimensionsMixin"
+import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
+import { ContainerMixin } from "../../Container/ContainerMixin"
+import { LoadType } from "../../Setup/Enums"
 
 const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
-const VideoSequenceWithContent = ContentMixin(VideoSequenceWithTweenable)
+const VideoSequenceWithContainer = ContainerMixin(VideoSequenceWithTweenable)
+const VideoSequenceWithContent = ContentMixin(VideoSequenceWithContainer)
 const VideoSequenceWithPreloadable = PreloadableMixin(VideoSequenceWithContent)
-const VideoSequenceWithUpdatableDimensions = UpdatableDimensionsMixin(VideoSequenceWithPreloadable)
-const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceWithUpdatableDimensions)
+const VideoSequenceWithUpdatableSize = UpdatableSizeMixin(VideoSequenceWithPreloadable)
+const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceWithUpdatableSize)
 
 export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration implements VideoSequence {
 
@@ -55,7 +58,7 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
   //   return { graphFiles, link: this, values }
   // }
 
-  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Dimensions): SvgContent {
+  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Size): SvgContent {
   //   const { filterGraph } = filterChain
   //   const { preloader, size } = filterGraph
   //   const files = this.graphFiles(filterGraph)
@@ -79,14 +82,47 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
 
 
 
-  copy(): VideoSequence { return super.copy() as VideoSequence }
+  // copy(): VideoSequence { return super.copy() as VideoSequence }
 
   graphFiles(args: GraphFileArgs): GraphFiles {
     const { quantize, time } = args
     const definitionTime = this.definitionTime(quantize, time)
     const definitionArgs: GraphFileArgs = { ...args, time: definitionTime }
-    return this.definition.graphFiles(definitionArgs)
+    return this.definitionGraphFiles(definitionArgs)
   }
+
+
+  definitionGraphFiles(args: GraphFileArgs): GraphFiles {
+    const files = super.graphFiles(args) // maybe get the audio file
+    const { definition } = this
+    const { streaming, editing, visible, time } = args
+    if (visible) {
+      if (editing) {
+        const frames = definition.framesArray(time)
+        const graphFiles = frames.map(frame => {
+          const graphFile: GraphFile = {
+            type: LoadType.Image, file: definition.urlForFrame(frame), input: true,
+            definition
+          }
+          return graphFile
+        })
+        files.push(...graphFiles)
+      } else {
+        const graphFile: GraphFile = {
+          type: LoadType.Video, file: definition.source, definition, input: true
+        }
+        if (streaming) {
+          graphFile.options = { loop: 1 }
+          graphFile.options.re = ''
+        }
+        files.push(graphFile)
+      }
+    }
+    return files
+  }
+
+
+
 
   declare definition : VideoSequenceDefinition
 

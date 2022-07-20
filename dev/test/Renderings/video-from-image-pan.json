@@ -20,7 +20,7 @@
             "contentId": "globe-image",
             "content": {
               "x": 0, "xEnd": 1,
-              "y": 1, "yEnd": 0
+              "y": 0, "yEnd": 1
             },
             "frame": 0,
             "frames": 40

@@ -1,7 +1,6 @@
 version: "3"
 services:
   tester:
-    # entrypoint: bash
     build:
       dockerfile: dev/test/Dockerfile.cnf
       context: ../../
@@ -9,14 +8,14 @@ services:
     container_name: moviemasher-tester
     command: test.e2e.ts
     volumes:
-      - ../../temporary/test:/home/node/app/temporary/test
       - ../../dev/:/home/node/app/dev/
-      - ./package.json:/home/node/app/package.json
-      - ./jest-puppeteer.config.js:/home/node/app/jest-puppeteer.config.js
       - ../../packages/:/home/node/app/packages/
-      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
+      - ../../temporary/test:/home/node/app/temporary/test
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
+      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
       - ../tester/:/home/node/app/workspaces/tester/
+      - ./jest-puppeteer.config.js:/home/node/app/jest-puppeteer.config.js
+      - ./package.json:/home/node/app/package.json
   jester:
     build:
       dockerfile: dev/test/Dockerfile.cnf
@@ -26,9 +25,9 @@ services:
     entrypoint: npm run jest
     command: test.ts
     volumes:
-      - ../../temporary/test:/home/node/app/temporary/test
       - ../../dev/:/home/node/app/dev/
-      - ./package.json:/home/node/app/package.json
       - ../../packages/:/home/node/app/packages/
-      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
+      - ../../temporary/test:/home/node/app/temporary/test
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
+      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
+      - ./package.json:/home/node/app/package.json

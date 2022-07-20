@@ -5,7 +5,9 @@ import { VideoOutput, VideoOutputArgs } from "./Output"
 export class VideoOutputClass extends AudioOutputClass implements VideoOutput {
   declare args: VideoOutputArgs
 
-  avType = AVType.Video
+  get avType() { 
+    return this.args.commandOutput.mute ? AVType.Video : AVType.Both 
+  } 
 
   get outputCover(): boolean { return !!this.args.commandOutput.cover }
 

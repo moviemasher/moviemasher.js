@@ -1,5 +1,5 @@
 import { Described, UnknownObject } from "../declarations"
-import { Dimensions } from "../Setup/Dimensions"
+import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
@@ -24,7 +24,7 @@ export interface Edited extends Described, Propertied {
   destroy(): void
   emitter?: Emitter
   graphFiles(args?: GraphFileOptions): GraphFiles
-  imageSize: Dimensions
+  imageSize: Size
   loading: boolean
   loadPromise(args?: GraphFileOptions): Promise<void>
   putPromise(): Promise<void>

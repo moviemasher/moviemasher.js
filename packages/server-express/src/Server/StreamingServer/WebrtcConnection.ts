@@ -3,13 +3,13 @@ import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
 import {
-  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType
+  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, tweenSizesEqual
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
 import { StreamInput, StreamOutput } from '../../UnixStream/SocketStreams'
 import { RunningCommand } from '../../RunningCommand/RunningCommand'
-import { RunningCommandFactory } from '../../RunningCommand/RunningCommandFactory'
+import { runningCommandInstance } from '../../RunningCommand/RunningCommandFactory'
 
 const wrtc = require('wrtc')
 const { RTCPeerConnection } = wrtc
@@ -20,7 +20,7 @@ const StreamPadding = 4
 export interface WebrtcStream {
   command: RunningCommand
   destination: string
-  size: string
+  size: Size
   video: PassThrough
   audio: PassThrough
   end?: boolean
@@ -180,7 +180,7 @@ export class WebrtcConnection extends EventEmitter {
   onFrameData(frameData: FrameData): void {
     // console.log("onFrameData...")
     const { frame: { width, height, data } } = frameData
-    const stream = this.streamForDimensions(width, height)
+    const stream = this.streamForSize({ width, height })
 
     this.streams.forEach(item=>{
       if (item !== stream && !item.end) {
@@ -243,12 +243,13 @@ export class WebrtcConnection extends EventEmitter {
 
   get stream(): WebrtcStream | undefined { return this.streams[0] }
 
-  streamForDimensions(width: number, height: number): WebrtcStream {
-    const size = width + 'x' + height
+  streamForSize(size: Size): WebrtcStream {
+    const { width, height } = size
+    const sizeString = width + 'x' + height
     const currentStream = this.stream
-    if (currentStream && currentStream.size === size) return currentStream
+    if (currentStream && tweenSizesEqual(currentStream.size, size)) return currentStream
 
-    console.log("streamForDimensions", width, height)
+    console.log("streamForSize", width, height)
 
     const prefix = path.resolve(this.outputPrefix, this.id)
     fs.mkdirSync(prefix, { recursive: true })
@@ -285,14 +286,14 @@ export class WebrtcConnection extends EventEmitter {
       // }
     }
 
-    console.log("streamForDimensions commandOutput", commandOutput)
-    const command = RunningCommandFactory.instance(this.id, {
-      inputs: [this.inputVideo(video, size), this.inputAudio(audio)],
+    console.log("streamForSize commandOutput", commandOutput)
+    const command = runningCommandInstance(this.id, {
+      inputs: [this.inputVideo(video, sizeString), this.inputAudio(audio)],
       commandFilters: [],
       output: commandOutput, avType: AVType.Both
     })
 
-    const webrtcStream = {
+    const webrtcStream: WebrtcStream = {
       destination,
       size,
       video,

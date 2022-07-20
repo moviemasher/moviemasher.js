@@ -10,7 +10,9 @@ export class AlphaColorFilter extends ColorFilter {
     super(...args)
     const property = this.properties.find(property => property.name === 'color')
     assertPropertyType(property?.type)
-    property.type = DataType.Rgba
+    // property.type = DataType.Rgba
     property.defaultValue = colorBlackOpaque
   }
+
+  alpha = true
 }

@@ -35,3 +35,5 @@ export class ColorChannelMixerFilter extends FilterDefinitionClass {
     return [filterElement]
   }
 }
+
+// covert to grayscale -> colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3
