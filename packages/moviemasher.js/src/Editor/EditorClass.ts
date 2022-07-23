@@ -26,7 +26,7 @@ import {
 } from "../Utility/Is"
 import {
   assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, isCastData,
-  MashData, Selectable, EditorSelection
+  MashData, Selectable, EditorSelection,
 } from "./Editor"
 import { Action, ActionObject } from "./Actions/Action/Action"
 import { ChangeAction } from "./Actions/Action/ChangeAction"
@@ -46,6 +46,9 @@ import { assertVisibleClip, isVisibleClip, VisibleClipObject } from "../Media/Vi
 import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
 import { isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
+import { PreviewOptions, Svgs } from "./Preview/Preview"
+import { svgElement } from "../Utility/Svg"
+import { idGenerate } from "../Utility"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -59,14 +62,19 @@ export class EditorClass implements Editor {
       endpoint,
       preloader,
       editType,
+      readOnly,
     } = args
+    
     if (isEditType(editType)) this._editType = editType
+    if (readOnly) this.readOnly = true
+    this.editing = !this.readOnly
     if (isBoolean(autoplay)) this.autoplay = autoplay
     if (isNumber(precision)) this.precision = precision
     if (isBoolean(loop)) this._loop = loop
     if (isNumber(fps)) this._fps = fps
     if (isNumber(volume)) this._volume = volume
     if (isNumber(buffer)) this._buffer = buffer
+    
 
     this.actions = new Actions(this)
     this.preloader = preloader || new BrowserLoaderClass(endpoint)
@@ -431,6 +439,8 @@ export class EditorClass implements Editor {
 
   get edited(): Edited | undefined { return this.selection.cast || this.selection.mash }
 
+  editing: boolean 
+
   private emitMash(): void {
     this.eventTarget.emit(EventType.Mash)
     this.eventTarget.emit(EventType.Track)
@@ -729,6 +739,8 @@ export class EditorClass implements Editor {
 
   preloader: BrowserLoaderClass
 
+  readOnly = false
+
   redo(): void { if (this.actions.canRedo) this.handleAction(this.actions.redo()) }
 
   remove(): void {
@@ -810,6 +822,7 @@ export class EditorClass implements Editor {
     else {
       delete this.selection.effect
       if (isClip(selectable)) {
+        
         this.selection.clip = selectable
         this.selection.track = this.selection.mash!.clipTrack(selectable)
       } else {
@@ -924,10 +937,17 @@ export class EditorClass implements Editor {
     if (canUndo) this.handleAction(this.actions.undo())
   }
 
-  get svg(): SVGSVGElement {
-    const { edited } = this
-    if (edited) return edited.svgElement({ editor: this })
-
-    return globalThis.document.createElementNS(NamespaceSvg, 'svg')
+  get svgs(): Svgs {
+    const { edited, selection, editing } = this
+    if (!edited) {
+      return [{ id: idGenerate('svg'), element: svgElement(this.imageSize) }]
+    }
+  
+    const svgs: Svgs = []
+    const options: PreviewOptions = { editor: this }
+    const { cast, mash } = selection
+    if (cast && mash) svgs.push(...mash.svgs(options))
+    else svgs.push(...edited.svgs(options))
+    return svgs
   }
 }

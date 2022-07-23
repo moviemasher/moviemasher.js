@@ -3,6 +3,7 @@ import { isTrackType, TrackType } from "../../../Setup/Enums"
 import { Clips, ClipObject, Clip } from "../../../Mixin/Clip/Clip"
 import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
+import { Mash } from "../Mash"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]
@@ -28,6 +29,7 @@ export interface Track extends Propertied {
   frames: number
   identifier: string
   layer: number
+  mash: Mash
   removeClip(clip: Clip): void
   sortClips(clips?: Clips): boolean
   trackType: TrackType

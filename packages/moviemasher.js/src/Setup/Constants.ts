@@ -20,8 +20,6 @@ export const IdSuffix = '.default'
 
 export const ClassDisabled = 'disabled'
 export const ClassSelected = 'selected'
-export const ClassMarker = 'marker'
-export const ClassHovering = 'hovering'
 export const ClassDropping = 'dropping'
 export const ClassDroppingBefore = 'dropping-before'
 export const ClassDroppingAfter = 'dropping-after'

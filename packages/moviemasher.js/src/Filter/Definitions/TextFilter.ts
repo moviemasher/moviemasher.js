@@ -6,14 +6,16 @@ import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from
 import { arrayLast } from "../../Utility/Array"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { tweenOption, tweenPosition } from "../../Utility/Tween"
+import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
 import { colorBlack, colorBlackOpaque, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent } from "../../Utility/Color"
 import { ColorizeFilter } from "./ColorizeFilter"
+import { sizesEqual } from "../../Utility/Size"
 
 /**
  * @category Filter
  */
 
+const TextFilterOverflow = 1.0
 export class TextFilter extends ColorizeFilter {
   constructor(...args: any[]) {
     super(...args)
@@ -25,10 +27,20 @@ export class TextFilter extends ColorizeFilter {
     }))
     
     this.properties.push(propertyInstance({
+      custom: true, type: DataType.Boolean, name: 'stretch'
+    }))
+    this.properties.push(propertyInstance({
       tweenable: true, custom: true, type: DataType.Number, name: 'height'
     }))
     this.properties.push(propertyInstance({
       tweenable: true, custom: true, type: DataType.Number, name: 'width'
+    }))
+
+    this.properties.push(propertyInstance({
+      custom: true, type: DataType.Number, name: 'intrinsicHeight'
+    }))
+    this.properties.push(propertyInstance({
+      custom: true, type: DataType.Number, name: 'intrinsicWidth'
     }))
     
     this.properties.push(propertyInstance({
@@ -51,11 +63,16 @@ export class TextFilter extends ColorizeFilter {
     const fontfile = filter.value('fontfile')
     const height = filter.value('height')
     const width = filter.value('width')
+    const stretch = !!filter.value('stretch')
+    const intrinsicWidth = filter.value('intrinsicWidth')
+    const intrinsicHeight = filter.value('intrinsicHeight')
 
     assertPopulatedString(textfile)
     assertPopulatedString(fontfile)
     assertNumber(height)
     assertNumber(width)
+    assertNumber(intrinsicWidth)
+    assertNumber(intrinsicHeight)
     assertNumber(x)
     assertPopulatedString(color, 'color')
 
@@ -72,26 +89,28 @@ export class TextFilter extends ColorizeFilter {
     const foreColor = (tweeningColor || contentOutput) ? white : color
     const backColor = contentOutput ? black : colorWhiteTransparent 
     
-    const heightEnd = duration ? filter.value(`height${PropertyTweenSuffix}`) : undefined
-    const widthEnd = duration ? filter.value(`width${PropertyTweenSuffix}`) : undefined
+    const size = { width, height }
+    const sizeEnd = { ...size }
+    if (duration) {
+      const heightEnd = filter.value(`height${PropertyTweenSuffix}`) || 0
+      const widthEnd = filter.value(`width${PropertyTweenSuffix}`) || 0
+      if (isAboveZero(widthEnd)) sizeEnd.width = widthEnd
+      if (isAboveZero(heightEnd)) sizeEnd.height = heightEnd
+    }
+    const ratio = intrinsicWidth / intrinsicHeight 
 
-    const colorDimensions = { width, height }
-
-    let tweeningDimensions = false
+    const maxSize = tweenMaxSize(size, sizeEnd)
     
-    if (isAboveZero(heightEnd)) {
-      tweeningDimensions ||= height !== heightEnd
-      colorDimensions.height = Math.max(colorDimensions.height, heightEnd) 
-    }
-    if (isAboveZero(widthEnd)) {
-      tweeningDimensions ||= width !== widthEnd
-      colorDimensions.width = Math.max(colorDimensions.width, widthEnd) 
-    }
-    // colorDimensions.width += 100
+    const colorSize = {
+      ...maxSize, width: Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
+    } //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxSize
+
+    let scaling = stretch || !sizesEqual(size, sizeEnd)
 
     const textOptions: ValueObject = {
-      fontsize: colorDimensions.height, fontfile, textfile, 
-      x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x)
+      fontsize: colorSize.height, fontfile, textfile, 
+      x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
+      // fix_bounds: 1,
     }
     // console.log(this.constructor.name, "commandFilters", colorDimensions)
     const position = tweenPosition(videoRate, duration)
@@ -110,7 +129,7 @@ export class TextFilter extends ColorizeFilter {
       textOptions.fontcolor_expr = `#${expressions.join('')}`
     } else textOptions.fontcolor = foreColor
 
-    const colorCommand = this.colorCommandFilter(colorDimensions, videoRate, duration, backColor)
+    const colorCommand = this.colorCommandFilter(colorSize, videoRate, duration, backColor)
     commandFilters.push(colorCommand)
     let filterInput = arrayLast(colorCommand.outputs)
 
@@ -130,18 +149,21 @@ export class TextFilter extends ColorizeFilter {
     commandFilters.push(formatCommandFilter)
     filterInput = formatId
 
-    if (tweeningDimensions) {
+    if (scaling) {
       const scaleFilter = 'scale'
       const scaleFilterId = idGenerate(scaleFilter)
+      const options = { 
+          eval: 'frame',
+          width: stretch ? tweenOption(width, sizeEnd.width, position, true) : -1, 
+          height: tweenOption(height, sizeEnd.height, position, true),
+        }
       const scaleCommandFilter: CommandFilter = {
         inputs: [filterInput], ffmpegFilter: scaleFilter, 
-        options: { 
-          eval: 'frame',
-          width: -1, //tweenOption(width, widthEnd, pos, true),
-          height: tweenOption(height, heightEnd, position, true),
-        },
+        options,
         outputs: [scaleFilterId]
       }
+      if (!(isNumber(options.width) && isNumber(options.height))) options.eval = 'frame'
+
       commandFilters.push(scaleCommandFilter)
       // filterInput = scaleFilterId
     }

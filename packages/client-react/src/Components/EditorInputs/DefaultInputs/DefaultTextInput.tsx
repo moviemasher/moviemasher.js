@@ -24,3 +24,4 @@ export function DefaultTextInput(): ReactResult {
 }
 
 DataTypeInputs[DataType.String] = <DefaultTextInput />
+DataTypeInputs[DataType.Orientation] = <DefaultTextInput />

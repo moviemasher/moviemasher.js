@@ -2,7 +2,6 @@ import { ObjectUnknown } from "../../declarations"
 import { propertyInstance } from "../../Setup/Property"
 import { DataType, TrackType } from "../../Setup/Enums"
 import { Default } from "../../Setup/Default"
-import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { DefinitionClass } from "../../Definition/Definition"
 import { ClipDefinition, ClipDefinitionClass } from "./Clip"
 
@@ -19,7 +18,6 @@ export function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDe
     audible = false
 
     private _duration? : number
-
     get duration() : number {
       if (!this._duration) {
         const object = Default.definition as ObjectUnknown
@@ -28,9 +26,7 @@ export function ClipDefinitionMixin<T extends DefinitionClass>(Base: T) : ClipDe
       }
       return this._duration
     }
-
     set duration(value : number) { this._duration = value }
-
 
     streamable = false
 

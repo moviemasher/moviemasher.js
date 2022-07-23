@@ -16,10 +16,13 @@ import { Clip, Clips } from "../Mixin/Clip/Clip"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
+import { VisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { Svgs } from "./Preview/Preview"
 
 export interface EditorArgs {
   autoplay: boolean
   buffer: number
+  readOnly?: boolean
   fps: number
   loop: boolean
   precision: number
@@ -67,9 +70,12 @@ export interface Editor {
   clips: Clips
   create(): void
   currentTime: number
+  dataPutRequest(): Promise<DataPutRequest>
   definitions: Definition[]
   deselect(selectionType: SelectType): void
   duration: number
+  readOnly: boolean
+  editing: boolean
   editType: EditType
   eventTarget: Emitter
   fps: number
@@ -98,11 +104,10 @@ export interface Editor {
   removeEffect(effect: Effect): void
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
-  dataPutRequest(): Promise<DataPutRequest>
   saved(temporaryIdLookup?: StringObject): void
   select(selectable: Selectable): void
   selectedProperties(selectTypes?: SelectType[]): SelectedProperties
-  svg: SVGSVGElement
+  svgs: Svgs
   time: Time
   timeRange: TimeRange
   undo(): void

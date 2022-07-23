@@ -1,6 +1,6 @@
 import { GenericFactory } from "../../declarations"
-import { FilterDefinition } from "../../Filter/Filter"
 import { FontDefinition } from "../../Media/Font/Font"
+import { Rect } from "../../Utility/Rect"
 import {
   Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer
 } from "../Container"
@@ -8,12 +8,10 @@ import {
 export interface TextContainerObject extends ContainerObject {
   fontId?: string
   string?: string
-  intrinsicOffset?: number
+  intrinsic?: Rect
 }
 
-export interface TextContainerDefinitionObject extends ContainerDefinitionObject {
-
-}
+export interface TextContainerDefinitionObject extends ContainerDefinitionObject {}
 
 export interface TextContainer extends Container {
   definition: TextContainerDefinition

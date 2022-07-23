@@ -25,6 +25,13 @@
   margin-inline: auto;
   color: var(--color-fore-tertiary);
 }
+.moviemasher .editor .panel.player .content > div {
+  position: absolute;
+}
+
+.moviemasher .editor .panel.player .content svg {
+  pointer-events: visibleFill;
+}
 
 .moviemasher .editor .panel.player .content svg .container {
   cursor: move;
@@ -65,14 +72,15 @@
   cursor: w-resize;
 }
 
-
-.moviemasher .editor .panel.player .content svg .shape.hovering {
-  stroke: var(--color-fore-secondary);
+.moviemasher .editor .panel.player .content svg .shape {
+  stroke: transparent;
   stroke-width: calc(2 * var(--border-size));
+}
+.moviemasher .editor .panel.player .content svg .shape:hover {
+  stroke: var(--color-fore-secondary);
 }
 
 .moviemasher .editor .panel.player .content svg .shape.marker {
   marker-mid: url(#shape-marker);
   stroke: var(--color-fore-secondary);
-  stroke-width: calc(2 * var(--border-size));
 }

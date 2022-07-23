@@ -10,9 +10,10 @@ import { isPositive } from "../../../Utility/Is"
 import { TimeRange } from "../../../Helpers/Time/Time"
 import { idGenerate } from "../../../Utility/Id"
 import { Defined } from "../../../Base/Defined"
-import { assertVisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { assertVisibleClip, VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
 import { isUpdatableDurationDefinition } from "../../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Default } from "../../../Setup/Default"
+import { Mash } from "../Mash"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -35,9 +36,8 @@ export class TrackClass extends PropertiedClass implements Track {
         const { definitionId } = clip
         if (!definitionId) throw Errors.id + JSON.stringify(clip)
         const definition = Defined.fromId(definitionId)
-        const clipWithTrack = { track: this.layer, ...clip }
-        const instance = definition.instanceFromObject(clipWithTrack) as Clip
-        instance.trackInstance = this
+        const instance = definition.instanceFromObject(clip) as VisibleClip
+        instance.track = this
         return instance
       }))
     }
@@ -141,6 +141,10 @@ export class TrackClass extends PropertiedClass implements Track {
 
   layer = 0
 
+  _mash?: Mash 
+  get mash(): Mash { return this._mash! }
+  set mash(value: Mash) { this._mash = value }
+  
   removeClip(clip : Clip) : void {
     const spliceClips = this.clips.filter(other => clip !== other)
     if (spliceClips.length === this.clips.length) {

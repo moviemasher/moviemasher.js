@@ -7,8 +7,10 @@ WORKDIR /home/node/app
 # COPY packages/ /home/node/app/packages/
 # COPY workspaces/ /home/node/app/workspaces/
 # COPY package.json /home/node/app/package.json
-# COPY package-lock.json /home/node/app/package-lock.json
 # RUN sh /home/node/app/dev/image/sh/build-clean.sh
+
+
+COPY dev/image/sh/options.sh /home/node/app/dev/image/sh/options.sh
 
 
 COPY dev/image/sh/tools/options.sh /home/node/app/dev/image/sh/tools/options.sh
@@ -38,8 +40,8 @@ RUN npm install
 COPY dev/ /home/node/app/dev/
 COPY packages/ /home/node/app/packages/
 COPY workspaces/ /home/node/app/workspaces/
-COPY package.json /home/node/app/package.json
-RUN npm run build
+# COPY dev/build/package.json /home/node/app/package.json
+# RUN npm run build
 
 COPY dev/image/sh/node/clean.sh /home/node/app/dev/image/sh/node/clean.sh
 RUN sh /home/node/app/dev/image/sh/node/clean.sh

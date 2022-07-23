@@ -73,11 +73,13 @@ export const propertyTypeValid = (value: Scalar, dataType: PropertyType): boolea
     case DataType.Percent:
     case DataType.Number: return propertyTypeValidNumber(value)
     case DataType.Mode: return propertyTypeValidNumber(value, Modes.length - 1)
+    case DataType.Orientation: 
     case DataType.String: return true
     case DataType.ContainerId:
     case DataType.ContentId:
     case DataType.FontId:
-    case DataType.DefinitionId: return isPopulatedString(value)
+    case DataType.DefinitionId: 
+    default: return isPopulatedString(value)
   }
   return false
 }

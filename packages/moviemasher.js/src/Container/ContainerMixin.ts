@@ -1,35 +1,26 @@
-import { Scalar, SvgContent, SvgFilters, UnknownObject } from "../declarations"
-import { Rect, RectTuple } from "../Utility/Rect"
+import { Scalar, SvgContent, SvgFilters } from "../declarations"
+import { Rect, rectsEqual, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, SelectedProperties } from "../MoveMe"
 import { Actions } from "../Editor/Actions/Actions"
 import { Filter } from "../Filter/Filter"
-import { Directions, SelectType } from "../Setup/Enums"
+import { Anchors, DirectionObject, Directions, SelectType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isBelowOne, isDefined, isNumber, isTimeRange, isUndefined } from "../Utility/Is"
-import { Container, ContainerClass, ContainerDefinition, ContainerObject } from "./Container"
+import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isBelowOne, isDefined, isTimeRange, isUndefined } from "../Utility/Is"
+import { Container, ContainerClass, ContainerDefinition } from "./Container"
 import { arrayLast } from "../Utility/Array"
 import { filterFromId } from "../Filter/FilterFactory"
-import { svgGroupElement } from "../Utility/Svg"
+import { svgGroupElement, svgPolygonElement } from "../Utility/Svg"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../Base/Propertied"
-import { tweenMaxSize, tweenOverRect, tweenRectsEqual, tweenScaleSizeToRect } from "../Utility/Tween"
+import { tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../Utility/Tween"
+import { pointsEqual, PointZero } from "../Utility/Point"
+import { NamespaceSvg } from "../Setup/Constants"
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
   return class extends Base implements Container {
-    constructor(...args: any[]) {
-      super(...args)
-      const [object] = args
-      const { intrinsicHeight, intrinsicWidth } = object as ContainerObject
-      if (isNumber(intrinsicHeight) && isNumber(intrinsicWidth)) {
-        this._intrinsicSize = {
-          width: intrinsicWidth, height: intrinsicHeight
-        }
-        // console.log(this.constructor.name, "intrinsicSize", this._intrinsicSize, this.id)
-      }
-    }
 
     private _blendFilter?: Filter
     get blendFilter() { return this._blendFilter ||= filterFromId('blend')}
@@ -67,7 +58,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       assertPopulatedArray(containerRects)
 
       // console.log(this.constructor.name, "initialCommandFilters", noContentFilters, contentColors, filterInput)
-      const tweeningSize = !tweenRectsEqual(...containerRects)
+      const tweeningSize = !rectsEqual(...containerRects)
       const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
       const colorArgs: CommandFilterArgs = { 
         ...args, outputSize: maxSize
@@ -96,20 +87,29 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return commandFilters
     }
 
-    containerRects(outputSize: Size, time: Time, timeRange: TimeRange, forFiles = false): RectTuple {
-      const scales = this.tweenRects(time, timeRange)
-      // console.log(this.constructor.name, "containerRects scales", scales, outputSize)
-      const [scale, scaleEnd] = scales
-      const { constrainX, constrainY } = this
-      const transformedRect = tweenScaleSizeToRect(outputSize, scale, constrainX, constrainY)
+    containerRects(size: Size, time: Time, timeRange: TimeRange, forFiles = false): RectTuple {
+      const { lock, intrinsicsKnown } = this
+      const tweenRects = this.tweenRects(time, timeRange)
+      const locked = lock ? tweenRectsLock(tweenRects, lock) : tweenRects
+      
+      const [scale, scaleEnd] = locked 
+      const inRect = forFiles && !intrinsicsKnown ? { ...size, ...PointZero } : this.intrinsicRect
+      const { width: inWidth, height: inHeight, x: inX, y: inY } = inRect
+      
+      const ratio = ((inWidth || size.width) + inX) / ((inHeight || size.height) + inY)
 
-      if (tweenRectsEqual(scale, scaleEnd)) return [transformedRect, transformedRect]
+      const forcedScale = tweenScaleSizeRatioLock(scale, size, ratio, lock)
 
-      const tweenRect = tweenOverRect(scale, scaleEnd)
-      const tweened = tweenScaleSizeToRect(outputSize, tweenRect, constrainX, constrainY)
+      const { directionObject } = this
+      const transformedRect = tweenScaleSizeToRect(size, forcedScale, directionObject)
 
+      const tweening = !pointsEqual(scale, scaleEnd)
+      if (!tweening) return [transformedRect, transformedRect]
+
+      const forcedScaleEnd = tweenScaleSizeRatioLock(scaleEnd, size, ratio, lock)
+      const tweenRect = tweenOverRect(forcedScale, forcedScaleEnd)
+      const tweened = tweenScaleSizeToRect(size, tweenRect, directionObject)
       const tuple: RectTuple = [transformedRect, tweened]
-      // console.log(this.constructor.name, "containerRects", constrainX, constrainY, tuple, scales)
       return tuple
     }
 
@@ -131,7 +131,13 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
   
     declare definition: ContainerDefinition
     
-    get directions() { return Directions }
+    get directions() { return Anchors }
+
+    get directionObject(): DirectionObject {
+      return Object.fromEntries(Directions.map(direction => 
+        [direction, !!this.value(`off${direction}`)]
+      ))
+    }
     
     finalCommandFilters(args: CommandFilterArgs): CommandFilters {
       // console.log(this.constructor.name, "finalCommandFilters")
@@ -153,23 +159,10 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return commandFilters
     }
 
-
-    private _intrinsicSize?: Size
-    intrinsicSize(): Size { 
-      return this._intrinsicSize ||= this.intrinsicSizeInitialize 
-    }
-
-
-    protected get intrinsicSizeInitialize(): Size { 
-      throw new Error(Errors.unimplemented) 
-    }
-
     get intrinsicGroupElement(): SVGGElement {
-      return svgGroupElement(this.intrinsicSize())
+      return svgGroupElement(this.intrinsicRect)
     }
 
-
-    get instrinsicsKnown(): boolean { return true }
 
     mutable = false
 
@@ -205,41 +198,18 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
 
     private _opacityFilter?: Filter
     get opacityFilter() { return this._opacityFilter ||= filterFromId('opacity')}
-
-    pathElement(previewSize: Size, time: Time, range: TimeRange, forecolor?: string): SvgContent {
-      throw new Error(Errors.unimplemented)
+    
+    pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = 'transparent'): SvgContent {
+      return svgPolygonElement(rect, '', forecolor)
     }
 
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
 
 
-    selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties {
-      const selectedProperties: SelectedProperties = []
-      this.properties.forEach(property => {
-        selectedProperties.push({
-          selectType, property, value: this.value(property.name),
-          changeHandler: (property: string, value: Scalar) => {
-            const undoValue = this.value(property)
-            const redoValue = isUndefined(value) ? undoValue : value
-            actions.create({ property, target: this, redoValue, undoValue })
-          },
-        })
-      })
-      return selectedProperties
-    }
 
     private _setsarFilter?: Filter
     get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
-
-    toJSON(): UnknownObject {
-      const dimensions = this.intrinsicSize()
-      const { width, height } = dimensions
-      const json = super.toJSON()
-      json.intrinsicWidth = width
-      json.intrinsicHeight = height
-      return json
-    }
 
     translateCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { 

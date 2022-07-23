@@ -11,4 +11,5 @@ services:
       - "8571:8571"
     volumes:
       - ../../packages:/home/node/app/packages
+      - ../../temporary/example-express-react:/home/node/app/temporary
       - ../../workspaces/example-express-react:/home/node/app/workspaces/example-express-react

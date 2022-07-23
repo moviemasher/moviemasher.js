@@ -11,7 +11,7 @@ import { assertTrue, isAboveZero, isPopulatedString, isPositive, isString } from
 import { sortByLayer } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { Clip, Clips } from "../../Mixin/Clip/Clip"
-import { Track, TrackArgs, TrackObject } from "./Track/Track"
+import { isTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview, AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { Mash, MashArgs } from "./Mash"
 import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
@@ -22,12 +22,12 @@ import {
 import { trackInstance } from "./Track/TrackFactory"
 import { EditedClass } from "../EditedClass"
 import { propertyInstance } from "../../Setup/Property"
-import { PreviewArgs, PreviewOptions } from "../../Editor/Preview/Preview"
+import { Preview, PreviewArgs, PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
 import { PreviewClass } from "../../Editor/Preview/PreviewClass"
 import { isVisibleClip, VisibleClip } from "../../Media/VisibleClip/VisibleClip"
 import { colorBlack } from "../../Utility/Color"
-import { isTextContainer } from "../../Container/TextContainer/TextContainer"
 import { isContainer } from "../../Container/Container"
+import { Cast } from "../Cast/Cast"
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
@@ -88,7 +88,7 @@ export class MashClass extends EditedClass implements Mash {
     const newTrack = this.clipTrackAtIndex(clip, trackIndex)
     if (!newTrack) throw Errors.invalid.track
 
-    const oldTrack = isPositive(clip.track) && this.clipTrack(clip)
+    const oldTrack = isTrack(clip.track) && this.clipTrack(clip)
 
     newTrack.assureFrames(this.quantize, [clip])
     this.emitIfFramesChange(() => {
@@ -151,6 +151,10 @@ export class MashClass extends EditedClass implements Mash {
 
   private _bufferTimer?: Interval
 
+  _cast?: Cast 
+  get cast(): Cast { return this._cast! }
+  set cast(value: Cast) { this._cast = value }
+  
   changeClipFrames(clip: Clip, value: number): void {
     let limitedValue = Math.max(1, value) // frames value must be > 0
 
@@ -164,7 +168,7 @@ export class MashClass extends EditedClass implements Mash {
     })
   }
 
-  changeClipTrimAndFrames(clip: VisibleClip, value: number, frames: number): void {
+  changeClipTrimAndFrames(clip: Clip, value: number, frames: number): void {
     let limitedValue = Math.max(0, value)
 
     const max = clip.maxFrames(this.quantize, 1) // do not remove last frame
@@ -179,11 +183,15 @@ export class MashClass extends EditedClass implements Mash {
     })
   }
 
-  clearDrawInterval(): void {
+  private clearDrawInterval(): void {
     if (this.drawInterval) {
       clearInterval(this.drawInterval)
       this.drawInterval = undefined
     }
+  }
+
+  private clearPreview() {
+    delete this._preview 
   }
 
   private clipIntersects(clip: Clip, range: Time): boolean {
@@ -192,9 +200,7 @@ export class MashClass extends EditedClass implements Mash {
     return clip.timeRange(this.quantize).intersects(range)
   }
 
-  clipTrack(clip: Clip): Track {
-    return this.clipTrackAtIndex(clip, clip.track)
-  }
+  clipTrack(clip: Clip): Track { return clip.track }
 
   private clipTrackAtIndex(clip: Clip, index = 0): Track {
     return this.trackOfTypeAtIndex(clip.trackType, index)
@@ -236,6 +242,7 @@ export class MashClass extends EditedClass implements Mash {
 
   private compositeVisible(time: Time): void {
     this.drawingTime = time
+    this.clearPreview()
     this.emitter?.emit(EventType.Draw)
   }
 
@@ -549,6 +556,28 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
+  private _preview?: Preview
+  preview(options: PreviewOptions) { 
+    return this.previewInitialize(options) 
+    // return this._preview ||= this.previewInitialize(options) 
+  }
+  private previewInitialize(options: PreviewOptions): Preview {
+    const { editor } = options
+    const clip = editor?.selection.clip
+    const selectedClip = isVisibleClip(clip) ? clip : undefined
+    const { drawingTime, time, quantize } = this
+    const svgTime = drawingTime || time
+    const args: PreviewArgs = {
+      editor,
+      backcolor: this.backcolor,
+      selectedClip,
+      time: svgTime.scale(quantize),
+      mash: this,
+      ...options,
+    }
+    return new PreviewClass(args)
+  }
+
   putPromise(): Promise<void> { 
     const { quantize, preloader } = this
     const args: GraphFileArgs = {
@@ -557,8 +586,7 @@ export class MashClass extends EditedClass implements Mash {
     const graphFiles = this.clips.flatMap(clip => {
       const { container } = clip
       if (isContainer(container)) {
-        if (!container.instrinsicsKnown) {
-
+        if (!container.intrinsicsKnown) {
           return container.graphFiles({ ...args, time: clip.time(quantize)})
         }
       }
@@ -568,7 +596,7 @@ export class MashClass extends EditedClass implements Mash {
   }
 
 
-  removeClipFromTrack(clip: Clip): void {
+  removeClipFromTrack(clip: VisibleClip): void {
     const track = this.clipTrack(clip)
     this.emitIfFramesChange(() => { track.removeClip(clip) })
   }
@@ -648,26 +676,36 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  svgElement(graphArgs: PreviewOptions): SVGSVGElement {
-    const { editor } = graphArgs
-    const clip = editor?.selection.clip
-    const selectedClip = isVisibleClip(clip) ? clip : undefined
-    const { drawingTime, time, quantize } = this
-    const svgTime = drawingTime || time
-    const args: PreviewArgs = {
-      editor,
-      backcolor: this.backcolor,
-      selectedClip,
-      time: svgTime.scale(quantize),
-      mash: this,
-      ...graphArgs,
-    }
-    const filterGraph = new PreviewClass(args)
-    // console.log(this.constructor.name, "svgElement")
-    return filterGraph.svgElement
+  // svgElement(graphArgs: PreviewOptions): SVGSVGElement {
+  //   const { editor } = graphArgs
+  //   const clip = editor?.selection.clip
+  //   const selectedClip = isVisibleClip(clip) ? clip : undefined
+  //   const { drawingTime, time, quantize } = this
+  //   const svgTime = drawingTime || time
+  //   const args: PreviewArgs = {
+  //     editor,
+  //     backcolor: this.backcolor,
+  //     selectedClip,
+  //     time: svgTime.scale(quantize),
+  //     mash: this,
+  //     ...graphArgs,
+  //   }
+  //   const preview = new PreviewClass(args)
+  //   // console.log(this.constructor.name, "svgElement")
+  //   return preview.svgElement
+  // }
+
+
+  svg(options: PreviewOptions): Svg { 
+    const preview = this.preview(options)
+    return preview.svg
   }
 
-
+  svgs(options: PreviewOptions): Svgs { 
+    const preview = this.preview(options)
+    return preview.svgs 
+  }
+  
   get time() : Time {
     return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantize)
   }

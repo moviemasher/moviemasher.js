@@ -3,17 +3,17 @@ import { Clip, Clips } from "../../../Mixin/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
 export interface AddClipToTrackActionObject extends AddTrackActionObject {
-  clip : Clip
-  createTracks : number
-  insertIndex : number
-  trackIndex : number
+  clip: Clip
+  createTracks: number
+  insertIndex: number
+  trackIndex: number
 }
 
 /**
  * @category Action
  */
 export class AddClipToTrackAction extends AddTrackAction {
-  constructor(object : AddClipToTrackActionObject) {
+  constructor(object: AddClipToTrackActionObject) {
     super(object)
     const { clip, createTracks, insertIndex, trackIndex } = object
     // console.log(this.constructor.name, createTracks, trackIndex)
@@ -23,24 +23,24 @@ export class AddClipToTrackAction extends AddTrackAction {
     this.trackIndex = trackIndex
   }
 
-  clip : Clip
+  clip: Clip
 
-  createTracks : number
+  createTracks: number
 
-  insertIndex : number
+  insertIndex: number
 
-  trackIndex : number
+  trackIndex: number
 
-  get clips() : Clips { return this.track.clips }
+  get clips(): Clips { return this.track.clips }
 
-  get track() : Track { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex) }
+  get track(): Track { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex) }
 
-  redoAction() : void {
+  redoAction(): void {
     for (let i = 0; i < this.createTracks; i += 1) { super.redoAction() }
     this.mash.addClipToTrack(this.clip, this.trackIndex, this.insertIndex)
   }
 
-  undoAction() : void {
+  undoAction(): void {
     this.mash.removeClipFromTrack(this.clip)
     for (let i = 0; i < this.createTracks; i += 1) { super.undoAction() }
   }

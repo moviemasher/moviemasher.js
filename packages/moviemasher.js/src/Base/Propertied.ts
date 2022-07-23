@@ -87,7 +87,9 @@ export class PropertiedClass implements Propertied {
       } //else console.warn(this.constructor.name, "setValue invalid!", propertyName, name, type, typeof value, value)
       return
     }
-    this[name] = propertyTypeCoerce(value, type)
+    const coerced = propertyTypeCoerce(value, type)
+    // console.log(this.constructor.name, "setValue", name, coerced)
+    this[name] = coerced
   }
 
   setValues(object: ScalarObject): void {

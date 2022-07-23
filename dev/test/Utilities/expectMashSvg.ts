@@ -11,5 +11,5 @@ export const expectCanvasAtTime = async (editor: Editor, time?: Time): Promise<v
   mash.imageSize = { width: 640, height: 480 }
   const promise = mash.seekToTime(seekTime)
   if (promise) await promise
-  expect(mash.svgElement({ editor, time: seekTime }).outerHTML).toMatchSnapshot(mash.label)
+  expect(mash.svg({ editor, time: seekTime }).element.outerHTML).toMatchSnapshot(mash.label)
 }

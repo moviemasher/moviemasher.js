@@ -187,6 +187,7 @@ export enum DataType {
   Rgb = 'rgb',
   Rgba = 'rgba',
   String = 'string',
+  Orientation = 'orientation',
   Track = 'track',
 }
 export const DataTypes = Object.values(DataType)
@@ -194,17 +195,47 @@ export const isDataType = (type?: any): type is DataType => {
   return isPopulatedString(type) && DataTypes.includes(type as DataType)
 }
 
+export enum Orientation {
+  H = 'H',
+  V = 'V',
+}
+export const Orientations = Object.values(Orientation)
+export const isOrientation = (value: any): value is any => {
+  return isPopulatedString(value) && Orientations.includes(value as Orientation)
+}
+
 export enum Direction {
-  N = 'n',
-  E = 'e',
-  S = 's',
-  W = 'w',
-  NE = 'ne',
-  SE = 'se',
-  SW = 'sw',
-  NW = 'nw',
+  E = 'E',
+  N = 'N',
+  S = 'S',
+  W = 'W',
 }
 export const Directions = Object.values(Direction)
+export const isDirection = (value?: any): value is Direction => {
+  return isPopulatedString(value) && Directions.includes(value as Direction)
+}
+export function assertDirection(value: any, name?: string): asserts value is Direction {
+  if (!isDirection(value)) throwError(value, "Direction", name)
+}
+
+export type DirectionObject = {
+  [index in Direction]?: boolean
+}
+
+export enum Anchor {
+  E = 'E',
+  N = 'N',
+  NE = 'NE',
+  NW = 'NW',
+  S = 'S',
+  SE = 'SE',
+  SW = 'SW',
+  W = 'W',
+}
+export const Anchors = Object.values(Anchor)
+
+
+
 export type PropertyType = DataType // | DefinitionType
 export const isPropertyType = (value: any): value is PropertyType => {
   return isDataType(value) //|| isDefinitionType(value)

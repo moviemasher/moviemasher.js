@@ -1,4 +1,4 @@
-import { DataType, isArray } from '@moviemasher/moviemasher.js'
+import { DataType, isArray, isNumber } from '@moviemasher/moviemasher.js'
 import React from 'react'
 import { InputContext } from '../../../Contexts/InputContext'
 import { ReactResult, SliderChangeHandler } from '../../../declarations'
@@ -13,7 +13,7 @@ export function DefaultPercentInput(): ReactResult {
   const onChange: SliderChangeHandler = (_event, values) => {
     changeHandler(property.name, isArray(values) ? values[0] : values)
   }
-
+  const { max, min, step } = property
   const inputProps = {
     type: 'checkbox',
     checked: !!value,
@@ -22,9 +22,9 @@ export function DefaultPercentInput(): ReactResult {
 
   const sliderProps = {
     value: Number(value),
-    min: 0.0,
-    max: 1.0,
-    step: 0.01,
+    min: isNumber(min) ? min : 0.0,
+    max: isNumber(max) ? max : 1.0,
+    step: isNumber(step) ? step : 0.01,
     onChange,
     name: property.name,
   }

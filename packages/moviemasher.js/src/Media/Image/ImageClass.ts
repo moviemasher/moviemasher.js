@@ -83,8 +83,5 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     return imageElement
   }
 
-  pathElement(previewSize: Size, time: Time, range: TimeRange, forecolor = 'transparent'): SvgContent {
-    return svgPolygonElement(previewSize, 'shape', forecolor)
-  }
 
 }

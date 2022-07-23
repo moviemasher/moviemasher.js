@@ -1,19 +1,18 @@
 import { PropertyTweenSuffix } from "../../Base"
 import { SvgContent } from "../../declarations"
-import { Point, PointZero } from "../../Utility/Point"
-import { Rect, RectTuple } from "../../Utility/Rect"
+import { Rect, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
-import { Size, dimensionsCover, dimensionsScale, dimensionsEven } from "../../Utility/Size"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
-import { assertAboveZero, assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isPopulatedArray, isTimeRange } from "../../Utility/Is"
+import { assertAboveZero, assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isTimeRange } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
-import { tweenMaxSize, tweenRectsEqual } from "../../Utility/Tween"
-import { colorBlack, colorBlackOpaque, colorRed } from "../../Utility/Color"
+import { tweenMaxSize } from "../../Utility/Tween"
+import { colorBlack, colorBlackOpaque } from "../../Utility/Color"
+import { PointZero } from "../../Utility/Point"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -41,7 +40,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       if (!visible) return commandFilters
 
       assertPopulatedArray(containerRects)
-      const tweeningSize = !tweenRectsEqual(...containerRects)
+      const tweeningSize = !rectsEqual(...containerRects)
       const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
   
       const colorArgs: CommandFilterArgs = { 
@@ -94,80 +93,48 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const { containerRects, visible, time, videoRate, clipTime, commandFiles, filterInput: input } = args
       if (!visible) return commandFilters
 
-      let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
-      
       assertTimeRange(clipTime)
       assertPopulatedArray(containerRects, 'containerRects')
 
-      const [rect, rectEnd] = containerRects
+      let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
+
+      const contentRects = this.contentRects(containerRects, time, clipTime)
+      const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
-          
-      const intrinsicSize = this.intrinsicSize()
-      const unscaledSize = dimensionsCover(intrinsicSize, rect)
-      const unscaledSizeEnd = dimensionsCover(intrinsicSize, rectEnd)
-
-      const [scale, scaleEnd] = this.tweenRects(time, clipTime)
-      const { x, y, width, height } = scale
-      const { x: xEnd, y: yEnd, width: widthEnd, height: heightEnd } = scaleEnd
-      
-      const coverSize = dimensionsEven(dimensionsScale(unscaledSize, width, height))
-      const coverSizeEnd = dimensionsEven(dimensionsScale(unscaledSizeEnd, widthEnd, heightEnd))
-      const coverRect: Rect = { ...coverSize, x: 0, y: 0 }
-      const coverRectEnd: Rect = { ...coverSizeEnd, x: 0, y: 0 }
-      const coverRects: RectTuple = [coverRect, coverRectEnd]
-      const maxSize = tweenMaxSize(...containerRects) 
-
-      const maxCoverRect = { 
-          ...tweenMaxSize(...coverRects), ...PointZero
-        }
+      const maxContainerSize = tweenMaxSize(...containerRects) 
+     
       const colorArgs: CommandFilterArgs = { 
         ...args, contentColors: [colorBlack, colorBlack], 
-        outputSize: maxCoverRect
+        outputSize: maxContainerSize
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs))
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
     
       const scaleArgs: CommandFilterArgs = {
-        ...args, filterInput, containerRects: coverRects
+        ...args, filterInput, containerRects: contentRects
       }
       commandFilters.push(...this.scaleCommandFilters(scaleArgs))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-      // if (tweeningSize) {
-      
-
-        const overlayArgs: CommandFilterArgs = { 
-          ...args, filterInput, chainInput: colorInput, 
-        }
-        commandFilters.push(...this.mergeCommandFilters(overlayArgs))
-       
-        filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-      // }
-      
-      const point: Point = {
-        x: x * (coverSize.width - rect.width),
-        y: y * (coverSize.height - rect.height),
+    
+      const overlayArgs: CommandFilterArgs = { 
+        ...args, filterInput, chainInput: colorInput, 
       }
-      const pointEnd: Point = {
-        x: xEnd * (coverSizeEnd.width - rectEnd.width),
-        y: yEnd * (coverSizeEnd.height - rectEnd.height),
-      }
-      // const moving = !pointsEqual(point, pointEnd)
-      // const zero = !moving && pointsEqual(point, PointZero)
+      commandFilters.push(...this.mergeCommandFilters(overlayArgs))
       
-      // if (!zero) {
-        // console.log(this.constructor.name, "contentCommandFilters adding crop", point, pointEnd)
-        const cropArgs: FilterCommandFilterArgs = { 
-          duration, videoRate, filterInput
-        }
-        const { cropFilter } = this
-        cropFilter.setValue(maxSize.width, "width")
-        cropFilter.setValue(maxSize.height, "height")
-        cropFilter.setValue(point.x, "x")
-        cropFilter.setValue(point.y, "y")
-        cropFilter.setValue(pointEnd.x, `x${PropertyTweenSuffix}`)
-        cropFilter.setValue(pointEnd.y, `y${PropertyTweenSuffix}`)
-        commandFilters.push(...cropFilter.commandFilters(cropArgs))
-      // }
+      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+   
+      const cropArgs: FilterCommandFilterArgs = { 
+        duration, videoRate, filterInput
+      }
+      const { cropFilter } = this
+      cropFilter.setValue(maxContainerSize.width, "width")
+      cropFilter.setValue(maxContainerSize.height, "height")
+      cropFilter.setValue(contentRect.x, "x")
+      cropFilter.setValue(contentRect.y, "y")
+      cropFilter.setValue(contentRectEnd.x, `x${PropertyTweenSuffix}`)
+      cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
+      commandFilters.push(...cropFilter.commandFilters(cropArgs))
+    
       return commandFilters
     }
 
@@ -175,38 +142,22 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
     initialCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
-      const { filterInput, container, visible, contentColors, track, containerRects } = args
+      const { filterInput, container, visible, track } = args
       if (!visible) return commandFilters
       
-      // const contentInput = `content-${track}`
       if (container) {
-        // const noContentFilters = isPopulatedArray(contentColors)
-        // // console.log(this.constructor.name, "initialCommandFilters", noContentFilters, contentColors, filterInput)
-        // if (noContentFilters) {
-        //   // add color filter to mask - will tween color/size, but not position
-        //   assertPopulatedArray(containerRects)
-        //   const tweeningSize = !tweenRectsEqual(...containerRects)
-        //   const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
-        //   const colorArgs: CommandFilterArgs = { 
-        //     ...args, outputSize: maxSize
-        //   }
-        //   commandFilters.push(...this.colorBackCommandFilters(colorArgs))
-        //   arrayLast(commandFilters).outputs = [contentInput]
-        // } 
-        // else { 
-          // relabel input as content
-          assertPopulatedString(filterInput)
-          commandFilters.push(this.copyCommandFilter(filterInput, track))
-        // }
+        // relabel input as content
+        assertPopulatedString(filterInput)
+        commandFilters.push(this.copyCommandFilter(filterInput, track))
       } 
       return commandFilters
     }
 
-    intrinsicSize(): Size { 
+    intrinsicSizeInitialize(): Rect { 
       const { width, height } = this.definition
       assertAboveZero(width, "updatable width")
       assertAboveZero(height, "updatable height")
-      return { width, height }
+      return { width, height, ...PointZero }
     }
     
     get intrinsicsKnown() {

@@ -18,8 +18,17 @@ export interface PreviewArgs extends PreviewOptions {
   mash: Mash
 }
 
+
+export interface Svg {
+  element: SVGSVGElement
+  id: string
+}
+
+export type Svgs = Svg[]
+
 export interface Preview extends GraphFileArgs {
-  svgElement: SVGSVGElement
+  svgs: Svgs
+  svg: Svg
   editing: boolean
   editor?: Editor
   size: Size

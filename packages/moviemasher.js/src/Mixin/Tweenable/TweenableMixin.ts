@@ -4,10 +4,10 @@ import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles, SelectedProperties } from "../../MoveMe"
 import { Point, PointTuple } from "../../Utility/Point"
-import { assertRect, RectTuple } from "../../Utility/Rect"
-import { DataType } from "../../Setup/Enums"
+import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
+import { DataType, Directions, Orientation, Orientations, SelectType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
@@ -17,6 +17,7 @@ import { assertAboveZero, assertArray, assertNumber, assertPopulatedString, asse
 import { assertSize, Size, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
+import { Actions } from "../../Editor/Actions/Actions"
 
 export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
@@ -31,20 +32,27 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
         tweenable: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
       }))
       if (container) {
-        this.addProperties(object, propertyInstance({ type: DataType.Mode }))
+        // this.addProperties(object, propertyInstance({ type: DataType.Mode }))
         this.addProperties(object, propertyInstance({
           tweenable: true, name: 'opacity', 
           type: DataType.Percent, defaultValue: 1.0
         }))
+        // offN, offS, offE, offW
+        Directions.forEach(direction => {
+          this.addProperties(object, propertyInstance({
+            name: `off${direction}`, type: DataType.Boolean
+          }))
+        })
+        
       }
-      
-
-      this.addProperties(object, propertyInstance({
-        name: 'constrainY', type: DataType.Boolean
-      }))
-      this.addProperties(object, propertyInstance({
-        name: 'constrainX', type: DataType.Boolean
-      }))
+      const lockObject = {
+        name: `lock`, type: DataType.Orientation, 
+        defaultValue: Orientation.H
+      }
+      // if (container && this.definitionId.includes("textcontainer")) {
+      //   lockObject.defaultValue = Orientation.H
+      // } 
+      this.addProperties(object, propertyInstance(lockObject))
     }
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -64,7 +72,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     _alphamergeFilter?: Filter 
     get alphamergeFilter() { return this._alphamergeFilter ||= filterFromId('alphamerge') }
-
 
     amixCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { chainInput, filterInput } = args
@@ -87,6 +94,26 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     canColor(args: CommandFilterArgs): boolean { return false }
 
     canColorTween(args: CommandFilterArgs): boolean { return false }
+
+    colorBackCommandFilters(args: CommandFilterArgs): CommandFilters { 
+      const { time, contentColors = [], videoRate, outputSize } = args
+      assertSize(outputSize)
+
+      const duration = isTimeRange(time) ? time.lengthSeconds : 0
+      const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
+      const { colorFilter } = this
+      const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
+      colorFilter.setValue(color, 'color')
+      colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
+      colorFilter.setValue(outputSize.width, 'width')
+      colorFilter.setValue(outputSize.height, 'height')
+      colorFilter.setValue(outputSize.width, `width${PropertyTweenSuffix}`)
+      colorFilter.setValue(outputSize.height, `height${PropertyTweenSuffix}`)
+      
+      const commandFilters = colorFilter.commandFilters(colorArgs)
+      arrayLast(commandFilters).outputs = [idGenerate(colorName(color) || 'back')]
+      return commandFilters
+    }
 
     colorCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = [] 
@@ -161,11 +188,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       else commandFilters.push(...this.contentCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
-
-    declare constrainX: boolean
-
-    declare constrainY: boolean
-
+   
     containerColorCommandFilters(args: CommandFilterArgs): CommandFilters { 
       return this.colorCommandFilters(args)
     }
@@ -190,6 +213,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
   
     private _cropFilter?: Filter 
     get cropFilter() { return this._cropFilter ||= filterFromId('crop') }
+    
+    declare definition: TweenableDefinition
 
     finalCommandFilters(args: CommandFilterArgs): CommandFilters { return [] }
 
@@ -198,30 +223,17 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     initialCommandFilters(args: CommandFilterArgs): CommandFilters {
       throw new Error(Errors.unimplemented)
     }
-    private _overlayFilter?: Filter
-    get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
-
-
-    colorBackCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      const { time, contentColors = [], videoRate, outputSize } = args
-      assertSize(outputSize)
-
-      const duration = isTimeRange(time) ? time.lengthSeconds : 0
-      const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
-      const { colorFilter } = this
-      const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
-      colorFilter.setValue(color, 'color')
-      colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
-      colorFilter.setValue(outputSize.width, 'width')
-      colorFilter.setValue(outputSize.height, 'height')
-      colorFilter.setValue(outputSize.width, `width${PropertyTweenSuffix}`)
-      colorFilter.setValue(outputSize.height, `height${PropertyTweenSuffix}`)
-      
-      const commandFilters = colorFilter.commandFilters(colorArgs)
-      arrayLast(commandFilters).outputs = [idGenerate(colorName(color) || 'back')]
-      return commandFilters
+    protected _intrinsicSize?: Rect
+    get intrinsicRect(): Rect { 
+      return this._intrinsicSize ||= this.intrinsicSizeInitialize()
     }
+    set intrinsicRect(value: Rect) { this._intrinsicSize = value }
 
+    get intrinsicsKnown(): boolean { return true }
+
+    intrinsicSizeInitialize(): Rect { throw new Error(Errors.unimplemented) }
+
+    declare lock: Orientation
 
     mergeCommandFilters(args: CommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = [] 
@@ -243,6 +255,14 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       commandFilter.outputs = [idGenerate('merged')]
       return commandFilters
     }
+
+    declare offE: boolean
+    declare offN: boolean
+    declare offS: boolean
+    declare offW: boolean
+
+    private _overlayFilter?: Filter
+    get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
 
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { time, containerRects, filterInput: input, videoRate } = args
@@ -279,6 +299,22 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
+    selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties {
+      const selectedProperties: SelectedProperties = []
+      this.properties.forEach(property => {
+        selectedProperties.push({
+          selectType, property, value: this.value(property.name),
+          changeHandler: (property: string, value: Scalar) => {
+            const undoValue = this.value(property)
+            const redoValue = isUndefined(value) ? undoValue : value
+            // console.log(this.constructor.name, "selectedProperties", undoValue, "=>", redoValue)
+            actions.create({ property, target: this, redoValue, undoValue })
+          },
+        })
+      })
+      return selectedProperties
+    }
+    
     private _setsarFilter?: Filter
     get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar') }
 
@@ -335,7 +371,5 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const [point, pointEnd] = this.tweenPoints(time, range)
       return [ { ...point , ...size }, { ...pointEnd , ...sizeEnd } ]
     }
-    
-    declare definition: TweenableDefinition
   }
 }

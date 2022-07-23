@@ -1,4 +1,4 @@
-import { assertAboveZero, assertPositive, isNumber, isObject, throwError } from "./Is"
+import { assertAboveZero, isNumber, isObject, throwError } from "./Is"
 
 export interface Size {
   width: number;
@@ -13,9 +13,16 @@ export function assertSize(value: any, name?: string): asserts value is Size {
 }
 
 
+export const sizesEqual = (dimensions: Size, dimensionsEnd?: any) => {
+  if (!isSize(dimensionsEnd)) return false
+
+  return dimensions.width === dimensionsEnd.width && dimensions.height === dimensionsEnd.height
+}
+
+
 export type Sizes = Size[]
 export type SizeTuple = [Size, Size]
-
+export const SizeZero = { width: 0, height: 0 }
 export const dimensionEven = (dimension: number): number => (
   2 * Math.max(1, Math.round(dimension / 2)) 
   // Math.max(2, Math.round(dimension)) 
@@ -31,22 +38,8 @@ export const dimensionsScale = (dimensions: Size, horizontally: number, vertical
   return { width: width * horizontally, height: height * vertically }
 }
 
-export const sizePad = (outputWidth: number, scaledWidth: number, scaleX: number, constrainX = false): number => {
-  // console.log("dimensionPad", outputWidth, scaledWidth, scaleX, constrainX)
-  assertPositive(scaleX)
-  assertPositive(scaledWidth)
-  const negator = constrainX ? -1 : 1
-  const nullifier = constrainX ? 0 : -1
-  const pad = negator * scaledWidth
-  const distance = outputWidth + pad
-  const start = nullifier * scaledWidth
-  const scaled = distance * scaleX
-  const x = start + scaled
-  // console.log("dimensionPad", x, "=", "(", nullifier, "*", scaledWidth, "):start", "+", "(", "(", outputWidth, "+", "(", negator, "*", scaledWidth, "):pad", "):distance", "*", scaleX, "):scaled")
-  return x
-}
 
-export const dimensionsCover = (inDimensions: Size, outDimensions: Size): Size => {
+export const sizeCover = (inDimensions: Size, outDimensions: Size): Size => {
   const { width: loadedWidth, height: loadedHeight } = inDimensions
   assertAboveZero(loadedWidth)
   assertAboveZero(loadedHeight)

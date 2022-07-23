@@ -1,4 +1,4 @@
-import { Size, dimensionsCover } from "../../Utility/Size"
+import { Size, sizeCover } from "../../Utility/Size"
 import { isAboveZero } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass, UpdatableSizeDefinitionObject } from "./UpdatableSize"
@@ -19,7 +19,7 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
 
     coverSize(dimensions: Size): Size {
       const { width, height } = this
-      return dimensionsCover({ width, height }, dimensions)
+      return sizeCover({ width, height }, dimensions)
     }
   }
 }

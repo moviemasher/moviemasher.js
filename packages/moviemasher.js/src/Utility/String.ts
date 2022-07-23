@@ -54,7 +54,7 @@ export const stringWidthForFamilyAtHeight = (string: string, family: string, hei
 
   const text = ctx.measureText(string)
   const { actualBoundingBoxLeft, actualBoundingBoxRight, width } = text
-  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft)
+  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft, text)
   return [width, actualBoundingBoxLeft]
 }
 

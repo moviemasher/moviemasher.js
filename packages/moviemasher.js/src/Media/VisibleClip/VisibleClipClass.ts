@@ -18,9 +18,12 @@ import { Size } from "../../Utility/Size"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Effects } from "../Effect/Effect"
 import { effectInstance } from "../Effect/EffectFactory"
+import { Track } from "../../Edited/Mash/Track/Track"
+import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
+import { Loader } from "../../Loader/Loader"
 
-const VisibleClipMixin = ClipMixin(InstanceBase)
-export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
+// const VisibleClipMixin = ClipMixin(InstanceBase)
+export class VisibleClipClass extends InstanceBase implements VisibleClip {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
@@ -135,6 +138,11 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
 
   declare contentId: string
 
+  copy(): VisibleClip {
+    const object = { ...this.toJSON(), id: '' }
+    return this.definition.instanceFromObject(object)
+  }
+
   declare definition: VisibleClipDefinition
 
   definitionIds(): string[] {
@@ -149,7 +157,36 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     return ids
   }
 
+  definitionTime(quantize : number, time : Time) : Time {
+    const scaledTime = super.definitionTime(quantize, time)
+    const startTime = this.time(quantize).scale(scaledTime.fps)
+    const endTime = this.endTime(quantize).scale(scaledTime.fps)
+
+    const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
+    return scaledTime.withFrame(frame - startTime.frame)
+  }
+
   effects: Effects = []
+
+
+  get endFrame() { return this.frame + this.frames }
+
+  endTime(quantize : number) : Time {
+    return timeFromArgs(this.endFrame, quantize)
+  }
+
+  declare frame: number
+
+  declare frames: number
+
+
+  iconUrl(preloader: Loader): string | undefined {
+    const { icon } = this.definition
+    if (!icon) return
+
+  }
+
+  maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
   get mutable(): boolean {
     return this.content.mutable || !!this.container?.mutable
@@ -170,21 +207,21 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
   }
 
   selectedProperties(actions: Actions, selectTypes: SelectType[] = SelectTypes): SelectedProperties {
-    const selectedProperties: SelectedProperties = []
-    const { trackInstance } = this
-    const dense = trackInstance?.dense
+    const selected: SelectedProperties = []
+    const { track, properties } = this
+    const dense = track?.dense
     const selectTypesByName: Record<string, SelectType> = {
       containerId: SelectType.Container,
       contentId: SelectType.Content,
     }
-    this.properties.forEach(property => {
+    properties.forEach(property => {
       const { name } = property
        // frame is set by dense tracks
       if (name === 'frame' && dense) return
       const selectType = selectTypesByName[name] || SelectType.Clip
       if (!selectTypes.includes(selectType)) return
 
-      selectedProperties.push({
+      selected.push({
         selectType, property, value: this.value(name),
         changeHandler: (property: string, value: Scalar) => {
           const undoValue = this.value(property)
@@ -197,12 +234,12 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     })
     const { container, content } = this
     if (selectTypes.includes(SelectType.Content)) {
-      selectedProperties.push(...content.selectedProperties(actions, SelectType.Content))
+      selected.push(...content.selectedProperties(actions, SelectType.Content))
     }
     if (container && selectTypes.includes(SelectType.Container)) {
-      selectedProperties.push(...container.selectedProperties(actions, SelectType.Container))
+      selected.push(...container.selectedProperties(actions, SelectType.Container))
     }
-    return selectedProperties
+    return selected
   }
 
 
@@ -256,6 +293,18 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
     return svgFilters
   }
 
+  time(quantize : number) : Time { return timeFromArgs(this.frame, quantize) }
+
+  timeRange(quantize : number) : TimeRange {
+    return timeRangeFromArgs(this.frame, quantize, this.frames)
+  }
+
+  timeRangeRelative(timeRange : TimeRange, quantize : number) : TimeRange {
+    const range = this.timeRange(quantize).scale(timeRange.fps)
+    const frame = Math.max(0, timeRange.frame - range.frame)
+
+    return timeRange.withFrame(frame)
+  }
   toJSON(): UnknownObject {
     const json = super.toJSON()
     const { container, content } = this
@@ -268,7 +317,10 @@ export class VisibleClipClass extends VisibleClipMixin implements VisibleClip {
   toString(): string {
     return `[VisibleClip ${this.label}]`
   }
-
+  _track?: Track 
+  get track() { return this._track }
+  set track(value) { this._track = value }
+  
   trackType = TrackType.Video
 
   get visible(): boolean {

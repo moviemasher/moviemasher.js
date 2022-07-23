@@ -4,7 +4,7 @@ import { Rect, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
 import { CommandFilters, CommandFilterArgs, SelectedProperties, CommandFilter } from "../MoveMe"
 import { Actions } from "../Editor/Actions/Actions"
-import { Direction, isContainerType, SelectType } from "../Setup/Enums"
+import { Anchor, DirectionObject, isContainerType, SelectType } from "../Setup/Enums"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Filter } from "../Filter/Filter"
 import { isObject, throwError } from "../Utility/Is"
@@ -16,8 +16,6 @@ export interface ContainerObject extends TweenableObject {
   opacityEnd?: number
   width?: number
   widthEnd?: number
-  intrinsicWidth?: number
-  intrinsicHeight?: number
 }
 export const isContainerObject = (value: any): value is ContainerObject => {
   return isObject(value) && "opacity" in value
@@ -40,10 +38,9 @@ export interface Container extends Tweenable {
   containerRects(outputSize: Size, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple
   containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent
   containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
-  directions: Direction[]
+  directions: Anchor[]
+  directionObject: DirectionObject
   height: number
-  instrinsicsKnown: boolean
-  intrinsicSize(): Size
   intrinsicGroupElement: SVGGElement
   mode: number
   mutable: boolean
@@ -51,8 +48,8 @@ export interface Container extends Tweenable {
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number
-  pathElement(previewSize: Size, time: Time, range: TimeRange, forecolor?: string): SvgContent 
-  selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties
+  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor?: string): SvgContent 
+  
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

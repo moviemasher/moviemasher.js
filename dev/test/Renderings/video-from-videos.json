@@ -23,8 +23,8 @@
             "container": {
               "x": 1,
               "y": 1,
-              "constrainX": true,
-              "constrainY": true,
+              "offW": false, "offE": false,
+              "offS": false, "offN": false,
               "width": 0.5, "height": 0.5
             }
           }
@@ -43,8 +43,8 @@
             "container": {
               "x": 0,
               "y": 0,
-              "constrainX": true,
-              "constrainY": true,
+              "offW": false, "offE": false,
+              "offS": false, "offN": false,
               "width": 0.5, "height": 0.5
             },
             "frame": 10,

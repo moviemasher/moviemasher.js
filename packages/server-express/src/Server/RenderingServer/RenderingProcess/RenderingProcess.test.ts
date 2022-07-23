@@ -191,32 +191,7 @@ describe.skip("RenderingProcess", () => {
 describe("Rendering", () => {
 
 
-  describe.only("content in containers", () => {
-    const contentTests = GenerateTestsDefault.content as GenerateContentTest[]
-    const containerTests = GenerateTestsDefault.container as GenerateContainerTest[]
-    const tests:[string, GenerateOptions][] = []
-    contentTests.forEach(contentTest => {
-      containerTests.forEach(containerTest => {
-        const content = contentTest[0]
-        const container = containerTest[0]
-        const delimiter = [GenerateIdDelimiter, GenerateIdDelimiter].join(GenerateDelimiter)
-        const label = [content, container].join(delimiter)// ...GenerateOptionsDefault, , contentSize: '', contentPoint: '', containerPoint: '' 
-        tests.push([label, { container, content }])
-      })
-    })
-  
-    test.each(tests)("%s", async (name, options) => {
-      await expectTestRender(name, options)
-    })
 
-    test("combined", async () => { 
-      const ids = tests.map(test => `all-${test[0]}`) as GenerateTestIds
-      const allIds = generateIds()
-      await expectCombine(ids, 'combined', allIds.length * duration) 
-    })
-  })
-
-  
   const expectMashTestRender = (mashTest: GenerateMashTest): Promise<void> => {
     const [id, mash] = mashTest
     const { tracks } = mash
@@ -312,6 +287,51 @@ describe("Rendering", () => {
     })
   }
 
+  describe("content in containers", () => {
+    const contentTests = GenerateTestsDefault.content as GenerateContentTest[]
+    const containerTests = GenerateTestsDefault.container as GenerateContainerTest[]
+    const tests:[string, GenerateOptions][] = []
+    contentTests.forEach(contentTest => {
+      containerTests.forEach(containerTest => {
+        const content = contentTest[0]
+        const container = containerTest[0]
+        const delimiter = [GenerateIdDelimiter, GenerateIdDelimiter].join(GenerateDelimiter)
+        const label = [content, container].join(delimiter)// ...GenerateOptionsDefault, , contentSize: '', contentPoint: '', containerPoint: '' 
+        tests.push([label, { container, content }])
+      })
+    })
+  
+    test.each(tests)("%s", async (name, options) => {
+      await expectTestRender(name, options)
+    })
+
+    test("combined", async () => { 
+      const ids = tests.map(test => `all-${test[0]}`) as GenerateTestIds
+      const allIds = generateIds()
+      await expectCombine(ids, 'combined', allIds.length * duration) 
+    })
+  })
+
+  describe.only("specific", () => {
+    const ids = [
+      "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
+      // "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
+      // "P_TL_F_in_S_C_TL-BR_F-H_50",
+      // "P_TL_F_in_S_U_TL-BR_Q-F_50",
+      // "BL-RE_in_R_C_TL_Q-F_100",
+      // "BL-RE_in_S_C_TL_Q-F_100",
+      // "BL-RE_in_K_C_TL_Q-F_100",
+      "BL-RE_in_T_C_TL_Q-F_100",
+      // "P_TL_F_in_K_C_TL-BR_H_50"
+    ] as GenerateTestIds
+
+    test.each(ids)("%s", async (id) => { await expectTestIdRender(id) })
+
+    test("all", async () => { await expectCombine(ids, 'specific') })
+  })
+})
+
+
   // describe("default", () => {
   //   const ids = generateIds(GenerateOptionsDefault)
   //   test.each(ids)("%s", async (id) => {
@@ -380,25 +400,6 @@ describe("Rendering", () => {
   //   test("all", async () => { await expectCombine(ids, 'container-opacity-tween') })
   // })
   
-  describe("specific", () => {
-    const ids = [
-      // "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
-      // "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
-      // "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
-      // "P_TL_F_in_S_C_TL-BR_F-H_50",
-
-      // "P_TL_F_in_S_U_TL-BR_Q-F_50",
-      "BL-RE_in_R_C_TL_Q-F_100",
-      "BL-RE_in_S_C_TL_Q-F_100",
-      "BL-RE_in_K_C_TL_Q-F_100",
-      "BL-RE_in_T_C_TL_Q-F_100",
-      // "P_TL_F_in_K_C_TL-BR_H_50"
-    ] as GenerateTestIds
-
-    test.each(ids)("%s", async (id) => { await expectTestIdRender(id) })
-
-    // test("all", async () => { await expectCombine(ids, 'specific') })
-  })
   
   // describe("text", () => {
   //   const generateOptions: GenerateOptions = { 
@@ -421,4 +422,3 @@ describe("Rendering", () => {
 
   //   test("all", async () => { await expectCombine(ids, 'puppy-in-kitten') })
   // })
-})

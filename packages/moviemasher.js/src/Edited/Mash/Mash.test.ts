@@ -1,9 +1,8 @@
 
 import { expectArrayLength, expectEmptyArray } from "../../../../../dev/test/Utilities/Expect"
 
-import { AVType, DefinitionType, GraphFileType, GraphType, LoadType, TrackType, TrackTypes } from "../../Setup/Enums"
+import { AVType, GraphFileType, GraphType, LoadType, TrackType, TrackTypes } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { ClipObject, isClipObject } from "../../Mixin/Clip/Clip"
 import { idGenerate } from "../../Utility/Id"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashClass"
@@ -18,7 +17,7 @@ import { FilterGraphsOptions } from './FilterGraphs/FilterGraphs'
 import { FilterGraphClass } from './FilterGraph/FilterGraphClass'
 import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities'
 import { visibleClipDefault } from "../../Media/VisibleClip/VisibleClipFactory"
-import { VisibleClip, VisibleClipObject } from "../../Media/VisibleClip/VisibleClip"
+import { isVisibleClipObject, VisibleClip, VisibleClipObject } from "../../Media/VisibleClip/VisibleClip"
 import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { TrackClass } from "./Track/TrackClass"
 import { isTrackObject } from "./Track/Track"
@@ -37,7 +36,7 @@ describe("Mash", () => {
   }
 
   const addNewTextClip = (mash: Mash, track = 0): VisibleClip => {
-    const clipObject: ClipObject = {
+    const clipObject = {
       definitionId: visibleClipDefault.id, containerId: defaultTextId
     }
     const clip = visibleClipDefault.instanceFromObject(clipObject)
@@ -52,8 +51,8 @@ describe("Mash", () => {
   }
 
   const mashWithMultipleImageClips = () => {
-    const clip1: ClipObject = { definitionId: visibleClipDefault.id, contentId: 'image-square', frames: 30 }
-    const clip2: ClipObject = { definitionId: visibleClipDefault.id, contentId: 'image-landscape', frames: 40 }
+    const clip1 = { definitionId: visibleClipDefault.id, contentId: 'image-square', frames: 30 }
+    const clip2 = { definitionId: visibleClipDefault.id, contentId: 'image-landscape', frames: 40 }
     return createMash([clip1, clip2])
   }
 
@@ -228,7 +227,7 @@ describe("Mash", () => {
       expect(filterGraphs.filterGraphsVisible.length).toBe(2)
     })
     test("returns expected FilterGraphs for image", async () => {
-      const clip: ClipObject = { definitionId: visibleClipDefault.id, contentId: 'image-landscape' }
+      const clip = { definitionId: visibleClipDefault.id, contentId: 'image-landscape' }
       const mashObject: MashObject = {
         tracks: [{ trackType: TrackType.Video, clips: [clip] }]
       }
@@ -467,9 +466,9 @@ describe("Mash", () => {
       expectArrayLength(videoTrack2.clips, 1)
       const clips = videoTrack2.clips!
 
-      clips.forEach(object => expect(isClipObject(object)).toBeTruthy())
+      clips.forEach(object => expect(isVisibleClipObject(object)).toBeTruthy())
       const [clipObject] = clips
-      expect(isClipObject(clipObject)).toBeTruthy()
+      expect(isVisibleClipObject(clipObject)).toBeTruthy()
 
       expect(clipObject.color).toEqual(clip.value('color'))
     })

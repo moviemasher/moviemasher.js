@@ -1,17 +1,16 @@
 import { SvgContents } from "../../declarations"
-import { Point } from "../../Utility/Point"
 import { Size } from "../../Utility/Size"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
 import { Loader } from "../../Loader/Loader"
-import { NamespaceSvg } from "../../Setup/Constants"
 import { AVType } from "../../Setup/Enums"
 import { sortByTrack } from "../../Utility/Sort"
 import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../../Edited/Mash/Mash"
-import { PreviewArgs, Preview } from "./Preview"
+import { PreviewArgs, Preview, Svgs, Svg } from "./Preview"
+import { svgElement, svgPolygonElement } from "../../Utility/Svg"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
@@ -39,35 +38,34 @@ export class PreviewClass implements Preview {
   get preloader(): Loader { return this.mash.preloader }
 
   get quantize(): number { return this.mash.quantize }
+
   size: Size
 
   selectedClip?: VisibleClip
 
-  selectedScale: Point = { x: 0, y: 0 }
-
   streaming = false
 
-  get svgElement(): SVGSVGElement {
-    const { trackPreviews, size, backcolor } = this
-    const contents: SvgContents = []
-    if (backcolor) {
-      const rectElement = globalThis.document.createElementNS(NamespaceSvg, 'rect')
-      rectElement.setAttribute('width', String(size.width))
-      rectElement.setAttribute('height', String(size.height))
-      rectElement.setAttribute('fill', backcolor)
-      contents.push(rectElement)
-    }
-    // console.log(this.constructor.name, "svgElement", trackPreviews.length)
-    contents.push(...trackPreviews.map(chain => chain.svg))
-    const width = String(size.width)
-    const height = String(size.height)
+  // get svgElement(): SVGSVGElement {
+  //   const { trackPreviews, size, backcolor } = this
+  //   const contents: SvgContents = []
+  //   if (backcolor) contents.push(svgPolygonElement(size, '', backcolor))
+  //   contents.push(...trackPreviews.map(chain => chain.svgElement))
+  //   const element = svgElement(size)
+  //   element.append(...contents)
+  //   return element
+  // }
 
-    const svgElement = globalThis.document.createElementNS(NamespaceSvg, 'svg')
-    svgElement.setAttribute('width', width)
-    svgElement.setAttribute('height', height)
-    svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
-    svgElement.append(...contents)
-    return svgElement
+  _svgs?: Svgs
+  get svgs(): Svgs { 
+    return this._svgs ||= this.trackPreviews.map(preview => preview.svg)
+  } 
+  
+  get svg(): Svg {
+    const { size, svgs, mash } = this
+    const { id } = mash
+    const svg = svgElement(size)
+    svg.append(...svgs.map(svg => svg.element))
+    return { element: svg, id  }
   }
 
   time: Time

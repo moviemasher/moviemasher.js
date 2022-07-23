@@ -1,6 +1,7 @@
 import { Size } from "./Size"
 import { NamespaceSvg } from "../Setup/Constants"
-import { Rect, isRect } from "../Utility/Rect"
+import { Rect, isRect, rectFromSize } from "./Rect"
+import { isAboveZero } from "./Is"
 
 export const svgOfDimensions = (dimensions: Size) => {
   const { width, height } = dimensions
@@ -33,4 +34,13 @@ export const svgPolygonElement = (size: Size | Rect, className = '', fill = 'non
   if (fill) element.setAttribute('fill', fill)
   if (className) element.classList.add(className)
   return element
+}
+
+export const svgElement = (size: Size): SVGSVGElement => {
+  const { width, height } = size
+  const svgElement = globalThis.document.createElementNS(NamespaceSvg, 'svg')
+  svgElement.setAttribute('width', String(width))
+  svgElement.setAttribute('height', String(height))
+  svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
+  return svgElement
 }

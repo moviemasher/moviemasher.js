@@ -10,7 +10,7 @@ import { PropertiedClass } from "../Base/Propertied"
 import { isAboveZero, isUndefined } from "../Utility/Is"
 import { idGenerate } from "../Utility/Id"
 import { Loader } from "../Loader/Loader"
-import { PreviewOptions } from "../Editor/Preview/Preview"
+import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
 import { Default } from "../Setup/Default"
 
 
@@ -88,10 +88,14 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   reload(): Promise<void> | undefined { return }
 
-  svgElement(graphArgs: PreviewOptions): SVGSVGElement {
-    throw Errors.unimplemented
-  }
+  // svgElement(options: PreviewOptions): SVGSVGElement {
+  //   throw Errors.unimplemented
+  // }
+  
+  svg(options: PreviewOptions): Svg { throw Errors.unimplemented }
 
+  svgs(options: PreviewOptions): Svgs { throw Errors.unimplemented }
+  
   toJSON(): UnknownObject {
     const json = super.toJSON()
     json.createdAt = this.createdAt

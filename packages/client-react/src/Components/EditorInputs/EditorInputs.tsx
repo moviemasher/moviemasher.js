@@ -29,4 +29,5 @@ export const DataTypeInputs: DataTypeElements = {
   [DataType.Mode]: EmptyElement,
   [DataType.Direction4]: EmptyElement,
   [DataType.Direction8]: EmptyElement,
+  [DataType.Orientation]: EmptyElement,
 }

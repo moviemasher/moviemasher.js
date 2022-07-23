@@ -2,25 +2,16 @@ import { GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { TrackType } from "../../Setup/Enums"
 import { Time, TimeRange  } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { ClipClass, ClipObject, ClipDefinition, Clip } from "./Clip"
+import { ClipClass, ClipDefinition, Clip } from "./Clip"
 import { Loader } from "../../Loader/Loader"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
 export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
   return class extends Base implements Clip {
-    constructor(...args : any[]) {
-      super(...args)
-      const [object] = args
-      const { track } = <ClipObject> object
-      if (typeof track !== "undefined") this.track = track
-    }
-
     copy(): Clip {
-      const clipObject: ClipObject = this.toJSON()
-      clipObject.id = ''
-      clipObject.track = this.track
-      return this.definition.instanceFromObject(clipObject) as Clip
+      const object = { ...this.toJSON(), id: '' }
+      return this.definition.instanceFromObject(object) as Clip
     }
 
     declare definition: ClipDefinition
@@ -66,8 +57,6 @@ export function ClipMixin<T extends InstanceClass>(Base: T): ClipClass & T {
 
       return timeRange.withFrame(frame)
     }
-
-    track = -1
 
     trackType = TrackType.Video
 

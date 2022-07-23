@@ -14,7 +14,8 @@ import {
 } from "./Layer/Layer"
 import { propertyInstance } from "../../Setup/Property"
 import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
-import { PreviewOptions } from "../../Editor/Preview/Preview"
+import { PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
+import { svgElement } from "../../Utility/Svg"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -189,17 +190,31 @@ export class CastClass extends EditedClass implements Cast {
     return { position: index, layer: layerFolder }
   }
 
-  svgElement(graphArgs: PreviewOptions): SVGSVGElement {
-    const { imageSize: size } = this
-    const svg = globalThis.document.createElementNS(NamespaceSvg, 'svg')
-    svg.setAttribute('height', String(size.height))
-    svg.setAttribute('width', String(size.width))
-    const args: PreviewOptions = {
-      backcolor: this.backcolor, ...graphArgs,
-    }
-    svg.append(...this.mashes.map(mash => mash.svgElement(args)))
-    return svg
+  svgs(args: PreviewOptions): Svgs {
+    const { mashes } = this
+    const svgs = mashes.flatMap(mash => mash.svgs(args))
+    // console.log(this.constructor.name, "svgs", svgs.length, mashes.length)
+    return svgs
   }
+
+  svg(args: PreviewOptions): Svg {
+    const { imageSize, id } = this
+    const element = svgElement(imageSize)
+    element.append(...this.svgs(args).map(svg => svg.element))
+    return { id, element: element }
+  }
+
+  // svgElement(graphArgs: PreviewOptions): SVGSVGElement {
+  //   const { imageSize: size } = this
+  //   const svg = globalThis.document.createElementNS(NamespaceSvg, 'svg')
+  //   svg.setAttribute('height', String(size.height))
+  //   svg.setAttribute('width', String(size.width))
+  //   const args: PreviewOptions = {
+  //     backcolor: this.backcolor, ...graphArgs,
+  //   }
+  //   svg.append(...this.mashes.map(mash => mash.svgElement(args)))
+  //   return svg
+  // }
 
   toJSON(): UnknownObject {
     const json = super.toJSON()

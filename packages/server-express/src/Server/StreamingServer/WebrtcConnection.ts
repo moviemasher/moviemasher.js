@@ -3,11 +3,11 @@ import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
 import {
-  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, tweenSizesEqual
+  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
-import { StreamInput, StreamOutput } from '../../UnixStream/SocketStreams'
+import { StreamInput } from '../../UnixStream/SocketStreams'
 import { RunningCommand } from '../../RunningCommand/RunningCommand'
 import { runningCommandInstance } from '../../RunningCommand/RunningCommandFactory'
 
@@ -247,7 +247,7 @@ export class WebrtcConnection extends EventEmitter {
     const { width, height } = size
     const sizeString = width + 'x' + height
     const currentStream = this.stream
-    if (currentStream && tweenSizesEqual(currentStream.size, size)) return currentStream
+    if (currentStream && sizesEqual(currentStream.size, size)) return currentStream
 
     console.log("streamForSize", width, height)
 

@@ -1,7 +1,7 @@
 import React from "react"
 import { SelectType, NumberObject, SelectedProperty, isVisibleClip } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
+import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { InspectorEffects } from "./InspectorEffects"
@@ -37,7 +37,6 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
     }
   }
 
-
   selectedProperties.forEach(selectedProperty => {
     const { property, changeHandler, selectType, value } = selectedProperty
     kidsByType[selectType] ||= []
@@ -50,6 +49,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
       changeHandler,
       ...props
     }
+    // console.log("InspectorProperties", `inspector-${selectType}-${name}`, changeHandler)
     kids.push(<InspectorProperty {...propertyProps} />)
   })
 

@@ -1,7 +1,7 @@
 {
-  "label": "Lobster",
+  "label": "League Spartan",
   "id": "com.moviemasher.font.default",
   "type": "font",
-  "source": "../shared/font/lobster/lobster.ttf",
-  "url": "../shared/font/lobster/lobster.woff2"
+  "source": "../shared/font/leaguespartan/leaguespartan-bold.ttf",
+  "url": "../shared/font/leaguespartan/leaguespartan-bold.woff2"
 }

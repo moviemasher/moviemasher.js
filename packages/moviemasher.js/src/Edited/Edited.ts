@@ -4,7 +4,7 @@ import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
-import { PreviewOptions } from "../Editor/Preview/Preview"
+import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -31,5 +31,7 @@ export interface Edited extends Described, Propertied {
   quantize: number
   readonly preloader: Loader
   reload(): Promise<void> | undefined
-  svgElement(graphArgs: PreviewOptions): SVGSVGElement
+  // svgElement(graphArgs: PreviewOptions): SVGSVGElement
+  svgs(graphArgs: PreviewOptions): Svgs
+  svg(graphArgs: PreviewOptions): Svg
 }

@@ -11,8 +11,6 @@ import { Definition } from "../Definition/Definition"
 import { AudibleContextInstance } from "../Context/AudibleContext"
 import { LoaderFile, LoaderSource } from "./Loader"
 import { LoaderClass } from "./LoaderClass"
-import { assert } from "console"
-import { assertFontDefinition } from "../Media"
 
 export class BrowserLoaderClass extends LoaderClass {
   constructor(endpoint?: Endpoint) {

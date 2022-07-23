@@ -1,12 +1,14 @@
 import { Constrained, Scalar} from "../../declarations"
 import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
+import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject } from "../../Instance/Instance"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles, SelectedProperties } from "../../MoveMe"
+import { Orientation, SelectType } from "../../Setup/Enums"
 import { PointTuple } from "../../Utility/Point"
-import { RectTuple } from "../../Utility/Rect"
-import { SizeTuple } from "../../Utility/Size"
+import { Rect, RectTuple } from "../../Utility/Rect"
+import { Size, SizeTuple } from "../../Utility/Size"
 
 export interface TweenableObject extends InstanceObject {
   container?: boolean
@@ -15,43 +17,53 @@ export interface TweenableObject extends InstanceObject {
   xEnd?: number
   y?: number
   yEnd?: number
-  constrainX?: boolean
-  constrainY?: boolean
+  offN?: boolean
+  offS?: boolean
+  offE?: boolean
+  offW?: boolean
+  lock?: string
 }
 
 export interface TweenableDefinitionObject extends DefinitionObject {}
 
 export interface Tweenable extends Instance { 
-  commandFiles(args: CommandFileArgs): CommandFiles 
-  colorCommandFilters(args: CommandFilterArgs): CommandFilters
-  copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
+
   alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters
-  colorFilter: Filter  
   alphamergeFilter: Filter
-  mergeCommandFilters(args: CommandFilterArgs): CommandFilters
+  amixCommandFilters(args: CommandFilterArgs): CommandFilters
   canColor(args: CommandFilterArgs): boolean
   canColorTween(args: CommandFilterArgs): boolean
-  
   colorBackCommandFilters(args: CommandFilterArgs, output?: string): CommandFilters
-  cropFilter: Filter
-  overlayFilter: Filter
-  finalCommandFilters(args: CommandFilterArgs): CommandFilters 
-  setptsFilter: Filter
-  containerColorCommandFilters(args: CommandFilterArgs): CommandFilters
-  scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
-  initialCommandFilters(args: CommandFilterArgs): CommandFilters
+  colorCommandFilters(args: CommandFilterArgs): CommandFilters
+  colorFilter: Filter  
+  commandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
-  contentCommandFilters(args: CommandFilterArgs): CommandFilters 
+  containerColorCommandFilters(args: CommandFilterArgs): CommandFilters
   containerCommandFilters(args: CommandFilterArgs): CommandFilters 
-  amixCommandFilters(args: CommandFilterArgs): CommandFilters
-  constrainX: boolean
-  constrainY: boolean
+  contentCommandFilters(args: CommandFilterArgs): CommandFilters 
+  copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
+  cropFilter: Filter
+  finalCommandFilters(args: CommandFilterArgs): CommandFilters 
   graphFiles(args: GraphFileArgs): GraphFiles
+  initialCommandFilters(args: CommandFilterArgs): CommandFilters
+  intrinsicRect: Rect
+  intrinsicSizeInitialize(): Rect
+  intrinsicsKnown: boolean
+  lock: Orientation
+  mergeCommandFilters(args: CommandFilterArgs): CommandFilters
+  offE: boolean
+  offN: boolean
+  offS: boolean
+  offW: boolean
+  overlayFilter: Filter
+  scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
+  selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties
+  setptsFilter: Filter
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
-  tweenValues(key: string, time: Time, range: TimeRange): Scalar[] 
   tweenPoints(time: Time, range: TimeRange): PointTuple 
-  tweenSizes(time: Time, range: TimeRange): SizeTuple 
   tweenRects(time: Time, range: TimeRange): RectTuple
+  tweenSizes(time: Time, range: TimeRange): SizeTuple 
+  tweenValues(key: string, time: Time, range: TimeRange): Scalar[] 
 }
 
 

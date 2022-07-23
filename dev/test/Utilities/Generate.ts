@@ -11,6 +11,7 @@ import { assertContainerObject, ContainerObject, isContainerObject } from "../..
 import { DefinitionObjects } from "../../../packages/moviemasher.js/src/Definition/Definition"
 import { assertPoint, isPoint, Point } from "../../../packages/moviemasher.js/src/Utility/Point"
 import { PopulatedString } from "../../../packages/moviemasher.js/src/declarations"
+import { Directions, Orientation } from "../../../packages/moviemasher.js/src"
 
 enum GeneratePoint {
   TL = 'TL',
@@ -74,14 +75,12 @@ export type GenerateContainerTest = [string, string, ContainerObject]
 export type PointTest = [string, ContainerObject]
 export type GenerateMashTest = [string, MashObject]
 export type SizeTest = [string, ContainerObject]
-export type BooleanTest = [string, boolean]
+export type BooleanTest = [string, ContainerObject]
 export type NumberTest = [string, ContainerObject]
-const textOptions = { 
-  "string": "Valken",
-  "intrinsicWidth": 33750,
-  "intrinsicHeight": 10000,
-  "intrinsicOffset": 130,
-  "fontId": "font.valken"
+const textOptions: TextContainerObject = { 
+  string: "Valken",
+  intrinsic: { width: 33750, height: 10000, x: 130, y: 0 },
+  fontId: "font.valken"
 }
 
 type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
@@ -245,7 +244,10 @@ export const GenerateTestsDefault: GenerateTests = {
     opacityTest(GenerateOpacity.F, GenerateOpacity.Z),
     opacityTest(GenerateOpacity.H),
   ],
-  [GenerateArg.Constrain]: [[GenerateConstrain.C, true], [GenerateConstrain.U, false]],
+  [GenerateArg.Constrain]: [
+    [GenerateConstrain.C, {}], 
+    [GenerateConstrain.U, Object.fromEntries(Directions.map(direction => [`off${direction}`, true]))]
+  ],
 }
 
 export const generateArgsTween = (renderTestOption: GenerateArg): string[] => {
@@ -397,9 +399,8 @@ const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames 
   const textHeight = 0.1
   const debug: TextContainerObject = {
     fontId: 'font.valken', height: textHeight, 
-    constrainX: true, constrainY: true,
     x: 0, y: 0.5,
-    intrinsicWidth: width / textHeight, intrinsicHeight: height,
+    intrinsic: { x: 0, y: 0, width: width / textHeight, height }
   }
   const debugClip: VisibleClipObject = {
     containerId: 'com.moviemasher.textcontainer.default',
@@ -415,11 +416,12 @@ const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames 
     definitionId: visibleClipDefault.id,
     content: {
       ...contentPoint, ...contentDimensions, ...contentObject,
+      lock: ''
     },
     container: {
       ...containerPoint, ...containerDimensions, 
       ...containerObject, ...opacity, 
-      constrainX: constrained, constrainY: constrained,
+      ...constrained,
     }
   }  
   const labelClip: VisibleClipObject = { 

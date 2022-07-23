@@ -37,7 +37,6 @@ export interface Clip extends Instance {
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
-  track: number
   trackInstance?: Track
   trackType: TrackType
 }

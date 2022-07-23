@@ -13,6 +13,7 @@ import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
 import { DefinitionObjects } from "../../Definition/Definition"
 import { isObject } from "../../Utility/Is"
 import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
+import { Cast } from "../Cast/Cast"
 
 export interface DefinitionReferenceObject {
   definitionId: string
@@ -41,8 +42,9 @@ export interface MashArgs extends EditedArgs, MashObject { }
 export interface Mash extends Edited {
   addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(trackType: TrackType): Track
+  cast: Cast
   changeClipFrames(clip : Clip, value : number) : void
-  changeClipTrimAndFrames(clip : VisibleClip, value : number, frames : number) : void
+  changeClipTrimAndFrames(clip : Clip, value : number, frames : number) : void
   clips: VisibleClip[]
   clipsInTimeOfType(time: Time, avType?: AVType): VisibleClip[]
   clipTrack(clip: Clip): Track

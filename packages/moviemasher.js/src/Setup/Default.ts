@@ -13,7 +13,7 @@ export const MashEditorDefaults: EditorArgs = {
 export const MashDefaults = {
   label: "Unlabeled Mash",
   quantize: 10,
-  backcolor: colorTransparent,
+  backcolor: colorBlack,
   gain: 0.75,
   buffer: 10,
 }

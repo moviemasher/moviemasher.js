@@ -1,10 +1,24 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
-import { Point, pointsEqual, pointTransform } from "./Point"
-import { assertRect, isRect, Rect } from "./Rect"
-import { assertSize, sizePad, dimensionsEven, dimensionsScale, isSize, Size } from "./Size"
+import { Point, pointTransform, PointTuple } from "./Point"
+import { assertRect, isRect, Rect, RectTuple } from "./Rect"
+import { assertSize, dimensionsEven, dimensionsScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
-import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
+import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
+import { DirectionObject, Orientation } from "../Setup/Enums"
+
+export const tweenPad = (outputDistance: number, scaledDistance: number, scale: number, offE = false, offW = false): number => {
+  assertPositive(scale)
+  assertPositive(scaledDistance)
+
+  const baseDistance = outputDistance - scaledDistance
+  const east = offE ? scaledDistance  : 0 
+  const west = offW ? scaledDistance : 0
+  const distance = baseDistance + east + west
+  const scaled = distance * scale
+  const x = scaled - east
+  return x
+}
 
 export const tweenNumberStep = (number: number, numberEnd: number, frame: number, frames: number): number => {
   const unit = (numberEnd - number) / frames
@@ -52,7 +66,6 @@ export const tweenDimensionsTransform = (dimensions: Size, dimensionsEnd: Size |
   }
 }
 
-
 export const tweenRectTransform = (rect: Rect, rectEnd: Rect | undefined): Rect => {
   if (!isRect(rectEnd)) return { x: 0, y: 0, width: 1, height: 1 }
 
@@ -60,15 +73,6 @@ export const tweenRectTransform = (rect: Rect, rectEnd: Rect | undefined): Rect 
     ...pointTransform(rect, rectEnd), 
     ...tweenDimensionsTransform(rect, rectEnd) 
   }
-}
-
-export const tweenSizesEqual = (dimensions: Size, dimensionsEnd?: any) => {
-  if (!isSize(dimensionsEnd)) return false
-
-  return dimensions.width === dimensionsEnd.width && dimensions.height === dimensionsEnd.height
-}
-export const tweenRectsEqual = (rect: Rect, rectEnd?: any) => {
-  return pointsEqual(rect, rectEnd) && tweenSizesEqual(rect, rectEnd)
 }
 
 export const tweenRects = (rect: Rect, rectEnd: Rect | undefined, frames: number): Rect[] => {
@@ -83,7 +87,7 @@ export const tweenRects = (rect: Rect, rectEnd: Rect | undefined, frames: number
 
 export const tweenMaxSize = (size: Size, sizeEnd?: any): Size => {
   const { width, height } = size
-  if (!isSize(sizeEnd) || tweenSizesEqual(size, sizeEnd)) return { width, height }
+  if (!isSize(sizeEnd) || sizesEqual(size, sizeEnd)) return { width, height }
 
   return {
     width: Math.max(width, sizeEnd.width),
@@ -93,7 +97,7 @@ export const tweenMaxSize = (size: Size, sizeEnd?: any): Size => {
 
 export const tweenMinSize = (size: Size, sizeEnd?: any): Size => {
   const { width, height } = size
-  if (!isSize(sizeEnd) || tweenSizesEqual(size, sizeEnd)) return { width, height }
+  if (!isSize(sizeEnd) || sizesEqual(size, sizeEnd)) return { width, height }
   return {
     width: Math.min(width, sizeEnd.width),
     height: Math.min(height, sizeEnd.height),
@@ -147,7 +151,7 @@ export const tweenOverSize = (point: Size, pointEnd: any): Size => {
   return { ...point, ...tweenNumberObject(pointEnd) }
 }
 
-export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, constrainX = false, constrainY = false): Rect => {
+export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDirections: DirectionObject = {}): Rect => {
   assertSize(size)
   assertRect(rect)
   const { width: outWidth, height: outHeight } = size
@@ -156,16 +160,19 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, constra
   assertPositive(y)
   assertPositive(width)
   assertPositive(height)
-  const scaledDimensions = dimensionsEven(dimensionsScale(size, width, height))
+
+  const scaledSize = dimensionsScale(size, width, height)
+
+  const evenSize = dimensionsEven(scaledSize)
   const result = {
-    ...scaledDimensions,
-    x: Math.round(sizePad(outWidth, scaledDimensions.width, x, constrainX)), 
-    y: Math.round(sizePad(outHeight, scaledDimensions.height, y, constrainY))
+    ...evenSize,
+    x: Math.round(tweenPad(outWidth, evenSize.width, x, offDirections.E, offDirections.W)), 
+    y: Math.round(tweenPad(outHeight, evenSize.height, y, offDirections.N, offDirections.S))
   }
   return result
 }
 
-export const tweenRectScale = (dimensions: Size | any, rect: Rect | any): string => {
+export const tweenRectScale = (dimensions: Size | any, rect: Rect | Size | any): string => {
   assertSize(dimensions)
   assertSize(rect)
 
@@ -182,4 +189,72 @@ export const tweenRectScale = (dimensions: Size | any, rect: Rect | any): string
     words.push(`scale(${scaleWidth},${scaleHeight})`)
   }
   return words.join(' ')
+}
+
+export const tweenCoverSizes = (inSize: Size, outSize: Size | SizeTuple, scales: SizeTuple): SizeTuple => {
+  const outSizes = isArray(outSize) ? outSize : [outSize, outSize]
+  const [rect, rectEnd] = outSizes
+  const unscaledSize = sizeCover(inSize, rect)
+  const unscaledSizeEnd = sizeCover(inSize, rectEnd)
+  const [scale, scaleEnd] = scales
+  const { width, height } = scale
+  const { width: widthEnd, height: heightEnd } = scaleEnd
+  const scaledSize = dimensionsScale(unscaledSize, width, height)
+  const scaledSizeEnd = dimensionsScale(unscaledSizeEnd, widthEnd, heightEnd)
+  const coverSize = dimensionsEven(scaledSize)
+  const coverSizeEnd = dimensionsEven(scaledSizeEnd)
+  const coverRects: SizeTuple = [coverSize, coverSizeEnd]
+  return coverRects
+}
+
+export const tweenCoverPoints = (scaledSizes: SizeTuple, outSize: Size | SizeTuple, scales: PointTuple): PointTuple => {
+  const outSizes = isArray(outSize) ? outSize : [outSize, outSize]
+  const [coverSize, coverSizeEnd] = scaledSizes
+  const [rect, rectEnd] = outSizes
+  const [scale, scaleEnd] = scales
+  const { x, y } = scale
+  const { x: xEnd, y: yEnd } = scaleEnd
+  const point: Point = {
+    x: x * (coverSize.width - rect.width),
+    y: y * (coverSize.height - rect.height),
+  }
+  const pointEnd: Point = {
+    x: xEnd * (coverSizeEnd.width - rectEnd.width),
+    y: yEnd * (coverSizeEnd.height - rectEnd.height),
+  }
+  return [point, pointEnd]
+}
+
+export const tweenRectLock = (rect: Rect, lock: Orientation): Rect => {
+  const copy = { ...rect }
+  switch (lock) {
+    case Orientation.H: 
+      copy.width = copy.height
+      break
+    case Orientation.V:
+      copy.height = copy.width
+      break
+  }
+  return copy
+}
+
+export const tweenRectsLock = (rects: RectTuple, lock: Orientation): RectTuple => {
+  return rects.map(rect => tweenRectLock(rect, lock)) as RectTuple
+}
+
+export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: number, lock?: Orientation | string): Rect => {
+  if (!lock) return scale
+
+  const { width: outWidth, height: outHeight } = outputSize
+  const forcedScale = { ...scale }
+  switch(lock){
+    case Orientation.H:
+      forcedScale.width = (inRatio * (outHeight * forcedScale.height)) / outWidth
+      break
+    case Orientation.V:
+      forcedScale.height = (inRatio * (outWidth * forcedScale.width)) / outHeight
+      break
+  }
+  return forcedScale
+
 }
