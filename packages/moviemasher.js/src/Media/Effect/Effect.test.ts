@@ -7,7 +7,7 @@ import { effectDefinitionFromId } from "./EffectFactory"
 import { imageDefinition } from "../Image/ImageFactory"
 import { ImageDefinitionObject } from "../Image/Image"
 import { Defined } from "../../Base/Defined"
-import { visibleClipInstance } from "../VisibleClip/VisibleClipFactory"
+import { clipInstance } from "../Clip/ClipFactory"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -32,12 +32,13 @@ describe("Effect", () => {
       const cableDefinition = imageDefinition(imageDefinitionObject)
 
       const effectDefinition = effectDefinitionFromId("com.moviemasher.effect.chromakey")
-      const clip = visibleClipInstance({ 
+
+      const clip = clipInstance({ 
         contentId: cableDefinition.id, 
         containerId: matteDefinition.id,
         container: {
           effects: [
-            { id: effectDefinition.id }
+            { definitionId: effectDefinition.id }
           ]
         }
       })

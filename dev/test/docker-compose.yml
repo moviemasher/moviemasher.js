@@ -9,7 +9,11 @@ services:
     command: test.e2e.ts
     volumes:
       - ../../dev/:/home/node/app/dev/
-      - ../../packages/:/home/node/app/packages/
+
+      - ../../packages/moviemasher.js/src/:/home/node/app/packages/moviemasher.js/src/
+      - ../../packages/server-express:/home/node/app/packages/server-express
+      - ../../temporary/test-empty-1/:/home/node/app/packages/moviemasher.js/dist/
+
       - ../../temporary/test:/home/node/app/temporary/test
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
       - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
@@ -26,8 +30,13 @@ services:
     command: test.ts
     volumes:
       - ../../dev/:/home/node/app/dev/
-      - ../../packages/:/home/node/app/packages/
+
+      - ../../packages/moviemasher.js/src/:/home/node/app/packages/moviemasher.js/src/
+      - ../../packages/server-express/src/:/home/node/app/packages/server-express/src/
+      - ../../temporary/test-empty-1/:/home/node/app/packages/moviemasher.js/dist/
+      - ../../temporary/test-empty-2/:/home/node/app/packages/server-express/dist/
+
       - ../../temporary/test:/home/node/app/temporary/test
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
       - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
-      - ./package.json:/home/node/app/package.json
+      # - ./package.json:/home/node/app/package.json

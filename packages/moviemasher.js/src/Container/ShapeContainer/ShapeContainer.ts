@@ -4,9 +4,6 @@ import {
 } from "../Container"
 
 export interface ShapeContainerObject extends ContainerObject {
-  pathWidth?: number
-  pathHeight?: number
-  path?: string
 }
 
 export interface ShapeContainerDefinitionObject extends ContainerDefinitionObject {
@@ -17,9 +14,6 @@ export interface ShapeContainerDefinitionObject extends ContainerDefinitionObjec
 
 export interface ShapeContainer extends Container {
   definition: ShapeContainerDefinition
-  path: string
-  pathWidth: number
-  pathHeight: number
 }
 export const isShapeContainer = (value: any): value is ShapeContainer => {
   return isContainer(value) && "path" in value

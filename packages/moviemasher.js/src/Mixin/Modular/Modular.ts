@@ -1,8 +1,11 @@
-import { Constrained } from "../../declarations"
+import { Constrained, SvgFilters } from "../../declarations"
 import { Definition, DefinitionObject } from "../../Definition/Definition"
 import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject } from "../../Instance/Instance"
 import { PropertyObject } from "../../Setup/Property"
+import { Rect } from "../../Utility/Rect"
+import { Size } from "../../Utility/Size"
 
 
 export interface ModularObject extends InstanceObject {
@@ -11,8 +14,8 @@ export interface ModularObject extends InstanceObject {
 
 export interface Modular extends Instance {
   definition: ModularDefinition
+  svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
 
-  // chainLinks(): ChainLinks
 }
 
 export interface ModularDefinitionObject extends DefinitionObject {

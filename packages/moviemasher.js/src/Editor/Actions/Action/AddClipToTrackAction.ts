@@ -1,5 +1,5 @@
 import { Track } from "../../../Edited/Mash/Track/Track"
-import { Clip, Clips } from "../../../Mixin/Clip/Clip"
+import { Clip, Clips } from "../../../Media/Clip/Clip"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
 export interface AddClipToTrackActionObject extends AddTrackActionObject {

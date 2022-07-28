@@ -31,8 +31,8 @@ export interface AudibleSource extends AudioBufferSourceNode {}
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement
 export type SvgFilters = SvgFilter[]
-export type SvgContent = SVGMaskElement | SVGImageElement | SVGForeignObjectElement | SVGTextElement | SVGPathElement | SVGGElement
-export type SvgContents = SvgContent[]
+export type SvgItem = SVGMaskElement | SVGImageElement | SVGForeignObjectElement | SVGTextElement | SVGPathElement | SVGGElement
+
 
 export type VisibleSource = HTMLVideoElement | HTMLImageElement | SVGImageElement | HTMLCanvasElement
 
@@ -65,7 +65,7 @@ export interface WithLayer {
 }
 
 export interface WithTrack {
-  track : number
+  trackNumber : number
 }
 
 export interface WithLabel {

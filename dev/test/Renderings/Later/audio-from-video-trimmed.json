@@ -12,7 +12,7 @@
         "trackType": "video",
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "contentId": "video-rgb",
             "content": {
               "trim": 10

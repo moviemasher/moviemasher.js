@@ -1,10 +1,10 @@
 import { PropertyTweenSuffix } from "../../Base"
-import { SvgContent } from "../../declarations"
+import { SvgItem } from "../../declarations"
 import { Rect, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
 import { DataType } from "../../Setup/Enums"
-import { propertyInstance } from "../../Setup/Property"
+import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { assertAboveZero, assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isTimeRange } from "../../Utility/Is"
@@ -22,12 +22,12 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const { container } = object as UpdatableSizeObject
       const min = container ? 0.0 : 1.0
       this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'width', 
-        type: DataType.Percent, defaultValue: 1.0, max: 2.0, min
+        tweenable: true, name: 'width', type: DataType.Percent, 
+        group: DataGroup.Size, defaultValue: 1.0, max: 2.0, min
       }))
       this.addProperties(object, propertyInstance({
         tweenable: true, name: 'height', type: DataType.Percent, 
-        defaultValue: 1.0, max: 2.0, min
+        group: DataGroup.Size, defaultValue: 1.0, max: 2.0, min
       }))
     }
     
@@ -80,12 +80,12 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 
       // then we need to do opacity, etc, and merge
-      commandFilters.push(...this.finalCommandFilters({ ...args, filterInput }))
+      commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
     
-    containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent {
-      return this.svgContent(rect, time, range, true)
+    containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem {
+      return this.svgItem(rect, time, range, true)
     }
 
     contentCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -153,7 +153,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
 
-    intrinsicSizeInitialize(): Rect { 
+    intrinsicRectInitialize(): Rect { 
       const { width, height } = this.definition
       assertAboveZero(width, "updatable width")
       assertAboveZero(height, "updatable height")

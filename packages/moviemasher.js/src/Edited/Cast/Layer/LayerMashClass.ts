@@ -12,6 +12,7 @@ export class LayerMashClass extends LayerClass implements LayerMash {
     const { label, mash } = args
     if (!label) this.label = mash.label
     this.mash = mash
+    mash.layer = this
   }
 
   get mashes(): Mashes { return [this.mash] }

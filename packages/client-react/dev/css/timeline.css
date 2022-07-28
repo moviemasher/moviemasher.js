@@ -8,7 +8,8 @@
 }
 
 .moviemasher .editor .panel.timeline .foot {
-  grid-template-columns: 50% repeat(auto-fill, var(--button-size));
+  grid-auto-flow: column;
+  grid-template-columns: repeat(4, min-content) ;
 }
 
 .moviemasher .editor .panel.timeline .content {

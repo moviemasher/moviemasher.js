@@ -2,7 +2,6 @@
 .DS_Store
 .git/*
 .vscode/*
-# **/dist*
 node_modules
 temporary/*
 **/*.test.ts

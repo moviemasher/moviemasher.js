@@ -1,4 +1,4 @@
-import { Clip } from "../../../Mixin/Clip/Clip"
+import { Clip } from "../../../Media/Clip/Clip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 /**

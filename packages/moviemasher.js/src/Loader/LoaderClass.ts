@@ -85,13 +85,13 @@ export class LoaderClass implements Loader {
   }
 
   protected updateDefinitionSize(definition: Definition, size: UnknownObject) {
-    console.log(this.constructor.name, "updateDefinitionSize")
+    // console.log(this.constructor.name, "updateDefinitionSize")
     if (!isUpdatableSizeDefinition(definition)) return 
     
     const { width: definitionWidth, height: definitionHeight } = definition
     const { width: sourceWidth, height: sourceHeight } = size
 
-    console.log(this.constructor.name, "updateDefinitionSize", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
+      // console.log(this.constructor.name, "updateDefinitionSize", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
     if (!isAboveZero(definitionWidth)) {
       assertAboveZero(sourceWidth, 'source width')
       definition.width = sourceWidth

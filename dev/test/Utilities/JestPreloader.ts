@@ -14,7 +14,7 @@ export class JestPreloader extends BrowserLoaderClass {
     const { baseURI } = document
     const file = url.startsWith(baseURI) ? url.slice(baseURI.length) : url
     const pathResolved = path.resolve(TestFilePrefix, file)
-    console.log(this.constructor.name, "requestFont", url, pathResolved, family)
+    // console.log(this.constructor.name, "requestFont", url, pathResolved, family)
     const object = { family }
     registerFont(pathResolved, object)
     return Promise.resolve(object as LoadedFont)
@@ -25,7 +25,7 @@ export class JestPreloader extends BrowserLoaderClass {
     const { definition } = graphFile
     const file = url.startsWith(baseURI) ? url.slice(baseURI.length) : url
     const pathResolved = path.resolve(TestFilePrefix, file)
-    console.log(this.constructor.name, "requestImage", url, pathResolved)
+    // console.log(this.constructor.name, "requestImage", url, pathResolved)
     const loadImageResult = loadImage(pathResolved).then(image => {
       // console.log(this.constructor.name, "requestImage -> loadImage", url, pathResolved, image)
       const { width, height } = image

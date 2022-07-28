@@ -1,23 +1,15 @@
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { Clip } from "../../../Media/Clip/Clip"
 import { Preview, Svg } from "../Preview"
-import { Evaluator } from "../../../Helpers/Evaluator"
-import { Size } from "../../../Utility/Size"
 
 export interface TrackPreviewArgs {
-  clip: VisibleClip
+  clip: Clip
   preview: Preview
   timeRange: TimeRange
-  tweenTime?: Time,
+  tweenTime?: Time
 }
 
 export interface TrackPreview {
-  // evaluator: Evaluator
-  // size: Size
-  // clip: VisibleClip
-  // preview: Preview
-  // selected: boolean
-  // svgElement: SVGSVGElement
   svg: Svg
 }
 

@@ -14,7 +14,7 @@ import {
   timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
 import { isAboveZero, isPositive } from "../Utility/Is"
-import { assertVisibleClip, VisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { assertClip, Clip } from "../Media/Clip/Clip"
 import { assertUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
@@ -26,7 +26,7 @@ export class RenderingOutputClass implements RenderingOutput {
     const { durationClips, args } = this
     const { quantize } = args.mash
     durationClips.forEach(clip => {
-      assertVisibleClip(clip)
+      assertClip(clip)
 
       const { content } = clip
       const { definition } = content
@@ -67,7 +67,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get duration(): number { return this.timeRange.lengthSeconds }
 
-  private get durationClips(): VisibleClip[] {
+  private get durationClips(): Clip[] {
     const { mash } = this.args
     const { frames } = mash
     if (isPositive(frames)) {
@@ -166,7 +166,7 @@ export class RenderingOutputClass implements RenderingOutput {
     return this.filterGraphs.loadPromise 
   }
 
-  get renderingClips(): VisibleClip[] {
+  get renderingClips(): Clip[] {
     return this.args.mash.clipsInTimeOfType(this.timeRange, this.avType)
   }
 

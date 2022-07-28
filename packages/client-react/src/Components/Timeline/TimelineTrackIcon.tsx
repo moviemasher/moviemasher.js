@@ -1,5 +1,5 @@
 import React from "react"
-import { ClassSelected, TrackTypes } from "@moviemasher/moviemasher.js"
+import { ClassSelected } from "@moviemasher/moviemasher.js"
 
 import {
   EditorIcons, PropsWithoutChild, ReactResult, WithClassName
@@ -7,7 +7,6 @@ import {
 import { TimelineContext } from "../../Contexts/TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
-import { TimelineTrackIsType } from "./TimelineTrackIsType"
 import { EditorContext } from "../../Contexts/EditorContext"
 
 export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
@@ -22,17 +21,11 @@ export function TimelineTrackIcon(props: TimelineTrackIcon): ReactResult {
   const editorContext = React.useContext(EditorContext)
   const timelineContext = React.useContext(TimelineContext)
   const trackContext = React.useContext(TrackContext)
-  const { editor, droppingPositionClass } = editorContext
-  if (!editor) return null
+  const { droppingPositionClass } = editorContext
+ 
 
   const { droppingTrack, droppingPosition, selectedTrack } = timelineContext
   const { track } = trackContext
-
-  const children = TrackTypes.map(type => {
-    const stringType = String(type)
-    const typeProps = { type, children: icons[stringType], key: stringType }
-    return <TimelineTrackIsType { ...typeProps} />
-  })
 
   const calculatedClassName = (): string => {
     const classes: string[] = []
@@ -45,6 +38,12 @@ export function TimelineTrackIcon(props: TimelineTrackIcon): ReactResult {
   const className = React.useMemo(
     calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]
   )
+
+  if (!track) return null
+
+  const { dense } = track
+  
+  const children = dense ? icons.trackDense : icons.track
 
   const viewProps = { ...rest, className, children }
   return <View {...viewProps} />

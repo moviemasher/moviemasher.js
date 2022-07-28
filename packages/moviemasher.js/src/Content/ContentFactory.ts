@@ -2,11 +2,9 @@ import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedString } from "../Utility/Is"
 import { Factories } from "../Definitions/Factories"
-// import { ContentDefinitionClass } from "./ContentDefinitionClass"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "./Content"
 
-import defaultContentJson from "../Definitions/DefinitionObjects/colorcontent/default.json"
-import { ColorContentClass } from "./ColorContent"
+import defaultContentJson from "../Definitions/DefinitionObjects/content/default.json"
 import { ColorContentDefinitionClass } from "./ColorContent/ColorContentDefinitionClass"
 
 export const contentDefault = new ColorContentDefinitionClass(defaultContentJson)
@@ -31,17 +29,14 @@ export const contentInstance = (object: ContentObject): Content => {
   if (!definitionId) throw Errors.id
 
   const definition = contentDefinitionFromId(definitionId)
-  const instance = definition.instanceFromObject(object)
-
-  throw 'contentInstance'
-  // return instance
+  const instance = definition.instanceFromObject(object) as Content
+  return instance
 }
 
 export const contentFromId = (id: string): Content => {
   const definition = contentDefinitionFromId(id)
-  const instance = definition.instanceFromObject({ definitionId: id })
-  throw 'contentFromId'
-  // return instance
+  const instance = definition.instanceFromObject({ definitionId: id }) as Content
+  return instance
 }
 
 Factories[DefinitionType.Content] = {

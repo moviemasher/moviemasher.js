@@ -1,5 +1,5 @@
 import React from 'react'
-import { Definition, StringSetter } from '@moviemasher/moviemasher.js'
+import { Definition, DefinitionType, EmptyMethod, StringSetter } from '@moviemasher/moviemasher.js'
 import { ReactStateSetter } from '../declarations'
 
 export interface BrowserContextInterface {
@@ -9,6 +9,9 @@ export interface BrowserContextInterface {
   setDefinitionId: StringSetter
   setSourceId: ReactStateSetter<string>
   sourceId: string,
+
+  selectedTypes: DefinitionType[]
+  changeType: StringSetter
 }
 
 export const BrowserContextDefault: BrowserContextInterface = {
@@ -18,6 +21,9 @@ export const BrowserContextDefault: BrowserContextInterface = {
   setDefinitionId: () => {},
   setSourceId: () => {},
   sourceId: '',
+
+  selectedTypes: [],
+  changeType: EmptyMethod
 }
 
 export const BrowserContext = React.createContext(BrowserContextDefault)

@@ -10,9 +10,9 @@ import { Editor } from "./Editor"
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { assertMash } from "../Edited/Mash/Mash"
 import { EditType } from "../Setup/Enums"
-import { VisibleClipClass } from "../Media/VisibleClip/VisibleClipClass"
+import { ClipClass } from "../Media/Clip/ClipClass"
 
-import visibleDefaultJson from "../Definitions/DefinitionObjects/colorcontent/default.json"
+import visibleDefaultJson from "../Definitions/DefinitionObjects/content/default.json"
 
 const createEditor = (): Editor => {
   return editorInstance({ editType: EditType.Mash, preloader: new JestPreloader()})
@@ -61,7 +61,7 @@ describe("Editor", () => {
       editor.load({ mash: {} })
 
       const clip = await editor.add(visibleDefaultJson)
-      expect(clip).toBeInstanceOf(VisibleClipClass)
+      expect(clip).toBeInstanceOf(ClipClass)
       const { edited } = editor
       assertMash(edited)
       expectCanvasAtTime(editor)

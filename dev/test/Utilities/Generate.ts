@@ -1,17 +1,17 @@
 
-import { visibleClipDefault } from "../../../packages/moviemasher.js/src/Media/VisibleClip/VisibleClipFactory"
-import { VisibleClipObject } from "../../../packages/moviemasher.js/src/Media/VisibleClip/VisibleClip"
-import { MashObject } from "../../../packages/moviemasher.js/src/Edited/Mash/Mash"
+import { PopulatedString } from "../../../packages/moviemasher.js/src/declarations"
 import { colorBlack, colorBlue, colorGreen, colorRed } from "../../../packages/moviemasher.js/src/Utility/Color"
-import { assertObject, assertPopulatedArray, assertPopulatedString, assertPositive, isObject, isPopulatedArray, isPopulatedString, isPositive, isString, throwError } from "../../../packages/moviemasher.js/src/Utility/Is"
+import { assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString, throwError } from "../../../packages/moviemasher.js/src/Utility/Is"
 import { assertSize, DimensionsPreview, isSize, Size } from "../../../packages/moviemasher.js/src/Utility/Size"
 import { TextContainerObject } from "../../../packages/moviemasher.js/src/Container/TextContainer/TextContainer"
 import { ContentObject } from "../../../packages/moviemasher.js/src/Content/Content"
 import { assertContainerObject, ContainerObject, isContainerObject } from "../../../packages/moviemasher.js/src/Container/Container"
 import { DefinitionObjects } from "../../../packages/moviemasher.js/src/Definition/Definition"
 import { assertPoint, isPoint, Point } from "../../../packages/moviemasher.js/src/Utility/Point"
-import { PopulatedString } from "../../../packages/moviemasher.js/src/declarations"
-import { Directions, Orientation } from "../../../packages/moviemasher.js/src"
+import { Directions } from "../../../packages/moviemasher.js/src/Setup/Enums"
+import { ClipObject } from "../../../packages/moviemasher.js/src/Media/Clip/Clip"
+import { clipDefault } from "../../../packages/moviemasher.js/src/Media/Clip/ClipFactory"
+import { MashObject } from "../../../packages/moviemasher.js/src/Edited/Mash/Mash"
 
 enum GeneratePoint {
   TL = 'TL',
@@ -79,7 +79,7 @@ export type BooleanTest = [string, ContainerObject]
 export type NumberTest = [string, ContainerObject]
 const textOptions: TextContainerObject = { 
   string: "Valken",
-  intrinsic: { width: 33750, height: 10000, x: 130, y: 0 },
+  intrinsic: { width: 33750, height: 1000, x: 130, y: 0 },
   fontId: "font.valken"
 }
 
@@ -200,20 +200,20 @@ export const GenerateOptionsDefault: GenerateOptions = {
 export const GenerateTestsDefault: GenerateTests = {
   [GenerateArg.Container]: [
     ["K", "kitten", {}],
-    ["R", 'com.moviemasher.shapecontainer.default', {}],
-    // ["S", 'com.moviemasher.shapecontainer.test', {}],
-    // ["B", 'com.moviemasher.shapecontainer.broadcast', {}],
-    ["S", 'com.moviemasher.shapecontainer.chat', {}],
-    ["T", 'com.moviemasher.textcontainer.default', textOptions],
+    ["R", 'com.moviemasher.container.default', {}],
+    // ["S", 'com.moviemasher.container.test', {}],
+    // ["B", 'com.moviemasher.container.broadcast', {}],
+    ["S", 'com.moviemasher.container.chat', {}],
+    ["T", 'com.moviemasher.container.text', textOptions],
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
     ["P", "puppy", {}],
-    ["BL", "com.moviemasher.colorcontent.default", { color: colorBlue }],
-    // ["BK", "com.moviemasher.colorcontent.default", { color: colorBlack }],
-    // ["RE", "com.moviemasher.colorcontent.default", { color: colorRed }],
-    // ["WH", "com.moviemasher.colorcontent.default", { color: colorWhite }],
-    ["BL-RE", "com.moviemasher.colorcontent.default", { colorEnd: colorRed, color: colorBlue }],
+    ["BL", "com.moviemasher.content.default", { color: colorBlue }],
+    // ["BK", "com.moviemasher.content.default", { color: colorBlack }],
+    // ["RE", "com.moviemasher.content.default", { color: colorRed }],
+    // ["WH", "com.moviemasher.content.default", { color: colorWhite }],
+    ["BL-RE", "com.moviemasher.content.default", { colorEnd: colorRed, color: colorBlue }],
     // ["K", "kitten", {}],
   ],
   [GenerateArg.ContainerPoint]: [
@@ -299,7 +299,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   const limitedContents = limitedOptions(GenerateArg.Content) as GenerateContentTest[]
   assertPopulatedArray(limitedContents, 'limitedContents')
   limitedContents.forEach(([contentLabel, contentId]) => {
-    const isColor = contentId === "com.moviemasher.colorcontent.default"
+    const isColor = contentId === "com.moviemasher.content.default"
     const limitedContainers = limitedOptions(GenerateArg.Container) as GenerateContainerTest[]
     assertPopulatedArray(limitedContainers, 'limitedContainers')
     limitedContainers.forEach(([containerLabel]) => {
@@ -344,8 +344,8 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
 
 export const generateTests = (generateOptions: GenerateOptions, testId = 'all', size = DimensionsPreview, frames = 10): GenerateMashTest => {
   const ids = generateIds(generateOptions)
-  const clips: VisibleClipObject[] = []
-  const labelClips: VisibleClipObject[] = []
+  const clips: ClipObject[] = []
+  const labelClips: ClipObject[] = []
   ids.forEach(id => {
     const [clip, labelClip] = generateClips(id, size, frames)
     clips.push(clip)
@@ -371,8 +371,8 @@ export const generateTest = (testId: GenerateTestId, size = DimensionsPreview, f
   return [testId, mash]
 }
 
-type VisibleClipObjectTuple = [VisibleClipObject, VisibleClipObject]
-const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames = 10): VisibleClipObjectTuple => {
+type ClipObjectTuple = [ClipObject, ClipObject]
+const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames = 10): ClipObjectTuple => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
@@ -402,18 +402,18 @@ const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames 
     x: 0, y: 0.5,
     intrinsic: { x: 0, y: 0, width: width / textHeight, height }
   }
-  const debugClip: VisibleClipObject = {
-    containerId: 'com.moviemasher.textcontainer.default',
+  const debugClip: ClipObject = {
+    containerId: 'com.moviemasher.container.text',
     content: { color: colorBlack },
     frames,
-    definitionId: visibleClipDefault.id,
+    definitionId: clipDefault.id,
   }
   assertPoint(containerPoint)
   assertPoint(contentPoint)
 
-  const clip: VisibleClipObject = { 
+  const clip: ClipObject = { 
     frames, containerId, contentId, 
-    definitionId: visibleClipDefault.id,
+    definitionId: clipDefault.id,
     content: {
       ...contentPoint, ...contentDimensions, ...contentObject,
       lock: ''
@@ -424,7 +424,7 @@ const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames 
       ...constrained,
     }
   }  
-  const labelClip: VisibleClipObject = { 
+  const labelClip: ClipObject = { 
     ...debugClip, container: { ...debug, string: testId }
   }
   return [clip, labelClip] 

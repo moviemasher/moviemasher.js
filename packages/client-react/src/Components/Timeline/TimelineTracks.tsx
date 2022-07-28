@@ -36,8 +36,10 @@ export function TimelineTracks(props: TimelineTracksProps): ReactResult {
 
   const childNodes = (): React.ReactElement[] => {
     const { mash } = editor.selection
-    const audioTracks = mash?.trackCount(TrackType.Audio) || 0
-    const videoTracks = mash?.trackCount(TrackType.Video) || 0
+    if (!mash) return []
+
+    const audioTracks = mash.trackCount(TrackType.Audio)
+    const videoTracks = mash.trackCount(TrackType.Video) 
     const childNodes: React.ReactElement[] = []
     for (let i = videoTracks - 1; i >= 0; i--) childNodes.push(childNode(i, TrackType.Video))
     for (let i = 0; i < audioTracks; i++) childNodes.push(childNode(i, TrackType.Audio))

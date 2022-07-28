@@ -1,5 +1,5 @@
 import { isPositive, isArray, isDefined } from "../../../packages/moviemasher.js/src/Utility/Is"
-import { Errors } from "../../../packages//moviemasher.js/src/Setup/Errors"
+import { Errors } from "../../../packages/moviemasher.js/src/Setup/Errors"
 import { Constructor } from "../src/declarations"
 
 export const expectArrayLength = (value: any, length = -1, constructor?: Constructor): any[] => {

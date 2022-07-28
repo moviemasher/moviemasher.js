@@ -1,4 +1,4 @@
-import { ScalarObject, SvgContent, SvgFilters, ValueObject } from "../declarations"
+import { ScalarObject, SvgItem, SvgFilters, ValueObject } from "../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
 import { DataType, DefinitionType, isPhase, Phase } from "../Setup/Enums"
 import { Parameter } from "../Setup/Parameter"
@@ -46,7 +46,7 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
   }
 
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent {
+  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem {
     throw new Error(Errors.unimplemented + 'initialSvgContent')
   }
 

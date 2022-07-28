@@ -22,12 +22,28 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
   const { editor, droppingPositionClass } = editorContext
+  const mash = editor?.selection.mash
+  const { track } = trackContext
   const {
     dragTypeValid, onDragLeave, onDrop, droppingTrack, setDroppingTrack,
     droppingPosition, setDroppingPosition, setDroppingClip, selectedTrack,
   } = timelineContext
-  const { track } = trackContext
-  const mash = editor?.selection.mash
+  const calculatedClassName = (): string => {
+    if (!(mash && track)) return ''
+
+    const selected = track === selectedTrack
+    const classes: string[] = []
+    if (propsClassName) classes.push(propsClassName)
+    if (selected) classes.push(ClassSelected)
+    if (droppingTrack === track) classes.push(droppingPositionClass(droppingPosition))
+
+    return classes.join(' ')
+  }
+
+  const className = React.useMemo(
+    calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]
+  )
+
   if (!(mash && track)) return null
 
   const kid = React.Children.only(children)
@@ -59,20 +75,6 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
     event.stopPropagation()
     if (definitionType) event.preventDefault()
   }
-
-  const calculatedClassName = (): string => {
-    const selected = track === selectedTrack
-    const classes: string[] = []
-    if (propsClassName) classes.push(propsClassName)
-    if (selected) classes.push(ClassSelected)
-    if (droppingTrack === track) classes.push(droppingPositionClass(droppingPosition))
-
-    return classes.join(' ')
-  }
-
-  const className = React.useMemo(
-    calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]
-  )
 
   const viewProps:UnknownObject = {
     className,

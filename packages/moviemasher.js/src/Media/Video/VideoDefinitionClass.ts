@@ -33,10 +33,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
     const { fps } = object as VideoDefinitionObject
     if (fps) this.fps = fps
 
-    this.fpsFilterDefinition = filterDefinitionFromId('fps')
-
-    this.setsarFilterDefinition = filterDefinitionFromId('setsar')
-
     // TODO: support speed
     // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
@@ -53,8 +49,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
   }
 
   fps = Default.definition.video.fps
-
-  fpsFilterDefinition: FilterDefinition
 
   instanceFromObject(object: VideoObject = {}): Video {
     return new VideoClass(this.instanceArgs(object))
@@ -102,8 +96,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
     })
     return promise
   }
-
-  setsarFilterDefinition: FilterDefinition
 
   toJSON() : UnknownObject {
     const object = super.toJSON()

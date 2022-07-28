@@ -1,4 +1,4 @@
-import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { Clip } from "../../../Media/Clip/Clip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 export interface ChangeTrimActionObject extends ChangeActionObject {
@@ -13,9 +13,9 @@ export class ChangeTrimAction extends ChangeAction {
     super(object)
     const { frames, target } = object
     this.frames = frames
-    this.clip = target as VisibleClip
+    this.clip = target as Clip
   }
-  clip: VisibleClip
+  clip: Clip
 
   frames : number
 

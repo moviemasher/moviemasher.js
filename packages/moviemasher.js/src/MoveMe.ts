@@ -1,23 +1,14 @@
-import { AVType, GraphFileType, LoadType, SelectType } from "./Setup/Enums"
+import { AVType, GraphFileType, LoadType } from "./Setup/Enums"
 import { Time, TimeRange } from "./Helpers/Time/Time"
 import { Definition } from "./Definition/Definition"
-import { Propertied, PropertiedChangeHandler } from "./Base/Propertied"
-import { Property } from "./Setup/Property"
+import { Propertied } from "./Base/Propertied"
 import { EmptyMethod } from "./Setup/Constants"
 import { Filter } from "./Filter/Filter"
-import { Scalar, ValueObject } from "./declarations"
+import { ValueObject } from "./declarations"
 import { Size } from "./Utility/Size"
 import { RectTuple } from "./Utility/Rect"
 
 
-
-export interface SelectedProperty {
-  selectType: SelectType
-  property: Property
-  changeHandler: PropertiedChangeHandler
-  value: Scalar
-}
-export type SelectedProperties = SelectedProperty[]
 
 
 export interface CommandFilter {

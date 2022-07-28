@@ -3,16 +3,16 @@ import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
-import { EditorUndoButton } from '../Controls/EditorUndoButton'
-import { EditorRedoButton } from '../Controls/EditorRedoButton'
 import { InspectorProperties } from './InspectorProperties'
 import { InspectorContent } from './InspectorContent'
 import { InspectorProps } from './Inspector'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
+import { InspectorType } from './InspectorType'
+import { InspectorTypePicker } from './InspectorTypePicker'
+import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
 import { Button } from '../../Utilities/Button'
-import { Process } from '../Process/Process'
-import { SaveControl } from '../Controls/SaveControl'
-import { View } from '../../Utilities/View'
+import { SelectType } from '@moviemasher/moviemasher.js'
+import { label } from '../../Utilities/Label'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {
   noApi?: boolean
@@ -28,22 +28,35 @@ export const DefaultInspectorProps: PropsMethod<InspectorPropsDefault, Inspector
   optionsStrict.header.content ||= [
     DefaultIcons.inspector
   ]
+ 
+  optionsStrict.footer.content ||= [
+    <InspectorTypePicker key="mash-cast" className='icon-button' types="mash,cast">{DefaultIcons.document}</InspectorTypePicker>,
+    <InspectorTypePicker key="layer" className='icon-button' types="layer">{DefaultIcons.layer}</InspectorTypePicker>,
+    <InspectorTypePicker key="clip" className='icon-button' type="clip">{DefaultIcons.clip}</InspectorTypePicker>,
+    <InspectorTypePicker key="content" className='icon-button' type="content">{DefaultIcons.content}</InspectorTypePicker>,
+    <InspectorTypePicker key="container" className='icon-button' type="container">{DefaultIcons.container}</InspectorTypePicker>,
+ ]
+
+  const contentChildren = [<InspectorProperties key="properties" />]
   if (!noApi) {
-    optionsStrict.footer.content ||= [
-      <Process key='save-process' id='data'>
-        <View>
-          <SaveControl><Button>Save</Button></SaveControl>
-        </View>
-      </Process>
-    ]
+    const types = [SelectType.Clip, SelectType.Track, SelectType.Effect]
+    types.forEach(type => {
+      const removeProps = { type }
+      const typeProps = { ...removeProps, key: `${type}-delete` }
+      const buttonProps = { 
+        startIcon: DefaultIcons.remove, children: label('remove') 
+      }
+      contentChildren.push(
+        <InspectorType { ...typeProps }>
+          <EditorRemoveButton { ...removeProps }>
+            <Button { ...buttonProps } />
+          </EditorRemoveButton>
+        </InspectorType>
+      )
+    })
   }
-  optionsStrict.footer.after ||= [
-    <EditorUndoButton key='undo'><Button startIcon={DefaultIcons.undo}>Undo</Button></EditorUndoButton>,
-    <EditorRedoButton key='redo'><Button startIcon={DefaultIcons.redo}>Redo</Button></EditorRedoButton>,
-  ]
-
-
-  optionsStrict.content.children ||= <InspectorProperties/>
+  optionsStrict.content.children ||= <>{contentChildren}</>
+  
 
   optionsStrict.content.props!.label ||= '--clip-label'
 

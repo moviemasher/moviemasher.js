@@ -19,6 +19,7 @@
   --border: var(--border-size) solid var(--back-tertiary);
   --border-radius: 5px;
   --drop-size: 2px;
+  --progress-width: calc(2 * var(--icon-size));
 }
 
 .moviemasher .editor .panel .content {

@@ -1,21 +1,25 @@
 import React from 'react'
-import { Clip, DefinitionType, Effect, SelectedProperties, Track, TrackType } from '@moviemasher/moviemasher.js'
+import { Clip, DefinitionType, Effect, EmptyMethod, SelectedProperties, SelectType, StringSetter, Track, TrackType } from '@moviemasher/moviemasher.js'
 
 
 export interface InspectorContextInterface {
   definitionType: DefinitionType | ''
-  trackType: TrackType | ''
   actionCount: number
   selectedProperties: SelectedProperties
+  selectTypes: SelectType[]
+  selectedTypes: SelectType[]
   clip?: Clip
   effect?: Effect
+  changeType: StringSetter
 }
 
 export const InspectorContextDefault: InspectorContextInterface = {
   definitionType: '',
-  trackType: '',
   actionCount: 0,
   selectedProperties: [],
+  selectTypes: [],
+  selectedTypes: [],
+  changeType: EmptyMethod
 }
 
 export const InspectorContext = React.createContext(InspectorContextDefault)

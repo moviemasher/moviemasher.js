@@ -4,7 +4,7 @@ import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Mash } from "../../Edited/Mash/Mash"
-import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
+import { Clip } from "../../Media/Clip/Clip"
 
 export interface PreviewOptions  {
   editor?: Editor
@@ -13,7 +13,7 @@ export interface PreviewOptions  {
 }
 
 export interface PreviewArgs extends PreviewOptions {
-  selectedClip?: VisibleClip
+  selectedClip?: Clip
   time: Time
   mash: Mash
 }
@@ -32,7 +32,7 @@ export interface Preview extends GraphFileArgs {
   editing: boolean
   editor?: Editor
   size: Size
-  selectedClip?: VisibleClip
+  selectedClip?: Clip
   time: Time
   duration: number
   audible: boolean

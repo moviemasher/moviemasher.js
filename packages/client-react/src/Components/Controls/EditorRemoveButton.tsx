@@ -1,26 +1,31 @@
 import React from "react"
-import { MasherAction, EventType } from "@moviemasher/moviemasher.js"
+import { EventType, SelectType, assertSelectType, isEffect, isClip, isTrack } from "@moviemasher/moviemasher.js"
 import { useListeners } from "../../Hooks/useListeners"
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 
-export interface EditorRemoveButtonProps extends PropsAndChild {}
+export interface EditorRemoveButtonProps extends PropsAndChild {
+  type?: string
+}
 
 export function EditorRemoveButton(props: EditorRemoveButtonProps): ReactResult {
-  const { children, ...rest } = props
+  const { children, type, ...rest } = props
+  const selectType = type || SelectType.Clip
+  assertSelectType(selectType)
+
   const editor = useEditor()
-  const [disabled, setDisabled] = React.useState(true)
+  const [disabled, setDisabled] = React.useState(!editor.selection[selectType])
   useListeners({
-    [EventType.Selection]: () => { setDisabled(!editor.can(MasherAction.Remove)) }
+    [EventType.Selection]: () => { setDisabled(!editor.selection[selectType]) }
   })
 
   const onClick = () => {
     if (disabled) return
 
-    const { clip, effect, track } = editor.selection
-    if (effect) editor.removeEffect(effect)
-    else if (clip) editor.removeClip(clip)
-    else if (track) editor.removeTrack(track)
+    const selectable = editor.selection[selectType]
+    if (isEffect(selectable)) editor.removeEffect(selectable)
+    else if (isClip(selectable)) editor.removeClip(selectable)
+    else if (isTrack(selectable)) editor.removeTrack(selectable)
   }
 
   const cloneProps = { ...rest, onClick, disabled }

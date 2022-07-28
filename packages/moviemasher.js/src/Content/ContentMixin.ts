@@ -1,12 +1,8 @@
-import { Scalar, SvgContent } from "../declarations"
+import { SvgItem } from "../declarations"
 import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
-import { Size } from "../Utility/Size"
-import { SelectedProperties } from "../MoveMe"
 
-import { Actions } from "../Editor/Actions/Actions"
-import { SelectType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
-import { isArray, isUndefined } from "../Utility/Is"
+import { isArray } from "../Utility/Is"
 import { Content, ContentClass } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -14,13 +10,6 @@ import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tw
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
-    intrinsicSizeInitialize(): Rect { return RectZero }
-
-    mutable = false
-
-    muted = false
-
-
     contentRects(containerRects: Rect | RectTuple, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple {
       if (forFiles && !this.intrinsicsKnown) {
         return isArray(containerRects) ? containerRects : [containerRects, containerRects]
@@ -37,15 +26,25 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]
     }
 
-    contentSvg(containerRect: Rect, time: Time, timeRange: TimeRange): SvgContent {
+    contentSvgItem(containerRect: Rect, time: Time, timeRange: TimeRange): SvgItem {
       const [contentRect] = this.contentRects(containerRect, time, timeRange)
       const { x, y } = contentRect    
       const point = { x: containerRect.x - x, y: containerRect.y - y }
       const rect = rectFromSize(contentRect, point)
-      return this.svgContent(rect, time, timeRange, true)
+      return this.svgItem(rect, time, timeRange, true)
     }
+    
+    intrinsicRectInitialize(): Rect { return RectZero }
 
-    svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent {
+    mutable = false
+
+    muted = false
+
+    get isDefault() { 
+      return this.definitionId === "com.moviemasher.content.default" 
+    }
+  
+    svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
       throw new Error(Errors.unimplemented) 
     }
   }

@@ -16,5 +16,5 @@
     "target": "ESNext",
   },
   "exclude": ["**/*.json"],
-  "include": ["**/src/**/*.ts", "**/src/**/*.tsx"],
+  "include": ["**/src/**/*.ts", "**/src/**/*.tsx", "dev/test/RenderingProcess.test.ts"],
 }

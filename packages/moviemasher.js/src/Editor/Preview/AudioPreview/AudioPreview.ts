@@ -1,3 +1,4 @@
+import { StartOptions } from "../../../declarations"
 import { Errors} from "../../../Setup/Errors"
 import { Default } from "../../../Setup/Default"
 import { isAboveZero, isPositive, isTimeRange } from "../../../Utility/Is"
@@ -6,8 +7,7 @@ import { Loader } from "../../../Loader/Loader"
 import { AudibleContextInstance } from "../../../Context/AudibleContext"
 import { isVideo, Video } from "../../../Media/Video/Video"
 import { Audio, isAudio } from "../../../Media/Audio/Audio"
-import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
-import { StartOptions } from "../../../declarations"
+import { Clip } from "../../../Media/Clip/Clip"
 
 export interface AudioPreviewArgs {
   buffer? : number
@@ -28,7 +28,7 @@ export class AudioPreview {
     this.preloader = preloader
   }
 
-  adjustClipGain(clip: VisibleClip, quantize: number): void {
+  adjustClipGain(clip: Clip, quantize: number): void {
     const timeRange = clip.timeRange(quantize)
     const avs = this.clipSources(clip)
     avs.forEach(av => { this.adjustSourceGain(av, timeRange) })
@@ -74,14 +74,14 @@ export class AudioPreview {
 
   clear() {  }
 
-  private clipSources(clip: VisibleClip): AudioOrVideo[] {
+  private clipSources(clip: Clip): AudioOrVideo[] {
     const avs: AudioOrVideo[] = []
     const { container, content } = clip
     if (isAudioOrVideo(container) && !container.muted) avs.push(container)
     if (isAudioOrVideo(content) && !content.muted) avs.push(content)
     return avs
   }
-  compositeAudible(clips: VisibleClip[], quantize: number): boolean {
+  compositeAudible(clips: Clip[], quantize: number): boolean {
     // console.log(this.constructor.name, "compositeAudible", clips.length)
     if (!this.createSources(clips, quantize)) return false
 
@@ -89,7 +89,7 @@ export class AudioPreview {
     return true
   }
 
-  private createSources(clips: VisibleClip[], quantize: number, time?:Time): boolean {
+  private createSources(clips: Clip[], quantize: number, time?:Time): boolean {
     if (!this.playing && !time) return false
 
     const addingClips = clips.filter(clip => !this.playingClips.includes(clip))
@@ -128,7 +128,7 @@ export class AudioPreview {
     })
   }
 
-  private destroySources(clipsToKeep: VisibleClip[] = []): void {
+  private destroySources(clipsToKeep: Clip[] = []): void {
     const sourceClips = [...this.playingClips]
     const clipsToRemove = sourceClips.filter(clip => !clipsToKeep.includes(clip))
 
@@ -155,7 +155,7 @@ export class AudioPreview {
 
   private playing = false
 
-  private playingClips: VisibleClip[] = []
+  private playingClips: Clip[] = []
 
   preloader: Loader
 
@@ -179,7 +179,7 @@ export class AudioPreview {
   }
 
   // called when playhead starts moving
-  startPlaying(time: Time, clips: VisibleClip[], quantize: number) : boolean {
+  startPlaying(time: Time, clips: Clip[], quantize: number) : boolean {
     if (!this.bufferSource) throw Errors.internal + 'bufferSource startPlaying'
     if (this.playing) throw Errors.internal + 'playing'
 

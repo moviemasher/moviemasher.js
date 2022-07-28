@@ -4,17 +4,20 @@ import { assertPopulatedString } from "../Utility/Is"
 import { Factories } from "../Definitions/Factories"
 // import { ContainerDefinitionClass } from "./ContainerDefinitionClass"
 import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "./Container"
-
-import defaultContainerJson from "../Definitions/DefinitionObjects/shapecontainer/default.json"
-import chatContainerJson from "../Definitions/DefinitionObjects/shapecontainer/chat.json"
-import broadcastContainerJson from "../Definitions/DefinitionObjects/shapecontainer/broadcast.json"
-import musicContainerJson from "../Definitions/DefinitionObjects/shapecontainer/music.json"
-import testContainerJson from "../Definitions/DefinitionObjects/shapecontainer/test.json"
 import { ShapeContainerDefinitionClass } from "./ShapeContainer/ShapeContainerDefinitionClass"
+
+import defaultContainerJson from "../Definitions/DefinitionObjects/container/default.json"
+import chatContainerJson from "../Definitions/DefinitionObjects/container/chat.json"
+import broadcastContainerJson from "../Definitions/DefinitionObjects/container/broadcast.json"
+import musicContainerJson from "../Definitions/DefinitionObjects/container/music.json"
+import testContainerJson from "../Definitions/DefinitionObjects/container/test.json"
+import textContainerJson from "../Definitions/DefinitionObjects/container/text.json"
+import { TextContainerDefinitionClass } from "./TextContainer/TextContainerDefinitionClass"
 
 export const containerDefault = new ShapeContainerDefinitionClass(defaultContainerJson)
 export const containerDefaults = [
   containerDefault,
+  new TextContainerDefinitionClass(textContainerJson),
   new ShapeContainerDefinitionClass(chatContainerJson),
   new ShapeContainerDefinitionClass(broadcastContainerJson),
   new ShapeContainerDefinitionClass(musicContainerJson),
@@ -41,16 +44,15 @@ export const containerInstance = (object: ContainerObject): Container => {
   if (!definitionId) throw Errors.id
 
   const definition = containerDefinitionFromId(definitionId)
-  const instance = definition.instanceFromObject(object)
-  throw 'containerInstance'
-  // return instance
+  const instance = definition.instanceFromObject(object) as Container
+  return instance
 }
 
 export const containerFromId = (id: string): Container => {
   const definition = containerDefinitionFromId(id)
-  const instance = definition.instanceFromObject({ definitionId: id })
-  throw 'containerFromId'
-  // return instance
+  const instance = definition.instanceFromObject({ definitionId: id }) as Container
+ 
+  return instance
 }
 
 Factories[DefinitionType.Container] = {

@@ -1,5 +1,5 @@
 import {
-  UnknownObject, CanvasVisibleSource, SvgContent} from "../../declarations"
+  UnknownObject, CanvasVisibleSource, SvgItem} from "../../declarations"
 import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
 import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
@@ -90,7 +90,7 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   pattern = '%.jpg'
 
-  // preloadableSvg(trackPreview: TrackPreview): SvgContent {
+  // preloadableSvg(trackPreview: TrackPreview): SvgItem {
   //   const { preview: filterGraph } = trackPreview
   //   const { size } = filterGraph
   //   const { preloader, editing, visible, quantize, time } = filterGraph

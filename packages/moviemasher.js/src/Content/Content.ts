@@ -1,10 +1,7 @@
-import { Constrained,  GenericFactory,  SvgContent } from "../declarations"
+import { Constrained,  GenericFactory,  SvgItem } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
-import { Size } from "../Utility/Size"
-import { ColorTuple, CommandFilterArgs, CommandFilters, SelectedProperties } from "../MoveMe"
-import { isContentType, Orientation, SelectType } from "../Setup/Enums"
+import { isContentType, Orientation } from "../Setup/Enums"
 import { throwError } from "../Utility/Is"
-import { Actions } from "../Editor/Actions/Actions"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 
@@ -15,12 +12,12 @@ export interface ContentObject extends TweenableObject {
 export interface ContentDefinitionObject extends TweenableDefinitionObject { }
 
 export interface Content extends Tweenable {
+  contentRects(rects: RectTuple, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple 
+  contentSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
+  lock: Orientation
   mutable: boolean
   muted: boolean
-  lock: Orientation
-  contentSvg(rect: Rect, time: Time, range: TimeRange): SvgContent
-  svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent
-  contentRects(rects: RectTuple, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple 
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem
 }
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentType(value.type)

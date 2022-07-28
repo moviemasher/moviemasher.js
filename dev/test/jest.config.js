@@ -31,15 +31,15 @@ module.exports = {
       ...defaults,
       displayName: "Jester",
       coverageDirectory: "./temporary/test/coverage",
-      collectCoverageFrom: ["./src/**/*.ts"],
+      collectCoverageFrom: ["packages/moviemasher.js/src/**/*.ts"],
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.setup.js"],
-      testRegex: 'packages/.*\\.test\\.ts$',
+      testRegex: 'packages/moviemasher.js/src/.*\\.test\\.ts$',
       testEnvironment: "jsdom",
     }, {
       ...defaults,
       displayName: "Tester",
       preset: "jest-puppeteer",
-      testRegex: 'packages/.*\\.test\\.e2e\\.ts$',
+      testRegex: 'packages/moviemasher.js/src/.*\\.test\\.e2e\\.ts$',
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.puppeteer.setup.js"],
     }
   ]

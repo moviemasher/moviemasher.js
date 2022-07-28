@@ -1,6 +1,7 @@
 import { UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
+import { SelectedProperties } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType } from "../Setup/Enums"
@@ -12,6 +13,7 @@ import { idGenerate } from "../Utility/Id"
 import { Loader } from "../Loader/Loader"
 import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
 import { Default } from "../Setup/Default"
+import { Editor } from "../Editor/Editor"
 
 
 export class EditedClass extends PropertiedClass implements Edited {
@@ -46,6 +48,10 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   destroy(): void {}
 
+  _editor?: Editor 
+  get editor(): Editor { return this._editor! }
+  set editor(value: Editor) { this._editor = value}
+  
   _emitter?: Emitter
   get emitter(): Emitter | undefined { return this._emitter }
   set emitter(value: Emitter | undefined) {
@@ -88,10 +94,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   reload(): Promise<void> | undefined { return }
 
-  // svgElement(options: PreviewOptions): SVGSVGElement {
-  //   throw Errors.unimplemented
-  // }
-  
+
   svg(options: PreviewOptions): Svg { throw Errors.unimplemented }
 
   svgs(options: PreviewOptions): Svgs { throw Errors.unimplemented }

@@ -5,13 +5,16 @@ import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 
 export interface TimelineTrackAddControlProps extends PropsAndChild, WithClassName {
-  trackType: string
+  
 }
 
 export function TimelineTrackAddControl(props:TimelineTrackAddControlProps): ReactResult {
   const editor = useEditor()
-  const { trackType, children, ...rest } = props
-  const cloneProps: UnknownObject = { ...rest }
-  cloneProps.onClick = () => { editor.addTrack(trackType as TrackType) }
-  return  React.cloneElement(React.Children.only(children), cloneProps)
+  const { children, ...rest } = props
+  const cloneProps: UnknownObject = { 
+    ...rest, 
+    disabled: !editor.selection.mash,
+  }
+  cloneProps.onClick = () => { editor.addTrack(TrackType.Video) }
+  return React.cloneElement(React.Children.only(children), cloneProps)
 }

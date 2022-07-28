@@ -1,11 +1,11 @@
 import React from "react"
-import { SelectType, NumberObject, SelectedProperty, isVisibleClip } from "@moviemasher/moviemasher.js"
+import { SelectType, DataGroup, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { InspectorEffects } from "./InspectorEffects"
-import { useSelected } from "../../Hooks/useSelected"
+import { DataGroupInputs } from "../DataGroupInputs/DataGroupInputs"
 
 export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {}
 
@@ -15,53 +15,34 @@ export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassNa
 export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedProperties } = inspectorContext
-  const selectedClip = useSelected()
-
-  const counts: NumberObject = {}
-  const types = selectedProperties.map(selectedProperty => {
-    const { selectType } = selectedProperty as SelectedProperty
-    const type = String(selectType)
-    counts[type] ||= 0
-    counts[type]++
-    return type
-  })
-
-  const kidsByType: Record<string, React.ReactChild[]> = {}
-
-  if (counts.clip) {
-    if (isVisibleClip(selectedClip)) {
-      const effectIndex = types.findIndex(type => type === SelectType.Effect)
-      const index = effectIndex === -1 ? types.length : effectIndex
-      types.splice(index, 0, 'effects')
-      kidsByType.effects = [<InspectorEffects key="inspector-effects" />]
-    }
-  }
-
+  const ungroupedInputs: React.ReactChild[] = []
+  const groupedInputs: React.ReactChild[] = []
+  const groups: UnknownObject = {} // = new Map<DataGroup, SelectType>()// new Set<DataGroup>()
+  const selectTypes = new Set<SelectType>()
   selectedProperties.forEach(selectedProperty => {
-    const { property, changeHandler, selectType, value } = selectedProperty
-    kidsByType[selectType] ||= []
-    const kids = kidsByType[selectType]
-    const { name } = property
+    const { property, changeHandler, selectType, value, name: nameOveride } = selectedProperty
+    const { name: propertyName, group } = property
+    if (group) {
+      const key = [group, selectType].join('-')
+      if (!groups[key]) {
+        groups[key] = true
+        groupedInputs.push(React.cloneElement(DataGroupInputs[group], { selectType }))
+      }
+      return
+    } 
+    
+    const name = nameOveride || propertyName
+    selectTypes.add(selectType)
     const propertyProps: InspectorPropertyProps = {
       key: `inspector-${selectType}-${name}`,
-      property,
-      value,
-      changeHandler,
+      property, value, changeHandler, name,
       ...props
     }
-    // console.log("InspectorProperties", `inspector-${selectType}-${name}`, changeHandler)
-    kids.push(<InspectorProperty {...propertyProps} />)
+    ungroupedInputs.push(<InspectorProperty {...propertyProps} />)
   })
+  if (selectTypes.has(SelectType.Clip)) {
+    ungroupedInputs.push(<InspectorEffects key="inspector-effects" />)
+  }
 
-  const kids: React.ReactChild[] = [...new Set(types)].map(type => {
-    const summaryProps = { key: `summary-${type}`, children: type }
-    const detailsProps = {
-      key: `details-${type}`,
-      open: true,
-      children: [<summary { ...summaryProps } />, ...kidsByType[type]]
-    }
-    return <details { ...detailsProps } />
-  })
-
-  return <>{kids}</>
+  return <>{ungroupedInputs}{groupedInputs}</>
 }

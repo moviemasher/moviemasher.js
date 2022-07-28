@@ -3,13 +3,14 @@ import { Scalar, PropertiedChangeHandler, Property, DataType } from "@moviemashe
 
 export interface InputContextInterface {
   property: Property
+  name: string
   value: Scalar
-  changeHandler: PropertiedChangeHandler
+  changeHandler?: PropertiedChangeHandler
 }
 
 export const InputContextDefault: InputContextInterface = {
   value: '',
-  changeHandler: () => { },
+  name: '',
   property: { type: DataType.String, name: '', defaultValue: '' }
 }
 

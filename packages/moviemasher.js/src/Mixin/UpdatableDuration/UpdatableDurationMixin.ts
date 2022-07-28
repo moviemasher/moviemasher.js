@@ -4,7 +4,7 @@ import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Default } from "../../Setup/Default"
 import { LoadType } from "../../Setup/Enums"
-import { assertPopulatedString, assertTrue, isPositive } from "../../Utility/Is"
+import { assertPopulatedString, isPositive } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
 import { filterFromId } from "../../Filter/FilterFactory"
@@ -157,7 +157,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     }
 
     startOptions(seconds: number, timeRange: TimeRange): StartOptions {
-      let offset = 0
+      let offset = timeRange.withFrame(this.trim).seconds
       let start = timeRange.seconds - seconds
       let duration = timeRange.lengthSeconds
 

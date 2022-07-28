@@ -48,6 +48,9 @@ export class TextFilter extends ColorizeFilter {
     }))
 
     this.properties.push(propertyInstance({
+      tweenable: true, custom: true, type: DataType.Number, name: 'y'
+    }))
+    this.properties.push(propertyInstance({
       tweenable: true, custom: true, type: DataType.String, name: 'color'
     }))
     this.populateParametersFromProperties()
@@ -59,6 +62,7 @@ export class TextFilter extends ColorizeFilter {
 
     const color = filter.value('color')
     const x = filter.value('x')
+    const y = filter.value('y')
     const textfile = filter.value('textfile')
     const fontfile = filter.value('fontfile')
     const height = filter.value('height')
@@ -74,9 +78,11 @@ export class TextFilter extends ColorizeFilter {
     assertNumber(intrinsicWidth)
     assertNumber(intrinsicHeight)
     assertNumber(x)
+    assertNumber(y)
     assertPopulatedString(color, 'color')
 
-    const xEnd = filter.value('xEnd')
+    const xEnd = filter.value(`x${PropertyTweenSuffix}`)
+    const yEnd = filter.value(`y${PropertyTweenSuffix}`)
     const colorEnd = duration ? filter.value(`color${PropertyTweenSuffix}`) : undefined
     const tweeningColor = isPopulatedString(colorEnd) && color !== colorEnd
 
@@ -102,7 +108,8 @@ export class TextFilter extends ColorizeFilter {
     const maxSize = tweenMaxSize(size, sizeEnd)
     
     const colorSize = {
-      ...maxSize, width: Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
+      ...maxSize, 
+      width: Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
     } //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxSize
 
     let scaling = stretch || !sizesEqual(size, sizeEnd)
@@ -110,6 +117,7 @@ export class TextFilter extends ColorizeFilter {
     const textOptions: ValueObject = {
       fontsize: colorSize.height, fontfile, textfile, 
       x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
+      y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),
       // fix_bounds: 1,
     }
     // console.log(this.constructor.name, "commandFilters", colorDimensions)

@@ -1,4 +1,4 @@
-import { SvgContent, ValueObject } from "../../declarations"
+import { SvgItem, ValueObject } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { Size } from "../../Utility/Size"
 import { CommandFile, CommandFileArgs, CommandFiles, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
@@ -66,7 +66,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     return graphFiles
   }
 
-  svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent {
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
     const { x, y, width, height } = rect
     const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
     imageElement.setAttribute('id', `image-${this.id}`)
@@ -76,9 +76,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     imageElement.setAttribute('width', String(width))
     if (stretch) {
       imageElement.setAttribute('height', String(height))
-
       imageElement.setAttribute('preserveAspectRatio', 'none')
-      
     }
     return imageElement
   }

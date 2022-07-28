@@ -2,8 +2,15 @@ import { Scalar } from "../declarations"
 import { assertPropertyType, DataType, isPropertyType, PropertyType } from "./Enums"
 import { propertyTypeDefault } from "../Helpers/PropertyType"
 import {
-  isBoolean, isNumber, isObject, isPopulatedString, isUndefined
+  isBoolean, isNumber, isObject, isPopulatedString, isUndefined, throwError
 } from "../Utility/Is"
+
+export enum DataGroup {
+  Point = 'point',
+  Size = 'size',
+  Opacity = 'opacity',
+  Color = 'color',
+}
 
 export interface PropertyObject {
   custom? : boolean
@@ -14,6 +21,8 @@ export interface PropertyObject {
   step?: number
   tweenable?: boolean
   type? : PropertyType | string
+  group?: DataGroup
+
 }
 
 export interface Property  {
@@ -24,11 +33,15 @@ export interface Property  {
   name: string
   step?: number
   tweenable?: boolean
+  group?: DataGroup
   type: PropertyType
 }
 
 export const isProperty = (value: any): value is Property => {
   return isObject(value) && "type" in value && isPropertyType(value.type)
+}
+export function assertProperty(value: any, name?: string): asserts value is Property {
+  if (!isProperty(value)) throwError(value, 'Property', name)
 }
 
 const propertyType = (type?: PropertyType | string, value?: Scalar): PropertyType => {

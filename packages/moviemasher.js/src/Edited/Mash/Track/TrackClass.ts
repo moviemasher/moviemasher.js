@@ -1,19 +1,21 @@
-import { UnknownObject } from "../../../declarations"
-import { TrackType } from "../../../Setup/Enums"
+import { Scalar, UnknownObject } from "../../../declarations"
+import { ActionType, SelectType, TrackType } from "../../../Setup/Enums"
 import { Errors } from "../../../Setup/Errors"
 import { propertyInstance } from "../../../Setup/Property"
 import { sortByFrame } from "../../../Utility/Sort"
-import { Clip, Clips } from "../../../Mixin/Clip/Clip"
+import { assertClip, Clip, Clips } from "../../../Media/Clip/Clip"
 import { PropertiedClass } from "../../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
-import { isPositive } from "../../../Utility/Is"
+import { assertPopulatedString, isPositive, isUndefined } from "../../../Utility/Is"
 import { TimeRange } from "../../../Helpers/Time/Time"
 import { idGenerate } from "../../../Utility/Id"
 import { Defined } from "../../../Base/Defined"
-import { assertVisibleClip, VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
 import { isUpdatableDurationDefinition } from "../../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Default } from "../../../Setup/Default"
 import { Mash } from "../Mash"
+import { SelectedProperties } from "../../../Utility/SelectedProperty"
+import { Actions } from "../../../Editor/Actions/Actions"
+import { clipInstance } from "../../../Media/Clip/ClipFactory"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -33,10 +35,10 @@ export class TrackClass extends PropertiedClass implements Track {
     
     if (clips) {
       this.clips.push(...clips.map(clip => {
-        const { definitionId } = clip
-        if (!definitionId) throw Errors.id + JSON.stringify(clip)
-        const definition = Defined.fromId(definitionId)
-        const instance = definition.instanceFromObject(clip) as VisibleClip
+        // const { definitionId } = clip
+        // if (!definitionId) throw Errors.id + JSON.stringify(clip)
+        // const definition = Defined.fromId(definitionId)
+        const instance = clipInstance(clip) //definition.instanceFromObject(clip) as Clip
         instance.track = this
         return instance
       }))
@@ -61,8 +63,7 @@ export class TrackClass extends PropertiedClass implements Track {
     spliceClips.splice(clipIndex, 0, clip)
     this.sortClips(spliceClips)
 
-    clip.track = this.layer
-    clip.trackInstance = this
+    clip.track = this
 
     // remove all my current clips and replace with new ones in one step
     this.clips.splice(0, this.clips.length, ...spliceClips)
@@ -92,7 +93,7 @@ export class TrackClass extends PropertiedClass implements Track {
     clipsArray.forEach(clip => {
       if (isPositive(clip.frames)) return
 
-      assertVisibleClip(clip)
+      assertClip(clip)
       const { definition } = clip.content
       if (isUpdatableDurationDefinition(definition)) {
         clip.frames = definition.frames(quantize)
@@ -102,6 +103,8 @@ export class TrackClass extends PropertiedClass implements Track {
       clip.frames = Default.frames
     })
   }
+
+
 
   clips: Clips = []
 
@@ -151,12 +154,28 @@ export class TrackClass extends PropertiedClass implements Track {
       // console.trace("removeClip", this.trackType, this.layer, this.clips)
       throw Errors.internal + 'removeClip'
     }
-    clip.track = -1
-    delete clip.trackInstance
+    clip.trackNumber = -1
     this.sortClips(spliceClips)
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
+  
+  selectedProperties(actions: Actions): SelectedProperties {
+    return this.properties.map(property => ({
+      property, selectType: SelectType.Track, 
+      changeHandler: (property: string, value: Scalar) => {
+        assertPopulatedString(property)
+    
+        const redoValue = isUndefined(value) ? this.value(property) : value
+        const undoValue = this.value(property)
+        const options = {
+          type: ActionType.Change, target: this, property, redoValue, undoValue
+        }
+        actions.create(options)
+      },
+      value: this.value(property.name)
+    }))
+  }
   sortClips(clips?: Clips): boolean {
     const sortClips = clips || this.clips
     const changed = this.assureFrame(sortClips)

@@ -20,20 +20,6 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     if (path) this.path = path
     if (pathWidth) this.pathWidth = pathWidth
     if (pathHeight) this.pathHeight = pathHeight
-    // console.log(this.constructor.name, path, object)
-
-
-    this.properties.push(propertyInstance({
-      name: 'path', defaultValue: this.path, type: DataType.String
-    }))
-    this.properties.push(propertyInstance({
-      name: 'pathWidth', defaultValue: this.pathWidth, type: DataType.Number
-    }))
-    this.properties.push(propertyInstance({
-      name: 'pathHeight', defaultValue: this.pathHeight, type: DataType.Number
-    }))
-
-    // console.log(this.constructor.name, "constructor", this.properties)
   }
 
   instanceFromObject(object: ShapeContainerObject = {}): ShapeContainer {
@@ -54,5 +40,5 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     return object
   }
 
-  type = DefinitionType.ShapeContainer
+  type = DefinitionType.Container
 }

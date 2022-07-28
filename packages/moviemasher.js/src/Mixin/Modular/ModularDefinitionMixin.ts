@@ -1,5 +1,4 @@
-import {
-  UnknownObject} from "../../declarations"
+import { UnknownObject} from "../../declarations"
 import { propertyInstance } from "../../Setup/Property"
 import { DefinitionClass } from "../../Definition/Definition"
 import {

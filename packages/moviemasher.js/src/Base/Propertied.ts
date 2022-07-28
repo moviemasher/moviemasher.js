@@ -1,6 +1,9 @@
 import { Scalar, ScalarObject, UnknownObject, ValueObject } from "../declarations"
+import { Actions } from "../Editor/Actions/Actions"
 import { propertyTypeCoerce,propertyTypeValid } from "../Helpers/PropertyType"
 import { Time } from "../Helpers/Time/Time"
+import { SelectedProperties } from "../Utility/SelectedProperty"
+import { SelectType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 import { assertObject, assertTrue, isUndefined } from "../Utility/Is"
@@ -14,6 +17,7 @@ export interface Propertied {
   properties: Property[]
   toJSON(): UnknownObject
   addProperties(object: any, ...properties: Property[]): void
+  selectedProperties(actions: Actions): SelectedProperties 
 }
 
 export interface PropertiedChangeHandler {
@@ -71,6 +75,9 @@ export class PropertiedClass implements Propertied {
     if (tweenable) this.propertySetOrDefault(object, property, `${name}${PropertyTweenSuffix}`)
   }
 
+
+  selectedProperties(actions: Actions): SelectedProperties { return [] }
+  
   setValue(value: Scalar, name: string, property?: Property): void {
     if (isUndefined(value)) {
       delete this[name]

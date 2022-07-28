@@ -1,5 +1,5 @@
 import {
-  GenericFactory, ScalarObject, SvgContent, SvgFilters} from "../declarations"
+  GenericFactory, ScalarObject, SvgItem, SvgFilters} from "../declarations"
 import { CommandFilters, FilterArgs, FilterCommandFilterArgs, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe";
 import { Phase } from "../Setup/Enums"
 import { Parameter, ParameterObject } from "../Setup/Parameter";
@@ -19,7 +19,7 @@ export interface Filter extends Instance {
   commandFilters(args: FilterCommandFilterArgs): CommandFilters
   definition : FilterDefinition
   parametersDefined: Parameter[]
-  filterSvg(args?: FilterArgs): SvgContent
+  filterSvg(args?: FilterArgs): SvgItem
   filterSvgFilters(tweening?: boolean): SvgFilters
   scalarObject(tweening?: boolean): ScalarObject
 }
@@ -29,7 +29,7 @@ export interface FilterDefinition extends Definition {
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters
   instanceFromObject(object?: FilterObject): Filter
   parameters: Parameter[]
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent
+  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem
   filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters
 }
 

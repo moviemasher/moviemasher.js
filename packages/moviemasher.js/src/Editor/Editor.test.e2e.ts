@@ -7,9 +7,8 @@ import { DefinitionType, } from '../Setup/Enums'
 import { ImageDefinitionObject } from '../Media/Image/Image'
 import { fontDefault } from '../Media/Font/FontFactory'
 import { PuppeteerHost, PuppeteerPort } from '../../../../dev/tester/src/Setup/Constants'
-import { ClipObject } from '../Mixin/Clip/Clip'
-import { VisibleClipObject } from '../Media/VisibleClip/VisibleClip'
-import { visibleClipDefault } from '../Media/VisibleClip/VisibleClipFactory'
+import { ClipObject } from '../Media/Clip/Clip'
+import { clipDefault } from '../Media/Clip/ClipFactory'
 import { defaultTextId } from '../../../../dev/test/Setup/Constants'
 
 describe('Editor', () => {
@@ -62,12 +61,12 @@ describe('Editor', () => {
     })
 
     test('displays Text correctly', async () => {
-      const visibleClipObject: VisibleClipObject = {
-        definitionId: visibleClipDefault.id,
+      const clipObject: ClipObject = {
+        definitionId: clipDefault.id,
         containerId: defaultTextId,
         string: 'hey!'
       }
-      await expectClipDisplays(visibleClipObject)
+      await expectClipDisplays(clipObject)
     })
   })
 
@@ -106,8 +105,8 @@ describe('Editor', () => {
 
   const expectDefinitionDisplays = async (definition: DefinitionObject) => {
     const { id } = definition
-    const visibleClipObject: VisibleClipObject = {
-      definitionId: visibleClipDefault.id,
+    const visibleClipObject: ClipObject = {
+      definitionId: clipDefault.id,
       contentId: id,
     }
     const data: MashData = {

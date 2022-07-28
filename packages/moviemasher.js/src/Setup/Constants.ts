@@ -19,6 +19,7 @@ export const IdPrefix = 'com.moviemasher.'
 export const IdSuffix = '.default'
 
 export const ClassDisabled = 'disabled'
+export const ClassButton = 'icon-button'
 export const ClassSelected = 'selected'
 export const ClassDropping = 'dropping'
 export const ClassDroppingBefore = 'dropping-before'

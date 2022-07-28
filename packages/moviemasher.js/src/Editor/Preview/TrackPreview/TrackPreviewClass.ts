@@ -1,10 +1,10 @@
 import { assertContainer } from "../../../Container/Container"
-import { SvgContent } from "../../../declarations"
+import { SvgItem } from "../../../declarations"
 import { Point } from "../../../Utility/Point"
 import { Rect, rectsEqual } from "../../../Utility/Rect"
 import { Size } from "../../../Utility/Size"
 import { Evaluator, EvaluatorArgs } from "../../../Helpers/Evaluator"
-import { assertVisibleClip, VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { assertClip, Clip } from "../../../Media/Clip/Clip"
 import { NamespaceSvg } from "../../../Setup/Constants"
 import { idGenerate } from "../../../Utility/Id"
 import { svgGroupElement, svgOfDimensions, svgPolygonElement } from "../../../Utility/Svg"
@@ -22,7 +22,7 @@ export class TrackPreviewClass implements TrackPreview {
     this.selected = this.preview.selectedClip === this.clip
   }
 
-  private get clip(): VisibleClip { return this.args.clip }
+  private get clip(): Clip { return this.args.clip }
 
   private editing = true
 
@@ -49,8 +49,9 @@ export class TrackPreviewClass implements TrackPreview {
   private selected = false
   
   private get svgElement(): SVGSVGElement {
+    // console.log(this.constructor.name, "svgElement")
     const { timeRange, time, clip, evaluator, editing, size } = this
-    assertVisibleClip(clip)
+    assertClip(clip)
     const { container, content } = clip
     assertContainer(container)
 
@@ -59,37 +60,38 @@ export class TrackPreviewClass implements TrackPreview {
 
     const [containerRect] = containerRects
     evaluator.instance = container
-    const containerSvg = container.containerSvg(containerRect, time, timeRange)
+    const containerSvgItem = container.containerSvgItem(containerRect, time, timeRange)
 
     evaluator.instance = content
-    const contentSvg = content.contentSvg(containerRect, time, timeRange)
+    const contentSvgItem = content.contentSvgItem(containerRect, time, timeRange)
     const svgElement = svgOfDimensions(size)
     const maskId = `mask-${idGenerate()}`
 
-    contentSvg.classList.add('contained')
+    contentSvgItem.classList.add('contained')
     const maskElement = globalThis.document.createElementNS(NamespaceSvg, 'mask')
     maskElement.setAttribute('id', maskId)
     maskElement.setAttribute('width', String(containerRect.width))
     const polygonElement = svgPolygonElement(containerRect, '', 'transparent')
     maskElement.appendChild(polygonElement)
-    contentSvg.setAttribute('mask', `url(#${maskId})`)
-    contentSvg.setAttribute('mask-mode', 'alpha')
+    contentSvgItem.setAttribute('mask', `url(#${maskId})`)
+    contentSvgItem.setAttribute('mask-mode', 'alpha')
 
-    maskElement.append(containerSvg)
+    maskElement.append(containerSvgItem)
     svgElement.append(maskElement)
-    svgElement.append(contentSvg)
+    svgElement.append(contentSvgItem)
 
     if (editing) svgElement.append(this.svgEditingContent(containerRect, time, timeRange))
     
-    const svgFilters = clip.svgFilters(size, containerRect, time, timeRange)
-    if (svgFilters.length) {
+    const containerSvgFilters = container.containerSvgFilters(size, containerRect, time, timeRange)
+    if (containerSvgFilters.length) {
       const id = `filter-${idGenerate()}`
       const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'filter')
       filterElement.setAttribute('id', id)
       filterElement.setAttribute('filterUnits', "userSpaceOnUse")
-      filterElement.append(...svgFilters)
+      filterElement.append(...containerSvgFilters)
       svgElement.appendChild(filterElement)
-      contentSvg.setAttribute('filter', `url(#${id})`)
+      // console.log(this.constructor.name, "svgElement", "adding filter", id)
+      containerSvgItem.setAttribute('filter', `url(#${id})`)
     }
     return svgElement
   }
@@ -116,7 +118,7 @@ export class TrackPreviewClass implements TrackPreview {
       const element = svgPolygonElement(rect, 'handle', 'currentColor')
       element.classList.add(direction)
       element.addEventListener('pointerdown', event => {
-        console.log("click", direction)
+        // console.log("click", direction)
         this.editor.select(this.clip)
         event.stopPropagation()
       })
@@ -126,7 +128,7 @@ export class TrackPreviewClass implements TrackPreview {
     return groupElement
   }
 
-  private svgEditingContent(containerRect: Rect, time: Time, range: TimeRange): SvgContent {
+  private svgEditingContent(containerRect: Rect, time: Time, range: TimeRange): SvgItem {
     const container = this.clip.container!
     const transformedGroupElement = svgGroupElement()
     const { clip, selected, editor } = this
@@ -154,10 +156,10 @@ export class TrackPreviewClass implements TrackPreview {
       pathElement.classList.add('shape')
 
       pathElement.addEventListener('pointerenter', () => {
-        console.log(this.constructor.name, "pointerenter", pathElement.classList)
+        // console.log(this.constructor.name, "pointerenter", pathElement.classList)
       })
       pathElement.addEventListener('pointerleave', () => {
-        console.log(this.constructor.name, "pointerleave", pathElement.classList)
+        // console.log(this.constructor.name, "pointerleave", pathElement.classList)
       })
     }
     transformedGroupElement.append(pathElement)

@@ -1,16 +1,18 @@
 import {
-  Interval, UnknownObject} from "../../declarations"
+  Interval, Scalar, UnknownObject} from "../../declarations"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
+import { SelectedProperties } from "../../Utility/SelectedProperty"
 import {
-  AVType, DataType, EventType, GraphType, TrackType
+  ActionType,
+  AVType, DataType, EventType, GraphType, SelectType, TrackType
 } from "../../Setup/Enums"
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { assertTrue, isAboveZero, isPopulatedString, isPositive, isString } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isAboveZero, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
 import { sortByLayer } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
-import { Clip, Clips } from "../../Mixin/Clip/Clip"
+import { isClip, Clip, Clips } from "../../Media/Clip/Clip"
 import { isTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview, AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { Mash, MashArgs } from "./Mash"
@@ -24,10 +26,12 @@ import { EditedClass } from "../EditedClass"
 import { propertyInstance } from "../../Setup/Property"
 import { Preview, PreviewArgs, PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
 import { PreviewClass } from "../../Editor/Preview/PreviewClass"
-import { isVisibleClip, VisibleClip } from "../../Media/VisibleClip/VisibleClip"
 import { colorBlack } from "../../Utility/Color"
 import { isContainer } from "../../Container/Container"
 import { Cast } from "../Cast/Cast"
+import { LayerMash } from "../Cast/Layer/Layer"
+import { Actions } from "../../Editor/Actions/Actions"
+import { NonePreview } from "../../Editor/Preview/NonePreview"
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
@@ -62,26 +66,28 @@ export class MashClass extends EditedClass implements Mash {
     if (createdAt) this.createdAt = createdAt
     if (frame) this._frame = frame
     let videoTrackCount = 0
-    if (tracks) tracks.forEach(track => {
+    if (tracks) tracks.forEach(trackObject => {
       const trackArgs: TrackArgs = {
         trackType: TrackType.Video,
-        ...track, layer: this.trackCount(track.trackType)
+        ...trackObject, layer: this.trackCount(trackObject.trackType)
       }
       const isVideoTrack = trackArgs.trackType === TrackType.Video
       if (isVideoTrack) videoTrackCount++
 
-      if (typeof track.dense === 'undefined') {
+      if (typeof trackObject.dense === 'undefined') {
         trackArgs.dense = videoTrackCount === 1
       }
-      const instance = trackInstance(trackArgs)
-      instance.assureFrames(this.quantize)
-      instance.sortClips()
+      const track = trackInstance(trackArgs)
+      track.mash = this
+      track.assureFrames(this.quantize)
+      track.sortClips()
 
-      this.tracks.push(instance)
+      this.tracks.push(track)
     })
     this.assureTrackOfType(TrackType.Video)
     this.assureTrackOfType(TrackType.Audio)
     this.tracks.sort(sortByLayer)
+    this._preview = new NonePreview(this.previewArgs())
   }
 
   addClipToTrack(clip: Clip, trackIndex = 0, insertIndex = 0, frame?: number): void {
@@ -101,8 +107,11 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   addTrack(trackType: TrackType): Track {
-    const options: TrackObject = { trackType: trackType, layer: this.trackCount(trackType) }
+    const options: TrackObject = { 
+      trackType: trackType, layer: this.trackCount(trackType) 
+    }
     const track = trackInstance(options)
+    track.mash = this
     // console.log(this.constructor.name, "addTrack", track)
     this.tracks.push(track)
     this.tracks.sort(sortByLayer)
@@ -114,7 +123,9 @@ export class MashClass extends EditedClass implements Mash {
     if (!this.trackCount(trackType)) {
       const dense = trackType === TrackType.Video 
       const trackArgs = { trackType, dense }
-      this.tracks.push(trackInstance(trackArgs))
+      const track = trackInstance(trackArgs)
+      track.mash = this
+      this.tracks.push(track)
     }
   }
 
@@ -151,10 +162,6 @@ export class MashClass extends EditedClass implements Mash {
 
   private _bufferTimer?: Interval
 
-  _cast?: Cast 
-  get cast(): Cast { return this._cast! }
-  set cast(value: Cast) { this._cast = value }
-  
   changeClipFrames(clip: Clip, value: number): void {
     let limitedValue = Math.max(1, value) // frames value must be > 0
 
@@ -184,13 +191,14 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   private clearDrawInterval(): void {
-    if (this.drawInterval) {
-      clearInterval(this.drawInterval)
-      this.drawInterval = undefined
-    }
+    if (!this.drawInterval) return
+
+    clearInterval(this.drawInterval)
+    this.drawInterval = undefined
   }
 
-  private clearPreview() {
+  clearPreview() {
+    // console.log(this.constructor.name, "clearPreview")
     delete this._preview 
   }
 
@@ -200,29 +208,29 @@ export class MashClass extends EditedClass implements Mash {
     return clip.timeRange(this.quantize).intersects(range)
   }
 
-  clipTrack(clip: Clip): Track { return clip.track }
+  clipTrack(clip: Clip): Track { return clip.track! }
 
   private clipTrackAtIndex(clip: Clip, index = 0): Track {
     return this.trackOfTypeAtIndex(clip.trackType, index)
   }
 
-  get clips(): VisibleClip[] {
-    return this.tracks.map(track => track.clips).flat() as VisibleClip[]
+  get clips(): Clip[] {
+    return this.tracks.map(track => track.clips).flat() as Clip[]
   }
 
-  private get clipsAudible(): VisibleClip[] {
+  private get clipsAudible(): Clip[] {
     return this.clips.filter(clip => clip.mutable && clip.notMuted)
   }
 
-  private clipsAudibleInTime(time: Time): VisibleClip[] {
+  private clipsAudibleInTime(time: Time): Clip[] {
     return this.filterIntersecting(this.clipsAudible, time)
   }
 
-  private clipsInTime(time: Time): VisibleClip[] {
+  private clipsInTime(time: Time): Clip[] {
     return this.filterIntersecting(this.clips, time)
   }
 
-  clipsInTimeOfType(time: Time, avType = AVType.Both): VisibleClip[] {
+  clipsInTimeOfType(time: Time, avType = AVType.Both): Clip[] {
     switch (avType) {
       case AVType.Both: return this.clipsInTime(time)
       case AVType.Audio: return this.clipsAudibleInTime(time)
@@ -230,11 +238,11 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
-  private get clipsVisible(): VisibleClip[] {
+  private get clipsVisible(): Clip[] {
     return this.clips.filter(clip => clip.container)
   }
 
-  private clipsVisibleInTime(time: Time): VisibleClip[] {
+  private clipsVisibleInTime(time: Time): Clip[] {
     return this.filterIntersecting(this.clipsVisible, time)
   }
 
@@ -251,7 +259,7 @@ export class MashClass extends EditedClass implements Mash {
     requestAnimationFrame(() => this.compositeVisible(time))
   }
 
-  private compositeAudibleClips(clips: VisibleClip[]): void {
+  private compositeAudibleClips(clips: Clip[]): void {
     if (this._paused) return
 
     this.composition.compositeAudible(clips, this.quantize)
@@ -293,11 +301,13 @@ export class MashClass extends EditedClass implements Mash {
   private drawInterval?: Interval
 
   private drawRequest(): void {
+    // console.log(this.constructor.name, "drawRequest")
     const { time } = this
     this.compositeVisibleRequest(time)
   }
 
   private drawTime(time: Time): void {
+    // console.log(this.constructor.name, "drawTime")
     const timeChange = time !== this.time
     this.drawnTime = time
     this.drawRequest()
@@ -305,6 +315,7 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   private drawWhilePlayerNotPlaying() {
+    // console.log(this.constructor.name, "drawWhilePlayerNotPlaying")
     const now = performance.now()
     const ellapsed = now - this.drawnSeconds
     if (ellapsed < 1.0 / this.quantize) return
@@ -321,32 +332,6 @@ export class MashClass extends EditedClass implements Mash {
     if (loading) return
 
     this.drawRequest()
-  }
-
-  private drawWhilePlaying() {
-    // what time does the audio context think it is?
-    const { seconds } = this.composition
-
-    // what time would masher consider to be in next frame?
-    const nextFrameTime = this.time.withFrame(this.time.frame + 1)
-
-    // are we beyond the end of mash?
-    if (seconds >= this.endTime.seconds) {
-      // should we loop back to beginning?
-      if (this.loop) this.seekToTime(this.time.withFrame(0))
-      else {
-        this.paused = true
-        this.emitter?.emit(EventType.Ended)
-      }
-    } else {
-      // are we at or beyond the next frame?
-      if (seconds >= nextFrameTime.seconds) {
-        const compositionTime = timeFromSeconds(seconds, this.time.fps)
-
-        // go to where the audio context thinks we are
-        this.drawTime(compositionTime)
-      }
-    }
   }
 
   drawnSeconds = 0
@@ -391,9 +376,9 @@ export class MashClass extends EditedClass implements Mash {
     return new FilterGraphsClass(filterGraphsOptions)
   }
 
-  private filterIntersecting(clips: Clips, time: Time): VisibleClip[] {
+  private filterIntersecting(clips: Clips, time: Time): Clip[] {
     const scaled = time.scale(this.quantize)
-    return clips.filter(clip => this.clipIntersects(clip, scaled)) as VisibleClip[]
+    return clips.filter(clip => this.clipIntersects(clip, scaled)) as Clip[]
   }
 
   private _frame = 0 // initial frame supplied to constructor
@@ -467,10 +452,36 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   private handleDrawInterval(): void {
-    if (this._playing) this.drawWhilePlaying()
-    else this.drawWhilePlayerNotPlaying()
+    // console.log(this.constructor.name, "handleDrawInterval", this._playing)
+    // what time does the audio context think it is?
+    const { seconds } = this.composition
+
+    // what time would masher consider to be in next frame?
+    const nextFrameTime = this.time.withFrame(this.time.frame + 1)
+
+    // are we beyond the end of mash?
+    if (seconds >= this.endTime.seconds) {
+      // should we loop back to beginning?
+      if (this.loop) this.seekToTime(this.time.withFrame(0))
+      else {
+        this.paused = true
+        this.emitter?.emit(EventType.Ended)
+      }
+    } else {
+      // are we at or beyond the next frame?
+      if (seconds >= nextFrameTime.seconds) {
+        const compositionTime = timeFromSeconds(seconds, this.time.fps)
+
+        // go to where the audio context thinks we are
+        this.drawTime(compositionTime)
+      }
+    }
   }
 
+  _layer?: LayerMash 
+  get layer(): LayerMash { return this._layer! }
+  set layer(value: LayerMash) { this._layer = value }
+  
   loadPromise(args: GraphFileOptions = {}): Promise<void> {
     const promise = this.loadPromiseUnlessBuffered(args)
     // console.log(this.constructor.name, "loadPromise", args, "loadPromiseUnlessBuffered", promise)
@@ -552,19 +563,27 @@ export class MashClass extends EditedClass implements Mash {
           return
         }
         this.emitter?.emit(EventType.Playing)
-      } else this.composition.stopPlaying()
+        this.setDrawInterval()
+      } else {
+        this.composition.stopPlaying()
+        this.clearDrawInterval()
+      }
     }
   }
 
   private _preview?: Preview
   preview(options: PreviewOptions) { 
-    return this.previewInitialize(options) 
-    // return this._preview ||= this.previewInitialize(options) 
+    // return this.previewInitialize(options) 
+    return this._preview ||= this.previewInitialize(options) 
   }
   private previewInitialize(options: PreviewOptions): Preview {
+    return new PreviewClass(this.previewArgs(options))
+  }
+
+  private previewArgs(options: PreviewOptions = {}): PreviewArgs {
     const { editor } = options
     const clip = editor?.selection.clip
-    const selectedClip = isVisibleClip(clip) ? clip : undefined
+    const selectedClip = isClip(clip) ? clip : undefined
     const { drawingTime, time, quantize } = this
     const svgTime = drawingTime || time
     const args: PreviewArgs = {
@@ -575,7 +594,8 @@ export class MashClass extends EditedClass implements Mash {
       mash: this,
       ...options,
     }
-    return new PreviewClass(args)
+
+    return args
   }
 
   putPromise(): Promise<void> { 
@@ -596,7 +616,7 @@ export class MashClass extends EditedClass implements Mash {
   }
 
 
-  removeClipFromTrack(clip: VisibleClip): void {
+  removeClipFromTrack(clip: Clip): void {
     const track = this.clipTrack(clip)
     this.emitIfFramesChange(() => { track.removeClip(clip) })
   }
@@ -625,8 +645,6 @@ export class MashClass extends EditedClass implements Mash {
         this.emitter?.emit(EventType.Seeked)
       }
       this.drawTime(time)
-
-
       if (!paused) {
         this.composition.startContext()
         this.playing = true
@@ -644,12 +662,30 @@ export class MashClass extends EditedClass implements Mash {
       this.seekTime = time
       this.emitter?.emit(EventType.Seeking)
       this.emitter?.emit(EventType.Time)
-      if (!this.drawInterval) this.setDrawInterval()
     }
     return this.stopLoadAndDraw(true)
   }
 
+  selectedProperties(actions: Actions): SelectedProperties {
+    return this.properties.map(property => ({
+      selectType: SelectType.Mash, property, 
+      value: this.value(property.name),
+      changeHandler: (property: string, value: Scalar) => {
+        assertPopulatedString(property, 'changeMash property')
+
+        const redoValue = isUndefined(value) ? this.value(property) : value
+        const undoValue = this.value(property)
+        const options: UnknownObject = {
+          property, target: this, redoValue, undoValue, type: ActionType.Change
+        }
+        actions.create(options)
+      }
+    }))
+  }
+
   setDrawInterval(): void {
+    if (this.drawInterval) return 
+
     this.clearDrawInterval()
     this.drawInterval = setInterval(() => { this.handleDrawInterval() }, 500 / this.time.fps)
   }
@@ -679,7 +715,7 @@ export class MashClass extends EditedClass implements Mash {
   // svgElement(graphArgs: PreviewOptions): SVGSVGElement {
   //   const { editor } = graphArgs
   //   const clip = editor?.selection.clip
-  //   const selectedClip = isVisibleClip(clip) ? clip : undefined
+  //   const selectedClip = isClip(clip) ? clip : undefined
   //   const { drawingTime, time, quantize } = this
   //   const svgTime = drawingTime || time
   //   const args: PreviewArgs = {

@@ -2,7 +2,7 @@ import fs from 'fs'
 import {
   DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, OutputFormat, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, VisibleClipObject,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -108,7 +108,7 @@ export class StreamingProcessClass extends EventEmitter {
     const definitionObject: ImageDefinitionObject = {
       source, id: contentId, type: DefinitionType.Image, url: source
     }
-    const clip: VisibleClipObject = { contentId, width: 0.2 }
+    const clip: ClipObject = { contentId, width: 0.2 }
     const mashObject: MashObject = {
       backcolor: "#000000",
       tracks: [{ trackType: TrackType.Video, clips: [clip] }]

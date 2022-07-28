@@ -1,17 +1,16 @@
 .moviemasher .editor.caster {
   grid-template-areas:
-    "composer inspector panels"
-    "player inspector panels";
+    "player inspector panels"
+    "timeline composer panels";
   grid-template-columns:
     calc(var(--preview-width) + (var(--border-size) * 2))
     var(--inspector-width)
     1fr;
   grid-template-rows:
-    1fr
-    calc( var(--preview-height) + var(--header-height) + var(--footer-height));
+    calc( var(--preview-height) + var(--header-height) + var(--footer-height))
+    1fr;
 }
 
-/* */
 .moviemasher .editor.caster .panel.timeline {
   grid-area: initial;
 }

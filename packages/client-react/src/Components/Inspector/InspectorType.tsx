@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { propsDefinitionTypes } from '../../Utilities/Props'
+import { propsSelectTypes } from '../../Utilities/Props'
 import { InspectorContext } from '../../Contexts/InspectorContext'
 import { ReactResult } from '../../declarations'
 
@@ -15,14 +15,12 @@ export interface InspectorTypeProps {
  */
 export function InspectorType(props: InspectorTypeProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
-  const { definitionType } = inspectorContext
-  if (!definitionType) return null
+  const { selectedTypes } = inspectorContext
+  if (!selectedTypes.length) return null
 
   const { type, types, children } = props
-  if (!children) return null
-
-  const definitionTypes = propsDefinitionTypes(type, types)
-  if (!definitionTypes.includes(definitionType)) return null
+  const propTypes = propsSelectTypes(type, types)
+  if (!propTypes.some(type => selectedTypes.includes(type))) return null
 
   return <>{children}</>
 }

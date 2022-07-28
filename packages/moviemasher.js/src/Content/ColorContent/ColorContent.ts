@@ -1,5 +1,4 @@
 import { GenericFactory } from "../../declarations"
-import { FilterDefinition } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { ColorTuple } from "../../MoveMe"
 import {

@@ -1,6 +1,6 @@
 import { FilterGraphsClass } from "./FilterGraphsClass"
 import { mashInstance } from "../MashFactory"
-import { visibleClipDefault } from "../../../Media/VisibleClip/VisibleClipFactory"
+import { clipDefault } from "../../../Media/Clip/ClipFactory"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
 import { expectArrayLength } from "../../../../../../dev/test/Utilities/Expect"
 
@@ -19,7 +19,7 @@ describe("FilterGraphs", () => {
   })
   
   describe("mash with single clip", () => {
-    const mash = mashInstance({ tracks: [ { clips: [{ definitionId: visibleClipDefault.id }] }]})
+    const mash = mashInstance({ tracks: [ { clips: [{ definitionId: clipDefault.id }] }]})
     const filterGraphs = mash.filterGraphs()
     const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
     test("it contains a single visible FilterGraph", () => {
@@ -32,7 +32,7 @@ describe("FilterGraphs", () => {
     
     test("its visible FilterGraph contains correct CommandFilters", () => {
       const { commandFilters } = filterGraphVisible
-      expectArrayLength(commandFilters, 3)
+      expectArrayLength(commandFilters, 4)
     })
   })
 })

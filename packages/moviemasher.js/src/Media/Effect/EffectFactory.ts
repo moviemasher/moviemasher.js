@@ -2,7 +2,6 @@ import { DefinitionType } from "../../Setup/Enums"
 import { EffectDefinitionClass } from "./EffectDefinitionClass"
 import { Factories } from "../../Definitions/Factories"
 import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
-import { EffectClass } from "./EffectClass"
 import { assertPopulatedString } from "../../Utility/Is"
 
 import effectBlurJson from "../../Definitions/DefinitionObjects/effect/blur.json"
@@ -38,6 +37,7 @@ export const effectDefinitionFromId = (id: string): EffectDefinition => {
 
 export const effectInstance = (object: EffectObject): Effect => {
   const { definitionId = '' } = object
+  console.log("effectInstance", definitionId, object)
   const definition = effectDefinitionFromId(definitionId)
   return definition.instanceFromObject(object)
 }

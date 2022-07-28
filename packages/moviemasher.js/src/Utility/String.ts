@@ -43,8 +43,8 @@ export const stringSeconds = (seconds : number, fps : number, duration : number)
   return s
 }
 
-export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): [number, number] => {
-  if (!(isPopulatedString(string) && isAboveZero(height))) return [0, 0]
+export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): [number, number, number] => {
+  if (!(isPopulatedString(string) && isAboveZero(height))) return [0, 0, 0]
 
   if (!globalThis.document) throw 'wrong environment'
   
@@ -53,10 +53,10 @@ export const stringWidthForFamilyAtHeight = (string: string, family: string, hei
   ctx.font = `${height}px ${family}`
 
   const text = ctx.measureText(string)
-  const { actualBoundingBoxLeft, actualBoundingBoxRight, width } = text
-  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft, text)
-  return [width, actualBoundingBoxLeft]
-}
+  const { actualBoundingBoxLeft, actualBoundingBoxRight, width, actualBoundingBoxAscent, fontBoundingBoxAscent } = text
+  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft,actualBoundingBoxAscent, text)
+  return [width, actualBoundingBoxLeft, height - actualBoundingBoxAscent]
+}//fontBoundingBoxAscent -
 
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {
   if (!isPopulatedString(value)) return value

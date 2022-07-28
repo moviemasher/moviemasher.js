@@ -1,95 +1,149 @@
 import React from 'react'
 
-import { RiMusic2Fill } from 'react-icons/ri'
-import { MdInvertColors } from 'react-icons/md'
-import { RiFilmFill } from 'react-icons/ri'
-import { RiPlayCircleFill } from 'react-icons/ri'
-import { RiPauseCircleFill } from 'react-icons/ri'
-import { RiChatVoiceFill } from 'react-icons/ri'
-import { RiVideoChatFill } from 'react-icons/ri'
-import { IoColorFillSharp } from 'react-icons/io5'
-import { RiImageFill } from 'react-icons/ri'
-import { RiMvLine } from 'react-icons/ri'
-import { RiMusicLine } from 'react-icons/ri'
-import { RiVideoLine } from 'react-icons/ri'
-import { RiArrowLeftRightLine } from 'react-icons/ri'
-import { RiArrowRightSLine } from 'react-icons/ri'
-import { RiUploadCloud2Line } from 'react-icons/ri'
-import { RiArrowGoBackLine } from 'react-icons/ri'
-import { RiArrowGoForwardLine } from 'react-icons/ri'
-import { RiDeleteBin7Line } from 'react-icons/ri'
-import { RiAddLine } from 'react-icons/ri'
-import { RiEyeLine } from 'react-icons/ri'
-import { RiEyeOffLine } from 'react-icons/ri'
-import { BsReverseLayoutSidebarInsetReverse } from 'react-icons/bs'
-import { RiVolumeUpLine } from 'react-icons/ri'
-import { RiVolumeMuteLine } from 'react-icons/ri'
-import { FaUserCircle } from 'react-icons/fa'
-import { RiBroadcastFill } from 'react-icons/ri'
-import { RiUserSettingsFill } from 'react-icons/ri'
-import { RiStackFill } from 'react-icons/ri'
-import { RiStackLine } from 'react-icons/ri'
-import { RiChat3Fill } from 'react-icons/ri'
-import { RiMessage3Fill } from 'react-icons/ri'
-import { RiEdit2Fill } from 'react-icons/ri'
-import { RiFolderLine } from 'react-icons/ri'
-import { RiFolderOpenLine } from 'react-icons/ri'
-import { RiFolderAddFill } from 'react-icons/ri'
-import { MdPermMedia } from 'react-icons/md'
-import { AiOutlineFieldTime } from 'react-icons/ai'
+import { 
+  RiMusic2Fill,
+  RiFilmFill,
+  RiPlayCircleFill,
+  RiPauseCircleFill,
+  RiChatVoiceFill,
+  RiVideoChatFill,
+  RiImageFill,
+  RiMvLine,
+  RiMusicLine,
+  RiVideoLine,
+  RiArrowLeftRightLine,
+  RiArrowRightSLine,
+  RiUploadCloud2Line,
+  RiArrowGoBackLine,
+  RiArrowGoForwardLine,
+  RiDeleteBin7Line,
+  RiAddLine,
+  RiEyeLine,
+  RiEyeOffLine,
+  RiVolumeUpLine,
+  RiVolumeMuteLine,
+  RiBroadcastFill,
+  RiUserSettingsFill,
+  RiStackFill,
+  RiStackLine,
+  RiChat3Fill,
+  RiMessage3Fill,
+  RiEdit2Fill,
+  RiFolderLine,
+  RiFolderOpenLine,
+  RiFolderAddFill,
+} from 'react-icons/ri'
+
+import { 
+  MdInvertColors,
+  MdPermMedia, 
+  MdOutlineTextFields, 
+  MdOutlineTimelapse,
+  MdOpacity,
+ } from 'react-icons/md'
+
+import { 
+  IoColorFillSharp, 
+  IoDocument,
+} from 'react-icons/io5'
+
+import { 
+  BsSkipStartFill, BsSkipEndFill,
+  BsReverseLayoutSidebarInsetReverse, 
+  BsSkipEnd,
+ } from 'react-icons/bs'
+
+import { 
+  FaUserCircle,
+  FaExpand,
+  FaLock, FaUnlock
+} from 'react-icons/fa'
+
+// import { AiOutlineFieldTime } from 'react-icons/ai'
 import { BiShapeTriangle } from 'react-icons/bi'
-import { MdOutlineTextFields } from 'react-icons/md'
+
+import { TiZoomOutOutline, TiZoomInOutline } from 'react-icons/ti'
+import { 
+  GiFastForwardButton, GiPlayButton, GiMove, GiResize, 
+  GiHorizontalFlip, GiVerticalFlip,
+ } from 'react-icons/gi'
+import { HiArrowsExpand, HiEye, HiLockClosed, HiLockOpen } from 'react-icons/hi'
+import { ImFileVideo } from 'react-icons/im'
+
+import { 
+  VscTriangleRight, 
+  VscTriangleDown,
+ 
+} from 'react-icons/vsc'
+
 import { MMTubeIcon } from '../Icons/MMTubeIcon'
 import { MMIcon } from '../Icons/MMIcon'
 
-import { VscTriangleRight } from 'react-icons/vsc'
-import { VscTriangleDown } from 'react-icons/vsc'
-
 
 export const DefaultIcons = {
-  collapse: <VscTriangleDown/>,
-  collapsed: <VscTriangleRight/>,
-  app: <img key='logo' src="mm.svg" />,
   add: <RiAddLine key='add' />,
   administrator: <RiUserSettingsFill key='administrator' />,
+  app: <img key='logo' src="mm.svg" />,
   audible: <RiVolumeUpLine key='audible' />,
+  audio: <RiMusicLine />,
   broadcast: <RiBroadcastFill key='broadcast' />,
   browser: <MdPermMedia key='browser' />,
   browserAudio: <RiMusic2Fill />,
   browserAudioStream: <RiChatVoiceFill />,
   browserEffect: <MdInvertColors />,
-  browserShape: <BiShapeTriangle />,
+  color: <IoColorFillSharp key="color" />,
   browserImage: <RiImageFill />,
+  browserShape: <BiShapeTriangle />,
   browserText: <MdOutlineTextFields />,
-  browserFill: <IoColorFillSharp />,
   browserVideo: <RiFilmFill />,
   browserVideoStream: <RiVideoChatFill />,
-  folder: <RiFolderLine key='folder' />,
-  folderOpen: <RiFolderOpenLine key='folderOpen' />,
-  folderAdd: <RiFolderAddFill key='folderAdd' />,
   chat: <RiChat3Fill key='chat' />,
+  clip: <MdOutlineTimelapse/>,
+  collapse: <VscTriangleDown/>,
+  collapsed: <VscTriangleRight/>,
+  container: <FaExpand/>,
+  content: <HiArrowsExpand/>,
+  document: <IoDocument />,
+  end: <BsSkipEndFill />,
+  endUndefined: <BsSkipEnd />,
+  folder: <RiFolderLine key='folder' />,
+  folderAdd: <RiFolderAddFill key='folderAdd' />,
+  folderOpen: <RiFolderOpenLine key='folderOpen' />,
+  horz: <GiHorizontalFlip key="horz-flip" />,
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
   invisible: <RiEyeOffLine key='invisible' />,
   layer: <RiStackLine key='layer' />,
   layers: <RiStackFill key='layers' />,
-  mm: <MMIcon />,
+  lock: <HiLockClosed />,
+  matte: <BsReverseLayoutSidebarInsetReverse/>,
   message: <RiMessage3Fill key='message' />,
+  mm: <MMIcon />,
+  mmTube: <MMTubeIcon />,
+  opacity: <MdOpacity key="opacity" />,
   playerPause: <RiPauseCircleFill key="player-pause" />,
   playerPlay: <RiPlayCircleFill key="player-play"/>,
+  point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine />,
   remove: <RiDeleteBin7Line />,
+  render: <ImFileVideo />,
+  size: <GiResize key="size" />,
+  start: <BsSkipStartFill />,
   streamers: <FaUserCircle key='streamers' />,
-  matte: <BsReverseLayoutSidebarInsetReverse/>,
-  timeline: <AiOutlineFieldTime key='timeline' />,
+  timeline: <MdOutlineTimelapse key='timeline' />,
   timelineAddAudio: <RiMvLine />,
   timelineAddVideo: <RiVideoLine />,
-  audio: <RiMusicLine />,
+  track: <GiFastForwardButton/>,
+  trackDense: <GiPlayButton key="track-dense"/>,
   transition: <RiArrowLeftRightLine />,
-  video: <RiArrowRightSLine />,
-  mmTube: <MMTubeIcon />,
   undo: <RiArrowGoBackLine />,
+  unlock: <HiLockOpen />,
   upload: <RiUploadCloud2Line />,
+  vert: <GiVerticalFlip key="vert-flip" />,
+  video: <RiArrowRightSLine />,
+  view: <HiEye />,
   visible: <RiEyeLine key='visible' />,
+  zoomLess: <TiZoomOutOutline key="zoom-less" />,
+  zoomMore: <TiZoomInOutline key="zoom-more" />,
 
 }

@@ -1,11 +1,10 @@
+import { SvgItem, SvgFilters, UnknownObject, ScalarObject } from "../declarations"
 import { InstanceBase } from "../Instance/InstanceBase"
-import { SvgContent, SvgFilters, UnknownObject, ScalarObject } from "../declarations"
 import { CommandFilters, FilterArgs, FilterCommandFilterArgs } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { isPopulatedObject } from "../Utility/Is"
-import { Filter, FilterDefinition } from "./Filter"
+import { Filter, FilterDefinition, FilterObject } from "./Filter"
 import { Parameter } from "../Setup/Parameter"
-import { FilterObject } from "./Filter"
 import { PropertyTweenSuffix } from "../Base/Propertied"
 
 export class FilterClass extends InstanceBase implements Filter {
@@ -46,7 +45,7 @@ export class FilterClass extends InstanceBase implements Filter {
     return this._parametersDefined = parameters
   }
 
-  filterSvg(args: FilterArgs = {}): SvgContent {
+  filterSvg(args: FilterArgs = {}): SvgItem {
     return this.definition.filterDefinitionSvg({ ...args, filter: this })
   }
 

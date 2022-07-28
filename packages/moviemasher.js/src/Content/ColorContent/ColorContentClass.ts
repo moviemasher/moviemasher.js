@@ -1,4 +1,4 @@
-import { SvgContent } from "../../declarations"
+import { SvgItem } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { ColorContent, ColorContentDefinition } from "./ColorContent"
 import { InstanceBase } from "../../Instance/InstanceBase"
@@ -8,7 +8,7 @@ import { filterFromId } from "../../Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { DataType } from "../../Setup/Enums"
-import { propertyInstance } from "../../Setup/Property"
+import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { ColorTuple } from "../../MoveMe"
 import { assertPopulatedString, isPopulatedString } from "../../Utility/Is"
 
@@ -20,10 +20,9 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     const [object] = args
    
     this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'color', type: DataType.Rgb, 
-        defaultValue: this.definition.color
-      })
-    )
+      tweenable: true, name: 'color', type: DataType.Rgb, 
+      defaultValue: this.definition.color, group: DataGroup.Color
+    }))
   }
 
   declare color: string
@@ -38,7 +37,7 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     return [color, colorEnd]
   }
 
-  contentSvg(containerRect: Rect, time: Time, range: TimeRange): SvgContent {
+  contentSvgItem(containerRect: Rect, time: Time, range: TimeRange): SvgItem {
     const { colorFilter } = this
     const [color] = this.tweenValues('color', time, range)
     const { x, y, width, height } = containerRect

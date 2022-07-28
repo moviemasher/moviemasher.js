@@ -13,37 +13,19 @@ export class OpacityFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      tweenable: true, name: 'opacity', 
-      type: DataType.Percent, defaultValue: 1.0
-    }))
-    
-    this.properties.push(propertyInstance({
-      custom: true, name: `opacity${PropertyTweenSuffix}`, type: DataType.Number,
-      defaultValue: 1.0, min: 0.0, max: 1.0, step: 0.01
+      tweenable: true, custom: true, name: 'opacity', 
+      type: DataType.Number, defaultValue: 1.0, 
     }))
     this.populateParametersFromProperties()
   }
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
-    // return commandFilters
     const { filterInput: input, filter, duration, videoRate } = args
-    
     const opacity = filter.value('opacity')
-    assertNumber(opacity)
     let filterInput = input
+    assertNumber(opacity)
     assertPopulatedString(filterInput, 'filterInput')
-    assertPopulatedString(filterInput)
-
-    // const setptsFilter = 'setpts'
-    // const setptsId = idGenerate(setptsFilter)
-    // const setptsCommandFilter: CommandFilter = {
-    //   inputs: [filterInput], ffmpegFilter: setptsFilter, 
-    //   options: { expr: 'PTS-STARTPTS' }, outputs: [setptsId]
-    // }
-    // commandFilters.push(setptsCommandFilter)
-    // filterInput = setptsId
- 
 
     const options: ValueObject = { r: 'r(X,Y)', a: `alpha(X,Y)*${opacity}` }
     if (duration) {
@@ -54,7 +36,6 @@ export class OpacityFilter extends FilterDefinitionClass {
         options.a = `alpha(X,Y)*(${opacity}+(${toValue}*${position}))`
       }
     }
-
     const formatFilter = 'format'
     const formatId = idGenerate(formatFilter)
     const formatCommandFilter: CommandFilter = {
@@ -63,8 +44,6 @@ export class OpacityFilter extends FilterDefinitionClass {
     }
     commandFilters.push(formatCommandFilter)
     filterInput = formatId
-
-
     const { ffmpegFilter } = this
     const commandFilter: CommandFilter = {
       inputs: [filterInput], ffmpegFilter, 
@@ -85,5 +64,4 @@ export class OpacityFilter extends FilterDefinitionClass {
     filterElement.setAttribute('values', `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`)
     return [filterElement]
   }
-
 }

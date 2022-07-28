@@ -15,11 +15,7 @@ export interface LayerObject  {
 }
 
 export const isLayerObject = (value: any): value is LayerObject => {
-  if (isObject(value) && "type" in value) {
-    const { type } = value
-    return isLayerType(type)
-  }
-  return false
+  return isObject(value) && "type" in value && isLayerType(value.type)
 }
 
 export interface LayerFolderObject extends LayerObject {

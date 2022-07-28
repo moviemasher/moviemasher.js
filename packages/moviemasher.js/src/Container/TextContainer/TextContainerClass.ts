@@ -2,23 +2,22 @@ import { TextContainer, TextContainerDefinition, TextContainerObject } from "./T
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { Filter } from "../../Filter/Filter"
-import { Scalar, SvgContent, UnknownObject, ValueObject } from "../../declarations"
+import { Scalar, SvgItem, UnknownObject, ValueObject } from "../../declarations"
 import { isRect, Rect } from "../../Utility/Rect"
 import { assertSize, sizesEqual } from "../../Utility/Size"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { DataType, GraphFileType, isOrientation, LoadType } from "../../Setup/Enums"
+import { GraphFileType, isOrientation, LoadType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
 import { FontDefinition } from "../../Media/Font/Font"
 import { Defined } from "../../Base/Defined"
 import { stringWidthForFamilyAtHeight } from "../../Utility/String"
-import { Property, propertyInstance } from "../../Setup/Property"
+import { Property } from "../../Setup/Property"
 import { colorBlack, colorWhite } from "../../Utility/Color"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { assertPopulatedArray, assertPopulatedString, assertTrue, isTimeRange } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { fontDefault } from "../../Media/Font/FontFactory"
 import { tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility"
@@ -33,21 +32,6 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
     const { intrinsic } = object as TextContainerObject
     if (isRect(intrinsic)) this.intrinsicRect = intrinsic
-
-    this.addProperties(object, propertyInstance({
-      custom: true, type: DataType.String, defaultValue: 'Text'
-    }))
-    this.addProperties(object, propertyInstance({
-      custom: true, type: DataType.FontId, name: 'fontId', defaultValue: fontDefault.id
-    }))
-    this.addProperties(object, propertyInstance({
-      tweenable: true, custom: true, type: DataType.Percent, name: 'height', defaultValue: 0.3, max: 2.0
-    }))
-
-    this.addProperties(object, propertyInstance({
-      tweenable: true, custom: true, type: DataType.Percent, name: 'width', defaultValue: 0.3, max: 2.0
-    }))
-    // console.log(this.constructor.name, "lock", this.lock)
   }
 
   canColor(args: CommandFilterArgs): boolean { return true }
@@ -57,7 +41,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
   private _colorFilter?: Filter
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
 
-  containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent { 
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
     return this.pathElement(rect, time, range) 
   }
 
@@ -145,16 +129,19 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
     const { textFilter, intrinsicRect, lock } = this
     const x = intrinsicRect.x * (width / intrinsicRect.width)
+    const y = intrinsicRect.y * (height / intrinsicRect.height)
 
-    const options: ValueObject = { x, width, height, color, textfile, fontfile }
+    const options: ValueObject = { x, y, width, height, color, textfile, fontfile }
     textFilter.setValues(options)
     
     const xEnd = intrinsicRect.x * (rectEnd.width / intrinsicRect.width)
+  const yEnd = intrinsicRect.y * (rectEnd.height / intrinsicRect.height)
 
     textFilter.setValue(!isOrientation(lock), 'stretch')
     textFilter.setValue(intrinsicRect.height, 'intrinsicHeight')
     textFilter.setValue(intrinsicRect.width, 'intrinsicWidth')
     textFilter.setValue(xEnd, `x${PropertyTweenSuffix}`)
+    textFilter.setValue(yEnd, `y${PropertyTweenSuffix}`)
     textFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
     textFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)
     textFilter.setValue(rectEnd.width, `width${PropertyTweenSuffix}`)
@@ -174,28 +161,29 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return commandFilters
   }
 
-  intrinsicSizeInitialize(): Rect {
+  intrinsicRectInitialize(): Rect {
     const { family } = this.font
     assertPopulatedString(family)
 
     const clipString = this.string
 
-    const height = 10000
+    const height = 1000
     const dimensions = { width: 0, height, ...PointZero }
     
     if (!clipString) return dimensions
 
-    const [width, offset] = stringWidthForFamilyAtHeight(clipString, family, height)
+    const [width, x, y] = stringWidthForFamilyAtHeight(clipString, family, height)
     dimensions.width = width
-    dimensions.x = offset
+    dimensions.x = x
+    dimensions.y = y
     return dimensions
   }
 
   get intrinsicsKnown(): boolean { 
-    return isRect(this._intrinsicSize) 
+    return isRect(this._intrinsicRect) 
   }
 
-  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgContent {
+  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
     const { string, font, intrinsicRect } = this
     const { x: inX, y: inY, width: inWidth, height: inHeight } = intrinsicRect
     const { x, y, width: outWidth, height: outHeight } = rect
@@ -229,13 +217,13 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
       case 'fontId':
         // console.log(this.constructor.name, "setValue deleting font because", name, "changed")
         delete this._font
-        delete this._intrinsicSize
+        delete this._intrinsicRect
         break
-      case 'height':
-      case 'width':
+      // case 'height':
+      // case 'width':
+      // case 'lock':
       case 'string':
-      case 'lock':
-        delete this._intrinsicSize
+        delete this._intrinsicRect
         break
     }
   }

@@ -62,10 +62,15 @@ describe("Factory", () => {
     const quantize = 10
     const duration = 10 // frames
     const seconds = duration * quantize
-    const mediaObject = { id: 'audio-blah', url: "audio.mp3", duration: seconds, type: DefinitionType.Audio }
+    const mediaObject = { 
+      id: 'audio-blah', 
+      url: "audio.mp3", 
+      duration: seconds, 
+      type: DefinitionType.Audio
+    }
     // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: DefinitionType.Audio}
-    const audioDefinition = () => <AudioDefinition> Factory.audio.definition(mediaObject)
-    const defaults = { frame: 0, frames: -1, trim: 0, gain: 1.0 }
+    const audioDefinition = () => Factory.audio.definition(mediaObject)
+    const defaults = { trim: 0, gain: 1.0 } //frame: 0, frames: -1, 
 
     describe("instance", () => {
       test("returns audio clip for valid clipObject", () => {

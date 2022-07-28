@@ -2,7 +2,7 @@ import {
   UnknownObject, Value, Described} from "../../declarations"
 import { AVType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
-import { Clip } from "../../Mixin/Clip/Clip"
+import { Clip } from "../../Media/Clip/Clip"
 import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Edited, EditedArgs, EditedObject } from "../../Edited/Edited"
@@ -12,8 +12,8 @@ import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
 import { DefinitionObjects } from "../../Definition/Definition"
 import { isObject } from "../../Utility/Is"
-import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
-import { Cast } from "../Cast/Cast"
+
+import { LayerMash } from "../Cast/Layer/Layer"
 
 export interface DefinitionReferenceObject {
   definitionId: string
@@ -40,13 +40,14 @@ export interface MashAndDefinitionsObject {
 export interface MashArgs extends EditedArgs, MashObject { }
 
 export interface Mash extends Edited {
+  /** this.time -> this.endTime in time's fps */
   addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(trackType: TrackType): Track
-  cast: Cast
   changeClipFrames(clip : Clip, value : number) : void
   changeClipTrimAndFrames(clip : Clip, value : number, frames : number) : void
-  clips: VisibleClip[]
-  clipsInTimeOfType(time: Time, avType?: AVType): VisibleClip[]
+  clearPreview(): void
+  clips: Clip[]
+  clipsInTimeOfType(time: Time, avType?: AVType): Clip[]
   clipTrack(clip: Clip): Track
   composition: AudioPreview
   definitionIds: string[]
@@ -58,6 +59,7 @@ export interface Mash extends Edited {
   frame: number
   frames: number
   gain: number
+  layer: LayerMash
   loop: boolean
   paused: boolean
   preloader: Loader
@@ -67,7 +69,6 @@ export interface Mash extends Edited {
   rendering: string
   seekToTime(time: Time): Promise<void> | undefined
   time: Time
-  /** this.time -> this.endTime in time's fps */
   timeRange: TimeRange
   toJSON(): UnknownObject
   trackCount(type?: TrackType): number

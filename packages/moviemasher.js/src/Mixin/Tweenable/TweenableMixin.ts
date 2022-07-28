@@ -1,15 +1,16 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar } from "../../declarations"
+import { Scalar, UnknownObject } from "../../declarations"
 import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles, SelectedProperties } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { SelectedProperties } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { DataType, Directions, Orientation, Orientations, SelectType } from "../../Setup/Enums"
+import { DataType, Orientation, SelectType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { propertyInstance } from "../../Setup/Property"
+import { assertProperty, DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { colorBlackOpaque, colorName, colorWhite } from "../../Utility/Color"
 import { idGenerate } from "../../Utility/Id"
@@ -18,41 +19,34 @@ import { assertSize, Size, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
 import { Actions } from "../../Editor/Actions/Actions"
+import { Clip } from "../../Media/Clip/Clip"
+import { Effects } from "../../Media/Effect/Effect"
+import { effectInstance } from "../../Media/Effect/EffectFactory"
 
 export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { container } = object as TweenableObject
-      this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'x', type: DataType.Percent, defaultValue: 0.5 
-      }))
-      this.addProperties(object, propertyInstance({
-        tweenable: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
-      }))
-      if (container) {
-        // this.addProperties(object, propertyInstance({ type: DataType.Mode }))
+      const { container, effects } = object as TweenableObject
+      const { isDefault } = this
+      if (container || !isDefault) {
         this.addProperties(object, propertyInstance({
-          tweenable: true, name: 'opacity', 
-          type: DataType.Percent, defaultValue: 1.0
+          name: 'x', type: DataType.Percent, defaultValue: 0.5,
+          group: DataGroup.Point, tweenable: true, 
         }))
-        // offN, offS, offE, offW
-        Directions.forEach(direction => {
-          this.addProperties(object, propertyInstance({
-            name: `off${direction}`, type: DataType.Boolean
-          }))
-        })
+        this.addProperties(object, propertyInstance({
+          name: 'y', type: DataType.Percent, defaultValue: 0.5,
+          group: DataGroup.Point, tweenable: true, 
+        }))
         
+        this.addProperties(object, propertyInstance({
+          name: 'lock', type: DataType.Orientation, defaultValue: Orientation.H,
+          group: DataGroup.Size, 
+        }))
       }
-      const lockObject = {
-        name: `lock`, type: DataType.Orientation, 
-        defaultValue: Orientation.H
-      }
-      // if (container && this.definitionId.includes("textcontainer")) {
-      //   lockObject.defaultValue = Orientation.H
-      // } 
-      this.addProperties(object, propertyInstance(lockObject))
+      if (effects) this.effects.push(...effects.map(effect => effectInstance(effect)))
+
     }
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -94,6 +88,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     canColor(args: CommandFilterArgs): boolean { return false }
 
     canColorTween(args: CommandFilterArgs): boolean { return false }
+
+    _clip?: Clip
+    get clip() { return this._clip! }
+    set clip(value: Clip) { this._clip = value }
 
     colorBackCommandFilters(args: CommandFilterArgs): CommandFilters { 
       const { time, contentColors = [], videoRate, outputSize } = args
@@ -189,6 +187,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFilters
     }
    
+    container = false
+
     containerColorCommandFilters(args: CommandFilterArgs): CommandFilters { 
       return this.colorCommandFilters(args)
     }
@@ -216,22 +216,33 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     declare definition: TweenableDefinition
 
-    finalCommandFilters(args: CommandFilterArgs): CommandFilters { return [] }
+    definitionIds(): string[] {
+      return [
+        ...super.definitionIds(),
+        ...this.effects.flatMap(effect => effect.definitionIds()),
+      ]
+    }
+    
+    effects: Effects = []
+  
+    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters { return [] }
 
     graphFiles(args: GraphFileArgs): GraphFiles { return [] }
 
     initialCommandFilters(args: CommandFilterArgs): CommandFilters {
       throw new Error(Errors.unimplemented)
     }
-    protected _intrinsicSize?: Rect
+    protected _intrinsicRect?: Rect
     get intrinsicRect(): Rect { 
-      return this._intrinsicSize ||= this.intrinsicSizeInitialize()
+      return this._intrinsicRect ||= this.intrinsicRectInitialize()
     }
-    set intrinsicRect(value: Rect) { this._intrinsicSize = value }
+    set intrinsicRect(value: Rect) { this._intrinsicRect = value }
 
     get intrinsicsKnown(): boolean { return true }
 
-    intrinsicSizeInitialize(): Rect { throw new Error(Errors.unimplemented) }
+    intrinsicRectInitialize(): Rect { throw new Error(Errors.unimplemented) }
+
+    get isDefault() { return false }
 
     declare lock: Orientation
 
@@ -299,18 +310,53 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
-    selectedProperties(actions: Actions, selectType: SelectType): SelectedProperties {
+    selectedProperties(actions: Actions): SelectedProperties {
       const selectedProperties: SelectedProperties = []
+      const { container, clip, isDefault } = this
+
+      // add contentId or containerId from clip, as if it were my property  
+      const selectType = container ? SelectType.Container : SelectType.Content 
+      const dataType = container ? DataType.ContainerId : DataType.ContentId
+      const property = clip.properties.find(property => property.type === dataType)
+      assertProperty(property)
+
+      const value = this.definitionId
+      selectedProperties.push({
+        selectType, property, value,
+        changeHandler: (property: string, value: Scalar) => {
+          const undoValue = this.value(property)
+          const redoValue = isUndefined(value) ? undoValue : value
+          actions.create({ property, target: clip, redoValue, undoValue })
+        },
+      })
+      const colorKeys = ['lock', 'width', 'height', 'x', 'y']
+      // add my actual properties
       this.properties.forEach(property => {
+        const { name, tweenable } = property
+        console.log(this.constructor.name, "selectedProperties", container, isDefault, name)
+        if ((!container) && isDefault && colorKeys.includes(name)) return
+
         selectedProperties.push({
-          selectType, property, value: this.value(property.name),
+          selectType, property, value: this.value(name), 
           changeHandler: (property: string, value: Scalar) => {
             const undoValue = this.value(property)
+            // console.log("changeHandler", property, undoValue, "=>", value)
             const redoValue = isUndefined(value) ? undoValue : value
-            // console.log(this.constructor.name, "selectedProperties", undoValue, "=>", redoValue)
             actions.create({ property, target: this, redoValue, undoValue })
-          },
+          }
         })
+        if (tweenable) {
+          const tweenName = [name, PropertyTweenSuffix].join('')
+          selectedProperties.push({
+            selectType, property, value: this.value(tweenName), name: tweenName,
+            changeHandler: (property: string, value: Scalar) => {
+              const undoValue = this.value(property)
+              // console.log("changeHandler TWEEN", property, undoValue, "=>", value)
+              const redoValue = isUndefined(value) ? undoValue : value
+              actions.create({ property, target: this, redoValue, undoValue })
+            }
+          })
+        }
       })
       return selectedProperties
     }
@@ -320,6 +366,12 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     _setptsFilter?: Filter
     get setptsFilter() { return this._setptsFilter ||= filterFromId('setpts')}
+
+    toJSON(): UnknownObject {
+      const json = super.toJSON()
+      json.effects = this.effects
+      return json
+    }
 
     tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {
       const value = this.value(keyPrefix)

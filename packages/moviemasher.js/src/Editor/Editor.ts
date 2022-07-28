@@ -1,6 +1,6 @@
 import { Endpoint, StringObject, VisibleContextData } from "../declarations"
 import { Size } from "../Utility/Size"
-import { SelectedProperties } from "../MoveMe"
+import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler, SelectedProperties } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction, SelectType, TrackType } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
@@ -12,12 +12,14 @@ import { Cast } from "../Edited/Cast/Cast"
 import { Definition, DefinitionObject } from "../Definition/Definition"
 import { Effect } from "../Media/Effect/Effect"
 import { Track } from "../Edited/Mash/Track/Track"
-import { Clip, Clips } from "../Mixin/Clip/Clip"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
-import { VisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { Clip, Clips } from "../Media/Clip/Clip"
 import { Svgs } from "./Preview/Preview"
+import { Content } from "../Content/Content"
+import { Container } from "../Container/Container"
+import { Actions } from "./Actions/Actions"
 
 export interface EditorArgs {
   autoplay: boolean
@@ -47,7 +49,7 @@ export interface EditorSelection extends Partial<SelectableObject> {
 
 export type ClipOrEffect = Clip | Effect
 
-export type Selectable = Cast | Mash | Track | Layer | Clip | Effect
+export type Selectable = Cast | Mash | Track | Layer | Clip | Effect | Content | Container
 
 export interface CastData extends Partial<DataCastGetResponse> { }
 export interface MashData extends Partial<DataMashGetResponse> { }
@@ -58,9 +60,10 @@ export function assertMashData(data: EditedData): asserts data is MashData {
 }
 
 export interface Editor {
+  actions: Actions
   add(object: DefinitionObject, frameOrIndex?: number, trackIndex?: number): Promise<ClipOrEffect>
   addClip(clip: Clip, frameOrIndex?: number, trackIndex?: number): Promise<void>
-  addEffect(effect: Effect, insertIndex?: number): Promise<void>
+  addEffect: EffectAddHandler
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
   addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void
   addTrack(trackType: TrackType): void
@@ -86,7 +89,7 @@ export interface Editor {
   loop: boolean
   move(object: ClipOrEffect, frameOrIndex?: number, trackIndex?: number): void
   moveClip(clip: Clip, frameOrIndex?: number, trackIndex?: number): void
-  moveEffect(effect: Effect, index?: number): void
+  moveEffect: EffectMoveHandler
   moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void
   muted: boolean
   pause(): void
@@ -101,11 +104,12 @@ export interface Editor {
   redo(): void
   remove(): void
   removeClip(clip: Clip): void
-  removeEffect(effect: Effect): void
+  removeEffect: EffectRemovehandler
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringObject): void
   select(selectable: Selectable): void
+  selectTypes: SelectType[]
   selectedProperties(selectTypes?: SelectType[]): SelectedProperties
   svgs: Svgs
   time: Time

@@ -58,7 +58,7 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
   //   return { graphFiles, link: this, values }
   // }
 
-  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Size): SvgContent {
+  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Size): SvgItem {
   //   const { filterGraph } = filterChain
   //   const { preloader, size } = filterGraph
   //   const files = this.graphFiles(filterGraph)

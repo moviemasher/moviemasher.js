@@ -1,10 +1,14 @@
 import { Described, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
+import { SelectedProperties } from "../Utility/SelectedProperty"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
 import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
+import { SelectType } from "../Setup/Enums"
+import { Actions } from "../Editor/Actions/Actions"
+import { Editor } from "../Editor/Editor"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -22,6 +26,7 @@ export interface Edited extends Described, Propertied {
   backcolor: string
   buffer: number
   destroy(): void
+  editor: Editor
   emitter?: Emitter
   graphFiles(args?: GraphFileOptions): GraphFiles
   imageSize: Size
@@ -32,6 +37,7 @@ export interface Edited extends Described, Propertied {
   readonly preloader: Loader
   reload(): Promise<void> | undefined
   // svgElement(graphArgs: PreviewOptions): SVGSVGElement
+
   svgs(graphArgs: PreviewOptions): Svgs
   svg(graphArgs: PreviewOptions): Svg
 }

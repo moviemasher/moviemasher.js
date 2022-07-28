@@ -1,5 +1,4 @@
-import { expectArrayLength, expectArray } from "../../../../dev/test/Utilities/Expect"
-import { FilterCommandFilterArgs } from "../MoveMe"
+import { expectArray } from "../../../../dev/test/Utilities/Expect"
 
 import { isProperty } from "../Setup/Property"
 import { FilterClass } from "./FilterClass"
@@ -19,9 +18,11 @@ describe("Filter", () => {
       expect(filter).toBeInstanceOf(FilterClass)
     })
     test("its properties is a populated Array", () => {
-      expectArrayLength(properties)
-      const [property] = properties
-      expect(isProperty(property)).toBe(true)
+      expectArray(properties)
+      if (properties.length) {
+        const [property] = properties
+        expect(isProperty(property)).toBe(true)
+      }
       
     })
     test("its value() method returns defaultValue for each Property", () => {
@@ -29,11 +30,6 @@ describe("Filter", () => {
         const { name } = property
         expect(filter.value(name)).toEqual(property.defaultValue)
       })
-    })
-    test("its commandFilters() method returns CommandFilters", () => {
-      const filterCommandFilterArgs: FilterCommandFilterArgs = { duration: 0, videoRate: 0 }
-      const commandFilters = filter.commandFilters(filterCommandFilterArgs)
-      expectArray(commandFilters)
     })
   })
 })

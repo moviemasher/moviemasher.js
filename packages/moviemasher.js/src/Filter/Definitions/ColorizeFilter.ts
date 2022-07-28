@@ -4,7 +4,7 @@ import { DataType, Phase } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { idGenerate } from "../../Utility/Id"
 import { colorBlack, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba } from "../../Utility/Color"
-import { assertAboveZero, assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
+import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { ValueObject } from "../../declarations"
 import { tweenPosition } from "../../Utility/Tween"
@@ -28,8 +28,8 @@ export class ColorizeFilter extends FilterDefinitionClass {
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
     const { filter, videoRate, duration, filterInput: input } = args
-    assertAboveZero(duration, 'duration')
-    assertAboveZero(videoRate, 'videoRate')
+    assertNumber(duration, 'duration')
+    assertNumber(videoRate, 'videoRate')
     const color = filter.value('color')
     assertPopulatedString(color, 'color')
     let filterInput = input
@@ -66,7 +66,7 @@ export class ColorizeFilter extends FilterDefinitionClass {
     const keys = alpha ? colorRgbaKeys : colorRgbKeys
     const options: ValueObject = {}
 
-    const position = tweenPosition(videoRate, duration, 'N')
+    const position = duration ? tweenPosition(videoRate, duration, 'N') : 0
 
     keys.forEach(key => {
       const from = fromColor[key]

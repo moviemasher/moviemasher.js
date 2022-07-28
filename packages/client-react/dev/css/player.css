@@ -3,7 +3,8 @@
 }
 
 .moviemasher .editor .panel.player .head {
-  grid-template-columns: 1fr repeat(3, min-content);
+  grid-auto-flow: column;
+  grid-template-columns: 1fr repeat(auto-fill, min-content);
 }
 
 .moviemasher .editor.masher .panel.player .foot {
@@ -25,9 +26,9 @@
   margin-inline: auto;
   color: var(--color-fore-tertiary);
 }
-.moviemasher .editor .panel.player .content > div {
+/* .moviemasher .editor .panel.player .content > svg {
   position: absolute;
-}
+} */
 
 .moviemasher .editor .panel.player .content svg {
   pointer-events: visibleFill;

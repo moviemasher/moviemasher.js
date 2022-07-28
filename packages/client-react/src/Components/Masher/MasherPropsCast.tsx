@@ -31,16 +31,14 @@ const composerProps = DefaultComposerProps({ props: { className: "panel composer
 const timelineProps = DefaultTimelineProps({ props: { className: "panel timeline" } })
 const inspectorProps = DefaultInspectorProps({ props: { className: "panel inspector" } })
 const browserProps = DefaultBrowserProps({ props: { className: "panel browser" } })
-const playerProps = DefaultPlayerProps({
-  header: { content: DefaultIcons.visible }, props: { className: "panel player" }
-})
+const playerProps = DefaultPlayerProps({ props: { className: "panel player" } })
 
 const children = <>
   <Player key="player" { ...playerProps } />
   <Composer key="composer" { ...composerProps }  />
   <Inspector key="inspector" { ...inspectorProps } />
+  <Timeline key="timeline" { ...timelineProps } />
   <Panels key="panels" className='panels'>
-    <Browser key="browser" { ...browserProps } />
     <Panel key="streamers" className='panel streamers'>
       <PanelHead key="head" className='head'>{DefaultIcons.streamers}</PanelHead>
       <PanelContent key="content" className='content'>CONTENT</PanelContent>
@@ -71,7 +69,7 @@ const children = <>
         </PanelFoot>
       </PanelNotCollapsed>
     </Panel>
-    <Timeline key="timeline" { ...timelineProps } />
+    <Browser key="browser" { ...browserProps } />
   </Panels>
 </>
 

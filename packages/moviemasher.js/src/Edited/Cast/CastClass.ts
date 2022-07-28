@@ -1,10 +1,11 @@
-import { UnknownObject } from "../../declarations"
+import { Scalar, UnknownObject } from "../../declarations"
 import { Size } from "../../Utility/Size"
 import { GraphFiles, GraphFileOptions } from "../../MoveMe"
+import { SelectedProperties } from "../../Utility/SelectedProperty"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
-import { DataType, DroppingPosition } from "../../Setup/Enums"
-import { isAboveZero, isNumber, isString } from "../../Utility/Is"
+import { ActionType, DataType, DroppingPosition, SelectType } from "../../Setup/Enums"
+import { assertPopulatedString, isAboveZero, isNumber, isString, isUndefined } from "../../Utility/Is"
 import { EditedClass } from "../EditedClass"
 import { Mashes } from "../Mash/Mash"
 import { Cast, CastArgs } from "./Cast"
@@ -13,9 +14,10 @@ import {
   Layer, LayerAndPosition, LayerFolder, LayerObject, LayerObjects, Layers, LayersAndIndex
 } from "./Layer/Layer"
 import { propertyInstance } from "../../Setup/Property"
-import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
+import { EmptyMethod } from "../../Setup/Constants"
 import { PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
 import { svgElement } from "../../Utility/Svg"
+import { Actions } from "../../Editor/Actions/Actions"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -107,12 +109,12 @@ export class CastClass extends EditedClass implements Cast {
   }
 
   createLayer(layerObject: LayerObject): Layer {
-    const { preloader, visibleContext } = this
-    const object = {
-      preloader, visibleContext,
+    const { preloader } = this
+    const object: LayerObject = {
+      preloader, 
       ...layerObject
     }
-    const layer = layerInstance(object)
+    const layer = layerInstance(object, this)
     assertLayer(layer)
 
     return layer
@@ -147,7 +149,7 @@ export class CastClass extends EditedClass implements Cast {
     if (!layerObjects) return
     const { preloader } = this
     this.layers.push(...layerObjects.map(layer =>
-      layerInstance({ preloader, ...layer })
+      layerInstance({ preloader, ...layer }, this)
     ))
   }
 
@@ -192,7 +194,7 @@ export class CastClass extends EditedClass implements Cast {
 
   svgs(args: PreviewOptions): Svgs {
     const { mashes } = this
-    const svgs = mashes.flatMap(mash => mash.svgs(args))
+    const svgs = mashes.reverse().flatMap(mash => mash.svgs(args))
     // console.log(this.constructor.name, "svgs", svgs.length, mashes.length)
     return svgs
   }
@@ -204,18 +206,22 @@ export class CastClass extends EditedClass implements Cast {
     return { id, element: element }
   }
 
-  // svgElement(graphArgs: PreviewOptions): SVGSVGElement {
-  //   const { imageSize: size } = this
-  //   const svg = globalThis.document.createElementNS(NamespaceSvg, 'svg')
-  //   svg.setAttribute('height', String(size.height))
-  //   svg.setAttribute('width', String(size.width))
-  //   const args: PreviewOptions = {
-  //     backcolor: this.backcolor, ...graphArgs,
-  //   }
-  //   svg.append(...this.mashes.map(mash => mash.svgElement(args)))
-  //   return svg
-  // }
-
+  selectedProperties(actions: Actions): SelectedProperties {
+    return this.properties.map(property => ({
+      selectType: SelectType.Cast, property, 
+      value: this.value(property.name),
+      changeHandler: (property: string, value: Scalar) => {
+        assertPopulatedString(property, 'changeCast property')
+    
+        const redoValue = isUndefined(value) ? this.value(property) : value
+        const undoValue = this.value(property)
+        const options: UnknownObject = {
+          property, target: this, redoValue, undoValue, type: ActionType.Change
+        }
+        actions.create(options)
+      },
+    }))
+  }
   toJSON(): UnknownObject {
     const json = super.toJSON()
     json.layers = this.layers

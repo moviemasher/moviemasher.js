@@ -1,6 +1,6 @@
 import { UnknownObject } from "../../../declarations"
 import { isTrackType, TrackType } from "../../../Setup/Enums"
-import { Clips, ClipObject, Clip } from "../../../Mixin/Clip/Clip"
+import { Clips, ClipObject, Clip } from "../../../Media/Clip/Clip"
 import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { Mash } from "../Mash"

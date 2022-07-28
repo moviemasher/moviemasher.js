@@ -2,7 +2,7 @@ import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
   DefinitionType, LoadType, TrackType, ValueObject, CommandOutputs, OutputType,
-  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, VisibleClipObject, visibleClipDefault,
+  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault,
 } from "@moviemasher/moviemasher.js"
 
 
@@ -90,14 +90,11 @@ export const renderingSource = (commandOutput?: RenderingCommandOutput): string 
   return `${outputType}.${ext}`
 }
 
-
-
 export const renderingInputFromRaw = (loadType: LoadType, source: string, clip: ValueObject = {}): RenderingInput => {
   const definitionId = clip.id || source 
   const definition = renderingDefinitionObject(loadType, source, String(definitionId), String(clip.label))
   return renderingInput(definition, clip)
 }
-
 
 export const renderingClipFromDefinition = (definition: DefinitionObject, overrides: ValueObject = {}): ClipObject => {
   const { id, type } = definition
@@ -105,8 +102,8 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
   const contentId = id || type
   const supplied = suppliedContainerId ? String(suppliedContainerId) : undefined
   const containerId = type === 'audio' ? '' : supplied
-  const definitionId = visibleClipDefault.id
-  const visibleClipObject: VisibleClipObject = {
+  const definitionId = clipDefault.id
+  const visibleClipObject: ClipObject = {
     definitionId, contentId, content: rest, containerId
   }
   // console.log("renderingClipFromDefinition", overrides, visibleClipObject)

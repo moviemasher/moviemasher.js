@@ -75,6 +75,10 @@ export const SelectTypes = Object.values(SelectType)
 export const isSelectType = (value?: any): value is SelectType => {
   return isPopulatedString(value) && SelectTypes.includes(value as SelectType)
 }
+export function assertSelectType(value: any, name?: string): asserts value is SelectType {
+  if (!isSelectType(value)) throwError(value, 'SelectType', name)
+}
+
 export type ClipSelectType = SelectType.Content | SelectType.Container
 export const ClipSelectTypes = [SelectType.Content, SelectType.Container]
 export const isClipSelectType = (type?: any): type is ClipSelectType => {
@@ -133,19 +137,15 @@ export const isFillType = (type?: any): type is FillType => {
 
 export enum DefinitionType {
   Audio = 'audio',
-  ColorContent = 'colorcontent',
+  Clip = 'clip',
+  Container = 'container',
+  Content = 'content',
   Effect = 'effect',
   Filter = 'filter',
   Font = 'font',
   Image = 'image',
-  ShapeContainer = 'shapecontainer',
-  TextContainer = 'textcontainer',
   Video = 'video',
   VideoSequence = 'videosequence',
-  Visible = 'visible',
-  Container = 'container',
-  Content = 'content',
-  Clip = 'clip',
 }
 export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {
@@ -155,8 +155,8 @@ export function assertDefinitionType(value?: any, message = ''): asserts value i
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
 }
 
-export type ContainerType = DefinitionType.Image | DefinitionType.ShapeContainer | DefinitionType.Video | DefinitionType.TextContainer | DefinitionType.VideoSequence
-export const ContainerTypes = [DefinitionType.Image, DefinitionType.ShapeContainer, DefinitionType.Video, DefinitionType.TextContainer, DefinitionType.VideoSequence]
+export type ContainerType = DefinitionType.Image | DefinitionType.Video | DefinitionType.Container | DefinitionType.VideoSequence
+export const ContainerTypes = [DefinitionType.Image, DefinitionType.Video, DefinitionType.Container, DefinitionType.VideoSequence]
 export const isContainerType = (type?: any): type is ContainerType => {
   return isDefinitionType(type) && ContainerTypes.includes(type)
 }
@@ -164,8 +164,8 @@ export function assertContainerType(type?: any): asserts type is ContainerType {
   if (!isContainerType(type)) throw new Error("expected ContainerType")
 }
 
-export type ContentType = DefinitionType.ColorContent | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence | DefinitionType.Audio
-export const ContentTypes = [DefinitionType.ColorContent, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence, DefinitionType.Audio]
+export type ContentType = DefinitionType.Content | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence | DefinitionType.Audio
+export const ContentTypes = [DefinitionType.Content, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence, DefinitionType.Audio]
 export const isContentType = (type?: any): type is ContentType => {
   return isDefinitionType(type) && ContentTypes.includes(type)
 }

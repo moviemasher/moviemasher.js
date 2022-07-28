@@ -16,13 +16,13 @@
         "layer": 0,
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "contentId": "frog-image",
             "frame": 0,
             "frames": 20
           },
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "contentId": "globe-image",
             "frame": 20,
             "frames": 20

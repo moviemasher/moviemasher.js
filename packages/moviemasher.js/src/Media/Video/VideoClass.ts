@@ -9,7 +9,7 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 import { ContentMixin } from "../../Content/ContentMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
-import { SvgContent } from "../../declarations"
+import { SvgItem } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
@@ -23,7 +23,7 @@ const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithPreloadable)
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize)
 
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
-  svgContent(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgContent {
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
     const { height, width, x, y } = rect
     const { foreignElement } = this
     foreignElement.setAttribute('width', String(width))

@@ -16,7 +16,7 @@
         "layer": 0,
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "contentId": "video-rgb",
             "frame": 0,
             "frames": 30,
@@ -35,7 +35,7 @@
         "trackType": "video",
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "contentId": "video-rgb",
             "content": {
               "trim": 5

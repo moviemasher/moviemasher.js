@@ -23,5 +23,5 @@ export class ColorContentDefinitionClass extends ColorContentDefinitionWithConte
     return new ColorContentClass(this.instanceArgs(object))
   }
 
-  type = DefinitionType.ColorContent
+  type = DefinitionType.Content
 }

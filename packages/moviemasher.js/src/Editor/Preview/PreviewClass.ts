@@ -1,8 +1,7 @@
-import { SvgContents } from "../../declarations"
 import { Size } from "../../Utility/Size"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
-import { VisibleClip } from "../../Media/VisibleClip/VisibleClip"
+import { Clip } from "../../Media/Clip/Clip"
 import { Loader } from "../../Loader/Loader"
 import { AVType } from "../../Setup/Enums"
 import { sortByTrack } from "../../Utility/Sort"
@@ -10,7 +9,7 @@ import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../../Edited/Mash/Mash"
 import { PreviewArgs, Preview, Svgs, Svg } from "./Preview"
-import { svgElement, svgPolygonElement } from "../../Utility/Svg"
+import { svgElement } from "../../Utility/Svg"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
@@ -41,19 +40,9 @@ export class PreviewClass implements Preview {
 
   size: Size
 
-  selectedClip?: VisibleClip
+  selectedClip?: Clip
 
   streaming = false
-
-  // get svgElement(): SVGSVGElement {
-  //   const { trackPreviews, size, backcolor } = this
-  //   const contents: SvgContents = []
-  //   if (backcolor) contents.push(svgPolygonElement(size, '', backcolor))
-  //   contents.push(...trackPreviews.map(chain => chain.svgElement))
-  //   const element = svgElement(size)
-  //   element.append(...contents)
-  //   return element
-  // }
 
   _svgs?: Svgs
   get svgs(): Svgs { 
@@ -72,7 +61,7 @@ export class PreviewClass implements Preview {
 
   private _trackPreviews?: TrackPreviews
   private get trackPreviews() { return this._trackPreviews ||= this.trackPreviewsInitialize }
-  private get trackPreviewsInitialize(): TrackPreviews {
+  protected get trackPreviewsInitialize(): TrackPreviews {
     const trackPreviews: TrackPreviews = []
     const { time, quantize } = this
 

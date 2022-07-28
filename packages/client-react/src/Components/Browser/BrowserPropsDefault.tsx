@@ -29,33 +29,38 @@ export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps>
   optionsStrict.props.sourceId ||= 'text'
 
   optionsStrict.header.content ||= [
-    <BrowserSource key='shapecontainer' id='shapecontainer' className='icon-button' children={DefaultIcons.browserShape} />,
-    <BrowserSource key='textcontainer' id='textcontainer' className='icon-button' children={DefaultIcons.browserText} />,
-    <BrowserSource key='colorcontent' id='colorcontent' className='icon-button' children={DefaultIcons.browserFill} />,
+    DefaultIcons.browser,
+  ]
+
+  optionsStrict.footer.content ||= [
+    <BrowserSource key='container' id='container' className='icon-button' children={DefaultIcons.container} />,
+    <BrowserSource key='content' id='content' className='icon-button' children={DefaultIcons.content} />,
     <BrowserSource key='effect' id='effect' className='icon-button' children={DefaultIcons.browserEffect} />,
   ]
 
   const SourceClass = noApi ? BrowserSource : BrowserDataSource
-  optionsStrict.header.before ||= [
-    DefaultIcons.browser,
+  optionsStrict.footer.before ||= [
     <SourceClass key='video' id='videosequence' className='icon-button' children={DefaultIcons.browserVideo} />,
     <SourceClass key='audio' id='audio' className='icon-button' children={DefaultIcons.browserAudio} />,
     <SourceClass key='image' id='image' className='icon-button' children={DefaultIcons.browserImage} />,
   ]
 
   if (!noApi) {
-    optionsStrict.footer.before ||= [
-      <Process key='upload-process' id='data'>
-        <UploadControl>
-          {DefaultIcons.upload}
-        </UploadControl>
-        <ProcessActive>
-          <ProcessStatus />
-          <ProcessProgress />
-        </ProcessActive>
-      </Process>
+    optionsStrict.footer.after ||= [
+      <View key='upload' className="progress">
+        <Process id='data'>
+         <ProcessActive>
+            <ProcessStatus />
+            <ProcessProgress />
+         </ProcessActive>
+          <UploadControl>
+            {DefaultIcons.upload}
+          </UploadControl>
+        </Process>
+      </View>
     ]
   }
+  //  
   optionsStrict.content.children ||= (
     <BrowserDefinition className='definition' icon="--clip-icon"></BrowserDefinition>
   )

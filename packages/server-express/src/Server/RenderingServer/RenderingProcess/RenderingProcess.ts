@@ -25,7 +25,9 @@ export interface RunResult {
 
 export interface RenderingProcessOptions extends RenderingProcessInput, Partial<RenderingOptions>, RenderingCallback {}
 
-export interface RenderingProcessArgs extends RenderingProcessInput, Required<RenderingOptions> {
+export interface RenderingArgs extends Required<RenderingOptions> {}
+
+export interface RenderingProcessArgs extends RenderingProcessInput, RenderingArgs {
   id?: string
 }
 

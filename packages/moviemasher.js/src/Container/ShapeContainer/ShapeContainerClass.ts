@@ -2,7 +2,7 @@ import { ShapeContainer, ShapeContainerDefinition } from "./ShapeContainer"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { colorBlack, colorBlackOpaque, colorWhite } from "../../Utility/Color"
-import { SvgContent, ValueObject } from "../../declarations"
+import { SvgItem, ValueObject } from "../../declarations"
 import { Rect, rectsEqual } from "../../Utility/Rect"
 import { Size } from "../../Utility/Size"
 import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
@@ -13,7 +13,7 @@ import { commandFilesInput } from "../../Utility/CommandFiles"
 import { arrayLast } from "../../Utility/Array"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
-import { propertyInstance } from "../../Setup/Property"
+import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
@@ -26,12 +26,12 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     super(...args)
     const [object] = args
     this.addProperties(object, propertyInstance({
-      tweenable: true, name: 'width', 
-      type: DataType.Percent, defaultValue: 1.0, max: 2.0
+      tweenable: true, name: 'width', type: DataType.Percent, 
+      group: DataGroup.Size, defaultValue: 1.0, max: 2.0
     }))
     this.addProperties(object, propertyInstance({
       tweenable: true, name: 'height', type: DataType.Percent, 
-      defaultValue: 1.0, max: 2.0
+      group: DataGroup.Size, defaultValue: 1.0, max: 2.0
     }))
   }
 
@@ -55,7 +55,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       // console.log(this.constructor.name, "commandFiles NONE", isDefault, requiresAlpha, tweeningColor, tweeningSize)
       return commandFiles
     }
-    const { definition, path, id } = this
+    const { definition, id } = this
+    const { path } = definition
     const { contentColors: colors = [], containerRects, time, videoRate } = args
 
     assertPopulatedArray(containerRects, 'containerRects')
@@ -162,12 +163,12 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     } else if (this.isDefault || noContentFilters) {
       filterInput ||= commandFilesInput(commandFiles, this.id, true)
       assertPopulatedString(filterInput, 'final input')
-      commandFilters.push(...this.finalCommandFilters({ ...args, filterInput}))
+      commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput}))
     }
     return commandFilters
   }
 
-  containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent { 
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
     return this.pathElement(rect, time, range, colorWhite)
   }
 
@@ -185,7 +186,6 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
 
     return tweeningColor || tweeningSize
   }
-
 
   initialCommandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = [] 
@@ -274,12 +274,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return commandFilters
   }
 
-  intrinsicSizeInitialize(): Rect {
-    return { width: this.pathWidth, height: this.pathHeight, ...PointZero }
-  }
-
-  get isDefault() { 
-    return this.definitionId === "com.moviemasher.shapecontainer.default" 
+  intrinsicRectInitialize(): Rect {
+    const { pathHeight: height, pathWidth: width} = this.definition
+    return { width, height, ...PointZero }
   }
 
   isTweeningColor(args: CommandFileArgs): boolean {
@@ -297,23 +294,18 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return !rectsEqual(...containerRects)
   }
 
-  declare path: string
-
-  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgContent {
-    const { intrinsicRect } = this
+  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
+    const { intrinsicRect, definition } = this
+    const { path } = definition
     const transformAttribute = tweenRectScale(intrinsicRect, rect)
 
     const pathElement = globalThis.document.createElementNS(NamespaceSvg, 'path')
-    pathElement.setAttribute('d', this.path)
+    pathElement.setAttribute('d', path)
     pathElement.setAttribute('fill', forecolor)
     pathElement.setAttribute('transform', transformAttribute)
     pathElement.setAttribute('transform-origin', 'top left')
     return pathElement
   }
-
-  declare pathHeight: number
-
-  declare pathWidth: number
 
   requiresAlpha(args: CommandFileArgs): boolean {
     const { contentColors } = args

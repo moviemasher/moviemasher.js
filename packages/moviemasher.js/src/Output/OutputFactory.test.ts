@@ -1,15 +1,18 @@
 import { VideoOutputArgs } from "./Output"
 import { OutputFactory } from "./OutputFactory"
-import { renderingProcessTestArgs } from "../../../../dev/test/Utilities/renderingProcessArgs"
+import { renderingProcessInput } from "../../../../dev/test/Utilities/renderingProcessInput"
 import { outputDefaultPopulate } from "./OutputDefault"
 import { DefinitionType, OutputType, TrackType } from "../Setup/Enums"
 import { mashInstance } from "../Edited/Mash/MashFactory"
 import { MashArgs, MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
-import { VisibleClip } from "../Media/VisibleClip/VisibleClip"
+import { Clip } from "../Media/Clip/Clip"
 import { Defined } from "../Base/Defined"
-import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
+import { clipDefault } from "../Media/Clip/ClipFactory"
 import { assertUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
+import { assertTrue } from "../Utility/Is"
+import { idGenerate } from "../Utility/Id"
+import { expectArrayLength } from "../../../../dev/test/Utilities/Expect"
 
 describe("OutputFactory", () => {
   describe("video", () => {
@@ -27,8 +30,8 @@ describe("OutputFactory", () => {
         tracks: [
           {
             clips: [
-              { definitionId: visibleClipDefault.id, contentId: globeDefinitionObject.id, frames: 30 },
-              { definitionId: visibleClipDefault.id, contentId: cableDefinitionObject.id, frames: 40 },
+              { definitionId: clipDefault.id, contentId: globeDefinitionObject.id, frames: 30 },
+              { definitionId: clipDefault.id, contentId: cableDefinitionObject.id, frames: 40 },
             ]
           }
         ]
@@ -39,8 +42,8 @@ describe("OutputFactory", () => {
       const mash = mashInstance(mashArgs)
       const { quantize } = mash
       const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
-      const clips = videoTrack.clips as VisibleClip[]
-      const testArgs = renderingProcessTestArgs(id)
+      const clips = videoTrack.clips as Clip[]
+      const testArgs = renderingProcessInput(id)
 
       const videoOutputArgs: VideoOutputArgs = {
         ...testArgs, mash, commandOutput: output,
@@ -62,15 +65,16 @@ describe("OutputFactory", () => {
         // console.log(clip.frames, duration, timeRange.lengthSeconds)
         expect(duration).toBe(timeRange.lengthSeconds)
         // console.log(inputs)
-
-        expect(inputs?.length).toBe(1)
-        const [input] = inputs!
+        assertTrue(inputs)
+        expectArrayLength(inputs, 1)
+        
+        const [input] = inputs
         const { source } = input
 
         const { content } = clip
         const { definition } = content
         assertUpdatableSizeDefinition(definition)
-        expect(source).toBe(definition.source)
+        expect(source.startsWith('http')).toBe(true)
       })
     })
   })

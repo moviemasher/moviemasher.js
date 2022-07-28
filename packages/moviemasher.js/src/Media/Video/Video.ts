@@ -1,7 +1,6 @@
 import { GenericFactory } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { isInstance } from "../../Instance/Instance"
-import { FilterDefinition } from "../../Filter/Filter"
 import {
   UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject
 } from "../../Mixin/UpdatableSize/UpdatableSize"
@@ -25,8 +24,6 @@ export interface VideoDefinitionObject extends ContainerDefinitionObject, Conten
 
 export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoObject): Video
-  setsarFilterDefinition: FilterDefinition
-  fpsFilterDefinition: FilterDefinition
 }
 
 export const isVideo = (value: any): value is Video => {

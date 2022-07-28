@@ -15,13 +15,13 @@
         "layer": 0,
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "containerId": "",
             "contentId": "audio-one",
             "frames": 10
           },
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "containerId": "",
             "contentId": "audio-two",
             "content": {
@@ -30,7 +30,7 @@
             "frames": 10
           },
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "containerId": "",
             "contentId": "audio-three",
             "content": {
@@ -46,7 +46,7 @@
         "layer": 1,
         "clips": [
           {
-            "definitionId": "com.moviemasher.visible.default",
+            "definitionId": "com.moviemasher.clip.default",
             "containerId": "",
             "contentId": "audio-loop",
             "frames": 30

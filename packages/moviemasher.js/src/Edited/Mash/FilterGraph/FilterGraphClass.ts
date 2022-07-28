@@ -9,7 +9,7 @@ import { assertTrue, isAboveZero } from "../../../Utility/Is"
 import { AVType } from "../../../Setup/Enums"
 import { sortByTrack } from "../../../Utility/Sort"
 import { colorTransparent } from "../../../Utility/Color"
-import { VisibleClip } from "../../../Media/VisibleClip/VisibleClip"
+import { Clip } from "../../../Media/Clip/Clip"
 import { idGenerate } from "../../../Utility/Id"
 import { arrayLast } from "../../../Utility"
 import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
@@ -64,7 +64,7 @@ export class FilterGraphClass implements FilterGraph {
     return silenceCommandFilter
   }
 
-  private _clips?: VisibleClip[]
+  private _clips?: Clip[]
   private get clips() { return this._clips ||= this.clipsInitialize }
   private get clipsInitialize() {
     const { time, mash, avType } = this

@@ -30,6 +30,22 @@
   }
 }
 
+.moviemasher .editor .panel .foot > .progress {
+  grid-column-end: end;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr var(--progress-width) var(--icon-size);
+  grid-gap: var(--spacing);
+}
+  
+
+.moviemasher progress { width: var(--progress-width); }
+.moviemasher .process-status {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-align: right;
+  font-size: initial;
+}
 
 .moviemasher .editor .panels {
   grid-area: panels;

@@ -4,14 +4,13 @@ import fs from 'fs'
 import path from 'path'
 
 import { audioDefinition } from "../../packages/moviemasher.js/src/Media/Audio/AudioFactory"
-import { colorContentDefinition } from "../../packages/moviemasher.js/src/Content/ColorContent/ColorContentFactory"
-import { shapeContainerDefinition } from "../../packages/moviemasher.js/src/Container/ShapeContainer/ShapeContainerFactory"
-import { textContainerDefinition } from "../../packages/moviemasher.js/src/Container/TextContainer/TextContainerFactory"
+import { contentDefinition } from "../../packages/moviemasher.js/src/Content/ContentFactory"
+import { containerDefinition } from "../../packages/moviemasher.js/src/Container/ContainerFactory"
 import { effectDefinition } from "../../packages/moviemasher.js/src/Media/Effect/EffectFactory"
 import { filterDefinition } from "../../packages/moviemasher.js/src/Filter/FilterFactory"
 import { fontDefinition, fontDefault } from "../../packages/moviemasher.js/src/Media/Font/FontFactory"
 import { imageDefinition } from "../../packages/moviemasher.js/src/Media/Image/ImageFactory"
-import { visibleClipDefinition } from "../../packages/moviemasher.js/src/Media/VisibleClip/VisibleClipFactory"
+import { clipDefinition } from "../../packages/moviemasher.js/src/Media/Clip/ClipFactory"
 import { videoDefinition } from "../../packages/moviemasher.js/src/Media/Video/VideoFactory"
 import { videoSequenceDefinition } from "../../packages/moviemasher.js/src/Media/VideoSequence/VideoSequenceFactory"
 
@@ -20,15 +19,14 @@ import { DefinitionType } from "../../packages/moviemasher.js/src/Setup/Enums"
 
 export default [
   audioDefinition,
-  colorContentDefinition,
+  contentDefinition,
   effectDefinition,
   filterDefinition,
   fontDefinition,
-  shapeContainerDefinition,
-  visibleClipDefinition,
+  containerDefinition,
+  clipDefinition,
   imageDefinition,
   videoDefinition,
-  textContainerDefinition,
   videoSequenceDefinition,
 ]
 

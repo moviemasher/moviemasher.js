@@ -1,10 +1,9 @@
 import { Tweenable, TweenableObject, isTweenable, TweenableDefinitionObject, TweenableDefinition, isTweenableDefinition } from "../Mixin/Tweenable/Tweenable"
-import { Constrained, GenericFactory, SvgContent, SvgFilters } from "../declarations"
+import { Constrained, GenericFactory, SvgItem, SvgFilters } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
-import { CommandFilters, CommandFilterArgs, SelectedProperties, CommandFilter } from "../MoveMe"
-import { Actions } from "../Editor/Actions/Actions"
-import { Anchor, DirectionObject, isContainerType, SelectType } from "../Setup/Enums"
+import { CommandFilters, CommandFilterArgs } from "../MoveMe"
+import { Anchor, DirectionObject, isContainerType } from "../Setup/Enums"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Filter } from "../Filter/Filter"
 import { isObject, throwError } from "../Utility/Is"
@@ -33,13 +32,13 @@ export const isContainerDefinition = (value?: any): value is ContainerDefinition
 
 export interface Container extends Tweenable {
   blendFilter: Filter
-  colorMaximize: boolean
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
+  colorMaximize: boolean
   containerRects(outputSize: Size, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple
-  containerSvg(rect: Rect, time: Time, range: TimeRange): SvgContent
   containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
-  directions: Anchor[]
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
   directionObject: DirectionObject
+  directions: Anchor[]
   height: number
   intrinsicGroupElement: SVGGElement
   mode: number
@@ -48,8 +47,7 @@ export interface Container extends Tweenable {
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number
-  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor?: string): SvgContent 
-  
+  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor?: string): SvgItem 
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

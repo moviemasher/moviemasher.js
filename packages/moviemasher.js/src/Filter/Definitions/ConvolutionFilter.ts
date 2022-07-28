@@ -144,31 +144,23 @@ const numberFromCombined = (combined: number): ConvolutionNumberObject => {
   return { combined, r: combined, g: combined, b: combined, a: combined }
 }
 
-const convolutionStringObject = (combined: string): ConvolutionStringObject => {
-  assertPopulatedString(combined)
-
-  return fromCombined(combined)
+const convolutionStringObject = (combined: any): ConvolutionStringObject => {
+  return fromCombined(String(combined))
 }
 
 const convolutionMatrixObject = (stringObject: ConvolutionStringObject): ConvolutionNumbersObject => {
   const { combined } = stringObject
-  assertPopulatedString(combined)
-
-  return numbersFromCombined(matrixFromString(stringObject.combined))
+  return numbersFromCombined(matrixFromString(String(combined)))
 }
 
 const convolutionBiasObject = (stringObject: ConvolutionStringObject): ConvolutionNumberObject => {
   const { combined } = stringObject
-  assertPopulatedString(combined)
-
-  return numberFromCombined(biasFromString(stringObject.combined))
+  return numberFromCombined(biasFromString(String(combined)))
 }
 
 const convolutionMultiplierObject = (stringObject: ConvolutionStringObject): ConvolutionNumberObject => {
   const { combined } = stringObject
-  assertPopulatedString(combined)
-
-  return numberFromCombined(multiplierFromString(stringObject.combined))
+  return numberFromCombined(multiplierFromString(String(combined)))
 }
 
 const parse = (convolutionObject: ConvolutionServerFilter) => {

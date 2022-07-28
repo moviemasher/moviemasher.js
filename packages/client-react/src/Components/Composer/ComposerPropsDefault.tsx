@@ -25,7 +25,7 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
   const { className = "panel composer", children:_, noApi, ...rest } = props
 
   const children = <Panel className={className} {...rest}>
-    <PanelHead key="head" className='head'>{DefaultIcons.app}</PanelHead>
+    <PanelHead key="head" className='head'>{DefaultIcons.layers}</PanelHead>
     <ComposerContent key="content" className='content'>
       <div key='layer' className='layer'>
         <div key='icons'>
@@ -59,12 +59,12 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
     <PanelFoot key="foot" className='foot'>
       <AddMashControl>
         <Button>
-          {DefaultIcons.mmTube} {DefaultIcons.add}
+          {DefaultIcons.add}{DefaultIcons.mmTube} 
         </Button>
       </AddMashControl>
       <AddFolderControl>
         <Button>
-          {DefaultIcons.folder} {DefaultIcons.add}
+          {DefaultIcons.add}{DefaultIcons.folder} 
         </Button>
       </AddFolderControl>
     </PanelFoot>

@@ -1,7 +1,7 @@
 import {
-  Scalar, StringObject, Timeout, UnknownObject} from "../declarations"
+  StringObject, Timeout} from "../declarations"
 import { Size } from "../Utility/Size"
-import { SelectedProperties } from "../MoveMe"
+import { SelectedProperties } from "../Utility/SelectedProperty"
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Edited } from "../Edited/Edited"
 import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
@@ -11,19 +11,16 @@ import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from "../Helpers/Time/TimeUtilities"
 import { Effect, isEffect, isEffectDefinition } from "../Media/Effect/Effect"
 import { isTrack, Track } from "../Edited/Mash/Track/Track"
-import { Clip, Clips, isClip } from "../Mixin/Clip/Clip"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Default } from "../Setup/Default"
 import {
   ActionType, assertDefinitionType, DefinitionType, EditType, EventType,
-  isClipSelectType,
   isEditType, LayerType, MasherAction, SelectType, SelectTypes, TrackType
 } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import {
-  assertPopulatedString, assertTrue, isAboveZero, isBoolean, isDefined, isNumber, isObject, isPopulatedObject,
-  isPopulatedString, isPositive, isUndefined
-} from "../Utility/Is"
+  assertPopulatedString, assertTrue, isAboveZero, isBoolean, isNumber, isObject, isPopulatedObject,
+  isPopulatedString, isPositive} from "../Utility/Is"
 import {
   assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, isCastData,
   MashData, Selectable, EditorSelection,
@@ -40,15 +37,15 @@ import {
 } from "../Edited/Cast/Layer/LayerFactory"
 
 import { Layer, LayerAndPosition, LayerObject } from "../Edited/Cast/Layer/Layer"
-import { NamespaceSvg } from "../Setup/Constants"
 import { Defined } from "../Base/Defined"
-import { assertVisibleClip, isVisibleClip, VisibleClipObject } from "../Media/VisibleClip/VisibleClip"
-import { visibleClipDefault } from "../Media/VisibleClip/VisibleClipFactory"
+import { assertClip, isClip, ClipObject, Clip, Clips } from "../Media/Clip/Clip"
+import { clipDefault } from "../Media/Clip/ClipFactory"
 import { isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
 import { PreviewOptions, Svgs } from "./Preview/Preview"
 import { svgElement } from "../Utility/Svg"
 import { idGenerate } from "../Utility"
+import { assertContainer } from "../Container/Container"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -96,11 +93,11 @@ export class EditorClass implements Editor {
 
     // TODO: audio...
 
-    const visibleClipObject: VisibleClipObject = { label }
-    if (isContentDefinition(definition)) visibleClipObject.contentId = id
-    else visibleClipObject.containerId = id
+    const clipObject: ClipObject = { label }
+    if (isContentDefinition(definition)) clipObject.contentId = id
+    else clipObject.containerId = id
 
-    const clip = visibleClipDefault.instanceFromObject(visibleClipObject)
+    const clip = clipDefault.instanceFromObject(clipObject)
 
 
     // const definition = Factory[type].definition(object)
@@ -138,12 +135,13 @@ export class EditorClass implements Editor {
   addEffect(effect: Effect, insertIndex = 0): Promise<void> {
     // console.log(this.constructor.name, "addEffect", object, index)
     const { clip } = this.selection
-    if (!isVisibleClip(clip)) {
+    if (!isClip(clip)) {
       console.error(this.constructor.name, "addEffect expected effectable selection")
       throw Errors.selection + 'effectable'
     }
-
-    const { effects } = clip
+    const { container } = clip
+    assertContainer(container)
+    const { effects } = container
 
     if (!effects) throw Errors.selection
 
@@ -240,73 +238,6 @@ export class EditorClass implements Editor {
     return true
   }
 
-  private changeCast(property: string, value: Scalar): void {
-    const { cast: target } = this.selection
-    if (!target) throw new Error(Errors.selection)
-    assertPopulatedString(property, 'changeCast property')
-
-    const redoValue = isUndefined(value) ? target.value(property) : value
-    const undoValue = target.value(property)
-    const options: UnknownObject = {
-      property, target: target, redoValue, undoValue, type: ActionType.Change
-    }
-    this.actions.create(options)
-  }
-
-  private changeEffect(property: string, value: Scalar, effect?: Effect): void {
-    if (!isPopulatedString(property)) throw Errors.property
-
-    const target = effect || this.selection.effect
-    if (!target) throw Errors.selection
-
-    const redoValue = isUndefined(value) ? target.value(property) : value
-    const undoValue = target.value(property)
-    const options = {
-      type: ActionType.Change, target, property, redoValue, undoValue
-    }
-    this.actions.create(options)
-  }
-
-  private changeLayer(property: string, value: Scalar): void {
-    const { layer: target } = this.selection
-    if (!target) throw new Error(Errors.selection)
-    assertPopulatedString(property, 'changeLayer property')
-
-    const redoValue = isUndefined(value) ? target.value(property) : value
-    const undoValue = target.value(property)
-    const options: UnknownObject = {
-      property, target: target, redoValue, undoValue, type: ActionType.Change
-    }
-    this.actions.create(options)
-  }
-
-  private changeMash(property: string, value: Scalar): void {
-    const { mash: target } = this.selection
-    if (!target) throw new Error(Errors.selection)
-    assertPopulatedString(property, 'changeMash property')
-
-    const redoValue = isUndefined(value) ? target.value(property) : value
-    const undoValue = target.value(property)
-    const options: UnknownObject = {
-      property, target: target, redoValue, undoValue, type: ActionType.Change
-    }
-    this.actions.create(options)
-  }
-
-  private changeTrack(property: string, value: Scalar): void {
-    if (!isPopulatedString(property)) throw Errors.property
-
-    const { track: target } = this.selection
-    if (!target) throw Errors.selection
-
-    const redoValue = isUndefined(value) ? target.value(property) : value
-    const undoValue = target.value(property)
-    const options = {
-      type: ActionType.Change, target, property, redoValue, undoValue
-    }
-    this.actions.create(options)
-  }
-
   private clearActions(): void {
     if (!this.actions.instances.length) return
 
@@ -327,6 +258,7 @@ export class EditorClass implements Editor {
   }
 
   private configureEdited(edited: Edited): void {
+    edited.editor = this
     edited.imageSize = this._imageSize
     edited.emitter = this.eventTarget
   }
@@ -433,13 +365,15 @@ export class EditorClass implements Editor {
 
   _editType?: EditType
   get editType(): EditType {
-    if (!this._editType) this._editType = this.selection.cast ? EditType.Cast : EditType.Mash
+    if (!this._editType) this._editType = this.editingCast ? EditType.Cast : EditType.Mash
     return this._editType!
   }
 
   get edited(): Edited | undefined { return this.selection.cast || this.selection.mash }
 
   editing: boolean 
+
+  get editingCast(): boolean { return !!this.selection.cast }
 
   private emitMash(): void {
     this.eventTarget.emit(EventType.Mash)
@@ -488,6 +422,8 @@ export class EditorClass implements Editor {
   }
 
   handleAction(action: Action): void {
+
+    // console.log(this.constructor.name, "handleAction")
     const { selection } = action
     const { mash } = selection
     const mashChanged = mash !== this.selection.mash
@@ -495,13 +431,16 @@ export class EditorClass implements Editor {
     const { edited } = this
     assertTrue(edited)
     const { quantize } = edited
-    if (mash && action instanceof ChangeAction) {
-      const { property, target } = action
-      if (property === "gain" && isVisibleClip(target)) {
-        mash.composition.adjustClipGain(target, quantize)
-        return
+    if (mash) {
+      mash.clearPreview()
+      if (action instanceof ChangeAction)  {
+        const { property, target } = action
+        if (property === "gain" && isClip(target)) {
+          mash.composition.adjustClipGain(target, quantize)
+          return
+        }
       }
-    }
+    } 
     const promise = edited.reload() || Promise.resolve()
     promise.then(() => {
       if (!mash) this.handleDraw()
@@ -514,6 +453,7 @@ export class EditorClass implements Editor {
   drawTimeout?: Timeout
 
   handleDraw(event?: Event): void {
+    // console.log(this.constructor.name, "handleDraw")
     if (!this.drawTimeout) {
       const { edited } = this
       if (!edited) throw Errors.internal + 'handleDraw with no edited'
@@ -521,6 +461,8 @@ export class EditorClass implements Editor {
         return
       }
       this.drawTimeout = setTimeout(() => {
+
+        // console.log(this.constructor.name, "handleDraw drawTimeout")
         this.eventTarget.dispatch(EventType.Draw)
         delete this.drawTimeout
       }, 10)
@@ -564,6 +506,7 @@ export class EditorClass implements Editor {
     this.eventTarget.emit(EventType.Cast)
     this.eventTarget.trap(EventType.Draw, this.handleDraw.bind(this))
     this.emitMash()
+    this.eventTarget.emit(EventType.Selection)
     // TODO return proper promise of load
     return Promise.resolve()
   }
@@ -626,7 +569,7 @@ export class EditorClass implements Editor {
     if (!isPositive(frameOrIndex)) throw Errors.argument + 'moveClip frameOrIndex'
     if (!isPositive(trackIndex)) throw Errors.argument + 'moveClip trackIndex'
 
-    const { trackType, track: undoTrackIndex } = clip
+    const { trackType, trackNumber: undoTrackIndex } = clip
     const options: any = {
       clip,
       trackType,
@@ -663,8 +606,9 @@ export class EditorClass implements Editor {
 
     const { clip } = this.selection
     if (!clip) throw Errors.selection
-    assertVisibleClip(clip)
-    const effectable = clip
+    assertClip(clip)
+    const effectable = clip.container
+    assertContainer(effectable)
     const { effects } = effectable
     const undoEffects = [...effects]
     const redoEffects = undoEffects.filter(e => e !== effect)
@@ -769,8 +713,10 @@ export class EditorClass implements Editor {
     const { clip } = this.selection
     if (!clip) throw Errors.selection
 
-    assertVisibleClip(clip)
-    const { effects } = clip
+    assertClip(clip)
+    const { container } = clip
+    assertContainer(container)
+    const { effects } = container
     const undoEffects = [...effects]
     const redoEffects = effects.filter(other => other !== effect)
 
@@ -822,11 +768,23 @@ export class EditorClass implements Editor {
     else {
       delete this.selection.effect
       if (isClip(selectable)) {
-        
         this.selection.clip = selectable
-        this.selection.track = this.selection.mash!.clipTrack(selectable)
+        this.selection.track = selectable.track
+        this.selection.content = selectable.content
+        this.selection.container = selectable.container
+        if (this.editingCast) {
+          const { mash } = selectable.track
+          if (mash !== this.selection.mash) {
+            this.selection.mash = mash
+            this.selection.layer = mash.layer
+            this.emitMash()
+          } 
+        } 
       } else {
         delete this.selection.clip
+        delete this.selection.content
+        delete this.selection.container 
+
         if (isTrack(selectable)) {
           this.selection.track = selectable
         } else {
@@ -845,70 +803,42 @@ export class EditorClass implements Editor {
 
   selection: EditorSelection = {}
 
-  selectedProperties(selectTypes: SelectType[] = SelectTypes): SelectedProperties {
-
-    const filteredTypes = selectTypes.filter(type => {
-      const selectType = isClipSelectType(type) ? SelectType.Clip : type
-      return isDefined(this.selection[selectType])
-    })
-    // TODO: support filtering based on selectTypes
-    const properties: SelectedProperties = []
+  get selectTypes(): SelectType[] {
+    const selectTypes: SelectType[] = []
     const { mash, clip, effect, track, cast, layer } = this.selection
-    if (mash) {
-      if (track) {
-        if (clip) {
-          if (effect && filteredTypes.includes(SelectType.Effect)) {
-            properties.push(...effect.properties.map(property => ({
-              selectType: SelectType.Effect, property, changeHandler: this.changeEffect.bind(this),
-              value: effect.value(property.name)
-            })))
-          }
-          if (filteredTypes.includes(SelectType.Clip)) {
-            assertVisibleClip(clip)
-            properties.push(...clip.selectedProperties(this.actions, filteredTypes))
-          }
-        }
-        if (filteredTypes.includes(SelectType.Track)) {
-          properties.push(...track.properties.map(property => ({
-            selectType: SelectType.Track, property, changeHandler: this.changeTrack.bind(this),
-            value: track.value(property.name)
-          })))
-        }
-      }
-      if (filteredTypes.includes(SelectType.Mash)) {
-        properties.push(...mash.properties.map(property => ({
-          selectType: SelectType.Mash, property, changeHandler: this.changeMash.bind(this),
-          value: mash.value(property.name)
-        })))
-      }
+    if (cast) {
+      selectTypes.push(SelectType.Cast)
+      if (layer) selectTypes.push(SelectType.Layer)
     }
-    if (cast && filteredTypes.includes(SelectType.Cast)) {
-      properties.push(...cast.properties.map(property => ({
-        selectType: SelectType.Cast, property, changeHandler: this.changeCast.bind(this),
-        value: cast.value(property.name)
-      })))
-      if (layer) {
-        properties.push(...layer.properties.map(property => ({
-          selectType: SelectType.Layer, property, changeHandler: this.changeLayer.bind(this),
-          value: layer.value(property.name)
-        })))
-      }
+
+    if (!mash) return selectTypes
+
+    selectTypes.push(SelectType.Mash)
+    if (!track) return selectTypes
+
+    selectTypes.push(SelectType.Track)
+    if (!clip) return selectTypes
+
+    selectTypes.push(SelectType.Clip)
+    
+    selectTypes.push(SelectType.Content)
+
+    if (isPopulatedString(clip.containerId)) {
+      selectTypes.push(SelectType.Container)
+      if (effect) selectTypes.push(SelectType.Effect)
     }
-    const names: string[] = []
-    const duplicates: string[] = []
-    const filtered = properties.filter(selectedProperty => {
-      const { property, selectType } = selectedProperty
-      const { name } = property
-      const qualifiedName = `${selectType}.${name}`
-      if (!names.includes(qualifiedName)) {
-        names.push(qualifiedName)
-        return true
-      }
-      duplicates.push(qualifiedName)
-      return false
+    return selectTypes
+  }
+
+  selectedProperties(types: SelectType[] = SelectTypes): SelectedProperties {
+    const { selectTypes } = this
+    const filteredTypes = selectTypes.filter(type => types.includes(type))
+    
+    return filteredTypes.flatMap(selectType => {
+      const target = this.selection[selectType]
+      assertTrue(target, selectType)
+      return target.selectedProperties(this.actions)
     })
-    if (duplicates.length) console.warn(this.constructor.name, "selectedProperties found duplicates:", duplicates.join(", "))
-    return filtered
   }
 
   get time(): Time { return this.selection.mash?.time || timeFromArgs(0, this.fps)}
@@ -945,9 +875,10 @@ export class EditorClass implements Editor {
   
     const svgs: Svgs = []
     const options: PreviewOptions = { editor: this }
-    const { cast, mash } = selection
-    if (cast && mash) svgs.push(...mash.svgs(options))
-    else svgs.push(...edited.svgs(options))
+    // const { cast, mash } = selection
+    // if (cast && mash) svgs.push(...mash.svgs(options))
+    // else 
+    svgs.push(...edited.svgs(options))
     return svgs
   }
 }

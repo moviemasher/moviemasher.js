@@ -13,6 +13,11 @@ import { PlayerProps } from './Player'
 import { SelectEditedControl } from '../Controls/SelectEditedControl'
 import { CreateEditedControl } from '../Controls/CreateEditedControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
+import { SaveControl } from '../Controls/SaveControl'
+import { View } from '../../Utilities/View'
+import { Process } from '../Process/Process'
+import { EditorUndoButton } from '../Controls/EditorUndoButton'
+import { EditorRedoButton } from '../Controls/EditorRedoButton'
 
 export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
   noApi?: boolean
@@ -29,12 +34,22 @@ export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = 
   optionsStrict.content.children ||= (
     <PlayerContent {...optionsStrict.content.props} />
   )
-  optionsStrict.header.content ||= [DefaultIcons.app]
+  optionsStrict.header.content ||= [
+    DefaultIcons.app,
+    <EditorUndoButton key='undo'><Button startIcon={DefaultIcons.undo}>Undo</Button></EditorUndoButton>,
+    <EditorRedoButton key='redo'><Button startIcon={DefaultIcons.redo}>Redo</Button></EditorRedoButton>,
+  ]
 
+ 
   if (!noApi) {
     optionsStrict.header.after ||= [
+      <Process key='save-process' id='data'>
+        <View><SaveControl><Button>Save</Button></SaveControl></View>
+      </Process>,
       <SelectEditedControl key="select-edited" />,
-      <CreateEditedControl key="create-edited"><Button endIcon={DefaultIcons.add}>New</Button></CreateEditedControl>,
+      <CreateEditedControl key="create-edited">
+        <Button>{DefaultIcons.add}New</Button>
+      </CreateEditedControl>,
     ]
   }
 

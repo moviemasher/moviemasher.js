@@ -1,4 +1,4 @@
-import { SvgContent } from "../../declarations"
+import { SvgItem } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { pixelColor } from "../../Utility/Pixel"
 import { DataType, Phase } from "../../Setup/Enums"
@@ -124,7 +124,7 @@ export class ColorFilter extends ColorizeFilter {
   }
   _ffmpegFilter = 'color'
 
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgContent {
+  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem {
     const { filter } = args
     const valueObject = filter.scalarObject(false)
     const { width, height, color } = valueObject
