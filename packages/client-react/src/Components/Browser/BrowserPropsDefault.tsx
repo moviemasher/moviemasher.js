@@ -49,10 +49,8 @@ export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps>
     optionsStrict.footer.after ||= [
       <View key='upload' className="progress">
         <Process id='data'>
-         <ProcessActive>
-            <ProcessStatus />
-            <ProcessProgress />
-         </ProcessActive>
+          <ProcessStatus />
+          <ProcessProgress />
           <UploadControl>
             {DefaultIcons.upload}
           </UploadControl>

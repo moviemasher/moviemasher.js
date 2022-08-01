@@ -15,7 +15,7 @@ import {
 } from "../Helpers/Time/TimeUtilities"
 import { isAboveZero, isPositive } from "../Utility/Is"
 import { assertClip, Clip } from "../Media/Clip/Clip"
-import { assertUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
+import { assertUpdatableDurationDefinition, isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 
@@ -30,10 +30,11 @@ export class RenderingOutputClass implements RenderingOutput {
 
       const { content } = clip
       const { definition } = content
-      assertUpdatableDurationDefinition(definition)
-      const frames = definition.frames(quantize)
-      // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
-      if (frames) clip.frames = frames
+      if (isUpdatableDurationDefinition(definition)) {
+        const frames = definition.frames(quantize)
+        // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
+        if (frames) clip.frames = frames
+      }
     })
   }
 

@@ -39,7 +39,9 @@
 }
   
 
-.moviemasher progress { width: var(--progress-width); }
+.moviemasher progress,
+.moviemasher .progress-holder { width: var(--progress-width); }
+
 .moviemasher .process-status {
   white-space: nowrap;
   overflow-x: hidden;

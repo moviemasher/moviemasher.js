@@ -22,7 +22,7 @@ export function ProcessStatus(props: ProcessStatusProps): ReactResult {
   const viewProps = {
     ...rest, onClick, key: 'process-status',
     className: classes.join(' '),
-    children: error || status || 'hello world'
+    children: error || status 
   }
-  return < View {...viewProps} />
+  return <View { ...viewProps } />
 }

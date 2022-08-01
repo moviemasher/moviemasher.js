@@ -33,10 +33,8 @@ export const MasherPropsDefault: PropsMethod<EditorProps, MasherProps> = functio
     panelOptions.timeline.footer.after ||= [
       <View key='render' className="progress">
         <Process key='render-process' id='rendering'>
-          <ProcessActive>
-            <ProcessStatus />
-            <ProcessProgress />
-          </ProcessActive>
+          <ProcessStatus />
+          <ProcessProgress />
           <RenderControl>{DefaultIcons.render}</RenderControl>
         </Process>
         <ViewControl key='view-control'>{DefaultIcons.view}</ViewControl>

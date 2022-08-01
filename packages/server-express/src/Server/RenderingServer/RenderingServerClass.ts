@@ -9,7 +9,7 @@ import {
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
   LoadType, DefinitionTypes, Endpoint, ApiRequestInit, outputDefaultPopulate,
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
-  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject, assertTrue,
+  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject, assertTrue, NumberObject,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -94,8 +94,12 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         break
       }
     }
-    const infoFilenamesByType = Object.fromEntries(commandOutputs.map((output, index) => {
+    const byType: NumberObject = {}
+    const infoFilenamesByType = Object.fromEntries(commandOutputs.map(output => {
       const {outputType} = output
+      byType[outputType] ||= -1
+      byType[outputType]++
+      const index = byType[outputType]
       return [outputType, renderingOutputFile(index, output, ExtensionLoadedInfo)]
     }))
     const has = wants.filter(want => commandOutputs.find(output => output.outputType === want))
@@ -274,10 +278,14 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const { outputs, upload } = json
 
       const filenames = fs.readdirSync(outputDirectory)
-      const working = outputs.map((renderingCommandOutput, index) => {
+      const byType: NumberObject = {}
 
+      const working = outputs.map(renderingCommandOutput => {
         // console.log(this.constructor.name, "status output", renderingCommandOutput)
         const { outputType } = renderingCommandOutput
+        byType[outputType] ||= -1
+        byType[outputType]++
+        const index = byType[outputType]
         response[outputType] ||= { total: 0, completed: 0 }
         const state = response[outputType]!
         state.total++
