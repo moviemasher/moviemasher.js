@@ -3,6 +3,7 @@ import { Point } from "../Utility/Point"
 import { Rect } from "../Utility/Rect"
 import { Size } from "./Size"
 import { Time, TimeRange } from "../Helpers/Time/Time"
+import { throwError } from "./Throw"
 
 export const isObject = (value: any): value is Object => typeof value === 'object'
 
@@ -24,7 +25,9 @@ export function assertNumber(value: any, name?: string): asserts value is number
 }
 
 export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
-
+export function assertBoolean(value: any, name?: string): asserts value is Boolean {
+  if (!isBoolean(value)) throwError(value, "Boolean", name)
+}
 export const isMethod = (value: any): boolean => typeof value === 'function'
 
 export const isDefined = (value: any): boolean => !isUndefined(value)
@@ -91,6 +94,9 @@ export function assertRgb(value: any, name?: string): asserts value is Rgb {
 export const isTime = (value: any): value is Time => {
   return isObject(value) && "isRange" in value
 }
+export function assertTime(value: any, name?: string): asserts value is Time {
+  if (!isTime(value)) throwError(value, "Time", name)
+}
 
 export const isTimeRange = (value: any): value is TimeRange => {
   return isTime(value) && value.isRange
@@ -121,10 +127,4 @@ export function assertValueObject(value: any, name?: string): asserts value is V
   if (!isValueObject(value)) throwError(value, "ValueObject", name)
 }
 
-export const throwError = (value: any, expected: string, name = "value") => {
-  const type = typeof value
-  const typeName = type === 'object' ? value.constructor.name: type
-  console.error("throwError", value)
-  throw new Error(`${name} is "${value}" (${typeName}) instead of ${expected}`)
-}
 

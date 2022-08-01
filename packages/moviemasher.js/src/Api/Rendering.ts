@@ -27,8 +27,9 @@ export interface CommandDescription {
 
 export interface RenderingResult {
   error?: string
+  warning?: string
   outputType: OutputType
-  destination: string
+  destination?: string
 }
 
 export interface RenderingDescription {
@@ -54,6 +55,7 @@ export interface RenderingInput {
 }
 
 export interface RenderingOptions extends RenderingInput {
+  upload?: boolean
   outputs: CommandOutputs
 }
 

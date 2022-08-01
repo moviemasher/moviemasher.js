@@ -10,13 +10,12 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
 
   _avType = AVType.Video
 
-  protected override get mashDurationPromise(): Promise<void> {
-    const { args } = this
-    if (args.offset) return super.mashDurationPromise
-
-    this.assureClipFrames()
-    return Promise.resolve()
-  }
+  // protected override get mashDurationPromise(): Promise<void> {
+  //   const { args } = this
+  //   if (args.offset) return super.mashDurationPromise
+    
+  //   return Promise.resolve()
+  // }
 
   override get endTime(): Time | undefined { return }
 

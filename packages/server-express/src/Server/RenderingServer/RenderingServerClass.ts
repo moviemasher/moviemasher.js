@@ -9,7 +9,7 @@ import {
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
   LoadType, DefinitionTypes, Endpoint, ApiRequestInit, outputDefaultPopulate,
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
-  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject,
+  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject, assertTrue,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -34,22 +34,22 @@ import { idUnique } from "../../Utilities/Id"
 export class RenderingServerClass extends ServerClass implements RenderingServer {
   constructor(public args: RenderingServerArgs) { super(args) }
 
-  private dataPutCallback(user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
+  private dataPutCallback(upload: boolean, user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
     const definitionPath = this.definitionFilePath(user, id)
-    if (fs.existsSync(definitionPath)) {
-      // it's an upload
+    if (upload) {
+      assertTrue(fs.existsSync(definitionPath), definitionPath)
+    
       const definitionString = expandFile(definitionPath)
       const definition: DefinitionObject = JSON.parse(definitionString)
-      this.definitionObject(user, renderingId, definition, outputs)
+      this.populateDefinition(user, renderingId, definition, outputs)
       const callback: ApiCallback = {
         endpoint: { prefix: Endpoints.data.definition.put },
         request: { body: { definition }}
       }
       return callback
     }
-
-    const [output] = outputs
     // it's a mash render
+    const [output] = outputs
     const mash: MashObject = {
       id, rendering: `${id}/${renderingId}/${output.outputType}.${output.extension || output.format}`
     }
@@ -60,7 +60,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     return callback
   }
 
-  private definitionObject(user: string, renderingId: string, definition: DefinitionObject, commandOutputs: CommandOutputs): void {
+  private populateDefinition(user: string, renderingId: string, definition: DefinitionObject, commandOutputs: CommandOutputs): void {
     const id = definition.id!
     const outputDirectory = this.outputDirectory(user, id)
     const { type, source } = definition
@@ -94,7 +94,10 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         break
       }
     }
-
+    const infoFilenamesByType = Object.fromEntries(commandOutputs.map((output, index) => {
+      const {outputType} = output
+      return [outputType, renderingOutputFile(index, output, ExtensionLoadedInfo)]
+    }))
     const has = wants.filter(want => commandOutputs.find(output => output.outputType === want))
     const lastOutputByType: RenderingCommandOutputs = Object.fromEntries(has.map(type => {
       const outputs = commandOutputs.filter(output => output.outputType === type)
@@ -102,21 +105,28 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       return [type, commandOutput]
     }))
     has.forEach(type => {
-      // console.log(this.constructor.name, "definitionObject", has)
+      const infoFilename = infoFilenamesByType[type]
+      const infoPath = path.join(outputDirectory, renderingId, infoFilename)
+      assertTrue(fs.existsSync(infoPath), infoPath)
+     
+      const infoString = expandFile(infoPath)
+      const info: LoadedInfo = JSON.parse(infoString)
+      const { error } = info
+      if (error) return
+      
+      Object.entries(info).forEach(([key, value]) => {
+        definition[key] ||= value
+      })
+  
+
+
       const commandOutput = lastOutputByType[type]!
-      if (type !== OutputType.ImageSequence) {
-        const infoFilename = renderingOutputFile(commandOutput, ExtensionLoadedInfo)
-        const infoPath = path.join(outputDirectory, renderingId, infoFilename)
-        if (fs.existsSync(infoPath)) {
-          const infoString = expandFile(infoPath)
-          const info: LoadedInfo = JSON.parse(infoString)
-          if (!info.error) {
-            Object.entries(info).forEach(([key, value]) => {
-              definition[key] ||= value
-            })
-          }
-        }
+      switch(type) {
+        case OutputType.ImageSequence: break
+
       }
+    
+      
       const destinationFileName = renderingSource(commandOutput)
       const suffix = [renderingId, destinationFileName].join('/') // support blank filename
       if (fs.existsSync(path.join(outputDirectory, suffix))) {
@@ -198,7 +208,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
   start: ServerHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
-    const { mash, outputs, definitions = [] } = request
+    const { mash, outputs, definitions = [], upload = false, ...rest } = request
     // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
     const commandOutputs = outputs.map(output => {
       const { outputType } = output
@@ -217,13 +227,14 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const filePrefix = this.fileServer!.args.uploadsPrefix
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const processArgs: RenderingProcessArgs = {
+        ...rest,
+        upload, mash,
         defaultDirectory: user,
         validDirectories: ['shared'],
         cacheDirectory,
         outputDirectory,
         filePrefix,
         definitions,
-        ...request,
         outputs: commandOutputs
       }
       const renderingProcess = renderingProcessInstance(processArgs)
@@ -240,7 +251,9 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
     const outputs: CommandOutputs = renderingDefinitionTypeCommandOutputs(type)
     const input: RenderingInput = renderingInput(definitionObject)
-    const renderingStartRequest: RenderingStartRequest = { ...input, outputs }
+    const renderingStartRequest: RenderingStartRequest = { 
+      ...input, outputs, upload: true 
+    }
     const request: ApiRequestInit = { body: renderingStartRequest }
     const endpoint: Endpoint = { prefix: Endpoints.rendering.start }
     const renderingApiCallback: ApiCallback = { endpoint, request }
@@ -258,20 +271,17 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
       const jsonString = expandFile(jsonPath)
       const json: RenderingOptions = JSON.parse(jsonString)
-      const { outputs } = json
+      const { outputs, upload } = json
 
       const filenames = fs.readdirSync(outputDirectory)
-      const working = outputs.map(renderingCommandOutput => {
+      const working = outputs.map((renderingCommandOutput, index) => {
 
         // console.log(this.constructor.name, "status output", renderingCommandOutput)
         const { outputType } = renderingCommandOutput
-        if (!response[outputType]) response[outputType] = { total: 0, completed: 0 }
+        response[outputType] ||= { total: 0, completed: 0 }
         const state = response[outputType]!
-
-
         state.total++
-
-        const resultFileName = renderingOutputFile(renderingCommandOutput, ExtensionLoadedInfo)
+        const resultFileName = renderingOutputFile(index, renderingCommandOutput, ExtensionLoadedInfo)
         if (filenames.includes(resultFileName)) {
           state.completed++
           return 0
@@ -279,7 +289,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         return 1
       })
       if (Math.max(...working)) response.apiCallback = this.statusCallback(id, renderingId)
-      else response.apiCallback = this.dataPutCallback(user, id, renderingId, outputs)
+      else response.apiCallback = this.dataPutCallback(!!upload, user, id, renderingId, outputs)
     } catch (error) { response.error = String(error) }
     // console.log(this.constructor.name, "status response", response)
     res.send(response)

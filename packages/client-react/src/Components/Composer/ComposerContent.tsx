@@ -8,7 +8,6 @@ import { View } from "../../Utilities/View"
 import { Problems } from "../../Setup/Problems"
 import { LayerContext } from "../../Contexts/LayerContext"
 import { ComposerContext } from "../../Contexts/ComposerContext"
-import { EditorContext } from "../../Contexts/EditorContext"
 import { ComposerLayer } from "./ComposerLayer"
 import { useEditor } from "../../Hooks/useEditor"
 
@@ -20,7 +19,6 @@ export interface ComposerContentProps extends PropsAndChild, WithClassName {}
  */
 export function ComposerContent(props: ComposerContentProps): ReactResult {
   const composerContext = React.useContext(ComposerContext)
-  const editorContext = React.useContext(EditorContext)
 
   const {
     droppingLayer, setDroppingLayer,

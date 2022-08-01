@@ -1,11 +1,12 @@
-import { DataType, isArray, isDefined, isNumber, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { InputContext } from '../../../Contexts/InputContext'
-import { ReactResult, SliderChangeHandler } from '../../../declarations'
-import { Slider } from '../../../Utilities/Slider'
-import { DataTypeInputs } from '../DataTypeInputs'
+import { DataType, isArray, isDefined, isNumber, UnknownObject } from '@moviemasher/moviemasher.js'
 
-export function DefaultPercentInput(): ReactResult {
+import { ReactResult, SliderChangeHandler } from '../../declarations'
+import { InputContext } from '../../Contexts/InputContext'
+import { Slider } from '../../Utilities/Slider'
+import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+
+export function PercentTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value: valueOrNot, name } = inputContext
   if (!property) return null
@@ -29,4 +30,4 @@ export function DefaultPercentInput(): ReactResult {
   return <Slider className='zoom slider' {...sliderProps} />
 }
 
-DataTypeInputs[DataType.Percent] = <DefaultPercentInput />
+DataTypeInputs[DataType.Percent] = <PercentTypeInput />

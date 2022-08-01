@@ -1,6 +1,4 @@
-export * from "./AlphaColorFilter"
 export * from "./AlphamergeFilter"
-export * from "./BlendFilter"
 export * from "./ChromaKeyFilter"
 export * from "./ColorChannelMixerFilter"
 export * from "./ColorFilter"

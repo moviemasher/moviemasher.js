@@ -27,10 +27,10 @@ export function UploadControl(props: PropsAndChild): ReactResult {
 
   const handleApiCallback = (callback: ApiCallback) => {
     setTimeout(() => {
-      // console.debug("handleApiCallback request", apiCallback)
+      console.debug("handleApiCallback request", callback)
       fetchCallback(callback).then((response: ApiCallbackResponse) => {
+        console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
-        // console.debug("handleApiCallback request", response)
         if (error) handleError(callback.endpoint.prefix!, error)
         else if (apiCallback) {
           const { request, endpoint } = apiCallback
@@ -76,13 +76,13 @@ export function UploadControl(props: PropsAndChild): ReactResult {
     if (processing) return
 
     const { type, name, size } = file
-    // console.log("startProcessing", file)
+    console.log("startProcessing", file)
     setProcessing(true)
     loadTypeRef.current = ''
     const request: RenderingUploadRequest = { type, name, size }
-    // console.debug("RenderingUploadRequest", Endpoints.rendering.upload, request)
+    console.debug("RenderingUploadRequest", Endpoints.rendering.upload, request)
     endpointPromise(Endpoints.rendering.upload, request).then((response: RenderingUploadResponse) => {
-      // console.debug("RenderingUploadResponse", Endpoints.rendering.upload, response)
+      console.debug("RenderingUploadResponse", Endpoints.rendering.upload, response)
       const { error, fileApiCallback, apiCallback, fileProperty } = response
       if (error) return handleError(Endpoints.rendering.upload, error)
       if (fileApiCallback && fileApiCallback.request) {
@@ -93,9 +93,9 @@ export function UploadControl(props: PropsAndChild): ReactResult {
           // console.debug("SETTING BODY")
           fileApiCallback.request.body = file
         }
-        // console.debug("FileStoreRequest", fileApiCallback)
+        console.debug("FileStoreRequest", fileApiCallback)
         fetchCallback(fileApiCallback).then((response: FileStoreResponse) => {
-          // console.debug("FileStoreResponse", response)
+          console.debug("FileStoreResponse", response)
           const { error } = response
           if (error) return handleError(fileApiCallback.endpoint.prefix!, error)
 

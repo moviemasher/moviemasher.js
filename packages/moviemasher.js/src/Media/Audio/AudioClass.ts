@@ -33,7 +33,7 @@ export class AudioClass extends AudioWithUpdatableDuration implements Audio {
     return [graphFile]
   }
 
-  mutable = true
-
+  mutable() { return true }
+  
   trackType = TrackType.Audio
 }

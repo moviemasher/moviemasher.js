@@ -22,6 +22,8 @@ export interface CommandOutput extends UnknownObject, Partial<Size> {
 export interface RenderingCommandOutput extends CommandOutput {
   outputType: OutputType
   basename?: string
+  optional?: boolean
+  cover?: boolean
 }
 
 export type CommandOutputs = RenderingCommandOutput[]
@@ -70,7 +72,9 @@ export interface ImageOutputArgs extends RenderingOutputArgs {
 
 export interface ImageOutput extends RenderingOutput {}
 
-export interface AudioOutputArgs extends RenderingOutputArgs {}
+export interface AudioOutputArgs extends RenderingOutputArgs {
+  optional?: boolean
+}
 
 export interface AudioOutput extends RenderingOutput {}
 

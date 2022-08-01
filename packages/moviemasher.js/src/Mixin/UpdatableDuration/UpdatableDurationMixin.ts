@@ -11,7 +11,7 @@ import { filterFromId } from "../../Filter/FilterFactory"
 import { Filter } from "../../Filter/Filter"
 import { timeFromArgs } from "../../Helpers"
 import { commandFilesInput } from "../../Utility/CommandFiles"
-import { idGenerate } from "../../Utility"
+import { idGenerate } from "../../Utility/Id"
 
 const AudibleGainDelimiter = ','
 

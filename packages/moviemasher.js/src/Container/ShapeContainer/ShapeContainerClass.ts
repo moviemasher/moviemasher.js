@@ -159,10 +159,18 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       const superArgs: CommandFilterArgs = { 
         ...argsWithoutColors, filterInput
       }
+
       commandFilters.push(...super.containerCommandFilters(superArgs))
     } else if (this.isDefault || noContentFilters) {
       filterInput ||= commandFilesInput(commandFiles, this.id, true)
       assertPopulatedString(filterInput, 'final input')
+      
+      // add effects...
+      const effectsFilters = this.effectsCommandFilters({ ...args, filterInput })
+      if (effectsFilters.length) {
+        commandFilters.push(...effectsFilters)
+        filterInput = arrayLast(arrayLast(effectsFilters).outputs)
+      }
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput}))
     }
     return commandFilters

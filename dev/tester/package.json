@@ -13,7 +13,6 @@
     "build-client": "rollup --config rollup.config.js",
     "build": "run-s clean copy build-server build-client",
     "build-server": "tsc --project ./server.tsconfig.json",
-
     "start": "pm2 start ./dist/server.js",
     "stop": "pm2 delete ./dist/server.js",
     "logs": "pm2 logs ./dist/server.js",
@@ -26,7 +25,9 @@
     "copy-icon": "cp ../../dev/img/favicon.ico dist",
     "copy-img": "cp -R ../../dev/img dist",
     "copy-shared": "cp -R ../../dev/shared dist",
-    "copy": "run-s copy-icon copy-shared copy-img copy-html"
+    "copy": "run-s copy-icon copy-shared copy-img copy-html",
+    "jest": "jest --config jest.config.js",
+    "test": "run-s start \"jest {1}\" --"
   },
   "dependencies": {
     "@moviemasher/client-react": "5.0.7"

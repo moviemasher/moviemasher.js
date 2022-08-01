@@ -40,6 +40,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       if (!visible) return commandFilters
 
       assertPopulatedArray(containerRects)
+
       const tweeningSize = !rectsEqual(...containerRects)
       const maxSize = tweeningSize ? tweenMaxSize(...containerRects) : containerRects[0]
   
@@ -47,15 +48,14 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
         ...args, contentColors: [colorBlackOpaque, colorBlackOpaque], outputSize: maxSize
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs))
-
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
-      
       const fileInput = commandFilesInput(commandFiles, this.id, visible)
       
       // first we need to scale file 
       commandFilters.push(...this.scaleCommandFilters({ ...args, filterInput: fileInput }))
       let filterInput = arrayLast(arrayLast(commandFilters).outputs) 
     
+ 
       const overlayArgs: CommandFilterArgs = { 
         ...args, filterInput, chainInput: colorInput, outputSize: maxSize
       }
@@ -75,11 +75,19 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       commandFilters.push(...cropFilter.commandFilters(cropArgs))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 
+      // add effects...
+      const effectsFilters = this.effectsCommandFilters({ ...args, filterInput })
+      if (effectsFilters.length) {
+        commandFilters.push(...effectsFilters)
+        filterInput = arrayLast(arrayLast(effectsFilters).outputs)
+      }
+
+
       assertPopulatedString(filterInput, 'alphamerge input')
       commandFilters.push(...this.alphamergeCommandFilters({ ...args, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 
-      // then we need to do opacity, etc, and merge
+      // then we need to do effects, opacity, etc, and merge
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
@@ -135,6 +143,10 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
       commandFilters.push(...cropFilter.commandFilters(cropArgs))
     
+
+      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+   
+      commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
 

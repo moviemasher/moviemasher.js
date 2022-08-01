@@ -1,10 +1,12 @@
 import path from "path"
 import fs from 'fs'
 
-import { isPositive, LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
+import { isPositive, LoadedInfo, Sizes, SizeZero } from "@moviemasher/moviemasher.js"
+
+import { commandArgsString } from "../Utilities/Command"
 import { commandProcess } from "./CommandFactory"
 import { CommandProbeData } from "./Command"
-import { commandArgsString } from "../Utilities/Command"
+
 const probingFile = (src: string): string => {
   const match = src.match(/%0([0-9]*)d/)
   if (!match) return src
@@ -13,8 +15,6 @@ const probingFile = (src: string): string => {
   const ext = path.extname(src)
   const [_, digit] = match  
   const zeros = '0'.repeat(Number(digit) - 1)
-  
-
   return path.join(parentDir, `${zeros}1${ext}`)
 }
 
@@ -38,35 +38,30 @@ export const probingInfoPromise = (file: string, destination?: string): Promise<
   return new Promise((resolve, reject) => {
     fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
       process.ffprobe((error: any, data: CommandProbeData) => {
+        const info: LoadedInfo = { audible: false, ...SizeZero }
         if (error) {
-          const errorString = commandArgsString(process._getArguments(), dest, error)
-          return reject(errorString)
-        }
-        const info: LoadedInfo = {}
-        const { streams, format } = data
-        // console.log("ffprobe data", data)
-        const { duration = 0 } = format
-
-        const durations: number[] = []
-        const sizes: Sizes = []
-
-        for (const stream of streams) {
-          const { width, height, duration } = stream
-          if (isPositive(duration)) durations.push(Number(duration))
-
-          if (width && height) {
-            sizes.push({ width, height })
+          info.error = commandArgsString(process._getArguments(), dest, error)
+        } else {
+          const { streams, format } = data
+          const { duration = 0 } = format
+          const durations: number[] = []
+          const sizes: Sizes = []
+          for (const stream of streams) {
+            const { width, height, duration, codec_type } = stream
+            if (codec_type === 'audio') info.audible = true
+            if (isPositive(duration)) durations.push(Number(duration))
+            if (width && height) sizes.push({ width, height })
           }
-        }
-        if (duration || durations.length) {
-          if (durations.length) {
-            const maxDuration = Math.max(...durations)
-            info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
-          } else info.duration = duration
-        }
-        if (sizes.length) {
-          info.width = Math.max(...sizes.map(size => size.width))
-          info.height = Math.max(...sizes.map(size => size.height))
+          if (duration || durations.length) {
+            if (durations.length) {
+              const maxDuration = Math.max(...durations)
+              info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
+            } else info.duration = duration
+          }
+          if (sizes.length) {
+            info.width = Math.max(...sizes.map(size => size.width))
+            info.height = Math.max(...sizes.map(size => size.height))
+          }  
         }
         fs.promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info) })
       })

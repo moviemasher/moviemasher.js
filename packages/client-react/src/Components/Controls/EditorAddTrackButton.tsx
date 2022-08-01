@@ -4,9 +4,7 @@ import { TrackType, UnknownObject } from "@moviemasher/moviemasher.js"
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 
-export interface TimelineTrackAddControlProps extends PropsAndChild, WithClassName {
-  
-}
+export interface TimelineTrackAddControlProps extends PropsAndChild, WithClassName {}
 
 export function TimelineTrackAddControl(props:TimelineTrackAddControlProps): ReactResult {
   const editor = useEditor()

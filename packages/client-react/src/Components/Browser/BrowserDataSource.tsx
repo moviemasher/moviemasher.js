@@ -42,7 +42,7 @@ export function BrowserDataSource(props: BrowserSourceProps): ReactResult {
     endpointPromise(
       Endpoints.data.definition.retrieve, request
     ).then((response: DataDefinitionRetrieveResponse) => {
-      // console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
+      console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
       const { definitions } = response
       setDefinitions(
         definitions.map(definition => DefinitionBase.fromObject(definition))

@@ -28,8 +28,7 @@
     "test-help": "jest -h",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
     "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
-    "jest": "jest --config dev/test/jest.config.js",
-    "test": "run-s start \"jest {1}\" --"
+    "jest": "jest --config dev/test/jest.config.js"
   },
   "devDependencies": {
     "@types/css-font-loading-module": "^0.0.7",

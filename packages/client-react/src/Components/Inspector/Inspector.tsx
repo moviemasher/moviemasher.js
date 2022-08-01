@@ -1,5 +1,5 @@
 import React from 'react'
-import { arraySet, assertPopulatedString, assertSelectType, DefinitionType, EventType, SelectedProperties, SelectType, TrackType } from '@moviemasher/moviemasher.js'
+import { arraySet, assertPopulatedString, SelectTypesObject, assertSelectType, DefinitionType, EventType, SelectedItems, SelectType, TrackType } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
@@ -9,9 +9,8 @@ import {
 } from '../../Contexts/InspectorContext'
 import { useEditor } from '../../Hooks/useEditor'
 
-export interface InspectorProps extends PropsAndChildren, WithClassName {
+export interface InspectorProps extends PropsAndChildren, WithClassName {}
 
-}
 
 /**
  * @parents Masher
@@ -22,15 +21,16 @@ export function Inspector(props: InspectorProps): ReactResult {
   const [definitionType, setDefinitionType] = React.useState<DefinitionType | ''>('')
   const [actionCount, setActionCount] = React.useState(() => 0)
   const [clip, setClip] = React.useState(() => editor.selection.clip)
-  const [effect, setEffect] = React.useState(() => editor.selection.effect)
+  const [selectTypesObject] = React.useState<SelectTypesObject>({})
+  const [selected, setSelected] = React.useState('')
+
   const [selectTypes, setSelectTypes] = React.useState<SelectType[]>(() => editor.selectTypes)
-  const [selectedProperties, setSelectedProperties] = React.useState<SelectedProperties>(() => editor.selectedProperties())
+  const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => editor.selectedItems())
   const [selectedTypes, setSelectedTypes] = React.useState<SelectType[]>(() => [])
   const handleSection = React.useCallback(() => {
       const { selection, selectTypes } = editor
-      const { clip, effect } = selection
+      const { clip } = selection
       setClip(clip)
-      setEffect(effect)
       setDefinitionType(clip ? clip.type : '')
       setSelectTypes(orginal => arraySet(orginal, selectTypes))
       const intersects = selectTypes.some(type => selectedTypes.includes(type))
@@ -39,7 +39,7 @@ export function Inspector(props: InspectorProps): ReactResult {
         // console.log("Inspector EventType.Selection", types, "because", selectedTypes, "doesn't include one of", selectTypes)
         setSelectedTypes(orginal => arraySet(orginal, types))
       }
-      setSelectedProperties(editor.selectedProperties(types))
+      setSelectedItems(editor.selectedItems(types))
     }, [selectedTypes, selectTypes])
   useListeners({
     [EventType.Action]: () => {
@@ -48,20 +48,19 @@ export function Inspector(props: InspectorProps): ReactResult {
     [EventType.Selection]: handleSection,
   })
 
-  const changeType = React.useCallback((type: string) => {
-    assertPopulatedString(type)
-    
-    const types = type.split(',')
-    types.every(type => assertSelectType(type))
-    const selectTypes = types as SelectType[]
+  const changeType = React.useCallback((key: string) => {
+    assertPopulatedString(key)
+    const selectTypes = selectTypesObject[key]
+    setSelected(key)
     setSelectedTypes(orginal => arraySet(orginal, selectTypes))
-    setSelectedProperties(editor.selectedProperties(selectTypes))
+    setSelectedItems(editor.selectedItems(selectTypes))
   }, [])
 
   const inspectorContext: InspectorContextInterface = {
     ...InspectorContextDefault,
-    actionCount, clip, effect, definitionType, selectedProperties,
-    selectedTypes, selectTypes, changeType,
+    actionCount, clip, definitionType, selectedItems, selected,
+    selectTypesObject,
+    selectedTypes, selectTypes, changeSelected: changeType,
   }
 
   return (

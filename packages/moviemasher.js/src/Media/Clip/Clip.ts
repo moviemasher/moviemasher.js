@@ -3,8 +3,8 @@ import { Content, ContentObject } from "../../Content/Content"
 import { GenericFactory, SvgFilters } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { TrackType } from "../../Setup/Enums"
-import { throwError } from "../../Utility/Is"
+import { Timing, TrackType } from "../../Setup/Enums"
+import { throwError } from "../../Utility/Throw"
 import { Size } from "../../Utility/Size"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { EffectObject, Effects } from "../Effect/Effect"
@@ -19,6 +19,7 @@ export interface ClipObject extends InstanceObject {
   content?: ContentObject
   container?: ContainerObject
   frame? : number
+  timing?: string
   frames? : number
 }
 export const isClipObject = (value: any): value is ClipObject => {
@@ -50,6 +51,7 @@ export interface Clip extends Instance {
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
+  timing: Timing
   track: Track
   trackNumber: number
   trackType: TrackType

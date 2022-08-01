@@ -22,8 +22,17 @@ export function Composer(props: ComposerProps): ReactResult {
   const [refreshed, setRefreshed] = React.useState(0)
   const [droppingPosition, setDroppingPosition] = React.useState<DroppingPosition | number>(DroppingPosition.None)
   const { editor, draggable } = editorContext
-  if (!editor) return null
+ 
 
+  const refresh = () => { setRefreshed(value => value + 1) }
+
+  const handleSelection = () => { setSelectedLayer(editor!.selection.layer) }
+
+  useListeners({
+    [EventType.Selection]: handleSelection,
+    [EventType.Cast]: refresh,
+  })
+ if (!editor) return null
 
   const validDragType = (dataTransfer: DataTransfer): DragType | undefined => {
     const type = dragType(dataTransfer)
@@ -31,15 +40,6 @@ export function Composer(props: ComposerProps): ReactResult {
 
     if ([DragType.Mash, DragType.Layer].includes(type)) return type
   }
-
-  const refresh = () => { setRefreshed(value => value + 1) }
-
-  const handleSelection = () => { setSelectedLayer(editor.selection.layer) }
-
-  useListeners({
-    [EventType.Selection]: handleSelection,
-    [EventType.Cast]: refresh,
-  })
 
   const onDragLeave = () => {
     setDroppingPosition(DroppingPosition.None)

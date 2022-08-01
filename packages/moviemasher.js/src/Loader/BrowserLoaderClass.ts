@@ -84,7 +84,7 @@ export class BrowserLoaderClass extends LoaderClass {
       this.arrayBufferPromiseFromUrl(url)
         .then(arrayBuffer => this.audioBufferPromiseFromArrayBuffer(arrayBuffer))
         .then(buffer => {
-          this.updateDefinitionDuration(graphFile.definition, buffer.duration)
+          this.updateDefinitionDuration(graphFile.definition, buffer.duration, true)
           return buffer
         })
         .then(resolve)
@@ -147,7 +147,13 @@ export class BrowserLoaderClass extends LoaderClass {
         const { definition } = graphFile
         const dimensions = { width, height }
         this.updateDefinitionSize(definition, dimensions)
-        this.updateDefinitionDuration(definition, duration)
+        const hasAudio = (video: any) => {
+          return video.mozHasAudio ||
+            Boolean(video.webkitAudioDecodedByteCount) ||
+            Boolean(video.audioTracks?.length);
+        }
+
+        this.updateDefinitionDuration(definition, duration, hasAudio(video))
         return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
           return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
             resolve({ video, audio: audioBuffer })
@@ -167,6 +173,7 @@ export class BrowserLoaderClass extends LoaderClass {
         video.onerror = null
         video.width = video.videoWidth
         video.height = video.videoHeight
+
         resolve(video)
       }
       video.onerror = reject

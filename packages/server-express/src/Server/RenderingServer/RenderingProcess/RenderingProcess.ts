@@ -33,5 +33,4 @@ export interface RenderingProcessArgs extends RenderingProcessInput, RenderingAr
 
 export interface RenderingProcess {
   runPromise: ()=> Promise<RunResult>
-  destinations: string[]
 }

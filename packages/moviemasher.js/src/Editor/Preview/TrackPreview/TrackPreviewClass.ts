@@ -14,6 +14,7 @@ import { Anchor, assertDirection, Direction } from "../../../Setup/Enums"
 import { Editor } from "../../Editor"
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
 import { Svg } from "../Preview"
+import { GraphFileArgs, GraphFiles } from "../../../MoveMe"
 
 export const TrackPreviewHandleSize = 4
 
@@ -98,10 +99,26 @@ export class TrackPreviewClass implements TrackPreview {
 
   private get size(): Size { return this.preview.size }
  
-  get svg(): Svg {
-    const { clip, svgElement: svg } = this
-    const { id } = clip
-    return { id, element: svg }
+  get svg(): Promise<Svg> {
+    const { timeRange, time, quantize, clip, evaluator, editing, size } = this
+    assertClip(clip)
+    const { container, content, id } = clip
+    assertContainer(container)
+    const known = container.intrinsicsKnown && content.intrinsicsKnown
+    if (known) return Promise.resolve({ id, element: this.svgElement })
+
+    const { preview } = this
+    const { preloader } = preview
+    const graphFiles: GraphFiles = []
+    const args: GraphFileArgs = {
+      quantize, time, clipTime: timeRange
+    }
+    graphFiles.push(...container.graphFiles(args))
+    graphFiles.push(...content.graphFiles(args))
+
+    return preloader.loadFilesPromise(graphFiles).then(() => {
+      return { id, element: this.svgElement }
+    })
   }
 
   private svgBoundsElement(directions: Anchor[], rect: Rect): SVGGElement {

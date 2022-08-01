@@ -20,7 +20,6 @@ export interface VideoSequenceDefinitionObject extends ContentDefinitionObject, 
   increment?: number
   pattern?: string
   padding?: number
-  audio?: string
 }
 
 export interface VideoSequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {

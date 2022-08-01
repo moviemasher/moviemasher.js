@@ -5,6 +5,7 @@ import { NamespaceSvg } from "../../Setup/Constants"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isAboveZero, isObject } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
+import { colorRgbaKeys } from "../../Utility/Color"
 
 
 /**
@@ -107,8 +108,6 @@ export function assertConvolutionServerFilter(value: any): asserts value is Conv
   if (!isConvolutionServerFilter(value)) throw new Error("expected ConvolutionServerFilter")
 }
 
-const RGBA = 'rgba'
-const RGBAS = RGBA.split('').map(c => c as ConvolutionRgba)
 
 const matrixFromString = (string?: string): Numbers => {
   const definedString = string || "0 0 0 0 1 0 0 0 0"
@@ -175,7 +174,7 @@ const parse = (convolutionObject: ConvolutionServerFilter) => {
 
 const optionsFromObject =(convolutionObject: ConvolutionObject): ValueObject => {
   const valueObject: ValueObject = {}
-  RGBAS.forEach((channel, index) => {
+  colorRgbaKeys.map(c => c as ConvolutionRgba).forEach((channel, index) => {
     const multiplier = convolutionObject.multiplier[channel]
     const matrix = convolutionObject.matrix[channel]
     valueObject[`${index}m`] = matrix.join(' ')

@@ -2,7 +2,7 @@ import React from "react"
 import { 
   selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
   DataGroup, isDefined, Orientation, PropertyTweenSuffix, isOrientation, 
-  selectedPropertiesGroupedByName, ScalarObject, assertSelectType 
+  selectedPropertyObject, ScalarObject, assertSelectType, assertTime 
 } from "@moviemasher/moviemasher.js"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
@@ -12,25 +12,31 @@ import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../../Contexts/InputContext"
 import { View } from "../../Utilities/View"
 import { sessionGet, sessionSet } from "../../Utilities/Session"
+import { useEditor } from "../../Hooks/useEditor"
 
 const SizeInputOrientations: Record<Orientation, string> = {
   [Orientation.H]: 'width', [Orientation.V]: 'height'
 }
 const SizeInputKey = 'size-input-tween'
 
-export function SizeInput(props: DataGroupProps): ReactResult {
+export function SizeGroupInput(props: DataGroupProps): ReactResult {
+  const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
   const [tweening, setTweening] = React.useState(!!sessionGet(SizeInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedProperties: properties } = inspectorContext
-  const byName = selectedPropertiesGroupedByName(properties, DataGroup.Size, selectType)
+  const { selectedItems: properties } = inspectorContext
+  const byName = selectedPropertyObject(properties, DataGroup.Size, selectType)
   
   const { 
     lock, width, height, 
     [`width${PropertyTweenSuffix}`]: widthEnd,
     [`height${PropertyTweenSuffix}`]: heightEnd
   } = byName 
+  const { time } = width
+  const { time: timeEnd } = widthEnd
+  assertTime(time)
+  assertTime(timeEnd)
   const widthProperty = tweening ? widthEnd : width
   const heightProperty = tweening ? heightEnd : height
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
@@ -95,6 +101,7 @@ export function SizeInput(props: DataGroupProps): ReactResult {
     className: tweening ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
+      editor.goToTime(time)
       setTweening(false)
       sessionSet(SizeInputKey, '')
     }
@@ -104,6 +111,7 @@ export function SizeInput(props: DataGroupProps): ReactResult {
     className: tweening ? selectedButton : ClassButton,
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
+      editor.goToTime(timeEnd)
       setTweening(true)
       sessionSet(SizeInputKey, 1)
     }
@@ -122,4 +130,4 @@ export function SizeInput(props: DataGroupProps): ReactResult {
   return <fieldset><legend>{legendElements}</legend>{elements}</fieldset>
 }
 
-DataGroupInputs[DataGroup.Size] = <SizeInput key="size-input" />
+DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-input" />

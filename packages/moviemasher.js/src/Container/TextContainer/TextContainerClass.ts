@@ -20,7 +20,7 @@ import { assertPopulatedArray, assertPopulatedString, assertTrue, isTimeRange } 
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
-import { arrayLast } from "../../Utility"
+import { arrayLast } from "../../Utility/Array"
 
 
 const TextContainerWithTweenable = TweenableMixin(InstanceBase)

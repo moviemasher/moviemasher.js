@@ -6,7 +6,8 @@ import { CommandFilters, CommandFilterArgs } from "../MoveMe"
 import { Anchor, DirectionObject, isContainerType } from "../Setup/Enums"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Filter } from "../Filter/Filter"
-import { isObject, throwError } from "../Utility/Is"
+import { isObject } from "../Utility/Is"
+import { throwError } from "../Utility/Throw"
 
 export interface ContainerObject extends TweenableObject {
   height?: number
@@ -42,8 +43,6 @@ export interface Container extends Tweenable {
   height: number
   intrinsicGroupElement: SVGGElement
   mode: number
-  mutable: boolean
-  muted: boolean
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number

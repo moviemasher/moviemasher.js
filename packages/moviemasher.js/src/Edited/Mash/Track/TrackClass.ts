@@ -1,21 +1,24 @@
 import { Scalar, UnknownObject } from "../../../declarations"
-import { ActionType, SelectType, TrackType } from "../../../Setup/Enums"
+import { ActionType, Duration, SelectType, Timing, TrackType } from "../../../Setup/Enums"
 import { Errors } from "../../../Setup/Errors"
 import { propertyInstance } from "../../../Setup/Property"
 import { sortByFrame } from "../../../Utility/Sort"
 import { assertClip, Clip, Clips } from "../../../Media/Clip/Clip"
 import { PropertiedClass } from "../../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
-import { assertPopulatedString, isPositive, isUndefined } from "../../../Utility/Is"
+import { assertPopulatedString, isAboveZero, isPositive, isUndefined } from "../../../Utility/Is"
 import { TimeRange } from "../../../Helpers/Time/Time"
 import { idGenerate } from "../../../Utility/Id"
 import { Defined } from "../../../Base/Defined"
 import { isUpdatableDurationDefinition } from "../../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Default } from "../../../Setup/Default"
 import { Mash } from "../Mash"
-import { SelectedProperties } from "../../../Utility/SelectedProperty"
+import { SelectedItems } from "../../../Utility/SelectedProperty"
 import { Actions } from "../../../Editor/Actions/Actions"
 import { clipInstance } from "../../../Media/Clip/ClipFactory"
+import { Selectables } from "../../../Editor/Selectable"
+import { arrayLast } from "../../../Utility/Array"
+import { isContainer } from "../../../Container"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -53,7 +56,7 @@ export class TrackClass extends PropertiedClass implements Track {
     const movingClips : Clips = [] // build array of clips already in this.clips
     // build array of my clips excluding the clips we're inserting
     const spliceClips = this.clips.filter((other, index) => {
-      const moving = other === clip
+      const moving = (other === clip)
       if (moving) movingClips.push(other)
       // insert index should be decreased when clip is moving and comes before
       if (origIndex && moving && index < origIndex) clipIndex -= 1
@@ -90,16 +93,39 @@ export class TrackClass extends PropertiedClass implements Track {
 
   assureFrames(quantize: number, clips?: Clips): void {
     const clipsArray = clips || this.clips
+    // console.log(this.constructor.name, "assureFrames", clipsArray.length, "clip(s)")
     clipsArray.forEach(clip => {
-      if (isPositive(clip.frames)) return
-
-      assertClip(clip)
-      const { definition } = clip.content
-      if (isUpdatableDurationDefinition(definition)) {
-        clip.frames = definition.frames(quantize)
+      const { frames } = clip
+      if (isAboveZero(frames)) {
+        // console.log(this.constructor.name, "assureFrames clip has frames", frames)
+        return
       }
-      if (isPositive(clip.frames)) return
+      
+      const { container, content, timing} = clip
+      switch(timing){
+        case Timing.Container: {
+          if (! isContainer(container)) break
 
+          const { definition } = container
+          if (!isUpdatableDurationDefinition(definition)) break
+
+          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id)
+          clip.frames = definition.frames(quantize)
+          // console.log(this.constructor.name, "assureFrames isUpdatableDurationDefinition", frames, "=>", clip.frames)
+          return
+        }
+        case Timing.Content: {
+          const { definition } = content
+          if (!isUpdatableDurationDefinition(definition)) break    
+          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id)
+
+          clip.frames = definition.frames(quantize)
+          // console.log(this.constructor.name, "assureFrames isUpdatableDurationDefinition", frames, "=>", clip.frames)
+          return
+        }
+
+      }
+      if (isAboveZero(clip.frames)) return
       clip.frames = Default.frames
     })
   }
@@ -130,12 +156,19 @@ export class TrackClass extends PropertiedClass implements Track {
   }
 
   get frames() : number {
-    if (!this.clips.length) return 0
+    const { clips } = this
+    const { length } = clips
+    if (!length) return 0
 
-    const clip = this.clips[this.clips.length - 1]
+    for (const clip of clips) {
+      const { frames: clipFrames } = clip
+      switch(clipFrames){
+        case Duration.Unknown:
+        case Duration.Unlimited: return clipFrames
+      }
+    }
+    const clip: Clip = arrayLast(clips)
     const { frame, frames } = clip
-    if (frames < 1) return -1
-
     return frame + frames
   }
 
@@ -159,8 +192,11 @@ export class TrackClass extends PropertiedClass implements Track {
     this.clips.splice(0, this.clips.length, ...spliceClips)
   }
 
+  selectType = SelectType.Track
   
-  selectedProperties(actions: Actions): SelectedProperties {
+  selectables(): Selectables { return [this, ...this.mash.selectables()] }
+    
+  selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => ({
       property, selectType: SelectType.Track, 
       changeHandler: (property: string, value: Scalar) => {

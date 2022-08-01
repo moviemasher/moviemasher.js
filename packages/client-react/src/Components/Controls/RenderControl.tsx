@@ -10,7 +10,9 @@ import {
   EventType,
   MasherAction,
   assertMash,
-  Mash
+  Mash,
+  ApiRequest,
+  ApiResponse
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
@@ -42,7 +44,7 @@ export function RenderControl(props: PropsAndChild): ReactResult {
       fetchCallback(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
-        if (error) handleError(callback.endpoint.prefix!, error)
+        if (error) handleError(callback.endpoint.prefix!, callback.request!, response, error)
         else if (apiCallback) {
           const { request, endpoint } = apiCallback
           if (endpoint.prefix === Endpoints.data.mash.put) {
@@ -56,10 +58,10 @@ export function RenderControl(props: PropsAndChild): ReactResult {
       })
     }, 2000)
   }
-  const handleError = (endpoint: string, error: string) => {
+  const handleError = (endpoint: string, request: ApiRequest, response: ApiResponse, error: string) => {
     setProcessing(false)
     setError(error)
-    console.error(endpoint, error)
+    console.error(endpoint, request, response, error)
   }
 
   const onClick = () => {
@@ -79,7 +81,7 @@ export function RenderControl(props: PropsAndChild): ReactResult {
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {
       console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
       const { apiCallback, error } = response
-      if (error) handleError(Endpoints.rendering.start, error)
+      if (error) handleError(Endpoints.rendering.start, request, response, error)
       else handleApiCallback(apiCallback!, edited)
     })
   }

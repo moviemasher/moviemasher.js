@@ -7,9 +7,34 @@ import { Content, ContentClass } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tween"
+import { DataGroup, Property, propertyInstance } from "../Setup/Property"
+import { DataType, Orientation } from "../Setup/Enums"
+import { SelectedProperties } from "../Utility/SelectedProperty"
+import { Actions } from "../Editor/Actions/Actions"
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
+    constructor(...args: any[]) {
+      super(...args)
+      const [object] = args
+      const { isDefault } = this
+      if (!isDefault) {
+        this.addProperties(object, propertyInstance({
+          name: 'x', type: DataType.Percent, defaultValue: 0.5,
+          group: DataGroup.Point, tweenable: true, 
+        }))
+        this.addProperties(object, propertyInstance({
+          name: 'y', type: DataType.Percent, defaultValue: 0.5,
+          group: DataGroup.Point, tweenable: true, 
+        }))
+        
+        this.addProperties(object, propertyInstance({
+          name: 'lock', type: DataType.String, defaultValue: Orientation.H,
+          group: DataGroup.Size, 
+        }))
+      }
+    }
+
     contentRects(containerRects: Rect | RectTuple, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple {
       if (forFiles && !this.intrinsicsKnown) {
         return isArray(containerRects) ? containerRects : [containerRects, containerRects]
@@ -36,14 +61,22 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     
     intrinsicRectInitialize(): Rect { return RectZero }
 
-    mutable = false
-
-    muted = false
-
     get isDefault() { 
       return this.definitionId === "com.moviemasher.content.default" 
     }
-  
+    
+    selectedProperties(actions: Actions, property: Property): SelectedProperties {
+      const { isDefault } = this
+      const { name } = property
+
+      const selectedProperties: SelectedProperties = []
+      const colorKeys = ['lock', 'width', 'height', 'x', 'y']
+      if (isDefault && colorKeys.includes(name)) return selectedProperties
+
+      selectedProperties.push(...super.selectedProperties(actions, property))
+      return selectedProperties
+    }
+
     svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
       throw new Error(Errors.unimplemented) 
     }

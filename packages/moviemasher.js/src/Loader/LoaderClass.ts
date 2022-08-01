@@ -2,7 +2,7 @@ import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { Loader, LoaderFile } from "./Loader"
 import { Definition } from "../Definition/Definition"
-import { assertAboveZero, isAboveZero } from "../Utility/Is"
+import { assertAboveZero, assertBoolean, isAboveZero } from "../Utility/Is"
 import { isUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { UnknownObject } from "../declarations"
@@ -74,13 +74,20 @@ export class LoaderClass implements Loader {
   }
 
 
-  protected updateDefinitionDuration(definition: Definition, value?: number) {
-    if (!isUpdatableDurationDefinition(definition)) return
+  protected updateDefinitionDuration(definition: Definition, durationOrNot?: number, audioOrNot?: boolean) {
+    // console.log(this.constructor.name, "updateDefinitionDuration", definition.id, durationOrNot, audioOrNot)
+   if (!isUpdatableDurationDefinition(definition)) return
     
-    const { duration } = definition
+    const { duration, audio } = definition
     if (!isAboveZero(duration)) {
-      assertAboveZero(value)
-      definition.duration = value
+      assertAboveZero(durationOrNot)
+      // console.log(this.constructor.name, "updateDefinitionDuration duration", duration, "=>", durationOrNot)
+      definition.duration = durationOrNot
+    }
+    if (!audio) {
+      assertBoolean(audioOrNot)
+      // console.log(this.constructor.name, "updateDefinitionDuration audio", audio, "=>", audioOrNot)
+      definition.audio = audioOrNot
     }
   }
 

@@ -37,7 +37,7 @@ export const effectDefinitionFromId = (id: string): EffectDefinition => {
 
 export const effectInstance = (object: EffectObject): Effect => {
   const { definitionId = '' } = object
-  console.log("effectInstance", definitionId, object)
+  // console.log("effectInstance", definitionId, object)
   const definition = effectDefinitionFromId(definitionId)
   return definition.instanceFromObject(object)
 }

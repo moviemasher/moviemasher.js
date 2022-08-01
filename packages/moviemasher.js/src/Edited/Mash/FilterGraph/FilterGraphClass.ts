@@ -11,7 +11,7 @@ import { sortByTrack } from "../../../Utility/Sort"
 import { colorTransparent } from "../../../Utility/Color"
 import { Clip } from "../../../Media/Clip/Clip"
 import { idGenerate } from "../../../Utility/Id"
-import { arrayLast } from "../../../Utility"
+import { arrayLast } from "../../../Utility/Array"
 import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
 
 export const FilterGraphInputVisible = 'BACKCOLOR'
@@ -28,6 +28,7 @@ export class FilterGraphClass implements FilterGraph {
     this.backcolor = backcolor
     this.size = size
     // console.log(this.constructor.name, this.id, "size", size)
+    // console.log(this.constructor.name, this.id, "visible", visible)
     if (visible) this.visible = true
     if (streaming) this.streaming = true
     assertTrue(isAboveZero(this.videoRate), 'videoRate')
@@ -88,7 +89,7 @@ export class FilterGraphClass implements FilterGraph {
     const commandFiles: CommandFiles = []
     const { time, videoRate, quantize, size: outputSize, clips, visible, preloader } = this
     
-    // console.log(this.constructor.name, this.id, "commandFilesInitialize size", outputSize)
+    // console.log(this.constructor.name, this.id, "commandFilesInitialize", visible, outputSize)
     commandFiles.push(...clips.flatMap(clip => {
       const clipTime = clip.timeRange(quantize)
       const chainArgs: CommandFileArgs = { 
@@ -109,7 +110,7 @@ export class FilterGraphClass implements FilterGraph {
       visible, videoRate, commandFiles 
     } = this
 
-    // console.log(this.constructor.name, this.id, "commandFilters size", outputSize)
+    // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
 
     const chainArgs: CommandFilterArgs = { 
       videoRate, time, quantize, visible, outputSize: outputSize, commandFiles, 

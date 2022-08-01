@@ -3,7 +3,7 @@ import { Rect, rectsEqual, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../MoveMe"
 import { Filter } from "../Filter/Filter"
-import { Anchors, DataType, DirectionObject, Directions } from "../Setup/Enums"
+import { Anchors, DataType, DirectionObject, Directions, Orientation } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isBelowOne, isDefined, isTimeRange } from "../Utility/Is"
 import { Container, ContainerClass, ContainerDefinition } from "./Container"
@@ -23,7 +23,20 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-    
+      this.addProperties(object, propertyInstance({
+        name: 'x', type: DataType.Percent, defaultValue: 0.5,
+        group: DataGroup.Point, tweenable: true, 
+      }))
+      this.addProperties(object, propertyInstance({
+        name: 'y', type: DataType.Percent, defaultValue: 0.5,
+        group: DataGroup.Point, tweenable: true, 
+      }))
+      
+      this.addProperties(object, propertyInstance({
+        name: 'lock', type: DataType.String, defaultValue: Orientation.H,
+        group: DataGroup.Size, 
+      }))
+      
       // offN, offS, offE, offW
       Directions.forEach(direction => {
         this.addProperties(object, propertyInstance({
@@ -37,8 +50,8 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         type: DataType.Percent, defaultValue: 1.0,
           group: DataGroup.Opacity,
       }))
-    
     }
+
     private _blendFilter?: Filter
     get blendFilter() { return this._blendFilter ||= filterFromId('blend')}
 
@@ -63,6 +76,8 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
 
     colorMaximize = false
 
+    container = true
+    
     containerColorCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
       const { visible, contentColors, containerRects } = args
@@ -91,15 +106,21 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const { contentColors, filterInput: input, visible } = args
       if (!visible) return commandFilters
 
-      // console.log(this.constructor.name, "containerCommandFilters")
-
       let filterInput = input
+
+      // add effects...
+      const effectsFilters = this.effectsCommandFilters({ ...args, filterInput })
+      if (effectsFilters.length) {
+        commandFilters.push(...effectsFilters)
+        filterInput = arrayLast(arrayLast(effectsFilters).outputs)
+      }
       assertPopulatedString(filterInput, 'filterInput')
 
       if (!contentColors?.length) {
         commandFilters.push(...this.alphamergeCommandFilters({ ...args, filterInput }))
         filterInput = arrayLast(arrayLast(commandFilters).outputs)
       } 
+
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
@@ -127,7 +148,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const tweenRect = tweenOverRect(forcedScale, forcedScaleEnd)
       const tweened = tweenScaleSizeToRect(size, tweenRect, directionObject)
       const tuple: RectTuple = [transformedRect, tweened]
-      console.log(this.constructor.name, "containerRects", tuple, tweenRects, locked)
+      // console.log(this.constructor.name, "containerRects", tuple, tweenRects, locked)
 
       return tuple
     }
@@ -172,7 +193,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           commandFilters.push(...opacityFilters)
           filterInput = arrayLast(arrayLast(opacityFilters).outputs)
         }  
-        // console.log(this.constructor.name, "containerFinalCommandFilters", opacityFilters.length)
         commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
       } else {
         commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
@@ -188,10 +208,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return this.definitionId === "com.moviemasher.container.default" 
     }
 
-    mutable = false
 
-    muted = false
-    
     declare height: number
 
     declare mode: number

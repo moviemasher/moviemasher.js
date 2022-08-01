@@ -45,7 +45,10 @@ export function PlayerContent(props: PropsWithoutChild): ReactResult {
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const handleDraw = () => { setSvgs(editor.svgs) }
+  const handleDraw = async () => { 
+    const svgs = await editor.svgs
+    setSvgs(svgs) 
+  }
 
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
 

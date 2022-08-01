@@ -65,6 +65,10 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
   }
   isRange = true
 
+  get last() : number { return this.frame + this.frames - 1 }
+
+  get lastTime() : Time { return new TimeClass(this.last, this.fps) }
+
   get lengthSeconds() : number { return Number(this.frames) / Number(this.fps) }
 
   get position(): number { return Number(this.frame) / Number(this.frames) }

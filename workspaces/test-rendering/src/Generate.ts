@@ -1,17 +1,17 @@
 
-import { PopulatedString } from "../../../packages/moviemasher.js/src/declarations"
-import { colorBlack, colorBlue, colorGreen, colorRed } from "../../../packages/moviemasher.js/src/Utility/Color"
-import { assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString, throwError } from "../../../packages/moviemasher.js/src/Utility/Is"
-import { assertSize, DimensionsPreview, isSize, Size } from "../../../packages/moviemasher.js/src/Utility/Size"
-import { TextContainerObject } from "../../../packages/moviemasher.js/src/Container/TextContainer/TextContainer"
-import { ContentObject } from "../../../packages/moviemasher.js/src/Content/Content"
-import { assertContainerObject, ContainerObject, isContainerObject } from "../../../packages/moviemasher.js/src/Container/Container"
-import { DefinitionObjects } from "../../../packages/moviemasher.js/src/Definition/Definition"
-import { assertPoint, isPoint, Point } from "../../../packages/moviemasher.js/src/Utility/Point"
-import { Directions } from "../../../packages/moviemasher.js/src/Setup/Enums"
-import { ClipObject } from "../../../packages/moviemasher.js/src/Media/Clip/Clip"
-import { clipDefault } from "../../../packages/moviemasher.js/src/Media/Clip/ClipFactory"
-import { MashObject } from "../../../packages/moviemasher.js/src/Edited/Mash/Mash"
+import { 
+  PopulatedString,
+colorBlack, colorBlue, colorGreen, colorRed,
+assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString,
+ assertSize, DimensionsPreview, isSize, Size, TextContainerObject,
+ ContentObject ,
+ assertContainerObject, ContainerObject, isContainerObject,
+ DefinitionObjects,
+ assertPoint, isPoint, Point, 
+ throwError,
+ Directions,
+ ClipObject, clipDefault, MashObject, Tracks, TrackObject, Duration
+ } from "@moviemasher/moviemasher.js"
 
 enum GeneratePoint {
   TL = 'TL',
@@ -199,8 +199,8 @@ export const GenerateOptionsDefault: GenerateOptions = {
 
 export const GenerateTestsDefault: GenerateTests = {
   [GenerateArg.Container]: [
-    ["K", "kitten", {}],
     ["R", 'com.moviemasher.container.default', {}],
+    ["K", "kitten", {}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
     ["S", 'com.moviemasher.container.chat', {}],
@@ -208,8 +208,10 @@ export const GenerateTestsDefault: GenerateTests = {
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
-    ["P", "puppy", {}],
     ["BL", "com.moviemasher.content.default", { color: colorBlue }],
+    ["P", "puppy", {}],
+    ["RGB", "rgb", {}],
+    ["V", "video", {}],
     // ["BK", "com.moviemasher.content.default", { color: colorBlack }],
     // ["RE", "com.moviemasher.content.default", { color: colorRed }],
     // ["WH", "com.moviemasher.content.default", { color: colorWhite }],
@@ -265,6 +267,11 @@ export const GenerateDefinitionObjects: DefinitionObjects = [
     "width": 3024, "height": 4032
   },
   {
+    "id": "rgb",
+    "type": "video",
+    "source": "../shared/video/rgb.mp4",
+  },
+  {
     "id": "kitten",
     "type": "image",
     "source": "../shared/image/kitten/image.jpg",
@@ -279,10 +286,9 @@ export const GenerateDefinitionObjects: DefinitionObjects = [
   },
   {
     "type": "video",
-    "label": "Video", "id": "video-rgb",
-    "url": "../shared/video/rgb.mp4",
-    "source": "../shared/video/rgb.mp4",
-    "duration": 3, "fps": 10
+    "label": "Video", "id": "video",
+    "url": "../shared/video/dance.mp4",
+    "source": "../shared/video/dance.mp4"
   }
 ]
 
@@ -342,37 +348,35 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   return mashIds
 }
 
-export const generateTests = (generateOptions: GenerateOptions, testId = 'all', size = DimensionsPreview, frames = 10): GenerateMashTest => {
+export const generateTests = (generateOptions: GenerateOptions, testId = 'all', size = DimensionsPreview, frames = 10, labels = false): GenerateMashTest => {
   const ids = generateIds(generateOptions)
   const clips: ClipObject[] = []
   const labelClips: ClipObject[] = []
   ids.forEach(id => {
-    const [clip, labelClip] = generateClips(id, size, frames)
+    const [clip, labelClip] = generateClips(id, size, frames, labels)
     clips.push(clip)
-    labelClips.push(labelClip)
+    if (labelClip) labelClips.push(labelClip)
   })
+  const tracks: TrackObject[] = [{ clips }]
+  if (labels) tracks.push({ clips: labelClips, dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: colorGreen,
-    tracks: [ 
-      { clips }, { clips: labelClips, dense: true },
-    ] 
+    id: testId, backcolor: colorGreen, tracks 
   }
   return [testId, mash]
 }
 
-export const generateTest = (testId: GenerateTestId, size = DimensionsPreview, frames = 10): GenerateMashTest => {
-  const [clip, labelClip] = generateClips(testId, size, frames)
+export const generateTest = (testId: GenerateTestId, size = DimensionsPreview, frames = Duration.Unknown, labels = false): GenerateMashTest => {
+  const [clip, labelClip] = generateClips(testId, size, frames, labels)
+  const tracks: TrackObject[] = [{ clips: [clip] }]
+  if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: colorGreen,
-    tracks: [ 
-      { clips: [clip] }, { clips: [labelClip], dense: true },
-    ] 
+    id: testId, backcolor: colorGreen, tracks 
   }
   return [testId, mash]
 }
 
 type ClipObjectTuple = [ClipObject, ClipObject]
-const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames = 10): ClipObjectTuple => {
+const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames = Duration.Unknown, labels = false): ClipObject[] => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
@@ -424,8 +428,13 @@ const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames 
       ...constrained,
     }
   }  
-  const labelClip: ClipObject = { 
-    ...debugClip, container: { ...debug, string: testId }
+  const objects = [clip]
+  if (labels) {
+    const labelClip: ClipObject = { 
+      ...debugClip, container: { ...debug, string: testId }
+    }  
+    objects.push(labelClip)
   }
-  return [clip, labelClip] 
+  
+  return objects
 }

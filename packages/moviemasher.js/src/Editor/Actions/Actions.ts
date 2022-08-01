@@ -1,6 +1,7 @@
 import { ActionType } from "../../Setup/Enums"
 import { isPositive } from "../../Utility/Is"
 import { Editor } from "../Editor"
+import { EditorSelection } from "../Selectable"
 import { Action, ActionObject, ActionOptions, assertAction } from "./Action/Action"
 import { actionInstance } from "./Action/ActionFactory"
 import { ChangeAction, isChangeAction, isChangeActionObject } from "./Action/ChangeAction"
@@ -83,6 +84,8 @@ export class Actions  {
     this.instances.splice(0, this.index + 1)
     this.index = -1
   }
+
+  get selection(): EditorSelection { return this.editor.selection }
 
   undo() : Action {
     const action = this.currentAction

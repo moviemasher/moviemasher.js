@@ -1,4 +1,5 @@
-import { assertAboveZero, isNumber, isObject, throwError } from "./Is"
+import { assertAboveZero, isNumber, isObject } from "./Is"
+import { throwError } from "./Throw";
 
 export interface Size {
   width: number;

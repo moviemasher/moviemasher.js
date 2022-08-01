@@ -1,7 +1,7 @@
 import { Scalar, UnknownObject } from "../../declarations"
 import { Size } from "../../Utility/Size"
 import { GraphFiles, GraphFileOptions } from "../../MoveMe"
-import { SelectedProperties } from "../../Utility/SelectedProperty"
+import { SelectedItems } from "../../Utility/SelectedProperty"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
 import { ActionType, DataType, DroppingPosition, SelectType } from "../../Setup/Enums"
@@ -18,6 +18,7 @@ import { EmptyMethod } from "../../Setup/Constants"
 import { PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
 import { svgElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
+import { Selectables } from "../../Editor/Selectable"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -116,6 +117,7 @@ export class CastClass extends EditedClass implements Cast {
     }
     const layer = layerInstance(object, this)
     assertLayer(layer)
+    layer.cast = this
 
     return layer
   }
@@ -145,12 +147,10 @@ export class CastClass extends EditedClass implements Cast {
     return CastLayerFolders(this.layers)
   }
 
-  layersInitialize(layerObjects?: LayerObjects): void {
-    if (!layerObjects) return
-    const { preloader } = this
-    this.layers.push(...layerObjects.map(layer =>
-      layerInstance({ preloader, ...layer }, this)
-    ))
+  private layersInitialize(objects?: LayerObjects): void {
+    if (!objects) return
+    
+    this.layers.push(...objects.map(object => this.createLayer(object)))
   }
 
   loadPromise(args?: GraphFileOptions): Promise<void> {
@@ -192,21 +192,11 @@ export class CastClass extends EditedClass implements Cast {
     return { position: index, layer: layerFolder }
   }
 
-  svgs(args: PreviewOptions): Svgs {
-    const { mashes } = this
-    const svgs = mashes.reverse().flatMap(mash => mash.svgs(args))
-    // console.log(this.constructor.name, "svgs", svgs.length, mashes.length)
-    return svgs
-  }
+  selectType = SelectType.Cast
 
-  svg(args: PreviewOptions): Svg {
-    const { imageSize, id } = this
-    const element = svgElement(imageSize)
-    element.append(...this.svgs(args).map(svg => svg.element))
-    return { id, element: element }
-  }
+  selectables(): Selectables { return [this] }
 
-  selectedProperties(actions: Actions): SelectedProperties {
+  selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => ({
       selectType: SelectType.Cast, property, 
       value: this.value(property.name),
@@ -222,6 +212,28 @@ export class CastClass extends EditedClass implements Cast {
       },
     }))
   }
+
+  svg(args: PreviewOptions): Promise<Svg> {
+    return this.svgs(args).then(svgs => {
+       const { imageSize, id } = this
+      const element = svgElement(imageSize)
+      element.append(...svgs.map(svg => svg.element))
+      return { id, element: element }
+    })
+  }
+
+  svgs(args: PreviewOptions): Promise<Svgs> {
+    const { mashes } = this
+    const { length } = mashes
+    if (!length) return Promise.resolve([])
+
+    const promises = mashes.map(mash => mash.svgs(args))
+    const promise = Promise.all(promises).then(svgsArray => {
+      return svgsArray.reverse().flat()
+    })
+    return promise
+  }
+
   toJSON(): UnknownObject {
     const json = super.toJSON()
     json.layers = this.layers

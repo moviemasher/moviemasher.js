@@ -3,7 +3,7 @@ import { Errors } from "../../../Setup/Errors"
 import { ActionType } from "../../../Setup/Enums"
 
 import { Mash } from "../../../Edited/Mash/Mash"
-import { EditorSelection } from "../../Editor"
+import { EditorSelection } from "../../Selectable"
 import { Cast } from "../../../Edited/Cast/Cast"
 
 

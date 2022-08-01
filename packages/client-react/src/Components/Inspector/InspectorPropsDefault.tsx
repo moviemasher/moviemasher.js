@@ -39,12 +39,12 @@ export const DefaultInspectorProps: PropsMethod<InspectorPropsDefault, Inspector
 
   const contentChildren = [<InspectorProperties key="properties" />]
   if (!noApi) {
-    const types = [SelectType.Clip, SelectType.Track, SelectType.Effect]
+    const types = [SelectType.Clip, SelectType.Track, SelectType.Layer]
     types.forEach(type => {
       const removeProps = { type }
       const typeProps = { ...removeProps, key: `${type}-delete` }
       const buttonProps = { 
-        startIcon: DefaultIcons.remove, children: label('remove') 
+        startIcon: DefaultIcons.remove, children: label('remove', type) 
       }
       contentChildren.push(
         <InspectorType { ...typeProps }>

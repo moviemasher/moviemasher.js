@@ -3,6 +3,7 @@ import { Loader } from "../../../Loader/Loader"
 import { DroppingPosition, isLayerType, LayerType } from "../../../Setup/Enums"
 import { isObject } from "../../../Utility/Is"
 import { Mash, Mashes, MashObject } from "../../Mash/Mash"
+import { Cast } from "../Cast"
 import { Triggers } from "../Trigger/Trigger"
 
 
@@ -59,6 +60,7 @@ export interface LayerFolder extends Layer, LayerFolderArgs {
 export interface Layer extends Propertied, LayerArgs {
   id: string
   mashes: Mashes
+  cast: Cast
   type: LayerType
   triggers: Triggers
 }

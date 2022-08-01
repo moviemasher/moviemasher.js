@@ -2,7 +2,7 @@ import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
   DefinitionType, LoadType, TrackType, ValueObject, CommandOutputs, OutputType,
-  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault,
+  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault, assertPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
 
@@ -42,7 +42,7 @@ export const renderingDefinitionTypeCommandOutputs = (definitionType: Definition
       break
     }
     case DefinitionType.VideoSequence: {
-      outputs.push({ outputType: OutputType.Audio })
+      outputs.push({ outputType: OutputType.Audio, optional: true })
       outputs.push({ outputType: OutputType.Image })
       outputs.push({ outputType: OutputType.ImageSequence })
       // outputs.push({ outputType: OutputType.Waveform })
@@ -71,10 +71,14 @@ export const renderingCommandOutputs = (commandOutputs: CommandOutputs): Command
   })
 }
 
-export const renderingOutputFile = (commandOutput: RenderingCommandOutput, extension?: string): string => {
+export const renderingOutputFile = (index: number, commandOutput: RenderingCommandOutput, extension?: string): string => {
   const { basename, format, extension: outputExtension, outputType } = commandOutput
   const ext = extension || outputExtension || format
-  return `${basename || outputType}.${ext}`
+  assertPopulatedString(ext)
+  const components = [basename || outputType]
+  if (index) components.push(String(index))
+  components.push(ext)
+  return components.join('.')
 }
 
 export const renderingSource = (commandOutput?: RenderingCommandOutput): string => {

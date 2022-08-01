@@ -1,10 +1,11 @@
-import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { InputContext } from '../../../Contexts/InputContext'
-import { ReactResult } from '../../../declarations'
-import { DataTypeInputs } from '../DataTypeInputs'
+import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
 
-export function DefaultRgbInput(): ReactResult {
+import { ReactResult } from '../../declarations'
+import { InputContext } from '../../Contexts/InputContext'
+import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+
+export function RgbTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
@@ -24,4 +25,4 @@ export function DefaultRgbInput(): ReactResult {
   return <input {...colorProps} />
 }
 
-DataTypeInputs[DataType.Rgb] = <DefaultRgbInput />
+DataTypeInputs[DataType.Rgb] = <RgbTypeInput />

@@ -33,14 +33,8 @@ module.exports = {
       coverageDirectory: "./temporary/test/coverage",
       collectCoverageFrom: ["packages/moviemasher.js/src/**/*.ts"],
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.setup.js"],
-      testRegex: 'packages/moviemasher.js/src/.*\\.test\\.ts$',
+      testRegex: 'packages/moviemasher.*\\.test\\.ts$',
       testEnvironment: "jsdom",
-    }, {
-      ...defaults,
-      displayName: "Tester",
-      preset: "jest-puppeteer",
-      testRegex: 'packages/moviemasher.js/src/.*\\.test\\.e2e\\.ts$',
-      setupFilesAfterEnv: ["<rootDir>/dev/test/jest.puppeteer.setup.js"],
     }
   ]
 }

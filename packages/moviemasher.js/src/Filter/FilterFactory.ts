@@ -11,12 +11,10 @@ import { Factories } from "../Definitions/Factories"
 import { assertPopulatedString } from "../Utility/Is"
 import { DefinitionType } from "../Setup/Enums"
 import { FilterDefinitionClass } from "./FilterDefinitionClass"
-import { BlendFilter } from "./Definitions/BlendFilter"
 import { OpacityFilter } from "./Definitions/OpacityFilter"
 import { SetsarFilter } from "./Definitions/SetsarFilter"
 import { FpsFilter } from "./Definitions/FpsFilter"
 import { IdPrefix } from "../Setup/Constants"
-import { AlphaColorFilter } from "./Definitions/AlphaColorFilter"
 import { SetptsFilter } from "./Definitions/SetptsFilter"
 import { AlphamergeFilter } from "./Definitions/AlphamergeFilter"
 import { TrimFilter } from "./Definitions/TrimFilter"
@@ -26,9 +24,7 @@ import { ColorizeFilter } from "./Definitions/ColorizeFilter"
 export const FilterIdPrefix = `${IdPrefix}filter.`
 
 export const filterDefaults = [
-  new AlphaColorFilter({ id: `${FilterIdPrefix}alphacolor` }),
   new AlphamergeFilter({ id: `${FilterIdPrefix}alphamerge` }),
-  new BlendFilter({ id: `${FilterIdPrefix}blend` }),
   new ChromaKeyFilter({ id: `${FilterIdPrefix}chromakey` }),
   new ColorChannelMixerFilter({ id: `${FilterIdPrefix}colorchannelmixer` }),
   new ColorFilter({ id: `${FilterIdPrefix}color` }),

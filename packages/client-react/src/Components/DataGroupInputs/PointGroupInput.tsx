@@ -1,10 +1,8 @@
 import React from "react"
-import { assertSelectType, ClassButton, ClassSelected, DataGroup, Directions, isDefined, selectedPropertiesGroupedByName } from "@moviemasher/moviemasher.js"
+import { assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, isDefined, selectedPropertyObject } from "@moviemasher/moviemasher.js"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
-import { InspectorPropertiesProps,  } from "../Inspector/InspectorProperties"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
-import { InspectorProperty, InspectorPropertyProps } from "../Inspector/InspectorProperty"
 import { DefaultIcons } from "@moviemasher/icons-default"
 import { sessionGet, sessionSet } from "../../Utilities/Session"
 import { PropertyTweenSuffix } from "@moviemasher/moviemasher.js"
@@ -13,18 +11,19 @@ import { ScalarObject } from "@moviemasher/moviemasher.js"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../../Contexts/InputContext"
 import { View } from "../../Utilities/View"
-
+import { useEditor } from "../../Hooks/useEditor"
 
 const PointInputKey = 'point-input-tween'
-export function PointInput(props: DataGroupProps): ReactResult {
+
+export function PointGroupInput(props: DataGroupProps): ReactResult {
+  const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
   const [tweening, setTweening] = React.useState(!!sessionGet(PointInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedProperties: properties } = inspectorContext
-  const byName = selectedPropertiesGroupedByName(properties, DataGroup.Point, selectType)
+  const { selectedItems: properties } = inspectorContext
+  const byName = selectedPropertyObject(properties, DataGroup.Point, selectType)
   
-
   const { 
     offE, offW, offN, offS, x, y, 
     [`x${PropertyTweenSuffix}`]: xEnd,
@@ -41,6 +40,11 @@ export function PointInput(props: DataGroupProps): ReactResult {
     xEnd: xEndValue, 
     yEnd: yEndValue 
   } = values
+  const { time } = x
+  const { time: timeEnd } = xEnd
+  assertTime(time)
+  assertTime(timeEnd)
+
   const xTween = isDefined(xEndValue) && xValue !== xEndValue
   const yTween = isDefined(yEndValue) && yValue !== yEndValue
   const endsDefined = xTween || yTween
@@ -69,6 +73,7 @@ export function PointInput(props: DataGroupProps): ReactResult {
     className: tweening ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
+      editor.goToTime(time)
       setTweening(false)
       sessionSet(PointInputKey, '')
     }
@@ -79,6 +84,7 @@ export function PointInput(props: DataGroupProps): ReactResult {
     className: tweening ? selectedButton : ClassButton,
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
+      editor.goToTime(timeEnd)
       setTweening(true)
       sessionSet(PointInputKey, 1)
     }
@@ -133,4 +139,4 @@ export function PointInput(props: DataGroupProps): ReactResult {
 
 }
 
-DataGroupInputs[DataGroup.Point] = <PointInput key="point-input" />
+DataGroupInputs[DataGroup.Point] = <PointGroupInput key="point-input" />

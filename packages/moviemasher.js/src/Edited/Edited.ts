@@ -1,7 +1,7 @@
 import { Described, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
-import { SelectedProperties } from "../Utility/SelectedProperty"
+import { SelectedItems } from "../Utility/SelectedProperty"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
@@ -38,6 +38,6 @@ export interface Edited extends Described, Propertied {
   reload(): Promise<void> | undefined
   // svgElement(graphArgs: PreviewOptions): SVGSVGElement
 
-  svgs(graphArgs: PreviewOptions): Svgs
-  svg(graphArgs: PreviewOptions): Svg
+  svgs(graphArgs: PreviewOptions): Promise<Svgs>
+  svg(graphArgs: PreviewOptions): Promise<Svg>
 }

@@ -5,22 +5,22 @@ import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
 import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { SelectedProperties } from "../../Utility/SelectedProperty"
+import { SelectedEffects, SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { DataType, Orientation, SelectType } from "../../Setup/Enums"
+import { ActionType, DataType, Orientation } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { assertProperty, DataGroup, propertyInstance } from "../../Setup/Property"
+import { assertProperty, DataGroup, Property, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { colorBlackOpaque, colorName, colorWhite } from "../../Utility/Color"
 import { idGenerate } from "../../Utility/Id"
-import { assertAboveZero, assertArray, assertNumber, assertPopulatedString, assertTrue, isNumber, isPopulatedArray, isTimeRange, isUndefined } from "../../Utility/Is"
+import { assertAboveZero, assertArray, assertNumber, assertPopulatedString, assertPositive, assertTrue, isNumber, isPopulatedArray, isTimeRange, isUndefined } from "../../Utility/Is"
 import { assertSize, Size, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Clip } from "../../Media/Clip/Clip"
-import { Effects } from "../../Media/Effect/Effect"
+import { Effect, Effects } from "../../Media/Effect/Effect"
 import { effectInstance } from "../../Media/Effect/EffectFactory"
 
 export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
@@ -28,25 +28,11 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { container, effects } = object as TweenableObject
-      const { isDefault } = this
-      if (container || !isDefault) {
-        this.addProperties(object, propertyInstance({
-          name: 'x', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
-        }))
-        this.addProperties(object, propertyInstance({
-          name: 'y', type: DataType.Percent, defaultValue: 0.5,
-          group: DataGroup.Point, tweenable: true, 
-        }))
-        
-        this.addProperties(object, propertyInstance({
-          name: 'lock', type: DataType.Orientation, defaultValue: Orientation.H,
-          group: DataGroup.Size, 
-        }))
-      }
-      if (effects) this.effects.push(...effects.map(effect => effectInstance(effect)))
-
+      const { effects } = object as TweenableObject
+      if (effects) this.effects.push(...effects.map(effectObject => {
+        const effect = effectInstance(effectObject)
+        return effect
+      }))
     }
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -194,13 +180,13 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     }
 
     containerCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      console.log(this.constructor.name, "containerCommandFilters returning empty")
+      // console.log(this.constructor.name, "containerCommandFilters returning empty")
       return [] 
     }
 
     contentCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      console.log(this.constructor.name, "contentCommandFilters returning empty")
-      return [] 
+      // console.log(this.constructor.name, "contentCommandFilters returning empty")
+      return this.effectsCommandFilters(args)
     }
 
     copyCommandFilter(input: string, track: number, prefix = 'content'): CommandFilter {
@@ -225,7 +211,24 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     effects: Effects = []
   
-    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters { return [] }
+    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters { 
+      return []
+    }
+
+    effectsCommandFilters(args: CommandFilterArgs): CommandFilters { 
+      const commandFilters: CommandFilters = []
+      const { filterInput: input } = args
+      let filterInput = input
+      assertPopulatedString(filterInput)
+
+      const { effects } = this
+      commandFilters.push(...effects.flatMap(effect => {
+        const filters = effect.commandFilters({ ...args, filterInput })
+        if (filters.length) filterInput = arrayLast(arrayLast(filters).outputs)
+        return filters
+      }))
+      return commandFilters
+    }
 
     graphFiles(args: GraphFileArgs): GraphFiles { return [] }
 
@@ -267,6 +270,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFilters
     }
 
+    mutable() { return false }
+    
+    declare muted: boolean 
+    
     declare offE: boolean
     declare offN: boolean
     declare offS: boolean
@@ -288,7 +295,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       // console.log(this.constructor.name, "scaleCommandFilters", containerRects, duration)
       const commandFilters: CommandFilters = []
       
-      const { scaleFilter, setsarFilter } = this
+      const { scaleFilter } = this
       const filterCommandFilterArgs: FilterCommandFilterArgs = { 
         duration, videoRate, filterInput
       }
@@ -310,54 +317,110 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
-    selectedProperties(actions: Actions): SelectedProperties {
-      const selectedProperties: SelectedProperties = []
-      const { container, clip, isDefault } = this
+    selectedItems(actions: Actions): SelectedItems {
+      const selectedItems: SelectedItems = []
+      const { container, clip: target, effects, selectType } = this
 
-      // add contentId or containerId from clip, as if it were my property  
-      const selectType = container ? SelectType.Container : SelectType.Content 
+      // add contentId or containerId from target, as if it were my property  
       const dataType = container ? DataType.ContainerId : DataType.ContentId
-      const property = clip.properties.find(property => property.type === dataType)
+      const property = target.properties.find(property => property.type === dataType)
       assertProperty(property)
 
       const value = this.definitionId
-      selectedProperties.push({
+      selectedItems.push({
         selectType, property, value,
         changeHandler: (property: string, value: Scalar) => {
           const undoValue = this.value(property)
           const redoValue = isUndefined(value) ? undoValue : value
-          actions.create({ property, target: clip, redoValue, undoValue })
+          actions.create({ property, target, redoValue, undoValue })
         },
       })
-      const colorKeys = ['lock', 'width', 'height', 'x', 'y']
+
+
       // add my actual properties
       this.properties.forEach(property => {
-        const { name, tweenable } = property
-        console.log(this.constructor.name, "selectedProperties", container, isDefault, name)
-        if ((!container) && isDefault && colorKeys.includes(name)) return
+        selectedItems.push(...this.selectedProperties(actions, property))
+      })
 
-        selectedProperties.push({
-          selectType, property, value: this.value(name), 
+      // add effects 
+      const { selection } = actions
+      const undoEffects = [...effects]
+      const selectedEffects: SelectedEffects = {
+        selectType,
+        value: this.effects, 
+        removeHandler: (effect: Effect) => {
+          const options = {
+            redoSelection: { ...selection, effect: undefined },
+            effects,
+            undoEffects,
+            redoEffects: effects.filter(other => other !== effect),
+            type: ActionType.MoveEffect
+          }
+          actions.create(options)
+        },
+        moveHandler: (effect: Effect, index = 0) => {
+          // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
+          assertPositive(index, 'index')
+          
+          const redoEffects = undoEffects.filter(e => e !== effect)
+          const currentIndex = undoEffects.indexOf(effect)
+          const insertIndex = currentIndex < index ? index - 1 : index
+          redoEffects.splice(insertIndex, 0, effect)
+          const options = {
+            effects, undoEffects, redoEffects, type: ActionType.MoveEffect, 
+            effectable: this
+          }
+          actions.create(options)
+        },
+        
+        addHandler: (effect: Effect, insertIndex = 0) => {
+          assertPositive(insertIndex, 'index')
+          const redoEffects = [...effects]
+          redoEffects.splice(insertIndex, 0, effect)
+          const options = {
+            effects,
+            undoEffects,
+            redoEffects,
+            redoSelection: { ...selection, effect },
+            type: ActionType.MoveEffect
+          }
+          actions.create(options)
+        },
+      }
+      selectedItems.push(selectedEffects)
+      return selectedItems
+    }
+
+    selectedProperties(actions: Actions, property: Property): SelectedProperties {
+      const selectedProperties: SelectedProperties = []
+      const { name, tweenable } = property
+      const { clip, selectType } = this
+      const timeRange = clip.timeRange(actions.editor.edited!.quantize)
+
+      const selectedProperty: SelectedProperty = {
+        selectType, property, value: this.value(name), 
+        changeHandler: (property: string, value: Scalar) => {
+          const undoValue = this.value(property)
+          const redoValue = isUndefined(value) ? undoValue : value
+          actions.create({ property, target: this, redoValue, undoValue })
+        }
+      }
+      if (tweenable) selectedProperty.time = timeRange.startTime
+      selectedProperties.push(selectedProperty)
+      if (tweenable) {
+        const tweenName = [name, PropertyTweenSuffix].join('')
+        const selectedPropertEnd: SelectedProperty = {
+          selectType, property, value: this.value(tweenName), name: tweenName,
+          time: timeRange.lastTime,
           changeHandler: (property: string, value: Scalar) => {
             const undoValue = this.value(property)
-            // console.log("changeHandler", property, undoValue, "=>", value)
             const redoValue = isUndefined(value) ? undoValue : value
             actions.create({ property, target: this, redoValue, undoValue })
           }
-        })
-        if (tweenable) {
-          const tweenName = [name, PropertyTweenSuffix].join('')
-          selectedProperties.push({
-            selectType, property, value: this.value(tweenName), name: tweenName,
-            changeHandler: (property: string, value: Scalar) => {
-              const undoValue = this.value(property)
-              // console.log("changeHandler TWEEN", property, undoValue, "=>", value)
-              const redoValue = isUndefined(value) ? undoValue : value
-              actions.create({ property, target: this, redoValue, undoValue })
-            }
-          })
         }
-      })
+        selectedProperties.push(selectedPropertEnd)
+      }
+
       return selectedProperties
     }
     

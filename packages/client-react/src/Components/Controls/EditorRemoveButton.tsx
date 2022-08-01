@@ -5,7 +5,7 @@ import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 
 export interface EditorRemoveButtonProps extends PropsAndChild {
-  type?: string
+  type: string
 }
 
 export function EditorRemoveButton(props: EditorRemoveButtonProps): ReactResult {

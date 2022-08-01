@@ -7,8 +7,10 @@ import { Layer, LayerArgs } from "./Layer"
 import { Scalar, UnknownObject } from "../../../declarations"
 import { idGenerate } from "../../../Utility/Id"
 import { Actions } from "../../../Editor/Actions/Actions"
-import { SelectedProperties } from "../../../Utility/SelectedProperty"
+import { SelectedItems } from "../../../Utility/SelectedProperty"
 import { assertPopulatedString, isUndefined } from "../../../Utility/Is"
+import { Selectables } from "../../../Editor"
+import { Cast } from "../Cast"
 
 export class LayerClass extends PropertiedClass implements Layer {
   constructor(args: LayerArgs) {
@@ -19,6 +21,10 @@ export class LayerClass extends PropertiedClass implements Layer {
     this.propertiesInitialize(args)
   }
 
+  _cast?: Cast 
+  get cast() { return this._cast! }
+  set cast(value: Cast) { this._cast = value }
+  
   _id?: string
   get id(): string { return this._id ||= idGenerate() }
 
@@ -26,7 +32,11 @@ export class LayerClass extends PropertiedClass implements Layer {
 
   declare label: string
 
-  selectedProperties(actions: Actions): SelectedProperties {
+  selectType = SelectType.Layer
+
+  selectables(): Selectables { return [this, ...this.cast.selectables()] }
+
+  selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => ({
       selectType: SelectType.Layer, property, 
       changeHandler: (property: string, value: Scalar) => {

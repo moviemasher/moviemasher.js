@@ -80,6 +80,4 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     }
     return imageElement
   }
-
-
 }

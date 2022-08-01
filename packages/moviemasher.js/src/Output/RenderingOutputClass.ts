@@ -100,6 +100,7 @@ export class RenderingOutputClass implements RenderingOutput {
       time, graphType, videoRate, size: this.sizeCovered(), 
       avType: this.avTypeNeededForClips
     }
+
     return filterGraphsOptions
   }
 
@@ -107,7 +108,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   protected get mashDurationPromise(): Promise<void> {
     const clips = this.durationClips
-    // console.log(this.constructor.name, "mashDurationPromise", clips.length)
+    // console.log(this.constructor.name, "mashDurationPromise", clips.length, "clip(s)")
 
     if (!clips.length) return Promise.resolve()
 
@@ -119,15 +120,23 @@ export class RenderingOutputClass implements RenderingOutput {
     const time = timeRangeFromArgs(startFrame, quantize, endFrame + 1)
 
     const { avType, graphType } = this
-    const options: GraphFileOptions = {
+    const options: GraphFileArgs = {
       audible: avType !== AVType.Video,
       visible: avType !== AVType.Audio,
       time, streaming: graphType === GraphType.Cast,
+      quantize,
     }
-    const files = mash.graphFiles(options).filter(graphFile => isLoadType(graphFile.type))
+    const graphFiles = clips.flatMap(clip => clip.clipGraphFiles(options))
+   
+    const files = graphFiles.filter(graphFile => isLoadType(graphFile.type))
+    // console.log(this.constructor.name, "mashDurationPromise", files.length, "file(s)")
 
     const { preloader } = mash
-    return preloader.loadFilesPromise(files).then(() => { this.assureClipFrames() })
+    return preloader.loadFilesPromise(files).then(() => { 
+      // console.log(this.constructor.name, "mashDurationPromise loadFilesPromise done, calling assureClipFrames")
+
+      this.assureClipFrames() 
+    })
   }
 
   get mashSize(): Size | undefined {
@@ -174,9 +183,18 @@ export class RenderingOutputClass implements RenderingOutput {
     // console.log(this.constructor.name, "renderingDescriptionPromise")
 
     let promise = this.mashDurationPromise
-    promise = promise.then(() => this.sizePromise)
-    promise = promise.then(() => this.preloadPromise)
+    promise = promise.then(() => {
+      // console.log(this.constructor.name, "renderingDescriptionPromise mashDurationPromise done")
+      return this.sizePromise
+    })
+    promise = promise.then(() => {
+      // console.log(this.constructor.name, "renderingDescriptionPromise sizePromise")
+      return this.preloadPromise
+    })
     return promise.then(() => {
+      // console.log(this.constructor.name, "renderingDescriptionPromise preloadPromise calling done, calling assureClipFrames")
+      this.assureClipFrames()
+
       const { commandOutput } = this
       const renderingDescription: RenderingDescription = { commandOutput }
       const avType = this.avTypeNeededForClips
@@ -205,6 +223,36 @@ export class RenderingOutputClass implements RenderingOutput {
       }
       return renderingDescription
     })
+  }
+
+  get renderingDescription(): RenderingDescription {
+    const { commandOutput } = this
+    const renderingDescription: RenderingDescription = { commandOutput }
+    const avType = this.avTypeNeededForClips
+    const { filterGraphs } = this
+    // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
+    if (avType !== AVType.Audio) {
+      const { filterGraphsVisible } = filterGraphs
+      const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
+        const { commandFilters, commandInputs: inputs, duration } = filterGraph
+        const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
+      // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
+        return commandDescription
+      })
+      renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
+    }
+    if (avType !== AVType.Video) {
+      const { filterGraphAudible, duration } = filterGraphs
+      if (filterGraphAudible) {
+        const { commandFilters, commandInputs: inputs } = filterGraphAudible
+       
+        const commandDescription: CommandDescription = {
+          inputs, commandFilters, duration, avType: AVType.Audio
+        }
+        renderingDescription.audibleCommandDescription = commandDescription
+      }
+    }
+    return renderingDescription
   }
 
   get startTime(): Time {
@@ -244,6 +292,7 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get sizePromise(): Promise<void> {
+    // console.log(this.constructor.name, "sizePromise")
     if (this.avType === AVType.Audio || !this.outputCover) return Promise.resolve()
 
     const { visibleGraphFiles } = this

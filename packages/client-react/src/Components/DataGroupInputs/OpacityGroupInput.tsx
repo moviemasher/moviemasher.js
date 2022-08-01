@@ -1,10 +1,8 @@
 import React from "react"
-import { assertSelectType, ClassButton, ClassSelected, DataGroup, Directions, isDefined, selectedPropertiesGroupedByName } from "@moviemasher/moviemasher.js"
+import { assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, isDefined, selectedPropertyObject } from "@moviemasher/moviemasher.js"
 import { InspectorContext } from "../../Contexts/InspectorContext"
-import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
-import { InspectorPropertiesProps,  } from "../Inspector/InspectorProperties"
+import { PropsAndChild, ReactResult } from "../../declarations"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
-import { InspectorProperty, InspectorPropertyProps } from "../Inspector/InspectorProperty"
 import { DefaultIcons } from "@moviemasher/icons-default"
 import { sessionGet, sessionSet } from "../../Utilities/Session"
 import { PropertyTweenSuffix } from "@moviemasher/moviemasher.js"
@@ -13,29 +11,27 @@ import { ScalarObject } from "@moviemasher/moviemasher.js"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../../Contexts/InputContext"
 import { View } from "../../Utilities/View"
-
+import { useEditor } from "../../Hooks/useEditor"
 
 const OpacityInputKey = 'opacity-input-tween'
-export function OpacityInput(props: DataGroupProps): ReactResult {
+
+export function OpacityGroupInput(props: DataGroupProps): ReactResult {
+  const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
   const [tweening, setTweening] = React.useState(!!sessionGet(OpacityInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedProperties: properties } = inspectorContext
-  const byName = selectedPropertiesGroupedByName(properties, DataGroup.Opacity, selectType)
-  
-
-  const { 
-    opacity, 
-    [`opacity${PropertyTweenSuffix}`]: opacityEnd,
-  } = byName 
+  const { selectedItems: properties } = inspectorContext
+  const byName = selectedPropertyObject(properties, DataGroup.Opacity, selectType)
+  const { opacity, [`opacity${PropertyTweenSuffix}`]: opacityEnd } = byName 
   const opacityProperty = tweening ? opacityEnd : opacity
+  const { time } = opacity
+  const { time: timeEnd } = opacityEnd
+  assertTime(time)
+  assertTime(timeEnd)
 
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
-  const { 
-    opacity: opacityValue, 
-    opacityEnd: opacityEndValue, 
-  } = values
+  const { opacity: opacityValue, opacityEnd: opacityEndValue } = values
   const endsDefined = isDefined(opacityEndValue) && opacityValue !== opacityEndValue
   
   const { property, changeHandler, value, name: nameOveride } = opacityProperty
@@ -51,6 +47,7 @@ export function OpacityInput(props: DataGroupProps): ReactResult {
     className: tweening ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
+      editor.goToTime(time)
       setTweening(false)
       sessionSet(OpacityInputKey, '')
     }
@@ -61,6 +58,7 @@ export function OpacityInput(props: DataGroupProps): ReactResult {
     className: tweening ? selectedButton : ClassButton,
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
+      editor.goToTime(timeEnd)
       setTweening(true)
       sessionSet(OpacityInputKey, 1)
     }
@@ -79,4 +77,4 @@ export function OpacityInput(props: DataGroupProps): ReactResult {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Opacity] = <OpacityInput key="opacity-input" />
+DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput key="opacity-input" />

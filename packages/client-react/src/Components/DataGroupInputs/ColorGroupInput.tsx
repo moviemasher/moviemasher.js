@@ -1,5 +1,5 @@
 import React from "react"
-import { assertSelectType, ClassButton, ClassSelected, DataGroup, isDefined, selectedPropertiesGroupedByName } from "@moviemasher/moviemasher.js"
+import { assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, isDefined, selectedPropertyObject } from "@moviemasher/moviemasher.js"
 import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
@@ -11,18 +11,26 @@ import { ScalarObject } from "@moviemasher/moviemasher.js"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../../Contexts/InputContext"
 import { View } from "../../Utilities/View"
+import { useEditor } from "../../Hooks/useEditor"
 
 
 const ColorInputKey = 'color-input-tween'
-export function ColorInput(props: DataGroupProps): ReactResult {
+export function ColorGroupInput(props: DataGroupProps): ReactResult {  
+  const editor = useEditor()
+
   const { selectType } = props
   assertSelectType(selectType)
 
   const [tweening, setTweening] = React.useState(!!sessionGet(ColorInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedProperties: properties } = inspectorContext
-  const byName = selectedPropertiesGroupedByName(properties, DataGroup.Color, selectType)
+  const { selectedItems: properties } = inspectorContext
+  const byName = selectedPropertyObject(properties, DataGroup.Color, selectType)
   const { color, [`color${PropertyTweenSuffix}`]: colorEnd } = byName 
+  const { time } = color
+  const { time: timeEnd } = colorEnd
+  assertTime(time)
+  assertTime(timeEnd)
+
   const colorProperty = tweening ? colorEnd : color
 
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
@@ -44,6 +52,7 @@ export function ColorInput(props: DataGroupProps): ReactResult {
     className: tweening ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
+      editor.goToTime(time)
       setTweening(false)
       sessionSet(ColorInputKey, '')
     }
@@ -53,7 +62,8 @@ export function ColorInput(props: DataGroupProps): ReactResult {
     key: 'end',
     className: tweening ? selectedButton : ClassButton,
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
-    onClick: () => {
+    onClick: () => {      
+      editor.goToTime(timeEnd)
       setTweening(true)
       sessionSet(ColorInputKey, 1)
     }
@@ -72,4 +82,4 @@ export function ColorInput(props: DataGroupProps): ReactResult {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Color] = <ColorInput key="color-input" />
+DataGroupInputs[DataGroup.Color] = <ColorGroupInput key="color-input" />

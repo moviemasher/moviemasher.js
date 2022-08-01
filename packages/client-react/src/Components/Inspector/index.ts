@@ -1,4 +1,3 @@
-export * from './InspectorEffects'
 export * from "./Inspector"
 export * from "./InspectorContent"
 export * from "./InspectorEffect"

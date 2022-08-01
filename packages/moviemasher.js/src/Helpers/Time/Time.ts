@@ -21,6 +21,8 @@ export interface TimeRange extends Time {
   frames: number
   includes(frame: number): boolean
   intersects(time: Time): boolean
+  last: number
+  lastTime: Time
   position: number
   positionTime(position: number, rounding?: string): Time
   scale(fps: number, rounding?: string): TimeRange

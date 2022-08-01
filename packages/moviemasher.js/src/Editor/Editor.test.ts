@@ -93,14 +93,14 @@ describe("Editor", () => {
   })
 
 
-  describe("selectedProperties", () => {
+  describe("selectedItems", () => {
     test("returns expected properties", () => {
       const editor = createEditor()
       editor.load({ mash: {}, definitions: []})
       // masher.add(themeTextJson)
-      const selectedProperties = editor.selectedProperties()
-      // console.log('selectedProperties', selectedProperties)
-      expect(selectedProperties.length).toEqual(2)
+      const selectedItems = editor.selectedItems()
+      // console.log('selectedItems', selectedItems)
+      expect(selectedItems.length).toEqual(2)
     })
   })
 

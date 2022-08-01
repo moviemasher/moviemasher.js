@@ -1,14 +1,13 @@
 import { Endpoint, StringObject, VisibleContextData } from "../declarations"
 import { Size } from "../Utility/Size"
-import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler, SelectedProperties } from "../Utility/SelectedProperty"
+import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler, SelectedItems } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction, SelectType, TrackType } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
-import { Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
+import { MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 
-import { Cast } from "../Edited/Cast/Cast"
 import { Definition, DefinitionObject } from "../Definition/Definition"
 import { Effect } from "../Media/Effect/Effect"
 import { Track } from "../Edited/Mash/Track/Track"
@@ -17,9 +16,8 @@ import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
 import { Clip, Clips } from "../Media/Clip/Clip"
 import { Svgs } from "./Preview/Preview"
-import { Content } from "../Content/Content"
-import { Container } from "../Container/Container"
 import { Actions } from "./Actions/Actions"
+import { EditorSelection, Selectable } from "./Selectable"
 
 export interface EditorArgs {
   autoplay: boolean
@@ -36,20 +34,8 @@ export interface EditorArgs {
 
 export interface EditorOptions extends Partial<EditorArgs> { }
 
-export interface SelectableObject extends Record<SelectType, Selectable> {}
-
-export interface EditorSelection extends Partial<SelectableObject> {
-  [SelectType.Cast]?: Cast
-  [SelectType.Mash]?: Mash
-  [SelectType.Layer]?: Layer
-  [SelectType.Track]?: Track
-  [SelectType.Clip]?: Clip
-  [SelectType.Effect]?: Effect
-}
 
 export type ClipOrEffect = Clip | Effect
-
-export type Selectable = Cast | Mash | Track | Layer | Clip | Effect | Content | Container
 
 export interface CastData extends Partial<DataCastGetResponse> { }
 export interface MashData extends Partial<DataMashGetResponse> { }
@@ -102,7 +88,6 @@ export interface Editor {
   readonly edited?: Edited
   readonly selection: EditorSelection
   redo(): void
-  remove(): void
   removeClip(clip: Clip): void
   removeEffect: EffectRemovehandler
   removeLayer(layer: Layer): void
@@ -110,8 +95,8 @@ export interface Editor {
   saved(temporaryIdLookup?: StringObject): void
   select(selectable: Selectable): void
   selectTypes: SelectType[]
-  selectedProperties(selectTypes?: SelectType[]): SelectedProperties
-  svgs: Svgs
+  selectedItems(selectTypes?: SelectType[]): SelectedItems
+  svgs: Promise<Svgs>
   time: Time
   timeRange: TimeRange
   undo(): void

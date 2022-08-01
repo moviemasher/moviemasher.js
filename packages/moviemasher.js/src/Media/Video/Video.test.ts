@@ -15,7 +15,7 @@ describe("Video", () => {
       ...object
     })
 
-    test("returns expected timing", () => {
+    test("returns expected options", () => {
       const quantize = 30
       const timeRange = timeRangeFromArgs(0, quantize)
       const zeroClip = videoInstance(clipObject())

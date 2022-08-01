@@ -8,6 +8,7 @@ import { AudibleContextInstance } from "../../../Context/AudibleContext"
 import { isVideo, Video } from "../../../Media/Video/Video"
 import { Audio, isAudio } from "../../../Media/Audio/Audio"
 import { Clip } from "../../../Media/Clip/Clip"
+import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition } from "../../../Mixin"
 
 export interface AudioPreviewArgs {
   buffer? : number
@@ -15,10 +16,6 @@ export interface AudioPreviewArgs {
   preloader: Loader
 }
 
-export type AudioOrVideo = Audio | Video
-export const isAudioOrVideo = (value: any): value is AudioOrVideo => {
-  return isAudio(value) || isVideo(value)
-}
 
 export class AudioPreview {
   constructor(object : AudioPreviewArgs) {
@@ -34,7 +31,7 @@ export class AudioPreview {
     avs.forEach(av => { this.adjustSourceGain(av, timeRange) })
   }
 
-  private adjustSourceGain(av: AudioOrVideo, timeRange: TimeRange | StartOptions): void {
+  private adjustSourceGain(av: UpdatableDuration, timeRange: TimeRange | StartOptions): void {
 
     const source = AudibleContextInstance.getSource(av.id)
       if (!source) {
@@ -56,8 +53,8 @@ export class AudioPreview {
       }
 
       // position/gain pairs...
-      const timing = isTimeRange(timeRange) ? av.startOptions(this.seconds, timeRange) : timeRange
-      const { start, duration } = timing
+      const options = isTimeRange(timeRange) ? av.startOptions(this.seconds, timeRange) : timeRange
+      const { start, duration } = options
 
       gainNode.gain.cancelScheduledValues(0)
       av.gainPairs.forEach(pair => {
@@ -74,11 +71,11 @@ export class AudioPreview {
 
   clear() {  }
 
-  private clipSources(clip: Clip): AudioOrVideo[] {
-    const avs: AudioOrVideo[] = []
+  private clipSources(clip: Clip): UpdatableDuration[] {
+    const avs: UpdatableDuration[] = []
     const { container, content } = clip
-    if (isAudioOrVideo(container) && !container.muted) avs.push(container)
-    if (isAudioOrVideo(content) && !content.muted) avs.push(content)
+    if (isUpdatableDuration(container) && !container.muted) avs.push(container)
+    if (isUpdatableDuration(content) && !content.muted) avs.push(content)
     return avs
   }
   compositeAudible(clips: Clip[], quantize: number): boolean {
@@ -103,8 +100,8 @@ export class AudioPreview {
       const filtered = avs.filter(av => !AudibleContextInstance.hasSource(av.id))
       return filtered.every(av => {
         const startSeconds = this.playing ? this.seconds : time?.seconds || 0
-        const timing = av.startOptions(startSeconds, timeRange)
-        const { start, duration, offset } = timing
+        const options = av.startOptions(startSeconds, timeRange)
+        const { start, duration, offset } = options
 
         if (isPositive(start) && isAboveZero(duration)) {
           const audibleSource = av.audibleSource(this.preloader)
@@ -117,11 +114,11 @@ export class AudioPreview {
           }
           const { definition, id } = av
 
-          const { loop } = definition
+          const { loop } = definition as UpdatableDurationDefinition
 
           AudibleContextInstance.startAt(id, audibleSource, start, duration, offset, loop)
 
-          this.adjustSourceGain(av, timing)
+          this.adjustSourceGain(av, options)
         }
         return true
       })

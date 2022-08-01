@@ -1,10 +1,11 @@
-import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { InputContext } from '../../../Contexts/InputContext'
-import { ReactResult } from '../../../declarations'
-import { DataTypeInputs } from '../DataTypeInputs'
+import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
 
-export function DefaultBooleanInput(): ReactResult {
+import { ReactResult } from '../../declarations'
+import { InputContext } from '../../Contexts/InputContext'
+import { DataTypeInputs } from './DataTypeInputs'
+
+export function BooleanTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
@@ -22,4 +23,4 @@ export function DefaultBooleanInput(): ReactResult {
   return <input {...inputProps} />
 }
 
-DataTypeInputs[DataType.Boolean] = <DefaultBooleanInput />
+DataTypeInputs[DataType.Boolean] = <BooleanTypeInput />

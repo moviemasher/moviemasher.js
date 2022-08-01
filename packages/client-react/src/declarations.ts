@@ -14,6 +14,8 @@ export type NodesArray = Array<NodeObject>
 
 export type UnknownElement = React.ReactElement<Record<string, unknown>>
 
+export interface ElementRecord extends Record<string, UnknownElement> {}
+
 export interface EditorIcons {
   [key: string]: UnknownElement
 }

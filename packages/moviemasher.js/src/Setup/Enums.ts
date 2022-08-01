@@ -1,4 +1,4 @@
-import { isPopulatedString, throwError } from "../Utility/Is"
+import { throwError } from "../Utility/Throw"
 
 export enum Phase {
   Initialize = 'initialize',
@@ -7,7 +7,7 @@ export enum Phase {
 }
 export const Phases = Object.values(Phase)
 export const isPhase = (value: any): value is Phase => {
-  return isPopulatedString(value) && Phases.includes(value as Phase)
+  return Phases.includes(value as Phase)
 }
 
 export enum DroppingPosition {
@@ -23,7 +23,7 @@ export enum LayerType {
 }
 export const LayerTypes = Object.values(LayerType)
 export const isLayerType = (value: any): value is LayerType => {
-  return isPopulatedString(value) && LayerTypes.includes(value as LayerType)
+  return LayerTypes.includes(value as LayerType)
 }
 export function assertLayerType(value: any): asserts value is LayerType {
   if (!isLayerType(value)) throw new Error('expected LayerType')
@@ -51,7 +51,7 @@ export enum EditType {
 }
 export const EditTypes = Object.values(EditType)
 export const isEditType = (value?: any): value is EditType => {
-  return isPopulatedString(value) && EditTypes.includes(value as EditType)
+  return EditTypes.includes(value as EditType)
 }
 
 export enum AVType {
@@ -66,14 +66,15 @@ export enum SelectType {
   Track = 'track',
   Layer = 'layer',
   Clip = 'clip',
-  Effect = 'effect',
+  // Effect = 'effect',
   Content = 'content',
   Container = 'container',
+  None = 'none',
 }
 
 export const SelectTypes = Object.values(SelectType)
 export const isSelectType = (value?: any): value is SelectType => {
-  return isPopulatedString(value) && SelectTypes.includes(value as SelectType)
+  return SelectTypes.includes(value as SelectType)
 }
 export function assertSelectType(value: any, name?: string): asserts value is SelectType {
   if (!isSelectType(value)) throwError(value, 'SelectType', name)
@@ -85,15 +86,13 @@ export const isClipSelectType = (type?: any): type is ClipSelectType => {
   return isSelectType(type) && ClipSelectTypes.includes(type)
 }
 
-
-
 export enum TrackType {
   Audio = 'audio',
   Video = 'video',
 }
 export const TrackTypes = Object.values(TrackType)
 export const isTrackType = (value?: any): value is TrackType => {
-  return isPopulatedString(value) && TrackTypes.includes(value as TrackType)
+  return TrackTypes.includes(value as TrackType)
 }
 
 export enum OutputFormat {
@@ -131,7 +130,7 @@ export enum FillType {
 }
 export const FillTypes = Object.values(FillType)
 export const isFillType = (type?: any): type is FillType => {
-  return isPopulatedString(type) && FillTypes.includes(type as FillType)
+  return FillTypes.includes(type as FillType)
 }
 
 
@@ -149,7 +148,7 @@ export enum DefinitionType {
 }
 export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {
-  return isPopulatedString(type) && DefinitionTypes.includes(type as DefinitionType)
+  return DefinitionTypes.includes(type as DefinitionType)
 }
 export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
@@ -174,25 +173,20 @@ export function assertContentType(type?: any): asserts type is ContentType {
 }
 export enum DataType {
   Boolean = 'boolean',
-  Direction4 = 'direction4',
-  Direction8 = 'direction8',
-  FontId = 'fontid',
   ContainerId = 'containerid',
   ContentId = 'contentid',
   DefinitionId = 'definitionid',
+  FontId = 'fontid',
   Frame = 'frame',
-  Mode = 'mode',
   Number = 'number',
   Percent = 'percent',
   Rgb = 'rgb',
-  Rgba = 'rgba',
   String = 'string',
-  Orientation = 'orientation',
-  Track = 'track',
+  Timing = 'timing',
 }
 export const DataTypes = Object.values(DataType)
 export const isDataType = (type?: any): type is DataType => {
-  return isPopulatedString(type) && DataTypes.includes(type as DataType)
+  return DataTypes.includes(type as DataType)
 }
 
 export enum Orientation {
@@ -201,7 +195,7 @@ export enum Orientation {
 }
 export const Orientations = Object.values(Orientation)
 export const isOrientation = (value: any): value is any => {
-  return isPopulatedString(value) && Orientations.includes(value as Orientation)
+  return Orientations.includes(value as Orientation)
 }
 
 export enum Direction {
@@ -212,7 +206,7 @@ export enum Direction {
 }
 export const Directions = Object.values(Direction)
 export const isDirection = (value?: any): value is Direction => {
-  return isPopulatedString(value) && Directions.includes(value as Direction)
+  return Directions.includes(value as Direction)
 }
 export function assertDirection(value: any, name?: string): asserts value is Direction {
   if (!isDirection(value)) throwError(value, "Direction", name)
@@ -251,7 +245,7 @@ export enum TriggerType {
 }
 export const TriggerTypes = Object.values(TriggerType)
 export const isTriggerType = (type?: any): type is TriggerType => {
-  return isPopulatedString(type) && TriggerTypes.includes(type as TriggerType)
+  return TriggerTypes.includes(type as TriggerType)
 }
 
 export enum TransformType {
@@ -297,7 +291,7 @@ export enum LoadType {
 }
 export const LoadTypes = Object.values(LoadType)
 export const isLoadType = (type?: any): type is LoadType => {
-  return isPopulatedString(type) && LoadTypes.includes(type as LoadType)
+  return LoadTypes.includes(type as LoadType)
 }
 
 export enum MoveType {
@@ -328,3 +322,16 @@ export enum ServerType {
   Web = 'web',
 }
 export const ServerTypes = Object.values(ServerType)
+
+export enum Duration {
+  Unknown = -1,
+  Unlimited = -2,
+}
+
+export enum Timing {
+  Custom = 'custom',
+  Content = 'content',
+  Container = 'container',
+}
+
+export const Timings = Object.values(Timing)

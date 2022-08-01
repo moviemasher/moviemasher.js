@@ -1,7 +1,7 @@
 import {
   Interval, Scalar, UnknownObject} from "../../declarations"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
-import { SelectedProperties } from "../../Utility/SelectedProperty"
+import { SelectedItems } from "../../Utility/SelectedProperty"
 import {
   ActionType,
   AVType, DataType, EventType, GraphType, SelectType, TrackType
@@ -32,6 +32,7 @@ import { Cast } from "../Cast/Cast"
 import { LayerMash } from "../Cast/Layer/Layer"
 import { Actions } from "../../Editor/Actions/Actions"
 import { NonePreview } from "../../Editor/Preview/NonePreview"
+import { Selectables } from "../../Editor/Selectable"
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
@@ -666,7 +667,15 @@ export class MashClass extends EditedClass implements Mash {
     return this.stopLoadAndDraw(true)
   }
 
-  selectedProperties(actions: Actions): SelectedProperties {
+  selectType = SelectType.Mash
+
+  selectables(): Selectables { 
+    const selectables: Selectables = [this]
+    if (this._layer) selectables.push(...this.layer.selectables())
+    return selectables
+  }
+    
+  selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => ({
       selectType: SelectType.Mash, property, 
       value: this.value(property.name),
@@ -712,34 +721,12 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  // svgElement(graphArgs: PreviewOptions): SVGSVGElement {
-  //   const { editor } = graphArgs
-  //   const clip = editor?.selection.clip
-  //   const selectedClip = isClip(clip) ? clip : undefined
-  //   const { drawingTime, time, quantize } = this
-  //   const svgTime = drawingTime || time
-  //   const args: PreviewArgs = {
-  //     editor,
-  //     backcolor: this.backcolor,
-  //     selectedClip,
-  //     time: svgTime.scale(quantize),
-  //     mash: this,
-  //     ...graphArgs,
-  //   }
-  //   const preview = new PreviewClass(args)
-  //   // console.log(this.constructor.name, "svgElement")
-  //   return preview.svgElement
-  // }
-
-
-  svg(options: PreviewOptions): Svg { 
-    const preview = this.preview(options)
-    return preview.svg
+  svg(options: PreviewOptions): Promise<Svg> { 
+    return this.preview(options).svg
   }
 
-  svgs(options: PreviewOptions): Svgs { 
-    const preview = this.preview(options)
-    return preview.svgs 
+  svgs(options: PreviewOptions): Promise<Svgs> { 
+    return this.preview(options).svgs 
   }
   
   get time() : Time {

@@ -8,17 +8,17 @@ import { Property } from "../../Setup/Property"
 import { Scalar, SvgFilters, UnknownObject } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { GraphFileArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs } from "../../MoveMe"
-import { SelectedProperties } from "../../Utility/SelectedProperty"
-import { ActionType, DataType, SelectType, TrackType } from "../../Setup/Enums"
+import { SelectedItems } from "../../Utility/SelectedProperty"
+import { ActionType, DataType, SelectType, Timing, TrackType } from "../../Setup/Enums"
 import { Actions } from "../../Editor/Actions/Actions"
-import { assertPopulatedString, assertTrue, isPopulatedString, isUndefined } from "../../Utility/Is"
+import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPopulatedString, isPositive, isUndefined } from "../../Utility/Is"
 import { isColorContent } from "../../Content"
 import { arrayLast } from "../../Utility/Array"
-import { Size } from "../../Utility/Size"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Track } from "../../Edited/Mash/Track/Track"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { Loader } from "../../Loader/Loader"
+import { Selectables } from "../../Editor/Selectable"
 
 // const ClipMixin = ClipMixin(InstanceBase)
 export class ClipClass extends InstanceBase implements Clip {
@@ -36,8 +36,8 @@ export class ClipClass extends InstanceBase implements Clip {
 
   clipGraphFiles(args: GraphFileArgs): GraphFiles {
     const { quantize } = args
-    const clipTime = this.timeRange(quantize)
-    const fileArgs = { ...args, clipTime }
+    const fileArgs = { ...args }
+    if (isPositive(this.frames)) fileArgs.clipTime = this.timeRange(quantize)
     const files = this.content.graphFiles(fileArgs)
     if (this.container) files.push(...this.container.graphFiles(fileArgs))
     return files
@@ -49,7 +49,7 @@ export class ClipClass extends InstanceBase implements Clip {
     const clipTime = this.timeRange(quantize)
     const { content, container } = this
     const contentArgs: CommandFileArgs = { ...args, clipTime }
-    // console.log(this.constructor.name, "commandFiles", visible, outputSize, container)
+    // console.log(this.constructor.name, "commandFiles", visible, outputSize)
 
     if (visible && outputSize && container) {
       // console.log("container", typeof container, container?.constructor.name)
@@ -181,7 +181,7 @@ export class ClipClass extends InstanceBase implements Clip {
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
   get mutable(): boolean {
-    return this.content.mutable || !!this.container?.mutable
+    return this.content.mutable() || this.container?.mutable() || false
   }
 
   declare muted: boolean
@@ -190,70 +190,53 @@ export class ClipClass extends InstanceBase implements Clip {
     const { content, muted } = this
     if (muted) return false
 
-    if (content.mutable && !content.muted) return true
+    if (content.mutable() && !content.muted) return true
 
     const { container } = this
-    if (!container?.mutable) return true
+    if (!container?.mutable()) return true
 
     return !container.muted
   }
 
-  selectedProperties(actions: Actions): SelectedProperties {
-    const selected: SelectedProperties = []
-    const { track, properties } = this
-    const dense = track?.dense
-    
-    
-    properties.forEach(property => {
-      const { name, type } = property
-       // frame is set by dense tracks
-      if (name === 'frame' && dense) return
-      if (type === DataType.ContainerId || type === DataType.ContentId) return
+  selectType = SelectType.Clip
 
-      const selectType = SelectType.Clip
+  selectables(): Selectables { return [this, ...this.track.selectables()] }
+
+  selectedItems(actions: Actions): SelectedItems {
+    const selected: SelectedItems = []
+    const { properties } = this
+    const props = properties.filter(property => this.selectedProperty(property))
+    props.forEach(property => {
+      const { name } = property
       const value = this.value(name)
-      // console.log(this.constructor.name, "selectedProperties", name, value)
       selected.push({
-        selectType, property, value,
+        selectType: SelectType.Clip, property, value,
         changeHandler: (property: string, value: Scalar) => {
           const undoValue = this.value(property)
           const redoValue = isUndefined(value) ? undoValue : value
-          const options: UnknownObject = { property, target: this, redoValue, undoValue }
+          const options: UnknownObject = { 
+            property, target: this, redoValue, undoValue 
+          }
           if (property === 'frames') options.type = ActionType.ChangeFrames
           actions.create(options)
-        },
+        }
       })
     })
     return selected
   }
 
-
-  // private changeClip(property: string, value: Scalar): void {
-  //   const { clip } = this.selection
-  //   if (!clip) throw new Error(Errors.selection)
-  //   assertPopulatedString(property, 'changeClip property')
-  //   const redoValue = isUndefined(value) ? clip.value(property) : value
-  //   const undoValue = clip.value(property)
-  //   const options: UnknownObject = { property, target: clip, redoValue, undoValue }
-
-  //   switch (options.property) {
-  //     case 'frames': {
-  //       options.type = ActionType.ChangeFrames
-  //       break
-  //     }
-  //     case 'trim': {
-  //       options.type = ActionType.ChangeTrim
-  //       // TODO: make sure there's a test for this
-  //       // not sure where this was derived from - using original clip??
-  //       options.frames = clip.frames + Number(options.undoValue)
-  //       break
-  //     }
-  //     default: options.type = ActionType.Change
-  //   }
-  //   this.actions.create(options)
-  // }
-
-
+  private selectedProperty(property: Property): boolean {
+    const { name, type } = property
+    switch(type) {
+      case DataType.ContainerId:
+      case DataType.ContentId: return false
+    }
+    switch(name) {
+      case 'frame': return !this.track.dense
+      case 'frames': return this.timing === Timing.Custom
+    }
+    return true
+  }
 
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)
@@ -270,19 +253,25 @@ export class ClipClass extends InstanceBase implements Clip {
       }
     }
   }
-
+    
   time(quantize : number) : Time { return timeFromArgs(this.frame, quantize) }
 
   timeRange(quantize : number) : TimeRange {
+    const { frame, frames } = this
+    assertPositive(frame, "timeRange frame")
+    assertAboveZero(frames, "timeRange frames")
+
     return timeRangeFromArgs(this.frame, quantize, this.frames)
   }
 
   timeRangeRelative(timeRange : TimeRange, quantize : number) : TimeRange {
     const range = this.timeRange(quantize).scale(timeRange.fps)
     const frame = Math.max(0, timeRange.frame - range.frame)
-
     return timeRange.withFrame(frame)
   }
+
+  declare timing: Timing 
+
   toJSON(): UnknownObject {
     const json = super.toJSON()
     const { container, content } = this

@@ -1,4 +1,4 @@
-import { throwError } from "./Is";
+import { throwError } from "./Throw";
 import { isPoint, Point, pointsEqual, PointTuple, PointZero } from "./Point";
 import { isSize, Size, sizesEqual, SizeTuple, SizeZero } from "./Size";
 

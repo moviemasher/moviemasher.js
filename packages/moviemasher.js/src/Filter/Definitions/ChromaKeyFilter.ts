@@ -18,11 +18,11 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     }))
     this.properties.push(propertyInstance({
       custom: true, name: 'similarity', type: DataType.Percent,
-      defaultValue: 0.0
+      defaultValue: 0.9
     }))
     this.properties.push(propertyInstance({
       custom: true, name: 'blend', type: DataType.Percent,
-      defaultValue: 0.01
+      defaultValue: 0.0
     }))
     this.populateParametersFromProperties()
   }
@@ -37,14 +37,15 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     const max = 255.0
     const range = max * max * (1.0 - blend)
     const rgb = colorToRgb(color)
-
-    const r = 1.0 - (similarity * (max / rgb.r))
-    const g = 1.0 - (similarity * (max / rgb.g))
-    const b = 1.0 - (similarity * (max / rgb.b))
+    // console.log(rgb)
+    const r = 1.0 - (similarity * ((rgb.r) / max)) 
+    const g = 1.0 - (similarity * ((rgb.g) / max))
+    const b = 1.0 - (similarity * ((rgb.b) / max))
 
     filterElement.setAttribute('type', 'matrix')
     filterElement.setAttribute('values', `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 ${r} ${g} ${b} -${range} ${range}`)
 
+    //Error: <feColorMatrix> attribute values: Expected number, "…0 0 0 0 0 1 0 0 NaN 1 NaN -64374…" 
     return [filterElement]
   }
 }

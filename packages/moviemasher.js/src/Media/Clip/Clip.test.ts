@@ -48,7 +48,7 @@ describe("Clip", () => {
       const commandFilters = describedClip.commandFilters({ ...commandFilterArgs, commandFiles })
   
       expectArrayLength(commandFilters, 3, Object)
-      console.log("commandFilters", commandFilters)
+      // console.log("commandFilters", commandFilters)
       const [colorCommand, copyCommand, overlayCommand] = commandFilters
       expect(colorCommand.ffmpegFilter).toEqual('color')
       expect(copyCommand.ffmpegFilter).toEqual('copy')
@@ -182,7 +182,7 @@ describe("Clip", () => {
       const commandFiles = describedClip.commandFiles(audioCommandFileArgs)
       expectArrayLength(commandFiles, 1, Object)
       const commandFilters = describedClip.commandFilters({...audioCommandFilterArgs, commandFiles })
-      console.log("commandFilters", commandFilters)
+      // console.log("commandFilters", commandFilters)
       expectCommandFilters(commandFilters, "atrim", "amix")
       const [atrimCommand, amixCommand] = commandFilters
       expectArrayLength(atrimCommand.inputs, 1)

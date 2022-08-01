@@ -29,13 +29,14 @@ export class NodeLoader extends LoaderClass {
   }
 
   private applyLoadedInfo(graphFile: GraphFile, loadedInfo: LoadedInfo): void {
+    // console.log(this.constructor.name, "applyLoadedInfo", graphFile.definition.id, loadedInfo)
+    
     const { definition } = graphFile
-    const { duration, width, height } = loadedInfo
+    const { duration, width, height, audible } = loadedInfo
 
     const dimensions = { width, height }
     this.updateDefinitionSize(definition, dimensions)
-    this.updateDefinitionDuration(definition, duration)
-    
+    this.updateDefinitionDuration(definition, duration, !!audible)
   }
 
   protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
@@ -134,7 +135,6 @@ export class NodeLoader extends LoaderClass {
     })
   }
 
-
   private updateSources(key: string, preloaderSource: LoaderSource, graphFile: GraphFile): Promise<void> {
     const { definitions, result } = preloaderSource
     preloaderSource.loaded = true
@@ -157,12 +157,16 @@ export class NodeLoader extends LoaderClass {
 
     const preloaderFile = preloaderSource as LoaderFile
 
-    const infoPath = path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
+    const infoPath = this.infoPath(key) 
     // console.log(this.constructor.name, "updateSources", infoPath)
     return probingInfoPromise(key, infoPath).then(info => {
       preloaderFile.loadedInfo = info
       return info
     }).then(loadedInfo => { this.applyLoadedInfo(graphFile, loadedInfo) })
+  }
+
+  infoPath(key: string): string {
+    return path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
   }
 
   private writePromise(graphFile: GraphFile, key: string): Promise<void> {

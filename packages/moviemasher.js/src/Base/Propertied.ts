@@ -1,12 +1,11 @@
-import { Scalar, ScalarObject, UnknownObject, ValueObject } from "../declarations"
+import { Scalar, ScalarObject, UnknownObject } from "../declarations"
 import { Actions } from "../Editor/Actions/Actions"
 import { propertyTypeCoerce,propertyTypeValid } from "../Helpers/PropertyType"
-import { Time } from "../Helpers/Time/Time"
-import { SelectedProperties } from "../Utility/SelectedProperty"
+import { SelectedItems } from "../Utility/SelectedProperty"
 import { SelectType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
 import { assertObject, assertTrue, isUndefined } from "../Utility/Is"
+import { Selectables } from "../Editor/Selectable"
 
 export const PropertyTweenSuffix = 'End'
 
@@ -17,7 +16,10 @@ export interface Propertied {
   properties: Property[]
   toJSON(): UnknownObject
   addProperties(object: any, ...properties: Property[]): void
-  selectedProperties(actions: Actions): SelectedProperties 
+
+  selectType: SelectType
+  selectables(): Selectables
+  selectedItems(actions: Actions): SelectedItems 
 }
 
 export interface PropertiedChangeHandler {
@@ -75,8 +77,11 @@ export class PropertiedClass implements Propertied {
     if (tweenable) this.propertySetOrDefault(object, property, `${name}${PropertyTweenSuffix}`)
   }
 
+  selectables(): Selectables { return [] }
 
-  selectedProperties(actions: Actions): SelectedProperties { return [] }
+  selectType = SelectType.None
+
+  selectedItems(actions: Actions): SelectedItems { return [] }
   
   setValue(value: Scalar, name: string, property?: Property): void {
     if (isUndefined(value)) {

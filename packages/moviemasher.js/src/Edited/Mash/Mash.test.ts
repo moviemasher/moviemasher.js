@@ -353,7 +353,7 @@ describe("Mash", () => {
         if (time.isRange) expect(duration).toBeGreaterThan(0)
         else expect(duration).toBe(0)
 
-          console.log('commandFilters', commandFilters)
+        // console.log('commandFilters', commandFilters)
         expect(commandFilters.length).toEqual(5)
         expect(graphFiles).toBeInstanceOf(Array)
         const imageFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Image)

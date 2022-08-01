@@ -1,4 +1,5 @@
-import { isNumber, isObject, throwError } from "./Is";
+import { isNumber, isObject } from "./Is";
+import { throwError } from "./Throw";
 
 export interface Point {
   x: number;

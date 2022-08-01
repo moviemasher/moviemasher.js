@@ -6,6 +6,7 @@ services:
       context: ../../
     image: moviemasher/moviemasher.tester:5.0.7
     container_name: moviemasher-tester
+    entrypoint: npm run jest -w tester
     command: test.e2e.ts
     volumes:
       - ../../dev/:/home/node/app/dev/
@@ -15,4 +16,18 @@ services:
       - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
       - ../tester/:/home/node/app/workspaces/tester/
       - ./jest-puppeteer.config.js:/home/node/app/jest-puppeteer.config.js
-      - ./package.json:/home/node/app/package.json
+      - ./jest.config.js:/home/node/app/jest.config.js
+      - ../../packages/moviemasher.js/src/:/home/node/app/packages/moviemasher.js/src/
+
+
+  tester-old:
+    build:
+      dockerfile: dev/test/Dockerfile.cnf
+      context: ../../
+    image: moviemasher/moviemasher.tester:5.0.7
+    container_name: moviemasher-tester
+    command: test.e2e.ts
+    volumes:
+      - ../../packages/server-express:/home/node/app/packages/server-express
+      - ../../temporary/test-empty-1/:/home/node/app/packages/moviemasher.js/dist/
+

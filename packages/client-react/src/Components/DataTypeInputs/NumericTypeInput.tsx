@@ -1,10 +1,11 @@
 import React from 'react'
 import { DataType, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
-import { InputContext } from '../../../Contexts/InputContext'
-import { ReactResult } from '../../../declarations'
-import { DataTypeInputs } from '../DataTypeInputs'
 
-export function DefaultNumericInput(): ReactResult {
+import { ReactResult } from '../../declarations'
+import { InputContext } from '../../Contexts/InputContext'
+import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+
+export function NumericTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
@@ -30,5 +31,5 @@ export function DefaultNumericInput(): ReactResult {
 
 }
 
-DataTypeInputs[DataType.Number] = <DefaultNumericInput />
-DataTypeInputs[DataType.Frame] = <DefaultNumericInput />
+DataTypeInputs[DataType.Number] = <NumericTypeInput />
+DataTypeInputs[DataType.Frame] = <NumericTypeInput />

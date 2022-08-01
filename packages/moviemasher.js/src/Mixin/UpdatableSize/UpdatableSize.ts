@@ -1,5 +1,5 @@
 import { Constrained } from "../../declarations"
-import { throwError } from "../../Utility"
+import { throwError } from "../../Utility/Throw"
 import { Size } from "../../Utility/Size"
 import {
   isPreloadable, isPreloadableDefinition,

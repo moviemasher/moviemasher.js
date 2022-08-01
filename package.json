@@ -20,7 +20,6 @@
   },
   "scripts": {
     "build-bundler": "docker-compose --file dev/build/docker-compose.yml build bundler",
-    "build-cjs": "npm run build build-cjs",
     "build-image": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.0.7 .",
     "build-tester": "docker-compose --file dev/tester/docker-compose.yml build tester",
     "build": "docker-compose --file dev/build/docker-compose.yml run --rm bundler",
@@ -28,7 +27,7 @@
     "docker-logs": "docker-compose --file dev/image/docker-compose.yml logs -f",
     "docker-up": "docker-compose --file dev/image/docker-compose.yml up -d",
     "ffmpeg": "docker compose --file dev/test/ffmpeg/docker-compose.yml run --rm -it ffmpeg",
-    "jest": "docker-compose --file dev/test/docker-compose.yml run --rm jester",
+    "jest": "docker-compose --file dev/test/docker-compose.yml run --rm test",
     "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
     "lint": "eslint src/**/*.ts",
     "logs": "pm2 logs",
@@ -41,7 +40,8 @@
     "test-help": "jest -h",
     "delete-temporary": "rm -rf temporary/test/* ; ",
     "test-jest": "jest --config dev/test/jest.config.js",
-    "test-rendering": "docker-compose --file dev/test/docker-compose.yml run --rm jester Rendering -- -u",
+    "test-rendering": "npm run test -w test-rendering",
+    "build-rendering": "npm run build -w test-rendering",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
     "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",
     "test": "docker-compose --file dev/tester/docker-compose.yml run --rm tester"

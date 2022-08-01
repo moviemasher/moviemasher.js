@@ -1,23 +1,23 @@
 import React from 'react'
-import { InputContext } from '../../../Contexts/InputContext'
-import { DataType, Modes, UnknownObject } from '@moviemasher/moviemasher.js'
-import { ReactResult } from '../../../declarations'
-import { DataTypeInputs } from '../DataTypeInputs'
+import { DataType, Timings, UnknownObject } from '@moviemasher/moviemasher.js'
 
-export function DefaultModeInput(): ReactResult {
+import { ReactResult } from '../../declarations'
+import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+import { InputContext } from '../../Contexts/InputContext'
+
+export function TimingTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
 
 
-  const options = Modes.map((id, index) => {
-    const optionProps = { value: index, children: id.replaceAll('-', ' '), key: id }
+  const options = Timings.map(id => {
+    const optionProps = { value: id, children: id, key: id }
     return <option {...optionProps} />
   })
 
   const selectProps: UnknownObject = {
-    className: 'mode',
     children: options,
     name,
     value: String(value),
@@ -33,4 +33,4 @@ export function DefaultModeInput(): ReactResult {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.Mode] = <DefaultModeInput />
+DataTypeInputs[DataType.Timing] = <TimingTypeInput />

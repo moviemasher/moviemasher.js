@@ -32,7 +32,6 @@ export function Browser(props: BrowserProps): ReactResult {
     const selectTypes = types as DefinitionType[]
     console.log("Inspector changeType", ...selectTypes)
     setSelectedTypes(selectTypes)
-    // setSelectedProperties(editor.selectedProperties(selectTypes))
   }
   const browserContext: BrowserContextInterface = {
     definitions,

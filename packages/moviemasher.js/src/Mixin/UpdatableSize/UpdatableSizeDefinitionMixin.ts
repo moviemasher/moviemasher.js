@@ -2,6 +2,7 @@ import { Size, sizeCover } from "../../Utility/Size"
 import { isAboveZero } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass, UpdatableSizeDefinitionObject } from "./UpdatableSize"
+import { UnknownObject } from "../../declarations"
 
 export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {
@@ -9,10 +10,10 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
       super(...args)
       const [object] = args
       const { width, height } = object as UpdatableSizeDefinitionObject
+
       if (isAboveZero(width)) this.width = width
       if (isAboveZero(height)) this.height = height
     }
-
 
     width = 0
     height = 0
@@ -20,6 +21,14 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
     coverSize(dimensions: Size): Size {
       const { width, height } = this
       return sizeCover({ width, height }, dimensions)
+    }
+
+    toJSON() : UnknownObject {
+      const json = super.toJSON()
+      const { width, height } = this
+      if (width) json.width = this.width
+      if (height) json.height = this.height
+      return json
     }
   }
 }

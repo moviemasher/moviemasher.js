@@ -45,16 +45,30 @@ export class PreviewClass implements Preview {
   streaming = false
 
   _svgs?: Svgs
-  get svgs(): Svgs { 
-    return this._svgs ||= this.trackPreviews.map(preview => preview.svg)
+  get svgs(): Promise<Svgs> { 
+    const { _svgs } = this
+    if (_svgs) return Promise.resolve(_svgs)
+
+    const { trackPreviews } = this
+    const { length } = trackPreviews
+    if (!length) return Promise.resolve([])
+
+    const promises = trackPreviews.map(trackPreview => trackPreview.svg)
+    const promise = Promise.all(promises)
+    return promise.then(svgs => {
+      this._svgs = svgs
+      return svgs
+    })
   } 
   
-  get svg(): Svg {
-    const { size, svgs, mash } = this
-    const { id } = mash
-    const svg = svgElement(size)
-    svg.append(...svgs.map(svg => svg.element))
-    return { element: svg, id  }
+  get svg(): Promise<Svg> {
+    return this.svgs.then(svgs => {
+      const { size, mash } = this
+      const { id } = mash
+      const svg = svgElement(size)
+      svg.append(...svgs.map(svg => svg.element))
+      return { element: svg, id  }
+    })
   }
 
   time: Time

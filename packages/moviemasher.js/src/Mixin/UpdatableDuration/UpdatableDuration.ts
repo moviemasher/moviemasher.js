@@ -1,7 +1,7 @@
 import { AudibleSource, Constrained, StartOptions, Value } from "../../declarations"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
-import { throwError } from "../../Utility/Is"
+import { throwError } from "../../Utility/Throw"
 import {
   isPreloadable, isPreloadableDefinition,
   Preloadable, PreloadableDefinition,
@@ -12,12 +12,12 @@ export interface UpdatableDurationObject extends PreloadableObject {
   gain?: Value
   muted?: boolean
   loops?: number
-
   speed?: number
 }
 
 export interface UpdatableDurationDefinitionObject extends PreloadableDefinitionObject {
   duration?: number
+  audio?: boolean
   loop?: boolean
   waveform?: string
 }
@@ -40,14 +40,14 @@ export function assertUpdatableDuration(value?: any, name?: string): asserts val
 export interface UpdatableDurationDefinition extends PreloadableDefinition {
   duration: number
   audibleSource(preloader: Loader): AudibleSource | undefined
-
+  audio: boolean
   urlAudible: string
   loop: boolean
 
   frames(quantize: number): number
 }
 export const isUpdatableDurationDefinition = (value?: any): value is UpdatableDurationDefinition => {
-  return isPreloadableDefinition(value) && "duration" in value
+  return isPreloadableDefinition(value) && "audibleSource" in value
 }
 export function assertUpdatableDurationDefinition(value?: any, name?: string): asserts value is UpdatableDurationDefinition {
   if (!isUpdatableDurationDefinition(value)) throwError(value, "UpdatableDefinition", name)

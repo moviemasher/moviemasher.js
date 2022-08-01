@@ -1,6 +1,4 @@
-import {
-  UnknownObject, CanvasVisibleSource, SvgItem} from "../../declarations"
-import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
+import { UnknownObject} from "../../declarations"
 import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
@@ -9,16 +7,13 @@ import {
   VideoSequenceObject
 } from "./VideoSequence"
 import { Default } from "../../Setup/Default"
-import { Loader } from "../../Loader/Loader"
 import {
   PreloadableDefinitionMixin
 } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
-import { NamespaceSvg } from "../../Setup/Constants"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
-import { TrackPreview } from "../../Editor/Preview/TrackPreview/TrackPreview"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
 const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
@@ -53,18 +48,23 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   framesArray(start: Time): number[] {
     const frames : number[] = []
-    const startFrame = Math.min(this.framesMax, start.scale(this.fps, "floor").frame)
+    const { fps, framesMax } = this
+    const startFrame = Math.min(framesMax, start.scale(fps, "floor").frame)
     if (start.isRange) {
-      const endFrame = Math.min(this.framesMax + 1, start.timeRange.endTime.scale(this.fps, "ceil").frame)
+      const endFrame = Math.min(framesMax + 1, start.timeRange.endTime.scale(fps, "ceil").frame)
       for (let frame = startFrame; frame < endFrame; frame += 1) {
         frames.push(frame)
       }
     } else frames.push(startFrame)
-    // console.log(this.constructor.name, "framesArray", frames.length, frames[0])
+    // console.log(this.constructor.name, "framesArray", start, fps, framesMax, frames)
     return frames
   }
 
-  private get framesMax() : number { return Math.floor(this.fps * this.duration) - 2 }
+  private get framesMax() : number { 
+    const { fps, duration } = this
+    // console.log(this.constructor.name, "framesMax", fps, duration)
+    return Math.floor(fps * duration) - 2 
+  }
 
   increment = Default.definition.videosequence.increment
 
@@ -109,13 +109,15 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
   // }
 
   toJSON() : UnknownObject {
-    const object = super.toJSON()
-    if (this.pattern !== Default.definition.videosequence.pattern) object.pattern = this.pattern
-    if (this.increment !== Default.definition.videosequence.increment) object.increment = this.increment
-    if (this.begin !== Default.definition.videosequence.begin) object.begin = this.begin
-    if (this.fps !== Default.definition.videosequence.fps) object.fps = this.fps
-    if (this.padding !== Default.definition.videosequence.padding) object.padding = this.padding
-    return object
+    const json = super.toJSON()
+    const { videosequence } = Default.definition
+    const { pattern, increment, begin, fps, padding } = this
+    if (pattern !== videosequence.pattern) json.pattern = pattern
+    if (increment !== videosequence.increment) json.increment = increment
+    if (begin !== videosequence.begin) json.begin = begin
+    if (fps !== videosequence.fps) json.fps = fps
+    if (padding !== videosequence.padding) json.padding = padding
+    return json
   }
 
   trackType = TrackType.Video
@@ -123,8 +125,11 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
   type = DefinitionType.VideoSequence
 
   urlForFrame(frame : number): string {
-    let s = String((frame * this.increment) + this.begin)
-    if (this.padding) s = s.padStart(this.padding, '0')
-    return (this.url + this.pattern).replaceAll('%', s)
+    const { increment, begin, padding, url, pattern } = this
+    // console.log(this.constructor.name, "urlForFrame", frame, increment, begin, padding, url, pattern )
+    let s = String((frame * increment) + begin)
+    if (padding) s = s.padStart(padding, '0')
+    
+    return (url + pattern).replaceAll('%', s)
   }
 }

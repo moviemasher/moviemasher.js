@@ -27,8 +27,8 @@ export interface Svg {
 export type Svgs = Svg[]
 
 export interface Preview extends GraphFileArgs {
-  svgs: Svgs
-  svg: Svg
+  svgs: Promise<Svgs>
+  svg: Promise<Svg>
   editing: boolean
   editor?: Editor
   size: Size

@@ -3,6 +3,8 @@ import { PropertiedChangeHandler } from "../Base/Propertied"
 import { DataGroup, Property } from "../Setup/Property"
 import { Scalar, ScalarObject } from "../declarations"
 import { Effect, Effects } from "../Media/Effect/Effect"
+import { isObject } from "./Is"
+import { Time, TimeRange } from "../Helpers/Time/Time"
 
 
 export interface Selected {
@@ -10,13 +12,19 @@ export interface Selected {
   name?: string
 }
 
-export type EffectAddHandler = (effect: Effect, insertIndex?: number) => Promise<void>
+export type EffectAddHandler = (effect: Effect, insertIndex?: number) => void
 export type EffectMoveHandler = (effect: Effect, index?: number) => void
 export type EffectRemovehandler = (effect: Effect) =>  void
+
+
 export interface SelectedProperty extends Selected {
   property: Property
   changeHandler: PropertiedChangeHandler
   value: Scalar
+  time?: Time
+}
+export const isSelectedProperty = (value: any): value is SelectedProperty => {
+  return isObject(value) && "changeHandler" in value
 }
 
 export interface SelectedEffects extends Selected {
@@ -26,15 +34,18 @@ export interface SelectedEffects extends Selected {
   addHandler: EffectAddHandler
 }
 
-export type SelectedProperties = Array<SelectedProperty >//| SelectedEffects
+export type SelectedItems = Array<SelectedProperty | SelectedEffects>
+
+export type SelectedProperties = Array<SelectedProperty>
 
 export type SelectedPropertyObject = Record<string, SelectedProperty>
 
-export const selectedPropertiesGroupedByName = (properties: SelectedProperties, group: DataGroup, selectType: SelectType): SelectedPropertyObject => {
-  const filtered = properties.filter(prop => (
-    prop.property.group === group && prop.selectType === selectType
-  ))
-  // console.log("selectedPropertiesGroupedByName", properties.length, filtered.length, group, selectType)
+export const selectedPropertyObject = (properties: SelectedItems, group: DataGroup, selectType: SelectType): SelectedPropertyObject => {
+  const filtered = properties.filter(prop => {
+    if (!isSelectedProperty(prop)) return false
+    return prop.property.group === group && prop.selectType === selectType
+  }) as SelectedProperties
+  // console.log("selectedPropertyObject", properties.length, filtered.length, group, selectType)
   
   const byName = Object.fromEntries(filtered.map(selected => {
     const { name: nameOveride, property } = selected

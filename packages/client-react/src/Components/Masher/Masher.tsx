@@ -26,7 +26,7 @@ import { PlayerPropsDefault } from '../Player/PlayerPropsDefault'
 import { BrowserPropsDefault } from '../Browser/BrowserPropsDefault'
 import { PanelOptions } from '../Panel/Panel'
 import { ComposerPropsDefault } from '../Composer/ComposerPropsDefault'
-import { Draggable } from '../../Helpers'
+import { Draggable } from '../../Helpers/DragDrop'
 import { useListeners } from '../../Hooks/useListeners'
 
 export type PanelOptionsOrFalse = PanelOptions | false
@@ -118,9 +118,7 @@ export function Masher(props: MasherProps): ReactResult {
   }
 
   const editorContext: EditorContextInterface = {
-    frames,
-    frame,
-    editor,
+    frame, frames, editor,
     draggable, setDraggable, droppingPositionClass
   }
   const viewProps = { ...rest, ref }

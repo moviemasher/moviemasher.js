@@ -10,7 +10,7 @@ export interface TrackPreviewArgs {
 }
 
 export interface TrackPreview {
-  svg: Svg
+  svg: Promise<Svg>
 }
 
 export type TrackPreviews = TrackPreview[]

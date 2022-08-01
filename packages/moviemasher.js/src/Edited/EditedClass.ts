@@ -94,10 +94,9 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   reload(): Promise<void> | undefined { return }
 
+  svg(options: PreviewOptions): Promise<Svg> { throw Errors.unimplemented }
 
-  svg(options: PreviewOptions): Svg { throw Errors.unimplemented }
-
-  svgs(options: PreviewOptions): Svgs { throw Errors.unimplemented }
+  svgs(options: PreviewOptions): Promise<Svgs> { throw Errors.unimplemented }
   
   toJSON(): UnknownObject {
     const json = super.toJSON()

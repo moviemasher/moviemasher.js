@@ -42,18 +42,19 @@ export class FilterGraphsClass implements FilterGraphs {
       assertTrue(length === 1 || avType !== AVType.Audio, 'single time for avtype audio')
 
       const filterGraphArgs: FilterGraphArgs = {
-        ...rest, time: this.time, mash
+        ...rest, time: this.time, mash, visible: false,
       }
-      // TODO make new audio-only graph...
       this.filterGraphAudible = new FilterGraphClass(filterGraphArgs)
     }
-    this.filterGraphsVisible.push(...times.map(time => {
-      const filterGraphArgs: FilterGraphArgs = { 
-        ...rest, time, mash, visible: true 
-      }
-      const filterGraph = new FilterGraphClass(filterGraphArgs)
-      return filterGraph
-    }))
+    if (avType !== AVType.Audio) {
+      this.filterGraphsVisible.push(...times.map(time => {
+        const filterGraphArgs: FilterGraphArgs = { 
+          ...rest, time, mash, visible: true 
+        }
+        const filterGraph = new FilterGraphClass(filterGraphArgs)
+        return filterGraph
+      }))
+    }
   }
 
   get duration(): number { return this.time.lengthSeconds }

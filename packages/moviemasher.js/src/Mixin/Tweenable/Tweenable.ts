@@ -1,5 +1,6 @@
 import { Constrained, Scalar} from "../../declarations"
 import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
+import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject } from "../../Instance/Instance"
@@ -7,8 +8,10 @@ import { Clip } from "../../Media/Clip/Clip"
 import { EffectObject, Effects } from "../../Media/Effect/Effect"
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { Orientation } from "../../Setup/Enums"
+import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
 import { Rect, RectTuple } from "../../Utility/Rect"
+import { SelectedProperties } from "../../Utility/SelectedProperty"
 import { SizeTuple } from "../../Utility/Size"
 
 export interface TweenableObject extends InstanceObject {
@@ -40,6 +43,7 @@ export interface Tweenable extends Instance {
   colorFilter: Filter  
   commandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
+  container: boolean
   containerColorCommandFilters(args: CommandFilterArgs): CommandFilters
   containerCommandFilters(args: CommandFilterArgs): CommandFilters 
   containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters 
@@ -47,6 +51,7 @@ export interface Tweenable extends Instance {
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
   cropFilter: Filter
   effects: Effects
+  effectsCommandFilters(args: CommandFilterArgs): CommandFilters 
   graphFiles(args: GraphFileArgs): GraphFiles
   initialCommandFilters(args: CommandFilterArgs): CommandFilters
   intrinsicRect: Rect
@@ -55,12 +60,17 @@ export interface Tweenable extends Instance {
   isDefault: boolean
   lock: Orientation
   mergeCommandFilters(args: CommandFilterArgs): CommandFilters
+
+  mutable(): boolean
+  muted: boolean
+
   offE: boolean
   offN: boolean
   offS: boolean
   offW: boolean
   overlayFilter: Filter
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
+  selectedProperties(actions: Actions, property: Property): SelectedProperties
   setptsFilter: Filter
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
   tweenPoints(time: Time, range: TimeRange): PointTuple 

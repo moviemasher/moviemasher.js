@@ -2,14 +2,16 @@ import { Scalar } from "../declarations"
 import { assertPropertyType, DataType, isPropertyType, PropertyType } from "./Enums"
 import { propertyTypeDefault } from "../Helpers/PropertyType"
 import {
-  isBoolean, isNumber, isObject, isPopulatedString, isUndefined, throwError
-} from "../Utility/Is"
+  isBoolean, isNumber, isObject, isPopulatedString, isUndefined} from "../Utility/Is"
+import { throwError } from "../Utility/Throw"
 
 export enum DataGroup {
   Point = 'point',
   Size = 'size',
   Opacity = 'opacity',
   Color = 'color',
+  Effects = 'effects',
+  Timing = 'timing',
 }
 
 export interface PropertyObject {
