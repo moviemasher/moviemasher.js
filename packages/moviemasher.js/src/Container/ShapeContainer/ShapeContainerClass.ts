@@ -73,7 +73,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     if (isDefault) backcolor = colorWhite
     else if (requiresAlpha) backcolor = colorBlack
 
-    const { intrinsicRect } = this
+    const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width="${inWidth}" height="${inHeight}"`
     const transformAttribute = tweenRectScale(intrinsicRect, maxSize)
@@ -282,7 +282,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return commandFilters
   }
 
-  intrinsicRectInitialize(): Rect {
+  intrinsicRect(editing = false): Rect {
     const { pathHeight: height, pathWidth: width} = this.definition
     return { width, height, ...PointZero }
   }
@@ -303,7 +303,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   }
 
   pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
-    const { intrinsicRect, definition } = this
+    const { definition } = this
+    const intrinsicRect = this.intrinsicRect(true)
     const { path } = definition
     const transformAttribute = tweenRectScale(intrinsicRect, rect)
 

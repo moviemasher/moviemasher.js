@@ -235,15 +235,12 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     initialCommandFilters(args: CommandFilterArgs): CommandFilters {
       throw new Error(Errors.unimplemented)
     }
-    protected _intrinsicRect?: Rect
-    get intrinsicRect(): Rect { 
-      return this._intrinsicRect ||= this.intrinsicRectInitialize()
+    
+    intrinsicRect(editing = false): Rect { 
+      throw new Error(Errors.unimplemented) 
     }
-    set intrinsicRect(value: Rect) { this._intrinsicRect = value }
 
-    get intrinsicsKnown(): boolean { return true }
-
-    intrinsicRectInitialize(): Rect { throw new Error(Errors.unimplemented) }
+    intrinsicsKnown(editing = false): boolean { return true }
 
     get isDefault() { return false }
 

@@ -1,7 +1,7 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
 import { Point, pointTransform, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
-import { assertSize, dimensionsEven, dimensionsScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
+import { assertSize, sizeEven, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
@@ -161,9 +161,9 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
   assertPositive(width)
   assertPositive(height)
 
-  const scaledSize = dimensionsScale(size, width, height)
+  const scaledSize = sizeScale(size, width, height)
 
-  const evenSize = dimensionsEven(scaledSize)
+  const evenSize = sizeEven(scaledSize)
   const result = {
     ...evenSize,
     x: Math.round(tweenPad(outWidth, evenSize.width, x, offDirections.E, offDirections.W)), 
@@ -199,10 +199,10 @@ export const tweenCoverSizes = (inSize: Size, outSize: Size | SizeTuple, scales:
   const [scale, scaleEnd] = scales
   const { width, height } = scale
   const { width: widthEnd, height: heightEnd } = scaleEnd
-  const scaledSize = dimensionsScale(unscaledSize, width, height)
-  const scaledSizeEnd = dimensionsScale(unscaledSizeEnd, widthEnd, heightEnd)
-  const coverSize = dimensionsEven(scaledSize)
-  const coverSizeEnd = dimensionsEven(scaledSizeEnd)
+  const scaledSize = sizeScale(unscaledSize, width, height)
+  const scaledSizeEnd = sizeScale(unscaledSizeEnd, widthEnd, heightEnd)
+  const coverSize = sizeEven(scaledSize)
+  const coverSizeEnd = sizeEven(scaledSizeEnd)
   const coverRects: SizeTuple = [coverSize, coverSizeEnd]
   return coverRects
 }

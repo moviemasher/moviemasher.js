@@ -17,15 +17,13 @@ import { useEditor } from "../../Hooks/useEditor"
 const SizeInputOrientations: Record<Orientation, string> = {
   [Orientation.H]: 'width', [Orientation.V]: 'height'
 }
-const SizeInputKey = 'size-input-tween'
 
 export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
-  const [tweening, setTweening] = React.useState(!!sessionGet(SizeInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties } = inspectorContext
+  const { selectedItems: properties, tweening, changeTweening } = inspectorContext
   const byName = selectedPropertyObject(properties, DataGroup.Size, selectType)
   
   const { 
@@ -41,7 +39,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const heightProperty = tweening ? heightEnd : height
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
   if (!(widthProperty && heightProperty)) {
-    console.log("SizeInput properties.length", selectType, properties.length, Object.keys(byName), selectType, values)
+    // console.log("SizeInput properties.length", selectType, properties.length, Object.keys(byName), selectType, values)
     return null
   }
 
@@ -102,8 +100,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     key: 'start',
     onClick: () => {
       editor.goToTime(time)
-      setTweening(false)
-      sessionSet(SizeInputKey, '')
+      changeTweening(false)
     }
   }
   const endProps: PropsAndChild = {
@@ -112,8 +109,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
       editor.goToTime(timeEnd)
-      setTweening(true)
-      sessionSet(SizeInputKey, 1)
+      changeTweening(true)
     }
   }
   const legendElements = [

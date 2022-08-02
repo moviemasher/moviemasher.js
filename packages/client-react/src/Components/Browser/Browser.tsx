@@ -30,7 +30,7 @@ export function Browser(props: BrowserProps): ReactResult {
     const types = type.split(',')
     types.every(type => assertDefinitionType(type))
     const selectTypes = types as DefinitionType[]
-    console.log("Inspector changeType", ...selectTypes)
+    // console.log("Inspector changeType", ...selectTypes)
     setSelectedTypes(selectTypes)
   }
   const browserContext: BrowserContextInterface = {

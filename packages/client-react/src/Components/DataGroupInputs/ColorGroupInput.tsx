@@ -4,7 +4,6 @@ import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DefaultIcons } from "@moviemasher/icons-default"
-import { sessionGet, sessionSet } from "../../Utilities/Session"
 import { PropertyTweenSuffix } from "@moviemasher/moviemasher.js"
 import { selectedPropertiesScalarObject } from "@moviemasher/moviemasher.js"
 import { ScalarObject } from "@moviemasher/moviemasher.js"
@@ -13,17 +12,14 @@ import { InputContext, InputContextInterface } from "../../Contexts/InputContext
 import { View } from "../../Utilities/View"
 import { useEditor } from "../../Hooks/useEditor"
 
-
-const ColorInputKey = 'color-input-tween'
 export function ColorGroupInput(props: DataGroupProps): ReactResult {  
   const editor = useEditor()
 
   const { selectType } = props
   assertSelectType(selectType)
 
-  const [tweening, setTweening] = React.useState(!!sessionGet(ColorInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties } = inspectorContext
+  const { selectedItems: properties, changeTweening, tweening } = inspectorContext
   const byName = selectedPropertyObject(properties, DataGroup.Color, selectType)
   const { color, [`color${PropertyTweenSuffix}`]: colorEnd } = byName 
   const { time } = color
@@ -53,8 +49,7 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
     key: 'start',
     onClick: () => {
       editor.goToTime(time)
-      setTweening(false)
-      sessionSet(ColorInputKey, '')
+      changeTweening(false)
     }
   }
 
@@ -64,8 +59,7 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {      
       editor.goToTime(timeEnd)
-      setTweening(true)
-      sessionSet(ColorInputKey, 1)
+      changeTweening(true)
     }
   }
   const viewProps = {

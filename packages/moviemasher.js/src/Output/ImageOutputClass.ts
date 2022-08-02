@@ -10,13 +10,6 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
 
   _avType = AVType.Video
 
-  // protected override get mashDurationPromise(): Promise<void> {
-  //   const { args } = this
-  //   if (args.offset) return super.mashDurationPromise
-    
-  //   return Promise.resolve()
-  // }
-
   override get endTime(): Time | undefined { return }
 
   override get filterGraphsOptions(): FilterGraphsOptions {
@@ -28,10 +21,6 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
       avType
     }
     return filterGraphsOptions
-  }
-
-  override get outputCover(): boolean {
-    return !!this.args.commandOutput.cover
   }
 
   outputType = OutputType.Image

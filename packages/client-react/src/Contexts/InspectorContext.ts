@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clip, SelectTypesObject, DefinitionType, Effect, EmptyMethod, SelectedItems, SelectType, StringSetter, Track, TrackType } from '@moviemasher/moviemasher.js'
+import { Clip, SelectTypesObject, DefinitionType, Effect, EmptyMethod, SelectedItems, SelectType, StringSetter, Track, TrackType, BooleanSetter } from '@moviemasher/moviemasher.js'
 
 
 export interface InspectorContextInterface {
@@ -13,6 +13,8 @@ export interface InspectorContextInterface {
   selected: string
   changeSelected: StringSetter
   selectTypesObject: SelectTypesObject
+  tweening: boolean
+  changeTweening: BooleanSetter
 }
 
 export const InspectorContextDefault: InspectorContextInterface = {
@@ -24,6 +26,8 @@ export const InspectorContextDefault: InspectorContextInterface = {
   changeSelected: EmptyMethod,
   selected: '',
   selectTypesObject: {},
+  tweening: false,
+  changeTweening: EmptyMethod,
 }
 
 export const InspectorContext = React.createContext(InspectorContextDefault)

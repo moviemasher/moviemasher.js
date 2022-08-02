@@ -4,7 +4,7 @@ import {
 } from "../declarations"
 import { GraphFile } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
-import { GraphFileType, isLoadType, LoadType, LoadTypes } from "../Setup/Enums"
+import { GraphFileType, GraphType, isLoadType, LoadType, LoadTypes } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { urlForEndpoint } from "../Utility/Url"
 import { Definition } from "../Definition/Definition"

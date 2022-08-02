@@ -5,17 +5,16 @@ import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
   ApiCallback, UploadDescription, Endpoints, Errors,
-  FileStoreRequest, FileStoreResponse, JsonObject, LoadTypes, LoadType,
+  FileStoreRequest, FileStoreResponse, JsonObject, LoadTypes, LoadType, assertPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../../Host/Host"
 import { ServerHandler } from "../Server"
 import { ServerClass } from "../ServerClass"
-import { FileServer, FileServerArgs } from "./FileServer"
+import { FileServer, FileServerArgs, FileServerFilename } from "./FileServer"
 
 
 const FileServerMeg = 1024 * 1024
-const FileServerFilename = 'original'
 
 
 export class FileServerClass extends ServerClass implements FileServer {
@@ -101,11 +100,10 @@ export class FileServerClass extends ServerClass implements FileServer {
     res.send(response)
   }
 
-  userSourceSuffix(id: string, extension: string, loadType?: LoadType, user?: string): string {
-    if (!id) throw Errors.id
-    if (!extension) throw Errors.invalid.type
-
-    return path.join(id, `${FileServerFilename}.${extension}`)
+  userUploadPrefix(id: string, user?: string): string {
+    assertPopulatedString(id, 'upload id')
+    
+    return id
   }
 
   withinLimits(size: number, type: string): boolean {

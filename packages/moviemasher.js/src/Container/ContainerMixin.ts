@@ -6,7 +6,7 @@ import { Filter } from "../Filter/Filter"
 import { Anchors, DataType, DirectionObject, Directions, Orientation } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isAboveZero, isBelowOne, isDefined, isTimeRange } from "../Utility/Is"
-import { Container, ContainerClass, ContainerDefinition } from "./Container"
+import { Container, ContainerClass, ContainerDefinition, ContainerRectArgs } from "./Container"
 import { arrayLast } from "../Utility/Array"
 import { filterFromId } from "../Filter/FilterFactory"
 import { svgGroupElement, svgPolygonElement } from "../Utility/Svg"
@@ -124,18 +124,42 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }))
       return commandFilters
     }
+    
+    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { filterInput: input, visible } = args
 
-    containerRects(size: Size, time: Time, timeRange: TimeRange, forFiles = false): RectTuple {
-      const { lock, intrinsicsKnown } = this
+      let filterInput = input 
+      assertPopulatedString(filterInput, 'filterInput')
+      if (visible) {
+        const opacityFilters = this.opacityCommandFilters(args)
+        if (opacityFilters.length) {
+          commandFilters.push(...opacityFilters)
+          filterInput = arrayLast(arrayLast(opacityFilters).outputs)
+        }  
+        commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
+      } else {
+        commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
+      }
+      return commandFilters
+    }
+
+    containerRects(args: ContainerRectArgs): RectTuple {
+      const { size, time, timeRange, loading, editing } = args
+      const { lock } = this
       const tweenRects = this.tweenRects(time, timeRange)
       const locked = lock ? tweenRectsLock(tweenRects, lock) : tweenRects
       
-      const [scale, scaleEnd] = locked 
-      const inRect = (forFiles && !intrinsicsKnown) ? { ...size, ...PointZero } : this.intrinsicRect
+      const loadingSize = loading && !this.intrinsicsKnown(editing)
+      const inRect = loadingSize ? { ...size, ...PointZero } : this.intrinsicRect(editing)
+
+      // console.log(this.constructor.name, "containerRects", inRect, loadingSize, editing)
+
       const { width: inWidth, height: inHeight, x: inX, y: inY } = inRect
       
       const ratio = ((inWidth || size.width) + inX) / ((inHeight || size.height) + inY)
 
+      const [scale, scaleEnd] = locked 
       const forcedScale = tweenScaleSizeRatioLock(scale, size, ratio, lock)
 
       const { directionObject } = this
@@ -180,28 +204,9 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         [direction, !!this.value(`off${direction}`)]
       ))
     }
-    
-    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters {
-      const commandFilters: CommandFilters = []
-      const { filterInput: input, visible } = args
-
-      let filterInput = input 
-      assertPopulatedString(filterInput, 'filterInput')
-      if (visible) {
-        const opacityFilters = this.opacityCommandFilters(args)
-        if (opacityFilters.length) {
-          commandFilters.push(...opacityFilters)
-          filterInput = arrayLast(arrayLast(opacityFilters).outputs)
-        }  
-        commandFilters.push(...this.translateCommandFilters({ ...args, filterInput }))
-      } else {
-        commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
-      }
-      return commandFilters
-    }
 
     get intrinsicGroupElement(): SVGGElement {
-      return svgGroupElement(this.intrinsicRect)
+      return svgGroupElement(this.intrinsicRect(true))
     }
 
     get isDefault() { 

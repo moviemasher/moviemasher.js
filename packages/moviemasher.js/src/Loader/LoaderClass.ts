@@ -8,6 +8,8 @@ import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/Updata
 import { UnknownObject } from "../declarations"
 import { isPreloadableDefinition } from "../Mixin"
 import { assertFontDefinition, isFontDefinition } from "../Media/Font/Font"
+import { GraphType } from "../Setup/Enums"
+import { sizeAboveZero, sizesEqual } from "../Utility"
 
 export class LoaderClass implements Loader {
   protected filePromise(key: string, graphFile: GraphFile): LoaderFile {
@@ -91,23 +93,21 @@ export class LoaderClass implements Loader {
     }
   }
 
-  protected updateDefinitionSize(definition: Definition, size: UnknownObject) {
-    // console.log(this.constructor.name, "updateDefinitionSize")
+  protected updateDefinitionSize(definition: Definition, size: UnknownObject, source = false) {
+    // return unless definition's size updatable
     if (!isUpdatableSizeDefinition(definition)) return 
-    
-    const { width: definitionWidth, height: definitionHeight } = definition
-    const { width: sourceWidth, height: sourceHeight } = size
 
-      // console.log(this.constructor.name, "updateDefinitionSize", definitionWidth, "x", definitionHeight, "=>", sourceWidth, "x", sourceHeight)
-    if (!isAboveZero(definitionWidth)) {
-      assertAboveZero(sourceWidth, 'source width')
-      definition.width = sourceWidth
-    }
-    
-    if (!isAboveZero(definitionHeight)) {
-      assertAboveZero(sourceHeight, 'source height')
-      definition.height = sourceHeight
-    }
+    // return unless provided size is valid
+    if (!sizeAboveZero(size)) return
+
+    const key = source ? "sourceSize" : "previewSize"
+    const { [key]: definitionSize} = definition
+
+    // return if definition's size already matches
+    if (sizesEqual(size, definitionSize)) return 
+
+    // console.log(this.constructor.name, "updateDefinitionSize", key, definitionSize, "=>", size)
+    definition[key] = size
   }
 
   protected updateDefinitionFamily(definition: Definition, family: string) {

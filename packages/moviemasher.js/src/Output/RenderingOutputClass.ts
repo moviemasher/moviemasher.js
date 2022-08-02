@@ -1,5 +1,5 @@
 import { ValueObject } from "../declarations"
-import { Size, dimensionsEven } from "../Utility/Size"
+import { Size, sizeEven, assertSize, isSize, sizeScale, sizeCover, sizeAboveZero } from "../Utility/Size"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
@@ -13,7 +13,7 @@ import { RenderingCommandOutput, RenderingOutput, RenderingOutputArgs } from "./
 import {
   timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
-import { isAboveZero, isPositive } from "../Utility/Is"
+import { assertAboveZero, isAboveZero, isPositive } from "../Utility/Is"
 import { assertClip, Clip } from "../Media/Clip/Clip"
 import { assertUpdatableDurationDefinition, isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
@@ -96,10 +96,10 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get filterGraphsOptions(): FilterGraphsOptions {
     const { timeRange: time, graphType, videoRate } = this
+    const size = this.sizeCovered()
 
     const filterGraphsOptions: FilterGraphsOptions = {
-      time, graphType, videoRate, size: this.sizeCovered(), 
-      avType: this.avTypeNeededForClips
+      time, graphType, videoRate, size, avType: this.avTypeNeededForClips
     }
 
     return filterGraphsOptions
@@ -141,22 +141,22 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get mashSize(): Size | undefined {
-    const { visibleGraphFiles } = this
-    const visible = visibleGraphFiles.map(graphFile => graphFile.definition).filter(Boolean)
-    const definitions = [...new Set(visible.map(definition => definition as UpdatableSizeDefinition))]
-    const sized = definitions.filter(definition => definition.width && definition.height)
+    const { visibleGraphFiles: graphFiles } = this
+    const definitions = graphFiles.map(graphFile => graphFile.definition)
+    const updatable = definitions.filter(def => isUpdatableSizeDefinition(def))
+    const set = new Set(updatable as UpdatableSizeDefinition[])
+    const unique = [...set]
+    const sized = unique.filter(definition => definition.sourceSize)
     if (!sized.length) return
 
-    const sizes = sized.map(definition => (
-      { width: definition.width, height: definition.height }
-    ))
+    const sizes = sized.map(definition => definition.sourceSize!)
     return {
       width: Math.max(...sizes.map(size => size.width)),
       height: Math.max(...sizes.map(size => size.height))
     }
   }
 
-  get outputCover(): boolean { return false }
+  get outputCover(): boolean { return !!this.args.commandOutput.cover }
 
   get outputSize(): Size {
     const { width, height } = this.args.commandOutput
@@ -264,32 +264,24 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   sizeCovered(): Size {
-    const { outputSize } = this
-    if (!this.outputCover) {
-      // console.log(this.constructor.name, "sizeCovered outputCover false")
+    const { outputSize, outputCover } = this
+    if (!outputCover) {
+      // console.log(this.constructor.name, "sizeCovered mashSize false outputCover", outputSize)
       return outputSize
     }
-
     const { mashSize } = this
-    if (!mashSize) {
-      // console.log(this.constructor.name, "sizeCovered mashSize false")
+    if (!isSize(mashSize)) {
+      // console.log(this.constructor.name, "sizeCovered mashSize false outputSize", outputSize)
       return outputSize // mash doesn't care about size
     }
+    const { width, height } = mashSize
+    assertAboveZero(width)
+    assertAboveZero(height)
+  
+    const sizeEven = sizeCover(mashSize, outputSize)
+    // console.log(this.constructor.name, "sizeCovered", mashSize, outputSize, "=>", sizeEven)
 
-    if (mashSize.width === 0 || mashSize.height == 0) throw Errors.internal + 'sizeCovered'
-
-    const horzRatio = outputSize.width / mashSize.width
-    const vertRatio = outputSize.height / mashSize.height
-    const scale = Math.max(horzRatio, vertRatio)
-    if (scale >= 1.0) {
-      // console.log(this.constructor.name, "sizeCovered scale >= 1", scale, "mashSize", mashSize)
-      return mashSize
-    }
-
-    if (horzRatio > vertRatio) outputSize.height = scale * mashSize.height
-    else outputSize.width = scale * mashSize.width
-
-    return dimensionsEven(outputSize)
+    return sizeEven
   }
 
   get sizePromise(): Promise<void> {
@@ -297,14 +289,14 @@ export class RenderingOutputClass implements RenderingOutput {
     if (this.avType === AVType.Audio || !this.outputCover) return Promise.resolve()
 
     const { visibleGraphFiles } = this
-    // console.log(this.constructor.name, "sizePromise", visibleGraphFiles.length)
+    // console.log(this.constructor.name, "sizePromise", visibleGraphFiles.length, "visibleGraphFile(s)")
     if (!visibleGraphFiles.length) return Promise.resolve()
 
     const graphFiles = visibleGraphFiles.filter(graphFile => {
       const { definition } = graphFile
       if (!isUpdatableSizeDefinition(definition)) return false
 
-      return !(definition.width && definition.height)
+      return !sizeAboveZero(definition.sourceSize)
     })
     if (!graphFiles.length) return Promise.resolve()
 

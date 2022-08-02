@@ -1,4 +1,4 @@
-import { assertContainer } from "../../../Container/Container"
+import { assertContainer, ContainerRectArgs } from "../../../Container/Container"
 import { SvgItem } from "../../../declarations"
 import { Point } from "../../../Utility/Point"
 import { Rect, rectsEqual } from "../../../Utility/Rect"
@@ -55,8 +55,10 @@ export class TrackPreviewClass implements TrackPreview {
     assertClip(clip)
     const { container, content } = clip
     assertContainer(container)
-
-    const containerRects = container.containerRects(size, time, timeRange)
+    const containerRectArgs: ContainerRectArgs = {
+      size, time, timeRange
+    }
+    const containerRects = container.containerRects(containerRectArgs)
     assertTrue(rectsEqual(...containerRects), 'single container rect')
 
     const [containerRect] = containerRects
@@ -104,7 +106,7 @@ export class TrackPreviewClass implements TrackPreview {
     assertClip(clip)
     const { container, content, id } = clip
     assertContainer(container)
-    const known = container.intrinsicsKnown && content.intrinsicsKnown
+    const known = container.intrinsicsKnown(true) && content.intrinsicsKnown(true)
     if (known) return Promise.resolve({ id, element: this.svgElement })
 
     const { preview } = this

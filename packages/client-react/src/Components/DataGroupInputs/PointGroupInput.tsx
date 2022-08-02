@@ -4,7 +4,6 @@ import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DefaultIcons } from "@moviemasher/icons-default"
-import { sessionGet, sessionSet } from "../../Utilities/Session"
 import { PropertyTweenSuffix } from "@moviemasher/moviemasher.js"
 import { selectedPropertiesScalarObject } from "@moviemasher/moviemasher.js"
 import { ScalarObject } from "@moviemasher/moviemasher.js"
@@ -13,15 +12,13 @@ import { InputContext, InputContextInterface } from "../../Contexts/InputContext
 import { View } from "../../Utilities/View"
 import { useEditor } from "../../Hooks/useEditor"
 
-const PointInputKey = 'point-input-tween'
 
 export function PointGroupInput(props: DataGroupProps): ReactResult {
   const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
-  const [tweening, setTweening] = React.useState(!!sessionGet(PointInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties } = inspectorContext
+  const { selectedItems: properties, changeTweening, tweening } = inspectorContext
   const byName = selectedPropertyObject(properties, DataGroup.Point, selectType)
   
   const { 
@@ -74,8 +71,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     key: 'start',
     onClick: () => {
       editor.goToTime(time)
-      setTweening(false)
-      sessionSet(PointInputKey, '')
+      changeTweening(false)
     }
   }
 
@@ -85,8 +81,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
       editor.goToTime(timeEnd)
-      setTweening(true)
-      sessionSet(PointInputKey, 1)
+      changeTweening(true)
     }
   }
 

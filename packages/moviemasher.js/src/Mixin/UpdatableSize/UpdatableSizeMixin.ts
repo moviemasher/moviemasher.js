@@ -13,6 +13,8 @@ import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSi
 import { tweenMaxSize } from "../../Utility/Tween"
 import { colorBlack, colorBlackOpaque } from "../../Utility/Color"
 import { PointZero } from "../../Utility/Point"
+import { ContentRectArgs } from "../../Content/Content"
+import { assertSizeAboveZero, sizeAboveZero } from "../../Utility/Size"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -106,7 +108,11 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
       let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
 
-      const contentRects = this.contentRects(containerRects, time, clipTime)
+      const contentArgs: ContentRectArgs = {
+        rects: containerRects, time, timeRange: clipTime
+      }
+      const contentRects = this.contentRects(contentArgs)
+      // console.log(this.constructor.name, "contentCommandFilters", containerRects, contentRects)
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const maxContainerSize = tweenMaxSize(...containerRects) 
@@ -165,16 +171,17 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
 
-    intrinsicRectInitialize(): Rect { 
-      const { width, height } = this.definition
-      assertAboveZero(width, "updatable width")
-      assertAboveZero(height, "updatable height")
-      return { width, height, ...PointZero }
+    intrinsicRect(editing = false): Rect {
+      const key = editing ? 'previewSize' : 'sourceSize'
+      const { [key]: size } = this.definition
+      assertSizeAboveZero(size, key)
+      return { ...size, ...PointZero }
     }
     
-    get intrinsicsKnown() {
-      const { width, height } = this.definition
-      return isAboveZero(width) && isAboveZero(height)
+    intrinsicsKnown(editing = false) {
+      const key = editing ? 'previewSize' : 'sourceSize'
+      const { [key]: size} = this.definition
+      return sizeAboveZero(size)
     }
   }
 }

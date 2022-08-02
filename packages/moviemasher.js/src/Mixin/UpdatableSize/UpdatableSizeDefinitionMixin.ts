@@ -1,4 +1,4 @@
-import { Size, sizeCover } from "../../Utility/Size"
+import { Size, sizeAboveZero, sizeCover } from "../../Utility/Size"
 import { isAboveZero } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass, UpdatableSizeDefinitionObject } from "./UpdatableSize"
@@ -9,25 +9,21 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { width, height } = object as UpdatableSizeDefinitionObject
+      const { sourceSize, previewSize } = object as UpdatableSizeDefinitionObject
 
-      if (isAboveZero(width)) this.width = width
-      if (isAboveZero(height)) this.height = height
+      if (sizeAboveZero(previewSize)) this.previewSize = previewSize
+      if (sizeAboveZero(sourceSize)) this.sourceSize = sourceSize
     }
 
-    width = 0
-    height = 0
+    previewSize?: Size 
 
-    coverSize(dimensions: Size): Size {
-      const { width, height } = this
-      return sizeCover({ width, height }, dimensions)
-    }
+    sourceSize?: Size 
 
     toJSON() : UnknownObject {
       const json = super.toJSON()
-      const { width, height } = this
-      if (width) json.width = this.width
-      if (height) json.height = this.height
+      const { sourceSize, previewSize } = this
+      if (sourceSize) json.sourceSize = this.sourceSize
+      if (previewSize) json.previewSize = this.previewSize
       return json
     }
   }

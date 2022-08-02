@@ -35,7 +35,7 @@ export class NodeLoader extends LoaderClass {
     const { duration, width, height, audible } = loadedInfo
 
     const dimensions = { width, height }
-    this.updateDefinitionSize(definition, dimensions)
+    this.updateDefinitionSize(definition, dimensions, true)
     this.updateDefinitionDuration(definition, duration, !!audible)
   }
 

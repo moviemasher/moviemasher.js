@@ -3,7 +3,7 @@ import {
   PopulatedString,
 colorBlack, colorBlue, colorGreen, colorRed,
 assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString,
- assertSize, DimensionsPreview, isSize, Size, TextContainerObject,
+ assertSize, SizePreview, isSize, Size, TextContainerObject,
  ContentObject ,
  assertContainerObject, ContainerObject, isContainerObject,
  DefinitionObjects,
@@ -192,7 +192,7 @@ const sizeTest = (...mashSizes: GenerateSize[]): SizeTest => {
 }
 
 export const GenerateOptionsDefault: GenerateOptions = {
-  container: "R", containerPoint: GeneratePoint.M, containerSize: GenerateSize.H,
+  container: "R", containerPoint: GeneratePoint.M, containerSize: GenerateSize.F,
   content: "BL", contentPoint: GeneratePoint.TL, contentSize: GenerateSize.F,
   constrain: GenerateConstrain.C, opacity: GenerateOpacity.F,
 }
@@ -231,6 +231,7 @@ export const GenerateTestsDefault: GenerateTests = {
     pointTest(GeneratePoint.M),
   ],
   [GenerateArg.ContainerSize]: [
+    sizeTest(GenerateSize.F),
     sizeTest(GenerateSize.Q),
     sizeTest(GenerateSize.Q, GenerateSize.F),
     sizeTest(GenerateSize.F, GenerateSize.H),
@@ -348,7 +349,7 @@ export const generateIds = (generateOptions: GenerateOptions = {}): GenerateTest
   return mashIds
 }
 
-export const generateTests = (generateOptions: GenerateOptions, testId = 'all', size = DimensionsPreview, frames = 10, labels = false): GenerateMashTest => {
+export const generateTests = (generateOptions: GenerateOptions, testId = 'all', size = SizePreview, frames = 10, labels = false): GenerateMashTest => {
   const ids = generateIds(generateOptions)
   const clips: ClipObject[] = []
   const labelClips: ClipObject[] = []
@@ -365,7 +366,7 @@ export const generateTests = (generateOptions: GenerateOptions, testId = 'all', 
   return [testId, mash]
 }
 
-export const generateTest = (testId: GenerateTestId, size = DimensionsPreview, frames = Duration.Unknown, labels = false): GenerateMashTest => {
+export const generateTest = (testId: GenerateTestId, size = SizePreview, frames = Duration.Unknown, labels = false): GenerateMashTest => {
   const [clip, labelClip] = generateClips(testId, size, frames, labels)
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
@@ -376,7 +377,7 @@ export const generateTest = (testId: GenerateTestId, size = DimensionsPreview, f
 }
 
 type ClipObjectTuple = [ClipObject, ClipObject]
-const generateClips = (testId: GenerateTestId, size = DimensionsPreview, frames = Duration.Unknown, labels = false): ClipObject[] => {
+const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Duration.Unknown, labels = false): ClipObject[] => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]

@@ -7,7 +7,6 @@ export class ImageSequenceOutputClass extends AudioOutputClass implements ImageS
 
   _avType = AVType.Video
 
-  get outputCover(): boolean { return !!this.args.commandOutput.cover }
 
   outputType = OutputType.ImageSequence
 }

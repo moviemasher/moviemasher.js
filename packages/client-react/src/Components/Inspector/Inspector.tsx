@@ -8,6 +8,8 @@ import {
   InspectorContext, InspectorContextDefault, InspectorContextInterface
 } from '../../Contexts/InspectorContext'
 import { useEditor } from '../../Hooks/useEditor'
+import { sessionGet, sessionSet } from '../../Utilities/Session'
+import { TweenInputKey } from '../../Setup/Constants'
 
 export interface InspectorProps extends PropsAndChildren, WithClassName {}
 
@@ -24,6 +26,7 @@ export function Inspector(props: InspectorProps): ReactResult {
   const [selectTypesObject] = React.useState<SelectTypesObject>({})
   const [selected, setSelected] = React.useState('')
 
+  const [tweening, setTweening] = React.useState(!!sessionGet(TweenInputKey))
   const [selectTypes, setSelectTypes] = React.useState<SelectType[]>(() => editor.selectTypes)
   const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => editor.selectedItems())
   const [selectedTypes, setSelectedTypes] = React.useState<SelectType[]>(() => [])
@@ -56,11 +59,18 @@ export function Inspector(props: InspectorProps): ReactResult {
     setSelectedItems(editor.selectedItems(selectTypes))
   }, [])
 
+  const changeTweening = (tweening: boolean): void => {
+
+    // editor.goToTime(timeEnd)
+    setTweening(tweening)
+    sessionSet(TweenInputKey, tweening ? '1' : '')
+  }
   const inspectorContext: InspectorContextInterface = {
     ...InspectorContextDefault,
     actionCount, clip, definitionType, selectedItems, selected,
     selectTypesObject,
-    selectedTypes, selectTypes, changeSelected: changeType,
+    selectedTypes, selectTypes, changeSelected: changeType, 
+    changeTweening, tweening,
   }
 
   return (

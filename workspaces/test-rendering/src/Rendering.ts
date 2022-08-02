@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import {
-  DimensionsPreview,
+  SizePreview,
   idGenerate,
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod
 } from '@moviemasher/moviemasher.js'
@@ -150,6 +150,6 @@ const renderingTestPromise = (suffix: string, options: GenerateOptions, output: 
 const renderingTestIdPromise = (id: string, videoOutput: RenderingCommandOutput): Promise<void> => {
   assertPopulatedString(id)
 
-  const mashTest = generateTest(id, DimensionsPreview)
+  const mashTest = generateTest(id, SizePreview)
   return renderingMashTestPromise(mashTest, false, videoOutput)
 }

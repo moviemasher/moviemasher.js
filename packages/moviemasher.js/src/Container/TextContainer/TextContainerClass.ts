@@ -31,7 +31,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const [object] = args
 
     const { intrinsic } = object as TextContainerObject
-    if (isRect(intrinsic)) this.intrinsicRect = intrinsic
+    if (isRect(intrinsic)) this._intrinsicRect = intrinsic
   }
 
   canColor(args: CommandFilterArgs): boolean { return true }
@@ -127,7 +127,8 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const { resolved: fontfile } = fontFile
     assertPopulatedString(fontfile, 'fontfile')
 
-    const { textFilter, intrinsicRect, lock } = this
+    const { textFilter, lock } = this
+    const intrinsicRect = this.intrinsicRect()
     const x = intrinsicRect.x * (width / intrinsicRect.width)
     const y = intrinsicRect.y * (height / intrinsicRect.height)
 
@@ -161,7 +162,12 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return commandFilters
   }
 
-  intrinsicRectInitialize(): Rect {
+  protected _intrinsicRect?: Rect
+  intrinsicRect(_ = false): Rect { 
+    return this._intrinsicRect || this.intrinsicRectInitialize()
+  }
+
+  private intrinsicRectInitialize(): Rect {
     const { family } = this.font
     assertPopulatedString(family)
 
@@ -179,12 +185,13 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return dimensions
   }
 
-  get intrinsicsKnown(): boolean { 
+  intrinsicsKnown(editing = false): boolean { 
     return isRect(this._intrinsicRect) 
   }
 
   pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
-    const { string, font, intrinsicRect } = this
+    const { string, font } = this
+    const intrinsicRect = this.intrinsicRect(true)
     const { x: inX, y: inY, width: inWidth, height: inHeight } = intrinsicRect
     const { x, y, width: outWidth, height: outHeight } = rect
     const xOffset = inX * (outHeight / inHeight)
@@ -235,8 +242,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
   toJSON(): UnknownObject {
     const json = super.toJSON()
-    json.intrinsic = this.intrinsicRect
-    
+    json.intrinsic = this.intrinsicRect(true)
     return json
   }
 }

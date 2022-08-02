@@ -6,7 +6,7 @@ import path from 'path'
 import { 
   EmptyMethod,
   Default,
-DimensionsPreview,
+SizePreview,
 idGenerate,
 assertTrue, outputDefaultVideo,
 outputDefaultImage, Duration, assertArray, outputDefaultAudio, outputDefaultImageSequence
@@ -51,18 +51,18 @@ import { renderingProcessInput, renderingMashTestPromise } from './Rendering'
 //   })
 // })
 
-const imageOutput = outputDefaultImage({ ...DimensionsPreview }) 
+const imageOutput = outputDefaultImage({ cover: true }) 
 const audioOutput = outputDefaultAudio({ optional: true }) 
-const sequenceOutput = outputDefaultImageSequence() 
-const videoOutput = outputDefaultVideo({ ...DimensionsPreview, mute: true }) 
+const sequenceOutput = outputDefaultImageSequence({ ...SizePreview, cover: true }) 
+const videoOutput = outputDefaultVideo({ ...SizePreview, mute: true }) 
 
 
 const testUploadVideo = async (test: GenerateMashTest) => {
-  const outputs = [imageOutput, audioOutput, sequenceOutput] // 
+  const outputs = [imageOutput] // , audioOutput, sequenceOutput
   await renderingMashTestPromise(test, true, ...outputs)  
 }
-const [testId] = generateIds({ ...GenerateOptionsDefault, content: "V" })
-const test = generateTest(testId, DimensionsPreview, Duration.Unknown)
+const [testId] = generateIds({ ...GenerateOptionsDefault, content: "P" })
+const test = generateTest(testId, SizePreview, Duration.Unknown)
 
 testUploadVideo(test)
 

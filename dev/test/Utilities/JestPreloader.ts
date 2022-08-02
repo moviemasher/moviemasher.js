@@ -5,6 +5,7 @@ import { LoadedFont, LoadedImage, LoadFontPromise, LoadImagePromise } from "../.
 import { BrowserLoaderClass } from "../../../packages/moviemasher.js/src/Loader/BrowserLoaderClass"
 import { TestFilePrefix } from "../Setup/Constants"
 import { GraphFile } from '../../../packages/moviemasher.js/src/MoveMe'
+import { GraphType } from '@moviemasher/moviemasher.js'
 
 export class JestPreloader extends BrowserLoaderClass {
   protected override requestFont(url: string, graphFile: GraphFile): LoadFontPromise {

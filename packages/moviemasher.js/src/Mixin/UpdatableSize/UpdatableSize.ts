@@ -6,13 +6,19 @@ import {
   Preloadable, PreloadableDefinition,
   PreloadableDefinitionObject, PreloadableObject
 } from "../Preloadable/Preloadable"
+import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
 
+export const UpdatableSizeDefinitionType = [
+  DefinitionType.Image,
+  DefinitionType.Video,
+  DefinitionType.VideoSequence,
+]
 export interface UpdatableSizeObject extends PreloadableObject {
 }
 
 export interface UpdatableSizeDefinitionObject extends PreloadableDefinitionObject {
-  width?: number
-  height?: number
+  sourceSize?: Size
+  previewSize?: Size
 }
 
 export interface UpdatableSize extends Preloadable {}
@@ -23,13 +29,16 @@ export function assertUpdatableSize(value?: any): asserts value is UpdatableSize
   if (!isUpdatableSize(value)) throwError(value, 'UpdatableSize') 
 }
 
+export const isUpdatableSizeType = (value: any): value is DefinitionType => {
+  return isDefinitionType(value) && UpdatableSizeDefinitionType.includes(value)
+}
+
 export interface UpdatableSizeDefinition extends PreloadableDefinition {
-  width: number
-  height: number
-  coverSize(size: Size): Size
+  previewSize?: Size
+  sourceSize?: Size
 }
 export const isUpdatableSizeDefinition = (value?: any): value is UpdatableSizeDefinition => {
-  return isPreloadableDefinition(value) && "coverSize" in value
+  return isPreloadableDefinition(value)
 }
 export function assertUpdatableSizeDefinition(value?: any): asserts value is UpdatableSizeDefinition {
   if (!isUpdatableSizeDefinition(value)) throwError(value, 'UpdatableSizeDefinition') 

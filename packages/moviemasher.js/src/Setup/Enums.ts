@@ -150,6 +150,7 @@ export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {
   return DefinitionTypes.includes(type as DefinitionType)
 }
+
 export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
 }
@@ -292,6 +293,9 @@ export enum LoadType {
 export const LoadTypes = Object.values(LoadType)
 export const isLoadType = (type?: any): type is LoadType => {
   return LoadTypes.includes(type as LoadType)
+}
+export function assertLoadType(value: any, name?: string): asserts value is LoadType {
+  if (!isLoadType(value)) throwError(value, "LoadType", name)
 }
 
 export enum MoveType {

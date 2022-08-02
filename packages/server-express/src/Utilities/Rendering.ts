@@ -26,35 +26,6 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   return { mash, definitions }
 }
 
-export const renderingDefinitionTypeCommandOutputs = (definitionType: DefinitionType) => {
-  const outputs: CommandOutputs = []
-
-  // TODO: support waveform generation
-  // TODO: support font uploading
-  switch (definitionType) {
-    case DefinitionType.Audio: {
-      outputs.push({ outputType: OutputType.Audio })
-      // outputs.push({ outputType: OutputType.Waveform })
-      break
-    }
-    case DefinitionType.Image: {
-      outputs.push({ outputType: OutputType.Image })
-      break
-    }
-    case DefinitionType.VideoSequence: {
-      outputs.push({ outputType: OutputType.Audio, optional: true })
-      outputs.push({ outputType: OutputType.Image })
-      outputs.push({ outputType: OutputType.ImageSequence })
-      // outputs.push({ outputType: OutputType.Waveform })
-      break
-    }
-    case DefinitionType.Font: {
-      // outputs.push({ outputType: OutputType.Font })
-      break
-    }
-  }
-  return outputs
-}
 
 export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
   const counts: NumberObject = {}
@@ -76,7 +47,7 @@ export const renderingOutputFile = (index: number, commandOutput: RenderingComma
   const ext = extension || outputExtension || format
   assertPopulatedString(ext)
   const components = [basename || outputType]
-  if (index) components.push(String(index))
+  if (index && !basename) components.push(String(index))
   components.push(ext)
   return components.join('.')
 }

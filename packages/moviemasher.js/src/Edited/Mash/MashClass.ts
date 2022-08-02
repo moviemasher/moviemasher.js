@@ -607,7 +607,7 @@ export class MashClass extends EditedClass implements Mash {
     const graphFiles = this.clips.flatMap(clip => {
       const { container } = clip
       if (isContainer(container)) {
-        if (!container.intrinsicsKnown) {
+        if (!container.intrinsicsKnown(true)) {
           return container.graphFiles({ ...args, time: clip.time(quantize)})
         }
       }

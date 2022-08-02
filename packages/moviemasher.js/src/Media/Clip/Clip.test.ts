@@ -6,7 +6,7 @@ import { contentDefault } from "../../Content/ContentFactory"
 import { FilterGraphInputAudible, FilterGraphInputVisible } from "../../Edited/Mash/FilterGraph/FilterGraphClass"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { CommandFileArgs, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../../MoveMe"
-import { DimensionsOutput } from "../../Utility/Size"
+import { SizeOutput } from "../../Utility/Size"
 import { createClip, createClipWithAudio, createClipWithImage } from "../../../../../dev/test/Utilities/Create"
 import { ImageClass } from "../Image/ImageClass"
 import { AudioClass } from "../Audio/AudioClass"
@@ -20,7 +20,7 @@ describe("Clip", () => {
   const graphFileArgs: GraphFileArgs = { time, quantize, visible: true }
   const commandFileArgs: CommandFileArgs = { 
     time, quantize, visible: true, videoRate,
-    outputSize: DimensionsOutput
+    outputSize: SizeOutput
   }
   const commandFilterArgs: CommandFilterArgs = {
     chainInput: FilterGraphInputVisible,

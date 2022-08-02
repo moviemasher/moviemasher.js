@@ -1,7 +1,7 @@
 import { Clip, ClipDefinition, ClipObject } from "./Clip"
 import { InstanceBase } from "../../Instance/InstanceBase"
 
-import { assertContainer, Container, ContainerObject } from "../../Container/Container"
+import { assertContainer, Container, ContainerObject, ContainerRectArgs } from "../../Container/Container"
 import { Defined } from "../../Base/Defined"
 import { assertContent, Content, ContentObject } from "../../Content/Content"
 import { Property } from "../../Setup/Property"
@@ -53,7 +53,12 @@ export class ClipClass extends InstanceBase implements Clip {
 
     if (visible && outputSize && container) {
       // console.log("container", typeof container, container?.constructor.name)
-      contentArgs.containerRects = container.containerRects(outputSize, time, clipTime, true)
+      const containerRectArgs: ContainerRectArgs = {
+        size: outputSize, time, timeRange: clipTime, loading: true
+      }
+      
+      contentArgs.containerRects = container.containerRects(containerRectArgs)
+
       const colors = isColorContent(content) ? content.contentColors(time, clipTime) : undefined
       if (!colors) {
         const contentFiles = content.commandFiles(contentArgs)
@@ -82,8 +87,11 @@ export class ClipClass extends InstanceBase implements Clip {
 
     const { content, container } = this
     if (visible && outputSize && container) {
-      contentArgs.containerRects = container.containerRects(outputSize, time, clipTime)
-      
+      const containerRectArgs: ContainerRectArgs = {
+        size: outputSize, time, timeRange: clipTime
+      }
+      contentArgs.containerRects = container.containerRects(containerRectArgs)
+      // console.log(this.constructor.name, "commandFilters", contentArgs.containerRects)
       const isColor = isColorContent(content)
       const colors = isColor ? content.contentColors(time, clipTime) : undefined
 

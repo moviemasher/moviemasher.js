@@ -9,6 +9,7 @@ import {
   ShapeContainerDefinitionObject, ShapeContainerObject
 } from "./ShapeContainer"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
+import { isAboveZero } from "../../Utility/Is"
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -18,8 +19,8 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     const [object] = args
     const { path, pathHeight, pathWidth } = object as ShapeContainerDefinitionObject
     if (path) this.path = path
-    if (pathWidth) this.pathWidth = pathWidth
-    if (pathHeight) this.pathHeight = pathHeight
+    if (isAboveZero(pathWidth)) this.pathWidth = pathWidth
+    if (isAboveZero(pathHeight)) this.pathHeight = pathHeight
   }
 
   instanceFromObject(object: ShapeContainerObject = {}): ShapeContainer {
@@ -35,8 +36,8 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
   toJSON(): UnknownObject {
     const object = super.toJSON()
     if (this.path) object.path = this.path
-    if (this.pathHeight) object.pathHeight = this.pathHeight
-    if (this.pathWidth) object.pathWidth = this.pathWidth
+    if (isAboveZero(this.pathHeight)) object.pathHeight = this.pathHeight
+    if (isAboveZero(this.pathWidth)) object.pathWidth = this.pathWidth
     return object
   }
 

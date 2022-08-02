@@ -326,9 +326,10 @@ export class RenderingProcessClass implements RenderingProcess {
       const renderingOutput = this.outputInstance(instanceOptions)
       
       promise = promise.then(data => {
-        data.countsByType[outputType] ||= -1
-        data.countsByType[outputType]++ 
-        const index = data.countsByType[outputType]
+        const { countsByType } = data
+        if (!isDefined(countsByType[outputType])) countsByType[outputType] = -1
+        countsByType[outputType]++ 
+        const index = countsByType[outputType]
 
         // console.log(this.constructor.name, "runPromise directoryPromise done")
 
@@ -384,10 +385,14 @@ export class RenderingProcessClass implements RenderingProcess {
           }
           const url = preloader.key(graphFile)
           const infoPath = preloader.infoPath(url)
-          // console.log("url", url, "infoPath", infoPath)
-          return fs.promises.copyFile(infoPath, path.join(outputDirectory, `upload.${ExtensionLoadedInfo}`)).then(() => {
-            return runResult
-          })
+          
+          if (fs.existsSync(infoPath)) {
+            // console.log("url", url, "infoPath", infoPath)
+            return fs.promises.copyFile(infoPath, path.join(outputDirectory, `upload.${ExtensionLoadedInfo}`)).then(() => {
+              return runResult
+            })
+          }
+          
         }
       }
       return runResult

@@ -3,7 +3,7 @@ import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
 
 import { Errors } from "../Setup/Errors"
 import { isArray } from "../Utility/Is"
-import { Content, ContentClass } from "./Content"
+import { Content, ContentClass, ContentRectArgs } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tween"
@@ -35,31 +35,34 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       }
     }
 
-    contentRects(containerRects: Rect | RectTuple, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple {
-      if (forFiles && !this.intrinsicsKnown) {
-        return isArray(containerRects) ? containerRects : [containerRects, containerRects]
+    contentRects(args: ContentRectArgs): RectTuple {
+      const {rects: rects, time, timeRange, loading, editing } = args
+      if (loading && !this.intrinsicsKnown(editing)) {
+        return isArray(rects) ? rects : [rects, rects]
       }
-
-      const { lock, intrinsicRect } = this
+      const { lock } = this
       const tweenRects = this.tweenRects(time, timeRange)
       const locked = lock ? tweenRectsLock(tweenRects, lock) : tweenRects
-      
-      const coverSizes = tweenCoverSizes(intrinsicRect, containerRects, locked)
+      const intrinsicRect = this.intrinsicRect(editing)
+      const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked)
       const [size, sizeEnd] = coverSizes 
-      const coverPoints = tweenCoverPoints(coverSizes, containerRects, locked)
+      const coverPoints = tweenCoverPoints(coverSizes, rects, locked)
       const [point, pointEnd] = coverPoints
       return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]
     }
 
     contentSvgItem(containerRect: Rect, time: Time, timeRange: TimeRange): SvgItem {
-      const [contentRect] = this.contentRects(containerRect, time, timeRange)
+      const contentArgs: ContentRectArgs = {
+        rects: containerRect, time, timeRange, editing: true
+      }
+      const [contentRect] = this.contentRects(contentArgs)
       const { x, y } = contentRect    
       const point = { x: containerRect.x - x, y: containerRect.y - y }
       const rect = rectFromSize(contentRect, point)
       return this.svgItem(rect, time, timeRange, true)
     }
     
-    intrinsicRectInitialize(): Rect { return RectZero }
+    intrinsicRect(_ = false): Rect { return RectZero }
 
     get isDefault() { 
       return this.definitionId === "com.moviemasher.content.default" 
@@ -82,3 +85,4 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     }
   }
 }
+ 

@@ -31,11 +31,19 @@ export const isContainerDefinition = (value?: any): value is ContainerDefinition
   return isTweenableDefinition(value) && isContainerType(value.type)
 }
 
+export interface ContainerRectArgs {
+  size: Size
+  time: Time
+  timeRange: TimeRange
+  loading?: boolean
+  editing?: boolean
+}
+
 export interface Container extends Tweenable {
   blendFilter: Filter
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
-  containerRects(outputSize: Size, time: Time, timeRange: TimeRange, forFiles?: boolean): RectTuple
+  containerRects(args: ContainerRectArgs): RectTuple
   containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
   containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
   directionObject: DirectionObject

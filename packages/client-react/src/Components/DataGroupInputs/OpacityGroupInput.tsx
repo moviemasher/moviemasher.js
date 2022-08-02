@@ -4,7 +4,6 @@ import { InspectorContext } from "../../Contexts/InspectorContext"
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DefaultIcons } from "@moviemasher/icons-default"
-import { sessionGet, sessionSet } from "../../Utilities/Session"
 import { PropertyTweenSuffix } from "@moviemasher/moviemasher.js"
 import { selectedPropertiesScalarObject } from "@moviemasher/moviemasher.js"
 import { ScalarObject } from "@moviemasher/moviemasher.js"
@@ -13,15 +12,13 @@ import { InputContext, InputContextInterface } from "../../Contexts/InputContext
 import { View } from "../../Utilities/View"
 import { useEditor } from "../../Hooks/useEditor"
 
-const OpacityInputKey = 'opacity-input-tween'
 
 export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
-  const [tweening, setTweening] = React.useState(!!sessionGet(OpacityInputKey))
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties } = inspectorContext
+  const { selectedItems: properties, changeTweening, tweening } = inspectorContext
   const byName = selectedPropertyObject(properties, DataGroup.Opacity, selectType)
   const { opacity, [`opacity${PropertyTweenSuffix}`]: opacityEnd } = byName 
   const opacityProperty = tweening ? opacityEnd : opacity
@@ -48,8 +45,7 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
     key: 'start',
     onClick: () => {
       editor.goToTime(time)
-      setTweening(false)
-      sessionSet(OpacityInputKey, '')
+      changeTweening(false)
     }
   }
 
@@ -59,8 +55,7 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
     children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
       editor.goToTime(timeEnd)
-      setTweening(true)
-      sessionSet(OpacityInputKey, 1)
+      changeTweening(true)
     }
   }
   const viewProps = {

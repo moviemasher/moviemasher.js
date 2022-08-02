@@ -1,6 +1,9 @@
 import { ApiCallback, FileStoreRequest, FileStoreResponse, LoadType, NumberObject, UploadDescription } from "@moviemasher/moviemasher.js"
 import { Server, ServerArgs, ServerHandler } from "../Server"
 
+
+export const FileServerFilename = 'original'
+
 export type LoadTypeExtensions = {
   [index in LoadType]: string[]
 }
@@ -18,6 +21,6 @@ export interface FileServer extends Server {
   property: string
   extensionLoadType(extension: string): LoadType | undefined
   store: ServerHandler<FileStoreResponse, FileStoreRequest>
-  userSourceSuffix(id: string, extension: string, loadType?: LoadType, user?: string): string
+  userUploadPrefix(id: string, user?: string): string
   withinLimits(size: number, type: string): boolean
 }

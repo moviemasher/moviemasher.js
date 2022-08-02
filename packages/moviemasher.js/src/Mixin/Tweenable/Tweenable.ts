@@ -54,9 +54,8 @@ export interface Tweenable extends Instance {
   effectsCommandFilters(args: CommandFilterArgs): CommandFilters 
   graphFiles(args: GraphFileArgs): GraphFiles
   initialCommandFilters(args: CommandFilterArgs): CommandFilters
-  intrinsicRect: Rect
-  intrinsicRectInitialize(): Rect
-  intrinsicsKnown: boolean
+  intrinsicRect(editing?: boolean): Rect
+  intrinsicsKnown(editing?: boolean): boolean
   isDefault: boolean
   lock: Orientation
   mergeCommandFilters(args: CommandFilterArgs): CommandFilters
@@ -78,7 +77,6 @@ export interface Tweenable extends Instance {
   tweenSizes(time: Time, range: TimeRange): SizeTuple 
   tweenValues(key: string, time: Time, range: TimeRange): Scalar[] 
 }
-
 
 export const isTweenable = (value?: any): value is Tweenable => {
   return isDefinition(value.definition)

@@ -76,7 +76,7 @@ export function UploadControl(props: PropsAndChild): ReactResult {
     if (processing) return
 
     const { type, name, size } = file
-    console.log("startProcessing", file)
+    // console.log("startProcessing", file)
     setProcessing(true)
     loadTypeRef.current = ''
     const request: RenderingUploadRequest = { type, name, size }
