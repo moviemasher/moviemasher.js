@@ -48,7 +48,6 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return [graphFile]
   }
  
-  mutable() { return this.definition.audio }
 
   private _foreignElement?: SVGForeignObjectElement
   private get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }

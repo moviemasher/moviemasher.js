@@ -112,10 +112,14 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
         rects: containerRects, time, timeRange: clipTime
       }
       const contentRects = this.contentRects(contentArgs)
+
+      const tweeningContainer = !rectsEqual(...containerRects)
+      const tweeningContent = !rectsEqual(...contentRects)
+
       // console.log(this.constructor.name, "contentCommandFilters", containerRects, contentRects)
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
-      const maxContainerSize = tweenMaxSize(...containerRects) 
+      const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
      
       const colorArgs: CommandFilterArgs = { 
         ...args, contentColors: [colorBlack, colorBlack], 
@@ -140,18 +144,18 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const cropArgs: FilterCommandFilterArgs = { 
         duration, videoRate, filterInput
       }
-      const { cropFilter } = this
-      cropFilter.setValue(maxContainerSize.width, "width")
-      cropFilter.setValue(maxContainerSize.height, "height")
-      cropFilter.setValue(contentRect.x, "x")
-      cropFilter.setValue(contentRect.y, "y")
-      cropFilter.setValue(contentRectEnd.x, `x${PropertyTweenSuffix}`)
-      cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
-      commandFilters.push(...cropFilter.commandFilters(cropArgs))
-    
 
-      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-   
+      // if (tweeningContent) {
+        const { cropFilter } = this
+        cropFilter.setValue(maxContainerSize.width, "width")
+        cropFilter.setValue(maxContainerSize.height, "height")
+        cropFilter.setValue(contentRect.x, "x")
+        cropFilter.setValue(contentRect.y, "y")
+        cropFilter.setValue(contentRectEnd.x, `x${PropertyTweenSuffix}`)
+        cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
+        commandFilters.push(...cropFilter.commandFilters(cropArgs))
+        filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+      // }
       commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }))
       return commandFilters
     }

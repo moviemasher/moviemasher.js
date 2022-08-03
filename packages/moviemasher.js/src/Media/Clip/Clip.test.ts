@@ -12,20 +12,27 @@ import { ImageClass } from "../Image/ImageClass"
 import { AudioClass } from "../Audio/AudioClass"
 import { GraphFileType, LoadType } from "../../Setup/Enums"
 import { arrayLast } from "../../Utility/Array"
+import { Clip } from "./Clip"
 
 describe("Clip", () => {
   const time = timeFromArgs()
   const quantize = time.fps
   const videoRate = 30
-  const graphFileArgs: GraphFileArgs = { time, quantize, visible: true }
-  const commandFileArgs: CommandFileArgs = { 
-    time, quantize, visible: true, videoRate,
-    outputSize: SizeOutput
-  }
-  const commandFilterArgs: CommandFilterArgs = {
-    chainInput: FilterGraphInputVisible,
-    ...commandFileArgs, commandFiles: [], track: 0
-  }
+  const graphFileArgs = (clip: Clip): GraphFileArgs => {
+    return { time, quantize, visible: true, clipTime: clip.timeRange(quantize) }
+  } 
+  const commandFileArgs = (clip: Clip): CommandFileArgs => {
+    return { 
+      time, quantize, visible: true, videoRate,
+      outputSize: SizeOutput, clipTime: clip.timeRange(quantize)
+    }
+  } 
+  const commandFilterArgs = (clip: Clip): CommandFilterArgs => {
+    return {
+      chainInput: FilterGraphInputVisible,
+      ...commandFileArgs(clip), commandFiles: [], track: 0
+    }
+  } 
   const expectCommandFilters = (commandFilters: CommandFilters, ...commands: string[]) => {
     const commandNames = commandFilters.map(commandFilter => commandFilter.ffmpegFilter)
     expect(commandNames).toEqual(commands)
@@ -40,12 +47,14 @@ describe("Clip", () => {
       expect(describedClip.container).toBeInstanceOf(ShapeContainerClass)
     })
     test("clipGraphFiles() returns empty array", () => {
-      expectEmptyArray(describedClip.clipGraphFiles(graphFileArgs))
+      expectEmptyArray(describedClip.clipGraphFiles(graphFileArgs(describedClip)))
     })
     test("commandFilters() returns expected color and overlay", () => {
-      const commandFiles = describedClip.commandFiles(commandFileArgs)
+      const commandFiles = describedClip.commandFiles(commandFileArgs(describedClip))
       expectEmptyArray(commandFiles)
-      const commandFilters = describedClip.commandFilters({ ...commandFilterArgs, commandFiles })
+      const commandFilters = describedClip.commandFilters({ 
+        ...commandFilterArgs(describedClip), commandFiles 
+      })
   
       expectArrayLength(commandFilters, 3, Object)
       // console.log("commandFilters", commandFilters)
@@ -71,12 +80,12 @@ describe("Clip", () => {
     })
     test("clipGraphFiles() returns image GraphFile", () => {
       const describedClip = createClipWithImage()
-      const graphFiles = describedClip.clipGraphFiles(graphFileArgs)
+      const graphFiles = describedClip.clipGraphFiles(graphFileArgs(describedClip))
       expectArrayLength(graphFiles, 1, Object)
     })
     test("commandFiles() returns expected CommandFiles ", async () => {
       const describedClip = createClipWithImage()
-      const commandFiles = describedClip.commandFiles(commandFileArgs)
+      const commandFiles = describedClip.commandFiles(commandFileArgs(describedClip))
       expectArrayLength(commandFiles, 1, Object)
       const [commandFile] = commandFiles
       // console.log("commandFile", commandFile)
@@ -84,8 +93,10 @@ describe("Clip", () => {
     test("commandFilters() returns expected CommandFilters", () => {
       const describedClip = createClipWithImage()
 
-      const commandFiles = describedClip.commandFiles(commandFileArgs)
-      const commandFilters = describedClip.commandFilters({...commandFilterArgs, commandFiles })
+      const commandFiles = describedClip.commandFiles(commandFileArgs(describedClip))
+      const commandFilters = describedClip.commandFilters({
+        ...commandFilterArgs(describedClip), commandFiles 
+      })
       expectArrayLength(commandFiles, 1, Object)
       expectCommandFilters(commandFilters, "color", "scale", "overlay", "crop", "copy", "overlay")
       const [colorCommand] = commandFilters
@@ -111,14 +122,14 @@ describe("Clip", () => {
     })
     test("clipGraphFiles() returns image GraphFile", () => {
       const describedClip = createClip()
-      const graphFiles = describedClip.clipGraphFiles(graphFileArgs)
+      const graphFiles = describedClip.clipGraphFiles(graphFileArgs(describedClip))
       expectArrayLength(graphFiles, 1, Object)
       const [graphFile] = graphFiles
       expect(graphFile.type).toBe(LoadType.Image)
     })
     test("commandFiles() returns expected CommandFiles ", () => {
       const describedClip = createClip()
-      const commandFiles = describedClip.commandFiles(commandFileArgs)
+      const commandFiles = describedClip.commandFiles(commandFileArgs(describedClip))
       expectArrayLength(commandFiles, 2, Object)
       expect(commandFiles.every(file => file.input)).toBe(true)
       const [imageFile, svgFile] = commandFiles
@@ -127,9 +138,11 @@ describe("Clip", () => {
     })
     test("commandFilters() returns expected CommandFilters", () => {
       const describedClip = createClip()
-      const commandFiles = describedClip.commandFiles(commandFileArgs)
+      const commandFiles = describedClip.commandFiles(commandFileArgs(describedClip))
       expectArrayLength(commandFiles, 2, Object)
-      const commandFilters = describedClip.commandFilters({...commandFilterArgs, commandFiles })
+      const commandFilters = describedClip.commandFilters({
+        ...commandFilterArgs(describedClip), commandFiles 
+      })
       // console.log("commandFilters", commandFilters)//.map(f => f.ffmpegFilter))
       expectCommandFilters(commandFilters, "color", "scale", "overlay", "crop", "format", "format", "alphamerge", "overlay")//"color", 
       const alphamergeCommand = commandFilters[6]
@@ -144,13 +157,19 @@ describe("Clip", () => {
   })
 
   describe("with audio content", () => {
-    const audioGraphFileArgs = { ...graphFileArgs, visible: false, audible: true }
-    const audioCommandFileArgs = { ...commandFileArgs, visible: false, audible: true }
-    const audioCommandFilterArgs: CommandFilterArgs = {
-      chainInput: FilterGraphInputAudible,
-      filterInput: 'FILTER',
-      ...audioCommandFileArgs, commandFiles: [], track: 0
+    const audioGraphFileArgs = (clip: Clip) => {
+      return { ...graphFileArgs(clip), visible: false, audible: true }
     }
+    const audioCommandFileArgs = (clip: Clip) => {
+      return { ...commandFileArgs(clip), visible: false, audible: true }
+    } 
+    const audioCommandFilterArgs = (clip: Clip): CommandFilterArgs => {
+      return {
+        chainInput: FilterGraphInputAudible,
+        filterInput: 'FILTER',
+        ...audioCommandFileArgs(clip), commandFiles: [], track: 0
+      }
+    } 
 
     test("has audio content and undefined container", () => {
       const describedClip = createClipWithAudio()
@@ -161,7 +180,7 @@ describe("Clip", () => {
     })
     test("clipGraphFiles() returns audio input GraphFile", () => {
       const describedClip = createClipWithAudio()
-      const graphFiles = describedClip.clipGraphFiles(audioGraphFileArgs)
+      const graphFiles = describedClip.clipGraphFiles(audioGraphFileArgs(describedClip))
       expectArrayLength(graphFiles, 1, Object)
       const [graphFile] = graphFiles
       const { type, input } = graphFile
@@ -170,7 +189,7 @@ describe("Clip", () => {
     })
     test("commandFiles() returns expected CommandFiles ", async () => {
       const describedClip = createClipWithAudio()
-      const commandFiles = describedClip.commandFiles(audioCommandFileArgs)
+      const commandFiles = describedClip.commandFiles(audioCommandFileArgs(describedClip))
       expectArrayLength(commandFiles, 1, Object)
       const [audioFile] = commandFiles
       const { type, input } = audioFile
@@ -179,9 +198,11 @@ describe("Clip", () => {
     })
     test("commandFilters() returns expected CommandFilters", async () => {
       const describedClip = createClipWithAudio()
-      const commandFiles = describedClip.commandFiles(audioCommandFileArgs)
+      const commandFiles = describedClip.commandFiles(audioCommandFileArgs(describedClip))
       expectArrayLength(commandFiles, 1, Object)
-      const commandFilters = describedClip.commandFilters({...audioCommandFilterArgs, commandFiles })
+      const commandFilters = describedClip.commandFilters({
+        ...audioCommandFilterArgs(describedClip), commandFiles 
+      })
       // console.log("commandFilters", commandFilters)
       expectCommandFilters(commandFilters, "atrim", "amix")
       const [atrimCommand, amixCommand] = commandFilters

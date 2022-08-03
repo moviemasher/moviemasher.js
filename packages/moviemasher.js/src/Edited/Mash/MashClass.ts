@@ -9,7 +9,7 @@ import {
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { assertPopulatedString, assertTrue, isAboveZero, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
+import { assertPopulatedString, assertTime, assertTrue, isAboveZero, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
 import { sortByLayer } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "../../Media/Clip/Clip"
@@ -33,6 +33,7 @@ import { LayerMash } from "../Cast/Layer/Layer"
 import { Actions } from "../../Editor/Actions/Actions"
 import { NonePreview } from "../../Editor/Preview/NonePreview"
 import { Selectables } from "../../Editor/Selectable"
+import { isTextContainer } from "../../Container/TextContainer/TextContainer"
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
@@ -408,7 +409,7 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
-  graphFileArgs(options: GraphFileOptions = {}): GraphFileArgs {
+  private graphFileOptions(options: GraphFileOptions = {}): GraphFileOptions {
     const { time, audible, visible, editing, streaming } = options
 
     const definedTime = time || this.time
@@ -416,7 +417,7 @@ export class MashClass extends EditedClass implements Mash {
     const definedVisible = visible || !isRange
     const definedAudible = isRange && audible
 
-    const args: GraphFileArgs = {
+    const args: GraphFileOptions = {
       editing,
       streaming,
       audible: definedAudible, visible: definedVisible,
@@ -431,13 +432,19 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   graphFiles(options?: GraphFileOptions): GraphFiles {
-    const args = this.graphFileArgs(options)
+    const args = this.graphFileOptions(options)
     const { time, audible, visible } = args
+    const { quantize } = this
+    assertTime(time)
+
     const scaled = time.scale(this.quantize)
     const type = audible && visible ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
     const clips = this.clipsInTimeOfType(scaled, type)
     // console.log(this.constructor.name, "graphFiles", args, clips.length, "clip(s)")
-    return clips.flatMap(clip => clip.clipGraphFiles(args))
+    return clips.flatMap(clip => {
+      const clipTime = clip.timeRange(quantize)
+      return clip.clipGraphFiles({ ...args, clipTime, quantize, time })
+    })
   }
 
   private graphFilesUnloaded(options: GraphFileOptions): GraphFiles {
@@ -601,21 +608,23 @@ export class MashClass extends EditedClass implements Mash {
 
   putPromise(): Promise<void> { 
     const { quantize, preloader } = this
-    const args: GraphFileArgs = {
-      editing: true, visible: true, quantize, time: timeFromArgs()
-    }
+    
+    // make sure we've loaded fonts in order to calculate intrinsic rect
     const graphFiles = this.clips.flatMap(clip => {
       const { container } = clip
-      if (isContainer(container)) {
+      if (isTextContainer(container)) {
         if (!container.intrinsicsKnown(true)) {
-          return container.graphFiles({ ...args, time: clip.time(quantize)})
+          const args: GraphFileArgs = {
+            editing: true, visible: true, quantize, 
+            time: clip.time(quantize), clipTime: clip.timeRange(quantize)
+          }
+          return container.graphFiles(args)
         }
       }
       return [] 
     })  
     return preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
   }
-
 
   removeClipFromTrack(clip: Clip): void {
     const track = this.clipTrack(clip)

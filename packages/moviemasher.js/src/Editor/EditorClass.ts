@@ -391,12 +391,17 @@ export class EditorClass implements Editor {
   private get gain(): number { return this.muted ? 0.0 : this.volume }
 
   goToTime(value?: Time): Promise<void> {
-    const { fps } = this
-    const time = value ? value.scaleToFps(fps) : timeFromArgs(0, fps)
-    const min = time.min(this.endTime)
-    if (value && min.equalsTime(this.time)) return Promise.resolve()
+    const { fps, time } = this
+    const { frame: currentFrame } = time
+    const goTime = value ? value.scaleToFps(fps) : timeFromArgs(0, fps)
+    const { frame: attemptFrame } = goTime
+    const { frame: endFrame } = this.endTime
+    const lastFrame = endFrame - 1
+    const goFrame = lastFrame < 1 ? 0 : Math.min(attemptFrame, lastFrame)
+    
+    if (value && currentFrame === goFrame) return Promise.resolve()
 
-    const promise = this.selection.mash?.seekToTime(min)
+    const promise = this.selection.mash?.seekToTime(timeFromArgs(goFrame, fps))
     if (promise) return promise
 
     return Promise.resolve()

@@ -129,8 +129,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     get colorFilter() { return this._colorFilter ||= filterFromId('color') }
 
     commandFiles(args: CommandFileArgs): CommandFiles {
-      const { visible } = args
-      const graphFileArgs: GraphFileArgs = { ...args, audible: !visible }
+      const { visible, clipTime } = args
+      const graphFileArgs: GraphFileArgs = { 
+        ...args, audible: !visible, clipTime 
+      }
       const commandFiles: CommandFiles = [] 
       const graphFiles = this.graphFiles(graphFileArgs)
       let inputCount = 0
@@ -215,6 +217,19 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return []
     }
 
+
+    definitionTime(time : Time, clipTime: TimeRange) : Time {
+      const { fps: quantize } = clipTime
+      const scaledTime = time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
+      const { startTime, endTime } = clipTime
+      // const startTime = this.time(quantize).scale(scaledTime.fps)
+      // const endTime = this.endTime(quantize).scale(scaledTime.fps)
+  
+      const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
+      return scaledTime.withFrame(frame - startTime.frame)
+    }
+
+    
     effectsCommandFilters(args: CommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = []
       const { filterInput: input } = args

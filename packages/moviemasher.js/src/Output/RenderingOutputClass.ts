@@ -121,13 +121,17 @@ export class RenderingOutputClass implements RenderingOutput {
     const time = timeRangeFromArgs(startFrame, quantize, endFrame + 1)
 
     const { avType, graphType } = this
-    const options: GraphFileArgs = {
+    const options: GraphFileOptions = {
       audible: avType !== AVType.Video,
       visible: avType !== AVType.Audio,
-      time, streaming: graphType === GraphType.Cast,
-      quantize,
+      streaming: graphType === GraphType.Cast,
     }
-    const graphFiles = clips.flatMap(clip => clip.clipGraphFiles(options))
+    const graphFiles = clips.flatMap(clip => {
+      const args: GraphFileArgs = { 
+        ...options, quantize, time, clipTime: clip.timeRange(quantize)
+      }
+      return clip.clipGraphFiles(args)
+    })
    
     const files = graphFiles.filter(graphFile => isLoadType(graphFile.type))
     // console.log(this.constructor.name, "mashDurationPromise", files.length, "file(s)")
@@ -311,7 +315,7 @@ export class RenderingOutputClass implements RenderingOutput {
   get visibleGraphFiles(): GraphFiles {
     const { timeRange: time } = this
 
-    const filterGraphOptions: GraphFileArgs = {
+    const filterGraphOptions: GraphFileOptions = {
       visible: true, time, quantize: this.args.mash.quantize
     }
     const graphFiles = this.args.mash.graphFiles(filterGraphOptions)

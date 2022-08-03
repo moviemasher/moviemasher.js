@@ -87,10 +87,13 @@ export class AudioPreview {
   }
 
   private createSources(clips: Clip[], quantize: number, time?:Time): boolean {
+    // console.log(this.constructor.name, "createSources", clips.length, "clip(s)", quantize, time, this.playing)
+
     if (!this.playing && !time) return false
 
     const addingClips = clips.filter(clip => !this.playingClips.includes(clip))
     this.playingClips.push(...addingClips)
+    // console.log(this.constructor.name, "createSources", addingClips.length, "addingClip(s)")
 
     return addingClips.every(clip => {
       const avs = this.clipSources(clip)
@@ -115,11 +118,11 @@ export class AudioPreview {
           const { definition, id } = av
 
           const { loop } = definition as UpdatableDurationDefinition
-
+          // console.log(this.constructor.name, "createSources", options, loop)
           AudibleContextInstance.startAt(id, audibleSource, start, duration, offset, loop)
 
           this.adjustSourceGain(av, options)
-        }
+        } else console.error(this.constructor.name, "createSources", options)
         return true
       })
     })

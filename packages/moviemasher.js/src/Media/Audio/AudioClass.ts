@@ -16,22 +16,22 @@ const AudioWithUpdatableDuration = UpdatableDurationMixin(AudioWithPreloadable)
 export class AudioClass extends AudioWithUpdatableDuration implements Audio {
   declare definition : AudioDefinition
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
-    const { editing, audible, time, clipTime } = args
-    if (!audible) return []
+  // graphFiles(args: GraphFileArgs): GraphFiles {
+  //   const { editing, audible, time, clipTime } = args
+  //   if (!audible) return []
 
-    if (editing && !time.isRange) return []
+  //   if (editing && !time.isRange) return []
 
-    const { definition } = this
-    // const itsoffset = clipTime!.seconds - time.seconds
-    const options: ValueObject = {  }
-    // if (itsoffset) options.itsoffset = itsoffset
-    const graphFile: GraphFile = {
-      type: LoadType.Audio, file: definition.urlAudible, definition, input: true,
-      options
-    }
-    return [graphFile]
-  }
+  //   const { definition } = this
+  //   // const itsoffset = clipTime!.seconds - time.seconds
+  //   const options: ValueObject = {  }
+  //   // if (itsoffset) options.itsoffset = itsoffset
+  //   const graphFile: GraphFile = {
+  //     type: LoadType.Audio, file: definition.urlAudible(editing), 
+  //     definition, input: true, options
+  //   }
+  //   return [graphFile]
+  // }
 
   mutable() { return true }
   

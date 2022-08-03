@@ -42,16 +42,17 @@ export interface AVEditingArgs {
 
 export interface GraphFileOptions extends Partial<AVEditingArgs> {
   quantize?: number
+  clipTime?: TimeRange
 }
 
 export interface GraphFileArgs extends AVEditingArgs {
   quantize: number
-  clipTime?: TimeRange
+  clipTime: TimeRange
 }
 
 export type ColorTuple = [string, string]
 
-export interface CommandFileArgs {
+export interface CommandFileOptions {
   visible?: boolean
   time: Time
   quantize: number
@@ -60,6 +61,11 @@ export interface CommandFileArgs {
   contentColors?: ColorTuple
   videoRate: number
   clipTime?: TimeRange
+}
+
+export interface CommandFileArgs extends CommandFileOptions {
+  
+  clipTime: TimeRange
 }
 
 export interface CommandFilterArgs extends CommandFileArgs {

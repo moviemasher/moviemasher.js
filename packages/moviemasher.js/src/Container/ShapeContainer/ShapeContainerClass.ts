@@ -4,7 +4,7 @@ import { NamespaceSvg } from "../../Setup/Constants"
 import { colorBlack, colorBlackOpaque, colorWhite } from "../../Utility/Color"
 import { SvgItem, ValueObject } from "../../declarations"
 import { Rect, rectsEqual } from "../../Utility/Rect"
-import { Size } from "../../Utility/Size"
+import { Size, sizeAboveZero } from "../../Utility/Size"
 import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
 import { DataType, GraphFileType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
@@ -18,6 +18,7 @@ import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { PointZero } from "../../Utility/Point"
+import { svgPolygonElement } from "../../Utility/Svg"
 
 const ShapeContainerWithTweenable = TweenableMixin(InstanceBase)
 const ShapeContainerWithContainer = ContainerMixin(ShapeContainerWithTweenable)
@@ -305,6 +306,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
     const { definition } = this
     const intrinsicRect = this.intrinsicRect(true)
+    if (!sizeAboveZero(intrinsicRect)) {
+      return svgPolygonElement(rect, '', forecolor)
+    }
     const { path } = definition
     const transformAttribute = tweenRectScale(intrinsicRect, rect)
 

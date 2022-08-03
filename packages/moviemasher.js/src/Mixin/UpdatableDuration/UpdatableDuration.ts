@@ -26,6 +26,7 @@ export interface UpdatableDurationDefinitionObject extends PreloadableDefinition
   audio?: boolean
   loop?: boolean
   waveform?: string
+  audioUrl?: string
 }
 
 export interface UpdatableDuration extends Preloadable {
@@ -53,7 +54,8 @@ export interface UpdatableDurationDefinition extends PreloadableDefinition {
   duration: number
   audibleSource(preloader: Loader): AudibleSource | undefined
   audio: boolean
-  urlAudible: string
+  audioUrl: string
+  urlAudible(editing?: boolean): string
   loop: boolean
 
   frames(quantize: number): number

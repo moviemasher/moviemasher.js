@@ -5,7 +5,7 @@ import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { Loader } from "../../Loader/Loader"
 import { DataType, Duration, LoadType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertPopulatedString, isAboveZero } from "../../Utility/Is"
+import { assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
 
@@ -14,9 +14,11 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { audio, url, source, loop, duration, waveform } = object as UpdatableDurationDefinitionObject
+      const { audioUrl, audio, url, source, loop, duration, waveform } = object as UpdatableDurationDefinitionObject
 
+      
       if (audio) this.audio = true
+      if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
       if (waveform) this.waveform = waveform
       if (isAboveZero(duration)) this.duration = duration
       // console.log(this.constructor.name, "duration", duration, this.duration)
@@ -25,10 +27,6 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         this.properties.push(propertyInstance({ name: 'loops', defaultValue: 1 }))
       }
 
-      const urlAudible = url || source || ""
-      assertPopulatedString(urlAudible)
-
-      this.urlAudible = urlAudible
       this.properties.push(propertyInstance({ name: "gain", defaultValue: 1.0 }))
       this.properties.push(propertyInstance({ name: "speed", defaultValue: 1.0 }))
       this.properties.push(propertyInstance({ name: "trim", defaultValue: 0, type: DataType.Frame }))
@@ -36,7 +34,8 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
 
     audibleSource(preloader: Loader): AudibleSource | undefined {
       const graphFile: GraphFile = {
-        file: this.urlAudible, type: LoadType.Audio, definition: this, input: true
+        file: this.urlAudible(true), type: LoadType.Audio, 
+        definition: this, input: true
       }
       if (!preloader.loadedFile(graphFile)) return
       const cached: LoadedAudio = preloader.getFile(graphFile)
@@ -46,6 +45,8 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
     audio = false
+
+    audioUrl = ''
 
     duration = 0
 
@@ -70,7 +71,11 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
 
-    urlAudible: string
+    urlAudible(editing = false): string { 
+      if (editing) return this.audioUrl || this.url
+
+      return this.source
+    }
     
     waveform?: string
   }

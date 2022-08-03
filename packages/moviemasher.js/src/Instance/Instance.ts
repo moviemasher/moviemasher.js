@@ -22,7 +22,6 @@ export interface Instance extends Propertied {
   definitionId: string
   definitionIds(): string[]
   propertiesCustom: Property[]
-  definitionTime(quantize: number, time: Time): Time
   id: string
   label: string
   propertyNames: string[]

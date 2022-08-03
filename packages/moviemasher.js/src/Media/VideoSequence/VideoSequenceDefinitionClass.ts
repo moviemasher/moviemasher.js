@@ -74,39 +74,9 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
 
   loadType = LoadType.Image
 
-  // loadedVisible(preloader: Loader, _quantize: number, time: Time): CanvasVisibleSource | undefined {
-  //   const frames = this.framesArray(time)
-  //   const [frame] = frames
-  //   const url = this.urlForFrame(frame)
-  //   const file: GraphFile = {
-  //     type: LoadType.Image, file: url, definition: this, input: true
-  //   }
-  //   if (!preloader.loadedFile(file)) return
-
-  //   return preloader.getFile(file)
-  // }
-
   padding : number
 
   pattern = '%.jpg'
-
-  // preloadableSvg(trackPreview: TrackPreview): SvgItem {
-  //   const { preview: filterGraph } = trackPreview
-  //   const { size } = filterGraph
-  //   const { preloader, editing, visible, quantize, time } = filterGraph
-  //   const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
-
-  //   const { width, height } = size
-  //   const graphFiles = this.graphFiles(graphFileArgs)
-  //   const [graphFile] = graphFiles
-  //   const href = preloader.key(graphFile)
-  //   const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
-  //   imageElement.setAttribute('id', `image-${this.id}`)
-  //   imageElement.setAttribute('width', String(width))
-  //   imageElement.setAttribute('height', String(height))
-  //   imageElement.setAttribute('href', href)
-  //   return imageElement
-  // }
 
   toJSON() : UnknownObject {
     const json = super.toJSON()

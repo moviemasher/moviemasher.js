@@ -23,69 +23,6 @@ const VideoSequenceWithUpdatableSize = UpdatableSizeMixin(VideoSequenceWithPrelo
 const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceWithUpdatableSize)
 
 export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration implements VideoSequence {
-
-  // chainLinks(): ChainLinks {
-  //   const links: ChainLinks = [this]
-  //   links.push(...super.chainLinks())
-  //   return links
-  // }
-
-  // filterChainPhase(filterChain: FilterChain, phase: Phase): FilterChainPhase | undefined {
-  //   if (phase !== Phase.Initialize) return
-
-  //   const { filterGraph } = filterChain
-  //   const { preloader, editing, visible, quantize, time } = filterGraph
-  //   const graphFileArgs: GraphFileArgs = { editing, visible, quantize, time }
-  //   const files = this.graphFiles(graphFileArgs)
-  //   const graphFiles = files.map((file, index) => {
-  //     const graphFile: GraphFile = { ...file }
-  //     return graphFile
-  //   })
-
-  //   const values: ValueObject = {}
-  //   const [graphFile] = graphFiles
-
-  //   let { width, height } = this.definition
-  //   if (!(isAboveZero(width) && isAboveZero(height))) {
-  //     const loaded: LoadedImage = preloader.getFile(graphFile)
-
-  //     width = loaded.width
-  //     height = loaded.width
-  //   }
-  //   values.width = width
-  //   values.height = height
-  //   values.href = preloader.key(graphFile)
-  //   filterChain.size = { width, height }
-
-  //   return { graphFiles, link: this, values }
-  // }
-
-  // preloadableSvg(filterChain: ClientFilterChain, dimensions?: Size): SvgItem {
-  //   const { filterGraph } = filterChain
-  //   const { preloader, size } = filterGraph
-  //   const files = this.graphFiles(filterGraph)
-  //   const [file] = files
-
-  //   const loaded: LoadedImage = preloader.getFile(file)
-
-  //   const { src: href, width: loadedWidth, height: loadedHeight } = loaded
-  //   const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
-  //   imageElement.setAttribute('id', `image-${this.id}`)
-  //   imageElement.setAttribute('href', href)
-
-  //   const { width, height } = dimensions || size
-  //   const scaleWidth = width / loadedWidth
-  //   const scaleHeight = height / loadedHeight
-  //   if (scaleWidth > scaleHeight) imageElement.setAttribute('width', String(width))
-  //   else imageElement.setAttribute('height', String(height))
-
-  //   return imageElement
-  // }
-
-
-
-  // copy(): VideoSequence { return super.copy() as VideoSequence }
-
   definitionGraphFiles(args: GraphFileArgs): GraphFiles {
     const files = super.graphFiles(args) 
     const { definition } = this
@@ -118,16 +55,11 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
 
   declare definition : VideoSequenceDefinition
 
-  definitionTime(quantize : number, time : Time) : Time {
-    const scaledTime = super.definitionTime(quantize, time)
-    if (this.speed === Default.instance.video.speed) return scaledTime
-
-    return scaledTime.divide(this.speed) //, 'ceil')
-  }
-
   graphFiles(args: GraphFileArgs): GraphFiles {
-    const { quantize, time } = args
-    const definitionTime = this.definitionTime(quantize, time)
+    const { quantize, time, clipTime } = args
+
+    const definitionTime = this.definitionTime(time, clipTime)
+    // console.log(this.constructor.name, "graphFiles", time, clipTime, definitionTime)
     const definitionArgs: GraphFileArgs = { ...args, time: definitionTime }
     return this.definitionGraphFiles(definitionArgs)
   }
@@ -135,10 +67,12 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
   speed = Default.instance.video.speed
 
   svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
+    // console.log(this.constructor.name, "svgItem", time, range)
+    const definitionTime = this.definitionTime(time, range)
     const { x, y, width, height } = rect
     const { definition } = this
    
-    const [frame] = definition.framesArray(time)
+    const [frame] = definition.framesArray(definitionTime)
     const url = definition.urlForFrame(frame)
     const lastUrl = this.definition.urlAbsolute
     const urlComponents = url.split('/')

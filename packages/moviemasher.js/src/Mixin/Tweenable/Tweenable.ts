@@ -50,6 +50,8 @@ export interface Tweenable extends Instance {
   contentCommandFilters(args: CommandFilterArgs): CommandFilters 
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
   cropFilter: Filter
+
+  definitionTime(masherTime: Time, clipRange: TimeRange): Time
   effects: Effects
   effectsCommandFilters(args: CommandFilterArgs): CommandFilters 
   graphFiles(args: GraphFileArgs): GraphFiles

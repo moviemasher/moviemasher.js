@@ -65,7 +65,9 @@ export class ClipClass extends InstanceBase implements Clip {
         // console.log(this.constructor.name, "commandFiles content:", contentFiles.length)
         commandFiles.push(...contentFiles)
       }
-      const containerArgs: CommandFileArgs = { ...contentArgs, contentColors: colors }
+      const containerArgs: CommandFileArgs = { 
+        ...contentArgs, contentColors: colors 
+      }
       const containerFiles = container.commandFiles(containerArgs)
 
       // console.log(this.constructor.name, "commandFiles container:", containerFiles.length)
@@ -159,15 +161,6 @@ export class ClipClass extends InstanceBase implements Clip {
     ]
     if (this.container) ids.push(...this.container.definitionIds())
     return ids
-  }
-
-  definitionTime(quantize : number, time : Time) : Time {
-    const scaledTime = super.definitionTime(quantize, time)
-    const startTime = this.time(quantize).scale(scaledTime.fps)
-    const endTime = this.endTime(quantize).scale(scaledTime.fps)
-
-    const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
-    return scaledTime.withFrame(frame - startTime.frame)
   }
 
   get endFrame() { return this.frame + this.frames }

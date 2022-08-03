@@ -95,7 +95,7 @@ export class FilterGraphClass implements FilterGraph {
       const chainArgs: CommandFileArgs = { 
         time, quantize, visible, outputSize: outputSize, videoRate, clipTime
       }
-    return clip.commandFiles(chainArgs)
+      return clip.commandFiles(chainArgs)
     }))
     commandFiles.forEach(commandFile => {
       commandFile.resolved = preloader.key(commandFile)

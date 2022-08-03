@@ -8,7 +8,7 @@ import {
   EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, CommandInput, RenderingDescription, AVType, CommandInputs,
   Defined,
   assertTrue,
-  ExtTs, assertSize, ExtText, isDefined, isDefinition, isObject, isPopulatedString, isPreloadableDefinition, NumberObject, GraphFile
+  ExtTs, assertSize, ExtText, isDefined, isDefinition, isObject, isPopulatedString, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero
 } from "@moviemasher/moviemasher.js"
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
@@ -58,17 +58,14 @@ export class RenderingProcessClass implements RenderingProcess {
       const cmdPath = path.join(temporaryDirectory, `${baseName}.${ExtensionCommands}`)
       const infoPath = path.join(temporaryDirectory, `${baseName}.${ExtensionLoadedInfo}`)
       const { duration } = description
-      if (!duration) throw Errors.invalid.duration
+      assertAboveZero(duration, 'duration')
 
       const concatFileDuration: RenderingProcessConcatFileDuration = [fileName, duration]
-   
       promise = promise.then(() => {
-        // console.log(this.constructor.name, "combinedRenderingDescriptionPromise finished, calling renderResultPromise")
-
-        return this.renderResultPromise(destinationPath, cmdPath, infoPath, output, description).then(EmptyMethod)
+        return this.renderResultPromise(
+          destinationPath, cmdPath, infoPath, output, description
+        ).then(EmptyMethod)
       })
-    
-      
       return concatFileDuration
     })
 
@@ -89,12 +86,21 @@ export class RenderingProcessClass implements RenderingProcess {
       const inputs = audibleCommandDescription?.inputs || []
 
       const description: CommandDescription = { 
-        inputs: [commandInput], duration, avType: AVType.Video,
-        commandFilters: [{ inputs: [`${inputs.length}:v`], ffmpegFilter: 'scale', options: { width, height }, outputs: [] }]
+        inputs: [commandInput], duration, avType: AVType.Video
       }
+      if (inputs.length) {
+        description.commandFilters =  [{ 
+          inputs: [`${inputs.length}:v`], ffmpegFilter: 'copy', 
+          options: {}, outputs: [] 
+        }]  
+      }
+      
       const renderingDescription: RenderingDescription = {
-        commandOutput: { ...commandOutput, width, height, options: { ...commandOutputOptions, 'c:v': 'copy' } }, audibleCommandDescription,
-        visibleCommandDescriptions: [description],
+        audibleCommandDescription, visibleCommandDescriptions: [description],
+        commandOutput: { 
+          ...commandOutput, width, height, 
+          options: { ...commandOutputOptions, 'c:v': 'copy' } 
+        }, 
       }
       return renderingDescription
     })
@@ -357,10 +363,9 @@ export class RenderingProcessClass implements RenderingProcess {
           }
 
           const cmdFilename = renderingOutputFile(index, output, ExtensionCommands)
-          const cmdPath = path.join(outputDirectory, cmdFilename)
-          
           const destinationFileName = this.fileName(index, output, renderingOutput)
-          const destination = `${outputDirectory}/${destinationFileName}`
+          const cmdPath = path.join(outputDirectory, cmdFilename)
+          const destination = path.join(outputDirectory, destinationFileName)
           // console.log(this.constructor.name, "runPromise flatPromise done", destination)
 
           const renderPromise = this.renderResultPromise(

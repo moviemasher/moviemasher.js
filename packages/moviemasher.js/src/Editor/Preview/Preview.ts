@@ -1,5 +1,5 @@
 import { Size } from "../../Utility/Size"
-import { GraphFileArgs } from "../../MoveMe"
+import { GraphFileArgs, GraphFileOptions } from "../../MoveMe"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
@@ -26,7 +26,7 @@ export interface Svg {
 
 export type Svgs = Svg[]
 
-export interface Preview extends GraphFileArgs {
+export interface Preview extends GraphFileOptions {
   svgs: Promise<Svgs>
   svg: Promise<Svg>
   editing: boolean
@@ -38,4 +38,5 @@ export interface Preview extends GraphFileArgs {
   audible: boolean
   visible: boolean
   preloader: Loader
+  quantize: number
 }

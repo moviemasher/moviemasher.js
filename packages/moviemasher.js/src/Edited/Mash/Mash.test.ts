@@ -21,7 +21,7 @@ import { isClipObject, Clip, ClipObject } from "../../Media/Clip/Clip"
 import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { TrackClass } from "./Track/TrackClass"
 import { isTrackObject } from "./Track/Track"
-import { GraphFileArgs } from "../../MoveMe"
+import { GraphFileArgs, GraphFileOptions } from "../../MoveMe"
 import { defaultTextId } from "../../../../../dev/test/Setup/Constants"
 import { FilterGraph } from "./FilterGraph/FilterGraph"
 
@@ -344,11 +344,10 @@ describe("Mash", () => {
 
         // await mash.loadPromise(filterGraph)
         const { visible, quantize, time } = filterGraph
-        const graphFileArgs: GraphFileArgs = { editing: false, visible, quantize, time }
-      
+        const graphFileArgs: GraphFileOptions = { 
+          editing: false, visible, quantize, time 
+        }
         const graphFiles = mash.graphFiles(graphFileArgs)
-
-        
         const { commandFilters, duration } = filterGraph
         if (time.isRange) expect(duration).toBeGreaterThan(0)
         else expect(duration).toBe(0)

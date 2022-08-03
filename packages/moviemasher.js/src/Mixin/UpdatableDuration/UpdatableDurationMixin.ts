@@ -57,10 +57,10 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     declare definition: UpdatableDurationDefinition
 
-    definitionTime(quantize: number, time: Time): Time {
-      const scaledTime = super.definitionTime(quantize, time)
+    definitionTime(masherTime: Time, clipRange: TimeRange): Time {
+      const scaledTime = super.definitionTime(masherTime, clipRange)
       if (this.speed === Default.instance.video.speed) return scaledTime
-
+  
       return scaledTime.divide(this.speed) //, 'ceil')
     }
 
@@ -79,8 +79,9 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
       const options: ValueObject = {}
       const graphFile: GraphFile = {
-        type: LoadType.Audio, file: definition.urlAudible, definition, input: true,
-        options
+        type: LoadType.Audio, 
+        file: definition.urlAudible(editing), 
+        definition, input: true, options
       }
       return [graphFile]
     }
@@ -96,7 +97,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       const commandFilters: CommandFilters = []
       const { trim } = this
       const { time, quantize, visible, commandFiles, clipTime, videoRate } = args
-      // console.log(this.constructor.name, "initialCommandFilters", commandFiles)
+      // console.log(this.constructor.name, "initialCommandFilters", time, clipTime)
       const timeDuration = time.isRange ? time.lengthSeconds : 0
       const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
       
@@ -107,8 +108,14 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       const trimFilter = visible ? 'trim' : 'atrim'
       const trimId = idGenerate(trimFilter)
       const trimOptions: ValueObject = {}
+
+      const definitionTime = this.definitionTime(time, clipTime)
+
+      const startFrame = definitionTime.frame + trim
+
       if (duration) trimOptions.duration = duration
-      if (trim) trimOptions.start = timeFromArgs(trim, quantize).seconds
+      if (startFrame) trimOptions.start = timeFromArgs(startFrame, quantize).seconds
+
       const commandFilter: CommandFilter = { 
         inputs: [filterInput], 
         ffmpegFilter: trimFilter, 
@@ -155,6 +162,8 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       }
       return commandFilters
     }
+
+    mutable() { return this.definition.audio }
 
     startOptions(seconds: number, timeRange: TimeRange): StartOptions {
       let offset = timeRange.withFrame(this.trim).seconds

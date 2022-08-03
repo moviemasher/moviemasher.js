@@ -35,10 +35,6 @@ export class InstanceBase extends PropertiedClass implements Instance {
 
   definitionIds(): string[] { return [this.definitionId] }
 
-  definitionTime(quantize: number, time: Time): Time {
-    return time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
-  }
-
   protected _id?: string
   get id(): string { return this._id ||= idGenerate() }
 

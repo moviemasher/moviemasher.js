@@ -102,7 +102,7 @@ export class TrackPreviewClass implements TrackPreview {
   private get size(): Size { return this.preview.size }
  
   get svg(): Promise<Svg> {
-    const { timeRange, time, quantize, clip, evaluator, editing, size } = this
+    const { timeRange, time, quantize, clip, editing } = this
     assertClip(clip)
     const { container, content, id } = clip
     assertContainer(container)
@@ -112,9 +112,7 @@ export class TrackPreviewClass implements TrackPreview {
     const { preview } = this
     const { preloader } = preview
     const graphFiles: GraphFiles = []
-    const args: GraphFileArgs = {
-      quantize, time, clipTime: timeRange
-    }
+    const args: GraphFileArgs = { editing, quantize, time, clipTime: timeRange }
     graphFiles.push(...container.graphFiles(args))
     graphFiles.push(...content.graphFiles(args))
 
