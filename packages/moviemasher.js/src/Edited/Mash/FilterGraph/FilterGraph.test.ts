@@ -1,5 +1,5 @@
 import { mashInstance } from "../MashFactory"
-import { clipDefault } from "../../../Media/Clip/ClipFactory"
+import { clipDefault } from "../../../Edited/Mash/Track/Clip/ClipFactory"
 import { expectArrayLength } from "../../../../../../dev/test/Utilities/Expect"
 
 describe("FilterGraph", () => {

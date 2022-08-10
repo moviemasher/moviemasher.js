@@ -1,6 +1,6 @@
 import { DataGroup, SelectType } from "@moviemasher/moviemasher.js";
-import { PropsWithoutChild, UnknownElement } from "../../declarations"
-import { EmptyElement } from '../../Setup/Constants'
+import { PropsWithoutChild, UnknownElement } from "../../../../declarations"
+import { EmptyElement } from '../../../../Setup/Constants'
 export type DataGroupElements = {
   [key in DataGroup]: UnknownElement
 }

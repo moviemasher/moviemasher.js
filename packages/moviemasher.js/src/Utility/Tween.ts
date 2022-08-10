@@ -1,11 +1,20 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
-import { Point, pointTransform, PointTuple } from "./Point"
+import { Point, pointsEqual, pointTransform, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
-import { assertSize, sizeEven, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
+import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
 import { DirectionObject, Orientation } from "../Setup/Enums"
+import { assertTweenable, Tweenable } from "../Mixin/Tweenable/Tweenable"
+import { Time, TimeRange } from "../Helpers/Time/Time"
+
+export interface Tweening {
+  point?: boolean
+  size?: boolean
+  color?: boolean
+  canColor?: boolean
+}
 
 export const tweenPad = (outputDistance: number, scaledDistance: number, scale: number, offE = false, offW = false): number => {
   assertPositive(scale)
@@ -163,7 +172,7 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
 
   const scaledSize = sizeScale(size, width, height)
 
-  const evenSize = sizeEven(scaledSize)
+  const evenSize = sizeCeil(scaledSize)
   const result = {
     ...evenSize,
     x: Math.round(tweenPad(outWidth, evenSize.width, x, offDirections.E, offDirections.W)), 
@@ -201,8 +210,8 @@ export const tweenCoverSizes = (inSize: Size, outSize: Size | SizeTuple, scales:
   const { width: widthEnd, height: heightEnd } = scaleEnd
   const scaledSize = sizeScale(unscaledSize, width, height)
   const scaledSizeEnd = sizeScale(unscaledSizeEnd, widthEnd, heightEnd)
-  const coverSize = sizeEven(scaledSize)
-  const coverSizeEnd = sizeEven(scaledSizeEnd)
+  const coverSize = sizeCeil(scaledSize)
+  const coverSizeEnd = sizeCeil(scaledSizeEnd)
   const coverRects: SizeTuple = [coverSize, coverSizeEnd]
   return coverRects
 }
@@ -256,5 +265,30 @@ export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: 
       break
   }
   return forcedScale
+}
+
+export const tweeningPoints = (tweenable?: Tweenable): boolean => {
+  assertTweenable(tweenable)
+  const { clip } = tweenable
+  const { track } = clip
+  const { mash } = track
+  const { quantize } = mash
+  const timeRange = clip.timeRange(quantize)
+  const tweenPoints = tweenable.tweenPoints(timeRange, timeRange)
+  return !pointsEqual(...tweenPoints)
+}
+
+export const tweenMinMax = (value: number, min: number, max: number): number => {
+  return Math.min(max, Math.max(min, value))
+}
+
+export const tweenInputTime = (timeRange: TimeRange, onEdge?: boolean, nearStart?: boolean, endDefined?: boolean, endSelected?: boolean): Time | undefined => {
+  if (!endDefined) return
+
+  if (!onEdge) return nearStart ? timeRange.startTime : timeRange.lastTime 
+
+  if (endSelected) {
+    if (nearStart) return timeRange.lastTime 
+  } else if (!nearStart) return timeRange.startTime
 
 }

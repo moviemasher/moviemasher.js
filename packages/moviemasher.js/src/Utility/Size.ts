@@ -25,13 +25,21 @@ export type Sizes = Size[]
 export type SizeTuple = [Size, Size]
 export const SizeZero = { width: 0, height: 0 }
 
-
 export const sizeEven = (size: Size): Size => {
   const { width, height } = size
   return { 
-    width: 2 * Math.max(1, Math.round(width / 2)) ,
-    height: 2 * Math.max(1, Math.round(height / 2)),
+    width: 2 * Math.max(1, Math.ceil(width / 2)) ,
+    height: 2 * Math.max(1, Math.ceil(height / 2)),
   }
+}
+
+export const sizeCeil = (size: Size): Size => {
+  const { width, height } = size
+  return { 
+    width: Math.max(2, Math.ceil(width)),
+    height: Math.max(2, Math.ceil(height)),
+  }
+ 
 }
 
 export const sizeScale = (size: Size, horizontally: number, vertically: number): Size => {
@@ -48,10 +56,10 @@ export const sizeCover = (inDimensions: Size, outDimensions: Size): Size => {
   const scaleWidth = width / loadedWidth
   const scaleHeight = height / loadedHeight
 
-  if (scaleWidth > scaleHeight) return sizeEven({ ...outDimensions, height: loadedHeight * scaleWidth }) 
+  if (scaleWidth > scaleHeight) return sizeCeil({ ...outDimensions, height: loadedHeight * scaleWidth }) 
   
 
-  return sizeEven({ ...outDimensions, width: loadedWidth * scaleHeight })
+  return sizeCeil({ ...outDimensions, width: loadedWidth * scaleHeight })
 }
 
 export const sizeAboveZero = (size: any): size is Size => { 

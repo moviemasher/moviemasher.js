@@ -34,7 +34,6 @@ export class ColorFilter extends ColorizeFilter {
 
   alpha = false
 
-
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
     const { filter, videoRate, duration } = args
@@ -71,13 +70,10 @@ export class ColorFilter extends ColorizeFilter {
       }
     }
     const maxSize = tweeningSize ? tweenMaxSize(startSize, endSize) : startSize
-     
-  
     const colorCommandFilter: CommandFilter = {
       inputs: [], ffmpegFilter, 
       options: { 
-        color, rate: videoRate, 
-        size: Object.values(maxSize).join('x') 
+        color, rate: videoRate, size: Object.values(maxSize).join('x') 
       },
       outputs: [filterInput]
     }
@@ -102,9 +98,6 @@ export class ColorFilter extends ColorizeFilter {
     }
 
     if (tweeningSize) {
-      
-
-
       const scaleFilter = 'scale'
       const scaleFilterId = idGenerate(scaleFilter)
       const position = tweenPosition(videoRate, duration)

@@ -1,6 +1,6 @@
 import { Defined } from "../../../packages/moviemasher.js/src/Base/Defined"
-import { ClipObject } from "../../../packages/moviemasher.js/src/Media/Clip/Clip"
-import { clipDefault, clipInstance } from "../../../packages/moviemasher.js/src/Media/Clip/ClipFactory"
+import { ClipObject } from "../../../packages/moviemasher.js/src/Edited/Mash/Track/Clip/Clip"
+import { clipDefault, clipInstance } from "../../../packages/moviemasher.js/src/Edited/Mash/Track/Clip/ClipFactory"
 import { imageDefinitionObject } from "./Image"
 import { audioDefinitionObject } from "./Audio"
 

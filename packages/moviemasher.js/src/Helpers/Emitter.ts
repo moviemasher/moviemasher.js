@@ -24,7 +24,7 @@ export class Emitter extends EventTarget {
   }
 
   trap(type: EventType, listener?: EventListener): void {
-    if (this.trapped.has(type)) throw new Error(Errors.internal)
+    if (this.trapped.has(type)) return
 
     this.trapped.set(type, listener || null)
   }

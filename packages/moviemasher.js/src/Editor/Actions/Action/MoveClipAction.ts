@@ -1,4 +1,4 @@
-import { Clip } from "../../../Media/Clip/Clip"
+import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
 import { Action, ActionOptions } from "./Action"
 
 export interface MoveClipActionObject extends ActionOptions {

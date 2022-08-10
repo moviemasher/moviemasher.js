@@ -1,9 +1,9 @@
 import React from 'react'
 import { DataType, Timings, UnknownObject } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../declarations'
+import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { InputContext } from '../../Contexts/InputContext'
+import { InputContext } from '../InputContext'
 
 export function TimingTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)

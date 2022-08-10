@@ -2,15 +2,16 @@ import { isCustomEvent, UnknownObject } from "../../../declarations"
 import { Errors } from "../../../Setup/Errors"
 import { ActionType } from "../../../Setup/Enums"
 
-import { Mash } from "../../../Edited/Mash/Mash"
-import { EditorSelection } from "../../Selectable"
+import { assertMash, isMash, Mash } from "../../../Edited/Mash/Mash"
+import { EditorSelectionObject } from "../../EditorSelection"
 import { Cast } from "../../../Edited/Cast/Cast"
+import { assertCast, isCast } from "../../../Edited/Cast/CastFactory"
 
 
 export interface ActionOptions extends UnknownObject {
-  redoSelection: EditorSelection
+  redoSelection: EditorSelectionObject
   type : ActionType
-  undoSelection: EditorSelection
+  undoSelection: EditorSelectionObject
 }
 
 export type ActionObject = Partial<ActionOptions>
@@ -23,11 +24,24 @@ export class Action {
     this.type = type
     this.undoSelection = undoSelection
   }
-  get cast(): Cast { return this.redoSelection.cast || this.undoSelection.cast! }
+  get cast(): Cast { 
+    const { cast } = this.redoSelection
+    if (isCast(cast)) return cast
 
+    const { cast: undoCast } = this.undoSelection
+    assertCast(undoCast) 
+    return undoCast
+  }
   done =  false
 
-  get mash(): Mash { return this.redoSelection.mash || this.undoSelection.mash! }
+  get mash(): Mash { 
+    const { mash } = this.redoSelection
+    if (isMash(mash)) return mash
+
+    const { mash: undoMash } = this.undoSelection
+    assertMash(undoMash) 
+    return undoMash
+  }
 
   redo() : void {
     this.redoAction()
@@ -36,9 +50,9 @@ export class Action {
 
   redoAction() : void { throw Errors.unimplemented + 'redoAction' }
 
-  redoSelection: EditorSelection
+  redoSelection: EditorSelectionObject
 
-  get selection(): EditorSelection {
+  get selection(): EditorSelectionObject {
     if (this.done) return this.redoSelection
 
     return this.undoSelection
@@ -53,11 +67,10 @@ export class Action {
 
   undoAction() : void { throw Errors.unimplemented + 'undoAction'}
 
-  undoSelection: EditorSelection
+  undoSelection: EditorSelectionObject
 }
 
 export const isAction = (value: any): value is Action => value instanceof Action
-
 export function assertAction(value: any): asserts value is Action {
   if (!isAction(value)) throw new Error('expected Action')
 }

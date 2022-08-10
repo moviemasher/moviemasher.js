@@ -1,4 +1,4 @@
-import { Clip } from "../../../Media/Clip/Clip"
+import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 /**

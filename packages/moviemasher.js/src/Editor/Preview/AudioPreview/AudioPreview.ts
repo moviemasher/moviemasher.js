@@ -5,10 +5,8 @@ import { isAboveZero, isPositive, isTimeRange } from "../../../Utility/Is"
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
 import { Loader } from "../../../Loader/Loader"
 import { AudibleContextInstance } from "../../../Context/AudibleContext"
-import { isVideo, Video } from "../../../Media/Video/Video"
-import { Audio, isAudio } from "../../../Media/Audio/Audio"
-import { Clip } from "../../../Media/Clip/Clip"
 import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition } from "../../../Mixin"
+import { Clip } from "../../../Edited/Mash/Track/Clip/Clip"
 
 export interface AudioPreviewArgs {
   buffer? : number
@@ -32,7 +30,6 @@ export class AudioPreview {
   }
 
   private adjustSourceGain(av: UpdatableDuration, timeRange: TimeRange | StartOptions): void {
-
     const source = AudibleContextInstance.getSource(av.id)
       if (!source) {
         // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
@@ -78,6 +75,7 @@ export class AudioPreview {
     if (isUpdatableDuration(content) && !content.muted) avs.push(content)
     return avs
   }
+  
   compositeAudible(clips: Clip[], quantize: number): boolean {
     // console.log(this.constructor.name, "compositeAudible", clips.length)
     if (!this.createSources(clips, quantize)) return false

@@ -7,7 +7,7 @@ import { arrayLast } from "../../Utility/Array"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
-import { colorBlack, colorBlackOpaque, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent } from "../../Utility/Color"
+import { colorBlack, colorBlackOpaque, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent } from "../../Utility/Color"
 import { ColorizeFilter } from "./ColorizeFilter"
 import { sizesEqual } from "../../Utility/Size"
 
@@ -89,12 +89,13 @@ export class TextFilter extends ColorizeFilter {
     const { ffmpegFilter } = this
     const drawtextId = idGenerate(ffmpegFilter)
     
-    const alpha = color.length > 7
-    const white = alpha ? colorWhiteOpaque : colorWhite
-    const black = alpha ? colorBlackOpaque : colorBlack
-    const foreColor = (tweeningColor || contentOutput) ? white : color
-    const backColor = contentOutput ? black : colorWhiteTransparent 
-    
+    const foreColor = (tweeningColor || contentOutput) ? colorWhite : color
+
+    let backColor = colorBlack
+    if (!contentOutput) {
+      backColor = tweeningColor ? colorBlackTransparent : colorWhiteTransparent
+    }
+ 
     const size = { width, height }
     const sizeEnd = { ...size }
     if (duration) {
@@ -106,21 +107,21 @@ export class TextFilter extends ColorizeFilter {
     const ratio = intrinsicWidth / intrinsicHeight 
 
     const maxSize = tweenMaxSize(size, sizeEnd)
-    
-    const colorSize = {
-      ...maxSize, 
-      width: Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
-    } //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxSize
+    const calculatedWidth = Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
+    const colorSize = { ...maxSize } 
+    //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxSize
+
+    if (calculatedWidth > colorSize.width) colorSize.width = calculatedWidth
 
     let scaling = stretch || !sizesEqual(size, sizeEnd)
-
+    const scaleOptions: ValueObject = {}
     const textOptions: ValueObject = {
       fontsize: colorSize.height, fontfile, textfile, 
       x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
       y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),
       // fix_bounds: 1,
     }
-    // console.log(this.constructor.name, "commandFilters", colorDimensions)
+    // console.log(this.constructor.name, "commandFilters", colorSize, maxSize, size, sizeEnd)
     const position = tweenPosition(videoRate, duration)
     if (tweeningColor) {
       const alpha = color.length > 7
@@ -141,6 +142,25 @@ export class TextFilter extends ColorizeFilter {
     commandFilters.push(colorCommand)
     let filterInput = arrayLast(colorCommand.outputs)
 
+    if (scaling) {
+      scaleOptions.width = stretch ? tweenOption(width, sizeEnd.width, position, true) : -1
+      scaleOptions.height = tweenOption(height, sizeEnd.height, position, true)
+    
+      if (!(isNumber(scaleOptions.width) && isNumber(scaleOptions.height))) {
+        scaleOptions.eval = 'frame'
+
+        // const setptsFilter = 'setpts'
+        // const setptsFilterId = idGenerate(setptsFilter)
+        // const setptsOptions = { expr: 'PTS-STARTPTS' }
+        // const setptsCommandFilter: CommandFilter = {
+        //   inputs: [filterInput], ffmpegFilter: setptsFilter, 
+        //   options: setptsOptions,
+        //   outputs: [setptsFilterId]
+        // }
+        // commandFilters.push(setptsCommandFilter)
+        // filterInput = setptsFilterId
+      }
+    } 
     const drawtextFilter: CommandFilter = {
       inputs: [filterInput], ffmpegFilter,
       options: textOptions, outputs: [drawtextId]
@@ -148,32 +168,26 @@ export class TextFilter extends ColorizeFilter {
     commandFilters.push(drawtextFilter)
     filterInput = drawtextId
     
-    const formatFilter = 'format'
-    const formatId = idGenerate(formatFilter)
-    const formatCommandFilter: CommandFilter = {
-      inputs: [filterInput], ffmpegFilter: formatFilter, 
-      options: { pix_fmts: 'rgba' }, outputs: [formatId]
+    if (!contentOutput) {   
+      const formatFilter = 'format'
+      const formatId = idGenerate(formatFilter)
+      const formatCommandFilter: CommandFilter = {
+        inputs: [filterInput], ffmpegFilter: formatFilter, 
+        options: { pix_fmts: 'yuva420p' }, outputs: [formatId]
+      }
+      commandFilters.push(formatCommandFilter)
+      filterInput = formatId
     }
-    commandFilters.push(formatCommandFilter)
-    filterInput = formatId
-
     if (scaling) {
       const scaleFilter = 'scale'
       const scaleFilterId = idGenerate(scaleFilter)
-      const options = { 
-          eval: 'frame',
-          width: stretch ? tweenOption(width, sizeEnd.width, position, true) : -1, 
-          height: tweenOption(height, sizeEnd.height, position, true),
-        }
       const scaleCommandFilter: CommandFilter = {
         inputs: [filterInput], ffmpegFilter: scaleFilter, 
-        options,
+        options: scaleOptions,
         outputs: [scaleFilterId]
       }
-      if (!(isNumber(options.width) && isNumber(options.height))) options.eval = 'frame'
-
       commandFilters.push(scaleCommandFilter)
-      // filterInput = scaleFilterId
+      filterInput = scaleFilterId
     }
     return commandFilters
   }

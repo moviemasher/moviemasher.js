@@ -3,19 +3,18 @@ import { ActionType, Duration, SelectType, Timing, TrackType } from "../../../Se
 import { Errors } from "../../../Setup/Errors"
 import { propertyInstance } from "../../../Setup/Property"
 import { sortByFrame } from "../../../Utility/Sort"
-import { assertClip, Clip, Clips } from "../../../Media/Clip/Clip"
+import { Clip, Clips } from "./Clip/Clip"
 import { PropertiedClass } from "../../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
-import { assertPopulatedString, isAboveZero, isPositive, isUndefined } from "../../../Utility/Is"
+import { assertPopulatedString, isAboveZero, isUndefined } from "../../../Utility/Is"
 import { TimeRange } from "../../../Helpers/Time/Time"
 import { idGenerate } from "../../../Utility/Id"
-import { Defined } from "../../../Base/Defined"
 import { isUpdatableDurationDefinition } from "../../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Default } from "../../../Setup/Default"
 import { Mash } from "../Mash"
 import { SelectedItems } from "../../../Utility/SelectedProperty"
 import { Actions } from "../../../Editor/Actions/Actions"
-import { clipInstance } from "../../../Media/Clip/ClipFactory"
+import { clipInstance } from "../../../Edited/Mash/Track/Clip/ClipFactory"
 import { Selectables } from "../../../Editor/Selectable"
 import { arrayLast } from "../../../Utility/Array"
 import { isContainer } from "../../../Container"
@@ -117,7 +116,7 @@ export class TrackClass extends PropertiedClass implements Track {
         case Timing.Content: {
           const { definition } = content
           if (!isUpdatableDurationDefinition(definition)) break    
-          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id)
+          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id, definition.audibleSource)
 
           clip.frames = definition.frames(quantize)
           // console.log(this.constructor.name, "assureFrames isUpdatableDurationDefinition", frames, "=>", clip.frames)
@@ -126,7 +125,9 @@ export class TrackClass extends PropertiedClass implements Track {
 
       }
       if (isAboveZero(clip.frames)) return
+
       clip.frames = Default.frames
+      // console.log(this.constructor.name, "assureFrames using default", frames, "=>", clip.frames)
     })
   }
 

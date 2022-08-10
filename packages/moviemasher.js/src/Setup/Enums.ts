@@ -35,6 +35,7 @@ export enum ActionType {
   AddLayer = 'addLayer',
   AddTrack = 'addTrack',
   Change = 'change',
+  ChangeMultiple = 'changeMultiple',
   ChangeFrames = 'changeFrames',
   ChangeGain = 'changeGain',
   ChangeTrim = 'changeTrim',
@@ -189,6 +190,9 @@ export const DataTypes = Object.values(DataType)
 export const isDataType = (type?: any): type is DataType => {
   return DataTypes.includes(type as DataType)
 }
+export function assertDataType(value: any, name?: string): asserts value is DataType {
+  if (!isDataType(value)) throwError(value, "DataType", name)
+}
 
 export enum Orientation {
   H = 'H',
@@ -229,15 +233,6 @@ export enum Anchor {
 }
 export const Anchors = Object.values(Anchor)
 
-
-
-export type PropertyType = DataType // | DefinitionType
-export const isPropertyType = (value: any): value is PropertyType => {
-  return isDataType(value) //|| isDefinitionType(value)
-}
-export function assertPropertyType(value: any, name?: string): asserts value is PropertyType {
-  if (!isPropertyType(value)) throwError(value, "PropertyType", name)
-}
 
 export enum TriggerType {
   Init = 'init',

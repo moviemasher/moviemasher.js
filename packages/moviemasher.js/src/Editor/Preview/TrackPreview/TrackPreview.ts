@@ -1,5 +1,5 @@
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { Clip } from "../../../Media/Clip/Clip"
+import { Clip } from "../../../Edited/Mash/Track/Clip/Clip"
 import { Preview, Svg } from "../Preview"
 
 export interface TrackPreviewArgs {

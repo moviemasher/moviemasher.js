@@ -1,13 +1,15 @@
 import React from 'react'
 import { DataType, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../declarations'
-import { InputContext } from '../../Contexts/InputContext'
+import { ReactResult } from '../../../../declarations'
+import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+import { useEditor } from '../../../../Hooks/useEditor'
 
 export function NumericTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
-  const { changeHandler, property, value, name } = inputContext
+  const editor = useEditor()
+  const { changeHandler, property, value, name, time } = inputContext
   if (!property) return null
 
   const { min, max, step } = property
@@ -23,8 +25,10 @@ export function NumericTypeInput(): ReactResult {
   if (isDefined(step)) inputProps.step = step
 
   if (changeHandler) {
-    inputProps.onChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-      changeHandler(name, event.target.value)
+    inputProps.onChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = event.target
+      if (time) await editor.goToTime(time)
+      changeHandler(name, value)
     }
   } else inputProps.disabled = true
   return <input {...inputProps} />

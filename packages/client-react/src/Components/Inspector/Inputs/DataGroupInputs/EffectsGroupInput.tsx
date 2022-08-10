@@ -1,12 +1,17 @@
-import { isEffectDefinition, Defined, DefinitionType, assertEffect, UnknownObject, ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue } from '@moviemasher/moviemasher.js'
+import { 
+  isEffectDefinition, Defined, DefinitionType, assertEffect, UnknownObject, 
+  ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue 
+} from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
-import { DragEffectObject, dragType, dropType } from '../../Helpers/DragDrop'
-import { useEditor } from '../../Hooks/useEditor'
-import { View } from '../../Utilities/View'
-import { InspectorEffect } from '../Inspector/InspectorEffect'
-import { InspectorProperties } from '../Inspector/InspectorProperties'
+
+import { PropsWithoutChild, ReactResult, WithClassName } from "../../../../declarations"
+import { DragEffectObject, dragType, dropType } from '../../../../Helpers/DragDrop'
+import { useEditor } from '../../../../Hooks/useEditor'
+import { View } from '../../../../Utilities/View'
+import { InspectorEffect } from '../../../Inspector/InspectorEffect'
+import { InspectorProperties } from '../../../Inspector/InspectorProperties'
 import { DataGroupInputs } from './DataGroupInputs'
+
 export interface EffectsInputProps extends PropsWithoutChild, WithClassName {
   selectedEffects?: SelectedEffects
 }

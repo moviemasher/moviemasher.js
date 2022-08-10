@@ -1,17 +1,17 @@
 
 import { 
   PopulatedString,
-colorBlack, colorBlue, colorGreen, colorRed,
-assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString,
- assertSize, SizePreview, isSize, Size, TextContainerObject,
- ContentObject ,
- assertContainerObject, ContainerObject, isContainerObject,
- DefinitionObjects,
- assertPoint, isPoint, Point, 
- throwError,
- Directions,
- ClipObject, clipDefault, MashObject, Tracks, TrackObject, Duration
- } from "@moviemasher/moviemasher.js"
+  colorBlack, colorBlue, colorGreen, colorRed,
+  assertPopulatedArray, assertPopulatedString, isPopulatedArray, isPopulatedString, isString,
+  assertSize, SizePreview, isSize, Size, TextContainerObject,
+  ContentObject ,
+  assertContainerObject, ContainerObject, isContainerObject,
+  DefinitionObjects,
+  assertPoint, isPoint, Point, 
+  throwError,
+  Directions,
+  ClipObject, clipDefault, MashObject, Tracks, TrackObject, Duration
+} from "@moviemasher/moviemasher.js"
 
 enum GeneratePoint {
   TL = 'TL',
@@ -65,7 +65,7 @@ export enum GenerateArg {
   Opacity = 'opacity',
   Constrain = 'constrain',
 }
-const GenerateArgs = Object.values(GenerateArg)
+export const GenerateArgs = Object.values(GenerateArg)
 
 
 export type GenerateOptions = { [index in GenerateArg]?: string | string[] }
@@ -79,7 +79,7 @@ export type BooleanTest = [string, ContainerObject]
 export type NumberTest = [string, ContainerObject]
 const textOptions: TextContainerObject = { 
   string: "Valken",
-  intrinsic: { width: 33750, height: 1000, x: 130, y: 0 },
+  intrinsic: { width: 3375, height: 1000, x: 130, y: 0 },
   fontId: "font.valken"
 }
 
@@ -112,6 +112,7 @@ export const GenerateDelimiter = 'in'
 type GenerateTestId = PopulatedString 
 export type GenerateTestIds = GenerateTestId[]
 
+
 const MashPointsDefault = {
   [GeneratePoint.TL]: { x: 0, y: 0 },
   [GeneratePoint.TR]: { x: 1, y: 0 },
@@ -119,6 +120,7 @@ const MashPointsDefault = {
   [GeneratePoint.BL]: { x: 0, y: 1 },
   [GeneratePoint.M]: { x: 0.5, y: 0.5 },
 }
+
 const MashSizesDefault = {
   [GenerateSize.Z]: { width: 0, height: 0 },
   [GenerateSize.F]: { width: 1, height: 1 },
@@ -133,21 +135,69 @@ const MashOpacityDefault = {
   [GenerateOpacity.Z]: { opacity: 0.0 },
 }
 
-export const generateTestArgs = (id: string): GenerateTestArgs => {
-  const delimiter = [GenerateIdDelimiter, GenerateDelimiter, GenerateIdDelimiter].join('')
-  const [contentIds, containerIds] = id.split(delimiter)
+const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Duration.Unknown, labels = false): ClipObject[] => {
+  const generateOptions = generateTestArgs(testId)
+  const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
+    const option = generateOptions[renderTestOption]
+    assertPopulatedString(option)
+    const renderTests = GenerateTestsDefault[renderTestOption]
+    const renderTest = renderTests.find(test => test[0] === option)
+    assertRenderTest(renderTest)
+    return [renderTestOption, renderTest]
+  })) as unknown as GenerateTestObject
+  
+  const {
+    content: [contentLabel, contentId, contentObject], 
+    contentPoint: [contentPointName, contentPoint],
+    contentSize: [contentDimensionName, contentDimensions],
+    container: [containerLabel, containerId, containerObject],
+    containerPoint: [containerPointName, containerPoint],
+    containerSize: [containerDimensionName, containerDimensions],
+    constrain: [constrainedLabel, constrained],
+    opacity: [opacityLabel, opacity],
 
-  const [
-    content, contentPoint = GeneratePoint.M, contentSize = GenerateSize.F
-  ] = contentIds.split(GenerateIdDelimiter)
-  const [
-    container, constrain, containerPoint, containerSize, opacity
-  ] = containerIds.split(GenerateIdDelimiter)
-  return {
-    content, contentPoint, contentSize, 
-    container, constrain, containerPoint, containerSize, opacity
+  } = renderTestObject
+
+  const { width, height } = size
+  const textHeight = 0.1
+  const debug: TextContainerObject = {
+    fontId: 'font.valken', height: textHeight, 
+    x: 0, y: 0.5,
+    intrinsic: { x: 0, y: 0, width: width / textHeight, height }
   }
+  const debugClip: ClipObject = {
+    containerId: 'com.moviemasher.container.text',
+    content: { color: colorBlack },
+    frames,
+    definitionId: clipDefault.id,
+  }
+  assertPoint(containerPoint)
+  assertPoint(contentPoint)
+
+  const clip: ClipObject = { 
+    frames, containerId, contentId, 
+    definitionId: clipDefault.id,
+    content: {
+      ...contentPoint, ...contentDimensions, ...contentObject,
+      lock: ''
+    },
+    container: {
+      ...containerPoint, ...containerDimensions, 
+      ...containerObject, ...opacity, 
+      ...constrained,
+    }
+  }  
+  const objects = [clip]
+  if (labels) {
+    const labelClip: ClipObject = { 
+      ...debugClip, container: { ...debug, string: testId }
+    }  
+    objects.push(labelClip)
+  }
+  
+  return objects
 }
+
 
 const pointsContainerObject = (...points: Point[]): ContainerObject => {
   const [point, pointEnd] = points
@@ -191,6 +241,22 @@ const sizeTest = (...mashSizes: GenerateSize[]): SizeTest => {
   return [mashSizes.join(GenerateTweenDelimiter), sizesContainerObject(...sizes)]
 }
 
+export const generateTestArgs = (id: string): GenerateTestArgs => {
+  const delimiter = [GenerateIdDelimiter, GenerateDelimiter, GenerateIdDelimiter].join('')
+  const [contentIds, containerIds] = id.split(delimiter)
+
+  const [
+    content, contentPoint = GeneratePoint.M, contentSize = GenerateSize.F
+  ] = contentIds.split(GenerateIdDelimiter)
+  const [
+    container, constrain, containerPoint, containerSize, opacity
+  ] = containerIds.split(GenerateIdDelimiter)
+  return {
+    content, contentPoint, contentSize, 
+    container, constrain, containerPoint, containerSize, opacity
+  }
+}
+
 export const GenerateOptionsDefault: GenerateOptions = {
   container: "R", containerPoint: GeneratePoint.M, containerSize: GenerateSize.F,
   content: "BL", contentPoint: GeneratePoint.TL, contentSize: GenerateSize.F,
@@ -211,7 +277,7 @@ export const GenerateTestsDefault: GenerateTests = {
     ["BL", "com.moviemasher.content.default", { color: colorBlue }],
     ["P", "puppy", {}],
     ["RGB", "rgb", {}],
-    ["V", "video", {}],
+    // ["V", "video", {}],
     // ["BK", "com.moviemasher.content.default", { color: colorBlack }],
     // ["RE", "com.moviemasher.content.default", { color: colorRed }],
     // ["WH", "com.moviemasher.content.default", { color: colorWhite }],
@@ -253,10 +319,15 @@ export const GenerateTestsDefault: GenerateTests = {
   ],
 }
 
-export const generateArgsTween = (renderTestOption: GenerateArg): string[] => {
+export const generateArgsDynamic = (renderTestOption: GenerateArg): string[] => {
   const tests = GenerateTestsDefault[renderTestOption]
   const tweenTests = tests.filter(test => test[0].includes(GenerateTweenDelimiter))
-  
+  return tweenTests.map(test => test[0])
+}
+
+export const generateArgsStatic = (renderTestOption: GenerateArg): string[] => {
+  const tests = GenerateTestsDefault[renderTestOption]
+  const tweenTests = tests.filter(test => !test[0].includes(GenerateTweenDelimiter))
   return tweenTests.map(test => test[0])
 }
 
@@ -374,68 +445,4 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
     id: testId, backcolor: colorGreen, tracks 
   }
   return [testId, mash]
-}
-
-type ClipObjectTuple = [ClipObject, ClipObject]
-const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Duration.Unknown, labels = false): ClipObject[] => {
-  const generateOptions = generateTestArgs(testId)
-  const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
-    const option = generateOptions[renderTestOption]
-    assertPopulatedString(option)
-    const renderTests = GenerateTestsDefault[renderTestOption]
-    const renderTest = renderTests.find(test => test[0] === option)
-    assertRenderTest(renderTest)
-    return [renderTestOption, renderTest]
-  })) as unknown as GenerateTestObject
-  
-  const {
-    content: [contentLabel, contentId, contentObject], 
-    contentPoint: [contentPointName, contentPoint],
-    contentSize: [contentDimensionName, contentDimensions],
-    container: [containerLabel, containerId, containerObject],
-    containerPoint: [containerPointName, containerPoint],
-    containerSize: [containerDimensionName, containerDimensions],
-    constrain: [constrainedLabel, constrained],
-    opacity: [opacityLabel, opacity],
-
-  } = renderTestObject
-
-  const { width, height } = size
-  const textHeight = 0.1
-  const debug: TextContainerObject = {
-    fontId: 'font.valken', height: textHeight, 
-    x: 0, y: 0.5,
-    intrinsic: { x: 0, y: 0, width: width / textHeight, height }
-  }
-  const debugClip: ClipObject = {
-    containerId: 'com.moviemasher.container.text',
-    content: { color: colorBlack },
-    frames,
-    definitionId: clipDefault.id,
-  }
-  assertPoint(containerPoint)
-  assertPoint(contentPoint)
-
-  const clip: ClipObject = { 
-    frames, containerId, contentId, 
-    definitionId: clipDefault.id,
-    content: {
-      ...contentPoint, ...contentDimensions, ...contentObject,
-      lock: ''
-    },
-    container: {
-      ...containerPoint, ...containerDimensions, 
-      ...containerObject, ...opacity, 
-      ...constrained,
-    }
-  }  
-  const objects = [clip]
-  if (labels) {
-    const labelClip: ClipObject = { 
-      ...debugClip, container: { ...debug, string: testId }
-    }  
-    objects.push(labelClip)
-  }
-  
-  return objects
 }

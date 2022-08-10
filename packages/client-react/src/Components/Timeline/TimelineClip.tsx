@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  UnknownObject, Clip, pixelFromFrame, DroppingPosition, ClassSelected
+  UnknownObject, Clip, pixelFromFrame, DroppingPosition, ClassSelected, eventStop
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
@@ -40,7 +40,10 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
   const kid = React.Children.only(children)
   if (!React.isValidElement(kid)) throw Problems.child
 
-  const onMouseDown = () => { editor.select(clip) }
+  const onPointerDown = (event: MouseEvent) => { 
+    eventStop(event)
+    editor.selection.set(clip) 
+  }
 
   const onDragEnd: React.DragEventHandler = event => {
     const { dataTransfer } = event
@@ -50,16 +53,18 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     }
   }
 
-  const onDragStart: React.DragEventHandler = event => {
-    onMouseDown()
+  const onDragStart = (event: DragEvent) => {
+    onPointerDown(event)
     const { dataTransfer, clientX } = event
-    const rect = ref.current!.getBoundingClientRect()
-    const { left } = rect
+    if (dataTransfer) {
+      const rect = ref.current!.getBoundingClientRect()
+      const { left } = rect
 
-    const data = { offset: clientX - left }
-    const json = JSON.stringify(data)
-    dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(type + DragSuffix, json)
+      const data = { offset: clientX - left }
+      const json = JSON.stringify(data)
+      dataTransfer.effectAllowed = 'move'
+      dataTransfer.setData(type + DragSuffix, json)
+    }
   }
 
   const width = pixelFromFrame(frames, scale, 'floor')
@@ -108,7 +113,7 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     ...kid.props,
     style,
     className,
-    onMouseDown, onDragStart, onDragEnd,
+    onPointerDown, onDragStart, onDragEnd,
     onDragOver, onDragLeave,
     onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,

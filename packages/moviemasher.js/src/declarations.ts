@@ -6,6 +6,7 @@ export type Scalar = boolean | Value | undefined
 export type PopulatedString = string & { isEmpty: never }
 export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
+export interface BooleanObject extends Record<string, boolean> {}
 export interface UnknownObject extends Record<string, unknown> {}
 export interface StringObject extends Record<string, string> { }
 export interface ScalarObject extends Record<string, Scalar> { }

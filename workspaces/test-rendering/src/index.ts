@@ -1,42 +1,31 @@
 import fs from 'fs'
 import path from 'path'
 
-
-
 import { 
-  EmptyMethod,
-  Default,
-SizePreview,
-idGenerate,
-assertTrue, outputDefaultVideo,
-outputDefaultImage, Duration, assertArray, outputDefaultAudio, outputDefaultImageSequence
+  SizePreview,
+outputDefaultVideo,
+outputDefaultImage, outputDefaultAudio, outputDefaultImageSequence, isArray
  } from '@moviemasher/moviemasher.js'
 
-import { ExtensionLoadedInfo,
-  RenderingProcessArgs, commandProcess,
-  renderingProcessInstance,
-  probingInfoPromise } from '@moviemasher/server-express'
 
 
 import { 
-  GenerateTestsDefault, 
-  GenerateContentTest, 
-  GenerateContainerTest, 
-  GenerateMashTest, 
-  generateTest, 
   generateIds, 
   GenerateTestIds,
-  GenerateDelimiter,
-  GenerateIdDelimiter,
+  GenerateOptions,
+  generateArgsDynamic,
+  GenerateArg,
   GenerateOptionsDefault,
-  generateTests
-} from "./Generate"
-import { renderingProcessInput, renderingMashTestPromise } from './Rendering'
+  generateArgsStatic,
+  GenerateArgs} from "./Generate"
+import { renderingTestIdPromise, renderingTestIdsPromise } from './Rendering'
+import { TestRenderOutput } from './TestRenderOutput'
+import { ExtensionLoadedInfo } from '@moviemasher/server-express'
 
 
+const args = process.argv.slice(2)
 
-
-
+console.log("args", ...args)
 
 // const contentTests = [GenerateTestsDefault.content.find(test => test[0] === "RGB")] as GenerateContentTest[]
 // const containerTests = GenerateTestsDefault.container.slice(0, 1) as GenerateContainerTest[]
@@ -57,54 +46,127 @@ const sequenceOutput = outputDefaultImageSequence({ ...SizePreview, cover: true 
 const videoOutput = outputDefaultVideo({ ...SizePreview, mute: true }) 
 
 
-const testUploadVideo = async (test: GenerateMashTest) => {
-  const outputs = [imageOutput] // , audioOutput, sequenceOutput
-  await renderingMashTestPromise(test, true, ...outputs)  
+// const testUploadVideo = async (test: GenerateMashTest) => {
+//   const outputs = [imageOutput, audioOutput, sequenceOutput] // 
+//   await renderingMashTestPromise(test, true, ...outputs)  
+// }
+// const [testId] = generateIds({ ...GenerateOptionsDefault, content: "P" })
+// const test = generateTest(testId, SizePreview, Duration.Unknown)
+// testUploadVideo(test)
+
+const renderSpecificIds = (ids: GenerateTestIds, force = false) => {
+  let promise = Promise.resolve()
+  const renderIds = force ? ids : ids.filter(id => { 
+    const idPath = path.join(TestRenderOutput, id, `video.${ExtensionLoadedInfo}`)
+    return !fs.existsSync(idPath)
+  })
+  console.log("renderSpecificIds", renderIds.length)
+  renderIds.forEach(id => { 
+    promise = promise.then(() => {
+      console.log(id)
+      return renderingTestIdPromise(id, videoOutput, true, 5)
+    })  
+  })
+  return promise
 }
-const [testId] = generateIds({ ...GenerateOptionsDefault, content: "P" })
-const test = generateTest(testId, SizePreview, Duration.Unknown)
 
-testUploadVideo(test)
+const combineAllRendered = async () => {
+  await renderingTestIdsPromise(generateIds(), 'all-combined', videoOutput) 
+}
 
+const renderAndCombine = async (name: string, options?: GenerateOptions | GenerateTestIds, force = false) => {
+  const ids = isArray(options) ? options : generateIds(options)
+  await renderSpecificIds(ids, force)
+  await renderingTestIdsPromise(ids, name, videoOutput).catch(error => {
+    console.error(error)
+  })
+}
 
-// tests.forEach(async test => {
-//   const [name, options] = test
-//   await renderingTestPromise(name, options, videoOutput)
-// })
-// describe("Rendering", () => {
+const staticGenerateOptions: GenerateOptions = { 
+  // ...GenerateOptionsDefault, 
+  // container: "T", content: '', 
+  containerPoint: generateArgsStatic(GenerateArg.ContainerPoint).pop(),
+  containerSize: generateArgsStatic(GenerateArg.ContainerSize).pop(),
+  contentSize: generateArgsStatic(GenerateArg.ContentSize).pop(),
+  contentPoint: generateArgsStatic(GenerateArg.ContentPoint).pop(),
+  opacity: generateArgsStatic(GenerateArg.Opacity).pop(),
+}
+const dynamicGenerateOptions: GenerateOptions = { 
+  // ...GenerateOptionsDefault, 
+  // container: "T", content: '', 
+  containerPoint: generateArgsDynamic(GenerateArg.ContainerPoint).pop(),
+  containerSize: generateArgsDynamic(GenerateArg.ContainerSize).pop(),
+  contentSize: generateArgsDynamic(GenerateArg.ContentSize).pop(),
+  contentPoint: generateArgsDynamic(GenerateArg.ContentPoint).pop(),
+  opacity: generateArgsDynamic(GenerateArg.Opacity).pop(),
+}
 
+const specificIds = [
+  "BL_in_K_U_M_F-H_100",
+  "BL_in_K_U_M_F-H_50",
+  "P_BR-M_F_in_R_U_M_H_50",
+  "BL_in_K_U_M_H_100-0",
+  "P_M_F_in_S_U_M_H_100",
+  "P_BR-M_D-F_in_R_C_BR-M_F-H_100",
+  "BL_in_K_C_TL_H_100-0",
+  "BL_in_K_C_TL_H_100",
+  "BL_in_K_C_TL_H_50",
+  "BL_in_K_C_TL_Q_100-0",
+  "BL_in_R_C_TL-BR_H_100",
+  "BL_in_T_U_M_Q-F_100",
+  "BL-RE_in_K_C_TL_Q-F_100",
+  "BL-RE_in_R_C_TL_Q-F_100",
+  "BL-RE_in_S_C_TL_Q-F_100",
+  "BL-RE_in_T_C_TL_Q-F_100",
+  "BL-RE_in_T_U_M_F-H_100",
+  "BL-RE_in_T_U_M_Q-F_100",
+  "BL-RE_in_T_U_M_Q-F_100",
+  "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
+  "P_TL_F_in_K_C_TL-BR_H_50",
+  "P_TL_F_in_S_C_TL-BR_F-H_50",
+  "P_TL_F_in_S_U_TL-BR_Q-F_50",
+  "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
+  "P_TL_F_in_T_U_M_F_100",
+  "P_TL_F_in_T_U_M_Q_100",
+  "P_TL_F_in_T_U_M_Q-F_100",
+  "RGB_TL_F_in_T_U_M_Q-F_100",
+  "RGB_TL_F_in_T_U_M_Q-F_100",
+] as GenerateTestIds
+// renderAndCombine('specific', specificIds, true)
 
-//   describe("content in containers", () => {
+const cherryPick = async () => {
+  const args = GenerateArgs.filter(arg => {
+    switch (arg) {
+      case GenerateArg.Container:
+      case GenerateArg.Content:
+      case GenerateArg.Constrain: return false
+    }
+    return true
+  })
+  let promise = Promise.resolve()
+  args.forEach(arg => {
     
-//     test.each(tests)("%s", async (name, options) => {
-//       await renderingTestPromise(name, options, videoOutput)
-//     })
+    promise = promise.then(() => {
+      const generateOptions = {
+        ...staticGenerateOptions, [arg]: dynamicGenerateOptions[arg]
+      }
+      return renderAndCombine(`static-${arg}-dynamic`, generateOptions)
+    })
+    promise = promise.then(() => {
+      const generateOptions = {
+        ...dynamicGenerateOptions, [arg]: staticGenerateOptions[arg]
+      }
+      return renderAndCombine(`dynamic-${arg}-static`, generateOptions)
+  })
+  })
+  await promise
+}
+// cherryPick()
 
-//     test("combined", async () => { 
-//       const ids = tests.map(test => `all-${test[0]}`) as GenerateTestIds
-//       const allIds = generateIds()
-//       await renderingTestIdsPromise(ids, 'combined', allIds.length * duration) 
-//     })
-//   })
 
-//   describe.only("specific", () => {
-//     const ids = [
-//       "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
-//       // "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
-//       // "P_TL_F_in_S_C_TL-BR_F-H_50",
-//       // "P_TL_F_in_S_U_TL-BR_Q-F_50",
-//       // "BL-RE_in_R_C_TL_Q-F_100",
-//       // "BL-RE_in_S_C_TL_Q-F_100",
-//       // "BL-RE_in_K_C_TL_Q-F_100",
-//       "BL-RE_in_T_C_TL_Q-F_100",
-//       // "P_TL_F_in_K_C_TL-BR_H_50"
-//     ] as GenerateTestIds
+renderSpecificIds(generateIds())
 
-//     test.each(ids)("%s", async (id) => { await renderingTestIdPromise(id, videoOutput) })
 
-//     test("all", async () => { await renderingTestIdsPromise(ids, 'specific') })
-//   })
-// })
 
 
   // describe("default", () => {
@@ -116,10 +178,7 @@ testUploadVideo(test)
   
 
   // describe("container-size-tween", () => {
-  //   const generateOptions: GenerateOptions = { 
-  //     ...GenerateOptionsDefault, container: "", content: '', 
-  //     containerSize: generateArgsTween(GenerateArg.ContainerSize) 
-  //   }
+  //   
   //   const ids = generateIds(generateOptions)
   //   test.each(ids)("%s", async (id) => {
   //     await renderingTestIdPromise(id, videoOutput)

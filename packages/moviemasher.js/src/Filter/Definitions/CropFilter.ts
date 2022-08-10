@@ -38,7 +38,7 @@ export class CropFilter extends FilterDefinitionClass {
     const commandFilters: CommandFilters = []
     const scalars = filter.scalarObject(!!duration)
 
-    const options: ValueObject = {}
+    const options: ValueObject = { exact: 1 }
     const position = tweenPosition(videoRate, duration)
     options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true)
     options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], position, true)

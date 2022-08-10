@@ -32,7 +32,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
 
   const onClick: React.MouseEventHandler = event => {
     event.stopPropagation()
-    editor.select(layer)
+    editor.selection.set(layer)
   }
 
   const onDragEnd: React.DragEventHandler = event => {
@@ -54,7 +54,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
   const onMouseDown: React.MouseEventHandler = event => {
     // event.preventDefault()
     event.stopPropagation()
-    editor.select(layer)
+    editor.selection.set(layer)
   }
 
   const currentDroppingPosition = (event: React.DragEvent<Element>): DroppingPosition => {

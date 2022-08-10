@@ -59,7 +59,6 @@ export const Errors = {
     filter: `${$unknown} filter `,
     font: `${$unknown} font `,
     scaler: `${$unknown} scalar `,
-    mode: `${$unknown} mode `,
     definition: `${$unknown} definition `,
   },
   uncached: "Uncached URL ",

@@ -1,11 +1,11 @@
-import { DefinitionType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { assertPopulatedString } from "../../Utility/Is"
-import { Factories } from "../../Definitions/Factories"
+import { DefinitionType } from "../../../../Setup/Enums"
+import { Errors } from "../../../../Setup/Errors"
+import { assertPopulatedString } from "../../../../Utility/Is"
+import { Factories } from "../../../../Definitions/Factories"
 import { ClipDefinitionClass } from "./ClipDefinitionClass"
 import { Clip, ClipDefinition, ClipDefinitionObject, ClipObject } from "./Clip"
 
-import clipDefaultJson from "../../Definitions/DefinitionObjects/clip/default.json"
+import clipDefaultJson from "../../../../Definitions/DefinitionObjects/clip/default.json"
 
 export const clipDefault = new ClipDefinitionClass(clipDefaultJson)
 export const clipDefaultId = clipDefault.id

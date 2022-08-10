@@ -76,7 +76,7 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     calculatedClassName, [droppingPosition, droppingLayer, editor.selection.layer]
   )
 
-  const onClick = () => { editor.deselect(SelectType.Layer) }
+  const onClick = () => { editor.selection.unset(SelectType.Layer) }
 
   const onDragOver: React.DragEventHandler = event => {
     setDroppingPosition(viewChildren.length)

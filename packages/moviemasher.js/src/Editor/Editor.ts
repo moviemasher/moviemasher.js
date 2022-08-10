@@ -14,10 +14,11 @@ import { Track } from "../Edited/Mash/Track/Track"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
-import { Clip, Clips } from "../Media/Clip/Clip"
+import { Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
 import { Svgs } from "./Preview/Preview"
 import { Actions } from "./Actions/Actions"
-import { EditorSelection, Selectable } from "./Selectable"
+import { Selectable } from "./Selectable"
+import { EditorSelection } from "./EditorSelection"
 
 export interface EditorArgs {
   autoplay: boolean
@@ -46,6 +47,11 @@ export function assertMashData(data: EditedData): asserts data is MashData {
 }
 
 export interface Editor {
+  // deselect(selectionType: SelectType): void
+  // select(selectable: Selectable): void
+  // selectedItems(selectTypes?: SelectType[]): SelectedItems
+  // selectTypes: SelectType[]
+
   actions: Actions
   add(object: DefinitionObject, frameOrIndex?: number, trackIndex?: number): Promise<ClipOrEffect>
   addClip(clip: Clip, frameOrIndex?: number, trackIndex?: number): Promise<void>
@@ -61,9 +67,7 @@ export interface Editor {
   currentTime: number
   dataPutRequest(): Promise<DataPutRequest>
   definitions: Definition[]
-  deselect(selectionType: SelectType): void
   duration: number
-  readOnly: boolean
   editing: boolean
   editType: EditType
   eventTarget: Emitter
@@ -87,15 +91,13 @@ export interface Editor {
   preloader: BrowserLoaderClass
   readonly edited?: Edited
   readonly selection: EditorSelection
+  readOnly: boolean
   redo(): void
   removeClip(clip: Clip): void
   removeEffect: EffectRemovehandler
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringObject): void
-  select(selectable: Selectable): void
-  selectTypes: SelectType[]
-  selectedItems(selectTypes?: SelectType[]): SelectedItems
   svgs: Promise<Svgs>
   time: Time
   timeRange: TimeRange

@@ -2,25 +2,25 @@ import { TextContainer, TextContainerDefinition, TextContainerObject } from "./T
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { Filter } from "../../Filter/Filter"
-import { Scalar, SvgItem, UnknownObject, ValueObject } from "../../declarations"
+import { Scalar, ScalarObject, SvgItem, UnknownObject } from "../../declarations"
 import { isRect, Rect } from "../../Utility/Rect"
-import { assertSize, sizesEqual } from "../../Utility/Size"
-import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { GraphFileType, isOrientation, LoadType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
 import { FontDefinition } from "../../Media/Font/Font"
 import { Defined } from "../../Base/Defined"
 import { stringWidthForFamilyAtHeight } from "../../Utility/String"
 import { Property } from "../../Setup/Property"
-import { colorBlack, colorWhite } from "../../Utility/Color"
+import { colorBlack, colorBlackTransparent, colorWhite } from "../../Utility/Color"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { assertPopulatedArray, assertPopulatedString, assertTrue, isTimeRange } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
+import { Tweening, tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility/Array"
+import { Editor } from "../../Editor/Editor"
 
 
 const TextContainerWithTweenable = TweenableMixin(InstanceBase)
@@ -42,7 +42,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
 
   containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
-    return this.pathElement(rect, time, range) 
+    return this.pathElement(rect) 
   }
 
   declare definition: TextContainerDefinition
@@ -71,47 +71,39 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return graphFiles
   }
 
-  initialCommandFilters(args: CommandFilterArgs): CommandFilters {
+  initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const commandFilters: CommandFilters = [] 
-    const { visible} = args
-    if (!visible) return commandFilters
-
     const { 
-      contentColors: colors = [], outputSize: outputSize, track, filterInput: input,
-      containerRects, videoRate, commandFiles, time
+      contentColors: colors = [], outputSize, track, filterInput: input,
+      containerRects, videoRate, commandFiles, duration
     } = args
   
-    const duration = isTimeRange(time) ? time.lengthSeconds : 0
-    
-    assertPopulatedArray(containerRects)
-    assertSize(outputSize)
-    
     let filterInput = input
-    let colorInput = ''
+    // console.log(this.constructor.name, "initialCommandFilters", filterInput, tweening)
+
     if (filterInput) {
       commandFilters.push(this.copyCommandFilter(filterInput, track))
     }
 
-    const merging = filterInput && !sizesEqual(...containerRects)
-
     const [rect, rectEnd] = containerRects
     const { height, width } = rect
-    const [color = colorWhite, colorEnd] = colors
-    assertPopulatedString(color)
+ 
+    // console.log(this.constructor.name, "initialCommandFilters", merging, ...containerRects)
+    const maxSize = tweenMaxSize(...containerRects) 
 
-    // console.log(this.constructor.name, "initialCommandFilters", ...containerRects)
-
+    let colorInput = ''
+    const merging = !!filterInput || tweening.size
     if (merging) {
-      const maxSize = tweenMaxSize(...containerRects) 
-      const colorArgs: CommandFilterArgs = { 
-        ...args, contentColors: [colorBlack, colorBlack], 
+      const backColor = filterInput ? colorBlack : colorBlackTransparent
+      const colorArgs: VisibleCommandFilterArgs = { 
+        ...args, 
+        contentColors: [backColor, backColor], 
         outputSize: maxSize
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs))
       colorInput = arrayLast(arrayLast(commandFilters).outputs) 
     }
 
-  
     const textFile = commandFiles.find(commandFile => (
       commandFile.inputId === this.id && commandFile.type === GraphFileType.Txt
     ))
@@ -131,34 +123,49 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const intrinsicRect = this.intrinsicRect()
     const x = intrinsicRect.x * (width / intrinsicRect.width)
     const y = intrinsicRect.y * (height / intrinsicRect.height)
+    const [color = colorWhite, colorEnd] = colors
+    assertPopulatedString(color)
 
-    const options: ValueObject = { x, y, width, height, color, textfile, fontfile }
-    textFilter.setValues(options)
-    
     const xEnd = intrinsicRect.x * (rectEnd.width / intrinsicRect.width)
-  const yEnd = intrinsicRect.y * (rectEnd.height / intrinsicRect.height)
+    const yEnd = intrinsicRect.y * (rectEnd.height / intrinsicRect.height)
+    
+    const options: ScalarObject = { 
+      x, y, width, height, color, textfile, fontfile,
+      stretch: !isOrientation(lock),
+      intrinsicHeight: intrinsicRect.height,
+      intrinsicWidth: intrinsicRect.width,
+      [`x${PropertyTweenSuffix}`]: xEnd,
+      [`y${PropertyTweenSuffix}`]: yEnd,
+      [`color${PropertyTweenSuffix}`]: colorEnd,
+      [`height${PropertyTweenSuffix}`]: rectEnd.height,
+      [`width${PropertyTweenSuffix}`]: rectEnd.width,
+    }
+    textFilter.setValues(options)
+    // console.log(this.constructor.name, "initialCommandFilters", options)
 
-    textFilter.setValue(!isOrientation(lock), 'stretch')
-    textFilter.setValue(intrinsicRect.height, 'intrinsicHeight')
-    textFilter.setValue(intrinsicRect.width, 'intrinsicWidth')
-    textFilter.setValue(xEnd, `x${PropertyTweenSuffix}`)
-    textFilter.setValue(yEnd, `y${PropertyTweenSuffix}`)
-    textFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
-    textFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)
-    textFilter.setValue(rectEnd.width, `width${PropertyTweenSuffix}`)
-  
     const textArgs: FilterCommandFilterArgs = {
       dimensions: outputSize, videoRate, duration, filterInput
     }
-    commandFilters.push(...this.textFilter.commandFilters(textArgs))
+    commandFilters.push(...textFilter.commandFilters(textArgs))
     
     if (merging) {
       filterInput = arrayLast(arrayLast(commandFilters).outputs)
-      const overlayArgs: CommandFilterArgs = { 
-        ...args, filterInput, chainInput: colorInput, 
+      assertPopulatedString(filterInput, 'overlay filterInput')
+      commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
+
+      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+      assertPopulatedString(filterInput, 'crop filterInput')
+
+      const cropArgs: FilterCommandFilterArgs = { 
+        duration: 0, videoRate, filterInput
       }
-      commandFilters.push(...this.mergeCommandFilters(overlayArgs))
-    }
+      const { cropFilter } = this
+      cropFilter.setValue(maxSize.width, "width")
+      cropFilter.setValue(maxSize.height, "height")
+      cropFilter.setValue(0, "x")
+      cropFilter.setValue(0, "y")
+      commandFilters.push(...cropFilter.commandFilters(cropArgs))
+    } 
     return commandFilters
   }
 
@@ -189,7 +196,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return isRect(this._intrinsicRect) 
   }
 
-  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor = colorWhite): SvgItem {
+  pathElement(rect: Rect, forecolor = colorWhite, editor?: Editor): SvgItem {
     const { string, font } = this
     const intrinsicRect = this.intrinsicRect(true)
     const { x: inX, y: inY, width: inWidth, height: inHeight } = intrinsicRect
@@ -200,17 +207,21 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const size = { width, height }
     const offset = { ...size, x: x + xOffset, y: y + yOffset }
     const { family } = font    
-    const textElement = globalThis.document.createElementNS(NamespaceSvg, 'text')
+    const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'text')
 
-    textElement.setAttribute('font-family', family)
-    textElement.setAttribute('fill', forecolor)
-    textElement.setAttribute('font-size', String(inHeight))
-    textElement.setAttribute('dominant-baseline', 'hanging')
-    textElement.append(`${string}  `)
+    svgItem.setAttribute('font-family', family)
+    svgItem.setAttribute('fill', forecolor)
+    svgItem.setAttribute('font-size', String(inHeight))
+    svgItem.setAttribute('dominant-baseline', 'hanging')
+    svgItem.append(`${string}  `)
     const transformAttribute = tweenRectScale(intrinsicRect, offset)
-    textElement.setAttribute('transform', transformAttribute)
-    textElement.setAttribute('transform-origin', 'top left')
-    return textElement
+    svgItem.setAttribute('transform', transformAttribute)
+    svgItem.setAttribute('transform-origin', 'top left')
+
+
+    if (editor) this.attachHandlers(svgItem, editor)
+    
+    return svgItem
   }
 
   private _setptsFilter?: Filter

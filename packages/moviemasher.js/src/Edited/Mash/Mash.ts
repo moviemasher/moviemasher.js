@@ -2,7 +2,7 @@ import {
   UnknownObject, Value, Described} from "../../declarations"
 import { AVType, DefinitionType, TrackType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
-import { Clip } from "../../Media/Clip/Clip"
+import { Clip } from "./Track/Clip/Clip"
 import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Edited, EditedArgs, EditedObject } from "../../Edited/Edited"

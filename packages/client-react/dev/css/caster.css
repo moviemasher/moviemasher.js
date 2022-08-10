@@ -1,11 +1,11 @@
 .moviemasher .editor.caster {
   grid-template-areas:
-    "player inspector panels"
+    "player browser panels"
     "timeline composer panels";
   grid-template-columns:
     calc(var(--preview-width) + (var(--border-size) * 2))
-    var(--inspector-width)
-    1fr;
+    1fr
+    var(--inspector-width);
   grid-template-rows:
     calc( var(--preview-height) + var(--header-height) + var(--footer-height))
     1fr;

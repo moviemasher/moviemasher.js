@@ -49,6 +49,7 @@ export class ScaleFilter extends FilterDefinitionClass {
     const options: ValueObject = {
       width: tweenOption(width, widthEnd, position, true),
       height: tweenOption(height, heightEnd, position, true),
+      // sws_flags: 'accurate_rnd',
     }
     if (!(isNumber(options.width) && isNumber(options.height))) options.eval = 'frame'
 

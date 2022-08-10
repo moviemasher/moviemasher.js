@@ -1,17 +1,21 @@
 import React from 'react'
-import { arraySet, assertPopulatedString, SelectTypesObject, assertSelectType, DefinitionType, EventType, SelectedItems, SelectType, TrackType } from '@moviemasher/moviemasher.js'
+import { 
+  arraySet, assertSelectType, EventType, SelectedItems, SelectType, SelectTypes, 
+  assertPositive, assertTrue, timeFromArgs, timeEqualizeRates, assertDataGroup,
+  isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, isPopulatedObject, SelectedProperties 
+} from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import {
-  InspectorContext, InspectorContextDefault, InspectorContextInterface
-} from '../../Contexts/InspectorContext'
+  DataGroupBooleans,
+  InspectorContext, InspectorContextDefault, InspectorContextInterface, SelectedInfo
+} from './InspectorContext'
 import { useEditor } from '../../Hooks/useEditor'
-import { sessionGet, sessionSet } from '../../Utilities/Session'
-import { TweenInputKey } from '../../Setup/Constants'
 
 export interface InspectorProps extends PropsAndChildren, WithClassName {}
+
 
 
 /**
@@ -20,57 +24,106 @@ export interface InspectorProps extends PropsAndChildren, WithClassName {}
  */
 export function Inspector(props: InspectorProps): ReactResult {
   const editor = useEditor()
-  const [definitionType, setDefinitionType] = React.useState<DefinitionType | ''>('')
   const [actionCount, setActionCount] = React.useState(() => 0)
-  const [clip, setClip] = React.useState(() => editor.selection.clip)
-  const [selectTypesObject] = React.useState<SelectTypesObject>({})
-  const [selected, setSelected] = React.useState('')
+  const info = React.useRef<SelectedInfo>({ 
+    tweenDefined: {}, tweenSelected: {}, 
+    selectedType: SelectType.None, selectTypes: []
+  })
+  const [orderedTypes, setOrderedTypes] = React.useState<SelectType[]>(() => SelectTypes)
+  const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => [])
+  const handleAction = () => { setActionCount(value => value + 1) }
+  const handleSelection = () => {
+    const { selection } = editor
+    const { selectTypes: types, clip, mash } = selection
+    const { current } = info
+    const { selectedType, selectTypes } = current
+    const bestType = orderedTypes.find(type => types.includes(type))
+    assertSelectType(bestType)
 
-  const [tweening, setTweening] = React.useState(!!sessionGet(TweenInputKey))
-  const [selectTypes, setSelectTypes] = React.useState<SelectType[]>(() => editor.selectTypes)
-  const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => editor.selectedItems())
-  const [selectedTypes, setSelectedTypes] = React.useState<SelectType[]>(() => [])
-  const handleSection = React.useCallback(() => {
-      const { selection, selectTypes } = editor
-      const { clip } = selection
-      setClip(clip)
-      setDefinitionType(clip ? clip.type : '')
-      setSelectTypes(orginal => arraySet(orginal, selectTypes))
-      const intersects = selectTypes.some(type => selectedTypes.includes(type))
-      const types = intersects ? selectedTypes : selectTypes.slice(0, 1)
-      if (!intersects) {
-        // console.log("Inspector EventType.Selection", types, "because", selectedTypes, "doesn't include one of", selectTypes)
-        setSelectedTypes(orginal => arraySet(orginal, types))
+    if (bestType !== selectedType) {
+      // console.log("setInfo selectedType", selectedType, "=>", bestType, orderedTypes)
+      current.selectedType = bestType
+    }
+    arraySet(selectTypes, types)
+    
+    const items = editor.selection.selectedItems([bestType])
+    const tweening: DataGroupBooleans = {}
+    if (clip && mash) {
+      const tweenItems = items.filter(item => {
+        if (!isSelectedProperty(item)) return 
+
+        const { property, name } = item
+        const { tweenable, group } = property
+        if (!(tweenable && group && name)) return
+
+        return name.endsWith(PropertyTweenSuffix)
+      }) as SelectedProperties
+      // console.log("Inspector handleSelection", tweenItems.length, "tweenItem(s)")
+      tweenItems.forEach(item => {
+        const { property, value } = item
+        const { group } = property
+        assertDataGroup(group)
+        tweening[group] = isDefined(value) 
+      })  
+
+      if (tweenItems.length) {
+        
+        const { time, quantize } = mash
+        const timeRange = clip.timeRange(quantize)
+
+        current.time = time
+        current.timeRange = timeRange
+        // console.log("Inspector tweening", time, timeRange)
+        const frame = timeRange.frame + Math.round(timeRange.frames / 2)
+        const halfTime = timeFromArgs(frame, quantize)
+        const [midTime, timeScaled] = timeEqualizeRates(halfTime, time)
+        
+        current.nearStart = midTime.frame > timeScaled.frame
+        const edge = current.nearStart ? timeRange.startTime : timeRange.lastTime
+
+        current.onEdge = time.equalsTime(edge)
       }
-      setSelectedItems(editor.selectedItems(types))
-    }, [selectedTypes, selectTypes])
+    }
+    
+    current.tweenDefined = tweening
+
+    setSelectedItems(items)
+    handleAction()
+  }
+  
   useListeners({
-    [EventType.Action]: () => {
-      setActionCount(value => value + 1)
-    },
-    [EventType.Selection]: handleSection,
+    [EventType.Action]: handleAction,
+    [EventType.Selection]: handleSelection,
   })
 
-  const changeType = React.useCallback((key: string) => {
-    assertPopulatedString(key)
-    const selectTypes = selectTypesObject[key]
-    setSelected(key)
-    setSelectedTypes(orginal => arraySet(orginal, selectTypes))
-    setSelectedItems(editor.selectedItems(selectTypes))
+  const changeType = React.useCallback((type: string) => {
+    assertSelectType(type)
+    setOrderedTypes(original => {
+      const index = original.indexOf(type) 
+      assertPositive(index) 
+      const types = [type]
+      if (index) types.push(...original.slice(0, index))
+      if (index < original.length - 1) types.push(...original.slice(index + 1))
+      assertTrue(types.length === original.length, 'type lengths match')
+      // console.log("setOrderedTypes", original, "=>", types)
+      arraySet(original, types)
+      handleSelection()
+      return original
+    })
+    info.current.selectedType = type
+    
+    setSelectedItems(editor.selection.selectedItems([type]))
   }, [])
 
-  const changeTweening = (tweening: boolean): void => {
-
-    // editor.goToTime(timeEnd)
-    setTweening(tweening)
-    sessionSet(TweenInputKey, tweening ? '1' : '')
+  const changeTweening = (group: DataGroup, tweening: boolean): void => {
+    info.current.tweenSelected[group] = tweening
+    handleSelection()
   }
   const inspectorContext: InspectorContextInterface = {
     ...InspectorContextDefault,
-    actionCount, clip, definitionType, selectedItems, selected,
-    selectTypesObject,
-    selectedTypes, selectTypes, changeSelected: changeType, 
-    changeTweening, tweening,
+    actionCount, selectedItems,
+    changeSelected: changeType, 
+    changeTweening, selectedInfo: info.current,
   }
 
   return (

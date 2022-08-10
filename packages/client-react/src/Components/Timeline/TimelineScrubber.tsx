@@ -1,5 +1,5 @@
 import React from "react"
-import { pixelFromFrame, pixelToFrame, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
+import { eventStop, pixelFromFrame, pixelToFrame, Point, pointsEqual, PointZero, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { View } from "../../Utilities/View"
 import { ReactResult, PropsWithChildren } from "../../declarations"
@@ -16,6 +16,7 @@ export interface TimelineScrubber extends PropsWithChildren {
  * @parents Timeline
  */
 export function TimelineScrubber(props: TimelineScrubber): ReactResult {
+  
   const clientXRef = React.useRef<number>(-1)
   const ref = React.useRef<HTMLDivElement>(null)
   const timelineContext = React.useContext(TimelineContext)
@@ -23,42 +24,45 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
   const { frames, editor } = editorContext
   const { scale, rect } = timelineContext
   const { inactive, styleHeight, styleWidth, ...rest } = props
-  const [down, setDown] = React.useState(() => false)
   if (!editor) return null
 
-  const handleEvent = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation()
-    event.preventDefault()
-    const { current } = ref
-    if (!(current && editor.selection.mash)) return
+  const addHandlers = () => {
+    const { window } = globalThis
 
-    const { clientX } = event
-    if (clientXRef.current === clientX) return
+    const removeWindowHandlers = () => {
+      window.removeEventListener('pointermove', pointerMove)
+      window.removeEventListener('pointerup', pointerUp)
+    }
 
-    clientXRef.current = clientX
+    const pointerMove = (event: MouseEvent) => {
+      eventStop(event)
+      
+      const { current } = ref
+      if (!(current && editor.selection.mash)) return
 
-    const rect = current.getBoundingClientRect()
-    const pixel = Math.max(0, Math.min(rect.width, clientX - rect.x))
-    const frame = pixelToFrame(pixel, scale, 'floor')
-    editor.time = timeFromArgs(frame, editor.selection.mash!.quantize)
-  }
+      const { clientX } = event
+      if (clientXRef.current === clientX) return
 
-  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    clientXRef.current = -1
-    setDown(true)
-    handleEvent(event)
-    event.stopPropagation()
-  }
+      clientXRef.current = clientX
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!down) return
-    handleEvent(event)
-    event.stopPropagation()
-  }
+      const rect = current.getBoundingClientRect()
+      const pixel = Math.max(0, Math.min(rect.width, clientX - rect.x))
+      const frame = pixelToFrame(pixel, scale, 'floor')
+      editor.time = timeFromArgs(frame, editor.selection.mash!.quantize)
+    }
 
-  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
-    setDown(false)
-    handleEvent(event)
+    const pointerUp = (event: MouseEvent) => {
+      pointerMove(event)
+      removeWindowHandlers()
+    }   
+
+    const pointerDown = (event: MouseEvent) => {
+      clientXRef.current = -1
+      window.addEventListener('pointermove', pointerMove)
+      window.addEventListener('pointerup', pointerUp)
+      pointerMove(event)
+    }    
+    return pointerDown
   }
 
   const { width, height } = rect
@@ -73,18 +77,11 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
       }
       viewProps.style = style
     }
-    if (!inactive) {
-      viewProps.onMouseDown = onMouseDown
-      if (down) {
-        viewProps.onMouseMove = handleMouseMove
-        viewProps.onMouseUp = handleMouseUp
-        viewProps.onClick = handleMouseUp
-        viewProps.onMouseLeave = handleMouseUp
-      }
-    }
+    if (!inactive) viewProps.onPointerDown = addHandlers()
+    
     return viewProps
   }
 
-  const viewProps = React.useMemo(calculateViewProps, [down, frames, scale, width, height])
+  const viewProps = React.useMemo(calculateViewProps, [frames, scale, width, height])
   return <View {...viewProps} />
 }

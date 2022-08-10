@@ -5,6 +5,7 @@ import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { ContainerRectArgs } from "../Container/Container"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from "../MoveMe"
 
 export interface ContentObject extends TweenableObject {
   lock?: string
@@ -24,6 +25,8 @@ export interface Content extends Tweenable {
   contentSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
   lock: Orientation
   svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem
+  audibleCommandFilters(args: CommandFilterArgs): CommandFilters
+  audibleCommandFiles(args: CommandFileArgs): CommandFiles
 }
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentType(value.type)

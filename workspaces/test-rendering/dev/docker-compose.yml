@@ -3,8 +3,8 @@ services:
   test:
     image: moviemasher/moviemasher.js:5.0.7
     container_name: moviemasher-test-rendering
-    entrypoint: node
-    command: workspaces/test-rendering/dist/index.js
+    entrypoint: node workspaces/test-rendering/dist/index.js
+    command: ''
     volumes:
       - ../../../dev/:/home/node/app/dev/
       - ../../../packages/moviemasher.js/dist/:/home/node/app/packages/moviemasher.js/dist/

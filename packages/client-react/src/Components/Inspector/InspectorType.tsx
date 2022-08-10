@@ -1,12 +1,11 @@
 import React from 'react'
+import { assertSelectType, SelectType } from '@moviemasher/moviemasher.js'
 
-import { propsSelectTypes } from '../../Utilities/Props'
-import { InspectorContext } from '../../Contexts/InspectorContext'
 import { ReactResult } from '../../declarations'
+import { InspectorContext } from './InspectorContext'
 
 export interface InspectorTypeProps {
-  type?: string
-  types?: string | string[]
+  type?: string | SelectType
   children: React.ReactNode
 }
 
@@ -15,12 +14,11 @@ export interface InspectorTypeProps {
  */
 export function InspectorType(props: InspectorTypeProps): ReactResult {
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedTypes } = inspectorContext
-  if (!selectedTypes.length) return null
-
-  const { type, types, children } = props
-  const propTypes = propsSelectTypes(type, types)
-  if (!propTypes.some(type => selectedTypes.includes(type))) return null
+  const { selectedInfo } = inspectorContext
+  const { selectedType } = selectedInfo
+  const { type, children } = props
+  assertSelectType(type)
+  if (selectedType !== type) return null
 
   return <>{children}</>
 }

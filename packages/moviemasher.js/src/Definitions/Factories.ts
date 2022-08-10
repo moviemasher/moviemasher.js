@@ -6,7 +6,7 @@ import { FontFactory } from "../Media/Font/Font"
 import { ImageFactory } from "../Media/Image/Image"
 import { VideoFactory } from "../Media/Video/Video"
 import { VideoSequenceFactory } from "../Media/VideoSequence/VideoSequence"
-import { ClipFactory } from "../Media/Clip/Clip"
+import { ClipFactory } from "../Edited/Mash/Track/Clip/Clip"
 import { ContentFactory } from "../Content/Content"
 import { ContainerFactory } from "../Container/Container"
 

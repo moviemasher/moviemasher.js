@@ -29,8 +29,8 @@ export class OverlayFilter extends FilterDefinitionClass {
     assertPopulatedString(chainInput, 'chainInput')
 
     const scalars = filter.scalarObject(!!duration)
-    const options: ValueObject = { format: 'yuv420' } //repeatlast: 0, shortest: 1
-
+    const options: ValueObject = {} //repeatlast: 0, shortest: 1
+    options.format = 'yuv420'
     const position = tweenPosition(videoRate, duration, '(n-1)') // overlay bug
 
     const x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true)

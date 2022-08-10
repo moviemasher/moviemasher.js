@@ -1,9 +1,10 @@
 import { UnknownObject } from "../../../declarations"
 import { isTrackType, TrackType } from "../../../Setup/Enums"
-import { Clips, ClipObject, Clip } from "../../../Media/Clip/Clip"
+import { Clips, ClipObject, Clip } from "./Clip/Clip"
 import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { Mash } from "../Mash"
+import { Selectable } from "../../../Editor/Selectable"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]
@@ -19,7 +20,7 @@ export const isTrackObject = (value?: any): value is TrackObject => {
 export interface TrackArgs extends TrackObject {
 }
 
-export interface Track extends Propertied {
+export interface Track extends Propertied, Selectable {
   addClip(clip: Clip, insertIndex?: number): void
   assureFrame(clips?: Clips): boolean
   assureFrames(quantize: number, clips?: Clips): void
@@ -37,6 +38,5 @@ export interface Track extends Propertied {
 export const isTrack = (value?: any): value is Track => {
   return isObject(value) && "addClip" in value
 }
-
 
 export type Tracks = Track[]

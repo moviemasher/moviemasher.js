@@ -31,6 +31,9 @@ export function assertBoolean(value: any, name?: string): asserts value is Boole
 export const isMethod = (value: any): boolean => typeof value === 'function'
 
 export const isDefined = (value: any): boolean => !isUndefined(value)
+export function assertDefined(value: any, name?: string): asserts value is true {
+  if (!isDefined(value)) throwError(value, 'defined', name)
+}
 
 export const isNan = (value: any): boolean => isNumberOrNaN(value) && Number.isNaN(value)
 

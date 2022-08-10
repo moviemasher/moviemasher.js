@@ -1,5 +1,6 @@
 import { Action, ActionOptions } from "./Action"
 import { Layer, LayerAndPosition } from "../../../Edited/Cast/Layer/Layer"
+import { assertLayer, isLayer } from "../../../Edited"
 
 export interface AddLayerActionObject extends ActionOptions {
   layerAndPosition?: LayerAndPosition
@@ -17,7 +18,11 @@ export class AddLayerAction extends Action {
 
   layerAndPosition?: LayerAndPosition
 
-  get layer(): Layer { return this.redoSelection.layer! }
+  get layer(): Layer { 
+    const { layer } = this.redoSelection
+    assertLayer(layer)
+    return layer
+  }
 
   redoAction() : void { this.cast.addLayer(this.layer, this.layerAndPosition) }
 

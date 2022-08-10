@@ -1,6 +1,6 @@
 import { FilterGraphsClass } from "./FilterGraphsClass"
 import { mashInstance } from "../MashFactory"
-import { clipDefault } from "../../../Media/Clip/ClipFactory"
+import { clipDefault } from "../../../Edited/Mash/Track/Clip/ClipFactory"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
 import { expectArrayLength } from "../../../../../../dev/test/Utilities/Expect"
 

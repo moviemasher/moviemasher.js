@@ -1,4 +1,5 @@
 import { Propertied } from "../../../Base/Propertied"
+import { Selectable } from "../../../Editor/Selectable"
 import { Loader } from "../../../Loader/Loader"
 import { DroppingPosition, isLayerType, LayerType } from "../../../Setup/Enums"
 import { isObject } from "../../../Utility/Is"
@@ -57,7 +58,7 @@ export interface LayerMash extends Layer, LayerMashArgs {
 export interface LayerFolder extends Layer, LayerFolderArgs {
 }
 
-export interface Layer extends Propertied, LayerArgs {
+export interface Layer extends Propertied, LayerArgs, Selectable {
   id: string
   mashes: Mashes
   cast: Cast

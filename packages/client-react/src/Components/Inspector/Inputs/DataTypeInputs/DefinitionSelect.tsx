@@ -1,8 +1,8 @@
 import React from 'react'
 import { assertTrue, DataType, Defined, DefinitionType } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../declarations'
-import { InputContext } from '../../Contexts/InputContext'
+import { ReactResult } from '../../../../declarations'
+import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 
 export function DefinitionSelect(): ReactResult {

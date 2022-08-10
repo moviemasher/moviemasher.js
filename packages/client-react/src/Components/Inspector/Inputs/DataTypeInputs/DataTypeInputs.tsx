@@ -1,7 +1,7 @@
 import { DataType } from '@moviemasher/moviemasher.js'
 
-import { UnknownElement } from '../../declarations'
-import { EmptyElement } from '../../Setup/Constants'
+import { UnknownElement } from '../../../../declarations'
+import { EmptyElement } from '../../../../Setup/Constants'
 
 export type DataTypeElements = {
   [key in DataType]: UnknownElement

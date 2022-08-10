@@ -4,7 +4,9 @@ import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Mash } from "../../Edited/Mash/Mash"
-import { Clip } from "../../Media/Clip/Clip"
+import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
+import { ScalarObject } from "../../declarations"
+import { Rect } from "../../Utility/Rect"
 
 export interface PreviewOptions  {
   editor?: Editor
@@ -22,6 +24,9 @@ export interface PreviewArgs extends PreviewOptions {
 export interface Svg {
   element: SVGSVGElement
   id: string
+  changeHandler?: (values: ScalarObject) => void 
+  clip?: Clip
+  rect?: Rect
 }
 
 export type Svgs = Svg[]

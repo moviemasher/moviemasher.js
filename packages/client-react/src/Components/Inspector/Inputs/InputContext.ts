@@ -1,11 +1,15 @@
 import React from 'react'
-import { Scalar, PropertiedChangeHandler, Property, DataType } from "@moviemasher/moviemasher.js"
+import { 
+  Scalar, PropertiedChangeHandler, Property, DataType, Time 
+} from "@moviemasher/moviemasher.js"
 
 export interface InputContextInterface {
   property: Property
   name: string
   value: Scalar
+  defaultValue?: Scalar
   changeHandler?: PropertiedChangeHandler
+  time?: Time
 }
 
 export const InputContextDefault: InputContextInterface = {

@@ -3,12 +3,15 @@ import { Scalar } from "../../../declarations"
 import { isObject } from "../../../Utility/Is"
 import { Action, ActionOptions } from "./Action"
 
+
 export interface ChangeActionObject extends ActionOptions {
   property: string
-  redoValue: Scalar
+  redoValue?: Scalar
+  undoValue?: Scalar
   target: Propertied
-  undoValue: Scalar
 }
+
+
 export const isChangeActionObject = (value: any): value is ChangeActionObject => {
   return isObject(value) && "target" in value && "property" in value
 }
@@ -18,7 +21,7 @@ export const isChangeActionObject = (value: any): value is ChangeActionObject =>
  * @category Action
  */
 export class ChangeAction extends Action {
-  constructor(object : ChangeActionObject) {
+  constructor(object: ChangeActionObject) {
     super(object)
     const { property, redoValue, target, undoValue } = object
     this.property = property
@@ -47,12 +50,16 @@ export class ChangeAction extends Action {
     this.target.setValue(this.undoValue, this.property)
   }
 
-  updateAction(value : Scalar) : void {
-    this.redoValue = value
+  updateAction(object: ChangeActionObject) : void {
+    console.log(this.constructor.name, "updateAction", object)
+    const { redoValue } = object
+    this.redoValue = redoValue
     this.redo()
   }
 }
-export const isChangeAction = (value: any): value is ChangeAction => value instanceof ChangeAction
+export const isChangeAction = (value: any): value is ChangeAction => (
+  value instanceof ChangeAction
+)
 export function assertChangeAction(value: any): asserts value is ChangeAction {
   if (!isChangeAction(value)) throw new Error('expected ChangeAction')
 }

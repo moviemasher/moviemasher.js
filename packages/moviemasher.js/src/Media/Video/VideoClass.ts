@@ -3,7 +3,7 @@ import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
-import { assertPopulatedString } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 
 import { ContentMixin } from "../../Content/ContentMixin"
@@ -24,13 +24,30 @@ const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize
 
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
   svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
-    const { height, width, x, y } = rect
-    const { foreignElement } = this
-    foreignElement.setAttribute('width', String(width))
-    foreignElement.setAttribute('x', String(x))
-    foreignElement.setAttribute('y', String(y))
-    if (stretch) foreignElement.setAttribute('height', String(height))
-    return foreignElement
+    // const { height, width, x, y } = rect
+    // const { foreignElement } = this
+
+    const args: GraphFileArgs = {
+      time, clipTime: range, visible: true, quantize: range.fps, editing: true
+    }
+    const [graphFile] = this.graphFiles(args)
+    const { preloader } = this.clip.track.mash
+    const element = preloader.getFile(graphFile)?.cloneNode()
+    assertTrue(!!element, "video element")
+    return this.foreignSvgItem(element, rect, stretch)
+
+    // foreignElement.setAttribute('x', String(x))
+    // foreignElement.setAttribute('y', String(y))
+    // foreignElement.setAttribute('width', String(width))
+    // element.setAttribute('width', String(width))
+    // if (stretch) {
+    //   foreignElement.setAttribute('height', String(height))
+    //   foreignElement.setAttribute('preserveAspectRatio', 'none')
+    //   element.setAttribute('height', String(height))
+    //   element.setAttribute('preserveAspectRatio', 'none')
+    // }
+    // foreignElement.replaceChildren(element)
+    // return foreignElement
   }
  
   declare definition : VideoDefinition
@@ -46,20 +63,5 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       input: true, options: {}, type: LoadType.Video, file, definition
     }
     return [graphFile]
-  }
- 
-
-  private _foreignElement?: SVGForeignObjectElement
-  private get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }
-  private get foreignElementInitialize(): SVGForeignObjectElement {
-    if (!globalThis.document) throw 'wrong environment'
-  
-    const video = globalThis.document.createElement('video')
-    video.crossOrigin = 'anonymous'
-    video.src = this.definition.urlAbsolute
-    const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
-    foreignElement.setAttribute('id', `video-${this.id}`)
-    foreignElement.append(video)
-    return foreignElement
   }
 }

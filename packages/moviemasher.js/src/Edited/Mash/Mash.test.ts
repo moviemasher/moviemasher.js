@@ -16,14 +16,14 @@ import { FilterGraphsOptions } from './FilterGraphs/FilterGraphs'
 
 import { FilterGraphClass } from './FilterGraph/FilterGraphClass'
 import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '../../Helpers/Time/TimeUtilities'
-import { clipDefault } from "../../Media/Clip/ClipFactory"
-import { isClipObject, Clip, ClipObject } from "../../Media/Clip/Clip"
+import { isClipObject, Clip, ClipObject } from "../../Edited/Mash/Track/Clip/Clip"
 import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { TrackClass } from "./Track/TrackClass"
 import { isTrackObject } from "./Track/Track"
-import { GraphFileArgs, GraphFileOptions } from "../../MoveMe"
+import { GraphFileOptions } from "../../MoveMe"
 import { defaultTextId } from "../../../../../dev/test/Setup/Constants"
 import { FilterGraph } from "./FilterGraph/FilterGraph"
+import { clipDefault } from "./Track/Clip/ClipFactory"
 
 
 describe("Mash", () => {

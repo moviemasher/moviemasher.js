@@ -10,7 +10,7 @@ import { effectDefinition } from "../../packages/moviemasher.js/src/Media/Effect
 import { filterDefinition } from "../../packages/moviemasher.js/src/Filter/FilterFactory"
 import { fontDefinition, fontDefault } from "../../packages/moviemasher.js/src/Media/Font/FontFactory"
 import { imageDefinition } from "../../packages/moviemasher.js/src/Media/Image/ImageFactory"
-import { clipDefinition } from "../../packages/moviemasher.js/src/Media/Clip/ClipFactory"
+import { clipDefinition } from "../../packages/moviemasher.js/src/Edited/Mash/Track/Clip/ClipFactory"
 import { videoDefinition } from "../../packages/moviemasher.js/src/Media/Video/VideoFactory"
 import { videoSequenceDefinition } from "../../packages/moviemasher.js/src/Media/VideoSequence/VideoSequenceFactory"
 

@@ -1,42 +1,39 @@
 import React from 'react'
-import { EventType, SelectType, Svg, Svgs } from '@moviemasher/moviemasher.js'
+import { 
+  assertContainer, assertTrue, EventType, PointZero, Rect, SelectType, Svgs, timeEqualizeRates, timeFromArgs, 
+  Clip} from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult } from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
-
-export interface SvgContentProps extends PropsWithoutChild, Svg {
-  width: number
-  height: number
-}
-
-export function SvgContent(props: SvgContentProps): ReactResult {
-  const editor = useEditor()
-  const ref = React.useRef<SVGSVGElement>(null)
-  const { element, id: key } = props
-  const updateRef = () => {
-    const { current } = ref
-    if (current) current.replaceChildren(element)
-  }
- 
-  React.useEffect(updateRef, [])
-
-  if (ref.current) updateRef()
-
-  const { width, height } = editor.imageSize
-  const viewProps = { key, ref, 
-    width, height, viewBox: `0 0 ${width} ${height}`
-   }
-  return <svg { ...viewProps} />
-} 
+import { PlayerContentSvgProps, PlayerContentSvg } from './PlayerContentSvg'
 
 export function PlayerContent(props: PropsWithoutChild): ReactResult {
   const editor = useEditor()
   const [svgs, setSvgs] = React.useState<Svgs>([])
+  const [rect, setRect] = React.useState<Rect>(() => ({ ...PointZero, ...editor.imageSize}))
   const ref = React.useRef<HTMLDivElement>(null)
 
-  const handleResize = () => { editor.imageSize = ref.current!.getBoundingClientRect() }
+  const handleResize = () => { 
+    const { current } = ref
+    assertTrue(current)
+
+    const rect = current.getBoundingClientRect()
+    
+    const { x, y, width, height } = rect
+
+    setRect(original => {
+      console.log("PlayerContent setRect", x, y, width, height)
+      original.width = width
+      original.height = height
+      original.x = x
+      original.y = y
+      const size = { width, height }
+      editor.imageSize = size
+      return original
+    })
+  }
   const [resizeObserver] = React.useState(new ResizeObserver(handleResize))
 
   React.useEffect(() => {
@@ -53,17 +50,18 @@ export function PlayerContent(props: PropsWithoutChild): ReactResult {
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
 
   const onPointerDown = () => {
-    console.log("PlayerContent onPointerDown")
-    editor.deselect(SelectType.Clip)
+    // console.log("PlayerContent onPointerDown")
+    editor.selection.unset(SelectType.Clip)
   }
  
 
   const svgChildren = svgs.map(svg => {
-    const svgProps = {
-      ...svg, ...editor.imageSize, key: svg.id
+    const svgProps: PlayerContentSvgProps = {
+      ...svg, key: svg.id, contentRect: rect,
     }
-    return <SvgContent { ...svgProps } />
+    return <PlayerContentSvg { ...svgProps } />
   })
+  // console.log("PlayerContent", svgChildren.length, "svgChildren")
   const svgProps = {
     children: svgChildren,
     ...editor.imageSize, viewBox: `0 0 ${editor.imageSize.width} ${editor.imageSize.height}`

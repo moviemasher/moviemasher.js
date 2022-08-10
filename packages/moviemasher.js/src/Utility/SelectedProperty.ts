@@ -21,7 +21,6 @@ export interface SelectedProperty extends Selected {
   property: Property
   changeHandler: PropertiedChangeHandler
   value: Scalar
-  time?: Time
 }
 export const isSelectedProperty = (value: any): value is SelectedProperty => {
   return isObject(value) && "changeHandler" in value

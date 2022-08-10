@@ -20,10 +20,13 @@ export function TimelineContent(props: PropsWithChildren): ReactResult {
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
   useListeners({ [EventType.Mash]: resetScroll })
 
-  const onClick = () => { editor.deselect(SelectType.Track) }
+  const onPointerDown = (event: React.MouseEvent<HTMLDivElement>) => { 
+    console.log("TimelineContent onPointerDown", event)
+    editor.selection.unset(SelectType.Track) 
+  }
   const onScroll = () => {
     setScroll({ x: ref.current!.scrollLeft, y: ref.current!.scrollTop })
   }
-  const viewProps = { ...props, onClick, onScroll, ref }
+  const viewProps = { ...props, onPointerDown, onScroll, ref }
   return <View {...viewProps} />
 }

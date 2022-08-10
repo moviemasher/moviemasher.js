@@ -36,9 +36,10 @@ const playerProps = DefaultPlayerProps({ props: { className: "panel player" } })
 const children = <>
   <Player key="player" { ...playerProps } />
   <Composer key="composer" { ...composerProps }  />
-  <Inspector key="inspector" { ...inspectorProps } />
+  <Browser key="browser" { ...browserProps } />
   <Timeline key="timeline" { ...timelineProps } />
   <Panels key="panels" className='panels'>
+    <Inspector key="inspector" { ...inspectorProps } />
     <Panel key="streamers" className='panel streamers'>
       <PanelHead key="head" className='head'>{DefaultIcons.streamers}</PanelHead>
       <PanelContent key="content" className='content'>CONTENT</PanelContent>
@@ -69,7 +70,6 @@ const children = <>
         </PanelFoot>
       </PanelNotCollapsed>
     </Panel>
-    <Browser key="browser" { ...browserProps } />
   </Panels>
 </>
 

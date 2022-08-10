@@ -1,5 +1,5 @@
 import { ValueObject } from "../declarations"
-import { Size, sizeEven, assertSize, isSize, sizeScale, sizeCover, sizeAboveZero } from "../Utility/Size"
+import { Size, sizeCeil, assertSize, isSize, sizeScale, sizeCover, sizeAboveZero } from "../Utility/Size"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
@@ -14,7 +14,7 @@ import {
   timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
 import { assertAboveZero, isAboveZero, isPositive } from "../Utility/Is"
-import { assertClip, Clip } from "../Media/Clip/Clip"
+import { assertClip, Clip } from "../Edited/Mash/Track/Clip/Clip"
 import { assertUpdatableDurationDefinition, isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
@@ -26,8 +26,6 @@ export class RenderingOutputClass implements RenderingOutput {
     const { durationClips, args } = this
     const { quantize } = args.mash
     durationClips.forEach(clip => {
-      assertClip(clip)
-
       const { content } = clip
       const { definition } = content
       if (isUpdatableDurationDefinition(definition)) {
@@ -128,7 +126,7 @@ export class RenderingOutputClass implements RenderingOutput {
     }
     const graphFiles = clips.flatMap(clip => {
       const args: GraphFileArgs = { 
-        ...options, quantize, time, clipTime: clip.timeRange(quantize)
+        ...options, quantize, time, clipTime: time
       }
       return clip.clipGraphFiles(args)
     })
@@ -282,10 +280,7 @@ export class RenderingOutputClass implements RenderingOutput {
     assertAboveZero(width)
     assertAboveZero(height)
   
-    const sizeEven = sizeCover(mashSize, outputSize)
-    // console.log(this.constructor.name, "sizeCovered", mashSize, outputSize, "=>", sizeEven)
-
-    return sizeEven
+    return sizeCover(mashSize, outputSize)
   }
 
   get sizePromise(): Promise<void> {

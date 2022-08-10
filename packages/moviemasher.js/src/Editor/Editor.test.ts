@@ -10,7 +10,7 @@ import { Editor } from "./Editor"
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { assertMash } from "../Edited/Mash/Mash"
 import { EditType } from "../Setup/Enums"
-import { ClipClass } from "../Media/Clip/ClipClass"
+import { ClipClass } from "../Edited/Mash/Track/Clip/ClipClass"
 
 import visibleDefaultJson from "../Definitions/DefinitionObjects/content/default.json"
 
@@ -98,7 +98,7 @@ describe("Editor", () => {
       const editor = createEditor()
       editor.load({ mash: {}, definitions: []})
       // masher.add(themeTextJson)
-      const selectedItems = editor.selectedItems()
+      const selectedItems = editor.selection.selectedItems()
       // console.log('selectedItems', selectedItems)
       expect(selectedItems.length).toEqual(2)
     })

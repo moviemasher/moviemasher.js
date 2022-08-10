@@ -9,6 +9,7 @@ import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
 import { SelectType } from "../Setup/Enums"
 import { Actions } from "../Editor/Actions/Actions"
 import { Editor } from "../Editor/Editor"
+import { Selectable } from "../Editor/Selectable"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -22,7 +23,7 @@ export interface EditedArgs extends EditedObject {
   preloader?: Loader
 }
 
-export interface Edited extends Described, Propertied {
+export interface Edited extends Described, Propertied, Selectable {
   backcolor: string
   buffer: number
   destroy(): void

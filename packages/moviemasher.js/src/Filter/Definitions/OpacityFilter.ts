@@ -27,7 +27,9 @@ export class OpacityFilter extends FilterDefinitionClass {
     assertNumber(opacity)
     assertPopulatedString(filterInput, 'filterInput')
 
-    const options: ValueObject = { r: 'r(X,Y)', a: `alpha(X,Y)*${opacity}` }
+    const options: ValueObject = { 
+      lum: 'lum(X,Y)', cb: 'cb(X,Y)', cr: 'cr(X,Y)', a: `alpha(X,Y)*${opacity}` 
+    }
     if (duration) {
       const opacityEnd = filter.value(`opacity${PropertyTweenSuffix}`)
       if (isNumber(opacityEnd) && opacity != opacityEnd) {
@@ -36,14 +38,14 @@ export class OpacityFilter extends FilterDefinitionClass {
         options.a = `alpha(X,Y)*(${opacity}+(${toValue}*${position}))`
       }
     }
-    const formatFilter = 'format'
-    const formatId = idGenerate(formatFilter)
-    const formatCommandFilter: CommandFilter = {
-      inputs: [filterInput], ffmpegFilter: formatFilter, 
-      options: { pix_fmts: 'rgba' }, outputs: [formatId]
-    }
-    commandFilters.push(formatCommandFilter)
-    filterInput = formatId
+    // const formatFilter = 'format'
+    // const formatId = idGenerate(formatFilter)
+    // const formatCommandFilter: CommandFilter = {
+    //   inputs: [filterInput], ffmpegFilter: formatFilter, 
+    //   options: { pix_fmts: 'rgba' }, outputs: [formatId]
+    // }
+    // commandFilters.push(formatCommandFilter)
+    // filterInput = formatId
     const { ffmpegFilter } = this
     const commandFilter: CommandFilter = {
       inputs: [filterInput], ffmpegFilter, 

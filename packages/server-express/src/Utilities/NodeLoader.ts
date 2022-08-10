@@ -8,7 +8,7 @@ import {
   EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
   Errors, LoaderClass, GraphFileType, LoaderFile, Definition,
   LoaderSource,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
@@ -131,7 +131,7 @@ export class NodeLoader extends LoaderClass {
       const trimmable = isUpdatableDurationDefinition(definition)
       if (trimmable && !isAboveZero(definition.duration)) return true
 
-      return isUpdatableSizeDefinition(definition) && !isAboveZero(definition.width)
+      return isUpdatableSizeDefinition(definition) && !sizeAboveZero(definition.sourceSize)
     })
   }
 

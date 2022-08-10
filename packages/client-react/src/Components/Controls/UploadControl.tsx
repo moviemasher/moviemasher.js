@@ -27,9 +27,9 @@ export function UploadControl(props: PropsAndChild): ReactResult {
 
   const handleApiCallback = (callback: ApiCallback) => {
     setTimeout(() => {
-      console.debug("handleApiCallback request", callback)
+      // console.debug("handleApiCallback request", callback)
       fetchCallback(callback).then((response: ApiCallbackResponse) => {
-        console.debug("handleApiCallback response", response)
+        // console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
         if (error) handleError(callback.endpoint.prefix!, error)
         else if (apiCallback) {

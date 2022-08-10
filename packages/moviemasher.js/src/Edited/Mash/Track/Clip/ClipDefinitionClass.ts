@@ -1,10 +1,10 @@
 import { Clip, ClipDefinition, ClipObject } from "./Clip"
 import { ClipClass } from "./ClipClass"
-import { DataType, DefinitionType, Duration, Timing, TrackType } from "../../Setup/Enums"
-import { DefinitionBase } from "../../Definition/DefinitionBase"
-import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { Default, IdPrefix, IdSuffix } from "../../Setup"
-import { ObjectUnknown } from "../../declarations"
+import { DataType, DefinitionType, Duration, Timing, TrackType } from "../../../../Setup/Enums"
+import { DefinitionBase } from "../../../../Definition/DefinitionBase"
+import { DataGroup, propertyInstance } from "../../../../Setup/Property"
+import { Default, IdPrefix, IdSuffix } from "../../../../Setup"
+import { ObjectUnknown } from "../../../../declarations"
 
 export class ClipDefinitionClass extends DefinitionBase implements ClipDefinition {
   constructor(...args: any[]) {

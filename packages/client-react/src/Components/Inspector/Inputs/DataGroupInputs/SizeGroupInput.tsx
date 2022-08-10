@@ -2,17 +2,18 @@ import React from "react"
 import { 
   selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
   DataGroup, isDefined, Orientation, PropertyTweenSuffix, isOrientation, 
-  selectedPropertyObject, ScalarObject, assertSelectType, assertTime 
+  selectedPropertyObject, ScalarObject, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
 } from "@moviemasher/moviemasher.js"
-import { InspectorContext } from "../../Contexts/InspectorContext"
-import { PropsAndChild, ReactResult, UnknownElement } from "../../declarations"
-import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DefaultIcons } from "@moviemasher/icons-default"
+
+
+import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
+import { InspectorContext } from "../../../Inspector/InspectorContext"
+import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
-import { InputContext, InputContextInterface } from "../../Contexts/InputContext"
-import { View } from "../../Utilities/View"
-import { sessionGet, sessionSet } from "../../Utilities/Session"
-import { useEditor } from "../../Hooks/useEditor"
+import { InputContext, InputContextInterface } from "../InputContext"
+import { View } from "../../../../Utilities/View"
+import { useEditor } from "../../../../Hooks/useEditor"
 
 const SizeInputOrientations: Record<Orientation, string> = {
   [Orientation.H]: 'width', [Orientation.V]: 'height'
@@ -23,7 +24,14 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const { selectType } = props
   assertSelectType(selectType)
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties, tweening, changeTweening } = inspectorContext
+  const { selectedItems: properties, selectedInfo, changeTweening } = inspectorContext
+  const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
+  assertTimeRange(timeRange)
+  assertTime(time)
+  
+  const endDefined = tweenDefined[DataGroup.Size]
+  const endSelected = tweenSelected[DataGroup.Size]
+
   const byName = selectedPropertyObject(properties, DataGroup.Size, selectType)
   
   const { 
@@ -31,34 +39,22 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     [`width${PropertyTweenSuffix}`]: widthEnd,
     [`height${PropertyTweenSuffix}`]: heightEnd
   } = byName 
-  const { time } = width
-  const { time: timeEnd } = widthEnd
-  assertTime(time)
-  assertTime(timeEnd)
-  const widthProperty = tweening ? widthEnd : width
-  const heightProperty = tweening ? heightEnd : height
+  
+  const widthProperty = endSelected ? widthEnd : width
+  const heightProperty = endSelected ? heightEnd : height
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
-  if (!(widthProperty && heightProperty)) {
-    // console.log("SizeInput properties.length", selectType, properties.length, Object.keys(byName), selectType, values)
-    return null
-  }
 
-  const { 
-    lock: lockValue, 
-    width: widthValue, 
-    height: heightValue, 
-    widthEnd: widthEndValue, 
-    heightEnd: heightEndValue 
-  } = values
-
+  const { lock: lockValue } = values
   assertString(lockValue)
     
   const orientation = isOrientation(lockValue) ? lockValue as Orientation : undefined
-  const widthTween = isDefined(widthEndValue) && widthValue !== widthEndValue
-  const heightTween = isDefined(heightEndValue) && heightValue !== heightEndValue
-  const endsDefined = widthTween || heightTween
+  
   const elementsByName: Record<string, UnknownElement> = {}
   const inspectingProperties = [widthProperty, heightProperty]
+
+  // go to first/last frame if needed and tween value defined...
+  const goTime = tweenInputTime(timeRange, onEdge, nearStart, endDefined, endSelected)
+
   inspectingProperties.forEach(selectedProperty => {
     const { property, changeHandler, value, name: nameOveride } = selectedProperty
     const { type, name: propertyName } = property
@@ -66,11 +62,22 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     const baseName = name.replace(PropertyTweenSuffix, '')
     const input = DataTypeInputs[type] 
     const key = `inspector-${selectType}-${name}`
-    const inputContext: InputContextInterface = { property, value, name }
+    const inputContext: InputContextInterface = { 
+      property, value, name, time: goTime
+    }
+
+    // if we're editing tween value, but it's not defined yet...
+    if (endSelected) {
+      // tell input to use start value as default, rather than the property's...
+      inputContext.defaultValue = values[baseName] 
+    }
+
     if (!(orientation && baseName === SizeInputOrientations[orientation])) {
       inputContext.changeHandler = changeHandler
     }
-    const providerProps = { key, value: inputContext, children: input }
+    const providerProps = { 
+      key, value: inputContext, children: input
+    }
     elementsByName[baseName] = <InputContext.Provider { ...providerProps } />  
   })
   const lockWidthProps = { 
@@ -96,20 +103,20 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const lockHeight = <View { ...lockHeightProps } />
   const startProps: PropsAndChild = {
     children: DefaultIcons.start,
-    className: tweening ? ClassButton : selectedButton,
+    className: endSelected ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
-      editor.goToTime(time)
-      changeTweening(false)
+      editor.goToTime(timeRange.startTime)
+      changeTweening(DataGroup.Size, false)
     }
   }
   const endProps: PropsAndChild = {
     key: 'end',
-    className: tweening ? selectedButton : ClassButton,
-    children: endsDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
+    className: endSelected ? selectedButton : ClassButton,
+    children: endDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
     onClick: () => {
-      editor.goToTime(timeEnd)
-      changeTweening(true)
+      editor.goToTime(timeRange.lastTime)
+      changeTweening(DataGroup.Size, true)
     }
   }
   const legendElements = [

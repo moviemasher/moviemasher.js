@@ -1,27 +1,29 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, UnknownObject } from "../../declarations"
+import { Scalar, SvgItem, UnknownObject } from "../../declarations"
 import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { SelectedEffects, SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { ActionType, DataType, Orientation } from "../../Setup/Enums"
+import { ActionType, DataType, Orientation, SelectType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { assertProperty, DataGroup, Property, propertyInstance } from "../../Setup/Property"
+import { assertProperty, Property } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { colorBlackOpaque, colorName, colorWhite } from "../../Utility/Color"
 import { idGenerate } from "../../Utility/Id"
-import { assertAboveZero, assertArray, assertNumber, assertPopulatedString, assertPositive, assertTrue, isNumber, isPopulatedArray, isTimeRange, isUndefined } from "../../Utility/Is"
-import { assertSize, Size, SizeTuple } from "../../Utility/Size"
-import { tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
+import { assertAboveZero, assertArray, assertNumber, assertPopulatedString, assertPositive, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
+import { assertSize, Size, sizeEven, sizesEqual, SizeTuple } from "../../Utility/Size"
+import { tweenColorStep, Tweening, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
 import { Actions } from "../../Editor/Actions/Actions"
-import { Clip } from "../../Media/Clip/Clip"
+import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
 import { Effect, Effects } from "../../Media/Effect/Effect"
 import { effectInstance } from "../../Media/Effect/EffectFactory"
+import { NamespaceSvg } from "../../Setup/Constants"
+import { Selectables } from "../../Editor/Selectable"
 
 export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
@@ -79,37 +81,88 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     get clip() { return this._clip! }
     set clip(value: Clip) { this._clip = value }
 
-    colorBackCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      const { time, contentColors = [], videoRate, outputSize } = args
+    colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters { 
+      const { time, contentColors = [], videoRate, outputSize, duration } = args
       assertSize(outputSize)
-
-      const duration = isTimeRange(time) ? time.lengthSeconds : 0
+      const evenSize = sizeEven(outputSize)
       const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
+      const outputString = output || idGenerate(colorName(color) || 'back')
       const { colorFilter } = this
       const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
       colorFilter.setValue(color, 'color')
       colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
-      colorFilter.setValue(outputSize.width, 'width')
-      colorFilter.setValue(outputSize.height, 'height')
-      colorFilter.setValue(outputSize.width, `width${PropertyTweenSuffix}`)
-      colorFilter.setValue(outputSize.height, `height${PropertyTweenSuffix}`)
-      
+      colorFilter.setValue(evenSize.width, 'width')
+      colorFilter.setValue(evenSize.height, 'height')
+      colorFilter.setValue(evenSize.width, `width${PropertyTweenSuffix}`)
+      colorFilter.setValue(evenSize.height, `height${PropertyTweenSuffix}`)
       const commandFilters = colorFilter.commandFilters(colorArgs)
-      arrayLast(commandFilters).outputs = [idGenerate(colorName(color) || 'back')]
+      
+      if (sizesEqual(evenSize, outputSize)) {
+        arrayLast(commandFilters).outputs = [outputString]
+      } else {
+        const filterInput = arrayLast(arrayLast(commandFilters).outputs)
+        assertPopulatedString(filterInput, 'crop input')
+        const cropFilter = 'crop'
+        // const cropId = idGenerate(cropFilter)
+        const cropCommandFilter: CommandFilter = {
+          inputs: [filterInput], ffmpegFilter: cropFilter, 
+          options: { w: outputSize.width, h: outputSize.height, exact: 1 }, 
+          outputs: [outputString]
+        }
+        commandFilters.push(cropCommandFilter)
+      }
       return commandFilters
     }
+    
+    _colorFilter?: Filter
+    get colorFilter() { return this._colorFilter ||= filterFromId('color') }
 
-    colorCommandFilters(args: CommandFilterArgs): CommandFilters {
+    commandFiles(args: CommandFileArgs): CommandFiles {
+      const { clipTime } = args
+      const graphFileArgs: GraphFileArgs = { 
+        ...args, audible: false, clipTime 
+      }
+      return this.graphCommandFiles(graphFileArgs)
+    }
+
+    graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles {
+      const commandFiles: CommandFiles = [] 
+      const graphFiles = this.graphFiles(graphFileArgs)
+      let inputCount = 0
+      commandFiles.push(...graphFiles.map((graphFile, index) => {
+        const { input } = graphFile
+        const inputId = index && input ? `${this.id}-${inputCount}` : this.id
+        const commandFile: CommandFile = { ...graphFile, inputId }
+        if (input) inputCount++
+        return commandFile
+      }))
+      return commandFiles
+    }
+    
+    commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { filterInput: input = '' } = args
+      let filterInput = input
+      // console.log(this.constructor.name, "commandFilters", container)
+      const initialFilters = this.initialCommandFilters(args, tweening, container)
+      if (initialFilters.length) {
+        commandFilters.push(...initialFilters)
+        filterInput = arrayLast(arrayLast(initialFilters).outputs)
+      }
+      if (container) commandFilters.push(...this.containerCommandFilters({ ...args, filterInput }, tweening))
+      else commandFilters.push(...this.contentCommandFilters({ ...args, filterInput }, tweening))
+      return commandFilters
+    }
+   
+    container = false
+
+    containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = [] 
-      const { contentColors: colors = [], containerRects, videoRate, time } = args
+      const { contentColors: colors = [], containerRects, videoRate, time, duration } = args
       assertArray(containerRects, 'containerRects')
-      const [rect, rectEndOrEmpty = {}] = containerRects
-      assertRect(rect)
+      const [rect, rectEnd] = containerRects
   
-      const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
-  
-      const rectEnd = { ...rect, ...rectEndOrEmpty }
   
       const { colorFilter } = this
       const [color, colorEnd] = colors
@@ -124,69 +177,13 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       commandFilters.push(...colorFilter.commandFilters(colorArgs))
       return commandFilters
     }
-    
-    _colorFilter?: Filter
-    get colorFilter() { return this._colorFilter ||= filterFromId('color') }
 
-    commandFiles(args: CommandFileArgs): CommandFiles {
-      const { visible, clipTime } = args
-      const graphFileArgs: GraphFileArgs = { 
-        ...args, audible: !visible, clipTime 
-      }
-      const commandFiles: CommandFiles = [] 
-      const graphFiles = this.graphFiles(graphFileArgs)
-      let inputCount = 0
-      commandFiles.push(...graphFiles.map((graphFile, index) => {
-        const { input } = graphFile
-        const inputId = index && input ? `${this.id}-${inputCount}` : this.id
-        const commandFile: CommandFile = { ...graphFile, inputId }
-        if (input) inputCount++
-        return commandFile
-      }))
-      return commandFiles
-    }
-    
-    commandFilters(args: CommandFilterArgs): CommandFilters {
-      const commandFilters: CommandFilters = []
-      const { visible, container, filterInput: input = '', contentColors } = args
-      let filterInput = input
-      if (container && visible) {
-        const hasColorContent = isPopulatedArray(contentColors)
-        if (hasColorContent) {
-          assertTrue(!filterInput.length, '!filterInput')
-
-          const tweening = contentColors[0] !== contentColors[1]
-          const can = tweening ? this.canColorTween(args) : this.canColor(args)
-          if (!can) {
-            commandFilters.push(...this.containerColorCommandFilters(args))
-            filterInput = arrayLast(arrayLast(commandFilters).outputs)
-          }
-        }
-      }
-
-      // console.log(this.constructor.name, "commandFilters", container)
-      const initialFilters = this.initialCommandFilters({ ...args, filterInput })
-      if (initialFilters.length) {
-        commandFilters.push(...initialFilters)
-        filterInput = arrayLast(arrayLast(initialFilters).outputs)
-      }
-      if (container) commandFilters.push(...this.containerCommandFilters({ ...args, filterInput }))
-      else commandFilters.push(...this.contentCommandFilters({ ...args, filterInput }))
-      return commandFilters
-    }
-   
-    container = false
-
-    containerColorCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      return this.colorCommandFilters(args)
-    }
-
-    containerCommandFilters(args: CommandFilterArgs): CommandFilters { 
+    containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
       // console.log(this.constructor.name, "containerCommandFilters returning empty")
       return [] 
     }
 
-    contentCommandFilters(args: CommandFilterArgs): CommandFilters { 
+    contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
       // console.log(this.constructor.name, "contentCommandFilters returning empty")
       return this.effectsCommandFilters(args)
     }
@@ -213,7 +210,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     effects: Effects = []
   
-    containerFinalCommandFilters(args: CommandFilterArgs): CommandFilters { 
+    containerFinalCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
       return []
     }
 
@@ -230,7 +227,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     }
 
     
-    effectsCommandFilters(args: CommandFilterArgs): CommandFilters { 
+    effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = []
       const { filterInput: input } = args
       let filterInput = input
@@ -245,9 +242,37 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFilters
     }
 
+
+    private _foreignElement?: SVGForeignObjectElement
+    get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }
+    private get foreignElementInitialize(): SVGForeignObjectElement {
+      if (!globalThis.document) throw 'wrong environment'
+    
+      const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
+      foreignElement.setAttribute('id', `foreign-element-${this.id}`)
+      return foreignElement
+    }
+
+    foreignSvgItem(element: SvgItem, rect: Rect, stretch?: boolean): SVGForeignObjectElement {
+      const { x, y, width, height } = rect
+      const { foreignElement } = this
+      foreignElement.setAttribute('x', String(x))
+      foreignElement.setAttribute('y', String(y))
+      foreignElement.setAttribute('width', String(width))
+      element.setAttribute('width', String(width))
+      if (stretch) {
+        foreignElement.setAttribute('height', String(height))
+        foreignElement.setAttribute('preserveAspectRatio', 'none')
+        element.setAttribute('height', String(height))
+        element.setAttribute('preserveAspectRatio', 'none')
+      }
+      foreignElement.replaceChildren(element)
+      return foreignElement
+    }
+
     graphFiles(args: GraphFileArgs): GraphFiles { return [] }
 
-    initialCommandFilters(args: CommandFilterArgs): CommandFilters {
+    initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       throw new Error(Errors.unimplemented)
     }
     
@@ -261,24 +286,21 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     declare lock: Orientation
 
-    mergeCommandFilters(args: CommandFilterArgs): CommandFilters { 
-      const commandFilters: CommandFilters = [] 
-      const { chainInput, filterInput } = args
-     
-      assertPopulatedString(chainInput, 'chainInput')
-      assertPopulatedString(filterInput, 'filterInput')
-     
-      const overlayArgs: FilterCommandFilterArgs = {
-        filterInput, chainInput, videoRate: 0, duration: 0
-      }
+    overlayCommandFilters(bottomInput: string, topInput: string): CommandFilters { 
+      assertPopulatedString(bottomInput, 'bottomInput')
+      assertPopulatedString(topInput, 'topInput')
 
+      const commandFilters: CommandFilters = [] 
+      const overlayArgs: FilterCommandFilterArgs = {
+        filterInput: topInput, chainInput: bottomInput, videoRate: 0, duration: 0
+      }
       const { overlayFilter } = this
       overlayFilter.setValue(0, 'x')
       overlayFilter.setValue(0, 'y')
 
       commandFilters.push(...overlayFilter.commandFilters(overlayArgs))
       const commandFilter = arrayLast(commandFilters)
-      commandFilter.outputs = [idGenerate('merged')]
+      commandFilter.outputs = [idGenerate(topInput)]
       return commandFilters
     }
 
@@ -306,7 +328,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       // console.log(this.constructor.name, "scaleCommandFilters", containerRects, duration)
       const commandFilters: CommandFilters = []
-      
+      // 
       const { scaleFilter } = this
       const filterCommandFilterArgs: FilterCommandFilterArgs = { 
         duration, videoRate, filterInput
@@ -329,6 +351,11 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
+
+    selectables(): Selectables { return [] }
+
+    selectType = SelectType.None
+
     selectedItems(actions: Actions): SelectedItems {
       const selectedItems: SelectedItems = []
       const { container, clip: target, effects, selectType } = this
@@ -338,13 +365,12 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const property = target.properties.find(property => property.type === dataType)
       assertProperty(property)
 
-      const value = this.definitionId
+      const { definitionId } = this
       selectedItems.push({
-        selectType, property, value,
+        selectType, property, value: definitionId,
         changeHandler: (property: string, value: Scalar) => {
-          const undoValue = this.value(property)
-          const redoValue = isUndefined(value) ? undoValue : value
-          actions.create({ property, target, redoValue, undoValue })
+          const redoValue = isUndefined(value) ? definitionId : value
+          actions.create({ property, target, redoValue, undoValue: definitionId })
         },
       })
 
@@ -406,30 +432,33 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
       const selectedProperties: SelectedProperties = []
       const { name, tweenable } = property
-      const { clip, selectType } = this
-      const timeRange = clip.timeRange(actions.editor.edited!.quantize)
+      const { selectType } = this
+      // const timeRange = clip.timeRange(actions.editor.edited!.quantize)
 
       const selectedProperty: SelectedProperty = {
         selectType, property, value: this.value(name), 
         changeHandler: (property: string, value: Scalar) => {
+          // console.log(this.constructor.name, "selectedProperties changeHandler", property, value)
           const undoValue = this.value(property)
           const redoValue = isUndefined(value) ? undoValue : value
           actions.create({ property, target: this, redoValue, undoValue })
         }
       }
-      if (tweenable) selectedProperty.time = timeRange.startTime
+      // if (tweenable) selectedProperty.time = timeRange.startTime
+      // console.log(this.constructor.name, "selectedProperties", name)
       selectedProperties.push(selectedProperty)
       if (tweenable) {
         const tweenName = [name, PropertyTweenSuffix].join('')
         const selectedPropertEnd: SelectedProperty = {
+          // time: timeRange.lastTime,
           selectType, property, value: this.value(tweenName), name: tweenName,
-          time: timeRange.lastTime,
           changeHandler: (property: string, value: Scalar) => {
+            // console.log(this.constructor.name, "selectedProperties changeHandler", property, value)
             const undoValue = this.value(property)
-            const redoValue = isUndefined(value) ? undoValue : value
-            actions.create({ property, target: this, redoValue, undoValue })
+            actions.create({ property, target: this, redoValue: value, undoValue })
           }
         }
+        // console.log(this.constructor.name, "selectedProperties", tweenName)
         selectedProperties.push(selectedPropertEnd)
       }
 

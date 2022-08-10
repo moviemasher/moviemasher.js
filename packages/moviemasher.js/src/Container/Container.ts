@@ -8,6 +8,8 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Filter } from "../Filter/Filter"
 import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
+import { Actions } from "../Editor/Actions/Actions"
+import { Editor } from "../Editor/Editor"
 
 export interface ContainerObject extends TweenableObject {
   height?: number
@@ -40,7 +42,6 @@ export interface ContainerRectArgs {
 }
 
 export interface Container extends Tweenable {
-  blendFilter: Filter
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
   containerRects(args: ContainerRectArgs): RectTuple
@@ -50,11 +51,11 @@ export interface Container extends Tweenable {
   directions: Anchor[]
   height: number
   intrinsicGroupElement: SVGGElement
-  mode: number
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number
-  pathElement(rect: Rect, time: Time, range: TimeRange, forecolor?: string): SvgItem 
+  pathElement(rect: Rect, forecolor?: string, editor?: Editor): SvgItem 
+  attachHandlers(svgItem: SvgItem, editor: Editor): void
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

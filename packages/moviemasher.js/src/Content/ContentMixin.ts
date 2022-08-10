@@ -1,8 +1,8 @@
-import { SvgItem } from "../declarations"
+import { SvgItem, ValueObject } from "../declarations"
 import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
 
 import { Errors } from "../Setup/Errors"
-import { isArray } from "../Utility/Is"
+import { assertPopulatedString, isArray } from "../Utility/Is"
 import { Content, ContentClass, ContentRectArgs } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -11,6 +11,11 @@ import { DataGroup, Property, propertyInstance } from "../Setup/Property"
 import { DataType, Orientation } from "../Setup/Enums"
 import { SelectedProperties } from "../Utility/SelectedProperty"
 import { Actions } from "../Editor/Actions/Actions"
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../MoveMe"
+import { idGenerate } from "../Utility/Id"
+import { commandFilesInput } from "../Utility/CommandFiles"
+import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
+import { arrayLast } from "../Utility/Array"
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
@@ -33,6 +38,57 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
           group: DataGroup.Size, 
         }))
       }
+    }
+
+    audibleCommandFiles(args: CommandFileArgs): CommandFiles {
+      const { clipTime } = args
+      const graphFileArgs: GraphFileArgs = { 
+        ...args, audible: true, clipTime 
+      }
+      return this.graphCommandFiles(graphFileArgs)
+    }
+
+    audibleCommandFilters(args: CommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { time, quantize, commandFiles, clipTime } = args
+      // console.log(this.constructor.name, "initialCommandFilters", time, clipTime)
+      const timeDuration = time.isRange ? time.lengthSeconds : 0
+      const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
+      
+      let filterInput = commandFilesInput(commandFiles, this.id, false)
+    
+      const trimFilter = 'atrim'
+      const trimId = idGenerate(trimFilter)
+      const trimOptions: ValueObject = {}
+
+      const { frame } = this.definitionTime(time, clipTime)
+
+      if (duration) trimOptions.duration = duration
+      if (frame) trimOptions.start = timeFromArgs(frame, quantize).seconds
+
+      const commandFilter: CommandFilter = { 
+        inputs: [filterInput], 
+        ffmpegFilter: trimFilter, 
+        options: trimOptions, 
+        outputs: [trimId]
+      }
+      commandFilters.push(commandFilter)
+      filterInput = trimId
+      
+      const delays = (clipTime!.seconds - time.seconds) * 1000
+      if (delays) {
+        const adelayFilter = 'adelay'
+        const adelayId = idGenerate(adelayFilter)
+        const adelayCommandFilter: CommandFilter = { 
+          ffmpegFilter: adelayFilter, 
+          options: { delays, all:1 }, 
+          inputs: [filterInput], outputs: [adelayId]
+        }
+        commandFilters.push(adelayCommandFilter) 
+        filterInput = adelayId
+      }
+      commandFilters.push(...this.amixCommandFilters({ ...args, filterInput }))
+      return commandFilters
     }
 
     contentRects(args: ContentRectArgs): RectTuple {

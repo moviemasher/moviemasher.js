@@ -3,15 +3,15 @@ import {
   Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, ContainerTypes, ContentTypes, assertTrue
 } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
-import { Problems } from '../../Setup/Problems'
-import { View } from '../../Utilities/View'
-import { InputContext } from '../../Contexts/InputContext'
-import { DefinitionContext } from '../../Contexts/DefinitionContext'
+import { PropsAndChild, ReactResult, WithClassName } from '../../../../declarations'
+import { Problems } from '../../../../Setup/Problems'
+import { View } from '../../../../Utilities/View'
+import { InputContext } from '../InputContext'
+import { DefinitionContext } from '../../../../Contexts/DefinitionContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { DragDefinitionObject, dragType, dropType } from '../../Helpers/DragDrop'
-import { BrowserDefinition } from '../Browser/BrowserDefinition'
-import { propsDefinitionTypes } from '../../Utilities/Props'
+import { DragDefinitionObject, dragType, dropType } from '../../../../Helpers/DragDrop'
+import { BrowserDefinition } from '../../../Browser/BrowserDefinition'
+import { propsDefinitionTypes } from '../../../../Utilities/Props'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string

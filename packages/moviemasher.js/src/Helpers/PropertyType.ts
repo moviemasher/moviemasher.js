@@ -1,7 +1,7 @@
 import { Scalar } from "../declarations"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
 import {
-  DataType, isDataType, isDefinitionType, PropertyType
+  DataType, isDataType, isDefinitionType
 } from "../Setup/Enums"
 import { colorBlack, colorValid } from "../Utility/Color"
 import { isBoolean, isNumber, isNumeric, isPopulatedString } from "../Utility/Is"
@@ -12,17 +12,17 @@ export const PropertyTypesNumeric = [
   DataType.Number,
 ]
 
-const propertyTypeRepresentedAsNumber = (dataType: PropertyType): boolean => {
+const propertyTypeRepresentedAsNumber = (dataType: DataType): boolean => {
   return isDataType(dataType) && PropertyTypesNumeric.includes(dataType)
 }
 
-export const propertyTypeIsString = (dataType: PropertyType): boolean => {
+export const propertyTypeIsString = (dataType: DataType): boolean => {
   if (dataType === DataType.Boolean) return false
   if (propertyTypeRepresentedAsNumber(dataType)) return false
   return true
 }
 
-export const propertyTypeDefault = (dataType: PropertyType): Scalar => {
+export const propertyTypeDefault = (dataType: DataType): Scalar => {
   if (isDefinitionType(dataType)) return `${IdPrefix}${dataType}${IdSuffix}`
 
   switch (dataType) {
@@ -38,7 +38,7 @@ const propertyTypeValidBoolean = (value: Scalar): boolean => {
   return ['true', 'false', ''].includes(value as string)
 }
 
-export const propertyTypeValid = (value: Scalar, dataType: PropertyType): boolean => {
+export const propertyTypeValid = (value: Scalar, dataType: DataType): boolean => {
   if (isDefinitionType(dataType)) return isPopulatedString(value)
 
   switch (dataType) {
@@ -57,7 +57,7 @@ export const propertyTypeValid = (value: Scalar, dataType: PropertyType): boolea
   return false
 }
 
-export const propertyTypeCoerce = (value: Scalar, dataType: PropertyType): Scalar => {
+export const propertyTypeCoerce = (value: Scalar, dataType: DataType): Scalar => {
   if (dataType === DataType.Boolean) {
     if (isBoolean(value)) return value as boolean
     if (isNumeric(value)) return !!Number(value)

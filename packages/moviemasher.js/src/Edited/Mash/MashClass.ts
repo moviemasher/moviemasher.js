@@ -12,7 +12,7 @@ import { Default } from "../../Setup/Default"
 import { assertPopulatedString, assertTime, assertTrue, isAboveZero, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
 import { sortByLayer } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
-import { isClip, Clip, Clips } from "../../Media/Clip/Clip"
+import { isClip, Clip, Clips } from "./Track/Clip/Clip"
 import { isTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview, AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { Mash, MashArgs } from "./Mash"
@@ -148,8 +148,14 @@ export class MashClass extends EditedClass implements Mash {
     if (this._bufferTimer) return
 
     this._bufferTimer = setInterval(() => {
-      this.loadPromiseUnlessBuffered({ editing: true, visible: true, audible: true })
-      this.compositeAudibleClips(this.clipsAudibleInTime(this.timeToBuffer))
+      if (this._paused) return
+
+      const options: GraphFileOptions = { 
+        editing: true, audible: true 
+      }
+      this.loadPromiseUnlessBuffered(options)
+      const clips = this.clipsAudibleInTime(this.timeToBuffer)
+      this.composition.compositeAudible(clips, this.quantize)
     }, Math.round((this.buffer * 1000) / 2))
   }
 
@@ -217,15 +223,13 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   get clips(): Clip[] {
-    return this.tracks.map(track => track.clips).flat() as Clip[]
-  }
-
-  private get clipsAudible(): Clip[] {
-    return this.clips.filter(clip => clip.mutable && clip.notMuted)
+    return this.tracks.map(track => track.clips).flat() 
   }
 
   private clipsAudibleInTime(time: Time): Clip[] {
-    return this.filterIntersecting(this.clipsAudible, time)
+    const { clips } = this
+    const clipsAudible = clips.filter(clip => clip.mutable && clip.notMuted)
+    return this.filterIntersecting(clipsAudible, time)
   }
 
   private clipsInTime(time: Time): Clip[] {
@@ -261,11 +265,6 @@ export class MashClass extends EditedClass implements Mash {
     requestAnimationFrame(() => this.compositeVisible(time))
   }
 
-  private compositeAudibleClips(clips: Clip[]): void {
-    if (this._paused) return
-
-    this.composition.compositeAudible(clips, this.quantize)
-  }
 
   private _composition?: AudioPreview
   get composition(): AudioPreview {
@@ -438,7 +437,7 @@ export class MashClass extends EditedClass implements Mash {
     assertTime(time)
 
     const scaled = time.scale(this.quantize)
-    const type = audible && visible ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
+    const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
     const clips = this.clipsInTimeOfType(scaled, type)
     // console.log(this.constructor.name, "graphFiles", args, clips.length, "clip(s)")
     return clips.flatMap(clip => {
@@ -526,12 +525,12 @@ export class MashClass extends EditedClass implements Mash {
   get paused(): boolean { return this._paused }
 
   set paused(value: boolean) {
-    const forcedValue = value || !this.frames
+    const paused = value || !this.frames
     // console.log(this.constructor.name, "set paused", forcedValue)
-    if (this._paused === forcedValue) return
+    if (this._paused === paused) return
 
-    this._paused = forcedValue
-    if (forcedValue) {
+    this._paused = paused
+    if (paused) {
       this.playing = false
       this.bufferStop()
       if (this._bufferTimer) {
@@ -562,7 +561,7 @@ export class MashClass extends EditedClass implements Mash {
       this._playing = value
       if (value) {
         const clips = this.clipsAudibleInTime(this.timeToBuffer)
-        // console.log("playing", value, this.time)
+        // console.log("playing", value, this.time, clips.length)
         if (!this.composition.startPlaying(this.time, clips, this.quantize)) {
           // console.log(this.constructor.name, "set playing", value, "audio not cached", this.time, clips.length)
           // audio was not cached
@@ -730,11 +729,13 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  svg(options: PreviewOptions): Promise<Svg> { 
+  svg(options: PreviewOptions): Promise<Svg> {     
+    // console.log(this.constructor.name, "svg")
     return this.preview(options).svg
   }
 
   svgs(options: PreviewOptions): Promise<Svgs> { 
+    // console.log(this.constructor.name, "svgs")
     return this.preview(options).svgs 
   }
   

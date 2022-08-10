@@ -56,6 +56,15 @@ export class TimeClass implements Time {
     return time
   }
 
+  closest(timeRange: TimeRange): Time {
+    const frame = timeRange.frame + Math.round(timeRange.frames / 2)
+    const halfTime = new TimeClass(frame, timeRange.fps)
+    const [midTime, editorTime] = timeEqualizeRates(halfTime, this)
+    
+    const shouldBeOnLast = midTime.frame < editorTime.frame
+    return shouldBeOnLast ? timeRange.lastTime : timeRange.startTime
+  }
+  
   get copy() : Time { return new TimeClass(this.frame, this.fps) }
 
   get description() : string { return `${this.frame}@${this.fps}` }

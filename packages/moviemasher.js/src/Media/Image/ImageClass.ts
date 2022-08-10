@@ -5,7 +5,7 @@ import { CommandFile, CommandFileArgs, CommandFiles, GraphFile, GraphFileArgs, G
 import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { ImageDefinition, Image } from "./Image"
-import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isTimeRange } from "../../Utility/Is"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { ContentMixin } from "../../Content/ContentMixin"
@@ -67,17 +67,28 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
   }
 
   svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
-    const { x, y, width, height } = rect
-    const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
-    imageElement.setAttribute('id', `image-${this.id}`)
-    imageElement.setAttribute('href', this.definition.urlAbsolute)
-    imageElement.setAttribute('x', String(x))
-    imageElement.setAttribute('y', String(y))
-    imageElement.setAttribute('width', String(width))
-    if (stretch) {
-      imageElement.setAttribute('height', String(height))
-      imageElement.setAttribute('preserveAspectRatio', 'none')
+    
+    const args: GraphFileArgs = {
+      time, clipTime: range, visible: true, quantize: range.fps, editing: true
     }
-    return imageElement
+    const [graphFile] = this.graphFiles(args)
+    const { preloader } = this.clip.track.mash
+    const element = preloader.getFile(graphFile)?.cloneNode()
+    assertTrue(!!element, "image element")
+    
+    return this.foreignSvgItem(element, rect, stretch)
+    
+    // const { x, y, width, height } = rect
+    // const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
+    // imageElement.setAttribute('id', `image-${this.id}`)
+    // imageElement.setAttribute('href', this.definition.urlAbsolute)
+    // imageElement.setAttribute('x', String(x))
+    // imageElement.setAttribute('y', String(y))
+    // imageElement.setAttribute('width', String(width))
+    // if (stretch) {
+    //   imageElement.setAttribute('height', String(height))
+    //   imageElement.setAttribute('preserveAspectRatio', 'none')
+    // }
+    // return imageElement
   }
 }

@@ -1,38 +1,33 @@
 import React from 'react'
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 import { View } from '../../Utilities/View'
-import { InspectorContext } from '../../Contexts/InspectorContext'
+import { InspectorContext } from './InspectorContext'
 import { propsSelectTypes } from '../../Utilities/Props'
-import { ClassSelected, isPopulatedString } from '@moviemasher/moviemasher.js'
+import { assertSelectType, ClassSelected, isPopulatedString, SelectType } from '@moviemasher/moviemasher.js'
 
 
 export interface InspectorTypePickerProps extends PropsAndChildren, WithClassName {
-  type?: string
-  types?: string | string[]
+  type: string | SelectType
 }
 /**
  * @parents Inspector
  */
 
 export function InspectorTypePicker(props: InspectorTypePickerProps): ReactResult {
-  const { type, types, children, className } = props
+  const { type, children, className } = props
+  assertSelectType(type)
+  
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectTypes, selected, changeSelected, selectedTypes, selectTypesObject } = inspectorContext
-  const propTypes = propsSelectTypes(type, types)
-  const key = propTypes.join('-')
-  React.useEffect(() => {
-    selectTypesObject[key] = propTypes
-    return () => { delete selectTypesObject[key] }
-  }, [])
+  const { changeSelected, selectedInfo } = inspectorContext
+  const { selectTypes, selectedType} = selectedInfo
 
-  if (!selectTypes.length) return null
-  if (!propTypes.some(type => selectTypes.includes(type))) return null
+  if (!selectTypes.includes(type)) return null
 
-  const onClick = () => { changeSelected(key) }
+  const onClick = () => { changeSelected(type) }
 
   const classes: string[] = []
   if (isPopulatedString(className)) classes.push(className)
-  if (propTypes.some(type => selectedTypes.includes(type))) classes.push(ClassSelected)
+  if (selectedType === type) classes.push(ClassSelected)
 
   const viewProps = { children, onClick, className: classes.join(' ') }
   return <View {...viewProps} />

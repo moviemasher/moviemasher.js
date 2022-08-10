@@ -3,9 +3,9 @@ import path from 'path'
 import {
   SizePreview,
   idGenerate,
-  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod
+  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration
 } from '@moviemasher/moviemasher.js'
-import { commandProcess, ExtensionLoadedInfo, probingInfoPromise, RenderingArgs, RenderingProcessArgs, RenderingProcessInput, renderingProcessInstance } from '@moviemasher/server-express'
+import { commandProcess, ExtensionLoadedInfo, probingInfoPromise, RenderingArgs, renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, renderingProcessInstance } from '@moviemasher/server-express'
 import {
   GenerateDefinitionObjects, GenerateOptions, GenerateMashTest,
   generateTest,
@@ -19,16 +19,23 @@ import { TestRenderCache, TestRenderOutput, TestFilePrefix } from "./TestRenderO
 
 export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, output: RenderingCommandOutput): Promise<void> => {
   const id = `all-${suffix}`
+  const fileName = renderingOutputFile(0, output)
+
   const sources: string[] = ids.map(id => {
-    const resolved = path.resolve(path.join(TestRenderOutput, id))
+    const resolved = path.resolve(path.join(TestRenderOutput, id, fileName))
     assertTrue(fs.existsSync(resolved), resolved)
 
     return resolved
   })
+  
 
-  const destination = path.resolve(path.join(TestRenderOutput, id))
+
+  const destination = path.resolve(path.join(TestRenderOutput, id, fileName))
 
   // console.log("renderingTestIdsPromise", sources.length, destination)
+
+  if (!sources.length) return Promise.resolve()
+  
   return fs.promises.mkdir(path.dirname(destination), { recursive: true }).then(() => {
     return new Promise<void>((resolve, reject) => {
       const command = commandProcess()
@@ -47,6 +54,7 @@ export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, ou
       const extName = path.extname(destination)
       const baseName = path.basename(destination, extName)
       const infoPath = path.join(dirName, `${baseName}.${ExtensionLoadedInfo}`)
+      // console.log("renderingTestIdsPromise probingInfoPromise", destination, infoPath)
       return probingInfoPromise(destination, infoPath).then(EmptyMethod)
     })
   })
@@ -98,7 +106,7 @@ export const renderingProcessInput = (id: string): RenderingProcessInput => {
     validDirectories: [path.resolve(TestRenderOutput)],
   }
 }
-const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
+export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
   const options: RenderingArgs = {
     mash: {}, outputs: [], definitions: [], upload: false
   }
@@ -123,20 +131,12 @@ export const renderingMashTestPromise = (mashTest: GenerateMashTest, upload: boo
     outputs, upload
   }
   const input = renderingProcessInput(id)
-
   const processArgs: RenderingProcessArgs = {
     ...input, id, ...options
   }
-  // const process = renderingProcessInstance(processArgs)
-
-  // console.log("expectMashTestRender rendering", process.id)
-  // const [source] = process.destinations
-  // const destination = path.resolve(source)
-
-  // console.log("expectMashTestRender rendering", destination)
   return renderingPromise(processArgs)
 }
-const renderingTestPromise = (suffix: string, options: GenerateOptions, output: RenderingCommandOutput): Promise<void> => {
+ export const renderingTestPromise = (suffix: string, options: GenerateOptions, output: RenderingCommandOutput): Promise<void> => {
   let promise = Promise.resolve()
   const ids = generateIds(options)
   ids.forEach(id => {
@@ -147,9 +147,10 @@ const renderingTestPromise = (suffix: string, options: GenerateOptions, output: 
   })
   return promise
 }
-const renderingTestIdPromise = (id: string, videoOutput: RenderingCommandOutput): Promise<void> => {
+
+export const renderingTestIdPromise = (id: string, videoOutput: RenderingCommandOutput, labels = false, duration = Duration.Unknown): Promise<void> => {
   assertPopulatedString(id)
 
-  const mashTest = generateTest(id, SizePreview)
+  const mashTest = generateTest(id, SizePreview, duration, labels)
   return renderingMashTestPromise(mashTest, false, videoOutput)
 }

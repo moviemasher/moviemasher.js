@@ -1,6 +1,7 @@
 export * from "./Array"
 export * from "./Color"
 export * from "./CommandFiles"
+export * from "./Event"
 export * from "./Id"
 export * from "./Is"
 export * from "./Pixel"

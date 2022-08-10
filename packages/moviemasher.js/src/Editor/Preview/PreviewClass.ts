@@ -1,7 +1,7 @@
 import { Size } from "../../Utility/Size"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
-import { Clip } from "../../Media/Clip/Clip"
+import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
 import { Loader } from "../../Loader/Loader"
 import { AVType } from "../../Setup/Enums"
 import { sortByTrack } from "../../Utility/Sort"
@@ -44,8 +44,21 @@ export class PreviewClass implements Preview {
 
   streaming = false
 
+  
+  get svg(): Promise<Svg> {
+    // console.log(this.constructor.name, "svg")
+    return this.svgs.then(svgs => {
+      const { size, mash } = this
+      const { id } = mash
+      const svg = svgElement(size)
+      svg.append(...svgs.map(svg => svg.element))
+      return { element: svg, id  }
+    })
+  }
+
   _svgs?: Svgs
   get svgs(): Promise<Svgs> { 
+    // console.log(this.constructor.name, "svgs")
     const { _svgs } = this
     if (_svgs) return Promise.resolve(_svgs)
 
@@ -60,16 +73,6 @@ export class PreviewClass implements Preview {
       return svgs
     })
   } 
-  
-  get svg(): Promise<Svg> {
-    return this.svgs.then(svgs => {
-      const { size, mash } = this
-      const { id } = mash
-      const svg = svgElement(size)
-      svg.append(...svgs.map(svg => svg.element))
-      return { element: svg, id  }
-    })
-  }
 
   time: Time
 

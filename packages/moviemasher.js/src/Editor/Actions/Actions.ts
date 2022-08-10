@@ -1,7 +1,7 @@
 import { ActionType } from "../../Setup/Enums"
 import { isPositive } from "../../Utility/Is"
 import { Editor } from "../Editor"
-import { EditorSelection } from "../Selectable"
+import { EditorSelectionObject } from "../EditorSelection"
 import { Action, ActionObject, ActionOptions, assertAction } from "./Action/Action"
 import { actionInstance } from "./Action/ActionFactory"
 import { ChangeAction, isChangeAction, isChangeActionObject } from "./Action/ChangeAction"
@@ -29,15 +29,15 @@ export class Actions  {
     const clone: ActionOptions = {
       ...rest,
       type,
-      undoSelection: undoSelection || { ...editor.selection },
-      redoSelection: redoSelection || { ...editor.selection },
+      undoSelection: undoSelection || { ...editor.selection.object },
+      redoSelection: redoSelection || { ...editor.selection.object },
     }
     if (isChangeActionObject(object) && this.currentActionLast) {
       const { currentAction } = this
       if (isChangeAction(currentAction)) {
-        const { target, property, redoValue } = object
+        const { target, property } = object
         if (currentAction.target === target && currentAction.property === property) {
-          currentAction.updateAction(redoValue)
+          currentAction.updateAction(object)
           editor.handleAction(currentAction)
           return
         }
@@ -85,7 +85,7 @@ export class Actions  {
     this.index = -1
   }
 
-  get selection(): EditorSelection { return this.editor.selection }
+  get selection(): EditorSelectionObject { return this.editor.selection }
 
   undo() : Action {
     const action = this.currentAction

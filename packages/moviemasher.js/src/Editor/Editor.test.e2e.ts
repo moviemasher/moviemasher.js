@@ -7,8 +7,8 @@ import { DefinitionType, } from '../Setup/Enums'
 import { ImageDefinitionObject } from '../Media/Image/Image'
 import { fontDefault } from '../Media/Font/FontFactory'
 import { PuppeteerHost, PuppeteerPort } from '../../../../dev/tester/src/Setup/Constants'
-import { ClipObject } from '../Media/Clip/Clip'
-import { clipDefault } from '../Media/Clip/ClipFactory'
+import { ClipObject } from '../Edited/Mash/Track/Clip/Clip'
+import { clipDefault } from '../Edited/Mash/Track/Clip/ClipFactory'
 import { defaultTextId } from '../../../../dev/test/Setup/Constants'
 
 describe('Editor', () => {

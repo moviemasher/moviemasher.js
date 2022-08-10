@@ -1,10 +1,10 @@
 import { UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
-import { SelectedProperties } from "../Utility/SelectedProperty"
+import { SelectedItems, SelectedProperties } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
-import { DataType, EventType } from "../Setup/Enums"
+import { DataType, EventType, SelectType } from "../Setup/Enums"
 import { propertyInstance } from "../Setup/Property"
 import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
@@ -14,6 +14,8 @@ import { Loader } from "../Loader/Loader"
 import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
 import { Default } from "../Setup/Default"
 import { Editor } from "../Editor/Editor"
+import { Actions } from "../Editor/Actions/Actions"
+import { Selectables } from "../Editor/Selectable"
 
 
 export class EditedClass extends PropertiedClass implements Edited {
@@ -93,6 +95,13 @@ export class EditedClass extends PropertiedClass implements Edited {
   quantize = Default.mash.quantize
 
   reload(): Promise<void> | undefined { return }
+
+
+  selectables(): Selectables { return [] }
+
+  selectType = SelectType.None
+
+  selectedItems(actions: Actions): SelectedItems { return [] }
 
   svg(options: PreviewOptions): Promise<Svg> { throw Errors.unimplemented }
 

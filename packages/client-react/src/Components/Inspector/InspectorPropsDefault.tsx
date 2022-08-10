@@ -30,8 +30,9 @@ export const DefaultInspectorProps: PropsMethod<InspectorPropsDefault, Inspector
   ]
  
   optionsStrict.footer.content ||= [
-    <InspectorTypePicker key="mash-cast" className='icon-button' types="mash,cast">{DefaultIcons.document}</InspectorTypePicker>,
-    <InspectorTypePicker key="layer" className='icon-button' types="layer">{DefaultIcons.layer}</InspectorTypePicker>,
+    <InspectorTypePicker key="cast" className='icon-button' type="cast">{DefaultIcons.broadcast}</InspectorTypePicker>,
+    <InspectorTypePicker key="mash" className='icon-button' type="mash">{DefaultIcons.mm}</InspectorTypePicker>,
+    <InspectorTypePicker key="layer" className='icon-button' type="layer">{DefaultIcons.layer}</InspectorTypePicker>,
     <InspectorTypePicker key="clip" className='icon-button' type="clip">{DefaultIcons.clip}</InspectorTypePicker>,
     <InspectorTypePicker key="content" className='icon-button' type="content">{DefaultIcons.content}</InspectorTypePicker>,
     <InspectorTypePicker key="container" className='icon-button' type="container">{DefaultIcons.container}</InspectorTypePicker>,

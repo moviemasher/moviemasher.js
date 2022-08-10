@@ -4,10 +4,11 @@ import { GenericFactory } from "../../declarations"
 import { Modular, ModularObject } from "../../Mixin/Modular/Modular"
 import { ModularDefinition, ModularDefinitionObject } from "../../Mixin/Modular/Modular"
 import { DefinitionType } from "../../Setup/Enums"
+import { Selectable } from "../../Editor/Selectable"
 
 export type EffectObject = ModularObject
 
-export interface Effect extends Modular {
+export interface Effect extends Modular, Selectable {
   definition : EffectDefinition
 }
 

@@ -1,5 +1,5 @@
 import { SvgFilters } from "../../declarations"
-import { CommandFilterArgs, CommandFilters, FilterArgs, FilterCommandFilterArgs } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
 import { assertProperty } from "../../Setup/Property"
 import { Size } from "../../Utility/Size"
 import { Rect } from "../../Utility/Rect"

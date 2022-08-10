@@ -67,13 +67,20 @@ export interface CommandFileArgs extends CommandFileOptions {
   
   clipTime: TimeRange
 }
-
+export interface VisibleCommandFileArgs extends CommandFileArgs {
+  outputSize: Size
+  containerRects: RectTuple
+}
 export interface CommandFilterArgs extends CommandFileArgs {
   track: number
-  container?: boolean
   commandFiles: CommandFiles
   chainInput: string
   filterInput?: string
+}
+export interface VisibleCommandFilterArgs extends CommandFilterArgs {
+  outputSize: Size
+  containerRects: RectTuple
+  duration: number
 }
 
 export interface FilterArgs {

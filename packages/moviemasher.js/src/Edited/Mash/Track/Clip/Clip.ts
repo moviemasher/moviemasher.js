@@ -1,17 +1,15 @@
-import { Container, ContainerObject } from "../../Container/Container"
-import { Content, ContentObject } from "../../Content/Content"
-import { GenericFactory, SvgFilters } from "../../declarations"
-import { Rect } from "../../Utility/Rect"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { Timing, TrackType } from "../../Setup/Enums"
-import { throwError } from "../../Utility/Throw"
-import { Size } from "../../Utility/Size"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { EffectObject, Effects } from "../Effect/Effect"
-import { Track } from "../../Edited/Mash/Track/Track"
-import { Definition, DefinitionObject } from "../../Definition/Definition"
-import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../Instance/Instance"
-import { Loader } from "../../Loader/Loader"
+import { Container, ContainerObject } from "../../../../Container/Container"
+import { Content, ContentObject } from "../../../../Content/Content"
+import { GenericFactory } from "../../../../declarations"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
+import { Timing, TrackType } from "../../../../Setup/Enums"
+import { throwError } from "../../../../Utility/Throw"
+import { Time, TimeRange } from "../../../../Helpers/Time/Time"
+import { Track } from "../../../../Edited/Mash/Track/Track"
+import { Definition, DefinitionObject } from "../../../../Definition/Definition"
+import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../../../Instance/Instance"
+import { Loader } from "../../../../Loader/Loader"
+import { Selectable } from "../../../../Editor/Selectable"
 
 export interface ClipObject extends InstanceObject {
   containerId?: string
@@ -28,7 +26,7 @@ export const isClipObject = (value: any): value is ClipObject => {
 
 export interface ClipDefinitionObject extends DefinitionObject {}
 
-export interface Clip extends Instance {
+export interface Clip extends Instance, Selectable {
   
   // definition: ClipDefinition
   audible: boolean

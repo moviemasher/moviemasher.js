@@ -1,13 +1,16 @@
 import React from "react"
-import { SelectType, UnknownObject, isSelectedProperty, SelectedItems } from "@moviemasher/moviemasher.js"
+import { 
+  SelectType, UnknownObject, isSelectedProperty, SelectedItems, Time 
+} from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
-import { InspectorContext } from "../../Contexts/InspectorContext"
-import { DataGroupInputs } from "../DataGroupInputs/DataGroupInputs"
+import { InspectorContext } from "./InspectorContext"
+import { DataGroupInputs } from "./Inputs/DataGroupInputs/DataGroupInputs"
 
 export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {
   selectedItems?: SelectedItems
+  time?: Time
 }
 
 /**
@@ -40,7 +43,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
       selectTypes.add(selectType)
       const propertyProps: InspectorPropertyProps = {
         key: `inspector-${selectType}-${name}`,
-        property, value, changeHandler, name,
+        property, value, changeHandler, name, 
         ...props
       }
       ungroupedInputs.push(<InspectorProperty {...propertyProps} />)
