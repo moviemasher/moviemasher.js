@@ -1,7 +1,7 @@
 import {
-  AudibleSource, UnknownObject, LoadVideoResult} from "../../declarations"
+  AudibleSource, UnknownObject, LoadedVideo, LoadedAudio} from "../../declarations"
 import { GraphFile } from "../../MoveMe"
-import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time/Time"
@@ -13,8 +13,6 @@ import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
-import { FilterDefinition } from "../../Filter/Filter"
-import { filterDefinitionFromId } from "../../Filter/FilterFactory"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
@@ -30,25 +28,21 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
-    const { fps } = object as VideoDefinitionObject
-    if (fps) this.fps = fps
-
+    const { loadedVideo } = object as VideoDefinitionObject
+    if (loadedVideo) this.loadedVideo = loadedVideo
+  
     // TODO: support speed
     // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
 
   audibleSource(preloader: Loader): AudibleSource | undefined {
     const graphFile: GraphFile = {
-      type: LoadType.Video, file: this.url, definition: this, input: true
+      type: LoadType.Audio, file: this.url, definition: this, input: true
     }
-    const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
-    if (!cached) return
-
-    const { audio } = cached
+    const audio: LoadedAudio = preloader.getFile(graphFile)
+   
     return AudibleContextInstance.createBufferSource(audio)
   }
-
-  fps = Default.definition.video.fps
 
   instanceFromObject(object: VideoObject = {}): Video {
     return new VideoClass(this.instanceArgs(object))
@@ -56,20 +50,8 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
 
   loadType = LoadType.Video
 
-  // loadedVisible(preloader: Loader, quantize: number, startTime: Time): CanvasVisibleSource | undefined {
-  //   const rate = this.fps || quantize
-  //   const time = startTime.scale(rate)
-
-  //   const graphFile: GraphFile = {
-  //     type: LoadType.Video, file: this.url, input: true, definition: this
-  //   }
-  //   const cached: LoadVideoResult | undefined = preloader.getFile(graphFile)
-  //   if (!cached) return
-
-  //   const { video } = cached
-  //   return video
-  // }
-
+  loadedVideo?: LoadedVideo
+  
   pattern = '%.jpg'
 
   private seek(definitionTime: Time, video:HTMLVideoElement): void {
@@ -101,11 +83,8 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
     const object = super.toJSON()
     object.url = this.url
     if (this.source) object.source = this.source
-    if (this.fps !== Default.definition.video.fps) object.fps = this.fps
     return object
   }
-
-  trackType = TrackType.Video
 
   type = DefinitionType.Video
 }

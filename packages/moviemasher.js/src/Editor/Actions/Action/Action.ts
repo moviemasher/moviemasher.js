@@ -24,7 +24,7 @@ export class Action {
     this.type = type
     this.undoSelection = undoSelection
   }
-  get cast(): Cast { 
+  protected get cast(): Cast { 
     const { cast } = this.redoSelection
     if (isCast(cast)) return cast
 
@@ -34,7 +34,7 @@ export class Action {
   }
   done =  false
 
-  get mash(): Mash { 
+  protected get mash(): Mash { 
     const { mash } = this.redoSelection
     if (isMash(mash)) return mash
 
@@ -48,9 +48,9 @@ export class Action {
     this.done = true
   }
 
-  redoAction() : void { throw Errors.unimplemented + 'redoAction' }
+  protected redoAction() : void { throw Errors.unimplemented + 'redoAction' }
 
-  redoSelection: EditorSelectionObject
+  protected redoSelection: EditorSelectionObject
 
   get selection(): EditorSelectionObject {
     if (this.done) return this.redoSelection
@@ -65,9 +65,9 @@ export class Action {
     this.done = false
   }
 
-  undoAction() : void { throw Errors.unimplemented + 'undoAction'}
+  protected undoAction() : void { throw Errors.unimplemented + 'undoAction'}
 
-  undoSelection: EditorSelectionObject
+  protected undoSelection: EditorSelectionObject
 }
 
 export const isAction = (value: any): value is Action => value instanceof Action

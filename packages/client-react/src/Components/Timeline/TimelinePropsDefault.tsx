@@ -13,33 +13,38 @@ import { TimelineZoomer } from './TimelineZoomer'
 import { TimelineTracks } from './TimelineTracks'
 import { TimelineScrubber } from './TimelineScrubber'
 import { TimelineContent } from './TimelineContent'
-import { TimelineTrackAddControl } from '../Controls/EditorAddTrackButton'
+import { TimelineAddTrackControl } from './TimelineAddTrackControl'
 
 import { TimelineProps } from './Timeline'
 import { Panel, PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { TimelineTrackIcon } from './TimelineTrackIcon'
 import { Button } from '../../Utilities'
+import { TimelineZoom } from './TimelineZoom'
+import { TimelineAddClipControl } from './TimelineAddClipControl'
 
-export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
-  noApi?: boolean
-}
+export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
 export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props) {
-  const { noApi, ...options } = props
-
-  const optionsStrict = panelOptionsStrict(options)
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
   optionsStrict.header.content ||= [DefaultIcons.timeline]
 
   optionsStrict.footer.content ||= [
-    <TimelineTrackAddControl key='add-track'>
+    <TimelineAddClipControl key='add-clip'>
+      <Button children={DefaultIcons.add}/>
+    </TimelineAddClipControl>,
+    <TimelineAddTrackControl key='add-track'>
       <Button children={[DefaultIcons.add, DefaultIcons.trackDense]}/>
-    </TimelineTrackAddControl>,
-    DefaultIcons.zoomLess,
+    </TimelineAddTrackControl>,
+    <TimelineZoom key="zoom-out" zoom={0}>
+      <Button useView={true}>{DefaultIcons.zoomLess}</Button>
+    </TimelineZoom>,
     <TimelineZoomer key='zoomer'/>,
-    DefaultIcons.zoomMore,
+    <TimelineZoom key="zoom-in" zoom={1}>
+      <Button useView={true}>{DefaultIcons.zoomMore}</Button>
+    </TimelineZoom>,
   ]
 
   optionsStrict.content.children ||= <>

@@ -1,10 +1,10 @@
 import { UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
-import { Definition } from "../Definition/Definition"
+import { assertDefinition, Definition } from "../Definition/Definition"
 import { Time } from "../Helpers/Time/Time"
 import { idGenerate } from "../Utility/Id"
 import { PropertiedClass } from "../Base/Propertied"
-import { isPopulatedObject } from "../Utility/Is"
+import { assertPopulatedObject, isPopulatedObject } from "../Utility/Is"
 import { Errors } from "../Setup/Errors"
 import { Instance, InstanceObject } from "./Instance"
 
@@ -13,13 +13,11 @@ export class InstanceBase extends PropertiedClass implements Instance {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
-    if (!isPopulatedObject(object))
-      throw Errors.invalid.object
-
+    assertPopulatedObject(object)
+   
     const { definition } = object as InstanceObject
+    assertDefinition(definition)
 
-    if (!definition)
-      throw Errors.invalid.definition.object
     this.definition = definition
     this.properties.push(...this.definition.properties)
     this.propertiesInitialize(object)
@@ -50,7 +48,8 @@ export class InstanceBase extends PropertiedClass implements Instance {
 
   toJSON(): UnknownObject {
     const json = super.toJSON()
-    const { definitionId, type } = this
+    const { definitionId, type, _label } = this
+    if (_label) json.label = _label
     json.type = type
     json.definitionId = definitionId
     return json

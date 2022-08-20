@@ -55,7 +55,7 @@ export class OpacityFilter extends FilterDefinitionClass {
     return commandFilters
   }
   
-  _ffmpegFilter = 'geq'
+  protected _ffmpegFilter = 'geq'
   
   filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
     const { opacity } = valueObject

@@ -16,20 +16,19 @@ export class EffectClass extends EffectWithModular {
   selectType = SelectType.None
 
   selectedItems(actions: Actions): SelectedItems {
-    return this.properties.map(property => ({
-      selectType: SelectType.None, property, 
-      value: this.value(property.name),
-      changeHandler: (property: string, value: Scalar) => {
-        assertPopulatedString(property)
-    
-        const redoValue = isUndefined(value) ? this.value(property) : value
-        const undoValue = this.value(property)
-        const options = {
-          type: ActionType.Change, target: this, property, redoValue, undoValue
+    return this.properties.map(property => { 
+      const undoValue = this.value(property.name)
+      const target = this
+      return {
+        value: undoValue,
+        selectType: SelectType.None, property, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+      
+          const options = { target, property, redoValue, undoValue }
+          actions.create(options)
         }
-        actions.create(options)
       }
-    }))
+    })
   }
-  
 }

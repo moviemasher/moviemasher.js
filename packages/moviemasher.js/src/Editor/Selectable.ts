@@ -2,12 +2,10 @@ import { SelectType } from "../Setup/Enums"
 import { Actions } from "./Actions/Actions"
 import { SelectedItems } from "../Utility/SelectedProperty"
 
-export interface Selectable { // = Cast | Mash | Track | Layer | Clip 
-
-  selectType: SelectType
+export interface Selectable { 
   selectables(): Selectables
   selectedItems(actions: Actions): SelectedItems 
-
+  selectType: SelectType
 }
 export type Selectables = Selectable[]
 

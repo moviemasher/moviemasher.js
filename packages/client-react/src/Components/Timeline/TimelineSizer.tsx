@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { View } from "../../Utilities/View"
-import { TimelineContext } from "../../Contexts/TimelineContext"
+import { TimelineContext } from "./TimelineContext"
 import { PropsWithChildren, ReactResult } from '../../declarations'
 
 /**

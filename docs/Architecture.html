@@ -74,21 +74,15 @@
 
 </svg>
 </a><label for="nav-toggle" class="nav-button"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path fill="currentColor" d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z"/></svg>
-</label><h1>JavaScript video editor, encoder, and streamer - version 5.0.7</h1></div></header><main><input type="checkbox" id="nav-toggle" class="nav-toggle"/><nav class="nav-left"><h2><a class="" href="index.html">README</a></h2><h2><a class="" href="demo/index.html">Demo</a></h2><details open><summary>Guides</summary><h2><a class="current" href="Architecture.html">Architecture</a></h2><h2><a class="" href="Style.html">Style</a></h2><h2><a class="" href="Layout.html">Layout</a></h2><h2><a class="" href="Integration.html">Integration</a></h2><h2><a class="" href="Rendering.html">Rendering</a></h2><h2><a class="" href="Streaming.html">Streaming</a></h2></details><details><summary>Core</summary><h2><a class="" href="interface/Mash.html">Mash</a></h2><h2><a class="" href="interface/MashEditor.html">MashEditor</a></h2><h2><a class="" href="interface/Filter.html">Filter</a></h2><h2><a class="" href="variable/Factory.html">Factory</a></h2><h2><a class="" href="Utility.html">Utility</a></h2><h2><a class="" href="class/Action.html">Action</a></h2><h2><a class="" href="Enumerations.html">Enumerations</a></h2><h2><a class="" href="Types.html">Types</a></h2><h2><a class="" href="Exports.html">Exports</a></h2></details><details><summary>Client</summary><h2><a class="" href="component/ApiClient.html">ApiClient</a></h2><h2><a class="" href="component/Masher.html">Masher</a></h2><h2><a class="" href="component/Player.html">Player</a></h2><h2><a class="" href="component/Browser.html">Browser</a></h2><h2><a class="" href="component/Inspector.html">Inspector</a></h2><h2><a class="" href="component/Timeline.html">Timeline</a></h2><h2><a class="" href="component/Process.html">Process</a></h2></details><details><summary>Server</summary><h2><a class="" href="class/Host.html">Host</a></h2><h2><a class="" href="interface/ApiServer.html">ApiServer</a></h2><h2><a class="" href="interface/DataServer.html">DataServer</a></h2><h2><a class="" href="interface/FileServer.html">FileServer</a></h2><h2><a class="" href="interface/RenderingServer.html">RenderingServer</a></h2><h2><a class="" href="interface/StreamingServer.html">StreamingServer</a></h2><h2><a class="" href="interface/WebServer.html">WebServer</a></h2></details></nav><article><div class="scrollable"><section><a id="Architecture"><h2>Architecture</h2></a><div class="section"><p>The Movie Masher codebase is organized as a monorepo which is made available
+</label><h1>JavaScript video editor, encoder, and streamer - version 5.0.7</h1></div></header><main><input type="checkbox" id="nav-toggle" class="nav-toggle"/><nav class="nav-left"><h2><a class="" href="index.html">README</a></h2><h2><a class="" href="demo/index.html">Demo</a></h2><details open><summary>Guides</summary><h2><a class="" href="User.html">User</a></h2><h2><a class="current" href="Architecture.html">Architecture</a></h2><h2><a class="" href="Style.html">Style</a></h2><h2><a class="" href="Layout.html">Layout</a></h2><h2><a class="" href="Integration.html">Integration</a></h2><h2><a class="" href="Rendering.html">Rendering</a></h2><h2><a class="" href="Streaming.html">Streaming</a></h2></details><details><summary>Core</summary><h2><a class="" href="interface/Mash.html">Mash</a></h2><h2><a class="" href="interface/Editor.html">Editor</a></h2><h2><a class="" href="interface/Filter.html">Filter</a></h2><h2><a class="" href="variable/Factory.html">Factory</a></h2><h2><a class="" href="class/Action.html">Action</a></h2><h2><a class="" href="Enumerations.html">Enumerations</a></h2><h2><a class="" href="Types.html">Types</a></h2><h2><a class="" href="Exports.html">Exports</a></h2></details><details><summary>Client</summary><h2><a class="" href="component/ApiClient.html">ApiClient</a></h2><h2><a class="" href="component/Masher.html">Masher</a></h2><h2><a class="" href="component/Player.html">Player</a></h2><h2><a class="" href="component/Browser.html">Browser</a></h2><h2><a class="" href="component/Inspector.html">Inspector</a></h2><h2><a class="" href="component/Timeline.html">Timeline</a></h2><h2><a class="" href="component/Process.html">Process</a></h2></details><details><summary>Server</summary><h2><a class="" href="class/Host.html">Host</a></h2><h2><a class="" href="interface/ApiServer.html">ApiServer</a></h2><h2><a class="" href="interface/DataServer.html">DataServer</a></h2><h2><a class="" href="interface/FileServer.html">FileServer</a></h2><h2><a class="" href="interface/RenderingServer.html">RenderingServer</a></h2><h2><a class="" href="interface/StreamingServer.html">StreamingServer</a></h2><h2><a class="" href="interface/WebServer.html">WebServer</a></h2></details></nav><article><div class="scrollable"><section><a id="Architecture"><h2>Architecture</h2></a><div class="section"><p>The Movie Masher codebase is organized as a monorepo which is made available
 in GitHub as <a href="https://github.com/moviemasher/moviemasher.js">moviemasher/moviemasher.js</a>.
 This repository contains and builds several packages which are made available
 in NPM:</p>
 <ul>
 <li><p><a href="https://www.npmjs.com/package/@moviemasher/moviemasher.js">@moviemasher/moviemasher.js</a> - core
-NPM package that uses the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">Canvas Api</a>
+NPM package that uses the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Svg_API">SVG API</a>
 and <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">Web Audio API</a>
 to composite and mix audiovisual content in a timed and controlled way.</p>
-</li>
-<li><p><a href="https://www.npmjs.com/package/@moviemasher/client-react">@moviemasher/client-react</a> - higher
-level NPM package that uses
-<a href="https://reactjs.org">ReactJS</a>
-and the core package to build a client user interface that facilitates playback and
-editing of content, as well as interactions with remote servers.</p>
 </li>
 <li><p><a href="https://www.npmjs.com/package/@moviemasher/server-express">@moviemasher/server-express</a> - higher
 level NPM package that uses
@@ -98,6 +92,16 @@ level NPM package that uses
 <a href="https://github.com/illuspas/Node-Media-Server">Node Media Server</a>,
 <a href="https://github.com/node-webrtc/node-webrtc">WebRTC</a>,
 and the core package to provide server APIs that manage files, data, encoding, and streaming.</p>
+</li>
+<li><p><a href="https://www.npmjs.com/package/@moviemasher/client-react">@moviemasher/client-react</a> - higher
+level NPM package that uses
+<a href="https://reactjs.org">ReactJS</a>
+and both the core and icon packages to build a client user interface that facilitates playback and
+editing of content, as well as interactions with remote servers.</p>
+</li>
+<li><p><a href="https://www.npmjs.com/package/@moviemasher/icons-default">@moviemasher/icons-default</a> - add-on NPM package that uses
+<a href="https://react-icons.github.io/react-icons/">React Icons</a>
+to bundle a variety of SVG icons used in the UI.</p>
 </li>
 </ul>
 <p>All code is written in <a href="https://www.typescriptlang.org">TypeScript</a> as strongly-typed
@@ -111,6 +115,7 @@ the code to produce a bundle best optimized for final delivery.</p>
 <li>node_modules - installed module depedencies</li>
 <li>packages - published NPM modules<ul>
 <li>client-react</li>
+<li>icons-default</li>
 <li>moviemasher.js</li>
 <li>server-express</li>
 </ul>
@@ -127,45 +132,13 @@ the code to produce a bundle best optimized for final delivery.</p>
 browser APIs not natively available in all execution environments. It defines core
 interfaces into Movie Masher&#39;s data structures and classes, ultimately enabling playback and
 composition of a variety of media assets within both client and server contexts.</p>
-<p>Core interfaces include <a href="interface/Mash.html">Mash</a> which organizes assets into an edit decision
-list (EDL), and <a href="interface/MashEditor.html">MashEditor</a> which provides methods to edit it and selectively composite its content.
-Learn more about how mashes are composited within different contexts
-in the <a href="rendering.html">Rendering Guide</a>.</p>
-<p>Similarly, the <a href="interface/Cast.html">Cast</a> interface organizes mashes for use within a streaming session,
-while <a href="interface/CastEditor.html">CastEditor</a> provides methods to edit it and selectively composite its content.
-Learn more about how mashes are composited by streams
-in the <a href="streaming.html">Streaming Guide</a>.</p>
-<p>In both cases, editors handle <a href="https://www.json.org">JSON</a> serialization of their respective
-content for transport between client and server. During editing they encapsulate each
-operation within a discrete <a href="class/Action.html">Action</a> to support undo/redo history.
-When compositing visual content they use patterns and concepts established by
-<a href="https://www.ffmpeg.org">FFmpeg</a> like <a href="interface/FilterGraph.html">FilterGraph</a> and <a href="interface/FilterChain.html">FilterChain</a>.</p>
-</div></section><section><a id="client-react"><h2>client-react</h2></a><div class="section"><p>The client-react NPM package depends on moviemasher.js plus
-<a href="https://www.npmjs.com/package/react">react</a>, with examples using
-<a href="https://www.npmjs.com/package/react-dom">react-dom</a>.
-It defines dozens of interoperable
-<a href="https://reactjs.org">ReactJS</a> function components that can be
-combined to fit a wide variety of uses within a custom video editing application.</p>
-<p>The <a href="component/ApiClient.html">ApiClient</a> component provides a central mechanism for other components like <a href="function/Webrtc.html">Webrtc</a>
-that interact with a remote <a href="interface/Server.html">Server</a>. It interacts with the <a href="interface/ApiServer.html">ApiServer</a> to determine
-which other servers are supported, and map each <a href="interface/Endpoint.html">Endpoint</a> to an actual <a href="interface/ApiCallback.html">ApiCallback</a>
-request. It provides an <a href="variable/ApiContext.html">ApiContext</a> for child components to quickly see if their server
-is supported and retrieve a fetch promise for each request.
-Learn more about customizing server interaction in the <a href="integration.html">Integration Guide</a>.</p>
-<p>The <a href="component/Masher.html">Masher</a> and <a href="component/Caster.html">Caster</a> components sit atop the
-<a href="interface/MashEditor.html">MashEditor</a> and <a href="interface/CastEditor.html">CastEditor</a> interfaces. The former can be placed inside the later,
-since a <a href="interface/Cast.html">Cast</a> contains at least one <a href="interface/Mash.html">Mash</a> that can be edited. Both components
-provide context for child components to access the underlying editor,
-call its methods, and display its content.</p>
-<p>Higher level components like <a href="component/Player.html">Player</a> and <a href="component/Timeline.html">Timeline</a> logically organize particular
-functionality, in this case <a href="interface/Mash.html">Mash</a> display and <a href="interface/Track.html">Track</a> editing. They both provide
-context for specific child components like
-<a href="component/Player.html#PlayerButton">PlayerButton</a> and <a href="component/Timeline.html#TimelineScrubber">TimelineScrubber</a> to operate within.
-For <a href="interface/Cast.html">Cast</a> display and <a href="class/Layer.html">Layer</a> editing the
-<a href="component/Streamer.html">Streamer</a> and <a href="component/Layers.html">Layers</a> components provide similiar functionality.
-The <a href="component/Browser.html">Browser</a> and <a href="component/Inspector.html">Inspector</a> components provide a unified context for adding and
-altering content.
-Learn more about creating custom user interfaces in the <a href="layout.html">Layout Guide</a>.</p>
+<p>It includes the core <a href="interface/Mash.html">Mash</a> interface which organizes assets into an edit decision
+list (EDL) and supports <a href="https://www.json.org">JSON</a> serialization for transport between client and server. It can be used in either context, though some methods are only valid in one or the other. </p>
+<p>In the client content, <a href="interface/Editor.html">Editor</a> provides methods which represent each discrete edit as a collection of <a href="class/Actions.html">Actions</a>, to support undo/redo history. It also provides <a href="Types.html#Svgs">Svgs</a> representing the <a href="Types.html#Tracks">Tracks</a> within the <a href="interface/Mash.html">Mash</a> for compositing within the browser. Learn more 
+in the <a href="layout.html">Layout Guide</a>.</p>
+<p>In the server context, <a href="interface/RenderingProcess.html">RenderingProcess</a> provides methods which produce media files from a <a href="interface/Mash.html">Mash</a>, using patterns and concepts established by
+<a href="https://www.ffmpeg.org">FFmpeg</a> like <a href="interface/FilterGraphs.html">FilterGraphs</a>.
+Learn more in the <a href="rendering.html">Rendering Guide</a>.</p>
 </div></section><section><a id="server-express"><h2>server-express</h2></a><div class="section"><p>The server-express NPM package depends on moviemasher.js plus
 <a href="https://www.npmjs.com/package/express">express</a>,
 <a href="https://www.npmjs.com/package/sqlite">sqlite</a>,
@@ -193,4 +166,30 @@ to <a href="https://www.ffmpeg.org">FFmpeg</a> arguments, so subclassing is poss
 Learn more about server encoding in the
 <a href="rendering.html">Rendering Guide</a> and
 <a href="streaming.html">Streaming Guide</a>.</p>
-</div></section></div></article><nav class="nav-right"><h2><a class="tsd-kind-icon" href="#Architecture">Architecture</a></h2><hr/><h2><a class="tsd-kind-icon" href="#Repository Structure">Repository Structure</a></h2><h2><a class="tsd-kind-icon" href="#moviemasher.js">moviemasher.js</a></h2><h2><a class="tsd-kind-icon" href="#client-react">client-react</a></h2><h2><a class="tsd-kind-icon" href="#server-express">server-express</a></h2></nav></main><footer><div id="fb-root"></div><div class="footer"><div><form action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="75YQHMFEATLCL"/><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!"/><img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width=1 height=1/></form></div><div><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="open source online video editor and encoding api" data-url="https://www.moviemasher.com" data-via="MovieMasherJS" data-dnt="true" data-show-count="false">Tweet</a></div><div class="fb-share-button" data-href="//moviemasher.com" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u&src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div><div class="fb-like" data-href="//www.moviemasher.com" data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="false"></div></div></footer></body></html>
+</div></section><section><a id="client-react"><h2>client-react</h2></a><div class="section"><p>The client-react NPM package depends on moviemasher.js and icons-default plus
+<a href="https://www.npmjs.com/package/react">react</a>, with examples using
+<a href="https://www.npmjs.com/package/react-dom">react-dom</a>.
+It defines dozens of interoperable
+<a href="https://reactjs.org">ReactJS</a> function components that can be
+combined to fit a wide variety of uses within a custom video editing application.</p>
+<p>The <a href="component/ApiClient.html">ApiClient</a> component provides a central mechanism for other components like <a href="function/Webrtc.html">Webrtc</a>
+that interact with a remote <a href="interface/Server.html">Server</a>. It interacts with the <a href="interface/ApiServer.html">ApiServer</a> to determine
+which other servers are supported, and map each <a href="interface/Endpoint.html">Endpoint</a> to an actual <a href="interface/ApiCallback.html">ApiCallback</a>
+request. It provides an <a href="variable/ApiContext.html">ApiContext</a> for child components to quickly see if their server
+is supported and retrieve a fetch promise for each request.
+Learn more about customizing server interaction in the <a href="integration.html">Integration Guide</a>.</p>
+<p>The <a href="component/Masher.html">Masher</a> component sits atop the <a href="interface/Editor.html">Editor</a> interface, allowing editing of
+either a <a href="interface/Cast.html">Cast</a> or <a href="interface/Mash.html">Mash</a>. Context is provided to child components so they
+can access the underlying editor, call its methods, and display its content.</p>
+<p>Higher level components like <a href="component/Player.html">Player</a> and <a href="component/Timeline.html">Timeline</a> logically organize particular
+functionality, in this case <a href="interface/Mash.html">Mash</a> display and <a href="interface/Track.html">Track</a> editing. They both provide
+context for specific child components like
+<a href="component/Player.html#PlayerButton">PlayerButton</a> and <a href="component/Timeline.html#TimelineScrubber">TimelineScrubber</a> to operate within.
+For <a href="interface/Cast.html">Cast</a> display and <a href="interface/Layer.html">Layer</a> editing the
+<a href="component/Streamer.html">Streamer</a> and <a href="Types.html#Layers">Layers</a> components provide similiar functionality.
+The <a href="component/Browser.html">Browser</a> and <a href="component/Inspector.html">Inspector</a> components provide a unified context for adding and
+altering content.
+Learn more about creating custom user interfaces in the <a href="layout.html">Layout Guide</a>.</p>
+</div></section><section><a id="icons-default"><h2>icons-default</h2></a><div class="section"><p>The icons-default NPM package has no runtime dependencies, but depends on 
+<a href="https://www.npmjs.com/package/react-icons">react-icons</a> during bundling. It packages icons into SVG content wrapped in JavaScript code, so this time consuming bundling step can be avoided in the client-react package.</p>
+</div></section></div></article><nav class="nav-right"><h2><a class="tsd-kind-icon" href="#Architecture">Architecture</a></h2><hr/><h2><a class="tsd-kind-icon" href="#Repository Structure">Repository Structure</a></h2><h2><a class="tsd-kind-icon" href="#moviemasher.js">moviemasher.js</a></h2><h2><a class="tsd-kind-icon" href="#server-express">server-express</a></h2><h2><a class="tsd-kind-icon" href="#client-react">client-react</a></h2><h2><a class="tsd-kind-icon" href="#icons-default">icons-default</a></h2></nav></main><footer><div id="fb-root"></div><div class="footer"><div><form action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick"/><input type="hidden" name="hosted_button_id" value="75YQHMFEATLCL"/><input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!"/><img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width=1 height=1/></form></div><div><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="open source online video editor and encoding api" data-url="https://www.moviemasher.com" data-via="MovieMasherJS" data-dnt="true" data-show-count="false">Tweet</a></div><div class="fb-share-button" data-href="//moviemasher.com" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u&src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div><div class="fb-like" data-href="//moviemasher.com" data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="false"></div></div></footer></body></html>

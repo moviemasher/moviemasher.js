@@ -1,11 +1,9 @@
 import { Constrained, UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { Definition } from "../Definition/Definition"
-import { Time } from "../Helpers/Time/Time"
 import { Propertied } from "../Base/Propertied"
 import { isObject } from "../Utility/Is"
 import { Property } from "../Setup/Property"
-import { InstanceBase } from "./InstanceBase"
 
 export interface InstanceObject extends UnknownObject {
   definitionId?: string
@@ -29,8 +27,7 @@ export interface Instance extends Propertied {
 }
 
 export const isInstance = (value?: any): value is Instance => {
-  return isObject(value) && value instanceof InstanceBase
+  return isObject(value) && "definitionIds" in value
 }
-
 
 export type InstanceClass = Constrained<Instance>

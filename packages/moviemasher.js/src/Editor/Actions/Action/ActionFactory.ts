@@ -8,7 +8,6 @@ import { AddTrackAction } from "./AddTrackAction"
 import { AddTrackActionObject } from "./AddTrackAction"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 import { ChangeFramesAction } from "./ChangeFramesAction"
-import { ChangeTrimAction, ChangeTrimActionObject } from "./ChangeTrimAction"
 import { MoveClipAction, MoveClipActionObject } from "./MoveClipAction"
 import { MoveEffectAction, MoveEffectActionObject } from "./MoveEffectAction"
 import { RemoveClipAction, RemoveClipActionObject } from "./RemoveClipAction"
@@ -27,8 +26,7 @@ export const actionInstance = (object : ActionOptions) : Action => {
       case ActionType.AddLayer: return new AddLayerAction(<AddLayerActionObject> object)
       case ActionType.AddTrack: return new AddTrackAction(<AddTrackActionObject> object)
       case ActionType.Change: return new ChangeAction(<ChangeActionObject> object)
-      case ActionType.ChangeFrames: return new ChangeFramesAction(<ChangeActionObject> object)
-      case ActionType.ChangeTrim: return new ChangeTrimAction(<ChangeTrimActionObject> object)
+      case ActionType.ChangeFrame: return new ChangeFramesAction(<ChangeActionObject> object)
       case ActionType.ChangeMultiple: return new ChangeMultipleAction(<ChangeMultipleActionObject> object)
       case ActionType.MoveClip: return new MoveClipAction(<MoveClipActionObject> object)
       case ActionType.MoveEffect: return new MoveEffectAction(<MoveEffectActionObject> object)

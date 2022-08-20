@@ -178,7 +178,7 @@ export class NodeLoader extends LoaderClass {
       if (file.startsWith('http')) {
         return promise.then(() => this.remotePromise(key, file))
       } 
-      // local files should already exist!
+      // local file should already exist!
       throw Errors.uncached + file 
     } 
     switch(type) {

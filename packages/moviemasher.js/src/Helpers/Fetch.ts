@@ -1,4 +1,5 @@
 import { ApiCallback } from "../Api/Api"
+import { isUndefined } from "../Utility/Is"
 import { urlForEndpoint } from "../Utility/Url"
 
 export const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
@@ -21,7 +22,7 @@ export const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
     case formType: {
       const formData = new FormData()
       Object.entries(init.body).forEach(([key, value]) => {
-        if (typeof value === 'undefined') return
+        if (isUndefined(value)) return
 
         formData.set(key, value instanceof Blob ? value : String(value))
       })

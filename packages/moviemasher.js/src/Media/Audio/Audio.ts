@@ -1,5 +1,5 @@
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
-import { GenericFactory } from "../../declarations"
+import { GenericFactory, LoadedAudio } from "../../declarations"
 import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 
 
@@ -12,10 +12,13 @@ export const isAudio = (value: any): value is Audio => {
   return isContent(value) && isUpdatableDuration(value)
 }
 
-export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationObject { }
+export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationObject { 
+  loadedAudio?: LoadedAudio
+}
 
 export interface AudioDefinition extends ContentDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: AudioObject): Audio
+  loadedAudio?: LoadedAudio
 }
 
 /**

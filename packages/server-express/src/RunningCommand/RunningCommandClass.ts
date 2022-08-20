@@ -69,10 +69,8 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     this.command.on('end', (...args: any[]) => {
       this.emit('end', ...args)
     })
-    if (typeof destination === 'string') {
-      this.makeDirectory(destination)
+    if (isPopulatedString(destination)) this.makeDirectory(destination)
 
-    }
     try {
       this.command.output(destination)
       this.command.run()

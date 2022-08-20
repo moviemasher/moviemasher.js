@@ -1,27 +1,36 @@
 import React from 'react'
 import {
-  Rect, EmptyRect,
-  Clip, DefinitionType, DroppingPosition, EventType, isDefinitionType,
-  Track, TrackType, pixelToFrame, Clips, pixelPerFrame, Point} from '@moviemasher/moviemasher.js'
+  Rect, RectZero,
+  Clip, DefinitionType, DroppingPosition, EventType, Track, pixelToFrame, Clips, pixelPerFrame, Point, eventStop, arrayLast, EditorIndex, assertPopulatedString, isPositive} from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult } from '../../declarations'
-import { TimelineContext, TimelineContextInterface } from '../../Contexts/TimelineContext'
+import { TimelineContext, TimelineContextInterface } from './TimelineContext'
 import { useListeners } from '../../Hooks/useListeners'
 import {
-  DragSuffix, dragType, isDragClipObject, isDragDefinitionObject
+  dragTypes, isDragClipObject, isDragDefinitionObject, isTransferType, 
+  dragDefinitionType, TransferTypeFiles, dragData
 } from '../../Helpers/DragDrop'
-import { EditorContext } from '../../Contexts/EditorContext'
 import { useEditor } from '../../Hooks/useEditor'
+import { EditorContext } from '../../Contexts/EditorContext'
 
 
 export interface TimelineProps extends PropsAndChildren {}
 export const TimelineDefaultZoom = 1.0
 /**
- * @parents Masher, Caster
+ * @parents Masher
  * @children TimelineContent, TimelineZoomer
  */
 export function Timeline(props: TimelineProps): ReactResult {
+  const editor = useEditor()
   const editorContext = React.useContext(EditorContext)
+  const { dropFiles } = editorContext
+  const currentFrame = () => { return editor.selection.mash?.frame || 0 }
+  const currentFrames = () => { return editor.selection.mash?.frames || 0 }
+  const [frames, setFrames] = React.useState(currentFrames)
+  const [frame, setFrame] = React.useState(currentFrame)
+  const updateFrames = () => { setFrames(currentFrames()) }
+  const updateFrame = () => { setFrame(currentFrame()) }
+
   const [droppingPosition, setDroppingPosition] = React.useState<DroppingPosition | number>(DroppingPosition.None)
   const [droppingTrack, setDroppingTrack] = React.useState<Track | undefined>()
   const [droppingClip, setDroppingClip] = React.useState<Clip | undefined>()
@@ -29,11 +38,10 @@ export function Timeline(props: TimelineProps): ReactResult {
   const [refreshed, setRefreshed] = React.useState(0)
   const [selectedClip, setSelectedClip] = React.useState<Clip | undefined>()
   const [zoom, setZoom] = React.useState(TimelineDefaultZoom)
-  const [rect, setRect] = React.useState<Rect>(EmptyRect)
-  const [scroll, setScroll] = React.useState<Point>(EmptyRect)
+  const [rect, setRect] = React.useState<Rect>(RectZero)
+  const [scroll, setScroll] = React.useState<Point>(RectZero)
   const refresh = () => { setRefreshed(value => value + 1) }
 
-  const editor = useEditor()
   useListeners({
     [EventType.Mash]: () => { setZoom(TimelineDefaultZoom) },
     [EventType.Action]: refresh,
@@ -41,26 +49,28 @@ export function Timeline(props: TimelineProps): ReactResult {
       setSelectedClip(editor.selection.clip)
       setSelectedTrack(editor.selection.track)
     },
-  })
+    [EventType.Time]: updateFrame,
+    [EventType.Duration]: updateFrames,
+  }, editor.eventTarget)
 
-  const { frames } = editorContext
+  const dragTypeValid = (dataTransfer: DataTransfer, clip?: Clip): boolean => {
+    const types = dragTypes(dataTransfer)
+    // any file can be dropped
+    if (types.includes(TransferTypeFiles)) return true
 
-  const dragTypeValid = (dataTransfer: DataTransfer, track?: Track): DefinitionType | undefined => {
-    // TODO: support auto-creation of tracks
-    if (!track) return
+    const type = types.find(isTransferType)
+    if (!type) return false
 
-    const type = dragType(dataTransfer)
-    if (!isDefinitionType(type)) return
+    // anything can be dropped on a clip
+    if (clip) return true
 
-    const { trackType } = track
-    if (String(type) === String(trackType)) return type // audio, video
-
-    if (trackType === TrackType.Audio) return
-
-    return type
+    // effects can only be dropped on clips
+    const definitionType = dragDefinitionType(type)
+    return definitionType !== DefinitionType.Effect
   }
 
-  const onDragLeave = () => {
+  const onDragLeave = (event: DragEvent) => {
+    eventStop(event)
     setDroppingPosition(DroppingPosition.None)
     setDroppingTrack(undefined)
     setDroppingClip(undefined)
@@ -85,40 +95,48 @@ export function Timeline(props: TimelineProps): ReactResult {
     return clipIndex
   }
 
-  const onDrop: React.DragEventHandler = event => {
-    if (!droppingTrack) {
-      console.error("no droppingTrack")
+  const onDrop = (event: DragEvent) => {
+    eventStop(event)
+    const { dataTransfer, clientX } = event 
+    if (!(dataTransfer && dragTypeValid(dataTransfer, droppingClip))) {
+      console.log("Timeline onDrop invalid", dataTransfer?.types, !!droppingClip)
       return
     }
-    const { dataTransfer, clientX } = event
-    const definitionType = dragTypeValid(dataTransfer, droppingTrack)
-    if (!definitionType) {
-      console.error("no definitionType", dragType(dataTransfer))
-      return
-    }
+    const types = dragTypes(dataTransfer)
+    const droppingFiles = types.includes(TransferTypeFiles)
 
-    const offsetDrop = clientX - rect.x
-    const json = dataTransfer.getData(definitionType + DragSuffix)
-    const data = JSON.parse(json)
-    if (isDragClipObject(data)) {
-      const { offset } = data
-      const { dense, clips, layer } = droppingTrack
-      let index = dropIndex(dense, clips)
-      if (index < 0) {
-        const frame = pixelToFrame(Math.max(0, scroll.x + (offsetDrop - offset)), scale)
-        index = dense ? frameToIndex(frame, clips) : frame
-      }
+    const dense = !!droppingTrack?.dense
+    const index = droppingTrack?.index || -1
+    const clips = droppingTrack?.clips || []
+
+    const data = droppingFiles ? {} : dragData(dataTransfer)
+    const draggingClip = !droppingFiles && isDragClipObject(data)
+    const offset = draggingClip ? data.offset : 0
+
+    let indexDrop = dropIndex(dense, clips)
+    if (!isPositive(indexDrop)) {
+      const offsetDrop = clientX - rect.x
+      const frame = pixelToFrame(Math.max(0, scroll.x + (offsetDrop - offset)), scale)
+      indexDrop = dense ? frameToIndex(frame, clips) : frame
+    }
+    const editorIndex: EditorIndex = { clip: indexDrop, track: index }
+    if (droppingFiles) {
+      const { files } = dataTransfer
+      console.log("Timeline onDrop dropped files", files, editorIndex)
+      dropFiles(files, editorIndex)
+      return
+    }
+    if (draggingClip) {
       if (isDragDefinitionObject(data)) {
         const { definitionObject } = data
-        editor.add(definitionObject, index, layer)
+        console.log("Timeline onDrop DefinitionObject...", definitionObject, editorIndex)
+        editor.add(definitionObject, editorIndex)
       } else {
-        editor.moveClip(editor.selection.clip!, index, layer)
+        console.log("Timeline onDrop moving clip", editorIndex)
+        editor.moveClip(editor.selection.clip!, editorIndex)
       }
-    }
-    onDragLeave()
-    // TODO: handle other types
-    event.preventDefault()
-    event.stopPropagation()
+    } else console.log("Timeline onDrop !isDragClipObject", data)
+    onDragLeave(event)
   }
 
   const { width } = rect
@@ -141,6 +159,7 @@ export function Timeline(props: TimelineProps): ReactResult {
     droppingPosition, setDroppingPosition,
     onDragLeave, onDrop, dragTypeValid,
     selectedClip, selectedTrack,
+    frame, frames, 
   }
 
   return <TimelineContext.Provider value={timelineContext} children={props.children} />

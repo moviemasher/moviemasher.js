@@ -1,5 +1,5 @@
 import { UnknownObject} from "../../declarations"
-import { DefinitionType, TrackType, LoadType } from "../../Setup/Enums"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
 import {
@@ -15,6 +15,7 @@ import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
+import { isPositive } from "../../Utility/Is"
 
 const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(VideoSequenceDefinitionWithTweenable)
@@ -29,7 +30,7 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
       padding, begin, fps, increment, pattern
     } = <VideoSequenceDefinitionObject>object
 
-    if (typeof begin !== "undefined") this.begin = begin
+    if (isPositive(begin)) this.begin = begin
     if (fps) this.fps = fps
     if (increment) this.increment = increment
     if (pattern) this.pattern = pattern
@@ -89,8 +90,6 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
     if (padding !== videosequence.padding) json.padding = padding
     return json
   }
-
-  trackType = TrackType.Video
 
   type = DefinitionType.VideoSequence
 

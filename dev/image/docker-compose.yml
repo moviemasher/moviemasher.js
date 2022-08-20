@@ -12,4 +12,5 @@ services:
     volumes:
       - ../../packages:/home/node/app/packages
       - ../../temporary/example-express-react:/home/node/app/temporary
+      - ../../docs:/home/node/app/docs
       - ../../workspaces/example-express-react:/home/node/app/workspaces/example-express-react

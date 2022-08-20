@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../declarations"
+import { GenericFactory, LoadedVideo } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { isInstance } from "../../Instance/Instance"
 import {
@@ -19,11 +19,12 @@ export interface Video extends Content, Container, UpdatableSize, UpdatableDurat
 }
 
 export interface VideoDefinitionObject extends ContainerDefinitionObject, ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
-  fps?: number
+  loadedVideo?: LoadedVideo
 }
 
 export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoObject): Video
+  loadedVideo?: LoadedVideo
 }
 
 export const isVideo = (value: any): value is Video => {

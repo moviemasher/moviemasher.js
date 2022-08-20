@@ -24,6 +24,7 @@ export const Errors = {
   internal: $internal,
   argument: `${$invalidArgument}`,
   invalid: {
+    
     canvas: `${$invalidProperty}canvas `,
     context: `${$invalidProperty}context `,
     duration: `${$invalid} duration`,

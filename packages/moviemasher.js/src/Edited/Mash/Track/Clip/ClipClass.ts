@@ -1,16 +1,16 @@
 import { Clip, ClipDefinition, ClipObject } from "./Clip"
 import { InstanceBase } from "../../../../Instance/InstanceBase"
 
-import { assertContainer, Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
+import { assertContainer, Container, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
 import { Defined } from "../../../../Base/Defined"
-import { assertContent, Content, ContentObject } from "../../../../Content/Content"
+import { assertContent, Content, ContentObject, isContent } from "../../../../Content/Content"
 import { Property } from "../../../../Setup/Property"
 import { Scalar, UnknownObject } from "../../../../declarations"
 import { GraphFileArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
 import { SelectedItems } from "../../../../Utility/SelectedProperty"
-import { ActionType, DataType, SelectType, Timing, TrackType } from "../../../../Setup/Enums"
+import { ActionType, DataType, SelectType, Timing } from "../../../../Setup/Enums"
 import { Actions } from "../../../../Editor/Actions/Actions"
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPopulatedArray, isPopulatedString, isPositive, isUndefined } from "../../../../Utility/Is"
+import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive } from "../../../../Utility/Is"
 import { isColorContent } from "../../../../Content"
 import { arrayLast } from "../../../../Utility/Array"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
@@ -21,15 +21,16 @@ import { Selectables } from "../../../../Editor/Selectable"
 import { assertSize, sizesEqual } from "../../../../Utility/Size"
 import { Tweening } from "../../../../Utility/Tween"
 import { pointsEqual } from "../../../../Utility/Point"
+import { isUpdatableDuration, Tweenable } from "../../../../Mixin"
+import { Default } from "../../../../Setup/Default"
 
-// const ClipMixin = ClipMixin(InstanceBase)
 export class ClipClass extends InstanceBase implements Clip {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
     const { container, content } = object as ClipObject
-    if (container) this.containerInitialize(container)
-    if (content) this.contentInitialize(content)
+    if (isPopulatedObject(container)) this.containerInitialize(container)
+    if (isPopulatedObject(content)) this.contentInitialize(content)
   }
 
   get audible(): boolean {
@@ -150,6 +151,7 @@ export class ClipClass extends InstanceBase implements Clip {
     assertContainer(instance)
 
     instance.clip = this
+    if (this.timing === Timing.Container && this._track) this.resetDuration(instance)
     // console.log(this.constructor.name, "containerInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._container = instance
   }
@@ -162,11 +164,12 @@ export class ClipClass extends InstanceBase implements Clip {
     const { contentId } = this
     const definitionId = contentId || contentObject.definitionId
     assertPopulatedString(definitionId)
-    const object: ContentObject = { ...contentObject, definitionId, content: true }
+    const object: ContentObject = { ...contentObject, definitionId }
     const instance = Defined.fromId(definitionId).instanceFromObject(object)
     assertContent(instance)
 
     instance.clip = this
+    if (this.timing === Timing.Content && this._track) this.resetDuration(instance)
     // console.log(this.constructor.name, "contentInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._content = instance
   }
@@ -236,6 +239,38 @@ export class ClipClass extends InstanceBase implements Clip {
     return !container.muted
   }
 
+  resetDuration(tweenable?: Tweenable, quantize?: number): void {
+    const { timing } = this
+    // console.log("resetDuration", timing)
+    const track = this._track
+    switch(timing) {
+      case Timing.Custom: {
+        if (isPositive(this.frames)) break
+
+        this.frames = Default.duration * (quantize || track!.mash.quantize)
+        break
+      }
+      case Timing.Container: {
+        const container = isContainer(tweenable) ? tweenable : this.container
+        if (!container) break
+
+        if (!isUpdatableDuration(container)) break
+
+        this.frames = container.frames(quantize || track!.mash.quantize)
+        break
+      }
+      case Timing.Content: {
+        const content = isContent(tweenable) ? tweenable : this.content
+        if (!content) break
+
+        if (!isUpdatableDuration(content)) break    
+
+        this.frames = content.frames(quantize || track!.mash.quantize)
+        break
+      }
+    }
+  }
+
   selectType = SelectType.Clip
 
   selectables(): Selectables { return [this, ...this.track.selectables()] }
@@ -246,16 +281,18 @@ export class ClipClass extends InstanceBase implements Clip {
     const props = properties.filter(property => this.selectedProperty(property))
     props.forEach(property => {
       const { name } = property
-      const value = this.value(name)
+      const isFrames = name === 'frames' || name === 'frame'
+      const undoValue = this.value(name)
+      const target = this
       selected.push({
-        selectType: SelectType.Clip, property, value,
-        changeHandler: (property: string, value: Scalar) => {
-          const undoValue = this.value(property)
-          const redoValue = isUndefined(value) ? undoValue : value
-          const options: UnknownObject = { 
-            property, target: this, redoValue, undoValue 
+        value: undoValue,
+        selectType: SelectType.Clip, property, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+
+          const options = { property, target, redoValue, undoValue,
+            type: isFrames ? ActionType.ChangeFrame : ActionType.Change
           }
-          if (property === 'frames') options.type = ActionType.ChangeFrames
           actions.create(options)
         }
       })
@@ -314,24 +351,27 @@ export class ClipClass extends InstanceBase implements Clip {
     const json = super.toJSON()
     const { container, content } = this
     json.content = content
-    if (container) json.container = container
+    json.contentId = content.definitionId
+    if (container) {
+      json.container = container
+      json.containerId = container.definitionId
+    }
     return json
   }
 
   toString(): string {
     return `[Clip ${this.label}]`
   }
+
   _track?: Track 
   get track() { return this._track! }
   set track(value) { this._track = value }
   
   get trackNumber(): number { 
     const { track } = this
-    return track ? track.layer : -1 
+    return track ? track.index : -1 
   }
   set trackNumber(value: number) { if (value < 0) delete this._track }
-
-  trackType = TrackType.Video
 
   get visible(): boolean {
     return !!this.containerId

@@ -4,7 +4,7 @@ At the lowest level, [FFmpeg](https://www.ffmpeg.org) is used server-side throug
 [fluent-ffmpeg](https://www.npmjs.com/package/fluent-ffmpeg) library to render
 a [[Mash]] into files of various types. To run FFmpeg commands Movie Masher wraps an instance from this library with an instance of the [[Command]] class, that itself is wrapped by a [[RunningCommand]] instance which allows the FFmpeg process to be monitored and potentially stopped.
 
-At the highest level, the [[RenderingServer]] receives a request to render a [[MashObject]] into one or more output files, represented by [[CommandOutputs]]. It validates the request and passes it to a new [[RenderingProcess]] instance. This creates a specific type of [[RenderingOutput]] instance for each [[CommandOutput]] provided. Each of these is responsible for converting the [[Mash]] into a corresponding [[RenderingDescription]] object. The [[RenderingProcess]] then converts each of them to a [[CommandDescription]] that it creates a [[RunningCommand]] with:
+At the highest level, the [[RenderingServer]] receives a request to render a [[MashObject]] into one or more output files, represented by [[CommandOutputs]]. It validates the request and passes it to a new [[RenderingProcess]] instance. This creates a specific type of [[RenderingOutput]] instance for each [[CommandOutput]] provided, which is responsible for converting the [[Mash]] into a corresponding [[RenderingDescription]] object. The [[RenderingProcess]] then converts each of them to a [[CommandDescription]] that it creates a [[RunningCommand]] with:
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/ffmpeg-abstraction.svg) -->
 <svg width="640" height="190" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 190">
@@ -32,7 +32,7 @@ At the highest level, the [[RenderingServer]] receives a request to render a [[M
 Hence, the [[RenderingProcess]] interface greatly simplifies generating
 multiple output files from a [[MashObject]], [[DefinitionObjects]], and [[CommandOutputs]]. The underlying [[RunningCommand]] interface can be used directly to render output, though any inputs specified must be locally sourced. The base-level [[Command]] interface can be used when monitoring isn't needed, or when synchronous results are required.
 
-## Descriptions
+## Outputs
 
 Movie Masher supports five [[RenderingOutput]] interfaces that convert a
 [[Mash]] into the [[RenderingDescription]] that will render its specific output:
@@ -56,45 +56,39 @@ The [[CommandDescription]] object structure closely matches FFmpeg's command lin
 - a single [[CommandOutput]] object describing the output file's AV codecs, bitrates, and dimensions as well as its file extension and format plus related output `options`
 - multiple [[GraphFilters]], each describing an FFmpeg filter to apply (AKA a [filtergraph](https://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description))
 
-## Mash Conversion
-
-To generate an appropriate [[RenderingDescription]], a [[RenderingOutput]] will have its [[Mash]] create a new [[FilterGraphs]] instance specifically tailored to its requirements for audible/visible content and time range. This simple interface is also used by the [[Composition]] class to cache assets and render previews within the browser. Here it's relied on it to provide:
+## Descriptions
+To generate an appropriate [[RenderingDescription]], a [[RenderingOutput]] will have its [[Mash]] create a new [[FilterGraphs]] instance - a specialized collection of [[FilterGraph]] objects:
 
 - a single [[FilterGraph]] instance, describing audible content
 - multiple [[FilterGraph]] instances, describing visible content
 
 Each [[FilterGraph]] describes a section of the [[Mash]] that can be conveniently
-cached and rendered together, including all [[Clips]] from all relevant and populated [[Tracks]].
-It provides a powerful and flexible interface from which the remaining [[RenderingDescription]] data is drawn:
+cached and rendered together, including just the [[Clips]] in that section relevant to the [[RendingOutput]].
+Together that are used to build the remaining [[RenderingDescription]] data:
 
 - multiple [[CommandInput]] objects, describing any input files
 - mutiple [[GraphFilter]] objects, describing any filters to apply
 
-Each [[FilterGraph]] also contains a set of [[FilterChains]], one per [[Track]], from which the data above is constructed. Each [[FilterChain]] describes a [[Clip]] and any associated [[Merger]], [[Scaler]], and [[Effects]] as a collection of [[GraphFilters]] and [[GraphFiles]]. A [[FilterGraph]] essentially
-combines the [[GraphFilters]] from all [[FilterChains]] and converts a subset of its [[GraphFiles]],
-as [[CommandInputs]].
+In keeping with FFmpeg, the [[RenderingOutput]] will supply input files and/or filters. For instance, the default [[Clip]] is a simple colored rectangle which is adequately described by just the [color](https://ffmpeg.org/ffmpeg-filters.html#color)
+filter. A [[Clip]] with a [[ShapeContainer]] is adequately described by just an SVG input file. A [[Clip]] with an [[Image]] or [[Video]] will typically be described both by an input file and multiple filters that size, position and crop it. 
 
-A single [[Clip]] can result in multiple [[GraphFiles]] which may or may not be converted
-to [[CommandInputs]].
-For instance, a [[Theme]] that utilizes the [[DrawTextFilter]] will include
-a [[GraphFile]] for its referenced [[FontDefinition]], but also one for its text content.
-Neither will be converted because FFmpeg's underlying
-[drawtext](https://ffmpeg.org/ffmpeg-filters.html#drawtext)
-filter expects paths to these files to be specified as option values.
+The [[CommandInput]] interface extends [[GraphFile]], which ultimately describes a file on disk that is made available to FFmpeg during [[Command]] execution. Typically this is the raw asset associated with [[Video]], [[Image]], or [[Audio]] clips but other resources are also supported. FFmpeg requires files to be specified either as a [[CommandInput]] or [[GraphFilter]] option value.
+
 
 ## File Caching
+Internally, a [[RenderingOutput]] will build its [[CommandInputs]] from a set of [[GraphFiles]] provided by the [[FilterGraphs]]. 
+A single [[Clip]] may require multiple [[GraphFiles]] which may or may not all be converted to [[CommandInputs]]. They will all be cached locally though, and their paths ultimately utilized either as direct input, or as filter options. 
 
-To assure that all files in a [[RenderingDescription]] are available locally, a [[RenderingOutput]] will retrieve a [[LoadPromise]] from its [[Mash]] to cache them. In some cases, it will retrieve one directly from its [[Preloader]] to load specific [[GraphFiles]] from the [[FilterGraphs]] which are required to determine output duration or dimensions.
+For instance, a [[Clip]] with a [[TextContainer]] and [[ColorContent]] will require two [[Graphfiles]] - one for the [[Font]] and another containing the text itself. Neither of these
+are converted to [[CommandInputs]] because FFmpeg's underlying
+[drawtext](https://ffmpeg.org/ffmpeg-filters.html#drawtext)
+filter expects paths to these files to be specified as option values. The font file is cached though, and the text is written to disk. 
 
-A [[GraphFile]] ultimately describes a file on disk that is made available to FFmpeg during
-[[Command]] execution. Typically this is the raw asset associated with [[Video]],
-[[Image]], or [[Audio]] clips but other resources are also supported.
-FFmpeg requires files to be specified either as a [[CommandInput]] or [[GraphFilter]] option
-value.
+To assure that all files in a [[RenderingDescription]] are available locally, a [[RenderingOutput]] will retrieve a promise from its [[Mash]] to cache them. In some cases, it will retrieve one directly from its [[Loader]] to load specific [[GraphFiles]] from the [[FilterGraphs]] which are required to determine output duration or dimensions, if it can't be calculated from information supplied in the [[DefinitionObjects]].
 
-The [[NodePreloader]] handles all the complexity of caching each [[GraphFile]]
+The [[NodeLoader]] handles all the complexity of caching each [[GraphFile]]
 locally and correctly providing its file path to [[GraphFilters]].
-Caching a [[GraphFile]] triggers different processing, depending on its `type` property
+Caching a [[GraphFile]] triggers different postprocessing, depending on its `type` property
 which can be either a [[GraphFileType]] or [[LoadType]].
 
 In the simplest case, the `type` property is a [[GraphFileType]] which implies the `file`
@@ -103,5 +97,5 @@ the [[RenderingOutput]] as, for instance, a TEXT, SVG or PNG file. Binary files 
 Base64 encoded.
 
 In cases where the `type` property is a [[LoadType]], the `file` property will be a
-relative or absolute URL. The [[NodePreloader]]
+relative or absolute URL. The [[NodeLoader]]
 instance is configured by the [[RenderingProcess]] instance to download absolute URLs, but resolve relative ones to a local directory. Typically, the [[RenderingServer]] specifies this as the user's upload directory.

@@ -5,7 +5,7 @@ import { Rect, rectsEqual } from "../../../Utility/Rect"
 import { Size } from "../../../Utility/Size"
 import { Evaluator, EvaluatorArgs } from "../../../Helpers/Evaluator"
 import { assertClip, Clip } from "../../../Edited/Mash/Track/Clip/Clip"
-import { NamespaceSvg } from "../../../Setup/Constants"
+import { NamespaceSvg, NamespaceXhtml } from "../../../Setup/Constants"
 import { idGenerate } from "../../../Utility/Id"
 import { svgGroupElement, svgOfDimensions, svgPolygonElement } from "../../../Utility/Svg"
 import { TrackPreview, TrackPreviewArgs } from "./TrackPreview"
@@ -167,18 +167,21 @@ export class TrackPreviewClass implements TrackPreview {
     evaluator.instance = content
     const contentSvgItem = content.contentSvgItem(rect, time, timeRange)
     const element = svgOfDimensions(size)
+    element.setAttribute('xmlns', NamespaceSvg)
+
     const maskId = `mask-${idGenerate()}`
 
     contentSvgItem.classList.add('contained')
     const maskElement = globalThis.document.createElementNS(NamespaceSvg, 'mask')
     maskElement.setAttribute('id', maskId)
-    maskElement.setAttribute('width', String(rect.width))
-    const polygonElement = svgPolygonElement(rect, '', 'transparent')
-    maskElement.appendChild(polygonElement)
+    maskElement.setAttribute('width', String(size.width))
+    maskElement.setAttribute('height', String(size.height))
+    maskElement.appendChild(svgPolygonElement(size, '', 'transparent'))
+    // maskElement.appendChild(svgPolygonElement(rect, '', 'white'))
+    maskElement.appendChild(containerSvgItem)
     contentSvgItem.setAttribute('mask', `url(#${maskId})`)
-    contentSvgItem.setAttribute('mask-mode', 'alpha')
+    contentSvgItem.setAttribute('mask-mode', 'luminance')
 
-    maskElement.append(containerSvgItem)
     element.append(maskElement)
     element.append(contentSvgItem)
 

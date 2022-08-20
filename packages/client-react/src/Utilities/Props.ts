@@ -1,11 +1,11 @@
-import { DefinitionType, isDefinitionType, isSelectType, Property, SelectType } from "@moviemasher/moviemasher.js"
+import { DefinitionType, isDefinitionType, isSelectType, isString, Property, SelectType } from "@moviemasher/moviemasher.js"
 
 const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
   if (string) return [string]
 
   if (!array) return properties ? properties.map(property => property.name) : []
 
-  if (typeof array === 'string') return array.split(',').map(string => string.trim())
+  if (isString(array)) return array.split(',').map(string => string.trim())
 
   return array
 }

@@ -1,5 +1,4 @@
-import { DefinitionType, EditType, TrackType } from "../../Setup/Enums"
-import { expectCanvasAtTime } from "../../../../../dev/test/Utilities/expectMashSvg"
+import { DefinitionType, EditType } from "../../Setup/Enums"
 import { editorInstance } from "../../Editor/EditorFactory"
 import { JestPreloader } from "../../../../../dev/test/Utilities/JestPreloader"
 import { assertMash } from "../../Edited/Mash/Mash"
@@ -7,7 +6,7 @@ import { effectDefinitionFromId } from "./EffectFactory"
 import { imageDefinition } from "../Image/ImageFactory"
 import { ImageDefinitionObject } from "../Image/Image"
 import { Defined } from "../../Base/Defined"
-import { clipInstance } from "../Clip/ClipFactory"
+import { clipInstance } from "../../Edited/Mash/Track/Clip/ClipFactory"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -21,13 +20,13 @@ describe("Effect", () => {
         type: DefinitionType.Image
       }
       const editor = editorInstance({ editType: EditType.Mash, preloader: new JestPreloader() })
-      editor.load({mash: {}})
+      await editor.load({mash: {}})
       const { edited } = editor
       assertMash(edited)
       Defined.define(matteDefinitionObject, imageDefinitionObject)
       editor.imageSize = { width: 640, height: 480 }
-      editor.addTrack(TrackType.Video)
-      expect(edited.tracks.length).toBe(3)
+      editor.addTrack()
+      expect(edited.tracks.length).toBe(2)
       const matteDefinition = imageDefinition(matteDefinitionObject)
       const cableDefinition = imageDefinition(imageDefinitionObject)
 
@@ -43,7 +42,7 @@ describe("Effect", () => {
         }
       })
       await editor.addClip(clip)
-      expectCanvasAtTime(editor)
+
     })
   })
 })

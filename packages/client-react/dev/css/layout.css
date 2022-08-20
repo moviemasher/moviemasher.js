@@ -1,8 +1,8 @@
 
 .moviemasher .masher {
   grid-template-areas:
-    "player browser inspector"
-    "timeline timeline inspector";
+    "player browser panels"
+    "timeline timeline panels";
   grid-template-columns:
     calc(
       var(--preview-width)
@@ -30,24 +30,6 @@
   }
 }
 
-.moviemasher .editor .panel .foot > .progress {
-  grid-column-end: end;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr var(--progress-width) var(--icon-size);
-  grid-gap: var(--spacing);
-}
-  
-
-.moviemasher progress,
-.moviemasher .progress-holder { width: var(--progress-width); }
-
-.moviemasher .process-status {
-  white-space: nowrap;
-  overflow-x: hidden;
-  text-align: right;
-  font-size: initial;
-}
 
 .moviemasher .editor .panels {
   grid-area: panels;
@@ -56,10 +38,6 @@
 	gap: var(--spacing);
 }
 
-.moviemasher .editor .panel.timeline .content {
-  --padding: 0px;
-  --spacing: 2px;
-}
 
 .moviemasher .editor .panel {
   flex-grow: 1;
@@ -81,19 +59,20 @@
   border-bottom: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
+  display: grid;
 }
 
 .moviemasher .editor .panel .foot {
   border-top: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
+  display: flex;
 }
 
 .moviemasher .editor .panel .foot,
 .moviemasher .editor .panel .head {
   background-color: var(--back-secondary);
   color: var(--fore-secondary);
-  display: grid;
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }

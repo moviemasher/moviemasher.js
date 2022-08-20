@@ -10,25 +10,37 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { source, url } = object as PreloadableDefinitionObject
+      const { 
+        source, url, bytes, mimeType 
+      } = object as PreloadableDefinitionObject
+
       const sourceOrUrl = source || url || ''
       this.source = source || sourceOrUrl
       this.url = url || sourceOrUrl
+
+      if (bytes) this.bytes = bytes
+      if (mimeType) this.mimeType = mimeType
     }
 
+    bytes = 0
+
     loadType!: LoadType
+
+    mimeType = ''
 
     source: string
 
     toJSON(): UnknownObject {
-      const object = super.toJSON()
-      if (this.url) object.url = this.url
-      if (this.source) object.source = this.source
-      return object
+      const json = super.toJSON()
+      if (this.url) json.url = this.url
+      if (this.source) json.source = this.source
+      if (this.bytes) json.bytes = this.bytes
+      if (this.mimeType) json.mimeType = this.mimeType
+      return json
     }
 
     url: string
 
-    urlAbsolute = ""
+    urlAbsolute = ''
   }
 }

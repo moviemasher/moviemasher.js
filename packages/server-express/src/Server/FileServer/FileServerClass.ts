@@ -4,7 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
-  ApiCallback, UploadDescription, Endpoints, Errors,
+  ApiCallback, UploadDescription, Endpoints, Errors, UploadTypes,
   FileStoreRequest, FileStoreResponse, JsonObject, LoadTypes, LoadType, assertPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
@@ -29,27 +29,23 @@ export class FileServerClass extends ServerClass implements FileServer {
     return callback
   }
 
-  init(userId: string): JsonObject {
-    const prefix = `/${path.join(this.args.uploadsRelative, userId)}/`
-    const typesAndExtensions: string[] = []
-    const extensions: string[] = Object.values(this.args.extensions).flat()
-    typesAndExtensions.push(...extensions.map(extension => `.${extension}`))
-    typesAndExtensions.push(...LoadTypes.map(loadType => `${loadType}/*`))
-    const accept = typesAndExtensions.join(',')
-    return { prefix, accept }
-  }
-
   get extensions(): string[] {
     return Object.values(this.args.extensions).flat()
   }
 
   extensionLoadType(extension: string): LoadType | undefined {
-    return LoadTypes.find(loadType =>
+    return UploadTypes.find(loadType =>
       this.args.extensions[loadType].includes(extension)
     )
   }
 
   id = 'file'
+
+  init(userId: string): JsonObject {
+    const prefix = `/${path.join(this.args.uploadsRelative, userId)}/`
+    const { extensions, uploadLimits } = this.args
+    return { prefix, extensions, uploadLimits }
+  }
 
   property = 'file'
 

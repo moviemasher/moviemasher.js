@@ -94,11 +94,6 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
         'aiff',
         'mp3',
       ],
-
-      [LoadType.Font]: [
-        'ttf',
-      ],
-
       [LoadType.Image]: [
         'jpeg',
         'jpg',
@@ -166,7 +161,7 @@ export const DefaultHostOptions = (args: HostOptionsDefault): HostOptions => {
   }
 
   const web: WebServerArgs = {
-    sources: { '/': home },//, '/docs/': './docs/index.html', '/docs/shared/': './dev/shared/'
+    sources: { '/': home, '/docs/': './docs/index.html', '/docs/shared/': './dev/shared/' },//
     authentication
   }
 

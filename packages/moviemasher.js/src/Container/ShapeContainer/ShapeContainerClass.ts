@@ -312,7 +312,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const { definition } = this
     const intrinsicRect = this.intrinsicRect(true)
     if (!sizeAboveZero(intrinsicRect)) {
-      console.log(this.constructor.name, "pathElement", intrinsicRect)
+      // console.log(this.constructor.name, "pathElement", intrinsicRect)
       const svgItem = svgPolygonElement(rect, '', forecolor)
       if (editor) this.attachHandlers(svgItem, editor)
       return svgItem

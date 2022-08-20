@@ -1,12 +1,9 @@
 
 .moviemasher .editor .panel.inspector {
   grid-area: inspector;
+  flex-grow: 1;
 }
 
-.moviemasher .editor .panel.inspector .foot {
-  grid-auto-columns: min-content;
-  grid-auto-flow: column;
-}
 .moviemasher .editor .panel.inspector .content fieldset {
   line-height: var(--icon-size);
   font-size: var(--icon-size);
@@ -46,11 +43,7 @@
   font-size: var(--icon-size);
 }
 
-.moviemasher .editor .panel.inspector details>div>label {
-  text-transform: capitalize;
-}
-
-.moviemasher .editor .panel.inspector details>div>label:after {
+.moviemasher .editor .panel.inspector .content>div>label:after {
   content: ':';
 }
 
@@ -63,6 +56,10 @@
   margin-bottom: var(--spacing);
 }
 
+.moviemasher .editor .panel.inspector .content>div>label,
+.moviemasher .editor .panel.inspector .content>div>button {
+  margin-right: var(--spacing);
+}
 
 .moviemasher .editor .panel.inspector .effects {
   width: 100%;
@@ -76,7 +73,6 @@
   overflow-y: scroll;
 }
 
-
 .moviemasher .editor .panel.inspector .definition-drop {
   display: grid;
   width: 100%;
@@ -88,20 +84,6 @@
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
 }
-
-
-.moviemasher .editor .panel.inspector .definition {
-  overflow-x: hidden;
-  background-size: cover;
-  background-image: var(--clip-icon);
-  background-position: center;
-  border: var(--border);
-  border-radius: var(--border-radius);
-  border-color: var(--fore-secondary);
-  color: var(--fore-secondary);
-  background-color: var(--back-secondary);
-}
-
 
 .moviemasher .editor .panel.inspector .effects .effect {
   width: 100%;

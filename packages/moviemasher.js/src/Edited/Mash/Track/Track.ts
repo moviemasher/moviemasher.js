@@ -1,27 +1,21 @@
-import { UnknownObject } from "../../../declarations"
-import { isTrackType, TrackType } from "../../../Setup/Enums"
+import { UnknownObject, WithIndex } from "../../../declarations"
 import { Clips, ClipObject, Clip } from "./Clip/Clip"
 import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { Mash } from "../Mash"
 import { Selectable } from "../../../Editor/Selectable"
+import { throwError } from "../../../Utility"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]
   dense?:  boolean
-  layer?: number
-  trackType?: TrackType
-}
-export const isTrackObject = (value?: any): value is TrackObject => {
-  return isObject(value) && isTrackType(value.trackType)
+  index?: number
 }
 
+export interface TrackArgs extends TrackObject {}
 
-export interface TrackArgs extends TrackObject {
-}
-
-export interface Track extends Propertied, Selectable {
-  addClip(clip: Clip, insertIndex?: number): void
+export interface Track extends Propertied, Selectable, WithIndex {
+  addClips(clip: Clips, insertIndex?: number): void
   assureFrame(clips?: Clips): boolean
   assureFrames(quantize: number, clips?: Clips): void
   clips: Clips
@@ -29,14 +23,15 @@ export interface Track extends Propertied, Selectable {
   frameForClipNearFrame(clip: Clip, frame?: number): number
   frames: number
   identifier: string
-  layer: number
   mash: Mash
-  removeClip(clip: Clip): void
+  removeClips(clip: Clips): void
   sortClips(clips?: Clips): boolean
-  trackType: TrackType
 }
 export const isTrack = (value?: any): value is Track => {
-  return isObject(value) && "addClip" in value
+  return isObject(value) && "frameForClipNearFrame" in value
+}
+export function assertTrack(value: any, name?: string): asserts value is Track {
+  if (!isTrack(value)) throwError(value, 'Track', name)
 }
 
 export type Tracks = Track[]

@@ -4,12 +4,12 @@ import { Editor, EditorArgs, EditorOptions } from "./Editor"
 export let editorSingleton: Editor
 export const editorArgs = (options: EditorOptions = {}): EditorArgs => {
   return {
-    autoplay: Default.masher.autoplay,
-    precision: Default.masher.precision,
-    loop: Default.masher.loop,
-    fps: Default.masher.fps,
-    volume: Default.masher.volume,
-    buffer: Default.masher.buffer,
+    autoplay: Default.editor.autoplay,
+    precision: Default.editor.precision,
+    loop: Default.editor.loop,
+    fps: Default.editor.fps,
+    volume: Default.editor.volume,
+    buffer: Default.editor.buffer,
     ...options
   }
 }

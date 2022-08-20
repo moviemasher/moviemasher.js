@@ -21,9 +21,7 @@ export class ColorizeFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
-  alpha = false
-
-  _ffmpegFilter = 'geq'
+  protected _ffmpegFilter = 'geq'
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []

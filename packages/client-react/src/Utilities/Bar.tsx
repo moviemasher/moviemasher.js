@@ -12,7 +12,6 @@ export interface BarOptions {
 export interface BarProps extends BarOptions, PropsWithoutChild {}
 
 export function Bar(props: BarProps): ReactResult {
-
   const { before, content, after, props: viewProps = {} } = props
   if (!(before || content || after)) return null
 

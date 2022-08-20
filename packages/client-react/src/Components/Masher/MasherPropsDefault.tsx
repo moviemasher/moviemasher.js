@@ -1,56 +1,42 @@
 import React from 'react'
+import { EditType } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod } from '../../declarations'
 import { EditorProps, MasherProps } from './Masher'
 import { Browser } from '../Browser/Browser'
-import { DefaultBrowserProps } from '../Browser/BrowserPropsDefault'
-import { DefaultInspectorProps } from '../Inspector/InspectorPropsDefault'
+import { BrowserPropsDefault } from '../Browser/BrowserPropsDefault'
+import { InspectorPropsDefault } from '../Inspector/InspectorPropsDefault'
 import { DefaultPlayerProps } from '../Player/PlayerPropsDefault'
 import { DefaultTimelineProps } from '../Timeline/TimelinePropsDefault'
 import { Inspector } from '../Inspector/Inspector'
 import { Player } from '../Player/Player'
 import { Timeline } from '../Timeline/Timeline'
-import { EditType } from '@moviemasher/moviemasher.js'
-import { ViewControl } from '../Controls/ViewControl'
-import { Process } from '../Process/Process'
-import { RenderControl } from '../Controls/RenderControl'
-import { ProcessActive } from '../Process/ProcessActive'
-import { ProcessStatus } from '../Process/ProcessStatus'
-import { ProcessProgress } from '../Process/ProcessProgress'
-import { Button } from '../../Utilities/Button'
-import { View } from '../../Utilities/View'
-import { DefaultIcons } from '@moviemasher/icons-default'
+import { ActivityPropsDefault } from '../Activity/ActivityPropsDefault'
+import { Activity } from '../Activity/Activity'
+import { Panels } from '../Panel/Panels'
 
-export const MasherPropsDefault: PropsMethod<EditorProps, MasherProps> = function(props) {
-  const { noApi, panels, ...rest } = props
+export const MasherPropsDefault: PropsMethod<EditorProps, MasherProps> = function(props = {}) {
+  const { panels, ...rest } = props
   const panelOptions = panels || {}
   panelOptions.player ||= {}
   panelOptions.browser ||= {}
   panelOptions.timeline ||= {}
   panelOptions.inspector ||= {}
-  if (!noApi) {
-    panelOptions.timeline.footer ||= {}
-    panelOptions.timeline.footer.after ||= [
-      <View key='render' className="progress">
-        <Process key='render-process' id='rendering'>
-          <ProcessStatus />
-          <ProcessProgress />
-          <RenderControl>{DefaultIcons.render}</RenderControl>
-        </Process>
-        <ViewControl key='view-control'>{DefaultIcons.view}</ViewControl>
-      </View>
-    ]
-  }
+  panelOptions.activity ||= {}
 
   const playerProps = DefaultPlayerProps(panelOptions.player)
-  const browserProps = DefaultBrowserProps(panelOptions.browser)
+  const browserProps = BrowserPropsDefault(panelOptions.browser)
   const timelineProps = DefaultTimelineProps(panelOptions.timeline)
-  const inspectorProps = DefaultInspectorProps(panelOptions.inspector)
+  const inspectorProps = InspectorPropsDefault(panelOptions.inspector)
+  const activityProps = ActivityPropsDefault(panelOptions.activity)
 
   const children = <>
     <Player { ...playerProps } />
     <Browser { ...browserProps } />
-    <Inspector { ...inspectorProps } />
+    <Panels key="panels" className='panels'>
+      <Inspector { ...inspectorProps } />
+      <Activity { ...activityProps } />
+    </Panels>
     <Timeline { ...timelineProps } />
   </>
 

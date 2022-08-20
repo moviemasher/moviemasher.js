@@ -1,5 +1,6 @@
 import { StringObject } from "../declarations"
 import { ServerType } from "../Setup/Enums"
+import { isObject, isString } from "../Utility/Is"
 
 
 const EndpointsApi: StringObject = {
@@ -53,8 +54,8 @@ export const Endpoints = {
 
 // populate Endpoints with key paths...
 Object.entries(Endpoints).forEach(([serverType, server]) => {
-  if (typeof server === 'object') Object.entries(server).forEach(([key1, value1]) => {
-    if (typeof value1 === 'string') server[key1] = `/${serverType}/${key1}`
+  if (isObject(server)) Object.entries(server).forEach(([key1, value1]) => {
+    if (isString(value1)) server[key1] = `/${serverType}/${key1}`
     else Object.entries(value1).forEach(([key2, value2]) => {
       if (!value2) value1[key2] = `/${serverType}/${key1}/${key2}`
     })

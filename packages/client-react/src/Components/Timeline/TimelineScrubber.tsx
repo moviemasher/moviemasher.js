@@ -1,13 +1,14 @@
 import React from "react"
-import { eventStop, pixelFromFrame, pixelToFrame, Point, pointsEqual, PointZero, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
+import { ClassDisabled, eventStop, EventType, pixelFromFrame, pixelToFrame, Point, pointsEqual, PointZero, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { View } from "../../Utilities/View"
-import { ReactResult, PropsWithChildren } from "../../declarations"
-import { TimelineContext } from "../../Contexts/TimelineContext"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { ReactResult, PropsWithChildren, WithClassName } from "../../declarations"
+import { TimelineContext } from "./TimelineContext"
+import { useListeners } from "../../Hooks/useListeners"
+import { useEditor } from "../../Hooks/useEditor"
 
 
-export interface TimelineScrubber extends PropsWithChildren {
+export interface TimelineScrubber extends PropsWithChildren, WithClassName {
   inactive?: boolean
   styleHeight?: boolean
   styleWidth?: boolean
@@ -16,16 +17,18 @@ export interface TimelineScrubber extends PropsWithChildren {
  * @parents Timeline
  */
 export function TimelineScrubber(props: TimelineScrubber): ReactResult {
-  
+  const editor = useEditor()
   const clientXRef = React.useRef<number>(-1)
   const ref = React.useRef<HTMLDivElement>(null)
   const timelineContext = React.useContext(TimelineContext)
-  const editorContext = React.useContext(EditorContext)
-  const { frames, editor } = editorContext
-  const { scale, rect } = timelineContext
-  const { inactive, styleHeight, styleWidth, ...rest } = props
-  if (!editor) return null
+  const { frames,scale, rect } = timelineContext
+  const { className, inactive, styleHeight, styleWidth, ...rest } = props
 
+  const getDisabled = () => !editor.selection.mash
+  const [disabled, setDisabled] = React.useState(getDisabled)
+  const updateDisabled = () => { setDisabled(getDisabled())}
+  useListeners({ [EventType.Selection]: updateDisabled })
+  
   const addHandlers = () => {
     const { window } = globalThis
 
@@ -67,7 +70,12 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
 
   const { width, height } = rect
   const calculateViewProps = () => {
-    const viewProps: UnknownObject = { ...rest, ref }
+    const classes: string[] = []
+    if (className) classes.push(className)
+    if (disabled) classes.push(ClassDisabled)
+    const viewProps: UnknownObject = { 
+      ...rest, ref, className: classes.join(' ')
+    }
     if (styleWidth || styleHeight) {
       const style: UnknownObject = {}
       if (styleHeight) style.minHeight = height
@@ -77,11 +85,11 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
       }
       viewProps.style = style
     }
-    if (!inactive) viewProps.onPointerDown = addHandlers()
+    if (!(inactive || disabled)) viewProps.onPointerDown = addHandlers()
     
     return viewProps
   }
 
-  const viewProps = React.useMemo(calculateViewProps, [frames, scale, width, height])
+  const viewProps = React.useMemo(calculateViewProps, [frames, scale, width, height, disabled])
   return <View {...viewProps} />
 }

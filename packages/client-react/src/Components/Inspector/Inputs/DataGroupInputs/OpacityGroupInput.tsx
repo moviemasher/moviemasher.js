@@ -87,4 +87,4 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput key="opacity-input" />
+DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput key="opacity-group-input" />

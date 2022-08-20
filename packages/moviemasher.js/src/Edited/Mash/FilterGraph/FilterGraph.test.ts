@@ -4,7 +4,6 @@ import { expectArrayLength } from "../../../../../../dev/test/Utilities/Expect"
 
 describe("FilterGraph", () => {
   describe("mash with color/rect clip", () => {
-   
     test("its CommandFilters are correct", () => {
       const mash = mashInstance({ tracks: [ { clips: [{ definitionId: clipDefault.id }] }]})
       const filterGraphs = mash.filterGraphs()

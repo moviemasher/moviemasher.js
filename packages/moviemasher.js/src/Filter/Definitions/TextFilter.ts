@@ -192,7 +192,7 @@ export class TextFilter extends ColorizeFilter {
     return commandFilters
   }
 
-  _ffmpegFilter = 'drawtext'
+  protected _ffmpegFilter = 'drawtext'
 
   phase = Phase.Populate
 }

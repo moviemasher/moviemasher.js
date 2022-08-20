@@ -173,6 +173,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       } = outInfo
       const outputFilename = renderingOutputFile(index, output)
       const outUrl = path.join(prefix, outputFilename)
+      console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
       switch(outputType) {
         case OutputType.ImageSequence: {
           if (isAboveZero(outWidth) && isAboveZero(outHeight)) {

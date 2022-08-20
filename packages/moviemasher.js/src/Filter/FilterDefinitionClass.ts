@@ -41,7 +41,7 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     return commandFilter
   }
 
-  _ffmpegFilter?: string
+  protected _ffmpegFilter?: string
   get ffmpegFilter(): string {
     return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
   }

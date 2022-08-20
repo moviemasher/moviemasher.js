@@ -1,23 +1,27 @@
-import { TrackType } from "../../../Setup/Enums"
 import { Action, ActionOptions } from "./Action"
 
 export interface AddTrackActionObject extends ActionOptions {
-  trackType : TrackType
+  createTracks: number
 }
 
 /**
  * @category Action
  */
 export class AddTrackAction extends Action {
-  constructor(object : AddTrackActionObject) {
+
+  constructor(object: AddTrackActionObject) {
     super(object)
-    const { trackType } = object
-    this.trackType = trackType
+    const { createTracks } = object
+    this.createTracks = createTracks
   }
 
-  trackType : TrackType
+  createTracks: number
 
-  redoAction() : void { this.mash.addTrack(this.trackType) }
+  redoAction() : void { 
+    for (let i = 0; i < this.createTracks; i += 1) { this.mash.addTrack() }
+  }
 
-  undoAction() : void { this.mash.removeTrack(this.trackType) }
+  undoAction() : void { 
+    for (let i = 0; i < this.createTracks; i += 1) { this.mash.removeTrack() }
+  }
 }

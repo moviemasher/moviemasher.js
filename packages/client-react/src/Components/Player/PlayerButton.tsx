@@ -1,6 +1,6 @@
 import React from "react"
 import { View } from "../../Utilities/View"
-import { PlayerContext } from "../../Contexts/PlayerContext"
+import { PlayerContext } from "./PlayerContext"
 import { PropsWithChildren, ReactResult } from "../../declarations"
 
 /**

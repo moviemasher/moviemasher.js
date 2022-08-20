@@ -1,12 +1,18 @@
-import { ClassSelected, DroppingPosition, isLayerFolder } from "@moviemasher/moviemasher.js"
-
 import React from "react"
+import { 
+  ClassSelected, DroppingPosition, isLayerFolder
+} from "@moviemasher/moviemasher.js"
+
+import { 
+  PropsWithChildren, ReactResult, WithClassName
+} from "../../declarations"
+import { 
+  DragElementPoint, DragElementRect, DragSuffix, droppingPositionClass 
+} from "../../Helpers/DragDrop"
+import { View } from "../../Utilities/View"
 import { ComposerContext } from "../../Contexts/ComposerContext"
 import { EditorContext } from "../../Contexts/EditorContext"
 import { LayerContext } from "../../Contexts/LayerContext"
-import { PropsWithChildren, ReactResult, WithClassName } from "../../declarations"
-import { DragElementPoint, DragElementRect, DragSuffix } from "../../Helpers/DragDrop"
-import { View } from "../../Utilities/View"
 
 export interface ComposerLayerProps extends PropsWithChildren, WithClassName { }
 
@@ -24,7 +30,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
     validDragType, droppingPosition, setDroppingPosition, onDrop,
     droppingLayer, setDroppingLayer, onDragLeave
   } = composerContext
-  const { editor, setDraggable, droppingPositionClass } = editorContext
+  const { editor, setDraggable } = editorContext
   const { layer } = layerContext
   if (!(editor && layer)) return null
 

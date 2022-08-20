@@ -2,7 +2,7 @@ import React from 'react'
 import { ClassSelected, UnknownObject, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
-import { BrowserContext } from '../../Contexts/BrowserContext'
+import { BrowserContext } from './BrowserContext'
 import { DragSuffix } from '../../Helpers/DragDrop'
 import { useEditor } from '../../Hooks/useEditor'
 import { useDefinition } from '../../Hooks/useDefinition'
@@ -24,7 +24,7 @@ export function BrowserDefinition(props: BrowserDefinitionProps): ReactResult {
   const definition = useDefinition()
 
   const { icon: iconVar, className } = props
-  const { definitionId, setDefinitionId } = browserContext
+  const { definitionId, changeDefinitionId: setDefinitionId } = browserContext
   const { id, label, icon } = definition
 
   const children = () => {

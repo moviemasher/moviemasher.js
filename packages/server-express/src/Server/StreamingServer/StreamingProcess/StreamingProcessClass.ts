@@ -1,8 +1,8 @@
 import fs from 'fs'
 import {
   DefinitionObjects, DefinitionType, ImageDefinitionObject,
-  MashObject, OutputFormat, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject,
+  MashObject, OutputFormat, UnknownObject, CommandInput, ValueObject,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -74,7 +74,7 @@ export class StreamingProcessClass extends EventEmitter {
         streamingDescription.inputs?.forEach(input => {
           const { source } = input
           if (!source) throw 'no source'
-          if (typeof source !== 'string') return
+          if (!isString(source)) return
           if (source.includes('://')) return
 
           const resolved = path.resolve(prefix, source)
@@ -111,7 +111,7 @@ export class StreamingProcessClass extends EventEmitter {
     const clip: ClipObject = { contentId, width: 0.2 }
     const mashObject: MashObject = {
       backcolor: "#000000",
-      tracks: [{ trackType: TrackType.Video, clips: [clip] }]
+      tracks: [{ clips: [clip] }]
     }
     const definitionObjects: DefinitionObjects = [definitionObject]
     const mashObjects: MashObject[] = [mashObject]
@@ -142,10 +142,10 @@ export class StreamingProcessClass extends EventEmitter {
       options.hls_flags += `${options.hls_flags ? '+' : ''}append_list`
 
       const number = this.latestTsNumber
-      if (typeof number !== 'undefined') options.start_number = number + 1
+      if (isNumber(number)) options.start_number = number + 1
     }
     const { hls_segment_filename } = options
-    if (typeof hls_segment_filename === 'string') {
+    if (isString(hls_segment_filename)) {
       if (!hls_segment_filename.includes('/')) {
         options.hls_segment_filename = `${pathPrefix}/${hls_segment_filename}`
       }

@@ -4,7 +4,7 @@ import {
 } from "../declarations"
 import { GraphFile } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
-import { GraphFileType, GraphType, isLoadType, LoadType, LoadTypes } from "../Setup/Enums"
+import { GraphFileType, isLoadType, LoadType, LoadTypes } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { urlForEndpoint } from "../Utility/Url"
 import { Definition } from "../Definition/Definition"
@@ -18,21 +18,29 @@ export class BrowserLoaderClass extends LoaderClass {
     this.endpoint = endpoint || {}
   }
 
-  private arrayBufferPromiseFromUrl(url: string): Promise<ArrayBuffer> {
+  private arrayBufferPromise(url: string): Promise<ArrayBuffer> {
     return fetch(url).then(response => response.arrayBuffer())
   }
 
-  // private arrayBufferPromiseFromBlob(blob: Blob):Promise<ArrayBuffer> {
-  //   return new Promise<ArrayBuffer>((resolve, reject) => {
-  //     const reader = new FileReader()
-  //     reader.onload = () => { resolve(<ArrayBuffer> reader.result) }
-  //     reader.onerror = reject
-  //     reader.readAsArrayBuffer(blob)
-  //   })
-  // }
+  private arrayBufferPromiseFromBlob(url: string):Promise<ArrayBuffer> {
+    return fetch(url).then(response => response.blob()).then(blob => {
+      return new Promise<ArrayBuffer>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => { resolve(<ArrayBuffer> reader.result) }
+        reader.onerror = reject
+        reader.readAsArrayBuffer(blob)
+      }) 
+    })
+  }
 
   private audioBufferPromiseFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
     return AudibleContextInstance.decode(arrayBuffer)
+  }
+
+  audioPromise(url:string): LoadAudioPromise {
+    const isBlob = url.startsWith('blob:')
+    const promise = isBlob ? this.arrayBufferPromiseFromBlob(url) : this.arrayBufferPromise(url)
+    return promise.then(buffer => this.audioBufferPromiseFromArrayBuffer(buffer))
   }
 
   endpoint: Endpoint = {}
@@ -75,22 +83,11 @@ export class BrowserLoaderClass extends LoaderClass {
     return file
   }
 
-  private remove(url: string): void {
-    this.files.delete(url)
-  }
-
   private requestAudio(url: string, graphFile: GraphFile): LoadAudioPromise {
-    const promise: LoadAudioPromise = new Promise((resolve, reject) => {
-      this.arrayBufferPromiseFromUrl(url)
-        .then(arrayBuffer => this.audioBufferPromiseFromArrayBuffer(arrayBuffer))
-        .then(buffer => {
-          this.updateDefinitionDuration(graphFile.definition, buffer.duration, true)
-          return buffer
-        })
-        .then(resolve)
-        .catch(reject)
+    return this.audioPromise(url).then(buffer => {
+      this.updateDefinitionDuration(graphFile.definition, buffer.duration, true)
+      return buffer
     })
-    return promise
   }
 
   protected fontFamily(url: string): string {
@@ -103,7 +100,7 @@ export class BrowserLoaderClass extends LoaderClass {
     const { definition } = graphFile
     this.updateDefinitionFamily(definition, family)
     const promise : LoadFontPromise = new Promise((resolve, reject) => {
-      this.arrayBufferPromiseFromUrl(url)
+      this.arrayBufferPromise(url)
         .then(buffer => {
           const face = new FontFace(family, buffer)
           return face.load()
@@ -117,15 +114,19 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   protected requestImage(url: string, graphFile: GraphFile) : LoadImagePromise {
-    const image = new Image()
-    image.crossOrigin = "Anonymous"
-    image.src = url
-    return image.decode().then(() => {
+    return this.imagePromise(url).then(image => {
       const { width, height } = image
       const dimensions = { width, height }
       this.updateDefinitionSize(graphFile.definition, dimensions)
-      return Promise.resolve(image)
+      return image
     })
+  }
+
+  imagePromise(url: string) : LoadImagePromise {
+    const image = new Image()
+    image.crossOrigin = "Anonymous"
+    image.src = url
+    return image.decode().then(() => image)
   }
 
   private requestPromise(graphFile: GraphFile, url: string): Promise<any> {
@@ -142,7 +143,7 @@ export class BrowserLoaderClass extends LoaderClass {
 
   private requestVideo(url: string, graphFile: GraphFile): LoadVideoPromise {
     const promise: LoadVideoPromise = new Promise((resolve, reject) => {
-      return this.videoPromiseFromUrl(url).then(video => {
+      return this.videoPromise(url).then(video => {
         const { duration, width, height } = video
         const { definition } = graphFile
         const dimensions = { width, height }
@@ -152,20 +153,14 @@ export class BrowserLoaderClass extends LoaderClass {
             Boolean(video.webkitAudioDecodedByteCount) ||
             Boolean(video.audioTracks?.length);
         }
-
         this.updateDefinitionDuration(definition, duration, hasAudio(video))
-        return this.arrayBufferPromiseFromUrl(url).then(arrayBuffer => {
-          return this.audioBufferPromiseFromArrayBuffer(arrayBuffer).then(audioBuffer => {
-            resolve({ video, audio: audioBuffer })
-          })
-        })
+        resolve(video)
       }).catch(reject)
     })
     return promise
   }
 
-
-  private videoPromiseFromUrl(url: string): Promise<LoadedVideo> {
+  videoPromise(url: string): Promise<LoadedVideo> {
     return new Promise<LoadedVideo>((resolve, reject) => {
       const video = this.videoFromUrl(url)
       video.ondurationchange = () => {

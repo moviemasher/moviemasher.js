@@ -1,10 +1,11 @@
 
 const defaults = {
   verbose: true,
-  bail: 1,
-  maxWorkers: 1, 
-  cache: false,
+  // bail: 1,
+  // maxWorkers: 1, 
+  // cache: false,
   automock: false,
+  // detectOpenHandles: true,
   rootDir: "./",
   globals: {
     'ts-jest': {
@@ -29,7 +30,7 @@ module.exports = {
   projects: [
     {
       ...defaults,
-      displayName: "Jester",
+      displayName: "Core",
       coverageDirectory: "./temporary/test/coverage",
       collectCoverageFrom: ["packages/moviemasher.js/src/**/*.ts"],
       setupFilesAfterEnv: ["<rootDir>/dev/test/jest.setup.js"],

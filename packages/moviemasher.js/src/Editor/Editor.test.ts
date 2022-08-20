@@ -1,7 +1,6 @@
 import { UnknownObject } from "../declarations"
 import { Default } from "../Setup/Default"
 import { EditorClass } from "./EditorClass"
-import { expectCanvasAtTime } from "../../../../dev/test/Utilities/expectMashSvg"
 import { Emitter } from "../Helpers/Emitter"
 import { editorInstance } from "./EditorFactory"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
@@ -15,10 +14,11 @@ import { ClipClass } from "../Edited/Mash/Track/Clip/ClipClass"
 import visibleDefaultJson from "../Definitions/DefinitionObjects/content/default.json"
 
 const createEditor = (): Editor => {
-  return editorInstance({ editType: EditType.Mash, preloader: new JestPreloader()})
+  const preloader = new JestPreloader()
+
+  return editorInstance({ editType: EditType.Mash, preloader })
 }
 describe("EditorFactory", () => {
-
   describe("editorInstance", () => {
     test("returns EditorClass instance", () => {
       expect(createEditor()).toBeInstanceOf(EditorClass)
@@ -27,7 +27,7 @@ describe("EditorFactory", () => {
 })
 
 describe("Editor", () => {
-  const values = Object.entries({
+  const editorTestValues = Object.entries({
     loop: false,
     fps: 25,
     precision: 4,
@@ -35,17 +35,17 @@ describe("Editor", () => {
     volume: 0.4,
     buffer: 3,
   })
-  const defaults = Object.entries(Default.masher)
+  const editorTestDefaults = Object.entries(Default.editor)
 
-  describe.each(defaults)("%s getter", (key, value) => {
+  describe.each(editorTestDefaults)("%s getter", (key, value) => {
     test("returns default", () => {
       const editor = createEditor() as unknown as UnknownObject
-      if (key === 'fps') expect(editor[key]).toEqual(Default.masher.fps)
+      if (key === 'fps') expect(editor[key]).toEqual(Default.editor.fps)
       else expect(editor[key]).toEqual(value)
     })
   })
 
-  describe.each(values)("%s setter", (key, value) => {
+  describe.each(editorTestValues)("%s setter", (key, value) => {
     test("updates value", () => {
       const editor = createEditor() as unknown as UnknownObject
       expect(editor[key]).not.toEqual(value)
@@ -58,29 +58,30 @@ describe("Editor", () => {
   describe("add", () => {
     test("returns promise that loads clip", async () => {
       const editor = createEditor()
-      editor.load({ mash: {} })
+      await editor.load({ mash: {}, definitions: [] })
 
-      const clip = await editor.add(visibleDefaultJson)
-      expect(clip).toBeInstanceOf(ClipClass)
       const { edited } = editor
       assertMash(edited)
-      expectCanvasAtTime(editor)
+
+      await editor.add(visibleDefaultJson)
+      const [clip] = edited.tracks[0].clips
+      expect(clip).toBeInstanceOf(ClipClass)
     })
   })
 
   describe("eventTarget", () => {
     test("returns Emitter instance", () => {
       const editor = createEditor()
-      const canvas = editor.eventTarget
-      expect(canvas).toBeInstanceOf(Emitter)
+      const { eventTarget } = editor
+      expect(eventTarget).toBeInstanceOf(Emitter)
     })
   })
 
   describe("goToTime", () => {
     test("returns what is set after resolving promise", async () => {
       const editor = createEditor()
-      expect(editor.edited).toBeUndefined()
-      editor.load({ mash: {} })
+      // expect(editor.edited).toBeUndefined()
+      await editor.load({ mash: {}, definitions: [] })
       const { edited } = editor
       assertMash(edited)
 
@@ -94,9 +95,9 @@ describe("Editor", () => {
 
 
   describe("selectedItems", () => {
-    test("returns expected properties", () => {
+    test("returns expected properties", async () => {
       const editor = createEditor()
-      editor.load({ mash: {}, definitions: []})
+      await editor.load({ mash: {}, definitions: []})
       // masher.add(themeTextJson)
       const selectedItems = editor.selection.selectedItems()
       // console.log('selectedItems', selectedItems)

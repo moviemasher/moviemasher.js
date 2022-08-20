@@ -30,7 +30,11 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { effects } = object as TweenableObject
+      const { effects, container } = object as TweenableObject
+      if (container) {
+        // console.log(this.constructor.name, "TweenableMixin container", container)
+        this.container = true
+      }
       if (effects) this.effects.push(...effects.map(effectObject => {
         const effect = effectInstance(effectObject)
         return effect
@@ -77,12 +81,13 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     canColorTween(args: CommandFilterArgs): boolean { return false }
 
-    _clip?: Clip
+    private _clip?: Clip
     get clip() { return this._clip! }
     set clip(value: Clip) { this._clip = value }
+    get clipped(): boolean { return !!this._clip }
 
     colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters { 
-      const { time, contentColors = [], videoRate, outputSize, duration } = args
+      const { contentColors = [], videoRate, outputSize, duration } = args
       assertSize(outputSize)
       const evenSize = sizeEven(outputSize)
       const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
@@ -158,7 +163,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = [] 
-      const { contentColors: colors = [], containerRects, videoRate, time, duration } = args
+      const { contentColors: colors = [], containerRects, videoRate, duration } = args
       assertArray(containerRects, 'containerRects')
       const [rect, rectEnd] = containerRects
   
@@ -219,9 +224,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const { fps: quantize } = clipTime
       const scaledTime = time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
       const { startTime, endTime } = clipTime
-      // const startTime = this.time(quantize).scale(scaledTime.fps)
-      // const endTime = this.endTime(quantize).scale(scaledTime.fps)
-  
       const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
       return scaledTime.withFrame(frame - startTime.frame)
     }
@@ -242,7 +244,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFilters
     }
 
-
     private _foreignElement?: SVGForeignObjectElement
     get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }
     private get foreignElementInitialize(): SVGForeignObjectElement {
@@ -256,15 +257,15 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     foreignSvgItem(element: SvgItem, rect: Rect, stretch?: boolean): SVGForeignObjectElement {
       const { x, y, width, height } = rect
       const { foreignElement } = this
+      
       foreignElement.setAttribute('x', String(x))
       foreignElement.setAttribute('y', String(y))
       foreignElement.setAttribute('width', String(width))
-      element.setAttribute('width', String(width))
+      // element.setAttribute('width', String(width))
       if (stretch) {
         foreignElement.setAttribute('height', String(height))
-        foreignElement.setAttribute('preserveAspectRatio', 'none')
-        element.setAttribute('height', String(height))
-        element.setAttribute('preserveAspectRatio', 'none')
+        // element.setAttribute('height', String(height))
+        // element.setAttribute('preserveAspectRatio', 'none')
       }
       foreignElement.replaceChildren(element)
       return foreignElement
@@ -351,7 +352,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
-
     selectables(): Selectables { return [] }
 
     selectType = SelectType.None
@@ -383,6 +383,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       // add effects 
       const { selection } = actions
       const undoEffects = [...effects]
+      const effectable = this
       const selectedEffects: SelectedEffects = {
         selectType,
         value: this.effects, 
@@ -397,7 +398,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
           actions.create(options)
         },
         moveHandler: (effect: Effect, index = 0) => {
-          // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
           assertPositive(index, 'index')
           
           const redoEffects = undoEffects.filter(e => e !== effect)
@@ -406,7 +406,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
           redoEffects.splice(insertIndex, 0, effect)
           const options = {
             effects, undoEffects, redoEffects, type: ActionType.MoveEffect, 
-            effectable: this
+            effectable
           }
           actions.create(options)
         },
@@ -431,31 +431,28 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
       const selectedProperties: SelectedProperties = []
-      const { name, tweenable } = property
+      const { name, tweenable, type: dataType } = property
       const { selectType } = this
-      // const timeRange = clip.timeRange(actions.editor.edited!.quantize)
-
+      const undoValue = this.value(name)
+      const target = this
+      const type = dataType === DataType.Frame ? ActionType.ChangeFrame : ActionType.Change
       const selectedProperty: SelectedProperty = {
-        selectType, property, value: this.value(name), 
-        changeHandler: (property: string, value: Scalar) => {
-          // console.log(this.constructor.name, "selectedProperties changeHandler", property, value)
-          const undoValue = this.value(property)
-          const redoValue = isUndefined(value) ? undoValue : value
-          actions.create({ property, target: this, redoValue, undoValue })
+        selectType, property, value: undoValue, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+          actions.create({ type, property, target, redoValue, undoValue })
         }
       }
-      // if (tweenable) selectedProperty.time = timeRange.startTime
       // console.log(this.constructor.name, "selectedProperties", name)
       selectedProperties.push(selectedProperty)
       if (tweenable) {
         const tweenName = [name, PropertyTweenSuffix].join('')
+        const target = this
+        const undoValue = this.value(tweenName)
         const selectedPropertEnd: SelectedProperty = {
-          // time: timeRange.lastTime,
-          selectType, property, value: this.value(tweenName), name: tweenName,
-          changeHandler: (property: string, value: Scalar) => {
-            // console.log(this.constructor.name, "selectedProperties changeHandler", property, value)
-            const undoValue = this.value(property)
-            actions.create({ property, target: this, redoValue: value, undoValue })
+          selectType, property, value: undoValue, name: tweenName,
+          changeHandler: (property: string, redoValue: Scalar) => {            
+            actions.create({ property, target, redoValue, undoValue })
           }
         }
         // console.log(this.constructor.name, "selectedProperties", tweenName)
@@ -494,14 +491,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return tweenColorStep(value, valueEnd, frame, frames)
     }
 
-    tweenValues(key: string, time: Time, range: TimeRange): Scalar[] {
-      const values: Scalar[] = []
-      const isRange = isTimeRange(time)
-      values.push(this.tween(key, isRange ? time.startTime : time, range))
-      if (isRange) values.push(this.tween(key, time.endTime, range))
-      return values
-    }
-
     tweenPoints(time: Time, range: TimeRange): PointTuple {
       const [x, xEndOrNot] = this.tweenValues('x', time, range)
       const [y, yEndOrNot] = this.tweenValues('y', time, range)
@@ -510,6 +499,12 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const point: Point = { x, y } 
       const tweenPoint = { x: xEndOrNot, y: yEndOrNot }
       return [point, tweenOverPoint(point, tweenPoint)]
+    }
+
+    tweenRects(time: Time, range: TimeRange): RectTuple {
+      const [size, sizeEnd] = this.tweenSizes(time, range)
+      const [point, pointEnd] = this.tweenPoints(time, range)
+      return [ { ...point , ...size }, { ...pointEnd , ...sizeEnd } ]
     }
 
     tweenSizes(time: Time, range: TimeRange): SizeTuple {
@@ -522,10 +517,12 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return [size, tweenOverSize(size, tweenSize)]
     }
 
-    tweenRects(time: Time, range: TimeRange): RectTuple {
-      const [size, sizeEnd] = this.tweenSizes(time, range)
-      const [point, pointEnd] = this.tweenPoints(time, range)
-      return [ { ...point , ...size }, { ...pointEnd , ...sizeEnd } ]
+    tweenValues(key: string, time: Time, range: TimeRange): Scalar[] {
+      const values: Scalar[] = []
+      const isRange = isTimeRange(time)
+      values.push(this.tween(key, isRange ? time.startTime : time, range))
+      if (isRange) values.push(this.tween(key, time.endTime, range))
+      return values
     }
   }
 }

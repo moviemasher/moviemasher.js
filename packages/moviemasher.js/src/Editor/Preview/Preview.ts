@@ -1,5 +1,5 @@
 import { Size } from "../../Utility/Size"
-import { GraphFileArgs, GraphFileOptions } from "../../MoveMe"
+import { GraphFileOptions } from "../../MoveMe"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"

@@ -1,17 +1,19 @@
 import React from 'react'
 import {
-  Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, ContainerTypes, ContentTypes, assertTrue
+  assertDefinition,
+  Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, 
+  ContainerTypes, ContentTypes, assertTrue, eventStop
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../../../declarations'
-import { Problems } from '../../../../Setup/Problems'
 import { View } from '../../../../Utilities/View'
 import { InputContext } from '../InputContext'
 import { DefinitionContext } from '../../../../Contexts/DefinitionContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { DragDefinitionObject, dragType, dropType } from '../../../../Helpers/DragDrop'
+import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '../../../../Helpers/DragDrop'
 import { BrowserDefinition } from '../../../Browser/BrowserDefinition'
 import { propsDefinitionTypes } from '../../../../Utilities/Props'
+import { EditorContext } from '../../../../Contexts/EditorContext'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string
@@ -21,12 +23,12 @@ export interface DefinitionDropProps extends WithClassName, PropsAndChild {
 export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
   const { type, types, children, className, ...rest } = props
   const child = React.Children.only(children)
-  if (!React.isValidElement(child)) throw Problems.child
+  assertTrue(React.isValidElement(child))
 
   const inputContext = React.useContext(InputContext)
-
+  const editorContext = React.useContext(EditorContext)
+  const { dropFiles } = editorContext
   const [isOver, setIsOver] = React.useState(false)
-
   const { changeHandler, value, name } = inputContext
   assertTrue(changeHandler)
 
@@ -37,39 +39,63 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
 
     assertPopulatedString(value)
     const definition = Defined.fromId(value)
-    if (!definition) {
-      console.trace("DefinitionDrop childNodes could not find definition", value)
-    }
+    assertDefinition(definition)
+
     const definitionProps = { definition, key: definition.id }
     const children = React.cloneElement(child, definitionProps)
     const contextProps = { children, value: { definition } }
-    const context = <DefinitionContext.Provider {...contextProps} />
-    return context
+    return <DefinitionContext.Provider {...contextProps} />
   }
 
-  const dropAllowed = (event: React.DragEvent): boolean => {
+  const dropAllowed = (event: DragEvent): boolean => {
     const { dataTransfer } = event
+    assertTrue(dataTransfer)
+    
+    const types = dragTypes(dataTransfer)
+    // any file can be dropped
+    if (types.includes(TransferTypeFiles)) {
+      // console.log("DefinitionDrop dropAllowed FILE", name)
+      return true
+    }
+
     const draggingType = dragType(dataTransfer)
     if (!isDefinitionType(draggingType)) return false
 
+
+    // console.log("DefinitionDrop dropAllowed", name, draggingType, definitionTypes)
     return definitionTypes.includes(draggingType)
 
   }
 
-  const onDragLeave: React.DragEventHandler = () => { setIsOver(false) }
+  const onDragLeave = () => { setIsOver(false) }
 
-  const onDragOver: React.DragEventHandler = event => {
+  const onDragOver = (event: DragEvent) => {
     const allowed = dropAllowed(event)
     setIsOver(allowed)
     if (allowed) event.preventDefault()
   }
 
-  const onDrop: React.DragEventHandler = event => {
-    event.preventDefault()
+  const onDrop = (event: DragEvent) => {
+    eventStop(event)
     setIsOver(false)
     if (!dropAllowed(event)) return
 
     const { dataTransfer } = event
+    assertTrue(dataTransfer)
+
+    const types = dragTypes(dataTransfer)
+    // any file can be dropped
+    if (types.includes(TransferTypeFiles)) {
+      const { files } = dataTransfer
+      // console.log("DefinitionDrop onDrop dropped files", name, files)
+      dropFiles(files).then(definitions => {
+        const [definition] = definitions
+        if (!definition) return
+        // console.log("DefinitionDrop dropped file", name, definition.type, definition.id)
+        changeHandler(name, definition.id)
+      })
+      return
+    }
     const type = dropType(dataTransfer)!
     const json = dataTransfer.getData(type)
     const data: DragDefinitionObject = JSON.parse(json)
@@ -95,15 +121,15 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     onDragOver,
     onDrop,
     value: String(value),
-    key: `${name}-select`,
+    key: `${name}-drop`,
   }
   return <View {...viewProps} />
 }
 
 DataTypeInputs[DataType.ContainerId] = <DefinitionDrop types={ContainerTypes} className='definition-drop'>
-  <BrowserDefinition className='definition' />
+  <BrowserDefinition className='definition' icon="--clip-icon" />
 </DefinitionDrop>
 
 DataTypeInputs[DataType.ContentId] = <DefinitionDrop types={ContentTypes} className='definition-drop'>
-  <BrowserDefinition className='definition' />
+  <BrowserDefinition className='definition' icon="--clip-icon" />
 </DefinitionDrop>

@@ -78,6 +78,9 @@ export function assertPopulatedArray(value: any, name = 'value'): asserts value 
 export const isPopulatedObject = (value: any): boolean => (
   isObject(value) && length(Object.keys(value))
 )
+export function assertPopulatedObject(value: any, name = 'value'): asserts value is Object {
+  if (!isPopulatedObject(value)) throwError(value, 'populated array', name)
+}
 
 export const isNumeric = (value: any): boolean => (
   (isNumber(value) || isPopulatedString(value)) && !isNan(Number(value))

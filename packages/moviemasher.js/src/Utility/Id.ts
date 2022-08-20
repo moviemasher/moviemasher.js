@@ -1,8 +1,9 @@
 import { NumberObject } from "../declarations"
+import { isPopulatedString } from "./Is"
 
 // eslint-disable-next-line prefer-const
-export let idPrefix = ''
-export let idCount = 0
+let idPrefix = ''
+let idCount = 0
 
 const idCountsByPrefix: NumberObject = {}
 export const idGenerate = (prefix = idPrefix): string => {
@@ -16,3 +17,9 @@ export const idGenerate = (prefix = idPrefix): string => {
 }
 
 export const idPrefixSet = (prefix: string): void => { idPrefix = prefix }
+
+export const idTemporary = (id: string): boolean => {
+  if (!isPopulatedString(idPrefix)) return false
+
+  return id.startsWith(idPrefix)
+}

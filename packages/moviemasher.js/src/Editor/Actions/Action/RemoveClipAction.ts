@@ -26,7 +26,7 @@ export class RemoveClipAction extends Action {
 
   index : number
 
-  get trackIndex() : number { return this.track.layer }
+  get trackIndex() : number { return this.track.index }
 
   redoAction() : void {
     this.mash.removeClipFromTrack(this.clip)

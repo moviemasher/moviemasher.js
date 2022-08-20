@@ -1,5 +1,5 @@
 import React from 'react'
-import { PanelContext } from '../../Contexts/PanelContext'
+import { CollapseContext, CollapseContextInterface } from '../Collapse/CollapseContext'
 
 import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
 import { BarOptions } from '../../Utilities/Bar'
@@ -46,15 +46,15 @@ export interface PanelProps extends PropsAndChildren, WithClassName {
 
 export function Panel(props: PanelProps): ReactResult {
   const { children, className, collapsed: collapsedProp } = props
-  const [collapsed, setCollapsed] = React.useState(!!collapsedProp)
+  const [collapsed, changeCollapsed] = React.useState(!!collapsedProp)
 
   const classes: string[] = []
   if (className) classes.push(className)
   if (collapsed) classes.push('collapsed')
 
   const viewProps = { children, className: classes.join(' ') }
-  const panelContext = { collapsed, setCollapsed }
-  return <PanelContext.Provider value={panelContext}>
+  const collapseContext: CollapseContextInterface = { collapsed, changeCollapsed }
+  return <CollapseContext.Provider value={collapseContext}>
     <View {...viewProps} />
-  </PanelContext.Provider>
+  </CollapseContext.Provider>
 }

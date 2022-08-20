@@ -1,6 +1,6 @@
 import { 
   isEffectDefinition, Defined, DefinitionType, assertEffect, UnknownObject, 
-  ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue 
+  ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue, isDefined, isObject 
 } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
@@ -65,7 +65,7 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
     const data: DragEffectObject = JSON.parse(json)
     const { definitionObject, index } = data
     const droppedIndex = dropIndex(event)
-    if (typeof definitionObject === 'undefined') {
+    if (!isObject(definitionObject)) {
       if (droppedIndex === index) return
       assertEffect(selected)
       moveHandler(selected, droppedIndex)
@@ -114,4 +114,4 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
   return <>{effectsView}{effectView}</>
 }
 
-DataGroupInputs[DataGroup.Effects] = <EffectsGroupInput />
+DataGroupInputs[DataGroup.Effects] = <EffectsGroupInput key="effects-group-input" />

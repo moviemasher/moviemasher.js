@@ -1,7 +1,7 @@
 import { EditorArgs } from "../Editor/Editor"
 import { colorBlack, colorTransparent } from "../Utility/Color"
 
-export const MashEditorDefaults: EditorArgs = {
+const DefaultEditorArgs: EditorArgs = {
   buffer: 10,
   fps: 30,
   loop: true,
@@ -10,16 +10,16 @@ export const MashEditorDefaults: EditorArgs = {
   autoplay: false,
 }
 
-export const MashDefaults = {
-  label: "Unlabeled Mash",
+const DefaultMash = {
+  label: "Mash",
   quantize: 10,
   backcolor: colorBlack,
   gain: 0.75,
   buffer: 10,
 }
 
-const CastDefaults = {
-  label: "Unlabeled Cast",
+const DefaultCast = {
+  label: "Cast",
   quantize: 10,
   backcolor: colorBlack,
   gain: 0.75,
@@ -27,21 +27,16 @@ const CastDefaults = {
 }
 
 export const Default = {
-  frames: 30,
+  duration: 3,
   label: "Unlabeled",
-  masher: MashEditorDefaults,
-  cast: CastDefaults,
-  mash: MashDefaults,
-  instance: {
-    audio: { gain: 1.0, trim: 0, loop: 1 },
-    video: { speed: 1.0 }
-  },
+  editor: DefaultEditorArgs,
+  cast: DefaultCast,
+  mash: DefaultMash,
   definition: {
     image: { duration: 2 },
     textcontainer: { duration: 3 },
     shape: { duration: 3 },
     visible: { duration: 3 },
-    visibleclip: { duration: 3 },
     video: { fps: 0 },
     videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
     videostream: { duration: 10 },

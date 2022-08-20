@@ -16,6 +16,7 @@ import { Default } from "../Setup/Default"
 import { Editor } from "../Editor/Editor"
 import { Actions } from "../Editor/Actions/Actions"
 import { Selectables } from "../Editor/Selectable"
+import { colorBlack } from "../Utility/Color"
 
 
 export class EditedClass extends PropertiedClass implements Edited {
@@ -27,8 +28,13 @@ export class EditedClass extends PropertiedClass implements Edited {
     if (createdAt) this.createdAt = createdAt
     if (label) this.label = label
     if (isAboveZero(quantize)) this.quantize = quantize
-
-    this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
+    this.properties.push(propertyInstance({ 
+      name: 'label', type: DataType.String
+    }))
+    this.properties.push(propertyInstance({ 
+      name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack 
+    }))
+    
   }
 
   declare backcolor: string
@@ -38,7 +44,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   createdAt = ''
 
-  data: UnknownObject = {}
+  private data: UnknownObject = {}
 
   protected dataPopulate(rest: UnknownObject) {
     const propertyNames = this.properties.map(property => property.name)
@@ -55,11 +61,12 @@ export class EditedClass extends PropertiedClass implements Edited {
   set editor(value: Editor) { this._editor = value}
   
   _emitter?: Emitter
-  get emitter(): Emitter | undefined { return this._emitter }
-  set emitter(value: Emitter | undefined) {
+  get emitter(): Emitter { return this._emitter! }
+  set emitter(value: Emitter) {
     this._emitter = value
     this.emitterChanged()
   }
+
   protected emitterChanged() { }
 
   graphFiles(args: GraphFileOptions): GraphFiles { return [] }
@@ -78,8 +85,8 @@ export class EditedClass extends PropertiedClass implements Edited {
     if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
     this._imageSize = value
   }
-  declare label: string
 
+  declare label: string
 
   loadPromise(args?: GraphFileOptions): Promise<void> { throw Errors.unimplemented }
 
@@ -95,7 +102,6 @@ export class EditedClass extends PropertiedClass implements Edited {
   quantize = Default.mash.quantize
 
   reload(): Promise<void> | undefined { return }
-
 
   selectables(): Selectables { return [] }
 

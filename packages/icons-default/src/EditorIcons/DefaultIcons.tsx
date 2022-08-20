@@ -56,19 +56,22 @@ import {
 import { 
   FaUserCircle,
   FaExpand,
-  FaLock, FaUnlock
+  FaExclamationCircle,
+  FaRegCheckCircle,
 } from 'react-icons/fa'
 
 // import { AiOutlineFieldTime } from 'react-icons/ai'
-import { BiShapeTriangle } from 'react-icons/bi'
+import { BiShapeTriangle, BiBorderOuter, BiBorderInner } from 'react-icons/bi'
+import { GiDirectorChair } from 'react-icons/gi'
 
+import { TbActivityHeartbeat } from 'react-icons/tb'
 import { TiZoomOutOutline, TiZoomInOutline } from 'react-icons/ti'
 import { 
-  GiFastForwardButton, GiPlayButton, GiMove, GiResize, 
+  GiMove, GiResize, 
   GiHorizontalFlip, GiVerticalFlip,
  } from 'react-icons/gi'
 import { HiArrowsExpand, HiEye, HiLockClosed, HiLockOpen } from 'react-icons/hi'
-import { ImFileVideo } from 'react-icons/im'
+import { ImFileVideo, ImSpinner3 } from 'react-icons/im'
 
 import { 
   VscTriangleRight, 
@@ -77,21 +80,30 @@ import {
 } from 'react-icons/vsc'
 
 import { MMTubeIcon } from '../Icons/MMTubeIcon'
+import { MMWideIcon } from '../Icons/MMWideIcon'
 import { MMIcon } from '../Icons/MMIcon'
 
 
 export const DefaultIcons = {
   add: <RiAddLine key='add' />,
+
+  activity: <TbActivityHeartbeat key='activity' />,
+  active: <ImSpinner3 key='active' />,
+  complete: <FaRegCheckCircle key='complete' />,
+  error: <FaExclamationCircle key='error' />,
+  
+
+
   administrator: <RiUserSettingsFill key='administrator' />,
   app: <img key='logo' src="mm.svg" />,
   audible: <RiVolumeUpLine key='audible' />,
   audio: <RiMusicLine />,
   broadcast: <RiBroadcastFill key='broadcast' />,
+  composer: <GiDirectorChair key='composer' />,
   browser: <MdPermMedia key='browser' />,
   browserAudio: <RiMusic2Fill />,
   browserAudioStream: <RiChatVoiceFill />,
   browserEffect: <MdInvertColors />,
-  color: <IoColorFillSharp key="color" />,
   browserImage: <RiImageFill />,
   browserShape: <BiShapeTriangle />,
   browserText: <MdOutlineTextFields />,
@@ -101,9 +113,10 @@ export const DefaultIcons = {
   clip: <MdOutlineTimelapse/>,
   collapse: <VscTriangleDown/>,
   collapsed: <VscTriangleRight/>,
-  container: <FaExpand/>,
-  content: <HiArrowsExpand/>,
-  document: <IoDocument />,
+  color: <IoColorFillSharp key="color" />,
+  container: <BiBorderOuter/>,
+  content: <BiBorderInner/>,
+  document: <IoDocument key="document" />,
   end: <BsSkipEndFill />,
   endUndefined: <BsSkipEnd />,
   folder: <RiFolderLine key='folder' />,
@@ -113,19 +126,18 @@ export const DefaultIcons = {
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
   invisible: <RiEyeOffLine key='invisible' />,
-  layer: <RiStackLine key='layer' />,
-  layers: <RiStackFill key='layers' />,
   lock: <HiLockClosed />,
   matte: <BsReverseLayoutSidebarInsetReverse/>,
   message: <RiMessage3Fill key='message' />,
   mm: <MMIcon />,
   mmTube: <MMTubeIcon />,
+  mmWide: <MMWideIcon />,
   opacity: <MdOpacity key="opacity" />,
   playerPause: <RiPauseCircleFill key="player-pause" />,
   playerPlay: <RiPlayCircleFill key="player-play"/>,
   point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine />,
-  remove: <RiDeleteBin7Line />,
+  remove: <RiDeleteBin7Line key="remove" />,
   render: <ImFileVideo />,
   size: <GiResize key="size" />,
   start: <BsSkipStartFill />,
@@ -133,17 +145,16 @@ export const DefaultIcons = {
   timeline: <MdOutlineTimelapse key='timeline' />,
   timelineAddAudio: <RiMvLine />,
   timelineAddVideo: <RiVideoLine />,
-  track: <GiFastForwardButton/>,
-  trackDense: <GiPlayButton key="track-dense"/>,
+  track: <RiStackLine/>,
+  trackDense: <RiStackFill key="track-dense"/>,
   transition: <RiArrowLeftRightLine />,
   undo: <RiArrowGoBackLine />,
   unlock: <HiLockOpen />,
-  upload: <RiUploadCloud2Line />,
+  upload: <RiUploadCloud2Line key="upload" />,
   vert: <GiVerticalFlip key="vert-flip" />,
   video: <RiArrowRightSLine />,
   view: <HiEye />,
   visible: <RiEyeLine key='visible' />,
   zoomLess: <TiZoomOutOutline key="zoom-less" />,
   zoomMore: <TiZoomInOutline key="zoom-more" />,
-
 }

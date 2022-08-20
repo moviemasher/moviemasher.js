@@ -32,8 +32,6 @@ export class ColorFilter extends ColorizeFilter {
     this.populateParametersFromProperties()
   }
 
-  alpha = false
-
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters: CommandFilters = []
     const { filter, videoRate, duration } = args
@@ -115,7 +113,7 @@ export class ColorFilter extends ColorizeFilter {
     }
     return commandFilters
   }
-  _ffmpegFilter = 'color'
+  protected _ffmpegFilter = 'color'
 
   filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem {
     const { filter } = args

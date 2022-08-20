@@ -1,5 +1,5 @@
 import { Errors } from "../../Setup/Errors"
-import { isInteger, isNumber } from "../../Utility/Is"
+import { assertAboveZero, assertNumber, isInteger, isNumber } from "../../Utility/Is"
 import { roundWithMethod } from "../../Utility/Round"
 import { Time, TimeRange } from "./Time"
 
@@ -30,10 +30,6 @@ export const timeEqualizeRates = (time1 : Time, time2 : Time, rounding = '') : T
 }
 
 export class TimeClass implements Time {
-  frame : number
-
-  fps : number
-
   constructor(frame = 0, fps = 1) {
     if (!isInteger(frame) || frame < 0) {
       // console.trace(Errors.frame, frame)
@@ -60,7 +56,6 @@ export class TimeClass implements Time {
     const frame = timeRange.frame + Math.round(timeRange.frames / 2)
     const halfTime = new TimeClass(frame, timeRange.fps)
     const [midTime, editorTime] = timeEqualizeRates(halfTime, this)
-    
     const shouldBeOnLast = midTime.frame < editorTime.frame
     return shouldBeOnLast ? timeRange.lastTime : timeRange.startTime
   }
@@ -69,15 +64,22 @@ export class TimeClass implements Time {
 
   get description() : string { return `${this.frame}@${this.fps}` }
 
-  divide(number : number, rounding = '') : Time {
-    if (!isNumber(number)) throw Errors.argument + 'divide'
-    return new TimeClass(roundWithMethod(Number(this.frame) / number, rounding), this.fps)
+  divide(number: number, rounding = '') : Time {
+    assertAboveZero(number)
+
+    if (number === 1.0) return this
+
+    return this.withFrame(roundWithMethod(this.frame / number, rounding))
   }
 
   equalsTime(time : Time) : boolean {
     const [time1, time2] = timeEqualizeRates(this, time)
     return time1.frame === time2.frame
   }
+
+  fps : number
+
+  frame : number
 
   isRange = false
 

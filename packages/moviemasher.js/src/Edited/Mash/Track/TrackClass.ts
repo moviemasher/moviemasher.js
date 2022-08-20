@@ -1,53 +1,47 @@
 import { Scalar, UnknownObject } from "../../../declarations"
-import { ActionType, Duration, SelectType, Timing, TrackType } from "../../../Setup/Enums"
+import { ActionType, Duration, SelectType, Timing } from "../../../Setup/Enums"
 import { Errors } from "../../../Setup/Errors"
 import { propertyInstance } from "../../../Setup/Property"
 import { sortByFrame } from "../../../Utility/Sort"
 import { Clip, Clips } from "./Clip/Clip"
 import { PropertiedClass } from "../../../Base/Propertied"
 import { Track, TrackArgs } from "./Track"
-import { assertPopulatedString, isAboveZero, isUndefined } from "../../../Utility/Is"
+import { assertPopulatedString, assertTrue, isAboveZero, isDefined, isPositive, isUndefined } from "../../../Utility/Is"
 import { TimeRange } from "../../../Helpers/Time/Time"
 import { idGenerate } from "../../../Utility/Id"
 import { isUpdatableDurationDefinition } from "../../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Default } from "../../../Setup/Default"
-import { Mash } from "../Mash"
+import { assertMash, Mash } from "../Mash"
 import { SelectedItems } from "../../../Utility/SelectedProperty"
 import { Actions } from "../../../Editor/Actions/Actions"
 import { clipInstance } from "../../../Edited/Mash/Track/Clip/ClipFactory"
 import { Selectables } from "../../../Editor/Selectable"
-import { arrayLast } from "../../../Utility/Array"
+import { arrayLast, arraySet } from "../../../Utility/Array"
 import { isContainer } from "../../../Container"
+import { Tweenable } from "../../../Mixin/Tweenable/Tweenable"
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
     super()
 
-    const { clips, layer, trackType, dense } =  args
-    if (layer) this.layer = layer
-    if (trackType) this.trackType = trackType
+    const { clips, index: layer, dense } =  args
+    if (isPositive(layer)) this.index = layer
 
-
-    if (typeof dense === 'undefined') {
-      this.dense = !this.layer && this.trackType === TrackType.Video
-    } else this.dense = !!dense
-
+    this.dense = isDefined(dense) ? !!dense : !this.index  
+  
     this.properties.push(propertyInstance({ name: "dense", defaultValue: false }))
     this.propertiesInitialize(args)
     
     if (clips) {
       this.clips.push(...clips.map(clip => {
-        // const { definitionId } = clip
-        // if (!definitionId) throw Errors.id + JSON.stringify(clip)
-        // const definition = Defined.fromId(definitionId)
-        const instance = clipInstance(clip) //definition.instanceFromObject(clip) as Clip
+        const instance = clipInstance(clip) 
         instance.track = this
         return instance
       }))
     }
   }
 
-  addClip(clip : Clip, insertIndex = 0) : void {
+  addClips(clips : Clips, insertIndex = 0) : void {
     let clipIndex = insertIndex || 0
     if (!this.dense) clipIndex = 0 // ordered by clip.frame values
 
@@ -55,20 +49,18 @@ export class TrackClass extends PropertiedClass implements Track {
     const movingClips : Clips = [] // build array of clips already in this.clips
     // build array of my clips excluding the clips we're inserting
     const spliceClips = this.clips.filter((other, index) => {
-      const moving = (other === clip)
+      const moving = clips.includes(other)
       if (moving) movingClips.push(other)
       // insert index should be decreased when clip is moving and comes before
       if (origIndex && moving && index < origIndex) clipIndex -= 1
       return !moving
     })
     // insert the clips we're adding at the correct index, then sort properly
-    spliceClips.splice(clipIndex, 0, clip)
+    spliceClips.splice(clipIndex, 0, ...clips)
     this.sortClips(spliceClips)
 
-    clip.track = this
-
-    // remove all my current clips and replace with new ones in one step
-    this.clips.splice(0, this.clips.length, ...spliceClips)
+    
+    arraySet(this.clips, spliceClips)
   }
 
 
@@ -90,48 +82,28 @@ export class TrackClass extends PropertiedClass implements Track {
     return changed
   }
 
+  // private assureTarget(clip: Clip): Tweenable | undefined {
+  //   const { timing } = clip
+  //   switch(timing) {
+  //     case Timing.Custom: return
+  //     case Timing.Container: return clip.container
+  //     case Timing.Content: return clip.content
+  //   }
+  // }
+
   assureFrames(quantize: number, clips?: Clips): void {
     const clipsArray = clips || this.clips
     // console.log(this.constructor.name, "assureFrames", clipsArray.length, "clip(s)")
     clipsArray.forEach(clip => {
       const { frames } = clip
-      if (isAboveZero(frames)) {
-        // console.log(this.constructor.name, "assureFrames clip has frames", frames)
-        return
-      }
+      if (isAboveZero(frames)) return
       
-      const { container, content, timing} = clip
-      switch(timing){
-        case Timing.Container: {
-          if (! isContainer(container)) break
-
-          const { definition } = container
-          if (!isUpdatableDurationDefinition(definition)) break
-
-          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id)
-          clip.frames = definition.frames(quantize)
-          // console.log(this.constructor.name, "assureFrames isUpdatableDurationDefinition", frames, "=>", clip.frames)
-          return
-        }
-        case Timing.Content: {
-          const { definition } = content
-          if (!isUpdatableDurationDefinition(definition)) break    
-          // console.log(this.constructor.name, "assureFrames clip needs frames from", timing, definition.id, definition.audibleSource)
-
-          clip.frames = definition.frames(quantize)
-          // console.log(this.constructor.name, "assureFrames isUpdatableDurationDefinition", frames, "=>", clip.frames)
-          return
-        }
-
-      }
+      clip.resetDuration(undefined, quantize)
       if (isAboveZero(clip.frames)) return
 
-      clip.frames = Default.frames
-      // console.log(this.constructor.name, "assureFrames using default", frames, "=>", clip.frames)
+      clip.frames = Math.floor(Default.duration * quantize)
     })
   }
-
-
 
   clips: Clips = []
 
@@ -159,11 +131,11 @@ export class TrackClass extends PropertiedClass implements Track {
   get frames() : number {
     const { clips } = this
     const { length } = clips
-    if (!length) return 0
+    if (!length) return Duration.None
 
     for (const clip of clips) {
       const { frames: clipFrames } = clip
-      switch(clipFrames){
+      switch(clipFrames) {
         case Duration.Unknown:
         case Duration.Unlimited: return clipFrames
       }
@@ -176,21 +148,22 @@ export class TrackClass extends PropertiedClass implements Track {
   private _identifier?: string
   get identifier(): string { return this._identifier ||= idGenerate()}
 
-  layer = 0
+  index = 0
 
   _mash?: Mash 
-  get mash(): Mash { return this._mash! }
+  get mash(): Mash { 
+    const { _mash } = this
+    assertMash(_mash)
+    return _mash
+  }
   set mash(value: Mash) { this._mash = value }
   
-  removeClip(clip : Clip) : void {
-    const spliceClips = this.clips.filter(other => clip !== other)
-    if (spliceClips.length === this.clips.length) {
-      // console.trace("removeClip", this.trackType, this.layer, this.clips)
-      throw Errors.internal + 'removeClip'
-    }
-    clip.trackNumber = -1
-    this.sortClips(spliceClips)
-    this.clips.splice(0, this.clips.length, ...spliceClips)
+  removeClips(clips : Clips) : void {
+    const newClips = this.clips.filter(other => !clips.includes(other))
+    assertTrue(newClips.length !== this.clips.length)
+    clips.forEach(clip => clip.trackNumber = -1)
+    this.sortClips(newClips)
+    arraySet(this.clips, newClips)
   }
 
   selectType = SelectType.Track
@@ -198,21 +171,22 @@ export class TrackClass extends PropertiedClass implements Track {
   selectables(): Selectables { return [this, ...this.mash.selectables()] }
     
   selectedItems(actions: Actions): SelectedItems {
-    return this.properties.map(property => ({
-      property, selectType: SelectType.Track, 
-      changeHandler: (property: string, value: Scalar) => {
-        assertPopulatedString(property)
-    
-        const redoValue = isUndefined(value) ? this.value(property) : value
-        const undoValue = this.value(property)
-        const options = {
-          type: ActionType.Change, target: this, property, redoValue, undoValue
+    return this.properties.map(property => {
+      const undoValue = this.value(property.name)
+      const target = this
+      return {
+        value: undoValue,
+        property, selectType: SelectType.Track, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+      
+          const options = { target, property, redoValue, undoValue }
+          actions.create(options)
         }
-        actions.create(options)
-      },
-      value: this.value(property.name)
-    }))
+      }
+    })
   }
+
   sortClips(clips?: Clips): boolean {
     const sortClips = clips || this.clips
     const changed = this.assureFrame(sortClips)
@@ -220,16 +194,9 @@ export class TrackClass extends PropertiedClass implements Track {
     return changed
   }
 
-  toJSON() : UnknownObject {
-    return {
-      dense: this.dense,
-      trackType: this.trackType,
-      layer: this.layer,
-      clips: this.clips,
-    }
+  toJSON(): UnknownObject {
+    const json = super.toJSON()
+    json.clips = this.clips
+    return json
   }
-
-  trackType = TrackType.Video
-
-
 }

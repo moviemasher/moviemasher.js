@@ -1,4 +1,5 @@
 import React from 'react'
+import { ClassButton, SelectType, labelInterpolate, labelTranslate } from '@moviemasher/moviemasher.js'
 import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
@@ -7,58 +8,107 @@ import { InspectorProperties } from './InspectorProperties'
 import { InspectorContent } from './InspectorContent'
 import { InspectorProps } from './Inspector'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
-import { InspectorType } from './InspectorType'
-import { InspectorTypePicker } from './InspectorTypePicker'
+import { InspectorPicked } from './InspectorPicked'
+import { InspectorPicker } from './InspectorPicker'
 import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
 import { Button } from '../../Utilities/Button'
-import { SelectType } from '@moviemasher/moviemasher.js'
-import { label } from '../../Utilities/Label'
+import { SaveControl } from '../Controls/SaveControl'
+import { SelectEditedControl } from '../Controls/SelectEditedControl'
+import { CreateEditedControl } from '../Controls/CreateEditedControl'
+import { RenderControl } from '../Controls/RenderControl'
+import { ViewControl } from '../Controls/ViewControl'
+import { View } from '../../Utilities/View'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {
   noApi?: boolean
 }
 
-export const DefaultInspectorProps: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props) {
+export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props) {
   const { noApi, ...options } = props
 
   const optionsStrict = panelOptionsStrict(options)
   optionsStrict.props.key ||= 'inspector'
   optionsStrict.props.className ||= 'panel inspector'
 
-  optionsStrict.header.content ||= [
-    DefaultIcons.inspector
-  ]
+  optionsStrict.header.content ||= [DefaultIcons.inspector]
  
   optionsStrict.footer.content ||= [
-    <InspectorTypePicker key="cast" className='icon-button' type="cast">{DefaultIcons.broadcast}</InspectorTypePicker>,
-    <InspectorTypePicker key="mash" className='icon-button' type="mash">{DefaultIcons.mm}</InspectorTypePicker>,
-    <InspectorTypePicker key="layer" className='icon-button' type="layer">{DefaultIcons.layer}</InspectorTypePicker>,
-    <InspectorTypePicker key="clip" className='icon-button' type="clip">{DefaultIcons.clip}</InspectorTypePicker>,
-    <InspectorTypePicker key="content" className='icon-button' type="content">{DefaultIcons.content}</InspectorTypePicker>,
-    <InspectorTypePicker key="container" className='icon-button' type="container">{DefaultIcons.container}</InspectorTypePicker>,
+    <InspectorPicker key="mash" className={ClassButton} id="mash">
+      {DefaultIcons.document}
+    </InspectorPicker>,
+    <InspectorPicker key="cast" className={ClassButton} id="cast">
+      {DefaultIcons.document}
+    </InspectorPicker>,
+    <InspectorPicker key="layer" className={ClassButton} id="layer">
+      {DefaultIcons.composer}
+    </InspectorPicker>,
+    <InspectorPicker key="clip" className={ClassButton} id="clip">
+      {DefaultIcons.clip}
+    </InspectorPicker>,
+    <InspectorPicker key="container" className={ClassButton} id="container">
+      {DefaultIcons.container}
+    </InspectorPicker>,
+    <InspectorPicker key="content" className={ClassButton} id="content">
+      {DefaultIcons.content}
+    </InspectorPicker>,
  ]
 
   const contentChildren = [<InspectorProperties key="properties" />]
+  const types = [SelectType.Clip, SelectType.Track, SelectType.Layer]
+  types.forEach(type => {
+    contentChildren.push(
+      <InspectorPicked key={`${type}-delete`} type={type}>
+        <EditorRemoveButton type={type}>
+          <Button>
+            {labelInterpolate('delete', { type })}
+            {DefaultIcons.remove}
+          </Button>
+        </EditorRemoveButton>
+      </InspectorPicked>
+    )
+  })
   if (!noApi) {
-    const types = [SelectType.Clip, SelectType.Track, SelectType.Layer]
-    types.forEach(type => {
-      const removeProps = { type }
-      const typeProps = { ...removeProps, key: `${type}-delete` }
-      const buttonProps = { 
-        startIcon: DefaultIcons.remove, children: label('remove', type) 
-      }
-      contentChildren.push(
-        <InspectorType { ...typeProps }>
-          <EditorRemoveButton { ...removeProps }>
-            <Button { ...buttonProps } />
-          </EditorRemoveButton>
-        </InspectorType>
-      )
-    })
+     contentChildren.push(
+      <InspectorPicked type="mash" key="inspector-mash">
+        <View>
+          <RenderControl key='render-process'>
+            <Button>
+              {labelTranslate('render')} 
+              {DefaultIcons.render}
+            </Button>
+          </RenderControl>
+          <ViewControl key='view-control'>
+            <Button>
+              {labelTranslate('view')} 
+              {DefaultIcons.view}
+            </Button>
+          </ViewControl>    
+        </View>  
+      </InspectorPicked>,
+      <InspectorPicked types="mash,cast" key="inspector-document">
+        <View>
+          <label>{labelTranslate('open')}</label>
+          <SelectEditedControl key="select-edited" />
+        </View>
+        <View>
+          <SaveControl key='save-process'>
+            <Button>
+              {labelTranslate('update')}
+              {DefaultIcons.document}
+            </Button>
+          </SaveControl>
+          <CreateEditedControl key="create-edited">
+            <Button>
+              {labelTranslate('create')} 
+              {DefaultIcons.document}
+            </Button>
+          </CreateEditedControl>
+        </View>
+      </InspectorPicked>,
+    )
   }
   optionsStrict.content.children ||= <>{contentChildren}</>
   
-
   optionsStrict.content.props!.label ||= '--clip-label'
 
   const children = <>

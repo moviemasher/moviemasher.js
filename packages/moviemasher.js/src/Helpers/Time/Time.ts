@@ -1,6 +1,7 @@
 export interface Time {
   add(time: Time): Time
   closest(timeRange: TimeRange): Time
+  copy: Time
   divide(number: number, rounding?: string): Time
   equalsTime(time: Time): boolean
   fps: number
@@ -17,6 +18,7 @@ export interface Time {
 }
 
 export interface TimeRange extends Time {
+  copy: TimeRange
   end: number
   endTime: Time
   frames: number

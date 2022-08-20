@@ -1,7 +1,7 @@
-import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
-import { Action, ActionOptions } from "./Action"
+import { Clip } from "../../../Edited/Mash/Track/Clip/Clip"
+import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
-export interface MoveClipActionObject extends ActionOptions {
+export interface MoveClipActionObject extends AddTrackActionObject {
   clip : Clip
   insertIndex : number
   redoFrame? : number
@@ -14,7 +14,7 @@ export interface MoveClipActionObject extends ActionOptions {
 /**
  * @category Action
  */
-export class MoveClipAction extends Action {
+export class MoveClipAction extends AddTrackAction {
   constructor(object : MoveClipActionObject) {
     super(object)
     const {
@@ -54,10 +54,12 @@ export class MoveClipAction extends Action {
   }
 
   redoAction() : void {
+    super.redoAction()
     this.addClip(this.trackIndex, this.insertIndex, this.redoFrame)
   }
 
   undoAction() : void {
     this.addClip(this.undoTrackIndex, this.undoInsertIndex, this.undoFrame)
+    super.undoAction()
   }
 }

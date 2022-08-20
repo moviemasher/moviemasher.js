@@ -1,7 +1,7 @@
 import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
-  DefinitionType, LoadType, TrackType, ValueObject, CommandOutputs, OutputType,
+  DefinitionType, LoadType, ValueObject, CommandOutputs, OutputType,
   RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault, assertPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
@@ -17,7 +17,7 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   const definitions: DefinitionObjects = [definitionObject]
   const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
   const track: TrackObject = {
-    trackType: String(type) === String(DefinitionType.Audio) ? TrackType.Audio : TrackType.Video,
+    dense: String(type) !== String(DefinitionType.Audio),
     clips: [clip]
   }
   const tracks: TrackObject[] = [track]
@@ -86,9 +86,7 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
 }
 
 export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId?: string, label?: string): DefinitionObject => {
-  const type: DefinitionType = definitionTypeFromRaw(loadType)
-  // console.log("renderingDefinitionObject", definitionId, typeof definitionId)
- 
+  const type: DefinitionType = definitionTypeFromRaw(loadType) 
   const id = definitionId || idUnique()
   const definition: DefinitionObject = { id, type, source, label }
   return definition

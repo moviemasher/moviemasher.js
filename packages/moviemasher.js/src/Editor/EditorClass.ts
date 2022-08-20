@@ -1,6 +1,6 @@
 import {
-  StringObject, Timeout} from "../declarations"
-import { Size } from "../Utility/Size"
+  StringObject, Timeout, UnknownObject} from "../declarations"
+import { size, Size, sizeAboveZero } from "../Utility/Size"
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Edited } from "../Edited/Edited"
 import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
@@ -8,20 +8,20 @@ import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from "../Helpers/Time/TimeUtilities"
-import { Effect, isEffectDefinition } from "../Media/Effect/Effect"
-import { Track } from "../Edited/Mash/Track/Track"
+import { Effect } from "../Media/Effect/Effect"
+import { assertTrack, Track } from "../Edited/Mash/Track/Track"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Default } from "../Setup/Default"
 import {
   ActionType, assertDefinitionType, DefinitionType, EditType, EventType,
-  isEditType, LayerType, MasherAction, TrackType
-} from "../Setup/Enums"
+  isEditType, isLoadType, LayerType, LoadType, MasherAction} from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import {
-  assertPopulatedString, assertTrue, isAboveZero, isBoolean, isNumber, isObject, isPopulatedObject,
-  isPositive} from "../Utility/Is"
+  assertAboveZero,
+  assertPopulatedObject,
+  assertPopulatedString, assertPositive, assertTrue, isAboveZero, isArray, isBoolean, isNumber, isObject, isPositive} from "../Utility/Is"
 import {
-  assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, isCastData,
+  assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, EditorIndex, isCastData,
   MashData,
 } from "./Editor"
 import { editorSelectionInstance } from "./EditorSelection/EditorSelectionFactory"
@@ -45,10 +45,13 @@ import { isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
 import { Svgs } from "./Preview/Preview"
 import { svgElement } from "../Utility/Svg"
-import { idGenerate } from "../Utility/Id"
+import { idGenerate, idTemporary } from "../Utility/Id"
 import { assertContainer } from "../Container/Container"
 import { Cast } from "../Edited/Cast/Cast"
 import { GraphFileOptions } from "../MoveMe"
+import { arrayUnique } from "../Utility/Array"
+import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
+import { ActivityInfo, ActivityType } from "../Utility/Activity"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -82,57 +85,83 @@ export class EditorClass implements Editor {
 
   actions: Actions
 
-  add(object: DefinitionObject, frameOrIndex = 0, trackIndex = 0): Promise<ClipOrEffect> {
-    if (!isPopulatedObject(object)) throw Errors.argument + 'add'
+  add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]> {
+    const objects = isArray(object) ? object : [object]
+    if (!objects.length) return Promise.resolve([])
+    
+    const definitions = objects.map(definitionObject => {
+      assertPopulatedObject(definitionObject)
+    
+      return Defined.fromObject(definitionObject)
+    })
+    if (!editorIndex) return Promise.resolve(definitions)
 
-    // console.log(this.constructor.name, "add object", object)
-    const definition = Defined.fromObject(object)
+    const loadDefinitions = definitions.filter(definition => {
+      if (!isUpdatableDurationDefinition(definition)) return false
 
-    // console.log(this.constructor.name, "add definition", definition)
-    const { id, label } = definition
-
-    if (isEffectDefinition(definition)) {
-      const effect = definition.instanceFromObject()
-      return this.addEffect(effect, frameOrIndex).then(() => effect)
-    }
-
-    const clipObject: ClipObject = { label }
-    if (isContentDefinition(definition)) clipObject.contentId = id
-    else clipObject.containerId = id
-
-    const clip = clipDefault.instanceFromObject(clipObject)
-
-
-    // const definition = Factory[type].definition(object)
-    // const clip = definition.instanceFromObject() as Clip
-    // console.log(this.constructor.name, "add", clip)
-    return this.addClip(clip, frameOrIndex, trackIndex).then(() => clip)
+      return !isAboveZero(definition.duration)
+    }) as UpdatableDurationDefinition[]
+    const files = loadDefinitions.map(definition => definition.graphFile(true))
+    const { preloader } = this
+    const promise = preloader.loadFilesPromise(files)
+    
+    return promise.then(() => {
+      const clips = definitions.map(definition => {
+        const { id, label } = definition
+        const clipObject: ClipObject = { label }
+        if (isContentDefinition(definition)) clipObject.contentId = id
+        else clipObject.containerId = id
+        return clipDefault.instanceFromObject(clipObject)
+      })
+      return this.addClip(clips, editorIndex).then(() => definitions)
+    })
   }
 
-  addClip(clip: Clip, frameOrIndex = 0, trackIndex = 0): Promise<void> {
+  addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void> {
+    // if track index defined - drop on timeline
+    // if layer index defined - drop on composer
+    // otherwise - drop on player
+
+    const { clip: frameOrIndex = 0, track: trackIndex = 0 } = editorIndex
+    const clips = isArray(clip) ? clip : [clip]
+    const [firstClip] = clips
+    if (!firstClip) return Promise.resolve()
+
     const { mash } = this.selection
-    if (!mash) throw new Error(Errors.selection)
+    assertMash(mash)
+   
+    const { tracks } = mash
+    const { length } = tracks
+    assertAboveZero(length)
 
-    const { trackType } = clip
+    const trackPositive = isPositive(trackIndex)
+    const track = trackPositive ? tracks[trackIndex] : undefined
+    const trackClips = track?.clips || []
+    let index = trackIndex
+    if (index < 0) index = length
+    else if (index >= length) index = length - 1
 
-    const tracksOfType = mash.tracks.filter(track => track.trackType === trackType)
-    const track = tracksOfType[trackIndex]
-    const trackCount = tracksOfType.length
+    const dense = track?.dense 
 
     const redoSelection: EditorSelectionObject = { 
-      ...this.selection.object, track, clip 
+      ...this.selection.object, clip: firstClip 
     }
+    const createTracks = trackPositive ? 0 : clips.length
     const options: ActionObject = {
-      clip, trackType, type: ActionType.AddClipToTrack,
-      redoSelection,
+      clips, type: ActionType.AddClipToTrack, trackIndex,
+      redoSelection, createTracks
     }
-    if (track.dense) {
-      options.insertIndex = frameOrIndex
-      options.createTracks = Math.min(1, Math.max(0, 1 - trackCount))
+    
+    if (dense) {
+      const insertIndex = isPositive(frameOrIndex) ? frameOrIndex : trackClips.length
+      options.insertIndex = insertIndex
     } else {
-      options.trackIndex = trackIndex
-      clip.frame = track.frameForClipNearFrame(clip, frameOrIndex)
-      options.createTracks = Math.max(0, trackIndex + 1 - trackCount)
+      if (createTracks) options.redoFrame = 0
+      else {
+        assertTrack(track)
+        const frame = isPositive(frameOrIndex) ? frameOrIndex : track.frames
+        options.redoFrame = track.frameForClipNearFrame(firstClip, frame)
+      }
     }
     this.actions.create(options)
     return this.loadMashAndDraw()
@@ -166,6 +195,126 @@ export class EditorClass implements Editor {
     return this.loadMashAndDraw()
   }
 
+  addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]> {
+    let promise: Promise<void> = Promise.resolve()
+    const defs: DefinitionObjects = []
+    const { preloader, eventTarget } = this
+    files.forEach(file => {
+      const { name, type } = file
+      const coreType = type.split('/').shift()
+      const url = URL.createObjectURL(file)
+      const definitionObject: DefinitionObject = {
+        type: coreType, label: name, url, source: url, id: idGenerate()
+      }
+      const info = { 
+        id: idGenerate('activity'), type: ActivityType.Analyze, label: name 
+      }
+      switch(coreType){
+        case LoadType.Audio: {
+          const audioPromise = promise.then(() => {
+            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
+            return preloader.audioPromise(url)
+          })
+          promise = audioPromise.then(audio => {
+            const { duration } = audio
+            if (isAboveZero(duration)) {
+              const object = { 
+                ...definitionObject, loadedAudio: audio, duration: audio.duration 
+              }
+              defs.push(object)
+              eventTarget.emit(EventType.Activity, { 
+                ...info, step: 1, steps: 1, type: ActivityType.Complete
+              })
+            } else {
+              eventTarget.emit(EventType.Activity, { 
+                ...info, type: ActivityType.Error, error: 'import.duration', 
+                value: duration,
+              }) 
+            }
+          })
+          break
+        }
+        case LoadType.Image: {
+          const imagePromise = promise.then(() => {
+            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
+            return preloader.imagePromise(url)
+          })
+          promise = imagePromise.then(image => {
+            const previewSize = size(image)
+            if (sizeAboveZero(previewSize)) {
+              const object = { 
+                ...definitionObject, icon: url, loadedImage: image, 
+                previewSize,
+              }
+              defs.push(object)
+              eventTarget.emit(EventType.Activity, { 
+                ...info, step: 1, steps: 1, type: ActivityType.Complete
+              })
+
+            } else {
+              const { width, height } = previewSize
+              eventTarget.emit(EventType.Activity, { 
+                ...info, type: ActivityType.Error, error: 'import.size', 
+                value: `${width}x${height}`,
+              })  
+            }
+          })
+          break
+        }
+        case LoadType.Video: {
+          const videoPromise = promise.then(() => {
+            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
+            return preloader.videoPromise(url)
+          })
+          promise = videoPromise.then(video => {
+            const { duration, videoWidth, clientWidth, videoHeight, clientHeight } = video
+            const width = videoWidth || clientWidth
+            const height = videoHeight || clientHeight
+            const previewSize = { width, height }
+            const sizeOkay = sizeAboveZero(previewSize)
+            const durationOkay = isAboveZero(duration)
+            if (sizeOkay && durationOkay) {
+              const canvas = document.createElement('canvas')
+              const ctx = canvas.getContext('2d')
+              assertTrue(ctx)
+              
+              canvas.height = previewSize.height
+              canvas.width = previewSize.width
+              ctx.drawImage(video, 0, 0, previewSize.width, previewSize.height)
+
+              const object = { 
+                ...definitionObject, loadedVideo: video, duration: video.duration,
+                previewSize, icon: canvas.toDataURL()
+              }
+              defs.push(object)
+              eventTarget.emit(EventType.Activity, { 
+                ...info, step: 1, steps: 1, type: ActivityType.Complete 
+              }) 
+            } else { 
+              eventTarget.emit(EventType.Activity, { 
+                ...info, type: ActivityType.Error, 
+                error: sizeOkay ? 'import.duration' : 'import.size', 
+                value: sizeOkay ? duration : `${width}x${height}`,
+              })  
+            }
+          })
+          break
+        }
+      }
+    })
+    const definitionsPromise = promise.then(() => this.add(defs, editorIndex))
+
+    return definitionsPromise.then(definitions => {
+      const { length } = definitions
+      if (length) {
+        const types = definitions.map(object => object.type)
+        const definitionTypes = arrayUnique(types)
+        this.eventTarget.emit(EventType.Added, { definitionTypes })
+      }
+      return definitions
+    })
+  }
+
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void {
     const { cast } = this.selection
     assertCast(cast)
@@ -195,19 +344,21 @@ export class EditorClass implements Editor {
     const { mash } = layer
     this.configureMash(mash)
     const redoSelection: EditorSelectionObject = { cast, layer, mash }
-    const options = { type: ActionType.AddLayer, redoSelection, layerAndPosition }
+    const options = { 
+      type: ActionType.AddLayer, redoSelection, layerAndPosition 
+    }
     this.actions.create(options)
   }
 
-  addTrack(trackType = TrackType.Video): void {
+  addTrack(): void {
     const { mash, cast } = this.selection
     const redoSelection: EditorSelectionObject = { mash, cast }
-    this.actions.create({ redoSelection, trackType, type: ActionType.AddTrack })
+    this.actions.create({ redoSelection, type: ActionType.AddTrack })
   }
 
-  autoplay = Default.masher.autoplay
+  autoplay = Default.editor.autoplay
 
-  private _buffer = Default.masher.buffer
+  private _buffer = Default.editor.buffer
   get buffer(): number { return this._buffer }
   set buffer(value: number) {
     const number = Number(value)
@@ -220,14 +371,12 @@ export class EditorClass implements Editor {
 
   can(masherAction: MasherAction): boolean {
     const { selection } = this
-    const { track, clip, mash } = selection
+    const { track, clip, mash, layer } = selection
     switch (masherAction) {
       case MasherAction.Save: return this.actions.canSave
       case MasherAction.Undo: return this.actions.canUndo
       case MasherAction.Redo: return this.actions.canRedo
-      case MasherAction.Remove: return !!(
-        clip || (track && mash?.trackCount(track.trackType) === track.layer + 1)
-      )
+      case MasherAction.Remove: return !!(clip || track || layer)
       case MasherAction.Render: return !!mash?.id
       default: throw Errors.argument + 'can'
     }
@@ -339,16 +488,27 @@ export class EditorClass implements Editor {
   }
 
   get definitions(): Definition[] {
-    const { edited } = this
-    if (!edited) return []
+    const { mashes } = this
 
-    const mashes = isCast(edited) ? edited.mashes : [edited as Mash]
     const ids = [...new Set(mashes.flatMap(mash => mash.definitionIds))]
     const definitions = ids.map(id => Defined.fromId(id))
     return definitions
   }
 
+  get definitionsUnsaved(): Definition[] {
+    const { definitions } = this
+
+    return definitions.filter(definition => {
+      const { type, id } = definition
+      if (!isLoadType(type)) return false
+
+      return idTemporary(id)
+    })
+  }
+
   private destroy() { if (!this.castDestroy()) this.mashDestroy() }
+
+  private drawTimeout?: Timeout
 
   get duration(): number { return this.selection.mash?.duration || 0 }
 
@@ -364,12 +524,6 @@ export class EditorClass implements Editor {
 
   get editingCast(): boolean { return !!this.selection.cast }
 
-  private emitMash(): void {
-    this.eventTarget.emit(EventType.Mash)
-    this.eventTarget.emit(EventType.Track)
-    this.eventTarget.emit(EventType.Duration)
-  }
-
   private get endTime(): Time {
     const { mash } = this.selection
     return mash ? mash.endTime.scale(this.fps, 'floor') : timeFromArgs()
@@ -377,9 +531,9 @@ export class EditorClass implements Editor {
 
   eventTarget = new Emitter()
 
-  private _fps = Default.masher.fps
+  private _fps = Default.editor.fps
   get fps(): number {
-    return this._fps || this.selection.mash?.quantize || Default.masher.fps
+    return this._fps || this.selection.mash?.quantize || Default.editor.fps
   }
   set fps(value: number) {
     const number = Number(value)
@@ -424,11 +578,23 @@ export class EditorClass implements Editor {
   
     if (isMash(mash)) {
       mash.clearPreview()
-      if (action instanceof ChangeAction)  {
+      if (action instanceof ChangeAction) {
         const { property, target } = action
-        if (property === "gain" && isClip(target)) {
-          mash.composition.adjustClipGain(target, edited.quantize)
-          return
+        switch(property) {
+          // case "frames":
+          // case "startTrim":
+          // case "endTrim":
+          // case "speed":
+          // case "frame": {
+          //   mash.resetFrames()
+          //   break
+          // }
+          case "gain": {
+            if (isClip(target)) {
+              mash.composition.adjustClipGain(target, mash.quantize)
+            }    
+            break
+          }
         }
       }
     } 
@@ -437,15 +603,11 @@ export class EditorClass implements Editor {
     const promise = edited.reload() || Promise.resolve()
     
     promise.then(() => {
-      if (!mash) {
-        // console.log(this.constructor.name, "handleAction handleDraw")
-        this.handleDraw()
-      }
+      if (!mash) this.handleDraw()
+      // console.log(this.constructor.name, "handleAction", type)
       this.eventTarget.emit(EventType.Action, { action })
     })
   }
-
-  private drawTimeout?: Timeout
 
   private handleDraw(event?: Event): void {
     // console.log(this.constructor.name, "handleDraw")
@@ -511,6 +673,7 @@ export class EditorClass implements Editor {
   }
 
   private loadMashData(data: MashData = {}): Promise<void> {
+    // console.log(this.constructor.name, "loadMashData", data)
     const { mash: mashObject = {}, definitions: definitionObjects = [] } = data
     Defined.undefineAll()
     Defined.define(...definitionObjects)
@@ -525,7 +688,7 @@ export class EditorClass implements Editor {
     })
   }
 
-  private _loop = Default.masher.loop
+  private _loop = Default.editor.loop
   get loop(): boolean { return this._loop }
   set loop(value: boolean) {
     const boolean = !!value
@@ -543,7 +706,15 @@ export class EditorClass implements Editor {
     return true
   }
 
-  move(object: ClipOrEffect, frameOrIndex = 0, trackIndex = 0): void {
+  private get mashes(): Mash[] {
+    const { edited } = this
+    if (!edited) return []
+
+    return isCast(edited) ? edited.mashes : [edited as Mash]
+  }
+
+  move(object: ClipOrEffect, editorIndex: EditorIndex = {}): void {
+    const { clip: frameOrIndex = 0, track: trackIndex = 0} = editorIndex
     if (!isObject(object)) throw Errors.argument + 'move'
     const { type } = object
     if (type === DefinitionType.Effect) {
@@ -551,41 +722,46 @@ export class EditorClass implements Editor {
       return
     }
 
-    this.moveClip(<Clip>object, frameOrIndex, trackIndex)
+    this.moveClip(<Clip>object, editorIndex)
   }
 
-  moveClip(clip: Clip, frameOrIndex = 0, trackIndex = 0): void {
+  moveClip(clip: Clip, editorIndex: EditorIndex = {}): void {
+    assertClip(clip)
+
+    const { clip: frameOrIndex = 0, track: track = 0} = editorIndex
+    assertPositive(frameOrIndex)
+
     const { mash } = this.selection
-    if (!mash) throw new Error(Errors.selection)
+    assertMash(mash)
 
-    // console.log("moveClip", "frameOrIndex", frameOrIndex, "trackIndex", trackIndex)
-    if (!isPositive(frameOrIndex)) throw Errors.argument + 'moveClip frameOrIndex'
-    if (!isPositive(trackIndex)) throw Errors.argument + 'moveClip trackIndex'
+    const { tracks } = mash
 
-    const { trackType, trackNumber: undoTrackIndex } = clip
+    const { trackNumber: undoTrack } = clip
     const options: any = {
       clip,
-      trackType,
-      trackIndex,
-      undoTrackIndex,
+      trackIndex: track,
+      undoTrackIndex: undoTrack,
       type: ActionType.MoveClip
     }
+    const creating = !isPositive(track)
+    if (creating) options.createTracks = 1
 
-    const redoTrack = mash.trackOfTypeAtIndex(trackType, trackIndex)
-    const undoTrack = mash.trackOfTypeAtIndex(trackType, undoTrackIndex)
-    const currentIndex = redoTrack.clips.indexOf(clip)
+    const undoDense = isPositive(undoTrack) && tracks[undoTrack].dense 
+    const redoDense = isPositive(track) && tracks[track].dense
+   
+    const currentIndex = creating ? -1 : tracks[track].clips.indexOf(clip)
 
-    if (redoTrack.dense) options.insertIndex = frameOrIndex
-    if (undoTrack.dense) {
+    if (redoDense) options.insertIndex = frameOrIndex
+    if (undoDense) {
       options.undoInsertIndex = currentIndex
       if (frameOrIndex < currentIndex) options.undoInsertIndex += 1
     }
 
-    if (!(redoTrack.dense && undoTrack.dense)) {
+    if (!(redoDense && undoDense)) {
       const { frame } = clip
-      const insertFrame = redoTrack.frameForClipNearFrame(clip, frameOrIndex)
+      const insertFrame = creating ? 0 : tracks[track].frameForClipNearFrame(clip, frameOrIndex)
       const offset = insertFrame - frame
-      if (!offset && trackIndex === undoTrackIndex) return // no change
+      if (!offset && track === undoTrack) return // no change
 
       options.undoFrame = frame
       options.redoFrame = frame + offset
@@ -672,7 +848,7 @@ export class EditorClass implements Editor {
     return parseFloat(`0.${"0".repeat(this.precision - 1)}1`)
   }
 
-  precision = Default.masher.precision
+  precision = Default.editor.precision
 
   preloader: BrowserLoaderClass
 
@@ -782,7 +958,7 @@ export class EditorClass implements Editor {
 
   get timeRange(): TimeRange { return this.selection.mash?.timeRange || timeRangeFromArgs(0, this.fps) }
 
-  private _volume = Default.masher.volume
+  private _volume = Default.editor.volume
   get volume(): number { return this._volume }
   set volume(value: number) {
     const number = Number(value)

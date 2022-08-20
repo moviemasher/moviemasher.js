@@ -1,7 +1,7 @@
 import { JsonValue, UnknownObject, Value, ValueObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { Errors } from "../Setup/Errors"
-import { isDefined, isNan, isNumeric, isString, isUndefined } from "../Utility/Is"
+import { assertDefined, assertValueObject, isBoolean, isDefined, isNan, isNumber, isNumeric, isString, isUndefined } from "../Utility/Is"
 import { Time, TimeRange } from "./Time/Time"
 
 import { Filter } from "../Filter/Filter"
@@ -12,7 +12,7 @@ import { propertyTypeIsString } from "./PropertyType"
 import { Instance } from "../Instance/Instance"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
-  if (typeof elements === "string") return String(elements).split(',')
+  if (isString(elements)) return String(elements).split(',')
 
   return <Value[]> elements
 }
@@ -75,16 +75,14 @@ export class Evaluator {
   }
 
   private evaluateBooleanValue(value: Value): boolean {
-    switch (typeof value) {
-      case 'boolean': return value
-      case 'number': return !!value
-      case 'string': {
-        switch (value) {
-          case 'true': return true
-          case 'false':
-          case '': return false
-        }
-      }
+    if (isBoolean(value)) return value
+
+    if (isNumber(value)) return !!value
+
+    switch (value) {
+      case 'true': return true
+      case 'false':
+      case '': return false
     }
     return false
   }
@@ -92,11 +90,8 @@ export class Evaluator {
   private evaluateConditionals(evaluation: Evaluation, conditionals: ValueObject[], debug?: boolean): Value {
     const trueConditional = conditionals.find(conditional => {
       const expression = EvaluatorConditional(conditional)
-      if (isNumeric(expression)) {
-        // console.log("evaluateConditionals isNumeric", expression, Number(expression))
-        return !!Number(expression)
-      }
-
+      if (isNumeric(expression)) return !!Number(expression)
+      
       switch (expression) {
         case 'true': return true
         case 'false':
@@ -104,19 +99,19 @@ export class Evaluator {
       }
 
       const childEvaluation = new Evaluation(expression, evaluation)
-
       this.evaluateEvaluation(childEvaluation, debug)
-
       const { result } = childEvaluation
       if (debug) this.logDebug(childEvaluation)
 
       return this.evaluateBooleanValue(result)
 
     })
-    if (typeof trueConditional === "undefined") throw Errors.eval.conditionTruth
-    if (typeof trueConditional.value === "undefined") throw Errors.eval.conditionValue
+    assertValueObject(trueConditional, Errors.eval.conditionTruth) 
 
-    return trueConditional.value
+    const { value } = trueConditional
+    if (isUndefined(value)) throw Errors.eval.conditionValue
+
+    return value
   }
 
   private evaluateEvaluation(evaluation: Evaluation, debug?: boolean): void {
@@ -357,11 +352,12 @@ export class Evaluator {
 
 
   propertyValue(key: string): Value {
-    const selectionValue = this.instance.value(key)!
-    switch (typeof selectionValue) {
-      case 'boolean': return selectionValue ? 1 : 0
-      default: return selectionValue
-    }
+    const selectionValue = this.instance.value(key)
+    assertDefined(selectionValue, key)
+
+    if (isBoolean(selectionValue)) return selectionValue ? 1 : 0
+    
+    return selectionValue
   }
 
   private setExpression(key: string, expression: string): void {

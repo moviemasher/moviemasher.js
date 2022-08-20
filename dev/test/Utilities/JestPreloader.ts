@@ -28,13 +28,15 @@ export class JestPreloader extends BrowserLoaderClass {
     const pathResolved = path.resolve(TestFilePrefix, file)
     // console.log(this.constructor.name, "requestImage", url, pathResolved)
     const loadImageResult = loadImage(pathResolved).then(image => {
-      // console.log(this.constructor.name, "requestImage -> loadImage", url, pathResolved, image)
       const { width, height } = image
+      // console.log(this.constructor.name, "requestImage -> loadImage", url, pathResolved, width, height)
       const dimensions = { width, height }
-      this.updateDefinitionSize(definition, dimensions)
+      this.updateDefinitionSize(definition, dimensions, this.server)
 
       return image as any as LoadedImage
     })
     return loadImageResult
   }
+
+  server = false
 }

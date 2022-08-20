@@ -10,14 +10,11 @@ import { PlayerTimeControl } from './PlayerTimeControl'
 import { PlayerPlaying } from './PlayerPlaying'
 import { PlayerNotPlaying } from './PlayerNotPlaying'
 import { PlayerProps } from './Player'
-import { SelectEditedControl } from '../Controls/SelectEditedControl'
-import { CreateEditedControl } from '../Controls/CreateEditedControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
-import { SaveControl } from '../Controls/SaveControl'
-import { View } from '../../Utilities/View'
-import { Process } from '../Process/Process'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
+import { ClassButton } from '@moviemasher/moviemasher.js'
+import { PlayerTime } from './PlayerTime'
 
 export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
   noApi?: boolean
@@ -36,29 +33,17 @@ export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = 
   )
   optionsStrict.header.content ||= [
     DefaultIcons.app,
-    <EditorUndoButton key='undo'><Button startIcon={DefaultIcons.undo}>Undo</Button></EditorUndoButton>,
-    <EditorRedoButton key='redo'><Button startIcon={DefaultIcons.redo}>Redo</Button></EditorRedoButton>,
+    <EditorUndoButton key='undo'><Button>{DefaultIcons.undo}Undo</Button></EditorUndoButton>,
+    <EditorRedoButton key='redo'><Button>{DefaultIcons.redo}Redo</Button></EditorRedoButton>,
   ]
-
- 
-  if (!noApi) {
-    optionsStrict.header.after ||= [
-      <Process key='save-process' id='data'>
-        <View><SaveControl><Button>Save</Button></SaveControl></View>
-      </Process>,
-      <SelectEditedControl key="select-edited" />,
-      <CreateEditedControl key="create-edited">
-        <Button>{DefaultIcons.add}New</Button>
-      </CreateEditedControl>,
-    ]
-  }
-
+  
   optionsStrict.footer.content ||= [
-    <PlayerButton key='play-button' className='icon-button'>
+    <PlayerButton key='play-button' className={ClassButton}>
       <PlayerPlaying key='playing'>{DefaultIcons.playerPause}</PlayerPlaying>
       <PlayerNotPlaying key='not-playing'>{DefaultIcons.playerPlay}</PlayerNotPlaying>
     </PlayerButton>,
-    <PlayerTimeControl key='time-slider'/>
+    <PlayerTimeControl key='time-slider'/>,
+    <PlayerTime key='time' className="time" />
   ]
 
   const children = <>

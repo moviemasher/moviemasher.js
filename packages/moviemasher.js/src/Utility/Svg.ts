@@ -2,6 +2,7 @@ import { Size } from "./Size"
 import { NamespaceSvg } from "../Setup/Constants"
 import { Rect, isRect, rectFromSize } from "./Rect"
 import { isAboveZero } from "./Is"
+import { Svg } from "../Editor/Preview/Preview"
 
 export const svgOfDimensions = (dimensions: Size) => {
   const { width, height } = dimensions
@@ -13,7 +14,6 @@ export const svgOfDimensions = (dimensions: Size) => {
 }
 
 export const svgGroupElement = (dimensions?: Size): SVGGElement => {
- 
   const element = globalThis.document.createElementNS(NamespaceSvg, 'g')
   if (dimensions) {
     const { width, height } = dimensions
@@ -43,4 +43,12 @@ export const svgElement = (size: Size): SVGSVGElement => {
   svgElement.setAttribute('height', String(height))
   svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
   return svgElement
+}
+
+export const svgBackcolor = (backcolor: string, size: Size): Svg => {
+  const element = svgElement(size)
+  element.appendChild(svgPolygonElement(size, '', backcolor))
+  const svg: Svg = { element, id: 'backcolor' }
+  return svg
+
 }

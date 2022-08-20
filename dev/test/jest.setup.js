@@ -38,11 +38,11 @@ export default [
 //   fs.rmSync(TestRenderCache, { recursive: true, force: true })
 // }
 
-const { toMatchImageSnapshot } = require('jest-image-snapshot')
+// const { toMatchImageSnapshot } = require('jest-image-snapshot')
 
-expect.extend({ toMatchImageSnapshot })
+// expect.extend({ toMatchImageSnapshot })
 
-jest.setTimeout(60 * 60 * 1000)
+jest.setTimeout(10 * 1000)
 
 require('jest-fetch-mock').enableMocks()
 
@@ -61,10 +61,12 @@ beforeAll(() => {})
 beforeEach(() => {
   Defined.undefineAll()
   Defined.define({
-    id: 'image-square', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
+    id: 'image-square', type: DefinitionType.Image, 
+    source: '../shared/image/globe.jpg'
   })
   Defined.define({
-    id: 'image-landscape', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
+    id: 'image-landscape', type: DefinitionType.Image, 
+    source: '../shared/image/cable.jpg'
   })
   Defined.define({
     type: "videosequence",
@@ -72,14 +74,15 @@ beforeEach(() => {
     url: 'video/frames/',
     source: 'video/source.mp4',
     audio: 'video/audio.mp3',
-    duration: 3, fps: 30, width: 640, height: 480
+    duration: 3, fps: 30, sourceSize: {width: 640, height: 480}
   })
   Defined.define({
     type: "video",
     label: "Video", id: "video-rgb",
     url: 'video.mp4',
     source: 'video.mp4',
-    duration: 3, fps: 10, width: 640, height: 480
+    duration: 3, fps: 10, sourceSize: { width: 640, height: 480 }
+    
   })
   fontDefault.url = fontDefault.source
 })

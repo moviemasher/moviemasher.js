@@ -10,7 +10,6 @@ import { View } from "../../../../Utilities/View"
 import { InspectorProperty, InspectorPropertyProps } from "../../../Inspector/InspectorProperty"
 
 
-const TimingInputKey = 'opacity-input-tween'
 export function TimingGroupInput(props: DataGroupProps): ReactResult {
   const { selectType } = props
   assertSelectType(selectType)
@@ -37,4 +36,4 @@ export function TimingGroupInput(props: DataGroupProps): ReactResult {
   return <View>{Object.values(elementsByName)}</View>
 }
 
-DataGroupInputs[DataGroup.Timing] = <TimingGroupInput key="timing-input" />
+DataGroupInputs[DataGroup.Timing] = <TimingGroupInput key="timing-group-input" />

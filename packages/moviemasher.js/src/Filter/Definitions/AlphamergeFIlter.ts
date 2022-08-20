@@ -21,6 +21,6 @@ export class AlphamergeFilter extends FilterDefinitionClass {
     commandFilters.push(commandFilter)
     return commandFilters
   }
-  // _ffmpegFilter? = 'overlay'
+
   phase = Phase.Finalize
 }

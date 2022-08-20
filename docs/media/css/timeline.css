@@ -1,149 +1,122 @@
-.moviemasher .editor .timeline .track-icon {
-  background-color: var(--back-secondary);
-  color: var(--fore-secondary);
-  display: grid;
-}
-
-.moviemasher .editor .timeline {
+.moviemasher .editor .panel.timeline {
   isolation: isolate;
   grid-area: timeline;
 }
 
-.moviemasher .editor .timeline .head {
-  grid-template-columns: repeat(7, auto) 1fr min-content;
+.moviemasher .editor .panel.timeline .head {
+  grid-template-columns: 1fr repeat(6, auto) 1fr min-content;
 }
 
-.moviemasher .editor .timeline .content {
-  position: relative;
+.moviemasher .editor .panel.timeline .foot {
+  grid-auto-flow: column;
+  grid-template-columns: repeat(4, min-content) ;
+}
+
+.moviemasher .editor .panel.timeline .content {
   overflow: auto;
+  overscroll-behavior: none;
   display: grid;
-  grid-template-areas: "scrubber-icon scrubber" "tracks-icon tracks";
   grid-template-columns: var(--track-width) 1fr;
-  grid-template-rows: var(--scrubber-height) 1fr;
+  grid-template-rows: var(--scrubber-height) repeat(auto-fill, var(--track-height));
+  row-gap: var(--spacing);
+  padding: var(--padding);
+  position: relative;
 }
 
-.moviemasher .editor .timeline .scrub-pad,
-.moviemasher .editor .timeline .scrub {
-  background-color: var(--back-secondary);
-  border-bottom: var(--border);
+.moviemasher .editor .panel.timeline .content .scrubber-bar,
+.moviemasher .editor .panel.timeline .content .scrubber-icon {
+  z-index: 3;
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  left: var(--track-width);
 }
 
-.moviemasher .editor .timeline .scrub-pad {
-  grid-area: scrubber-icon;
-  z-index: 2;
-}
-
-.moviemasher .editor .timeline .scrub {
-  grid-area: scrubber;
-  z-index: 3;
-}
-
-.moviemasher .editor .timeline .scrub-bar-container {
+.moviemasher .editor .panel.timeline .content .scrubber-bar {
   pointer-events: none;
-  position: relative;
-  grid-area: tracks;
-  z-index: 4;
+  top: var(--scrubber-height);
 }
 
-.moviemasher .editor .timeline .scrub-bar {
+.moviemasher .editor .panel.timeline .content .scrubber-icon {
+  box-shadow: calc(-1 * var(--track-width)) 0 0 0 var(--back-secondary);
+  --spacing: 4px;
+  top: 0px;
+  background-color: var(--back-secondary);
+}
+.moviemasher .editor .panel.timeline .content .scrubber-element-bar,
+.moviemasher .editor .panel.timeline .content .scrubber-element-icon {
+  position: absolute;
+  background-color: var(--color-fore-secondary);
+}
+
+.moviemasher .editor .panel.timeline .content .scrubber-element-bar {
   width: 1px;
   top: 0px;
   bottom: 0px;
 }
 
-.moviemasher .editor .timeline .scrub-icon {
-  margin-left: calc(0px - (var(--scrubber-height) / 2));
-  width: var(--scrubber-height);
+.moviemasher .editor .panel.timeline .content .scrubber-element-icon {
+  --half-width: calc(var(--scrubber-width) / 2);
+  margin-left: calc(0px - (var(--scrubber-width) / 2));
+  width: var(--scrubber-width);
   height: var(--scrubber-height);
-  clip-path: polygon(3px 3px, calc(100% - 3px) 3px, 50% calc(100% - 3px));
-}
-.moviemasher .editor .timeline .scrub-bar,
-.moviemasher .editor .timeline .scrub-icon {
-  position: absolute;
-  background-color: var(--color-fore-secondary);
-}
-
-
-.moviemasher .editor .timeline .tracks {
-  grid-area: tracks;
-  grid-column-start: tracks-icon;
+  clip-path: polygon(
+    0 var(--spacing),
+    var(--scrubber-width) var(--spacing),
+    calc(50% + 1px) var(--scrubber-height),
+    50% var(--scrubber-height)
+  );
 }
 
-.moviemasher .editor .timeline .foot {
-  grid-template-columns: 50% repeat(auto-fill, var(--button-size));
-}
-
-.moviemasher .editor .timeline-sizer {
+.moviemasher .editor .panel.timeline .content .timeline-sizer {
   pointer-events: none;
   position: absolute;
-  left: var(--track-width);
-  right: 0px;
   top: var(--scrubber-height);
+  left: var(--track-width);
   bottom: 0px;
+  right: 0px;
 }
 
-
-.moviemasher .editor .timeline .track {
-  display: grid;
-  grid-template-columns: var(--track-width) 1fr;
-  border-bottom: var(--border);
-  height: var(--track-height);
-  overflow-y: hidden;
-}
-
-.moviemasher .editor .timeline .track-icon {
-  position: -webkit-sticky;
-  position: sticky;
-  left: 0;
-}
-
-.moviemasher .editor .timeline .track-icon svg {
-  margin: auto;
-}
-
-.moviemasher .editor .timeline .clips {
-  white-space: nowrap;
-  margin-block: auto;
-}
-
-.moviemasher .editor .timeline .clips,
-.moviemasher .editor .timeline .clip {
-  height: calc(var(--track-height) - (2 * var(--padding)));
-}
-
-.moviemasher .editor .timeline .clips .clip {
+.moviemasher .editor .panel.timeline .content .track {
+  --drop-size: var(--border-size);
+  display: flex;
   border: var(--border);
-  border-radius: var(--border-radius);
-  overflow-x: hidden;
+  overflow: hidden;
+  background-color: var(--back-primary);
+  white-space: nowrap;
+}
+
+.moviemasher .editor .panel.timeline .content .track.selected {
+  background-color: var(--color-back-primary);
+}
+
+
+.moviemasher .editor .panel.timeline .content .track .clip {
+  border-inline: var(--border);
+  overflow: hidden;
   background-size: cover;
   background-image: var(--clip-icon);
   padding: 0px;
   display: inline-block;
-  background-size: contain;
   background-repeat: no-repeat;
-
-  border-color: var(--fore-secondary);
   color: var(--fore-secondary);
   background-color: var(--back-secondary);
 }
 
-.moviemasher .editor .timeline .clips .clip:hover,
-.moviemasher .editor .timeline .clips .selected {
+.moviemasher .editor .panel.timeline .content .track .clip:hover,
+.moviemasher .editor .panel.timeline .content .track .selected {
   color: var(--color-fore-secondary);
   border-color: var(--color-fore-secondary);
   background-color: var(--color-back-secondary);
 }
 
-.moviemasher .editor .timeline .clips .selected:hover {
+.moviemasher .editor .panel.timeline .content .track .selected:hover {
   color: var(--color-fore-tertiary);
   border-color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
 }
 
-.moviemasher .editor .timeline .clip label {
+.moviemasher .editor .panel.timeline .clip label {
+  overflow: hidden;
   display: inline-block;
   width: 100%;
   background-color: var(--back-primary);
@@ -151,13 +124,51 @@
   height: calc(var(--icon-size) + var(--spacing));
 }
 
-.moviemasher .editor .timeline .clip label:after {
+.moviemasher .editor .panel.timeline .clip label:after {
   content: var(--clip-label);
   padding: var(--spacing);
   display: inline-block;
 }
 
+.moviemasher .editor .panel.timeline .content .track.dropping {
+  border-block-color: var(--color-drop);
+}
 
-.moviemasher .editor .timeline .drop {
+.moviemasher .editor .panel.timeline .content .track-icon {
+  border-block: var(--border);
+  background-color: var(--back-secondary);
+  color: var(--fore-secondary);
+  display: flex;
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  height: var(--track-height);
+}
+
+.moviemasher .editor .panel.timeline .content .track-icon.selected {
   background-color: var(--color-back-secondary);
+  color: var(--color-fore-secondary);
+}
+
+.moviemasher .editor .panel.timeline .content .track-icon svg {
+  margin: auto;
+}
+.moviemasher .editor .panel.timeline .content .track-icon.dropping {
+  border-color: var(--color-drop);
+
+}
+.moviemasher .editor .panel.timeline .content .track .clip.dropping {
+  border-color: var(--color-drop);
+  box-shadow:
+    0 var(--drop-size) 0 0 var(--color-drop),
+    0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
+  ;
+}
+
+.moviemasher .editor .panel.timeline .content .track .clip.dropping-before {
+  box-shadow: calc(-1 * var(--drop-size)) 0 0 0 var(--color-drop);
+}
+.moviemasher .editor .panel.timeline .content .track .clip.dropping-after {
+  box-shadow: var(--drop-size) 0 0 0 var(--color-drop);
 }

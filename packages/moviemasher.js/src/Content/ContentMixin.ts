@@ -17,6 +17,8 @@ import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
 import { arrayLast } from "../Utility/Array"
 
+const ContentMixinKeys = ['lock', 'width', 'height', 'x', 'y']
+
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
     constructor(...args: any[]) {
@@ -126,14 +128,9 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
       const { isDefault } = this
-      const { name } = property
+      if (isDefault && ContentMixinKeys.includes(property.name)) return []
 
-      const selectedProperties: SelectedProperties = []
-      const colorKeys = ['lock', 'width', 'height', 'x', 'y']
-      if (isDefault && colorKeys.includes(name)) return selectedProperties
-
-      selectedProperties.push(...super.selectedProperties(actions, property))
-      return selectedProperties
+      return super.selectedProperties(actions, property)
     }
 
     svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {

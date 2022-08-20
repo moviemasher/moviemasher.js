@@ -5,17 +5,21 @@
   --spacing: 20px;
   --header-height: 38px;
   --footer-height: 48px;
+  --preview-aspect-ratio: 16 / 9;
   --preview-width: 480px;
   --preview-height: 270px;
   --scrubber-height: 16px;
+  --scrubber-width: 16px;
   --inspector-width: 240px;
   --track-width: 34px;
-  --track-height: 120px;
+  --track-height: 60px;
   --icon-size: 24px;
   --button-size: 24px;
   --border-size: 1px;
   --border: var(--border-size) solid var(--back-tertiary);
   --border-radius: 5px;
+  --drop-size: 2px;
+  --progress-width: calc(2 * var(--icon-size));
 }
 
 .moviemasher .editor .panel .content {
@@ -26,5 +30,19 @@
 .moviemasher .editor .panel .foot,
 .moviemasher .editor .panel .head {
   --padding: 5px;
+  --spacing: 5px;
+}
+
+.moviemasher .editor .panel.composer .content {
+  --padding: 10px;
+  --spacing: var(--drop-size);
+}
+
+.moviemasher .editor .panel.composer .content .layer {
+  --padding: 2px;
+  --spacing: 5px;
+}
+
+.moviemasher .editor .panel.timeline .content {
   --spacing: 5px;
 }

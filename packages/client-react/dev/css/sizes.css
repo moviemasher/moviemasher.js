@@ -4,7 +4,7 @@
   --padding: 40px;
   --spacing: 20px;
   --header-height: 38px;
-  --footer-height: 48px;
+  --footer-height: 38px;
   --preview-aspect-ratio: 16 / 9;
   --preview-width: 480px;
   --preview-height: 270px;
@@ -44,5 +44,19 @@
 }
 
 .moviemasher .editor .panel.timeline .content {
+  --padding: 0px;
+  --spacing: 5px;
+}
+
+
+
+.moviemasher .editor .panel.activity .content {
+  --padding: 10px;
+  --spacing: 5px;
+}
+
+
+.moviemasher .editor .panel button {
+  --padding: 5px;
   --spacing: 5px;
 }

@@ -2,7 +2,7 @@ import { VideoOutputArgs } from "./Output"
 import { OutputFactory } from "./OutputFactory"
 import { renderingProcessInput } from "../../../../dev/test/Utilities/renderingProcessInput"
 import { outputDefaultPopulate } from "./OutputDefault"
-import { DefinitionType, OutputType, TrackType } from "../Setup/Enums"
+import { DefinitionType, OutputType } from "../Setup/Enums"
 import { mashInstance } from "../Edited/Mash/MashFactory"
 import { MashArgs, MashObject } from "../Edited/Mash/Mash"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
@@ -11,7 +11,6 @@ import { Defined } from "../Base/Defined"
 import { clipDefault } from "../Edited/Mash/Track/Clip/ClipFactory"
 import { assertUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { assertTrue } from "../Utility/Is"
-import { idGenerate } from "../Utility/Id"
 import { expectArrayLength } from "../../../../dev/test/Utilities/Expect"
 
 describe("OutputFactory", () => {
@@ -20,10 +19,10 @@ describe("OutputFactory", () => {
       const id = 'video-from-multiple'
       const output = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
       const globeDefinitionObject = {
-        id: 'globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
+        id: 'image-id-globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
       }
       const cableDefinitionObject = {
-        id: 'cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
+        id: 'image-id-cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
       }
       const definitionObjects = [globeDefinitionObject, cableDefinitionObject]
       const mashObject: MashObject = {
@@ -38,10 +37,12 @@ describe("OutputFactory", () => {
       }
 
       Defined.define(...definitionObjects)
-      const mashArgs: MashArgs = { ...mashObject, preloader: new JestPreloader() }
+      const preloader = new JestPreloader()
+      preloader.server = true
+      const mashArgs: MashArgs = { ...mashObject, preloader }
       const mash = mashInstance(mashArgs)
       const { quantize } = mash
-      const videoTrack = mash.trackOfTypeAtIndex(TrackType.Video)
+      const videoTrack = mash.tracks[0]
       const clips = videoTrack.clips as Clip[]
       const testArgs = renderingProcessInput(id)
 

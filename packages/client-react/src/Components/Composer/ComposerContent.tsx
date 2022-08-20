@@ -1,6 +1,6 @@
 import React from "react"
 import {
-  Layer, Layers, SelectType, isLayerFolder, DroppingPosition, ClassDropping
+  Layer, Layers, SelectType, isLayerFolder, DroppingPosition, ClassDropping, assertTrue
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
@@ -10,6 +10,7 @@ import { LayerContext } from "../../Contexts/LayerContext"
 import { ComposerContext } from "../../Contexts/ComposerContext"
 import { ComposerLayer } from "./ComposerLayer"
 import { useEditor } from "../../Hooks/useEditor"
+import { dragType } from "../../Helpers/DragDrop"
 
 export interface ComposerContentProps extends PropsAndChild, WithClassName {}
 
@@ -31,7 +32,7 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
   const { className: propsClassName = 'content', children, ...rest } = props
 
   const child = React.Children.only(children)
-  if (!React.isValidElement(child)) throw Problems.child
+  assertTrue(React.isValidElement(child))
 
   const layersArray = (layers: Layers, depth = 0): React.ReactElement[] => {
     return layers.flatMap(layer => {
@@ -79,6 +80,13 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
   const onClick = () => { editor.selection.unset(SelectType.Layer) }
 
   const onDragOver: React.DragEventHandler = event => {
+    const {dataTransfer} = event
+    const { types, files, items } = dataTransfer
+    console.log("types", types)
+    console.log("files", files)
+    console.log("items", items)
+    // const type = dragType(dataTransfer)
+
     setDroppingPosition(viewChildren.length)
     setDroppingLayer()
     event.preventDefault()

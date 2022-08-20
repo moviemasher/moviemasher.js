@@ -149,7 +149,7 @@ export class EditorSelectionClass implements EditorSelection {
 
     if (!mash) return selectTypes
 
-    selectTypes.push(SelectType.Mash)
+    if (!cast) selectTypes.push(SelectType.Mash)
     if (!track) return selectTypes
 
     selectTypes.push(SelectType.Track)

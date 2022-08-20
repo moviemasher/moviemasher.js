@@ -25,7 +25,6 @@ export interface Pixels extends Uint8ClampedArray {}
 export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
 export interface LoadedAudio extends AudioBuffer {}
-export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio }
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
 
@@ -44,7 +43,7 @@ export type Interval = ReturnType<typeof setInterval>
 
 export type LoadFontPromise = Promise<LoadedFont>
 export type LoadImagePromise = Promise<LoadedImage>
-export type LoadVideoPromise = Promise<LoadVideoResult>
+export type LoadVideoPromise = Promise<LoadedVideo>
 export type LoadAudioPromise = Promise<LoadedAudio>
 
 export interface NumberConverter { (value: number): number }
@@ -61,8 +60,8 @@ export interface WithFrame {
   frame : number
 }
 
-export interface WithLayer {
-  layer : number
+export interface WithIndex {
+  index : number
 }
 
 export interface WithTrack {

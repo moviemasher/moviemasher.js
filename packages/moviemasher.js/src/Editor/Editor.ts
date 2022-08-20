@@ -1,14 +1,14 @@
-import { Endpoint, StringObject, VisibleContextData } from "../declarations"
+import { Endpoint, StringObject } from "../declarations"
 import { Size } from "../Utility/Size"
-import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler, SelectedItems } from "../Utility/SelectedProperty"
+import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
-import { EditType, MasherAction, SelectType, TrackType } from "../Setup/Enums"
+import { DroppingPosition, EditType, MasherAction } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
 import { MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 
-import { Definition, DefinitionObject } from "../Definition/Definition"
+import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Effect } from "../Media/Effect/Effect"
 import { Track } from "../Edited/Mash/Track/Track"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -17,9 +17,16 @@ import { Action } from "./Actions/Action/Action"
 import { Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
 import { Svgs } from "./Preview/Preview"
 import { Actions } from "./Actions/Actions"
-import { Selectable } from "./Selectable"
 import { EditorSelection } from "./EditorSelection"
+import { isObject } from "../Utility/Is"
+import { throwError } from "../Utility/Throw"
 
+export interface EditorIndex {
+  layer?: number
+  clip?: number
+  track?: number
+  effect?: number
+}
 export interface EditorArgs {
   autoplay: boolean
   buffer: number
@@ -35,30 +42,30 @@ export interface EditorArgs {
 
 export interface EditorOptions extends Partial<EditorArgs> { }
 
-
 export type ClipOrEffect = Clip | Effect
 
 export interface CastData extends Partial<DataCastGetResponse> { }
 export interface MashData extends Partial<DataMashGetResponse> { }
 export type EditedData = CastData | MashData
-export const isCastData = (data: EditedData): data is CastData => "cast" in data
-export function assertMashData(data: EditedData): asserts data is MashData {
-  if (!(data as MashData).mash) throw new Error('expected MashData')
+export const isCastData = (data: EditedData): data is CastData => (
+  isObject(data) && "cast" in data
+)
+export const isMashData = (data: EditedData): data is CastData => (
+  isObject(data) && "mash" in data
+)
+export function assertMashData(data: EditedData, name?: string): asserts data is MashData {
+  if (!isMashData(data)) throwError(data, 'MashData', name)
 }
 
 export interface Editor {
-  // deselect(selectionType: SelectType): void
-  // select(selectable: Selectable): void
-  // selectedItems(selectTypes?: SelectType[]): SelectedItems
-  // selectTypes: SelectType[]
-
   actions: Actions
-  add(object: DefinitionObject, frameOrIndex?: number, trackIndex?: number): Promise<ClipOrEffect>
-  addClip(clip: Clip, frameOrIndex?: number, trackIndex?: number): Promise<void>
+  add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]>
+  addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]>
+  addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void>
   addEffect: EffectAddHandler
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
   addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void
-  addTrack(trackType: TrackType): void
+  addTrack(): void
   autoplay: boolean
   buffer: number
   can(action: MasherAction): boolean
@@ -67,6 +74,7 @@ export interface Editor {
   currentTime: number
   dataPutRequest(): Promise<DataPutRequest>
   definitions: Definition[]
+  definitionsUnsaved: Definition[]
   duration: number
   editing: boolean
   editType: EditType
@@ -77,8 +85,8 @@ export interface Editor {
   imageSize: Size
   load(data: EditedData): Promise<void>
   loop: boolean
-  move(object: ClipOrEffect, frameOrIndex?: number, trackIndex?: number): void
-  moveClip(clip: Clip, frameOrIndex?: number, trackIndex?: number): void
+  move(object: ClipOrEffect, editorIndex?: EditorIndex): void
+  moveClip(clip: Clip, editorIndex?: EditorIndex): void
   moveEffect: EffectMoveHandler
   moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void
   muted: boolean

@@ -1,3 +1,4 @@
+import { isPopulatedString } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 
 export enum Phase {
@@ -36,9 +37,8 @@ export enum ActionType {
   AddTrack = 'addTrack',
   Change = 'change',
   ChangeMultiple = 'changeMultiple',
-  ChangeFrames = 'changeFrames',
+  ChangeFrame = 'changeFrame',
   ChangeGain = 'changeGain',
-  ChangeTrim = 'changeTrim',
   MoveClip = 'moveClip',
   MoveEffect = 'moveEffect',
   MoveLayer = 'moveLayer',
@@ -85,15 +85,6 @@ export type ClipSelectType = SelectType.Content | SelectType.Container
 export const ClipSelectTypes = [SelectType.Content, SelectType.Container]
 export const isClipSelectType = (type?: any): type is ClipSelectType => {
   return isSelectType(type) && ClipSelectTypes.includes(type)
-}
-
-export enum TrackType {
-  Audio = 'audio',
-  Video = 'video',
-}
-export const TrackTypes = Object.values(TrackType)
-export const isTrackType = (value?: any): value is TrackType => {
-  return TrackTypes.includes(value as TrackType)
 }
 
 export enum OutputFormat {
@@ -151,10 +142,11 @@ export const DefinitionTypes = Object.values(DefinitionType)
 export const isDefinitionType = (type?: any): type is DefinitionType => {
   return DefinitionTypes.includes(type as DefinitionType)
 }
-
 export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
 }
+export type DefinitionTypesObject = Record<string, DefinitionType[]>
+
 
 export type ContainerType = DefinitionType.Image | DefinitionType.Video | DefinitionType.Container | DefinitionType.VideoSequence
 export const ContainerTypes = [DefinitionType.Image, DefinitionType.Video, DefinitionType.Container, DefinitionType.VideoSequence]
@@ -251,6 +243,7 @@ export enum TransformType {
 
 export enum EventType {
   Action = 'action',
+  Added = 'added',
   Cast = 'cast',
   Draw = 'draw',
   Duration = 'durationchange',
@@ -261,6 +254,7 @@ export enum EventType {
   Pause = 'pause',
   Play = 'play',
   Playing = 'playing',
+  Activity = 'activity',
   Render = 'render',
   Save = 'save',
   Seeked = 'seeked',
@@ -271,6 +265,11 @@ export enum EventType {
   Volume = 'volumechange',
   Waiting = 'waiting',
 }
+export const EventTypes = Object.values(EventType)
+export const isEventType = (type?: any): type is EventType => {
+  return EventTypes.includes(type as EventType)
+}
+
 
 export enum GraphFileType {
   Svg = 'svg',
@@ -287,10 +286,14 @@ export enum LoadType {
 }
 export const LoadTypes = Object.values(LoadType)
 export const isLoadType = (type?: any): type is LoadType => {
-  return LoadTypes.includes(type as LoadType)
+  return isPopulatedString(type) && LoadTypes.includes(type as LoadType)
 }
 export function assertLoadType(value: any, name?: string): asserts value is LoadType {
   if (!isLoadType(value)) throwError(value, "LoadType", name)
+}
+export const UploadTypes = LoadTypes.filter(type => type !== LoadType.Font)
+export const isUploadType = (type?: any): type is LoadType => {
+  return isLoadType(type) && UploadTypes.includes(type)
 }
 
 export enum MoveType {
@@ -325,6 +328,7 @@ export const ServerTypes = Object.values(ServerType)
 export enum Duration {
   Unknown = -1,
   Unlimited = -2,
+  None = 0,
 }
 
 export enum Timing {

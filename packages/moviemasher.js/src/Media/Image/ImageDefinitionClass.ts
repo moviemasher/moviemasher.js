@@ -1,18 +1,13 @@
-import { CanvasVisibleSource } from "../../declarations"
-import { GraphFile, GraphFiles, GraphFileArgs } from "../../MoveMe"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
-import { Time } from "../../Helpers/Time/Time"
-import { Loader } from "../../Loader/Loader"
-import { Errors } from "../../Setup/Errors"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { assertPopulatedString } from "../../Utility/Is"
+import { LoadedImage } from "../../declarations"
 
 const ImageDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
@@ -26,5 +21,7 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
 
   loadType = LoadType.Image
 
+  loadedImage?: LoadedImage 
+  
   type = DefinitionType.Image
 }

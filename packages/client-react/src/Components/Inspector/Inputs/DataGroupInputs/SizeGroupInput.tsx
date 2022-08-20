@@ -82,7 +82,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   })
   const lockWidthProps = { 
     key: "lock-width",
-    className: "icon-button",
+    className: ClassButton,
     children: orientation === Orientation.H ? DefaultIcons.lock : DefaultIcons.unlock, 
     onClick: () => {
       const value = orientation === Orientation.H ? "" : Orientation.H
@@ -92,7 +92,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const lockWidth = <View { ...lockWidthProps } />
   const lockHeightProps = { 
     key: "lock-height",
-    className: "icon-button",
+    className: ClassButton,
     children: orientation === Orientation.V ? DefaultIcons.lock : DefaultIcons.unlock, 
     onClick: () => {
       const value = orientation === Orientation.V ? "" : Orientation.V
@@ -133,4 +133,4 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   return <fieldset><legend>{legendElements}</legend>{elements}</fieldset>
 }
 
-DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-input" />
+DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-group-input" />

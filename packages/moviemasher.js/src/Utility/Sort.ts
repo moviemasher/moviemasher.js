@@ -1,10 +1,10 @@
-import { WithFrame, WithLabel, WithTrack, WithLayer } from "../declarations"
+import { WithFrame, WithLabel, WithTrack, WithIndex } from "../declarations"
 
 export const sortByFrame = (a : WithFrame, b : WithFrame) : number => (
   a.frame - b.frame
 )
-export const sortByLayer = (a : WithLayer, b : WithLayer) : number => (
-  a.layer - b.layer
+export const sortByIndex = (a : WithIndex, b : WithIndex) : number => (
+  a.index - b.index
 )
 export const sortByTrack = (a : WithTrack, b : WithTrack) : number => (
   a.trackNumber - b.trackNumber

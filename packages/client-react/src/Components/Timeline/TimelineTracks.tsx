@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, TrackType, Track } from '@moviemasher/moviemasher.js'
+import { EventType, arrayReversed, Tracks } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult } from '../../declarations'
 import { useListeners } from '../../Hooks/useListeners'
@@ -13,7 +13,6 @@ export interface TimelineTracksProps extends PropsAndChildren {}
  * @children TimelineTrack
  */
 export function TimelineTracks(props: TimelineTracksProps): ReactResult {
-  const { children } = props
   const [refresh, setRefreshed] = React.useState(() => 0)
   const updateRefreshed = () => { setRefreshed(nonce => nonce + 1) }
   const editor = useEditor()
@@ -21,32 +20,37 @@ export function TimelineTracks(props: TimelineTracksProps): ReactResult {
     [EventType.Mash]: updateRefreshed, [EventType.Track]: updateRefreshed,
   })
 
-  const childNode = (trackIndex: number, trackType: TrackType): React.ReactElement => {
-    const { mash } = editor.selection
-    const track: Track = mash!.trackOfTypeAtIndex(trackType, trackIndex)
-    const { identifier } = track
-    const trackContext = { track }
-    const contextProps = {
-      children,
-      value: trackContext,
-      key: `track-context-${identifier}`
-    }
-    return <TrackContext.Provider {...contextProps} />
-  }
+  const { children } = props
 
   const childNodes = (): React.ReactElement[] => {
     const { mash } = editor.selection
     if (!mash) return []
 
-    const audioTracks = mash.trackCount(TrackType.Audio)
-    const videoTracks = mash.trackCount(TrackType.Video) 
-    const childNodes: React.ReactElement[] = []
-    for (let i = videoTracks - 1; i >= 0; i--) childNodes.push(childNode(i, TrackType.Video))
-    for (let i = 0; i < audioTracks; i++) childNodes.push(childNode(i, TrackType.Audio))
-    return childNodes
+    const { tracks } = mash
+    const reversedTracks = arrayReversed(tracks) as Tracks
+    return reversedTracks.map((track, i) => {
+      const { identifier, index } = track
+      const clones = React.Children.map(children, child => {
+        if (!React.isValidElement(child)) throw `TimelineTracks`
+
+        return React.cloneElement(child, { 
+          key: `track-clone-${i}-${index}-${identifier}`
+        })
+      })
+      const contextProps = {
+        children: clones,
+        value: { track },
+        key: `track-context-${i}-${index}-${identifier}`
+      }
+      return <TrackContext.Provider {...contextProps} />
+    })
   }
 
   const viewChildren = React.useMemo(childNodes, [refresh])
-  return <>{viewChildren}</>
-
+  
+  const fragmentProps = {
+    key: `track-content`,
+    children: viewChildren,
+  }
+  return <React.Fragment { ...fragmentProps } />
 }

@@ -1,4 +1,3 @@
-import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 /**
@@ -7,16 +6,13 @@ import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 export class ChangeFramesAction extends ChangeAction {
   constructor(object : ChangeActionObject) {
     super(object)
-    this.clip = <Clip> this.target
   }
 
-  clip : Clip
-
   redoAction() : void {
-    this.mash.changeClipFrames(this.clip, this.redoValueNumeric)
+    this.mash.changeTiming(this.target, this.property, this.redoValueNumeric)
   }
 
   undoAction() : void {
-    this.mash.changeClipFrames(this.clip, this.undoValueNumeric)
+    this.mash.changeTiming(this.target, this.property, this.undoValueNumeric)
   }
 }

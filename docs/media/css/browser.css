@@ -3,7 +3,7 @@
 }
 
 .moviemasher .editor .panel.browser .head {
-  grid-template-columns: repeat(auto-fit, var(--icon-size));
+  grid-template-columns: 1fr fit-content(var(--icon-size));
   overflow: hidden;
 }
 
@@ -12,8 +12,12 @@
 }
 
 .moviemasher .editor .panel.browser .foot {
-  grid-template-columns: min-content 1fr min-content;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fit, var(--icon-size));
 }
+
+
+
 
 .moviemasher .editor .panel.browser .foot label {
   width: var(--icon-size);
@@ -35,6 +39,7 @@
   overflow-x: hidden;
   background-size: cover;
   background-image: var(--clip-icon);
+  background-position: center;
   border: var(--border);
   border-radius: var(--border-radius);
   border-color: var(--fore-secondary);

@@ -1,7 +1,7 @@
 import { UnknownObject, Value } from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
-import { isNumeric, isString } from "../Utility/Is"
+import { isDefined, isNumeric, isString, isValue } from "../Utility/Is"
 
 
 export interface EvaluationCallback { (evaluation: Evaluation): Value }
@@ -185,7 +185,9 @@ export class Evaluation {
   _result?: number
 
   get result(): Value {
-    if (typeof this._result === 'undefined') return this.expression
-    return this._result
+    if (isValue(this._result)) return this._result
+    
+    return this.expression
+
   }
 }

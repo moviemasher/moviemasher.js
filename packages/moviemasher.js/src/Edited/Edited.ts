@@ -28,7 +28,7 @@ export interface Edited extends Described, Propertied, Selectable {
   buffer: number
   destroy(): void
   editor: Editor
-  emitter?: Emitter
+  emitter: Emitter
   graphFiles(args?: GraphFileOptions): GraphFiles
   imageSize: Size
   loading: boolean
@@ -37,8 +37,6 @@ export interface Edited extends Described, Propertied, Selectable {
   quantize: number
   readonly preloader: Loader
   reload(): Promise<void> | undefined
-  // svgElement(graphArgs: PreviewOptions): SVGSVGElement
-
-  svgs(graphArgs: PreviewOptions): Promise<Svgs>
   svg(graphArgs: PreviewOptions): Promise<Svg>
+  svgs(graphArgs: PreviewOptions): Promise<Svgs>
 }

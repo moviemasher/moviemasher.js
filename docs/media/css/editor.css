@@ -7,6 +7,7 @@
   height: var(--icon-size);
 }
 
+
 .moviemasher .editor .panel button {
   display: inline-flex;
   min-width: var(--icon-size);
@@ -15,22 +16,24 @@
   appearance: none;
   outline: none;
   align-items: center;
-  font-size: 0.875rem;
   font-weight: 500;
   border: var(--border);
   border-radius: var(--border-radius);
   color: var(--fore-secondary-promote);
   border-color: var(--fore-secondary-promote);
   background-color: var(--back-secondary);
+  transition: var(--button-transition);
+}
+
+.moviemasher .editor .icon-button {
+  height: var(--icon-size);
+  font-size: var(--icon-size);
+  line-height: var(--icon-size);
 }
 
 .moviemasher .editor .icon-button:hover,
 .moviemasher .editor .icon-button.selected {
   color: var(--fore-secondary-promote);
-  transition: var(--button-transition);
-}
-
-.moviemasher .editor .panel button {
   transition: var(--button-transition);
 }
 
@@ -45,13 +48,10 @@
 }
 
 .moviemasher .editor .panel button > svg {
-  width: 0.75rem;
-  height: 0.75rem;
   margin: 0px 5px;
-}
-
-.moviemasher .editor input {
-  width: 100%;
+  margin-top: 1px;
+  height: 1em;
+  width: 1em;
 }
 
 .moviemasher .editor input[type=file] {

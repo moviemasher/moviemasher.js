@@ -6,12 +6,12 @@ import { assertObject, assertTrue, isUndefined } from "../Utility/Is"
 export const PropertyTweenSuffix = 'End'
 
 export interface Propertied {
-  value(key: string): Scalar
+  addProperties(object: any, ...properties: Property[]): void
+  properties: Property[]
   setValue(value: Scalar, name: string, property?: Property ): void
   setValues(object: ScalarObject): void
-  properties: Property[]
   toJSON(): UnknownObject
-  addProperties(object: any, ...properties: Property[]): void
+  value(key: string): Scalar
 }
 
 export interface PropertiedChangeHandler {
@@ -82,7 +82,7 @@ export class PropertiedClass implements Propertied {
       if (propertyName !== name) {
         // tween end value can be undefined
         delete this[name]
-      } //else console.warn(this.constructor.name, "setValue invalid!", propertyName, name, type, typeof value, value)
+      } 
       return
     }
     const coerced = propertyTypeCoerce(value, type)

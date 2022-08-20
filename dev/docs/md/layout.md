@@ -21,7 +21,7 @@ requests to their server(s). Learn more about the server side of these same inte
 The [[Caster]] component can be the root component or a descendent of [[ApiClient]].
 In the later case, it will make a [[DataCastDefaultRequest]] to retrieve a [[Cast]]
 to load. It supplies a [[CasterContext]] to its children which simply contains a
-`castEditor` reference to the underlying [[CastEditor]]. Some child components use this
+`castEditor` reference to the underlying [[Editor]]. Some child components use this
 reference to subscribe to its events, access its properties, and call its methods.
 It typically contains the following children:
 
@@ -46,9 +46,9 @@ The [[Masher]] component can be the root component or placed under either an [[A
 component. When under an [[ApiClient]] component, it will make a [[DataMashDefaultRequest]] to retrieve a
 a [[MashObject]] to load. When under a [[Caster]] component, it will instead load its selected [[Mash]].
 It supplies a [[MasherContext]] to its children which simply contains a
-`mashEditor` reference to the underlying [[MashEditor]].
+`mashEditor` reference to the underlying [[Editor]].
 The user interface presented on the [Demo](demo/index.html) page uses the
-[[DefaultMasherProps]] method to suppy default props to this component.
+[[MasherPropsDefault]] method to suppy default props to this component.
 It supplies the following children:
 
 <!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/masher.svg) -->

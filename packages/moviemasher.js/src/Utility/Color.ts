@@ -1,6 +1,7 @@
 import {
   AlphaColor, Rgb, Rgba, RgbaObject, RgbObject, Yuv, YuvObject
 } from "../declarations"
+import { isPositive } from "./Is"
 
 export const colorRgbKeys = 'rgb'.split('')
 export const colorRgbaKeys = [...colorRgbKeys, 'a']
@@ -148,7 +149,7 @@ export const getChunksFromString = (st: string, chunkSize: number) => st.match(n
 export const hex256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.length), 16)
 
 export const colorAlpha = (value?: number) => {
-  if (typeof value === "undefined") return 1.0
+  if (!isPositive(value)) return 1.0
 
   return Math.max(0, Math.min(1.0, value / 255))
 }

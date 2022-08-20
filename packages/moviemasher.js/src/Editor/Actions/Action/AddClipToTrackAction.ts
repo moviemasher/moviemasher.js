@@ -1,12 +1,13 @@
-import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
+import { Clips } from "../../../Edited/Mash/Track/Clip/Clip"
 import { Track } from "../../../Edited/Mash/Track/Track"
 import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
 
 export interface AddClipToTrackActionObject extends AddTrackActionObject {
-  clip: Clip
-  createTracks: number
+  clips: Clips
   insertIndex: number
   trackIndex: number
+  redoFrame?: number
+  undoFrame: number
 }
 
 /**
@@ -15,33 +16,38 @@ export interface AddClipToTrackActionObject extends AddTrackActionObject {
 export class AddClipToTrackAction extends AddTrackAction {
   constructor(object: AddClipToTrackActionObject) {
     super(object)
-    const { clip, createTracks, insertIndex, trackIndex } = object
-    // console.log(this.constructor.name, createTracks, trackIndex)
-    this.clip = clip
-    this.createTracks = createTracks
+    const { 
+      clips, insertIndex, trackIndex, redoFrame, undoFrame 
+    } = object
+    this.clips = clips
     this.insertIndex = insertIndex
     this.trackIndex = trackIndex
+    this.redoFrame = redoFrame
+    this.undoFrame = undoFrame
   }
 
-  clip: Clip
+  clips: Clips
 
-  createTracks: number
 
   insertIndex: number
 
   trackIndex: number
 
-  get clips(): Clips { return this.track.clips }
-
-  get track(): Track { return this.mash.trackOfTypeAtIndex(this.trackType, this.trackIndex) }
+  get track(): Track { return this.mash.tracks[this.trackIndex] }
 
   redoAction(): void {
-    for (let i = 0; i < this.createTracks; i += 1) { super.redoAction() }
-    this.mash.addClipToTrack(this.clip, this.trackIndex, this.insertIndex)
+    super.redoAction()
+    const { mash, redoFrame, trackIndex, insertIndex, clips } = this
+    mash.addClipToTrack(clips, trackIndex, insertIndex, redoFrame)
   }
 
+  redoFrame?: number
+
   undoAction(): void {
-    this.mash.removeClipFromTrack(this.clip)
-    for (let i = 0; i < this.createTracks; i += 1) { super.undoAction() }
+    const { mash, clips} = this
+    mash.removeClipFromTrack(clips)
+    super.undoAction() 
   }
+
+  undoFrame: number
 }

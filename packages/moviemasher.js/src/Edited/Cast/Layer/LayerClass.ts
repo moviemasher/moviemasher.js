@@ -37,20 +37,20 @@ export class LayerClass extends PropertiedClass implements Layer {
   selectables(): Selectables { return [this, ...this.cast.selectables()] }
 
   selectedItems(actions: Actions): SelectedItems {
-    return this.properties.map(property => ({
-      selectType: SelectType.Layer, property, 
-      changeHandler: (property: string, value: Scalar) => {
-        assertPopulatedString(property, 'changeLayer property')
-    
-        const redoValue = isUndefined(value) ? this.value(property) : value
-        const undoValue = this.value(property)
-        const options: UnknownObject = {
-          property, target: this, redoValue, undoValue, type: ActionType.Change
+    return this.properties.map(property => {
+      const undoValue = this.value(property.name)
+      const target = this
+      return {
+        value: undoValue,
+        selectType: SelectType.Layer, property, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+      
+          const options = { property, target, redoValue, undoValue }
+          actions.create(options)
         }
-        actions.create(options)
-      },
-      value: this.value(property.name)
-    }))
+      }
+    })
   }
 
   toJSON(): UnknownObject {

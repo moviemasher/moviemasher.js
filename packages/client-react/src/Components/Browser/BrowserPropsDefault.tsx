@@ -2,63 +2,40 @@ import React from 'react'
 import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
-import { View } from '../../Utilities/View'
 import { Bar } from '../../Utilities/Bar'
 import { BrowserContent } from './BrowserContent'
-import { BrowserSource } from './BrowserSource'
+import { BrowserPicker } from './BrowserPicker'
 import { BrowserProps } from './Browser'
-import { BrowserDataSource } from './BrowserDataSource'
-import { Process } from '../Process/Process'
-import { UploadControl } from '../Controls/UploadControl'
-import { ProcessActive } from '../Process/ProcessActive'
-import { ProcessStatus } from '../Process/ProcessStatus'
-import { ProcessProgress } from '../Process/ProcessProgress'
+import { BrowserControl } from './BrowserControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { BrowserDefinition } from './BrowserDefinition'
+import { ClassButton } from '@moviemasher/moviemasher.js'
 
-export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {
-  noApi?: boolean
-}
+export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props) {
-  const { noApi, ...options } = props
-
-  const optionsStrict = panelOptionsStrict(options)
+export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props) {
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
-  optionsStrict.props.sourceId ||= 'text'
+  optionsStrict.props.initialPicked ||= 'container'
 
-  optionsStrict.header.content ||= [
-    DefaultIcons.browser,
-  ]
+  optionsStrict.header.content ||= [DefaultIcons.browser]
 
   optionsStrict.footer.content ||= [
-    <BrowserSource key='container' id='container' className='icon-button' children={DefaultIcons.container} />,
-    <BrowserSource key='content' id='content' className='icon-button' children={DefaultIcons.content} />,
-    <BrowserSource key='effect' id='effect' className='icon-button' children={DefaultIcons.browserEffect} />,
+    <BrowserPicker key='effect' id='effect' className={ClassButton} children={DefaultIcons.browserEffect} />,
+    <BrowserPicker key='container' id='container' className={ClassButton} children={DefaultIcons.container} />,
+    <BrowserPicker key='content' id='content' className={ClassButton} children={DefaultIcons.content} />,
   ]
-
-  const SourceClass = noApi ? BrowserSource : BrowserDataSource
   optionsStrict.footer.before ||= [
-    <SourceClass key='video' id='videosequence' className='icon-button' children={DefaultIcons.browserVideo} />,
-    <SourceClass key='audio' id='audio' className='icon-button' children={DefaultIcons.browserAudio} />,
-    <SourceClass key='image' id='image' className='icon-button' children={DefaultIcons.browserImage} />,
+    <BrowserPicker key='video' id='video' types='video,videosequence' className={ClassButton} children={DefaultIcons.browserVideo} />,
+    <BrowserPicker key='audio' id='audio' className={ClassButton} children={DefaultIcons.browserAudio} />,
+    <BrowserPicker key='image' id='image' className={ClassButton} children={DefaultIcons.browserImage} />,
   ]
 
-  if (!noApi) {
-    optionsStrict.footer.after ||= [
-      <View key='upload' className="progress">
-        <Process id='data'>
-          <ProcessStatus />
-          <ProcessProgress />
-          <UploadControl>
-            {DefaultIcons.upload}
-          </UploadControl>
-        </Process>
-      </View>
-    ]
-  }
-  //  
+  optionsStrict.footer.after ||= [
+    <BrowserControl key='import' children={DefaultIcons.upload} />
+  ]
+
   optionsStrict.content.children ||= (
     <BrowserDefinition className='definition' icon="--clip-icon"></BrowserDefinition>
   )
@@ -70,5 +47,6 @@ export const DefaultBrowserProps: PropsMethod<BrowserPropsDefault, BrowserProps>
     </BrowserContent>
     <Bar {...optionsStrict.footer} />
   </>
+  
   return { ...optionsStrict.props, children }
 }

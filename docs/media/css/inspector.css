@@ -3,13 +3,55 @@
   grid-area: inspector;
 }
 
-.moviemasher .editor .panel.inspector summary,
-.moviemasher .editor .panel.inspector label {
+.moviemasher .editor .panel.inspector .foot {
+  grid-auto-columns: min-content;
+  grid-auto-flow: column;
+}
+.moviemasher .editor .panel.inspector .content fieldset {
+  line-height: var(--icon-size);
+  font-size: var(--icon-size);
+  padding: var(--spacing);
+}
+.moviemasher .editor .panel.inspector .content .start-end {
+  display: flex;
+  float: right;
+}
+
+.moviemasher .editor .panel.inspector .content fieldset > legend {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr min-content;
+  width: 100%;
+}
+
+.moviemasher .editor .panel.inspector .content fieldset > div {
+  display: grid;
+  gap: var(--spacing);
+  grid-auto-flow: column;
+}
+.moviemasher .editor .panel.inspector .content fieldset > div.size {
+  grid-template-columns: var(--icon-size) minmax(50px, 1fr) var(--icon-size);
+}
+
+.moviemasher .editor .panel.inspector .content fieldset > div.point {
+  grid-template-columns: repeat(2, var(--icon-size)) minmax(50px, 1fr) var(--icon-size);
+}
+.moviemasher .editor .panel.inspector .content .opacity,
+.moviemasher .editor .panel.inspector .content .color {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--spacing);
+  grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
+  line-height: var(--icon-size);
+  font-size: var(--icon-size);
+}
+
+.moviemasher .editor .panel.inspector details>div>label {
   text-transform: capitalize;
 }
 
-.moviemasher .editor .panel.inspector label:after {
-  content: ': ';
+.moviemasher .editor .panel.inspector details>div>label:after {
+  content: ':';
 }
 
 .moviemasher .editor .panel.inspector .content {
@@ -33,6 +75,33 @@
   background-color: var(--back-primary);
   overflow-y: scroll;
 }
+
+
+.moviemasher .editor .panel.inspector .definition-drop {
+  display: grid;
+  width: 100%;
+  aspect-ratio: var(--preview-aspect-ratio);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+  color: var(--fore-primary);
+  border-color: var(--fore-primary);
+  background-color: var(--back-primary);
+}
+
+
+.moviemasher .editor .panel.inspector .definition {
+  overflow-x: hidden;
+  background-size: cover;
+  background-image: var(--clip-icon);
+  background-position: center;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--fore-secondary);
+  color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+
 
 .moviemasher .editor .panel.inspector .effects .effect {
   width: 100%;
@@ -61,6 +130,6 @@
 }
 
 
-.moviemasher .editor .panel.inspector .drop {
+.moviemasher .editor .panel.inspector .dropping {
   background-color: var(--color-back-secondary);
 }

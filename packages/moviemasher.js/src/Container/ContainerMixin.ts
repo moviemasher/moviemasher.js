@@ -49,7 +49,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       this.addProperties(object, propertyInstance({
         tweenable: true, name: 'opacity', 
         type: DataType.Percent, defaultValue: 1.0,
-          group: DataGroup.Opacity,
+        group: DataGroup.Opacity,
       }))
     }
     attachHandlers(svgItem: SvgItem, editor: Editor): void {
@@ -135,8 +135,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     }
 
     colorMaximize = false
-
-    container = true
     
     containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []

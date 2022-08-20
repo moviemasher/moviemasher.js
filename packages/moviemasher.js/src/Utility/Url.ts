@@ -15,10 +15,8 @@ export const urlAbsolute = (url: string, base?: string): string => {
 }
 
 export const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => {
-  if (suffix?.startsWith('http')) {
-    console.trace("urlForEndpoint", suffix)
-    return suffix
-  }
+  if (suffix?.startsWith('http') || suffix?.startsWith('blob:')) return suffix
+  
   const bits: string[] = []
   if (endpoint) {
     const { host, port, protocol, prefix } = endpoint
@@ -36,13 +34,4 @@ export const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => 
   }
   if (suffix) bits.push(suffix)
   return urlAbsolute(bits.join(''))
-}
-
-/**
- * @category Utility
- */
-export const Url = {
-  absolute: urlAbsolute,
-  forEndpoint: urlForEndpoint,
-  endpoint: urlEndpoint
 }

@@ -51,7 +51,7 @@ export class ChangeAction extends Action {
   }
 
   updateAction(object: ChangeActionObject) : void {
-    console.log(this.constructor.name, "updateAction", object)
+    // console.log(this.constructor.name, "updateAction", object)
     const { redoValue } = object
     this.redoValue = redoValue
     this.redo()

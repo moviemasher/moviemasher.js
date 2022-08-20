@@ -1,4 +1,4 @@
-import { GenericFactory } from "../../declarations"
+import { GenericFactory, LoadedAudio } from "../../declarations"
 import { UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject } from "../../Mixin/UpdatableSize/UpdatableSize"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
@@ -20,13 +20,14 @@ export interface VideoSequenceDefinitionObject extends ContentDefinitionObject, 
   increment?: number
   pattern?: string
   padding?: number
+  loadedAudio?: LoadedAudio
 }
 
 export interface VideoSequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoSequenceObject): VideoSequence
-
   framesArray(start: Time): number[]
   urlForFrame(frame : number): string
+  loadedAudio?: LoadedAudio
 }
 
 /**

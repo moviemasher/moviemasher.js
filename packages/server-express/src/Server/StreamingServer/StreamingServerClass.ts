@@ -15,7 +15,7 @@ import {
   StreamingRemoteRequest, StreamingRemoteResponse,
   StreamingLocalRequest, StreamingLocalResponse,
   StreamingWebrtcRequest, StreamingWebrtcResponse, WithError, StreamingStartRequest,
-  StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs
+  StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs, isPositive
 } from "@moviemasher/moviemasher.js"
 
 import { WebrtcConnection } from './WebrtcConnection'
@@ -162,7 +162,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     switch (streamingFormat) {
       case StreamingFormat.Hls: {
         const { hls_time } = options
-        if (typeof hls_time !== 'undefined') response.readySeconds = Number(hls_time)
+        if (isPositive(hls_time)) response.readySeconds = hls_time
       }
     }
     try {

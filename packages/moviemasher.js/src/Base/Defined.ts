@@ -3,7 +3,7 @@ import { IdPrefix } from "../Setup/Constants"
 import { assertDefinitionType, DefinitionType, isDefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedString } from "../Utility/Is"
-import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
+import { assertDefinition, Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 
 export class Defined {
   static byId = new Map<string, Definition>()
@@ -92,5 +92,14 @@ export class Defined {
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.byId = new Map<string, Definition>()
     this.definitionsByType = new Map<DefinitionType, Definition[]>()
+  }
+
+
+
+  static updateDefinitionId(oldId: string, newId: string) {
+    const definition = this.byId.get(oldId)
+    assertDefinition(definition)
+    this.byId.set(newId, definition)
+    this.byId.delete(oldId)
   }
 }

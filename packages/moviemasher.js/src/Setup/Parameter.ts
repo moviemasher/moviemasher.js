@@ -1,5 +1,5 @@
 import { UnknownObject, Value, ValueObject } from "../declarations"
-import { isNumeric } from "../Utility/Is"
+import { isNumeric, isUndefined } from "../Utility/Is"
 import { DataType, DataTypes } from "./Enums"
 import { Errors } from "./Errors"
 
@@ -16,7 +16,7 @@ export class Parameter {
 
     this.values = values
     this.name = name
-    if (typeof value === "undefined") {
+    if (isUndefined(value)) {
       if (this.values?.length) this.value = this.values[0]
       else throw Errors.invalid.value
     } else this.value = value

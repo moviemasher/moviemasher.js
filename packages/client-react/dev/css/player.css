@@ -4,17 +4,22 @@
 
 .moviemasher .editor .panel.player .head {
   grid-auto-flow: column;
-  grid-template-columns: 1fr repeat(auto-fill, min-content);
+  grid-template-columns: 1fr repeat(2, min-content);
 }
 
-.moviemasher .editor.masher .panel.player .foot {
+/* .moviemasher .editor.masher .panel.player .foot {
   grid-template-columns: var(--icon-size) 1fr 1fr;
 }
 
 .moviemasher .editor.caster .panel.player .foot {
   grid-template-columns: repeat(5, min-content);
-}
+} */
 
+.moviemasher .editor .panel.player .foot .time {
+  font-size: 0.75em;
+  text-align: right;
+  flex-grow: 1;
+}
 
 .moviemasher .editor .panel.player .content {
   background: repeating-conic-gradient(
@@ -26,9 +31,6 @@
   margin-inline: auto;
   color: var(--color-fore-tertiary);
 }
-/* .moviemasher .editor .panel.player .content > svg {
-  position: absolute;
-} */
 
 .moviemasher .editor .panel.player .content svg {
   pointer-events: visibleFill;
@@ -85,3 +87,12 @@
   marker-mid: url(#shape-marker);
   stroke: var(--color-fore-secondary);
 }
+
+
+.moviemasher .editor .panel.player .dropping {
+  box-shadow:
+    0 var(--drop-size) 0 0 var(--color-drop),
+    0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
+  ;
+}
+

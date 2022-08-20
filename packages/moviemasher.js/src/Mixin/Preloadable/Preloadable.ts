@@ -1,13 +1,13 @@
 import { Constrained} from "../../declarations"
-import { GraphFileArgs, GraphFiles } from "../../MoveMe"
-import { isLoadType, LoadType } from "../../Setup/Enums"
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Content/Content"
+import { LoadType } from "../../Setup/Enums"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContentDefinition } from "../../Content/Content"
 
-export interface PreloadableObject extends ContentObject {
-}
+export interface PreloadableObject extends ContentObject {}
 
 export interface PreloadableDefinitionObject extends ContentDefinitionObject {
   source?: string
+  bytes?: number
+  mimeType?: string
   url?: string
 }
 
@@ -25,6 +25,8 @@ export interface PreloadableDefinition extends ContentDefinition {
   source: string
   url: string
   urlAbsolute: string
+  bytes: number
+  mimeType: string
 }
 export const isPreloadableDefinition = (value?: any): value is PreloadableDefinition => {
   return isContentDefinition(value) && "loadType" in value //&& isLoadType(value.loadType) 

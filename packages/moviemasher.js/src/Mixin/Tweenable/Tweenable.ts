@@ -3,7 +3,7 @@ import { Definition, DefinitionObject, isDefinition } from "../../Definition/Def
 import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Instance, InstanceObject } from "../../Instance/Instance"
+import { Instance, InstanceObject, isInstance } from "../../Instance/Instance"
 import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
 import { EffectObject, Effects } from "../../Media/Effect/Effect"
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
@@ -18,7 +18,6 @@ import { Selectable } from "../../Editor/Selectable"
 
 export interface TweenableObject extends InstanceObject {
   container?: boolean
-  content?: boolean
   x?: number
   xEnd?: number
   y?: number
@@ -40,6 +39,7 @@ export interface Tweenable extends Instance, Selectable {
   canColor(args: CommandFilterArgs): boolean
   canColorTween(args: CommandFilterArgs): boolean
   clip: Clip
+  clipped: boolean
   colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters
   colorFilter: Filter  
   commandFiles(args: VisibleCommandFileArgs): CommandFiles 
@@ -83,7 +83,7 @@ export interface Tweenable extends Instance, Selectable {
 }
 
 export const isTweenable = (value?: any): value is Tweenable => {
-  return isDefinition(value.definition)
+  return isInstance(value) && isDefinition(value.definition)
 }
 export function assertTweenable(value?: any): asserts value is Tweenable {
   if (!isTweenable(value)) throw new Error('expected Tweenable')

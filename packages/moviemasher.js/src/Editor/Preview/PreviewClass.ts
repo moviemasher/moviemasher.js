@@ -9,7 +9,7 @@ import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../../Edited/Mash/Mash"
 import { PreviewArgs, Preview, Svgs, Svg } from "./Preview"
-import { svgElement } from "../../Utility/Svg"
+import { svgBackcolor, svgElement, svgPolygonElement } from "../../Utility/Svg"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
@@ -18,6 +18,7 @@ export class PreviewClass implements Preview {
     this.size = mash.imageSize
     this.time = time
     this.backcolor = backcolor
+
     if (editor) this.editor = editor
     this.selectedClip = selectedClip
   }
@@ -26,6 +27,13 @@ export class PreviewClass implements Preview {
 
   backcolor?: string
 
+  private get backcolorSvg(): Svg {
+    const { backcolor, size } = this
+    const element = svgElement(size)
+    element.appendChild(svgPolygonElement(size, '', backcolor))
+    const svg: Svg = { element, id: 'backcolor' }
+    return svg
+  }
   editing = true
   
   get duration(): number { return this.time.lengthSeconds }
@@ -62,15 +70,15 @@ export class PreviewClass implements Preview {
     const { _svgs } = this
     if (_svgs) return Promise.resolve(_svgs)
 
-    const { trackPreviews } = this
-    const { length } = trackPreviews
-    if (!length) return Promise.resolve([])
-
+    const { trackPreviews, size } = this
     const promises = trackPreviews.map(trackPreview => trackPreview.svg)
     const promise = Promise.all(promises)
     return promise.then(svgs => {
-      this._svgs = svgs
-      return svgs
+      const { backcolor } = this
+      const allSvgs: Svgs = []
+      if (backcolor) allSvgs.push(svgBackcolor(backcolor, size))
+      allSvgs.push(...svgs)
+      return  this._svgs = allSvgs
     })
   } 
 

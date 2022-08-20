@@ -91,4 +91,4 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Color] = <ColorGroupInput key="color-input" />
+DataGroupInputs[DataGroup.Color] = <ColorGroupInput key="color-group-input" />

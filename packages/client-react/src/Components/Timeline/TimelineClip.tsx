@@ -5,10 +5,11 @@ import {
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
 import { Problems } from '../../Setup/Problems'
-import { DragSuffix } from '../../Helpers/DragDrop'
+import { DragSuffix, droppingPositionClass } from '../../Helpers/DragDrop'
 import { TrackContext } from '../../Contexts/TrackContext'
-import { TimelineContext } from '../../Contexts/TimelineContext'
+import { TimelineContext } from './TimelineContext'
 import { EditorContext } from '../../Contexts/EditorContext'
+import { useEditor } from '../../Hooks/useEditor'
 
 export interface TimelineClipProps extends UnknownObject, PropsAndChild {
   clip: Clip
@@ -26,13 +27,11 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
   const editorContext = React.useContext(EditorContext)
   const ref = React.useRef<HTMLDivElement>(null)
   const {
-    droppingPosition, droppingClip, scale, selectedClip,
+    droppingPosition, droppingClip, scale, selectedClip, onDrop,
     dragTypeValid, setDroppingPosition, setDroppingClip, setDroppingTrack, onDragLeave
   } = timelineContext
   const { track } = trackContext
-  const { editor, droppingPositionClass } = editorContext
-
-  if (!editor) return null
+  const editor = useEditor()
 
   const { icon: iconVar, label: labelVar, clip, prevClipEnd, children } = props
   const { label, type, frame, frames } = clip
@@ -41,30 +40,35 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
   if (!React.isValidElement(kid)) throw Problems.child
 
   const onPointerDown = (event: MouseEvent) => { 
-    eventStop(event)
+    event.stopPropagation()
     editor.selection.set(clip) 
   }
 
-  const onDragEnd: React.DragEventHandler = event => {
+  const onDragEnd = (event: DragEvent) => {
+    eventStop(event)
     const { dataTransfer } = event
+    if (!dataTransfer) return
+    
     const { dropEffect } = dataTransfer
     if (dropEffect === 'none') {
+      console.log("TimelineClip removeClip")
       editor.removeClip(clip)
     }
   }
 
   const onDragStart = (event: DragEvent) => {
-    onPointerDown(event)
+    event.stopPropagation()
     const { dataTransfer, clientX } = event
-    if (dataTransfer) {
-      const rect = ref.current!.getBoundingClientRect()
-      const { left } = rect
+    const { current } = ref
+    if (!(dataTransfer && current)) return
 
-      const data = { offset: clientX - left }
-      const json = JSON.stringify(data)
-      dataTransfer.effectAllowed = 'move'
-      dataTransfer.setData(type + DragSuffix, json)
-    }
+    const rect = current.getBoundingClientRect()
+    const { left } = rect
+
+    const data = { offset: clientX - left }
+    const json = JSON.stringify(data)
+    dataTransfer.effectAllowed = 'move'
+    dataTransfer.setData(type + DragSuffix, json)
   }
 
   const width = pixelFromFrame(frames, scale, 'floor')
@@ -80,16 +84,19 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor')
   }
 
-  const onDragOver: React.DragEventHandler = event => {
+  const onDragOver = (event: DragEvent) => {
+    eventStop(event)
     const { dataTransfer } = event
-    const definitionType = dragTypeValid(dataTransfer, track)
+    if (!dataTransfer) {
+      console.log("TimelineClip onDragOver no dataTransfer")
+      return
+    } 
 
+    const definitionType = dragTypeValid(dataTransfer, clip)
+    const pos = definitionType ? DroppingPosition.At : DroppingPosition.None
     setDroppingTrack(definitionType ? track : undefined)
     setDroppingClip(definitionType ? clip : undefined)
-    setDroppingPosition(definitionType ? DroppingPosition.At : DroppingPosition.None)
-
-    event.stopPropagation()
-    if (definitionType) event.preventDefault()
+    setDroppingPosition(pos)
   }
 
   const { className: propsClassName } = kid.props as WithClassName
@@ -114,7 +121,7 @@ export function TimelineClip(props: TimelineClipProps): ReactResult {
     style,
     className,
     onPointerDown, onDragStart, onDragEnd,
-    onDragOver, onDragLeave,
+    onDragOver, onDragLeave, onDrop,
     onClick: (event: React.MouseEvent) => event.stopPropagation(),
     draggable: true,
     ref,

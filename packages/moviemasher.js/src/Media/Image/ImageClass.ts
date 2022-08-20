@@ -1,19 +1,20 @@
-import { SvgItem, ValueObject } from "../../declarations"
+import { LoadedImage, SvgItem, ValueObject } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 import { Size } from "../../Utility/Size"
 import { CommandFile, CommandFileArgs, CommandFiles, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
 import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { ImageDefinition, Image } from "./Image"
-import { assertPopulatedString, assertTrue, isTimeRange } from "../../Utility/Is"
+import { assertDefined, assertPopulatedString, assertTrue, isDefined, isTimeRange, isUndefined } from "../../Utility/Is"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { ContentMixin } from "../../Content/ContentMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
-import { NamespaceSvg } from "../../Setup/Constants"
+import { NamespaceSvg, NamespaceXhtml } from "../../Setup/Constants"
 import { svgPolygonElement } from "../../Utility/Svg"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 
 
 const ImageWithTweenable = TweenableMixin(InstanceBase)
@@ -67,28 +68,49 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
   }
 
   svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
+    const {loadedHtmlImage} = this
+    const { x, y, width, height } = rect
+    loadedHtmlImage.setAttribute('x', String(x))
+    loadedHtmlImage.setAttribute('y', String(y))
+    loadedHtmlImage.setAttribute('width', String(width))
+    if (stretch) {
+      loadedHtmlImage.setAttribute('height', String(height))
+      loadedHtmlImage.setAttribute('preserveAspectRatio', 'none')
+    }
+    return loadedHtmlImage
+    // return this.foreignSvgItem(this.loadedHtmlImage as any, rect, stretch)
+  }
+
+  private _loadedHtmlImage?: SvgItem
+
+  private get loadedHtmlImage() {
+    if (this._loadedHtmlImage) return this._loadedHtmlImage
     
+    const { loadedImage } = this
+    const scoped = globalThis.document.createElementNS(NamespaceSvg, "image") 
+    //loadedImage.cloneNode() as LoadedImage
+    const { src } = loadedImage
+    
+    scoped.setAttribute('href', src)
+    return this._loadedHtmlImage = scoped
+  }
+
+  private get loadedImage(): LoadedImage {
+    const { clip, definition } = this
+    const { loadedImage } = definition
+    if (loadedImage) return loadedImage
+
+    const clipTime = timeRangeFromArgs()
     const args: GraphFileArgs = {
-      time, clipTime: range, visible: true, quantize: range.fps, editing: true
+      time: clipTime, clipTime, 
+      visible: true, quantize: 0, editing: true
     }
     const [graphFile] = this.graphFiles(args)
-    const { preloader } = this.clip.track.mash
-    const element = preloader.getFile(graphFile)?.cloneNode()
-    assertTrue(!!element, "image element")
-    
-    return this.foreignSvgItem(element, rect, stretch)
-    
-    // const { x, y, width, height } = rect
-    // const imageElement = globalThis.document.createElementNS(NamespaceSvg, 'image')
-    // imageElement.setAttribute('id', `image-${this.id}`)
-    // imageElement.setAttribute('href', this.definition.urlAbsolute)
-    // imageElement.setAttribute('x', String(x))
-    // imageElement.setAttribute('y', String(y))
-    // imageElement.setAttribute('width', String(width))
-    // if (stretch) {
-    //   imageElement.setAttribute('height', String(height))
-    //   imageElement.setAttribute('preserveAspectRatio', 'none')
-    // }
-    // return imageElement
+    const { preloader } = clip.track.mash
+    const image: LoadedImage = preloader.getFile(graphFile)
+    assertTrue(!!image, "image")
+
+    definition.loadedImage = image
+    return image
   }
 }

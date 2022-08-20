@@ -7,8 +7,7 @@ import { isUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { UnknownObject } from "../declarations"
 import { isPreloadableDefinition } from "../Mixin"
-import { assertFontDefinition, isFontDefinition } from "../Media/Font/Font"
-import { GraphType } from "../Setup/Enums"
+import { isFontDefinition } from "../Media/Font/Font"
 import { sizeAboveZero, sizesEqual } from "../Utility"
 
 export class LoaderClass implements Loader {
@@ -16,10 +15,15 @@ export class LoaderClass implements Loader {
     throw Errors.unimplemented + 'filePromise'
   }
 
-  protected files = new Map<string, LoaderFile>()
+  private files = new Map<string, LoaderFile>()
 
   flushFilesExcept(graphFiles: GraphFiles = []): void {
-    const retainKeys = graphFiles.map(graphFile => this.key(graphFile))
+    const retainKeys = graphFiles.map(graphFile => {
+      const { type } = graphFile
+      const key = this.key(graphFile)
+      const filesKey = `${type}-${key}`
+      return filesKey
+    })
     const keys = [...this.files.keys()]
     const removeKeys = keys.filter(key => !retainKeys.includes(key))
     removeKeys.forEach(key => {
@@ -29,27 +33,30 @@ export class LoaderClass implements Loader {
   }
 
   getFile(graphFile: GraphFile): any {
+    const { type } = graphFile
     const key = this.key(graphFile)
-    const preloaderFile = this.files.get(key)
+    const filesKey = `${type}-${key}`
+    const preloaderFile = this.files.get(filesKey)
     return preloaderFile?.result
   }
 
   key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
 
   private loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
+    
+    const { definition, type } = graphFile
     const key = this.key(graphFile)
-    const { definition } = graphFile
+    const filesKey = `${type}-${key}`
     if (isPreloadableDefinition(definition) || isFontDefinition(definition)) {
       definition.urlAbsolute ||= key
     }
-
-    let file = this.files.get(key)
+    let file = this.files.get(filesKey)
     const definitions = file?.definitions || new Map<string, Definition>()
     definitions.set(definition.id, definition)
 
     if (!file) {
       file = this.filePromise(key, graphFile)
-      this.files.set(key, file)
+      this.files.set(filesKey, file)
     }
     return file.promise.then(() => graphFile)
   }
@@ -61,7 +68,10 @@ export class LoaderClass implements Loader {
 
   loadedFile(graphFile: GraphFile): boolean {
     const key = this.key(graphFile)
-    const file = this.files.get(key)
+    const { type } = graphFile
+    const filesKey = `${type}-${key}`
+    
+    const file = this.files.get(filesKey)
     if (!file) return false
 
     return !!file.loaded
@@ -69,12 +79,13 @@ export class LoaderClass implements Loader {
 
   loadingFile(graphFile: GraphFile): boolean {
     const key = this.key(graphFile)
-    const file = this.files.get(key)
+    const { type } = graphFile
+    const filesKey = `${type}-${key}`
+    const file = this.files.get(filesKey)
     if (!file) return false
 
     return !file.loaded
   }
-
 
   protected updateDefinitionDuration(definition: Definition, durationOrNot?: number, audioOrNot?: boolean) {
     // console.log(this.constructor.name, "updateDefinitionDuration", definition.id, durationOrNot, audioOrNot)

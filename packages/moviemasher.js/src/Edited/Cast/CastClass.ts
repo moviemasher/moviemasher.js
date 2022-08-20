@@ -16,9 +16,10 @@ import {
 import { propertyInstance } from "../../Setup/Property"
 import { EmptyMethod } from "../../Setup/Constants"
 import { PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
-import { svgElement } from "../../Utility/Svg"
+import { svgBackcolor, svgElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
+import { arrayReversed } from "../../Utility/Array"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -66,12 +67,9 @@ const CastLayersAndIndex = (layers: Layers, layerAndPosition: LayerAndPosition):
 
 export class CastClass extends EditedClass implements Cast {
   constructor(args: CastArgs) {
+    args.label ||= Default.cast.label
     super(args)
-    const property = propertyInstance(
-        { name: 'backcolor', type: DataType.Rgb, defaultValue: Default.cast.backcolor }
-      )
-    this.properties.push(property)
-  
+    
     const {
       createdAt,
       icon,
@@ -80,15 +78,10 @@ export class CastClass extends EditedClass implements Cast {
       layers,
       definitions,
       preloader,
-      backcolor,
       ...rest
     } = args
 
     this.propertiesInitialize(args)
-    // propertiesInitialize doesn't set defaults
-    if (!isString(label)) this.label = Default.mash.label
-    if (!isString(backcolor)) this.backcolor = Default.mash.backcolor
-
     this.dataPopulate(rest)
     this.layersInitialize(layers)
   }
@@ -127,7 +120,7 @@ export class CastClass extends EditedClass implements Cast {
   }
 
   protected override emitterChanged() {
-    this.mashes.forEach(mash => mash.emitter = this._emitter)
+    this.mashes.forEach(mash => mash.emitter = this.emitter)
   }
 
   graphFiles(args?: GraphFileOptions): GraphFiles {
@@ -197,25 +190,25 @@ export class CastClass extends EditedClass implements Cast {
   selectables(): Selectables { return [this] }
 
   selectedItems(actions: Actions): SelectedItems {
-    return this.properties.map(property => ({
-      selectType: SelectType.Cast, property, 
-      value: this.value(property.name),
-      changeHandler: (property: string, value: Scalar) => {
-        assertPopulatedString(property, 'changeCast property')
-    
-        const redoValue = isUndefined(value) ? this.value(property) : value
-        const undoValue = this.value(property)
-        const options: UnknownObject = {
-          property, target: this, redoValue, undoValue, type: ActionType.Change
-        }
-        actions.create(options)
-      },
-    }))
+    return this.properties.map(property => {
+      const undoValue = this.value(property.name)
+      const target = this
+      return {
+        value: undoValue,
+        selectType: SelectType.Cast, property, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+      
+          const options = { property, target, redoValue, undoValue }
+          actions.create(options)
+        },
+      }
+    })
   }
 
   svg(args: PreviewOptions): Promise<Svg> {
     return this.svgs(args).then(svgs => {
-       const { imageSize, id } = this
+      const { imageSize, id } = this
       const element = svgElement(imageSize)
       element.append(...svgs.map(svg => svg.element))
       return { id, element: element }
@@ -223,15 +216,36 @@ export class CastClass extends EditedClass implements Cast {
   }
 
   svgs(args: PreviewOptions): Promise<Svgs> {
-    const { mashes } = this
-    const { length } = mashes
-    if (!length) return Promise.resolve([])
+    const { mashes, imageSize } = this
+    const allSvgs: Svgs = []
 
-    const promises = mashes.map(mash => mash.svgs(args))
-    const promise = Promise.all(promises).then(svgsArray => {
-      return svgsArray.reverse().flat()
+    const { backcolor = this.backcolor, ...rest } = args
+    const mashArgs = { ...rest, backcolor: '' }
+
+    let promise = Promise.resolve([svgBackcolor(backcolor, imageSize)])
+
+    arrayReversed(mashes).forEach(mash => {
+      promise = promise.then(svgs => {
+        allSvgs.push(...svgs)
+        console.log(this.constructor.name, "svgs backcolor =", mashArgs.backcolor)
+        return mash.svgs(mashArgs)
+      })
     })
-    return promise
+    return promise.then(svgs => {
+        allSvgs.push(...svgs)
+        return allSvgs
+    })
+
+    // if (!length) return Promise.resolve([])
+
+
+    // const promises = mashes.map(mash => {
+    //   return mash.svgs(args)
+    // })
+    // const promise = Promise.all(promises).then(svgsArray => (
+    //   arrayReversed(svgsArray).flat()
+    // ))
+    // return promise
   }
 
   toJSON(): UnknownObject {

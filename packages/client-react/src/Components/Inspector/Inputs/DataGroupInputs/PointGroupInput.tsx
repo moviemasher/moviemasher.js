@@ -104,7 +104,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   ]
   const lockOffEProps = { 
     key: "lock-east",
-    className: "icon-button",
+    className: ClassButton,
     children: offEValue ? DefaultIcons.unlock : DefaultIcons.lock, 
     onClick: () => { offE.changeHandler('offE', !offEValue) }
   }
@@ -112,7 +112,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
 
   const lockOffWProps = { 
     key: "lock-west",
-    className: "icon-button",
+    className: ClassButton,
     children: offWValue ? DefaultIcons.unlock : DefaultIcons.lock, 
     onClick: () => { offW.changeHandler('offW', !offWValue) }
   }
@@ -120,7 +120,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
 
   const lockOffNProps = { 
     key: "lock-north",
-    className: "icon-button",
+    className: ClassButton,
     children: offNValue ? DefaultIcons.unlock : DefaultIcons.lock, 
     onClick: () => { offN.changeHandler('offN', !offNValue) }
   }
@@ -128,7 +128,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
 
   const lockOffSProps = { 
     key: "lock-south",
-    className: "icon-button",
+    className: ClassButton,
     children: offSValue ? DefaultIcons.unlock : DefaultIcons.lock, 
     onClick: () => { offS.changeHandler('offS', !offSValue) }
   }

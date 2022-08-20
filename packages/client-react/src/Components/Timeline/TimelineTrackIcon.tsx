@@ -4,10 +4,10 @@ import { ClassSelected } from "@moviemasher/moviemasher.js"
 import {
   EditorIcons, PropsWithoutChild, ReactResult, WithClassName
 } from "../../declarations"
-import { TimelineContext } from "../../Contexts/TimelineContext"
+import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { droppingPositionClass } from "../../Helpers/DragDrop"
 
 export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
   icons: EditorIcons
@@ -18,10 +18,8 @@ export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
  */
 export function TimelineTrackIcon(props: TimelineTrackIcon): ReactResult {
   const { className: propsClassName, icons, ...rest } = props
-  const editorContext = React.useContext(EditorContext)
   const timelineContext = React.useContext(TimelineContext)
   const trackContext = React.useContext(TrackContext)
-  const { droppingPositionClass } = editorContext
  
 
   const { droppingTrack, droppingPosition, selectedTrack } = timelineContext
@@ -41,10 +39,12 @@ export function TimelineTrackIcon(props: TimelineTrackIcon): ReactResult {
 
   if (!track) return null
 
-  const { dense } = track
+  const { dense, index } = track
   
   const children = dense ? icons.trackDense : icons.track
 
-  const viewProps = { ...rest, className, children }
+  const viewProps = { 
+    ...rest, className, children, key: `track-icon-${index}`
+  }
   return <View {...viewProps} />
 }

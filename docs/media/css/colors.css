@@ -30,6 +30,11 @@
   --color-fore-primary: hsl(var(--hue-fore), var(--sat-primary), var(--lum-fore-primary));
   --color-fore-secondary: hsl(var(--hue-fore), var(--sat-secondary), var(--lum-fore-secondary));
   --color-fore-tertiary: hsl(var(--hue-fore), var(--sat-tertiary), var(--lum-fore-tertiary));
+  --color-drop: red;
+}
+
+:root {
+  color-scheme: dark light;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,5 +47,6 @@
     --lum-fore-tertiary: 85%;
     --fore-secondary-promote: var(--color-fore-secondary);
     --fore-secondary-demote: var(--back-primary);
+    --color-drop: yellow;
   }
 }

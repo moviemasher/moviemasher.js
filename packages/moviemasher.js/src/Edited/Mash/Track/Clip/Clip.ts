@@ -2,7 +2,7 @@ import { Container, ContainerObject } from "../../../../Container/Container"
 import { Content, ContentObject } from "../../../../Content/Content"
 import { GenericFactory } from "../../../../declarations"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
-import { Timing, TrackType } from "../../../../Setup/Enums"
+import { Timing } from "../../../../Setup/Enums"
 import { throwError } from "../../../../Utility/Throw"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../../../../Edited/Mash/Track/Track"
@@ -10,6 +10,7 @@ import { Definition, DefinitionObject } from "../../../../Definition/Definition"
 import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../../../Instance/Instance"
 import { Loader } from "../../../../Loader/Loader"
 import { Selectable } from "../../../../Editor/Selectable"
+import { Tweenable } from "../../../../Mixin/Tweenable/Tweenable"
 
 export interface ClipObject extends InstanceObject {
   containerId?: string
@@ -46,13 +47,13 @@ export interface Clip extends Instance, Selectable {
   mutable: boolean
   muted: boolean
   notMuted: boolean
+  resetDuration(tweenable?: Tweenable, quantize?: number): void
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
   timing: Timing
   track: Track
   trackNumber: number
-  trackType: TrackType
   visible : boolean
 }
 
@@ -68,9 +69,8 @@ export type Clips = Clip[]
 export interface ClipDefinition extends Definition {
   instanceFromObject(object?: ClipObject): Clip
   audible: boolean
-  duration: number
+  // duration: number
   streamable : boolean
-  trackType: TrackType
   visible: boolean
 }
 

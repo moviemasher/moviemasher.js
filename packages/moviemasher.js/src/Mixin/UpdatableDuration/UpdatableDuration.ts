@@ -1,6 +1,7 @@
 import { AudibleSource, Constrained, StartOptions, Value } from "../../declarations"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
+import { GraphFile } from "../../MoveMe"
 import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
 import { throwError } from "../../Utility/Throw"
 import {
@@ -19,6 +20,8 @@ export interface UpdatableDurationObject extends PreloadableObject {
   muted?: boolean
   loops?: number
   speed?: number
+  startTrim?: number
+  endTrim?: number
 }
 
 export interface UpdatableDurationDefinitionObject extends PreloadableDefinitionObject {
@@ -30,11 +33,11 @@ export interface UpdatableDurationDefinitionObject extends PreloadableDefinition
 }
 
 export interface UpdatableDuration extends Preloadable {
+  audibleSource(preloader: Loader): AudibleSource | undefined
+  frames(quantize: number): number 
   gain: number
   gainPairs: number[][]
-
   speed: number
-  audibleSource(preloader: Loader): AudibleSource | undefined
   startOptions(seconds: number, timeRange: TimeRange): StartOptions
 }
 export const isUpdatableDuration = (value?: any): value is UpdatableDuration => {
@@ -48,17 +51,15 @@ export const isUpdatableDurationType = (value: any): value is DefinitionType => 
   return isDefinitionType(value) && UpdatableDurationDefinitionTypes.includes(value)
 }
 
-
-
 export interface UpdatableDurationDefinition extends PreloadableDefinition {
-  duration: number
   audibleSource(preloader: Loader): AudibleSource | undefined
   audio: boolean
   audioUrl: string
-  urlAudible(editing?: boolean): string
-  loop: boolean
-
+  duration: number
   frames(quantize: number): number
+  graphFile(editing?: boolean): GraphFile
+  loop: boolean
+  urlAudible(editing?: boolean): string
 }
 export const isUpdatableDurationDefinition = (value?: any): value is UpdatableDurationDefinition => {
   return isPreloadableDefinition(value) && "audibleSource" in value

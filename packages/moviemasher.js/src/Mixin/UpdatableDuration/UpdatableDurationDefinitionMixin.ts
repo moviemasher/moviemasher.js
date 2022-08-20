@@ -4,7 +4,7 @@ import { GraphFile } from "../../MoveMe"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { Loader } from "../../Loader/Loader"
 import { DataType, Duration, LoadType } from "../../Setup/Enums"
-import { propertyInstance } from "../../Setup/Property"
+import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
@@ -27,18 +27,28 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         this.loop = loop
         this.properties.push(propertyInstance({ name: 'loops', defaultValue: 1 }))
       }
-
-      this.properties.push(propertyInstance({ name: "gain", defaultValue: 1.0 }))
-      this.properties.push(propertyInstance({ name: "speed", defaultValue: 1.0 }))
-      this.properties.push(propertyInstance({ name: "trim", defaultValue: 0, type: DataType.Frame }))
+      // group: DataGroup.Timing, 
+      this.properties.push(propertyInstance({ 
+        name: "gain", defaultValue: 1.0, type: DataType.Percent, 
+        min: 0, max: 2.0, step: 0.01 
+      }))
+      this.properties.push(propertyInstance({ 
+        name: "speed", defaultValue: 1.0, type: DataType.Percent, 
+        min: 0.1, max: 2.0, step: 0.1,
+        group: DataGroup.Timing,
+      }))
+      this.properties.push(propertyInstance({ 
+        name: "startTrim", defaultValue: 0, type: DataType.Frame,
+        group: DataGroup.Timing,
+      }))
+      this.properties.push(propertyInstance({ 
+        name: "endTrim", defaultValue: 0, type: DataType.Frame,
+        group: DataGroup.Timing,
+      }))
     }
 
     audibleSource(preloader: Loader): AudibleSource | undefined {
-      const file = this.urlAudible(true)
-      const graphFile: GraphFile = {
-        file, type: LoadType.Audio, 
-        definition: this, input: true
-      }
+      const graphFile = this.graphFile(true)
       const loaded = preloader.loadedFile(graphFile)
       // console.log(this.constructor.name, "audibleSource", file, loaded)
       if (!loaded) return
@@ -60,7 +70,15 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       // console.log(this.constructor.name, "frames duration =", duration)
       if (!duration) return Duration.Unknown
 
-      return timeFromSeconds(this.duration, quantize, 'floor').frame
+      return  timeFromSeconds(this.duration, quantize, 'floor').frame
+    }
+
+    graphFile(editing?: boolean): GraphFile {
+      const file = this.urlAudible(editing)
+      const { loadType } = this
+      const type = loadType === LoadType.Video ? loadType : LoadType.Audio
+      const graphFile: GraphFile = { file, type, definition: this, input: true }
+      return graphFile
     }
 
     loop = false
@@ -74,7 +92,6 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       if (waveform) json.waveform = this.waveform
       return json
     }
-
 
     urlAudible(editing = false): string { 
       // console.log(this.constructor.name, "urlAudible", editing, this.audioUrl)

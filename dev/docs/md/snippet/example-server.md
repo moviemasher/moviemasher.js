@@ -31,8 +31,8 @@ create the [Host](https://moviemasher.com/docs/component/Host.html) constructor 
 ```json
 {
   "port": 8570,
-  "previewDimensions": { "width": 480, "height": 270 },
-  "outputDimensions": { "width": 1920, "height": 1080 }
+  "previewSize": { "width": 480, "height": 270 },
+  "outputSize": { "width": 1920, "height": 1080 }
 }
 ```
 <!-- MAGIC:END -->

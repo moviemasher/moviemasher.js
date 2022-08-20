@@ -47,6 +47,10 @@ export function Composer(props: ComposerProps): ReactResult {
   }
 
   const onDrop: React.DragEventHandler = event => {
+    event.preventDefault()
+    setDroppingPosition(DroppingPosition.None)
+    refresh()
+
     const { dataTransfer } = event
     const dragType = validDragType(dataTransfer)
     if (!dragType) return
@@ -67,9 +71,6 @@ export function Composer(props: ComposerProps): ReactResult {
         break
       }
     }
-    setDroppingPosition(DroppingPosition.None)
-    event.preventDefault()
-    composerContext.refresh()
   }
 
   const composerContext: ComposerContextInterface = {

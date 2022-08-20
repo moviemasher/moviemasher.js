@@ -1,20 +1,24 @@
-import { AudibleSource, StartOptions, UnknownObject, ValueObject } from "../../declarations"
-import { CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
+import { AudibleSource, LoadedAudio, Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarations"
+import { CommandFilter, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Default } from "../../Setup/Default"
 import { LoadType } from "../../Setup/Enums"
-import { assertPopulatedString, isPositive } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isDefined, isPositive, isString } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Filter } from "../../Filter/Filter"
-import { timeFromArgs } from "../../Helpers"
+import { timeFromArgs, timeFromSeconds, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { idGenerate } from "../../Utility/Id"
 import { Tweening } from "../../Utility/Tween"
+import { Property } from "../../Setup"
+import { Actions } from "../../Editor/Actions/Actions"
+import { SelectedProperties } from "../../Utility/SelectedProperty"
 
 const AudibleGainDelimiter = ','
+
 
 export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): UpdatableDurationClass & T {
   return class extends Base implements UpdatableDuration {
@@ -23,8 +27,8 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       const [object] = args
       const { gain } = object as UpdatableDurationObject
 
-      if (typeof gain !== "undefined") {
-        if (typeof gain === "string") {
+      if (isDefined(gain)) {
+        if (isString(gain)) {
           if (gain.includes(AudibleGainDelimiter)) {
             const floats = gain.split(AudibleGainDelimiter).map(string => parseFloat(string))
             const z = floats.length / 2
@@ -33,7 +37,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
             }
             this.gain = -1
           } else this.gain = Number(gain)
-        } else this.gain = gain
+        } else if (isPositive(gain)) this.gain = gain
       }
     }
 
@@ -45,19 +49,23 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     definitionTime(masherTime: Time, clipRange: TimeRange): Time {
       const superTime = super.definitionTime(masherTime, clipRange)
-
-      const { trim } = this
-      const scaledTime = superTime.withFrame(superTime.frame + trim)
-
-      if (this.speed === Default.instance.video.speed) return scaledTime
-  
-      return scaledTime.divide(this.speed) //, 'ceil')
+      const { startTrim, endTrim, definition } = this
+      const { duration } = definition
+      const durationTime = timeFromSeconds(duration, clipRange.fps)
+      const durationFrames = durationTime.frame - (startTrim + endTrim)
+      const offset = superTime.frame % durationFrames
+      return superTime.withFrame(offset + startTrim).divide(this.speed) 
     }
 
-    gain = Default.instance.audio.gain
+    frames(quantize: number): number {
+      const { definition, startTrim, endTrim } = this
+      const frames = definition.frames(quantize)
+      return frames - (startTrim + endTrim)
+    }
+
+    gain = 1.0
 
     gainPairs: number[][] = []
-
 
     graphFiles(args: GraphFileArgs): GraphFiles {
       const { editing, audible, time } = args
@@ -135,13 +143,58 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return commandFilters
     }
 
+    private get loadedAudio(): LoadedAudio {
+      const { clip } = this
+      const clipTime = timeRangeFromArgs()
+      const args: GraphFileArgs = {
+        time: clipTime, clipTime, 
+        audible: true, quantize: 0, editing: true
+      }
+      const [graphFile] = this.graphFiles(args)
+      const element: LoadedAudio = clip.track.mash.preloader.getFile(graphFile)
+      assertTrue(!!element, "audio")
+  
+      return element
+    }
+
+
     mutable() { 
       // console.log(this.constructor.name, "mutable", this.definition.audio )
       return this.definition.audio 
     }
 
+
+    
+    selectedProperties(actions: Actions, property: Property): SelectedProperties {
+      const { name } = property
+      switch(name) {
+        case 'gain':
+        case 'muted': {
+          const mutable = this.mutable()
+          if (!mutable || (this.muted && name === 'gain')) return []
+        } 
+      }
+      return super.selectedProperties(actions, property)
+    }
+
+    setValue(value: Scalar, name: string, property?: Property | undefined): void {
+      super.setValue(value, name, property)
+      if (!this.clipped) return
+
+      switch (name) {
+        case 'startTrim':
+        case 'endTrim':
+        case 'speed':
+          console.log(this.constructor.name, "setValue", name, value)
+            
+          this.clip.resetDuration(this)
+          break
+      
+      }
+    }
+
     startOptions(seconds: number, timeRange: TimeRange): StartOptions {
-      let offset = timeRange.withFrame(this.trim).seconds
+      let offset = timeRange.withFrame(this.startTrim).seconds
       let start = timeRange.seconds - seconds
       let duration = timeRange.lengthSeconds
 
@@ -154,14 +207,16 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     }
 
     declare speed: number
+
     toJSON(): UnknownObject {
       const object = super.toJSON()
-      if (this.speed !== Default.instance.video.speed) object.speed = this.speed
-      if (this.gain !== Default.instance.audio.gain) object.gain = this.gain
+      if (this.speed !== 1.0) object.speed = this.speed
+      if (this.gain !== 1.0) object.gain = this.gain
       return object
     }
 
-    declare trim: number
+    declare startTrim: number
+    declare endTrim: number
 
     private _trimFilter?: Filter
     get trimFilter() { return this._trimFilter ||= filterFromId('trim')}

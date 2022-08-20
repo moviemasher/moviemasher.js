@@ -28,6 +28,8 @@ export function EditorRemoveButton(props: EditorRemoveButtonProps): ReactResult 
     else if (isTrack(selectable)) editor.removeTrack(selectable)
   }
 
-  const cloneProps = { ...rest, onClick, disabled }
-  return  React.cloneElement(React.Children.only(children), cloneProps)
+  const child = React.Children.only(children)
+
+  const cloneProps = { ...rest, ...child.props, onClick, disabled }
+  return React.cloneElement(child, cloneProps)
 }

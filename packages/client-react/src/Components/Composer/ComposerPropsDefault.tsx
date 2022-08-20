@@ -6,8 +6,6 @@ import { Button } from "../../Utilities/Button"
 import { AddFolderControl } from "../Controls/AddFolderControl"
 import { AddMashControl } from "../Controls/AddMashControl"
 import { Panel, PanelOptions } from "../Panel/Panel"
-import { PanelFoot } from "../Panel/PanelFoot"
-import { PanelHead } from "../Panel/PanelHead"
 import { ComposerProps } from "./Composer"
 import { ComposerContent } from "./ComposerContent"
 import { ComposerDepth } from "./ComposerDepth"
@@ -16,6 +14,8 @@ import { ComposerFolderOpen } from "./ComposerFolderOpen"
 import { ComposerLayerFolder } from "./ComposerLayerFolder"
 import { ComposerLayerLabel } from "./ComposerLayerLabel"
 import { ComposerLayerMash } from "./ComposerLayerMash"
+import { ClassButton } from "@moviemasher/moviemasher.js"
+import { View } from "../../Utilities/View"
 
 
 export interface  ComposerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
@@ -25,7 +25,7 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
   const { className = "panel composer", children:_, noApi, ...rest } = props
 
   const children = <Panel className={className} {...rest}>
-    <PanelHead key="head" className='head'>{DefaultIcons.layers}</PanelHead>
+    <View key="head" className='head'>{DefaultIcons.composer}</View>
     <ComposerContent key="content" className='content'>
       <div key='layer' className='layer'>
         <div key='icons'>
@@ -34,32 +34,32 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
           </ComposerDepth>
           <ComposerLayerFolder key="layer-folder">
             <ComposerFolderOpen key="folder-open">
-              <div className='icon-button'>
+              <div className={ClassButton}>
                 {DefaultIcons.folder}
               </div>
             </ComposerFolderOpen>
             <ComposerFolderClose key="folder-close">
-              <div className='icon-button'>
+              <div className={ClassButton}>
                 {DefaultIcons.folderOpen}
               </div>
             </ComposerFolderClose>
           </ComposerLayerFolder>
           <ComposerLayerMash key="layer-mash">
-            <div key="mash-icon" className='icon-button'>
+            <div key="mash-icon" className={ClassButton}>
               {DefaultIcons.mmTube}
             </div>
           </ComposerLayerMash>
         </div>
         <ComposerLayerLabel key="label" />
-        <div key="play-button" className='icon-button'>
+        <div key="play-button" className={ClassButton}>
           {DefaultIcons.playerPlay}
         </div>
       </div>
     </ComposerContent>
-    <PanelFoot key="foot" className='foot'>
+    <View key="foot" className='foot'>
       <AddMashControl>
         <Button>
-          {DefaultIcons.add}{DefaultIcons.mmTube} 
+          {DefaultIcons.add}{DefaultIcons.mmWide} 
         </Button>
       </AddMashControl>
       <AddFolderControl>
@@ -67,7 +67,7 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
           {DefaultIcons.add}{DefaultIcons.folder} 
         </Button>
       </AddFolderControl>
-    </PanelFoot>
+    </View>
   </Panel>
   return { children }
 }
