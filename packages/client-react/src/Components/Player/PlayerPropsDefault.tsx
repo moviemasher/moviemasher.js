@@ -13,7 +13,7 @@ import { PlayerProps } from './Player'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
-import { ClassButton } from '@moviemasher/moviemasher.js'
+import { ClassButton, labelTranslate } from '@moviemasher/moviemasher.js'
 import { PlayerTime } from './PlayerTime'
 
 export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
@@ -33,8 +33,12 @@ export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = 
   )
   optionsStrict.header.content ||= [
     DefaultIcons.app,
-    <EditorUndoButton key='undo'><Button>{DefaultIcons.undo}Undo</Button></EditorUndoButton>,
-    <EditorRedoButton key='redo'><Button>{DefaultIcons.redo}Redo</Button></EditorRedoButton>,
+    <EditorUndoButton key='undo'>
+      <Button>{DefaultIcons.undo}{labelTranslate('undo')}</Button>
+    </EditorUndoButton>,
+    <EditorRedoButton key='redo'>
+      <Button>{DefaultIcons.redo}{labelTranslate('redo')}</Button>
+    </EditorRedoButton>,
   ]
   
   optionsStrict.footer.content ||= [

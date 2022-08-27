@@ -308,7 +308,6 @@ export class RenderingProcessClass implements RenderingProcess {
   }
 
   runPromise(): Promise<RunResult> {
-    
     const results: RenderingResult[] = []
     const countsByType: NumberObject = {}
     const runData = {
@@ -318,7 +317,7 @@ export class RenderingProcessClass implements RenderingProcess {
     let promise = this.directoryPromise().then(() => runData)
     
     const { outputsPopulated } = this
-    const { outputDirectory, upload, definitions } = this.args
+    const { outputDirectory, upload } = this.args
     
 
     outputsPopulated.forEach(output => {

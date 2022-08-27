@@ -4,15 +4,16 @@ import { PropsWithoutChild, ReactResult, WithClassName } from "../../declaration
 import { ViewerContext } from '../../Contexts/ViewerContext'
 import { View } from '../../Utilities/View'
 import { useEditor } from '../../Hooks/useEditor'
+import { sizeCopy } from '@moviemasher/moviemasher.js'
 
 export interface BroadcasterContentProps extends PropsWithoutChild, WithClassName {}
 export function BroadcasterContent(props: BroadcasterContentProps): ReactResult {
   const viewerContext = React.useContext(ViewerContext)
   const editor = useEditor()
-  const { imageSize } = editor
+  const { rect } = editor
   const { url, streaming } = viewerContext
   if (!(streaming && url)) return <View {...props} />
 
-  const videoProps = { ...imageSize, ...props, autoPlay: true }
+  const videoProps = { ...sizeCopy(rect), ...props, autoPlay: true }
   return <video src={url} { ...videoProps } />
 }

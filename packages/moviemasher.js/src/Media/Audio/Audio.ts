@@ -1,6 +1,8 @@
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
 import { GenericFactory, LoadedAudio } from "../../declarations"
+import { isDefinition } from "../../Definition/Definition"
 import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { DefinitionType } from "../../Setup/Enums"
 
 
 export interface AudioObject extends ContentObject, UpdatableDurationObject {}
@@ -19,6 +21,10 @@ export interface AudioDefinitionObject extends ContentDefinitionObject, Updatabl
 export interface AudioDefinition extends ContentDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: AudioObject): Audio
   loadedAudio?: LoadedAudio
+}
+
+export const isAudioDefinition = (value: any): value is AudioDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Audio
 }
 
 /**

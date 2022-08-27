@@ -80,10 +80,8 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       const file = definition.urlAudible(editing)
       // console.log(this.constructor.name, "graphFiles", editing, file)
 
-      const options: ValueObject = {}
       const graphFile: GraphFile = {
-        type: LoadType.Audio, file, 
-        definition, input: true, options
+        type: LoadType.Audio, file, definition, input: true
       }
       return [graphFile]
     }

@@ -3,7 +3,6 @@ import {
 import { GraphFile } from "../../MoveMe"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { Default } from "../../Setup/Default"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoClass } from "./VideoClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
@@ -15,13 +14,11 @@ import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
-import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 
 const VideoDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithTweenable)
-const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithContent)
-const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContainer)
+const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContent)
 const VideoDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoDefinitionWithPreloadable)
 const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableSize)
 export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration implements VideoDefinition {

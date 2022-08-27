@@ -1,8 +1,7 @@
-import { Endpoint, StringObject } from "../declarations"
-import { Size } from "../Utility/Size"
+import { Endpoint, StringObject, SvgItem } from "../declarations"
 import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
-import { DroppingPosition, EditType, MasherAction } from "../Setup/Enums"
+import { EditType, MasherAction } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
@@ -15,11 +14,11 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
 import { Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
-import { Svgs } from "./Preview/Preview"
 import { Actions } from "./Actions/Actions"
 import { EditorSelection } from "./EditorSelection"
 import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
+import { Rect } from "../Utility/Rect"
 
 export interface EditorIndex {
   layer?: number
@@ -73,16 +72,18 @@ export interface Editor {
   create(): void
   currentTime: number
   dataPutRequest(): Promise<DataPutRequest>
+  dragging: boolean
   definitions: Definition[]
   definitionsUnsaved: Definition[]
   duration: number
+  readonly edited?: Edited
   editing: boolean
   editType: EditType
   eventTarget: Emitter
   fps: number
   goToTime(value: Time): Promise<void>
   handleAction(action: Action): void
-  imageSize: Size
+  rect: Rect
   load(data: EditedData): Promise<void>
   loop: boolean
   move(object: ClipOrEffect, editorIndex?: EditorIndex): void
@@ -97,18 +98,19 @@ export interface Editor {
   positionStep: number
   precision: number
   preloader: BrowserLoaderClass
-  readonly edited?: Edited
-  readonly selection: EditorSelection
   readOnly: boolean
   redo(): void
+  redraw(): void
   removeClip(clip: Clip): void
   removeEffect: EffectRemovehandler
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringObject): void
-  svgs: Promise<Svgs>
+  readonly selection: EditorSelection
+  svgItems(disabled?: boolean): Promise<SvgItem[]>
   time: Time
   timeRange: TimeRange
   undo(): void
+  updateDefinition(definitionObject: DefinitionObject, definition?: Definition): Promise<void> 
   volume: number
 }

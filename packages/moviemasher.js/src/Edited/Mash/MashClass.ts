@@ -1,5 +1,5 @@
 import {
-  Interval, Scalar, UnknownObject} from "../../declarations"
+  Interval, Scalar, SvgItem, UnknownObject} from "../../declarations"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import {
@@ -8,7 +8,7 @@ import {
 import { EmptyMethod } from "../../Setup/Constants"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
-import { assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
+import { assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isPopulatedArray, isPopulatedString, isPositive, isString, isUndefined } from "../../Utility/Is"
 import { sortByIndex } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "./Track/Clip/Clip"
@@ -34,28 +34,20 @@ type TrackClips = [number, Clips]
 
 export class MashClass extends EditedClass implements Mash {
   constructor(args: MashArgs) {
-    args.label ||= Default.mash.label
     super(args)
     const {
-      createdAt,
-      tracks,
-      id,
+      createdAt, icon, id, label,
       frame,
-      rendering,
-      label,
-      icon,
       preloader,
+      rendering,
+      tracks,
       ...rest
     } = args
-
-    this.propertiesInitialize(args)
- 
     this.dataPopulate(rest)
-
-    if (rendering && isPopulatedString(rendering)) this._rendering = rendering
-    if (createdAt) this.createdAt = createdAt
-    if (frame) this._frame = frame
-    if (tracks) tracks.forEach((trackObject, index) => {
+    if (isPopulatedString(rendering)) this._rendering = rendering
+    if (isPopulatedString(createdAt)) this.createdAt = createdAt
+    if (isAboveZero(frame)) this._frame = frame
+    if (isPopulatedArray(tracks)) tracks.forEach((trackObject, index) => {
       const trackArgs: TrackArgs = {
         dense: !index, ...trackObject, index
       }
@@ -481,6 +473,8 @@ export class MashClass extends EditedClass implements Mash {
 
   loop = false
 
+  get mashes(): Mash[] { return [this] }
+
   private _paused = true
   get paused(): boolean { return this._paused }
   set paused(value: boolean) {
@@ -679,13 +673,8 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  svg(options: PreviewOptions): Promise<Svg> {     
-    // console.log(this.constructor.name, "svg")
-    return this.preview(options).svg
-  }
-
-  svgs(options: PreviewOptions): Promise<Svgs> { 
-    return this.preview(options).svgs 
+  svgItems(options: PreviewOptions): Promise<SvgItem[]> { 
+    return this.preview(options).svgItemsPromise 
   }
   
   get time() : Time {

@@ -63,7 +63,7 @@ export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & 
         this.setFilterValues(filter)
         return filter.filterSvgFilters()
       }))
-      console.log(this.constructor.name, "svgFilters", svgFilters.length)
+      // console.log(this.constructor.name, "svgFilters", svgFilters.length)
       return svgFilters
     }
   }

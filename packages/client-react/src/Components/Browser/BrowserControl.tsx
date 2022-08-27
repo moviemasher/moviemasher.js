@@ -2,8 +2,8 @@ import React from "react"
 import { ServerType, assertObject } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
-import { ApiContext } from "../../Contexts/ApiContext"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { ApiContext } from "../ApiClient/ApiContext"
+import { EditorContext } from "../../Components/Masher/EditorContext"
 
 const BrowserControlId = 'upload-control-id'
 

@@ -21,11 +21,13 @@ import { TimelineTrackIcon } from './TimelineTrackIcon'
 import { Button } from '../../Utilities'
 import { TimelineZoom } from './TimelineZoom'
 import { TimelineAddClipControl } from './TimelineAddClipControl'
+import { ClipItem } from '../ClipItem/ClipItem'
 
 export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
 export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props) {
-  const optionsStrict = panelOptionsStrict(props)
+  const { noApi, ...options } = props
+  const optionsStrict = panelOptionsStrict(options)
   optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
@@ -56,14 +58,8 @@ export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelinePro
     </TimelineScrubber>
     <TimelineTracks>
       <TimelineTrackIcon className='track-icon' icons={DefaultIcons} />
-      <TimelineTrack
-        className='track'
-        label='--clip-label'
-        icon='--clip-icon'
-      >
-        <View className='clip'>
-          <label />
-        </View>
+      <TimelineTrack className='track'>
+        <ClipItem className='clip preview' />
       </TimelineTrack>
     </TimelineTracks>
     <TimelineSizer className='timeline-sizer' />

@@ -1,11 +1,14 @@
-import { UnknownObject } from "../declarations"
-import { assertDefinitionType, DefinitionType, isDefinitionType } from "../Setup/Enums"
+import { Endpoint, LoadedImage, SvgOrImage, UnknownObject } from "../declarations"
+import { assertDefinitionType, DefinitionType, isDefinitionType, Orientation } from "../Setup/Enums"
 import { Property } from "../Setup/Property"
-import { assertPopulatedString } from "../Utility/Is"
+import { assertPopulatedString, isPopulatedString } from "../Utility/Is"
 import { Instance, InstanceObject } from "../Instance/Instance"
 import { InstanceBase } from "../Instance/InstanceBase"
 import { Factory } from "../Definitions/Factory/Factory"
 import { Definition, DefinitionObject } from "../Definition/Definition"
+import { sizeCopy, Size } from "../Utility/Size"
+import { urlForEndpoint, urlHasProtocol } from "../Utility/Url"
+import { svgElement, svgImageElement } from "../Utility/Svg"
 
 
 export class DefinitionBase implements Definition {
@@ -15,16 +18,29 @@ export class DefinitionBase implements Definition {
     assertPopulatedString(id, 'id')
 
     this.id = id
-    this.label = label || id
-    if (icon)
-      this.icon = icon
+    if (isPopulatedString(label)) this.label = label 
+    if (isPopulatedString(icon)) this.icon = icon
   }
 
   icon?: string
 
   id: string
 
+  definitionIcon(endpoint: Endpoint, dimensions: Size): Promise<SvgOrImage> | undefined {
+    const { icon } = this
+    if (icon) {
+      const url = urlForEndpoint(endpoint, icon)
+      const image = new Image()
+      image.crossOrigin = "Anonymous"
 
+      image.src = url
+      const copy = sizeCopy(dimensions)
+      const key = copy.height > copy.width ? 'width' : 'height'
+      image.setAttribute(key, String(copy[key]))
+      return Promise.resolve(image) 
+    }
+  }
+  
   instanceFromObject(object: InstanceObject = {}): Instance {
     return new InstanceBase({ ...this.instanceArgs(object), ...object })
   }
@@ -36,7 +52,7 @@ export class DefinitionBase implements Definition {
     return { ...defaults, ...object, definition: this }
   }
 
-  label: string
+  label = ''
 
   properties: Property[] = [];
 

@@ -1,21 +1,26 @@
 import React from "react"
 import {
   DataMashRetrieveRequest, DataRetrieveResponse, DataGetRequest,
-  Endpoints, EventType, MasherAction, ServerType, Described,
-  DataCastGetResponse, DataMashGetResponse, Errors, EditType
+  Endpoints, EventType, MasherAction, ServerType, DataCastGetResponse, DataMashGetResponse, DescribedObject, isEventType, isSelectType, assertObject, isPopulatedString, LabelAndId, labels, labelTranslate, isPopulatedObject, isPositive, assertPopulatedObject, labelInterpolate
 } from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
+import { InspectorContext } from "../Inspector/InspectorContext"
 
 export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
-  const [requested, setRequested] = React.useState(false)
-  const described = React.useRef<Described[]>([])
-  const apiContext = React.useContext(ApiContext)
   const editor = useEditor()
+  const [requested, setRequested] = React.useState(false)
+  const [described, setDescribed] = React.useState<LabelAndId[]>(() => [])
+
   const [editedId, setEditedId] = React.useState(editor.edited?.id || '')
+  const apiContext = React.useContext(ApiContext)
+  const inspectorContext = React.useContext(InspectorContext)
+  const { selectedInfo } = inspectorContext
+  const { selectedType } = selectedInfo
+
   const [editedLabel, setEditedLabel] = React.useState(editor.edited?.label || '')
   const getDisabled = () => editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
@@ -23,39 +28,34 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
 
   const updateDisabled = () => { setDisabled(getDisabled()) }
 
-  const findDescribed = (id: string): Described | undefined => {
-    return described.current.find(object => object.id === id)
-  }
+  const handleEdited = (event: Event) => {
+    const { type } = event
+    if (!(isEventType(type) && isSelectType(type))) return
+    
+    if (type !== selectedType) return
 
-  const handleSave = () => {
-    if (!editedId) {
-      // saved new
-      const { edited } = editor
-      if (!edited) return
+    const { edited } = editor
+    assertObject(edited)
 
-      const { id, label, createdAt } = edited
-      const object = findDescribed(id)
-      if (!object) {
-        described.current.push({ id, label, createdAt })
-      }
+    const { id, label } = edited
+    setDescribed(original => {
+      const copy = original.filter(object => isPopulatedString(object.label))
+      const index = copy.findIndex(object => object.id === id)
+      if (isPositive(index)) copy.splice(index, 1, edited)
+      else copy.push(edited)
       setEditedId(id)
-    }
-    updateDisabled()
-  }
-
-  const handleMash = () => {
-    setEditedId(editor.edited?.id || '')
-    setEditedLabel(editor.edited?.label || '')
+      setEditedLabel(label)
+      return copy
+    })
   }
 
   const handleAction = () => {
     const { edited } = editor
-    if (!edited) return
+    assertObject(edited)
 
-    const { label, id } = edited
+    const { label } = edited
     if (editedLabel !== label) {
-      const object = findDescribed(id)
-      if (object) object.label = label
+      setDescribed(original => [...original])
       setEditedLabel(label)
     }
     updateDisabled()
@@ -63,69 +63,78 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
 
   useListeners({
     [EventType.Action]: handleAction,
-    [EventType.Mash]: handleMash,
-    [EventType.Save]: handleSave,
-  })
-
-  const describedOptions = () => {
-    const { edited } = editor
-
-    const editedId = edited?.id || ''
-
-    let editedFound = false
-    const children = described.current.map(object => {
-      const { label, id } = object
-      const selected = id === editedId
-      editedFound ||= selected
-      const children = selected ? editedLabel : label || id
-      const optionProps = { children, value: id, key: id }
-      const option = <option {...optionProps} />
-      return option
-    })
-    if (!editedFound) {
-      children.push(<option key={editedId} value={editedId}>{editedLabel}</option>)
-    }
-    return children
-  }
-
-  const options = React.useMemo(describedOptions, [described.current, editedId, editedLabel])
+    [EventType.Mash]: handleEdited,
+    [EventType.Cast]: handleEdited,
+    [EventType.Save]: updateDisabled,
+  }, editor.eventTarget)
 
   const onChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     if (disabled) return
 
     const { selectedIndex } = event.target
-    const object = described.current[selectedIndex]
-    if (!object) throw Errors.internal
+    const object = described[selectedIndex]
+    assertObject(object)
 
-    const id = object.id!
+    const { id } = object
     const request: DataGetRequest = { id }
     const { editType } = editor
     const endpoint = Endpoints.data[editType].get
-    // console.debug("GetRequest", endpoint, request)
+    console.debug("GetRequest", endpoint, request)
     endpointPromise(endpoint, request).then((response: DataMashGetResponse | DataCastGetResponse) => {
-      // console.debug("GetResponse", endpoint, response)
-      return editor.load(response)
+      console.debug("GetResponse", endpoint, response)
+      const { error } = response
+      if (error) console.error("GetResponse", endpoint, error)
+      else return editor.load(response)
     })
   }
 
   React.useEffect(() => {
-    if (requested) return
     if (!enabled.includes(ServerType.Data)) return
+    if (requested) return
 
     setRequested(true)
     const request: DataMashRetrieveRequest = { partial: true }
     const endpoint = Endpoints.data[editor.editType].retrieve
-    // console.debug("RetrieveRequest", endpoint, request)
+    console.debug("RetrieveRequest", endpoint, request)
     endpointPromise(endpoint, request).then((response: DataRetrieveResponse) => {
-      // console.debug("RetrieveResponse", endpoint, response)
-      described.current = response.described
+      console.debug("RetrieveResponse", endpoint, response)
+      const { described, error } = response
+      if (error) console.error("RetrieveResponse", endpoint, error)
+      else setDescribed(original => {
+        const copy = [...original]
+        described.forEach(object => {
+          const { id } = object
+          const found = copy.find(object => object.id === id)
+          if (found) return
+          
+          copy.push(object as LabelAndId)
+        })
+        return copy
+      })
     })
   }, [enabled])
 
-  if (!options.length) return null
+
+  const describedOptions = () => {
+    const { editType, edited } = editor
+    const elements = [<optgroup key="group" label={labelTranslate('open')}/>]
+    if (!edited) return elements
+
+    const { id: editedId, label: editedLabel } = edited
+    elements.push(...described.map(object => {
+      const { label: objectLabel, id } = object
+      const label = (id === editedId) ? editedLabel : objectLabel
+      const children = isPopulatedString(label) ? label : labelInterpolate('unlabeled', { type: editType }) 
+      const optionProps = { children, value: id, key: id }
+      const option = <option {...optionProps} />
+      return option
+    }))
+
+    return elements
+  }
 
   const selectOptions = {
-    ...props, onChange, disabled, children: options, value: editedId
+    ...props, onChange, disabled, children: describedOptions(), value: editedId
   }
   return <select {...selectOptions} />
 }

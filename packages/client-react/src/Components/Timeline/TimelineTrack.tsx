@@ -1,15 +1,18 @@
 import React from 'react'
-import { assertMash, assertTrack, ClassSelected, DroppingPosition, eventStop, UnknownObject } from '@moviemasher/moviemasher.js'
+import { 
+  assertMash, assertTrack, assertTrue, ClassSelected, DroppingPosition, 
+  eventStop, UnknownObject 
+} from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, ReactResult, WithClassName } from '../../declarations'
+import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
 import { TimelineContext } from './TimelineContext'
 import { TrackContext } from '../../Contexts/TrackContext'
 import { View } from '../../Utilities/View'
-import { TimelineClip } from './TimelineClip'
 import { useEditor } from '../../Hooks/useEditor'
 import { droppingPositionClass } from '../../Helpers/DragDrop'
+import { ClipContext } from '../ClipItem/ClipContext'
 
-export interface TimelineTrackProps extends PropsWithChildren, WithClassName {
+export interface TimelineTrackProps extends PropsAndChild, WithClassName {
   label?: string
 }
 
@@ -22,6 +25,9 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   const { mash } = selection
  
   const { className: propsClassName, children, ...rest } = props
+  const child = React.Children.only(children)
+  assertTrue(React.isValidElement(child))
+
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
   const { track } = trackContext
@@ -49,22 +55,16 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
     calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]
   )
 
-  const kid = React.Children.only(children)
-  if (!React.isValidElement(kid)) throw `TimelineClips`
-
-
   const childNodes = (): React.ReactElement[] => {
     let prevClipEnd = dense ? -1 : 0
+    const childProps = child.props
     return clips.map(clip => {
-      const clipProps = {
-        ...rest,
-        prevClipEnd,
-        key: clip.id,
-        clip,
-        children: kid,
-      }
+      const cloneProps = { ...childProps, key: clip.id }
+      const children = React.cloneElement(child, cloneProps)
+      const contextProps = { children, value: { clip, prevClipEnd }, key: clip.id }
+      const context = <ClipContext.Provider { ...contextProps } />
       if (!dense) prevClipEnd = clip.frames + clip.frame
-      return <TimelineClip {...clipProps} />
+      return context
     })
   }
 
@@ -81,11 +81,10 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   }
 
   const viewProps:UnknownObject = {
+    ...rest,
     className,
     children: childNodes(),
-    onDragLeave,
-    onDragOver,
-    onDrop,
+    onDragLeave, onDragOver, onDrop,
     key: `track-${index}`
   }
 

@@ -100,7 +100,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       }
       const { lock } = this
       const tweenRects = this.tweenRects(time, timeRange)
-      const locked = lock ? tweenRectsLock(tweenRects, lock) : tweenRects
+      const locked = tweenRectsLock(tweenRects, lock) 
       const intrinsicRect = this.intrinsicRect(editing)
       const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked)
       const [size, sizeEnd] = coverSizes 
@@ -109,7 +109,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]
     }
 
-    contentSvgItem(containerRect: Rect, time: Time, timeRange: TimeRange): SvgItem {
+    contentSvgItem(containerRect: Rect, time: Time, timeRange: TimeRange, icon?: boolean): SvgItem {
       const contentArgs: ContentRectArgs = {
         rects: containerRect, time, timeRange, editing: true
       }
@@ -117,7 +117,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const { x, y } = contentRect    
       const point = { x: containerRect.x - x, y: containerRect.y - y }
       const rect = rectFromSize(contentRect, point)
-      return this.svgItem(rect, time, timeRange, true)
+      return this.svgItem(rect, time, timeRange, true, icon)
     }
     
     intrinsicRect(_ = false): Rect { return RectZero }
@@ -133,7 +133,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return super.selectedProperties(actions, property)
     }
 
-    svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
+    svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem {
       throw new Error(Errors.unimplemented) 
     }
   }

@@ -7,13 +7,13 @@ import {
   Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback,
 } from '@moviemasher/moviemasher.js'
 
-import { ApiContext, ApiContextInterface } from '../../Contexts/ApiContext'
+import { ApiContext, ApiContextInterface } from './ApiContext'
 import { PropsWithChildren, ReactResult } from '../../declarations'
 
 export interface ApiProps extends PropsWithChildren {
   endpoint?: Endpoint
   path?: string
- }
+}
 
 export function ApiClient(props: ApiProps): ReactResult {
   const { endpoint, children, path } = props
@@ -63,7 +63,9 @@ export function ApiClient(props: ApiProps): ReactResult {
     })
   }, [])
 
-  const apiContext: ApiContextInterface = { enabled, endpointPromise, servers }
+  const apiContext: ApiContextInterface = { 
+    exists: true, enabled, endpointPromise, servers 
+  }
 
   return (
     <ApiContext.Provider value={apiContext}>

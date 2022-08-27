@@ -57,7 +57,7 @@ export const pixelColor = (value : Value) : string => {
   return string
 }
 
-export const pixelPerFrame = (frames: number, width: number, zoom: number): number => {
+export const pixelPerFrame = (frames: number, width: number, zoom = 1): number => {
   if (!(frames && width)) return 0
 
   const widthFrames = width / frames

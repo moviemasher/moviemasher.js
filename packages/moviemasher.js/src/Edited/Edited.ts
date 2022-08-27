@@ -1,15 +1,13 @@
-import { Described, UnknownObject } from "../declarations"
+import { Described, SvgItem, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
-import { SelectedItems } from "../Utility/SelectedProperty"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
-import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
-import { SelectType } from "../Setup/Enums"
-import { Actions } from "../Editor/Actions/Actions"
+import { PreviewOptions } from "../Editor/Preview/Preview"
 import { Editor } from "../Editor/Editor"
 import { Selectable } from "../Editor/Selectable"
+import { Mash } from "./Mash/Mash"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -33,10 +31,10 @@ export interface Edited extends Described, Propertied, Selectable {
   imageSize: Size
   loading: boolean
   loadPromise(args?: GraphFileOptions): Promise<void>
+  mashes: Mash[]
+  readonly preloader: Loader
   putPromise(): Promise<void>
   quantize: number
-  readonly preloader: Loader
   reload(): Promise<void> | undefined
-  svg(graphArgs: PreviewOptions): Promise<Svg>
-  svgs(graphArgs: PreviewOptions): Promise<Svgs>
+  svgItems(options: PreviewOptions): Promise<SvgItem[]>
 }

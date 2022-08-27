@@ -1,7 +1,7 @@
 .moviemasher .editor.caster {
   grid-template-areas:
     "player browser panels"
-    "timeline composer panels";
+    "composer timeline panels";
   grid-template-columns:
     calc(var(--preview-width) + (var(--border-size) * 2))
     1fr
@@ -9,13 +9,4 @@
   grid-template-rows:
     calc( var(--preview-height) + var(--header-height) + var(--footer-height))
     1fr;
-}
-
-.moviemasher .editor.caster .panel.timeline {
-  grid-area: initial;
-}
-
-
-canvas.composite:hover {
-  border: var(--border);
 }

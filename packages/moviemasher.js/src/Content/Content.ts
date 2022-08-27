@@ -4,7 +4,6 @@ import { isContentType, Orientation } from "../Setup/Enums"
 import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { ContainerRectArgs } from "../Container/Container"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from "../MoveMe"
 
 export interface ContentObject extends TweenableObject {
@@ -22,9 +21,9 @@ export interface ContentRectArgs {
 }
 export interface Content extends Tweenable {
   contentRects(args: ContentRectArgs): RectTuple 
-  contentSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
+  contentSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem
   lock: Orientation
-  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters
   audibleCommandFiles(args: CommandFileArgs): CommandFiles
 }

@@ -1,6 +1,6 @@
 {
   "name": "tester",
-  "version": "5.0.7",
+  "version": "5.1.0",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
@@ -30,6 +30,6 @@
     "test": "run-s start \"jest {1}\" --"
   },
   "dependencies": {
-    "@moviemasher/client-react": "5.0.7"
+    "@moviemasher/client-react": "5.1.0"
   }
 }

@@ -2,7 +2,7 @@ import React from "react"
 import { Emitter, EventType } from "@moviemasher/moviemasher.js"
 
 import { ListenerCallback } from "../declarations"
-import { EditorContext } from "../Contexts/EditorContext"
+import { EditorContext } from "../Components/Masher/EditorContext"
 
 export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
 

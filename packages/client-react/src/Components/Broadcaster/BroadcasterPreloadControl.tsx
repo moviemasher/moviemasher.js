@@ -6,7 +6,7 @@ import {
 import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { ProcessContext } from "../../Contexts/ProcessContext"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
 import { ViewerContext } from "../../Contexts/ViewerContext"
 
 export interface BroadcasterPreloadControlProps extends PropsAndChildren, WithClassName { }

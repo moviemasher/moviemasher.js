@@ -1,6 +1,7 @@
 import { GraphFile, GraphFiles } from "../MoveMe"
-import { Definition } from "../Definition/Definition"
-import { GraphType } from "../Setup/Enums"
+import { Definition, DefinitionObject } from "../Definition/Definition"
+import { GraphType, LoadType } from "../Setup/Enums"
+import { PreloadableDefinition } from "../Mixin/Preloadable/Preloadable"
 
 export interface LoadedInfo {
   duration?: number
@@ -16,18 +17,19 @@ export interface LoaderSource {
   result?: any
   promise?: Promise<void>
   loaded: boolean
-  definitions: Map<string, Definition>
+  definitions: Definition[]
 }
 
 export interface LoaderFile {
-  definitions: Map<string, Definition>
-  promise: Promise<void>
+  definitions: Definition[]
+  promise?: Promise<void>
   result?: any
   loadedInfo?: LoadedInfo
   loaded?: boolean
 }
 
 export interface Loader {
+  loadDefinitionObject(definition: DefinitionObject, object: any, loadedInfo?: LoadedInfo, key?: string): string
   flushFilesExcept(graphFiles?: GraphFiles): void
   getFile(graphFile: GraphFile): any
   key(graphFile: GraphFile): string

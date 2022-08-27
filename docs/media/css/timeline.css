@@ -3,13 +3,9 @@
   grid-area: timeline;
 }
 
+
 .moviemasher .editor .panel.timeline .head {
   grid-template-columns: 1fr repeat(6, auto) 1fr min-content;
-}
-
-.moviemasher .editor .panel.timeline .foot {
-  grid-auto-flow: column;
-  grid-template-columns: repeat(4, min-content) ;
 }
 
 .moviemasher .editor .panel.timeline .content {
@@ -19,7 +15,6 @@
   grid-template-columns: var(--track-width) 1fr;
   grid-template-rows: var(--scrubber-height) repeat(auto-fill, var(--track-height));
   row-gap: var(--spacing);
-  padding: var(--padding);
   position: relative;
 }
 
@@ -45,8 +40,11 @@
 .moviemasher .editor .panel.timeline .content .scrubber-element-bar,
 .moviemasher .editor .panel.timeline .content .scrubber-element-icon {
   position: absolute;
+  cursor:pointer;
   background-color: var(--color-fore-secondary);
+  transition: var(--button-transition);
 }
+
 
 .moviemasher .editor .panel.timeline .content .scrubber-element-bar {
   width: 1px;
@@ -67,6 +65,13 @@
   );
 }
 
+.moviemasher .editor .panel.timeline .content .disabled .scrubber-element-bar,
+.moviemasher .editor .panel.timeline .content .disabled .scrubber-element-icon {
+  pointer-events: none;
+  cursor: default;
+  background-color: var(--fore-secondary-demote);
+}
+
 .moviemasher .editor .panel.timeline .content .timeline-sizer {
   pointer-events: none;
   position: absolute;
@@ -77,6 +82,7 @@
 }
 
 .moviemasher .editor .panel.timeline .content .track {
+  padding: var(--padding);
   --drop-size: var(--border-size);
   display: flex;
   border: var(--border);
@@ -89,17 +95,10 @@
   background-color: var(--color-back-primary);
 }
 
-
 .moviemasher .editor .panel.timeline .content .track .clip {
   border-inline: var(--border);
-  overflow: hidden;
-  background-size: cover;
-  background-image: var(--clip-icon);
-  padding: 0px;
+  border-block: none;
   display: inline-block;
-  background-repeat: no-repeat;
-  color: var(--fore-secondary);
-  background-color: var(--back-secondary);
 }
 
 .moviemasher .editor .panel.timeline .content .track .clip:hover,
@@ -115,20 +114,6 @@
   background-color: var(--color-back-tertiary);
 }
 
-.moviemasher .editor .panel.timeline .clip label {
-  overflow: hidden;
-  display: inline-block;
-  width: 100%;
-  background-color: var(--back-primary);
-  opacity: 0.75;
-  height: calc(var(--icon-size) + var(--spacing));
-}
-
-.moviemasher .editor .panel.timeline .clip label:after {
-  content: var(--clip-label);
-  padding: var(--spacing);
-  display: inline-block;
-}
 
 .moviemasher .editor .panel.timeline .content .track.dropping {
   border-block-color: var(--color-drop);

@@ -7,9 +7,9 @@
   grid-area: composer;
 }
 
-.moviemasher .editor .composer .foot {
+/* .moviemasher .editor .composer .foot {
   grid-template-columns: repeat(4, min-content);
-}
+} */
 
 .moviemasher .editor .composer .content {
   display: grid;

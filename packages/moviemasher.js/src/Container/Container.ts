@@ -44,9 +44,9 @@ export interface ContainerRectArgs {
 export interface Container extends Tweenable {
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
-  containerRects(args: ContainerRectArgs): RectTuple
+  containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
   containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
-  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem
   directionObject: DirectionObject
   directions: Anchor[]
   height: number
@@ -54,8 +54,7 @@ export interface Container extends Tweenable {
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number
-  pathElement(rect: Rect, forecolor?: string, editor?: Editor): SvgItem 
-  attachHandlers(svgItem: SvgItem, editor: Editor): void
+  pathElement(rect: Rect): SvgItem 
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

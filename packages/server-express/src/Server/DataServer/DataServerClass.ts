@@ -21,9 +21,9 @@ import {
   DataCastGetResponse,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
   DataCastRetrieveRequest,
-  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId, Described,
+  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId,
   assertPopulatedString, isLayerMashObject, isLayerFolderObject, LayerObjects,
-  StringsObject,
+  StringsObject, DescribedObject, 
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -185,7 +185,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       const user = this.userFromRequest(req)
       const cast = await this.getLatestPromise(user, '`cast`') as CastObject
       if (cast.id) {
-        const castDefinitions = await this.castSelectRelationsPromise(cast)
+        const castDefinitions = await this.selectCastRelationsPromise(cast)
         response.definitions = castDefinitions.definitions
         response.cast = castDefinitions.cast
       }
@@ -198,10 +198,23 @@ export class DataServerClass extends ServerClass implements DataServer {
     const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
-      const mash = await this.getLatestPromise(user, '`mash`') as MashObject
+      const sql = `
+        SELECT mash.* FROM mash 
+        LEFT JOIN cast_mash 
+        ON cast_mash.mashId = mash.id 
+        WHERE cast_mash.mashId IS NULL
+        AND mash.userId = ? 
+        ORDER BY createdAt DESC
+        LIMIT 1
+      `
+      const mash = await this.db.get(sql, user).then(row => {
+        const { userId: rowUserId, ...rest } = DataServerJson(row)
+        return rowUserId === user ? rest : {}
+      }) as MashObject
+
       if (mash.id) {
         response.mash = mash
-        response.definitions = await this.mashSelectRelationsPromise(String(mash.id))
+        response.definitions = await this.selectMashRelationsPromise(String(mash.id))
       }
     } catch (error) { response.error = String(error) }
     // console.log("defaultMash", response)
@@ -273,7 +286,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       const cast = await this.jsonPromise('`cast`', user, id)
       if (!cast) response.error = `Could not find cast ${id}`
       else {
-        const castDefinitions = await this.castSelectRelationsPromise(cast)
+        const castDefinitions = await this.selectCastRelationsPromise(cast)
         response.definitions = castDefinitions.definitions
         response.cast = castDefinitions.cast
       }
@@ -309,13 +322,10 @@ export class DataServerClass extends ServerClass implements DataServer {
     try {
       const user = this.userFromRequest(req)
       const mash = await this.jsonPromise('`mash`', user, id)
-
-      const { userId, ...rest } = mash
-
-      if (!(mash.id === id && userId === user)) response.error = `Could not find mash ${id}`
+      if (mash.id !== id) response.error = `Could not find mash ${id}`
       else {
-        response.mash = rest
-        response.definitions = await this.mashSelectRelationsPromise(id)
+        response.mash = mash
+        response.definitions = await this.selectMashRelationsPromise(id)
       }
     } catch (error) { response.error = String(error) }
     res.send(response)
@@ -324,7 +334,6 @@ export class DataServerClass extends ServerClass implements DataServer {
   id = 'data'
 
   init(): DataServerInit { return { temporaryIdPrefix: this.args.temporaryIdPrefix } }
-
 
   private insertDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
     return this.createPromise('`definition`', DataServerInsertRecord(userId, definition))
@@ -406,7 +415,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.described = await this.castsSelectPromise(user, columns)
+      response.described = await this.selectCastsPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -419,7 +428,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       const user = this.userFromRequest(req)
       // console.log(this.constructor.name, "retrieveDefinition", types, partial)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.definitions = await this.definitionsSelectPromise(user, types, columns)
+      response.definitions = await this.selectDefinitionsPromise(user, types, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -430,7 +439,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.described = await this.mashesSelectPromise(user, columns)
+      response.described = await this.selectMashesPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -446,13 +455,13 @@ export class DataServerClass extends ServerClass implements DataServer {
     return promise
   }
 
-  private castsSelectPromise(userId: string, columns = DataServerColumnsDefault): Promise<Described[]> {
+  private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
     const table = '`cast`'
     const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
     return this.db.all(sql, userId).then(DataServerJsons)
   }
 
-  private definitionsSelectPromise(userId: string, types: string[], columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectDefinitionsPromise(userId: string, types: string[], columns = DataServerColumnsDefault): Promise<MashObject[]> {
     const table = '`definition`'
     const sql = `
       SELECT ${columns.join(', ')}
@@ -464,7 +473,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.all(sql, ...types, userId).then(DataServerJsons)
   }
 
-  private castSelectRelationsPromise(cast: CastObject): Promise<DataServerCastRelationSelect> {
+  private selectCastRelationsPromise(cast: CastObject): Promise<DataServerCastRelationSelect> {
     const { id } = cast
     assertPopulatedString(id)
 
@@ -487,7 +496,7 @@ export class DataServerClass extends ServerClass implements DataServer {
         const { id } = mash
         assertPopulatedString(id)
         promise = promise.then(data => {
-          return this.mashSelectRelationsPromise(id).then(definitions => {
+          return this.selectMashRelationsPromise(id).then(definitions => {
             data.definitions.push(...definitions)
             return data
           })
@@ -497,7 +506,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private mashSelectRelationsPromise(id: string): Promise<DefinitionObjects> {
+  private selectMashRelationsPromise(id: string): Promise<DefinitionObjects> {
     const sql = `
       SELECT definition.*
       FROM mash_definition
@@ -508,9 +517,18 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.all(sql, id).then(DataServerJsons)
   }
 
-  private mashesSelectPromise(userId: string, columns = DataServerColumnsDefault): Promise<Described[]> {
+  private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
     const table = '`mash`'
-    const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
+    const qualified = columns.map(column => `${table}.${column}`)
+    
+    const sql = `SELECT 
+      ${qualified.join(', ')} 
+      FROM ${table} 
+      LEFT JOIN cast_mash
+      ON cast_mash.mashId = ${table}.id
+      WHERE cast_mash.mashId IS NULL
+      AND userId = ?
+    `
     return this.db.all(sql, userId).then(DataServerJsons)
   }
 

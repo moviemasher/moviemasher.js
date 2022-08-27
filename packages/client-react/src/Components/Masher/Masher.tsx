@@ -18,9 +18,9 @@ import {
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
-import { ApiContext } from '../../Contexts/ApiContext'
+import { ApiContext } from '../ApiClient/ApiContext'
 import { View } from '../../Utilities/View'
-import { EditorContext, EditorContextInterface } from '../../Contexts/EditorContext'
+import { EditorContext, EditorContextInterface } from '../../Components/Masher/EditorContext'
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import { TimelinePropsDefault } from '../Timeline/TimelinePropsDefault'
 import { InspectorPropsDefault } from '../Inspector/InspectorPropsDefault'
@@ -66,15 +66,23 @@ export function Masher(props: MasherProps): ReactResult {
     ...rest
   } = props
 
+  const editorIndexRef = React.useRef<EditorIndex>({})
+  const { current: editorIndex } = editorIndexRef
+
   const ref = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
   const [editor] = React.useState(() => editorInstance({ editType }))
   const [requested, setRequested] = React.useState(false)
   const [draggable, setDraggable] = React.useState<Draggable | undefined>()
 
-  const { enabled, endpointPromise, servers } = apiContext
+  const { exists, enabled, endpointPromise, servers } = apiContext
 
   React.useEffect(() => {
+    if (!exists) {
+      editor.load({ mash: {} })
+      return
+    }
+
     if (!requested && enabled.includes(ServerType.Data)) {
       setRequested(true)
       const request: DataMashDefaultRequest = {}
@@ -126,7 +134,7 @@ export function Masher(props: MasherProps): ReactResult {
 
   const handleApiCallback = (id: string, definition: Definition, callback: ApiCallback): Promise<void> => {
     console.debug("handleApiCallback request", callback)
-    const { eventTarget, preloader } = editor
+    const { eventTarget } = editor
     return fetchCallback(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
       const { apiCallback, error } = response
@@ -141,11 +149,9 @@ export function Masher(props: MasherProps): ReactResult {
           assertObject(body)
 
           const putRequest: DataDefinitionPutRequest = body
-          const { id } = putRequest.definition
-          assertPopulatedString(id)
+          const { definition: definitionObject } = putRequest
 
-          Defined.updateDefinitionId(definition.id, id)
-          definition.id = id
+          editor.updateDefinition(definitionObject, definition)
         }
         if (callback.endpoint.prefix === Endpoints.rendering.status) {
           const statusResponse: RenderingStatusResponse = response
@@ -239,7 +245,7 @@ export function Masher(props: MasherProps): ReactResult {
   }
 
   const editorContext: EditorContextInterface = {
-    editor, draggable, setDraggable, dropFiles, save
+    editor, draggable, setDraggable, dropFiles, save,editorIndex
   }
   const viewProps = { ...rest, onDrop: eventStop, ref }
   return (

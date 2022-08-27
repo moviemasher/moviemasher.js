@@ -1,4 +1,4 @@
-import { JsonObject, AndId, Described, StringObject, StringsObject } from "../declarations"
+import { JsonObject, AndId, Described, StringObject, StringsObject, DescribedObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { MashObject } from "../Edited/Mash/Mash"
@@ -21,7 +21,7 @@ export interface DataPutRequest extends ApiRequest {
 
 
 export interface DataRetrieveResponse extends ApiResponse {
-  described: Described[]
+  described: DescribedObject[]
 }
 
 export interface DataServerInit extends JsonObject {

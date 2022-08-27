@@ -2,29 +2,35 @@ import { GenericFactory, LoadedVideo } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { isInstance } from "../../Instance/Instance"
 import {
-  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject
+  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
+  UpdatableSizeObject
 } from "../../Mixin/UpdatableSize/UpdatableSize"
 import {
   Content, ContentDefinition, ContentDefinitionObject, ContentObject
 } from "../../Content/Content"
-import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
-import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "../../Container/Container"
+import { UpdatableDuration, UpdatableDurationDefinition, 
+  UpdatableDurationDefinitionObject, UpdatableDurationObject 
+} from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { isDefinition } from "../../Definition"
 
-export interface VideoObject extends ContainerObject, ContentObject, UpdatableSizeObject, UpdatableDurationObject {
+export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
 }
 
-export interface Video extends Content, Container, UpdatableSize, UpdatableDuration {
+export interface Video extends Content, UpdatableSize, UpdatableDuration {
   definition : VideoDefinition
 }
 
-export interface VideoDefinitionObject extends ContainerDefinitionObject, ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+export interface VideoDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   loadedVideo?: LoadedVideo
 }
 
-export interface VideoDefinition extends ContainerDefinition, ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+export interface VideoDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoObject): Video
   loadedVideo?: LoadedVideo
+}
+export const isVideoDefinition = (value: any): value is VideoDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Video
 }
 
 export const isVideo = (value: any): value is Video => {

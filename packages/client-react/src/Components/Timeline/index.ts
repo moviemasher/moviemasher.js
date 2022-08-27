@@ -1,7 +1,6 @@
 export * from "./Timeline"
 export * from "./TimelineAddClipControl"
 export * from "./TimelineAddTrackControl"
-export * from "./TimelineClip"
 export * from "./TimelineContent"
 export * from "./TimelineContext"
 export * from "./TimelinePropsDefault"

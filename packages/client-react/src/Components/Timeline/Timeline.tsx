@@ -11,7 +11,7 @@ import {
   dragDefinitionType, TransferTypeFiles, dragData
 } from '../../Helpers/DragDrop'
 import { useEditor } from '../../Hooks/useEditor'
-import { EditorContext } from '../../Contexts/EditorContext'
+import { EditorContext } from '../../Components/Masher/EditorContext'
 
 
 export interface TimelineProps extends PropsAndChildren {}
@@ -59,9 +59,10 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (types.includes(TransferTypeFiles)) return true
 
     const type = types.find(isTransferType)
+    console.log("Timeline dragTypeValid", type, types)
     if (!type) return false
 
-    // anything can be dropped on a clip
+    // anything can be dropped on a clip 
     if (clip) return true
 
     // effects can only be dropped on clips

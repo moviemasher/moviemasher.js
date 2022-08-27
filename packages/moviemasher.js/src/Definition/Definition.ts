@@ -1,10 +1,14 @@
-import { Constrained, Described, UnknownObject } from "../declarations"
+import { 
+  Constrained, Described, Endpoint, LoadedImage, SvgOrImage, UnknownObject 
+} from "../declarations"
 import { DefinitionType, isDefinitionType } from "../Setup/Enums"
 import { Property } from "../Setup/Property"
 import { Times } from "../Helpers/Time/Time"
 import { isObject } from "../Utility/Is"
 import { Instance, InstanceObject } from "../Instance/Instance"
 import { throwError } from "../Utility/Throw"
+import { Size } from "../Utility/Size"
+
 
 export interface DefinitionObject extends UnknownObject, Partial<Described> {
   type?: DefinitionType | string
@@ -14,7 +18,7 @@ export interface DefinitionObject extends UnknownObject, Partial<Described> {
 export type DefinitionObjects = DefinitionObject[]
 
 export interface Definition {
-  icon?: string
+  definitionIcon(endpoint: Endpoint, size: Size): Promise<SvgOrImage> | undefined
   id: string
   instanceFromObject(object?: InstanceObject): Instance
   instanceArgs(object?: InstanceObject): InstanceObject

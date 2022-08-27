@@ -19,4 +19,5 @@ export const DataTypeInputs: DataTypeElements = {
   [DataType.ContentId]: EmptyElement,
   [DataType.Boolean]: EmptyElement,
   [DataType.Timing]: EmptyElement,
+  [DataType.Sizing]: EmptyElement,
 }

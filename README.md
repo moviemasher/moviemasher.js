@@ -2,7 +2,7 @@
 <!-- The below content is automatically added from dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.7_
+_JavaScript video editor, encoder, switcher - version 5.0.7_
 
 - _visual compositing_ through **SVG API**
 - _audio mixing_ through **WebAudio API**
@@ -190,7 +190,7 @@ Learn more about building your own customized server in the
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.0.7
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.1.0
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password

@@ -5,7 +5,7 @@ import { Time } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { Mash } from "../../Edited/Mash/Mash"
 import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
-import { ScalarObject } from "../../declarations"
+import { ScalarObject, SvgItem } from "../../declarations"
 import { Rect } from "../../Utility/Rect"
 
 export interface PreviewOptions  {
@@ -22,7 +22,7 @@ export interface PreviewArgs extends PreviewOptions {
 
 
 export interface Svg {
-  element: SVGSVGElement
+  element: SvgItem
   id: string
   changeHandler?: (values: ScalarObject) => void 
   clip?: Clip
@@ -32,8 +32,7 @@ export interface Svg {
 export type Svgs = Svg[]
 
 export interface Preview extends GraphFileOptions {
-  svgs: Promise<Svgs>
-  svg: Promise<Svg>
+  svgItemsPromise: Promise<SvgItem[]>
   editing: boolean
   editor?: Editor
   size: Size

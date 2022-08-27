@@ -23,7 +23,6 @@ export function RgbTypeInput(): ReactResult {
     colorProps.onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = event.target
       if (time) await editor.goToTime(time)
-      console.log("RgbTypeInput", value, time?.toString())
       changeHandler(name, value)
     }
   } else colorProps.disabled = true

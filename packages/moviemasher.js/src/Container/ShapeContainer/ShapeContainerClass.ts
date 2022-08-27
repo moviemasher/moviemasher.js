@@ -12,13 +12,13 @@ import { assertPopulatedArray, assertPopulatedString, assertTrue, isPopulatedArr
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { arrayLast } from "../../Utility/Array"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { Tweening, tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
+import { Tweening, tweenMaxSize, tweenRectTransform } from "../../Utility/Tween"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { PointZero } from "../../Utility/Point"
-import { svgPolygonElement } from "../../Utility/Svg"
+import { svgPathElement, svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Editor } from "../../Editor/Editor"
 
@@ -82,7 +82,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width="${inWidth}" height="${inHeight}"`
-    const transformAttribute = tweenRectScale(intrinsicRect, maxSize)
+    const transformAttribute = tweenRectTransform(intrinsicRect, maxSize)
 
     // console.log(this.constructor.name, "commandFiles", forecolor, backcolor, tweeningColor, noContentFilters)
     const tags: string[] = []
@@ -180,8 +180,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return commandFilters
   }
 
-  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
-    return this.pathElement(rect, colorWhite)
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem { 
+    return this.pathElement(rect)
   }
 
   declare definition: ShapeContainerDefinition
@@ -308,27 +308,19 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return !rectsEqual(...containerRects)
   }
 
-  pathElement(rect: Rect, forecolor = colorWhite, editor?: Editor): SvgItem {
+  pathElement(rect: Rect): SvgItem {
     const { definition } = this
     const intrinsicRect = this.intrinsicRect(true)
     if (!sizeAboveZero(intrinsicRect)) {
-      // console.log(this.constructor.name, "pathElement", intrinsicRect)
-      const svgItem = svgPolygonElement(rect, '', forecolor)
-      if (editor) this.attachHandlers(svgItem, editor)
-      return svgItem
+      const polygonElement = svgPolygonElement(rect, '', '')
+      return polygonElement
     }
     const { path } = definition
-    const transformAttribute = tweenRectScale(intrinsicRect, rect)
-
-    const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'path')
-    svgItem.setAttribute('d', path)
-    svgItem.setAttribute('fill', forecolor)
-    svgItem.setAttribute('transform', transformAttribute)
-    svgItem.setAttribute('transform-origin', 'top left')
-
-    if (editor) this.attachHandlers(svgItem, editor)
-
-    return svgItem
+    const transformAttribute = tweenRectTransform(intrinsicRect, rect)
+    const pathElement = svgPathElement(path, '')
+    pathElement.setAttribute('transform', transformAttribute)
+    pathElement.setAttribute('transform-origin', 'top left')
+    return pathElement
   }
 
   requiresAlpha(args: CommandFileArgs): boolean {

@@ -1,14 +1,14 @@
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
-import { Loader, LoaderFile } from "./Loader"
-import { Definition } from "../Definition/Definition"
+import { LoadedInfo, Loader, LoaderFile } from "./Loader"
+import { Definition, DefinitionObject } from "../Definition/Definition"
 import { assertAboveZero, assertBoolean, isAboveZero } from "../Utility/Is"
 import { isUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { UnknownObject } from "../declarations"
-import { isPreloadableDefinition } from "../Mixin"
+import { isPreloadableDefinition, PreloadableDefinition } from "../Mixin"
 import { isFontDefinition } from "../Media/Font/Font"
-import { sizeAboveZero, sizesEqual } from "../Utility"
+import { idGenerate, sizeAboveZero, sizesEqual } from "../Utility"
 
 export class LoaderClass implements Loader {
   protected filePromise(key: string, graphFile: GraphFile): LoaderFile {
@@ -42,8 +42,20 @@ export class LoaderClass implements Loader {
 
   key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
 
+  loadDefinitionObject(definition: DefinitionObject, object: any, loadedInfo?: LoadedInfo, key?: string): string {
+    const id = key || idGenerate('object:')
+    definition.url ||= id
+
+    const { loadType } = definition
+    const loaderFile: LoaderFile = {
+      definitions: [], result: object, loaded: true, loadedInfo
+    }
+    const filesKey = `${loadType}-${id}`
+    this.files.set(filesKey, loaderFile)
+    return id
+  }
+
   private loadFilePromise(graphFile: GraphFile): Promise<GraphFile> {
-    
     const { definition, type } = graphFile
     const key = this.key(graphFile)
     const filesKey = `${type}-${key}`
@@ -51,14 +63,15 @@ export class LoaderClass implements Loader {
       definition.urlAbsolute ||= key
     }
     let file = this.files.get(filesKey)
-    const definitions = file?.definitions || new Map<string, Definition>()
-    definitions.set(definition.id, definition)
-
+    const definitions = file?.definitions || []
+    if (!definitions.includes(definition)) definitions.push(definition)
+    
     if (!file) {
       file = this.filePromise(key, graphFile)
       this.files.set(filesKey, file)
     }
-    return file.promise.then(() => graphFile)
+
+    return file.promise!.then(() => graphFile)
   }
 
   loadFilesPromise(graphFiles: GraphFiles): Promise<GraphFiles> {
@@ -105,6 +118,7 @@ export class LoaderClass implements Loader {
   }
 
   protected updateDefinitionSize(definition: Definition, size: UnknownObject, source = false) {
+    
     // return unless definition's size updatable
     if (!isUpdatableSizeDefinition(definition)) return 
 
@@ -113,6 +127,8 @@ export class LoaderClass implements Loader {
 
     const key = source ? "sourceSize" : "previewSize"
     const { [key]: definitionSize} = definition
+
+    console.log(this.constructor.name, "updateDefinitionSize", key, definitionSize, "=>", size)
 
     // return if definition's size already matches
     if (sizesEqual(size, definitionSize)) return 

@@ -37,7 +37,7 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     return [color, colorEnd]
   }
 
-  contentSvgItem(containerRect: Rect, time: Time, range: TimeRange): SvgItem {
+  contentSvgItem(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem {
     const { colorFilter } = this
     const [color] = this.tweenValues('color', time, range)
     const { x, y, width, height } = containerRect

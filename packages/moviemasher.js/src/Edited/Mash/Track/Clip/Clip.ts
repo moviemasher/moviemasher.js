@@ -1,16 +1,17 @@
-import { Container, ContainerObject } from "../../../../Container/Container"
+import { Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
 import { Content, ContentObject } from "../../../../Content/Content"
-import { GenericFactory } from "../../../../declarations"
+import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler } from "../../../../declarations"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
-import { Timing } from "../../../../Setup/Enums"
+import { Sizing, Timing } from "../../../../Setup/Enums"
 import { throwError } from "../../../../Utility/Throw"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../../../../Edited/Mash/Track/Track"
 import { Definition, DefinitionObject } from "../../../../Definition/Definition"
 import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../../../Instance/Instance"
-import { Loader } from "../../../../Loader/Loader"
 import { Selectable } from "../../../../Editor/Selectable"
 import { Tweenable } from "../../../../Mixin/Tweenable/Tweenable"
+import { Size } from "../../../../Utility/Size"
+import { RectTuple } from "../../../../Utility/Rect"
 
 export interface ClipObject extends InstanceObject {
   containerId?: string
@@ -28,8 +29,6 @@ export const isClipObject = (value: any): value is ClipObject => {
 export interface ClipDefinitionObject extends DefinitionObject {}
 
 export interface Clip extends Instance, Selectable {
-  
-  // definition: ClipDefinition
   audible: boolean
   clipGraphFiles(args: GraphFileArgs): GraphFiles
   commandFiles(args: CommandFileArgs): CommandFiles 
@@ -42,12 +41,18 @@ export interface Clip extends Instance, Selectable {
   endFrame: number
   frame : number
   frames: number
-  iconUrl(preloader: Loader): string | undefined
+
+  clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
+  rects(args: ContainerRectArgs): RectTuple
+
+  
   maxFrames(quantize : number, trim? : number) : number
   mutable: boolean
   muted: boolean
   notMuted: boolean
   resetDuration(tweenable?: Tweenable, quantize?: number): void
+  sizing: Sizing
+  svgElement(size: Size, time?: Time, iconIndex?: number): SvgItemsTuple 
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange

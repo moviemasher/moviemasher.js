@@ -3,14 +3,6 @@
   user-select: none;
   -webkit-user-select: none;
 }
-.moviemasher .editor label {
-  height: var(--icon-size);
-}
-
-
-.moviemasher .editor .panel select {
-  height: var(--button-size);
-}
 
 .moviemasher .editor .panel button {
   display: inline-flex;

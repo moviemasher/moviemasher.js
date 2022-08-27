@@ -42,8 +42,7 @@ export class NodeLoader extends LoaderClass {
   protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
     // console.log(this.constructor.name, "filePromise", key)
     const { definition } = graphFile
-    const definitions = new Map<string, Definition>()
-    definitions.set(definition.id, definition)
+    const definitions = [definition]
     const preloaderSource: LoaderSource = { loaded: false, definitions }
     if (fs.existsSync(key)) {
       // console.log(this.constructor.name, "filePromise existent")
@@ -122,7 +121,7 @@ export class NodeLoader extends LoaderClass {
   }
 
   private updateableDefinitions(preloaderSource: LoaderSource): Definition[] {
-    const definitions = [...preloaderSource.definitions.values()]
+    const definitions = [...preloaderSource.definitions]
     const preloadableDefinitions = definitions.filter(definition => {
       return isPreloadableDefinition(definition) 
     })
@@ -136,7 +135,7 @@ export class NodeLoader extends LoaderClass {
   }
 
   private updateSources(key: string, preloaderSource: LoaderSource, graphFile: GraphFile): Promise<void> {
-    const { definitions, result } = preloaderSource
+    const { definitions } = preloaderSource
     preloaderSource.loaded = true
     definitions.forEach(definition => {
       if (!isPreloadableDefinition(definition)) return

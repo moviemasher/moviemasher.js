@@ -14,8 +14,21 @@ export const urlAbsolute = (url: string, base?: string): string => {
   return href
 }
 
+export const urlHasProtocol = (url: string) => url.includes(':')
+
+export const urlContainsContent = (url: string): boolean => {
+  if (!urlHasProtocol(url)) return false
+
+  const [protocol] = url.split(':')
+  switch (protocol) {
+    case 'blob':
+    case 'data': return true
+  }
+  return false
+}
+
 export const urlForEndpoint = (endpoint?: Endpoint, suffix?: string): string => {
-  if (suffix?.startsWith('http') || suffix?.startsWith('blob:')) return suffix
+  if (suffix && urlHasProtocol(suffix)) return suffix
   
   const bits: string[] = []
   if (endpoint) {

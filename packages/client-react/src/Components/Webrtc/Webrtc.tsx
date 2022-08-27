@@ -3,7 +3,7 @@ import { ServerType } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChildren, WithClassName } from "../../declarations"
 import { WebrtcContext, WebrtcContextInterface } from "../../Contexts/WebrtcContext"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
 import { View } from "../../Utilities/View"
 import { WebrtcClient } from "./WebrtcClient"
 

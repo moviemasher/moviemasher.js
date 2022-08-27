@@ -23,13 +23,11 @@ export const pointsEqual = (point: Point, pointEnd?: any) => {
   return point.x === pointEnd.x && point.y === pointEnd.y
 }
 
-export const pointTransform = (point: Point, pointEnd: Point | undefined): Point => {
-  if (!isPoint(pointEnd)) return { x: 0, y: 0 }
-
-  return {
-    x: pointEnd.x - point.x,
-    y: pointEnd.y - point.y,
-  }
-}
-
 export const PointZero: Point = { x: 0, y: 0 }
+
+export const pointCopy = (point: any): Point => {
+  assertPoint(point)
+
+  const { x, y } = point
+  return { x, y } 
+}

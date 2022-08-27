@@ -6,6 +6,7 @@
   --header-height: 38px;
   --footer-height: 38px;
   --preview-aspect-ratio: 16 / 9;
+  --icon-ratio: 0.25;
   --preview-width: 480px;
   --preview-height: 270px;
   --scrubber-height: 16px;
@@ -55,6 +56,9 @@
   --spacing: 5px;
 }
 
+.moviemasher .editor .panel .preview label {
+  --padding: 5px;
+}
 
 .moviemasher .editor .panel button {
   --padding: 5px;

@@ -11,7 +11,7 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 import { ContentMixin } from "../../Content/ContentMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
 import { NamespaceSvg, NamespaceXhtml } from "../../Setup/Constants"
-import { svgPolygonElement } from "../../Utility/Svg"
+import { svgImageElement, svgPolygonElement } from "../../Utility/Svg"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
@@ -38,15 +38,13 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     const options: ValueObject = { loop: 1, framerate: videoRate }
     if (duration) options.t = duration
-    graphFile.options = options
     const commandFile: CommandFile = {
-      ...graphFile, inputId: this.id
+      ...graphFile, inputId: this.id, options
     }
     // console.log(this.constructor.name, "commandFiles", commandFile)
     commandFiles.push(commandFile)
     return commandFiles
   }
-
 
   graphFiles(args: GraphFileArgs): GraphFiles { 
     const { visible, editing } = args
@@ -61,14 +59,12 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     const graphFile: GraphFile = {
       input: true, type: LoadType.Image, file, definition
     }
-    // console.log(this.constructor.name, "graphFiles", file)
     graphFiles.push(graphFile)
-  
     return graphFiles
   }
 
-  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
-    const {loadedHtmlImage} = this
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem {
+    const { loadedHtmlImage } = this
     const { x, y, width, height } = rect
     loadedHtmlImage.setAttribute('x', String(x))
     loadedHtmlImage.setAttribute('y', String(y))
@@ -78,21 +74,16 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
       loadedHtmlImage.setAttribute('preserveAspectRatio', 'none')
     }
     return loadedHtmlImage
-    // return this.foreignSvgItem(this.loadedHtmlImage as any, rect, stretch)
   }
 
-  private _loadedHtmlImage?: SvgItem
+  // protected _loadedHtmlImage?: SvgItem
 
   private get loadedHtmlImage() {
-    if (this._loadedHtmlImage) return this._loadedHtmlImage
+    // if (this._loadedHtmlImage) return this._loadedHtmlImage
     
     const { loadedImage } = this
-    const scoped = globalThis.document.createElementNS(NamespaceSvg, "image") 
-    //loadedImage.cloneNode() as LoadedImage
-    const { src } = loadedImage
-    
-    scoped.setAttribute('href', src)
-    return this._loadedHtmlImage = scoped
+    const { src } = loadedImage // this._loadedHtmlImage =
+    return svgImageElement(src)
   }
 
   private get loadedImage(): LoadedImage {
@@ -108,7 +99,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     const [graphFile] = this.graphFiles(args)
     const { preloader } = clip.track.mash
     const image: LoadedImage = preloader.getFile(graphFile)
-    assertTrue(!!image, "image")
+    assertTrue(image, "image")
 
     definition.loadedImage = image
     return image

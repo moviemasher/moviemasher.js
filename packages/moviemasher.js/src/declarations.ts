@@ -31,8 +31,14 @@ export interface AudibleSource extends AudioBufferSourceNode {}
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement
 export type SvgFilters = SvgFilter[]
-export type SvgItem = SVGMaskElement | SVGImageElement | SVGForeignObjectElement | SVGTextElement | SVGPathElement | SVGGElement
+export type SvgItem = SVGElement 
 
+
+export type SvgItems = SvgItem[]
+export type SvgItemsTuple = [SvgItems, SvgItems]
+
+
+export type SvgOrImage = SVGSVGElement | LoadedImage
 
 export type VisibleSource = HTMLVideoElement | HTMLImageElement | SVGImageElement | HTMLCanvasElement
 
@@ -51,6 +57,7 @@ export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
 export interface BooleanGetter { (): boolean }
+export type EventHandler = (event: Event) => void 
 
 export type AnyArray = any[]
 export type JsonValue = Scalar | AnyArray | UnknownObject
@@ -95,6 +102,12 @@ export interface AndType {
 export interface AndId {
   id: string
 }
+
+export interface AndLabel {
+  label: string
+}
+
+export interface LabelAndId extends AndId, AndLabel {}
 
 export interface WithError {
   error?: string
@@ -171,14 +184,18 @@ export interface InputParameter {
   value: Value
 }
 
-export interface Described {
-  createdAt: string
+export interface DescribedObject extends AndId, UnknownObject {
   icon?: string
-  id : string
+  label?: string
+}
+
+export interface Described extends AndId {
+  createdAt: string
+  icon: string
   label: string
 }
 
-export interface DescribedObject extends Partial<Described> {}
+
 
 export const isCustomEvent = (value: any): value is CustomEvent => (
   value instanceof CustomEvent

@@ -1,7 +1,7 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
-import { Point, pointsEqual, pointTransform, PointTuple } from "./Point"
+import { isPoint, Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
-import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple } from "./Size"
+import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
@@ -66,23 +66,6 @@ export const tweenColors = (color: Scalar, colorEnd: Scalar, frames: number): st
   return colors
 }
 
-export const tweenDimensionsTransform = (dimensions: Size, dimensionsEnd: Size | undefined): Size => {
-  if (!isSize(dimensionsEnd)) return { width: 1, height: 1 }
-
-  return {
-    width: dimensions.width / dimensionsEnd.width,
-    height: dimensions.height / dimensionsEnd.height,
-  }
-}
-
-export const tweenRectTransform = (rect: Rect, rectEnd: Rect | undefined): Rect => {
-  if (!isRect(rectEnd)) return { x: 0, y: 0, width: 1, height: 1 }
-
-  return { 
-    ...pointTransform(rect, rectEnd), 
-    ...tweenDimensionsTransform(rect, rectEnd) 
-  }
-}
 
 export const tweenRects = (rect: Rect, rectEnd: Rect | undefined, frames: number): Rect[] => {
   const rects = [rect]
@@ -181,7 +164,7 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
   return result
 }
 
-export const tweenRectScale = (dimensions: Size | any, rect: Rect | Size | any): string => {
+export const tweenRectTransform = (dimensions: Size | any, rect: Rect | Size | any): string => {
   assertSize(dimensions)
   assertSize(rect)
 
@@ -190,7 +173,7 @@ export const tweenRectScale = (dimensions: Size | any, rect: Rect | Size | any):
   const words: string[] = []
   const scaleWidth = width / outWidth 
   const scaleHeight = height / outHeight 
-  if (isRect(rect)) {
+  if (isPoint(rect)) {
     const { x, y } = rect
     if (!(x === 0 && y === 0)) words.push(`translate(${x},${y})`)
   }
@@ -234,20 +217,11 @@ export const tweenCoverPoints = (scaledSizes: SizeTuple, outSize: Size | SizeTup
   return [point, pointEnd]
 }
 
-export const tweenRectLock = (rect: Rect, lock: Orientation): Rect => {
-  const copy = { ...rect }
-  switch (lock) {
-    case Orientation.H: 
-      copy.width = copy.height
-      break
-    case Orientation.V:
-      copy.height = copy.width
-      break
-  }
-  return copy
-}
+export const tweenRectLock = (rect: Rect, lock?: Orientation): Rect => ({
+  ...rect,  ...sizeLock(rect, lock)
+})
 
-export const tweenRectsLock = (rects: RectTuple, lock: Orientation): RectTuple => {
+export const tweenRectsLock = (rects: RectTuple, lock?: Orientation): RectTuple => {
   return rects.map(rect => tweenRectLock(rect, lock)) as RectTuple
 }
 

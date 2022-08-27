@@ -9,7 +9,7 @@ import { PropsWithChildren, ReactResult } from "../../declarations"
  */
 export function PlayerButton(props: PropsWithChildren): ReactResult {
   const playerContext = React.useContext(PlayerContext)
-  const { paused, setPaused } = playerContext
+  const { paused, changePaused: setPaused } = playerContext
 
   const onClick = () => { setPaused(!paused) }
 

@@ -7,7 +7,7 @@ import { PropsAndChildren, ReactResult } from "../../declarations"
 import { DragType, dragType, isDragType } from "../../Helpers/DragDrop"
 import { useListeners } from "../../Hooks/useListeners"
 import { ComposerContext, ComposerContextInterface } from "../../Contexts/ComposerContext"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { EditorContext } from "../../Components/Masher/EditorContext"
 
 export interface ComposerProps extends PropsAndChildren {}
 

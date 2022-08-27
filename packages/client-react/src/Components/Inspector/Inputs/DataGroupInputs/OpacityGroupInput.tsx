@@ -1,9 +1,7 @@
 import React from "react"
 import { 
   assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, 
-  isDefined, selectedPropertyObject, PropertyTweenSuffix, ScalarObject,
-  selectedPropertiesScalarObject,
-  assertTimeRange,
+  selectedPropertyObject, PropertyTweenSuffix, assertTimeRange,
   tweenInputTime
 } from "@moviemasher/moviemasher.js"
 import { DefaultIcons } from "@moviemasher/icons-default"
@@ -19,7 +17,7 @@ import { useEditor } from "../../../../Hooks/useEditor"
 
 export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   const editor = useEditor()
-  const { selectType } = props
+  const { selectType, ...rest } = props
   assertSelectType(selectType)
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedItems: properties, changeTweening, selectedInfo } = inspectorContext
@@ -39,7 +37,6 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   const { type, name: propertyName } = property
   const name = nameOveride || propertyName
   const input = DataTypeInputs[type] 
-  const key = `inspector-${selectType}-${name}`
   const inputContext: InputContextInterface = { 
     property, value, name, changeHandler
   }
@@ -52,7 +49,6 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
     inputContext.defaultValue = opacity.value
   }
 
-  const providerProps = { key, value: inputContext, children: input }
   const selectedButton = [ClassSelected, ClassButton].join(' ')
   const startProps: PropsAndChild = {
     children: DefaultIcons.start,
@@ -73,12 +69,16 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
       changeTweening(DataGroup.Opacity, true)
     }
   }
+
+  const providerProps = { key: 'context', value: inputContext, children: input }
+
   const viewProps = {
-    key, className: "opacity",
+    ...rest,
+    key: `inspector-${selectType}-${name}`, 
     children: [
       DefaultIcons.opacity, 
       <InputContext.Provider { ...providerProps } />, 
-      <View className="start-end" key={`${key}-start-end`}>
+      <View className="start-end" key='start-end'>
         <View { ...startProps } />
         <View { ...endProps } />
       </View>
@@ -87,4 +87,4 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   return <View { ...viewProps } />
 }
 
-DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput key="opacity-group-input" />
+DataGroupInputs[DataGroup.Opacity] = <OpacityGroupInput className="opacity tween row" key="opacity-group-input" />

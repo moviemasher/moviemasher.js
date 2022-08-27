@@ -172,6 +172,7 @@ export class EditorSelectionClass implements EditorSelection {
       let target = selection[type]
       if (isClipSelectType(type) && isClip(clip)) target = clip[type]
       assertTrue(target, type)
+      
       return target.selectedItems(this.editor.actions)
     })
   }

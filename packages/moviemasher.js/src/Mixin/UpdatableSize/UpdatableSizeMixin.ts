@@ -99,8 +99,8 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
     
-    containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem {
-      return this.svgItem(rect, time, range, true)
+    containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem {
+      return this.svgItem(rect, time, range, true, icon)
     }
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {

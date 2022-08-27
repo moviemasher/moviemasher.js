@@ -19,6 +19,8 @@ Most any SVG or font-based icons should work. Properties in the [[EditorIcons]] 
 
 ```tsx
 export const DefaultIcons = {
+  active: <ImSpinner3 key='active' />,
+  activity: <TbActivityHeartbeat key='activity' />,
   add: <RiAddLine key='add' />,
   administrator: <RiUserSettingsFill key='administrator' />,
   app: <img key='logo' src="mm.svg" />,
@@ -28,8 +30,7 @@ export const DefaultIcons = {
   browser: <MdPermMedia key='browser' />,
   browserAudio: <RiMusic2Fill />,
   browserAudioStream: <RiChatVoiceFill />,
-  browserEffect: <MdInvertColors />,
-  color: <IoColorFillSharp key="color" />,
+  browserEffect: <MdInvertColors key="effect" />,
   browserImage: <RiImageFill />,
   browserShape: <BiShapeTriangle />,
   browserText: <MdOutlineTextFields />,
@@ -39,11 +40,15 @@ export const DefaultIcons = {
   clip: <MdOutlineTimelapse/>,
   collapse: <VscTriangleDown/>,
   collapsed: <VscTriangleRight/>,
-  container: <FaExpand/>,
-  content: <HiArrowsExpand/>,
-  document: <IoDocument />,
+  color: <IoMdColorFill key="color" />,
+  complete: <FaRegCheckCircle key='complete' />,
+  composer: <GiDirectorChair key='composer' />,
+  container: <BiBorderOuter/>,
+  content: <BiBorderInner/>,
+  document: <IoDocument key="document" />,
   end: <BsSkipEndFill />,
   endUndefined: <BsSkipEnd />,
+  error: <FaExclamationCircle key='error' />,
   folder: <RiFolderLine key='folder' />,
   folderAdd: <RiFolderAddFill key='folderAdd' />,
   folderOpen: <RiFolderOpenLine key='folderOpen' />,
@@ -51,19 +56,19 @@ export const DefaultIcons = {
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
   invisible: <RiEyeOffLine key='invisible' />,
-  layer: <RiStackLine key='layer' />,
-  layers: <RiStackFill key='layers' />,
+  label: <MdLabel key="label" />,
   lock: <HiLockClosed />,
   matte: <BsReverseLayoutSidebarInsetReverse/>,
   message: <RiMessage3Fill key='message' />,
   mm: <MMIcon />,
   mmTube: <MMTubeIcon />,
+  mmWide: <MMWideIcon />,
   opacity: <MdOpacity key="opacity" />,
   playerPause: <RiPauseCircleFill key="player-pause" />,
   playerPlay: <RiPlayCircleFill key="player-play"/>,
   point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine />,
-  remove: <RiDeleteBin7Line />,
+  remove: <RiDeleteBin7Line key="remove" />,
   render: <ImFileVideo />,
   size: <GiResize key="size" />,
   start: <BsSkipStartFill />,
@@ -71,19 +76,18 @@ export const DefaultIcons = {
   timeline: <MdOutlineTimelapse key='timeline' />,
   timelineAddAudio: <RiMvLine />,
   timelineAddVideo: <RiVideoLine />,
-  track: <GiFastForwardButton/>,
-  trackDense: <GiPlayButton key="track-dense"/>,
+  track: <RiStackLine/>,
+  trackDense: <RiStackFill key="track-dense"/>,
   transition: <RiArrowLeftRightLine />,
   undo: <RiArrowGoBackLine />,
   unlock: <HiLockOpen />,
-  upload: <RiUploadCloud2Line />,
+  upload: <RiUploadCloud2Line key="upload" />,
   vert: <GiVerticalFlip key="vert-flip" />,
   video: <RiArrowRightSLine />,
   view: <HiEye />,
   visible: <RiEyeLine key='visible' />,
   zoomLess: <TiZoomOutOutline key="zoom-less" />,
   zoomMore: <TiZoomInOutline key="zoom-more" />,
-
 }
 ```
 <!-- MAGIC:END -->
@@ -177,8 +181,9 @@ The icon button currently selected in the browser header is painted with the pro
   --padding: 40px;
   --spacing: 20px;
   --header-height: 38px;
-  --footer-height: 48px;
+  --footer-height: 38px;
   --preview-aspect-ratio: 16 / 9;
+  --icon-ratio: 0.25;
   --preview-width: 480px;
   --preview-height: 270px;
   --scrubber-height: 16px;
@@ -217,6 +222,23 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 .moviemasher .editor .panel.timeline .content {
+  --padding: 0px;
+  --spacing: 5px;
+}
+
+
+
+.moviemasher .editor .panel.activity .content {
+  --padding: 10px;
+  --spacing: 5px;
+}
+
+.moviemasher .editor .panel .preview label {
+  --padding: 5px;
+}
+
+.moviemasher .editor .panel button {
+  --padding: 5px;
   --spacing: 5px;
 }
 ```
@@ -232,8 +254,8 @@ The icon button currently selected in the browser header is painted with the pro
 ```css
 .moviemasher .masher {
   grid-template-areas:
-    "player browser inspector"
-    "timeline timeline inspector";
+    "player browser panels"
+    "timeline timeline panels";
   grid-template-columns:
     calc(
       var(--preview-width)
@@ -261,24 +283,6 @@ The icon button currently selected in the browser header is painted with the pro
   }
 }
 
-.moviemasher .editor .panel .foot > .progress {
-  grid-column-end: end;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: 1fr var(--progress-width) var(--icon-size);
-  grid-gap: var(--spacing);
-}
-  
-
-.moviemasher progress,
-.moviemasher .progress-holder { width: var(--progress-width); }
-
-.moviemasher .process-status {
-  white-space: nowrap;
-  overflow-x: hidden;
-  text-align: right;
-  font-size: initial;
-}
 
 .moviemasher .editor .panels {
   grid-area: panels;
@@ -287,10 +291,6 @@ The icon button currently selected in the browser header is painted with the pro
 	gap: var(--spacing);
 }
 
-.moviemasher .editor .panel.timeline .content {
-  --padding: 0px;
-  --spacing: 2px;
-}
 
 .moviemasher .editor .panel {
   flex-grow: 1;
@@ -312,19 +312,20 @@ The icon button currently selected in the browser header is painted with the pro
   border-bottom: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
+  display: grid;
 }
 
 .moviemasher .editor .panel .foot {
   border-top: var(--border);
   padding: var(--padding);
   column-gap: var(--spacing);
+  display: flex;
 }
 
 .moviemasher .editor .panel .foot,
 .moviemasher .editor .panel .head {
   background-color: var(--back-secondary);
   color: var(--fore-secondary);
-  display: grid;
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }
@@ -348,6 +349,43 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--back-primary);
   color: var(--fore-tertiary);
 }
+
+
+.moviemasher .editor .panel .preview {
+  position: relative;
+  overflow: hidden;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--fore-secondary);
+  color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+.moviemasher .editor .panel .preview > * {
+  pointer-events: none;
+}
+
+.moviemasher .editor .panel .definition div {
+  text-align: center;
+}
+
+.moviemasher .editor .panel .preview label {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--back-primary);
+  opacity: 0.5;
+  height: calc(var(--icon-size));
+  padding: var(--padding);
+}
+
+.moviemasher .editor label {
+  height: var(--icon-size);
+}
+
+.moviemasher .editor .panel select {
+  height: var(--button-size);
+}
 ```
 <!-- MAGIC:END -->
 </fieldset>
@@ -363,56 +401,57 @@ The icon button currently selected in the browser header is painted with the pro
   user-select: none;
   -webkit-user-select: none;
 }
-.moviemasher .editor label {
-  height: var(--icon-size);
-}
-
 
 .moviemasher .editor .panel button {
   display: inline-flex;
-  min-width: var(--icon-size);
-  height: var(--icon-size);
+  gap: var(--spacing);
+  padding: var(--padding);
+  align-items: center;
+  min-width: var(--button-size);
+  font-size: calc(var(--button-size) - 2 * var(--spacing));
+  line-height: calc(var(--button-size) - 2 * var(--spacing));
+  height: var(--button-size);
   cursor: pointer;
   appearance: none;
   outline: none;
-  align-items: center;
   font-weight: 500;
   border: var(--border);
   border-radius: var(--border-radius);
+
   color: var(--fore-secondary-promote);
   border-color: var(--fore-secondary-promote);
+
   background-color: var(--back-secondary);
   transition: var(--button-transition);
 }
 
-.moviemasher .editor .icon-button {
-  height: var(--icon-size);
-  font-size: var(--icon-size);
-  line-height: var(--icon-size);
-}
-
-.moviemasher .editor .icon-button:hover,
-.moviemasher .editor .icon-button.selected {
-  color: var(--fore-secondary-promote);
+.moviemasher .editor .button {
+  cursor: pointer;
+  height: var(--button-size);
+  font-size: var(--button-size);
+  line-height: var(--button-size);
   transition: var(--button-transition);
 }
+
 
 .moviemasher .editor .panel button:hover {
   color: var(--fore-secondary);
   border-color: var(--fore-secondary);
 }
 
+.moviemasher .editor .button:hover,
+.moviemasher .editor .button.selected {
+  color: var(--fore-secondary-promote);
+}
+
+.moviemasher .editor .button.disabled:hover,
+.moviemasher .editor .button.disabled,
 .moviemasher .editor .panel button:disabled {
+  cursor: default;
   color: var(--fore-secondary-demote);
   border-color: var(--fore-secondary-demote);
 }
 
-.moviemasher .editor .panel button > svg {
-  margin: 0px 5px;
-  margin-top: 1px;
-  height: 1em;
-  width: 1em;
-}
 
 .moviemasher .editor input[type=file] {
   visibility: hidden;
@@ -442,41 +481,27 @@ The icon button currently selected in the browser header is painted with the pro
   color: var(--fore-secondary);
 }
 
-.moviemasher .editor .panel.browser .foot {
-  grid-auto-flow: column;
-  grid-template-columns: repeat(auto-fit, var(--icon-size));
-}
-
-
-
-
 .moviemasher .editor .panel.browser .foot label {
-  width: var(--icon-size);
+  text-align: right;
+  flex-grow: 1;
 }
 .moviemasher .editor .panel.browser .foot label:hover {
   color: var(--fore-secondary-promote);
 }
 
+.moviemasher .editor .panel.browser .dropping {
+  background-color: var(--color-drop);
+}
+
 .moviemasher .editor .panel.browser .content {
   padding: var(--padding);
   display: grid;
-  grid-template-columns: repeat(auto-fit, calc(var(--preview-width) / 3));
-  grid-auto-rows: calc(var(--preview-height) / 3);
+  grid-template-columns: repeat(auto-fit, calc(var(--preview-width) * var(--icon-ratio)));
+  grid-auto-rows: calc(var(--preview-height) * var(--icon-ratio));
   gap: var(--spacing);
   overflow-y: auto;
 }
 
-.moviemasher .editor .panel.browser .definition {
-  overflow-x: hidden;
-  background-size: cover;
-  background-image: var(--clip-icon);
-  background-position: center;
-  border: var(--border);
-  border-radius: var(--border-radius);
-  border-color: var(--fore-secondary);
-  color: var(--fore-secondary);
-  background-color: var(--back-secondary);
-}
 
 .moviemasher .editor .panel.browser .content .definition:hover,
 .moviemasher .editor .panel.browser .content .selected {
@@ -489,20 +514,6 @@ The icon button currently selected in the browser header is painted with the pro
   border-color: var(--color-fore-tertiary);
   color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
-}
-
-.moviemasher .editor .panel.browser .definition label {
-  display: inline-block;
-  width: 100%;
-  background-color: var(--back-primary);
-  opacity: 0.75;
-  height: calc(var(--icon-size) + var(--spacing));
-}
-
-.moviemasher .editor .panel.browser .definition label:after {
-  content: var(--clip-label);
-  padding: var(--spacing);
-  display: inline-block;
 }
 ```
 <!-- MAGIC:END -->
@@ -520,13 +531,9 @@ The icon button currently selected in the browser header is painted with the pro
   grid-area: timeline;
 }
 
+
 .moviemasher .editor .panel.timeline .head {
   grid-template-columns: 1fr repeat(6, auto) 1fr min-content;
-}
-
-.moviemasher .editor .panel.timeline .foot {
-  grid-auto-flow: column;
-  grid-template-columns: repeat(4, min-content) ;
 }
 
 .moviemasher .editor .panel.timeline .content {
@@ -536,7 +543,6 @@ The icon button currently selected in the browser header is painted with the pro
   grid-template-columns: var(--track-width) 1fr;
   grid-template-rows: var(--scrubber-height) repeat(auto-fill, var(--track-height));
   row-gap: var(--spacing);
-  padding: var(--padding);
   position: relative;
 }
 
@@ -562,8 +568,11 @@ The icon button currently selected in the browser header is painted with the pro
 .moviemasher .editor .panel.timeline .content .scrubber-element-bar,
 .moviemasher .editor .panel.timeline .content .scrubber-element-icon {
   position: absolute;
+  cursor:pointer;
   background-color: var(--color-fore-secondary);
+  transition: var(--button-transition);
 }
+
 
 .moviemasher .editor .panel.timeline .content .scrubber-element-bar {
   width: 1px;
@@ -584,6 +593,13 @@ The icon button currently selected in the browser header is painted with the pro
   );
 }
 
+.moviemasher .editor .panel.timeline .content .disabled .scrubber-element-bar,
+.moviemasher .editor .panel.timeline .content .disabled .scrubber-element-icon {
+  pointer-events: none;
+  cursor: default;
+  background-color: var(--fore-secondary-demote);
+}
+
 .moviemasher .editor .panel.timeline .content .timeline-sizer {
   pointer-events: none;
   position: absolute;
@@ -594,6 +610,7 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 .moviemasher .editor .panel.timeline .content .track {
+  padding: var(--padding);
   --drop-size: var(--border-size);
   display: flex;
   border: var(--border);
@@ -606,17 +623,10 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--color-back-primary);
 }
 
-
 .moviemasher .editor .panel.timeline .content .track .clip {
   border-inline: var(--border);
-  overflow: hidden;
-  background-size: cover;
-  background-image: var(--clip-icon);
-  padding: 0px;
+  border-block: none;
   display: inline-block;
-  background-repeat: no-repeat;
-  color: var(--fore-secondary);
-  background-color: var(--back-secondary);
 }
 
 .moviemasher .editor .panel.timeline .content .track .clip:hover,
@@ -632,20 +642,6 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--color-back-tertiary);
 }
 
-.moviemasher .editor .panel.timeline .clip label {
-  overflow: hidden;
-  display: inline-block;
-  width: 100%;
-  background-color: var(--back-primary);
-  opacity: 0.75;
-  height: calc(var(--icon-size) + var(--spacing));
-}
-
-.moviemasher .editor .panel.timeline .clip label:after {
-  content: var(--clip-label);
-  padding: var(--spacing);
-  display: inline-block;
-}
 
 .moviemasher .editor .panel.timeline .content .track.dropping {
   border-block-color: var(--color-drop);
@@ -706,23 +702,16 @@ The icon button currently selected in the browser header is painted with the pro
 
 .moviemasher .editor .panel.player .head {
   grid-auto-flow: column;
-  grid-template-columns: 1fr repeat(auto-fill, min-content);
+  grid-template-columns: 1fr repeat(2, min-content);
 }
 
-.moviemasher .editor.masher .panel.player .foot {
-  grid-template-columns: var(--icon-size) 1fr 1fr;
+.moviemasher .editor .panel.player .foot .time {
+  font-size: 0.75em;
+  text-align: right;
+  flex-grow: 1;
 }
-
-.moviemasher .editor.caster .panel.player .foot {
-  grid-template-columns: repeat(5, min-content);
-}
-
 
 .moviemasher .editor .panel.player .content {
-  background: repeating-conic-gradient(
-    var(--back-secondary) 0% 25%, transparent 0% 50%
-  ) 50% / 20px 20px;
-  background-position: top left;
   width: var(--preview-width);
   height: var(--preview-height);
   margin-inline: auto;
@@ -730,60 +719,80 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 
-.moviemasher .editor .panel.player .content svg {
-  pointer-events: visibleFill;
+.moviemasher .editor .panel.player .dropping {
+  box-shadow:
+    0 var(--drop-size) 0 0 var(--color-drop),
+    0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
+  ;
 }
-
-.moviemasher .editor .panel.player .content svg .container {
+.moviemasher .editor .panel.player .content svg .outline {
   cursor: move;
-  pointer-events: visibleFill;
-}
-.moviemasher .editor .panel.player .content svg .contained {
-  pointer-events: none;
+  pointer-events: fill;
+  stroke-width: 0;
 }
 
-.moviemasher .editor .panel.player .content svg .bounds {
+.moviemasher .editor .panel.player .content svg .outline.animate:hover {
   stroke-width: calc(2 * var(--border-size));
-  pointer-events: visibleStroke;
-  
+  stroke-dasharray: 4px;
+  stroke-dashoffset: 8px;
+  stroke: white;
+  animation: 
+    stroke 1s linear infinite forwards,
+    color 1s linear 0.5s infinite alternate;
 }
 
-.moviemasher .editor .panel.player .content svg .handle.ne {
+@keyframes color { to {  stroke: black } }
+@keyframes stroke { to { stroke-dashoffset: 0; } }
+
+.moviemasher .editor .panel.player .content svg .handle.bounds.ne {
   cursor: ne-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.se {
+.moviemasher .editor .panel.player .content svg .handle.bounds.se {
   cursor: se-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.nw {
+.moviemasher .editor .panel.player .content svg .handle.bounds.nw {
   cursor: nw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.sw {
+.moviemasher .editor .panel.player .content svg .handle.bounds.sw {
   cursor: sw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.n {
+.moviemasher .editor .panel.player .content svg .handle.bounds.n {
   cursor: n-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.s {
+.moviemasher .editor .panel.player .content svg .handle.bounds.s {
   cursor: s-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.e {
+.moviemasher .editor .panel.player .content svg .handle.bounds.e {
   cursor: e-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.w {
+.moviemasher .editor .panel.player .content svg .handle.bounds.w {
   cursor: w-resize;
 }
 
-.moviemasher .editor .panel.player .content svg .shape {
-  stroke: transparent;
-  stroke-width: calc(2 * var(--border-size));
-}
-.moviemasher .editor .panel.player .content svg .shape:hover {
-  stroke: var(--color-fore-secondary);
+.moviemasher .editor .panel.player .content svg .bounds {
+  fill: white;
 }
 
-.moviemasher .editor .panel.player .content svg .shape.marker {
-  marker-mid: url(#shape-marker);
-  stroke: var(--color-fore-secondary);
+.moviemasher .editor .panel.player .content svg .bounds.active {
+  pointer-events: fill;
+  fill: transparent;
+}
+
+@supports (-moz-appearance:none) {
+  .moviemasher .player.panel .content svg .filtered {
+    filter: none;
+  }
+  .moviemasher .player.panel .content svg use.mozilla  {
+    stroke-width: var(--border-size);
+    stroke: black;
+    fill: white;
+  }
+}
+
+@supports not (-moz-appearance:none) {
+  .moviemasher .player.panel .content svg use.mozilla {
+    display: none;
+  }
 }
 ```
 <!-- MAGIC:END -->
@@ -798,12 +807,9 @@ The icon button currently selected in the browser header is painted with the pro
 ```css
 .moviemasher .editor .panel.inspector {
   grid-area: inspector;
+  flex-grow: 1;
 }
 
-.moviemasher .editor .panel.inspector .foot {
-  grid-auto-columns: min-content;
-  grid-auto-flow: column;
-}
 .moviemasher .editor .panel.inspector .content fieldset {
   line-height: var(--icon-size);
   font-size: var(--icon-size);
@@ -835,20 +841,7 @@ The icon button currently selected in the browser header is painted with the pro
 }
 .moviemasher .editor .panel.inspector .content .opacity,
 .moviemasher .editor .panel.inspector .content .color {
-  display: grid;
-  grid-auto-flow: column;
-  gap: var(--spacing);
-  grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
-  line-height: var(--icon-size);
-  font-size: var(--icon-size);
-}
-
-.moviemasher .editor .panel.inspector details>div>label {
-  text-transform: capitalize;
-}
-
-.moviemasher .editor .panel.inspector details>div>label:after {
-  content: ':';
+  
 }
 
 .moviemasher .editor .panel.inspector .content {
@@ -861,7 +854,25 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 
-.moviemasher .editor .panel.inspector .effects {
+.moviemasher .editor .panel.inspector .content > .row {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--spacing);
+  grid-template-columns: var(--icon-size) 1fr;
+  line-height: var(--icon-size);
+  font-size: var(--icon-size);
+}
+
+.moviemasher .editor .panel.inspector .content > .row.tween {
+  grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
+}
+
+.moviemasher .editor .panel.inspector .content > div > label,
+.moviemasher .editor .panel.inspector .content > div > button {
+  margin-right: var(--spacing);
+}
+
+.moviemasher .editor .panel.inspector .effects .list {
   width: 100%;
   height: calc((3 * var(--icon-size)) + (4 * var(--spacing)));
   border: var(--border);
@@ -873,10 +884,8 @@ The icon button currently selected in the browser header is painted with the pro
   overflow-y: scroll;
 }
 
-
 .moviemasher .editor .panel.inspector .definition-drop {
   display: grid;
-  width: 100%;
   aspect-ratio: var(--preview-aspect-ratio);
   border: var(--border);
   border-radius: var(--border-radius);
@@ -884,23 +893,10 @@ The icon button currently selected in the browser header is painted with the pro
   color: var(--fore-primary);
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
+  height: calc((2 * var(--spacing)) + var(--preview-height) * var(--icon-ratio));
 }
 
-
-.moviemasher .editor .panel.inspector .definition {
-  overflow-x: hidden;
-  background-size: cover;
-  background-image: var(--clip-icon);
-  background-position: center;
-  border: var(--border);
-  border-radius: var(--border-radius);
-  border-color: var(--fore-secondary);
-  color: var(--fore-secondary);
-  background-color: var(--back-secondary);
-}
-
-
-.moviemasher .editor .panel.inspector .effects .effect {
+.moviemasher .editor .panel.inspector .effects .list .effect {
   width: 100%;
   height: var(--icon-size);
   border: var(--border);
@@ -912,15 +908,14 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--back-secondary);
 }
 
-
-.moviemasher .editor .panel.inspector .effects .effect:hover,
-.moviemasher .editor .panel.inspector .effects .selected {
+.moviemasher .editor .panel.inspector .effects .list .effect:hover,
+.moviemasher .editor .panel.inspector .effects .list .selected {
   color: var(--color-fore-secondary);
   border-color: var(--color-fore-secondary);
   background-color: var(--color-back-secondary);
 }
 
-.moviemasher .editor .panel.inspector .effects .selected:hover {
+.moviemasher .editor .panel.inspector .effects .list .selected:hover {
   color: var(--color-fore-tertiary);
   border-color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
@@ -928,7 +923,7 @@ The icon button currently selected in the browser header is painted with the pro
 
 
 .moviemasher .editor .panel.inspector .dropping {
-  background-color: var(--color-back-secondary);
+  background-color: var(--color-drop);
 }
 ```
 <!-- MAGIC:END -->

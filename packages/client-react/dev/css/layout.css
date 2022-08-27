@@ -96,3 +96,40 @@
   background-color: var(--back-primary);
   color: var(--fore-tertiary);
 }
+
+
+.moviemasher .editor .panel .preview {
+  position: relative;
+  overflow: hidden;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--fore-secondary);
+  color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+.moviemasher .editor .panel .preview > * {
+  pointer-events: none;
+}
+
+.moviemasher .editor .panel .definition div {
+  text-align: center;
+}
+
+.moviemasher .editor .panel .preview label {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--back-primary);
+  opacity: 0.5;
+  height: calc(var(--icon-size));
+  padding: var(--padding);
+}
+
+.moviemasher .editor label {
+  height: var(--icon-size);
+}
+
+.moviemasher .editor .panel select {
+  height: var(--button-size);
+}

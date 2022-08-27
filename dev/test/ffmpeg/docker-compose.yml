@@ -1,7 +1,7 @@
 version: "3"
 services:
   ffmpeg:
-    image: moviemasher/moviemasher.js:5.0.7
+    image: moviemasher/moviemasher.js:5.1.0
     # image: jrottenberg/ffmpeg
     container_name: ffmpeg
     volumes:

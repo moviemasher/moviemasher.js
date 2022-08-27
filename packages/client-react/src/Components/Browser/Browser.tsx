@@ -10,7 +10,7 @@ import { PropsWithChildren, ReactResult } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { useListeners } from "../../Hooks/useListeners"
 import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
 
 
 export interface BrowserProps extends PropsWithChildren {

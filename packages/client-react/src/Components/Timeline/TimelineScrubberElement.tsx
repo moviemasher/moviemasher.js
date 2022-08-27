@@ -3,7 +3,7 @@ import { pixelFromFrame } from "@moviemasher/moviemasher.js"
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
 import { TimelineContext } from "./TimelineContext"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { EditorContext } from "../../Components/Masher/EditorContext"
 import { View } from "../../Utilities/View"
 
 /**

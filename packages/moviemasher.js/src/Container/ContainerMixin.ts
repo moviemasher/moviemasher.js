@@ -14,7 +14,6 @@ import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../Base/Propertied"
 import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../Utility/Tween"
-import { PointZero } from "../Utility/Point"
 import { DataGroup, propertyInstance } from "../Setup/Property"
 import { Editor } from "../Editor/Editor"
 
@@ -51,68 +50,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         type: DataType.Percent, defaultValue: 1.0,
         group: DataGroup.Opacity,
       }))
-    }
-    attachHandlers(svgItem: SvgItem, editor: Editor): void {
-      // const { window } = globalThis
-      // const { clip } = this
-    
-      // const svgParentDiv = (element: Element): HTMLDivElement | null => {
-      //   const { parentNode } = element
-      //   if (parentNode === null || !(parentNode instanceof Element)) {
-      //     return null
-      //   }
-      //   if (parentNode instanceof HTMLDivElement) return parentNode
-      //   return svgParentDiv(parentNode)
-      // }
-      // const pointerUp =  (event: PointerEvent) => {
-      //   console.log(this.constructor.name, "svgEditingContent pointerUp", clip.label, event)
-      //   window.removeEventListener('pointermove', pointerMove)
-      //   window.removeEventListener('pointerup', pointerUp)
-      //   eventStop(event)
-      // } 
-      // const pointerMove = (event: PointerEvent) => {
-      //   const div = svgParentDiv(svgItem)
-      //   if (div) {
-      //     const clientRect = div.getBoundingClientRect()
-      //     const { movementX, movementY, x, y, screenX, screenY } = event
-      //     // const redoValues: ScalarObject = {
-
-      //     // }
-      //     // const undoValues: ScalarObject = {
-            
-      //     // }
-          
-      //     // const args: ActionObject = {
-      //     //   property: DataGroup.Point,
-      //     //   target: this,
-      //     //   type: ActionType.ChangeMultiple, redoValues, undoValues 
-      //     // }
-      //     // editor.actions.create(args)
-      //     console.log(this.constructor.name, "svgEditingContent pointerMove", clip.label, x, y, screenX, screenY , clientRect)
-          
-      //     eventStop(event)
-      //   } else pointerUp(event)
-      // } 
-      
-      // const pointerDown = (event: Event) => {
-      //   console.log(this.constructor.name, "svgEditingContent pointerDown", clip.label, event)
-      //   window.addEventListener('pointermove', pointerMove)
-      //   window.addEventListener('pointerup', pointerUp)
-  
-      //   editor.selection.set(clip)
-      //   eventStop(event)
-      // }
-      // const pointerDragStart = (event: Event) => {
-      //   console.log(this.constructor.name, "svgEditingContent pointerDragStart", clip.label, event)
-      //   window.addEventListener('pointermove', pointerMove)
-      //   window.addEventListener('pointerup', pointerUp)
-  
-      //   // editor.selection.set(clip)
-      //   eventStop(event)
-      // }
-      // svgItem.setAttribute('draggable', 'true')
-      // svgItem.addEventListener('dragstart', pointerDragStart)
-      // svgItem.addEventListener('pointerdown', pointerDown)
     }
 
     private _colorizeFilter?: Filter
@@ -196,17 +133,12 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return commandFilters
     }
 
-    containerRects(args: ContainerRectArgs): RectTuple {
-      const { size, time, timeRange, loading, editing } = args
+    containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple {
+      const { size, time, timeRange } = args
       const { lock } = this
       const tweenRects = this.tweenRects(time, timeRange)
-      const locked = lock ? tweenRectsLock(tweenRects, lock) : tweenRects
+      const locked = tweenRectsLock(tweenRects, lock)
       
-      const loadingSize = loading && !this.intrinsicsKnown(editing)
-      const inRect = loadingSize ? { ...size, ...PointZero } : this.intrinsicRect(editing)
-
-      // console.log(this.constructor.name, "containerRects inRect=", inRect, loadingSize, editing, tweenRects)
-
       const { width: inWidth, height: inHeight, x: inX, y: inY } = inRect
       
       const ratio = ((inWidth || size.width) + inX) / ((inHeight || size.height) + inY)
@@ -227,12 +159,10 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const tweenRect = tweenOverRect(forcedScale, forcedScaleEnd)
       const tweened = tweenScaleSizeToRect(size, tweenRect, directionObject)
       const tuple: RectTuple = [transformedRect, tweened]
-      // console.log(this.constructor.name, "containerRects", tuple, tweenRects, locked)
-
       return tuple
     }
 
-    containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
+    containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem { 
       throw new Error(Errors.unimplemented) 
     }
 
@@ -295,10 +225,8 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     private _opacityFilter?: Filter
     get opacityFilter() { return this._opacityFilter ||= filterFromId('opacity')}
     
-    pathElement(rect: Rect, forecolor = 'transparent', editor?: Editor): SvgItem {
-      const svgItem = svgPolygonElement(rect, '', forecolor)
-      if (editor) this.attachHandlers(svgItem, editor)
-      return svgItem
+    pathElement(rect: Rect, forecolor = 'none'): SvgItem {
+      return svgPolygonElement(rect, '', forecolor)
     }
 
     translateCommandFilters(args: CommandFilterArgs): CommandFilters {

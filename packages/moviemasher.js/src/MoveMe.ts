@@ -32,20 +32,21 @@ export interface FilterValueObject {
 }
 export type FilterValueObjects = FilterValueObject[]
 
-export interface AVEditingArgs {
+export interface GraphFileBase {
   audible?: boolean
   editing?: boolean
+  icon?: boolean
   visible?: boolean
   streaming?: boolean
   time: Time
 }
 
-export interface GraphFileOptions extends Partial<AVEditingArgs> {
+export interface GraphFileOptions extends Partial<GraphFileBase> {
   quantize?: number
   clipTime?: TimeRange
 }
 
-export interface GraphFileArgs extends AVEditingArgs {
+export interface GraphFileArgs extends GraphFileBase {
   quantize: number
   clipTime: TimeRange
 }
@@ -53,6 +54,7 @@ export interface GraphFileArgs extends AVEditingArgs {
 export type ColorTuple = [string, string]
 
 export interface CommandFileOptions {
+  streaming?: boolean
   visible?: boolean
   time: Time
   quantize: number
@@ -64,7 +66,6 @@ export interface CommandFileOptions {
 }
 
 export interface CommandFileArgs extends CommandFileOptions {
-  
   clipTime: TimeRange
 }
 export interface VisibleCommandFileArgs extends CommandFileArgs {
@@ -106,7 +107,6 @@ export interface FilterDefinitionCommandFilterArgs extends FilterCommandFilterAr
 export interface GraphFile {
   type: GraphFileType | LoadType
   file: string
-  options?: ValueObject
   input?: boolean
   definition: Definition
   resolved?: string
@@ -114,7 +114,8 @@ export interface GraphFile {
 export type GraphFiles = GraphFile[]
 
 export interface CommandFile extends GraphFile {
- inputId: string
+  options?: ValueObject
+  inputId: string
 }
 
 export type CommandFiles = CommandFile[]

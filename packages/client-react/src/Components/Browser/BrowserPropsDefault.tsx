@@ -8,13 +8,14 @@ import { BrowserPicker } from './BrowserPicker'
 import { BrowserProps } from './Browser'
 import { BrowserControl } from './BrowserControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
-import { BrowserDefinition } from './BrowserDefinition'
+import { DefinitionItem } from '../DefinitionItem/DefinitionItem'
 import { ClassButton } from '@moviemasher/moviemasher.js'
 
 export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 
 export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props) {
-  const optionsStrict = panelOptionsStrict(props)
+  const { noApi, ...options } = props
+  const optionsStrict = panelOptionsStrict(options)
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
   optionsStrict.props.initialPicked ||= 'container'
@@ -37,7 +38,7 @@ export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps>
   ]
 
   optionsStrict.content.children ||= (
-    <BrowserDefinition className='definition' icon="--clip-icon"></BrowserDefinition>
+    <DefinitionItem draggable={true} className='definition preview'></DefinitionItem>
   )
 
   const children = <>

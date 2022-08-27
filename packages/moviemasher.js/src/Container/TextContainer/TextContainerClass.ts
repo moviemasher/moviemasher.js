@@ -17,7 +17,7 @@ import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { assertPopulatedString, assertTrue } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Tweening, tweenMaxSize, tweenRectScale } from "../../Utility/Tween"
+import { Tweening, tweenMaxSize, tweenRectTransform } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility/Array"
 import { Editor } from "../../Editor/Editor"
@@ -41,7 +41,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
   private _colorFilter?: Filter
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
 
-  containerSvgItem(rect: Rect, time: Time, range: TimeRange): SvgItem { 
+  containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem { 
     return this.pathElement(rect) 
   }
 
@@ -196,7 +196,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return isRect(this._intrinsicRect) 
   }
 
-  pathElement(rect: Rect, forecolor = colorWhite, editor?: Editor): SvgItem {
+  pathElement(rect: Rect): SvgItem {
     const { string, font } = this
     const intrinsicRect = this.intrinsicRect(true)
     const { x: inX, y: inY, width: inWidth, height: inHeight } = intrinsicRect
@@ -210,17 +210,13 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'text')
 
     svgItem.setAttribute('font-family', family)
-    svgItem.setAttribute('fill', forecolor)
+    // svgItem.setAttribute('fill', forecolor)
     svgItem.setAttribute('font-size', String(inHeight))
     svgItem.setAttribute('dominant-baseline', 'hanging')
     svgItem.append(`${string}  `)
-    const transformAttribute = tweenRectScale(intrinsicRect, offset)
+    const transformAttribute = tweenRectTransform(intrinsicRect, offset)
     svgItem.setAttribute('transform', transformAttribute)
-    svgItem.setAttribute('transform-origin', 'top left')
-
-
-    if (editor) this.attachHandlers(svgItem, editor)
-    
+    svgItem.setAttribute('transform-origin', 'top left')    
     return svgItem
   }
 

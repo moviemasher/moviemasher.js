@@ -2,7 +2,7 @@ import React from 'react'
 import {
   assertDefinition,
   Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, 
-  ContainerTypes, ContentTypes, assertTrue, eventStop
+  ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../../../declarations'
@@ -11,9 +11,9 @@ import { InputContext } from '../InputContext'
 import { DefinitionContext } from '../../../../Contexts/DefinitionContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '../../../../Helpers/DragDrop'
-import { BrowserDefinition } from '../../../Browser/BrowserDefinition'
+import { DefinitionItem } from '../../../DefinitionItem/DefinitionItem'
 import { propsDefinitionTypes } from '../../../../Utilities/Props'
-import { EditorContext } from '../../../../Contexts/EditorContext'
+import { EditorContext } from '../../../../Components/Masher/EditorContext'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string
@@ -52,19 +52,13 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     assertTrue(dataTransfer)
     
     const types = dragTypes(dataTransfer)
-    // any file can be dropped
-    if (types.includes(TransferTypeFiles)) {
-      // console.log("DefinitionDrop dropAllowed FILE", name)
-      return true
-    }
+    // any file can be dropped - we filter out invalid ones later
+    if (types.includes(TransferTypeFiles)) return true
 
     const draggingType = dragType(dataTransfer)
     if (!isDefinitionType(draggingType)) return false
 
-
-    // console.log("DefinitionDrop dropAllowed", name, draggingType, definitionTypes)
     return definitionTypes.includes(draggingType)
-
   }
 
   const onDragLeave = () => { setIsOver(false) }
@@ -89,10 +83,13 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
       const { files } = dataTransfer
       // console.log("DefinitionDrop onDrop dropped files", name, files)
       dropFiles(files).then(definitions => {
-        const [definition] = definitions
-        if (!definition) return
-        // console.log("DefinitionDrop dropped file", name, definition.type, definition.id)
-        changeHandler(name, definition.id)
+        if (!definitions.length) return
+
+        const valid = definitions.filter(definition => (
+          name !== "containerId" || isContainerDefinition(definition)
+        ))
+        const [definition] = valid
+        if (definition) changeHandler(name, definition.id)
       })
       return
     }
@@ -100,7 +97,9 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     const json = dataTransfer.getData(type)
     const data: DragDefinitionObject = JSON.parse(json)
     const { definitionObject } = data
-    Defined.define(definitionObject)
+    const [definition] = Defined.define(definitionObject)
+    if (name === "containerId" && !isContainerDefinition(definition)) return
+
     changeHandler(name, definitionObject.id!)
   }
 
@@ -126,10 +125,14 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
   return <View {...viewProps} />
 }
 
-DataTypeInputs[DataType.ContainerId] = <DefinitionDrop types={ContainerTypes} className='definition-drop'>
-  <BrowserDefinition className='definition' icon="--clip-icon" />
-</DefinitionDrop>
+DataTypeInputs[DataType.ContainerId] = (
+  <DefinitionDrop types={ContainerTypes} className='definition-drop'>
+    <DefinitionItem className='definition preview'/>
+  </DefinitionDrop>
+)
 
-DataTypeInputs[DataType.ContentId] = <DefinitionDrop types={ContentTypes} className='definition-drop'>
-  <BrowserDefinition className='definition' icon="--clip-icon" />
-</DefinitionDrop>
+DataTypeInputs[DataType.ContentId] = (
+  <DefinitionDrop types={ContentTypes} className='definition-drop'>
+    <DefinitionItem className='definition preview' />
+  </DefinitionDrop>
+)

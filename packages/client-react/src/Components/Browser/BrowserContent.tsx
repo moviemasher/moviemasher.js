@@ -8,7 +8,7 @@ import { View } from "../../Utilities/View"
 import { BrowserContext } from "./BrowserContext"
 import { DefinitionContext } from "../../Contexts/DefinitionContext"
 import { dragTypes, TransferTypeFiles } from "../../Helpers/DragDrop"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { EditorContext } from "../Masher/EditorContext"
 
 export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 
@@ -27,13 +27,6 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const definitions = browserContext.definitions || []
   const { dropFiles } = editorContext
 
-  const viewChildren = definitions.map(definition => {
-    const definitionProps = { definition, key: definition.id }
-    const children = React.cloneElement(child, definitionProps)
-    const contextProps = { children, value: { definition }, key: definition.id }
-    const context = <DefinitionContext.Provider { ...contextProps } />
-    return context
-  })
 
 
   const dragValid = (dataTransfer?: DataTransfer | null): boolean => {
@@ -65,11 +58,23 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   if (className) classes.push(className)
   if (over) classes.push(ClassDropping)
   
+  const childNodes = () => {
+    const childProps = child.props
+    return definitions.map(definition => {
+      const cloneProps = { ...childProps, key: definition.id }
+      const children = React.cloneElement(child, cloneProps)
+      const contextProps = { children, value: { definition }, key: definition.id }
+      const context = <DefinitionContext.Provider { ...contextProps } />
+      return context
+    })
+  }
+
   const viewProps = {
     ...rest, 
     className: classes.join(' '),
     key: `browser-content`,
-    children: viewChildren, onDrop, onDragOver, onDragLeave,
+    children: childNodes(), 
+    onDrop, onDragOver, onDragLeave,
 
   }
   return <View {...viewProps} />

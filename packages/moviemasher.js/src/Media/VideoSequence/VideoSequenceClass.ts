@@ -1,5 +1,5 @@
-import { SvgItem, UnknownObject } from "../../declarations"
-import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { LoadedImage, SvgItem, UnknownObject } from "../../declarations"
+import { CommandFiles, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
 import { Default } from "../../Setup/Default"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
@@ -10,9 +10,10 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
-import { LoadType } from "../../Setup/Enums"
+import { LoadType, Orientation } from "../../Setup/Enums"
 import { Rect } from "../../Utility/Rect"
 import { assertTrue } from "../../Utility"
+import { svgImageElement } from "../../Utility/Svg"
 
 const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
 const VideoSequenceWithContainer = ContainerMixin(VideoSequenceWithTweenable)
@@ -24,8 +25,21 @@ const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceW
 export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration implements VideoSequence {
   declare definition : VideoSequenceDefinition
 
+  commandFiles(args: VisibleCommandFileArgs): CommandFiles {
+    const files = super.commandFiles(args)
+    const { streaming, visible } = args
+    if (!(visible && streaming)) return files
+
+    files.forEach(file => {
+      const { options = {} } = file
+      options.loop = 1 
+      options.re = ''
+      file.options = options
+    })
+    return files
+  }
   graphFiles(args: GraphFileArgs): GraphFiles {
-    const { time, clipTime, editing, streaming, visible } = args
+    const { time, clipTime, editing, visible } = args
     const definitionTime = this.definitionTime(time, clipTime)
 
     if (!editing) console.trace(this.constructor.name, "graphFiles", editing, time, clipTime, definitionTime)
@@ -48,10 +62,6 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
         const graphFile: GraphFile = {
           type: LoadType.Video, file: definition.source, definition, input: true
         }
-        if (streaming) {
-          graphFile.options = { loop: 1 }
-          graphFile.options.re = ''
-        }
         files.push(graphFile)
       }
     }
@@ -60,16 +70,17 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
 
   speed = 1.0
 
-  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): SvgItem {
+  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem {
     const args: GraphFileArgs = {
       time, clipTime: range, visible: true, quantize: range.fps, editing: true
     }
     const [graphFile] = this.graphFiles(args)
     const { preloader } = this.clip.track.mash
-    const element = preloader.getFile(graphFile)?.cloneNode()
-    assertTrue(!!element, "image element")
-
-    return this.foreignSvgItem(element, rect, stretch)
+    const loadedImage = preloader.getFile(graphFile) as LoadedImage 
+    assertTrue(loadedImage, "image element")
+    const { src } = loadedImage
+    const lock = stretch ? undefined : Orientation.V
+    return svgImageElement(src, rect, lock)
   }
 
   toJSON() : UnknownObject {

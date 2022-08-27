@@ -47,14 +47,18 @@ export class BrowserLoaderClass extends LoaderClass {
 
   protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
     const { type, definition } = graphFile
-    const definitions = new Map<string, Definition>()
-    if (definition) definitions.set(definition.id, definition)
+    const definitions = [definition]
+    
     const stringLoadTypes = LoadTypes.map(String)
     const loadable = stringLoadTypes.includes(type)
     const preloaderSource: LoaderSource = { loaded: false, definitions }
     const promise = loadable ? this.loadablePromise(graphFile, key, preloaderSource) : this.graphPromise(graphFile, key, preloaderSource)
     preloaderSource.promise = promise
     return preloaderSource as LoaderFile
+  }
+
+  protected fontFamily(url: string): string {
+    return url.replaceAll(/[^a-z0-9]/gi, '_')
   }
 
   private graphPromise(graphFile: GraphFile, key: string, preloaderSource: LoaderSource): Promise<void> {
@@ -68,12 +72,11 @@ export class BrowserLoaderClass extends LoaderClass {
     return Promise.resolve()
   }
 
-  private loadablePromise(graphFile: GraphFile, url: string, preloaderSource: LoaderSource): Promise<void> {
-    const promise = this.requestPromise(graphFile, url).then(result => {
-      preloaderSource.result = result
-      preloaderSource.loaded = true
-    }).then(EmptyMethod)
-    return promise
+  imagePromise(url: string) : LoadImagePromise {
+    const image = new Image()
+    image.crossOrigin = "Anonymous"
+    image.src = url
+    return image.decode().then(() => image)
   }
 
   key(graphFile: GraphFile): string {
@@ -83,15 +86,19 @@ export class BrowserLoaderClass extends LoaderClass {
     return file
   }
 
+  private loadablePromise(graphFile: GraphFile, url: string, preloaderSource: LoaderSource): Promise<void> {
+    const promise = this.requestPromise(graphFile, url).then(result => {
+      preloaderSource.result = result
+      preloaderSource.loaded = true
+    }).then(EmptyMethod)
+    return promise
+  }
+
   private requestAudio(url: string, graphFile: GraphFile): LoadAudioPromise {
     return this.audioPromise(url).then(buffer => {
       this.updateDefinitionDuration(graphFile.definition, buffer.duration, true)
       return buffer
     })
-  }
-
-  protected fontFamily(url: string): string {
-    return url.replaceAll(/[^a-z0-9]/gi, '_')
   }
 
   protected requestFont(url: string, graphFile: GraphFile): LoadFontPromise {
@@ -120,13 +127,6 @@ export class BrowserLoaderClass extends LoaderClass {
       this.updateDefinitionSize(graphFile.definition, dimensions)
       return image
     })
-  }
-
-  imagePromise(url: string) : LoadImagePromise {
-    const image = new Image()
-    image.crossOrigin = "Anonymous"
-    image.src = url
-    return image.decode().then(() => image)
   }
 
   private requestPromise(graphFile: GraphFile, url: string): Promise<any> {
@@ -163,8 +163,8 @@ export class BrowserLoaderClass extends LoaderClass {
   videoPromise(url: string): Promise<LoadedVideo> {
     return new Promise<LoadedVideo>((resolve, reject) => {
       const video = this.videoFromUrl(url)
-      video.ondurationchange = () => {
-        video.ondurationchange = null
+      video.oncanplay = () => {
+        video.oncanplay = null
         video.onerror = null
         video.width = video.videoWidth
         video.height = video.videoHeight

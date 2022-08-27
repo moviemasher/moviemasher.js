@@ -35,16 +35,7 @@
 }
 .moviemasher .editor .panel.inspector .content .opacity,
 .moviemasher .editor .panel.inspector .content .color {
-  display: grid;
-  grid-auto-flow: column;
-  gap: var(--spacing);
-  grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
-  line-height: var(--icon-size);
-  font-size: var(--icon-size);
-}
-
-.moviemasher .editor .panel.inspector .content>div>label:after {
-  content: ':';
+  
 }
 
 .moviemasher .editor .panel.inspector .content {
@@ -56,12 +47,26 @@
   margin-bottom: var(--spacing);
 }
 
-.moviemasher .editor .panel.inspector .content>div>label,
-.moviemasher .editor .panel.inspector .content>div>button {
+
+.moviemasher .editor .panel.inspector .content > .row {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--spacing);
+  grid-template-columns: var(--icon-size) 1fr;
+  line-height: var(--icon-size);
+  font-size: var(--icon-size);
+}
+
+.moviemasher .editor .panel.inspector .content > .row.tween {
+  grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
+}
+
+.moviemasher .editor .panel.inspector .content > div > label,
+.moviemasher .editor .panel.inspector .content > div > button {
   margin-right: var(--spacing);
 }
 
-.moviemasher .editor .panel.inspector .effects {
+.moviemasher .editor .panel.inspector .effects .list {
   width: 100%;
   height: calc((3 * var(--icon-size)) + (4 * var(--spacing)));
   border: var(--border);
@@ -75,7 +80,6 @@
 
 .moviemasher .editor .panel.inspector .definition-drop {
   display: grid;
-  width: 100%;
   aspect-ratio: var(--preview-aspect-ratio);
   border: var(--border);
   border-radius: var(--border-radius);
@@ -83,9 +87,10 @@
   color: var(--fore-primary);
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
+  height: calc((2 * var(--spacing)) + var(--preview-height) * var(--icon-ratio));
 }
 
-.moviemasher .editor .panel.inspector .effects .effect {
+.moviemasher .editor .panel.inspector .effects .list .effect {
   width: 100%;
   height: var(--icon-size);
   border: var(--border);
@@ -97,15 +102,14 @@
   background-color: var(--back-secondary);
 }
 
-
-.moviemasher .editor .panel.inspector .effects .effect:hover,
-.moviemasher .editor .panel.inspector .effects .selected {
+.moviemasher .editor .panel.inspector .effects .list .effect:hover,
+.moviemasher .editor .panel.inspector .effects .list .selected {
   color: var(--color-fore-secondary);
   border-color: var(--color-fore-secondary);
   background-color: var(--color-back-secondary);
 }
 
-.moviemasher .editor .panel.inspector .effects .selected:hover {
+.moviemasher .editor .panel.inspector .effects .list .selected:hover {
   color: var(--color-fore-tertiary);
   border-color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
@@ -113,5 +117,5 @@
 
 
 .moviemasher .editor .panel.inspector .dropping {
-  background-color: var(--color-back-secondary);
+  background-color: var(--color-drop);
 }

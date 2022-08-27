@@ -16,7 +16,7 @@ import { Activity } from '../Activity/Activity'
 import { Panels } from '../Panel/Panels'
 
 export const MasherPropsDefault: PropsMethod<EditorProps, MasherProps> = function(props = {}) {
-  const { panels, ...rest } = props
+  const { noApi, panels, ...rest } = props
   const panelOptions = panels || {}
   panelOptions.player ||= {}
   panelOptions.browser ||= {}

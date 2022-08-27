@@ -13,7 +13,6 @@ export interface Cast extends Edited {
   addLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void
   createLayer(layerObject: LayerObject): Layer
   layers: Layers
-  mashes: Mashes
   moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): LayerAndPosition
   removeLayer(layer: Layer): LayerAndPosition
   toJSON(): UnknownObject

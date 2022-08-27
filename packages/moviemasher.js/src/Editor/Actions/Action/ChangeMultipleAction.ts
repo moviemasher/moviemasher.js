@@ -18,16 +18,18 @@ export class ChangeMultipleAction extends ChangeAction {
   }
 
   redoAction() : void {
-    Object.entries(this.redoValues).forEach(([property, value]) => {
-      this.target.setValue(value, property)
+    const { target, redoValues } = this
+    Object.entries(redoValues).forEach(([property, value]) => {
+      target.setValue(value, property)
     })
   }
 
   redoValues: ScalarObject
 
   undoAction() : void {
-    Object.entries(this.undoValues).forEach(([property, value]) => {
-      this.target.setValue(value, property)
+    const { target, undoValues } = this
+    Object.entries(undoValues).forEach(([property, value]) => {
+      target.setValue(value, property)
     })
   }  
   updateAction(object: ChangeMultipleActionObject) : void {

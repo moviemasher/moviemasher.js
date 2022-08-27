@@ -1,7 +1,7 @@
 import React from "react"
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
 import { ProcessContext } from "../../Contexts/ProcessContext"
 import { WebrtcContext } from "../../Contexts/WebrtcContext"
 import { WebrtcClient } from "./WebrtcClient"

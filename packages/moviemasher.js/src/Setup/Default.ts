@@ -1,5 +1,5 @@
 import { EditorArgs } from "../Editor/Editor"
-import { colorBlack, colorTransparent } from "../Utility/Color"
+import { colorBlack } from "../Utility/Color"
 
 const DefaultEditorArgs: EditorArgs = {
   buffer: 10,

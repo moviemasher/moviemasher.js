@@ -67,7 +67,6 @@ export enum SelectType {
   Track = 'track',
   Layer = 'layer',
   Clip = 'clip',
-  // Effect = 'effect',
   Content = 'content',
   Container = 'container',
   None = 'none',
@@ -145,11 +144,21 @@ export const isDefinitionType = (type?: any): type is DefinitionType => {
 export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
 }
-export type DefinitionTypesObject = Record<string, DefinitionType[]>
+export type SizingDefinitionType = DefinitionType.Content | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence
+export const SizingDefinitionTypes = [DefinitionType.Content, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence]
+export const isSizingDefinitionType = (type?: any): type is SizingDefinitionType => {
+  return isDefinitionType(type) && SizingDefinitionTypes.includes(type)
+}
 
 
-export type ContainerType = DefinitionType.Image | DefinitionType.Video | DefinitionType.Container | DefinitionType.VideoSequence
-export const ContainerTypes = [DefinitionType.Image, DefinitionType.Video, DefinitionType.Container, DefinitionType.VideoSequence]
+export type TimingDefinitionType = DefinitionType.Audio | DefinitionType.Video | DefinitionType.VideoSequence
+export const TimingDefinitionTypes = [DefinitionType.Audio, DefinitionType.Video, DefinitionType.VideoSequence]
+export const isTimingDefinitionType = (type?: any): type is TimingDefinitionType => {
+  return isDefinitionType(type) && TimingDefinitionTypes.includes(type)
+}
+
+export type ContainerType = DefinitionType.Image | DefinitionType.Container | DefinitionType.VideoSequence
+export const ContainerTypes = [DefinitionType.Image, DefinitionType.Container, DefinitionType.VideoSequence]
 export const isContainerType = (type?: any): type is ContainerType => {
   return isDefinitionType(type) && ContainerTypes.includes(type)
 }
@@ -165,6 +174,12 @@ export const isContentType = (type?: any): type is ContentType => {
 export function assertContentType(type?: any): asserts type is ContentType {
   if (!isContentType(type)) throw new Error("expected ContentType")
 }
+
+export type DefinitionTypesObject = Record<string, DefinitionType[]>
+
+
+
+
 export enum DataType {
   Boolean = 'boolean',
   ContainerId = 'containerid',
@@ -177,6 +192,7 @@ export enum DataType {
   Rgb = 'rgb',
   String = 'string',
   Timing = 'timing',
+  Sizing = 'sizing',
 }
 export const DataTypes = Object.values(DataType)
 export const isDataType = (type?: any): type is DataType => {
@@ -250,7 +266,7 @@ export enum EventType {
   Ended = 'ended',
   Fps = 'ratechange',
   Loaded = 'loadeddata',
-  Mash = 'mashchange',
+  Mash = 'mash',
   Pause = 'pause',
   Play = 'play',
   Playing = 'playing',
@@ -336,5 +352,11 @@ export enum Timing {
   Content = 'content',
   Container = 'container',
 }
-
 export const Timings = Object.values(Timing)
+
+export enum Sizing {
+  Preview = 'preview',
+  Content = 'content',
+  Container = 'container',
+}
+export const Sizings = Object.values(Sizing)

@@ -7,6 +7,7 @@ import { imageDefinition } from "../Image/ImageFactory"
 import { ImageDefinitionObject } from "../Image/Image"
 import { Defined } from "../../Base/Defined"
 import { clipInstance } from "../../Edited/Mash/Track/Clip/ClipFactory"
+import { PointZero } from "../../Utility"
 
 describe("Effect", () => {
   describe("ChromaKey", () => {
@@ -24,7 +25,7 @@ describe("Effect", () => {
       const { edited } = editor
       assertMash(edited)
       Defined.define(matteDefinitionObject, imageDefinitionObject)
-      editor.imageSize = { width: 640, height: 480 }
+      editor.rect = { ...PointZero, width: 640, height: 480 }
       editor.addTrack()
       expect(edited.tracks.length).toBe(2)
       const matteDefinition = imageDefinition(matteDefinitionObject)
@@ -41,7 +42,7 @@ describe("Effect", () => {
           ]
         }
       })
-      await editor.addClip(clip)
+      await editor.addClip(clip, {})
 
     })
   })

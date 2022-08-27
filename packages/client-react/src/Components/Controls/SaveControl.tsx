@@ -7,7 +7,7 @@ import { PropsAndChild, ReactResult } from "../../declarations"
 import { ProcessContext } from "../../Contexts/ProcessContext"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { EditorContext } from "../../Components/Masher/EditorContext"
 
 export function SaveControl(props:PropsAndChild): ReactResult {
   const editor = useEditor()

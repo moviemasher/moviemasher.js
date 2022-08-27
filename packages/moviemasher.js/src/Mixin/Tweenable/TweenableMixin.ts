@@ -1,5 +1,5 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, SvgItem, UnknownObject } from "../../declarations"
+import { Scalar, ScalarObject, SvgItem, UnknownObject } from "../../declarations"
 import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
@@ -8,7 +8,7 @@ import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilte
 import { SelectedEffects, SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { ActionType, DataType, Orientation, SelectType } from "../../Setup/Enums"
+import { ActionType, DataType, isSizingDefinitionType, isTimingDefinitionType, Orientation, SelectType, Sizing, Timing } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
 import { assertProperty, Property } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
@@ -24,6 +24,9 @@ import { Effect, Effects } from "../../Media/Effect/Effect"
 import { effectInstance } from "../../Media/Effect/EffectFactory"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { Selectables } from "../../Editor/Selectable"
+import { Defined } from "../../Base"
+import { isUpdatableDuration, isUpdatableDurationDefinition } from "../UpdatableDuration"
+import { isUpdatableSizeDefinition } from "../UpdatableSize"
 
 export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
@@ -244,33 +247,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFilters
     }
 
-    private _foreignElement?: SVGForeignObjectElement
-    get foreignElement() { return this._foreignElement ||= this.foreignElementInitialize }
-    private get foreignElementInitialize(): SVGForeignObjectElement {
-      if (!globalThis.document) throw 'wrong environment'
-    
-      const foreignElement = globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
-      foreignElement.setAttribute('id', `foreign-element-${this.id}`)
-      return foreignElement
-    }
-
-    foreignSvgItem(element: SvgItem, rect: Rect, stretch?: boolean): SVGForeignObjectElement {
-      const { x, y, width, height } = rect
-      const { foreignElement } = this
-      
-      foreignElement.setAttribute('x', String(x))
-      foreignElement.setAttribute('y', String(y))
-      foreignElement.setAttribute('width', String(width))
-      // element.setAttribute('width', String(width))
-      if (stretch) {
-        foreignElement.setAttribute('height', String(height))
-        // element.setAttribute('height', String(height))
-        // element.setAttribute('preserveAspectRatio', 'none')
-      }
-      foreignElement.replaceChildren(element)
-      return foreignElement
-    }
-
     graphFiles(args: GraphFileArgs): GraphFiles { return [] }
 
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
@@ -329,7 +305,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       // console.log(this.constructor.name, "scaleCommandFilters", containerRects, duration)
       const commandFilters: CommandFilters = []
-      // 
+      
       const { scaleFilter } = this
       const filterCommandFilterArgs: FilterCommandFilterArgs = { 
         duration, videoRate, filterInput
@@ -339,13 +315,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       scaleFilter.setValue(rectEnd.width, `width${PropertyTweenSuffix}`)
       scaleFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)  
       commandFilters.push(...scaleFilter.commandFilters(filterCommandFilterArgs))
-      // filterCommandFilterArgs.filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-
-      // setsarFilter.setValue(1, 'max')
-      // setsarFilter.setValue(1, 'sar')
-      // commandFilters.push(...setsarFilter.commandFilters(filterCommandFilterArgs))
-      // filterCommandFilterArgs.filterInput = arrayLast(arrayLast(commandFilters).outputs) 
-
       return commandFilters
     }
 
@@ -358,22 +327,50 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     selectedItems(actions: Actions): SelectedItems {
       const selectedItems: SelectedItems = []
-      const { container, clip: target, effects, selectType } = this
+      const { container, clip, effects, selectType, definition } = this
 
-      // add contentId or containerId from target, as if it were my property  
+      // add contentId or containerId from target, as if it were my property 
+      const { id: undoValue } = definition 
+      const { timing, sizing } = clip
       const dataType = container ? DataType.ContainerId : DataType.ContentId
-      const property = target.properties.find(property => property.type === dataType)
+      const property = clip.properties.find(property => property.type === dataType)
       assertProperty(property)
+      
+      const { name } = property
+      const undoValues: ScalarObject = { timing, sizing, [name]: undoValue }
 
-      const { definitionId } = this
+      const values: ScalarObject = { ...undoValues }
+
+      const relevantTiming = container ? Timing.Container : Timing.Content
+      const relevantSizing = container ? Sizing.Container : Sizing.Content
+
+      const timingBound = timing === relevantTiming
+      const sizingBound = sizing === relevantSizing 
+     
       selectedItems.push({
-        selectType, property, value: definitionId,
-        changeHandler: (property: string, value: Scalar) => {
-          const redoValue = isUndefined(value) ? definitionId : value
-          actions.create({ property, target, redoValue, undoValue: definitionId })
+        selectType, property, value: undoValue,
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(redoValue)
+
+          const redoValues = { ...values, [name]: redoValue }
+          if (timingBound || sizingBound) {
+
+            const newDefinition = Defined.fromId(redoValue)
+            const { type } = newDefinition
+            if (timingBound && !isTimingDefinitionType(type)) {
+              redoValues.timing = Timing.Custom
+            }
+            if (sizingBound && !isSizingDefinitionType(type)) {
+              redoValues.sizing = container ? Sizing.Content : Sizing.Container
+            }
+          } 
+          const actionObject = { 
+            type: ActionType.ChangeMultiple, 
+            property, target: clip, redoValues, undoValues 
+          }
+          actions.create(actionObject)
         },
       })
-
 
       // add my actual properties
       this.properties.forEach(property => {
@@ -432,6 +429,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
       const selectedProperties: SelectedProperties = []
       const { name, tweenable, type: dataType } = property
+      if (name === 'muted' && !this.mutable()) return selectedProperties 
+      
       const { selectType } = this
       const undoValue = this.value(name)
       const target = this

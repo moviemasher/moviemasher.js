@@ -92,6 +92,7 @@ export class TrackClass extends PropertiedClass implements Track {
   // }
 
   assureFrames(quantize: number, clips?: Clips): void {
+    const suppliedClips = isDefined(clips)
     const clipsArray = clips || this.clips
     // console.log(this.constructor.name, "assureFrames", clipsArray.length, "clip(s)")
     clipsArray.forEach(clip => {
@@ -99,7 +100,7 @@ export class TrackClass extends PropertiedClass implements Track {
       if (isAboveZero(frames)) return
       
       clip.resetDuration(undefined, quantize)
-      if (isAboveZero(clip.frames)) return
+      if (isAboveZero(clip.frames) || !suppliedClips) return
 
       clip.frames = Math.floor(Default.duration * quantize)
     })

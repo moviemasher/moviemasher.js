@@ -11,7 +11,7 @@ import {
 } from "../../Helpers/DragDrop"
 import { View } from "../../Utilities/View"
 import { ComposerContext } from "../../Contexts/ComposerContext"
-import { EditorContext } from "../../Contexts/EditorContext"
+import { EditorContext } from "../../Components/Masher/EditorContext"
 import { LayerContext } from "../../Contexts/LayerContext"
 
 export interface ComposerLayerProps extends PropsWithChildren, WithClassName { }

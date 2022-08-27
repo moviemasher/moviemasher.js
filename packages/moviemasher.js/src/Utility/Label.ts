@@ -16,6 +16,7 @@ export const labels: StringObject = {
   clip: 'Clip',
   update: 'Save',
   delete: 'Remove {{type}}',
+  unlabeled: 'Unlabeled {{type}}',
   analyze: 'Analyzing...',
   load: 'Loading...',
   complete: 'Completed',
@@ -23,8 +24,11 @@ export const labels: StringObject = {
   create: 'New',
   render: 'Render',
   view: 'View',
-  open: 'Open',
-
+  open: 'Open...',
+  undo: 'Undo',
+  redo: 'Redo',
+  cast: 'Cast',
+  mash: 'Mash',
 }
 
 export const labelLookup = (id: string): string => {

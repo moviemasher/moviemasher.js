@@ -243,3 +243,13 @@ export const colorServer = (color: string): string => {
   return `${color.slice(0, 7)}@0x${color.slice(-2)}`
 }
 
+export const colorRgbDifference = (rgb: Rgb | Rgba): Rgb | Rgba => {
+  const { r, g, b } = rgb
+  return { 
+    ...rgb, 
+    r: 255 - r,
+    g: 255 - g,
+    b: 255 - b,
+    
+  }
+}

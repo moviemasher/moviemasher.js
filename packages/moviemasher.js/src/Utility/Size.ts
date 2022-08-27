@@ -1,11 +1,11 @@
-import { assertAboveZero, isAboveZero, isNumber, isObject } from "./Is"
+import { Orientation } from "../Setup/Enums";
+import { isAboveZero, isNumber, isObject } from "./Is"
 import { throwError } from "./Throw";
 
 export interface Size {
   width: number;
   height: number;
 }
-
 export const isSize = (value: any): value is Size => {
   return isObject(value) && isNumber(value.width) && isNumber(value.height) 
 }
@@ -20,7 +20,6 @@ export const sizesEqual = (size: Size, sizeEnd?: any) => {
   return size.width === sizeEnd.width && size.height === sizeEnd.height
 }
 
-
 export type Sizes = Size[]
 export type SizeTuple = [Size, Size]
 export const SizeZero = { width: 0, height: 0 }
@@ -28,7 +27,7 @@ export const SizeZero = { width: 0, height: 0 }
 export const sizeEven = (size: Size): Size => {
   const { width, height } = size
   return { 
-    width: 2 * Math.max(1, Math.ceil(width / 2)) ,
+    width: 2 * Math.max(1, Math.ceil(width / 2)),
     height: 2 * Math.max(1, Math.ceil(height / 2)),
   }
 }
@@ -39,7 +38,6 @@ export const sizeCeil = (size: Size): Size => {
     width: Math.max(2, Math.ceil(width)),
     height: Math.max(2, Math.ceil(height)),
   }
- 
 }
 
 export const sizeScale = (size: Size, horizontally: number, vertically: number): Size => {
@@ -47,19 +45,21 @@ export const sizeScale = (size: Size, horizontally: number, vertically: number):
   return { width: width * horizontally, height: height * vertically }
 }
 
+export const sizeCover = (inSize: Size, outSize: Size, contain = false): Size => {
+  assertSizeAboveZero(inSize)
+  assertSize(outSize)
 
-export const sizeCover = (inDimensions: Size, outDimensions: Size): Size => {
-  const { width: loadedWidth, height: loadedHeight } = inDimensions
-  assertAboveZero(loadedWidth)
-  assertAboveZero(loadedHeight)
-  const { width, height } = outDimensions 
-  const scaleWidth = width / loadedWidth
-  const scaleHeight = height / loadedHeight
+  const { width: inWidth, height: inHeight } = inSize
+  const { width, height } = outSize 
+  const scaleWidth = width / inWidth
+  const scaleHeight = height / inHeight
 
-  if (scaleWidth > scaleHeight) return sizeCeil({ ...outDimensions, height: loadedHeight * scaleWidth }) 
+  const useWidth = contain ? scaleWidth < scaleHeight : scaleWidth > scaleHeight
+  if (useWidth) {
+    return sizeCeil({ ...outSize, height: inHeight * scaleWidth }) 
+  }
   
-
-  return sizeCeil({ ...outDimensions, width: loadedWidth * scaleHeight })
+  return sizeCeil({ ...outSize, width: inWidth * scaleHeight })
 }
 
 export const sizeAboveZero = (size: any): size is Size => { 
@@ -78,9 +78,22 @@ export const SizePreview = sizeScale(SizeOutput, 0.25, 0.25)
 
 export const SizeIcon = sizeScale(SizePreview, 0.5, 0.5)
 
-export const size = (size: any) => {
+export const sizeCopy = (size: any) => {
   assertSize(size)
 
   const { width, height } = size
   return { width, height }
+}
+
+export const sizeLock = (lockSize: Size, lock?: Orientation): Size => {
+  const copy = sizeCopy(lockSize)
+  switch (lock) {
+    case Orientation.H: 
+      copy.width = copy.height
+      break
+    case Orientation.V:
+      copy.height = copy.width
+      break
+  }
+  return copy
 }

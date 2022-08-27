@@ -1,22 +1,21 @@
-import { Scalar, UnknownObject } from "../../declarations"
+import { Scalar, SvgItem, UnknownObject } from "../../declarations"
 import { Size } from "../../Utility/Size"
 import { GraphFiles, GraphFileOptions } from "../../MoveMe"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
-import { ActionType, DataType, DroppingPosition, SelectType } from "../../Setup/Enums"
-import { assertPopulatedString, isAboveZero, isNumber, isString, isUndefined } from "../../Utility/Is"
+import { DroppingPosition, SelectType } from "../../Setup/Enums"
+import { assertPopulatedString, isAboveZero, isNumber, isPopulatedArray } from "../../Utility/Is"
 import { EditedClass } from "../EditedClass"
 import { Mashes } from "../Mash/Mash"
 import { Cast, CastArgs } from "./Cast"
 import { assertLayer, isLayerFolder, layerInstance } from "./Layer/LayerFactory"
 import {
-  Layer, LayerAndPosition, LayerFolder, LayerObject, LayerObjects, Layers, LayersAndIndex
+  Layer, LayerAndPosition, LayerFolder, LayerObject, Layers, LayersAndIndex
 } from "./Layer/Layer"
-import { propertyInstance } from "../../Setup/Property"
 import { EmptyMethod } from "../../Setup/Constants"
-import { PreviewOptions, Svg, Svgs } from "../../Editor/Preview/Preview"
-import { svgBackcolor, svgElement } from "../../Utility/Svg"
+import { PreviewOptions } from "../../Editor/Preview/Preview"
+import { svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
 import { arrayReversed } from "../../Utility/Array"
@@ -67,23 +66,18 @@ const CastLayersAndIndex = (layers: Layers, layerAndPosition: LayerAndPosition):
 
 export class CastClass extends EditedClass implements Cast {
   constructor(args: CastArgs) {
-    args.label ||= Default.cast.label
     super(args)
-    
     const {
-      createdAt,
-      icon,
-      id,
-      label,
-      layers,
+      createdAt, icon, id, label,
       definitions,
+      layers,
       preloader,
       ...rest
     } = args
-
-    this.propertiesInitialize(args)
     this.dataPopulate(rest)
-    this.layersInitialize(layers)
+    if (isPopulatedArray(layers)) this.layers.push(...layers.map(object => 
+      this.createLayer(object)
+    ))
   }
 
   addLayer(layer: Layer, layerAndPosition: LayerAndPosition = {}) {
@@ -138,12 +132,6 @@ export class CastClass extends EditedClass implements Cast {
 
   get layerFolders(): LayerFolder[] {
     return CastLayerFolders(this.layers)
-  }
-
-  private layersInitialize(objects?: LayerObjects): void {
-    if (!objects) return
-    
-    this.layers.push(...objects.map(object => this.createLayer(object)))
   }
 
   loadPromise(args?: GraphFileOptions): Promise<void> {
@@ -206,23 +194,14 @@ export class CastClass extends EditedClass implements Cast {
     })
   }
 
-  svg(args: PreviewOptions): Promise<Svg> {
-    return this.svgs(args).then(svgs => {
-      const { imageSize, id } = this
-      const element = svgElement(imageSize)
-      element.append(...svgs.map(svg => svg.element))
-      return { id, element: element }
-    })
-  }
-
-  svgs(args: PreviewOptions): Promise<Svgs> {
+  svgItems(args: PreviewOptions): Promise<SvgItem[]> {
     const { mashes, imageSize } = this
-    const allSvgs: Svgs = []
+    const allSvgs: SvgItem[] = []
 
     const { backcolor = this.backcolor, ...rest } = args
     const mashArgs = { ...rest, backcolor: '' }
 
-    let promise = Promise.resolve([svgBackcolor(backcolor, imageSize)])
+    let promise = Promise.resolve([svgPolygonElement(imageSize, '', backcolor)])
 
     arrayReversed(mashes).forEach(mash => {
       promise = promise.then(svgs => {
@@ -236,16 +215,6 @@ export class CastClass extends EditedClass implements Cast {
         return allSvgs
     })
 
-    // if (!length) return Promise.resolve([])
-
-
-    // const promises = mashes.map(mash => {
-    //   return mash.svgs(args)
-    // })
-    // const promise = Promise.all(promises).then(svgsArray => (
-    //   arrayReversed(svgsArray).flat()
-    // ))
-    // return promise
   }
 
   toJSON(): UnknownObject {

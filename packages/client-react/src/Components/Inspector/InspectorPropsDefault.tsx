@@ -86,10 +86,7 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
         </View>  
       </InspectorPicked>,
       <InspectorPicked types="mash,cast" key="inspector-document">
-        <View>
-          <label>{labelTranslate('open')}</label>
-          <SelectEditedControl key="select-edited" />
-        </View>
+        <SelectEditedControl key="select-edited" />
         <View>
           <SaveControl key='save-process'>
             <Button>
@@ -108,8 +105,6 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
     )
   }
   optionsStrict.content.children ||= <>{contentChildren}</>
-  
-  optionsStrict.content.props!.label ||= '--clip-label'
 
   const children = <>
     <Bar {...optionsStrict.header} />

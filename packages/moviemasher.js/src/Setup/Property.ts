@@ -12,6 +12,7 @@ export enum DataGroup {
   Color = 'color',
   Effects = 'effects',
   Timing = 'timing',
+  Sizing = 'sizing',
 }
 
 export const DataGroups = Object.values(DataGroup)

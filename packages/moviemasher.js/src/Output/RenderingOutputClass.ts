@@ -1,5 +1,5 @@
 import { ValueObject } from "../declarations"
-import { Size, sizeCeil, assertSize, isSize, sizeScale, sizeCover, sizeAboveZero } from "../Utility/Size"
+import { Size, isSize, sizeCover, sizeAboveZero } from "../Utility/Size"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
 import { EmptyMethod } from "../Setup/Constants"
 import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
@@ -14,8 +14,8 @@ import {
   timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
 import { assertAboveZero, isAboveZero, isPositive } from "../Utility/Is"
-import { assertClip, Clip } from "../Edited/Mash/Track/Clip/Clip"
-import { assertUpdatableDurationDefinition, isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
+import { Clip } from "../Edited/Mash/Track/Clip/Clip"
+import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 
@@ -30,7 +30,7 @@ export class RenderingOutputClass implements RenderingOutput {
       const { definition } = content
       if (isUpdatableDurationDefinition(definition)) {
         const frames = definition.frames(quantize)
-        // console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
+        console.log(this.constructor.name, "assureClipFrames", clip.label, frames, definition.duration)
         if (frames) clip.frames = frames
       }
     })
@@ -70,14 +70,14 @@ export class RenderingOutputClass implements RenderingOutput {
     const { mash } = this.args
     const { frames } = mash
     if (isPositive(frames)) {
-      // console.log(this.constructor.name, "durationClips mash is", frames, "frames")
+      console.log(this.constructor.name, "durationClips mash is", frames, "frames")
       return []
     }
 
     const { clips } = mash
     const zeroClips = clips.filter(clip => !isAboveZero(clip.frames))
 
-    // console.log(this.constructor.name, "durationClips", frames, clips.length, zeroClips.length)
+    console.log(this.constructor.name, "durationClips", frames, clips.length, zeroClips.length)
     return zeroClips
   }
 
@@ -107,7 +107,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   protected get mashDurationPromise(): Promise<void> {
     const clips = this.durationClips
-    // console.log(this.constructor.name, "mashDurationPromise", clips.length, "clip(s)")
+    console.log(this.constructor.name, "mashDurationPromise", clips.length, "clip(s)")
 
     if (!clips.length) return Promise.resolve()
 
@@ -132,11 +132,11 @@ export class RenderingOutputClass implements RenderingOutput {
     })
    
     const files = graphFiles.filter(graphFile => isLoadType(graphFile.type))
-    // console.log(this.constructor.name, "mashDurationPromise", files.length, "file(s)")
+    console.log(this.constructor.name, "mashDurationPromise", files.length, "file(s)")
 
     const { preloader } = mash
     return preloader.loadFilesPromise(files).then(() => { 
-      // console.log(this.constructor.name, "mashDurationPromise loadFilesPromise done, calling assureClipFrames")
+      console.log(this.constructor.name, "mashDurationPromise loadFilesPromise done, calling assureClipFrames")
 
       this.assureClipFrames() 
     })

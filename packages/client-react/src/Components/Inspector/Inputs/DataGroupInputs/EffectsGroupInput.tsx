@@ -1,3 +1,4 @@
+import { DefaultIcons } from '@moviemasher/icons-default'
 import { 
   isEffectDefinition, Defined, DefinitionType, assertEffect, UnknownObject, 
   ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue, isDefined, isObject 
@@ -20,7 +21,7 @@ export interface EffectsInputProps extends PropsWithoutChild, WithClassName {
  * @children InspectorEffect
  */
 export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
-  const { selectedEffects, className, ...rest } = props
+  const { selectedEffects, ...rest } = props
   const ref = React.useRef<HTMLDivElement>(null)
   const [isOver, setIsOver] = React.useState(false)
   const [selectedEffect, setSelectedEffect] = React.useState<Effect | null>(null)
@@ -93,25 +94,36 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
   }
 
   const calculateClassName = (): string => {
-    const classes = [className || 'effects']
+    const classes = ['list']
     if (isOver) classes.push(ClassDropping)
     return classes.join(' ')
   }
 
   const memoClassName = React.useMemo(calculateClassName, [isOver])
 
-  const viewProps:UnknownObject = {
-    className: memoClassName,
+  const listViewProps:UnknownObject = {
     children: childNodes(),
     ref,
     onDragLeave,
     onDragOver,
     onDrop,
     onClick,
+    key: 'view',
+    className: memoClassName,
   }
-  const effectsView = <View {...viewProps}/>
-  const effectView = selected ? <InspectorProperties selectedItems={selected.selectedItems(actions)}/>: <></>
-  return <>{effectsView}{effectView}</>
+
+  const viewProps = {
+    ...rest,
+    key: 'effects',
+    children: [DefaultIcons.browserEffect, <View {...listViewProps} />]
+  }
+  const effectsView = <View { ...viewProps } />
+  if (!selected) return effectsView
+
+  return <>
+    {effectsView}
+    <InspectorProperties selectedItems={selected.selectedItems(actions)}/>
+  </>
 }
 
-DataGroupInputs[DataGroup.Effects] = <EffectsGroupInput key="effects-group-input" />
+DataGroupInputs[DataGroup.Effects] = <EffectsGroupInput className="effects row" key="effects-group-input" />

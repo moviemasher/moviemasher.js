@@ -7,9 +7,9 @@ import {
   ApiCallback, DefinitionObject, Endpoints, Errors, OutputType, RenderingStartRequest,
   DefinitionType, CommandOutputs,
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
-  LoadType, DefinitionTypes, Endpoint, ApiRequestInit, outputDefaultPopulate,
+  LoadType, Endpoint, ApiRequestInit, outputDefaultPopulate,
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
-  RenderingUploadRequest, RenderingUploadResponse, LoadTypes, RenderingCommandOutput, MashObject, assertTrue, NumberObject, SizePreview, SizeOutput, SizeIcon, assertAboveZero, isUpdatableDurationType, isUpdatableSizeType, isAboveZero, isLoadType, isDefined,
+  RenderingUploadRequest, RenderingUploadResponse, RenderingCommandOutput, MashObject, assertTrue, NumberObject, SizePreview, SizeOutput, SizeIcon, isUpdatableDurationType, isUpdatableSizeType, isAboveZero, isLoadType, isDefined,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -19,7 +19,7 @@ import { RenderingProcessArgs } from "./RenderingProcess/RenderingProcess"
 import { renderingProcessInstance } from "./RenderingProcess/RenderingProcessFactory"
 import {
   renderingDefinitionObject, renderingInput,
-  renderingSource, renderingOutputFile
+  renderingOutputFile
 } from "../../Utilities/Rendering"
 import {
   BasenameDefinition, BasenameRendering, ExtensionLoadedInfo
@@ -177,6 +177,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       switch(outputType) {
         case OutputType.ImageSequence: {
           if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
+            definition.fps = output.videoRate
             definition.previewSize = { width: outWidth, height: outHeight }
             definition.url = prefix + '/'
           } 
@@ -245,11 +246,20 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
   start: ServerHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
-    const { mash, outputs, definitions = [], upload = false, ...rest } = request
+    const { 
+      mash = {}, 
+      outputs = [], 
+      definitions = [], 
+      upload = false, 
+      ...rest 
+    } = request
     // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
     const commandOutputs = outputs.map(output => {
       const { outputType } = output
-      const commandOutput = {...this.renderingCommandOutputs[outputType], ...output}
+      const commandOutput = { 
+        ...this.renderingCommandOutputs[outputType], 
+        ...output
+      }
       return outputDefaultPopulate(commandOutput)
     })
 
@@ -287,7 +297,8 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     assertDefinitionType(type)
 
     const outputs: CommandOutputs = this.definitionTypeCommandOutputs(type)
-    const input: RenderingInput = renderingInput(definitionObject)
+    const clipObject = { }
+    const input: RenderingInput = renderingInput(definitionObject, clipObject)
     const renderingStartRequest: RenderingStartRequest = { 
       ...input, outputs, upload: true 
     }

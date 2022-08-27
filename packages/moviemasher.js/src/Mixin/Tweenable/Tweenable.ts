@@ -54,8 +54,6 @@ export interface Tweenable extends Instance, Selectable {
   definitionTime(masherTime: Time, clipRange: TimeRange): Time
   effects: Effects
   effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters 
-  foreignElement: SVGForeignObjectElement
-  foreignSvgItem(element: SvgItem, rect: Rect, stretch?: boolean): SVGForeignObjectElement
   graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
   graphFiles(args: GraphFileArgs): GraphFiles
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters

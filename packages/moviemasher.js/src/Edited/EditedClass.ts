@@ -1,14 +1,14 @@
-import { UnknownObject } from "../declarations"
+import { SvgItem, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { SelectedItems, SelectedProperties } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType, SelectType } from "../Setup/Enums"
-import { propertyInstance } from "../Setup/Property"
+import { DataGroup, propertyInstance } from "../Setup/Property"
 import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
-import { isAboveZero, isUndefined } from "../Utility/Is"
+import { isAboveZero, isPopulatedString, isUndefined } from "../Utility/Is"
 import { idGenerate } from "../Utility/Id"
 import { Loader } from "../Loader/Loader"
 import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
@@ -17,24 +17,26 @@ import { Editor } from "../Editor/Editor"
 import { Actions } from "../Editor/Actions/Actions"
 import { Selectables } from "../Editor/Selectable"
 import { colorBlack } from "../Utility/Color"
+import { Mash } from "./Mash"
+import { throwError } from "../Utility"
 
 
 export class EditedClass extends PropertiedClass implements Edited {
   constructor(args: EditedArgs) {
     super()
-    const { createdAt, id, label, preloader, quantize } = args
+    const { createdAt, id, icon, preloader, quantize } = args
     if (preloader) this._preloader = preloader
-    if (id) this._id = id
-    if (createdAt) this.createdAt = createdAt
-    if (label) this.label = label
+    if (isPopulatedString(id)) this._id = id
+    if (isPopulatedString(icon)) this.icon = icon
+    if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isAboveZero(quantize)) this.quantize = quantize
     this.properties.push(propertyInstance({ 
       name: 'label', type: DataType.String
     }))
     this.properties.push(propertyInstance({ 
-      name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack 
+      name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack, 
     }))
-    
+    this.propertiesInitialize(args)
   }
 
   declare backcolor: string
@@ -71,6 +73,8 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   graphFiles(args: GraphFileOptions): GraphFiles { return [] }
 
+  icon = ''
+
   protected _id = ''
   get id(): string { return this._id ||= idGenerate() }
   set id(value: string) {
@@ -92,6 +96,8 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   get loading(): boolean { return false }
 
+  get mashes(): Mash[]{ throw Errors.unimplemented }
+
   private _preloader?: Loader
   get preloader(): Loader {
     return this._preloader!
@@ -109,9 +115,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   selectedItems(actions: Actions): SelectedItems { return [] }
 
-  svg(options: PreviewOptions): Promise<Svg> { throw Errors.unimplemented }
-
-  svgs(options: PreviewOptions): Promise<Svgs> { throw Errors.unimplemented }
+  svgItems(options: PreviewOptions): Promise<SvgItem[]> { throw Errors.unimplemented }
   
   toJSON(): UnknownObject {
     const json = super.toJSON()

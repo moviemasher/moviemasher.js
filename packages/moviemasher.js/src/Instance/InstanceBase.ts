@@ -36,9 +36,10 @@ export class InstanceBase extends PropertiedClass implements Instance {
   protected _id?: string
   get id(): string { return this._id ||= idGenerate() }
 
-  protected _label?: string
+  protected _label = ''
 
-  get label(): string { return this._label || this.definition.label || this.id }
+  get label(): string { return this._label  }
+  //|| this.definition.label || this.id
 
   set label(value: string) { this._label = value }
 
@@ -48,8 +49,8 @@ export class InstanceBase extends PropertiedClass implements Instance {
 
   toJSON(): UnknownObject {
     const json = super.toJSON()
-    const { definitionId, type, _label } = this
-    if (_label) json.label = _label
+    const { definitionId, type, label } = this
+    if (label) json.label = label
     json.type = type
     json.definitionId = definitionId
     return json
