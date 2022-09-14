@@ -1,12 +1,11 @@
 import { DefinitionType } from "../../Setup/Enums"
-import { AudioDefinition } from "../../Media/Audio/Audio"
 import { AudioClass } from "../../Media/Audio/AudioClass"
 import { ImageDefinition } from "../../Media/Image"
 import { ImageClass } from "../../Media/Image/ImageClass"
 import { VideoClass } from "../../Media/Video/VideoClass"
 import { Factory } from "./Factory"
 import { expectFactory } from "../../../../../dev/test/Utilities/expectFactory"
-import { idGenerate } from "../../Utility/Id"
+import { idGenerateString } from "../../Utility/Id"
 import { VideoSequenceClass } from "../../Media/VideoSequence/VideoSequenceClass"
 import { VideoSequenceDefinitionClass } from "../../Media/VideoSequence/VideoSequenceDefinitionClass"
 
@@ -17,7 +16,7 @@ describe("Factory", () => {
   describe(DefinitionType.Video, () => {
     test("returns factory", () => expectFactory(Factory.video))
     const definitionObject = {
-      id: idGenerate(),
+      id: idGenerateString(),
       url: "file.mp4",
       type: DefinitionType.Video,
       fps: 30, duration: 10
@@ -36,7 +35,7 @@ describe("Factory", () => {
     test("returns factory", () => expectFactory(Factory.videosequence) )
 
     const definitionObject = {
-      id: idGenerate(),
+      id: idGenerateString(),
       url: "frames/",
       type: DefinitionType.VideoSequence,
       fps: 30, duration: 10

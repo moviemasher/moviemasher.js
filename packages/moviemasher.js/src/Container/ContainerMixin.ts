@@ -4,9 +4,8 @@ import { Size } from "../Utility/Size"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../MoveMe"
 import { Filter } from "../Filter/Filter"
 import { Anchors, DataType, DirectionObject, Directions, Orientation } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
 import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isBelowOne, isDefined, isTimeRange } from "../Utility/Is"
-import { Container, ContainerClass, ContainerDefinition, ContainerRectArgs } from "./Container"
+import { Container, ContainerClass, ContainerDefaultId, ContainerDefinition, ContainerRectArgs } from "./Container"
 import { arrayLast } from "../Utility/Array"
 import { filterFromId } from "../Filter/FilterFactory"
 import { svgGroupElement, svgPolygonElement } from "../Utility/Svg"
@@ -15,7 +14,6 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../Base/Propertied"
 import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../Utility/Tween"
 import { DataGroup, propertyInstance } from "../Setup/Property"
-import { Editor } from "../Editor/Editor"
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
@@ -23,6 +21,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
+      
       this.addProperties(object, propertyInstance({
         name: 'x', type: DataType.Percent, defaultValue: 0.5,
         group: DataGroup.Point, tweenable: true, 
@@ -30,11 +29,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       this.addProperties(object, propertyInstance({
         name: 'y', type: DataType.Percent, defaultValue: 0.5,
         group: DataGroup.Point, tweenable: true, 
-      }))
-      
-      this.addProperties(object, propertyInstance({
-        name: 'lock', type: DataType.String, defaultValue: Orientation.H,
-        group: DataGroup.Size, 
       }))
       
       // offN, offS, offE, offW
@@ -92,7 +86,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return commandFilters
     }
 
-    
     containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
       const commandFilters: CommandFilters = []
       const { contentColors, filterInput: input } = args
@@ -162,10 +155,10 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return tuple
     }
 
-    containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem { 
-      throw new Error(Errors.unimplemented) 
+    containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> { 
+      return Promise.resolve(this.pathElement(containerRect))
     }
-
+  
     containerSvgFilters(outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SvgFilters {
       const svgFilters: SvgFilters = []
       svgFilters.push(...this.effects.flatMap(effect => effect.svgFilters(outputSize, containerRect, time, clipTime)))
@@ -194,9 +187,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return svgGroupElement(this.intrinsicRect(true))
     }
 
-    get isDefault() { 
-      return this.definitionId === "com.moviemasher.container.default" 
-    }
+    get isDefault() { return this.definitionId === ContainerDefaultId }
 
 
     declare height: number

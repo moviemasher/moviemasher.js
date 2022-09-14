@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertTrue, ClassDropping, ClassSelected, eventStop 
+  assertTrue, ClassDropping, eventStop
 } from "@moviemasher/moviemasher.js"
 
 import { WithClassName, ReactResult, PropsAndChild } from "../../declarations"
@@ -25,11 +25,9 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const editorContext = React.useContext(EditorContext)
   const browserContext = React.useContext(BrowserContext)
   const definitions = browserContext.definitions || []
-  const { dropFiles } = editorContext
+  const { drop } = editorContext
 
-
-
-  const dragValid = (dataTransfer?: DataTransfer | null): boolean => {
+  const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
     if (!dataTransfer) return false
 
     return dragTypes(dataTransfer).includes(TransferTypeFiles)
@@ -38,10 +36,7 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const onDrop = (event: DragEvent): void => {
     onDragLeave(event)
     const { dataTransfer } = event
-    if (!(dataTransfer && dragValid(dataTransfer))) return 
-
-    const { files } = dataTransfer
-    dropFiles(files)
+    if (dragValid(dataTransfer)) drop(dataTransfer.files)
   } 
 
   const onDragOver = (event: DragEvent) => {

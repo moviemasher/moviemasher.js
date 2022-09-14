@@ -4,7 +4,7 @@ import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
-import { PreviewOptions } from "../Editor/Preview/Preview"
+import { PreviewOptions } from "./Mash/Preview/Preview"
 import { Editor } from "../Editor/Editor"
 import { Selectable } from "../Editor/Selectable"
 import { Mash } from "./Mash/Mash"
@@ -27,7 +27,7 @@ export interface Edited extends Described, Propertied, Selectable {
   destroy(): void
   editor: Editor
   emitter: Emitter
-  graphFiles(args?: GraphFileOptions): GraphFiles
+  editedGraphFiles(args?: GraphFileOptions): GraphFiles
   imageSize: Size
   loading: boolean
   loadPromise(args?: GraphFileOptions): Promise<void>

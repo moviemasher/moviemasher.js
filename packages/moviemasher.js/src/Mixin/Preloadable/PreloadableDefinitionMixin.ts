@@ -40,7 +40,5 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
     }
 
     url: string
-
-    urlAbsolute = ''
   }
 }

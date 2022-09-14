@@ -1,14 +1,17 @@
 import React from "react"
-import { contentDefault, EditorIndex, EventType, UnknownObject } from "@moviemasher/moviemasher.js"
+import { ContentDefaultId, EditorIndex, EventType, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
+import { EditorContext } from "../Masher/EditorContext"
 
 export interface TimelineAddClipControlProps extends PropsAndChild, WithClassName {}
 
 export function TimelineAddClipControl(props:TimelineAddClipControlProps): ReactResult {
   const editor = useEditor()
+  const editorContext = React.useContext(EditorContext)
+  const { definition, drop } = editorContext
   const getDisabled = () => !editor.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
@@ -20,15 +23,19 @@ export function TimelineAddClipControl(props:TimelineAddClipControlProps): React
     disabled,
   }
   cloneProps.onClick = () => { 
-    const { clip, track } = editor.selection
+    const { selection, edited } = editor
+    const { clip, track } = selection
+    const object = definition?.toJSON() || { id: ContentDefaultId }
     const editorIndex: EditorIndex = {
       clip: 0, track: -1
     }
     if (clip && track) {
       editorIndex.clip = track.dense ? track.clips.indexOf(clip) : clip.endFrame
       editorIndex.track = track.index
+    } else {
+      editorIndex.clip = editor.time.scale(edited!.quantize).frame
     }
-    editor.add({ id: contentDefault.id }, editorIndex) 
+    drop(object, editorIndex)
   }
   return React.cloneElement(React.Children.only(children), cloneProps)
 }

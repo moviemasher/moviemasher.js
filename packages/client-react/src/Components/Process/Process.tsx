@@ -21,11 +21,11 @@ export function Process(props:ProcessProps): ReactResult {
   const [error, setError] = React.useState('')
 
   const { children, id } = props
-  const { enabled } = apiContext
+  const { enabled, servers } = apiContext
 
   if (!ServerTypes.map(String).includes(id)) return null
   const serverType = id as ServerType
-  if (!enabled.includes(serverType)) return null
+  if (!(enabled && servers[serverType])) return null
 
   const processContext = {
     processing, setProcessing,

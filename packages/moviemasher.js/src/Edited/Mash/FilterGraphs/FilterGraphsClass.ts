@@ -57,6 +57,10 @@ export class FilterGraphsClass implements FilterGraphs {
     }
   }
 
+  assureDuration() {}
+  assureSize() {}
+
+  
   get duration(): number { return this.time.lengthSeconds }
 
   filterGraphsVisible: FilterGraph[] = []
@@ -75,10 +79,10 @@ export class FilterGraphsClass implements FilterGraphs {
   get graphFilesInput(): GraphFiles {
     return this.graphFiles.filter(graphFile => graphFile.input)
   }
+
   get loadPromise(): Promise<void> {
-    const { graphFiles } = this
-    // console.log(this.constructor.name, "loadPromise", graphFiles.map(f => f.file))
-    return this.args.mash.preloader.loadFilesPromise(graphFiles).then(EmptyMethod)
+    return this.args.mash.preloader.loadFilesPromise(this.graphFiles)
   }
+
   time: Time
 }

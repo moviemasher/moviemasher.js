@@ -2,25 +2,29 @@ import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { AudibleSource, LoadedAudio, UnknownObject } from "../../declarations"
 import { GraphFile } from "../../MoveMe"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { Loader } from "../../Loader/Loader"
+import { isLoadedAudio, Loader } from "../../Loader/Loader"
 import { DataType, Duration, LoadType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { isAboveZero, isPopulatedString } from "../../Utility/Is"
+import { assertObject, isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
+import { urlPrependProtocol } from "../../Utility/Url"
 
 export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { audioUrl, audio, loop, duration, waveform } = object as UpdatableDurationDefinitionObject
-      if (audio) {
+      const { 
+        audioUrl, audio, loop, duration, waveform, loadedAudio
+      } = object as UpdatableDurationDefinitionObject
+      if (audio || audioUrl || loadedAudio) {
         this.audio = true
-        // console.log(this.constructor.name, "audio", audio, this.audio)
+        if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
+        if (waveform) this.waveform = waveform
+      if (loadedAudio) this.loadedAudio = loadedAudio
       }
-      if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
-      if (waveform) this.waveform = waveform
+      // console.log(this.constructor.name, "audio", audio, this.audio, this.audioUrl)
       if (isAboveZero(duration)) this.duration = duration
       // console.log(this.constructor.name, "duration", duration, this.duration)
       if (loop) {
@@ -48,15 +52,37 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
     audibleSource(preloader: Loader): AudibleSource | undefined {
-      const graphFile = this.graphFile(true)
-      const loaded = preloader.loadedFile(graphFile)
-      // console.log(this.constructor.name, "audibleSource", file, loaded)
-      if (!loaded) return
+      const { loadedAudio } = this
+      if (loadedAudio) {
+        // console.log(this.constructor.name, "audibleSource loadedAudio")
+        return AudibleContextInstance.createBufferSource(loadedAudio)
+      }
 
-      const cached: LoadedAudio = preloader.getFile(graphFile)
-      if (!cached) return
+      const { audioUrl } = this
+      if (!isPopulatedString(audioUrl)) {
+        // console.log(this.constructor.name, "audibleSource no audioUrl")
+        this.audio = false
+        return
+      }
 
-      return AudibleContextInstance.createBufferSource(cached)
+      const cache = preloader.getCache(urlPrependProtocol('audio', audioUrl))
+      if (!cache) {
+        // console.log(this.constructor.name, "audibleSource not cached", audioUrl)
+        return
+      }
+
+      const { error, result } = cache
+      if (error || !isLoadedAudio(result)) {
+        // console.log(this.constructor.name, "audibleSource error", error)
+        this.audio = false
+        this.audioUrl = ''
+        return
+      }
+  
+      this.loadedAudio = result
+      
+      // console.log(this.constructor.name, "audibleSource cached", audioUrl)
+      return AudibleContextInstance.createBufferSource(result)
     }
 
     audio = false
@@ -70,26 +96,22 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       // console.log(this.constructor.name, "frames duration =", duration)
       if (!duration) return Duration.Unknown
 
-      return  timeFromSeconds(this.duration, quantize, 'floor').frame
+      return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
 
-    graphFile(editing?: boolean): GraphFile {
-      const file = this.urlAudible(editing)
-      const { loadType } = this
-      const type = loadType === LoadType.Video ? loadType : LoadType.Audio
-      const graphFile: GraphFile = { file, type, definition: this, input: true }
-      return graphFile
-    }
+    loadedAudio?: LoadedAudio
 
     loop = false
 
     toJSON() : UnknownObject {
       const json = super.toJSON()
-      const { duration, audio, loop, waveform } = this
-      if (duration) json.duration = this.duration
-      if (audio) json.audio = this.audio
-      if (loop) json.loop = this.loop
-      if (waveform) json.waveform = this.waveform
+      const { duration, audio, loop, waveform, audioUrl, url } = this
+      if (duration) json.duration = duration
+      if (audio) json.audio = audio
+      if (loop) json.loop = loop
+      if (waveform) json.waveform = waveform
+      if (url) json.url = url
+      else if (audioUrl) json.audioUrl = audioUrl
       return json
     }
 

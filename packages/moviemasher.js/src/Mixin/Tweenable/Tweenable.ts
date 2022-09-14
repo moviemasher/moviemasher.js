@@ -1,12 +1,12 @@
-import { Constrained, Scalar, SvgItem} from "../../declarations"
+import { Constrained, Scalar} from "../../declarations"
+import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject, isInstance } from "../../Instance/Instance"
-import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
+import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
 import { EffectObject, Effects } from "../../Media/Effect/Effect"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Orientation } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
@@ -34,7 +34,6 @@ export interface TweenableDefinitionObject extends DefinitionObject {}
 
 export interface Tweenable extends Instance, Selectable { 
   alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters
-  alphamergeFilter: Filter
   amixCommandFilters(args: CommandFilterArgs): CommandFilters
   canColor(args: CommandFilterArgs): boolean
   canColorTween(args: CommandFilterArgs): boolean
@@ -54,11 +53,13 @@ export interface Tweenable extends Instance, Selectable {
   definitionTime(masherTime: Time, clipRange: TimeRange): Time
   effects: Effects
   effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters 
+  frames(quantize: number): number 
   graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
   graphFiles(args: GraphFileArgs): GraphFiles
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters
   intrinsicRect(editing?: boolean): Rect
-  intrinsicsKnown(editing?: boolean): boolean
+  intrinsicsKnown(options: IntrinsicOptions): boolean
+  intrinsicGraphFile(options: IntrinsicOptions): GraphFile
   isDefault: boolean
   lock: Orientation
   mutable(): boolean
@@ -71,8 +72,6 @@ export interface Tweenable extends Instance, Selectable {
   overlayFilter: Filter
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
-  setptsFilter: Filter
-  setsarFilter: Filter
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
   tweenPoints(time: Time, range: TimeRange): PointTuple 
   tweenRects(time: Time, range: TimeRange): RectTuple

@@ -7,9 +7,7 @@ import { Filter } from "./Filter/Filter"
 import { ValueObject } from "./declarations"
 import { Size } from "./Utility/Size"
 import { RectTuple } from "./Utility/Rect"
-
-
-
+import { LoaderType } from "./Loader/Loader"
 
 export interface CommandFilter {
   avType?: AVType
@@ -35,8 +33,8 @@ export type FilterValueObjects = FilterValueObject[]
 export interface GraphFileBase {
   audible?: boolean
   editing?: boolean
-  icon?: boolean
   visible?: boolean
+  icon?: boolean
   streaming?: boolean
   time: Time
 }
@@ -105,10 +103,11 @@ export interface FilterDefinitionCommandFilterArgs extends FilterCommandFilterAr
 }
 
 export interface GraphFile {
-  type: GraphFileType | LoadType
+  type: LoaderType
   file: string
+  content?: string
   input?: boolean
-  definition: Definition
+  definition?: Definition
   resolved?: string
 }
 export type GraphFiles = GraphFile[]

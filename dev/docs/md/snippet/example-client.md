@@ -1,5 +1,22 @@
 ## Client Example
 
+### Installation
+
+The following shell command installs the client and core libraries to your NPM project,
+saving the former to the `dependencies` array in your **package.json** file.
+
+```shell
+npm install @moviemasher/client-react --save
+```
+
+Alternatively, if you're wanting to build your own client you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) instead.
+
+_Please note_ that this does not install a server implementation that interacts with this module. 
+Learn more about how the codebase is structured in the
+[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
+
+ ### Inclusion
+
 From our HTML file we link to both the compiled JavaScript and CSS files.
 To support the widest variety of workflows and tooling, the Cascading Style Sheets
 required to layout the client user interface are kept separate from JavaScript code:
@@ -83,4 +100,4 @@ selectively provided, and manually configured with a selection of available chil
 We are also setting the preview dimensions here, to their defaults for demonstration purposes. As mentioned above, overriding the defaults from JavaScript is sub-optimal - a visible resizing will occur as the CSS variables are updated - but helpful if supplying custom CSS is impractical.
 
 Learn more about building a fully customized video editing client in the
-[Layout Guide](https://moviemasher.com/docs/Layout.html).
+[Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html).

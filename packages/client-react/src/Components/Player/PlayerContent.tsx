@@ -1,80 +1,104 @@
 import React from 'react'
 import { 
-  assertTrue, EventType, PointZero, Rect, SelectType, Svgs, eventStop,
-  ClassDropping, isDefined, sizeCopy
+  EventType, Rect, eventStop, isDefinitionType, rectRound,
+  ClassDropping, sizeCopy, sizeAboveZero, UnknownObject, assertDefinitionType, rectCopy, EditorIndex, assertObject, SelectType, idGenerate, 
 } from '@moviemasher/moviemasher.js'
 
-import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
+import { 
+  PropsWithChildren,
+  ReactResult, WithClassName 
+} from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import { EditorContext } from '../../Components/Masher/EditorContext'
-import { dragType, dragTypes, TransferTypeFiles } from '../../Helpers/DragDrop'
+import { assertDragDefinitionObject, dragData, dragType, dragTypes, 
+  TransferTypeFiles 
+} from '../../Helpers/DragDrop'
 import { PlayerContext } from './PlayerContext'
 
-export interface PlayerContentProps extends PropsWithoutChild, WithClassName {}
+export interface PlayerContentProps extends PropsWithChildren, WithClassName {}
+
+/**
+ * @parents Player
+ */
 export function PlayerContent(props: PlayerContentProps): ReactResult {
-  const { className, ...rest } = props
-
+  const { children, className, ...rest } = props
+  
+  const editor = useEditor()
+  const [rect, setRect] = React.useState<Rect>(() => (rectCopy(editor.rect)))
   const svgRef = React.useRef<SVGSVGElement>(null)
-
+  const viewRef = React.useRef<HTMLDivElement>(null)
   const editorContext = React.useContext(EditorContext)
   const [over, setOver] = React.useState(false)
-  const editor = useEditor()
   const playerContext = React.useContext(PlayerContext)
-
   const { disabled } = playerContext
-  const { dropFiles } = editorContext
-  // const [svgs, setSvgs] = React.useState<Svgs>([])
-  const [rect, setRect] = React.useState<Rect>(() => ({ ...PointZero, ...editor.rect }))
-  const ref = React.useRef<HTMLDivElement>(null)
+  const { drop } = editorContext
+  const watchingRef = React.useRef<UnknownObject>({})
+  const { current: watching } = watchingRef
 
   const handleResize = () => { 
-    const { current } = ref
-    assertTrue(current)
-
-    const rect = current.getBoundingClientRect()
-    const { x, y, width, height } = rect
-    setRect(original => {
-      original.width = width
-      original.height = height
-      original.x = x
-      original.y = y
-      editor.rect = { ...original }
-      return original
+    const { current } = viewRef
+    if (!current) return
+  
+    const rect = rectRound(current.getBoundingClientRect())
+    setRect(() => {
+      editor.rect = rect
+      return rectCopy(rect)
     })
   }
+
   const [resizeObserver] = React.useState(new ResizeObserver(handleResize))
 
   React.useEffect(() => {
-    const { current } = ref
+    const { current } = viewRef
     if (current) resizeObserver.observe(current)
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const handleDraw = async () => { 
-    const svgs = await editor.svgItems(disabled)
+  const requestItems = () => {
     const { current } = svgRef
-    if (current) current.replaceChildren(...svgs)
+    assertObject(current)
+    
+    // const { rect } = editor
+    const callId = idGenerate('svgItems')
+    // console.log("PlayerContent.requestItems...", callId)
+    return editor.svgItems(disabled).then(svgs => {
+      // console.log("PlayerContent.requestItems!", callId)
+      // current.replaceChildren()
+      current.replaceChildren(...svgs)
+      watching.drawing = false
+      if (watching.redraw) handleDraw()
+        // else 
+      return callId
+    })
+    
+  }
+
+  const handleDraw = () => { 
+    const { current } = svgRef
+    const { rect } = editor
+    if (!(current && sizeAboveZero(rect))) return
+
+    if (watching.drawing) {
+      watching.redraw = true
+      return
+    }
+    watching.drawing = true
+    watching.redraw = false
+
+    requestItems()//.then(callId => console.log("PlayerContent.handleDraw resolved", callId))
   }
 
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
 
-  const dragValid = (dataTransfer?: DataTransfer | null): boolean => {
+  const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
     if (!dataTransfer) return false
 
     const types = dragTypes(dataTransfer)
-    if (types.includes(TransferTypeFiles)) {
-      console.log("PlayerContent dragValid FILES", types)
-      return true
-    }
-
-    const type = dragType(dataTransfer)
-    if (isDefined(type)) {
-      console.log("PlayerContent dragValid TYPE", type)
-      return true
-    }
-    return false
+    if (types.includes(TransferTypeFiles)) return true
+    
+    return isDefinitionType(dragType(dataTransfer))
   }
 
   const onDragLeave = (event: DragEvent): void => {
@@ -85,30 +109,58 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   const onDrop = (event: DragEvent): void => {
     onDragLeave(event)
     const { dataTransfer } = event
-    if (!(dataTransfer && dragValid(dataTransfer))) return 
+    if (!dragValid(dataTransfer)) return 
 
-    const { files } = dataTransfer
-    dropFiles(files)
+    const { edited } = editor
+    assertObject(edited)
+    const editorIndex: EditorIndex = {
+      clip: editor.time.scale(edited.quantize).frame,
+      track: -1,
+    }
+    const types = dragTypes(dataTransfer)
+    if (types.includes(TransferTypeFiles)) {
+      drop(dataTransfer.files, editorIndex)
+    } else {
+      const type = dragType(dataTransfer)
+      assertDefinitionType(type)
+      const data = dragData(dataTransfer, type)
+      assertDragDefinitionObject(data)
+      drop(data.definitionObject, editorIndex)
+    }
   } 
 
   const onDragOver = (event: DragEvent) => {
     eventStop(event)
     setOver(dragValid(event.dataTransfer))
   }
+
   const classes: string[] = []
   if (className) classes.push(className)
   if (over) classes.push(ClassDropping)
 
-  const svgProps = {
-    ref: svgRef, ...sizeCopy(rect), viewBox: `0 0 ${rect.width} ${rect.height}`
+  const viewProps: UnknownObject = {
+    ...rest, ref: viewRef, 
+    className: classes.join(' '),
+    key: 'player-content', 
+    onDragOver, onDrop, onDragLeave, 
+    onPointerDown: () => { editor.selection.unset(SelectType.Clip) }
+  
   }
 
-  const children = <svg { ...svgProps } />
-  const viewProps = {
-    ...rest, 
-    className: classes.join(' '),
-    key: 'player-content', ref, children, 
-    onDragOver, onDrop, onDragLeave,
-  }
+  if (sizeAboveZero(rect)) {
+    const svgProps = { 
+      ref: svgRef, ...sizeCopy(rect), 
+      viewBox: `0 0 ${rect.width} ${rect.height}`,
+      key: "svg",
+    }
+    const nodes = [<svg { ...svgProps } />]
+      
+    if (children) {
+      const child = React.Children.only(children)
+      if (React.isValidElement(child)) nodes.push(child)
+    }
+    viewProps.children = nodes 
+  } 
+
   return <View { ...viewProps}/>
 }

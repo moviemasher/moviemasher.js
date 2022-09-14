@@ -1,4 +1,4 @@
-import { Endpoint, StringObject, SvgItem } from "../declarations"
+import { Endpoint, NumberObject, StringObject, SvgItem } from "../declarations"
 import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction } from "../Setup/Enums"
@@ -20,7 +20,7 @@ import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 import { Rect } from "../Utility/Rect"
 
-export interface EditorIndex {
+export interface EditorIndex extends Partial<NumberObject> {
   layer?: number
   clip?: number
   track?: number
@@ -29,14 +29,15 @@ export interface EditorIndex {
 export interface EditorArgs {
   autoplay: boolean
   buffer: number
-  readOnly?: boolean
+  editType?: EditType
+  endpoint?: Endpoint
   fps: number
   loop: boolean
   precision: number
-  volume: number
   preloader?: BrowserLoaderClass
-  endpoint?: Endpoint
-  editType?: EditType
+  readOnly?: boolean
+  rect?: Rect
+  volume: number
 }
 
 export interface EditorOptions extends Partial<EditorArgs> { }
@@ -107,7 +108,8 @@ export interface Editor {
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringObject): void
   readonly selection: EditorSelection
-  svgItems(disabled?: boolean): Promise<SvgItem[]>
+  svgElement: SVGSVGElement
+  svgItems(enabled?: boolean): Promise<SvgItem[]>
   time: Time
   timeRange: TimeRange
   undo(): void

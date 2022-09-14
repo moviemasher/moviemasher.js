@@ -1,4 +1,4 @@
-import { AudibleSource, Constrained, StartOptions, Value } from "../../declarations"
+import { AudibleSource, Constrained, LoadedAudio, StartOptions, Value } from "../../declarations"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
 import { GraphFile } from "../../MoveMe"
@@ -30,11 +30,10 @@ export interface UpdatableDurationDefinitionObject extends PreloadableDefinition
   loop?: boolean
   waveform?: string
   audioUrl?: string
+  loadedAudio?: LoadedAudio
 }
 
 export interface UpdatableDuration extends Preloadable {
-  audibleSource(preloader: Loader): AudibleSource | undefined
-  frames(quantize: number): number 
   gain: number
   gainPairs: number[][]
   speed: number
@@ -57,7 +56,7 @@ export interface UpdatableDurationDefinition extends PreloadableDefinition {
   audioUrl: string
   duration: number
   frames(quantize: number): number
-  graphFile(editing?: boolean): GraphFile
+  loadedAudio?: LoadedAudio
   loop: boolean
   urlAudible(editing?: boolean): string
 }

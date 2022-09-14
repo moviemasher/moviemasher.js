@@ -82,15 +82,6 @@ export class TrackClass extends PropertiedClass implements Track {
     return changed
   }
 
-  // private assureTarget(clip: Clip): Tweenable | undefined {
-  //   const { timing } = clip
-  //   switch(timing) {
-  //     case Timing.Custom: return
-  //     case Timing.Container: return clip.container
-  //     case Timing.Content: return clip.content
-  //   }
-  // }
-
   assureFrames(quantize: number, clips?: Clips): void {
     const suppliedClips = isDefined(clips)
     const clipsArray = clips || this.clips
@@ -147,7 +138,7 @@ export class TrackClass extends PropertiedClass implements Track {
   }
 
   private _identifier?: string
-  get identifier(): string { return this._identifier ||= idGenerate()}
+  get identifier(): string { return this._identifier ||= idGenerate('track')}
 
   index = 0
 

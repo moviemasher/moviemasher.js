@@ -2,13 +2,9 @@
 <!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, switcher - version 5.0.7_
-
-- _visual compositing_ through **SVG API**
-- _audio mixing_ through **WebAudio API**
-- _encoding_ and _streaming_ through **FFmpeg**
-- _client_ implemented in **ReactJS**
-- _server_ implemented in **ExpressJS**
+| JavaScript video editor, encoder, switcher | _NEW in version 5.1.0_ |
+| -- | -- |
+| **visual compositing** through _SVG API_ <br> **audio mixing** through _WebAudio API_ <br> **client** implemented in _ReactJS_ <br> **server** implemented in _ExpressJS_  <br> **encode** and **stream** through _FFmpeg_ | • container/content pattern <br> • vector-based masking <br> • tranform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
 <!-- MAGIC:END -->
 
 ## Express Server Plug-in
@@ -39,7 +35,11 @@ In addition to this README, there is a simple
 also available when using a code editor that supports TypeScript and IntelliSense.
 <!-- MAGIC:END -->
 
-## Installation
+
+<!-- MAGIC:START (FILEMD:src=../../dev/docs/md/snippet/example-server.md&stripMagic=true) -->
+## Server Example
+
+### Installation
 
 The following shell command installs the server and core libraries to your NPM project,
 saving the former to the `dependencies` array in your **package.json** file.
@@ -47,14 +47,13 @@ saving the former to the `dependencies` array in your **package.json** file.
 ```shell
 npm install @moviemasher/server-express --save
 ```
+Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) instead.
 
 _Please note_ that this does not install a client implementation that interacts with this module.
 Learn more about how the codebase is structured in the
 [Architecture Guide](https://moviemasher.com/docs/Architecture.html).
 
-<!-- MAGIC:START (FILEMD:src=../../dev/docs/md/snippet/example-server.md&stripMagic=true) -->
-## Server Example
-
+### Inclusion
 <fieldset>
 
 <legend>server.ts</legend>
@@ -94,7 +93,7 @@ We are setting the preview dimensions to their default for demonstration purpose
 We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. Please note: they should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
 
 Learn more about building your own customized server in the
-[Integration Guide](https://moviemasher.com/docs/Integration.html).
+[Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).
 
 <!-- MAGIC:END -->
 

@@ -2,6 +2,6 @@
   "label": "League Spartan",
   "id": "com.moviemasher.font.default",
   "type": "font",
-  "source": "../shared/font/leaguespartan/leaguespartan-bold.ttf",
-  "url": "../shared/font/leaguespartan/leaguespartan-bold.woff2"
+  "source": "https://fonts.googleapis.com/css?family=League+Spartan",
+  "url": "//fonts.gstatic.com/s/leaguespartan/v6/kJEnBuEW6A0lliaV_m88ja5Twtx8BWhtkDVmjZvM_oTZA81dNA6MzbxG.woff2"
 }

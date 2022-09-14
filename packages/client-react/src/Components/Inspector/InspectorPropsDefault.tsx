@@ -18,15 +18,12 @@ import { CreateEditedControl } from '../Controls/CreateEditedControl'
 import { RenderControl } from '../Controls/RenderControl'
 import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
+import { ApiEnabled } from '../ApiClient/ApiEnabled'
 
-export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {
-  noApi?: boolean
-}
+export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props) {
-  const { noApi, ...options } = props
-
-  const optionsStrict = panelOptionsStrict(options)
+export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props = {}) {
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'inspector'
   optionsStrict.props.className ||= 'panel inspector'
 
@@ -55,20 +52,9 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
 
   const contentChildren = [<InspectorProperties key="properties" />]
   const types = [SelectType.Clip, SelectType.Track, SelectType.Layer]
-  types.forEach(type => {
-    contentChildren.push(
-      <InspectorPicked key={`${type}-delete`} type={type}>
-        <EditorRemoveButton type={type}>
-          <Button>
-            {labelInterpolate('delete', { type })}
-            {DefaultIcons.remove}
-          </Button>
-        </EditorRemoveButton>
-      </InspectorPicked>
-    )
-  })
-  if (!noApi) {
-     contentChildren.push(
+
+  contentChildren.push(
+    <ApiEnabled>
       <InspectorPicked type="mash" key="inspector-mash">
         <View>
           <RenderControl key='render-process'>
@@ -84,7 +70,7 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
             </Button>
           </ViewControl>    
         </View>  
-      </InspectorPicked>,
+      </InspectorPicked>
       <InspectorPicked types="mash,cast" key="inspector-document">
         <SelectEditedControl key="select-edited" />
         <View>
@@ -101,9 +87,23 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
             </Button>
           </CreateEditedControl>
         </View>
-      </InspectorPicked>,
+      </InspectorPicked>
+    </ApiEnabled>
+  )
+
+  types.forEach(type => {
+    contentChildren.push(
+      <InspectorPicked key={`${type}-delete`} type={type}>
+        <EditorRemoveButton type={type}>
+          <Button>
+            {labelInterpolate('delete', { type })}
+            {DefaultIcons.remove}
+          </Button>
+        </EditorRemoveButton>
+      </InspectorPicked>
     )
-  }
+  })
+  
   optionsStrict.content.children ||= <>{contentChildren}</>
 
   const children = <>

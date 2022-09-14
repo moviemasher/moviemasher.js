@@ -1,5 +1,4 @@
 {
   "label": "Rectangle",
-  "type": "container",
-  "id": "com.moviemasher.container.default"
+  "type": "container"
 }

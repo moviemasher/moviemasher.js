@@ -60,6 +60,7 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
     }   
 
     const pointerDown = (event: MouseEvent) => {
+      event.stopPropagation()
       clientXRef.current = -1
       window.addEventListener('pointermove', pointerMove)
       window.addEventListener('pointerup', pointerUp)

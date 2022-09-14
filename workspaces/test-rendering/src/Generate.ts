@@ -162,12 +162,14 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   const textHeight = 0.1
   const debug: TextContainerObject = {
     fontId: 'font.valken', height: textHeight, 
-    x: 0, y: 0.5,
+    x: 0, y: 0.5, lock: 'H',
     intrinsic: { x: 0, y: 0, width: width / textHeight, height }
   }
   const debugClip: ClipObject = {
     containerId: 'com.moviemasher.container.text',
     content: { color: colorBlack },
+    sizing: 'preview',
+    timing: 'custom',
     frames,
     definitionId: clipDefault.id,
   }
@@ -277,7 +279,7 @@ export const GenerateTestsDefault: GenerateTests = {
     ["BL", "com.moviemasher.content.default", { color: colorBlue }],
     ["P", "puppy", {}],
     ["RGB", "rgb", {}],
-    // ["V", "video", {}],
+    ["V", "video", {}],
     // ["BK", "com.moviemasher.content.default", { color: colorBlack }],
     // ["RE", "com.moviemasher.content.default", { color: colorRed }],
     // ["WH", "com.moviemasher.content.default", { color: colorWhite }],
@@ -432,7 +434,7 @@ export const generateTests = (generateOptions: GenerateOptions, testId = 'all', 
   const tracks: TrackObject[] = [{ clips }]
   if (labels) tracks.push({ clips: labelClips, dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: colorGreen, tracks 
+    id: testId, backcolor: '#666666', tracks 
   }
   return [testId, mash]
 }
@@ -442,7 +444,7 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: colorGreen, tracks 
+    id: testId, backcolor: '#666666', tracks 
   }
   return [testId, mash]
 }

@@ -5,12 +5,10 @@ import { Emitter } from "../Helpers/Emitter"
 import { editorInstance } from "./EditorFactory"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
 import { Editor } from "./Editor"
-
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { assertMash } from "../Edited/Mash/Mash"
 import { EditType } from "../Setup/Enums"
 import { ClipClass } from "../Edited/Mash/Track/Clip/ClipClass"
-
 import visibleDefaultJson from "../Definitions/DefinitionObjects/content/default.json"
 
 const createEditor = (): Editor => {
@@ -35,6 +33,7 @@ describe("Editor", () => {
     volume: 0.4,
     buffer: 3,
   })
+  
   const editorTestDefaults = Object.entries(Default.editor)
 
   describe.each(editorTestDefaults)("%s getter", (key, value) => {
@@ -93,7 +92,6 @@ describe("Editor", () => {
     })
   })
 
-
   describe("selectedItems", () => {
     test("returns expected properties", async () => {
       const editor = createEditor()
@@ -104,5 +102,4 @@ describe("Editor", () => {
       expect(selectedItems.length).toEqual(2)
     })
   })
-
 })

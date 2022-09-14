@@ -8,14 +8,13 @@ import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../Setup/Property"
-import { DataType, Orientation } from "../Setup/Enums"
+import { DataType, DefinitionType } from "../Setup/Enums"
 import { SelectedProperties } from "../Utility/SelectedProperty"
 import { Actions } from "../Editor/Actions/Actions"
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../MoveMe"
 import { idGenerate } from "../Utility/Id"
 import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
-import { arrayLast } from "../Utility/Array"
 
 const ContentMixinKeys = ['lock', 'width', 'height', 'x', 'y']
 
@@ -24,8 +23,8 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { isDefault } = this
-      if (!isDefault) {
+      const { isDefaultOrAudio } = this
+      if (!isDefaultOrAudio) {
         this.addProperties(object, propertyInstance({
           name: 'x', type: DataType.Percent, defaultValue: 0.5,
           group: DataGroup.Point, tweenable: true, 
@@ -35,10 +34,6 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
           group: DataGroup.Point, tweenable: true, 
         }))
         
-        this.addProperties(object, propertyInstance({
-          name: 'lock', type: DataType.String, defaultValue: Orientation.H,
-          group: DataGroup.Size, 
-        }))
       }
     }
 
@@ -57,7 +52,9 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const timeDuration = time.isRange ? time.lengthSeconds : 0
       const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
       
-      let filterInput = commandFilesInput(commandFiles, this.id, false)
+      const { id } = this
+      // console.log(this.constructor.name, "audibleCommandFilters calling commandFilesInput", id)
+      let filterInput = commandFilesInput(commandFiles, id, false)
     
       const trimFilter = 'atrim'
       const trimId = idGenerate(trimFilter)
@@ -94,8 +91,8 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     }
 
     contentRects(args: ContentRectArgs): RectTuple {
-      const {rects: rects, time, timeRange, loading, editing } = args
-      if (loading && !this.intrinsicsKnown(editing)) {
+      const {containerRects: rects, time, timeRange, loading, editing } = args
+      if (loading && !this.intrinsicsKnown({ editing, size: true })) {
         return isArray(rects) ? rects : [rects, rects]
       }
       const { lock } = this
@@ -109,31 +106,40 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]
     }
 
-    contentSvgItem(containerRect: Rect, time: Time, timeRange: TimeRange, icon?: boolean): SvgItem {
+    contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect {
       const contentArgs: ContentRectArgs = {
-        rects: containerRect, time, timeRange, editing: true
+        containerRects: containerRect, time, timeRange, editing: true
       }
       const [contentRect] = this.contentRects(contentArgs)
       const { x, y } = contentRect    
       const point = { x: containerRect.x - x, y: containerRect.y - y }
       const rect = rectFromSize(contentRect, point)
-      return this.svgItem(rect, time, timeRange, true, icon)
+      return rect
+    }
+
+    contentPreviewItemPromise(containerRect: Rect, time: Time, timeRange: TimeRange, icon?: boolean): Promise<SvgItem> {
+      return this.itemPromise(containerRect, time, timeRange, true, icon)
     }
     
+
     intrinsicRect(_ = false): Rect { return RectZero }
 
     get isDefault() { 
       return this.definitionId === "com.moviemasher.content.default" 
     }
+
+    get isDefaultOrAudio() {
+      return this.isDefault || this.type === DefinitionType.Audio
+    }
     
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
-      const { isDefault } = this
-      if (isDefault && ContentMixinKeys.includes(property.name)) return []
+      const { isDefaultOrAudio } = this
+      if (isDefaultOrAudio && ContentMixinKeys.includes(property.name)) return []
 
       return super.selectedProperties(actions, property)
     }
 
-    svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem {
+    itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {
       throw new Error(Errors.unimplemented) 
     }
   }

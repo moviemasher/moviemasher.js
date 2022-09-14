@@ -25,9 +25,8 @@ import { ClipItem } from '../ClipItem/ClipItem'
 
 export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
-export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props) {
-  const { noApi, ...options } = props
-  const optionsStrict = panelOptionsStrict(options)
+export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props = {}) {
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
@@ -62,7 +61,7 @@ export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelinePro
         <ClipItem className='clip preview' />
       </TimelineTrack>
     </TimelineTracks>
-    <TimelineSizer className='timeline-sizer' />
+    <TimelineSizer className='drop-box' />
   </>
 
   const children = <Panel {...optionsStrict.props}>

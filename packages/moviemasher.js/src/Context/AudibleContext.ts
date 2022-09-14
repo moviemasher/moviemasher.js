@@ -1,4 +1,4 @@
-import { AudibleContextData, AudibleSource, LoadedAudio } from "../declarations"
+import { AudibleContextData, AudibleSource } from "../declarations"
 import { Errors } from "../Setup/Errors"
 
 const AudibleSampleRate = 44100
@@ -10,14 +10,14 @@ export interface AudibleContextSource {
 }
 
 export class AudibleContext {
-  addSource(id: string, source: AudibleContextSource): void {
+  private addSource(id: string, source: AudibleContextSource): void {
     // console.log("addSource", id)
-    this.sourcesByClipId.set(id, source)
+    this.sourcesById.set(id, source)
   }
 
   private _context? : AudibleContextData
 
-  get context() : AudibleContextData {
+  private get context() : AudibleContextData {
     if (!this._context) {
       const Klass = AudioContext || window.webkitAudioContext
       if (!Klass) throw Errors.audibleContext
@@ -27,23 +27,23 @@ export class AudibleContext {
     return this._context
   }
 
-  createBuffer(seconds : number) : LoadedAudio {
+  createBuffer(seconds : number) : AudioBuffer {
     const length = AudibleSampleRate * seconds
     return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate)
   }
 
-  createBufferSource(buffer?: LoadedAudio): AudibleSource {
+  createBufferSource(buffer?: AudioBuffer): AudibleSource {
     // console.trace(this.constructor.name, "createBufferSource")
     const sourceNode = this.context.createBufferSource()
     if (buffer) sourceNode.buffer = buffer
     return sourceNode
   }
 
-  createGain() : GainNode { return this.context.createGain() }
+  private createGain() : GainNode { return this.context.createGain() }
 
   get currentTime() : number { return this.context.currentTime }
 
-  decode(buffer : ArrayBuffer) : Promise<LoadedAudio> {
+  decode(buffer : ArrayBuffer) : Promise<AudioBuffer> {
     return new Promise((resolve, reject) => (
       this.context.decodeAudioData(
         buffer,
@@ -58,7 +58,7 @@ export class AudibleContext {
     const source = this.getSource(id)
     if (!source) return
 
-    this.sourcesByClipId.delete(id)
+    this.sourcesById.delete(id)
     const { gainSource, gainNode } = source
     gainNode.disconnect(this.destination)
     gainSource.disconnect(gainNode)
@@ -68,20 +68,20 @@ export class AudibleContext {
   get destination() : AudioDestinationNode { return this.context.destination }
 
   getSource(id: string): AudibleContextSource | undefined {
-    return this.sourcesByClipId.get(id)
+    return this.sourcesById.get(id)
   }
 
-  hasSource(id: string): boolean { return this.sourcesByClipId.has(id) }
+  hasSource(id: string): boolean { return this.sourcesById.has(id) }
 
-  private sourcesByClipId = new Map<string, AudibleContextSource>()
+  private sourcesById = new Map<string, AudibleContextSource>()
 
-  startAt(clipId: string, source: AudibleSource, start: number, duration: number, offset?: number, loops = false):void {
+  startAt(id: string, source: AudibleSource, start: number, duration: number, offset?: number, loops = false):void {
     const gainNode = this.createGain()
     source.loop = loops
     source.connect(gainNode)
     gainNode.connect(this.destination)
     source.start(this.currentTime + start, offset, duration)
-    this.addSource(clipId, { gainSource: source, gainNode })
+    this.addSource(id, { gainSource: source, gainNode })
   }
 }
 

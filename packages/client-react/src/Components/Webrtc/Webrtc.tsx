@@ -13,8 +13,8 @@ export function Webrtc(props: WebrtcProps) {
   const [client, setClient] = React.useState<WebrtcClient | undefined>()
   const apiContext = React.useContext(ApiContext)
 
-  const { enabled } = apiContext
-  if (!enabled.includes(ServerType.Streaming)) return null
+  const { enabled, servers } = apiContext
+  if (!(enabled && servers[ServerType.Streaming])) return null
 
   const context: WebrtcContextInterface = { client, setClient }
 

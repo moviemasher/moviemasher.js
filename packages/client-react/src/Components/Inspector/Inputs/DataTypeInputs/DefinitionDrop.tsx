@@ -25,10 +25,10 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
   const child = React.Children.only(children)
   assertTrue(React.isValidElement(child))
 
+  const [isOver, setIsOver] = React.useState(false)
   const inputContext = React.useContext(InputContext)
   const editorContext = React.useContext(EditorContext)
-  const { dropFiles } = editorContext
-  const [isOver, setIsOver] = React.useState(false)
+  const { drop } = editorContext
   const { changeHandler, value, name } = inputContext
   assertTrue(changeHandler)
 
@@ -69,7 +69,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     if (allowed) event.preventDefault()
   }
 
-  const onDrop = (event: DragEvent) => {
+  const onDrop = async (event: DragEvent) => {
     eventStop(event)
     setIsOver(false)
     if (!dropAllowed(event)) return
@@ -80,16 +80,18 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     const types = dragTypes(dataTransfer)
     // any file can be dropped
     if (types.includes(TransferTypeFiles)) {
-      const { files } = dataTransfer
-      // console.log("DefinitionDrop onDrop dropped files", name, files)
-      dropFiles(files).then(definitions => {
+      await drop(dataTransfer.files).then(definitions => {
         if (!definitions.length) return
 
         const valid = definitions.filter(definition => (
           name !== "containerId" || isContainerDefinition(definition)
         ))
         const [definition] = valid
-        if (definition) changeHandler(name, definition.id)
+        if (definition) {
+          assertTrue(Defined.installed(definition.id), `${definition.type} installed`)
+          console.log("DefinitionDrop onDrop", definition.type, definition.label)
+          changeHandler(name, definition.id)
+        }
       })
       return
     }

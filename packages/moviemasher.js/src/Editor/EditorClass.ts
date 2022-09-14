@@ -1,30 +1,29 @@
 import {
-  StringObject, SvgItem, Timeout} from "../declarations"
-import { sizeCopy, Size, sizeAboveZero } from "../Utility/Size"
-import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
+  StringObject, SvgItem, Timeout, UnknownObject} from "../declarations"
+import { sizeCopy, sizeAboveZero, assertSizeAboveZero } from "../Utility/Size"
+import { Definition, DefinitionObject, DefinitionObjects, isDefinitionObject } from "../Definition/Definition"
 import { Edited } from "../Edited/Edited"
 import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from "../Helpers/Time/TimeUtilities"
-import { Effect } from "../Media/Effect/Effect"
+import { assertEffect, Effect } from "../Media/Effect/Effect"
 import { assertTrack, Track } from "../Edited/Mash/Track/Track"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Default } from "../Setup/Default"
 import {
-  ActionType, assertDefinitionType, assertLoadType, DefinitionType, EditType, EventType,
-  isDefinitionType,
-  isEditType, isLoadType, LayerType, LoadType, MasherAction} from "../Setup/Enums"
+  ActionType, assertDefinitionType, assertEditType, DefinitionType, EditType, 
+  isDefinitionType, EventType, isEditType, isLoadType, LayerType, MasherAction
+} from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import {
-  assertAboveZero,
-  assertObject,
-  assertPopulatedObject,
-  assertPopulatedString, assertPositive, assertTrue, isAboveZero, isArray, isBoolean, isNumber, isObject, isPopulatedString, isPositive} from "../Utility/Is"
+  assertAboveZero, assertObject, assertPopulatedObject, isPositive,
+  assertPopulatedString, assertPositive, assertTrue, isAboveZero, isArray, 
+  isBoolean, isNumber, isPopulatedString} from "../Utility/Is"
 import {
-  assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, EditorIndex, isCastData,
-  MashData,
+  assertMashData, CastData, ClipOrEffect, EditedData, Editor, EditorArgs, 
+  EditorIndex, isCastData, MashData,
 } from "./Editor"
 import { editorSelectionInstance } from "./EditorSelection/EditorSelectionFactory"
 
@@ -37,7 +36,8 @@ import { Factory } from "../Definitions/Factory"
 import { assertCast, castInstance, isCast } from "../Edited/Cast/CastFactory"
 import { mashInstance } from "../Edited/Mash/MashFactory"
 import {
-  assertLayer, assertLayerFolder, assertLayerMash} from "../Edited/Cast/Layer/LayerFactory"
+  assertLayer, assertLayerFolder, assertLayerMash
+} from "../Edited/Cast/Layer/LayerFactory"
 
 import { Layer, LayerAndPosition, LayerObject } from "../Edited/Cast/Layer/Layer"
 import { Defined } from "../Base/Defined"
@@ -45,21 +45,18 @@ import { assertClip, isClip, ClipObject, Clip, Clips } from "../Edited/Mash/Trac
 import { clipDefault } from "../Edited/Mash/Track/Clip/ClipFactory"
 import { isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
-import { PreviewOptions, Svgs } from "./Preview/Preview"
+import { PreviewOptions } from "../Edited/Mash/Preview/Preview"
 import { svgElement } from "../Utility/Svg"
-import { idGenerate, idTemporary } from "../Utility/Id"
+import { idGenerate, idIsTemporary } from "../Utility/Id"
 import { assertContainer } from "../Container/Container"
 import { Cast } from "../Edited/Cast/Cast"
 import { GraphFileOptions } from "../MoveMe"
 import { arrayUnique } from "../Utility/Array"
-import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
+import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
 import { ActivityType } from "../Utility/Activity"
 import { isVideoDefinition } from "../Media/Video/Video"
-import { isAudioDefinition } from "../Media/Audio/Audio"
 import { isImageDefinition } from "../Media/Image/Image"
-import { LoadedInfo } from "../Loader/Loader"
-import { PointZero } from "../Utility/Point"
-import { Rect } from "../Utility/Rect"
+import { Rect, rectsEqual, RectZero } from "../Utility/Rect"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -74,6 +71,7 @@ export class EditorClass implements Editor {
       preloader,
       editType,
       readOnly,
+      rect,
     } = args
     
     if (isEditType(editType)) this._editType = editType
@@ -85,8 +83,7 @@ export class EditorClass implements Editor {
     if (isNumber(fps)) this._fps = fps
     if (isNumber(volume)) this._volume = volume
     if (isNumber(buffer)) this._buffer = buffer
-    
-
+    if (sizeAboveZero(rect)) this._rect = rect
     this.actions = new Actions(this)
     this.preloader = preloader || new BrowserLoaderClass(endpoint)
   }
@@ -103,35 +100,26 @@ export class EditorClass implements Editor {
       return Defined.fromObject(definitionObject)
     })
     if (!editorIndex) return Promise.resolve(definitions)
+    const clips = definitions.map(definition => {
+      const { id, type } = definition
+      const clipObject: ClipObject = {}
+      if (isContentDefinition(definition)) clipObject.contentId = id
+      else clipObject.containerId = id
 
-    const loadDefinitions = definitions.filter(definition => {
-      if (!isUpdatableDurationDefinition(definition)) return false
-
-      return !isAboveZero(definition.duration)
-    }) as UpdatableDurationDefinition[]
-    const files = loadDefinitions.map(definition => definition.graphFile(true))
+      if (type === DefinitionType.Audio) clipObject.containerId = ''
+      return clipDefault.instanceFromObject(clipObject)
+    })
+    const options = { editing: true, duration: true }
+    const unknownClips = clips.filter(clip => clip.intrinsicsKnown(options))
+    const files = unknownClips.flatMap(clip => clip.intrinsicGraphFiles(options))
     const { preloader } = this
     const promise = preloader.loadFilesPromise(files)
-    
     return promise.then(() => {
-      const clips = definitions.map(definition => {
-        const { id } = definition
-        const clipObject: ClipObject = {}
-        if (isContentDefinition(definition)) clipObject.contentId = id
-        else clipObject.containerId = id
-        return clipDefault.instanceFromObject(clipObject)
-      })
       return this.addClip(clips, editorIndex).then(() => definitions)
     })
   }
 
   addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void> {
-    // if track index defined - drop on timeline
-    // if layer index defined - drop on composer
-    // otherwise - drop on player
-
-    console.log(this.constructor.name, "addClip", editorIndex)
-
     const { clip: frameOrIndex = 0, track: trackIndex = 0 } = editorIndex
     const clips = isArray(clip) ? clip : [clip]
     const [firstClip] = clips
@@ -166,7 +154,7 @@ export class EditorClass implements Editor {
       const insertIndex = isPositive(frameOrIndex) ? frameOrIndex : trackClips.length
       options.insertIndex = insertIndex
     } else {
-      if (createTracks) options.redoFrame = 0
+      if (createTracks) options.redoFrame = isPositive(frameOrIndex) ? frameOrIndex : 0
       else {
         assertTrack(track)
         const frame = isPositive(frameOrIndex) ? frameOrIndex : track.frames
@@ -206,133 +194,49 @@ export class EditorClass implements Editor {
   }
 
   addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]> {
-    let promise: Promise<void> = Promise.resolve()
-    const definitions: DefinitionObjects = []
-    const { preloader, eventTarget } = this
-    files.forEach(file => {
-      const { name, type } = file
-      const coreType = type.split('/').shift()
-      if (!isLoadType(coreType)) return 
-      
-      const url = URL.createObjectURL(file)
-      const definitionObject: DefinitionObject = {
-        type: coreType, label: name, url, source: url, id: idGenerate()
-      }
-      const info = { 
-        id: idGenerate('activity'), type: ActivityType.Analyze, label: name 
-      }
-      switch(coreType){
-        case LoadType.Audio: {
-          const audioPromise = promise.then(() => {
-            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
-            return preloader.audioPromise(url)
-          })
-          promise = audioPromise.then(audio => {
-            const { duration } = audio
-            if (isAboveZero(duration)) {
-              const object = { 
-                ...definitionObject, loadedAudio: audio, duration: audio.duration 
-              }
-              definitions.push(object)
-              eventTarget.emit(EventType.Activity, { 
-                ...info, step: 1, steps: 1, type: ActivityType.Complete
-              })
-            } else {
-              eventTarget.emit(EventType.Activity, { 
-                ...info, type: ActivityType.Error, error: 'import.duration', 
-                value: duration,
-              }) 
-            }
-          })
-          break
-        }
-        case LoadType.Image: {
-          const imagePromise = promise.then(() => {
-            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
-            return preloader.imagePromise(url)
-          })
-          promise = imagePromise.then(image => {
-            const previewSize = sizeCopy(image)
-            if (sizeAboveZero(previewSize)) {
-              const object = { 
-                ...definitionObject, icon: url, loadedImage: image, 
-                previewSize,
-              }
-              definitions.push(object)
-              eventTarget.emit(EventType.Activity, { 
-                ...info, step: 1, steps: 1, type: ActivityType.Complete
-              })
+    const { preloader, eventTarget, rect } = this
+    let promise: Promise<DefinitionObjects> = Promise.resolve([])
+    preloader.filePromises(files, rect).forEach(filePromise => {
+      promise = promise.then(objects => {
+        const id = idGenerate('activity')
+        const info: UnknownObject = { id, type: ActivityType.Analyze }
+        eventTarget.emit(EventType.Activity, info)
+        return filePromise.then(definitionOrError => {
+          const activityInfo = { ...info }
+          const { label } = definitionOrError
+          activityInfo.label = label
+          if (isDefinitionObject(definitionOrError)) {
+            objects.push(definitionOrError)
+            const { url, type } = definitionOrError
+            assertPopulatedString(url)
 
-            } else {
-              const { width, height } = previewSize
-              eventTarget.emit(EventType.Activity, { 
-                ...info, type: ActivityType.Error, error: 'import.size', 
-                value: `${width}x${height}`,
-              })  
-            }
-          })
-          break
-        }
-        case LoadType.Video: {
-          const videoPromise = promise.then(() => {
-            eventTarget.emit(EventType.Activity, { ...info, steps: 1 })
-            return preloader.videoPromise(url)
-          })
-          promise = videoPromise.then(loadedVideo => {
-            const { 
-              duration, videoWidth, clientWidth, videoHeight, clientHeight 
-            } = loadedVideo
-            const width = videoWidth || clientWidth
-            const height = videoHeight || clientHeight
-            const previewSize = { width, height }
-            const sizeOkay = sizeAboveZero(previewSize)
-            const durationOkay = isAboveZero(duration)
-            if (sizeOkay && durationOkay) {
-              const loadedInfo: LoadedInfo = {
-                ...previewSize, duration
-              }
-              preloader.loadDefinitionObject(definitionObject, loadedVideo, loadedInfo)
+            // console.log(this.constructor.name, "addFiles.filePromises", url, type)
+            const info = preloader.info(url)
+            assertObject(info)
 
-              const canvas = document.createElement('canvas')
-              canvas.height = previewSize.height
-              canvas.width = previewSize.width
-              const ctx = canvas.getContext('2d')
-              assertTrue(ctx)
-              ctx.drawImage(loadedVideo, 0, 0, previewSize.width, previewSize.height)
-              const icon = canvas.toDataURL()
-              // console.log("icon", icon)
-              const object = { 
-                ...definitionObject, previewSize, loadedVideo, duration, icon
-              }
-              definitions.push(object)
-              eventTarget.emit(EventType.Activity, { 
-                ...info, step: 1, steps: 1, type: ActivityType.Complete 
-              }) 
-            } else { 
-              eventTarget.emit(EventType.Activity, { 
-                ...info, type: ActivityType.Error, 
-                error: sizeOkay ? 'import.duration' : 'import.size', 
-                value: sizeOkay ? duration : `${width}x${height}`,
-              })  
-            }
-          })
-          break
-        }
-      }
+            activityInfo.type = ActivityType.Complete
+            activityInfo.value = info
+          } else {
+            const { error, value } = definitionOrError
+            activityInfo.type = ActivityType.Error
+            activityInfo.error = error
+            activityInfo.value = value
+          }
+          eventTarget.emit(EventType.Activity, activityInfo)
+          return objects
+        })
+      })
     })
-    
-    const definitionsPromise = promise.then(() => 
-      this.add(definitions, editorIndex)
-    )
+    return promise.then(objects => {
+      return this.add(objects, editorIndex).then(definitions => {
+        if (definitions.length) {
+          const definitionTypes = arrayUnique(definitions.map(object => object.type))
+          this.eventTarget.emit(EventType.Added, { definitionTypes })
+        }
+        return definitions
+      })
 
-    return definitionsPromise.then(definitions => {
-      const { length } = definitions
-      if (length) {
-        const types = definitions.map(object => object.type)
-        const definitionTypes = arrayUnique(types)
-        this.eventTarget.emit(EventType.Added, { definitionTypes })
-      }
-      return definitions
+     
     })
   }
 
@@ -374,7 +278,9 @@ export class EditorClass implements Editor {
   addTrack(): void {
     const { mash, cast } = this.selection
     const redoSelection: EditorSelectionObject = { mash, cast }
-    this.actions.create({ redoSelection, type: ActionType.AddTrack })
+    this.actions.create({ 
+      redoSelection, type: ActionType.AddTrack, createTracks: 1 
+    })
   }
 
   autoplay = Default.editor.autoplay
@@ -433,7 +339,8 @@ export class EditorClass implements Editor {
 
   private configureEdited(edited: Edited): void {
     edited.editor = this
-    edited.imageSize = sizeCopy(this._rect)
+    const { rect } = this
+    if (sizeAboveZero(rect)) edited.imageSize = sizeCopy(rect)
     edited.emitter = this.eventTarget
   }
 
@@ -445,8 +352,6 @@ export class EditorClass implements Editor {
 
     return mash.loadPromise({ editing: true, visible: true }).then(() => {
       this.selection.set(mash)
-      // console.log(this.constructor.name, "configureMash loadPromise handleDraw", !!this.selection.mash)
-
       this.handleDraw() 
     })
   }
@@ -462,13 +367,17 @@ export class EditorClass implements Editor {
   dataPutRequest(): Promise<DataPutRequest> {
     const { edited, editType } = this
     assertObject(edited)
+    assertEditType(editType)
 
+    // set edit's label if it's empty
+    const { label } = edited 
+    if (!isPopulatedString(label)) {
+      const defaultLabel = Default[editType].label
+      assertPopulatedString(defaultLabel, 'defaultLabel')
+      edited.setValue(defaultLabel, 'label')
+    }
+  
     return edited.putPromise().then(() => {
-      const { label } = edited 
-      if (!isPopulatedString(label)) {
-        edited.setValue('label', Default[editType].label)
-      }
-    
       if (isMash(edited)) {
         return {
           mash: edited.toJSON(),
@@ -520,7 +429,7 @@ export class EditorClass implements Editor {
       const { type, id } = definition
       if (!isLoadType(type)) return false
 
-      return idTemporary(id)
+      return idIsTemporary(id)
     })
   }
 
@@ -601,14 +510,6 @@ export class EditorClass implements Editor {
       if (action instanceof ChangeAction) {
         const { property, target } = action
         switch(property) {
-          // case "frames":
-          // case "startTrim":
-          // case "endTrim":
-          // case "speed":
-          // case "frame": {
-          //   mash.resetFrames()
-          //   break
-          // }
           case "gain": {
             if (isClip(target)) {
               mash.composition.adjustClipGain(target, mash.quantize)
@@ -631,27 +532,14 @@ export class EditorClass implements Editor {
 
   private handleDraw(event?: Event): void {
     // console.log(this.constructor.name, "handleDraw")
-    if (!this.drawTimeout) {
-      const { edited } = this
-      if (!edited || edited.loading) {
-        // console.log(this.constructor.name, "handleDraw", edited?.loading)
-        return
-      }
-      this.drawTimeout = setTimeout(() => {
+    if (this.drawTimeout || !this.edited?.loading) return
 
+      this.drawTimeout = setTimeout(() => {
         // console.log(this.constructor.name, "handleDraw drawTimeout")
         this.eventTarget.dispatch(EventType.Draw)
         delete this.drawTimeout
       }, 10)
-    }
-  }
-
-  private _rect: Rect = { ...PointZero, width: 300, height: 150 }
-  get rect(): Rect { return this._rect }
-  set rect(value: Rect) {
-    this._rect = value
-    const { edited } = this
-    if (edited) edited.imageSize = sizeCopy(this._rect)
+    
   }
 
   load(data: EditedData): Promise<void> {
@@ -687,7 +575,6 @@ export class EditorClass implements Editor {
   }
 
   private loadMashData(data: MashData = {}): Promise<void> {
-    // console.log(this.constructor.name, "loadMashData", data)
     const { mash: mashObject = {}, definitions: definitionObjects = [] } = data
     Defined.undefineAll()
     Defined.define(...definitionObjects)
@@ -697,6 +584,7 @@ export class EditorClass implements Editor {
 
     return promise.then(() => {
       return this.goToTime().then(() => {
+        mash.clearPreview()
         if (this.autoplay) this.paused = false
       })
     })
@@ -728,15 +616,16 @@ export class EditorClass implements Editor {
   }
 
   move(object: ClipOrEffect, editorIndex: EditorIndex = {}): void {
-    const { clip: frameOrIndex = 0, track: trackIndex = 0} = editorIndex
-    if (!isObject(object)) throw Errors.argument + 'move'
-    const { type } = object
-    if (type === DefinitionType.Effect) {
-      this.moveEffect(<Effect>object, frameOrIndex)
+    assertPopulatedObject(object, 'clip')
+
+    if (isClip(object)) {
+      this.moveClip(object, editorIndex)
       return
     }
+    assertEffect(object)
 
-    this.moveClip(<Clip>object, editorIndex)
+    const { clip: frameOrIndex = 0 } = editorIndex
+    this.moveEffect(object, frameOrIndex)
   }
 
   moveClip(clip: Clip, editorIndex: EditorIndex = {}): void {
@@ -840,6 +729,9 @@ export class EditorClass implements Editor {
   set paused(value: boolean) {
     const { mash } = this.selection
     if (mash) mash.paused = value
+
+    // bring back selection
+    if (value) this.redraw()
   }
 
   play(): void { this.paused = false }
@@ -865,6 +757,22 @@ export class EditorClass implements Editor {
   preloader: BrowserLoaderClass
 
   readOnly = false
+
+  private _rect: Rect = { ...RectZero }
+  get rect(): Rect { return this._rect }
+  set rect(value: Rect) {
+    // console.log(this.constructor.name, "rect =", value)
+    assertSizeAboveZero(value)
+
+    const { edited, rect } = this
+    this._rect = value
+    if (edited) edited.imageSize = sizeCopy(value)
+  
+    if (rectsEqual(rect, value)) return
+    const { eventTarget } = this
+    eventTarget.emit(EventType.Resize, { rect: value })
+    this.redraw()
+  }
 
   redo(): void { if (this.actions.canRedo) this.handleAction(this.actions.redo()) }
 
@@ -961,13 +869,16 @@ export class EditorClass implements Editor {
     return this._selection = selection
   }
   
-  svgItems(disabled?: boolean): Promise<SvgItem[]> {
+  get svgElement() { return this.preloader.svgElement } 
+  set svgElement(value: SVGSVGElement) { this.preloader.svgElement = value }
+
+  svgItems(enabled?: boolean): Promise<SvgItem[]> {
     const { edited } = this
     // return an empty element if we haven't loaded anything yet
     if (!edited) return Promise.resolve([svgElement(this.rect)])
 
     const options: PreviewOptions = {}
-    if (!disabled) options.editor = this
+    if (enabled && this.paused) options.editor = this
     return edited.svgItems(options)
   }
 
@@ -993,6 +904,7 @@ export class EditorClass implements Editor {
     const { id: oldId, type: oldType } = target
     const idChanged = oldId !== id
     const typeChanged = isDefinitionType(newType) && oldType !== newType
+    // console.log(this.constructor.name, "updateDefinition", typeChanged, idChanged, definitionObject)
     if (typeChanged) {
       // support changing a video to a videosequence
       const newDefinition = Factory[newType].definition(definitionObject)
@@ -1001,7 +913,7 @@ export class EditorClass implements Editor {
       Defined.updateDefinitionId(target.id, id)
       Object.assign(target, definitionObject)
       if (isVideoDefinition(target)) delete target.loadedVideo 
-      else if (isAudioDefinition(target)) delete target.loadedAudio
+      else if (isUpdatableDurationDefinition(target)) delete target.loadedAudio
       else if (isImageDefinition(target)) delete target.loadedImage
     } 
     const { edited } = this

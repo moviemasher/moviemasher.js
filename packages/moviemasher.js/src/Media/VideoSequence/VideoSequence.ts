@@ -20,14 +20,12 @@ export interface VideoSequenceDefinitionObject extends ContentDefinitionObject, 
   increment?: number
   pattern?: string
   padding?: number
-  loadedAudio?: LoadedAudio
 }
 
 export interface VideoSequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoSequenceObject): VideoSequence
   framesArray(start: Time): number[]
   urlForFrame(frame : number): string
-  loadedAudio?: LoadedAudio
 }
 
 /**

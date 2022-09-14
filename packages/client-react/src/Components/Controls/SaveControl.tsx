@@ -4,18 +4,16 @@ import {
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
-import { ProcessContext } from "../../Contexts/ProcessContext"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
 import { EditorContext } from "../../Components/Masher/EditorContext"
 
 export function SaveControl(props:PropsAndChild): ReactResult {
   const editor = useEditor()
-  const processContext = React.useContext(ProcessContext)
   const editorContext = React.useContext(EditorContext)
 
   const { save } = editorContext
-  const { processing, setProcessing } = processContext
+  
   const getDisabled = () => !editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled()) }

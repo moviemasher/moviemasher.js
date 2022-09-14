@@ -20,17 +20,25 @@ export interface ClipObject extends InstanceObject {
   container?: ContainerObject
   frame? : number
   timing?: string
+  sizing?: string
   frames? : number
 }
 export const isClipObject = (value: any): value is ClipObject => {
   return isInstanceObject(value) 
 }
+export interface IntrinsicOptions {
+  editing?: boolean
+  size?: boolean
+  duration?: boolean
+}
+
 
 export interface ClipDefinitionObject extends DefinitionObject {}
 
 export interface Clip extends Instance, Selectable {
   audible: boolean
   clipGraphFiles(args: GraphFileArgs): GraphFiles
+  clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
   commandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
   container?: Container
@@ -41,18 +49,16 @@ export interface Clip extends Instance, Selectable {
   endFrame: number
   frame : number
   frames: number
-
-  clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
-  rects(args: ContainerRectArgs): RectTuple
-
-  
+  intrinsicsKnown(options: IntrinsicOptions): boolean
+  intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles
   maxFrames(quantize : number, trim? : number) : number
   mutable: boolean
   muted: boolean
   notMuted: boolean
+  rects(args: ContainerRectArgs): RectTuple
   resetDuration(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing
-  svgElement(size: Size, time?: Time, iconIndex?: number): SvgItemsTuple 
+  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple>
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
@@ -63,7 +69,7 @@ export interface Clip extends Instance, Selectable {
 }
 
 export const isClip = (value: any): value is Clip => {
-  return isInstance(value) && "containerId" in value
+  return isInstance(value) && "contentId" in value
 }
 export function assertClip(value: any, name?: string): asserts value is Clip {
   if (!isClip(value)) throwError(value, "Clip", name)

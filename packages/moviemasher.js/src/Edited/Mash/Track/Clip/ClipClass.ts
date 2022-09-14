@@ -1,40 +1,71 @@
-import { Clip, ClipDefinition, ClipObject } from "./Clip"
+import { Clip, ClipDefinition, ClipObject, IntrinsicOptions } from "./Clip"
 import { InstanceBase } from "../../../../Instance/InstanceBase"
 
-import { assertContainer, Container, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
+import { assertContainer, Container, ContainerDefaultId, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
 import { Defined } from "../../../../Base/Defined"
-import { assertContent, Content, ContentObject, isContent } from "../../../../Content/Content"
+import { assertContent, Content, ContentDefaultId, ContentObject, isContent } from "../../../../Content/Content"
 import { Property } from "../../../../Setup/Property"
 import { Scalar, SvgItems, SvgItemsTuple, SvgOrImage, UnknownObject } from "../../../../declarations"
 import { GraphFileArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
 import { SelectedItems } from "../../../../Utility/SelectedProperty"
-import { ActionType, DataType, DefinitionType, isSizingDefinitionType, isTimingDefinitionType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
+import { ActionType, DataType, DefinitionType, isDefinitionType, isSizingDefinitionType, isTimingDefinitionType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
 import { Actions } from "../../../../Editor/Actions/Actions"
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isNumber, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive } from "../../../../Utility/Is"
+import { assertAboveZero, assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive } from "../../../../Utility/Is"
 import { isColorContent } from "../../../../Content"
 import { arrayLast } from "../../../../Utility/Array"
-import { Time, TimeRange, Times } from "../../../../Helpers/Time/Time"
+import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../../../../Edited/Mash/Track/Track"
 import { timeFromArgs, timeRangeFromArgs } from "../../../../Helpers/Time/TimeUtilities"
 import { Selectables } from "../../../../Editor/Selectable"
-import { assertSize, Size, sizeCover, sizesEqual } from "../../../../Utility/Size"
+import { assertSizeAboveZero, Size, sizeCover, sizeEven, sizesEqual } from "../../../../Utility/Size"
 import { Tweening } from "../../../../Utility/Tween"
-import { pointsEqual, PointZero } from "../../../../Utility/Point"
+import { pointCopy, pointsEqual, PointZero } from "../../../../Utility/Point"
 import { assertTweenable, isUpdatableDuration, isUpdatableSize, Tweenable } from "../../../../Mixin"
 import { Default } from "../../../../Setup/Default"
 import { Rect, rectsEqual, RectTuple } from "../../../../Utility/Rect"
-import { svgDefsElement, svgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgUseElement } from "../../../../Utility/Svg"
+import { svgAddClass, svgAppend, svgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSetDimensions, svgUseElement } from "../../../../Utility/Svg"
 import { pixelToFrame } from "../../../../Utility/Pixel"
-import { colorFromRgb, colorRgbDifference, colorToRgb, colorWhite } from "../../../../Utility/Color"
-import { idGenerate } from "../../../../Utility"
+import { colorWhite } from "../../../../Utility/Color"
+import { idGenerate, idGenerateString } from "../../../../Utility/Id"
+import { Preview, PreviewArgs } from "../../Preview/Preview"
+import { PreviewClass } from "../../Preview/PreviewClass"
 
 export class ClipClass extends InstanceBase implements Clip {
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
     const { container, content } = object as ClipObject
-    if (isPopulatedObject(container)) this.containerInitialize(container)
-    if (isPopulatedObject(content)) this.contentInitialize(content)
+    this.containerInitialize(container || {})
+    this.contentInitialize(content || {})
+  }
+
+  private assureTimingAndSizing(timing: Timing, sizing: Sizing, type: DefinitionType) {
+    const { timing: myTiming, sizing: mySizing, containerId, contentId } = this
+    const containerOk = containerId !== ContainerDefaultId
+    const contentOk = contentId !== ContentDefaultId
+
+    let timingOk = myTiming !== timing
+    let sizingOk = mySizing !== sizing
+
+    timingOk ||= isTimingDefinitionType(type)
+    sizingOk ||= isSizingDefinitionType(type)
+
+    timingOk ||= timing === Timing.Container ? containerOk : contentOk
+    sizingOk ||= sizing === Sizing.Container ? containerOk : contentOk
+
+    if (!timingOk) {
+      if (timing === Timing.Content && containerId) {
+        this.timing = Timing.Container
+      } else this.timing = Timing.Custom
+      // console.log(this.constructor.name, "assureTimingAndSizing setting timing", type, isTimingDefinitionType(type), myTiming, "->", this.timing)
+    }
+    if (!sizingOk) {
+      if (sizing === Sizing.Content && containerId) {
+        this.sizing = Sizing.Container 
+      } else this.sizing =  Sizing.Preview
+      // console.log(this.constructor.name, "assureTimingAndSizing setting sizing", type, isSizingDefinitionType(type), mySizing, "->", this.sizing)
+    }
+    return !(sizingOk && timingOk)
   }
 
   get audible(): boolean {
@@ -42,69 +73,66 @@ export class ClipClass extends InstanceBase implements Clip {
   }
 
   clipGraphFiles(args: GraphFileArgs): GraphFiles {
+    const files: GraphFiles = []
     const { quantize } = args
-    if (isAboveZero(this.frames)) args.clipTime ||= this.timeRange(quantize)
-    // console.log(this.constructor.name, "clipGraphFiles", fileArgs)
-    const files = this.content.graphFiles(args)
-    if (this.container) files.push(...this.container.graphFiles(args))
+    const { content, container, frames } = this
+    if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
+    if (container) files.push(...container.graphFiles(args))
+    
+    files.push(...content.graphFiles(args))
     return files
   }
 
-  clipIcon(size: Size, scale: number, buffer = 1, color?: string): Promise<SvgOrImage> | undefined {
-    const { quantize, preloader, imageSize, backcolor: mashColor } = this.track.mash
-    const backcolor = color || mashColor
-    const containedSize = sizeCover(imageSize, size, true)
-    const widthAndBuffer = containedSize.width + buffer
+  clipIcon(size: Size, scale: number, buffer = 1): Promise<SvgOrImage> | undefined {
+    const { container } = this
+
+    // TODO: display audio waveform...
+    if (!container) return 
+
+    const { track } = this
+
+
+    const { quantize, imageSize } = track.mash
+    assertSizeAboveZero(imageSize, 'track.mash.imageSize')
+
+    const frameSize = sizeEven(sizeCover(imageSize, size, true))
+    assertSizeAboveZero(frameSize, `${this.constructor.name}.clipIcon containedSize`)
+
+
+    const widthAndBuffer = frameSize.width + buffer
     const cellCount = Math.ceil(size.width / widthAndBuffer)
     const clipTime = this.timeRange(quantize)
-    const files: GraphFiles = []
-    const rect = { ...PointZero, ...containedSize }
     const { startTime } = clipTime
-    
-    const times: Times = []
-    const args: GraphFileArgs = {
-      icon: true,
-      time: startTime, clipTime, editing: true, visible: true, quantize
-    }
+
+    const previews: Preview[] = []
+    const { mash } = track
+    let pixel = 0
     for (let i = 0; i < cellCount; i++) {
-      times.push(startTime.copy)
-      files.push(...this.clipGraphFiles({ ...args, time: startTime }))
-      rect.x += containedSize.width + buffer
-      startTime.frame = clipTime.frame + pixelToFrame(rect.x, scale, 'floor')
+      const { copy: time } = startTime
+      const previewArgs: PreviewArgs = { 
+        mash, time, onlyClip: this, size: frameSize,
+      }
+      const preview = new PreviewClass(previewArgs)
+      previews.push(preview)
+      pixel += widthAndBuffer
+      startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
     }
-    rect.x = 0
-    const promise = preloader.loadFilesPromise(files)
-    return promise.then(() => {
-      const rect = { ...PointZero, ...size }
+    let svgItemPromise = Promise.resolve([] as SvgItems)
+    previews.forEach(preview => {
+      svgItemPromise = svgItemPromise.then(items => {
+        return preview.svgItemPromise.then(svgItem => {
+          return [...items, svgItem]
+        })
+      })
+    })
+ 
+    return svgItemPromise.then(svgItems => {
+      const point = { ...PointZero }
       const containerSvg = svgElement(size)
-    
-      const defsElement = svgDefsElement()
-      containerSvg.appendChild(defsElement)
-
-      const backgroundElement = svgGroupElement(size)
-      containerSvg.appendChild(backgroundElement)
-
-      backgroundElement.appendChild(svgPolygonElement(size, '', backcolor))
-      
-      
-      const rgb = colorToRgb(backcolor)
-      const differenceRgb = colorRgbDifference(rgb)
-      const forecolor = colorFromRgb(differenceRgb)
-
-      times.forEach((time, index) => {
-        const groupItem = svgGroupElement()
-        const [defs, items] = this.svgElement(containedSize, time, index)
-        defs.forEach(def => defsElement.appendChild(def))
-        items.forEach(item => groupItem.appendChild(item))
-    
-
-        groupItem.setAttribute('transform', `translate(${rect.x}, 0)`)
-        containerSvg.appendChild(groupItem)
-        rect.x += containedSize.width
-        const bufferRect = { ...rect, width: buffer }
-        const bufferSvg = svgPolygonElement(bufferRect, '', forecolor)
-        backgroundElement.appendChild(bufferSvg)
-        rect.x += buffer
+      svgItems.forEach(groupItem => {
+        svgSetDimensions(groupItem, point)
+        svgAppend(containerSvg, groupItem)
+        point.x += widthAndBuffer
       })
       return containerSvg
     })
@@ -120,7 +148,7 @@ export class ClipClass extends InstanceBase implements Clip {
 
     
     if (visible) {
-      assertSize(outputSize)
+      assertSizeAboveZero(outputSize)
       assertContainer(container)
       const containerRectArgs: ContainerRectArgs = {
         size: outputSize, time, timeRange: clipTime, loading: true
@@ -157,7 +185,7 @@ export class ClipClass extends InstanceBase implements Clip {
     const { content, container } = this
     if (!visible) return this.content.audibleCommandFilters(contentArgs)
       
-    assertSize(outputSize)
+    assertSizeAboveZero(outputSize)
     assertContainer(container)
     
     const containerRectArgs: ContainerRectArgs = {
@@ -202,30 +230,23 @@ export class ClipClass extends InstanceBase implements Clip {
     return commandFilters
   }
 
-  assureTimingAndSizing(timing: Timing, sizing: Sizing, type: DefinitionType) {
-    const { timing: myTiming, sizing: mySizing } = this
-    if (myTiming === timing && !isTimingDefinitionType(type)) {
-      this.timing = Timing.Custom
-    }
-    if (mySizing === sizing && !isSizingDefinitionType(type)) {
-      this.sizing = Sizing.Preview
-    }
-  }
-
   private _container?: Container
   get container() { return this._container || this.containerInitialize() }
   private containerInitialize(containerObject: ContainerObject = {}): Container | undefined {
-    const { containerId, timing, sizing } = this
+    const { containerId } = this
     const definitionId = containerId || containerObject.definitionId
     if (!isPopulatedString(definitionId)) return
 
+    const definition = Defined.fromId(definitionId)
+    const { type } = definition
+
+    this.assureTimingAndSizing(Timing.Container, Sizing.Container, type)
+
     const object: ContainerObject  = { ...containerObject, definitionId, container: true }
-    const instance = Defined.fromId(definitionId).instanceFromObject(object)
+    const instance = definition.instanceFromObject(object)
     assertContainer(instance)
 
     instance.clip = this
-    const { type } = instance
-    this.assureTimingAndSizing(Timing.Container, Sizing.Container, type)
 
     if (this.timing === Timing.Container && this._track) this.resetDuration(instance)
     // console.log(this.constructor.name, "containerInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
@@ -237,17 +258,24 @@ export class ClipClass extends InstanceBase implements Clip {
   private _content?: Content
   get content() { return this._content || this.contentInitialize() }
   private contentInitialize(contentObject: ContentObject = {}) {
-    const { contentId } = this
+    const { contentId, containerId } = this
     const definitionId = contentId || contentObject.definitionId
     assertPopulatedString(definitionId)
+
+    const definition = Defined.fromId(definitionId)
+    const { type } = definition
+    if (this.assureTimingAndSizing(Timing.Content, Sizing.Content, type)) {
+      const { container } = this
+      if (container) {
+        this.assureTimingAndSizing(Timing.Container, Sizing.Container, container.type)
+      }
+    }
+
     const object: ContentObject = { ...contentObject, definitionId }
-   
-    const instance = Defined.fromId(definitionId).instanceFromObject(object)
+    const instance = definition.instanceFromObject(object)
     assertContent(instance)
 
     instance.clip = this
-    const { type } = instance
-    this.assureTimingAndSizing(Timing.Content, Sizing.Content, type)
 
     if (this.timing === Timing.Content && this._track) this.resetDuration(instance)
     // console.log(this.constructor.name, "contentInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
@@ -282,6 +310,26 @@ export class ClipClass extends InstanceBase implements Clip {
 
   declare frames: number
   
+  intrinsicsKnown(options: IntrinsicOptions): boolean {
+    const { content, container } = this
+    let known = content.intrinsicsKnown(options)
+    if (container) known &&= container.intrinsicsKnown(options)
+    return known
+  }
+
+  intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles {
+    const { content, container } = this
+    const files: GraphFiles = []
+    if (!content.intrinsicsKnown(options)) {
+      files.push(content.intrinsicGraphFile(options))
+    }
+    if (container && !container.intrinsicsKnown(options)) {
+      files.push(container.intrinsicGraphFile(options))
+    }
+    return files
+    
+  }
+
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
   get mutable(): boolean {
@@ -320,20 +368,25 @@ export class ClipClass extends InstanceBase implements Clip {
 
     const target = sizing === Sizing.Container ? this.container : this.content
     assertTweenable(target)
-    if (!target.intrinsicsKnown(editing)) return rect
-
-    return target.intrinsicRect(editing)
+    if (!target.intrinsicsKnown({editing, size: true})) {
+      // console.log(this.constructor.name, "rectIntrinsic NOT KNOWN", sizing, target.definition.label)
+      return rect
+    }
+    const targetRect = target.intrinsicRect(editing)
+    // console.log(this.constructor.name, "rectIntrinsic KNOWN", targetRect, sizing, target.definition.label)
+    return targetRect
   }
 
   rects(args: ContainerRectArgs): RectTuple {
     const { size, loading, editing } = args
     const intrinsicRect = this.rectIntrinsic(size, loading, editing)
-
+    // console.log(this.constructor.name, "rects intrinsicRect", intrinsicRect, args)
     const { container } = this
     assertContainer(container)
 
     return container.containerRects(args, intrinsicRect)
   }
+
 
   resetDuration(tweenable?: Tweenable, quantize?: number): void {
     const { timing } = this
@@ -350,7 +403,7 @@ export class ClipClass extends InstanceBase implements Clip {
         const container = isContainer(tweenable) ? tweenable : this.container
         if (!container) break
 
-        if (!isUpdatableDuration(container)) break
+        // if (!isUpdatableDuration(container)) break
 
         this.frames = container.frames(quantize || track!.mash.quantize)
         break
@@ -359,7 +412,7 @@ export class ClipClass extends InstanceBase implements Clip {
         const content = isContent(tweenable) ? tweenable : this.content
         if (!content) break
 
-        if (!isUpdatableDuration(content)) break    
+        // if (!isUpdatableDuration(content)) break    
 
         this.frames = content.frames(quantize || track!.mash.quantize)
         break
@@ -425,15 +478,12 @@ export class ClipClass extends InstanceBase implements Clip {
     }
   }
     
-  svgElement(size: Size, time?: Time, iconIndex?: number): SvgItemsTuple {
+  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple> {
+    assertSizeAboveZero(size)
     // TODO: make luminance a property of container...
     const luminance = true
 
-    const icon = isNumber(iconIndex)
-    const defs: SvgItems = []
-    const items: SvgItems = []
-    const tuple: SvgItemsTuple = [defs, items]
-    
+   
     const timeRange = this.timeRange(this.track.mash.quantize)
     const svgTime = time || timeRange.startTime
     const { container, content, id } = this
@@ -445,46 +495,51 @@ export class ClipClass extends InstanceBase implements Clip {
     const containerRects = this.rects(containerRectArgs)
     assertTrue(rectsEqual(...containerRects))
 
-    const [rect] = containerRects
-    const containerSvgItem = container.containerSvgItem(rect, svgTime, timeRange, icon)
-    defs.push(containerSvgItem)
+    const [containerRect] = containerRects
 
-    let containerId = icon ? idGenerate('container') : `container-${id}` 
+    const containerPromise = container.containerPreviewItemPromise(containerRect, svgTime, timeRange, icon)
+    return containerPromise.then(containerItem => {
+      const defs: SvgItems = [containerItem]
 
-    const updatable = isUpdatableSize(container)
-    if (!icon && updatable) {
-      console.log("!icon && updatable")
-      const polygonElement = svgPolygonElement(rect, '', '', containerId)
-      polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;')
-      defs.push(polygonElement)
-      containerId = idGenerate('container')
-    }
+      let containerId = idGenerateString() 
+      const updatable = isUpdatableSize(container)
+      if (!icon && updatable) {
+        // container is image/video so we need to add a polygon for hover
+        const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
+        polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;')
+        defs.push(polygonElement)
+        containerId = idGenerateString()
+      }
+      containerItem.setAttribute('id', containerId)
+      
+      return content.contentPreviewItemPromise(containerRect, svgTime, timeRange, icon).then(contentItem => {
+        assertObject(contentItem)
+        const group = svgGroupElement()
+        svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem])
+        const items: SvgItems = [group]
+      
+        svgAddClass(group, 'contained')
+        const maskElement = svgMaskElement(size, group, luminance)
+        defs.push(maskElement)
 
-    containerSvgItem.setAttribute('id', containerId)
-
-    const contentSvgItem = content.contentSvgItem(rect, svgTime, timeRange, icon)
-
-    items.push(contentSvgItem)
-
-    contentSvgItem.classList.add('contained')
-    const maskElement = svgMaskElement(size, contentSvgItem, luminance)
-    defs.push(maskElement)
-
-    const useContainerInMask = svgUseElement(containerId)
-    maskElement.appendChild(useContainerInMask)
-    if (!updatable) {
-      containerSvgItem.setAttribute('vector-effect', 'non-scaling-stroke;')
-      useContainerInMask.setAttribute('fill', colorWhite)
-    }
-    
-
-    const containerSvgFilters = container.containerSvgFilters(size, rect, svgTime, timeRange)
-    if (containerSvgFilters.length) {
-      const filter = svgFilterElement(containerSvgFilters, containerSvgItem)
-      defs.push(filter)
-    }
-    return tuple
+        const useContainerInMask = svgUseElement(containerId)
+        maskElement.appendChild(useContainerInMask)
+        if (!updatable) {
+          containerItem.setAttribute('vector-effect', 'non-scaling-stroke;')
+          useContainerInMask.setAttribute('fill', colorWhite)
+        }
+        const containerSvgFilters = container.containerSvgFilters(size, containerRect, svgTime, timeRange)
+        if (containerSvgFilters.length) {
+          const filter = svgFilterElement(containerSvgFilters, containerItem)
+          defs.push(filter)
+        }
+        const tuple: SvgItemsTuple = [defs, items]
+        return tuple
+      })
+    })
   }
+
+  declare sizing: Sizing
 
   time(quantize : number) : Time { return timeFromArgs(this.frame, quantize) }
 
@@ -502,7 +557,6 @@ export class ClipClass extends InstanceBase implements Clip {
     return timeRange.withFrame(frame)
   }
 
-  declare sizing: Sizing
 
   declare timing: Timing
 
@@ -514,7 +568,7 @@ export class ClipClass extends InstanceBase implements Clip {
     if (container) {
       json.container = container
       json.containerId = container.definitionId
-    }
+    } else json.containerId = ""
     return json
   }
 

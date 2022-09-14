@@ -86,7 +86,7 @@ The base implementation just maps back to the same server, but subclasses can us
 mechanism to dynamically route traffic to other servers. The client caches mapping based
 on a time-to-live (TTL) value supplied by the server, so routing can potentially be
 per-request.
-Learn more about customizing client interaction in the [Integration Guide](integration.html).
+Learn more about customizing client interaction in the [Server Developer Guide](ServerDeveloper.html).
 
 The [[DataServer]] and [[FileServer]] store and deliver user JSON data and media assets
 respectively. The base implementations use a local database and the file system, but
@@ -115,7 +115,7 @@ that interact with a remote [[Server]]. It interacts with the [[ApiServer]] to d
 which other servers are supported, and map each [[Endpoint]] to an actual [[ApiCallback]]
 request. It provides an [[ApiContext]] for child components to quickly see if their server
 is supported and retrieve a fetch promise for each request.
-Learn more about customizing server interaction in the [Integration Guide](integration.html).
+Learn more about customizing server interaction in the [Client Developer Guide](ClientDeveloper.html).
 
 The [[Masher]] component sits atop the [[Editor]] interface, allowing editing of
 either a [[Cast]] or [[Mash]]. Context is provided to child components so they

@@ -8,11 +8,14 @@
   line-height: var(--icon-size);
   font-size: var(--icon-size);
   padding: var(--spacing);
+  background-color: initial;
 }
 .moviemasher .editor .panel.inspector .content .start-end {
   display: flex;
   float: right;
 }
+
+
 
 .moviemasher .editor .panel.inspector .content fieldset > legend {
   display: grid;
@@ -32,10 +35,6 @@
 
 .moviemasher .editor .panel.inspector .content fieldset > div.point {
   grid-template-columns: repeat(2, var(--icon-size)) minmax(50px, 1fr) var(--icon-size);
-}
-.moviemasher .editor .panel.inspector .content .opacity,
-.moviemasher .editor .panel.inspector .content .color {
-  
 }
 
 .moviemasher .editor .panel.inspector .content {
@@ -117,5 +116,5 @@
 
 
 .moviemasher .editor .panel.inspector .dropping {
-  background-color: var(--color-drop);
-}
+  box-shadow: var(--dropping-shadow);
+} 

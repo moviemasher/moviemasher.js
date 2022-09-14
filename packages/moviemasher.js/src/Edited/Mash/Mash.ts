@@ -3,7 +3,7 @@ import {
 import { AVType, DefinitionType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { Clip, Clips } from "./Track/Clip/Clip"
-import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
+import { AudioPreview } from "./Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Edited, EditedArgs, EditedObject } from "../../Edited/Edited"
 import { Track, TrackObject } from "./Track/Track"
@@ -37,6 +37,9 @@ export type DefinitionReferenceObjects = DefinitionReferenceObject[]
 export interface MashAndDefinitionsObject {
   mashObject: MashObject
   definitionObjects: DefinitionObjects
+}
+export const isMashAndDefinitionsObject = (value: any): value is MashAndDefinitionsObject => {
+  return isObject(value) && "mashObject" in value && "definitionObjects" in value
 }
 
 export interface MashArgs extends EditedArgs, MashObject { }

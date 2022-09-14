@@ -1,5 +1,7 @@
+import { NumberObject } from "../declarations";
 import { Orientation } from "../Setup/Enums";
 import { isAboveZero, isNumber, isObject } from "./Is"
+import { labelInterpolate } from "./Label";
 import { throwError } from "./Throw";
 
 export interface Size {
@@ -24,12 +26,20 @@ export type Sizes = Size[]
 export type SizeTuple = [Size, Size]
 export const SizeZero = { width: 0, height: 0 }
 
+export const sizedEven = (number: number): number => {
+  return 2 * Math.max(1, Math.ceil(number / 2))
+}
+
 export const sizeEven = (size: Size): Size => {
   const { width, height } = size
   return { 
-    width: 2 * Math.max(1, Math.ceil(width / 2)),
-    height: 2 * Math.max(1, Math.ceil(height / 2)),
+    width: sizedEven(width), height: sizedEven(height),
   }
+}
+
+export const sizeRound = (point: Size): Size => {
+  const { width, height } = point
+  return { width: Math.round(width), height: Math.round(height) } 
 }
 
 export const sizeCeil = (size: Size): Size => {
@@ -79,7 +89,7 @@ export const SizePreview = sizeScale(SizeOutput, 0.25, 0.25)
 export const SizeIcon = sizeScale(SizePreview, 0.5, 0.5)
 
 export const sizeCopy = (size: any) => {
-  assertSize(size)
+  // assertSize(size)
 
   const { width, height } = size
   return { width, height }
@@ -96,4 +106,28 @@ export const sizeLock = (lockSize: Size, lock?: Orientation): Size => {
       break
   }
   return copy
+}
+
+export const sizeString = (size: Size) => {
+  const { width, height } = size
+  return `width=${width};height=${height}`
+}
+
+export const sizeLockNegative = (size: Size, lock?: Orientation): Size => {
+  assertSizeAboveZero(size)
+  const locked = sizeCopy(size)
+  if (lock) {
+    if (lock === Orientation.V) locked.height = -1
+    else locked.width = -1
+  } 
+  return locked
+}
+
+export const sizeFromElement = (element: Element): Size => {
+  const size = { 
+    width: Number(element.getAttribute('width')), 
+    height: Number(element.getAttribute('height')) 
+  }
+  assertSizeAboveZero(size)
+  return size
 }

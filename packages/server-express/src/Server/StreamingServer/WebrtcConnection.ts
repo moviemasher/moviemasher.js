@@ -149,13 +149,14 @@ export class WebrtcConnection extends EventEmitter {
     }
   }
 
-  inputVideo(video: internal.Stream, size: string): CommandInput {
+  inputVideo(video: internal.Stream, size: Size): CommandInput {
+    const { width, height } = size
     return {
       source: StreamInput(video, this.id, 'video').url,
       options: {
         f: 'rawvideo',
         pix_fmt: 'yuv420p',
-        s: size,
+        s: `${width}x${height}`,
         r: '30',
       }
     }
@@ -245,7 +246,6 @@ export class WebrtcConnection extends EventEmitter {
 
   streamForSize(size: Size): WebrtcStream {
     const { width, height } = size
-    const sizeString = width + 'x' + height
     const currentStream = this.stream
     if (currentStream && sizesEqual(currentStream.size, size)) return currentStream
 
@@ -287,8 +287,12 @@ export class WebrtcConnection extends EventEmitter {
     }
 
     console.log("streamForSize commandOutput", commandOutput)
+  
+
     const command = runningCommandInstance(this.id, {
-      inputs: [this.inputVideo(video, sizeString), this.inputAudio(audio)],
+      inputs: [
+        this.inputVideo(video, size), this.inputAudio(audio)
+      ],
       commandFilters: [],
       output: commandOutput, avType: AVType.Both
     })

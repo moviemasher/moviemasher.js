@@ -1,4 +1,4 @@
-import { Endpoint, LoadedImage, SvgOrImage, UnknownObject } from "../declarations"
+import { LoadedImage, SvgItem, SvgOrImage, UnknownObject } from "../declarations"
 import { assertDefinitionType, DefinitionType, isDefinitionType, Orientation } from "../Setup/Enums"
 import { Property } from "../Setup/Property"
 import { assertPopulatedString, isPopulatedString } from "../Utility/Is"
@@ -6,9 +6,11 @@ import { Instance, InstanceObject } from "../Instance/Instance"
 import { InstanceBase } from "../Instance/InstanceBase"
 import { Factory } from "../Definitions/Factory/Factory"
 import { Definition, DefinitionObject } from "../Definition/Definition"
-import { sizeCopy, Size } from "../Utility/Size"
-import { urlForEndpoint, urlHasProtocol } from "../Utility/Url"
-import { svgElement, svgImageElement } from "../Utility/Svg"
+import { Size, sizeCover, sizeFromElement, sizeString } from "../Utility/Size"
+import { BrowserLoaderClass, Loader } from "../Loader"
+import { svgElement, svgSetTransformPoint } from "../Utility/Svg"
+import { centerPoint, rectString } from "../Utility/Rect"
+import { urlPrependProtocol } from "../Utility/Url"
 
 
 export class DefinitionBase implements Definition {
@@ -26,23 +28,37 @@ export class DefinitionBase implements Definition {
 
   id: string
 
-  definitionIcon(endpoint: Endpoint, dimensions: Size): Promise<SvgOrImage> | undefined {
-    const { icon } = this
-    if (icon) {
-      const url = urlForEndpoint(endpoint, icon)
-      const image = new Image()
-      image.crossOrigin = "Anonymous"
 
-      image.src = url
-      const copy = sizeCopy(dimensions)
-      const key = copy.height > copy.width ? 'width' : 'height'
-      image.setAttribute(key, String(copy[key]))
-      return Promise.resolve(image) 
-    }
+  
+  protected urlIcon(url: string, loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
+    const imageUrl = urlPrependProtocol('image', url)
+    // console.log(this.constructor.name, "urlIcon", imageUrl)
+    return loader.loadPromise(imageUrl).then((image: LoadedImage) => {
+      // console.log(this.constructor.name, "urlIcon.loadPromise", imageUrl, image?.constructor.name)
+      const { width, height } = image
+      const inSize = { width, height }
+      const coverSize = sizeCover(inSize, size, true)
+      const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
+      const svgUrl = urlPrependProtocol('svg', imageUrl, outRect)
+    
+      // console.log(this.constructor.name, "urlIcon", svgUrl)
+      return loader.loadPromise(svgUrl).then(svgImage => {
+        // console.log(this.constructor.name, "urlIcon.loadPromise", svgUrl, svgImage?.constructor.name)
+        return svgElement(size, svgImage)
+      })
+    })
+  }
+
+
+  definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
+    const { icon } = this
+    if (!icon) return 
+    
+    return this.urlIcon(icon, loader, size)
   }
   
   instanceFromObject(object: InstanceObject = {}): Instance {
-    return new InstanceBase({ ...this.instanceArgs(object), ...object })
+    return new InstanceBase(this.instanceArgs(object))
   }
 
   instanceArgs(object: InstanceObject = {}): InstanceObject {

@@ -1,10 +1,8 @@
-import { AudibleSource, LoadedAudio, Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarations"
+import { LoadedAudio, Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarations"
 import { CommandFilter, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Loader } from "../../Loader/Loader"
-import { Default } from "../../Setup/Default"
 import { LoadType } from "../../Setup/Enums"
-import { assertPopulatedString, assertTrue, isDefined, isPositive, isString } from "../../Utility/Is"
+import { assertPopulatedString, assertTrue, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
 import { filterFromId } from "../../Filter/FilterFactory"
@@ -16,6 +14,7 @@ import { Tweening } from "../../Utility/Tween"
 import { Property } from "../../Setup"
 import { Actions } from "../../Editor/Actions/Actions"
 import { SelectedProperties } from "../../Utility/SelectedProperty"
+import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
 
 const AudibleGainDelimiter = ','
 
@@ -40,11 +39,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
         } else if (isPositive(gain)) this.gain = gain
       }
     }
-
-    audibleSource(preloader: Loader): AudibleSource | undefined {
-      return this.definition.audibleSource(preloader)
-    }
-
+    
     declare definition: UpdatableDurationDefinition
 
     definitionTime(masherTime: Time, clipRange: TimeRange): Time {
@@ -69,15 +64,20 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     graphFiles(args: GraphFileArgs): GraphFiles {
       const { editing, audible, time } = args
-      if (!audible) return []
+      if (!audible || (editing && !time.isRange)) {
 
-      if (editing && !time.isRange) return []
+        // console.log(this.constructor.name, "graphFiles NONE", audible, editing, time.isRange)
+        return []
+      }
+      if (!(this.mutable() && !this.muted)) {
+        // console.log(this.constructor.name, "graphFiles NONE", audible, editing, time.isRange)
 
-      if (!(this.mutable() && !this.muted)) return []
+        return []
+      }
 
       const { definition } = this
-
       const file = definition.urlAudible(editing)
+
       // console.log(this.constructor.name, "graphFiles", editing, file)
 
       const graphFile: GraphFile = {
@@ -98,8 +98,10 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       const { 
         time, quantize, commandFiles, clipTime, videoRate, duration 
       } = args
-      
-      let filterInput = commandFilesInput(commandFiles, this.id, true)
+
+      const { id } = this
+      // console.log(this.constructor.name, "initialCommandFilters calling commandFilesInput", id)
+      let filterInput = commandFilesInput(commandFiles, id, true)
       assertPopulatedString(filterInput, 'filterInput')
     
       const trimFilter = 'trim' 
@@ -141,27 +143,17 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return commandFilters
     }
 
-    private get loadedAudio(): LoadedAudio {
-      const { clip } = this
-      const clipTime = timeRangeFromArgs()
-      const args: GraphFileArgs = {
-        time: clipTime, clipTime, 
-        audible: true, quantize: 0, editing: true
-      }
-      const [graphFile] = this.graphFiles(args)
-      const element: LoadedAudio = clip.track.mash.preloader.getFile(graphFile)
-      assertTrue(!!element, "audio")
-  
-      return element
+    intrinsicsKnown(options: IntrinsicOptions): boolean {
+      const superKnown = super.intrinsicsKnown(options)
+      if (!superKnown) return false
+
+      const { duration } = options
+      if (!duration) return true
+      
+      return isAboveZero(this.definition.duration)
     }
 
-
-    mutable() { 
-      // console.log(this.constructor.name, "mutable", this.definition.audio )
-      return this.definition.audio 
-    }
-
-
+    mutable() { return this.definition.audio }
     
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
       const { name } = property
@@ -183,7 +175,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
         case 'startTrim':
         case 'endTrim':
         case 'speed':
-          console.log(this.constructor.name, "setValue", name, value)
+          // console.log(this.constructor.name, "setValue", name, value)
             
           this.clip.resetDuration(this)
           break
@@ -207,10 +199,11 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     declare speed: number
 
     toJSON(): UnknownObject {
-      const object = super.toJSON()
-      if (this.speed !== 1.0) object.speed = this.speed
-      if (this.gain !== 1.0) object.gain = this.gain
-      return object
+      const json = super.toJSON()
+      const { speed, gain } = this
+      if (speed !== 1.0) json.speed = speed
+      if (gain !== 1.0) json.gain = gain
+      return json
     }
 
     declare startTrim: number

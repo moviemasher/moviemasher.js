@@ -1,4 +1,4 @@
-import { Constrained } from "../../declarations"
+import { Constrained, LoadedImage } from "../../declarations"
 import { throwError } from "../../Utility/Throw"
 import { Size } from "../../Utility/Size"
 import {

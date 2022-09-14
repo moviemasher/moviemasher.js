@@ -7,10 +7,6 @@
   grid-area: composer;
 }
 
-/* .moviemasher .editor .composer .foot {
-  grid-template-columns: repeat(4, min-content);
-} */
-
 .moviemasher .editor .composer .content {
   display: grid;
   padding: var(--padding);
@@ -30,6 +26,7 @@
   color: var(--fore-secondary);
   background-color: var(--back-primary);
 }
+
 .moviemasher .editor .composer .content .layer > div:first-child {
   display: flex;
 }
@@ -48,11 +45,10 @@
 
 .moviemasher .editor .composer .content .layer.dropping,
 .moviemasher .editor .composer .content.dropping {
-  box-shadow: var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
-  calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+  box-shadow: 
+    var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+    calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
 }
-
-
 
 .moviemasher .editor .composer .content .layer.dropping-before {
   box-shadow: 0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop);

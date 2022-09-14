@@ -1,5 +1,20 @@
 ## Server Example
 
+### Installation
+
+The following shell command installs the server and core libraries to your NPM project,
+saving the former to the `dependencies` array in your **package.json** file.
+
+```shell
+npm install @moviemasher/server-express --save
+```
+Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) instead.
+
+_Please note_ that this does not install a client implementation that interacts with this module.
+Learn more about how the codebase is structured in the
+[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
+
+### Inclusion
 <fieldset>
 
 <legend>server.ts</legend>
@@ -43,4 +58,4 @@ We are setting the preview dimensions to their default for demonstration purpose
 We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. Please note: they should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
 
 Learn more about building your own customized server in the
-[Integration Guide](https://moviemasher.com/docs/Integration.html).
+[Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).

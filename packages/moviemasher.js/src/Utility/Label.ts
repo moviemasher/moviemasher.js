@@ -10,9 +10,11 @@ export const labelObjects: Record<string, StringObject> = {
     size: 'Dimensions {{value}}',
     duration: 'Duration {{value}}',
     render: '{{value}}',
+    displaySize: '{{width}}x{{height}}',
   }
 }
 export const labels: StringObject = {
+  audible: 'Audible',
   clip: 'Clip',
   update: 'Save',
   delete: 'Remove {{type}}',

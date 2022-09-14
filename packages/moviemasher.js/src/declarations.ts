@@ -24,6 +24,8 @@ export interface Context2D extends CanvasRenderingContext2D {}
 export interface Pixels extends Uint8ClampedArray {}
 export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
+export interface LoadedSvgImage extends SVGImageElement {}
+
 export interface LoadedAudio extends AudioBuffer {}
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
@@ -31,7 +33,7 @@ export interface AudibleSource extends AudioBufferSourceNode {}
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement
 export type SvgFilters = SvgFilter[]
-export type SvgItem = SVGElement 
+export type SvgItem = SVGElement | LoadedImage
 
 
 export type SvgItems = SvgItem[]

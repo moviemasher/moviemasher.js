@@ -33,7 +33,7 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
   const selected = (selectedEffect && effects.includes(selectedEffect)) ? selectedEffect : null
   if (selected !== selectedEffect) setSelectedEffect(selected)
 
-  const dropIndex = (event: React.DragEvent): number => {
+  const dropIndex = (event: DragEvent): number => {
     const { target } = event
     if (target && target instanceof HTMLDivElement) {
       const index = target.getAttribute('index')
@@ -42,25 +42,27 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
     return effects.length
   }
 
-  const dropAllowed = (event: React.DragEvent): boolean => {
+  const dropAllowed = (event: DragEvent): boolean => {
     const { dataTransfer } = event
     const type = dragType(dataTransfer)
     return type === DefinitionType.Effect
   }
-  const onDragLeave: React.DragEventHandler = () => { setIsOver(false) }
+  const onDragLeave = () => { setIsOver(false) }
 
-  const onDragOver: React.DragEventHandler = event => {
+  const onDragOver = (event: DragEvent) => {
     const allowed = dropAllowed(event)
     setIsOver(allowed)
     if (allowed) event.preventDefault()
   }
 
-  const onDrop: React.DragEventHandler = event => {
+  const onDrop = (event: DragEvent) => {
     setIsOver(false)
     if (!dropAllowed(event)) return
 
     event.preventDefault()
     const { dataTransfer } = event
+    if (!dataTransfer) return 
+    
     const type = dropType(dataTransfer)!
     const json = dataTransfer.getData(type)
     const data: DragEffectObject = JSON.parse(json)

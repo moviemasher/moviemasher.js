@@ -1,6 +1,10 @@
 import {
   DefinitionObject, UnknownObject, MashAndDefinitionsObject,
-  Clip, Effect, Layer, Point, isString, Rect, isObject, isDefinitionType, DefinitionType, PopulatedString, assertDefinitionType, ActivityInfo, ObjectUnknown, assertObject, StringsObject, NumberObject, JsonObject, isUploadType, isAboveZero, isPopulatedString, isArray, DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, ClassDroppingBefore
+  Clip, Effect, Layer, Point, isString, Rect, isObject, isDefinitionType, 
+  DefinitionType, assertDefinitionType, StringsObject, NumberObject, 
+  JsonObject, isUploadType, isAboveZero, isPopulatedString, isArray, 
+  DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
+  ClassDroppingBefore, isPopulatedObject, throwError
 } from "@moviemasher/moviemasher.js"
 import React from "react"
 
@@ -10,18 +14,24 @@ export const DragSuffix = '/x-moviemasher'
 export type FileInfo = File | UnknownObject
 export type FileInfos = FileInfo[]
 
-export interface DragClipObject {
+export interface DragOffsetObject {
   offset: number
 }
-export const isDragClipObject = (value: any): value is DragClipObject => {
+export const isDragOffsetObject = (value: any): value is DragOffsetObject => {
   return isObject(value) && "offset" in value
 }
-export interface DragDefinitionObject extends DragClipObject {
-  definitionObject: DefinitionObject
+export function assertDragOffsetObject(value: any): asserts value is DragOffsetObject {
+  if (!isDragOffsetObject(value)) throwError(value, 'DragOffsetObject')
 }
 
+export interface DragDefinitionObject extends DragOffsetObject {
+  definitionObject: DefinitionObject
+}
 export const isDragDefinitionObject = (value: any): value is DragDefinitionObject => {
-  return isDragClipObject(value) && "definitionObject" in value
+  return isDragOffsetObject(value) && "definitionObject" in value
+}
+export function assertDragDefinitionObject(value: any): asserts value is DragDefinitionObject {
+  if (!isDragDefinitionObject(value)) throwError(value, 'DragDefinitionObject')
 }
 
 export interface DragLayerObject extends UnknownObject {
@@ -34,7 +44,7 @@ export interface DragEffectObject extends UnknownObject {
   definitionObject?: DefinitionObject
 }
 
-export type Draggable = MashAndDefinitionsObject | Clip | Effect | Layer
+export type Draggable = DefinitionObject | MashAndDefinitionsObject | Clip | Effect | Layer | FileList
 
 export enum DragType {
   Mash = 'mash',
@@ -53,7 +63,9 @@ export const isTransferType = (value: any): value is TransferType => {
   return isString(value) && value.endsWith(DragSuffix)
 }
 // 
-export const dropType = (dataTransfer: DataTransfer): TransferType | undefined => {
+export const dropType = (dataTransfer?: DataTransfer | null): TransferType | undefined => {
+  if (!dataTransfer) return
+  
   return dataTransfer.types.find(isTransferType)
 }
 
@@ -63,7 +75,7 @@ export const dragDefinitionType = (transferType: TransferType): DefinitionType =
   return type
 }
 
-export const dragType = (dataTransfer: DataTransfer): DragType | DefinitionType | undefined => {
+export const dragType = (dataTransfer?: DataTransfer | null): DragType | DefinitionType | undefined => {
   const prefix = dropType(dataTransfer)
   if (!prefix) return
 
@@ -89,22 +101,20 @@ export const dragData = (dataTransfer: DataTransfer, type?: TransferType) => {
 
 export const DragElementRect = (current: Element): Rect => current.getBoundingClientRect()
 
-export const DragElementPoint = (event: React.DragEvent, current: Element | Rect,): Point => {
+export const DragElementPoint = (event: DragEvent, current: Element | Rect,): Point => {
   const rect = (current instanceof Element) ? DragElementRect(current) : current
   const { x, y } = rect
   const { clientY, clientX } = event
   return { x: clientX - x, y: clientY - y }
 }
 
-export const dropFilesFromList = (files: FileList, serverOptions: JsonObject): FileInfos => {
+export const dropFilesFromList = (files: FileList, serverOptions: JsonObject = {}): FileInfos => {
   const infos: FileInfos = []
   const { length } = files
   if (!length) return infos
 
-  const { extensions, uploadLimits } = serverOptions
-  assertObject(extensions)
-  assertObject(uploadLimits)
-
+  const exists = isPopulatedObject(serverOptions)
+  const { extensions = {}, uploadLimits = {} } = serverOptions
   const extensionsByType = extensions as StringsObject
   const limitsByType = uploadLimits as NumberObject
 
@@ -113,27 +123,26 @@ export const dropFilesFromList = (files: FileList, serverOptions: JsonObject): F
     if (!file) continue
 
     const { name, size, type } = file
-
     const coreType = type.split('/').shift()
     if (!isUploadType(coreType)) {
-      infos.push({ 
-        label: name, value: coreType, 
-        error: 'import.type'
-      })
+      infos.push({ label: name, value: coreType, error: 'import.type' })
       continue
     }
     
     const max = limitsByType[coreType]
-    if (!(isAboveZero(max) && max * 1024 * 1024 > size)) {
+    if (exists && !(isAboveZero(max) && max * 1024 * 1024 > size)) {
       infos.push({ label: name, value: `${max}MB`, error: 'import.bytes' })
       continue
     }
 
     const ext = name.toLowerCase().split('.').pop()
+    const extDefined = isPopulatedString(ext)
     const exts = extensionsByType[coreType]
-    if (!(isPopulatedString(ext) && isArray(exts) && exts.includes(ext))) {
-      infos.push({ label: name, value: ext, error: 'import.extension' })
-      continue
+    if (exists || !extDefined) {
+      if (!(extDefined && isArray(exts) && exts.includes(ext))) {
+        infos.push({ label: name, value: ext, error: 'import.extension' })
+        continue
+      } 
     }
     infos.push(file)
   }

@@ -1,16 +1,16 @@
 import React from 'react'
 import { 
-  ClassSelected, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
+  assertTrue,
+  ClassSelected, idGenerateString, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
 
 import { 
   PropsWithoutChild, ReactResult, WithClassName 
 } from '../../declarations'
-import { BrowserContext } from '../Browser/BrowserContext'
 import { DragSuffix } from '../../Helpers/DragDrop'
-import { useEditor } from '../../Hooks/useEditor'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
+import { EditorContext } from '../Masher/EditorContext'
 
 export interface DefinitionItemProps extends WithClassName, PropsWithoutChild {
   draggable?: boolean
@@ -27,22 +27,22 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const svgRef = React.useRef<HTMLDivElement>(null)
   const viewRef = React.useRef<HTMLDivElement>(null)
 
-  const browserContext = React.useContext(BrowserContext)
-  const editor = useEditor()
+  const editorContext = React.useContext(EditorContext)
+  const { editor, definition: selectedDefinition, changeDefinition } = editorContext
+  assertTrue(editor)
 
   const definition = useDefinition()
 
-  const { definitionId, changeDefinitionId: setDefinitionId } = browserContext
   const { id, label } = definition
+  const iconId = props.draggable ? id : 'definition'
 
   const updateRef = async () => {
-    const { current } = svgRef
-    if (!current) return 
-
     const { rect, preloader } = editor
-    const { endpoint } = preloader
+    const { current } = svgRef
+    if (!(current && sizeAboveZero(rect))) return 
+
     const scaled = sizeCeil(sizeScale(sizeCopy(rect), ratio, ratio))
-    const element = await definition.definitionIcon(endpoint, scaled)
+    const element = await definition.definitionIcon(preloader, scaled)
     if (element) current.replaceChildren(element)
   }
 
@@ -55,10 +55,13 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     return nodes
   }
 
-  const onPointerDown = () => { setDefinitionId(id) }
+  const onPointerDown = (event: Event) => { 
+    event.stopPropagation()
+    changeDefinition(definition) 
+  }
 
   const onDragStart = (event: DragEvent) => {
-    onPointerDown()
+    onPointerDown(event)
     const rect = viewRef.current!.getBoundingClientRect()
     const { left } = rect
     const { clientX } = event
@@ -74,7 +77,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const calculateClassName = () => {
     const classes = []
     if (className) classes.push(className)
-    if (definitionId === id) classes.push(ClassSelected)
+    if (selectedDefinition?.id === id) classes.push(ClassSelected)
     return classes.join(' ')
   }
 

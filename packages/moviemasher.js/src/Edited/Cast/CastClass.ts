@@ -14,11 +14,12 @@ import {
   Layer, LayerAndPosition, LayerFolder, LayerObject, Layers, LayersAndIndex
 } from "./Layer/Layer"
 import { EmptyMethod } from "../../Setup/Constants"
-import { PreviewOptions } from "../../Editor/Preview/Preview"
+import { PreviewOptions } from "../Mash/Preview/Preview"
 import { svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
 import { arrayReversed } from "../../Utility/Array"
+import { Property } from "../../Setup/Property"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -117,8 +118,8 @@ export class CastClass extends EditedClass implements Cast {
     this.mashes.forEach(mash => mash.emitter = this.emitter)
   }
 
-  graphFiles(args?: GraphFileOptions): GraphFiles {
-    return this.mashes.flatMap(mash => mash.graphFiles(args))
+  editedGraphFiles(args?: GraphFileOptions): GraphFiles {
+    return this.mashes.flatMap(mash => mash.editedGraphFiles(args))
   }
 
   get imageSize(): Size { return super.imageSize }
@@ -194,6 +195,16 @@ export class CastClass extends EditedClass implements Cast {
     })
   }
 
+  setValue(value: Scalar, name: string, property?: Property): void {
+    super.setValue(value, name, property)
+    switch (name) {
+      case 'backcolor': {
+        this.mashes.forEach(mash => mash.setValue(value, name, property))
+        break
+      }
+    }
+  }
+  
   svgItems(args: PreviewOptions): Promise<SvgItem[]> {
     const { mashes, imageSize } = this
     const allSvgs: SvgItem[] = []
@@ -206,7 +217,6 @@ export class CastClass extends EditedClass implements Cast {
     arrayReversed(mashes).forEach(mash => {
       promise = promise.then(svgs => {
         allSvgs.push(...svgs)
-        console.log(this.constructor.name, "svgs backcolor =", mashArgs.backcolor)
         return mash.svgs(mashArgs)
       })
     })

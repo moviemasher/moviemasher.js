@@ -1,6 +1,5 @@
-import { LoadedImage, SvgItem, UnknownObject } from "../../declarations"
+import { SvgItem, UnknownObject } from "../../declarations"
 import { CommandFiles, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
-import { Default } from "../../Setup/Default"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
 import { InstanceBase } from "../../Instance/InstanceBase"
@@ -12,8 +11,8 @@ import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
 import { LoadType, Orientation } from "../../Setup/Enums"
 import { Rect } from "../../Utility/Rect"
-import { assertTrue } from "../../Utility"
-import { svgImageElement } from "../../Utility/Svg"
+import { svgSetDimensionsLock } from "../../Utility/Svg"
+import { Size } from "../../Utility/Size"
 
 const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
 const VideoSequenceWithContainer = ContainerMixin(VideoSequenceWithTweenable)
@@ -38,11 +37,11 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     })
     return files
   }
+
   graphFiles(args: GraphFileArgs): GraphFiles {
     const { time, clipTime, editing, visible } = args
     const definitionTime = this.definitionTime(time, clipTime)
 
-    if (!editing) console.trace(this.constructor.name, "graphFiles", editing, time, clipTime, definitionTime)
     const definitionArgs: GraphFileArgs = { ...args, time: definitionTime }
     const files = super.graphFiles(definitionArgs) 
     
@@ -50,14 +49,14 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
       const { definition } = this
       if (editing) {
         const frames = definition.framesArray(definitionTime)
-        const graphFiles = frames.map(frame => {
+        const files = frames.map(frame => {
           const graphFile: GraphFile = {
             type: LoadType.Image, file: definition.urlForFrame(frame), 
             input: true, definition
           }
           return graphFile
         })
-        files.push(...graphFiles)
+        files.push(...files)
       } else {
         const graphFile: GraphFile = {
           type: LoadType.Video, file: definition.source, definition, input: true
@@ -67,21 +66,36 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     }
     return files
   }
+  iconUrl(size: Size, time: Time, range: TimeRange): string {
+    const definitionTime = this.definitionTime(time, range)
+    const { definition } = this
+    const frames = definition.framesArray(definitionTime)
+    const [frame] = frames
+    return definition.urlForFrame(frame)
+  }
+
+  // private itemPromise(time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
+  //   const definitionTime = this.definitionTime(time, range)
+  //   const { definition } = this
+  //   const frames = definition.framesArray(definitionTime)
+  //   const [frame] = frames
+  //   const url = definition.urlForFrame(frame)
+  //   const svgUrl = `svg:/${url}`
+  //   const { preloader } = this.clip.track.mash
+  //   return preloader.loadPromise(svgUrl, definition)
+  // }
+
+  // itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {
+  //   const { container } = this
+  //   const rect = container ? containerRect : this.contentRect(containerRect, time, range)
+  //   const lock = stretch ? undefined : Orientation.V
+  //   return this.itemPromise(time, range, icon).then(item => {
+  //     svgSetDimensionsLock(item, rect, lock)
+  //     return item
+  //   })
+  // }
 
   speed = 1.0
-
-  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem {
-    const args: GraphFileArgs = {
-      time, clipTime: range, visible: true, quantize: range.fps, editing: true
-    }
-    const [graphFile] = this.graphFiles(args)
-    const { preloader } = this.clip.track.mash
-    const loadedImage = preloader.getFile(graphFile) as LoadedImage 
-    assertTrue(loadedImage, "image element")
-    const { src } = loadedImage
-    const lock = stretch ? undefined : Orientation.V
-    return svgImageElement(src, rect, lock)
-  }
 
   toJSON() : UnknownObject {
     const object = super.toJSON()

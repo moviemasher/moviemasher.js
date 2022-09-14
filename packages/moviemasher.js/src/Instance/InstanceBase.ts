@@ -2,7 +2,7 @@ import { UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { assertDefinition, Definition } from "../Definition/Definition"
 import { Time } from "../Helpers/Time/Time"
-import { idGenerate } from "../Utility/Id"
+import { idGenerate, idGenerateString } from "../Utility/Id"
 import { PropertiedClass } from "../Base/Propertied"
 import { assertPopulatedObject, isPopulatedObject } from "../Utility/Is"
 import { Errors } from "../Setup/Errors"
@@ -34,7 +34,7 @@ export class InstanceBase extends PropertiedClass implements Instance {
   definitionIds(): string[] { return [this.definitionId] }
 
   protected _id?: string
-  get id(): string { return this._id ||= idGenerate() }
+  get id(): string { return this._id ||= idGenerateString() }
 
   protected _label = ''
 

@@ -3,7 +3,7 @@ import { expectArrayLength, expectEmptyArray } from "../../../../../dev/test/Uti
 
 import { AVType, GraphFileType, GraphType, LoadType } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { idGenerate } from "../../Utility/Id"
+import { idGenerate, idGenerateString } from "../../Utility/Id"
 import { Mash, MashObject } from "./Mash"
 import { MashClass } from "./MashClass"
 
@@ -20,7 +20,7 @@ import { isClipObject, Clip, ClipObject } from "../../Edited/Mash/Track/Clip/Cli
 import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { TrackClass } from "./Track/TrackClass"
 import { GraphFileOptions } from "../../MoveMe"
-import { defaultTextId } from "../../../../../dev/test/Setup/Constants"
+import { containerTextId } from "../../../../../dev/test/Setup/Constants"
 import { FilterGraph } from "./FilterGraph/FilterGraph"
 import { clipDefault } from "./Track/Clip/ClipFactory"
 
@@ -36,7 +36,7 @@ describe("Mash", () => {
 
   const addNewTextClip = (mash: Mash, track = 0): Clip => {
     const clipObject = {
-      definitionId: clipDefault.id, containerId: defaultTextId
+      definitionId: clipDefault.id, containerId: containerTextId
     }
     const clip = clipDefault.instanceFromObject(clipObject)
     expect(clip).toBeTruthy()
@@ -62,6 +62,7 @@ describe("Mash", () => {
       const mash = mashInstance()
       expect(mash).toBeInstanceOf(MashClass)
     })
+
     test("returns proper mash with minimal object", () => {
       const clipObjects = [
         { definitionId: clipDefault.id, contentId: 'image-square' },
@@ -80,6 +81,7 @@ describe("Mash", () => {
 
     })
   })
+
   describe("addTrack", () => {
     test.each([true, false])("returns new track with dense = %s", (tf) => {
       const mash = mashInstance()
@@ -153,15 +155,14 @@ describe("Mash", () => {
   describe("clips", () => {
     test("returns proper clips", () => {
       const clips = [
-        { label: 'A', definitionId: clipDefault.id, containerId: defaultTextId, frame: 0, frames: 100, string: "A" },
+        { label: 'A', definitionId: clipDefault.id, containerId: containerTextId, frame: 0, frames: 100, string: "A" },
         { label: 'B', definitionId: clipDefault.id, frame: 100, frames: 50, color: "blue"},
-        { label: 'C', definitionId: clipDefault.id, containerId: defaultTextId, frame: 150, frames: 100, string: "C" },
+        { label: 'C', definitionId: clipDefault.id, containerId: containerTextId, frame: 150, frames: 100, string: "C" },
       ]
       const mash = mashInstance({ tracks: [{ clips }, { clips }, { clips }] })
       expect(mash.clips.length).toEqual(clips.length * 3)
     })
   })
-
 
   describe("clipsInTimeOfType", () => {
     test("returns expected", () => {
@@ -175,8 +176,7 @@ describe("Mash", () => {
   describe("graphFiles", () => {
     test("returns image file from first frame only", () => {
       const mash = mashWithMultipleImageClips()
-      const graphFiles = mash.graphFiles()
-      expectArrayLength(graphFiles, 1)
+      expectArrayLength(mash.editedGraphFiles(), 1)
 
     })
 
@@ -184,21 +184,22 @@ describe("Mash", () => {
       const mash = createMash()
       addNewTextClip(mash)
 
-      const graphFiles = mash.graphFiles()
-      expectArrayLength(graphFiles, 2)
-      const [fontGraphFile, textGraphFile] = graphFiles
+      const files = mash.editedGraphFiles()
+      expectArrayLength(files, 2)
+      const [fontGraphFile, textGraphFile] = files
       expect(textGraphFile.type).toEqual(GraphFileType.Txt)
       expect(fontGraphFile.type).toEqual(LoadType.Font)
       expect(textGraphFile.input).toBeFalsy()
       expect(fontGraphFile.input).toBeFalsy()
 
-      const editingGraphFiles = mash.graphFiles({ editing: true })
+      const editingGraphFiles = mash.editedGraphFiles({ editing: true })
       expectArrayLength(editingGraphFiles, 1)
       const [editingFontGraphFile] = editingGraphFiles
       expect(editingFontGraphFile.type).toEqual(LoadType.Font)
       expect(editingFontGraphFile.input).toBeFalsy()
     })
   })
+
   describe("filterGraphs", () => {
     test("filterGraphsVisible returns two for two clips", () => {
       const clip1 = { definitionId: clipDefault.id, frames: 60}
@@ -219,6 +220,7 @@ describe("Mash", () => {
       const filterGraphs = mash.filterGraphs(args)
       expect(filterGraphs.filterGraphsVisible.length).toBe(2)
     })
+
     test("returns expected FilterGraphs for image", async () => {
       const clip = { definitionId: clipDefault.id, contentId: 'image-landscape' }
  
@@ -292,9 +294,7 @@ describe("Mash", () => {
 
       })
     })
-
-
-
+    
     test("returns expected FilterGraphs for text", async () => {
       const mash = createMash()
       addNewTextClip(mash)
@@ -337,16 +337,16 @@ describe("Mash", () => {
         const graphFileArgs: GraphFileOptions = { 
           editing: false, visible, quantize, time 
         }
-        const graphFiles = mash.graphFiles(graphFileArgs)
+        const files = mash.editedGraphFiles(graphFileArgs)
         const { commandFilters, duration } = filterGraph
         if (time.isRange) expect(duration).toBeGreaterThan(0)
         else expect(duration).toBe(0)
 
         // console.log('commandFilters', commandFilters)
         expect(commandFilters.length).toEqual(10)
-        expect(graphFiles).toBeInstanceOf(Array)
-        const imageFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Image)
-        const audioFiles = graphFiles.filter(graphFile => graphFile.type === LoadType.Audio)
+        expect(files).toBeInstanceOf(Array)
+        const imageFiles = files.filter(graphFile => graphFile.type === LoadType.Image)
+        const audioFiles = files.filter(graphFile => graphFile.type === LoadType.Audio)
         if (time.isRange) {
           expect(audioFiles.length).toBe(1)
           const [audioFile] = audioFiles
@@ -412,11 +412,10 @@ describe("Mash", () => {
 
   describe("id", () => {
     test("returns what is provided to constructor", () => {
-      const id = idGenerate()
+      const id = idGenerateString()
       const mash = mashInstance({ id })
       expect(mash.id).toEqual(id)
     })
-
   })
 
   describe("removeTrack", () => {
@@ -430,7 +429,7 @@ describe("Mash", () => {
 
   describe("toJSON", () => {
     test("returns expected object", () => {
-      const id = idGenerate()
+      const id = idGenerateString()
       const mash = mashInstance({ id })
       mash.addTrack()
       const clip = addNewClip(mash, 1)

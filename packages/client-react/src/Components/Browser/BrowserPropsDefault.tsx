@@ -13,9 +13,8 @@ import { ClassButton } from '@moviemasher/moviemasher.js'
 
 export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props) {
-  const { noApi, ...options } = props
-  const optionsStrict = panelOptionsStrict(options)
+export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props = {}) {
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
   optionsStrict.props.initialPicked ||= 'container'
@@ -38,7 +37,7 @@ export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps>
   ]
 
   optionsStrict.content.children ||= (
-    <DefinitionItem draggable={true} className='definition preview'></DefinitionItem>
+    <DefinitionItem draggable={true} className='definition preview' />
   )
 
   const children = <>

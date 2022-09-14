@@ -20,7 +20,7 @@ const names = ['masher', 'caster', ] // //// files.map(file => path.basename(fil
 
 const replaceOptions = {
   preventAssignment: true,
-  'process.env.NODE_ENV': JSON.stringify( 'development' )
+  'process.env.NODE_ENV': JSON.stringify( 'production' )
 }
 
 const clients = names.map(name => ({

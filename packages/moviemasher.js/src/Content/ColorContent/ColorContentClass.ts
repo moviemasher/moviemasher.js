@@ -37,7 +37,7 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     return [color, colorEnd]
   }
 
-  contentSvgItem(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem {
+  contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
     const { colorFilter } = this
     const [color] = this.tweenValues('color', time, range)
     const { x, y, width, height } = containerRect
@@ -45,7 +45,7 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     const svg =  colorFilter.filterSvg()
     svg.setAttribute('x', String(x))
     svg.setAttribute('y', String(y))
-    return svg
+    return Promise.resolve(svg)
   }
 
   declare definition: ColorContentDefinition

@@ -2,13 +2,14 @@ import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedString } from "../Utility/Is"
 import { Factories } from "../Definitions/Factories"
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "./Content"
+import { Content, ContentDefaultId, ContentDefinition, ContentDefinitionObject, ContentObject } from "./Content"
 
-import defaultContentJson from "../Definitions/DefinitionObjects/content/default.json"
+import defaultContent from "../Definitions/DefinitionObjects/content/default.json"
 import { ColorContentDefinitionClass } from "./ColorContent/ColorContentDefinitionClass"
 
-export const contentDefault = new ColorContentDefinitionClass(defaultContentJson)
-export const contentDefaults = [contentDefault]
+export const contentDefaults = [
+  new ColorContentDefinitionClass({...defaultContent, id: ContentDefaultId})
+]
 
 export const contentDefinition = (object : ContentDefinitionObject) : ContentDefinition => {
   const { id } = object

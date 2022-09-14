@@ -6,6 +6,7 @@ export interface Time {
   equalsTime(time: Time): boolean
   fps: number
   frame: number
+  durationFrames(duration: number, fps?: number): number[]
   lengthSeconds: number
   isRange: boolean
   min(time: Time): Time

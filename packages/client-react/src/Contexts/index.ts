@@ -1,4 +1,3 @@
-export * from './ComposerContext'
 export * from './LayerContext'
 export * from './ProcessContext'
 export * from './ShooterContext'

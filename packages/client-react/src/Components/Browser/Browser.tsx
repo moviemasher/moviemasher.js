@@ -3,7 +3,7 @@ import {
   arrayUnique, assertPopulatedArray, assertPopulatedString, 
   DataDefinitionRetrieveRequest, DataDefinitionRetrieveResponse, 
   Defined, Definition, DefinitionBase, DefinitionType, DefinitionTypesObject, 
-  Endpoints, EventType, isPopulatedArray, ServerType, isEventType
+  Endpoints, EventType, isPopulatedArray, ServerType, isEventType, isPopulatedString
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
@@ -11,6 +11,7 @@ import { View } from "../../Utilities/View"
 import { useListeners } from "../../Hooks/useListeners"
 import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
 import { ApiContext } from "../ApiClient/ApiContext"
+import { EditorContext } from "../Masher/EditorContext"
 
 
 export interface BrowserProps extends PropsWithChildren {
@@ -30,11 +31,12 @@ export function Browser(props: BrowserProps): ReactResult {
   const [typesObject, setTypesObject] = React.useState<DefinitionTypesObject>({})
 
   const apiContext = React.useContext(ApiContext)
-  const [ definitions, setDefinitions] = React.useState<Definition[] | undefined>(undefined)
-  const [ definitionId, setDefinitionId] = React.useState('')
+  const editorContext = React.useContext(EditorContext)
+  const { changeDefinition } = editorContext
+  const [ definitions, setDefinitions] = React.useState<Definition[]>([])
   const [ picked, setPicked] = React.useState(initialPicked)  
 
-  const { enabled, endpointPromise } = apiContext
+  const { enabled, servers, endpointPromise } = apiContext
   
   const definedDefinitions = (definitionTypes: DefinitionType[]): Definition[] => {
     const lists = definitionTypes.map(type => Defined.byType(type))
@@ -44,74 +46,75 @@ export function Browser(props: BrowserProps): ReactResult {
 
   const definitionsPromise = (definitionTypes: DefinitionType[]) => {
     const defined = definedDefinitions(definitionTypes)
-    if (!enabled.includes(ServerType.Data)) return Promise.resolve(defined)
+    if (!(enabled && servers[ServerType.Data])) return Promise.resolve(defined)
     
     const request: DataDefinitionRetrieveRequest = { types: definitionTypes }
     return endpointPromise(
       Endpoints.data.definition.retrieve, request
     ).then((response: DataDefinitionRetrieveResponse) => {
       console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
-      const { definitions } = response
-      const combined = [...defined]
-      const filtered = definitions.filter(definitionObject => {
+      const { definitions: definitionObjects } = response
+      const filtered = definitionObjects.filter(definitionObject => {
         const { id } = definitionObject
-        return !definitions.some(definition => definition.id === id)
+        return !defined.some(definition => definition.id === id)
       })
-      combined.push(...filtered.map(def => DefinitionBase.fromObject(def)))
-      return arrayUnique(combined) as Definition[]
+      return [
+        ...defined, 
+        ...filtered.map(def => DefinitionBase.fromObject(def))
+      ]
     })
   }
 
-  const updateDefinitions = async (id: string) => {
-    assertPopulatedString(id)
-    setDefinitions(await definitionsPromise(typesObject[id] || []))
+  const changeDefinitions = async (types: DefinitionType[]) => {
+    changeDefinition()
+    setDefinitions(await definitionsPromise(types))
+  }
+  const updateDefinitions = async (id?: string) => {
+    const types = isPopulatedString(id) ? (typesObject[id] || []) : []
+    await changeDefinitions(types) 
   }
   
-  const pick = (id: string) => {
+  const pick = async (id: string) => {
     assertPopulatedString(id)
     setPicked(id)
-    updateDefinitions(id)
+    await updateDefinitions(id)
   }
 
-  // const handleAdded = React.useCallback(, [typesObject, picked])
+  useListeners({ 
+    [EventType.Added]: async (event: Event) => {
+      const { type } = event
+      if (isEventType(type) && (event instanceof CustomEvent)) {
+        const { detail } = event
+        const { definitionTypes } = detail
+        if (isPopulatedArray(definitionTypes)) {
+          const addedTypes = definitionTypes as DefinitionType[]
+          const ids = Object.keys(typesObject)
+          const selectedIds = ids.filter(id => {
+            const types = typesObject[id]
+            assertPopulatedArray(types)
 
-  useListeners({ [EventType.Added]: (event: Event) => {
-    const { type } = event
-    if (isEventType(type) && (event instanceof CustomEvent)) {
-      const { detail } = event
-      console.log("Browser handleAdded detail", detail)
-      const { definitionTypes } = detail
-      if (isPopulatedArray(definitionTypes)) {
-        const addedTypes = definitionTypes as DefinitionType[]
-        const ids = Object.keys(typesObject)
-        const selectedIds = ids.filter(id => {
-          const types = typesObject[id]
-          assertPopulatedArray(types)
+            return types.some(type => addedTypes.includes(type))
+          })
+          if (!isPopulatedArray(selectedIds)) return
 
-          return types.some(type => addedTypes.includes(type))
-        })
-        if (!isPopulatedArray(selectedIds)) {
-          console.log("Browser handleAdded no selectedIds", ids, typesObject)
-          return
+          const selectedId = selectedIds.includes(picked) ? picked : selectedIds.shift()
+       
+          assertPopulatedString(selectedId)
+          await pick(selectedId)
         }
-
-        const selectedId = selectedIds.includes(picked) ? picked : selectedIds.shift()
-        
-        console.log("Browser handleAdded selectedId", picked, selectedId, selectedIds)
-          
-        assertPopulatedString(selectedId)
-        pick(selectedId)
       }
+    },
+    [EventType.Resize]: () => {
+      updateDefinitions().then(() => { updateDefinitions(picked)})
     }
-  }
- })
+  })
 
   const addPicker = async (id: string, types: DefinitionType[]): Promise<void> => {
     setTypesObject(original => {
       original[id] = types
       return original
     })
-    if (id === picked) setDefinitions(await definitionsPromise(types))
+    if (id === picked) await changeDefinitions(types) 
   }
 
   const removePicker = (id: string): void => {
@@ -120,12 +123,9 @@ export function Browser(props: BrowserProps): ReactResult {
       return original
     })
   }
-  const changeDefinitionId = (id: string) => { setDefinitionId(id) }
 
   const browserContext: BrowserContextInterface = {
     definitions,
-    definitionId,
-    changeDefinitionId,
     picked,
     pick, 
     addPicker, 

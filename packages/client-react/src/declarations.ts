@@ -49,7 +49,7 @@ export interface PropsAndChildren extends Record<string, unknown> {
 
 export type ReactResult = React.ReactElement<any, any> | null
 
-export type PropsMethod<I, O> = (input: I) => O
+export type PropsMethod<I, O> = (input?: I) => O
 
 export interface WithClassName extends Record<string, unknown> {
   className?: string

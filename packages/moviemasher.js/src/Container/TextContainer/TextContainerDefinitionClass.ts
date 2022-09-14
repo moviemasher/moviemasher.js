@@ -38,6 +38,4 @@ export class TextContainerDefinitionClass extends TextContainerDefinitionWithCon
   instanceFromObject(object: TextContainerObject = {}): TextContainer {
     return new TextContainerClass(this.instanceArgs(object))
   }
-
-  type = DefinitionType.Container
 }

@@ -19,13 +19,10 @@ import { ActivityProgress } from './ActivityProgress'
 import { ActivityPicked } from './ActivityPicked'
 import { ActivityItem } from './ActivityItem'
 
-export interface ActivityPropsDefault extends PanelOptions, PropsWithoutChild {
-  noApi?: boolean
-}
+export interface ActivityPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityProps> = function (props) {
-  const { noApi, ...options } = props
-  const optionsStrict = panelOptionsStrict(options)
+export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityProps> = function (props = {}) {
+  const optionsStrict = panelOptionsStrict(props)
   optionsStrict.props.key ||= 'activity'
   optionsStrict.props.className ||= 'panel activity'
   optionsStrict.props.initialPicked ||= ActivityGroup.Active

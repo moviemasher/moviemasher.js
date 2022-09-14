@@ -13,27 +13,27 @@
   flex-grow: 1;
 }
 
+
 .moviemasher .editor .panel.player .content {
   width: var(--preview-width);
   height: var(--preview-height);
   margin-inline: auto;
   color: var(--color-fore-tertiary);
+  position: relative;
 }
+/* 
 
+.moviemasher .editor .panel.player .content > svg .contained {
+  pointer-events: none;
+} */
 
-.moviemasher .editor .panel.player .dropping {
-  box-shadow:
-    0 var(--drop-size) 0 0 var(--color-drop),
-    0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
-  ;
-}
-.moviemasher .editor .panel.player .content svg .outline {
+.moviemasher .editor .panel.player .content > svg .outline {
   cursor: move;
   pointer-events: fill;
   stroke-width: 0;
 }
 
-.moviemasher .editor .panel.player .content svg .outline.animate:hover {
+.moviemasher .editor .panel.player .content > svg .outline.animate:hover {
   stroke-width: calc(2 * var(--border-size));
   stroke-dasharray: 4px;
   stroke-dashoffset: 8px;
@@ -46,45 +46,45 @@
 @keyframes color { to {  stroke: black } }
 @keyframes stroke { to { stroke-dashoffset: 0; } }
 
-.moviemasher .editor .panel.player .content svg .handle.bounds.ne {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.ne {
   cursor: ne-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.se {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.se {
   cursor: se-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.nw {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.nw {
   cursor: nw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.sw {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.sw {
   cursor: sw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.n {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.n {
   cursor: n-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.s {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.s {
   cursor: s-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.e {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.e {
   cursor: e-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.w {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.w {
   cursor: w-resize;
 }
 
-.moviemasher .editor .panel.player .content svg .bounds {
+.moviemasher .editor .panel.player .content > svg .bounds {
   fill: white;
 }
 
-.moviemasher .editor .panel.player .content svg .bounds.active {
+.moviemasher .editor .panel.player .content > svg .bounds.active {
   pointer-events: fill;
   fill: transparent;
 }
 
 @supports (-moz-appearance:none) {
-  .moviemasher .player.panel .content svg .filtered {
+  .moviemasher .player.panel .content > svg .filtered {
     filter: none;
   }
-  .moviemasher .player.panel .content svg use.mozilla  {
+  .moviemasher .player.panel .content > svg use.mozilla  {
     stroke-width: var(--border-size);
     stroke: black;
     fill: white;
@@ -92,7 +92,7 @@
 }
 
 @supports not (-moz-appearance:none) {
-  .moviemasher .player.panel .content svg use.mozilla {
+  .moviemasher .player.panel .content > svg use.mozilla {
     display: none;
   }
 }

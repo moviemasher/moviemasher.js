@@ -29,6 +29,6 @@ export default {
     commonjs({ include: /node_modules/ }),
     ts({tsconfig: './dev/tsconfig.json'}),
     css({ output: 'index.css' }),
-    terser()
+    // terser()
   ]
 }

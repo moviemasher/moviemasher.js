@@ -15,13 +15,13 @@ export function PlayerTime(props: PlayerTimeProps): ReactResult {
   const editor = useEditor()
   const getTimeRange = () => editor.timeRange
   const [timeRange, setTimeRange] = React.useState(getTimeRange)
-  const update = () => { setTimeRange(getTimeRange())}
+  const update = () => { setTimeRange(getTimeRange()) }
 
   useListeners({
     [EventType.Time]: update, [EventType.Duration]: update,
   }, editor.eventTarget)
 
-  const {seconds, fps, lengthSeconds } = timeRange
+  const { seconds, fps, lengthSeconds } = timeRange
 
   const viewChildren = [
     stringSeconds(seconds, fps, lengthSeconds), "/",

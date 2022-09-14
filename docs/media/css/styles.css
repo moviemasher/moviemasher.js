@@ -4,6 +4,7 @@
 
 :root {
   --pad: 20px;
+  --space: 5px;
   --width: 500px;
 }
 
@@ -109,8 +110,8 @@ h2 {
 }
 
 h3 {
-  font-size: 0.8em;
-  /* display: inline; */
+  color: var(--fore-secondary);
+  font-size: 1.2rem;
 }
 
 h4 {
@@ -141,7 +142,7 @@ body {
   }
 }
 
-header, footer {
+header {
   background-color: var(--back-secondary);
   color: var(--fore-secondary);
   height: min-content;
@@ -163,11 +164,6 @@ main {
 article {
   display: grid;
   min-height: 0px;
-}
-
-footer {
-  border-top: var(--back-tertiary) 1px solid;
-  padding: var(--pad);
 }
 
 
@@ -286,9 +282,17 @@ section hr {
   border-top: var(--fore-secondary) 1px solid;
 }
 
-section td {
-  border: var(--fore-secondary) 1px solid;
-  padding: 3px;
+.section table {
+  width: 100%;
+  border-collapse: collapse;
+} 
+
+.section table thead {
+  border-bottom: var(--fore-secondary) 1px solid;
+}
+
+.section table tbody tr:first-child td {
+  padding-top: var(--space);
 }
 
 header > .header {
@@ -314,20 +318,9 @@ header > .header > * {
 header > hr {
   line-height: 30px;
 }
-footer > hr,
+
 header > hr {
-
   margin: 0;
-}
-
-.footer {
-  display: flex;
-}
-
-.footer > div {
-  height: 20px;
-  flex-grow: 1;
-  text-align: center;
 }
 
 label { user-select: none; }

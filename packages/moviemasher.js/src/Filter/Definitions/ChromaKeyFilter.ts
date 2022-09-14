@@ -37,7 +37,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     const max = 255.0
     const range = max * max * (1.0 - blend)
     const rgb = colorToRgb(color)
-    console.log("filterDefinitionSvgFilters", rgb)
+    // console.log("filterDefinitionSvgFilters", rgb)
     const r = 1.0 - (similarity * ((rgb.r) / max)) 
     const g = 1.0 - (similarity * ((rgb.g) / max))
     const b = 1.0 - (similarity * ((rgb.b) / max))

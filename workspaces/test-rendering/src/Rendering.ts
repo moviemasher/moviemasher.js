@@ -3,7 +3,7 @@ import path from 'path'
 import {
   SizePreview,
   idGenerate,
-  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration
+  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration, idGenerateString
 } from '@moviemasher/moviemasher.js'
 import { commandProcess, ExtensionLoadedInfo, probingInfoPromise, RenderingArgs, renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, renderingProcessInstance } from '@moviemasher/server-express'
 import {
@@ -110,7 +110,7 @@ export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
   const options: RenderingArgs = {
     mash: {}, outputs: [], definitions: [], upload: false
   }
-  const definedId = id || idGenerate()
+  const definedId = id || idGenerateString()
   const testArgs = renderingProcessInput(definedId)
 
   const args: RenderingProcessArgs = {

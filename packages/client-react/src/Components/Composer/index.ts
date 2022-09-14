@@ -8,3 +8,4 @@ export * from "./ComposerLayerFolder"
 export * from "./ComposerLayerLabel"
 export * from "./ComposerLayerMash"
 export * from "./ComposerPropsDefault"
+export * from './ComposerContext'

@@ -26,7 +26,7 @@ export class LayerClass extends PropertiedClass implements Layer {
   set cast(value: Cast) { this._cast = value }
   
   _id?: string
-  get id(): string { return this._id ||= idGenerate() }
+  get id(): string { return this._id ||= idGenerate('layer') }
 
   get mashes(): Mashes { throw Errors.unimplemented + 'mashes'}
 

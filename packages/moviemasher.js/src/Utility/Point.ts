@@ -26,8 +26,18 @@ export const pointsEqual = (point: Point, pointEnd?: any) => {
 export const PointZero: Point = { x: 0, y: 0 }
 
 export const pointCopy = (point: any): Point => {
-  assertPoint(point)
+  // assertPoint(point)
 
   const { x, y } = point
   return { x, y } 
+}
+
+export const pointRound = (point: Point): Point => {
+  const { x, y } = point
+  return { x: Math.round(x), y: Math.round(y) } 
+}
+
+export const pointString = (point: Point): string => {
+  const { x, y } = point
+  return `x=${x};y=${y}`
 }

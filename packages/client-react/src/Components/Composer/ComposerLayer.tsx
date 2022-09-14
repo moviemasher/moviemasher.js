@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  ClassSelected, DroppingPosition, isLayerFolder
+  ClassSelected, DroppingPosition, eventStop, isLayerFolder, isObject
 } from "@moviemasher/moviemasher.js"
 
 import { 
@@ -10,9 +10,10 @@ import {
   DragElementPoint, DragElementRect, DragSuffix, droppingPositionClass 
 } from "../../Helpers/DragDrop"
 import { View } from "../../Utilities/View"
-import { ComposerContext } from "../../Contexts/ComposerContext"
+import { ComposerContext } from "./ComposerContext"
 import { EditorContext } from "../../Components/Masher/EditorContext"
 import { LayerContext } from "../../Contexts/LayerContext"
+import { useEditor } from "../../Hooks/useEditor"
 
 export interface ComposerLayerProps extends PropsWithChildren, WithClassName { }
 
@@ -30,9 +31,10 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
     validDragType, droppingPosition, setDroppingPosition, onDrop,
     droppingLayer, setDroppingLayer, onDragLeave
   } = composerContext
-  const { editor, setDraggable } = editorContext
+
+  const editor = useEditor()
   const { layer } = layerContext
-  if (!(editor && layer)) return null
+  if (!layer) return null
 
   const { className: propsClassName = 'layer', ...rest} = props
 
@@ -41,29 +43,31 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
     editor.selection.set(layer)
   }
 
-  const onDragEnd: React.DragEventHandler = event => {
+  const onDragEnd = (event: DragEvent) => {
     const { dataTransfer } = event
+    if (!dataTransfer) return
+
     const { dropEffect } = dataTransfer
-    setDraggable()
     if (dropEffect === 'none') editor.removeLayer(layer)
   }
 
-  const onDragStart: React.DragEventHandler = event => {
-    const point = DragElementPoint(event, ref.current!)
-    onMouseDown(event)
-    const { dataTransfer } = event
-    dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(`layer${DragSuffix}`, JSON.stringify(point))
-    setDraggable(layer)
-  }
-
-  const onMouseDown: React.MouseEventHandler = event => {
-    // event.preventDefault()
+  const onPointerDown = (event: Event) => {
     event.stopPropagation()
     editor.selection.set(layer)
   }
+  
+  const onDragStart = (event: DragEvent) => {
+    const point = DragElementPoint(event, ref.current!)
+    onPointerDown(event)
+    const { dataTransfer } = event
+    if (!isObject(dataTransfer)) return
 
-  const currentDroppingPosition = (event: React.DragEvent<Element>): DroppingPosition => {
+    dataTransfer.effectAllowed = 'move'
+    dataTransfer.setData(`layer${DragSuffix}`, JSON.stringify(point))
+  }
+
+
+  const currentDroppingPosition = (event: DragEvent): DroppingPosition => {
     const { dataTransfer } = event
     const { current } = ref
     if (!(current && validDragType(dataTransfer))) return DroppingPosition.None
@@ -81,12 +85,11 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
     return DroppingPosition.At
   }
 
-  const onDragOver: React.DragEventHandler = event => {
+  const onDragOver = (event: DragEvent) => {
     const position = currentDroppingPosition(event)
     setDroppingPosition(position)
     setDroppingLayer(layer)
-    event.preventDefault()
-    event.stopPropagation()
+    eventStop(event)
   }
 
   const calculatedClassName = (): string => {
@@ -105,7 +108,7 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
 
   const viewProps = {
     ...rest, className, ref,
-    onMouseDown, onDragStart, onDragEnd,
+    onMouseDown: onPointerDown, onDragStart, onDragEnd,
     onClick, onDragLeave, onDragOver, onDrop,
     draggable: true,
   }

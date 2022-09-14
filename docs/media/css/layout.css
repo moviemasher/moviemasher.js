@@ -50,6 +50,20 @@
   background-color: var(--back-primary);
 }
 
+
+.moviemasher .editor .panel .content .drop-box {
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+
+.moviemasher .editor .panel .content.dropping .drop-box {
+  box-shadow: var(--dropping-shadow);
+}
+
 .moviemasher .editor .panel.collapsed {
   grid-template-rows: var(--header-height);
   flex-grow: 0;
@@ -111,9 +125,6 @@
   pointer-events: none;
 }
 
-.moviemasher .editor .panel .definition div {
-  text-align: center;
-}
 
 .moviemasher .editor .panel .preview label {
   position: absolute;

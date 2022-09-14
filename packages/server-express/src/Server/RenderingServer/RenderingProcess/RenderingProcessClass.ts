@@ -8,7 +8,7 @@ import {
   EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, CommandInput, RenderingDescription, AVType, CommandInputs,
   Defined,
   assertTrue,
-  ExtTs, assertSize, ExtText, isDefined, isDefinition, isObject, isPopulatedString, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero
+  ExtTs, assertSize, ExtText, isDefined, isDefinition, isObject, isPopulatedString, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, idGenerateString, assertLoadType
 } from "@moviemasher/moviemasher.js"
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
@@ -194,7 +194,7 @@ export class RenderingProcessClass implements RenderingProcess {
   get id(): string {
     if (this._id) return this._id
 
-    return this._id = this.args.id || idGenerate()
+    return this._id = this.args.id || idGenerateString()
   }
 
   private _mashInstance?: Mash
@@ -387,6 +387,8 @@ export class RenderingProcessClass implements RenderingProcess {
           const graphFile: GraphFile = {
             input: true, definition, type, file
           }
+          assertLoadType(type)
+          
           const url = preloader.key(graphFile)
           const infoPath = preloader.infoPath(url)
           

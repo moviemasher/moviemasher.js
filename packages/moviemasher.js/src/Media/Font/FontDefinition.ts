@@ -26,7 +26,7 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
     const { url, source } = this
     const file = editing ? url : source
     const graphFile: GraphFile = {
-      type: this.loadType, file, definition: this
+      type: LoadType.Font, file, definition: this
     }
     return [graphFile]
   }
@@ -48,6 +48,4 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
   type = DefinitionType.Font
 
   url = ''
-
-  urlAbsolute = ''
 }

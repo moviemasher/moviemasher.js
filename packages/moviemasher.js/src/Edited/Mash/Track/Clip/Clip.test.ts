@@ -1,8 +1,6 @@
 import { expectArrayLength, expectEmptyArray } from "../../../../../../../dev/test/Utilities/Expect"
 import { ShapeContainerClass } from "../../../../Container/ShapeContainer/ShapeContainerClass"
-import { containerDefault } from "../../../../Container/ContainerFactory"
 import { ColorContentClass } from "../../../../Content/ColorContent/ColorContentClass"
-import { contentDefault } from "../../../../Content/ContentFactory"
 import { FilterGraphInputAudible, FilterGraphInputVisible } from "../../../../Edited/Mash/FilterGraph/FilterGraphClass"
 import { timeFromArgs } from "../../../../Helpers/Time/TimeUtilities"
 import { CommandFileArgs, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../../../../MoveMe"
@@ -12,6 +10,8 @@ import { ImageClass } from "../../../../Media/Image/ImageClass"
 import { AudioClass } from "../../../../Media/Audio/AudioClass"
 import { GraphFileType, LoadType } from "../../../../Setup/Enums"
 import { Clip } from "./Clip"
+import { ContentDefaultId } from "../../../../Content/Content"
+import { ContainerDefaultId } from "../../../../Container/Container"
 
 describe("Clip", () => {
   const time = timeFromArgs()
@@ -40,8 +40,8 @@ describe("Clip", () => {
   describe("with default arguments", () => {
     const describedClip = createClip()
     test("has default content and container", () => {
-      expect(describedClip.contentId).toEqual(contentDefault.id)
-      expect(describedClip.containerId).toEqual(containerDefault.id)
+      expect(describedClip.contentId).toEqual(ContentDefaultId)
+      expect(describedClip.containerId).toEqual(ContainerDefaultId)
       expect(describedClip.content).toBeInstanceOf(ColorContentClass)
       expect(describedClip.container).toBeInstanceOf(ShapeContainerClass)
     })
@@ -73,14 +73,14 @@ describe("Clip", () => {
     test("has image content and default container", () => {
       const describedClip = createClipWithImage()
       expect(describedClip.contentId).toEqual('image')
-      expect(describedClip.containerId).toEqual(containerDefault.id)
+      expect(describedClip.containerId).toEqual(ContainerDefaultId)
       expect(describedClip.content).toBeInstanceOf(ImageClass)
       expect(describedClip.container).toBeInstanceOf(ShapeContainerClass)
     })
     test("clipGraphFiles() returns image GraphFile", () => {
       const describedClip = createClipWithImage()
-      const graphFiles = describedClip.clipGraphFiles(graphFileArgs(describedClip))
-      expectArrayLength(graphFiles, 1, Object)
+      const files = describedClip.clipGraphFiles(graphFileArgs(describedClip))
+      expectArrayLength(files, 1, Object)
     })
     test("commandFiles() returns expected CommandFiles ", () => {
       const describedClip = createClipWithImage()
@@ -115,9 +115,9 @@ describe("Clip", () => {
     })
     test("clipGraphFiles() returns image GraphFile", () => {
       const describedClip = createClip()
-      const graphFiles = describedClip.clipGraphFiles(graphFileArgs(describedClip))
-      expectArrayLength(graphFiles, 1, Object)
-      const [graphFile] = graphFiles
+      const files = describedClip.clipGraphFiles(graphFileArgs(describedClip))
+      expectArrayLength(files, 1, Object)
+      const [graphFile] = files
       expect(graphFile.type).toBe(LoadType.Image)
     })
     test("commandFiles() returns expected CommandFiles ", () => {
@@ -166,9 +166,9 @@ describe("Clip", () => {
     })
     test("clipGraphFiles() returns audio input GraphFile", () => {
       const describedClip = createClipWithAudio()
-      const graphFiles = describedClip.clipGraphFiles(audioGraphFileArgs(describedClip))
-      expectArrayLength(graphFiles, 1, Object)
-      const [graphFile] = graphFiles
+      const files = describedClip.clipGraphFiles(audioGraphFileArgs(describedClip))
+      expectArrayLength(files, 1, Object)
+      const [graphFile] = files
       const { type, input } = graphFile
       expect(type).toBe(LoadType.Audio)
       expect(input).toBe(true)

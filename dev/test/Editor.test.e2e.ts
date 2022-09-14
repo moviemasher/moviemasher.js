@@ -9,7 +9,7 @@ import { fontDefault } from '../../packages/moviemasher.js/src/Media/Font/FontFa
 import { PuppeteerHost, PuppeteerPort } from '../tester/src/Setup/Constants'
 import { ClipObject } from '../../packages/moviemasher.js/src/Edited/Mash/Track/Clip/Clip'
 import { clipDefault } from '../../packages/moviemasher.js/src/Edited/Mash/Track/Clip/ClipFactory'
-import { defaultTextId } from './Setup/Constants'
+import { containerTextId } from './Setup/Constants'
 
 describe('Editor', () => {
   describe("svg", () => {
@@ -63,7 +63,7 @@ describe('Editor', () => {
     test('displays Text correctly', async () => {
       const clipObject: ClipObject = {
         definitionId: clipDefault.id,
-        containerId: defaultTextId,
+        containerId: containerTextId,
         string: 'hey!'
       }
       await expectClipDisplays(clipObject)

@@ -1,13 +1,13 @@
 import React from 'react'
 import {
   Rect, RectZero,
-  Clip, DefinitionType, DroppingPosition, EventType, Track, pixelToFrame, Clips, pixelPerFrame, Point, eventStop, arrayLast, EditorIndex, assertPopulatedString, isPositive} from '@moviemasher/moviemasher.js'
+  Clip, DefinitionType, DroppingPosition, EventType, Track, pixelToFrame, Clips, pixelPerFrame, Point, eventStop, arrayLast, EditorIndex, assertPopulatedString, isPositive, assertClip} from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult } from '../../declarations'
 import { TimelineContext, TimelineContextInterface } from './TimelineContext'
 import { useListeners } from '../../Hooks/useListeners'
 import {
-  dragTypes, isDragClipObject, isDragDefinitionObject, isTransferType, 
+  dragTypes, isDragOffsetObject, isDragDefinitionObject, isTransferType, 
   dragDefinitionType, TransferTypeFiles, dragData
 } from '../../Helpers/DragDrop'
 import { useEditor } from '../../Hooks/useEditor'
@@ -23,7 +23,7 @@ export const TimelineDefaultZoom = 1.0
 export function Timeline(props: TimelineProps): ReactResult {
   const editor = useEditor()
   const editorContext = React.useContext(EditorContext)
-  const { dropFiles } = editorContext
+  const { drop } = editorContext
   const currentFrame = () => { return editor.selection.mash?.frame || 0 }
   const currentFrames = () => { return editor.selection.mash?.frames || 0 }
   const [frames, setFrames] = React.useState(currentFrames)
@@ -59,7 +59,6 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (types.includes(TransferTypeFiles)) return true
 
     const type = types.find(isTransferType)
-    console.log("Timeline dragTypeValid", type, types)
     if (!type) return false
 
     // anything can be dropped on a clip 
@@ -107,12 +106,12 @@ export function Timeline(props: TimelineProps): ReactResult {
     const droppingFiles = types.includes(TransferTypeFiles)
 
     const dense = !!droppingTrack?.dense
-    const index = droppingTrack?.index || -1
+    const index = droppingTrack ? droppingTrack.index : -1
     const clips = droppingTrack?.clips || []
 
     const data = droppingFiles ? {} : dragData(dataTransfer)
-    const draggingClip = !droppingFiles && isDragClipObject(data)
-    const offset = draggingClip ? data.offset : 0
+    const draggingItem = !droppingFiles && isDragOffsetObject(data)
+    const offset = draggingItem ? data.offset : 0
 
     let indexDrop = dropIndex(dense, clips)
     if (!isPositive(indexDrop)) {
@@ -121,22 +120,22 @@ export function Timeline(props: TimelineProps): ReactResult {
       indexDrop = dense ? frameToIndex(frame, clips) : frame
     }
     const editorIndex: EditorIndex = { clip: indexDrop, track: index }
+
     if (droppingFiles) {
-      const { files } = dataTransfer
-      console.log("Timeline onDrop dropped files", files, editorIndex)
-      dropFiles(files, editorIndex)
-      return
-    }
-    if (draggingClip) {
+      drop(dataTransfer.files, editorIndex)
+    } else if (draggingItem) {
       if (isDragDefinitionObject(data)) {
         const { definitionObject } = data
-        console.log("Timeline onDrop DefinitionObject...", definitionObject, editorIndex)
-        editor.add(definitionObject, editorIndex)
+        console.log("Timeline onDrop definition", definitionObject)
+        drop(definitionObject, editorIndex)
       } else {
-        console.log("Timeline onDrop moving clip", editorIndex)
-        editor.moveClip(editor.selection.clip!, editorIndex)
+        const { clip } = editor.selection
+        assertClip(clip)
+        
+        console.log("Timeline onDrop moving clip", editorIndex, clip.content.definition.label)
+        editor.moveClip(clip, editorIndex)
       }
-    } else console.log("Timeline onDrop !isDragClipObject", data)
+    } 
     onDragLeave(event)
   }
 

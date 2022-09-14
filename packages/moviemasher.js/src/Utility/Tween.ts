@@ -1,5 +1,5 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
-import { isPoint, Point, pointsEqual, PointTuple } from "./Point"
+import { Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
 import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
@@ -162,25 +162,6 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
     y: Math.round(tweenPad(outHeight, evenSize.height, y, offDirections.N, offDirections.S))
   }
   return result
-}
-
-export const tweenRectTransform = (dimensions: Size | any, rect: Rect | Size | any): string => {
-  assertSize(dimensions)
-  assertSize(rect)
-
-  const { width: outWidth, height: outHeight } = dimensions
-  const { width, height } = rect
-  const words: string[] = []
-  const scaleWidth = width / outWidth 
-  const scaleHeight = height / outHeight 
-  if (isPoint(rect)) {
-    const { x, y } = rect
-    if (!(x === 0 && y === 0)) words.push(`translate(${x},${y})`)
-  }
-  if (!(scaleWidth === 1 && scaleHeight === 1)) {
-    words.push(`scale(${scaleWidth},${scaleHeight})`)
-  }
-  return words.join(' ')
 }
 
 export const tweenCoverSizes = (inSize: Size, outSize: Size | SizeTuple, scales: SizeTuple): SizeTuple => {

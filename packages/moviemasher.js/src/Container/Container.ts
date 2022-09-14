@@ -5,11 +5,12 @@ import { Size } from "../Utility/Size"
 import { CommandFilters, CommandFilterArgs } from "../MoveMe"
 import { Anchor, DirectionObject, isContainerType } from "../Setup/Enums"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { Filter } from "../Filter/Filter"
 import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
-import { Actions } from "../Editor/Actions/Actions"
-import { Editor } from "../Editor/Editor"
+import { IdPrefix, IdSuffix } from "../Setup/Constants"
+
+export const ContainerDefaultId = `${IdPrefix}container${IdSuffix}`
+export const ContainerTextId = `${IdPrefix}container.text`
 
 export interface ContainerObject extends TweenableObject {
   height?: number
@@ -46,7 +47,7 @@ export interface Container extends Tweenable {
   colorMaximize: boolean
   containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
   containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
-  containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem
+  containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   directionObject: DirectionObject
   directions: Anchor[]
   height: number

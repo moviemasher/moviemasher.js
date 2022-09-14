@@ -1,5 +1,5 @@
 import React from "react"
-import { ComposerContext } from "../../Contexts/ComposerContext"
+import { ComposerContext } from "../Composer/ComposerContext"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"

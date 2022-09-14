@@ -20,7 +20,7 @@
 }
 
 .moviemasher .editor .panel.browser .dropping {
-  background-color: var(--color-drop);
+  box-shadow: var(--dropping-shadow);
 }
 
 .moviemasher .editor .panel.browser .content {

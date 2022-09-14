@@ -19,11 +19,10 @@ describe("FilterGraphs", () => {
   })
   
   describe("mash with single clip", () => {
-    
     test("it contains a single visible FilterGraph", () => {
       const mash = mashInstance({ tracks: [ { clips: [{ definitionId: clipDefault.id }] }]})
-    const filterGraphs = mash.filterGraphs()
-    const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
+      const filterGraphs = mash.filterGraphs()
+      const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
       expect(filterGraphAudible).toBeUndefined()
       expectArrayLength(filterGraphsVisible, 1)
       expect(filterGraphVisible).toBeDefined()

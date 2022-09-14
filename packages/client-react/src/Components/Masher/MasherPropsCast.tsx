@@ -19,7 +19,7 @@ import { ActivityPropsDefault } from '../Activity/ActivityPropsDefault'
 
 
 export const MasherPropsCast: PropsMethod<EditorProps, MasherProps> = function (props = {}) {
-  const { noApi, panels, ...rest } = props
+  const { panels, ...rest } = props
   const panelOptions = panels || {}
   panelOptions.player ||= {}
   panelOptions.browser ||= {}

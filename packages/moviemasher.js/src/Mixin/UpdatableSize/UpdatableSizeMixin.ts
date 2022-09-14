@@ -1,9 +1,9 @@
 import { PropertyTweenSuffix } from "../../Base"
 import { SvgItem } from "../../declarations"
-import { Rect, rectsEqual } from "../../Utility/Rect"
+import { centerPoint, Rect, rectsEqual, rectString } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
-import { DataType } from "../../Setup/Enums"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, VisibleCommandFilterArgs } from "../../MoveMe"
+import { DataType, Orientation } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
@@ -14,7 +14,11 @@ import { Tweening, tweenMaxSize } from "../../Utility/Tween"
 import { colorBlack, colorBlackOpaque } from "../../Utility/Color"
 import { PointZero } from "../../Utility/Point"
 import { ContentRectArgs } from "../../Content/Content"
-import { assertSizeAboveZero, sizeAboveZero } from "../../Utility/Size"
+import { assertSizeAboveZero, Size, sizeAboveZero, sizeCopy, sizeFromElement, sizeString } from "../../Utility/Size"
+import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
+import { BrowserLoaderClass } from "../../Loader/BrowserLoaderClass"
+import { svgElement, svgSetDimensions, svgSetDimensionsLock, svgSetTransformPoint } from "../../Utility/Svg"
+import { urlPrependProtocol } from "../../Utility/Url"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -53,7 +57,10 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs, `container-${track}-back`))
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
-      const fileInput = commandFilesInput(commandFiles, this.id, true)
+
+      const { id } = this
+      // console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id)
+      const fileInput = commandFilesInput(commandFiles, id, true)
 
       // then add file input, scaled
       commandFilters.push(...this.scaleCommandFilters({ ...args, filterInput: fileInput }))
@@ -99,8 +106,8 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
     
-    containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem {
-      return this.svgItem(rect, time, range, true, icon)
+    containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
+      return this.itemPromise(containerRect, time, range, true, icon)
     }
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
@@ -114,10 +121,12 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       assertTimeRange(clipTime)
       assertPopulatedArray(containerRects, 'containerRects')
 
-      let filterInput = input || commandFilesInput(commandFiles, this.id, visible)
+      const { id } = this
+      if (!input) console.log(this.constructor.name, "contentCommandFilters calling commandFilesInput", id)
+      let filterInput = input || commandFilesInput(commandFiles, id, visible)
 
       const contentArgs: ContentRectArgs = {
-        rects: containerRects, time, timeRange: clipTime
+        containerRects: containerRects, time, timeRange: clipTime
       }
       const contentRects = this.contentRects(contentArgs)
 
@@ -171,6 +180,11 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
     declare definition: UpdatableSizeDefinition
 
+    iconUrl(size: Size, time: Time, clipTime: TimeRange): string {
+      return this.definition.url
+    }
+
+
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
       const { filterInput, track } = args
@@ -190,10 +204,51 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return { ...size, ...PointZero }
     }
     
-    intrinsicsKnown(editing = false) {
+    intrinsicsKnown(options: IntrinsicOptions): boolean {
+      const { editing, size } = options
+      if (!size) return true
+      
       const key = editing ? 'previewSize' : 'sourceSize'
-      const { [key]: size} = this.definition
-      return sizeAboveZero(size)
+      const { [key]: definitionSize} = this.definition
+      return sizeAboveZero(definitionSize)
+    }
+
+    itemIconPromise(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): Promise<SvgItem> {
+      const { clip } = this
+      const { preloader } = clip.track.mash
+      
+      const url = this.iconUrl(sizeCopy(rect), time, range)
+      const imageUrl = urlPrependProtocol('image', url)
+      const lock = stretch ? '' : Orientation.V
+      const svgUrl = urlPrependProtocol('svg', imageUrl, { ...rect, lock })
+      
+      return preloader.loadPromise(svgUrl)
+    }
+
+    protected previewItem?: SvgItem
+
+    itemPreviewPromise(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): Promise<SvgItem> {
+      if (this.previewItem) return Promise.resolve(this.previewItem).then(item => {
+        const lock = stretch ? undefined : Orientation.V
+
+        svgSetDimensionsLock(item, rect, lock)
+        return item
+      })
+
+      const promise = this.itemIconPromise(rect, time, range, stretch)
+      return promise.then(svgItem => {
+        this.previewItem = svgItem
+        return svgItem
+      })
+    }
+
+    itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {
+      const { container } = this
+      const rect = container ? containerRect : this.contentRect(containerRect, time, range)
+      if (icon) return this.itemIconPromise(rect, time, range, stretch)
+      
+      return this.itemPreviewPromise(rect, time, range, stretch)
+      
     }
   }
 }

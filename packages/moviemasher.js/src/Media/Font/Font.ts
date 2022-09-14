@@ -21,7 +21,6 @@ export interface FontDefinition extends Definition {
   source: string
   family: string
   url: string
-  urlAbsolute: string
   graphFiles(args: GraphFileArgs): GraphFiles
 }
 export const isFontDefinition = (value: any): value is FontDefinition => {

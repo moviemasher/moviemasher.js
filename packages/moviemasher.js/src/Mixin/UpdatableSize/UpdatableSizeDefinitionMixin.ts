@@ -1,8 +1,11 @@
-import { Size, sizeAboveZero, sizeCover } from "../../Utility/Size"
-import { isAboveZero } from "../../Utility/Is"
+import { Size, sizeAboveZero, sizeFromElement, sizeString } from "../../Utility/Size"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass, UpdatableSizeDefinitionObject } from "./UpdatableSize"
 import { UnknownObject } from "../../declarations"
+import { BrowserLoaderClass } from "../../Loader/BrowserLoaderClass"
+import { Orientation } from "../../Setup/Enums"
+import { centerPoint } from "../../Utility/Rect"
+import { svgElement, svgSetTransformPoint } from "../../Utility/Svg"
 
 export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {
@@ -14,7 +17,7 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
       if (sizeAboveZero(previewSize)) this.previewSize = previewSize
       if (sizeAboveZero(sourceSize)) this.sourceSize = sourceSize
     }
-
+    
     previewSize?: Size 
 
     sourceSize?: Size 

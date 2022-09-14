@@ -1,24 +1,23 @@
 import { SvgItem, UnknownObject } from "../declarations"
-import { Size } from "../Utility/Size"
+import { assertSizeAboveZero, Size, SizeZero } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
-import { SelectedItems, SelectedProperties } from "../Utility/SelectedProperty"
+import { SelectedItems } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType, SelectType } from "../Setup/Enums"
-import { DataGroup, propertyInstance } from "../Setup/Property"
+import { propertyInstance } from "../Setup/Property"
 import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
 import { isAboveZero, isPopulatedString, isUndefined } from "../Utility/Is"
-import { idGenerate } from "../Utility/Id"
+import { idGenerate, idTemporary } from "../Utility/Id"
 import { Loader } from "../Loader/Loader"
-import { PreviewOptions, Svg, Svgs } from "../Editor/Preview/Preview"
+import { PreviewOptions } from "./Mash/Preview/Preview"
 import { Default } from "../Setup/Default"
 import { Editor } from "../Editor/Editor"
 import { Actions } from "../Editor/Actions/Actions"
 import { Selectables } from "../Editor/Selectable"
 import { colorBlack } from "../Utility/Color"
 import { Mash } from "./Mash"
-import { throwError } from "../Utility"
 
 
 export class EditedClass extends PropertiedClass implements Edited {
@@ -31,7 +30,7 @@ export class EditedClass extends PropertiedClass implements Edited {
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isAboveZero(quantize)) this.quantize = quantize
     this.properties.push(propertyInstance({ 
-      name: 'label', type: DataType.String
+      name: 'label', type: DataType.String, defaultValue: ''
     }))
     this.properties.push(propertyInstance({ 
       name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack, 
@@ -71,22 +70,22 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   protected emitterChanged() { }
 
-  graphFiles(args: GraphFileOptions): GraphFiles { return [] }
+  editedGraphFiles(args: GraphFileOptions): GraphFiles { return [] }
 
   icon = ''
 
   protected _id = ''
-  get id(): string { return this._id ||= idGenerate() }
+  get id(): string { return this._id ||= idTemporary() }
   set id(value: string) {
     this._id = value
     this.emitter?.emit(EventType.Save)
   }
 
-  private _imageSize = { width: 300, height: 150 }
+  private _imageSize = { ...SizeZero }
   get imageSize(): Size { return this._imageSize }
   set imageSize(value: Size) {
-    const { width, height } = value
-    if (!(isAboveZero(width) && isAboveZero(height))) throw Errors.invalid.size
+    assertSizeAboveZero(value)
+
     this._imageSize = value
   }
 

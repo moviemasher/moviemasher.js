@@ -24,7 +24,7 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
   const [editedLabel, setEditedLabel] = React.useState(editor.edited?.label || '')
   const getDisabled = () => editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
-  const { enabled, endpointPromise } = apiContext
+  const { enabled, servers, endpointPromise } = apiContext
 
   const updateDisabled = () => { setDisabled(getDisabled()) }
 
@@ -89,7 +89,7 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
   }
 
   React.useEffect(() => {
-    if (!enabled.includes(ServerType.Data)) return
+    if (!(enabled && servers[ServerType.Data])) return
     if (requested) return
 
     setRequested(true)
@@ -112,7 +112,7 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
         return copy
       })
     })
-  }, [enabled])
+  }, [servers, enabled])
 
 
   const describedOptions = () => {

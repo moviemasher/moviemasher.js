@@ -6,7 +6,7 @@ import {
 import { PropsAndChildren, ReactResult } from "../../declarations"
 import { DragType, dragType, isDragType } from "../../Helpers/DragDrop"
 import { useListeners } from "../../Hooks/useListeners"
-import { ComposerContext, ComposerContextInterface } from "../../Contexts/ComposerContext"
+import { ComposerContext, ComposerContextInterface } from "./ComposerContext"
 import { EditorContext } from "../../Components/Masher/EditorContext"
 
 export interface ComposerProps extends PropsAndChildren {}
@@ -34,7 +34,9 @@ export function Composer(props: ComposerProps): ReactResult {
   })
  if (!editor) return null
 
-  const validDragType = (dataTransfer: DataTransfer): DragType | undefined => {
+  const validDragType = (dataTransfer?: DataTransfer | null): DragType | undefined => {
+    if (!dataTransfer) return
+
     const type = dragType(dataTransfer)
     if (!isDragType(type)) return
 
@@ -46,12 +48,13 @@ export function Composer(props: ComposerProps): ReactResult {
     setDroppingLayer(undefined)
   }
 
-  const onDrop: React.DragEventHandler = event => {
+  const onDrop = (event: DragEvent) => {
     event.preventDefault()
     setDroppingPosition(DroppingPosition.None)
     refresh()
 
     const { dataTransfer } = event
+
     const dragType = validDragType(dataTransfer)
     if (!dragType) return
 

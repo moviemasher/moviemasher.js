@@ -2,26 +2,24 @@ import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedString } from "../Utility/Is"
 import { Factories } from "../Definitions/Factories"
-// import { ContainerDefinitionClass } from "./ContainerDefinitionClass"
-import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "./Container"
+import { Container, ContainerDefaultId, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "./Container"
 import { ShapeContainerDefinitionClass } from "./ShapeContainer/ShapeContainerDefinitionClass"
-
-import defaultContainerJson from "../Definitions/DefinitionObjects/container/default.json"
-import chatContainerJson from "../Definitions/DefinitionObjects/container/chat.json"
-import broadcastContainerJson from "../Definitions/DefinitionObjects/container/broadcast.json"
-import musicContainerJson from "../Definitions/DefinitionObjects/container/music.json"
-import testContainerJson from "../Definitions/DefinitionObjects/container/test.json"
-import textContainerJson from "../Definitions/DefinitionObjects/container/text.json"
 import { TextContainerDefinitionClass } from "./TextContainer/TextContainerDefinitionClass"
 
-export const containerDefault = new ShapeContainerDefinitionClass(defaultContainerJson)
+import defaultContainer from "../Definitions/DefinitionObjects/container/default.json"
+import chatContainer from "../Definitions/DefinitionObjects/container/chat.json"
+import broadcastContainer from "../Definitions/DefinitionObjects/container/broadcast.json"
+import musicContainer from "../Definitions/DefinitionObjects/container/music.json"
+import testContainer from "../Definitions/DefinitionObjects/container/test.json"
+import textContainer from "../Definitions/DefinitionObjects/container/text.json"
+
 export const containerDefaults = [
-  containerDefault,
-  new TextContainerDefinitionClass(textContainerJson),
-  new ShapeContainerDefinitionClass(chatContainerJson),
-  new ShapeContainerDefinitionClass(broadcastContainerJson),
-  new ShapeContainerDefinitionClass(musicContainerJson),
-  new ShapeContainerDefinitionClass(testContainerJson),
+  new ShapeContainerDefinitionClass({ id: ContainerDefaultId, ...defaultContainer }),
+  new TextContainerDefinitionClass(textContainer),
+  new ShapeContainerDefinitionClass(chatContainer),
+  new ShapeContainerDefinitionClass(broadcastContainer),
+  new ShapeContainerDefinitionClass(musicContainer),
+  new ShapeContainerDefinitionClass(testContainer),
 ]
 
 export const containerDefinition = (object : ContainerDefinitionObject) : ContainerDefinition => {
@@ -51,7 +49,6 @@ export const containerInstance = (object: ContainerObject): Container => {
 export const containerFromId = (id: string): Container => {
   const definition = containerDefinitionFromId(id)
   const instance = definition.instanceFromObject({ definitionId: id }) as Container
- 
   return instance
 }
 

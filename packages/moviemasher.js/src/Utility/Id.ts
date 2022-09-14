@@ -1,25 +1,46 @@
 import { NumberObject } from "../declarations"
 import { isPopulatedString } from "./Is"
 
-// eslint-disable-next-line prefer-const
-let idPrefix = ''
-let idCount = 0
+const Id = {
+  count: 0,
+  prefix: '',
+  countsByPrefix: {} as NumberObject
+}
 
-const idCountsByPrefix: NumberObject = {}
-export const idGenerate = (prefix = idPrefix): string => {
+export const idGenerateString = (): string => {
+  const components:string[] = []
+  if (Id.prefix) components.push(Id.prefix)
+
+  components.push(Date.now().toString(36))
+  components.push(Math.random().toString(36).slice(2))
+  return components.join('-')
+}
+
+export const idPrefixSet = (prefix: string): void => { Id.prefix = prefix }
+
+export const idTemporary = () => {
+  const { prefix } = Id
   const components:string[] = []
   if (prefix) {
     components.push(prefix)
-    idCountsByPrefix[prefix] ||= 0
-    components.push(String(idCountsByPrefix[prefix]++))
-  } else components.push(String(idCount++))
+    Id.countsByPrefix[prefix] ||= 0
+    components.push(String(Id.countsByPrefix[prefix]++))
+  } else components.push(String(Id.count++))
   return components.join('')
 }
 
-export const idPrefixSet = (prefix: string): void => { idPrefix = prefix }
+export const idGenerate = (prefix = Id.prefix): string => {
+  const components:string[] = []
+  if (prefix) {
+    components.push(prefix)
+    Id.countsByPrefix[prefix] ||= 0
+    components.push(String(Id.countsByPrefix[prefix]++))
+  } else components.push(String(Id.count++))
+  return components.join('')
+}
 
-export const idTemporary = (id: string): boolean => {
-  if (!isPopulatedString(idPrefix)) return false
+export const idIsTemporary = (id: string): boolean => {
+  if (!isPopulatedString(Id.prefix)) return false
 
-  return id.startsWith(idPrefix)
+  return id.startsWith(Id.prefix)
 }

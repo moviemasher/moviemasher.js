@@ -2,9 +2,8 @@ import React from 'react'
 import {
   UnknownObject, pixelFromFrame, DroppingPosition, ClassSelected, eventStop, 
   assertTrue,
-  sizeAboveZero,
-  Size,
-  assertObject
+  sizeAboveZero, svgPolygonElement,
+  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgElement, sizeCeil, isEventType, isObject
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
@@ -14,6 +13,9 @@ import { TimelineContext } from '../Timeline/TimelineContext'
 import { useEditor } from '../../Hooks/useEditor'
 import { ClipContext } from './ClipContext'
 import { View } from '../../Utilities/View'
+import { useListeners } from '../../Hooks'
+
+const ClipItemRefreshRate = 500
 
 export interface ClipItemProps extends WithClassName, PropsWithoutChild {}
 /**
@@ -21,12 +23,15 @@ export interface ClipItemProps extends WithClassName, PropsWithoutChild {}
  */
 export function ClipItem(props: ClipItemProps): ReactResult {
   const { className, ...rest } = props
-
-  const svgRef = React.useRef<HTMLDivElement>(null)
+  const svgRef = React.useRef<SVGSVGElement>(null)
   const viewRef = React.useRef<HTMLDivElement>(null)
   const editor = useEditor()
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
+  const [nonce, setNonce] = React.useState(0)
+  const updateNonce = () => { setNonce(new Date().valueOf()) }
+  const watchingRef = React.useRef<UnknownObject>({})
+  const { current: watching } = watchingRef
   const clipContext = React.useContext(ClipContext)
   const {
     droppingPosition, droppingClip, scale, selectedClip, onDrop,
@@ -37,34 +42,168 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   const { clip, prevClipEnd} = clipContext
   assertTrue(clip)
 
-  const { label, type, frame, frames } = clip
-  const width = pixelFromFrame(frames, scale, 'floor')
-  const updateRef = async () => {
-    const { current } = svgRef
-    if (!current) return
-    
-    const currentSize: Size = { width, height: 0 }
-    const parent = current.parentNode
-    if (parent instanceof HTMLDivElement) {
-      const rect = parent.getBoundingClientRect()
-      currentSize.height = rect.height
+  const backgroundNode = (backcolor: string, size: Size, spacing: number) => {
+    const rgb = colorToRgb(backcolor)
+    const differenceRgb = colorRgbDifference(rgb)
+    const forecolor = colorFromRgb(differenceRgb)
+    const framePolygon = svgPolygonElement(size, '', backcolor)
+    const spaceRect = { 
+      x: size.width, y: 0,
+      width: spacing, height: size.height, 
     }
+    const spacePolygon = svgPolygonElement(spaceRect, '', forecolor)
 
-    if (!sizeAboveZero(currentSize)) return
-
-    const { rect: size, edited } = editor
-    assertObject(edited)
-
-    const { backcolor } = edited
-
-    const minWidth = currentSize.height * (size.width / size.height)
-    currentSize.width = Math.max(currentSize.width,  minWidth)
-    const element = await clip.clipIcon(currentSize, scale, 1, backcolor)
-    if (element) current.replaceChildren(element)
+    const patternSize = { 
+      width: size.width + spacing, height: size.height
+    }
+    const patternId = idGenerate('pattern')
+    const patternItems = [framePolygon, spacePolygon]
+    const pattern = svgPatternElement(patternSize, patternId, patternItems)
+    const defsElement = svgDefsElement([pattern])
+    const patternedSize = { width: timelineContext.rect.width, height: parentHeight }
+    const patternedPolygon = svgPolygonElement(patternedSize, '', svgUrl(patternId))
+    return svgElement(patternedSize, [defsElement, patternedPolygon])
+  }
+  const getParentHeight = () => {
+    const { current } = svgRef
+    const parent = current?.parentNode
+    if (parent instanceof HTMLDivElement) {
+      return parent.getBoundingClientRect().height
+    }
+  
+    // console.log("ClipItem.getParentHeight NO HEIGHT", !!current)
+    return 0
   }
 
-  React.useEffect(() => { updateRef() }, [])
-  if (svgRef.current) updateRef()
+  const [parentHeight, setParentHeight] = React.useState(getParentHeight)
+
+  const { label, type, frame, frames } = clip
+
+  const getCurrentWidth = () => {
+    if (!(isAboveZero(scale) && isAboveZero(frames))) {
+      // console.log("ClipItem getCurrentWidth returing 0", scale, frames)
+      return 0
+    }
+
+    const currentWidth = pixelFromFrame(frames, scale, 'floor')
+    const { width } = watching
+    if (currentWidth && currentWidth !== width) {
+      watching.width = currentWidth
+      updateNonce()
+    }
+    return currentWidth
+  }
+
+  const currentWidth = getCurrentWidth()
+
+  const actionCallback = (event: Event) => { 
+    // console.log("ClipItem actionCallback", event)
+    if (watching.redraw) return
+    
+    const { type } = event
+    if (!isEventType(type)) return
+    if (!(event instanceof CustomEvent)) return
+    if (type !== EventType.Action) return
+    
+    const { detail } = event
+    if (!detail) return 
+    
+    const { action } = detail
+    if (!action) return
+
+    const { target } = action
+    if (!isObject(target)) return
+
+    switch(target) {
+      case clip:
+      case clip.container:
+      case clip.content: break
+      default: {
+        if (action.property === 'backcolor') break
+        return
+      }
+    }    
+    updateNonce()
+  }
+
+  useListeners({ [EventType.Action]: actionCallback, [EventType.Save]: updateNonce })
+
+  const frameSize = () => {
+    const { rect } = editor
+    const size = { 
+      width: parentHeight * (rect.width / rect.height), height: parentHeight
+    }
+    return sizeCeil(size)
+  }
+
+  const clipSize = (size: Size) => {
+    const { width, height } = size
+    return { width: Math.max(width, currentWidth), height }
+  }
+
+  const populateSvg = (): Promise<void> => {
+
+    // console.log("ClipItem.populateSvg")
+
+    const { width, redraw } = watching
+    delete watching.timeout 
+    delete watching.redraw 
+    
+    const { current } = svgRef
+    const { edited } = editor
+
+    const allOk = current && edited && width && width === getCurrentWidth()
+
+    if (redraw || !allOk) {
+      updateNonce()
+      if (!allOk) {
+        // console.log("ClipItem.populateSvg returning", current, edited, width, getCurrentWidth())
+        return Promise.resolve()
+      }
+    }
+    
+    const currentSize = frameSize()
+    const fullSize = clipSize(currentSize)
+    const { backcolor } = edited
+
+    const promise = clip.clipIcon(fullSize, timelineContext.scale, 2)
+    if (!promise) return Promise.resolve()
+    
+    return promise.then(element => {
+      const latestWidth = getCurrentWidth()
+      if (element && width >= latestWidth) {
+        // console.log("ClipItem.populateSvg replacing children", fullSize)
+        current.replaceChildren(backgroundNode(backcolor, currentSize, 2), element)
+      } //else console.log("ClipItem.populateSvg", !!element, width, ">= ?", latestWidth)
+    })
+  }
+  
+  const handleChange = () => {
+    if (!parentHeight) {
+      // console.log("ClipItem.handleChange no parentHeight")
+      return setParentHeight(getParentHeight)
+    }
+     
+    const { current } = svgRef
+    const { edited } = editor
+    if (!(current && edited)) return
+    const { backcolor } = edited
+
+    // current.replaceChildren(backgroundNode(backcolor, frameSize(), 2))
+    
+    if (watching.timeout) {
+      if (!watching.redraw) {
+        // console.log("ClipItem.handleChange setting redraw", nonce, scale, parentHeight)
+        watching.redraw = true
+      }
+      return
+    }
+    // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
+    watching.timeout = setTimeout(populateSvg, ClipItemRefreshRate)
+  }
+
+  React.useEffect(handleChange, [nonce, scale, parentHeight])
+  
 
   const onPointerDown = (event: MouseEvent) => { 
     event.stopPropagation()
@@ -78,13 +217,13 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     
     const { dropEffect } = dataTransfer
     if (dropEffect === 'none') {
-      console.log("TimelineClip removeClip")
       editor.removeClip(clip)
     }
   }
 
   const onDragStart = (event: DragEvent) => {
-    event.stopPropagation()
+    onPointerDown(event)
+
     const { dataTransfer, clientX } = event
     const { current } = viewRef
     if (!(dataTransfer && current)) return
@@ -101,10 +240,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   const onDragOver = (event: DragEvent) => {
     eventStop(event)
     const { dataTransfer } = event
-    if (!dataTransfer) {
-      console.log("TimelineClip onDragOver no dataTransfer")
-      return
-    } 
+    if (!dataTransfer) return
 
     const definitionType = dragTypeValid(dataTransfer, clip)
     const pos = definitionType ? DroppingPosition.At : DroppingPosition.None
@@ -125,12 +261,22 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   }
 
   const childNodes = () => {
-    const nodes = [<View key="icon" ref={svgRef} />]
+    const svgProps: UnknownObject = {
+      key: "clip-previews", ref: svgRef
+    }
+    const size = { width: currentWidth, height: parentHeight }
+    if (sizeAboveZero(size)) {
+      const { width, height } = size
+      svgProps.width = width
+      svgProps.height = height
+      svgProps.viewBox = `0 0 ${width} ${height}`
+    }
+    const nodes = [<svg { ...svgProps } />]
     if (label) nodes.unshift(<label key='label'>{label}</label>)
     return nodes
   }
 
-  const style: UnknownObject = { width }
+  const style: UnknownObject = { width: currentWidth }
   if (prevClipEnd > -1) {
     style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor')
   }

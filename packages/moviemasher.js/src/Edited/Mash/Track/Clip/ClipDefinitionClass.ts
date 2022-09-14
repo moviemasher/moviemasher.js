@@ -3,18 +3,20 @@ import { ClipClass } from "./ClipClass"
 import { DataType, DefinitionType, Duration, Sizing, Timing } from "../../../../Setup/Enums"
 import { DefinitionBase } from "../../../../Definition/DefinitionBase"
 import { DataGroup, propertyInstance } from "../../../../Setup/Property"
-import { IdPrefix, IdSuffix } from "../../../../Setup/Constants"
+import { ContainerDefaultId } from "../../../../Container/Container"
+import { ContentDefaultId } from "../../../../Content/Content"
+import { isUndefined } from "../../../../Utility/Is"
 
 export class ClipDefinitionClass extends DefinitionBase implements ClipDefinition {
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
       name: "containerId", type: DataType.ContainerId,
-      defaultValue: `${IdPrefix}container${IdSuffix}`
+      defaultValue: ContainerDefaultId
     }))
     this.properties.push(propertyInstance({
       name: "contentId", type: DataType.ContentId,
-      defaultValue: `${IdPrefix}content${IdSuffix}`
+      defaultValue: ContentDefaultId
     }))
     this.properties.push(propertyInstance({ name: "label", type: DataType.String }))
     this.properties.push(propertyInstance({ 
@@ -38,16 +40,28 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
 
   audible = false
     
-  // private _duration? : number
-  // get duration() : number {
-  //   if (!this._duration) {
-  //     const object = Default.definition as ObjectUnknown
-  //     const value = object ? object[this.type] : undefined
-  //     this._duration = value ? Number(value.duration) : 0
-  //   }
-  //   return this._duration
-  // }
-  // set duration(value : number) { this._duration = value }
+  instanceArgs(object: ClipObject = {}): ClipObject {
+    const args = super.instanceArgs(object) as ClipObject
+    const { containerId, contentId } = args
+    const defaultContent = isUndefined(contentId) || contentId === ContentDefaultId
+    let defaultContainer = isUndefined(containerId) || containerId === ContainerDefaultId
+    if (args.sizing === Sizing.Content && defaultContent) {
+      // console.log("instanceArgs setting sizing to container", object)
+      args.sizing = Sizing.Container
+    }
+    if (args.sizing === Sizing.Container && defaultContainer) {
+      // console.log("instanceArgs setting sizing to preview", object)
+      args.sizing = Sizing.Preview
+    }
+    if (args.timing === Timing.Content && defaultContent) {
+      args.timing = Timing.Container
+    }
+    if (args.timing === Timing.Container && defaultContainer) {
+      args.timing = Timing.Custom
+    }
+    // console.log("instanceArgs", args)
+    return args
+  }
 
   instanceFromObject(object: ClipObject = {}): Clip {
     return new ClipClass(this.instanceArgs(object))

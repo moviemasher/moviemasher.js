@@ -14,21 +14,22 @@ import { Property } from "../../Setup/Property"
 import { colorBlack, colorBlackTransparent, colorWhite } from "../../Utility/Color"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { assertPopulatedString, assertTrue } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Tweening, tweenMaxSize, tweenRectTransform } from "../../Utility/Tween"
+import { Tweening, tweenMaxSize } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility/Array"
-import { Editor } from "../../Editor/Editor"
+import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
+import { svgSetTransformRects } from "../../Utility/Svg"
 
 
 const TextContainerWithTweenable = TweenableMixin(InstanceBase)
 const TextContainerWithContainer = ContainerMixin(TextContainerWithTweenable)
 export class TextContainerClass extends TextContainerWithContainer implements TextContainer {
   constructor(...args: any[]) {
-    super(...args)
     const [object] = args
+    object.lock ||= ''
+    super(...args)
 
     const { intrinsic } = object as TextContainerObject
     if (isRect(intrinsic)) this._intrinsicRect = intrinsic
@@ -40,10 +41,6 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
   private _colorFilter?: Filter
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
-
-  containerSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem { 
-    return this.pathElement(rect) 
-  }
 
   declare definition: TextContainerDefinition
 
@@ -61,14 +58,15 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const { string } = this
     // console.trace(this.constructor.name, "graphFiles", visible, editing)
 
-    const graphFiles = this.font.graphFiles(args)
+    const files = this.font.graphFiles(args)
     if (!editing) {
       const textGraphFile: GraphFile = {
-        definition: this.font, type: GraphFileType.Txt, file: string
+        definition: this.font, type: GraphFileType.Txt, 
+        file: this.id, content: string
       }
-      graphFiles.push(textGraphFile)
+      files.push(textGraphFile)
     }
-    return graphFiles
+    return files
   }
 
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
@@ -128,7 +126,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
     const xEnd = intrinsicRect.x * (rectEnd.width / intrinsicRect.width)
     const yEnd = intrinsicRect.y * (rectEnd.height / intrinsicRect.height)
-    
+    // console.log(this.constructor.name, "initialCommandFilters", lock)
     const options: ScalarObject = { 
       x, y, width, height, color, textfile, fontfile,
       stretch: !isOrientation(lock),
@@ -170,6 +168,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
   }
 
   protected _intrinsicRect?: Rect
+
   intrinsicRect(_ = false): Rect { 
     return this._intrinsicRect || this.intrinsicRectInitialize()
   }
@@ -192,14 +191,17 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return dimensions
   }
 
-  intrinsicsKnown(editing = false): boolean { 
+  intrinsicsKnown(options: IntrinsicOptions): boolean { 
+    const { size } = options
+    if (!size) return true
+
     return isRect(this._intrinsicRect) 
   }
 
   pathElement(rect: Rect): SvgItem {
     const { string, font } = this
-    const intrinsicRect = this.intrinsicRect(true)
-    const { x: inX, y: inY, width: inWidth, height: inHeight } = intrinsicRect
+    const inRect = this.intrinsicRect(true)
+    const { x: inX, y: inY, width: inWidth, height: inHeight } = inRect
     const { x, y, width: outWidth, height: outHeight } = rect
     const xOffset = inX * (outHeight / inHeight)
     const yOffset = inY * (outWidth / inWidth)
@@ -210,18 +212,12 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'text')
 
     svgItem.setAttribute('font-family', family)
-    // svgItem.setAttribute('fill', forecolor)
     svgItem.setAttribute('font-size', String(inHeight))
     svgItem.setAttribute('dominant-baseline', 'hanging')
     svgItem.append(`${string}  `)
-    const transformAttribute = tweenRectTransform(intrinsicRect, offset)
-    svgItem.setAttribute('transform', transformAttribute)
-    svgItem.setAttribute('transform-origin', 'top left')    
+    svgSetTransformRects(svgItem, inRect, offset)
     return svgItem
   }
-
-  private _setptsFilter?: Filter
-  get setptsFilter() { return this._setptsFilter ||= filterFromId('setpts')}
 
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)

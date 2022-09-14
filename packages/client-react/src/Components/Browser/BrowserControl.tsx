@@ -1,5 +1,5 @@
 import React from "react"
-import { ServerType, assertObject } from "@moviemasher/moviemasher.js"
+import { ServerType, assertObject, UploadTypes } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { ApiContext } from "../ApiClient/ApiContext"
@@ -12,22 +12,23 @@ export function BrowserControl(props: PropsAndChild): ReactResult {
   const apiContext = React.useContext(ApiContext)
   const editorContext = React.useContext(EditorContext)
 
-  const { servers, enabled } = apiContext
-  const { dropFiles } = editorContext
-  const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
-  if (!required.every(serverType => enabled.includes(serverType))) return null
+  const { servers } = apiContext
+  const { drop } = editorContext
+
+  // const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
+  // if (!(enabled && required.every(type => servers[type]))) return null
 
   const { children, ...rest } = props
 
   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { files } = event.currentTarget
-    if (files) dropFiles(files)
+    if (files) drop(files)
   }
 
-  const { file } = servers
-  assertObject(file)
-
-  const { extensions } = file
+  const { file = {} } = servers
+  const { 
+    extensions = Object.fromEntries(UploadTypes.map(type => [type, []])) 
+  } = file
   assertObject(extensions)
 
   const accept = Object.entries(extensions).flatMap(([uploadType, noDots]) => {

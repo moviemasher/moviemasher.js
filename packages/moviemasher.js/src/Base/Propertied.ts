@@ -76,7 +76,7 @@ export class PropertiedClass implements Propertied {
     }
     const propertyName = this.propertyName(name)
     const found = property || this.propertyFind(propertyName)
-    assertTrue(found, `${propertyName} ${name} ${value}`)
+    assertTrue(found, `${this.constructor.name}.${propertyName} in ${this.properties.map(p => p.name).join(', ')}`)
     const type = found.type
     if (!propertyTypeValid(value, type)) {
       if (propertyName !== name) {

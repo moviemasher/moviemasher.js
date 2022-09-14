@@ -21,6 +21,10 @@
   --border-radius: 5px;
   --drop-size: 2px;
   --progress-width: calc(2 * var(--icon-size));
+  --dropping-shadow: 
+    var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+    calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+  ;
 }
 
 .moviemasher .editor .panel .content {

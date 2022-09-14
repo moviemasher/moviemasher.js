@@ -5,7 +5,9 @@ import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from "../MoveMe"
+import { IdPrefix, IdSuffix } from "../Setup/Constants"
 
+export const ContentDefaultId = `${IdPrefix}content${IdSuffix}`
 export interface ContentObject extends TweenableObject {
   lock?: string
 }
@@ -13,17 +15,18 @@ export interface ContentObject extends TweenableObject {
 export interface ContentDefinitionObject extends TweenableDefinitionObject { }
 
 export interface ContentRectArgs {
-  rects: Rect | RectTuple
+  containerRects: Rect | RectTuple
   time: Time
   timeRange: TimeRange
   loading?: boolean
   editing?: boolean
 }
 export interface Content extends Tweenable {
+  contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
   contentRects(args: ContentRectArgs): RectTuple 
-  contentSvgItem(rect: Rect, time: Time, range: TimeRange, icon?: boolean): SvgItem
+  contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   lock: Orientation
-  svgItem(rect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): SvgItem
+  itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem>
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters
   audibleCommandFiles(args: CommandFileArgs): CommandFiles
 }

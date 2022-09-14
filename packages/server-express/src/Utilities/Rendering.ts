@@ -2,7 +2,7 @@ import {
   DefinitionObject, DefinitionObjects,
   MashObject, TrackObject, ClipObject,
   DefinitionType, LoadType, ValueObject, CommandOutputs, OutputType,
-  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault, assertPopulatedString,
+  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault, assertPopulatedString, ContentObject, Timing,
 } from "@moviemasher/moviemasher.js"
 
 
@@ -17,7 +17,7 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   const definitions: DefinitionObjects = [definitionObject]
   const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
   const track: TrackObject = {
-    dense: String(type) !== String(DefinitionType.Audio),
+    dense: true,// String(type) !== String(DefinitionType.Audio),
     clips: [clip]
   }
   const tracks: TrackObject[] = [track]
@@ -25,7 +25,6 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   const mash: MashObject = { ...mashObject, tracks }
   return { mash, definitions }
 }
-
 
 export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
   const counts: NumberObject = {}
@@ -78,8 +77,13 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
   const supplied = suppliedContainerId ? String(suppliedContainerId) : undefined
   const containerId = type === 'audio' ? '' : supplied
   const definitionId = clipDefault.id
+  const content: ContentObject = {...rest}
   const visibleClipObject: ClipObject = {
-    definitionId, contentId, content: rest, containerId
+    definitionId, contentId, content, containerId
+  }
+  if (type === DefinitionType.Image) {
+    visibleClipObject.timing = Timing.Custom
+    visibleClipObject.frames = 1
   }
   // console.log("renderingClipFromDefinition", overrides, visibleClipObject)
   return visibleClipObject
@@ -91,8 +95,6 @@ export const renderingDefinitionObject = (loadType: LoadType, source: string, de
   const definition: DefinitionObject = { id, type, source, label }
   return definition
 }
-
-
 
 export const definitionTypeFromRaw = (loadType: LoadType): DefinitionType => {
   switch (loadType) {

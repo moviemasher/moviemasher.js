@@ -5,5 +5,5 @@ export const TestRenderAssets = 'test-assets'
 export const TestRenderingsDir = 'dev/test/Renderings'
 export const TestFilePrefix = 'dev'
 
-export const defaultTextId = 'com.moviemasher.container.text'
+export const containerTextId = 'com.moviemasher.container.text'
 export const defaultShapeId = 'com.moviemasher.container.default'

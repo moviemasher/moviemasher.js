@@ -25,17 +25,22 @@ export function InspectorEffect(props: InspectorEffectProps): ReactResult {
 
   const onMouseDown = () => { if (!selected) setSelectedEffect(effect) }
 
-  const onDragEnd: React.DragEventHandler = event => {
+  const onDragEnd = (event: DragEvent) => {
     const { dataTransfer } = event
+    if (!dataTransfer) return 
+    
     const { dropEffect } = dataTransfer
     if (dropEffect === 'none') removeHandler(effect)
   }
 
-  const onDragStart: React.DragEventHandler = event => {
+  const onDragStart = (event: DragEvent) => {
     if (!selected) onMouseDown()
     const data = { index }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
+
+    if (!dataTransfer) return 
+
     dataTransfer.effectAllowed = 'move'
     dataTransfer.setData(`effect${DragSuffix}`, json)
   }

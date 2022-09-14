@@ -6,9 +6,8 @@ import md5 from 'md5'
 
 import {
   EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
-  Errors, LoaderClass, GraphFileType, LoaderFile, Definition,
-  LoaderSource,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero
+  Errors, LoaderClass, GraphFileType, LoaderCache, Definition,
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, assertObject, isDefinition, isLoaderType, LoadType
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
@@ -28,79 +27,98 @@ export class NodeLoader extends LoaderClass {
     if (!defaultDirectory) throw Errors.invalid.url + 'defaultDirectory'
   }
 
-  private applyLoadedInfo(graphFile: GraphFile, loadedInfo: LoadedInfo): void {
-    // console.log(this.constructor.name, "applyLoadedInfo", graphFile.definition.id, loadedInfo)
-    
-    const { definition } = graphFile
-    const { duration, width, height, audible } = loadedInfo
+  protected override browsing = false
 
-    const dimensions = { width, height }
-    this.updateDefinitionSize(definition, dimensions, true)
-    this.updateDefinitionDuration(definition, duration, !!audible)
-  }
-
-  protected override filePromise(key: string, graphFile: GraphFile): LoaderFile {
+  protected cachePromise(url: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
     // console.log(this.constructor.name, "filePromise", key)
-    const { definition } = graphFile
-    const definitions = [definition]
-    const preloaderSource: LoaderSource = { loaded: false, definitions }
-    if (fs.existsSync(key)) {
+    if (fs.existsSync(url)) {
       // console.log(this.constructor.name, "filePromise existent")
-      preloaderSource.promise = this.updateSources(key, preloaderSource, graphFile)
-    } else {
+      return this.updateSources(url, cache, graphFile)
+    } 
+    
+    const { filePrefix } = this
+    if (url.startsWith(filePrefix)) throw Errors.uncached + ' filePromise ' + url
 
-      // console.log(this.constructor.name, "filePromise nonexistent")
-
-      const { filePrefix } = this
-      if (key.startsWith(filePrefix)) throw Errors.uncached + ' filePromise ' + key
-
-      preloaderSource.promise = this.writePromise(graphFile, key).then(() => {
-        return this.updateSources(key, preloaderSource, graphFile)
-      })
-    }
-    return preloaderSource as LoaderFile
+    return this.writePromise(graphFile, url).then(() => {
+      return this.updateSources(url, cache, graphFile)
+    })
   }
 
   getFile(_graphFile: GraphFile): any { throw Errors.unimplemented + 'getFile' }
 
   graphType = GraphType.Mash
 
-  key(graphFile: GraphFile): string {
-    const { type, file, resolved } = graphFile
-    // console.log(this.constructor.name, "key", type, file, resolved)
-    if (resolved) return resolved
-
-    const { definition, ...rest } = graphFile
-
-    assertPopulatedString(file, JSON.stringify(rest))
-
-    const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this
-    if (isLoadType(type)) {
-      if (file.includes('://')) return path.resolve(
-        cacheDirectory, md5(file), `${BasenameCache}${path.extname(file)}`
-      )
-
-      const resolved = path.resolve(filePrefix, defaultDirectory, file)
-      const directories = [defaultDirectory, ...validDirectories]
-      const prefixes = [path.resolve(cacheDirectory), 
-        ...directories.map(dir => path.resolve(filePrefix, dir))
-      ]
-      const valid = prefixes.some(prefix => resolved.startsWith(prefix))
-
-      if (!valid) throw Errors.invalid.url + resolved
-
-      graphFile.resolved = resolved
-      return resolved
-    }
-    const fileName = this.graphFileTypeBasename(type, file) 
-    return path.resolve(cacheDirectory, md5(file), fileName) 
-  }
-
-  private graphFileTypeBasename(type: GraphFileType, file: PopulatedString) {
+  private graphFileTypeBasename(type: GraphFileType, content: PopulatedString) {
     if (type !== GraphFileType.SvgSequence) return `${BasenameCache}.${type}`
-    const fileCount = file.split("\n").length
+    const fileCount = content.split("\n").length
     const digits = String(fileCount).length
     return `%0${digits}.svg`
+  }
+
+  infoPath(key: string): string {
+    return path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
+  }
+
+  key(graphFile: GraphFile): string {
+    const { type, file, content, resolved: key } = graphFile
+    if (key) {
+      // console.log(this.constructor.name, "key RESOLVED", type, file, key)
+      return key
+    }
+    assertPopulatedString(file, 'file')
+
+    const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this
+    if (!isLoadType(type)) {
+
+      if (!type) console.trace(this.constructor.name, "key NOT LOADTYPE", type, file, content)
+
+      // file is clip.id, content contains text of file
+      assertPopulatedString(content, 'content')
+      
+      const fileName = this.graphFileTypeBasename(type, content) 
+      return path.resolve(cacheDirectory, file, fileName) 
+    }
+
+  
+    // file is url, if absolute then use md5 as directory name
+    if (file.includes('://')) {
+      console.log(this.constructor.name, "key LOADTYPE ABSOLUTE", type, file, content)
+      const extname = path.extname(file)
+      const ext = extname || this.typeExtension(type)
+      return path.resolve(
+        cacheDirectory, md5(file), `${BasenameCache}${ext}`
+      )
+    }
+      // console.log(this.constructor.name, "key LOADTYPE NOT ABSOLUTE", type, file)
+
+    const resolved = path.resolve(filePrefix, defaultDirectory, file)
+    const directories = [defaultDirectory, ...validDirectories]
+    const prefixes = [path.resolve(cacheDirectory), 
+      ...directories.map(dir => path.resolve(filePrefix, dir))
+    ]
+    const valid = prefixes.some(prefix => resolved.startsWith(prefix))
+
+    if (!valid) throw Errors.invalid.url + resolved
+
+    graphFile.resolved = resolved
+    return resolved
+    
+  }
+
+
+  protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
+    let cache = this.cacheGet(graphFile, true)
+    assertObject(cache)
+
+    const { definition } = graphFile
+    if (isDefinition(definition)) {
+      const { definitions } = cache 
+      if (!definitions.includes(definition)) definitions.push(definition)
+    }
+    const { promise } = cache
+    assertObject(promise)
+
+    return promise
   }
 
   private remotePromise(key: string, url: string): Promise<void> {
@@ -120,7 +138,15 @@ export class NodeLoader extends LoaderClass {
     return promise
   }
 
-  private updateableDefinitions(preloaderSource: LoaderSource): Definition[] {
+  private typeExtension(type: LoadType): string {
+    switch(type){
+      case LoadType.Font: return '.ttf'
+      case LoadType.Image: return '.png'
+      case LoadType.Audio: return '.mp3'
+      case LoadType.Video: return '.mp4'
+    }
+  }
+  private updateableDefinitions(preloaderSource: LoaderCache): Definition[] {
     const definitions = [...preloaderSource.definitions]
     const preloadableDefinitions = definitions.filter(definition => {
       return isPreloadableDefinition(definition) 
@@ -134,42 +160,38 @@ export class NodeLoader extends LoaderClass {
     })
   }
 
-  private updateSources(key: string, preloaderSource: LoaderSource, graphFile: GraphFile): Promise<void> {
-    const { definitions } = preloaderSource
-    preloaderSource.loaded = true
+  private updateSources(key: string, cache: LoaderCache, graphFile: GraphFile): Promise<any> {
+    const { definitions } = cache
+    cache.loaded = true
     definitions.forEach(definition => {
       if (!isPreloadableDefinition(definition)) return
 
       if (!definition.source.startsWith('http')) {
         definition.source = key
-        definition.urlAbsolute = key
       }
+      return 
     })
 
     const { type } = graphFile
     if (!isLoadType(type)) return Promise.resolve()
 
-    const neededDefinitions = this.updateableDefinitions(preloaderSource)
+    const neededDefinitions = this.updateableDefinitions(cache)
         // console.log(this.constructor.name, "updateSources", neededDefinitions.length)
 
     if (!neededDefinitions.length) return Promise.resolve()
 
-    const preloaderFile = preloaderSource as LoaderFile
+    // const preloaderFile = cache as LoaderCache
 
     const infoPath = this.infoPath(key) 
     // console.log(this.constructor.name, "updateSources", infoPath)
-    return probingInfoPromise(key, infoPath).then(info => {
-      preloaderFile.loadedInfo = info
-      return info
-    }).then(loadedInfo => { this.applyLoadedInfo(graphFile, loadedInfo) })
-  }
+    return probingInfoPromise(key, infoPath).then(loadedInfo => { 
 
-  infoPath(key: string): string {
-    return path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
+      this.updateDefinitions(graphFile, loadedInfo) 
+    })
   }
 
   private writePromise(graphFile: GraphFile, key: string): Promise<void> {
-    const { file, type } = graphFile
+    const { file, type, content } = graphFile
     const dirname = path.dirname(key)
     let promise = fs.promises.mkdir(dirname, { recursive: true }).then(EmptyMethod)
 
@@ -180,9 +202,11 @@ export class NodeLoader extends LoaderClass {
       // local file should already exist!
       throw Errors.uncached + file 
     } 
+    assertPopulatedString(content)
+    
     switch(type) {
       case GraphFileType.SvgSequence: return promise.then(() => {
-        const svgs = file.split("\n")
+        const svgs = content.split("\n")
         const { length } = svgs
         const digits = String(length).length
         return Promise.all(svgs.map((svg, index) => {
@@ -191,10 +215,8 @@ export class NodeLoader extends LoaderClass {
           return fs.promises.writeFile(filePath, svg)
         })).then(EmptyMethod)
       })
-      case GraphFileType.Png: return promise.then(() => {
-        return fs.promises.writeFile(key, Buffer.from(file, 'base64'))
-      })
+      
     }
-    return promise.then(() => fs.promises.writeFile(key, file))
+    return promise.then(() => fs.promises.writeFile(key, content))
   }
 }

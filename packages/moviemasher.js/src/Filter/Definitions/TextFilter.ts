@@ -142,6 +142,7 @@ export class TextFilter extends ColorizeFilter {
     commandFilters.push(colorCommand)
     let filterInput = arrayLast(colorCommand.outputs)
 
+    // console.log(this.constructor.name, "commandFilters", scaling, stretch)
     if (scaling) {
       scaleOptions.width = stretch ? tweenOption(width, sizeEnd.width, position, true) : -1
       scaleOptions.height = tweenOption(height, sizeEnd.height, position, true)

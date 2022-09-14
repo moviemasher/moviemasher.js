@@ -1,14 +1,8 @@
 import {
-  AudibleSource, UnknownObject, LoadedVideo, LoadedAudio} from "../../declarations"
-import { GraphFile } from "../../MoveMe"
+  UnknownObject, LoadedVideo} from "../../declarations"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { Time } from "../../Helpers/Time/Time"
 import { VideoClass } from "./VideoClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
-import { Loader } from "../../Loader/Loader"
-import { AudibleContextInstance } from "../../Context/AudibleContext"
-import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
@@ -32,14 +26,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
     // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
   }
 
-  audibleSource(preloader: Loader): AudibleSource | undefined {
-    const graphFile: GraphFile = {
-      type: LoadType.Audio, file: this.url, definition: this, input: true
-    }
-    const audio: LoadedAudio = preloader.getFile(graphFile)
-   
-    return AudibleContextInstance.createBufferSource(audio)
-  }
 
   instanceFromObject(object: VideoObject = {}): Video {
     return new VideoClass(this.instanceArgs(object))
@@ -51,30 +37,6 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
   
   pattern = '%.jpg'
 
-  private seek(definitionTime: Time, video:HTMLVideoElement): void {
-    if (!video) throw Errors.internal + 'seek'
-
-    video.currentTime = definitionTime.seconds
-  }
-
-  private seekNeeded(definitionTime: Time, video:HTMLVideoElement): boolean {
-    const { currentTime } = video
-    const videoTime = timeFromSeconds(currentTime, definitionTime.fps)
-    return !videoTime.equalsTime(definitionTime)
-  }
-
-  private seekPromise(definitionTime: Time, video:HTMLVideoElement): Promise<void> {
-    const promise:Promise<void> = new Promise(resolve => {
-      if (!this.seekNeeded(definitionTime, video)) return resolve()
-
-      video.onseeked = () => {
-        video.onseeked = null
-        resolve()
-      }
-      this.seek(definitionTime, video)
-    })
-    return promise
-  }
 
   toJSON() : UnknownObject {
     const object = super.toJSON()

@@ -9,10 +9,12 @@ describe("Tween", () => {
     const testCases: DimensionPad[] = [
       ['problem', 480, 480 * 0.25, 1, false, false, 360],
     ]
+    
     test.each(testCases)("%s", (label, outWidth, scaleWidth, scaleX, constrainE, constrainW, result) => {
       expect(tweenPad(outWidth, scaleWidth, scaleX, constrainE, constrainW)).toEqual(result)
     })
   })
+
   describe("tweenScaleSizeToRect", () => {
     type DimensionsTransformToRect = [string, Size, Rect, DirectionObject, Rect]
     const testCases: DimensionsTransformToRect[] = [
@@ -24,9 +26,9 @@ describe("Tween", () => {
         { width: 120, height: 68, x: 360, y: 202 }
       ],
     ]
+
     test.each(testCases)("%s", (label, dimensions, rect, directionObject, result) => {
       expect(tweenScaleSizeToRect(dimensions, rect, directionObject)).toEqual(result)
     })
   })
-  
 })

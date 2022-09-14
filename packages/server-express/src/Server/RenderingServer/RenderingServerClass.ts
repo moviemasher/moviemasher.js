@@ -121,15 +121,6 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     return path.resolve(...components)
   }
 
-  private outputTypeKey(outputType: OutputType): string {
-    switch (outputType) {
-      case OutputType.Image: return 'icon'
-      case OutputType.Video:
-      case OutputType.ImageSequence: return 'url'
-      default: return outputType
-    }
-  }
-
   private populateDefinition(user: string, renderingId: string, definition: DefinitionObject, commandOutputs: CommandOutputs): void {
     const { fileServer } = this
     assertTrue(fileServer)
@@ -173,7 +164,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       } = outInfo
       const outputFilename = renderingOutputFile(index, output)
       const outUrl = path.join(prefix, outputFilename)
-      console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
+      // console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
       switch(outputType) {
         case OutputType.ImageSequence: {
           if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
@@ -297,7 +288,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     assertDefinitionType(type)
 
     const outputs: CommandOutputs = this.definitionTypeCommandOutputs(type)
-    const clipObject = { }
+    const clipObject = {}
     const input: RenderingInput = renderingInput(definitionObject, clipObject)
     const renderingStartRequest: RenderingStartRequest = { 
       ...input, outputs, upload: true 

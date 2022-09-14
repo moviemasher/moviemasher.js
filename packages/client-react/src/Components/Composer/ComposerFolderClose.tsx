@@ -4,7 +4,7 @@ import { LayerFolder, LayerType } from "@moviemasher/moviemasher.js"
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useLayer } from "../../Hooks/useLayer"
 import { Problems } from "../../Setup/Problems"
-import { ComposerContext } from "../../Contexts/ComposerContext"
+import { ComposerContext } from "./ComposerContext"
 
 /**
  * @parents ComposerContent

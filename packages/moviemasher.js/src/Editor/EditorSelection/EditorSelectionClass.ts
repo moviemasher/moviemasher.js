@@ -65,7 +65,7 @@ export class EditorSelectionClass implements EditorSelection {
   }
 
   unset(selectType: SelectType): void {
-    console.log(this.constructor.name, "unset", selectType)
+    // console.log(this.constructor.name, "unset", selectType)
     const selectable = this.object[selectType]
     if (!selectable) return
     const selectables = selectable.selectables()

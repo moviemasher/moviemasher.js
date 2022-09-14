@@ -1,21 +1,20 @@
 import { UnknownObject } from "../../declarations"
-import { idGenerate } from "../../Utility/Id"
+import { idGenerateString } from "../../Utility/Id"
 import { timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { videoInstance } from "./VideoFactory"
 
 describe("Video", () => {
   describe("startOptions", () => {
-    const clipObject = (object: UnknownObject = {}) => ({
-      id: idGenerate(),
-      url: 'file.mp4',
-      duration: 30,
-      frame: 0,
-      frames: 300,
-      trim: 0,
-      ...object
-    })
-
     test("returns expected options", () => {
+      const clipObject = (object: UnknownObject = {}) => ({
+        id: idGenerateString(),
+        url: 'file.mp4',
+        duration: 30,
+        frame: 0,
+        frames: 300,
+        trim: 0,
+        ...object
+      })
       const quantize = 30
       const timeRange = timeRangeFromArgs(0, quantize)
       const zeroClip = videoInstance(clipObject())
@@ -35,9 +34,6 @@ describe("Video", () => {
       const trimOneTiming = trimClip.startOptions(1, timeRange)
       expect(trimOneTiming.start).toEqual(0)
       expect(trimOneTiming.offset).toEqual(2)
-
-    
-
     })
   })
 })

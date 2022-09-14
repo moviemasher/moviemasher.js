@@ -54,6 +54,10 @@ export const EditTypes = Object.values(EditType)
 export const isEditType = (value?: any): value is EditType => {
   return EditTypes.includes(value as EditType)
 }
+export function assertEditType(value: any, name?: string): asserts value is EditType {
+  if (!isEditType(value)) throwError(value, 'EditType', name)
+}
+
 
 export enum AVType {
   Audio = 'audio',
@@ -125,6 +129,36 @@ export const isFillType = (type?: any): type is FillType => {
 }
 
 
+export enum GraphFileType {
+  Svg = 'svg',
+  SvgSequence = 'svgsequence',
+  Txt = 'txt',
+  // Object = 'object'
+}
+
+export const GraphFileTypes = Object.values(GraphFileType)
+export const isGraphFileType = (type?: any): type is GraphFileType => {
+  return isPopulatedString(type) && GraphFileTypes.includes(type as GraphFileType)
+}
+
+export enum LoadType {
+  Audio = 'audio',
+  Font = 'font',
+  Image = 'image',
+  Video = 'video',
+}
+export const LoadTypes = Object.values(LoadType)
+export const isLoadType = (type?: any): type is LoadType => {
+  return isPopulatedString(type) && LoadTypes.includes(type as LoadType)
+}
+export function assertLoadType(value: any, name?: string): asserts value is LoadType {
+  if (!isLoadType(value)) throwError(value, "LoadType", name)
+}
+export const UploadTypes = LoadTypes.filter(type => type !== LoadType.Font)
+export const isUploadType = (type?: any): type is LoadType => {
+  return isLoadType(type) && UploadTypes.includes(type)
+}
+
 export enum DefinitionType {
   Audio = 'audio',
   Clip = 'clip',
@@ -144,8 +178,8 @@ export const isDefinitionType = (type?: any): type is DefinitionType => {
 export function assertDefinitionType(value?: any, message = ''): asserts value is DefinitionType {
   if (!isDefinitionType(value)) throw new Error(`expected '${value}' to be DefinitionType ${message}`)
 }
-export type SizingDefinitionType = DefinitionType.Content | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence
-export const SizingDefinitionTypes = [DefinitionType.Content, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence]
+export type SizingDefinitionType = DefinitionType.Container | DefinitionType.Image | DefinitionType.Video | DefinitionType.VideoSequence
+export const SizingDefinitionTypes = [DefinitionType.Container, DefinitionType.Image, DefinitionType.Video, DefinitionType.VideoSequence]
 export const isSizingDefinitionType = (type?: any): type is SizingDefinitionType => {
   return isDefinitionType(type) && SizingDefinitionTypes.includes(type)
 }
@@ -177,9 +211,6 @@ export function assertContentType(type?: any): asserts type is ContentType {
 
 export type DefinitionTypesObject = Record<string, DefinitionType[]>
 
-
-
-
 export enum DataType {
   Boolean = 'boolean',
   ContainerId = 'containerid',
@@ -207,8 +238,8 @@ export enum Orientation {
   V = 'V',
 }
 export const Orientations = Object.values(Orientation)
-export const isOrientation = (value: any): value is any => {
-  return Orientations.includes(value as Orientation)
+export const isOrientation = (value: any): value is Orientation => {
+  return isPopulatedString(value) && Orientations.includes(value as Orientation)
 }
 
 export enum Direction {
@@ -259,6 +290,7 @@ export enum TransformType {
 
 export enum EventType {
   Action = 'action',
+  Activity = 'activity',
   Added = 'added',
   Cast = 'cast',
   Draw = 'draw',
@@ -270,8 +302,8 @@ export enum EventType {
   Pause = 'pause',
   Play = 'play',
   Playing = 'playing',
-  Activity = 'activity',
   Render = 'render',
+  Resize = 'resize',
   Save = 'save',
   Seeked = 'seeked',
   Seeking = 'seeking',
@@ -286,31 +318,6 @@ export const isEventType = (type?: any): type is EventType => {
   return EventTypes.includes(type as EventType)
 }
 
-
-export enum GraphFileType {
-  Svg = 'svg',
-  SvgSequence = 'svgsequence',
-  Png = 'png',
-  Txt = 'txt',
-}
-
-export enum LoadType {
-  Audio = 'audio',
-  Font = 'font',
-  Image = 'image',
-  Video = 'video',
-}
-export const LoadTypes = Object.values(LoadType)
-export const isLoadType = (type?: any): type is LoadType => {
-  return isPopulatedString(type) && LoadTypes.includes(type as LoadType)
-}
-export function assertLoadType(value: any, name?: string): asserts value is LoadType {
-  if (!isLoadType(value)) throwError(value, "LoadType", name)
-}
-export const UploadTypes = LoadTypes.filter(type => type !== LoadType.Font)
-export const isUploadType = (type?: any): type is LoadType => {
-  return isLoadType(type) && UploadTypes.includes(type)
-}
 
 export enum MoveType {
   Audio = 'audio',

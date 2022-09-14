@@ -18,11 +18,9 @@ import { ClassButton } from "@moviemasher/moviemasher.js"
 import { View } from "../../Utilities/View"
 
 
-export interface  ComposerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
-  noApi?: boolean
-}
-export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerProps> = function (props) {
-  const { className = "panel composer", children:_, noApi, ...rest } = props
+export interface  ComposerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
+export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerProps> = function (props = {}) {
+  const { className = "panel composer", children:_, ...rest } = props
 
   const children = <Panel className={className} {...rest}>
     <View key="head" className='head'>{DefaultIcons.composer}</View>

@@ -77,9 +77,12 @@ export class Defined {
   static install(definition: Definition): Definition {
     const { type, id } = definition
     if (this.installed(id)) {
+      // console.log(this.constructor.name, "install REINSTALL", type, id)
       this.uninstall(definition)
       return this.updateDefinition(this.fromId(id), definition)
     }
+
+    // console.log(this.constructor.name, "install", type, id)
 
     this.byIdAdd(definition)
     this.byType(type).push(definition)
@@ -98,12 +101,16 @@ export class Defined {
   }
 
   static updateDefinition(oldDefinition: Definition, newDefinition: Definition): Definition {
+    // console.log(this.name, "updateDefinition")
+
     this.uninstall(oldDefinition)
     this.install(newDefinition)
     return newDefinition
   }
 
   static updateDefinitionId(oldId: string, newId: string) {
+    // console.log(this.name, "updateDefinitionId", oldId, "->", newId)
+
     const definition = this.byId.get(oldId)
     assertDefinition(definition)
 

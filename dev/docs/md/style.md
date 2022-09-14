@@ -198,6 +198,10 @@ The icon button currently selected in the browser header is painted with the pro
   --border-radius: 5px;
   --drop-size: 2px;
   --progress-width: calc(2 * var(--icon-size));
+  --dropping-shadow: 
+    var(--drop-size) var(--drop-size) 0 0 var(--color-drop) inset,
+    calc(-1 * var(--drop-size)) calc(-1 * var(--drop-size)) 0 0 var(--color-drop) inset;
+  ;
 }
 
 .moviemasher .editor .panel .content {
@@ -303,6 +307,20 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--back-primary);
 }
 
+
+.moviemasher .editor .panel .content .drop-box {
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+
+.moviemasher .editor .panel .content.dropping .drop-box {
+  box-shadow: var(--dropping-shadow);
+}
+
 .moviemasher .editor .panel.collapsed {
   grid-template-rows: var(--header-height);
   flex-grow: 0;
@@ -364,9 +382,6 @@ The icon button currently selected in the browser header is painted with the pro
   pointer-events: none;
 }
 
-.moviemasher .editor .panel .definition div {
-  text-align: center;
-}
 
 .moviemasher .editor .panel .preview label {
   position: absolute;
@@ -490,7 +505,7 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 .moviemasher .editor .panel.browser .dropping {
-  background-color: var(--color-drop);
+  box-shadow: var(--dropping-shadow);
 }
 
 .moviemasher .editor .panel.browser .content {
@@ -600,13 +615,9 @@ The icon button currently selected in the browser header is painted with the pro
   background-color: var(--fore-secondary-demote);
 }
 
-.moviemasher .editor .panel.timeline .content .timeline-sizer {
-  pointer-events: none;
-  position: absolute;
+.moviemasher .editor .panel.timeline .content .drop-box {
   top: var(--scrubber-height);
   left: var(--track-width);
-  bottom: 0px;
-  right: 0px;
 }
 
 .moviemasher .editor .panel.timeline .content .track {
@@ -711,27 +722,23 @@ The icon button currently selected in the browser header is painted with the pro
   flex-grow: 1;
 }
 
+
 .moviemasher .editor .panel.player .content {
   width: var(--preview-width);
   height: var(--preview-height);
   margin-inline: auto;
   color: var(--color-fore-tertiary);
+  position: relative;
 }
 
 
-.moviemasher .editor .panel.player .dropping {
-  box-shadow:
-    0 var(--drop-size) 0 0 var(--color-drop),
-    0 calc(-1 * var(--drop-size)) 0 0 var(--color-drop)
-  ;
-}
-.moviemasher .editor .panel.player .content svg .outline {
+.moviemasher .editor .panel.player .content > svg .outline {
   cursor: move;
   pointer-events: fill;
   stroke-width: 0;
 }
 
-.moviemasher .editor .panel.player .content svg .outline.animate:hover {
+.moviemasher .editor .panel.player .content > svg .outline.animate:hover {
   stroke-width: calc(2 * var(--border-size));
   stroke-dasharray: 4px;
   stroke-dashoffset: 8px;
@@ -744,45 +751,45 @@ The icon button currently selected in the browser header is painted with the pro
 @keyframes color { to {  stroke: black } }
 @keyframes stroke { to { stroke-dashoffset: 0; } }
 
-.moviemasher .editor .panel.player .content svg .handle.bounds.ne {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.ne {
   cursor: ne-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.se {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.se {
   cursor: se-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.nw {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.nw {
   cursor: nw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.sw {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.sw {
   cursor: sw-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.n {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.n {
   cursor: n-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.s {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.s {
   cursor: s-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.e {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.e {
   cursor: e-resize;
 }
-.moviemasher .editor .panel.player .content svg .handle.bounds.w {
+.moviemasher .editor .panel.player .content > svg .handle.bounds.w {
   cursor: w-resize;
 }
 
-.moviemasher .editor .panel.player .content svg .bounds {
+.moviemasher .editor .panel.player .content > svg .bounds {
   fill: white;
 }
 
-.moviemasher .editor .panel.player .content svg .bounds.active {
+.moviemasher .editor .panel.player .content > svg .bounds.active {
   pointer-events: fill;
   fill: transparent;
 }
 
 @supports (-moz-appearance:none) {
-  .moviemasher .player.panel .content svg .filtered {
+  .moviemasher .player.panel .content > svg .filtered {
     filter: none;
   }
-  .moviemasher .player.panel .content svg use.mozilla  {
+  .moviemasher .player.panel .content > svg use.mozilla  {
     stroke-width: var(--border-size);
     stroke: black;
     fill: white;
@@ -790,7 +797,7 @@ The icon button currently selected in the browser header is painted with the pro
 }
 
 @supports not (-moz-appearance:none) {
-  .moviemasher .player.panel .content svg use.mozilla {
+  .moviemasher .player.panel .content > svg use.mozilla {
     display: none;
   }
 }
@@ -814,11 +821,14 @@ The icon button currently selected in the browser header is painted with the pro
   line-height: var(--icon-size);
   font-size: var(--icon-size);
   padding: var(--spacing);
+  background-color: initial;
 }
 .moviemasher .editor .panel.inspector .content .start-end {
   display: flex;
   float: right;
 }
+
+
 
 .moviemasher .editor .panel.inspector .content fieldset > legend {
   display: grid;
@@ -838,10 +848,6 @@ The icon button currently selected in the browser header is painted with the pro
 
 .moviemasher .editor .panel.inspector .content fieldset > div.point {
   grid-template-columns: repeat(2, var(--icon-size)) minmax(50px, 1fr) var(--icon-size);
-}
-.moviemasher .editor .panel.inspector .content .opacity,
-.moviemasher .editor .panel.inspector .content .color {
-  
 }
 
 .moviemasher .editor .panel.inspector .content {
@@ -923,7 +929,7 @@ The icon button currently selected in the browser header is painted with the pro
 
 
 .moviemasher .editor .panel.inspector .dropping {
-  background-color: var(--color-drop);
+  box-shadow: var(--dropping-shadow);
 }
 ```
 <!-- MAGIC:END -->
