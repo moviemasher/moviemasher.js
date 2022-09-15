@@ -1,7 +1,9 @@
 import React from "react"
 import {
   DataMashRetrieveRequest, DataRetrieveResponse, DataGetRequest,
-  Endpoints, EventType, MasherAction, ServerType, DataCastGetResponse, DataMashGetResponse, DescribedObject, isEventType, isSelectType, assertObject, isPopulatedString, LabelAndId, labels, labelTranslate, isPopulatedObject, isPositive, assertPopulatedObject, labelInterpolate
+  Endpoints, EventType, MasherAction, ServerType, DataCastGetResponse, 
+  DataMashGetResponse, isEventType, isSelectType, assertObject, 
+  isPopulatedString, LabelAndId, isPositive,
 } from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult } from "../../declarations"
@@ -9,6 +11,7 @@ import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
 import { ApiContext } from "../ApiClient/ApiContext"
 import { InspectorContext } from "../Inspector/InspectorContext"
+import { labelInterpolate, labelTranslate } from "../../Utilities/Label"
 
 export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
   const editor = useEditor()

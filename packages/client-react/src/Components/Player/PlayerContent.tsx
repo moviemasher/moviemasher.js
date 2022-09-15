@@ -18,6 +18,7 @@ import { assertDragDefinitionObject, dragData, dragType, dragTypes,
 import { PlayerContext } from './PlayerContext'
 
 export interface PlayerContentProps extends PropsWithChildren, WithClassName {}
+const PlayerRefreshRate = 100
 
 /**
  * @parents Player
@@ -56,23 +57,19 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const requestItems = () => {
-    const { current } = svgRef
-    assertObject(current)
-    
-    // const { rect } = editor
-    const callId = idGenerate('svgItems')
-    // console.log("PlayerContent.requestItems...", callId)
-    return editor.svgItems(disabled).then(svgs => {
-      // console.log("PlayerContent.requestItems!", callId)
-      // current.replaceChildren()
+  const requestItems = (): Promise<void> => {
+
+    const { redraw } = watching
+    delete watching.timeout 
+    delete watching.redraw 
+
+    return editor.svgItems(!disabled).then(svgs => {
+      const { current } = svgRef
+      assertObject(current)
+   
       current.replaceChildren(...svgs)
-      watching.drawing = false
-      if (watching.redraw) handleDraw()
-        // else 
-      return callId
+      if (redraw) handleDraw()
     })
-    
   }
 
   const handleDraw = () => { 
@@ -80,14 +77,23 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     const { rect } = editor
     if (!(current && sizeAboveZero(rect))) return
 
-    if (watching.drawing) {
+
+    if (watching.timeout) {
       watching.redraw = true
       return
     }
-    watching.drawing = true
-    watching.redraw = false
+    // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
+    watching.timeout = setTimeout(requestItems, PlayerRefreshRate)
 
-    requestItems()//.then(callId => console.log("PlayerContent.handleDraw resolved", callId))
+
+    // if (watching.drawing) {
+    //   watching.redraw = true
+    //   return
+    // }
+    // watching.drawing = true
+    // watching.redraw = false
+
+    // requestItems()//.then(callId => console.log("PlayerContent.handleDraw resolved", callId))
   }
 
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })

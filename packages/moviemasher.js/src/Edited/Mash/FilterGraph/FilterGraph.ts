@@ -7,7 +7,7 @@ import { Mash } from "../Mash"
 
 export interface FilterGraphArgs {
   visible?: boolean
-  backcolor: string
+  background: string
   mash: Mash
   size: Size
   streaming?: boolean
@@ -16,7 +16,7 @@ export interface FilterGraphArgs {
 }
 
 export interface FilterGraph {
-  backcolor: string
+  background: string
   commandFiles: CommandFiles
   commandFilters: CommandFilters
   commandInputs: CommandInputs

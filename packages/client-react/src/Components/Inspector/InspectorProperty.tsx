@@ -23,9 +23,9 @@ export interface InspectorPropertyProps extends PropsWithoutChild, WithClassName
  */
 export function InspectorProperty(props: InspectorPropertyProps): ReactResult {
   const { 
-    defaultValue: propsDefault, changeHandler, time, property, value, name, 
-    ...rest 
+    defaultValue: propsDefault, changeHandler, time, property, value, name
   } = props
+  
   const { type, defaultValue: propertyDefault } = property
   const defaultValue = isDefined(propsDefault) ? propsDefault : propertyDefault
   const inputContext = { 

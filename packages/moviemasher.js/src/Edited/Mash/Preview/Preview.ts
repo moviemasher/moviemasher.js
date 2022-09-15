@@ -10,7 +10,7 @@ import { SvgItem, SvgItems } from "../../../declarations"
 export interface PreviewOptions  {
   editor?: Editor
   time?: Time
-  backcolor?: string
+  background?: string
 }
 
 export interface PreviewArgs extends PreviewOptions {
@@ -22,16 +22,16 @@ export interface PreviewArgs extends PreviewOptions {
 }
 
 export interface Preview extends GraphFileOptions {
-  svgItemsPromise: Promise<SvgItems>
-  svgItemPromise: Promise<SvgItem>
+  audible: boolean
+  duration: number
   editing: boolean
   editor?: Editor
-  size: Size
-  selectedClip?: Clip
-  time: Time
-  duration: number
-  audible: boolean
-  visible: boolean
   preloader: Loader
   quantize: number
+  selectedClip?: Clip
+  size: Size
+  svgItemPromise: Promise<SvgItem>
+  svgItemsPromise: Promise<SvgItems>
+  time: Time
+  visible: boolean
 }

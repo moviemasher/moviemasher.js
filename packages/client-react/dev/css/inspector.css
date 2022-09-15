@@ -14,10 +14,10 @@
   display: flex;
   float: right;
 }
-
-
-
 .moviemasher .editor .panel.inspector .content fieldset > legend {
+  width: 100%;
+}
+.moviemasher .editor .panel.inspector .content fieldset > legend > div {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr min-content;
@@ -31,6 +31,10 @@
 }
 .moviemasher .editor .panel.inspector .content fieldset > div.size {
   grid-template-columns: var(--icon-size) minmax(50px, 1fr) var(--icon-size);
+}
+
+.moviemasher .editor .panel.inspector .content fieldset > div.timing {
+  grid-template-columns: var(--icon-size) minmax(50px, 1fr);
 }
 
 .moviemasher .editor .panel.inspector .content fieldset > div.point {

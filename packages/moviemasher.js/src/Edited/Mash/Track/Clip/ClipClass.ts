@@ -1,16 +1,16 @@
 import { Clip, ClipDefinition, ClipObject, IntrinsicOptions } from "./Clip"
 import { InstanceBase } from "../../../../Instance/InstanceBase"
 
-import { assertContainer, Container, ContainerDefaultId, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
+import { assertContainer, Container, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
 import { Defined } from "../../../../Base/Defined"
-import { assertContent, Content, ContentDefaultId, ContentObject, isContent } from "../../../../Content/Content"
+import { assertContent, Content, ContentObject, isContent } from "../../../../Content/Content"
 import { Property } from "../../../../Setup/Property"
 import { Scalar, SvgItems, SvgItemsTuple, SvgOrImage, UnknownObject } from "../../../../declarations"
 import { GraphFileArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
 import { SelectedItems } from "../../../../Utility/SelectedProperty"
-import { ActionType, DataType, DefinitionType, isDefinitionType, isSizingDefinitionType, isTimingDefinitionType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
+import { ActionType, DataType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
 import { Actions } from "../../../../Editor/Actions/Actions"
-import { assertAboveZero, assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive } from "../../../../Utility/Is"
+import { assertAboveZero, assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedString, isPositive } from "../../../../Utility/Is"
 import { isColorContent } from "../../../../Content"
 import { arrayLast } from "../../../../Utility/Array"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
@@ -19,16 +19,17 @@ import { timeFromArgs, timeRangeFromArgs } from "../../../../Helpers/Time/TimeUt
 import { Selectables } from "../../../../Editor/Selectable"
 import { assertSizeAboveZero, Size, sizeCover, sizeEven, sizesEqual } from "../../../../Utility/Size"
 import { Tweening } from "../../../../Utility/Tween"
-import { pointCopy, pointsEqual, PointZero } from "../../../../Utility/Point"
-import { assertTweenable, isUpdatableDuration, isUpdatableSize, Tweenable } from "../../../../Mixin"
+import { pointsEqual, PointZero } from "../../../../Utility/Point"
+import { assertTweenable, isUpdatableSize, Tweenable } from "../../../../Mixin"
 import { Default } from "../../../../Setup/Default"
 import { Rect, rectsEqual, RectTuple } from "../../../../Utility/Rect"
 import { svgAddClass, svgAppend, svgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSetDimensions, svgUseElement } from "../../../../Utility/Svg"
 import { pixelToFrame } from "../../../../Utility/Pixel"
 import { colorWhite } from "../../../../Utility/Color"
-import { idGenerate, idGenerateString } from "../../../../Utility/Id"
+import { idGenerateString } from "../../../../Utility/Id"
 import { Preview, PreviewArgs } from "../../Preview/Preview"
 import { PreviewClass } from "../../Preview/PreviewClass"
+import { isAudio } from "../../../../Media/Audio/Audio"
 
 export class ClipClass extends InstanceBase implements Clip {
   constructor(...args: any[]) {
@@ -39,19 +40,20 @@ export class ClipClass extends InstanceBase implements Clip {
     this.contentInitialize(content || {})
   }
 
-  private assureTimingAndSizing(timing: Timing, sizing: Sizing, type: DefinitionType) {
-    const { timing: myTiming, sizing: mySizing, containerId, contentId } = this
-    const containerOk = containerId !== ContainerDefaultId
-    const contentOk = contentId !== ContentDefaultId
+  private assureTimingAndSizing(timing: Timing, sizing: Sizing, tweenable: Tweenable) {
+    const { type } = tweenable
+    const { timing: myTiming, sizing: mySizing, containerId } = this
+    // const containerOk = containerId !== ContainerDefaultId
+    // const contentOk = contentId !== ContentDefaultId
 
     let timingOk = myTiming !== timing
     let sizingOk = mySizing !== sizing
 
-    timingOk ||= isTimingDefinitionType(type)
-    sizingOk ||= isSizingDefinitionType(type)
+    timingOk ||= tweenable.hasIntrinsicTiming
+    sizingOk ||= tweenable.hasIntrinsicSizing
 
-    timingOk ||= timing === Timing.Container ? containerOk : contentOk
-    sizingOk ||= sizing === Sizing.Container ? containerOk : contentOk
+    // timingOk ||= timing === Timing.Container ? containerOk : contentOk
+    // sizingOk ||= sizing === Sizing.Container ? containerOk : contentOk
 
     if (!timingOk) {
       if (timing === Timing.Content && containerId) {
@@ -62,7 +64,7 @@ export class ClipClass extends InstanceBase implements Clip {
     if (!sizingOk) {
       if (sizing === Sizing.Content && containerId) {
         this.sizing = Sizing.Container 
-      } else this.sizing =  Sizing.Preview
+      } else this.sizing = Sizing.Preview
       // console.log(this.constructor.name, "assureTimingAndSizing setting sizing", type, isSizingDefinitionType(type), mySizing, "->", this.sizing)
     }
     return !(sizingOk && timingOk)
@@ -240,15 +242,17 @@ export class ClipClass extends InstanceBase implements Clip {
     const definition = Defined.fromId(definitionId)
     const { type } = definition
 
-    this.assureTimingAndSizing(Timing.Container, Sizing.Container, type)
-
     const object: ContainerObject  = { ...containerObject, definitionId, container: true }
     const instance = definition.instanceFromObject(object)
     assertContainer(instance)
 
+
+    this.assureTimingAndSizing(Timing.Container, Sizing.Container, instance)
+
     instance.clip = this
 
-    if (this.timing === Timing.Container && this._track) this.resetDuration(instance)
+    if (this.timing === Timing.Container && this._track) this.resetTiming(instance)
+    
     // console.log(this.constructor.name, "containerInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._container = instance
   }
@@ -258,26 +262,27 @@ export class ClipClass extends InstanceBase implements Clip {
   private _content?: Content
   get content() { return this._content || this.contentInitialize() }
   private contentInitialize(contentObject: ContentObject = {}) {
-    const { contentId, containerId } = this
+    const { contentId } = this
     const definitionId = contentId || contentObject.definitionId
     assertPopulatedString(definitionId)
 
     const definition = Defined.fromId(definitionId)
     const { type } = definition
-    if (this.assureTimingAndSizing(Timing.Content, Sizing.Content, type)) {
-      const { container } = this
-      if (container) {
-        this.assureTimingAndSizing(Timing.Container, Sizing.Container, container.type)
-      }
-    }
 
     const object: ContentObject = { ...contentObject, definitionId }
     const instance = definition.instanceFromObject(object)
     assertContent(instance)
 
+    if (this.assureTimingAndSizing(Timing.Content, Sizing.Content, instance)) {
+      const { container } = this
+      if (container) {
+        this.assureTimingAndSizing(Timing.Container, Sizing.Container, container)
+      }
+    }
+
     instance.clip = this
 
-    if (this.timing === Timing.Content && this._track) this.resetDuration(instance)
+    if (this.timing === Timing.Content && this._track) this.resetTiming(instance)
     // console.log(this.constructor.name, "contentInitialize", object, instance.constructor.name, instance.definitionId, instance.type)
     return this._content = instance
   }
@@ -360,6 +365,67 @@ export class ClipClass extends InstanceBase implements Clip {
 
     return !container.muted
   }
+    
+  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple> {
+    assertSizeAboveZero(size)
+    // TODO: make luminance a property of container...
+    const luminance = true
+
+   
+    const timeRange = this.timeRange(this.track.mash.quantize)
+    const svgTime = time || timeRange.startTime
+    const { container, content, id } = this
+    assertContainer(container)
+    
+    const containerRectArgs: ContainerRectArgs = {
+      size, time: svgTime, timeRange, editing: true,
+    }
+    const containerRects = this.rects(containerRectArgs)
+    assertTrue(rectsEqual(...containerRects))
+
+    const [containerRect] = containerRects
+
+    const containerPromise = container.containerPreviewItemPromise(containerRect, svgTime, timeRange, icon)
+    return containerPromise.then(containerItem => {
+      const defs: SvgItems = [containerItem]
+
+      let containerId = idGenerateString() 
+      const updatable = isUpdatableSize(container)
+      if (!icon && updatable) {
+        // container is image/video so we need to add a polygon for hover
+        const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
+        polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;')
+        defs.push(polygonElement)
+        containerId = idGenerateString()
+      }
+      containerItem.setAttribute('id', containerId)
+      
+      return content.contentPreviewItemPromise(containerRect, svgTime, timeRange, icon).then(contentItem => {
+        assertObject(contentItem)
+        const group = svgGroupElement()
+        svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem])
+        const items: SvgItems = [group]
+      
+        svgAddClass(group, 'contained')
+        const maskElement = svgMaskElement(undefined, group, luminance)
+        defs.push(maskElement)
+
+        const useContainerInMask = svgUseElement(containerId)
+        maskElement.appendChild(useContainerInMask)
+        if (!updatable) {
+          containerItem.setAttribute('vector-effect', 'non-scaling-stroke;')
+          useContainerInMask.setAttribute('fill', colorWhite)
+        }
+        const containerSvgFilters = container.containerSvgFilters(size, containerRect, svgTime, timeRange)
+        if (containerSvgFilters.length) {
+          const filter = svgFilterElement(containerSvgFilters, containerItem)
+          defs.push(filter)
+        }
+        const tuple: SvgItemsTuple = [defs, items]
+        return tuple
+      })
+    })
+  }
 
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
     const rect = { ...size, ...PointZero }
@@ -387,8 +453,7 @@ export class ClipClass extends InstanceBase implements Clip {
     return container.containerRects(args, intrinsicRect)
   }
 
-
-  resetDuration(tweenable?: Tweenable, quantize?: number): void {
+  resetTiming(tweenable?: Tweenable, quantize?: number): void {
     const { timing } = this
     // console.log("resetDuration", timing)
     const track = this._track
@@ -456,6 +521,11 @@ export class ClipClass extends InstanceBase implements Clip {
       case DataType.ContentId: return false
     }
     switch(name) {
+      case 'sizing': return !isAudio(this.content)
+      case 'timing': {
+        if (this.content.hasIntrinsicTiming) break
+        return !!this.container?.hasIntrinsicSizing
+      }
       case 'frame': return !this.track.dense
       case 'frames': return this.timing === Timing.Custom
     }
@@ -476,67 +546,6 @@ export class ClipClass extends InstanceBase implements Clip {
         break
       }
     }
-  }
-    
-  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple> {
-    assertSizeAboveZero(size)
-    // TODO: make luminance a property of container...
-    const luminance = true
-
-   
-    const timeRange = this.timeRange(this.track.mash.quantize)
-    const svgTime = time || timeRange.startTime
-    const { container, content, id } = this
-    assertContainer(container)
-    
-    const containerRectArgs: ContainerRectArgs = {
-      size, time: svgTime, timeRange, editing: true,
-    }
-    const containerRects = this.rects(containerRectArgs)
-    assertTrue(rectsEqual(...containerRects))
-
-    const [containerRect] = containerRects
-
-    const containerPromise = container.containerPreviewItemPromise(containerRect, svgTime, timeRange, icon)
-    return containerPromise.then(containerItem => {
-      const defs: SvgItems = [containerItem]
-
-      let containerId = idGenerateString() 
-      const updatable = isUpdatableSize(container)
-      if (!icon && updatable) {
-        // container is image/video so we need to add a polygon for hover
-        const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
-        polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;')
-        defs.push(polygonElement)
-        containerId = idGenerateString()
-      }
-      containerItem.setAttribute('id', containerId)
-      
-      return content.contentPreviewItemPromise(containerRect, svgTime, timeRange, icon).then(contentItem => {
-        assertObject(contentItem)
-        const group = svgGroupElement()
-        svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem])
-        const items: SvgItems = [group]
-      
-        svgAddClass(group, 'contained')
-        const maskElement = svgMaskElement(size, group, luminance)
-        defs.push(maskElement)
-
-        const useContainerInMask = svgUseElement(containerId)
-        maskElement.appendChild(useContainerInMask)
-        if (!updatable) {
-          containerItem.setAttribute('vector-effect', 'non-scaling-stroke;')
-          useContainerInMask.setAttribute('fill', colorWhite)
-        }
-        const containerSvgFilters = container.containerSvgFilters(size, containerRect, svgTime, timeRange)
-        if (containerSvgFilters.length) {
-          const filter = svgFilterElement(containerSvgFilters, containerItem)
-          defs.push(filter)
-        }
-        const tuple: SvgItemsTuple = [defs, items]
-        return tuple
-      })
-    })
   }
 
   declare sizing: Sizing

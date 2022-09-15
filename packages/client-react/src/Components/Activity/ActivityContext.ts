@@ -1,11 +1,9 @@
 import React from 'react'
-
 import { 
-  ActivityInfo, ActivityType, EmptyMethod, isObject, isPopulatedString, 
-  labelInterpolate, 
-  labelTranslate, 
-  throwError 
+  ActivityInfo, EmptyMethod, isObject, isPopulatedString, throwError,
 } from '@moviemasher/moviemasher.js'
+
+import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 
 export const activityLabel = (info: any): string => {
   if (!isObject(info)) return ''
@@ -27,8 +25,6 @@ export const activityLabel = (info: any): string => {
   // if (label) return label
   return labelTranslate(type)
 }
-
-
 
 export enum ActivityGroup {
   Active = 'active',

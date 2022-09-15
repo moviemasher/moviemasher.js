@@ -13,9 +13,10 @@ import { PlayerProps } from './Player'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
-import { ClassButton, labelTranslate } from '@moviemasher/moviemasher.js'
+import { ClassButton } from '@moviemasher/moviemasher.js'
 import { PlayerTime } from './PlayerTime'
 import { View } from '../../Utilities/View'
+import { labelTranslate } from '../../Utilities/Label'
 
 export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 

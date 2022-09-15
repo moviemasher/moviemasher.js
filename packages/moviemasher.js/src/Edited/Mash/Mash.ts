@@ -79,7 +79,6 @@ export interface Mash extends Edited {
 
 export type Mashes = Mash[]
 
-
 export const isMash = (value: any): value is Mash => {
   return isObject(value) && "composition" in value
 }

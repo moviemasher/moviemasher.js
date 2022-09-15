@@ -127,10 +127,10 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     </View>
   ]
   const elements = [
-    <View key="width" className='size' children={[DefaultIcons.horz, elementsByName.width, lockWidth]} />, 
-    <View key="height" className='size' children={[DefaultIcons.vert, elementsByName.height, lockHeight]} />
+    <View key="width" className='size' children={[DefaultIcons.width, elementsByName.width, lockWidth]} />, 
+    <View key="height" className='size' children={[DefaultIcons.height, elementsByName.height, lockHeight]} />
   ]
-  return <fieldset><legend>{legendElements}</legend>{elements}</fieldset>
+  return <fieldset><legend><View>{legendElements}</View></legend>{elements}</fieldset>
 }
 
 DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-group-input" />

@@ -19,13 +19,13 @@ export const FilterGraphInputAudible = 'SILENCE'
 
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
-    const { mash, backcolor, size, time, streaming, videoRate, visible } = args
+    const { mash, background, size, time, streaming, videoRate, visible } = args
     assertMash(mash)
 
     this.mash = mash
     this.time = time
     this.videoRate = videoRate 
-    this.backcolor = backcolor
+    this.background = background
     this.size = size
     // console.log(this.constructor.name, this.id, "size", size)
     // console.log(this.constructor.name, this.id, "visible", visible)
@@ -39,12 +39,12 @@ export class FilterGraphClass implements FilterGraph {
   get id() { return this._id ||= idGenerate('filtergraph')}
   get avType() { return this.visible ? AVType.Video : AVType.Audio }
 
-  backcolor: string 
+  background: string 
 
   private get commandFilterVisible(): CommandFilter {
-    const { duration, videoRate: rate, backcolor, size } = this
+    const { duration, videoRate: rate, background, size } = this
     // console.log(this.constructor.name, this.id, "commandFilterVisible size", size)
-    const color = backcolor || colorTransparent
+    const color = background || colorTransparent
     const colorCommandFilter: CommandFilter = {
       ffmpegFilter: 'color',
       options: { color, rate, size: `${size.width}x${size.height}` },

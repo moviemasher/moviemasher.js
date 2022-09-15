@@ -13,7 +13,7 @@ const DefaultEditorArgs: EditorArgs = {
 const DefaultMash = {
   label: "Mash",
   quantize: 10,
-  backcolor: colorBlack,
+  color: colorBlack,
   gain: 0.75,
   buffer: 10,
 }
@@ -21,7 +21,7 @@ const DefaultMash = {
 const DefaultCast = {
   label: "Cast",
   quantize: 10,
-  backcolor: colorBlack,
+  color: colorBlack,
   gain: 0.75,
   buffer: 10,
 }

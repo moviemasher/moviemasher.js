@@ -33,21 +33,11 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       super(...args)
       const [object] = args
       const { effects, container } = object as TweenableObject
-      if (container) {
-        // console.log(this.constructor.name, "TweenableMixin container", container)
-        this.container = true
-      }
-      if (container || !this.isDefault) {
-        this.addProperties(object, propertyInstance({
-          name: 'lock', type: DataType.String, defaultValue: Orientation.H,
-          group: DataGroup.Size, 
-        }))  
-      }
+      if (container) this.container = true
      
-      if (effects) this.effects.push(...effects.map(effectObject => {
-        const effect = effectInstance(effectObject)
-        return effect
-      }))
+      if (effects) this.effects.push(...effects.map(effectObject => 
+        effectInstance(effectObject)
+      ))
     }
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -258,6 +248,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     graphFiles(args: GraphFileArgs): GraphFiles { return [] }
 
+    hasIntrinsicSizing = false
+
+    hasIntrinsicTiming = false
+
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       throw new Error(Errors.unimplemented)
     }
@@ -359,12 +353,9 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       
       const { name } = property
       const undoValues: ScalarObject = { timing, sizing, [name]: undoValue }
-
       const values: ScalarObject = { ...undoValues }
-
       const relevantTiming = container ? Timing.Container : Timing.Content
       const relevantSizing = container ? Sizing.Container : Sizing.Content
-
       const timingBound = timing === relevantTiming
       const sizingBound = sizing === relevantSizing 
      
@@ -394,7 +385,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       })
 
       // add my actual properties
-      this.properties.forEach(property => {
+      const { properties } = this
+      const props = properties.filter(property => this.selectedProperty(property))
+
+      props.forEach(property => {
         selectedItems.push(...this.selectedProperties(actions, property))
       })
 
@@ -448,9 +442,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     }
 
     selectedProperties(actions: Actions, property: Property): SelectedProperties {
-      const selectedProperties: SelectedProperties = []
+      const properties: SelectedProperties = []
       const { name, tweenable, type: dataType } = property
-      if (name === 'muted' && !this.mutable()) return selectedProperties 
       
       const { selectType } = this
       const undoValue = this.value(name)
@@ -464,7 +457,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
         }
       }
       // console.log(this.constructor.name, "selectedProperties", name)
-      selectedProperties.push(selectedProperty)
+      properties.push(selectedProperty)
       if (tweenable) {
         const tweenName = [name, PropertyTweenSuffix].join('')
         const target = this
@@ -476,17 +469,18 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
           }
         }
         // console.log(this.constructor.name, "selectedProperties", tweenName)
-        selectedProperties.push(selectedPropertEnd)
+        properties.push(selectedPropertEnd)
       }
-
-      return selectedProperties
+      return properties
     }
-    
-    // private _setsarFilter?: Filter
-    // private get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar') }
 
-    // private _setptsFilter?: Filter
-    // private get setptsFilter() { return this._setptsFilter ||= filterFromId('setpts')}
+    selectedProperty(property: Property): boolean {
+      const { name } = property
+      switch(name) {
+        case 'muted': return this.mutable()
+      }
+      return true
+    }
 
     toJSON(): UnknownObject {
       const json = super.toJSON()

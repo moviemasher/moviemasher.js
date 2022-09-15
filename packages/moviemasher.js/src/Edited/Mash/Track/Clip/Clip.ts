@@ -56,7 +56,7 @@ export interface Clip extends Instance, Selectable {
   muted: boolean
   notMuted: boolean
   rects(args: ContainerRectArgs): RectTuple
-  resetDuration(tweenable?: Tweenable, quantize?: number): void
+  resetTiming(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing
   previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple>
   time(quantize : number) : Time

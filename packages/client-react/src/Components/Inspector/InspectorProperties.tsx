@@ -7,6 +7,8 @@ import { PropsWithoutChild, ReactResult, WithClassName } from "../../declaration
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "./InspectorContext"
 import { DataGroupInputs } from "./Inputs/DataGroupInputs/DataGroupInputs"
+import { View } from "../../Utilities/View"
+import { DefaultIcons } from "@moviemasher/icons-default"
 
 export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {
   selectedItems?: SelectedItems
@@ -46,7 +48,19 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
         property, value, changeHandler, name, 
         ...props
       }
-      ungroupedInputs.push(<InspectorProperty {...propertyProps} />)
+      const icon = DefaultIcons[name]
+      const inspectorProperty = <InspectorProperty {...propertyProps} />
+      if (icon) {
+        const viewChildren = [inspectorProperty]
+        viewChildren.unshift(icon)
+        const viewProps = {
+          children: viewChildren,
+          className: "row",
+        }
+
+        ungroupedInputs.push(<View { ...viewProps } />)    
+      } else ungroupedInputs.push(inspectorProperty)    
+      
     } else {
       const effectsProps = {
         key: "inspector-effects",

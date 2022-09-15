@@ -1,8 +1,8 @@
 import { PropertyTweenSuffix } from "../../Base"
 import { SvgItem } from "../../declarations"
-import { centerPoint, Rect, rectsEqual, rectString } from "../../Utility/Rect"
+import { Rect, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { DataType, Orientation } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
@@ -14,10 +14,9 @@ import { Tweening, tweenMaxSize } from "../../Utility/Tween"
 import { colorBlack, colorBlackOpaque } from "../../Utility/Color"
 import { PointZero } from "../../Utility/Point"
 import { ContentRectArgs } from "../../Content/Content"
-import { assertSizeAboveZero, Size, sizeAboveZero, sizeCopy, sizeFromElement, sizeString } from "../../Utility/Size"
+import { assertSizeAboveZero, Size, sizeAboveZero, sizeCopy } from "../../Utility/Size"
 import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { BrowserLoaderClass } from "../../Loader/BrowserLoaderClass"
-import { svgElement, svgSetDimensions, svgSetDimensionsLock, svgSetTransformPoint } from "../../Utility/Svg"
+import { svgSetDimensionsLock } from "../../Utility/Svg"
 import { urlPrependProtocol } from "../../Utility/Url"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
@@ -180,6 +179,8 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
     declare definition: UpdatableSizeDefinition
 
+    hasIntrinsicSizing = true
+    
     iconUrl(size: Size, time: Time, clipTime: TimeRange): string {
       return this.definition.url
     }

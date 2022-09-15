@@ -434,7 +434,7 @@ export const generateTests = (generateOptions: GenerateOptions, testId = 'all', 
   const tracks: TrackObject[] = [{ clips }]
   if (labels) tracks.push({ clips: labelClips, dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: '#666666', tracks 
+    id: testId, color: '#666666', tracks 
   }
   return [testId, mash]
 }
@@ -444,7 +444,7 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash: MashObject = { 
-    id: testId, backcolor: '#666666', tracks 
+    id: testId, color: '#666666', tracks 
   }
   return [testId, mash]
 }

@@ -1,5 +1,7 @@
 import React from 'react'
-
+import { 
+  AiOutlineColumnWidth,
+} from 'react-icons/ai'
 import { 
   RiMusic2Fill,
   RiFilmFill,
@@ -39,6 +41,7 @@ import {
   MdOutlineTextFields, 
   MdOutlineTimelapse,
   MdOpacity, MdLabel,
+  MdOutlineSpeed,
 } from 'react-icons/md'
 import { 
   IoMdColorFill,
@@ -49,16 +52,19 @@ import {
 import { 
   BsSkipStartFill, BsSkipEndFill,
   BsReverseLayoutSidebarInsetReverse, 
-  BsSkipEnd,
+  BsSkipEnd, BsAspectRatioFill,  
+  BsAlignStart, BsAlignEnd,
  } from 'react-icons/bs'
 import { 
   FaUserCircle,
   FaExclamationCircle,
   FaRegCheckCircle,
 } from 'react-icons/fa'
+
+
 import { BiShapeTriangle, BiBorderOuter, BiBorderInner } from 'react-icons/bi'
 import { GiDirectorChair } from 'react-icons/gi'
-import { TbActivityHeartbeat } from 'react-icons/tb'
+import { TbActivityHeartbeat, TbArrowAutofitWidth, TbArrowAutofitHeight } from 'react-icons/tb'
 import { TiZoomOutOutline, TiZoomInOutline } from 'react-icons/ti'
 import { 
   GiMove, GiResize, 
@@ -74,7 +80,7 @@ import { MMTubeIcon } from '../Icons/MMTubeIcon'
 import { MMWideIcon } from '../Icons/MMWideIcon'
 import { MMIcon } from '../Icons/MMIcon'
 
-export const DefaultIcons = {
+export const DefaultIcons: Record<string, JSX.Element> = {
   active: <ImSpinner3 key='active' />,
   activity: <TbActivityHeartbeat key='activity' />,
   add: <RiAddLine key='add' />,
@@ -104,10 +110,14 @@ export const DefaultIcons = {
   document: <IoDocument key="document" />,
   end: <BsSkipEndFill />,
   endUndefined: <BsSkipEnd />,
+  gain: <RiVolumeUpLine key="gain" />,
   error: <FaExclamationCircle key='error' />,
   folder: <RiFolderLine key='folder' />,
   folderAdd: <RiFolderAddFill key='folderAdd' />,
   folderOpen: <RiFolderOpenLine key='folderOpen' />,
+  frame: <BsAlignStart key="frame" />,
+  frames: <BsAlignEnd key="frames" />,
+  height: <TbArrowAutofitHeight key="height" />,
   horz: <GiHorizontalFlip key="horz-flip" />,
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
@@ -124,14 +134,20 @@ export const DefaultIcons = {
   playerPlay: <RiPlayCircleFill key="player-play"/>,
   point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine />,
+  muted: <RiVolumeMuteLine key="muted" />,
   remove: <RiDeleteBin7Line key="remove" />,
   render: <ImFileVideo />,
   size: <GiResize key="size" />,
+  sizing: <BsAspectRatioFill key="sizing" />,
   start: <BsSkipStartFill />,
   streamers: <FaUserCircle key='streamers' />,
   timeline: <MdOutlineTimelapse key='timeline' />,
   timelineAddAudio: <RiMvLine />,
   timelineAddVideo: <RiVideoLine />,
+  timing: <AiOutlineColumnWidth key="timing" />,
+  startTrim: <BsAlignStart key="timing" />,
+  speed: <MdOutlineSpeed key="speed" />,
+  endTrim: <BsAlignEnd key="timing" />,
   track: <RiStackLine/>,
   trackDense: <RiStackFill key="track-dense"/>,
   transition: <RiArrowLeftRightLine />,
@@ -142,6 +158,7 @@ export const DefaultIcons = {
   video: <RiArrowRightSLine />,
   view: <HiEye />,
   visible: <RiEyeLine key='visible' />,
+  width: <TbArrowAutofitWidth key="width" />,
   zoomLess: <TiZoomOutOutline key="zoom-less" />,
   zoomMore: <TiZoomInOutline key="zoom-more" />,
 }

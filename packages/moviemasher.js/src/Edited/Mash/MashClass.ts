@@ -198,13 +198,13 @@ export class MashClass extends EditedClass implements Mash {
     this.clearPreview()
     this.emitter?.emit(EventType.Draw)
   }
-  private counter = 0
+  // private counter = 0
   private compositeVisibleRequest(time: Time): void {
     // console.log(this.constructor.name, "compositeVisibleRequest", time)
     requestAnimationFrame(() => {
-      if (this.counter) console.timeEnd(`anim-frame-${this.counter}`)
-      this.counter++
-      console.time(`anim-frame-${this.counter}`)
+      // if (this.counter) console.timeEnd(`anim-frame-${this.counter}`)
+      // this.counter++
+      // console.time(`anim-frame-${this.counter}`)
       this.compositeVisible(time)
     })
   }
@@ -300,23 +300,18 @@ export class MashClass extends EditedClass implements Mash {
   get endTime(): Time { return timeFromArgs(this.frames, this.quantize) }
 
   filterGraphs(options: FilterGraphsOptions = {}): FilterGraphs {
-    const { backcolor, time, avType, graphType, size, videoRate, ...rest } = options
+    const { background, time, avType, graphType, size, videoRate, ...rest } = options
     const definedTime = time || this.time
     const definedAVType = avType || (definedTime.isRange ? AVType.Both : AVType.Video)
-    const definedBackcolor = backcolor || this.backcolor
-    const definedGraphType = graphType || GraphType.Mash
-    const definedRate = videoRate || definedTime.fps
-    const definedSize = size || this.imageSize
-    // console.log(this.constructor.name, "filterGraphsOptions", avType, "->", definedAVType)
     const filterGraphsOptions: FilterGraphsArgs = {
       ...rest,
       times: this.timeRanges(definedAVType, definedTime),
       avType: definedAVType,
-      graphType: definedGraphType,
-      size: definedSize,
-      videoRate: definedRate,
+      graphType: graphType || GraphType.Mash,
+      size: size || this.imageSize,
+      videoRate: videoRate || definedTime.fps,
       mash: this,
-      backcolor: definedBackcolor,
+      background: background || this.color,
     }
     // console.log(this.constructor.name, "filterGraphs filterGraphsOptions", filterGraphsOptions)
 
@@ -553,7 +548,7 @@ export class MashClass extends EditedClass implements Mash {
       mash: this,
       ...options,
     }
-    if (isUndefined(options.backcolor)) args.backcolor = this.backcolor
+    if (isUndefined(options.background)) args.background = this.color
     
     return args
   }
@@ -730,10 +725,7 @@ export class MashClass extends EditedClass implements Mash {
 
   toJSON(): UnknownObject {
     const json: UnknownObject = super.toJSON()
-    json.quantize = this.quantize
-    // json.backcolor = this.backcolor
     json.tracks = this.tracks
-
     if (this._rendering) json.rendering = this.rendering
     return json
   }

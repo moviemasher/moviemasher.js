@@ -5,6 +5,7 @@ import { ReactResult } from '../../../../declarations'
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 import { useEditor } from '../../../../Hooks/useEditor'
+import { DefaultIcons } from '@moviemasher/icons-default'
 
 export function RgbTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)

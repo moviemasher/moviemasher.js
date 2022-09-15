@@ -72,9 +72,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     if (alpha) forecolor = colorWhite
     else if (tweeningColor) forecolor = colorBlack
    
-    let backcolor = 'none'
-    if (isDefault) backcolor = colorWhite
-    else if (alpha) backcolor = colorBlack
+    let fill = 'none'
+    if (isDefault) fill = colorWhite
+    else if (alpha) fill = colorBlack
 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
@@ -84,7 +84,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const tags: string[] = []
     tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
     tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
-    tags.push(`<rect ${dimensionsString} fill="${backcolor}"/>`)
+    tags.push(`<rect ${dimensionsString} fill="${fill}"/>`)
     if (!isDefault) tags.push(`<path d="${path}" fill="${forecolor}"/>`)
     tags.push("</g>")
     tags.push("</svg>")
@@ -171,6 +171,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   }
 
   declare definition: ShapeContainerDefinition
+
+  hasIntrinsicSizing = true
 
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
     const commandFilters: CommandFilters = [] 

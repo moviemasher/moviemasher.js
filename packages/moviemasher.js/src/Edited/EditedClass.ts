@@ -5,7 +5,7 @@ import { SelectedItems } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType, SelectType } from "../Setup/Enums"
-import { propertyInstance } from "../Setup/Property"
+import { DataGroup, propertyInstance } from "../Setup/Property"
 import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
 import { isAboveZero, isPopulatedString, isUndefined } from "../Utility/Is"
@@ -33,12 +33,12 @@ export class EditedClass extends PropertiedClass implements Edited {
       name: 'label', type: DataType.String, defaultValue: ''
     }))
     this.properties.push(propertyInstance({ 
-      name: 'backcolor', type: DataType.Rgb, defaultValue: colorBlack, 
+      name: 'color', type: DataType.Rgb, defaultValue: colorBlack
     }))
     this.propertiesInitialize(args)
   }
 
-  declare backcolor: string
+  declare color: string
 
   get buffer(): number { throw new Error(Errors.unimplemented + 'get buffer') }
   set buffer(value: number) { throw new Error(Errors.unimplemented + 'set buffer') }
@@ -119,6 +119,7 @@ export class EditedClass extends PropertiedClass implements Edited {
   toJSON(): UnknownObject {
     const json = super.toJSON()
     json.createdAt = this.createdAt
+    json.quantize = this.quantize
     json.id = this.id
     if (this.icon) json.icon = this.icon
     Object.entries(this.data).forEach(([key, value]) => {

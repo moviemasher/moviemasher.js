@@ -8,7 +8,7 @@
   "mash": {
     "label": "",
     "quantize": 10,
-    "backcolor": "#666666",
+    "color": "#666666",
     "tracks": [
       {
         "dense": true,

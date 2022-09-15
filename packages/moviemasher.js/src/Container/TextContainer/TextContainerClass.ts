@@ -69,6 +69,8 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return files
   }
 
+  hasIntrinsicSizing = true
+
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
     const commandFilters: CommandFilters = [] 
     const { 

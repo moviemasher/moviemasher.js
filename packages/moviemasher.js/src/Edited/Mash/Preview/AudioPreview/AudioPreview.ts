@@ -60,8 +60,6 @@ export class AudioPreview {
       })
   }
 
-  backcolor? : string
-
   buffer = Default.mash.buffer
   
   bufferClips(clips: Clip[], quantize: number): boolean {

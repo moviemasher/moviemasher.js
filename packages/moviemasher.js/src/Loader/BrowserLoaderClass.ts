@@ -5,7 +5,7 @@ import { assertLoadType, GraphFileType, isLoadType, isOrientation, isUploadType,
 import { Errors } from "../Setup/Errors"
 import { urlForEndpoint, urlIsHttp, urlIsObject, urlPrependProtocol } from "../Utility/Url"
 import { AudibleContextInstance } from "../Context/AudibleContext"
-import { assertLoaderType, DefinitionOrErrorObject, ErrorObject, isLoadedImage, isLoadedVideo, Loaded, LoadedImageOrVideo, LoadedInfo, LoadedMedia, LoaderCache, LoaderFile, LoaderPath } from "./Loader"
+import { DefinitionOrErrorObject, ErrorObject, isLoadedImage, isLoadedVideo, Loaded, LoadedImageOrVideo, LoadedInfo, LoadedMedia, LoaderCache, LoaderFile, LoaderPath } from "./Loader"
 import { LoaderClass } from "./LoaderClass"
 import { assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero } from "../Utility/Is"
 import { Size, sizeAboveZero, sizeCopy, sizeCover, sizeString } from "../Utility/Size"
@@ -475,7 +475,7 @@ export class BrowserLoaderClass extends LoaderClass {
       const completed = () => {
         element.removeEventListener('error', failed)
         element.removeEventListener('load', passed)
-        // if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
+        if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
       }
       const failed = (error: any) => {
         // console.log(this.constructor.name, "loadsSvgImagesInitialize failed", error)

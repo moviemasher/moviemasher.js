@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, SelectType, labelInterpolate, labelTranslate } from '@moviemasher/moviemasher.js'
+import { ClassButton, SelectType } from '@moviemasher/moviemasher.js'
 import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
@@ -19,6 +19,7 @@ import { RenderControl } from '../Controls/RenderControl'
 import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
 import { ApiEnabled } from '../ApiClient/ApiEnabled'
+import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 

@@ -56,11 +56,14 @@ export interface Tweenable extends Instance, Selectable {
   frames(quantize: number): number 
   graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
   graphFiles(args: GraphFileArgs): GraphFiles
+  hasIntrinsicSizing: boolean
+  hasIntrinsicTiming: boolean
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters
   intrinsicRect(editing?: boolean): Rect
   intrinsicsKnown(options: IntrinsicOptions): boolean
   intrinsicGraphFile(options: IntrinsicOptions): GraphFile
   isDefault: boolean
+  
   lock: Orientation
   mutable(): boolean
   muted: boolean
@@ -72,6 +75,7 @@ export interface Tweenable extends Instance, Selectable {
   overlayFilter: Filter
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
+  selectedProperty(property: Property): boolean 
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
   tweenPoints(time: Time, range: TimeRange): PointTuple 
   tweenRects(time: Time, range: TimeRange): RectTuple

@@ -21,7 +21,7 @@ export interface FilterGraphsOptions {
   size?: Size
   time?: Time
   videoRate?: number
-  backcolor?: string
+  background?: string
 }
 
 export interface FilterGraphsArgs {
@@ -31,5 +31,5 @@ export interface FilterGraphsArgs {
   graphType: GraphType
   size: Size
   videoRate: number
-  backcolor: string
+  background: string
 }

@@ -12,7 +12,7 @@ import { Mash } from "./Mash/Mash"
 export interface EditedDescription extends UnknownObject, Described { }
 
 export interface EditedObject extends Partial<EditedDescription> {
-  backcolor?: string
+  color?: string
   buffer?: number
   quantize?: number
 }
@@ -22,7 +22,7 @@ export interface EditedArgs extends EditedObject {
 }
 
 export interface Edited extends Described, Propertied, Selectable {
-  backcolor: string
+  color: string
   buffer: number
   destroy(): void
   editor: Editor

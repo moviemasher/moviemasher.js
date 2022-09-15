@@ -198,7 +198,7 @@ export class CastClass extends EditedClass implements Cast {
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)
     switch (name) {
-      case 'backcolor': {
+      case 'color': {
         this.mashes.forEach(mash => mash.setValue(value, name, property))
         break
       }
@@ -209,10 +209,11 @@ export class CastClass extends EditedClass implements Cast {
     const { mashes, imageSize } = this
     const allSvgs: SvgItem[] = []
 
-    const { backcolor = this.backcolor, ...rest } = args
-    const mashArgs = { ...rest, backcolor: '' }
+    const { background = this.color } = args
 
-    let promise = Promise.resolve([svgPolygonElement(imageSize, '', backcolor)])
+    const mashArgs = { ...args, color: '' }
+
+    let promise = Promise.resolve([svgPolygonElement(imageSize, '', background)])
 
     arrayReversed(mashes).forEach(mash => {
       promise = promise.then(svgs => {
@@ -224,7 +225,6 @@ export class CastClass extends EditedClass implements Cast {
         allSvgs.push(...svgs)
         return allSvgs
     })
-
   }
 
   toJSON(): UnknownObject {

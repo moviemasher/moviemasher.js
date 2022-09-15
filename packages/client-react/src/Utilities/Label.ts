@@ -1,4 +1,4 @@
-import { StringObject } from "../declarations"
+import { StringObject } from "@moviemasher/moviemasher.js/src/declarations"
 
 const LabelRegex = /{{([a-z0-9_]*)}}/
 

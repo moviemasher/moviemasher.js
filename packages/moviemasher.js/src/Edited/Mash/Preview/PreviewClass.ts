@@ -18,11 +18,11 @@ import { EmptyMethod } from "../../../Setup/Constants"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
-    const { selectedClip, editor, time, mash, backcolor, onlyClip, size } = args
+    const { selectedClip, editor, time, mash, background, onlyClip, size } = args
     this.mash = mash
     this.size = size || mash.imageSize
     this.time = time
-    this.backcolor = backcolor
+    this.background = background
     this.selectedClip = selectedClip
     this.onlyClip = onlyClip
 
@@ -31,7 +31,7 @@ export class PreviewClass implements Preview {
 
   audible = false
 
-  backcolor?: string
+  background?: string
 
   private _clips?: Clip[]
   protected get clips() { return this._clips ||= this.clipsInitialize }
@@ -118,13 +118,17 @@ export class PreviewClass implements Preview {
       return this._svgItems = this.tupleItems(tuple)
     })
   }
+
   private tupleItems(tuple: SvgItemsTuple): SvgItems {
     const [defItems, previewItems] = tuple
-    const { clips, size, editing, backcolor, selectedClip, editor } = this
-    if (backcolor) previewItems.unshift(svgPolygonElement(size, '', backcolor))
+    const { clips, size, editing, background, selectedClip, editor } = this
+    if (background) previewItems.unshift(svgPolygonElement(size, '', background))
     if (!clips.length) return previewItems
 
-    if (!editing) return [svgDefsElement(defItems), ...previewItems]
+    if (!editing) {
+      // console.log("PreviewClass NOT EDITING")
+      return [svgDefsElement(defItems), ...previewItems]
+    }
 
     assertObject(editor)
 
@@ -132,26 +136,29 @@ export class PreviewClass implements Preview {
     const {trackPreviews: previews} = this
     const overlayId = idGenerate('overlay')
     const selected = previews.find(preview => preview.clip === selectedClip)
-    const interactiveItems: SvgItems = previews.map(trackPreview => {
+    const hoverItems: SvgItems = previews.map(trackPreview => {
       const trackSelected = trackPreview === selected
       const className = (dragging || trackSelected) ? '' : 'animate'
       return trackPreview.editingSvgItem(className)
     })
     if (!selected) {
-      return [svgDefsElement(defItems), ...previewItems, ...interactiveItems]
+      // console.log("PreviewClass NO SELECTION")
+      return [svgDefsElement(defItems), ...previewItems, ...hoverItems]
     }
-    const defs = [...defItems]
-    defs.push(selected.svgBoundsElement(false, overlayId))
+    // console.log("PreviewClass SELECTION")
+
     const filteredGroup = svgGroupElement()
     previewItems.forEach(item => filteredGroup.appendChild(item))
     const filterElement = svgDifferenceDefs(overlayId, filteredGroup)
-    defs.push(filterElement)
-    
-  
+ 
     return [
-      svgDefsElement(defs), 
+      svgDefsElement([
+        selected.svgBoundsElement(false, overlayId), 
+        ...defItems, 
+        filterElement
+      ]), 
       filteredGroup, 
-      ...interactiveItems,
+      ...hoverItems,
       // mozilla does not support svg fragments in FeImage! 
       // these elements should be styled to be hidden from other browsers
       // and offer an alternative to difference filter
@@ -177,91 +184,6 @@ export class PreviewClass implements Preview {
     return promise 
   }
 
-
-//   private get itemsPromise(): Promise<SvgItemsTuple[]> {
-//     const { clips, size, time, onlyClip } = this
-    
-//     let promise = Promise.resolve([] as SvgItemsTuple[])
-//     const icon = !!onlyClip
-//     clips.forEach(clip => {
-//       promise = promise.then(lastTuple => {
-//         return clip.previewItemsPromise(size, time, icon).then(clipTuple => {
-//           return [...lastTuple, clipTuple]
-//         })
-//       })
-//     })
-//     return promise 
-//   }
-// get svgItemPromise(): Promise<SvgItem> { 
-//   return this.svgItemsPromise.then(svgItems => {
-//     const { length } = svgItems
-//     if (length === 1) return svgItems[0]
-    
-//     const { size } = this
-//     const element = svgElement(size)
-//     svgItems.forEach(item => element.appendChild(item))
-//     return element
-//   })
-// }
-// get svgItemsPromise(): Promise<SvgItems> { 
-//   if (this._svgItems) return Promise.resolve(this._svgItems)
-
-//   const sizePromise = this.intrinsicSizePromise
-//   const itemsPromise = sizePromise.then(() => this.itemsPromise)
-//   return itemsPromise.then(tuples => {
-//     return this._svgItems = this.tupleItems(tuples)
-//   })
-// }
-
-// private tupleItems(tuples: SvgItemsTuple[]): SvgItems {
-//   const { clips, size, editing, backcolor, selectedClip, editor } = this
-
-//   const svgs: SvgItems = tuples.map(tuple => {
-
-//     const [defItems, previewItems] = tuple
-
-//     return svgElement(size, [svgDefsElement(defItems), ...previewItems])
-//   })
-//   if (backcolor) svgs.unshift(svgPolygonElement(size, '', backcolor))
-//   if (!(clips.length && editing)) return svgs
-
-//   const defItems: SvgItems = []
-//   // const svgs: SvgItems = []
- 
-
-//   assertObject(editor)
-
-//   const { dragging } = editor
-//   const {trackPreviews: previews} = this
-//   const overlayId = idGenerate('overlay')
-//   const selected = previews.find(preview => preview.clip === selectedClip)
-//   const interactiveItems: SvgItems = previews.map(trackPreview => {
-//     const trackSelected = trackPreview === selected
-//     const className = (dragging || trackSelected) ? '' : 'animate'
-//     return trackPreview.editingSvgItem(className)
-//   })
-//   if (!selected) {
-//     return [svgDefsElement(defItems), ...svgs, ...interactiveItems]
-//   }
-//   const defs = [...defItems]
-//   defs.push(selected.svgBoundsElement(false, overlayId))
-//   const filteredGroup = svgGroupElement()
-//   svgs.forEach(item => filteredGroup.appendChild(item))
-//   const filterElement = svgDifferenceDefs(overlayId, filteredGroup)
-//   defs.push(filterElement)
-  
-
-//   return [
-//     svgDefsElement(defs), 
-//     filteredGroup, 
-//     ...interactiveItems,
-//     // mozilla does not support svg fragments in FeImage! 
-//     // these elements should be styled to be hidden from other browsers
-//     // and offer an alternative to difference filter
-//     svgUseElement(overlayId, `mozilla`),
-//     selected.svgBoundsElement(true),
-//   ]
-// }
   visible = true
 }
 

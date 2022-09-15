@@ -16,19 +16,18 @@ export interface ContentDefinitionObject extends TweenableDefinitionObject { }
 
 export interface ContentRectArgs {
   containerRects: Rect | RectTuple
+  editing?: boolean
+  loading?: boolean
   time: Time
   timeRange: TimeRange
-  loading?: boolean
-  editing?: boolean
 }
 export interface Content extends Tweenable {
+  audibleCommandFiles(args: CommandFileArgs): CommandFiles
+  audibleCommandFilters(args: CommandFilterArgs): CommandFilters
+  contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
   contentRects(args: ContentRectArgs): RectTuple 
-  contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
-  lock: Orientation
   itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem>
-  audibleCommandFilters(args: CommandFilterArgs): CommandFilters
-  audibleCommandFiles(args: CommandFileArgs): CommandFiles
 }
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentType(value.type)

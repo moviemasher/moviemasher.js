@@ -93,6 +93,8 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       return this.gainPairs === [[0, 0], [1, 0]]
     }
 
+    hasIntrinsicTiming = true
+    
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
       const { 
@@ -155,16 +157,13 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     mutable() { return this.definition.audio }
     
-    selectedProperties(actions: Actions, property: Property): SelectedProperties {
+
+    selectedProperty(property: Property): boolean {
       const { name } = property
       switch(name) {
-        case 'gain':
-        case 'muted': {
-          const mutable = this.mutable()
-          if (!mutable || (this.muted && name === 'gain')) return []
-        } 
+        case 'gain': return this.mutable() && !this.muted 
       }
-      return super.selectedProperties(actions, property)
+      return super.selectedProperty(property)
     }
 
     setValue(value: Scalar, name: string, property?: Property | undefined): void {
@@ -177,7 +176,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
         case 'speed':
           // console.log(this.constructor.name, "setValue", name, value)
             
-          this.clip.resetDuration(this)
+          this.clip.resetTiming(this)
           break
       
       }

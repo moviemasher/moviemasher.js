@@ -1,7 +1,5 @@
-import { NumberObject } from "../declarations";
 import { Orientation } from "../Setup/Enums";
 import { isAboveZero, isNumber, isObject } from "./Is"
-import { labelInterpolate } from "./Label";
 import { throwError } from "./Throw";
 
 export interface Size {

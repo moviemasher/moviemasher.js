@@ -2,21 +2,18 @@ import { SvgItem, ValueObject } from "../declarations"
 import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
 
 import { Errors } from "../Setup/Errors"
-import { assertPopulatedString, isArray } from "../Utility/Is"
+import { isArray } from "../Utility/Is"
 import { Content, ContentClass, ContentRectArgs } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../Setup/Property"
-import { DataType, DefinitionType } from "../Setup/Enums"
-import { SelectedProperties } from "../Utility/SelectedProperty"
-import { Actions } from "../Editor/Actions/Actions"
+import { DataType, DefinitionType, Orientation } from "../Setup/Enums"
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../MoveMe"
 import { idGenerate } from "../Utility/Id"
 import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
 
-const ContentMixinKeys = ['lock', 'width', 'height', 'x', 'y']
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
   return class extends Base implements Content {
@@ -33,7 +30,10 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
           name: 'y', type: DataType.Percent, defaultValue: 0.5,
           group: DataGroup.Point, tweenable: true, 
         }))
-        
+        this.addProperties(object, propertyInstance({
+          name: 'lock', type: DataType.String, defaultValue: Orientation.H,
+          group: DataGroup.Size, 
+        }))  
       }
     }
 
@@ -132,11 +132,18 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return this.isDefault || this.type === DefinitionType.Audio
     }
     
-    selectedProperties(actions: Actions, property: Property): SelectedProperties {
+    selectedProperty(property: Property): boolean {
+      const { name } = property
       const { isDefaultOrAudio } = this
-      if (isDefaultOrAudio && ContentMixinKeys.includes(property.name)) return []
-
-      return super.selectedProperties(actions, property)
+      switch(name) {
+        case 'effects':
+        case 'lock':
+        case 'width':
+        case 'height':
+        case 'x':
+        case 'y': return !isDefaultOrAudio 
+      }
+      return super.selectedProperty(property)
     }
 
     itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {

@@ -19,17 +19,16 @@ export function SizingGroupInput(props: DataGroupProps): ReactResult {
   const byName = selectedPropertyObject(properties, DataGroup.Sizing, selectType)
 
   const elementsByName: ElementRecord = Object.fromEntries(Object.entries(byName).map(([key, selectedProperty]) => {
-    const { property, changeHandler, selectType, value, name: nameOveride } = selectedProperty
-      const { name: propertyName } = property
-      const name = nameOveride || propertyName
-    
-      const propertyProps: InspectorPropertyProps = {
-        key: `inspector-${selectType}-group-${name}`,
-        property, value, changeHandler, name,
-        ...props
-      }
-      
-
+    const { 
+      property, changeHandler, selectType, value, name: nameOveride 
+    } = selectedProperty
+    const { name: propertyName } = property
+    const name = nameOveride || propertyName
+    const propertyProps: InspectorPropertyProps = {
+      key: `inspector-${selectType}-group-${name}`,
+      property, value, changeHandler, name,
+      ...props
+    }
     return [key, <InspectorProperty {...propertyProps} />]
   }))
 

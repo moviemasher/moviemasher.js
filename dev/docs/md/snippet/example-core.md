@@ -36,7 +36,7 @@ editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
 <!-- MAGIC:END -->
 </fieldset>
 
-The SCRIPT first stores the SVG element in the `svg` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing an 'edit decision list'. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
+The SCRIPT code first stores the SVG element in the `svg` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
 
 This example includes just a single text clip on a single track, but multiple tracks containing multiple clips of different types could be provided. In Movie Masher, text is a kind of container so we specify `ContainerTextId` as the clip's `containerId` and populate `container` with the `string` we want to display. 
 
@@ -45,8 +45,3 @@ This clip is then nested within a mash object which is passed to the editor's `l
 The editor's `svgItems` method is then called which returns another promise that resolves with an array of elements. These are simply then appended to our SVG tag. 
 
 _Please note_ that this example will only display what's on the first frame of our mash and will not update if we subsequently use the editor to make changes. Its utility is limited to displaying a mash at a particular time. 
-
-
-
-Learn more about building a fully customized video editing client in the
-[Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html).

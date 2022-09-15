@@ -140,7 +140,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     <View key="y" className='point' children={[DefaultIcons.vert, lockOffN, elementsByName.y, lockOffS]} />
   ]
 
-  return <fieldset><legend>{legendElements}</legend>{elements}</fieldset>
+  return <fieldset><legend><View>{legendElements}</View></legend>{elements}</fieldset>
 
 }
 

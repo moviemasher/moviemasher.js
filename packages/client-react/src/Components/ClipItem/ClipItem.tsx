@@ -42,11 +42,11 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   const { clip, prevClipEnd} = clipContext
   assertTrue(clip)
 
-  const backgroundNode = (backcolor: string, size: Size, spacing: number) => {
-    const rgb = colorToRgb(backcolor)
+  const backgroundNode = (fill: string, size: Size, spacing: number) => {
+    const rgb = colorToRgb(fill)
     const differenceRgb = colorRgbDifference(rgb)
     const forecolor = colorFromRgb(differenceRgb)
-    const framePolygon = svgPolygonElement(size, '', backcolor)
+    const framePolygon = svgPolygonElement(size, '', fill)
     const spaceRect = { 
       x: size.width, y: 0,
       width: spacing, height: size.height, 
@@ -119,7 +119,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
       case clip.container:
       case clip.content: break
       default: {
-        if (action.property === 'backcolor') break
+        if (action.property === 'color') break
         return
       }
     }    
@@ -142,9 +142,6 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   }
 
   const populateSvg = (): Promise<void> => {
-
-    // console.log("ClipItem.populateSvg")
-
     const { width, redraw } = watching
     delete watching.timeout 
     delete watching.redraw 
@@ -153,19 +150,12 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const { edited } = editor
 
     const allOk = current && edited && width && width === getCurrentWidth()
-
     if (redraw || !allOk) {
       updateNonce()
-      if (!allOk) {
-        // console.log("ClipItem.populateSvg returning", current, edited, width, getCurrentWidth())
-        return Promise.resolve()
-      }
+      if (!allOk) return Promise.resolve()
     }
-    
     const currentSize = frameSize()
     const fullSize = clipSize(currentSize)
-    const { backcolor } = edited
-
     const promise = clip.clipIcon(fullSize, timelineContext.scale, 2)
     if (!promise) return Promise.resolve()
     
@@ -173,7 +163,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
       const latestWidth = getCurrentWidth()
       if (element && width >= latestWidth) {
         // console.log("ClipItem.populateSvg replacing children", fullSize)
-        current.replaceChildren(backgroundNode(backcolor, currentSize, 2), element)
+        current.replaceChildren(backgroundNode(edited.color, currentSize, 2), element)
       } //else console.log("ClipItem.populateSvg", !!element, width, ">= ?", latestWidth)
     })
   }
@@ -187,10 +177,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const { current } = svgRef
     const { edited } = editor
     if (!(current && edited)) return
-    const { backcolor } = edited
 
-    // current.replaceChildren(backgroundNode(backcolor, frameSize(), 2))
-    
     if (watching.timeout) {
       if (!watching.redraw) {
         // console.log("ClipItem.handleChange setting redraw", nonce, scale, parentHeight)
@@ -204,7 +191,6 @@ export function ClipItem(props: ClipItemProps): ReactResult {
 
   React.useEffect(handleChange, [nonce, scale, parentHeight])
   
-
   const onPointerDown = (event: MouseEvent) => { 
     event.stopPropagation()
     editor.selection.set(clip) 

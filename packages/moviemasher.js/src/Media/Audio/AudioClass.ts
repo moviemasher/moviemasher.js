@@ -22,4 +22,5 @@ export class AudioClass extends AudioWithUpdatableDuration implements Audio {
   declare definition : AudioDefinition
 
   mutable() { return true }
+
 }

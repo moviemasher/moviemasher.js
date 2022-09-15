@@ -90,7 +90,7 @@ export class TrackClass extends PropertiedClass implements Track {
       const { frames } = clip
       if (isAboveZero(frames)) return
       
-      clip.resetDuration(undefined, quantize)
+      clip.resetTiming(undefined, quantize)
       if (isAboveZero(clip.frames) || !suppliedClips) return
 
       clip.frames = Math.floor(Default.duration * quantize)
