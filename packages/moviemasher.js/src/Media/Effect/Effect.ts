@@ -5,11 +5,13 @@ import { Modular, ModularObject } from "../../Mixin/Modular/Modular"
 import { ModularDefinition, ModularDefinitionObject } from "../../Mixin/Modular/Modular"
 import { DefinitionType } from "../../Setup/Enums"
 import { Selectable } from "../../Editor/Selectable"
+import { Tweenable } from "../../Mixin/Tweenable/Tweenable"
 
 export type EffectObject = ModularObject
 
 export interface Effect extends Modular, Selectable {
   definition : EffectDefinition
+  tweenable: Tweenable
 }
 
 export const isEffect = (value?: any): value is Effect => {
@@ -18,7 +20,6 @@ export const isEffect = (value?: any): value is Effect => {
 export function assertEffect(value?: any): asserts value is Effect {
   if (!isEffect(value)) throw new Error("expected Effect")
 }
-
 
 export type Effects = Effect[]
 

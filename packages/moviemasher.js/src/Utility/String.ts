@@ -1,4 +1,5 @@
-import { isAboveZero, isPopulatedString } from "./Is"
+import { assertObject, isAboveZero, isPopulatedString } from "./Is"
+import { Rect, RectZero } from "./Rect"
 
 export const stringSeconds = (seconds : number, fps : number = 0, lengthSeconds : number = 0) : string => {
   const bits: string[] = []
@@ -77,21 +78,33 @@ export const stringSeconds = (seconds : number, fps : number = 0, lengthSeconds 
   return bits.join('')
 }
 
-export const stringWidthForFamilyAtHeight = (string: string, family: string, height: number): [number, number, number] => {
-  if (!(isPopulatedString(string) && isAboveZero(height))) return [0, 0, 0]
+export const stringFamilySizeRect = (string: string, family: string, size: number): Rect => {
+  if (!(isPopulatedString(string) && isAboveZero(size))) return RectZero
 
-  if (!globalThis.document) throw 'wrong environment'
+  const { document } = globalThis
   
-  const canvas = globalThis.document.createElement('canvas')
-  const ctx = canvas.getContext('2d')!
-  ctx.font = `${height}px ${family}`
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  assertObject(ctx)
 
-  const text = ctx.measureText(string)
-  const font = new FontFace(family, string)
-  const { actualBoundingBoxLeft, actualBoundingBoxRight, width, actualBoundingBoxAscent, fontBoundingBoxAscent } = text
-  // console.log("stringWidthForFamilyAtHeight", ctx.font, height, width, actualBoundingBoxLeft,actualBoundingBoxAscent, text)
-  return [width, actualBoundingBoxLeft, height - actualBoundingBoxAscent]
-}//fontBoundingBoxAscent -
+  ctx.font = `${size}px ${family}`
+
+  const metrics = ctx.measureText(string)
+  // const font = new FontFace(family, string)
+  const { 
+    actualBoundingBoxAscent, 
+    actualBoundingBoxDescent, 
+    actualBoundingBoxLeft, 
+    actualBoundingBoxRight, 
+    width, 
+  } = metrics
+  // console.log("stringFamilySizeRect", "actualBoundingBoxAscent", actualBoundingBoxAscent, "actualBoundingBoxDescent", actualBoundingBoxDescent)
+  return {
+    x: actualBoundingBoxLeft, y: actualBoundingBoxAscent,
+    width: actualBoundingBoxLeft + actualBoundingBoxRight,
+    height: actualBoundingBoxAscent + actualBoundingBoxDescent,
+  } 
+}
 
 export const stringPluralize = (count: number, value: string, suffix = 's'): string => {
   if (!isPopulatedString(value)) return value

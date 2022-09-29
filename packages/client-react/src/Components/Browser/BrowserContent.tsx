@@ -8,7 +8,7 @@ import { View } from "../../Utilities/View"
 import { BrowserContext } from "./BrowserContext"
 import { DefinitionContext } from "../../Contexts/DefinitionContext"
 import { dragTypes, TransferTypeFiles } from "../../Helpers/DragDrop"
-import { EditorContext } from "../Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 
@@ -22,7 +22,7 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const child = React.Children.only(children)
   assertTrue(React.isValidElement(child))
   
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const browserContext = React.useContext(BrowserContext)
   const definitions = browserContext.definitions || []
   const { drop } = editorContext

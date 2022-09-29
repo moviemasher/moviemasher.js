@@ -7,7 +7,7 @@ import { urlForEndpoint, urlIsHttp, urlIsObject, urlPrependProtocol } from "../U
 import { AudibleContextInstance } from "../Context/AudibleContext"
 import { DefinitionOrErrorObject, ErrorObject, isLoadedImage, isLoadedVideo, Loaded, LoadedImageOrVideo, LoadedInfo, LoadedMedia, LoaderCache, LoaderFile, LoaderPath } from "./Loader"
 import { LoaderClass } from "./LoaderClass"
-import { assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero } from "../Utility/Is"
+import { assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedString } from "../Utility/Is"
 import { Size, sizeAboveZero, sizeCopy, sizeCover, sizeString } from "../Utility/Size"
 import { timeFromArgs, timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { Time } from "../Helpers/Time/Time"
@@ -31,8 +31,6 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private arrayBufferPromise(url: string): Promise<ArrayBuffer> {
-    // console.log(this.constructor.name, "arrayBufferPromise", url)
-
     return fetch(url).then(response => response.arrayBuffer())
   }
 
@@ -211,21 +209,39 @@ export class BrowserLoaderClass extends LoaderClass {
 
   protected requestFont(file: LoaderFile): Promise<LoadedFont> {
     const { urlOrLoaderPath: url} = file
-    const bufferPromise = this.arrayBufferPromise(url)
+
+    const bufferPromise = fetch(url).then(response => {
+
+      const type = response.headers.get('content-type')
+      // console.log(this.constructor.name, "requestFont.fetch", type)
+      if (!isPopulatedString(type) || type.startsWith(LoadType.Font)) {
+        return response.arrayBuffer()
+      }
+      assertTrue(type.startsWith('text/css')) 
+
+      return response.text().then(string => 
+        this.arrayBufferPromise(this.lastCssUrl(string))
+      )
+    })
+      
     const family = this.fontFamily(url)
+    // console.log(this.constructor.name, "requestFont", url)
     const facePromise = bufferPromise.then(buffer => {
       // console.log(this.constructor.name, "requestFont.bufferPromise", url)
       const face = new FontFace(family, buffer)
       return face.load()
     })
     return facePromise.then(face => {
-      // console.log(this.constructor.name, "requestFont.facePromise", url, face)
+      // console.log(this.constructor.name, "requestFont.facePromise", url)
       const { fonts } = globalThis.document
       fonts.add(face)
-      // console.log(this.constructor.name, "requestFont.facePromise", fonts.status)
-      const info: LoadedInfo = { family }
-      this.updateLoaderFile(file, info)
-      return face
+      return fonts.ready.then(() => {
+        
+        // console.log(this.constructor.name, "requestFont.ready", url)
+        const info: LoadedInfo = { family }
+        this.updateLoaderFile(file, info)
+        return face
+      })
     })
   }
 
@@ -285,6 +301,8 @@ export class BrowserLoaderClass extends LoaderClass {
 
         const { lock, ...rest } = options
         const lockDefined = isOrientation(lock) ? lock : undefined
+        // console.log(this.constructor.name, "requestSvgImage.svgImagePromise lock", lockDefined, rest)
+
         svgSetDimensionsLock(item, rest, lockDefined)
          
         // console.log(this.constructor.name, "requestSvgImage.svgImagePromise returning", item?.constructor.name)
@@ -366,9 +384,6 @@ export class BrowserLoaderClass extends LoaderClass {
     return promise
   }
 
-  // private seekingPromises = new Map<string, Promise<void>>()
-
-
   private copyVideoPromise(url: string, options: ScalarObject): Promise<LoadedVideo> {
     assertObject(options)
     // console.log(this.constructor.name, "copyVideoPromise", url, options)
@@ -414,40 +429,10 @@ export class BrowserLoaderClass extends LoaderClass {
       const time = timeFromArgs(frame, fps)
       return this.seekPromise(key, time, video)
     })
-    // const promise = this.seekingVideoPromises.get(key)
-    
-
-    // const sourcePromise = this.sourcePromise(url)
-    // const copyPromise = 
-    // sourcePromise.then(source => {
-    //   const seekingVideo = this.seekingVideos.get(key)
-    //   if (seekingVideo) {
-    //     // console.log(this.constructor.name, "seekingVideoPromise.sourcePromise GOT seekingVideo")
-        
-    //     return Promise.resolve(seekingVideo)
-    //   }
-    //   const seekingVideoPromise = this.seekingVideoPromises.get(key)
-    //   if (seekingVideoPromise) {
-    //     // console.log(this.constructor.name, "seekingVideoPromise.sourcePromise GOT seekingVideoPromise")
-
-    //     return seekingVideoPromise
-    //   }
-    //   return this.videoPromise(source).then(video => {
-    //     // console.log(this.constructor.name, "seekingVideoPromise.videoPromise", source)
-
-    //     const initialSeekPromise = this.seekPromise(timeFromSeconds(1), video).then(() => {
-    //       // console.log(this.constructor.name, "seekingVideoPromise.seekPromise", source)
-    //       this.seekingVideos.set(key, video)
-    //       this.seekingVideoPromises.delete(key)
-    //       return video
-    //     })
-    //     return initialSeekPromise
-    //   })
-    // })
-  
   }
 
   private seekingVideoPromises = new Map<string, Promise<LoadedVideo>>()
+
   private seekingPromises = new Map<string, Promise<LoadedVideo>>()
 
   private seekingVideos = new Map<string, LoadedVideo>()
@@ -464,6 +449,7 @@ export class BrowserLoaderClass extends LoaderClass {
       return src
     })
   }
+
   private _svgElement?: SVGSVGElement
   get svgElement() { return this._svgElement ||= svgElement() }
   set svgElement(value) { this._svgElement = value}
@@ -475,7 +461,7 @@ export class BrowserLoaderClass extends LoaderClass {
       const completed = () => {
         element.removeEventListener('error', failed)
         element.removeEventListener('load', passed)
-        if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
+        // if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
       }
       const failed = (error: any) => {
         // console.log(this.constructor.name, "loadsSvgImagesInitialize failed", error)
@@ -485,8 +471,8 @@ export class BrowserLoaderClass extends LoaderClass {
 
       const passed = () => {
         // console.log(this.constructor.name, "loadsSvgImagesInitialize passed")
-        resolve(element)
         completed()
+        resolve(element)
       }
 
       element.addEventListener('error', failed, { once: true })
@@ -495,7 +481,6 @@ export class BrowserLoaderClass extends LoaderClass {
       svgSet(element, url, 'href')
     })
   }
-
 
   private videoInfo(video: LoadedVideo) {
     const { 

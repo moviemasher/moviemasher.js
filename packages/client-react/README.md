@@ -1,10 +1,10 @@
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/head.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/head.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 | JavaScript video editor, encoder, switcher | _NEW in version 5.1.0_ |
 | -- | -- |
-| **visual compositing** through _SVG API_ <br> **audio mixing** through _WebAudio API_ <br> **client** implemented in _ReactJS_ <br> **server** implemented in _ExpressJS_  <br> **encode** and **stream** through _FFmpeg_ | • container/content pattern <br> • vector-based masking <br> • tranform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
+| _visual compositing_ through **SVG API** <br> _audio mixing_ through **WebAudio API** <br> _client_ implemented in **ReactJS** <br> _server_ implemented in **ExpressJS**  <br> _encode_ and _stream_ through **FFmpeg** | • container/content pattern <br> • vector-based masking <br> • tranform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
 <!-- MAGIC:END -->
 
 ## React Client Plug-in
@@ -19,8 +19,8 @@ It exports component functions, contexts, hooks, utility methods, and styles
 that manifest a video editing user interface and interact with a server implementation like
 [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express). Its imports are all specified as peer dependencies.
 
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -31,113 +31,82 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=../../dev/docs/md/snippet/example-client.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/md/snippet/example-client.md&stripMagic=true) -->
 ## Client Example
 
-### Installation
-
-The following shell command installs the client and core libraries to your NPM project,
-saving the former to the `dependencies` array in your **package.json** file.
-
-```shell
-npm install @moviemasher/client-react --save
-```
-
-Alternatively, if you're wanting to build your own client you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) instead.
-
-_Please note_ that this does not install a server implementation that interacts with this module. 
-Learn more about how the codebase is structured in the
-[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
-
- ### Inclusion
-
-From our HTML file we link to both the compiled JavaScript and CSS files.
-To support the widest variety of workflows and tooling, the Cascading Style Sheets
-required to layout the client user interface are kept separate from JavaScript code:
+The HTML document below can simply be loaded in a web browser to display a 'hello world' example. The HEAD contains tags that load React and Movie Masher directly from NPM through a CDN. The BODY contains just an empty DIV element followed by a SCRIPT that uses React to display Movie Masher, prepopulated with a text clip...
 
 <fieldset>
-<legend>masher.html</legend>
+<legend>index.html</legend>
 
 ```html
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <title>Movie Masher React Client</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='masher.js' defer></script>
-    <style>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/theme-default/@5.1.0/umd/theme-default.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/client-react.js/@5.1.0/umd/client-react.js" crossorigin></script>
+    <link href='https://unpkg.com/@moviemasher/theme-default/@5.1.0/moviemasher.css' rel='stylesheet'>
+    <style> /* fit root DIV to viewport */
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
-      body, #app { width: 100vw; height: 100vh; display: flex; }
-      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
+      body, #root { width: 100vw; height: 100vh; display: flex; }
     </style>
-    <link href='masher.css' rel='stylesheet'>
-    <title>Movie Masher</title>
   </head>
   <body>
-    <div id='app' class='moviemasher'></div>
+    <div id='root' class='moviemasher'></div>
+    <script>
+
+// create constant referencing root DIV element
+const element = document.getElementById('root')
+
+// destructure constants from packages
+const { createElement } = React
+const { createRoot } = ReactDOM
+const { Masher, MasherDefaultProps } = MovieMasherClient
+const { TextContainerId } = MovieMasher
+
+// create mash object containing text clip on a track
+const clip = { 
+  container: { string: 'Hello World!' }, 
+  containerId: TextContainerId
+}
+const mash = { tracks: [{ clips: [clip] }] }
+
+// create root and render new Masher with mash in props
+const props = MasherDefaultProps({ edited: { mash } })
+const masher = createElement(Masher, props) 
+createRoot(element).render(masher)
+
+    </script>
   </body>
 </html>
 ```
 </fieldset>
 
-Since most of the interface elements scroll and stretch both horizontally and
-vertically, we are rendering into a node that is styled to fill the whole window. We also
-apply the `moviemasher` class to the node, so the additional styles in the CSS file are engaged.
+The SCRIPT first stores the DIV in the `element` variable, and then destructures what's needed from the modules. Since the UMD versions were loaded in the HEAD, we have a special variable for each module available in the global scope. 
 
-We also use this opportunity to set the dimensions of the video preview in the editor through CSS variables - to their default values, in this case. There are a few ways to override these dimensions, but doing so in the CSS is best practice.
+From `React` we destructure the `createElement` function, and then the `createRoot` function from the related `ReactDOM` module. From `MovieMasherClient` we destructure the `Masher` React component and the `MasherDefaultProps` function, and then the `Icons` object from the related `MovieMasherTheme` module. 
 
-Learn more about coloring and sizing the user interface using CSS in the
-[Style Guide](https://moviemasher.com/docs/Style.html).
+Additionally we destructure the `TextContainerId` variable from `MovieMasher` itself, since we want to prepopluate the editor with a text clip. This is optional since the variable is just a standard string which we could hard code, but it's always nice to use the constants. 
 
-<fieldset>
+With everything destructured, the SCRIPT then creates a text `clip` object and places it within a new `mash` object. In Movie Masher text is represented as a container, so the clip's `containerId` is set and `container.string` is populated with the desired string. By default the content appearing inside the text will simply be a color (white), but it could be an image or video as well. By default the mash `color` is black, so white text works for this example. 
 
-<legend>masher.tsx</legend>
+The `mash` is included in arguments passed to the `MasherDefaultProps` function. This returns `props` that are then passed to the `createElement` function in order to instantiate our `Masher` component. Finally, the root is created by the `createRoot` function and our instance is passed to its `render` function. 
 
-
-```tsx
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
-import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
-import "@moviemasher/client-react/dist/moviemasher.css"
-import { Defined, DefinitionType } from '@moviemasher/moviemasher.js'
-
-Defined.define({
-  type: DefinitionType.Font,
-  id: 'font.valken',
-  label: 'Valken',
-  source: "../shared/font/valken/valken.ttf",
-  url: "../shared/font/valken/valken.woff2",
-})
-const options = { previewSize: { width: 480, height: 270 } }
-const props = MasherPropsDefault(options)
-const masher = <Masher {...props} />
-const editor = <ApiClient>{masher}</ApiClient>
-const strictMode = <StrictMode>{editor}</StrictMode>
-ReactDOM.render(strictMode, document.getElementById('app'))
-```
-</fieldset>
-
-In this example we're using the
-[MasherPropsDefault](https://moviemasher.com/docs/function/MasherPropsDefault.html) function to
-populate the [Masher](https://moviemasher.com/docs/component/Masher.html) component with
-preconfigured children. Alternatively, child components like
-[Player](https://moviemasher.com/docs/component/Player.html),
-[Browser](https://moviemasher.com/docs/component/Browser.html),
-[Timeline](https://moviemasher.com/docs/component/Timeline.html), and
-[Inspector](https://moviemasher.com/docs/component/Inspector.html) can be
-selectively provided, and manually configured with a selection of available child controls.
-
-We are also setting the preview dimensions here, to their defaults for demonstration purposes. As mentioned above, overriding the defaults from JavaScript is sub-optimal - a visible resizing will occur as the CSS variables are updated - but helpful if supplying custom CSS is impractical.
-
-Learn more about building a fully customized video editing client in the
-[Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html).
-
+| <svg width="1rem" height="1rem" viewBox="0 0 512 512" ><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z" stroke="none" fill="currentColor" /></svg> | _Please note_ |
+| -- | -- |
+|  | This example utilizes the UMD builds of React and Movie Masher to avoid a bundling step. The appoach is simple, but suboptimal since more code is being delivered than is actually being used in production. One simple optimization is to load the minimized UMD builds instead, by changing React's file extensions from 'development.js' to 'production.js' and Movie Masher's from '.js' to '.min.js'. But typically a bundler converts the ESM builds into a truly optimized (tree shaken) script for final delivery. Learn more about bundling in the [Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html). |
 <!-- MAGIC:END -->
 
 
 
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

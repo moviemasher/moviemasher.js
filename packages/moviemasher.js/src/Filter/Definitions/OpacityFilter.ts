@@ -8,6 +8,7 @@ import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { idGenerate } from "../../Utility/Id"
 import { tweenPosition } from "../../Utility/Tween"
+import { svgFilterElement, svgSet } from "../../Utility/Svg"
 
 export class OpacityFilter extends FilterDefinitionClass {
   constructor(...args: any[]) {
@@ -57,13 +58,17 @@ export class OpacityFilter extends FilterDefinitionClass {
   
   protected _ffmpegFilter = 'geq'
   
-  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
     const { opacity } = valueObject
     assertNumber(opacity)
 
     const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feColorMatrix')
     filterElement.setAttribute('type', 'matrix')
-    filterElement.setAttribute('values', `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`)
+    const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
+    // console.log(this.constructor.name, "filterDefinitionSvgFilters", values)
+    svgSet(filterElement, values, 'values')
+
+
     return [filterElement]
   }
 }

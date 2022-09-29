@@ -1,7 +1,7 @@
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
-import { ApiClient, Masher, MasherPropsDefault } from "@moviemasher/client-react"
-import "@moviemasher/client-react/dist/moviemasher.css"
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
+import "@moviemasher/theme-default/moviemasher.css"
 import { Defined, DefinitionType } from '@moviemasher/moviemasher.js'
 
 Defined.define({
@@ -11,9 +11,9 @@ Defined.define({
   source: "../shared/font/valken/valken.ttf",
   url: "../shared/font/valken/valken.woff2",
 })
+const element = document.getElementById('app')!
 const options = { previewSize: { width: 480, height: 270 } }
-const props = MasherPropsDefault(options)
+const props = MasherDefaultProps(options)
 const masher = <Masher {...props} />
 const editor = <ApiClient>{masher}</ApiClient>
-const strictMode = <StrictMode>{editor}</StrictMode>
-ReactDOM.render(strictMode, document.getElementById('app'))
+ReactDOM.createRoot(element).render(editor)

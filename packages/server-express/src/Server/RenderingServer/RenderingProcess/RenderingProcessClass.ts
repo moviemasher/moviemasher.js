@@ -2,13 +2,13 @@ import fs from 'fs'
 import path from 'path'
 
 import {
-  idGenerate, Mash, mashInstance, OutputFactory,
+  Mash, mashInstance, OutputFactory,
   RenderingOutput, RenderingOutputArgs, Errors, CommandFilters,
   RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType,
   EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, CommandInput, RenderingDescription, AVType, CommandInputs,
   Defined,
   assertTrue,
-  ExtTs, assertSize, ExtText, isDefined, isDefinition, isObject, isPopulatedString, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, idGenerateString, assertLoadType
+  ExtTs, assertSize, isDefined, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, idGenerateString, assertLoadType
 } from "@moviemasher/moviemasher.js"
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
@@ -25,6 +25,7 @@ export type RenderingProcessConcatFileDuration = [string, number]
 
 export class RenderingProcessClass implements RenderingProcess {
   constructor(public args: RenderingProcessArgs) {
+    // console.log(this.constructor.name, "upload", args.upload)
     Defined.define(...this.args.definitions)
   }
 
@@ -32,7 +33,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const { visibleCommandDescriptions, commandOutput, audibleCommandDescription } = renderingDescription
     const length = visibleCommandDescriptions?.length
     if (!length || length === 1) {
-      // console.log(this.constructor.name, "combinedRenderingDescriptionPromise resolved", length)
+      console.log(this.constructor.name, "combinedRenderingDescriptionPromise resolved", length)
       return Promise.resolve(renderingDescription)
     }
 
@@ -109,7 +110,6 @@ export class RenderingProcessClass implements RenderingProcess {
   commandDescriptionMerged(flatDescription: RenderingDescription): CommandDescription | undefined{
     const { visibleCommandDescriptions, audibleCommandDescription } = flatDescription
     const descriptions: CommandDescriptions = []
-    if (audibleCommandDescription) descriptions.push(audibleCommandDescription)
     const length = visibleCommandDescriptions?.length
     if (length) {
       assertTrue(length === 1, 'flat') 
@@ -117,6 +117,9 @@ export class RenderingProcessClass implements RenderingProcess {
       const [visibleCommandDescription] = visibleCommandDescriptions
       descriptions.push(visibleCommandDescription)
     }
+    // audio must come last
+    if (audibleCommandDescription) descriptions.push(audibleCommandDescription)
+
     // else console.log(this.constructor.name, "commandDescriptionMerged no audibleCommandDescription")
     if (!descriptions.length) return
 
@@ -142,7 +145,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const commandDescription: CommandDescription = { inputs, commandFilters, avType }
     assertTrue(durations.length === descriptions.length, 'each description has duration')
     commandDescription.duration = Math.max(...durations)
-    // console.log(this.constructor.name, "commandDescriptionsMerged", commandDescription)
+    console.log(this.constructor.name, "commandDescriptionsMerged", inputs)
     return commandDescription
   }
 
@@ -210,12 +213,12 @@ export class RenderingProcessClass implements RenderingProcess {
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {
     const { outputType } = commandOutput
-    const { cacheDirectory } = this.args
-    // console.log(this.constructor.name, "outputInstance", cacheDirectory)
+    const { cacheDirectory, upload } = this.args
+    // console.log(this.constructor.name, "outputInstance upload", upload)
 
     const { mashInstance } = this
     const args: RenderingOutputArgs = {
-      commandOutput, cacheDirectory, mash: mashInstance
+      commandOutput, cacheDirectory, mash: mashInstance, upload
     }
     return OutputFactory[outputType](args)
   }
@@ -237,8 +240,9 @@ export class RenderingProcessClass implements RenderingProcess {
 
   private renderResultPromise(destination: string, cmdPath: string, infoPath: string, commandOutput: RenderingCommandOutput, commandDescription: CommandDescription): Promise<RenderingResult> {
     const { outputType, avType } = commandOutput
-    const { duration } = commandDescription
+    const { duration, inputs } = commandDescription
 
+    console.log(this.constructor.name, "renderResultPromise", inputs)
     const commandOptions: CommandOptions = {
       output: commandOutput, ...commandDescription
     }
@@ -277,7 +281,7 @@ export class RenderingProcessClass implements RenderingProcess {
       }
       const { error } = commandResult
       if (error) {
-        console.warn(this.constructor.name, "renderResultPromise runPromise", destination, error)
+        // console.warn(this.constructor.name, "renderResultPromise runPromise", destination, error)
         return fs.promises.writeFile(infoPath, JSON.stringify(renderingResult)).then(() => renderingResult)
       }
       return probingInfoPromise(destination, infoPath).then(() => renderingResult)
@@ -321,7 +325,7 @@ export class RenderingProcessClass implements RenderingProcess {
     
 
     outputsPopulated.forEach(output => {
-      const {optional, outputType} = output
+      const { optional, outputType } = output
       
       const instanceOptions: RenderingCommandOutput = {
         options: {}, ...output
@@ -357,7 +361,9 @@ export class RenderingProcessClass implements RenderingProcess {
           } 
           
           if (expectDuration) {
-            const { duration } = commandDescription
+            const { duration, inputs } = commandDescription
+            console.log(this.constructor.name, "command", inputs)
+
             if (!duration) throw Errors.invalid.duration
           }
 

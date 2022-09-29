@@ -5,7 +5,7 @@ import { colorBlack, colorBlackOpaque, colorWhite } from "../../Utility/Color"
 import { SvgItem, ValueObject } from "../../declarations"
 import { Rect, rectsEqual } from "../../Utility/Rect"
 import { sizeAboveZero, sizeEven, sizesEqual } from "../../Utility/Size"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { DataType, GraphFileType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
 import { assertPopulatedArray, assertPopulatedString, isBoolean, isPopulatedArray, isPopulatedString, isTimeRange } from "../../Utility/Is"
@@ -49,23 +49,22 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   }
 
 
-  commandFiles(args: CommandFileArgs): CommandFiles {
-    const commandFiles: CommandFiles = []
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const { isDefault, id } = this
     const alpha = this.requiresAlpha(args)
     const tweeningColor = this.isTweeningColor(args)
     if (isDefault && !alpha) {
       // console.log(this.constructor.name, "commandFiles NONE", id, isDefault, alpha, tweeningColor)
-      return commandFiles
+      return []
     }
     const { definition } = this
     const { path } = definition
     const { contentColors: colors = [], containerRects, time, videoRate } = args
-
     assertPopulatedArray(containerRects, 'containerRects')
+
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     const [rect, rectEnd] = containerRects
-    const maxSize = tweenMaxSize(rect, rectEnd)
+    const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd)}
     const { width: maxWidth, height: maxHeight} = maxSize
 
     let [forecolor] = colors
@@ -80,7 +79,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width="${inWidth}" height="${inHeight}"`
     const transformAttribute = svgTransform(intrinsicRect, maxSize)
-
+    // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
     const tags: string[] = []
     tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
     tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
@@ -101,10 +100,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       type: GraphFileType.Svg, file: id, content: svgTag, 
       input: true, inputId: id, definition, options
     }
-    // console.log(this.constructor.name, "commandFiles", id)
-
-    commandFiles.push(commandFile)
-    return commandFiles
+    // console.log(this.constructor.name, "visibleCommandFiles", commandFile)
+  
+    return [commandFile]
   }
   
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
@@ -159,12 +157,6 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       filterInput ||= commandFilesInput(commandFiles, id, true)
       assertPopulatedString(filterInput, 'final input')
       
-      // add effects...
-      const effectsFilters = this.effectsCommandFilters({ ...args, filterInput })
-      if (effectsFilters.length) {
-        commandFilters.push(...effectsFilters)
-        filterInput = arrayLast(arrayLast(effectsFilters).outputs)
-      }
       commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput}))
     }
     return commandFilters
@@ -177,9 +169,12 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
     const commandFilters: CommandFilters = [] 
     const { contentColors, ...argsWithoutColors } = args
+
     const { 
-      commandFiles, track, filterInput: input, containerRects, videoRate
+      commandFiles, upload, track, filterInput: input, containerRects, videoRate
     } = argsWithoutColors
+
+    if (upload) return commandFilters
 
     let filterInput = input 
     const alpha = this.requiresAlpha(args, !!tweening.size)
@@ -227,6 +222,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       const { id } = this
       // console.log(this.constructor.name, "initialCommandFilters ALPHA calling commandFilesInput", id)
       const fileInput = commandFilesInput(commandFiles, id, true)   
+      assertPopulatedString(fileInput, 'scale input')
+
+
       const colorArgs: VisibleCommandFilterArgs = { 
         ...args, 
         contentColors: [colorBlackOpaque, colorBlackOpaque], 
@@ -234,7 +232,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       }
       commandFilters.push(...this.colorBackCommandFilters(colorArgs, `${containerInput}-back`))
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
-      assertPopulatedString(fileInput, 'scale input')
+
       commandFilters.push(...this.scaleCommandFilters({ ...args, filterInput: fileInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 

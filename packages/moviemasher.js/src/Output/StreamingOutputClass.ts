@@ -41,7 +41,7 @@ export class StreamingOutputClass implements StreamingOutput {
         const filterGraphs = mash.filterGraphs(args)
         const { filterGraphVisible } = filterGraphs
         commandInputs.push(...filterGraphVisible.commandInputs)
-        files.push(...filterGraphs.graphFiles.filter(graphFile => graphFile.input))
+        files.push(...filterGraphs.fileUrls.filter(graphFile => graphFile.input))
         commandFilters.push(...filterGraphVisible.commandFilters)
       })
       const options: ValueObject = { ...this.args.commandOutput.options }

@@ -1,11 +1,10 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { AudibleSource, LoadedAudio, UnknownObject } from "../../declarations"
-import { GraphFile } from "../../MoveMe"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { isLoadedAudio, Loader } from "../../Loader/Loader"
-import { DataType, Duration, LoadType } from "../../Setup/Enums"
+import { DataType, Duration } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { assertObject, isAboveZero, isPopulatedString } from "../../Utility/Is"
+import { isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
 import { urlPrependProtocol } from "../../Utility/Url"
@@ -43,10 +42,12 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       }))
       this.properties.push(propertyInstance({ 
         name: "startTrim", defaultValue: 0, type: DataType.Frame,
+        step: 1, min: 0,
         group: DataGroup.Timing,
       }))
       this.properties.push(propertyInstance({ 
         name: "endTrim", defaultValue: 0, type: DataType.Frame,
+        step: 1, min: 0,
         group: DataGroup.Timing,
       }))
     }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { DefaultIcons } from '@moviemasher/icons-default'
 import { ClassButton, isUndefined } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
@@ -23,40 +22,41 @@ export interface ActivityPropsDefault extends PanelOptions, PropsWithoutChild {}
 
 export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
+  const { icons } = optionsStrict
   optionsStrict.props.key ||= 'activity'
   optionsStrict.props.className ||= 'panel activity'
   optionsStrict.props.initialPicked ||= ActivityGroup.Active
   if (isUndefined(optionsStrict.props.collapsed)) optionsStrict.props.collapsed = true
   
   optionsStrict.header.content ||= [
-    DefaultIcons.activity, 
+    icons.activity, 
     <NotCollapsed key="not-collapsed"><View key="view" /></NotCollapsed>,
     <Collapsed key="collapsed">
       <ActivityProgress key="progress" className='progress' />
     </Collapsed>,
     <CollapseControl key="collapse-control">
-      <NotCollapsed key="not-collapsed" children={DefaultIcons.collapse}/>
-      <Collapsed key="collapsed" children={DefaultIcons.collapsed}/>
+      <NotCollapsed key="not-collapsed" children={icons.collapse}/>
+      <Collapsed key="collapsed" children={icons.collapsed}/>
     </CollapseControl>
   ]
 
   optionsStrict.content.children ||= <ActivityItem className='item' collapsed={true}>
     <CollapseControl key="collapse-control">
-      <NotCollapsed key="not-collapsed" children={DefaultIcons.collapse}/>
-      <Collapsed key="collapsed" children={DefaultIcons.collapsed}/>
+      <NotCollapsed key="not-collapsed" children={icons.collapse}/>
+      <Collapsed key="collapsed" children={icons.collapsed}/>
     </CollapseControl>
     <ActivityLabel key="label" className="label" />
     <ActivityPicked key="active" id="active">
       <ActivityProgress key="progress" />
     </ActivityPicked>
-    <ActivityPicked key="error" id="error" children={DefaultIcons.error} />
-    <ActivityPicked key="complete" id="complete" children={DefaultIcons.complete} />
+    <ActivityPicked key="error" id="error" children={icons.error} />
+    <ActivityPicked key="complete" id="complete" children={icons.complete} />
   </ActivityItem>
   
   optionsStrict.footer.content ||= [
-    <ActivityPicker key='active' id='active' className={ClassButton} children={DefaultIcons.active} />,
-    <ActivityPicker key='error' id='error' className={ClassButton} children={DefaultIcons.error} />,
-    <ActivityPicker key='complete' id='complete' className={ClassButton} children={DefaultIcons.complete} />,
+    <ActivityPicker key='active' id='active' className={ClassButton} children={icons.active} />,
+    <ActivityPicker key='error' id='error' className={ClassButton} children={icons.error} />,
+    <ActivityPicker key='complete' id='complete' className={ClassButton} children={icons.complete} />,
   ]
 
   const children = <>

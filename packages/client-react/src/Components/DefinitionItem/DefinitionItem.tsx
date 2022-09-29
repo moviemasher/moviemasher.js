@@ -10,7 +10,7 @@ import { DragSuffix } from '../../Helpers/DragDrop'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
-import { EditorContext } from '../Masher/EditorContext'
+import { MasherContext } from '../Masher/MasherContext'
 
 export interface DefinitionItemProps extends WithClassName, PropsWithoutChild {
   draggable?: boolean
@@ -27,7 +27,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const svgRef = React.useRef<HTMLDivElement>(null)
   const viewRef = React.useRef<HTMLDivElement>(null)
 
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { editor, definition: selectedDefinition, changeDefinition } = editorContext
   assertTrue(editor)
 
@@ -71,6 +71,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     if (!dataTransfer) return 
     
     dataTransfer.effectAllowed = 'copy'
+    // console.log("DefinitionItem.onDragStart", definition.type + DragSuffix, json)
     dataTransfer.setData(definition.type + DragSuffix, json)
   }
 

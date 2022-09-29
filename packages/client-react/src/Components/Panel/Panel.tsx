@@ -1,9 +1,10 @@
 import React from 'react'
 import { CollapseContext, CollapseContextInterface } from '../Collapse/CollapseContext'
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+import { PropsAndChildren, ReactResult, ThemeIcons, WithClassName } from "../../declarations"
 import { BarOptions } from '../../Utilities/Bar'
 import { View } from '../../Utilities/View'
+import { assertPopulatedObject } from '@moviemasher/moviemasher.js'
 
 export interface ContentOptions {
   props?: WithClassName
@@ -11,6 +12,7 @@ export interface ContentOptions {
 }
 
 export interface PanelOptionsStrict {
+  icons: ThemeIcons
   props: WithClassName
   header: BarOptions
   content: ContentOptions
@@ -36,6 +38,8 @@ export const panelOptionsStrict = (options: PanelOptions): PanelOptionsStrict =>
   options.footer.props.className ||= 'foot'
 
   options.props ||= {}
+
+  assertPopulatedObject(options.icons)
 
   return options as PanelOptionsStrict
 }

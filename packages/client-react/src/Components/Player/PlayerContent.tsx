@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   EventType, Rect, eventStop, isDefinitionType, rectRound,
-  ClassDropping, sizeCopy, sizeAboveZero, UnknownObject, assertDefinitionType, rectCopy, EditorIndex, assertObject, SelectType, idGenerate, 
+  ClassDropping, sizeCopy, sizeAboveZero, UnknownObject, assertDefinitionType, rectCopy, EditorIndex, assertObject, SelectType, idGenerate, EmptyMethod, SvgItems, SvgItem, 
 } from '@moviemasher/moviemasher.js'
 
 import { 
@@ -11,14 +11,14 @@ import {
 import { useEditor } from '../../Hooks/useEditor'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
-import { EditorContext } from '../../Components/Masher/EditorContext'
+import { MasherContext } from '../Masher/MasherContext'
 import { assertDragDefinitionObject, dragData, dragType, dragTypes, 
   TransferTypeFiles 
 } from '../../Helpers/DragDrop'
 import { PlayerContext } from './PlayerContext'
 
 export interface PlayerContentProps extends PropsWithChildren, WithClassName {}
-const PlayerRefreshRate = 100
+const PlayerRefreshRate = 10
 
 /**
  * @parents Player
@@ -28,9 +28,9 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   
   const editor = useEditor()
   const [rect, setRect] = React.useState<Rect>(() => (rectCopy(editor.rect)))
-  const svgRef = React.useRef<SVGSVGElement>(null)
+  const svgRef = React.useRef<HTMLDivElement>(null)//SVGSVGElement
   const viewRef = React.useRef<HTMLDivElement>(null)
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const [over, setOver] = React.useState(false)
   const playerContext = React.useContext(PlayerContext)
   const { disabled } = playerContext
@@ -57,20 +57,43 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const requestItems = (): Promise<void> => {
+  const swapChildren = (elements: SvgItems) => {
+    const { current } = svgRef
+    assertObject(current)
+    // const removing: ChildNode[] = []
+    // current.childNodes.forEach(node => {
+    //   if (!elements.includes(node as SvgItem)) removing.push(node)
+    // })
 
+    // removing.forEach(remove => {
+    //   // console.log("removing", remove)
+    //   current.removeChild(remove)
+    // })
+    // elements.forEach((element, index) => {
+    //   if (element.parentElement !== current) {
+        
+    //     current.appendChild(element)
+    //   }
+    //   element.setAttribute('style', `z-index: ${index}`)
+    // })
+
+    current.replaceChildren(...elements)
+
+      // console.log("removed", removing.length, "added", elements.length - removing.length, "=", current.childNodes.length)
+  }
+
+  const requestItemsPromise = (): Promise<void> => {
     const { redraw } = watching
     delete watching.timeout 
     delete watching.redraw 
 
     return editor.svgItems(!disabled).then(svgs => {
-      const { current } = svgRef
-      assertObject(current)
    
-      current.replaceChildren(...svgs)
+      swapChildren(svgs)
       if (redraw) handleDraw()
     })
   }
+  const requestItems = () => { requestItemsPromise().then(EmptyMethod) }
 
   const handleDraw = () => { 
     const { current } = svgRef
@@ -84,16 +107,6 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     }
     // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
     watching.timeout = setTimeout(requestItems, PlayerRefreshRate)
-
-
-    // if (watching.drawing) {
-    //   watching.redraw = true
-    //   return
-    // }
-    // watching.drawing = true
-    // watching.redraw = false
-
-    // requestItems()//.then(callId => console.log("PlayerContent.handleDraw resolved", callId))
   }
 
   useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw })
@@ -155,11 +168,16 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
 
   if (sizeAboveZero(rect)) {
     const svgProps = { 
-      ref: svgRef, ...sizeCopy(rect), 
-      viewBox: `0 0 ${rect.width} ${rect.height}`,
+      ref: svgRef, 
       key: "svg",
+      className: 'svgs',
+      // ...sizeCopy(rect), 
+      // viewBox: `0 0 ${rect.width} ${rect.height}`,
+      // version: "2",
+      // xmlns: "http://www.w3.org/2000/svg",
+      // 'xmlns:html': "http://www.w3.org/1999/xhtml"
     }
-    const nodes = [<svg { ...svgProps } />]
+    const nodes = [<div { ...svgProps } />]
       
     if (children) {
       const child = React.Children.only(children)

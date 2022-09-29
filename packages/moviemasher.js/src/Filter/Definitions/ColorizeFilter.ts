@@ -1,10 +1,10 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { idGenerate } from "../../Utility/Id"
-import { colorBlack, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba } from "../../Utility/Color"
-import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
+import { colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba } from "../../Utility/Color"
+import { assertNumber, assertPopulatedString } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { ValueObject } from "../../declarations"
 import { tweenPosition } from "../../Utility/Tween"
@@ -42,17 +42,6 @@ export class ColorizeFilter extends FilterDefinitionClass {
     }
     commandFilters.push(formatCommandFilter)
     filterInput = formatId
- 
-
-    // const setptsFilter = 'setpts'
-    // const setptsId = idGenerate(setptsFilter)
-    // const setptsCommandFilter: CommandFilter = {
-    //   inputs: [filterInput], ffmpegFilter: setptsFilter, 
-    //   options: { expr: 'PTS-STARTPTS' }, outputs: [setptsId]
-    // }
-    // commandFilters.push(setptsCommandFilter)
-    // filterInput = setptsId
- 
 
     const colorEnd = filter.value(`color${PropertyTweenSuffix}`) || color
     assertPopulatedString(colorEnd)
@@ -83,6 +72,4 @@ export class ColorizeFilter extends FilterDefinitionClass {
     commandFilters.push(geqCommandFilter)
     return commandFilters
   }
-
-  phase = Phase.Initialize
 }

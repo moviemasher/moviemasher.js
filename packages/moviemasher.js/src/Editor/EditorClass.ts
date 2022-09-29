@@ -2,7 +2,7 @@ import {
   StringObject, SvgItem, Timeout, UnknownObject} from "../declarations"
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero } from "../Utility/Size"
 import { Definition, DefinitionObject, DefinitionObjects, isDefinitionObject } from "../Definition/Definition"
-import { Edited } from "../Edited/Edited"
+import { assertEdited, Edited, isEdited } from "../Edited/Edited"
 import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -43,12 +43,11 @@ import { Layer, LayerAndPosition, LayerObject } from "../Edited/Cast/Layer/Layer
 import { Defined } from "../Base/Defined"
 import { assertClip, isClip, ClipObject, Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
 import { clipDefault } from "../Edited/Mash/Track/Clip/ClipFactory"
-import { isContentDefinition } from "../Content/Content"
+import { assertContent, isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
 import { PreviewOptions } from "../Edited/Mash/Preview/Preview"
 import { svgElement } from "../Utility/Svg"
 import { idGenerate, idIsTemporary } from "../Utility/Id"
-import { assertContainer } from "../Container/Container"
 import { Cast } from "../Edited/Cast/Cast"
 import { GraphFileOptions } from "../MoveMe"
 import { arrayUnique } from "../Utility/Array"
@@ -57,6 +56,7 @@ import { ActivityType } from "../Utility/Activity"
 import { isVideoDefinition } from "../Media/Video/Video"
 import { isImageDefinition } from "../Media/Image/Image"
 import { Rect, rectsEqual, RectZero } from "../Utility/Rect"
+import { PointZero } from "../Utility"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -71,7 +71,8 @@ export class EditorClass implements Editor {
       preloader,
       editType,
       readOnly,
-      rect,
+      dimensions,
+      edited,
     } = args
     
     if (isEditType(editType)) this._editType = editType
@@ -83,9 +84,12 @@ export class EditorClass implements Editor {
     if (isNumber(fps)) this._fps = fps
     if (isNumber(volume)) this._volume = volume
     if (isNumber(buffer)) this._buffer = buffer
-    if (sizeAboveZero(rect)) this._rect = rect
+    if (sizeAboveZero(dimensions)) {
+      this._rect = { ...PointZero, ...dimensions }
+    }
     this.actions = new Actions(this)
     this.preloader = preloader || new BrowserLoaderClass(endpoint)
+    if (edited) this.load(edited)
   }
 
   actions: Actions
@@ -125,63 +129,67 @@ export class EditorClass implements Editor {
     const [firstClip] = clips
     if (!firstClip) return Promise.resolve()
 
-    const { mash } = this.selection
-    assertMash(mash)
-   
-    const { tracks } = mash
-    const { length } = tracks
-    assertAboveZero(length)
-
-    const trackPositive = isPositive(trackIndex)
-    const track = trackPositive ? tracks[trackIndex] : undefined
-    const trackClips = track?.clips || []
-    let index = trackIndex
-    if (index < 0) index = length
-    else if (index >= length) index = length - 1
-
-    const dense = track?.dense 
-
-    const redoSelection: EditorSelectionObject = { 
-      ...this.selection.object, clip: firstClip 
-    }
-    const createTracks = trackPositive ? 0 : clips.length
-    const options: ActionObject = {
-      clips, type: ActionType.AddClipToTrack, trackIndex,
-      redoSelection, createTracks
-    }
+    const promise = this.assureMash(clip)
+    return promise.then(() => {
+      const { mash } = this.selection
+      assertMash(mash)
     
-    if (dense) {
-      const insertIndex = isPositive(frameOrIndex) ? frameOrIndex : trackClips.length
-      options.insertIndex = insertIndex
-    } else {
-      if (createTracks) options.redoFrame = isPositive(frameOrIndex) ? frameOrIndex : 0
-      else {
-        assertTrack(track)
-        const frame = isPositive(frameOrIndex) ? frameOrIndex : track.frames
-        options.redoFrame = track.frameForClipNearFrame(firstClip, frame)
+      const { tracks } = mash
+      const { length } = tracks
+      assertAboveZero(length)
+
+      const trackPositive = isPositive(trackIndex)
+      const track = trackPositive ? tracks[trackIndex] : undefined
+      const trackClips = track?.clips || []
+      let index = trackIndex
+      if (index < 0) index = length
+      else if (index >= length) index = length - 1
+
+      const dense = track?.dense 
+
+      const redoSelection: EditorSelectionObject = { 
+        ...this.selection.object, clip: firstClip 
       }
-    }
-    this.actions.create(options)
-    return this.loadMashAndDraw()
+      const createTracks = trackPositive ? 0 : clips.length
+      const options: ActionObject = {
+        clips, type: ActionType.AddClipToTrack, trackIndex,
+        redoSelection, createTracks
+      }
+      
+      if (dense) {
+        const insertIndex = isPositive(frameOrIndex) ? frameOrIndex : trackClips.length
+        options.insertIndex = insertIndex
+      } else {
+        if (createTracks) options.redoFrame = isPositive(frameOrIndex) ? frameOrIndex : 0
+        else {
+          assertTrack(track)
+          const frame = isPositive(frameOrIndex) ? frameOrIndex : track.frames
+          options.redoFrame = track.frameForClipNearFrame(firstClip, frame)
+        }
+      }
+      this.actions.create(options)
+      return this.loadMashAndDraw()  
+    })
+    
   }
 
   addEffect(effect: Effect, insertIndex = 0): Promise<void> {
-    // console.log(this.constructor.name, "addEffect", object, index)
+    // console.log(this.constructor.name, "addEffect", effect.definition.label, insertIndex)
     const { clip } = this.selection
     if (!isClip(clip)) {
       console.error(this.constructor.name, "addEffect expected effectable selection")
       throw Errors.selection + 'effectable'
     }
-    const { container } = clip
-    assertContainer(container)
-    const { effects } = container
+    const { content } = clip
+    assertContent(content)
+    const { effects } = content
 
     if (!effects) throw Errors.selection
 
     const undoEffects = [...effects]
     const redoEffects = [...effects]
     redoEffects.splice(insertIndex, 0, effect)
-    const redoSelection: EditorSelectionObject = { ...this.selection.object }
+    const redoSelection: EditorSelectionObject = { ...this.selection.object, effect }
     const options = {
       effects,
       undoEffects,
@@ -259,6 +267,7 @@ export class EditorClass implements Editor {
     assertCast(cast)
 
     const mashObject = mashAndDefinitions?.mashObject || {}
+    // console.log(this.constructor.name, "addMash", mashObject)
     const definitionObjects = mashAndDefinitions?.definitionObjects || []
 
     Defined.define(...definitionObjects)
@@ -281,6 +290,20 @@ export class EditorClass implements Editor {
     this.actions.create({ 
       redoSelection, type: ActionType.AddTrack, createTracks: 1 
     })
+  }
+
+  private assureMash(clip: Clip | Clips) {
+    const { selection, editType } = this
+    const { mash } = selection
+    
+    if (!isMash(mash)) {
+      const first = isArray(clip) ? clip[0] : clip
+      const { label } = first.content.definition
+      const mashObject = { label }
+      if (editType === EditType.Mash) return this.load({ mash: mashObject})
+      this.addMash({ mashObject, definitionObjects: [] })
+    }
+    return Promise.resolve()
   }
 
   autoplay = Default.editor.autoplay
@@ -331,8 +354,6 @@ export class EditorClass implements Editor {
     this.configureEdited(cast)
     return cast.loadPromise({ editing: true, visible: true }).then(() => {
       this.selection.set(cast)
-    }).then(() => { 
-      // console.log(this.constructor.name, "configureCast loadPromise handleDraw")
       this.handleDraw() 
     })
   }
@@ -349,7 +370,6 @@ export class EditorClass implements Editor {
     mash.gain = this.gain
     mash.loop = this.loop
     this.configureEdited(mash)
-
     return mash.loadPromise({ editing: true, visible: true }).then(() => {
       this.selection.set(mash)
       this.handleDraw() 
@@ -449,6 +469,8 @@ export class EditorClass implements Editor {
 
   get edited(): Edited | undefined { return this.selection.cast || this.selection.mash }
 
+  editedData?: EditedData
+
   editing: boolean 
 
   get editingCast(): boolean { return !!this.selection.cast }
@@ -543,18 +565,13 @@ export class EditorClass implements Editor {
   }
 
   load(data: EditedData): Promise<void> {
-    this.destroy()
-    this.paused = true
-    this.clearActions()
-    this.selection.clear()
-    if (isCastData(data)) return this.loadCastData(data)
-
-    assertMashData(data)
-    return this.loadMashData(data)
+    this.editedData = data
+    // console.log(this.constructor.name, "load", data)
+    return this.loadEditedData()
   }
 
 
-  private loadCastData(data: CastData = {}): Promise<void> {
+  private loadCastData(data: CastData = {}) {
     const { cast: castObject = {}, definitions: definitionObjects = [] } = data
     Defined.undefineAll()
     Defined.define(...definitionObjects)
@@ -562,8 +579,35 @@ export class EditorClass implements Editor {
     this.eventTarget.trap(EventType.Draw, this.handleDraw.bind(this))
 
     const cast = castInstance(castObject, this.preloader)
-    const promise = this.configureCast(cast)
-    return promise
+    return this.configureCast(cast)
+  }
+
+  private loadEditedData(): Promise<void> {
+    const { rect, editedData: data } = this
+    if (!sizeAboveZero(rect)) {
+      // console.log(this.constructor.name, "loadEditedData DEFFERING LOAD", rect)
+      return Promise.resolve()
+    }
+
+    assertObject(data)
+    delete this.editedData
+    this.destroy()
+    this.paused = true
+    this.clearActions()
+    this.selection.clear()
+    
+    // console.log(this.constructor.name, "loadEditedData LOADING", rect, data)
+    if (isCastData(data)) return this.loadCastData(data)
+
+    assertMashData(data)
+
+    return this.loadMashData(data).then(() => {
+      return this.goToTime().then(() => {
+        const { edited: mash } = this
+        if (isMash(mash)) mash.clearPreview()
+        if (this.autoplay) this.paused = false
+      })
+    })
   }
 
   private loadMashAndDraw(): Promise<void> {
@@ -576,18 +620,12 @@ export class EditorClass implements Editor {
 
   private loadMashData(data: MashData = {}): Promise<void> {
     const { mash: mashObject = {}, definitions: definitionObjects = [] } = data
+    // console.log(this.constructor.name, "loadMashData LOADING", mashObject, definitionObjects)
     Defined.undefineAll()
     Defined.define(...definitionObjects)
     const mash = mashInstance({ ...mashObject, preloader: this.preloader })
     this.mashDestroy()
-    const promise = this.configureMash(mash)
-
-    return promise.then(() => {
-      return this.goToTime().then(() => {
-        mash.clearPreview()
-        if (this.autoplay) this.paused = false
-      })
-    })
+    return this.configureMash(mash)
   }
 
   private _loop = Default.editor.loop
@@ -673,14 +711,14 @@ export class EditorClass implements Editor {
   }
 
   moveEffect(effect: Effect, index = 0): void {
-    // console.log(this.constructor.name, "moveEffects", effectOrArray, index)
+    // console.log(this.constructor.name, "moveEffect", effect, index)
     if (!isPositive(index)) throw Errors.argument + 'index'
 
     const { clip } = this.selection
     if (!clip) throw Errors.selection
     assertClip(clip)
-    const effectable = clip.container
-    assertContainer(effectable)
+    const effectable = clip.content
+    assertContent(effectable)
     const { effects } = effectable
     const undoEffects = [...effects]
     const redoEffects = undoEffects.filter(e => e !== effect)
@@ -761,17 +799,22 @@ export class EditorClass implements Editor {
   private _rect: Rect = { ...RectZero }
   get rect(): Rect { return this._rect }
   set rect(value: Rect) {
-    // console.log(this.constructor.name, "rect =", value)
     assertSizeAboveZero(value)
 
-    const { edited, rect } = this
-    this._rect = value
-    if (edited) edited.imageSize = sizeCopy(value)
-  
+    const { editedData, rect } = this
+    // console.log(this.constructor.name, "rect", rect, "=>", value, !!editedData)
     if (rectsEqual(rect, value)) return
-    const { eventTarget } = this
-    eventTarget.emit(EventType.Resize, { rect: value })
-    this.redraw()
+
+    this._rect = value
+    const promise = editedData ? this.loadEditedData() : Promise.resolve()
+    promise.then(() => {
+      const { edited, rect, eventTarget } = this
+      if (!isEdited(edited)) return
+ 
+      edited.imageSize = sizeCopy(rect)
+      eventTarget.emit(EventType.Resize, { rect: value })
+      this.redraw()
+    })
   }
 
   redo(): void { if (this.actions.canRedo) this.handleAction(this.actions.redo()) }
@@ -806,14 +849,16 @@ export class EditorClass implements Editor {
     if (!clip) throw Errors.selection
 
     assertClip(clip)
-    const { container } = clip
-    assertContainer(container)
-    const { effects } = container
+    const { content } = clip
+    assertContent(content)
+    const { effects } = content
     const undoEffects = [...effects]
     const redoEffects = effects.filter(other => other !== effect)
     const redoSelection: EditorSelectionObject = { 
-      ...this.selection.object 
+      ...this.selection.object
     }
+    delete redoSelection.effect
+    // console.log(this.constructor.name, "removeEffect", redoSelection)
     const options = {
       redoSelection,
       effects,

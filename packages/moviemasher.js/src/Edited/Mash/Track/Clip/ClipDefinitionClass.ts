@@ -3,8 +3,8 @@ import { ClipClass } from "./ClipClass"
 import { DataType, DefinitionType, Duration, Sizing, Timing } from "../../../../Setup/Enums"
 import { DefinitionBase } from "../../../../Definition/DefinitionBase"
 import { DataGroup, propertyInstance } from "../../../../Setup/Property"
-import { ContainerDefaultId } from "../../../../Container/Container"
-import { ContentDefaultId } from "../../../../Content/Content"
+import { DefaultContainerId } from "../../../../Container/Container"
+import { DefaultContentId } from "../../../../Content/Content"
 import { isUndefined } from "../../../../Utility/Is"
 
 export class ClipDefinitionClass extends DefinitionBase implements ClipDefinition {
@@ -12,11 +12,11 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
     super(...args)
     this.properties.push(propertyInstance({
       name: "containerId", type: DataType.ContainerId,
-      defaultValue: ContainerDefaultId
+      defaultValue: DefaultContainerId
     }))
     this.properties.push(propertyInstance({
       name: "contentId", type: DataType.ContentId,
-      defaultValue: ContentDefaultId
+      defaultValue: DefaultContentId
     }))
     this.properties.push(propertyInstance({ name: "label", type: DataType.String }))
     this.properties.push(propertyInstance({ 
@@ -44,8 +44,8 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
   instanceArgs(object: ClipObject = {}): ClipObject {
     const args = super.instanceArgs(object) as ClipObject
     const { containerId, contentId } = args
-    const defaultContent = isUndefined(contentId) || contentId === ContentDefaultId
-    let defaultContainer = isUndefined(containerId) || containerId === ContainerDefaultId
+    const defaultContent = isUndefined(contentId) || contentId === DefaultContentId
+    let defaultContainer = isUndefined(containerId) || containerId === DefaultContainerId
     if (args.sizing === Sizing.Content && defaultContent) {
       // console.log("instanceArgs setting sizing to container", object)
       args.sizing = Sizing.Container

@@ -1,7 +1,8 @@
 import React from "react"
 import {
   Layer, Layers, SelectType, isLayerFolder, DroppingPosition, ClassDropping, 
-  assertTrue
+  assertTrue,
+  isDefinitionType
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
@@ -10,6 +11,7 @@ import { LayerContext } from "../../Contexts/LayerContext"
 import { ComposerContext } from "./ComposerContext"
 import { ComposerLayer } from "./ComposerLayer"
 import { useEditor } from "../../Hooks/useEditor"
+import { dragType, dragTypes, isDragType, TransferTypeFiles } from "../../Helpers/DragDrop"
 
 export interface ComposerContentProps extends PropsAndChild, WithClassName {}
 
@@ -26,7 +28,6 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     onDrop, onDragLeave
   } = composerContext
   const editor = useEditor()
-
 
   const { className: propsClassName = 'content', children, ...rest } = props
 
@@ -58,7 +59,6 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     return elements
   }
 
-
   const viewChildren = React.useMemo(
     () => layersArray(editor.selection.cast?.layers || []),
     [composerContext.refreshed, composerContext.selectedLayer]
@@ -78,19 +78,29 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
 
   const onClick = () => { editor.selection.unset(SelectType.Layer) }
 
-  const onDragOver = (event: DragEvent) => {
-    const {dataTransfer} = event
-    if (!dataTransfer) return 
+  const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
+    if (!dataTransfer) return false
+
+    const types = dragTypes(dataTransfer)
+    if (types.includes(TransferTypeFiles)) return true
     
-    const { types, files, items } = dataTransfer
-    console.log("types", types)
-    console.log("files", files)
-    console.log("items", items)
-    // const type = dragType(dataTransfer)
+    const type = dragType(dataTransfer)
+    return !!type
+  }
+
+  const onDragOver = (event: DragEvent) => {
+    event.preventDefault()
+    const {dataTransfer} = event
+    if (!dragValid(dataTransfer)) return 
+    
+    // const { types, files, items } = dataTransfer
+    // console.log("types", types)
+    // console.log("files", files)
+    // console.log("items", items)
+    // // const type = dragType(dataTransfer)
 
     setDroppingPosition(viewChildren.length)
     setDroppingLayer()
-    event.preventDefault()
   }
 
   const viewProps = {

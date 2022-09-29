@@ -3,7 +3,7 @@ import { Endpoint, LoadedImage, LoadedVideo } from "../declarations"
 
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
-import { assertLoaderPath, assertLoaderType, isLoaderPath, isLoaderType, Loaded, LoadedImageOrVideo, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
+import { assertLoaderType, Loaded, LoadedImageOrVideo, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
 import { Definition, isDefinition } from "../Definition/Definition"
 import { assertObject, assertPopulatedString, isAboveZero, isPopulatedObject, isString } from "../Utility/Is"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
@@ -12,7 +12,8 @@ import { FontDefinition, isFontDefinition } from "../Media/Font/Font"
 import { Size, sizeAboveZero, sizesEqual } from "../Utility/Size"
 import { EmptyMethod } from "../Setup/Constants"
 import { GraphFileType, LoadType } from "../Setup/Enums"
-import { urlEndpoint, urlOptionsObject, urlsAbsolute } from "../Utility/Url"
+import { urlOptionsObject, urlsAbsolute } from "../Utility/Url"
+import { arrayLast } from "../Utility/Array"
 
 export class LoaderClass implements Loader {
   constructor(endpoint?: Endpoint) {
@@ -29,7 +30,7 @@ export class LoaderClass implements Loader {
     const found = this.loaderCache.get(cacheKey)
     if (found ||!createIfNeeded) return found
 
-    const { definition } = graphFile
+    const { definition, type } = graphFile
     const definitions: Definition[] = []
     if (isDefinition(definition)) definitions.push(definition)
     const cache: LoaderCache = { loaded: false, definitions }
@@ -72,8 +73,8 @@ export class LoaderClass implements Loader {
     throw Errors.unimplemented + 'filePromise'
   }
   
-  flushFilesExcept(graphFiles: GraphFiles = []): void {
-    const retainKeys = graphFiles.map(graphFile => this.cacheKey(graphFile))
+  flushFilesExcept(fileUrls: GraphFiles = []): void {
+    const retainKeys = fileUrls.map(fileUrl => this.cacheKey(fileUrl))
     const keys = [...this.loaderCache.keys()]
     const removeKeys = keys.filter(key => !retainKeys.includes(key))
     removeKeys.forEach(key => {
@@ -96,7 +97,7 @@ export class LoaderClass implements Loader {
     return this.cacheGet(graphFile)?.error
   }
   
-  getFile(graphFile: GraphFile): any {
+  private getFile(graphFile: GraphFile): any {
     const cache = this.cacheGet(graphFile)
     const result = cache?.result
     if (!result) {
@@ -126,6 +127,7 @@ export class LoaderClass implements Loader {
     const definitions: Definition[] = []
     if (isDefinition(definition)) definitions.push(definition)
     const cache: LoaderCache = { loaded: false, definitions }
+    //if (definition) 
     if (loaderType !== GraphFileType.Svg) this.setLoaderCache(loaderPath, cache)
     cache.promise = this.filePromise(file).then(loaded => {
       // console.log(this.constructor.name, "getLoaderCache CACHED", loaderPath, loaded.constructor.name)
@@ -162,6 +164,14 @@ export class LoaderClass implements Loader {
 
   key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
 
+  protected lastCssUrl(string: string): string {
+    const exp = /url\(([^)]+)\)(?!.*\1)/g
+    const matches = string.matchAll(exp)
+    const matchesArray = [...matches]
+    const url = arrayLast(arrayLast(matchesArray))
+    // console.log(this.constructor.name, "lastCssUrl", string, url)
+    return url
+  }
   loadFilesPromise(graphFiles: GraphFiles): Promise<void> {
     const promises = graphFiles.map(file => 
       this.loadGraphFilePromise(file)
@@ -199,6 +209,7 @@ export class LoaderClass implements Loader {
       return something
     })
   }
+
 
   protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
     const { type, file, definition } = graphFile
@@ -277,7 +288,7 @@ export class LoaderClass implements Loader {
   private updateDefinitionDuration(definition: UpdatableDurationDefinition, duration: number, audio?: boolean) {
     const { duration: definitionDuration } = definition
     if (!isAboveZero(definitionDuration)) {
-      // console.log(this.constructor.name, "updateDefinitionDuration duration", duration, "=>", durationOrNot)
+      // console.log(this.constructor.name, "updateDefinitionDuration duration", definitionDuration, "=>", duration)
       definition.duration = duration
     }
     if (audio) definition.audio = true
@@ -289,7 +300,7 @@ export class LoaderClass implements Loader {
     if (! sizesEqual(size, definitionSize)) definition[key] = size
   }
 
-  private updateDefinitionFamily(definition: FontDefinition, family: string) {
+  protected updateDefinitionFamily(definition: FontDefinition, family: string) {
     const { family: definitionFamily } = definition
     if (!definitionFamily) definition.family = family
   }
@@ -312,7 +323,8 @@ export class LoaderClass implements Loader {
     }
     if (family) loadedInfo.family ||= family
 
-    definitions.forEach(definition => {
+      // console.log(this.constructor.name, "updateCache", definitions.length)
+      definitions.forEach(definition => {
       if (sizing && isUpdatableSizeDefinition(definition)) {
         this.updateDefinitionSize(definition, size)
       }
@@ -322,16 +334,21 @@ export class LoaderClass implements Loader {
       if (family && isFontDefinition(definition)) {
         this.updateDefinitionFamily(definition, family)
       }
+      // console.log(this.constructor.name, "updateCache", definition.type, definition.label)
     })
   }
 
   protected updateLoaderFile(file: LoaderFile, info: LoadedInfo) {
+    // console.log(this.constructor.name, "updateLoaderFile", file, info)
+
     const cache = this.getLoaderCache(file)
     assertObject(cache)
     this.updateCache(cache, info)
   }
   
   protected updateDefinitions(graphFile: GraphFile, info: LoadedInfo) {
+    // console.log(this.constructor.name, "updateDefinitions", graphFile.file, info)
+
     const cache = this.cacheGet(graphFile)
     assertObject(cache)
     this.updateCache(cache, info)

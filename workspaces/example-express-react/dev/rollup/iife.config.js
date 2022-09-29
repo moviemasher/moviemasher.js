@@ -8,7 +8,7 @@ import css from 'rollup-plugin-css-only'
 import copy from 'rollup-plugin-copy'
 import json from "@rollup/plugin-json"
 
-import { terser } from 'rollup-plugin-terser'
+// import { terser } from 'rollup-plugin-terser'
 
 const src = './src'
 const dest = './dist/public'
@@ -24,19 +24,18 @@ const replaceOptions = {
 }
 
 const clients = names.map(name => ({
-  context: 'this',
   input: `${src}/${name}${inputExtension}`,
   output: {
     file: path.join(dest, `${name}${outputExtension}`),
     format: "iife",
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     resolve(),
     replace(replaceOptions),
     json( { preferConst: true, indent: "  ", namedExports: true }),
     commonjs({ include: /node_modules/ }),
-    ts({ tsconfig: '../example-react/dev/tsconfig.json' }),
+    ts({ tsconfig: './dev/client.tsconfig.json' }),
     css({ output: `${name}.css` }),
     copy({
       targets: [{

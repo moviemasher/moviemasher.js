@@ -2,7 +2,7 @@ import { SvgItem, SvgFilters, UnknownObject, ScalarObject } from "../declaration
 import { InstanceBase } from "../Instance/InstanceBase"
 import { CommandFilters, FilterArgs, FilterCommandFilterArgs } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
-import { isPopulatedObject } from "../Utility/Is"
+import { isDefined, isNumber, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
 import { Filter, FilterDefinition, FilterObject } from "./Filter"
 import { Parameter } from "../Setup/Parameter"
 import { PropertyTweenSuffix } from "../Base/Propertied"
@@ -49,9 +49,35 @@ export class FilterClass extends InstanceBase implements Filter {
     return this.definition.filterDefinitionSvg({ ...args, filter: this })
   }
 
-  filterSvgFilters(tweening = false): SvgFilters {
-    const valueObject = this.scalarObject(tweening)
-    return this.definition.filterDefinitionSvgFilters(valueObject)
+  filterSvgFilter(): SvgFilters {
+    const valueObject = this.scalarObject()
+    return this.definition.filterDefinitionSvgFilter(valueObject)
+  }
+
+  scalarObject(tweening = false): ScalarObject {
+    const object: ScalarObject = {}
+    const { parametersDefined } = this
+
+    parametersDefined.forEach(parameter => {
+      const { name, value } = parameter
+      if (isPopulatedString(value)) {
+        const property = this.properties.find(property => value === property.name)
+        if (property) return 
+      }
+      if (isNumber(value) || isString(value)) object[name] = value
+    })
+    this.properties.forEach(property => {
+      const { tweenable, name } = property
+      if (isDefined(object[name])) return
+
+      object[name] = this.value(name)
+      if (!(tweening && tweenable)) return
+      
+      const key = `${name}${PropertyTweenSuffix}`
+      object[key] = this.value(key)
+    })
+    // console.log(this.constructor.name, "scalerObject", object, parametersDefined.map(p => p.name))
+    return object
   }
 
   toJSON() : UnknownObject {
@@ -62,20 +88,5 @@ export class FilterClass extends InstanceBase implements Filter {
 
   toString(): string {
     return `[Filter ${this.label}]`
-  }
-
-  scalarObject(tweening = false): ScalarObject {
-    const object: ScalarObject = {}
-     this.properties.forEach(property => {
-      const { name, tweenable } = property
-      object[name] = this.value(name)
-      if (!(tweening && tweenable)) return
-      
-      const key = `${name}${PropertyTweenSuffix}`
-      object[key] = this.value(key)
-    })
-    // console.log(this.constructor.name, "scalerObject", tweening, object)
-   
-    return object
   }
 }

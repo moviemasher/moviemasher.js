@@ -1,4 +1,4 @@
-import { assertSizeAboveZero, Size } from "../../../Utility/Size"
+import { Size } from "../../../Utility/Size"
 import { Editor } from "../../../Editor/Editor"
 import { Time } from "../../../Helpers/Time/Time"
 import { Clip, IntrinsicOptions } from "../Track/Clip/Clip"
@@ -9,12 +9,11 @@ import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../Mash"
 import { PreviewArgs, Preview } from "./Preview"
-import { svgDefsElement, svgDifferenceDefs, svgElement, svgGroupElement, svgPolygonElement, svgUseElement } from "../../../Utility/Svg"
+import { svgAddClass, svgAppend, svgDefsElement, svgDifferenceDefs, svgElement, svgGroupElement, svgPolygonElement, svgSet, svgUseElement } from "../../../Utility/Svg"
 import { assertObject, isObject } from "../../../Utility/Is"
 import { idGenerate } from "../../../Utility/Id"
 import { GraphFiles } from "../../../MoveMe"
 import { SvgItem, SvgItems, SvgItemsTuple } from "../../../declarations"
-import { EmptyMethod } from "../../../Setup/Constants"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
@@ -29,6 +28,7 @@ export class PreviewClass implements Preview {
     if (isObject(editor)) this.editor = editor
   }
 
+
   audible = false
 
   background?: string
@@ -41,6 +41,8 @@ export class PreviewClass implements Preview {
     
     return mash.clipsInTimeOfType(time, AVType.Video).sort(sortByTrack) 
   }
+
+  combine = false
   
   get duration(): number { return this.time.lengthSeconds }
 
@@ -58,12 +60,26 @@ export class PreviewClass implements Preview {
     return preloader.loadFilesPromise(files)
   }
 
+  private get itemsPromise(): Promise<SvgItems> {
+    const { clips, size, time, onlyClip } = this
+    
+    let promise = Promise.resolve([] as SvgItems)
+    const icon = !!onlyClip
+    clips.forEach(clip => {
+      promise = promise.then(lastTuple => {
+        return clip.previewItemsPromise(size, time, icon).then(svgItem => {
+          return [...lastTuple, svgItem] 
+        })
+      })
+    })
+    return promise 
+  }
+
   mash: Mash
 
   onlyClip?: Clip
 
   get preloader(): Loader { return this.mash.preloader }
-
 
   get quantize(): number { return this.mash.quantize }
 
@@ -109,81 +125,63 @@ export class PreviewClass implements Preview {
       return element
     })
   }
+
   get svgItemsPromise(): Promise<SvgItems> { 
     if (this._svgItems) return Promise.resolve(this._svgItems)
 
-    const sizePromise = this.intrinsicSizePromise
+    const sizePromise = this.intrinsicSizePromise  
     const itemsPromise = sizePromise.then(() => this.itemsPromise)
-    return itemsPromise.then(tuple => {
-      return this._svgItems = this.tupleItems(tuple)
+  
+    return itemsPromise.then(svgItems => {
+      return this._svgItems = this.tupleItems(svgItems)
     })
   }
 
-  private tupleItems(tuple: SvgItemsTuple): SvgItems {
-    const [defItems, previewItems] = tuple
-    const { clips, size, editing, background, selectedClip, editor } = this
-    if (background) previewItems.unshift(svgPolygonElement(size, '', background))
-    if (!clips.length) return previewItems
-
-    if (!editing) {
-      // console.log("PreviewClass NOT EDITING")
-      return [svgDefsElement(defItems), ...previewItems]
+  private tupleItems(svgItems: SvgItems): SvgItems {
+    const { size, editing, background, selectedClip, editor } = this
+    const previewItems = [...svgItems]
+    const trackClasses = 'track'
+    previewItems.forEach(item => svgAddClass(item, trackClasses))
+    const backgroundClasses = 'background'
+    if (background) {
+      const backgroundPolygon = svgPolygonElement(size, backgroundClasses, background)
+      const backgroundSvg = svgElement(size, backgroundPolygon)
+      previewItems.unshift(backgroundSvg)
     }
+    if (!(editing && svgItems.length)) return previewItems
 
     assertObject(editor)
 
+    // TODO: get classes from theme
+
     const { dragging } = editor
-    const {trackPreviews: previews} = this
-    const overlayId = idGenerate('overlay')
-    const selected = previews.find(preview => preview.clip === selectedClip)
-    const hoverItems: SvgItems = previews.map(trackPreview => {
-      const trackSelected = trackPreview === selected
-      const className = (dragging || trackSelected) ? '' : 'animate'
-      return trackPreview.editingSvgItem(className)
+    const { trackPreviews } = this
+    const selectedPreview = trackPreviews.find(preview => preview.clip === selectedClip)
+    const hoverItems: SvgItems = trackPreviews.map(trackPreview => {
+      const trackSelected = trackPreview === selectedPreview
+      const classes = ['outline']
+      if (!(dragging || trackSelected)) classes.push('animate')
+      // console.log(this.constructor.name, "tupleItems", dragging, trackSelected)
+      return trackPreview.editingSvgItem(classes)
     })
-    if (!selected) {
-      // console.log("PreviewClass NO SELECTION")
-      return [svgDefsElement(defItems), ...previewItems, ...hoverItems]
-    }
-    // console.log("PreviewClass SELECTION")
+    const outlineClasses = ['outlines']
+    const hoversSvg = svgElement(size, hoverItems)
+    svgAddClass(hoversSvg, outlineClasses)
 
-    const filteredGroup = svgGroupElement()
-    previewItems.forEach(item => filteredGroup.appendChild(item))
-    const filterElement = svgDifferenceDefs(overlayId, filteredGroup)
- 
-    return [
-      svgDefsElement([
-        selected.svgBoundsElement(false, overlayId), 
-        ...defItems, 
-        filterElement
-      ]), 
-      filteredGroup, 
-      ...hoverItems,
-      // mozilla does not support svg fragments in FeImage! 
-      // these elements should be styled to be hidden from other browsers
-      // and offer an alternative to difference filter
-      svgUseElement(overlayId, `mozilla`),
-      selected.svgBoundsElement(true),
-    ]
-  }
-
-  private get itemsPromise(): Promise<SvgItemsTuple> {
-    const { clips, size, time, onlyClip } = this
+    previewItems.push(hoversSvg)
+    if (!selectedPreview) return previewItems
     
-    let promise = Promise.resolve([[], []] as SvgItemsTuple)
-    const icon = !!onlyClip
-    clips.forEach(clip => {
-      promise = promise.then(lastTuple => {
-        return clip.previewItemsPromise(size, time, icon).then(clipTuple => {
-          const [lastDefs, lastItems] = lastTuple
-          const [clipDefs, clipItems] = clipTuple
-          return [[...lastDefs, ...clipDefs], [...lastItems, ...clipItems]] 
-        })
-      })
-    })
-    return promise 
+    const classes = ['bounds', 'back']
+    const lineClasses = ['line']
+    const handleClasses = ['handle']
+    const activeSvg = svgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses, true))
+    svgAddClass(activeSvg, classes)
+    classes[1] = 'fore'
+    const passiveSvg = svgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses))
+    svgAddClass(passiveSvg, classes)
+    previewItems.push(activeSvg, passiveSvg)
+    return previewItems
   }
-
   visible = true
 }
 

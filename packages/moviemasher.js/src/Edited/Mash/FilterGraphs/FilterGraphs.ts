@@ -11,7 +11,7 @@ export interface FilterGraphs {
   filterGraphAudible?: FilterGraph
   filterGraphVisible: FilterGraph
   filterGraphsVisible: FilterGraph[]
-  graphFiles: GraphFiles
+  fileUrls: GraphFiles
   loadPromise: Promise<void>
 }
 
@@ -22,6 +22,7 @@ export interface FilterGraphsOptions {
   time?: Time
   videoRate?: number
   background?: string
+  upload?: boolean
 }
 
 export interface FilterGraphsArgs {
@@ -32,4 +33,5 @@ export interface FilterGraphsArgs {
   size: Size
   videoRate: number
   background: string
+  upload?: boolean
 }

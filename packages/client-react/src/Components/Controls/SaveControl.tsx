@@ -6,11 +6,11 @@ import {
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
-import { EditorContext } from "../../Components/Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 export function SaveControl(props:PropsAndChild): ReactResult {
   const editor = useEditor()
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
 
   const { save } = editorContext
   

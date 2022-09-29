@@ -9,10 +9,10 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { ContainerMixin } from "../../Container/ContainerMixin"
-import { LoadType, Orientation } from "../../Setup/Enums"
+import { LoadType } from "../../Setup/Enums"
 import { Rect } from "../../Utility/Rect"
-import { svgSetDimensionsLock } from "../../Utility/Svg"
 import { Size } from "../../Utility/Size"
+import { svgSet } from "../../Utility/Svg"
 
 const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
 const VideoSequenceWithContainer = ContainerMixin(VideoSequenceWithTweenable)
@@ -24,8 +24,8 @@ const VideoSequenceWithUpdatableDuration = UpdatableDurationMixin(VideoSequenceW
 export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration implements VideoSequence {
   declare definition : VideoSequenceDefinition
 
-  commandFiles(args: VisibleCommandFileArgs): CommandFiles {
-    const files = super.commandFiles(args)
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+    const files = super.visibleCommandFiles(args)
     const { streaming, visible } = args
     if (!(visible && streaming)) return files
 
@@ -38,12 +38,12 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     return files
   }
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
+  fileUrls(args: GraphFileArgs): GraphFiles {
     const { time, clipTime, editing, visible } = args
     const definitionTime = this.definitionTime(time, clipTime)
 
     const definitionArgs: GraphFileArgs = { ...args, time: definitionTime }
-    const files = super.graphFiles(definitionArgs) 
+    const files = super.fileUrls(definitionArgs) 
     
     if (visible) {
       const { definition } = this
@@ -66,6 +66,7 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     }
     return files
   }
+
   iconUrl(size: Size, time: Time, range: TimeRange): string {
     const definitionTime = this.definitionTime(time, range)
     const { definition } = this
@@ -73,6 +74,13 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     const [frame] = frames
     return definition.urlForFrame(frame)
   }
+
+  // itemPreviewPromise(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): Promise<SvgItem> {
+  //   return this.itemIconPromise(rect, time, range, stretch).then(svgItem => {
+      
+  //     return svgItem
+  //   })
+  // }
 
   // private itemPromise(time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
   //   const definitionTime = this.definitionTime(time, range)

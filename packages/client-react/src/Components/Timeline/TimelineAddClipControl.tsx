@@ -1,16 +1,16 @@
 import React from "react"
-import { ContentDefaultId, EditorIndex, EventType, UnknownObject } from "@moviemasher/moviemasher.js"
+import { DefaultContentId, EditorIndex, EventType, UnknownObject } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
-import { EditorContext } from "../Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 export interface TimelineAddClipControlProps extends PropsAndChild, WithClassName {}
 
 export function TimelineAddClipControl(props:TimelineAddClipControlProps): ReactResult {
   const editor = useEditor()
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { definition, drop } = editorContext
   const getDisabled = () => !editor.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
@@ -25,7 +25,7 @@ export function TimelineAddClipControl(props:TimelineAddClipControlProps): React
   cloneProps.onClick = () => { 
     const { selection, edited } = editor
     const { clip, track } = selection
-    const object = definition?.toJSON() || { id: ContentDefaultId }
+    const object = definition?.toJSON() || { id: DefaultContentId }
     const editorIndex: EditorIndex = {
       clip: 0, track: -1
     }

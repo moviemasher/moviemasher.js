@@ -11,7 +11,7 @@ import {
 } from "../../Helpers/DragDrop"
 import { View } from "../../Utilities/View"
 import { ComposerContext } from "./ComposerContext"
-import { EditorContext } from "../../Components/Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 import { LayerContext } from "../../Contexts/LayerContext"
 import { useEditor } from "../../Hooks/useEditor"
 
@@ -23,7 +23,7 @@ export interface ComposerLayerProps extends PropsWithChildren, WithClassName { }
  */
 export function ComposerLayer(props: ComposerLayerProps): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const composerContext = React.useContext(ComposerContext)
   const layerContext = React.useContext(LayerContext)
 

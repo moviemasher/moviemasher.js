@@ -62,23 +62,17 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     gainPairs: number[][] = []
 
-    graphFiles(args: GraphFileArgs): GraphFiles {
+    fileUrls(args: GraphFileArgs): GraphFiles {
       const { editing, audible, time } = args
       if (!audible || (editing && !time.isRange)) {
 
-        // console.log(this.constructor.name, "graphFiles NONE", audible, editing, time.isRange)
         return []
       }
-      if (!(this.mutable() && !this.muted)) {
-        // console.log(this.constructor.name, "graphFiles NONE", audible, editing, time.isRange)
-
-        return []
-      }
+      if (!(this.mutable() && !this.muted)) return []
 
       const { definition } = this
       const file = definition.urlAudible(editing)
 
-      // console.log(this.constructor.name, "graphFiles", editing, file)
 
       const graphFile: GraphFile = {
         type: LoadType.Audio, file, definition, input: true
@@ -90,7 +84,14 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
       if (this.gain === 0) return true
       if (isPositive(this.gain)) return false
 
-      return this.gainPairs === [[0, 0], [1, 0]]
+      if (this.gainPairs.length !== 2) return false
+
+      const [first, second] = this.gainPairs
+      if (first.length !== 2) return false
+      if (second.length !== 2) return false
+      if (Math.max(...first)) return false
+      const [time, value] = second
+      return time === 1 && value === 0
     }
 
     hasIntrinsicTiming = true
@@ -168,7 +169,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     setValue(value: Scalar, name: string, property?: Property | undefined): void {
       super.setValue(value, name, property)
-      if (!this.clipped) return
+      if (property) return
 
       switch (name) {
         case 'startTrim':

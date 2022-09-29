@@ -8,7 +8,20 @@
   --width: 500px;
 }
 
-#app {
+body {
+  font-family: sans-serif;
+  line-height: 1.5em;
+  background-color: var(--back-primary);
+  color: var(--fore-tertiary);
+  padding: 0px;
+	margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+#root {
   display: flex;
   overflow-y: scroll;
 }
@@ -123,18 +136,6 @@ h4.tsd-returns-title > p {
   display: inline;
 }
 
-body {
-  font-family: sans-serif;
-  line-height: 1.5em;
-  background-color: var(--back-primary);
-  color: var(--fore-tertiary);
-  padding: 0px;
-	margin: 0px;
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-rows: min-content 1fr min-content;
-}
 
 @supports (-webkit-touch-callout: none) {
   body {
@@ -371,18 +372,18 @@ a.current:visited {
   fill: var(--fore-secondary);
 }
 
-section svg {
+section .section svg.diagram {
   width: 100%;
   height: auto;
 }
-svg text {
+section .section svg.diagram text {
   font-family: sans-serif;
 }
-a>svg,
-a:link>svg,
-a:active>svg,
-a:visited>svg,
-a:hover>svg {
+section .section a>svg,
+section .section a:link>svg,
+section .section a:active>svg,
+section .section a:visited>svg,
+section .section a:hover>svg {
   color: var(--fore-tertiary);
 }
 
@@ -394,13 +395,3 @@ a:hover>svg {
 .material-icons.md-36 {
   font-size: 36px;
 }
-
- /* FIX Facebook iframes */
-div.fb_iframe_widget>span[style] {
-  height: 24px !important;
-}
-/*
-iframe html,
-iframe body {
-  background-color: transparent !important;
-} */

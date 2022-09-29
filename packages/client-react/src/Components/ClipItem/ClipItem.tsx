@@ -156,6 +156,9 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     }
     const currentSize = frameSize()
     const fullSize = clipSize(currentSize)
+    
+    // return Promise.resolve()
+    
     const promise = clip.clipIcon(fullSize, timelineContext.scale, 2)
     if (!promise) return Promise.resolve()
     

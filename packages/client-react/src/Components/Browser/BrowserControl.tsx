@@ -3,14 +3,14 @@ import { ServerType, assertObject, UploadTypes } from "@moviemasher/moviemasher.
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { ApiContext } from "../ApiClient/ApiContext"
-import { EditorContext } from "../../Components/Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 const BrowserControlId = 'upload-control-id'
 
 export function BrowserControl(props: PropsAndChild): ReactResult {
   const fileInput = React.useRef<HTMLInputElement>(null)
   const apiContext = React.useContext(ApiContext)
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
 
   const { servers } = apiContext
   const { drop } = editorContext

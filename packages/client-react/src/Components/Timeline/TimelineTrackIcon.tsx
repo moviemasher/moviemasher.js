@@ -2,7 +2,7 @@ import React from "react"
 import { ClassSelected } from "@moviemasher/moviemasher.js"
 
 import {
-  EditorIcons, PropsWithoutChild, ReactResult, WithClassName
+  ThemeIcons, PropsWithoutChild, ReactResult, WithClassName
 } from "../../declarations"
 import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
@@ -10,7 +10,7 @@ import { View } from "../../Utilities/View"
 import { droppingPositionClass } from "../../Helpers/DragDrop"
 
 export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
-  icons: EditorIcons
+  icons: ThemeIcons
 }
 /**
  * @parents TimelineTracks

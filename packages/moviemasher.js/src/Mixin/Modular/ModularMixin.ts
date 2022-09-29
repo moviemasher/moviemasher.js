@@ -61,7 +61,7 @@ export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & 
       const { filters } = this.definition
       svgFilters.push(...filters.flatMap(filter => {
         this.setFilterValues(filter)
-        return filter.filterSvgFilters()
+        return filter.filterSvgFilter()
       }))
       // console.log(this.constructor.name, "svgFilters", svgFilters.length)
       return svgFilters

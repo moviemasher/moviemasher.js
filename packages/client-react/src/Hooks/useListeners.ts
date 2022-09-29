@@ -2,13 +2,13 @@ import React from "react"
 import { Emitter, EventType } from "@moviemasher/moviemasher.js"
 
 import { ListenerCallback } from "../declarations"
-import { EditorContext } from "../Components/Masher/EditorContext"
+import { MasherContext } from "../Components/Masher/MasherContext"
 
 export interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {}
 
 
 export const useListeners = (events: ListenerEvents, target?: Emitter): void => {
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { editor } = editorContext
   const eventTarget = target || editor!.eventTarget
 

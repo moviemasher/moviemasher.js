@@ -53,6 +53,7 @@ export function TimelineContent(props: TimelineContentProps): ReactResult {
 
   const onDragOver = (event: DragEvent) => {
     eventStop(event)
+
     const { dataTransfer } = event
     if (!dataTransfer) return
 

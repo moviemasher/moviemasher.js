@@ -34,4 +34,5 @@ export interface EditorSelection extends EditorSelectionObject {
   [SelectType.Track]: Track | undefined
   [SelectType.Content]: Content | undefined
   [SelectType.Container]: Container | undefined
+  [SelectType.Effect]: Effect | undefined
 }

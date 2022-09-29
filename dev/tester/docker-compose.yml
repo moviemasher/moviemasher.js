@@ -1,4 +1,7 @@
 version: "3"
+networks:
+  default:
+    name: tester
 services:
   tester:
     build:
@@ -13,7 +16,6 @@ services:
       - ../../packages/:/home/node/app/packages/
       - ../../temporary/test:/home/node/app/temporary/test
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
-      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
       - ../tester/:/home/node/app/workspaces/tester/
       - ./jest-puppeteer.config.js:/home/node/app/jest-puppeteer.config.js
       - ./jest.config.js:/home/node/app/jest.config.js

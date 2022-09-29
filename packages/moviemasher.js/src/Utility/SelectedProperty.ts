@@ -4,7 +4,6 @@ import { DataGroup, Property } from "../Setup/Property"
 import { Scalar, ScalarObject } from "../declarations"
 import { Effect, Effects } from "../Media/Effect/Effect"
 import { isObject } from "./Is"
-import { Time, TimeRange } from "../Helpers/Time/Time"
 
 
 export interface Selected {

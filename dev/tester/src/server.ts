@@ -9,10 +9,10 @@ import { PuppeteerPort, PuppeteerBind } from './Setup/Constants'
 
 const rootDir = './workspaces/tester/dist'
 
-const resolved = path.resolve(rootDir)
-const exists = fs.existsSync(resolved)
+const resolvedDir = path.resolve(rootDir)
+const exists = fs.existsSync(resolvedDir)
 if (!exists) {
-  const message = `No such file or directory: ${resolved}`
+  const message = `No such file or directory: ${resolvedDir}`
   console.log(message)
   throw new Error(message)
 }
@@ -20,7 +20,7 @@ if (!exists) {
 const app = Express()
 app.use(Express.json())
 app.use(cors({ origin: "*" }))
-app.use(Express.static(resolved))
+app.use(Express.static(resolvedDir))
 app.listen(PuppeteerPort, PuppeteerBind, () => {
-  console.log("serving", `${resolved}/*`, "on port", PuppeteerPort)
+  console.log("serving", `${resolvedDir}/*`, "on port", PuppeteerPort)
 })

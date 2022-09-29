@@ -11,7 +11,8 @@ import {
   dragDefinitionType, TransferTypeFiles, dragData
 } from '../../Helpers/DragDrop'
 import { useEditor } from '../../Hooks/useEditor'
-import { EditorContext } from '../../Components/Masher/EditorContext'
+import { MasherContext } from '../Masher/MasherContext'
+import { View } from '../../Utilities/View'
 
 
 export interface TimelineProps extends PropsAndChildren {}
@@ -22,7 +23,7 @@ export const TimelineDefaultZoom = 1.0
  */
 export function Timeline(props: TimelineProps): ReactResult {
   const editor = useEditor()
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { drop } = editorContext
   const currentFrame = () => { return editor.selection.mash?.frame || 0 }
   const currentFrames = () => { return editor.selection.mash?.frames || 0 }
@@ -126,13 +127,13 @@ export function Timeline(props: TimelineProps): ReactResult {
     } else if (draggingItem) {
       if (isDragDefinitionObject(data)) {
         const { definitionObject } = data
-        console.log("Timeline onDrop definition", definitionObject)
+        // console.log("Timeline onDrop definition", definitionObject)
         drop(definitionObject, editorIndex)
       } else {
         const { clip } = editor.selection
         assertClip(clip)
         
-        console.log("Timeline onDrop moving clip", editorIndex, clip.content.definition.label)
+        // console.log("Timeline onDrop moving clip", editorIndex, clip.content.definition.label)
         editor.moveClip(clip, editorIndex)
       }
     } 
@@ -162,5 +163,9 @@ export function Timeline(props: TimelineProps): ReactResult {
     frame, frames, 
   }
 
-  return <TimelineContext.Provider value={timelineContext} children={props.children} />
+  const contextProps = {
+    children: <View {...props} />,
+    value: timelineContext
+  }
+  return <TimelineContext.Provider { ...contextProps } />
 }

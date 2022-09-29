@@ -313,7 +313,7 @@ export class MashClass extends EditedClass implements Mash {
       mash: this,
       background: background || this.color,
     }
-    // console.log(this.constructor.name, "filterGraphs filterGraphsOptions", filterGraphsOptions)
+    // console.log(this.constructor.name, "filterGraphs filterGraphsOptions", filterGraphsOptions.upload, options.upload)
 
     return new FilterGraphsClass(filterGraphsOptions)
   }
@@ -381,13 +381,12 @@ export class MashClass extends EditedClass implements Mash {
     const scaled = time.scale(this.quantize)
     const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
     const clips = this.clipsInTimeOfType(scaled, type)
-    // console.log(this.constructor.name, "graphFiles", args, clips.length, "clip(s)")
     return clips.flatMap(clip => {
       const clipTime = clip.timeRange(quantize)
       const graphFileArgs: GraphFileArgs = { 
         ...args, clipTime, quantize, time 
       }
-      return clip.clipGraphFiles(graphFileArgs)
+      return clip.clipFileUrls(graphFileArgs)
     })
   }
 
@@ -404,8 +403,8 @@ export class MashClass extends EditedClass implements Mash {
     // what time does the audio context think it is?
     const { seconds } = this.composition
 
-    // what time would masher consider to be in next frame?
-    const nextFrameTime = this.time.withFrame(this.time.frame + 1)
+    // what time would masher consider to be in end frame?
+    const nextFrameTime = this.time.withFrame(this.time.frame)
 
     // are we beyond the end of mash?
     if (seconds >= this.endTime.seconds) {
@@ -565,7 +564,7 @@ export class MashClass extends EditedClass implements Mash {
             editing: true, visible: true, quantize, 
             time: clip.time(quantize), clipTime: clip.timeRange(quantize)
           }
-          return container.graphFiles(args)
+          return container.fileUrls(args)
         }
       }
       return [] 

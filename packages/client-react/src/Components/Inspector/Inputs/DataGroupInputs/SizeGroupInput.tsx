@@ -4,7 +4,6 @@ import {
   DataGroup, isDefined, Orientation, PropertyTweenSuffix, isOrientation, 
   selectedPropertyObject, ScalarObject, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
 } from "@moviemasher/moviemasher.js"
-import { DefaultIcons } from "@moviemasher/icons-default"
 
 
 import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
@@ -14,12 +13,15 @@ import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useEditor } from "../../../../Hooks/useEditor"
+import { MasherContext } from "../../../Masher/MasherContext"
 
 const SizeInputOrientations: Record<Orientation, string> = {
   [Orientation.H]: 'width', [Orientation.V]: 'height'
 }
 
 export function SizeGroupInput(props: DataGroupProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
   const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
@@ -83,7 +85,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const lockWidthProps = { 
     key: "lock-width",
     className: ClassButton,
-    children: orientation === Orientation.H ? DefaultIcons.lock : DefaultIcons.unlock, 
+    children: orientation === Orientation.H ? icons.lock : icons.unlock, 
     onClick: () => {
       const value = orientation === Orientation.H ? "" : Orientation.H
       lock.changeHandler('lock', value)
@@ -93,7 +95,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const lockHeightProps = { 
     key: "lock-height",
     className: ClassButton,
-    children: orientation === Orientation.V ? DefaultIcons.lock : DefaultIcons.unlock, 
+    children: orientation === Orientation.V ? icons.lock : icons.unlock, 
     onClick: () => {
       const value = orientation === Orientation.V ? "" : Orientation.V
       lock.changeHandler('lock', value)
@@ -102,7 +104,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const selectedButton = [ClassSelected, ClassButton].join(' ')
   const lockHeight = <View { ...lockHeightProps } />
   const startProps: PropsAndChild = {
-    children: DefaultIcons.start,
+    children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
@@ -113,24 +115,27 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const endProps: PropsAndChild = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
-    children: endDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
+    children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {
       editor.goToTime(timeRange.lastTime)
       changeTweening(DataGroup.Size, true)
     }
   }
   const legendElements = [
-    DefaultIcons.size,
+    icons.size,
     <View className="start-end" key={`${selectType}-size-start-end`}>
       <View { ...startProps } />
       <View { ...endProps } />
     </View>
   ]
   const elements = [
-    <View key="width" className='size' children={[DefaultIcons.width, elementsByName.width, lockWidth]} />, 
-    <View key="height" className='size' children={[DefaultIcons.height, elementsByName.height, lockHeight]} />
+    <View key="width" className='size' children={[icons.width, elementsByName.width, lockWidth]} />, 
+    <View key="height" className='size' children={[icons.height, elementsByName.height, lockHeight]} />
   ]
-  return <fieldset><legend><View>{legendElements}</View></legend>{elements}</fieldset>
+  return <fieldset>
+    <legend key="legend"><View>{legendElements}</View></legend>
+    {elements}
+  </fieldset>
 }
 
 DataGroupInputs[DataGroup.Size] = <SizeGroupInput key="size-group-input" />

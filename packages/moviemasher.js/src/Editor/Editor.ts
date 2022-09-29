@@ -19,8 +19,9 @@ import { EditorSelection } from "./EditorSelection"
 import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 import { Rect } from "../Utility/Rect"
-
-export interface EditorIndex extends Partial<NumberObject> {
+import { Size } from "../Utility/Size"
+// extends Partial<NumberObject> 
+export interface EditorIndex {
   layer?: number
   clip?: number
   track?: number
@@ -31,12 +32,13 @@ export interface EditorArgs {
   buffer: number
   editType?: EditType
   endpoint?: Endpoint
+  edited?: EditedData
   fps: number
   loop: boolean
   precision: number
   preloader?: BrowserLoaderClass
   readOnly?: boolean
-  rect?: Rect
+  dimensions?: Rect | Size | undefined
   volume: number
 }
 

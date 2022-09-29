@@ -7,7 +7,7 @@ import { Errors } from "../../Setup/Errors"
 import { DroppingPosition, SelectType } from "../../Setup/Enums"
 import { assertPopulatedString, isAboveZero, isNumber, isPopulatedArray } from "../../Utility/Is"
 import { EditedClass } from "../EditedClass"
-import { Mashes } from "../Mash/Mash"
+import { Mash, Mashes } from "../Mash/Mash"
 import { Cast, CastArgs } from "./Cast"
 import { assertLayer, isLayerFolder, layerInstance } from "./Layer/LayerFactory"
 import {
@@ -197,6 +197,8 @@ export class CastClass extends EditedClass implements Cast {
 
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)
+    if (property) return
+
     switch (name) {
       case 'color': {
         this.mashes.forEach(mash => mash.setValue(value, name, property))
@@ -213,12 +215,13 @@ export class CastClass extends EditedClass implements Cast {
 
     const mashArgs = { ...args, color: '' }
 
-    let promise = Promise.resolve([svgPolygonElement(imageSize, '', background)])
+    const element = svgPolygonElement(imageSize, '', background) as SvgItem
+    let promise = Promise.resolve([element])
 
-    arrayReversed(mashes).forEach(mash => {
+    arrayReversed(mashes).forEach((mash: Mash) => {
       promise = promise.then(svgs => {
         allSvgs.push(...svgs)
-        return mash.svgs(mashArgs)
+        return mash.svgItems(mashArgs)
       })
     })
     return promise.then(svgs => {

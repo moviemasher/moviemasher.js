@@ -1,5 +1,5 @@
 import { ValueObject } from "../../declarations"
-import { CommandFile, CommandFileArgs, CommandFiles, GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
 import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { ImageDefinition, Image } from "./Image"
@@ -16,12 +16,12 @@ const ImageWithContent = ContentMixin(ImageWithContainer)
 const ImageWithPreloadable = PreloadableMixin(ImageWithContent)
 const ImageWithUpdatableSize = UpdatableSizeMixin(ImageWithPreloadable)
 export class ImageClass extends ImageWithUpdatableSize implements Image {
-  commandFiles(args: CommandFileArgs): CommandFiles {
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const commandFiles: CommandFiles = []
     const { visible, time, videoRate } = args
     if (!visible) return commandFiles
     
-    const files = this.graphFiles(args)
+    const files = this.fileUrls(args)
     const [file] = files
     const duration = isTimeRange(time) ? time.lengthSeconds : 0
     const options: ValueObject = { loop: 1, framerate: videoRate }
@@ -35,7 +35,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
 
   declare definition: ImageDefinition
 
-  graphFiles(args: GraphFileArgs): GraphFiles { 
+  fileUrls(args: GraphFileArgs): GraphFiles { 
     const { visible, editing } = args
     const files: GraphFiles = []
     if (!visible) return files
@@ -49,7 +49,6 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
       input: true, type: LoadType.Image, file, definition
     }
     files.push(graphFile)
-    // console.log(this.constructor.name, "graphFiles", file)
     return files
   }
 }

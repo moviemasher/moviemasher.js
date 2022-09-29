@@ -97,7 +97,7 @@ export interface DataCastDefaultRequest extends ApiRequest {}
 export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
   previewSize?: Size
 }
-
+export type DataDefaultResponse = DataMashDefaultResponse | DataCastDefaultResponse
 export interface DataCastPutRequest extends DataPutRequest {
   cast: CastObject
   definitionIds: StringsObject

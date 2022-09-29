@@ -2,10 +2,10 @@
   "name": "@moviemasher/moviemasher.js",
   "version": "5.1.0",
   "description": "JavaScript video editor, encoder, switcher - version 5.1.0",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "umd/moviemasher.js",
+  "module": "esm/moviemasher.js",
   "source": "src/index.ts",
-  "types": "dist/moviemasher.d.ts",
+  "types": "esm/moviemasher.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -27,15 +27,13 @@
     "composite"
   ],
   "scripts": {
-    "watch-esm": "rollup --watch --config dev/rollup/esm.config.js",
-    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
     "build-esm": "rollup --config dev/rollup/esm.config.js",
-    "build-types": "rollup --config dev/rollup/types.config.js",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "build-full": "run-s lint-verbose test-verbose clean build-esm build-umd build-cjs",
-    "build": "run-s clean build-types build-esm build-cjs build-umd",
-    "clean": "rimraf dist",
-    "develop": "rollup --watch --config dev/rollup/esm.config.js"
+    "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
+    "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min",
+    "stop": "docker compose --file dev/example/docker-compose.yml down -v",
+    "start": "docker compose --file dev/example/docker-compose.yml up -d"
   },
   "devDependencies": {
     "typescript": "4.6.4"

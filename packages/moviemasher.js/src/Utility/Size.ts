@@ -48,6 +48,13 @@ export const sizeCeil = (size: Size): Size => {
   }
 }
 
+export const sizeFloor = (size: Size): Size => {
+  const { width, height } = size
+  return { 
+    width: Math.max(2, Math.floor(width)),
+    height: Math.max(2, Math.floor(height)),
+  }
+}
 export const sizeScale = (size: Size, horizontally: number, vertically: number): Size => {
   const { width, height } = size
   return { width: width * horizontally, height: height * vertically }

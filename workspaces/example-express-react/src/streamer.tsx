@@ -1,11 +1,17 @@
-import React, { StrictMode } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { ApiClient, Streamer, DefaultStreamerProps } from "@moviemasher/client-react"
-import "@moviemasher/client-react/dist/moviemasher.css"
 
+const { createRoot } = ReactDOM
+
+
+import { ApiClient, Streamer, DefaultStreamerProps } from "@moviemasher/client-react"
+import "@moviemasher/theme-default/moviemasher.css"
+
+const element = document.getElementById('app')
 const applicationOptions = { previewSize: { width: 480, height: 270 } }
 const options = DefaultStreamerProps(applicationOptions)
 const caster = <Streamer {...options} />
 const editor = <ApiClient>{caster}</ApiClient>
-const strictMode = <StrictMode>{editor}</StrictMode>
-ReactDOM.render(strictMode, document.getElementById('app'))
+createRoot(element).render(editor)
+
+

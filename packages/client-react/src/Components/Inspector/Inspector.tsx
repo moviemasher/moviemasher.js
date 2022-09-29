@@ -2,7 +2,8 @@ import React from 'react'
 import { 
   arraySet, assertSelectType, EventType, SelectedItems, SelectType, SelectTypes, 
   assertPositive, assertTrue, timeFromArgs, timeEqualizeRates, assertDataGroup,
-  isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, isPopulatedObject, SelectedProperties 
+  isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, 
+  SelectedProperties 
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
@@ -10,13 +11,12 @@ import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import {
   DataGroupBooleans,
-  InspectorContext, InspectorContextDefault, InspectorContextInterface, SelectedInfo
+  InspectorContext, InspectorContextDefault, InspectorContextInterface, 
+  SelectedInfo
 } from './InspectorContext'
 import { useEditor } from '../../Hooks/useEditor'
 
 export interface InspectorProps extends PropsAndChildren, WithClassName {}
-
-
 
 /**
  * @parents Masher
@@ -41,7 +41,7 @@ export function Inspector(props: InspectorProps): ReactResult {
     assertSelectType(bestType)
 
     if (bestType !== selectedType) {
-      // console.log("setInfo selectedType", selectedType, "=>", bestType, orderedTypes)
+      // console.log("setInfo selectedType", selectedType, "=>", bestType, types)
       current.selectedType = bestType
     }
     arraySet(selectTypes, types)
@@ -67,10 +67,8 @@ export function Inspector(props: InspectorProps): ReactResult {
       })  
 
       if (tweenItems.length) {
-        
         const { time, quantize } = mash
         const timeRange = clip.timeRange(quantize)
-
         current.time = time
         current.timeRange = timeRange
         // console.log("Inspector tweening", time, timeRange)
@@ -96,7 +94,7 @@ export function Inspector(props: InspectorProps): ReactResult {
     [EventType.Selection]: handleSelection,
   })
 
-  const changeType = React.useCallback((type: string) => {
+  const changeSelected = React.useCallback((type: string) => {
     assertSelectType(type)
     setOrderedTypes(original => {
       const index = original.indexOf(type) 
@@ -122,7 +120,7 @@ export function Inspector(props: InspectorProps): ReactResult {
   const inspectorContext: InspectorContextInterface = {
     ...InspectorContextDefault,
     actionCount, selectedItems,
-    changeSelected: changeType, 
+    changeSelected, 
     changeTweening, selectedInfo: info.current,
   }
 

@@ -1,27 +1,28 @@
 import React from "react"
 import {
-  DroppingPosition, EventType, isLayer, Layer, LayerAndPosition, MashAndDefinitionsObject
+  assertObject, DroppingPosition, EditorIndex, EventType, isLayer, Layer, LayerAndPosition, MashAndDefinitionsObject
 } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, ReactResult } from "../../declarations"
-import { DragType, dragType, isDragType } from "../../Helpers/DragDrop"
+import { PropsWithChildren, ReactResult } from "../../declarations"
+import { DragType, dragType, dragTypes, isDragType, TransferTypeFiles } from "../../Helpers/DragDrop"
 import { useListeners } from "../../Hooks/useListeners"
 import { ComposerContext, ComposerContextInterface } from "./ComposerContext"
-import { EditorContext } from "../../Components/Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
+import { View } from "../../Utilities/View"
 
-export interface ComposerProps extends PropsAndChildren {}
+export interface ComposerProps extends PropsWithChildren {}
 
 /**
  * @parents Masher
  * @children ComposerContent
  */
 export function Composer(props: ComposerProps): ReactResult {
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const [selectedLayer, setSelectedLayer] = React.useState<Layer | undefined>(undefined)
   const [droppingLayer, setDroppingLayer] = React.useState<Layer | undefined>(undefined)
   const [refreshed, setRefreshed] = React.useState(0)
   const [droppingPosition, setDroppingPosition] = React.useState<DroppingPosition | number>(DroppingPosition.None)
-  const { editor, draggable } = editorContext
+  const { editor, draggable, drop } = editorContext
  
 
   const refresh = () => { setRefreshed(value => value + 1) }
@@ -49,15 +50,29 @@ export function Composer(props: ComposerProps): ReactResult {
   }
 
   const onDrop = (event: DragEvent) => {
+    // console.log("Composer.onDrop")
     event.preventDefault()
     setDroppingPosition(DroppingPosition.None)
     refresh()
 
     const { dataTransfer } = event
+    assertObject(dataTransfer)
+    const types = dragTypes(dataTransfer)
+    if (types.includes(TransferTypeFiles)) {
+      const editorIndex: EditorIndex = {
+        
+      }
+      drop(dataTransfer.files, editorIndex)
+      return
+    }
+
 
     const dragType = validDragType(dataTransfer)
     if (!dragType) return
 
+    // console.log("Composer.onDrop", dragType)
+    
+    
     const layerAndPosition: LayerAndPosition = {
       layer: droppingLayer, position: droppingPosition
     }
@@ -73,6 +88,9 @@ export function Composer(props: ComposerProps): ReactResult {
         editor.addMash(mashAndDefinitions, layerAndPosition)
         break
       }
+      default: {
+        if (draggable) drop(draggable)
+      }
     }
   }
 
@@ -82,6 +100,9 @@ export function Composer(props: ComposerProps): ReactResult {
     droppingLayer, setDroppingLayer, onDragLeave,
   }
 
-
-  return <ComposerContext.Provider value={composerContext} children={props.children} />
+  const contextProps = {
+    children: <View { ...props } />,
+    value: composerContext
+  }
+  return <ComposerContext.Provider { ...contextProps } />
 }

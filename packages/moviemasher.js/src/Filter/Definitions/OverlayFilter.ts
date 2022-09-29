@@ -1,7 +1,7 @@
 import { ValueObject } from "../../declarations"
 import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
@@ -49,6 +49,4 @@ export class OverlayFilter extends FilterDefinitionClass {
     commandFilters.push(commandFilter)
     return commandFilters
   }
-  
-  phase = Phase.Finalize
 }

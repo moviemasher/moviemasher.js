@@ -16,7 +16,7 @@ const replaceOptions = {
 }
 
 export default {
-  context: 'this',
+  context: 'globalThis',
   input: source,
   output: {
     format: "iife",

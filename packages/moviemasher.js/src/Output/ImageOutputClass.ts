@@ -14,11 +14,11 @@ export class ImageOutputClass extends RenderingOutputClass implements ImageOutpu
 
   override get filterGraphsOptions(): FilterGraphsOptions {
     const {args, graphType, avType, startTime: time } = this
-    const { mash } = args
+    const { mash, upload } = args
     const { quantize: videoRate } = mash
     const filterGraphsOptions: FilterGraphsOptions = {
       time, graphType, videoRate, size: this.sizeCovered(), 
-      avType
+      avType, upload
     }
     return filterGraphsOptions
   }

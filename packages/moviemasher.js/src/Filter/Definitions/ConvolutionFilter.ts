@@ -1,4 +1,4 @@
-import { ScalarObject, SvgFilters, ValueObject } from "../../declarations"
+import { ScalarObject, StringObject, SvgFilters, ValueObject } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { NamespaceSvg } from "../../Setup/Constants"
@@ -6,6 +6,7 @@ import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isAboveZero, isObject } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { colorRgbaKeys } from "../../Utility/Color"
+import { svgFilter, svgFilterElement } from "../../Utility"
 
 
 /**
@@ -15,22 +16,21 @@ import { colorRgbaKeys } from "../../Utility/Color"
   constructor(...args: any[]) {
     super(...args)
     this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: "bias",
+      custom: true, name: "bias",
       defaultValue: 0.0, min: 0.0, max: 100.0, step: 0.01
     }))
     this.properties.push(propertyInstance({
       custom: true, name: "matrix", defaultValue: "0 0 0 0 1 0 0 0 0",
     }))
     this.properties.push(propertyInstance({
-      custom: true, tweenable: true, name: "multiplier",
+      custom: true, name: "multiplier",
       defaultValue: 1.0, min: 0.0, max: 100.0, step: 0.01
     }))
     this.populateParametersFromProperties()
   }
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
-    const { chainInput, filterInput, filter, duration } = args
-    assertPopulatedString(chainInput, 'chainInput')
+    const { filterInput, filter, duration } = args
     assertPopulatedString(filterInput, 'filterInput')  
     const commandFilters:CommandFilters = []
     const values = filter.scalarObject(!!duration) 
@@ -45,15 +45,17 @@ import { colorRgbaKeys } from "../../Utility/Color"
     return commandFilters
   }
 
-  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
     assertConvolutionServerFilter(valueObject)
-    const {matrix, bias, multiplier } = valueObject
-    
-    const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feConvolveMatrix')
-    filterElement.setAttribute('kernelMatrix', String(matrix))
-    filterElement.setAttribute('bias', String(bias))
-    if (isAboveZero(multiplier)) filterElement.setAttribute('divisor', String(multiplier))
-    return [filterElement]
+    const { matrix, bias, multiplier } = valueObject
+    const object: StringObject = { 
+      filter: 'feConvolveMatrix',
+      kernelMatrix: String(matrix),
+      bias: String(bias)
+    }
+    if (isAboveZero(multiplier)) object.divisor = String(multiplier)
+    // console.log(this.constructor.name, "filterDefinitionSvgFilter", object)
+    return [svgFilter(object)]
   }
 }
 

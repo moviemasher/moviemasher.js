@@ -12,6 +12,8 @@ import { EmptyMethod } from "../../../Setup/Constants"
 export class FilterGraphsClass implements FilterGraphs {
   constructor(public args: FilterGraphsArgs) {
     const { avType, times, mash, ...rest } = args
+    // console.log(this.constructor.name, "upload", args.upload)
+
     const { length } = times
     if (!length) { // no clips in timeline
       this.time = timeFromArgs()
@@ -59,7 +61,6 @@ export class FilterGraphsClass implements FilterGraphs {
 
   assureDuration() {}
   assureSize() {}
-
   
   get duration(): number { return this.time.lengthSeconds }
 
@@ -70,18 +71,18 @@ export class FilterGraphsClass implements FilterGraphs {
   get filterGraphVisible(): FilterGraph { return this.filterGraphsVisible[0] }
 
   _graphFiles?: GraphFiles
-  get graphFiles(): GraphFiles {
+  get fileUrls(): GraphFiles {
     const graphs = [...this.filterGraphsVisible]
     if (this.filterGraphAudible) graphs.push(this.filterGraphAudible)
-    return this._graphFiles ||= graphs.flatMap(graph => graph.commandFiles)
+    return this._graphFiles ||= graphs.flatMap(graph => graph.filterGraphCommandFiles)
   }
 
   get graphFilesInput(): GraphFiles {
-    return this.graphFiles.filter(graphFile => graphFile.input)
+    return this.fileUrls.filter(graphFile => graphFile.input)
   }
 
   get loadPromise(): Promise<void> {
-    return this.args.mash.preloader.loadFilesPromise(this.graphFiles)
+    return this.args.mash.preloader.loadFilesPromise(this.fileUrls)
   }
 
   time: Time

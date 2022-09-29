@@ -4,7 +4,7 @@ import { assertPopulatedString, isArray, isPopulatedArray, isPopulatedString, is
 import { Orientation } from "../Setup/Enums"
 import { StringObject, SvgFilter, SvgFilters, SvgItem, SvgItems } from "../declarations"
 import { idGenerateString } from "./Id"
-import { assertPoint, isPoint, Point, pointCopy, PointZero } from "./Point"
+import { assertPoint, isPoint, Point, pointCopy, pointNegate, pointValueString, PointZero } from "./Point"
 import { Rect } from "./Rect"
 
 
@@ -56,7 +56,7 @@ export const svgRectPoints = (dimensions: any): Point[] => {
   return points
 }
 
-export const svgPolygonElement = (dimensions: any, className = '', fill = '', id?: string): SVGPolygonElement => {
+export const svgPolygonElement = (dimensions: any, className?: string | string[], fill = '', id?: string): SVGPolygonElement => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'polygon')
   const rectPoints = svgRectPoints(dimensions)
   const points = rectPoints.map(point => [point.x, point.y].join(',')).join(' ') 
@@ -79,6 +79,9 @@ export const svgSetBox = (element: SvgItem, boxSize: Size) => {
 
 export const svgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SVGSVGElement => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'svg')
+  svgSet(element, '1.1', 'version')
+  svgSet(element, NamespaceSvg, 'xmlns')
+
   svgAppend(element, svgItems)
   if (!sizeAboveZero(size)) return element
 
@@ -97,10 +100,9 @@ export const svgSetDimensionsLock = (element: SvgItem, dimensions: any, lock?: O
   svgSetDimensions(element, rect)
 }
 
-export const svgImageElement = (href?: string, dimensions?: any, lock?: Orientation) => {
+export const svgImageElement = () => {
   const element = globalThis.document.createElementNS(NamespaceSvg, "image")
-  if (isPopulatedString(href)) svgSet(element, href, 'href')
-  if (isSize(dimensions)) svgSetDimensionsLock(element, dimensions, lock)
+  svgSet(element, 'none', 'preserveAspectRatio')
   return element
 }
 
@@ -116,7 +118,8 @@ export const svgMaskElement = (size?: Size, contentItem?: SvgItem, luminance?: b
   const maskElement = globalThis.document.createElementNS(NamespaceSvg, 'mask')
   svgSet(maskElement, maskId)
   if (sizeAboveZero(size)) {
-    svgSetDimensions(maskElement, size)
+
+    // svgSetDimensions(maskElement, size)
     const color = luminance ? 'black' : 'none'
     svgAppend(maskElement, svgPolygonElement(size, '', color))
   }
@@ -129,15 +132,15 @@ export const svgMaskElement = (size?: Size, contentItem?: SvgItem, luminance?: b
 }
 
 export const svgFilter = (values: StringObject, dimensions?: any): SvgFilter => {
-  const { type, ...rest } = values
-  assertPopulatedString(type)
+  const { filter, ...rest } = values
+  assertPopulatedString(filter)
 
-  const filter = globalThis.document.createElementNS(NamespaceSvg, type) 
-  svgSetDimensions(filter, dimensions)
+  const element = globalThis.document.createElementNS(NamespaceSvg, filter) 
+  svgSetDimensions(element, dimensions)
   Object.entries(rest).forEach(([key, value]) => {
-    svgSet(filter, String(value), key)
+    svgSet(element, String(value), key)
   })
-  return filter as SvgFilter
+  return element as SvgFilter
 }
 
 export const svgAppend = (element: SvgItem, items?: SvgItem | SvgItems) => {
@@ -169,13 +172,16 @@ export const svgFeImageElement = (id?: string, result?: string): SVGFEImageEleme
   return element
 }
 
-export const svgFilterElement = (filters?: SvgFilters, filtered?: SvgItem | SvgItems, rect?: any, id?: string): SVGFilterElement => {
+export const svgFilterElement = (filters?: SvgFilters, filtered?: SvgItem | SvgItems, rect?: any, units = 'userSpaceOnUse'): SVGFilterElement => {
   const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'filter')
-  svgSet(filterElement, 'userSpaceOnUse', 'filterUnits')
+  if (units) svgSet(filterElement, units, 'filterUnits')
+
+  svgSet(filterElement, 'sRGB', 'color-interpolation-filters')
+
   svgAppend(filterElement, filters)
 
-  if (filtered || isPopulatedString(id)) {
-    const filterId = id || idGenerateString()
+  if (filtered) {
+    const filterId = idGenerateString()
     svgSet(filterElement, filterId)
     if (filtered) {
       const array = isArray(filtered) ? filtered : [filtered]
@@ -190,7 +196,7 @@ export const svgFilterElement = (filters?: SvgFilters, filtered?: SvgItem | SvgI
 }
 
 export const svgDifferenceDefs = (overlayId: string, filtered: SvgItem | SvgItems) => {
-  const filterObject = { type: 'feBlend' }
+  const filterObject = { filter: 'feBlend' }
   const resultId = idGenerateString()
 
   const differenceFilter = svgFilter({ ...filterObject, mode: 'difference'})
@@ -209,8 +215,10 @@ export const svgSet = (element: SvgItem, value?: string, name = 'id') => {
   if (isPopulatedString(value)) element.setAttribute(name, value)
 }
 
-export const svgAddClass = (element: SvgItem, className?: string) => {
-  if (isPopulatedString(className)) element.classList.add(...className.split(' '))
+export const svgAddClass = (element: SvgItem, className?: string | string[]) => {
+  if (!className) return
+  const array = isArray(className) ? className : className.split(' ')
+  element.classList.add(...array)
 }
 
 export const svgUseElement = (href?: string, className?: string, id?: string) => {
@@ -222,31 +230,55 @@ export const svgUseElement = (href?: string, className?: string, id?: string) =>
   return element
 }
 
-export const svgSetTransform = (element: SvgItem, transform: string) => {
+export const svgSetTransform = (element: SvgItem, transform: string, origin = 'top left') => {
   svgSet(element, transform, 'transform')
-  svgSet(element, 'top left', 'transform-origin')
+  svgSet(element, origin, 'transform-origin')
 }
 
 
-export const svgTransform = (dimensions: Size, rect: Rect | Size): string => {
-  assertSize(dimensions)
-  assertSize(rect)
+export const svgTransform = (dimensions: Rect | Size, rect: Rect): string => {
+  assertSizeAboveZero(dimensions)
+  assertSizeAboveZero(rect)
 
-  const { width: outWidth, height: outHeight } = dimensions
-  const { width, height } = rect
+  const { width: inWidth, height: inHeight } = dimensions
+  const { width: outWidth, height: outHeight, x: outX, y: outY } = rect
+  const scaleWidth = outWidth / inWidth 
+  const scaleHeight = outHeight / inHeight 
   const words: string[] = []
-  const scaleWidth = width / outWidth 
-  const scaleHeight = height / outHeight 
-  if (isPoint(rect)) {
-    const { x, y } = rect
-    if (!(x === 0 && y === 0)) words.push(`translate(${x},${y})`)
-  }
+  if (!(outX === 0 && outY === 0)) words.push(`translate(${outX},${outY})`)
+  
   if (!(scaleWidth === 1 && scaleHeight === 1)) {
     words.push(`scale(${scaleWidth},${scaleHeight})`)
+  }
+  if (isPoint(dimensions)) {
+    const { x: inX, y: inY } = (dimensions)
+    if (!(inX === 0 && inY === 0)) words.push(`translate(${inX},${inY})`)
   }
   return words.join(' ')
 }
 
-export const svgSetTransformRects = (element: SvgItem, dimensions: Size, rect: Rect | Size) => {
+export const svgSetTransformRects = (element: SvgItem, dimensions: Rect | Size, rect: Rect) => {
   svgSetTransform(element, svgTransform(dimensions, rect))
 }
+
+export const svgFunc = (type: string, values: string) => {
+  const element = globalThis.document.createElementNS(NamespaceSvg, type)
+  svgSet(element, values, 'tableValues')
+  svgSet(element, 'discrete', 'type')
+  return element
+}
+
+export const svgSetChildren = (element: SvgItem, svgItems: SvgItems) => {
+  if (!element.hasChildNodes()) return svgAppend(element, svgItems)
+
+  const { childNodes } = element
+  const nodes: Node[] = []
+  childNodes.forEach(node => { 
+    if (!svgItems.includes(node as SvgItem)) nodes.push(node)
+  })
+  nodes.forEach(node => { element.removeChild(node) })
+  svgItems.forEach(node => element.appendChild(node))
+}
+
+
+

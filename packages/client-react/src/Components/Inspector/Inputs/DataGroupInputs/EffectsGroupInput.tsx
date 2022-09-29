@@ -1,4 +1,3 @@
-import { DefaultIcons } from '@moviemasher/icons-default'
 import { 
   isEffectDefinition, Defined, DefinitionType, assertEffect, UnknownObject, 
   ClassDropping, SelectedEffects, Effect, DataGroup, assertTrue, isDefined, isObject 
@@ -11,6 +10,7 @@ import { useEditor } from '../../../../Hooks/useEditor'
 import { View } from '../../../../Utilities/View'
 import { InspectorEffect } from '../../../Inspector/InspectorEffect'
 import { InspectorProperties } from '../../../Inspector/InspectorProperties'
+import { MasherContext } from '../../../Masher/MasherContext'
 import { DataGroupInputs } from './DataGroupInputs'
 
 export interface EffectsInputProps extends PropsWithoutChild, WithClassName {
@@ -21,6 +21,9 @@ export interface EffectsInputProps extends PropsWithoutChild, WithClassName {
  * @children InspectorEffect
  */
 export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
+  
   const { selectedEffects, ...rest } = props
   const ref = React.useRef<HTMLDivElement>(null)
   const [isOver, setIsOver] = React.useState(false)
@@ -117,7 +120,7 @@ export function EffectsGroupInput(props: EffectsInputProps): ReactResult {
   const viewProps = {
     ...rest,
     key: 'effects',
-    children: [DefaultIcons.browserEffect, <View {...listViewProps} />]
+    children: [icons.browserEffect, <View {...listViewProps} />]
   }
   const effectsView = <View { ...viewProps } />
   if (!selected) return effectsView

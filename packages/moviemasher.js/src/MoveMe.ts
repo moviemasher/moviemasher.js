@@ -75,6 +75,7 @@ export interface CommandFilterArgs extends CommandFileArgs {
   commandFiles: CommandFiles
   chainInput: string
   filterInput?: string
+  upload?: boolean
 }
 export interface VisibleCommandFilterArgs extends CommandFilterArgs {
   outputSize: Size

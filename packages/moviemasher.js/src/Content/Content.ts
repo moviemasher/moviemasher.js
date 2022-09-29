@@ -1,15 +1,17 @@
-import { Constrained,  GenericFactory,  SvgItem } from "../declarations"
+import { Constrained,  GenericFactory,  SvgFilter,  SvgFilters,  SvgItem } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
 import { isContentType, Orientation } from "../Setup/Enums"
 import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters } from "../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from "../MoveMe"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
+import { EffectObject, Effects } from "../Media/Effect/Effect"
+import { Size } from "../Utility/Size"
 
-export const ContentDefaultId = `${IdPrefix}content${IdSuffix}`
+export const DefaultContentId = `${IdPrefix}content${IdSuffix}`
 export interface ContentObject extends TweenableObject {
-  lock?: string
+  effects?: EffectObject[]
 }
 
 export interface ContentDefinitionObject extends TweenableDefinitionObject { }
@@ -27,7 +29,13 @@ export interface Content extends Tweenable {
   contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
   contentRects(args: ContentRectArgs): RectTuple 
-  itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem>
+
+  contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined
+  
+
+  effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters 
+  effects: Effects
+  itemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
 }
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentType(value.type)

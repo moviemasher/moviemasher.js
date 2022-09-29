@@ -2,11 +2,11 @@
   "name": "@moviemasher/client-react",
   "version": "5.1.0",
   "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.1.0",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "browser": "umd/client-react.js",
+  "module": "esm/client-react.js",
   "source": "src/index.ts",
   "type": "module",
-  "types": "dist/esm/index.d.ts",
+  "types": "esm/client-react.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -22,31 +22,28 @@
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.0",
-    "@moviemasher/icons-default": "5.1.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "@moviemasher/theme-default": "5.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-icons": "^4.4.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.2",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@types/node": "15.6.1"
-
   },
   "scripts": {
-    "develop": "rollup --config dev/rollup/esm.config.js --watch",
-    "build-css": "cat dev/css/* > dist/moviemasher.css",
-    "build-esm": "run-s build-rollup build-css",
-    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
-    "build-rollup": "rollup --config dev/rollup/esm.config.js",
-    "watch-esm": "rollup --watch --config dev/rollup/esm.config.js",
-    "build": "run-s clean build-esm build-cjs",
-    "clean": "rimraf dist"
+    "build-esm": "rollup --config dev/rollup/esm.config.js",
+    "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
+    "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
+    "build-umd": "rollup --config dev/rollup/umd.config.js",
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min",
+    "stop": "docker compose --file dev/example/docker-compose.yml down -v",
+    "start": "docker compose --file dev/example/docker-compose.yml up -d"
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

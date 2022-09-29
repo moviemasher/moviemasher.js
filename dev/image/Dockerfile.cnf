@@ -3,60 +3,20 @@ LABEL org.opencontainers.image.authors="support@moviemasher.com"
 
 WORKDIR /home/node/app
 
-# COPY dev/ /home/node/app/dev/
-# COPY packages/ /home/node/app/packages/
-# COPY workspaces/ /home/node/app/workspaces/
-# COPY package.json /home/node/app/package.json
-# RUN sh /home/node/app/dev/image/sh/build-clean.sh
-
-
-COPY dev/image/sh/options.sh /home/node/app/dev/image/sh/options.sh
-
-
-COPY dev/image/sh/tools/options.sh /home/node/app/dev/image/sh/tools/options.sh
-COPY dev/image/sh/tools/build.sh /home/node/app/dev/image/sh/tools/build.sh
-RUN sh /home/node/app/dev/image/sh/tools/build.sh
-
-COPY dev/image/sh/avlibs/options.sh /home/node/app/dev/image/sh/avlibs/options.sh
-COPY dev/image/sh/avlibs/build.sh /home/node/app/dev/image/sh/avlibs/build.sh
-RUN sh /home/node/app/dev/image/sh/avlibs/build.sh
-
-COPY dev/image/sh/ffmpeg/options.sh /home/node/app/dev/image/sh/ffmpeg/options.sh
-COPY dev/image/sh/ffmpeg/build.sh /home/node/app/dev/image/sh/ffmpeg/build.sh
-RUN sh /home/node/app/dev/image/sh/ffmpeg/build.sh
-
-COPY dev/image/sh/node/options.sh /home/node/app/dev/image/sh/node/options.sh
-COPY dev/image/sh/node/build.sh /home/node/app/dev/image/sh/node/build.sh
-RUN sh /home/node/app/dev/image/sh/node/build.sh
-
 COPY package.json /home/node/app/package.json
 COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
 COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
-COPY packages/icons-default/package.json /home/node/app/packages/icons-default/package.json
+COPY packages/theme-default/package.json /home/node/app/packages/theme-default/package.json
 COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
 
-RUN npm install
+COPY packages/client-react/umd /home/node/app/packages/client-react/umd
+COPY packages/moviemasher.js/umd /home/node/app/packages/moviemasher.js/umd
+COPY packages/theme-default/umd /home/node/app/packages/theme-default/umd
+COPY packages/theme-default/moviemasher.css /home/node/app/packages/theme-default/moviemasher.css
+COPY packages/server-express/cjs /home/node/app/packages/server-express/cjs
 
-COPY dev/ /home/node/app/dev/
-COPY packages/ /home/node/app/packages/
-COPY workspaces/ /home/node/app/workspaces/
-# COPY dev/build/package.json /home/node/app/package.json
-# RUN npm run build
-
-COPY dev/image/sh/node/clean.sh /home/node/app/dev/image/sh/node/clean.sh
-RUN sh /home/node/app/dev/image/sh/node/clean.sh
-
-COPY dev/image/sh/ffmpeg/clean.sh /home/node/app/dev/image/sh/ffmpeg/clean.sh
-RUN sh /home/node/app/dev/image/sh/ffmpeg/clean.sh
-
-COPY dev/image/sh/avlibs/clean.sh /home/node/app/dev/image/sh/avlibs/clean.sh
-RUN sh /home/node/app/dev/image/sh/avlibs/clean.sh
-
-COPY dev/image/sh/tools/clean.sh /home/node/app/dev/image/sh/tools/clean.sh
-RUN sh /home/node/app/dev/image/sh/tools/clean.sh
-
-
-COPY docs/ /home/node/app/docs/
+COPY dev/image/sh /home/node/app/dev/image/sh
+RUN sh /home/node/app/dev/image/sh/build-clean.sh
 
 ENTRYPOINT ["node_modules/pm2/bin/pm2-docker"]
 CMD ["start", "workspaces/example-express-react/dist/server.js"]

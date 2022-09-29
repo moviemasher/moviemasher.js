@@ -56,7 +56,7 @@ export function assertAboveZero(value: any, name?: string): asserts value is num
 export const isArray = (value: any): value is AnyArray => (
   isDefined(Array.isArray) ? Array.isArray(value): value instanceof Array
 )
-export function assertArray(value: any, name?: string): asserts value is number {
+export function assertArray(value: any, name?: string): asserts value is AnyArray {
   if (!isArray(value)) throwError(value, 'Array', name)
 }
 

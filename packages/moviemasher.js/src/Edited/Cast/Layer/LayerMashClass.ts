@@ -8,9 +8,9 @@ export class LayerMashClass extends LayerClass implements LayerMash {
   constructor(args: LayerMashArgs) {
     super(args)
 
-    // propertiesInitialize doesn't set defaults
-    const { label, mash } = args
-    if (!label) this.label = mash.label
+    const { mash } = args
+    // console.log("LayerMashClass", this.label, mash.label)
+    if (!this.label) this.label = mash.label
     this.mash = mash
     mash.layer = this
   }

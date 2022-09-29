@@ -41,3 +41,12 @@ export const pointString = (point: Point): string => {
   const { x, y } = point
   return `x=${x};y=${y}`
 }
+export const pointValueString = (point: Point): string => {
+  const { x, y } = point
+  return `${x},${y}`
+}
+
+export const pointNegate = (point: Point): Point => {
+  const { x, y } = point
+  return { x: -x, y: -y }
+}

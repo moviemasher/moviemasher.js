@@ -7,7 +7,9 @@ import { Loader } from "../Loader/Loader"
 import { PreviewOptions } from "./Mash/Preview/Preview"
 import { Editor } from "../Editor/Editor"
 import { Selectable } from "../Editor/Selectable"
-import { Mash } from "./Mash/Mash"
+import { isMash, Mash } from "./Mash/Mash"
+import { isCast } from "./Cast"
+import { throwError } from "../Utility/Throw"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -37,4 +39,11 @@ export interface Edited extends Described, Propertied, Selectable {
   quantize: number
   reload(): Promise<void> | undefined
   svgItems(options: PreviewOptions): Promise<SvgItem[]>
+}
+
+export const isEdited = (value: any): value is Edited => {
+  return isMash(value) || isCast(value)
+}
+export function assertEdited(value: any): asserts value is Edited {
+  if (!isEdited(value)) throwError(value, 'Edited')
 }

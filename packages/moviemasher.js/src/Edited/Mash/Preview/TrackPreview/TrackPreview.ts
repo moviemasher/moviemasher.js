@@ -18,11 +18,11 @@ export interface TrackPreviewArgs {
 }
 
 export interface TrackPreview {
-  editingSvgItem(className?: string, active?: boolean, id?: string): SvgItem
+  editingSvgItem(classes: string[], inactive?: boolean): SvgItem
   id: string
   clip: Clip
   editor: Editor
-  svgBoundsElement(active?: boolean, id?: string): SVGGElement 
+  svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems 
   container: Container
   rect: Rect
 }

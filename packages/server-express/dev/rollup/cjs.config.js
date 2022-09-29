@@ -1,4 +1,3 @@
-
 import resolve from '@rollup/plugin-node-resolve'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import commonjs from '@rollup/plugin-commonjs'
@@ -14,6 +13,7 @@ export default {
     file: main,
     format: "cjs",
     sourcemap: false,
+    name: "MovieMasherServer"
   },
   plugins: [
     peerDepsExternal(),
@@ -24,8 +24,6 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({ 
-      tsconfig: config => ({ ...config, declaration: true, declarationMap: true }) 
-    })  
+    ts({ tsconfig: './dev/tsconfig.json' })
   ]
 }

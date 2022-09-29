@@ -11,7 +11,7 @@ import { View } from "../../Utilities/View"
 import { useListeners } from "../../Hooks/useListeners"
 import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
 import { ApiContext } from "../ApiClient/ApiContext"
-import { EditorContext } from "../Masher/EditorContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 
 export interface BrowserProps extends PropsWithChildren {
@@ -31,7 +31,7 @@ export function Browser(props: BrowserProps): ReactResult {
   const [typesObject, setTypesObject] = React.useState<DefinitionTypesObject>({})
 
   const apiContext = React.useContext(ApiContext)
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { changeDefinition } = editorContext
   const [ definitions, setDefinitions] = React.useState<Definition[]>([])
   const [ picked, setPicked] = React.useState(initialPicked)  
@@ -132,9 +132,11 @@ export function Browser(props: BrowserProps): ReactResult {
     removePicker,
   }
 
+  const contextProps = {
+    value: browserContext,
+    children: <View {...rest} />
+  }
   return (
-    <BrowserContext.Provider value={browserContext}>
-      <View {...rest} />
-    </BrowserContext.Provider>
+    <BrowserContext.Provider { ...contextProps } />
   )
 }

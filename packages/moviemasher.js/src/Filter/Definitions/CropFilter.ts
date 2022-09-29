@@ -1,5 +1,5 @@
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { idGenerate } from "../../Utility/Id"
@@ -47,10 +47,6 @@ export class CropFilter extends FilterDefinitionClass {
     if (isTrueValue(width)) options.w = width
     if (isTrueValue(height)) options.h = height
 
-    // if (isString(options.x) || isString(options.y)) console.log(this.constructor.name, "commandFilters scalars", scalars, !!duration)
-    // console.log(this.constructor.name, "commandFilters options", options)
-
-   
     const { ffmpegFilter } = this
     const commandFilter: CommandFilter = {
       inputs: [filterInput], ffmpegFilter, 
@@ -60,7 +56,4 @@ export class CropFilter extends FilterDefinitionClass {
     commandFilters.push(commandFilter)
     return commandFilters
   }
-
-  phase = Phase.Populate
-
 }

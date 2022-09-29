@@ -1,4 +1,7 @@
 version: "3"
+networks:
+  default:
+    name: moviemasher-test
 services:
   test:
     build:
@@ -13,6 +16,4 @@ services:
       - ../../packages/moviemasher.js/src/:/home/node/app/packages/moviemasher.js/src/
       - ../../packages/server-express/src/:/home/node/app/packages/server-express/src/
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
-      - ../../workspaces/example-react/:/home/node/app/workspaces/example-react/
       - ../../temporary/test:/home/node/app/temporary/test
-      # - ./package.json:/home/node/app/package.json

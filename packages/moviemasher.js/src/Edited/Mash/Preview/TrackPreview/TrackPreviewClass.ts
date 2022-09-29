@@ -1,5 +1,5 @@
 import { Container, ContainerRectArgs } from "../../../../Container/Container"
-import { EventHandler, ScalarObject, SvgItem, SvgItemsTuple } from "../../../../declarations"
+import { EventHandler, ScalarObject, SvgItem, SvgItems, SvgItemsTuple } from "../../../../declarations"
 import { Point, pointsEqual, PointZero } from "../../../../Utility/Point"
 import { Rect, rectsEqual } from "../../../../Utility/Rect"
 import { assertSizeAboveZero, Size } from "../../../../Utility/Size"
@@ -177,54 +177,47 @@ export class TrackPreviewClass implements TrackPreview {
   
   private get size(): Size { return this.preview.size }
   
-  editingSvgItem(className?: string): SvgItem {
+  
+  editingSvgItem(classes: string[], inactive?: boolean): SvgItem {
+    // console.log(this.constructor.name, "editingSvgItem", className)
     const { container, rect } = this
-    
     const svgItem = container.pathElement(rect)
-    svgItem.classList.add('outline')
-    svgItem.setAttribute('vector-effect', 'non-scaling-stroke')
-    svgItem.setAttribute('fill', 'transparent')
- 
-    svgAddClass(svgItem, className)
 
-    const pointerDown = this.pointerDown()
-    svgItem.addEventListener('pointerdown', pointerDown)
+    svgItem.setAttribute('vector-effect', 'non-scaling-stroke')
+    svgAddClass(svgItem, classes)
+    if (!inactive) svgItem.addEventListener('pointerdown', this.pointerDown())
   
     return svgItem
   }
 
-  svgBoundsElement(active?: boolean, id?: string, ): SVGGElement {
+  svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems {
+    const items: SvgItems = []
     const handle = TrackPreviewHandleSize
     const line = TrackPreviewLineSize 
     const halfLine = line / 2
     const { rect, container } = this
     const { directions } = container
     const { width, height, x, y } = rect
-    const groupElement = svgGroupElement(undefined, id)
     const lineRect = { x: x - halfLine, y: y - halfLine, width: width, height: line }
-    const classes = ['line', 'bounds']
-    if (active) classes.push('active')
-    const lineClass = classes.join(' ')
-    groupElement.appendChild(svgPolygonElement(lineRect, lineClass))
+    
+    items.push(svgPolygonElement(lineRect, lineClasses))
     lineRect.y = y + height - halfLine
-    groupElement.appendChild(svgPolygonElement(lineRect, lineClass))
+    items.push(svgPolygonElement(lineRect, lineClasses))
     lineRect.x = x + width - halfLine
     lineRect.height = height
     lineRect.width = line
     lineRect.y = y
-    groupElement.appendChild(svgPolygonElement(lineRect, lineClass))
+    items.push(svgPolygonElement(lineRect, lineClasses))
     lineRect.x = x - halfLine
-    groupElement.appendChild(svgPolygonElement(lineRect, lineClass))
+    items.push(svgPolygonElement(lineRect, lineClasses))
 
-    classes[0] = 'handle'
-    const handleClass = classes.join(' ')
     const size = { width, height }
     directions.forEach(direction => {
       const point = this.svgHandlePoint(size, direction)
       const rect = { x: x + point.x, y: y + point.y, width: handle, height: handle }
-      const element = svgPolygonElement(rect, `${handleClass} ${direction.toLowerCase()}`)
-      groupElement.append(element)
-      if (!active) return 
+      const element = svgPolygonElement(rect, [...handleClasses, direction.toLowerCase()])
+      items.push(element)
+      if (inactive) return 
 
       element.addEventListener('pointerdown', (event: Event) => {
         // console.log("pointerdown", direction)
@@ -233,7 +226,7 @@ export class TrackPreviewClass implements TrackPreview {
       })
     })
     // svgSetTransformPoint(groupElement, rect)
-    return groupElement
+    return items
   }
 
   private svgHandlePoint(dimensions: Size, direction: Anchor): Point {

@@ -1,5 +1,4 @@
 import React from 'react'
-import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
@@ -15,25 +14,25 @@ export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 
 export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
+  const { icons } = optionsStrict
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
   optionsStrict.props.initialPicked ||= 'container'
-
-  optionsStrict.header.content ||= [DefaultIcons.browser]
+  optionsStrict.header.content ||= [icons.browser]
 
   optionsStrict.footer.content ||= [
-    <BrowserPicker key='effect' id='effect' className={ClassButton} children={DefaultIcons.browserEffect} />,
-    <BrowserPicker key='container' id='container' className={ClassButton} children={DefaultIcons.container} />,
-    <BrowserPicker key='content' id='content' className={ClassButton} children={DefaultIcons.content} />,
+    <BrowserPicker key='effect' id='effect' className={ClassButton} children={icons.browserEffect} />,
+    <BrowserPicker key='container' id='container' className={ClassButton} children={icons.container} />,
+    <BrowserPicker key='content' id='content' className={ClassButton} children={icons.content} />,
   ]
   optionsStrict.footer.before ||= [
-    <BrowserPicker key='video' id='video' types='video,videosequence' className={ClassButton} children={DefaultIcons.browserVideo} />,
-    <BrowserPicker key='audio' id='audio' className={ClassButton} children={DefaultIcons.browserAudio} />,
-    <BrowserPicker key='image' id='image' className={ClassButton} children={DefaultIcons.browserImage} />,
+    <BrowserPicker key='video' id='video' types='video,videosequence' className={ClassButton} children={icons.browserVideo} />,
+    <BrowserPicker key='audio' id='audio' className={ClassButton} children={icons.browserAudio} />,
+    <BrowserPicker key='image' id='image' className={ClassButton} children={icons.browserImage} />,
   ]
 
   optionsStrict.footer.after ||= [
-    <BrowserControl key='import' children={DefaultIcons.upload} />
+    <BrowserControl key='import' children={icons.upload} />
   ]
 
   optionsStrict.content.children ||= (

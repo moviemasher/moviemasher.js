@@ -6,7 +6,6 @@ import {
 } from "./Modular"
 import { Filter } from "../../Filter/Filter"
 import { filterInstance } from "../../Filter/FilterFactory"
-import { Phase } from "../../Setup/Enums"
 
 export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base implements ModularDefinition {
@@ -17,15 +16,9 @@ export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : Mod
       if (properties?.length) this.properties.push(...properties.map(property =>
         propertyInstance({ ...property, custom: true })
       ))
-      if (initializeFilter) this.initializeFilter = filterInstance({
-        phase: Phase.Initialize, ...initializeFilter
-      })
-      if (finalizeFilter) this.finalizeFilter = filterInstance({
-        phase: Phase.Finalize, ...finalizeFilter
-      })
-      if (filters) this.filters.push(...filters.map(filter => filterInstance({
-        phase: Phase.Populate, ...filter
-      })))
+      if (initializeFilter) this.initializeFilter = filterInstance(initializeFilter)
+      if (finalizeFilter) this.finalizeFilter = filterInstance(finalizeFilter)
+      if (filters) this.filters.push(...filters.map(filter => filterInstance(filter)))
     }
 
     filters : Filter[] = []

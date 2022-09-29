@@ -1,5 +1,4 @@
 import React from 'react'
-import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { PropsMethod, PropsWithoutChild, WithClassName } from '../../declarations'
 import { Button } from '../../Utilities/Button'
@@ -22,6 +21,7 @@ export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, Wit
 
 export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
+  const { icons } = optionsStrict
   optionsStrict.props.key ||= 'player'
   optionsStrict.props.className ||= 'panel player'
 
@@ -32,19 +32,19 @@ export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = 
     </PlayerContent>
   )
   optionsStrict.header.content ||= [
-    DefaultIcons.app,
+    icons.app,
     <EditorUndoButton key='undo'>
-      <Button>{DefaultIcons.undo}{labelTranslate('undo')}</Button>
+      <Button>{icons.undo}{labelTranslate('undo')}</Button>
     </EditorUndoButton>,
     <EditorRedoButton key='redo'>
-      <Button>{DefaultIcons.redo}{labelTranslate('redo')}</Button>
+      <Button>{icons.redo}{labelTranslate('redo')}</Button>
     </EditorRedoButton>,
   ]
   
   optionsStrict.footer.content ||= [
     <PlayerButton key='play-button' className={ClassButton}>
-      <PlayerPlaying key='playing'>{DefaultIcons.playerPause}</PlayerPlaying>
-      <PlayerNotPlaying key='not-playing'>{DefaultIcons.playerPlay}</PlayerNotPlaying>
+      <PlayerPlaying key='playing'>{icons.playerPause}</PlayerPlaying>
+      <PlayerNotPlaying key='not-playing'>{icons.playerPlay}</PlayerNotPlaying>
     </PlayerButton>,
     <PlayerTimeControl key='time-slider'/>,
     <PlayerTime key='time' className="time" />

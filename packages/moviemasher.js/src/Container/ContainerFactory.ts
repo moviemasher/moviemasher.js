@@ -2,7 +2,7 @@ import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { assertPopulatedString } from "../Utility/Is"
 import { Factories } from "../Definitions/Factories"
-import { Container, ContainerDefaultId, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "./Container"
+import { Container, DefaultContainerId, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "./Container"
 import { ShapeContainerDefinitionClass } from "./ShapeContainer/ShapeContainerDefinitionClass"
 import { TextContainerDefinitionClass } from "./TextContainer/TextContainerDefinitionClass"
 
@@ -14,7 +14,7 @@ import testContainer from "../Definitions/DefinitionObjects/container/test.json"
 import textContainer from "../Definitions/DefinitionObjects/container/text.json"
 
 export const containerDefaults = [
-  new ShapeContainerDefinitionClass({ id: ContainerDefaultId, ...defaultContainer }),
+  new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
   new TextContainerDefinitionClass(textContainer),
   new ShapeContainerDefinitionClass(chatContainer),
   new ShapeContainerDefinitionClass(broadcastContainer),

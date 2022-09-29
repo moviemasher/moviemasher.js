@@ -1,13 +1,14 @@
 import fs from 'fs'
-import https from 'https'
 import http from 'http'
+import https from 'https'
+
 import path from 'path'
 import md5 from 'md5'
 
 import {
   EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
   Errors, LoaderClass, GraphFileType, LoaderCache, Definition,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, assertObject, isDefinition, isLoaderType, LoadType
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, assertObject, isDefinition, isLoaderType, LoadType, isPopulatedString, urlIsHttp
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
@@ -30,21 +31,22 @@ export class NodeLoader extends LoaderClass {
   protected override browsing = false
 
   protected cachePromise(url: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
-    // console.log(this.constructor.name, "filePromise", key)
+    // console.log(this.constructor.name, "cachePromise", url)
     if (fs.existsSync(url)) {
-      // console.log(this.constructor.name, "filePromise existent")
+      // console.log(this.constructor.name, "cachePromise existent")
       return this.updateSources(url, cache, graphFile)
     } 
     
     const { filePrefix } = this
-    if (url.startsWith(filePrefix)) throw Errors.uncached + ' filePromise ' + url
+    if (url.startsWith(filePrefix)) throw Errors.uncached + ' cachePromise ' + url
 
+    // console.log(this.constructor.name, "cachePromise calling writePromise", url)
     return this.writePromise(graphFile, url).then(() => {
       return this.updateSources(url, cache, graphFile)
     })
   }
 
-  getFile(_graphFile: GraphFile): any { throw Errors.unimplemented + 'getFile' }
+  // getFile(_graphFile: GraphFile): any { throw Errors.unimplemented + 'getFile' }
 
   graphType = GraphType.Mash
 
@@ -82,7 +84,7 @@ export class NodeLoader extends LoaderClass {
   
     // file is url, if absolute then use md5 as directory name
     if (file.includes('://')) {
-      console.log(this.constructor.name, "key LOADTYPE ABSOLUTE", type, file, content)
+      // console.log(this.constructor.name, "key LOADTYPE ABSOLUTE", type, file, content)
       const extname = path.extname(file)
       const ext = extname || this.typeExtension(type)
       return path.resolve(
@@ -121,23 +123,53 @@ export class NodeLoader extends LoaderClass {
     return promise
   }
 
-  private remotePromise(key: string, url: string): Promise<void> {
+  private remoteLocalFile(originalFile: string, loadType: LoadType, mimeType?: string): string {
+    if (!isPopulatedString(mimeType) || mimeType.startsWith(loadType)) return originalFile
+    if (!(loadType === LoadType.Font && mimeType.startsWith('text/css'))) return originalFile
+    
+    const dirname = path.dirname(originalFile)
+    const extname = path.extname(originalFile)
+    const basename = path.basename(originalFile, extname)
+    return path.join(dirname, `${basename}.css`)
+  }
+  private remotePromise(loadType: LoadType, key: string, urlString: string): Promise<void> {
+    // console.log(this.constructor.name, "remotePromise", key, urlString)
     const promise: Promise<void> = new Promise((resolve, reject) => {
-      const callback = (res: http.IncomingMessage) => {
-        const stream = fs.createWriteStream(key)
-        res.pipe(stream)
+      const { request } = urlString.startsWith('https') ? https : http
+      const req = request(urlString, response => {
+        const { ['content-type']: type } = response.headers
+        const filePath = this.remoteLocalFile(key, loadType, type)
+        // console.log(this.constructor.name, "remotePromise.request", type, filePath)
+        const stream = fs.createWriteStream(filePath)
+        response.pipe(stream)
         stream.on('finish', () => {
           stream.close()
-          resolve()
+          if (filePath === key) resolve()
+          else {
+            fs.promises.readFile(filePath).then(buffer => {
+              const string = buffer.toString()
+              const lastUrl = this.lastCssUrl(string)
+              
+              this.remotePromise(loadType, key, lastUrl).then(resolve)
+            })
+          }
         })
-        stream.on('error', (error) => { reject(error) })
-      }
-      if (url.startsWith('https://')) https.get(url, callback)
-      else http.get(url, callback)
+        stream.on('error', (error) => { 
+          console.error(this.constructor.name, "remotePromise.callback error", error)
+          reject(error) 
+        })
+      })
+      req.on('error', error => {
+        console.error(error)
+        reject(error) 
+      })
+      req.end()
     })
     return promise
   }
 
+
+  
   private typeExtension(type: LoadType): string {
     switch(type){
       case LoadType.Font: return '.ttf'
@@ -146,6 +178,7 @@ export class NodeLoader extends LoaderClass {
       case LoadType.Video: return '.mp4'
     }
   }
+
   private updateableDefinitions(preloaderSource: LoaderCache): Definition[] {
     const definitions = [...preloaderSource.definitions]
     const preloadableDefinitions = definitions.filter(definition => {
@@ -185,7 +218,6 @@ export class NodeLoader extends LoaderClass {
     const infoPath = this.infoPath(key) 
     // console.log(this.constructor.name, "updateSources", infoPath)
     return probingInfoPromise(key, infoPath).then(loadedInfo => { 
-
       this.updateDefinitions(graphFile, loadedInfo) 
     })
   }
@@ -195,9 +227,11 @@ export class NodeLoader extends LoaderClass {
     const dirname = path.dirname(key)
     let promise = fs.promises.mkdir(dirname, { recursive: true }).then(EmptyMethod)
 
+    // console.log(this.constructor.name, "writePromise", key, type, file)
     if (isLoadType(type)) {
-      if (file.startsWith('http')) {
-        return promise.then(() => this.remotePromise(key, file))
+      if (urlIsHttp(file)) {
+        // console.log(this.constructor.name, "writePromise calling remotePromise", type, key, file)
+        return promise.then(() => this.remotePromise(type, key, file))
       } 
       // local file should already exist!
       throw Errors.uncached + file 

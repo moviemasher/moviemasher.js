@@ -4,7 +4,6 @@ import {
   isDefined, selectedPropertyObject, selectedPropertiesScalarObject, 
   PropertyTweenSuffix, ScalarObject, assertTimeRange, tweenInputTime
 } from "@moviemasher/moviemasher.js"
-import { DefaultIcons } from "@moviemasher/icons-default"
 
 import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
 import { InspectorContext } from "../../../Inspector/InspectorContext"
@@ -13,9 +12,13 @@ import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useEditor } from "../../../../Hooks/useEditor"
+import { MasherContext } from "../../../Masher/MasherContext"
 
 
 export function PointGroupInput(props: DataGroupProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
+  
   const editor = useEditor()
   const { selectType } = props
   assertSelectType(selectType)
@@ -76,7 +79,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
 
   const selectedButton = [ClassSelected, ClassButton].join(' ')
   const startProps: PropsAndChild = {
-    children: DefaultIcons.start,
+    children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
@@ -88,7 +91,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const endProps: PropsAndChild = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
-    children: endDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
+    children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {
       editor.goToTime(timeRange.lastTime)
       changeTweening(DataGroup.Point, true)
@@ -96,7 +99,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   }
 
   const legendElements = [
-    DefaultIcons.point, 
+    icons.point, 
     <View className="start-end" key={`${selectType}-point-start-end`}>
       <View { ...startProps } />
       <View { ...endProps } />
@@ -105,7 +108,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const lockOffEProps = { 
     key: "lock-east",
     className: ClassButton,
-    children: offEValue ? DefaultIcons.unlock : DefaultIcons.lock, 
+    children: offEValue ? icons.unlock : icons.lock, 
     onClick: () => { offE.changeHandler('offE', !offEValue) }
   }
   const lockOffE = <View { ...lockOffEProps } />
@@ -113,7 +116,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const lockOffWProps = { 
     key: "lock-west",
     className: ClassButton,
-    children: offWValue ? DefaultIcons.unlock : DefaultIcons.lock, 
+    children: offWValue ? icons.unlock : icons.lock, 
     onClick: () => { offW.changeHandler('offW', !offWValue) }
   }
   const lockOffW = <View { ...lockOffWProps } />
@@ -121,7 +124,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const lockOffNProps = { 
     key: "lock-north",
     className: ClassButton,
-    children: offNValue ? DefaultIcons.unlock : DefaultIcons.lock, 
+    children: offNValue ? icons.unlock : icons.lock, 
     onClick: () => { offN.changeHandler('offN', !offNValue) }
   }
   const lockOffN = <View { ...lockOffNProps } />
@@ -129,18 +132,21 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const lockOffSProps = { 
     key: "lock-south",
     className: ClassButton,
-    children: offSValue ? DefaultIcons.unlock : DefaultIcons.lock, 
+    children: offSValue ? icons.unlock : icons.lock, 
     onClick: () => { offS.changeHandler('offS', !offSValue) }
   }
   const lockOffS = <View { ...lockOffSProps } />
 
 
   const elements = [
-    <View key="x" className='point' children={[DefaultIcons.horz, lockOffE, elementsByName.x, lockOffW]} />, 
-    <View key="y" className='point' children={[DefaultIcons.vert, lockOffN, elementsByName.y, lockOffS]} />
+    <View key="x" className='point' children={[icons.horz, lockOffE, elementsByName.x, lockOffW]} />, 
+    <View key="y" className='point' children={[icons.vert, lockOffN, elementsByName.y, lockOffS]} />
   ]
 
-  return <fieldset><legend><View>{legendElements}</View></legend>{elements}</fieldset>
+  return <fieldset>
+    <legend key="legend"><View>{legendElements}</View></legend>
+    {elements}
+  </fieldset>
 
 }
 

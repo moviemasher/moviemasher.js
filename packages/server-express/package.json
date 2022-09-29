@@ -2,10 +2,10 @@
   "name": "@moviemasher/server-express",
   "version": "5.1.0",
   "description": "Movie Masher Server Plugin implemented in ExpressJS - version 5.1.0",
-  "main": "dist/cjs/index.js",
+  "main": "cjs/server-express.js",
   "source": "src/index.ts",
+  "types": "cjs/server-express.d.ts",
   "type": "commonjs",
-  "types": "dist/cjs/index.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -20,9 +20,8 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build-rollup": "rollup --config dev/rollup/cjs.config.js",
-    "build": "run-s clean build-rollup",
-    "clean": "rimraf dist"
+    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
+    "build": "run-s build-cjs"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.0",

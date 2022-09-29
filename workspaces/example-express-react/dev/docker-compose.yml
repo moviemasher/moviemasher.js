@@ -1,0 +1,18 @@
+version: "3"
+networks:
+  default:
+    name: express-react-example
+services:
+  moviemasher:
+    build:
+      dockerfile: ../../../dev/image/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/moviemasher.js:5.1.0
+    container_name: moviemasher-8570
+    ports:
+      - "8570:8570"
+      - "8571:8571"
+    volumes:
+      - ../../../packages:/home/node/app/packages
+      - ../../../temporary/example-express-react:/home/node/app/temporary
+      - ../../../workspaces/example-express-react:/home/node/app/workspaces/example-express-react

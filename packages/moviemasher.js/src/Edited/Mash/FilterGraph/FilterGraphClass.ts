@@ -13,19 +13,23 @@ import { Clip } from "../Track/Clip/Clip"
 import { idGenerate } from "../../../Utility/Id"
 import { arrayLast } from "../../../Utility/Array"
 import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
+import { assertDefinition } from "../../../Definition/Definition"
 
 export const FilterGraphInputVisible = 'BACKCOLOR'
 export const FilterGraphInputAudible = 'SILENCE'
 
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
-    const { mash, background, size, time, streaming, videoRate, visible } = args
+    const { upload, mash, background, size, time, streaming, videoRate, visible } = args
     assertMash(mash)
 
     this.mash = mash
     this.time = time
     this.videoRate = videoRate 
     this.background = background
+    this.upload = upload
+    // console.log(this.constructor.name, "upload", args.upload)
+
     this.size = size
     // console.log(this.constructor.name, this.id, "size", size)
     // console.log(this.constructor.name, this.id, "visible", visible)
@@ -81,47 +85,55 @@ export class FilterGraphClass implements FilterGraph {
   }
 
   private _commandFiles?: CommandFiles
-  get commandFiles(): CommandFiles {
+  get filterGraphCommandFiles(): CommandFiles {
     return this._commandFiles ||= this.commandFilesInitialize
   }
   get commandFilesInitialize(): CommandFiles {
     // console.log(this.constructor.name, "commandFilesInitialize")
-    const commandFiles: CommandFiles = []
     const { time, videoRate, quantize, size: outputSize, clips, visible, preloader } = this
     
     // console.log(this.constructor.name, this.id, "commandFilesInitialize", visible, outputSize)
-    commandFiles.push(...clips.flatMap(clip => {
+    const commandFiles = clips.flatMap(clip => {
       const clipTime = clip.timeRange(quantize)
       const chainArgs: CommandFileArgs = { 
         time, quantize, visible, outputSize: outputSize, videoRate, clipTime
       }
-      return clip.commandFiles(chainArgs)
-    }))
+      return clip.clipCommandFiles(chainArgs)
+    })
+
     commandFiles.forEach(commandFile => {
-      commandFile.resolved = preloader.key(commandFile)
+      const { definition } = commandFile
+      assertDefinition(definition)
+      const { label } = definition
+      const resolved = preloader.key(commandFile)
+      console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
+      commandFile.resolved = resolved
     })
     return commandFiles
   }
 
   get commandFilters(): CommandFilters { 
-    const commandFilters: CommandFilters = []
+    const filters: CommandFilters = []
     const { 
       time, quantize, size: outputSize, clips, 
-      visible, videoRate, commandFiles 
+      visible, videoRate, filterGraphCommandFiles: commandFiles, upload
     } = this
+    // console.log(this.constructor.name, "commandFilters upload", upload)
 
     // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
 
     const chainArgs: CommandFilterArgs = { 
       videoRate, time, quantize, visible, outputSize: outputSize, commandFiles, 
-      chainInput: '', clipTime: timeRangeFromTime(time), track: 0
+      chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
     }
     
     if (visible) {
-      commandFilters.push(this.commandFilterVisible)
-      chainArgs.chainInput = FilterGraphInputVisible
+      if (!upload) {
+        filters.push(this.commandFilterVisible)
+        chainArgs.chainInput = FilterGraphInputVisible
+      }
     } else {
-      commandFilters.push(this.commandFilterAudible)
+      filters.push(this.commandFilterAudible)
       chainArgs.chainInput = FilterGraphInputAudible
     }
     
@@ -130,20 +142,20 @@ export class FilterGraphClass implements FilterGraph {
       chainArgs.clipTime = clip.timeRange(quantize)
       chainArgs.track = index
       // console.log(this.constructor.name, "commandFilters", chainArgs)
-      commandFilters.push(...clip.commandFilters(chainArgs))
+      filters.push(...clip.commandFilters(chainArgs))
     
-      const lastFilter = arrayLast(commandFilters)
+      const lastFilter = arrayLast(filters)
       if (index < length - 1 ) {
         if (!lastFilter.outputs.length) lastFilter.outputs.push(idGenerate('clip'))
       }
       chainArgs.chainInput = arrayLast(lastFilter.outputs)
     })
-    return commandFilters
+    return filters
   }
 
   get duration(): number { return this.time.lengthSeconds }
 
-  get inputCommandFiles(): CommandFiles { return this.commandFiles.filter(file => file.input) }
+  get inputCommandFiles(): CommandFiles { return this.filterGraphCommandFiles.filter(file => file.input) }
   
   mash: Mash
 
@@ -156,6 +168,8 @@ export class FilterGraphClass implements FilterGraph {
   streaming = false
 
   time: Time 
+
+  upload?: boolean
 
   visible = false
 

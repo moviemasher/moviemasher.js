@@ -1,1 +1,1 @@
-export * from './DefaultHostOptions'
+export * from './HostDefaultOptions'

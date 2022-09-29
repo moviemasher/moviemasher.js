@@ -5,9 +5,11 @@ import { ReactResult } from '../../../../declarations'
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 import { useEditor } from '../../../../Hooks/useEditor'
-import { DefaultIcons } from '@moviemasher/icons-default'
+import { MasherContext } from '../../../Masher/MasherContext'
 
 export function RgbTypeInput(): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
   const inputContext = React.useContext(InputContext)
   const editor = useEditor()
   const { changeHandler, property, value: contextValue, name, time, defaultValue: contextDefault } = inputContext

@@ -2,10 +2,8 @@ import React from "react"
 import { 
   assertSelectType, assertTime, ClassButton, ClassSelected, 
   DataGroup, selectedPropertyObject, PropertyTweenSuffix,
-assertTimeRange, tweenInputTime
-
+  assertTimeRange, tweenInputTime
 } from "@moviemasher/moviemasher.js"
-import { DefaultIcons } from "@moviemasher/icons-default"
 
 import { PropsAndChild, ReactResult } from "../../../../declarations"
 import { InspectorContext } from "../../../Inspector/InspectorContext"
@@ -14,8 +12,12 @@ import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
 import { useEditor } from "../../../../Hooks/useEditor"
+import { MasherContext } from "../../../Masher/MasherContext"
 
 export function ColorGroupInput(props: DataGroupProps): ReactResult {  
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
+  
   const editor = useEditor()
 
   const { selectType, ...rest } = props
@@ -55,7 +57,7 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
   const selectedButton = [ClassSelected, ClassButton].join(' ')
 
   const startProps: PropsAndChild = {
-    children: DefaultIcons.start,
+    children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
     onClick: () => {
@@ -67,7 +69,7 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
   const endProps: PropsAndChild = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
-    children: endDefined ? DefaultIcons.end : DefaultIcons.endUndefined,
+    children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {      
       editor.goToTime(timeRange.lastTime)
       changeTweening(DataGroup.Color, true)
@@ -80,7 +82,7 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
     ...rest,
     key: `inspector-${selectType}-${name}`,
     children: [
-      DefaultIcons.color, 
+      icons.color, 
       <InputContext.Provider { ...providerProps } />, 
       <View className="start-end" key='start-end'>
         <View { ...startProps } />

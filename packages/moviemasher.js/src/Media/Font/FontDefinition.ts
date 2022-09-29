@@ -19,7 +19,7 @@ export class FontDefinitionClass extends DefinitionBase implements FontDefinitio
 
   family = ""
 
-  graphFiles(args: GraphFileArgs): GraphFiles {
+  fileUrls(args: GraphFileArgs): GraphFiles {
     const { visible, editing } = args
     if (!visible) return []
 

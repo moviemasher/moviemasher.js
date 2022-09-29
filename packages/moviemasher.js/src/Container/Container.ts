@@ -1,5 +1,5 @@
 import { Tweenable, TweenableObject, isTweenable, TweenableDefinitionObject, TweenableDefinition, isTweenableDefinition } from "../Mixin/Tweenable/Tweenable"
-import { Constrained, GenericFactory, SvgItem, SvgFilters } from "../declarations"
+import { Constrained, GenericFactory, SvgItem } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
 import { CommandFilters, CommandFilterArgs } from "../MoveMe"
@@ -9,8 +9,8 @@ import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
 
-export const ContainerDefaultId = `${IdPrefix}container${IdSuffix}`
-export const ContainerTextId = `${IdPrefix}container.text`
+export const DefaultContainerId = `${IdPrefix}container${IdSuffix}`
+export const TextContainerId = `${IdPrefix}container.text`
 
 export interface ContainerObject extends TweenableObject {
   height?: number
@@ -46,12 +46,11 @@ export interface Container extends Tweenable {
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
   containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
-  containerSvgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
+  containerSvgFilter(svgItem: SvgItem, previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SVGFilterElement | undefined
   containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   directionObject: DirectionObject
   directions: Anchor[]
   height: number
-  intrinsicGroupElement: SVGGElement
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number

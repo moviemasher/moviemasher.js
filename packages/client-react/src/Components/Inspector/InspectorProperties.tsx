@@ -8,7 +8,7 @@ import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "./InspectorContext"
 import { DataGroupInputs } from "./Inputs/DataGroupInputs/DataGroupInputs"
 import { View } from "../../Utilities/View"
-import { DefaultIcons } from "@moviemasher/icons-default"
+import { MasherContext } from "../Masher/MasherContext"
 
 export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {
   selectedItems?: SelectedItems
@@ -19,6 +19,8 @@ export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassNa
  * @parents InspectorContent
  */
 export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedItems: propsItems } = props
   const { selectedItems: inspectorItems } = inspectorContext
@@ -48,7 +50,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
         property, value, changeHandler, name, 
         ...props
       }
-      const icon = DefaultIcons[name]
+      const icon = icons[name]
       const inspectorProperty = <InspectorProperty {...propertyProps} />
       if (icon) {
         const viewChildren = [inspectorProperty]
@@ -56,6 +58,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
         const viewProps = {
           children: viewChildren,
           className: "row",
+          key: `icon-${selectType}-${name}`,
         }
 
         ungroupedInputs.push(<View { ...viewProps } />)    

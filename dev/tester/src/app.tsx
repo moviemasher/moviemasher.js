@@ -1,5 +1,5 @@
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import { Masher, Player, PlayerContent, useEditor, useListeners } from "@moviemasher/client-react"
 import { EventType } from '@moviemasher/moviemasher.js'
 import "./index.css"
@@ -33,5 +33,5 @@ const masher = (
     </Player>
   </Masher>
 )
-const strictMode = <StrictMode>{masher}</StrictMode>
-ReactDOM.render(strictMode, document.getElementById('app'))
+const element = document.getElementById('app')!
+ReactDOM.createRoot(element).render(masher)

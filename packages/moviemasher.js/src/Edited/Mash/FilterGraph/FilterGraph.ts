@@ -13,11 +13,12 @@ export interface FilterGraphArgs {
   streaming?: boolean
   time: Time
   videoRate: number
+  upload?: boolean
 }
 
 export interface FilterGraph {
   background: string
-  commandFiles: CommandFiles
+  filterGraphCommandFiles: CommandFiles
   commandFilters: CommandFilters
   commandInputs: CommandInputs
   duration: number

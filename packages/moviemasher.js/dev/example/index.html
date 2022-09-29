@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Movie Masher</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <!-- In production: change extension from '.js' to '.min.js' -->
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
+  </head>
+  <body>
+    <svg id="svg" width="640" height="480"></svg>
+    <script>
+const element = document.getElementById('svg')
+const { editorInstance, TextContainerId } = MovieMasher
+const editor = editorInstance({ rect: element.getBoundingClientRect() })
+const clip = { 
+  container: { string: 'Hello World!' }, containerId: TextContainerId
+}
+editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
+  editor.svgItems().then(svgs => element.append(...svgs))
+})
+    </script>
+  </body>
+</html>

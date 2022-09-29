@@ -1,4 +1,4 @@
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 
@@ -13,5 +13,4 @@ export class SetptsFilter extends FilterDefinitionClass {
     }))
     this.populateParametersFromProperties()
   }
-  phase = Phase.Initialize
 }

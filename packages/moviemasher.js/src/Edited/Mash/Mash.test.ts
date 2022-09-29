@@ -173,7 +173,7 @@ describe("Mash", () => {
     })
   })
 
-  describe("graphFiles", () => {
+  describe("fileUrls", () => {
     test("returns image file from first frame only", () => {
       const mash = mashWithMultipleImageClips()
       expectArrayLength(mash.editedGraphFiles(), 1)
@@ -233,9 +233,7 @@ describe("Mash", () => {
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
       await filterGraphs.loadPromise
 
-      // await mash.loadPromise(filterGraph)
-
-      const { commandFilters, commandFiles } = filterGraph
+      const { commandFilters, filterGraphCommandFiles: commandFiles } = filterGraph
       // console.log("commandFilters", commandFilters)
       expect(commandFilters.length).toEqual(7)
 
@@ -274,11 +272,11 @@ describe("Mash", () => {
 
         const clip = clips[index]
         const timeRange = clip.timeRange(quantize)
-        const { commandFiles: graphFiles, duration } = filterGraph
+        const { filterGraphCommandFiles: commandFiles, duration } = filterGraph
         // console.log(clip.frame, clip.frames, time, timeRange, duration, timeRange.lengthSeconds)
         expect(duration).toBe(timeRange.lengthSeconds)
-        expect(graphFiles.length).toBe(1)
-        const [graphFile] = graphFiles
+        expect(commandFiles.length).toBe(1)
+        const [graphFile] = commandFiles
         const { type, file, input, options } = graphFile
         expect(type).toEqual(LoadType.Image)
         expect(input).toEqual(true)
@@ -332,7 +330,6 @@ describe("Mash", () => {
         expect(filterGraph).toBeInstanceOf(FilterGraphClass)
         if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-        // await mash.loadPromise(filterGraph)
         const { visible, quantize, time } = filterGraph
         const graphFileArgs: GraphFileOptions = { 
           editing: false, visible, quantize, time 
@@ -389,13 +386,13 @@ describe("Mash", () => {
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
-      const { commandFilters, commandFiles: graphFiles, duration } = filterGraph
+      const { commandFilters, filterGraphCommandFiles: commandFiles, duration } = filterGraph
       expect(duration).toBe(0)
       // console.log("commandFilters", commandFilters)
       expect(commandFilters.length).toEqual(9)
-      expect(graphFiles).toBeInstanceOf(Array)
-      expect(graphFiles.length).toBe(1)
-      const [graphFile] = graphFiles
+      expect(commandFiles).toBeInstanceOf(Array)
+      expect(commandFiles.length).toBe(1)
+      const [graphFile] = commandFiles
       expect(graphFile).toBeInstanceOf(Object)
       const { file, input } = graphFile
       expect(input).toBe(true)

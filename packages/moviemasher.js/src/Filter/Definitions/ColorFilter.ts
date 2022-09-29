@@ -1,15 +1,13 @@
 import { SvgItem } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { pixelColor } from "../../Utility/Pixel"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { colorWhite, colorWhiteOpaque } from "../../Utility/Color"
 import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
-import { arrayLast } from "../../Utility/Array"
 import { ColorizeFilter } from "./ColorizeFilter"
 import { assertSize } from "../../Utility/Size"
 
@@ -109,7 +107,6 @@ export class ColorFilter extends ColorizeFilter {
         outputs: [scaleFilterId]
       }
       commandFilters.push(scaleCommandFilter)
-      // filterInput = scaleFilterId
     }
     return commandFilters
   }
@@ -127,6 +124,4 @@ export class ColorFilter extends ColorizeFilter {
     rectElement.setAttribute('fill', pixelColor(color))
     return rectElement
   }
-
-  phase = Phase.Initialize
 }

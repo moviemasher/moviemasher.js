@@ -1,7 +1,7 @@
 import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
 import { Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
-import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock } from "./Size"
+import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock, sizeRound, sizeFloor } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
@@ -154,7 +154,6 @@ export const tweenScaleSizeToRect = (size: Size | any, rect: Rect | any, offDire
   assertPositive(height)
 
   const scaledSize = sizeScale(size, width, height)
-
   const evenSize = sizeCeil(scaledSize)
   const result = {
     ...evenSize,
@@ -199,7 +198,7 @@ export const tweenCoverPoints = (scaledSizes: SizeTuple, outSize: Size | SizeTup
 }
 
 export const tweenRectLock = (rect: Rect, lock?: Orientation): Rect => ({
-  ...rect,  ...sizeLock(rect, lock)
+  ...rect, ...sizeLock(rect, lock)
 })
 
 export const tweenRectsLock = (rects: RectTuple, lock?: Orientation): RectTuple => {
@@ -213,10 +212,10 @@ export const tweenScaleSizeRatioLock = (scale: Rect, outputSize: Size, inRatio: 
   const forcedScale = { ...scale }
   switch(lock){
     case Orientation.H:
-      forcedScale.width = (inRatio * (outHeight * forcedScale.height)) / outWidth
+      forcedScale.width = ((outHeight * forcedScale.height) * inRatio) / outWidth
       break
     case Orientation.V:
-      forcedScale.height = (inRatio * (outWidth * forcedScale.width)) / outHeight
+      forcedScale.height = ((outWidth * forcedScale.width) / inRatio) / outHeight
       break
   }
   return forcedScale

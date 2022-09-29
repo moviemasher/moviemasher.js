@@ -1,6 +1,6 @@
 
 export * from "./Masher"
-export * from "./MasherPropsCast"
-export * from "./MasherPropsDefault"
+export * from "./MasherCastProps"
+export * from "./MasherDefaultProps"
 
-export * from './EditorContext'
+export * from './MasherContext'

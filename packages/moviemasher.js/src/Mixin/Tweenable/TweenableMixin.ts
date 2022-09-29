@@ -1,27 +1,25 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, ScalarObject, UnknownObject } from "../../declarations"
+import { Scalar, ScalarObject } from "../../declarations"
 import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
-import { SelectedEffects, SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
 import { ActionType, DataType, isSizingDefinitionType, isTimingDefinitionType, Orientation, SelectType, Sizing, Timing } from "../../Setup/Enums"
 import { Errors } from "../../Setup/Errors"
-import { assertProperty, DataGroup, Property, propertyInstance } from "../../Setup/Property"
+import { assertProperty, Property } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { colorBlackOpaque, colorName, colorWhite } from "../../Utility/Color"
 import { idGenerate } from "../../Utility/Id"
-import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, assertPositive, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
+import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
 import { assertSize, Size, sizeEven, sizesEqual, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, Tweening, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { Effect, Effects } from "../../Media/Effect/Effect"
-import { effectInstance } from "../../Media/Effect/EffectFactory"
 import { Selectables } from "../../Editor/Selectable"
 import { Defined } from "../../Base"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
@@ -32,12 +30,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { effects, container } = object as TweenableObject
+      const { container } = object as TweenableObject
       if (container) this.container = true
-     
-      if (effects) this.effects.push(...effects.map(effectObject => 
-        effectInstance(effectObject)
-      ))
     }
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -122,12 +116,13 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     _colorFilter?: Filter
     get colorFilter() { return this._colorFilter ||= filterFromId('color') }
 
-    commandFiles(args: CommandFileArgs): CommandFiles {
-      const { clipTime } = args
+    visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
       const graphFileArgs: GraphFileArgs = { 
-        ...args, audible: false, clipTime 
+        ...args, audible: false, visible: true
       }
-      return this.graphCommandFiles(graphFileArgs)
+      const files = this.fileCommandFiles(graphFileArgs)
+      // console.log(this.constructor.name, "visibleCommandFiles", files)
+      return files
     }
     
     commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
@@ -180,7 +175,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
       // console.log(this.constructor.name, "contentCommandFilters returning empty")
-      return this.effectsCommandFilters(args)
+      return []
     }
 
     copyCommandFilter(input: string, track: number, prefix = 'content'): CommandFilter {
@@ -196,13 +191,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     declare definition: TweenableDefinition
 
-    definitionIds(): string[] {
-      return [
-        ...super.definitionIds(),
-        ...this.effects.flatMap(effect => effect.definitionIds()),
-      ]
-    }
-    
     definitionTime(time : Time, clipTime: TimeRange) : Time {
       const { fps: quantize } = clipTime
       const scaledTime = time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
@@ -210,35 +198,18 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
       return scaledTime.withFrame(frame - startTime.frame)
     }
-    
-    effects: Effects = []
-  
-    effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
-      const commandFilters: CommandFilters = []
-      const { filterInput: input } = args
-      let filterInput = input
-      assertPopulatedString(filterInput)
-
-      const { effects } = this
-      commandFilters.push(...effects.flatMap(effect => {
-        const filters = effect.commandFilters({ ...args, filterInput })
-        if (filters.length) filterInput = arrayLast(arrayLast(filters).outputs)
-        return filters
-      }))
-      return commandFilters
-    }
 
     frames(quantize: number): number {
       return timeFromArgs(Default.duration, quantize).frame
     }
 
-    graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles {
+    fileCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles {
       const commandFiles: CommandFiles = [] 
-      const files = this.graphFiles(graphFileArgs)
+      const files = this.fileUrls(graphFileArgs)
       let inputCount = 0
       commandFiles.push(...files.map((graphFile, index) => {
         const { input } = graphFile
-        const inputId = index && input ? `${this.id}-${inputCount}` : this.id
+        const inputId = (index && input) ? `${this.id}-${inputCount}` : this.id
         const commandFile: CommandFile = { ...graphFile, inputId }
         if (input) inputCount++
         return commandFile
@@ -246,7 +217,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFiles
     }
 
-    graphFiles(args: GraphFileArgs): GraphFiles { return [] }
+    fileUrls(args: GraphFileArgs): GraphFiles { return [] }
 
     hasIntrinsicSizing = false
 
@@ -269,9 +240,9 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
         editing, time: clipTime.startTime, clipTime, quantize: clipTime.fps,
         visible: size, audible: duration,
       }
-      const [graphFile] = this.graphFiles(graphFileArgs)
+      const [graphFile] = this.fileUrls(graphFileArgs)
       assertObject(graphFile)
-
+      
       return graphFile
     }
 
@@ -314,9 +285,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       assertPopulatedString(filterInput, 'filterInput')
 
       assertArray(containerRects, 'containerRects')
-      const [rect, rectEndOrEmpty = {}] = containerRects
+      const [rect, rectEnd] = containerRects
       assertRect(rect)
-      const rectEnd = { ...rect, ...rectEndOrEmpty }
+      assertRect(rectEnd)
+
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       // console.log(this.constructor.name, "scaleCommandFilters", containerRects, duration)
       const commandFilters: CommandFilters = []
@@ -336,13 +308,13 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     private _scaleFilter?: Filter
     get scaleFilter() { return this._scaleFilter ||= filterFromId('scale')}
      
-    selectables(): Selectables { return [] }
+    selectables(): Selectables { return [this, ...this.clip.selectables()] }
 
     selectType = SelectType.None
 
     selectedItems(actions: Actions): SelectedItems {
       const selectedItems: SelectedItems = []
-      const { container, clip, effects, selectType, definition } = this
+      const { container, clip, selectType, definition } = this
 
       // add contentId or containerId from target, as if it were my property 
       const { id: undoValue } = definition 
@@ -391,53 +363,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       props.forEach(property => {
         selectedItems.push(...this.selectedProperties(actions, property))
       })
-
-      // add effects 
-      const { selection } = actions
-      const undoEffects = [...effects]
-      const effectable = this
-      const selectedEffects: SelectedEffects = {
-        selectType,
-        value: this.effects, 
-        removeHandler: (effect: Effect) => {
-          const options = {
-            redoSelection: { ...selection, effect: undefined },
-            effects,
-            undoEffects,
-            redoEffects: effects.filter(other => other !== effect),
-            type: ActionType.MoveEffect
-          }
-          actions.create(options)
-        },
-        moveHandler: (effect: Effect, index = 0) => {
-          assertPositive(index, 'index')
-          
-          const redoEffects = undoEffects.filter(e => e !== effect)
-          const currentIndex = undoEffects.indexOf(effect)
-          const insertIndex = currentIndex < index ? index - 1 : index
-          redoEffects.splice(insertIndex, 0, effect)
-          const options = {
-            effects, undoEffects, redoEffects, type: ActionType.MoveEffect, 
-            effectable
-          }
-          actions.create(options)
-        },
-        
-        addHandler: (effect: Effect, insertIndex = 0) => {
-          assertPositive(insertIndex, 'index')
-          const redoEffects = [...effects]
-          redoEffects.splice(insertIndex, 0, effect)
-          const options = {
-            effects,
-            undoEffects,
-            redoEffects,
-            redoSelection: { ...selection, effect },
-            type: ActionType.MoveEffect
-          }
-          actions.create(options)
-        },
-      }
-      selectedItems.push(selectedEffects)
+      
       return selectedItems
     }
 
@@ -478,14 +404,9 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const { name } = property
       switch(name) {
         case 'muted': return this.mutable()
+        case 'opacity': return this.container
       }
       return true
-    }
-
-    toJSON(): UnknownObject {
-      const json = super.toJSON()
-      json.effects = this.effects
-      return json
     }
 
     tween(keyPrefix: string, time: Time, range: TimeRange): Scalar {

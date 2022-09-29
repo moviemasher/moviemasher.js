@@ -1,0 +1,21 @@
+version: "3"
+networks:
+  default:
+    name: documentation
+services:
+  documentation:
+    image: httpd:2.4
+    container_name: moviemasher-docs-8579
+    ports:
+      - 8577:80
+    volumes:
+      - ../../../docs:/usr/local/apache2/htdocs/docs
+      - ../../../docs/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js
+      - ../../../packages/moviemasher.js/umd/moviemasher.min.js:/usr/local/apache2/htdocs/moviemasher.min.js
+      - ../../../packages/client-react/umd/client-react.js:/usr/local/apache2/htdocs/client-react.js
+      - ../../../packages/client-react/umd/client-react.min.js:/usr/local/apache2/htdocs/client-react.min.js
+      - ../../../packages/theme-default/umd/theme-default.js:/usr/local/apache2/htdocs/theme-default.js
+      - ../../../packages/theme-default/umd/theme-default.min.js:/usr/local/apache2/htdocs/theme-default.min.js
+      - ../../../packages/theme-default/moviemasher.css:/usr/local/apache2/htdocs/moviemasher.css
+      - ../../../dev/shared:/usr/local/apache2/htdocs/shared

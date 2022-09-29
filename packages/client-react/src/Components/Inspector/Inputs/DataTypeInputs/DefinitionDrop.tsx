@@ -13,7 +13,7 @@ import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '../../../../Helpers/DragDrop'
 import { DefinitionItem } from '../../../DefinitionItem/DefinitionItem'
 import { propsDefinitionTypes } from '../../../../Utilities/Props'
-import { EditorContext } from '../../../../Components/Masher/EditorContext'
+import { MasherContext } from '../../../Masher/MasherContext'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string
@@ -27,7 +27,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
 
   const [isOver, setIsOver] = React.useState(false)
   const inputContext = React.useContext(InputContext)
-  const editorContext = React.useContext(EditorContext)
+  const editorContext = React.useContext(MasherContext)
   const { drop } = editorContext
   const { changeHandler, value, name } = inputContext
   assertTrue(changeHandler)
@@ -89,7 +89,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
         const [definition] = valid
         if (definition) {
           assertTrue(Defined.installed(definition.id), `${definition.type} installed`)
-          console.log("DefinitionDrop onDrop", definition.type, definition.label)
+          // console.log("DefinitionDrop onDrop", definition.type, definition.label)
           changeHandler(name, definition.id)
         }
       })

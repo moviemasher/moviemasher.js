@@ -2,8 +2,8 @@ import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { colorRgbaKeys } from "../../Utility/Color"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { NamespaceSvg } from "../../Setup/Constants"
-import { SvgFilters, ScalarObject } from "../../declarations"
+import { ScalarObject, StringObject, SvgFilters } from "../../declarations"
+import { svgFilter, svgFilterElement } from "../../Utility/Svg"
 
 const ColorChannelMixerFilterKeys = colorRgbaKeys.flatMap(c =>
   colorRgbaKeys.map(d => `${c}${d}`)
@@ -25,14 +25,16 @@ export class ColorChannelMixerFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
-  filterDefinitionSvgFilters(object: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(object: ScalarObject): SvgFilters {
     const bits = colorRgbaKeys.flatMap(c =>
       [...colorRgbaKeys.map(d => Number(object[`${c}${d}`])), 0]
     )
-    const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feColorMatrix')
-    filterElement.setAttribute('type', 'matrix')
-    filterElement.setAttribute('values', bits.join(' '))
-    return [filterElement]
+    const options: StringObject = { 
+      filter: 'feColorMatrix',
+      type: 'matrix',
+      values: bits.join(' '),
+    }
+    return [svgFilter(options)]
   }
 }
 

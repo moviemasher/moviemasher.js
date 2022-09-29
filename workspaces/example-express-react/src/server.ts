@@ -1,7 +1,8 @@
 import path from 'path'
-import { Host, DefaultHostOptions, expandToJson } from '@moviemasher/server-express'
+import { Host, HostDefaultOptions, expandToJson } from '@moviemasher/server-express'
 
-const configuration = process.argv[2] || path.resolve(__dirname, './server-config.json')
-const options = expandToJson(configuration)
-const host = new Host(DefaultHostOptions(options))
+const config = process.argv[2] || path.resolve(__dirname, './server-config.json')
+const configuration = expandToJson(config)
+const options = HostDefaultOptions(configuration)
+const host = new Host(options)
 host.start()

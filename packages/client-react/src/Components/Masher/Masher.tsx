@@ -6,6 +6,7 @@ import {
   Size,
   EditType,
   DataCastDefaultResponse,
+  DataDefaultResponse,
   eventStop,
   EditorIndex,
   DataPutResponse,
@@ -14,13 +15,13 @@ import {
   ApiCallbackResponse,
   DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes, 
   assertObject, EventType, isMashAndDefinitionsObject,
-  idGenerate, ActivityType, Definition, assertPreloadableDefinition, isDefinitionObject, isUndefined, isClip, isEffect, isLayer, isDefined, DefinitionObject, isDefinition, GraphFile, EditedData
+  idGenerate, ActivityType, Definition, assertPreloadableDefinition, isDefinitionObject, isClip, isEffect, isLayer, DefinitionObject, isDefinition, EditedData, MashObject, EditedObject, sizeAboveZero
 } from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
+import { ThemeIcons, PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
 import { ApiContext } from '../ApiClient/ApiContext'
 import { View } from '../../Utilities/View'
-import { EditorContext, EditorContextInterface } from '../../Components/Masher/EditorContext'
+import { MasherContext, MasherContextInterface } from './MasherContext'
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import { TimelinePropsDefault } from '../Timeline/TimelinePropsDefault'
 import { InspectorPropsDefault } from '../Inspector/InspectorPropsDefault'
@@ -45,13 +46,14 @@ export interface UiOptions {
 
 export interface MasherOptions extends UnknownObject, WithClassName {
   previewSize?: Size
+  icons?: ThemeIcons
   editType?: EditType
+  edited?: DataDefaultResponse
 }
 
-interface EditorDefaultsArgs extends MasherOptions {
+export interface EditorProps extends MasherOptions, PropsWithoutChild {
   panels?: Partial<UiOptions>
 }
-export interface EditorProps extends EditorDefaultsArgs, PropsWithoutChild {}
 
 export interface MasherProps extends MasherOptions, PropsWithChildren {}
 
@@ -64,6 +66,8 @@ export function Masher(props: MasherProps): ReactResult {
   const {
     editType = EditType.Mash,
     previewSize,
+    icons = {},
+    edited,
     ...rest
   } = props
 
@@ -75,7 +79,7 @@ export function Masher(props: MasherProps): ReactResult {
 
   const ref = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
-  const [editor] = React.useState(() => editorInstance({ editType }))
+  const [editor] = React.useState(() => editorInstance({ editType}))
   const [requested, setRequested] = React.useState(false)
   const [draggable, setDraggable] = React.useState<Draggable | undefined>()
 
@@ -85,16 +89,23 @@ export function Masher(props: MasherProps): ReactResult {
     elementSetPreviewSize(ref.current, previewSize) 
   }, [previewSize])
 
-  const editorLoad = (object: EditedData) => {
-    const { current } = svgRef
-    assertObject(current)
-    editor.svgElement = current
-    editor.load(object)
+  const editorLoad = (object?: DataDefaultResponse) => {
+    const loadObject = object || edited || { [editType]: {}, definitions: [] }
+    const { previewSize: size = previewSize, ...rest } = loadObject
+
+    const { current: svg } = svgRef
+    const { current: div } = ref
+    assertObject(svg)
+    if (sizeAboveZero(size)) {
+      elementSetPreviewSize(div, size)
+      // editor.rect = size
+    }
+    editor.svgElement = svg
+    editor.load(rest)
   }
   React.useEffect(() => {
     if (!enabled) {
-      const editedData: EditedData = { [editType]: {}, definitions: []}
-      editorLoad(editedData)
+      editorLoad()
       return
     }
     if (!requested && servers[ServerType.Data]) {
@@ -104,12 +115,11 @@ export function Masher(props: MasherProps): ReactResult {
       const promise = endpointPromise(Endpoints.data[editType].default, request)
       promise.then((response: DataMashDefaultResponse | DataCastDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
-        const { previewSize: serverSize, ...rest } = response
-        elementSetPreviewSize(ref.current, serverSize)
+        const { previewSize: serverSize = previewSize, ...rest } = response
         if (servers.file?.prefix) {
           editor.preloader.endpoint.prefix = String(servers.file.prefix)
         }
-        editorLoad(rest)
+        editorLoad(response)
       })
     }
   }, [servers])
@@ -138,37 +148,37 @@ export function Masher(props: MasherProps): ReactResult {
   }
 
   const dropDefinitionObject = (definitionObject: DefinitionObject, editorIndex?: EditorIndex): Promise<Definition[]>  => {
-    console.log("Timeline onDrop DefinitionObject...", definitionObject, editorIndex)
+    // console.log("Masher onDrop DefinitionObject...", definitionObject, editorIndex)
     return editor.add(definitionObject, editorIndex)
   }
 
   const drop = (draggable: Draggable, editorIndex?: EditorIndex): Promise<Definition[]>  => {
     if (!draggable) return Promise.resolve([]) 
-    console.log("Masher drop editorIndex = ", editorIndex)
+    // console.log("Masher drop editorIndex = ", editorIndex)
 
     if (isClip(draggable)) {
-      console.log("Masher drop Clip")
+      // console.log("Masher drop Clip")
       return Promise.resolve([])
     }
     if (isEffect(draggable)) {
-      console.log("Masher drop Effect")
+      // console.log("Masher drop Effect")
       return Promise.resolve([])
     }
     if (isLayer(draggable)) {
-      console.log("Masher drop Layer")
+      // console.log("Masher drop Layer")
       return Promise.resolve([])
     }
     if (isDefinitionObject(draggable)) {
-      console.log("Masher drop DefinitionObject")
+      // console.log("Masher drop DefinitionObject")
       return dropDefinitionObject(draggable, editorIndex)
       
     }
     if (isMashAndDefinitionsObject(draggable)) {
-      console.log("Masher drop MashAndDefinitionsObject")
+      // console.log("Masher drop MashAndDefinitionsObject")
       return Promise.resolve([])
     }
     return dropFiles(draggable, editorIndex).then(definitions => {
-      console.log("Masher.dropFiles", definitions)
+      // console.log("Masher.dropFiles", definitions)
       const [definition] = definitions
       if (isDefinition(definition)) changeDefinition(definition)
       return definitions
@@ -296,15 +306,15 @@ export function Masher(props: MasherProps): ReactResult {
     setDefinition(definition) 
   }
 
-  const editorContext: EditorContextInterface = {
+  const editorContext: MasherContextInterface = {
     editor, draggable, setDraggable, save, editorIndex, drop,
-    definition, changeDefinition,
+    definition, changeDefinition, icons
   }
   const viewProps = { ...rest, onDrop: eventStop, ref }
   return (
-    <EditorContext.Provider value={editorContext}>
+    <MasherContext.Provider value={editorContext}>
       <View { ...viewProps } />
       <svg style={{ display: 'none' }} ref={svgRef} />
-    </EditorContext.Provider>
+    </MasherContext.Provider>
   )
 }

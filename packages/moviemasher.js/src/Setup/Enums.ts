@@ -1,16 +1,6 @@
 import { isPopulatedString } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 
-export enum Phase {
-  Initialize = 'initialize',
-  Populate = 'populate',
-  Finalize = 'finalize',
-}
-export const Phases = Object.values(Phase)
-export const isPhase = (value: any): value is Phase => {
-  return Phases.includes(value as Phase)
-}
-
 export enum DroppingPosition {
   At = 'at',
   After = 'after',
@@ -70,6 +60,7 @@ export enum SelectType {
   Mash = 'mash',
   Track = 'track',
   Layer = 'layer',
+  Effect = 'effect',
   Clip = 'clip',
   Content = 'content',
   Container = 'container',

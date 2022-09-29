@@ -1,6 +1,5 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { Phase } from "../../Setup/Enums"
 import { assertPopulatedString } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 
@@ -21,6 +20,4 @@ export class AlphamergeFilter extends FilterDefinitionClass {
     commandFilters.push(commandFilter)
     return commandFilters
   }
-
-  phase = Phase.Finalize
 }

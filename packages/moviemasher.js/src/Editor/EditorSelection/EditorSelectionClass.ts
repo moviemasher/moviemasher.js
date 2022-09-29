@@ -13,6 +13,7 @@ import { Container } from "../../Container/Container"
 import { Content } from "../../Content/Content"
 import { isLayer, isLayerMash } from "../../Edited/Cast/Layer/LayerFactory"
 import { isCast } from "../../Edited/Cast/CastFactory"
+import { Effect, isEffect } from "../../Media/Effect/Effect"
 
 export class EditorSelectionClass implements EditorSelection {
     get [SelectType.None](): Selectable | undefined { return undefined }
@@ -50,6 +51,10 @@ export class EditorSelectionClass implements EditorSelection {
   get [SelectType.Content](): Content | undefined { 
     const { clip } = this._object
     if (isClip(clip)) return clip.content
+  }
+  get [SelectType.Effect](): Effect | undefined { 
+    const { effect } = this._object
+    if (isEffect(effect)) return effect
   }
 
   private _editor?: Editor
@@ -131,8 +136,8 @@ export class EditorSelectionClass implements EditorSelection {
   private selectionPopulated(selection: EditorSelectionObject): EditorSelectionObject {
     const { mash: mashOld, object } = this
     const { cast: castOld } = object
-    const { clip, track, layer, cast, mash } = selection
-    const target = clip || track || mash || layer || cast || castOld || mashOld
+    const { clip, track, layer, cast, mash, effect } = selection
+    const target = effect || clip || track || mash || layer || cast || castOld || mashOld 
     assertTrue(target, 'target')
 
     return this.selectionFromSelectables(target.selectables())
@@ -141,7 +146,7 @@ export class EditorSelectionClass implements EditorSelection {
   get selectTypes(): SelectType[] {
     const selectTypes: SelectType[] = []
     const { mash, object } = this
-    const { clip, track, cast, layer } = object
+    const { clip, track, cast, layer, effect } = object
     if (cast) {
       selectTypes.push(SelectType.Cast)
       if (layer) selectTypes.push(SelectType.Layer)
@@ -157,6 +162,7 @@ export class EditorSelectionClass implements EditorSelection {
 
     selectTypes.push(SelectType.Clip)
     selectTypes.push(SelectType.Content)
+    if (isEffect(effect)) selectTypes.push(SelectType.Effect)
     if (isPopulatedString(clip.containerId)) {
       selectTypes.push(SelectType.Container)
     }

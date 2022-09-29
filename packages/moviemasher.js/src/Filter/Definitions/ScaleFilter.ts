@@ -1,6 +1,6 @@
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isNumber } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
@@ -43,6 +43,8 @@ export class ScaleFilter extends FilterDefinitionClass {
     } = values
     assertPopulatedString(filterInput)
     
+    // console.log(this.constructor.name, "commandFilters", filterInput, width, "x", height) //, widthEnd, "x", heightEnd)
+
     const { ffmpegFilter } = this
   
     const position = tweenPosition(videoRate, duration)
@@ -60,6 +62,4 @@ export class ScaleFilter extends FilterDefinitionClass {
     commandFilters.push(commandFilter)
     return commandFilters
   }
-
-  phase = Phase.Populate
 }

@@ -46,6 +46,7 @@ export interface RenderingOutputArgs extends OutputConstructorArgs {
   mash: Mash
   startTime?: Time
   endTime?: Time
+  upload?: boolean
 }
 
 export interface RenderingOutput {

@@ -1,9 +1,9 @@
 import { ScalarObject, SvgItem, SvgFilters, ValueObject } from "../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
-import { DataType, DefinitionType, isPhase, Phase } from "../Setup/Enums"
+import { DataType, DefinitionType } from "../Setup/Enums"
 import { Parameter } from "../Setup/Parameter"
 import { DefinitionBase } from "../Definition/DefinitionBase"
-import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from "./Filter"
+import { Filter, FilterDefinition, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
 import { Errors } from "../Setup/Errors"
 import { idGenerate } from "../Utility/Id"
@@ -12,13 +12,6 @@ import { Size } from "../Utility/Size"
 import { colorWhiteTransparent } from "../Utility/Color"
 
 export class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
-  constructor(...args: any[]) {
-    super(...args)
-    const [object] = args
-    const { phase } = object as FilterDefinitionObject
-    if (isPhase(phase)) this.phase = phase
-  }
-
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const { filter, duration, filterInput } = args
     assertPopulatedString(filterInput)
@@ -56,8 +49,6 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
 
   parameters : Parameter[] = []
 
-  phase = Phase.Populate
-
   protected populateParametersFromProperties() {
     this.parameters = this.properties.map(property => {
       const { name } = property
@@ -65,8 +56,8 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     })
   }
 
-  filterDefinitionSvgFilters(valueObject: ScalarObject): SvgFilters {
-    return []
+  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
+    throw Errors.unimplemented
   }
 
   protected colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {

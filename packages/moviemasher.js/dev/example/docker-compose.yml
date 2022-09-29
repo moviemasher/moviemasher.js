@@ -1,0 +1,14 @@
+version: "3"
+networks:
+  default:
+    name: moviemasher-js-example
+services:
+  moviemasher-example:
+    image: httpd:2.4
+    container_name: moviemasher-js-8579
+    ports:
+      - 8579:80
+    volumes:
+      - ./index.html:/usr/local/apache2/htdocs/index.html
+      - ../../umd/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js
+      - ../../umd/moviemasher.min.js:/usr/local/apache2/htdocs/moviemasher.min.js

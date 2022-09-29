@@ -8,7 +8,7 @@ export type FontObject = InstanceObject
 
 export interface Font extends Instance {
   definition: FontDefinition
-  graphFiles(args: GraphFileArgs): GraphFiles
+  fileUrls(args: GraphFileArgs): GraphFiles
 }
 
 export interface FontDefinitionObject extends DefinitionObject {
@@ -21,7 +21,7 @@ export interface FontDefinition extends Definition {
   source: string
   family: string
   url: string
-  graphFiles(args: GraphFileArgs): GraphFiles
+  fileUrls(args: GraphFileArgs): GraphFiles
 }
 export const isFontDefinition = (value: any): value is FontDefinition => {
   return isDefinition(value) && value.type === DefinitionType.Font

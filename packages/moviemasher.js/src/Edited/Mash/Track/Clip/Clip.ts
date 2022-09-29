@@ -1,6 +1,6 @@
 import { Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
 import { Content, ContentObject } from "../../../../Content/Content"
-import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler } from "../../../../declarations"
+import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler, SvgItem } from "../../../../declarations"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
 import { Sizing, Timing } from "../../../../Setup/Enums"
 import { throwError } from "../../../../Utility/Throw"
@@ -37,9 +37,9 @@ export interface ClipDefinitionObject extends DefinitionObject {}
 
 export interface Clip extends Instance, Selectable {
   audible: boolean
-  clipGraphFiles(args: GraphFileArgs): GraphFiles
+  clipFileUrls(args: GraphFileArgs): GraphFiles
   clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
-  commandFiles(args: CommandFileArgs): CommandFiles 
+  clipCommandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
   container?: Container
   containerId: string
@@ -58,7 +58,7 @@ export interface Clip extends Instance, Selectable {
   rects(args: ContainerRectArgs): RectTuple
   resetTiming(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing
-  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItemsTuple>
+  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItem>
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange

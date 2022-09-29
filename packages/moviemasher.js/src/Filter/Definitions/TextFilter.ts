@@ -1,5 +1,5 @@
 import { ValueObject } from "../../declarations"
-import { DataType, Phase } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from "../../Utility/Is"
 import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from "../../MoveMe"
@@ -7,15 +7,13 @@ import { arrayLast } from "../../Utility/Array"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
-import { colorBlack, colorBlackOpaque, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent } from "../../Utility/Color"
+import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent } from "../../Utility/Color"
 import { ColorizeFilter } from "./ColorizeFilter"
 import { sizesEqual } from "../../Utility/Size"
 
 /**
  * @category Filter
  */
-
-const TextFilterOverflow = 1.0
 export class TextFilter extends ColorizeFilter {
   constructor(...args: any[]) {
     super(...args)
@@ -107,16 +105,15 @@ export class TextFilter extends ColorizeFilter {
     const ratio = intrinsicWidth / intrinsicHeight 
 
     const maxSize = tweenMaxSize(size, sizeEnd)
-    const calculatedWidth = Math.round((TextFilterOverflow * maxSize.height) + (ratio * maxSize.height))
-    const colorSize = { ...maxSize } 
+    const calculatedWidth = Math.round(ratio * maxSize.height)
     //stretch ? { width: Math.round(intrinsicWidth / 100), height: Math.round(intrinsicHeight / 100) } : maxSize
 
-    if (calculatedWidth > colorSize.width) colorSize.width = calculatedWidth
+    if (calculatedWidth > maxSize.width) maxSize.width = calculatedWidth
 
     let scaling = stretch || !sizesEqual(size, sizeEnd)
     const scaleOptions: ValueObject = {}
     const textOptions: ValueObject = {
-      fontsize: colorSize.height, fontfile, textfile, 
+      fontsize: maxSize.height, fontfile, textfile, 
       x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
       y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),
       // fix_bounds: 1,
@@ -138,7 +135,7 @@ export class TextFilter extends ColorizeFilter {
       textOptions.fontcolor_expr = `#${expressions.join('')}`
     } else textOptions.fontcolor = foreColor
 
-    const colorCommand = this.colorCommandFilter(colorSize, videoRate, duration, backColor)
+    const colorCommand = this.colorCommandFilter(maxSize, videoRate, duration, backColor)
     commandFilters.push(colorCommand)
     let filterInput = arrayLast(colorCommand.outputs)
 
@@ -149,17 +146,6 @@ export class TextFilter extends ColorizeFilter {
     
       if (!(isNumber(scaleOptions.width) && isNumber(scaleOptions.height))) {
         scaleOptions.eval = 'frame'
-
-        // const setptsFilter = 'setpts'
-        // const setptsFilterId = idGenerate(setptsFilter)
-        // const setptsOptions = { expr: 'PTS-STARTPTS' }
-        // const setptsCommandFilter: CommandFilter = {
-        //   inputs: [filterInput], ffmpegFilter: setptsFilter, 
-        //   options: setptsOptions,
-        //   outputs: [setptsFilterId]
-        // }
-        // commandFilters.push(setptsCommandFilter)
-        // filterInput = setptsFilterId
       }
     } 
     const drawtextFilter: CommandFilter = {
@@ -194,6 +180,4 @@ export class TextFilter extends ColorizeFilter {
   }
 
   protected _ffmpegFilter = 'drawtext'
-
-  phase = Phase.Populate
 }

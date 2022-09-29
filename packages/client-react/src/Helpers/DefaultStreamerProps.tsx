@@ -1,6 +1,5 @@
 import React from 'react'
 import { UnknownObject } from '@moviemasher/moviemasher.js'
-import { DefaultIcons } from '@moviemasher/icons-default'
 
 import { Button } from '../Utilities'
 import { ProcessActive } from '../Components/Process/ProcessActive'
@@ -13,8 +12,8 @@ import { WebrtcContent } from '../Components/Webrtc/WebrtcContent'
 const application = <Webrtc className='panel webrtc'>
     <div className='head'>
       <WebrtcButton>
-        <ProcessActive><Button>{DefaultIcons.playerPause}Stop Broadcasting</Button></ProcessActive>
-        <ProcessInactive><Button>{DefaultIcons.playerPlay}Start Broadcasting</Button></ProcessInactive>
+        <ProcessActive><Button>Stop Broadcasting</Button></ProcessActive>
+        <ProcessInactive><Button>Start Broadcasting</Button></ProcessInactive>
       </WebrtcButton>
     </div>
     <WebrtcContent className="content" />

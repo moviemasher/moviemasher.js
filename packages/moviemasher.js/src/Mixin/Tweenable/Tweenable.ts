@@ -27,7 +27,6 @@ export interface TweenableObject extends InstanceObject {
   offE?: boolean
   offW?: boolean
   lock?: string
-  effects?: EffectObject[]
 }
 
 export interface TweenableDefinitionObject extends DefinitionObject {}
@@ -41,7 +40,7 @@ export interface Tweenable extends Instance, Selectable {
   clipped: boolean
   colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters
   colorFilter: Filter  
-  commandFiles(args: VisibleCommandFileArgs): CommandFiles 
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles 
   commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters 
   container: boolean
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters
@@ -51,11 +50,9 @@ export interface Tweenable extends Instance, Selectable {
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
   cropFilter: Filter
   definitionTime(masherTime: Time, clipRange: TimeRange): Time
-  effects: Effects
-  effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters 
   frames(quantize: number): number 
-  graphCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
-  graphFiles(args: GraphFileArgs): GraphFiles
+  fileCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
+  fileUrls(args: GraphFileArgs): GraphFiles
   hasIntrinsicSizing: boolean
   hasIntrinsicTiming: boolean
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters

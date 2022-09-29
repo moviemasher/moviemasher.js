@@ -1,4 +1,7 @@
 version: "3"
+networks:
+  default:
+    name: ffmpeg-test
 services:
   ffmpeg:
     image: moviemasher/moviemasher.js:5.1.0

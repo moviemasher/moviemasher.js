@@ -1,5 +1,4 @@
 import React from 'react'
-import { DefaultIcons } from '@moviemasher/icons-default'
 
 import {
   PropsMethod, PropsWithoutChild, WithClassName
@@ -27,24 +26,25 @@ export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, W
 
 export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props = {}) {
   const optionsStrict = panelOptionsStrict(props)
+  const { icons } = optionsStrict
   optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
-  optionsStrict.header.content ||= [DefaultIcons.timeline]
+  optionsStrict.header.content ||= [icons.timeline]
 
   optionsStrict.footer.content ||= [
     <TimelineAddClipControl key='add-clip'>
-      <Button children={DefaultIcons.add}/>
+      <Button children={icons.add}/>
     </TimelineAddClipControl>,
     <TimelineAddTrackControl key='add-track'>
-      <Button children={[DefaultIcons.add, DefaultIcons.trackDense]}/>
+      <Button children={[icons.add, icons.trackDense]}/>
     </TimelineAddTrackControl>,
     <TimelineZoom key="zoom-out" zoom={0}>
-      <Button useView={true}>{DefaultIcons.zoomLess}</Button>
+      <Button useView={true}>{icons.zoomLess}</Button>
     </TimelineZoom>,
     <TimelineZoomer key='zoomer'/>,
     <TimelineZoom key="zoom-in" zoom={1}>
-      <Button useView={true}>{DefaultIcons.zoomMore}</Button>
+      <Button useView={true}>{icons.zoomMore}</Button>
     </TimelineZoom>,
   ]
 
@@ -56,20 +56,21 @@ export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelinePro
       <TimelineScrubberElement className='scrubber-element-icon'/>
     </TimelineScrubber>
     <TimelineTracks>
-      <TimelineTrackIcon className='track-icon' icons={DefaultIcons} />
+      <TimelineTrackIcon className='track-icon' icons={icons} />
       <TimelineTrack className='track'>
         <ClipItem className='clip preview' />
       </TimelineTrack>
     </TimelineTracks>
     <TimelineSizer className='drop-box' />
   </>
-
-  const children = <Panel {...optionsStrict.props}>
+  
+  const children = <>
     <Bar {...optionsStrict.header} />
     <TimelineContent {...optionsStrict.content.props}>
       {optionsStrict.content.children}
     </TimelineContent>
     <Bar {...optionsStrict.footer} />
-  </Panel>
-  return { children }
+  </>
+
+  return { ...optionsStrict.props, children }
 }

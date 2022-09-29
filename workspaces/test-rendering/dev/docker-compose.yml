@@ -1,4 +1,7 @@
 version: "3"
+networks:
+  default:
+    name: test-rendering
 services:
   test:
     image: moviemasher/moviemasher.js:5.1.0

@@ -6,12 +6,18 @@ import { SelectedItems } from "../../Utility/SelectedProperty"
 import { ActionType, SelectType } from "../../Setup/Enums"
 import { Scalar } from "../../declarations"
 import { assertPopulatedString, isUndefined } from "../../Utility/Is"
+import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
+import { Tweenable } from "../../Mixin/Tweenable/Tweenable"
 
 const EffectWithModular = ModularMixin(InstanceBase)
 export class EffectClass extends EffectWithModular {
   declare definition: EffectDefinition
 
-  selectables(): Selectables { return [] }
+  private _tweenable?: Tweenable
+  get tweenable(): Tweenable { return this._tweenable! }
+  set tweenable(value: Tweenable) { this._tweenable = value }
+  
+  selectables(): Selectables { return [this, ...this.tweenable.selectables()] }
 
   selectType = SelectType.None
 

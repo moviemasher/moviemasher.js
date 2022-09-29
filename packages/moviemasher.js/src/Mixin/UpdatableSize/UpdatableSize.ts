@@ -1,4 +1,4 @@
-import { Constrained, LoadedImage } from "../../declarations"
+import { Constrained, LoadedImage, SvgItem } from "../../declarations"
 import { throwError } from "../../Utility/Throw"
 import { Size } from "../../Utility/Size"
 import {
@@ -7,6 +7,8 @@ import {
   PreloadableDefinitionObject, PreloadableObject
 } from "../Preloadable/Preloadable"
 import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
+import { Rect } from "../../Utility/Rect"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
 
 export const UpdatableSizeDefinitionType = [
   DefinitionType.Image,
@@ -21,7 +23,10 @@ export interface UpdatableSizeDefinitionObject extends PreloadableDefinitionObje
   previewSize?: Size
 }
 
-export interface UpdatableSize extends Preloadable {}
+export interface UpdatableSize extends Preloadable {
+  // itemIconPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> 
+  
+}
 export const isUpdatableSize = (value?: any): value is UpdatableSize => {
   return isPreloadable(value)
 }

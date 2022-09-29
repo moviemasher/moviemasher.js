@@ -66,10 +66,10 @@ export interface LoaderCache {
 }
 
 export interface Loader {
-  flushFilesExcept(graphFiles?: GraphFiles): void
+  flushFilesExcept(fileUrls?: GraphFiles): void
   getCache(path: LoaderPath): LoaderCache | undefined
   getError(graphFile: GraphFile): any 
-  getFile(graphFile: GraphFile): any
+  // getFile(graphFile: GraphFile): any
   info(loaderPath: LoaderPath): LoadedInfo | undefined
   key(graphFile: GraphFile): string
   loadedFile(graphFile: GraphFile): boolean

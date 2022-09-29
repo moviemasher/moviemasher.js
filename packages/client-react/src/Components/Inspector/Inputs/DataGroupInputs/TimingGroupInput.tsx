@@ -8,10 +8,12 @@ import { InspectorContext } from "../../../Inspector/InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { View } from "../../../../Utilities/View"
 import { InspectorProperty, InspectorPropertyProps } from "../../../Inspector/InspectorProperty"
-import { DefaultIcons } from "@moviemasher/icons-default"
+import { MasherContext } from "../../../Masher/MasherContext"
 
 
 export function TimingGroupInput(props: DataGroupProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
   const { selectType } = props
   assertSelectType(selectType)
 
@@ -34,22 +36,25 @@ export function TimingGroupInput(props: DataGroupProps): ReactResult {
   const { timing, ...rest } = elementsByName
   if (!isPopulatedObject(rest)) {
     const viewProps = {
-      children: [DefaultIcons.timing, timing], className: 'row'
+      key: 'timing', children: [icons.timing, timing], className: 'row'
     }
     return <View { ...viewProps} />
   }
 
-  const legendElements = [DefaultIcons.timing]
+  const legendElements = [icons.timing]
   if (timing) legendElements.push(timing)
   const elements = Object.entries(rest).map(([key, value]) => {
-    const icon = DefaultIcons[key]
+    const icon = icons[key]
     const children = [value]
     if (icon) children.unshift(icon)
-    const frameProps = { className: "timing", children }
+    const frameProps = { className: "timing", key: 'timing', children }
     return <View { ...frameProps } />
   })
 
-  return <fieldset><legend><View>{legendElements}</View></legend>{elements}</fieldset>
+  return <fieldset>
+    <legend key="legend"><View>{legendElements}</View></legend>
+    {elements}
+  </fieldset>
 }
 
 DataGroupInputs[DataGroup.Timing] = <TimingGroupInput key="timing-group-input" />

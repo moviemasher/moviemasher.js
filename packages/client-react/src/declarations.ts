@@ -16,9 +16,7 @@ export type UnknownElement = React.ReactElement<Record<string, unknown>>
 
 export interface ElementRecord extends Record<string, UnknownElement> {}
 
-export interface EditorIcons {
-  [key: string]: UnknownElement
-}
+export type ThemeIcons = Record<string, JSX.Element>
 
 export interface SourceCallbackOptions extends Record<string, unknown> {
   page?: number

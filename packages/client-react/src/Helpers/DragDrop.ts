@@ -91,11 +91,12 @@ export const dragTypes = (dataTransfer: DataTransfer): string[] => {
 }
 
 export const dragData = (dataTransfer: DataTransfer, type?: TransferType) => {
-  const transferType = type || dragTypes(dataTransfer).find(isTransferType)
+  const transferType = type ? `${type}${DragSuffix}` : dragTypes(dataTransfer).find(isTransferType)
   if (!transferType) return {}
 
   const json = dataTransfer.getData(transferType)
-  const data = JSON.parse(json)
+  // console.log("dragData", json, type, transferType)
+  const data = json ? JSON.parse(json) : {}
   return data
 }
 

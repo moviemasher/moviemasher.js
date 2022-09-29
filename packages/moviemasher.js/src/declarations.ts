@@ -31,7 +31,7 @@ export interface LoadedFont extends FontFace { } // just { family: string } in t
 export interface AudibleSource extends AudioBufferSourceNode {}
 
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
-export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement
+export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
 export type SvgFilters = SvgFilter[]
 export type SvgItem = SVGElement | LoadedImage
 

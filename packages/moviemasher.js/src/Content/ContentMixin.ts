@@ -1,18 +1,25 @@
-import { SvgItem, ValueObject } from "../declarations"
+import { SvgFilter, SvgFilters, SvgItem, UnknownObject, ValueObject } from "../declarations"
 import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
 
 import { Errors } from "../Setup/Errors"
-import { isArray } from "../Utility/Is"
-import { Content, ContentClass, ContentRectArgs } from "./Content"
+import { assertPopulatedString, assertPositive, isArray } from "../Utility/Is"
+import { Content, ContentClass, ContentObject, ContentRectArgs } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { tweenCoverPoints, tweenCoverSizes, tweenRectsLock } from "../Utility/Tween"
+import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from "../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../Setup/Property"
-import { DataType, DefinitionType, Orientation } from "../Setup/Enums"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs } from "../MoveMe"
+import { ActionType, DataType, DefinitionType, Orientation } from "../Setup/Enums"
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, VisibleCommandFilterArgs } from "../MoveMe"
 import { idGenerate } from "../Utility/Id"
 import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
+import { Actions } from "../Editor/Actions/Actions"
+import { SelectedEffects, SelectedItems } from "../Utility/SelectedProperty"
+import { Effect, Effects } from "../Media/Effect/Effect"
+import { arrayLast } from "../Utility/Array"
+import { effectInstance } from "../Media/Effect/EffectFactory"
+import { Size, sizeCopy } from "../Utility/Size"
+import { svgFilterElement, svgSet } from "../Utility/Svg"
 
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
@@ -35,14 +42,22 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
           group: DataGroup.Size, 
         }))  
       }
+    
+      const { effects } = object as ContentObject
+
+      if (effects) this.effects.push(...effects.map(effectObject => {
+        const instance = effectInstance(effectObject)
+        instance.tweenable = this
+        return instance
+      }))
     }
 
+
     audibleCommandFiles(args: CommandFileArgs): CommandFiles {
-      const { clipTime } = args
       const graphFileArgs: GraphFileArgs = { 
-        ...args, audible: true, clipTime 
+        ...args, audible: true, visible: false
       }
-      return this.graphCommandFiles(graphFileArgs)
+      return this.fileCommandFiles(graphFileArgs)
     }
 
     audibleCommandFilters(args: CommandFilterArgs): CommandFilters {
@@ -90,6 +105,30 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return commandFilters
     }
 
+
+    contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
+      // console.log(this.constructor.name, "contentCommandFilters returning empty")
+      return this.effectsCommandFilters(args)
+    }
+
+
+    contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
+      const { effects } = this
+       if (!effects.length) return 
+      
+      const svgFilters: SvgFilters = this.effects.flatMap(effect => 
+        effect.svgFilters(outputSize, containerRect, time, clipTime)
+      )
+     
+      // const size = sizeCopy(this.contentRect(containerRect, time, clipTime))
+      
+      const filter = svgFilterElement(svgFilters, contentItem)
+      svgSet(filter, '200%', 'width')
+      svgSet(filter, '200%', 'height')
+      
+      return filter
+    }
+
     contentRects(args: ContentRectArgs): RectTuple {
       const {containerRects: rects, time, timeRange, loading, editing } = args
       if (loading && !this.intrinsicsKnown({ editing, size: true })) {
@@ -103,7 +142,10 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const [size, sizeEnd] = coverSizes 
       const coverPoints = tweenCoverPoints(coverSizes, rects, locked)
       const [point, pointEnd] = coverPoints
-      return [rectFromSize(size, point), rectFromSize(sizeEnd, pointEnd)]
+      const rect = rectFromSize(size, point)
+      const rectEnd = rectFromSize(sizeEnd, pointEnd)
+      // console.log(this.constructor.name, "contentRects", lock, locked, isArray(rects) ? rects[0] : rects,  "->", rect)
+      return [rect, rectEnd]
     }
 
     contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect {
@@ -118,10 +160,33 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     }
 
     contentPreviewItemPromise(containerRect: Rect, time: Time, timeRange: TimeRange, icon?: boolean): Promise<SvgItem> {
-      return this.itemPromise(containerRect, time, timeRange, true, icon)
+      return this.itemPromise(containerRect, time, timeRange, icon)
     }
     
+    definitionIds(): string[] {
+      return [
+        ...super.definitionIds(),
+        ...this.effects.flatMap(effect => effect.definitionIds()),
+      ]
+    }
+    
+    effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
+      const commandFilters: CommandFilters = []
+      const { filterInput: input } = args
+      let filterInput = input
+      assertPopulatedString(filterInput)
 
+      const { effects } = this
+      commandFilters.push(...effects.flatMap(effect => {
+        const filters = effect.commandFilters({ ...args, filterInput })
+        if (filters.length) filterInput = arrayLast(arrayLast(filters).outputs)
+        return filters
+      }))
+      return commandFilters
+    }
+  
+    effects: Effects = []
+    
     intrinsicRect(_ = false): Rect { return RectZero }
 
     get isDefault() { 
@@ -130,6 +195,65 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
 
     get isDefaultOrAudio() {
       return this.isDefault || this.type === DefinitionType.Audio
+    }
+
+    itemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
+      throw new Error(Errors.unimplemented) 
+    }
+
+    selectedItems(actions: Actions): SelectedItems {
+      const selectedItems: SelectedItems = super.selectedItems(actions)
+      if (this.isDefaultOrAudio) return selectedItems
+
+      // add effects 
+      const { effects, selectType } = this
+  
+      const undoEffects = [...effects]
+      const effectable = this
+      const selectedEffects: SelectedEffects = {
+        selectType,
+        value: this.effects, 
+        removeHandler: (effect: Effect) => {
+          const options = {
+            redoSelection: { ...actions.selection, effect: undefined },
+            effects,
+            undoEffects,
+            redoEffects: effects.filter(other => other !== effect),
+            type: ActionType.MoveEffect
+          }
+          actions.create(options)
+        },
+        moveHandler: (effect: Effect, index = 0) => {
+          assertPositive(index, 'index')
+          
+          const redoEffects = undoEffects.filter(e => e !== effect)
+          const currentIndex = undoEffects.indexOf(effect)
+          const insertIndex = currentIndex < index ? index - 1 : index
+          redoEffects.splice(insertIndex, 0, effect)
+          const options = {
+            effects, undoEffects, redoEffects, type: ActionType.MoveEffect, 
+            effectable
+          }
+          actions.create(options)
+        },
+        
+        addHandler: (effect: Effect, insertIndex = 0) => {
+          assertPositive(insertIndex, 'index')
+          const redoEffects = [...effects]
+          redoEffects.splice(insertIndex, 0, effect)
+          effect.tweenable = this
+          const options = {
+            effects,
+            undoEffects,
+            redoEffects,
+            redoSelection: { ...actions.selection, effect },
+            type: ActionType.MoveEffect
+          }
+          actions.create(options)
+        },
+      }
+      selectedItems.push(selectedEffects)
+      return selectedItems
     }
     
     selectedProperty(property: Property): boolean {
@@ -146,8 +270,10 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return super.selectedProperty(property)
     }
 
-    itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {
-      throw new Error(Errors.unimplemented) 
+    toJSON(): UnknownObject {
+      const json = super.toJSON()
+      json.effects = this.effects
+      return json
     }
   }
 }
