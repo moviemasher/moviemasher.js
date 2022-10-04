@@ -3,10 +3,10 @@ import ts from 'rollup-plugin-ts'
 
 import pkg from '../../package.json'
 
-const { module, source } = pkg
+const { module } = pkg
 
 export default {
-  input: source,
+  input: 'src/index.ts',
   output: { format: 'esm', file: module },
   plugins: [
     peerDepsExternal(),

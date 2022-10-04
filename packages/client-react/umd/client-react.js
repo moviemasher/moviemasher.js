@@ -1139,7 +1139,6 @@
         moviemasher_js.assertTrue(editor);
         const definition = useDefinition();
         const { id, label } = definition;
-        props.draggable ? id : 'definition';
         const updateRef = () => __awaiter(this, void 0, void 0, function* () {
             const { rect, preloader } = editor;
             const { current } = svgRef;
@@ -1213,7 +1212,7 @@
             React__default["default"].createElement(BrowserPicker, { key: 'image', id: 'image', className: moviemasher_js.ClassButton, children: icons.browserImage }),
         ]);
         (_g = optionsStrict.footer).after || (_g.after = [
-            React__default["default"].createElement(BrowserControl, { key: 'import', children: icons.upload })
+            React__default["default"].createElement(BrowserControl, { key: 'import', children: icons.import })
         ]);
         (_h = optionsStrict.content).children || (_h.children = React__default["default"].createElement(DefinitionItem, { draggable: true, className: 'definition preview' }));
         const children = React__default["default"].createElement(React__default["default"].Fragment, null,
@@ -3444,7 +3443,6 @@
             if (!requested && servers[moviemasher_js.ServerType.Data]) {
                 setRequested(true);
                 const request = {};
-                // console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
                 const promise = endpointPromise(moviemasher_js.Endpoints.data[editType].default, request);
                 promise.then((response) => {
                     var _a;

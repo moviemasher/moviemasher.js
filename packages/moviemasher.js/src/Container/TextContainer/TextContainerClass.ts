@@ -42,16 +42,6 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
   private _colorFilter?: Filter
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
 
-  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
-    const files = super.visibleCommandFiles(args)
-    const { string } = this
-    const textGraphFile: CommandFile = {
-      definition: this.font, type: GraphFileType.Txt, 
-      file: this.id, content: string, inputId: this.id,
-    }
-    files.push(textGraphFile)
-    return files
-  }
   declare definition: TextContainerDefinition
 
   definitionIds(): string[] { return [...super.definitionIds(), this.fontId] }
@@ -229,4 +219,16 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     json.intrinsic = this.intrinsicRect(true)
     return json
   }
+
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+    const files = super.visibleCommandFiles(args)
+    const { string } = this
+    const textGraphFile: CommandFile = {
+      definition: this.font, type: GraphFileType.Txt, 
+      file: this.id, content: string, inputId: this.id,
+    }
+    files.push(textGraphFile)
+    return files
+  }
 }
+

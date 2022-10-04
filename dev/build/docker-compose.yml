@@ -1,17 +1,16 @@
 version: "3"
 networks:
   default:
-    name: moviemasher-build
+    name: moviemasher-builder
 services:
-  bundler:
+  builder:
     build:
       dockerfile: dev/build/Dockerfile.cnf
       context: ../../
-    image: moviemasher/moviemasher.bundler:5.1.0
-    container_name: moviemasher-bundler
+    image: moviemasher/moviemasher.builder:5.1.0
+    container_name: moviemasher-builder
     volumes:
       - ../../dev/:/home/node/app/dev/
       - ../../dev/build/package.json:/home/node/app/package.json
       - ../../packages/:/home/node/app/packages/
       - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
-      - ../../dev/tester/:/home/node/app/workspaces/tester/

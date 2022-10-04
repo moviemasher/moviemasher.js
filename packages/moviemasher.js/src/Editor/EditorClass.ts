@@ -104,6 +104,7 @@ export class EditorClass implements Editor {
       return Defined.fromObject(definitionObject)
     })
     if (!editorIndex) return Promise.resolve(definitions)
+    
     const clips = definitions.map(definition => {
       const { id, type } = definition
       const clipObject: ClipObject = {}

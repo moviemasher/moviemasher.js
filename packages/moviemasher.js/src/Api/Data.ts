@@ -94,6 +94,7 @@ export interface DataCastRelations {
   definitions: DefinitionObjects
 }
 export interface DataCastDefaultRequest extends ApiRequest {}
+export type DataDefaultRequest = DataMashDefaultRequest | DataCastDefaultRequest
 export interface DataCastDefaultResponse extends ApiResponse, DataCastRelations {
   previewSize?: Size
 }

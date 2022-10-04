@@ -16,5 +16,5 @@
     "target": "ESNext",
     "rootDir": "../"
   },
-  "include": ["../src/**/*.tsx"]
+  "include": ["../src/*.tsx"]
 }

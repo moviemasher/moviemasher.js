@@ -6,6 +6,7 @@ describe("FilterGraph", () => {
   describe("mash with color/rect clip", () => {
     test("its CommandFilters are correct", () => {
       const mash = mashInstance({ tracks: [ { clips: [{ definitionId: clipDefault.id }] }]})
+      mash.imageSize = { width: 480, height: 270 }
       const filterGraphs = mash.filterGraphs()
       const { filterGraphVisible } = filterGraphs
       

@@ -1,6 +1,6 @@
 {
   "label": "Color",
-  "type": "color",
+  "type": "content",
   "id": "com.moviemasher.content.default",
   "color": "#FFFFFF"
 }

@@ -26,7 +26,7 @@ describe("Video", () => {
       expect(zeroOneTiming.start).toEqual(0)
       expect(zeroOneTiming.offset).toEqual(1)
 
-      const trimClip = videoInstance(clipObject({ trim: 30 }))
+      const trimClip = videoInstance(clipObject({ startTrim: 30 }))
       const trimZeroTiming = trimClip.startOptions(0, timeRange)
       expect(trimZeroTiming.start).toEqual(0)
       expect(trimZeroTiming.offset).toEqual(1)

@@ -171,9 +171,10 @@ export class EditorSelectionClass implements EditorSelection {
 
   selectedItems(types: SelectType[] = SelectTypes): SelectedItems {
     const { selectTypes, object: selection } = this
-    const { clip } = selection
     const filteredTypes = selectTypes.filter(type => types.includes(type))
     
+    const { clip } = selection
+    // console.log(this.constructor.name, "selectedItems", this.object)
     return filteredTypes.flatMap(type => {
       let target = selection[type]
       if (isClipSelectType(type) && isClip(clip)) target = clip[type]

@@ -4,10 +4,10 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 import pkg from "../../package.json"
 
-const { source, main } = pkg
+const { main } = pkg
 
 export default {
-  input: source,
+  input: 'src/index.ts',
   context: 'globalThis.window',
   output: { 
     format: 'umd', file: main, name: 'MovieMasherTheme', 

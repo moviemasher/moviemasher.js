@@ -3,10 +3,10 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 import pkg from "../../package.json"
 
-const { source, browser } = pkg
+const { browser } = pkg
 
 export default {
-  input: source,
+  input: 'src/index.ts',
   output: { 
     format: 'umd', file: browser, name: 'MovieMasherClient', 
     globals: { 

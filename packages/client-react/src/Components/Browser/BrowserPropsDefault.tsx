@@ -32,7 +32,7 @@ export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps>
   ]
 
   optionsStrict.footer.after ||= [
-    <BrowserControl key='import' children={icons.upload} />
+    <BrowserControl key='import' children={icons.import} />
   ]
 
   optionsStrict.content.children ||= (

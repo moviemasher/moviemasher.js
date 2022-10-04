@@ -1,14 +1,15 @@
 version: "3"
 networks:
   default:
-    name: documentation
+    name: moviemasher-documentation
 services:
   documentation:
     image: httpd:2.4
-    container_name: moviemasher-docs-8579
+    container_name: moviemasher-documentation-8577
     ports:
       - 8577:80
     volumes:
+      - ../html/index.html:/usr/local/apache2/htdocs/index.html
       - ../../../docs:/usr/local/apache2/htdocs/docs
       - ../../../docs/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
       - ../../../packages/moviemasher.js/umd/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js

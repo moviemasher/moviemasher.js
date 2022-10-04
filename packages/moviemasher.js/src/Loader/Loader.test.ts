@@ -21,7 +21,7 @@ describe("Loader", () => {
       ]
       urls.forEach(url => {
 
-        console.log(url, loader.parseUrlPath(url))
+        // console.log(url, loader.parseUrlPath(url))
       })
     })
     

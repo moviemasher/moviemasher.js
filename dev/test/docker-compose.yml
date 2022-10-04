@@ -1,14 +1,14 @@
 version: "3"
 networks:
   default:
-    name: moviemasher-test
+    name: moviemasher-tester
 services:
-  test:
+  tester:
     build:
       dockerfile: dev/test/Dockerfile.cnf
       context: ../../
     image: moviemasher/moviemasher.tester:5.1.0
-    container_name: moviemasher-test
+    container_name: moviemasher-tester
     entrypoint: npm run jest
     command: test.ts
     volumes:

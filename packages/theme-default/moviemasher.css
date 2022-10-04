@@ -103,18 +103,6 @@
   color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
 }
-.moviemasher .editor.caster {
-  grid-template-areas:
-    "player browser panels"
-    "composer timeline panels";
-  grid-template-columns:
-    calc(var(--preview-width) + (var(--border-size) * 2))
-    1fr
-    var(--inspector-width);
-  grid-template-rows:
-    calc( var(--preview-height) + var(--header-height) + var(--footer-height))
-    1fr;
-}
 /* colors.css */
 
 .moviemasher {
@@ -426,7 +414,7 @@
   box-shadow: var(--dropping-shadow);
 } 
 
-.moviemasher .masher {
+.moviemasher .editor.masher {
   grid-template-areas:
     "player browser panels"
     "timeline timeline panels";
@@ -446,6 +434,18 @@
     1fr;
 }
 
+.moviemasher .editor.caster {
+  grid-template-areas:
+    "player browser panels"
+    "composer timeline panels";
+  grid-template-columns:
+    calc(var(--preview-width) + (var(--border-size) * 2))
+    1fr
+    var(--inspector-width);
+  grid-template-rows:
+    calc( var(--preview-height) + var(--header-height) + var(--footer-height))
+    1fr;
+}
 
 @media (max-width: 999px) {
   .moviemasher .editor {

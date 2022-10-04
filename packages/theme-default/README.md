@@ -8,15 +8,14 @@
 <!-- MAGIC:END -->
 
 ## Movie Masher Theme Plug-in
-This module is a reference implementation of a theme plug-in.
-
-It exports SVG icons and CSS utilized by a client implementation like
+This module is a reference implementation of a theme plug-in. It exports SVG icons and CSS utilized by a client implementation like
 [@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react).
 Its imports are all specified as peer dependencies.
 
 This theme implementation utilizes
 [React Icons](https://react-icons.github.io/react-icons) 
-to provide the widest selection of icons.
+to provide the widest selection of icons. Learn more about visually customizing the user interface in the
+[Styling Overview](https://moviemasher.com/docs/Styling.html).
 
 <!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
 <!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->

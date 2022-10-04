@@ -1,10 +1,9 @@
 FROM moviemasher/moviemasher.js:5.1.0
 LABEL org.opencontainers.image.authors="support@moviemasher.com"
 
-# COPY dev/image/sh/build-build.sh /home/node/app/dev/image/sh/build-build.sh
-# RUN sh /home/node/app/dev/image/sh/build-build.sh
 
-COPY dev/build/package.json /home/node/app/workspaces/build/package.json
+COPY dev/build/package.json /home/node/app/package.json
+COPY packages /home/node/app/packages
 RUN npm install
 
 ENTRYPOINT ["npm", "run"]

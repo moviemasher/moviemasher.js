@@ -1,6 +1,8 @@
 .DS_Store
 node_modules*
-**/dist*
+**/umd/*
+**/esm/*
+**/cjs/*
 temporary*
 **/__image_snapshots__*
 *.cache/*

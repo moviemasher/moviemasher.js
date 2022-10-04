@@ -192,7 +192,7 @@ export class RenderingOutputClass implements RenderingOutput {
       if (avType !== AVType.Audio) {
         const { filterGraphsVisible } = filterGraphs
         const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-          const { commandFilters, commandInputs: inputs, duration } = filterGraph
+          const { commandInputs: inputs, commandFilters, duration } = filterGraph
           const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
         // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
           return commandDescription

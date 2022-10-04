@@ -10,8 +10,8 @@ services:
     command: ''
     volumes:
       - ../../../dev/:/home/node/app/dev/
-      - ../../../packages/moviemasher.js/dist/:/home/node/app/packages/moviemasher.js/dist/
-      - ../../../packages/server-express/dist/:/home/node/app/packages/server-express/dist/
+      - ../../../packages/moviemasher.js/umd/:/home/node/app/packages/moviemasher.js/umd/
+      - ../../../packages/server-express/cjs/:/home/node/app/packages/server-express/cjs/
       - ../../../workspaces/test-rendering/:/home/node/app/workspaces/test-rendering/
       - ../../../temporary/test-rendering/:/home/node/app/temporary/
       - ../../../package.json:/home/node/app/package.json

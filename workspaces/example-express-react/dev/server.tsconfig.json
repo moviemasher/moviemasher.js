@@ -12,7 +12,7 @@
     "moduleResolution": "node",
     "noEmitOnError": false,
     "noImplicitAny": false,
-    "outDir": "../dist",
+    "outDir": "../host",
     "resolveJsonModule": true,
     "strict": true,
     "target": "ESNext"

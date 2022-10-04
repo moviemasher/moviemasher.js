@@ -55,10 +55,10 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   if (outputRate) commandOutput.videoRate = outputRate
   const temporary = temporaryDirectory || './temporary'
   const cacheDirectory = renderingCacheDirectory || `${temporary}/cache`
-  const migrations = dataMigrationsDirectory || "./workspaces/example-express-react/dev/data/migrations"
-  const home = webServerHome || "./workspaces/example-express-react/dist/public/masher.html"
+  const migrations = dataMigrationsDirectory || "./workspaces/example-express-react/host/data-migrations"
+  const home = webServerHome || "./workspaces/example-express-react/host/public/index.html"
   const homeDirectory = path.dirname(home)
-  const baseFile = dataBaseFile || `${path.dirname(homeDirectory)}/data/sqlite.db`
+  const baseFile = dataBaseFile || `${path.dirname(migrations)}/sqlite.db`
   const upload = fileUploadDirectory || `${homeDirectory}/media`
   const commandOutputs: RenderingCommandOutputs = renderingCommandOutputs || {}
 

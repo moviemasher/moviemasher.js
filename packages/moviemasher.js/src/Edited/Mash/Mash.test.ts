@@ -48,7 +48,9 @@ describe("Mash", () => {
     const mashObject: MashObject = { tracks: [{ clips }] }
     const preloader = new JestPreloader()
     preloader.server = true
-    return mashInstance({ ...mashObject, preloader })
+    const mash = mashInstance({ ...mashObject, preloader })
+    mash.imageSize = { width: 480, height: 270 }
+    return mash
   }
 
   const mashWithMultipleImageClips = () => {
@@ -185,11 +187,9 @@ describe("Mash", () => {
       addNewTextClip(mash)
 
       const files = mash.editedGraphFiles()
-      expectArrayLength(files, 2)
-      const [fontGraphFile, textGraphFile] = files
-      expect(textGraphFile.type).toEqual(GraphFileType.Txt)
+      expectArrayLength(files, 1)
+      const [fontGraphFile] = files
       expect(fontGraphFile.type).toEqual(LoadType.Font)
-      expect(textGraphFile.input).toBeFalsy()
       expect(fontGraphFile.input).toBeFalsy()
 
       const editingGraphFiles = mash.editedGraphFiles({ editing: true })
@@ -226,7 +226,7 @@ describe("Mash", () => {
  
       const mash = createMash([clip]) 
       const filterGraphs = mash.filterGraphs(filterGraphsOptions)
-        const { filterGraphsVisible } = filterGraphs
+      const { filterGraphsVisible } = filterGraphs
       expect(filterGraphsVisible.length).toEqual(1)
       const filterGraph = filterGraphsVisible[0]
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
@@ -293,8 +293,10 @@ describe("Mash", () => {
       })
     })
     
-    test("returns expected FilterGraphs for text", async () => {
+    // TODO: support remote fonts in tests or use local ones...
+    test.skip("returns expected FilterGraphs for text", async () => {
       const mash = createMash()
+      
       addNewTextClip(mash)
       const filterGraphs = mash.filterGraphs(filterGraphsOptions)
       const {filterGraphsVisible} = filterGraphs
@@ -320,6 +322,8 @@ describe("Mash", () => {
   
         const clipObjects = [{ definitionId: clipDefault.id, containerId: 'video-sequence', frames: 30, ...clip }] 
         const mash = createMash(clipObjects)
+
+        mash.imageSize = { width: 480, height: 270 }
         const graphArgs = { ...filterGraphsOptions, ...args }
         const filterGraphs = mash.filterGraphs(graphArgs)
         const { filterGraphsVisible, filterGraphAudible } = filterGraphs

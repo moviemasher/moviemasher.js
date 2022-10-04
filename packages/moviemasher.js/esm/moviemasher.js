@@ -4047,12 +4047,6 @@ function TweenableMixin(Base) {
         }
         _colorFilter;
         get colorFilter() { return this._colorFilter ||= filterFromId('color'); }
-        visibleCommandFiles(args) {
-            const graphFileArgs = {
-                ...args, audible: false, visible: true
-            };
-            return this.fileCommandFiles(graphFileArgs);
-        }
         commandFilters(args, tweening, container = false) {
             const commandFilters = [];
             const { filterInput: input = '' } = args;
@@ -4329,6 +4323,14 @@ function TweenableMixin(Base) {
                 values.push(this.tween(key, time.endTime, range));
             return values;
         }
+        visibleCommandFiles(args) {
+            const graphFileArgs = {
+                ...args, audible: false, visible: true
+            };
+            const files = this.fileCommandFiles(graphFileArgs);
+            // console.log(this.constructor.name, "visibleCommandFiles", files)
+            return files;
+        }
     };
 }
 
@@ -4353,65 +4355,7 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
         if (isDefault)
             return false;
         // shape files can only colorize a single color at a single size
-        if (this.isTweeningColor(args))
-            return false;
-        return true; //!( || this.isTweeningSize(args))
-    }
-    visibleCommandFiles(args) {
-        const commandFiles = [];
-        const { isDefault, id } = this;
-        const alpha = this.requiresAlpha(args);
-        const tweeningColor = this.isTweeningColor(args);
-        if (isDefault && !alpha) {
-            // console.log(this.constructor.name, "commandFiles NONE", id, isDefault, alpha, tweeningColor)
-            return commandFiles;
-        }
-        const { definition } = this;
-        const { path } = definition;
-        const { contentColors: colors = [], containerRects, time, videoRate } = args;
-        assertPopulatedArray(containerRects, 'containerRects');
-        const duration = isTimeRange(time) ? time.lengthSeconds : 0;
-        const [rect, rectEnd] = containerRects;
-        const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd) };
-        const { width: maxWidth, height: maxHeight } = maxSize;
-        let [forecolor] = colors;
-        if (alpha)
-            forecolor = colorWhite;
-        else if (tweeningColor)
-            forecolor = colorBlack;
-        let fill = 'none';
-        if (isDefault)
-            fill = colorWhite;
-        else if (alpha)
-            fill = colorBlack;
-        const intrinsicRect = isDefault ? maxSize : this.intrinsicRect();
-        const { width: inWidth, height: inHeight } = intrinsicRect;
-        const dimensionsString = `width="${inWidth}" height="${inHeight}"`;
-        const transformAttribute = svgTransform(intrinsicRect, maxSize);
-        // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
-        const tags = [];
-        tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`);
-        tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`);
-        tags.push(`<rect ${dimensionsString} fill="${fill}"/>`);
-        if (!isDefault)
-            tags.push(`<path d="${path}" fill="${forecolor}"/>`);
-        tags.push("</g>");
-        tags.push("</svg>");
-        const svgTag = tags.join("");
-        const options = {};
-        if (duration) {
-            options.loop = 1;
-            options.framerate = videoRate;
-            options.t = duration;
-            // options.re = ''
-        }
-        const commandFile = {
-            type: GraphFileType.Svg, file: id, content: svgTag,
-            input: true, inputId: id, definition, options
-        };
-        // console.log(this.constructor.name, "commandFiles", id)
-        commandFiles.push(commandFile);
-        return commandFiles;
+        return !this.isTweeningColor(args);
     }
     containerColorCommandFilters(args) {
         const commandFilters = [];
@@ -4450,8 +4394,7 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
         }
         else if (this.isDefault || noContentFilters) {
             const { id } = this;
-            if (!filterInput)
-                console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id);
+            // if (!filterInput) console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id)
             filterInput ||= commandFilesInput(commandFiles, id, true);
             assertPopulatedString(filterInput, 'final input');
             commandFilters.push(...this.containerFinalCommandFilters({ ...args, filterInput }));
@@ -4588,6 +4531,60 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
             return true; // always need to mask content
         return this.isTweeningColor(args); //tweeningSize || 
     }
+    visibleCommandFiles(args) {
+        const { isDefault, id } = this;
+        const alpha = this.requiresAlpha(args);
+        const tweeningColor = this.isTweeningColor(args);
+        if (isDefault && !alpha) {
+            // console.log(this.constructor.name, "commandFiles NONE", id, isDefault, alpha, tweeningColor)
+            return [];
+        }
+        const { definition } = this;
+        const { path } = definition;
+        const { contentColors: colors = [], containerRects, time, videoRate } = args;
+        assertPopulatedArray(containerRects, 'containerRects');
+        const duration = isTimeRange(time) ? time.lengthSeconds : 0;
+        const [rect, rectEnd] = containerRects;
+        const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd) };
+        const { width: maxWidth, height: maxHeight } = maxSize;
+        let [forecolor] = colors;
+        if (alpha)
+            forecolor = colorWhite;
+        else if (tweeningColor)
+            forecolor = colorBlack;
+        let fill = 'none';
+        if (isDefault)
+            fill = colorWhite;
+        else if (alpha)
+            fill = colorBlack;
+        const intrinsicRect = isDefault ? maxSize : this.intrinsicRect();
+        const { width: inWidth, height: inHeight } = intrinsicRect;
+        const dimensionsString = `width="${inWidth}" height="${inHeight}"`;
+        const transformAttribute = svgTransform(intrinsicRect, maxSize);
+        // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
+        const tags = [];
+        tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`);
+        tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`);
+        tags.push(`<rect ${dimensionsString} fill="${fill}"/>`);
+        if (!isDefault)
+            tags.push(`<path d="${path}" fill="${forecolor}"/>`);
+        tags.push("</g>");
+        tags.push("</svg>");
+        const svgTag = tags.join("");
+        const options = {};
+        if (duration) {
+            options.loop = 1;
+            options.framerate = videoRate;
+            options.t = duration;
+            // options.re = ''
+        }
+        const commandFile = {
+            type: GraphFileType.Svg, file: id, content: svgTag,
+            input: true, inputId: id, definition, options
+        };
+        // console.log(this.constructor.name, "visibleCommandFiles", commandFile)
+        return [commandFile];
+    }
 }
 
 function TweenableDefinitionMixin(Base) {
@@ -4670,16 +4667,6 @@ class TextContainerClass extends TextContainerWithContainer {
     canColorTween(args) { return true; }
     _colorFilter;
     get colorFilter() { return this._colorFilter ||= filterFromId('color'); }
-    visibleCommandFiles(args) {
-        const files = super.visibleCommandFiles(args);
-        const { string } = this;
-        const textGraphFile = {
-            definition: this.font, type: GraphFileType.Txt,
-            file: this.id, content: string, inputId: this.id,
-        };
-        files.push(textGraphFile);
-        return files;
-    }
     definitionIds() { return [...super.definitionIds(), this.fontId]; }
     _font;
     get font() { return this._font ||= Defined.fromId(this.fontId); }
@@ -4816,6 +4803,16 @@ class TextContainerClass extends TextContainerWithContainer {
         const json = super.toJSON();
         json.intrinsic = this.intrinsicRect(true);
         return json;
+    }
+    visibleCommandFiles(args) {
+        const files = super.visibleCommandFiles(args);
+        const { string } = this;
+        const textGraphFile = {
+            definition: this.font, type: GraphFileType.Txt,
+            file: this.id, content: string, inputId: this.id,
+        };
+        files.push(textGraphFile);
+        return files;
     }
 }
 
@@ -5016,6 +5013,7 @@ Factories[DefinitionType.Font] = {
 
 const TextContainerDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase);
 const TextContainerDefinitionWithContainer = ContainerDefinitionMixin(TextContainerDefinitionWithTweenable);
+const TextContainerDefinitionIcon = 'M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z';
 class TextContainerDefinitionClass extends TextContainerDefinitionWithContainer {
     constructor(...args) {
         super(...args);
@@ -5034,6 +5032,18 @@ class TextContainerDefinitionClass extends TextContainerDefinitionWithContainer 
             name: 'width', tweenable: true, custom: true, type: DataType.Percent,
             defaultValue: 0.8, max: 2.0, group: DataGroup.Size
         }));
+    }
+    definitionIcon(loader, size) {
+        const superElement = super.definitionIcon(loader, size);
+        if (superElement)
+            return superElement;
+        const inSize = { width: 24, height: 24 };
+        const coverSize = sizeCover(inSize, size, true);
+        const outRect = { ...coverSize, ...centerPoint(size, coverSize) };
+        const bounds = svgPolygonElement(inSize);
+        const pathElement = svgPathElement(TextContainerDefinitionIcon);
+        svgSetTransformRects(pathElement, inSize, outRect);
+        return Promise.resolve(svgElement(size, [bounds, pathElement]));
     }
     instanceArgs(object) {
         const textObject = object || {};
@@ -5878,7 +5888,7 @@ class ColorContentDefinitionClass extends ColorContentDefinitionWithContent {
 }
 
 const label$1 = "Color";
-const type$1 = "color";
+const type$1 = "content";
 const id$1 = "com.moviemasher.content.default";
 const color = "#FFFFFF";
 var defaultContent = {
@@ -6958,27 +6968,31 @@ class FilterGraphClass {
             return clip.clipCommandFiles(chainArgs);
         });
         commandFiles.forEach(commandFile => {
-            commandFile.resolved = preloader.key(commandFile);
+            const { definition } = commandFile;
+            assertDefinition(definition);
+            const resolved = preloader.key(commandFile);
+            // console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
+            commandFile.resolved = resolved;
         });
         return commandFiles;
     }
     get commandFilters() {
-        const commandFilters = [];
+        const filters = [];
         const { time, quantize, size: outputSize, clips, visible, videoRate, filterGraphCommandFiles: commandFiles, upload } = this;
         // console.log(this.constructor.name, "commandFilters upload", upload)
         // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
         const chainArgs = {
-            videoRate, time, quantize, visible, outputSize: outputSize, commandFiles,
+            videoRate, time, quantize, visible, outputSize, commandFiles,
             chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
         };
         if (visible) {
             if (!upload) {
-                commandFilters.push(this.commandFilterVisible);
+                filters.push(this.commandFilterVisible);
                 chainArgs.chainInput = FilterGraphInputVisible;
             }
         }
         else {
-            commandFilters.push(this.commandFilterAudible);
+            filters.push(this.commandFilterAudible);
             chainArgs.chainInput = FilterGraphInputAudible;
         }
         const { length } = clips;
@@ -6986,15 +7000,15 @@ class FilterGraphClass {
             chainArgs.clipTime = clip.timeRange(quantize);
             chainArgs.track = index;
             // console.log(this.constructor.name, "commandFilters", chainArgs)
-            commandFilters.push(...clip.commandFilters(chainArgs));
-            const lastFilter = arrayLast(commandFilters);
+            filters.push(...clip.commandFilters(chainArgs));
+            const lastFilter = arrayLast(filters);
             if (index < length - 1) {
                 if (!lastFilter.outputs.length)
                     lastFilter.outputs.push(idGenerate('clip'));
             }
             chainArgs.chainInput = arrayLast(lastFilter.outputs);
         });
-        return commandFilters;
+        return filters;
     }
     get duration() { return this.time.lengthSeconds; }
     get inputCommandFiles() { return this.filterGraphCommandFiles.filter(file => file.input); }
@@ -7257,7 +7271,7 @@ class TrackPreviewClass {
             if (inactive)
                 return;
             element.addEventListener('pointerdown', (event) => {
-                console.log("pointerdown", direction);
+                // console.log("pointerdown", direction)
                 this.editor.selection.set(this.clip);
                 eventStop(event);
             });
@@ -7556,17 +7570,16 @@ class ClipClass extends InstanceBase {
             };
             const containerRects = this.rects(containerRectArgs);
             // console.log(this.constructor.name, "clipCommandFiles", containerRects)
-            contentArgs.containerRects = containerRects;
             const colors = isColorContent(content) ? content.contentColors(time, clipTime) : undefined;
-            const containerArgs = {
+            const fileArgs = {
                 ...contentArgs, outputSize, contentColors: colors, containerRects
             };
             if (!colors) {
-                const contentFiles = content.visibleCommandFiles(containerArgs);
+                const contentFiles = content.visibleCommandFiles(fileArgs);
                 // console.log(this.constructor.name, "commandFiles content:", contentFiles.length)
                 commandFiles.push(...contentFiles);
             }
-            const containerFiles = container.visibleCommandFiles(containerArgs);
+            const containerFiles = container.visibleCommandFiles(fileArgs);
             // console.log(this.constructor.name, "commandFiles container:", containerFiles.length)
             commandFiles.push(...containerFiles);
         }
@@ -7578,7 +7591,7 @@ class ClipClass extends InstanceBase {
     }
     commandFilters(args) {
         const commandFilters = [];
-        const { visible, quantize, outputSize: outputSize, time } = args;
+        const { visible, quantize, outputSize, time } = args;
         const clipTime = this.timeRange(quantize);
         const contentArgs = { ...args, clipTime };
         const { content, container } = this;
@@ -7809,11 +7822,12 @@ class ClipClass extends InstanceBase {
     }
     resetTiming(tweenable, quantize) {
         const { timing } = this;
-        // console.log("resetDuration", timing)
+        // console.log("resetTiming", timing)
         const track = this._track;
         switch (timing) {
             case Timing.Custom: {
-                if (isPositive(this.frames))
+                // console.log("resetTiming", this.frames)
+                if (isAboveZero(this.frames))
                     break;
                 this.frames = Default.duration * (quantize || track.mash.quantize);
                 break;
@@ -10569,8 +10583,9 @@ class EditorSelectionClass {
     }
     selectedItems(types = SelectTypes) {
         const { selectTypes, object: selection } = this;
-        const { clip } = selection;
         const filteredTypes = selectTypes.filter(type => types.includes(type));
+        const { clip } = selection;
+        // console.log(this.constructor.name, "selectedItems", this.object)
         return filteredTypes.flatMap(type => {
             let target = selection[type];
             if (isClipSelectType(type) && isClip(clip))
@@ -12565,7 +12580,7 @@ class RenderingOutputClass {
             if (avType !== AVType.Audio) {
                 const { filterGraphsVisible } = filterGraphs;
                 const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-                    const { commandFilters, commandInputs: inputs, duration } = filterGraph;
+                    const { commandInputs: inputs, commandFilters, duration } = filterGraph;
                     const commandDescription = { inputs, commandFilters, duration, avType: AVType.Video };
                     // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
                     return commandDescription;

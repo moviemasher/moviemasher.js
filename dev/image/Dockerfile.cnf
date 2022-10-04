@@ -4,19 +4,16 @@ LABEL org.opencontainers.image.authors="support@moviemasher.com"
 WORKDIR /home/node/app
 
 COPY package.json /home/node/app/package.json
-COPY packages/client-react/package.json /home/node/app/packages/client-react/package.json
-COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
-COPY packages/theme-default/package.json /home/node/app/packages/theme-default/package.json
-COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
 
-COPY packages/client-react/umd /home/node/app/packages/client-react/umd
-COPY packages/moviemasher.js/umd /home/node/app/packages/moviemasher.js/umd
-COPY packages/theme-default/umd /home/node/app/packages/theme-default/umd
-COPY packages/theme-default/moviemasher.css /home/node/app/packages/theme-default/moviemasher.css
-COPY packages/server-express/cjs /home/node/app/packages/server-express/cjs
+COPY packages/moviemasher.js/package.json /home/node/app/packages/moviemasher.js/package.json
+COPY packages/server-express/package.json /home/node/app/packages/server-express/package.json
 
 COPY dev/image/sh /home/node/app/dev/image/sh
 RUN sh /home/node/app/dev/image/sh/build-clean.sh
 
 ENTRYPOINT ["node_modules/pm2/bin/pm2-docker"]
-CMD ["start", "workspaces/example-express-react/dist/server.js"]
+CMD ["start", "workspaces/example-express-react/host/server.js"]
+
+COPY packages/moviemasher.js/umd/moviemasher.min.js /home/node/app/packages/moviemasher.js/umd/moviemasher.min.js
+COPY packages/server-express/cjs/server-express.min.js /home/node/app/packages/server-express/cjs/server-express.min.js
+COPY workspaces/example-express-react/host /home/node/app/workspaces/example-express-react/host

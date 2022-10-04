@@ -5,7 +5,6 @@
   "type": "commonjs",
   "types": "packages/moviemasher.js/dist/cjs/index.d.ts",
   "source": "index",
-  "main": "workspaces/tester/dist/server.js",
   "version": "5.1.0",
   "license": "MPL-2.0",
   "author": {
@@ -22,9 +21,7 @@
   "scripts": {
     "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
     "lint": "eslint src/**/*.ts",
-    "start": "pm2 start workspaces/tester/dist/server.js",
     "logs": "pm2 logs",
-    "stop": "pm2 delete workspaces/tester/dist/server.js",
     "test-help": "jest -h",
     "test-verbose": "jest --verbose --coverage --config dev/test/jest.config.js",
     "test-watch": "jest --verbose  --watch --config dev/test/jest.config.js",

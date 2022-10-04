@@ -97,12 +97,8 @@ function RiStackFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M20.083 10.5l1.202.721a.5.5 0 0 1 0 .858L12 17.65l-9.285-5.571a.5.5 0 0 1 0-.858l1.202-.721L12 15.35l8.083-4.85zm0 4.7l1.202.721a.5.5 0 0 1 0 .858l-8.77 5.262a1 1 0 0 1-1.03 0l-8.77-5.262a.5.5 0 0 1 0-.858l1.202-.721L12 20.05l8.083-4.85zM12.514 1.309l8.771 5.262a.5.5 0 0 1 0 .858L12 13 2.715 7.429a.5.5 0 0 1 0-.858l8.77-5.262a1 1 0 0 1 1.03 0z"}}]}]})(props);
 }function RiStackLine (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M20.083 15.2l1.202.721a.5.5 0 0 1 0 .858l-8.77 5.262a1 1 0 0 1-1.03 0l-8.77-5.262a.5.5 0 0 1 0-.858l1.202-.721L12 20.05l8.083-4.85zm0-4.7l1.202.721a.5.5 0 0 1 0 .858L12 17.65l-9.285-5.571a.5.5 0 0 1 0-.858l1.202-.721L12 15.35l8.083-4.85zm-7.569-9.191l8.771 5.262a.5.5 0 0 1 0 .858L12 13 2.715 7.429a.5.5 0 0 1 0-.858l8.77-5.262a1 1 0 0 1 1.03 0zM12 3.332L5.887 7 12 10.668 18.113 7 12 3.332z"}}]}]})(props);
-}function RiChat3Fill (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M7.291 20.824L2 22l1.176-5.291A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10a9.956 9.956 0 0 1-4.709-1.176z"}}]}]})(props);
 }function RiChatVoiceFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M4.929 19.071A9.969 9.969 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10H2l2.929-2.929zM11 6v12h2V6h-2zM7 9v6h2V9H7zm8 0v6h2V9h-2z"}}]}]})(props);
-}function RiMessage3Fill (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M2 8.994A5.99 5.99 0 0 1 8 3h8c3.313 0 6 2.695 6 5.994V21H8c-3.313 0-6-2.695-6-5.994V8.994zM14 11v2h2v-2h-2zm-6 0v2h2v-2H8z"}}]}]})(props);
 }function RiVideoChatFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M6.455 19L2 22.5V4a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455zM14 10.25V8H7v6h7v-2.25L17 14V8l-3 2.25z"}}]}]})(props);
 }function RiEdit2Fill (props) {
@@ -113,16 +109,12 @@ function RiStackFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M4 5v14h16V7h-8.414l-2-2H4zm8.414 0H21a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7.414l2 2z"}}]}]})(props);
 }function RiFolderOpenLine (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M3 21a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7.414l2 2H20a1 1 0 0 1 1 1v3h-2V7h-7.414l-2-2H4v11.998L5.5 11h17l-2.31 9.243a1 1 0 0 1-.97.757H3zm16.938-8H7.062l-1.5 6h12.876l1.5-6z"}}]}]})(props);
-}function RiBroadcastFill (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M4.929 2.929l1.414 1.414A7.975 7.975 0 0 0 4 10c0 2.21.895 4.21 2.343 5.657L4.93 17.07A9.969 9.969 0 0 1 2 10a9.969 9.969 0 0 1 2.929-7.071zm14.142 0A9.969 9.969 0 0 1 22 10a9.969 9.969 0 0 1-2.929 7.071l-1.414-1.414A7.975 7.975 0 0 0 20 10c0-2.21-.895-4.21-2.343-5.657L19.07 2.93zM7.757 5.757l1.415 1.415A3.987 3.987 0 0 0 8 10c0 1.105.448 2.105 1.172 2.828l-1.415 1.415A5.981 5.981 0 0 1 6 10c0-1.657.672-3.157 1.757-4.243zm8.486 0A5.981 5.981 0 0 1 18 10a5.981 5.981 0 0 1-1.757 4.243l-1.415-1.415A3.987 3.987 0 0 0 16 10a3.987 3.987 0 0 0-1.172-2.828l1.415-1.415zM12 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 2c.58 0 1.077.413 1.184.983L14.5 22h-5l1.316-7.017c.107-.57.604-.983 1.184-.983z"}}]}]})(props);
 }function RiFilmFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM4 5v2h2V5H4zm14 0v2h2V5h-2zM4 9v2h2V9H4zm14 0v2h2V9h-2zM4 13v2h2v-2H4zm14 0v2h2v-2h-2zM4 17v2h2v-2H4zm14 0v2h2v-2h-2z"}}]}]})(props);
 }function RiImageFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M20 5H4v14l9.292-9.294a1 1 0 0 1 1.414 0L20 15.01V5zM2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM8 11a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"}}]}]})(props);
 }function RiMusic2Fill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M20 3v14a4 4 0 1 1-2-3.465V6H9v11a4 4 0 1 1-2-3.465V3h13z"}}]}]})(props);
-}function RiMusicLine (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M12 13.535V3h8v2h-6v12a4 4 0 1 1-2-3.465zM10 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"}}]}]})(props);
 }function RiPauseCircleFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zM9 9v6h2V9H9zm4 0v6h2V9h-2z"}}]}]})(props);
 }function RiPlayCircleFill (props) {
@@ -137,16 +129,10 @@ function RiStackFill (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M5.828 7l2.536 2.536L6.95 10.95 2 6l4.95-4.95 1.414 1.414L5.828 5H13a8 8 0 1 1 0 16H4v-2h9a6 6 0 1 0 0-12H5.828z"}}]}]})(props);
 }function RiArrowGoForwardLine (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M18.172 7H11a6 6 0 1 0 0 12h9v2h-9a8 8 0 1 1 0-16h7.172l-2.536-2.536L17.05 1.05 22 6l-4.95 4.95-1.414-1.414L18.172 7z"}}]}]})(props);
-}function RiArrowRightSLine (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"}}]}]})(props);
 }function RiDeleteBin7Line (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M17 6h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6h5V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3zm1 2H6v12h12V8zM9 4v2h6V4H9z"}}]}]})(props);
-}function RiEyeLine (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M12 3c5.392 0 9.878 3.88 10.819 9-.94 5.12-5.427 9-10.819 9-5.392 0-9.878-3.88-10.819-9C2.121 6.88 6.608 3 12 3zm0 16a9.005 9.005 0 0 0 8.777-7 9.005 9.005 0 0 0-17.554 0A9.005 9.005 0 0 0 12 19zm0-2.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"}}]}]})(props);
 }function RiEyeOffLine (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M17.882 19.297A10.949 10.949 0 0 1 12 21c-5.392 0-9.878-3.88-10.819-9a10.982 10.982 0 0 1 3.34-6.066L1.392 2.808l1.415-1.415 19.799 19.8-1.415 1.414-3.31-3.31zM5.935 7.35A8.965 8.965 0 0 0 3.223 12a9.005 9.005 0 0 0 13.201 5.838l-2.028-2.028A4.5 4.5 0 0 1 8.19 9.604L5.935 7.35zm6.979 6.978l-3.242-3.242a2.5 2.5 0 0 0 3.241 3.241zm7.893 2.264l-1.431-1.43A8.935 8.935 0 0 0 20.777 12 9.005 9.005 0 0 0 9.552 5.338L7.974 3.76C9.221 3.27 10.58 3 12 3c5.392 0 9.878 3.88 10.819 9a10.947 10.947 0 0 1-2.012 4.592zm-9.084-9.084a4.5 4.5 0 0 1 4.769 4.769l-4.77-4.769z"}}]}]})(props);
-}function RiUserSettingsFill (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24"},"child":[{"tag":"g","attr":{},"child":[{"tag":"path","attr":{"fill":"none","d":"M0 0h24v24H0z"}},{"tag":"path","attr":{"d":"M12 14v8H4a8 8 0 0 1 8-8zm0-1c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm2.595 5.812a3.51 3.51 0 0 1 0-1.623l-.992-.573 1-1.732.992.573A3.496 3.496 0 0 1 17 14.645V13.5h2v1.145c.532.158 1.012.44 1.405.812l.992-.573 1 1.732-.992.573a3.51 3.51 0 0 1 0 1.622l.992.573-1 1.732-.992-.573a3.496 3.496 0 0 1-1.405.812V22.5h-2v-1.145a3.496 3.496 0 0 1-1.405-.812l-.992.573-1-1.732.992-.572zM18 17a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"}}]}]})(props);
 }
 
 // THIS FILE IS AUTO GENERATED
@@ -177,9 +163,7 @@ function IoDocument (props) {
 }
 
 // THIS FILE IS AUTO GENERATED
-function BsReverseLayoutSidebarInsetReverse (props) {
-  return GenIcon({"tag":"svg","attr":{"fill":"currentColor","viewBox":"0 0 16 16"},"child":[{"tag":"path","attr":{"d":"M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2zm12-1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h12z"}},{"tag":"path","attr":{"d":"M13 4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V4z"}}]})(props);
-}function BsAspectRatioFill (props) {
+function BsAspectRatioFill (props) {
   return GenIcon({"tag":"svg","attr":{"fill":"currentColor","viewBox":"0 0 16 16"},"child":[{"tag":"path","attr":{"d":"M0 12.5v-9A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5zM2.5 4a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 1 0V5h2.5a.5.5 0 0 0 0-1h-3zm11 8a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-1 0V11h-2.5a.5.5 0 0 0 0 1h3z"}}]})(props);
 }function BsSkipEndFill (props) {
   return GenIcon({"tag":"svg","attr":{"fill":"currentColor","viewBox":"0 0 16 16"},"child":[{"tag":"path","attr":{"d":"M12.5 4a.5.5 0 0 0-1 0v3.248L5.233 3.612C4.693 3.3 4 3.678 4 4.308v7.384c0 .63.692 1.01 1.233.697L11.5 8.753V12a.5.5 0 0 0 1 0V4z"}}]})(props);
@@ -192,8 +176,6 @@ function BsReverseLayoutSidebarInsetReverse (props) {
 // THIS FILE IS AUTO GENERATED
 function FaExclamationCircle (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 512 512"},"child":[{"tag":"path","attr":{"d":"M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"}}]})(props);
-}function FaUserCircle (props) {
-  return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 496 512"},"child":[{"tag":"path","attr":{"d":"M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"}}]})(props);
 }function FaRegCheckCircle (props) {
   return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 512 512"},"child":[{"tag":"path","attr":{"d":"M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"}}]})(props);
 }
@@ -271,11 +253,25 @@ const MMWideIcon = () => {
         React.createElement("path", { d: "M 9.16 2.00 C 8.62 2.00 8.13 2.18 7.73 2.57 L 7.73 2.57 L 1.19 8.91 C 0.77 9.34 0.55 9.82 0.53 10.39 L 0.53 10.39 C 0.53 10.91 0.72 11.37 1.13 11.76 L 1.13 11.76 C 1.56 12.15 2.05 12.31 2.60 12.28 L 2.60 12.28 C 3.17 12.31 3.64 12.13 4.03 11.70 L 4.03 11.70 L 9.16 6.90 L 13.67 11.28 C 14.33 11.87 14.67 12.20 14.73 12.24 L 14.73 12.24 C 15.12 12.63 15.60 12.81 16.14 12.81 L 16.14 12.81 C 16.69 12.85 17.20 12.66 17.63 12.28 L 17.63 12.28 C 17.67 12.26 18.01 11.93 18.63 11.28 L 18.63 11.28 C 19.29 10.65 20.07 9.93 20.93 9.12 L 20.93 9.12 C 21.82 8.23 22.57 7.51 23.20 6.90 L 23.20 6.90 L 31.34 14.86 C 31.74 15.25 32.21 15.47 32.72 15.51 L 32.72 15.51 L 38.29 15.51 L 38.23 19.10 L 44.00 13.55 L 38.29 7.90 L 38.29 11.54 L 33.65 11.48 L 24.63 2.63 C 24.22 2.28 23.74 2.09 23.20 2.09 L 23.20 2.09 C 22.65 2.07 22.16 2.24 21.71 2.63 L 21.71 2.63 L 16.20 8.01 L 11.64 3.63 C 10.98 2.96 10.64 2.61 10.60 2.57 L 10.60 2.57 C 10.18 2.18 9.75 2.00 9.28 2.00 L 9.28 2.00 C 9.24 2.00 9.20 2.00 9.16 2.00", stroke: "none", fill: "currentColor" }),
         React.createElement("path", { d: "M 7.70 11.61 L 2.58 16.53 L 0.00 14.05 L 0.00 21.91 L 8.15 21.91 L 5.49 19.38 C 5.53 19.38 5.56 19.36 5.60 19.32 L 5.60 19.32 L 9.19 15.88 L 14.75 21.28 C 15.14 21.67 15.62 21.85 16.16 21.85 L 16.16 21.85 C 16.73 21.89 17.22 21.72 17.65 21.33 L 17.65 21.33 L 23.16 15.88 L 28.78 21.43 C 29.18 21.78 29.67 21.96 30.21 21.96 L 30.21 21.96 L 34.34 22.00 C 34.93 21.98 35.42 21.78 35.83 21.43 L 35.83 21.43 C 36.23 21.04 36.44 20.56 36.44 19.95 L 36.44 19.95 C 36.44 19.39 36.23 18.91 35.83 18.53 L 35.83 18.53 C 35.46 18.17 34.99 18.01 34.40 18.01 L 34.40 18.01 L 31.10 17.95 L 24.65 11.67 C 24.25 11.32 23.76 11.13 23.22 11.13 L 23.22 11.13 C 22.67 11.11 22.18 11.28 21.75 11.67 L 21.75 11.67 L 16.16 16.99 L 10.56 11.61 C 10.15 11.22 9.69 11.04 9.19 11.04 L 9.19 11.04 C 8.64 11.04 8.15 11.22 7.70 11.61", stroke: "none", fill: "currentColor" }));
 };
-const MMIcon = () => {
-    return React.createElement("svg", { width: "1em", height: "1em", viewBox: "0 0 24 24", version: "1.1", xmlns: "http://www.w3.org/2000/svg" },
-        React.createElement("path", { d: "M 0.00 0.00 L 24.00 0.00 L 24.00 24.00 L 0.00 24.00 Z M 0.00 0.00", stroke: "none", fill: "none" }),
-        React.createElement("path", { d: "M 4.20 11.29 L 1.41 13.99 L 0.00 12.63 L 0.00 16.95 L 4.44 16.95 L 2.99 15.56 C 3.01 15.56 3.03 15.55 3.06 15.53 L 3.06 15.53 L 5.01 13.64 L 8.04 16.60 C 8.26 16.82 8.52 16.92 8.82 16.92 L 8.82 16.92 C 9.13 16.94 9.39 16.85 9.63 16.63 L 9.63 16.63 L 12.63 13.64 L 15.70 16.68 C 15.91 16.88 16.18 16.98 16.48 16.98 L 16.48 16.98 L 18.73 17.00 C 19.05 16.99 19.32 16.88 19.55 16.68 L 19.55 16.68 C 19.76 16.47 19.88 16.21 19.88 15.87 L 19.88 15.87 C 19.88 15.57 19.76 15.30 19.55 15.09 L 19.55 15.09 C 19.34 14.90 19.08 14.80 18.76 14.80 L 18.76 14.80 L 16.96 14.77 L 13.45 11.32 C 13.23 11.12 12.96 11.02 12.66 11.02 L 12.66 11.02 C 12.37 11.01 12.10 11.10 11.86 11.32 L 11.86 11.32 L 8.82 14.25 L 5.76 11.29 C 5.53 11.07 5.29 10.97 5.01 10.97 L 5.01 10.97 C 4.71 10.97 4.44 11.07 4.20 11.29 M 5.00 6.00 C 4.70 6.00 4.43 6.10 4.22 6.32 L 4.22 6.32 L 0.65 9.80 C 0.42 10.04 0.30 10.30 0.29 10.62 L 0.29 10.62 C 0.29 10.90 0.39 11.15 0.62 11.37 L 0.62 11.37 C 0.85 11.58 1.12 11.67 1.42 11.65 L 1.42 11.65 C 1.73 11.67 1.98 11.57 2.20 11.34 L 2.20 11.34 L 5.00 8.69 L 7.46 11.10 C 7.82 11.43 8.00 11.61 8.03 11.63 L 8.03 11.63 C 8.25 11.85 8.51 11.95 8.81 11.95 L 8.81 11.95 C 9.10 11.97 9.38 11.87 9.62 11.65 L 9.62 11.65 C 9.64 11.64 9.82 11.46 10.16 11.10 L 10.16 11.10 C 10.52 10.76 10.95 10.36 11.42 9.91 L 11.42 9.91 C 11.90 9.43 12.31 9.03 12.65 8.69 L 12.65 8.69 L 17.10 13.08 C 17.31 13.29 17.57 13.41 17.85 13.43 L 17.85 13.43 L 20.88 13.43 L 20.85 15.40 L 24.00 12.35 L 20.88 9.24 L 20.88 11.25 L 18.35 11.21 L 13.43 6.35 C 13.21 6.15 12.95 6.05 12.65 6.05 L 12.65 6.05 C 12.35 6.04 12.09 6.13 11.84 6.35 L 11.84 6.35 L 8.84 9.30 L 6.35 6.89 C 5.99 6.53 5.80 6.34 5.78 6.32 L 5.78 6.32 C 5.55 6.10 5.32 6.00 5.06 6.00 L 5.06 6.00 C 5.04 6.00 5.02 6.00 5.00 6.00", stroke: "none", fill: "currentColor" }));
+const MMLogo = () => {
+    return React.createElement("svg", { width: "52", height: "24", xmlns: "http://www.w3.org/2000/svg" },
+        React.createElement("defs", null,
+            React.createElement("linearGradient", { id: "gradient_0", gradientUnits: "userSpaceOnUse", x1: "27.12", y1: "20.06", x2: "26.83", y2: "0.10" },
+                React.createElement("stop", { offset: "0%", stopColor: "#62789b" }),
+                React.createElement("stop", { offset: "100%", stopColor: "#8c9bdd" }))),
+        React.createElement("path", { d: "M 10.83 0.00 C 10.18 0.00 9.61 0.22 9.14 0.69 L 9.14 0.69 L 1.40 8.29 C 0.91 8.81 0.64 9.38 0.62 10.07 L 0.62 10.07 C 0.62 10.69 0.85 11.24 1.34 11.71 L 1.34 11.71 C 1.85 12.18 2.43 12.38 3.07 12.33 L 3.07 12.33 C 3.74 12.38 4.30 12.15 4.77 11.64 L 4.77 11.64 L 10.83 5.88 L 16.16 11.13 C 16.94 11.84 17.34 12.24 17.41 12.29 L 17.41 12.29 C 17.87 12.75 18.43 12.97 19.08 12.97 L 19.08 12.97 C 19.72 13.02 20.33 12.80 20.84 12.33 L 20.84 12.33 C 20.88 12.31 21.28 11.91 22.02 11.13 L 22.02 11.13 C 22.80 10.38 23.71 9.51 24.74 8.54 L 24.74 8.54 C 25.79 7.47 26.68 6.61 27.41 5.88 L 27.41 5.88 L 37.04 15.44 C 37.51 15.90 38.07 16.17 38.67 16.21 L 38.67 16.21 L 45.25 16.21 L 45.18 20.52 L 52.00 13.86 L 45.25 7.08 L 45.25 11.44 L 39.76 11.38 L 29.11 0.75 C 28.62 0.33 28.06 0.11 27.41 0.11 L 27.41 0.11 C 26.77 0.09 26.19 0.29 25.65 0.75 L 25.65 0.75 L 19.15 7.21 L 13.75 1.95 C 12.97 1.15 12.57 0.73 12.52 0.69 L 12.52 0.69 C 12.03 0.22 11.52 0.00 10.96 0.00 L 10.96 0.00 C 10.92 0.00 10.88 0.00 10.83 0.00", stroke: "none", fill: "url(#gradient_0)" }),
+        React.createElement("defs", null,
+            React.createElement("linearGradient", { id: "gradient_1", gradientUnits: "userSpaceOnUse", x1: "22.21", y1: "23.71", x2: "21.97", y2: "10.91" },
+                React.createElement("stop", { offset: "0%", stopColor: "#62789b" }),
+                React.createElement("stop", { offset: "100%", stopColor: "#8c9bdd" }))),
+        React.createElement("path", { d: "M 9.09 11.54 L 3.05 17.44 L -0.00 14.46 L -0.00 23.89 L 9.63 23.89 L 6.49 20.85 C 6.53 20.85 6.58 20.83 6.62 20.78 L 6.62 20.78 L 10.86 16.66 L 17.43 23.14 C 17.90 23.60 18.46 23.82 19.10 23.82 L 19.10 23.82 C 19.77 23.87 20.35 23.67 20.86 23.20 L 20.86 23.20 L 27.37 16.66 L 34.01 23.31 C 34.48 23.73 35.06 23.96 35.71 23.96 L 35.71 23.96 L 40.59 24.00 C 41.28 23.98 41.86 23.73 42.35 23.31 L 42.35 23.31 C 42.82 22.85 43.06 22.27 43.06 21.54 L 43.06 21.54 C 43.06 20.87 42.82 20.30 42.35 19.83 L 42.35 19.83 C 41.90 19.41 41.35 19.21 40.66 19.21 L 40.66 19.21 L 36.76 19.14 L 29.13 11.60 C 28.66 11.18 28.08 10.96 27.44 10.96 L 27.44 10.96 C 26.79 10.94 26.21 11.14 25.70 11.60 L 25.70 11.60 L 19.10 17.99 L 12.48 11.54 C 11.99 11.07 11.46 10.85 10.86 10.85 L 10.86 10.85 C 10.21 10.85 9.63 11.07 9.09 11.54", stroke: "none", fill: "url(#gradient_1)" }));
 };
+// const MMIcon = () => {
+//   return <svg width="1em" height="1em" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+//     <path d="M 0.00 0.00 L 24.00 0.00 L 24.00 24.00 L 0.00 24.00 Z M 0.00 0.00" stroke="none" fill="none" />
+//     <path d="M 4.20 11.29 L 1.41 13.99 L 0.00 12.63 L 0.00 16.95 L 4.44 16.95 L 2.99 15.56 C 3.01 15.56 3.03 15.55 3.06 15.53 L 3.06 15.53 L 5.01 13.64 L 8.04 16.60 C 8.26 16.82 8.52 16.92 8.82 16.92 L 8.82 16.92 C 9.13 16.94 9.39 16.85 9.63 16.63 L 9.63 16.63 L 12.63 13.64 L 15.70 16.68 C 15.91 16.88 16.18 16.98 16.48 16.98 L 16.48 16.98 L 18.73 17.00 C 19.05 16.99 19.32 16.88 19.55 16.68 L 19.55 16.68 C 19.76 16.47 19.88 16.21 19.88 15.87 L 19.88 15.87 C 19.88 15.57 19.76 15.30 19.55 15.09 L 19.55 15.09 C 19.34 14.90 19.08 14.80 18.76 14.80 L 18.76 14.80 L 16.96 14.77 L 13.45 11.32 C 13.23 11.12 12.96 11.02 12.66 11.02 L 12.66 11.02 C 12.37 11.01 12.10 11.10 11.86 11.32 L 11.86 11.32 L 8.82 14.25 L 5.76 11.29 C 5.53 11.07 5.29 10.97 5.01 10.97 L 5.01 10.97 C 4.71 10.97 4.44 11.07 4.20 11.29 M 5.00 6.00 C 4.70 6.00 4.43 6.10 4.22 6.32 L 4.22 6.32 L 0.65 9.80 C 0.42 10.04 0.30 10.30 0.29 10.62 L 0.29 10.62 C 0.29 10.90 0.39 11.15 0.62 11.37 L 0.62 11.37 C 0.85 11.58 1.12 11.67 1.42 11.65 L 1.42 11.65 C 1.73 11.67 1.98 11.57 2.20 11.34 L 2.20 11.34 L 5.00 8.69 L 7.46 11.10 C 7.82 11.43 8.00 11.61 8.03 11.63 L 8.03 11.63 C 8.25 11.85 8.51 11.95 8.81 11.95 L 8.81 11.95 C 9.10 11.97 9.38 11.87 9.62 11.65 L 9.62 11.65 C 9.64 11.64 9.82 11.46 10.16 11.10 L 10.16 11.10 C 10.52 10.76 10.95 10.36 11.42 9.91 L 11.42 9.91 C 11.90 9.43 12.31 9.03 12.65 8.69 L 12.65 8.69 L 17.10 13.08 C 17.31 13.29 17.57 13.41 17.85 13.43 L 17.85 13.43 L 20.88 13.43 L 20.85 15.40 L 24.00 12.35 L 20.88 9.24 L 20.88 11.25 L 18.35 11.21 L 13.43 6.35 C 13.21 6.15 12.95 6.05 12.65 6.05 L 12.65 6.05 C 12.35 6.04 12.09 6.13 11.84 6.35 L 11.84 6.35 L 8.84 9.30 L 6.35 6.89 C 5.99 6.53 5.80 6.34 5.78 6.32 L 5.78 6.32 C 5.55 6.10 5.32 6.00 5.06 6.00 L 5.06 6.00 C 5.04 6.00 5.02 6.00 5.00 6.00" stroke="none" fill="currentColor" />
+//   </svg>
+// }
 const MMTubeIcon = () => {
     return React.createElement("svg", { width: "1em", height: "1em", viewBox: "0 0 24 24", version: "1.1", xmlns: "http://www.w3.org/2000/svg" },
         React.createElement("defs", null,
@@ -287,11 +283,10 @@ const Icons = {
     active: React.createElement(ImSpinner3, { key: 'active' }),
     activity: React.createElement(TbActivityHeartbeat, { key: 'activity' }),
     add: React.createElement(RiAddLine, { key: 'add' }),
-    administrator: React.createElement(RiUserSettingsFill, { key: 'administrator' }),
-    app: React.createElement("img", { key: 'logo', src: "mm.svg" }),
-    audible: React.createElement(RiVolumeUpLine, { key: 'audible' }),
-    audio: React.createElement(RiMusicLine, { key: "audio" }),
-    broadcast: React.createElement(RiBroadcastFill, { key: 'broadcast' }),
+    app: React.createElement(MMLogo, { key: 'app' }),
+    // audible: <RiVolumeUpLine key='audible' />,
+    // audio: <RiMusicLine key="audio" />,
+    // broadcast: <RiBroadcastFill key='broadcast' />,
     browser: React.createElement(MdPermMedia, { key: 'browser' }),
     browserAudio: React.createElement(RiMusic2Fill, { key: "browserAudio" }),
     browserAudioStream: React.createElement(RiChatVoiceFill, { key: "browserAudioStream" }),
@@ -301,7 +296,7 @@ const Icons = {
     browserText: React.createElement(MdOutlineTextFields, { key: "browserText" }),
     browserVideo: React.createElement(RiFilmFill, { key: "browserVideo" }),
     browserVideoStream: React.createElement(RiVideoChatFill, { key: "browserVideoStream" }),
-    chat: React.createElement(RiChat3Fill, { key: 'chat' }),
+    // chat: <RiChat3Fill key='chat' />,
     clip: React.createElement(MdOutlineTimelapse, { key: "clip" }),
     collapse: React.createElement(VscTriangleDown, { key: "collapse" }),
     collapsed: React.createElement(VscTriangleRight, { key: "collapsed" }),
@@ -327,9 +322,9 @@ const Icons = {
     invisible: React.createElement(RiEyeOffLine, { key: 'invisible' }),
     label: React.createElement(MdLabel, { key: "label" }),
     lock: React.createElement(HiLockClosed, { key: "lock" }),
-    matte: React.createElement(BsReverseLayoutSidebarInsetReverse, { key: "matte" }),
-    message: React.createElement(RiMessage3Fill, { key: 'message' }),
-    mm: React.createElement(MMIcon, { key: "mm" }),
+    // matte: <BsReverseLayoutSidebarInsetReverse key="matte" />,
+    // message: <RiMessage3Fill key='message' />,
+    // mm: <MMIcon key="mm" />,
     mmTube: React.createElement(MMTubeIcon, { key: "mmTube" }),
     mmWide: React.createElement(MMWideIcon, { key: "mmWide" }),
     opacity: React.createElement(MdOpacity, { key: "opacity" }),
@@ -343,7 +338,7 @@ const Icons = {
     size: React.createElement(GiResize, { key: "size" }),
     sizing: React.createElement(BsAspectRatioFill, { key: "sizing" }),
     start: React.createElement(BsSkipStartFill, { key: "start" }),
-    streamers: React.createElement(FaUserCircle, { key: 'streamers' }),
+    // streamers: <FaUserCircle key='streamers' />,
     timeline: React.createElement(MdOutlineTimelapse, { key: 'timeline' }),
     timing: React.createElement(AiOutlineColumnWidth, { key: "timing" }),
     startTrim: React.createElement(CgArrowLongRightL, { key: "start-trim" }),
@@ -353,11 +348,11 @@ const Icons = {
     trackDense: React.createElement(RiStackFill, { key: "track-dense" }),
     undo: React.createElement(RiArrowGoBackLine, { key: "undo" }),
     unlock: React.createElement(HiLockOpen, { key: "unlock" }),
-    upload: React.createElement(TbFileImport, { key: "upload" }),
+    import: React.createElement(TbFileImport, { key: "upload" }),
     vert: React.createElement(GiVerticalFlip, { key: "vert" }),
-    video: React.createElement(RiArrowRightSLine, { key: "video" }),
+    // video: <RiArrowRightSLine key="video" />,
     view: React.createElement(HiEye, { key: "view" }),
-    visible: React.createElement(RiEyeLine, { key: 'visible' }),
+    // visible: <RiEyeLine key='visible' />,
     width: React.createElement(TbArrowAutofitWidth, { key: "width" }),
     zoomLess: React.createElement(TiZoomOutOutline, { key: "zoom-less" }),
     zoomMore: React.createElement(TiZoomInOutline, { key: "zoom-more" }),

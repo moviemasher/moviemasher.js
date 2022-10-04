@@ -4,7 +4,7 @@ import { EditorClass } from "./EditorClass"
 import { Emitter } from "../Helpers/Emitter"
 import { editorInstance } from "./EditorFactory"
 import { JestPreloader } from "../../../../dev/test/Utilities/JestPreloader"
-import { Editor } from "./Editor"
+import { Editor, EditorOptions } from "./Editor"
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { assertMash } from "../Edited/Mash/Mash"
 import { EditType } from "../Setup/Enums"
@@ -13,8 +13,10 @@ import visibleDefaultJson from "../Definitions/DefinitionObjects/content/default
 
 const createEditor = (): Editor => {
   const preloader = new JestPreloader()
-
-  return editorInstance({ editType: EditType.Mash, preloader })
+  const options: EditorOptions = { 
+    editType: EditType.Mash, preloader, dimensions: { width: 480, height: 270 } 
+  }
+  return editorInstance(options)
 }
 describe("EditorFactory", () => {
   describe("editorInstance", () => {
@@ -62,7 +64,7 @@ describe("Editor", () => {
       const { edited } = editor
       assertMash(edited)
 
-      await editor.add(visibleDefaultJson)
+      await editor.add(visibleDefaultJson, {})
       const [clip] = edited.tracks[0].clips
       expect(clip).toBeInstanceOf(ClipClass)
     })
@@ -84,7 +86,7 @@ describe("Editor", () => {
       const { edited } = editor
       assertMash(edited)
 
-      await editor.add(visibleDefaultJson)
+      await editor.add(visibleDefaultJson, {})
       expect(edited.frames).toEqual(30)
       const time = timeFromSeconds(2, editor.fps)
       await editor.goToTime(time)

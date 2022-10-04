@@ -5,10 +5,10 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 import pkg from "../../package.json"
 
-const { source, module } = pkg
+const { module } = pkg
 
 export default {
-  input: source,
+  input: 'src/index.ts',
   context: 'globalThis.window',
   output: { format: 'esm', file: module },
   plugins: [

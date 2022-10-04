@@ -4,7 +4,6 @@
   "description": "Movie Masher Theme Plugin - version 5.1.0",
   "main": "umd/theme-default.js",
   "module": "esm/theme-default.js",
-  "source": "src/index.ts",
   "types": "esm/theme-default.d.ts",
   "type": "module",
   "license": "MPL-2.0",
@@ -32,7 +31,7 @@
     "@types/node": "15.6.1"
   },
   "scripts": {
-    "build-css": "cat dev/css/* > moviemasher.css",
+    "build-css": "cat src/css/* > moviemasher.css",
     "build-esm": "rollup --config dev/rollup/esm.config.js",
     "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
     "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",

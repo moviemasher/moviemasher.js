@@ -3,7 +3,7 @@ networks:
   default:
     name: moviemasher-js-example
 services:
-  moviemasher-example:
+  moviemasher-js-example:
     image: httpd:2.4
     container_name: moviemasher-js-8579
     ports:

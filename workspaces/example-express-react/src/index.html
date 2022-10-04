@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <script src="moviemasher.js" crossorigin></script>
+    <script src="theme-default.js" crossorigin></script>
+    <script src="client-react.js" crossorigin></script>
+    <link href="moviemasher.css" rel='stylesheet'>
+
+    <script src='index.js' defer></script>
+    <style>
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #app { width: 100vw; height: 100vh; display: flex; }
+      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
+    </style>
+    <title>Movie Masher</title>
+  </head>
+  <body>
+    <div id='app' class='moviemasher'></div>
+  </body>
+</html>

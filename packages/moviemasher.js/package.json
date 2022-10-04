@@ -2,9 +2,8 @@
   "name": "@moviemasher/moviemasher.js",
   "version": "5.1.0",
   "description": "JavaScript video editor, encoder, switcher - version 5.1.0",
-  "main": "umd/moviemasher.js",
+  "main": "umd/moviemasher.min.js",
   "module": "esm/moviemasher.js",
-  "source": "src/index.ts",
   "types": "esm/moviemasher.d.ts",
   "license": "MPL-2.0",
   "author": {
@@ -27,13 +26,13 @@
     "composite"
   ],
   "scripts": {
-    "build-esm": "rollup --config dev/rollup/esm.config.js",
-    "build-umd": "rollup --config dev/rollup/umd.config.js",
     "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
+    "build-esm": "rollup --config dev/rollup/esm.config.js",
     "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
+    "build-umd": "rollup --config dev/rollup/umd.config.js",
     "build": "run-s build-esm build-esm-min build-umd build-umd-min",
-    "stop": "docker compose --file dev/example/docker-compose.yml down -v",
-    "start": "docker compose --file dev/example/docker-compose.yml up -d"
+    "start": "docker compose --file dev/example/docker-compose.yml up -d",
+    "stop": "docker compose --file dev/example/docker-compose.yml down -v"
   },
   "devDependencies": {
     "typescript": "4.6.4"

@@ -1133,7 +1133,6 @@ function DefinitionItem(props) {
     assertTrue(editor);
     const definition = useDefinition();
     const { id, label } = definition;
-    props.draggable ? id : 'definition';
     const updateRef = () => __awaiter(this, void 0, void 0, function* () {
         const { rect, preloader } = editor;
         const { current } = svgRef;
@@ -1207,7 +1206,7 @@ const BrowserPropsDefault = function (props = {}) {
         React.createElement(BrowserPicker, { key: 'image', id: 'image', className: ClassButton, children: icons.browserImage }),
     ]);
     (_g = optionsStrict.footer).after || (_g.after = [
-        React.createElement(BrowserControl, { key: 'import', children: icons.upload })
+        React.createElement(BrowserControl, { key: 'import', children: icons.import })
     ]);
     (_h = optionsStrict.content).children || (_h.children = React.createElement(DefinitionItem, { draggable: true, className: 'definition preview' }));
     const children = React.createElement(React.Fragment, null,
@@ -3438,7 +3437,6 @@ function Masher(props) {
         if (!requested && servers[ServerType.Data]) {
             setRequested(true);
             const request = {};
-            // console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
             const promise = endpointPromise(Endpoints.data[editType].default, request);
             promise.then((response) => {
                 var _a;

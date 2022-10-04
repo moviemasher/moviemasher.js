@@ -30,7 +30,7 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
     if (this._commandProcess) return this._commandProcess
 
     const { commandInputs: inputs, commandFilters, output, avType } = this
-    console.log(this.constructor.name, "command", inputs)
+    // console.log(this.constructor.name, "command", inputs)
     const commandOptions: CommandOptions = { commandFilters, inputs, output, avType }
     return this._commandProcess = commandInstance(commandOptions)
   }

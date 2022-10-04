@@ -1,11 +1,9 @@
 import React from 'react'
 import {
   editorInstance, UnknownObject,
-  DataMashDefaultResponse,
-  DataMashDefaultRequest,
+  DataDefaultRequest,
   Size,
   EditType,
-  DataCastDefaultResponse,
   DataDefaultResponse,
   eventStop,
   EditorIndex,
@@ -15,7 +13,9 @@ import {
   ApiCallbackResponse,
   DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes, 
   assertObject, EventType, isMashAndDefinitionsObject,
-  idGenerate, ActivityType, Definition, assertPreloadableDefinition, isDefinitionObject, isClip, isEffect, isLayer, DefinitionObject, isDefinition, EditedData, MashObject, EditedObject, sizeAboveZero
+  idGenerate, ActivityType, Definition, assertPreloadableDefinition, 
+  isDefinitionObject, isClip, isEffect, isLayer, DefinitionObject, isDefinition, 
+  sizeAboveZero
 } from '@moviemasher/moviemasher.js'
 
 import { ThemeIcons, PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
@@ -110,10 +110,9 @@ export function Masher(props: MasherProps): ReactResult {
     }
     if (!requested && servers[ServerType.Data]) {
       setRequested(true)
-      const request: DataMashDefaultRequest = {}
-      // console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
+      const request: DataDefaultRequest = {}
       const promise = endpointPromise(Endpoints.data[editType].default, request)
-      promise.then((response: DataMashDefaultResponse | DataCastDefaultResponse) => {
+      promise.then((response: DataDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
         const { previewSize: serverSize = previewSize, ...rest } = response
         if (servers.file?.prefix) {

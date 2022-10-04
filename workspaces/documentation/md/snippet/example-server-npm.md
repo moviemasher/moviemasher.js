@@ -12,7 +12,7 @@ Alternatively, if you're wanting to build your own server you can just install a
 
 _Please note_ that this does not install a client implementation that interacts with this module.
 Learn more about how the codebase is structured in the
-[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
+[Architecture Overview](https://moviemasher.com/docs/Architecture.html).
 
 ### Inclusion
 <fieldset>

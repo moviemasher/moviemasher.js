@@ -9,9 +9,15 @@ import {
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { fontDefault } from "../../Media/Font/FontFactory"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { isUndefined } from "../../Utility"
+import { isUndefined } from "../../Utility/Is"
+import { Loader } from "../../Loader/Loader"
+import { Size, sizeCover } from "../../Utility/Size"
+import { svgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../Utility/Svg"
+import { centerPoint } from "../../Utility/Rect"
+
 const TextContainerDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const TextContainerDefinitionWithContainer = ContainerDefinitionMixin(TextContainerDefinitionWithTweenable)
+const TextContainerDefinitionIcon = 'M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z'
 export class TextContainerDefinitionClass extends TextContainerDefinitionWithContainer implements TextContainerDefinition {
   constructor(...args: any[]) {
     super(...args)
@@ -32,6 +38,19 @@ export class TextContainerDefinitionClass extends TextContainerDefinitionWithCon
       name: 'width', tweenable: true, custom: true, type: DataType.Percent, 
       defaultValue: 0.8, max: 2.0, group: DataGroup.Size
     }))
+  }
+
+  definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
+    const superElement = super.definitionIcon(loader, size)
+    if (superElement) return superElement
+
+    const inSize = { width: 24, height: 24 }
+    const coverSize = sizeCover(inSize, size, true)
+    const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
+    const bounds = svgPolygonElement(inSize)
+    const pathElement = svgPathElement(TextContainerDefinitionIcon)
+    svgSetTransformRects(pathElement, inSize, outRect)
+    return Promise.resolve(svgElement(size, [bounds, pathElement]))
   }
 
   instanceArgs(object?: TextContainerObject): TextContainerObject {

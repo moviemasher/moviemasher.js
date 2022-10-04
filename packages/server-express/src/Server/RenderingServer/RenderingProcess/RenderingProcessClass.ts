@@ -33,7 +33,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const { visibleCommandDescriptions, commandOutput, audibleCommandDescription } = renderingDescription
     const length = visibleCommandDescriptions?.length
     if (!length || length === 1) {
-      console.log(this.constructor.name, "combinedRenderingDescriptionPromise resolved", length)
+      // console.log(this.constructor.name, "combinedRenderingDescriptionPromise resolved", length)
       return Promise.resolve(renderingDescription)
     }
 
@@ -145,7 +145,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const commandDescription: CommandDescription = { inputs, commandFilters, avType }
     assertTrue(durations.length === descriptions.length, 'each description has duration')
     commandDescription.duration = Math.max(...durations)
-    console.log(this.constructor.name, "commandDescriptionsMerged", inputs)
+    // console.log(this.constructor.name, "commandDescriptionsMerged", inputs)
     return commandDescription
   }
 
@@ -242,7 +242,7 @@ export class RenderingProcessClass implements RenderingProcess {
     const { outputType, avType } = commandOutput
     const { duration, inputs } = commandDescription
 
-    console.log(this.constructor.name, "renderResultPromise", inputs)
+    // console.log(this.constructor.name, "renderResultPromise", inputs)
     const commandOptions: CommandOptions = {
       output: commandOutput, ...commandDescription
     }
@@ -362,7 +362,7 @@ export class RenderingProcessClass implements RenderingProcess {
           
           if (expectDuration) {
             const { duration, inputs } = commandDescription
-            console.log(this.constructor.name, "command", inputs)
+            // console.log(this.constructor.name, "command", inputs)
 
             if (!duration) throw Errors.invalid.duration
           }

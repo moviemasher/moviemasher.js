@@ -115,15 +115,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     _colorFilter?: Filter
     get colorFilter() { return this._colorFilter ||= filterFromId('color') }
-
-    visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
-      const graphFileArgs: GraphFileArgs = { 
-        ...args, audible: false, visible: true
-      }
-      const files = this.fileCommandFiles(graphFileArgs)
-      // console.log(this.constructor.name, "visibleCommandFiles", files)
-      return files
-    }
     
     commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
@@ -458,6 +449,15 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       values.push(this.tween(key, isRange ? time.startTime : time, range))
       if (isRange) values.push(this.tween(key, time.endTime, range))
       return values
+    }
+
+    visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+      const graphFileArgs: GraphFileArgs = { 
+        ...args, audible: false, visible: true
+      }
+      const files = this.fileCommandFiles(graphFileArgs)
+      // console.log(this.constructor.name, "visibleCommandFiles", files)
+      return files
     }
   }
 }

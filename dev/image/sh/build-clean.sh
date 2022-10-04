@@ -11,7 +11,6 @@ cd $NODE_APP ;
 source dev/image/sh/node/build.sh ;
 
 cd $NODE_APP ;
-npm install -w @moviemasher/client-react ;
 npm install -w @moviemasher/server-express ;
 
 cd $NODE_APP ;

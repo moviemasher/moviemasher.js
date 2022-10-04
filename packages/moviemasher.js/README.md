@@ -2,9 +2,12 @@
 <!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-| JavaScript video editor, encoder, switcher | _NEW in version 5.1.0_ |
-| -- | -- |
-| _visual compositing_ through **SVG API** <br> _audio mixing_ through **WebAudio API** <br> _client_ implemented in **ReactJS** <br> _server_ implemented in **ExpressJS**  <br> _encode_ and _stream_ through **FFmpeg** | • container/content pattern <br> • vector-based masking <br> • tranform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
+_JavaScript video editor, encoder, switcher_
+- _visual compositing_ through **SVG API**
+- _audio mixing_ through **WebAudio API** 
+- _client_ implemented in **ReactJS** 
+- _server_ implemented in **ExpressJS**  
+- _encode_ and _stream_ through **FFmpeg**
 <!-- MAGIC:END -->
 
 ## Core Library
@@ -19,7 +22,7 @@ This module is a peer dependency of both
 
 In addition to this README, there is a simple
 [demo](https://moviemasher.com/docs/demo/index.html) and
-[more extensive documentation](https://moviemasher.com/docs/index.html) available on
+more [extensive documentation](https://moviemasher.com/docs/index.html) available on
 [MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
 also available when using a code editor that supports TypeScript and IntelliSense.
 <!-- MAGIC:END -->
@@ -39,7 +42,6 @@ The HTML document below can be loaded in a web browser to display the simplest '
     <title>Movie Masher</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <!-- In production: change extension from '.js' to '.min.js' -->
     <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
   </head>
   <body>
@@ -66,10 +68,11 @@ This example includes just a single text clip on a single track, but multiple tr
 
 This clip is then nested within a mash object which is passed to the editor's `load` method. This returns a promise that resolves once the first frame can be displayed, in this case waiting until the default font is loaded. The editor's `svgItems` method is then called which returns another promise that resolves with an array of elements. These are simply then appended to our SVG tag. 
 
-_Please note_ that this example will only display what's on the first frame of our mash and will not update if we subsequently use the editor to make changes. Its utility is limited to displaying a mash at a particular time. 
+| <svg width="1rem" height="1rem" viewBox="0 0 512 512"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z" stroke="none" fill="currentColor" /></svg> | _Please note_ |
+| -- | -- |
+|  | This example will only display what's on the first frame of our mash and will not update if we subsequently use the editor to make changes. More typically the client package is used, even when just displaying a mash. Learn more about how the codebase is structured in the [Architecture Overview](https://moviemasher.com/docs/Architecture.html). |
 
-Learn more about how the codebase is structured in the
-[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
+
 <!-- MAGIC:END -->
 <!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
 <!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
@@ -81,6 +84,5 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please [send an email](mailto:connect27@moviemasher.com)
-to discuss ways to contribute to the project.
+and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
 <!-- MAGIC:END -->

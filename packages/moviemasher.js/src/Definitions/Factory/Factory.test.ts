@@ -69,7 +69,7 @@ describe("Factory", () => {
     }
     // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: DefinitionType.Audio}
     const audioDefinition = () => Factory.audio.definition(mediaObject)
-    const defaults = { trim: 0, gain: 1.0 } //frame: 0, frames: -1, 
+    const defaults = { startTrim: 0, gain: 1.0 } //frame: 0, frames: -1, 
 
     describe("instance", () => {
       test("returns audio clip for valid clipObject", () => {

@@ -69,7 +69,7 @@ export class StreamingProcessClass extends EventEmitter {
         }
 
         // TODO: there shouldn't be any relative paths at this point, but we added one above!
-        const prefix = '../example-express-react/dist'
+        const prefix = '../example-express-react'
 
         streamingDescription.inputs?.forEach(input => {
           const { source } = input

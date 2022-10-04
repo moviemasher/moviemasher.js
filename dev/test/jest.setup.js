@@ -62,11 +62,11 @@ beforeEach(() => {
   Defined.undefineAll()
   Defined.define({
     id: 'image-square', type: DefinitionType.Image, 
-    source: '../shared/image/globe.jpg'
+    source: '../shared/image/globe.jpg',  sourceSize: { width: 640, height: 480 }
   })
   Defined.define({
     id: 'image-landscape', type: DefinitionType.Image, 
-    source: '../shared/image/cable.jpg'
+    source: '../shared/image/cable.jpg', sourceSize: { width: 640, height: 480 }
   })
   Defined.define({
     type: "videosequence",
@@ -74,7 +74,7 @@ beforeEach(() => {
     url: 'video/frames/',
     source: 'video/source.mp4',
     audio: 'video/audio.mp3',
-    duration: 3, fps: 30, sourceSize: {width: 640, height: 480}
+    duration: 3, fps: 30, sourceSize: { width: 640, height: 480 }
   })
   Defined.define({
     type: "video",

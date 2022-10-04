@@ -3,12 +3,14 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
+import { terser } from 'rollup-plugin-terser'
+
 import pkg from "../../package.json"
 
-const { main, source } = pkg
+const { main } = pkg
 
 export default {
-  input: source,
+  input: 'src/index.ts',
   output: {
     file: main,
     format: "cjs",
@@ -24,6 +26,7 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({ tsconfig: './dev/tsconfig.json' })
+    ts({ tsconfig: './dev/tsconfig.json' }),
+    terser()
   ]
 }

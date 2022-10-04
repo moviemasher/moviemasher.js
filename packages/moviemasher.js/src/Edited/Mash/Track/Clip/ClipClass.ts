@@ -181,7 +181,7 @@ export class ClipClass extends InstanceBase implements Clip {
 
   commandFilters(args: CommandFilterArgs): CommandFilters {
     const commandFilters:CommandFilters = []
-    const { visible, quantize, outputSize: outputSize, time } = args
+    const { visible, quantize, outputSize, time } = args
     const clipTime = this.timeRange(quantize)
     const contentArgs: CommandFilterArgs = { ...args, clipTime }
     const { content, container } = this
@@ -464,11 +464,13 @@ export class ClipClass extends InstanceBase implements Clip {
 
   resetTiming(tweenable?: Tweenable, quantize?: number): void {
     const { timing } = this
-    // console.log("resetDuration", timing)
+    // console.log("resetTiming", timing)
     const track = this._track
     switch(timing) {
       case Timing.Custom: {
-        if (isPositive(this.frames)) break
+        
+        // console.log("resetTiming", this.frames)
+        if (isAboveZero(this.frames)) break
 
         this.frames = Default.duration * (quantize || track!.mash.quantize)
         break

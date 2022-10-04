@@ -12,6 +12,7 @@ import { clipDefault } from "../Edited/Mash/Track/Clip/ClipFactory"
 import { assertUpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { assertTrue } from "../Utility/Is"
 import { expectArrayLength } from "../../../../dev/test/Utilities/Expect"
+import { ImageDefinitionObject } from "../Media/Image/Image"
 
 describe("OutputFactory", () => {
   describe("video", () => {
@@ -19,10 +20,13 @@ describe("OutputFactory", () => {
       const id = 'video-from-multiple'
       const output = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
       const globeDefinitionObject = {
-        id: 'image-id-globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
+        id: 'image-id-globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg',
+        sourceSize: { width: 320, height: 320 }
       }
-      const cableDefinitionObject = {
-        id: 'image-id-cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg'
+      const cableDefinitionObject: ImageDefinitionObject = {
+        id: 'image-id-cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg',
+        sourceSize: { width: 320, height: 240 }
+        
       }
       const definitionObjects = [globeDefinitionObject, cableDefinitionObject]
       const mashObject: MashObject = {

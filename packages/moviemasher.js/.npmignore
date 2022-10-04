@@ -1,3 +1,2 @@
-**/*.test.ts
-**/__image_snapshots__*
-**/__snapshots__*
+src/*
+dev/*

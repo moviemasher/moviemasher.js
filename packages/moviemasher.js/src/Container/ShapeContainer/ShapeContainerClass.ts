@@ -42,67 +42,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     if (isDefault) return false
 
     // shape files can only colorize a single color at a single size
-    if (this.isTweeningColor(args)) return false
-
-
-    return true //!( || this.isTweeningSize(args))
-  }
-
-
-  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
-    const { isDefault, id } = this
-    const alpha = this.requiresAlpha(args)
-    const tweeningColor = this.isTweeningColor(args)
-    if (isDefault && !alpha) {
-      // console.log(this.constructor.name, "commandFiles NONE", id, isDefault, alpha, tweeningColor)
-      return []
-    }
-    const { definition } = this
-    const { path } = definition
-    const { contentColors: colors = [], containerRects, time, videoRate } = args
-    assertPopulatedArray(containerRects, 'containerRects')
-
-    const duration = isTimeRange(time) ? time.lengthSeconds : 0
-    const [rect, rectEnd] = containerRects
-    const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd)}
-    const { width: maxWidth, height: maxHeight} = maxSize
-
-    let [forecolor] = colors
-    if (alpha) forecolor = colorWhite
-    else if (tweeningColor) forecolor = colorBlack
-   
-    let fill = 'none'
-    if (isDefault) fill = colorWhite
-    else if (alpha) fill = colorBlack
-
-    const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
-    const { width: inWidth, height: inHeight } = intrinsicRect
-    const dimensionsString = `width="${inWidth}" height="${inHeight}"`
-    const transformAttribute = svgTransform(intrinsicRect, maxSize)
-    // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
-    const tags: string[] = []
-    tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
-    tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
-    tags.push(`<rect ${dimensionsString} fill="${fill}"/>`)
-    if (!isDefault) tags.push(`<path d="${path}" fill="${forecolor}"/>`)
-    tags.push("</g>")
-    tags.push("</svg>")
-    const svgTag = tags.join("")
-  
-    const options: ValueObject = {}
-    if (duration) {
-      options.loop = 1
-      options.framerate = videoRate
-      options.t = duration
-      // options.re = ''
-    }
-    const commandFile: CommandFile = { 
-      type: GraphFileType.Svg, file: id, content: svgTag, 
-      input: true, inputId: id, definition, options
-    }
-    // console.log(this.constructor.name, "visibleCommandFiles", commandFile)
-  
-    return [commandFile]
+    return !this.isTweeningColor(args)
   }
   
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters {
@@ -152,7 +92,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       commandFilters.push(...super.containerCommandFilters(superArgs, tweening))
     } else if (this.isDefault || noContentFilters) {
       const { id } = this
-      if (!filterInput) console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id)
+      // if (!filterInput) console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id)
       
       filterInput ||= commandFilesInput(commandFiles, id, true)
       assertPopulatedString(filterInput, 'final input')
@@ -320,6 +260,62 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
 
     return this.isTweeningColor(args)//tweeningSize || 
   
+  }
+
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+    const { isDefault, id } = this
+    const alpha = this.requiresAlpha(args)
+    const tweeningColor = this.isTweeningColor(args)
+    if (isDefault && !alpha) {
+      // console.log(this.constructor.name, "commandFiles NONE", id, isDefault, alpha, tweeningColor)
+      return []
+    }
+    const { definition } = this
+    const { path } = definition
+    const { contentColors: colors = [], containerRects, time, videoRate } = args
+    assertPopulatedArray(containerRects, 'containerRects')
+
+    const duration = isTimeRange(time) ? time.lengthSeconds : 0
+    const [rect, rectEnd] = containerRects
+    const maxSize = { ...PointZero, ...tweenMaxSize(rect, rectEnd)}
+    const { width: maxWidth, height: maxHeight} = maxSize
+
+    let [forecolor] = colors
+    if (alpha) forecolor = colorWhite
+    else if (tweeningColor) forecolor = colorBlack
+   
+    let fill = 'none'
+    if (isDefault) fill = colorWhite
+    else if (alpha) fill = colorBlack
+
+    const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
+    const { width: inWidth, height: inHeight } = intrinsicRect
+    const dimensionsString = `width="${inWidth}" height="${inHeight}"`
+    const transformAttribute = svgTransform(intrinsicRect, maxSize)
+    // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
+    const tags: string[] = []
+    tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
+    tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
+    tags.push(`<rect ${dimensionsString} fill="${fill}"/>`)
+    if (!isDefault) tags.push(`<path d="${path}" fill="${forecolor}"/>`)
+    tags.push("</g>")
+    tags.push("</svg>")
+    const svgTag = tags.join("")
+  
+    const options: ValueObject = {}
+    if (duration) {
+      options.loop = 1
+      options.framerate = videoRate
+      options.t = duration
+      // options.re = ''
+    }
+    const commandFile: CommandFile = { 
+      type: GraphFileType.Svg, file: id, content: svgTag, 
+      input: true, inputId: id, definition, options
+    }
+    // console.log(this.constructor.name, "visibleCommandFiles", commandFile)
+  
+    return [commandFile]
   }
 }
 

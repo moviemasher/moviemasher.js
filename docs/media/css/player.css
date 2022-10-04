@@ -25,16 +25,19 @@
 .moviemasher .editor .panel.player .content > .svgs {
   position: relative;
 }
+
+
 .moviemasher .editor .panel.player .content > .svgs > svg {
   position: absolute;
   left: 0px;
   top: 0px;
-  pointer-events: none;
 }
 
-/* .moviemasher .editor .panel.player .content > .svgs > svg .contained {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds,
+.moviemasher .editor .panel.player .content > .svgs > svg.background,
+.moviemasher .editor .panel.player .content > .svgs > svg.track {
   pointer-events: none;
-} */
+}
 
 .moviemasher .editor .panel.player .content > .svgs > svg .outline {
   cursor: move;
@@ -56,38 +59,42 @@
 @keyframes color { to {  stroke: black } }
 @keyframes stroke { to { stroke-dashoffset: 0; } }
 /* 
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.ne {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.ne {
   cursor: ne-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.se {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.se {
   cursor: se-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.nw {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.nw {
   cursor: nw-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.sw {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.sw {
   cursor: sw-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.n {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.n {
   cursor: n-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.s {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.s {
   cursor: s-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.e {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.e {
   cursor: e-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.w {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.w {
   cursor: w-resize;
 } */
 
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.back {
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds.back > * {
   stroke-width: calc(2 * var(--border-size));
+
   stroke: black;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg .bounds.fore {
-  pointer-events: none;
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds.back .handle {
+  pointer-events: fill;
+}
+
+.moviemasher .editor .panel.player .content > .svgs > svg.bounds.fore > * {
   stroke: none;
   fill: white;
 }

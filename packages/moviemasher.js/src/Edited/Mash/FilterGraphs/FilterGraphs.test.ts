@@ -32,6 +32,7 @@ describe("FilterGraphs", () => {
     
     test("its visible FilterGraph contains correct CommandFilters", () => {
       const mash = mashInstance({ tracks: [ { clips: [{ definitionId: clipDefault.id }] }]})
+      mash.imageSize = { width: 640, height: 480 }
       const filterGraphs = mash.filterGraphs()
       const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
       const { commandFilters } = filterGraphVisible

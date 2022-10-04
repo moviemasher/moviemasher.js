@@ -34,8 +34,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const definition = useDefinition()
 
   const { id, label } = definition
-  const iconId = props.draggable ? id : 'definition'
-
+ 
   const updateRef = async () => {
     const { rect, preloader } = editor
     const { current } = svgRef

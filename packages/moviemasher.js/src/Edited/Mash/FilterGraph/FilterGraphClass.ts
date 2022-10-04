@@ -106,7 +106,7 @@ export class FilterGraphClass implements FilterGraph {
       assertDefinition(definition)
       const { label } = definition
       const resolved = preloader.key(commandFile)
-      console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
+      // console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
       commandFile.resolved = resolved
     })
     return commandFiles
@@ -123,7 +123,7 @@ export class FilterGraphClass implements FilterGraph {
     // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
 
     const chainArgs: CommandFilterArgs = { 
-      videoRate, time, quantize, visible, outputSize: outputSize, commandFiles, 
+      videoRate, time, quantize, visible, outputSize, commandFiles, 
       chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
     }
     

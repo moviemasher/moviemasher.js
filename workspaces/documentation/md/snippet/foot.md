@@ -6,5 +6,4 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please [send an email](mailto:connect27@moviemasher.com)
-to discuss ways to contribute to the project.
+and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
