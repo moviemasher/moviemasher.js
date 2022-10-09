@@ -7,27 +7,35 @@ import { ShapeContainerDefinitionClass } from "./ShapeContainer/ShapeContainerDe
 import { TextContainerDefinitionClass } from "./TextContainer/TextContainerDefinitionClass"
 
 import defaultContainer from "../Definitions/DefinitionObjects/container/default.json"
-import chatContainer from "../Definitions/DefinitionObjects/container/chat.json"
-import broadcastContainer from "../Definitions/DefinitionObjects/container/broadcast.json"
-import musicContainer from "../Definitions/DefinitionObjects/container/music.json"
-import testContainer from "../Definitions/DefinitionObjects/container/test.json"
+import heartContainer from "../Definitions/DefinitionObjects/container/heart.json"
+import cloudContainer from "../Definitions/DefinitionObjects/container/cloud.json"
+import appleContainer from "../Definitions/DefinitionObjects/container/apple.json"
+import starburstContainer from "../Definitions/DefinitionObjects/container/starburst.json"
+import roundedRectContainer from "../Definitions/DefinitionObjects/container/rounded-rect.json"
 import textContainer from "../Definitions/DefinitionObjects/container/text.json"
+import fireContainer from "../Definitions/DefinitionObjects/container/fire.json"
+import flagContainer from "../Definitions/DefinitionObjects/container/flag.json"
+import ovalContainer from "../Definitions/DefinitionObjects/container/oval.json"
 
 export const containerDefaults = [
-  new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
   new TextContainerDefinitionClass(textContainer),
-  new ShapeContainerDefinitionClass(chatContainer),
-  new ShapeContainerDefinitionClass(broadcastContainer),
-  new ShapeContainerDefinitionClass(musicContainer),
-  new ShapeContainerDefinitionClass(testContainer),
+  new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
+  new ShapeContainerDefinitionClass(roundedRectContainer),
+  new ShapeContainerDefinitionClass(ovalContainer),
+  new ShapeContainerDefinitionClass(starburstContainer),
+  new ShapeContainerDefinitionClass(heartContainer),
+  new ShapeContainerDefinitionClass(cloudContainer),
+  new ShapeContainerDefinitionClass(fireContainer),
+  new ShapeContainerDefinitionClass(flagContainer),
+  new ShapeContainerDefinitionClass(appleContainer),
 ]
 
 export const containerDefinition = (object : ContainerDefinitionObject) : ContainerDefinition => {
   const { id } = object
   assertPopulatedString(id, 'containerDefinition id')
 
-  throw 'containerDefinition'
-  // return new ContainerDefinitionClass({ ...object, type: DefinitionType.Container })
+  // console.log("containerDefinition", id, object, containerDefaults)
+  return new ShapeContainerDefinitionClass({ ...object, type: DefinitionType.Container })
 }
 
 export const containerDefinitionFromId = (id: string): ContainerDefinition => {

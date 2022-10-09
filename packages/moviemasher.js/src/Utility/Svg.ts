@@ -68,7 +68,7 @@ export const svgPolygonElement = (dimensions: any, className?: string | string[]
 }
 
 export const svgSetBox = (element: SvgItem, boxSize: Size) => {
-  assertSizeAboveZero(boxSize)
+  assertSizeAboveZero(boxSize, 'svgSetBox')
 
   const justSize = sizeCopy(boxSize)
   const { width, height } = justSize
@@ -143,7 +143,7 @@ export const svgFilter = (values: StringObject, dimensions?: any): SvgFilter => 
   return element as SvgFilter
 }
 
-export const svgAppend = (element: SvgItem, items?: SvgItem | SvgItems) => {
+export const svgAppend = (element: Element, items?: SvgItem | SvgItems) => {
   if (!items) return
 
   const kids = isArray(items) ? items : [items]
@@ -215,7 +215,7 @@ export const svgSet = (element: SvgItem, value?: string, name = 'id') => {
   if (isPopulatedString(value)) element.setAttribute(name, value)
 }
 
-export const svgAddClass = (element: SvgItem, className?: string | string[]) => {
+export const svgAddClass = (element: Element, className?: string | string[]) => {
   if (!className) return
   const array = isArray(className) ? className : className.split(' ')
   element.classList.add(...array)
@@ -237,8 +237,8 @@ export const svgSetTransform = (element: SvgItem, transform: string, origin = 't
 
 
 export const svgTransform = (dimensions: Rect | Size, rect: Rect): string => {
-  assertSizeAboveZero(dimensions)
-  assertSizeAboveZero(rect)
+  assertSizeAboveZero(dimensions, 'svgTransform.dimensions')
+  assertSizeAboveZero(rect, 'svgTransform.rect')
 
   const { width: inWidth, height: inHeight } = dimensions
   const { width: outWidth, height: outHeight, x: outX, y: outY } = rect
@@ -268,7 +268,7 @@ export const svgFunc = (type: string, values: string) => {
   return element
 }
 
-export const svgSetChildren = (element: SvgItem, svgItems: SvgItems) => {
+export const svgSetChildren = (element: Element, svgItems: SvgItems) => {
   if (!element.hasChildNodes()) return svgAppend(element, svgItems)
 
   const { childNodes } = element

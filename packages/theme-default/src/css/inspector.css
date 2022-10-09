@@ -4,12 +4,21 @@
   flex-grow: 1;
 }
 
+.moviemasher .editor .panel.inspector .head {
+  grid-auto-flow: column;
+  grid-template-columns: 1fr repeat(2, min-content);
+}
+
 .moviemasher .editor .panel.inspector .content fieldset {
+  width: 100%;
+  max-width: 100%;
   line-height: var(--icon-size);
   font-size: var(--icon-size);
   padding: var(--spacing);
   background-color: initial;
 }
+
+
 .moviemasher .editor .panel.inspector .content .start-end {
   display: flex;
   float: right;
@@ -25,11 +34,17 @@
 }
 
 .moviemasher .editor .panel.inspector .content fieldset > div {
-  display: grid;
+  display: flex;
   gap: var(--spacing);
   grid-auto-flow: column;
 }
-.moviemasher .editor .panel.inspector .content fieldset > div.size {
+
+.moviemasher .editor .panel.inspector .content fieldset > div > input {
+  min-width: 50px;
+  width: 100%;
+}
+
+/* .moviemasher .editor .panel.inspector .content fieldset > div.size {
   grid-template-columns: var(--icon-size) minmax(50px, 1fr) var(--icon-size);
 }
 
@@ -39,7 +54,7 @@
 
 .moviemasher .editor .panel.inspector .content fieldset > div.point {
   grid-template-columns: repeat(2, var(--icon-size)) minmax(50px, 1fr) var(--icon-size);
-}
+} */
 
 .moviemasher .editor .panel.inspector .content {
   overflow-y: auto;
@@ -82,6 +97,7 @@
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
   overflow-y: scroll;
+  font-size: 1rem;
 }
 
 .moviemasher .editor .panel.inspector .definition-drop {

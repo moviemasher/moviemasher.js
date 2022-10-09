@@ -18,7 +18,9 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
       name: "contentId", type: DataType.ContentId,
       defaultValue: DefaultContentId
     }))
-    this.properties.push(propertyInstance({ name: "label", type: DataType.String }))
+    this.properties.push(propertyInstance({ 
+      name: "label", type: DataType.String 
+    }))
     this.properties.push(propertyInstance({ 
       name: "sizing", type: DataType.Sizing, defaultValue: Sizing.Content,
       // group: DataGroup.Sizing,
@@ -28,6 +30,7 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
       group: DataGroup.Timing,
     }))
     this.properties.push(propertyInstance({ 
+      name: "frame",
       type: DataType.Frame, 
       group: DataGroup.Timing, 
       defaultValue: Duration.None, min: 0, step: 1

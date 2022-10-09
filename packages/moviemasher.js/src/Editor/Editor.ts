@@ -1,4 +1,4 @@
-import { Endpoint, NumberObject, StringObject, SvgItem } from "../declarations"
+import { Endpoint, NumberObject, PreviewItems, StringObject, SvgItem } from "../declarations"
 import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction } from "../Setup/Enums"
@@ -111,7 +111,7 @@ export interface Editor {
   saved(temporaryIdLookup?: StringObject): void
   readonly selection: EditorSelection
   svgElement: SVGSVGElement
-  svgItems(enabled?: boolean): Promise<SvgItem[]>
+  previewItems(enabled?: boolean): Promise<PreviewItems>
   time: Time
   timeRange: TimeRange
   undo(): void

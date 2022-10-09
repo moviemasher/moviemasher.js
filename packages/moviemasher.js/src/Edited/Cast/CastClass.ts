@@ -1,4 +1,4 @@
-import { Scalar, SvgItem, UnknownObject } from "../../declarations"
+import { PreviewItem, PreviewItems, Scalar, SvgItem, UnknownObject } from "../../declarations"
 import { Size } from "../../Utility/Size"
 import { GraphFiles, GraphFileOptions } from "../../MoveMe"
 import { SelectedItems } from "../../Utility/SelectedProperty"
@@ -15,7 +15,7 @@ import {
 } from "./Layer/Layer"
 import { EmptyMethod } from "../../Setup/Constants"
 import { PreviewOptions } from "../Mash/Preview/Preview"
-import { svgPolygonElement } from "../../Utility/Svg"
+import { svgElement, svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
 import { arrayReversed } from "../../Utility/Array"
@@ -79,6 +79,7 @@ export class CastClass extends EditedClass implements Cast {
     if (isPopulatedArray(layers)) this.layers.push(...layers.map(object => 
       this.createLayer(object)
     ))
+    this.label ||= Default.cast.label
   }
 
   addLayer(layer: Layer, layerAndPosition: LayerAndPosition = {}) {
@@ -207,21 +208,21 @@ export class CastClass extends EditedClass implements Cast {
     }
   }
   
-  svgItems(args: PreviewOptions): Promise<SvgItem[]> {
+  previewItems(args: PreviewOptions): Promise<PreviewItems> {
     const { mashes, imageSize } = this
-    const allSvgs: SvgItem[] = []
+    const allSvgs: PreviewItems = []
 
     const { background = this.color } = args
 
     const mashArgs = { ...args, color: '' }
 
-    const element = svgPolygonElement(imageSize, '', background) as SvgItem
+    const element = svgElement(imageSize, svgPolygonElement(imageSize, '', background)) as PreviewItem
     let promise = Promise.resolve([element])
 
     arrayReversed(mashes).forEach((mash: Mash) => {
       promise = promise.then(svgs => {
         allSvgs.push(...svgs)
-        return mash.svgItems(mashArgs)
+        return mash.previewItems(mashArgs)
       })
     })
     return promise.then(svgs => {

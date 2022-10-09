@@ -1,3 +1,6 @@
 export * from "./useEditor"
 export * from "./useLayer"
 export * from "./useListeners"
+export * from "./useEditorActivity"
+export * from "./useEditorDefinitions"
+export * from "./useApiDefinitions"

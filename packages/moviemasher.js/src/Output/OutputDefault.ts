@@ -3,6 +3,7 @@ import { CommandOutput, RenderingCommandOutput, StreamingCommandOutput } from ".
 
 import outputDefaultAudioJson from './Defaults/audio.json'
 import outputDefaultImageJson from './Defaults/image.json'
+import outputDefaultImagePngJson from './Defaults/imagepng.json'
 import outputDefaultVideoJson from './Defaults/video.json'
 import outputDefaultImageSequenceJson from './Defaults/imagesequence.json'
 import outputDefaultWaveformJson from './Defaults/waveform.json'
@@ -34,8 +35,8 @@ export const outputDefaultWaveform = (overrides?: CommandOutput): RenderingComma
 
 export const outputDefaultPng = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
-  const commandOutput = outputDefaultImageJson as RenderingCommandOutput
-  return { ...commandOutput, ...object, format: OutputFormat.Png }
+  const commandOutput = outputDefaultImagePngJson as RenderingCommandOutput
+  return { ...commandOutput, ...object }
 }
 export const outputDefaultImage = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}

@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import {
   SizePreview,
-  idGenerate,
-  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration, idGenerateString
-} from '@moviemasher/moviemasher.js'
+  assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
+  isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration, idGenerateString
+} from '@moviemasher/moviemasher.js/umd/moviemasher.js'
 import { commandProcess, ExtensionLoadedInfo, probingInfoPromise, RenderingArgs, renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, renderingProcessInstance } from '@moviemasher/server-express'
 import {
   GenerateDefinitionObjects, GenerateOptions, GenerateMashTest,

@@ -348,7 +348,8 @@ export class RenderingProcessClass implements RenderingProcess {
           return this.combinedRenderingDescriptionPromise(index, renderingDescription)
         })
         return flatPromise.then(flatDescription => {
-          const infoFilename = renderingOutputFile(index, output, ExtensionLoadedInfo)
+          const { commandOutput } = flatDescription
+          const infoFilename = renderingOutputFile(index, commandOutput, ExtensionLoadedInfo)
           const infoPath = path.join(outputDirectory, infoFilename)
           const commandDescription = this.commandDescriptionMerged(flatDescription)
        
@@ -367,14 +368,14 @@ export class RenderingProcessClass implements RenderingProcess {
             if (!duration) throw Errors.invalid.duration
           }
 
-          const cmdFilename = renderingOutputFile(index, output, ExtensionCommands)
-          const destinationFileName = this.fileName(index, output, renderingOutput)
+          const cmdFilename = renderingOutputFile(index, commandOutput, ExtensionCommands)
+          const destinationFileName = this.fileName(index, commandOutput, renderingOutput)
           const cmdPath = path.join(outputDirectory, cmdFilename)
           const destination = path.join(outputDirectory, destinationFileName)
           // console.log(this.constructor.name, "runPromise flatPromise done", destination)
 
           const renderPromise = this.renderResultPromise(
-            destination, cmdPath, infoPath, output, commandDescription
+            destination, cmdPath, infoPath, commandOutput, commandDescription
           )
           return renderPromise.then(renderingResult => { results.push(renderingResult) })
         }).then(() => data)

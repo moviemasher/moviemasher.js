@@ -1,5 +1,5 @@
 import React from "react"
-import { ServerType, assertObject, UploadTypes } from "@moviemasher/moviemasher.js"
+import { assertObject, UploadTypes } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { ApiContext } from "../ApiClient/ApiContext"
@@ -8,17 +8,13 @@ import { MasherContext } from "../Masher/MasherContext"
 const BrowserControlId = 'upload-control-id'
 
 export function BrowserControl(props: PropsAndChild): ReactResult {
+  const { children, ...rest } = props
   const fileInput = React.useRef<HTMLInputElement>(null)
   const apiContext = React.useContext(ApiContext)
   const editorContext = React.useContext(MasherContext)
-
   const { servers } = apiContext
   const { drop } = editorContext
 
-  // const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
-  // if (!(enabled && required.every(type => servers[type]))) return null
-
-  const { children, ...rest } = props
 
   const onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { files } = event.currentTarget

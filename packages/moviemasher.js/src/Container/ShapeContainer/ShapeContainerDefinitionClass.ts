@@ -8,10 +8,11 @@ import {
 } from "./ShapeContainer"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { isAboveZero, isPopulatedString } from "../../Utility/Is"
-import { svgElement, svgPathElement, svgSetTransformRects } from "../../Utility/Svg"
+import { svgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../Utility/Svg"
 import { Size, sizeAboveZero, sizeCover } from "../../Utility/Size"
 import { Loader } from "../../Loader/Loader"
 import { centerPoint } from "../../Utility/Rect"
+import { DefaultContainerId } from "../Container"
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -29,7 +30,10 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     const superElement = super.definitionIcon(loader, size)
     if (superElement) return superElement
 
-    const { pathHeight: height, pathWidth: width, path } = this
+    const { id, pathHeight: height, pathWidth: width, path } = this
+    if (id === DefaultContainerId) {
+      return Promise.resolve(svgElement(size, svgPolygonElement(size, '', 'currentColor')))
+    }
     const inSize = { width, height }
     if (!(sizeAboveZero(inSize) && isPopulatedString(path))) return
 

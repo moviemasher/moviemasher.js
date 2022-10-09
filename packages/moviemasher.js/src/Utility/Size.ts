@@ -61,7 +61,7 @@ export const sizeScale = (size: Size, horizontally: number, vertically: number):
 }
 
 export const sizeCover = (inSize: Size, outSize: Size, contain = false): Size => {
-  assertSizeAboveZero(inSize)
+  assertSizeAboveZero(inSize, 'sizeCover')
   assertSize(outSize)
 
   const { width: inWidth, height: inHeight } = inSize
@@ -119,7 +119,7 @@ export const sizeString = (size: Size) => {
 }
 
 export const sizeLockNegative = (size: Size, lock?: Orientation): Size => {
-  assertSizeAboveZero(size)
+  assertSizeAboveZero(size, 'sizeLockNegative')
   const locked = sizeCopy(size)
   if (lock) {
     if (lock === Orientation.V) locked.height = -1
@@ -133,6 +133,6 @@ export const sizeFromElement = (element: Element): Size => {
     width: Number(element.getAttribute('width')), 
     height: Number(element.getAttribute('height')) 
   }
-  assertSizeAboveZero(size)
+  assertSizeAboveZero(size, 'sizeFromElement')
   return size
 }

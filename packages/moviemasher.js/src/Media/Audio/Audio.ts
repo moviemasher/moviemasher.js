@@ -1,7 +1,7 @@
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
-import { GenericFactory, LoadedAudio } from "../../declarations"
+import { GenericFactory } from "../../declarations"
 import { isDefinition } from "../../Definition/Definition"
-import { isUpdatableDuration, UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { DefinitionType } from "../../Setup/Enums"
 
 
@@ -11,7 +11,7 @@ export interface Audio extends Content, UpdatableDuration {
   definition : AudioDefinition
 }
 export const isAudio = (value: any): value is Audio => {
-  return isContent(value) && isUpdatableDuration(value)
+  return isContent(value) && isAudioDefinition(value.definition)
 }
 
 export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationDefinitionObject { 

@@ -19,9 +19,7 @@ export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 export function BrowserContent(props: BrowserContentProps): ReactResult {
   const [over, setOver] = React.useState(false)
   const { className, children, ...rest } = props
-  const child = React.Children.only(children)
-  assertTrue(React.isValidElement(child))
-  
+
   const editorContext = React.useContext(MasherContext)
   const browserContext = React.useContext(BrowserContext)
   const definitions = browserContext.definitions || []
@@ -52,6 +50,9 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   const classes: string[] = []
   if (className) classes.push(className)
   if (over) classes.push(ClassDropping)
+  
+  const child = React.Children.only(children)
+  assertTrue(React.isValidElement(child))
   
   const childNodes = () => {
     const childProps = child.props

@@ -19,7 +19,9 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build": "rollup --config dev/rollup/cjs.config.js"
+    "build-cjs-min": "rollup --config dev/rollup/cjs.min.config.js",
+    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
+    "build": "run-s build-cjs build-cjs-min"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.0",

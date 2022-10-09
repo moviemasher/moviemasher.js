@@ -160,9 +160,9 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const outInfo: LoadedInfo = expandToJson(outInfoPath)
       const { 
         width: outWidth, height: outHeight, 
-        duration: outDuration, audible: outAudible 
+        duration: outDuration, audible: outAudible, extension
       } = outInfo
-      const outputFilename = renderingOutputFile(index, output)
+      const outputFilename = renderingOutputFile(index, output, extension)
       const outUrl = path.join(prefix, outputFilename)
       // console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
       switch(outputType) {

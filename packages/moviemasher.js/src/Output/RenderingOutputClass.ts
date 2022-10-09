@@ -56,14 +56,8 @@ export class RenderingOutputClass implements RenderingOutput {
     return type
   }
 
-  _commandOutput?: RenderingCommandOutput
-  get commandOutput(): RenderingCommandOutput {
-    if (this._commandOutput) return this._commandOutput
+  protected get commandOutput(): RenderingCommandOutput { return this.args.commandOutput }
 
-    const options: ValueObject = { ...this.args.commandOutput.options }
-    const commandOutput: RenderingCommandOutput = { ...this.args.commandOutput, options }
-    return this._commandOutput = commandOutput
-  }
 
   get duration(): number { return this.timeRange.lengthSeconds }
 
@@ -214,35 +208,35 @@ export class RenderingOutputClass implements RenderingOutput {
     })
   }
 
-  get renderingDescription(): RenderingDescription {
-    const { commandOutput } = this
-    const renderingDescription: RenderingDescription = { commandOutput }
-    const avType = this.avTypeNeededForClips
-    const { filterGraphs } = this
-    // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
-    if (avType !== AVType.Audio) {
-      const { filterGraphsVisible } = filterGraphs
-      const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-        const { commandFilters, commandInputs: inputs, duration } = filterGraph
-        const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
-      // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
-        return commandDescription
-      })
-      renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
-    }
-    if (avType !== AVType.Video) {
-      const { filterGraphAudible, duration } = filterGraphs
-      if (filterGraphAudible) {
-        const { commandFilters, commandInputs: inputs } = filterGraphAudible
+  // get renderingDescription(): RenderingDescription {
+  //   const { commandOutput } = this
+  //   const renderingDescription: RenderingDescription = { commandOutput }
+  //   const avType = this.avTypeNeededForClips
+  //   const { filterGraphs } = this
+  //   // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
+  //   if (avType !== AVType.Audio) {
+  //     const { filterGraphsVisible } = filterGraphs
+  //     const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
+  //       const { commandFilters, commandInputs: inputs, duration } = filterGraph
+  //       const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
+  //     // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
+  //       return commandDescription
+  //     })
+  //     renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
+  //   }
+  //   if (avType !== AVType.Video) {
+  //     const { filterGraphAudible, duration } = filterGraphs
+  //     if (filterGraphAudible) {
+  //       const { commandFilters, commandInputs: inputs } = filterGraphAudible
        
-        const commandDescription: CommandDescription = {
-          inputs, commandFilters, duration, avType: AVType.Audio
-        }
-        renderingDescription.audibleCommandDescription = commandDescription
-      }
-    }
-    return renderingDescription
-  }
+  //       const commandDescription: CommandDescription = {
+  //         inputs, commandFilters, duration, avType: AVType.Audio
+  //       }
+  //       renderingDescription.audibleCommandDescription = commandDescription
+  //     }
+  //   }
+  //   return renderingDescription
+  // }
 
   get startTime(): Time {
     if (this.args.startTime) return this.args.startTime

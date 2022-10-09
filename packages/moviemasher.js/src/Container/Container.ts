@@ -1,5 +1,5 @@
 import { Tweenable, TweenableObject, isTweenable, TweenableDefinitionObject, TweenableDefinition, isTweenableDefinition } from "../Mixin/Tweenable/Tweenable"
-import { Constrained, GenericFactory, SvgItem } from "../declarations"
+import { Constrained, GenericFactory, LoadedVideo, PreviewItems, SvgItem, SvgItems } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
 import { CommandFilters, CommandFilterArgs } from "../MoveMe"
@@ -8,6 +8,7 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 import { isObject } from "../Utility/Is"
 import { throwError } from "../Utility/Throw"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
+import { Content } from "../Content/Content"
 
 export const DefaultContainerId = `${IdPrefix}container${IdSuffix}`
 export const TextContainerId = `${IdPrefix}container.text`
@@ -15,6 +16,10 @@ export const TextContainerId = `${IdPrefix}container.text`
 export interface ContainerObject extends TweenableObject {
   height?: number
   heightEnd?: number
+  offN?: boolean
+  offS?: boolean
+  offE?: boolean
+  offW?: boolean
   opacity?: number
   opacityEnd?: number
   width?: number
@@ -51,10 +56,15 @@ export interface Container extends Tweenable {
   directionObject: DirectionObject
   directions: Anchor[]
   height: number
+  offE: boolean
+  offN: boolean
+  offS: boolean
+  offW: boolean
   opacity: number
   opacityCommandFilters(args: CommandFilterArgs): CommandFilters
   opacityEnd?: number
   pathElement(rect: Rect): SvgItem 
+  containedContent(content: Content, containerRect: Rect, previewSize: Size, time: Time, range: TimeRange, icon?: boolean): Promise<PreviewItems>
   translateCommandFilters(args: CommandFilterArgs): CommandFilters
   width: number
   x: number

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.renderingTestIdPromise = exports.renderingTestPromise = exports.renderingMashTestPromise = exports.renderingProcessArgs = exports.renderingProcessInput = exports.renderingTestIdsPromise = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const moviemasher_js_1 = require("@moviemasher/moviemasher.js");
+const moviemasher_js_1 = require("@moviemasher/moviemasher.js/umd/moviemasher.js");
 const server_express_1 = require("@moviemasher/server-express");
 const Generate_1 = require("./Generate");
 const TestRenderOutput_1 = require("./TestRenderOutput");

@@ -9,9 +9,11 @@ import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/Updatabl
 import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
+import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
 
 const VideoDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
-const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithTweenable)
+const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithTweenable)
+const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithContainer)
 const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContent)
 const VideoDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoDefinitionWithPreloadable)
 const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableSize)

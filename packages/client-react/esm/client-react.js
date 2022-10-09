@@ -1,5 +1,5 @@
 import React from 'react';
-import { EmptyMethod, isObject, isPopulatedString, throwError, EventType, isEventType, ActivityType, ClassCollapsed, assertTrue, ClassSelected, isPopulatedArray, isPositive, isAboveZero, assertObject, assertPopulatedObject, isUndefined, ClassButton, urlEndpoint, Endpoints, idPrefixSet, isPopulatedObject, ApiVersion, fetchCallback, sizeCopy, assertCast, assertPopulatedString, assertPopulatedArray, ServerType, DefinitionBase, Defined, isString, assertDefinitionType, isDefinitionType, isUploadType, isArray, DroppingPosition, ClassDroppingBefore, ClassDroppingAfter, ClassDropping, eventStop, isSelectType, UploadTypes, sizeAboveZero, sizeCeil, sizeScale, RectZero, pixelFromFrame, colorToRgb, colorRgbDifference, colorFromRgb, svgPolygonElement, idGenerate, svgPatternElement, svgDefsElement, svgUrl, svgElement, isLayer, isLayerFolder, SelectType, LayerType, isActionEvent, isChangeAction, ClassDisabled, MasherAction, assertSelectType, isEffect, isClip, isTrack, assertMash, OutputType, isMash, urlForEndpoint, DataType, ContainerTypes, ContentTypes, assertDefinition, isContainerDefinition, DefinitionType, isDefined, isNumber, Sizings, Timings, DataGroup, assertTimeRange, assertTime, selectedPropertyObject, tweenInputTime, PropertyTweenSuffix, isSelectedProperty, assertEffect, isEffectDefinition, selectedPropertiesScalarObject, Orientation, assertString, isOrientation, SelectTypes, assertPositive, arraySet, assertDataGroup, timeFromArgs, timeEqualizeRates, EditType, editorInstance, isDefinitionObject, isMashAndDefinitionsObject, isDefinition, assertPreloadableDefinition, OutputTypes, rectCopy, rectRound, stringSeconds, assertTrack, arrayReversed, pixelToFrame, DefaultContentId, pixelPerFrame, assertClip, ServerTypes, Errors } from '@moviemasher/moviemasher.js';
+import { EmptyMethod, isObject, isPopulatedString, throwError, assertDefined, EventType, isEventType, ActivityType, ClassCollapsed, assertTrue, ClassSelected, isPopulatedArray, isPositive, isAboveZero, assertObject, assertPopulatedObject, isUndefined, ClassButton, urlEndpoint, Endpoints, idPrefixSet, isPopulatedObject, ApiVersion, fetchCallback, sizeCopy, assertCast, Defined, ServerType, DefinitionBase, assertPopulatedString, isString, assertDefinitionType, isDefinitionType, isUploadType, isArray, DroppingPosition, ClassDroppingBefore, ClassDroppingAfter, ClassDropping, eventStop, isSelectType, UploadTypes, sizeAboveZero, sizeCeil, sizeScale, RectZero, pixelFromFrame, colorToRgb, colorRgbDifference, colorFromRgb, svgPolygonElement, idGenerate, svgPatternElement, svgDefsElement, svgUrl, svgElement, isLayer, isLayerFolder, SelectType, LayerType, isActionEvent, isChangeAction, ClassDisabled, MasherAction, assertSelectType, isEffect, isClip, isTrack, assertMash, OutputType, isMash, urlForEndpoint, DataType, ContainerTypes, ContentTypes, assertDefinition, isContainerDefinition, DefinitionType, isDefined, isNumber, Sizings, Timings, DataGroup, assertTimeRange, assertTime, selectedPropertyObject, tweenInputTime, PropertyTweenSuffix, isSelectedProperty, assertEffect, isEffectDefinition, selectedPropertiesScalarObject, Orientation, assertString, isOrientation, SelectTypes, assertPositive, arraySet, assertDataGroup, timeFromArgs, timeEqualizeRates, assertPopulatedArray, EditType, editorInstance, isDefinitionObject, isMashAndDefinitionsObject, isDefinition, assertPreloadableDefinition, OutputTypes, rectCopy, rectRound, stringSeconds, arrayReversed, pixelToFrame, DefaultContentId, pixelPerFrame, assertClip, ServerTypes, Errors } from '@moviemasher/moviemasher.js';
 import { Icons } from '@moviemasher/theme-default';
 
 /******************************************************************************
@@ -137,6 +137,12 @@ const ActivityContextDefault = {
 };
 const ActivityContext = React.createContext(ActivityContextDefault);
 
+const CollapseContextDefault = {
+    collapsed: false,
+    changeCollapsed: () => { },
+};
+const CollapseContext = React.createContext(CollapseContextDefault);
+
 const MasherContextDefault = {
     changeDefinition: EmptyMethod,
     drop: () => Promise.resolve([]),
@@ -147,60 +153,25 @@ const MasherContextDefault = {
 };
 const MasherContext = React.createContext(MasherContextDefault);
 
-const useListeners = (events, target) => {
-    const editorContext = React.useContext(MasherContext);
-    const { editor } = editorContext;
-    const eventTarget = target || editor.eventTarget;
-    const handleEvent = (event) => {
-        const { type } = event;
-        const handler = events[type];
-        if (handler)
-            handler(event);
-    };
-    const removeListeners = () => {
-        Object.keys(events).forEach(eventType => {
-            eventTarget.removeEventListener(eventType, handleEvent);
-        });
-    };
-    const addListeners = () => {
-        Object.keys(events).forEach(eventType => {
-            eventTarget.addEventListener(eventType, handleEvent);
-        });
-        return () => { removeListeners(); };
-    };
-    React.useEffect(() => addListeners(), []);
-};
-
-const CollapseContextDefault = {
-    collapsed: false,
-    changeCollapsed: () => { },
-};
-const CollapseContext = React.createContext(CollapseContextDefault);
-
-/**
- * @parents Masher
- * @children ActivityContent
- */
-function Activity(props) {
-    const { initialPicked = ActivityGroup.Active, collapsed: collapsedProp, className } = props, rest = __rest(props, ["initialPicked", "collapsed", "className"]);
-    const [collapsed, setCollapsed] = React.useState(!!collapsedProp);
-    assertActivityGroup(initialPicked);
+const useEditorActivity = () => {
+    // console.log("useEditorActivity")
+    const masherContext = React.useContext(MasherContext);
+    const { editor } = masherContext;
+    assertDefined(editor);
     const allActivitiesRef = React.useRef([]);
-    const { current: allActivities } = allActivitiesRef;
-    const [activities, setActivities] = React.useState(() => ([]));
-    const [picked, setPicked] = React.useState(() => initialPicked || ActivityGroup.Active);
-    const [label, setLabel] = React.useState('');
-    const getActivities = (activityGroup) => (allActivitiesRef.current.filter(activity => activity.activityGroup === activityGroup));
-    const handleActivity = (event) => {
+    const { eventTarget } = editor;
+    const getSnapshot = () => {
+        return allActivitiesRef.current;
+    };
+    const handleEvent = (event) => {
         const { type } = event;
         if (isEventType(type) && (event instanceof CustomEvent)) {
             const info = event.detail;
             const { id, type } = info;
+            const { current: allActivities } = allActivitiesRef;
             const existing = allActivities.find(activity => activity.id === id);
             const activity = existing || { id, activityGroup: ActivityGroup.Active, infos: [] };
             activity.infos.unshift(info);
-            if (collapsed)
-                setLabel(activityLabel(info));
             if (type === ActivityType.Complete)
                 activity.activityGroup = ActivityGroup.Complete;
             else if (type === ActivityType.Error) {
@@ -208,22 +179,46 @@ function Activity(props) {
             }
             if (!existing)
                 allActivities.unshift(activity);
-            setActivities(getActivities(picked));
         }
     };
-    useListeners({ [EventType.Activity]: handleActivity });
-    const pick = (activityGroup) => {
-        setActivities(() => getActivities(activityGroup));
-        setPicked(() => activityGroup);
+    const externalStore = React.useSyncExternalStore((callback) => {
+        eventTarget.addEventListener(EventType.Activity, callback);
+        return () => {
+            eventTarget.removeEventListener(EventType.Activity, callback);
+        };
+    }, getSnapshot);
+    const removeListener = () => {
+        eventTarget.removeEventListener(EventType.Activity, handleEvent);
     };
+    const addListener = () => {
+        eventTarget.addEventListener(EventType.Activity, handleEvent);
+        return () => { removeListener(); };
+    };
+    React.useEffect(() => addListener(), []);
+    return [editor, externalStore];
+};
+
+/**
+ * @parents Masher
+ * @children ActivityContent
+ */
+function Activity(props) {
+    const { initialPicked = ActivityGroup.Active, initialCollapsed = false, className } = props, rest = __rest(props, ["initialPicked", "initialCollapsed", "className"]);
+    assertActivityGroup(initialPicked);
+    const [collapsed, setCollapsed] = React.useState(initialCollapsed);
+    const [label, setLabel] = React.useState('');
+    const [editor, activity] = useEditorActivity();
+    const [picked, setPicked] = React.useState(initialPicked);
+    const filteredActivities = React.useMemo(() => {
+        // console.log("filteredActivities", picked, allActivities.length)
+        return activity.filter(activity => activity.activityGroup === picked);
+    }, [picked, activity.length]);
     const activityContext = {
-        activities, picked, pick, allActivities, label
+        activities: filteredActivities,
+        allActivities: activity,
+        picked, pick: setPicked, label
     };
-    const changeCollapsed = (value) => {
-        setLabel('');
-        setCollapsed(value);
-    };
-    const collapseContext = { collapsed, changeCollapsed };
+    const collapseContext = { collapsed, changeCollapsed: setCollapsed };
     const classes = [];
     if (className)
         classes.push(className);
@@ -470,8 +465,8 @@ const ActivityPropsDefault = function (props = {}) {
     (_a = optionsStrict.props).key || (_a.key = 'activity');
     (_b = optionsStrict.props).className || (_b.className = 'panel activity');
     (_c = optionsStrict.props).initialPicked || (_c.initialPicked = ActivityGroup.Active);
-    if (isUndefined(optionsStrict.props.collapsed))
-        optionsStrict.props.collapsed = true;
+    if (isUndefined(optionsStrict.props.initialCollapsed))
+        optionsStrict.props.initialCollapsed = true;
     (_d = optionsStrict.header).content || (_d.content = [
         icons.activity,
         React.createElement(NotCollapsed, { key: "not-collapsed" },
@@ -764,90 +759,136 @@ const BrowserContextDefault = {
 };
 const BrowserContext = React.createContext(BrowserContextDefault);
 
+const EditorDefinitionsEvent = EventType.Added;
+const useEditorDefinitions = (types = []) => {
+    const masherContext = React.useContext(MasherContext);
+    const { editor } = masherContext;
+    assertDefined(editor);
+    const storeRef = React.useRef({});
+    const { eventTarget } = editor;
+    const snapshotInitialize = () => {
+        const lists = types.map(type => Defined.byType(type));
+        return lists.length === 1 ? lists[0] : lists.flat();
+    };
+    const snapshotGet = () => {
+        var _a;
+        const key = types.join('-') || 'empty';
+        return (_a = storeRef.current)[key] || (_a[key] = snapshotInitialize());
+    };
+    const handleEvent = (event) => {
+        const { type } = event;
+        if (isEventType(type) && (event instanceof CustomEvent)) {
+            const { detail } = event;
+            const { definitionTypes } = detail;
+            if (isPopulatedArray(definitionTypes)) {
+                const types = definitionTypes;
+                const { current } = storeRef;
+                const allIds = Object.keys(current);
+                const ids = allIds.filter(id => types.some(type => id.includes(type)));
+                ids.forEach(id => delete current[id]);
+            }
+        }
+    };
+    const externalStore = React.useSyncExternalStore((callback) => {
+        eventTarget.addEventListener(EditorDefinitionsEvent, callback);
+        return () => {
+            eventTarget.removeEventListener(EditorDefinitionsEvent, callback);
+        };
+    }, snapshotGet);
+    const removeListener = () => {
+        eventTarget.removeEventListener(EditorDefinitionsEvent, handleEvent);
+    };
+    const addListener = () => {
+        eventTarget.addEventListener(EditorDefinitionsEvent, handleEvent);
+        return () => { removeListener(); };
+    };
+    React.useEffect(() => addListener(), []);
+    return [editor, externalStore];
+};
+
+const ApiDefinitionsEvent = 'api-definitions';
+const ApiDefinitionsDisabled = 'disabled';
+const ApiDefinitionsEmpty = 'empty';
+const useApiDefinitions = (types = []) => {
+    const apiContext = React.useContext(ApiContext);
+    const masherContext = React.useContext(MasherContext);
+    const { enabled, servers, endpointPromise } = apiContext;
+    const { editor } = masherContext;
+    assertDefined(editor);
+    const storeRef = React.useRef({});
+    const { eventTarget } = editor;
+    const definitionsPromise = (key) => {
+        const request = { types };
+        console.debug("DataDefinitionRetrieveRequest", Endpoints.data.definition.retrieve, request);
+        return endpointPromise(Endpoints.data.definition.retrieve, request).then((response) => {
+            console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response);
+            const { definitions } = response;
+            const array = storeRef.current[key];
+            array.push(...definitions.map(def => DefinitionBase.fromObject(def)));
+            eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent));
+        });
+    };
+    const snapshotInitialize = (key) => {
+        switch (key) {
+            case ApiDefinitionsEmpty:
+            case ApiDefinitionsDisabled: break;
+            default: definitionsPromise(key);
+        }
+        return [];
+    };
+    const currentKey = () => {
+        if (!(enabled && servers[ServerType.Data]))
+            return ApiDefinitionsDisabled;
+        if (!types.length)
+            return ApiDefinitionsEmpty;
+        return types.join('-');
+    };
+    const snapshotGet = () => {
+        const key = currentKey();
+        const array = storeRef.current[key];
+        if (array)
+            return array;
+        // console.log("useApiDefinitions defining", key)
+        return storeRef.current[key] = snapshotInitialize(key);
+    };
+    const externalStore = React.useSyncExternalStore((callback) => {
+        eventTarget.addEventListener(ApiDefinitionsEvent, callback);
+        return () => {
+            eventTarget.removeEventListener(ApiDefinitionsEvent, callback);
+        };
+    }, snapshotGet);
+    return [editor, externalStore];
+};
+
+const useDefinitions = (types = []) => {
+    const [editor, editorDefinitions] = useEditorDefinitions(types);
+    const [_, apiDefinitions] = useApiDefinitions(types);
+    const definitions = apiDefinitions.filter(apiDefinition => !editorDefinitions.some(editorDefinition => editorDefinition.id === apiDefinition.id));
+    return [editor, [...editorDefinitions, ...definitions]];
+};
+
 /**
  * @parents Masher
  * @children BrowserContent, BrowserPicker
  */
 function Browser(props) {
     const { initialPicked = 'container' } = props, rest = __rest(props, ["initialPicked"]);
-    assertPopulatedString(initialPicked);
     const [typesObject, setTypesObject] = React.useState({});
-    const apiContext = React.useContext(ApiContext);
     const editorContext = React.useContext(MasherContext);
     const { changeDefinition } = editorContext;
-    const [definitions, setDefinitions] = React.useState([]);
     const [picked, setPicked] = React.useState(initialPicked);
-    const { enabled, servers, endpointPromise } = apiContext;
-    const definedDefinitions = (definitionTypes) => {
-        const lists = definitionTypes.map(type => Defined.byType(type));
-        const combined = lists.length === 1 ? lists[0] : lists.flat();
-        return combined;
-    };
-    const definitionsPromise = (definitionTypes) => {
-        const defined = definedDefinitions(definitionTypes);
-        if (!(enabled && servers[ServerType.Data]))
-            return Promise.resolve(defined);
-        const request = { types: definitionTypes };
-        return endpointPromise(Endpoints.data.definition.retrieve, request).then((response) => {
-            console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response);
-            const { definitions: definitionObjects } = response;
-            const filtered = definitionObjects.filter(definitionObject => {
-                const { id } = definitionObject;
-                return !defined.some(definition => definition.id === id);
-            });
-            return [
-                ...defined,
-                ...filtered.map(def => DefinitionBase.fromObject(def))
-            ];
-        });
-    };
-    const changeDefinitions = (types) => __awaiter(this, void 0, void 0, function* () {
-        changeDefinition();
-        setDefinitions(yield definitionsPromise(types));
-    });
-    const updateDefinitions = (id) => __awaiter(this, void 0, void 0, function* () {
-        const types = isPopulatedString(id) ? (typesObject[id] || []) : [];
-        yield changeDefinitions(types);
-    });
-    const pick = (id) => __awaiter(this, void 0, void 0, function* () {
+    const pick = (id) => {
         assertPopulatedString(id);
+        changeDefinition();
         setPicked(id);
-        yield updateDefinitions(id);
-    });
-    useListeners({
-        [EventType.Added]: (event) => __awaiter(this, void 0, void 0, function* () {
-            const { type } = event;
-            if (isEventType(type) && (event instanceof CustomEvent)) {
-                const { detail } = event;
-                const { definitionTypes } = detail;
-                if (isPopulatedArray(definitionTypes)) {
-                    const addedTypes = definitionTypes;
-                    const ids = Object.keys(typesObject);
-                    const selectedIds = ids.filter(id => {
-                        const types = typesObject[id];
-                        assertPopulatedArray(types);
-                        return types.some(type => addedTypes.includes(type));
-                    });
-                    if (!isPopulatedArray(selectedIds))
-                        return;
-                    const selectedId = selectedIds.includes(picked) ? picked : selectedIds.shift();
-                    assertPopulatedString(selectedId);
-                    yield pick(selectedId);
-                }
-            }
-        }),
-        [EventType.Resize]: () => {
-            updateDefinitions().then(() => { updateDefinitions(picked); });
-        }
-    });
-    const addPicker = (id, types) => __awaiter(this, void 0, void 0, function* () {
+    };
+    const [_, definitions] = useDefinitions(typesObject[picked]);
+    const addPicker = (id, types) => {
         setTypesObject(original => {
             original[id] = types;
             return original;
         });
-        if (id === picked)
-            yield changeDefinitions(types);
-    });
+    };
     const removePicker = (id) => {
         setTypesObject(original => {
             delete original[id];
@@ -992,8 +1033,6 @@ const droppingPositionClass = (droppingPosition) => {
 function BrowserContent(props) {
     const [over, setOver] = React.useState(false);
     const { className, children } = props, rest = __rest(props, ["className", "children"]);
-    const child = React.Children.only(children);
-    assertTrue(React.isValidElement(child));
     const editorContext = React.useContext(MasherContext);
     const browserContext = React.useContext(BrowserContext);
     const definitions = browserContext.definitions || [];
@@ -1022,6 +1061,8 @@ function BrowserContent(props) {
         classes.push(className);
     if (over)
         classes.push(ClassDropping);
+    const child = React.Children.only(children);
+    assertTrue(React.isValidElement(child));
     const childNodes = () => {
         const childProps = child.props;
         return definitions.map(definition => {
@@ -1066,8 +1107,6 @@ const propsSelectTypes = (type, types, id) => {
 function BrowserPicker(props) {
     const { children, type, types, className, id } = props, rest = __rest(props, ["children", "type", "types", "className", "id"]);
     assertPopulatedString(id);
-    const child = React.Children.only(children);
-    assertTrue(React.isValidElement(child), Problems.child);
     const browserContext = React.useContext(BrowserContext);
     const { pick, picked, addPicker, removePicker } = browserContext;
     const classes = [];
@@ -1075,25 +1114,24 @@ function BrowserPicker(props) {
         classes.push(className);
     if (picked === id)
         classes.push(ClassSelected);
-    const onClick = () => { pick(id); };
     React.useEffect(() => {
         addPicker(id, propsDefinitionTypes(type, types, id));
         return () => { removePicker(id); };
     }, []);
-    const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), key: `browser-picker-${id}`, onClick });
+    const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), key: `browser-picker-${id}`, onClick: () => { pick(id); } });
+    const child = React.Children.only(children);
+    assertTrue(React.isValidElement(child), Problems.child);
     return React.cloneElement(child, viewProps);
 }
 
 const BrowserControlId = 'upload-control-id';
 function BrowserControl(props) {
+    const { children } = props, rest = __rest(props, ["children"]);
     const fileInput = React.useRef(null);
     const apiContext = React.useContext(ApiContext);
     const editorContext = React.useContext(MasherContext);
     const { servers } = apiContext;
     const { drop } = editorContext;
-    // const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
-    // if (!(enabled && required.every(type => servers[type]))) return null
-    const { children } = props, rest = __rest(props, ["children"]);
     const onChange = (event) => {
         const { files } = event.currentTarget;
         if (files)
@@ -1132,7 +1170,7 @@ function DefinitionItem(props) {
     const { editor, definition: selectedDefinition, changeDefinition } = editorContext;
     assertTrue(editor);
     const definition = useDefinition();
-    const { id, label } = definition;
+    const { id, label, type } = definition;
     const updateRef = () => __awaiter(this, void 0, void 0, function* () {
         const { rect, preloader } = editor;
         const { current } = svgRef;
@@ -1249,6 +1287,32 @@ const LayerContext = React.createContext(LayerContextDefault);
 
 const useLayer = () => React.useContext(LayerContext).layer;
 
+const useListeners = (events, target) => {
+    const masherContext = React.useContext(MasherContext);
+    const { editor } = masherContext;
+    const eventTarget = target || editor.eventTarget;
+    const handleEvent = (event) => {
+        const { type } = event;
+        const handler = events[type];
+        if (handler)
+            handler(event);
+    };
+    const removeListeners = () => {
+        const keys = Object.keys(events);
+        // console.log("useListeners.removeListeners", keys)
+        keys.forEach(eventType => {
+            eventTarget.removeEventListener(eventType, handleEvent);
+        });
+    };
+    const addListeners = () => {
+        Object.keys(events).forEach(eventType => {
+            eventTarget.addEventListener(eventType, handleEvent);
+        });
+        return () => { removeListeners(); };
+    };
+    React.useEffect(() => addListeners(), []);
+};
+
 const ClipItemRefreshRate = 500;
 /**
  * @parents TimelineTrack
@@ -1294,7 +1358,7 @@ function ClipItem(props) {
         const { current } = svgRef;
         const parent = current === null || current === void 0 ? void 0 : current.parentNode;
         if (parent instanceof HTMLDivElement) {
-            return parent.getBoundingClientRect().height;
+            return parent.offsetHeight; // .getBoundingClientRect().height
         }
         // console.log("ClipItem.getParentHeight NO HEIGHT", !!current)
         return 0;
@@ -2168,9 +2232,9 @@ function SelectEditedControl(props) {
                 setDescribed(original => {
                     const copy = [...original];
                     described.forEach(object => {
-                        const { id } = object;
+                        const { id, label } = object;
                         const found = copy.find(object => object.id === id);
-                        if (found)
+                        if (found || !isPopulatedString(label))
                             return;
                         copy.push(object);
                     });
@@ -2178,6 +2242,8 @@ function SelectEditedControl(props) {
                 });
         });
     }, [servers, enabled]);
+    if (described.length < 2)
+        return null;
     const describedOptions = () => {
         const { editType, edited } = editor;
         const elements = [React.createElement("optgroup", { key: "group", label: labelTranslate('open') })];
@@ -2194,8 +2260,15 @@ function SelectEditedControl(props) {
         }));
         return elements;
     };
-    const selectOptions = Object.assign(Object.assign({}, props), { onChange, disabled, children: describedOptions(), value: editedId });
-    return React.createElement("select", Object.assign({}, selectOptions));
+    const { children } = props, rest = __rest(props, ["children"]);
+    const child = React.Children.only(children);
+    assertTrue(React.isValidElement(child));
+    const selectOptions = {
+        key: "edited-select",
+        onChange, disabled, children: describedOptions(), value: editedId
+    };
+    const viewProps = Object.assign(Object.assign({}, rest), { children: [child, React.createElement("select", Object.assign({}, selectOptions))] });
+    return React.createElement(View, Object.assign({}, viewProps));
 }
 
 function ViewControl(props) {
@@ -2327,7 +2400,8 @@ function DefinitionDrop(props) {
             yield drop(dataTransfer.files).then(definitions => {
                 if (!definitions.length)
                     return;
-                const valid = definitions.filter(definition => (name !== "containerId" || isContainerDefinition(definition)));
+                const container = name === "containerId";
+                const valid = container ? definitions.filter(isContainerDefinition) : definitions;
                 const [definition] = valid;
                 if (definition) {
                     assertTrue(Defined.installed(definition.id), `${definition.type} installed`);
@@ -2999,37 +3073,53 @@ function PointGroupInput(props) {
             React.createElement(View, Object.assign({}, startProps)),
             React.createElement(View, Object.assign({}, endProps)))
     ];
-    const lockOffEProps = {
-        key: "lock-east",
-        className: ClassButton,
-        children: offEValue ? icons.unlock : icons.lock,
-        onClick: () => { offE.changeHandler('offE', !offEValue); }
-    };
-    const lockOffE = React.createElement(View, Object.assign({}, lockOffEProps));
-    const lockOffWProps = {
-        key: "lock-west",
-        className: ClassButton,
-        children: offWValue ? icons.unlock : icons.lock,
-        onClick: () => { offW.changeHandler('offW', !offWValue); }
-    };
-    const lockOffW = React.createElement(View, Object.assign({}, lockOffWProps));
-    const lockOffNProps = {
-        key: "lock-north",
-        className: ClassButton,
-        children: offNValue ? icons.unlock : icons.lock,
-        onClick: () => { offN.changeHandler('offN', !offNValue); }
-    };
-    const lockOffN = React.createElement(View, Object.assign({}, lockOffNProps));
-    const lockOffSProps = {
-        key: "lock-south",
-        className: ClassButton,
-        children: offSValue ? icons.unlock : icons.lock,
-        onClick: () => { offS.changeHandler('offS', !offSValue); }
-    };
-    const lockOffS = React.createElement(View, Object.assign({}, lockOffSProps));
+    const xElements = [React.createElement(View, { key: "horz-icon", children: icons.horz, className: ClassButton })];
+    const yElements = [React.createElement(View, { key: "vert-icon", children: icons.vert, className: ClassButton })];
+    if (offE) {
+        const lockOffEProps = {
+            key: "lock-east",
+            className: ClassButton,
+            children: offEValue ? icons.unlock : icons.lock,
+            onClick: () => { offE.changeHandler('offE', !offEValue); }
+        };
+        const lockOffE = React.createElement(View, Object.assign({}, lockOffEProps));
+        xElements.push(lockOffE);
+    }
+    xElements.push(elementsByName.x);
+    if (offW) {
+        const lockOffWProps = {
+            key: "lock-west",
+            className: ClassButton,
+            children: offWValue ? icons.unlock : icons.lock,
+            onClick: () => { offW.changeHandler('offW', !offWValue); }
+        };
+        const lockOffW = React.createElement(View, Object.assign({}, lockOffWProps));
+        xElements.push(lockOffW);
+    }
+    if (offN) {
+        const lockOffNProps = {
+            key: "lock-north",
+            className: ClassButton,
+            children: offNValue ? icons.unlock : icons.lock,
+            onClick: () => { offN.changeHandler('offN', !offNValue); }
+        };
+        const lockOffN = React.createElement(View, Object.assign({}, lockOffNProps));
+        yElements.push(lockOffN);
+    }
+    yElements.push(elementsByName.y);
+    if (offS) {
+        const lockOffSProps = {
+            key: "lock-south",
+            className: ClassButton,
+            children: offSValue ? icons.unlock : icons.lock,
+            onClick: () => { offS.changeHandler('offS', !offSValue); }
+        };
+        const lockOffS = React.createElement(View, Object.assign({}, lockOffSProps));
+        yElements.push(lockOffS);
+    }
     const elements = [
-        React.createElement(View, { key: "x", className: 'point', children: [icons.horz, lockOffE, elementsByName.x, lockOffW] }),
-        React.createElement(View, { key: "y", className: 'point', children: [icons.vert, lockOffN, elementsByName.y, lockOffS] })
+        React.createElement(View, { key: "x", children: xElements }),
+        React.createElement(View, { key: "y", children: yElements })
     ];
     return React.createElement("fieldset", null,
         React.createElement("legend", { key: "legend" },
@@ -3046,7 +3136,7 @@ function SizeGroupInput(props) {
     const { icons } = masherContext;
     const editor = useEditor();
     const { selectType } = props;
-    assertSelectType(selectType);
+    assertSelectType(selectType, 'selectType');
     const inspectorContext = React.useContext(InspectorContext);
     const { selectedItems: properties, selectedInfo, changeTweening } = inspectorContext;
     const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo;
@@ -3060,7 +3150,7 @@ function SizeGroupInput(props) {
     const heightProperty = endSelected ? heightEnd : height;
     const values = selectedPropertiesScalarObject(byName);
     const { lock: lockValue } = values;
-    assertString(lockValue);
+    assertString(lockValue, 'lockValue');
     const orientation = isOrientation(lockValue) ? lockValue : undefined;
     const elementsByName = {};
     const inspectingProperties = [widthProperty, heightProperty];
@@ -3134,9 +3224,19 @@ function SizeGroupInput(props) {
             React.createElement(View, Object.assign({}, startProps)),
             React.createElement(View, Object.assign({}, endProps)))
     ];
+    const widthElements = [
+        React.createElement(View, { key: "width-icon", children: icons.width, className: ClassButton }),
+        elementsByName.width,
+        lockWidth
+    ];
+    const heightElements = [
+        React.createElement(View, { key: "height-icon", children: icons.height, className: ClassButton }),
+        elementsByName.height,
+        lockHeight
+    ];
     const elements = [
-        React.createElement(View, { key: "width", className: 'size', children: [icons.width, elementsByName.width, lockWidth] }),
-        React.createElement(View, { key: "height", className: 'size', children: [icons.height, elementsByName.height, lockHeight] })
+        React.createElement(View, { key: "width", children: widthElements }),
+        React.createElement(View, { key: "height", children: heightElements })
     ];
     return React.createElement("fieldset", null,
         React.createElement("legend", { key: "legend" },
@@ -3191,8 +3291,8 @@ function TimingGroupInput(props) {
         const icon = icons[key];
         const children = [value];
         if (icon)
-            children.unshift(icon);
-        const frameProps = { className: "timing", key: 'timing', children };
+            children.unshift(React.createElement(View, { key: `${key}-icon`, children: icon, className: ClassButton }));
+        const frameProps = { key: `${key}-view`, children };
         return React.createElement(View, Object.assign({}, frameProps));
     });
     return React.createElement("fieldset", null,
@@ -3348,7 +3448,17 @@ const InspectorPropsDefault = function (props = {}) {
     const { icons } = optionsStrict;
     (_a = optionsStrict.props).key || (_a.key = 'inspector');
     (_b = optionsStrict.props).className || (_b.className = 'panel inspector');
-    (_c = optionsStrict.header).content || (_c.content = [icons.inspector]);
+    (_c = optionsStrict.header).content || (_c.content = [
+        icons.inspector,
+        React.createElement(EditorUndoButton, { key: 'undo' },
+            React.createElement(Button, null,
+                icons.undo,
+                labelTranslate('undo'))),
+        React.createElement(EditorRedoButton, { key: 'redo' },
+            React.createElement(Button, null,
+                icons.redo,
+                labelTranslate('redo'))),
+    ]);
     (_d = optionsStrict.footer).content || (_d.content = [
         React.createElement(InspectorPicker, { key: "mash", className: ClassButton, id: "mash" }, icons.document),
         React.createElement(InspectorPicker, { key: "cast", className: ClassButton, id: "cast" }, icons.document),
@@ -3371,7 +3481,7 @@ const InspectorPropsDefault = function (props = {}) {
                         labelTranslate('view'),
                         icons.view)))),
         React.createElement(InspectorPicked, { types: "mash,cast", key: "inspector-document" },
-            React.createElement(SelectEditedControl, { key: "select-edited" }),
+            React.createElement(SelectEditedControl, { key: "select-edited", className: "row", children: icons.document }),
             React.createElement(View, { key: "view" },
                 React.createElement(SaveControl, { key: 'save-process' },
                     React.createElement(Button, { key: "button" },
@@ -3526,7 +3636,7 @@ function Masher(props) {
                     assertObject(body);
                     const putRequest = body;
                     const { definition: definitionObject } = putRequest;
-                    console.debug("handleApiCallback calling updateDefinition", definitionObject);
+                    // console.debug("handleApiCallback calling updateDefinition", definitionObject)
                     editor.updateDefinition(definitionObject, definition);
                 }
                 if (callback.endpoint.prefix === Endpoints.rendering.status) {
@@ -3675,29 +3785,15 @@ function PlayerContent(props) {
     }, []);
     const swapChildren = (elements) => {
         const { current } = svgRef;
-        assertObject(current);
-        // const removing: ChildNode[] = []
-        // current.childNodes.forEach(node => {
-        //   if (!elements.includes(node as SvgItem)) removing.push(node)
-        // })
-        // removing.forEach(remove => {
-        //   // console.log("removing", remove)
-        //   current.removeChild(remove)
-        // })
-        // elements.forEach((element, index) => {
-        //   if (element.parentElement !== current) {
-        //     current.appendChild(element)
-        //   }
-        //   element.setAttribute('style', `z-index: ${index}`)
-        // })
+        if (!current)
+            return;
         current.replaceChildren(...elements);
-        // console.log("removed", removing.length, "added", elements.length - removing.length, "=", current.childNodes.length)
     };
     const requestItemsPromise = () => {
         const { redraw } = watching;
         delete watching.timeout;
         delete watching.redraw;
-        return editor.svgItems(!disabled).then(svgs => {
+        return editor.previewItems(!disabled).then(svgs => {
             swapChildren(svgs);
             if (redraw)
                 handleDraw();
@@ -3864,17 +3960,7 @@ const DefaultPlayerProps = function (props = {}) {
     (_b = optionsStrict.props).className || (_b.className = 'panel player');
     (_c = optionsStrict.content).children || (_c.children = React.createElement(PlayerContent, Object.assign({}, optionsStrict.content.props),
         React.createElement(View, { key: "drop-box", className: "drop-box" })));
-    (_d = optionsStrict.header).content || (_d.content = [
-        icons.app,
-        React.createElement(EditorUndoButton, { key: 'undo' },
-            React.createElement(Button, null,
-                icons.undo,
-                labelTranslate('undo'))),
-        React.createElement(EditorRedoButton, { key: 'redo' },
-            React.createElement(Button, null,
-                icons.redo,
-                labelTranslate('redo'))),
-    ]);
+    (_d = optionsStrict.header).content || (_d.content = [icons.app]);
     (_e = optionsStrict.footer).content || (_e.content = [
         React.createElement(PlayerButton, { key: 'play-button', className: ClassButton },
             React.createElement(PlayerPlaying, { key: 'playing' }, icons.playerPause),
@@ -3916,9 +4002,6 @@ function TimelineTrack(props) {
     const trackContext = React.useContext(TrackContext);
     const timelineContext = React.useContext(TimelineContext);
     const { track } = trackContext;
-    assertMash(mash);
-    assertTrack(track);
-    const { clips, dense, index } = track;
     const { dragTypeValid, onDragLeave, onDrop, droppingTrack, setDroppingTrack, droppingPosition, setDroppingPosition, setDroppingClip, selectedTrack, } = timelineContext;
     const calculatedClassName = () => {
         const selected = track === selectedTrack;
@@ -3932,6 +4015,11 @@ function TimelineTrack(props) {
         return classes.join(' ');
     };
     const className = React.useMemo(calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]);
+    if (!(mash && track))
+        return null;
+    // assertMash(mash)
+    // assertTrack(track)
+    const { clips, dense, index } = track;
     const childNodes = () => {
         let prevClipEnd = dense ? -1 : 0;
         const childProps = child.props;
@@ -4827,4 +4915,4 @@ const DefaultStreamerProps = (args) => {
     return { className: 'editor caster', children: application };
 };
 
-export { Activity, ActivityContent, ActivityContentContext, ActivityContentContextDefault, ActivityContext, ActivityContextDefault, ActivityGroup, ActivityGroups, ActivityItem, ActivityLabel, ActivityPicked, ActivityPicker, ActivityProgress, ActivityPropsDefault, ApiClient, ApiContext, ApiContextDefault, ApiEnabled, Bar, BooleanTypeInput, Broadcaster, BroadcasterContent, BroadcasterControl, BroadcasterPreloadControl, BroadcasterUpdateControl, Browser, BrowserContent, BrowserContext, BrowserContextDefault, BrowserControl, BrowserPicker, BrowserPropsDefault, Button, ClipContext, ClipContextDefault, ClipItem, ColorGroupInput, Composer, ComposerContent, ComposerContext, ComposerContextDefault, ComposerDepth, ComposerFolderClose, ComposerFolderOpen, ComposerLayer, ComposerLayerFolder, ComposerLayerLabel, ComposerLayerMash, CreateEditedControl, DataGroupInputs, DataTypeInputs, DefaultComposerProps, DefaultPlayerProps, DefaultStreamerProps, DefaultTimelineProps, DefinitionContext, DefinitionContextDefault, DefinitionDrop, DefinitionItem, DefinitionSelect, DragElementPoint, DragElementRect, DragSuffix, DragType, DragTypes, EditorRedoButton, EditorRemoveButton, EditorUndoButton, EffectsGroupInput, EmptyElement, InputContext, InputContextDefault, Inspector, InspectorContent, InspectorContext, InspectorContextDefault, InspectorEffect, InspectorPicked, InspectorPicker, InspectorProperties, InspectorProperty, InspectorPropsDefault, LayerContext, LayerContextDefault, Masher, MasherCastProps, MasherContext, MasherContextDefault, MasherDefaultProps, NumericTypeInput, OpacityGroupInput, Panel, PanelContent, PanelFoot, PanelHead, Panels, PercentTypeInput, Player, PlayerButton, PlayerContent, PlayerContext, PlayerContextDefault, PlayerNotPlaying, PlayerPlaying, PlayerTime, PlayerTimeControl, PointGroupInput, Problems, Process, ProcessActive, ProcessContext, ProcessContextDefault, ProcessInactive, ProcessProgress, ProcessStatus, RenderControl, RgbTypeInput, SaveControl, SelectEditedControl, Shooter, ShooterContext, ShooterContextDefault, SizeGroupInput, SizingGroupInput, SizingTypeInput, Slider, Streamer, Streamers, StreamersCreateControl, TextTypeInput, Timeline, TimelineAddClipControl, TimelineAddTrackControl, TimelineContent, TimelineContext, TimelineContextDefault, TimelineDefaultZoom, TimelineScrubber, TimelineScrubberElement, TimelineSizer, TimelineTrack, TimelineTrackIcon, TimelineTracks, TimelineZoom, TimelineZoomer, TimingGroupInput, TimingTypeInput, TrackContext, TrackContextDefault, TransferTypeFiles, TweenInputKey, VideoView, View, ViewControl, ViewerContext, ViewerContextDefault, Webrtc, WebrtcButton, WebrtcClient, WebrtcContent, WebrtcContext, WebrtcContextDefault, activityLabel, assertActivityGroup, assertDragDefinitionObject, assertDragOffsetObject, dragData, dragDefinitionType, dragType, dragTypes, dropFilesFromList, dropType, droppingPositionClass, elementSetPreviewSize, isActivityGroup, isDragDefinitionObject, isDragOffsetObject, isDragType, isTransferType, labelInterpolate, labelLookup, labelObjects, labelTranslate, labels, panelOptionsStrict, propsDefinitionTypes, propsSelectTypes, sessionGet, sessionSet, useClip, useDefinition, useEditor, useLayer, useListeners };
+export { Activity, ActivityContent, ActivityContentContext, ActivityContentContextDefault, ActivityContext, ActivityContextDefault, ActivityGroup, ActivityGroups, ActivityItem, ActivityLabel, ActivityPicked, ActivityPicker, ActivityProgress, ActivityPropsDefault, ApiClient, ApiContext, ApiContextDefault, ApiEnabled, Bar, BooleanTypeInput, Broadcaster, BroadcasterContent, BroadcasterControl, BroadcasterPreloadControl, BroadcasterUpdateControl, Browser, BrowserContent, BrowserContext, BrowserContextDefault, BrowserControl, BrowserPicker, BrowserPropsDefault, Button, ClipContext, ClipContextDefault, ClipItem, ColorGroupInput, Composer, ComposerContent, ComposerContext, ComposerContextDefault, ComposerDepth, ComposerFolderClose, ComposerFolderOpen, ComposerLayer, ComposerLayerFolder, ComposerLayerLabel, ComposerLayerMash, CreateEditedControl, DataGroupInputs, DataTypeInputs, DefaultComposerProps, DefaultPlayerProps, DefaultStreamerProps, DefaultTimelineProps, DefinitionContext, DefinitionContextDefault, DefinitionDrop, DefinitionItem, DefinitionSelect, DragElementPoint, DragElementRect, DragSuffix, DragType, DragTypes, EditorRedoButton, EditorRemoveButton, EditorUndoButton, EffectsGroupInput, EmptyElement, InputContext, InputContextDefault, Inspector, InspectorContent, InspectorContext, InspectorContextDefault, InspectorEffect, InspectorPicked, InspectorPicker, InspectorProperties, InspectorProperty, InspectorPropsDefault, LayerContext, LayerContextDefault, Masher, MasherCastProps, MasherContext, MasherContextDefault, MasherDefaultProps, NumericTypeInput, OpacityGroupInput, Panel, PanelContent, PanelFoot, PanelHead, Panels, PercentTypeInput, Player, PlayerButton, PlayerContent, PlayerContext, PlayerContextDefault, PlayerNotPlaying, PlayerPlaying, PlayerTime, PlayerTimeControl, PointGroupInput, Problems, Process, ProcessActive, ProcessContext, ProcessContextDefault, ProcessInactive, ProcessProgress, ProcessStatus, RenderControl, RgbTypeInput, SaveControl, SelectEditedControl, Shooter, ShooterContext, ShooterContextDefault, SizeGroupInput, SizingGroupInput, SizingTypeInput, Slider, Streamer, Streamers, StreamersCreateControl, TextTypeInput, Timeline, TimelineAddClipControl, TimelineAddTrackControl, TimelineContent, TimelineContext, TimelineContextDefault, TimelineDefaultZoom, TimelineScrubber, TimelineScrubberElement, TimelineSizer, TimelineTrack, TimelineTrackIcon, TimelineTracks, TimelineZoom, TimelineZoomer, TimingGroupInput, TimingTypeInput, TrackContext, TrackContextDefault, TransferTypeFiles, TweenInputKey, VideoView, View, ViewControl, ViewerContext, ViewerContextDefault, Webrtc, WebrtcButton, WebrtcClient, WebrtcContent, WebrtcContext, WebrtcContextDefault, activityLabel, assertActivityGroup, assertDragDefinitionObject, assertDragOffsetObject, dragData, dragDefinitionType, dragType, dragTypes, dropFilesFromList, dropType, droppingPositionClass, elementSetPreviewSize, isActivityGroup, isDragDefinitionObject, isDragOffsetObject, isDragType, isTransferType, labelInterpolate, labelLookup, labelObjects, labelTranslate, labels, panelOptionsStrict, propsDefinitionTypes, propsSelectTypes, sessionGet, sessionSet, useApiDefinitions, useClip, useDefinition, useEditor, useEditorActivity, useEditorDefinitions, useLayer, useListeners };

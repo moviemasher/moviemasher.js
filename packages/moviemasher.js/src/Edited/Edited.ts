@@ -1,4 +1,4 @@
-import { Described, SvgItem, UnknownObject } from "../declarations"
+import { Described, PreviewItems, SvgItem, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { Propertied } from "../Base/Propertied"
@@ -38,7 +38,7 @@ export interface Edited extends Described, Propertied, Selectable {
   putPromise(): Promise<void>
   quantize: number
   reload(): Promise<void> | undefined
-  svgItems(options: PreviewOptions): Promise<SvgItem[]>
+  previewItems(options: PreviewOptions): Promise<PreviewItems>
 }
 
 export const isEdited = (value: any): value is Edited => {

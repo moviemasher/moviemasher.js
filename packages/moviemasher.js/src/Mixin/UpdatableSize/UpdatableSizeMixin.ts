@@ -1,9 +1,9 @@
 import { PropertyTweenSuffix } from "../../Base"
 import { SvgItem } from "../../declarations"
-import { Rect, rectsEqual } from "../../Utility/Rect"
+import { Rect, rectFromSize, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
-import { DataType, Orientation } from "../../Setup/Enums"
+import { DataType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
@@ -11,13 +11,15 @@ import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isTimeRan
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
 import { Tweening, tweenMaxSize } from "../../Utility/Tween"
-import { colorBlack, colorBlackOpaque } from "../../Utility/Color"
+import { colorBlack, colorBlackOpaque, colorTransparent } from "../../Utility/Color"
 import { PointZero } from "../../Utility/Point"
 import { ContentRectArgs } from "../../Content/Content"
 import { assertSizeAboveZero, Size, sizeAboveZero, sizeCopy } from "../../Utility/Size"
 import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { svgSet, svgSetDimensions, svgSetDimensionsLock } from "../../Utility/Svg"
+import { svgSetDimensions } from "../../Utility/Svg"
 import { urlPrependProtocol } from "../../Utility/Url"
+import { filterFromId } from "../../Filter/FilterFactory"
+import { Filter } from "../../Filter/Filter"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -128,10 +130,11 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
+      const dont = false
       const colorInput = `content-${track}-back`
-      if (!upload) {
+      if (!(upload || dont)) {
         const colorArgs: VisibleCommandFilterArgs = { 
-          ...args, contentColors: [colorBlack, colorBlack], 
+          ...args, contentColors: [colorTransparent, colorTransparent], 
           outputSize: maxContainerSize
         }
         commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput))
@@ -147,7 +150,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
    
-      if (tweening.size) {
+      if (tweening.size && !dont) {
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       }
@@ -164,8 +167,15 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
       commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+
+      const { setsarFilter } = this
+      setsarFilter.setValue("1/1", "sar")
+
+      commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }))
+      filterInput = arrayLast(arrayLast(commandFilters).outputs) 
+
   
-      if (!tweening.size) {
+      if (!(tweening.size || dont)) {
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       }
@@ -173,6 +183,9 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening))
       return commandFilters
     }
+    private _setsarFilter?: Filter
+    get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
+
 
     declare definition: UpdatableSizeDefinition
 
@@ -229,19 +242,31 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
     // protected previewItem?: SvgItem
 
     protected itemPreviewPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-      return this.itemIconPromise(rect, time, range, true)
+      return this.itemIconPromise(rect, time, range)
     }
 
     itemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
       const { container } = this
-      const rect = container ? containerRect : this.contentRect(containerRect, time, range)
+      const rect = container ? containerRect : this.itemContentRect(containerRect, time, range)
       if (icon) return this.itemIconPromise(rect, time, range)
       
       return this.itemPreviewPromise(rect, time, range).then(svgItem => {
         svgSetDimensions(svgItem, rect)
         return svgItem
       })
-      
     }
+
+
+    private itemContentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect {
+      const contentArgs: ContentRectArgs = {
+        containerRects: containerRect, time, timeRange, editing: true
+      }
+      const [contentRect] = this.contentRects(contentArgs)
+      const { x, y } = contentRect    
+      const point = { x: containerRect.x - x, y: containerRect.y - y }
+      const rect = rectFromSize(contentRect, point)
+      return rect
+    }
+
   }
 }

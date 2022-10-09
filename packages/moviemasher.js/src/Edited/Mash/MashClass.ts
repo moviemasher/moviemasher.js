@@ -1,5 +1,5 @@
 import {
-  Interval, Scalar, SvgItem, UnknownObject} from "../../declarations"
+  Interval, PreviewItems, Scalar, SvgItem, UnknownObject} from "../../declarations"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import {
@@ -60,6 +60,7 @@ export class MashClass extends EditedClass implements Mash {
     this.assureTrack()
     this.tracks.sort(sortByIndex)
     this._preview = new NonePreview({ mash: this, time: timeFromArgs() })
+    this.label ||= Default.mash.label
   }
 
   addClipToTrack(clip: Clip | Clips, trackIndex = 0, insertIndex = 0, frame?: number): void {
@@ -670,8 +671,8 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  svgItems(options: PreviewOptions): Promise<SvgItem[]> { 
-    return this.preview(options).svgItemsPromise 
+  previewItems(options: PreviewOptions): Promise<PreviewItems> { 
+    return this.preview(options).previewItemsPromise 
   }
   
   get time() : Time {

@@ -8,8 +8,8 @@ export interface ListenerEvents extends Partial<Record<EventType, ListenerCallba
 
 
 export const useListeners = (events: ListenerEvents, target?: Emitter): void => {
-  const editorContext = React.useContext(MasherContext)
-  const { editor } = editorContext
+  const masherContext = React.useContext(MasherContext)
+  const { editor } = masherContext
   const eventTarget = target || editor!.eventTarget
 
   const handleEvent = (event : Event) => {
@@ -19,7 +19,9 @@ export const useListeners = (events: ListenerEvents, target?: Emitter): void => 
   }
 
   const removeListeners = () => {
-    Object.keys(events).forEach(eventType => {
+    const keys = Object.keys(events)
+    // console.log("useListeners.removeListeners", keys)
+    keys.forEach(eventType => {
       eventTarget.removeEventListener(eventType, handleEvent)
     })
   }

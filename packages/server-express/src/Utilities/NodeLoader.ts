@@ -46,8 +46,6 @@ export class NodeLoader extends LoaderClass {
     })
   }
 
-  // getFile(_graphFile: GraphFile): any { throw Errors.unimplemented + 'getFile' }
-
   graphType = GraphType.Mash
 
   private graphFileTypeBasename(type: GraphFileType, content: PopulatedString) {

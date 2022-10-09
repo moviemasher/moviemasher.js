@@ -1,20 +1,17 @@
 import React from "react"
-import { 
-  ActivityInfo, isEventType, EventType, ActivityType, ClassCollapsed
-} from '@moviemasher/moviemasher.js'
+import { ClassCollapsed } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult, WithClassName } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { ActivityContext, ActivityContextInterface, ActivityGroup, 
-  activityLabel, 
-  ActivityObject, ActivityObjects, assertActivityGroup 
+  assertActivityGroup 
 } from "./ActivityContext"
-import { useListeners } from "../../Hooks/useListeners"
 import { CollapseContext, CollapseContextInterface } from "../Collapse/CollapseContext"
+import { useEditorActivity } from "../../Hooks/useEditorActivity"
 
 export interface ActivityProps extends PropsWithChildren, WithClassName {
   initialPicked?: string
-  collapsed?: boolean
+  initialCollapsed?: boolean
 }
 
 /**
@@ -24,70 +21,37 @@ export interface ActivityProps extends PropsWithChildren, WithClassName {
 export function Activity(props: ActivityProps): ReactResult {
   const { 
     initialPicked = ActivityGroup.Active, 
-    collapsed: collapsedProp, 
+    initialCollapsed = false, 
     className,
     ...rest 
   } = props
-
-  const [collapsed, setCollapsed] = React.useState(!!collapsedProp)
   assertActivityGroup(initialPicked)
 
-  const allActivitiesRef = React.useRef<ActivityObjects>([])
-  const { current: allActivities } = allActivitiesRef
-  const [activities, setActivities] = React.useState<ActivityObjects>(() => ([]))
-  const [picked, setPicked] = React.useState<ActivityGroup>(() => initialPicked || ActivityGroup.Active)
-  const [label, setLabel] = React.useState<string>('')
+  const [collapsed, setCollapsed] = React.useState(initialCollapsed)
+  const [label, setLabel] = React.useState('')
 
-  const getActivities = (activityGroup: ActivityGroup): ActivityObjects => (
-    allActivitiesRef.current.filter(activity => activity.activityGroup === activityGroup)
-  )
+  const [editor, activity] = useEditorActivity() 
+  const [picked, setPicked] = React.useState(initialPicked)
 
-  const handleActivity = (event: Event) => {
-    const { type } = event
-    if (isEventType(type) && (event instanceof CustomEvent)) {
-      const info: ActivityInfo = event.detail
-      const { id, type } = info
-      const existing = allActivities.find(activity => activity.id === id)
-
-      const activity: ActivityObject = existing || { id, activityGroup: ActivityGroup.Active, infos: [] }
-      activity.infos.unshift(info)
-      if (collapsed) setLabel(activityLabel(info))
-      if (type === ActivityType.Complete) activity.activityGroup = ActivityGroup.Complete
-      else if (type === ActivityType.Error) {
-        activity.activityGroup = ActivityGroup.Error
-      }
-   
-      if (!existing) allActivities.unshift(activity)
-      setActivities(getActivities(picked))
-    }
-  }
-  
-  useListeners({ [EventType.Activity]: handleActivity })
-
-  const pick = (activityGroup: ActivityGroup) => {
-    setActivities(() => getActivities(activityGroup))
-    setPicked(() => activityGroup)
-  }
+  const filteredActivities = React.useMemo(() => {
+    // console.log("filteredActivities", picked, allActivities.length)
+    return activity.filter(activity => activity.activityGroup === picked)
+  }, [picked, activity.length])
 
   const activityContext: ActivityContextInterface = { 
-    activities, picked, pick, allActivities, label
+    activities: filteredActivities, 
+    allActivities: activity, 
+    picked, pick: setPicked, label
   }
 
-  const changeCollapsed = (value: boolean) => {
-    setLabel('')
-    setCollapsed(value)
-  }
 
-  const collapseContext: CollapseContextInterface = { collapsed, changeCollapsed }
+  const collapseContext: CollapseContextInterface = { collapsed, changeCollapsed: setCollapsed }
 
   const classes: string[] = []
   if (className) classes.push(className)
   if (collapsed) classes.push(ClassCollapsed)
 
-  const viewProps = {
-    ...rest,
-    className: classes.join(' '),
-  }
+  const viewProps = { ...rest, className: classes.join(' ') }
 
   return (
     <ActivityContext.Provider value={activityContext}>

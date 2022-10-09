@@ -103,12 +103,12 @@ export const pixelsReplaceRgba = (pixels: Uint8ClampedArray, size: Size, find: R
   let index = pixels.length / 4
   while (index--) {
     const pixels_offset = index * 4
-    const rgba = pixelRgbaAtIndex(pixels_offset, pixels)
-    if (isPositive(rgba.a)) {
+    const rgbaAtIndex = pixelRgbaAtIndex(pixels_offset, pixels)
+    if (isPositive(rgbaAtIndex.a)) {
 
-      const rgbaAsYuv = colorRgbToYuv(rgba)
+      const rgbaAsYuv = colorRgbToYuv(rgbaAtIndex)
       const difference = accurate ? colorYuvBlend(yuvsFromPixelsAccurate(pixels, index, size), yuv, similarity, blend) : colorYuvDifference(rgbaAsYuv, yuv, similarity, blend)
-      const mixed = pixelsMixRbga(rgba, replace, difference)
+      const mixed = pixelsMixRbga(rgbaAtIndex, replace, difference)
       pixels[pixels_offset + 3] = mixed.a
       if (mixed.a) {
         pixels[pixels_offset] = mixed.r

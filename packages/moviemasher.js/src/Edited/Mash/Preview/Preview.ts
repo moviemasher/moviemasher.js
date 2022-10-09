@@ -1,3 +1,4 @@
+import { PreviewItems, SvgItems } from "../../../declarations"
 import { Size } from "../../../Utility/Size"
 import { GraphFileOptions } from "../../../MoveMe"
 import { Editor } from "../../../Editor/Editor"
@@ -5,7 +6,6 @@ import { Time } from "../../../Helpers/Time/Time"
 import { Loader } from "../../../Loader/Loader"
 import { Mash } from "../Mash"
 import { Clip } from "../Track/Clip/Clip"
-import { SvgItem, SvgItems } from "../../../declarations"
 
 export interface PreviewOptions  {
   editor?: Editor
@@ -30,8 +30,8 @@ export interface Preview extends GraphFileOptions {
   quantize: number
   selectedClip?: Clip
   size: Size
-  svgItemPromise: Promise<SvgItem>
   svgItemsPromise: Promise<SvgItems>
+  previewItemsPromise: Promise<PreviewItems>
   time: Time
   visible: boolean
 }

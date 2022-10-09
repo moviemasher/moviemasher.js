@@ -10,12 +10,10 @@ import { PlayerPlaying } from './PlayerPlaying'
 import { PlayerNotPlaying } from './PlayerNotPlaying'
 import { PlayerProps } from './Player'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
-import { EditorUndoButton } from '../Controls/EditorUndoButton'
-import { EditorRedoButton } from '../Controls/EditorRedoButton'
+
 import { ClassButton } from '@moviemasher/moviemasher.js'
 import { PlayerTime } from './PlayerTime'
 import { View } from '../../Utilities/View'
-import { labelTranslate } from '../../Utilities/Label'
 
 export interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
@@ -31,15 +29,7 @@ export const DefaultPlayerProps: PropsMethod<PlayerPropsDefault, PlayerProps> = 
       <View key="drop-box" className="drop-box" />
     </PlayerContent>
   )
-  optionsStrict.header.content ||= [
-    icons.app,
-    <EditorUndoButton key='undo'>
-      <Button>{icons.undo}{labelTranslate('undo')}</Button>
-    </EditorUndoButton>,
-    <EditorRedoButton key='redo'>
-      <Button>{icons.redo}{labelTranslate('redo')}</Button>
-    </EditorRedoButton>,
-  ]
+  optionsStrict.header.content ||= [icons.app]
   
   optionsStrict.footer.content ||= [
     <PlayerButton key='play-button' className={ClassButton}>

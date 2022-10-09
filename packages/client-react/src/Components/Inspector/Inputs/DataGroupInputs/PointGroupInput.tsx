@@ -38,6 +38,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     [`x${PropertyTweenSuffix}`]: xEnd,
     [`y${PropertyTweenSuffix}`]: yEnd
   } = byName 
+
   const xProperty = endSelected ? xEnd : x
   const yProperty = endSelected ? yEnd : y
 
@@ -105,42 +106,58 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
       <View { ...endProps } />
     </View>
   ]
-  const lockOffEProps = { 
-    key: "lock-east",
-    className: ClassButton,
-    children: offEValue ? icons.unlock : icons.lock, 
-    onClick: () => { offE.changeHandler('offE', !offEValue) }
+
+
+  const xElements = [<View key="horz-icon" children={icons.horz} className={ClassButton} />]
+  const yElements = [<View key="vert-icon" children={icons.vert} className={ClassButton} />]
+
+  if (offE) {
+    const lockOffEProps = { 
+      key: "lock-east",
+      className: ClassButton,
+      children: offEValue ? icons.unlock : icons.lock, 
+      onClick: () => { offE.changeHandler('offE', !offEValue) }
+    }
+    const lockOffE = <View { ...lockOffEProps } />
+
+    xElements.push(lockOffE)
   }
-  const lockOffE = <View { ...lockOffEProps } />
-
-  const lockOffWProps = { 
-    key: "lock-west",
-    className: ClassButton,
-    children: offWValue ? icons.unlock : icons.lock, 
-    onClick: () => { offW.changeHandler('offW', !offWValue) }
+  xElements.push( elementsByName.x)
+  if (offW) {
+    const lockOffWProps = { 
+      key: "lock-west",
+      className: ClassButton,
+      children: offWValue ? icons.unlock : icons.lock, 
+      onClick: () => { offW.changeHandler('offW', !offWValue) }
+    }
+    const lockOffW = <View { ...lockOffWProps } />
+    xElements.push(lockOffW)
   }
-  const lockOffW = <View { ...lockOffWProps } />
+  if (offN) {
+    const lockOffNProps = { 
+      key: "lock-north",
+      className: ClassButton,
+      children: offNValue ? icons.unlock : icons.lock, 
+      onClick: () => { offN.changeHandler('offN', !offNValue) }
+    }
+    const lockOffN = <View { ...lockOffNProps } />
 
-  const lockOffNProps = { 
-    key: "lock-north",
-    className: ClassButton,
-    children: offNValue ? icons.unlock : icons.lock, 
-    onClick: () => { offN.changeHandler('offN', !offNValue) }
+    yElements.push(lockOffN)
   }
-  const lockOffN = <View { ...lockOffNProps } />
-
-  const lockOffSProps = { 
-    key: "lock-south",
-    className: ClassButton,
-    children: offSValue ? icons.unlock : icons.lock, 
-    onClick: () => { offS.changeHandler('offS', !offSValue) }
+  yElements.push(elementsByName.y)
+  if (offS) {
+    const lockOffSProps = { 
+      key: "lock-south",
+      className: ClassButton,
+      children: offSValue ? icons.unlock : icons.lock, 
+      onClick: () => { offS.changeHandler('offS', !offSValue) }
+    }
+    const lockOffS = <View { ...lockOffSProps } />
+    yElements.push(lockOffS)
   }
-  const lockOffS = <View { ...lockOffSProps } />
-
-
   const elements = [
-    <View key="x" className='point' children={[icons.horz, lockOffE, elementsByName.x, lockOffW]} />, 
-    <View key="y" className='point' children={[icons.vert, lockOffN, elementsByName.y, lockOffS]} />
+    <View key="x" children={xElements} />, 
+    <View key="y" children={yElements} />
   ]
 
   return <fieldset>

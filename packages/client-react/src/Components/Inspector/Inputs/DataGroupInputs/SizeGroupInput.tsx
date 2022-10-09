@@ -24,7 +24,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const { icons } = masherContext
   const editor = useEditor()
   const { selectType } = props
-  assertSelectType(selectType)
+  assertSelectType(selectType, 'selectType')
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedItems: properties, selectedInfo, changeTweening } = inspectorContext
   const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
@@ -47,7 +47,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
 
   const { lock: lockValue } = values
-  assertString(lockValue)
+  assertString(lockValue, 'lockValue')
     
   const orientation = isOrientation(lockValue) ? lockValue as Orientation : undefined
   
@@ -128,9 +128,19 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
       <View { ...endProps } />
     </View>
   ]
+  const widthElements = [
+    <View key="width-icon" children={icons.width} className={ClassButton} />, 
+    elementsByName.width, 
+    lockWidth
+  ]
+  const heightElements = [
+    <View key="height-icon" children={icons.height} className={ClassButton} />, 
+    elementsByName.height, 
+    lockHeight
+  ]
   const elements = [
-    <View key="width" className='size' children={[icons.width, elementsByName.width, lockWidth]} />, 
-    <View key="height" className='size' children={[icons.height, elementsByName.height, lockHeight]} />
+    <View key="width" children={widthElements} />, 
+    <View key="height" children={heightElements} />
   ]
   return <fieldset>
     <legend key="legend"><View>{legendElements}</View></legend>

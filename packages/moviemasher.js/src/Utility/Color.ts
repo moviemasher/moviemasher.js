@@ -71,11 +71,11 @@ export const colorRgbToHex = (rgb: RgbObject): string => {
   return `#${r}${g}${b}`
 }
 
-export const colorRgbaToHex = (rgba: RgbaObject): string => {
-  let r = rgba.r.toString(16)
-  let g = rgba.g.toString(16)
-  let b = rgba.b.toString(16)
-  let a = Math.round(255 * Number(rgba.a)).toString(16)
+export const colorRgbaToHex = (object: RgbaObject): string => {
+  let r = object.r.toString(16)
+  let g = object.g.toString(16)
+  let b = object.b.toString(16)
+  let a = Math.round(255 * Number(object.a)).toString(16)
   if (r.length < 2) r = `0${r}`
   if (g.length < 2) g = `0${g}`
   if (b.length < 2) b = `0${b}`
@@ -218,8 +218,8 @@ export const colorToRgba = (value: string): Rgba => {
 }
 
 export const colorAlphaColor = (value: string): AlphaColor => {
-  const rgba = colorToRgba(value)
-  return { alpha: rgba.a, color: colorRgbToHex(rgba) }
+  const toRgba = colorToRgba(value)
+  return { alpha: toRgba.a, color: colorRgbToHex(toRgba) }
 }
 
 export const colorFromRgb = (rgb: Rgb): string => {
@@ -227,8 +227,8 @@ export const colorFromRgb = (rgb: Rgb): string => {
   return `rgb(${r},${g},${b})`
 }
 
-export const colorFromRgba = (rgba: Rgba): string => {
-  const { r, g, b, a} = rgba
+export const colorFromRgba = (object: Rgba): string => {
+  const { r, g, b, a} = object
   return `rgb(${r},${g},${b},${a})`
 }
 

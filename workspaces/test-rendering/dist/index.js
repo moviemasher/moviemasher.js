@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const moviemasher_js_1 = require("@moviemasher/moviemasher.js");
+const moviemasher_js_1 = require("@moviemasher/moviemasher.js/umd/moviemasher.js");
 const Generate_1 = require("./Generate");
 const Rendering_1 = require("./Rendering");
 const TestRenderOutput_1 = require("./TestRenderOutput");
@@ -79,6 +79,16 @@ const dynamicGenerateOptions = {
     opacity: (0, Generate_1.generateArgsDynamic)(Generate_1.GenerateArg.Opacity).pop(),
 };
 const specificIds = [
+    "P_M_F_in_S_U_M_H_100",
+    "P_TL_F_in_T_U_M_F_100",
+    "P_TL_F_in_T_U_M_Q_100",
+    "P_BR-M_D-F_in_R_C_BR-M_F-H_100",
+    "P_BR-M_F_in_R_U_M_H_50",
+    "P_TL_F_in_K_C_TL-BR_H_50",
+    "P_TL_F_in_S_C_TL-BR_F-H_50",
+    "P_TL_F_in_S_U_TL-BR_Q-F_50",
+    "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
+    "P_TL_F_in_T_U_M_Q-F_100",
     "BL_in_S_C_M_H_100",
     "BL_in_T_C_M_Q-F_100",
     "BL-RE_in_K_C_TL_Q-F_100",
@@ -88,16 +98,6 @@ const specificIds = [
     "BL-RE_in_T_U_M_F-H_100",
     "BL-RE_in_T_U_M_Q-F_100",
     "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
-    "P_BR-M_D-F_in_R_C_BR-M_F-H_100",
-    "P_BR-M_F_in_R_U_M_H_50",
-    "P_M_F_in_S_U_M_H_100",
-    "P_TL_F_in_K_C_TL-BR_H_50",
-    "P_TL_F_in_S_C_TL-BR_F-H_50",
-    "P_TL_F_in_S_U_TL-BR_Q-F_50",
-    "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
-    "P_TL_F_in_T_U_M_F_100",
-    "P_TL_F_in_T_U_M_Q_100",
-    "P_TL_F_in_T_U_M_Q-F_100",
     "RGB_TL_F_in_T_U_M_Q-F_100",
     "V_TL_F_in_S_U_M_Q-F_100",
     "V_TL_F_in_T_U_M_Q-F_100",

@@ -15,7 +15,7 @@ export interface TextContainerDefinitionObject extends ContainerDefinitionObject
 
 export interface TextContainer extends Container {
   definition: TextContainerDefinition
-  font: FontDefinition
+  // font: FontDefinition
   fontId: string
   string: string
 }

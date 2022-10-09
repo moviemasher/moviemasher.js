@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTest = exports.generateTests = exports.generateIds = exports.GenerateDefinitionObjects = exports.generateArgsStatic = exports.generateArgsDynamic = exports.GenerateTestsDefault = exports.GenerateOptionsDefault = exports.generateTestArgs = exports.GenerateDelimiter = exports.GenerateIdDelimiter = exports.GenerateArgs = exports.GenerateArg = exports.isGenerateOpacity = exports.isGenerateConstrain = exports.isGenerateSize = exports.isGeneratePoint = void 0;
-const moviemasher_js_1 = require("@moviemasher/moviemasher.js");
+const moviemasher_js_1 = require("@moviemasher/moviemasher.js/umd/moviemasher.js");
 var GeneratePoint;
 (function (GeneratePoint) {
     GeneratePoint["TL"] = "TL";
@@ -200,7 +200,7 @@ exports.GenerateTestsDefault = {
         ["K", "kitten", {}],
         // ["S", 'com.moviemasher.container.test', {}],
         // ["B", 'com.moviemasher.container.broadcast', {}],
-        ["S", 'com.moviemasher.container.chat', {}],
+        ["S", 'com.remixicon.container.heart', {}],
         ["T", 'com.moviemasher.container.text', textOptions],
         // ["P", "puppy" , {}],
     ],
@@ -364,7 +364,7 @@ const generateTests = (generateOptions, testId = 'all', size = moviemasher_js_1.
     if (labels)
         tracks.push({ clips: labelClips, dense: true });
     const mash = {
-        id: testId, backcolor: '#666666', tracks
+        id: testId, color: '#666666', tracks
     };
     return [testId, mash];
 };
@@ -375,7 +375,7 @@ const generateTest = (testId, size = moviemasher_js_1.SizePreview, frames = movi
     if (labelClip)
         tracks.push({ clips: [labelClip], dense: true });
     const mash = {
-        id: testId, backcolor: '#666666', tracks
+        id: testId, color: '#666666', tracks
     };
     return [testId, mash];
 };

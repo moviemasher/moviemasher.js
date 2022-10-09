@@ -1,4 +1,5 @@
 import {
+  PreviewItems,
   StringObject, SvgItem, Timeout, UnknownObject} from "../declarations"
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero } from "../Utility/Size"
 import { Definition, DefinitionObject, DefinitionObjects, isDefinitionObject } from "../Definition/Definition"
@@ -328,7 +329,7 @@ export class EditorClass implements Editor {
       case MasherAction.Undo: return this.actions.canUndo
       case MasherAction.Redo: return this.actions.canRedo
       case MasherAction.Remove: return !!(clip || track || layer)
-      case MasherAction.Render: return !!mash?.id
+      case MasherAction.Render: return !!(mash?.id && !idIsTemporary(mash.id))
       default: throw Errors.argument + 'can'
     }
   }
@@ -918,14 +919,14 @@ export class EditorClass implements Editor {
   get svgElement() { return this.preloader.svgElement } 
   set svgElement(value: SVGSVGElement) { this.preloader.svgElement = value }
 
-  svgItems(enabled?: boolean): Promise<SvgItem[]> {
+  previewItems(enabled?: boolean): Promise<PreviewItems> {
     const { edited } = this
     // return an empty element if we haven't loaded anything yet
     if (!edited) return Promise.resolve([svgElement(this.rect)])
 
     const options: PreviewOptions = {}
     if (enabled && this.paused) options.editor = this
-    return edited.svgItems(options)
+    return edited.previewItems(options)
   }
 
   get time(): Time { return this.selection.mash?.time || timeFromArgs(0, this.fps)}

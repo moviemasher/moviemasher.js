@@ -57,14 +57,14 @@ export enum AVType {
 
 export enum SelectType {
   Cast = 'cast',
-  Mash = 'mash',
-  Track = 'track',
-  Layer = 'layer',
-  Effect = 'effect',
   Clip = 'clip',
-  Content = 'content',
   Container = 'container',
+  Content = 'content',
+  Effect = 'effect',
+  Layer = 'layer',
+  Mash = 'mash',
   None = 'none',
+  Track = 'track',
 }
 
 export const SelectTypes = Object.values(SelectType)
@@ -83,29 +83,29 @@ export const isClipSelectType = (type?: any): type is ClipSelectType => {
 
 export enum OutputFormat {
   AudioConcat = 'wav',
-  Mdash = 'mdash',
   Flv = 'flv',
   Hls = 'hls',
   Jpeg = 'jpeg',
+  Mdash = 'mdash',
   Mp3 = 'mp3',
   Mp4 = 'mp4',
-  VideoConcat = 'yuv4mpegpipe',
   Png = 'image2',
   Rtmp = 'rtmp',
+  VideoConcat = 'yuv4mpegpipe',
 }
 
 export enum StreamingFormat {
   Hls = 'hls',
-  Rtmp = 'rtmp',
   Mdash = 'mdash',
+  Rtmp = 'rtmp',
 }
 
 
 export enum OutputType {
   Audio = 'audio',
   Image = 'image',
-  Video = 'video',
   ImageSequence = 'imagesequence',
+  Video = 'video',
   Waveform = 'waveform',
 }
 export const OutputTypes = Object.values(OutputType)

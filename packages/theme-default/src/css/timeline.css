@@ -92,8 +92,7 @@
 }
 
 .moviemasher .editor .panel.timeline .content .track .clip {
-  border-inline: var(--border);
-  border-block: none;
+  border: var(--border);
   display: inline-block;
 }
 

@@ -68,7 +68,8 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const { current } = svgRef
     const parent = current?.parentNode
     if (parent instanceof HTMLDivElement) {
-      return parent.getBoundingClientRect().height
+
+      return parent.offsetHeight // .getBoundingClientRect().height
     }
   
     // console.log("ClipItem.getParentHeight NO HEIGHT", !!current)

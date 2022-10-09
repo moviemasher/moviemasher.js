@@ -13,7 +13,7 @@ import { svgAddClass, svgAppend, svgDefsElement, svgDifferenceDefs, svgElement, 
 import { assertObject, isObject } from "../../../Utility/Is"
 import { idGenerate } from "../../../Utility/Id"
 import { GraphFiles } from "../../../MoveMe"
-import { SvgItem, SvgItems, SvgItemsTuple } from "../../../declarations"
+import { PreviewItems, SvgItem, SvgItems, SvgItemsTuple } from "../../../declarations"
 
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
@@ -60,15 +60,15 @@ export class PreviewClass implements Preview {
     return preloader.loadFilesPromise(files)
   }
 
-  private get itemsPromise(): Promise<SvgItems> {
+  private get itemsPromise(): Promise<PreviewItems> {
     const { clips, size, time, onlyClip } = this
     
-    let promise = Promise.resolve([] as SvgItems)
+    let promise = Promise.resolve([] as PreviewItems)
     const icon = !!onlyClip
     clips.forEach(clip => {
       promise = promise.then(lastTuple => {
-        return clip.previewItemsPromise(size, time, icon).then(svgItem => {
-          return [...lastTuple, svgItem] 
+        return clip.previewItemsPromise(size, time, icon).then(svgItems => {
+          return [...lastTuple, ...svgItems] 
         })
       })
     })
@@ -90,7 +90,7 @@ export class PreviewClass implements Preview {
   streaming = false
 
 
-  private _svgItems?: SvgItems
+  private _svgItems?: PreviewItems
   time: Time
 
   private _trackPreviews?: TrackPreviews
@@ -112,21 +112,13 @@ export class PreviewClass implements Preview {
     })
     return trackPreviews
   }
-
-  
-  get svgItemPromise(): Promise<SvgItem> { 
-    return this.svgItemsPromise.then(svgItems => {
-      const { length } = svgItems
-      if (length === 1) return svgItems[0]
-      
-      const { size } = this
-      const element = svgElement(size)
-      svgItems.forEach(item => element.appendChild(item))
-      return element
-    })
+  get svgItemsPromise(): Promise<SvgItems> { 
+    return this.previewItemsPromise as Promise<SvgItems>
   }
 
-  get svgItemsPromise(): Promise<SvgItems> { 
+  
+
+  get previewItemsPromise(): Promise<PreviewItems> { 
     if (this._svgItems) return Promise.resolve(this._svgItems)
 
     const sizePromise = this.intrinsicSizePromise  
@@ -137,7 +129,7 @@ export class PreviewClass implements Preview {
     })
   }
 
-  private tupleItems(svgItems: SvgItems): SvgItems {
+  private tupleItems(svgItems: PreviewItems): PreviewItems {
     const { size, editing, background, selectedClip, editor } = this
     const previewItems = [...svgItems]
     const trackClasses = 'track'

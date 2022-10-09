@@ -28,32 +28,14 @@ export class DefinitionBase implements Definition {
 
   id: string
 
-
-  
-  protected urlIcon(url: string, loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
-    const imageUrl = urlPrependProtocol('image', url)
-    // console.log(this.constructor.name, "urlIcon", imageUrl)
-    return loader.loadPromise(imageUrl).then((image: LoadedImage) => {
-      // console.log(this.constructor.name, "urlIcon.loadPromise", imageUrl, image?.constructor.name)
-      const { width, height } = image
-      const inSize = { width, height }
-      const coverSize = sizeCover(inSize, size, true)
-      const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-      const svgUrl = urlPrependProtocol('svg', imageUrl, outRect)
-    
-      // console.log(this.constructor.name, "urlIcon", svgUrl)
-      return loader.loadPromise(svgUrl).then(svgImage => {
-        // console.log(this.constructor.name, "urlIcon.loadPromise", svgUrl, svgImage?.constructor.name)
-        return svgElement(size, svgImage)
-      })
-    })
-  }
-
-
   definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
     const { icon } = this
-    if (!icon) return 
-    
+    if (!icon) {
+      // console.log(this.constructor.name, "definitionIcon NO ICON")
+      return
+    } 
+    // console.log(this.constructor.name, "definitionIcon", icon)
+
     return this.urlIcon(icon, loader, size)
   }
   
@@ -89,12 +71,29 @@ export class DefinitionBase implements Definition {
 
   type!: DefinitionType
 
-  // value(name: string): Scalar | undefined { return this.property(name)?.value }
+  protected urlIcon(url: string, loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
+    const imageUrl = urlPrependProtocol('image', url)
+    // console.log(this.constructor.name, "urlIcon", imageUrl)
+    return loader.loadPromise(imageUrl).then((image: LoadedImage) => {
+      // console.log(this.constructor.name, "urlIcon.loadPromise", imageUrl, image?.constructor.name)
+      const { width, height } = image
+      const inSize = { width, height }
+      const coverSize = sizeCover(inSize, size, true)
+      const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
+      const svgUrl = urlPrependProtocol('svg', imageUrl, outRect)
+    
+      // console.log(this.constructor.name, "urlIcon", svgUrl)
+      return loader.loadPromise(svgUrl).then(svgImage => {
+        // console.log(this.constructor.name, "urlIcon.loadPromise", svgUrl, svgImage?.constructor.name)
+        return svgElement(size, svgImage)
+      })
+    })
+  }
+
   static fromObject(object: DefinitionObject): Definition {
     const { id, type } = object
     assertDefinitionType(type)
     assertPopulatedString(id, 'id')
     return Factory[type].definition(object)
   }
-
 }

@@ -1,8 +1,7 @@
 import { Factory } from "../Definitions/Factory/Factory"
 import { IdPrefix } from "../Setup/Constants"
 import { assertDefinitionType, DefinitionType, isDefinitionType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
-import { assertPopulatedString, assertPositive, assertTrue } from "../Utility/Is"
+import { assertPopulatedString } from "../Utility/Is"
 import { assertDefinition, Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 
 export class Defined {
@@ -28,20 +27,13 @@ export class Defined {
   }
 
   private static definitionDelete(definition: Definition): void {
-    const { type } = definition
+    const { type, id } = definition
     const definitions = this.byType(type)
-    const index = definitions.indexOf(definition)
+    const index = definitions.findIndex(definition => id === definition.id)
+    // console.log(this.name, "definitionDelete", type, id, index)
     if (index < 0) return
 
     definitions.splice(index, 1)
-  }
-
-  static definitionUninstall(id: string): void {
-    if (!this.installed(id)) return
-
-    const definition = this.fromId(id)
-    this.byId.delete(id)
-    this.definitionDelete(definition)
   }
 
   private static definitionsByType = new Map<DefinitionType, Definition[]>()
@@ -76,6 +68,8 @@ export class Defined {
 
   static install(definition: Definition): Definition {
     const { type, id } = definition
+    // console.log(this.name, "install", JSON.stringify(definition))
+
     if (this.installed(id)) {
       // console.log(this.constructor.name, "install REINSTALL", type, id)
       this.uninstall(definition)
@@ -91,7 +85,15 @@ export class Defined {
 
   static installed(id: string): boolean { return this.byId.has(id) }
 
-  static predefined(id: string) { return id.startsWith(IdPrefix) }
+  static predefined(id: string) { 
+    if (id.startsWith(IdPrefix)) return true
+
+    const definitionType = this.definitionsType(id)
+    if (!definitionType) return false
+
+    const array = this.byType(definitionType)
+    return array.some(definition => definition.id === id)
+  }
 
   static undefineAll() {
     // console.log(this.name, "undefineAll")
@@ -101,7 +103,7 @@ export class Defined {
   }
 
   static updateDefinition(oldDefinition: Definition, newDefinition: Definition): Definition {
-    // console.log(this.name, "updateDefinition")
+    // console.log(this.name, "updateDefinition", oldDefinition.type, oldDefinition.id, "->", newDefinition.type, newDefinition.id)
 
     this.uninstall(oldDefinition)
     this.install(newDefinition)
@@ -119,13 +121,8 @@ export class Defined {
   }
 
   static uninstall(definition: Definition) {
-    const { type, id } = definition
-    const list = this.definitionsByType.get(type)
-    assertTrue(list)
-    const index = list.indexOf(definition)
-    assertPositive(index)
-
-    list.splice(index, 1)
+    this.definitionDelete(definition)
+    const { id } = definition
     this.byId.delete(id)
     return definition
   }

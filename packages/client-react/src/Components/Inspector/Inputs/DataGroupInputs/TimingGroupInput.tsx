@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertSelectType, DataGroup, isPopulatedObject, selectedPropertyObject 
+  assertSelectType, ClassButton, DataGroup, isPopulatedObject, selectedPropertyObject 
 } from "@moviemasher/moviemasher.js"
 
 import { ElementRecord, ReactResult } from "../../../../declarations"
@@ -46,8 +46,8 @@ export function TimingGroupInput(props: DataGroupProps): ReactResult {
   const elements = Object.entries(rest).map(([key, value]) => {
     const icon = icons[key]
     const children = [value]
-    if (icon) children.unshift(icon)
-    const frameProps = { className: "timing", key: 'timing', children }
+    if (icon) children.unshift(<View key={`${key}-icon`} children={icon} className={ClassButton} />)
+    const frameProps = { key: `${key}-view`, children }
     return <View { ...frameProps } />
   })
 

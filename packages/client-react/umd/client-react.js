@@ -143,6 +143,12 @@
     };
     const ActivityContext = React__default["default"].createContext(ActivityContextDefault);
 
+    const CollapseContextDefault = {
+        collapsed: false,
+        changeCollapsed: () => { },
+    };
+    const CollapseContext = React__default["default"].createContext(CollapseContextDefault);
+
     const MasherContextDefault = {
         changeDefinition: moviemasher_js.EmptyMethod,
         drop: () => Promise.resolve([]),
@@ -153,60 +159,25 @@
     };
     const MasherContext = React__default["default"].createContext(MasherContextDefault);
 
-    const useListeners = (events, target) => {
-        const editorContext = React__default["default"].useContext(MasherContext);
-        const { editor } = editorContext;
-        const eventTarget = target || editor.eventTarget;
-        const handleEvent = (event) => {
-            const { type } = event;
-            const handler = events[type];
-            if (handler)
-                handler(event);
-        };
-        const removeListeners = () => {
-            Object.keys(events).forEach(eventType => {
-                eventTarget.removeEventListener(eventType, handleEvent);
-            });
-        };
-        const addListeners = () => {
-            Object.keys(events).forEach(eventType => {
-                eventTarget.addEventListener(eventType, handleEvent);
-            });
-            return () => { removeListeners(); };
-        };
-        React__default["default"].useEffect(() => addListeners(), []);
-    };
-
-    const CollapseContextDefault = {
-        collapsed: false,
-        changeCollapsed: () => { },
-    };
-    const CollapseContext = React__default["default"].createContext(CollapseContextDefault);
-
-    /**
-     * @parents Masher
-     * @children ActivityContent
-     */
-    function Activity(props) {
-        const { initialPicked = exports.ActivityGroup.Active, collapsed: collapsedProp, className } = props, rest = __rest(props, ["initialPicked", "collapsed", "className"]);
-        const [collapsed, setCollapsed] = React__default["default"].useState(!!collapsedProp);
-        assertActivityGroup(initialPicked);
+    const useEditorActivity = () => {
+        // console.log("useEditorActivity")
+        const masherContext = React__default["default"].useContext(MasherContext);
+        const { editor } = masherContext;
+        moviemasher_js.assertDefined(editor);
         const allActivitiesRef = React__default["default"].useRef([]);
-        const { current: allActivities } = allActivitiesRef;
-        const [activities, setActivities] = React__default["default"].useState(() => ([]));
-        const [picked, setPicked] = React__default["default"].useState(() => initialPicked || exports.ActivityGroup.Active);
-        const [label, setLabel] = React__default["default"].useState('');
-        const getActivities = (activityGroup) => (allActivitiesRef.current.filter(activity => activity.activityGroup === activityGroup));
-        const handleActivity = (event) => {
+        const { eventTarget } = editor;
+        const getSnapshot = () => {
+            return allActivitiesRef.current;
+        };
+        const handleEvent = (event) => {
             const { type } = event;
             if (moviemasher_js.isEventType(type) && (event instanceof CustomEvent)) {
                 const info = event.detail;
                 const { id, type } = info;
+                const { current: allActivities } = allActivitiesRef;
                 const existing = allActivities.find(activity => activity.id === id);
                 const activity = existing || { id, activityGroup: exports.ActivityGroup.Active, infos: [] };
                 activity.infos.unshift(info);
-                if (collapsed)
-                    setLabel(activityLabel(info));
                 if (type === moviemasher_js.ActivityType.Complete)
                     activity.activityGroup = exports.ActivityGroup.Complete;
                 else if (type === moviemasher_js.ActivityType.Error) {
@@ -214,22 +185,46 @@
                 }
                 if (!existing)
                     allActivities.unshift(activity);
-                setActivities(getActivities(picked));
             }
         };
-        useListeners({ [moviemasher_js.EventType.Activity]: handleActivity });
-        const pick = (activityGroup) => {
-            setActivities(() => getActivities(activityGroup));
-            setPicked(() => activityGroup);
+        const externalStore = React__default["default"].useSyncExternalStore((callback) => {
+            eventTarget.addEventListener(moviemasher_js.EventType.Activity, callback);
+            return () => {
+                eventTarget.removeEventListener(moviemasher_js.EventType.Activity, callback);
+            };
+        }, getSnapshot);
+        const removeListener = () => {
+            eventTarget.removeEventListener(moviemasher_js.EventType.Activity, handleEvent);
         };
+        const addListener = () => {
+            eventTarget.addEventListener(moviemasher_js.EventType.Activity, handleEvent);
+            return () => { removeListener(); };
+        };
+        React__default["default"].useEffect(() => addListener(), []);
+        return [editor, externalStore];
+    };
+
+    /**
+     * @parents Masher
+     * @children ActivityContent
+     */
+    function Activity(props) {
+        const { initialPicked = exports.ActivityGroup.Active, initialCollapsed = false, className } = props, rest = __rest(props, ["initialPicked", "initialCollapsed", "className"]);
+        assertActivityGroup(initialPicked);
+        const [collapsed, setCollapsed] = React__default["default"].useState(initialCollapsed);
+        const [label, setLabel] = React__default["default"].useState('');
+        const [editor, activity] = useEditorActivity();
+        const [picked, setPicked] = React__default["default"].useState(initialPicked);
+        const filteredActivities = React__default["default"].useMemo(() => {
+            // console.log("filteredActivities", picked, allActivities.length)
+            return activity.filter(activity => activity.activityGroup === picked);
+        }, [picked, activity.length]);
         const activityContext = {
-            activities, picked, pick, allActivities, label
+            activities: filteredActivities,
+            allActivities: activity,
+            picked, pick: setPicked, label
         };
-        const changeCollapsed = (value) => {
-            setLabel('');
-            setCollapsed(value);
-        };
-        const collapseContext = { collapsed, changeCollapsed };
+        const collapseContext = { collapsed, changeCollapsed: setCollapsed };
         const classes = [];
         if (className)
             classes.push(className);
@@ -476,8 +471,8 @@
         (_a = optionsStrict.props).key || (_a.key = 'activity');
         (_b = optionsStrict.props).className || (_b.className = 'panel activity');
         (_c = optionsStrict.props).initialPicked || (_c.initialPicked = exports.ActivityGroup.Active);
-        if (moviemasher_js.isUndefined(optionsStrict.props.collapsed))
-            optionsStrict.props.collapsed = true;
+        if (moviemasher_js.isUndefined(optionsStrict.props.initialCollapsed))
+            optionsStrict.props.initialCollapsed = true;
         (_d = optionsStrict.header).content || (_d.content = [
             icons.activity,
             React__default["default"].createElement(NotCollapsed, { key: "not-collapsed" },
@@ -770,90 +765,136 @@
     };
     const BrowserContext = React__default["default"].createContext(BrowserContextDefault);
 
+    const EditorDefinitionsEvent = moviemasher_js.EventType.Added;
+    const useEditorDefinitions = (types = []) => {
+        const masherContext = React__default["default"].useContext(MasherContext);
+        const { editor } = masherContext;
+        moviemasher_js.assertDefined(editor);
+        const storeRef = React__default["default"].useRef({});
+        const { eventTarget } = editor;
+        const snapshotInitialize = () => {
+            const lists = types.map(type => moviemasher_js.Defined.byType(type));
+            return lists.length === 1 ? lists[0] : lists.flat();
+        };
+        const snapshotGet = () => {
+            var _a;
+            const key = types.join('-') || 'empty';
+            return (_a = storeRef.current)[key] || (_a[key] = snapshotInitialize());
+        };
+        const handleEvent = (event) => {
+            const { type } = event;
+            if (moviemasher_js.isEventType(type) && (event instanceof CustomEvent)) {
+                const { detail } = event;
+                const { definitionTypes } = detail;
+                if (moviemasher_js.isPopulatedArray(definitionTypes)) {
+                    const types = definitionTypes;
+                    const { current } = storeRef;
+                    const allIds = Object.keys(current);
+                    const ids = allIds.filter(id => types.some(type => id.includes(type)));
+                    ids.forEach(id => delete current[id]);
+                }
+            }
+        };
+        const externalStore = React__default["default"].useSyncExternalStore((callback) => {
+            eventTarget.addEventListener(EditorDefinitionsEvent, callback);
+            return () => {
+                eventTarget.removeEventListener(EditorDefinitionsEvent, callback);
+            };
+        }, snapshotGet);
+        const removeListener = () => {
+            eventTarget.removeEventListener(EditorDefinitionsEvent, handleEvent);
+        };
+        const addListener = () => {
+            eventTarget.addEventListener(EditorDefinitionsEvent, handleEvent);
+            return () => { removeListener(); };
+        };
+        React__default["default"].useEffect(() => addListener(), []);
+        return [editor, externalStore];
+    };
+
+    const ApiDefinitionsEvent = 'api-definitions';
+    const ApiDefinitionsDisabled = 'disabled';
+    const ApiDefinitionsEmpty = 'empty';
+    const useApiDefinitions = (types = []) => {
+        const apiContext = React__default["default"].useContext(ApiContext);
+        const masherContext = React__default["default"].useContext(MasherContext);
+        const { enabled, servers, endpointPromise } = apiContext;
+        const { editor } = masherContext;
+        moviemasher_js.assertDefined(editor);
+        const storeRef = React__default["default"].useRef({});
+        const { eventTarget } = editor;
+        const definitionsPromise = (key) => {
+            const request = { types };
+            console.debug("DataDefinitionRetrieveRequest", moviemasher_js.Endpoints.data.definition.retrieve, request);
+            return endpointPromise(moviemasher_js.Endpoints.data.definition.retrieve, request).then((response) => {
+                console.debug("DataDefinitionRetrieveResponse", moviemasher_js.Endpoints.data.definition.retrieve, response);
+                const { definitions } = response;
+                const array = storeRef.current[key];
+                array.push(...definitions.map(def => moviemasher_js.DefinitionBase.fromObject(def)));
+                eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent));
+            });
+        };
+        const snapshotInitialize = (key) => {
+            switch (key) {
+                case ApiDefinitionsEmpty:
+                case ApiDefinitionsDisabled: break;
+                default: definitionsPromise(key);
+            }
+            return [];
+        };
+        const currentKey = () => {
+            if (!(enabled && servers[moviemasher_js.ServerType.Data]))
+                return ApiDefinitionsDisabled;
+            if (!types.length)
+                return ApiDefinitionsEmpty;
+            return types.join('-');
+        };
+        const snapshotGet = () => {
+            const key = currentKey();
+            const array = storeRef.current[key];
+            if (array)
+                return array;
+            // console.log("useApiDefinitions defining", key)
+            return storeRef.current[key] = snapshotInitialize(key);
+        };
+        const externalStore = React__default["default"].useSyncExternalStore((callback) => {
+            eventTarget.addEventListener(ApiDefinitionsEvent, callback);
+            return () => {
+                eventTarget.removeEventListener(ApiDefinitionsEvent, callback);
+            };
+        }, snapshotGet);
+        return [editor, externalStore];
+    };
+
+    const useDefinitions = (types = []) => {
+        const [editor, editorDefinitions] = useEditorDefinitions(types);
+        const [_, apiDefinitions] = useApiDefinitions(types);
+        const definitions = apiDefinitions.filter(apiDefinition => !editorDefinitions.some(editorDefinition => editorDefinition.id === apiDefinition.id));
+        return [editor, [...editorDefinitions, ...definitions]];
+    };
+
     /**
      * @parents Masher
      * @children BrowserContent, BrowserPicker
      */
     function Browser(props) {
         const { initialPicked = 'container' } = props, rest = __rest(props, ["initialPicked"]);
-        moviemasher_js.assertPopulatedString(initialPicked);
         const [typesObject, setTypesObject] = React__default["default"].useState({});
-        const apiContext = React__default["default"].useContext(ApiContext);
         const editorContext = React__default["default"].useContext(MasherContext);
         const { changeDefinition } = editorContext;
-        const [definitions, setDefinitions] = React__default["default"].useState([]);
         const [picked, setPicked] = React__default["default"].useState(initialPicked);
-        const { enabled, servers, endpointPromise } = apiContext;
-        const definedDefinitions = (definitionTypes) => {
-            const lists = definitionTypes.map(type => moviemasher_js.Defined.byType(type));
-            const combined = lists.length === 1 ? lists[0] : lists.flat();
-            return combined;
-        };
-        const definitionsPromise = (definitionTypes) => {
-            const defined = definedDefinitions(definitionTypes);
-            if (!(enabled && servers[moviemasher_js.ServerType.Data]))
-                return Promise.resolve(defined);
-            const request = { types: definitionTypes };
-            return endpointPromise(moviemasher_js.Endpoints.data.definition.retrieve, request).then((response) => {
-                console.debug("DataDefinitionRetrieveResponse", moviemasher_js.Endpoints.data.definition.retrieve, response);
-                const { definitions: definitionObjects } = response;
-                const filtered = definitionObjects.filter(definitionObject => {
-                    const { id } = definitionObject;
-                    return !defined.some(definition => definition.id === id);
-                });
-                return [
-                    ...defined,
-                    ...filtered.map(def => moviemasher_js.DefinitionBase.fromObject(def))
-                ];
-            });
-        };
-        const changeDefinitions = (types) => __awaiter(this, void 0, void 0, function* () {
-            changeDefinition();
-            setDefinitions(yield definitionsPromise(types));
-        });
-        const updateDefinitions = (id) => __awaiter(this, void 0, void 0, function* () {
-            const types = moviemasher_js.isPopulatedString(id) ? (typesObject[id] || []) : [];
-            yield changeDefinitions(types);
-        });
-        const pick = (id) => __awaiter(this, void 0, void 0, function* () {
+        const pick = (id) => {
             moviemasher_js.assertPopulatedString(id);
+            changeDefinition();
             setPicked(id);
-            yield updateDefinitions(id);
-        });
-        useListeners({
-            [moviemasher_js.EventType.Added]: (event) => __awaiter(this, void 0, void 0, function* () {
-                const { type } = event;
-                if (moviemasher_js.isEventType(type) && (event instanceof CustomEvent)) {
-                    const { detail } = event;
-                    const { definitionTypes } = detail;
-                    if (moviemasher_js.isPopulatedArray(definitionTypes)) {
-                        const addedTypes = definitionTypes;
-                        const ids = Object.keys(typesObject);
-                        const selectedIds = ids.filter(id => {
-                            const types = typesObject[id];
-                            moviemasher_js.assertPopulatedArray(types);
-                            return types.some(type => addedTypes.includes(type));
-                        });
-                        if (!moviemasher_js.isPopulatedArray(selectedIds))
-                            return;
-                        const selectedId = selectedIds.includes(picked) ? picked : selectedIds.shift();
-                        moviemasher_js.assertPopulatedString(selectedId);
-                        yield pick(selectedId);
-                    }
-                }
-            }),
-            [moviemasher_js.EventType.Resize]: () => {
-                updateDefinitions().then(() => { updateDefinitions(picked); });
-            }
-        });
-        const addPicker = (id, types) => __awaiter(this, void 0, void 0, function* () {
+        };
+        const [_, definitions] = useDefinitions(typesObject[picked]);
+        const addPicker = (id, types) => {
             setTypesObject(original => {
                 original[id] = types;
                 return original;
             });
-            if (id === picked)
-                yield changeDefinitions(types);
-        });
+        };
         const removePicker = (id) => {
             setTypesObject(original => {
                 delete original[id];
@@ -998,8 +1039,6 @@
     function BrowserContent(props) {
         const [over, setOver] = React__default["default"].useState(false);
         const { className, children } = props, rest = __rest(props, ["className", "children"]);
-        const child = React__default["default"].Children.only(children);
-        moviemasher_js.assertTrue(React__default["default"].isValidElement(child));
         const editorContext = React__default["default"].useContext(MasherContext);
         const browserContext = React__default["default"].useContext(BrowserContext);
         const definitions = browserContext.definitions || [];
@@ -1028,6 +1067,8 @@
             classes.push(className);
         if (over)
             classes.push(moviemasher_js.ClassDropping);
+        const child = React__default["default"].Children.only(children);
+        moviemasher_js.assertTrue(React__default["default"].isValidElement(child));
         const childNodes = () => {
             const childProps = child.props;
             return definitions.map(definition => {
@@ -1072,8 +1113,6 @@
     function BrowserPicker(props) {
         const { children, type, types, className, id } = props, rest = __rest(props, ["children", "type", "types", "className", "id"]);
         moviemasher_js.assertPopulatedString(id);
-        const child = React__default["default"].Children.only(children);
-        moviemasher_js.assertTrue(React__default["default"].isValidElement(child), Problems.child);
         const browserContext = React__default["default"].useContext(BrowserContext);
         const { pick, picked, addPicker, removePicker } = browserContext;
         const classes = [];
@@ -1081,25 +1120,24 @@
             classes.push(className);
         if (picked === id)
             classes.push(moviemasher_js.ClassSelected);
-        const onClick = () => { pick(id); };
         React__default["default"].useEffect(() => {
             addPicker(id, propsDefinitionTypes(type, types, id));
             return () => { removePicker(id); };
         }, []);
-        const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), key: `browser-picker-${id}`, onClick });
+        const viewProps = Object.assign(Object.assign({}, rest), { className: classes.join(' '), key: `browser-picker-${id}`, onClick: () => { pick(id); } });
+        const child = React__default["default"].Children.only(children);
+        moviemasher_js.assertTrue(React__default["default"].isValidElement(child), Problems.child);
         return React__default["default"].cloneElement(child, viewProps);
     }
 
     const BrowserControlId = 'upload-control-id';
     function BrowserControl(props) {
+        const { children } = props, rest = __rest(props, ["children"]);
         const fileInput = React__default["default"].useRef(null);
         const apiContext = React__default["default"].useContext(ApiContext);
         const editorContext = React__default["default"].useContext(MasherContext);
         const { servers } = apiContext;
         const { drop } = editorContext;
-        // const required = [ServerType.File, ServerType.Data, ServerType.Rendering]
-        // if (!(enabled && required.every(type => servers[type]))) return null
-        const { children } = props, rest = __rest(props, ["children"]);
         const onChange = (event) => {
             const { files } = event.currentTarget;
             if (files)
@@ -1138,7 +1176,7 @@
         const { editor, definition: selectedDefinition, changeDefinition } = editorContext;
         moviemasher_js.assertTrue(editor);
         const definition = useDefinition();
-        const { id, label } = definition;
+        const { id, label, type } = definition;
         const updateRef = () => __awaiter(this, void 0, void 0, function* () {
             const { rect, preloader } = editor;
             const { current } = svgRef;
@@ -1255,6 +1293,32 @@
 
     const useLayer = () => React__default["default"].useContext(LayerContext).layer;
 
+    const useListeners = (events, target) => {
+        const masherContext = React__default["default"].useContext(MasherContext);
+        const { editor } = masherContext;
+        const eventTarget = target || editor.eventTarget;
+        const handleEvent = (event) => {
+            const { type } = event;
+            const handler = events[type];
+            if (handler)
+                handler(event);
+        };
+        const removeListeners = () => {
+            const keys = Object.keys(events);
+            // console.log("useListeners.removeListeners", keys)
+            keys.forEach(eventType => {
+                eventTarget.removeEventListener(eventType, handleEvent);
+            });
+        };
+        const addListeners = () => {
+            Object.keys(events).forEach(eventType => {
+                eventTarget.addEventListener(eventType, handleEvent);
+            });
+            return () => { removeListeners(); };
+        };
+        React__default["default"].useEffect(() => addListeners(), []);
+    };
+
     const ClipItemRefreshRate = 500;
     /**
      * @parents TimelineTrack
@@ -1300,7 +1364,7 @@
             const { current } = svgRef;
             const parent = current === null || current === void 0 ? void 0 : current.parentNode;
             if (parent instanceof HTMLDivElement) {
-                return parent.getBoundingClientRect().height;
+                return parent.offsetHeight; // .getBoundingClientRect().height
             }
             // console.log("ClipItem.getParentHeight NO HEIGHT", !!current)
             return 0;
@@ -2174,9 +2238,9 @@
                     setDescribed(original => {
                         const copy = [...original];
                         described.forEach(object => {
-                            const { id } = object;
+                            const { id, label } = object;
                             const found = copy.find(object => object.id === id);
-                            if (found)
+                            if (found || !moviemasher_js.isPopulatedString(label))
                                 return;
                             copy.push(object);
                         });
@@ -2184,6 +2248,8 @@
                     });
             });
         }, [servers, enabled]);
+        if (described.length < 2)
+            return null;
         const describedOptions = () => {
             const { editType, edited } = editor;
             const elements = [React__default["default"].createElement("optgroup", { key: "group", label: labelTranslate('open') })];
@@ -2200,8 +2266,15 @@
             }));
             return elements;
         };
-        const selectOptions = Object.assign(Object.assign({}, props), { onChange, disabled, children: describedOptions(), value: editedId });
-        return React__default["default"].createElement("select", Object.assign({}, selectOptions));
+        const { children } = props, rest = __rest(props, ["children"]);
+        const child = React__default["default"].Children.only(children);
+        moviemasher_js.assertTrue(React__default["default"].isValidElement(child));
+        const selectOptions = {
+            key: "edited-select",
+            onChange, disabled, children: describedOptions(), value: editedId
+        };
+        const viewProps = Object.assign(Object.assign({}, rest), { children: [child, React__default["default"].createElement("select", Object.assign({}, selectOptions))] });
+        return React__default["default"].createElement(View, Object.assign({}, viewProps));
     }
 
     function ViewControl(props) {
@@ -2333,7 +2406,8 @@
                 yield drop(dataTransfer.files).then(definitions => {
                     if (!definitions.length)
                         return;
-                    const valid = definitions.filter(definition => (name !== "containerId" || moviemasher_js.isContainerDefinition(definition)));
+                    const container = name === "containerId";
+                    const valid = container ? definitions.filter(moviemasher_js.isContainerDefinition) : definitions;
                     const [definition] = valid;
                     if (definition) {
                         moviemasher_js.assertTrue(moviemasher_js.Defined.installed(definition.id), `${definition.type} installed`);
@@ -3005,37 +3079,53 @@
                 React__default["default"].createElement(View, Object.assign({}, startProps)),
                 React__default["default"].createElement(View, Object.assign({}, endProps)))
         ];
-        const lockOffEProps = {
-            key: "lock-east",
-            className: moviemasher_js.ClassButton,
-            children: offEValue ? icons.unlock : icons.lock,
-            onClick: () => { offE.changeHandler('offE', !offEValue); }
-        };
-        const lockOffE = React__default["default"].createElement(View, Object.assign({}, lockOffEProps));
-        const lockOffWProps = {
-            key: "lock-west",
-            className: moviemasher_js.ClassButton,
-            children: offWValue ? icons.unlock : icons.lock,
-            onClick: () => { offW.changeHandler('offW', !offWValue); }
-        };
-        const lockOffW = React__default["default"].createElement(View, Object.assign({}, lockOffWProps));
-        const lockOffNProps = {
-            key: "lock-north",
-            className: moviemasher_js.ClassButton,
-            children: offNValue ? icons.unlock : icons.lock,
-            onClick: () => { offN.changeHandler('offN', !offNValue); }
-        };
-        const lockOffN = React__default["default"].createElement(View, Object.assign({}, lockOffNProps));
-        const lockOffSProps = {
-            key: "lock-south",
-            className: moviemasher_js.ClassButton,
-            children: offSValue ? icons.unlock : icons.lock,
-            onClick: () => { offS.changeHandler('offS', !offSValue); }
-        };
-        const lockOffS = React__default["default"].createElement(View, Object.assign({}, lockOffSProps));
+        const xElements = [React__default["default"].createElement(View, { key: "horz-icon", children: icons.horz, className: moviemasher_js.ClassButton })];
+        const yElements = [React__default["default"].createElement(View, { key: "vert-icon", children: icons.vert, className: moviemasher_js.ClassButton })];
+        if (offE) {
+            const lockOffEProps = {
+                key: "lock-east",
+                className: moviemasher_js.ClassButton,
+                children: offEValue ? icons.unlock : icons.lock,
+                onClick: () => { offE.changeHandler('offE', !offEValue); }
+            };
+            const lockOffE = React__default["default"].createElement(View, Object.assign({}, lockOffEProps));
+            xElements.push(lockOffE);
+        }
+        xElements.push(elementsByName.x);
+        if (offW) {
+            const lockOffWProps = {
+                key: "lock-west",
+                className: moviemasher_js.ClassButton,
+                children: offWValue ? icons.unlock : icons.lock,
+                onClick: () => { offW.changeHandler('offW', !offWValue); }
+            };
+            const lockOffW = React__default["default"].createElement(View, Object.assign({}, lockOffWProps));
+            xElements.push(lockOffW);
+        }
+        if (offN) {
+            const lockOffNProps = {
+                key: "lock-north",
+                className: moviemasher_js.ClassButton,
+                children: offNValue ? icons.unlock : icons.lock,
+                onClick: () => { offN.changeHandler('offN', !offNValue); }
+            };
+            const lockOffN = React__default["default"].createElement(View, Object.assign({}, lockOffNProps));
+            yElements.push(lockOffN);
+        }
+        yElements.push(elementsByName.y);
+        if (offS) {
+            const lockOffSProps = {
+                key: "lock-south",
+                className: moviemasher_js.ClassButton,
+                children: offSValue ? icons.unlock : icons.lock,
+                onClick: () => { offS.changeHandler('offS', !offSValue); }
+            };
+            const lockOffS = React__default["default"].createElement(View, Object.assign({}, lockOffSProps));
+            yElements.push(lockOffS);
+        }
         const elements = [
-            React__default["default"].createElement(View, { key: "x", className: 'point', children: [icons.horz, lockOffE, elementsByName.x, lockOffW] }),
-            React__default["default"].createElement(View, { key: "y", className: 'point', children: [icons.vert, lockOffN, elementsByName.y, lockOffS] })
+            React__default["default"].createElement(View, { key: "x", children: xElements }),
+            React__default["default"].createElement(View, { key: "y", children: yElements })
         ];
         return React__default["default"].createElement("fieldset", null,
             React__default["default"].createElement("legend", { key: "legend" },
@@ -3052,7 +3142,7 @@
         const { icons } = masherContext;
         const editor = useEditor();
         const { selectType } = props;
-        moviemasher_js.assertSelectType(selectType);
+        moviemasher_js.assertSelectType(selectType, 'selectType');
         const inspectorContext = React__default["default"].useContext(InspectorContext);
         const { selectedItems: properties, selectedInfo, changeTweening } = inspectorContext;
         const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo;
@@ -3066,7 +3156,7 @@
         const heightProperty = endSelected ? heightEnd : height;
         const values = moviemasher_js.selectedPropertiesScalarObject(byName);
         const { lock: lockValue } = values;
-        moviemasher_js.assertString(lockValue);
+        moviemasher_js.assertString(lockValue, 'lockValue');
         const orientation = moviemasher_js.isOrientation(lockValue) ? lockValue : undefined;
         const elementsByName = {};
         const inspectingProperties = [widthProperty, heightProperty];
@@ -3140,9 +3230,19 @@
                 React__default["default"].createElement(View, Object.assign({}, startProps)),
                 React__default["default"].createElement(View, Object.assign({}, endProps)))
         ];
+        const widthElements = [
+            React__default["default"].createElement(View, { key: "width-icon", children: icons.width, className: moviemasher_js.ClassButton }),
+            elementsByName.width,
+            lockWidth
+        ];
+        const heightElements = [
+            React__default["default"].createElement(View, { key: "height-icon", children: icons.height, className: moviemasher_js.ClassButton }),
+            elementsByName.height,
+            lockHeight
+        ];
         const elements = [
-            React__default["default"].createElement(View, { key: "width", className: 'size', children: [icons.width, elementsByName.width, lockWidth] }),
-            React__default["default"].createElement(View, { key: "height", className: 'size', children: [icons.height, elementsByName.height, lockHeight] })
+            React__default["default"].createElement(View, { key: "width", children: widthElements }),
+            React__default["default"].createElement(View, { key: "height", children: heightElements })
         ];
         return React__default["default"].createElement("fieldset", null,
             React__default["default"].createElement("legend", { key: "legend" },
@@ -3197,8 +3297,8 @@
             const icon = icons[key];
             const children = [value];
             if (icon)
-                children.unshift(icon);
-            const frameProps = { className: "timing", key: 'timing', children };
+                children.unshift(React__default["default"].createElement(View, { key: `${key}-icon`, children: icon, className: moviemasher_js.ClassButton }));
+            const frameProps = { key: `${key}-view`, children };
             return React__default["default"].createElement(View, Object.assign({}, frameProps));
         });
         return React__default["default"].createElement("fieldset", null,
@@ -3354,7 +3454,17 @@
         const { icons } = optionsStrict;
         (_a = optionsStrict.props).key || (_a.key = 'inspector');
         (_b = optionsStrict.props).className || (_b.className = 'panel inspector');
-        (_c = optionsStrict.header).content || (_c.content = [icons.inspector]);
+        (_c = optionsStrict.header).content || (_c.content = [
+            icons.inspector,
+            React__default["default"].createElement(EditorUndoButton, { key: 'undo' },
+                React__default["default"].createElement(Button, null,
+                    icons.undo,
+                    labelTranslate('undo'))),
+            React__default["default"].createElement(EditorRedoButton, { key: 'redo' },
+                React__default["default"].createElement(Button, null,
+                    icons.redo,
+                    labelTranslate('redo'))),
+        ]);
         (_d = optionsStrict.footer).content || (_d.content = [
             React__default["default"].createElement(InspectorPicker, { key: "mash", className: moviemasher_js.ClassButton, id: "mash" }, icons.document),
             React__default["default"].createElement(InspectorPicker, { key: "cast", className: moviemasher_js.ClassButton, id: "cast" }, icons.document),
@@ -3377,7 +3487,7 @@
                             labelTranslate('view'),
                             icons.view)))),
             React__default["default"].createElement(InspectorPicked, { types: "mash,cast", key: "inspector-document" },
-                React__default["default"].createElement(SelectEditedControl, { key: "select-edited" }),
+                React__default["default"].createElement(SelectEditedControl, { key: "select-edited", className: "row", children: icons.document }),
                 React__default["default"].createElement(View, { key: "view" },
                     React__default["default"].createElement(SaveControl, { key: 'save-process' },
                         React__default["default"].createElement(Button, { key: "button" },
@@ -3532,7 +3642,7 @@
                         moviemasher_js.assertObject(body);
                         const putRequest = body;
                         const { definition: definitionObject } = putRequest;
-                        console.debug("handleApiCallback calling updateDefinition", definitionObject);
+                        // console.debug("handleApiCallback calling updateDefinition", definitionObject)
                         editor.updateDefinition(definitionObject, definition);
                     }
                     if (callback.endpoint.prefix === moviemasher_js.Endpoints.rendering.status) {
@@ -3681,29 +3791,15 @@
         }, []);
         const swapChildren = (elements) => {
             const { current } = svgRef;
-            moviemasher_js.assertObject(current);
-            // const removing: ChildNode[] = []
-            // current.childNodes.forEach(node => {
-            //   if (!elements.includes(node as SvgItem)) removing.push(node)
-            // })
-            // removing.forEach(remove => {
-            //   // console.log("removing", remove)
-            //   current.removeChild(remove)
-            // })
-            // elements.forEach((element, index) => {
-            //   if (element.parentElement !== current) {
-            //     current.appendChild(element)
-            //   }
-            //   element.setAttribute('style', `z-index: ${index}`)
-            // })
+            if (!current)
+                return;
             current.replaceChildren(...elements);
-            // console.log("removed", removing.length, "added", elements.length - removing.length, "=", current.childNodes.length)
         };
         const requestItemsPromise = () => {
             const { redraw } = watching;
             delete watching.timeout;
             delete watching.redraw;
-            return editor.svgItems(!disabled).then(svgs => {
+            return editor.previewItems(!disabled).then(svgs => {
                 swapChildren(svgs);
                 if (redraw)
                     handleDraw();
@@ -3870,17 +3966,7 @@
         (_b = optionsStrict.props).className || (_b.className = 'panel player');
         (_c = optionsStrict.content).children || (_c.children = React__default["default"].createElement(PlayerContent, Object.assign({}, optionsStrict.content.props),
             React__default["default"].createElement(View, { key: "drop-box", className: "drop-box" })));
-        (_d = optionsStrict.header).content || (_d.content = [
-            icons.app,
-            React__default["default"].createElement(EditorUndoButton, { key: 'undo' },
-                React__default["default"].createElement(Button, null,
-                    icons.undo,
-                    labelTranslate('undo'))),
-            React__default["default"].createElement(EditorRedoButton, { key: 'redo' },
-                React__default["default"].createElement(Button, null,
-                    icons.redo,
-                    labelTranslate('redo'))),
-        ]);
+        (_d = optionsStrict.header).content || (_d.content = [icons.app]);
         (_e = optionsStrict.footer).content || (_e.content = [
             React__default["default"].createElement(PlayerButton, { key: 'play-button', className: moviemasher_js.ClassButton },
                 React__default["default"].createElement(PlayerPlaying, { key: 'playing' }, icons.playerPause),
@@ -3922,9 +4008,6 @@
         const trackContext = React__default["default"].useContext(TrackContext);
         const timelineContext = React__default["default"].useContext(TimelineContext);
         const { track } = trackContext;
-        moviemasher_js.assertMash(mash);
-        moviemasher_js.assertTrack(track);
-        const { clips, dense, index } = track;
         const { dragTypeValid, onDragLeave, onDrop, droppingTrack, setDroppingTrack, droppingPosition, setDroppingPosition, setDroppingClip, selectedTrack, } = timelineContext;
         const calculatedClassName = () => {
             const selected = track === selectedTrack;
@@ -3938,6 +4021,11 @@
             return classes.join(' ');
         };
         const className = React__default["default"].useMemo(calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]);
+        if (!(mash && track))
+            return null;
+        // assertMash(mash)
+        // assertTrack(track)
+        const { clips, dense, index } = track;
         const childNodes = () => {
             let prevClipEnd = dense ? -1 : 0;
             const childProps = child.props;
@@ -5020,9 +5108,12 @@
     exports.propsSelectTypes = propsSelectTypes;
     exports.sessionGet = sessionGet;
     exports.sessionSet = sessionSet;
+    exports.useApiDefinitions = useApiDefinitions;
     exports.useClip = useClip;
     exports.useDefinition = useDefinition;
     exports.useEditor = useEditor;
+    exports.useEditorActivity = useEditorActivity;
+    exports.useEditorDefinitions = useEditorDefinitions;
     exports.useLayer = useLayer;
     exports.useListeners = useListeners;
 

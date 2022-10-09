@@ -3,7 +3,7 @@ import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { assertPopulatedString } from "../../Utility/Is"
+import { assertPopulatedString, isPopulatedString } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenOption, tweenPosition } from "../../Utility/Tween"
 
@@ -19,6 +19,12 @@ export class OverlayFilter extends FilterDefinitionClass {
     this.properties.push(propertyInstance({
       tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
     }))
+    this.properties.push(propertyInstance({
+      custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420p10'
+    }))
+    this.properties.push(propertyInstance({
+      custom: true, name: 'alpha', type: DataType.String, defaultValue: 'straight' // premultiplied
+    }))
     this.populateParametersFromProperties()
   }
 
@@ -30,7 +36,10 @@ export class OverlayFilter extends FilterDefinitionClass {
 
     const scalars = filter.scalarObject(!!duration)
     const options: ValueObject = {} //repeatlast: 0, shortest: 1
-    options.format = 'yuv420'
+    const { format, alpha } = scalars
+    if (isPopulatedString(format)) options.format = format
+    if (isPopulatedString(alpha)) options.alpha = alpha
+  
     const position = tweenPosition(videoRate, duration, '(n-1)') // overlay bug
 
     const x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true)

@@ -32,6 +32,9 @@ export interface Definition {
   type: DefinitionType
 }
 
+export type Definitions = Definition[]
+
+
 export type DefinitionClass = Constrained<Definition>
 export type DefinitionTimes = Map<Definition, Times[]>
 

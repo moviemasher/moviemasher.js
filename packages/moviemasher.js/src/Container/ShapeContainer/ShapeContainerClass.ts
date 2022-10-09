@@ -231,11 +231,11 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     return !equal
   }
 
-  pathElement(rect: Rect): SvgItem {
+  pathElement(rect: Rect, forecolor: string = ''): SvgItem {
     const { definition } = this
     const inRect = this.intrinsicRect(true)
     if (!sizeAboveZero(inRect)) {
-      const polygonElement = svgPolygonElement(rect, '', '')
+      const polygonElement = svgPolygonElement(rect, '', forecolor)
       return polygonElement
     }
     const { path } = definition

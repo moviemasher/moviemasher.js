@@ -32,11 +32,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   const timelineContext = React.useContext(TimelineContext)
   const { track } = trackContext
 
-  assertMash(mash)
-  assertTrack(track)
 
-  const { clips, dense, index } = track
-  
   const {
     dragTypeValid, onDragLeave, onDrop, droppingTrack, setDroppingTrack,
     droppingPosition, setDroppingPosition, setDroppingClip, selectedTrack,
@@ -54,7 +50,13 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   const className = React.useMemo(
     calculatedClassName, [droppingPosition, droppingTrack, selectedTrack]
   )
+  if (!(mash && track)) return null
 
+  // assertMash(mash)
+  // assertTrack(track)
+
+  const { clips, dense, index } = track
+  
   const childNodes = (): React.ReactElement[] => {
     let prevClipEnd = dense ? -1 : 0
     const childProps = child.props

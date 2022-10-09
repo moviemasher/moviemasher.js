@@ -3,17 +3,20 @@ import {
   DataMashRetrieveRequest, DataRetrieveResponse, DataGetRequest,
   Endpoints, EventType, MasherAction, ServerType, DataCastGetResponse, 
   DataMashGetResponse, isEventType, isSelectType, assertObject, 
-  isPopulatedString, LabelAndId, isPositive,
+  isPopulatedString, LabelAndId, isPositive, assertTrue,
 } from "@moviemasher/moviemasher.js"
 
-import { PropsWithoutChild, ReactResult } from "../../declarations"
+import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
 import { ApiContext } from "../ApiClient/ApiContext"
 import { InspectorContext } from "../Inspector/InspectorContext"
 import { labelInterpolate, labelTranslate } from "../../Utilities/Label"
+import { View } from "../../Utilities/View"
 
-export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
+export interface SelectEditedControlProps extends PropsAndChild, WithClassName {}
+
+export function SelectEditedControl(props: SelectEditedControlProps): ReactResult {
   const editor = useEditor()
   const [requested, setRequested] = React.useState(false)
   const [described, setDescribed] = React.useState<LabelAndId[]>(() => [])
@@ -106,9 +109,9 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
       else setDescribed(original => {
         const copy = [...original]
         described.forEach(object => {
-          const { id } = object
+          const { id, label } = object
           const found = copy.find(object => object.id === id)
-          if (found) return
+          if (found || !isPopulatedString(label)) return
           
           copy.push(object as LabelAndId)
         })
@@ -117,6 +120,7 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
     })
   }, [servers, enabled])
 
+  if (described.length < 2) return null
 
   const describedOptions = () => {
     const { editType, edited } = editor
@@ -136,8 +140,14 @@ export function SelectEditedControl(props: PropsWithoutChild): ReactResult {
     return elements
   }
 
+  const { children, ...rest } = props
+  const child = React.Children.only(children)
+  assertTrue(React.isValidElement(child))
+
   const selectOptions = {
-    ...props, onChange, disabled, children: describedOptions(), value: editedId
+    key: "edited-select",
+    onChange, disabled, children: describedOptions(), value: editedId
   }
-  return <select {...selectOptions} />
+  const viewProps = { ...rest, children: [child, <select {...selectOptions} />] }
+  return <View { ...viewProps } />
 }

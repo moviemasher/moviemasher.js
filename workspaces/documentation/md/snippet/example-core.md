@@ -25,7 +25,7 @@ const clip = {
   container: { string: 'Hello World!' }, containerId: TextContainerId
 }
 editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
-  editor.svgItems().then(svgs => element.append(...svgs))
+  editor.previewItems().then(svgs => element.append(...svgs))
 })
     </script>
   </body>

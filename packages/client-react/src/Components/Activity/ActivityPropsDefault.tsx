@@ -26,7 +26,7 @@ export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityPro
   optionsStrict.props.key ||= 'activity'
   optionsStrict.props.className ||= 'panel activity'
   optionsStrict.props.initialPicked ||= ActivityGroup.Active
-  if (isUndefined(optionsStrict.props.collapsed)) optionsStrict.props.collapsed = true
+  if (isUndefined(optionsStrict.props.initialCollapsed)) optionsStrict.props.initialCollapsed = true
   
   optionsStrict.header.content ||= [
     icons.activity, 

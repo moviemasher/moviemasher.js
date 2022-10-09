@@ -1,6 +1,7 @@
 import { Constrained} from "../../declarations"
 import { LoadType } from "../../Setup/Enums"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Content/Content"
+import { CommandProbeData } from "../../Loader/Loader"
 
 export interface PreloadableObject extends ContentObject {}
 
@@ -17,6 +18,7 @@ export interface PreloadableDefinition extends ContentDefinition {
   url: string
   bytes: number
   mimeType: string
+  info?: CommandProbeData
 }
 export const isPreloadableDefinition = (value?: any): value is PreloadableDefinition => {
   return isContentDefinition(value) && "loadType" in value 

@@ -57,29 +57,11 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     return () => { resizeObserver.disconnect() }
   }, [])
 
-  const swapChildren = (elements: SvgItems) => {
+  const swapChildren = (elements: Element[]) => {
     const { current } = svgRef
-    assertObject(current)
-    // const removing: ChildNode[] = []
-    // current.childNodes.forEach(node => {
-    //   if (!elements.includes(node as SvgItem)) removing.push(node)
-    // })
+    if (!current) return
 
-    // removing.forEach(remove => {
-    //   // console.log("removing", remove)
-    //   current.removeChild(remove)
-    // })
-    // elements.forEach((element, index) => {
-    //   if (element.parentElement !== current) {
-        
-    //     current.appendChild(element)
-    //   }
-    //   element.setAttribute('style', `z-index: ${index}`)
-    // })
-
-    current.replaceChildren(...elements)
-
-      // console.log("removed", removing.length, "added", elements.length - removing.length, "=", current.childNodes.length)
+    current.replaceChildren(...elements)  
   }
 
   const requestItemsPromise = (): Promise<void> => {
@@ -87,7 +69,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     delete watching.timeout 
     delete watching.redraw 
 
-    return editor.svgItems(!disabled).then(svgs => {
+    return editor.previewItems(!disabled).then(svgs => {
    
       swapChildren(svgs)
       if (redraw) handleDraw()

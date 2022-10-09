@@ -1,4 +1,5 @@
 import React from 'react'
+import { ClassButton } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
@@ -8,7 +9,6 @@ import { BrowserProps } from './Browser'
 import { BrowserControl } from './BrowserControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { DefinitionItem } from '../DefinitionItem/DefinitionItem'
-import { ClassButton } from '@moviemasher/moviemasher.js'
 
 export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 

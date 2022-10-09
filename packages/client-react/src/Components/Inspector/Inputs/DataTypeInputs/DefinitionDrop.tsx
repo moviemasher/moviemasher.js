@@ -77,15 +77,15 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     const { dataTransfer } = event
     assertTrue(dataTransfer)
 
+
     const types = dragTypes(dataTransfer)
     // any file can be dropped
     if (types.includes(TransferTypeFiles)) {
       await drop(dataTransfer.files).then(definitions => {
         if (!definitions.length) return
 
-        const valid = definitions.filter(definition => (
-          name !== "containerId" || isContainerDefinition(definition)
-        ))
+        const container = name === "containerId"
+        const valid = container ? definitions.filter(isContainerDefinition) : definitions
         const [definition] = valid
         if (definition) {
           assertTrue(Defined.installed(definition.id), `${definition.type} installed`)

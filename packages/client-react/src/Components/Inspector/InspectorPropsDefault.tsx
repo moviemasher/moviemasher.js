@@ -19,6 +19,8 @@ import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
 import { ApiEnabled } from '../ApiClient/ApiEnabled'
 import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
+import { EditorUndoButton } from '../Controls/EditorUndoButton'
+import { EditorRedoButton } from '../Controls/EditorRedoButton'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 
@@ -28,7 +30,15 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
   optionsStrict.props.key ||= 'inspector'
   optionsStrict.props.className ||= 'panel inspector'
 
-  optionsStrict.header.content ||= [icons.inspector]
+  optionsStrict.header.content ||= [
+    icons.inspector,
+    <EditorUndoButton key='undo'>
+      <Button>{icons.undo}{labelTranslate('undo')}</Button>
+    </EditorUndoButton>,
+    <EditorRedoButton key='redo'>
+      <Button>{icons.redo}{labelTranslate('redo')}</Button>
+    </EditorRedoButton>,
+  ]
  
   optionsStrict.footer.content ||= [
     <InspectorPicker key="mash" className={ClassButton} id="mash">
@@ -73,7 +83,7 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
         </View>  
       </InspectorPicked>
       <InspectorPicked types="mash,cast" key="inspector-document">
-        <SelectEditedControl key="select-edited" />
+        <SelectEditedControl key="select-edited" className="row" children={icons.document} />
         <View key="view">
           <SaveControl key='save-process'>
             <Button key="button">

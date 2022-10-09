@@ -1,4 +1,4 @@
-import { SvgItem, UnknownObject } from "../declarations"
+import { PreviewItems, SvgItem, UnknownObject } from "../declarations"
 import { assertSizeAboveZero, Size, SizeZero } from "../Utility/Size"
 import { GraphFileOptions, GraphFiles } from "../MoveMe"
 import { SelectedItems } from "../Utility/SelectedProperty"
@@ -84,7 +84,7 @@ export class EditedClass extends PropertiedClass implements Edited {
   private _imageSize = { ...SizeZero }
   get imageSize(): Size { return this._imageSize }
   set imageSize(value: Size) {
-    assertSizeAboveZero(value)
+    assertSizeAboveZero(value, 'imageSize')
 
     this._imageSize = value
   }
@@ -114,7 +114,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   selectedItems(actions: Actions): SelectedItems { return [] }
 
-  svgItems(options: PreviewOptions): Promise<SvgItem[]> { throw Errors.unimplemented }
+  previewItems(options: PreviewOptions): Promise<PreviewItems> { throw Errors.unimplemented }
   
   toJSON(): UnknownObject {
     const json = super.toJSON()

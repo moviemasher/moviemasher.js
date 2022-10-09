@@ -11,7 +11,7 @@ import {
   throwError,
   Directions,
   ClipObject, clipDefault, MashObject, Tracks, TrackObject, Duration
-} from "@moviemasher/moviemasher.js"
+} from '@moviemasher/moviemasher.js/umd/moviemasher.js'
 
 enum GeneratePoint {
   TL = 'TL',
@@ -271,7 +271,7 @@ export const GenerateTestsDefault: GenerateTests = {
     ["K", "kitten", {}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
-    ["S", 'com.moviemasher.container.chat', {}],
+    ["S", 'com.remixicon.container.heart', {}],
     ["T", 'com.moviemasher.container.text', textOptions],
     // ["P", "puppy" , {}],
   ],

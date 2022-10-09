@@ -47,10 +47,9 @@ export class TextContainerDefinitionClass extends TextContainerDefinitionWithCon
     const inSize = { width: 24, height: 24 }
     const coverSize = sizeCover(inSize, size, true)
     const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-    const bounds = svgPolygonElement(inSize)
     const pathElement = svgPathElement(TextContainerDefinitionIcon)
     svgSetTransformRects(pathElement, inSize, outRect)
-    return Promise.resolve(svgElement(size, [bounds, pathElement]))
+    return Promise.resolve(svgElement(size, pathElement))
   }
 
   instanceArgs(object?: TextContainerObject): TextContainerObject {

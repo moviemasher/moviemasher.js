@@ -22,10 +22,7 @@ export interface TweenableObject extends InstanceObject {
   xEnd?: number
   y?: number
   yEnd?: number
-  offN?: boolean
-  offS?: boolean
-  offE?: boolean
-  offW?: boolean
+
   lock?: string
 }
 
@@ -64,10 +61,7 @@ export interface Tweenable extends Instance, Selectable {
   lock: Orientation
   mutable(): boolean
   muted: boolean
-  offE: boolean
-  offN: boolean
-  offS: boolean
-  offW: boolean
+
   overlayCommandFilters(bottomInput: string, topInput: string): CommandFilters
   overlayFilter: Filter
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 

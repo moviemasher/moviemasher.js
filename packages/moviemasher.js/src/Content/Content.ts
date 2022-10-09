@@ -1,6 +1,6 @@
-import { Constrained,  GenericFactory,  SvgFilter,  SvgFilters,  SvgItem } from "../declarations"
+import { Constrained,  GenericFactory,  SvgItem } from "../declarations"
 import { Rect, RectTuple } from "../Utility/Rect"
-import { isContentType, Orientation } from "../Setup/Enums"
+import { isContentType } from "../Setup/Enums"
 import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -27,7 +27,7 @@ export interface Content extends Tweenable {
   audibleCommandFiles(args: CommandFileArgs): CommandFiles
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters
   contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
-  contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
+  // contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
   contentRects(args: ContentRectArgs): RectTuple 
 
   contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined

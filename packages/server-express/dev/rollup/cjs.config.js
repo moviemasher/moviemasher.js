@@ -3,16 +3,12 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
-import { terser } from 'rollup-plugin-terser'
 
-import pkg from "../../package.json"
-
-const { main } = pkg
 
 export default {
   input: 'src/index.ts',
   output: {
-    file: main,
+    file: 'cjs/server-express.js',
     format: "cjs",
     sourcemap: false,
     name: "MovieMasherServer"
@@ -26,7 +22,6 @@ export default {
     }),
     resolve(),
     commonjs({ exclude: '**/*.node', include: /node_modules/ }),
-    ts({ tsconfig: './dev/tsconfig.json' }),
-    terser()
+    ts({ tsconfig: './dev/tsconfig.json' })
   ]
 }

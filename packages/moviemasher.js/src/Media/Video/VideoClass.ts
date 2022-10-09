@@ -3,7 +3,7 @@ import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
-import { assertPopulatedString } from "../../Utility/Is"
+import { assertPopulatedString, isBoolean } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 
 import { ContentMixin } from "../../Content/ContentMixin"
@@ -15,10 +15,13 @@ import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { Size, sizeCopy, sizeCover } from "../../Utility/Size"
 import { urlPrependProtocol } from "../../Utility/Url"
-import { svgAppend, svgElement, svgSetDimensions } from "../../Utility/Svg"
+import { svgSetDimensions } from "../../Utility/Svg"
+import { ContainerMixin } from "../../Container/ContainerMixin"
 
 const VideoWithTweenable = TweenableMixin(InstanceBase)
-const VideoWithContent = ContentMixin(VideoWithTweenable)
+
+const VideoWithContainer = ContainerMixin(VideoWithTweenable)
+const VideoWithContent = ContentMixin(VideoWithContainer)
 const VideoWithPreloadable = PreloadableMixin(VideoWithContent)
 const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithPreloadable)
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize)
@@ -26,21 +29,12 @@ const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
   declare definition : VideoDefinition
 
-  private _foreignElement?: SVGForeignObjectElement
-  get foreignElement() { 
-    return this._foreignElement ||= this.foreignElementInitialize 
-  }
-  private get foreignElementInitialize(): SVGForeignObjectElement {
-    // console.log(this.constructor.name, "foreignElementInitialize")
-
-    return globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
-  }
-
   fileUrls(args: GraphFileArgs): GraphFiles {
     const files: GraphFiles = []
 
     const { editing, time, audible, visible, icon } = args
     
+    // console.log(this.constructor.name, "fileUrls", audible, editing, visible)
 
     const { definition } = this
     const { url, source } = definition
@@ -71,20 +65,14 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return files
   }
 
-  itemPreviewPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-    const { _foreignElement, _loadedVideo } = this
-    const predefined = !!_foreignElement
-    if (predefined || _loadedVideo) {
-      // console.log(this.constructor.name, "itemPreviewPromise LOADED")
-      this.updateForeignElement(rect, time, range, predefined)
+  private _foreignElement?: SVGForeignObjectElement
+  get foreignElement() { 
+    return this._foreignElement ||= this.foreignElementInitialize 
+  }
+  private get foreignElementInitialize(): SVGForeignObjectElement {
+    // console.log(this.constructor.name, "foreignElementInitialize")
 
-      return Promise.resolve(this.foreignElement)
-    }
-    
-    return this.loadVideoPromise.then(() => {
-      this.updateForeignElement(rect, time, range)
-      return Promise.resolve(this.foreignElement)
-    })
+    return globalThis.document.createElementNS(NamespaceSvg, 'foreignObject')
   }
 
   iconUrl(size: Size, time: Time, clipTime: TimeRange): string {
@@ -100,10 +88,25 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return urlPrependProtocol('image', videoUrl, { width, height })
   }
 
+  itemPreviewPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
+    const { clientCanMaskVideo } = VideoClass
+    const { _foreignElement, _loadedVideo } = this
+    const predefined = !!_foreignElement
+    if (predefined || _loadedVideo) {
+      // console.log(this.constructor.name, "itemPreviewPromise LOADED")
+      this.updateForeignElement(rect, time, range, predefined)
+
+      return Promise.resolve(clientCanMaskVideo ? this.foreignElement : this.loadedVideo)
+    }
+    
+    return this.loadVideoPromise.then(() => {
+      this.updateForeignElement(rect, time, range)
+      return clientCanMaskVideo ? this.foreignElement : this.loadedVideo
+    })
+  }
+
   private _loadedVideo?: LoadedVideo
-
   private get loadedVideo(): LoadedVideo { return this._loadedVideo! }
-
 
   private get loadVideoPromise(): Promise<LoadedVideo> {
     // console.log(this.constructor.name, "loadVideoPromise")
@@ -127,7 +130,6 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     })
   }
 
-
   private updateVideo(rect: Rect, time: Time, range: TimeRange) {
     const { loadedVideo } = this
     const { currentTime } = loadedVideo
@@ -145,10 +147,23 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
   }
 
   private updateForeignElement(rect: Rect, time: Time, range: TimeRange, foreignElementDefined?: boolean) {
-    const { foreignElement, loadedVideo } = this
-    if (!foreignElementDefined) foreignElement.appendChild(loadedVideo)
-    svgSetDimensions(foreignElement, rect)
+    const { clientCanMaskVideo } = VideoClass
+    if (clientCanMaskVideo) {
+      const { foreignElement } = this
+      if (!foreignElementDefined) foreignElement.appendChild(this.loadedVideo)
+      svgSetDimensions(foreignElement, rect)
+    }
     this.updateVideo(rect, time, range)
-    // this.updateSvg(rect)
+  }
+
+  static _clientCanMaskVideo?: boolean
+  static get clientCanMaskVideo(): boolean {
+    const { _clientCanMaskVideo } = this
+    if (isBoolean(_clientCanMaskVideo)) return _clientCanMaskVideo
+
+    const { navigator } = globalThis
+    const { userAgent } = navigator
+    const safari = userAgent.includes('Safari') && !userAgent.includes('Chrome')
+    return this._clientCanMaskVideo = !safari
   }
 }

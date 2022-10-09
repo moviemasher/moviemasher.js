@@ -176,14 +176,14 @@ var AVType;
 var SelectType;
 (function (SelectType) {
     SelectType["Cast"] = "cast";
-    SelectType["Mash"] = "mash";
-    SelectType["Track"] = "track";
-    SelectType["Layer"] = "layer";
-    SelectType["Effect"] = "effect";
     SelectType["Clip"] = "clip";
-    SelectType["Content"] = "content";
     SelectType["Container"] = "container";
+    SelectType["Content"] = "content";
+    SelectType["Effect"] = "effect";
+    SelectType["Layer"] = "layer";
+    SelectType["Mash"] = "mash";
     SelectType["None"] = "none";
+    SelectType["Track"] = "track";
 })(SelectType || (SelectType = {}));
 const SelectTypes = Object.values(SelectType);
 const isSelectType = (value) => {
@@ -200,28 +200,28 @@ const isClipSelectType = (type) => {
 var OutputFormat;
 (function (OutputFormat) {
     OutputFormat["AudioConcat"] = "wav";
-    OutputFormat["Mdash"] = "mdash";
     OutputFormat["Flv"] = "flv";
     OutputFormat["Hls"] = "hls";
     OutputFormat["Jpeg"] = "jpeg";
+    OutputFormat["Mdash"] = "mdash";
     OutputFormat["Mp3"] = "mp3";
     OutputFormat["Mp4"] = "mp4";
-    OutputFormat["VideoConcat"] = "yuv4mpegpipe";
     OutputFormat["Png"] = "image2";
     OutputFormat["Rtmp"] = "rtmp";
+    OutputFormat["VideoConcat"] = "yuv4mpegpipe";
 })(OutputFormat || (OutputFormat = {}));
 var StreamingFormat;
 (function (StreamingFormat) {
     StreamingFormat["Hls"] = "hls";
-    StreamingFormat["Rtmp"] = "rtmp";
     StreamingFormat["Mdash"] = "mdash";
+    StreamingFormat["Rtmp"] = "rtmp";
 })(StreamingFormat || (StreamingFormat = {}));
 var OutputType;
 (function (OutputType) {
     OutputType["Audio"] = "audio";
     OutputType["Image"] = "image";
-    OutputType["Video"] = "video";
     OutputType["ImageSequence"] = "imagesequence";
+    OutputType["Video"] = "video";
     OutputType["Waveform"] = "waveform";
 })(OutputType || (OutputType = {}));
 const OutputTypes = Object.values(OutputType);
@@ -581,19 +581,13 @@ class Defined {
         return objects.map(object => this.fromObject(object));
     }
     static definitionDelete(definition) {
-        const { type } = definition;
+        const { type, id } = definition;
         const definitions = this.byType(type);
-        const index = definitions.indexOf(definition);
+        const index = definitions.findIndex(definition => id === definition.id);
+        // console.log(this.name, "definitionDelete", type, id, index)
         if (index < 0)
             return;
         definitions.splice(index, 1);
-    }
-    static definitionUninstall(id) {
-        if (!this.installed(id))
-            return;
-        const definition = this.fromId(id);
-        this.byId.delete(id);
-        this.definitionDelete(definition);
     }
     static definitionsByType = new Map();
     static definitionsType(id) {
@@ -619,6 +613,7 @@ class Defined {
     static get ids() { return [...this.byId.keys()]; }
     static install(definition) {
         const { type, id } = definition;
+        // console.log(this.name, "install", JSON.stringify(definition))
         if (this.installed(id)) {
             // console.log(this.constructor.name, "install REINSTALL", type, id)
             this.uninstall(definition);
@@ -630,7 +625,15 @@ class Defined {
         return definition;
     }
     static installed(id) { return this.byId.has(id); }
-    static predefined(id) { return id.startsWith(IdPrefix); }
+    static predefined(id) {
+        if (id.startsWith(IdPrefix))
+            return true;
+        const definitionType = this.definitionsType(id);
+        if (!definitionType)
+            return false;
+        const array = this.byType(definitionType);
+        return array.some(definition => definition.id === id);
+    }
     static undefineAll() {
         // console.log(this.name, "undefineAll")
         // TODO: be more graceful - tell definitions they are being destroyed...
@@ -638,7 +641,7 @@ class Defined {
         this.definitionsByType = new Map();
     }
     static updateDefinition(oldDefinition, newDefinition) {
-        // console.log(this.name, "updateDefinition")
+        // console.log(this.name, "updateDefinition", oldDefinition.type, oldDefinition.id, "->", newDefinition.type, newDefinition.id)
         this.uninstall(oldDefinition);
         this.install(newDefinition);
         return newDefinition;
@@ -651,12 +654,8 @@ class Defined {
         this.byId.set(newId, definition);
     }
     static uninstall(definition) {
-        const { type, id } = definition;
-        const list = this.definitionsByType.get(type);
-        assertTrue(list);
-        const index = list.indexOf(definition);
-        assertPositive(index);
-        list.splice(index, 1);
+        this.definitionDelete(definition);
+        const { id } = definition;
         this.byId.delete(id);
         return definition;
     }
@@ -725,11 +724,11 @@ const colorRgbToHex = (rgb) => {
         b = `0${b}`;
     return `#${r}${g}${b}`;
 };
-const colorRgbaToHex = (rgba) => {
-    let r = rgba.r.toString(16);
-    let g = rgba.g.toString(16);
-    let b = rgba.b.toString(16);
-    let a = Math.round(255 * Number(rgba.a)).toString(16);
+const colorRgbaToHex = (object) => {
+    let r = object.r.toString(16);
+    let g = object.g.toString(16);
+    let b = object.b.toString(16);
+    let a = Math.round(255 * Number(object.a)).toString(16);
     if (r.length < 2)
         r = `0${r}`;
     if (g.length < 2)
@@ -857,15 +856,15 @@ const colorToRgba = (value) => {
     return colorRgba;
 };
 const colorAlphaColor = (value) => {
-    const rgba = colorToRgba(value);
-    return { alpha: rgba.a, color: colorRgbToHex(rgba) };
+    const toRgba = colorToRgba(value);
+    return { alpha: toRgba.a, color: colorRgbToHex(toRgba) };
 };
 const colorFromRgb = (rgb) => {
     const { r, g, b } = rgb;
     return `rgb(${r},${g},${b})`;
 };
-const colorFromRgba = (rgba) => {
-    const { r, g, b, a } = rgba;
+const colorFromRgba = (object) => {
+    const { r, g, b, a } = object;
     return `rgb(${r},${g},${b},${a})`;
 };
 const colorRgb = { r: 0, g: 0, b: 0 };
@@ -1151,7 +1150,7 @@ const sizeScale = (size, horizontally, vertically) => {
     return { width: width * horizontally, height: height * vertically };
 };
 const sizeCover = (inSize, outSize, contain = false) => {
-    assertSizeAboveZero(inSize);
+    assertSizeAboveZero(inSize, 'sizeCover');
     assertSize(outSize);
     const { width: inWidth, height: inHeight } = inSize;
     const { width, height } = outSize;
@@ -1198,7 +1197,7 @@ const sizeString = (size) => {
     return `width=${width};height=${height}`;
 };
 const sizeLockNegative = (size, lock) => {
-    assertSizeAboveZero(size);
+    assertSizeAboveZero(size, 'sizeLockNegative');
     const locked = sizeCopy(size);
     if (lock) {
         if (lock === Orientation.V)
@@ -1213,7 +1212,7 @@ const sizeFromElement = (element) => {
         width: Number(element.getAttribute('width')),
         height: Number(element.getAttribute('height'))
     };
-    assertSizeAboveZero(size);
+    assertSizeAboveZero(size, 'sizeFromElement');
     return size;
 };
 
@@ -1594,7 +1593,7 @@ const svgPolygonElement = (dimensions, className, fill = '', id) => {
     return element;
 };
 const svgSetBox = (element, boxSize) => {
-    assertSizeAboveZero(boxSize);
+    assertSizeAboveZero(boxSize, 'svgSetBox');
     const justSize = sizeCopy(boxSize);
     const { width, height } = justSize;
     svgSetDimensions(element, justSize);
@@ -1739,8 +1738,8 @@ const svgSetTransform = (element, transform, origin = 'top left') => {
     svgSet(element, origin, 'transform-origin');
 };
 const svgTransform = (dimensions, rect) => {
-    assertSizeAboveZero(dimensions);
-    assertSizeAboveZero(rect);
+    assertSizeAboveZero(dimensions, 'svgTransform.dimensions');
+    assertSizeAboveZero(rect, 'svgTransform.rect');
     const { width: inWidth, height: inHeight } = dimensions;
     const { width: outWidth, height: outHeight, x: outX, y: outY } = rect;
     const scaleWidth = outWidth / inWidth;
@@ -1942,27 +1941,13 @@ class DefinitionBase {
     }
     icon;
     id;
-    urlIcon(url, loader, size) {
-        const imageUrl = urlPrependProtocol('image', url);
-        // console.log(this.constructor.name, "urlIcon", imageUrl)
-        return loader.loadPromise(imageUrl).then((image) => {
-            // console.log(this.constructor.name, "urlIcon.loadPromise", imageUrl, image?.constructor.name)
-            const { width, height } = image;
-            const inSize = { width, height };
-            const coverSize = sizeCover(inSize, size, true);
-            const outRect = { ...coverSize, ...centerPoint(size, coverSize) };
-            const svgUrl = urlPrependProtocol('svg', imageUrl, outRect);
-            // console.log(this.constructor.name, "urlIcon", svgUrl)
-            return loader.loadPromise(svgUrl).then(svgImage => {
-                // console.log(this.constructor.name, "urlIcon.loadPromise", svgUrl, svgImage?.constructor.name)
-                return svgElement(size, svgImage);
-            });
-        });
-    }
     definitionIcon(loader, size) {
         const { icon } = this;
-        if (!icon)
+        if (!icon) {
+            // console.log(this.constructor.name, "definitionIcon NO ICON")
             return;
+        }
+        // console.log(this.constructor.name, "definitionIcon", icon)
         return this.urlIcon(icon, loader, size);
     }
     instanceFromObject(object = {}) {
@@ -1987,7 +1972,23 @@ class DefinitionBase {
     }
     toString() { return this.label; }
     type;
-    // value(name: string): Scalar | undefined { return this.property(name)?.value }
+    urlIcon(url, loader, size) {
+        const imageUrl = urlPrependProtocol('image', url);
+        // console.log(this.constructor.name, "urlIcon", imageUrl)
+        return loader.loadPromise(imageUrl).then((image) => {
+            // console.log(this.constructor.name, "urlIcon.loadPromise", imageUrl, image?.constructor.name)
+            const { width, height } = image;
+            const inSize = { width, height };
+            const coverSize = sizeCover(inSize, size, true);
+            const outRect = { ...coverSize, ...centerPoint(size, coverSize) };
+            const svgUrl = urlPrependProtocol('svg', imageUrl, outRect);
+            // console.log(this.constructor.name, "urlIcon", svgUrl)
+            return loader.loadPromise(svgUrl).then(svgImage => {
+                // console.log(this.constructor.name, "urlIcon.loadPromise", svgUrl, svgImage?.constructor.name)
+                return svgElement(size, svgImage);
+            });
+        });
+    }
     static fromObject(object) {
         const { id, type } = object;
         assertDefinitionType(type);
@@ -2312,11 +2313,11 @@ const pixelsReplaceRgba = (pixels, size, find, replace, similarity = 0, blend = 
     let index = pixels.length / 4;
     while (index--) {
         const pixels_offset = index * 4;
-        const rgba = pixelRgbaAtIndex(pixels_offset, pixels);
-        if (isPositive(rgba.a)) {
-            const rgbaAsYuv = colorRgbToYuv(rgba);
+        const rgbaAtIndex = pixelRgbaAtIndex(pixels_offset, pixels);
+        if (isPositive(rgbaAtIndex.a)) {
+            const rgbaAsYuv = colorRgbToYuv(rgbaAtIndex);
             const difference = accurate ? colorYuvBlend(yuvsFromPixelsAccurate(pixels, index, size), yuv, similarity, blend) : colorYuvDifference(rgbaAsYuv, yuv, similarity, blend);
-            const mixed = pixelsMixRbga(rgba, replace, difference);
+            const mixed = pixelsMixRbga(rgbaAtIndex, replace, difference);
             pixels[pixels_offset + 3] = mixed.a;
             if (mixed.a) {
                 pixels[pixels_offset] = mixed.r;
@@ -3090,6 +3091,12 @@ class OverlayFilter extends FilterDefinitionClass {
         this.properties.push(propertyInstance({
             tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
         }));
+        this.properties.push(propertyInstance({
+            custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420p10'
+        }));
+        this.properties.push(propertyInstance({
+            custom: true, name: 'alpha', type: DataType.String, defaultValue: 'straight' // premultiplied
+        }));
         this.populateParametersFromProperties();
     }
     commandFilters(args) {
@@ -3099,7 +3106,11 @@ class OverlayFilter extends FilterDefinitionClass {
         assertPopulatedString(chainInput, 'chainInput');
         const scalars = filter.scalarObject(!!duration);
         const options = {}; //repeatlast: 0, shortest: 1
-        options.format = 'yuv420';
+        const { format, alpha } = scalars;
+        if (isPopulatedString(format))
+            options.format = format;
+        if (isPopulatedString(alpha))
+            options.alpha = alpha;
         const position = tweenPosition(videoRate, duration, '(n-1)'); // overlay bug
         const x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true);
         const y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], position, true);
@@ -3502,31 +3513,84 @@ Factories[DefinitionType.Filter] = {
     defaults: filterDefaults,
 };
 
+const DefaultContentId = `${IdPrefix}content${IdSuffix}`;
+const isContent = (value) => {
+    return isTweenable(value) && isContentType(value.type);
+};
+function assertContent(value, name) {
+    if (!isContent(value))
+        throwError(value, 'Content', name);
+}
+const isContentDefinition = (value) => {
+    return isTweenableDefinition(value) && isContentType(value.type);
+};
+
+const isPreloadableDefinition = (value) => {
+    return isContentDefinition(value) && "loadType" in value;
+};
+function assertPreloadableDefinition(value) {
+    if (!isPreloadableDefinition(value))
+        throw new Error('expected PreloadableDefinition');
+}
+const isPreloadable = (value) => {
+    return isContent(value) && isPreloadableDefinition(value.definition);
+};
+function assertPreloadable(value) {
+    if (!isPreloadable(value))
+        throw new Error('expected Preloadable');
+}
+
+const UpdatableSizeDefinitionType = [
+    DefinitionType.Image,
+    DefinitionType.Video,
+    DefinitionType.VideoSequence,
+];
+const isUpdatableSize = (value) => {
+    return isPreloadable(value);
+};
+function assertUpdatableSize(value) {
+    if (!isUpdatableSize(value))
+        throwError(value, 'UpdatableSize');
+}
+const isUpdatableSizeType = (value) => {
+    return isDefinitionType(value) && UpdatableSizeDefinitionType.includes(value);
+};
+const isUpdatableSizeDefinition = (value) => {
+    return isPreloadableDefinition(value);
+};
+function assertUpdatableSizeDefinition(value) {
+    if (!isUpdatableSizeDefinition(value))
+        throwError(value, 'UpdatableSizeDefinition');
+}
+
 function ContainerMixin(Base) {
     return class extends Base {
         constructor(...args) {
             super(...args);
             const [object] = args;
-            this.addProperties(object, propertyInstance({
-                name: 'x', type: DataType.Percent, defaultValue: 0.5,
-                group: DataGroup.Point, tweenable: true,
-            }));
-            this.addProperties(object, propertyInstance({
-                name: 'y', type: DataType.Percent, defaultValue: 0.5,
-                group: DataGroup.Point, tweenable: true,
-            }));
-            // offN, offS, offE, offW
-            Directions.forEach(direction => {
+            const { container } = this;
+            if (container) {
                 this.addProperties(object, propertyInstance({
-                    name: `off${direction}`, type: DataType.Boolean,
-                    group: DataGroup.Point,
+                    name: 'x', type: DataType.Percent, defaultValue: 0.5,
+                    group: DataGroup.Point, tweenable: true,
                 }));
-            });
-            this.addProperties(object, propertyInstance({
-                tweenable: true, name: 'opacity',
-                type: DataType.Percent, defaultValue: 1.0,
-                group: DataGroup.Opacity,
-            }));
+                this.addProperties(object, propertyInstance({
+                    name: 'y', type: DataType.Percent, defaultValue: 0.5,
+                    group: DataGroup.Point, tweenable: true,
+                }));
+                // offN, offS, offE, offW
+                Directions.forEach(direction => {
+                    this.addProperties(object, propertyInstance({
+                        name: `off${direction}`, type: DataType.Boolean,
+                        group: DataGroup.Point,
+                    }));
+                });
+                this.addProperties(object, propertyInstance({
+                    tweenable: true, name: 'opacity',
+                    type: DataType.Percent, defaultValue: 1.0,
+                    group: DataGroup.Opacity,
+                }));
+            }
         }
         _colorizeFilter;
         get colorizeFilter() { return this._colorizeFilter ||= filterFromId('colorize'); }
@@ -3544,6 +3608,104 @@ function ContainerMixin(Base) {
             return colorizeFilter.commandFilters(filterArgs);
         }
         colorMaximize = false;
+        containedVideo(video, containerRect, size, time, range) {
+            const x = Math.round(Number(video.getAttribute('x')));
+            const y = Math.round(Number(video.getAttribute('y')));
+            const containerPoint = pointCopy(containerRect);
+            containerPoint.x -= x;
+            containerPoint.y -= y;
+            const zeroRect = { ...containerPoint, ...sizeCopy(containerRect) };
+            const updatableContainer = isUpdatableSize(this);
+            const items = [];
+            const { div } = this;
+            const styles = [];
+            styles.push(`left: ${x}px`);
+            styles.push(`top: ${y}px`);
+            if (updatableContainer) {
+                const file = this.intrinsicGraphFile({ size: true, editing: true });
+                const { preloader } = this.clip.track.mash;
+                const src = preloader.sourceUrl(file);
+                styles.push(`mask-image: url(${src})`);
+                styles.push('mask-repeat: no-repeat');
+                styles.push('mask-mode: luminance');
+                styles.push(`mask-size: ${zeroRect.width}px ${zeroRect.height}px`);
+                styles.push(`mask-position: ${zeroRect.x}px ${zeroRect.y}px`);
+            }
+            else {
+                const containerItem = this.pathElement(zeroRect);
+                containerItem.setAttribute('fill', colorWhite);
+                let clipId = idGenerateString();
+                const clipElement = globalThis.document.createElementNS(NamespaceSvg, 'clipPath');
+                svgSet(clipElement, clipId);
+                svgAppend(clipElement, containerItem);
+                const svg = svgElement(size);
+                svgSetChildren(svg, [svgDefsElement([clipElement])]);
+                styles.push(`clip-path:${svgUrl(clipId)}`);
+                items.push(svg);
+            }
+            div.setAttribute('style', styles.join(';') + ';');
+            svgSetChildren(div, [video]);
+            items.push(div);
+            return Promise.resolve(items);
+        }
+        containedContent(content, containerRect, size, time, range, icon) {
+            const updatableContainer = isUpdatableSize(this);
+            const updatableContent = isUpdatableSize(content);
+            const contentPromise = content.contentPreviewItemPromise(containerRect, time, range, icon);
+            const containedPromise = contentPromise.then(contentItem => {
+                assertObject(contentItem);
+                if (isLoadedVideo(contentItem)) {
+                    assertTrue(!icon, 'not icon');
+                    // console.log(this.constructor.name, "containedContent VIDEO")
+                    return this.containedVideo(contentItem, containerRect, size, time, range);
+                }
+                const containerPromise = this.containerPreviewItemPromise(containerRect, time, range, icon);
+                return containerPromise.then(containerItem => {
+                    const defs = [];
+                    // TODO: make luminance a property of container...
+                    const luminance = true;
+                    defs.push(containerItem);
+                    let containerId = idGenerateString();
+                    if (updatableContainer && !icon) {
+                        // container is image/video so we need to add a polygon for hover
+                        const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId);
+                        polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;');
+                        defs.push(polygonElement);
+                        containerId = idGenerateString();
+                    }
+                    containerItem.setAttribute('id', containerId);
+                    const group = svgGroupElement();
+                    svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem]);
+                    const items = [group];
+                    svgAddClass(group, 'contained');
+                    const maskElement = svgMaskElement(undefined, group, luminance);
+                    defs.push(maskElement);
+                    const useContainerInMask = svgUseElement(containerId);
+                    maskElement.appendChild(svgPolygonElement(size, '', 'black'));
+                    maskElement.appendChild(useContainerInMask);
+                    if (!updatableContainer) {
+                        containerItem.setAttribute('vector-effect', 'non-scaling-stroke;');
+                        useContainerInMask.setAttribute('fill', colorWhite);
+                    }
+                    const containerSvgFilter = this.containerSvgFilter(containerItem, size, containerRect, time, range);
+                    if (containerSvgFilter)
+                        defs.push(containerSvgFilter);
+                    else
+                        containerItem.removeAttribute('filter');
+                    const contentSvgFilter = content.contentSvgFilter(contentItem, size, containerRect, time, range);
+                    if (contentSvgFilter)
+                        defs.push(contentSvgFilter);
+                    else
+                        contentItem.removeAttribute('filter');
+                    const useSvg = (updatableContent || updatableContainer) && !icon;
+                    const svg = useSvg ? this.svgElement : svgElement();
+                    svgSetChildren(svg, [svgDefsElement(defs), ...items]);
+                    svgSetDimensions(svg, size);
+                    return [svg];
+                });
+            });
+            return containedPromise;
+        }
         containerColorCommandFilters(args) {
             const commandFilters = [];
             const { contentColors, containerRects, track } = args;
@@ -3625,6 +3787,10 @@ function ContainerMixin(Base) {
         get directionObject() {
             return Object.fromEntries(Directions.map(direction => [direction, !!this.value(`off${direction}`)]));
         }
+        _div;
+        get div() {
+            return this._div ||= globalThis.document.createElement('div');
+        }
         get isDefault() { return this.definitionId === DefaultContainerId; }
         opacityCommandFilters(args) {
             const { outputSize: outputSize, filterInput, clipTime, time, videoRate } = args;
@@ -3648,6 +3814,10 @@ function ContainerMixin(Base) {
         pathElement(rect, forecolor = 'none') {
             return svgPolygonElement(rect, '', forecolor);
         }
+        _svgElement;
+        get svgElement() {
+            return this._svgElement ||= svgElement();
+        }
         translateCommandFilters(args) {
             const commandFilters = [];
             const { outputSize, time, containerRects, chainInput, filterInput, videoRate } = args;
@@ -3657,6 +3827,7 @@ function ContainerMixin(Base) {
             const [rect, rectEnd] = containerRects;
             const duration = isTimeRange(time) ? time.lengthSeconds : 0;
             const { overlayFilter } = this;
+            // overlayFilter.setValue('yuv420p10', 'format')
             overlayFilter.setValue(rect.x, 'x');
             overlayFilter.setValue(rect.y, 'y');
             if (duration) {
@@ -4156,6 +4327,7 @@ function TweenableMixin(Base) {
                 filterInput: topInput, chainInput: bottomInput, videoRate: 0, duration: 0
             };
             const { overlayFilter } = this;
+            // overlayFilter.setValue('yuv420p10', 'format')
             overlayFilter.setValue(0, 'x');
             overlayFilter.setValue(0, 'y');
             commandFilters.push(...overlayFilter.commandFilters(overlayArgs));
@@ -4505,11 +4677,11 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
         const equal = rectsEqual(...containerRects);
         return !equal;
     }
-    pathElement(rect) {
+    pathElement(rect, forecolor = '') {
         const { definition } = this;
         const inRect = this.intrinsicRect(true);
         if (!sizeAboveZero(inRect)) {
-            const polygonElement = svgPolygonElement(rect, '', '');
+            const polygonElement = svgPolygonElement(rect, '', forecolor);
             return polygonElement;
         }
         const { path } = definition;
@@ -4616,7 +4788,10 @@ class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithContaine
         const superElement = super.definitionIcon(loader, size);
         if (superElement)
             return superElement;
-        const { pathHeight: height, pathWidth: width, path } = this;
+        const { id, pathHeight: height, pathWidth: width, path } = this;
+        if (id === DefaultContainerId) {
+            return Promise.resolve(svgElement(size, svgPolygonElement(size, '', 'currentColor')));
+        }
         const inSize = { width, height };
         if (!(sizeAboveZero(inSize) && isPopulatedString(path)))
             return;
@@ -4859,113 +5034,113 @@ class FontDefinitionClass extends DefinitionBase {
     url = '';
 }
 
-const label$n = "Butcherman";
-const id$m = "com.moviemasher.font.butcherman";
-const type$n = "font";
+const label$r = "Butcherman";
+const id$q = "com.moviemasher.font.butcherman";
+const type$q = "font";
 const source$9 = "https://fonts.googleapis.com/css2?family=Butcherman";
 var fontButchermanJson = {
-  label: label$n,
-  id: id$m,
-  type: type$n,
+  label: label$r,
+  id: id$q,
+  type: type$q,
   source: source$9
 };
 
-const label$m = "Croissant One";
-const id$l = "com.moviemasher.font.croissant-one";
-const type$m = "font";
+const label$q = "Croissant One";
+const id$p = "com.moviemasher.font.croissant-one";
+const type$p = "font";
 const source$8 = "https://fonts.googleapis.com/css2?family=Croissant+One";
 var fontCroissantOneJson = {
-  label: label$m,
-  id: id$l,
-  type: type$m,
+  label: label$q,
+  id: id$p,
+  type: type$p,
   source: source$8
 };
 
-const label$l = "League Spartan";
-const id$k = "com.moviemasher.font.default";
-const type$l = "font";
+const label$p = "League Spartan";
+const id$o = "com.moviemasher.font.default";
+const type$o = "font";
 const source$7 = "https://fonts.googleapis.com/css2?family=League+Spartan";
 var fontDefaultJson = {
-  label: label$l,
-  id: id$k,
-  type: type$l,
+  label: label$p,
+  id: id$o,
+  type: type$o,
   source: source$7
 };
 
-const label$k = "Germania One";
-const id$j = "com.moviemasher.font.germania-one";
-const type$k = "font";
+const label$o = "Germania One";
+const id$n = "com.moviemasher.font.germania-one";
+const type$n = "font";
 const source$6 = "https://fonts.googleapis.com/css2?family=Germania+One";
 var fontGermaniaOneJson = {
-  label: label$k,
-  id: id$j,
-  type: type$k,
+  label: label$o,
+  id: id$n,
+  type: type$n,
   source: source$6
 };
 
-const label$j = "Kenia";
-const id$i = "com.moviemasher.font.kenia";
-const type$j = "font";
+const label$n = "Kenia";
+const id$m = "com.moviemasher.font.kenia";
+const type$m = "font";
 const source$5 = "https://fonts.googleapis.com/css2?family=Kenia";
 var fontKeniaJson = {
-  label: label$j,
-  id: id$i,
-  type: type$j,
+  label: label$n,
+  id: id$m,
+  type: type$m,
   source: source$5
 };
 
-const label$i = "Luckiest Guy";
-const id$h = "com.moviemasher.font.luckiest-guy";
-const type$i = "font";
+const label$m = "Luckiest Guy";
+const id$l = "com.moviemasher.font.luckiest-guy";
+const type$l = "font";
 const source$4 = "https://fonts.googleapis.com/css2?family=Luckiest+Guy";
 var fontLuckiestGuyJson = {
-  label: label$i,
-  id: id$h,
-  type: type$i,
+  label: label$m,
+  id: id$l,
+  type: type$l,
   source: source$4
 };
 
-const label$h = "Monoton";
-const id$g = "com.moviemasher.font.monoton";
-const type$h = "font";
+const label$l = "Monoton";
+const id$k = "com.moviemasher.font.monoton";
+const type$k = "font";
 const source$3 = "https://fonts.googleapis.com/css2?family=Monoton";
 var fontMonotonJson = {
-  label: label$h,
-  id: id$g,
-  type: type$h,
+  label: label$l,
+  id: id$k,
+  type: type$k,
   source: source$3
 };
 
-const label$g = "Oleo Script";
-const id$f = "com.moviemasher.font.oleo-script";
-const type$g = "font";
+const label$k = "Oleo Script";
+const id$j = "com.moviemasher.font.oleo-script";
+const type$j = "font";
 const source$2 = "https://fonts.googleapis.com/css2?family=Oleo+Script";
 var fontOleoScriptJson = {
-  label: label$g,
-  id: id$f,
-  type: type$g,
+  label: label$k,
+  id: id$j,
+  type: type$j,
   source: source$2
 };
 
-const label$f = "Shojumaru";
-const id$e = "com.moviemasher.font.shojumaru";
-const type$f = "font";
+const label$j = "Shojumaru";
+const id$i = "com.moviemasher.font.shojumaru";
+const type$i = "font";
 const source$1 = "https://fonts.googleapis.com/css2?family=Shojumaru";
 var fontShojumaruJson = {
-  label: label$f,
-  id: id$e,
-  type: type$f,
+  label: label$j,
+  id: id$i,
+  type: type$i,
   source: source$1
 };
 
-const label$e = "Rubik+Dirt";
-const id$d = "com.moviemasher.font.rubik-dirt";
-const type$e = "font";
+const label$i = "Rubik+Dirt";
+const id$h = "com.moviemasher.font.rubik-dirt";
+const type$h = "font";
 const source = "https://fonts.googleapis.com/css2?family=Rubik+Dirt";
 var fontRubikDirtJson = {
-  label: label$e,
-  id: id$d,
-  type: type$e,
+  label: label$i,
+  id: id$h,
+  type: type$h,
   source: source
 };
 
@@ -5040,10 +5215,9 @@ class TextContainerDefinitionClass extends TextContainerDefinitionWithContainer 
         const inSize = { width: 24, height: 24 };
         const coverSize = sizeCover(inSize, size, true);
         const outRect = { ...coverSize, ...centerPoint(size, coverSize) };
-        const bounds = svgPolygonElement(inSize);
         const pathElement = svgPathElement(TextContainerDefinitionIcon);
         svgSetTransformRects(pathElement, inSize, outRect);
-        return Promise.resolve(svgElement(size, [bounds, pathElement]));
+        return Promise.resolve(svgElement(size, pathElement));
     }
     instanceArgs(object) {
         const textObject = object || {};
@@ -5056,20 +5230,78 @@ class TextContainerDefinitionClass extends TextContainerDefinitionWithContainer 
     }
 }
 
-const label$d = "Rectangle";
-const type$d = "container";
+const label$h = "Rectangle";
+const type$g = "container";
 var defaultContainer = {
-  label: label$d,
-  type: type$d
+  label: label$h,
+  type: type$g
 };
 
-const label$c = "Chat";
+const label$g = "Heart: Remix Icons";
+const type$f = "container";
+const id$g = "com.remixicon.container.heart";
+const pathWidth$7 = 24;
+const pathHeight$7 = 24;
+const path$7 = "M16.5 3C19.538 3 22 5.5 22 9c0 7-7.5 11-10 12.5C9.5 20 2 16 2 9c0-3.5 2.5-6 5.5-6C9.36 3 11 4 12 5c1-1 2.64-2 4.5-2z";
+var heartContainer = {
+  label: label$g,
+  type: type$f,
+  id: id$g,
+  pathWidth: pathWidth$7,
+  pathHeight: pathHeight$7,
+  path: path$7
+};
+
+const label$f = "Cloud: Ant Design";
+const id$f = "design.ant.container.cloud";
+const pathWidth$6 = 1024;
+const pathHeight$6 = 1024;
+const path$6 = "M811.4 418.7C765.6 297.9 648.9 212 512.2 212S258.8 297.8 213 418.6C127.3 441.1 64 519.1 64 612c0 110.5 89.5 200 199.9 200h496.2C870.5 812 960 722.5 960 612c0-92.7-63.1-170.7-148.6-193.3z";
+var cloudContainer = {
+  label: label$f,
+  id: id$f,
+  pathWidth: pathWidth$6,
+  pathHeight: pathHeight$6,
+  path: path$6
+};
+
+const label$e = "Apple: Dev Icons";
+const type$e = "container";
+const id$e = "devicons.container.apple";
+const pathWidth$5 = 32;
+const pathHeight$5 = 32;
+const path$5 = "M23.023 17.093c-0.033-3.259 2.657-4.822 2.777-4.901-1.512-2.211-3.867-2.514-4.705-2.548-2.002-0.204-3.91 1.18-4.926 1.18-1.014 0-2.583-1.15-4.244-1.121-2.185 0.033-4.199 1.271-5.323 3.227-2.269 3.936-0.58 9.769 1.631 12.963 1.081 1.561 2.37 3.318 4.061 3.254 1.63-0.064 2.245-1.055 4.215-1.055s2.524 1.055 4.248 1.021c1.753-0.032 2.864-1.591 3.936-3.159 1.24-1.814 1.751-3.57 1.782-3.659-0.038-0.017-3.416-1.312-3.451-5.202zM19.783 7.53c0.897-1.089 1.504-2.602 1.34-4.108-1.294 0.053-2.861 0.86-3.79 1.948-0.832 0.965-1.561 2.502-1.365 3.981 1.444 0.112 2.916-0.734 3.816-1.821z";
+var appleContainer = {
+  label: label$e,
+  type: type$e,
+  id: id$e,
+  pathWidth: pathWidth$5,
+  pathHeight: pathHeight$5,
+  path: path$5
+};
+
+const label$d = "Starburst: Typicons";
+const type$d = "container";
+const id$d = "com.s-ings.container.starburst";
+const pathWidth$4 = 24;
+const pathHeight$4 = 24;
+const path$4 = "M19.064 10.109l1.179-2.387c.074-.149.068-.327-.015-.471-.083-.145-.234-.238-.401-.249l-2.656-.172-.172-2.656c-.011-.167-.104-.317-.249-.401-.145-.084-.322-.09-.472-.015l-2.385 1.18-1.477-2.215c-.186-.278-.646-.278-.832 0l-1.477 2.215-2.385-1.18c-.151-.075-.327-.069-.472.015-.145.083-.238.234-.249.401l-.171 2.656-2.657.171c-.167.011-.318.104-.401.249-.084.145-.089.322-.015.472l1.179 2.386-2.214 1.477c-.139.093-.223.249-.223.416s.083.323.223.416l2.215 1.477-1.18 2.386c-.074.15-.068.327.015.472.083.144.234.238.401.248l2.656.171.171 2.657c.011.167.104.317.249.401.144.083.32.088.472.015l2.386-1.179 1.477 2.214c.093.139.249.223.416.223s.323-.083.416-.223l1.477-2.214 2.386 1.179c.15.073.327.068.472-.015s.238-.234.249-.401l.171-2.656 2.656-.172c.167-.011.317-.104.401-.249.083-.145.089-.322.015-.472l-1.179-2.385 2.214-1.478c.139-.093.223-.249.223-.416s-.083-.323-.223-.416l-2.214-1.475z";
+var starburstContainer = {
+  label: label$d,
+  type: type$d,
+  id: id$d,
+  pathWidth: pathWidth$4,
+  pathHeight: pathHeight$4,
+  path: path$4
+};
+
+const label$c = "Rounded Rect";
 const type$c = "container";
-const id$c = "com.moviemasher.container.chat";
-const pathWidth$3 = 24;
-const pathHeight$3 = 24;
-const path$3 = "M4.929 19.071A9.969 9.969 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10H2l2.929-2.929zM11 6v12h2V6h-2zM7 9v6h2V9H7zm8 0v6h2V9h-2z";
-var chatContainer = {
+const id$c = "com.moviemasher.container.rounded-rect";
+const pathWidth$3 = 1920;
+const pathHeight$3 = 1080;
+const path$3 = "M 358.00 980.00 C 215.51 980.00 100.00 864.49 100.00 722.00 L 100.00 358.00 C 100.00 215.51 215.51 100.00 358.00 100.00 L 1562.00 100.00 C 1704.49 100.00 1820.00 215.51 1820.00 358.00 L 1820.00 722.00 C 1820.00 864.49 1704.49 980.00 1562.00 980.00 Z M 358.00 980.00";
+var roundedRectContainer = {
   label: label$c,
   type: type$c,
   id: id$c,
@@ -5078,75 +5310,79 @@ var chatContainer = {
   path: path$3
 };
 
-const label$b = "Broadcast";
-const type$b = "container";
-const id$b = "com.moviemasher.container.broadcast";
-const pathWidth$2 = 24;
-const pathHeight$2 = 24;
-const path$2 = "M4.929 2.929l1.414 1.414A7.975 7.975 0 0 0 4 10c0 2.21.895 4.21 2.343 5.657L4.93 17.07A9.969 9.969 0 0 1 2 10a9.969 9.969 0 0 1 2.929-7.071zm14.142 0A9.969 9.969 0 0 1 22 10a9.969 9.969 0 0 1-2.929 7.071l-1.414-1.414A7.975 7.975 0 0 0 20 10c0-2.21-.895-4.21-2.343-5.657L19.07 2.93zM7.757 5.757l1.415 1.415A3.987 3.987 0 0 0 8 10c0 1.105.448 2.105 1.172 2.828l-1.415 1.415A5.981 5.981 0 0 1 6 10c0-1.657.672-3.157 1.757-4.243zm8.486 0A5.981 5.981 0 0 1 18 10a5.981 5.981 0 0 1-1.757 4.243l-1.415-1.415A3.987 3.987 0 0 0 16 10a3.987 3.987 0 0 0-1.172-2.828l1.415-1.415zM12 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 2c.58 0 1.077.413 1.184.983L14.5 22h-5l1.316-7.017c.107-.57.604-.983 1.184-.983z";
-var broadcastContainer = {
+const label$b = "Text";
+const type$b = "text";
+const id$b = "com.moviemasher.container.text";
+const fontId = "com.moviemasher.font.default";
+var textContainer = {
   label: label$b,
   type: type$b,
   id: id$b,
+  fontId: fontId
+};
+
+const label$a = "Fire: Ant Design";
+const type$a = "container";
+const id$a = "design.ant.container.fire";
+const pathWidth$2 = 1024;
+const pathHeight$2 = 1024;
+const path$2 = "M834.1 469.2A347.49 347.49 0 0 0 751.2 354l-29.1-26.7a8.09 8.09 0 0 0-13 3.3l-13 37.3c-8.1 23.4-23 47.3-44.1 70.8-1.4 1.5-3 1.9-4.1 2-1.1.1-2.8-.1-4.3-1.5-1.4-1.2-2.1-3-2-4.8 3.7-60.2-14.3-128.1-53.7-202C555.3 171 510 123.1 453.4 89.7l-41.3-24.3c-5.4-3.2-12.3 1-12 7.3l2.2 48c1.5 32.8-2.3 61.8-11.3 85.9-11 29.5-26.8 56.9-47 81.5a295.64 295.64 0 0 1-47.5 46.1 352.6 352.6 0 0 0-100.3 121.5A347.75 347.75 0 0 0 160 610c0 47.2 9.3 92.9 27.7 136a349.4 349.4 0 0 0 75.5 110.9c32.4 32 70 57.2 111.9 74.7C418.5 949.8 464.5 959 512 959s93.5-9.2 136.9-27.3A348.6 348.6 0 0 0 760.8 857c32.4-32 57.8-69.4 75.5-110.9a344.2 344.2 0 0 0 27.7-136c0-48.8-10-96.2-29.9-140.9z";
+var fireContainer = {
+  label: label$a,
+  type: type$a,
+  id: id$a,
   pathWidth: pathWidth$2,
   pathHeight: pathHeight$2,
   path: path$2
 };
 
-const label$a = "Music";
-const type$a = "container";
-const id$a = "com.moviemasher.container.music";
-const pathWidth$1 = 24;
-const pathHeight$1 = 24;
-const path$1 = "M12 13.535V3h8v2h-6v12a4 4 0 1 1-2-3.465zM10 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z";
-var musicContainer = {
-  label: label$a,
-  type: type$a,
-  id: id$a,
+const label$9 = "Flag: Ant Design";
+const type$9 = "container";
+const id$9 = "design.ant.container.flag";
+const pathWidth$1 = 1024;
+const pathHeight$1 = 1024;
+const path$1 = "M880 305H624V192c0-17.7-14.3-32-32-32H184v-40c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v784c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V640h248v113c0 17.7 14.3 32 32 32h416c17.7 0 32-14.3 32-32V337c0-17.7-14.3-32-32-32z";
+var flagContainer = {
+  label: label$9,
+  type: type$9,
+  id: id$9,
   pathWidth: pathWidth$1,
   pathHeight: pathHeight$1,
   path: path$1
 };
 
-const label$9 = "Test";
-const type$9 = "container";
-const id$9 = "com.moviemasher.container.test";
-const pathWidth = 1920;
-const pathHeight = 1080;
-const path = "M 358.00 980.00 C 215.51 980.00 100.00 864.49 100.00 722.00 L 100.00 358.00 C 100.00 215.51 215.51 100.00 358.00 100.00 L 1562.00 100.00 C 1704.49 100.00 1820.00 215.51 1820.00 358.00 L 1820.00 722.00 C 1820.00 864.49 1704.49 980.00 1562.00 980.00 Z M 358.00 980.00";
-var testContainer = {
-  label: label$9,
-  type: type$9,
-  id: id$9,
+const label$8 = "Oval";
+const type$8 = "container";
+const id$8 = "com.moviemasher.container.oval";
+const pathWidth = 24;
+const pathHeight = 24;
+const path = "M0,12 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0";
+var ovalContainer = {
+  label: label$8,
+  type: type$8,
+  id: id$8,
   pathWidth: pathWidth,
   pathHeight: pathHeight,
   path: path
 };
 
-const label$8 = "Text";
-const type$8 = "text";
-const id$8 = "com.moviemasher.container.text";
-const fontId = "com.moviemasher.font.default";
-var textContainer = {
-  label: label$8,
-  type: type$8,
-  id: id$8,
-  fontId: fontId
-};
-
 const containerDefaults = [
-    new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
     new TextContainerDefinitionClass(textContainer),
-    new ShapeContainerDefinitionClass(chatContainer),
-    new ShapeContainerDefinitionClass(broadcastContainer),
-    new ShapeContainerDefinitionClass(musicContainer),
-    new ShapeContainerDefinitionClass(testContainer),
+    new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
+    new ShapeContainerDefinitionClass(roundedRectContainer),
+    new ShapeContainerDefinitionClass(ovalContainer),
+    new ShapeContainerDefinitionClass(starburstContainer),
+    new ShapeContainerDefinitionClass(heartContainer),
+    new ShapeContainerDefinitionClass(cloudContainer),
+    new ShapeContainerDefinitionClass(fireContainer),
+    new ShapeContainerDefinitionClass(flagContainer),
+    new ShapeContainerDefinitionClass(appleContainer),
 ];
 const containerDefinition = (object) => {
     const { id } = object;
     assertPopulatedString(id, 'containerDefinition id');
-    throw 'containerDefinition';
-    // return new ContainerDefinitionClass({ ...object, type: DefinitionType.Container })
+    // console.log("containerDefinition", id, object, containerDefaults)
+    return new ShapeContainerDefinitionClass({ ...object, type: DefinitionType.Container });
 };
 const containerDefinitionFromId = (id) => {
     const definition = containerDefaults.find(definition => definition.id === id);
@@ -5173,18 +5409,6 @@ Factories[DefinitionType.Container] = {
     fromId: containerFromId,
     instance: containerInstance,
     defaults: containerDefaults,
-};
-
-const DefaultContentId = `${IdPrefix}content${IdSuffix}`;
-const isContent = (value) => {
-    return isTweenable(value) && isContentType(value.type);
-};
-function assertContent(value, name) {
-    if (!isContent(value))
-        throwError(value, 'Content', name);
-}
-const isContentDefinition = (value) => {
-    return isTweenableDefinition(value) && isContentType(value.type);
 };
 
 function ContentDefinitionMixin(Base) {
@@ -5613,13 +5837,20 @@ Factories[DefinitionType.Effect] = {
     defaults: effectDefaults,
 };
 
+const isAudio = (value) => {
+    return isContent(value) && isAudioDefinition(value.definition);
+};
+const isAudioDefinition = (value) => {
+    return isDefinition(value) && value.type === DefinitionType.Audio;
+};
+
 function ContentMixin(Base) {
     return class extends Base {
         constructor(...args) {
             super(...args);
             const [object] = args;
-            const { isDefaultOrAudio } = this;
-            if (!isDefaultOrAudio) {
+            const { isDefaultOrAudio, container } = this;
+            if (!(isDefaultOrAudio || container)) {
                 this.addProperties(object, propertyInstance({
                     name: 'x', type: DataType.Percent, defaultValue: 0.5,
                     group: DataGroup.Point, tweenable: true,
@@ -5691,26 +5922,21 @@ function ContentMixin(Base) {
             // console.log(this.constructor.name, "contentCommandFilters returning empty")
             return this.effectsCommandFilters(args);
         }
-        contentSvgFilter(contentItem, outputSize, containerRect, time, clipTime) {
-            const { effects } = this;
-            if (!effects.length)
-                return;
-            const svgFilters = this.effects.flatMap(effect => effect.svgFilters(outputSize, containerRect, time, clipTime));
-            // const size = sizeCopy(this.contentRect(containerRect, time, clipTime))
-            const filter = svgFilterElement(svgFilters, contentItem);
-            svgSet(filter, '200%', 'width');
-            svgSet(filter, '200%', 'height');
-            return filter;
+        contentPreviewItemPromise(containerRect, time, timeRange, icon) {
+            return this.itemPromise(containerRect, time, timeRange, icon);
         }
         contentRects(args) {
             const { containerRects: rects, time, timeRange, loading, editing } = args;
+            const tuple = isArray(rects) ? rects : [rects, rects];
             if (loading && !this.intrinsicsKnown({ editing, size: true })) {
-                return isArray(rects) ? rects : [rects, rects];
+                return tuple;
             }
+            const intrinsicRect = this.intrinsicRect(editing);
+            if (!sizeAboveZero(intrinsicRect))
+                return tuple;
             const { lock } = this;
             const tweenRects = this.tweenRects(time, timeRange);
             const locked = tweenRectsLock(tweenRects, lock);
-            const intrinsicRect = this.intrinsicRect(editing);
             const coverSizes = tweenCoverSizes(intrinsicRect, rects, locked);
             const [size, sizeEnd] = coverSizes;
             const coverPoints = tweenCoverPoints(coverSizes, rects, locked);
@@ -5720,18 +5946,16 @@ function ContentMixin(Base) {
             // console.log(this.constructor.name, "contentRects", lock, locked, isArray(rects) ? rects[0] : rects,  "->", rect)
             return [rect, rectEnd];
         }
-        contentRect(containerRect, time, timeRange) {
-            const contentArgs = {
-                containerRects: containerRect, time, timeRange, editing: true
-            };
-            const [contentRect] = this.contentRects(contentArgs);
-            const { x, y } = contentRect;
-            const point = { x: containerRect.x - x, y: containerRect.y - y };
-            const rect = rectFromSize(contentRect, point);
-            return rect;
-        }
-        contentPreviewItemPromise(containerRect, time, timeRange, icon) {
-            return this.itemPromise(containerRect, time, timeRange, icon);
+        contentSvgFilter(contentItem, outputSize, containerRect, time, clipTime) {
+            const { effects, isDefaultOrAudio } = this;
+            if (isDefaultOrAudio || !effects.length)
+                return;
+            const svgFilters = this.effects.flatMap(effect => effect.svgFilters(outputSize, containerRect, time, clipTime));
+            // const size = sizeCopy(this.contentRect(containerRect, time, clipTime))
+            const filter = svgFilterElement(svgFilters, contentItem);
+            svgSet(filter, '200%', 'width');
+            svgSet(filter, '200%', 'height');
+            return filter;
         }
         definitionIds() {
             return [
@@ -5744,7 +5968,9 @@ function ContentMixin(Base) {
             const { filterInput: input } = args;
             let filterInput = input;
             assertPopulatedString(filterInput);
-            const { effects } = this;
+            const { effects, isDefaultOrAudio } = this;
+            if (isDefaultOrAudio)
+                return commandFilters;
             commandFilters.push(...effects.flatMap(effect => {
                 const filters = effect.commandFilters({ ...args, filterInput });
                 if (filters.length)
@@ -5759,14 +5985,14 @@ function ContentMixin(Base) {
             return this.definitionId === "com.moviemasher.content.default";
         }
         get isDefaultOrAudio() {
-            return this.isDefault || this.type === DefinitionType.Audio;
+            return this.isDefault || isAudio(this);
         }
         itemPromise(containerRect, time, range, icon) {
             throw new Error(Errors.unimplemented);
         }
         selectedItems(actions) {
             const selectedItems = super.selectedItems(actions);
-            if (this.isDefaultOrAudio)
+            if (this.isDefaultOrAudio || this.container)
                 return selectedItems;
             // add effects 
             const { effects, selectType } = this;
@@ -5817,14 +6043,13 @@ function ContentMixin(Base) {
         }
         selectedProperty(property) {
             const { name } = property;
-            const { isDefaultOrAudio } = this;
             switch (name) {
-                case 'effects':
-                case 'lock':
+                case 'effects': // return !(this.container || this.isDefaultOrAudio)
+                case 'lock': //return this.container && !isAudio(this)
                 case 'width':
                 case 'height':
                 case 'x':
-                case 'y': return !isDefaultOrAudio;
+                case 'y': return !(this.isDefaultOrAudio);
             }
             return super.selectedProperty(property);
         }
@@ -6067,7 +6292,7 @@ class EditedClass extends PropertiedClass {
     _imageSize = { ...SizeZero };
     get imageSize() { return this._imageSize; }
     set imageSize(value) {
-        assertSizeAboveZero(value);
+        assertSizeAboveZero(value, 'imageSize');
         this._imageSize = value;
     }
     loadPromise(args) { throw Errors.unimplemented; }
@@ -6083,7 +6308,7 @@ class EditedClass extends PropertiedClass {
     selectables() { return []; }
     selectType = SelectType.None;
     selectedItems(actions) { return []; }
-    svgItems(options) { throw Errors.unimplemented; }
+    previewItems(options) { throw Errors.unimplemented; }
     toJSON() {
         const json = super.toJSON();
         json.createdAt = this.createdAt;
@@ -6116,21 +6341,6 @@ const isTrack = (value) => {
 function assertTrack(value, name) {
     if (!isTrack(value))
         throwError(value, 'Track', name);
-}
-
-const isPreloadableDefinition = (value) => {
-    return isContentDefinition(value) && "loadType" in value;
-};
-function assertPreloadableDefinition(value) {
-    if (!isPreloadableDefinition(value))
-        throw new Error('expected PreloadableDefinition');
-}
-const isPreloadable = (value) => {
-    return isContent(value) && isPreloadableDefinition(value.definition);
-};
-function assertPreloadable(value) {
-    if (!isPreloadable(value))
-        throw new Error('expected Preloadable');
 }
 
 function PreloadableDefinitionMixin(Base) {
@@ -6170,29 +6380,6 @@ function PreloadableDefinitionMixin(Base) {
 function PreloadableMixin(Base) {
     return class extends Base {
     };
-}
-
-const UpdatableSizeDefinitionType = [
-    DefinitionType.Image,
-    DefinitionType.Video,
-    DefinitionType.VideoSequence,
-];
-const isUpdatableSize = (value) => {
-    return isPreloadable(value);
-};
-function assertUpdatableSize(value) {
-    if (!isUpdatableSize(value))
-        throwError(value, 'UpdatableSize');
-}
-const isUpdatableSizeType = (value) => {
-    return isDefinitionType(value) && UpdatableSizeDefinitionType.includes(value);
-};
-const isUpdatableSizeDefinition = (value) => {
-    return isPreloadableDefinition(value);
-};
-function assertUpdatableSizeDefinition(value) {
-    if (!isUpdatableSizeDefinition(value))
-        throwError(value, 'UpdatableSizeDefinition');
 }
 
 function UpdatableSizeMixin(Base) {
@@ -6283,10 +6470,11 @@ function UpdatableSizeMixin(Base) {
             const [contentRect, contentRectEnd] = contentRects;
             const duration = isTimeRange(time) ? time.lengthSeconds : 0;
             const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0];
+            const dont = false;
             const colorInput = `content-${track}-back`;
-            if (!upload) {
+            if (!(upload || dont)) {
                 const colorArgs = {
-                    ...args, contentColors: [colorBlack, colorBlack],
+                    ...args, contentColors: [colorTransparent, colorTransparent],
                     outputSize: maxContainerSize
                 };
                 commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput));
@@ -6298,7 +6486,7 @@ function UpdatableSizeMixin(Base) {
             if (upload)
                 return commandFilters;
             filterInput = arrayLast(arrayLast(commandFilters).outputs);
-            if (tweening.size) {
+            if (tweening.size && !dont) {
                 commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput));
                 filterInput = arrayLast(arrayLast(commandFilters).outputs);
             }
@@ -6314,13 +6502,19 @@ function UpdatableSizeMixin(Base) {
             cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`);
             commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }));
             filterInput = arrayLast(arrayLast(commandFilters).outputs);
-            if (!tweening.size) {
+            const { setsarFilter } = this;
+            setsarFilter.setValue("1/1", "sar");
+            commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }));
+            filterInput = arrayLast(arrayLast(commandFilters).outputs);
+            if (!(tweening.size || dont)) {
                 commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput));
                 filterInput = arrayLast(arrayLast(commandFilters).outputs);
             }
             commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening));
             return commandFilters;
         }
+        _setsarFilter;
+        get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar'); }
         hasIntrinsicSizing = true;
         iconUrl(size, time, clipTime) {
             return this.definition.url;
@@ -6363,17 +6557,27 @@ function UpdatableSizeMixin(Base) {
         }
         // protected previewItem?: SvgItem
         itemPreviewPromise(rect, time, range) {
-            return this.itemIconPromise(rect, time, range, true);
+            return this.itemIconPromise(rect, time, range);
         }
         itemPromise(containerRect, time, range, icon) {
             const { container } = this;
-            const rect = container ? containerRect : this.contentRect(containerRect, time, range);
+            const rect = container ? containerRect : this.itemContentRect(containerRect, time, range);
             if (icon)
                 return this.itemIconPromise(rect, time, range);
             return this.itemPreviewPromise(rect, time, range).then(svgItem => {
                 svgSetDimensions(svgItem, rect);
                 return svgItem;
             });
+        }
+        itemContentRect(containerRect, time, timeRange) {
+            const contentArgs = {
+                containerRects: containerRect, time, timeRange, editing: true
+            };
+            const [contentRect] = this.contentRects(contentArgs);
+            const { x, y } = contentRect;
+            const point = { x: containerRect.x - x, y: containerRect.y - y };
+            const rect = rectFromSize(contentRect, point);
+            return rect;
         }
     };
 }
@@ -6653,20 +6857,22 @@ function UpdatableDurationDefinitionMixin(Base) {
                 this.audio = false;
                 return;
             }
-            const cache = preloader.getCache(urlPrependProtocol('audio', audioUrl));
+            const protocolUrl = urlPrependProtocol('audio', audioUrl);
+            // console.log(this.constructor.name, "audibleSource", protocolUrl)
+            const cache = preloader.getCache(protocolUrl);
             if (!cache) {
-                // console.log(this.constructor.name, "audibleSource not cached", audioUrl)
+                // console.log(this.constructor.name, "audibleSource not cached", protocolUrl)
                 return;
             }
             const { error, result } = cache;
             if (error || !isLoadedAudio(result)) {
-                // console.log(this.constructor.name, "audibleSource error", error)
+                // console.log(this.constructor.name, "audibleSource error", error, protocolUrl, result)
                 this.audio = false;
                 this.audioUrl = '';
                 return;
             }
             this.loadedAudio = result;
-            // console.log(this.constructor.name, "audibleSource cached", audioUrl)
+            // console.log(this.constructor.name, "audibleSource cached", protocolUrl)
             return AudibleContextInstance.createBufferSource(result);
         }
         audio = false;
@@ -6700,8 +6906,9 @@ function UpdatableDurationDefinitionMixin(Base) {
         }
         urlAudible(editing = false) {
             // console.log(this.constructor.name, "urlAudible", editing, this.audioUrl)
-            if (editing)
-                return this.audioUrl || this.url;
+            if (editing) {
+                return urlPrependProtocol('audio', this.audioUrl || this.url);
+            }
             return this.source;
         }
         waveform;
@@ -7352,8 +7559,8 @@ class PreviewClass {
         const icon = !!onlyClip;
         clips.forEach(clip => {
             promise = promise.then(lastTuple => {
-                return clip.previewItemsPromise(size, time, icon).then(svgItem => {
-                    return [...lastTuple, svgItem];
+                return clip.previewItemsPromise(size, time, icon).then(svgItems => {
+                    return [...lastTuple, ...svgItems];
                 });
             });
         });
@@ -7386,18 +7593,10 @@ class PreviewClass {
         });
         return trackPreviews;
     }
-    get svgItemPromise() {
-        return this.svgItemsPromise.then(svgItems => {
-            const { length } = svgItems;
-            if (length === 1)
-                return svgItems[0];
-            const { size } = this;
-            const element = svgElement(size);
-            svgItems.forEach(item => element.appendChild(item));
-            return element;
-        });
-    }
     get svgItemsPromise() {
+        return this.previewItemsPromise;
+    }
+    get previewItemsPromise() {
         if (this._svgItems)
             return Promise.resolve(this._svgItems);
         const sizePromise = this.intrinsicSizePromise;
@@ -7451,13 +7650,6 @@ class PreviewClass {
     }
     visible = true;
 }
-
-const isAudio = (value) => {
-    return isContent(value) && isUpdatableDuration(value);
-};
-const isAudioDefinition = (value) => {
-    return isDefinition(value) && value.type === DefinitionType.Audio;
-};
 
 class ClipClass extends InstanceBase {
     constructor(...args) {
@@ -7563,7 +7755,7 @@ class ClipClass extends InstanceBase {
         const contentArgs = { ...args, clipTime };
         // console.log(this.constructor.name, "commandFiles", visible, outputSize)
         if (visible) {
-            assertSizeAboveZero(outputSize);
+            assertSizeAboveZero(outputSize, 'outputSize');
             assertContainer(container);
             const containerRectArgs = {
                 size: outputSize, time, timeRange: clipTime, loading: true
@@ -7597,7 +7789,7 @@ class ClipClass extends InstanceBase {
         const { content, container } = this;
         if (!visible)
             return this.content.audibleCommandFilters(contentArgs);
-        assertSizeAboveZero(outputSize);
+        assertSizeAboveZero(outputSize, 'outputSize');
         assertContainer(container);
         const containerRectArgs = {
             size: outputSize, time, timeRange: clipTime
@@ -7737,9 +7929,7 @@ class ClipClass extends InstanceBase {
         return !container.muted;
     }
     previewItemsPromise(size, time, icon) {
-        assertSizeAboveZero(size);
-        // TODO: make luminance a property of container...
-        const luminance = true;
+        assertSizeAboveZero(size, 'previewItemsPromise');
         const timeRange = this.timeRange(this.track.mash.quantize);
         const svgTime = time || timeRange.startTime;
         const { container, content } = this;
@@ -7750,52 +7940,7 @@ class ClipClass extends InstanceBase {
         const containerRects = this.rects(containerRectArgs);
         assertTrue(rectsEqual(...containerRects));
         const [containerRect] = containerRects;
-        const containerPromise = container.containerPreviewItemPromise(containerRect, svgTime, timeRange, icon);
-        return containerPromise.then(containerItem => {
-            const defs = [containerItem];
-            let containerId = idGenerateString();
-            const updatable = isUpdatableSize(container);
-            const useSvg = isUpdatableSize(content) && !icon;
-            if (updatable && !icon) {
-                // container is image/video so we need to add a polygon for hover
-                const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId);
-                polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;');
-                defs.push(polygonElement);
-                containerId = idGenerateString();
-            }
-            containerItem.setAttribute('id', containerId);
-            return content.contentPreviewItemPromise(containerRect, svgTime, timeRange, icon).then(contentItem => {
-                assertObject(contentItem);
-                const group = svgGroupElement();
-                svgAppend(group, [svgPolygonElement(containerRect, '', 'transparent'), contentItem]);
-                const items = [group];
-                svgAddClass(group, 'contained');
-                const maskElement = svgMaskElement(undefined, group, luminance);
-                defs.push(maskElement);
-                const useContainerInMask = svgUseElement(containerId);
-                maskElement.appendChild(useContainerInMask);
-                if (!updatable) {
-                    containerItem.setAttribute('vector-effect', 'non-scaling-stroke;');
-                    useContainerInMask.setAttribute('fill', colorWhite);
-                }
-                const containerSvgFilter = container.containerSvgFilter(containerItem, size, containerRect, svgTime, timeRange);
-                if (containerSvgFilter) {
-                    defs.push(containerSvgFilter);
-                }
-                else
-                    containerItem.removeAttribute('filter');
-                const contentSvgFilter = content.contentSvgFilter(contentItem, size, containerRect, svgTime, timeRange);
-                if (contentSvgFilter)
-                    defs.push(contentSvgFilter);
-                else
-                    contentItem.removeAttribute('filter');
-                const svg = useSvg ? this.svgElement : svgElement();
-                svgSetChildren(svg, [svgDefsElement(defs), ...items]);
-                svgSetDimensions(svg, size);
-                // const tuple: SvgItemsTuple = [defs, items]
-                return svg;
-            });
-        });
+        return container.containedContent(content, containerRect, size, svgTime, timeRange, icon);
     }
     rectIntrinsic(size, loading, editing) {
         const rect = { ...size, ...PointZero };
@@ -7910,13 +8055,13 @@ class ClipClass extends InstanceBase {
             }
         }
     }
-    _svgElement;
-    get svgElement() {
-        return this._svgElement ||= svgElement();
-    }
-    updateSvg(rect) {
-        svgSetDimensions(this.svgElement, rect);
-    }
+    // private _svgElement?: SVGSVGElement
+    // private get svgElement() { 
+    //   return this._svgElement ||= svgElement() 
+    // }
+    // private updateSvg(rect: Rect) {
+    //   svgSetDimensions(this.svgElement, rect)
+    // }
     time(quantize) { return timeFromArgs(this.frame, quantize); }
     timeRange(quantize) {
         const { frame, frames } = this;
@@ -7970,7 +8115,9 @@ class ClipDefinitionClass extends DefinitionBase {
             name: "contentId", type: DataType.ContentId,
             defaultValue: DefaultContentId
         }));
-        this.properties.push(propertyInstance({ name: "label", type: DataType.String }));
+        this.properties.push(propertyInstance({
+            name: "label", type: DataType.String
+        }));
         this.properties.push(propertyInstance({
             name: "sizing", type: DataType.Sizing, defaultValue: Sizing.Content,
             // group: DataGroup.Sizing,
@@ -7980,6 +8127,7 @@ class ClipDefinitionClass extends DefinitionBase {
             group: DataGroup.Timing,
         }));
         this.properties.push(propertyInstance({
+            name: "frame",
             type: DataType.Frame,
             group: DataGroup.Timing,
             defaultValue: Duration.None, min: 0, step: 1
@@ -8253,6 +8401,7 @@ class MashClass extends EditedClass {
         this.assureTrack();
         this.tracks.sort(sortByIndex);
         this._preview = new NonePreview({ mash: this, time: timeFromArgs() });
+        this.label ||= Default.mash.label;
     }
     addClipToTrack(clip, trackIndex = 0, insertIndex = 0, frame) {
         const clipsArray = isArray(clip) ? clip : [clip];
@@ -8788,8 +8937,8 @@ class MashClass extends EditedClass {
             });
         this.restartAfterStop(time, paused, seeking);
     }
-    svgItems(options) {
-        return this.preview(options).svgItemsPromise;
+    previewItems(options) {
+        return this.preview(options).previewItemsPromise;
     }
     get time() {
         return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantize);
@@ -9054,6 +9203,7 @@ class CastClass extends EditedClass {
         this.dataPopulate(rest);
         if (isPopulatedArray(layers))
             this.layers.push(...layers.map(object => this.createLayer(object)));
+        this.label ||= Default.cast.label;
     }
     addLayer(layer, layerAndPosition = {}) {
         const { layers, index } = CastLayersAndIndex(this.layers, layerAndPosition);
@@ -9157,17 +9307,17 @@ class CastClass extends EditedClass {
             }
         }
     }
-    svgItems(args) {
+    previewItems(args) {
         const { mashes, imageSize } = this;
         const allSvgs = [];
         const { background = this.color } = args;
         const mashArgs = { ...args, color: '' };
-        const element = svgPolygonElement(imageSize, '', background);
+        const element = svgElement(imageSize, svgPolygonElement(imageSize, '', background));
         let promise = Promise.resolve([element]);
         arrayReversed(mashes).forEach((mash) => {
             promise = promise.then(svgs => {
                 allSvgs.push(...svgs);
-                return mash.svgItems(mashArgs);
+                return mash.previewItems(mashArgs);
             });
         });
         return promise.then(svgs => {
@@ -9755,27 +9905,13 @@ class LoaderClass {
     }
     getCache(path) {
         const files = this.parseUrlPath(path);
-        const file = files.pop();
+        const [file] = files;
+        // console.log(this.constructor.name, "getCache", path, file)
         assertObject(file);
         return this.loaderCache.get(file.loaderPath);
     }
     getError(graphFile) {
         return this.cacheGet(graphFile)?.error;
-    }
-    getFile(graphFile) {
-        const cache = this.cacheGet(graphFile);
-        const result = cache?.result;
-        if (!result) {
-            const { type } = graphFile;
-            const key = this.key(graphFile);
-            const filesKey = `${type}-${key}`;
-            if (cache)
-                console.trace(this.constructor.name, `getFile NO RESULT files.${filesKey} for`, graphFile.definition?.label);
-            else
-                console.trace(this.constructor.name, `getFile NOTHING AT files.${filesKey} for`, graphFile.definition?.label, this.loaderCache.keys());
-            return;
-        }
-        return result;
     }
     getLoaderCache(file, createIfNeeded, definition) {
         const { loaderPath, loaderType } = file;
@@ -9785,21 +9921,20 @@ class LoaderClass {
             // else console.log(this.constructor.name, "getLoaderCache NOT FOUND", loaderPath)
             return found;
         }
-        // console.log(this.constructor.name, "getLoaderCache CACHING", loaderPath)
+        // console.log(this.constructor.name, "getLoaderCache LOADING", loaderPath)
         const definitions = [];
         if (isDefinition(definition))
             definitions.push(definition);
         const cache = { loaded: false, definitions };
-        //if (definition) 
         if (loaderType !== GraphFileType.Svg)
             this.setLoaderCache(loaderPath, cache);
         cache.promise = this.filePromise(file).then(loaded => {
-            // console.log(this.constructor.name, "getLoaderCache CACHED", loaderPath, loaded.constructor.name)
+            // console.log(this.constructor.name, "getLoaderCache CACHED", loaderPath, loaded?.constructor.name)
             cache.loaded = true;
             cache.result = loaded;
             return loaded;
         }).catch(error => {
-            // console.log(this.constructor.name, "getLoaderCache ERROR", loaderPath, error, error.constructor.name)
+            // console.log(this.constructor.name, "getLoaderCache ERROR", loaderPath, error, error?.constructor.name)
             cache.error = error;
             cache.loaded = true;
             return error;
@@ -9838,6 +9973,11 @@ class LoaderClass {
         const promises = graphFiles.map(file => this.loadGraphFilePromise(file));
         return Promise.all(promises).then(EmptyMethod);
     }
+    loadGraphFilePromise(graphFile) {
+        const { type, file, definition } = graphFile;
+        const url = `${type}:/${file}`;
+        return this.loadPromise(url, definition);
+    }
     loadPromise(urlPath, definition) {
         // console.log(this.constructor.name, "loadPromise", urlPath)
         const cache = this.loaderCache.get(urlPath);
@@ -9853,7 +9993,7 @@ class LoaderClass {
         }
         const files = this.parseUrlPath(urlPath);
         files.reverse();
-        // console.log(this.constructor.name, "loadPromise START", files)
+        // console.log(this.constructor.name, "loadPromise START", files.map(file => file.urlOrLoaderPath))
         const file = files.shift();
         assertObject(file);
         let promise = this.loaderFilePromise(file, definition);
@@ -9866,11 +10006,6 @@ class LoaderClass {
             // console.log(this.constructor.name, "loadPromise FINISH returning", something?.constructor.name)
             return something;
         });
-    }
-    loadGraphFilePromise(graphFile) {
-        const { type, file, definition } = graphFile;
-        const url = `${type}:/${file}`;
-        return this.loadPromise(url, definition);
     }
     loadedFile(graphFile) {
         const file = this.cacheGet(graphFile);
@@ -9948,26 +10083,29 @@ class LoaderClass {
         if (!definitionFamily)
             definition.family = family;
     }
-    updateCache(cache, info) {
+    updateCache(cache, loadedInfo) {
         cache.loadedInfo ||= {};
-        const { definitions, loadedInfo } = cache;
-        const { duration, width, height, audible, family } = info;
+        const { definitions, loadedInfo: cachedInfo } = cache;
+        const { duration, width, height, audible, family, info } = loadedInfo;
         const size = { width, height };
         const durating = isAboveZero(duration);
         const sizing = sizeAboveZero(size);
+        const informing = isObject(info);
         if (sizing) {
-            loadedInfo.width ||= size.width;
-            loadedInfo.height ||= size.height;
+            cachedInfo.width ||= size.width;
+            cachedInfo.height ||= size.height;
         }
         if (durating) {
             if (audible)
-                loadedInfo.audible = true;
-            loadedInfo.duration ||= duration;
+                cachedInfo.audible = true;
+            cachedInfo.duration ||= duration;
         }
         if (family)
-            loadedInfo.family ||= family;
-        // console.log(this.constructor.name, "updateCache", definitions.length)
+            cachedInfo.family ||= family;
+        // console.log(this.constructor.name, "updateCache", loadedInfo, definitions.length)
         definitions.forEach(definition => {
+            if (informing && isPreloadableDefinition(definition))
+                definition.info ||= info;
             if (sizing && isUpdatableSizeDefinition(definition)) {
                 this.updateDefinitionSize(definition, size);
             }
@@ -10035,9 +10173,11 @@ class BrowserLoaderClass extends LoaderClass {
         return urlForEndpoint(this.endpoint, path);
     }
     arrayBufferPromise(url) {
+        // console.log(this.constructor.name, "arrayBufferPromise")
         return fetch(url).then(response => response.arrayBuffer());
     }
     audioBufferPromise(audio) {
+        // console.log(this.constructor.name, "audioBufferPromise")
         return AudibleContextInstance.decode(audio);
     }
     audioInfo(buffer) {
@@ -10076,6 +10216,32 @@ class BrowserLoaderClass extends LoaderClass {
         const context = canvas.getContext('2d');
         assertTrue(context);
         return [canvas, context];
+    }
+    copyVideoPromise(url, options) {
+        assertObject(options);
+        // console.log(this.constructor.name, "copyVideoPromise", url, options)
+        const key = url.split(':').pop();
+        assertPopulatedString(key);
+        const video = this.seekingVideos.get(key);
+        if (video)
+            return Promise.resolve(video);
+        const promise = this.seekingVideoPromises.get(key);
+        if (promise)
+            return promise;
+        const sourcePromise = this.sourcePromise(url);
+        const copyPromise = sourcePromise.then(source => {
+            return this.videoPromise(source).then(video => {
+                // console.log(this.constructor.name, "copyVideoPromise.videoPromise", source)
+                const initialSeekPromise = this.seekPromise(key, timeFromSeconds(1), video).then(() => {
+                    // console.log(this.constructor.name, "copyVideoPromise.seekPromise", source)
+                    this.seekingVideos.set(key, video);
+                    return video;
+                });
+                return initialSeekPromise;
+            });
+        });
+        this.seekingVideoPromises.set(key, copyPromise);
+        return copyPromise;
     }
     filePromise(file) {
         const { loaderType } = file;
@@ -10136,7 +10302,7 @@ class BrowserLoaderClass extends LoaderClass {
                         object.loadedImage = media;
                     }
                     else {
-                        object.icon = urlPrependProtocol('video', idKey, { fps: 10 });
+                        object.icon = urlPrependProtocol('video', idKey, { fps: 10, frame: 10 });
                         object.loadedVideo = media;
                     }
                 }
@@ -10185,16 +10351,18 @@ class BrowserLoaderClass extends LoaderClass {
     }
     requestAudio(file) {
         const { urlOrLoaderPath, options } = file;
+        // console.log(this.constructor.name, "requestAudio", urlOrLoaderPath)
         assertPopulatedString(urlOrLoaderPath, 'urlOrLoaderPath');
-        if (urlIsHttp(urlOrLoaderPath))
-            return this.audioPromise(urlOrLoaderPath).then(buffer => {
-                assertObject(buffer);
-                this.updateLoaderFile(file, this.audioInfo(buffer));
-                return buffer;
-            });
-        if (urlOrLoaderPath.startsWith('video:'))
-            return this.requestVideoAudio(file);
-        return this.loadPromise(urlOrLoaderPath);
+        const http = urlIsHttp(urlOrLoaderPath);
+        const video = http ? false : urlOrLoaderPath.startsWith('video:');
+        if (!(http || video))
+            return this.loadPromise(urlOrLoaderPath);
+        const promise = http ? this.audioPromise(urlOrLoaderPath) : this.requestVideoAudio(file);
+        return promise.then(buffer => {
+            assertObject(buffer);
+            this.updateLoaderFile(file, this.audioInfo(buffer));
+            return buffer;
+        });
     }
     requestFont(file) {
         const { urlOrLoaderPath: url } = file;
@@ -10284,10 +10452,8 @@ class BrowserLoaderClass extends LoaderClass {
         urlIsObject(urlOrLoaderPath);
         const isHttp = urlIsHttp(urlOrLoaderPath);
         if (options) {
-            // if (isObject || isHttp) {
             // console.log(this.constructor.name, "requestVideo with OPTIONS", urlOrLoaderPath, options)
             return this.seekingVideoPromise(urlOrLoaderPath, options);
-            // }
         }
         else if (isHttp) {
             // console.log(this.constructor.name, "requestVideo HTTP without OPTIONS", urlOrLoaderPath)
@@ -10303,12 +10469,14 @@ class BrowserLoaderClass extends LoaderClass {
     requestVideoAudio(file) {
         const { urlOrLoaderPath } = file;
         // console.log(this.constructor.name, "requestVideoAudio", urlOrLoaderPath)
-        return this.loadPromise(urlOrLoaderPath).then((video) => {
+        const videoPromise = this.loadPromise(urlOrLoaderPath);
+        const audioPromise = videoPromise.then(video => {
             const { src } = video;
             // console.log(this.constructor.name, "requestVideoAudio.loadPromise", urlOrLoaderPath, src?.slice(0, 10))
             assertPopulatedString(src);
             return this.audioPromise(src);
         });
+        return audioPromise;
     }
     seek(definitionTime, video) {
         if (!video)
@@ -10343,32 +10511,6 @@ class BrowserLoaderClass extends LoaderClass {
         if (existing)
             return existing.then(() => promise);
         return promise;
-    }
-    copyVideoPromise(url, options) {
-        assertObject(options);
-        // console.log(this.constructor.name, "copyVideoPromise", url, options)
-        const key = url.split(':').pop();
-        assertPopulatedString(key);
-        const video = this.seekingVideos.get(key);
-        if (video)
-            return Promise.resolve(video);
-        const promise = this.seekingVideoPromises.get(key);
-        if (promise)
-            return promise;
-        const sourcePromise = this.sourcePromise(url);
-        const copyPromise = sourcePromise.then(source => {
-            return this.videoPromise(source).then(video => {
-                // console.log(this.constructor.name, "copyVideoPromise.videoPromise", source)
-                const initialSeekPromise = this.seekPromise(key, timeFromSeconds(1), video).then(() => {
-                    // console.log(this.constructor.name, "copyVideoPromise.seekPromise", source)
-                    this.seekingVideos.set(key, video);
-                    return video;
-                });
-                return initialSeekPromise;
-            });
-        });
-        this.seekingVideoPromises.set(key, copyPromise);
-        return copyPromise;
     }
     seekingVideoPromise = (url, options) => {
         assertObject(options);
@@ -10407,7 +10549,8 @@ class BrowserLoaderClass extends LoaderClass {
             const completed = () => {
                 element.removeEventListener('error', failed);
                 element.removeEventListener('load', passed);
-                // if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
+                if (!this.svgImageEmitsLoadEvent)
+                    this.svgElement.removeChild(element);
             };
             const failed = (error) => {
                 // console.log(this.constructor.name, "loadsSvgImagesInitialize failed", error)
@@ -10854,7 +10997,7 @@ class EditorClass {
             case MasherAction.Undo: return this.actions.canUndo;
             case MasherAction.Redo: return this.actions.canRedo;
             case MasherAction.Remove: return !!(clip || track || layer);
-            case MasherAction.Render: return !!mash?.id;
+            case MasherAction.Render: return !!(mash?.id && !idIsTemporary(mash.id));
             default: throw Errors.argument + 'can';
         }
     }
@@ -11367,7 +11510,7 @@ class EditorClass {
     }
     get svgElement() { return this.preloader.svgElement; }
     set svgElement(value) { this.preloader.svgElement = value; }
-    svgItems(enabled) {
+    previewItems(enabled) {
         const { edited } = this;
         // return an empty element if we haven't loaded anything yet
         if (!edited)
@@ -11375,7 +11518,7 @@ class EditorClass {
         const options = {};
         if (enabled && this.paused)
             options.editor = this;
-        return edited.svgItems(options);
+        return edited.previewItems(options);
     }
     get time() { return this.selection.mash?.time || timeFromArgs(0, this.fps); }
     set time(value) { this.goToTime(value); }
@@ -11457,470 +11600,6 @@ const editorArgs = (options = {}) => {
 const editorInstance = (options = {}) => {
     return editorSingleton = new EditorClass(editorArgs(options));
 };
-
-const EvaluatorMethods = {
-    abs: Math.abs,
-    ceil: Math.ceil,
-    eq: (a, b) => Number(a) === Number(b),
-    floor: Math.floor,
-    gt: (a, b) => Number(a) > Number(b),
-    gte: (a, b) => Number(a) >= Number(b),
-    if: (tf, tv, fv) => tf ? tv : fv,
-    includes: (value, ...values) => values.includes(value),
-    lt: (a, b) => Number(a) < Number(b),
-    lte: (a, b) => Number(a) <= Number(b),
-    max: Math.max,
-    min: Math.min,
-    number: Number,
-    rgb: (r, g, b) => colorRgbToHex({ r, g, b }),
-    rgba: (r, g, b, a) => colorRgbaToHex({ r, g, b, a }),
-    round: Math.round,
-    string: String,
-};
-const EvaluatorMethodKeys = Object.keys(EvaluatorMethods);
-const EvaluatorCodeRegex = /\\b[a-z]\\b/i;
-const EvaluatorCleanString = (string) => {
-    let expression = string.replaceAll(' or ', '||').replaceAll(' and ', '&&');
-    expression = expression.replaceAll(' ', '');
-    return expression;
-};
-const EvaluatorRegExp = (key) => {
-    return new RegExp(`\\b${key}\\b`, 'g');
-};
-const EvaluatorMethodRegExp = (key) => {
-    return new RegExp(`\\b${key}\\b\\(`, 'g');
-};
-class Evaluation {
-    constructor(expression, evalution) {
-        this.expressions.push(expression);
-        this.evaluation = evalution;
-    }
-    args = {};
-    execute(message) {
-        if (this.resolved)
-            return;
-        const { expression, args } = this;
-        let cleaned = EvaluatorCleanString(expression);
-        if (cleaned.match(EvaluatorCodeRegex))
-            throw Errors.eval.string + cleaned;
-        const keys = [];
-        const unknowns = [];
-        Object.entries(args).forEach(([key, value]) => {
-            keys.push(key);
-            unknowns.push(value);
-        });
-        const functionBody = `return ${cleaned}`;
-        try {
-            // eslint-disable-next-line no-new-func
-            const compiledFunction = new Function(...keys, functionBody);
-            const result = compiledFunction(...unknowns);
-            this.expressions.push(String(result));
-            if (isNumeric(result)) {
-                this.resolved = true;
-                this._result = Number(result);
-                this.log(message || 'executed');
-            }
-            else if (!isString(result)) {
-                throw Errors.eval.string;
-            }
-        }
-        catch (exception) {
-            const underKeys = keys.filter(key => key.startsWith('_'));
-            underKeys.forEach(key => {
-                cleaned = cleaned.replaceAll(EvaluatorRegExp(key), key.slice(1));
-            });
-            this.expressions.push(cleaned);
-            this.log('execute failure');
-        }
-    }
-    get expression() {
-        const { expressions } = this;
-        const { length } = expressions;
-        const expression = expressions[length - 1];
-        return expression;
-    }
-    expressions = [];
-    evaluation;
-    evaluations = [];
-    log(message, key) {
-        const indent = this.resolved ? '* ' : '- ';
-        const words = [indent];
-        words.push(message);
-        if (key)
-            words.push(`${key}:`);
-        const [previous, current] = this.expressions.slice(-2);
-        words.push(previous, ' -> ', current);
-        this._logs.push(words.join(' '));
-    }
-    _logs = [];
-    get logs() { return this.logsIndented(); }
-    logsIndented(depth = 0) {
-        const indent = ' '.repeat(depth * 2);
-        return [
-            `${indent}Evaluation: ${this.expressions[0]}`,
-            ...this._logs.map(line => `${indent}${line}`),
-            ...this.evaluations.flatMap(evaluation => evaluation.logsIndented(depth + 1))
-        ];
-    }
-    get rootExpression() {
-        if (this.evaluation)
-            return this.evaluation.rootExpression;
-        return this.expressions[0];
-    }
-    replaceAll(key, method, message) {
-        if (this.resolved)
-            return true;
-        const { expression } = this;
-        const is = expression === key;
-        const regExp = is ? undefined : EvaluatorRegExp(key);
-        const contains = is || regExp.test(expression);
-        if (contains) {
-            const value = method(this);
-            const string = String(value);
-            const numeric = isNumeric(value);
-            if (numeric && is) {
-                this.expressions.push(string);
-                this.resolved = true;
-                this._result = Number(value);
-                this.log(message || 'resolved', key);
-                return true;
-            }
-            const replaced = is ? string : expression.replaceAll(regExp, string);
-            this.expressions.push(replaced);
-            this.log(message || 'evaluated', key);
-        } //else console.log(this.constructor.name, "replaceAll", message, "NOT FOUND", key, expression)
-        return false;
-    }
-    replaceMethods(message) {
-        if (this.resolved)
-            return;
-        const { args } = this;
-        EvaluatorMethodKeys.forEach(key => {
-            const methodRegExp = EvaluatorMethodRegExp(key);
-            const { expression } = this;
-            if (methodRegExp.test(expression)) {
-                const underKey = `_${key}`;
-                args[underKey] = EvaluatorMethods[key];
-                const regExp = EvaluatorRegExp(key);
-                this.expressions.push(expression.replaceAll(regExp, underKey));
-                this.log(message || 'method', key);
-            }
-        });
-    }
-    resolved = false;
-    _result;
-    get result() {
-        if (isValue(this._result))
-            return this._result;
-        return this.expression;
-    }
-}
-
-const EvaluatorArray = (elements) => {
-    if (isString(elements))
-        return String(elements).split(',');
-    return elements;
-};
-const EvaluatorConditional = (conditional) => {
-    const { condition } = conditional;
-    if (isDefined(conditional.is))
-        return `${condition}==${conditional.is}`;
-    const elements = conditional.in;
-    if (isUndefined(elements))
-        return String(condition).trim();
-    // support supplying values as array or comma-delimited string
-    const array = EvaluatorArray(elements);
-    const strings = isString(array[0]);
-    const escaped = array.map(element => (strings ? `"${element}"` : element));
-    const type = strings ? 'string' : 'number';
-    const expression = `(includes(${type}(${condition}),${escaped.join(',')}))`;
-    return expression;
-};
-const EvaluatorExpessions = {
-    out_height_scaled: 'if(gt(out_width, out_height), scale * out_height, out_height + ((scale - 1.0) * out_width))',
-    out_width_scaled: 'if(gt(out_height, out_width), scale * out_width, out_width + ((scale - 1.0) * out_height))',
-};
-class Evaluator {
-    constructor(args) {
-        const { tweenTime, timeRange, instance, editing, filter } = args;
-        this.tweenTime = tweenTime;
-        this.outputSize = args.outputSize;
-        this.editing = !!editing;
-        Object.entries(EvaluatorExpessions).forEach(([k, v]) => { this.setExpression(k, v); });
-        const { height, width } = this.outputSize;
-        this.setExpression('out_size', `${width}x${height}`);
-        if (timeRange)
-            this.timeRange = timeRange;
-        if (instance)
-            this.instance = instance;
-        if (filter)
-            this.filter = filter;
-    }
-    get customProperties() {
-        const record = {}; // instance overrides filter
-        this.filterCustomProperties.forEach(property => { record[property.name] = property; });
-        this.instanceCustomProperties.forEach(property => { record[property.name] = property; });
-        return Object.values(record);
-    }
-    evaluateBooleanValue(value) {
-        if (isBoolean(value))
-            return value;
-        if (isNumber(value))
-            return !!value;
-        switch (value) {
-            case 'true': return true;
-            case 'false':
-            case '': return false;
-        }
-        return false;
-    }
-    evaluateConditionals(evaluation, conditionals, debug) {
-        const trueConditional = conditionals.find(conditional => {
-            const expression = EvaluatorConditional(conditional);
-            if (isNumeric(expression))
-                return !!Number(expression);
-            switch (expression) {
-                case 'true': return true;
-                case 'false':
-                case '': return false;
-            }
-            const childEvaluation = new Evaluation(expression, evaluation);
-            this.evaluateEvaluation(childEvaluation, debug);
-            const { result } = childEvaluation;
-            if (debug)
-                this.logDebug(childEvaluation);
-            return this.evaluateBooleanValue(result);
-        });
-        assertValueObject(trueConditional, Errors.eval.conditionTruth);
-        const { value } = trueConditional;
-        if (isUndefined(value))
-            throw Errors.eval.conditionValue;
-        return value;
-    }
-    evaluateEvaluation(evaluation, debug) {
-        this.expandEvaluation(evaluation, debug);
-        evaluation.execute();
-    }
-    expandParameter(evaluation, parameter, debug) {
-        let expanded = false;
-        const { name } = parameter;
-        evaluation.replaceAll(name, evaluation => {
-            expanded = true;
-            return this.parameterConditionalValue(evaluation, parameter, debug);
-        }, 'expandParameter');
-        if (expanded) {
-            this.expandEvaluationProperties(evaluation);
-        }
-        return expanded;
-    }
-    expandEvaluation(evaluation, debug) {
-        this.exampleEvaluationParameters(evaluation, debug);
-        this.expandEvaluationExpressions(evaluation);
-        this.expandEvaluationNumbers(evaluation);
-        this.populateEvaluationArgs(evaluation);
-        this.expandEvaluationMethods(evaluation);
-    }
-    expandEvaluationExpressions(evaluation) {
-        if (evaluation.resolved)
-            return;
-        for (const entry of this.expressions.entries()) {
-            const [key, value] = entry;
-            evaluation.replaceAll(key, () => value, 'expandEvaluationExpressions');
-        }
-    }
-    expandEvaluationMethods(evaluation) {
-        if (evaluation.resolved)
-            return;
-        evaluation.replaceMethods();
-    }
-    expandEvaluationNumbers(evaluation) {
-        if (evaluation.resolved)
-            return;
-        for (const property of this.customProperties) {
-            const { name, type } = property;
-            if (propertyTypeIsString(type))
-                continue;
-            if (evaluation.replaceAll(name, () => {
-                if (this.instanceCustomProperties.includes(property)) {
-                    return this.instance.value(name);
-                }
-                return this.filter.value(name);
-            }, 'expandEvaluationNumbers.properties'))
-                break;
-        }
-        for (const entry of this.numbers.entries()) {
-            const [key, value] = entry;
-            if (evaluation.replaceAll(key, () => value, 'expandEvaluationNumbers.numbers'))
-                break;
-        }
-    }
-    exampleEvaluationParameters(evaluation, debug) {
-        if (evaluation.resolved)
-            return;
-        const expanded = [];
-        for (const parameter of this.parameterInstances) {
-            const { name } = parameter;
-            const notRoot = evaluation.rootExpression !== name;
-            const expand = notRoot && !expanded.includes(name);
-            // if (!expand) console.log(this.constructor.name, "exampleEvaluationParameters NOT EXPANDING", name, notRoot)
-            if (expand && this.expandParameter(evaluation, parameter, debug)) {
-                expanded.push(name);
-            }
-        }
-    }
-    expandEvaluationProperties(evaluation) {
-        for (const property of this.customProperties) {
-            const { name } = property;
-            evaluation.replaceAll(name, () => {
-                if (this.instanceCustomProperties.includes(property)) {
-                    return this.instance.value(name);
-                }
-                return this.filter.value(name);
-            }, 'expandEvaluationProperties');
-        }
-    }
-    expressions = new Map();
-    _filter;
-    get filter() { return this._filter; }
-    set filter(value) {
-        if (!value)
-            return;
-        this._filter = value;
-        this.parameterInstances = this.filter.parametersDefined;
-        this.filterCustomProperties = [...this.filter.propertiesCustom];
-        this.numbersInitialize();
-    }
-    editing;
-    filterCustomProperties = [];
-    // TODO: check if needed
-    get(key) {
-        if (this.numbers.has(key))
-            return this.numbers.get(key);
-        return '';
-    }
-    logDebug(evaluation) {
-        console.debug(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`);
-    }
-    label = 'createVisibleContext';
-    _instance;
-    get instance() { return this._instance; }
-    set instance(value) {
-        this._instance = value;
-        this.instanceCustomProperties = [...this.instance.propertiesCustom];
-    }
-    numbers = new Map();
-    numbersInitialize() {
-        this.numbers.clear();
-        const { height, width } = this.outputSize;
-        const { lengthSeconds, fps } = this.timeRange;
-        this.setNumber('out_height', height);
-        this.setNumber('out_width', width);
-        this.setNumber('out_duration', lengthSeconds);
-        this.setNumber('out_rate', fps);
-        if (this.editing)
-            this.setNumber('t', this.position);
-    }
-    outputSize;
-    parameterInstance(key) {
-        return this.parameterInstances.find(parameter => parameter.name === key);
-    }
-    parameterNumber(key, debug) {
-        const value = this.parameter(key, debug);
-        const number = Number(value);
-        if (isNan(number))
-            throw Errors.eval.number + `${key} ≠ ${value}`;
-        return number;
-    }
-    parameter(key, debug) {
-        const parameter = this.parameterInstance(key);
-        if (!parameter)
-            throw Errors.eval.string + key;
-        const evaluation = new Evaluation(key);
-        this.expandParameter(evaluation, parameter, debug);
-        this.evaluateEvaluation(evaluation, debug);
-        if (debug)
-            this.logDebug(evaluation);
-        return evaluation.result;
-    }
-    parameterValue(key, debug) {
-        const parameter = this.parameterInstance(key);
-        if (!parameter)
-            throw Errors.eval.string + key;
-        const evaluation = new Evaluation(key);
-        this.expandParameter(evaluation, parameter, debug);
-        if (debug)
-            this.logDebug(evaluation);
-        return evaluation.result;
-    }
-    get parameters() {
-        const evaluated = {};
-        this.parameterInstances.forEach(parameter => {
-            const { name } = parameter;
-            evaluated[name] = this.parameter(name);
-        });
-        return evaluated;
-    }
-    get parameterValues() {
-        const evaluated = {};
-        this.parameterInstances.forEach(parameter => {
-            const { name } = parameter;
-            evaluated[name] = this.parameterValue(name);
-        });
-        return evaluated;
-    }
-    parameterConditionalValue(evaluation, parameter, debug) {
-        let value = parameter.value;
-        if (Array.isArray(value)) {
-            value = this.evaluateConditionals(evaluation, value, debug);
-        }
-        if (isNumeric(value))
-            return Number(value);
-        if (!value)
-            return value; // empty string
-        const { values } = parameter;
-        const found = values?.find(test => test === value);
-        if (found)
-            return found; // one of a set of supported vales
-        return value;
-    }
-    parameterInstances = [];
-    populateEvaluationArgs(evaluation) {
-        if (evaluation.resolved)
-            return;
-        const { args } = evaluation;
-        for (const property of this.customProperties) {
-            const { name } = property;
-            evaluation.replaceAll(name, () => {
-                const underKey = `_${name}`;
-                if (this.instanceCustomProperties.includes(property)) {
-                    args[underKey] = this.instance.value(name);
-                }
-                else
-                    args[underKey] = this.filter.value(name);
-                return underKey;
-            }, 'populateEvaluationArgs.properties');
-        }
-    }
-    get position() { return this.timeRange.position; }
-    instanceCustomProperties = [];
-    propertyValue(key) {
-        const selectionValue = this.instance.value(key);
-        assertDefined(selectionValue, key);
-        if (isBoolean(selectionValue))
-            return selectionValue ? 1 : 0;
-        return selectionValue;
-    }
-    setExpression(key, expression) {
-        this.expressions.set(key, expression);
-    }
-    setNumber(key, number) {
-        this.numbers.set(key, number);
-    }
-    _timeRange;
-    get timeRange() { return this._timeRange; }
-    set timeRange(value) { this._timeRange = value; }
-    tweenTime;
-}
 
 const AudioWithTweenable = TweenableMixin(InstanceBase);
 const AudioWithContent = ContentMixin(AudioWithTweenable);
@@ -12068,22 +11747,16 @@ Factories[DefinitionType.Image] = {
 };
 
 const VideoWithTweenable = TweenableMixin(InstanceBase);
-const VideoWithContent = ContentMixin(VideoWithTweenable);
+const VideoWithContainer = ContainerMixin(VideoWithTweenable);
+const VideoWithContent = ContentMixin(VideoWithContainer);
 const VideoWithPreloadable = PreloadableMixin(VideoWithContent);
 const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithPreloadable);
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize);
 class VideoClass extends VideoWithUpdatableDuration {
-    _foreignElement;
-    get foreignElement() {
-        return this._foreignElement ||= this.foreignElementInitialize;
-    }
-    get foreignElementInitialize() {
-        // console.log(this.constructor.name, "foreignElementInitialize")
-        return globalThis.document.createElementNS(NamespaceSvg, 'foreignObject');
-    }
     fileUrls(args) {
         const files = [];
         const { editing, time, audible, visible, icon } = args;
+        // console.log(this.constructor.name, "fileUrls", audible, editing, visible)
         const { definition } = this;
         const { url, source } = definition;
         const editingUrl = editing ? url : source;
@@ -12111,18 +11784,13 @@ class VideoClass extends VideoWithUpdatableDuration {
         }
         return files;
     }
-    itemPreviewPromise(rect, time, range) {
-        const { _foreignElement, _loadedVideo } = this;
-        const predefined = !!_foreignElement;
-        if (predefined || _loadedVideo) {
-            // console.log(this.constructor.name, "itemPreviewPromise LOADED")
-            this.updateForeignElement(rect, time, range, predefined);
-            return Promise.resolve(this.foreignElement);
-        }
-        return this.loadVideoPromise.then(() => {
-            this.updateForeignElement(rect, time, range);
-            return Promise.resolve(this.foreignElement);
-        });
+    _foreignElement;
+    get foreignElement() {
+        return this._foreignElement ||= this.foreignElementInitialize;
+    }
+    get foreignElementInitialize() {
+        // console.log(this.constructor.name, "foreignElementInitialize")
+        return globalThis.document.createElementNS(NamespaceSvg, 'foreignObject');
     }
     iconUrl(size, time, clipTime) {
         const inSize = sizeCopy(this.intrinsicRect(true));
@@ -12135,6 +11803,20 @@ class VideoClass extends VideoWithUpdatableDuration {
         const { url } = definition;
         const videoUrl = urlPrependProtocol('video', url, { frame, fps });
         return urlPrependProtocol('image', videoUrl, { width, height });
+    }
+    itemPreviewPromise(rect, time, range) {
+        const { clientCanMaskVideo } = VideoClass;
+        const { _foreignElement, _loadedVideo } = this;
+        const predefined = !!_foreignElement;
+        if (predefined || _loadedVideo) {
+            // console.log(this.constructor.name, "itemPreviewPromise LOADED")
+            this.updateForeignElement(rect, time, range, predefined);
+            return Promise.resolve(clientCanMaskVideo ? this.foreignElement : this.loadedVideo);
+        }
+        return this.loadVideoPromise.then(() => {
+            this.updateForeignElement(rect, time, range);
+            return clientCanMaskVideo ? this.foreignElement : this.loadedVideo;
+        });
     }
     _loadedVideo;
     get loadedVideo() { return this._loadedVideo; }
@@ -12173,17 +11855,30 @@ class VideoClass extends VideoWithUpdatableDuration {
         return loadedVideo;
     }
     updateForeignElement(rect, time, range, foreignElementDefined) {
-        const { foreignElement, loadedVideo } = this;
-        if (!foreignElementDefined)
-            foreignElement.appendChild(loadedVideo);
-        svgSetDimensions(foreignElement, rect);
+        const { clientCanMaskVideo } = VideoClass;
+        if (clientCanMaskVideo) {
+            const { foreignElement } = this;
+            if (!foreignElementDefined)
+                foreignElement.appendChild(this.loadedVideo);
+            svgSetDimensions(foreignElement, rect);
+        }
         this.updateVideo(rect, time, range);
-        // this.updateSvg(rect)
+    }
+    static _clientCanMaskVideo;
+    static get clientCanMaskVideo() {
+        const { _clientCanMaskVideo } = this;
+        if (isBoolean(_clientCanMaskVideo))
+            return _clientCanMaskVideo;
+        const { navigator } = globalThis;
+        const { userAgent } = navigator;
+        const safari = userAgent.includes('Safari') && !userAgent.includes('Chrome');
+        return this._clientCanMaskVideo = !safari;
     }
 }
 
 const VideoDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase);
-const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithTweenable);
+const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithTweenable);
+const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithContainer);
 const VideoDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoDefinitionWithContent);
 const VideoDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoDefinitionWithPreloadable);
 const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableSize);
@@ -12466,14 +12161,7 @@ class RenderingOutputClass {
         const [type] = types;
         return type;
     }
-    _commandOutput;
-    get commandOutput() {
-        if (this._commandOutput)
-            return this._commandOutput;
-        const options = { ...this.args.commandOutput.options };
-        const commandOutput = { ...this.args.commandOutput, options };
-        return this._commandOutput = commandOutput;
-    }
+    get commandOutput() { return this.args.commandOutput; }
     get duration() { return this.timeRange.lengthSeconds; }
     _durationClips;
     get durationClips() { return this._durationClips ||= this.durationClipsInitialize; }
@@ -12600,34 +12288,34 @@ class RenderingOutputClass {
             return renderingDescription;
         });
     }
-    get renderingDescription() {
-        const { commandOutput } = this;
-        const renderingDescription = { commandOutput };
-        const avType = this.avTypeNeededForClips;
-        const { filterGraphs } = this;
-        // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
-        if (avType !== AVType.Audio) {
-            const { filterGraphsVisible } = filterGraphs;
-            const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-                const { commandFilters, commandInputs: inputs, duration } = filterGraph;
-                const commandDescription = { inputs, commandFilters, duration, avType: AVType.Video };
-                // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
-                return commandDescription;
-            });
-            renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions;
-        }
-        if (avType !== AVType.Video) {
-            const { filterGraphAudible, duration } = filterGraphs;
-            if (filterGraphAudible) {
-                const { commandFilters, commandInputs: inputs } = filterGraphAudible;
-                const commandDescription = {
-                    inputs, commandFilters, duration, avType: AVType.Audio
-                };
-                renderingDescription.audibleCommandDescription = commandDescription;
-            }
-        }
-        return renderingDescription;
-    }
+    // get renderingDescription(): RenderingDescription {
+    //   const { commandOutput } = this
+    //   const renderingDescription: RenderingDescription = { commandOutput }
+    //   const avType = this.avTypeNeededForClips
+    //   const { filterGraphs } = this
+    //   // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
+    //   if (avType !== AVType.Audio) {
+    //     const { filterGraphsVisible } = filterGraphs
+    //     const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
+    //       const { commandFilters, commandInputs: inputs, duration } = filterGraph
+    //       const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
+    //     // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
+    //       return commandDescription
+    //     })
+    //     renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
+    //   }
+    //   if (avType !== AVType.Video) {
+    //     const { filterGraphAudible, duration } = filterGraphs
+    //     if (filterGraphAudible) {
+    //       const { commandFilters, commandInputs: inputs } = filterGraphAudible
+    //       const commandDescription: CommandDescription = {
+    //         inputs, commandFilters, duration, avType: AVType.Audio
+    //       }
+    //       renderingDescription.audibleCommandDescription = commandDescription
+    //     }
+    //   }
+    //   return renderingDescription
+    // }
     get startTime() {
         if (this.args.startTime)
             return this.args.startTime;
@@ -12677,170 +12365,60 @@ class RenderingOutputClass {
 class AudioOutputClass extends RenderingOutputClass {
     _avType = AVType.Audio;
     outputType = OutputType.Audio;
-    get renderingDescription() {
-        const { renderingClips } = this;
-        const noAudio = renderingClips.some(clip => !clip.mutable);
-        if (noAudio)
-            return { commandOutput: this.commandOutput };
-        return super.renderingDescription;
-    }
 }
 
-class ImageOutputClass extends RenderingOutputClass {
-    _avType = AVType.Video;
-    get endTime() { return; }
-    get filterGraphsOptions() {
-        const { args, graphType, avType, startTime: time } = this;
-        const { mash, upload } = args;
-        const { quantize: videoRate } = mash;
-        const filterGraphsOptions = {
-            time, graphType, videoRate, size: this.sizeCovered(),
-            avType, upload
-        };
-        return filterGraphsOptions;
-    }
-    outputType = OutputType.Image;
-    get startTime() {
-        const { commandOutput, mash } = this.args;
-        const { offset } = commandOutput;
-        const needDuration = offset || mash.frames < 0;
-        if (needDuration)
-            return timeFromArgs(0, mash.quantize);
-        return mash.timeRange.positionTime(Number(offset || 0), 'ceil');
-    }
-}
-
-class ImageSequenceOutputClass extends AudioOutputClass {
-    _avType = AVType.Video;
-    outputType = OutputType.ImageSequence;
-}
-
-class VideoOutputClass extends AudioOutputClass {
-    get avType() {
-        return this.args.commandOutput.mute ? AVType.Video : AVType.Both;
-    }
-    get outputCover() { return !!this.args.commandOutput.cover; }
-    outputType = OutputType.Video;
-}
-
-class WaveformOutputClass extends RenderingOutputClass {
-    _avType = AVType.Audio;
-    outputType = OutputType.Waveform;
-    get sizePromise() { return Promise.resolve(); }
-}
-// layers = []
-// layers << "color=s=#{output[:dimensions]}:c=##{output[:backcolor]}[bg]"
-// layers << "[0:a]aformat=channel_layouts=mono,showwavespic=colors=##{output[:forecolor]}:s=#{output[:dimensions]}[fg]"
-// layers << "[bg][fg]overlay=format=rgb"
-
-const outputInstanceAudio = (object) => {
-    return new AudioOutputClass(object);
-};
-const outputInstanceImage = (object) => {
-    return new ImageOutputClass(object);
-};
-const outputInstanceVideo = (object) => {
-    return new VideoOutputClass(object);
-};
-const outputInstanceVideoSequence = (object) => {
-    return new ImageSequenceOutputClass(object);
-};
-const outputInstanceWaveform = (object) => {
-    return new WaveformOutputClass(object);
-};
-/**
- * @category Factory
- */
-const OutputFactory = {
-    [OutputType.Audio]: outputInstanceAudio,
-    [OutputType.Image]: outputInstanceImage,
-    [OutputType.Video]: outputInstanceVideo,
-    [OutputType.ImageSequence]: outputInstanceVideoSequence,
-    [OutputType.Waveform]: outputInstanceWaveform,
-};
-
-class StreamingOutputClass {
-    constructor(args) {
-        this.args = args;
-    }
-    args;
-    streamingDescription(renderingResults) {
-        const { mashes } = this.args;
-        const promises = mashes.map(mash => {
-            const options = {
-                audible: true, visible: true, streaming: true,
-            };
-            return mash.preloader.loadFilesPromise(mash.editedGraphFiles(options));
-        });
-        let promise = Promise.all(promises).then(() => {
-            const files = [];
-            const commandFilters = [];
-            const commandInputs = [];
-            const avType = AVType.Both;
-            mashes.forEach(mash => {
-                const args = {
-                    size: this.outputSize,
-                    videoRate: this.args.commandOutput.videoRate,
-                    graphType: GraphType.Cast,
-                    avType
-                };
-                const filterGraphs = mash.filterGraphs(args);
-                const { filterGraphVisible } = filterGraphs;
-                commandInputs.push(...filterGraphVisible.commandInputs);
-                files.push(...filterGraphs.fileUrls.filter(graphFile => graphFile.input));
-                commandFilters.push(...filterGraphVisible.commandFilters);
-            });
-            const options = { ...this.args.commandOutput.options };
-            const commandOutput = { ...this.args.commandOutput, options };
-            const commandOptions = {
-                inputs: commandInputs, commandFilters, commandOutput, avType
-            };
-            return commandOptions;
-        });
-        return promise;
-    }
-    mashes = [];
-    get outputSize() {
-        const { width, height } = this.args.commandOutput;
-        return { width, height };
-    }
-}
-
-class VideoStreamOutputClass extends StreamingOutputClass {
-}
-
-const options$7 = {
+const options$8 = {
 };
 const audioBitrate$5 = 160;
 const audioCodec$5 = "libmp3lame";
 const audioChannels$5 = 2;
 const audioRate$5 = 44100;
-const extension$7 = "mp3";
-const outputType$4 = "audio";
+const extension$8 = "mp3";
+const outputType$5 = "audio";
 var outputDefaultAudioJson = {
-  options: options$7,
+  options: options$8,
   audioBitrate: audioBitrate$5,
   audioCodec: audioCodec$5,
   audioChannels: audioChannels$5,
   audioRate: audioRate$5,
+  extension: extension$8,
+  outputType: outputType$5
+};
+
+const options$7 = {
+};
+const width$7 = 320;
+const height$7 = 240;
+const extension$7 = "jpg";
+const outputType$4 = "image";
+const cover$3 = true;
+const offset$1 = 0;
+var outputDefaultImageJson = {
+  options: options$7,
+  width: width$7,
+  height: height$7,
   extension: extension$7,
-  outputType: outputType$4
+  outputType: outputType$4,
+  cover: cover$3,
+  offset: offset$1
 };
 
 const options$6 = {
 };
 const width$6 = 320;
 const height$6 = 240;
-const extension$6 = "jpg";
+const extension$6 = "png";
 const outputType$3 = "image";
+const format$5 = "image2";
 const cover$2 = true;
 const offset = 0;
-var outputDefaultImageJson = {
+var outputDefaultImagePngJson = {
   options: options$6,
   width: width$6,
   height: height$6,
   extension: extension$6,
   outputType: outputType$3,
+  format: format$5,
   cover: cover$2,
   offset: offset
 };
@@ -13049,8 +12627,8 @@ const outputDefaultWaveform = (overrides) => {
 };
 const outputDefaultPng = (overrides) => {
     const object = overrides || {};
-    const commandOutput = outputDefaultImageJson;
-    return { ...commandOutput, ...object, format: OutputFormat.Png };
+    const commandOutput = outputDefaultImagePngJson;
+    return { ...commandOutput, ...object };
 };
 const outputDefaultImage = (overrides) => {
     const object = overrides || {};
@@ -13127,4 +12705,153 @@ const outputDefaultRtmp = (overrides) => {
     // '-minrate 3000', '-maxrate 3000', '-g 60'
 };
 
-export { AVType, Action, ActionFactory, ActionType, Actions, ActivityType, AddClipToTrackAction, AddEffectAction, AddLayerAction, AddTrackAction, AlphamergeFilter, Anchor, Anchors, ApiVersion, AudibleContext, AudibleContextInstance, AudioClass, AudioDefinitionClass, AudioOutputClass, AudioPreview, BrowserLoaderClass, CastClass, ChangeAction, ChangeFramesAction, ChangeMultipleAction, ChromaKeyFilter, ClassButton, ClassCollapsed, ClassDisabled, ClassDropping, ClassDroppingAfter, ClassDroppingBefore, ClassSelected, ClipClass, ClipDefinitionClass, ClipSelectTypes, Color, ColorChannelMixerFilter, ColorContentClass, ColorContentDefinitionClass, ColorFilter, ColorizeFilter, Colors, ContainerDefinitionMixin, ContainerMixin, ContainerTypes, ContentDefinitionMixin, ContentMixin, ContentTypes, ContextFactory, ConvolutionFilter, CropFilter, DataGroup, DataGroups, DataType, DataTypes, Default, DefaultContainerId, DefaultContentId, Defined, DefinitionBase, DefinitionType, DefinitionTypes, Direction, DirectionLabels, Directions, DroppingPosition, Duration, EditType, EditTypes, EditedClass, EditorClass, EditorSelectionClass, EffectClass, EffectDefinitionClass, Emitter, EmptyMethod, Endpoints, Errors, Evaluation, Evaluator, EventType, EventTypes, ExtDash, ExtHls, ExtJpeg, ExtJson, ExtPng, ExtRtmp, ExtText, ExtTs, Factories, Factory, FillType, FillTypes, FilterClass, FilterDefinitionClass, FilterGraphClass, FilterGraphInputAudible, FilterGraphInputVisible, FilterGraphsClass, FilterIdPrefix, FontClass, FontDefinitionClass, FpsFilter, GraphFileType, GraphFileTypes, GraphType, IdPrefix, IdSuffix, ImageClass, ImageDefinitionClass, ImageOutputClass, ImageSequenceOutputClass, InstanceBase, LayerClass, LayerFolderClass, LayerMashClass, LayerType, LayerTypes, LoadType, LoadTypes, LoaderClass, MashClass, MasherAction, ModularDefinitionMixin, ModularMixin, MoveClipAction, MoveEffectAction, MoveLayerAction, MoveType, NamespaceLink, NamespaceSvg, NamespaceXhtml, NonePreview, OpacityFilter, Orientation, Orientations, OutputFactory, OutputFilterGraphPadding, OutputFormat, OutputType, OutputTypes, OverlayFilter, Parameter, PointZero, PreloadableDefinitionMixin, PreloadableMixin, PreviewClass, PropertiedClass, PropertyTweenSuffix, PropertyTypesNumeric, RectZero, RemoveClipAction, RemoveLayerAction, RenderingOutputClass, ScaleFilter, SelectType, SelectTypes, ServerType, ServerTypes, SetptsFilter, SetsarFilter, ShapeContainerClass, ShapeContainerDefinitionClass, SizeIcon, SizeOutput, SizePreview, SizeZero, Sizing, SizingDefinitionTypes, Sizings, StreamingFormat, StreamingOutputClass, TextContainerClass, TextContainerDefinitionClass, TextContainerId, TextFilter, TimeClass, TimeRangeClass, Timing, TimingDefinitionTypes, Timings, TrackClass, TrackFactory, TrackPreviewClass, TrackPreviewHandleSize, TrackPreviewLineSize, TransformType, TriggerType, TriggerTypes, TrimFilter, TweenableDefinitionMixin, TweenableMixin, UpdatableDurationDefinitionMixin, UpdatableDurationDefinitionTypes, UpdatableDurationMixin, UpdatableSizeDefinitionMixin, UpdatableSizeDefinitionType, UpdatableSizeMixin, UploadTypes, VideoClass, VideoDefinitionClass, VideoOutputClass, VideoSequenceClass, VideoSequenceDefinitionClass, VideoStreamOutputClass, WaveformOutputClass, actionInstance, arrayLast, arrayReversed, arraySet, arrayUnique, assertAboveZero, assertAction, assertArray, assertBoolean, assertCast, assertChangeAction, assertClip, assertContainer, assertContainerObject, assertContainerType, assertContent, assertContentType, assertConvolutionServerFilter, assertDataGroup, assertDataType, assertDefined, assertDefinition, assertDefinitionType, assertDirection, assertEditType, assertEdited, assertEffect, assertFontDefinition, assertLayer, assertLayerFolder, assertLayerMash, assertLayerType, assertLoadType, assertLoaderPath, assertLoaderType, assertMash, assertMashClass, assertMashData, assertNumber, assertObject, assertPoint, assertPopulatedArray, assertPopulatedObject, assertPopulatedString, assertPositive, assertPreloadable, assertPreloadableDefinition, assertProperty, assertRect, assertRgb, assertSelectType, assertSize, assertSizeAboveZero, assertString, assertTextContainer, assertTime, assertTimeRange, assertTrack, assertTrue, assertTweenable, assertTweenableDefinition, assertUpdatableDuration, assertUpdatableDurationDefinition, assertUpdatableSize, assertUpdatableSizeDefinition, assertValue, assertValueObject, assertVideo, audioDefinition, audioDefinitionFromId, audioFromId, audioInstance, castInstance, centerPoint, clipDefault, clipDefaultId, clipDefaults, clipDefinition, clipDefinitionFromId, clipFromId, clipInstance, colorAlpha, colorAlphaColor, colorBlack, colorBlackOpaque, colorBlackTransparent, colorBlue, colorFromRgb, colorFromRgba, colorGreen, colorHexRegex, colorHexToRgb, colorHexToRgba, colorName, colorRed, colorRgb, colorRgbDifference, colorRgbKeys, colorRgbRegex, colorRgbToHex, colorRgbToYuv, colorRgba, colorRgbaKeys, colorRgbaRegex, colorRgbaToHex, colorRgbaToRgba, colorRgbaTransparent, colorServer, colorStrip, colorToRgb, colorToRgba, colorTransparent, colorValid, colorValidHex, colorValidRgb, colorValidRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent, colorYellow, colorYuvBlend, colorYuvDifference, colorYuvToRgb, commandFilesInput, commandFilesInputIndex, containerDefaults, containerDefinition, containerDefinitionFromId, containerFromId, containerInstance, contentDefaults, contentDefinition, contentDefinitionFromId, contentFromId, contentInstance, editorArgs, editorInstance, editorSelectionInstance, editorSingleton, effectDefaults, effectDefinition, effectDefinitionFromId, effectFromId, effectInstance, eventStop, fetchCallback, filterDefaults, filterDefinition, filterDefinitionFromId, filterFromId, filterInstance, fontDefault, fontDefaults, fontDefinition, fontDefinitionFromId, fontFromId, fontInstance, getChunksFromString, hex256, idGenerate, idGenerateString, idIsTemporary, idPrefixSet, idTemporary, imageDefinition, imageDefinitionFromId, imageFromId, imageInstance, isAboveZero, isAction, isActionEvent, isActionInit, isArray, isAudio, isAudioDefinition, isBelowOne, isBoolean, isCast, isCastData, isChangeAction, isChangeActionObject, isClip, isClipObject, isClipSelectType, isColorContent, isContainer, isContainerDefinition, isContainerObject, isContainerType, isContent, isContentDefinition, isContentType, isConvolutionServerFilter, isCustomEvent, isDataGroup, isDataType, isDefined, isDefinition, isDefinitionObject, isDefinitionType, isDirection, isEditType, isEdited, isEffect, isEffectDefinition, isEventType, isFillType, isFloat, isFontDefinition, isGraphFileType, isImageDefinition, isInstance, isInstanceObject, isInteger, isLayer, isLayerFolder, isLayerFolderObject, isLayerMash, isLayerMashObject, isLayerObject, isLayerType, isLoadType, isLoadedAudio, isLoadedImage, isLoadedVideo, isLoaderPath, isLoaderType, isMash, isMashAndDefinitionsObject, isMashClass, isMashData, isMethod, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isOrientation, isPoint, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, isPreloadable, isPreloadableDefinition, isPropertied, isProperty, isRect, isRgb, isSelectType, isSelectedProperty, isShapeContainer, isSize, isSizingDefinitionType, isString, isTextContainer, isTime, isTimeRange, isTimingDefinitionType, isTrack, isTriggerType, isTrueValue, isTweenable, isTweenableDefinition, isUndefined, isUpdatableDuration, isUpdatableDurationDefinition, isUpdatableDurationType, isUpdatableSize, isUpdatableSizeDefinition, isUpdatableSizeType, isUploadType, isValue, isValueObject, isVideo, isVideoDefinition, layerFolderInstance, layerInstance, layerMashInstance, mashInstance, outputDefaultAudio, outputDefaultDash, outputDefaultFormatByType, outputDefaultHls, outputDefaultImage, outputDefaultImageSequence, outputDefaultPng, outputDefaultPopulate, outputDefaultRendering, outputDefaultRtmp, outputDefaultStreaming, outputDefaultTypeByFormat, outputDefaultVideo, outputDefaultWaveform, outputInstanceAudio, outputInstanceImage, outputInstanceVideo, outputInstanceVideoSequence, outputInstanceWaveform, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, pixelsMixRbg, pixelsMixRbga, pixelsRemoveRgba, pixelsReplaceRgba, pointCopy, pointNegate, pointRound, pointString, pointValueString, pointsEqual, propertyInstance, propertyTypeCoerce, propertyTypeDefault, propertyTypeIsString, propertyTypeValid, rectCopy, rectFromSize, rectRound, rectString, rectsEqual, rectsFromSizes, rgbNumeric, rgbValue, roundMethod, roundWithMethod, selectedPropertiesScalarObject, selectedPropertyObject, sizeAboveZero, sizeCeil, sizeCopy, sizeCover, sizeEven, sizeFloor, sizeFromElement, sizeLock, sizeLockNegative, sizeRound, sizeScale, sizeString, sizedEven, sizesEqual, sortByFrame, sortByIndex, sortByLabel, sortByTrack, stringFamilySizeRect, stringPluralize, stringSeconds, svgAddClass, svgAppend, svgDefsElement, svgDifferenceDefs, svgElement, svgFeImageElement, svgFilter, svgFilterElement, svgFunc, svgGroupElement, svgId, svgImageElement, svgMaskElement, svgPathElement, svgPatternElement, svgPolygonElement, svgRectPoints, svgSet, svgSetBox, svgSetChildren, svgSetDimensions, svgSetDimensionsLock, svgSetTransform, svgSetTransformPoint, svgSetTransformRects, svgTransform, svgUrl, svgUseElement, throwError, timeEqualizeRates, timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromSeconds, timeRangeFromTime, timeRangeFromTimes, trackInstance, tweenColorStep, tweenColors, tweenCoverPoints, tweenCoverSizes, tweenInputTime, tweenMaxSize, tweenMinMax, tweenMinSize, tweenNumberObject, tweenNumberStep, tweenOption, tweenOverPoint, tweenOverRect, tweenOverSize, tweenPad, tweenPosition, tweenRectLock, tweenRects, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect, tweenableRects, tweeningPoints, urlCombine, urlEndpoint, urlForEndpoint, urlFromEndpoint, urlHasProtocol, urlIsHttp, urlIsObject, urlIsRootProtocol, urlOptions, urlOptionsObject, urlParse, urlPrependProtocol, urlProtocol, urlsAbsolute, urlsParsed, videoDefinition, videoDefinitionFromId, videoFromId, videoInstance, videoSequenceDefinition, videoSequenceDefinitionFromId, videoSequenceFromId, videoSequenceInstance, yuvNumeric };
+class ImageOutputClass extends RenderingOutputClass {
+    _avType = AVType.Video;
+    get commandOutput() {
+        const { upload, commandOutput } = this.args;
+        if (!upload) {
+            // console.log(this.constructor.name, "commandOutput NOT UPLOAD")
+            return commandOutput;
+        }
+        const { renderingClips } = this;
+        const [clip] = renderingClips;
+        const { definition } = clip.content;
+        // console.log(this.constructor.name, "commandOutput", definition.label)
+        assertPreloadableDefinition(definition);
+        const { info } = definition;
+        assertObject(info);
+        const { streams } = info;
+        const [stream] = streams;
+        const { pix_fmt, codec_name } = stream;
+        if (codec_name !== 'png') {
+            // console.log("commandOutput codec_name", codec_name)
+            return commandOutput;
+        }
+        const { width, height, basename } = commandOutput;
+        const overrides = { width, height, basename };
+        const output = outputDefaultPng(overrides);
+        // console.log("commandOutput output", output, commandOutput)
+        return output;
+    }
+    get endTime() { return; }
+    get filterGraphsOptions() {
+        const { args, graphType, avType, startTime: time } = this;
+        const { mash, upload } = args;
+        const { quantize: videoRate } = mash;
+        const filterGraphsOptions = {
+            time, graphType, videoRate, size: this.sizeCovered(),
+            avType, upload
+        };
+        return filterGraphsOptions;
+    }
+    outputType = OutputType.Image;
+    get startTime() {
+        const { commandOutput, mash } = this.args;
+        const { offset } = commandOutput;
+        const needDuration = offset || mash.frames < 0;
+        if (needDuration)
+            return timeFromArgs(0, mash.quantize);
+        return mash.timeRange.positionTime(Number(offset || 0), 'ceil');
+    }
+}
+
+class ImageSequenceOutputClass extends AudioOutputClass {
+    _avType = AVType.Video;
+    outputType = OutputType.ImageSequence;
+}
+
+class VideoOutputClass extends AudioOutputClass {
+    get avType() {
+        return this.args.commandOutput.mute ? AVType.Video : AVType.Both;
+    }
+    get outputCover() { return !!this.args.commandOutput.cover; }
+    outputType = OutputType.Video;
+}
+
+class WaveformOutputClass extends RenderingOutputClass {
+    _avType = AVType.Audio;
+    outputType = OutputType.Waveform;
+    get sizePromise() { return Promise.resolve(); }
+}
+// layers = []
+// layers << "color=s=#{output[:dimensions]}:c=##{output[:backcolor]}[bg]"
+// layers << "[0:a]aformat=channel_layouts=mono,showwavespic=colors=##{output[:forecolor]}:s=#{output[:dimensions]}[fg]"
+// layers << "[bg][fg]overlay=format=rgb"
+
+const outputInstanceAudio = (object) => {
+    return new AudioOutputClass(object);
+};
+const outputInstanceImage = (object) => {
+    return new ImageOutputClass(object);
+};
+const outputInstanceVideo = (object) => {
+    return new VideoOutputClass(object);
+};
+const outputInstanceVideoSequence = (object) => {
+    return new ImageSequenceOutputClass(object);
+};
+const outputInstanceWaveform = (object) => {
+    return new WaveformOutputClass(object);
+};
+/**
+ * @category Factory
+ */
+const OutputFactory = {
+    [OutputType.Audio]: outputInstanceAudio,
+    [OutputType.Image]: outputInstanceImage,
+    [OutputType.Video]: outputInstanceVideo,
+    [OutputType.ImageSequence]: outputInstanceVideoSequence,
+    [OutputType.Waveform]: outputInstanceWaveform,
+};
+
+class StreamingOutputClass {
+    constructor(args) {
+        this.args = args;
+    }
+    args;
+    streamingDescription(renderingResults) {
+        const { mashes } = this.args;
+        const promises = mashes.map(mash => {
+            const options = {
+                audible: true, visible: true, streaming: true,
+            };
+            return mash.preloader.loadFilesPromise(mash.editedGraphFiles(options));
+        });
+        let promise = Promise.all(promises).then(() => {
+            const files = [];
+            const commandFilters = [];
+            const commandInputs = [];
+            const avType = AVType.Both;
+            mashes.forEach(mash => {
+                const args = {
+                    size: this.outputSize,
+                    videoRate: this.args.commandOutput.videoRate,
+                    graphType: GraphType.Cast,
+                    avType
+                };
+                const filterGraphs = mash.filterGraphs(args);
+                const { filterGraphVisible } = filterGraphs;
+                commandInputs.push(...filterGraphVisible.commandInputs);
+                files.push(...filterGraphs.fileUrls.filter(graphFile => graphFile.input));
+                commandFilters.push(...filterGraphVisible.commandFilters);
+            });
+            const options = { ...this.args.commandOutput.options };
+            const commandOutput = { ...this.args.commandOutput, options };
+            const commandOptions = {
+                inputs: commandInputs, commandFilters, commandOutput, avType
+            };
+            return commandOptions;
+        });
+        return promise;
+    }
+    mashes = [];
+    get outputSize() {
+        const { width, height } = this.args.commandOutput;
+        return { width, height };
+    }
+}
+
+class VideoStreamOutputClass extends StreamingOutputClass {
+}
+
+export { AVType, Action, ActionFactory, ActionType, Actions, ActivityType, AddClipToTrackAction, AddEffectAction, AddLayerAction, AddTrackAction, AlphamergeFilter, Anchor, Anchors, ApiVersion, AudibleContext, AudibleContextInstance, AudioClass, AudioDefinitionClass, AudioOutputClass, AudioPreview, BrowserLoaderClass, CastClass, ChangeAction, ChangeFramesAction, ChangeMultipleAction, ChromaKeyFilter, ClassButton, ClassCollapsed, ClassDisabled, ClassDropping, ClassDroppingAfter, ClassDroppingBefore, ClassSelected, ClipClass, ClipDefinitionClass, ClipSelectTypes, Color, ColorChannelMixerFilter, ColorContentClass, ColorContentDefinitionClass, ColorFilter, ColorizeFilter, Colors, ContainerDefinitionMixin, ContainerMixin, ContainerTypes, ContentDefinitionMixin, ContentMixin, ContentTypes, ContextFactory, ConvolutionFilter, CropFilter, DataGroup, DataGroups, DataType, DataTypes, Default, DefaultContainerId, DefaultContentId, Defined, DefinitionBase, DefinitionType, DefinitionTypes, Direction, DirectionLabels, Directions, DroppingPosition, Duration, EditType, EditTypes, EditedClass, EditorClass, EditorSelectionClass, EffectClass, EffectDefinitionClass, Emitter, EmptyMethod, Endpoints, Errors, EventType, EventTypes, ExtDash, ExtHls, ExtJpeg, ExtJson, ExtPng, ExtRtmp, ExtText, ExtTs, Factories, Factory, FillType, FillTypes, FilterClass, FilterDefinitionClass, FilterGraphClass, FilterGraphInputAudible, FilterGraphInputVisible, FilterGraphsClass, FilterIdPrefix, FontClass, FontDefinitionClass, FpsFilter, GraphFileType, GraphFileTypes, GraphType, IdPrefix, IdSuffix, ImageClass, ImageDefinitionClass, ImageOutputClass, ImageSequenceOutputClass, InstanceBase, LayerClass, LayerFolderClass, LayerMashClass, LayerType, LayerTypes, LoadType, LoadTypes, LoaderClass, MashClass, MasherAction, ModularDefinitionMixin, ModularMixin, MoveClipAction, MoveEffectAction, MoveLayerAction, MoveType, NamespaceLink, NamespaceSvg, NamespaceXhtml, NonePreview, OpacityFilter, Orientation, Orientations, OutputFactory, OutputFilterGraphPadding, OutputFormat, OutputType, OutputTypes, OverlayFilter, Parameter, PointZero, PreloadableDefinitionMixin, PreloadableMixin, PreviewClass, PropertiedClass, PropertyTweenSuffix, PropertyTypesNumeric, RectZero, RemoveClipAction, RemoveLayerAction, RenderingOutputClass, ScaleFilter, SelectType, SelectTypes, ServerType, ServerTypes, SetptsFilter, SetsarFilter, ShapeContainerClass, ShapeContainerDefinitionClass, SizeIcon, SizeOutput, SizePreview, SizeZero, Sizing, SizingDefinitionTypes, Sizings, StreamingFormat, StreamingOutputClass, TextContainerClass, TextContainerDefinitionClass, TextContainerId, TextFilter, TimeClass, TimeRangeClass, Timing, TimingDefinitionTypes, Timings, TrackClass, TrackFactory, TrackPreviewClass, TrackPreviewHandleSize, TrackPreviewLineSize, TransformType, TriggerType, TriggerTypes, TrimFilter, TweenableDefinitionMixin, TweenableMixin, UpdatableDurationDefinitionMixin, UpdatableDurationDefinitionTypes, UpdatableDurationMixin, UpdatableSizeDefinitionMixin, UpdatableSizeDefinitionType, UpdatableSizeMixin, UploadTypes, VideoClass, VideoDefinitionClass, VideoOutputClass, VideoSequenceClass, VideoSequenceDefinitionClass, VideoStreamOutputClass, WaveformOutputClass, actionInstance, arrayLast, arrayReversed, arraySet, arrayUnique, assertAboveZero, assertAction, assertArray, assertBoolean, assertCast, assertChangeAction, assertClip, assertContainer, assertContainerObject, assertContainerType, assertContent, assertContentType, assertConvolutionServerFilter, assertDataGroup, assertDataType, assertDefined, assertDefinition, assertDefinitionType, assertDirection, assertEditType, assertEdited, assertEffect, assertFontDefinition, assertLayer, assertLayerFolder, assertLayerMash, assertLayerType, assertLoadType, assertLoaderPath, assertLoaderType, assertMash, assertMashClass, assertMashData, assertNumber, assertObject, assertPoint, assertPopulatedArray, assertPopulatedObject, assertPopulatedString, assertPositive, assertPreloadable, assertPreloadableDefinition, assertProperty, assertRect, assertRgb, assertSelectType, assertSize, assertSizeAboveZero, assertString, assertTextContainer, assertTime, assertTimeRange, assertTrack, assertTrue, assertTweenable, assertTweenableDefinition, assertUpdatableDuration, assertUpdatableDurationDefinition, assertUpdatableSize, assertUpdatableSizeDefinition, assertValue, assertValueObject, assertVideo, audioDefinition, audioDefinitionFromId, audioFromId, audioInstance, castInstance, centerPoint, clipDefault, clipDefaultId, clipDefaults, clipDefinition, clipDefinitionFromId, clipFromId, clipInstance, colorAlpha, colorAlphaColor, colorBlack, colorBlackOpaque, colorBlackTransparent, colorBlue, colorFromRgb, colorFromRgba, colorGreen, colorHexRegex, colorHexToRgb, colorHexToRgba, colorName, colorRed, colorRgb, colorRgbDifference, colorRgbKeys, colorRgbRegex, colorRgbToHex, colorRgbToYuv, colorRgba, colorRgbaKeys, colorRgbaRegex, colorRgbaToHex, colorRgbaToRgba, colorRgbaTransparent, colorServer, colorStrip, colorToRgb, colorToRgba, colorTransparent, colorValid, colorValidHex, colorValidRgb, colorValidRgba, colorWhite, colorWhiteOpaque, colorWhiteTransparent, colorYellow, colorYuvBlend, colorYuvDifference, colorYuvToRgb, commandFilesInput, commandFilesInputIndex, containerDefaults, containerDefinition, containerDefinitionFromId, containerFromId, containerInstance, contentDefaults, contentDefinition, contentDefinitionFromId, contentFromId, contentInstance, editorArgs, editorInstance, editorSelectionInstance, editorSingleton, effectDefaults, effectDefinition, effectDefinitionFromId, effectFromId, effectInstance, eventStop, fetchCallback, filterDefaults, filterDefinition, filterDefinitionFromId, filterFromId, filterInstance, fontDefault, fontDefaults, fontDefinition, fontDefinitionFromId, fontFromId, fontInstance, getChunksFromString, hex256, idGenerate, idGenerateString, idIsTemporary, idPrefixSet, idTemporary, imageDefinition, imageDefinitionFromId, imageFromId, imageInstance, isAboveZero, isAction, isActionEvent, isActionInit, isArray, isAudio, isAudioDefinition, isBelowOne, isBoolean, isCast, isCastData, isChangeAction, isChangeActionObject, isClip, isClipObject, isClipSelectType, isColorContent, isContainer, isContainerDefinition, isContainerObject, isContainerType, isContent, isContentDefinition, isContentType, isConvolutionServerFilter, isCustomEvent, isDataGroup, isDataType, isDefined, isDefinition, isDefinitionObject, isDefinitionType, isDirection, isEditType, isEdited, isEffect, isEffectDefinition, isEventType, isFillType, isFloat, isFontDefinition, isGraphFileType, isImageDefinition, isInstance, isInstanceObject, isInteger, isLayer, isLayerFolder, isLayerFolderObject, isLayerMash, isLayerMashObject, isLayerObject, isLayerType, isLoadType, isLoadedAudio, isLoadedImage, isLoadedVideo, isLoaderPath, isLoaderType, isMash, isMashAndDefinitionsObject, isMashClass, isMashData, isMethod, isNan, isNumber, isNumberOrNaN, isNumeric, isObject, isOrientation, isPoint, isPopulatedArray, isPopulatedObject, isPopulatedString, isPositive, isPreloadable, isPreloadableDefinition, isPropertied, isProperty, isRect, isRgb, isSelectType, isSelectedProperty, isShapeContainer, isSize, isSizingDefinitionType, isString, isTextContainer, isTime, isTimeRange, isTimingDefinitionType, isTrack, isTriggerType, isTrueValue, isTweenable, isTweenableDefinition, isUndefined, isUpdatableDuration, isUpdatableDurationDefinition, isUpdatableDurationType, isUpdatableSize, isUpdatableSizeDefinition, isUpdatableSizeType, isUploadType, isValue, isValueObject, isVideo, isVideoDefinition, layerFolderInstance, layerInstance, layerMashInstance, mashInstance, outputDefaultAudio, outputDefaultDash, outputDefaultFormatByType, outputDefaultHls, outputDefaultImage, outputDefaultImageSequence, outputDefaultPng, outputDefaultPopulate, outputDefaultRendering, outputDefaultRtmp, outputDefaultStreaming, outputDefaultTypeByFormat, outputDefaultVideo, outputDefaultWaveform, outputInstanceAudio, outputInstanceImage, outputInstanceVideo, outputInstanceVideoSequence, outputInstanceWaveform, pixelColor, pixelFromFrame, pixelNeighboringRgbas, pixelPerFrame, pixelRgbaAtIndex, pixelToFrame, pixelsMixRbg, pixelsMixRbga, pixelsRemoveRgba, pixelsReplaceRgba, pointCopy, pointNegate, pointRound, pointString, pointValueString, pointsEqual, propertyInstance, propertyTypeCoerce, propertyTypeDefault, propertyTypeIsString, propertyTypeValid, rectCopy, rectFromSize, rectRound, rectString, rectsEqual, rectsFromSizes, rgbNumeric, rgbValue, roundMethod, roundWithMethod, selectedPropertiesScalarObject, selectedPropertyObject, sizeAboveZero, sizeCeil, sizeCopy, sizeCover, sizeEven, sizeFloor, sizeFromElement, sizeLock, sizeLockNegative, sizeRound, sizeScale, sizeString, sizedEven, sizesEqual, sortByFrame, sortByIndex, sortByLabel, sortByTrack, stringFamilySizeRect, stringPluralize, stringSeconds, svgAddClass, svgAppend, svgDefsElement, svgDifferenceDefs, svgElement, svgFeImageElement, svgFilter, svgFilterElement, svgFunc, svgGroupElement, svgId, svgImageElement, svgMaskElement, svgPathElement, svgPatternElement, svgPolygonElement, svgRectPoints, svgSet, svgSetBox, svgSetChildren, svgSetDimensions, svgSetDimensionsLock, svgSetTransform, svgSetTransformPoint, svgSetTransformRects, svgTransform, svgUrl, svgUseElement, throwError, timeEqualizeRates, timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromSeconds, timeRangeFromTime, timeRangeFromTimes, trackInstance, tweenColorStep, tweenColors, tweenCoverPoints, tweenCoverSizes, tweenInputTime, tweenMaxSize, tweenMinMax, tweenMinSize, tweenNumberObject, tweenNumberStep, tweenOption, tweenOverPoint, tweenOverRect, tweenOverSize, tweenPad, tweenPosition, tweenRectLock, tweenRects, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect, tweenableRects, tweeningPoints, urlCombine, urlEndpoint, urlForEndpoint, urlFromEndpoint, urlHasProtocol, urlIsHttp, urlIsObject, urlIsRootProtocol, urlOptions, urlOptionsObject, urlParse, urlPrependProtocol, urlProtocol, urlsAbsolute, urlsParsed, videoDefinition, videoDefinitionFromId, videoFromId, videoInstance, videoSequenceDefinition, videoSequenceDefinitionFromId, videoSequenceFromId, videoSequenceInstance, yuvNumeric };

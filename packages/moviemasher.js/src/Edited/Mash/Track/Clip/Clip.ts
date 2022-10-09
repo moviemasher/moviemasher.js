@@ -1,6 +1,6 @@
 import { Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
 import { Content, ContentObject } from "../../../../Content/Content"
-import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler, SvgItem } from "../../../../declarations"
+import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler, SvgItem, SvgItems, PreviewItems } from "../../../../declarations"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
 import { Sizing, Timing } from "../../../../Setup/Enums"
 import { throwError } from "../../../../Utility/Throw"
@@ -58,7 +58,7 @@ export interface Clip extends Instance, Selectable {
   rects(args: ContainerRectArgs): RectTuple
   resetTiming(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing
-  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<SvgItem>
+  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<PreviewItems>
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange

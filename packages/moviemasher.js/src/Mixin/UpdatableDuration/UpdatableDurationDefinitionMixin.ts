@@ -53,6 +53,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
     audibleSource(preloader: Loader): AudibleSource | undefined {
+
       const { loadedAudio } = this
       if (loadedAudio) {
         // console.log(this.constructor.name, "audibleSource loadedAudio")
@@ -65,16 +66,17 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         this.audio = false
         return
       }
-
-      const cache = preloader.getCache(urlPrependProtocol('audio', audioUrl))
+      const protocolUrl = urlPrependProtocol('audio', audioUrl)
+      // console.log(this.constructor.name, "audibleSource", protocolUrl)
+      const cache = preloader.getCache(protocolUrl)
       if (!cache) {
-        // console.log(this.constructor.name, "audibleSource not cached", audioUrl)
+        // console.log(this.constructor.name, "audibleSource not cached", protocolUrl)
         return
       }
 
       const { error, result } = cache
       if (error || !isLoadedAudio(result)) {
-        // console.log(this.constructor.name, "audibleSource error", error)
+        // console.log(this.constructor.name, "audibleSource error", error, protocolUrl, result)
         this.audio = false
         this.audioUrl = ''
         return
@@ -82,7 +84,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
   
       this.loadedAudio = result
       
-      // console.log(this.constructor.name, "audibleSource cached", audioUrl)
+      // console.log(this.constructor.name, "audibleSource cached", protocolUrl)
       return AudibleContextInstance.createBufferSource(result)
     }
 
@@ -118,8 +120,9 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
 
     urlAudible(editing = false): string { 
       // console.log(this.constructor.name, "urlAudible", editing, this.audioUrl)
-      if (editing) return this.audioUrl || this.url
-
+      if (editing) {
+        return urlPrependProtocol('audio', this.audioUrl || this.url) 
+      }
       return this.source
     }
     

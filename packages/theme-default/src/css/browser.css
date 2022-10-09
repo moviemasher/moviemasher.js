@@ -15,7 +15,7 @@
   text-align: right;
   flex-grow: 1;
 }
-.moviemasher .editor .panel.browser .foot label:hover {
+.moviemasher .editor .panel.browser .foot label > svg:hover {
   color: var(--fore-secondary-promote);
 }
 

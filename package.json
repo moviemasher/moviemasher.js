@@ -23,6 +23,7 @@
     "build-tester": "docker compose --file dev/test/docker-compose.yml build tester",
     "build-image": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.1.0 .",
     "build-rendering": "npm run build -w test-rendering",
+    "test-rendering": "npm run test -w test-rendering",
     "build": "docker compose --file dev/build/docker-compose.yml run --rm builder",
     "delete-temporary": "rm -rf temporary/test/* ; ",
     "ffmpeg": "docker compose --file dev/test/ffmpeg/docker-compose.yml run --rm -it ffmpeg",

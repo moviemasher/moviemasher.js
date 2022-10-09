@@ -206,7 +206,7 @@ export function Masher(props: MasherProps): ReactResult {
 
           const putRequest: DataDefinitionPutRequest = body
           const { definition: definitionObject } = putRequest
-          console.debug("handleApiCallback calling updateDefinition", definitionObject)
+          // console.debug("handleApiCallback calling updateDefinition", definitionObject)
 
           editor.updateDefinition(definitionObject, definition)
         }

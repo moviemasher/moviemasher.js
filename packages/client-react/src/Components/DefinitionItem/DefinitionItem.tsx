@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, idGenerateString, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
+  ClassSelected, DefinitionType, idGenerateString, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
 
 import { 
   PropsWithoutChild, ReactResult, WithClassName 
@@ -33,7 +33,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
 
   const definition = useDefinition()
 
-  const { id, label } = definition
+  const { id, label, type } = definition
  
   const updateRef = async () => {
     const { rect, preloader } = editor

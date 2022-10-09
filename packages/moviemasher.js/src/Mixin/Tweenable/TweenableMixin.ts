@@ -244,10 +244,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     declare muted: boolean 
     
-    declare offE: boolean
-    declare offN: boolean
-    declare offS: boolean
-    declare offW: boolean
+
 
     overlayCommandFilters(bottomInput: string, topInput: string): CommandFilters { 
       assertPopulatedString(bottomInput, 'bottomInput')
@@ -258,6 +255,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
         filterInput: topInput, chainInput: bottomInput, videoRate: 0, duration: 0
       }
       const { overlayFilter } = this
+      // overlayFilter.setValue('yuv420p10', 'format')
       overlayFilter.setValue(0, 'x')
       overlayFilter.setValue(0, 'y')
 

@@ -1,11 +1,11 @@
 
-import { Endpoint, LoadedImage, LoadedVideo } from "../declarations"
+import { Endpoint, LoadedImage, LoadedImageOrVideo, LoadedVideo } from "../declarations"
 
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
-import { assertLoaderType, Loaded, LoadedImageOrVideo, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
+import { assertLoaderType, Loaded, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
 import { Definition, isDefinition } from "../Definition/Definition"
-import { assertObject, assertPopulatedString, isAboveZero, isPopulatedObject, isString } from "../Utility/Is"
+import { assertObject, assertPopulatedString, isAboveZero, isObject, isPopulatedObject, isString } from "../Utility/Is"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { FontDefinition, isFontDefinition } from "../Media/Font/Font"
@@ -14,6 +14,7 @@ import { EmptyMethod } from "../Setup/Constants"
 import { GraphFileType, LoadType } from "../Setup/Enums"
 import { urlOptionsObject, urlsAbsolute } from "../Utility/Url"
 import { arrayLast } from "../Utility/Array"
+import { isPreloadableDefinition } from "../Mixin/Preloadable/Preloadable"
 
 export class LoaderClass implements Loader {
   constructor(endpoint?: Endpoint) {
@@ -88,7 +89,8 @@ export class LoaderClass implements Loader {
 
   getCache(path: LoaderPath): LoaderCache | undefined {
     const files = this.parseUrlPath(path)
-    const file = files.pop()
+    const [file] = files
+    // console.log(this.constructor.name, "getCache", path, file)
     assertObject(file)
     return this.loaderCache.get(file.loaderPath)
   }
@@ -97,20 +99,6 @@ export class LoaderClass implements Loader {
     return this.cacheGet(graphFile)?.error
   }
   
-  private getFile(graphFile: GraphFile): any {
-    const cache = this.cacheGet(graphFile)
-    const result = cache?.result
-    if (!result) {
-      const { type } = graphFile
-      const key = this.key(graphFile)
-      const filesKey = `${type}-${key}`
-      if (cache) console.trace(this.constructor.name, `getFile NO RESULT files.${filesKey} for`, graphFile.definition?.label)
-      else console.trace(this.constructor.name, `getFile NOTHING AT files.${filesKey} for`, graphFile.definition?.label, this.loaderCache.keys())
-      return
-    }
-    return result
-  }
-
 
   private getLoaderCache(file: LoaderFile, createIfNeeded?: boolean, definition?: Definition): LoaderCache | undefined {
     const { loaderPath, loaderType } = file
@@ -122,20 +110,20 @@ export class LoaderClass implements Loader {
       return found
     }
 
-    // console.log(this.constructor.name, "getLoaderCache CACHING", loaderPath)
+    // console.log(this.constructor.name, "getLoaderCache LOADING", loaderPath)
 
     const definitions: Definition[] = []
     if (isDefinition(definition)) definitions.push(definition)
     const cache: LoaderCache = { loaded: false, definitions }
-    //if (definition) 
+
     if (loaderType !== GraphFileType.Svg) this.setLoaderCache(loaderPath, cache)
     cache.promise = this.filePromise(file).then(loaded => {
-      // console.log(this.constructor.name, "getLoaderCache CACHED", loaderPath, loaded.constructor.name)
+      // console.log(this.constructor.name, "getLoaderCache CACHED", loaderPath, loaded?.constructor.name)
       cache.loaded = true
       cache.result = loaded
       return loaded
     }).catch(error => {
-      // console.log(this.constructor.name, "getLoaderCache ERROR", loaderPath, error, error.constructor.name)
+      // console.log(this.constructor.name, "getLoaderCache ERROR", loaderPath, error, error?.constructor.name)
       cache.error = error
       cache.loaded = true
       return error
@@ -179,6 +167,12 @@ export class LoaderClass implements Loader {
     return Promise.all(promises).then(EmptyMethod)
   }
 
+  protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
+    const { type, file, definition } = graphFile
+    const url = `${type}:/${file}`
+    return this.loadPromise(url, definition)
+  }
+
   loadPromise(urlPath: string, definition?: Definition): Promise<any> {
     // console.log(this.constructor.name, "loadPromise", urlPath)
     const cache = this.loaderCache.get(urlPath)
@@ -195,7 +189,7 @@ export class LoaderClass implements Loader {
 
     const files = this.parseUrlPath(urlPath)
     files.reverse()
-    // console.log(this.constructor.name, "loadPromise START", files)
+    // console.log(this.constructor.name, "loadPromise START", files.map(file => file.urlOrLoaderPath))
     const file = files.shift()
     assertObject(file)
     let promise = this.loaderFilePromise(file, definition)
@@ -208,13 +202,6 @@ export class LoaderClass implements Loader {
       // console.log(this.constructor.name, "loadPromise FINISH returning", something?.constructor.name)
       return something
     })
-  }
-
-
-  protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
-    const { type, file, definition } = graphFile
-    const url = `${type}:/${file}`
-    return this.loadPromise(url, definition)
   }
 
   loadedFile(graphFile: GraphFile): boolean {
@@ -305,26 +292,28 @@ export class LoaderClass implements Loader {
     if (!definitionFamily) definition.family = family
   }
 
-  protected updateCache(cache: LoaderCache, info: LoadedInfo) {
+  protected updateCache(cache: LoaderCache, loadedInfo: LoadedInfo) {
     cache.loadedInfo ||= {}
 
-    const { definitions, loadedInfo } = cache
-    const { duration, width, height, audible, family } = info
+    const { definitions, loadedInfo: cachedInfo } = cache
+    const { duration, width, height, audible, family, info } = loadedInfo
     const size = { width, height }
     const durating = isAboveZero(duration)
     const sizing = sizeAboveZero(size)
+    const informing = isObject(info)
     if (sizing) {
-      loadedInfo.width ||= size.width
-      loadedInfo.height ||= size.height
+      cachedInfo.width ||= size.width
+      cachedInfo.height ||= size.height
     }
     if (durating) {
-     if (audible) loadedInfo.audible = true
-      loadedInfo.duration ||= duration
+     if (audible) cachedInfo.audible = true
+      cachedInfo.duration ||= duration
     }
-    if (family) loadedInfo.family ||= family
+    if (family) cachedInfo.family ||= family
 
-      // console.log(this.constructor.name, "updateCache", definitions.length)
-      definitions.forEach(definition => {
+    // console.log(this.constructor.name, "updateCache", loadedInfo, definitions.length)
+    definitions.forEach(definition => {
+      if (informing && isPreloadableDefinition(definition)) definition.info ||= info
       if (sizing && isUpdatableSizeDefinition(definition)) {
         this.updateDefinitionSize(definition, size)
       }
