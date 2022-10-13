@@ -54,7 +54,8 @@ npm install @moviemasher/server-express --save
 ```
 Alternatively, if you're wanting to build your own server you can just install and build off the [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) instead.
 
-_Please note_ that this does not install a client implementation that interacts with this package. Learn more about how the codebase is structured in the
+### _Please note_ 
+This does not install a client implementation that interacts with this package. Learn more about how the codebase is structured in the
 [Architecture Overview](https://moviemasher.com/docs/Architecture.html).
 
 ### Inclusion 
