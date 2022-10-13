@@ -31,11 +31,10 @@
     "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
     "build-min": "run-s build-esm-min build-umd-min",
-    "build": "run-s build-esm build-esm-min build-umd build-umd-min",
-    "start": "docker compose --file dev/example/docker-compose.yml up -d",
-    "stop": "docker compose --file dev/example/docker-compose.yml down -v"
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min"
   },
   "devDependencies": {
     "typescript": "4.6.4"
   }
 }
+

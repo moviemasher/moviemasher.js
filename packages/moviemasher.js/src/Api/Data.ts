@@ -109,6 +109,11 @@ export interface DataCastPutResponse extends DataPutResponse {
 export interface DataCastDeleteRequest extends ApiRequest, AndId {}
 export interface DataCastDeleteResponse extends ApiResponse {}
 
+export interface DataCastGetRequest extends DataGetRequest {}
+export interface DataMashGetRequest extends DataGetRequest {}
+
+export interface DataStreamGetRequest extends DataGetRequest {}
+
 export interface DataCastGetResponse extends DataCastDefaultResponse {
   previewSize?: Size
 }
@@ -120,6 +125,10 @@ export interface DataDefinitionGetResponse extends ApiResponse {
 
 export interface DataCastRetrieveRequest extends ApiRequest, DataRetrieve { }
 
+export interface DataMashRetrieveResponse extends DataRetrieveResponse {}
+export interface DataCastRetrieveResponse extends DataRetrieveResponse {}
+
+export interface DataStreamRetrieveResponse extends DataRetrieveResponse {}
 // STREAM
 
 export interface DataStreamDefinitions {

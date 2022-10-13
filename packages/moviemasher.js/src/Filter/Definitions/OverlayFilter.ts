@@ -20,7 +20,7 @@ export class OverlayFilter extends FilterDefinitionClass {
       tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420p10'
+      custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420' // yuv420p10
     }))
     this.properties.push(propertyInstance({
       custom: true, name: 'alpha', type: DataType.String, defaultValue: 'straight' // premultiplied

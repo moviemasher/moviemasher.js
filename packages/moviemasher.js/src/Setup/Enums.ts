@@ -281,7 +281,7 @@ export enum TransformType {
 
 export enum EventType {
   Action = 'action',
-  Activity = 'activity',
+  Active = 'active',
   Added = 'added',
   Cast = 'cast',
   Draw = 'draw',

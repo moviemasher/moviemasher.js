@@ -1,19 +1,20 @@
 version: "3"
 networks:
   default:
-    name: express-react-example
+    name: moviemasher-example-express-react
 services:
-  moviemasher:
+  moviemasher-example-express-react:
     build:
       dockerfile: ../../../dev/image/Dockerfile.cnf
       context: ../../../
     image: moviemasher/moviemasher.js:5.1.0
-    container_name: moviemasher-8570
+    container_name: moviemasher-example-express-react-8570
     ports:
       - "8570:8570"
       - "8571:8571"
     volumes:
       - ../src/index.html:/home/node/app/workspaces/example-express-react/host/public/index.html
+      - ../host/public/index.js:/home/node/app/workspaces/example-express-react/host/public/index.js
       - ../../../packages/server-express/cjs:/home/node/app/packages/server-express/cjs
       - ../../../packages/moviemasher.js/esm:/home/node/app/packages/moviemasher.js/esm
       - ../../../packages/moviemasher.js/umd:/home/node/app/packages/moviemasher.js/umd
@@ -27,4 +28,5 @@ services:
       - ../../../packages/theme-default/umd/theme-default.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.js
       - ../../../packages/theme-default/umd/theme-default.min.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.min.js
       - ../../../temporary/express-react/media:/home/node/app/workspaces/example-express-react/host/public/media
+      - ../../../temporary/express-react/temporary:/home/node/app/temporary
       

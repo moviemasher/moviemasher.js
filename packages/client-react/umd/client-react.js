@@ -188,16 +188,16 @@
             }
         };
         const externalStore = React__default["default"].useSyncExternalStore((callback) => {
-            eventTarget.addEventListener(moviemasher_js.EventType.Activity, callback);
+            eventTarget.addEventListener(moviemasher_js.EventType.Active, callback);
             return () => {
-                eventTarget.removeEventListener(moviemasher_js.EventType.Activity, callback);
+                eventTarget.removeEventListener(moviemasher_js.EventType.Active, callback);
             };
         }, getSnapshot);
         const removeListener = () => {
-            eventTarget.removeEventListener(moviemasher_js.EventType.Activity, handleEvent);
+            eventTarget.removeEventListener(moviemasher_js.EventType.Active, handleEvent);
         };
         const addListener = () => {
-            eventTarget.addEventListener(moviemasher_js.EventType.Activity, handleEvent);
+            eventTarget.addEventListener(moviemasher_js.EventType.Active, handleEvent);
             return () => { removeListener(); };
         };
         React__default["default"].useEffect(() => addListener(), []);
@@ -537,9 +537,9 @@
             const promiseCallback = {
                 endpoint, request: { body: request }
             };
-            // console.debug("ApiEndpointRequest", endpoint, request)
+            // console.debug("ApiCallbacksRequest", endpoint, request)
             return moviemasher_js.fetchCallback(promiseCallback).then((response) => {
-                // console.debug("ApiEndpointResponse", endpoint, response)
+                // console.debug("ApiCallbacksResponse", endpoint, response)
                 const { apiCallbacks } = response;
                 setCallbacks(servers => (Object.assign(Object.assign({}, servers), apiCallbacks)));
                 return apiCallbacks[id];
@@ -870,7 +870,9 @@
         const [editor, editorDefinitions] = useEditorDefinitions(types);
         const [_, apiDefinitions] = useApiDefinitions(types);
         const definitions = apiDefinitions.filter(apiDefinition => !editorDefinitions.some(editorDefinition => editorDefinition.id === apiDefinition.id));
-        return [editor, [...editorDefinitions, ...definitions]];
+        const combined = [...editorDefinitions, ...definitions];
+        // console.log("useDefinitions", combined.length, types.join(', '))
+        return [editor, combined];
     };
 
     /**
@@ -890,16 +892,10 @@
         };
         const [_, definitions] = useDefinitions(typesObject[picked]);
         const addPicker = (id, types) => {
-            setTypesObject(original => {
-                original[id] = types;
-                return original;
-            });
+            setTypesObject(original => (Object.assign(Object.assign({}, original), { [id]: types })));
         };
         const removePicker = (id) => {
-            setTypesObject(original => {
-                delete original[id];
-                return original;
-            });
+            setTypesObject(original => (Object.assign(Object.assign({}, original), { [id]: [] })));
         };
         const browserContext = {
             definitions,
@@ -3581,7 +3577,7 @@
                     errors.forEach(error => {
                         const id = moviemasher_js.idGenerate('activity-error');
                         const info = Object.assign({ id, type: moviemasher_js.ActivityType.Error }, error);
-                        eventTarget.emit(moviemasher_js.EventType.Activity, info);
+                        eventTarget.emit(moviemasher_js.EventType.Active, info);
                     });
                 }
                 if (validFiles.length)
@@ -3657,17 +3653,17 @@
                             step += state.completed;
                         });
                         if (steps)
-                            eventTarget.emit(moviemasher_js.EventType.Activity, {
+                            eventTarget.emit(moviemasher_js.EventType.Active, {
                                 id, step, steps, type: moviemasher_js.ActivityType.Render
                             });
                     }
                     return delayPromise().then(() => handleApiCallback(id, definition, apiCallback));
                 }
-                eventTarget.emit(moviemasher_js.EventType.Activity, { id, type: moviemasher_js.ActivityType.Complete });
+                eventTarget.emit(moviemasher_js.EventType.Active, { id, type: moviemasher_js.ActivityType.Complete });
             });
         };
         const handleError = (endpoint, error, id) => {
-            editor.eventTarget.emit(moviemasher_js.EventType.Activity, {
+            editor.eventTarget.emit(moviemasher_js.EventType.Active, {
                 id, type: moviemasher_js.ActivityType.Error, error: 'import.render', value: error
             });
             console.error(endpoint, error);
@@ -3680,7 +3676,7 @@
                 moviemasher_js.assertPreloadableDefinition(definition);
                 const { label, type, source } = definition;
                 const id = moviemasher_js.idGenerate('activity');
-                eventTarget.emit(moviemasher_js.EventType.Activity, { id, label, type: moviemasher_js.ActivityType.Render });
+                eventTarget.emit(moviemasher_js.EventType.Active, { id, label, type: moviemasher_js.ActivityType.Render });
                 const { rendering } = moviemasher_js.Endpoints;
                 const responsePromise = fetch(source);
                 const blobPromise = responsePromise.then(response => response.blob());
@@ -3765,11 +3761,11 @@
         const [rect, setRect] = React__default["default"].useState(() => (moviemasher_js.rectCopy(editor.rect)));
         const svgRef = React__default["default"].useRef(null); //SVGSVGElement
         const viewRef = React__default["default"].useRef(null);
-        const editorContext = React__default["default"].useContext(MasherContext);
+        const masherContext = React__default["default"].useContext(MasherContext);
         const [over, setOver] = React__default["default"].useState(false);
         const playerContext = React__default["default"].useContext(PlayerContext);
         const { disabled } = playerContext;
-        const { drop } = editorContext;
+        const { drop } = masherContext;
         const watchingRef = React__default["default"].useRef({});
         const { current: watching } = watchingRef;
         const handleResize = () => {
@@ -3815,7 +3811,6 @@
                 watching.redraw = true;
                 return;
             }
-            // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
             watching.timeout = setTimeout(requestItems, PlayerRefreshRate);
         };
         useListeners({ [moviemasher_js.EventType.Draw]: handleDraw, [moviemasher_js.EventType.Selection]: handleDraw });
@@ -3865,16 +3860,7 @@
             classes.push(moviemasher_js.ClassDropping);
         const viewProps = Object.assign(Object.assign({}, rest), { ref: viewRef, className: classes.join(' '), key: 'player-content', onDragOver, onDrop, onDragLeave, onPointerDown: () => { editor.selection.unset(moviemasher_js.SelectType.Clip); } });
         if (moviemasher_js.sizeAboveZero(rect)) {
-            const svgProps = {
-                ref: svgRef,
-                key: "svg",
-                className: 'svgs',
-                // ...sizeCopy(rect), 
-                // viewBox: `0 0 ${rect.width} ${rect.height}`,
-                // version: "2",
-                // xmlns: "http://www.w3.org/2000/svg",
-                // 'xmlns:html': "http://www.w3.org/1999/xhtml"
-            };
+            const svgProps = { ref: svgRef, key: "svg", className: 'svgs' };
             const nodes = [React__default["default"].createElement("div", Object.assign({}, svgProps))];
             if (children) {
                 const child = React__default["default"].Children.only(children);

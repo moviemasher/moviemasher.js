@@ -11,5 +11,7 @@ export const useDefinitions = (types: DefinitionType[] = []): [Editor, Definitio
   const definitions = apiDefinitions.filter(apiDefinition => 
     !editorDefinitions.some(editorDefinition => editorDefinition.id === apiDefinition.id)
   )
-  return [editor, [...editorDefinitions, ...definitions]]
+  const combined = [...editorDefinitions, ...definitions]
+  // console.log("useDefinitions", combined.length, types.join(', '))
+  return [editor, combined]
 }

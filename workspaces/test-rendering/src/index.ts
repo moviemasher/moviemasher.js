@@ -100,28 +100,28 @@ const dynamicGenerateOptions: GenerateOptions = {
 }
 
 const specificIds = [
-  "P_M_F_in_S_U_M_H_100",
+  "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
+  "P_TL_F_in_T_U_M_Q-F_100",
   "P_TL_F_in_T_U_M_F_100",
   "P_TL_F_in_T_U_M_Q_100",
+  "BL-RE_in_T_C_TL_Q-F_100",
+  "BL-RE_in_T_U_M_F-H_100",
+  "BL-RE_in_T_U_M_Q-F_100",
+  "BL_in_T_C_M_Q-F_100",
+  "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
+  "RGB_TL_F_in_T_U_M_Q-F_100",
+  "V_TL_F_in_T_U_M_Q-F_100",
+  "P_M_F_in_S_U_M_H_100",
   "P_BR-M_D-F_in_R_C_BR-M_F-H_100",
   "P_BR-M_F_in_R_U_M_H_50",
   "P_TL_F_in_K_C_TL-BR_H_50",
   "P_TL_F_in_S_C_TL-BR_F-H_50",
   "P_TL_F_in_S_U_TL-BR_Q-F_50",
-  "P_TL_F_in_T_C_TL-BR_Q-F_100-0",
-  "P_TL_F_in_T_U_M_Q-F_100",
   "BL_in_S_C_M_H_100",
-  "BL_in_T_C_M_Q-F_100",
   "BL-RE_in_K_C_TL_Q-F_100",
   "BL-RE_in_R_C_TL_Q-F_100",
   "BL-RE_in_S_C_TL_Q-F_100",
-  "BL-RE_in_T_C_TL_Q-F_100",
-  "BL-RE_in_T_U_M_F-H_100",
-  "BL-RE_in_T_U_M_Q-F_100",
-  "BL-RE_TL_F_in_T_C_TL-BR_Q-F_50",
-  "RGB_TL_F_in_T_U_M_Q-F_100",
   "V_TL_F_in_S_U_M_Q-F_100",
-  "V_TL_F_in_T_U_M_Q-F_100",
   "P_TL_F_in_R_C_TL-BR_F_100",
   "BL_in_K_C_M_H_100-0",
   "BL_in_K_C_M_H_100",
@@ -163,12 +163,9 @@ const cherryPick = async () => {
 }
 
 
-renderAndCombine('specific', specificIds, true)
-// cherryPick()
+// renderAndCombine('specific', specificIds, true)
+cherryPick()
 // renderSpecificIds(generateIds())
-
-
-
 
   // describe("default", () => {
   //   const ids = generateIds(GenerateOptionsDefault)

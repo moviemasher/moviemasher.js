@@ -235,7 +235,7 @@ describe("Mash", () => {
 
       const { commandFilters, filterGraphCommandFiles: commandFiles } = filterGraph
       // console.log("commandFilters", commandFilters)
-      expect(commandFilters.length).toEqual(7)
+      expect(commandFilters.length).toEqual(8)
 
       // console.log("commandFiles", commandFiles)
       expect(commandFiles.length).toBe(1)
@@ -393,7 +393,7 @@ describe("Mash", () => {
       const { commandFilters, filterGraphCommandFiles: commandFiles, duration } = filterGraph
       expect(duration).toBe(0)
       // console.log("commandFilters", commandFilters)
-      expect(commandFilters.length).toEqual(9)
+      expect(commandFilters.length).toEqual(10)
       expect(commandFiles).toBeInstanceOf(Array)
       expect(commandFiles.length).toBe(1)
       const [graphFile] = commandFiles

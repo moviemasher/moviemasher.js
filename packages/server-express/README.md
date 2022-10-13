@@ -59,8 +59,11 @@ The script below can then be included in your project and triggered in a variety
 ```js
 const MovieMasherServer = require("@moviemasher/server-express")
 
-const { Host, HostDefaultOptions } = MovieMasherServer
-const options = HostDefaultOptions({ port: 8570 })
+const { Host } = MovieMasherServer
+const options = { 
+  port: 8572, host: '0.0.0.0', 
+  api: { authentication: { type: 'basic' } } 
+}
 const host = new Host(options)
 host.start()
 ```

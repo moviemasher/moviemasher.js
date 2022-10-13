@@ -34,18 +34,18 @@ export const useEditorActivity = (): [Editor, ActivityObjects] => {
     }
   }
   const externalStore = React.useSyncExternalStore<ActivityObjects>((callback) => {
-    eventTarget.addEventListener(EventType.Activity, callback)
+    eventTarget.addEventListener(EventType.Active, callback)
     return () => {
-      eventTarget.removeEventListener(EventType.Activity, callback)
+      eventTarget.removeEventListener(EventType.Active, callback)
     }
   }, getSnapshot)
 
   const removeListener = () => {
-    eventTarget.removeEventListener(EventType.Activity, handleEvent)
+    eventTarget.removeEventListener(EventType.Active, handleEvent)
   }
 
   const addListener = () => {
-    eventTarget.addEventListener(EventType.Activity, handleEvent)
+    eventTarget.addEventListener(EventType.Active, handleEvent)
 
     return () => { removeListener() }
   }

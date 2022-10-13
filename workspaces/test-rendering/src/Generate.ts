@@ -78,9 +78,9 @@ export type SizeTest = [string, ContainerObject]
 export type BooleanTest = [string, ContainerObject]
 export type NumberTest = [string, ContainerObject]
 const textOptions: TextContainerObject = { 
-  string: "Valken",
-  intrinsic: { width: 3375, height: 1000, x: 130, y: 0 },
-  fontId: "font.valken"
+  string: "Luckiest Guy",
+  intrinsic: { width: 6167.01953125, height: 738, x: 0, y: 723 },
+  fontId: "com.moviemasher.font.luckiest-guy"
 }
 
 type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
@@ -161,9 +161,13 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   const { width, height } = size
   const textHeight = 0.1
   const debug: TextContainerObject = {
-    fontId: 'font.valken', height: textHeight, 
-    x: 0, y: 0.5, lock: 'H',
-    intrinsic: { x: 0, y: 0, width: width / textHeight, height }
+    intrinsic: { x: 0, y: 0, width: width, height: 1000 / textHeight },
+    // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
+    fontId: "com.moviemasher.font.luckiest-guy",
+    // height: textHeight, 
+    x: 0, y: 0.5, 
+    lock: 'V',
+    width: 1,
   }
   const debugClip: ClipObject = {
     containerId: 'com.moviemasher.container.text',
@@ -183,6 +187,7 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
       ...contentPoint, ...contentDimensions, ...contentObject,
       lock: ''
     },
+    sizing: 'container',
     container: {
       ...containerPoint, ...containerDimensions, 
       ...containerObject, ...opacity, 

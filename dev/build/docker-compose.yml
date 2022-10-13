@@ -13,5 +13,4 @@ services:
       - ../../dev/:/home/node/app/dev/
       - ../../dev/build/package.json:/home/node/app/package.json
       - ../../packages/:/home/node/app/packages/
-      - ../../workspaces/example-express-react/:/home/node/app/workspaces/example-express-react/
-      - ../../workspaces/test-rendering/:/home/node/app/workspaces/test-rendering/
+      - ../../workspaces/:/home/node/app/workspaces/

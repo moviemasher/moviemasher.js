@@ -102,7 +102,7 @@ describe("Clip", () => {
   })
 
   describe("with image content scaled and positioned within container", () => {
-    const containerId = "com.moviemasher.container.chat"
+    const containerId = "devicons.container.apple"
     const createClip = () => createClipWithImage({ 
       containerId, container: { width: 0.5, height: 0.5, x: 0.5, y: 0.5 } 
     })

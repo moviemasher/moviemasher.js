@@ -79,7 +79,7 @@ import {
 } from 'react-icons/vsc'
 import { ImFileVideo } from 'react-icons/im'
 
-import { ThemeIcons } from '@moviemasher/client-react'
+import type { ThemeIcons } from '@moviemasher/client-react'
 
 const MMWideIcon = () => {
   return <svg width="2em" height="1em" viewBox="0 0 48 24">

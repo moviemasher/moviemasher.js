@@ -11,7 +11,7 @@ const EndpointsApi: StringObject = {
 const EndpointsEncode: StringObject = {
   start: '',
   status: '',
-  stop: '',
+  // stop: '',
 }
 
 const EndpointsRendering: StringObject = { ...EndpointsEncode, upload: '' }

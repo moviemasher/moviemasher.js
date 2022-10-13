@@ -32,10 +32,10 @@ export interface ApiCallbacks extends Record<string, ApiCallback> {}
 export interface ApiServerInit extends JsonObject { }
 
 
-export interface ApiEndpointRequest extends ApiRequest, AndId {}
+export interface ApiCallbacksRequest extends ApiRequest, AndId {}
 
 
-export interface ApiEndpointResponse extends ApiResponse {
+export interface ApiCallbacksResponse extends ApiResponse {
   apiCallbacks: ApiCallbacks
 }
 

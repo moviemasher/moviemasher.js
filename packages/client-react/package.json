@@ -36,9 +36,7 @@
     "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
     "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "build": "run-s build-esm build-esm-min build-umd build-umd-min",
-    "stop": "docker compose --file dev/example/docker-compose.yml down -v",
-    "start": "docker compose --file dev/example/docker-compose.yml up -d"
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min"
   },
   "eslintConfig": {
     "extends": [

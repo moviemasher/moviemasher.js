@@ -206,6 +206,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
 
   intrinsicRect(editing = false): Rect {
     const { pathHeight: height, pathWidth: width} = this.definition
+    // console.log(this.constructor.name, "intrinsicRect", this.definition)
     return { width, height, ...PointZero }
   }
 
@@ -291,6 +292,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width="${inWidth}" height="${inHeight}"`
+    // console.log(this.constructor.name, "visibleCommandFiles", this.definitionId, rect, rectEnd, intrinsicRect)
+
     const transformAttribute = svgTransform(intrinsicRect, maxSize)
     // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
     const tags: string[] = []

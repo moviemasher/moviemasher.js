@@ -138,7 +138,7 @@ export function Masher(props: MasherProps): ReactResult {
         errors.forEach(error => {
           const id = idGenerate('activity-error')
           const info = { id, type: ActivityType.Error, ...error }
-          eventTarget.emit(EventType.Activity, info)
+          eventTarget.emit(EventType.Active, info)
         })
       }
       if (validFiles.length) return editor.addFiles(validFiles, editorIndex)
@@ -221,18 +221,18 @@ export function Masher(props: MasherProps): ReactResult {
             steps += state.total
             step += state.completed
           })
-          if (steps) eventTarget.emit(EventType.Activity, { 
+          if (steps) eventTarget.emit(EventType.Active, { 
             id, step, steps, type: ActivityType.Render 
           })
         }
         return delayPromise().then(() => handleApiCallback(id, definition, apiCallback))
       }
-      eventTarget.emit(EventType.Activity, { id, type: ActivityType.Complete })
+      eventTarget.emit(EventType.Active, { id, type: ActivityType.Complete })
     })
   }
 
   const handleError = (endpoint: string, error: string, id: string) => {
-    editor.eventTarget.emit(EventType.Activity, { 
+    editor.eventTarget.emit(EventType.Active, { 
       id, type: ActivityType.Error, error: 'import.render', value: error 
     })
     console.error(endpoint, error)
@@ -248,7 +248,7 @@ export function Masher(props: MasherProps): ReactResult {
       const { label, type, source } = definition
 
       const id = idGenerate('activity')
-      eventTarget.emit(EventType.Activity, { id, label, type: ActivityType.Render })
+      eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
 
       const { rendering } = Endpoints
       const responsePromise = fetch(source)

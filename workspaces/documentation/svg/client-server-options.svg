@@ -25,7 +25,7 @@
 
 <path d="M 0.00 0.00 L 290.00 0.00 L 290.00 40.00 L 0.00 40.00 Z M 0.00 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
-<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[DefaultMasherProps]]()</text>
+<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[MasherDefaultProps]]()</text>
 <path d="M 37.54 80.00 L 252.46 80.00 L 252.46 120.00 L 37.54 120.00 Z M 37.54 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
 <text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >{[[MasherProps]]}</text>

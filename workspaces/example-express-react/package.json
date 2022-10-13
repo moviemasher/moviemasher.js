@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/example-express-react",
   "version": "5.1.0",
-  "description": "Movie Masher React Client Example",
+  "description": "Movie Masher Express React Example",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -14,9 +14,10 @@
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
     "start": "docker compose --file dev/docker-compose.yml up -d",
     "stop": "docker compose --file dev/docker-compose.yml down -v",
-    "build-client": "rollup --config dev/rollup/iife.config.js",
+    "build-client": "rollup --config dev/iife.rollup.config.js",
     "build-server": "tsc --project ./dev/server.tsconfig.json",
-    "build": "run-s clean build-server build-client",
+    "build-html": "node ../../dev/build/replace-paths.js ./src/index.html ./host/public/index.html",
+    "build": "run-s clean build-server build-client build-html",
     "clean": "rimraf host"
   },
   "peerDependencies": {

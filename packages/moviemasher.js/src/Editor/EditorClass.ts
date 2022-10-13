@@ -1,9 +1,9 @@
 import {
   PreviewItems,
-  StringObject, SvgItem, Timeout, UnknownObject} from "../declarations"
-import { sizeCopy, sizeAboveZero, assertSizeAboveZero } from "../Utility/Size"
+  StringObject, Timeout, UnknownObject} from "../declarations"
+import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../Utility/Size"
 import { Definition, DefinitionObject, DefinitionObjects, isDefinitionObject } from "../Definition/Definition"
-import { assertEdited, Edited, isEdited } from "../Edited/Edited"
+import { Edited, isEdited } from "../Edited/Edited"
 import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -56,8 +56,8 @@ import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
 import { ActivityType } from "../Utility/Activity"
 import { isVideoDefinition } from "../Media/Video/Video"
 import { isImageDefinition } from "../Media/Image/Image"
-import { Rect, rectsEqual, RectZero } from "../Utility/Rect"
-import { PointZero } from "../Utility"
+import { Rect, rectsEqual } from "../Utility/Rect"
+import { isPoint, pointCopy, PointZero } from "../Utility/Point"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -75,6 +75,9 @@ export class EditorClass implements Editor {
       dimensions,
       edited,
     } = args
+    const point = isPoint(dimensions) ? pointCopy(dimensions) : PointZero
+    const size = isSize(dimensions) ? sizeCopy(dimensions) : SizeZero
+    this._rect = { ...point, ...size } 
     
     if (isEditType(editType)) this._editType = editType
     if (readOnly) this.readOnly = true
@@ -85,9 +88,7 @@ export class EditorClass implements Editor {
     if (isNumber(fps)) this._fps = fps
     if (isNumber(volume)) this._volume = volume
     if (isNumber(buffer)) this._buffer = buffer
-    if (sizeAboveZero(dimensions)) {
-      this._rect = { ...PointZero, ...dimensions }
-    }
+    
     this.actions = new Actions(this)
     this.preloader = preloader || new BrowserLoaderClass(endpoint)
     if (edited) this.load(edited)
@@ -210,7 +211,7 @@ export class EditorClass implements Editor {
       promise = promise.then(objects => {
         const id = idGenerate('activity')
         const info: UnknownObject = { id, type: ActivityType.Analyze }
-        eventTarget.emit(EventType.Activity, info)
+        eventTarget.emit(EventType.Active, info)
         return filePromise.then(definitionOrError => {
           const activityInfo = { ...info }
           const { label } = definitionOrError
@@ -232,7 +233,7 @@ export class EditorClass implements Editor {
             activityInfo.error = error
             activityInfo.value = value
           }
-          eventTarget.emit(EventType.Activity, activityInfo)
+          eventTarget.emit(EventType.Active, activityInfo)
           return objects
         })
       })
@@ -329,7 +330,7 @@ export class EditorClass implements Editor {
       case MasherAction.Undo: return this.actions.canUndo
       case MasherAction.Redo: return this.actions.canRedo
       case MasherAction.Remove: return !!(clip || track || layer)
-      case MasherAction.Render: return !!(mash?.id && !idIsTemporary(mash.id))
+      case MasherAction.Render: return !this.actions.canSave && !!(mash?.id && !idIsTemporary(mash.id))
       default: throw Errors.argument + 'can'
     }
   }
@@ -798,7 +799,7 @@ export class EditorClass implements Editor {
 
   readOnly = false
 
-  private _rect: Rect = { ...RectZero }
+  private _rect: Rect
   get rect(): Rect { return this._rect }
   set rect(value: Rect) {
     assertSizeAboveZero(value)
@@ -922,10 +923,16 @@ export class EditorClass implements Editor {
   previewItems(enabled?: boolean): Promise<PreviewItems> {
     const { edited } = this
     // return an empty element if we haven't loaded anything yet
-    if (!edited) return Promise.resolve([svgElement(this.rect)])
+    if (!edited) {
+      // console.log(this.constructor.name, "previewItems NO EDITED", this.rect)
+      return Promise.resolve([svgElement(this.rect)])
+    }
 
     const options: PreviewOptions = {}
     if (enabled && this.paused) options.editor = this
+
+    // console.log(this.constructor.name, "previewItems", this.rect)
+
     return edited.previewItems(options)
   }
 

@@ -62,7 +62,7 @@ export interface Tweenable extends Instance, Selectable {
   mutable(): boolean
   muted: boolean
 
-  overlayCommandFilters(bottomInput: string, topInput: string): CommandFilters
+  overlayCommandFilters(bottomInput: string, topInput: string, format?: string): CommandFilters
   overlayFilter: Filter
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties

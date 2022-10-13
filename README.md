@@ -10,12 +10,15 @@ _JavaScript video editor, encoder, switcher_
 - _encode_ and _stream_ through **FFmpeg**
 <!-- MAGIC:END -->
 
+## Description
 Movie Masher is a web-based video editor built entirely in TypeScript and available as a collection of modern ESM packages. It consists of a core library shared by both a React client and ExpressJS server. The client provides an optimized, low resoluition editing experience while the server renders out the result as a high quality video. 
 
+<!-- MAGIC:START (FILE:src=workspaces/documentation/md/snippet/new.md) -->
+<!-- The below content is automatically added from workspaces/documentation/md/snippet/new.md -->
 |<svg width="2em" height="1em" viewBox="0 0 48 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M 0.00 0.00 L 48.00 0.00 L 48.00 24.00 L 0.00 24.00 Z M 0.00 0.00" stroke="none" fill="none" /><path d="M 9.16 2.00 C 8.62 2.00 8.13 2.18 7.73 2.57 L 7.73 2.57 L 1.19 8.91 C 0.77 9.34 0.55 9.82 0.53 10.39 L 0.53 10.39 C 0.53 10.91 0.72 11.37 1.13 11.76 L 1.13 11.76 C 1.56 12.15 2.05 12.31 2.60 12.28 L 2.60 12.28 C 3.17 12.31 3.64 12.13 4.03 11.70 L 4.03 11.70 L 9.16 6.90 L 13.67 11.28 C 14.33 11.87 14.67 12.20 14.73 12.24 L 14.73 12.24 C 15.12 12.63 15.60 12.81 16.14 12.81 L 16.14 12.81 C 16.69 12.85 17.20 12.66 17.63 12.28 L 17.63 12.28 C 17.67 12.26 18.01 11.93 18.63 11.28 L 18.63 11.28 C 19.29 10.65 20.07 9.93 20.93 9.12 L 20.93 9.12 C 21.82 8.23 22.57 7.51 23.20 6.90 L 23.20 6.90 L 31.34 14.86 C 31.74 15.25 32.21 15.47 32.72 15.51 L 32.72 15.51 L 38.29 15.51 L 38.23 19.10 L 44.00 13.55 L 38.29 7.90 L 38.29 11.54 L 33.65 11.48 L 24.63 2.63 C 24.22 2.28 23.74 2.09 23.20 2.09 L 23.20 2.09 C 22.65 2.07 22.16 2.24 21.71 2.63 L 21.71 2.63 L 16.20 8.01 L 11.64 3.63 C 10.98 2.96 10.64 2.61 10.60 2.57 L 10.60 2.57 C 10.18 2.18 9.75 2.00 9.28 2.00 L 9.28 2.00 C 9.24 2.00 9.20 2.00 9.16 2.00" stroke="none" fill="currentColor"  /><path d="M 7.70 11.61 L 2.58 16.53 L 0.00 14.05 L 0.00 21.91 L 8.15 21.91 L 5.49 19.38 C 5.53 19.38 5.56 19.36 5.60 19.32 L 5.60 19.32 L 9.19 15.88 L 14.75 21.28 C 15.14 21.67 15.62 21.85 16.16 21.85 L 16.16 21.85 C 16.73 21.89 17.22 21.72 17.65 21.33 L 17.65 21.33 L 23.16 15.88 L 28.78 21.43 C 29.18 21.78 29.67 21.96 30.21 21.96 L 30.21 21.96 L 34.34 22.00 C 34.93 21.98 35.42 21.78 35.83 21.43 L 35.83 21.43 C 36.23 21.04 36.44 20.56 36.44 19.95 L 36.44 19.95 C 36.44 19.39 36.23 18.91 35.83 18.53 L 35.83 18.53 C 35.46 18.17 34.99 18.01 34.40 18.01 L 34.40 18.01 L 31.10 17.95 L 24.65 11.67 C 24.25 11.32 23.76 11.13 23.22 11.13 L 23.22 11.13 C 22.67 11.11 22.18 11.28 21.75 11.67 L 21.75 11.67 L 16.16 16.99 L 10.56 11.61 C 10.15 11.22 9.69 11.04 9.19 11.04 L 9.19 11.04 C 8.64 11.04 8.15 11.22 7.70 11.61" stroke="none" fill="currentColor"  /></svg>| _NEW in version 5.1.0_ |
 | -- | -- |
-|  <br>  | • container/content pattern <br> • vector-based masking <br> • tranform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
-
+|  <br>  | • container/content pattern <br> • vector-based masking <br> • transform/color tweening <br> • WYSIWYG player editing <br> • reorganized inspector |
+<!-- MAGIC:END -->
 
 <!-- MAGIC:START (FILE:src=workspaces/documentation/md/snippet/documentation.md) -->
 <!-- The below content is automatically added from workspaces/documentation/md/snippet/documentation.md -->
@@ -67,7 +70,7 @@ docker rm moviemasher
 <!-- MAGIC:START (FILEMD:src=workspaces/documentation/md/snippet/example-core.md&stripMagic=true) -->
 ## Core Example
 
-The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty SVG tag followed by another SCRIPT tag containing code that uses the library to populate it with SVGElements. 
+The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
 
 <fieldset>
 <legend>moviemasher.html</legend>
@@ -76,22 +79,28 @@ The HTML document below can be loaded in a web browser to display the simplest '
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>Movie Masher</title>
+    <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <style>
+      #root { width: 360px; height: 640px; }
+      #root > * { position: absolute; }
+    </style>
   </head>
   <body>
-    <svg id="svg" width="640" height="480"></svg>
+    <div id="root"></div>
     <script>
-const element = document.getElementById('svg')
+const element = document.getElementById('root')
 const { editorInstance, TextContainerId } = MovieMasher
-const editor = editorInstance({ rect: element.getBoundingClientRect() })
+const dimensions = element.getBoundingClientRect()
+const editor = editorInstance({ dimensions })
 const clip = { 
   container: { string: 'Hello World!' }, containerId: TextContainerId
 }
-editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
-  editor.svgItems().then(svgs => element.append(...svgs))
+const mash = { tracks: [{ clips: [clip] }] }
+editor.load({ mash }).then(() => {
+  editor.previewItems().then(elements => element.append(...elements))
 })
     </script>
   </body>
@@ -99,7 +108,7 @@ editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
 ```
 </fieldset>
 
-The SCRIPT code first stores the SVG element in the `element` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
+The SCRIPT code first stores the DIV element in the `element` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
 
 This example includes just a single text clip on a single track, but multiple tracks containing multiple clips of different types could be provided. In Movie Masher, text is a kind of container so we specify `TextContainerId` as the clip's `containerId` and populate `container` with the `string` we want to display. 
 
@@ -124,11 +133,11 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>Movie Masher React Client</title>
+    <title>Movie Masher React Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin></script>
-    <script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin></script>
+    <script src='https://unpkg.com/react@18/umd/react.production.js' crossorigin></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default/@5.1.0/umd/theme-default.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-react.js/@5.1.0/umd/client-react.js' crossorigin></script>
@@ -206,8 +215,11 @@ The script below can then be included in your project and triggered in a variety
 ```js
 const MovieMasherServer = require("@moviemasher/server-express")
 
-const { Host, HostDefaultOptions } = MovieMasherServer
-const options = HostDefaultOptions({ port: 8570 })
+const { Host } = MovieMasherServer
+const options = { 
+  port: 8572, host: '0.0.0.0', 
+  api: { authentication: { type: 'basic' } } 
+}
 const host = new Host(options)
 host.start()
 ```

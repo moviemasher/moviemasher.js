@@ -386,7 +386,7 @@ var TransformType;
 var EventType;
 (function (EventType) {
     EventType["Action"] = "action";
-    EventType["Activity"] = "activity";
+    EventType["Active"] = "active";
     EventType["Added"] = "added";
     EventType["Cast"] = "cast";
     EventType["Draw"] = "draw";
@@ -472,7 +472,7 @@ const EndpointsApi = {
 const EndpointsEncode = {
     start: '',
     status: '',
-    stop: '',
+    // stop: '',
 };
 const EndpointsRendering = { ...EndpointsEncode, upload: '' };
 const EndpointsCrud = {
@@ -3092,7 +3092,7 @@ class OverlayFilter extends FilterDefinitionClass {
             tweenable: true, custom: true, name: 'y', type: DataType.Percent, defaultValue: 0.5
         }));
         this.properties.push(propertyInstance({
-            custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420p10'
+            custom: true, name: 'format', type: DataType.String, defaultValue: 'yuv420' // yuv420p10
         }));
         this.properties.push(propertyInstance({
             custom: true, name: 'alpha', type: DataType.String, defaultValue: 'straight' // premultiplied
@@ -4319,7 +4319,7 @@ function TweenableMixin(Base) {
         }
         get isDefault() { return false; }
         mutable() { return false; }
-        overlayCommandFilters(bottomInput, topInput) {
+        overlayCommandFilters(bottomInput, topInput, format) {
             assertPopulatedString(bottomInput, 'bottomInput');
             assertPopulatedString(topInput, 'topInput');
             const commandFilters = [];
@@ -4327,7 +4327,8 @@ function TweenableMixin(Base) {
                 filterInput: topInput, chainInput: bottomInput, videoRate: 0, duration: 0
             };
             const { overlayFilter } = this;
-            // overlayFilter.setValue('yuv420p10', 'format')
+            if (format)
+                overlayFilter.setValue(format, 'format');
             overlayFilter.setValue(0, 'x');
             overlayFilter.setValue(0, 'y');
             commandFilters.push(...overlayFilter.commandFilters(overlayArgs));
@@ -4659,6 +4660,7 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
     }
     intrinsicRect(editing = false) {
         const { pathHeight: height, pathWidth: width } = this.definition;
+        // console.log(this.constructor.name, "intrinsicRect", this.definition)
         return { width, height, ...PointZero };
     }
     isTweeningColor(args) {
@@ -4732,6 +4734,7 @@ class ShapeContainerClass extends ShapeContainerWithContainer {
         const intrinsicRect = isDefault ? maxSize : this.intrinsicRect();
         const { width: inWidth, height: inHeight } = intrinsicRect;
         const dimensionsString = `width="${inWidth}" height="${inHeight}"`;
+        // console.log(this.constructor.name, "visibleCommandFiles", this.definitionId, rect, rectEnd, intrinsicRect)
         const transformAttribute = svgTransform(intrinsicRect, maxSize);
         // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
         const tags = [];
@@ -6470,9 +6473,8 @@ function UpdatableSizeMixin(Base) {
             const [contentRect, contentRectEnd] = contentRects;
             const duration = isTimeRange(time) ? time.lengthSeconds : 0;
             const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0];
-            const dont = false;
             const colorInput = `content-${track}-back`;
-            if (!(upload || dont)) {
+            if (!upload) {
                 const colorArgs = {
                     ...args, contentColors: [colorTransparent, colorTransparent],
                     outputSize: maxContainerSize
@@ -6486,7 +6488,7 @@ function UpdatableSizeMixin(Base) {
             if (upload)
                 return commandFilters;
             filterInput = arrayLast(arrayLast(commandFilters).outputs);
-            if (tweening.size && !dont) {
+            if (tweening.size) {
                 commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput));
                 filterInput = arrayLast(arrayLast(commandFilters).outputs);
             }
@@ -6506,8 +6508,8 @@ function UpdatableSizeMixin(Base) {
             setsarFilter.setValue("1/1", "sar");
             commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }));
             filterInput = arrayLast(arrayLast(commandFilters).outputs);
-            if (!(tweening.size || dont)) {
-                commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput));
+            if (!tweening.size) {
+                commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, 'yuv420p10'));
                 filterInput = arrayLast(arrayLast(commandFilters).outputs);
             }
             commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening));
@@ -10761,6 +10763,9 @@ const isImageDefinition = (value) => {
 class EditorClass {
     constructor(args) {
         const { autoplay, precision, loop, fps, volume, buffer, endpoint, preloader, editType, readOnly, dimensions, edited, } = args;
+        const point = isPoint(dimensions) ? pointCopy(dimensions) : PointZero;
+        const size = isSize(dimensions) ? sizeCopy(dimensions) : SizeZero;
+        this._rect = { ...point, ...size };
         if (isEditType(editType))
             this._editType = editType;
         if (readOnly)
@@ -10778,9 +10783,6 @@ class EditorClass {
             this._volume = volume;
         if (isNumber(buffer))
             this._buffer = buffer;
-        if (sizeAboveZero(dimensions)) {
-            this._rect = { ...PointZero, ...dimensions };
-        }
         this.actions = new Actions(this);
         this.preloader = preloader || new BrowserLoaderClass(endpoint);
         if (edited)
@@ -10892,7 +10894,7 @@ class EditorClass {
             promise = promise.then(objects => {
                 const id = idGenerate('activity');
                 const info = { id, type: ActivityType.Analyze };
-                eventTarget.emit(EventType.Activity, info);
+                eventTarget.emit(EventType.Active, info);
                 return filePromise.then(definitionOrError => {
                     const activityInfo = { ...info };
                     const { label } = definitionOrError;
@@ -10913,7 +10915,7 @@ class EditorClass {
                         activityInfo.error = error;
                         activityInfo.value = value;
                     }
-                    eventTarget.emit(EventType.Activity, activityInfo);
+                    eventTarget.emit(EventType.Active, activityInfo);
                     return objects;
                 });
             });
@@ -10997,7 +10999,7 @@ class EditorClass {
             case MasherAction.Undo: return this.actions.canUndo;
             case MasherAction.Redo: return this.actions.canRedo;
             case MasherAction.Remove: return !!(clip || track || layer);
-            case MasherAction.Render: return !!(mash?.id && !idIsTemporary(mash.id));
+            case MasherAction.Render: return !this.actions.canSave && !!(mash?.id && !idIsTemporary(mash.id));
             default: throw Errors.argument + 'can';
         }
     }
@@ -11399,7 +11401,7 @@ class EditorClass {
     precision = Default.editor.precision;
     preloader;
     readOnly = false;
-    _rect = { ...RectZero };
+    _rect;
     get rect() { return this._rect; }
     set rect(value) {
         assertSizeAboveZero(value);
@@ -11513,11 +11515,14 @@ class EditorClass {
     previewItems(enabled) {
         const { edited } = this;
         // return an empty element if we haven't loaded anything yet
-        if (!edited)
+        if (!edited) {
+            // console.log(this.constructor.name, "previewItems NO EDITED", this.rect)
             return Promise.resolve([svgElement(this.rect)]);
+        }
         const options = {};
         if (enabled && this.paused)
             options.editor = this;
+        // console.log(this.constructor.name, "previewItems", this.rect)
         return edited.previewItems(options);
     }
     get time() { return this.selection.mash?.time || timeFromArgs(0, this.fps); }

@@ -10,7 +10,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --project ./dev/tsconfig.json",
-    "test": "docker-compose --file dev/docker-compose.yml run --rm test"
+    "test": "docker-compose --file dev/docker-compose.yml run --rm test-rendering"
   },
   "dependencies": {
     "@moviemasher/moviemasher.js": "5.1.0",

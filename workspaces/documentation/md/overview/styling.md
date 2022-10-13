@@ -252,7 +252,6 @@ The icon button currently selected in the browser header is painted with the pro
   }
 }
 
-
 .moviemasher .editor .panels {
   grid-area: panels;
 	display: flex;
@@ -351,6 +350,7 @@ The icon button currently selected in the browser header is painted with the pro
   position: absolute;
   display: inline-block;
   overflow: hidden;
+  white-space: nowrap;
   width: 100%;
   background-color: var(--back-primary);
   opacity: 0.5;
@@ -361,6 +361,7 @@ The icon button currently selected in the browser header is painted with the pro
 .moviemasher .editor label {
   height: var(--icon-size);
 }
+
 
 .moviemasher .editor .panel select {
   height: var(--button-size);

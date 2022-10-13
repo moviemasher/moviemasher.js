@@ -6,5 +6,3 @@ _JavaScript video editor, encoder, switcher_
 - _client_ implemented in **ReactJS** 
 - _server_ implemented in **ExpressJS**  
 - _encode_ and _stream_ through **FFmpeg**
-
-

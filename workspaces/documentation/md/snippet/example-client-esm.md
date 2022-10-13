@@ -46,7 +46,6 @@ Since most of the interface elements scroll and stretch both horizontally and
 vertically, we are rendering into a node that is styled to fill the whole window. We also apply the `moviemasher` class to the node, so the additional styles in the CSS file are engaged.
 
 We also use this opportunity to set the dimensions of the video preview in the editor through CSS variables - to their default values, in this case. There are a few ways to override these dimensions, but doing so in the CSS is best practice.
-
 Learn more about coloring and sizing the user interface using CSS in the
 [Styling Overview](https://moviemasher.com/docs/Styling.html).
 
@@ -61,7 +60,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
 
-const element = document.getElementById('app')!
+const element = document.getElementById('root')!
 const options = { previewSize: { width: 480, height: 270 } }
 const props = MasherDefaultProps(options)
 const masher = <Masher {...props} />

@@ -1,10 +1,10 @@
 import React from 'react'
 import {
   ApiVersion,
-  ApiEndpointResponse,
+  ApiCallbacksResponse,
   Endpoint, EndpointPromiser, fetchCallback, idPrefixSet,
   ApiServersRequest, ApiServersResponse, ServerTypes, ServerType,
-  Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback, urlEndpoint, ApiEndpointRequest,
+  Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback, urlEndpoint, ApiCallbacksRequest,
 } from '@moviemasher/moviemasher.js'
 
 import { ApiContext, ApiContextInterface } from './ApiContext'
@@ -45,13 +45,13 @@ export function ApiClient(props: ApiProps): ReactResult {
       return Promise.resolve(previousResponse)
     }
 
-    const request: ApiEndpointRequest = { id, version: ApiVersion } 
+    const request: ApiCallbacksRequest = { id, version: ApiVersion } 
     const promiseCallback: ApiCallback = {
       endpoint, request: { body: request }
     }
-    // console.debug("ApiEndpointRequest", endpoint, request)
-    return fetchCallback(promiseCallback).then((response: ApiEndpointResponse) => {
-      // console.debug("ApiEndpointResponse", endpoint, response)
+    // console.debug("ApiCallbacksRequest", endpoint, request)
+    return fetchCallback(promiseCallback).then((response: ApiCallbacksResponse) => {
+      // console.debug("ApiCallbacksResponse", endpoint, response)
       const { apiCallbacks } = response
       setCallbacks(servers => ({ ...servers, ...apiCallbacks }))
       return apiCallbacks[id]

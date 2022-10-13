@@ -182,16 +182,16 @@ const useEditorActivity = () => {
         }
     };
     const externalStore = React.useSyncExternalStore((callback) => {
-        eventTarget.addEventListener(EventType.Activity, callback);
+        eventTarget.addEventListener(EventType.Active, callback);
         return () => {
-            eventTarget.removeEventListener(EventType.Activity, callback);
+            eventTarget.removeEventListener(EventType.Active, callback);
         };
     }, getSnapshot);
     const removeListener = () => {
-        eventTarget.removeEventListener(EventType.Activity, handleEvent);
+        eventTarget.removeEventListener(EventType.Active, handleEvent);
     };
     const addListener = () => {
-        eventTarget.addEventListener(EventType.Activity, handleEvent);
+        eventTarget.addEventListener(EventType.Active, handleEvent);
         return () => { removeListener(); };
     };
     React.useEffect(() => addListener(), []);
@@ -531,9 +531,9 @@ function ApiClient(props) {
         const promiseCallback = {
             endpoint, request: { body: request }
         };
-        // console.debug("ApiEndpointRequest", endpoint, request)
+        // console.debug("ApiCallbacksRequest", endpoint, request)
         return fetchCallback(promiseCallback).then((response) => {
-            // console.debug("ApiEndpointResponse", endpoint, response)
+            // console.debug("ApiCallbacksResponse", endpoint, response)
             const { apiCallbacks } = response;
             setCallbacks(servers => (Object.assign(Object.assign({}, servers), apiCallbacks)));
             return apiCallbacks[id];
@@ -864,7 +864,9 @@ const useDefinitions = (types = []) => {
     const [editor, editorDefinitions] = useEditorDefinitions(types);
     const [_, apiDefinitions] = useApiDefinitions(types);
     const definitions = apiDefinitions.filter(apiDefinition => !editorDefinitions.some(editorDefinition => editorDefinition.id === apiDefinition.id));
-    return [editor, [...editorDefinitions, ...definitions]];
+    const combined = [...editorDefinitions, ...definitions];
+    // console.log("useDefinitions", combined.length, types.join(', '))
+    return [editor, combined];
 };
 
 /**
@@ -884,16 +886,10 @@ function Browser(props) {
     };
     const [_, definitions] = useDefinitions(typesObject[picked]);
     const addPicker = (id, types) => {
-        setTypesObject(original => {
-            original[id] = types;
-            return original;
-        });
+        setTypesObject(original => (Object.assign(Object.assign({}, original), { [id]: types })));
     };
     const removePicker = (id) => {
-        setTypesObject(original => {
-            delete original[id];
-            return original;
-        });
+        setTypesObject(original => (Object.assign(Object.assign({}, original), { [id]: [] })));
     };
     const browserContext = {
         definitions,
@@ -3575,7 +3571,7 @@ function Masher(props) {
                 errors.forEach(error => {
                     const id = idGenerate('activity-error');
                     const info = Object.assign({ id, type: ActivityType.Error }, error);
-                    eventTarget.emit(EventType.Activity, info);
+                    eventTarget.emit(EventType.Active, info);
                 });
             }
             if (validFiles.length)
@@ -3651,17 +3647,17 @@ function Masher(props) {
                         step += state.completed;
                     });
                     if (steps)
-                        eventTarget.emit(EventType.Activity, {
+                        eventTarget.emit(EventType.Active, {
                             id, step, steps, type: ActivityType.Render
                         });
                 }
                 return delayPromise().then(() => handleApiCallback(id, definition, apiCallback));
             }
-            eventTarget.emit(EventType.Activity, { id, type: ActivityType.Complete });
+            eventTarget.emit(EventType.Active, { id, type: ActivityType.Complete });
         });
     };
     const handleError = (endpoint, error, id) => {
-        editor.eventTarget.emit(EventType.Activity, {
+        editor.eventTarget.emit(EventType.Active, {
             id, type: ActivityType.Error, error: 'import.render', value: error
         });
         console.error(endpoint, error);
@@ -3674,7 +3670,7 @@ function Masher(props) {
             assertPreloadableDefinition(definition);
             const { label, type, source } = definition;
             const id = idGenerate('activity');
-            eventTarget.emit(EventType.Activity, { id, label, type: ActivityType.Render });
+            eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render });
             const { rendering } = Endpoints;
             const responsePromise = fetch(source);
             const blobPromise = responsePromise.then(response => response.blob());
@@ -3759,11 +3755,11 @@ function PlayerContent(props) {
     const [rect, setRect] = React.useState(() => (rectCopy(editor.rect)));
     const svgRef = React.useRef(null); //SVGSVGElement
     const viewRef = React.useRef(null);
-    const editorContext = React.useContext(MasherContext);
+    const masherContext = React.useContext(MasherContext);
     const [over, setOver] = React.useState(false);
     const playerContext = React.useContext(PlayerContext);
     const { disabled } = playerContext;
-    const { drop } = editorContext;
+    const { drop } = masherContext;
     const watchingRef = React.useRef({});
     const { current: watching } = watchingRef;
     const handleResize = () => {
@@ -3809,7 +3805,6 @@ function PlayerContent(props) {
             watching.redraw = true;
             return;
         }
-        // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
         watching.timeout = setTimeout(requestItems, PlayerRefreshRate);
     };
     useListeners({ [EventType.Draw]: handleDraw, [EventType.Selection]: handleDraw });
@@ -3859,16 +3854,7 @@ function PlayerContent(props) {
         classes.push(ClassDropping);
     const viewProps = Object.assign(Object.assign({}, rest), { ref: viewRef, className: classes.join(' '), key: 'player-content', onDragOver, onDrop, onDragLeave, onPointerDown: () => { editor.selection.unset(SelectType.Clip); } });
     if (sizeAboveZero(rect)) {
-        const svgProps = {
-            ref: svgRef,
-            key: "svg",
-            className: 'svgs',
-            // ...sizeCopy(rect), 
-            // viewBox: `0 0 ${rect.width} ${rect.height}`,
-            // version: "2",
-            // xmlns: "http://www.w3.org/2000/svg",
-            // 'xmlns:html': "http://www.w3.org/1999/xhtml"
-        };
+        const svgProps = { ref: svgRef, key: "svg", className: 'svgs' };
         const nodes = [React.createElement("div", Object.assign({}, svgProps))];
         if (children) {
             const child = React.Children.only(children);

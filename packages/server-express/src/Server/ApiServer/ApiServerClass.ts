@@ -1,8 +1,8 @@
 import Express from "express"
 import {
   ApiServerInit,
-  ApiEndpointRequest, ApiEndpointResponse,
-  ApiServersRequest, ApiServersResponse, Endpoints, ServerType,
+  ApiCallbacksRequest, ApiCallbacksResponse,
+  ApiServersRequest, ApiServersResponse, Endpoints, ServerType, ApiCallbacks,
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -19,23 +19,21 @@ export class ApiServerClass extends ServerClass implements ApiServer {
 
   private activeServers: HostServers = {}
 
-  callbacks: ServerHandler<ApiEndpointResponse, ApiEndpointRequest> = (req, res) => {
+  callbacks: ServerHandler<ApiCallbacksResponse, ApiCallbacksRequest> = (req, res) => {
     const request = req.body
     const { id } = request
-
-    const response: ApiEndpointResponse = {
-      apiCallbacks: { [id]: { endpoint: { prefix: id } } }
-    }
+    const apiCallbacks: ApiCallbacks = {}
+    const keys = Object.keys(this.activeServers)
+    const [_, serverId] = id.split('/')
+    if (keys.includes(serverId)) apiCallbacks[id] = { endpoint: { prefix: id } }
+    const response: ApiCallbacksResponse = { apiCallbacks }
     res.send(response)
   }
 
   servers: ServerHandler<ApiServersResponse, ApiServersRequest> = (req, res) => {
-
-    // const { cast, mashIds } = req.body
     const response: ApiServersResponse = {}
     try {
       const user = this.userFromRequest(req)
-
 
       Object.entries(this.activeServers).forEach(([serverType, server]) => {
         response[serverType as ServerType] = server.init(user)

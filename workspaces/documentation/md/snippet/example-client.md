@@ -4,17 +4,17 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
 
 <fieldset>
 <legend>umd.html</legend>
-<!-- MAGIC:START (TRIMCODE:src=../../../../packages/client-react/dev/example/index.html&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-react/public/index.html&stripComments=1) -->
 
 ```html
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>Movie Masher React Client</title>
+    <title>Movie Masher React Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin></script>
-    <script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin></script>
+    <script src='https://unpkg.com/react@18/umd/react.production.js' crossorigin></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default/@5.1.0/umd/theme-default.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-react.js/@5.1.0/umd/client-react.js' crossorigin></script>

@@ -62,9 +62,9 @@ var GenerateArg;
 })(GenerateArg = exports.GenerateArg || (exports.GenerateArg = {}));
 exports.GenerateArgs = Object.values(GenerateArg);
 const textOptions = {
-    string: "Valken",
-    intrinsic: { width: 3375, height: 1000, x: 130, y: 0 },
-    fontId: "font.valken"
+    string: "Luckiest Guy",
+    intrinsic: { width: 6167.01953125, height: 738, x: 0, y: 723 },
+    fontId: "com.moviemasher.font.luckiest-guy"
 };
 const isRenderTest = (value) => {
     return (0, moviemasher_js_1.isPopulatedArray)(value) && (0, moviemasher_js_1.isString)(value[0]);
@@ -109,9 +109,13 @@ const generateClips = (testId, size = moviemasher_js_1.SizePreview, frames = mov
     const { width, height } = size;
     const textHeight = 0.1;
     const debug = {
-        fontId: 'font.valken', height: textHeight,
-        x: 0, y: 0.5, lock: 'H',
-        intrinsic: { x: 0, y: 0, width: width / textHeight, height }
+        intrinsic: { x: 0, y: 0, width: width, height: 1000 / textHeight },
+        // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
+        fontId: "com.moviemasher.font.luckiest-guy",
+        // height: textHeight, 
+        x: 0, y: 0.5,
+        lock: 'V',
+        width: 1,
     };
     const debugClip = {
         containerId: 'com.moviemasher.container.text',
@@ -130,6 +134,7 @@ const generateClips = (testId, size = moviemasher_js_1.SizePreview, frames = mov
             ...contentPoint, ...contentDimensions, ...contentObject,
             lock: ''
         },
+        sizing: 'container',
         container: {
             ...containerPoint, ...containerDimensions,
             ...containerObject, ...opacity,

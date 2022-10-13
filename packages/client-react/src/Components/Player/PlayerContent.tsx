@@ -1,20 +1,20 @@
 import React from 'react'
 import { 
   EventType, Rect, eventStop, isDefinitionType, rectRound,
-  ClassDropping, sizeCopy, sizeAboveZero, UnknownObject, assertDefinitionType, rectCopy, EditorIndex, assertObject, SelectType, idGenerate, EmptyMethod, SvgItems, SvgItem, 
+  ClassDropping, sizeAboveZero, UnknownObject, assertDefinitionType, 
+  rectCopy, EditorIndex, assertObject, SelectType, EmptyMethod, 
 } from '@moviemasher/moviemasher.js'
 
-import { 
-  PropsWithChildren,
-  ReactResult, WithClassName 
+import {  
+  PropsWithChildren, ReactResult, WithClassName 
 } from '../../declarations'
+import { 
+  assertDragDefinitionObject, dragData, dragType, dragTypes, TransferTypeFiles 
+} from '../../Helpers/DragDrop'
 import { useEditor } from '../../Hooks/useEditor'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import { MasherContext } from '../Masher/MasherContext'
-import { assertDragDefinitionObject, dragData, dragType, dragTypes, 
-  TransferTypeFiles 
-} from '../../Helpers/DragDrop'
 import { PlayerContext } from './PlayerContext'
 
 export interface PlayerContentProps extends PropsWithChildren, WithClassName {}
@@ -30,11 +30,11 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   const [rect, setRect] = React.useState<Rect>(() => (rectCopy(editor.rect)))
   const svgRef = React.useRef<HTMLDivElement>(null)//SVGSVGElement
   const viewRef = React.useRef<HTMLDivElement>(null)
-  const editorContext = React.useContext(MasherContext)
+  const masherContext = React.useContext(MasherContext)
   const [over, setOver] = React.useState(false)
   const playerContext = React.useContext(PlayerContext)
   const { disabled } = playerContext
-  const { drop } = editorContext
+  const { drop } = masherContext
   const watchingRef = React.useRef<UnknownObject>({})
   const { current: watching } = watchingRef
 
@@ -75,6 +75,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
       if (redraw) handleDraw()
     })
   }
+
   const requestItems = () => { requestItemsPromise().then(EmptyMethod) }
 
   const handleDraw = () => { 
@@ -82,12 +83,10 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     const { rect } = editor
     if (!(current && sizeAboveZero(rect))) return
 
-
     if (watching.timeout) {
       watching.redraw = true
       return
     }
-    // // console.log("ClipItem.handleChange setting timeout", nonce, scale)
     watching.timeout = setTimeout(requestItems, PlayerRefreshRate)
   }
 
@@ -145,28 +144,16 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     key: 'player-content', 
     onDragOver, onDrop, onDragLeave, 
     onPointerDown: () => { editor.selection.unset(SelectType.Clip) }
-  
   }
 
   if (sizeAboveZero(rect)) {
-    const svgProps = { 
-      ref: svgRef, 
-      key: "svg",
-      className: 'svgs',
-      // ...sizeCopy(rect), 
-      // viewBox: `0 0 ${rect.width} ${rect.height}`,
-      // version: "2",
-      // xmlns: "http://www.w3.org/2000/svg",
-      // 'xmlns:html': "http://www.w3.org/1999/xhtml"
-    }
+    const svgProps = { ref: svgRef, key: "svg", className: 'svgs' }
     const nodes = [<div { ...svgProps } />]
-      
     if (children) {
       const child = React.Children.only(children)
       if (React.isValidElement(child)) nodes.push(child)
     }
     viewProps.children = nodes 
   } 
-
   return <View { ...viewProps}/>
 }

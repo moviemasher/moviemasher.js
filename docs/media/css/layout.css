@@ -42,7 +42,6 @@
   }
 }
 
-
 .moviemasher .editor .panels {
   grid-area: panels;
 	display: flex;
@@ -141,6 +140,7 @@
   position: absolute;
   display: inline-block;
   overflow: hidden;
+  white-space: nowrap;
   width: 100%;
   background-color: var(--back-primary);
   opacity: 0.5;
@@ -151,6 +151,7 @@
 .moviemasher .editor label {
   height: var(--icon-size);
 }
+
 
 .moviemasher .editor .panel select {
   height: var(--button-size);

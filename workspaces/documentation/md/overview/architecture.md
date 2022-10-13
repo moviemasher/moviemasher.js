@@ -42,13 +42,14 @@ the code to produce a bundle best optimized for final delivery.
 - node_modules - installed module depedencies
 - packages - published NPM modules
   - client-react
-  - theme-default
   - moviemasher.js
   - server-express
+  - theme-default
 - workspaces - example deployments
+  - example-core
+  - example-express
   - example-express-react
-- Dockerfile.cnf - Docker image configuration
-- package.json - shared dependecies and scripts
+  - example-react
 
 ## moviemasher.js
 

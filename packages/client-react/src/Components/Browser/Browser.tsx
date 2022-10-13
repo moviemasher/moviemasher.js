@@ -35,17 +35,11 @@ export function Browser(props: BrowserProps): ReactResult {
   const [_, definitions] = useDefinitions(typesObject[picked])
 
   const addPicker = (id: string, types: DefinitionType[]) => {
-    setTypesObject(original => {
-      original[id] = types
-      return original
-    })
+    setTypesObject(original => ({ ...original, [id]: types }))
   }
 
   const removePicker = (id: string): void => {
-    setTypesObject(original => { 
-      delete original[id]
-      return original
-    })
+    setTypesObject(original => ({ ...original, [id]: [] }))
   }
 
   const browserContext: BrowserContextInterface = {

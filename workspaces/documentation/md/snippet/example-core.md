@@ -1,31 +1,37 @@
 ## Core Example
 
-The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty SVG tag followed by another SCRIPT tag containing code that uses the library to populate it with SVGElements. 
+The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
 
 <fieldset>
 <legend>moviemasher.html</legend>
-<!-- MAGIC:START (TRIMCODE:src=../../../../packages/moviemasher.js/dev/example/index.html) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-core/public/index.html) -->
 
 ```html
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>Movie Masher</title>
+    <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <style>
+      #root { width: 360px; height: 640px; }
+      #root > * { position: absolute; }
+    </style>
   </head>
   <body>
-    <svg id="svg" width="640" height="480"></svg>
+    <div id="root"></div>
     <script>
-const element = document.getElementById('svg')
+const element = document.getElementById('root')
 const { editorInstance, TextContainerId } = MovieMasher
-const editor = editorInstance({ rect: element.getBoundingClientRect() })
+const dimensions = element.getBoundingClientRect()
+const editor = editorInstance({ dimensions })
 const clip = { 
   container: { string: 'Hello World!' }, containerId: TextContainerId
 }
-editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
-  editor.previewItems().then(svgs => element.append(...svgs))
+const mash = { tracks: [{ clips: [clip] }] }
+editor.load({ mash }).then(() => {
+  editor.previewItems().then(elements => element.append(...elements))
 })
     </script>
   </body>
@@ -34,7 +40,7 @@ editor.load({ mash: { tracks: [{ clips: [clip] }] } }).then(() => {
 <!-- MAGIC:END -->
 </fieldset>
 
-The SCRIPT code first stores the SVG element in the `element` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
+The SCRIPT code first stores the DIV element in the `element` variable and then destructures what's needed from the core library. The `editorInstance` method is used to construct an editor, which is a specialized object capable of loading and previewing content. The SVG's bounding rect is provided to the editor so it knows how big a preview to generate. 
 
 This example includes just a single text clip on a single track, but multiple tracks containing multiple clips of different types could be provided. In Movie Masher, text is a kind of container so we specify `TextContainerId` as the clip's `containerId` and populate `container` with the `string` we want to display. 
 

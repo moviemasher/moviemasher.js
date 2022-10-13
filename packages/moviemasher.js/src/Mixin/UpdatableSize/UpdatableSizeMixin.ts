@@ -132,7 +132,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
       const dont = false
       const colorInput = `content-${track}-back`
-      if (!(upload || dont)) {
+      if (!upload) {
         const colorArgs: VisibleCommandFilterArgs = { 
           ...args, contentColors: [colorTransparent, colorTransparent], 
           outputSize: maxContainerSize
@@ -150,7 +150,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
    
-      if (tweening.size && !dont) {
+      if (tweening.size) {
         commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
         filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       }
@@ -175,8 +175,8 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 
   
-      if (!(tweening.size || dont)) {
-        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput))
+      if (!tweening.size) {
+        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, 'yuv420p10'))
         filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       }
       

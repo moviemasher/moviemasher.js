@@ -2,11 +2,6 @@
   grid-area: player;
 }
 
-.moviemasher .editor .panel.player .head {
-  grid-auto-flow: column;
-  grid-template-columns: 1fr repeat(2, min-content);
-}
-
 .moviemasher .editor .panel.player .foot .time {
   font-size: 0.75em;
   text-align: right;
@@ -27,7 +22,8 @@
 }
 
 
-.moviemasher .editor .panel.player .content > .svgs > svg {
+.moviemasher .editor .panel.player .content > .svgs > svg,
+.moviemasher .editor .panel.player .content > .svgs > div {
   position: absolute;
   left: 0px;
   top: 0px;

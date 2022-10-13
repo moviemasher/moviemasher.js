@@ -1,12 +1,6 @@
 The Movie Masher client application provides a powerful, simplified interface that facilitates video editing and realtime switching within a web browser. It allows you to construct video files and livestreams that are rendered remotely, even when your local device has limited connectivity. 
 
 
-## Where to Run
-
-Non-developers or anyone with an Amazon account may find launching Movie Masher within their
-[AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-vj7erupihhxv6) to be the simplest option. The image available there can be used to launch an EC2 instance of any size, to which you have full access. You can even make your own images based on it, including any custom changes or additions.
-
-
 ## Key Concepts
 
 **Video editors** typically work with some kind of 'edit decision list' which Movie Masher calls a _mash_. It describes how and when media elements should be presesented within a video file, including animated transformations of visual media. Usually it's edited within some sort of linear, time-based interface. 
@@ -19,12 +13,31 @@ Non-developers or anyone with an Amazon account may find launching Movie Masher 
 
 The Movie Masher user interface is divided into several panels that contain different views, inputs, and specialized controls which help structure and organize specific tasks. 
 
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../../svg/masher.svg) -->
+<svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360" class='diagram'>
+<path d="M 0.00 0.00 L 219.76 0.00 L 219.76 175.37 L 0.00 175.37 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 460.00 0.00 L 640.00 0.00 L 640.00 299.97 L 460.00 299.97 Z M 460.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 228.82 0.00 L 450.00 0.00 L 450.00 175.37 L 228.82 175.37 Z M 228.82 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 0.00 185.00 L 219.76 185.00 L 219.76 360.00 L 0.00 360.00 Z M 0.00 185.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="14.00" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Player]]</text>
+<text x="242.82" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Browser]]</text>
+<text x="14.00" y="219.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Composer]]</text>
+<text x="474.00" y="34.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Inspector]]</text>
+<text x="242.82" y="219.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Timeline]]</text>
+<path d="M 228.82 185.00 L 448.54 185.00 L 448.54 360.00 L 228.82 360.00 Z M 228.82 185.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<path d="M 460.00 310.00 L 640.00 310.00 L 640.00 360.00 L 460.00 360.00 Z M 460.00 310.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+<text x="474.00" y="344.48" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[Activity]]</text>
+</svg>
+<!-- MAGIC:END -->
+
 - *Player* - video preview, volume control, playback controls
-- *Timeline* - view with media clips in tracks, zoom controls, scrub controls
+- *Timeline* - view of media clips in tracks, zoom controls, scrub controls
 - *Browser* - source media grouped by type, upload/import controls
 - *Inspector* - timing controls, inputs that size, position, colorize, blend
-- *Composer* - view with mashes in layers, stream controls
+- *Composer* - view of mashes in layers, stream controls
 - *Activity* - view of history related to imports, exports, renderings, etc.
+
+
 
 ## Drag and Drop
 While not required, Drag and Drop interactions provide the most intuitive means to import and arrange media elements. Video, audio, and images can all be dragged from the file system or other applications, and then dropped directly on the Browser, Timeline, or Player panels to import. Once preprocessed locally, the file will appear in the Browser panel and information about it will appear in the Activity panel. 
