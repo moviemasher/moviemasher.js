@@ -5,7 +5,7 @@ source dev/image/sh/avlibs/options.sh
 $SUDO yum install -y $AV_DEPENDENCIES
 
 cd $SRC
-mkdir vpx
+$SUDO mkdir vpx
 cd vpx
 curl -sL https://codeload.github.com/webmproject/libvpx/tar.gz/v${VPX_VERSION} | tar -zx --strip-components=1
 ./configure --prefix="${PREFIX}" --as=yasm --enable-vp8 --enable-vp9 --enable-vp9-highbitdepth --enable-pic --enable-shared --disable-debug --disable-examples --disable-docs --disable-install-bins --disable-unit-tests
@@ -13,7 +13,7 @@ make
 $SUDO make install
 
 cd $SRC
-mkdir lame
+$SUDO mkdir lame
 cd lame
 curl -sL https://sourceforge.net/projects/lame/files/lame/${LAME_VERSION}/lame-${LAME_VERSION}.tar.gz/download | tar -zx --strip-components=1
 ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --disable-frontend
@@ -54,7 +54,7 @@ whereis x264
 
 cd $SRC
 git clone https://github.com/uclouvain/openjpeg.git
-mkdir openjpeg/build
+$SUDO mkdir openjpeg/build
 cd openjpeg/build
 cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_BUILD_TYPE=Release
 make
