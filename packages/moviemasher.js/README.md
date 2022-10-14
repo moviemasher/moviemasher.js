@@ -42,7 +42,7 @@ The HTML document below can be loaded in a web browser to display the simplest '
     <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.0/umd/moviemasher.js" crossorigin></script>
     <style>
       #root { width: 360px; height: 640px; }
       #root > * { position: absolute; }

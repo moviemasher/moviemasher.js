@@ -13,12 +13,12 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <title>Movie Masher React Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src='https://unpkg.com/react@18/umd/react.production.js' crossorigin></script>
-    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/moviemasher.js/@5.1.0/umd/moviemasher.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/theme-default/@5.1.0/umd/theme-default.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/client-react.js/@5.1.0/umd/client-react.js' crossorigin></script>
-    <link href='https://unpkg.com/@moviemasher/theme-default/@5.1.0/moviemasher.css' rel='stylesheet'>
+    <script src='https://unpkg.com/react@18/umd/react.production.min.js' crossorigin></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/moviemasher.js@5.1.0/umd/moviemasher.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/theme-default@5.1.0/umd/theme-default.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/client-react.js@5.1.0/umd/client-react.js' crossorigin></script>
+    <link href='https://unpkg.com/@moviemasher/theme-default@5.1.0/moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #root { width: 100vw; height: 100vh; display: flex; }
