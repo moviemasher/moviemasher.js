@@ -1,48 +1,38 @@
 import React from 'react'
-import { PropertiedChangeHandler, Propertied } from "@moviemasher/moviemasher.js"
+import { 
+  isDefined, PropertiedChangeHandler, Property, Scalar, Time 
+} from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
-import { InputContext } from '../../Contexts/InputContext'
-import {
-  InspectorPropertyContainer, InspectorPropertyContainerProps
-} from './InspectorPropertyContainer'
-import { DataTypeInputs } from '../Editor/EditorInputs/DefaultInputs/DataTypeInputs'
+import { 
+  PropsWithoutChild, ReactResult, WithClassName 
+} from '../../declarations'
+import { InputContext } from './Inputs/InputContext'
+import { DataTypeInputs } from './Inputs/DataTypeInputs/DataTypeInputs'
 
-interface InspectorPropertyProps extends PropsAndChildren, WithClassName {
-  property: string
-  instance: Propertied
+export interface InspectorPropertyProps extends PropsWithoutChild, WithClassName {
+  property: Property
+  value: Scalar
+  defaultValue?: Scalar
   changeHandler: PropertiedChangeHandler
+  name: string
+  time?: Time
 }
 
 /**
  * @parents InspectorContent
  */
-function InspectorProperty(props: InspectorPropertyProps): ReactResult {
-  const { changeHandler, property: propertyName, instance, ...rest } = props
-  const property = instance.property(propertyName)
-  if (!property) return null
-
-  const { type, name } = property
-
-  const { id } = type
-  const value = instance.value(name)
-  const input = DataTypeInputs[id]
-
-  const inputContext = { property, value, changeHandler }
-
-  const inputWithContext = (
-    <InputContext.Provider key='context' value={inputContext}>
-      {input}
-    </InputContext.Provider>
-  )
-
-  const containerProps: InspectorPropertyContainerProps = {
-    property: propertyName,
-    type: type.id,
-    contained: inputWithContext,
-    ...rest
+export function InspectorProperty(props: InspectorPropertyProps): ReactResult {
+  const { 
+    defaultValue: propsDefault, changeHandler, time, property, value, name
+  } = props
+  
+  const { type, defaultValue: propertyDefault } = property
+  const defaultValue = isDefined(propsDefault) ? propsDefault : propertyDefault
+  const inputContext = { 
+    property, value, changeHandler, name, time, defaultValue
   }
-  return <InspectorPropertyContainer {...containerProps} />
+  const contextProps = {
+    key: 'context', value: inputContext, children: DataTypeInputs[type] 
+  }
+  return <InputContext.Provider {...contextProps} />
 }
-
-export { InspectorProperty, InspectorPropertyProps }

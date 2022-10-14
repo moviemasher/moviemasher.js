@@ -5,19 +5,21 @@ import {
   DataDefinitionDeleteResponse, DataDefinitionDeleteRequest,
   DataMashDeleteResponse, DataMashDeleteRequest,
   DataCastPutResponse, DataCastPutRequest,
-  DataMashRetrieveRequest, DataMashRetrieveResponse,
+  DataMashRetrieveRequest,
   DataDefinitionPutResponse, DataDefinitionPutRequest,
   DataMashPutRequest, DataMashPutResponse,
-  DataMashGetResponse, DataMashGetRequest,
-  DataCastGetResponse, DataCastGetRequest,
+  DataMashGetResponse,
+  DataGetRequest, DataRetrieveResponse,
+  DataCastGetResponse,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
-  DataCastRetrieveResponse, DataCastRetrieveRequest,
+  DataCastRetrieveRequest,
   DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
 } from "@moviemasher/moviemasher.js"
 
 import { Server, ServerArgs, ServerHandler } from "../Server"
 
 export interface DataServerArgs extends ServerArgs {
+  temporaryIdPrefix: string
   dbMigrationsPrefix: string
   dbPath: string
 }
@@ -29,13 +31,13 @@ export interface DataServer extends Server {
   deleteCast: ServerHandler<DataCastDeleteResponse, DataCastDeleteRequest>
   deleteDefinition: ServerHandler<DataDefinitionDeleteResponse, DataDefinitionDeleteRequest>
   deleteMash: ServerHandler<DataMashDeleteResponse, DataMashDeleteRequest>
-  getCast: ServerHandler<DataCastGetResponse, DataCastGetRequest>
+  getCast: ServerHandler<DataCastGetResponse, DataGetRequest>
   getDefinition: ServerHandler<DataDefinitionGetResponse, DataDefinitionGetRequest>
-  getMash: ServerHandler<DataMashGetResponse, DataMashGetRequest>
+  getMash: ServerHandler<DataMashGetResponse, DataGetRequest>
   putCast: ServerHandler<DataCastPutResponse | WithError, DataCastPutRequest>
   putDefinition: ServerHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest>
   putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest>
-  retrieveCast: ServerHandler<DataCastRetrieveResponse | WithError, DataCastRetrieveRequest>
+  retrieveCast: ServerHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest>
   retrieveDefinition: ServerHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest>
-  retrieveMash: ServerHandler<DataMashRetrieveResponse | WithError, DataMashRetrieveRequest>
+  retrieveMash: ServerHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest>
 }

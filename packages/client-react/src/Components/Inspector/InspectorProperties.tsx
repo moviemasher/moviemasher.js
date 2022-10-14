@@ -1,47 +1,80 @@
 import React from "react"
-import { PropertiedChangeHandler, Propertied } from "@moviemasher/moviemasher.js"
+import { 
+  SelectType, UnknownObject, isSelectedProperty, SelectedItems, Time 
+} from "@moviemasher/moviemasher.js"
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
-import { propsStringArray } from "../../Utilities/Props"
+import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
-import { useSelected } from "../../Hooks/useSelected"
-import { useEditor } from "../../Hooks/useEditor"
+import { InspectorContext } from "./InspectorContext"
+import { DataGroupInputs } from "./Inputs/DataGroupInputs/DataGroupInputs"
+import { View } from "../../Utilities/View"
+import { MasherContext } from "../Masher/MasherContext"
 
-interface InspectorPropertiesProps extends PropsAndChildren, WithClassName {
-  property?: string
-  propertyPrefix?: string
-  properties?: string | string[]
-  inspected?: Propertied
+export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {
+  selectedItems?: SelectedItems
+  time?: Time
 }
 
 /**
  * @parents InspectorContent
  */
-function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
-  const editor = useEditor()
-  const { propertyPrefix, inspected, property, properties, ...rest } = props
-  const instance = inspected || useSelected()
-  if (!instance) return null
+export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
+  const inspectorContext = React.useContext(InspectorContext)
+  const { selectedItems: propsItems } = props
+  const { selectedItems: inspectorItems } = inspectorContext
+  const selectedItems = propsItems || inspectorItems
 
-  const changeHandler: PropertiedChangeHandler = (property, value) => {
-    const propertyPath = propertyPrefix ? `${propertyPrefix}.${property}` : property
-    editor.change(propertyPath, value)
+  const ungroupedInputs: React.ReactChild[] = []
+  const groupedInputs: React.ReactChild[] = []
+  const groups: UnknownObject = {} 
+  const selectTypes = new Set<SelectType>()
+  selectedItems.forEach(selectedProperty => {
+    if (isSelectedProperty(selectedProperty)) {
+      const { property, changeHandler, selectType, value, name: nameOveride } = selectedProperty
+      const { name: propertyName, group } = property
+      if (group) {
+        const key = [group, selectType].join('-')
+        if (!groups[key]) {
+          groups[key] = true
+          groupedInputs.push(React.cloneElement(DataGroupInputs[group], { selectType }))
+        }
+        return
+      } 
+      
+      const name = nameOveride || propertyName
+      selectTypes.add(selectType)
+      const propertyProps: InspectorPropertyProps = {
+        key: `inspector-${selectType}-${name}`,
+        property, value, changeHandler, name, 
+        ...props
+      }
+      const icon = icons[name]
+      const inspectorProperty = <InspectorProperty {...propertyProps} />
+      if (icon) {
+        const viewChildren = [inspectorProperty]
+        viewChildren.unshift(icon)
+        const viewProps = {
+          children: viewChildren,
+          className: "row",
+          key: `icon-${selectType}-${name}`,
+        }
+
+        ungroupedInputs.push(<View { ...viewProps } />)    
+      } else ungroupedInputs.push(inspectorProperty)    
+      
+    } else {
+      const effectsProps = {
+        key: "inspector-effects",
+        selectedEffects: selectedProperty,
+      }
+      groupedInputs.push(React.cloneElement(DataGroupInputs.effects, effectsProps))
+    }
+  })
+  if (selectTypes.has(SelectType.Clip)) {
+    ungroupedInputs.push()
   }
 
-  const strings = propsStringArray(property, properties, instance.properties)
-
-  const kids = strings.map(property => {
-    const propertyProps: InspectorPropertyProps = {
-      key: `inspector-${property}`,
-      property,
-      propertyPrefix,
-      instance,
-      changeHandler,
-      ...rest
-    }
-    return <InspectorProperty {...propertyProps} />
-  })
-  return <>{kids}</>
+  return <>{ungroupedInputs}{groupedInputs}</>
 }
-
-export { InspectorProperties, InspectorPropertiesProps }

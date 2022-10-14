@@ -1,21 +1,26 @@
-import { AVType, LoadType, TrackType } from "../../Setup/Enums"
 import { AudioDefinition, Audio } from "./Audio"
-import { InstanceBase } from "../../Base/Instance"
-import { AudibleMixin } from "../../Mixin/Audible/AudibleMixin"
-import { ClipMixin } from "../../Mixin/Clip/ClipMixin"
-import { AudibleFileMixin } from "../../Mixin/AudibleFile/AudibleFileMixin"
-import { Errors } from "../../Setup/Errors"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
-import { GraphFile } from "../../declarations"
+import { InstanceBase } from "../../Instance/InstanceBase"
+import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
+import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
+import { ContentMixin } from "../../Content/ContentMixin"
+import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
+import { Rect } from "../../Utility/Rect"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { SvgItem } from "../../declarations"
+import { svgPolygonElement } from "../../Utility/Svg"
 
-const AudioWithClip = ClipMixin(InstanceBase)
-const AudioWithAudible = AudibleMixin(AudioWithClip)
-const AudioWithAudibleFile = AudibleFileMixin(AudioWithAudible)
-class AudioClass extends AudioWithAudibleFile implements Audio {
+
+const AudioWithTweenable = TweenableMixin(InstanceBase)
+const AudioWithContent = ContentMixin(AudioWithTweenable)
+const AudioWithPreloadable = PreloadableMixin(AudioWithContent)
+const AudioWithUpdatableDuration = UpdatableDurationMixin(AudioWithPreloadable)
+export class AudioClass extends AudioWithUpdatableDuration implements Audio {
+  contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
+    return Promise.resolve(svgPolygonElement(containerRect, '', 'currentColor'))
+  }
+
   declare definition : AudioDefinition
 
-  trackType = TrackType.Audio
+  mutable() { return true }
+
 }
-
-
-export { AudioClass }

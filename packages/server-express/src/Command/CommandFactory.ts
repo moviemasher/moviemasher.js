@@ -1,11 +1,13 @@
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import {
-  CommandOptions, GraphFilters, isPopulatedObject, OutputFormat, ValueObject
+  AVType,
+  CommandFilters,
+  CommandOptions, isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, OutputFormat, ValueObject
 } from '@moviemasher/moviemasher.js'
 
 import { Command } from './Command'
 
-const commandInputOptions = (args: ValueObject): string[] => Object.entries(args).map(
+const commandCombinedOptions = (args: ValueObject): string[] => Object.entries(args).map(
   ([key, value]) => {
     const keyString = `-${key}`
     const valueString = String(value)
@@ -14,17 +16,21 @@ const commandInputOptions = (args: ValueObject): string[] => Object.entries(args
   }
 )
 
-const commandComplexFilter = (args: GraphFilters): ffmpeg.FilterSpecification[] => args.map(
-  graphFilter => {
-    const options = Object.entries(graphFilter.options).map(([key, value]) => {
-      const valueString = String(value).replaceAll(',', '\\,')
-      if (valueString.length) return `${key}=${valueString}`
+const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[] => {
+  return args.map(commandFilter => {
+    const { options, ffmpegFilter, ...rest } = commandFilter
+    const newOptions = Object.entries(options).map(([key, value]) => {
+      if (isNumber(value)) return `${key}=${value}`
 
-      return key
+      if (!value.length) return key.replaceAll(',', '\\,')
+
+      const commasEscaped = value.replaceAll(',', '\\,')
+      const colonsEscaped = commasEscaped.replaceAll(':', '\\\\:')
+      return `${key}=${colonsEscaped}`
     }).join(':')
-    return { ...graphFilter, options }
-  }
-)
+    return { ...rest, options: newOptions, filter: ffmpegFilter }
+  })
+}
 
 export const commandProcess = (): ffmpeg.FfmpegCommand => {
    const logger: FfmpegCommandLogger = {
@@ -40,30 +46,44 @@ export const commandProcess = (): ffmpeg.FfmpegCommand => {
 
 export const commandInstance = (args: CommandOptions): Command => {
   const instance: ffmpeg.FfmpegCommand = commandProcess()
-  const { inputs, output, graphFilters } = args
-
+  
+  const { inputs, output, commandFilters, avType } = args
+  if (avType === AVType.Video) instance.noAudio()
+  else if (avType === AVType.Audio) instance.noVideo()
   inputs?.forEach(({ source, options }) => {
     // console.log("commandInstance adding", source)
     instance.addInput(source)
     // instance.addInputOption('-re')
-    if (options) instance.addInputOptions(commandInputOptions(options))
+    if (options) instance.addInputOptions(commandCombinedOptions(options))
   })
-  // console.log("commandInstance GRAPHFILTERS", graphFilters)
-  if (graphFilters?.length) instance.complexFilter(commandComplexFilter(graphFilters))
+  // console.log("commandInstance GRAPHFILTERS", commandFilters)
 
-  if (output.audioCodec) instance.audioCodec(output.audioCodec)
-  if (output.audioBitrate) instance.audioBitrate(output.audioBitrate)
-  if (output.audioChannels) instance.audioChannels(output.audioChannels)
-  if (output.audioRate) instance.audioFrequency(output.audioRate)
-
-  if (output.videoCodec) instance.videoCodec(output.videoCodec)
-  // if (output.width && output.height) instance.size(`${output.width}x${output.height}`)
-  if (output.videoRate) instance.fpsOutput(output.videoRate)
-
-  if (output.format && output.format !== OutputFormat.Png) instance.format(output.format)
+  if (commandFilters?.length) {
+    instance.complexFilter(commandComplexFilter(commandFilters))
+    const last = commandFilters[commandFilters.length - 1]
+    last.outputs.forEach(output => {
+      instance.map(`[${output}]`)
+    })
+    // instance.addOption('-filter_complex_threads 1')
+  }
+  if (avType !== AVType.Video) {
+    if (isPopulatedString(output.audioCodec)) instance.audioCodec(output.audioCodec)
+    if (isValue(output.audioBitrate)) instance.audioBitrate(output.audioBitrate)
+    if (isAboveZero(output.audioChannels)) instance.audioChannels(output.audioChannels)
+    if (isAboveZero(output.audioRate)) instance.audioFrequency(output.audioRate)
+  }
+  if (avType !== AVType.Audio) {
+    if (isPopulatedString(output.videoCodec)) instance.videoCodec(output.videoCodec)
+    if (isAboveZero(output.videoRate)) instance.fpsOutput(output.videoRate)
+  }
+  // if (isPopulatedString(output.format) && output.format !== OutputFormat.Png) instance.format(output.format)
 
   const options: ValueObject = output.options || {}
-  if (isPopulatedObject(options)) instance.addOptions(commandInputOptions(options))
+  const instanceOptions = isPopulatedObject(options) ? options : {}
+  instanceOptions.hide_banner = ''
+  instanceOptions.shortest = ''
+  // instance.addOutputOption('-shortest')
+  instance.addOptions(commandCombinedOptions(instanceOptions))
   return instance
 }
 

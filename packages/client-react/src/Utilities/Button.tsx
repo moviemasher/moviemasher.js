@@ -1,25 +1,27 @@
+import { ClassButton, ClassDisabled, ClassSelected } from "@moviemasher/moviemasher.js"
 import React from "react"
-import { UnknownObject } from "@moviemasher/moviemasher.js"
-import { ReactResult } from "../declarations"
+import { PropsAndChildren, ReactResult, WithClassName } from "../declarations"
+import { View } from "./View"
 
-interface ButtonProps extends UnknownObject {
-  onClick? : (event : React.MouseEvent<HTMLButtonElement>) => void
-  startIcon? : React.ReactElement
-  endIcon? : React.ReactElement
-  children? : React.ReactElement | React.ReactText
+export interface ButtonProps extends PropsAndChildren, WithClassName {
+  onClick? : (event : React.MouseEvent) => void
+  useView?: boolean
+  disabled?: boolean
+  selected?: boolean
 }
 
-function Button(props: ButtonProps): ReactResult {
-  const { startIcon, endIcon, children, ...rest } = props
-  const kids = []
-  if (children) {
-    if (typeof children === 'string' || typeof children === 'number') {
-      if (startIcon) kids.push(React.cloneElement(startIcon, { key: 'start' }))
-      kids.push(children)
-      if (endIcon) kids.push(React.cloneElement(endIcon, { key: 'end' }))
-    } else kids.push(React.cloneElement(children as React.ReactElement, { key: 'child' }))
+export function Button(props: ButtonProps): ReactResult {
+  const { useView, selected, ...rest } = props
+  if (!useView) return <button { ...rest } />
+
+  const { disabled, className, ...pruned } = rest
+  const classes = [ClassButton]
+  if (className) classes.push(className)
+  if (disabled) classes.push(ClassDisabled)
+  else if (selected) classes.push(ClassSelected)
+  const viewProps = {
+    ...pruned,
+    className: classes.join(' ')
   }
-  return <button children={kids} { ...rest } />
+  return <View { ...viewProps } />
 }
-
-export { Button, ButtonProps }

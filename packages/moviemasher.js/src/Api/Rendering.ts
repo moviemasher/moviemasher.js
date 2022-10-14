@@ -1,8 +1,9 @@
-import { DefinitionObjects } from "../Base/Definition"
-import { AndId, GraphFilters, UploadDescription, ValueObject } from "../declarations"
+import { DefinitionObjects } from "../Definition/Definition"
+import { AndId, UploadDescription, ValueObject } from "../declarations"
+import { CommandFilters, GraphFilters } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
-import { LoadType, OutputType } from "../Setup/Enums"
+import { AVType, LoadType, OutputType } from "../Setup/Enums"
 import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
 export interface CommandInput {
@@ -19,14 +20,16 @@ export interface CommandOptions extends CommandDescription {
 export interface CommandDescription {
   duration?: number
   inputs?: CommandInputs
-  graphFilters?: GraphFilters
+  commandFilters?: CommandFilters
+  avType: AVType
 }
 
 
 export interface RenderingResult {
   error?: string
+  warning?: string
   outputType: OutputType
-  destination: string
+  destination?: string
 }
 
 export interface RenderingDescription {
@@ -52,9 +55,14 @@ export interface RenderingInput {
 }
 
 export interface RenderingOptions extends RenderingInput {
+  upload?: boolean
   outputs: CommandOutputs
 }
 
+/**
+ * Start rendering a mash object
+ * @swagger rendering/start
+ */
 export interface RenderingStartRequest extends ApiRequest, RenderingOptions {}
 
 export interface RenderingStartResponse extends ApiCallbackResponse {}

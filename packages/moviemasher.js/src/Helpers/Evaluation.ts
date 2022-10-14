@@ -1,7 +1,7 @@
 import { UnknownObject, Value } from "../declarations"
 import { Errors } from "../Setup/Errors"
 import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
-import { isNumeric } from "../Utility/Is"
+import { isDefined, isNumeric, isString, isValue } from "../Utility/Is"
 
 
 export interface EvaluationCallback { (evaluation: Evaluation): Value }
@@ -52,7 +52,7 @@ const EvaluatorMethodRegExp = (key: string): RegExp => {
   return new RegExp(`\\b${key}\\b\\(`, 'g')
 }
 
-class Evaluation {
+export class Evaluation {
   constructor(expression: string, evalution?: Evaluation) {
     this.expressions.push(expression)
     this.evaluation = evalution
@@ -84,6 +84,8 @@ class Evaluation {
         this.resolved = true
         this._result = Number(result)
         this.log(message || 'executed')
+      } else if (!isString(result)) {
+        throw Errors.eval.string
       }
     } catch (exception) {
       const underKeys = keys.filter(key => key.startsWith('_'))
@@ -183,9 +185,9 @@ class Evaluation {
   _result?: number
 
   get result(): Value {
-    if (typeof this._result === 'undefined') return this.expression
-    return this._result
+    if (isValue(this._result)) return this._result
+    
+    return this.expression
+
   }
 }
-
-export { Evaluation }

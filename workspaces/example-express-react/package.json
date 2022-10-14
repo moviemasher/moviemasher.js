@@ -1,29 +1,35 @@
 {
-  "name": "example-express-react",
-  "version": "5.0.6",
-  "description": "Movie Masher React Client Example",
+  "name": "@moviemasher/example-express-react",
+  "version": "5.1.0",
+  "description": "Movie Masher Express React Example",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
   "license": "MPL-2.0",
-  "main": "dist/server.js",
-  "scripts": {
-    "build-client": "rollup --config dev/rollup/iife.config.js",
-    "build-server": "tsc --project ./dev/tsconfig.json",
-    "build": "run-s clean copy build-server build-client",
-    "clean-create": "mkdir -p dist/public/media/shared",
-    "clean-delete": "rimraf dist",
-    "clean": "run-s clean-delete clean-create",
-    "copy-icons": "cp ../../dev/img/* dist/public",
-    "copy-json": "cp ./src/server-config.json dist",
-    "copy": "run-s copy-icons copy-shared copy-json",
-    "copy-shared": "cp -R ../../dev/shared dist/public/media"
+  "browser": "host/public/index.js",
+  "source": "src/masher.tsx",
+  "main": "host/server.js",
+  "scripts": {  
+    "logs": "docker compose --file dev/docker-compose.yml logs -f",
+    "start": "docker compose --file dev/docker-compose.yml up -d",
+    "stop": "docker compose --file dev/docker-compose.yml down -v",
+    "build-client": "rollup --config dev/iife.rollup.config.js",
+    "build-server": "tsc --project ./dev/server.tsconfig.json",
+    "build-html": "node ../../dev/build/replace-paths.js ./src/index.html ./host/public/index.html",
+    "build": "run-s clean build-server build-client build-html",
+    "clean": "rimraf host"
   },
-  "dependencies": {
-    "@moviemasher/client-react": "5.0.6",
-    "@moviemasher/server-express": "5.0.6",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.0",
+    "@moviemasher/client-react": "5.1.0",
+    "@moviemasher/server-express": "5.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/node": "15.6.1"
   }
 }

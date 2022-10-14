@@ -1,0 +1,10 @@
+FROM moviemasher/moviemasher.js:5.1.0
+LABEL org.opencontainers.image.authors="support@moviemasher.com"
+
+
+COPY dev/build/package.json /home/node/app/package.json
+COPY packages /home/node/app/packages
+RUN npm install
+
+ENTRYPOINT ["npm", "run"]
+CMD ["build"]

@@ -2,9 +2,9 @@
 .DS_Store
 .git/*
 .vscode/*
-**/dist*
 node_modules
 temporary/*
 **/*.test.ts
+**/*.test.e2e.ts
 **/__image_snapshots__*
 **/__snapshots__*

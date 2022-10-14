@@ -6,7 +6,7 @@ import { Server, ServerArgs } from "./Server"
 import { HostServers } from "../Host/Host"
 
 
-class ServerClass implements Server {
+export class ServerClass implements Server {
   constructor(public args: ServerArgs) {  }
 
   id = ''
@@ -42,5 +42,3 @@ class ServerClass implements Server {
     return user
   }
 }
-
-export { ServerClass }

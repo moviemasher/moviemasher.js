@@ -1,7 +1,7 @@
 import React from "react"
 import { WithClassName, ReactResult, SliderChangeHandler } from "../declarations";
 
-interface SliderProps extends WithClassName {
+export interface SliderProps extends WithClassName {
   value? : number
   step? : number
   max? : number
@@ -9,7 +9,7 @@ interface SliderProps extends WithClassName {
   onChange? : SliderChangeHandler
 }
 
-function Slider(props: SliderProps): ReactResult {
+export function Slider(props: SliderProps): ReactResult {
   const { className, onChange } = props
   const options : WithClassName = { ...props }
   const classes = ['slider']
@@ -25,5 +25,3 @@ function Slider(props: SliderProps): ReactResult {
   const input = <input type='range' { ...options } />
   return input
 }
-
-export { Slider, SliderProps }

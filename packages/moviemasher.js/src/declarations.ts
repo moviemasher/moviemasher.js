@@ -1,38 +1,16 @@
-import { AVType, GraphFileType, GraphType, LoadType } from "./Setup/Enums"
-import { TimeRange } from "./Helpers/Time/Time"
-import { Time } from "./Helpers/Time/Time"
-import { Definition } from "./Base/Definition"
-
-// TODO: remove
-export interface ScrollMetrics {
-  height : number
-  width : number
-  scrollPaddingleft : number
-  scrollPaddingRight : number
-  scrollPaddingTop : number
-  scrollPaddingBottom : number
-  scrollLeft : number
-  scrollTop : number
-  x : number
-  y : number
-}
-
 /* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  interface Window {
-    webkitAudioContext: typeof AudioContext
-  }
-}
+declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Any = any
 export type Value = number | string
-export type Scalar = boolean | Value
-
+export type Scalar = boolean | Value | undefined
+export type PopulatedString = string & { isEmpty: never }
 export interface ValueObject extends Record<string, Value> {}
 export interface NumberObject extends Record<string, number> {}
+export interface BooleanObject extends Record<string, boolean> {}
 export interface UnknownObject extends Record<string, unknown> {}
 export interface StringObject extends Record<string, string> { }
+export interface ScalarObject extends Record<string, Scalar> { }
+export interface StringsObject extends Record<string, string[]> { }
 export interface RegExpObject extends Record<string, RegExp> {}
 
 export interface ObjectUnknown extends Record<string, UnknownObject> {}
@@ -46,41 +24,60 @@ export interface Context2D extends CanvasRenderingContext2D {}
 export interface Pixels extends Uint8ClampedArray {}
 export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
+export interface LoadedSvgImage extends SVGImageElement {}
+
 export interface LoadedAudio extends AudioBuffer {}
-export interface LoadVideoResult { video: LoadedVideo, audio: LoadedAudio, sequence: Sequence[] }
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
-export type VisibleSource = CanvasImageSource
+
+export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
+export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
+export type SvgFilters = SvgFilter[]
+export type LoadedImageOrVideo = LoadedImage | LoadedVideo
+export type SvgItem = SVGElement | LoadedImageOrVideo
+
+
+export type SvgItems = SvgItem[]
+export type SvgItemsTuple = [SvgItems, SvgItems]
+
+export type PreviewItem = SVGSVGElement | HTMLDivElement
+export type PreviewItems = PreviewItem[]
+
+export type SvgOrImage = SVGSVGElement | LoadedImage
+
+export type VisibleSource = HTMLVideoElement | HTMLImageElement | SVGImageElement | HTMLCanvasElement
+
+export type CanvasVisibleSource = VisibleSource | ImageBitmap | CanvasImageSource
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type Interval = ReturnType<typeof setInterval>
 
-export type LoadPromise = Promise <void>
 export type LoadFontPromise = Promise<LoadedFont>
 export type LoadImagePromise = Promise<LoadedImage>
-export type LoadVideoPromise = Promise<LoadVideoResult>
+export type LoadVideoPromise = Promise<LoadedVideo>
 export type LoadAudioPromise = Promise<LoadedAudio>
-export type Sequence = LoadPromise | VisibleSource
 
 export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
+export interface BooleanGetter { (): boolean }
+export type EventHandler = (event: Event) => void 
 
-export type ScalarArray = unknown[]
-export type JsonValue = Scalar | ScalarArray | UnknownObject
+export type AnyArray = any[]
+export type JsonValue = Scalar | AnyArray | UnknownObject
 export interface JsonObject extends Record<string, JsonValue | JsonValue[]> {}
 
 export interface WithFrame {
   frame : number
 }
 
-export interface WithLayer {
-  layer : number
+export interface WithIndex {
+  index : number
 }
 
 export interface WithTrack {
-  track : number
+  trackNumber : number
 }
 
 export interface WithLabel {
@@ -111,57 +108,20 @@ export interface AndId {
   id: string
 }
 
+export interface AndLabel {
+  label: string
+}
+
+export interface LabelAndId extends AndId, AndLabel {}
+
 export interface WithError {
   error?: string
 }
 
-export interface AndTypeAndId extends AndType, AndId {
-
-}
+export interface AndTypeAndId extends AndType, AndId {}
 
 export interface AndTypeAndValue extends AndType {
   value : number
-}
-
-export interface Size {
-  width: number
-  height: number
-}
-
-export interface EvaluatedSize {
-  w? : number
-  h? : number
-  width? : number
-  height? : number
-}
-
-export interface EvaluatedPoint {
-  x? : number
-  y? : number
-}
-
-export interface Point {
-  x : number
-  y: number
-}
-
-export interface EvaluatedRect {
-  x? : number
-  y? : number
-  w? : number
-  h? : number
-  out_w? : number
-  out_h? : number
-}
-
-export interface Rect extends Size, Point {}
-
-export interface TextStyle {
-  height : number
-  family : string
-  color : string
-  shadow? : string
-  shadowPoint? : Point
 }
 
 export interface RgbObject {
@@ -192,18 +152,15 @@ export interface Yuv {
   v: number
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export interface Constructor { new (...args: any[]): any }
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
 export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
+  defaults?: DEFINITION[]
   definitionFromId(id : string) : DEFINITION
   definition(object: DEFINITIONOBJECT): DEFINITION
-  install(object : DEFINITIONOBJECT) : DEFINITION
   instance(object : INSTANCEOBJECT) : INSTANCE
-  initialize() : void
   fromId(id : string) : INSTANCE
 }
 
@@ -232,57 +189,31 @@ export interface InputParameter {
   value: Value
 }
 
-/**
- * matches fluent-ffmpeg's FilterSpecification
- */
-export interface GraphFilter {
-  avType?: AVType
-  filter: string
-  inputs?: string[]
-  outputs?: string[]
-  options: ValueObject
-}
-export type GraphFilters = GraphFilter[]
-
-export interface ModularGraphFilter extends GraphFilter {
-  graphFiles?: GraphFiles
-}
-
-export type ModularGraphFilters = ModularGraphFilter[]
-
-export interface GraphFile {
-  type: GraphFileType | LoadType
-  file: string
-  options?: ValueObject
-  input?: boolean
-  definition?: Definition
-}
-
-export type GraphFiles = GraphFile[]
-
-export interface FilesOptions {
-  avType?: AVType
-  graphType?: GraphType
-  timeRange?: TimeRange
-}
-
-export interface FilesArgs {
-  preloading?: boolean
-  avType?: AVType
-  graphType: GraphType
-  quantize: number
-  time: Time
-}
-
-export interface Described {
-  createdAt: string
+export interface DescribedObject extends AndId, UnknownObject {
   icon?: string
-  id : string
+  label?: string
+}
+
+export interface Described extends AndId {
+  createdAt: string
+  icon: string
   label: string
 }
 
-export interface GraphFileIconArgs {
-  size: Size
-  mashSize: Size
-  position?: number
-}
+
+
+export const isCustomEvent = (value: any): value is CustomEvent => (
+  value instanceof CustomEvent
+)
+
+
+
+
+
+
+
+
+
+
+
+

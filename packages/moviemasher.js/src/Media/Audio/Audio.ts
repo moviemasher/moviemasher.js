@@ -1,29 +1,33 @@
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
 import { GenericFactory } from "../../declarations"
-import {
-  AudibleFile,
-  AudibleFileObject,
-  AudibleFileDefinition,
-  AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
+import { isDefinition } from "../../Definition/Definition"
+import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { DefinitionType } from "../../Setup/Enums"
 
-type AudioObject = AudibleFileObject
 
-interface Audio extends AudibleFile {
+export interface AudioObject extends ContentObject, UpdatableDurationObject {}
+
+export interface Audio extends Content, UpdatableDuration {
   definition : AudioDefinition
 }
+export const isAudio = (value: any): value is Audio => {
+  return isContent(value) && isAudioDefinition(value.definition)
+}
 
-type AudioDefinitionObject = AudibleFileDefinitionObject
+export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationDefinitionObject { 
+}
 
-interface AudioDefinition extends AudibleFileDefinition {
-  instance: Audio
-  instanceFromObject(object: AudioObject): Audio
+export interface AudioDefinition extends ContentDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: AudioObject): Audio
+}
+
+export const isAudioDefinition = (value: any): value is AudioDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Audio
 }
 
 /**
  * @category Factory
  */
-interface AudioFactory extends GenericFactory<
+export interface AudioFactory extends GenericFactory<
   Audio, AudioObject, AudioDefinition, AudioDefinitionObject
 > { }
-
-export { Audio, AudioObject, AudioDefinition, AudioDefinitionObject, AudioFactory }

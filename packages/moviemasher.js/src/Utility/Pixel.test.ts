@@ -1,4 +1,5 @@
-import { pixelFromFrame, pixelPerFrame, pixelToFrame } from "./Pixel"
+import { colorHexToRgb, colorRgb } from "./Color"
+import { pixelFromFrame, pixelPerFrame, pixelsMixRbg, pixelToFrame } from "./Pixel"
 
 describe("Pixel", () => {
   describe("perFrame", () => {
@@ -17,6 +18,14 @@ describe("Pixel", () => {
       const pixel = 10
       const perFrame = 0.2
       expect(pixelFromFrame(pixelToFrame(pixel, perFrame), perFrame)).toEqual(pixel)
+    })
+  })
+  describe("pixelsMixRbg", () => {
+    test("interpolates properly between colors", () => {
+      const red = colorHexToRgb('#FF0000')
+      const green = colorHexToRgb('#00FF00')
+      const blue = colorHexToRgb('#0000FF')
+      expect(pixelsMixRbg(red, blue, 0.0)).toEqual(red)
     })
   })
 })

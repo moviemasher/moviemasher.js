@@ -4,10 +4,24 @@
 
 :root {
   --pad: 20px;
+  --space: 5px;
   --width: 500px;
 }
 
-#app {
+body {
+  font-family: sans-serif;
+  line-height: 1.5em;
+  background-color: var(--back-primary);
+  color: var(--fore-tertiary);
+  padding: 0px;
+	margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+#root {
   display: flex;
   overflow-y: scroll;
 }
@@ -109,8 +123,8 @@ h2 {
 }
 
 h3 {
-  font-size: 0.8em;
-  /* display: inline; */
+  color: var(--fore-secondary);
+  font-size: 1.2rem;
 }
 
 h4 {
@@ -122,18 +136,6 @@ h4.tsd-returns-title > p {
   display: inline;
 }
 
-body {
-  font-family: sans-serif;
-  line-height: 1.5em;
-  background-color: var(--back-primary);
-  color: var(--fore-tertiary);
-  padding: 0px;
-	margin: 0px;
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  grid-template-rows: min-content 1fr min-content;
-}
 
 @supports (-webkit-touch-callout: none) {
   body {
@@ -141,7 +143,7 @@ body {
   }
 }
 
-header, footer {
+header {
   background-color: var(--back-secondary);
   color: var(--fore-secondary);
   height: min-content;
@@ -163,11 +165,6 @@ main {
 article {
   display: grid;
   min-height: 0px;
-}
-
-footer {
-  border-top: var(--back-tertiary) 1px solid;
-  padding: var(--pad);
 }
 
 
@@ -286,9 +283,17 @@ section hr {
   border-top: var(--fore-secondary) 1px solid;
 }
 
-section td {
-  border: var(--fore-secondary) 1px solid;
-  padding: 3px;
+.section table {
+  width: 100%;
+  border-collapse: collapse;
+} 
+
+.section table thead {
+  border-bottom: var(--fore-secondary) 1px solid;
+}
+
+.section table tbody tr:first-child td {
+  padding-top: var(--space);
 }
 
 header > .header {
@@ -314,20 +319,9 @@ header > .header > * {
 header > hr {
   line-height: 30px;
 }
-footer > hr,
+
 header > hr {
-
   margin: 0;
-}
-
-.footer {
-  display: flex;
-}
-
-.footer > div {
-  height: 20px;
-  flex-grow: 1;
-  text-align: center;
 }
 
 label { user-select: none; }
@@ -378,18 +372,18 @@ a.current:visited {
   fill: var(--fore-secondary);
 }
 
-section svg {
+section .section svg.diagram {
   width: 100%;
   height: auto;
 }
-svg text {
+section .section svg.diagram text {
   font-family: sans-serif;
 }
-a>svg,
-a:link>svg,
-a:active>svg,
-a:visited>svg,
-a:hover>svg {
+section .section a>svg,
+section .section a:link>svg,
+section .section a:active>svg,
+section .section a:visited>svg,
+section .section a:hover>svg {
   color: var(--fore-tertiary);
 }
 
@@ -401,13 +395,3 @@ a:hover>svg {
 .material-icons.md-36 {
   font-size: 36px;
 }
-
- /* FIX Facebook iframes */
-div.fb_iframe_widget>span[style] {
-  height: 24px !important;
-}
-
-/* iframe html,
-iframe body {
-  background-color: transparent !important;
-} */

@@ -1,247 +1,177 @@
-import { CommandInput, CommandInputs } from "../../../Api"
-import { ContextFactory } from "../../../Context/ContextFactory"
-import { GraphFile, GraphFiles, GraphFilter, GraphFilters, Size } from "../../../declarations"
-import { Evaluator, EvaluatorArgs } from "../../../Helpers/Evaluator"
+import { Size } from "../../../Utility/Size"
+import { CommandFilters, CommandFilter, CommandFiles, CommandFileArgs, CommandFilterArgs } from "../../../MoveMe"
+import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
+import { CommandInput, CommandInputs } from "../../../Api/Rendering"
+import { Loader } from "../../../Loader/Loader"
+import { assertMash, Mash } from "../Mash"
 import { Time } from "../../../Helpers/Time/Time"
-import { TransitionFilterChainArgs } from "../../../Media/Transition/Transition"
-import { Preloader } from "../../../Preloader/Preloader"
-import { Errors } from "../../../Setup"
-import { AVType, GraphType, LoadType, LoadTypes } from "../../../Setup/Enums"
-import { FilterChain, FilterChains } from "../FilterChain/FilterChain"
-import { FilterChainClass, FilterChainConstructorArgs } from "../FilterChain/FilterChainClass"
-import { FilterGraphs, FilterGraphsInstance } from "../FilterGraphs/FilterGraphs"
-import { Contents, Mash } from "../Mash"
-import { FilterGraphInstance, FilterGraphOptions } from "./FilterGraph"
+import { assertTrue, isAboveZero } from "../../../Utility/Is"
+import { AVType } from "../../../Setup/Enums"
+import { sortByTrack } from "../../../Utility/Sort"
+import { colorTransparent } from "../../../Utility/Color"
+import { Clip } from "../Track/Clip/Clip"
+import { idGenerate } from "../../../Utility/Id"
+import { arrayLast } from "../../../Utility/Array"
+import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
+import { assertDefinition } from "../../../Definition/Definition"
 
-export interface FilterGraphArgs extends Required<FilterGraphOptions> {
-  backcolor?: string
-  contents?: Contents
-  filterChain?: FilterChain
-  mash: Mash
-  filterGraphs: FilterGraphsInstance
-}
+export const FilterGraphInputVisible = 'BACKCOLOR'
+export const FilterGraphInputAudible = 'SILENCE'
 
-class FilterGraphClass implements FilterGraphInstance {
-  constructor(public args: FilterGraphArgs) {}
+export class FilterGraphClass implements FilterGraph {
+  constructor(args: FilterGraphArgs) {
+    const { upload, mash, background, size, time, streaming, videoRate, visible } = args
+    assertMash(mash)
 
-  addGraphFile(graphFile: GraphFile): string {
-    const { graphFiles, avType } = this
-    const { input, type } = graphFile
-    graphFiles.push(graphFile)
-    // console.log(this.constructor.name, "addGraphFile", graphFile.file, graphFiles.length)
-    if (!input) return ''
+    this.mash = mash
+    this.time = time
+    this.videoRate = videoRate 
+    this.background = background
+    this.upload = upload
+    // console.log(this.constructor.name, "upload", args.upload)
 
-    const { inputCount } = this
-    const av = type === LoadType.Audio || avType === AVType.Audio ? 'a' : 'v'
-    return `${inputCount - 1}:${av}`
+    this.size = size
+    // console.log(this.constructor.name, this.id, "size", size)
+    // console.log(this.constructor.name, this.id, "visible", visible)
+    if (visible) this.visible = true
+    if (streaming) this.streaming = true
+    assertTrue(isAboveZero(this.videoRate), 'videoRate')
+    assertTrue(this.time.fps === this.quantize, 'time is in mash rate')
   }
 
-  get avType(): AVType { return this.args.avType }
+  _id?: string
+  get id() { return this._id ||= idGenerate('filtergraph')}
+  get avType() { return this.visible ? AVType.Video : AVType.Audio }
 
-  get backcolor(): string { return this.args.backcolor || this.mash.backcolor }
+  background: string 
+
+  private get commandFilterVisible(): CommandFilter {
+    const { duration, videoRate: rate, background, size } = this
+    // console.log(this.constructor.name, this.id, "commandFilterVisible size", size)
+    const color = background || colorTransparent
+    const colorCommandFilter: CommandFilter = {
+      ffmpegFilter: 'color',
+      options: { color, rate, size: `${size.width}x${size.height}` },
+      inputs: [], outputs: [FilterGraphInputVisible]
+    }
+    if (duration) colorCommandFilter.options.duration = duration
+    return colorCommandFilter
+  }
+
+  private get commandFilterAudible(): CommandFilter {
+    const { duration } = this
+    const silenceCommandFilter: CommandFilter = {
+      ffmpegFilter: 'aevalsrc',
+      options: { exprs: 0, duration },
+      inputs: [], outputs: [FilterGraphInputAudible]
+    }
+    if (duration) silenceCommandFilter.options.duration = duration
+    return silenceCommandFilter
+  }
+
+  private _clips?: Clip[]
+  private get clips() { return this._clips ||= this.clipsInitialize }
+  private get clipsInitialize() {
+    const { time, mash, avType } = this
+    return mash.clipsInTimeOfType(time, avType).sort(sortByTrack)
+  }
 
   get commandInputs(): CommandInputs {
-    return this.inputGraphFiles.map(graphFile => this.graphFileCommandInput(graphFile))
+    return this.inputCommandFiles.map(commandFile => {
+      const { options } = commandFile
+      const input: CommandInput = { source: this.preloader.key(commandFile), options }
+      return input
+    })
   }
 
-  private contentIndex = 0
+  private _commandFiles?: CommandFiles
+  get filterGraphCommandFiles(): CommandFiles {
+    return this._commandFiles ||= this.commandFilesInitialize
+  }
+  get commandFilesInitialize(): CommandFiles {
+    // console.log(this.constructor.name, "commandFilesInitialize")
+    const { time, videoRate, quantize, size: outputSize, clips, visible, preloader } = this
+    
+    // console.log(this.constructor.name, this.id, "commandFilesInitialize", visible, outputSize)
+    const commandFiles = clips.flatMap(clip => {
+      const clipTime = clip.timeRange(quantize)
+      const chainArgs: CommandFileArgs = { 
+        time, quantize, visible, outputSize: outputSize, videoRate, clipTime
+      }
+      return clip.clipCommandFiles(chainArgs)
+    })
 
-  private contentLength = 0
-
-  private _contents?: Contents
-  get contents() { return this._contents ||= this.contentsInitialize }
-  get contentsInitialize(): Contents {
-    const { args, mash, time, avType } = this
-    const contents = args.contents || mash.contents(time, avType)
-    // console.log(this.constructor.name, "contentsInitialize", avType, time, contents.length)
-    return contents
+    commandFiles.forEach(commandFile => {
+      const { definition } = commandFile
+      assertDefinition(definition)
+      const { label } = definition
+      const resolved = preloader.key(commandFile)
+      // console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
+      commandFile.resolved = resolved
+    })
+    return commandFiles
   }
 
-  _duration?: number
+  get commandFilters(): CommandFilters { 
+    const filters: CommandFilters = []
+    const { 
+      time, quantize, size: outputSize, clips, 
+      visible, videoRate, filterGraphCommandFiles: commandFiles, upload
+    } = this
+    // console.log(this.constructor.name, "commandFilters upload", upload)
+
+    // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
+
+    const chainArgs: CommandFilterArgs = { 
+      videoRate, time, quantize, visible, outputSize, commandFiles, 
+      chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
+    }
+    
+    if (visible) {
+      if (!upload) {
+        filters.push(this.commandFilterVisible)
+        chainArgs.chainInput = FilterGraphInputVisible
+      }
+    } else {
+      filters.push(this.commandFilterAudible)
+      chainArgs.chainInput = FilterGraphInputAudible
+    }
+    
+    const { length } = clips
+    clips.forEach((clip, index) => {
+      chainArgs.clipTime = clip.timeRange(quantize)
+      chainArgs.track = index
+      // console.log(this.constructor.name, "commandFilters", chainArgs)
+      filters.push(...clip.commandFilters(chainArgs))
+    
+      const lastFilter = arrayLast(filters)
+      if (index < length - 1 ) {
+        if (!lastFilter.outputs.length) lastFilter.outputs.push(idGenerate('clip'))
+      }
+      chainArgs.chainInput = arrayLast(lastFilter.outputs)
+    })
+    return filters
+  }
+
   get duration(): number { return this.time.lengthSeconds }
 
-  private _evaluator?: Evaluator
-  get evaluator() { return this._evaluator ||= this.evaluatorInitialize }
-  get evaluatorInitialize(): Evaluator {
-    const { preloading, avType, size: outputSize, graphType, preloader } = this
-    const evaluatorArgs: EvaluatorArgs = {
-      preloading,
-      avType, outputSize, graphType, preloader,
-    }
-    return new Evaluator(evaluatorArgs)
-  }
-  _filterChain?: FilterChain
-  get filterChain() { return this._filterChain ||= this.filterChainInitialize }
-  get filterChainInitialize(): FilterChain {
-    const { args, duration } = this
-    const { filterChain: supplied } = args
-    if (supplied) {
-      // console.log(this.constructor.name, 'filterChainInitialize', supplied)
-      return supplied
-    }
+  get inputCommandFiles(): CommandFiles { return this.filterGraphCommandFiles.filter(file => file.input) }
+  
+  mash: Mash
 
-    const { videoRate, backcolor, size, graphType, preloading } = this
+  get preloader(): Loader { return this.mash.preloader }
 
-      // console.log(this.constructor.name, 'filterChainInitialize size', size)
-    const outputs = ['COLORBACK']
-    const colorFilter: GraphFilter = {
-      filter: 'color',
-      options: { rate: videoRate, color: backcolor, size: `${size.width}x${size.height}` },
-      outputs
-    }
-    if (duration) colorFilter.options.duration = duration
-    const filterChainConstructorArgs: FilterChainConstructorArgs = {
-      filterGraph: this, graphFilters: [colorFilter]
-    }
-    const filterChain: FilterChain = new FilterChainClass(filterChainConstructorArgs)
-    if (graphType === GraphType.Canvas && !preloading) {
-      const visibleContext = ContextFactory.toSize(size)
-      visibleContext.drawFill(backcolor)
-      filterChain.visibleContext = visibleContext
-    }
-    return filterChain
-  }
+  get quantize() { return this.mash.quantize }
 
-  filterChains: FilterChains = []
-  filterChainsInitialize(): FilterChains {
-    const { filterChains, backcolor, time, quantize, avType } = this
-    const { contents } = this
-    const audibleContents = contents.filter(content => content.audible)
-    const visibleContents = contents.filter(content => content.transformable)
-    const orderedContents = [...visibleContents, ...audibleContents]
-    this.contentIndex = 0
-    this.contentLength = orderedContents.length
+  size: Size 
 
-    // console.log(this.constructor.name, 'filterChainsInitialize contents', avType, visibleContents.length, audibleContents.length)
+  streaming = false
 
-    orderedContents.forEach(content => {
-      const { audible, transformable } = content
-      const clip = audible || transformable
-      if (!clip) throw Errors.internal + 'content clip'
+  time: Time 
 
-      const clipTimeRange = clip!.timeRange(quantize)
-      const range = clipTimeRange.scale(time.fps)
-      const frame = Math.max(0, time.frame - range.frame)
-      this.evaluator.timeRange = range.withFrame(frame)
+  upload?: boolean
 
-      if (avType !== AVType.Video && (audible || clip.audible)) {
-        const { filterGraphAudible } = this.filterGraphs
-        const audibleChainArgs: FilterChainConstructorArgs = {
-          filterGraph: filterGraphAudible
-        }
-        const filterChainAudible = new FilterChainClass(audibleChainArgs)
-        clip.initializeFilterChain(filterChainAudible)
+  visible = false
 
-        // TODO: support gain as audio filter
-        // clip.filterChain(filterChainAudible)
-
-        // filterGraphAudible.filterChains.push(filterChainAudible)
-      }
-      if (transformable && avType !== AVType.Audio) {
-        const filterChainArgs: FilterChainConstructorArgs = { filterGraph: this }
-        const filterChain: FilterChain = new FilterChainClass(filterChainArgs)
-        transformable.initializeFilterChain(filterChain)
-        transformable.filterChain(filterChain)
-        const { transition, from } = content
-        if (transition) {
-          const transitionFilterChainArgs: TransitionFilterChainArgs = {
-            filterChain, transition, from, backcolor
-          }
-          transition.definition.transitionFilterChain(transitionFilterChainArgs)
-        }
-        filterChains.push(filterChain)
-      }
-      this.contentIndex++
-    })
-    return filterChains
-  }
-
-  get filterGraphs(): FilterGraphsInstance { return this.args.filterGraphs }
-
-  private graphFileCommandInput(graphFile: GraphFile): CommandInput {
-    const { type, file, options } = graphFile
-    switch (type) {
-      case LoadType.Audio:
-      case LoadType.Video:
-      case LoadType.Image:
-      // TODO: handle graph file types
-      default: {
-        const input: CommandInput = { source: file, options }
-        return input
-      }
-    }
-  }
-
-  graphFiles: GraphFiles = []
-
-  get graphFilterOutput(): string {
-    const { filterChain, filterChains, contentIndex } = this
-    const chain = contentIndex ? filterChains[contentIndex - 1] : filterChain
-
-    const { graphFilters, graphFilter } = chain
-    const last = graphFilter || graphFilters[graphFilters.length - 1]
-    if (!last) {
-      console.trace(this.constructor.name, "graphFilterOutput with no last", graphFilters.length, chain)
-      throw Errors.internal + 'last'
-    }
-    const { outputs } = last
-    if (!outputs) throw Errors.internal + 'outputs'
-
-    const prevOutput = outputs[outputs.length - 1]
-    if (!prevOutput) throw Errors.internal + 'prevOutput'
-
-    return prevOutput
-  }
-
-  graphFilterOutputs(graphFilter: GraphFilter): string[] {
-    const outputs: string[] = []
-    const { filter } = graphFilter
-    if (this.contentIndex < this.contentLength - 1) {
-      outputs.push(`${filter.toUpperCase()}${this.contentIndex}`)
-    }
-    return outputs
-  }
-
-  get graphFilters(): GraphFilters {
-    const chains: FilterChains = []
-    const { avType } = this
-    if (avType !== AVType.Audio) chains.push(this.filterChain)
-    chains.push(...this.filterChains)
-    return chains.flatMap(chain => {
-      const { graphFilter, graphFilters } = chain
-      const filters = [...graphFilters]
-      if (graphFilter) filters.push(graphFilter)
-      return filters
-    })
-  }
-
-  get graphType(): GraphType { return this.args.graphType || GraphType.Canvas }
-
-
-  get inputCount(): number {
-    return this.inputGraphFiles.length
-  }
-
-  get inputGraphFiles(): GraphFiles { return this.graphFiles.filter(file => file.input) }
-
-  get preloading(): boolean { return !!this.args.preloading }
-
-  get loadableGraphFiles(): GraphFiles {
-    const stringLoadTypes = LoadTypes.map(String)
-    return this.graphFiles.filter(file => stringLoadTypes.includes(file.type))
-  }
-
-  get mash(): Mash { return this.args.mash! }
-
-  get preloader(): Preloader { return this.mash.preloader }
-
-  get quantize(): number { return this.mash.quantize }
-
-  get size(): Size { return this.args.size || this.mash.imageSize }
-
-  get time(): Time { return this.args.time || this.mash.time }
-
-  get videoRate(): number { return this.args.videoRate || this.time.fps }
+  videoRate: number 
 }
-
-export { FilterGraphClass }

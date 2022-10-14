@@ -1,28 +1,29 @@
 import { ValueObject, Value, UnknownObject } from "../declarations"
 import { AVType, OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
 import { RenderingDescription, RenderingResult } from "../Api/Rendering"
-import { Mash } from "../Edited/Mash/Mash"
+import { Mash, Mashes } from "../Edited/Mash/Mash"
 import { StreamingDescription } from "../Api/Streaming"
 import { Time } from "../Helpers/Time/Time"
+import { Size } from "../Utility/Size"
 
-export interface CommandOutput extends UnknownObject {
+export interface CommandOutput extends UnknownObject, Partial<Size> {
   audioBitrate?: Value
   audioChannels?: number
   audioCodec?: string
   audioRate?: number
   extension?: string
   format?: OutputFormat
-  height?: number
   options?: ValueObject
   videoBitrate?: Value
   videoCodec?: string
   videoRate?: number
-  width?: number
 }
 
 export interface RenderingCommandOutput extends CommandOutput {
   outputType: OutputType
   basename?: string
+  optional?: boolean
+  cover?: boolean
 }
 
 export type CommandOutputs = RenderingCommandOutput[]
@@ -37,7 +38,7 @@ export interface OutputConstructorArgs {
 
 export interface StreamingOutputArgs extends OutputConstructorArgs {
   commandOutput: StreamingCommandOutput
-  mashes: Mash[]
+  mashes: Mashes
 }
 
 export interface RenderingOutputArgs extends OutputConstructorArgs {
@@ -45,6 +46,7 @@ export interface RenderingOutputArgs extends OutputConstructorArgs {
   mash: Mash
   startTime?: Time
   endTime?: Time
+  upload?: boolean
 }
 
 export interface RenderingOutput {
@@ -71,7 +73,9 @@ export interface ImageOutputArgs extends RenderingOutputArgs {
 
 export interface ImageOutput extends RenderingOutput {}
 
-export interface AudioOutputArgs extends RenderingOutputArgs {}
+export interface AudioOutputArgs extends RenderingOutputArgs {
+  optional?: boolean
+}
 
 export interface AudioOutput extends RenderingOutput {}
 
@@ -83,6 +87,7 @@ export interface WaveformOutput extends RenderingOutput {}
 
 export interface VideoOutputArgs extends RenderingOutputArgs {
   cover?: boolean
+  mute?: boolean
 }
 export interface VideoOutput extends RenderingOutput {}
 

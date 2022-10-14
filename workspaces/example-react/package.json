@@ -1,28 +1,16 @@
 {
-  "name": "example-react",
-  "version": "5.0.6",
+  "name": "@moviemasher/example-react",
+  "version": "5.1.0",
   "description": "Movie Masher React Example",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
   "license": "MPL-2.0",
-  "main": "dist/index.js",
-  "source": "index.tsx",
-  "scripts": {
-    "build-rollup": "rollup --config dev/rollup/iife.config.js",
-    "build": "run-s clean copy build-rollup",
-    "clean-create-img": "mkdir -p dist/img",
-    "clean-create-shared": "mkdir -p dist/shared",
-    "clean-delete": "rimraf dist",
-    "clean": "run-s clean-delete clean-create-img clean-create-shared",
-    "copy-html": "cp ../../dev/index.html dist",
-    "copy-icon": "cp ../../dev/img/favicon.ico dist",
-    "copy-img": "cp -R ../../dev/img dist",
-    "copy-shared": "cp -R ../../dev/shared dist",
-    "copy": "run-s copy-icon copy-shared copy-img copy-html"
-  },
-  "dependencies": {
-    "@moviemasher/client-react": "5.0.6"
+  "scripts": {  
+    "logs": "docker compose --file dev/docker-compose.yml logs -f",
+    "start": "docker compose --file dev/docker-compose.yml up -d",
+    "stop": "docker compose --file dev/docker-compose.yml down -v",
+    "build": "node ../../dev/build/replace-paths.js ./src/index.html ./public/index.html"
   }
 }

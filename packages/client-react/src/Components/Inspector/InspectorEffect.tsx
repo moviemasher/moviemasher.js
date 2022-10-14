@@ -1,53 +1,52 @@
-import { Effect, Transformable } from '@moviemasher/moviemasher.js'
+import { ClassSelected, Effect, EffectRemovehandler } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
 import { ReactResult, WithClassName } from '../../declarations'
-import { useSelected, useSelectedEffect } from '../../Hooks'
-import { useMashEditor } from '../../Hooks/useMashEditor'
-import { DragSuffix } from '../../Setup/Constants'
+import { DragSuffix } from '../../Helpers/DragDrop'
 import { View } from '../../Utilities'
 
-interface InspectorEffectProps extends WithClassName {
+export interface InspectorEffectProps extends WithClassName {
   effect: Effect
+  selectedEffect: Effect | null
+  setSelectedEffect: (effect: Effect | null) => void
+  index: number 
+  removeHandler: EffectRemovehandler
 }
 
 /**
- * @parents DefaultEffectsInput
+ * @parents InspectorEffects
  */
-function InspectorEffect(props: InspectorEffectProps): ReactResult {
-  const masher = useMashEditor()
-  const selectedEffect = useSelectedEffect()
-  const selectedClip = useSelected()
-  const { effect, ...rest } = props
-
+export function InspectorEffect(props: InspectorEffectProps): ReactResult {
+  const { 
+    className, removeHandler, index, effect, selectedEffect, setSelectedEffect, 
+    ...rest 
+  } = props
   const selected = selectedEffect === effect
 
-  const onMouseDown = (event: React.MouseEvent) => {
-    if (!selected) masher.selectEffect(effect)
-  }
+  const onMouseDown = () => { if (!selected) setSelectedEffect(effect) }
 
-
-  const onDragEnd: React.DragEventHandler = event => {
+  const onDragEnd = (event: DragEvent) => {
     const { dataTransfer } = event
+    if (!dataTransfer) return 
+    
     const { dropEffect } = dataTransfer
-    if (dropEffect === 'none') {
-      masher.removeEffect(effect)
-    }
+    if (dropEffect === 'none') removeHandler(effect)
   }
 
-  const onDragStart: React.DragEventHandler = event => {
-    if (!selected) onMouseDown(event)
-
-    const data = { index: (selectedClip! as Transformable).effects.indexOf(effect)}
+  const onDragStart = (event: DragEvent) => {
+    if (!selected) onMouseDown()
+    const data = { index }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
+
+    if (!dataTransfer) return 
+
     dataTransfer.effectAllowed = 'move'
-    // console.log("onDragStart setData", `effect${DragSuffix}`, json)
     dataTransfer.setData(`effect${DragSuffix}`, json)
   }
 
-  const classes = ['effect']
-  if (selected) classes.push('selected')
+  const classes = [className || 'effect']
+  if (selected) classes.push(ClassSelected)
   const viewProps = {
     ...rest,
     children: effect.label,
@@ -58,5 +57,3 @@ function InspectorEffect(props: InspectorEffectProps): ReactResult {
   }
   return <View {...viewProps} />
 }
-
-export { InspectorEffect, InspectorEffectProps }

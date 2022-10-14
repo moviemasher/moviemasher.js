@@ -1,7 +1,7 @@
-import { MashEditorOptions } from "../Editor/MashEditor/MashEditor"
-import { colorTransparent } from "../Utility/Color"
+import { EditorArgs } from "../Editor/Editor"
+import { colorBlack } from "../Utility/Color"
 
-const MashEditorDefaults: MashEditorOptions = {
+const DefaultEditorArgs: EditorArgs = {
   buffer: 10,
   fps: 30,
   loop: true,
@@ -10,31 +10,35 @@ const MashEditorDefaults: MashEditorOptions = {
   autoplay: false,
 }
 
-const MashDefaults = {
-  label: "Unlabeled Mash",
+const DefaultMash = {
+  label: "Mash",
   quantize: 10,
-  backcolor: colorTransparent,
+  color: colorBlack,
   gain: 0.75,
   buffer: 10,
 }
 
-const Default = {
+const DefaultCast = {
+  label: "Cast",
+  quantize: 10,
+  color: colorBlack,
+  gain: 0.75,
+  buffer: 10,
+}
+
+export const Default = {
+  duration: 3,
   label: "Unlabeled",
-  masher: MashEditorDefaults,
-  mash: MashDefaults,
-  instance: {
-    audio: { gain: 1.0, trim: 0, loop: 1 },
-    video: { speed: 1.0 }
-  },
+  editor: DefaultEditorArgs,
+  cast: DefaultCast,
+  mash: DefaultMash,
   definition: {
-    frame: { duration: 2 },
     image: { duration: 2 },
-    theme: { duration: 3 },
-    transition: { duration: 1 },
+    textcontainer: { duration: 3 },
+    shape: { duration: 3 },
+    visible: { duration: 3 },
     video: { fps: 0 },
     videosequence: { pattern: '%.jpg', fps: 10, increment: 1, begin: 1, padding: 0 },
     videostream: { duration: 10 },
   },
 }
-
-export { Default, MashDefaults, MashEditorDefaults }

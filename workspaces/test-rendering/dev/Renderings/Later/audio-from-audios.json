@@ -1,0 +1,88 @@
+{
+  "id": "audio-from-audios-json",
+  "outputs": [
+    {
+      "outputType": "audio"
+    }
+  ],
+  "mash": {
+    "label": "",
+    "quantize": 10,
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "audio",
+        "layer": 0,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "containerId": "",
+            "contentId": "audio-one",
+            "frames": 10
+          },
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "containerId": "",
+            "contentId": "audio-two",
+            "content": {
+              "trim": 0
+            },
+            "frames": 10
+          },
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "containerId": "",
+            "contentId": "audio-three",
+            "content": {
+              "trim": 0
+            },
+            "frames": 10
+          }
+        ]
+      },
+      {
+        "dense": true,
+        "trackType": "audio",
+        "layer": 1,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "containerId": "",
+            "contentId": "audio-loop",
+            "frames": 30
+          }
+        ]
+      }
+    ]
+  },
+  "definitions": [
+    {
+      "type": "audio",
+      "label": "Audio 1", "id": "audio-one",
+      "url": "../shared/audio/one.wav",
+      "source": "../shared/audio/one.wav",
+      "duration": 1
+    }, 
+    {
+      "type": "audio",
+      "label": "Audio 2", "id": "audio-two",
+      "url": "../shared/audio/two.wav",
+      "source": "../shared/audio/two.wav",
+      "duration": 1
+    }, 
+    {
+      "type": "audio",
+      "label": "Audio 3", "id": "audio-three",
+      "url": "../shared/audio/three.wav",
+      "source": "../shared/audio/three.wav",
+      "duration": 1
+    }, 
+    {
+      "type": "audio",
+      "label": "Audio Loop", "id": "audio-loop",
+      "url": "../shared/audio/loop.mp3",
+      "source": "../shared/audio/loop.mp3",
+      "duration": 3
+    }
+  ]
+}

@@ -1,64 +1,44 @@
-import { VisibleSource, GraphFile, FilesArgs, GraphFiles } from "../../declarations"
-import { AVType, DefinitionType, GraphType, LoadType } from "../../Setup/Enums"
-import { Image, ImageDefinition, ImageObject } from "./Image"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
-import { VisibleDefinitionMixin } from "../../Mixin/Visible/VisibleDefinitionMixin"
-import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
-import { Time } from "../../Helpers/Time/Time"
-import {
-  TransformableDefinitionMixin
-} from "../../Mixin/Transformable/TransformableDefintiionMixin"
-import { Preloader } from "../../Preloader/Preloader"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
-import { Errors } from "../../Setup/Errors"
+import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
+import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
+import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
+import { LoadedImage } from "../../declarations"
+import { Loader } from "../../Loader/Loader"
+import { Size } from "../../Utility/Size"
 
-
-const ImageDefinitionWithClip = ClipDefinitionMixin(PreloadableDefinition)
-const ImageDefinitionWithVisible = VisibleDefinitionMixin(ImageDefinitionWithClip)
-const ImageDefinitionWithTransformable = TransformableDefinitionMixin(ImageDefinitionWithVisible)
-
-class ImageDefinitionClass extends ImageDefinitionWithTransformable implements ImageDefinition {
-  private preloadableFile(args: FilesArgs): GraphFile | undefined {
-    const { avType, graphType } = args
-    if (avType === AVType.Audio) return
-
-    const file = this.preloadableSource(graphType)
-    if (!file) throw Errors.invalid.url + this.id + ' preloadableFile'
-
-    const graphFile: GraphFile = {
-      type: this.loadType, file, definition: this, input: true
-    }
-    return graphFile
+const ImageDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
+const ImageDefinitionWithContent = ContentDefinitionMixin(ImageDefinitionWithContainer)
+const ImageDefinitionWithPreloadable = PreloadableDefinitionMixin(ImageDefinitionWithContent)
+const ImageDefinitionWithUpdatable = UpdatableSizeDefinitionMixin(ImageDefinitionWithPreloadable)
+export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implements ImageDefinition {
+  constructor(...args: any[]) {
+    super(...args)
+    const [object] = args
+    const { loadedImage } = object as ImageDefinitionObject
+    if (loadedImage) this.loadedImage = loadedImage
   }
 
-  definitionFiles(args: FilesArgs): GraphFiles {
-    const graphFiles: GraphFiles = []
-    const graphFile = this.preloadableFile(args)
-    if (graphFile) graphFiles.push(graphFile)
-    return graphFiles
+  definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
+    const superElement = super.definitionIcon(loader, size)
+    if (superElement) return superElement
+
+    const { url } = this
+    return this.urlIcon(url, loader, size)
   }
 
-  get instance() : Image { return this.instanceFromObject(this.instanceObject) }
-
-  instanceFromObject(object : ImageObject) : Image {
-    const instance = new ImageClass({ ...this.instanceObject, ...object })
-    return instance
-  }
-
-  loadedVisible(preloader: Preloader, quantize: number, time: Time): VisibleSource | undefined {
-    const filesArgs: FilesArgs = {
-      avType: AVType.Video, graphType: GraphType.Canvas,
-      time: time, quantize
-    }
-    const file = this.preloadableFile(filesArgs)
-    if (!file || !preloader.loadedFile(file)) return
-
-    return preloader.getFile(file)
+  instanceFromObject(object: ImageObject = {}) : Image {
+    return new ImageClass(this.instanceArgs(object))
   }
 
   loadType = LoadType.Image
 
+  loadedImage?: LoadedImage 
+  
   type = DefinitionType.Image
 }
-
-export { ImageDefinitionClass }

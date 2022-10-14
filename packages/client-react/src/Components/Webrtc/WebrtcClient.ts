@@ -11,7 +11,7 @@ function enableStereoOpus(sdp:string):string {
   return sdp.replace(/a=fmtp:111/, 'a=fmtp:111 stereo=1\r\na=fmtp:111')
 }
 
-class WebrtcClient {
+export class WebrtcClient {
   constructor(endpointPromise: EndpointPromiser, setStatus: StringSetter) {
     this.setStatus = setStatus
     this.endpointPromise = endpointPromise
@@ -85,15 +85,15 @@ class WebrtcClient {
                 type: 'answer',
                 sdp: stereo ? enableStereoOpus(originalAnswer.sdp!) : originalAnswer.sdp
               })
-              // console.debug(this.constructor.name, "createConnection setLocalDescription")
+              console.debug(this.constructor.name, "createConnection setLocalDescription")
               peer.setLocalDescription(updatedAnswer).then(() => {
                 const { localDescription } = peer
                 if (!localDescription) throw Errors.invalid.object + 'localDescription'
 
                 const request: StreamingRemoteRequest = { id, localDescription }
-                // console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
+                console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
                 this.endpointPromise(Endpoints.streaming.remote, request).then((response: StreamingRemoteResponse) => {
-                  // console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
+                  console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
                 })
               })
             })
@@ -116,5 +116,3 @@ class WebrtcClient {
 
   setStatus: StringSetter
 }
-
-export { WebrtcClient }

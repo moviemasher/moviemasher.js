@@ -3,13 +3,13 @@ import ts from 'rollup-plugin-ts'
 
 import pkg from '../../package.json'
 
-const { peerDependencies, module, source } = pkg
+const { module } = pkg
 
 export default {
-  external: Object.keys(peerDependencies),
-  input: source,
-  output: { format: "esm", file: module, sourcemap: false },
+  input: 'src/index.ts',
+  output: { format: 'esm', file: module },
   plugins: [
-    peerDepsExternal(), ts({ tsconfig: "./dev/tsconfig.json" })
+    peerDepsExternal(),
+    ts({ tsconfig: './dev/tsconfig.json' })
   ]
 }

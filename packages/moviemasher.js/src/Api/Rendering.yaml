@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Converted from Rendering.yaml with typeconv
+  version: '1'
+  x-id: Rendering.yaml
+  x-comment: >-
+    Generated from packages/moviemasher.js/src/Api/Rendering.ts by
+    core-types-json-schema (https://github.com/grantila/core-types-json-schema)
+    on behalf of typeconv (https://github.com/grantila/typeconv)
+paths: {}
+components:
+  schemas:
+    CommandInput:
+      properties:
+        source:
+          title: CommandInput.source
+          type: string
+        options:
+          $ref: '#/components/schemas/ValueObject'
+          title: CommandInput.options
+      required:
+        - source
+      additionalProperties: false
+      title: CommandInput
+      type: object
+    CommandInputs:
+      items:
+        $ref: '#/components/schemas/CommandInput'
+        title: CommandInputs.[]
+      title: CommandInputs.[]
+      type: array
+    CommandOptions:
+      properties:
+        output:
+          $ref: '#/components/schemas/CommandOutput'
+          title: CommandOptions.output
+      required:
+        - output
+      additionalProperties: false
+      title: CommandOptions
+      type: object
+    CommandDescription:
+      properties:
+        duration:
+          title: CommandDescription.duration
+          type: number
+        inputs:
+          $ref: '#/components/schemas/CommandInputs'
+          title: CommandDescription.inputs
+        graphFilters:
+          $ref: '#/components/schemas/GraphFilters'
+          title: CommandDescription.graphFilters
+      additionalProperties: false
+      title: CommandDescription
+      type: object
+    RenderingResult:
+      properties:
+        error:
+          title: RenderingResult.error
+          type: string
+        outputType:
+          $ref: '#/components/schemas/OutputType'
+          title: RenderingResult.outputType
+        destination:
+          title: RenderingResult.destination
+          type: string
+      required:
+        - outputType
+        - destination
+      additionalProperties: false
+      title: RenderingResult
+      type: object
+    RenderingDescription:
+      properties:
+        audibleCommandDescription:
+          $ref: '#/components/schemas/CommandDescription'
+          title: RenderingDescription.audibleCommandDescription
+        visibleCommandDescriptions:
+          $ref: '#/components/schemas/CommandDescriptions'
+          title: RenderingDescription.visibleCommandDescriptions
+        commandOutput:
+          $ref: '#/components/schemas/RenderingCommandOutput'
+          title: RenderingDescription.commandOutput
+      required:
+        - commandOutput
+      additionalProperties: false
+      title: RenderingDescription
+      type: object
+    CommandDescriptions:
+      items:
+        $ref: '#/components/schemas/CommandDescription'
+        title: CommandDescriptions.[]
+      title: CommandDescriptions.[]
+      type: array
+    RenderingState:
+      properties:
+        total:
+          title: RenderingState.total
+          type: number
+        completed:
+          title: RenderingState.completed
+          type: number
+      required:
+        - total
+        - completed
+      additionalProperties: false
+      title: RenderingState
+      type: object
+    RenderingStatus:
+      title: RenderingStatus
+    RenderingInput:
+      properties:
+        definitions:
+          $ref: '#/components/schemas/DefinitionObjects'
+          title: RenderingInput.definitions
+        mash:
+          $ref: '#/components/schemas/MashObject'
+          title: RenderingInput.mash
+      required:
+        - mash
+      additionalProperties: false
+      title: RenderingInput
+      type: object
+    RenderingOptions:
+      properties:
+        outputs:
+          $ref: '#/components/schemas/CommandOutputs'
+          title: RenderingOptions.outputs
+      required:
+        - outputs
+      additionalProperties: false
+      title: RenderingOptions
+      type: object
+    RenderingStartRequest:
+      additionalProperties: false
+      title: RenderingStartRequest
+      description: |-
+        Start rendering a mash object
+        @swagger rendering/start
+      type: object
+    RenderingStartResponse:
+      additionalProperties: false
+      title: RenderingStartResponse
+      type: object
+    RenderingStatusRequest:
+      properties:
+        renderingId:
+          title: RenderingStatusRequest.renderingId
+          type: string
+      required:
+        - renderingId
+      additionalProperties: false
+      title: RenderingStatusRequest
+      type: object
+    RenderingStatusResponse:
+      additionalProperties: false
+      title: RenderingStatusResponse
+      type: object
+    RenderingUploadRequest:
+      additionalProperties: false
+      title: RenderingUploadRequest
+      type: object
+    RenderingUploadResponse:
+      properties:
+        id:
+          title: RenderingUploadResponse.id
+          type: string
+        fileProperty:
+          title: RenderingUploadResponse.fileProperty
+          type: string
+        loadType:
+          $ref: '#/components/schemas/LoadType'
+          title: RenderingUploadResponse.loadType
+        fileApiCallback:
+          $ref: '#/components/schemas/ApiCallback'
+          title: RenderingUploadResponse.fileApiCallback
+      additionalProperties: false
+      title: RenderingUploadResponse
+      type: object

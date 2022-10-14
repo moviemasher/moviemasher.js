@@ -1,33 +1,51 @@
-import { FilesArgs, GraphFile, GraphFiles } from "../../declarations"
-import { AVType, DefinitionType, LoadType } from "../../Setup/Enums"
-import { Font, FontDefinition, FontObject } from "./Font"
+import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { FontClass } from "./FontInstance"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { UnknownObject, ValueObject } from "../../declarations"
 
-class FontDefinitionClass extends PreloadableDefinition implements FontDefinition {
-  definitionFiles(args: FilesArgs): GraphFiles {
-    const { avType, graphType } = args
-    if (avType === AVType.Audio) return []
 
+export class FontDefinitionClass extends DefinitionBase implements FontDefinition {
+  constructor(...args: any[]) {
+    super(...args)
+    const [object] = args
+    const { source, url } = object as FontDefinitionObject
+    const sourceOrUrl = source || url || ''
+
+    this.source = source || sourceOrUrl
+    this.url = url || sourceOrUrl
+  }
+
+  family = ""
+
+  fileUrls(args: GraphFileArgs): GraphFiles {
+    const { visible, editing } = args
+    if (!visible) return []
+
+    const { url, source } = this
+    const file = editing ? url : source
     const graphFile: GraphFile = {
-      type: this.loadType, file: this.preloadableSource(graphType), definition: this
+      type: LoadType.Font, file, definition: this
     }
     return [graphFile]
   }
-
-  get instance(): Font {
-    return this.instanceFromObject(this.instanceObject)
-  }
-
-  instanceFromObject(object : FontObject) : Font {
-    return new FontClass({ ...this.instanceObject, ...object })
+  instanceFromObject(object: FontObject = {}): Font {
+    return new FontClass(this.instanceArgs(object))
   }
 
   loadType = LoadType.Font
 
-  retain = true
+  toJSON(): UnknownObject {
+    const json = super.toJSON()
+    const { url, source } = this
+    json.url = url
+    json.source = source
+    return json
+  }
+  source = ''
 
   type = DefinitionType.Font
-}
 
-export { FontDefinitionClass }
+  url = ''
+}

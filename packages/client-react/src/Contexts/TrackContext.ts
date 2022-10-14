@@ -1,17 +1,10 @@
 import React from 'react'
-import { TrackType } from '@moviemasher/moviemasher.js'
+import { Track } from '@moviemasher/moviemasher.js'
 
-interface TrackContextInterface {
-  trackType: TrackType
-  layer: number
+export interface TrackContextInterface {
+  track?: Track
 }
 
-const TrackContextDefault: TrackContextInterface = {
-  trackType: TrackType.Video,
-  layer: 0,
-}
+export const TrackContextDefault: TrackContextInterface = {}
 
-const TrackContext = React.createContext(TrackContextDefault)
-const TrackContextProvider = TrackContext.Provider
-
-export { TrackContext, TrackContextProvider, TrackContextInterface, TrackContextDefault }
+export const TrackContext = React.createContext(TrackContextDefault)

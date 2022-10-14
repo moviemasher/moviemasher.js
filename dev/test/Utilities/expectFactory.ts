@@ -1,9 +1,9 @@
 import { GenericFactory } from "../../../packages/moviemasher.js/src/declarations"
-import { Definition, DefinitionObject } from "../../../packages/moviemasher.js/src/Base/Definition"
-import { Instance, InstanceObject } from "../../../packages/moviemasher.js/src/Base/Instance"
+import { Definition, DefinitionObject } from "../../../packages/moviemasher.js/src/Definition/Definition"
+import { Instance, InstanceObject } from "../../../packages/moviemasher.js/src/Instance/Instance"
 import { Errors } from "../../../packages/moviemasher.js/src/Setup/Errors"
 
-const expectFactory = (object : unknown | undefined) :void => {
+export const expectFactory = (object : unknown | undefined) :void => {
   expect(object).toBeDefined()
   if (!object) throw Errors.internal
 
@@ -14,8 +14,5 @@ const expectFactory = (object : unknown | undefined) :void => {
   expect(factory.definition).toBeInstanceOf(Function)
   expect(factory.definitionFromId).toBeInstanceOf(Function)
   expect(factory.fromId).toBeInstanceOf(Function)
-  expect(factory.initialize).toBeInstanceOf(Function)
   expect(factory.instance).toBeInstanceOf(Function)
 }
-
-export { expectFactory }

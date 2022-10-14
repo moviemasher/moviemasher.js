@@ -1,77 +1,239 @@
+import { PreviewItem, PreviewItems, Scalar, SvgItem, UnknownObject } from "../../declarations"
+import { Size } from "../../Utility/Size"
+import { GraphFiles, GraphFileOptions } from "../../MoveMe"
+import { SelectedItems } from "../../Utility/SelectedProperty"
+import { Default } from "../../Setup/Default"
+import { Errors } from "../../Setup/Errors"
+import { DroppingPosition, SelectType } from "../../Setup/Enums"
+import { assertPopulatedString, isAboveZero, isNumber, isPopulatedArray } from "../../Utility/Is"
+import { EditedClass } from "../EditedClass"
+import { Mash, Mashes } from "../Mash/Mash"
+import { Cast, CastArgs } from "./Cast"
+import { assertLayer, isLayerFolder, layerInstance } from "./Layer/LayerFactory"
 import {
-  Any, GraphFiles, Size, UnknownObject, VisibleContextData
-} from "../../declarations"
-import { Emitter } from "../../Helpers/Emitter"
-import { idGenerate } from "../../Utility/Id"
-import { isPopulatedString } from "../../Utility/Is"
-import { Mash } from "../Mash/Mash"
-import { MashFactory } from "../Mash/MashFactory"
-import { CastObject, Cast } from "./Cast"
-import { FilterGraphOptions } from "../Mash/FilterGraph/FilterGraph"
+  Layer, LayerAndPosition, LayerFolder, LayerObject, Layers, LayersAndIndex
+} from "./Layer/Layer"
+import { EmptyMethod } from "../../Setup/Constants"
+import { PreviewOptions } from "../Mash/Preview/Preview"
+import { svgElement, svgPolygonElement } from "../../Utility/Svg"
+import { Actions } from "../../Editor/Actions/Actions"
+import { Selectables } from "../../Editor/Selectable"
+import { arrayReversed } from "../../Utility/Array"
+import { Property } from "../../Setup/Property"
 
-class CastClass implements Cast {
-  constructor(...args: Any[]) {
-    const object = args[0] || {}
+const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
+  return layers.flatMap(layer => {
+    if (isLayerFolder(layer)) {
+      return [layer, ...CastLayerFolders(layer.layers)]
+    }
+    return []
+  })
+}
+
+const CastPositionIndex = (index: number, droppingPosition?: DroppingPosition): number => {
+  if (droppingPosition === DroppingPosition.After) return index + 1
+
+  return index
+}
+
+const CastFindLayerFolder = (layer: Layer, layers: Layers): LayerFolder | undefined => {
+  if (layers.includes(layer)) return
+
+  const layerFolders = CastLayerFolders(layers)
+  return layerFolders.find(layerFolder => layerFolder.layers.includes(layer))
+}
+
+const CastLayersAndIndex = (layers: Layers, layerAndPosition: LayerAndPosition): LayersAndIndex => {
+  const { layer, position = DroppingPosition.At } = layerAndPosition
+  const numeric = isNumber(position)
+  const defined = !!layer
+  const folder = defined && isLayerFolder(layer)
+  const index = numeric ? position : 0
+  if (!defined || numeric) return {
+    index: index, layers: folder ? layer.layers : layers
+  }
+  if (folder && position === DroppingPosition.At) return {
+    index: 0, layers: layer.layers
+  }
+  const layerFolder = CastFindLayerFolder(layer, layers)
+  if (!layerFolder) return { index, layers }
+
+  const { layers: folderLayers} = layerFolder
+  const currentIndex = folderLayers.indexOf(layer)
+  if (currentIndex < 0) throw new Error(Errors.internal)
+
+  return { layers: folderLayers, index: CastPositionIndex(currentIndex, position) }
+}
+
+export class CastClass extends EditedClass implements Cast {
+  constructor(args: CastArgs) {
+    super(args)
     const {
-      createdAt,
-      id,
-      label,
+      createdAt, icon, id, label,
+      definitions,
+      layers,
+      preloader,
       ...rest
-    } = <CastObject>object
-
-    if (id) this._id = id
-    if (createdAt) this.createdAt = createdAt
-    if (label && isPopulatedString(label)) this.label = label
-
-    Object.assign(this.data, rest)
-    this.mashes.push(MashFactory.instance({
-      tracks: [{ clips: [{ definitionId: 'id-image' }] }]
-    }))
+    } = args
+    this.dataPopulate(rest)
+    if (isPopulatedArray(layers)) this.layers.push(...layers.map(object => 
+      this.createLayer(object)
+    ))
+    this.label ||= Default.cast.label
   }
 
-  createdAt = ''
-
-  data: UnknownObject = {}
-
-  private _emitter?: Emitter
-
-  get emitter(): Emitter | undefined { return this._emitter }
-
-  set emitter(value: Emitter | undefined) {
-    this._emitter = value
-    this.mash.emitter = value
+  addLayer(layer: Layer, layerAndPosition: LayerAndPosition = {}) {
+    const { layers, index } = CastLayersAndIndex(this.layers, layerAndPosition)
+    layers.splice(index, 0, layer)
   }
-  private _id = ''
 
-  get id(): string { return this._id ||= idGenerate() }
+  private _buffer = Default.cast.buffer
+  get buffer(): number { return this._buffer }
+  set buffer(value: number) {
+    if (!isAboveZero(value)) throw Errors.invalid.argument + 'buffer ' + value
 
-  get imageData() : VisibleContextData { return this.mash.imageData }
+    if (this._buffer !== value) {
+      this._buffer = value
+      this.mashes.forEach(mash => { mash.buffer = value })
+    }
+  }
 
-  get imageSize() : Size { return this.mash.imageSize }
+  createLayer(layerObject: LayerObject): Layer {
+    const { preloader } = this
+    const object: LayerObject = {
+      preloader, 
+      ...layerObject
+    }
+    const layer = layerInstance(object, this)
+    assertLayer(layer)
+    layer.cast = this
 
-  set imageSize(value : Size) {this.mash.imageSize = value }
+    return layer
+  }
 
-  label = ''
+  destroy(): void {
+    this.mashes.forEach(mash => mash.destroy())
+  }
 
-  get mash(): Mash { return this.mashes[0] }
+  protected override emitterChanged() {
+    this.mashes.forEach(mash => mash.emitter = this.emitter)
+  }
 
-  mashes: Mash[] = []
+  editedGraphFiles(args?: GraphFileOptions): GraphFiles {
+    return this.mashes.flatMap(mash => mash.editedGraphFiles(args))
+  }
 
-  graphFiles(args: FilterGraphOptions): GraphFiles  {
-    const graphFiles = this.mashes.flatMap(mash => mash.graphFiles(args))
-    return graphFiles
+  get imageSize(): Size { return super.imageSize }
+  set imageSize(value: Size) {
+    super.imageSize = value
+    const { imageSize } = this
+    this.mashes.forEach(mash => { mash.imageSize = imageSize })
+  }
+
+  layers: Layers = []
+
+  get layerFolders(): LayerFolder[] {
+    return CastLayerFolders(this.layers)
+  }
+
+  loadPromise(args?: GraphFileOptions): Promise<void> {
+    return Promise.all(this.mashes.map(mash => mash.loadPromise(args))).then(EmptyMethod)
+  }
+
+  get loading(): boolean {
+    return this.mashes.some(mash => mash.loading)
+  }
+
+  get mashes(): Mashes { return this.layers.flatMap(layer => layer.mashes) }
+
+  moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): LayerAndPosition {
+    const result = this.removeLayer(layer)
+    this.addLayer(layer, layerAndPosition)
+    return result
+  }
+
+  putPromise(): Promise<void> { 
+    return Promise.all(this.mashes.map(mash => mash.putPromise())).then(EmptyMethod)
+  }
+
+  reload(): Promise<void> | undefined {
+    // TODO: reload mashes?
+
+    return
+  }
+
+  removeLayer(layer: Layer): LayerAndPosition {
+    const layerFolder = CastFindLayerFolder(layer, this.layers)
+    const layers = layerFolder?.layers || this.layers
+    const index = layers.indexOf(layer)
+    if (index < 0) {
+      console.error("removeLayer", index, layers.length, layer.label, layerFolder?.label)
+      throw new Error(Errors.internal)
+    }
+
+    layers.splice(index, 1)
+    return { position: index, layer: layerFolder }
+  }
+
+  selectType = SelectType.Cast
+
+  selectables(): Selectables { return [this] }
+
+  selectedItems(actions: Actions): SelectedItems {
+    return this.properties.map(property => {
+      const undoValue = this.value(property.name)
+      const target = this
+      return {
+        value: undoValue,
+        selectType: SelectType.Cast, property, 
+        changeHandler: (property: string, redoValue: Scalar) => {
+          assertPopulatedString(property)
+      
+          const options = { property, target, redoValue, undoValue }
+          actions.create(options)
+        },
+      }
+    })
+  }
+
+  setValue(value: Scalar, name: string, property?: Property): void {
+    super.setValue(value, name, property)
+    if (property) return
+
+    switch (name) {
+      case 'color': {
+        this.mashes.forEach(mash => mash.setValue(value, name, property))
+        break
+      }
+    }
+  }
+  
+  previewItems(args: PreviewOptions): Promise<PreviewItems> {
+    const { mashes, imageSize } = this
+    const allSvgs: PreviewItems = []
+
+    const { background = this.color } = args
+
+    const mashArgs = { ...args, color: '' }
+
+    const element = svgElement(imageSize, svgPolygonElement(imageSize, '', background)) as PreviewItem
+    let promise = Promise.resolve([element])
+
+    arrayReversed(mashes).forEach((mash: Mash) => {
+      promise = promise.then(svgs => {
+        allSvgs.push(...svgs)
+        return mash.previewItems(mashArgs)
+      })
+    })
+    return promise.then(svgs => {
+        allSvgs.push(...svgs)
+        return allSvgs
+    })
   }
 
   toJSON(): UnknownObject {
-     const json: UnknownObject = {
-      label: this.label,
-      createdAt: this.createdAt,
-      ...this.data,
-    }
-    if (this._id) json.id = this.id
+    const json = super.toJSON()
+    json.layers = this.layers
     return json
-
   }
 }
-
-export { CastClass }

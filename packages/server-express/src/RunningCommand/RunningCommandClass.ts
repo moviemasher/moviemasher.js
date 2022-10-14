@@ -2,22 +2,24 @@ import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
 import {
-  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors
+  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters, AVType, isString, assertPopulatedString, isPopulatedString, assertPopulatedArray
 } from "@moviemasher/moviemasher.js"
 
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
+import { commandArgsString } from "../Utilities/Command"
 
-class RunningCommandClass extends EventEmitter implements RunningCommand {
+export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
-    const { graphFilters, inputs, output } = args
-    if (graphFilters) this.graphFilters = graphFilters
+    const { commandFilters, inputs, output, avType } = args
+    this.avType = avType
+    if (commandFilters) this.commandFilters = commandFilters
     if (inputs) this.commandInputs = inputs
-    if (!(this.commandInputs.length || this.graphFilters.length)) {
-      console.trace(this.constructor.name, "with no inputs or graphFilters")
+    if (!(this.commandInputs.length || this.commandFilters.length)) {
+      console.trace(this.constructor.name, "with no inputs or commandFilters")
       throw Errors.invalid.argument + 'inputs'
     }
     this.output = output
@@ -27,11 +29,15 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
   get command(): Command {
     if (this._commandProcess) return this._commandProcess
 
-    const { commandInputs: inputs, graphFilters, output } = this
-    return this._commandProcess = commandInstance({ graphFilters, inputs, output })
+    const { commandInputs: inputs, commandFilters, output, avType } = this
+    // console.log(this.constructor.name, "command", inputs)
+    const commandOptions: CommandOptions = { commandFilters, inputs, output, avType }
+    return this._commandProcess = commandInstance(commandOptions)
   }
 
-  graphFilters: GraphFilters = []
+  avType: AVType
+
+  commandFilters: CommandFilters = []
 
   id: string
 
@@ -49,11 +55,13 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
   output: CommandOutput = {}
 
   run(destination: CommandDestination): void {
-    // console.log(this.constructor.name, "run")
+    // console.log(this.constructor.name, "run", destination)
 
     this.command.on('error', (...args: any[]) => {
-      console.error(this.constructor.name, "run received error", this.runError(...args))
-      this.emit('error', this.runError(...args))
+      const destinationString = isPopulatedString(destination) ? destination : ''
+      const errorString = this.runError(destinationString, ...args)
+      console.error(this.constructor.name, "run on error", errorString)
+      this.emit('error', errorString)
     })
     this.command.on('start', (...args: any[]) => {
       this.emit('start', ...args)
@@ -61,49 +69,39 @@ class RunningCommandClass extends EventEmitter implements RunningCommand {
     this.command.on('end', (...args: any[]) => {
       this.emit('end', ...args)
     })
-    if (typeof destination === 'string') {
-      // console.log(this.constructor.name, "run", destination)
-      this.makeDirectory(destination)
+    if (isPopulatedString(destination)) this.makeDirectory(destination)
 
-    }
     try {
+      this.command.output(destination)
       this.command.run()
     } catch (error) {
       console.error(this.constructor.name, "run received error", error)
     }
   }
 
-  runError(...args: any[]): string {
-    return [...this.command._getArguments(), ...args].join("\n")
+  runError(destination: string, ...args: any[]): string {
+    return commandArgsString(this.command._getArguments(), destination, ...args) 
   }
 
-  async runPromise(destination: CommandDestination): Promise<CommandResult> {
-    // console.log(this.constructor.name, "runPromise", destination)
-    const promise = new Promise<CommandResult>(resolve => {
-      this.command.on('error', (...args: any[]) => {
-        console.error(this.constructor.name, "runPromise received error event", ...args)
-        resolve({ error: this.runError(...args) })
-      })
-      this.command.on('end', () => {
-        // console.log(this.constructor.name, "runPromise received end event")
 
-        const result: CommandResult = {}
-        resolve(result)
+  runPromise(destination: CommandDestination): Promise<CommandResult> {
+    assertPopulatedString(destination)
+
+    const result: CommandResult = {}
+    const promise = new Promise<CommandResult>((resolve, reject) => {
+      const { command } = this
+      command.on('error', (...args: any[]) => {
+        reject({ error: this.runError(destination, ...args)})
       })
+      command.on('end', () => { resolve(result) })
       try {
-        if (typeof destination === 'string') {
-          this.makeDirectory(destination)
-          this.command.save(destination)
-        }
-        else console.log(this.constructor.name, "runPromise destination not string", destination)
+        this.makeDirectory(destination)
+        command.save(destination)
       }
       catch (error) {
-        console.error(this.constructor.name, "runPromise resolving during catch")
-        resolve({ error: this.runError(error) })
+        reject({ error: this.runError(destination, error) })
       }
     })
     return promise
   }
 }
-
-export { RunningCommandClass }

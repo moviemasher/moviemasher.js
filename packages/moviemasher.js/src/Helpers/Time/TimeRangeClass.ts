@@ -1,15 +1,18 @@
-import { Is } from "../../Utility/Is"
+import { isInteger } from "../../Utility/Is"
 import { TimeClass, timeEqualizeRates } from "./TimeClass"
 import { roundWithMethod } from "../../Utility/Round"
 import { Errors } from "../../Setup/Errors"
 import { Time, TimeRange, TimeRanges, Times } from "./Time"
 
-class TimeRangeClass extends TimeClass implements TimeRange {
+export class TimeRangeClass extends TimeClass implements TimeRange {
   frames : number
 
   constructor(frame = 0, fps = 1, frames = 1) {
     super(frame, fps)
-    if (!(Is.integer(frames) && frames >= 0)) throw Errors.timeRange + 'frames'
+    if (!(isInteger(frames) && frames >= 0)) {
+      console.trace(this.constructor.name)
+      throw Errors.timeRange + ' frames'
+    }
 
     this.frames = frames
   }
@@ -62,6 +65,10 @@ class TimeRangeClass extends TimeClass implements TimeRange {
   }
   isRange = true
 
+  get last() : number { return this.frame + this.frames - 1 }
+
+  get lastTime() : Time { return new TimeClass(this.last, this.fps) }
+
   get lengthSeconds() : number { return Number(this.frames) / Number(this.fps) }
 
   get position(): number { return Number(this.frame) / Number(this.frames) }
@@ -109,5 +116,3 @@ class TimeRangeClass extends TimeClass implements TimeRange {
   }
 
 }
-
-export { TimeRangeClass }

@@ -1,6 +1,10 @@
-export * from "./PlayerNotPlaying"
+export * from './PlayerContext'
+export * from "./Player"
 export * from "./PlayerButton"
 export * from "./PlayerContent"
-export * from "./Player"
+// export * from "./PlayerContentSvg"
+export * from "./PlayerNotPlaying"
 export * from "./PlayerPlaying"
+export * from "./PlayerPropsDefault"
+export * from "./PlayerTime"
 export * from "./PlayerTimeControl"

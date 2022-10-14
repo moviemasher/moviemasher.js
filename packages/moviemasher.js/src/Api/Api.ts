@@ -3,7 +3,7 @@ import { JsonObject, Endpoint, AndId, WithError, StringObject } from "../declara
 import { ServerType } from "../Setup/Enums"
 import { DataServerInit } from "./Data"
 
-export const ApiVersion = "5.0.6"
+export const ApiVersion = "5.1.0"
 
 export interface ApiRequest {
   [index: string]: any
@@ -32,10 +32,10 @@ export interface ApiCallbacks extends Record<string, ApiCallback> {}
 export interface ApiServerInit extends JsonObject { }
 
 
-export interface ApiEndpointRequest extends ApiRequest, AndId {}
+export interface ApiCallbacksRequest extends ApiRequest, AndId {}
 
 
-export interface ApiEndpointResponse extends ApiResponse {
+export interface ApiCallbacksResponse extends ApiResponse {
   apiCallbacks: ApiCallbacks
 }
 

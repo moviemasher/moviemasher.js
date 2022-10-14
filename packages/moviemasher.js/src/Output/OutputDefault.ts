@@ -3,6 +3,7 @@ import { CommandOutput, RenderingCommandOutput, StreamingCommandOutput } from ".
 
 import outputDefaultAudioJson from './Defaults/audio.json'
 import outputDefaultImageJson from './Defaults/image.json'
+import outputDefaultImagePngJson from './Defaults/imagepng.json'
 import outputDefaultVideoJson from './Defaults/video.json'
 import outputDefaultImageSequenceJson from './Defaults/imagesequence.json'
 import outputDefaultWaveformJson from './Defaults/waveform.json'
@@ -10,40 +11,40 @@ import outputDefaultDashJson from './Defaults/dash.json'
 import outputDefaultHlsJson from './Defaults/hls.json'
 import outputDefaultRtmpJson from './Defaults/rtmp.json'
 
-const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultAudioJson as RenderingCommandOutput
   return { ...commandOutput,  ...object }
 }
 
-const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultVideoJson as RenderingCommandOutput
-  return { ...commandOutput,  ...object }
+  return { ...commandOutput, ...object }
 }
-const outputDefaultImageSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultImageSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultImageSequenceJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
-const outputDefaultWaveform = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultWaveform = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultWaveformJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
 
-const outputDefaultPng = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultPng = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
-  const commandOutput = outputDefaultImageJson as RenderingCommandOutput
-  return { ...commandOutput, ...object, format: OutputFormat.Png }
+  const commandOutput = outputDefaultImagePngJson as RenderingCommandOutput
+  return { ...commandOutput, ...object }
 }
-const outputDefaultImage = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultImage = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultImageJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
 
-const outputDefaultPopulate = (overrides: RenderingCommandOutput): RenderingCommandOutput => {
+export const outputDefaultPopulate = (overrides: RenderingCommandOutput): RenderingCommandOutput => {
   const { outputType } = overrides
   switch (outputType) {
     case OutputType.Audio: return outputDefaultAudio(overrides)
@@ -54,11 +55,11 @@ const outputDefaultPopulate = (overrides: RenderingCommandOutput): RenderingComm
   }
 }
 
-const outputDefaultRendering = (outputType: OutputType, overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultRendering = (outputType: OutputType, overrides?: CommandOutput): RenderingCommandOutput => {
   return outputDefaultPopulate({ ...overrides, outputType })
 }
 
-const outputDefaultTypeByFormat = {
+export const outputDefaultTypeByFormat = {
   [OutputFormat.AudioConcat]: OutputType.Audio,
   [OutputFormat.Mdash]: OutputType.Video,
   [OutputFormat.Flv]: OutputType.Video,
@@ -71,7 +72,7 @@ const outputDefaultTypeByFormat = {
   [OutputFormat.VideoConcat]: OutputType.Video,
 }
 
-const outputDefaultFormatByType = {
+export const outputDefaultFormatByType = {
   [OutputType.Audio]: OutputFormat.Mp3,
   [OutputType.Image]: OutputFormat.Png,
   [OutputType.Video]: OutputFormat.Mp4,
@@ -79,7 +80,7 @@ const outputDefaultFormatByType = {
   [OutputType.Waveform]: OutputFormat.Png,
 }
 
-const outputDefaultStreaming = (overrides: CommandOutput): StreamingCommandOutput => {
+export const outputDefaultStreaming = (overrides: CommandOutput): StreamingCommandOutput => {
   const { format } = overrides
   switch (format) {
     case OutputFormat.Mdash: return outputDefaultDash(overrides)
@@ -89,13 +90,13 @@ const outputDefaultStreaming = (overrides: CommandOutput): StreamingCommandOutpu
   }
 }
 
-const outputDefaultHls = (overrides?: CommandOutput): StreamingCommandOutput => {
+export const outputDefaultHls = (overrides?: CommandOutput): StreamingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultHlsJson as StreamingCommandOutput
   return { ...commandOutput, ...object }
 }
 
-const outputDefaultDash = (overrides?: CommandOutput): StreamingCommandOutput => {
+export const outputDefaultDash = (overrides?: CommandOutput): StreamingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultDashJson as StreamingCommandOutput
   return { ...commandOutput, ...object }
@@ -111,7 +112,7 @@ ffmpeg -re -i <input> -map 0 -map 0 -c:a libfdk_aac -c:v libx264
 */
 }
 
-const outputDefaultRtmp = (overrides?: CommandOutput): StreamingCommandOutput => {
+export const outputDefaultRtmp = (overrides?: CommandOutput): StreamingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultRtmpJson as StreamingCommandOutput
   return { ...commandOutput, ...object }
@@ -120,23 +121,4 @@ const outputDefaultRtmp = (overrides?: CommandOutput): StreamingCommandOutput =>
   // IVS suggests, but it currently fails:
   // '-profile:v main', '-preset veryfast', '-x264opts "nal-hrd=cbr:no-scenecut"',
   // '-minrate 3000', '-maxrate 3000', '-g 60'
-}
-
-export {
-  outputDefaultAudio,
-  outputDefaultVideo,
-  outputDefaultWaveform,
-  outputDefaultImageSequence,
-
-  outputDefaultRtmp,
-  outputDefaultDash,
-  outputDefaultHls,
-
-  outputDefaultFormatByType,
-  outputDefaultTypeByFormat,
-  outputDefaultRendering,
-  outputDefaultPopulate,
-  outputDefaultPng,
-  outputDefaultImage,
-  outputDefaultStreaming,
 }

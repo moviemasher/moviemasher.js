@@ -1,13 +1,13 @@
 import React from "react"
 
-import { View } from "../../Utilities/View"
-import { WebrtcContext } from "../../Contexts/WebrtcContext"
 import { PropsWithChildren, ReactResult } from "../../declarations"
-import { ApiContext } from "../../Contexts/ApiContext"
+import { ApiContext } from "../ApiClient/ApiContext"
 import { ProcessContext } from "../../Contexts/ProcessContext"
+import { WebrtcContext } from "../../Contexts/WebrtcContext"
 import { WebrtcClient } from "./WebrtcClient"
+import { View } from "../../Utilities/View"
 
-function WebrtcButton(props: PropsWithChildren): ReactResult {
+export function WebrtcButton(props: PropsWithChildren): ReactResult {
   const webrtcContext = React.useContext(WebrtcContext)
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
@@ -37,5 +37,3 @@ function WebrtcButton(props: PropsWithChildren): ReactResult {
   const broadcastingOptions = { ...props, onClick }
   return <View {...broadcastingOptions} />
 }
-
-export { WebrtcButton }

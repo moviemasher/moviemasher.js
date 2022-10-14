@@ -42,3 +42,4 @@ export const timeFromSeconds = (seconds = 0, fps = 1, rounding = '') : Time => {
   const rounded = roundWithMethod(seconds * fps, rounding)
   return timeFromArgs(rounded, fps)
 }
+

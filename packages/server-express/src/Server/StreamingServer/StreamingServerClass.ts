@@ -3,7 +3,7 @@ import path from "path"
 import Express from "express"
 
 const NodeMediaServer = require('node-media-server')
-const uuid = require('uuid').v4
+
 
 import {
   UnknownObject,
@@ -15,7 +15,7 @@ import {
   StreamingRemoteRequest, StreamingRemoteResponse,
   StreamingLocalRequest, StreamingLocalResponse,
   StreamingWebrtcRequest, StreamingWebrtcResponse, WithError, StreamingStartRequest,
-  StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs
+  StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs, isPositive
 } from "@moviemasher/moviemasher.js"
 
 import { WebrtcConnection } from './WebrtcConnection'
@@ -28,6 +28,7 @@ import { directoryLatest } from '../../Utilities/Directory'
 import { FormatOptions, StreamingServer, StreamingServerArgs } from './StreamingServer'
 import { FileServer } from '../FileServer/FileServer'
 
+import { idUnique } from "../../Utilities/Id"
 
 
 export class StreamingServerClass extends ServerClass implements StreamingServer {
@@ -44,7 +45,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       return
     }
     try {
-      // console.log(Endpoints.streaming.cut, 'request', request)
+      console.log(Endpoints.streaming.cut, 'request', request)
       const cutArgs: StreamingProcessCutArgs = { definitionObjects, mashObjects }
       const updated = streamingProcess.cut(cutArgs)
       const response: StreamingCutResponse = updated
@@ -72,8 +73,29 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   fileServer?: FileServer
 
-  remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async(req, res) => {
-    const { id, localDescription } = req.body
+  local: ServerHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
+    const { id } = req.body
+    const connection = WebrtcConnection.getConnection(id)
+    if (!connection) {
+      res.send({ error: `no connection ${id}` })
+      return
+    }
+
+    const { localDescription } = connection
+    if (!localDescription) return res.send({ error: `no localDescription for connection ${id}`})
+
+    const description = connection.toJSON().localDescription
+    if (!description) return res.send({ error: `no local description for connection ${id}`})
+
+    const response: StreamingLocalResponse = { localDescription: description }
+    res.send(response)
+  }
+
+  remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
+    const request = req.body
+    console.log(Endpoints.streaming.remote, 'request', request)
+
+    const { id, localDescription } = request
     const connection = WebrtcConnection.getConnection(id)
     if (!connection) {
       res.send({ error: `no connection ${id}` })
@@ -97,24 +119,6 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     }
   }
 
-  local: ServerHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
-    const { id } = req.body
-    const connection = WebrtcConnection.getConnection(id)
-    if (!connection) {
-      res.send({ error: `no connection ${id}` })
-      return
-    }
-
-    const { localDescription } = connection
-    if (!localDescription) return res.send({ error: `no localDescription for connection ${id}`})
-
-    const description = connection.toJSON().localDescription
-    if (!description) return res.send({ error: `no local description for connection ${id}`})
-
-    const response: StreamingLocalResponse = { localDescription: description }
-    res.send(response)
-  }
-
   id = 'streaming'
 
   preload: ServerHandler<StreamingPreloadResponse, StreamingPreloadRequest> = (req, res) => {
@@ -126,9 +130,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
   // TODO: support other output besides HLS file
   start: ServerHandler<StreamingStartResponse, StreamingStartRequest> = (req, res) => {
     const request = req.body
+    console.log(Endpoints.streaming.start, 'request', request)
+
     const { width, height, videoRate, format } = request
     const streamingFormat = format || StreamingFormat.Hls
-    const id = uuid()
+    const id = idUnique()
     const formatOptions = this.args.streamingFormatOptions[streamingFormat]
 
     const { commandOutput, directory, file } = formatOptions
@@ -156,7 +162,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     switch (streamingFormat) {
       case StreamingFormat.Hls: {
         const { hls_time } = options
-        if (typeof hls_time !== 'undefined') response.readySeconds = Number(hls_time)
+        if (isPositive(hls_time)) response.readySeconds = hls_time
       }
     }
     try {
@@ -265,8 +271,8 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       // console.log("file", file)
       try { res.send(fs.readFileSync(file)) }
       catch (error) {
-        console.error(error);
-        res.sendStatus(500);
+        // console.error(error)
+        res.sendStatus(500)
       }
     })
 
@@ -337,11 +343,13 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     return `${url}/${id}/${file}`
   }
 
-  webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (_, res) => {
+  webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (req, res) => {
     try {
-      // const { localDescription } = req.body
+
+      const request = req.body
+      console.log(Endpoints.streaming.webrtc, 'request', request)
       const hlsFormatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
-      const connection = WebrtcConnection.create(uuid(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
+      const connection = WebrtcConnection.create(idUnique(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
 
       await connection.doOffer()
 

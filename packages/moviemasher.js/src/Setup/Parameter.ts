@@ -1,22 +1,22 @@
 import { UnknownObject, Value, ValueObject } from "../declarations"
-import { isNumeric } from "../Utility/Is"
+import { isNumeric, isUndefined } from "../Utility/Is"
 import { DataType, DataTypes } from "./Enums"
 import { Errors } from "./Errors"
 
-interface ParameterObject {
+export interface ParameterObject {
   name : string
   value: Value | ValueObject[]
   values?: Value[]
   dataType?: DataType | string
 }
 
-class Parameter {
+export class Parameter {
   constructor({ name, value, dataType, values }: ParameterObject) {
     if (!name) throw Errors.invalid.name
 
     this.values = values
     this.name = name
-    if (typeof value === "undefined") {
+    if (isUndefined(value)) {
       if (this.values?.length) this.value = this.values[0]
       else throw Errors.invalid.value
     } else this.value = value
@@ -45,5 +45,3 @@ class Parameter {
 
   values?: Value[]
 }
-
-export { Parameter, ParameterObject }

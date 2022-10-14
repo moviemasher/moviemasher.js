@@ -1,4 +1,10 @@
 module.exports = {
+  globals: {
+    page: true,
+    browser: true,
+    context: true,
+    jestPuppeteer: true,
+  },
   env: {
     browser: true,
     es2021: true,
@@ -28,7 +34,7 @@ module.exports = {
     "no-undef": 0,
     "class-methods-use-this": 0,
     "object-curly-newline": 0,
-    "no-unused-vars": "off",
+    "no-unused-vars": "on",
     "radix": 0,
     "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/no-unused-vars": 0,
@@ -39,5 +45,5 @@ module.exports = {
       node: { extensions: [".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "rollup.config.js", "test/jest.config.js"],
+  ignorePatterns: ['.eslintrc.js', "**/*.config.js", "dev/test/jest.*.js"],
 };

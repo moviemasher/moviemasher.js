@@ -3,26 +3,27 @@ import { Database, open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import fs from 'fs'
 import path from 'path'
-const uuid = require('uuid').v4
+
 
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
   DefinitionObject, DefinitionObjects, CastObject, DataServerInit, Endpoints, EmptyMethod,
-  DataCastRelations,
   DataCastDefaultResponse, DataCastDefaultRequest,
   DataMashDefaultRequest, DataMashDefaultResponse,
   DataCastDeleteResponse, DataCastDeleteRequest,
   DataDefinitionDeleteResponse, DataDefinitionDeleteRequest,
   DataMashDeleteResponse, DataMashDeleteRequest,
   DataCastPutResponse, DataCastPutRequest,
-  DataMashRetrieveRequest, DataMashRetrieveResponse,
+  DataMashRetrieveRequest,
   DataDefinitionPutResponse, DataDefinitionPutRequest,
   DataMashPutRequest, DataMashPutResponse,
-  DataMashGetResponse, DataMashGetRequest,
-  DataCastGetResponse, DataCastGetRequest,
+  DataMashGetResponse, DataGetRequest, DataRetrieveResponse,
+  DataCastGetResponse,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
-  DataCastRetrieveResponse, DataCastRetrieveRequest,
-  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId, ObjectUnknown,
+  DataCastRetrieveRequest,
+  DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest, AndId,
+  assertPopulatedString, isLayerMashObject, isLayerFolderObject, LayerObjects,
+  StringsObject, DescribedObject, 
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -30,8 +31,23 @@ import { ServerHandler } from "../Server"
 import { HostServers } from "../../Host/Host"
 import { DataServer, DataServerArgs } from "./DataServer"
 import { FileServer } from "../FileServer/FileServer"
+import { idUnique } from "../../Utilities/Id"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
 
+export interface DataServerCastRelationUpdate {
+  cast: CastObject
+  temporaryIdLookup: StringObject
+}
+
+export interface DataServerCastRelationSelect {
+  cast: CastObject
+  definitions: DefinitionObject[]
+}
+
+export interface DataServerRow extends UnknownObject, AndId { }
+
+const DataServerColumns = ['id', 'label', 'icon']
+const DataServerColumnsDefault = ['*']
 
 const DataServerNow = () => (new Date()).toISOString()
 
@@ -39,14 +55,24 @@ const DataServerSelect = (quotedTable: string, columns = DataServerColumnsDefaul
   return `SELECT ${columns.join(', ')} FROM ${quotedTable} WHERE id = ?`
 }
 
+const DataServerJsonAnonymous = (row: any): any => {
+  if (!row) return {}
+
+  const { json, userId, ...rest } = row
+  return json ? { ...JSON.parse(json), ...rest } : rest
+}
+
 const DataServerJson = (row: any): any => {
   if (!row) return {}
 
   const { json, ...rest } = row
-  return json ? { ...JSON.parse(json), ...rest } : rest
+  if (!json) return rest
+
+  const parsed = JSON.parse(json)
+  return DataServerJson({ ...parsed, ...rest })
 }
 
-const DataServerJsons = (rows: any[]): any[] => { return rows.map(DataServerJson) }
+const DataServerJsons = (rows: any[]): any[] => { return rows.map(DataServerJsonAnonymous) }
 
 const DataServerInsert = (quotedTable: string, columns: string[]): string => {
   return `
@@ -65,7 +91,7 @@ const DataServerUpdate = (quotedTable: string, columns: string[]): string => {
 }
 
 const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObject => {
-  const { type, createdAt, icon, label, id, ...rest } = data
+  const { userId: _, type, createdAt, icon, label, id, ...rest } = data
   const json = JSON.stringify(rest)
   const record: StringObject = { json, userId }
   if (id) record.id = String(id)
@@ -77,40 +103,63 @@ const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObje
   return record
 }
 
-const DataServerColumns = ['id', 'label', 'icon']
-const DataServerColumnsDefault = ['*']
-export interface DataServerRow extends UnknownObject, AndId { }
+const DataServerPopulateLayers = (mashes: MashObject[], layers?: LayerObjects) => {
+  layers?.forEach(layer => {
+    if (isLayerFolderObject(layer)) DataServerPopulateLayers(mashes, layer.layers)
+    else if (isLayerMashObject(layer)) {
+      const { mash } = layer
+      const { id } = mash
+      const found = mashes.find(mash => mash.id === id)
+      if (!found) throw new Error(Errors.internal + 'no mash with id ' + id + ' in ' + mashes.map(m => m.id).join(', '))
+
+      layer.mash = found
+    }
+  })
+}
+
 
 export class DataServerClass extends ServerClass implements DataServer {
   constructor(public args: DataServerArgs) { super(args) }
 
-  private castRelationsPromise(id: string): Promise<DataCastRelations> {
-    const mashesSql = `
-      SELECT mash.*
-      FROM cast_mash
-      JOIN mash
-      ON mash.id = mashId
-      WHERE castId = ?
-    `
-    return this.db.all(mashesSql, id).then(DataServerJsons).then(mashes => {
-      const ids = mashes.map(mash => mash.id)
-      const sql = `
-        SELECT UNIQUE definition.*
-        FROM mash_definition
-        JOIN definition
-        ON definition.id = definitionId
-        WHERE ${Array(ids.length).fill('mashId = ?').join(' OR ')}
-      `
-      return this.db.all(sql, ...ids).then(DataServerJsons).then(definitions => {
-        return { mashes, definitions }
+  private castInsertPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<StringObject> {
+    const lookup: StringObject = {}
+    const { id } = cast
+    const temporaryId = id || idUnique()
+    const permanentId = temporaryId.startsWith(this.args.temporaryIdPrefix) ? idUnique() : temporaryId
+    if (permanentId !== temporaryId) lookup[temporaryId] = permanentId
+    cast.id = permanentId
+
+    const updatePromise = this.castUpdateRelationsPromise(userId, cast, definitionIds)
+    const insertPromise = updatePromise.then(castData =>{
+      const { cast, temporaryIdLookup } = castData
+      return this.createPromise('`cast`', DataServerInsertRecord(userId, cast)).then(() => {
+        return {...temporaryIdLookup, ...lookup }
       })
     })
+
+    return insertPromise.then(lookup => ({...lookup, ...lookup}))
+  }
+
+  private castUpdatePromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<StringObject> {
+    const { id } = cast
+    if (!id) return Promise.reject(401)
+
+    const relationsPromise = this.castUpdateRelationsPromise(userId, cast, definitionIds)
+    const updatePromise = relationsPromise.then(castData => {
+      const { cast, temporaryIdLookup } = castData
+      return this.updatePromise('`cast`', cast).then(() => temporaryIdLookup)
+    })
+    return updatePromise
   }
 
   private createPromise(quotedTable: string, data: UnknownObject): Promise<string> {
     data.createdAt ||= DataServerNow()
-    data.id ||= uuid()
-    const id = data.id as string
+    const id = data.id || idUnique()
+    assertPopulatedString(id)
+
+    const permanentId = id.startsWith(this.args.temporaryIdPrefix) ? idUnique() : id
+    data.id = permanentId
+
     const keys: string[] = []
     const values: any[] = []
     Object.entries(data).forEach(([key, value]) => {
@@ -119,7 +168,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
     const sql = DataServerInsert(quotedTable, keys)
     // console.log(sql, ...values)
-    return this.db.run(sql, ...values).then(() => id)
+    return this.db.run(sql, ...values).then(() => permanentId)
   }
 
   private _db?: Database
@@ -130,14 +179,15 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   defaultCast: ServerHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest> = async (req, res) => {
-    const response: DataCastDefaultResponse = { cast: {}, mashes: [], definitions: [] }
+    const previewSize = this.renderingServer?.args.previewSize
+    const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
-      const cast = await this.getLatestPromise(user, '`cast`')
-      const { id } = cast
-      if (id) {
-        const relations = await this.castRelationsPromise(String(id))
-        Object.assign(response, relations, { cast })
+      const cast = await this.getLatestPromise(user, '`cast`') as CastObject
+      if (cast.id) {
+        const castDefinitions = await this.selectCastRelationsPromise(cast)
+        response.definitions = castDefinitions.definitions
+        response.cast = castDefinitions.cast
       }
     } catch (error) { response.error = String(error) }
     res.send(response)
@@ -148,11 +198,23 @@ export class DataServerClass extends ServerClass implements DataServer {
     const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
-      const mash = await this.getLatestPromise(user, '`mash`')
-      const { id } = mash
-      if (id) {
+      const sql = `
+        SELECT mash.* FROM mash 
+        LEFT JOIN cast_mash 
+        ON cast_mash.mashId = mash.id 
+        WHERE cast_mash.mashId IS NULL
+        AND mash.userId = ? 
+        ORDER BY createdAt DESC
+        LIMIT 1
+      `
+      const mash = await this.db.get(sql, user).then(row => {
+        const { userId: rowUserId, ...rest } = DataServerJson(row)
+        return rowUserId === user ? rest : {}
+      }) as MashObject
+
+      if (mash.id) {
         response.mash = mash
-        response.definitions = await this.selectMashRelationsPromise(String(id))
+        response.definitions = await this.selectMashRelationsPromise(String(mash.id))
       }
     } catch (error) { response.error = String(error) }
     // console.log("defaultMash", response)
@@ -211,20 +273,23 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private deletePromise(quotedTable: string, id: string): Promise<void> {
     const sql = `DELETE FROM ${quotedTable} WHERE id = ?`
-    // console.log(sql, id)
     return this.db.run(sql, id).then(EmptyMethod)
   }
 
   fileServer?: FileServer
 
-  getCast: ServerHandler<DataCastGetResponse, DataCastGetRequest> = async (req, res) => {
+  getCast: ServerHandler<DataCastGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
-    const response: DataCastGetResponse = { cast: {}, mashes: [], definitions: [] }
+    const response: DataCastGetResponse = { cast: {}, definitions: [] }
     try {
       const user = this.userFromRequest(req)
-      const cast = await this.jsonPromise('`cast`', id)
-      if (!(cast.id && cast.userId === user)) response.error = `Could not find cast ${id}`
-      else response.cast = cast
+      const cast = await this.jsonPromise('`cast`', user, id)
+      if (!cast) response.error = `Could not find cast ${id}`
+      else {
+        const castDefinitions = await this.selectCastRelationsPromise(cast)
+        response.definitions = castDefinitions.definitions
+        response.cast = castDefinitions.cast
+      }
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -234,8 +299,8 @@ export class DataServerClass extends ServerClass implements DataServer {
     const response: DataDefinitionGetResponse = { definition: {} }
     try {
       const user = this.userFromRequest(req)
-      const definition = await this.jsonPromise('`definition`', id)
-      if (!definition.id || (definition.userId && definition.userId !== user)) {
+      const definition = await this.jsonPromise('`definition`', user, id)
+      if (!definition) {
         response.error = `Could not find definition ${id}`
       } else response.definition = definition
     } catch (error) { response.error = String(error) }
@@ -244,16 +309,20 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   getLatestPromise(userId: string, quotedTable: string): Promise<JsonObject> {
     const sql = `SELECT * FROM ${quotedTable} WHERE userId = ? ORDER BY createdAt DESC`
-    return this.db.get(sql, userId).then(DataServerJson)
+    return this.db.get(sql, userId).then(row => {
+
+      const { userId: rowUserId, ...rest } = DataServerJson(row)
+      return rowUserId === userId ? rest : {}
+    })
   }
 
-  getMash: ServerHandler<DataMashGetResponse, DataMashGetRequest> = async (req, res) => {
+  getMash: ServerHandler<DataMashGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataMashGetResponse = { mash: {}, definitions: [] }
     try {
       const user = this.userFromRequest(req)
-      const mash = await this.jsonPromise('`mash`', id)
-      if (!(mash.id && mash.userId === user)) response.error = `Could not find mash ${id}`
+      const mash = await this.jsonPromise('`mash`', user, id)
+      if (mash.id !== id) response.error = `Could not find mash ${id}`
       else {
         response.mash = mash
         response.definitions = await this.selectMashRelationsPromise(id)
@@ -264,34 +333,54 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   id = 'data'
 
-  init(): DataServerInit { return { uuid: uuid() } }
-
-  private insertCastPromise(userId: string, cast: CastObject, mashIds: string[]): Promise<string> {
-    return this.createPromise('`cast`', DataServerInsertRecord(userId, cast)).then(id =>
-      this.updateCastMashesPromise(id, mashIds).then()
-    )
-  }
+  init(): DataServerInit { return { temporaryIdPrefix: this.args.temporaryIdPrefix } }
 
   private insertDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
     return this.createPromise('`definition`', DataServerInsertRecord(userId, definition))
   }
 
-  private insertMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<string> {
-    return this.createPromise('`mash`', DataServerInsertRecord(userId, mash)).then(id =>
-      this.updateMashDefinitionsPromise(id, definitionIds).then()
+  private jsonPromise(quotedTable: string, userId: string, id?: string): Promise<any> {
+    if (!id || id.startsWith(this.args.temporaryIdPrefix)) return Promise.resolve()
+
+    return this.db.get(DataServerSelect(quotedTable), id).then(DataServerJson).then(row => {
+      if (!row) return
+
+      const { userId: rowUserId, ...rest } = row
+      if (rowUserId === userId) return rest
+    })
+  }
+
+  private mashInsertPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<StringObject> {
+    const temporaryLookup: StringObject = {}
+    const { id } = mash
+    const temporaryId = id || idUnique()
+    mash.id = temporaryId
+
+    const insertPromise = this.createPromise('`mash`', DataServerInsertRecord(userId, mash))
+    const definitionPromise = insertPromise.then(permanentId =>{
+      if (permanentId !== temporaryId) temporaryLookup[temporaryId] = permanentId
+      return this.mashUpdateRelationsPromise(permanentId, definitionIds)
+    })
+    return definitionPromise.then(() => temporaryLookup)
+  }
+
+  private mashUpdatePromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<StringObject> {
+    const { createdAt, icon, id, label, ...rest } = mash
+    if (!id) return Promise.reject(401)
+
+    const json = JSON.stringify(rest)
+    const data = { userId, createdAt, icon, id, label, json }
+    return this.updatePromise('`mash`', data).then(() =>
+      this.mashUpdateRelationsPromise(id, definitionIds)
     )
   }
 
-  private jsonPromise(quotedTable: string, id: string, columns?: string[]): Promise<any> {
-    return this.db.get(DataServerSelect(quotedTable, columns), id).then(DataServerJson)
-  }
-
   putCast: ServerHandler<DataCastPutResponse | WithError, DataCastPutRequest> = async (req, res) => {
-    const { cast, mashIds } = req.body
-    const response: DataCastPutResponse = { id: '' }
+    const { cast, definitionIds } = req.body
+    const response: DataCastPutResponse = {}
     try {
       const user = this.userFromRequest(req)
-      response.id = await this.writeCastPromise(user, cast, mashIds)
+      response.temporaryIdLookup = await this.writeCastPromise(user, cast, definitionIds)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -309,24 +398,24 @@ export class DataServerClass extends ServerClass implements DataServer {
   putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest> = async (req, res) => {
     const { mash, definitionIds } = req.body
     // console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
-    const response: DataMashPutResponse = { id: '' }
+    const response: DataMashPutResponse = {}
 
     try {
       const user = this.userFromRequest(req)
-      response.id = await this.writeMashPromise(user, mash, definitionIds)
+      response.temporaryIdLookup = await this.writeMashPromise(user, mash, definitionIds)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
   renderingServer?: RenderingServer
 
-  retrieveCast: ServerHandler<DataCastRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
+  retrieveCast: ServerHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
-    const response: DataCastRetrieveResponse = { casts: [] }
+    const response: DataRetrieveResponse = { described: [] }
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.casts = await this.selectCastsPromise(user, columns)
+      response.described = await this.selectCastsPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -344,13 +433,13 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  retrieveMash: ServerHandler<DataMashRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
+  retrieveMash: ServerHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
-    const response: DataMashRetrieveResponse = { mashes: [] }
+    const response: DataRetrieveResponse = { described: [] }
     try {
       const user = this.userFromRequest(req)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
-      response.mashes = await this.selectMashesPromise(user, columns)
+      response.described = await this.selectMashesPromise(user, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
@@ -366,16 +455,10 @@ export class DataServerClass extends ServerClass implements DataServer {
     return promise
   }
 
-  private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
     const table = '`cast`'
     const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
-    return this.db.all(sql, userId).then(rows => {
-      return rows.map(row => {
-        const { json, ...rest } = row
-        if (json) return { ...JSON.parse(json), ...rest }
-        return rest
-      })
-    })
+    return this.db.all(sql, userId).then(DataServerJsons)
   }
 
   private selectDefinitionsPromise(userId: string, types: string[], columns = DataServerColumnsDefault): Promise<MashObject[]> {
@@ -390,6 +473,39 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.all(sql, ...types, userId).then(DataServerJsons)
   }
 
+  private selectCastRelationsPromise(cast: CastObject): Promise<DataServerCastRelationSelect> {
+    const { id } = cast
+    assertPopulatedString(id)
+
+    const sql = `
+      SELECT mash.*
+      FROM cast_mash
+      JOIN mash
+      ON mash.id = mashId
+      WHERE castId = ?
+    `
+
+    return this.db.all(sql, id).then(DataServerJsons).then((mashes:MashObject[]) => {
+      DataServerPopulateLayers(mashes, cast.layers)
+
+      const definitions: DefinitionObjects = []
+      const initialData: DataServerCastRelationSelect = { cast, definitions }
+      let promise: Promise<DataServerCastRelationSelect> = Promise.resolve(initialData)
+
+      mashes.forEach(mash => {
+        const { id } = mash
+        assertPopulatedString(id)
+        promise = promise.then(data => {
+          return this.selectMashRelationsPromise(id).then(definitions => {
+            data.definitions.push(...definitions)
+            return data
+          })
+        })
+      })
+      return promise
+    })
+  }
+
   private selectMashRelationsPromise(id: string): Promise<DefinitionObjects> {
     const sql = `
       SELECT definition.*
@@ -401,16 +517,19 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.all(sql, id).then(DataServerJsons)
   }
 
-  private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<MashObject[]> {
+  private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
     const table = '`mash`'
-    const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
-    return this.db.all(sql, userId).then(rows => {
-      return rows.map(row => {
-        const { json, ...rest } = row
-        if (json) return { ...JSON.parse(json), ...rest }
-        return rest
-      })
-    })
+    const qualified = columns.map(column => `${table}.${column}`)
+    
+    const sql = `SELECT 
+      ${qualified.join(', ')} 
+      FROM ${table} 
+      LEFT JOIN cast_mash
+      ON cast_mash.mashId = ${table}.id
+      WHERE cast_mash.mashId IS NULL
+      AND userId = ?
+    `
+    return this.db.all(sql, userId).then(DataServerJsons)
   }
 
   private startDatabase() {
@@ -467,18 +586,57 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.db.run(sql, ...values, id).then(EmptyMethod)
   }
 
-  private updateCastMashesPromise(castId: string, mashIds: string[]): Promise<string> {
-    return this.updateRelationsPromise('cast', 'mash', castId, mashIds)
-  }
-
-  private updateCastPromise(cast: CastObject, mashIds: string[]): Promise<void> {
+  private castUpdateRelationsPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<DataServerCastRelationUpdate> {
+    const temporaryIdLookup: StringObject = {}
     const { createdAt, icon, id, label, ...rest } = cast
-    if (!id) return Promise.reject(401)
+    assertPopulatedString(id)
 
-    const json = JSON.stringify(rest)
-    const data = { createdAt, icon, id, label, json }
-    return this.updatePromise('`cast`', data).then(() => {
-      this.updateCastMashesPromise(id, mashIds)
+    const { layers = [] } = cast
+
+    const layersMashes = (layers: LayerObjects): MashObject[] => {
+      const { temporaryIdPrefix } = this.args
+      return layers.flatMap(layer => {
+        if (isLayerMashObject(layer)) {
+          const { mash } = layer
+          const temporaryId = mash.id!
+          assertPopulatedString(temporaryId)
+
+          const permanentId = temporaryId.startsWith(temporaryIdPrefix) ? idUnique() : temporaryId
+          if (temporaryId !== permanentId) {
+            temporaryIdLookup[temporaryId] = permanentId
+            mash.id = permanentId
+          }
+          layer.mash = { id: permanentId }
+          return [mash]
+        } else if (isLayerFolderObject(layer)) {
+          const { layers } = layer
+          if (layers) return layersMashes(layers)
+        }
+        return []
+      })
+    }
+    const mashes = layersMashes(layers)
+    let mashesPromise: Promise<StringObject> = Promise.resolve(temporaryIdLookup)
+    const permanentIds = mashes.map(mash => mash.id!)
+
+    mashes.forEach(mash => {
+      const mashId = mash.id!
+      const ids = definitionIds ? definitionIds[mashId] : []
+      mashesPromise = mashesPromise.then(lookup => {
+        return this.writeMashPromise(userId, mash, ids).then(mashLookup => (
+          { ...lookup, ...mashLookup }
+        ))
+      })
+    })
+    return mashesPromise.then(mashesLookup => {
+      return this.updateRelationsPromise('cast', 'mash', id, permanentIds).then(lookup => {
+        const json = JSON.stringify(rest)
+        const cast = { createdAt, icon, id, label, json }
+        const response: DataServerCastRelationUpdate = {
+          cast, temporaryIdLookup: { ...lookup, ...mashesLookup }
+        }
+        return response
+      })
     })
   }
 
@@ -491,37 +649,41 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this.updatePromise('`definition`', data).then(EmptyMethod)
   }
 
-  private updateMashDefinitionsPromise(mashId: string, definitionIds?: string[]): Promise<string> {
-    return this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
+  private mashUpdateRelationsPromise(mashId: string, definitionIds?: string[]): Promise<StringObject> {
+    // console.log("updateMashDefinitionsPromise", mashId, definitionIds)
+    const relationPromise = this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
+    return relationPromise
   }
 
-  private updateMashPromise(mash: MashObject, definitionIds?: string[]): Promise<void> {
-    const { createdAt, icon, id, label, ...rest } = mash
-    if (!id) return Promise.reject(401)
 
-    const json = JSON.stringify(rest)
-    const data = { createdAt, icon, id, label, json }
-    return this.updatePromise('`mash`', data).then(() => {
-      this.updateMashDefinitionsPromise(id, definitionIds)
+  private updateRelationsPromise(from: string, to: string, id: string, ids?: string[]): Promise<StringObject> {
+    const temporaryLookup: StringObject = {}
+    if (!ids) return Promise.resolve(temporaryLookup)
+    
+    const permanentIds = ids.map(id => {
+      if (id.startsWith(this.args.temporaryIdPrefix)) return temporaryLookup[id] = idUnique()
+
+      return id
     })
-  }
-
-  private updateRelationsPromise(from: string, to: string, id: string, definitionIds?: string[]): Promise<string> {
-    if (!definitionIds) return Promise.resolve(id)
 
     const quotedTable = `${from}_${to}`
     const fromId = `${from}Id`
     const toId = `${to}Id`
     const sql = `SELECT * FROM ${quotedTable} WHERE ${fromId} = ?`
+    // console.log("updateRelationsPromise", sql, id)
     return this.db.all(sql, id).then(rows => {
-      const existing = Object.fromEntries(rows.map((row: DataServerRow) => [String(row[toId]), row.id]))
-      const defined = Object.keys(existing).filter(id => !definitionIds.includes(id))
-      const deleting = defined.map(id => existing[id])
-      const creating = definitionIds.filter(id => !defined.includes(id))
+      const toDelete: string[] = []
+      const toKeep: string[] = []
+      rows.forEach((row: DataServerRow) => {
+        const relatedId = String(row[toId])
+        if (permanentIds.includes(relatedId)) toKeep.push(relatedId)
+        else toDelete.push(row.id)
+      })
+      const toCreate = permanentIds.filter(id => !toKeep.includes(id))
       const promises: Promise<void>[] = [
-        ...deleting.map(id => this.deletePromise(quotedTable, id)),
-        ...creating.map(definitionId =>
-          this.createPromise(quotedTable, { [toId]: definitionId, [fromId]: id }).then(EmptyMethod)
+        ...toDelete.map(id => this.deletePromise(quotedTable, id)),
+        ...toCreate.map(relatedId =>
+          this.createPromise(quotedTable, { [toId]: relatedId, [fromId]: id }).then(EmptyMethod)
         ),
       ]
       switch (promises.length) {
@@ -529,7 +691,7 @@ export class DataServerClass extends ServerClass implements DataServer {
         case 1: return promises[0]
         default: return Promise.all(promises).then(EmptyMethod)
       }
-    }).then(() => id)
+    }).then(() => temporaryLookup)
   }
 
   private userIdPromise(table: string, id: string): Promise<string> {
@@ -537,14 +699,16 @@ export class DataServerClass extends ServerClass implements DataServer {
       .then(row => row?.userId || '')
   }
 
-  private writeCastPromise(userId: string, cast: CastObject, mashIds: string[]): Promise<string> {
+  private writeCastPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<StringObject> {
     const { id } = cast
-    if (!id) return this.insertCastPromise(userId, cast, mashIds)
 
-    return this.rowExists('`cast`', id, userId).then(existing => {
-      if (!existing) return this.insertCastPromise(userId, cast, mashIds)
-
-      return this.updateCastPromise(cast, mashIds).then(() => id)
+    const promiseJson = this.jsonPromise('`cast`', userId, id)
+    return promiseJson.then(row => {
+      if (row) {
+        Object.assign(row, cast)
+        return this.castUpdatePromise(userId, row, definitionIds)
+      }
+      return this.castInsertPromise(userId, cast, definitionIds)
     })
   }
 
@@ -558,17 +722,16 @@ export class DataServerClass extends ServerClass implements DataServer {
       return this.updateDefinitionPromise(definition).then(() => id)
     })
   }
-  private writeMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<string> {
-    const { id } = mash
-    if (!id) return this.insertMashPromise(userId, mash, definitionIds)
 
-    const promiseJson = this.jsonPromise('`mash`', id)
-    return promiseJson.then(something => {
-      if (something) {
-        Object.assign(something, mash)
-        return this.updateMashPromise(something, definitionIds).then(() => id)
+  private writeMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<StringObject> {
+    const { id } = mash
+    const promiseJson = this.jsonPromise('`mash`', userId, id)
+    return promiseJson.then(row => {
+      if (row) {
+        Object.assign(row, mash)
+        return this.mashUpdatePromise(userId, row, definitionIds)
       }
-      return this.insertMashPromise(userId, mash, definitionIds).then(() => id)
+      return this.mashInsertPromise(userId, mash, definitionIds)
     })
   }
 }

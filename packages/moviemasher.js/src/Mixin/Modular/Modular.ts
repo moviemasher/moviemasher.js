@@ -1,40 +1,34 @@
-import {
-  Any, Constrained, ModularGraphFilter} from "../../declarations"
-import { VisibleContext } from "../../Context/VisibleContext"
-import { Definition, DefinitionObject } from "../../Base/Definition"
-import { Filter, FilterDefinitionObject } from "../../Media/Filter/Filter"
-import { Instance, InstanceObject } from "../../Base/Instance"
-import { Property, PropertyObject } from "../../Setup/Property"
-import { FilterChain } from "../../Edited/Mash/FilterChain/FilterChain"
+import { Constrained, SvgFilters } from "../../declarations"
+import { Definition, DefinitionObject } from "../../Definition/Definition"
+import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { Instance, InstanceObject } from "../../Instance/Instance"
+import { CommandFilterArgs, CommandFilters } from "../../MoveMe"
+import { PropertyObject } from "../../Setup/Property"
+import { Rect } from "../../Utility/Rect"
+import { Size } from "../../Utility/Size"
+
 
 export interface ModularObject extends InstanceObject {
   id?: string
 }
 
-interface Modular extends Instance {
+export interface Modular extends Instance {
   definition: ModularDefinition
-  constructProperties(object?: Any): void
+  svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters
+  commandFilters(args: CommandFilterArgs): CommandFilters
 }
 
-interface ModularDefinitionObject extends DefinitionObject {
+export interface ModularDefinitionObject extends DefinitionObject {
+  initializeFilter?: FilterDefinitionObject
+  finalizeFilter?: FilterDefinitionObject
   filters? : FilterDefinitionObject[]
   properties? : PropertyObject[]
 }
 
-interface ModularDefinition extends Definition {
+export interface ModularDefinition extends Definition {
   filters: Filter[]
-  modularGraphFilters(modular: Modular, filterChain: FilterChain, visibleContext?: VisibleContext ): ModularGraphFilter[]
-  populateFilterChain(filterChain: FilterChain, modular: Modular): void
-  propertiesCustom: Property[]
 }
 
-type ModularClass = Constrained<Modular>
-type ModularDefinitionClass = Constrained<ModularDefinition>
-
-export {
-  Modular,
-  ModularClass,
-  ModularDefinition,
-  ModularDefinitionClass,
-  ModularDefinitionObject,
-}
+export type ModularClass = Constrained<Modular>
+export type ModularDefinitionClass = Constrained<ModularDefinition>

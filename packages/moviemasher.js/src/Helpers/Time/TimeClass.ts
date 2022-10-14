@@ -1,5 +1,5 @@
 import { Errors } from "../../Setup/Errors"
-import { Is } from "../../Utility/Is"
+import { assertAboveZero, assertNumber, isInteger, isNumber } from "../../Utility/Is"
 import { roundWithMethod } from "../../Utility/Round"
 import { Time, TimeRange } from "./Time"
 
@@ -30,16 +30,12 @@ export const timeEqualizeRates = (time1 : Time, time2 : Time, rounding = '') : T
 }
 
 export class TimeClass implements Time {
-  frame : number
-
-  fps : number
-
   constructor(frame = 0, fps = 1) {
-    if (!Is.integer(frame) || frame < 0) {
+    if (!isInteger(frame) || frame < 0) {
       // console.trace(Errors.frame, frame)
       throw Errors.frame + frame
     }
-    if (!Is.integer(fps) || fps < 1) throw Errors.fps
+    if (!isInteger(fps) || fps < 1) throw Errors.fps
 
     this.frame = frame
     this.fps = fps
@@ -56,18 +52,48 @@ export class TimeClass implements Time {
     return time
   }
 
+  closest(timeRange: TimeRange): Time {
+    const frame = timeRange.frame + Math.round(timeRange.frames / 2)
+    const halfTime = new TimeClass(frame, timeRange.fps)
+    const [midTime, editorTime] = timeEqualizeRates(halfTime, this)
+    const shouldBeOnLast = midTime.frame < editorTime.frame
+    return shouldBeOnLast ? timeRange.lastTime : timeRange.startTime
+  }
+  
   get copy() : Time { return new TimeClass(this.frame, this.fps) }
 
   get description() : string { return `${this.frame}@${this.fps}` }
 
-  divide(number : number, rounding = '') : Time {
-    if (!Is.number(number)) throw Errors.argument + 'divide'
-    return new TimeClass(roundWithMethod(Number(this.frame) / number, rounding), this.fps)
+  divide(number: number, rounding = '') : Time {
+    assertAboveZero(number)
+
+    if (number === 1.0) return this
+
+    return this.withFrame(roundWithMethod(this.frame / number, rounding))
   }
 
   equalsTime(time : Time) : boolean {
     const [time1, time2] = timeEqualizeRates(this, time)
     return time1.frame === time2.frame
+  }
+
+  fps : number
+
+  frame : number
+
+  durationFrames(duration: number, fps = 0): number[] {
+    const rate = fps || this.fps
+    const frames: number[] = []
+    const framesMax  = Math.floor(rate * duration) - 2 
+    const startFrame = Math.min(framesMax, this.scale(rate, "floor").frame)
+    if (this.isRange) {
+      const scaledFrame = this.timeRange.endTime.scale(rate, "ceil").frame
+      const endFrame = Math.min(framesMax + 1, scaledFrame)
+      for (let frame = startFrame; frame < endFrame; frame += 1) {
+        frames.push(frame)
+      }
+    } else frames.push(startFrame)
+    return frames
   }
 
   isRange = false

@@ -1,62 +1,67 @@
-import { Definitions } from "../../Definitions"
 import { DefinitionType } from "../../Setup/Enums"
 import { FontDefinitionClass } from "./FontDefinition"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { Factories } from "../../Definitions/Factories"
-import { Is } from "../../Utility/Is"
+import { isPopulatedString } from "../../Utility/Is"
+
+
+import fontButchermanJson from "../../Definitions/DefinitionObjects/font/butcherman.json"
+import fontCroissantOneJson from "../../Definitions/DefinitionObjects/font/croissant-one.json"
 import fontDefaultJson from "../../Definitions/DefinitionObjects/font/default.json"
+import fontGermaniaOneJson from "../../Definitions/DefinitionObjects/font/germania-one.json"
+import fontKeniaJson from "../../Definitions/DefinitionObjects/font/kenia.json"
+import fontLuckiestGuyJson from "../../Definitions/DefinitionObjects/font/luckiest-guy.json"
+import fontMonotonJson from "../../Definitions/DefinitionObjects/font/monoton.json"
+import fontOleoScriptJson from "../../Definitions/DefinitionObjects/font/oleo-script.json"
+import fontShojumaruJson from "../../Definitions/DefinitionObjects/font/shojumaru.json"
+import fontRubikDirtJson from "../../Definitions/DefinitionObjects/font/rubik-dirt.json"
 
-const fontDefaultId = "com.moviemasher.font.default"
 
-const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) ? id : fontDefaultId
-  if (!Definitions.installed(idString)) {
-    return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id: idString })
-  }
-  return Definitions.fromId(idString) as FontDefinition
+const fontDefaultId = fontDefaultJson.id
+
+export const fontDefinition = (object : FontDefinitionObject) : FontDefinition => {
+  const { id: idString } = object
+  const id = idString && isPopulatedString(idString) ? idString : fontDefaultId
+
+  return new FontDefinitionClass({ ...object, type: DefinitionType.Font, id })
 }
-const fontDefinitionFromId = (id : string) : FontDefinition => {
+
+export const fontDefault = fontDefinition(fontDefaultJson)
+export const fontDefaults = [
+  fontDefault,
+  fontDefinition(fontButchermanJson),
+  fontDefinition(fontCroissantOneJson),
+  fontDefinition(fontKeniaJson),
+  fontDefinition(fontGermaniaOneJson),
+  fontDefinition(fontLuckiestGuyJson),
+  fontDefinition(fontMonotonJson),
+  fontDefinition(fontOleoScriptJson),
+  fontDefinition(fontShojumaruJson),
+  fontDefinition(fontRubikDirtJson),
+]
+
+export const fontDefinitionFromId = (id: string): FontDefinition => {
+  const definition = fontDefaults.find(definition => definition.id === id)
+  if (definition) return definition
+
   return fontDefinition({ id })
 }
 
-const fontInstance = (object : FontObject) : Font => {
-  return fontDefinition(object).instanceFromObject(object)
+export const fontInstance = (object: FontObject): Font => {
+  const { definitionId = '' } = object
+  const definition = fontDefinitionFromId(definitionId)
+  return definition.instanceFromObject(object)
 }
 
-const fontFromId = (id : string) : Font => {
-  return fontInstance({ id })
+export const fontFromId = (definitionId: string): Font => {
+  const definition = fontDefinitionFromId(definitionId)
+  return definition.instanceFromObject()
 }
 
-const fontInitialize = () : void => {
-  fontInstall(fontDefaultJson)
-}
-const fontInstall = (object : FontDefinitionObject) : FontDefinition => {
-  const { id } = object
-  const idString = id && Is.populatedString(id) ? id : fontDefaultId
-  Definitions.uninstall(idString)
-  const instance = fontDefinition(object)
-  Definitions.install(instance)
-  return instance
-}
-
-const FontFactoryImplementation = {
-  install: fontInstall,
+Factories[DefinitionType.Font] = {
   definition: fontDefinition,
   definitionFromId: fontDefinitionFromId,
   fromId: fontFromId,
-  initialize: fontInitialize,
   instance: fontInstance,
-}
-
-Factories[DefinitionType.Font] = FontFactoryImplementation
-
-export {
-  fontInstall,
-  fontDefinition,
-  fontDefinitionFromId,
-  FontFactoryImplementation,
-  fontFromId,
-  fontInitialize,
-  fontInstance,
+  defaults: fontDefaults,
 }

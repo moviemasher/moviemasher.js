@@ -1,32 +1,34 @@
 import React from 'react'
 import {
   ApiVersion,
-  ApiEndpointResponse,
+  ApiCallbacksResponse,
   Endpoint, EndpointPromiser, fetchCallback, idPrefixSet,
   ApiServersRequest, ApiServersResponse, ServerTypes, ServerType,
-  Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback,
+  Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback, urlEndpoint, ApiCallbacksRequest,
 } from '@moviemasher/moviemasher.js'
 
-import { ApiContext, ApiContextInterface } from '../../Contexts/ApiContext'
+import { ApiContext, ApiContextInterface } from './ApiContext'
 import { PropsWithChildren, ReactResult } from '../../declarations'
 
 export interface ApiProps extends PropsWithChildren {
   endpoint?: Endpoint
   path?: string
- }
+}
 
 export function ApiClient(props: ApiProps): ReactResult {
-  const { endpoint, children, path } = props
-  const callback = { endpoint: endpoint || { prefix: path || Endpoints.api.callbacks } }
+  const { endpoint: end, children, path } = props
+  const endpoint = end || urlEndpoint({ prefix: path || Endpoints.api.callbacks })
 
   const [callbacks, setCallbacks] = React.useState<ApiCallbacks>(() => (
-    { [Endpoints.api.callbacks]: callback }
+    { [Endpoints.api.callbacks]: { endpoint } }
   ))
   const [servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
-  const [enabled, setEnabled] = React.useState<ServerType[]>(() => ([]))
 
   const endpointPromise: EndpointPromiser = (id, body?) => {
     return serverPromise(id).then(endpointResponse => {
+
+      // console.debug("ApiClient.endpointPromise.serverPromise", id, endpointResponse)
+
       if (isPopulatedObject(body)) {
         endpointResponse.request ||= {}
         endpointResponse.request.body = { version: ApiVersion, ...body }
@@ -36,17 +38,20 @@ export function ApiClient(props: ApiProps): ReactResult {
   }
 
   const serverPromise = (id: string): Promise<ApiCallback> => {
+    // console.debug("ApiClient.serverPromise", id, endpoint)
     const previousResponse = callbacks[id]
     if (previousResponse) {
       // TODO: check for expires...
       return Promise.resolve(previousResponse)
     }
 
+    const request: ApiCallbacksRequest = { id, version: ApiVersion } 
     const promiseCallback: ApiCallback = {
-      endpoint: callback.endpoint, request: { body: { id, version: ApiVersion } }
+      endpoint, request: { body: request }
     }
-    return fetchCallback(promiseCallback).then((response: ApiEndpointResponse) => {
-      // console.debug("ApiEndpointResponse", callback.endpoint, response)
+    // console.debug("ApiCallbacksRequest", endpoint, request)
+    return fetchCallback(promiseCallback).then((response: ApiCallbacksResponse) => {
+      // console.debug("ApiCallbacksResponse", endpoint, response)
       const { apiCallbacks } = response
       setCallbacks(servers => ({ ...servers, ...apiCallbacks }))
       return apiCallbacks[id]
@@ -55,15 +60,17 @@ export function ApiClient(props: ApiProps): ReactResult {
 
   React.useEffect(() => {
     const request: ApiServersRequest = {}
+    // console.debug("ApiServersRequest", request)
     endpointPromise(Endpoints.api.servers, request).then((response: ApiServersResponse) => {
       // console.debug("ApiServersResponse", response)
+      if (response.data?.temporaryIdPrefix) idPrefixSet(response.data.temporaryIdPrefix)
       setServers(response)
-      setEnabled(ServerTypes.filter(type => !!response[type]))
-      if (response.data?.uuid) idPrefixSet(response.data.uuid)
     })
   }, [])
 
-  const apiContext: ApiContextInterface = { enabled, endpointPromise, servers }
+  const apiContext: ApiContextInterface = { 
+    enabled: true, endpointPromise, servers 
+  }
 
   return (
     <ApiContext.Provider value={apiContext}>

@@ -5,7 +5,7 @@ const $invalidArgument = `${$invalid} argument `
 const $invalidProperty = `${$invalid} property `
 const $invalidDefinitionProperty = `${$invalid} definition property`
 const $internal = "Internal Error "
-const Errors = {
+export const Errors = {
   eval: {
     sourceRect: `${$invalid} evaluation of source rect `,
     outputSize: `${$invalid} evaluation of output size `,
@@ -24,6 +24,7 @@ const Errors = {
   internal: $internal,
   argument: `${$invalidArgument}`,
   invalid: {
+    
     canvas: `${$invalidProperty}canvas `,
     context: `${$invalidProperty}context `,
     duration: `${$invalid} duration`,
@@ -31,8 +32,9 @@ const Errors = {
       audio: `${$invalidDefinitionProperty} audio|url`,
       url: `${$invalidDefinitionProperty} url`,
       source: `${$invalidDefinitionProperty} source`,
-      id: `${$invalidDefinitionProperty} id`,
+      id: `${$invalidDefinitionProperty} id `,
       object: `${$invalidProperty}definition`,
+      type: `${$invalidDefinitionProperty} type `,
     },
     size: `${$invalid} size `,
     track: `${$invalid} track `,
@@ -58,7 +60,6 @@ const Errors = {
     filter: `${$unknown} filter `,
     font: `${$unknown} font `,
     scaler: `${$unknown} scalar `,
-    mode: `${$unknown} mode `,
     definition: `${$unknown} definition `,
   },
   uncached: "Uncached URL ",
@@ -79,5 +80,3 @@ const Errors = {
   property: `${$invalidArgument}property `,
   wrongClass: `${$expected} instance of `,
 }
-
-export { Errors }

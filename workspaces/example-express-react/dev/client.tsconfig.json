@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "checkJs": false,
+    "declaration": false,
+    "declarationMap": false,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["DOM", "ESNext", "ES2020", "ES2019", "ES2018", "ES2017", "ES2016", "ES2015", "ES5"],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "strict": true,
+    "target": "ESNext",
+    "rootDir": "../"
+  },
+  "include": ["../src/*.tsx"]
+}

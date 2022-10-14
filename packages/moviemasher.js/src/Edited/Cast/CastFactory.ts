@@ -1,32 +1,14 @@
-import { Factory } from "../../Definitions/Factory/Factory"
-import { DefinitionType, DefinitionTypes } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
-import { isPopulatedString } from "../../Utility/Is"
-import { DefinitionObjects } from "../../Base/Definition"
-import { Cast, CastObject } from "./Cast"
+import { Cast, CastArgs, CastObject } from "./Cast"
 import { CastClass } from "./CastClass"
+import { Loader } from "../../Loader/Loader"
 
-/**
- * @category Factory
- */
-const CastFactory = {
-  instance: (object: CastObject = {}, definitions?: DefinitionObjects): Cast => {
-    if (definitions) definitions.forEach(definition => {
-      const { id: definitionId, type } = definition
-      if (!(type && isPopulatedString(type))) throw Errors.type + definitionId
-
-      const definitionType = type as DefinitionType
-      if (!DefinitionTypes.includes(definitionType)) throw Errors.type + definitionType
-
-      if (!(definitionId && isPopulatedString(definitionId))) {
-        throw Errors.invalid.definition.id + JSON.stringify(definition)
-      }
-      // installs our definition
-      Factory[definitionType].definition(definition)
-    })
-
-    return new CastClass(object)
-  }
+export const castInstance = (object: CastObject = {}, preloader?: Loader): Cast => {
+  const castArgs: CastArgs = {  ...object, preloader }
+  return new CastClass(castArgs)
 }
 
-export { CastFactory }
+export const isCast = (value: any): value is Cast => value instanceof CastClass
+
+export function assertCast(value: any): asserts value is Cast {
+  if (!isCast(value)) throw new Error("expected Cast")
+}

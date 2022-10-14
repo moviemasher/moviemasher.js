@@ -16,6 +16,7 @@ export interface RenderingServerArgs extends ServerArgs {
   commandOutputs?: RenderingCommandOutputs
   previewSize?: Size
   outputSize?: Size
+  iconSize?: Size
 }
 
 export interface RenderingServer extends Server {

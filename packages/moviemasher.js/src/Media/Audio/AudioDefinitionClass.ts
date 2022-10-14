@@ -1,25 +1,30 @@
-import { DefinitionType, TrackType } from "../../Setup/Enums"
+import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { AudioClass } from "./AudioClass"
-import { Audio, AudioDefinition, AudioObject } from "./Audio"
-import { ClipDefinitionMixin } from "../../Mixin/Clip/ClipDefinitionMixin"
-import { AudibleDefinitionMixin } from "../../Mixin/Audible/AudibleDefinitionMixin"
-import { AudibleFileDefinitionMixin } from "../../Mixin/AudibleFile/AudibleFileDefinitionMixin"
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
+import { Audio, AudioDefinition, AudioDefinitionObject, AudioObject } from "./Audio"
+import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
+import { DefinitionBase } from "../../Definition/DefinitionBase"
+import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
+import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
+import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
 
-const AudioDefinitionWithClip = ClipDefinitionMixin(PreloadableDefinition)
-const AudioDefinitionWithAudible = AudibleDefinitionMixin(AudioDefinitionWithClip)
-const AudioDefinitionWithAudibleFile = AudibleFileDefinitionMixin(AudioDefinitionWithAudible)
-class AudioDefinitionClass extends AudioDefinitionWithAudibleFile implements AudioDefinition {
-  get instance() : Audio { return this.instanceFromObject(this.instanceObject) }
 
-  instanceFromObject(object : AudioObject) : Audio {
-    const audioObject = { ...this.instanceObject, ...object }
-    return new AudioClass(audioObject)
+const AudioDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const AudioDefinitionWithContent = ContentDefinitionMixin(AudioDefinitionWithTweenable)
+const AudioDefinitionWithPreloadable = PreloadableDefinitionMixin(AudioDefinitionWithContent)
+const AudioDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(AudioDefinitionWithPreloadable)
+export class AudioDefinitionClass extends AudioDefinitionWithUpdatableDuration implements AudioDefinition {
+  constructor(...args: any[]) {
+    super(...args)
+    const [object] = args
+    const { audioUrl, url } = object as AudioDefinitionObject
+    if (!audioUrl && url) this.audioUrl = url
   }
 
-  trackType = TrackType.Audio
+  instanceFromObject(object: AudioObject = {}) : Audio {
+    return new AudioClass(this.instanceArgs(object))
+  }
 
   type = DefinitionType.Audio
-}
 
-export { AudioDefinitionClass }
+  loadType = LoadType.Audio
+}

@@ -1,0 +1,64 @@
+{
+  "id": "video-from-videos-json",
+  "outputs": [
+    {
+      "outputType": "video"
+    }
+  ],
+  "mash": {
+    "label": "",
+    "quantize": 10,
+    "color": "#666666",
+    "tracks": [
+      {
+        "dense": true,
+        "trackType": "video",
+        "layer": 0,
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "contentId": "video-rgb",
+            "frame": 0,
+            "frames": 30,
+            "container": {
+              "x": 1,
+              "y": 1,
+              "offW": false, "offE": false,
+              "offS": false, "offN": false,
+              "width": 0.5, "height": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "dense": false,
+        "trackType": "video",
+        "clips": [
+          {
+            "definitionId": "com.moviemasher.clip.default",
+            "contentId": "video-rgb",
+            "content": {
+              "trim": 5
+            },
+            "container": {
+              "x": 0,
+              "y": 0,
+              "offW": false, "offE": false,
+              "offS": false, "offN": false,
+              "width": 0.5, "height": 0.5
+            },
+            "frame": 10,
+            "frames": 20
+          }
+        ]
+      }
+    ]
+  },
+  "definitions": [{
+    "type": "video",
+    "label": "Video", "id": "video-rgb",
+    "url": "../shared/video/rgb.mp4",
+    "source": "../shared/video/rgb.mp4",
+    "duration": 3, "fps": 10
+  }]
+}

@@ -1,25 +1,46 @@
+import { NumberObject } from "../declarations"
+import { isPopulatedString } from "./Is"
 
-// eslint-disable-next-line prefer-const
-let idPrefix = ''
+const Id = {
+  count: 0,
+  prefix: '',
+  countsByPrefix: {} as NumberObject
+}
 
-const idGenerate = (): string => {
+export const idGenerateString = (): string => {
   const components:string[] = []
-  if (idPrefix) components.push(idPrefix)
+  if (Id.prefix) components.push(Id.prefix)
 
   components.push(Date.now().toString(36))
   components.push(Math.random().toString(36).slice(2))
   return components.join('-')
 }
 
-const idPrefixSet = (prefix: string): void => { idPrefix = prefix }
+export const idPrefixSet = (prefix: string): void => { Id.prefix = prefix }
 
-/**
- * @category Utility
- */
-const Id = {
-  generate: idGenerate,
-  prefix: idPrefix,
-  prefixSet: idPrefixSet
+export const idTemporary = () => {
+  const { prefix } = Id
+  const components:string[] = []
+  if (prefix) {
+    components.push(prefix)
+    Id.countsByPrefix[prefix] ||= 0
+    components.push(String(Id.countsByPrefix[prefix]++))
+  } else components.push(String(Id.count++))
+  return components.join('')
 }
 
-export { Id, idGenerate, idPrefix, idPrefixSet }
+export const idGenerate = (prefix = Id.prefix): string => {
+  const components:string[] = []
+  if (prefix) {
+    components.push(prefix)
+    Id.countsByPrefix[prefix] ||= 0
+    components.push(String(Id.countsByPrefix[prefix]++))
+  } else components.push(String(Id.count++))
+  return components.join('')
+}
+
+export const idIsTemporary = (id: string): boolean => {
+  if (!isPopulatedString(Id.prefix)) return false
+
+  return id.startsWith(Id.prefix)
+}

@@ -1,38 +1,70 @@
-import { Any } from "../../declarations"
-import { Definition } from "../../Base/Definition"
+import { SvgFilters } from "../../declarations"
+import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
+import { assertProperty } from "../../Setup/Property"
+import { Size } from "../../Utility/Size"
+import { Rect } from "../../Utility/Rect"
+import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { ModularClass, ModularDefinition } from "./Modular"
-import { Definitions } from "../../Definitions/Definitions"
-import { InstanceClass } from "../../Base/Instance"
+import { InstanceClass } from "../../Instance/Instance"
+import { Filter } from "../../Filter/Filter"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
+import { arrayLast } from "../../Utility/Array"
 
-function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
+
+
+export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
   return class extends Base {
-    constructor(...args : Any[]) {
-      super(...args)
-      const [object] = args
-      this.constructProperties(object)
-    }
+    commandFilters(args: CommandFilterArgs): CommandFilters {
+      const commandFilters: CommandFilters = []
+      const { videoRate, filterInput, time } = args
+      assertPopulatedString(filterInput)
 
-    constructProperties(object : Any = {}) : void {
-      // console.log(this.constructor.name, "constructProperties", object, this.propertyNames)
-      this.definition.properties.forEach(property => {
-        const { name } = property
-        if (typeof object[name] !== "undefined") this[name] = object[name]
-        else if (typeof this[name] === "undefined") this[name] = property.value
+      const duration = isTimeRange(time) ? time.lengthSeconds : 0
+      const { filters } = this.definition
+      const filterArgs: FilterCommandFilterArgs = { 
+        videoRate, duration, filterInput 
+      }
+      commandFilters.push(...filters.flatMap(filter => {
+        this.setFilterValues(filter)
+        const filters = filter.commandFilters(filterArgs)
+        if (filters.length) {
+          filterArgs.filterInput = arrayLast(arrayLast(filters).outputs)
+        }
+        return filters
+      }))
+      return commandFilters
+    }
+    
+    declare definition : ModularDefinition
+
+    private setFilterValues(filter: Filter) {
+      const filterNames = filter.properties.map(property => property.name)
+      const propertyNames = this.properties.map(property => property.name)
+      const shared = propertyNames.filter(name => filterNames.includes(name))
+      shared.forEach(name => {
+        const property = this.properties.find(property => property.name === name)
+        assertProperty(property)
+
+        const { tweenable } = property
+        filter.setValue(this.value(name), name)
+        if (tweenable) {
+          const tweenName = `${name}${PropertyTweenSuffix}`
+          filter.setValue(this.value(tweenName), tweenName)
+        }
       })
     }
 
-    declare definition : ModularDefinition
-
-    get definitions() : Definition[] {
-      return [...super.definitions, ...this.modularDefinitions]
-    }
-
-    private get modularDefinitions() : Definition[] {
-      const modular = this.definition.propertiesModular
-      const ids = modular.map(property => String(this.value(property.name)))
-      return ids.map(id => Definitions.fromId(id))
+    
+    svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters {
+      const svgFilters: SvgFilters = []
+      const { filters } = this.definition
+      svgFilters.push(...filters.flatMap(filter => {
+        this.setFilterValues(filter)
+        return filter.filterSvgFilter()
+      }))
+      // console.log(this.constructor.name, "svgFilters", svgFilters.length)
+      return svgFilters
     }
   }
 }
-
-export { ModularMixin }

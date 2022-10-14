@@ -1,34 +1,15 @@
-import { builtinModules } from "module"
-import path from "path"
 import ts from "rollup-plugin-ts"
 import json from "@rollup/plugin-json"
 
 import pkg from "../../package.json"
 
-const { source, devDependencies } = pkg
+const { module } = pkg
 
 export default {
-  input: source,
-  external: [
-		...builtinModules,
-		...(devDependencies ? Object.keys(devDependencies) : []),
-	],
+  input: 'src/index.ts',
+  output: { format: 'esm', file: module },
   plugins: [
-  json({ preferConst: true, indent: "  ", namedExports: true }),
-  ts({
-    hook: {
-      outputPath: (_, kind) => {
-        switch (kind) {
-          case 'declarationMap': return path.resolve('./dist/moviemasher.d.ts.map')
-          case 'declaration': return path.resolve('./dist/moviemasher.d.ts')
-        }
-      }
-    },
-    tsconfig: {
-      fileName: "./dev/tsconfig.json",
-      hook: config => ({ ...config, declarationMap: true, declaration: true })
-    }
-  })
-],
-  output: { format: "esm", file: "dist/esm/index.js", sourcemap: true }
+    ts({ tsconfig: './dev/tsconfig.json' }), 
+    json({ preferConst: true, indent: '  ', namedExports: true })    
+  ]
 }

@@ -1,24 +1,24 @@
 import fs from 'fs'
-const uuid = require('uuid').v4
 import {
-  ClipObject, DefinitionObjects, DefinitionType, ImageDefinitionObject,
-  MashObject, MergerObject, OutputFormat, ScalerObject, TrackType, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, MashFactory, ExtTs, ExtHls, CommandOptions,
+  DefinitionObjects, DefinitionType, ImageDefinitionObject,
+  MashObject, OutputFormat, UnknownObject, CommandInput, ValueObject,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, colorBlack,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
 import { RunningCommand } from "../../../RunningCommand/RunningCommand"
-import { RunningCommandFactory } from "../../../RunningCommand/RunningCommandFactory"
-import { NodePreloader } from "../../../Utilities/NodePreloader"
+import { runningCommandDelete, runningCommandInstance } from "../../../RunningCommand/RunningCommandFactory"
+import { NodeLoader } from "../../../Utilities/NodeLoader"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
 
+import { idUnique } from "../../../Utilities/Id"
 
-const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
+// const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
 
 
-class StreamingProcessClass extends EventEmitter {
+export class StreamingProcessClass extends EventEmitter {
   constructor(args: StreamingProcessArgs) {
     super()
     this.args = args
@@ -39,11 +39,9 @@ class StreamingProcessClass extends EventEmitter {
   cut(args: StreamingProcessCutArgs): WithError {
     const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this.args
     const { mashObjects, definitionObjects } = args
-    const preloader = new NodePreloader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    const preloader = new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
-      const mash = MashFactory.instance(mashObject, definitionObjects)
-      mash.preloader = preloader
-      return mash
+      return mashInstance({ ...mashObject, definitionObjects, preloader })
     })
     const commandOutput = { ...this.args.commandOutput, options: this.currentOptions }
 
@@ -56,7 +54,7 @@ class StreamingProcessClass extends EventEmitter {
     try {
       if (this.command) {
         // console.log(this.constructor.name, "cut deleting existing command")
-        RunningCommandFactory.delete(this.command.id)
+        runningCommandDelete(this.command.id)
         // this.command.removeAllListeners('error')
       }
 
@@ -71,19 +69,19 @@ class StreamingProcessClass extends EventEmitter {
         }
 
         // TODO: there shouldn't be any relative paths at this point, but we added one above!
-        const prefix = '../example-express-react/dist'
+        const prefix = '../example-express-react'
 
         streamingDescription.inputs?.forEach(input => {
           const { source } = input
           if (!source) throw 'no source'
-          if (typeof source !== 'string') return
+          if (!isString(source)) return
           if (source.includes('://')) return
 
           const resolved = path.resolve(prefix, source)
           const url = `file://${resolved}`
           // console.log(this.constructor.name, "update resolved", source, 'to', url)
 
-          const exists = fs.existsSync(url)
+          const exists = fs.existsSync(source)
           if (!exists) {
             console.error(this.constructor.name, "could not find", source, url)
             throw `NOT FOUND ${url}`
@@ -93,7 +91,7 @@ class StreamingProcessClass extends EventEmitter {
         const commandOptions: CommandOptions = {
           ...streamingDescription, output: commandOutput
         }
-        this.command = RunningCommandFactory.instance(uuid(), commandOptions)
+        this.command = runningCommandInstance(idUnique(), commandOptions)
         this.command.addListener('error', this.error.bind(this))
         this.command.run(destination)
       })
@@ -105,18 +103,13 @@ class StreamingProcessClass extends EventEmitter {
   }
 
   defaultContent(): StreamingProcessCutArgs {
-    const source = './favicon.ico'
-    const definitionId = 'image'
+    const source = '../shared/image/favicon.ico'
+    const contentId = 'image'
     const definitionObject: ImageDefinitionObject = {
-      source, id: definitionId, type: DefinitionType.Image, url: source
+      source, id: contentId, type: DefinitionType.Image, url: source
     }
-    const merger: MergerObject = { definitionId: 'com.moviemasher.merger.center' }
-    const scaler: ScalerObject = { definitionId: 'com.moviemasher.scaler.default', scale: 0.2 }
-    const clip: ClipObject = { definitionId, merger, scaler }
-    const mashObject: MashObject = {
-      backcolor: "#000000",
-      tracks: [{ trackType: TrackType.Video, clips: [clip] }]
-    }
+    const clip: ClipObject = { contentId, width: 0.2 }
+    const mashObject: MashObject = { tracks: [{ clips: [clip] }] }
     const definitionObjects: DefinitionObjects = [definitionObject]
     const mashObjects: MashObject[] = [mashObject]
     const args: StreamingProcessCutArgs = { mashObjects, definitionObjects }
@@ -146,10 +139,10 @@ class StreamingProcessClass extends EventEmitter {
       options.hls_flags += `${options.hls_flags ? '+' : ''}append_list`
 
       const number = this.latestTsNumber
-      if (typeof number !== 'undefined') options.start_number = number + 1
+      if (isNumber(number)) options.start_number = number + 1
     }
     const { hls_segment_filename } = options
-    if (typeof hls_segment_filename === 'string') {
+    if (isString(hls_segment_filename)) {
       if (!hls_segment_filename.includes('/')) {
         options.hls_segment_filename = `${pathPrefix}/${hls_segment_filename}`
       }
@@ -173,5 +166,3 @@ class StreamingProcessClass extends EventEmitter {
     return { id: this.id, state: this.state }
   }
 }
-
-export { StreamingProcessClass }

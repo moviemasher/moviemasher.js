@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Movie Masher Express Example</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <style>
+      #root { width: 360px; height: 640px; }
+      #root > * { position: absolute; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+const element = document.getElementById('root')
+const { editorInstance, TextContainerId } = MovieMasher
+const dimensions = element.getBoundingClientRect()
+const editor = editorInstance({ dimensions })
+const clip = { 
+  container: { string: 'Hello World!' }, containerId: TextContainerId
+}
+const mash = { tracks: [{ clips: [clip] }] }
+editor.load({ mash }).then(() => {
+  editor.previewItems().then(elements => element.append(...elements))
+})
+    </script>
+  </body>
+</html>

@@ -6,48 +6,36 @@ import { ImageSequenceOutputClass } from "./ImageSequenceOutputClass"
 import { WaveformOutputClass } from "./WaveformOutputClass"
 import {
   AudioOutputArgs,
-  ImageOutputArgs,
-  VideoOutputArgs,
-  ImageSequenceOutputArgs,
-  WaveformOutputArgs
+  ImageOutputArgs, VideoOutputArgs, ImageSequenceOutputArgs, WaveformOutputArgs
 } from "./Output"
 
-const outputInstanceAudio = (object: AudioOutputArgs) => {
+export const outputInstanceAudio = (object: AudioOutputArgs) => {
   return new AudioOutputClass(object)
 }
 
-const outputInstanceImage = (object: ImageOutputArgs) => {
+export const outputInstanceImage = (object: ImageOutputArgs) => {
   return new ImageOutputClass(object)
 }
 
-const outputInstanceVideo = (object: VideoOutputArgs) => {
+export const outputInstanceVideo = (object: VideoOutputArgs) => {
   return new VideoOutputClass(object)
 }
 
-const outputInstanceVideoSequence = (object: ImageSequenceOutputArgs) => {
+export const outputInstanceVideoSequence = (object: ImageSequenceOutputArgs) => {
   return new ImageSequenceOutputClass(object)
 }
 
-const outputInstanceWaveform = (object: WaveformOutputArgs) => {
+export const outputInstanceWaveform = (object: WaveformOutputArgs) => {
   return new WaveformOutputClass(object)
 }
 
 /**
  * @category Factory
  */
-const OutputFactory = {
+export const OutputFactory = {
   [OutputType.Audio]: outputInstanceAudio,
   [OutputType.Image]: outputInstanceImage,
   [OutputType.Video]: outputInstanceVideo,
   [OutputType.ImageSequence]: outputInstanceVideoSequence,
   [OutputType.Waveform]: outputInstanceWaveform,
-}
-
-export {
-  OutputFactory,
-  outputInstanceAudio,
-  outputInstanceImage,
-  outputInstanceVideo,
-  outputInstanceVideoSequence,
-  outputInstanceWaveform,
 }

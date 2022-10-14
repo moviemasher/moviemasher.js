@@ -1,5 +1,6 @@
 import { StringObject } from "../declarations"
 import { ServerType } from "../Setup/Enums"
+import { isObject, isString } from "../Utility/Is"
 
 
 const EndpointsApi: StringObject = {
@@ -10,7 +11,7 @@ const EndpointsApi: StringObject = {
 const EndpointsEncode: StringObject = {
   start: '',
   status: '',
-  stop: '',
+  // stop: '',
 }
 
 const EndpointsRendering: StringObject = { ...EndpointsEncode, upload: '' }
@@ -25,6 +26,7 @@ const EndpointsCrud: StringObject = {
 const EndpointsData: Record<string, StringObject> = {
   cast: { ...EndpointsCrud, default: '' },
   mash: { ...EndpointsCrud, default: '' },
+  stream: { ...EndpointsCrud },
   definition: { ...EndpointsCrud },
 }
 
@@ -42,21 +44,20 @@ const EndpointsFile: StringObject = {
   store: '',
 }
 
-const Endpoints = {
+export const Endpoints = {
   [ServerType.Api]: EndpointsApi,
   [ServerType.Data]: EndpointsData,
   [ServerType.File]: EndpointsFile,
   [ServerType.Rendering]: EndpointsRendering,
   [ServerType.Streaming]: EndpointsStreaming,
 }
+
 // populate Endpoints with key paths...
 Object.entries(Endpoints).forEach(([serverType, server]) => {
-  if (typeof server === 'object') Object.entries(server).forEach(([key1, value1]) => {
-    if (typeof value1 === 'string') server[key1] = `/${serverType}/${key1}`
+  if (isObject(server)) Object.entries(server).forEach(([key1, value1]) => {
+    if (isString(value1)) server[key1] = `/${serverType}/${key1}`
     else Object.entries(value1).forEach(([key2, value2]) => {
       if (!value2) value1[key2] = `/${serverType}/${key1}/${key2}`
     })
   })
 })
-
-export { Endpoints }

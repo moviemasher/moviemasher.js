@@ -1,0 +1,32 @@
+version: "3"
+networks:
+  default:
+    name: moviemasher-example-express-react
+services:
+  moviemasher-example-express-react:
+    build:
+      dockerfile: ../../../dev/image/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/moviemasher.js:5.1.0
+    container_name: moviemasher-example-express-react-8570
+    ports:
+      - "8570:8570"
+      - "8571:8571"
+    volumes:
+      - ../src/index.html:/home/node/app/workspaces/example-express-react/host/public/index.html
+      - ../host/public/index.js:/home/node/app/workspaces/example-express-react/host/public/index.js
+      - ../../../packages/server-express/cjs:/home/node/app/packages/server-express/cjs
+      - ../../../packages/moviemasher.js/esm:/home/node/app/packages/moviemasher.js/esm
+      - ../../../packages/moviemasher.js/umd:/home/node/app/packages/moviemasher.js/umd
+      - ../../../packages/server-express/package.json:/home/node/app/packages/server-express/package.json
+      - ../../../packages/theme-default/moviemasher.css:/home/node/app/workspaces/example-express-react/host/public/moviemasher.css
+      - ../../../packages/moviemasher.js/package.json:/home/node/app/packages/moviemasher.js/package.json
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/home/node/app/workspaces/example-express-react/host/public/moviemasher.js
+      - ../../../packages/moviemasher.js/umd/moviemasher.min.js:/home/node/app/workspaces/example-express-react/host/public/moviemasher.min.js
+      - ../../../packages/client-react/umd/client-react.js:/home/node/app/workspaces/example-express-react/host/public/client-react.js
+      - ../../../packages/client-react/umd/client-react.min.js:/home/node/app/workspaces/example-express-react/host/public/client-react.min.js
+      - ../../../packages/theme-default/umd/theme-default.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.js
+      - ../../../packages/theme-default/umd/theme-default.min.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.min.js
+      - ../../../temporary/express-react/media:/home/node/app/workspaces/example-express-react/host/public/media
+      - ../../../temporary/express-react/temporary:/home/node/app/temporary
+      

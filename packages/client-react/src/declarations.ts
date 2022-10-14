@@ -1,6 +1,5 @@
 import React from 'react'
 
-
 // TODO: determine if we really need to repeat this
 declare global {
   interface Window {
@@ -15,9 +14,9 @@ export type NodesArray = Array<NodeObject>
 
 export type UnknownElement = React.ReactElement<Record<string, unknown>>
 
-export interface EditorIcons {
-  [key: string]: UnknownElement
-}
+export interface ElementRecord extends Record<string, UnknownElement> {}
+
+export type ThemeIcons = Record<string, JSX.Element>
 
 export interface SourceCallbackOptions extends Record<string, unknown> {
   page?: number
@@ -27,7 +26,7 @@ export interface SourceCallbackOptions extends Record<string, unknown> {
 
 export type ReactStateSetter<T = string> = React.Dispatch<React.SetStateAction<T>>
 
-export interface ListenerCallback { (): void }
+export interface ListenerCallback { (event: Event): void }
 
 
 export interface PropsAndChild extends Record<string, unknown> {
@@ -45,9 +44,10 @@ export interface PropsWithChildren extends Record<string, unknown> {
 export interface PropsAndChildren extends Record<string, unknown> {
   children: React.ReactNode
 }
+
 export type ReactResult = React.ReactElement<any, any> | null
 
-export type PropsMethod<I, O> = (input: I) => O
+export type PropsMethod<I, O> = (input?: I) => O
 
 export interface WithClassName extends Record<string, unknown> {
   className?: string

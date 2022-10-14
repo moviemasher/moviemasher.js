@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg width="640" height="280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M 145.00 60.00 L 145.00 63.10 M 141.41 63.10 L 148.59 63.10 L 145.00 80.00 Z M 141.41 63.10" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 145.00 40.00 L 145.00 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 370.00 0.00 L 640.00 0.00 L 640.00 40.00 L 370.00 40.00 Z M 370.00 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="375.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[HostDefaultOptions]]()</text>
+<path d="M 400.17 80.00 L 610.00 80.00 L 610.00 120.00 L 400.17 120.00 Z M 400.17 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="405.42" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >{[[HostOptions]]}</text>
+<path d="M 460.00 160.00 L 550.00 160.00 L 550.00 200.00 L 460.00 200.00 Z M 460.00 160.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="465.25" y="189.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[Host]]</text>
+<path d="M 80.33 160.00 L 209.67 160.00 L 209.67 200.00 L 80.33 200.00 Z M 80.33 160.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="85.58" y="189.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[Masher]]</text>
+<path d="M 425.00 240.00 L 585.00 240.00 L 585.00 280.00 L 425.00 280.00 Z M 425.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="430.25" y="269.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[ApiServer]]</text>
+<path d="M 145.00 220.00 L 145.00 223.10 M 141.41 223.10 L 148.59 223.10 L 145.00 240.00 Z M 141.41 223.10" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 145.00 200.00 L 145.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 0.00 0.00 L 290.00 0.00 L 290.00 40.00 L 0.00 40.00 Z M 0.00 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[MasherDefaultProps]]()</text>
+<path d="M 37.54 80.00 L 252.46 80.00 L 252.46 120.00 L 37.54 120.00 Z M 37.54 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >{[[MasherProps]]}</text>
+<path d="M 505.00 220.00 L 505.00 223.10 M 501.41 223.10 L 508.59 223.10 L 505.00 240.00 Z M 501.41 223.10" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 505.00 200.00 L 505.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 145.00 140.00 L 145.00 143.10 M 141.41 143.10 L 148.59 143.10 L 145.00 160.00 Z M 141.41 143.10" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 145.00 120.00 L 145.00 160.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 505.04 60.00 L 505.05 63.10 M 501.46 63.11 L 508.64 63.09 L 505.08 80.00 Z M 501.46 63.11" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 505.00 40.00 L 505.08 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 505.04 140.00 L 505.04 143.10 M 501.44 143.09 L 508.63 143.11 L 505.00 160.00 Z M 501.44 143.09" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 505.08 120.00 L 505.00 160.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<path d="M 70.00 240.00 L 220.00 240.00 L 220.00 280.00 L 70.00 280.00 Z M 70.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+<text x="75.25" y="269.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[ApiClient]]</text>
+<path d="M 392.40 260.00 L 408.10 260.00 M 408.10 263.59 L 408.10 256.41 L 425.00 260.00 Z M 408.10 263.59" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 252.60 260.00 L 236.90 260.00 M 236.90 256.41 L 236.90 263.59 L 220.00 260.00 Z M 236.90 256.41" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
+
+<path d="M 425.00 260.00 L 220.00 260.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
+
+
+</svg>

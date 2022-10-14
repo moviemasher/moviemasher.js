@@ -1,27 +1,43 @@
+import { isDefinition } from "../../Definition/Definition"
+import { isInstance } from "../../Instance/Instance"
 import { GenericFactory } from "../../declarations"
 import { Modular, ModularObject } from "../../Mixin/Modular/Modular"
 import { ModularDefinition, ModularDefinitionObject } from "../../Mixin/Modular/Modular"
+import { DefinitionType } from "../../Setup/Enums"
+import { Selectable } from "../../Editor/Selectable"
+import { Tweenable } from "../../Mixin/Tweenable/Tweenable"
 
-type EffectObject = ModularObject
+export type EffectObject = ModularObject
 
-interface Effect extends Modular {
+export interface Effect extends Modular, Selectable {
   definition : EffectDefinition
+  tweenable: Tweenable
+}
+
+export const isEffect = (value?: any): value is Effect => {
+  return isInstance(value) && value.type === DefinitionType.Effect
+}
+export function assertEffect(value?: any): asserts value is Effect {
+  if (!isEffect(value)) throw new Error("expected Effect")
 }
 
 export type Effects = Effect[]
 
-type EffectDefinitionObject = ModularDefinitionObject
+export type EffectDefinitionObject = ModularDefinitionObject
 
-interface EffectDefinition extends ModularDefinition {
-  instance : Effect
-  instanceFromObject(object : EffectObject) : Effect
+export interface EffectDefinition extends ModularDefinition {
+  instanceFromObject(object?: EffectObject) : Effect
+}
+export const isEffectDefinition = (value?: any): value is EffectDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Effect
 }
 
 /**
  * @category Factory
  */
-interface EffectFactory extends GenericFactory<
+export interface EffectFactory extends GenericFactory<
   Effect, EffectObject, EffectDefinition, EffectDefinitionObject
 > {}
 
-export { Effect, EffectDefinition, EffectDefinitionObject, EffectFactory, EffectObject }
+
+// TODO: consider renaming to ClipFilter

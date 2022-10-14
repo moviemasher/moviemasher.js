@@ -1,11 +1,10 @@
-import React, { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
-import { ApiClient, Masher, DefaultMasherProps } from "@moviemasher/client-react"
-import "@moviemasher/client-react/dist/moviemasher.css"
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { ApiClient, Masher, MasherDefaultProps } from "@moviemasher/client-react"
 
-const applicationOptions = { previewSize: { width: 480, height: 270 } }
-const options = DefaultMasherProps(applicationOptions)
-const masher = <Masher {...options} />
+const element = document.getElementById('root')!
+const options = { previewSize: { width: 480, height: 270 } }
+const props = MasherDefaultProps(options)
+const masher = <Masher {...props} />
 const editor = <ApiClient>{masher}</ApiClient>
-const strictMode = <StrictMode>{editor}</StrictMode>
-ReactDOM.render(strictMode, document.getElementById('app'))
+ReactDOM.createRoot(element).render(editor)

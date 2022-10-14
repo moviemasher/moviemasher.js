@@ -1,14 +1,13 @@
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/head.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/head.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, and streamer - version 5.0.6_
-
-- _visual compositing_ through **Canvas API**
-- _audio mixing_ through **WebAudio API**
-- _encoding_ and _streaming_ through **FFmpeg**
-- _client_ implemented in **ReactJS**
-- _server_ implemented in **ExpressJS**
+_JavaScript video editor, encoder, switcher_
+- _visual compositing_ through **SVG API**
+- _audio mixing_ through **WebAudio API** 
+- _client_ implemented in **ReactJS** 
+- _server_ implemented in **ExpressJS**  
+- _encode_ and _stream_ through **FFmpeg**
 <!-- MAGIC:END -->
 
 ## Express Server Plug-in
@@ -28,78 +27,58 @@ This server implementation utilizes
 [Node Media Server](https://github.com/illuspas/Node-Media-Server), and
 [WebRTC](https://github.com/node-webrtc/node-webrtc) to support its data, rendering, and streaming APIs.
 
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
 [demo](https://moviemasher.com/docs/demo/index.html) and
-[more extensive documentation](https://moviemasher.com/docs/index.html) available on
+more [extensive documentation](https://moviemasher.com/docs/index.html) available on
 [MovieMasher.com](https://moviemasher.com/). Inline documentation and code completion is
 also available when using a code editor that supports TypeScript and IntelliSense.
 <!-- MAGIC:END -->
 
-## Installation
 
-The following shell command installs the server and core libraries to your NPM project,
+<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/md/snippet/example-server.md&stripMagic=true) -->
+## Server Example
+
+The following shell command installs the server and required packages to your NPM project,
 saving the former to the `dependencies` array in your **package.json** file.
 
 ```shell
 npm install @moviemasher/server-express --save
 ```
 
-_Please note_ that this does not install a client implementation that interacts with this module.
-Learn more about how the codebase is structured in the
-[Architecture Guide](https://moviemasher.com/docs/Architecture.html).
-
-<!-- MAGIC:START (FILEMD:src=../../dev/docs/md/snippet/example-server.md&stripMagic=true) -->
-## Server Example
+The script below can then be included in your project and triggered in a variety of ways. The most straightfoward is to simply pass its path directly to node.
 
 <fieldset>
 
-<legend>server.ts</legend>
+<legend>server.js</legend>
 
 
-```ts
-import path from 'path'
-import { Host, DefaultHostOptions, expandToJson } from '@moviemasher/server-express'
+```js
+const MovieMasherServer = require("@moviemasher/server-express")
 
-const configuration = process.argv[2] || path.resolve(__dirname, './server-config.json')
-const options = expandToJson(configuration)
-const host = new Host(DefaultHostOptions(options))
+const { Host } = MovieMasherServer
+const options = { 
+  port: 8572, host: '0.0.0.0', 
+  api: { authentication: { type: 'basic' } } 
+}
+const host = new Host(options)
 host.start()
 ```
 </fieldset>
 
-In this example we're using the
-[DefaultHostOptions](https://moviemasher.com/docs/function/DefaultHostOptions.html) function to
-create the [Host](https://moviemasher.com/docs/component/Host.html) constructor arguments from a JSON file with the following structure:
+The script first requires MovieMasherServer, then destructures what's needed from it. In this example we're just grabbing the `Host` class and corresponding `HostDefaultOptions` function. We call the later with the desired port number, and then pass the options it returns as arguments to the class constructor. Finally, the `start` method of the new instance is called to start the ExpressJS server. 
 
-<fieldset>
+While the server is running, requests can be made to http://localhost:8570 following half a dozen APIs that save data, handle uploads, render video, etc. 
 
-<legend>server-config.json</legend>
-
-
-```json
-{
-  "port": 8570,
-  "previewSize": { "width": 480, "height": 270 },
-  "outputSize": { "width": 1920, "height": 1080 }
-}
-```
-</fieldset>
-
-We are setting the preview dimensions to their default for demonstration purposes. The server will pass these to the client and the client will apply them, but only after the CSS is applied so a resize will be visible if they differ. Preview dimensions should be overridden either in the client, or better still, in the CSS. If the defaults are overidden there they should be here too, since the client does NOT pass them to the server. The rendering server uses them to optimally size previews of uploaded video and images.
-
-We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. Please note: they should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
-
-Learn more about building your own customized server in the
-[Integration Guide](https://moviemasher.com/docs/Integration.html).
-
+### _Please note_
+This example installs an FFmpeg build that has limited rendering capabilities due to lack of support of SVG files. Typically a custom build is utilized instead. Learn more about integrating your own services in the [Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILE:src=../../dev/docs/md/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../dev/docs/md/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a
@@ -108,6 +87,5 @@ Further support is occassionally offered to particular projects on an hourly con
 
 Pull requests for fixes, features, and refactorings
 are always appreciated, as are documentation updates. Creative help with graphics, video
-and the web site is also needed. Please [send an email](mailto:connect27@moviemasher.com)
-to discuss ways to contribute to the project.
+and the web site is also needed. Please review the [Contributor Guide](https://moviemasher.com/docs/Contributor.html) and [send an email](mailto:connect27@moviemasher.com) to discuss ways to work on the project.
 <!-- MAGIC:END -->

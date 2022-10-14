@@ -1,0 +1,58 @@
+{
+  "name": "@moviemasher/theme-default",
+  "version": "5.1.0",
+  "description": "Movie Masher Theme Plugin - version 5.1.0",
+  "main": "umd/theme-default.js",
+  "module": "esm/theme-default.js",
+  "types": "esm/theme-default.d.ts",
+  "type": "module",
+  "license": "MPL-2.0",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "peerDependencies": {
+    "@moviemasher/client-react": "5.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "react-icons": "^4.4.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/node": "15.6.1"
+  },
+  "scripts": {
+    "build-css": "cat src/css/* > moviemasher.css",
+    "build-esm": "rollup --config dev/rollup/esm.config.js",
+    "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
+    "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
+    "build-umd": "rollup --config dev/rollup/umd.config.js",
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min build-css"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

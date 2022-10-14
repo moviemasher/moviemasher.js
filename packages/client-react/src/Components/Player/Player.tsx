@@ -1,45 +1,41 @@
 import React from 'react'
 import { EventType } from '@moviemasher/moviemasher.js'
-import { ListenerCallback, PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
 
-import { PlayerContext, PlayerContextInterface } from '../../Contexts/PlayerContext'
+import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+import { PlayerContext, PlayerContextInterface } from './PlayerContext'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
-import { useMashEditor } from '../../Hooks/useMashEditor'
+import { useEditor } from '../../Hooks/useEditor'
 
-interface PlayerProps extends PropsAndChildren, WithClassName {}
-
-/**
- * @parents Masher, Caster
- * @children PlayerContent, PlayerPlaying, PlayerNotPlaying, PlayerTimeControl, PlayerButton
- */
-function Player(props: PlayerProps): ReactResult {
-  const masher = useMashEditor()
-  const handlePaused : ListenerCallback = () => { setPaused(masher.paused) }
-  useListeners({
-    [EventType.Pause]: handlePaused,
-    [EventType.Play]: handlePaused,
-    [EventType.Volume]: () => { setVolume(masher.volume) },
-  })
-
-  const [paused, setPaused] = React.useState(masher.paused)
-  const [volume, setVolume] = React.useState(masher.volume)
-
-  const changePaused = (value: boolean) => { masher.paused = value }
-  const changeVolume = (value: number) => { masher.volume = value }
-
-  const playerContext: PlayerContextInterface = {
-    paused,
-    setPaused: changePaused,
-    setVolume: changeVolume,
-    volume,
-  }
-
-  return (
-    <PlayerContext.Provider value={playerContext}>
-      <View {...props}/>
-    </PlayerContext.Provider>
-  )
+export interface PlayerProps extends PropsAndChildren, WithClassName {
+  disabled?: boolean
 }
 
-export { Player, PlayerProps }
+/**
+ * @parents Masher
+ * @children PlayerContent, PlayerPlaying, PlayerNotPlaying, PlayerTimeControl, PlayerTime, PlayerButton
+ */
+export function Player(props: PlayerProps): ReactResult {
+  const { disabled, ...rest } = props
+  const editor = useEditor()
+  const [paused, setPaused] = React.useState(editor.paused)
+  const [volume, setVolume] = React.useState(editor.volume)
+  const updatePaused = () => { setPaused(editor.paused) }
+  useListeners({
+    [EventType.Pause]: updatePaused, [EventType.Play]: updatePaused,
+    [EventType.Volume]: () => { setVolume(editor.volume) },
+  })
+
+  const changePaused = (value: boolean) => { editor.paused = value }
+  const changeVolume = (value: number) => { editor.volume = value }
+
+  const playerContext: PlayerContextInterface = {
+    paused, disabled, volume, changePaused, changeVolume,
+  }
+  const contextProps = {
+    value: playerContext, children: <View { ...rest } />
+  }
+  return (
+    <PlayerContext.Provider { ...contextProps } />
+  )
+}

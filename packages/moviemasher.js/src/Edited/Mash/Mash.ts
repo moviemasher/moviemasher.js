@@ -1,78 +1,88 @@
 import {
-  LoadPromise, UnknownObject, Value, Described, GraphFiles
-} from "../../declarations"
-import { AVType, GraphType, TrackType } from "../../Setup/Enums"
-import { Definition } from "../../Base/Definition"
+  UnknownObject, Value, Described} from "../../declarations"
+import { AVType, DefinitionType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
-import { Clip, Clips } from "../../Mixin/Clip/Clip"
-import { Audible, AudibleContent } from "../../Mixin/Audible/Audible"
-import { Action } from "../../Editor/MashEditor/Actions/Action/Action"
-import { Composition } from "./Composition/Composition"
+import { Clip, Clips } from "./Track/Clip/Clip"
+import { AudioPreview } from "./Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
-import { Edited } from "../../Edited/Edited"
-import { Track, TrackObject } from "../../Media/Track/Track"
-import { Preloader } from "../../Preloader/Preloader"
-import { FilterGraphObject, FilterGraphOptions } from "./FilterGraph/FilterGraph"
-import { TransformableContent } from "../../Mixin/Transformable/Transformable"
+import { Edited, EditedArgs, EditedObject } from "../../Edited/Edited"
+import { Track, TrackObject } from "./Track/Track"
+import { Loader } from "../../Loader/Loader"
+import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
+import { DefinitionObjects } from "../../Definition/Definition"
+import { isObject } from "../../Utility/Is"
 
-interface MashDescription extends UnknownObject, Described {}
-interface MashObject extends Partial<MashDescription> {
-  backcolor? : string
-  buffer?: number
+import { LayerMash } from "../Cast/Layer/Layer"
+import { throwError } from "../../Utility/Throw"
+import { Propertied } from "../../Base/Propertied"
+
+export interface DefinitionReferenceObject {
+  definitionId: string
+  definitionType: DefinitionType
+  label: string
+}
+export interface MashDescription extends UnknownObject, Described {}
+
+export interface MashObject extends EditedObject {
+  definitionReferences?: DefinitionReferenceObjects
   gain?: Value
-  quantize? : number
   tracks?: TrackObject[]
   frame?: number
   rendering?: string
 }
 
-export interface MashArgs extends MashObject {
-  definitions: Definition[]
-}
-export type Content = TransformableContent & AudibleContent
-export type Contents = Content[]
+export type DefinitionReferenceObjects = DefinitionReferenceObject[]
 
-interface Mash extends Edited {
-  addClipToTrack(clip : Clip, trackIndex? : number, insertIndex? : number, frame? : number) : void
-  addTrack(trackType: TrackType): Track
-  backcolor: string
-  buffer: number
-  changeClipFrames(clip : Clip, value : number) : void
-  changeClipTrimAndFrames(clip : Audible, value : number, frames : number) : void
-  clips: Clips
+export interface MashAndDefinitionsObject {
+  mashObject: MashObject
+  definitionObjects: DefinitionObjects
+}
+export const isMashAndDefinitionsObject = (value: any): value is MashAndDefinitionsObject => {
+  return isObject(value) && "mashObject" in value && "definitionObjects" in value
+}
+
+export interface MashArgs extends EditedArgs, MashObject { }
+
+export interface Mash extends Edited {
+  /** this.time -> this.endTime in time's fps */
+  addClipToTrack(clip : Clip | Clips, trackIndex? : number, insertIndex? : number, frame? : number) : void
+  addTrack(object?: TrackObject): Track
+  changeTiming(propertied: Propertied, property: string, value : number) : void
+  clearPreview(): void
+  clips: Clip[]
   clipsInTimeOfType(time: Time, avType?: AVType): Clip[]
-  clipTrack(clip: Clip): Track
-  composition: Composition
-  contents(time: Time, avType?: AVType): Contents
-  definitions : Definition[]
-  destroy() : void
+  composition: AudioPreview
+  definitionIds: string[]
   draw() : void
   drawnTime? : Time
   duration: number
   endTime: Time
-  filterGraphs(args: FilterGraphOptions): FilterGraphs
+  filterGraphs(args?: FilterGraphsOptions): FilterGraphs
   frame: number
   frames: number
   gain: number
-  graphFiles(args: FilterGraphOptions): GraphFiles
-  handleAction(action: Action): void
+  layer: LayerMash
   loop: boolean
   paused: boolean
-  preloader: Preloader
-  loadPromise(args?: FilterGraphObject): LoadPromise
+  preloader: Loader
   quantize : number
-  removeClipFromTrack(clip : Clip) : void
-  removeTrack(trackType: TrackType): void
+  removeClipFromTrack(clip : Clip | Clips) : void
+  removeTrack(index?: number): void
   rendering: string
-  seekToTime(time: Time): LoadPromise | undefined
+  seekToTime(time: Time): Promise<void> | undefined
   time: Time
-  /** this.time -> this.endTime in time's fps */
   timeRange: TimeRange
   toJSON(): UnknownObject
-  trackCount(type?: TrackType): number
-  trackOfTypeAtIndex(type : TrackType, index? : number) : Track
   tracks: Track[]
 }
 
-export { Mash, MashObject, MashDescription }
+export type Mashes = Mash[]
+
+export const isMash = (value: any): value is Mash => {
+  return isObject(value) && "composition" in value
+}
+
+export function assertMash(value: any, name?: string): asserts value is Mash {
+  if (!isMash(value)) throwError(value, "Mash", name)
+}

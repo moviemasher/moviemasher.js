@@ -1,30 +1,26 @@
-import { DefinitionType, DefinitionTypes, Property } from "@moviemasher/moviemasher.js"
+import { DefinitionType, isDefinitionType, isSelectType, isString, Property, SelectType } from "@moviemasher/moviemasher.js"
 
 const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
   if (string) return [string]
 
   if (!array) return properties ? properties.map(property => property.name) : []
 
-  if (typeof array === 'string') return array.split(',').map(string => string.trim())
+  if (isString(array)) return array.split(',').map(string => string.trim())
 
   return array
 }
 
-const propsDefinitionTypes = (type?:string, types?: string | string[], id?: string): DefinitionType[] => {
+export const propsDefinitionTypes = (type?: string, types?: string | string[], id?: string): DefinitionType[] => {
   const strings = propsStringArray(type, types)
   if (id && !strings.length) strings.push(id)
-  const definitionTypes = DefinitionTypes.map(String)
-  const validStrings = strings.filter(string => definitionTypes.includes(string))
+  const validStrings = strings.filter(string => isDefinitionType(string))
   return validStrings.map(string => string as DefinitionType)
 }
 
-const Props = {
-  stringArray: propsStringArray,
-  definitionTypes: propsDefinitionTypes,
-}
 
-export {
-  Props,
-  propsStringArray,
-  propsDefinitionTypes,
+export const propsSelectTypes = (type?: string, types?: string | string[], id?: string): SelectType[] => {
+  const strings = propsStringArray(type, types)
+  if (id && !strings.length) strings.push(id)
+  const validStrings = strings.filter(string => isSelectType(string))
+  return validStrings.map(string => string as SelectType)
 }

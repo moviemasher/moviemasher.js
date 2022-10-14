@@ -1,47 +1,68 @@
-import { FilterGraphOptions } from "../Edited/Mash/FilterGraph/FilterGraph"
+import { FilterGraphsOptions } from "../Edited/Mash/FilterGraphs/FilterGraphs"
 import { Time } from "../Helpers/Time/Time"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
+import { assertPreloadableDefinition } from "../Mixin/Preloadable/Preloadable"
 import { AVType, OutputType } from "../Setup/Enums"
-import { ImageOutput, ImageOutputArgs } from "./Output"
+import { assertObject } from "../Utility/Is"
+import { sizeCopy } from "../Utility/Size"
+import { ImageOutput, ImageOutputArgs, RenderingCommandOutput } from "./Output"
+import { outputDefaultPng } from "./OutputDefault"
 import { RenderingOutputClass } from "./RenderingOutputClass"
 
-class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
+export class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
   declare args: ImageOutputArgs
 
-  avType = AVType.Video
+  _avType = AVType.Video
 
-  protected override get mashDurationPromise(): Promise<void> {
-    const { args } = this
-    if (args.offset) return super.mashDurationPromise
+  protected override get commandOutput(): RenderingCommandOutput { 
+    const { upload, commandOutput } = this.args
+    if (!upload) {
+      // console.log(this.constructor.name, "commandOutput NOT UPLOAD")
+      return commandOutput
+    }
 
-    this.assureClipFrames()
-    return Promise.resolve()
+    const { renderingClips } = this
+    const [clip] = renderingClips
+    const { definition } = clip.content
+    // console.log(this.constructor.name, "commandOutput", definition.label)
+    assertPreloadableDefinition(definition)
+    const { info } = definition
+    assertObject(info)
+
+    const { streams } = info
+    const [stream] = streams
+    const { pix_fmt, codec_name } = stream
+    if (codec_name !== 'png') {
+      // console.log("commandOutput codec_name", codec_name)
+      return commandOutput
+    }
+    
+    const { width, height, basename } = commandOutput
+    const overrides ={ width, height, basename } 
+    const output = outputDefaultPng(overrides)
+
+    // console.log("commandOutput output", output, commandOutput)
+
+    return output
   }
 
   override get endTime(): Time | undefined { return }
 
-  override get filterGraphOptions(): FilterGraphOptions {
-    const {args, graphType, avType, startTime } = this
-    const { mash } = args
-    const { quantize } = mash
-    const filterGraphOptions: FilterGraphOptions = {
-      preloading: false,
-      size: this.sizeCovered(), videoRate: quantize,
-      time: startTime,
-      graphType, avType
+  override get filterGraphsOptions(): FilterGraphsOptions {
+    const { args, graphType, avType, startTime: time } = this
+    const { mash, upload } = args
+    const { quantize: videoRate } = mash
+    const filterGraphsOptions: FilterGraphsOptions = {
+      time, graphType, videoRate, size: this.sizeCovered(), 
+      avType, upload
     }
-    return filterGraphOptions
-  }
-
-  override get outputCover(): boolean {
-    // console.log(this.constructor.name, "outputCover", this.args.commandOutput)
-    return !!this.args.commandOutput.cover
+    return filterGraphsOptions
   }
 
   outputType = OutputType.Image
 
   override get startTime(): Time {
-     const { commandOutput, mash } = this.args
+    const { commandOutput, mash } = this.args
     const { offset } = commandOutput
     const needDuration = offset || mash.frames < 0
     if (needDuration) return timeFromArgs(0, mash.quantize)
@@ -49,6 +70,3 @@ class ImageOutputClass extends RenderingOutputClass implements ImageOutput{
     return mash.timeRange.positionTime(Number(offset || 0), 'ceil')
   }
 }
-
-export { ImageOutputClass }
-// ffmpeg -i /Users/doug/GitHub/moviemasher.js/dev/shared/video.mp4 -y -filter_complex 'color=color=#00000000:size=427x240[COLORBACK];[0:v]trim=start=1[TRIM0];[TRIM0]fps=fps=10[FPS0];[FPS0]setpts=expr=PTS-STARTPTS[SETPTS0];[SETPTS0]setsar=sar=1:max=1[SETSAR0];[SETSAR0]scale=width=427:height=240[SCALE0];[SCALE0]setsar[SETSAR1];[COLORBACK][SETSAR1]overlay=x=0:y=0' -frames:v 1 temporary/test/render/image-from-trimmed-video/image.png

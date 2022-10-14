@@ -1,41 +1,49 @@
-import { PreloadableDefinition } from "../../Base/PreloadableDefinition"
-import { GenericFactory } from "../../declarations"
+import { GenericFactory, LoadedVideo } from "../../declarations"
+import { DefinitionType } from "../../Setup/Enums"
+import { isInstance } from "../../Instance/Instance"
 import {
-  AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
+  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
+  UpdatableSizeObject
+} from "../../Mixin/UpdatableSize/UpdatableSize"
 import {
-  Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../../Mixin/Transformable/Transformable"
+  Content, ContentDefinition, ContentDefinitionObject, ContentObject
+} from "../../Content/Content"
+import { UpdatableDuration, UpdatableDurationDefinition, 
+  UpdatableDurationDefinitionObject, UpdatableDurationObject 
+} from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { isDefinition } from "../../Definition"
 
-interface VideoObject extends AudibleFileObject, TransformableObject {
+export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
 }
 
-interface Video extends AudibleFile, Transformable {
+export interface Video extends Content, UpdatableSize, UpdatableDuration {
   definition : VideoDefinition
-  copy : Video
-  speed : number
 }
 
-interface VideoDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
-  fps?: number
-  source?: string
-  url?: string
+export interface VideoDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+  loadedVideo?: LoadedVideo
 }
 
-interface VideoDefinition extends AudibleFileDefinition, TransformableDefinition, PreloadableDefinition {
-  instance : Video
-  instanceFromObject(object: VideoObject): Video
+export interface VideoDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: VideoObject): Video
+  loadedVideo?: LoadedVideo
+}
+export const isVideoDefinition = (value: any): value is VideoDefinition => {
+  return isDefinition(value) && value.type === DefinitionType.Video
+}
+
+export const isVideo = (value: any): value is Video => {
+  return isInstance(value) && value.definition.type === DefinitionType.Video
+}
+
+export function assertVideo(value: any): asserts value is Video {
+  if (!isVideo(value)) throw new Error('expected Video')
 }
 
 /**
  * @category Factory
  */
-interface VideoFactory extends GenericFactory<
+export interface VideoFactory extends GenericFactory<
   Video, VideoObject, VideoDefinition, VideoDefinitionObject
 > {}
-
-export {
-  Video, VideoDefinition, VideoDefinitionObject,
-  VideoFactory, VideoObject
-}

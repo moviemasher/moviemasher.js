@@ -1,0 +1,27 @@
+{
+  "name": "@moviemasher/documentation",
+  "version": "5.1.0",
+  "description": "Movie Masher Documentation",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MPL-2.0",
+  "scripts": {  
+    "logs": "docker compose --file dev/docker-compose.yml logs -f",
+    "start": "docker compose --file dev/docker-compose.yml up -d",
+    "stop": "docker compose --file dev/docker-compose.yml down -v"
+  },
+  "dependencies": {
+    "@moviemasher/moviemasher.js": "5.1.0",
+    "@moviemasher/client-react": "5.1.0",
+    "@moviemasher/server-express": "5.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/node": "15.6.1"
+  }
+}

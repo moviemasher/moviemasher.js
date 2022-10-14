@@ -1,19 +1,10 @@
-import { DefinitionObjects, DefinitionBase } from "../../Base/Definition"
-import { Mash, MashArgs, MashObject } from "./Mash"
+import { Mash, MashArgs } from "./Mash"
 import { MashClass } from "./MashClass"
-import { Preloader } from "../../Preloader/Preloader"
 
-/**
- * @category Factory
- */
-const MashFactory = {
-  instance: (object: MashObject = {}, definitionObjects: DefinitionObjects = [], preloader?: Preloader): Mash => {
-    const definitions = definitionObjects.map(definition => DefinitionBase.fromObject(definition))
-    const mashArgs: MashArgs = { ...object, definitions }
-    const instance = new MashClass(mashArgs)
-    if (preloader) instance.preloader = preloader
-    return instance
-  }
+export const mashInstance = (object: MashArgs = {}): Mash => new MashClass(object)
+
+export const isMashClass = (value: any): value is MashClass => value instanceof MashClass
+
+export function assertMashClass(value: any): asserts value is MashClass {
+  if (!isMashClass(value)) throw new Error("expected MashClass")
 }
-
-export { MashFactory }

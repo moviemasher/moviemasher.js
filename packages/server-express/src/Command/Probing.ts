@@ -1,66 +1,84 @@
 import path from "path"
 import fs from 'fs'
 
-import { isPositive, LoadedInfo, Size } from "@moviemasher/moviemasher.js"
-import { commandProcess } from "./CommandFactory"
-import { CommandProbeData } from "./Command"
+import { isPositive, LoadedInfo, Sizes, SizeZero, CommandProbeData, isNumeric } from "@moviemasher/moviemasher.js"
 
-export const probingInfoPromise = (src: string, destination?: string): Promise<LoadedInfo> => {
-  const dest = destination || path.join(path.dirname(src), `${path.basename(src)}.json`)
+import { commandArgsString } from "../Utilities/Command"
+import { commandProcess } from "./CommandFactory"
+import Ffmpeg from "fluent-ffmpeg"
+
+
+const probingFile = (src: string): string => {
+  const match = src.match(/%0([0-9]*)d/)
+  if (!match) return src
+
+  const parentDir = path.dirname(src)
+  const ext = path.extname(src)
+  const [_, digit] = match  
+  const zeros = '0'.repeat(Number(digit) - 1)
+  return path.join(parentDir, `${zeros}1${ext}`)
+}
+
+export const probingInfoPromise = (file: string, destination?: string): Promise<LoadedInfo> => {
+  const src = probingFile(file)
+  const relative = path.relative('./', file)
+  const parentDir = path.dirname(src)
+  if (!fs.existsSync(src)) return Promise.reject(`${relative} does not exist`)
+  if (!fs.statSync(src).size) return Promise.reject(`${relative} is empty`)
+  
+  const dest = destination || path.join(parentDir, `${path.basename(src)}.json`)
   if (fs.existsSync(dest)) {
     // console.log("probingInfoPromise found", dest)
-    return fs.promises.readFile(dest).then(buffer => {
-      const loadedInfo: LoadedInfo = JSON.parse(buffer.toString())
-      return loadedInfo
-    })
+    return fs.promises.readFile(dest).then(buffer => (
+      JSON.parse(buffer.toString()) as LoadedInfo
+    ))
   }
 
   const process = commandProcess()
   process.addInput(src)
   return new Promise((resolve, reject) => {
     fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
-      process.ffprobe((error: any, data: CommandProbeData) => {
+      process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
+        // console.log("probingInfoPromise", data)
+        const info: LoadedInfo = { 
+          audible: false, ...SizeZero, info: data, 
+          extension: path.extname(src).slice(1)
+        }
         if (error) {
-          console.error(process._getArguments(), error)
-          reject(error)
-          return
-        }
-        const info: LoadedInfo = {}
-        const { streams, format } = data
-        // console.log("ffprobe data", data)
-        const { duration = 0 } = format
-
-        const durations: number[] = []
-        const sizes: Size[] = []
-
-        for (const stream of streams) {
-          const { width, height, duration } = stream
-          if (isPositive(duration)) durations.push(Number(duration))
-
-          if (width && height) {
-            sizes.push({ width, height })
+          info.error = commandArgsString(process._getArguments(), dest, error)
+        } else {
+          const { streams, format } = data
+          const { duration = 0 } = format
+          const durations: number[] = []
+          const rotations: number[] = []
+          const sizes: Sizes = []
+          for (const stream of streams) {
+            const { rotation, width, height, duration, codec_type } = stream
+            if (isNumeric(rotation)) rotations.push(Math.abs(Number(rotation)))
+            if (codec_type === 'audio') info.audible = true
+            if (isPositive(duration)) durations.push(Number(duration))
+            if (width && height) sizes.push({ width, height })
           }
-        }
-        if (duration || durations.length) {
-          if (durations.length) {
-            const maxDuration = Math.max(...durations)
-            info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
-          } else info.duration = duration
-        }
-        if (sizes.length) {
-          info.width = Math.max(...sizes.map(size => size.width))
-          info.height = Math.max(...sizes.map(size => size.height))
+
+          if (duration || durations.length) {
+            if (durations.length) {
+              const maxDuration = Math.max(...durations)
+              info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
+            } else info.duration = duration
+          }
+          if (sizes.length) {
+            const flipped = rotations.some(n => n === 90 || n === 270)
+            const widthKey = flipped ? 'height' : 'width'
+            const heightKey = flipped ? 'width' : 'height'
+            info[widthKey] = Math.max(...sizes.map(size => size.width))
+            info[heightKey] = Math.max(...sizes.map(size => size.height))
+          }  
         }
         fs.promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info) })
       })
     })
   })
 }
-
-export const Probing = {
-  infoPromise: probingInfoPromise
-}
-
 
 // const data = {
 //         streams: [
@@ -143,7 +161,7 @@ export const Probing = {
 //           }
 //         ],
 //         format: {
-//           filename: '/Users/doug/GitHub/moviemasher.js/dev/shared/video.mp4',
+//           filename: '/Users/doug/GitHub/moviemasher.js/dev/shared/video/rgb.mp4',
 //           nb_streams: 2,
 //           nb_programs: 0,
 //           format_name: 'mov,mp4,m4a,3gp,3g2,mj2',

@@ -1,51 +1,32 @@
-import { CommandInputs } from "../../../Api"
-import { GraphFile, GraphFiles, GraphFilter, GraphFilters, Size } from "../../../declarations"
-import { Evaluator } from "../../../Helpers/Evaluator"
+import { Size } from "../../../Utility/Size"
+import { CommandFilters, CommandFiles } from "../../../MoveMe"
 import { Time } from "../../../Helpers/Time/Time"
-import { Preloader } from "../../../Preloader/Preloader"
-import { AVType, GraphType } from "../../../Setup/Enums"
-import { FilterChain, FilterChains } from "../FilterChain/FilterChain"
-import { FilterGraphsInstance } from "../FilterGraphs/FilterGraphs"
+import { Loader } from "../../../Loader/Loader"
+import { CommandInputs } from "../../../Api"
+import { Mash } from "../Mash"
 
-export interface FilterGraphOptions {
-  avType: AVType
-  graphType?: GraphType
-  preloading?: boolean
+export interface FilterGraphArgs {
+  visible?: boolean
+  background: string
+  mash: Mash
   size: Size
-  time?: Time
+  streaming?: boolean
+  time: Time
   videoRate: number
+  upload?: boolean
 }
-
-export interface FilterGraphObject extends Partial<FilterGraphOptions> {}
 
 export interface FilterGraph {
-  avType: AVType
+  background: string
+  filterGraphCommandFiles: CommandFiles
+  commandFilters: CommandFilters
   commandInputs: CommandInputs
   duration: number
-  graphFiles: GraphFiles
-  graphFilters: GraphFilters
-  time: Time
-}
-
-export interface FilterGraphInstance extends FilterGraph {
-  addGraphFile(graphFile: GraphFile): string
-  evaluator: Evaluator
-  /** the output of my last filterChain */
-  graphFilterOutput: string
-  graphFilterOutputs(graphFilter: GraphFilter): string[]
-  preloading: boolean
-  inputGraphFiles: GraphFiles
-  loadableGraphFiles: GraphFiles
-  preloader: Preloader
-  inputCount: number
-  duration: number
-  time: Time
-  filterChain: FilterChain
-  filterChains: FilterChains
-  filterChainsInitialize(): void
-  filterGraphs: FilterGraphsInstance
-  graphType: GraphType
+  preloader: Loader
   quantize: number
   size: Size
+  streaming: boolean
+  time: Time
   videoRate: number
+  visible: boolean
 }

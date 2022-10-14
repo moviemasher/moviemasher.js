@@ -1,49 +1,36 @@
-import { GenericFactory } from "../../declarations"
-import {
-  AudibleFile, AudibleFileObject, AudibleFileDefinition, AudibleFileDefinitionObject
-} from "../../Mixin/AudibleFile/AudibleFile"
-import {
-  Transformable, TransformableDefinitionObject, TransformableDefinition, TransformableObject
-} from "../../Mixin/Transformable/Transformable"
+import { GenericFactory, LoadedAudio } from "../../declarations"
+import { UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject } from "../../Mixin/UpdatableSize/UpdatableSize"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
+import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
+import { Time } from "../../Helpers/Time/Time"
 
-interface VideoSequenceObject extends AudibleFileObject, TransformableObject {
+export interface VideoSequenceObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
 }
 
-interface VideoSequence extends AudibleFile, Transformable {
+export interface VideoSequence extends Content, UpdatableSize, UpdatableDuration {
   definition : VideoSequenceDefinition
-  copy : VideoSequence
+  // copy() : VideoSequence
   speed : number
 }
 
-interface VideoSequenceDefinitionObject extends AudibleFileDefinitionObject, TransformableDefinitionObject {
+export interface VideoSequenceDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   begin?: number
   fps?: number
   increment?: number
   pattern?: string
-  source?: string
   padding?: number
-  url?: string
 }
 
-type AudibleOmitted = AudibleFileDefinition
-
-interface VideoSequenceDefinition extends AudibleOmitted, TransformableDefinition {
-  instance : VideoSequence
-  instanceFromObject(object: VideoSequenceObject): VideoSequence
+export interface VideoSequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+  instanceFromObject(object?: VideoSequenceObject): VideoSequence
+  framesArray(start: Time): number[]
+  urlForFrame(frame : number): string
 }
 
 /**
  * @category Factory
  */
-interface VideoSequenceFactory extends GenericFactory<
+export interface VideoSequenceFactory extends GenericFactory<
   VideoSequence, VideoSequenceObject, VideoSequenceDefinition, VideoSequenceDefinitionObject
 > {}
-
-export {
-  VideoSequence,
-  VideoSequenceDefinition,
-  VideoSequenceDefinitionObject,
-  VideoSequenceFactory,
-  VideoSequenceObject,
-}
