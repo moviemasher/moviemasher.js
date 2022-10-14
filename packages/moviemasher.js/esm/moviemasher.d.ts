@@ -2150,7 +2150,7 @@ interface DataStreamDeleteRequest extends ApiRequest, AndId {
 }
 interface DataStreamDeleteResponse extends ApiResponse {
 }
-declare const ApiVersion = "5.1.0";
+declare const ApiVersion = "5.1.1";
 interface ApiRequest {
     [index: string]: any;
     version?: string;

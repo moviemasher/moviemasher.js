@@ -463,7 +463,7 @@ var Sizing;
 })(Sizing || (Sizing = {}));
 const Sizings = Object.values(Sizing);
 
-const ApiVersion = "5.1.0";
+const ApiVersion = "5.1.1";
 
 const EndpointsApi = {
     servers: '',

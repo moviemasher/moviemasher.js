@@ -759,7 +759,8 @@ const BrowserContextDefault = {
 };
 const BrowserContext = React.createContext(BrowserContextDefault);
 
-const EditorDefinitionsEvent = EventType.Added;
+const EditorDefinitionsEventAdded = EventType.Added;
+const EditorDefinitionsEventResize = EventType.Resize;
 const useEditorDefinitions = (types = []) => {
     const masherContext = React.useContext(MasherContext);
     const { editor } = masherContext;
@@ -790,16 +791,18 @@ const useEditorDefinitions = (types = []) => {
         }
     };
     const externalStore = React.useSyncExternalStore((callback) => {
-        eventTarget.addEventListener(EditorDefinitionsEvent, callback);
+        eventTarget.addEventListener(EditorDefinitionsEventAdded, callback);
+        eventTarget.addEventListener(EditorDefinitionsEventResize, callback);
         return () => {
-            eventTarget.removeEventListener(EditorDefinitionsEvent, callback);
+            eventTarget.removeEventListener(EditorDefinitionsEventAdded, callback);
+            eventTarget.removeEventListener(EditorDefinitionsEventResize, callback);
         };
     }, snapshotGet);
     const removeListener = () => {
-        eventTarget.removeEventListener(EditorDefinitionsEvent, handleEvent);
+        eventTarget.removeEventListener(EditorDefinitionsEventAdded, handleEvent);
     };
     const addListener = () => {
-        eventTarget.addEventListener(EditorDefinitionsEvent, handleEvent);
+        eventTarget.addEventListener(EditorDefinitionsEventAdded, handleEvent);
         return () => { removeListener(); };
     };
     React.useEffect(() => addListener(), []);

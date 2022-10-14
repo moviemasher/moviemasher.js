@@ -765,7 +765,8 @@
     };
     const BrowserContext = React__default["default"].createContext(BrowserContextDefault);
 
-    const EditorDefinitionsEvent = moviemasher_js.EventType.Added;
+    const EditorDefinitionsEventAdded = moviemasher_js.EventType.Added;
+    const EditorDefinitionsEventResize = moviemasher_js.EventType.Resize;
     const useEditorDefinitions = (types = []) => {
         const masherContext = React__default["default"].useContext(MasherContext);
         const { editor } = masherContext;
@@ -796,16 +797,18 @@
             }
         };
         const externalStore = React__default["default"].useSyncExternalStore((callback) => {
-            eventTarget.addEventListener(EditorDefinitionsEvent, callback);
+            eventTarget.addEventListener(EditorDefinitionsEventAdded, callback);
+            eventTarget.addEventListener(EditorDefinitionsEventResize, callback);
             return () => {
-                eventTarget.removeEventListener(EditorDefinitionsEvent, callback);
+                eventTarget.removeEventListener(EditorDefinitionsEventAdded, callback);
+                eventTarget.removeEventListener(EditorDefinitionsEventResize, callback);
             };
         }, snapshotGet);
         const removeListener = () => {
-            eventTarget.removeEventListener(EditorDefinitionsEvent, handleEvent);
+            eventTarget.removeEventListener(EditorDefinitionsEventAdded, handleEvent);
         };
         const addListener = () => {
-            eventTarget.addEventListener(EditorDefinitionsEvent, handleEvent);
+            eventTarget.addEventListener(EditorDefinitionsEventAdded, handleEvent);
             return () => { removeListener(); };
         };
         React__default["default"].useEffect(() => addListener(), []);

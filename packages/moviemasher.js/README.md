@@ -1,5 +1,5 @@
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/head.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/head.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor, encoder, switcher_
@@ -16,8 +16,8 @@ This module is a peer dependency of both
 [@moviemasher/client-react](https://www.npmjs.com/package/@moviemasher/client-react) and
 [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express) modules, and not typically installed directly. It exports core interfaces, classes, factories, utility methods, enumerations, and types related to creating, managing and rendering video edit decision lists.
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -27,7 +27,7 @@ more [extensive documentation](https://moviemasher.com/docs/index.html) availabl
 also available when using a code editor that supports TypeScript and IntelliSense.
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/md/snippet/example-core.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/src/snippet/example-core.md&stripMagic=true) -->
 ## Core Example
 
 The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
@@ -42,7 +42,7 @@ The HTML document below can be loaded in a web browser to display the simplest '
     <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.0/umd/moviemasher.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.1/umd/moviemasher.js" crossorigin></script>
     <style>
       #root { width: 360px; height: 640px; }
       #root > * { position: absolute; }
@@ -79,8 +79,8 @@ This example will only display what's on the first frame of our mash and will no
 
 
 <!-- MAGIC:END -->
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a
