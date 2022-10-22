@@ -1,5 +1,5 @@
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/head.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/head.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor, encoder, switcher_
@@ -27,8 +27,8 @@ This server implementation utilizes
 [Node Media Server](https://github.com/illuspas/Node-Media-Server), and
 [WebRTC](https://github.com/node-webrtc/node-webrtc) to support its data, rendering, and streaming APIs.
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -39,7 +39,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/md/snippet/example-server.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/src/snippet/example-server.md&stripMagic=true) -->
 ## Server Example
 
 The following shell command installs the server and required packages to your NPM project,
@@ -77,8 +77,8 @@ While the server is running, requests can be made to http://localhost:8570 follo
 This example installs an FFmpeg build that has limited rendering capabilities due to lack of support of SVG files. Typically a custom build is utilized instead. Learn more about integrating your own services in the [Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html).
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

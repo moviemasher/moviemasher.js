@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/documentation",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Movie Masher Documentation",
   "author": {
     "name": "Movie Masher",
@@ -10,12 +10,14 @@
   "scripts": {  
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
     "start": "docker compose --file dev/docker-compose.yml up -d",
-    "stop": "docker compose --file dev/docker-compose.yml down -v"
+    "stop": "docker compose --file dev/docker-compose.yml down -v",
+    "build": "node ../../dev/build/replace-paths.js ./src/demo.html ./public/demo.html"
+
   },
   "dependencies": {
-    "@moviemasher/moviemasher.js": "5.1.0",
-    "@moviemasher/client-react": "5.1.0",
-    "@moviemasher/server-express": "5.1.0",
+    "@moviemasher/moviemasher.js": "5.1.1",
+    "@moviemasher/client-react": "5.1.1",
+    "@moviemasher/server-express": "5.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: dev/test/Dockerfile.cnf
       context: ../../
-    image: moviemasher/moviemasher.tester:5.1.0
+    image: moviemasher/moviemasher.tester:5.1.1
     container_name: moviemasher-tester
     entrypoint: npm run jest
     command: test.ts

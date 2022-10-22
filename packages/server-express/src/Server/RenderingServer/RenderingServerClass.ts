@@ -261,7 +261,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     }
     try {
       const user = this.userFromRequest(req)
-      const { cacheDirectory } = this.args
+      const { cacheDirectory, temporaryDirectory } = this.args
       const filePrefix = this.fileServer!.args.uploadsPrefix
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const processArgs: RenderingProcessArgs = {
@@ -270,6 +270,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         defaultDirectory: user,
         validDirectories: ['shared'],
         cacheDirectory,
+        temporaryDirectory,
         outputDirectory,
         filePrefix,
         definitions,

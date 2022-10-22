@@ -1,11 +1,11 @@
 {
   "name": "@moviemasher/moviemasher-test",
-  "description": "JavaScript video editor, encoder, switcher - version 5.1.0",
+  "description": "JavaScript video editor, encoder, switcher - version 5.1.1",
   "homepage": "https://moviemasher.com",
   "type": "commonjs",
   "types": "packages/moviemasher.js/dist/cjs/index.d.ts",
   "source": "index",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",

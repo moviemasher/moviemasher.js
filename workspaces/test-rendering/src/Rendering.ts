@@ -5,7 +5,11 @@ import {
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
   isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration, idGenerateString
 } from '@moviemasher/moviemasher.js/umd/moviemasher.js'
-import { commandProcess, ExtensionLoadedInfo, probingInfoPromise, RenderingArgs, renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, renderingProcessInstance } from '@moviemasher/server-express'
+import { 
+  commandProcess, ExtensionLoadedInfo, Probe, RenderingArgs, 
+  renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, 
+  renderingProcessInstance 
+} from '@moviemasher/server-express'
 import {
   GenerateDefinitionObjects, GenerateOptions, GenerateMashTest,
   generateTest,
@@ -14,7 +18,7 @@ import {
 } from "./Generate"
 
 
-import { TestRenderCache, TestRenderOutput, TestFilePrefix } from "./TestRenderOutput"
+import { TestRenderCache, TestRenderOutput, TestFilePrefix, TestTemporary } from "./TestRenderOutput"
 
 
 export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, output: RenderingCommandOutput): Promise<void> => {
@@ -54,8 +58,7 @@ export const renderingTestIdsPromise = (ids: GenerateTestIds, suffix: string, ou
       const extName = path.extname(destination)
       const baseName = path.basename(destination, extName)
       const infoPath = path.join(dirName, `${baseName}.${ExtensionLoadedInfo}`)
-      // console.log("renderingTestIdsPromise probingInfoPromise", destination, infoPath)
-      return probingInfoPromise(destination, infoPath).then(EmptyMethod)
+      return Probe.promise(TestTemporary, destination, infoPath).then(EmptyMethod)
     })
   })
 }
@@ -107,6 +110,7 @@ export const renderingProcessInput = (id: string): RenderingProcessInput => {
   }
 }
 export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
+
   const options: RenderingArgs = {
     mash: {}, outputs: [], definitions: [], upload: false
   }
@@ -114,7 +118,8 @@ export const renderingProcessArgs = (id?: string): RenderingProcessArgs => {
   const testArgs = renderingProcessInput(definedId)
 
   const args: RenderingProcessArgs = {
-    ...testArgs, ...options, id: definedId
+    ...testArgs, ...options, id: definedId, 
+    temporaryDirectory: TestTemporary,
   }
   return args
 }
@@ -132,6 +137,7 @@ export const renderingMashTestPromise = (mashTest: GenerateMashTest, upload: boo
   }
   const input = renderingProcessInput(id)
   const processArgs: RenderingProcessArgs = {
+    temporaryDirectory: TestTemporary,
     ...input, id, ...options
   }
   return renderingPromise(processArgs)

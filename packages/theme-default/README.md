@@ -1,5 +1,5 @@
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/head.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/head.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor, encoder, switcher_
@@ -20,8 +20,8 @@ This theme implementation utilizes
 to provide the widest selection of icons. Learn more about visually customizing the user interface in the
 [Styling Overview](https://moviemasher.com/docs/Styling.html).
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -32,8 +32,8 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/md/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/md/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

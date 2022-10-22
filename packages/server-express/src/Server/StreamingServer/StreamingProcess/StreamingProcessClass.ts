@@ -37,9 +37,12 @@ export class StreamingProcessClass extends EventEmitter {
   command?: RunningCommand
 
   cut(args: StreamingProcessCutArgs): WithError {
-    const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this.args
+    const { 
+      cacheDirectory, filePrefix, defaultDirectory, validDirectories, 
+      temporaryDirectory 
+    } = this.args
     const { mashObjects, definitionObjects } = args
-    const preloader = new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    const preloader = new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
       return mashInstance({ ...mashObject, definitionObjects, preloader })
     })

@@ -13,7 +13,7 @@ The Movie Masher client application provides a powerful, simplified interface th
 
 The Movie Masher user interface is divided into several panels that contain different views, inputs, and specialized controls which help structure and organize specific tasks. 
 
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../../svg/masher.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/masher.svg) -->
 <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360" class='diagram'>
 <path d="M 0.00 0.00 L 219.76 0.00 L 219.76 175.37 L 0.00 175.37 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 460.00 0.00 L 640.00 0.00 L 640.00 299.97 L 460.00 299.97 Z M 460.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />

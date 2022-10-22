@@ -8,7 +8,7 @@ The codebase mostly follows the [Compound Components](https://www.patterns.dev/p
 
 The [[Masher]] top-tier component wraps the entire interface within a [[MasherContext]] that provides a pointer to the core [[Editor]] instance, theme elements, as well as state related to Drag and Drop operations. One or more second-tier components typically utilize this context to support particular editing functionality:
 
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../../svg/masher.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/masher.svg) -->
 <svg width="640" height="360" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 360" class='diagram'>
 <path d="M 0.00 0.00 L 219.76 0.00 L 219.76 175.37 L 0.00 175.37 Z M 0.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <path d="M 460.00 0.00 L 640.00 0.00 L 640.00 299.97 L 460.00 299.97 Z M 460.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />

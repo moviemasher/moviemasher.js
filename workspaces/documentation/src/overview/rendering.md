@@ -6,7 +6,7 @@ a [[Mash]] into files of various types. To run FFmpeg commands Movie Masher wrap
 
 At the highest level, the [[RenderingServer]] receives a request to render a [[MashObject]] into one or more output files, represented by [[CommandOutputs]]. It validates the request and passes it to a new [[RenderingProcess]] instance. This creates a specific type of [[RenderingOutput]] instance for each [[CommandOutput]] provided, which is responsible for converting the [[Mash]] into a corresponding [[RenderingDescription]] object. The [[RenderingProcess]] then converts each of them to a [[CommandDescription]] that it creates a [[RunningCommand]] with:
 
-<!-- MAGIC:START (COLORSVG:replacements=black&src=../../svg/ffmpeg-abstraction.svg) -->
+<!-- MAGIC:START (COLORSVG:replacements=black&src=../svg/ffmpeg-abstraction.svg) -->
 <svg width="640" height="190" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 640 190" class='diagram'>
 <path d="M 380.00 0.00 L 640.00 0.00 L 640.00 190.00 L 380.00 190.00 Z M 380.00 0.00" stroke-width="2.50" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 <text x="385.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="currentColor" opacity="1.00" font-weight="bold" >[[RunningCommand]]</text>

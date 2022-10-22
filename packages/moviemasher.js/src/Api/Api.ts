@@ -3,7 +3,7 @@ import { JsonObject, Endpoint, AndId, WithError, StringObject } from "../declara
 import { ServerType } from "../Setup/Enums"
 import { DataServerInit } from "./Data"
 
-export const ApiVersion = "5.1.0"
+export const ApiVersion = "5.1.1"
 
 export interface ApiRequest {
   [index: string]: any

@@ -41,8 +41,7 @@ const renderingTestIdsPromise = (ids, suffix, output) => {
             const extName = path_1.default.extname(destination);
             const baseName = path_1.default.basename(destination, extName);
             const infoPath = path_1.default.join(dirName, `${baseName}.${server_express_1.ExtensionLoadedInfo}`);
-            // console.log("renderingTestIdsPromise probingInfoPromise", destination, infoPath)
-            return (0, server_express_1.probingInfoPromise)(destination, infoPath).then(moviemasher_js_1.EmptyMethod);
+            return server_express_1.Probe.promise(TestRenderOutput_1.TestTemporary, destination, infoPath).then(moviemasher_js_1.EmptyMethod);
         });
     });
 };
@@ -102,7 +101,8 @@ const renderingProcessArgs = (id) => {
     const definedId = id || (0, moviemasher_js_1.idGenerateString)();
     const testArgs = (0, exports.renderingProcessInput)(definedId);
     const args = {
-        ...testArgs, ...options, id: definedId
+        ...testArgs, ...options, id: definedId,
+        temporaryDirectory: TestRenderOutput_1.TestTemporary,
     };
     return args;
 };
@@ -119,6 +119,7 @@ const renderingMashTestPromise = (mashTest, upload, ...outputs) => {
     };
     const input = (0, exports.renderingProcessInput)(id);
     const processArgs = {
+        temporaryDirectory: TestRenderOutput_1.TestTemporary,
         ...input, id, ...options
     };
     return renderingPromise(processArgs);

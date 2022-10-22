@@ -17,7 +17,7 @@ import { runningCommandInstance } from "../../../RunningCommand/RunningCommandFa
 import { RenderingProcess, RenderingProcessArgs, RunResult } from "./RenderingProcess"
 import { NodeLoader } from '../../../Utilities/NodeLoader'
 import { CommandResult } from '../../../RunningCommand/RunningCommand'
-import { probingInfoPromise } from '../../../Command/Probing'
+import { Probe } from '../../../Command/Probe'
 import { renderingCommandOutputs, renderingOutputFile } from '../../../Utilities/Rendering'
 import { commandArgsString } from '../../../Utilities/Command'
 
@@ -48,16 +48,16 @@ export class RenderingProcessClass implements RenderingProcess {
       ...rest, options, extension, outputType: OutputType.Video
     }
     const { outputDirectory } = this.args
-    const temporaryDirectoryName = renderingOutputFile(index, commandOutput, 'concat')
+    const concatDirectoryName = renderingOutputFile(index, commandOutput, 'concat')
 
-    const temporaryDirectory = path.join(outputDirectory, temporaryDirectoryName)
-    let promise: Promise<void> = this.createDirectoryPromise(temporaryDirectory)
+    const concatDirectory = path.join(outputDirectory, concatDirectoryName)
+    let promise: Promise<void> = this.createDirectoryPromise(concatDirectory)
     const fileDurations = visibleCommandDescriptions.map((description, index) => {
       const baseName = `concat-${index}`
       const fileName = `${baseName}.${extension}`
-      const destinationPath = path.join(temporaryDirectory, fileName)
-      const cmdPath = path.join(temporaryDirectory, `${baseName}.${ExtensionCommands}`)
-      const infoPath = path.join(temporaryDirectory, `${baseName}.${ExtensionLoadedInfo}`)
+      const destinationPath = path.join(concatDirectory, fileName)
+      const cmdPath = path.join(concatDirectory, `${baseName}.${ExtensionCommands}`)
+      const infoPath = path.join(concatDirectory, `${baseName}.${ExtensionLoadedInfo}`)
       const { duration } = description
       assertAboveZero(duration, 'duration')
 
@@ -71,7 +71,7 @@ export class RenderingProcessClass implements RenderingProcess {
     })
 
     const concatFile = this.concatFile(fileDurations)
-    const concatFilePath = path.join(temporaryDirectory, 'concat.txt')
+    const concatFilePath = path.join(concatDirectory, 'concat.txt')
     promise = promise.then(() => {
       // console.log(this.constructor.name, "combinedRenderingDescriptionPromise finished concat generation", concatFilePath)
       return this.createFilePromise(concatFilePath, concatFile)
@@ -233,9 +233,10 @@ export class RenderingProcessClass implements RenderingProcess {
   get preloaderInitialize() { 
     const { args } = this
     const {
-      cacheDirectory, validDirectories, defaultDirectory, filePrefix
+      cacheDirectory, validDirectories, defaultDirectory, filePrefix, 
+      temporaryDirectory
     } = args
-    return new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    return new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories)
   }
 
   private renderResultPromise(destination: string, cmdPath: string, infoPath: string, commandOutput: RenderingCommandOutput, commandDescription: CommandDescription): Promise<RenderingResult> {
@@ -284,7 +285,8 @@ export class RenderingProcessClass implements RenderingProcess {
         // console.warn(this.constructor.name, "renderResultPromise runPromise", destination, error)
         return fs.promises.writeFile(infoPath, JSON.stringify(renderingResult)).then(() => renderingResult)
       }
-      return probingInfoPromise(destination, infoPath).then(() => renderingResult)
+      const { temporaryDirectory } = this.args
+      return Probe.promise(temporaryDirectory, destination, infoPath).then(() => renderingResult)
     })
   }
 

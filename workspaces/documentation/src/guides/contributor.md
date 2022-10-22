@@ -34,7 +34,7 @@ Each of the published modules has a project directory within the _/packages_ dir
 Docker is used extensively during development to assure consistent build and test environments. Standard NPM scripts like `build`, `test`, and `start` run within Docker containers rather than directly on your local (host) computer. These containers are launched from Docker images that are based off the latest publicly available [DockerHub image](https://hub.docker.com/r/moviemasher/moviemasher.js/). Unless you want to make changes to that image, it's fastest to download a local copy of it with the following command:
 
 ```shell
-docker pull moviemasher/moviemasher.js:5.1.0
+docker pull moviemasher/moviemasher.js:5.1.1
 ```
 
 This image was constructed using the `Dockerfile` and shell scripts in _/dev/image_. If changes are made there, you'll want to rebuild the base image with the following command:

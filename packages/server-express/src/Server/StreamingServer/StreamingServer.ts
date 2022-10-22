@@ -34,6 +34,7 @@ export interface StreamingServerArgs extends ServerArgs {
   commandOutput: CommandOutput
   webrtcStreamingDir: string
   cacheDirectory: string
+  temporaryDirectory: string
 }
 
 export interface StreamingServer extends Server {

@@ -167,13 +167,13 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     }
     try {
       const user = this.userFromRequest(req)
-      const { cacheDirectory } = this.args
+      const { cacheDirectory, temporaryDirectory } = this.args
       const filePrefix = this.fileServer!.args.uploadsPrefix
       const streamingDirectory = directory
       const streamingProcessArgs: StreamingProcessArgs = {
         filePrefix, defaultDirectory: user, validDirectories: ['shared'],
         cacheDirectory, id, directory: streamingDirectory,
-        file, commandOutput: streamingCommandOutput
+        file, commandOutput: streamingCommandOutput, temporaryDirectory
       }
       const connection = streamingProcessCreate(streamingProcessArgs)
       connection.cut(connection.defaultContent())

@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/example-express-react",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Movie Masher Express React Example",
   "author": {
     "name": "Movie Masher",
@@ -21,9 +21,9 @@
     "clean": "rimraf host"
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.0",
-    "@moviemasher/client-react": "5.1.0",
-    "@moviemasher/server-express": "5.1.0",
+    "@moviemasher/moviemasher.js": "5.1.1",
+    "@moviemasher/client-react": "5.1.1",
+    "@moviemasher/server-express": "5.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

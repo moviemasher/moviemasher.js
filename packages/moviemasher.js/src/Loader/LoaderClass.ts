@@ -5,7 +5,7 @@ import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { assertLoaderType, Loaded, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
 import { Definition, isDefinition } from "../Definition/Definition"
-import { assertObject, assertPopulatedString, isAboveZero, isObject, isPopulatedObject, isString } from "../Utility/Is"
+import { assertObject, assertPopulatedString, isAboveZero, isObject, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { FontDefinition, isFontDefinition } from "../Media/Font/Font"
@@ -281,10 +281,11 @@ export class LoaderClass implements Loader {
     if (audio) definition.audio = true
   }
 
-  private updateDefinitionSize(definition: UpdatableSizeDefinition, size: Size) {
+  private updateDefinitionSize(definition: UpdatableSizeDefinition, size: Size, alpha?: boolean) {
     const key = this.browsing ? "previewSize" : "sourceSize"
     const { [key]: definitionSize} = definition
     if (! sizesEqual(size, definitionSize)) definition[key] = size
+    definition.alpha ||= alpha
   }
 
   protected updateDefinitionFamily(definition: FontDefinition, family: string) {
@@ -296,7 +297,7 @@ export class LoaderClass implements Loader {
     cache.loadedInfo ||= {}
 
     const { definitions, loadedInfo: cachedInfo } = cache
-    const { duration, width, height, audible, family, info } = loadedInfo
+    const { duration, width, height, audible, family, info, alpha } = loadedInfo
     const size = { width, height }
     const durating = isAboveZero(duration)
     const sizing = sizeAboveZero(size)
@@ -313,9 +314,10 @@ export class LoaderClass implements Loader {
 
     // console.log(this.constructor.name, "updateCache", loadedInfo, definitions.length)
     definitions.forEach(definition => {
+     
       if (informing && isPreloadableDefinition(definition)) definition.info ||= info
       if (sizing && isUpdatableSizeDefinition(definition)) {
-        this.updateDefinitionSize(definition, size)
+        this.updateDefinitionSize(definition, size, alpha)
       }
       if (durating && isUpdatableDurationDefinition(definition)) {
         this.updateDefinitionDuration(definition, duration, audible)

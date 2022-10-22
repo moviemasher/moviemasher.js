@@ -18,6 +18,8 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
       if (sizeAboveZero(sourceSize)) this.sourceSize = sourceSize
     }
     
+    alpha?: boolean 
+    
     previewSize?: Size 
 
     sourceSize?: Size 

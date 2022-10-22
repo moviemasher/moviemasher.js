@@ -4,7 +4,7 @@ networks:
     name: test-rendering
 services:
   test-rendering:
-    image: moviemasher/moviemasher.js:5.1.0
+    image: moviemasher/moviemasher.js:5.1.1
     container_name: moviemasher-test-rendering
     entrypoint: node workspaces/test-rendering/dist/index.js
     command: ''

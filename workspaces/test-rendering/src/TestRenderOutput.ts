@@ -1,3 +1,4 @@
-export const TestRenderOutput = 'temporary/render'
-export const TestRenderCache = 'temporary/cache'
+export const TestTemporary = 'temporary'
+export const TestRenderOutput = `${TestTemporary}/render`
+export const TestRenderCache = `${TestTemporary}/cache`
 export const TestFilePrefix = 'dev';
