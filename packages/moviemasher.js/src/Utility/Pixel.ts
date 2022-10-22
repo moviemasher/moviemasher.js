@@ -2,7 +2,7 @@ import { Rgba, Value, Pixels, Rgb, Yuv } from "../declarations"
 import { Point } from "../Utility/Point"
 import { Size } from "./Size"
 import { colorRgbaKeys, colorRgbaTransparent, colorRgbKeys, colorRgbToYuv, colorYuvBlend, colorYuvDifference } from "./Color"
-import { isPositive } from "./Is"
+import { isPopulatedString, isPositive } from "./Is"
 import { roundWithMethod } from "./Round"
 
 const pixelFromPoint = (pt : Point, width : number) => pt.y * width + pt.x

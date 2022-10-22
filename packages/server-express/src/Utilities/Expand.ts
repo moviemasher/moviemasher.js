@@ -3,12 +3,17 @@ import path from 'path'
 import { execSync } from 'child_process'
 import { ExtJson, JsonObject, ExtText } from '@moviemasher/moviemasher.js'
 
-export const expandCommand = (command?: string): string => {
+
+export const expandCommand = (command: string): string => { 
+  return execSync(command).toString().trim()
+}
+
+export const expandFileOrScript = (command?: string): string => {
   if (!command) return ''
 
   if (command.endsWith(ExtText)) return expandFile(command)
 
-  if (command.startsWith('/')) return execSync(command).toString().trim()
+  if (command.startsWith('/')) return expandCommand(command) 
   return command
 }
 
@@ -32,7 +37,7 @@ export const expandToJson = (config: string): JsonObject => {
   switch (config[0]) {
     case '.':
     case '/': { // path to script, since it doesn't end in .json
-      return expandToJson(expandCommand(config))
+      return expandToJson(expandFileOrScript(config))
     }
     case '{': { // json string
       return JSON.parse(config)

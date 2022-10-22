@@ -41,8 +41,8 @@ const renderingTestIdsPromise = (ids, suffix, output) => {
             const extName = path_1.default.extname(destination);
             const baseName = path_1.default.basename(destination, extName);
             const infoPath = path_1.default.join(dirName, `${baseName}.${server_express_1.ExtensionLoadedInfo}`);
-            // console.log("renderingTestIdsPromise probingInfoPromise", destination, infoPath)
-            return (0, server_express_1.probingInfoPromise)(destination, infoPath).then(moviemasher_js_1.EmptyMethod);
+            // console.log("renderingTestIdsPromise probePromise", destination, infoPath)
+            return (0, server_express_1.probePromise)(destination, infoPath).then(moviemasher_js_1.EmptyMethod);
         });
     });
 };

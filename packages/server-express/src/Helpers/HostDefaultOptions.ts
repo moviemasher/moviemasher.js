@@ -12,7 +12,7 @@ import { ServerAuthentication } from "../Server/Server"
 import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "../Host/Host"
-import { expandCommand } from '../Utilities/Expand'
+import { expandFileOrScript } from '../Utilities/Expand'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
@@ -69,7 +69,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   const authentication = auth || OpenAuthentication
   if (authentication.type === 'basic') {
     // support grabbing shared password from command or text file
-    authentication.password = expandCommand(authentication.password)
+    authentication.password = expandFileOrScript(authentication.password)
   }
   const api: ApiServerArgs = {
     authentication
@@ -113,6 +113,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
 
 
   const rendering: RenderingServerArgs = {
+    temporaryDirectory: temporary,
     cacheDirectory, authentication, commandOutputs, previewSize, outputSize
   }
 
@@ -144,6 +145,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     commandOutput: outputDefaultHls(commandOutput),
     appName: StreamingFormat.Rtmp,
     cacheDirectory: `${temporary}/cache`,
+    temporaryDirectory: temporary,
     webrtcStreamingDir: `${temporary}/streams/webrtc`,
     rtmpOptions: {
       port: 1935,

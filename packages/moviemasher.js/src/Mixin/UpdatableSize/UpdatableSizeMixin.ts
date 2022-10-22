@@ -116,7 +116,6 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       assertPopulatedArray(containerRects, 'containerRects')
 
       const { id } = this
-      // if (!input) console.log(this.constructor.name, "contentCommandFilters calling commandFilesInput", id)
       let filterInput = input || commandFilesInput(commandFiles, id, visible)
 
       const contentArgs: ContentRectArgs = {
@@ -126,7 +125,6 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
       const tweeningContainer = !rectsEqual(...containerRects)
 
-      // console.log(this.constructor.name, "contentCommandFilters", containerRects, contentRects)
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
@@ -176,7 +174,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
   
       if (!tweening.size) {
-        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, 'yuv420p10'))
+        commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, this.definition.alpha))
         filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       }
       

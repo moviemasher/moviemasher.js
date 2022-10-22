@@ -841,50 +841,50 @@ type DefinitionOrErrorObject = DefinitionObject | ErrorObject;
 type Loaded = LoadedFont | LoadedMedia | LoadedSvgImage | AudioBuffer;
 interface CommandProbeStream {
     [key: string]: any;
-    codec_name?: string | undefined;
+    // avg_frame_rate?: string | undefined
+    // bit_rate?: string | undefined
+    // bits_per_raw_sample?: string | undefined
+    // bits_per_sample?: number | undefined
+    // channel_layout?: string | undefined
+    // channels?: number | undefined
+    // chroma_location?: string | undefined
     // codec_long_name?: string | undefined
-    // profile?: number | undefined
-    codec_type?: string | undefined;
-    // codec_time_base?: string | undefined
     // codec_tag_string?: string | undefined
     // codec_tag?: string | undefined
-    width?: number | undefined;
-    height?: number | undefined;
-    // coded_width?: number | undefined
+    // codec_time_base?: string | undefined
     // coded_height?: number | undefined
-    // has_b_frames?: number | undefined
-    // sample_aspect_ratio?: string | undefined
-    // display_aspect_ratio?: string | undefined
-    pix_fmt?: string | undefined;
-    // level?: string | undefined
+    // coded_width?: number | undefined
+    // color_primaries?: string | undefined
     // color_range?: string | undefined
     // color_space?: string | undefined
     // color_transfer?: string | undefined
-    // color_primaries?: string | undefined
-    // chroma_location?: string | undefined
-    // field_order?: string | undefined
-    // timecode?: string | undefined
-    // refs?: number | undefined
-    // id?: string | undefined
-    // r_frame_rate?: string | undefined
-    // avg_frame_rate?: string | undefined
-    // time_base?: string | undefined
-    // start_pts?: number | undefined
-    // start_time?: number | undefined
+    // display_aspect_ratio?: string | undefined
     // duration_ts?: string | undefined
-    duration?: string | undefined;
-    // bit_rate?: string | undefined
+    // field_order?: string | undefined
+    // has_b_frames?: number | undefined
+    // id?: string | undefined
+    // level?: string | undefined
     // max_bit_rate?: string | undefined
-    // bits_per_raw_sample?: string | undefined
     // nb_frames?: string | undefined
     // nb_read_frames?: string | undefined
     // nb_read_packets?: string | undefined
+    // profile?: number | undefined
+    // r_frame_rate?: string | undefined
+    // refs?: number | undefined
+    // sample_aspect_ratio?: string | undefined
     // sample_fmt?: string | undefined
     // sample_rate?: number | undefined
-    // channels?: number | undefined
-    // channel_layout?: string | undefined
-    // bits_per_sample?: number | undefined
+    // start_pts?: number | undefined
+    // start_time?: number | undefined
+    // time_base?: string | undefined
+    // timecode?: string | undefined
+    codec_name?: string | undefined;
+    codec_type?: string | undefined;
+    duration?: string | undefined;
+    height?: number | undefined;
+    pix_fmt?: string | undefined;
     rotation?: string | number | undefined;
+    width?: number | undefined;
 }
 interface CommandProbeFormat {
     // filename?: string | undefined
@@ -908,6 +908,7 @@ interface LoadedInfo extends Partial<ErrorObject> {
     duration?: number;
     family?: string;
     extension?: string;
+    alpha?: boolean;
     fps?: number;
     height?: number;
     width?: number;
@@ -1731,7 +1732,7 @@ interface Tweenable extends Instance, Selectable {
     lock: Orientation;
     mutable(): boolean;
     muted: boolean;
-    overlayCommandFilters(bottomInput: string, topInput: string, format?: string): CommandFilters;
+    overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters;
     overlayFilter: Filter;
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters;
     selectedProperties(actions: Actions, property: Property): SelectedProperties;
@@ -2598,6 +2599,7 @@ declare const isUpdatableSizeType: (value: any) => value is DefinitionType;
 interface UpdatableSizeDefinition extends PreloadableDefinition {
     previewSize?: Size;
     sourceSize?: Size;
+    alpha?: boolean;
 }
 declare const isUpdatableSizeDefinition: (value?: any) => value is UpdatableSizeDefinition;
 declare function assertUpdatableSizeDefinition(value?: any): asserts value is UpdatableSizeDefinition;

@@ -1,14 +1,27 @@
 import path from "path"
 import fs from 'fs'
 
-import { isPositive, LoadedInfo, Sizes, SizeZero, CommandProbeData, isNumeric } from "@moviemasher/moviemasher.js"
+import { isPositive, LoadedInfo, Sizes, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
-import { commandArgsString } from "../Utilities/Command"
-import { commandProcess } from "./CommandFactory"
+import { commandArgsString } from "../../Utilities/Command"
+import { commandProcess } from "../CommandFactory"
 import Ffmpeg from "fluent-ffmpeg"
+import { expandCommand } from "../../Utilities/Expand"
 
 
-const probingFile = (src: string): string => {
+export class Probe {
+  private static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
+
+  private static _alphaFormats?: string[]
+  static get alphaFormats(): string[] {
+    return this._alphaFormats ||= this.alphaFormatsInitialize
+  }
+  private static get alphaFormatsInitialize(): string[] {
+    const result = expandCommand(this.AlphaFormatsCommand)
+    return result.split("\n")
+  }
+
+  private static probeFile(src: string): string {
   const match = src.match(/%0([0-9]*)d/)
   if (!match) return src
 
@@ -19,65 +32,66 @@ const probingFile = (src: string): string => {
   return path.join(parentDir, `${zeros}1${ext}`)
 }
 
-export const probingInfoPromise = (file: string, destination?: string): Promise<LoadedInfo> => {
-  const src = probingFile(file)
-  const relative = path.relative('./', file)
-  const parentDir = path.dirname(src)
-  if (!fs.existsSync(src)) return Promise.reject(`${relative} does not exist`)
-  if (!fs.statSync(src).size) return Promise.reject(`${relative} is empty`)
-  
-  const dest = destination || path.join(parentDir, `${path.basename(src)}.json`)
-  if (fs.existsSync(dest)) {
-    // console.log("probingInfoPromise found", dest)
-    return fs.promises.readFile(dest).then(buffer => (
-      JSON.parse(buffer.toString()) as LoadedInfo
-    ))
-  }
+  static promise(temporaryDirectory: string, file: string, destination?: string): Promise<LoadedInfo> {
+    
+    const src = this.probeFile(file)
+    const relative = path.relative('./', file)
+    const parentDir = path.dirname(src)
+    if (!fs.existsSync(src)) return Promise.reject(`${relative} does not exist`)
+    if (!fs.statSync(src).size) return Promise.reject(`${relative} is empty`)
+    
+    const dest = destination || path.join(parentDir, `${path.basename(src)}.json`)
+    if (fs.existsSync(dest)) {
+      return fs.promises.readFile(dest).then(buffer => (
+        JSON.parse(buffer.toString()) as LoadedInfo
+      ))
+    }
 
-  const process = commandProcess()
-  process.addInput(src)
-  return new Promise((resolve, reject) => {
-    fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
-      process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
-        // console.log("probingInfoPromise", data)
-        const info: LoadedInfo = { 
-          audible: false, ...SizeZero, info: data, 
-          extension: path.extname(src).slice(1)
-        }
-        if (error) {
-          info.error = commandArgsString(process._getArguments(), dest, error)
-        } else {
-          const { streams, format } = data
-          const { duration = 0 } = format
-          const durations: number[] = []
-          const rotations: number[] = []
-          const sizes: Sizes = []
-          for (const stream of streams) {
-            const { rotation, width, height, duration, codec_type } = stream
-            if (isNumeric(rotation)) rotations.push(Math.abs(Number(rotation)))
-            if (codec_type === 'audio') info.audible = true
-            if (isPositive(duration)) durations.push(Number(duration))
-            if (width && height) sizes.push({ width, height })
+    const process = commandProcess()
+    process.addInput(src)
+    return new Promise((resolve, reject) => {
+      fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
+        process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
+          const info: LoadedInfo = { 
+            audible: false, ...SizeZero, info: data, 
+            extension: path.extname(src).slice(1)
           }
+          if (error) {
+            info.error = commandArgsString(process._getArguments(), dest, error)
+          } else {
+            const { streams, format } = data
+            const { duration = 0 } = format
+            const durations: number[] = []
+            const rotations: number[] = []
+            const sizes: Sizes = []
+            for (const stream of streams) {
+              const { rotation, width, height, duration, codec_type, pix_fmt } = stream
+              if (isPopulatedString(pix_fmt)) info.alpha = this.alphaFormats.includes(pix_fmt)
+              if (isNumeric(rotation)) rotations.push(Math.abs(Number(rotation)))
+              if (codec_type === 'audio') info.audible = true
+              if (isPositive(duration)) durations.push(Number(duration))
+              if (width && height) sizes.push({ width, height })
+            }
 
-          if (duration || durations.length) {
-            if (durations.length) {
-              const maxDuration = Math.max(...durations)
-              info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
-            } else info.duration = duration
+            if (duration || durations.length) {
+              if (durations.length) {
+                const maxDuration = Math.max(...durations)
+                info.duration = duration ? Math.max(maxDuration, duration) : maxDuration
+              } else info.duration = duration
+            }
+            if (sizes.length) {
+              const flipped = rotations.some(n => n === 90 || n === 270)
+              const widthKey = flipped ? 'height' : 'width'
+              const heightKey = flipped ? 'width' : 'height'
+              info[widthKey] = Math.max(...sizes.map(size => size.width))
+              info[heightKey] = Math.max(...sizes.map(size => size.height))
+            }  
           }
-          if (sizes.length) {
-            const flipped = rotations.some(n => n === 90 || n === 270)
-            const widthKey = flipped ? 'height' : 'width'
-            const heightKey = flipped ? 'width' : 'height'
-            info[widthKey] = Math.max(...sizes.map(size => size.width))
-            info[heightKey] = Math.max(...sizes.map(size => size.height))
-          }  
-        }
-        fs.promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info) })
+          fs.promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info) })
+        })
       })
     })
-  })
+  }
 }
 
 // const data = {

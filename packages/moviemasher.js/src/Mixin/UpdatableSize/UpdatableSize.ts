@@ -41,6 +41,7 @@ export const isUpdatableSizeType = (value: any): value is DefinitionType => {
 export interface UpdatableSizeDefinition extends PreloadableDefinition {
   previewSize?: Size
   sourceSize?: Size
+  alpha?: boolean
 }
 export const isUpdatableSizeDefinition = (value?: any): value is UpdatableSizeDefinition => {
   return isPreloadableDefinition(value)

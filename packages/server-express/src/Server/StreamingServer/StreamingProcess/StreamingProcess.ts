@@ -16,6 +16,7 @@ export interface StreamingProcessArgs {
   file: string
   commandOutput: StreamingCommandOutput
   cacheDirectory: string
+  temporaryDirectory: string
   filePrefix: string
   defaultDirectory: string
   validDirectories: string[]

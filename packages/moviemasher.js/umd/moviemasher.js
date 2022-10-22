@@ -4325,7 +4325,7 @@
           }
           get isDefault() { return false; }
           mutable() { return false; }
-          overlayCommandFilters(bottomInput, topInput, format) {
+          overlayCommandFilters(bottomInput, topInput, alpha) {
               assertPopulatedString(bottomInput, 'bottomInput');
               assertPopulatedString(topInput, 'topInput');
               const commandFilters = [];
@@ -4333,8 +4333,8 @@
                   filterInput: topInput, chainInput: bottomInput, videoRate: 0, duration: 0
               };
               const { overlayFilter } = this;
-              if (format)
-                  overlayFilter.setValue(format, 'format');
+              if (alpha)
+                  overlayFilter.setValue('yuv420p10', 'format');
               overlayFilter.setValue(0, 'x');
               overlayFilter.setValue(0, 'y');
               commandFilters.push(...overlayFilter.commandFilters(overlayArgs));
@@ -6468,14 +6468,12 @@
               assertTimeRange(clipTime);
               assertPopulatedArray(containerRects, 'containerRects');
               const { id } = this;
-              // if (!input) console.log(this.constructor.name, "contentCommandFilters calling commandFilesInput", id)
               let filterInput = input || commandFilesInput(commandFiles, id, visible);
               const contentArgs = {
                   containerRects: containerRects, time, timeRange: clipTime
               };
               const contentRects = this.contentRects(contentArgs);
               const tweeningContainer = !rectsEqual(...containerRects);
-              // console.log(this.constructor.name, "contentCommandFilters", containerRects, contentRects)
               const [contentRect, contentRectEnd] = contentRects;
               const duration = isTimeRange(time) ? time.lengthSeconds : 0;
               const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0];
@@ -6515,7 +6513,7 @@
               commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }));
               filterInput = arrayLast(arrayLast(commandFilters).outputs);
               if (!tweening.size) {
-                  commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, 'yuv420p10'));
+                  commandFilters.push(...this.overlayCommandFilters(colorInput, filterInput, this.definition.alpha));
                   filterInput = arrayLast(arrayLast(commandFilters).outputs);
               }
               commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening));
@@ -6601,6 +6599,7 @@
               if (sizeAboveZero(sourceSize))
                   this.sourceSize = sourceSize;
           }
+          alpha;
           previewSize;
           sourceSize;
           toJSON() {
@@ -10080,11 +10079,12 @@
           if (audio)
               definition.audio = true;
       }
-      updateDefinitionSize(definition, size) {
+      updateDefinitionSize(definition, size, alpha) {
           const key = this.browsing ? "previewSize" : "sourceSize";
           const { [key]: definitionSize } = definition;
           if (!sizesEqual(size, definitionSize))
               definition[key] = size;
+          definition.alpha ||= alpha;
       }
       updateDefinitionFamily(definition, family) {
           const { family: definitionFamily } = definition;
@@ -10094,7 +10094,7 @@
       updateCache(cache, loadedInfo) {
           cache.loadedInfo ||= {};
           const { definitions, loadedInfo: cachedInfo } = cache;
-          const { duration, width, height, audible, family, info } = loadedInfo;
+          const { duration, width, height, audible, family, info, alpha } = loadedInfo;
           const size = { width, height };
           const durating = isAboveZero(duration);
           const sizing = sizeAboveZero(size);
@@ -10115,7 +10115,7 @@
               if (informing && isPreloadableDefinition(definition))
                   definition.info ||= info;
               if (sizing && isUpdatableSizeDefinition(definition)) {
-                  this.updateDefinitionSize(definition, size);
+                  this.updateDefinitionSize(definition, size, alpha);
               }
               if (durating && isUpdatableDurationDefinition(definition)) {
                   this.updateDefinitionDuration(definition, duration, audible);

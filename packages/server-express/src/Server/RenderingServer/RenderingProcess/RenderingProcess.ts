@@ -29,6 +29,7 @@ export interface RenderingArgs extends Required<RenderingOptions> {}
 
 export interface RenderingProcessArgs extends RenderingProcessInput, RenderingArgs {
   id?: string
+  temporaryDirectory: string
 }
 
 export interface RenderingProcess {

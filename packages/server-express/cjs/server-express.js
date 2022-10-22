@@ -207,80 +207,129 @@ const commandArgsString = (args, destination, ...errors) => {
     return blocks.join(`${commandNL}${commandNL}`);
 };
 
-const probingFile = (src) => {
-    const match = src.match(/%0([0-9]*)d/);
-    if (!match)
-        return src;
-    const parentDir = path__default["default"].dirname(src);
-    const ext = path__default["default"].extname(src);
-    const [_, digit] = match;
-    const zeros = '0'.repeat(Number(digit) - 1);
-    return path__default["default"].join(parentDir, `${zeros}1${ext}`);
+const expandCommand = (command) => {
+    return child_process.execSync(command).toString().trim();
 };
-const probingInfoPromise = (file, destination) => {
-    const src = probingFile(file);
-    const relative = path__default["default"].relative('./', file);
-    const parentDir = path__default["default"].dirname(src);
-    if (!fs__default["default"].existsSync(src))
-        return Promise.reject(`${relative} does not exist`);
-    if (!fs__default["default"].statSync(src).size)
-        return Promise.reject(`${relative} is empty`);
-    const dest = destination || path__default["default"].join(parentDir, `${path__default["default"].basename(src)}.json`);
-    if (fs__default["default"].existsSync(dest)) {
-        // console.log("probingInfoPromise found", dest)
-        return fs__default["default"].promises.readFile(dest).then(buffer => JSON.parse(buffer.toString()));
+const expandFileOrScript = (command) => {
+    if (!command)
+        return '';
+    if (command.endsWith(moviemasher_js.ExtText))
+        return expandFile(command);
+    if (command.startsWith('/'))
+        return expandCommand(command);
+    return command;
+};
+const expandFile = (file) => {
+    return file ? fs__default["default"].readFileSync(file).toString() : '';
+};
+const expandPath = (string) => {
+    return string.startsWith('.') ? path__default["default"].resolve(string) : string;
+};
+const expandToJson = (config) => {
+    if (!config) {
+        return {};
     }
-    const process = commandProcess();
-    process.addInput(src);
-    return new Promise((resolve, reject) => {
-        fs__default["default"].promises.mkdir(path__default["default"].dirname(dest), { recursive: true }).then(() => {
-            process.ffprobe((error, data) => {
-                // console.log("probingInfoPromise", data)
-                const info = {
-                    audible: false, ...moviemasher_js.SizeZero, info: data,
-                    extension: path__default["default"].extname(src).slice(1)
-                };
-                if (error) {
-                    info.error = commandArgsString(process._getArguments(), dest, error);
-                }
-                else {
-                    const { streams, format } = data;
-                    const { duration = 0 } = format;
-                    const durations = [];
-                    const rotations = [];
-                    const sizes = [];
-                    for (const stream of streams) {
-                        const { rotation, width, height, duration, codec_type } = stream;
-                        if (moviemasher_js.isNumeric(rotation))
-                            rotations.push(Math.abs(Number(rotation)));
-                        if (codec_type === 'audio')
-                            info.audible = true;
-                        if (moviemasher_js.isPositive(duration))
-                            durations.push(Number(duration));
-                        if (width && height)
-                            sizes.push({ width, height });
+    if (config.endsWith(moviemasher_js.ExtJson)) { // json file
+        return expandToJson(expandFile(config));
+    }
+    switch (config[0]) {
+        case '.':
+        case '/': { // path to script, since it doesn't end in .json
+            return expandToJson(expandFileOrScript(config));
+        }
+        case '{': { // json string
+            return JSON.parse(config);
+        }
+    }
+    // failed to expand to JSON
+    return {};
+};
+
+class Probe {
+    static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' ";
+    static _alphaFormats;
+    static get alphaFormats() {
+        return this._alphaFormats ||= this.alphaFormatsInitialize;
+    }
+    static get alphaFormatsInitialize() {
+        const result = expandCommand(this.AlphaFormatsCommand);
+        return result.split("\n");
+    }
+    static probeFile(src) {
+        const match = src.match(/%0([0-9]*)d/);
+        if (!match)
+            return src;
+        const parentDir = path__default["default"].dirname(src);
+        const ext = path__default["default"].extname(src);
+        const [_, digit] = match;
+        const zeros = '0'.repeat(Number(digit) - 1);
+        return path__default["default"].join(parentDir, `${zeros}1${ext}`);
+    }
+    static promise(temporaryDirectory, file, destination) {
+        const src = this.probeFile(file);
+        const relative = path__default["default"].relative('./', file);
+        const parentDir = path__default["default"].dirname(src);
+        if (!fs__default["default"].existsSync(src))
+            return Promise.reject(`${relative} does not exist`);
+        if (!fs__default["default"].statSync(src).size)
+            return Promise.reject(`${relative} is empty`);
+        const dest = destination || path__default["default"].join(parentDir, `${path__default["default"].basename(src)}.json`);
+        if (fs__default["default"].existsSync(dest)) {
+            return fs__default["default"].promises.readFile(dest).then(buffer => JSON.parse(buffer.toString()));
+        }
+        const process = commandProcess();
+        process.addInput(src);
+        return new Promise((resolve, reject) => {
+            fs__default["default"].promises.mkdir(path__default["default"].dirname(dest), { recursive: true }).then(() => {
+                process.ffprobe((error, data) => {
+                    const info = {
+                        audible: false, ...moviemasher_js.SizeZero, info: data,
+                        extension: path__default["default"].extname(src).slice(1)
+                    };
+                    if (error) {
+                        info.error = commandArgsString(process._getArguments(), dest, error);
                     }
-                    if (duration || durations.length) {
-                        if (durations.length) {
-                            const maxDuration = Math.max(...durations);
-                            info.duration = duration ? Math.max(maxDuration, duration) : maxDuration;
+                    else {
+                        const { streams, format } = data;
+                        const { duration = 0 } = format;
+                        const durations = [];
+                        const rotations = [];
+                        const sizes = [];
+                        for (const stream of streams) {
+                            const { rotation, width, height, duration, codec_type, pix_fmt } = stream;
+                            if (moviemasher_js.isPopulatedString(pix_fmt))
+                                info.alpha = this.alphaFormats.includes(pix_fmt);
+                            if (moviemasher_js.isNumeric(rotation))
+                                rotations.push(Math.abs(Number(rotation)));
+                            if (codec_type === 'audio')
+                                info.audible = true;
+                            if (moviemasher_js.isPositive(duration))
+                                durations.push(Number(duration));
+                            if (width && height)
+                                sizes.push({ width, height });
                         }
-                        else
-                            info.duration = duration;
+                        if (duration || durations.length) {
+                            if (durations.length) {
+                                const maxDuration = Math.max(...durations);
+                                info.duration = duration ? Math.max(maxDuration, duration) : maxDuration;
+                            }
+                            else
+                                info.duration = duration;
+                        }
+                        if (sizes.length) {
+                            const flipped = rotations.some(n => n === 90 || n === 270);
+                            const widthKey = flipped ? 'height' : 'width';
+                            const heightKey = flipped ? 'width' : 'height';
+                            info[widthKey] = Math.max(...sizes.map(size => size.width));
+                            info[heightKey] = Math.max(...sizes.map(size => size.height));
+                        }
                     }
-                    if (sizes.length) {
-                        const flipped = rotations.some(n => n === 90 || n === 270);
-                        const widthKey = flipped ? 'height' : 'width';
-                        const heightKey = flipped ? 'width' : 'height';
-                        info[widthKey] = Math.max(...sizes.map(size => size.width));
-                        info[heightKey] = Math.max(...sizes.map(size => size.height));
-                    }
-                }
-                fs__default["default"].promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info); });
+                    fs__default["default"].promises.writeFile(dest, JSON.stringify(info)).then(() => { resolve(info); });
+                });
             });
         });
-    });
-};
+    }
+}
 // const data = {
 //         streams: [
 //           {
@@ -383,41 +432,6 @@ const probingInfoPromise = (file, destination) => {
 //         chapters: []
 // }
 
-const expandCommand = (command) => {
-    if (!command)
-        return '';
-    if (command.endsWith(moviemasher_js.ExtText))
-        return expandFile(command);
-    if (command.startsWith('/'))
-        return child_process.execSync(command).toString().trim();
-    return command;
-};
-const expandFile = (file) => {
-    return file ? fs__default["default"].readFileSync(file).toString() : '';
-};
-const expandPath = (string) => {
-    return string.startsWith('.') ? path__default["default"].resolve(string) : string;
-};
-const expandToJson = (config) => {
-    if (!config) {
-        return {};
-    }
-    if (config.endsWith(moviemasher_js.ExtJson)) { // json file
-        return expandToJson(expandFile(config));
-    }
-    switch (config[0]) {
-        case '.':
-        case '/': { // path to script, since it doesn't end in .json
-            return expandToJson(expandCommand(config));
-        }
-        case '{': { // json string
-            return JSON.parse(config);
-        }
-    }
-    // failed to expand to JSON
-    return {};
-};
-
 const OpenAuthentication = { type: 'basic' };
 const HostDefaultPort = 8570;
 const HostDefaultOptions = (args = {}) => {
@@ -446,7 +460,7 @@ const HostDefaultOptions = (args = {}) => {
     const authentication = auth || OpenAuthentication;
     if (authentication.type === 'basic') {
         // support grabbing shared password from command or text file
-        authentication.password = expandCommand(authentication.password);
+        authentication.password = expandFileOrScript(authentication.password);
     }
     const api = {
         authentication
@@ -486,6 +500,7 @@ const HostDefaultOptions = (args = {}) => {
         authentication
     };
     const rendering = {
+        temporaryDirectory: temporary,
         cacheDirectory, authentication, commandOutputs, previewSize, outputSize
     };
     const streamingFormatOptions = {
@@ -516,6 +531,7 @@ const HostDefaultOptions = (args = {}) => {
         commandOutput: moviemasher_js.outputDefaultHls(commandOutput),
         appName: moviemasher_js.StreamingFormat.Rtmp,
         cacheDirectory: `${temporary}/cache`,
+        temporaryDirectory: temporary,
         webrtcStreamingDir: `${temporary}/streams/webrtc`,
         rtmpOptions: {
             port: 1935,
@@ -1503,12 +1519,14 @@ const runningCommandInstance = (id, options) => {
 };
 
 class NodeLoader extends moviemasher_js.LoaderClass {
+    temporaryDirectory;
     cacheDirectory;
     filePrefix;
     defaultDirectory;
     validDirectories;
-    constructor(cacheDirectory, filePrefix, defaultDirectory, validDirectories) {
+    constructor(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories) {
         super();
+        this.temporaryDirectory = temporaryDirectory;
         this.cacheDirectory = cacheDirectory;
         this.filePrefix = filePrefix;
         this.defaultDirectory = defaultDirectory;
@@ -1679,8 +1697,9 @@ class NodeLoader extends moviemasher_js.LoaderClass {
             return Promise.resolve();
         // const preloaderFile = cache as LoaderCache
         const infoPath = this.infoPath(key);
+        const { temporaryDirectory } = this;
         // console.log(this.constructor.name, "updateSources", infoPath)
-        return probingInfoPromise(key, infoPath).then(loadedInfo => {
+        return Probe.promise(temporaryDirectory, key, infoPath).then(loadedInfo => {
             this.updateDefinitions(graphFile, loadedInfo);
         });
     }
@@ -1826,15 +1845,15 @@ class RenderingProcessClass {
             ...rest, options, extension, outputType: moviemasher_js.OutputType.Video
         };
         const { outputDirectory } = this.args;
-        const temporaryDirectoryName = renderingOutputFile(index, commandOutput, 'concat');
-        const temporaryDirectory = path__default["default"].join(outputDirectory, temporaryDirectoryName);
-        let promise = this.createDirectoryPromise(temporaryDirectory);
+        const concatDirectoryName = renderingOutputFile(index, commandOutput, 'concat');
+        const concatDirectory = path__default["default"].join(outputDirectory, concatDirectoryName);
+        let promise = this.createDirectoryPromise(concatDirectory);
         const fileDurations = visibleCommandDescriptions.map((description, index) => {
             const baseName = `concat-${index}`;
             const fileName = `${baseName}.${extension}`;
-            const destinationPath = path__default["default"].join(temporaryDirectory, fileName);
-            const cmdPath = path__default["default"].join(temporaryDirectory, `${baseName}.${ExtensionCommands}`);
-            const infoPath = path__default["default"].join(temporaryDirectory, `${baseName}.${ExtensionLoadedInfo}`);
+            const destinationPath = path__default["default"].join(concatDirectory, fileName);
+            const cmdPath = path__default["default"].join(concatDirectory, `${baseName}.${ExtensionCommands}`);
+            const infoPath = path__default["default"].join(concatDirectory, `${baseName}.${ExtensionLoadedInfo}`);
             const { duration } = description;
             moviemasher_js.assertAboveZero(duration, 'duration');
             const concatFileDuration = [fileName, duration];
@@ -1844,7 +1863,7 @@ class RenderingProcessClass {
             return concatFileDuration;
         });
         const concatFile = this.concatFile(fileDurations);
-        const concatFilePath = path__default["default"].join(temporaryDirectory, 'concat.txt');
+        const concatFilePath = path__default["default"].join(concatDirectory, 'concat.txt');
         promise = promise.then(() => {
             // console.log(this.constructor.name, "combinedRenderingDescriptionPromise finished concat generation", concatFilePath)
             return this.createFilePromise(concatFilePath, concatFile);
@@ -1989,8 +2008,8 @@ class RenderingProcessClass {
     get preloader() { return this._preloader ||= this.preloaderInitialize; }
     get preloaderInitialize() {
         const { args } = this;
-        const { cacheDirectory, validDirectories, defaultDirectory, filePrefix } = args;
-        return new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories);
+        const { cacheDirectory, validDirectories, defaultDirectory, filePrefix, temporaryDirectory } = args;
+        return new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories);
     }
     renderResultPromise(destination, cmdPath, infoPath, commandOutput, commandDescription) {
         const { outputType, avType } = commandOutput;
@@ -2036,7 +2055,8 @@ class RenderingProcessClass {
                 // console.warn(this.constructor.name, "renderResultPromise runPromise", destination, error)
                 return fs__default["default"].promises.writeFile(infoPath, JSON.stringify(renderingResult)).then(() => renderingResult);
             }
-            return probingInfoPromise(destination, infoPath).then(() => renderingResult);
+            const { temporaryDirectory } = this.args;
+            return Probe.promise(temporaryDirectory, destination, infoPath).then(() => renderingResult);
         });
     }
     rendered(destinationPath, duration = 0, tolerance = 0.1) {
@@ -2361,7 +2381,7 @@ class RenderingServerClass extends ServerClass {
         };
         try {
             const user = this.userFromRequest(req);
-            const { cacheDirectory } = this.args;
+            const { cacheDirectory, temporaryDirectory } = this.args;
             const filePrefix = this.fileServer.args.uploadsPrefix;
             const outputDirectory = this.outputDirectory(user, id, renderingId);
             const processArgs = {
@@ -2370,6 +2390,7 @@ class RenderingServerClass extends ServerClass {
                 defaultDirectory: user,
                 validDirectories: ['shared'],
                 cacheDirectory,
+                temporaryDirectory,
                 outputDirectory,
                 filePrefix,
                 definitions,
@@ -2871,9 +2892,9 @@ class StreamingProcessClass extends EventEmitter__default["default"] {
     }
     command;
     cut(args) {
-        const { cacheDirectory, filePrefix, defaultDirectory, validDirectories } = this.args;
+        const { cacheDirectory, filePrefix, defaultDirectory, validDirectories, temporaryDirectory } = this.args;
         const { mashObjects, definitionObjects } = args;
-        const preloader = new NodeLoader(cacheDirectory, filePrefix, defaultDirectory, validDirectories);
+        const preloader = new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories);
         const mashes = mashObjects.map(mashObject => {
             return moviemasher_js.mashInstance({ ...mashObject, definitionObjects, preloader });
         });
@@ -3140,13 +3161,13 @@ class StreamingServerClass extends ServerClass {
         }
         try {
             const user = this.userFromRequest(req);
-            const { cacheDirectory } = this.args;
+            const { cacheDirectory, temporaryDirectory } = this.args;
             const filePrefix = this.fileServer.args.uploadsPrefix;
             const streamingDirectory = directory;
             const streamingProcessArgs = {
                 filePrefix, defaultDirectory: user, validDirectories: ['shared'],
                 cacheDirectory, id, directory: streamingDirectory,
-                file, commandOutput: streamingCommandOutput
+                file, commandOutput: streamingCommandOutput, temporaryDirectory
             };
             const connection = streamingProcessCreate(streamingProcessArgs);
             connection.cut(connection.defaultContent());
@@ -3386,6 +3407,7 @@ exports.Host = Host;
 exports.HostDefaultOptions = HostDefaultOptions;
 exports.HostDefaultPort = HostDefaultPort;
 exports.NodeLoader = NodeLoader;
+exports.Probe = Probe;
 exports.RenderingProcessClass = RenderingProcessClass;
 exports.RenderingServerClass = RenderingServerClass;
 exports.RunningCommandClass = RunningCommandClass;
@@ -3409,10 +3431,10 @@ exports.definitionTypeFromRaw = definitionTypeFromRaw;
 exports.directoryLatest = directoryLatest;
 exports.expandCommand = expandCommand;
 exports.expandFile = expandFile;
+exports.expandFileOrScript = expandFileOrScript;
 exports.expandPath = expandPath;
 exports.expandToJson = expandToJson;
 exports.idUnique = idUnique;
-exports.probingInfoPromise = probingInfoPromise;
 exports.renderingClipFromDefinition = renderingClipFromDefinition;
 exports.renderingCommandOutputs = renderingCommandOutputs;
 exports.renderingDefinitionObject = renderingDefinitionObject;

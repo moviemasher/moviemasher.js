@@ -46,7 +46,14 @@ interface Command extends EventEmitter {
 declare const commandProcess: () => ffmpeg.FfmpegCommand;
 declare const commandInstance: (args: CommandOptions) => Command;
 declare const commandPath: (path?: string) => void;
-declare const probingInfoPromise: (file: string, destination?: string | undefined) => Promise<LoadedInfo>;
+declare class Probe {
+    private static AlphaFormatsCommand;
+    private static _alphaFormats?;
+    static get alphaFormats(): string[];
+    private static get alphaFormatsInitialize();
+    private static probeFile;
+    static promise(temporaryDirectory: string, file: string, destination?: string): Promise<LoadedInfo>;
+}
 interface ApiServerArgs extends ServerArgs {
 }
 interface ApiServer extends Server {
@@ -176,6 +183,7 @@ interface StreamingServerArgs extends ServerArgs {
     commandOutput: CommandOutput;
     webrtcStreamingDir: string;
     cacheDirectory: string;
+    temporaryDirectory: string;
 }
 interface StreamingServer extends Server {
     args: StreamingServerArgs;
@@ -233,6 +241,7 @@ type RenderingCommandOutputs = {
 };
 interface RenderingServerArgs extends ServerArgs {
     cacheDirectory: string;
+    temporaryDirectory: string;
     commandOutputs?: RenderingCommandOutputs;
     previewSize?: Size;
     outputSize?: Size;
@@ -398,16 +407,18 @@ interface RenderingArgs extends Required<RenderingOptions> {
 }
 interface RenderingProcessArgs extends RenderingProcessInput, RenderingArgs {
     id?: string;
+    temporaryDirectory: string;
 }
 interface RenderingProcess {
     runPromise: () => Promise<RunResult>;
 }
 declare class NodeLoader extends LoaderClass {
+    temporaryDirectory: string;
     cacheDirectory: string;
     filePrefix: string;
     defaultDirectory: string;
     validDirectories: string[];
-    constructor(cacheDirectory: string, filePrefix: string, defaultDirectory: string, validDirectories: string[]);
+    constructor(temporaryDirectory: string, cacheDirectory: string, filePrefix: string, defaultDirectory: string, validDirectories: string[]);
     protected browsing: boolean;
     protected cachePromise(url: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded>;
     graphType: GraphType;
@@ -505,6 +516,7 @@ interface StreamingProcessArgs {
     file: string;
     commandOutput: StreamingCommandOutput;
     cacheDirectory: string;
+    temporaryDirectory: string;
     filePrefix: string;
     defaultDirectory: string;
     validDirectories: string[];
@@ -572,7 +584,8 @@ declare const directoryLatest: (directory: string, extension: string) => string 
 declare const Directory: {
     latest: (directory: string, extension: string) => string | undefined;
 };
-declare const expandCommand: (command?: string | undefined) => string;
+declare const expandCommand: (command: string) => string;
+declare const expandFileOrScript: (command?: string | undefined) => string;
 declare const expandFile: (file?: string | undefined) => string;
 declare const expandPath: (string: string) => string;
 declare const expandToJson: (config: string) => JsonObject;
@@ -585,5 +598,5 @@ declare const renderingInputFromRaw: (loadType: LoadType, source: string, clip?:
 declare const renderingClipFromDefinition: (definition: DefinitionObject, overrides?: ValueObject) => ClipObject;
 declare const renderingDefinitionObject: (loadType: LoadType, source: string, definitionId?: string | undefined, label?: string | undefined) => DefinitionObject;
 declare const definitionTypeFromRaw: (loadType: LoadType) => DefinitionType;
-export { ConnectionJson, Authenticator, CommandProbeFunction, Command, commandProcess, commandInstance, commandPath, probingInfoPromise, HostOptionsDefault, HostDefaultPort, HostDefaultOptions, HostOptions, HostServers, Host, CommandDestination, CommandResult, RunningCommand, RunningCommandClass, runningCommandGet, runningCommandDelete, runningCommandInstance, ApiServerArgs, ApiServer, ApiServerClass, DataServerArgs, DataServer, DataServerCastRelationUpdate, DataServerCastRelationSelect, DataServerRow, DataServerClass, FileServerFilename, FileServerArgs, FileServer, FileServerClass, RenderingProcessInput, RenderingCallback, RunResult, RenderingProcessOptions, RenderingArgs, RenderingProcessArgs, RenderingProcess, RenderingProcessConcatFileDuration, RenderingProcessClass, renderingProcessInstance, RenderingCommandOutputs, RenderingServerArgs, RenderingServer, RenderingServerClass, FormatOptions, StreamingFormatOptions, StreamingServerArgs, StreamingServer, StreamingServerClass, StreamConnectionCommand, StreamingProcessArgs, StreamingProcessCutArgs, StreamingProcessClass, streamingProcessDeleteAll, streamingProcessCreate, streamingProcessDelete, streamingProcessGet, StreamingProcessFactory, WebrtcStream, AudioData, FrameData, WebrtcConnection, ServerAuthentication, ServerArgs, Server, ServerHandler, ServerClass, WebServerArgs, WebServer, WebServerClass, BasenameCache, BasenameRendering, BasenameDefinition, ExtensionLoadedInfo, ExtensionCommands, SocketCallback, StreamUnix, StreamInput, StreamOutput, commandExpandComplex, commandQuoteComplex, commandErrors, commandArgsString, directoryLatest, Directory, expandCommand, expandFile, expandPath, expandToJson, idUnique, NodeLoader, renderingInput, renderingCommandOutputs, renderingOutputFile, renderingSource, renderingInputFromRaw, renderingClipFromDefinition, renderingDefinitionObject, definitionTypeFromRaw };
+export { ConnectionJson, Authenticator, CommandProbeFunction, Command, commandProcess, commandInstance, commandPath, Probe, HostOptionsDefault, HostDefaultPort, HostDefaultOptions, HostOptions, HostServers, Host, CommandDestination, CommandResult, RunningCommand, RunningCommandClass, runningCommandGet, runningCommandDelete, runningCommandInstance, ApiServerArgs, ApiServer, ApiServerClass, DataServerArgs, DataServer, DataServerCastRelationUpdate, DataServerCastRelationSelect, DataServerRow, DataServerClass, FileServerFilename, FileServerArgs, FileServer, FileServerClass, RenderingProcessInput, RenderingCallback, RunResult, RenderingProcessOptions, RenderingArgs, RenderingProcessArgs, RenderingProcess, RenderingProcessConcatFileDuration, RenderingProcessClass, renderingProcessInstance, RenderingCommandOutputs, RenderingServerArgs, RenderingServer, RenderingServerClass, FormatOptions, StreamingFormatOptions, StreamingServerArgs, StreamingServer, StreamingServerClass, StreamConnectionCommand, StreamingProcessArgs, StreamingProcessCutArgs, StreamingProcessClass, streamingProcessDeleteAll, streamingProcessCreate, streamingProcessDelete, streamingProcessGet, StreamingProcessFactory, WebrtcStream, AudioData, FrameData, WebrtcConnection, ServerAuthentication, ServerArgs, Server, ServerHandler, ServerClass, WebServerArgs, WebServer, WebServerClass, BasenameCache, BasenameRendering, BasenameDefinition, ExtensionLoadedInfo, ExtensionCommands, SocketCallback, StreamUnix, StreamInput, StreamOutput, commandExpandComplex, commandQuoteComplex, commandErrors, commandArgsString, directoryLatest, Directory, expandCommand, expandFileOrScript, expandFile, expandPath, expandToJson, idUnique, NodeLoader, renderingInput, renderingCommandOutputs, renderingOutputFile, renderingSource, renderingInputFromRaw, renderingClipFromDefinition, renderingDefinitionObject, definitionTypeFromRaw };
 //# sourceMappingURL=server-express.d.ts.map

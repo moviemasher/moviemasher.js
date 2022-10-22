@@ -12,11 +12,12 @@ import {
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
-import { probingInfoPromise } from '../Command/Probing'
+import { Probe } from '../Command/Probe'
 
 
 export class NodeLoader extends LoaderClass {
   constructor(
+    public temporaryDirectory: string,
     public cacheDirectory: string,
     public filePrefix: string,
     public defaultDirectory: string,
@@ -214,8 +215,9 @@ export class NodeLoader extends LoaderClass {
     // const preloaderFile = cache as LoaderCache
 
     const infoPath = this.infoPath(key) 
+    const { temporaryDirectory } = this
     // console.log(this.constructor.name, "updateSources", infoPath)
-    return probingInfoPromise(key, infoPath).then(loadedInfo => { 
+    return Probe.promise(temporaryDirectory, key, infoPath).then(loadedInfo => { 
       this.updateDefinitions(graphFile, loadedInfo) 
     })
   }

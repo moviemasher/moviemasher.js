@@ -13,6 +13,7 @@ export type RenderingCommandOutputs = {
 
 export interface RenderingServerArgs extends ServerArgs {
   cacheDirectory: string
+  temporaryDirectory: string
   commandOutputs?: RenderingCommandOutputs
   previewSize?: Size
   outputSize?: Size

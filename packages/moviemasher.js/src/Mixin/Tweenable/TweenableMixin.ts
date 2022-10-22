@@ -246,7 +246,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
 
 
-    overlayCommandFilters(bottomInput: string, topInput: string, format?: string): CommandFilters { 
+    overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters { 
       assertPopulatedString(bottomInput, 'bottomInput')
       assertPopulatedString(topInput, 'topInput')
 
@@ -256,7 +256,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       }
       const { overlayFilter } = this
 
-      if (format) overlayFilter.setValue(format, 'format')
+      if (alpha) overlayFilter.setValue('yuv420p10', 'format')
       overlayFilter.setValue(0, 'x')
       overlayFilter.setValue(0, 'y')
 
