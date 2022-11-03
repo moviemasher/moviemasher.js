@@ -1,20 +1,14 @@
 import { SelectType } from "../Setup/Enums"
 import { PropertiedChangeHandler } from "../Base/Propertied"
 import { DataGroup, Property } from "../Setup/Property"
-import { Scalar, ScalarObject } from "../declarations"
-import { Effect, Effects } from "../Media/Effect/Effect"
+import { IndexHandler, Scalar, ScalarObject } from "../declarations"
 import { isObject } from "./Is"
-
+import { Movable, Movables } from "../Edited/Mash/Mash"
 
 export interface Selected {
   selectType: SelectType
   name?: string
 }
-
-export type EffectAddHandler = (effect: Effect, insertIndex?: number) => void
-export type EffectMoveHandler = (effect: Effect, index?: number) => void
-export type EffectRemovehandler = (effect: Effect) =>  void
-
 
 export interface SelectedProperty extends Selected {
   property: Property
@@ -25,14 +19,14 @@ export const isSelectedProperty = (value: any): value is SelectedProperty => {
   return isObject(value) && "changeHandler" in value
 }
 
-export interface SelectedEffects extends Selected {
-  value: Effects
-  moveHandler: EffectMoveHandler
-  removeHandler: EffectRemovehandler
-  addHandler: EffectAddHandler
+export interface SelectedMovable extends Selected {
+  value: Movables
+  moveHandler: IndexHandler<Movable>
+  removeHandler: IndexHandler<Movable>
+  addHandler: IndexHandler<Movable>
 }
 
-export type SelectedItems = Array<SelectedProperty | SelectedEffects>
+export type SelectedItems = Array<SelectedProperty | SelectedMovable>
 
 export type SelectedProperties = Array<SelectedProperty>
 

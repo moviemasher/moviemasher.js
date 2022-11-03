@@ -1,6 +1,7 @@
 import React from "react"
 import { 
-  SelectType, UnknownObject, isSelectedProperty, SelectedItems, Time 
+  SelectType, UnknownObject, isSelectedProperty, SelectedItems, Time,
+  assertDataGroup
 } from "@moviemasher/moviemasher.js"
 
 import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
@@ -29,22 +30,22 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
   const ungroupedInputs: React.ReactChild[] = []
   const groupedInputs: React.ReactChild[] = []
   const groups: UnknownObject = {} 
-  const selectTypes = new Set<SelectType>()
-  selectedItems.forEach(selectedProperty => {
-    if (isSelectedProperty(selectedProperty)) {
-      const { property, changeHandler, selectType, value, name: nameOveride } = selectedProperty
+  selectedItems.forEach(selectedItem => {
+    if (isSelectedProperty(selectedItem)) {
+      const { property, changeHandler, selectType, value, name: nameOveride } = selectedItem
       const { name: propertyName, group } = property
+      // console.log("InspectorProperties", selectType, nameOveride, propertyName, group)
       if (group) {
         const key = [group, selectType].join('-')
         if (!groups[key]) {
           groups[key] = true
-          groupedInputs.push(React.cloneElement(DataGroupInputs[group], { selectType }))
+          groupedInputs.push(React.cloneElement(DataGroupInputs[group], { selectType, selectedItems }))
         }
         return
       } 
       
       const name = nameOveride || propertyName
-      selectTypes.add(selectType)
+
       const propertyProps: InspectorPropertyProps = {
         key: `inspector-${selectType}-${name}`,
         property, value, changeHandler, name, 
@@ -65,16 +66,15 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
       } else ungroupedInputs.push(inspectorProperty)    
       
     } else {
-      const effectsProps = {
-        key: "inspector-effects",
-        selectedEffects: selectedProperty,
+      const { name } = selectedItem
+      assertDataGroup(name)
+
+      const groupProps = {
+        key: `inspector-${name}`,
+        selectedMovable: selectedItem,
       }
-      groupedInputs.push(React.cloneElement(DataGroupInputs.effects, effectsProps))
+      groupedInputs.push(React.cloneElement(DataGroupInputs[name], groupProps))
     }
   })
-  if (selectTypes.has(SelectType.Clip)) {
-    ungroupedInputs.push()
-  }
-
   return <>{ungroupedInputs}{groupedInputs}</>
 }

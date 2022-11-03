@@ -8,19 +8,20 @@ import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations
 import { View } from "../../Utilities/View"
 import { ProcessContext } from "../../Contexts/ProcessContext"
 import { ApiContext } from "../ApiClient/ApiContext"
-import { ViewerContext } from "../../Contexts/ViewerContext"
+import { MasherContext } from "../Masher/MasherContext"
 
 export interface BroadcasterControlProps extends PropsAndChildren, WithClassName {}
 
 export function BroadcasterControl(props: BroadcasterControlProps): ReactResult {
   const processContext = React.useContext(ProcessContext)
   const apiContext = React.useContext(ApiContext)
-  const viewerContext = React.useContext(ViewerContext)
+  const masherContext = React.useContext(MasherContext)
 
   const { setProcessing, processing, setStatus } = processContext
   const [disabled, setDisabled] = React.useState(processing)
   const { endpointPromise } = apiContext
-  const { setStreaming, setId, setUrl, setWidth, setHeight, setVideoRate } = viewerContext
+  const { current, setStreaming } = masherContext
+
 
   const startStreaming = () => {
     const request: StreamingStartRequest = {}
@@ -29,10 +30,12 @@ export function BroadcasterControl(props: BroadcasterControlProps): ReactResult 
       console.debug("StreamingStartResponse", Endpoints.streaming.start, response)
       setStatus(`Started stream`)
       const { id, readySeconds, width, height, videoRate } = response
-      setId(id)
-      setWidth(width)
-      setHeight(height)
-      setVideoRate(videoRate)
+
+      current.streamId = id
+      current.streamWidth = width
+      current.streamheight = height
+      current.streamRate = videoRate
+      
       const monitorStream = () => {
         setTimeout(() => {
           const request: StreamingStatusRequest = { id }
@@ -41,8 +44,9 @@ export function BroadcasterControl(props: BroadcasterControlProps): ReactResult 
             console.debug("StreamingStatusResponse", Endpoints.streaming.status, response)
             const { streamUrl } = response
             if (streamUrl) {
-              setUrl(streamUrl)
+              current.streamUrl = streamUrl
               setStreaming(true)
+            
               setProcessing(true)
               setStatus(`Streaming`)
             }

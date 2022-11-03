@@ -23,10 +23,11 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   const editor = useEditor()
-  const { selectType } = props
+  const { selectType, selectedItems: propsItems, ...rest } = props
   assertSelectType(selectType, 'selectType')
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties, selectedInfo, changeTweening } = inspectorContext
+  const selectedItems = propsItems || inspectorContext.selectedItems
+  const { selectedInfo, changeTweening } = inspectorContext
   const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
   assertTimeRange(timeRange)
   assertTime(time)
@@ -34,7 +35,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const endDefined = tweenDefined[DataGroup.Size]
   const endSelected = tweenSelected[DataGroup.Size]
 
-  const byName = selectedPropertyObject(properties, DataGroup.Size, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroup.Size, selectType)
   
   const { 
     lock, width, height, 
@@ -142,7 +143,9 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     <View key="width" children={widthElements} />, 
     <View key="height" children={heightElements} />
   ]
-  return <fieldset>
+
+  const fieldsetProps = { ...rest }
+  return <fieldset { ...fieldsetProps }>
     <legend key="legend"><View>{legendElements}</View></legend>
     {elements}
   </fieldset>

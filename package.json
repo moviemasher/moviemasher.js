@@ -1,11 +1,11 @@
 {
   "name": "@moviemasher/moviemasher-core",
-  "description": "JavaScript video editor, encoder, switcher - version 5.1.1",
+  "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
   "homepage": "https://moviemasher.com",
   "type": "commonjs",
   "source": "index",
   "main": "workspaces/example-express-react/host/server.js",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -21,7 +21,7 @@
   "scripts": {
     "build-builder": "docker compose --file dev/build/docker-compose.yml build builder",
     "build-tester": "docker compose --file dev/test/docker-compose.yml build tester",
-    "build-image": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.1.1 .",
+    "build-image": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.1.2 .",
     "build-rendering": "npm run build -w test-rendering",
     "test-rendering": "npm run test -w test-rendering",
     "build": "docker compose --file dev/build/docker-compose.yml run --rm builder",

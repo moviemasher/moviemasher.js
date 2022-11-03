@@ -7,17 +7,18 @@ services:
     build:
       dockerfile: ../../../dev/image/Dockerfile.cnf
       context: ../../../
-    image: moviemasher/moviemasher.js:5.1.1
+    image: moviemasher/moviemasher.js:5.1.2
     container_name: moviemasher-example-express-react-8570
     ports:
       - "8570:8570"
       - "8571:8571"
     volumes:
       - ../src/index.html:/home/node/app/workspaces/example-express-react/host/public/index.html
+      - ../../../dev/shared:/home/node/app/workspaces/example-express-react/host/public/media/shared
       - ../host/public/index.js:/home/node/app/workspaces/example-express-react/host/public/index.js
-      - ../../../packages/server-express/cjs:/home/node/app/packages/server-express/cjs
+      - ../../../packages/server-express/cjs/server-express.js:/home/node/app/packages/server-express/cjs/server-express.min.js
       - ../../../packages/moviemasher.js/esm:/home/node/app/packages/moviemasher.js/esm
-      - ../../../packages/moviemasher.js/umd:/home/node/app/packages/moviemasher.js/umd
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/home/node/app/packages/moviemasher.js/umd/moviemasher.min.js
       - ../../../packages/server-express/package.json:/home/node/app/packages/server-express/package.json
       - ../../../packages/theme-default/moviemasher.css:/home/node/app/workspaces/example-express-react/host/public/moviemasher.css
       - ../../../packages/moviemasher.js/package.json:/home/node/app/packages/moviemasher.js/package.json
@@ -29,4 +30,6 @@ services:
       - ../../../packages/theme-default/umd/theme-default.min.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.min.js
       - ../../../temporary/express-react/media:/home/node/app/workspaces/example-express-react/host/public/media
       - ../../../temporary/express-react/temporary:/home/node/app/temporary
+      - ../../../node_modules/react/umd/react.development.js:/home/node/app/workspaces/example-express-react/host/public/react.development.js
+      - ../../../node_modules/react-dom/umd/react-dom.development.js:/home/node/app/workspaces/example-express-react/host/public/react-dom.development.js
       

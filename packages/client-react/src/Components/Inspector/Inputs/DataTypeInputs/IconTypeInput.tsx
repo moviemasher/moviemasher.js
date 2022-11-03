@@ -1,18 +1,22 @@
 import React from 'react'
-import { DataType, Timings, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
-import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
+import { DataTypeInputs } from './DataTypeInputs'
 import { InputContext } from '../InputContext'
+import { MasherContext } from '../../../Masher/MasherContext'
 
-export function TimingTypeInput(): ReactResult {
+export function IconTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
 
+  const masherContext = React.useContext(MasherContext)
+  const { icons } = masherContext
+  const names = Object.keys(icons)
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
 
 
-  const options = Timings.map(id => {
+  const options = names.map(id => {
     const optionProps = { value: id, children: id, key: id }
     return <option {...optionProps} />
   })
@@ -33,4 +37,4 @@ export function TimingTypeInput(): ReactResult {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.Timing] = <TimingTypeInput />
+DataTypeInputs[DataType.Icon] = <IconTypeInput />

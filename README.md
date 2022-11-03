@@ -54,7 +54,7 @@ in AWS Marketplace does the same within their hosted environment.
 A fully functional demo of the system including server rendering can easily be launched within Docker using the following command:
 
 ```shell
-docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.1.1
+docker run -d -p '8570:8570' --name moviemasher moviemasher/moviemasher.js:5.1.2
 ```
 
 Then navigate to http://localhost:8570 in your browser, supplying any username/password
@@ -82,7 +82,7 @@ The HTML document below can be loaded in a web browser to display the simplest '
     <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.1/umd/moviemasher.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.2/umd/moviemasher.js" crossorigin></script>
     <style>
       #root { width: 360px; height: 640px; }
       #root > * { position: absolute; }
@@ -137,10 +137,10 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://unpkg.com/react@18/umd/react.production.min.js' crossorigin></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/moviemasher.js@5.1.1/umd/moviemasher.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/theme-default@5.1.1/umd/theme-default.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/client-react@5.1.1/umd/client-react.js' crossorigin></script>
-    <link href='https://unpkg.com/@moviemasher/theme-default@5.1.1/moviemasher.css' rel='stylesheet'>
+    <script src='https://unpkg.com/@moviemasher/moviemasher.js@5.1.2/umd/moviemasher.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js' crossorigin></script>
+    <link href='https://unpkg.com/@moviemasher/theme-default@5.1.2/moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #root { width: 100vw; height: 100vh; display: flex; }

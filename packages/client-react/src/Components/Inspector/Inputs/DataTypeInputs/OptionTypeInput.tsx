@@ -1,24 +1,22 @@
 import React from 'react'
-import { DataType, Sizings, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownObject, assertPopulatedArray } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
 import { InputContext } from '../InputContext'
 
-export function SizingTypeInput(): ReactResult {
+export function OptionTypeInput(): ReactResult {
   const inputContext = React.useContext(InputContext)
-
   const { changeHandler, property, value, name } = inputContext
-  if (!property) return null
+  const { options } = property
+  assertPopulatedArray(options)
 
-
-  const options = Sizings.map(id => {
+  const ids = options.map(String)
+  const selectProps: UnknownObject = {
+    children: ids.map(id => {
     const optionProps = { value: id, children: id, key: id }
     return <option {...optionProps} />
-  })
-
-  const selectProps: UnknownObject = {
-    children: options,
+  }),
     name,
     value: String(value),
     key: `${name}-select`,
@@ -33,4 +31,4 @@ export function SizingTypeInput(): ReactResult {
   return <select {...selectProps} />
 }
 
-DataTypeInputs[DataType.Sizing] = <SizingTypeInput />
+DataTypeInputs[DataType.Option] = <OptionTypeInput />

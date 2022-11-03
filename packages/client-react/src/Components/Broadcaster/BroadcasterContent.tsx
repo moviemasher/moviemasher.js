@@ -1,19 +1,27 @@
 import React from 'react'
+import { assertPopulatedString, sizeAboveZero } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
-import { ViewerContext } from '../../Contexts/ViewerContext'
 import { View } from '../../Utilities/View'
 import { useEditor } from '../../Hooks/useEditor'
-import { sizeCopy } from '@moviemasher/moviemasher.js'
+import { CollapseContext } from '../Collapse/CollapseContext'
+import { MasherContext } from '../Masher/MasherContext'
 
 export interface BroadcasterContentProps extends PropsWithoutChild, WithClassName {}
 export function BroadcasterContent(props: BroadcasterContentProps): ReactResult {
-  const viewerContext = React.useContext(ViewerContext)
-  const editor = useEditor()
-  const { rect } = editor
-  const { url, streaming } = viewerContext
-  if (!(streaming && url)) return <View {...props} />
 
-  const videoProps = { ...sizeCopy(rect), ...props, autoPlay: true }
-  return <video src={url} { ...videoProps } />
+  const masherContext = React.useContext(MasherContext)
+  const collapseContext = React.useContext(CollapseContext)
+  const editor = useEditor()
+  const { collapsed } = collapseContext
+  const { rect } = editor
+  const { current, streaming } = masherContext
+  const { streamUrl } = current
+  if (collapsed || !sizeAboveZero(rect) || !(streaming && streamUrl)) {
+    return <View {...props} />
+  }
+  assertPopulatedString(streamUrl)
+
+  const videoProps = { ...props, autoPlay: true }
+  return <video src={streamUrl} { ...videoProps } />
 }

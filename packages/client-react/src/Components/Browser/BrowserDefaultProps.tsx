@@ -9,19 +9,22 @@ import { BrowserProps } from './Browser'
 import { BrowserControl } from './BrowserControl'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { DefinitionItem } from '../DefinitionItem/DefinitionItem'
+import { View } from '../../Utilities/View'
 
 export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const BrowserPropsDefault: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props = {}) {
+export const BrowserDefaultProps: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
   optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
   optionsStrict.props.initialPicked ||= 'container'
-  optionsStrict.header.content ||= [icons.browser]
+  optionsStrict.header.content ||= [
+    <View key="panel-icon" children={icons.browser} />
+  ]
 
   optionsStrict.footer.content ||= [
-    <BrowserPicker key='effect' id='effect' className={ClassButton} children={icons.browserEffect} />,
+    <BrowserPicker key='effect' id='effect' className={ClassButton} children={icons.effect} />,
     <BrowserPicker key='container' id='container' className={ClassButton} children={icons.container} />,
     <BrowserPicker key='content' id='content' className={ClassButton} children={icons.content} />,
   ]

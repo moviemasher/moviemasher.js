@@ -1,8 +1,8 @@
-import { Action, ActionOptions } from "./Action"
+import { Action, ActionObject } from "./Action"
 import { Layer, LayerAndPosition } from "../../../Edited/Cast/Layer/Layer"
 import { assertLayer, isLayer } from "../../../Edited"
 
-export interface AddLayerActionObject extends ActionOptions {
+export interface AddLayerActionObject extends ActionObject {
   layerAndPosition?: LayerAndPosition
 }
 

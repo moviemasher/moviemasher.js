@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/server-express",
-  "version": "5.1.1",
-  "description": "Movie Masher Server Plugin implemented in ExpressJS - version 5.1.1",
+  "version": "5.1.2",
+  "description": "Movie Masher Server Plugin implemented in ExpressJS - version 5.1.2",
   "main": "cjs/server-express.min.js",
   "types": "cjs/server-express.d.ts",
   "type": "commonjs",
@@ -24,7 +24,7 @@
     "build": "run-s build-cjs build-cjs-min"
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.1",
+    "@moviemasher/moviemasher.js": "5.1.2",
     "@bitjourney/uuid-v4": "^1.0.1",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",

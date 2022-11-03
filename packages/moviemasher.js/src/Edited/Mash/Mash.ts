@@ -16,18 +16,30 @@ import { isObject } from "../../Utility/Is"
 import { LayerMash } from "../Cast/Layer/Layer"
 import { throwError } from "../../Utility/Throw"
 import { Propertied } from "../../Base/Propertied"
+import { Effect } from "../../Media/Effect/Effect"
+import { Control, ControlObject, Controls } from "./Control/Control"
 
 export interface DefinitionReferenceObject {
   definitionId: string
   definitionType: DefinitionType
   label: string
 }
+
+export enum Frame {
+  First = 0,
+  Last = -1,
+}
+
+export type Movable = Effect | Control 
+export type Movables = Movable[]
+
 export interface MashDescription extends UnknownObject, Described {}
 
 export interface MashObject extends EditedObject {
   definitionReferences?: DefinitionReferenceObjects
   gain?: Value
   tracks?: TrackObject[]
+  controls?: ControlObject[]
   frame?: number
   rendering?: string
 }
@@ -53,6 +65,7 @@ export interface Mash extends Edited {
   clips: Clip[]
   clipsInTimeOfType(time: Time, avType?: AVType): Clip[]
   composition: AudioPreview
+  controls: Controls
   definitionIds: string[]
   draw() : void
   drawnTime? : Time

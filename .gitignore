@@ -4,3 +4,6 @@ temporary*
 **/__image_snapshots__*
 *.cache/*
 **/raw/*
+**/cjs/*
+**/umd/*
+**/esm/*

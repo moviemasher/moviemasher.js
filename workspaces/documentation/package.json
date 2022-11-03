@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/documentation",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Movie Masher Documentation",
   "author": {
     "name": "Movie Masher",
@@ -15,9 +15,9 @@
 
   },
   "dependencies": {
-    "@moviemasher/moviemasher.js": "5.1.1",
-    "@moviemasher/client-react": "5.1.1",
-    "@moviemasher/server-express": "5.1.1",
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/client-react": "5.1.2",
+    "@moviemasher/server-express": "5.1.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

@@ -3,7 +3,6 @@ import React from 'react'
 import {
   PropsMethod, PropsWithoutChild, WithClassName
 } from '../../declarations'
-import { View } from '../../Utilities/View'
 import { Bar } from '../../Utilities/Bar'
 import { TimelineScrubberElement } from './TimelineScrubberElement'
 import { TimelineTrack } from './TimelineTrack'
@@ -15,22 +14,25 @@ import { TimelineContent } from './TimelineContent'
 import { TimelineAddTrackControl } from './TimelineAddTrackControl'
 
 import { TimelineProps } from './Timeline'
-import { Panel, PanelOptions, panelOptionsStrict } from '../Panel/Panel'
+import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { TimelineTrackIcon } from './TimelineTrackIcon'
-import { Button } from '../../Utilities'
 import { TimelineZoom } from './TimelineZoom'
 import { TimelineAddClipControl } from './TimelineAddClipControl'
 import { ClipItem } from '../ClipItem/ClipItem'
+import { View } from '../../Utilities/View'
+import { Button } from '../../Utilities/Button'
 
 export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
-export const DefaultTimelineProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props = {}) {
+export const TimelineDefaultProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
   optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
-  optionsStrict.header.content ||= [icons.timeline]
+  optionsStrict.header.content ||= [
+    <View key="panel-icon" children={icons.timeline} />,
+  ]
 
   optionsStrict.footer.content ||= [
     <TimelineAddClipControl key='add-clip'>

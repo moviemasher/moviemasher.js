@@ -1,6 +1,6 @@
 {
   "name": "@moviemasher/example-express-react",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Movie Masher Express React Example",
   "author": {
     "name": "Movie Masher",
@@ -8,7 +8,7 @@
   },
   "license": "MPL-2.0",
   "browser": "host/public/index.js",
-  "source": "src/masher.tsx",
+  "source": "src/caster.tsx",
   "main": "host/server.js",
   "scripts": {  
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
@@ -21,9 +21,9 @@
     "clean": "rimraf host"
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.1",
-    "@moviemasher/client-react": "5.1.1",
-    "@moviemasher/server-express": "5.1.1",
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/client-react": "5.1.2",
+    "@moviemasher/server-express": "5.1.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

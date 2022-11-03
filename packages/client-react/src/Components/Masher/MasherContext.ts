@@ -1,30 +1,33 @@
 import React from 'react'
 import { 
-  Definition, Editor, EditorIndex, EmptyMethod 
+  BooleanSetter,
+  Definition, Editor, EditorIndex, EmptyMethod, ScalarObject 
 } from '@moviemasher/moviemasher.js'
+import type { ThemeIcons } from '@moviemasher/theme-default'
 
 import { Draggable } from '../../Helpers/DragDrop'
-import { ThemeIcons } from '../../declarations'
 
 export interface MasherContextInterface {
+  streaming: boolean
+  setStreaming: BooleanSetter
+  current: ScalarObject
   changeDefinition: (definition?: Definition) => void
-  definition?: Definition 
-  draggable?: Draggable
   drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Definition[]>
   editor?: Editor
   editorIndex: EditorIndex
   icons: ThemeIcons
   save: () => void
-  setDraggable(draggable?: Draggable): void
 }
 
 export const MasherContextDefault: MasherContextInterface = {
+  streaming: false,
+  setStreaming: EmptyMethod,
+  current: {},
   changeDefinition: EmptyMethod,
   drop: () => Promise.resolve([]),
   editorIndex: {},
   icons: {},
   save: EmptyMethod,
-  setDraggable: EmptyMethod,
 }
 
 export const MasherContext = React.createContext(MasherContextDefault)

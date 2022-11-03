@@ -20,10 +20,15 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const { icons } = masherContext
   
   const editor = useEditor()
-  const { selectType } = props
+  const { selectType, selectedItems: propsItems, ...rest } = props
   assertSelectType(selectType)
+
+ 
+
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties, changeTweening, selectedInfo } = inspectorContext
+  const selectedItems = propsItems || inspectorContext.selectedItems
+
+  const { changeTweening, selectedInfo } = inspectorContext
   const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
   assertTimeRange(timeRange)
   assertTime(time)
@@ -31,7 +36,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const endDefined = tweenDefined[DataGroup.Point]
   const endSelected = tweenSelected[DataGroup.Point]
 
-  const byName = selectedPropertyObject(properties, DataGroup.Point, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroup.Point, selectType)
   const values: ScalarObject = selectedPropertiesScalarObject(byName) 
   const { 
     offE, offW, offN, offS, x, y, 
@@ -160,7 +165,8 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     <View key="y" children={yElements} />
   ]
 
-  return <fieldset>
+  const fieldsetProps = { ...rest }
+  return <fieldset { ...fieldsetProps }>
     <legend key="legend"><View>{legendElements}</View></legend>
     {elements}
   </fieldset>

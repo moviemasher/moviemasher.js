@@ -30,6 +30,7 @@ export enum ActionType {
   ChangeFrame = 'changeFrame',
   ChangeGain = 'changeGain',
   MoveClip = 'moveClip',
+  Move = 'move',
   MoveEffect = 'moveEffect',
   MoveLayer = 'moveLayer',
   RemoveClip = 'removeClip',
@@ -60,7 +61,6 @@ export enum SelectType {
   Clip = 'clip',
   Container = 'container',
   Content = 'content',
-  Effect = 'effect',
   Layer = 'layer',
   Mash = 'mash',
   None = 'none',
@@ -209,12 +209,12 @@ export enum DataType {
   DefinitionId = 'definitionid',
   FontId = 'fontid',
   Frame = 'frame',
+  Icon = 'icon',
   Number = 'number',
   Percent = 'percent',
   Rgb = 'rgb',
   String = 'string',
-  Timing = 'timing',
-  Sizing = 'sizing',
+  Option = 'option',
 }
 export const DataTypes = Object.values(DataType)
 export const isDataType = (type?: any): type is DataType => {
@@ -358,3 +358,10 @@ export enum Sizing {
   Container = 'container',
 }
 export const Sizings = Object.values(Sizing)
+
+export enum Clicking {
+  Show = 'show',
+  Hide = 'hide',
+  Play = 'play',
+}
+export const Clickings = Object.values(Clicking)

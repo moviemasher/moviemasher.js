@@ -4,23 +4,25 @@ import {
 } from "@moviemasher/moviemasher.js"
 
 import { ElementRecord, ReactResult } from "../../../../declarations"
-import { InspectorContext } from "../../../Inspector/InspectorContext"
+import { InspectorContext } from "../../InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { View } from "../../../../Utilities/View"
-import { InspectorProperty, InspectorPropertyProps } from "../../../Inspector/InspectorProperty"
+import { InspectorProperty, InspectorPropertyProps } from "../../InspectorProperty"
 import { MasherContext } from "../../../Masher/MasherContext"
 
+export interface OptionGroupInputProps extends DataGroupProps {
+  dataGroup: DataGroup
+}
 
-export function TimingGroupInput(props: DataGroupProps): ReactResult {
+export function OptionGroupInput(props: OptionGroupInputProps): ReactResult {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
-  const { selectType } = props
+  const { selectType, selectedItems: propsItems, dataGroup, ...rest } = props
   assertSelectType(selectType)
 
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties } = inspectorContext
-  const byName = selectedPropertyObject(properties, DataGroup.Timing, selectType)
-
+  const selectedItems = propsItems || inspectorContext.selectedItems
+  const byName = selectedPropertyObject(selectedItems, dataGroup, selectType)
   const elementsByName: ElementRecord = Object.fromEntries(Object.entries(byName).map(([key, selectedProperty]) => {
     const { property, changeHandler, selectType, value, name: nameOveride } = selectedProperty
     const { name: propertyName } = property
@@ -33,17 +35,18 @@ export function TimingGroupInput(props: DataGroupProps): ReactResult {
     return [key, <InspectorProperty {...propertyProps} />]
   }))
 
-  const { timing, ...rest } = elementsByName
-  if (!isPopulatedObject(rest)) {
+  const { [dataGroup]: input, ...otherElements } = elementsByName
+  const iconElement = icons[dataGroup]
+  if (!isPopulatedObject(otherElements)) {
     const viewProps = {
-      key: 'timing', children: [icons.timing, timing], className: 'row'
+      key: dataGroup, children: [iconElement, input], className: 'row'
     }
     return <View { ...viewProps} />
   }
 
-  const legendElements = [icons.timing]
-  if (timing) legendElements.push(timing)
-  const elements = Object.entries(rest).map(([key, value]) => {
+  const legendElements = [iconElement]
+  if (input) legendElements.push(input)
+  const elements = Object.entries(otherElements).map(([key, value]) => {
     const icon = icons[key]
     const children = [value]
     if (icon) children.unshift(<View key={`${key}-icon`} children={icon} className={ClassButton} />)
@@ -51,10 +54,15 @@ export function TimingGroupInput(props: DataGroupProps): ReactResult {
     return <View { ...frameProps } />
   })
 
-  return <fieldset>
+
+  const fieldsetProps = { ...rest }
+  return <fieldset { ...fieldsetProps }>
     <legend key="legend"><View>{legendElements}</View></legend>
     {elements}
   </fieldset>
 }
 
-DataGroupInputs[DataGroup.Timing] = <TimingGroupInput key="timing-group-input" />
+[DataGroup.Timing, DataGroup.Clicking].forEach(dataGroup => {
+  const props = { dataGroup, key: `${dataGroup}-group-input` }
+  DataGroupInputs[dataGroup] = <OptionGroupInput { ...props } />
+})

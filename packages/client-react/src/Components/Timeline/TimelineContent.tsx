@@ -28,7 +28,7 @@ export function TimelineContent(props: TimelineContentProps): ReactResult {
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
   useListeners({ [EventType.Mash]: resetScroll })
 
-  const onPointerDown = (event: React.MouseEvent<HTMLDivElement>) => { 
+  const onPointerDown = () => { 
     editor.selection.unset(SelectType.Track) 
   }
   

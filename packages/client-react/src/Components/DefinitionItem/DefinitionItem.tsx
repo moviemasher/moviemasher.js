@@ -11,6 +11,7 @@ import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
 import { MasherContext } from '../Masher/MasherContext'
+import { BrowserContext } from '../Browser/BrowserContext'
 
 export interface DefinitionItemProps extends WithClassName, PropsWithoutChild {
   draggable?: boolean
@@ -26,14 +27,16 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   
   const svgRef = React.useRef<HTMLDivElement>(null)
   const viewRef = React.useRef<HTMLDivElement>(null)
-
+  const browserContext = React.useContext(BrowserContext)
+  const { refresh } = browserContext
   const editorContext = React.useContext(MasherContext)
-  const { editor, definition: selectedDefinition, changeDefinition } = editorContext
+  const { editor, changeDefinition, current } = editorContext
+  
   assertTrue(editor)
 
   const definition = useDefinition()
 
-  const { id, label, type } = definition
+  const { id, label } = definition
  
   const updateRef = async () => {
     const { rect, preloader } = editor
@@ -56,7 +59,9 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
 
   const onPointerDown = (event: Event) => { 
     event.stopPropagation()
+    
     changeDefinition(definition) 
+    refresh()
   }
 
   const onDragStart = (event: DragEvent) => {
@@ -77,7 +82,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const calculateClassName = () => {
     const classes = []
     if (className) classes.push(className)
-    if (selectedDefinition?.id === id) classes.push(ClassSelected)
+    if (current.definitionId === id) classes.push(ClassSelected)
     return classes.join(' ')
   }
 

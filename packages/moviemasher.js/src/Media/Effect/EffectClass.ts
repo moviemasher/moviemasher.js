@@ -12,12 +12,8 @@ import { Tweenable } from "../../Mixin/Tweenable/Tweenable"
 const EffectWithModular = ModularMixin(InstanceBase)
 export class EffectClass extends EffectWithModular {
   declare definition: EffectDefinition
-
-  private _tweenable?: Tweenable
-  get tweenable(): Tweenable { return this._tweenable! }
-  set tweenable(value: Tweenable) { this._tweenable = value }
   
-  selectables(): Selectables { return [this, ...this.tweenable.selectables()] }
+  selectables(): Selectables { return [this] }
 
   selectType = SelectType.None
 

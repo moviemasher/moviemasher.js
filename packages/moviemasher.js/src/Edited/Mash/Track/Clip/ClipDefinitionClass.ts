@@ -1,6 +1,6 @@
 import { Clip, ClipDefinition, ClipObject } from "./Clip"
 import { ClipClass } from "./ClipClass"
-import { DataType, DefinitionType, Duration, Sizing, Timing } from "../../../../Setup/Enums"
+import { DataType, DefinitionType, Duration, Sizing, Sizings, Timing, Timings } from "../../../../Setup/Enums"
 import { DefinitionBase } from "../../../../Definition/DefinitionBase"
 import { DataGroup, propertyInstance } from "../../../../Setup/Property"
 import { DefaultContainerId } from "../../../../Container/Container"
@@ -22,12 +22,12 @@ export class ClipDefinitionClass extends DefinitionBase implements ClipDefinitio
       name: "label", type: DataType.String 
     }))
     this.properties.push(propertyInstance({ 
-      name: "sizing", type: DataType.Sizing, defaultValue: Sizing.Content,
-      // group: DataGroup.Sizing,
+      name: "sizing", type: DataType.Option, defaultValue: Sizing.Content,
+      options: Sizings,
     }))
     this.properties.push(propertyInstance({ 
-      name: "timing", type: DataType.Timing, defaultValue: Timing.Content,
-      group: DataGroup.Timing,
+      name: "timing", type: DataType.Option, defaultValue: Timing.Content,
+      group: DataGroup.Timing, options: Timings
     }))
     this.properties.push(propertyInstance({ 
       name: "frame",

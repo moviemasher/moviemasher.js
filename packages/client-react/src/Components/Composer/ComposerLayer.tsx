@@ -38,11 +38,6 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
 
   const { className: propsClassName = 'layer', ...rest} = props
 
-  const onClick: React.MouseEventHandler = event => {
-    event.stopPropagation()
-    editor.selection.set(layer)
-  }
-
   const onDragEnd = (event: DragEvent) => {
     const { dataTransfer } = event
     if (!dataTransfer) return
@@ -52,11 +47,14 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
   }
 
   const onPointerDown = (event: Event) => {
+    // console.log("ComposerLayer onPointerDown")
     event.stopPropagation()
     editor.selection.set(layer)
   }
   
   const onDragStart = (event: DragEvent) => {
+
+    console.log("ComposerLayer onDragStart")
     const point = DragElementPoint(event, ref.current!)
     onPointerDown(event)
     const { dataTransfer } = event
@@ -108,8 +106,8 @@ export function ComposerLayer(props: ComposerLayerProps): ReactResult {
 
   const viewProps = {
     ...rest, className, ref,
-    onMouseDown: onPointerDown, onDragStart, onDragEnd,
-    onClick, onDragLeave, onDragOver, onDrop,
+    onPointerDown, onDragStart, onDragEnd,
+    onDragLeave, onDragOver, onDrop,
     draggable: true,
   }
   return <View {...viewProps }/>

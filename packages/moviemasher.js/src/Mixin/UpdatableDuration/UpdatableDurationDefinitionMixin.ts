@@ -30,7 +30,6 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         this.loop = loop
         this.properties.push(propertyInstance({ name: 'loops', defaultValue: 1 }))
       }
-      // group: DataGroup.Timing, 
       this.properties.push(propertyInstance({ 
         name: "gain", defaultValue: 1.0, type: DataType.Percent, 
         min: 0, max: 2.0, step: 0.01 

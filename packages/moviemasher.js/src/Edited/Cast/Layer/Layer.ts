@@ -1,6 +1,7 @@
 import { Propertied } from "../../../Base/Propertied"
 import { Selectable } from "../../../Editor/Selectable"
 import { Loader } from "../../../Loader/Loader"
+import { VoidMethod } from "../../../MoveMe"
 import { DroppingPosition, isLayerType, LayerType } from "../../../Setup/Enums"
 import { isObject } from "../../../Utility/Is"
 import { Mash, Mashes, MashObject } from "../../Mash/Mash"
@@ -60,6 +61,8 @@ export interface LayerFolder extends Layer, LayerFolderArgs {
 
 export interface Layer extends Propertied, LayerArgs, Selectable {
   id: string
+  cached: boolean 
+  cache: VoidMethod
   mashes: Mashes
   cast: Cast
   type: LayerType

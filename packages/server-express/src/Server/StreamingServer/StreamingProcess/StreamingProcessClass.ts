@@ -2,7 +2,7 @@ import fs from 'fs'
 import {
   DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, OutputFormat, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, colorBlack,
+  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, colorBlack, Defined,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
@@ -17,6 +17,7 @@ import { idUnique } from "../../../Utilities/Id"
 
 // const StreamingProcessClearPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII="
 
+const StreamingProcessLogoPath = '../shared/image/favicon.ico'
 
 export class StreamingProcessClass extends EventEmitter {
   constructor(args: StreamingProcessArgs) {
@@ -42,6 +43,7 @@ export class StreamingProcessClass extends EventEmitter {
       temporaryDirectory 
     } = this.args
     const { mashObjects, definitionObjects } = args
+    Defined.define(...definitionObjects)
     const preloader = new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
       return mashInstance({ ...mashObject, definitionObjects, preloader })
@@ -66,7 +68,7 @@ export class StreamingProcessClass extends EventEmitter {
         // streams require at least one real input
         if (!inputs?.length) {
           const input: CommandInput = {
-            source: './img/c.png', options: { r: videoRate, loop: 1 }
+            source: StreamingProcessLogoPath, options: { r: videoRate, loop: 1 }
           }
           streamingDescription.inputs = [input]
         }
@@ -76,7 +78,10 @@ export class StreamingProcessClass extends EventEmitter {
 
         streamingDescription.inputs?.forEach(input => {
           const { source } = input
-          if (!source) throw 'no source'
+          if (!source) {
+            console.log("NO SOURCE", input)
+            throw 'no source'
+          }
           if (!isString(source)) return
           if (source.includes('://')) return
 
@@ -99,23 +104,24 @@ export class StreamingProcessClass extends EventEmitter {
         this.command.run(destination)
       })
     } catch (error) {
-      console.error(this.constructor.name, "update CATCH", error)
+      console.error(this.constructor.name, "cut CATCH", error)
       return { error: String(error) }
     }
     return {}
   }
 
   defaultContent(): StreamingProcessCutArgs {
-    const source = '../shared/image/favicon.ico'
-    const contentId = 'image'
+    const source = StreamingProcessLogoPath
+    const contentId = 'default-logo-image'
     const definitionObject: ImageDefinitionObject = {
       source, id: contentId, type: DefinitionType.Image, url: source
     }
-    const clip: ClipObject = { contentId, width: 0.2 }
+    const clip: ClipObject = { contentId, container: { height: 0.2 } }
     const mashObject: MashObject = { tracks: [{ clips: [clip] }] }
     const definitionObjects: DefinitionObjects = [definitionObject]
     const mashObjects: MashObject[] = [mashObject]
     const args: StreamingProcessCutArgs = { mashObjects, definitionObjects }
+    console.log(this.constructor.name, "defaultContent", definitionObject)
     return args
   }
 
@@ -124,7 +130,7 @@ export class StreamingProcessClass extends EventEmitter {
   error(error: any) {
     if (String(error).includes('SIGKILL')) { return }
 
-    console.error("StreamingProcessClass", "errorCallback", error)
+    console.log("StreamingProcessClass", "errorCallback", error)
     this.cut(this.defaultContent())
   }
 

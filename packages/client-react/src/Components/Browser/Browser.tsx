@@ -8,6 +8,7 @@ import { View } from "../../Utilities/View"
 import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
 import { MasherContext } from "../Masher/MasherContext"
 import { useDefinitions } from "../../Hooks/useDefinitions"
+import { useRefresh } from "../../Hooks/useRefresh"
 
 
 export interface BrowserProps extends PropsWithChildren {
@@ -26,6 +27,8 @@ export function Browser(props: BrowserProps): ReactResult {
   const { changeDefinition } = editorContext
   const [ picked, setPicked] = React.useState(initialPicked) 
   
+  const [refresh] = useRefresh()
+
   const pick = (id: string) => {
     assertPopulatedString(id)
     changeDefinition()
@@ -43,6 +46,7 @@ export function Browser(props: BrowserProps): ReactResult {
   }
 
   const browserContext: BrowserContextInterface = {
+    refresh,
     definitions,
     picked,
     pick, 

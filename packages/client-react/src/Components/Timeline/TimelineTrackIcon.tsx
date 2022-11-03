@@ -2,12 +2,13 @@ import React from "react"
 import { ClassSelected } from "@moviemasher/moviemasher.js"
 
 import {
-  ThemeIcons, PropsWithoutChild, ReactResult, WithClassName
+  PropsWithoutChild, ReactResult, WithClassName
 } from "../../declarations"
 import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
 import { droppingPositionClass } from "../../Helpers/DragDrop"
+import type { ThemeIcons } from '@moviemasher/theme-default'
 
 export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
   icons: ThemeIcons

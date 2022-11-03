@@ -1,10 +1,10 @@
 import { Propertied } from "../../../Base/Propertied"
 import { Scalar } from "../../../declarations"
 import { isObject } from "../../../Utility/Is"
-import { Action, ActionOptions } from "./Action"
+import { Action, ActionObject } from "./Action"
 
 
-export interface ChangeActionObject extends ActionOptions {
+export interface ChangeActionObject extends ActionObject {
   property: string
   redoValue?: Scalar
   undoValue?: Scalar

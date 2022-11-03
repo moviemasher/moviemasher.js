@@ -1,5 +1,5 @@
 import React from "react"
-import { LayerFolder, LayerType } from "@moviemasher/moviemasher.js"
+import { eventStop, LayerFolder, LayerType } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useLayer } from "../../Hooks/useLayer"
@@ -20,12 +20,12 @@ export function ComposerFolderClose(props: PropsAndChild): ReactResult {
   const { children, ...rest } = props
   const child = React.Children.only(children)
   if (!React.isValidElement(child)) throw Problems.child
-
-  const onClick = () => {
+  const onPointerDown = (event: React.PointerEvent): void => {
+    event.stopPropagation()
     layerFolder.collapsed = true
     composerContext.refresh()
   }
-  const childProps = { ...rest, onClick }
+  const childProps = { ...rest, onPointerDown }
 
   return React.cloneElement(child, childProps)
 }

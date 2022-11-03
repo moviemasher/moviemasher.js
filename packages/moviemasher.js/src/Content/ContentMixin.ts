@@ -2,20 +2,20 @@ import { SvgFilters, SvgItem, UnknownObject, ValueObject } from "../declarations
 import { Rect, rectFromSize, RectTuple, RectZero } from "../Utility/Rect"
 
 import { Errors } from "../Setup/Errors"
-import { assertPopulatedString, assertPositive, isArray } from "../Utility/Is"
+import { assertPopulatedString, isArray } from "../Utility/Is"
 import { Content, ContentClass, ContentObject, ContentRectArgs } from "./Content"
 import { TweenableClass } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from "../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../Setup/Property"
-import { ActionType, DataType, Orientation } from "../Setup/Enums"
+import { DataType, Orientation } from "../Setup/Enums"
 import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, VisibleCommandFilterArgs } from "../MoveMe"
 import { idGenerate } from "../Utility/Id"
 import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
 import { Actions } from "../Editor/Actions/Actions"
-import { SelectedEffects, SelectedItems } from "../Utility/SelectedProperty"
-import { Effect, Effects } from "../Media/Effect/Effect"
+import { SelectedItems, SelectedMovable } from "../Utility/SelectedProperty"
+import { Effects } from "../Media/Effect/Effect"
 import { arrayLast } from "../Utility/Array"
 import { effectInstance } from "../Media/Effect/EffectFactory"
 import { Size, sizeAboveZero } from "../Utility/Size"
@@ -44,14 +44,8 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
           group: DataGroup.Size, 
         }))  
       }
-    
       const { effects } = object as ContentObject
-
-      if (effects) this.effects.push(...effects.map(effectObject => {
-        const instance = effectInstance(effectObject)
-        instance.tweenable = this
-        return instance
-      }))
+      if (effects) this.effects.push(...effects.map(effectInstance))
     }
 
 
@@ -204,50 +198,15 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
 
       // add effects 
       const { effects, selectType } = this
-  
-      const undoEffects = [...effects]
-      const effectable = this
-      const selectedEffects: SelectedEffects = {
+      const { editor } = actions
+ 
+      const selectedEffects: SelectedMovable = {
+        name: 'effects',
         selectType,
-        value: this.effects, 
-        removeHandler: (effect: Effect) => {
-          const options = {
-            redoSelection: { ...actions.selection, effect: undefined },
-            effects,
-            undoEffects,
-            redoEffects: effects.filter(other => other !== effect),
-            type: ActionType.MoveEffect
-          }
-          actions.create(options)
-        },
-        moveHandler: (effect: Effect, index = 0) => {
-          assertPositive(index, 'index')
-          
-          const redoEffects = undoEffects.filter(e => e !== effect)
-          const currentIndex = undoEffects.indexOf(effect)
-          const insertIndex = currentIndex < index ? index - 1 : index
-          redoEffects.splice(insertIndex, 0, effect)
-          const options = {
-            effects, undoEffects, redoEffects, type: ActionType.MoveEffect, 
-            effectable
-          }
-          actions.create(options)
-        },
-        
-        addHandler: (effect: Effect, insertIndex = 0) => {
-          assertPositive(insertIndex, 'index')
-          const redoEffects = [...effects]
-          redoEffects.splice(insertIndex, 0, effect)
-          effect.tweenable = this
-          const options = {
-            effects,
-            undoEffects,
-            redoEffects,
-            redoSelection: { ...actions.selection, effect },
-            type: ActionType.MoveEffect
-          }
-          actions.create(options)
-        },
+        value: effects, 
+        removeHandler: editor.removeEffect.bind(editor),
+        moveHandler: editor.moveEffect.bind(editor),
+        addHandler: editor.addEffect.bind(editor),
       }
       selectedItems.push(selectedEffects)
       return selectedItems

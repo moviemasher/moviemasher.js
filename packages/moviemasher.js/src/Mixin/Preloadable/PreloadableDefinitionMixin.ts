@@ -13,6 +13,7 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
       const { 
         source, url, bytes, mimeType 
       } = object as PreloadableDefinitionObject
+      // console.log(this.constructor.name, "source", source, "url", url)
 
       const sourceOrUrl = source || url || ''
       this.source = source || sourceOrUrl

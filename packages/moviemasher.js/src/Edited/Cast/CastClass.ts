@@ -214,7 +214,7 @@ export class CastClass extends EditedClass implements Cast {
 
     const { background = this.color } = args
 
-    const mashArgs = { ...args, color: '' }
+    const mashArgs = { ...args, background: '' }
 
     const element = svgElement(imageSize, svgPolygonElement(imageSize, '', background)) as PreviewItem
     let promise = Promise.resolve([element])

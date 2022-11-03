@@ -49,7 +49,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       const cutArgs: StreamingProcessCutArgs = { definitionObjects, mashObjects }
       const updated = streamingProcess.cut(cutArgs)
       const response: StreamingCutResponse = updated
-      // console.log(Endpoints.streaming.cut, 'response', response)
+      console.log(Endpoints.streaming.cut, 'response', response)
       res.send(response)
     } catch (error) {
       res.send({ error: String(error) })
@@ -176,8 +176,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
         file, commandOutput: streamingCommandOutput, temporaryDirectory
       }
       const connection = streamingProcessCreate(streamingProcessArgs)
-      connection.cut(connection.defaultContent())
+      const content = connection.defaultContent()
+      console.log(this.constructor.name, "start cuttting to", content)
+      connection.cut(content)
     } catch (error) { response.error = String(error) }
+    console.log(Endpoints.streaming.start, 'response', response)
     res.send(response)
   }
 

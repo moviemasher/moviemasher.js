@@ -59,10 +59,11 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     return elements
   }
 
-  const viewChildren = React.useMemo(
-    () => layersArray(editor.selection.cast?.layers || []),
-    [composerContext.refreshed, composerContext.selectedLayer]
-  )
+  const viewChildren = layersArray(editor.selection.cast?.layers || [])
+  // React.useMemo(
+  //   () => ,
+  //   [composerContext.refreshed, composerContext.selectedLayer]
+  // )
 
   const calculatedClassName = (): string => {
     const classes: string[] = [propsClassName]
@@ -76,7 +77,7 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     calculatedClassName, [droppingPosition, droppingLayer, editor.selection.layer]
   )
 
-  const onClick = () => { editor.selection.unset(SelectType.Layer) }
+  const onPointerDown = () => { editor.selection.unset(SelectType.Layer) }
 
   const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
     if (!dataTransfer) return false
@@ -92,20 +93,14 @@ export function ComposerContent(props: ComposerContentProps): ReactResult {
     event.preventDefault()
     const {dataTransfer} = event
     if (!dragValid(dataTransfer)) return 
-    
-    // const { types, files, items } = dataTransfer
-    // console.log("types", types)
-    // console.log("files", files)
-    // console.log("items", items)
-    // // const type = dragType(dataTransfer)
-
+  
     setDroppingPosition(viewChildren.length)
     setDroppingLayer()
   }
 
   const viewProps = {
     ...rest, children: viewChildren, key: 'composer-view',
-    onClick, onDragLeave, onDragOver, onDrop, className
+    onPointerDown, onDragLeave, onDragOver, onDrop, className
   }
   return <View {...viewProps} />
 }

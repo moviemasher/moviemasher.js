@@ -20,13 +20,17 @@
   display: grid;
   gap: var(--spacing);
   padding: var(--padding);
-  grid-template-columns: min-content 1fr min-content;
+  grid-template-columns: min-content 1fr max-content;
   height: calc(var(--icon-size) + 2 * var(--padding));
   line-height: var(--icon-size);
   color: var(--fore-secondary);
   background-color: var(--back-primary);
 }
 
+.moviemasher .editor .composer .content .layer .controls {
+  display: flex;
+  gap: var(--spacing);
+}
 .moviemasher .editor .composer .content .layer > div:first-child {
   display: flex;
 }
@@ -64,3 +68,14 @@
 .moviemasher .editor .composer .content .layer label  {
   white-space: nowrap;
 }
+
+
+
+.moviemasher .editor .composer.panel .button.disabled:hover,
+.moviemasher .editor .composer.panel .button.disabled,
+.moviemasher .editor .composer.panel button:disabled {
+  color: var(--fore-primary-demote);
+  border-color: var(--fore-primary-demote);
+  background-color: var(--back-primary-demote);
+}
+

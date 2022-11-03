@@ -153,6 +153,7 @@ export interface Yuv {
 }
 
 
+
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
@@ -163,6 +164,8 @@ export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITION
   instance(object : INSTANCEOBJECT) : INSTANCE
   fromId(id : string) : INSTANCE
 }
+
+export type IndexHandler<OBJECT = any, INDEX = number> = (effect: OBJECT, insertIndex?: INDEX) => void
 
 export interface StartOptions {
   duration: number

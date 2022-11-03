@@ -1,11 +1,11 @@
 {
   "name": "@moviemasher/builder",
-  "description": "JavaScript video editor, encoder, switcher - version 5.1.1",
+  "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
   "homepage": "https://moviemasher.com",
   "type": "commonjs",
   "types": "packages/moviemasher.js/esm/moviemasher.d.ts",
   "main": "workspaces/example-express-react/host/server.js",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",
@@ -19,9 +19,9 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "build": "run-s core client theme server examples",
+    "build": "run-s core theme client server examples",
     "client-esm": "npm run build-esm -w @moviemasher/client-react",
-    "client-example": "run-s client-esm example-client",
+    "client-example": "run-s client-umd example-client",
     "client-min": "npm run build-min -w @moviemasher/client-react",
     "client-types": "npm run build-types -w @moviemasher/client-react",
     "client-umd": "npm run build-umd -w @moviemasher/client-react",

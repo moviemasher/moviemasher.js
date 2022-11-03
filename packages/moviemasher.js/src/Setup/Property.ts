@@ -6,13 +6,14 @@ import {
 import { throwError } from "../Utility/Throw"
 
 export enum DataGroup {
+  Clicking = 'clicking',
+  Color = 'color',
+  Controls = 'controls',
+  Effects = 'effects',
+  Opacity = 'opacity',
   Point = 'point',
   Size = 'size',
-  Opacity = 'opacity',
-  Color = 'color',
-  Effects = 'effects',
   Timing = 'timing',
-  Sizing = 'sizing',
 }
 
 export const DataGroups = Object.values(DataGroup)
@@ -23,29 +24,23 @@ export function assertDataGroup(value: any, name?: string): asserts value is Dat
   if (!isDataGroup(value)) throwError(value, "DataGroup", name)
 }
 
-export interface PropertyObject {
-  custom? : boolean
-  defaultValue? : Scalar
-  max?: number
-  min?: number
-  name? : string
-  step?: number
-  tweenable?: boolean
-  type? : DataType | string
-  group?: DataGroup
-
-}
-
-export interface Property  {
+export interface PropertyBase {
   custom?: boolean
   defaultValue: Scalar
+  group?: DataGroup
   max?: number
   min?: number
   name: string
   step?: number
   tweenable?: boolean
-  group?: DataGroup
+  options?: Scalar[]
+}
+export interface Property extends PropertyBase {
   type: DataType
+}
+
+export interface PropertyObject extends Partial<PropertyBase> {
+  type? : DataType | string
 }
 
 export const isProperty = (value: any): value is Property => {

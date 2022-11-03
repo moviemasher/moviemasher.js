@@ -16,26 +16,30 @@ import { ComposerLayerFolder } from "./ComposerLayerFolder"
 import { ComposerLayerLabel } from "./ComposerLayerLabel"
 import { ComposerLayerMash } from "./ComposerLayerMash"
 import { Bar } from "../../Utilities/Bar"
+import { ComposerLayerButtons } from "./ComposerLayerButtons"
+import { View } from "../../Utilities/View"
 
 
 export interface  ComposerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
-export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerProps> = function (props = {}) {
+export const ComposerDefaultProps: PropsMethod<ComposerPropsDefault, ComposerProps> = function (props = {}) {
   
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
 
   optionsStrict.props.key ||= 'composer'
   optionsStrict.props.className ||= 'panel composer'
-  optionsStrict.props.initialPicked ||= 'container'
-  optionsStrict.header.content ||= [icons.composer]
+  // optionsStrict.props.initialPicked ||= 'container'
+  optionsStrict.header.content ||= [
+    <View key="panel-icon" children={icons.composer} />,
+  ]
 
   optionsStrict.footer.content ||= [
-    <AddMashControl>
+    <AddMashControl key="add-mash">
       <Button>
         {icons.add}{icons.mmWide} 
       </Button>
     </AddMashControl>,
-    <AddFolderControl>
+    <AddFolderControl key="add-folder">
       <Button>
         {icons.add}{icons.folder} 
       </Button>
@@ -67,9 +71,7 @@ export const DefaultComposerProps: PropsMethod<ComposerPropsDefault, ComposerPro
         </ComposerLayerMash>
       </div>
       <ComposerLayerLabel key="label" />
-      <div key="play-button" className={ClassButton}>
-        {icons.playerPlay}
-      </div>
+      <ComposerLayerButtons key="layer-buttons" />
     </div>
   )
 

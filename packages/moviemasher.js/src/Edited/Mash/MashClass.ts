@@ -1,11 +1,14 @@
 import {
-  Interval, PreviewItems, Scalar, SvgItem, UnknownObject} from "../../declarations"
+  Interval, PreviewItems, Scalar, UnknownObject} from "../../declarations"
 import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
-import { SelectedItems } from "../../Utility/SelectedProperty"
+import { SelectedItems, SelectedMovable, SelectedProperty } from "../../Utility/SelectedProperty"
 import {
-  AVType, Duration, EventType, GraphType, SelectType
+  ActionType, AVType, Duration, EventType, GraphType, SelectType
 } from "../../Setup/Enums"
-import { EmptyMethod } from "../../Setup/Constants"
+import {
+  timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, 
+  timeRangeFromTimes
+} from "../../Helpers/Time/TimeUtilities"
 import { Errors } from "../../Setup/Errors"
 import { Default } from "../../Setup/Default"
 import { assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isPopulatedArray, isPopulatedString, isPositive, isUndefined } from "../../Utility/Is"
@@ -14,12 +17,10 @@ import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "./Track/Clip/Clip"
 import { assertTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview, AudioPreviewArgs } from "./Preview/AudioPreview/AudioPreview"
-import { Mash, MashArgs } from "./Mash"
+import { Mash, MashArgs, Movable, Movables } from "./Mash"
+import { Controls } from "./Control/Control"
 import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphsClass } from "./FilterGraphs/FilterGraphsClass"
-import {
-  timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, timeRangeFromTimes
-} from "../../Helpers/Time/TimeUtilities"
 import { trackInstance } from "./Track/TrackFactory"
 import { EditedClass } from "../EditedClass"
 import { Preview, PreviewArgs, PreviewOptions } from "./Preview/Preview"
@@ -30,6 +31,9 @@ import { NonePreview } from "./Preview/NonePreview"
 import { Selectables } from "../../Editor/Selectable"
 import { isTextContainer } from "../../Container/TextContainer/TextContainer"
 import { Propertied } from "../../Base/Propertied"
+import { MoveActionOptions } from "../../Editor/Actions/Action/MoveAction"
+import { controlInstance } from "./Control/ControlFactory"
+
 type TrackClips = [number, Clips]
 
 export class MashClass extends EditedClass implements Mash {
@@ -41,13 +45,18 @@ export class MashClass extends EditedClass implements Mash {
       preloader,
       rendering,
       tracks,
+      controls,
       ...rest
     } = args
     this.dataPopulate(rest)
     if (isPopulatedString(rendering)) this._rendering = rendering
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isAboveZero(frame)) this._frame = frame
-    if (isPopulatedArray(tracks)) tracks.forEach((trackObject, index) => {
+
+    if (isArray(controls)) this.controls.push(...controls.map(controlInstance)) 
+    else this.controls.push(controlInstance({}))
+
+    if (isArray(tracks)) tracks.forEach((trackObject, index) => {
       const trackArgs: TrackArgs = {
         dense: !index, ...trackObject, index
       }
@@ -225,6 +234,56 @@ export class MashClass extends EditedClass implements Mash {
     return this._composition
   }
 
+
+  private controlAdd(control: Movable, index?: number): void {
+    const { actions } = this.layer.cast.editor
+    const controls = this.controls as Movables
+    const redoObjects = [...controls]
+    const insertIndex = isPositive(index) ? index : controls.length
+    redoObjects.splice(insertIndex, 0, control)
+
+    const options: MoveActionOptions = {
+      type: ActionType.Move,
+      objects: controls,
+      undoObjects: [...controls],
+      redoObjects,
+    }
+    actions.create(options)
+  }
+  
+
+  private controlMove(control: Movable, index?: number): void {
+    const { actions } = this.layer.cast.editor
+    const objects = this.controls as Movables
+    const currentIndex = objects.indexOf(control)
+    const posIndex = isPositive(index) ? index : objects.length
+    const spliceIndex = currentIndex < posIndex ? posIndex - 1 : posIndex
+    const redoObjects = objects.filter(e => e !== control)
+    redoObjects.splice(spliceIndex, 0, control)
+    const options: MoveActionOptions = {
+      type: ActionType.Move, 
+      objects, 
+      undoObjects: [...objects], 
+      redoObjects, 
+    }
+    actions.create(options)
+  }
+  
+
+  private controlRemove(control: Movable, index?: number): void {
+    const { actions } = this.layer.cast.editor
+    const controls = this.controls as Movables
+    const options = {
+      type: ActionType.Move,
+      objects: controls,
+      undoObjects: [...controls],
+      redoObjects: controls.filter(other => other !== control),
+    }
+    actions.create(options)
+  }
+
+  controls: Controls = []
+  
   get definitionIds(): string[] {
     const { clips } = this
     const ids = clips.flatMap(clip => clip.definitionIds())
@@ -549,10 +608,13 @@ export class MashClass extends EditedClass implements Mash {
       ...options,
     }
     if (isUndefined(options.background)) args.background = this.color
-    
     return args
   }
 
+  previewItems(options: PreviewOptions): Promise<PreviewItems> { 
+    return this.preview(options).previewItemsPromise 
+  }
+  
   putPromise(): Promise<void> { 
     const { quantize, preloader } = this
     
@@ -635,12 +697,14 @@ export class MashClass extends EditedClass implements Mash {
   }
     
   selectedItems(actions: Actions): SelectedItems {
-    return this.properties.map(property => {
+    const { properties, controls } = this
+    const items: SelectedItems = properties.map(property => {
       const undoValue = this.value(property.name)
       const target = this
-      return {
+      const selectedProperty: SelectedProperty = {
         value: undoValue,
-        selectType: SelectType.Mash, property, 
+        selectType: SelectType.Mash, 
+        property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
@@ -648,7 +712,21 @@ export class MashClass extends EditedClass implements Mash {
           actions.create(options)
         }
       }
+      return selectedProperty
     })
+    if (!this._layer) return items
+
+    const selected: SelectedMovable = {
+      name: 'controls',
+      selectType: SelectType.Mash,
+      value: controls,
+      addHandler: this.controlAdd.bind(this),
+      moveHandler: this.controlMove.bind(this),
+      removeHandler: this.controlRemove.bind(this),
+    }
+    items.push(selected)
+  
+    return items
   }
 
   private setDrawInterval(): void {
@@ -671,10 +749,6 @@ export class MashClass extends EditedClass implements Mash {
     this.restartAfterStop(time, paused, seeking)
   }
 
-  previewItems(options: PreviewOptions): Promise<PreviewItems> { 
-    return this.preview(options).previewItemsPromise 
-  }
-  
   get time() : Time {
     return this.seekTime || this.drawnTime || timeFromArgs(this._frame, this.quantize)
   }
@@ -726,6 +800,7 @@ export class MashClass extends EditedClass implements Mash {
   toJSON(): UnknownObject {
     const json: UnknownObject = super.toJSON()
     json.tracks = this.tracks
+    if (this._layer) json.controls = this.controls
     if (this._rendering) json.rendering = this.rendering
     return json
   }

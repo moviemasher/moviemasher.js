@@ -55,7 +55,6 @@ export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & 
       })
     }
 
-    
     svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters {
       const svgFilters: SvgFilters = []
       const { filters } = this.definition

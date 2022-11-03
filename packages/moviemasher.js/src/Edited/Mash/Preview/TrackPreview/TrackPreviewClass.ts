@@ -14,7 +14,7 @@ import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { tweeningPoints, tweenMinMax } from "../../../../Utility/Tween"
 import { PropertyTweenSuffix } from "../../../../Base/Propertied"
 import { DataGroup } from "../../../../Setup/Property"
-import { ActionObject } from "../../../../Editor/Actions/Action/Action"
+import { ActionOptions } from "../../../../Editor/Actions/Action/Action"
 import { eventStop } from "../../../../Utility/Event"
 
 export const TrackPreviewHandleSize = 8
@@ -105,7 +105,7 @@ export class TrackPreviewClass implements TrackPreview {
         [yKey]: totalHeight ? limitedY / totalHeight : undoValues[yKey]
       }
       
-      const args: ActionObject = {
+      const args: ActionOptions = {
         property: DataGroup.Point, target: container,
         type: ActionType.ChangeMultiple, redoValues, undoValues 
       }

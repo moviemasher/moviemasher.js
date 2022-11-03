@@ -15,8 +15,8 @@ export interface ActivityContentProps extends WithClassName, PropsAndChild {}
  */
 export function ActivityContent(props: ActivityContentProps): ReactResult {
   const activityContext = React.useContext(ActivityContext)
-  const panelContext = React.useContext(CollapseContext)
-  const { collapsed } = panelContext
+  const collapseContext = React.useContext(CollapseContext)
+  const { collapsed } = collapseContext
   const { activities } = activityContext
   if (collapsed) return null
 

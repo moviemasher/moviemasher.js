@@ -1,7 +1,7 @@
 {
   "name": "@moviemasher/client-react",
-  "version": "5.1.1",
-  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.1.1",
+  "version": "5.1.2",
+  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.1.2",
   "browser": "umd/client-react.js",
   "module": "esm/client-react.js",
   "type": "module",
@@ -20,8 +20,8 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.1",
-    "@moviemasher/theme-default": "5.1.1",
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/theme-default": "5.1.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-icons": "^4.4.0"

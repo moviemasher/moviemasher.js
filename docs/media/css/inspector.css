@@ -44,18 +44,6 @@
   width: 100%;
 }
 
-/* .moviemasher .editor .panel.inspector .content fieldset > div.size {
-  grid-template-columns: var(--icon-size) minmax(50px, 1fr) var(--icon-size);
-}
-
-.moviemasher .editor .panel.inspector .content fieldset > div.timing {
-  grid-template-columns: var(--icon-size) minmax(50px, 1fr);
-}
-
-.moviemasher .editor .panel.inspector .content fieldset > div.point {
-  grid-template-columns: repeat(2, var(--icon-size)) minmax(50px, 1fr) var(--icon-size);
-} */
-
 .moviemasher .editor .panel.inspector .content {
   overflow-y: auto;
   padding: var(--padding);
@@ -66,13 +54,21 @@
 }
 .moviemasher .editor .panel.inspector .content > .row {
   display: grid;
-  grid-auto-flow: column;
   gap: var(--spacing);
   grid-template-columns: var(--icon-size) 1fr;
+}
+
+
+.moviemasher .editor .panel.inspector .content > .row > *:first-child {
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }
 
+.moviemasher .editor .panel.inspector .content > .row .icons {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--spacing);
+}
 
 .moviemasher .editor .panel.inspector .content > .row input {
   min-width: 20px;
@@ -87,18 +83,45 @@
   margin-right: var(--spacing);
 }
 
-.moviemasher .editor .panel.inspector .effects .list {
+.moviemasher .editor .panel.inspector .row .list {
   width: 100%;
-  height: calc((3 * var(--icon-size)) + (4 * var(--spacing)));
+  height: calc((4 * var(--icon-size)) + (5 * var(--spacing)));
   border: var(--border);
   border-radius: var(--border-radius);
-  padding: var(--spacing);
+  padding: var(--padding);
   color: var(--fore-primary);
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
   overflow-y: scroll;
-  font-size: 1rem;
 }
+
+.moviemasher .editor .panel.inspector .row .list .movable {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  width: 100%;
+  gap: var(--spacing);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--padding);
+  padding: var(--spacing);
+  color: var(--fore-secondary);
+  border-color: var(--fore-secondary);
+  background-color: var(--back-secondary);
+}
+
+.moviemasher .editor .panel.inspector .row .list .movable:hover,
+.moviemasher .editor .panel.inspector .row .list .selected {
+  color: var(--color-fore-secondary);
+  border-color: var(--color-fore-secondary);
+  background-color: var(--color-back-secondary);
+}
+
+.moviemasher .editor .panel.inspector .row .list .selected:hover {
+  color: var(--color-fore-tertiary);
+  border-color: var(--color-fore-tertiary);
+  background-color: var(--color-back-tertiary);
+}
+
 
 .moviemasher .editor .panel.inspector .definition-drop {
   display: grid;
@@ -110,31 +133,6 @@
   border-color: var(--fore-primary);
   background-color: var(--back-primary);
   height: calc((2 * var(--spacing)) + var(--preview-height) * var(--icon-ratio));
-}
-
-.moviemasher .editor .panel.inspector .effects .list .effect {
-  width: 100%;
-  height: var(--icon-size);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--spacing);
-  padding: var(--border-radius);
-  color: var(--fore-secondary);
-  border-color: var(--fore-secondary);
-  background-color: var(--back-secondary);
-}
-
-.moviemasher .editor .panel.inspector .effects .list .effect:hover,
-.moviemasher .editor .panel.inspector .effects .list .selected {
-  color: var(--color-fore-secondary);
-  border-color: var(--color-fore-secondary);
-  background-color: var(--color-back-secondary);
-}
-
-.moviemasher .editor .panel.inspector .effects .list .selected:hover {
-  color: var(--color-fore-tertiary);
-  border-color: var(--color-fore-tertiary);
-  background-color: var(--color-back-tertiary);
 }
 
 

@@ -1,6 +1,6 @@
-import { Action, ActionOptions } from "./Action"
+import { Action, ActionObject } from "./Action"
 
-export interface AddTrackActionObject extends ActionOptions {
+export interface AddTrackActionObject extends ActionObject {
   createTracks: number
 }
 

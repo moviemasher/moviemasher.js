@@ -20,11 +20,14 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
   
   const editor = useEditor()
 
-  const { selectType, ...rest } = props
+  const { selectType, selectedItems: propsItems, ...rest } = props
   assertSelectType(selectType)
 
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems, changeTweening, selectedInfo } = inspectorContext
+  const selectedItems = propsItems || inspectorContext.selectedItems
+  
+  const { changeTweening, selectedInfo } = inspectorContext
+
   const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
   assertTimeRange(timeRange)
   assertTime(time)

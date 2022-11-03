@@ -1,5 +1,8 @@
+export * from './ComposerContext'
+export * from './ComposerLayerButtons'
 export * from "./Composer"
 export * from "./ComposerContent"
+export * from "./ComposerDefaultProps"
 export * from "./ComposerDepth"
 export * from "./ComposerFolderClose"
 export * from "./ComposerFolderOpen"
@@ -7,5 +10,3 @@ export * from "./ComposerLayer"
 export * from "./ComposerLayerFolder"
 export * from "./ComposerLayerLabel"
 export * from "./ComposerLayerMash"
-export * from "./ComposerPropsDefault"
-export * from './ComposerContext'

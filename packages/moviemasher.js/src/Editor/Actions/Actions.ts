@@ -2,7 +2,7 @@ import { ActionType } from "../../Setup/Enums"
 import { isPositive } from "../../Utility/Is"
 import { Editor } from "../Editor"
 import { EditorSelectionObject } from "../EditorSelection"
-import { Action, ActionObject, ActionOptions, assertAction } from "./Action/Action"
+import { Action, ActionOptions, ActionObject, assertAction } from "./Action/Action"
 import { actionInstance } from "./Action/ActionFactory"
 import { ChangeAction, isChangeAction, isChangeActionObject } from "./Action/ChangeAction"
 
@@ -22,11 +22,11 @@ export class Actions  {
 
   get canUndo() : boolean { return this.index > -1 }
 
-  create(object: ActionObject): void {
+  create(object: ActionOptions): void {
     const { editor } = this
     const { undoSelection, redoSelection, type = ActionType.Change, ...rest } = object
 
-    const clone: ActionOptions = {
+    const clone: ActionObject = {
       ...rest,
       type,
       undoSelection: undoSelection || { ...editor.selection.object },

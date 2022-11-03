@@ -208,7 +208,7 @@ export class NodeLoader extends LoaderClass {
     if (!isLoadType(type)) return Promise.resolve()
 
     const neededDefinitions = this.updateableDefinitions(cache)
-        // console.log(this.constructor.name, "updateSources", neededDefinitions.length)
+    // console.log(this.constructor.name, "updateSources", neededDefinitions.length)
 
     if (!neededDefinitions.length) return Promise.resolve()
 
@@ -236,7 +236,7 @@ export class NodeLoader extends LoaderClass {
       // local file should already exist!
       throw Errors.uncached + file 
     } 
-    assertPopulatedString(content)
+    assertPopulatedString(content, 'content')
     
     switch(type) {
       case GraphFileType.SvgSequence: return promise.then(() => {

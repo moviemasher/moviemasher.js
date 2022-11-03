@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, SelectType } from '@moviemasher/moviemasher.js'
+import { ClassButton, EditType, SelectType } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
@@ -11,9 +11,6 @@ import { InspectorPicked } from './InspectorPicked'
 import { InspectorPicker } from './InspectorPicker'
 import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
 import { Button } from '../../Utilities/Button'
-import { SaveControl } from '../Controls/SaveControl'
-import { SelectEditedControl } from '../Controls/SelectEditedControl'
-import { CreateEditedControl } from '../Controls/CreateEditedControl'
 import { RenderControl } from '../Controls/RenderControl'
 import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
@@ -21,17 +18,18 @@ import { ApiEnabled } from '../ApiClient/ApiEnabled'
 import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
+import { Mashing } from '../Masher/Mashing'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props = {}) {
+export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
   optionsStrict.props.key ||= 'inspector'
   optionsStrict.props.className ||= 'panel inspector'
 
   optionsStrict.header.content ||= [
-    icons.inspector,
+    <View key="panel-icon" children={icons.inspector} />,
     <EditorUndoButton key='undo'>
       <Button>{icons.undo}{labelTranslate('undo')}</Button>
     </EditorUndoButton>,
@@ -41,14 +39,14 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
   ]
  
   optionsStrict.footer.content ||= [
-    <InspectorPicker key="mash" className={ClassButton} id="mash">
-      {icons.document}
-    </InspectorPicker>,
     <InspectorPicker key="cast" className={ClassButton} id="cast">
-      {icons.document}
+      {icons.broadcaster}
     </InspectorPicker>,
     <InspectorPicker key="layer" className={ClassButton} id="layer">
       {icons.composer}
+    </InspectorPicker>,
+    <InspectorPicker key="mash" className={ClassButton} id="mash">
+      {icons.mmTube}
     </InspectorPicker>,
     <InspectorPicker key="clip" className={ClassButton} id="clip">
       {icons.clip}
@@ -66,39 +64,24 @@ export const InspectorPropsDefault: PropsMethod<InspectorPropsDefault, Inspector
 
   contentChildren.push(
     <ApiEnabled key="api-enabled">
-      <InspectorPicked type="mash" key="inspector-mash">
-        <View>
-          <RenderControl key='render-process'>
-            <Button>
-              {labelTranslate('render')} 
-              {icons.render}
-            </Button>
-          </RenderControl>
-          <ViewControl key='view-control'>
-            <Button>
-              {labelTranslate('view')} 
-              {icons.view}
-            </Button>
-          </ViewControl>    
-        </View>  
-      </InspectorPicked>
-      <InspectorPicked types="mash,cast" key="inspector-document">
-        <SelectEditedControl key="select-edited" className="row" children={icons.document} />
-        <View key="view">
-          <SaveControl key='save-process'>
-            <Button key="button">
-              {labelTranslate('update')}
-              {icons.document}
-            </Button>
-          </SaveControl>
-          <CreateEditedControl key="create-edited">
-            <Button>
-              {labelTranslate('create')} 
-              {icons.document}
-            </Button>
-          </CreateEditedControl>
-        </View>
-      </InspectorPicked>
+      <Mashing editType={EditType.Mash}>
+        <InspectorPicked type="mash" key="inspector-mash">
+          <View>
+            <RenderControl key='render-process'>
+              <Button>
+                {labelTranslate('render')} 
+                {icons.render}
+              </Button>
+            </RenderControl>
+            <ViewControl key='view-control'>
+              <Button>
+                {labelTranslate('view')} 
+                {icons.view}
+              </Button>
+            </ViewControl>    
+          </View>  
+        </InspectorPicked>
+      </Mashing>
     </ApiEnabled>
   )
 

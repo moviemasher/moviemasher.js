@@ -1,6 +1,6 @@
 {
   "name": "test-rendering",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Movie Masher Rendering Test",
   "author": {
     "name": "Movie Masher",
@@ -13,7 +13,7 @@
     "test": "docker-compose --file dev/docker-compose.yml run --rm test-rendering"
   },
   "dependencies": {
-    "@moviemasher/moviemasher.js": "5.1.1",
-    "@moviemasher/server-express": "5.1.1"
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/server-express": "5.1.2"
   }
 }

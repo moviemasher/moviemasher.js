@@ -25,10 +25,19 @@ export class LayerClass extends PropertiedClass implements Layer {
   get cast() { return this._cast! }
   set cast(value: Cast) { this._cast = value }
   
+  cache() {}
+  
+  private _cached = false
+  get cached(): boolean {
+    // TODO: determine from mashes
+    return this._cached
+  }
+  set cached(value: boolean) { this._cached = value }
+
   _id?: string
   get id(): string { return this._id ||= idGenerate('layer') }
 
-  get mashes(): Mashes { throw Errors.unimplemented + 'mashes'}
+  get mashes(): Mashes { throw Errors.unimplemented }
 
   declare label: string
 

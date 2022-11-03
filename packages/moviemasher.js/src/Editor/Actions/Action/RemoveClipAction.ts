@@ -1,8 +1,8 @@
 import { Track } from "../../../Edited/Mash/Track/Track"
 import { Clip, Clips } from "../../../Edited/Mash/Track/Clip/Clip"
-import { Action, ActionOptions } from "./Action"
+import { Action, ActionObject } from "./Action"
 
-export interface RemoveClipActionObject extends ActionOptions {
+export interface RemoveClipActionObject extends ActionObject {
   clip : Clip
   index : number
   track : Track

@@ -19,10 +19,13 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   const editor = useEditor()
-  const { selectType, ...rest } = props
+  const { selectType, selectedItems: propsItems, ...rest } = props
   assertSelectType(selectType)
   const inspectorContext = React.useContext(InspectorContext)
-  const { selectedItems: properties, changeTweening, selectedInfo } = inspectorContext
+  const selectedItems = propsItems || inspectorContext.selectedItems
+  const { changeTweening, selectedInfo } = inspectorContext
+
+
   const { tweenDefined, tweenSelected, onEdge, time, nearStart, timeRange } = selectedInfo
   assertTimeRange(timeRange)
   assertTime(time)
@@ -30,7 +33,7 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   const endDefined = tweenDefined[DataGroup.Opacity]
   const endSelected = tweenSelected[DataGroup.Opacity]
 
-  const byName = selectedPropertyObject(properties, DataGroup.Opacity, selectType)
+  const byName = selectedPropertyObject(selectedItems, DataGroup.Opacity, selectType)
   const { opacity, [`opacity${PropertyTweenSuffix}`]: opacityEnd } = byName 
   const opacityProperty = endSelected ? opacityEnd : opacity
 

@@ -20,7 +20,7 @@ import { ActivityItem } from './ActivityItem'
 
 export interface ActivityPropsDefault extends PanelOptions, PropsWithoutChild {}
 
-export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityProps> = function (props = {}) {
+export const ActivityDefaultProps: PropsMethod<ActivityPropsDefault, ActivityProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
   optionsStrict.props.key ||= 'activity'
@@ -29,7 +29,7 @@ export const ActivityPropsDefault: PropsMethod<ActivityPropsDefault, ActivityPro
   if (isUndefined(optionsStrict.props.initialCollapsed)) optionsStrict.props.initialCollapsed = true
   
   optionsStrict.header.content ||= [
-    icons.activity, 
+    <View key="panel-icon" children={icons.activity} />,
     <NotCollapsed key="not-collapsed"><View key="view" /></NotCollapsed>,
     <Collapsed key="collapsed">
       <ActivityProgress key="progress" className='progress' />

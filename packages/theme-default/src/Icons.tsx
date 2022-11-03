@@ -50,17 +50,23 @@ import {
   IoMdColorFill,
 } from 'react-icons/io'
 import { 
+  BiSquareRounded,
+} from 'react-icons/bi'
+import { 
   IoDocument, 
 } from 'react-icons/io5'
 import { 
   BsSkipStartFill, BsSkipEndFill,
   BsReverseLayoutSidebarInsetReverse, 
-  BsSkipEnd, BsAspectRatioFill,  
+  BsFillCircleFill, 
+  BsRssFill, BsRss,
+  BsSkipEnd, BsAspectRatioFill, BsHandIndexThumbFill,
  } from 'react-icons/bs'
 import { 
   FaUserCircle,
   FaExclamationCircle,
   FaRegCheckCircle,
+  FaRegHandPointer,
 } from 'react-icons/fa'
 import { BiShapeTriangle, BiBorderOuter, BiBorderInner } from 'react-icons/bi'
 import { GiDirectorChair } from 'react-icons/gi'
@@ -79,7 +85,8 @@ import {
 } from 'react-icons/vsc'
 import { ImFileVideo } from 'react-icons/im'
 
-import type { ThemeIcons } from '@moviemasher/client-react'
+export type ThemeIcons = Record<string, JSX.Element>
+
 
 const MMWideIcon = () => {
   return <svg width="2em" height="1em" viewBox="0 0 48 24">
@@ -89,7 +96,7 @@ const MMWideIcon = () => {
   </svg>
 }
 const MMLogo = () => {
-  return <svg width="52" height="24">
+  return <svg width="2em" height="1em" viewBox="0 0 52 24">
     <defs>
       <linearGradient id="gradient_0" gradientUnits="userSpaceOnUse" x1="27.12" y1="20.06" x2="26.83" y2="0.10">
         <stop offset="0%" stopColor="#62789b"/>
@@ -134,11 +141,11 @@ export const Icons: ThemeIcons = {
   app: <MMLogo key='app' />,
   // audible: <RiVolumeUpLine key='audible' />,
   // audio: <RiMusicLine key="audio" />,
-  // broadcast: <RiBroadcastFill key='broadcast' />,
+  broadcast: <CgCast key='broadcast' />,
+  broadcaster: <RiBroadcastFill key='broadcaster' />,
   browser: <MdPermMedia key='browser' />,
   browserAudio: <RiMusic2Fill key="browserAudio" />,
   browserAudioStream: <RiChatVoiceFill key="browserAudioStream" />,
-  browserEffect: <MdInvertColors key="browserEffect" />,
   browserImage: <RiImageFill key="browserImage" />,
   browserShape: <BiShapeTriangle key="browserShape" />,
   browserText: <MdOutlineTextFields key="browserText" />,
@@ -153,7 +160,11 @@ export const Icons: ThemeIcons = {
   composer: <GiDirectorChair key='composer' />,
   container: <BiBorderOuter key="container" />,
   content: <BiBorderInner key="content" />,
+  control: <BiSquareRounded key="control" />,
+  clicking: <BsHandIndexThumbFill key="control" />,
   document: <IoDocument key="document" />,
+  effect: <MdInvertColors key="effect" />,
+
   end: <BsSkipEndFill key="end" />,
   endUndefined: <BsSkipEnd key="endUndefined" />,
   gain: <RiVolumeUpLine key="gain" />,
@@ -165,6 +176,7 @@ export const Icons: ThemeIcons = {
   frames: <TbArrowBarToRight key="frames" />,
   height: <TbArrowAutofitHeight key="height" />,
   horz: <GiHorizontalFlip key="horz-flip" />,
+  icon: <BsFillCircleFill key='icon' />,
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
   invisible: <RiEyeOffLine key='invisible' />,
@@ -176,8 +188,8 @@ export const Icons: ThemeIcons = {
   mmTube: <MMTubeIcon key="mmTube" />,
   mmWide: <MMWideIcon key="mmWide" />,
   opacity: <MdOpacity key="opacity" />,
-  playerPause: <RiPauseCircleFill key="player-pause" />,
-  playerPlay: <RiPlayCircleFill key="player-play"/>,
+  pause: <RiPauseCircleFill key="pause" />,
+  play: <RiPlayCircleFill key="play"/>,
   point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine key="redo" />,
   muted: <RiVolumeMuteLine key="muted" />,
@@ -186,6 +198,8 @@ export const Icons: ThemeIcons = {
   size: <GiResize key="size" />,
   sizing: <BsAspectRatioFill key="sizing" />,
   start: <BsSkipStartFill key="start" />,
+  streamCached: <BsRssFill key='streamer-cached' />,
+  streamUncached: <BsRss key='streamer-uncached' />,
   // streamers: <FaUserCircle key='streamers' />,
   timeline: <MdOutlineTimelapse key='timeline' />,
   timing: <AiOutlineColumnWidth key="timing" />,

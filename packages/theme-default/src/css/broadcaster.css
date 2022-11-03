@@ -1,0 +1,18 @@
+
+.moviemasher .editor .panel.broadcaster .content {
+  aspect-ratio: var(--preview-aspect-ratio);
+  width: calc(var(--inspector-width) - (2 * var(--border-size)));
+}
+
+.moviemasher .editor .panel.broadcaster {
+  flex-grow: 0;
+  flex-shrink: 0;
+  grid-area: broadcaster;
+}
+
+.moviemasher .editor .panel.broadcaster.collapsed {
+  height: var(--header-height);
+}
+.moviemasher .editor .panel.broadcaster.collapsed .content {
+  aspect-ratio: initial;
+}

@@ -198,6 +198,16 @@ The icon button currently selected in the browser header is painted with the pro
   --padding: 5px;
   --spacing: 5px;
 }
+
+
+.moviemasher .editor .panel.inspector .row .list {
+  --padding: 5px;
+  --spacing: 2px;  
+}
+
+.moviemasher .editor .panel.inspector .content > .row .icons {
+  --spacing: 2px;
+}
 ```
 <!-- MAGIC:END -->
 </fieldset>

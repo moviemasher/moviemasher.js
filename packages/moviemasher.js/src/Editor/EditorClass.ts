@@ -4,7 +4,7 @@ import {
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../Utility/Size"
 import { Definition, DefinitionObject, DefinitionObjects, isDefinitionObject } from "../Definition/Definition"
 import { Edited, isEdited } from "../Edited/Edited"
-import { assertMash, isMash, Mash, MashAndDefinitionsObject } from "../Edited/Mash/Mash"
+import { assertMash, isMash, Mash, MashAndDefinitionsObject, Movable, Movables } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
@@ -29,7 +29,7 @@ import {
 import { editorSelectionInstance } from "./EditorSelection/EditorSelectionFactory"
 
 import { EditorSelection, EditorSelectionObject } from "./EditorSelection/EditorSelection"
-import { Action, ActionObject } from "./Actions/Action/Action"
+import { Action, ActionOptions } from "./Actions/Action/Action"
 import { ChangeAction } from "./Actions/Action/ChangeAction"
 import { Actions } from "./Actions/Actions"
 
@@ -58,6 +58,8 @@ import { isVideoDefinition } from "../Media/Video/Video"
 import { isImageDefinition } from "../Media/Image/Image"
 import { Rect, rectsEqual } from "../Utility/Rect"
 import { isPoint, pointCopy, PointZero } from "../Utility/Point"
+import { MoveEffectActionObject, MoveEffectOptions } from "./Actions/Action/MoveEffectAction"
+import { MoveActionOptions } from "./Actions/Action/MoveAction"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -154,7 +156,7 @@ export class EditorClass implements Editor {
         ...this.selection.object, clip: firstClip 
       }
       const createTracks = trackPositive ? 0 : clips.length
-      const options: ActionObject = {
+      const options: ActionOptions = {
         clips, type: ActionType.AddClipToTrack, trackIndex,
         redoSelection, createTracks
       }
@@ -176,32 +178,27 @@ export class EditorClass implements Editor {
     
   }
 
-  addEffect(effect: Effect, insertIndex = 0): Promise<void> {
-    // console.log(this.constructor.name, "addEffect", effect.definition.label, insertIndex)
-    const { clip } = this.selection
-    if (!isClip(clip)) {
-      console.error(this.constructor.name, "addEffect expected effectable selection")
-      throw Errors.selection + 'effectable'
-    }
+  addEffect(effect: Movable, index?: number): void {
+    const { selection, actions } = this
+    const { clip, mash } = selection
+    assertMash(mash)
+    assertClip(clip)
+    
     const { content } = clip
     assertContent(content)
-    const { effects } = content
 
-    if (!effects) throw Errors.selection
-
-    const undoEffects = [...effects]
-    const redoEffects = [...effects]
-    redoEffects.splice(insertIndex, 0, effect)
-    const redoSelection: EditorSelectionObject = { ...this.selection.object, effect }
-    const options = {
-      effects,
-      undoEffects,
-      redoEffects,
-      redoSelection,
-      type: ActionType.MoveEffect
+    const objects = content.effects as Movables
+    const insertIndex = isPositive(index) ? index : objects.length
+    const redoObjects = [...objects]
+    redoObjects.splice(insertIndex, 0, effect)
+    const options: MoveActionOptions = {
+      objects,
+      undoObjects: [...objects],
+      redoObjects,
+      type: ActionType.Move
     }
-    this.actions.create(options)
-    return this.loadMashAndDraw()
+    actions.create(options)
+    mash.draw()
   }
 
   addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]> {
@@ -352,6 +349,11 @@ export class EditorClass implements Editor {
   }
 
   get clips(): Clips { return this.selection.mash!.clips }
+
+  compose(mash: Mash, frame: number, frames: number): void {
+    console.log(this.constructor.name, "compose", mash.label, "FRAME", frame, "FRAMES", frames)
+
+  }
 
   private configureCast(cast: Cast): Promise<void> {
     this.configureEdited(cast)
@@ -546,6 +548,9 @@ export class EditorClass implements Editor {
     } 
 
     this.selection.object = selection
+
+    // console.log(this.constructor.name, "handleAction", this.selection.selectTypes, selection)
+
     const promise = edited.reload() || Promise.resolve()
     
     promise.then(() => {
@@ -713,26 +718,29 @@ export class EditorClass implements Editor {
     this.actions.create(options)
   }
 
-  moveEffect(effect: Effect, index = 0): void {
-    // console.log(this.constructor.name, "moveEffect", effect, index)
-    if (!isPositive(index)) throw Errors.argument + 'index'
-
-    const { clip } = this.selection
-    if (!clip) throw Errors.selection
+  moveEffect(effect: Movable, index?: number): void {
+    const { selection, actions } = this
+    const { clip, mash } = selection
     assertClip(clip)
-    const effectable = clip.content
-    assertContent(effectable)
-    const { effects } = effectable
-    const undoEffects = [...effects]
-    const redoEffects = undoEffects.filter(e => e !== effect)
-    const currentIndex = undoEffects.indexOf(effect)
-    const insertIndex = currentIndex < index ? index - 1 : index
-    redoEffects.splice(insertIndex, 0, effect)
+    assertMash(mash)
 
-    const options = {
-      effects, undoEffects, redoEffects, type: ActionType.MoveEffect, effectable
+    const { content } = clip
+    assertContent(content)
+
+    const objects = content.effects as Movables
+    const currentIndex = objects.indexOf(effect)
+    const posIndex = isPositive(index) ? index : objects.length
+    const spliceIndex = currentIndex < posIndex ? posIndex - 1 : posIndex
+    const redoObjects = objects.filter(e => e !== effect)
+    redoObjects.splice(spliceIndex, 0, effect)
+    const options: MoveActionOptions = {
+      type: ActionType.Move, 
+      objects, 
+      undoObjects: [...objects], 
+      redoObjects, 
     }
-    this.actions.create(options)
+    actions.create(options)
+    mash.draw()
   }
 
   moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void {
@@ -834,9 +842,8 @@ export class EditorClass implements Editor {
     if (!mash) throw new Error(Errors.selection)
 
     const { track } = clip
-    const redoSelection: EditorSelectionObject = { 
-      ...this.selection, clip: undefined 
-    }
+    const { clip: _, ...redoSelection } = this.selection
+
     const options = {
       redoSelection,
       clip,
@@ -847,29 +854,23 @@ export class EditorClass implements Editor {
     this.actions.create(options)
   }
 
-  removeEffect(effect: Effect): void {
-    const { clip } = this.selection
-    if (!clip) throw Errors.selection
-
+  removeEffect(effect: Movable): void {
+    const { selection, actions } = this
+    const { clip, mash } = selection
     assertClip(clip)
+    assertMash(mash)
+
     const { content } = clip
     assertContent(content)
-    const { effects } = content
-    const undoEffects = [...effects]
-    const redoEffects = effects.filter(other => other !== effect)
-    const redoSelection: EditorSelectionObject = { 
-      ...this.selection.object
+    const objects = content.effects as Movables
+    const options: MoveActionOptions = {
+      type: ActionType.Move,
+      objects: objects,
+      undoObjects: [...objects],
+      redoObjects: objects.filter(other => other !== effect),
     }
-    delete redoSelection.effect
-    // console.log(this.constructor.name, "removeEffect", redoSelection)
-    const options = {
-      redoSelection,
-      effects,
-      undoEffects,
-      redoEffects,
-      type: ActionType.MoveEffect
-    }
-    this.actions.create(options)
+    actions.create(options)
+    mash.draw()
   }
 
   removeLayer(layer: Layer): void {

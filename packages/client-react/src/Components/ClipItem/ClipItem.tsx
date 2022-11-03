@@ -13,7 +13,8 @@ import { TimelineContext } from '../Timeline/TimelineContext'
 import { useEditor } from '../../Hooks/useEditor'
 import { ClipContext } from './ClipContext'
 import { View } from '../../Utilities/View'
-import { useListeners } from '../../Hooks'
+import { useListeners } from '../../Hooks/useListeners'
+import { useRefresh } from '../../Hooks/useRefresh'
 
 const ClipItemRefreshRate = 500
 
@@ -28,8 +29,9 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   const editor = useEditor()
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
-  const [nonce, setNonce] = React.useState(0)
-  const updateNonce = () => { setNonce(new Date().valueOf()) }
+  
+  const [refresh, nonce] = useRefresh()
+
   const watchingRef = React.useRef<UnknownObject>({})
   const { current: watching } = watchingRef
   const clipContext = React.useContext(ClipContext)
@@ -90,7 +92,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const { width } = watching
     if (currentWidth && currentWidth !== width) {
       watching.width = currentWidth
-      updateNonce()
+      refresh()
     }
     return currentWidth
   }
@@ -124,10 +126,10 @@ export function ClipItem(props: ClipItemProps): ReactResult {
         return
       }
     }    
-    updateNonce()
+    refresh()
   }
 
-  useListeners({ [EventType.Action]: actionCallback, [EventType.Save]: updateNonce })
+  useListeners({ [EventType.Action]: actionCallback, [EventType.Save]: refresh })
 
   const frameSize = () => {
     const { rect } = editor
@@ -152,7 +154,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
 
     const allOk = current && edited && width && width === getCurrentWidth()
     if (redraw || !allOk) {
-      updateNonce()
+      refresh()
       if (!allOk) return Promise.resolve()
     }
     const currentSize = frameSize()

@@ -8,17 +8,18 @@ import { Cast } from "../../../Edited/Cast/Cast"
 import { assertCast, isCast } from "../../../Edited/Cast/CastFactory"
 
 
-export interface ActionOptions extends UnknownObject {
+export interface ActionObject extends UnknownObject {
   redoSelection: EditorSelectionObject
-  type : ActionType
+  type: ActionType
   undoSelection: EditorSelectionObject
 }
 
-export type ActionObject = Partial<ActionOptions>
-export type ActionMethod = (object: ActionObject) => void
+export type ActionOptions = Partial<ActionObject>
+
+export type ActionMethod = (object: ActionOptions) => void
 
 export class Action {
-  constructor(object : ActionOptions) {
+  constructor(object: ActionObject) {
     const { redoSelection, type, undoSelection } = object
     this.redoSelection = redoSelection
     this.type = type

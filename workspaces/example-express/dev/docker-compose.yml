@@ -7,12 +7,11 @@ services:
     build:
       dockerfile: ../../../dev/image/Dockerfile.cnf
       context: ../../../
-    image: moviemasher/moviemasher.js:5.1.1
+    image: moviemasher/moviemasher.js:5.1.2
     container_name: moviemasher-example-express-8572
     ports:
       - "8572:8572"
     volumes:
-      - ../src/index.html:/home/node/app/workspaces/example-express/host/public/index.html
       - ../../../packages/server-express/cjs:/home/node/app/packages/server-express/cjs
       - ../../../packages/moviemasher.js/esm:/home/node/app/packages/moviemasher.js/esm
       - ../../../packages/moviemasher.js/umd:/home/node/app/packages/moviemasher.js/umd

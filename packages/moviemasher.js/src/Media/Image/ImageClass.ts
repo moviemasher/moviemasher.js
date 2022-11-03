@@ -43,6 +43,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     const { definition } = this
     const { url, source } = definition
     const file = editing ? url : source
+    if (!file) console.log(this.constructor.name, "fileUrls", definition)
     assertPopulatedString(file, editing ? 'url' : 'source')
 
     const graphFile: GraphFile = {

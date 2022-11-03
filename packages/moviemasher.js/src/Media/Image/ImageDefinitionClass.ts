@@ -20,6 +20,8 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
   constructor(...args: any[]) {
     super(...args)
     const [object] = args
+    // console.log(this.constructor.name, object)
+
     const { loadedImage } = object as ImageDefinitionObject
     if (loadedImage) this.loadedImage = loadedImage
   }

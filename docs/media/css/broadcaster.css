@@ -1,0 +1,27 @@
+
+.moviemasher .editor .panel.broadcaster .content {
+  aspect-ratio: var(--preview-aspect-ratio);
+  width: calc(var(--inspector-width) - (2 * var(--border-size)));
+}
+
+
+.moviemasher .editor .panel.broadcaster {
+  flex-grow: 0;
+  flex-shrink: 0;
+  grid-area: broadcaster;
+}
+
+.moviemasher .editor .panel.broadcaster.collapsed {
+  height: var(--header-height);
+}
+.moviemasher .editor .panel.broadcaster.collapsed .content {
+  aspect-ratio: initial;
+}
+
+.moviemasher .editor .panel.broadcaster .head {
+  grid-template-columns: var(--icon-size) 1fr var(--icon-size);
+}
+
+.moviemasher .editor .panel.broadcaster .head label {
+  font-size: 0.5em;
+}

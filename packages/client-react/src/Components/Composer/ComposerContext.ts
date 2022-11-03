@@ -7,7 +7,7 @@ import { DragType } from '../../Helpers/DragDrop'
 
 export interface ComposerContextInterface {
   selectedLayer?: Layer
-  refreshed: number
+  compose: (layer: Layer, frame: number, frames: number) => void
   refresh: VoidMethod
   validDragType: (dataTransfer?: DataTransfer | null) => DragType | undefined
   droppingPosition: DroppingPosition | number
@@ -19,7 +19,8 @@ export interface ComposerContextInterface {
 }
 
 export const ComposerContextDefault: ComposerContextInterface = {
-  refreshed: 0, refresh: EmptyMethod,
+  compose: EmptyMethod,
+  refresh: EmptyMethod,
   validDragType: () => { return undefined },
   droppingPosition: DroppingPosition.None,
   setDroppingPosition: EmptyMethod,

@@ -4,7 +4,7 @@ import { PropsAndChildren, ReactResult, WithClassName } from "../declarations"
 import { View } from "./View"
 
 export interface ButtonProps extends PropsAndChildren, WithClassName {
-  onClick? : (event : React.MouseEvent) => void
+  onClick? : (event : React.MouseEvent ) => void
   useView?: boolean
   disabled?: boolean
   selected?: boolean

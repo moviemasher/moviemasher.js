@@ -125,22 +125,25 @@ export class PreviewClass implements Preview {
     const itemsPromise = sizePromise.then(() => this.itemsPromise)
   
     return itemsPromise.then(svgItems => {
-      return this._svgItems = this.tupleItems(svgItems)
+      return this._svgItems = svgItems.length ? this.tupleItems(svgItems) : []
     })
   }
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
     const { size, editing, background, selectedClip, editor } = this
-    const previewItems = [...svgItems]
+    console.log(this.constructor.name, "tupleItems", background, editor?.edited?.label)
+    const items = [...svgItems]
+
+
     const trackClasses = 'track'
-    previewItems.forEach(item => svgAddClass(item, trackClasses))
+    items.forEach(item => svgAddClass(item, trackClasses))
     const backgroundClasses = 'background'
     if (background) {
       const backgroundPolygon = svgPolygonElement(size, backgroundClasses, background)
       const backgroundSvg = svgElement(size, backgroundPolygon)
-      previewItems.unshift(backgroundSvg)
+      items.unshift(backgroundSvg)
     }
-    if (!(editing && svgItems.length)) return previewItems
+    if (!(editing && svgItems.length)) return items
 
     assertObject(editor)
 
@@ -160,8 +163,8 @@ export class PreviewClass implements Preview {
     const hoversSvg = svgElement(size, hoverItems)
     svgAddClass(hoversSvg, outlineClasses)
 
-    previewItems.push(hoversSvg)
-    if (!selectedPreview) return previewItems
+    items.push(hoversSvg)
+    if (!selectedPreview) return items
     
     const classes = ['bounds', 'back']
     const lineClasses = ['line']
@@ -171,8 +174,8 @@ export class PreviewClass implements Preview {
     classes[1] = 'fore'
     const passiveSvg = svgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses))
     svgAddClass(passiveSvg, classes)
-    previewItems.push(activeSvg, passiveSvg)
-    return previewItems
+    items.push(activeSvg, passiveSvg)
+    return items
   }
   visible = true
 }

@@ -1,11 +1,10 @@
-import { Endpoint, NumberObject, PreviewItems, StringObject, SvgItem } from "../declarations"
-import { EffectAddHandler, EffectMoveHandler, EffectRemovehandler } from "../Utility/SelectedProperty"
+import { Endpoint, IndexHandler, PreviewItems, StringObject } from "../declarations"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction } from "../Setup/Enums"
 import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
-import { MashAndDefinitionsObject } from "../Edited/Mash/Mash"
+import { Mash, MashAndDefinitionsObject, Movable } from "../Edited/Mash/Mash"
 
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { Effect } from "../Media/Effect/Effect"
@@ -64,7 +63,7 @@ export interface Editor {
   add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]>
   addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]>
   addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void>
-  addEffect: EffectAddHandler
+  addEffect: IndexHandler<Movable>
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
   addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void
   addTrack(): void
@@ -72,6 +71,7 @@ export interface Editor {
   buffer: number
   can(action: MasherAction): boolean
   clips: Clips
+  compose(mash: Mash, frame: number, frames: number): void
   create(): void
   currentTime: number
   dataPutRequest(): Promise<DataPutRequest>
@@ -91,7 +91,7 @@ export interface Editor {
   loop: boolean
   move(object: ClipOrEffect, editorIndex?: EditorIndex): void
   moveClip(clip: Clip, editorIndex?: EditorIndex): void
-  moveEffect: EffectMoveHandler
+  moveEffect: IndexHandler<Movable>
   moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void
   muted: boolean
   pause(): void
@@ -105,7 +105,7 @@ export interface Editor {
   redo(): void
   redraw(): void
   removeClip(clip: Clip): void
-  removeEffect: EffectRemovehandler
+  removeEffect: IndexHandler<Movable>
   removeLayer(layer: Layer): void
   removeTrack(track: Track): void
   saved(temporaryIdLookup?: StringObject): void

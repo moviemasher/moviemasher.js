@@ -15,22 +15,27 @@ import {
   assertObject, EventType, isMashAndDefinitionsObject,
   idGenerate, ActivityType, Definition, assertPreloadableDefinition, 
   isDefinitionObject, isClip, isEffect, isLayer, DefinitionObject, isDefinition, 
-  sizeAboveZero
+  sizeAboveZero,
+  ScalarObject
 } from '@moviemasher/moviemasher.js'
 
-import { ThemeIcons, PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
+import type { ThemeIcons } from '@moviemasher/theme-default'
+
+
+import { PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
 import { ApiContext } from '../ApiClient/ApiContext'
 import { View } from '../../Utilities/View'
 import { MasherContext, MasherContextInterface } from './MasherContext'
 import { elementSetPreviewSize } from '../../Utilities/Element'
-import { TimelinePropsDefault } from '../Timeline/TimelinePropsDefault'
-import { InspectorPropsDefault } from '../Inspector/InspectorPropsDefault'
-import { PlayerPropsDefault } from '../Player/PlayerPropsDefault'
-import { BrowserPropsDefault } from '../Browser/BrowserPropsDefault'
+import { TimelinePropsDefault } from '../Timeline/TimelineDefaultProps'
+import { InspectorPropsDefault } from '../Inspector/InspectorDefaultProps'
+import { BroadcasterPropsDefault } from '../Broadcaster/BroadcasterDefaultProps'
+import { PlayerPropsDefault } from '../Player/PlayerDefaultProps'
+import { BrowserPropsDefault } from '../Browser/BrowserDefaultProps'
 import { PanelOptions } from '../Panel/Panel'
-import { ComposerPropsDefault } from '../Composer/ComposerPropsDefault'
+import { ComposerPropsDefault } from '../Composer/ComposerDefaultProps'
 import { Draggable, dropFilesFromList } from '../../Helpers/DragDrop'
-import { ActivityPropsDefault } from '../Activity/ActivityPropsDefault'
+import { ActivityPropsDefault } from '../Activity/ActivityDefaultProps'
 
 export type PanelOptionsOrFalse = PanelOptions | false
 
@@ -41,6 +46,7 @@ export interface UiOptions {
   inspector: InspectorPropsDefault | false
   timeline: TimelinePropsDefault | false
   composer: ComposerPropsDefault | false
+  broadcaster: BroadcasterPropsDefault | false
   activity: ActivityPropsDefault | false
 }
 
@@ -63,6 +69,7 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {}
  * @returns provided children wrapped in a {@link View} and {@link MasherContext}
  */
 export function Masher(props: MasherProps): ReactResult {
+  console.log("Masher")
   const {
     editType = EditType.Mash,
     previewSize,
@@ -72,17 +79,16 @@ export function Masher(props: MasherProps): ReactResult {
   } = props
 
   const editorIndexRef = React.useRef<EditorIndex>({})
+  const currentRef = React.useRef<ScalarObject>({})
   const svgRef = React.useRef<SVGSVGElement>(null)
-  const { current: editorIndex } = editorIndexRef
-
-  const [ definition, setDefinition] = React.useState<Definition | undefined>()
-
   const ref = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
   const [editor] = React.useState(() => editorInstance({ editType}))
   const [requested, setRequested] = React.useState(false)
-  const [draggable, setDraggable] = React.useState<Draggable | undefined>()
+  const [streaming, setStreaming] = React.useState(false)
 
+  const { current: editorIndex } = editorIndexRef
+  const { current } = currentRef
   const { enabled, endpointPromise, servers } = apiContext
 
   React.useEffect(() => { 
@@ -96,10 +102,8 @@ export function Masher(props: MasherProps): ReactResult {
     const { current: svg } = svgRef
     const { current: div } = ref
     assertObject(svg)
-    if (sizeAboveZero(size)) {
-      elementSetPreviewSize(div, size)
-      // editor.rect = size
-    }
+    if (sizeAboveZero(size)) elementSetPreviewSize(div, size)
+    
     editor.svgElement = svg
     editor.load(rest)
   }
@@ -153,31 +157,31 @@ export function Masher(props: MasherProps): ReactResult {
 
   const drop = (draggable: Draggable, editorIndex?: EditorIndex): Promise<Definition[]>  => {
     if (!draggable) return Promise.resolve([]) 
-    // console.log("Masher drop editorIndex = ", editorIndex)
+    console.log("Masher drop editorIndex = ", editorIndex)
 
     if (isClip(draggable)) {
-      // console.log("Masher drop Clip")
+      console.log("Masher drop Clip")
       return Promise.resolve([])
     }
     if (isEffect(draggable)) {
-      // console.log("Masher drop Effect")
+      console.log("Masher drop Effect")
       return Promise.resolve([])
     }
     if (isLayer(draggable)) {
-      // console.log("Masher drop Layer")
+      console.log("Masher drop Layer")
       return Promise.resolve([])
     }
     if (isDefinitionObject(draggable)) {
-      // console.log("Masher drop DefinitionObject")
+      console.log("Masher drop DefinitionObject")
       return dropDefinitionObject(draggable, editorIndex)
       
     }
     if (isMashAndDefinitionsObject(draggable)) {
-      // console.log("Masher drop MashAndDefinitionsObject")
+      console.log("Masher drop MashAndDefinitionsObject")
       return Promise.resolve([])
     }
     return dropFiles(draggable, editorIndex).then(definitions => {
-      // console.log("Masher.dropFiles", definitions)
+      console.log("Masher.dropFiles", definitions)
       const [definition] = definitions
       if (isDefinition(definition)) changeDefinition(definition)
       return definitions
@@ -289,7 +293,7 @@ export function Masher(props: MasherProps): ReactResult {
     const definitionsPromise = saveDefinitionsPromise(definitionsUnsaved)
     const requestPromise = definitionsPromise.then(() => editor.dataPutRequest())
     const savePromise = requestPromise.then(request => {
-      const { editType } = editor
+      // const { editType } = editor
       console.debug("DataPutRequest", Endpoints.data[editType].put, JSON.parse(JSON.stringify(request)))
       endpointPromise(Endpoints.data[editType].put, request).then((response: DataPutResponse) => {
         console.debug("DataPutResponse", Endpoints.data[editType].put, response)
@@ -302,12 +306,13 @@ export function Masher(props: MasherProps): ReactResult {
   }
 
   const changeDefinition = (definition?: Definition) => { 
-    setDefinition(definition) 
+    current.definitionId = definition?.id
   }
 
   const editorContext: MasherContextInterface = {
-    editor, draggable, setDraggable, save, editorIndex, drop,
-    definition, changeDefinition, icons
+    streaming, setStreaming,
+    current, editor, save, editorIndex, drop,
+    changeDefinition, icons
   }
   const viewProps = { ...rest, onDrop: eventStop, ref }
   return (
