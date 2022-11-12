@@ -11,7 +11,7 @@ import { RenderingCommandOutputs, RenderingServerArgs } from "../Server/Renderin
 import { ServerAuthentication } from "../Server/Server"
 import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
-import { HostOptions } from "../Host/Host"
+import { HostOptions } from "./Host"
 import { expandFileOrScript } from '../Utilities/Expand'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }

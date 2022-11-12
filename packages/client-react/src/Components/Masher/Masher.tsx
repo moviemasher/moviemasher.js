@@ -36,6 +36,7 @@ import { PanelOptions } from '../Panel/Panel'
 import { ComposerPropsDefault } from '../Composer/ComposerDefaultProps'
 import { Draggable, dropFilesFromList } from '../../Helpers/DragDrop'
 import { ActivityPropsDefault } from '../Activity/ActivityDefaultProps'
+import { WebrtcPropsDefault } from '../Webrtc/WebrtcPropsDefault'
 
 export type PanelOptionsOrFalse = PanelOptions | false
 
@@ -46,6 +47,7 @@ export interface UiOptions {
   inspector: InspectorPropsDefault | false
   timeline: TimelinePropsDefault | false
   composer: ComposerPropsDefault | false
+  webrtc: WebrtcPropsDefault | false
   broadcaster: BroadcasterPropsDefault | false
   activity: ActivityPropsDefault | false
 }
@@ -69,7 +71,6 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {}
  * @returns provided children wrapped in a {@link View} and {@link MasherContext}
  */
 export function Masher(props: MasherProps): ReactResult {
-  console.log("Masher")
   const {
     editType = EditType.Mash,
     previewSize,
@@ -78,6 +79,7 @@ export function Masher(props: MasherProps): ReactResult {
     ...rest
   } = props
 
+  console.log("Masher", editType, previewSize)
   const editorIndexRef = React.useRef<EditorIndex>({})
   const currentRef = React.useRef<ScalarObject>({})
   const svgRef = React.useRef<SVGSVGElement>(null)

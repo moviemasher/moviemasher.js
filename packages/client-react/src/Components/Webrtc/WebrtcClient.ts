@@ -1,10 +1,9 @@
 import {
   EndpointPromiser,
-  Endpoints, Errors,
+  Endpoints, Errors,assertDefined,
   StreamingDeleteRequest, StreamingDeleteResponse,
   StreamingRemoteRequest, StreamingRemoteResponse,
-  StreamingWebrtcRequest, StreamingWebrtcResponse,
-  StringSetter
+  StreamingWebrtcRequest, StreamingWebrtcResponse
 } from "@moviemasher/moviemasher.js"
 
 function enableStereoOpus(sdp:string):string {
@@ -12,27 +11,27 @@ function enableStereoOpus(sdp:string):string {
 }
 
 export class WebrtcClient {
-  constructor(endpointPromise: EndpointPromiser, setStatus: StringSetter) {
-    this.setStatus = setStatus
-    this.endpointPromise = endpointPromise
-  }
+  constructor(public endpointPromise: EndpointPromiser, public localStream?: MediaStream) {}
 
-  async beforeAnswer(peerConnection: RTCPeerConnection) {
-    const promise = window.navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true
-    }).then(something => something).catch(error => {
-      console.error("beforeAnswer", error)
-      return undefined
-    })
-    this.localStream = await promise
+  beforeAnswer(peerConnection: RTCPeerConnection) {
+    const { localStream } = this
+    assertDefined(localStream)
 
-    if (!this.localStream) return
+    const width = 1920
+    const height = 1080
+    let promise = Promise.resolve()
 
-    this.localStream.getTracks().forEach(track => {
+    localStream.getTracks().forEach(track => {
+      const { contentHint, kind } = track
+      if (kind === 'video') {
+        promise = track.applyConstraints({ width, height }).then(() => {
 
-    if (!this.localStream) return
-      peerConnection.addTrack(track, this.localStream)
+          peerConnection.addTrack(track, localStream)
+        })
+      } else peerConnection.addTrack(track, localStream)
+      
+      console.log(this.constructor.name, "beforeAnswer adding track", kind, contentHint, track.getCapabilities(), track.getConstraints(), track.getSettings())
+      
     })
 
     // hack so that we can get a callback when the RTCPeerConnection
@@ -40,26 +39,30 @@ export class WebrtcClient {
     // "connectionstatechange" events.
     const { close } = peerConnection
     peerConnection.close = (...args: []) => {
+      console.log(this.constructor.name, "beforeAnswer.close")
       if (!this.localStream) return
 
       this.localStream.getTracks().forEach(track => { track.stop() })
 
       return close.apply(peerConnection, args)
     }
+    return promise
   }
 
   closeConnection() {
-    // console.log(this.constructor.name, "closeConnection", !!this.localPeerConnection)
+    console.log(this.constructor.name, "closeConnection", !!this.localPeerConnection)
     this.localPeerConnection?.close()
   }
 
   createConnection(options: { stereo?: boolean } = {}) {
     const { stereo } = options
     const request: StreamingWebrtcRequest = {}
-    // console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, request)
+    console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, request)
     return this.endpointPromise(Endpoints.streaming.webrtc, request).then((response: StreamingWebrtcResponse) => {
-      // console.debug("StreamingWebrtcRequest", Endpoints.streaming.webrtc, response)
+      // console.debug("StreamingWebrtcResponse", Endpoints.streaming.webrtc, response)
       const { id, localDescription } = response
+      console.debug("StreamingWebrtcResponse", Endpoints.streaming.webrtc)//, localDescription.sdp
+
       const rtcConfiguration: RTCConfiguration = {} //sdpSemantics: 'unified-plan'
       const peer = new RTCPeerConnection(rtcConfiguration)
       this.localPeerConnection = peer
@@ -68,37 +71,45 @@ export class WebrtcClient {
       // in future, subscribe to connectionstatechange events?
       peer.close = () => {
         const request: StreamingDeleteRequest = { id }
-        // console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, request)
+        console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, request)
         this.endpointPromise(Endpoints.streaming.delete, request).then((response: StreamingDeleteResponse) => {
-          // console.debug("StreamingDeleteRequest", Endpoints.streaming.delete, response)
+          console.debug("StreamingDeleteResponse", Endpoints.streaming.delete, response)
         })
         return RTCPeerConnection.prototype.close.apply(peer)
       }
       try {
-        // console.debug(this.constructor.name, "createConnection setRemoteDescription")
+        console.debug(this.constructor.name, "createConnection setRemoteDescription...")//, localDescription.sdp
         peer.setRemoteDescription(localDescription).then(() => {
-          // console.debug(this.constructor.name, "createConnection beforeAnswer")
+          console.debug(this.constructor.name, "createConnection beforeAnswer...")
           this.beforeAnswer(peer).then(() => {
-            // console.debug(this.constructor.name, "createConnection createAnswer")
-            peer.createAnswer().then((originalAnswer) => {
+            console.debug(this.constructor.name, "createConnection createAnswer...")
+            peer.createAnswer().then(originalAnswer => {
+              console.debug(this.constructor.name, "createConnection createAnswer!")//, originalAnswer.sdp
               const updatedAnswer = new RTCSessionDescription({
                 type: 'answer',
                 sdp: stereo ? enableStereoOpus(originalAnswer.sdp!) : originalAnswer.sdp
               })
-              console.debug(this.constructor.name, "createConnection setLocalDescription")
+              console.debug(this.constructor.name, "createConnection setLocalDescription...")
               peer.setLocalDescription(updatedAnswer).then(() => {
-                const { localDescription } = peer
-                if (!localDescription) throw Errors.invalid.object + 'localDescription'
+              console.debug(this.constructor.name, "createConnection setLocalDescription!")//, updatedAnswer.sdp
+                const { localDescription: peerDescription } = peer
+                if (!peerDescription) throw Errors.invalid.object + 'localDescription'
 
-                const request: StreamingRemoteRequest = { id, localDescription }
-                console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)
+                const request: StreamingRemoteRequest = { id, localDescription: peerDescription }
+                console.debug("StreamingRemoteRequest", Endpoints.streaming.remote, request)//, peerDescription.sdp
                 this.endpointPromise(Endpoints.streaming.remote, request).then((response: StreamingRemoteResponse) => {
-                  console.debug("StreamingRemoteResponse", Endpoints.streaming.remote, response)
+                  const { error, localDescription: remoteDescription } = response
+
+                  if (error) console.error("StreamingRemoteResponse", Endpoints.streaming.remote, remoteDescription.sdp, error)
+                  // else peer.setRemoteDescription(remoteDescription)
                 })
               })
             })
             return peer
+                    
           })
+        
+
         })
       } catch (error) {
         console.trace(this.constructor.name, "createConnection", error)
@@ -108,11 +119,5 @@ export class WebrtcClient {
     })
   }
 
-  endpointPromise: EndpointPromiser
-
   localPeerConnection?: RTCPeerConnection
-
-  localStream?: MediaStream
-
-  setStatus: StringSetter
 }

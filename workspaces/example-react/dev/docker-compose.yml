@@ -18,4 +18,3 @@ services:
       - ../../../packages/client-react/umd/client-react.min.js:/usr/local/apache2/htdocs/client-react.min.js
       - ../../../node_modules/react/umd/react.development.js:/usr/local/apache2/htdocs/react.development.js
       - ../../../node_modules/react-dom/umd/react-dom.development.js:/usr/local/apache2/htdocs/react-dom.development.js
-      

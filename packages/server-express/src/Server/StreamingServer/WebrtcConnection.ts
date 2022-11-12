@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
 import {
-  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual
+  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual, sizeString
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
@@ -55,13 +55,32 @@ export class WebrtcConnection extends EventEmitter {
     this.onAudioData = this.onAudioData.bind(this)
     this.onFrameData = this.onFrameData.bind(this)
     this.beforeOffer()
+
   }
 
+  dataLengths = new Set<number>()
+  frameCount = 0
+  sizes = new Set<string>()
+
+  interval = setInterval(() => {
+    const { frameCount } = this
+    if (!frameCount) return 
+
+    console.log(frameCount, [...this.dataLengths].join(', '), [...this.sizes].join(', '))
+    this.frameCount = 0
+    this.dataLengths.clear()
+    this.sizes.clear()
+  }, 1000)
+
   async applyAnswer(answer: RTCSessionDescriptionInit): Promise<void> {
+    console.log(this.constructor.name, "applyAnswer calling setRemoteDescription", answer.sdp)//
+
     await this.peerConnection.setRemoteDescription(answer)
   }
 
-  beforeOffer():void {
+  private beforeOffer():void {
+    console.log(this.constructor.name, "beforeOffer")
+
     const audioSink = this.createAudioSink()
     const videoSink = this.createVideoSink()
 
@@ -102,6 +121,8 @@ export class WebrtcConnection extends EventEmitter {
   }
 
   close(): void {
+    console.log(this.constructor.name, "close")
+
     this.peerConnection.removeEventListener('iceconnectionstatechange', this.onIceConnectionStateChange)
     if (this.connectionTimer) {
       clearTimeout(this.connectionTimer)
@@ -118,26 +139,39 @@ export class WebrtcConnection extends EventEmitter {
   }
 
   connectionTimer?: Timeout = setTimeout(() => {
-    if (this.peerConnection.iceConnectionState !== 'connected'
-      && this.peerConnection.iceConnectionState !== 'completed') {
+    const { iceConnectionState } = this.peerConnection
+    if (iceConnectionState !== 'connected' && iceConnectionState !== 'completed') {
+      console.log(this.constructor.name, "connectionTimer TIMED OUT", TIME_TO_CONNECTED, iceConnectionState)
       this.close()
     }
   }, TIME_TO_CONNECTED)
 
   async doOffer(): Promise<void> {
-    // console.log("doOffer")
-    const offer = await this.peerConnection.createOffer()
+    console.log(this.constructor.name, "doOffer...")
+    const options: RTCOfferOptions = {
+      iceRestart: false,
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true,
+    }
+    const offer = await this.peerConnection.createOffer(options)
+    console.log(this.constructor.name, "doOffer... created offer")//, offer.sdp
     await this.peerConnection.setLocalDescription(offer)
+    console.log(this.constructor.name, "doOffer... setLocalDescription")
     try {
       await this.waitUntilIceGatheringStateComplete()
+      console.log(this.constructor.name, "doOffer... waitUntilIceGatheringStateComplete DONE")
     } catch (error) {
+      console.log(this.constructor.name, "doOffer... waitUntilIceGatheringStateComplete ERROR", error)
       this.close()
       throw error
     }
   }
 
   get iceConnectionState():RTCIceConnectionState {
-    return this.peerConnection.iceConnectionState
+    const state = this.peerConnection.iceConnectionState
+    console.log(this.constructor.name, "iceConnectionState", state)
+
+    return state
   }
 
   id: string
@@ -145,14 +179,20 @@ export class WebrtcConnection extends EventEmitter {
   inputAudio(audio: internal.Stream): CommandInput {
     return {
       source: StreamInput(audio, this.id, 'audio').url,
-      options: {f: 's16le', ar: '48k', ac: 1 }
+      options: { f: 's16le', ar: '48k', ac: 1 }
     }
   }
 
   inputVideo(video: internal.Stream, size: Size): CommandInput {
     const { width, height } = size
+    const streamInput = StreamInput(video, this.id, 'video')
+    const { server } = streamInput
+
+    server.addListener('listening', () => {
+
+    })
     return {
-      source: StreamInput(video, this.id, 'video').url,
+      source: streamInput.url,
       options: {
         f: 'rawvideo',
         pix_fmt: 'yuv420p',
@@ -163,24 +203,37 @@ export class WebrtcConnection extends EventEmitter {
   }
 
   get localDescription(): RTCSessionDescription | null {
-    const description = this.peerConnection.localDescription
+    const { peerConnection } = this
+    
+    
+    const description = peerConnection.localDescription
     if (!description) return description
 
-    const { sdp, ...rest } = description
-    return { ...rest, sdp: sdp.replace(/\r\na=ice-options:trickle/g, '') }
+    const { sdp, ...rest } = description // a=ice-options:trickle
+    
+    const replaced = { ...rest, sdp: sdp.replaceAll("\r\na=ice-options:trickle", '') }//
+    console.log(this.constructor.name, "localDescription", replaced.type, replaced.sdp.includes('trickle'))
+    return replaced
   }
 
   onAudioData({ samples: { buffer } }: AudioData): void {
     // console.log("onAudioData...")
-    if (!this.stream || this.stream.end) return
+    if (!this.stream || this.stream.end) {
+      // console.log(this.constructor.name, "onAudioData", this.stream?.end)
+      return
+    }
 
     this.stream.audio.push(Buffer.from(buffer))
     // console.log("onAudioData!")
   }
 
   onFrameData(frameData: FrameData): void {
-    // console.log("onFrameData...")
     const { frame: { width, height, data } } = frameData
+
+    this.frameCount += 1
+    this.sizes.add([width, height].join("x"))
+    this.dataLengths.add(data.byteLength)
+    // console.log("onFrameData", width, height, data.byteLength)
     const stream = this.streamForSize({ width, height })
 
     this.streams.forEach(item=>{
@@ -196,23 +249,29 @@ export class WebrtcConnection extends EventEmitter {
   }
 
   onIceConnectionStateChange(): void {
-    // console.log(this.constructor.name, "onIceConnectionStateChange...")
-    if (['connected', 'completed'].includes(this.peerConnection.iceConnectionState)) {
+    const { iceConnectionState } = this.peerConnection
+    console.log(this.constructor.name, "onIceConnectionStateChange...", iceConnectionState)
+    if (['connected', 'completed'].includes(iceConnectionState)) {
       if (this.connectionTimer) {
+        console.log(this.constructor.name, "onIceConnectionStateChange clearing connectionTimer")
+
         clearTimeout(this.connectionTimer)
         this.connectionTimer = undefined
       }
       if (this.reconnectionTimer) {
+        console.log(this.constructor.name, "onIceConnectionStateChange clearing reconnectionTimer")
         clearTimeout(this.reconnectionTimer)
         this.reconnectionTimer = undefined
       }
-    } else if (this.peerConnection.iceConnectionState === 'disconnected'
-      || this.peerConnection.iceConnectionState === 'failed') {
+    } else if (iceConnectionState === 'disconnected' || iceConnectionState === 'failed') {
       if (!this.connectionTimer && !this.reconnectionTimer) {
-        this.reconnectionTimer = setTimeout(() => { this.close() }, TIME_TO_RECONNECTED)
+        this.reconnectionTimer = setTimeout(() => { 
+          console.log(this.constructor.name, "onIceConnectionStateChange creating reconnectionTimer")
+          this.close() 
+        }, TIME_TO_RECONNECTED)
       }
     }
-    // console.log(this.constructor.name, "onIceConnectionStateChange!")
+    console.log(this.constructor.name, "onIceConnectionStateChange!")
   }
 
   commandOutput: CommandOutput = outputDefaultHls()
@@ -224,7 +283,14 @@ export class WebrtcConnection extends EventEmitter {
   get peerConnection(): RTCPeerConnection {
     if (this._peerConnection) return this._peerConnection
 
-    const connection = <RTCPeerConnection> new RTCPeerConnection({ sdpSemantics: 'unified-plan' })
+    const args = { 
+      sdpSemantics: 'unified-plan', 
+      portRange: {
+        min: 10000, // defaults to 0
+        max: 10100  // defaults to 65535
+      } 
+    }
+    const connection = new RTCPeerConnection(args)
     connection.addEventListener('iceconnectionstatechange', this.onIceConnectionStateChange)
     this._peerConnection = connection
     return connection
@@ -233,7 +299,10 @@ export class WebrtcConnection extends EventEmitter {
   reconnectionTimer?: Timeout
 
   get remoteDescription(): RTCSessionDescription | null {
-    return this.peerConnection.remoteDescription
+    const description = this.peerConnection.remoteDescription
+    console.log(this.constructor.name, "remoteDescription")//, description?.sdp
+
+    return description
   }
 
   get signalingState():RTCSignalingState {
@@ -249,7 +318,8 @@ export class WebrtcConnection extends EventEmitter {
     const currentStream = this.stream
     if (currentStream && sizesEqual(currentStream.size, size)) return currentStream
 
-    console.log("streamForSize", width, height)
+    const widthAndHeight = [width, height].join('x')
+    console.log(this.constructor.name, "streamForSize", width, height)
 
     const prefix = path.resolve(this.outputPrefix, this.id)
     fs.mkdirSync(prefix, { recursive: true })
@@ -265,28 +335,34 @@ export class WebrtcConnection extends EventEmitter {
 
     switch (commandOutput.format) {
       case OutputFormat.Hls: {
-        destination = `${prefix}/${streamsPrefix}-${size}.m3u8`
+        destination = `${prefix}/${streamsPrefix}-${widthAndHeight}.m3u8`
         const { options } = commandOutput
         if (options && !Array.isArray(options)) {
-          options.hls_segment_filename = `${prefix}/${size}-%0${FilterGraphPadding}d.ts`
+          options.hls_segment_filename = `${prefix}/${widthAndHeight}-%0${FilterGraphPadding}d.ts`
         }
         break
       }
-      case OutputFormat.Flv: {
-        destination = `${prefix}/${streamsPrefix}-${size}.flv`
+      default: {
+      // case OutputFormat.Flv: {
+      //   destination = `${prefix}/${streamsPrefix}-${widthAndHeight}.flv`
+      //   break
+      // }
+      // case OutputFormat.Rtmp: {
+        destination = 'rtp://54.82.176.97:8579'
         break
       }
-      case OutputFormat.Rtmp: {
-        destination = 'rtmps://...'
-        break
-      }
+
+      // ./ffmpeg -re -i <source_file> -c copy -map 0 -f rtp_mpegts -fec prompeg=l=5:d=20
+      // rtp://<IP>:5000
+
+
       // case OutputFormat.Pipe: {
       //   const combined = new PassThrough()
       //   destination = StreamOutput(combined, this.id).url
       // }
     }
 
-    console.log("streamForSize commandOutput", commandOutput)
+    console.log(this.constructor.name, "streamForSize commandOutput", commandOutput)
   
 
     const command = runningCommandInstance(this.id, {
@@ -307,7 +383,7 @@ export class WebrtcConnection extends EventEmitter {
 
     this.streams.unshift(webrtcStream)
 
-    webrtcStream.command.run(destination)
+    // webrtcStream.command.run(destination)
 
     return webrtcStream
   }
@@ -325,15 +401,21 @@ export class WebrtcConnection extends EventEmitter {
   }
 
   async waitUntilIceGatheringStateComplete():Promise<void> {
+    console.log(this.constructor.name, "waitUntilIceGatheringStateComplete", this.peerConnection.iceGatheringState)
+
     if (this.peerConnection.iceGatheringState === 'complete') return
 
     const promise = new Promise<void>((resolve, reject) => {
-      const onIceCandidate = (object: RTCPeerConnectionIceEvent) => {
-        // console.log("onIceCandidate", object)
-        if (!object.candidate) {
+      const onIceCandidate = (event: RTCPeerConnectionIceEvent) => {
+        const { candidate } = event
+        
+        if (!candidate) {
+          console.log(this.constructor.name, "waitUntilIceGatheringStateComplete.onIceCandidate NO CANDIDATE so resolving")
           clearTimeout(timeout)
           this.peerConnection.removeEventListener('icecandidate', onIceCandidate)
           resolve()
+        } else {
+          console.log(this.constructor.name, "waitUntilIceGatheringStateComplete.onIceCandidate CANDIDATE", candidate.protocol, candidate.port, candidate.candidate)
         }
       }
       const timeout = setTimeout(() => {
@@ -356,7 +438,7 @@ export class WebrtcConnection extends EventEmitter {
 
   static create(id: string, outputPrefix?: string, commandOutput?: CommandOutput): WebrtcConnection {
     const connection = new WebrtcConnection(id, outputPrefix, commandOutput)
-    // console.log(this.constructor.name, "createConnection", connection.constructor.name, id)
+    console.log(this.name, "create", connection.constructor.name, id)
 
     const closedListener = () => { this.deleteConnection(connection) }
     this.callbacksByConnection.set(connection, closedListener)
@@ -372,7 +454,7 @@ export class WebrtcConnection extends EventEmitter {
 
     const closedListener = this.callbacksByConnection.get(connection)
 
-    // console.log(this.constructor.name, "deleteConnection", connection.id, !!closedListener)
+    console.log(this.name, "deleteConnection", connection.id, !!closedListener)
     if (!closedListener) return
 
     this.callbacksByConnection.delete(connection)

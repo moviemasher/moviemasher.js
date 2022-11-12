@@ -20,15 +20,13 @@ import { idUnique } from "../../../Utilities/Id"
 const StreamingProcessLogoPath = '../shared/image/favicon.ico'
 
 export class StreamingProcessClass extends EventEmitter {
-  constructor(args: StreamingProcessArgs) {
+  constructor(public args: StreamingProcessArgs) {
     super()
-    this.args = args
-    const { id } = args
-
+    const { id, commandOutput } = this.args
+    console.log(this.constructor.name, "constructor", commandOutput)
     this.id = id
     this.state = 'open'
   }
-  args: StreamingProcessArgs
 
   close(): void {
     this.state = 'closed'
@@ -55,6 +53,7 @@ export class StreamingProcessClass extends EventEmitter {
     const videoRate = output.args.commandOutput.videoRate
 
     const { pathPrefix, destination } = this
+
     fs.mkdirSync(pathPrefix, { recursive: true })
     try {
       if (this.command) {
@@ -125,7 +124,14 @@ export class StreamingProcessClass extends EventEmitter {
     return args
   }
 
-  get destination(): string { return `${this.pathPrefix}/${this.args.file}` }
+  get destination(): string { 
+    const { commandOutput } = this.args
+    const { format } = commandOutput
+    // if (format === OutputFormat.Rtmp) 
+    return 'rtp://54.82.176.97:8579'
+
+    // return `${this.pathPrefix}/${this.args.file}` 
+  }
 
   error(error: any) {
     if (String(error).includes('SIGKILL')) { return }

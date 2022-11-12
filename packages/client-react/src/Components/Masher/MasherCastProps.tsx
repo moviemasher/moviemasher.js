@@ -12,6 +12,7 @@ export const MasherCastProps: PropsMethod<EditorProps, MasherProps> = function (
   props.panels ||= {}
   props.panels.composer ||= {}
   props.panels.broadcaster ||= {}
+  props.panels.webrtc ||= {}
   const mashProps = MasherDefaultProps(props)
   return { ...mashProps, editType: EditType.Cast }
 }

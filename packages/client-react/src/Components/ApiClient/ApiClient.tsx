@@ -17,12 +17,19 @@ export interface ApiProps extends PropsWithChildren {
 
 export function ApiClient(props: ApiProps): ReactResult {
   const { endpoint: end, children, path } = props
+  console.log("ApiClient", end, path)
   const endpoint = end || urlEndpoint({ prefix: path || Endpoints.api.callbacks })
 
-  const [callbacks, setCallbacks] = React.useState<ApiCallbacks>(() => (
-    { [Endpoints.api.callbacks]: { endpoint } }
-  ))
-  const [servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
+  const [enabled, setEnabled] = React.useState(false)
+  const callbacksRef = React.useRef<ApiCallbacks>({[Endpoints.api.callbacks]: { endpoint }})
+  // const [callbacks, setCallbacks] = React.useState<ApiCallbacks>(() => (
+  //   { [Endpoints.api.callbacks]: { endpoint } }
+  // ))
+  const { current: callbacks } = callbacksRef
+
+  const serversRef = React.useRef<ApiServersResponse>({})
+  const { current: servers } = serversRef
+  // const [servers, setServers] = React.useState<ApiServersResponse>(() => ({}))
 
   const endpointPromise: EndpointPromiser = (id, body?) => {
     return serverPromise(id).then(endpointResponse => {
@@ -49,27 +56,30 @@ export function ApiClient(props: ApiProps): ReactResult {
     const promiseCallback: ApiCallback = {
       endpoint, request: { body: request }
     }
-    // console.debug("ApiCallbacksRequest", endpoint, request)
+    console.debug("ApiCallbacksRequest", endpoint, request)
     return fetchCallback(promiseCallback).then((response: ApiCallbacksResponse) => {
-      // console.debug("ApiCallbacksResponse", endpoint, response)
+      console.debug("ApiCallbacksResponse", endpoint, response)
       const { apiCallbacks } = response
-      setCallbacks(servers => ({ ...servers, ...apiCallbacks }))
+      Object.assign(callbacks, apiCallbacks)
+      // setCallbacks(servers => ({ ...servers, ...apiCallbacks }))
       return apiCallbacks[id]
     })
   }
 
   React.useEffect(() => {
     const request: ApiServersRequest = {}
-    // console.debug("ApiServersRequest", request)
+    console.debug("ApiServersRequest", request)
     endpointPromise(Endpoints.api.servers, request).then((response: ApiServersResponse) => {
-      // console.debug("ApiServersResponse", response)
+      console.debug("ApiServersResponse", response)
       if (response.data?.temporaryIdPrefix) idPrefixSet(response.data.temporaryIdPrefix)
-      setServers(response)
+      Object.assign(servers, response)
+      setEnabled(true)
+      // setServers(response)
     })
   }, [])
 
   const apiContext: ApiContextInterface = { 
-    enabled: true, endpointPromise, servers 
+    enabled, endpointPromise, servers 
   }
 
   return (

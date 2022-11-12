@@ -3,8 +3,56 @@ import {
   AiOutlineColumnWidth,
 } from 'react-icons/ai'
 import { 
-  CgArrowLongRightL, CgCast, CgArrowLongLeftL
+  BiSquareRounded,
+  BiShapeTriangle, BiBorderOuter, BiBorderInner 
+} from 'react-icons/bi'
+import { 
+  BsSkipStartFill, BsSkipEndFill,
+  BsReverseLayoutSidebarInsetReverse, 
+  BsFillCircleFill, 
+  BsRssFill, BsRss,
+  BsSkipEnd, BsAspectRatioFill, BsHandIndexThumbFill, BsFillMicFill,
+  BsFillCameraVideoFill, BsCameraVideoOff, BsMicMute,
+ } from 'react-icons/bs'
+import { 
+  CgArrowLongRightL, CgCast, CgArrowLongLeftL, CgOptions
 } from 'react-icons/cg'
+import { 
+  CiStreamOn
+} from 'react-icons/ci'
+import { 
+  FaUserCircle,
+  FaExclamationCircle,
+  FaRegCheckCircle,
+  FaRegHandPointer,
+} from 'react-icons/fa'
+import { 
+  GiDirectorChair,
+  GiMove, GiResize, 
+  GiHorizontalFlip, GiVerticalFlip,
+ } from 'react-icons/gi'
+import { 
+  HiEye, HiLockClosed, HiLockOpen, HiRefresh
+} from 'react-icons/hi'
+import { 
+  ImFileVideo 
+} from 'react-icons/im'
+import { 
+  IoMdColorFill,
+} from 'react-icons/io'
+import { 
+  IoDocument, 
+} from 'react-icons/io5'
+import { 
+  MdInvertColors,
+  MdPermMedia, 
+  MdOutlineTextFields, 
+  MdOutlineTimelapse,
+  MdOpacity, MdLabel,
+  MdOutlineSpeed, 
+  MdIncompleteCircle,
+  MdCastConnected,
+} from 'react-icons/md'
 import { 
   RiMusic2Fill,
   RiFilmFill,
@@ -38,52 +86,15 @@ import {
   RiFolderAddFill,
 } from 'react-icons/ri'
 import { 
-  MdInvertColors,
-  MdPermMedia, 
-  MdOutlineTextFields, 
-  MdOutlineTimelapse,
-  MdOpacity, MdLabel,
-  MdOutlineSpeed, 
-  MdIncompleteCircle,
-} from 'react-icons/md'
-import { 
-  IoMdColorFill,
-} from 'react-icons/io'
-import { 
-  BiSquareRounded,
-} from 'react-icons/bi'
-import { 
-  IoDocument, 
-} from 'react-icons/io5'
-import { 
-  BsSkipStartFill, BsSkipEndFill,
-  BsReverseLayoutSidebarInsetReverse, 
-  BsFillCircleFill, 
-  BsRssFill, BsRss,
-  BsSkipEnd, BsAspectRatioFill, BsHandIndexThumbFill,
- } from 'react-icons/bs'
-import { 
-  FaUserCircle,
-  FaExclamationCircle,
-  FaRegCheckCircle,
-  FaRegHandPointer,
-} from 'react-icons/fa'
-import { BiShapeTriangle, BiBorderOuter, BiBorderInner } from 'react-icons/bi'
-import { GiDirectorChair } from 'react-icons/gi'
-import { 
   TbArrowBarToRight, TbArrowBarRight, TbFileImport, TbActivityHeartbeat, TbArrowAutofitWidth, TbArrowAutofitHeight
 } from 'react-icons/tb'
-import { TiZoomOutOutline, TiZoomInOutline } from 'react-icons/ti'
 import { 
-  GiMove, GiResize, 
-  GiHorizontalFlip, GiVerticalFlip,
- } from 'react-icons/gi'
-import { HiEye, HiLockClosed, HiLockOpen } from 'react-icons/hi'
+  TiZoomOutOutline, TiZoomInOutline 
+} from 'react-icons/ti'
 import { 
   VscTriangleRight, 
   VscTriangleDown,
 } from 'react-icons/vsc'
-import { ImFileVideo } from 'react-icons/im'
 
 export type ThemeIcons = Record<string, JSX.Element>
 
@@ -135,12 +146,19 @@ const MMTubeIcon = () => {
 }
 
 export const Icons: ThemeIcons = {
+  // audible: <RiVolumeUpLine key='audible' />,
+  // audio: <RiMusicLine key="audio" />,
+  // chat: <RiChat3Fill key='chat' />,
+  // matte: <BsReverseLayoutSidebarInsetReverse key="matte" />,
+  // message: <RiMessage3Fill key='message' />,
+  // mm: <MMIcon key="mm" />,
+  // streamers: <FaUserCircle key='streamers' />,
+  // video: <RiArrowRightSLine key="video" />,
+  // visible: <RiEyeLine key='visible' />,
   active: <MdIncompleteCircle key='active' />,
   activity: <TbActivityHeartbeat key='activity' />,
   add: <RiAddLine key='add' />,
   app: <MMLogo key='app' />,
-  // audible: <RiVolumeUpLine key='audible' />,
-  // audio: <RiMusicLine key="audio" />,
   broadcast: <CgCast key='broadcast' />,
   broadcaster: <RiBroadcastFill key='broadcaster' />,
   browser: <MdPermMedia key='browser' />,
@@ -151,7 +169,9 @@ export const Icons: ThemeIcons = {
   browserText: <MdOutlineTextFields key="browserText" />,
   browserVideo: <RiFilmFill key="browserVideo" />,
   browserVideoStream: <RiVideoChatFill key="browserVideoStream" />,
-  // chat: <RiChat3Fill key='chat' />,
+  cam: <BsFillCameraVideoFill key="cam" />,
+  camDisabled: <BsCameraVideoOff key="cam-disabled" />,
+  clicking: <BsHandIndexThumbFill key="control" />,
   clip: <MdOutlineTimelapse key="clip" />,
   collapse: <VscTriangleDown key="collapse" />,
   collapsed: <VscTriangleRight key="collapsed" />,
@@ -161,61 +181,59 @@ export const Icons: ThemeIcons = {
   container: <BiBorderOuter key="container" />,
   content: <BiBorderInner key="content" />,
   control: <BiSquareRounded key="control" />,
-  clicking: <BsHandIndexThumbFill key="control" />,
   document: <IoDocument key="document" />,
   effect: <MdInvertColors key="effect" />,
-
   end: <BsSkipEndFill key="end" />,
+  endTrim: <CgArrowLongLeftL key="end-trim" />,
   endUndefined: <BsSkipEnd key="endUndefined" />,
-  gain: <RiVolumeUpLine key="gain" />,
   error: <FaExclamationCircle key='error' />,
   folder: <RiFolderLine key='folder' />,
   folderAdd: <RiFolderAddFill key='folderAdd' />,
   folderOpen: <RiFolderOpenLine key='folderOpen' />,
   frame: <TbArrowBarRight key="frame" />,
   frames: <TbArrowBarToRight key="frames" />,
+  gain: <RiVolumeUpLine key="gain" />,
   height: <TbArrowAutofitHeight key="height" />,
   horz: <GiHorizontalFlip key="horz-flip" />,
   icon: <BsFillCircleFill key='icon' />,
+  import: <TbFileImport key="upload" />,
   inaudible: <RiVolumeMuteLine key='inaudible' />,
   inspector: <RiEdit2Fill key='inspector' />,
   invisible: <RiEyeOffLine key='invisible' />,
   label: <MdLabel key="label" />,
   lock: <HiLockClosed key="lock" />,
-  // matte: <BsReverseLayoutSidebarInsetReverse key="matte" />,
-  // message: <RiMessage3Fill key='message' />,
-  // mm: <MMIcon key="mm" />,
+  mic: <BsFillMicFill key="mic" />,
+  micDisabled: <BsMicMute key="mic-disabled" />,
   mmTube: <MMTubeIcon key="mmTube" />,
   mmWide: <MMWideIcon key="mmWide" />,
+  muted: <RiVolumeMuteLine key="muted" />,
   opacity: <MdOpacity key="opacity" />,
   pause: <RiPauseCircleFill key="pause" />,
   play: <RiPlayCircleFill key="play"/>,
   point: <GiMove key="point" />,
   redo: <RiArrowGoForwardLine key="redo" />,
-  muted: <RiVolumeMuteLine key="muted" />,
+  refresh: <HiRefresh key="refresh" />,
   remove: <RiDeleteBin7Line key="remove" />,
   render: <ImFileVideo key="render" />,
   size: <GiResize key="size" />,
   sizing: <BsAspectRatioFill key="sizing" />,
+  speed: <MdOutlineSpeed key="speed" />,
   start: <BsSkipStartFill key="start" />,
+  startTrim: <CgArrowLongRightL key="start-trim" />,
   streamCached: <BsRssFill key='streamer-cached' />,
   streamUncached: <BsRss key='streamer-uncached' />,
-  // streamers: <FaUserCircle key='streamers' />,
   timeline: <MdOutlineTimelapse key='timeline' />,
   timing: <AiOutlineColumnWidth key="timing" />,
-  startTrim: <CgArrowLongRightL key="start-trim" />,
-  speed: <MdOutlineSpeed key="speed" />,
-  endTrim: <CgArrowLongLeftL key="end-trim" />,
   track: <RiStackLine key="track" />,
   trackDense: <RiStackFill key="track-dense"/>,
   undo: <RiArrowGoBackLine key="undo" />,
   unlock: <HiLockOpen key="unlock" />,
-  import: <TbFileImport key="upload" />,
   vert: <GiVerticalFlip key="vert" />,
-  // video: <RiArrowRightSLine key="video" />,
   view: <HiEye key="view" />,
-  // visible: <RiEyeLine key='visible' />,
   width: <TbArrowAutofitWidth key="width" />,
+  webrtc: <CiStreamOn key="webrtc"/>,
+  webrtcPreview: <MdCastConnected key="webrtc-preview"/>,
+  webrtcOptions: <CgOptions key="webrtc-options"/>,
   zoomLess: <TiZoomOutOutline key="zoom-less" />,
   zoomMore: <TiZoomInOutline key="zoom-more" />,
 }

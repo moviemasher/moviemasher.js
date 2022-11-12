@@ -5,20 +5,26 @@ import { Stream, Writable } from 'stream'
 
 export interface SocketCallback { (_: Socket): void }
 
-const SocketStreamsDir = "./temporary/streams/Sockets"
+const SocketStreamsDir = "/tmp/ss"// "./temporary/streams/sockets"
 
 export class StreamUnix {
   constructor(stream: Stream, id: string, onSocket: SocketCallback, type = 'stream') {
     // console.log("UnixStream", id, type)
     this.id = id
     this.type = type
+    // const { url } = stream
     try { // to delete previous file
       fs.mkdirSync(this.socketDir, { recursive:true })
       fs.statSync(this.socketDir)
       fs.statSync(this.socketPath)
       fs.unlinkSync(this.socketPath)
-    } catch (err) {}
+    } catch (err) {
+      // console.log(this.constructor.name, "ERROR", err)
+    }
+    // fs.writeFileSync(this.socketPath, "")
     const server = net.createServer(onSocket)
+    this.server = server
+    
     stream.on('finish', () => {
       // console.log(this.constructor.name, "finish")
       server.close()
@@ -27,9 +33,11 @@ export class StreamUnix {
       console.error(this.constructor.name, "error", error)
       server.close()
     })
-    // console.log("socketPath", this.socketPath)
+    console.log(this.constructor.name, "socketPath", this.socketPath)
     server.listen(this.socketPath)
   }
+
+  server: net.Server
 
   id: string
 
@@ -38,7 +46,7 @@ export class StreamUnix {
   }
 
   get socketPath(): string {
-    return `${this.socketDir}/${this.id}.sock`
+    return `${this.socketDir}/${this.id}`
   }
 
   type: string

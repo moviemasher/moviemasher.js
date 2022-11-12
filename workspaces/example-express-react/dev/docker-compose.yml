@@ -12,6 +12,7 @@ services:
     ports:
       - "8570:8570"
       - "8571:8571"
+      - "10000-10100:10000-10100"
     volumes:
       - ../src/index.html:/home/node/app/workspaces/example-express-react/host/public/index.html
       - ../../../dev/shared:/home/node/app/workspaces/example-express-react/host/public/media/shared
@@ -32,4 +33,3 @@ services:
       - ../../../temporary/express-react/temporary:/home/node/app/temporary
       - ../../../node_modules/react/umd/react.development.js:/home/node/app/workspaces/example-express-react/host/public/react.development.js
       - ../../../node_modules/react-dom/umd/react-dom.development.js:/home/node/app/workspaces/example-express-react/host/public/react-dom.development.js
-      

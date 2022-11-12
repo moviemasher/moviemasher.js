@@ -59,6 +59,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   delete: ServerHandler<StreamingDeleteResponse, StreamingDeleteRequest> = (req, res) => {
     const { id } = req.body
+    console.log(this.constructor.name, "delete", id)
     const connection = WebrtcConnection.getConnection(id)
     if (!connection) {
       res.send({ error: `no connection ${id}` })
@@ -93,10 +94,10 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
     const request = req.body
-    console.log(Endpoints.streaming.remote, 'request', request)
 
     const { id, localDescription } = request
     const connection = WebrtcConnection.getConnection(id)
+    console.log(Endpoints.streaming.remote, 'request', id, !!connection)
     if (!connection) {
       res.send({ error: `no connection ${id}` })
       return
@@ -242,6 +243,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     super.startServer(app, activeServers)
     this.fileServer = activeServers.file
 
+
     app.post(Endpoints.streaming.start, this.start)
     app.post(Endpoints.streaming.preload, this.preload)
     app.post(Endpoints.streaming.status, this.status)
@@ -252,6 +254,10 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     app.post(Endpoints.streaming.webrtc, this.webrtc)
     app.post(Endpoints.streaming.delete, this.delete)
 
+    app.get('/motion/:id', (req, res) => {
+      
+      res.send(`<html></html>`)
+    })
     app.get('/webrtc/:id', (req, res) => {
       // console.log('GET webrtc/:id')
       const { id } = req.params
@@ -331,7 +337,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       }
       case StreamingFormat.Rtmp:
       default: {
-        paths.push(path.resolve(formatOptions.directory, id, formatOptions.file))
+        if (formatOptions) paths.push(path.resolve(formatOptions.directory, id, formatOptions.file))
         break
       }
     }
@@ -351,11 +357,11 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
       const request = req.body
       console.log(Endpoints.streaming.webrtc, 'request', request)
-      const hlsFormatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
-      const connection = WebrtcConnection.create(idUnique(), this.args.webrtcStreamingDir, hlsFormatOptions.commandOutput)
+      const formatOptions = this.args.streamingFormatOptions[StreamingFormat.Hls]
+      const connection = WebrtcConnection.create(idUnique(), this.args.webrtcStreamingDir, formatOptions.commandOutput)
 
       await connection.doOffer()
-
+      
       const { localDescription, id } = connection
       if (!localDescription) {
         res.send({ error: 'could not create connection' })

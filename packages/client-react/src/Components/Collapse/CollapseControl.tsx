@@ -6,8 +6,8 @@ import { View } from "../../Utilities/View"
 export interface CollapseControlProps extends PropsWithChildren, WithClassName {}
 
 export function CollapseControl(props: CollapseControlProps): ReactResult {
-  const panelContext = React.useContext(CollapseContext)
-  const { collapsed, changeCollapsed: setCollapsed } = panelContext
+  const collapseContext = React.useContext(CollapseContext)
+  const { collapsed, changeCollapsed: setCollapsed } = collapseContext
   const viewProps = { 
     ...props, 
     onClick: () => { setCollapsed(!collapsed) },

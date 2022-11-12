@@ -1,6 +1,39 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <title>Movie Masher Motion</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    
+    <style>
+      body {
+        margin: 0px; padding: 0px; font-family: sans-serif; 
+        width: 100vw; height: 100vh; 
+        text-align: center;
+        /* background-color: gray; */
+      }
+      div {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* opacity: 50%; */
+        background-color: paleturquoise;
+        width: 1920px; height: 1080px;
+        font-size: 10vh;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <div>ffmpeg -hide_banner -re -f lavfi -i color=color=#FFFF00:size=1920x1080:rate=30: -pix_fmt yuv420p -vsync 1 -threads 0 -vcodec libx264 -r 30 -g 60 -sc_threshold 0 -b:v 128k -bufsize 256k -maxrate 256k -preset veryfast -profile:v baseline -tune film -f rtp_mpegts rtp://54.82.176.97:8579</div>
+  </body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
     <title>Movie Masher Express React Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>

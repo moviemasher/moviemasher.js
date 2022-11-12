@@ -16,6 +16,7 @@ export default {
     sourcemap: false,
     globals: { 
       react: 'React',
+      'amazon-ivs-web-broadcast': 'IVSBroadcastClient',
       'react-dom/client': 'ReactDOM',
       '@moviemasher/client-react': 'MovieMasherClient',
       '@moviemasher/moviemasher.js': 'MovieMasher',

@@ -25,10 +25,8 @@ export function Browser(props: BrowserProps): ReactResult {
   const [typesObject, setTypesObject] = React.useState<DefinitionTypesObject>({})
   const editorContext = React.useContext(MasherContext)
   const { changeDefinition } = editorContext
-  const [ picked, setPicked] = React.useState(initialPicked) 
-  
   const [refresh] = useRefresh()
-
+  const [ picked, setPicked] = React.useState(initialPicked) 
   const pick = (id: string) => {
     assertPopulatedString(id)
     changeDefinition()

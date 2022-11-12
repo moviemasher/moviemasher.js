@@ -16,6 +16,7 @@ import textContainer from "../Definitions/DefinitionObjects/container/text.json"
 import fireContainer from "../Definitions/DefinitionObjects/container/fire.json"
 import flagContainer from "../Definitions/DefinitionObjects/container/flag.json"
 import ovalContainer from "../Definitions/DefinitionObjects/container/oval.json"
+import mmContainer from "../Definitions/DefinitionObjects/container/mm.json"
 
 export const containerDefaults = [
   new TextContainerDefinitionClass(textContainer),
@@ -27,6 +28,7 @@ export const containerDefaults = [
   new ShapeContainerDefinitionClass(cloudContainer),
   new ShapeContainerDefinitionClass(fireContainer),
   new ShapeContainerDefinitionClass(flagContainer),
+  new ShapeContainerDefinitionClass(mmContainer),
   new ShapeContainerDefinitionClass(appleContainer),
 ]
 

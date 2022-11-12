@@ -2,33 +2,30 @@ import React from "react"
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
 import { ApiContext } from "../ApiClient/ApiContext"
-import { ProcessContext } from "../../Contexts/ProcessContext"
-import { WebrtcContext } from "../../Contexts/WebrtcContext"
+import { WebrtcContext } from "./WebrtcContext"
 import { WebrtcClient } from "./WebrtcClient"
 import { View } from "../../Utilities/View"
 
 export function WebrtcButton(props: PropsWithChildren): ReactResult {
   const webrtcContext = React.useContext(WebrtcContext)
-  const processContext = React.useContext(ProcessContext)
+  
   const apiContext = React.useContext(ApiContext)
 
-  const { setStatus, processing, setProcessing } = processContext
   const { endpointPromise } = apiContext
-  const { client, setClient } = webrtcContext
+  const { client, setClient, broadcasting, setBroadcasting, mediaStream } = webrtcContext
 
   const onClick = () => {
-    if (client) {
-      setStatus("Closing WebRTC connection")
-      client.closeConnection()
-      setProcessing(false)
+    if (broadcasting) {
+      console.log("WebrtcButton onClick closing WebRTC connection")
+      client?.closeConnection()
+      setBroadcasting(false)
       setClient(undefined)
     } else {
-      const client = new WebrtcClient(endpointPromise, setStatus)
-
-      setStatus("Opening WebRTC connection...")
+      console.log("WebrtcButton onClick opening WebRTC connection...", mediaStream?.id)
+      const client = new WebrtcClient(endpointPromise, mediaStream)
       client.createConnection().then(() => {
-        setStatus("Opened WebRTC connection")
-        setProcessing(true)
+        console.log("WebrtcButton onClick.createConnection opened WebRTC connection")
+        setBroadcasting(true)
         setClient(client)
       })
     }

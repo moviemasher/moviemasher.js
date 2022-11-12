@@ -8,7 +8,7 @@
   "videoCodec": "libx264",
   "audioChannels": 2,
   "audioRate": 44100,
-  "format": "flv",
+  "format": "rtp_mpegts",
   "extension": "flv",
   "streamingFormat": "rtmp",
   "options": {
