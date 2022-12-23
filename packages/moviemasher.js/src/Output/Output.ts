@@ -5,6 +5,7 @@ import { Mash, Mashes } from "../Edited/Mash/Mash"
 import { StreamingDescription } from "../Api/Streaming"
 import { Time } from "../Helpers/Time/Time"
 import { Size } from "../Utility/Size"
+import { GraphFiles } from "../MoveMe"
 
 export interface CommandOutput extends UnknownObject, Partial<Size> {
   audioBitrate?: Value
@@ -59,6 +60,8 @@ export interface RenderingOutput {
   startTime: Time
   /** supplied time or mash.endTime, but undefined for image outputs  */
   endTime?: Time
+  /** files needed to determine mash duration */
+  durationGraphFiles: GraphFiles 
 }
 
 

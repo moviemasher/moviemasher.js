@@ -2,24 +2,26 @@ import fs from 'fs'
 import path from 'path'
 
 import {
-  Mash, mashInstance, OutputFactory,
   RenderingOutput, RenderingOutputArgs, Errors, CommandFilters,
   RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType,
-  EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, CommandInput, RenderingDescription, AVType, CommandInputs,
-  Defined,
-  assertTrue,
-  ExtTs, assertSize, isDefined, isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, idGenerateString, assertLoadType
+  EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, 
+  CommandInput, RenderingDescription, AVType, CommandInputs,
+  Defined, renderingCommandOutputs, assertTrue, ExtTs, assertSize, isDefined, 
+  isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, 
+  Mash, mashInstance, OutputFactory, idGenerateString, assertLoadType
 } from "@moviemasher/moviemasher.js"
+
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
-} from '../../../Setup/Constants'
-import { runningCommandInstance } from "../../../RunningCommand/RunningCommandFactory"
+} from '../Setup/Constants'
+import { NodeLoader } from '../Utilities/NodeLoader'
+import { commandArgsString } from '../Utilities/Command'
+import { renderingOutputFile } from '../Utilities/Rendering'
+
+import { Probe } from '../Command/Probe/Probe'
 import { RenderingProcess, RenderingProcessArgs, RunResult } from "./RenderingProcess"
-import { NodeLoader } from '../../../Utilities/NodeLoader'
-import { CommandResult } from '../../../RunningCommand/RunningCommand'
-import { Probe } from '../../../Command/Probe'
-import { renderingCommandOutputs, renderingOutputFile } from '../../../Utilities/Rendering'
-import { commandArgsString } from '../../../Utilities/Command'
+import { runningCommandInstance } from '../RunningCommand/RunningCommandFactory'
+import { CommandResult } from '../RunningCommand/RunningCommand'
 
 export type RenderingProcessConcatFileDuration = [string, number]
 

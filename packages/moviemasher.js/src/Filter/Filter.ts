@@ -1,6 +1,6 @@
 import {
-  GenericFactory, ScalarObject, SvgItem, SvgFilters} from "../declarations"
-import { CommandFilters, FilterArgs, FilterCommandFilterArgs, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe";
+  GenericFactory, ScalarObject, SvgItem, SvgFilters, SvgItems} from "../declarations"
+import { CommandFiles, CommandFilters, FilterArgs, FilterCommandFileArgs, FilterCommandFilterArgs, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe";
 import { Parameter, ParameterObject } from "../Setup/Parameter";
 import { Definition, DefinitionObject } from "../Definition/Definition";
 import { Instance, InstanceObject } from "../Instance/Instance";
@@ -16,17 +16,19 @@ export interface Filter extends Instance {
   commandFilters(args: FilterCommandFilterArgs): CommandFilters
   definition : FilterDefinition
   parametersDefined: Parameter[]
-  filterSvg(args?: FilterArgs): SvgItem
+  filterSvgs(args?: FilterArgs): SvgItems
   filterSvgFilter(): SvgFilters
   scalarObject(tweening?: boolean): ScalarObject
+  commandFiles(args: FilterCommandFileArgs): CommandFiles
 }
 export type Filters = Filter[]
 
 export interface FilterDefinition extends Definition {
+  commandFiles(args: FilterDefinitionCommandFileArgs): CommandFiles
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters
   instanceFromObject(object?: FilterObject): Filter
   parameters: Parameter[]
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem
+  filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems
   filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters
 }
 

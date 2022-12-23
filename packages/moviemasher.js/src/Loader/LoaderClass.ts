@@ -5,7 +5,7 @@ import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { assertLoaderType, Loaded, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
 import { Definition, isDefinition } from "../Definition/Definition"
-import { assertObject, assertPopulatedString, isAboveZero, isObject, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
+import { assertObject, assertPopulatedString, isAboveZero, isArray, isObject, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { FontDefinition, isFontDefinition } from "../Media/Font/Font"
@@ -25,48 +25,13 @@ export class LoaderClass implements Loader {
 
   protected browsing = true
   
-  protected cacheGet(graphFile: GraphFile, createIfNeeded?: boolean): LoaderCache | undefined {
-    const key = this.key(graphFile)
-    const cacheKey = this.cacheKey(graphFile)
-    const found = this.loaderCache.get(cacheKey)
-    if (found ||!createIfNeeded) return found
-
-    const { definition, type } = graphFile
-    const definitions: Definition[] = []
-    if (isDefinition(definition)) definitions.push(definition)
-    const cache: LoaderCache = { loaded: false, definitions }
-    this.cacheSet(cacheKey, cache)
-    cache.promise = this.cachePromise(key, graphFile, cache).then(loaded => {
-      cache.loaded = true
-      cache.result = loaded
-      return loaded
-    }).catch(error => {
-      // console.log(this.constructor.name, "cacheGet.cachePromise", error, error.constructor.name)
-      cache.error = error
-      cache.loaded = true
-      return error
-    })
-    return cache
-  }
-
-  private cacheKey(graphFile: GraphFile): string {
+  protected cacheKey(graphFile: GraphFile): string {
     const { type } = graphFile
     const key = this.key(graphFile)
     return`${type}:/${key}`
   }
 
-  protected cachePromise(key: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
-    const cacheKey = this.cacheKey(graphFile)
-    const loaderFile: LoaderFile = {
-      loaderPath: cacheKey, urlOrLoaderPath: key, loaderType: graphFile.type
-    }
-    return this.filePromise(loaderFile)
-  }
 
-  private cacheSet(graphFile: GraphFile | string, cache: LoaderCache) {
-    const key = isString(graphFile) ? graphFile: this.cacheKey(graphFile) 
-    this.loaderCache.set(key, cache)
-  }
 
   endpoint: Endpoint
 
@@ -94,11 +59,6 @@ export class LoaderClass implements Loader {
     assertObject(file)
     return this.loaderCache.get(file.loaderPath)
   }
-
-  getError(graphFile: GraphFile): any {
-    return this.cacheGet(graphFile)?.error
-  }
-  
 
   private getLoaderCache(file: LoaderFile, createIfNeeded?: boolean, definition?: Definition): LoaderCache | undefined {
     const { loaderPath, loaderType } = file
@@ -160,6 +120,7 @@ export class LoaderClass implements Loader {
     // console.log(this.constructor.name, "lastCssUrl", string, url)
     return url
   }
+
   loadFilesPromise(graphFiles: GraphFiles): Promise<void> {
     const promises = graphFiles.map(file => 
       this.loadGraphFilePromise(file)
@@ -173,47 +134,51 @@ export class LoaderClass implements Loader {
     return this.loadPromise(url, definition)
   }
 
-  loadPromise(urlPath: string, definition?: Definition): Promise<any> {
-    // console.log(this.constructor.name, "loadPromise", urlPath)
-    const cache = this.loaderCache.get(urlPath)
-    if (cache) {
-      const { promise, result, loaded, error } = cache
-      if (loaded || error) {
-        // console.log(this.constructor.name, "loadPromise FOUND", error ? 'ERROR' : 'RESULT', urlPath)
-        return Promise.resolve(result)
+  loadPromise(urlPath: string | string[], definition?: Definition): Promise<any> {
+    const wasArray = isArray(urlPath)
+    const urls = wasArray ? urlPath : [urlPath]
+    const promises = urls.map(urlPath => {
+      // console.log(this.constructor.name, "loadPromise", urlPath)
+      const cache = this.loaderCache.get(urlPath)
+      if (cache) {
+        const { promise, result, loaded, error } = cache
+        if (loaded || error) {
+          // console.log(this.constructor.name, "loadPromise FOUND", error ? 'ERROR' : 'RESULT', urlPath)
+          return Promise.resolve(result)
+        }
+        // console.log(this.constructor.name, "loadPromise FOUND PROMISE", urlPath)
+        assertObject(promise)
+        return promise
       }
-      // console.log(this.constructor.name, "loadPromise FOUND PROMISE", urlPath)
-      assertObject(promise)
-      return promise
-    }
 
-    const files = this.parseUrlPath(urlPath)
-    files.reverse()
-    // console.log(this.constructor.name, "loadPromise START", files.map(file => file.urlOrLoaderPath))
-    const file = files.shift()
-    assertObject(file)
-    let promise = this.loaderFilePromise(file, definition)
-    files.forEach(file => { 
-      promise = promise.then(() => {
-        return this.loaderFilePromise(file)
+      const files = this.parseUrlPath(urlPath)
+      files.reverse()
+      // console.log(this.constructor.name, "loadPromise START", files.map(file => file.urlOrLoaderPath))
+      const file = files.shift()
+      assertObject(file)
+      let promise = this.loaderFilePromise(file, definition)
+      files.forEach(file => { 
+        promise = promise.then(() => {
+          return this.loaderFilePromise(file)
+        })
       })
+      return promise.then(something => {
+        // console.log(this.constructor.name, "loadPromise FINISH returning", something?.constructor.name)
+        return something
+      })  
     })
-    return promise.then(something => {
-      // console.log(this.constructor.name, "loadPromise FINISH returning", something?.constructor.name)
-      return something
-    })
+    return wasArray ? Promise.all(promises) : promises[0]
   }
 
-  loadedFile(graphFile: GraphFile): boolean {
-    const file = this.cacheGet(graphFile)
-    return !!file?.loaded
+  loaded(urlPath: string): boolean {
+    const info = this.info(urlPath)
+    return !!info
   }
 
-  private loaderCache = new Map<string, LoaderCache>()
+  protected loaderCache = new Map<string, LoaderCache>()
 
 
   private loaderFilePromise(file: LoaderFile, definition?: Definition): Promise<any> {
-        
     // const { loaderType, options, urlOrLoaderPath, loaderPath } = file
     let cache = this.getLoaderCache(file, true, definition)
     assertObject(cache)
@@ -259,12 +224,15 @@ export class LoaderClass implements Loader {
   }
 
   sourceUrl(graphFile: GraphFile): string {
-    const cache = this.cacheGet(graphFile)
-    if (!cache?.loaded) return this.key(graphFile)
+    const key = this.key(graphFile)
+    const cacheKey = this.cacheKey(graphFile)
+    const cache = this.loaderCache.get(cacheKey)
+    if (!cache?.loaded) return key
 
     const { type } = graphFile
     const { result } = cache
     assertObject(result)
+
     switch (type) {
       case LoadType.Image:
       case LoadType.Video: return (result as LoadedImageOrVideo).src
@@ -337,13 +305,6 @@ export class LoaderClass implements Loader {
     this.updateCache(cache, info)
   }
   
-  protected updateDefinitions(graphFile: GraphFile, info: LoadedInfo) {
-    // console.log(this.constructor.name, "updateDefinitions", graphFile.file, info)
-
-    const cache = this.cacheGet(graphFile)
-    assertObject(cache)
-    this.updateCache(cache, info)
-  }
 
   videoPromise(url: string): Promise<LoadedVideo> {
     return new Promise<LoadedVideo>((resolve, reject) => {

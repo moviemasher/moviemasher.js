@@ -1,0 +1,55 @@
+version: "3"
+networks:
+  default:
+    name: moviemasher-example-postgres-react
+services:
+  moviemasher-example-postgres-react:
+    build:
+      dockerfile: ../../../dev/image/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/moviemasher.js:5.1.2
+    container_name: moviemasher-example-postgres-react-8570
+    ports:
+      - "8570:8570"
+      - "8571:8571"
+      - "10000-10100:10000-10100"
+    volumes:
+      - ../src/index.html:/home/node/app/workspaces/example-express-react/host/public/index.html
+      - ../../../dev/shared:/home/node/app/workspaces/example-express-react/host/public/media/shared
+      - ../host/public/index.js:/home/node/app/workspaces/example-express-react/host/public/index.js
+      - ../../../packages/server-express/cjs/server-express.js:/home/node/app/packages/server-express/cjs/server-express.min.js
+      - ../../../packages/moviemasher.js/esm:/home/node/app/packages/moviemasher.js/esm
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/home/node/app/packages/moviemasher.js/umd/moviemasher.min.js
+      - ../../../packages/server-express/package.json:/home/node/app/packages/server-express/package.json
+      - ../../../packages/theme-default/moviemasher.css:/home/node/app/workspaces/example-express-react/host/public/moviemasher.css
+      - ../../../packages/moviemasher.js/package.json:/home/node/app/packages/moviemasher.js/package.json
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/home/node/app/workspaces/example-express-react/host/public/moviemasher.js
+      - ../../../packages/moviemasher.js/umd/moviemasher.min.js:/home/node/app/workspaces/example-express-react/host/public/moviemasher.min.js
+      - ../../../packages/client-react/umd/client-react.js:/home/node/app/workspaces/example-express-react/host/public/client-react.js
+      - ../../../packages/client-react/umd/client-react.min.js:/home/node/app/workspaces/example-express-react/host/public/client-react.min.js
+      - ../../../packages/theme-default/umd/theme-default.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.js
+      - ../../../packages/theme-default/umd/theme-default.min.js:/home/node/app/workspaces/example-express-react/host/public/theme-default.min.js
+      - ../../../temporary/express-react/media:/home/node/app/workspaces/example-express-react/host/public/media
+      - ../../../temporary/express-react/temporary:/home/node/app/temporary
+      - ../../../node_modules/react/umd/react.development.js:/home/node/app/workspaces/example-express-react/host/public/react.development.js
+      - ../../../node_modules/react-dom/umd/react-dom.development.js:/home/node/app/workspaces/example-express-react/host/public/react-dom.development.js
+  server:
+    image: postgrest/postgrest
+    ports:
+      - "3000:3000"
+    environment:
+      PGRST_DB_URI: postgres://app_user:password@db:5432/app_db
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
+    depends_on:
+      - db
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: password
+  # Uncomment this if you want to persist the data.
+  # volumes:
+  #   - "./pgdata:/var/lib/postgresql/data"

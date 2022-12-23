@@ -4,11 +4,6 @@
   flex-grow: 1;
 }
 
-.moviemasher .editor .panel.inspector .head {
-  grid-auto-flow: column;
-  grid-template-columns: 1fr repeat(2, min-content);
-}
-
 .moviemasher .editor .panel.inspector .content fieldset {
   width: 100%;
   max-width: 100%;

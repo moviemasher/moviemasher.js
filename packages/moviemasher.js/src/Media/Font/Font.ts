@@ -1,5 +1,5 @@
 import { GenericFactory } from "../../declarations"
-import { GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { PreloadArgs, GraphFiles } from "../../MoveMe"
 import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
 import { Instance, InstanceObject } from "../../Instance/Instance"
 import { DefinitionType } from "../../Setup/Enums"
@@ -8,7 +8,8 @@ export type FontObject = InstanceObject
 
 export interface Font extends Instance {
   definition: FontDefinition
-  fileUrls(args: GraphFileArgs): GraphFiles
+  graphFiles(args: PreloadArgs): GraphFiles
+  preloadUrls(args: PreloadArgs): string[]
 }
 
 export interface FontDefinitionObject extends DefinitionObject {
@@ -21,7 +22,8 @@ export interface FontDefinition extends Definition {
   source: string
   family: string
   url: string
-  fileUrls(args: GraphFileArgs): GraphFiles
+  graphFiles(args: PreloadArgs): GraphFiles
+  preloadUrls(args: PreloadArgs): string[]
 }
 export const isFontDefinition = (value: any): value is FontDefinition => {
   return isDefinition(value) && value.type === DefinitionType.Font

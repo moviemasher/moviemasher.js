@@ -1,5 +1,5 @@
-import { ScalarObject, SvgItem, SvgFilters, ValueObject } from "../declarations"
-import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
+import { ScalarObject, SvgItem, SvgFilters, ValueObject, SvgItems } from "../declarations"
+import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
 import { DataType, DefinitionType } from "../Setup/Enums"
 import { Parameter } from "../Setup/Parameter"
 import { DefinitionBase } from "../Definition/DefinitionBase"
@@ -12,6 +12,10 @@ import { Size } from "../Utility/Size"
 import { colorWhiteTransparent } from "../Utility/Color"
 
 export class FilterDefinitionClass extends DefinitionBase implements FilterDefinition {
+  commandFiles(args: FilterDefinitionCommandFileArgs): CommandFiles {
+    return []
+  }
+  
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const { filter, duration, filterInput } = args
     assertPopulatedString(filterInput)
@@ -39,7 +43,7 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
     return this._ffmpegFilter ||= this.id.split('.').pop() || this.id
   }
 
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem {
+  filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems {
     throw new Error(Errors.unimplemented + 'initialSvgContent')
   }
 
@@ -58,21 +62,6 @@ export class FilterDefinitionClass extends DefinitionBase implements FilterDefin
 
   filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
     throw Errors.unimplemented
-  }
-
-  protected colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
-    const { width, height } = dimensions
-    const transparentFilter = 'color'
-    const transparentId = idGenerate(transparentFilter)
-    const object: ValueObject = { color, size: `${width}x${height}` }
-    if (videoRate) object.rate = videoRate
-    if (duration) object.duration = duration
-    const commandFilter: CommandFilter = {
-      inputs: [], ffmpegFilter: transparentFilter, 
-      options: object,
-      outputs: [transparentId]
-    }
-    return commandFilter
   }
 
   type = DefinitionType.Filter

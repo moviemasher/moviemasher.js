@@ -6,7 +6,7 @@ import { Defined } from "../../../../Base/Defined"
 import { assertContent, Content, ContentObject, isContent } from "../../../../Content/Content"
 import { Property } from "../../../../Setup/Property"
 import { PreviewItems, Scalar, SvgItems, SvgOrImage, UnknownObject } from "../../../../declarations"
-import { GraphFileArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
+import { PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
 import { SelectedItems } from "../../../../Utility/SelectedProperty"
 import { ActionType, DataType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
 import { Actions } from "../../../../Editor/Actions/Actions"
@@ -72,14 +72,14 @@ export class ClipClass extends InstanceBase implements Clip {
     return this.mutable
   }
 
-  clipFileUrls(args: GraphFileArgs): GraphFiles {
+  clipGraphFiles(args: PreloadArgs): GraphFiles {
     const files: GraphFiles = []
     const { quantize } = args
     const { content, container, frames } = this
     if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
-    if (container) files.push(...container.fileUrls(args))
+    if (container) files.push(...container.graphFiles(args))
     
-    files.push(...content.fileUrls(args))
+    files.push(...content.graphFiles(args))
     return files
   }
 
@@ -330,8 +330,31 @@ export class ClipClass extends InstanceBase implements Clip {
       files.push(container.intrinsicGraphFile(options))
     }
     return files
-    
   }
+
+  // intrinsicUrls(options: IntrinsicOptions): string[] {
+  //   const { content, container } = this
+  //   const urls: string[] = []
+  //   if (!content.intrinsicsKnown(options)) {
+  //     urls.push(...content.intrinsicUrls(options))
+  //   }
+  //   if (container && !container.intrinsicsKnown(options)) {
+  //     urls.push(...container.intrinsicUrls(options))
+  //   }
+  //   return urls
+  // }
+
+  preloadUrls(args: PreloadArgs): string[] {
+    const files: string[] = []
+    const { quantize } = args
+    const { content, container, frames } = this
+    if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
+    if (container) files.push(...container.preloadUrls(args))
+    
+    files.push(...content.preloadUrls(args))
+    return files
+  }
+
 
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 

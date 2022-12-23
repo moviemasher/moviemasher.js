@@ -68,3 +68,14 @@
 .moviemasher .editor .composer .content .layer label  {
   white-space: nowrap;
 }
+
+
+
+.moviemasher .editor .composer.panel .button.disabled:hover,
+.moviemasher .editor .composer.panel .button.disabled,
+.moviemasher .editor .composer.panel button:disabled {
+  color: var(--fore-primary-demote);
+  border-color: var(--fore-primary-demote);
+  background-color: var(--back-primary-demote);
+}
+

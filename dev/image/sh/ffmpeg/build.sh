@@ -3,7 +3,7 @@ set -e ;
 source dev/image/sh/ffmpeg/options.sh ;
 
 ENABLE='--enable-librsvg --enable-libopenjpeg --enable-frei0r --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libspeex --enable-libtheora --enable-libvorbis --enable-libx264 --enable-zlib --enable-libxvid --enable-libvpx --enable-libopus --enable-postproc --enable-pthreads --enable-version3 --enable-gpl --enable-swresample'
-$SUDO ldconfig ;
+$SUDO /sbin/ldconfig $PREFIX/lib ;
 
 cd $SRC ;
 curl --silent -O -L https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.gz ;

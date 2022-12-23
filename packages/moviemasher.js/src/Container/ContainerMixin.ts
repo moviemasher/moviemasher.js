@@ -121,17 +121,10 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       svgSetChildren(div, [video])
         
       items.push(div)
-      
-    
-      
-             return Promise.resolve(items)
-
+      return Promise.resolve(items)
     }
 
     containedContent(content: Content, containerRect: Rect, size: Size, time: Time, range: TimeRange, icon?: boolean): Promise<PreviewItems> {
-      const updatableContainer = isUpdatableSize(this)
-      const updatableContent = isUpdatableSize(content)
-      
       const contentPromise = content.contentPreviewItemPromise(containerRect, time, range, icon)
       const containedPromise = contentPromise.then(contentItem => {
         assertObject(contentItem)
@@ -147,7 +140,9 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           const defs: SvgItems = []
           // TODO: make luminance a property of container...
           const luminance = true
-
+          const updatableContainer = isUpdatableSize(this)
+          const updatableContent = isUpdatableSize(content)
+          
           defs.push(containerItem)
           let containerId = idGenerateString() 
           if (updatableContainer && !icon) {
@@ -174,8 +169,8 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
             containerItem.setAttribute('vector-effect', 'non-scaling-stroke;')
             useContainerInMask.setAttribute('fill', colorWhite)
           }
-          const containerSvgFilter = this.containerSvgFilter(containerItem, size, containerRect, time, range)
-          if (containerSvgFilter) defs.push(containerSvgFilter)
+          const svgFilter = this.containerSvgFilter(containerItem, size, containerRect, time, range)
+          if (svgFilter) defs.push(svgFilter)
           else containerItem.removeAttribute('filter')
           const contentSvgFilter = content.contentSvgFilter(contentItem, size, containerRect, time, range)
           if (contentSvgFilter) defs.push(contentSvgFilter)
@@ -280,7 +275,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       return Promise.resolve(this.pathElement(containerRect))
     }
   
-    containerSvgFilter(svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
+    private containerSvgFilter(svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
       const [opacity] = this.tweenValues('opacity', time, clipTime)
       // console.log(this.constructor.name, "containerSvgFilters", opacity)
       if (!isBelowOne(opacity)) return 
@@ -289,7 +284,6 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       opacityFilter.setValue(opacity, 'opacity')
       return svgFilterElement(opacityFilter.filterSvgFilter(), svgItem)
     }
-
 
     declare definition: ContainerDefinition
     

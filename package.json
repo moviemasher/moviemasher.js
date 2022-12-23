@@ -43,8 +43,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "npm-run-all": "^4.1.5",
     "@types/css-font-loading-module": "^0.0.7",
     "@types/expect-puppeteer": "^4.4.7",
     "@types/jest": "^28.0.3",
@@ -52,6 +51,10 @@
     "@types/jest-image-snapshot": "^5.1.0",
     "@types/node": "15.6.1",
     "@types/puppeteer": "^5.4.6",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "typescript": "4.6.4"
+  },
+  "dependencies": {
   }
 }

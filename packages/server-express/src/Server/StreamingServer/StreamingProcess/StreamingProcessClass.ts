@@ -6,9 +6,7 @@ import {
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
-import { RunningCommand } from "../../../RunningCommand/RunningCommand"
-import { runningCommandDelete, runningCommandInstance } from "../../../RunningCommand/RunningCommandFactory"
-import { NodeLoader } from "../../../Utilities/NodeLoader"
+import { RunningCommand, runningCommandDelete, runningCommandInstance, NodeLoader } from "@moviemasher/server-core"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
@@ -23,7 +21,7 @@ export class StreamingProcessClass extends EventEmitter {
   constructor(public args: StreamingProcessArgs) {
     super()
     const { id, commandOutput } = this.args
-    console.log(this.constructor.name, "constructor", commandOutput)
+    // console.log(this.constructor.name, "constructor", commandOutput)
     this.id = id
     this.state = 'open'
   }

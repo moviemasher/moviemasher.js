@@ -2,9 +2,9 @@
   "name": "@moviemasher/moviemasher.js",
   "version": "5.1.2",
   "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
-  "main": "umd/moviemasher.min.js",
-  "module": "esm/moviemasher.js",
-  "types": "esm/moviemasher.d.ts",
+  "main": "./umd/moviemasher.min.js",
+  "module": "./esm/moviemasher.js",
+  "types": "./esm/moviemasher.d.ts",
   "license": "MPL-2.0",
   "author": {
     "name": "Movie Masher",

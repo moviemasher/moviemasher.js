@@ -4,7 +4,7 @@ import { isContentType } from "../Setup/Enums"
 import { throwError } from "../Utility/Throw"
 import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFilterArgs } from "../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../MoveMe"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
 import { EffectObject, Effects } from "../Media/Effect/Effect"
 import { Size } from "../Utility/Size"
@@ -27,14 +27,10 @@ export interface Content extends Tweenable {
   audibleCommandFiles(args: CommandFileArgs): CommandFiles
   audibleCommandFilters(args: CommandFilterArgs): CommandFilters
   contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
-  // contentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect
   contentRects(args: ContentRectArgs): RectTuple 
-
   contentSvgFilter(contentItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined
-  
-
-  effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters 
   effects: Effects
+  effectsCommandFiles(args: VisibleCommandFileArgs): CommandFiles
   itemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
 }
 export const isContent = (value?: any): value is Content => {

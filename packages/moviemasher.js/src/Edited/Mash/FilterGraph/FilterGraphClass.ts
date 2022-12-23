@@ -49,13 +49,13 @@ export class FilterGraphClass implements FilterGraph {
     const { duration, videoRate: rate, background, size } = this
     // console.log(this.constructor.name, this.id, "commandFilterVisible size", size)
     const color = background || colorTransparent
-    const colorCommandFilter: CommandFilter = {
+    const commandFilter: CommandFilter = {
       ffmpegFilter: 'color',
       options: { color, rate, size: `${size.width}x${size.height}` },
       inputs: [], outputs: [FilterGraphInputVisible]
     }
-    if (duration) colorCommandFilter.options.duration = duration
-    return colorCommandFilter
+    if (duration) commandFilter.options.duration = duration
+    return commandFilter
   }
 
   private get commandFilterAudible(): CommandFilter {
@@ -96,7 +96,7 @@ export class FilterGraphClass implements FilterGraph {
     const commandFiles = clips.flatMap(clip => {
       const clipTime = clip.timeRange(quantize)
       const chainArgs: CommandFileArgs = { 
-        time, quantize, visible, outputSize: outputSize, videoRate, clipTime
+        time, quantize, visible, outputSize, videoRate, clipTime
       }
       return clip.clipCommandFiles(chainArgs)
     })
@@ -123,7 +123,8 @@ export class FilterGraphClass implements FilterGraph {
     // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
 
     const chainArgs: CommandFilterArgs = { 
-      videoRate, time, quantize, visible, outputSize, commandFiles, 
+      commandFiles,
+      videoRate, time, quantize, visible, outputSize, 
       chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
     }
     

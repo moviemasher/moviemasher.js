@@ -1,5 +1,5 @@
 import { Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarations"
-import { CommandFilter, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { LoadType } from "../../Setup/Enums"
 import { assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
@@ -60,7 +60,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     gainPairs: number[][] = []
 
-    fileUrls(args: GraphFileArgs): GraphFiles {
+    graphFiles(args: PreloadArgs): GraphFiles {
       const { editing, audible, time } = args
       if (!audible || (editing && !time.isRange)) {
 
@@ -156,6 +156,14 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     mutable() { return this.definition.audio }
     
+    preloadUrls(args: PreloadArgs): string[] {
+      const { editing, audible, time } = args
+      if (!audible || (editing && !time.isRange)) return []
+      if (!(this.mutable() && !this.muted)) return []
+
+      const { definition } = this
+      return [definition.urlAudible(editing)]
+    }
 
     selectedProperty(property: Property): boolean {
       const { name } = property

@@ -20,6 +20,7 @@ import { AlphamergeFilter } from "./Definitions/AlphamergeFilter"
 import { TrimFilter } from "./Definitions/TrimFilter"
 import { TextFilter } from "./Definitions/TextFilter"
 import { ColorizeFilter } from "./Definitions/ColorizeFilter"
+import { RippleFilter } from "./Definitions/Ripple"
 
 export const FilterIdPrefix = `${IdPrefix}filter.`
 
@@ -35,6 +36,7 @@ export const filterDefaults = [
   new OpacityFilter({ id: `${FilterIdPrefix}opacity` }),
   new OverlayFilter({ id: `${FilterIdPrefix}overlay` }),
   new ScaleFilter({ id: `${FilterIdPrefix}scale` }),
+  new RippleFilter({ id: `${FilterIdPrefix}ripple` }),
   new SetptsFilter({ id: `${FilterIdPrefix}setpts` }),
   new SetsarFilter({ id: `${FilterIdPrefix}setsar` }),
   new TrimFilter({ id: `${FilterIdPrefix}trim` }),

@@ -9,7 +9,7 @@ import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
 import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent } from "../../Utility/Color"
 import { ColorizeFilter } from "./ColorizeFilter"
-import { sizesEqual } from "../../Utility/Size"
+import { Size, sizesEqual } from "../../Utility/Size"
 
 /**
  * @category Filter
@@ -53,6 +53,23 @@ export class TextFilter extends ColorizeFilter {
     }))
     this.populateParametersFromProperties()
   }
+
+
+  private colorCommandFilter(dimensions: Size, videoRate = 0, duration = 0, color = colorWhiteTransparent): CommandFilter {
+    const { width, height } = dimensions
+    const transparentFilter = 'color'
+    const transparentId = idGenerate(transparentFilter)
+    const object: ValueObject = { color, size: `${width}x${height}` }
+    if (videoRate) object.rate = videoRate
+    if (duration) object.duration = duration
+    const commandFilter: CommandFilter = {
+      inputs: [], ffmpegFilter: transparentFilter, 
+      options: object,
+      outputs: [transparentId]
+    }
+    return commandFilter
+  }
+
 
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters {
     const commandFilters:CommandFilters = []

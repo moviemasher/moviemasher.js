@@ -1,6 +1,6 @@
 import { PreviewItems, SvgItem, UnknownObject } from "../declarations"
 import { assertSizeAboveZero, Size, SizeZero } from "../Utility/Size"
-import { GraphFileOptions, GraphFiles } from "../MoveMe"
+import { PreloadOptions, GraphFiles } from "../MoveMe"
 import { SelectedItems } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
@@ -70,7 +70,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   protected emitterChanged() { }
 
-  editedGraphFiles(args: GraphFileOptions): GraphFiles { return [] }
+  editedGraphFiles(args: PreloadOptions): GraphFiles { return [] }
 
   icon = ''
 
@@ -91,7 +91,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   declare label: string
 
-  loadPromise(args?: GraphFileOptions): Promise<void> { throw Errors.unimplemented }
+  loadPromise(args?: PreloadOptions): Promise<void> { throw Errors.unimplemented }
 
   get loading(): boolean { return false }
 
@@ -114,7 +114,9 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   selectedItems(actions: Actions): SelectedItems { return [] }
 
-  previewItems(options: PreviewOptions): Promise<PreviewItems> { throw Errors.unimplemented }
+  previewItemsPromise(editor?: Editor): Promise<PreviewItems> {
+     throw Errors.unimplemented 
+  }
   
   toJSON(): UnknownObject {
     const json = super.toJSON()

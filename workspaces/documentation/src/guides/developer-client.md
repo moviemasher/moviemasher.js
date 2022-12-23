@@ -119,6 +119,24 @@ We are also setting the preview dimensions here, to their defaults for demonstra
 The client package is optimized to work with the [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express) package, but this is not a requirement. Server interactions are encapsulated by the [[ApiClient]] component which is typically used as the 
 root component wrapping the entire application. 
 
+When first rendered, the component makes an initial request to _/api/callbacks_ in order to configure the API itself. This endpoint can be overridden by supplying the `ApiClient` component an `endpoint` prop object:
+
+```javascript
+const clientProps = { 
+  endpoint: { 
+    protocol: 'http',
+    host: 'localhost',
+    port: 8080,
+    prefix: '/api',
+  },
+  children: <Masher { ...props } />
+}
+const apiClient = <ApiClient { ...clientProps } />
+```
+
+On the server side, you'll need to add the endpoint you've specified, as described in the
+[Server Developer Guide](https://moviemasher.com/docs/ServerDeveloper.html#API%20Server). The response received can selectively enable other APIs.
+
 When the [[Masher]] component is nested under an [[ApiClient]] component, it will make a [[DataDefaultRequest]] to retrieve a [[DataDefaultResponse]] to load into the editor.
 When it's not, the application is still 
 capable of importing and arranging media though interface elements like the save and render buttons aren't displayed. This magical behavior arises because these elements are within the [[ApiEnabled]] component which utilizes an [[ApiContext]] to control visibility of its children. This context contains an `enabled` boolean that is false by default and only enabled by the [[ApiClient]] component. When false, [[ApiEnabled]] component simply does not display its children. 
@@ -126,3 +144,5 @@ capable of importing and arranging media though interface elements like the save
 Other components use [[ApiContext]] to control visibility or augment behavior. In addition to looking at the `enabled` flag, components may inspect the context's `servers` object for a particular [[ServerType]] property that relates to their functionality. For instance, the [[Masher]] component will make a request for recent data once the ServerType.Data key is populated.  
 
 All requests made by components are channeled through the context as well, by calling its `endpointPromise` method. This returns a fetch-based promise for a specific endpoint with support for different request methods and formats. Some components may trigger a chain of promises, depending on current state. 
+
+

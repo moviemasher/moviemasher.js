@@ -11,8 +11,8 @@ export interface FilterGraphs {
   filterGraphAudible?: FilterGraph
   filterGraphVisible: FilterGraph
   filterGraphsVisible: FilterGraph[]
-  fileUrls: GraphFiles
-  loadPromise: Promise<void>
+  commandFiles: GraphFiles
+  loadCommandFilesPromise: Promise<void>
 }
 
 export interface FilterGraphsOptions {

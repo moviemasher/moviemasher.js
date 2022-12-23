@@ -1,12 +1,11 @@
 import { Constrained, Scalar} from "../../declarations"
-import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject, isInstance } from "../../Instance/Instance"
 import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { EffectObject, Effects } from "../../Media/Effect/Effect"
 import { Orientation } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
@@ -48,14 +47,15 @@ export interface Tweenable extends Instance, Selectable {
   cropFilter: Filter
   definitionTime(masherTime: Time, clipRange: TimeRange): Time
   frames(quantize: number): number 
-  fileCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles
-  fileUrls(args: GraphFileArgs): GraphFiles
+  fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles
+  graphFiles(args: PreloadArgs): GraphFiles
   hasIntrinsicSizing: boolean
   hasIntrinsicTiming: boolean
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters
   intrinsicRect(editing?: boolean): Rect
   intrinsicsKnown(options: IntrinsicOptions): boolean
   intrinsicGraphFile(options: IntrinsicOptions): GraphFile
+  // intrinsicUrls(options: IntrinsicOptions): string[]
   isDefault: boolean
   
   lock: Orientation
@@ -64,6 +64,7 @@ export interface Tweenable extends Instance, Selectable {
 
   overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters
   overlayFilter: Filter
+  preloadUrls(args: PreloadArgs): string[]
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
   selectedProperty(property: Property): boolean 

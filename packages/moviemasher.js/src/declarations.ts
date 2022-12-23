@@ -5,6 +5,8 @@ export type Value = number | string
 export type Scalar = boolean | Value | undefined
 export type PopulatedString = string & { isEmpty: never }
 export interface ValueObject extends Record<string, Value> {}
+export type ValueObjects = ValueObject[]
+export type ValueObjectsTuple = [ValueObjects, ValueObjects]
 export interface NumberObject extends Record<string, number> {}
 export interface BooleanObject extends Record<string, boolean> {}
 export interface UnknownObject extends Record<string, unknown> {}
@@ -29,6 +31,8 @@ export interface LoadedSvgImage extends SVGImageElement {}
 export interface LoadedAudio extends AudioBuffer {}
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
 export interface AudibleSource extends AudioBufferSourceNode {}
+
+export type SvgOutline = SVGRectElement | SVGPathElement
 
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement

@@ -1,6 +1,6 @@
-import { SvgItem, SvgFilters, UnknownObject, ScalarObject } from "../declarations"
+import { SvgItem, SvgFilters, UnknownObject, ScalarObject, SvgItems } from "../declarations"
 import { InstanceBase } from "../Instance/InstanceBase"
-import { CommandFilters, FilterArgs, FilterCommandFilterArgs } from "../MoveMe"
+import { CommandFiles, CommandFilters, FilterArgs, FilterCommandFileArgs, FilterCommandFilterArgs } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { isDefined, isNumber, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
 import { Filter, FilterDefinition, FilterObject } from "./Filter"
@@ -26,6 +26,12 @@ export class FilterClass extends InstanceBase implements Filter {
       return new Parameter(parameter)
     }))
   }
+
+
+  commandFiles(args: FilterCommandFileArgs): CommandFiles {
+    return this.definition.commandFiles({ ...args, filter: this })
+  }
+
   commandFilters(args: FilterCommandFilterArgs): CommandFilters {
     return this.definition.commandFilters({ ...args, filter: this })
   }
@@ -45,8 +51,8 @@ export class FilterClass extends InstanceBase implements Filter {
     return this._parametersDefined = parameters
   }
 
-  filterSvg(args: FilterArgs = {}): SvgItem {
-    return this.definition.filterDefinitionSvg({ ...args, filter: this })
+  filterSvgs(args: FilterArgs = {}): SvgItems {
+    return this.definition.filterDefinitionSvgs({ ...args, filter: this })
   }
 
   filterSvgFilter(): SvgFilters {

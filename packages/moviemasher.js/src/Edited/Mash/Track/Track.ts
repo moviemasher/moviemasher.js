@@ -4,7 +4,7 @@ import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { Mash } from "../Mash"
 import { Selectable } from "../../../Editor/Selectable"
-import { throwError } from "../../../Utility"
+import { throwError } from "../../../Utility/Throw"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]

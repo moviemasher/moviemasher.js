@@ -1,0 +1,6 @@
+ARG DENO_VERSION=1.28.3
+
+FROM denoland/deno:bin-$DENO_VERSION AS deno
+FROM amazonlinux:2.0.20220912.1
+COPY --from=deno /deno /usr/local/bin/deno
+

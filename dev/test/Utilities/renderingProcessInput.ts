@@ -1,4 +1,4 @@
-import { RenderingProcessInput } from "../../../packages/server-express/src/Server/RenderingServer/RenderingProcess/RenderingProcess"
+import { RenderingProcessInput } from "../../../packages/server-core/src/RenderingProcess/RenderingProcess"
 import path from "path"
 
 import {

@@ -1,4 +1,4 @@
-import { GraphFiles } from "../../../MoveMe"
+import { CommandFiles, GraphFiles } from "../../../MoveMe"
 import { Errors } from "../../../Setup/Errors"
 import { AVType } from "../../../Setup/Enums"
 import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
@@ -59,8 +59,12 @@ export class FilterGraphsClass implements FilterGraphs {
     }
   }
 
-  assureDuration() {}
-  assureSize() {}
+  private _commandFiles?: CommandFiles
+  get commandFiles(): CommandFiles {
+    const graphs = [...this.filterGraphsVisible]
+    if (this.filterGraphAudible) graphs.push(this.filterGraphAudible)
+    return this._commandFiles ||= graphs.flatMap(graph => graph.filterGraphCommandFiles)
+  }
   
   get duration(): number { return this.time.lengthSeconds }
 
@@ -70,19 +74,12 @@ export class FilterGraphsClass implements FilterGraphs {
 
   get filterGraphVisible(): FilterGraph { return this.filterGraphsVisible[0] }
 
-  _graphFiles?: GraphFiles
-  get fileUrls(): GraphFiles {
-    const graphs = [...this.filterGraphsVisible]
-    if (this.filterGraphAudible) graphs.push(this.filterGraphAudible)
-    return this._graphFiles ||= graphs.flatMap(graph => graph.filterGraphCommandFiles)
+  get inputCommandFiles(): CommandFiles {
+    return this.commandFiles.filter(graphFile => graphFile.input)
   }
 
-  get graphFilesInput(): GraphFiles {
-    return this.fileUrls.filter(graphFile => graphFile.input)
-  }
-
-  get loadPromise(): Promise<void> {
-    return this.args.mash.preloader.loadFilesPromise(this.fileUrls)
+  get loadCommandFilesPromise(): Promise<void> {
+    return this.args.mash.preloader.loadFilesPromise(this.commandFiles)
   }
 
   time: Time

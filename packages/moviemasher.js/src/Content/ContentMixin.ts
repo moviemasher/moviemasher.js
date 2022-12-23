@@ -9,7 +9,7 @@ import { Time, TimeRange } from "../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from "../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../Setup/Property"
 import { DataType, Orientation } from "../Setup/Enums"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFileArgs, VisibleCommandFilterArgs } from "../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../MoveMe"
 import { idGenerate } from "../Utility/Id"
 import { commandFilesInput } from "../Utility/CommandFiles"
 import { timeFromArgs } from "../Helpers/Time/TimeUtilities"
@@ -50,7 +50,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
 
 
     audibleCommandFiles(args: CommandFileArgs): CommandFiles {
-      const graphFileArgs: GraphFileArgs = { 
+      const graphFileArgs: PreloadArgs = { 
         ...args, audible: true, visible: false
       }
       return this.fileCommandFiles(graphFileArgs)
@@ -139,13 +139,13 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const { effects, isDefaultOrAudio } = this
        if (isDefaultOrAudio || !effects.length) return 
       
-      const svgFilters: SvgFilters = this.effects.flatMap(effect => 
+      const filters: SvgFilters = this.effects.flatMap(effect => 
         effect.svgFilters(outputSize, containerRect, time, clipTime)
       )
      
       // const size = sizeCopy(this.contentRect(containerRect, time, clipTime))
       
-      const filter = svgFilterElement(svgFilters, contentItem)
+      const filter = svgFilterElement(filters, contentItem)
       svgSet(filter, '200%', 'width')
       svgSet(filter, '200%', 'height')
       
@@ -158,8 +158,18 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
         ...this.effects.flatMap(effect => effect.definitionIds()),
       ]
     }
-    
-    effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
+
+
+    effectsCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+      const { container } = this
+      const files: CommandFiles = []
+      if (!container) {
+        files.push(...this.effects.flatMap(effect => effect.commandFiles(args)))
+      }
+      return files
+    }
+
+    private effectsCommandFilters(args: VisibleCommandFilterArgs): CommandFilters { 
       const commandFilters: CommandFilters = []
       const { filterInput: input } = args
       let filterInput = input
@@ -229,6 +239,12 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const json = super.toJSON()
       json.effects = this.effects
       return json
+    }
+
+    visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
+      const commandFiles = super.visibleCommandFiles(args)
+      commandFiles.push(...this.effectsCommandFiles(args))
+      return commandFiles
     }
   }
 }

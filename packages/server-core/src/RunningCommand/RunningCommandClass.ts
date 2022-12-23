@@ -1,58 +1,53 @@
 import path from "path"
 import fs from 'fs'
 import EventEmitter from "events"
+
 import {
-  CommandOptions, CommandOutput, CommandInputs, GraphFilters, Errors, CommandFilters, AVType, isString, assertPopulatedString, isPopulatedString, assertPopulatedArray
+  CommandOptions, Errors, assertPopulatedString, isPopulatedString
 } from "@moviemasher/moviemasher.js"
 
+import { commandArgsString } from "../Utilities/Command"
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
-import { commandArgsString } from "../Utilities/Command"
 
 export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {
     super()
     this.id = id
-    const { commandFilters, inputs, output, avType } = args
-    this.avType = avType
-    if (commandFilters) this.commandFilters = commandFilters
-    if (inputs) this.commandInputs = inputs
+    this.commandOptions = args
+
     if (!(this.commandInputs.length || this.commandFilters.length)) {
       console.trace(this.constructor.name, "with no inputs or commandFilters")
       throw Errors.invalid.argument + 'inputs'
     }
-    this.output = output
   }
 
-  private _commandProcess?: Command
+  private _command?: Command
   get command(): Command {
-    if (this._commandProcess) return this._commandProcess
-
-    const { commandInputs: inputs, commandFilters, output, avType } = this
-    // console.log(this.constructor.name, "command", inputs)
-    const commandOptions: CommandOptions = { commandFilters, inputs, output, avType }
-    return this._commandProcess = commandInstance(commandOptions)
+    return this._command ||= commandInstance(this.commandOptions)
   }
 
-  avType: AVType
+  get avType() { return this.commandOptions.avType }
 
-  commandFilters: CommandFilters = []
+  get commandFilters() { return this.commandOptions.commandFilters || [] }
 
   id: string
 
-  commandInputs: CommandInputs = []
+  get commandInputs() { return this.commandOptions.inputs || [] }
+
+  commandOptions: CommandOptions
 
   kill() {
     console.debug(this.constructor.name, "kill", this.id)
-    this._commandProcess?.kill('SIGKILL')
+    this._command?.kill('SIGKILL')
   }
 
   makeDirectory(destination: string): void {
     fs.mkdirSync(path.dirname(destination), { recursive: true })
   }
 
-  output: CommandOutput = {}
+  get output() { return this.commandOptions.commandFilters || [] }
 
   run(destination: CommandDestination): void {
     // console.log(this.constructor.name, "run", destination)
@@ -82,7 +77,6 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
   runError(destination: string, ...args: any[]): string {
     return commandArgsString(this.command._getArguments(), destination, ...args) 
   }
-
 
   runPromise(destination: CommandDestination): Promise<CommandResult> {
     assertPopulatedString(destination)

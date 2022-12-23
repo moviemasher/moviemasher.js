@@ -1,6 +1,6 @@
 /* sizes.css */
 
-.moviemasher .editor {
+.moviemasher {
   --padding: 40px;
   --spacing: 20px;
   --header-height: 38px;
@@ -62,11 +62,6 @@
 
 .moviemasher .editor .panel .preview label {
   --padding: 5px;
-}
-
-.moviemasher .editor .panel button {
-  --padding: 5px;
-  --spacing: 5px;
 }
 
 

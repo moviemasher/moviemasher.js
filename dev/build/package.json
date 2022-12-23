@@ -19,7 +19,7 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "build": "run-s core theme client server examples",
+    "build": "run-s core theme client server-core server examples",
     "client-esm": "npm run build-esm -w @moviemasher/client-react",
     "client-example": "run-s client-umd example-client",
     "client-min": "npm run build-min -w @moviemasher/client-react",
@@ -51,6 +51,7 @@
     "server-example": "run-s server example-server",
     "server-types": "npm run build-types -w @moviemasher/server-express",
     "server": "npm run build -w @moviemasher/server-express",
+    "server-core": "npm run build -w @moviemasher/server-core",
     "theme-css": "npm run build-css -w @moviemasher/theme-default",
     "theme-min": "npm run build-min -w @moviemasher/theme-default",
     "theme-umd": "npm run build-umd -w @moviemasher/theme-default",

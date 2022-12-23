@@ -55,6 +55,19 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
     return other >= frame && other < end
   }
 
+  intersection(time: Time): TimeRange | undefined {
+    const range = time.isRange ? time.timeRange : new TimeRangeClass(time.frame, time.fps)
+
+    const [range1, range2] = timeEqualizeRates(range, this) as TimeRanges
+
+    const { frame: frame1, end: end1, fps } = range1
+    const { frame: frame2, end: end2 } = range2
+
+    const frameMax = Math.max(frame1, frame2)
+    const endMin = Math.min(end1, end2)
+    return new TimeRangeClass(frameMax, fps, endMin - frameMax)
+  }
+
   intersects(time: Time): boolean {
     if (!time.isRange) return this.includesTime(time)
 

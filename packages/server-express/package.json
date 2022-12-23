@@ -25,6 +25,7 @@
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/server-core": "5.1.2",
     "@bitjourney/uuid-v4": "^1.0.1",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",

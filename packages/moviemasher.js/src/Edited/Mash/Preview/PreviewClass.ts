@@ -9,29 +9,27 @@ import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../Mash"
 import { PreviewArgs, Preview } from "./Preview"
-import { svgAddClass, svgAppend, svgDefsElement, svgDifferenceDefs, svgElement, svgGroupElement, svgPolygonElement, svgSet, svgUseElement } from "../../../Utility/Svg"
+import { svgAddClass, svgElement, svgPolygonElement } from "../../../Utility/Svg"
 import { assertObject, isObject } from "../../../Utility/Is"
-import { idGenerate } from "../../../Utility/Id"
 import { GraphFiles } from "../../../MoveMe"
-import { PreviewItems, SvgItem, SvgItems, SvgItemsTuple } from "../../../declarations"
+import { PreviewItems, SvgItems } from "../../../declarations"
 
+/**
+ * Preview of a single mash at a single frame
+ */
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
-    const { selectedClip, editor, time, mash, background, onlyClip, size } = args
+    const { selectedClip, editor, time, mash, onlyClip, size } = args
     this.mash = mash
     this.size = size || mash.imageSize
     this.time = time
-    this.background = background
     this.selectedClip = selectedClip
     this.onlyClip = onlyClip
 
     if (isObject(editor)) this.editor = editor
   }
 
-
   audible = false
-
-  background?: string
 
   private _clips?: Clip[]
   protected get clips() { return this._clips ||= this.clipsInitialize }
@@ -81,6 +79,17 @@ export class PreviewClass implements Preview {
 
   get preloader(): Loader { return this.mash.preloader }
 
+  get previewItemsPromise(): Promise<PreviewItems> { 
+    if (this._svgItems) return Promise.resolve(this._svgItems)
+
+    const sizePromise = this.intrinsicSizePromise  
+    const itemsPromise = sizePromise.then(() => this.itemsPromise)
+  
+    return itemsPromise.then(svgItems => {
+      return this._svgItems = svgItems.length ? this.tupleItems(svgItems) : []
+    })
+  }
+
   get quantize(): number { return this.mash.quantize }
 
   size: Size
@@ -89,8 +98,12 @@ export class PreviewClass implements Preview {
 
   streaming = false
 
-
   private _svgItems?: PreviewItems
+  
+  get svgItemsPromise(): Promise<SvgItems> { 
+    return this.previewItemsPromise as Promise<SvgItems>
+  }
+
   time: Time
 
   private _trackPreviews?: TrackPreviews
@@ -112,37 +125,15 @@ export class PreviewClass implements Preview {
     })
     return trackPreviews
   }
-  get svgItemsPromise(): Promise<SvgItems> { 
-    return this.previewItemsPromise as Promise<SvgItems>
-  }
-
-  
-
-  get previewItemsPromise(): Promise<PreviewItems> { 
-    if (this._svgItems) return Promise.resolve(this._svgItems)
-
-    const sizePromise = this.intrinsicSizePromise  
-    const itemsPromise = sizePromise.then(() => this.itemsPromise)
-  
-    return itemsPromise.then(svgItems => {
-      return this._svgItems = svgItems.length ? this.tupleItems(svgItems) : []
-    })
-  }
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
-    const { size, editing, background, selectedClip, editor } = this
-    console.log(this.constructor.name, "tupleItems", background, editor?.edited?.label)
+    const { size, editing, selectedClip, editor } = this
+    console.log(this.constructor.name, "tupleItems", editor?.edited?.label)
     const items = [...svgItems]
-
 
     const trackClasses = 'track'
     items.forEach(item => svgAddClass(item, trackClasses))
-    const backgroundClasses = 'background'
-    if (background) {
-      const backgroundPolygon = svgPolygonElement(size, backgroundClasses, background)
-      const backgroundSvg = svgElement(size, backgroundPolygon)
-      items.unshift(backgroundSvg)
-    }
+
     if (!(editing && svgItems.length)) return items
 
     assertObject(editor)
@@ -177,6 +168,7 @@ export class PreviewClass implements Preview {
     items.push(activeSvg, passiveSvg)
     return items
   }
+
   visible = true
 }
 

@@ -23,7 +23,9 @@ export interface TimeRange extends Time {
   end: number
   endTime: Time
   frames: number
+  frameTimes: Times
   includes(frame: number): boolean
+  intersection(time: Time): TimeRange | undefined 
   intersects(time: Time): boolean
   last: number
   lastTime: Time

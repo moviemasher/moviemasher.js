@@ -47,10 +47,10 @@ import { clipDefault } from "../Edited/Mash/Track/Clip/ClipFactory"
 import { assertContent, isContentDefinition } from "../Content/Content"
 import { DataPutRequest } from "../Api/Data"
 import { PreviewOptions } from "../Edited/Mash/Preview/Preview"
-import { svgElement } from "../Utility/Svg"
+import { svgElement, svgPolygonElement } from "../Utility/Svg"
 import { idGenerate, idIsTemporary } from "../Utility/Id"
 import { Cast } from "../Edited/Cast/Cast"
-import { GraphFileOptions } from "../MoveMe"
+import { PreloadOptions } from "../MoveMe"
 import { arrayUnique } from "../Utility/Array"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
 import { ActivityType } from "../Utility/Activity"
@@ -621,7 +621,7 @@ export class EditorClass implements Editor {
   private loadMashAndDraw(): Promise<void> {
     const { mash } = this.selection
     if (!mash) throw new Error(Errors.selection)
-    const args: GraphFileOptions = { editing: true, visible: true }
+    const args: PreloadOptions = { editing: true, visible: true }
     if (!this.paused) args.audible = true
     return mash.loadPromise(args).then(() => { mash.draw() })
   }
@@ -922,19 +922,19 @@ export class EditorClass implements Editor {
   set svgElement(value: SVGSVGElement) { this.preloader.svgElement = value }
 
   previewItems(enabled?: boolean): Promise<PreviewItems> {
-    const { edited } = this
-    // return an empty element if we haven't loaded anything yet
-    if (!edited) {
-      // console.log(this.constructor.name, "previewItems NO EDITED", this.rect)
-      return Promise.resolve([svgElement(this.rect)])
-    }
-
-    const options: PreviewOptions = {}
-    if (enabled && this.paused) options.editor = this
-
-    // console.log(this.constructor.name, "previewItems", this.rect)
-
-    return edited.previewItems(options)
+    const { edited, rect } = this
+    const color = edited ? edited.color : undefined      
+    const size = sizeCopy(rect)
+    const colorElement = svgElement(size, svgPolygonElement(size, '', color))
+    const promise = Promise.resolve([colorElement])
+    if (!edited) return promise
+    
+    const editor = (enabled && this.paused) ? this : undefined
+    return promise.then(elements => {
+      return edited.previewItemsPromise(editor).then(items => {
+        return [...elements, ...items]
+      })
+    })
   }
 
   get time(): Time { return this.selection.mash?.time || timeFromArgs(0, this.fps)}

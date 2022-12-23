@@ -107,6 +107,20 @@ It defines several <a href="interface/Server.html">Server</a> classes, each hand
 
 <p>Developers familar with Docker may want to launch the image available on
 <a href="https://hub.docker.com/r/moviemasher/moviemasher.js/">DockerHub</a>, either locally or within a cloud-based container service. This option provides the same ability to access the instance and build atop the image. </p>
+<p>Running the server locally is difficult because it requires certain FFmpeg features that don&#39;t come in the default binary supplied by fluent-ffmpeg. Supplying cross-platform binaries through the mechanisms that NPM provides is beyond the scope of Movie Masher since only LINUX is supported by the server at this juncture. Hence, Docker is used during development and testing to provide developers with a standard LINUX environment. </p>
+<p>That said, it&#39;s still possible to run the server on other platforms if you&#39;ve got a proper build of FFmpeg. Here&#39;s an example ExpressJS application from <em>workspaces/example-express/host/server.js</em> that launches the server on port 8572:</p>
+<fieldset>
+
+<legend>server.js</legend>
+
+<pre><code class="language-javascript"><span class="hl-11">const</span><span class="hl-0"> </span><span class="hl-12">MovieMasherServer</span><span class="hl-0"> = </span><span class="hl-2">require</span><span class="hl-0">(</span><span class="hl-1">&quot;@moviemasher/server-express&quot;</span><span class="hl-0">)</span><br/><br/><span class="hl-11">const</span><span class="hl-0"> { </span><span class="hl-12">Host</span><span class="hl-0"> } = </span><span class="hl-13">MovieMasherServer</span><br/><span class="hl-11">const</span><span class="hl-0"> </span><span class="hl-12">options</span><span class="hl-0"> = { </span><br/><span class="hl-0">  </span><span class="hl-13">port:</span><span class="hl-0"> </span><span class="hl-9">8572</span><span class="hl-0">, </span><span class="hl-13">host:</span><span class="hl-0"> </span><span class="hl-1">&#39;0.0.0.0&#39;</span><span class="hl-0">, </span><br/><span class="hl-0">  </span><span class="hl-13">api:</span><span class="hl-0"> { </span><span class="hl-13">authentication:</span><span class="hl-0"> { </span><span class="hl-13">type:</span><span class="hl-0"> </span><span class="hl-1">&#39;basic&#39;</span><span class="hl-0"> } } </span><br/><span class="hl-0">}</span><br/><span class="hl-11">const</span><span class="hl-0"> </span><span class="hl-12">host</span><span class="hl-0"> = </span><span class="hl-11">new</span><span class="hl-0"> </span><span class="hl-2">Host</span><span class="hl-0">(</span><span class="hl-13">options</span><span class="hl-0">)</span><br/><span class="hl-13">host</span><span class="hl-0">.</span><span class="hl-2">start</span><span class="hl-0">()</span>
+</code></pre>
+</fieldset>
+
+<p>You should be able to switch the port to 8570 and execute this script by whatever means you typically launch ExpressJS applications. Even without a custom FFmpeg build you should be able do everything short of rendering video files. </p>
+<p>If you already have a server application that you&#39;re trying to incorporate Movie Masher into, you might find it easier to just point the client there (as described in the 
+<a href="https://moviemasher.com/docs/ClientDeveloper.html">Client Developer Guide</a>) 
+and then add support for the APIs individually. From the initial request you can return an <a href="https://moviemasher.com/docs/interface/ApiServersResponse.html">ApiServersResponse</a> that selectively enables the other APIs, potentially overriding their endpoints to point to other parts of your application. </p>
 <!-- MAGIC:START (FILEMD:src=../snippet/example-server-cjs.md&stripMagic=true) --></div></section><section><a id="CJS Server Example"><h2>CJS Server Example</h2></a><div class="section"><p>The source code is available in CommonJS format for direct use in NodeJS, or as TypScript for rebundling with tools like <a href="https://rollupjs.org/">rollup.js</a>.</p>
 
 <a href="#installation" id="installation" style="color: inherit; text-decoration: none;">

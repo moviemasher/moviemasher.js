@@ -1,4 +1,4 @@
-import { SvgItem } from "../../declarations"
+import { SvgItem, SvgItems } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { pixelColor } from "../../Utility/Pixel"
 import { DataType } from "../../Setup/Enums"
@@ -66,15 +66,15 @@ export class ColorFilter extends ColorizeFilter {
       }
     }
     const maxSize = tweeningSize ? tweenMaxSize(startSize, endSize) : startSize
-    const colorCommandFilter: CommandFilter = {
+    const commandFilter: CommandFilter = {
       inputs: [], ffmpegFilter, 
       options: { 
         color, rate: videoRate, size: Object.values(maxSize).join('x') 
       },
       outputs: [filterInput]
     }
-    if (isAboveZero(duration)) colorCommandFilter.options.duration = duration
-    commandFilters.push(colorCommandFilter)
+    if (isAboveZero(duration)) commandFilter.options.duration = duration
+    commandFilters.push(commandFilter)
 
     // console.log(this.constructor.name, "commandFilters", tweeningColor, color, colorEnd, duration)
 
@@ -112,7 +112,7 @@ export class ColorFilter extends ColorizeFilter {
   }
   protected _ffmpegFilter = 'color'
 
-  filterDefinitionSvg(args: FilterDefinitionArgs): SvgItem {
+  filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems {
     const { filter } = args
     const valueObject = filter.scalarObject(false)
     const { width, height, color } = valueObject
@@ -122,6 +122,6 @@ export class ColorFilter extends ColorizeFilter {
     rectElement.setAttribute('width', String(width))
     rectElement.setAttribute('height', String(height))
     rectElement.setAttribute('fill', pixelColor(color))
-    return rectElement
+    return [rectElement]
   }
 }

@@ -4,7 +4,7 @@ import { NamespaceSvg } from "../../Setup/Constants"
 import { Filter } from "../../Filter/Filter"
 import { Scalar, ScalarObject, SvgItem, UnknownObject } from "../../declarations"
 import { isRect, Rect } from "../../Utility/Rect"
-import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { GraphFileType, isOrientation, LoadType } from "../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
 import { FontDefinition } from "../../Media/Font/Font"
@@ -51,7 +51,7 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
 
   declare fontId: string
 
-  fileUrls(args: GraphFileArgs): GraphFiles { return this.font.fileUrls(args) }
+  graphFiles(args: PreloadArgs): GraphFiles { return this.font.graphFiles(args) }
 
   hasIntrinsicSizing = true
 
@@ -194,6 +194,10 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     return svgItem
   }
 
+  preloadUrls(args: PreloadArgs): string[] { 
+    return this.font.preloadUrls(args) 
+  }
+  
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)
     if (property) return
@@ -225,7 +229,8 @@ export class TextContainerClass extends TextContainerWithContainer implements Te
     const { string } = this
     const textGraphFile: CommandFile = {
       definition: this.font, type: GraphFileType.Txt, 
-      file: this.id, content: string, inputId: this.id,
+      file: this.id, inputId: this.id,
+      content: string, 
     }
     files.push(textGraphFile)
     return files

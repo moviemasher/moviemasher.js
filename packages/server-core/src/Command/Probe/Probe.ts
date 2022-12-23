@@ -1,13 +1,11 @@
 import path from "path"
 import fs from 'fs'
-
+import Ffmpeg from "fluent-ffmpeg"
 import { isPositive, LoadedInfo, Sizes, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
-import { commandArgsString } from "../../Utilities/Command"
 import { commandProcess } from "../CommandFactory"
-import Ffmpeg from "fluent-ffmpeg"
+import { commandArgsString } from "../../Utilities/Command"
 import { expandCommand } from "../../Utilities/Expand"
-
 
 export class Probe {
   private static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
@@ -22,18 +20,17 @@ export class Probe {
   }
 
   private static probeFile(src: string): string {
-  const match = src.match(/%0([0-9]*)d/)
-  if (!match) return src
+    const match = src.match(/%0([0-9]*)d/)
+    if (!match) return src
 
-  const parentDir = path.dirname(src)
-  const ext = path.extname(src)
-  const [_, digit] = match  
-  const zeros = '0'.repeat(Number(digit) - 1)
-  return path.join(parentDir, `${zeros}1${ext}`)
-}
+    const parentDir = path.dirname(src)
+    const ext = path.extname(src)
+    const [_, digit] = match  
+    const zeros = '0'.repeat(Number(digit) - 1)
+    return path.join(parentDir, `${zeros}1${ext}`)
+  }
 
   static promise(temporaryDirectory: string, file: string, destination?: string): Promise<LoadedInfo> {
-    
     const src = this.probeFile(file)
     const relative = path.relative('./', file)
     const parentDir = path.dirname(src)

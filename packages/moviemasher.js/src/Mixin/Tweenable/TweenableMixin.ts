@@ -4,7 +4,7 @@ import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
@@ -194,9 +194,9 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return timeFromArgs(Default.duration, quantize).frame
     }
 
-    fileCommandFiles(graphFileArgs: GraphFileArgs): CommandFiles {
+    fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles {
       const commandFiles: CommandFiles = [] 
-      const files = this.fileUrls(graphFileArgs)
+      const files = this.graphFiles(graphFileArgs)
       let inputCount = 0
       commandFiles.push(...files.map((graphFile, index) => {
         const { input } = graphFile
@@ -208,7 +208,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFiles
     }
 
-    fileUrls(args: GraphFileArgs): GraphFiles { return [] }
+    graphFiles(args: PreloadArgs): GraphFiles { return [] }
 
     hasIntrinsicSizing = false
 
@@ -227,11 +227,11 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     intrinsicGraphFile(options: IntrinsicOptions): GraphFile {
       const { editing, size, duration } = options
       const clipTime = timeRangeFromArgs()
-      const graphFileArgs: GraphFileArgs = {
+      const graphFileArgs: PreloadArgs = {
         editing, time: clipTime.startTime, clipTime, quantize: clipTime.fps,
         visible: size, audible: duration,
       }
-      const [graphFile] = this.fileUrls(graphFileArgs)
+      const [graphFile] = this.graphFiles(graphFileArgs)
       assertObject(graphFile)
       
       return graphFile
@@ -268,6 +268,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     private _overlayFilter?: Filter
     get overlayFilter() { return this._overlayFilter ||= filterFromId('overlay')}
+
+    preloadUrls(args: PreloadArgs): string[] { return [] }
 
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { time, containerRects, filterInput: input, videoRate } = args
@@ -451,7 +453,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     }
 
     visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
-      const graphFileArgs: GraphFileArgs = { 
+      const graphFileArgs: PreloadArgs = { 
         ...args, audible: false, visible: true
       }
       const files = this.fileCommandFiles(graphFileArgs)

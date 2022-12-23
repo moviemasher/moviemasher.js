@@ -329,6 +329,7 @@ label { user-select: none; }
 
 pre {
   overflow-x: scroll;
+  white-space: nowrap;
 }
 
 fieldset {

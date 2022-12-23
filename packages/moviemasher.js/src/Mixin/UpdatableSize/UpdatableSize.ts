@@ -9,6 +9,7 @@ import {
 import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
 import { Rect } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { CommandFiles, VisibleCommandFileArgs } from "../../MoveMe"
 
 export const UpdatableSizeDefinitionType = [
   DefinitionType.Image,
@@ -23,10 +24,8 @@ export interface UpdatableSizeDefinitionObject extends PreloadableDefinitionObje
   previewSize?: Size
 }
 
-export interface UpdatableSize extends Preloadable {
-  // itemIconPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> 
-  
-}
+export interface UpdatableSize extends Preloadable {}
+
 export const isUpdatableSize = (value?: any): value is UpdatableSize => {
   return isPreloadable(value)
 }

@@ -1,6 +1,6 @@
 import { PreviewItems, SvgItems } from "../../../declarations"
 import { Size } from "../../../Utility/Size"
-import { GraphFileOptions } from "../../../MoveMe"
+import { PreloadOptions } from "../../../MoveMe"
 import { Editor } from "../../../Editor/Editor"
 import { Time } from "../../../Helpers/Time/Time"
 import { Loader } from "../../../Loader/Loader"
@@ -10,7 +10,6 @@ import { Clip } from "../Track/Clip/Clip"
 export interface PreviewOptions  {
   editor?: Editor
   time?: Time
-  background?: string
 }
 
 export interface PreviewArgs extends PreviewOptions {
@@ -21,7 +20,7 @@ export interface PreviewArgs extends PreviewOptions {
   mash: Mash
 }
 
-export interface Preview extends GraphFileOptions {
+export interface Preview extends PreloadOptions {
   audible: boolean
   duration: number
   editing: boolean

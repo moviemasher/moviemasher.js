@@ -1,6 +1,6 @@
 import { PreviewItem, PreviewItems, Scalar, SvgItem, UnknownObject } from "../../declarations"
 import { Size } from "../../Utility/Size"
-import { GraphFiles, GraphFileOptions } from "../../MoveMe"
+import { GraphFiles, PreloadOptions } from "../../MoveMe"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import { Default } from "../../Setup/Default"
 import { Errors } from "../../Setup/Errors"
@@ -20,6 +20,7 @@ import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
 import { arrayReversed } from "../../Utility/Array"
 import { Property } from "../../Setup/Property"
+import { Editor } from "../../Editor/Editor"
 
 const CastLayerFolders = (layers: Layer[]): LayerFolder[] => {
   return layers.flatMap(layer => {
@@ -119,7 +120,7 @@ export class CastClass extends EditedClass implements Cast {
     this.mashes.forEach(mash => mash.emitter = this.emitter)
   }
 
-  editedGraphFiles(args?: GraphFileOptions): GraphFiles {
+  editedGraphFiles(args?: PreloadOptions): GraphFiles {
     return this.mashes.flatMap(mash => mash.editedGraphFiles(args))
   }
 
@@ -136,7 +137,7 @@ export class CastClass extends EditedClass implements Cast {
     return CastLayerFolders(this.layers)
   }
 
-  loadPromise(args?: GraphFileOptions): Promise<void> {
+  loadPromise(args?: PreloadOptions): Promise<void> {
     return Promise.all(this.mashes.map(mash => mash.loadPromise(args))).then(EmptyMethod)
   }
 
@@ -208,26 +209,19 @@ export class CastClass extends EditedClass implements Cast {
     }
   }
   
-  previewItems(args: PreviewOptions): Promise<PreviewItems> {
-    const { mashes, imageSize } = this
-    const allSvgs: PreviewItems = []
-
-    const { background = this.color } = args
-
-    const mashArgs = { ...args, background: '' }
-
-    const element = svgElement(imageSize, svgPolygonElement(imageSize, '', background)) as PreviewItem
-    let promise = Promise.resolve([element])
-
+  previewItemsPromise(editor?: Editor): Promise<PreviewItems> {
+    const { mashes } = this
+    const items: PreviewItems = []
+    let promise: Promise<PreviewItems> = Promise.resolve([])
     arrayReversed(mashes).forEach((mash: Mash) => {
-      promise = promise.then(svgs => {
-        allSvgs.push(...svgs)
-        return mash.previewItems(mashArgs)
+      promise = promise.then(newItems => {
+        items.push(...newItems)
+        return mash.previewItemsPromise(editor)
       })
     })
-    return promise.then(svgs => {
-        allSvgs.push(...svgs)
-        return allSvgs
+    return promise.then(newItems => {
+      items.push(...newItems)
+      return items
     })
   }
 

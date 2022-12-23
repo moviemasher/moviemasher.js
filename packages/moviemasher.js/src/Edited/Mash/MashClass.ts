@@ -1,6 +1,6 @@
 import {
   Interval, PreviewItems, Scalar, UnknownObject} from "../../declarations"
-import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../../MoveMe"
+import { GraphFiles, PreloadArgs, PreloadOptions } from "../../MoveMe"
 import { SelectedItems, SelectedMovable, SelectedProperty } from "../../Utility/SelectedProperty"
 import {
   ActionType, AVType, Duration, EventType, GraphType, SelectType
@@ -33,6 +33,7 @@ import { isTextContainer } from "../../Container/TextContainer/TextContainer"
 import { Propertied } from "../../Base/Propertied"
 import { MoveActionOptions } from "../../Editor/Actions/Action/MoveAction"
 import { controlInstance } from "./Control/ControlFactory"
+import { Editor } from "../../Editor/Editor"
 
 type TrackClips = [number, Clips]
 
@@ -131,7 +132,7 @@ export class MashClass extends EditedClass implements Mash {
     this._bufferTimer = setInterval(() => {
       if (this._paused) return
 
-      const options: GraphFileOptions = { 
+      const options: PreloadOptions = { 
         editing: true, audible: true 
       }
       this.loadPromiseUnlessBuffered(options)
@@ -319,29 +320,7 @@ export class MashClass extends EditedClass implements Mash {
     this.emitter?.emit(timeChange ? EventType.Time : EventType.Loaded)
   }
 
-  private drawWhilePlayerNotPlaying() {
-    // console.log(this.constructor.name, "drawWhilePlayerNotPlaying")
-    const now = performance.now()
-    const ellapsed = now - this.drawnSeconds
-    if (ellapsed < 1.0 / this.quantize) return
-
-    this.drawnSeconds = now
-    const { time } = this
-    const clips = this.clipsVisibleInTime(time)
-    const streamableClips = clips.filter(clip => clip.definition.streamable)
-    if (!streamableClips.length) return
-
-    const files = this.graphFilesUnloaded({ time, editing: true, visible: true })
-
-    const loading = files.length
-    if (loading) return
-
-    this.drawRequest()
-  }
-
   private drawingTime?: Time
-
-  private drawnSeconds = 0
 
   drawnTime?: Time
 
@@ -411,14 +390,14 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
-  private graphFileOptions(options: GraphFileOptions = {}): GraphFileOptions {
+  private graphFileOptions(options: PreloadOptions = {}): PreloadOptions {
     const { time, audible, visible, editing, streaming } = options
     const definedTime = time || this.time
     const { isRange } = definedTime
     const definedVisible = visible || !isRange
     const definedAudible = isRange && audible
 
-    const args: GraphFileOptions = {
+    const args: PreloadOptions = {
       editing,
       streaming,
       audible: definedAudible, visible: definedVisible,
@@ -432,7 +411,7 @@ export class MashClass extends EditedClass implements Mash {
     return args
   }
 
-  editedGraphFiles(options?: GraphFileOptions): GraphFiles {
+  editedGraphFiles(options?: PreloadOptions): GraphFiles {
     const args = this.graphFileOptions(options)
     const { time, audible, visible } = args
     const { quantize } = this
@@ -443,19 +422,29 @@ export class MashClass extends EditedClass implements Mash {
     const clips = this.clipsInTimeOfType(scaled, type)
     return clips.flatMap(clip => {
       const clipTime = clip.timeRange(quantize)
-      const graphFileArgs: GraphFileArgs = { 
+      const graphFileArgs: PreloadArgs = { 
         ...args, clipTime, quantize, time 
       }
-      return clip.clipFileUrls(graphFileArgs)
+      return clip.clipGraphFiles(graphFileArgs)
     })
   }
 
-  private graphFilesUnloaded(options: GraphFileOptions): GraphFiles {
-    const files = this.editedGraphFiles(options)
-    if (!files.length) return []
+  preloadUrls(options?: PreloadOptions): string[] {
+    const args = this.graphFileOptions(options)
+    const { time, audible, visible } = args
+    const { quantize } = this
+    assertTime(time)
 
-    const { preloader } = this
-    return files.filter(file => !preloader.loadedFile(file))
+    const scaled = time.scale(this.quantize)
+    const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
+    const clips = this.clipsInTimeOfType(scaled, type)
+    return clips.flatMap(clip => {
+      const clipTime = clip.timeRange(quantize)
+      const graphFileArgs: PreloadArgs = { 
+        ...args, clipTime, quantize, time 
+      }
+      return clip.preloadUrls(graphFileArgs)
+    })
   }
 
   private handleDrawInterval(): void {
@@ -489,7 +478,7 @@ export class MashClass extends EditedClass implements Mash {
   get layer(): LayerMash { return this._layer! }
   set layer(value: LayerMash) { this._layer = value }
   
-  loadPromise(args: GraphFileOptions = {}): Promise<void> {
+  loadPromise(args: PreloadOptions = {}): Promise<void> {
     const promise = this.loadPromiseUnlessBuffered(args)
     // console.log(this.constructor.name, "loadPromise", args, "loadPromiseUnlessBuffered", promise)
     return promise || Promise.resolve()
@@ -499,20 +488,16 @@ export class MashClass extends EditedClass implements Mash {
 
   get loading(): boolean { return !!this.loadingPromises.length }
 
-  private loadPromiseUnlessBuffered(options: GraphFileOptions = {}): Promise<void> | undefined {
+  private loadPromiseUnlessBuffered(options: PreloadOptions = {}): Promise<void> | undefined {
     options.time ||= this.timeToBuffer
 
-    const files = this.graphFilesUnloaded(options)
-    if (!files.length) {
-      // console.log(this.constructor.name, "loadPromiseUnlessBuffered no unloaded graph files")
-      return
-    }
-
-
-    const promise = this.preloader.loadFilesPromise(files)
+    const urls = this.unpreloadedUrls(options)
+    if (!urls.length) return
+    
+    const promise = this.preloader.loadPromise(urls)
     const removedPromise = promise.then(() => {
       const index = this.loadingPromises.indexOf(promise)
-      if (index < 0) throw Errors.internal + "couldn't find promise~"
+      if (index < 0) throw Errors.internal + "couldn't find promise"
 
       this.loadingPromises.splice(index, 1)
     })
@@ -587,6 +572,15 @@ export class MashClass extends EditedClass implements Mash {
     }
   }
 
+
+  private unpreloadedUrls(options: PreloadOptions): string[] {
+    const urls = this.preloadUrls(options)
+    if (!urls.length) return []
+
+    const { preloader } = this
+    return urls.filter(file => !preloader.loaded(file))
+  }
+
   private _preview?: Preview
   private preview(options: PreviewOptions) { 
     return this._preview ||= this.previewInitialize(options) 
@@ -607,11 +601,11 @@ export class MashClass extends EditedClass implements Mash {
       mash: this,
       ...options,
     }
-    if (isUndefined(options.background)) args.background = this.color
     return args
   }
 
-  previewItems(options: PreviewOptions): Promise<PreviewItems> { 
+  previewItemsPromise(editor?: Editor): Promise<PreviewItems> {
+    const options: PreviewOptions = { editor }
     return this.preview(options).previewItemsPromise 
   }
   
@@ -623,11 +617,11 @@ export class MashClass extends EditedClass implements Mash {
       const { container } = clip
       if (isTextContainer(container)) {
         if (!container.intrinsicsKnown({ editing: true, size: true })) {
-          const args: GraphFileArgs = {
+          const args: PreloadArgs = {
             editing: true, visible: true, quantize, 
             time: clip.time(quantize), clipTime: clip.timeRange(quantize)
           }
-          return container.fileUrls(args)
+          return container.graphFiles(args)
         }
       }
       return [] 

@@ -8,8 +8,7 @@ import {
 
 import { ConnectionJson } from '../../declarations'
 import { StreamInput } from '../../UnixStream/SocketStreams'
-import { RunningCommand } from '../../RunningCommand/RunningCommand'
-import { runningCommandInstance } from '../../RunningCommand/RunningCommandFactory'
+import { RunningCommand, runningCommandInstance } from '@moviemasher/server-core'
 
 const wrtc = require('wrtc')
 const { RTCPeerConnection } = wrtc

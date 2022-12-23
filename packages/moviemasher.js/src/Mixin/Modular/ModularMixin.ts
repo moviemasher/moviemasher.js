@@ -1,5 +1,5 @@
 import { SvgFilters } from "../../declarations"
-import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs } from "../../MoveMe"
+import { CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs, VisibleCommandFileArgs } from "../../MoveMe"
 import { assertProperty } from "../../Setup/Property"
 import { Size } from "../../Utility/Size"
 import { Rect } from "../../Utility/Rect"
@@ -15,6 +15,23 @@ import { arrayLast } from "../../Utility/Array"
 
 export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & T {
   return class extends Base {
+    commandFiles(args: VisibleCommandFileArgs): CommandFiles {
+      const commandFiles: CommandFiles = []
+      const { videoRate, time } = args
+      
+
+      const duration = isTimeRange(time) ? time.lengthSeconds : 0
+      const { filters } = this.definition
+      const filterArgs: FilterCommandFileArgs = { 
+        ...args, videoRate, duration 
+      }
+      commandFiles.push(...filters.flatMap(filter => {
+        this.setFilterValues(filter)
+        return filter.commandFiles(filterArgs)
+      }))
+      return commandFiles
+    }
+
     commandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
       const { videoRate, filterInput, time } = args
@@ -56,14 +73,13 @@ export function ModularMixin<T extends InstanceClass>(Base: T) : ModularClass & 
     }
 
     svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters {
-      const svgFilters: SvgFilters = []
-      const { filters } = this.definition
-      svgFilters.push(...filters.flatMap(filter => {
+      const filters: SvgFilters = []
+      const { filters: definitionFilters } = this.definition
+      filters.push(...definitionFilters.flatMap(filter => {
         this.setFilterValues(filter)
         return filter.filterSvgFilter()
       }))
-      // console.log(this.constructor.name, "svgFilters", svgFilters.length)
-      return svgFilters
+      return filters
     }
   }
 }

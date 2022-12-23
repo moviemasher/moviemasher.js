@@ -1,4 +1,5 @@
 import { CommandOptions } from "@moviemasher/moviemasher.js"
+
 import { RunningCommand } from "./RunningCommand"
 import { RunningCommandClass } from './RunningCommandClass'
 

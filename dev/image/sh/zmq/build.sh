@@ -14,7 +14,7 @@ make
 $SUDO make install
 
 $SUDO yum install -y libunwind-devel ;
-$SUDO ldconfig ;
+$SUDO /sbin/ldconfig $PREFIX/lib ;
 $SUDO whereis libunwind ;
 
 

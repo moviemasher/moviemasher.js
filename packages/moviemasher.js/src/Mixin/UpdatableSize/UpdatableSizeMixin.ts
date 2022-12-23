@@ -2,7 +2,7 @@ import { PropertyTweenSuffix } from "../../Base"
 import { SvgItem } from "../../declarations"
 import { Rect, rectFromSize, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { DataType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
@@ -181,10 +181,9 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       commandFilters.push(...super.contentCommandFilters({ ...args, filterInput }, tweening))
       return commandFilters
     }
-    private _setsarFilter?: Filter
-    get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
 
 
+  
     declare definition: UpdatableSizeDefinition
 
     hasIntrinsicSizing = true
@@ -224,7 +223,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return sizeAboveZero(definitionSize)
     }
 
-    private itemIconPromise(rect: Rect, time: Time, range: TimeRange, cache?: boolean): Promise<SvgItem> {
+    private itemIconPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
       const { clip } = this
       const { preloader } = clip.track.mash
       
@@ -233,8 +232,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       // const lock = stretch ? '' : Orientation.V
       const svgUrl = urlPrependProtocol('svg', imageUrl, { ...rect })
       
-      const definition = cache ? this.definition : undefined
-      return preloader.loadPromise(svgUrl, definition)
+      return preloader.loadPromise(svgUrl)
     }
 
     // protected previewItem?: SvgItem
@@ -265,6 +263,10 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const rect = rectFromSize(contentRect, point)
       return rect
     }
+
+    private _setsarFilter?: Filter
+    get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
+
 
   }
 }

@@ -46,7 +46,7 @@ export const tweenColorStep = (value: PopulatedString, valueEnd: PopulatedString
   return colorRgbaToHex(pixelsMixRbga(colorToRgba(value), colorToRgba(valueEnd), offset))
 }
 
-const tweenRectStep = (rect: Rect, rectEnd: Rect, frame: number, frames: number): Rect => {
+export const tweenRectStep = (rect: Rect, rectEnd: Rect, frame: number, frames: number): Rect => {
   return {
     x: tweenNumberStep(rect.x, rectEnd.x, frame, frames),
     y: tweenNumberStep(rect.y, rectEnd.y, frame, frames),

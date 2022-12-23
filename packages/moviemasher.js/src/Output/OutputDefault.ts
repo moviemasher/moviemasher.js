@@ -1,5 +1,5 @@
 import { OutputFormat, OutputType } from "../Setup/Enums"
-import { CommandOutput, RenderingCommandOutput, StreamingCommandOutput } from "./Output"
+import { CommandOutput, CommandOutputs, RenderingCommandOutput, StreamingCommandOutput } from "./Output"
 
 import outputDefaultAudioJson from './Defaults/audio.json'
 import outputDefaultImageJson from './Defaults/image.json'
@@ -10,6 +10,7 @@ import outputDefaultWaveformJson from './Defaults/waveform.json'
 import outputDefaultDashJson from './Defaults/dash.json'
 import outputDefaultHlsJson from './Defaults/hls.json'
 import outputDefaultRtmpJson from './Defaults/rtmp.json'
+import { NumberObject } from "../declarations"
 
 export const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
@@ -58,6 +59,23 @@ export const outputDefaultPopulate = (overrides: RenderingCommandOutput): Render
 export const outputDefaultRendering = (outputType: OutputType, overrides?: CommandOutput): RenderingCommandOutput => {
   return outputDefaultPopulate({ ...overrides, outputType })
 }
+
+
+export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
+  const counts: NumberObject = {}
+  return commandOutputs.map(output => {
+    const { outputType } = output
+    const populated = outputDefaultPopulate(output)
+    if (!counts[outputType]) {
+      counts[outputType] = 1
+    } else {
+      populated.basename ||= `${outputType}-${counts[outputType]}`
+      counts[outputType]++
+    }
+    return populated
+  })
+}
+
 
 export const outputDefaultTypeByFormat = {
   [OutputFormat.AudioConcat]: OutputType.Audio,

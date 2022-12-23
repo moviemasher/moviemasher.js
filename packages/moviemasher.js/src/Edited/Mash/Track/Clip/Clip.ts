@@ -1,7 +1,7 @@
 import { Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
 import { Content, ContentObject } from "../../../../Content/Content"
 import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler, SvgItem, SvgItems, PreviewItems } from "../../../../declarations"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, GraphFileArgs, GraphFiles } from "../../../../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, PreloadArgs, GraphFiles } from "../../../../MoveMe"
 import { Sizing, Timing } from "../../../../Setup/Enums"
 import { throwError } from "../../../../Utility/Throw"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
@@ -37,7 +37,7 @@ export interface ClipDefinitionObject extends DefinitionObject {}
 
 export interface Clip extends Instance, Selectable {
   audible: boolean
-  clipFileUrls(args: GraphFileArgs): GraphFiles
+  clipGraphFiles(args: PreloadArgs): GraphFiles
   clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
   clipCommandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
@@ -51,10 +51,12 @@ export interface Clip extends Instance, Selectable {
   frames: number
   intrinsicsKnown(options: IntrinsicOptions): boolean
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles
+  // intrinsicUrls(options: IntrinsicOptions): string[]
   maxFrames(quantize : number, trim? : number) : number
   mutable: boolean
   muted: boolean
   notMuted: boolean
+  preloadUrls(args: PreloadArgs): string[]
   rects(args: ContainerRectArgs): RectTuple
   resetTiming(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing

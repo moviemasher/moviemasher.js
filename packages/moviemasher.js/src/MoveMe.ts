@@ -30,7 +30,7 @@ export interface FilterValueObject {
 }
 export type FilterValueObjects = FilterValueObject[]
 
-export interface GraphFileBase {
+export interface PreloadOptionsBase {
   audible?: boolean
   editing?: boolean
   visible?: boolean
@@ -39,12 +39,12 @@ export interface GraphFileBase {
   time: Time
 }
 
-export interface GraphFileOptions extends Partial<GraphFileBase> {
+export interface PreloadOptions extends Partial<PreloadOptionsBase> {
   quantize?: number
   clipTime?: TimeRange
 }
 
-export interface GraphFileArgs extends GraphFileBase {
+export interface PreloadArgs extends PreloadOptionsBase {
   quantize: number
   clipTime: TimeRange
 }
@@ -88,9 +88,23 @@ export interface FilterArgs {
 }
 
 export interface FilterCommandFilterArgs extends FilterArgs {
+  commandFiles?: CommandFiles,
   chainInput?: string, 
   filterInput?: string
   dimensions?: Size
+  videoRate: number
+  duration: number
+}
+
+export interface FilterCommandFileArgs extends FilterArgs {
+  outputSize: Size
+  containerRects: RectTuple
+  clipTime: TimeRange
+  streaming?: boolean
+  visible?: boolean
+  time: Time
+  quantize: number
+  contentColors?: ColorTuple
   videoRate: number
   duration: number
 }
@@ -100,6 +114,10 @@ export interface FilterDefinitionArgs extends FilterArgs {
 }
 
 export interface FilterDefinitionCommandFilterArgs extends FilterCommandFilterArgs {
+  filter: Filter
+}
+
+export interface FilterDefinitionCommandFileArgs extends FilterCommandFileArgs {
   filter: Filter
 }
 
@@ -121,6 +139,5 @@ export interface CommandFile extends GraphFile {
 export type CommandFiles = CommandFile[]
 
 export interface DefinitionRecord extends Record<string, Definition> { }
-
 
 export type VoidMethod = typeof EmptyMethod

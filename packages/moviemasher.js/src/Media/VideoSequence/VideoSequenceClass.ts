@@ -1,5 +1,5 @@
 import { SvgItem, UnknownObject } from "../../declarations"
-import { CommandFiles, GraphFile, GraphFileArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
+import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
 import { InstanceBase } from "../../Instance/InstanceBase"
@@ -38,12 +38,12 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     return files
   }
 
-  fileUrls(args: GraphFileArgs): GraphFiles {
+  graphFiles(args: PreloadArgs): GraphFiles {
     const { time, clipTime, editing, visible } = args
     const definitionTime = this.definitionTime(time, clipTime)
 
-    const definitionArgs: GraphFileArgs = { ...args, time: definitionTime }
-    const files = super.fileUrls(definitionArgs) 
+    const definitionArgs: PreloadArgs = { ...args, time: definitionTime }
+    const files = super.graphFiles(definitionArgs) 
     
     if (visible) {
       const { definition } = this
@@ -75,33 +75,29 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     return definition.urlForFrame(frame)
   }
 
-  // itemPreviewPromise(rect: Rect, time: Time, range: TimeRange, stretch?: boolean): Promise<SvgItem> {
-  //   return this.itemIconPromise(rect, time, range, stretch).then(svgItem => {
-      
-  //     return svgItem
-  //   })
-  // }
+  preloadUrls(args: PreloadArgs): string[] {
+    const { time, clipTime, editing, visible } = args
+    const definitionTime = this.definitionTime(time, clipTime)
 
-  // private itemPromise(time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
-  //   const definitionTime = this.definitionTime(time, range)
-  //   const { definition } = this
-  //   const frames = definition.framesArray(definitionTime)
-  //   const [frame] = frames
-  //   const url = definition.urlForFrame(frame)
-  //   const svgUrl = `svg:/${url}`
-  //   const { preloader } = this.clip.track.mash
-  //   return preloader.loadPromise(svgUrl, definition)
-  // }
-
-  // itemPromise(containerRect: Rect, time: Time, range: TimeRange, stretch?: boolean, icon?: boolean): Promise<SvgItem> {
-  //   const { container } = this
-  //   const rect = container ? containerRect : this.contentRect(containerRect, time, range)
-  //   const lock = stretch ? undefined : Orientation.V
-  //   return this.itemPromise(time, range, icon).then(item => {
-  //     svgSetDimensionsLock(item, rect, lock)
-  //     return item
-  //   })
-  // }
+    const definitionArgs: PreloadArgs = { ...args, time: definitionTime }
+    const files = super.preloadUrls(definitionArgs) 
+    
+    if (visible) {
+      const { definition } = this
+      if (editing) {
+        const frames = definition.framesArray(definitionTime)
+        const files = frames.map(frame => {
+          const graphFile: GraphFile = {
+            type: LoadType.Image, file: definition.urlForFrame(frame), 
+            input: true, definition
+          }
+          return graphFile
+        })
+        files.push(...files)
+      } else files.push(definition.source)
+    }
+    return files
+  }
 
   speed = 1.0
 

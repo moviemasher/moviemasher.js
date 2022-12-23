@@ -3,6 +3,7 @@ import {
   ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
   outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput, LoadType, Size
 } from "@moviemasher/moviemasher.js"
+import { expandFileOrScript } from '@moviemasher/server-core'
 
 import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
 import { DataServerArgs } from "../Server/DataServer/DataServer"
@@ -12,7 +13,6 @@ import { ServerAuthentication } from "../Server/Server"
 import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "./Host"
-import { expandFileOrScript } from '../Utilities/Expand'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 

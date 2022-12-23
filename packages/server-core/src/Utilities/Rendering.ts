@@ -1,12 +1,10 @@
 import {
-  DefinitionObject, DefinitionObjects,
-  MashObject, TrackObject, ClipObject,
-  DefinitionType, LoadType, ValueObject, CommandOutputs, OutputType,
-  RenderingInput, RenderingCommandOutput, NumberObject, outputDefaultPopulate, clipDefault, assertPopulatedString, ContentObject, Timing,
+  DefinitionObject, DefinitionObjects, ContentObject, Timing,
+  MashObject, TrackObject, ClipObject, assertPopulatedString, 
+  DefinitionType, LoadType, ValueObject, OutputType,
+  RenderingInput, RenderingCommandOutput, clipDefault, 
 } from "@moviemasher/moviemasher.js"
 
-
-import { idUnique } from "./Id"
 
 export const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = {}): RenderingInput => {
   const { type, id } = definition
@@ -26,20 +24,6 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   return { mash, definitions }
 }
 
-export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
-  const counts: NumberObject = {}
-  return commandOutputs.map(output => {
-    const { outputType } = output
-    const populated = outputDefaultPopulate(output)
-    if (!counts[outputType]) {
-      counts[outputType] = 1
-    } else {
-      populated.basename ||= `${outputType}-${counts[outputType]}`
-      counts[outputType]++
-    }
-    return populated
-  })
-}
 
 export const renderingOutputFile = (index: number, commandOutput: RenderingCommandOutput, extension?: string): string => {
   const { basename, format, extension: outputExtension, outputType } = commandOutput
@@ -89,10 +73,9 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
   return visibleClipObject
 }
 
-export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId?: string, label?: string): DefinitionObject => {
+export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId: string, label?: string): DefinitionObject => {
   const type: DefinitionType = definitionTypeFromRaw(loadType) 
-  const id = definitionId || idUnique()
-  const definition: DefinitionObject = { id, type, source, label }
+  const definition: DefinitionObject = { id: definitionId, type, source, label }
   return definition
 }
 

@@ -15,8 +15,7 @@ export default {
     format: "iife",
     sourcemap: false,
     globals: { 
-      react: 'React',
-      'amazon-ivs-web-broadcast': 'IVSBroadcastClient',
+      'react': 'React',
       'react-dom/client': 'ReactDOM',
       '@moviemasher/client-react': 'MovieMasherClient',
       '@moviemasher/moviemasher.js': 'MovieMasher',

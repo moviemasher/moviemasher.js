@@ -51,7 +51,7 @@ export interface Container extends Tweenable {
   colorizeCommandFilters(args: CommandFilterArgs): CommandFilters 
   colorMaximize: boolean
   containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple
-  containerSvgFilter(svgItem: SvgItem, previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SVGFilterElement | undefined
+  // containerSvgFilter(svgItem: SvgItem, previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SVGFilterElement | undefined
   containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem>
   directionObject: DirectionObject
   directions: Anchor[]

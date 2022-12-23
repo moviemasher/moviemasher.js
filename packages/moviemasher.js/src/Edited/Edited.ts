@@ -1,6 +1,6 @@
 import { Described, PreviewItems, SvgItem, UnknownObject } from "../declarations"
 import { Size } from "../Utility/Size"
-import { GraphFileOptions, GraphFiles } from "../MoveMe"
+import { PreloadOptions, GraphFiles } from "../MoveMe"
 import { Propertied } from "../Base/Propertied"
 import { Emitter } from "../Helpers/Emitter"
 import { Loader } from "../Loader/Loader"
@@ -29,21 +29,22 @@ export interface Edited extends Described, Propertied, Selectable {
   destroy(): void
   editor: Editor
   emitter: Emitter
-  editedGraphFiles(args?: GraphFileOptions): GraphFiles
+  editedGraphFiles(args?: PreloadOptions): GraphFiles
   imageSize: Size
   loading: boolean
-  loadPromise(args?: GraphFileOptions): Promise<void>
+  loadPromise(args?: PreloadOptions): Promise<void>
   mashes: Mash[]
   readonly preloader: Loader
   putPromise(): Promise<void>
   quantize: number
   reload(): Promise<void> | undefined
-  previewItems(options: PreviewOptions): Promise<PreviewItems>
+  previewItemsPromise(editor?: Editor): Promise<PreviewItems>
 }
 
 export const isEdited = (value: any): value is Edited => {
   return isMash(value) || isCast(value)
 }
+
 export function assertEdited(value: any): asserts value is Edited {
   if (!isEdited(value)) throwError(value, 'Edited')
 }

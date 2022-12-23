@@ -1,12 +1,11 @@
 import { ScalarObject, StringObject, SvgFilters, ValueObject } from "../../declarations"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { NamespaceSvg } from "../../Setup/Constants"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isAboveZero, isObject } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { colorRgbaKeys } from "../../Utility/Color"
-import { svgFilter, svgFilterElement } from "../../Utility"
+import { svgFilter } from "../../Utility/Svg"
 
 
 /**

@@ -10,7 +10,7 @@ import effectEmbossJson from "../../Definitions/DefinitionObjects/effect/emboss.
 import effectGrayscaleJson from "../../Definitions/DefinitionObjects/effect/grayscale.json"
 import effectSepiaJson from "../../Definitions/DefinitionObjects/effect/sepia.json"
 import effectSharpenJson from "../../Definitions/DefinitionObjects/effect/sharpen.json"
-// import effectTextJson from "../../Definitions/DefinitionObjects/effect/text.json"
+import effectRippleJson from "../../Definitions/DefinitionObjects/effect/ripple.json"
 
 export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
@@ -25,7 +25,7 @@ export const effectDefaults = [
   effectDefinition(effectGrayscaleJson),
   effectDefinition(effectSepiaJson),
   effectDefinition(effectSharpenJson),
-  // effectDefinition(effectTextJson),
+  effectDefinition(effectRippleJson),
 ]
 
 export const effectDefinitionFromId = (id: string): EffectDefinition => {

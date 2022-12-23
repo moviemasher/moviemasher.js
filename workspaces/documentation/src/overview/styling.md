@@ -301,26 +301,26 @@ The icon button currently selected in the browser header is painted with the pro
 
 .moviemasher .editor .panel .head {
   border-bottom: var(--border);
-  padding: var(--padding);
-  column-gap: var(--spacing);
-  display: grid;
 }
 
 .moviemasher .editor .panel .foot {
   border-top: var(--border);
-  padding: var(--padding);
-  column-gap: var(--spacing);
-  display: flex;
 }
 
 .moviemasher .editor .panel .foot,
 .moviemasher .editor .panel .head {
+  display: flex;
+  gap: var(--spacing);
+  padding: var(--padding);
+
   background-color: var(--back-secondary);
   color: var(--fore-secondary);
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }
-
+.moviemasher .editor .panel .head>*:first-child {
+  flex-grow: 1;
+}
 .moviemasher .editor .panel .head>*,
 .moviemasher .editor .panel .foot>* {
   margin-block: auto;

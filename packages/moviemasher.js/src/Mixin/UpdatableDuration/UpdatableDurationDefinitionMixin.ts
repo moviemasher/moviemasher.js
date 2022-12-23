@@ -52,7 +52,6 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
     audibleSource(preloader: Loader): AudibleSource | undefined {
-
       const { loadedAudio } = this
       if (loadedAudio) {
         // console.log(this.constructor.name, "audibleSource loadedAudio")

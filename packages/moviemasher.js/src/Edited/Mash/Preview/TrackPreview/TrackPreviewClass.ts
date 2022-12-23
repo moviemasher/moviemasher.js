@@ -21,12 +21,27 @@ export const TrackPreviewHandleSize = 8
 
 export const TrackPreviewLineSize = 2
 
+/**
+ * Preview of a single track at a single frame, thus representing a single clip 
+ */
 export class TrackPreviewClass implements TrackPreview {
   constructor(public args: TrackPreviewArgs) {}
 
   get clip(): Clip { return this.args.clip }
 
   get container(): Container { return this.clip.container! }
+
+  editingSvgItem(classes: string[], inactive?: boolean): SvgItem {
+    // console.log(this.constructor.name, "editingSvgItem", className)
+    const { container, rect } = this
+    const svgItem = container.pathElement(rect)
+
+    svgItem.setAttribute('vector-effect', 'non-scaling-stroke')
+    svgAddClass(svgItem, classes)
+    if (!inactive) svgItem.addEventListener('pointerdown', this.pointerDown())
+  
+    return svgItem
+  }
 
   get editor(): Editor { return this.preview.editor! }
 
@@ -176,19 +191,6 @@ export class TrackPreviewClass implements TrackPreview {
   }
   
   private get size(): Size { return this.preview.size }
-  
-  
-  editingSvgItem(classes: string[], inactive?: boolean): SvgItem {
-    // console.log(this.constructor.name, "editingSvgItem", className)
-    const { container, rect } = this
-    const svgItem = container.pathElement(rect)
-
-    svgItem.setAttribute('vector-effect', 'non-scaling-stroke')
-    svgAddClass(svgItem, classes)
-    if (!inactive) svgItem.addEventListener('pointerdown', this.pointerDown())
-  
-    return svgItem
-  }
 
   svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems {
     const items: SvgItems = []

@@ -40,6 +40,35 @@ Developers familar with Docker may want to launch the image available on
 [DockerHub](https://hub.docker.com/r/moviemasher/moviemasher.js/), either locally or within a cloud-based container service. This option provides the same ability to access the instance and build atop the image. 
 
 
+Running the server locally is difficult because it requires certain FFmpeg features that don't come in the default binary supplied by fluent-ffmpeg. Supplying cross-platform binaries through the mechanisms that NPM provides is beyond the scope of Movie Masher since only LINUX is supported by the server at this juncture. Hence, Docker is used during development and testing to provide developers with a standard LINUX environment. 
+
+That said, it's still possible to run the server on other platforms if you've got a proper build of FFmpeg. Here's an example ExpressJS application from _workspaces/example-express/host/server.js_ that launches the server on port 8572:
+
+
+<fieldset>
+
+<legend>server.js</legend>
+
+```javascript
+const MovieMasherServer = require("@moviemasher/server-express")
+
+const { Host } = MovieMasherServer
+const options = { 
+  port: 8572, host: '0.0.0.0', 
+  api: { authentication: { type: 'basic' } } 
+}
+const host = new Host(options)
+host.start()
+```
+</fieldset>
+
+You should be able to switch the port to 8570 and execute this script by whatever means you typically launch ExpressJS applications. Even without a custom FFmpeg build you should be able do everything short of rendering video files. 
+
+If you already have a server application that you're trying to incorporate Movie Masher into, you might find it easier to just point the client there (as described in the 
+[Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html)) 
+and then add support for the APIs individually. From the initial request you can return an [ApiServersResponse](https://moviemasher.com/docs/interface/ApiServersResponse.html) that selectively enables the other APIs, potentially overriding their endpoints to point to other parts of your application. 
+
+
 <!-- MAGIC:START (FILEMD:src=../snippet/example-server-cjs.md&stripMagic=true) -->
 ## CJS Server Example
 The source code is available in CommonJS format for direct use in NodeJS, or as TypScript for rebundling with tools like [rollup.js](https://rollupjs.org/).

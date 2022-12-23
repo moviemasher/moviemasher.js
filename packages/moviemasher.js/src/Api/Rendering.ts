@@ -24,6 +24,7 @@ export interface CommandDescription {
   avType: AVType
 }
 
+export type CommandDescriptions = CommandDescription[]
 
 export interface RenderingResult {
   error?: string
@@ -38,7 +39,6 @@ export interface RenderingDescription {
   commandOutput: RenderingCommandOutput
 }
 
-export type CommandDescriptions = CommandDescription[]
 
 export interface RenderingState {
   total: number
@@ -59,10 +59,6 @@ export interface RenderingOptions extends RenderingInput {
   outputs: CommandOutputs
 }
 
-/**
- * Start rendering a mash object
- * @swagger rendering/start
- */
 export interface RenderingStartRequest extends ApiRequest, RenderingOptions {}
 
 export interface RenderingStartResponse extends ApiCallbackResponse {}

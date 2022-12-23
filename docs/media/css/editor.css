@@ -35,8 +35,7 @@
   transition: var(--button-transition);
 }
 
-
-.moviemasher .editor .panel button:hover {
+.moviemasher .editor button:hover {
   color: var(--fore-secondary);
   border-color: var(--fore-secondary);
 }
@@ -48,10 +47,11 @@
 
 .moviemasher .editor .button.disabled:hover,
 .moviemasher .editor .button.disabled,
-.moviemasher .editor .panel button:disabled {
+.moviemasher .editor button:disabled {
   cursor: default;
   color: var(--fore-secondary-demote);
   border-color: var(--fore-secondary-demote);
+  background-color: var(--back-secondary-demote);
 }
 
 

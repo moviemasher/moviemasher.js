@@ -1,7 +1,7 @@
 import {
   ValueObject} from "../declarations"
 import { Size } from "../Utility/Size"
-import { GraphFiles, CommandFilters, GraphFileOptions } from "../MoveMe"
+import { GraphFiles, CommandFilters, PreloadOptions } from "../MoveMe"
 import { AVType, GraphType } from "../Setup/Enums"
 import { CommandOutput, StreamingOutput, StreamingOutputArgs } from "./Output"
 import { CommandInputs, RenderingResult } from "../Api/Rendering"
@@ -19,7 +19,7 @@ export class StreamingOutputClass implements StreamingOutput {
   streamingDescription(renderingResults?: RenderingResult[]): Promise<StreamingDescription> {
     const { mashes } = this.args
     const promises: Promise<void>[] = mashes.map(mash => {
-      const options: GraphFileOptions = {
+      const options: PreloadOptions = {
         audible: true, visible: true, streaming: true,
       }
       return mash.preloader.loadFilesPromise(mash.editedGraphFiles(options))
@@ -41,7 +41,7 @@ export class StreamingOutputClass implements StreamingOutput {
         const filterGraphs = mash.filterGraphs(args)
         const { filterGraphVisible } = filterGraphs
         commandInputs.push(...filterGraphVisible.commandInputs)
-        files.push(...filterGraphs.fileUrls.filter(graphFile => graphFile.input))
+        files.push(...filterGraphs.commandFiles.filter(graphFile => graphFile.input))
         commandFilters.push(...filterGraphVisible.commandFilters)
       })
       const options: ValueObject = { ...this.args.commandOutput.options }

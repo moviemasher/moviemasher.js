@@ -138,11 +138,14 @@ export interface LoaderCache {
 export interface Loader {
   flushFilesExcept(fileUrls?: GraphFiles): void
   getCache(path: LoaderPath): LoaderCache | undefined
-  getError(graphFile: GraphFile): any 
   info(loaderPath: LoaderPath): LoadedInfo | undefined
-  key(graphFile: GraphFile): string
-  loadedFile(graphFile: GraphFile): boolean
+  loaded(urlPath: string): boolean
+  loadPromise(urlPath: string | string[], definition?: Definition): Promise<any> 
+
+  // RenderingOutputClass, FilterGraphsClass
   loadFilesPromise(files: GraphFiles): Promise<void>
-  loadPromise(urlPath: string, definition?: Definition): Promise<any> 
+  // FilterGraphClass, RenderingProcessClass
+  key(graphFile: GraphFile): string
+  
   sourceUrl(graphFile: GraphFile): string
 }

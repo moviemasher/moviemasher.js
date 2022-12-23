@@ -4,10 +4,6 @@
 }
 
 
-.moviemasher .editor .panel.timeline .head {
-  grid-template-columns: 1fr repeat(6, auto) 1fr min-content;
-}
-
 .moviemasher .editor .panel.timeline .content {
   overflow: auto;
   overscroll-behavior: none;

@@ -42,7 +42,7 @@ export class ColorContentClass extends ColorContentWithContent implements ColorC
     const [color] = this.tweenValues('color', time, range)
     const { x, y, width, height } = containerRect
     colorFilter.setValues({ width, height, color })
-    const svg =  colorFilter.filterSvg()
+    const [svg] =  colorFilter.filterSvgs()
     svg.setAttribute('x', String(x))
     svg.setAttribute('y', String(y))
     return Promise.resolve(svg)

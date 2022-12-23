@@ -2,11 +2,9 @@
 set -e ;
 NODE_APP=$(pwd)
 
-source dev/image/sh/tools/build.sh ;
+source dev/image/sh/build.sh ;
 cd $NODE_APP ;
-source dev/image/sh/avlibs/build.sh ;
-cd $NODE_APP ;
-source dev/image/sh/ffmpeg/build.sh ;
+
 cd $NODE_APP ;
 source dev/image/sh/node/build.sh ;
 
@@ -17,10 +15,4 @@ cd $NODE_APP ;
 source dev/image/sh/node/clean.sh ;
 
 cd $NODE_APP ;
-source dev/image/sh/ffmpeg/clean.sh ;
-
-cd $NODE_APP ;
-source dev/image/sh/avlibs/clean.sh ;
-
-cd $NODE_APP ;
-source dev/image/sh/tools/clean.sh ;
+source dev/image/sh/clean.sh ;

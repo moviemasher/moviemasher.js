@@ -44,14 +44,14 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 ${r} ${g} ${b} -${range} ${range}`
     
   
-    const svgFilters: SvgFilters = []
+    const filters: SvgFilters = []
 
     const colorMatrix: StringObject = {
       filter: 'feColorMatrix',
       type: 'matrix',
       values,
     }
-    svgFilters.push(svgFilter(colorMatrix))
+    filters.push(svgFilter(colorMatrix))
 
 
     // const componentTransfer: StringObject = {
@@ -63,7 +63,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     // const funcG = svgFunc('feFuncG', '0 1 1  1 1 1')
     // const funcB = svgFunc('feFuncB', '0 1')
     // svgAppend(componentTransferFilter, [funcR, funcG, funcB])
-    // svgFilters.push(componentTransferFilter)
+    // filters.push(componentTransferFilter)
 
     // const blackAndWhiteMatrix: StringObject = {
     //   filter: 'feColorMatrix',
@@ -71,7 +71,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     //   values: '10 11 10 0 0 10 10 10 0 0 10 10 10 0 0 0 0 0 1 0',
     //   result: 'blackAndWhite', in: 'colorToBlack',
     // }
-    // svgFilters.push(svgFilter(blackAndWhiteMatrix))
+    // filters.push(svgFilter(blackAndWhiteMatrix))
 
 
     // const whiteToTransparentMatrix: StringObject = {
@@ -80,16 +80,16 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     //   values: '1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 -1 0 0 1 0',
     //   result: 'whiteToTransparent', in: 'blackAndWhite',
     // }
-    // svgFilters.push(svgFilter(whiteToTransparentMatrix))
+    // filters.push(svgFilter(whiteToTransparentMatrix))
 
     // const element = globalThis.document.createElementNS(NamespaceSvg, 'feComposite')
     // svgSet(element, 'out', 'operator')
     // svgSet(element, 'SourceGraphic', 'in')
     // // svgSet(element, 'blackAndWhite', 'in')
 
-    // svgFilters.push(element)
+    // filters.push(element)
 
-    return svgFilters
+    return filters
   }
 }
 

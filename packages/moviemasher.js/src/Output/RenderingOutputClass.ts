@@ -1,7 +1,6 @@
-import { ValueObject } from "../declarations"
-import { Size, isSize, sizeCover, sizeAboveZero } from "../Utility/Size"
-import { GraphFiles, GraphFileArgs, GraphFileOptions } from "../MoveMe"
-import { AVType, GraphType, isLoadType, OutputType } from "../Setup/Enums"
+import { Size, isSize, sizeCover } from "../Utility/Size"
+import { GraphFiles } from "../MoveMe"
+import { AVType, GraphType, OutputType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Time } from "../Helpers/Time/Time"
 import { TimeRange } from "../Helpers/Time/Time"
@@ -10,9 +9,9 @@ import {
 } from "../Api/Rendering"
 import { RenderingCommandOutput, RenderingOutput, RenderingOutputArgs } from "./Output"
 import {
-  timeFromArgs, timeRangeFromArgs, timeRangeFromTimes
+  timeFromArgs, timeRangeFromTimes
 } from "../Helpers/Time/TimeUtilities"
-import { assertAboveZero, isAboveZero, isPositive } from "../Utility/Is"
+import { assertAboveZero, isPositive } from "../Utility/Is"
 import { Clip, IntrinsicOptions } from "../Edited/Mash/Track/Clip/Clip"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
@@ -64,7 +63,6 @@ export class RenderingOutputClass implements RenderingOutput {
   _durationClips?: Clip[]
   private get durationClips(): Clip[] { return this._durationClips ||= this.durationClipsInitialize }
   private get durationClipsInitialize(): Clip[] {
-
     const { mash } = this.args
     const { frames } = mash
     if (isPositive(frames)) return []
@@ -77,6 +75,14 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get endTime(): Time | undefined {
     return this.args.endTime || this.args.mash.endTime
+  }
+
+  get durationGraphFiles(): GraphFiles {
+    const clips = this.durationClips
+    const options: IntrinsicOptions = { duration: true }
+    const files = clips.flatMap(clip => clip.intrinsicGraphFiles(options))
+    const unique = new Set(files)
+    return [...unique]
   }
 
   // private _filterGraphs?: FilterGraphsthis._filterGraphs =
@@ -103,18 +109,10 @@ export class RenderingOutputClass implements RenderingOutput {
   graphType = GraphType.Mash
 
   private get mashDurationPromise(): Promise<void> {
-    const clips = this.durationClips
-    if (!clips.length) {
-      // console.log(this.constructor.name, "mashDurationPromise no durationClips")
-      
-      return Promise.resolve()
-    }
-
-    const { mash } =  this.args
-    const options: IntrinsicOptions = { duration: true }
-    const files = clips.flatMap(clip => clip.intrinsicGraphFiles(options))
+    const files = this.durationGraphFiles
+    if (!files.length) return Promise.resolve()
     
-    const { preloader } = mash
+    const { preloader } = this.args.mash
       // console.log(this.constructor.name, "mashDurationPromise files", files.map(f => f.file))
     return preloader.loadFilesPromise(files)
   }
@@ -152,7 +150,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get preloadPromise(): Promise<void> { 
     // console.log(this.constructor.name, "preloadPromise")
-    return this.filterGraphs.loadPromise 
+    return this.filterGraphs.loadCommandFilesPromise 
   }
 
   get renderingClips(): Clip[] {
@@ -207,36 +205,6 @@ export class RenderingOutputClass implements RenderingOutput {
       return renderingDescription
     })
   }
-
-  // get renderingDescription(): RenderingDescription {
-  //   const { commandOutput } = this
-  //   const renderingDescription: RenderingDescription = { commandOutput }
-  //   const avType = this.avTypeNeededForClips
-  //   const { filterGraphs } = this
-  //   // console.log(this.constructor.name, "renderingDescriptionPromise avType", avType)
-  //   if (avType !== AVType.Audio) {
-  //     const { filterGraphsVisible } = filterGraphs
-  //     const visibleCommandDescriptions = filterGraphsVisible.map(filterGraph => {
-  //       const { commandFilters, commandInputs: inputs, duration } = filterGraph
-  //       const commandDescription: CommandDescription = { inputs, commandFilters, duration, avType: AVType.Video }
-  //     // console.log(this.constructor.name, "renderingDescriptionPromise inputs, commandFilters", inputs, commandFilters)
-  //       return commandDescription
-  //     })
-  //     renderingDescription.visibleCommandDescriptions = visibleCommandDescriptions
-  //   }
-  //   if (avType !== AVType.Video) {
-  //     const { filterGraphAudible, duration } = filterGraphs
-  //     if (filterGraphAudible) {
-  //       const { commandFilters, commandInputs: inputs } = filterGraphAudible
-       
-  //       const commandDescription: CommandDescription = {
-  //         inputs, commandFilters, duration, avType: AVType.Audio
-  //       }
-  //       renderingDescription.audibleCommandDescription = commandDescription
-  //     }
-  //   }
-  //   return renderingDescription
-  // }
 
   get startTime(): Time {
     if (this.args.startTime) return this.args.startTime

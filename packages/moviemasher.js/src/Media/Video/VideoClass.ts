@@ -1,4 +1,4 @@
-import { GraphFile, GraphFileArgs, GraphFiles } from "../../MoveMe"
+import { GraphFile, PreloadArgs, GraphFiles } from "../../MoveMe"
 import { LoadType } from "../../Setup/Enums"
 import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
@@ -29,7 +29,7 @@ const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
   declare definition : VideoDefinition
 
-  fileUrls(args: GraphFileArgs): GraphFiles {
+  graphFiles(args: PreloadArgs): GraphFiles {
     const files: GraphFiles = []
 
     const { editing, time, audible, visible, icon } = args
@@ -128,6 +128,25 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       definition.loadedVideo = video
       return this._loadedVideo = video.cloneNode() as LoadedVideo
     })
+  }
+
+  preloadUrls(args: PreloadArgs): string[] {
+    const files: string[] = []
+    const { editing, audible, visible, icon } = args
+    const { definition } = this
+    const { url, source } = definition
+    const editingUrl = editing ? url : source
+    assertPopulatedString(editingUrl, editing ? 'url' : 'source')
+
+    if (visible && !icon) files.push(editingUrl)
+ 
+    if (audible) {
+      const mutable = definition.duration ? this.mutable() : true
+      if (mutable && !this.muted) {
+        files.push(this.definition.urlAudible(editing))
+      }
+    }
+    return files
   }
 
   private updateVideo(rect: Rect, time: Time, range: TimeRange) {

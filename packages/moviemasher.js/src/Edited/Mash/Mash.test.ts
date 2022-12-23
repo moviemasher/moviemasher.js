@@ -19,7 +19,7 @@ import { timeFromArgs, timeRangeFromArgs, timeRangeFromTimes } from '../../Helpe
 import { isClipObject, Clip, ClipObject } from "../../Edited/Mash/Track/Clip/Clip"
 import { assertPreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { TrackClass } from "./Track/TrackClass"
-import { GraphFileOptions } from "../../MoveMe"
+import { PreloadOptions } from "../../MoveMe"
 import { containerTextId } from "../../../../../dev/test/Setup/Constants"
 import { FilterGraph } from "./FilterGraph/FilterGraph"
 import { clipDefault } from "./Track/Clip/ClipFactory"
@@ -179,10 +179,9 @@ describe("Mash", () => {
     test("returns image file from first frame only", () => {
       const mash = mashWithMultipleImageClips()
       expectArrayLength(mash.editedGraphFiles(), 1)
-
     })
 
-    test("returns font and text file from text container", () => {
+    test("returns font file from text container", () => {
       const mash = createMash()
       addNewTextClip(mash)
 
@@ -231,7 +230,7 @@ describe("Mash", () => {
       const filterGraph = filterGraphsVisible[0]
       expect(filterGraph).toBeInstanceOf(FilterGraphClass)
       if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
-      await filterGraphs.loadPromise
+      await filterGraphs.loadCommandFilesPromise
 
       const { commandFilters, filterGraphCommandFiles: commandFiles } = filterGraph
       // console.log("commandFilters", commandFilters)
@@ -335,7 +334,7 @@ describe("Mash", () => {
         if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
 
         const { visible, quantize, time } = filterGraph
-        const graphFileArgs: GraphFileOptions = { 
+        const graphFileArgs: PreloadOptions = { 
           editing: false, visible, quantize, time 
         }
         const files = mash.editedGraphFiles(graphFileArgs)

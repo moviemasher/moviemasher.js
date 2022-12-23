@@ -1,18 +1,19 @@
 import fs from 'fs'
 import http from 'http'
 import https from 'https'
-
 import path from 'path'
 import md5 from 'md5'
 
 import {
-  EmptyMethod, GraphFile, GraphType, LoadedInfo, isPreloadableDefinition,
-  Errors, LoaderClass, GraphFileType, LoaderCache, Definition,
-  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, assertObject, isDefinition, isLoaderType, LoadType, isPopulatedString, urlIsHttp
+  EmptyMethod, GraphFile, GraphType, isPreloadableDefinition, assertObject, 
+  Errors, LoaderClass, GraphFileType, LoaderCache, Definition, urlIsHttp,
+  isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, 
+  isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, LoadType, 
+  isDefinition, isPopulatedString, LoadedInfo, isString
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
-import { Probe } from '../Command/Probe'
+import { Probe } from '../Command/Probe/Probe'
 
 
 export class NodeLoader extends LoaderClass {
@@ -31,20 +32,56 @@ export class NodeLoader extends LoaderClass {
 
   protected override browsing = false
 
-  protected cachePromise(url: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
-    // console.log(this.constructor.name, "cachePromise", url)
+
+  private cacheGet(graphFile: GraphFile, createIfNeeded?: boolean): LoaderCache | undefined {
+    const key = this.key(graphFile)
+    const cacheKey = this.cacheKey(graphFile)
+    const found = this.loaderCache.get(cacheKey)
+    if (found ||!createIfNeeded) return found
+
+    const { definition, type } = graphFile
+    const definitions: Definition[] = []
+    if (isDefinition(definition)) definitions.push(definition)
+    const cache: LoaderCache = { loaded: false, definitions }
+    this.cacheSet(cacheKey, cache)
+    cache.promise = this.cachePromise(key, graphFile, cache).then(loaded => {
+      cache.loaded = true
+      cache.result = loaded
+      return loaded
+    }).catch(error => {
+      cache.error = error
+      cache.loaded = true
+      return error
+    })
+    return cache
+  }
+
+
+  // protected cachePromise(key: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
+  //   const cacheKey = this.cacheKey(graphFile)
+  //   const loaderFile: LoaderFile = {
+  //     loaderPath: cacheKey, urlOrLoaderPath: key, loaderType: graphFile.type
+  //   }
+  //   return this.filePromise(loaderFile)
+  // }
+
+  private cachePromise(url: string, graphFile: GraphFile, cache: LoaderCache): Promise<Loaded> {
     if (fs.existsSync(url)) {
-      // console.log(this.constructor.name, "cachePromise existent")
       return this.updateSources(url, cache, graphFile)
     } 
     
     const { filePrefix } = this
-    if (url.startsWith(filePrefix)) throw Errors.uncached + ' cachePromise ' + url
+    if (url.startsWith(filePrefix)) throw Errors.uncached + url
 
-    // console.log(this.constructor.name, "cachePromise calling writePromise", url)
     return this.writePromise(graphFile, url).then(() => {
       return this.updateSources(url, cache, graphFile)
     })
+  }
+
+
+  private cacheSet(graphFile: GraphFile | string, cache: LoaderCache) {
+    const key = isString(graphFile) ? graphFile: this.cacheKey(graphFile) 
+    this.loaderCache.set(key, cache)
   }
 
   graphType = GraphType.Mash
@@ -56,6 +93,7 @@ export class NodeLoader extends LoaderClass {
     return `%0${digits}.svg`
   }
 
+  // RenderingProcessClass
   infoPath(key: string): string {
     return path.join(this.cacheDirectory, `${md5(key)}.${ExtensionLoadedInfo}`)
   }
@@ -106,7 +144,7 @@ export class NodeLoader extends LoaderClass {
     
   }
 
-
+  // called by super.loadFilesPromise
   protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
     let cache = this.cacheGet(graphFile, true)
     assertObject(cache)
@@ -190,6 +228,15 @@ export class NodeLoader extends LoaderClass {
 
       return isUpdatableSizeDefinition(definition) && !sizeAboveZero(definition.sourceSize)
     })
+  }
+
+
+  private updateDefinitions(graphFile: GraphFile, info: LoadedInfo) {
+    // console.log(this.constructor.name, "updateDefinitions", graphFile.file, info)
+
+    const cache = this.cacheGet(graphFile)
+    assertObject(cache)
+    this.updateCache(cache, info)
   }
 
   private updateSources(key: string, cache: LoaderCache, graphFile: GraphFile): Promise<any> {
