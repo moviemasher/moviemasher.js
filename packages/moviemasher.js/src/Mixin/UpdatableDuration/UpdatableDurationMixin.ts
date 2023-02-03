@@ -2,11 +2,11 @@ import { Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarat
 import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { LoadType } from "../../Setup/Enums"
-import { assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
+import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
-import { filterFromId } from "../../Filter/FilterFactory"
-import { Filter } from "../../Filter/Filter"
+import { filterFromId } from "../../Module/Filter/FilterFactory"
+import { Filter } from "../../Module/Filter/Filter"
 import { timeFromArgs, timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { idGenerate } from "../../Utility/Id"
@@ -40,10 +40,12 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     
     declare definition: UpdatableDurationDefinition
 
-    definitionTime(masherTime: Time, clipRange: TimeRange): Time {
-      const superTime = super.definitionTime(masherTime, clipRange)
+    definitionTime(mashTime: Time, clipRange: TimeRange): Time {
+      const superTime = super.definitionTime(mashTime, clipRange)
       const { startTrim, endTrim, definition } = this
       const { duration } = definition
+      assertAboveZero(duration)
+
       const durationTime = timeFromSeconds(duration, clipRange.fps)
       const durationFrames = durationTime.frame - (startTrim + endTrim)
       const offset = superTime.frame % durationFrames
@@ -61,19 +63,13 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     gainPairs: number[][] = []
 
     graphFiles(args: PreloadArgs): GraphFiles {
-      const { editing, audible, time } = args
-      if (!audible || (editing && !time.isRange)) {
-
-        return []
-      }
+      const { audible } = args
+      if (!audible) return []
       if (!(this.mutable() && !this.muted)) return []
 
       const { definition } = this
-      const file = definition.urlAudible(editing)
-
-
       const graphFile: GraphFile = {
-        type: LoadType.Audio, file, definition, input: true
+        type: LoadType.Audio, file: '', definition, input: true
       }
       return [graphFile]
     }
@@ -156,14 +152,14 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     mutable() { return this.definition.audio }
     
-    preloadUrls(args: PreloadArgs): string[] {
-      const { editing, audible, time } = args
-      if (!audible || (editing && !time.isRange)) return []
-      if (!(this.mutable() && !this.muted)) return []
+    // preloadUrls(args: PreloadArgs): string[] {
+    //   const { editing, audible, time } = args
+    //   if (!audible || (editing && !time.isRange)) return []
+    //   if (!(this.mutable() && !this.muted)) return []
 
-      const { definition } = this
-      return [definition.urlAudible(editing)]
-    }
+    //   const { definition } = this
+    //   return [definition.urlAudible(editing)]
+    // }
 
     selectedProperty(property: Property): boolean {
       const { name } = property

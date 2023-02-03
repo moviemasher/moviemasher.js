@@ -1,14 +1,13 @@
 import { 
-  Constrained, Described, Endpoint, LoadedImage, SvgItem, SvgOrImage, UnknownObject 
+  Constrained, Described, UnknownObject 
 } from "../declarations"
 import { DefinitionType, isDefinitionType } from "../Setup/Enums"
 import { Property } from "../Setup/Property"
 import { Times } from "../Helpers/Time/Time"
 import { isObject } from "../Utility/Is"
 import { Instance, InstanceObject } from "../Instance/Instance"
-import { throwError } from "../Utility/Throw"
+import { errorsThrow } from "../Utility/Errors"
 import { Size } from "../Utility/Size"
-import { Loader } from "../Loader/Loader"
 
 
 export interface DefinitionObject extends UnknownObject, Partial<Described> {
@@ -21,19 +20,17 @@ export const isDefinitionObject = (value: any): value is DefinitionObject => {
 export type DefinitionObjects = DefinitionObject[]
 
 export interface Definition {
-  definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined
+  definitionIcon(size: Size): Promise<SVGSVGElement> | undefined
   id: string
   instanceFromObject(object?: InstanceObject): Instance
   instanceArgs(object?: InstanceObject): InstanceObject
   label: string
   properties: Property[]
-  propertiesModular: Property[]
   toJSON(): UnknownObject
-  type: DefinitionType
+  type: DefinitionType  
 }
 
 export type Definitions = Definition[]
-
 
 export type DefinitionClass = Constrained<Definition>
 export type DefinitionTimes = Map<Definition, Times[]>
@@ -42,5 +39,5 @@ export const isDefinition = (value: any): value is Definition => {
   return isObject(value) && isDefinitionType(value.type) && "instanceFromObject" in value
 }
 export function assertDefinition(value: any, name?: string): asserts value is Definition {
-  if (!isDefinition(value)) throwError(value, 'Definition', name)
+  if (!isDefinition(value)) errorsThrow(value, 'Definition', name)
 }

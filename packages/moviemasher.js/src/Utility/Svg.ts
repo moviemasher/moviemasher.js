@@ -1,16 +1,24 @@
-import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative, assertSize } from "./Size"
+import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from "./Size"
 import { NamespaceSvg } from "../Setup/Constants"
-import { assertPopulatedString, isArray, isPopulatedArray, isPopulatedString, isPositive } from "./Is"
-import { Orientation } from "../Setup/Enums"
-import { StringObject, SvgFilter, SvgFilters, SvgItem, SvgItems } from "../declarations"
+import { assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from "./Is"
+import { isOrientation, Orientation } from "../Setup/Enums"
+import { LoadedSvgImage, StringObject, SvgFilter, SvgFilters, SvgItem, SvgItems } from "../declarations"
 import { idGenerateString } from "./Id"
-import { assertPoint, isPoint, Point, pointCopy, pointNegate, pointValueString, PointZero } from "./Point"
+import { assertPoint, isPoint, Point, pointCopy, PointZero } from "./Point"
 import { Rect } from "./Rect"
+import { SvgImageOptions } from "../MoveMe"
 
+
+let _svgElement: SVGSVGElement
+let svgImageEmitsLoadEvent = false
+
+export const svgElement = () =>  _svgElement ||= svgSvgElement() 
+export const svgElementInitialize = (value: SVGSVGElement) => { _svgElement = value }
 
 export const svgId = (id: string): string => {
   return `#${id}`
 }
+
 export const svgUrl = (id: string): string => {
   return `url(${svgId(id)})`
 }
@@ -77,7 +85,7 @@ export const svgSetBox = (element: SvgItem, boxSize: Size) => {
   svgSet(element, viewBox, 'viewBox')
 }
 
-export const svgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SVGSVGElement => {
+export const svgSvgElement = (size?: Size, svgItems?: SvgItem | SvgItems): SVGSVGElement => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'svg')
   svgSet(element, '1.1', 'version')
   svgSet(element, NamespaceSvg, 'xmlns')
@@ -235,7 +243,6 @@ export const svgSetTransform = (element: SvgItem, transform: string, origin = 't
   svgSet(element, origin, 'transform-origin')
 }
 
-
 export const svgTransform = (dimensions: Rect | Size, rect: Rect): string => {
   assertSizeAboveZero(dimensions, 'svgTransform.dimensions')
   assertSizeAboveZero(rect, 'svgTransform.rect')
@@ -280,5 +287,65 @@ export const svgSetChildren = (element: Element, svgItems: SvgItems) => {
   svgItems.forEach(node => element.appendChild(node))
 }
 
+export const svgImagePromise = (url: string): Promise<LoadedSvgImage> => {
+  return new Promise<LoadedSvgImage>((resolve, reject) => {
+    const element = svgImageElement()
+    const completed = () => {
+      element.removeEventListener('error', failed)
+      element.removeEventListener('load', passed)
+      if (_svgElement && !svgImageEmitsLoadEvent) {
+         _svgElement.appendChild(element) 
+      }
+    }
+    const failed = (error: any) => {
+      completed()
+      reject(error)
+    }
+
+    const passed = () => {
+      completed()
+      resolve(element)
+    }
+
+    element.addEventListener('error', failed, { once: true })
+    element.addEventListener('load', passed, { once: true })
+    if (_svgElement && !svgImageEmitsLoadEvent) {
+      _svgElement.appendChild(element)
+    }
+    svgSet(element, url, 'href')
+  })
+}
+
+export const svgText = (string: string, family: string, size: number, transform: string) => {
+  const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'text')
+  svgItem.setAttribute('font-family', family)
+  svgItem.setAttribute('font-size', String(size))
+  svgItem.append(string)
+  svgSetTransform(svgItem, transform)
+  return svgItem
+}
+
+export const svgImagePromiseWithOptions = (url:string, options: SvgImageOptions): Promise<LoadedSvgImage> => {
+  return svgImagePromise(url).then(item => {
+    const { lock, ...rest } = options
+    svgSetDimensionsLock(item, rest, lock)
+    return item
+  })
+}
+
+// test for support for load events from svg images
+(() => {
+  const { document } = globalThis
+  if (document) {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = 1
+    const context = canvas.getContext('2d')
+    assertTrue(context)
+    context.fillRect(0, 0, 1, 1)
+    svgImagePromise(canvas.toDataURL()).then(() => {
+      svgImageEmitsLoadEvent = true
+    })
+  }
+})()
 
 

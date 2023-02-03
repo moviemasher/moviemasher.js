@@ -1,7 +1,8 @@
 import { CommandFiles } from "../MoveMe"
 import { assertPositive, isPositive } from "./Is"
 
-export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string) => {
+export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string, visible: boolean) => {
+  
   const inputCommandFiles = commandFiles.filter(commandFile => commandFile.input)
   const inputIndex = inputCommandFiles.findIndex(commandFile => commandFile.inputId === id)
   if (!isPositive(inputIndex)) console.log("commandFilesInputIndex", id, inputCommandFiles)
@@ -9,6 +10,8 @@ export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string) =
   return inputIndex
 }
 
-export const commandFilesInput = (commandFiles: CommandFiles, id: string, visible?: boolean) => (
-  [commandFilesInputIndex(commandFiles, id), visible ? 'v' : 'a'].join(':')
-)
+export const commandFilesInput = (commandFiles: CommandFiles, id: string, visible?: boolean) => {
+  const isVisible = !!visible
+  const aOrV = isVisible ? 'v' : 'a'
+  return [commandFilesInputIndex(commandFiles, id, isVisible), aOrV].join(':')
+}

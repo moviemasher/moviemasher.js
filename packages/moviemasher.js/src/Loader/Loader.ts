@@ -1,20 +1,31 @@
-import { LoadedAudio, LoadedFont, LoadedImage, LoadedImageOrVideo, LoadedSvgImage, LoadedVideo, Scalar, ScalarObject, Value } from "../declarations"
+import { LoadedAudio, LoadedFont, LoadedImage, LoadedImageOrVideo, LoadedMedia, LoadedSvgImage, LoadedVideo, Scalar, ScalarObject, Value } from "../declarations"
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Definition, DefinitionObject } from "../Definition/Definition"
 import { GraphFileType, isGraphFileType, isLoadType, LoadType } from "../Setup/Enums"
-import { throwError } from "../Utility/Throw"
-import { isPopulatedString } from "../Utility/Is"
+import { errorsThrow } from "../Utility/Errors"
+import { isObject, isPopulatedString } from "../Utility/Is"
 
-export type LoadedMedia = LoadedImageOrVideo | LoadedAudio
 
 export const isLoadedVideo = (value: any): value is LoadedVideo => {
   return value instanceof HTMLVideoElement
 }
+
+export function assertLoadedVideo(value: any, name?: string): asserts value is LoadedVideo {
+  if (!isLoadedVideo(value)) errorsThrow(value, "LoadedVideo", name)
+}
+
 export const isLoadedImage = (value: any): value is LoadedImage => {
   return value instanceof HTMLImageElement
 }
+export function assertLoadedImage(value: any, name?: string): asserts value is LoadedImage {
+  if (!isLoadedImage(value)) errorsThrow(value, "LoadedImage", name)
+}
+
 export const isLoadedAudio = (value: any): value is LoadedAudio => {
   return value instanceof AudioBuffer
+}
+export const isLoadedFont = (value: any): value is LoadedFont => {
+  return isObject(value) && "family" in value
 }
 
 export interface ErrorObject {
@@ -108,7 +119,7 @@ export const isLoaderType = (value: any): value is LoaderType => {
   return isLoadType(value) || isGraphFileType(value)
 }
 export function assertLoaderType(value: any, name?: string): asserts value is LoaderType {
-  if (!isLoaderType(value)) throwError(value, "LoaderType", name)
+  if (!isLoaderType(value)) errorsThrow(value, "LoaderType", name)
 }
 
 export type LoaderPath = string
@@ -116,7 +127,7 @@ export const isLoaderPath = (value: any): value is LoaderPath => {
   return isPopulatedString(value) && value.includes(':')
 }
 export function assertLoaderPath(value: any, name?: string): asserts value is LoaderPath {
-  if (!isLoaderPath(value)) throwError(value, "LoaderPath", name)
+  if (!isLoaderPath(value)) errorsThrow(value, "LoaderPath", name)
 }
 export interface LoaderFile {
   loaderPath: LoaderPath
@@ -140,12 +151,12 @@ export interface Loader {
   getCache(path: LoaderPath): LoaderCache | undefined
   info(loaderPath: LoaderPath): LoadedInfo | undefined
   loaded(urlPath: string): boolean
-  loadPromise(urlPath: string | string[], definition?: Definition): Promise<any> 
-
+  loadPromise(urlPath: string | string[], definition: Definition): Promise<any> 
+  updateDefinition(loaderPath: string, definition: Definition): void
   // RenderingOutputClass, FilterGraphsClass
   loadFilesPromise(files: GraphFiles): Promise<void>
+  media(urlPath: LoaderPath): Loaded | undefined 
   // FilterGraphClass, RenderingProcessClass
   key(graphFile: GraphFile): string
-  
   sourceUrl(graphFile: GraphFile): string
 }

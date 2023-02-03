@@ -1,8 +1,26 @@
-import { DefinitionType } from "../../Setup/Enums"
-import { Factories } from "../../Definitions/Factories"
 import { ImageDefinitionClass } from "./ImageDefinitionClass"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { assertPopulatedString } from "../../Utility/Is"
+import { MediaFactories } from "../MediaFactories"
+import { DefinitionType } from "../../Setup/Enums"
+
+import defaultContent from "../../MediaObjects/content/default.json"
+
+import defaultContainer from "../../MediaObjects/container/default.json"
+import heartContainer from "../../MediaObjects/container/heart.json"
+import cloudContainer from "../../MediaObjects/container/cloud.json"
+import appleContainer from "../../MediaObjects/container/apple.json"
+import starburstContainer from "../../MediaObjects/container/starburst.json"
+import roundedRectContainer from "../../MediaObjects/container/rounded-rect.json"
+import fireContainer from "../../MediaObjects/container/fire.json"
+import flagContainer from "../../MediaObjects/container/flag.json"
+import ovalContainer from "../../MediaObjects/container/oval.json"
+import mmContainer from "../../MediaObjects/container/mm.json"
+import { ShapeContainerDefinitionClass } from "../Container/ShapeContainer/ShapeContainerDefinitionClass"
+import { DefaultContainerId } from "../Container/Container"
+import { MediaDefaults } from "../MediaDefaults"
+import { ColorContentDefinitionClass } from "../Content/ColorContent/ColorContentDefinitionClass"
+import { DefaultContentId } from "../Content/Content"
 
 export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   const { id } = object
@@ -11,6 +29,12 @@ export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinitio
 }
 
 export const imageDefinitionFromId = (id : string) : ImageDefinition => {
+  const definition = MediaDefaults[DefinitionType.Image].find(definition => 
+    definition.id === id
+  )
+  if (definition) return definition as ImageDefinition
+
+  
   return imageDefinition({ id })
 }
 
@@ -24,9 +48,21 @@ export const imageFromId = (id : string) : Image => {
   return imageInstance({ id })
 }
 
-Factories[DefinitionType.Image] = {
-  definition: imageDefinition,
-  definitionFromId: imageDefinitionFromId,
-  fromId: imageFromId,
-  instance: imageInstance,
-}
+
+MediaFactories[DefinitionType.Image] = imageDefinition
+
+MediaDefaults[DefinitionType.Image].push(
+  new ColorContentDefinitionClass({id: DefaultContentId, ...defaultContent}),
+  new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
+  new ShapeContainerDefinitionClass(roundedRectContainer),
+  new ShapeContainerDefinitionClass(ovalContainer),
+  new ShapeContainerDefinitionClass(starburstContainer),
+  new ShapeContainerDefinitionClass(heartContainer),
+  new ShapeContainerDefinitionClass(cloudContainer),
+  new ShapeContainerDefinitionClass(fireContainer),
+  new ShapeContainerDefinitionClass(flagContainer),
+  new ShapeContainerDefinitionClass(mmContainer),
+  new ShapeContainerDefinitionClass(appleContainer),
+
+)
+

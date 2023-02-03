@@ -6,7 +6,7 @@
   "module": "esm/theme-default.js",
   "types": "esm/theme-default.d.ts",
   "type": "module",
-  "license": "MPL-2.0",
+  "license": "MIT",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -25,18 +25,19 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "react-icons": "4.6.0",
+    "react-icons": "4.7.1",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/node": "15.6.1"
+    "@types/node": "18.11.18"
   },
   "scripts": {
     "build-css": "cat src/css/* > moviemasher.css",
-    "build-esm": "rollup --config dev/rollup/esm.config.js",
-    "build-esm-min": "rollup --config dev/rollup/esm.min.config.js",
+    "build-esm": "esbuild src/index.ts --sourcemap --bundle --platform=browser --outfile=esm/theme-default.js",
+    "build-esm-min": "esbuild src/index.ts --bundle --platform=browser --outfile=esm/theme-default.min.js --minify",
     "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
     "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "build": "run-s build-esm build-esm-min build-umd build-umd-min build-css"
+    "copy-types": "cp umd/theme-default.d.ts esm/theme-default.d.ts",
+    "build": "run-s build-esm build-esm-min build-umd build-umd-min build-css copy-types"
   },
   "eslintConfig": {
     "extends": [

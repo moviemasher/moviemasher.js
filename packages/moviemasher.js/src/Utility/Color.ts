@@ -126,15 +126,23 @@ export const colorHexRegex = /^#([A-Fa-f0-9]{3,4}){1,2}$/
 
 export const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
 
+export const colorStyle = ():{ color: string } => {
+  if (typeof Option !== 'function') return { color: '' }
+  console.log("colorStyle Option", Option)
+  return new Option().style
+}
 export const colorValid = (color: string): boolean => {
   const stripped = colorStrip(color)
   if (colorValidHex(stripped) || colorValidRgba(stripped) || colorValidRgb(stripped)) return true
 
-  const style = new Option().style
-  style.color = color
-  const styleStripped = colorStrip(style.color)
-  if (!styleStripped) return false
+  const style = colorStyle()
 
+  style.color = color
+  const transformed = style.color
+  if (transformed === color) return false
+  const styleStripped = colorStrip(transformed)
+  if (!styleStripped) return false
+ 
   if (colorValidRgba(stripped) || colorValidRgb(stripped)) return true
 
   return styleStripped === stripped

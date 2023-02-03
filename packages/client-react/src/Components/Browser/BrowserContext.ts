@@ -1,12 +1,12 @@
 import React from 'react'
 import { 
-  Definition, DefinitionType, EmptyMethod, StringSetter, VoidMethod 
+  Definition, DefinitionType, EmptyMethod, MediaDefinitionType, Medias, StringSetter, VoidMethod 
 } from '@moviemasher/moviemasher.js'
 
 export interface BrowserContextInterface {
   refresh: VoidMethod
-  addPicker:(id: string, types: DefinitionType[]) => void
-  definitions: Definition[]
+  addPicker:(id: string, types: MediaDefinitionType[]) => void
+  definitions: Medias
   pick: StringSetter
   picked: string,
   removePicker:(id: string) => void

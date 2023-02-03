@@ -5,7 +5,7 @@ import {
   RenderingUploadRequest, RenderingUploadResponse,
 } from "@moviemasher/moviemasher.js"
 
-import { Server, ServerArgs, ServerHandler } from "../Server"
+import { Server, ServerArgs, ExpressHandler } from "../Server"
 
 export type RenderingCommandOutputs = {
   [index in OutputType]?: RenderingCommandOutput
@@ -22,7 +22,7 @@ export interface RenderingServerArgs extends ServerArgs {
 
 export interface RenderingServer extends Server {
   args: RenderingServerArgs
-  start: ServerHandler<RenderingStartResponse, RenderingStartRequest>
-  status: ServerHandler<RenderingStatusResponse, RenderingStatusRequest>
-  upload: ServerHandler<RenderingUploadResponse, RenderingUploadRequest>
+  start: ExpressHandler<RenderingStartResponse, RenderingStartRequest>
+  status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest>
+  upload: ExpressHandler<RenderingUploadResponse, RenderingUploadRequest>
 }

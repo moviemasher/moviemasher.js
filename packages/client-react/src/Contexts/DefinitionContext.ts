@@ -1,8 +1,8 @@
 import React from 'react'
-import { Definition } from '@moviemasher/moviemasher.js'
+import { Media } from '@moviemasher/moviemasher.js'
 
 export interface DefinitionContextInterface {
-  definition?: Definition
+  definition?: Media
 }
 
 export const DefinitionContextDefault: DefinitionContextInterface = {

@@ -1,5 +1,4 @@
 import { UnknownObject} from "../../declarations"
-import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { VideoSequenceClass } from "./VideoSequenceClass"
 import {
@@ -10,22 +9,22 @@ import { Default } from "../../Setup/Default"
 import {
   PreloadableDefinitionMixin
 } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
-import { DefinitionBase } from "../../Definition/DefinitionBase"
-import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
+import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { isPositive } from "../../Utility/Is"
+import { MediaBase } from "../MediaBase"
 
-const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const VideoSequenceDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const VideoSequenceDefinitionWithContent = ContentDefinitionMixin(VideoSequenceDefinitionWithTweenable)
 const VideoSequenceDefinitionWithPreloadable = PreloadableDefinitionMixin(VideoSequenceDefinitionWithContent)
 const VideoSequenceDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoSequenceDefinitionWithPreloadable)
 const VideoSequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoSequenceDefinitionWithUpdatableSize)
 export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpdatableDuration implements VideoSequenceDefinition {
   constructor(...args : any[]) {
-    super(...args)
     const [object] = args
+    super(object)
     const {
       padding, begin, fps, increment, pattern
     } = <VideoSequenceDefinitionObject>object
@@ -74,7 +73,7 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
     return new VideoSequenceClass(this.instanceArgs(object))
   }
 
-  loadType = LoadType.Image
+  // loadType = LoadType.Image
 
   padding : number
 
@@ -92,7 +91,7 @@ export class VideoSequenceDefinitionClass extends VideoSequenceDefinitionWithUpd
     return json
   }
 
-  type = DefinitionType.VideoSequence
+  // type = DefinitionType.Video
 
   urlForFrame(frame : number): string {
     const { increment, begin, padding, url, pattern } = this

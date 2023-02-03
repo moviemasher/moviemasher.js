@@ -1,4 +1,6 @@
-import { JsonObject, AndId, Described, StringObject, StringsObject, DescribedObject } from "../declarations"
+import { 
+  JsonObject, AndId, StringObject, StringsObject, DescribedObject 
+} from "../declarations"
 import { Size } from "../Utility/Size"
 import { DefinitionObject, DefinitionObjects } from "../Definition/Definition"
 import { MashObject } from "../Edited/Mash/Mash"

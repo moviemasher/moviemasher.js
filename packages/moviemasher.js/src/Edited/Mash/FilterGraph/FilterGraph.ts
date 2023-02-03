@@ -1,7 +1,6 @@
 import { Size } from "../../../Utility/Size"
 import { CommandFilters, CommandFiles } from "../../../MoveMe"
 import { Time } from "../../../Helpers/Time/Time"
-import { Loader } from "../../../Loader/Loader"
 import { CommandInputs } from "../../../Api"
 import { Mash } from "../Mash"
 
@@ -13,7 +12,6 @@ export interface FilterGraphArgs {
   streaming?: boolean
   time: Time
   videoRate: number
-  upload?: boolean
 }
 
 export interface FilterGraph {
@@ -22,7 +20,6 @@ export interface FilterGraph {
   commandFilters: CommandFilters
   commandInputs: CommandInputs
   duration: number
-  preloader: Loader
   quantize: number
   size: Size
   streaming: boolean

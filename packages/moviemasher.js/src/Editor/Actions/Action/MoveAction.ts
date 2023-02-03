@@ -1,4 +1,4 @@
-import { throwError } from "../../../Utility/Throw"
+import { errorsThrow } from "../../../Utility/Errors"
 import { Action, ActionOptions, ActionObject } from "./Action"
 
 export interface MoveActionObject extends ActionObject {
@@ -41,6 +41,6 @@ export const isMoveAction = (value: any): value is MoveAction => (
   value instanceof MoveAction
 )
 export function assertMoveAction(value: any, name?: string): asserts value is MoveAction {
-  if (!isMoveAction(value)) throwError(value, 'MoveAction', name)
+  if (!isMoveAction(value)) errorsThrow(value, 'MoveAction', name)
 }
 

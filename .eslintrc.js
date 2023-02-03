@@ -2,14 +2,12 @@ module.exports = {
   globals: {
     page: true,
     browser: true,
-    context: true,
-    jestPuppeteer: true,
+    context: true
   },
   env: {
     browser: true,
     es2021: true,
     node: true,
-    jest: true,
   },
   extends: ['plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
@@ -42,8 +40,8 @@ module.exports = {
   },
   settings: {
     "import/resolver": {
-      node: { extensions: [".js", ".jsx", ".ts", ".tsx"] }
+      node: { extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "**/*.config.js", "dev/test/jest.*.js"],
+  ignorePatterns: ['.eslintrc.js', "**/*.config.js"],
 };

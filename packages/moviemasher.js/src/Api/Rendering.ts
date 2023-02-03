@@ -1,6 +1,6 @@
 import { DefinitionObjects } from "../Definition/Definition"
 import { AndId, UploadDescription, ValueObject } from "../declarations"
-import { CommandFilters, GraphFilters } from "../MoveMe"
+import { CommandFilters, GraphFilters, PotentialError } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
 import { CommandOutput, CommandOutputs, RenderingCommandOutput } from "../Output/Output"
 import { AVType, LoadType, OutputType } from "../Setup/Enums"
@@ -55,7 +55,6 @@ export interface RenderingInput {
 }
 
 export interface RenderingOptions extends RenderingInput {
-  upload?: boolean
   outputs: CommandOutputs
 }
 

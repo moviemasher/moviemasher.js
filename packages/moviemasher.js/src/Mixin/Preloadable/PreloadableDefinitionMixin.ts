@@ -3,7 +3,7 @@ import { LoadType } from "../../Setup/Enums"
 import {
   PreloadableDefinition, PreloadableDefinitionClass, PreloadableDefinitionObject
 } from "./Preloadable"
-import { ContentDefinitionClass } from "../../Content/Content"
+import { ContentDefinitionClass } from "../../Media/Content/Content"
 
 export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Base: T): PreloadableDefinitionClass & T {
   return class extends Base implements PreloadableDefinition {
@@ -25,7 +25,7 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
 
     bytes = 0
 
-    loadType!: LoadType
+    // loadType!: LoadType
 
     mimeType = ''
 

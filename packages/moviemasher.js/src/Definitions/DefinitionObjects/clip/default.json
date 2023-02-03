@@ -1,7 +1,0 @@
-{
-  "label": "Visible",
-  "type": "visible",
-  "id": "com.moviemasher.clip.default",
-  "containerId": "com.moviemasher.container.default",
-  "contentId": "com.moviemasher.content.default"
-}

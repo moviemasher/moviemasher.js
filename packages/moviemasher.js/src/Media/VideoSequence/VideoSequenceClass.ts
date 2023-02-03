@@ -1,20 +1,18 @@
-import { SvgItem, UnknownObject } from "../../declarations"
+import { UnknownObject } from "../../declarations"
 import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { VideoSequence, VideoSequenceDefinition } from "./VideoSequence"
-import { InstanceBase } from "../../Instance/InstanceBase"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
-import { ContentMixin } from "../../Content/ContentMixin"
+import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { ContainerMixin } from "../../Container/ContainerMixin"
+import { ContainerMixin } from "../Container/ContainerMixin"
 import { LoadType } from "../../Setup/Enums"
-import { Rect } from "../../Utility/Rect"
 import { Size } from "../../Utility/Size"
-import { svgSet } from "../../Utility/Svg"
+import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
 
-const VideoSequenceWithTweenable = TweenableMixin(InstanceBase)
+const VideoSequenceWithTweenable = TweenableMixin(MediaInstanceBase)
 const VideoSequenceWithContainer = ContainerMixin(VideoSequenceWithTweenable)
 const VideoSequenceWithContent = ContentMixin(VideoSequenceWithContainer)
 const VideoSequenceWithPreloadable = PreloadableMixin(VideoSequenceWithContent)
@@ -47,7 +45,7 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     
     if (visible) {
       const { definition } = this
-      if (editing) {
+     if (editing) {
         const frames = definition.framesArray(definitionTime)
         const files = frames.map(frame => {
           const graphFile: GraphFile = {
@@ -75,29 +73,29 @@ export class VideoSequenceClass extends VideoSequenceWithUpdatableDuration imple
     return definition.urlForFrame(frame)
   }
 
-  preloadUrls(args: PreloadArgs): string[] {
-    const { time, clipTime, editing, visible } = args
-    const definitionTime = this.definitionTime(time, clipTime)
+  // preloadUrls(args: PreloadArgs): string[] {
+  //   const { time, clipTime, editing, visible } = args
+  //   const definitionTime = this.definitionTime(time, clipTime)
 
-    const definitionArgs: PreloadArgs = { ...args, time: definitionTime }
-    const files = super.preloadUrls(definitionArgs) 
+  //   const definitionArgs: PreloadArgs = { ...args, time: definitionTime }
+  //   const files = super.preloadUrls(definitionArgs) 
     
-    if (visible) {
-      const { definition } = this
-      if (editing) {
-        const frames = definition.framesArray(definitionTime)
-        const files = frames.map(frame => {
-          const graphFile: GraphFile = {
-            type: LoadType.Image, file: definition.urlForFrame(frame), 
-            input: true, definition
-          }
-          return graphFile
-        })
-        files.push(...files)
-      } else files.push(definition.source)
-    }
-    return files
-  }
+  //   if (visible) {
+  //     const { definition } = this
+  //     if (editing) {
+  //       const frames = definition.framesArray(definitionTime)
+  //       const files = frames.map(frame => {
+  //         const graphFile: GraphFile = {
+  //           type: LoadType.Image, file: definition.urlForFrame(frame), 
+  //           input: true, definition
+  //         }
+  //         return graphFile
+  //       })
+  //       files.push(...files)
+  //     } else files.push(definition.source)
+  //   }
+  //   return files
+  // }
 
   speed = 1.0
 

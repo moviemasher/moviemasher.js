@@ -1,8 +1,8 @@
-import { DefinitionType } from "../../Setup/Enums"
 import { assertPopulatedString } from "../../Utility/Is"
-import { Factories } from "../../Definitions/Factories"
 import { VideoSequenceDefinitionClass } from "./VideoSequenceDefinitionClass"
 import { VideoSequence, VideoSequenceDefinition, VideoSequenceDefinitionObject, VideoSequenceObject } from "./VideoSequence"
+import { DefinitionType } from "../../Setup/Enums"
+import { MediaFactories } from "../MediaFactories"
 
 export const videoSequenceDefinition = (object : VideoSequenceDefinitionObject) : VideoSequenceDefinition => {
   const { id } = object
@@ -24,9 +24,4 @@ export const videoSequenceFromId = (id : string) : VideoSequence => {
   return videoSequenceInstance({ id })
 }
 
-Factories[DefinitionType.VideoSequence] = {
-  definition: videoSequenceDefinition,
-  definitionFromId: videoSequenceDefinitionFromId,
-  fromId: videoSequenceFromId,
-  instance: videoSequenceInstance,
-}
+MediaFactories[DefinitionType.VideoSequence] = videoSequenceDefinition

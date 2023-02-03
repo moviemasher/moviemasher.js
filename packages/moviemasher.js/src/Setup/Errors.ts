@@ -24,7 +24,7 @@ export const Errors = {
   internal: $internal,
   argument: `${$invalidArgument}`,
   invalid: {
-    
+    environment: 'wrong environment',
     canvas: `${$invalidProperty}canvas `,
     context: `${$invalidProperty}context `,
     duration: `${$invalid} duration`,
@@ -44,6 +44,7 @@ export const Errors = {
     value: `${$invalidProperty}value `,
     type: `${$invalidProperty}type `,
     url: `${$invalidProperty}url `,
+    baseUrl: 'Call urlBaseInitialize first',
     user: 'Unauthenticated',
     property: $invalidProperty,
     argument: $invalidArgument,

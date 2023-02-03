@@ -1,17 +1,19 @@
-import { Container, ContainerObject, ContainerRectArgs } from "../../../../Container/Container"
-import { Content, ContentObject } from "../../../../Content/Content"
-import { GenericFactory, SvgOrImage, SvgItemsTuple, EventHandler, SvgItem, SvgItems, PreviewItems } from "../../../../declarations"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, PreloadArgs, GraphFiles } from "../../../../MoveMe"
+import { Container, ContainerObject, ContainerRectArgs } from "../../../../Media/Container/Container"
+import { Content, ContentObject } from "../../../../Media/Content/Content"
+import { SvgOrImage, PreviewItems } from "../../../../declarations"
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, PreloadArgs, GraphFiles, Component, ServerPromiseArgs } from "../../../../MoveMe"
 import { Sizing, Timing } from "../../../../Setup/Enums"
-import { throwError } from "../../../../Utility/Throw"
+import { errorsThrow } from "../../../../Utility/Errors"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../../../../Edited/Mash/Track/Track"
-import { Definition, DefinitionObject } from "../../../../Definition/Definition"
-import { Instance, InstanceObject, isInstance, isInstanceObject } from "../../../../Instance/Instance"
+import { DefinitionObject } from "../../../../Definition/Definition"
+import { InstanceObject, isInstance, isInstanceObject } from "../../../../Instance/Instance"
 import { Selectable } from "../../../../Editor/Selectable"
 import { Tweenable } from "../../../../Mixin/Tweenable/Tweenable"
 import { Size } from "../../../../Utility/Size"
 import { RectTuple } from "../../../../Utility/Rect"
+import { Property } from "../../../../Setup/Property"
+import { Propertied } from "../../../../Base/Propertied"
 
 export interface ClipObject extends InstanceObject {
   containerId?: string
@@ -35,9 +37,18 @@ export interface IntrinsicOptions {
 
 export interface ClipDefinitionObject extends DefinitionObject {}
 
-export interface Clip extends Instance, Selectable {
+export interface Clip extends Selectable, Propertied {
+  // copy(): Clip
+  // definition: Definition
+  // definitionId: string
+  definitionIds(): string[]
+  propertiesCustom: Property[]
+  id: string
+  label: string
+  // propertyNames: string[]
+  // type: DefinitionType
+
   audible: boolean
-  clipGraphFiles(args: PreloadArgs): GraphFiles
   clipIcon(size: Size, scale: number, spacing?: number, color?: string): Promise<SvgOrImage> | undefined
   clipCommandFiles(args: CommandFileArgs): CommandFiles 
   commandFilters(args: CommandFilterArgs): CommandFilters 
@@ -45,22 +56,25 @@ export interface Clip extends Instance, Selectable {
   containerId: string
   content: Content
   contentId: string
-  definition: ClipDefinition
+  // definition: ClipDefinition
   endFrame: number
   frame : number
   frames: number
   intrinsicsKnown(options: IntrinsicOptions): boolean
   intrinsicGraphFiles(options: IntrinsicOptions): GraphFiles
-  // intrinsicUrls(options: IntrinsicOptions): string[]
+ 
+  serverPromise(args: ServerPromiseArgs): Promise<void>
+  
+  loadPromise(args: PreloadArgs): Promise<void>
   maxFrames(quantize : number, trim? : number) : number
   mutable: boolean
   muted: boolean
   notMuted: boolean
-  preloadUrls(args: PreloadArgs): string[]
+  // preloadUrls(args: PreloadArgs): string[]
   rects(args: ContainerRectArgs): RectTuple
   resetTiming(tweenable?: Tweenable, quantize?: number): void
   sizing: Sizing
-  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<PreviewItems>
+  previewItemsPromise(size: Size, time: Time, component: Component): Promise<PreviewItems>
   time(quantize : number) : Time
   timeRange(quantize : number) : TimeRange
   timeRangeRelative(mashTime : TimeRange, quantize : number) : TimeRange
@@ -74,20 +88,15 @@ export const isClip = (value: any): value is Clip => {
   return isInstance(value) && "contentId" in value
 }
 export function assertClip(value: any, name?: string): asserts value is Clip {
-  if (!isClip(value)) throwError(value, "Clip", name)
+  if (!isClip(value)) errorsThrow(value, "Clip", name)
 }
 
 export type Clips = Clip[]
 
-export interface ClipDefinition extends Definition {
-  instanceFromObject(object?: ClipObject): Clip
-  audible: boolean
-  // duration: number
-  streamable : boolean
-  visible: boolean
-}
-
-/**
- * @category Factory
- */
-export interface ClipFactory extends GenericFactory<Clip, ClipObject, ClipDefinition, ClipDefinitionObject> {}
+// export interface ClipDefinition extends Definition {
+//   instanceFromObject(object?: ClipObject): Clip
+//   audible: boolean
+//   // duration: number
+//   streamable : boolean
+//   visible: boolean
+// }

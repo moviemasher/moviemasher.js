@@ -4,7 +4,7 @@ import { Errors } from "../Setup/Errors"
 import { assertDefined, assertValueObject, isBoolean, isDefined, isNan, isNumber, isNumeric, isString, isUndefined } from "../Utility/Is"
 import { Time, TimeRange } from "./Time/Time"
 
-import { Filter } from "../Filter/Filter"
+import { Filter } from "../Module/Filter/Filter"
 import { Parameter } from "../Setup/Parameter"
 import { Property } from "../Setup/Property"
 import { Evaluation } from "./Evaluation"

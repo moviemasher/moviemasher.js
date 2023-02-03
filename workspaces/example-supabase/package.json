@@ -1,0 +1,16 @@
+{
+  "name": "@moviemasher/example-supabase",
+  "version": "5.1.2",
+  "description": "Movie Masher Supabase Example",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MIT",
+  "scripts": {  
+    "logs": "docker compose --file dev/docker-compose.yml logs -f",
+    "up": "docker compose --file dev/docker-compose.yml up -d",
+    "down": "docker compose --file dev/docker-compose.yml down -v",
+    "build": "node ../../dev/utils/replace-paths.js ./src/index.html ./public/index.html"
+  }
+}

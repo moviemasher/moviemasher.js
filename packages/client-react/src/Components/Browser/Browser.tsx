@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertPopulatedString, DefinitionType, DefinitionTypesObject
+  assertPopulatedString, DefinitionType, DefinitionTypesObject, MediaDefinitionType
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
@@ -35,7 +35,7 @@ export function Browser(props: BrowserProps): ReactResult {
 
   const [_, definitions] = useDefinitions(typesObject[picked])
 
-  const addPicker = (id: string, types: DefinitionType[]) => {
+  const addPicker = (id: string, types: MediaDefinitionType[]) => {
     setTypesObject(original => ({ ...original, [id]: types }))
   }
 

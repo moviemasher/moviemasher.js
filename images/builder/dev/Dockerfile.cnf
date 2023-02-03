@@ -1,0 +1,15 @@
+ARG DIR_ROOT=/app
+FROM node:18
+ARG DIR_ROOT
+
+WORKDIR ${DIR_ROOT}
+COPY package.json ${DIR_ROOT}/package.json
+COPY packages ${DIR_ROOT}/packages
+COPY images/builder ${DIR_ROOT}/images/builder
+RUN npm install 
+# RUN npm install -g npm
+
+LABEL org.opencontainers.image.authors="support@moviemasher.com"
+
+ENTRYPOINT ["npm", "run"]
+CMD ["all"]

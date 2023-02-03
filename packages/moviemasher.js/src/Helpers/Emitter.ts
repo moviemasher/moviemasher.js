@@ -17,11 +17,17 @@ export class Emitter extends EventTarget {
     // console.log(this.constructor.name, "emit trapped", type, !!listener)
     if (listener) listener(this.event(type, detail))
   }
+  
+  enqueue(type: EventType, detail: UnknownObject = {}): void {
+    
+  }
 
   event(type: EventType, detail?: UnknownObject): CustomEvent {
     const init: CustomEventInit<UnknownObject> | undefined = detail ? { detail } : undefined
     return new CustomEvent(type, init)
   }
+
+  private queue = new Map<EventType, UnknownObject>()
 
   trap(type: EventType, listener?: EventListener): void {
     if (this.trapped.has(type)) return

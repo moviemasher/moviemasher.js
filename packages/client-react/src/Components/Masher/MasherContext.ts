@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   BooleanSetter,
-  Definition, Editor, EditorIndex, EmptyMethod, ScalarObject 
+  Editor, EditorIndex, EmptyMethod, Media, ScalarObject 
 } from '@moviemasher/moviemasher.js'
 import type { ThemeIcons } from '@moviemasher/theme-default'
 
@@ -11,8 +11,8 @@ export interface MasherContextInterface {
   streaming: boolean
   setStreaming: BooleanSetter
   current: ScalarObject
-  changeDefinition: (definition?: Definition) => void
-  drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Definition[]>
+  changeDefinition: (definition?: Media) => void
+  drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Media[]>
   editor?: Editor
   editorIndex: EditorIndex
   icons: ThemeIcons

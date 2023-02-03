@@ -1,12 +1,11 @@
 import {
-  DefinitionObject, UnknownObject, MashAndDefinitionsObject,
-  Clip, Effect, Layer, Point, isString, Rect, isObject, isDefinitionType, 
+  UnknownObject, MashAndDefinitionsObject,
+  Clip, Layer, Point, isString, Rect, isObject, isDefinitionType, 
   DefinitionType, assertDefinitionType, StringsObject, NumberObject, 
   JsonObject, isUploadType, isAboveZero, isPopulatedString, isArray, 
   DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
-  ClassDroppingBefore, isPopulatedObject, throwError
+  ClassDroppingBefore, isPopulatedObject, errorsThrow, MediaObject
 } from "@moviemasher/moviemasher.js"
-import React from "react"
 
 
 export const DragSuffix = '/x-moviemasher'
@@ -21,17 +20,17 @@ export const isDragOffsetObject = (value: any): value is DragOffsetObject => {
   return isObject(value) && "offset" in value
 }
 export function assertDragOffsetObject(value: any): asserts value is DragOffsetObject {
-  if (!isDragOffsetObject(value)) throwError(value, 'DragOffsetObject')
+  if (!isDragOffsetObject(value)) errorsThrow(value, 'DragOffsetObject')
 }
 
 export interface DragDefinitionObject extends DragOffsetObject {
-  definitionObject: DefinitionObject
+  mediaObject: MediaObject
 }
 export const isDragDefinitionObject = (value: any): value is DragDefinitionObject => {
-  return isDragOffsetObject(value) && "definitionObject" in value
+  return isDragOffsetObject(value) && "mediaObject" in value
 }
 export function assertDragDefinitionObject(value: any): asserts value is DragDefinitionObject {
-  if (!isDragDefinitionObject(value)) throwError(value, 'DragDefinitionObject')
+  if (!isDragDefinitionObject(value)) errorsThrow(value, 'DragDefinitionObject')
 }
 
 export interface DragLayerObject extends UnknownObject {
@@ -39,12 +38,8 @@ export interface DragLayerObject extends UnknownObject {
   mashAndDefinitions?: MashAndDefinitionsObject
 }
 
-export interface DragEffectObject extends UnknownObject {
-  index: number
-  definitionObject?: DefinitionObject
-}
 
-export type Draggable = DefinitionObject | MashAndDefinitionsObject | Clip | Effect | Layer | FileList
+export type Draggable = MediaObject | MashAndDefinitionsObject | Clip | Layer | FileList
 
 export enum DragType {
   Mash = 'mash',

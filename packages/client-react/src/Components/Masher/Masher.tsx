@@ -8,15 +8,14 @@ import {
   eventStop,
   EditorIndex,
   DataPutResponse,
-  Endpoints, fetchCallback, FileStoreResponse, ServerType,
+  Endpoints, fetchJsonPromise, FileStoreResponse, ServerType,
   RenderingUploadRequest, RenderingUploadResponse, ApiCallback, 
   ApiCallbackResponse,
   DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes, 
   assertObject, EventType, isMashAndDefinitionsObject,
   idGenerate, ActivityType, Definition, assertPreloadableDefinition, 
-  isDefinitionObject, isClip, isEffect, isLayer, DefinitionObject, isDefinition, 
-  sizeAboveZero,
-  ScalarObject
+  isClip, isEffect, isLayer, 
+  sizeAboveZero, ScalarObject, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia
 } from '@moviemasher/moviemasher.js'
 
 import type { ThemeIcons } from '@moviemasher/theme-default'
@@ -85,7 +84,7 @@ export function Masher(props: MasherProps): ReactResult {
   const svgRef = React.useRef<SVGSVGElement>(null)
   const ref = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
-  const [editor] = React.useState(() => editorInstance({ editType}))
+  const [editor] = React.useState(() => editorInstance({ editType }))
   const [requested, setRequested] = React.useState(false)
   const [streaming, setStreaming] = React.useState(false)
 
@@ -103,13 +102,15 @@ export function Masher(props: MasherProps): ReactResult {
 
     const { current: svg } = svgRef
     const { current: div } = ref
-    assertObject(svg)
+    assertObject(svg, 'svg')
     if (sizeAboveZero(size)) elementSetPreviewSize(div, size)
     
     editor.svgElement = svg
     editor.load(rest)
   }
   React.useEffect(() => {
+    console.debug("Masher useEffect", enabled, requested)
+
     if (!enabled) {
       editorLoad()
       return
@@ -117,19 +118,24 @@ export function Masher(props: MasherProps): ReactResult {
     if (!requested && servers[ServerType.Data]) {
       setRequested(true)
       const request: DataDefaultRequest = {}
+
+      console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
+
       const promise = endpointPromise(Endpoints.data[editType].default, request)
       promise.then((response: DataDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
         const { previewSize: serverSize = previewSize, ...rest } = response
+        console.log("Masher DataDefaultResponse", servers.file?.prefix)
         if (servers.file?.prefix) {
-          editor.preloader.endpoint.prefix = String(servers.file.prefix)
+          urlBaseInitialize(String(servers.file.prefix))
+          console.log("Masher DataDefaultResponse", servers.file.prefix)
         }
         editorLoad(response)
       })
     }
-  }, [servers])
+  }, [servers, enabled, requested])
 
-  const dropFiles = (files: FileList, editorIndex?: EditorIndex): Promise<Definition[]> => {
+  const dropFiles = (files: FileList, editorIndex?: EditorIndex): Promise<Media[]> => {
     const fileInfos = dropFilesFromList(files, servers.file)
     if (fileInfos.length) {
       const errors: UnknownObject[] = []
@@ -152,12 +158,15 @@ export function Masher(props: MasherProps): ReactResult {
     return Promise.resolve([])
   }
 
-  const dropDefinitionObject = (definitionObject: DefinitionObject, editorIndex?: EditorIndex): Promise<Definition[]>  => {
+  const dropMediaObject = (definitionObject: MediaObject, editorIndex?: EditorIndex): Promise<Media[]>  => {
     // console.log("Masher onDrop DefinitionObject...", definitionObject, editorIndex)
-    return editor.add(definitionObject, editorIndex)
+    return editor.addMedia(definitionObject, editorIndex)
   }
 
-  const drop = (draggable: Draggable, editorIndex?: EditorIndex): Promise<Definition[]>  => {
+  const drop = (draggable: Draggable, editorIndex?: EditorIndex): Promise<Media[]>  => {
+    console.log("Masher drop", draggable, editorIndex)
+
+    
     if (!draggable) return Promise.resolve([]) 
     console.log("Masher drop editorIndex = ", editorIndex)
 
@@ -173,9 +182,9 @@ export function Masher(props: MasherProps): ReactResult {
       console.log("Masher drop Layer")
       return Promise.resolve([])
     }
-    if (isDefinitionObject(draggable)) {
+    if (isMediaObject(draggable)) {
       console.log("Masher drop DefinitionObject")
-      return dropDefinitionObject(draggable, editorIndex)
+      return dropMediaObject(draggable, editorIndex)
       
     }
     if (isMashAndDefinitionsObject(draggable)) {
@@ -185,7 +194,7 @@ export function Masher(props: MasherProps): ReactResult {
     return dropFiles(draggable, editorIndex).then(definitions => {
       console.log("Masher.dropFiles", definitions)
       const [definition] = definitions
-      if (isDefinition(definition)) changeDefinition(definition)
+      if (isMedia(definition)) changeDefinition(definition)
       return definitions
     })
   }
@@ -197,26 +206,27 @@ export function Masher(props: MasherProps): ReactResult {
   const handleApiCallback = (id: string, definition: Definition, callback: ApiCallback): Promise<void> => {
     console.debug("handleApiCallback request", callback)
     const { eventTarget } = editor
-    return fetchCallback(callback).then((response: ApiCallbackResponse) => {
+    return fetchJsonPromise(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
       const { apiCallback, error } = response
-      if (error) return handleError(callback.endpoint.prefix!, error, id)
+      if (error) return handleError(callback.endpoint.pathname!, error, id)
 
       if (apiCallback) {
-        const { request, endpoint } = apiCallback
-        if (endpoint.prefix === Endpoints.data.definition.put) {
-          assertObject(request)
+        const { init, endpoint } = apiCallback
+        if (endpoint.pathname === Endpoints.data.definition.put) {
+          assertObject(init, 'init')
 
-          const { body } = request
-          assertObject(body)
+          const { body } = init
+          assertObject(body, 'body')
 
           const putRequest: DataDefinitionPutRequest = body
           const { definition: definitionObject } = putRequest
-          // console.debug("handleApiCallback calling updateDefinition", definitionObject)
+          console.debug("handleApiCallback calling updateDefinition", definitionObject)
 
           editor.updateDefinition(definitionObject, definition)
+          console.debug("handleApiCallback called updateDefinition")
         }
-        if (callback.endpoint.prefix === Endpoints.rendering.status) {
+        if (callback.endpoint.pathname === Endpoints.rendering.status) {
           const statusResponse: RenderingStatusResponse = response
           let steps = 0
           let step = 0
@@ -231,6 +241,7 @@ export function Masher(props: MasherProps): ReactResult {
             id, step, steps, type: ActivityType.Render 
           })
         }
+        
         return delayPromise().then(() => handleApiCallback(id, definition, apiCallback))
       }
       eventTarget.emit(EventType.Active, { id, type: ActivityType.Complete })
@@ -257,10 +268,11 @@ export function Masher(props: MasherProps): ReactResult {
       eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
 
       const { rendering } = Endpoints
+      console.log("Masher fetch", source)
       const responsePromise = fetch(source)
       const blobPromise = responsePromise.then(response => response.blob())
       const filePromise = blobPromise.then(blob => new File([blob], label))
-      const callbackPromise = filePromise.then(file => {
+      const resultPromise = filePromise.then(file => {
         const request: RenderingUploadRequest = { type, name: label, size: file.size }
         console.debug("RenderingUploadRequest", rendering.upload, request)
         const responsePromise = endpointPromise(rendering.upload, request)
@@ -269,23 +281,23 @@ export function Masher(props: MasherProps): ReactResult {
           const { error, fileApiCallback, apiCallback, fileProperty } = response
           if (error) return handleError(rendering.upload, error, id)
 
-          else if (fileApiCallback && fileApiCallback.request) {
-            if (fileProperty) fileApiCallback.request.body![fileProperty] = file
-            else fileApiCallback.request.body = file
-            return fetchCallback(fileApiCallback).then((response: FileStoreResponse) => {
+          else if (fileApiCallback && fileApiCallback.init) {
+            if (fileProperty) fileApiCallback.init.body![fileProperty] = file
+            else fileApiCallback.init.body = file
+            return fetchJsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
               console.debug("FileStoreResponse", response)
               const { error } = response
-              if (error) return handleError(fileApiCallback.endpoint.prefix!, error, id)
+              if (error) return handleError(fileApiCallback.endpoint.pathname!, error, id)
     
-              assertObject(apiCallback)
+              assertObject(apiCallback, 'apiCallback')
               return handleApiCallback(id, definition, apiCallback)
             })
           } 
-          assertObject(apiCallback)
+          assertObject(apiCallback, 'apiCallback')
           return handleApiCallback(id, definition, apiCallback)
         })
       })
-      promise = promise.then(() => callbackPromise)
+      promise = promise.then(() => resultPromise)
     })
     return promise
   }
@@ -307,7 +319,7 @@ export function Masher(props: MasherProps): ReactResult {
     await savePromise
   }
 
-  const changeDefinition = (definition?: Definition) => { 
+  const changeDefinition = (definition?: Media) => { 
     current.definitionId = definition?.id
   }
 

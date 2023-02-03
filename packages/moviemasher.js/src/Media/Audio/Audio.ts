@@ -1,8 +1,7 @@
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent } from "../../Content/Content"
-import { GenericFactory } from "../../declarations"
-import { isDefinition } from "../../Definition/Definition"
+import { Content, ContentObject, isContent } from "../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { DefinitionType } from "../../Setup/Enums"
+import { isMedia, Media, MediaObject } from "../Media"
 
 
 export interface AudioObject extends ContentObject, UpdatableDurationObject {}
@@ -14,20 +13,13 @@ export const isAudio = (value: any): value is Audio => {
   return isContent(value) && isAudioDefinition(value.definition)
 }
 
-export interface AudioDefinitionObject extends ContentDefinitionObject, UpdatableDurationDefinitionObject { 
+export interface AudioDefinitionObject extends MediaObject, UpdatableDurationDefinitionObject { 
 }
 
-export interface AudioDefinition extends ContentDefinition, UpdatableDurationDefinition {
+export interface AudioDefinition extends Media, UpdatableDurationDefinition {
   instanceFromObject(object?: AudioObject): Audio
 }
 
 export const isAudioDefinition = (value: any): value is AudioDefinition => {
-  return isDefinition(value) && value.type === DefinitionType.Audio
+  return isMedia(value) && value.type === DefinitionType.Audio
 }
-
-/**
- * @category Factory
- */
-export interface AudioFactory extends GenericFactory<
-  Audio, AudioObject, AudioDefinition, AudioDefinitionObject
-> { }

@@ -15,9 +15,7 @@ import { Cast } from "../Cast"
 export class LayerClass extends PropertiedClass implements Layer {
   constructor(args: LayerArgs) {
     super()
-
     this.properties.push(propertyInstance({ name: 'label', type: DataType.String }))
-
     this.propertiesInitialize(args)
   }
 

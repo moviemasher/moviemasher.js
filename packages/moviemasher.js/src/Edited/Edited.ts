@@ -9,7 +9,7 @@ import { Editor } from "../Editor/Editor"
 import { Selectable } from "../Editor/Selectable"
 import { isMash, Mash } from "./Mash/Mash"
 import { isCast } from "./Cast"
-import { throwError } from "../Utility/Throw"
+import { errorsThrow } from "../Utility/Errors"
 
 export interface EditedDescription extends UnknownObject, Described { }
 
@@ -19,9 +19,7 @@ export interface EditedObject extends Partial<EditedDescription> {
   quantize?: number
 }
 
-export interface EditedArgs extends EditedObject {
-  preloader?: Loader
-}
+export interface EditedArgs extends EditedObject {}
 
 export interface Edited extends Described, Propertied, Selectable {
   color: string
@@ -29,12 +27,11 @@ export interface Edited extends Described, Propertied, Selectable {
   destroy(): void
   editor: Editor
   emitter: Emitter
-  editedGraphFiles(args?: PreloadOptions): GraphFiles
+  // editedGraphFiles(args?: PreloadOptions): GraphFiles
   imageSize: Size
   loading: boolean
   loadPromise(args?: PreloadOptions): Promise<void>
   mashes: Mash[]
-  readonly preloader: Loader
   putPromise(): Promise<void>
   quantize: number
   reload(): Promise<void> | undefined
@@ -46,5 +43,5 @@ export const isEdited = (value: any): value is Edited => {
 }
 
 export function assertEdited(value: any): asserts value is Edited {
-  if (!isEdited(value)) throwError(value, 'Edited')
+  if (!isEdited(value)) errorsThrow(value, 'Edited')
 }

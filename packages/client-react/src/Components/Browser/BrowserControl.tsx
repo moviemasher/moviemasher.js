@@ -25,7 +25,7 @@ export function BrowserControl(props: PropsAndChild): ReactResult {
   const { 
     extensions = Object.fromEntries(UploadTypes.map(type => [type, []])) 
   } = file
-  assertObject(extensions)
+  assertObject(extensions, 'extensions')
 
   const accept = Object.entries(extensions).flatMap(([uploadType, noDots]) => {
     return [`${uploadType}/*`, ...noDots.map((noDot: string) => `.${noDot}`)]

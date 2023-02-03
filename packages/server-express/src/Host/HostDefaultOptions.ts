@@ -1,9 +1,9 @@
 import path from 'path'
 import {
   ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
-  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, CommandOutput, LoadType, Size
+  CommandOutput, LoadType, Size
 } from "@moviemasher/moviemasher.js"
-import { expandFileOrScript } from '@moviemasher/server-core'
+import { outputDefaultDash, outputDefaultRtmp, outputDefaultHls, expandFileOrScript } from '@moviemasher/server-core'
 
 import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
 import { DataServerArgs } from "../Server/DataServer/DataServer"
@@ -24,26 +24,36 @@ export interface HostOptionsDefault {
   outputRate?: number
   auth?: ServerAuthentication
   temporaryDirectory?: string
-  fileUploadDirectory?: string
+  mediaDirectory?: string
+  dataDirectory?: string
   dataMigrationsDirectory?: string
   renderingCacheDirectory?: string
-  dataBaseFile?: string
-  webServerHome?: string
+  privateDirectory?: string
+  publicDirectory?: string
   version?: string
   renderingCommandOutputs?: RenderingCommandOutputs
 }
 
 export const HostDefaultPort = 8570
+
 export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions => {
   const {
-    previewSize, outputSize,
-    outputRate,
-    port, auth, webServerHome,
-    temporaryDirectory, fileUploadDirectory,
-    dataMigrationsDirectory, dataBaseFile,
-    renderingCacheDirectory, host, version, renderingCommandOutputs,
+    publicDirectory = "./images/standalone/public",
+    privateDirectory = "./images/standalone/private",
+    temporaryDirectory = './temporary', 
+    dataMigrationsDirectory = "./dev/data-migrations", 
+    dataDirectory,
+    mediaDirectory,
+    renderingCacheDirectory, 
+    previewSize, outputSize, outputRate, port, auth, 
+    host, version, renderingCommandOutputs,
   } = args
   const definedHost = host || '0.0.0.0'
+  const dbDirectory = dataDirectory || `${privateDirectory}/data`
+  const cacheDirectory = renderingCacheDirectory || `${temporaryDirectory}/cache`
+  const uploadDir = mediaDirectory || `${publicDirectory}/media`
+  if (!uploadDir.startsWith(publicDirectory)) throw 'mediaDirectory must be public'
+
   const commandOutput: CommandOutput = {}
   const basePort = port || HostDefaultPort
   if (outputSize) {
@@ -53,18 +63,10 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   }
 
   if (outputRate) commandOutput.videoRate = outputRate
-  const temporary = temporaryDirectory || './temporary'
-  const cacheDirectory = renderingCacheDirectory || `${temporary}/cache`
-  const migrations = dataMigrationsDirectory || "./workspaces/example-express-react/host/data-migrations"
-  const home = webServerHome || "./workspaces/example-express-react/host/public/index.html"
-  const homeDirectory = path.dirname(home)
-  const baseFile = dataBaseFile || `${path.dirname(migrations)}/sqlite.db`
-  const upload = fileUploadDirectory || `${homeDirectory}/media`
+
   const commandOutputs: RenderingCommandOutputs = renderingCommandOutputs || {}
 
-  if (!upload.startsWith(homeDirectory)) throw 'fileUploadDirectory must be under webServerHome'
-
-  const uploadsRelative = path.relative(homeDirectory, upload)
+  const uploadsRelative = path.relative(publicDirectory, uploadDir)
 
   const authentication = auth || OpenAuthentication
   if (authentication.type === 'basic') {
@@ -76,8 +78,8 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   }
   const data: DataServerArgs = {
     temporaryIdPrefix: 'temporary-',
-    dbPath: baseFile,
-    dbMigrationsPrefix: migrations,
+    dbPath: `${dbDirectory}/sqlite.db`,
+    dbMigrationsPrefix: dataMigrationsDirectory,
     authentication
   }
 
@@ -87,7 +89,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
       audio: 50,
       image: 5,
     },
-    uploadsPrefix: upload,
+    uploadsPrefix: uploadDir,
     uploadsRelative,
     extensions: {
       [LoadType.Audio]: [
@@ -113,7 +115,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
 
 
   const rendering: RenderingServerArgs = {
-    temporaryDirectory: temporary,
+    temporaryDirectory,
     cacheDirectory, authentication, commandOutputs, previewSize, outputSize
   }
 
@@ -122,7 +124,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
       commandOutput: outputDefaultHls(commandOutput),
       segmentFile: `000000.${ExtTs}`,
       url: '/hls',
-      directory: `${temporary}/streams`,
+      directory: `${temporaryDirectory}/streams`,
       file: `index.${ExtHls}`,
     },
     [StreamingFormat.Rtmp]: {
@@ -130,23 +132,23 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
       segmentFile: '',
       file: `index.${ExtRtmp}`,
       url: '/rtmp',
-      directory: `${temporary}/streams/rtmp`,
+      directory: `${temporaryDirectory}/streams/rtmp`,
     },
     [StreamingFormat.Mdash]: {
       commandOutput: outputDefaultDash(commandOutput),
       segmentFile: '',
       file: `index.${ExtDash}`,
       url: '/rtmp',
-      directory: `${temporary}/streams/mdash`,
+      directory: `${temporaryDirectory}/streams/mdash`,
     },
   }
   const streaming: StreamingServerArgs = {
     streamingFormatOptions,
     commandOutput: outputDefaultHls(commandOutput),
     appName: StreamingFormat.Rtmp,
-    cacheDirectory: `${temporary}/cache`,
-    temporaryDirectory: temporary,
-    webrtcStreamingDir: `${temporary}/streams/webrtc`,
+    cacheDirectory: `${temporaryDirectory}/cache`,
+    temporaryDirectory,
+    webrtcStreamingDir: `${temporaryDirectory}/streams/webrtc`,
     rtmpOptions: {
       port: 1935,
       chunk_size: 60000,
@@ -156,15 +158,14 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     },
     httpOptions: {
       port: basePort + 1,
-      mediaroot: `${temporary}/streams`,
+      mediaroot: `${temporaryDirectory}/streams`,
       allow_origin: "*"
     },
     authentication
   }
 
   const web: WebServerArgs = {
-    sources: { '/': home },
-    authentication
+    sources: { '/': `${publicDirectory}/index.html` }, authentication
   }
 
   const options = {

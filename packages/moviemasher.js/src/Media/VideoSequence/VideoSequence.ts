@@ -1,6 +1,5 @@
-import { GenericFactory, LoadedAudio } from "../../declarations"
 import { UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, UpdatableSizeObject } from "../../Mixin/UpdatableSize/UpdatableSize"
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Content/Content"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Time } from "../../Helpers/Time/Time"
 
@@ -27,10 +26,3 @@ export interface VideoSequenceDefinition extends ContentDefinition, UpdatableSiz
   framesArray(start: Time): number[]
   urlForFrame(frame : number): string
 }
-
-/**
- * @category Factory
- */
-export interface VideoSequenceFactory extends GenericFactory<
-  VideoSequence, VideoSequenceObject, VideoSequenceDefinition, VideoSequenceDefinitionObject
-> {}

@@ -9,11 +9,11 @@ import { EditorSelection, EditorSelectionObject } from "./EditorSelection"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import { assertTrue, isPopulatedString, isPositive } from "../../Utility/Is"
 import { Editor } from "../Editor"
-import { Container } from "../../Container/Container"
-import { Content } from "../../Content/Content"
+import { Container } from "../../Media/Container/Container"
+import { Content } from "../../Media/Content/Content"
 import { isLayer, isLayerMash } from "../../Edited/Cast/Layer/LayerFactory"
 import { isCast } from "../../Edited/Cast/CastFactory"
-import { Effect, isEffect } from "../../Media/Effect/Effect"
+import { Effect, isEffect } from "../../Module/Effect/Effect"
 
 export class EditorSelectionClass implements EditorSelection {
     get [SelectType.None](): Selectable | undefined { return undefined }

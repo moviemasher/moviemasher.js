@@ -32,6 +32,7 @@ export const BrowserDefaultProps: PropsMethod<BrowserPropsDefault, BrowserProps>
     <BrowserPicker key='video' id='video' types='video,videosequence' className={ClassButton} children={icons.browserVideo} />,
     <BrowserPicker key='audio' id='audio' className={ClassButton} children={icons.browserAudio} />,
     <BrowserPicker key='image' id='image' className={ClassButton} children={icons.browserImage} />,
+    <BrowserPicker key='font' id='font' className={ClassButton} children={icons.browserText} />,
   ]
 
   optionsStrict.footer.after ||= [

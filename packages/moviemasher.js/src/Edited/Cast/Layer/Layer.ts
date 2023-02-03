@@ -14,7 +14,6 @@ export interface LayerObject  {
   label?: string
   mash?: MashObject
   layers?: LayerObjects
-  preloader?: Loader
 }
 
 export const isLayerObject = (value: any): value is LayerObject => {

@@ -3,7 +3,6 @@ import { Size } from "../../../Utility/Size"
 import { PreloadOptions } from "../../../MoveMe"
 import { Editor } from "../../../Editor/Editor"
 import { Time } from "../../../Helpers/Time/Time"
-import { Loader } from "../../../Loader/Loader"
 import { Mash } from "../Mash"
 import { Clip } from "../Track/Clip/Clip"
 
@@ -14,7 +13,7 @@ export interface PreviewOptions  {
 
 export interface PreviewArgs extends PreviewOptions {
   selectedClip?: Clip
-  onlyClip?: Clip
+  clip?: Clip
   size?: Size
   time: Time
   mash: Mash
@@ -25,7 +24,6 @@ export interface Preview extends PreloadOptions {
   duration: number
   editing: boolean
   editor?: Editor
-  preloader: Loader
   quantize: number
   selectedClip?: Clip
   size: Size

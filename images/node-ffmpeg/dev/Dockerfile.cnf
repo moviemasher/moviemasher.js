@@ -1,0 +1,35 @@
+ARG DIR_ROOT=/app
+
+FROM amazonlinux:2022 AS code
+ARG DIR_ROOT
+
+# package JSON files from main and relevant projects
+COPY package.json ${DIR_ROOT}/package.json
+COPY images/node-ffmpeg/package.json ${DIR_ROOT}/images/node-ffmpeg/package.json
+COPY packages/moviemasher.js/package.json ${DIR_ROOT}/packages/moviemasher.js/package.json
+COPY packages/server-core/package.json ${DIR_ROOT}/packages/server-core/package.json
+
+COPY packages/moviemasher.js/esm ${DIR_ROOT}/packages/moviemasher.js/esm
+
+COPY packages/server-core/esm ${DIR_ROOT}/packages/server-core/esm
+
+
+FROM amazonlinux:2022 
+ARG DIR_ROOT
+ARG OS_INSTALL=''
+ARG OS_EXECUTE='npm install -g npm'
+
+ARG INSTALL_NODE='18.12.1'
+ARG NPM_INSTALL='--workspace=@moviemasher/node-ffmpeg'
+
+WORKDIR ${DIR_ROOT}
+COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
+COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
+RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-aws2022.sh \
+  -n "${NPM_INSTALL}" \
+  -e "${OS_EXECUTE}" \
+  -o "${OS_INSTALL}" \
+  -r "${DIR_ROOT}"\
+  -i "${INSTALL_NODE}"
+
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

@@ -1,3 +1,5 @@
+import { isObject } from "./Utility/Is"
+
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
@@ -38,6 +40,9 @@ export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlen
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
 export type SvgFilters = SvgFilter[]
 export type LoadedImageOrVideo = LoadedImage | LoadedVideo
+
+export type LoadedMedia = LoadedImageOrVideo | LoadedAudio | LoadedFont
+
 export type SvgItem = SVGElement | LoadedImageOrVideo
 
 
@@ -70,7 +75,7 @@ export type EventHandler = (event: Event) => void
 
 export type AnyArray = any[]
 export type JsonValue = Scalar | AnyArray | UnknownObject
-export interface JsonObject extends Record<string, JsonValue | JsonValue[]> {}
+export interface JsonObject extends Record<string, JsonObject | JsonValue | JsonValue[]> {}
 
 export interface WithFrame {
   frame : number
@@ -161,13 +166,13 @@ export interface Yuv {
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type Constrained<T = UnknownObject> = new (...args: any[]) => T
 
-export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
-  defaults?: DEFINITION[]
-  definitionFromId(id : string) : DEFINITION
-  definition(object: DEFINITIONOBJECT): DEFINITION
-  instance(object : INSTANCEOBJECT) : INSTANCE
-  fromId(id : string) : INSTANCE
-}
+// export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
+//   defaults?: DEFINITION[]
+//   definitionFromId(id : string) : DEFINITION
+//   definition(object: DEFINITIONOBJECT): DEFINITION
+//   instance(object : INSTANCEOBJECT) : INSTANCE
+//   fromId(id : string) : INSTANCE
+// }
 
 export type IndexHandler<OBJECT = any, INDEX = number> = (effect: OBJECT, insertIndex?: INDEX) => void
 
@@ -177,12 +182,18 @@ export interface StartOptions {
   start: number
 }
 
-// TODO: rename prefix to path and add query string parameters?
+// search includes '?' prefix
+// protocol includes ':' suffix
 export interface Endpoint {
   protocol?: string
-  prefix?: string
-  host?: string
+  pathname?: string
+  hostname?: string
+  search?: string
   port?: number
+}
+
+export const isEndpoint = (value: any): value is Endpoint => {
+  return isObject(value) 
 }
 
 export interface UploadDescription {

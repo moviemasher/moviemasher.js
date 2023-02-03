@@ -1,10 +1,10 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { Scalar, ScalarObject } from "../../declarations"
-import { Filter } from "../../Filter/Filter"
-import { filterFromId } from "../../Filter/FilterFactory"
+import { Filter } from "../../Module/Filter/Filter"
+import { filterFromId } from "../../Module/Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { InstanceClass } from "../../Instance/Instance"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../MoveMe"
 import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
@@ -24,8 +24,9 @@ import { Selectables } from "../../Editor/Selectable"
 import { Defined } from "../../Base"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { Default } from "../../Setup/Default"
+import { MediaInstanceClass } from "../../Media"
 
-export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass & T {
+export function TweenableMixin<T extends MediaInstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
     constructor(...args: any[]) {
       super(...args)
@@ -33,6 +34,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       const { container } = object as TweenableObject
       if (container) this.container = true
     }
+    propertiesCustom!: Property[]
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = [] 
@@ -169,8 +171,8 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return []
     }
 
-    copyCommandFilter(input: string, track: number, prefix = 'content'): CommandFilter {
-      const contentOutput = `${prefix}-${track}`
+    copyCommandFilter(input: string, track: number, id = 'content'): CommandFilter {
+      const contentOutput = `${id}-${track}`
       const commandFilter: CommandFilter = {
         inputs: [input], ffmpegFilter: 'copy', options: {}, outputs: [contentOutput]
       }
@@ -182,10 +184,9 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
     
     declare definition: TweenableDefinition
 
-    definitionTime(time : Time, clipTime: TimeRange) : Time {
-      const { fps: quantize } = clipTime
-      const scaledTime = time.scaleToFps(quantize) // may have fps higher than quantize and time.fps
-      const { startTime, endTime } = clipTime
+    definitionTime(mashTime : Time, clipRange: TimeRange) : Time {
+      const { fps: quantize, startTime, endTime } = clipRange
+      const scaledTime = mashTime.scaleToFps(quantize) // may have fps higher than quantize and time.fps
       const frame = Math.max(Math.min(scaledTime.frame, endTime.frame), startTime.frame)
       return scaledTime.withFrame(frame - startTime.frame)
     }
@@ -208,7 +209,7 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
       return commandFiles
     }
 
-    graphFiles(args: PreloadArgs): GraphFiles { return [] }
+    graphFiles(args: PreloadArgs): GraphFiles { return this.definition.graphFiles(args) }
 
     hasIntrinsicSizing = false
 
@@ -232,20 +233,23 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
         visible: size, audible: duration,
       }
       const [graphFile] = this.graphFiles(graphFileArgs)
-      assertObject(graphFile)
+      assertObject(graphFile, 'graphFile')
       
       return graphFile
     }
 
     get isDefault() { return false }
 
+
+    loadPromise(args: PreloadArgs): Promise<void> {
+      return this.definition.loadPromise(args)
+    }
+
     declare lock: Orientation
     mutable() { return false }
     
     declare muted: boolean 
     
-
-
     overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters { 
       assertPopulatedString(bottomInput, 'bottomInput')
       assertPopulatedString(topInput, 'topInput')
@@ -271,6 +275,10 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
     preloadUrls(args: PreloadArgs): string[] { return [] }
 
+    serverPromise(args: ServerPromiseArgs): Promise<void> {
+      return this.definition.serverPromise(args)
+    }
+    
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { time, containerRects, filterInput: input, videoRate } = args
       let filterInput = input
@@ -330,7 +338,6 @@ export function TweenableMixin<T extends InstanceClass>(Base: T): TweenableClass
 
           const redoValues = { ...values, [name]: redoValue }
           if (timingBound || sizingBound) {
-
             const newDefinition = Defined.fromId(redoValue)
             const { type } = newDefinition
             if (timingBound && !isTimingDefinitionType(type)) {

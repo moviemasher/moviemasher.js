@@ -2,8 +2,7 @@ import fs from 'fs'
 import path from "path"
 import Express from "express"
 
-const NodeMediaServer = require('node-media-server')
-
+import NodeMediaServer from 'node-media-server'
 
 import {
   UnknownObject,
@@ -15,12 +14,13 @@ import {
   StreamingRemoteRequest, StreamingRemoteResponse,
   StreamingLocalRequest, StreamingLocalResponse,
   StreamingWebrtcRequest, StreamingWebrtcResponse, WithError, StreamingStartRequest,
-  StreamingFormat, outputDefaultStreaming, OutputFormat, ExtHls, ExtTs, isPositive
+  StreamingFormat, OutputFormat, ExtHls, ExtTs, isPositive
 } from "@moviemasher/moviemasher.js"
 
+import { outputDefaultStreaming } from '@moviemasher/server-core'
 import { WebrtcConnection } from './WebrtcConnection'
 import { ServerClass } from '../ServerClass'
-import { ServerHandler } from '../Server'
+import { ExpressHandler } from '../Server'
 import { HostServers } from '../../Host/Host'
 import { streamingProcessCreate, streamingProcessGet } from './StreamingProcess/StreamingProcessFactory'
 import { StreamingProcessArgs, StreamingProcessCutArgs } from './StreamingProcess/StreamingProcess'
@@ -34,7 +34,7 @@ import { idUnique } from "../../Utilities/Id"
 export class StreamingServerClass extends ServerClass implements StreamingServer {
   constructor(public args: StreamingServerArgs) { super(args) }
 
-  cut: ServerHandler<StreamingCutResponse, StreamingCutRequest> = (req, res) => {
+  cut: ExpressHandler<StreamingCutResponse, StreamingCutRequest> = (req, res) => {
     const request = req.body
 
     const { id, mashObjects, definitionObjects } = request
@@ -57,7 +57,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     }
   }
 
-  delete: ServerHandler<StreamingDeleteResponse, StreamingDeleteRequest> = (req, res) => {
+  delete: ExpressHandler<StreamingDeleteResponse, StreamingDeleteRequest> = (req, res) => {
     const { id } = req.body
     console.log(this.constructor.name, "delete", id)
     const connection = WebrtcConnection.getConnection(id)
@@ -74,7 +74,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   fileServer?: FileServer
 
-  local: ServerHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
+  local: ExpressHandler<StreamingLocalResponse | WithError, StreamingLocalRequest> = (req, res) => {
     const { id } = req.body
     const connection = WebrtcConnection.getConnection(id)
     if (!connection) {
@@ -92,7 +92,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     res.send(response)
   }
 
-  remote: ServerHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
+  remote: ExpressHandler<StreamingRemoteResponse | WithError, StreamingRemoteRequest> = async (req, res) => {
     const request = req.body
 
     const { id, localDescription } = request
@@ -122,14 +122,14 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
 
   id = 'streaming'
 
-  preload: ServerHandler<StreamingPreloadResponse, StreamingPreloadRequest> = (req, res) => {
+  preload: ExpressHandler<StreamingPreloadResponse, StreamingPreloadRequest> = (req, res) => {
     const { id, files } = req.body
     const response: StreamingPreloadResponse = {}
     res.send(response)
   }
 
   // TODO: support other output besides HLS file
-  start: ServerHandler<StreamingStartResponse, StreamingStartRequest> = (req, res) => {
+  start: ExpressHandler<StreamingStartResponse, StreamingStartRequest> = (req, res) => {
     const request = req.body
     console.log(Endpoints.streaming.start, 'request', request)
 
@@ -185,7 +185,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     res.send(response)
   }
 
-  startMediaServer(): void {
+  startMediaServer(): Promise<void> {
     const task: UnknownObject = { app: this.args.appName }
 
     const {
@@ -237,9 +237,10 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     }
     const nms = new NodeMediaServer(config)
     nms.run()
+    return Promise.resolve()
   }
 
-  startServer(app: Express.Application, activeServers: HostServers): void {
+  startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     super.startServer(app, activeServers)
     this.fileServer = activeServers.file
 
@@ -303,10 +304,10 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
       }
     })
 
-    this.startMediaServer()
+    return this.startMediaServer()
   }
 
-  status: ServerHandler<StreamingStatusResponse, StreamingStatusRequest> = (req, res) => {
+  status: ExpressHandler<StreamingStatusResponse, StreamingStatusRequest> = (req, res) => {
     const { body } = req
     const { id } = body
     const response: StreamingStatusResponse = {}
@@ -352,7 +353,7 @@ export class StreamingServerClass extends ServerClass implements StreamingServer
     return `${url}/${id}/${file}`
   }
 
-  webrtc: ServerHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (req, res) => {
+  webrtc: ExpressHandler<WebrtcConnection | WithError, StreamingWebrtcRequest> = async (req, res) => {
     try {
 
       const request = req.body

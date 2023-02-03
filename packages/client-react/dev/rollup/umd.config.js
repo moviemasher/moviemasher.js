@@ -1,22 +1,27 @@
 import ts from "rollup-plugin-ts"
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
-import pkg from "../../package.json"
-
-const { main } = pkg
-
 export default {
   input: 'src/index.ts',
   output: { 
-    format: 'umd', file: main, name: 'MovieMasherClient', 
+    format: 'umd', interop: 'auto', 
+    file: 'umd/client-react.js', name: 'MovieMasherClient', 
     globals: { 
-      react: 'React',
+      'react': 'React',
       '@moviemasher/theme-default': 'MovieMasherTheme',
       '@moviemasher/moviemasher.js': 'MovieMasher',
+      '@moviemasher/client-core': 'MovieMasherCore',
     },
   },
   plugins: [
     peerDepsExternal(),
-    ts({ tsconfig: './dev/tsconfig.json' })
+    ts({ tsconfig: { 
+      target: 'ESNext', 
+      resolveJsonModule: true, 
+      allowSyntheticDefaultImports: true,
+      jsx: 'react',
+      declaration: true,
+      declarationMap: true,
+    } }),
   ]
 }

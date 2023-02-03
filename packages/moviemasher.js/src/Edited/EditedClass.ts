@@ -1,17 +1,15 @@
-import { PreviewItems, SvgItem, UnknownObject } from "../declarations"
+import { PreviewItems, UnknownObject } from "../declarations"
 import { assertSizeAboveZero, Size, SizeZero } from "../Utility/Size"
 import { PreloadOptions, GraphFiles } from "../MoveMe"
 import { SelectedItems } from "../Utility/SelectedProperty"
 import { Emitter } from "../Helpers/Emitter"
 import { Errors } from "../Setup/Errors"
 import { DataType, EventType, SelectType } from "../Setup/Enums"
-import { DataGroup, propertyInstance } from "../Setup/Property"
+import { propertyInstance } from "../Setup/Property"
 import { Edited, EditedArgs } from "./Edited"
 import { PropertiedClass } from "../Base/Propertied"
 import { isAboveZero, isPopulatedString, isUndefined } from "../Utility/Is"
-import { idGenerate, idTemporary } from "../Utility/Id"
-import { Loader } from "../Loader/Loader"
-import { PreviewOptions } from "./Mash/Preview/Preview"
+import { idTemporary } from "../Utility/Id"
 import { Default } from "../Setup/Default"
 import { Editor } from "../Editor/Editor"
 import { Actions } from "../Editor/Actions/Actions"
@@ -23,8 +21,7 @@ import { Mash } from "./Mash"
 export class EditedClass extends PropertiedClass implements Edited {
   constructor(args: EditedArgs) {
     super()
-    const { createdAt, id, icon, preloader, quantize } = args
-    if (preloader) this._preloader = preloader
+    const { createdAt, id, icon, quantize } = args
     if (isPopulatedString(id)) this._id = id
     if (isPopulatedString(icon)) this.icon = icon
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
@@ -70,7 +67,7 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   protected emitterChanged() { }
 
-  editedGraphFiles(args: PreloadOptions): GraphFiles { return [] }
+  // editedGraphFiles(args: PreloadOptions): GraphFiles { return [] }
 
   icon = ''
 
@@ -97,11 +94,6 @@ export class EditedClass extends PropertiedClass implements Edited {
 
   get mashes(): Mash[]{ throw Errors.unimplemented }
 
-  private _preloader?: Loader
-  get preloader(): Loader {
-    return this._preloader!
-  }
-  
   putPromise(): Promise<void> { throw new Error(Errors.unimplemented) }
 
   quantize = Default.mash.quantize

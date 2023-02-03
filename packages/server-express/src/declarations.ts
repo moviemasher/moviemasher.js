@@ -9,3 +9,5 @@ export interface ConnectionJson {
   signalingState: RTCSignalingState
   state: string,
 }
+
+

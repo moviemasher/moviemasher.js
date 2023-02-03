@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
-  DataGroup, isDefined, Orientation, PropertyTweenSuffix, isOrientation, 
+  DataGroup, Orientation, PropertyTweenSuffix, isOrientation, 
   selectedPropertyObject, ScalarObject, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
 } from "@moviemasher/moviemasher.js"
 
@@ -59,6 +59,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   const goTime = tweenInputTime(timeRange, onEdge, nearStart, endDefined, endSelected)
 
   inspectingProperties.forEach(selectedProperty => {
+    
     const { property, changeHandler, value, name: nameOveride } = selectedProperty
     const { type, name: propertyName } = property
     const name = nameOveride || propertyName

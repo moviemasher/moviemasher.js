@@ -15,7 +15,7 @@ import {
 } from "./Layer/Layer"
 import { EmptyMethod } from "../../Setup/Constants"
 import { PreviewOptions } from "../Mash/Preview/Preview"
-import { svgElement, svgPolygonElement } from "../../Utility/Svg"
+import { svgSvgElement, svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"
 import { arrayReversed } from "../../Utility/Array"
@@ -73,7 +73,6 @@ export class CastClass extends EditedClass implements Cast {
       createdAt, icon, id, label,
       definitions,
       layers,
-      preloader,
       ...rest
     } = args
     this.dataPopulate(rest)
@@ -99,12 +98,7 @@ export class CastClass extends EditedClass implements Cast {
     }
   }
 
-  createLayer(layerObject: LayerObject): Layer {
-    const { preloader } = this
-    const object: LayerObject = {
-      preloader, 
-      ...layerObject
-    }
+  createLayer(object: LayerObject): Layer {
     const layer = layerInstance(object, this)
     assertLayer(layer)
     layer.cast = this
@@ -120,9 +114,9 @@ export class CastClass extends EditedClass implements Cast {
     this.mashes.forEach(mash => mash.emitter = this.emitter)
   }
 
-  editedGraphFiles(args?: PreloadOptions): GraphFiles {
-    return this.mashes.flatMap(mash => mash.editedGraphFiles(args))
-  }
+  // editedGraphFiles(args?: PreloadOptions): GraphFiles {
+  //   return this.mashes.flatMap(mash => mash.editedGraphFiles(args))
+  // }
 
   get imageSize(): Size { return super.imageSize }
   set imageSize(value: Size) {

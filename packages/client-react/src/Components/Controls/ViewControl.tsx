@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMash, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { assertMash, endpointFromUrl, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -30,7 +30,8 @@ export function ViewControl(props: PropsAndChild): ReactResult {
 
     const { edited } = editor
     assertMash(edited)
-    const url = urlForEndpoint(editor.preloader.endpoint, edited.rendering)
+    const endpoint = endpointFromUrl(edited.rendering)
+    const url = urlForEndpoint(endpoint)
     window.open(url)
   }
   const buttonOptions = { ...rest, onClick, disabled }

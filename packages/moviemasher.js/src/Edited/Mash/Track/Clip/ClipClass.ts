@@ -1,17 +1,17 @@
-import { Clip, ClipDefinition, ClipObject, IntrinsicOptions } from "./Clip"
-import { InstanceBase } from "../../../../Instance/InstanceBase"
-
-import { assertContainer, Container, ContainerObject, ContainerRectArgs, isContainer } from "../../../../Container/Container"
-import { Defined } from "../../../../Base/Defined"
-import { assertContent, Content, ContentObject, isContent } from "../../../../Content/Content"
-import { Property } from "../../../../Setup/Property"
 import { PreviewItems, Scalar, SvgItems, SvgOrImage, UnknownObject } from "../../../../declarations"
-import { PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../../MoveMe"
+
+import { Clip, ClipObject, IntrinsicOptions } from "./Clip"
+
+import { assertContainer, Container, ContainerObject, ContainerRectArgs, DefaultContainerId, isContainer } from "../../../../Media/Container/Container"
+import { Defined } from "../../../../Base/Defined"
+import { assertContent, Content, ContentObject, DefaultContentId, isContent } from "../../../../Media/Content/Content"
+import { DataGroup, Property, propertyInstance } from "../../../../Setup/Property"
+import { PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs, Component, ServerPromiseArgs } from "../../../../MoveMe"
 import { SelectedItems } from "../../../../Utility/SelectedProperty"
-import { ActionType, DataType, SelectType, Sizing, Timing } from "../../../../Setup/Enums"
+import { ActionType, DataType, Duration, SelectType, Sizing, Sizings, Timing, Timings } from "../../../../Setup/Enums"
 import { Actions } from "../../../../Editor/Actions/Actions"
 import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedString } from "../../../../Utility/Is"
-import { isColorContent } from "../../../../Content"
+import { isColorContent } from "../../../../Media/Content"
 import { arrayLast } from "../../../../Utility/Array"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../../../../Edited/Mash/Track/Track"
@@ -20,19 +20,56 @@ import { Selectables } from "../../../../Editor/Selectable"
 import { assertSizeAboveZero, Size, sizeCover, sizeEven, sizesEqual } from "../../../../Utility/Size"
 import { Tweening } from "../../../../Utility/Tween"
 import { pointsEqual, PointZero } from "../../../../Utility/Point"
-import { assertTweenable, Tweenable } from "../../../../Mixin"
+import { assertTweenable, Tweenable } from "../../../../Mixin/Tweenable/Tweenable"
 import { Default } from "../../../../Setup/Default"
 import { Rect, rectsEqual, RectTuple } from "../../../../Utility/Rect"
-import { svgAppend, svgElement, svgSetDimensions } from "../../../../Utility/Svg"
+import { svgAppend, svgSvgElement, svgSetDimensions } from "../../../../Utility/Svg"
 import { pixelToFrame } from "../../../../Utility/Pixel"
 import { Preview, PreviewArgs } from "../../Preview/Preview"
 import { PreviewClass } from "../../Preview/PreviewClass"
 import { isAudio } from "../../../../Media/Audio/Audio"
+import { PropertiedClass } from "../../../../Base/Propertied"
+import { idGenerateString } from "../../../../Utility/Id"
+import { EmptyMethod } from "../../../../Setup/Constants"
 
-export class ClipClass extends InstanceBase implements Clip {
+export class ClipClass extends PropertiedClass implements Clip {
   constructor(...args: any[]) {
     super(...args)
+
+    this.properties.push(propertyInstance({
+      name: "containerId", type: DataType.ContainerId,
+      defaultValue: DefaultContainerId
+    }))
+    this.properties.push(propertyInstance({
+      name: "contentId", type: DataType.ContentId,
+      defaultValue: DefaultContentId
+    }))
+    this.properties.push(propertyInstance({ 
+      name: "label", type: DataType.String 
+    }))
+    this.properties.push(propertyInstance({ 
+      name: "sizing", type: DataType.Option, defaultValue: Sizing.Content,
+      options: Sizings,
+    }))
+    this.properties.push(propertyInstance({ 
+      name: "timing", type: DataType.Option, defaultValue: Timing.Content,
+      group: DataGroup.Timing, options: Timings
+    }))
+    this.properties.push(propertyInstance({ 
+      name: "frame",
+      type: DataType.Frame, 
+      group: DataGroup.Timing, 
+      defaultValue: Duration.None, min: 0, step: 1
+    }))
+    this.properties.push(propertyInstance({ 
+      name: "frames", type: DataType.Frame, defaultValue: Duration.Unknown,
+      min: 1, step: 1,
+      group: DataGroup.Timing,
+    }))
+    
     const [object] = args
+    this.propertiesInitialize(object)
+   
     const { container, content } = object as ClipObject
     this.containerInitialize(container || {})
     this.contentInitialize(content || {})
@@ -72,17 +109,6 @@ export class ClipClass extends InstanceBase implements Clip {
     return this.mutable
   }
 
-  clipGraphFiles(args: PreloadArgs): GraphFiles {
-    const files: GraphFiles = []
-    const { quantize } = args
-    const { content, container, frames } = this
-    if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
-    if (container) files.push(...container.graphFiles(args))
-    
-    files.push(...content.graphFiles(args))
-    return files
-  }
-
   clipIcon(size: Size, scale: number, buffer = 1): Promise<SvgOrImage> | undefined {
     const { container } = this
 
@@ -110,25 +136,25 @@ export class ClipClass extends InstanceBase implements Clip {
     for (let i = 0; i < cellCount; i++) {
       const { copy: time } = startTime
       const previewArgs: PreviewArgs = { 
-        mash, time, onlyClip: this, size: frameSize,
+        mash, time, clip: this, size: frameSize,
       }
       const preview = new PreviewClass(previewArgs)
       previews.push(preview)
       pixel += widthAndBuffer
       startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
     }
-    let svgItemPromise = Promise.resolve([] as SvgItems)
+    let svgItemsPromise = Promise.resolve([] as SvgItems)
     previews.forEach(preview => {
-      svgItemPromise = svgItemPromise.then(items => {
+      svgItemsPromise = svgItemsPromise.then(items => {
         return preview.svgItemsPromise.then(svgItems => {
           return [...items, ...svgItems]
         })
       })
     })
  
-    return svgItemPromise.then(svgItems => {
+    return svgItemsPromise.then(svgItems => {
       const point = { ...PointZero }
-      const containerSvg = svgElement(size)
+      const containerSvg = svgSvgElement(size)
       svgItems.forEach(groupItem => {
         svgSetDimensions(groupItem, point)
         svgAppend(containerSvg, groupItem)
@@ -153,8 +179,10 @@ export class ClipClass extends InstanceBase implements Clip {
       const containerRectArgs: ContainerRectArgs = {
         size: outputSize, time, timeRange: clipTime, loading: true
       }
-      const containerRects = this.rects(containerRectArgs)
+
       // console.log(this.constructor.name, "clipCommandFiles", containerRects)
+
+      const containerRects = this.rects(containerRectArgs)
 
       const colors = isColorContent(content) ? content.contentColors(time, clipTime) : undefined
       
@@ -265,7 +293,6 @@ export class ClipClass extends InstanceBase implements Clip {
     assertPopulatedString(definitionId)
 
     const definition = Defined.fromId(definitionId)
-    const { type } = definition
 
     const object: ContentObject = { ...contentObject, definitionId }
     const instance = definition.instanceFromObject(object)
@@ -287,18 +314,15 @@ export class ClipClass extends InstanceBase implements Clip {
 
   declare contentId: string
 
-  copy(): Clip {
-    const object = { ...this.toJSON(), id: '' }
-    return this.definition.instanceFromObject(object)
-  }
+  // copy(): Clip {
+  //   const object = { ...this.toJSON(), id: '' }
+  //   return this.definition.instanceFromObject(object)
+  // }
 
-  declare definition: ClipDefinition
+  // declare definition: ClipDefinition
 
   definitionIds(): string[] {
-    const ids = [
-      ...super.definitionIds(),
-      ...this.content.definitionIds(),
-    ]
+    const ids = this.content.definitionIds()
     if (this.container) ids.push(...this.container.definitionIds())
     return ids
   }
@@ -331,6 +355,12 @@ export class ClipClass extends InstanceBase implements Clip {
     }
     return files
   }
+  protected _id?: string
+  get id(): string { return this._id ||= idGenerateString() }
+
+  protected _label = ''
+  get label(): string { return this._label  }
+  set label(value: string) { this._label = value }
 
   // intrinsicUrls(options: IntrinsicOptions): string[] {
   //   const { content, container } = this
@@ -344,17 +374,18 @@ export class ClipClass extends InstanceBase implements Clip {
   //   return urls
   // }
 
-  preloadUrls(args: PreloadArgs): string[] {
-    const files: string[] = []
+
+  loadPromise(args: PreloadArgs): Promise<void> {
     const { quantize } = args
     const { content, container, frames } = this
-    if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
-    if (container) files.push(...container.preloadUrls(args))
-    
-    files.push(...content.preloadUrls(args))
-    return files
-  }
 
+    if (isAboveZero(frames)) args.clipTime ||= this.timeRange(quantize)
+
+    const promises = [content.loadPromise(args)]
+
+    if (container) promises.push(container.loadPromise(args))
+    return Promise.all(promises).then(EmptyMethod)
+  }
 
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
 
@@ -387,23 +418,24 @@ export class ClipClass extends InstanceBase implements Clip {
     return !container.muted
   }
     
-  previewItemsPromise(size: Size, time?: Time, icon?: boolean): Promise<PreviewItems> {
+  previewItemsPromise(size: Size, time: Time, component: Component): Promise<PreviewItems> {
+    
     assertSizeAboveZero(size, 'previewItemsPromise')
 
     const timeRange = this.timeRange(this.track.mash.quantize)
-    const svgTime = time || timeRange.startTime
     const { container, content } = this
     assertContainer(container)
   
 
     const containerRectArgs: ContainerRectArgs = {
-      size, time: svgTime, timeRange, editing: true,
+      size, time, timeRange, editing: true, //loading: true,
     }
+    // console.log(this.constructor.name, "previewItemsPromise rects", containerRectArgs)
     const containerRects = this.rects(containerRectArgs)
     assertTrue(rectsEqual(...containerRects))
 
     const [containerRect] = containerRects
-    return container.containedContent(content, containerRect, size, svgTime, timeRange, icon)
+    return container.previewItemsPromise(content, containerRect, size, time, timeRange, component)
   }
 
   rectIntrinsic(size: Size, loading?: boolean, editing?: boolean): Rect {
@@ -413,8 +445,9 @@ export class ClipClass extends InstanceBase implements Clip {
 
     const target = sizing === Sizing.Container ? this.container : this.content
     assertTweenable(target)
-    const known = target.intrinsicsKnown({editing, size: true})
+    const known = target.intrinsicsKnown({ editing, size: true })
     if (loading && !known) return rect
+
 
     assertTrue(known, 'intrinsicsKnown')
 
@@ -425,6 +458,8 @@ export class ClipClass extends InstanceBase implements Clip {
 
   rects(args: ContainerRectArgs): RectTuple {
     const { size, loading, editing } = args
+    // console.log(this.constructor.name, "rects rectIntrinsic", loading, editing)
+
     const intrinsicRect = this.rectIntrinsic(size, loading, editing)
     // console.log(this.constructor.name, "rects intrinsicRect", intrinsicRect, args)
     const { container } = this
@@ -512,6 +547,13 @@ export class ClipClass extends InstanceBase implements Clip {
       case 'frames': return this.timing === Timing.Custom
     }
     return true
+  }
+
+  serverPromise(args: ServerPromiseArgs): Promise<void> {
+    const { content, container } = this
+    const promises = [content.serverPromise(args)]
+    if (container) promises.push(container.serverPromise(args))
+    return Promise.all(promises).then(EmptyMethod)  
   }
 
   setValue(value: Scalar, name: string, property?: Property): void {

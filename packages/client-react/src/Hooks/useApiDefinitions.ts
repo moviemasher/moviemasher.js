@@ -1,7 +1,9 @@
 import React from "react"
 import { 
-  assertDefined, Editor, Definitions, 
-  DefinitionType, ServerType, DataDefinitionRetrieveRequest, Endpoints, DataDefinitionRetrieveResponse, DefinitionBase 
+  assertDefined, Editor, Medias, 
+  MediaDefinitionType, ServerType, DataDefinitionRetrieveRequest, 
+  Endpoints, DataDefinitionRetrieveResponse, 
+  MediaBase 
 } from "@moviemasher/moviemasher.js"
 
 import { MasherContext } from "../Components/Masher/MasherContext"
@@ -12,14 +14,14 @@ const ApiDefinitionsDisabled = 'disabled'
 const ApiDefinitionsEmpty = 'empty'
 
 
-export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Definitions] => {
+export const useApiDefinitions = (types: MediaDefinitionType[] = []): [Editor, Medias] => {
   const apiContext = React.useContext(ApiContext)
   const masherContext = React.useContext(MasherContext)
   const { enabled, servers, endpointPromise } = apiContext
   const { editor } = masherContext
   assertDefined(editor)
   
-  const storeRef = React.useRef<Record<string, Definitions>>({})
+  const storeRef = React.useRef<Record<string, Medias>>({})
 
   const { eventTarget } = editor
 
@@ -32,12 +34,12 @@ export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Defini
       console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
       const { definitions } = response
       const array = storeRef.current[key]
-      array.push(...definitions.map(def => DefinitionBase.fromObject(def)))
+      array.push(...definitions.map(def => MediaBase.fromObject(def)))
       eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent))
     })
   }
   
-  const snapshotInitialize = (key: string): Definitions => {
+  const snapshotInitialize = (key: string): Medias => {
     switch(key) {
       case ApiDefinitionsEmpty:
       case ApiDefinitionsDisabled: break
@@ -63,7 +65,7 @@ export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Defini
     return storeRef.current[key] = snapshotInitialize(key)
   }
 
-  const externalStore = React.useSyncExternalStore<Definitions>((callback) => {
+  const externalStore = React.useSyncExternalStore<Medias>((callback) => {
     eventTarget.addEventListener(ApiDefinitionsEvent, callback)
     return () => {
       eventTarget.removeEventListener(ApiDefinitionsEvent, callback)

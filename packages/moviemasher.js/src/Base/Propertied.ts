@@ -40,7 +40,7 @@ export class PropertiedClass implements Propertied {
 
 
   protected propertiesInitialize(object: any) {
-    assertObject(object)
+    assertObject(object, 'propertiesInitialize(object)')
     this.properties.forEach(property => this.propertyTweenSetOrDefault(object, property))
   }
 

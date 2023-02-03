@@ -1,0 +1,11 @@
+version: "3"
+name: moviemasher-deno-ffmpeg
+services:
+ deno-ffmpeg:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: images/deno-ffmpeg/dev/Dockerfile.cnf
+    image: moviemasher/deno-ffmpeg:${MOVIEMASHER_VERSION}
+    

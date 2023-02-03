@@ -1,0 +1,11 @@
+version: "3"
+name: moviemasher-express-ffmpeg
+services:
+ express-ffmpeg:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: images/express-ffmpeg/dev/Dockerfile.cnf
+    image: moviemasher/express-ffmpeg:${MOVIEMASHER_VERSION}
+    

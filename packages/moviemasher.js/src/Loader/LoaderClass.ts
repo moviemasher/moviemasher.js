@@ -4,8 +4,8 @@ import { Endpoint, LoadedImage, LoadedImageOrVideo, LoadedVideo } from "../decla
 import { GraphFile, GraphFiles } from "../MoveMe"
 import { Errors } from "../Setup/Errors"
 import { assertLoaderType, Loaded, LoadedInfo, Loader, LoaderCache, LoaderFile, LoaderFiles, LoaderPath } from "./Loader"
-import { Definition, isDefinition } from "../Definition/Definition"
-import { assertObject, assertPopulatedString, isAboveZero, isArray, isObject, isPopulatedObject, isPopulatedString, isString } from "../Utility/Is"
+import { assertDefinition, Definition, isDefinition } from "../Definition/Definition"
+import { assertDefined, assertObject, assertPopulatedString, assertTrue, isAboveZero, isArray, isObject, isPopulatedObject } from "../Utility/Is"
 import { isUpdatableSizeDefinition, UpdatableSizeDefinition } from "../Mixin/UpdatableSize/UpdatableSize"
 import { isUpdatableDurationDefinition, UpdatableDurationDefinition } from "../Mixin/UpdatableDuration/UpdatableDuration"
 import { FontDefinition, isFontDefinition } from "../Media/Font/Font"
@@ -31,8 +31,6 @@ export class LoaderClass implements Loader {
     return`${type}:/${key}`
   }
 
-
-
   endpoint: Endpoint
 
   protected filePromise(file: LoaderFile): Promise<Loaded> {
@@ -55,12 +53,16 @@ export class LoaderClass implements Loader {
   getCache(path: LoaderPath): LoaderCache | undefined {
     const files = this.parseUrlPath(path)
     const [file] = files
+    if (!isObject(file)) {
+      console.trace(this.constructor.name, "getCache no file for", path)
+      return 
+    }
     // console.log(this.constructor.name, "getCache", path, file)
-    assertObject(file)
+    assertObject(file, 'getCache file' + path)
     return this.loaderCache.get(file.loaderPath)
   }
 
-  private getLoaderCache(file: LoaderFile, createIfNeeded?: boolean, definition?: Definition): LoaderCache | undefined {
+  private getLoaderCache(file: LoaderFile, createIfNeeded: boolean, definition?: Definition): LoaderCache | undefined {
     const { loaderPath, loaderType } = file
     const found = this.loaderCache.get(loaderPath)
     if (found ||!createIfNeeded) {
@@ -98,16 +100,17 @@ export class LoaderClass implements Loader {
   }
 
   info(loaderPath: LoaderPath): LoadedInfo | undefined {
-    if (!loaderPath) console.trace(this.constructor.name, "info NO loaderPath")
-    const files = this.parseUrlPath(loaderPath)
-    files.reverse()
-    for (const file of files) {
-      const cache = this.loaderCache.get(file.urlOrLoaderPath)
-      if (!cache) continue
+    assertPopulatedString(loaderPath)
 
-      const { loadedInfo } = cache
-      if (isPopulatedObject(loadedInfo)) return loadedInfo
-    }
+    const files = this.parseUrlPath(loaderPath)
+    const [file] = files
+ 
+    const { urlOrLoaderPath } = file
+    const cache = this.loaderCache.get(urlOrLoaderPath)
+    if (!cache) return
+
+    const { loadedInfo } = cache
+    if (isPopulatedObject(loadedInfo)) return loadedInfo
   }
 
   key(graphFile: GraphFile): string { throw Errors.unimplemented + 'key' }
@@ -130,15 +133,17 @@ export class LoaderClass implements Loader {
 
   protected loadGraphFilePromise(graphFile: GraphFile): Promise<any> {
     const { type, file, definition } = graphFile
+    assertDefinition(definition)
     const url = `${type}:/${file}`
     return this.loadPromise(url, definition)
   }
 
   loadPromise(urlPath: string | string[], definition?: Definition): Promise<any> {
+ 
     const wasArray = isArray(urlPath)
     const urls = wasArray ? urlPath : [urlPath]
+    // if (!urlHasProtocol(urls[0])) console.trace(this.constructor.name, "loadPromise", urlPath)
     const promises = urls.map(urlPath => {
-      // console.log(this.constructor.name, "loadPromise", urlPath)
       const cache = this.loaderCache.get(urlPath)
       if (cache) {
         const { promise, result, loaded, error } = cache
@@ -147,19 +152,21 @@ export class LoaderClass implements Loader {
           return Promise.resolve(result)
         }
         // console.log(this.constructor.name, "loadPromise FOUND PROMISE", urlPath)
-        assertObject(promise)
+        assertObject(promise, 'promise')
         return promise
       }
 
+      // console.log(this.constructor.name, "loadPromise", urlPath, this.endpoint)
       const files = this.parseUrlPath(urlPath)
+
       files.reverse()
       // console.log(this.constructor.name, "loadPromise START", files.map(file => file.urlOrLoaderPath))
       const file = files.shift()
-      assertObject(file)
+      assertObject(file, 'loadPromise file ' + urlPath)
       let promise = this.loaderFilePromise(file, definition)
       files.forEach(file => { 
         promise = promise.then(() => {
-          return this.loaderFilePromise(file)
+          return this.loaderFilePromise(file, definition)
         })
       })
       return promise.then(something => {
@@ -172,6 +179,7 @@ export class LoaderClass implements Loader {
 
   loaded(urlPath: string): boolean {
     const info = this.info(urlPath)
+    // console.log(this.constructor.name, "loaded", info)
     return !!info
   }
 
@@ -181,7 +189,7 @@ export class LoaderClass implements Loader {
   private loaderFilePromise(file: LoaderFile, definition?: Definition): Promise<any> {
     // const { loaderType, options, urlOrLoaderPath, loaderPath } = file
     let cache = this.getLoaderCache(file, true, definition)
-    assertObject(cache)
+    assertObject(cache, 'cache')
 
     const { promise, result, loaded, error } = cache
     if (result && loaded && !error) {
@@ -191,7 +199,7 @@ export class LoaderClass implements Loader {
     }
 
     // console.log(this.constructor.name, "loaderFilePromise PROMISE", file.loaderPath)
-    assertObject(promise)
+    assertObject(promise, 'promise')
     return promise
   }
 
@@ -206,10 +214,13 @@ export class LoaderClass implements Loader {
   parseUrlPath(id: LoaderPath | string): LoaderFiles {
     assertPopulatedString(id)
 
+    // console.log(this.constructor.name, "parseUrlPath", id, this.endpoint)
+
     const urls = urlsAbsolute(id, this.endpoint)
     return urls.map(url => {
-      const [loaderType, options, urlOrLoaderPath] = url
-      const loaderPath = `${loaderType}:${options}/${urlOrLoaderPath}`
+      const [withColon, options, urlOrLoaderPath] = url
+      const loaderType = withColon.slice(0, -1)
+      const loaderPath = `${withColon}${options}/${urlOrLoaderPath}`
       assertLoaderType(loaderType)
       const loaderFile: LoaderFile = {
         loaderPath, urlOrLoaderPath, loaderType, options: urlOptionsObject(options)
@@ -231,7 +242,7 @@ export class LoaderClass implements Loader {
 
     const { type } = graphFile
     const { result } = cache
-    assertObject(result)
+    assertObject(result, 'result')
 
     switch (type) {
       case LoadType.Image:
@@ -280,7 +291,7 @@ export class LoaderClass implements Loader {
     }
     if (family) cachedInfo.family ||= family
 
-    // console.log(this.constructor.name, "updateCache", loadedInfo, definitions.length)
+    console.log(this.constructor.name, "updateCache", loadedInfo, definitions.length)
     definitions.forEach(definition => {
      
       if (informing && isPreloadableDefinition(definition)) definition.info ||= info
@@ -293,15 +304,28 @@ export class LoaderClass implements Loader {
       if (family && isFontDefinition(definition)) {
         this.updateDefinitionFamily(definition, family)
       }
-      // console.log(this.constructor.name, "updateCache", definition.type, definition.label)
+      console.log(this.constructor.name, "updateCache", definition.type, definition.label)
     })
+  }
+
+  updateDefinition(loaderPath: string, definition: Definition) {
+    console.log(this.constructor.name, "updateDefinition", definition.type, definition.label, loaderPath)
+
+    const cache = this.getCache(loaderPath)
+    assertDefined(cache, 'cache')
+
+    const { definitions, loadedInfo} = cache
+    assertDefined(loadedInfo, 'loadedInfo')
+
+    if (!definitions.includes(definition)) definitions.push(definition)
+    this.updateCache(cache, loadedInfo) 
   }
 
   protected updateLoaderFile(file: LoaderFile, info: LoadedInfo) {
     // console.log(this.constructor.name, "updateLoaderFile", file, info)
-
-    const cache = this.getLoaderCache(file)
-    assertObject(cache)
+    // const { definition } = info
+    const cache = this.getLoaderCache(file, false)
+    assertObject(cache, 'cache')
     this.updateCache(cache, info)
   }
   

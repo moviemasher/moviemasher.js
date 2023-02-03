@@ -1,29 +1,29 @@
 import {
-  UnknownObject, Value, Described} from "../../declarations"
-import { AVType, DefinitionType } from "../../Setup/Enums"
+  UnknownObject, Value, Described
+} from "../../declarations"
+import { AVType } from "../../Setup/Enums"
 import { Time } from "../../Helpers/Time/Time"
 import { Clip, Clips } from "./Track/Clip/Clip"
 import { AudioPreview } from "./Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Edited, EditedArgs, EditedObject } from "../../Edited/Edited"
 import { Track, TrackObject } from "./Track/Track"
-import { Loader } from "../../Loader/Loader"
 import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
 import { FilterGraphs } from "./FilterGraphs/FilterGraphs"
 import { DefinitionObjects } from "../../Definition/Definition"
 import { isObject } from "../../Utility/Is"
 
 import { LayerMash } from "../Cast/Layer/Layer"
-import { throwError } from "../../Utility/Throw"
+import { errorsThrow } from "../../Utility/Errors"
 import { Propertied } from "../../Base/Propertied"
-import { Effect } from "../../Media/Effect/Effect"
+import { Effect } from "../../Module/Effect/Effect"
 import { Control, ControlObject, Controls } from "./Control/Control"
 
-export interface DefinitionReferenceObject {
-  definitionId: string
-  definitionType: DefinitionType
-  label: string
-}
+// export interface DefinitionReferenceObject {
+//   definitionId: string
+//   definitionType: DefinitionType
+//   label: string
+// }
 
 export enum Frame {
   First = 0,
@@ -36,7 +36,7 @@ export type Movables = Movable[]
 export interface MashDescription extends UnknownObject, Described {}
 
 export interface MashObject extends EditedObject {
-  definitionReferences?: DefinitionReferenceObjects
+  // definitionReferences?: DefinitionReferenceObjects
   gain?: Value
   tracks?: TrackObject[]
   controls?: ControlObject[]
@@ -44,7 +44,7 @@ export interface MashObject extends EditedObject {
   rendering?: string
 }
 
-export type DefinitionReferenceObjects = DefinitionReferenceObject[]
+// export type DefinitionReferenceObjects = DefinitionReferenceObject[]
 
 export interface MashAndDefinitionsObject {
   mashObject: MashObject
@@ -78,7 +78,6 @@ export interface Mash extends Edited {
   layer: LayerMash
   loop: boolean
   paused: boolean
-  preloader: Loader
   quantize : number
   removeClipFromTrack(clip : Clip | Clips) : void
   removeTrack(index?: number): void
@@ -97,5 +96,5 @@ export const isMash = (value: any): value is Mash => {
 }
 
 export function assertMash(value: any, name?: string): asserts value is Mash {
-  if (!isMash(value)) throwError(value, "Mash", name)
+  if (!isMash(value)) errorsThrow(value, "Mash", name)
 }

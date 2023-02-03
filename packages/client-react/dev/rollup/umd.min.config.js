@@ -1,19 +1,26 @@
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
+import ts from "rollup-plugin-ts"
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
-import pkg from "../../package.json"
-
-const { module } = pkg
-
 export default {
-  input: module,
+  input: 'src/index.ts',
   output: { 
-    format: 'umd', file: 'umd/client-react.min.js', name: 'MovieMasherClient', 
+    format: 'umd', interop: 'auto', 
+    file: 'umd/client-react.min.js', name: 'MovieMasherClient', 
     globals: { 
       react: 'React',
       '@moviemasher/theme-default': 'MovieMasherTheme',
       '@moviemasher/moviemasher.js': 'MovieMasher',
     },
   },
-  plugins: [peerDepsExternal(), terser()]
+  plugins: [
+    peerDepsExternal(), 
+    ts({ tsconfig: { 
+      target: 'ESNext', 
+      resolveJsonModule: true, 
+      allowSyntheticDefaultImports: true,
+      jsx: 'react',
+    }}),
+    terser(),
+  ]
 }

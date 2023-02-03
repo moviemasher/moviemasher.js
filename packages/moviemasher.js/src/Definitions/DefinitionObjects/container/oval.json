@@ -1,8 +1,0 @@
-{
-  "label": "Oval",
-  "type": "container",
-  "id": "com.moviemasher.container.oval",
-  "pathWidth": 24,
-  "pathHeight": 24,
-  "path": "M0,12 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0"
-}

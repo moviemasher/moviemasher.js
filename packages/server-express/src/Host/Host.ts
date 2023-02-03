@@ -62,8 +62,11 @@ export class Host {
     const app = Express()
     app.use(Express.json())
     if (corsOptions) app.use(cors(corsOptions))
-    servers.forEach(server => { server.startServer(app, HostServers) })
-    const server = app.listen(port, host, () => { console.log(`Listening on port ${port}`) })
-    server.once('close', () => { servers.forEach(server => server.stopServer()) })
+    const promises = servers.map(server => server.startServer(app, HostServers))
+    return Promise.all(promises).then(() => {
+      const server = app.listen(port, host, () => { console.log(`Listening on port ${port}`) })
+      server.once('close', () => { servers.forEach(server => server.stopServer()) })
+    })
+
   }
 }

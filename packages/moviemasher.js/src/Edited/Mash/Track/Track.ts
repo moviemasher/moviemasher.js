@@ -4,7 +4,7 @@ import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { Mash } from "../Mash"
 import { Selectable } from "../../../Editor/Selectable"
-import { throwError } from "../../../Utility/Throw"
+import { errorsThrow } from "../../../Utility/Errors"
 
 export interface TrackObject extends UnknownObject {
   clips?: ClipObject[]
@@ -31,7 +31,7 @@ export const isTrack = (value?: any): value is Track => {
   return isObject(value) && "frameForClipNearFrame" in value
 }
 export function assertTrack(value: any, name?: string): asserts value is Track {
-  if (!isTrack(value)) throwError(value, 'Track', name)
+  if (!isTrack(value)) errorsThrow(value, 'Track', name)
 }
 
 export type Tracks = Track[]

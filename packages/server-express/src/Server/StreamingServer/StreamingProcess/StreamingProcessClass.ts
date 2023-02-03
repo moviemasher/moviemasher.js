@@ -2,11 +2,11 @@ import fs from 'fs'
 import {
   DefinitionObjects, DefinitionType, ImageDefinitionObject,
   MashObject, OutputFormat, UnknownObject, CommandInput, ValueObject,
-  VideoStreamOutputArgs, VideoStreamOutputClass, WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, colorBlack, Defined,
+  WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, Defined,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
-import { RunningCommand, runningCommandDelete, runningCommandInstance, NodeLoader } from "@moviemasher/server-core"
+import { VideoStreamOutputArgs, VideoStreamOutputClass, RunningCommand, runningCommandDelete, runningCommandInstance, NodeLoader } from "@moviemasher/server-core"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
@@ -71,7 +71,7 @@ export class StreamingProcessClass extends EventEmitter {
         }
 
         // TODO: there shouldn't be any relative paths at this point, but we added one above!
-        const prefix = '../example-express-react'
+        const prefix = '../standalone'
 
         streamingDescription.inputs?.forEach(input => {
           const { source } = input

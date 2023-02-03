@@ -2,24 +2,24 @@ import { PropertyTweenSuffix } from "../../Base"
 import { SvgItem } from "../../declarations"
 import { Rect, rectFromSize, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
 import { DataType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
-import { assertPopulatedArray, assertPopulatedString, assertTimeRange, isTimeRange } from "../../Utility/Is"
+import { assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isTimeRange } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
 import { Tweening, tweenMaxSize } from "../../Utility/Tween"
-import { colorBlack, colorBlackOpaque, colorTransparent } from "../../Utility/Color"
+import { colorBlackOpaque, colorTransparent } from "../../Utility/Color"
 import { PointZero } from "../../Utility/Point"
-import { ContentRectArgs } from "../../Content/Content"
-import { assertSizeAboveZero, Size, sizeAboveZero, sizeCopy } from "../../Utility/Size"
+import { ContentRectArgs } from "../../Media/Content/Content"
+import { assertSizeAboveZero, Size, sizeAboveZero } from "../../Utility/Size"
 import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
 import { svgSetDimensions } from "../../Utility/Svg"
-import { urlPrependProtocol } from "../../Utility/Url"
-import { filterFromId } from "../../Filter/FilterFactory"
-import { Filter } from "../../Filter/Filter"
+import { filterFromId } from "../../Module/Filter/FilterFactory"
+import { Filter } from "../../Module/Filter/Filter"
+import { Errors } from "../../Setup/Errors"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -100,15 +100,21 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
     
-    containerPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
-      return this.itemPromise(containerRect, time, range, icon)
+    containerSvgItemPromise(rect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem> {
+      if (component !== Component.Player) return this.svgItemForTimelinePromise(rect, time, range)
+      
+      return this.svgItemForPlayerPromise(rect, time, range).then(svgItem => {
+        svgSetDimensions(svgItem, rect)
+        return svgItem
+      })
+      
     }
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
       const commandFilters: CommandFilters = []
       const { 
         containerRects, visible, time, videoRate, clipTime, 
-        commandFiles, filterInput: input, track, upload
+        commandFiles, filterInput: input, track
       } = args
       if (!visible) return commandFilters
 
@@ -128,24 +134,23 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       const [contentRect, contentRectEnd] = contentRects
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
       const maxContainerSize = tweeningContainer ? tweenMaxSize(...containerRects) : containerRects[0]
-      const dont = false
+
       const colorInput = `content-${track}-back`
-      if (!upload) {
-        const colorArgs: VisibleCommandFilterArgs = { 
-          ...args, contentColors: [colorTransparent, colorTransparent], 
-          outputSize: maxContainerSize
-        }
-        commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput))
-          
+     
+      const colorArgs: VisibleCommandFilterArgs = { 
+        ...args, contentColors: [colorTransparent, colorTransparent], 
+        outputSize: maxContainerSize
       }
+      commandFilters.push(...this.colorBackCommandFilters(colorArgs, colorInput))
+        
+    
     
       const scaleArgs: CommandFilterArgs = {
         ...args, filterInput, containerRects: contentRects
       }
       commandFilters.push(...this.scaleCommandFilters(scaleArgs))
       
-      if (upload) return commandFilters
-
+  
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
    
       if (tweening.size) {
@@ -182,16 +187,25 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return commandFilters
     }
 
+    svgItemForPlayerPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
+      return this.svgItemForTimelinePromise(rect, time, range)
+    }
 
-  
+    svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
+      throw new Error(Errors.unimplemented)
+    }
+
+    contentSvgItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem> {
+      assertTrue(!this.container)
+      
+      const rect = this.itemContentRect(containerRect, time, range)
+      return this.containerSvgItemPromise(rect, time, range, component)
+     
+    }
+
     declare definition: UpdatableSizeDefinition
 
     hasIntrinsicSizing = true
-    
-    iconUrl(size: Size, time: Time, clipTime: TimeRange): string {
-      return this.definition.url
-    }
-
 
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
       const commandFilters: CommandFilters = []
@@ -223,36 +237,6 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
       return sizeAboveZero(definitionSize)
     }
 
-    private itemIconPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-      const { clip } = this
-      const { preloader } = clip.track.mash
-      
-      const url = this.iconUrl(sizeCopy(rect), time, range)
-      const imageUrl = urlPrependProtocol('image', url)
-      // const lock = stretch ? '' : Orientation.V
-      const svgUrl = urlPrependProtocol('svg', imageUrl, { ...rect })
-      
-      return preloader.loadPromise(svgUrl)
-    }
-
-    // protected previewItem?: SvgItem
-
-    protected itemPreviewPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-      return this.itemIconPromise(rect, time, range)
-    }
-
-    itemPromise(containerRect: Rect, time: Time, range: TimeRange, icon?: boolean): Promise<SvgItem> {
-      const { container } = this
-      const rect = container ? containerRect : this.itemContentRect(containerRect, time, range)
-      if (icon) return this.itemIconPromise(rect, time, range)
-      
-      return this.itemPreviewPromise(rect, time, range).then(svgItem => {
-        svgSetDimensions(svgItem, rect)
-        return svgItem
-      })
-    }
-
-
     private itemContentRect(containerRect: Rect, time: Time, timeRange: TimeRange): Rect {
       const contentArgs: ContentRectArgs = {
         containerRects: containerRect, time, timeRange, editing: true
@@ -266,7 +250,5 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
 
     private _setsarFilter?: Filter
     get setsarFilter() { return this._setsarFilter ||= filterFromId('setsar')}
-
-
   }
 }

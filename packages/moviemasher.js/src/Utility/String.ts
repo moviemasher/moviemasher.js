@@ -85,7 +85,7 @@ export const stringFamilySizeRect = (string: string, family: string, size: numbe
   
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
-  assertObject(ctx)
+  assertObject(ctx, 'ctx')
 
   ctx.font = `${size}px ${family}`
 

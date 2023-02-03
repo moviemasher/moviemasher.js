@@ -1,0 +1,34 @@
+{
+  "name": "@moviemasher/node-ffmpeg",
+  "version": "5.1.2",
+  "description": "Movie Masher FFmpeg - version 5.1.2",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build"  
+  },
+  "dependencies": {
+    "@moviemasher/server-core": "5.1.2"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "@types/fluent-ffmpeg": "^2.1.20"
+  },
+  "workspaces": [
+    "images/*", 
+    "packages/*",
+    "workspaces/*"
+  ]
+}

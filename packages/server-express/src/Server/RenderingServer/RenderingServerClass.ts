@@ -7,23 +7,26 @@ import {
   ApiCallback, DefinitionObject, Endpoints, Errors, OutputType, RenderingStartRequest,
   DefinitionType, CommandOutputs,
   LoadedInfo, OutputTypes, CommandOutput, RenderingStartResponse,
-  LoadType, Endpoint, ApiRequestInit, outputDefaultPopulate,
+  LoadType, Endpoint, RequestInitObject, 
   RenderingStatusResponse, RenderingStatusRequest, RenderingInput, RenderingOptions,
-  RenderingUploadRequest, RenderingUploadResponse, RenderingCommandOutput, MashObject, assertTrue, NumberObject, SizePreview, SizeOutput, SizeIcon, isUpdatableDurationType, isUpdatableSizeType, isAboveZero, isLoadType, isDefined,
+  RenderingUploadRequest, RenderingUploadResponse, RenderingCommandOutput, MashObject, assertTrue, NumberObject, SizePreview, SizeOutput, SizeIcon, isUpdatableDurationType, isUpdatableSizeType, isAboveZero, isLoadType, isDefined, urlBaseInitialize,
 } from "@moviemasher/moviemasher.js"
 import { 
   expandFile, expandToJson, renderingProcessInstance, RenderingProcessArgs, 
   renderingDefinitionObject, renderingInput,
-  renderingOutputFile 
+  renderingOutputFile, 
+  BasenameDefinition,
+  ExtensionLoadedInfo,
+  BasenameRendering,
+  environment, outputDefaultPopulate,
+  Environment
 } from "@moviemasher/server-core"
 
 import { ServerClass } from "../ServerClass"
-import { ServerHandler } from "../Server"
+import { ExpressHandler } from "../Server"
 import { HostServers } from "../../Host/Host"
 
-import {
-  BasenameDefinition, BasenameRendering, ExtensionLoadedInfo
-} from "../../Setup/Constants"
+
 import { RenderingCommandOutputs, RenderingServer, RenderingServerArgs } from "./RenderingServer"
 import { FileServer, FileServerFilename } from "../FileServer/FileServer"
 
@@ -33,28 +36,28 @@ import { idUnique } from "../../Utilities/Id"
 export class RenderingServerClass extends ServerClass implements RenderingServer {
   constructor(public args: RenderingServerArgs) { super(args) }
 
-  private dataPutCallback(upload: boolean, user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
-    const definitionPath = this.definitionFilePath(user, id)
-    if (upload) {
-      assertTrue(fs.existsSync(definitionPath), definitionPath)
+  private dataPutCallback(user: string, id: string, renderingId: string, outputs: CommandOutputs): ApiCallback {
+    // const definitionPath = this.definitionFilePath(user, id)
+    // if (upload) {
+    //   assertTrue(fs.existsSync(definitionPath), definitionPath)
     
-      const definitionString = expandFile(definitionPath)
-      const definition: DefinitionObject = JSON.parse(definitionString)
-      this.populateDefinition(user, renderingId, definition, outputs)
-      const callback: ApiCallback = {
-        endpoint: { prefix: Endpoints.data.definition.put },
-        request: { body: { definition }}
-      }
-      return callback
-    }
+    //   const definitionString = expandFile(definitionPath)
+    //   const definition: DefinitionObject = JSON.parse(definitionString)
+    //   this.populateDefinition(user, renderingId, definition, outputs)
+    //   const callback: ApiCallback = {
+    //     endpoint: { pathname: Endpoints.data.definition.put },
+    //     init: { body: { definition }}
+    //   }
+    //   return callback
+    // }
     // it's a mash render
     const [output] = outputs
     const mash: MashObject = {
       id, rendering: `${id}/${renderingId}/${output.outputType}.${output.extension || output.format}`
     }
     const callback: ApiCallback = {
-      endpoint: { prefix: Endpoints.data.mash.put },
-      request: { body: { mash }}
+      endpoint: { pathname: Endpoints.data.mash.put },
+      init: { body: { mash }}
     }
     return callback
   }
@@ -74,7 +77,6 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     switch (definitionType) {
       case DefinitionType.Audio: {
         outputs.push({ outputType: OutputType.Audio })
-        // outputs.push({ outputType: OutputType.Waveform })
         break
       }
       case DefinitionType.Image: {
@@ -85,8 +87,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       case DefinitionType.VideoSequence: {
         outputs.push({ outputType: OutputType.Audio, optional: true })
         outputs.push({ outputType: OutputType.Image, ...iconSize, basename: 'icon' })
-        outputs.push({ outputType: OutputType.ImageSequence, ...previewSize })
-        // outputs.push({ outputType: OutputType.Waveform })
+        // outputs.push({ outputType: OutputType.ImageSequence, ...previewSize })
         break
       }
       case DefinitionType.Font: {
@@ -165,14 +166,14 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const outUrl = path.join(prefix, outputFilename)
       // console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
       switch(outputType) {
-        case OutputType.ImageSequence: {
-          if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
-            definition.fps = output.videoRate
-            definition.previewSize = { width: outWidth, height: outHeight }
-            definition.url = prefix + '/'
-          } 
-          break
-        }
+        // case OutputType.ImageSequence: {
+        //   if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
+        //     definition.fps = output.videoRate
+        //     definition.previewSize = { width: outWidth, height: outHeight }
+        //     definition.url = prefix + '/'
+        //   } 
+        //   break
+        // }
         case OutputType.Audio: {
           const { duration: definitionDuration } = definition
           if (isAboveZero(outDuration) && isAboveZero(definitionDuration)) {
@@ -214,8 +215,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const outputs = Object.fromEntries(OutputTypes.map(outputType => {
       const base: RenderingCommandOutput = { outputType }
       switch (outputType) {
-        case OutputType.Image:
-        case OutputType.ImageSequence: {
+        case OutputType.Image: {
           base.width = previewSize.width
           base.height = previewSize.height
           base.cover = true
@@ -234,13 +234,12 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     return this._renderingCommandOutputs = outputs
   }
 
-  start: ServerHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
+  start: ExpressHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
     const { 
       mash = {}, 
       outputs = [], 
       definitions = [], 
-      upload = false, 
       ...rest 
     } = request
     // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
@@ -260,12 +259,16 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     }
     try {
       const user = this.userFromRequest(req)
+
+      urlBaseInitialize('file://' + path.resolve(environment(Environment.API_DIR_FILE_PREFIX), user))
+      
+      
       const { cacheDirectory, temporaryDirectory } = this.args
       const filePrefix = this.fileServer!.args.uploadsPrefix
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const processArgs: RenderingProcessArgs = {
         ...rest,
-        upload, mash,
+        mash,
         defaultDirectory: user,
         validDirectories: ['shared'],
         cacheDirectory,
@@ -293,13 +296,13 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const renderingStartRequest: RenderingStartRequest = { 
       ...input, outputs, upload: true 
     }
-    const request: ApiRequestInit = { body: renderingStartRequest }
-    const endpoint: Endpoint = { prefix: Endpoints.rendering.start }
-    const renderingApiCallback: ApiCallback = { endpoint, request }
+    const init: RequestInitObject = { body: renderingStartRequest }
+    const endpoint: Endpoint = { pathname: Endpoints.rendering.start }
+    const renderingApiCallback: ApiCallback = { endpoint, init }
     return renderingApiCallback
   }
 
-  status: ServerHandler<RenderingStatusResponse, RenderingStatusRequest> = async (req, res) => {
+  status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest> = async (req, res) => {
     const request = req.body
     // console.log(this.constructor.name, "status", JSON.stringify(request, null, 2))
     const { id, renderingId } = request
@@ -310,7 +313,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
       const jsonString = expandFile(jsonPath)
       const json: RenderingOptions = JSON.parse(jsonString)
-      const { outputs, upload } = json
+      const { outputs } = json
 
       const filenames = fs.readdirSync(outputDirectory)
       const countsByType: NumberObject = {}
@@ -332,7 +335,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         return 1
       })
       if (Math.max(...working)) response.apiCallback = this.statusCallback(id, renderingId)
-      else response.apiCallback = this.dataPutCallback(!!upload, user, id, renderingId, outputs)
+      else response.apiCallback = this.dataPutCallback(user, id, renderingId, outputs)
     } catch (error) { response.error = String(error) }
     // console.log(this.constructor.name, "status response", response)
     res.send(response)
@@ -340,13 +343,13 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
   private statusCallback(id: string, renderingId: string): ApiCallback {
     const statusCallback: ApiCallback = {
-      endpoint: { prefix: Endpoints.rendering.status },
-      request: { body: { id, renderingId }}
+      endpoint: { pathname: Endpoints.rendering.status },
+      init: { body: { id, renderingId }}
     }
     return statusCallback
   }
 
-  startServer(app: Express.Application, activeServers: HostServers): void {
+  startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     super.startServer(app, activeServers)
     this.fileServer = activeServers.file
     if (this.fileServer) {
@@ -354,9 +357,10 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     }
     app.post(Endpoints.rendering.start, this.start)
     app.post(Endpoints.rendering.status, this.status)
+    return Promise.resolve()
   }
 
-  upload: ServerHandler<RenderingUploadResponse, RenderingUploadRequest> = async (req, res) => {
+  upload: ExpressHandler<RenderingUploadResponse, RenderingUploadRequest> = async (req, res) => {
     const request = req.body
     const { name, type, size } = request
     // console.log(this.constructor.name, "upload", request)

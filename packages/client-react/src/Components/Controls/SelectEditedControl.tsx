@@ -41,7 +41,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
     if (type !== selectedType) return
 
     const { edited } = editor
-    assertObject(edited)
+    assertObject(edited, 'edited')
 
     const { id, label } = edited
     setDescribed(original => {
@@ -57,7 +57,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
 
   const handleAction = () => {
     const { edited } = editor
-    assertObject(edited)
+    assertObject(edited, 'edited')
 
     const { label } = edited
     if (editedLabel !== label) {
@@ -79,7 +79,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
 
     const { selectedIndex } = event.target
     const object = described[selectedIndex]
-    assertObject(object)
+    assertObject(object, 'described[selectedIndex]')
 
     const { id } = object
     const request: DataGetRequest = { id }

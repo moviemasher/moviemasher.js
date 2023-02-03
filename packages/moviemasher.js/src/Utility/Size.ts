@@ -1,6 +1,6 @@
 import { Orientation } from "../Setup/Enums";
 import { isAboveZero, isNumber, isObject } from "./Is"
-import { throwError } from "./Throw";
+import { errorsThrow } from "./Errors";
 
 export interface Size {
   width: number;
@@ -10,7 +10,7 @@ export const isSize = (value: any): value is Size => {
   return isObject(value) && isNumber(value.width) && isNumber(value.height) 
 }
 export function assertSize(value: any, name?: string): asserts value is Size {
-  if (!isSize(value)) throwError(value, 'Size', name)
+  if (!isSize(value)) errorsThrow(value, 'Size', name)
 }
 
 
@@ -61,8 +61,8 @@ export const sizeScale = (size: Size, horizontally: number, vertically: number):
 }
 
 export const sizeCover = (inSize: Size, outSize: Size, contain = false): Size => {
-  assertSizeAboveZero(inSize, 'sizeCover')
-  assertSize(outSize)
+  assertSizeAboveZero(inSize, 'sizeCover.inSize')
+  assertSize(outSize, 'sizeCover.outSize')
 
   const { width: inWidth, height: inHeight } = inSize
   const { width, height } = outSize 
@@ -84,7 +84,7 @@ export const sizeAboveZero = (size: any): size is Size => {
   return isAboveZero(width) && isAboveZero(height)
 }
 export function assertSizeAboveZero(size: any, name?: string): asserts size is Size {
-  if (!sizeAboveZero(size)) throwError(size, 'SizeAboveZero', name)
+  if (!sizeAboveZero(size)) errorsThrow(size, 'SizeAboveZero', name)
 }
 
 export const SizeOutput: Size = { width: 1920, height: 1080 }

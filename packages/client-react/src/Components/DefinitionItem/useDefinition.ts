@@ -1,5 +1,5 @@
 import React from "react"
-import { Definition } from "@moviemasher/moviemasher.js"
+import { Definition, Media } from "@moviemasher/moviemasher.js"
 import { DefinitionContext } from "../../Contexts/DefinitionContext"
 
-export const useDefinition = (): Definition => React.useContext(DefinitionContext).definition!
+export const useDefinition = (): Media => React.useContext(DefinitionContext).definition!

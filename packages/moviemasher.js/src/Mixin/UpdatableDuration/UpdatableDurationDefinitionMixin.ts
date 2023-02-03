@@ -1,13 +1,16 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { AudibleSource, LoadedAudio, UnknownObject } from "../../declarations"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { isLoadedAudio, Loader } from "../../Loader/Loader"
-import { DataType, Duration } from "../../Setup/Enums"
+import { assertLoadedVideo, isLoadedAudio, Loader } from "../../Loader/Loader"
+import { DataType, DefinitionType, Duration } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { isAboveZero, isPopulatedString } from "../../Utility/Is"
+import { isAboveZero, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
 import { urlPrependProtocol } from "../../Utility/Url"
+import { Transcoding } from "../../Media/Transcoding/Transcoding"
+import { endpointFromUrl } from "../../Utility/Endpoint"
+import { requestAudioPromise } from "../../Utility/Request"
 
 export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {
@@ -15,13 +18,13 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       super(...args)
       const [object] = args
       const { 
-        audioUrl, audio, loop, duration, waveform, loadedAudio
+        audioUrl, audio, loop, duration, waveform 
       } = object as UpdatableDurationDefinitionObject
-      if (audio || audioUrl || loadedAudio) {
+    
+      if (audio || audioUrl ) {//|| loadedAudio
         this.audio = true
         if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
         if (waveform) this.waveform = waveform
-      if (loadedAudio) this.loadedAudio = loadedAudio
       }
       // console.log(this.constructor.name, "audio", audio, this.audio, this.audioUrl)
       if (isAboveZero(duration)) this.duration = duration
@@ -51,46 +54,39 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       }))
     }
 
-    audibleSource(preloader: Loader): AudibleSource | undefined {
+    audibleSource(): AudibleSource | undefined {
       const { loadedAudio } = this
       if (loadedAudio) {
         // console.log(this.constructor.name, "audibleSource loadedAudio")
         return AudibleContextInstance.createBufferSource(loadedAudio)
       }
-
-      const { audioUrl } = this
-      if (!isPopulatedString(audioUrl)) {
-        // console.log(this.constructor.name, "audibleSource no audioUrl")
-        this.audio = false
-        return
-      }
-      const protocolUrl = urlPrependProtocol('audio', audioUrl)
-      // console.log(this.constructor.name, "audibleSource", protocolUrl)
-      const cache = preloader.getCache(protocolUrl)
-      if (!cache) {
-        // console.log(this.constructor.name, "audibleSource not cached", protocolUrl)
-        return
-      }
-
-      const { error, result } = cache
-      if (error || !isLoadedAudio(result)) {
-        // console.log(this.constructor.name, "audibleSource error", error, protocolUrl, result)
-        this.audio = false
-        this.audioUrl = ''
-        return
-      }
-  
-      this.loadedAudio = result
-      
-      // console.log(this.constructor.name, "audibleSource cached", protocolUrl)
-      return AudibleContextInstance.createBufferSource(result)
     }
 
-    audio = false
+    private _audio?: boolean
+    get audio(): boolean { 
+      if (isUndefined(this._audio)) {
+        this._audio = this.probings.some(object => object.info?.audible)
+      }
+      return Boolean(this._audio)
+    }
+    set audio(value: boolean) { this._audio = value }
+
 
     audioUrl = ''
 
-    duration = 0
+    private _duration = 0
+    get duration(): number {
+      if (!isAboveZero(this._duration)) {
+        for (const probing of this.probings) {
+          if (probing?.info?.duration) {
+            this._duration = probing.info.duration
+            break
+          }
+        }
+      }
+      return this._duration
+    }
+    set duration(value: number) { this._duration = value }
 
     frames(quantize: number): number {
       const { duration } = this
@@ -101,6 +97,27 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     }
 
     loadedAudio?: LoadedAudio
+    
+    get loadedAudioPromise(): Promise<LoadedAudio> {
+      if (this.loadedAudio) return Promise.resolve(this.loadedAudio)
+
+      const transcoding = this.preferredTranscoding(DefinitionType.Audio, DefinitionType.Video)
+      return transcoding.loadedMediaPromise.then(media => {
+        if (isLoadedAudio(media)) {
+          this.loadedAudio = media
+          return media
+        }
+        assertLoadedVideo(media)
+
+        const { src } = media
+        const endpoint = endpointFromUrl(src)
+        const request = { endpoint }
+        return requestAudioPromise(request).then(audio => {
+          this.loadedAudio = audio
+          return audio
+        })
+      })
+    }
 
     loop = false
 

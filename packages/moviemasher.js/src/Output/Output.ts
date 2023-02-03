@@ -1,8 +1,7 @@
 import { ValueObject, Value, UnknownObject } from "../declarations"
-import { AVType, OutputFormat, OutputType, StreamingFormat } from "../Setup/Enums"
+import { AVType, OutputFormat, OutputType } from "../Setup/Enums"
 import { RenderingDescription, RenderingResult } from "../Api/Rendering"
-import { Mash, Mashes } from "../Edited/Mash/Mash"
-import { StreamingDescription } from "../Api/Streaming"
+import { Mash } from "../Edited/Mash/Mash"
 import { Time } from "../Helpers/Time/Time"
 import { Size } from "../Utility/Size"
 import { GraphFiles } from "../MoveMe"
@@ -29,25 +28,17 @@ export interface RenderingCommandOutput extends CommandOutput {
 
 export type CommandOutputs = RenderingCommandOutput[]
 
-export interface StreamingCommandOutput extends Required<CommandOutput> { // always singular
-  streamingFormat: StreamingFormat
-}
 
 export interface OutputConstructorArgs {
   cacheDirectory: string
 }
 
-export interface StreamingOutputArgs extends OutputConstructorArgs {
-  commandOutput: StreamingCommandOutput
-  mashes: Mashes
-}
 
 export interface RenderingOutputArgs extends OutputConstructorArgs {
   commandOutput: RenderingCommandOutput
   mash: Mash
   startTime?: Time
   endTime?: Time
-  upload?: boolean
 }
 
 export interface RenderingOutput {
@@ -64,41 +55,3 @@ export interface RenderingOutput {
   durationGraphFiles: GraphFiles 
 }
 
-
-export interface StreamingOutput {
-  streamingDescription(renderingResults?: RenderingResult[]): Promise<StreamingDescription>
-}
-
-export interface ImageOutputArgs extends RenderingOutputArgs {
-  offset?: number
-  cover?: boolean
-}
-
-export interface ImageOutput extends RenderingOutput {}
-
-export interface AudioOutputArgs extends RenderingOutputArgs {
-  optional?: boolean
-}
-
-export interface AudioOutput extends RenderingOutput {}
-
-export interface WaveformOutputArgs extends RenderingOutputArgs {
-  backcolor?: string
-  forecolor?: string
-}
-export interface WaveformOutput extends RenderingOutput {}
-
-export interface VideoOutputArgs extends RenderingOutputArgs {
-  cover?: boolean
-  mute?: boolean
-}
-export interface VideoOutput extends RenderingOutput {}
-
-export interface ImageSequenceOutputArgs extends RenderingOutputArgs {
-  cover?: boolean
-}
-export interface ImageSequenceOutput extends RenderingOutput {}
-
-export interface VideoStreamOutputArgs extends StreamingOutputArgs {}
-
-export interface VideoStreamOutput extends StreamingOutput {}

@@ -9,7 +9,7 @@ import {
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../../Host/Host"
-import { ServerHandler } from "../Server"
+import { ExpressHandler } from "../Server"
 import { ServerClass } from "../ServerClass"
 import { FileServer, FileServerArgs, FileServerFilename } from "./FileServer"
 
@@ -23,8 +23,8 @@ export class FileServerClass extends ServerClass implements FileServer {
   constructCallback(uploadDescription: UploadDescription, userId: string, id: string): ApiCallback {
     const request: FileStoreRequest = { id }
     const callback: ApiCallback = {
-      endpoint: { prefix: Endpoints.file.store },
-      request: { body: request, headers: { "Content-Type": "multipart/form-data" } }
+      endpoint: { pathname: Endpoints.file.store },
+      init: { body: request, headers: { "Content-Type": "multipart/form-data" } }
     }
     return callback
   }
@@ -49,7 +49,7 @@ export class FileServerClass extends ServerClass implements FileServer {
 
   property = 'file'
 
-  startServer(app: Express.Application, activeServers: HostServers): void {
+  startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     super.startServer(app, activeServers)
     const fileSize = FileServerMeg * Math.max(...Object.values(this.args.uploadLimits))
 
@@ -78,9 +78,10 @@ export class FileServerClass extends ServerClass implements FileServer {
     const multerOptions = { storage, limits: { fileSize } }
     const upload = multer(multerOptions)
     app.post(Endpoints.file.store, upload.single(this.property), this.store)
+    return Promise.resolve()
   }
 
-  store: ServerHandler<FileStoreResponse, FileStoreRequest> = async (req, res) => {
+  store: ExpressHandler<FileStoreResponse, FileStoreRequest> = async (req, res) => {
     const request = req.body
     const response: FileStoreResponse = {}
     try {

@@ -1,9 +1,7 @@
 version: "3"
-networks:
-  default:
-    name: moviemasher-documentation
+name: moviemasher-documentation
 services:
-  moviemasher-documentation:
+  documentation:
     image: httpd:2.4
     container_name: moviemasher-documentation-8577
     ports:

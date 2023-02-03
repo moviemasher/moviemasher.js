@@ -112,7 +112,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     if (!dragValid(dataTransfer)) return 
 
     const { edited } = editor
-    assertObject(edited)
+    assertObject(edited, 'edited')
     const editorIndex: EditorIndex = {
       clip: editor.time.scale(edited.quantize).frame,
       track: -1,
@@ -125,7 +125,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
       assertDefinitionType(type)
       const data = dragData(dataTransfer, type)
       assertDragDefinitionObject(data)
-      drop(data.definitionObject, editorIndex)
+      drop(data.mediaObject, editorIndex)
     }
   } 
 

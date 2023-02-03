@@ -11,16 +11,14 @@ import { Clip } from "../../Track/Clip/Clip"
 export interface AudioPreviewArgs {
   buffer? : number
   gain? : number
-  preloader: Loader
 }
 
 
 export class AudioPreview {
   constructor(object : AudioPreviewArgs) {
-    const { buffer, gain, preloader } = object
+    const { buffer, gain } = object
     if (isPositive(gain)) this.gain = gain
     if (isAboveZero(buffer)) this.buffer = buffer
-    this.preloader = preloader
   }
 
   adjustClipGain(clip: Clip, quantize: number): void {
@@ -104,10 +102,10 @@ export class AudioPreview {
         if (isPositive(start) && isAboveZero(duration)) {
           const { definition, id } = av
           assertUpdatableDurationDefinition(definition)
-          const audibleSource = definition.audibleSource(this.preloader)
+          const audibleSource = definition.audibleSource()
           if (!audibleSource) {
             if (!start) {
-              // console.log(this.constructor.name, "createSources no audible source", definition.label)
+              console.log(this.constructor.name, "createSources no audible source", definition.label)
               // wanted to start immediately but it's not loaded
               return false
             }
@@ -154,8 +152,6 @@ export class AudioPreview {
   private playing = false
 
   private playingClips: Clip[] = []
-
-  preloader: Loader
 
   get seconds(): number {
     const ellapsed = AudibleContextInstance.currentTime - this.contextSecondsWhenStarted

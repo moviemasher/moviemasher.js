@@ -1,29 +1,33 @@
 import {
-  Endpoint, LoadedAudio, LoadedFont, LoadedImage, LoadedImageOrVideo, LoadedSvgImage, LoadedVideo, ScalarObject} from "../declarations"
+  Endpoint, LoadedAudio, LoadedFont, LoadedImage, LoadedImageOrVideo, LoadedSvgImage, LoadedVideo, ScalarObject, LoadedMedia } from "../declarations"
 import { GraphFile } from "../MoveMe"
 import { assertLoadType, GraphFileType, isLoadType, isOrientation, isUploadType, LoadType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { urlForEndpoint, urlIsHttp, urlIsObject, urlPrependProtocol } from "../Utility/Url"
 import { AudibleContextInstance } from "../Context/AudibleContext"
-import { DefinitionOrErrorObject, ErrorObject, isLoadedImage, isLoadedVideo, Loaded, LoadedInfo, LoadedMedia, LoaderCache, LoaderFile, LoaderPath } from "./Loader"
+import { DefinitionOrErrorObject, ErrorObject, isLoadedAudio, isLoadedImage, isLoadedVideo, Loaded, LoadedInfo, LoaderCache, LoaderFile, LoaderPath } from "./Loader"
 import { LoaderClass } from "./LoaderClass"
 import { assertObject, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedString } from "../Utility/Is"
 import { Size, sizeAboveZero, sizeCopy, sizeCover, sizeString } from "../Utility/Size"
 import { timeFromArgs, timeFromSeconds } from "../Helpers/Time/TimeUtilities"
 import { Time } from "../Helpers/Time/Time"
 import { DefinitionObject } from "../Definition/Definition"
-import { svgElement, svgImageElement, svgSet, svgSetDimensionsLock } from "../Utility/Svg"
+import { svgSvgElement, svgImageElement, svgSet, svgSetDimensionsLock } from "../Utility/Svg"
 import { idGenerateString, idTemporary } from "../Utility/Id"
+import { ContentTypeCss } from "../Setup/Constants"
 
 export class BrowserLoaderClass extends LoaderClass {
   constructor(endpoint?: Endpoint) {
     super(endpoint)
 
-    const [canvas, context] = this.canvasContext({ width: 1, height: 1 })
-    context.fillRect(0, 0, 1, 1)
-    this.svgImagePromise(canvas.toDataURL()).then(() => {
-      this.svgImageEmitsLoadEvent = true
-    })
+    const { document } = globalThis
+    if (document) {
+      const [canvas, context] = this.canvasContext({ width: 1, height: 1 })
+      context.fillRect(0, 0, 1, 1)
+      this.svgImagePromise(canvas.toDataURL()).then(() => {
+        this.svgImageEmitsLoadEvent = true
+      })
+    }
   }
 
   protected override absoluteUrl(path: string): string { 
@@ -31,14 +35,20 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private arrayBufferPromise(url: string): Promise<ArrayBuffer> {
-    // console.log(this.constructor.name, "arrayBufferPromise")
+    console.log(this.constructor.name, "arrayBufferPromise...", url)
 
-    return fetch(url).then(response => response.arrayBuffer())
+    return fetch(url).then(response => {
+      console.log(this.constructor.name, "arrayBufferPromise!", url)
+      return response.arrayBuffer()
+    })
   }
 
-  private audioBufferPromise(audio: ArrayBuffer): Promise<LoadedAudio> {
+  private audioBufferPromise(audio: ArrayBuffer): Promise<LoadedAudio | any> {
     // console.log(this.constructor.name, "audioBufferPromise")
-    return AudibleContextInstance.decode(audio)
+
+    return AudibleContextInstance.decode(audio).catch(error => {
+      return { error }
+    })
   }
 
   private audioInfo(buffer: LoadedAudio): LoadedInfo {
@@ -47,7 +57,7 @@ export class BrowserLoaderClass extends LoaderClass {
     return info
   }
 
-  private audioPromise(url:string): Promise<LoadedAudio> {
+  private audioPromise(url:string): Promise<LoadedAudio | any> {
     assertPopulatedString(url, 'url')
     const isBlob = url.startsWith('blob:')
     // console.log(this.constructor.name, "audioPromise", isBlob ? 'BLOB' : url)
@@ -56,7 +66,7 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private blobAudioPromise(url: string): Promise<ArrayBuffer> {
-    // console.log(this.constructor.name, "blobAudioPromise")
+    // console.log(this.constructor.name, "blobAudioPromise", url)
 
     return fetch(url).then(response => response.blob()).then(blob => {
       return new Promise<ArrayBuffer>((resolve, reject) => {
@@ -72,7 +82,7 @@ export class BrowserLoaderClass extends LoaderClass {
 
   private canvas(size: Size): HTMLCanvasElement {
     const { width, height } = size
-    const canvas = document.createElement('canvas')
+    const canvas = globalThis.document.createElement('canvas')
     canvas.height = height
     canvas.width = width
     return canvas
@@ -80,13 +90,14 @@ export class BrowserLoaderClass extends LoaderClass {
 
   private canvasContext(size: Size): [HTMLCanvasElement, CanvasRenderingContext2D] {
     const canvas = this.canvas(size)
+
     const context = canvas.getContext('2d')
     assertTrue(context)
     return [canvas, context]
   }
 
   private copyVideoPromise(url: string, options: ScalarObject): Promise<LoadedVideo> {
-    assertObject(options)
+    assertObject(options, 'options')
     // console.log(this.constructor.name, "copyVideoPromise", url, options)
     const key = url.split(':').pop()
     assertPopulatedString(key)
@@ -117,7 +128,7 @@ export class BrowserLoaderClass extends LoaderClass {
 
   protected override filePromise(file: LoaderFile): Promise<Loaded> {
     const { loaderType } = file
-    // console.log(this.constructor.name, "filePromise", loaderType)
+    console.log(this.constructor.name, "filePromise", loaderType)
     switch (loaderType) {
       case LoadType.Audio: return this.requestAudio(file)
       case LoadType.Font: return this.requestFont(file)
@@ -211,8 +222,8 @@ export class BrowserLoaderClass extends LoaderClass {
   private mediaInfo(media: LoadedMedia): LoadedInfo {
     if (isLoadedVideo(media)) return this.videoInfo(media)
     if (isLoadedImage(media)) return this.imageInfo(media)
-    return this.audioInfo(media)
-    
+    if (isLoadedAudio(media)) return this.audioInfo(media)
+    throw new Error(Errors.type)
   }
 
   private mediaPromise(type: LoadType, url: string): Promise<LoadedMedia> {
@@ -226,7 +237,7 @@ export class BrowserLoaderClass extends LoaderClass {
     throw Errors.internal
   }
 
-  private requestAudio(file: LoaderFile): Promise<LoadedAudio> {
+  private requestAudio(file: LoaderFile): Promise<LoadedAudio | any> {
     const { urlOrLoaderPath, options } = file
     // console.log(this.constructor.name, "requestAudio", urlOrLoaderPath)
     assertPopulatedString(urlOrLoaderPath, 'urlOrLoaderPath')
@@ -237,7 +248,7 @@ export class BrowserLoaderClass extends LoaderClass {
     const promise = http ? this.audioPromise(urlOrLoaderPath) : this.requestVideoAudio(file)
     
     return promise.then(buffer => {
-      assertObject(buffer)
+      assertObject(buffer, 'buffer')
       this.updateLoaderFile(file, this.audioInfo(buffer))
       return buffer
     })
@@ -245,35 +256,38 @@ export class BrowserLoaderClass extends LoaderClass {
 
   protected requestFont(file: LoaderFile): Promise<LoadedFont> {
     const { urlOrLoaderPath: url} = file
+    console.log(this.constructor.name, "requestFont", url)
 
     const bufferPromise = fetch(url).then(response => {
 
       const type = response.headers.get('content-type')
-      // console.log(this.constructor.name, "requestFont.fetch", type)
+      console.log(this.constructor.name, "requestFont.fetch", type)
       if (!isPopulatedString(type) || type.startsWith(LoadType.Font)) {
         return response.arrayBuffer()
       }
-      assertTrue(type.startsWith('text/css')) 
+      assertTrue(type.startsWith(ContentTypeCss)) 
 
-      return response.text().then(string => 
-        this.arrayBufferPromise(this.lastCssUrl(string))
-      )
+      return response.text().then(string => {
+        const cssUrl = this.lastCssUrl(string)
+        console.log(this.constructor.name, "requestFont.fetch CSS", cssUrl)
+        return this.arrayBufferPromise(cssUrl)
+      })
     })
       
     const family = this.fontFamily(url)
-    // console.log(this.constructor.name, "requestFont", url)
+    console.log(this.constructor.name, "requestFont", url)
     const facePromise = bufferPromise.then(buffer => {
-      // console.log(this.constructor.name, "requestFont.bufferPromise", url)
+      console.log(this.constructor.name, "requestFont.bufferPromise", url)
       const face = new FontFace(family, buffer)
       return face.load()
     })
     return facePromise.then(face => {
-      // console.log(this.constructor.name, "requestFont.facePromise", url)
+      console.log(this.constructor.name, "requestFont.facePromise", url)
       const { fonts } = globalThis.document
       fonts.add(face)
       return fonts.ready.then(() => {
         
-        // console.log(this.constructor.name, "requestFont.ready", url)
+        console.log(this.constructor.name, "requestFont.ready", url)
         const info: LoadedInfo = { family }
         this.updateLoaderFile(file, info)
         return face
@@ -318,31 +332,14 @@ export class BrowserLoaderClass extends LoaderClass {
 
   private requestSvgImage(file: LoaderFile): Promise<LoadedSvgImage> {
     const { urlOrLoaderPath, options } = file
-    // console.log(this.constructor.name, "requestSvgImage", urlOrLoaderPath)
-
     return this.sourcePromise(urlOrLoaderPath).then(src => {
-      
-      // console.log(this.constructor.name, "requestSvgImage.sourcePromise", urlOrLoaderPath, src.length)
-
       const promise = this.svgImagePromise(src)
-
-      if (!options) {
-        // console.log(this.constructor.name, "requestSvgImage.sourcePromise NO OPTIONS", urlOrLoaderPath)
-
-        return promise
-      }
+      if (!options) return promise
 
       return promise.then(item => {
-        // console.log(this.constructor.name, "requestSvgImage.svgImagePromise OPTIONS", urlOrLoaderPath, options)
-
         const { lock, ...rest } = options
         const lockDefined = isOrientation(lock) ? lock : undefined
-        // console.log(this.constructor.name, "requestSvgImage.svgImagePromise lock", lockDefined, rest)
-
         svgSetDimensionsLock(item, rest, lockDefined)
-         
-        // console.log(this.constructor.name, "requestSvgImage.svgImagePromise returning", item?.constructor.name)
-
         return item
       })
     })
@@ -421,7 +418,7 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private seekingVideoPromise = (url: string, options: ScalarObject): Promise<LoadedVideo> => {
-    assertObject(options)
+    assertObject(options, 'options')
     // console.log(this.constructor.name, "seekingVideoPromise", url, options)
     const key = url.split(':').pop()
     assertPopulatedString(key)
@@ -446,8 +443,9 @@ export class BrowserLoaderClass extends LoaderClass {
   private sourcePromise(path: LoaderPath): Promise<string> {
     if (urlIsHttp(path)) return Promise.resolve(path) 
   
+    // console.log(this.constructor.name, "sourcePromise calling loadPromise", path)
     return this.loadPromise(path).then((loaded: LoadedImageOrVideo) => { 
-      assertObject(loaded)
+      assertObject(loaded, 'loaded')
      
       const { src } = loaded
       // console.log(this.constructor.name, "sourcePromise", path, "->", src?.length, src?.slice(0, 20))
@@ -457,7 +455,7 @@ export class BrowserLoaderClass extends LoaderClass {
   }
 
   private _svgElement?: SVGSVGElement
-  get svgElement() { return this._svgElement ||= svgElement() }
+  get svgElement() { return this._svgElement ||= svgSvgElement() }
   set svgElement(value) { this._svgElement = value}
 
   private svgImagePromise(url: string): Promise<LoadedSvgImage> {
@@ -467,7 +465,9 @@ export class BrowserLoaderClass extends LoaderClass {
       const completed = () => {
         element.removeEventListener('error', failed)
         element.removeEventListener('load', passed)
-        if (!this.svgImageEmitsLoadEvent) this.svgElement.removeChild(element)
+        if (!this.svgImageEmitsLoadEvent) {
+          try { this.svgElement.appendChild(element) } catch (error) {}
+        }
       }
       const failed = (error: any) => {
         // console.log(this.constructor.name, "loadsSvgImagesInitialize failed", error)
@@ -483,7 +483,9 @@ export class BrowserLoaderClass extends LoaderClass {
 
       element.addEventListener('error', failed, { once: true })
       element.addEventListener('load', passed, { once: true })
-      if (!this.svgImageEmitsLoadEvent) this.svgElement.appendChild(element)
+      if (!this.svgImageEmitsLoadEvent) {
+        try { this.svgElement.appendChild(element) } catch (error) {}
+      }
       svgSet(element, url, 'href')
     })
   }

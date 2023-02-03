@@ -3,7 +3,7 @@ import {
   RenderingStartRequest, RenderingStartResponse,
   Endpoints,
   OutputType,
-  fetchCallback,
+  fetchJsonPromise,
   ApiCallbackResponse,
   ApiCallback,
   DataMashPutRequest,
@@ -41,14 +41,14 @@ export function RenderControl(props: PropsAndChild): ReactResult {
   const handleApiCallback = (callback: ApiCallback, mash: Mash) => {
     setTimeout(() => {
       console.debug("handleApiCallback request", callback)
-      fetchCallback(callback).then((response: ApiCallbackResponse) => {
+      fetchJsonPromise(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
-        if (error) handleError(callback.endpoint.prefix!, callback.request!, response, error)
+        if (error) handleError(callback.endpoint.pathname!, callback.init!, response, error)
         else if (apiCallback) {
-          const { request, endpoint } = apiCallback
-          if (endpoint.prefix === Endpoints.data.mash.put) {
-            const putRequest: DataMashPutRequest = request!.body!
+          const { init, endpoint } = apiCallback
+          if (endpoint.pathname === Endpoints.data.mash.put) {
+            const putRequest: DataMashPutRequest = init!.body!
             const { rendering } = putRequest.mash
             if (rendering) mash.rendering = rendering
           }

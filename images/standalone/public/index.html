@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Movie Masher Standalone</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href='moviemasher.css' rel='stylesheet'>
+    <script src='react.js'></script>
+    <script src='react-dom.js'></script>
+    <script src='moviemasher.js'></script>
+    <script src='theme-default.js'></script>
+    <script src='client-core.js'></script>
+    <script src='client-react.js'></script>
+    <script src='client.js' defer></script>
+    <style>
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #root { width: 100vw; height: 100vh; display: flex; }
+      .moviemasher .editor { --preview-width: 480px; --preview-height: 270px; }
+    </style>
+  </head>
+  <body>
+    <div id='root' class='moviemasher'></div>
+  </body>
+</html>

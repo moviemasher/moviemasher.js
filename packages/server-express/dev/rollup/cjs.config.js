@@ -4,7 +4,6 @@ import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
 
-
 export default {
   input: 'src/index.ts',
   output: {

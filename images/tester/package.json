@@ -1,0 +1,33 @@
+{
+  "name": "@moviemasher/tester",
+  "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
+  "homepage": "https://moviemasher.com",
+  "type": "module",
+  "version": "5.1.2",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "scripts": {
+    "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "canvas": "^2.11.0",
+    "puppeteer": "^19.4.1"
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.7",
+    "@types/node": "18.11.18",
+    "npm-run-all": "^4.1.5",
+    "typescript": "4.9.4"
+  }
+}

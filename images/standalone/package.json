@@ -1,0 +1,55 @@
+{
+  "name": "@moviemasher/standalone",
+  "version": "5.1.2",
+  "description": "Movie Masher Express FFmpeg - version 5.1.2",
+  "browser": "public/client.js",
+  "source": "src/client.tsx",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "start": "node server.js",
+    "up": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml up -d",
+    "down": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml down -v",
+    "logs": "docker compose --env-file ../../dev/local.env  --file dev/docker-compose.yml logs -f",
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build",
+    "build-server": "esbuild src/server.ts --packages=external --bundle --outfile=private/server.js --platform=neutral",
+    "build-client": "rollup --config dev/iife.rollup.config.js",
+    "build-html": "cp src/index.html public/index.html",
+    "build": "run-s build-client build-server build-html"
+  },
+  "dependencies": {
+    "@moviemasher/server-express": "5.1.2"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/node": "18.11.18"
+  },
+
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/client-react": "5.1.2",
+    "@moviemasher/server-express": "5.1.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "workspaces": [
+    "images/*", 
+    "packages/*",
+    "workspaces/*"
+  ]
+}

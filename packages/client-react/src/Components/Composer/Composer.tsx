@@ -62,7 +62,7 @@ export function Composer(props: ComposerProps): ReactResult {
     refresh()
 
     const { dataTransfer } = event
-    assertObject(dataTransfer)
+    assertObject(dataTransfer, 'dataTransfer')
     const types = dragTypes(dataTransfer)
     if (types.includes(TransferTypeFiles)) {
       const editorIndex: EditorIndex = {

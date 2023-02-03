@@ -1,9 +1,7 @@
 version: "3"
-networks:
-  default:
-    name: moviemasher-example-core
+name: moviemasher-example-core
 services:
-  moviemasher-example-core:
+  example-core:
     image: httpd:2.4
     container_name: moviemasher-example-core-8579
     ports:

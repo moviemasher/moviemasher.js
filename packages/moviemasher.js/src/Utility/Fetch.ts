@@ -1,10 +1,17 @@
-import { ApiCallback } from "../Api/Api"
+import { RequestObject } from "../Api/Api"
+import { ResponseObject } from "../MoveMe"
 import { isUndefined } from "./Is"
 import { urlForEndpoint } from "./Url"
 
-export const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
-  const { endpoint, request } = apiCallback
-  const init = request || {}
+export const fetchJsonPromise = (apiCallback: RequestObject): Promise<any> => {
+  return fetchPromise(apiCallback).then(response => response.json())
+}
+
+
+export const fetchPromise = (apiCallback: RequestObject): Promise<ResponseObject> => {
+  const { endpoint, init = {} } = apiCallback
+  
+  // console.log('fetchJsonPromise', endpoint, init)
 
   const typeKey = 'Content-Type'
   const jsonType = 'application/json'
@@ -34,5 +41,5 @@ export const fetchCallback = (apiCallback: ApiCallback): Promise<any> => {
   }
 
   const url: string = urlForEndpoint(endpoint)
-  return fetch(url, init).then(response => response.json())
+  return fetch(url, init)
 }

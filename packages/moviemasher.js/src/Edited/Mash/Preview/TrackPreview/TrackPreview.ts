@@ -1,12 +1,10 @@
 
-import { SvgItem, SvgItems, SvgItemsTuple } from "../../../../declarations"
+import { SvgItem, SvgItems } from "../../../../declarations"
 
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Clip } from "../../Track/Clip/Clip"
 import { Preview } from "../Preview"
-import { Anchor } from "../../../../Setup/Enums"
-import { Container } from "../../../../Container/Container"
-import { Rect } from "../../../../Utility/Rect"
+import { Container } from "../../../../Media/Container/Container"
 import { Editor } from "../../../../Editor/Editor"
 
 export interface TrackPreviewArgs {
@@ -24,7 +22,7 @@ export interface TrackPreview {
   editor: Editor
   svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems 
   container: Container
-  rect: Rect
+  // rect: Rect
 }
 
 export type TrackPreviews = TrackPreview[]

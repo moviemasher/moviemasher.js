@@ -2,43 +2,47 @@ import { Size } from "../../../Utility/Size"
 import { Editor } from "../../../Editor/Editor"
 import { Time } from "../../../Helpers/Time/Time"
 import { Clip, IntrinsicOptions } from "../Track/Clip/Clip"
-import { Loader } from "../../../Loader/Loader"
 import { AVType } from "../../../Setup/Enums"
 import { sortByTrack } from "../../../Utility/Sort"
 import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
 import { Mash } from "../Mash"
 import { PreviewArgs, Preview } from "./Preview"
-import { svgAddClass, svgElement, svgPolygonElement } from "../../../Utility/Svg"
+import { svgAddClass, svgSvgElement } from "../../../Utility/Svg"
 import { assertObject, isObject } from "../../../Utility/Is"
-import { GraphFiles } from "../../../MoveMe"
+import { Component, PreloadArgs } from "../../../MoveMe"
 import { PreviewItems, SvgItems } from "../../../declarations"
+import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
+import { EmptyMethod } from "../../../Setup/Constants"
 
 /**
  * Preview of a single mash at a single frame
  */
 export class PreviewClass implements Preview {
   constructor(args: PreviewArgs) {
-    const { selectedClip, editor, time, mash, onlyClip, size } = args
+    const { selectedClip, editor, time, mash, clip, size } = args
     this.mash = mash
     this.size = size || mash.imageSize
     this.time = time
     this.selectedClip = selectedClip
-    this.onlyClip = onlyClip
+    this.clip = clip
 
     if (isObject(editor)) this.editor = editor
   }
 
   audible = false
 
+  clip?: Clip
+
   private _clips?: Clip[]
   protected get clips() { return this._clips ||= this.clipsInitialize }
   private get clipsInitialize() {
-    const { mash, time, onlyClip } = this
-    if (onlyClip) return [onlyClip]
+    const { mash, time, clip } = this
+    if (clip) return [clip]
     
     return mash.clipsInTimeOfType(time, AVType.Video).sort(sortByTrack) 
   }
+
 
   combine = false
   
@@ -49,41 +53,43 @@ export class PreviewClass implements Preview {
   editor?: Editor
 
   get intrinsicSizePromise(): Promise<void> {
-    const { clips, preloader } = this
+    const { clips, time, quantize } = this
     const options: IntrinsicOptions = { editing: true, size: true }
     const unknownClips = clips.filter(clip => !clip.intrinsicsKnown(options))
-    const files: GraphFiles = unknownClips.flatMap(clip => 
-      clip.intrinsicGraphFiles(options)
-    )
-    return preloader.loadFilesPromise(files)
-  }
 
-  private get itemsPromise(): Promise<PreviewItems> {
-    const { clips, size, time, onlyClip } = this
-    
-    let promise = Promise.resolve([] as PreviewItems)
-    const icon = !!onlyClip
-    clips.forEach(clip => {
-      promise = promise.then(lastTuple => {
-        return clip.previewItemsPromise(size, time, icon).then(svgItems => {
-          return [...lastTuple, ...svgItems] 
-        })
-      })
+    const args: PreloadArgs = {
+      quantize,
+      editing: true, visible: true, time, clipTime: timeRangeFromTime(time)
+    }
+    const promises = unknownClips.map(clip => {
+      args.clipTime = clip.timeRange(quantize)
+      return clip.loadPromise(args)
     })
-    return promise 
+
+    return Promise.all(promises).then(EmptyMethod)
   }
 
   mash: Mash
-
-  onlyClip?: Clip
-
-  get preloader(): Loader { return this.mash.preloader }
 
   get previewItemsPromise(): Promise<PreviewItems> { 
     if (this._svgItems) return Promise.resolve(this._svgItems)
 
     const sizePromise = this.intrinsicSizePromise  
-    const itemsPromise = sizePromise.then(() => this.itemsPromise)
+    const itemsPromise = sizePromise.then(() => {
+      const { clips, size, time, clip } = this
+    
+      let promise = Promise.resolve([] as PreviewItems)
+      const component = clip ? Component.Timeline : Component.Player
+
+      clips.forEach(clip => {
+        promise = promise.then(lastTuple => {
+          return clip.previewItemsPromise(size, time, component).then(svgItems => {
+            return [...lastTuple, ...svgItems] 
+          })
+        })
+      })
+      return promise 
+    })
   
     return itemsPromise.then(svgItems => {
       return this._svgItems = svgItems.length ? this.tupleItems(svgItems) : []
@@ -119,7 +125,7 @@ export class PreviewClass implements Preview {
       const frame = Math.max(0, time.frame - range.frame)
       const timeRange = range.withFrame(frame)
       const filterChainArgs: TrackPreviewArgs = {
-        clip, preview: this, tweenTime, timeRange, icon: !!this.onlyClip
+        clip, preview: this, tweenTime, timeRange, icon: !!this.clip
       }
       trackPreviews.push(new TrackPreviewClass(filterChainArgs))
     })
@@ -128,7 +134,7 @@ export class PreviewClass implements Preview {
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
     const { size, editing, selectedClip, editor } = this
-    console.log(this.constructor.name, "tupleItems", editor?.edited?.label)
+    // console.log(this.constructor.name, "tupleItems", editor?.edited?.label)
     const items = [...svgItems]
 
     const trackClasses = 'track'
@@ -136,7 +142,7 @@ export class PreviewClass implements Preview {
 
     if (!(editing && svgItems.length)) return items
 
-    assertObject(editor)
+    assertObject(editor, 'editor')
 
     // TODO: get classes from theme
 
@@ -151,7 +157,7 @@ export class PreviewClass implements Preview {
       return trackPreview.editingSvgItem(classes)
     })
     const outlineClasses = ['outlines']
-    const hoversSvg = svgElement(size, hoverItems)
+    const hoversSvg = svgSvgElement(size, hoverItems)
     svgAddClass(hoversSvg, outlineClasses)
 
     items.push(hoversSvg)
@@ -160,10 +166,10 @@ export class PreviewClass implements Preview {
     const classes = ['bounds', 'back']
     const lineClasses = ['line']
     const handleClasses = ['handle']
-    const activeSvg = svgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses, true))
+    const activeSvg = svgSvgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses, true))
     svgAddClass(activeSvg, classes)
     classes[1] = 'fore'
-    const passiveSvg = svgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses))
+    const passiveSvg = svgSvgElement(size, selectedPreview.svgBoundsElement(lineClasses, handleClasses))
     svgAddClass(passiveSvg, classes)
     items.push(activeSvg, passiveSvg)
     return items

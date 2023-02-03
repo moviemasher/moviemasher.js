@@ -1,46 +1,73 @@
-import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { LoadedImage } from "../../declarations"
+import { DefinitionType, MediaDefinitionType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
-import { DefinitionBase } from "../../Definition/DefinitionBase"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
-import { ContentDefinitionMixin } from "../../Content/ContentDefinitionMixin"
-import { ContainerDefinitionMixin } from "../../Container/ContainerDefinitionMixin"
+import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
+import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { LoadedImage } from "../../declarations"
-import { Loader } from "../../Loader/Loader"
-import { Size } from "../../Utility/Size"
+import { isLoadedImage } from "../../Loader/Loader"
+import { assertSizeAboveZero, Size, sizeCover } from "../../Utility/Size"
+import { MediaBase } from "../MediaBase"
+import { PreloadArgs, SvgImageOptions } from "../../MoveMe"
+import { requestImagePromise } from "../../Utility/Request"
+import { centerPoint } from "../../Utility/Rect"
+import { svgImagePromiseWithOptions, svgSvgElement } from "../../Utility/Svg"
 
-const ImageDefinitionWithTweenable = TweenableDefinitionMixin(DefinitionBase)
+const ImageDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
 const ImageDefinitionWithContent = ContentDefinitionMixin(ImageDefinitionWithContainer)
 const ImageDefinitionWithPreloadable = PreloadableDefinitionMixin(ImageDefinitionWithContent)
 const ImageDefinitionWithUpdatable = UpdatableSizeDefinitionMixin(ImageDefinitionWithPreloadable)
 export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implements ImageDefinition {
-  constructor(...args: any[]) {
-    super(...args)
-    const [object] = args
-    // console.log(this.constructor.name, object)
-
-    const { loadedImage } = object as ImageDefinitionObject
-    if (loadedImage) this.loadedImage = loadedImage
+  constructor(object: ImageDefinitionObject) {
+    super(object)
+    const { loadedMedia } = this
+    if (isLoadedImage(loadedMedia)) this.loadedImage = loadedMedia
+    console.log(this.constructor.name, object)
   }
 
-  definitionIcon(loader: Loader, size: Size): Promise<SVGSVGElement> | undefined {
-    const superElement = super.definitionIcon(loader, size)
-    if (superElement) return superElement
+  definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
+    const transcoding = this.preferredTranscoding(DefinitionType.Image) 
 
-    const { url } = this
-    return this.urlIcon(url, loader, size)
+    return transcoding.loadedMediaPromise.then(image => {
+      assertSizeAboveZero(image)
+
+      const { width, height, src } = image
+      const inSize = { width, height }
+      const coverSize = sizeCover(inSize, size, true)
+      const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
+      const options: SvgImageOptions = {
+        ...outRect
+      }
+      return svgImagePromiseWithOptions(src, options).then(svgImage => {
+        return svgSvgElement(size, svgImage)
+      })
+    })
   }
 
   instanceFromObject(object: ImageObject = {}) : Image {
     return new ImageClass(this.instanceArgs(object))
   }
 
-  loadType = LoadType.Image
 
+  loadPromise(args: PreloadArgs): Promise<void> {
+    const { editing, visible } = args
+    if (!visible) return Promise.resolve()
+
+    const { loadedImage } = this
+    if (loadedImage) return Promise.resolve()
+
+    const transcoding = editing ? this.preferredTranscoding(DefinitionType.Image) : this
+    
+    const { request } = transcoding
+    return requestImagePromise(request).then(image => {
+      this.loadedImage = image
+    })
+  }
+  
   loadedImage?: LoadedImage 
   
-  type = DefinitionType.Image
+  type = DefinitionType.Image as MediaDefinitionType
 }

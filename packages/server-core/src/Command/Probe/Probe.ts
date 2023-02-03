@@ -1,11 +1,13 @@
 import path from "path"
 import fs from 'fs'
 import Ffmpeg from "fluent-ffmpeg"
-import { isPositive, LoadedInfo, Sizes, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
+import type { LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
+ 
+import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
 import { commandProcess } from "../CommandFactory"
-import { commandArgsString } from "../../Utilities/Command"
-import { expandCommand } from "../../Utilities/Expand"
+import { commandArgsString } from "../../Utility/Command"
+import { expandCommand } from "../../Utility/Expand"
 
 export class Probe {
   private static AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "

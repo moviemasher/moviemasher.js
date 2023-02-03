@@ -6,28 +6,29 @@ import {
   RenderingCommandOutput, RenderingResult, CommandOutputs, OutputType,
   EmptyMethod, CommandDescription, CommandDescriptions, CommandOptions, 
   CommandInput, RenderingDescription, AVType, CommandInputs,
-  Defined, renderingCommandOutputs, assertTrue, ExtTs, assertSize, isDefined, 
-  isPreloadableDefinition, NumberObject, GraphFile, assertAboveZero, 
-  Mash, mashInstance, OutputFactory, idGenerateString, assertLoadType
+  Defined, assertTrue, ExtTs, assertSize, isDefined, 
+  NumberObject, assertAboveZero, 
+  Mash, mashInstance, idGenerateString
 } from "@moviemasher/moviemasher.js"
 
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
 } from '../Setup/Constants'
-import { NodeLoader } from '../Utilities/NodeLoader'
-import { commandArgsString } from '../Utilities/Command'
-import { renderingOutputFile } from '../Utilities/Rendering'
+import { NodeLoader } from '../Utility/NodeLoader'
+import { commandArgsString } from '../Utility/Command'
+import { renderingOutputFile } from '../Utility/Rendering'
 
 import { Probe } from '../Command/Probe/Probe'
 import { RenderingProcess, RenderingProcessArgs, RunResult } from "./RenderingProcess"
 import { runningCommandInstance } from '../RunningCommand/RunningCommandFactory'
 import { CommandResult } from '../RunningCommand/RunningCommand'
+import { renderingCommandOutputs } from '../Defaults/OutputDefault'
+import { RenderingOutputClass } from '../Encoder/RenderingOutputClass'
 
 export type RenderingProcessConcatFileDuration = [string, number]
 
 export class RenderingProcessClass implements RenderingProcess {
   constructor(public args: RenderingProcessArgs) {
-    // console.log(this.constructor.name, "upload", args.upload)
     Defined.define(...this.args.definitions)
   }
 
@@ -109,7 +110,7 @@ export class RenderingProcessClass implements RenderingProcess {
     })
   }
 
-  commandDescriptionMerged(flatDescription: RenderingDescription): CommandDescription | undefined{
+  private commandDescriptionMerged(flatDescription: RenderingDescription): CommandDescription | undefined{
     const { visibleCommandDescriptions, audibleCommandDescription } = flatDescription
     const descriptions: CommandDescriptions = []
     const length = visibleCommandDescriptions?.length
@@ -130,7 +131,7 @@ export class RenderingProcessClass implements RenderingProcess {
     return merged
   }
 
-  commandDescriptionsMerged(descriptions: CommandDescriptions): CommandDescription {
+  private commandDescriptionsMerged(descriptions: CommandDescriptions): CommandDescription {
     const inputs: CommandInputs = []
     const commandFilters: CommandFilters = []
     const durations: number[] = []
@@ -151,7 +152,7 @@ export class RenderingProcessClass implements RenderingProcess {
     return commandDescription
   }
 
-  concatFile(fileDurations: RenderingProcessConcatFileDuration[]): string {
+  private concatFile(fileDurations: RenderingProcessConcatFileDuration[]): string {
     const lines = ['ffconcat version 1.0']
     lines.push(...fileDurations.flatMap(fileDuration => {
       const [file, duration] = fileDuration
@@ -169,10 +170,10 @@ export class RenderingProcessClass implements RenderingProcess {
   }
 
   private directoryPromise(): Promise<void> {
-    const { outputsPopulated: outputs, args, id } = this
-    const { outputDirectory, mash, definitions, upload } = args
+    const { commandOutputs: outputs, args, id } = this
+    const { outputDirectory, mash, definitions } = args
     // console.log(this.constructor.name, "directoryPromise", outputDirectory)
-    const argsJson = JSON.stringify({ id, outputs, mash, definitions, upload }, null, 2)
+    const argsJson = JSON.stringify({ id, outputs, mash, definitions }, null, 2)
     return this.createDirectoryPromise(outputDirectory).then(() => {
       const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
       return this.createFilePromise(jsonPath, argsJson)
@@ -181,18 +182,19 @@ export class RenderingProcessClass implements RenderingProcess {
 
   private fileName(index: number, commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string {
     const { outputType, videoRate } = commandOutput
-    if (outputType !== OutputType.ImageSequence) return renderingOutputFile(index, commandOutput)
-    if (!videoRate) throw Errors.internal + 'videoRate'
+    // if (outputType !== OutputType.ImageSequence) 
+    return renderingOutputFile(index, commandOutput)
+    // if (!videoRate) throw Errors.internal + 'videoRate'
 
-    const { format, extension, basename } = commandOutput
-    const base = basename || ''
-    const ext = extension || format
-    const { duration } = renderingOutput
-    const framesMax = Math.floor(videoRate * duration) - 2
-    const begin = 1
-    const lastFrame = begin + (framesMax - begin)
-    const padding = String(lastFrame).length
-    return `${base}%0${padding}d.${ext}`
+    // const { format, extension, basename } = commandOutput
+    // const base = basename || ''
+    // const ext = extension || format
+    // const { duration } = renderingOutput
+    // const framesMax = Math.floor(videoRate * duration) - 2
+    // const begin = 1
+    // const lastFrame = begin + (framesMax - begin)
+    // const padding = String(lastFrame).length
+    // return `${base}%0${padding}d.${ext}`
   }
 
   private _id?: string
@@ -206,33 +208,27 @@ export class RenderingProcessClass implements RenderingProcess {
   get mashInstance(): Mash {
     if (this._mashInstance) return this._mashInstance
 
-    const { args, preloader } = this
+    const { args } = this
     const { mash } = args
 
-    const mashOptions = { ...mash, preloader }
-    return this._mashInstance = mashInstance(mashOptions)
+    return this._mashInstance = mashInstance(mash)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {
-    const { outputType } = commandOutput
-    const { cacheDirectory, upload } = this.args
-    // console.log(this.constructor.name, "outputInstance upload", upload)
-
-    const { mashInstance } = this
-    const args: RenderingOutputArgs = {
-      commandOutput, cacheDirectory, mash: mashInstance, upload
-    }
-    return OutputFactory[outputType](args)
+    const { cacheDirectory } = this.args
+    const { mashInstance: mash } = this
+    const args: RenderingOutputArgs = { commandOutput, cacheDirectory, mash }
+    return new RenderingOutputClass(args)
   }
 
-  private _outputsPopulated?: CommandOutputs
-  private get outputsPopulated(): CommandOutputs {
-    return this._outputsPopulated ||= renderingCommandOutputs(this.args.outputs)
+  private _commandOutputs?: CommandOutputs
+  get commandOutputs(): CommandOutputs {
+    return this._commandOutputs ||= renderingCommandOutputs(this.args.outputs)
   }
 
   private _preloader?: NodeLoader
-  get preloader() { return this._preloader ||= this.preloaderInitialize }
-  get preloaderInitialize() { 
+  private get preloader() { return this._preloader ||= this.preloaderInitialize }
+  private get preloaderInitialize() { 
     const { args } = this
     const {
       cacheDirectory, validDirectories, defaultDirectory, filePrefix, 
@@ -252,8 +248,7 @@ export class RenderingProcessClass implements RenderingProcess {
 
     const options = commandOutput.options!
     switch (outputType) {
-      case OutputType.Image:
-      case OutputType.Waveform: {
+      case OutputType.Image: {
         options['frames:v'] = 1
         break
       }
@@ -292,7 +287,7 @@ export class RenderingProcessClass implements RenderingProcess {
     })
   }
 
-  rendered(destinationPath: string, duration = 0, tolerance = 0.1): boolean {
+  private rendered(destinationPath: string, duration = 0, tolerance = 0.1): boolean {
     if (!fs.existsSync(destinationPath)) return false
 
     if (!duration) return true
@@ -324,11 +319,11 @@ export class RenderingProcessClass implements RenderingProcess {
     
     let promise = this.directoryPromise().then(() => runData)
     
-    const { outputsPopulated } = this
-    const { outputDirectory, upload } = this.args
+    const { commandOutputs } = this
+    const { outputDirectory } = this.args
     
 
-    outputsPopulated.forEach(output => {
+    commandOutputs.forEach(output => {
       const { optional, outputType } = output
       
       const instanceOptions: RenderingCommandOutput = {
@@ -385,34 +380,6 @@ export class RenderingProcessClass implements RenderingProcess {
         }).then(() => data)
       })
     })
-    return promise.then(({ runResult }) => {
-      if (upload) {
-        const [clip] = this.mashInstance.tracks[0].clips
-        const { contentId } = clip
-        
-        const definition = Defined.fromId(contentId)
-        if (isPreloadableDefinition(definition)) {
-          const { source: file, loadType: type } = definition
-          const { preloader, args } = this
-          const { outputDirectory } = args
-          const graphFile: GraphFile = {
-            input: true, definition, type, file
-          }
-          assertLoadType(type)
-          
-          const url = preloader.key(graphFile)
-          const infoPath = preloader.infoPath(url)
-          
-          if (fs.existsSync(infoPath)) {
-            // console.log("url", url, "infoPath", infoPath)
-            return fs.promises.copyFile(infoPath, path.join(outputDirectory, `upload.${ExtensionLoadedInfo}`)).then(() => {
-              return runResult
-            })
-          }
-          
-        }
-      }
-      return runResult
-    })
+    return promise.then(({ runResult }) => runResult)
   }
 }

@@ -1,11 +1,19 @@
-import { terser } from 'rollup-plugin-terser'
-
-import pkg from '../../package.json'
-
-const { module, main } = pkg
+import ts from "rollup-plugin-ts"
+import json from "@rollup/plugin-json"
+import terser from '@rollup/plugin-terser'
 
 export default {
-  input: module,
-  output: { format: 'umd', file: main, name: 'MovieMasher' },
-  plugins: [terser()],
+  input: 'src/index.ts',
+  output: { 
+    format: 'umd', interop: 'auto', 
+    file: 'umd/moviemasher.min.js', name: 'MovieMasher' },
+  plugins: [
+    json({ preferConst: true, indent: '  ', namedExports: true }),
+    ts({ tsconfig: {
+      target: 'ESNext',
+      resolveJsonModule: true, 
+      allowSyntheticDefaultImports: true,
+    } }),
+    terser()
+  ]
 }

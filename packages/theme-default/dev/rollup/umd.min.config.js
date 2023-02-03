@@ -1,12 +1,8 @@
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
-import pkg from "../../package.json"
-
-const { module } = pkg
-
 export default {
-  input: module,
+  input: 'esm/theme-default.js',
   context: 'globalThis.window',
   output: { 
     format: 'umd', file: 'umd/theme-default.min.js', name: 'MovieMasherTheme', 

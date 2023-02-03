@@ -1,4 +1,4 @@
-import { Container, ContainerRectArgs } from "../../../../Container/Container"
+import { Container, ContainerRectArgs } from "../../../../Media/Container/Container"
 import { EventHandler, ScalarObject, SvgItem, SvgItems, SvgItemsTuple } from "../../../../declarations"
 import { Point, pointsEqual, PointZero } from "../../../../Utility/Point"
 import { Rect, rectsEqual } from "../../../../Utility/Rect"
@@ -177,7 +177,7 @@ export class TrackPreviewClass implements TrackPreview {
   private get quantize() { return this.preview.quantize }
 
   private _rect?: Rect
-  get rect() { return this._rect || this.rectInitialize }
+  private get rect() { return this._rect || this.rectInitialize }
   private get rectInitialize() {
     const { time, timeRange, clip, size } = this
     assertSizeAboveZero(size, `${this.constructor.name}.rectInitialize size`)

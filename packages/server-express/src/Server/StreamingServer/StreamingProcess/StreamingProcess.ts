@@ -1,9 +1,9 @@
 
 import {
-  DefinitionObjects, MashObject, StreamingCommandOutput
+  DefinitionObjects, MashObject
 } from '@moviemasher/moviemasher.js'
 
-import { RunningCommand } from '@moviemasher/server-core'
+import { RunningCommand, StreamingCommandOutput } from '@moviemasher/server-core'
 
 export interface StreamConnectionCommand {
   command: RunningCommand

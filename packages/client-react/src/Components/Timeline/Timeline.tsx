@@ -63,7 +63,7 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (!type) return false
 
     // anything can be dropped on a clip 
-    if (clip) return true
+    if (clip || type.startsWith('clip')) return true
 
     // effects can only be dropped on clips
     const definitionType = dragDefinitionType(type)
@@ -99,10 +99,14 @@ export function Timeline(props: TimelineProps): ReactResult {
   const onDrop = (event: DragEvent) => {
     eventStop(event)
     const { dataTransfer, clientX } = event 
+    console.log("Timeline onDrop", dataTransfer?.types)
+
     if (!(dataTransfer && dragTypeValid(dataTransfer, droppingClip))) {
       console.log("Timeline onDrop invalid", dataTransfer?.types, !!droppingClip)
       return
     }
+    console.log("Timeline onDrop", dataTransfer.types, droppingClip)
+
     const types = dragTypes(dataTransfer)
     const droppingFiles = types.includes(TransferTypeFiles)
 
@@ -125,10 +129,11 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (droppingFiles) {
       drop(dataTransfer.files, editorIndex)
     } else if (draggingItem) {
+      console.log("onDrop", data)
       if (isDragDefinitionObject(data)) {
-        const { definitionObject } = data
+        const { mediaObject } = data
         // console.log("Timeline onDrop definition", definitionObject)
-        drop(definitionObject, editorIndex)
+        drop(mediaObject, editorIndex)
       } else {
         const { clip } = editor.selection
         assertClip(clip)

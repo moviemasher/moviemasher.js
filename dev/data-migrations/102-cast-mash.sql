@@ -1,0 +1,8 @@
+
+
+CREATE TABLE IF NOT EXISTS `cast_mash` (
+  id STRING PRIMARY KEY,
+  castId STRING NOT NULL,
+  mashId STRING NOT NULL,
+  createdAt STRING NOT NULL
+);

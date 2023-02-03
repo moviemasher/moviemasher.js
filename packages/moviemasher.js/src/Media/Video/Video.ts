@@ -1,4 +1,4 @@
-import { GenericFactory, LoadedVideo } from "../../declarations"
+import { LoadedImage, LoadedVideo } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
 import { isInstance } from "../../Instance/Instance"
 import {
@@ -6,12 +6,16 @@ import {
   UpdatableSizeObject
 } from "../../Mixin/UpdatableSize/UpdatableSize"
 import {
-  Content, ContentDefinition, ContentDefinitionObject, ContentObject
-} from "../../Content/Content"
+  Content, ContentObject
+} from "../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, 
   UpdatableDurationDefinitionObject, UpdatableDurationObject 
 } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { isDefinition } from "../../Definition"
+import { isMedia, Media, MediaObject } from "../Media"
+import { Transcoding } from "../Transcoding/Transcoding"
+import { Time } from "../../Helpers/Time/Time"
+import { Size } from "../../Utility/Size"
 
 export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
@@ -19,18 +23,26 @@ export interface VideoObject extends ContentObject, UpdatableSizeObject, Updatab
 
 export interface Video extends Content, UpdatableSize, UpdatableDuration {
   definition : VideoDefinition
-}
-
-export interface VideoDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   loadedVideo?: LoadedVideo
 }
 
-export interface VideoDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+export interface VideoDefinitionObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+  loadedVideo?: LoadedVideo
+}
+
+export type VideoTransitionalObject = MediaObject | VideoDefinitionObject
+
+export interface VideoDefinition extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
   instanceFromObject(object?: VideoObject): Video
   loadedVideo?: LoadedVideo
+  readonly previewTranscoding: Transcoding
+  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<LoadedImage>
 }
 export const isVideoDefinition = (value: any): value is VideoDefinition => {
-  return isDefinition(value) && value.type === DefinitionType.Video
+  return isMedia(value) && value.type === DefinitionType.Video
+}
+export function assertVideoDefinition(value: any): asserts value is VideoDefinition {
+  if (!isVideoDefinition(value)) throw new Error('expected VideoDefinition')
 }
 
 export const isVideo = (value: any): value is Video => {
@@ -40,10 +52,3 @@ export const isVideo = (value: any): value is Video => {
 export function assertVideo(value: any): asserts value is Video {
   if (!isVideo(value)) throw new Error('expected Video')
 }
-
-/**
- * @category Factory
- */
-export interface VideoFactory extends GenericFactory<
-  Video, VideoObject, VideoDefinition, VideoDefinitionObject
-> {}

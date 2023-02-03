@@ -7,7 +7,7 @@ import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api
 import { Mash, MashAndDefinitionsObject, Movable } from "../Edited/Mash/Mash"
 
 import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
-import { Effect } from "../Media/Effect/Effect"
+import { Effect } from "../Module/Effect/Effect"
 import { Track } from "../Edited/Mash/Track/Track"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
@@ -16,9 +16,10 @@ import { Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
 import { Actions } from "./Actions/Actions"
 import { EditorSelection } from "./EditorSelection"
 import { isObject } from "../Utility/Is"
-import { throwError } from "../Utility/Throw"
+import { errorsThrow } from "../Utility/Errors"
 import { Rect } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
+import { Media, MediaObject, MediaObjects } from "../Media/Media"
 // extends Partial<NumberObject> 
 export interface EditorIndex {
   layer?: number
@@ -30,12 +31,11 @@ export interface EditorArgs {
   autoplay: boolean
   buffer: number
   editType?: EditType
-  endpoint?: Endpoint
+  baseUrl?: string
   edited?: EditedData
   fps: number
   loop: boolean
   precision: number
-  preloader?: BrowserLoaderClass
   readOnly?: boolean
   dimensions?: Rect | Size | undefined
   volume: number
@@ -55,14 +55,15 @@ export const isMashData = (data: EditedData): data is CastData => (
   isObject(data) && "mash" in data
 )
 export function assertMashData(data: EditedData, name?: string): asserts data is MashData {
-  if (!isMashData(data)) throwError(data, 'MashData', name)
+  if (!isMashData(data)) errorsThrow(data, 'MashData', name)
 }
 
 export interface Editor {
   actions: Actions
-  add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]>
-  addFiles(files: File[], editorIndex?: EditorIndex): Promise<Definition[]>
+  // add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]>
+  addFiles(files: File[], editorIndex?: EditorIndex): Promise<Media[]>
   addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void>
+  addMedia(object: MediaObject | MediaObjects, editorIndex?: EditorIndex): Promise<Media[]>
   addEffect: IndexHandler<Movable>
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
   addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void
@@ -100,7 +101,6 @@ export interface Editor {
   position: number
   positionStep: number
   precision: number
-  preloader: BrowserLoaderClass
   readOnly: boolean
   redo(): void
   redraw(): void

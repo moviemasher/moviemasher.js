@@ -1,8 +1,8 @@
 import { AudibleSource, Constrained, LoadedAudio, StartOptions, Value } from "../../declarations"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Loader } from "../../Loader/Loader"
-import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
-import { throwError } from "../../Utility/Throw"
+import { DefinitionType, isDefinitionType, isMediaDefinitionType } from "../../Setup/Enums"
+import { errorsThrow } from "../../Utility/Errors"
 import {
   isPreloadable, isPreloadableDefinition,
   Preloadable, PreloadableDefinition,
@@ -12,7 +12,7 @@ import {
 export const UpdatableDurationDefinitionTypes = [
   DefinitionType.Audio,
   DefinitionType.Video,
-  DefinitionType.VideoSequence,
+  // DefinitionType.VideoSequence,
 ]
 export interface UpdatableDurationObject extends PreloadableObject {
   gain?: Value
@@ -29,7 +29,6 @@ export interface UpdatableDurationDefinitionObject extends PreloadableDefinition
   loop?: boolean
   waveform?: string
   audioUrl?: string
-  loadedAudio?: LoadedAudio
 }
 
 export interface UpdatableDuration extends Preloadable {
@@ -42,20 +41,21 @@ export const isUpdatableDuration = (value?: any): value is UpdatableDuration => 
   return isPreloadable(value) && "startOptions" in value
 }
 export function assertUpdatableDuration(value?: any, name?: string): asserts value is UpdatableDuration {
-  if (!isUpdatableDuration(value)) throwError(value, "Updatable", name)
+  if (!isUpdatableDuration(value)) errorsThrow(value, "Updatable", name)
 }
 
 export const isUpdatableDurationType = (value: any): value is DefinitionType => {
-  return isDefinitionType(value) && UpdatableDurationDefinitionTypes.includes(value)
+  return isMediaDefinitionType(value) && UpdatableDurationDefinitionTypes.includes(value)
 }
 
 export interface UpdatableDurationDefinition extends PreloadableDefinition {
-  audibleSource(preloader: Loader): AudibleSource | undefined
+  audibleSource(): AudibleSource | undefined
   audio: boolean
   audioUrl: string
   duration: number
   frames(quantize: number): number
   loadedAudio?: LoadedAudio
+  loadedAudioPromise: Promise<LoadedAudio> 
   loop: boolean
   urlAudible(editing?: boolean): string
 }
@@ -63,7 +63,7 @@ export const isUpdatableDurationDefinition = (value?: any): value is UpdatableDu
   return isPreloadableDefinition(value) && "audibleSource" in value
 }
 export function assertUpdatableDurationDefinition(value?: any, name?: string): asserts value is UpdatableDurationDefinition {
-  if (!isUpdatableDurationDefinition(value)) throwError(value, "UpdatableDefinition", name)
+  if (!isUpdatableDurationDefinition(value)) errorsThrow(value, "UpdatableDefinition", name)
 }
 
 export type UpdatableDurationClass = Constrained<UpdatableDuration>

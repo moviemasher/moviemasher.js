@@ -13,7 +13,7 @@ export class ServerClass implements Server {
 
   init(userId: string): JsonObject { return {} }
 
-  startServer(app: Express.Application, _activeServers: HostServers): void {
+  startServer(app: Express.Application, _activeServers: HostServers): Promise<void> {
     // console.log(this.constructor.name, "startServer")
 
     const { authentication } = this.args
@@ -32,6 +32,7 @@ export class ServerClass implements Server {
       }
       app.use(`/${this.id}/*`, basicAuth(options), (_req, _res, next) => { next() })
     }
+    return Promise.resolve()
    }
 
   stopServer(): void { }

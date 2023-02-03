@@ -6,3 +6,5 @@ export * from "./MashFactory"
 export * from "./Preview"
 export * from "./Track"
 export * from "./Control"
+
+export * from "./Encoding"

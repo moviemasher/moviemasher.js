@@ -2,15 +2,17 @@ import fs from 'fs'
 import EventEmitter from 'events'
 import path from 'path'
 import internal, { PassThrough } from 'stream'
+import wrtc from 'wrtc'
+
 import {
-  CommandOutput, outputDefaultHls, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual, sizeString
+  CommandOutput, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual, sizeString
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'
 import { StreamInput } from '../../UnixStream/SocketStreams'
-import { RunningCommand, runningCommandInstance } from '@moviemasher/server-core'
+import { RunningCommand, outputDefaultHls, runningCommandInstance } from '@moviemasher/server-core'
 
-const wrtc = require('wrtc')
+// const  = require('wrtc')
 const { RTCPeerConnection } = wrtc
 const { RTCAudioSink, RTCVideoSink } = wrtc.nonstandard
 const FilterGraphPadding = 6

@@ -16,7 +16,7 @@ import {
   DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
 } from "@moviemasher/moviemasher.js"
 
-import { Server, ServerArgs, ServerHandler } from "../Server"
+import { Server, ServerArgs, ExpressHandler } from "../Server"
 
 export interface DataServerArgs extends ServerArgs {
   temporaryIdPrefix: string
@@ -26,18 +26,18 @@ export interface DataServerArgs extends ServerArgs {
 
 export interface DataServer extends Server {
   args: DataServerArgs
-  defaultCast: ServerHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest>
-  defaultMash: ServerHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest>
-  deleteCast: ServerHandler<DataCastDeleteResponse, DataCastDeleteRequest>
-  deleteDefinition: ServerHandler<DataDefinitionDeleteResponse, DataDefinitionDeleteRequest>
-  deleteMash: ServerHandler<DataMashDeleteResponse, DataMashDeleteRequest>
-  getCast: ServerHandler<DataCastGetResponse, DataGetRequest>
-  getDefinition: ServerHandler<DataDefinitionGetResponse, DataDefinitionGetRequest>
-  getMash: ServerHandler<DataMashGetResponse, DataGetRequest>
-  putCast: ServerHandler<DataCastPutResponse | WithError, DataCastPutRequest>
-  putDefinition: ServerHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest>
-  putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest>
-  retrieveCast: ServerHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest>
-  retrieveDefinition: ServerHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest>
-  retrieveMash: ServerHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest>
+  defaultCast: ExpressHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest>
+  defaultMash: ExpressHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest>
+  deleteCast: ExpressHandler<DataCastDeleteResponse, DataCastDeleteRequest>
+  deleteDefinition: ExpressHandler<DataDefinitionDeleteResponse, DataDefinitionDeleteRequest>
+  deleteMash: ExpressHandler<DataMashDeleteResponse, DataMashDeleteRequest>
+  getCast: ExpressHandler<DataCastGetResponse, DataGetRequest>
+  getDefinition: ExpressHandler<DataDefinitionGetResponse, DataDefinitionGetRequest>
+  getMash: ExpressHandler<DataMashGetResponse, DataGetRequest>
+  putCast: ExpressHandler<DataCastPutResponse | WithError, DataCastPutRequest>
+  putDefinition: ExpressHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest>
+  putMash: ExpressHandler<DataMashPutResponse | WithError, DataMashPutRequest>
+  retrieveCast: ExpressHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest>
+  retrieveDefinition: ExpressHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest>
+  retrieveMash: ExpressHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest>
 }

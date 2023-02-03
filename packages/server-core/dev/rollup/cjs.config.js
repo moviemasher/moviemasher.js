@@ -3,7 +3,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import ts from "rollup-plugin-ts"
-
+import json from "@rollup/plugin-json"
 
 export default {
   input: 'src/index.ts',
@@ -14,6 +14,7 @@ export default {
     name: "MovieMasherServer"
   },
   plugins: [
+    json({ preferConst: true, indent: '  ', namedExports: true }),
     peerDepsExternal(),
     replace({
       preventAssignment: true,

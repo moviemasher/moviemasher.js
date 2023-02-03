@@ -12,7 +12,6 @@ import { EmptyMethod } from "../../../Setup/Constants"
 export class FilterGraphsClass implements FilterGraphs {
   constructor(public args: FilterGraphsArgs) {
     const { avType, times, mash, ...rest } = args
-    // console.log(this.constructor.name, "upload", args.upload)
 
     const { length } = times
     if (!length) { // no clips in timeline
@@ -79,7 +78,10 @@ export class FilterGraphsClass implements FilterGraphs {
   }
 
   get loadCommandFilesPromise(): Promise<void> {
-    return this.args.mash.preloader.loadFilesPromise(this.commandFiles)
+    throw new Error('UGH')
+    return Promise.resolve()
+
+    
   }
 
   time: Time

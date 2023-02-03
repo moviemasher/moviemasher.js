@@ -1,4 +1,4 @@
 export * from "./Font"
-export * from "./FontDefinition"
+export * from "./FontMediaClass"
 export * from "./FontFactory"
-export * from "./FontInstance"
+export * from "./FontClass"

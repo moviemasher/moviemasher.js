@@ -1,9 +1,7 @@
 import Express from "express"
-import { Database, open } from 'sqlite'
-import sqlite3 from 'sqlite3'
 import fs from 'fs'
 import path from 'path'
-
+import knex, { Knex } from 'knex'
 
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
@@ -27,7 +25,7 @@ import {
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
-import { ServerHandler } from "../Server"
+import { ExpressHandler } from "../Server"
 import { HostServers } from "../../Host/Host"
 import { DataServer, DataServerArgs } from "./DataServer"
 import { FileServer } from "../FileServer/FileServer"
@@ -51,10 +49,6 @@ const DataServerColumnsDefault = ['*']
 
 const DataServerNow = () => (new Date()).toISOString()
 
-const DataServerSelect = (quotedTable: string, columns = DataServerColumnsDefault): string => {
-  return `SELECT ${columns.join(', ')} FROM ${quotedTable} WHERE id = ?`
-}
-
 const DataServerJsonAnonymous = (row: any): any => {
   if (!row) return {}
 
@@ -73,22 +67,6 @@ const DataServerJson = (row: any): any => {
 }
 
 const DataServerJsons = (rows: any[]): any[] => { return rows.map(DataServerJsonAnonymous) }
-
-const DataServerInsert = (quotedTable: string, columns: string[]): string => {
-  return `
-    INSERT INTO ${quotedTable}
-    (${ columns.join(', ') })
-    VALUES(${Array(columns.length).fill('?').join(', ')})
-  `
-}
-
-const DataServerUpdate = (quotedTable: string, columns: string[]): string => {
-  return `
-    UPDATE ${quotedTable}
-    SET ${columns.map((column => `${column} = ?`)).join(', ')}
-    WHERE id = ?
-  `
-}
 
 const DataServerInsertRecord = (userId: string, data: UnknownObject): StringObject => {
   const { userId: _, type, createdAt, icon, label, id, ...rest } = data
@@ -132,7 +110,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     const updatePromise = this.castUpdateRelationsPromise(userId, cast, definitionIds)
     const insertPromise = updatePromise.then(castData =>{
       const { cast, temporaryIdLookup } = castData
-      return this.createPromise('`cast`', DataServerInsertRecord(userId, cast)).then(() => {
+      return this.createPromise('cast', DataServerInsertRecord(userId, cast)).then(() => {
         return {...temporaryIdLookup, ...lookup }
       })
     })
@@ -147,7 +125,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     const relationsPromise = this.castUpdateRelationsPromise(userId, cast, definitionIds)
     const updatePromise = relationsPromise.then(castData => {
       const { cast, temporaryIdLookup } = castData
-      return this.updatePromise('`cast`', cast).then(() => temporaryIdLookup)
+      return this.updatePromise('cast', cast).then(() => temporaryIdLookup)
     })
     return updatePromise
   }
@@ -160,30 +138,38 @@ export class DataServerClass extends ServerClass implements DataServer {
     const permanentId = id.startsWith(this.args.temporaryIdPrefix) ? idUnique() : id
     data.id = permanentId
 
-    const keys: string[] = []
-    const values: any[] = []
-    Object.entries(data).forEach(([key, value]) => {
-      keys.push(key)
-      values.push(value)
-    })
-    const sql = DataServerInsert(quotedTable, keys)
-    // console.log(sql, ...values)
-    return this.db.run(sql, ...values).then(() => permanentId)
+    return this.database(quotedTable).insert(data).then(() => permanentId)
   }
 
-  private _db?: Database
-  private get db(): Database {
-    if (!this._db) throw Errors.internal + 'db'
+  private _database?: Knex
+  private get database() {
+    return this._database ||= this.databaseInitialize
+  }
+  private get databaseInitialize() {
 
-    return this._db
+    const { dbPath } = this.args
+
+    const pgConfig = {
+      client: 'pg',
+      connection: process.env.PG_CONNECTION_STRING,
+      searchPath: ['knex', 'public'],
+    }
+    const sqliteConfig = {
+      client: 'sqlite3', 
+      connection: { filename: dbPath },
+      useNullAsDefault: true,
+    }
+    const database = knex(sqliteConfig)
+    return database
+
   }
 
-  defaultCast: ServerHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest> = async (req, res) => {
+  defaultCast: ExpressHandler<DataCastDefaultResponse | WithError, DataCastDefaultRequest> = async (req, res) => {
     const previewSize = this.renderingServer?.args.previewSize
     const response: DataCastDefaultResponse = { cast: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
-      const cast = await this.getLatestPromise(user, '`cast`') as CastObject
+      const cast = await this.getLatestPromise(user, 'cast') as CastObject
       if (cast.id) {
         const castDefinitions = await this.selectCastRelationsPromise(cast)
         response.definitions = castDefinitions.definitions
@@ -193,24 +179,21 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  defaultMash: ServerHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
+  defaultMash: ExpressHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
     const previewSize = this.renderingServer?.args.previewSize
     const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
     try {
       const user = this.userFromRequest(req)
-      const sql = `
-        SELECT mash.* FROM mash 
-        LEFT JOIN cast_mash 
-        ON cast_mash.mashId = mash.id 
-        WHERE cast_mash.mashId IS NULL
-        AND mash.userId = ? 
-        ORDER BY createdAt DESC
-        LIMIT 1
-      `
-      const mash = await this.db.get(sql, user).then(row => {
-        const { userId: rowUserId, ...rest } = DataServerJson(row)
-        return rowUserId === user ? rest : {}
-      }) as MashObject
+      const mash = await this.database
+        .first('mash.*')
+        .from('mash')
+        .leftJoin('cast_mash', 'cast_mash.mashId', '=', 'mash.id')
+        .whereNull('cast_mash.mashId')
+        .where(`mash.userId`, user)
+        .orderBy('createdAt', 'desc').then(row => {
+          const { userId: rowUserId, ...rest } = DataServerJson(row)
+          return rowUserId === user ? rest : {}
+        }) as MashObject
 
       if (mash.id) {
         response.mash = mash
@@ -221,50 +204,51 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  deleteCast: ServerHandler<DataCastDeleteResponse, DataCastDeleteRequest> = async (req, res) => {
+  deleteCast: ExpressHandler<DataCastDeleteResponse, DataCastDeleteRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataCastDeleteResponse = {}
     try {
       const user = this.userFromRequest(req)
-      const existing = await this.rowExists('`cast`', id, user)
-      if (existing) await this.deletePromise('`cast`', id)
+      const existing = await this.rowExists('cast', id, user)
+      if (existing) await this.deletePromise('cast', id)
       else response.error = `Could not find Cast with id: ${id}`
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
-  deleteDefinition: ServerHandler<DataDefinitionDeleteResponse, DataDefinitionDeleteRequest> = async (req, res) => {
+  deleteDefinition: ExpressHandler<DataDefinitionDeleteResponse, DataDefinitionDeleteRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataDefinitionDeleteResponse = {}
     try {
       const user = this.userFromRequest(req)
-      const existing = await this.rowExists('`mash`', id, user)
+      const existing = await this.rowExists('mash', id, user)
       if (existing) {
-        const sql = `SELECT * FROM mash_definition WHERE definitionId = ?`
-        const rows = await this.db.all(sql, id)
+        const rows = await (await this.database.select('*').from('mash_definition').where('definitionId', id))
         if (rows.length) {
           response.mashIds = rows.map(row => row.mashid)
           response.error = `Referenced by ${stringPluralize(rows.length, 'mash', 'es')}`
-        } else await this.deletePromise('`definition`', id)
+        } else await this.deletePromise('definition', id)
       }
       else response.error = `Could not find Definition with id: ${id}`
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
-  deleteMash: ServerHandler<DataMashDeleteResponse, DataMashDeleteRequest> = async (req, res) => {
+  deleteMash: ExpressHandler<DataMashDeleteResponse, DataMashDeleteRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataMashDeleteResponse = {}
     try {
       const user = this.userFromRequest(req)
-      const existing = await this.rowExists('`mash`', id, user)
+      const existing = await this.rowExists('mash', id, user)
       if (existing) {
-        const sql = `SELECT * FROM cast_mash WHERE mashId = ?`
-        const rows = await this.db.all(sql, id)
+        // const sql = `SELECT * FROM cast_mash WHERE mashId = ?`
+
+        const rows = await this.database.select('*').from('cast_mash').where('mashId', id)
+
         if (rows.length) {
           response.castIds = rows.map(row => row.castId)
           response.error = `Referenced by ${stringPluralize(rows.length, 'cast')}`
-        } else await this.deletePromise('`mash`', id)
+        } else await this.deletePromise('mash', id)
       }
       else response.error = `Could not find Mash with id: ${id}`
     } catch (error) { response.error = String(error) }
@@ -272,18 +256,17 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   private deletePromise(quotedTable: string, id: string): Promise<void> {
-    const sql = `DELETE FROM ${quotedTable} WHERE id = ?`
-    return this.db.run(sql, id).then(EmptyMethod)
+    return this.database(quotedTable).where({ id }).del()
   }
 
   fileServer?: FileServer
 
-  getCast: ServerHandler<DataCastGetResponse, DataGetRequest> = async (req, res) => {
+  getCast: ExpressHandler<DataCastGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataCastGetResponse = { cast: {}, definitions: [] }
     try {
       const user = this.userFromRequest(req)
-      const cast = await this.jsonPromise('`cast`', user, id)
+      const cast = await this.jsonPromise('cast', user, id)
       if (!cast) response.error = `Could not find cast ${id}`
       else {
         const castDefinitions = await this.selectCastRelationsPromise(cast)
@@ -294,12 +277,12 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  getDefinition: ServerHandler<DataDefinitionGetResponse, DataDefinitionGetRequest> = async (req, res) => {
+  getDefinition: ExpressHandler<DataDefinitionGetResponse, DataDefinitionGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataDefinitionGetResponse = { definition: {} }
     try {
       const user = this.userFromRequest(req)
-      const definition = await this.jsonPromise('`definition`', user, id)
+      const definition = await this.jsonPromise('definition', user, id)
       if (!definition) {
         response.error = `Could not find definition ${id}`
       } else response.definition = definition
@@ -308,20 +291,23 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   getLatestPromise(userId: string, quotedTable: string): Promise<JsonObject> {
-    const sql = `SELECT * FROM ${quotedTable} WHERE userId = ? ORDER BY createdAt DESC`
-    return this.db.get(sql, userId).then(row => {
-
-      const { userId: rowUserId, ...rest } = DataServerJson(row)
-      return rowUserId === userId ? rest : {}
-    })
+    return this.database
+      .first('*')
+      .from(quotedTable)
+      .where({ userId })
+      .orderBy('createAt')
+      .then(row => {
+        const { userId: rowUserId, ...rest } = DataServerJson(row)
+        return rowUserId === userId ? rest : {}
+      })
   }
 
-  getMash: ServerHandler<DataMashGetResponse, DataGetRequest> = async (req, res) => {
+  getMash: ExpressHandler<DataMashGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
     const response: DataMashGetResponse = { mash: {}, definitions: [] }
     try {
       const user = this.userFromRequest(req)
-      const mash = await this.jsonPromise('`mash`', user, id)
+      const mash = await this.jsonPromise('mash', user, id)
       if (mash.id !== id) response.error = `Could not find mash ${id}`
       else {
         response.mash = mash
@@ -336,13 +322,13 @@ export class DataServerClass extends ServerClass implements DataServer {
   init(): DataServerInit { return { temporaryIdPrefix: this.args.temporaryIdPrefix } }
 
   private insertDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
-    return this.createPromise('`definition`', DataServerInsertRecord(userId, definition))
+    return this.createPromise('definition', DataServerInsertRecord(userId, definition))
   }
 
   private jsonPromise(quotedTable: string, userId: string, id?: string): Promise<any> {
     if (!id || id.startsWith(this.args.temporaryIdPrefix)) return Promise.resolve()
 
-    return this.db.get(DataServerSelect(quotedTable), id).then(DataServerJson).then(row => {
+    return this.database.first(DataServerColumnsDefault).from(quotedTable).where({ id }).then(row => {
       if (!row) return
 
       const { userId: rowUserId, ...rest } = row
@@ -356,7 +342,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     const temporaryId = id || idUnique()
     mash.id = temporaryId
 
-    const insertPromise = this.createPromise('`mash`', DataServerInsertRecord(userId, mash))
+    const insertPromise = this.createPromise('mash', DataServerInsertRecord(userId, mash))
     const definitionPromise = insertPromise.then(permanentId =>{
       if (permanentId !== temporaryId) temporaryLookup[temporaryId] = permanentId
       return this.mashUpdateRelationsPromise(permanentId, definitionIds)
@@ -370,12 +356,12 @@ export class DataServerClass extends ServerClass implements DataServer {
 
     const json = JSON.stringify(rest)
     const data = { userId, createdAt, icon, id, label, json }
-    return this.updatePromise('`mash`', data).then(() =>
+    return this.updatePromise('mash', data).then(() =>
       this.mashUpdateRelationsPromise(id, definitionIds)
     )
   }
 
-  putCast: ServerHandler<DataCastPutResponse | WithError, DataCastPutRequest> = async (req, res) => {
+  putCast: ExpressHandler<DataCastPutResponse | WithError, DataCastPutRequest> = async (req, res) => {
     const { cast, definitionIds } = req.body
     const response: DataCastPutResponse = {}
     try {
@@ -385,7 +371,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  putDefinition: ServerHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest> = async (req, res) => {
+  putDefinition: ExpressHandler<DataDefinitionPutResponse | WithError, DataDefinitionPutRequest> = async (req, res) => {
     const { definition } = req.body
     const response: DataDefinitionPutResponse = { id: '' }
     try {
@@ -395,7 +381,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  putMash: ServerHandler<DataMashPutResponse | WithError, DataMashPutRequest> = async (req, res) => {
+  putMash: ExpressHandler<DataMashPutResponse | WithError, DataMashPutRequest> = async (req, res) => {
     const { mash, definitionIds } = req.body
     // console.log(this.constructor.name, Endpoints.data.mash.put, JSON.stringify(mash, null, 2))
     const response: DataMashPutResponse = {}
@@ -409,7 +395,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   renderingServer?: RenderingServer
 
-  retrieveCast: ServerHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
+  retrieveCast: ExpressHandler<DataRetrieveResponse | WithError, DataCastRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
     const response: DataRetrieveResponse = { described: [] }
     try {
@@ -420,20 +406,19 @@ export class DataServerClass extends ServerClass implements DataServer {
     res.send(response)
   }
 
-  retrieveDefinition: ServerHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest> = async (req, res) => {
+  retrieveDefinition: ExpressHandler<DataDefinitionRetrieveResponse | WithError, DataDefinitionRetrieveRequest> = async (req, res) => {
     const request = req.body
     const { partial, types } = request
     const response: DataDefinitionRetrieveResponse = { definitions: [] }
     try {
       const user = this.userFromRequest(req)
-      // console.log(this.constructor.name, "retrieveDefinition", types, partial)
       const columns = partial ? DataServerColumns : DataServerColumnsDefault
       response.definitions = await this.selectDefinitionsPromise(user, types, columns)
     } catch (error) { response.error = String(error) }
     res.send(response)
   }
 
-  retrieveMash: ServerHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
+  retrieveMash: ExpressHandler<DataRetrieveResponse | WithError, DataMashRetrieveRequest> = async (req, res) => {
     const { partial } = req.body
     const response: DataRetrieveResponse = { described: [] }
     try {
@@ -456,134 +441,128 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   private selectCastsPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
-    const table = '`cast`'
-    const sql = `SELECT ${columns.join(', ')} FROM ${table} WHERE userId = ?`
-    return this.db.all(sql, userId).then(DataServerJsons)
+    return this.database
+      .select(columns)
+      .from('cast')
+      .where({userId})
+      .then(DataServerJsons)
   }
 
   private selectDefinitionsPromise(userId: string, types: string[], columns = DataServerColumnsDefault): Promise<MashObject[]> {
-    const table = '`definition`'
-    const sql = `
-      SELECT ${columns.join(', ')}
-      FROM ${table}
-      WHERE (${Array(types.length).fill('type = ?').join(' OR ')})
-      AND (userId = '' OR userId = ?)
-    `
-    // console.log(this.constructor.name, sql, types, userId)
-    return this.db.all(sql, ...types, userId).then(DataServerJsons)
+    // console.log(this.constructor.name, "selectDefinitionsPromise", userId, types)
+    return this.database
+      .select(columns)
+      .from('definition')
+      .whereIn('type', types)
+      .where({ userId })
+      .then(DataServerJsons)
   }
 
   private selectCastRelationsPromise(cast: CastObject): Promise<DataServerCastRelationSelect> {
     const { id } = cast
     assertPopulatedString(id)
 
-    const sql = `
-      SELECT mash.*
-      FROM cast_mash
-      JOIN mash
-      ON mash.id = mashId
-      WHERE castId = ?
-    `
+    return this.database
+      .select('mash.*')
+      .from('cast_mash')
+      .join('mash', 'mash.id', '=', 'mashId')
+      .where({ castId: id })
+      .then(DataServerJsons)
+      .then((mashes:MashObject[]) => {
+        DataServerPopulateLayers(mashes, cast.layers)
 
-    return this.db.all(sql, id).then(DataServerJsons).then((mashes:MashObject[]) => {
-      DataServerPopulateLayers(mashes, cast.layers)
+        const definitions: DefinitionObjects = []
+        const initialData: DataServerCastRelationSelect = { cast, definitions }
+        let promise: Promise<DataServerCastRelationSelect> = Promise.resolve(initialData)
 
-      const definitions: DefinitionObjects = []
-      const initialData: DataServerCastRelationSelect = { cast, definitions }
-      let promise: Promise<DataServerCastRelationSelect> = Promise.resolve(initialData)
-
-      mashes.forEach(mash => {
-        const { id } = mash
-        assertPopulatedString(id)
-        promise = promise.then(data => {
-          return this.selectMashRelationsPromise(id).then(definitions => {
-            data.definitions.push(...definitions)
-            return data
+        mashes.forEach(mash => {
+          const { id } = mash
+          assertPopulatedString(id)
+          promise = promise.then(data => {
+            return this.selectMashRelationsPromise(id).then(definitions => {
+              data.definitions.push(...definitions)
+              return data
+            })
           })
         })
+        return promise
       })
-      return promise
-    })
   }
 
-  private selectMashRelationsPromise(id: string): Promise<DefinitionObjects> {
-    const sql = `
-      SELECT definition.*
-      FROM mash_definition
-      JOIN definition
-      ON definition.id = definitionId
-      WHERE mashId = ?
-    `
-    return this.db.all(sql, id).then(DataServerJsons)
+  private selectMashRelationsPromise(mashId: string): Promise<DefinitionObjects> {
+    return this.database
+      .select('definition.*')
+      .from('mash_definition')
+      .join('definition', 'definition.id', '=', 'definitionId')
+      .where({ mashId })
+      .then(DataServerJsons)
   }
 
   private selectMashesPromise(userId: string, columns = DataServerColumnsDefault): Promise<DescribedObject[]> {
-    const table = '`mash`'
-    const qualified = columns.map(column => `${table}.${column}`)
-    
-    const sql = `SELECT 
-      ${qualified.join(', ')} 
-      FROM ${table} 
-      LEFT JOIN cast_mash
-      ON cast_mash.mashId = ${table}.id
-      WHERE cast_mash.mashId IS NULL
-      AND userId = ?
-    `
-    return this.db.all(sql, userId).then(DataServerJsons)
+    const qualified = columns.map(column => `mash.${column}`)
+    console.log(this.constructor.name, "selectMashesPromise", userId, columns)
+
+    return this.database
+      .select(qualified)
+      .from('mash')
+      .leftJoin('cast_mash', 'cast_mash.mashId', '=', 'mash.id')
+      .whereNull('cast_mash.mashId')
+      .where({ userId })
+      .then(DataServerJsons)
   }
 
-  private startDatabase() {
+  private startDatabase(): Promise<void> {
     const { dbPath, dbMigrationsPrefix } = this.args
     console.debug(this.constructor.name, "startDatabase", dbPath)
     fs.mkdirSync(path.dirname(dbPath), { recursive: true })
-    open({ filename: dbPath, driver: sqlite3.Database }).then(db => {
-      this._db = db
-      if (dbMigrationsPrefix) {
-        console.debug(this.constructor.name, "startDatabase migrating...", dbMigrationsPrefix)
-        this.db.migrate({ migrationsPath: dbMigrationsPrefix }).catch(err =>
-          console.error(this.constructor.name, "startDatabase migration failed", err)
-        )
-      }
+
+    const { database } = this
+    if (!dbMigrationsPrefix) return Promise.resolve()
+  
+    console.debug(this.constructor.name, "startDatabase migrating...", dbMigrationsPrefix)
+    const directories = fs.readdirSync(dbMigrationsPrefix)
+    const promises = directories.map(file => {
+      const absolutePath = path.resolve(dbMigrationsPrefix, file)
+    
+      const buffer = fs.readFileSync(absolutePath)
+      const sql = buffer.toString()
+      return database.raw(sql).then(() => {
+        console.log(this.constructor.name, 'startDatabase migrated:', file)
+      })
     })
+    return Promise.all(promises).then(() => {}) 
   }
 
-  startServer(app: Express.Application, activeServers: HostServers): void {
-    super.startServer(app, activeServers)
-    this.fileServer = activeServers.file
-    this.renderingServer = activeServers.rendering
+  startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
+    return super.startServer(app, activeServers).then(() => {
+      this.fileServer = activeServers.file
+      this.renderingServer = activeServers.rendering
 
-    app.post(Endpoints.data.cast.default, this.defaultCast)
-    app.post(Endpoints.data.cast.delete, this.deleteCast)
-    app.post(Endpoints.data.cast.get, this.getCast)
-    app.post(Endpoints.data.cast.put, this.putCast)
-    app.post(Endpoints.data.cast.retrieve, this.retrieveCast)
-    app.post(Endpoints.data.definition.delete, this.deleteDefinition)
-    app.post(Endpoints.data.definition.get, this.getDefinition)
-    app.post(Endpoints.data.definition.retrieve, this.retrieveDefinition)
-    app.post(Endpoints.data.definition.put, this.putDefinition)
-    app.post(Endpoints.data.mash.default, this.defaultMash)
-    app.post(Endpoints.data.mash.delete, this.deleteMash)
-    app.post(Endpoints.data.mash.get, this.getMash)
-    app.post(Endpoints.data.mash.put, this.putMash)
-    app.post(Endpoints.data.mash.retrieve, this.retrieveMash)
+      app.post(Endpoints.data.cast.default, this.defaultCast)
+      app.post(Endpoints.data.cast.delete, this.deleteCast)
+      app.post(Endpoints.data.cast.get, this.getCast)
+      app.post(Endpoints.data.cast.put, this.putCast)
+      app.post(Endpoints.data.cast.retrieve, this.retrieveCast)
+      app.post(Endpoints.data.definition.delete, this.deleteDefinition)
+      app.post(Endpoints.data.definition.get, this.getDefinition)
+      app.post(Endpoints.data.definition.retrieve, this.retrieveDefinition)
+      app.post(Endpoints.data.definition.put, this.putDefinition)
+      app.post(Endpoints.data.mash.default, this.defaultMash)
+      app.post(Endpoints.data.mash.delete, this.deleteMash)
+      app.post(Endpoints.data.mash.get, this.getMash)
+      app.post(Endpoints.data.mash.put, this.putMash)
+      app.post(Endpoints.data.mash.retrieve, this.retrieveMash)
 
-    this.startDatabase()
+      return this.startDatabase()   
+    })
+   
   }
 
-  stopServer(): void { this._db?.close() }
+  stopServer(): void { this._database?.destroy() }
 
   private updatePromise(quotedTable: string, data: UnknownObject): Promise<void> {
     const { id, ...rest } = data
-    const keys: string[] = []
-    const values: any[] = []
-    Object.entries(rest).forEach(([key, value]) => {
-      keys.push(key)
-      values.push(value)
-    })
-    const sql = DataServerUpdate(quotedTable, keys)
-    // console.log(sql, ...values, id)
-
-    return this.db.run(sql, ...values, id).then(EmptyMethod)
+    return this.database(quotedTable).update(rest).where({ id }).then(EmptyMethod)
   }
 
   private castUpdateRelationsPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<DataServerCastRelationUpdate> {
@@ -646,13 +625,12 @@ export class DataServerClass extends ServerClass implements DataServer {
 
     const json = JSON.stringify(rest)
     const data = { createdAt, icon, id, label, json }
-    return this.updatePromise('`definition`', data).then(EmptyMethod)
+    return this.updatePromise('definition', data).then(EmptyMethod)
   }
 
   private mashUpdateRelationsPromise(mashId: string, definitionIds?: string[]): Promise<StringObject> {
     // console.log("updateMashDefinitionsPromise", mashId, definitionIds)
-    const relationPromise = this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
-    return relationPromise
+    return this.updateRelationsPromise('mash', 'definition', mashId, definitionIds)
   }
 
 
@@ -669,9 +647,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     const quotedTable = `${from}_${to}`
     const fromId = `${from}Id`
     const toId = `${to}Id`
-    const sql = `SELECT * FROM ${quotedTable} WHERE ${fromId} = ?`
-    // console.log("updateRelationsPromise", sql, id)
-    return this.db.all(sql, id).then(rows => {
+    return this.database.select('*').from(quotedTable).where(fromId, id).then(rows => {
       const toDelete: string[] = []
       const toKeep: string[] = []
       rows.forEach((row: DataServerRow) => {
@@ -695,14 +671,17 @@ export class DataServerClass extends ServerClass implements DataServer {
   }
 
   private userIdPromise(table: string, id: string): Promise<string> {
-    return this.db.get(`SELECT userId FROM ${table} WHERE id = ?`, id)
+    return this.database
+      .first('userId')
+      .from(table)
+      .where({ id })
       .then(row => row?.userId || '')
   }
 
   private writeCastPromise(userId: string, cast: CastObject, definitionIds?: StringsObject): Promise<StringObject> {
     const { id } = cast
 
-    const promiseJson = this.jsonPromise('`cast`', userId, id)
+    const promiseJson = this.jsonPromise('cast', userId, id)
     return promiseJson.then(row => {
       if (row) {
         Object.assign(row, cast)
@@ -716,7 +695,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     const { id } = definition
     if (!id) return this.insertDefinitionPromise(userId, definition)
 
-    return this.rowExists('`definition`', id, userId).then(existing => {
+    return this.rowExists('definition', id, userId).then(existing => {
       if (!existing) return this.insertDefinitionPromise(userId, definition)
 
       return this.updateDefinitionPromise(definition).then(() => id)
@@ -725,11 +704,10 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private writeMashPromise(userId: string, mash: MashObject, definitionIds?: string[]): Promise<StringObject> {
     const { id } = mash
-    const promiseJson = this.jsonPromise('`mash`', userId, id)
+    const promiseJson = this.jsonPromise('mash', userId, id)
     return promiseJson.then(row => {
       if (row) {
-        Object.assign(row, mash)
-        return this.mashUpdatePromise(userId, row, definitionIds)
+        return this.mashUpdatePromise(userId, { ...row, ...mash }, definitionIds)
       }
       return this.mashInsertPromise(userId, mash, definitionIds)
     })

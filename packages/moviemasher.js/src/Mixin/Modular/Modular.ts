@@ -1,6 +1,6 @@
 import { Constrained, SvgFilters } from "../../declarations"
 import { Definition, DefinitionObject } from "../../Definition/Definition"
-import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Filter, FilterDefinitionObject } from "../../Module/Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Instance, InstanceObject } from "../../Instance/Instance"
 import { CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs } from "../../MoveMe"

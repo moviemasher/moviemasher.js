@@ -1,0 +1,23 @@
+{
+  "name": "@moviemasher/protocol-server-supabase",
+  "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
+  "homepage": "https://moviemasher.com",
+  "type": "commonjs",
+  "source": "index",
+  "main": "images/standalone/private/server.js",
+  "version": "5.1.2",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "scripts": {
+  }
+}

@@ -1,8 +1,7 @@
 import { Size } from "../../../Utility/Size"
-import { CommandFilters, CommandFilter, CommandFiles, CommandFileArgs, CommandFilterArgs } from "../../../MoveMe"
+import { CommandFilters, CommandFilter, CommandFiles, CommandFileArgs, CommandFilterArgs, CommandFile } from "../../../MoveMe"
 import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
 import { CommandInput, CommandInputs } from "../../../Api/Rendering"
-import { Loader } from "../../../Loader/Loader"
 import { assertMash, Mash } from "../Mash"
 import { Time } from "../../../Helpers/Time/Time"
 import { assertTrue, isAboveZero } from "../../../Utility/Is"
@@ -20,15 +19,13 @@ export const FilterGraphInputAudible = 'SILENCE'
 
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
-    const { upload, mash, background, size, time, streaming, videoRate, visible } = args
+    const { mash, background, size, time, streaming, videoRate, visible } = args
     assertMash(mash)
 
     this.mash = mash
     this.time = time
     this.videoRate = videoRate 
     this.background = background
-    this.upload = upload
-    // console.log(this.constructor.name, "upload", args.upload)
 
     this.size = size
     // console.log(this.constructor.name, this.id, "size", size)
@@ -76,21 +73,33 @@ export class FilterGraphClass implements FilterGraph {
     return mash.clipsInTimeOfType(time, avType).sort(sortByTrack)
   }
 
+  private commandFileKey(commandFile: CommandFile): string {
+    const { definition } = commandFile
+    assertDefinition(definition)
+    // TODO!!
+    const { label } = definition
+    return label
+  }
+
   get commandInputs(): CommandInputs {
     return this.inputCommandFiles.map(commandFile => {
-      const { options } = commandFile
-      const input: CommandInput = { source: this.preloader.key(commandFile), options }
+      const { options, definition } = commandFile
+      assertDefinition(definition)
+
+      const input: CommandInput = { 
+        source: this.commandFileKey(commandFile), options 
+      }
       return input
     })
   }
 
-  private _commandFiles?: CommandFiles
+  private _filterGraphCommandFiles?: CommandFiles
   get filterGraphCommandFiles(): CommandFiles {
-    return this._commandFiles ||= this.commandFilesInitialize
+    return this._filterGraphCommandFiles ||= this.filterGraphCommandFilesInitialize
   }
-  get commandFilesInitialize(): CommandFiles {
+  get filterGraphCommandFilesInitialize(): CommandFiles {
     // console.log(this.constructor.name, "commandFilesInitialize")
-    const { time, videoRate, quantize, size: outputSize, clips, visible, preloader } = this
+    const { time, videoRate, quantize, size: outputSize, clips, visible } = this
     
     // console.log(this.constructor.name, this.id, "commandFilesInitialize", visible, outputSize)
     const commandFiles = clips.flatMap(clip => {
@@ -102,10 +111,7 @@ export class FilterGraphClass implements FilterGraph {
     })
 
     commandFiles.forEach(commandFile => {
-      const { definition } = commandFile
-      assertDefinition(definition)
-      const { label } = definition
-      const resolved = preloader.key(commandFile)
+      const resolved = this.commandFileKey(commandFile)
       // console.log(this.constructor.name, "commandFilesInitialize", label, resolved)
       commandFile.resolved = resolved
     })
@@ -116,23 +122,20 @@ export class FilterGraphClass implements FilterGraph {
     const filters: CommandFilters = []
     const { 
       time, quantize, size: outputSize, clips, 
-      visible, videoRate, filterGraphCommandFiles: commandFiles, upload
+      visible, videoRate, filterGraphCommandFiles: commandFiles
     } = this
-    // console.log(this.constructor.name, "commandFilters upload", upload)
 
     // console.log(this.constructor.name, this.id, "commandFilters", visible, outputSize)
 
     const chainArgs: CommandFilterArgs = { 
       commandFiles,
       videoRate, time, quantize, visible, outputSize, 
-      chainInput: '', clipTime: timeRangeFromTime(time), track: 0, upload
+      chainInput: '', clipTime: timeRangeFromTime(time), track: 0
     }
     
     if (visible) {
-      if (!upload) {
-        filters.push(this.commandFilterVisible)
-        chainArgs.chainInput = FilterGraphInputVisible
-      }
+      filters.push(this.commandFilterVisible)
+      chainArgs.chainInput = FilterGraphInputVisible
     } else {
       filters.push(this.commandFilterAudible)
       chainArgs.chainInput = FilterGraphInputAudible
@@ -160,8 +163,6 @@ export class FilterGraphClass implements FilterGraph {
   
   mash: Mash
 
-  get preloader(): Loader { return this.mash.preloader }
-
   get quantize() { return this.mash.quantize }
 
   size: Size 
@@ -169,8 +170,6 @@ export class FilterGraphClass implements FilterGraph {
   streaming = false
 
   time: Time 
-
-  upload?: boolean
 
   visible = false
 

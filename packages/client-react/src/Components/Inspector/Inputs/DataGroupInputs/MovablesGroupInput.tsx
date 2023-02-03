@@ -1,11 +1,12 @@
 import { 
-  isEffectDefinition, Defined, controlInstance, assertEffect, UnknownObject, 
-  ClassDropping, SelectedMovable, Effect, DataGroup, assertTrue, isDefined, isObject, assertPopulatedArray, Movable, assertPopulatedObject, assertDefined, ScalarObject 
+  isEffectDefinition, Defined, controlInstance, 
+  ClassDropping, SelectedMovable, DataGroup, isObject, Movable, 
+  assertPopulatedObject, assertDefined, ScalarObject, DefinedDefinitions
 } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
-import { PropsWithoutChild, ReactResult, WithClassName } from "../../../../declarations"
-import { DragEffectObject, dragType, dropType } from '../../../../Helpers/DragDrop'
+import { PropsWithoutChild, ReactResult } from "../../../../declarations"
+import { dropType } from '../../../../Helpers/DragDrop'
 import { useEditor } from '../../../../Hooks/useEditor'
 import { View } from '../../../../Utilities/View'
 import { InspectorMovable, InspectorMovableProps } from '../../InspectorMovable'
@@ -75,21 +76,21 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
     
     const type = dropType(dataTransfer)!
     const json = dataTransfer.getData(type)
-    const data: DragEffectObject = JSON.parse(json)
-    const { definitionObject, index } = data
+    const data = JSON.parse(json)
+    const { index } = data
     const droppedIndex = dropIndex(event)
-    if (isObject(definitionObject)) {
-      const definition = Defined.fromObject(definitionObject)
-      if (isEffectDefinition(definition)) {
-        const effect = definition.instanceFromObject()
-        addHandler(effect, droppedIndex)
-      }
-    } else {
+    // if (isObject(definitionObject)) {
+    //   const definition = Defined.fromObject(definitionObject)
+    //   if (isEffectDefinition(definition)) {
+    //     const effect = definition.instanceFromObject()
+    //     addHandler(effect, droppedIndex)
+    //   }
+    // } else {
       if (droppedIndex === index) return
 
       assertDefined(includedMovable)
       moveHandler(includedMovable, droppedIndex)
-    }
+    // }
   }
 
   const onClick: React.MouseEventHandler = () => { setSelected(null) }

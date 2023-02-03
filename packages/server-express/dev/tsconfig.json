@@ -15,6 +15,6 @@
     "target": "ESNext",
     "rootDir": "../"
   },
-  "exclude": ["../cjs/*",  "../src/**/*.test*.ts", "*.node", "**/node_modules/*"],
-  "include": ["../src/index.ts"],
+  "exclude": ["../esm/*",  "../cjs/*",  "../src/**/*.test*.ts", "*.node", "**/node_modules/*"],
+  "include": ["../src/*.ts"],
 }

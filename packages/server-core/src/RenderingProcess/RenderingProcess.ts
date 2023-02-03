@@ -1,5 +1,5 @@
 import {
-  ApiCallback, RenderingOptions, RenderingResult
+  ApiCallback, CommandOutputs, RenderingOptions, RenderingResult
 } from "@moviemasher/moviemasher.js"
 
 export interface RenderingProcessInput {
@@ -33,5 +33,6 @@ export interface RenderingProcessArgs extends RenderingProcessInput, RenderingAr
 }
 
 export interface RenderingProcess {
+  commandOutputs: CommandOutputs
   runPromise: ()=> Promise<RunResult>
 }

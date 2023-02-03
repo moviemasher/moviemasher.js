@@ -1,7 +1,7 @@
 import { Errors } from "../../Setup/Errors"
 import { AudioDefinitionClass } from "./AudioDefinitionClass"
 import { AudioDefinition, AudioDefinitionObject, Audio, AudioObject } from "./Audio"
-import { Factories } from "../../Definitions/Factories"
+import { MediaFactories } from "../MediaFactories"
 import { DefinitionType } from "../../Setup/Enums"
 
 
@@ -26,9 +26,4 @@ export const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
-Factories[DefinitionType.Audio] = {
-  definition: audioDefinition,
-  definitionFromId: audioDefinitionFromId,
-  fromId: audioFromId,
-  instance: audioInstance,
-}
+MediaFactories[DefinitionType.Audio] = audioDefinition

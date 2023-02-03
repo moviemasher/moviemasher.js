@@ -7,6 +7,9 @@ export const ExtJpeg = 'jpg'
 export const ExtPng = 'png'
 export const ExtJson = 'json'
 export const ExtText = 'txt'
+export const ExtCss = 'css'
+export const ContentTypeJson = 'application/json'
+export const ContentTypeCss = 'text/css'
 
 export const OutputFilterGraphPadding = 6
 export const EmptyMethod = () => {}

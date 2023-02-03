@@ -6,12 +6,12 @@
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
-  "license": "MPL-2.0",
+  "license": "MIT",
   "scripts": {  
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
     "start": "docker compose --file dev/docker-compose.yml up -d",
     "stop": "docker compose --file dev/docker-compose.yml down -v",
-    "build": "node ../../dev/build/replace-paths.js ./src/demo.html ./public/demo.html"
+    "build": "node ../../dev/utils/replace-paths.js ./src/demo.html ./public/demo.html"
 
   },
   "dependencies": {
@@ -24,6 +24,6 @@
   "devDependencies": {
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/node": "15.6.1"
+    "@types/node": "18.11.18"
   }
 }

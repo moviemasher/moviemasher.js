@@ -1,39 +1,43 @@
-import { GenericFactory } from "../../declarations"
 import { PreloadArgs, GraphFiles } from "../../MoveMe"
-import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
-import { Instance, InstanceObject } from "../../Instance/Instance"
 import { DefinitionType } from "../../Setup/Enums"
+import { isMedia, Media, MediaObject } from "../Media"
+import { PreloadableDefinition, PreloadableDefinitionObject, PreloadableObject } from "../../Mixin/Preloadable/Preloadable"
+import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer } from "../Container/Container"
+import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 
-export type FontObject = InstanceObject
 
-export interface Font extends Instance {
-  definition: FontDefinition
-  graphFiles(args: PreloadArgs): GraphFiles
-  preloadUrls(args: PreloadArgs): string[]
+export const DefaultFontId = `${IdPrefix}font${IdSuffix}`
+
+
+export interface FontDefinitionObject extends ContainerDefinitionObject, PreloadableDefinitionObject {
+  string?: string
 }
 
-export interface FontDefinitionObject extends DefinitionObject {
-  source?: string
-  url?: string
-}
+export interface FontObject extends ContainerObject, PreloadableObject {}
 
-export interface FontDefinition extends Definition {
-  instanceFromObject(object?: FontObject): Font
+export interface FontDefinition extends ContainerDefinition, PreloadableDefinition {
   source: string
   family: string
   url: string
-  graphFiles(args: PreloadArgs): GraphFiles
-  preloadUrls(args: PreloadArgs): string[]
+  instanceFromObject(object?: FontObject): Font
 }
+
 export const isFontDefinition = (value: any): value is FontDefinition => {
-  return isDefinition(value) && value.type === DefinitionType.Font
+  return isMedia(value) && value.type === DefinitionType.Font
 }
 export function assertFontDefinition(value: any): asserts value is FontDefinition {
   if (!isFontDefinition(value)) throw new Error("expected FontDefinition")
 }
-/**
- * @category Factory
- */
-export interface FontFactory extends GenericFactory<
-  Font, FontObject, FontDefinition, FontDefinitionObject
-> {}
+
+
+export interface Font extends Container {
+  definition: FontDefinition
+  fontId: string
+  string: string
+}
+export const isFont = (value: any): value is Font => {
+  return isContainer(value) && "fontId" in value
+}
+export function assertFont(value: any): asserts value is Font {
+  if (!isFont(value)) throw new Error("expected Font")
+}

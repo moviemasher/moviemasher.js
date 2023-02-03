@@ -1,22 +1,22 @@
 import React from "react"
 import { 
-  assertDefined, EventType, isEventType,  Editor, Definitions, 
-  DefinitionType, Defined, isPopulatedArray 
+  assertDefined, EventType, isEventType, Editor, Medias, 
+  MediaDefinitionType, Defined, isPopulatedArray 
 } from "@moviemasher/moviemasher.js"
 
 import { MasherContext } from "../Components/Masher/MasherContext"
 
 const EditorDefinitionsEventAdded = EventType.Added
 const EditorDefinitionsEventResize = EventType.Resize
-export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Definitions] => {
+export const useEditorDefinitions = (types: MediaDefinitionType[] = []): [Editor, Medias] => {
   const masherContext = React.useContext(MasherContext)
   const { editor } = masherContext
   assertDefined(editor)
 
-  const storeRef = React.useRef<Record<string, Definitions>>({})
+  const storeRef = React.useRef<Record<string, Medias>>({})
   const { eventTarget } = editor
   
-  const snapshotInitialize = (): Definitions => {
+  const snapshotInitialize = (): Medias => {
     const lists = types.map(type => Defined.byType(type))
     return lists.length === 1 ? lists[0] : lists.flat()
   }
@@ -32,7 +32,7 @@ export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Def
       const { detail } = event
       const { definitionTypes } = detail
       if (isPopulatedArray(definitionTypes)) {
-        const types = definitionTypes as DefinitionType[]
+        const types = definitionTypes as MediaDefinitionType[]
 
         const { current} = storeRef
         const allIds = Object.keys(current)
@@ -41,7 +41,7 @@ export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Def
       }
     }
   }
-  const externalStore = React.useSyncExternalStore<Definitions>((callback) => {
+  const externalStore = React.useSyncExternalStore<Medias>((callback) => {
     eventTarget.addEventListener(EditorDefinitionsEventAdded, callback)
     eventTarget.addEventListener(EditorDefinitionsEventResize, callback)
     return () => {

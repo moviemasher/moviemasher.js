@@ -6,11 +6,11 @@
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
   },
-  "license": "MPL-2.0",
+  "license": "MIT",
   "scripts": {  
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
-    "start": "docker compose --file dev/docker-compose.yml up -d",
-    "stop": "docker compose --file dev/docker-compose.yml down -v",
-    "build": "node ../../dev/build/replace-paths.js ./src/index.html ./public/index.html"
+    "up": "docker compose --file dev/docker-compose.yml up -d",
+    "down": "docker compose --file dev/docker-compose.yml down -v",
+    "build": "node ../../dev/utils/replace-paths.js ./src/index.html ./public/index.html"
   }
 }

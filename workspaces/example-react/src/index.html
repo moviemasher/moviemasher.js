@@ -8,6 +8,7 @@
     <script src='react-dom.development.js' crossorigin></script>
     <script src='moviemasher.js' crossorigin></script>
     <script src='theme-default.js' crossorigin></script>
+    <script src='client-core.js' crossorigin></script>
     <script src='client-react.js' crossorigin></script>
     <link href='moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */
@@ -33,7 +34,7 @@ const clip = {
   container: { string: 'Hello World!' }, 
   containerId: TextContainerId
 }
-const mash = { tracks: [{ clips: [clip] }] }
+const mash = {} // tracks: [{ clips: [clip] }] }
 
 // create root and render new Masher with mash in props
 const props = MasherDefaultProps({ edited: { mash } })

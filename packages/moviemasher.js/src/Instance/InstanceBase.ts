@@ -1,12 +1,11 @@
 import { UnknownObject } from "../declarations"
 import { DefinitionType } from "../Setup/Enums"
 import { assertDefinition, Definition } from "../Definition/Definition"
-import { Time } from "../Helpers/Time/Time"
-import { idGenerate, idGenerateString } from "../Utility/Id"
+import { idGenerateString } from "../Utility/Id"
 import { PropertiedClass } from "../Base/Propertied"
-import { assertPopulatedObject, isPopulatedObject } from "../Utility/Is"
-import { Errors } from "../Setup/Errors"
+import { assertPopulatedObject } from "../Utility/Is"
 import { Instance, InstanceObject } from "./Instance"
+import { Media } from "../Media/Media"
 
 
 export class InstanceBase extends PropertiedClass implements Instance {
@@ -23,9 +22,9 @@ export class InstanceBase extends PropertiedClass implements Instance {
     this.propertiesInitialize(object)
   }
 
-  copy(): Instance {
-    return this.definition.instanceFromObject(this.toJSON())
-  }
+  // copy(): Instance {
+  //   return this.definition.instanceFromObject(this.toJSON())
+  // }
 
   definition: Definition
 
@@ -37,15 +36,12 @@ export class InstanceBase extends PropertiedClass implements Instance {
   get id(): string { return this._id ||= idGenerateString() }
 
   protected _label = ''
-
   get label(): string { return this._label  }
-  //|| this.definition.label || this.id
-
   set label(value: string) { this._label = value }
 
-  get propertyNames(): string[] {
-    return this.properties.map(property => property.name)
-  }
+  // get propertyNames(): string[] {
+  //   return this.properties.map(property => property.name)
+  // }
 
   toJSON(): UnknownObject {
     const json = super.toJSON()

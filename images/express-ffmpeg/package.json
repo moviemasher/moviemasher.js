@@ -1,0 +1,42 @@
+{
+  "name": "@moviemasher/express-ffmpeg",
+  "version": "5.1.2",
+  "description": "Movie Masher Express FFmpeg - version 5.1.2",
+  "main": "esm/express-ffmpeg.js",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "start": "node esm/express-ffmpeg.js",
+    "up": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml up -d",
+    "down": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml down -v",
+    "logs": "docker compose --env-file ../../dev/local.env  --file dev/docker-compose.yml logs -f",
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build",
+    "build": "esbuild src/index.ts --define:process.env.FLUENTFFMPEG_COV=false --packages=external --bundle --outfile=esm/express-ffmpeg.js --platform=neutral"
+  },
+  "dependencies": {
+    "express": "4.18.2",
+    "@moviemasher/server-core": "5.1.2"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/node": "18.11.18"
+  },
+  "workspaces": [
+    "images/*", 
+    "packages/*",
+    "workspaces/*"
+  ]
+}

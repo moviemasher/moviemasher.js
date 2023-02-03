@@ -1,12 +1,12 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, DefinitionType, idGenerateString, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
+  ClassSelected, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
 
 import { 
   PropsWithoutChild, ReactResult, WithClassName 
 } from '../../declarations'
-import { DragSuffix } from '../../Helpers/DragDrop'
+import { DragDefinitionObject, DragSuffix } from '../../Helpers/DragDrop'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
@@ -39,12 +39,12 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const { id, label } = definition
  
   const updateRef = async () => {
-    const { rect, preloader } = editor
+    const { rect } = editor
     const { current } = svgRef
     if (!(current && sizeAboveZero(rect))) return 
 
     const scaled = sizeCeil(sizeScale(sizeCopy(rect), ratio, ratio))
-    const element = await definition.definitionIcon(preloader, scaled)
+    const element = await definition.definitionIcon(scaled)
     if (element) current.replaceChildren(element)
   }
 
@@ -69,7 +69,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     const rect = viewRef.current!.getBoundingClientRect()
     const { left } = rect
     const { clientX } = event
-    const data = { offset: clientX - left, definitionObject: definition }
+    const data: DragDefinitionObject = { offset: clientX - left, mediaObject: definition.toJSON() }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     if (!dataTransfer) return 

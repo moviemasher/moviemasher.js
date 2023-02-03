@@ -1,0 +1,64 @@
+FROM public.ecr.aws/lambda/nodejs:18
+LABEL org.opencontainers.image.authors="support@moviemasher.com"
+
+ARG DIR_ROOT=${LAMBDA_TASK_ROOT}
+COPY dev/image/sh ${DIR_ROOT}/dev/image/sh 
+COPY package.json ${DIR_ROOT}/package.json
+
+COPY images/lambda-ffmpeg/package.json ${DIR_ROOT}/images/lambda-ffmpeg/package.json
+COPY images/lambda-ffmpeg/esm ${DIR_ROOT}/images/lambda-ffmpeg/esm
+
+COPY packages/moviemasher.js/package.json ${DIR_ROOT}/packages/moviemasher.js/package.json
+COPY packages/moviemasher.js/esm ${DIR_ROOT}/packages/moviemasher.js/esm
+
+COPY packages/server-core/package.json ${DIR_ROOT}/packages/server-core/package.json
+COPY packages/server-core/esm ${DIR_ROOT}/packages/server-core/esm
+
+
+FROM public.ecr.aws/lambda/nodejs:18
+ARG DIR_ROOT=${LAMBDA_TASK_ROOT}
+ARG NPM_INSTALL='--workspace=@moviemasher/lambda-ffmpeg'
+
+WORKDIR ${DIR_ROOT}
+COPY --from=code ${DIR_ROOT} ${DIR_ROOT}
+COPY dev/image/sh ${DIR_ROOT}/dev/image/sh
+RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-lambda.sh \
+  -n "${NPM_INSTALL}" \
+  -e "${OS_EXECUTE}" \
+  -o "${OS_INSTALL}" \
+  -r "${DIR_ROOT}"
+
+
+# COPY dev/image/sh/options.sh ${DIR_ROOT}/dev/image/sh/options.sh 
+
+# COPY dev/image/sh/aws/ ${DIR_ROOT}/dev/image/sh/aws/ 
+# RUN sh ${DIR_ROOT}/dev/image/sh/aws/build.sh
+
+# COPY dev/image/sh/tools/ ${DIR_ROOT}/dev/image/sh/tools/ 
+# RUN sh ${DIR_ROOT}/dev/image/sh/tools/build.sh
+
+# COPY dev/image/sh/avlibs/ ${DIR_ROOT}/dev/image/sh/avlibs/  
+# RUN sh ${DIR_ROOT}/dev/image/sh/avlibs/build.sh
+
+# COPY dev/image/sh/ffmpeg/ ${DIR_ROOT}/dev/image/sh/ffmpeg/  
+# RUN sh ${DIR_ROOT}/dev/image/sh/ffmpeg/build.sh
+
+# RUN sh ${DIR_ROOT}/dev/image/sh/ffmpeg/clean.sh
+# RUN sh ${DIR_ROOT}/dev/image/sh/avlibs/clean.sh
+# RUN sh ${DIR_ROOT}/dev/image/sh/tools/clean.sh
+
+# COPY dev/image/sh/clean.sh ${DIR_ROOT}/dev/image/sh/clean.sh 
+# RUN sh ${DIR_ROOT}/dev/image/sh/clean.sh
+
+# # Assumes your function is named "app.js", and there is a package.json file in the app directory 
+# COPY workspaces/example-lambda/src/app.js workspaces/example-lambda/package.json ${DIR_ROOT}/
+# COPY packages/moviemasher.js ${DIR_ROOT}/node_modules/@moviemasher/moviemasher.js
+# COPY packages/server-core ${DIR_ROOT}/node_modules/@moviemasher/server-core
+
+# RUN npm install
+COPY esm/lambda-ffmpeg.js ${DIR_ROOT}/lambda-ffmpeg.mjs
+
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "lambda-ffmpeg.handler" ]
+
+

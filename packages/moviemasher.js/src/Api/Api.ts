@@ -1,6 +1,7 @@
 
-import { JsonObject, Endpoint, AndId, WithError, StringObject } from "../declarations"
+import { JsonObject, Endpoint, AndId, WithError, StringObject, isEndpoint } from "../declarations"
 import { ServerType } from "../Setup/Enums"
+import { isObject } from "../Utility/Is"
 import { DataServerInit } from "./Data"
 
 export const ApiVersion = "5.1.2"
@@ -11,7 +12,7 @@ export interface ApiRequest {
 }
 export interface ApiResponse extends WithError { }
 
-export interface ApiRequestInit { // extends RequestInit
+export interface RequestInitObject { 
   body?: any
   headers?: StringObject
   method?: string
@@ -22,11 +23,22 @@ export interface EndpointPromiser {
  (id: string, body?: JsonObject): Promise<any>
 }
 
-export interface ApiCallback {
+export interface RequestObject {
   endpoint: Endpoint
-  request?: ApiRequestInit
+  init?: RequestInitObject
+}
+export type RequestObjects = RequestObject[]
+
+export const isRequestObject = (value: any): value is RequestObject => {
+  return isObject(value) && "endpoint" in value && isEndpoint(value.endpoint)
+}
+
+export interface RequestRecord extends Record<string, RequestObject> {}
+
+export interface ApiCallback extends RequestObject {
   expires?: string
 }
+
 export interface ApiCallbacks extends Record<string, ApiCallback> {}
 
 export interface ApiServerInit extends JsonObject { }

@@ -1,6 +1,0 @@
-export * from "./Container"
-export * from "./ContainerMixin"
-export * from "./ContainerDefinitionMixin"
-export * from "./ShapeContainer"
-export * from "./TextContainer"
-export * from "./ContainerFactory"

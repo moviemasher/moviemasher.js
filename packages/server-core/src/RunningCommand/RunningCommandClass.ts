@@ -6,7 +6,7 @@ import {
   CommandOptions, Errors, assertPopulatedString, isPopulatedString
 } from "@moviemasher/moviemasher.js"
 
-import { commandArgsString } from "../Utilities/Command"
+import { commandArgsString } from "../Utility/Command"
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"

@@ -1,0 +1,33 @@
+{
+  "name": "@moviemasher/lambda-ffmpeg",
+  "version": "0.0.1",
+  "description": "Movie Masher FFmpeg for AWS Lambda",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "dependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@supabase/supabase-js": "2.2.0",
+    "express": "4.18.2",
+    "fluent-ffmpeg": "2.1.2"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.15",
+    "@types/fluent-ffmpeg": "2.1.20"
+  },
+  "scripts": {
+    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build",
+    "build": "esbuild src/index.ts --define:process.env.FLUENTFFMPEG_COV=false --packages=external --bundle --outfile=esm/lambda-ffmpeg.js --platform=neutral" 
+  },
+  "workspaces": ["packages/*"]
+}

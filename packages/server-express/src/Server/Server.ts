@@ -17,9 +17,9 @@ export interface ServerArgs extends Endpoint {
 
 export interface Server {
   stopServer(): void
-  startServer(app: Express.Application, activeServers: HostServers): void
+  startServer(app: Express.Application, activeServers: HostServers): Promise<void>
   init(userId: string): JsonObject
   id: string
 }
 
-export type ServerHandler<T1, T2 = UnknownObject> = Express.RequestHandler<UnknownObject, T1, T2, UnknownObject, UnknownObject>
+export type ExpressHandler<T1, T2 = UnknownObject> = Express.RequestHandler<UnknownObject, T1, T2, UnknownObject, UnknownObject>

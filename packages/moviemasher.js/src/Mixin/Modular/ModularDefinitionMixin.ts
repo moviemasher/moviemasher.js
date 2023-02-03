@@ -4,8 +4,8 @@ import { DefinitionClass } from "../../Definition/Definition"
 import {
   ModularDefinition, ModularDefinitionClass, ModularDefinitionObject
 } from "./Modular"
-import { Filter } from "../../Filter/Filter"
-import { filterInstance } from "../../Filter/FilterFactory"
+import { Filter } from "../../Module/Filter/Filter"
+import { filterInstance } from "../../Module/Filter/FilterFactory"
 
 export function ModularDefinitionMixin<T extends DefinitionClass>(Base: T) : ModularDefinitionClass & T {
   return class extends Base implements ModularDefinition {

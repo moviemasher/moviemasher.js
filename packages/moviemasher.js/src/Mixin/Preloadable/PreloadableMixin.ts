@@ -1,4 +1,4 @@
-import { ContentClass } from "../../Content/Content"
+import { ContentClass } from "../../Media/Content/Content"
 import { PreloadArgs, GraphFiles } from "../../MoveMe"
 import { Preloadable, PreloadableClass, PreloadableDefinition } from "./Preloadable"
 

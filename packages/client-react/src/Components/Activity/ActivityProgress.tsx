@@ -40,7 +40,7 @@ export interface ActivityProgressProps extends PropsWithoutChild, WithClassName 
       active.forEach(activityObject => {
         const { infos } = activityObject
         const [info] = infos
-        assertObject(info)
+        assertObject(info, 'info')
 
         const { step, steps } = info
         if (isPositive(steps)) totalSteps += steps

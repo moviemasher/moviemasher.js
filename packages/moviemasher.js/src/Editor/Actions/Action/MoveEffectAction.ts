@@ -1,4 +1,4 @@
-import { Effects } from "../../../Media/Effect/Effect"
+import { Effects } from "../../../Module/Effect/Effect"
 import { Action, ActionOptions, ActionObject } from "./Action"
 
 export interface MoveEffectActionObject extends ActionObject {

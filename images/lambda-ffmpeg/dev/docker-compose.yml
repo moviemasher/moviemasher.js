@@ -1,0 +1,10 @@
+version: "3"
+name: moviemasher-lambda-ffmpeg
+services:
+  lambda-ffmpeg:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: images/lambda-ffmpeg/dev/Dockerfile.cnf
+    image: moviemasher/lambda-ffmpeg:${MOVIEMASHER_VERSION}

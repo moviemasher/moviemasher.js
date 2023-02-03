@@ -1,12 +1,10 @@
-import { Constrained, Scalar} from "../../declarations"
-import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
-import { Definition, DefinitionObject, isDefinition } from "../../Definition/Definition"
+import { Constrained, Described, Scalar, UnknownObject} from "../../declarations"
+import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../MoveMe"
 import { Actions } from "../../Editor/Actions/Actions"
-import { Filter } from "../../Filter/Filter"
+import { Filter } from "../../Module/Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Instance, InstanceObject, isInstance } from "../../Instance/Instance"
 import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { Orientation } from "../../Setup/Enums"
+import { MediaDefinitionType, Orientation } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
 import { Rect, RectTuple } from "../../Utility/Rect"
@@ -14,8 +12,15 @@ import { SelectedProperties } from "../../Utility/SelectedProperty"
 import { SizeTuple } from "../../Utility/Size"
 import { Tweening } from "../../Utility/Tween"
 import { Selectable } from "../../Editor/Selectable"
+import { isMedia, Media } from "../../Media/Media"
+import { Propertied } from "../../Base/Propertied"
+import { isMediaInstance, MediaInstance } from "../../Media/MediaInstance/MediaInstance"
 
-export interface TweenableObject extends InstanceObject {
+export interface TweenableObject extends UnknownObject {
+  id?: string
+  definitionId?: string
+  definition?: Media
+  label?: string
   container?: boolean
   x?: number
   xEnd?: number
@@ -25,9 +30,11 @@ export interface TweenableObject extends InstanceObject {
   lock?: string
 }
 
-export interface TweenableDefinitionObject extends DefinitionObject {}
+export interface TweenableDefinitionObject extends  UnknownObject, Partial<Described> {
+  type?: MediaDefinitionType | string
+}
 
-export interface Tweenable extends Instance, Selectable { 
+export interface Tweenable extends MediaInstance, Selectable {
   alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters
   amixCommandFilters(args: CommandFilterArgs): CommandFilters
   canColor(args: CommandFilterArgs): boolean
@@ -58,16 +65,18 @@ export interface Tweenable extends Instance, Selectable {
   // intrinsicUrls(options: IntrinsicOptions): string[]
   isDefault: boolean
   
+  loadPromise(args: PreloadArgs): Promise<void>
   lock: Orientation
   mutable(): boolean
   muted: boolean
 
   overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters
   overlayFilter: Filter
-  preloadUrls(args: PreloadArgs): string[]
+  // preloadUrls(args: PreloadArgs): string[]
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
   selectedProperty(property: Property): boolean 
+  serverPromise(args: ServerPromiseArgs): Promise<void>
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
   tweenPoints(time: Time, range: TimeRange): PointTuple 
   tweenRects(time: Time, range: TimeRange): RectTuple
@@ -76,18 +85,21 @@ export interface Tweenable extends Instance, Selectable {
 }
 
 export const isTweenable = (value?: any): value is Tweenable => {
-  return isInstance(value) && isDefinition(value.definition)
+  return isMediaInstance(value) && isMedia(value.definition)
 }
 export function assertTweenable(value?: any): asserts value is Tweenable {
   if (!isTweenable(value)) throw new Error('expected Tweenable')
 }
 
-export interface TweenableDefinition extends Definition {
-  
+export interface TweenableDefinition extends Media {
+  graphFiles(args: PreloadArgs): GraphFiles 
+  loadPromise(args: PreloadArgs): Promise<void> 
+  serverPromise(args: ServerPromiseArgs): Promise<void>
+
 }
 
 export const isTweenableDefinition = (value?: any): value is TweenableDefinition => {
-  return isDefinition(value) 
+  return isMedia(value) 
 }
 
 export function assertTweenableDefinition(value?: any): asserts value is TweenableDefinition {

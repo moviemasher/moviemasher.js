@@ -3,7 +3,7 @@ import {
   UnknownObject, pixelFromFrame, DroppingPosition, ClassSelected, eventStop, 
   assertTrue,
   sizeAboveZero, svgPolygonElement,
-  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgElement, sizeCeil, isEventType, isObject
+  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
@@ -64,7 +64,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const defsElement = svgDefsElement([pattern])
     const patternedSize = { width: timelineContext.rect.width, height: parentHeight }
     const patternedPolygon = svgPolygonElement(patternedSize, '', svgUrl(patternId))
-    return svgElement(patternedSize, [defsElement, patternedPolygon])
+    return svgSvgElement(patternedSize, [defsElement, patternedPolygon])
   }
   const getParentHeight = () => {
     const { current } = svgRef
@@ -80,7 +80,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
 
   const [parentHeight, setParentHeight] = React.useState(getParentHeight)
 
-  const { label, type, frame, frames } = clip
+  const { label, frame, frames } = clip
 
   const getCurrentWidth = () => {
     if (!(isAboveZero(scale) && isAboveZero(frames))) {
@@ -226,7 +226,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     const data = { offset: clientX - left }
     const json = JSON.stringify(data)
     dataTransfer.effectAllowed = 'move'
-    dataTransfer.setData(type + DragSuffix, json)
+    dataTransfer.setData('clip' + DragSuffix, json)
   }
 
   const onDragOver = (event: DragEvent) => {

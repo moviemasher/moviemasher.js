@@ -1,7 +1,7 @@
 import React from 'react'
 import {
-  assertDefinition,
-  Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, 
+  assertMedia,
+  Defined, isMediaDefinitionType, assertPopulatedString, ClassDropping, DataType, 
   ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition
 } from '@moviemasher/moviemasher.js'
 
@@ -39,7 +39,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
 
     assertPopulatedString(value)
     const definition = Defined.fromId(value)
-    assertDefinition(definition)
+    assertMedia(definition)
 
     const definitionProps = { definition, key: definition.id }
     const children = React.cloneElement(child, definitionProps)
@@ -56,7 +56,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     if (types.includes(TransferTypeFiles)) return true
 
     const draggingType = dragType(dataTransfer)
-    if (!isDefinitionType(draggingType)) return false
+    if (!isMediaDefinitionType(draggingType)) return false
 
     return definitionTypes.includes(draggingType)
   }
@@ -98,11 +98,11 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     const type = dropType(dataTransfer)!
     const json = dataTransfer.getData(type)
     const data: DragDefinitionObject = JSON.parse(json)
-    const { definitionObject } = data
-    const [definition] = Defined.define(definitionObject)
+    const { mediaObject } = data
+    const [definition] = Defined.define(mediaObject)
     if (name === "containerId" && !isContainerDefinition(definition)) return
 
-    changeHandler(name, definitionObject.id!)
+    changeHandler(name, mediaObject.id!)
   }
 
   const calculateClassName = (): string => {

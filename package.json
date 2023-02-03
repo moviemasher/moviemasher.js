@@ -4,9 +4,9 @@
   "homepage": "https://moviemasher.com",
   "type": "commonjs",
   "source": "index",
-  "main": "workspaces/example-express-react/host/server.js",
+  "main": "images/standalone/private/server.js",
   "version": "5.1.2",
-  "license": "MPL-2.0",
+  "license": "MIT",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -19,42 +19,25 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "build-builder": "docker compose --file dev/build/docker-compose.yml build builder",
-    "build-tester": "docker compose --file dev/test/docker-compose.yml build tester",
-    "build-image": "docker build -f dev/image/Dockerfile.cnf -t moviemasher/moviemasher.js:5.1.2 .",
-    "build-rendering": "npm run build -w test-rendering",
-    "test-rendering": "npm run test -w test-rendering",
-    "build": "docker compose --file dev/build/docker-compose.yml run --rm builder",
-    "delete-temporary": "rm -rf temporary/test/* ; ",
-    "ffmpeg": "docker compose --file dev/test/ffmpeg/docker-compose.yml run --rm -it ffmpeg",
+    "start": "npm run up -w @moviemasher/standalone",
+    "stop": "npm run down -w @moviemasher/standalone",
+    "logs": "npm run logs -w @moviemasher/standalone",
+    
+    "build": "docker compose --env-file dev/local.env --file images/builder/dev/docker-compose.yml run --rm builder",
+    "build-esm": "npm run build esm",
+    
+    "test": "npm run build-esm && npm run test-run",
+    "test-run": "docker compose --env-file dev/local.env --file images/tester/dev/docker-compose.yml run --rm -it tester packages",
+
+    "docker-build":  "docker compose --env-file dev/local.env --file images/${npm_config_image}/dev/docker-compose.yml build",
+
     "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
     "lint": "eslint src/**/*.ts",
-    "publish-client": "npm publish --access public --workspace @moviemasher/client-react",
-    "publish-theme": "npm publish --access public --workspace @moviemasher/theme-default",
-    "publish-core": "npm publish --access public --workspace @moviemasher/moviemasher.js",
-    "publish-server": "npm publish --access public --workspace @moviemasher/server-express",
-    "logs": "npm run logs -w @moviemasher/example-express-react",
-    "start": "npm run start -w @moviemasher/example-express-react",
-    "stop": "npm run stop -w @moviemasher/example-express-react",
-    "test": "docker compose --file dev/test/docker-compose.yml run --rm tester"
+    "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}"
   },
   "workspaces": [
-    "workspaces/*",
-    "packages/*"
-  ],
-  "devDependencies": {
-    "npm-run-all": "^4.1.5",
-    "@types/css-font-loading-module": "^0.0.7",
-    "@types/expect-puppeteer": "^4.4.7",
-    "@types/jest": "^28.0.3",
-    "@types/jest-environment-puppeteer": "^5.0.2",
-    "@types/jest-image-snapshot": "^5.1.0",
-    "@types/node": "15.6.1",
-    "@types/puppeteer": "^5.4.6",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "typescript": "4.6.4"
-  },
-  "dependencies": {
-  }
+    "images/*",
+    "packages/*",
+    "workspaces/*"
+  ]
 }

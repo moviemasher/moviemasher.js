@@ -2,10 +2,10 @@
   "name": "@moviemasher/server-core",
   "version": "5.1.2",
   "description": "Movie Masher Server Core - version 5.1.2",
-  "main": "cjs/server-core.min.js",
-  "types": "cjs/server-core.d.ts",
-  "type": "commonjs",
-  "license": "MPL-2.0",
+  "types": "esm/server-core.d.ts",
+  "main": "esm/server-core.js",
+  "type": "module",
+  "license": "MIT",
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -21,15 +21,19 @@
   "scripts": {
     "build-cjs-min": "rollup --config dev/rollup/cjs.min.config.js",
     "build-cjs": "rollup --config dev/rollup/cjs.config.js",
-    "build": "run-s build-cjs build-cjs-min"
+    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --outfile=esm/server-core.min.js --minify",
+    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --outfile=esm/server-core.js",
+    "copy-types": "cp cjs/server-core.d.ts esm/server-core.d.ts",
+    "build": "run-s build-esm build-esm-min build-cjs build-cjs-min copy-types"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",
     "fluent-ffmpeg": "^2.1.2",
+    "ttf2woff2": "5.0.0",
     "child_process": "^1.0.2"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.20",
-    "@types/node": "15.6.1"
+    "@types/node": "18.11.18"
   }
 }
