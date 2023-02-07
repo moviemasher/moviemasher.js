@@ -7,12 +7,17 @@ import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
 import { MasherContext } from "../Masher/MasherContext"
+import { useClient } from "../../Hooks/useClient"
 
 export function SaveControl(props:PropsAndChild): ReactResult {
   const editor = useEditor()
-  const editorContext = React.useContext(MasherContext)
+  const masherContext = React.useContext(MasherContext)
+  const client = useClient()
 
-  const { save } = editorContext
+  client.save({})
+
+  
+  const { save } = masherContext
   
   const getDisabled = () => !editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)

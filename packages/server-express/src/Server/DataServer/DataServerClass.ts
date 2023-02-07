@@ -5,7 +5,7 @@ import knex, { Knex } from 'knex'
 
 import {
   Errors, MashObject, UnknownObject, StringObject, JsonObject, WithError, stringPluralize,
-  DefinitionObject, DefinitionObjects, CastObject, DataServerInit, Endpoints, EmptyMethod,
+  MediaObject, MediaObjects, CastObject, DataServerInit, Endpoints, EmptyMethod,
   DataCastDefaultResponse, DataCastDefaultRequest,
   DataMashDefaultRequest, DataMashDefaultResponse,
   DataCastDeleteResponse, DataCastDeleteRequest,
@@ -39,7 +39,7 @@ export interface DataServerCastRelationUpdate {
 
 export interface DataServerCastRelationSelect {
   cast: CastObject
-  definitions: DefinitionObject[]
+  definitions: MediaObject[]
 }
 
 export interface DataServerRow extends UnknownObject, AndId { }
@@ -181,7 +181,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   defaultMash: ExpressHandler<DataMashDefaultResponse | WithError, DataMashDefaultRequest> = async (req, res) => {
     const previewSize = this.renderingServer?.args.previewSize
-    const response: DataMashDefaultResponse = { mash: {}, definitions: [], previewSize }
+    const response: DataMashDefaultResponse = { mash: { media: [] }, previewSize }
     try {
       const user = this.userFromRequest(req)
       const mash = await this.database
@@ -196,8 +196,9 @@ export class DataServerClass extends ServerClass implements DataServer {
         }) as MashObject
 
       if (mash.id) {
-        response.mash = mash
-        response.definitions = await this.selectMashRelationsPromise(String(mash.id))
+        const media = await this.selectMashRelationsPromise(String(mash.id))
+        response.mash = { ...mash, media }
+        
       }
     } catch (error) { response.error = String(error) }
     // console.log("defaultMash", response)
@@ -304,14 +305,14 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   getMash: ExpressHandler<DataMashGetResponse, DataGetRequest> = async (req, res) => {
     const { id } = req.body
-    const response: DataMashGetResponse = { mash: {}, definitions: [] }
+    const response: DataMashGetResponse = { mash: { media: [] } }
     try {
       const user = this.userFromRequest(req)
       const mash = await this.jsonPromise('mash', user, id)
       if (mash.id !== id) response.error = `Could not find mash ${id}`
       else {
-        response.mash = mash
-        response.definitions = await this.selectMashRelationsPromise(id)
+        const media = await this.selectMashRelationsPromise(id)
+        response.mash = { ...mash, media }
       }
     } catch (error) { response.error = String(error) }
     res.send(response)
@@ -321,7 +322,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   init(): DataServerInit { return { temporaryIdPrefix: this.args.temporaryIdPrefix } }
 
-  private insertDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
+  private insertDefinitionPromise(userId: string, definition: MediaObject): Promise<string> {
     return this.createPromise('definition', DataServerInsertRecord(userId, definition))
   }
 
@@ -471,7 +472,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       .then((mashes:MashObject[]) => {
         DataServerPopulateLayers(mashes, cast.layers)
 
-        const definitions: DefinitionObjects = []
+        const definitions: MediaObjects = []
         const initialData: DataServerCastRelationSelect = { cast, definitions }
         let promise: Promise<DataServerCastRelationSelect> = Promise.resolve(initialData)
 
@@ -489,7 +490,7 @@ export class DataServerClass extends ServerClass implements DataServer {
       })
   }
 
-  private selectMashRelationsPromise(mashId: string): Promise<DefinitionObjects> {
+  private selectMashRelationsPromise(mashId: string): Promise<MediaObjects> {
     return this.database
       .select('definition.*')
       .from('mash_definition')
@@ -619,7 +620,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private updateDefinitionPromise(definition: DefinitionObject): Promise<void> {
+  private updateDefinitionPromise(definition: MediaObject): Promise<void> {
     const { type, createdAt, icon, id, label, ...rest } = definition
     if (!id) return Promise.reject(401)
 
@@ -691,7 +692,7 @@ export class DataServerClass extends ServerClass implements DataServer {
     })
   }
 
-  private writeDefinitionPromise(userId: string, definition: DefinitionObject): Promise<string> {
+  private writeDefinitionPromise(userId: string, definition: MediaObject): Promise<string> {
     const { id } = definition
     if (!id) return this.insertDefinitionPromise(userId, definition)
 

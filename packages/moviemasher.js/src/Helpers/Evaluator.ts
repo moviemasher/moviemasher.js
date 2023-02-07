@@ -3,13 +3,12 @@ import { Size } from "../Utility/Size"
 import { Errors } from "../Setup/Errors"
 import { assertDefined, assertValueObject, isBoolean, isDefined, isNan, isNumber, isNumeric, isString, isUndefined } from "../Utility/Is"
 import { Time, TimeRange } from "./Time/Time"
-
-import { Filter } from "../Module/Filter/Filter"
+import { Filter } from "../Filter/Filter"
 import { Parameter } from "../Setup/Parameter"
 import { Property } from "../Setup/Property"
 import { Evaluation } from "./Evaluation"
 import { propertyTypeIsString } from "./PropertyType"
-import { Instance } from "../Instance/Instance"
+import { MediaInstance } from "../Media/MediaInstance/MediaInstance"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
   if (isString(elements)) return String(elements).split(',')
@@ -41,7 +40,7 @@ const EvaluatorExpessions = {
 
 export interface EvaluatorArgs {
   editing?: boolean
-  instance?: Instance
+  instance?: MediaInstance
   timeRange?: TimeRange
   outputSize: Size
   filter?: Filter
@@ -236,9 +235,9 @@ export class Evaluator {
 
   label = 'createVisibleContext'
 
-  private _instance?: Instance
-  get instance(): Instance { return this._instance! }
-  set instance(value: Instance) {
+  private _instance?: MediaInstance
+  get instance(): MediaInstance { return this._instance! }
+  set instance(value: MediaInstance) {
     this._instance = value
     this.instanceCustomProperties = [...this.instance.propertiesCustom]
   }

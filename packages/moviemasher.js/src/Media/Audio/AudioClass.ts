@@ -1,5 +1,4 @@
 import { AudioDefinition, Audio } from "./Audio"
-import { InstanceBase } from "../../Instance/InstanceBase"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { ContentMixin } from "../Content/ContentMixin"

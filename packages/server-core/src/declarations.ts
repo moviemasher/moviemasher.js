@@ -1,4 +1,4 @@
-import { StringObject, Value } from "@moviemasher/moviemasher.js"
+import { RequestObject, StringObject, Value } from "@moviemasher/moviemasher.js"
 
 export interface RequestArgs {
   auth?: string;
@@ -8,4 +8,8 @@ export interface RequestArgs {
   path?: string;
   port?: Value
   protocol?: string
+}
+
+export interface Input {
+  request?: RequestObject
 }

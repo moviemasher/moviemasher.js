@@ -1,5 +1,5 @@
-import { CommandOptions } from "@moviemasher/moviemasher.js"
 
+import { CommandOptions } from "../Encode/Encode"
 import { RunningCommand } from "./RunningCommand"
 import { RunningCommandClass } from './RunningCommandClass'
 

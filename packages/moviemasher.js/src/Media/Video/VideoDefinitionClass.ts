@@ -1,6 +1,5 @@
-import {
-  UnknownObject, LoadedVideo, LoadedImage} from "../../declarations"
-import { DefinitionType, MediaDefinitionType } from "../../Setup/Enums"
+import { LoadedVideo, LoadedImage} from "../../declarations"
+import { DefinitionType } from "../../Setup/Enums"
 import { VideoClass } from "./VideoClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -11,10 +10,9 @@ import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinit
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { MediaBase } from "../MediaBase"
 import { assertSizeAboveZero, Size, sizeAboveZero, sizeCover, sizeString } from "../../Utility/Size"
-import { SvgImageOptions } from "../../MoveMe"
 import { svgImagePromiseWithOptions, svgSvgElement } from "../../Utility/Svg"
-import { centerPoint } from "../../Utility/Rect"
-import { Transcoding } from "../Transcoding/Transcoding"
+import { centerPoint, RectOptions } from "../../Utility/Rect"
+import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
 import { Time } from "../../Helpers/Time/Time"
 import { Errors } from "../../Setup/Errors"
 import { assertLoadedImage, assertLoadedVideo } from "../../Loader/Loader"
@@ -47,7 +45,7 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
       const inSize = { width, height }
       const coverSize = sizeCover(inSize, size, true)
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-      const options: SvgImageOptions = {
+      const options: RectOptions = {
         ...outRect
       }
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
@@ -85,7 +83,7 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
       case DefinitionType.Video: {
         return this.imageFromVideoTranscodingPromise(transcoding, definitionTime, outSize)
       }
-      case DefinitionType.VideoSequence: {
+      case DefinitionType.Sequence: {
         return this.imageFromSequencePromise(transcoding, definitionTime, outSize)
       }
     }
@@ -129,23 +127,16 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
 
   get iconTranscoding(): Transcoding {
     return this.preferredTranscoding(
-      DefinitionType.Image, DefinitionType.VideoSequence, DefinitionType.Video
+      DefinitionType.Image, DefinitionType.Sequence, DefinitionType.Video
     )
   }
 
   
   get previewTranscoding(): Transcoding {
     return this.preferredTranscoding(
-      DefinitionType.VideoSequence, DefinitionType.Video
+      DefinitionType.Sequence, DefinitionType.Video
     )
   }
 
-  toJSON() : UnknownObject {
-    const object = super.toJSON()
-    object.url = this.url
-    if (this.source) object.source = this.source
-    return object
-  }
-
-  type = DefinitionType.Video as MediaDefinitionType
+  type = DefinitionType.Video 
 }

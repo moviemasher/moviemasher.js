@@ -1,7 +1,6 @@
 import { 
-  isEffectDefinition, Defined, controlInstance, 
-  ClassDropping, SelectedMovable, DataGroup, isObject, Movable, 
-  assertPopulatedObject, assertDefined, ScalarObject, DefinedDefinitions
+  controlInstance, ClassDropping, SelectedMovable, DataGroup, Movable, 
+  assertPopulatedObject, assertDefined, ScalarObject
 } from '@moviemasher/moviemasher.js'
 import React from 'react'
 

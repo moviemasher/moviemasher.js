@@ -2,9 +2,10 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  OutputFormat, OutputType, outputDefaultRendering, ExtJpeg, ExtPng 
+  OutputFormat, OutputType, ExtJpeg, ExtPng 
 } from "@moviemasher/moviemasher.js"
 
+import { outputDefaultRendering } from '@moviemasher/server-core'
 const expectNoVideoKeys = (args) => {
   assert(!args.videoBitrate)
   assert(!args.videoCodec)

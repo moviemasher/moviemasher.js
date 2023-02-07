@@ -2,9 +2,14 @@ import fs from 'fs'
 import path from 'path'
 
 import { 
-  SizePreview, outputDefaultVideo,
-  outputDefaultImage, outputDefaultAudio, outputDefaultImageSequence, isArray
- } from '@moviemasher/moviemasher.js/umd/moviemasher.js'
+  SizePreview,  
+  isArray
+ } from '@moviemasher/moviemasher.js'
+
+import { 
+  outputDefaultVideo,
+  outputDefaultImage, outputDefaultAudio, outputDefaultImageSequence, 
+ } from '@moviemasher/server-core'
 
 
 

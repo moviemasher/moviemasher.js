@@ -1,6 +1,6 @@
 
 import {
-  DefinitionObjects, MashObject
+  MediaObjects, MashObject
 } from '@moviemasher/moviemasher.js'
 
 import { RunningCommand, StreamingCommandOutput } from '@moviemasher/server-core'
@@ -24,5 +24,5 @@ export interface StreamingProcessArgs {
 
 export interface StreamingProcessCutArgs {
   mashObjects: MashObject[]
-  definitionObjects: DefinitionObjects
+  definitionObjects: MediaObjects
 }

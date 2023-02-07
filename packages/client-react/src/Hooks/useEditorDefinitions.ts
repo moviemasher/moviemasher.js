@@ -1,14 +1,14 @@
 import React from "react"
 import { 
   assertDefined, EventType, isEventType, Editor, Medias, 
-  MediaDefinitionType, Defined, isPopulatedArray 
+  DefinitionType, Defined, isPopulatedArray 
 } from "@moviemasher/moviemasher.js"
 
 import { MasherContext } from "../Components/Masher/MasherContext"
 
 const EditorDefinitionsEventAdded = EventType.Added
 const EditorDefinitionsEventResize = EventType.Resize
-export const useEditorDefinitions = (types: MediaDefinitionType[] = []): [Editor, Medias] => {
+export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Medias] => {
   const masherContext = React.useContext(MasherContext)
   const { editor } = masherContext
   assertDefined(editor)
@@ -32,7 +32,7 @@ export const useEditorDefinitions = (types: MediaDefinitionType[] = []): [Editor
       const { detail } = event
       const { definitionTypes } = detail
       if (isPopulatedArray(definitionTypes)) {
-        const types = definitionTypes as MediaDefinitionType[]
+        const types = definitionTypes as DefinitionType[]
 
         const { current} = storeRef
         const allIds = Object.keys(current)

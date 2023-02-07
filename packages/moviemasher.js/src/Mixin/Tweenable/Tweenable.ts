@@ -1,10 +1,10 @@
 import { Constrained, Described, Scalar, UnknownObject} from "../../declarations"
 import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../MoveMe"
 import { Actions } from "../../Editor/Actions/Actions"
-import { Filter } from "../../Module/Filter/Filter"
+import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { MediaDefinitionType, Orientation } from "../../Setup/Enums"
+import { DefinitionType, Orientation } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
 import { Rect, RectTuple } from "../../Utility/Rect"
@@ -13,7 +13,6 @@ import { SizeTuple } from "../../Utility/Size"
 import { Tweening } from "../../Utility/Tween"
 import { Selectable } from "../../Editor/Selectable"
 import { isMedia, Media } from "../../Media/Media"
-import { Propertied } from "../../Base/Propertied"
 import { isMediaInstance, MediaInstance } from "../../Media/MediaInstance/MediaInstance"
 
 export interface TweenableObject extends UnknownObject {
@@ -31,7 +30,7 @@ export interface TweenableObject extends UnknownObject {
 }
 
 export interface TweenableDefinitionObject extends  UnknownObject, Partial<Described> {
-  type?: MediaDefinitionType | string
+  type?: DefinitionType | string
 }
 
 export interface Tweenable extends MediaInstance, Selectable {
@@ -43,7 +42,6 @@ export interface Tweenable extends MediaInstance, Selectable {
   clipped: boolean
   colorBackCommandFilters(args: VisibleCommandFilterArgs, output?: string): CommandFilters
   colorFilter: Filter  
-  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles 
   commandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters 
   container: boolean
   containerColorCommandFilters(args: VisibleCommandFilterArgs): CommandFilters
@@ -53,26 +51,22 @@ export interface Tweenable extends MediaInstance, Selectable {
   copyCommandFilter(input: string, track: number, prefix?: string): CommandFilter
   cropFilter: Filter
   definitionTime(masherTime: Time, clipRange: TimeRange): Time
-  frames(quantize: number): number 
   fileCommandFiles(graphFileArgs: PreloadArgs): CommandFiles
+  frames(quantize: number): number 
   graphFiles(args: PreloadArgs): GraphFiles
   hasIntrinsicSizing: boolean
   hasIntrinsicTiming: boolean
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container?: boolean): CommandFilters
+  intrinsicGraphFile(options: IntrinsicOptions): GraphFile
   intrinsicRect(editing?: boolean): Rect
   intrinsicsKnown(options: IntrinsicOptions): boolean
-  intrinsicGraphFile(options: IntrinsicOptions): GraphFile
-  // intrinsicUrls(options: IntrinsicOptions): string[]
   isDefault: boolean
-  
   loadPromise(args: PreloadArgs): Promise<void>
   lock: Orientation
   mutable(): boolean
   muted: boolean
-
   overlayCommandFilters(bottomInput: string, topInput: string, alpha?: boolean): CommandFilters
   overlayFilter: Filter
-  // preloadUrls(args: PreloadArgs): string[]
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
   selectedProperty(property: Property): boolean 
@@ -82,6 +76,7 @@ export interface Tweenable extends MediaInstance, Selectable {
   tweenRects(time: Time, range: TimeRange): RectTuple
   tweenSizes(time: Time, range: TimeRange): SizeTuple 
   tweenValues(key: string, time: Time, range: TimeRange): Scalar[] 
+  visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles 
 }
 
 export const isTweenable = (value?: any): value is Tweenable => {
@@ -95,7 +90,6 @@ export interface TweenableDefinition extends Media {
   graphFiles(args: PreloadArgs): GraphFiles 
   loadPromise(args: PreloadArgs): Promise<void> 
   serverPromise(args: ServerPromiseArgs): Promise<void>
-
 }
 
 export const isTweenableDefinition = (value?: any): value is TweenableDefinition => {

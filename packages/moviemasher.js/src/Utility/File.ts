@@ -1,8 +1,8 @@
 import { RequestObject } from "../Api/Api"
 import { LoadedAudio, LoadedImage, LoadedVideo, LoadedMedia, LoadedFont } from "../declarations"
-import { ErrorObject, isLoadedFont, isLoadedImage, isLoadedVideo, LoadedInfo } from "../Loader/Loader"
+import { ErrorObject, isLoadedAudio, isLoadedFont, isLoadedImage, isLoadedVideo, LoadedInfo } from "../Loader/Loader"
 import { MediaObject, MediaOrErrorObject } from "../Media/Media"
-import { ProbingObject, ProbingObjects } from "../Media/Probing/Probing"
+import { DecodingObject, DecodingObjects } from "../Decode/Decoding/Decoding"
 import { assertLoadType, isUploadType, LoadType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { endpointFromUrl } from "./Endpoint"
@@ -18,7 +18,6 @@ const audioInfo = (buffer: LoadedAudio): LoadedInfo => {
   const info: LoadedInfo = { duration, audible: true }
   return info
 }
-
 
 const imageInfo = (size: Size): LoadedInfo => {
   return sizeCopy(size)
@@ -39,19 +38,18 @@ const videoInfo = (video: LoadedVideo) => {
   const info: LoadedInfo = { width, height, duration, audible }
   return info
 }
-// export const loadLocalFile = (media: LoadedMedia, cacheKey: LoaderPath, loadedInfo: LoadedInfo): void => {
-//   const cache: LoaderCache = {
-//     definitions: [], result: media, loadedInfo,
-//     promise: Promise.resolve(media), loaded: true, 
-//   }
-//   setLoaderCache(cacheKey, cache)
-// }
+
+function fontInfo(media: LoadedFont): LoadedInfo {
+  return {}
+}
 
 export const mediaInfo = (media: LoadedMedia): LoadedInfo => {
   if (isLoadedVideo(media)) return videoInfo(media)
   if (isLoadedImage(media)) return imageInfo(media)
   if (isLoadedFont(media)) return fontInfo(media)
-  return audioInfo(media)
+  if (isLoadedAudio(media)) return audioInfo(media)
+  return {}
+
 }
 
 export const mediaPromise = (type: LoadType, request: RequestObject): Promise<LoadedMedia> => {
@@ -65,8 +63,6 @@ export const mediaPromise = (type: LoadType, request: RequestObject): Promise<Lo
   throw new Error(Errors.internal)
 }
 
-
-
 export const filePromises = (files: File[], size?: Size): Promise<MediaOrErrorObject>[] => {
   return files.map(file => {
     const { name: label, type: fileType } = file
@@ -79,12 +75,12 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaOrErrorOb
     const id = idGenerateString()
     const idKey = urlPrependProtocol('object', id)
     const url = URL.createObjectURL(file)
-    const probings: ProbingObjects = []
+    const decodings: DecodingObjects = []
     const request: RequestObject = {
       endpoint: endpointFromUrl(url)
     }
     const object: MediaObject = {
-      request, probings,
+      request, decodings,
       type, label, 
       //url: urlPrependProtocol(type, idKey), source: url, 
       id: idTemporary()
@@ -96,8 +92,8 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaOrErrorOb
     const promise = mediaPromise(type, request)
     return promise.then(media => {
       const info = mediaInfo(media)
-      const probing: ProbingObject = { info, id: idGenerateString() }
-      probings.push(probing)
+      const decoding: DecodingObject = { info }
+      decodings.push(decoding)
       if (hasDuration) {
         const { duration } = info
         if (!isAboveZero(duration)) return { 
@@ -134,6 +130,3 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaOrErrorOb
   })
 }
 
-function fontInfo(media: LoadedFont): LoadedInfo {
-  throw new Error("Function not implemented.")
-}

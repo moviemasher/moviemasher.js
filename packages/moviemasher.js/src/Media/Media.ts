@@ -1,14 +1,13 @@
 import { Constrained, UnknownObject } from "../declarations"
 import { ErrorObject } from "../Loader/Loader"
-import { PreloadableDefinitionObject } from "../Mixin/Preloadable/Preloadable"
 import { PreloadArgs } from "../MoveMe"
 import { Property } from "../Setup/Property"
 import { Size } from "../Utility/Size"
-import { EncodingObjects } from "../Edited/Mash/Encoding/Encoding"
-import { ProbingObjects, Probings } from "./Probing/Probing"
-import { isTranscoding, Transcoding, TranscodingObject } from "./Transcoding/Transcoding"
-import { TranscodingObjects, Transcodings } from "./Transcoding/Transcoding"
-import { DefinitionType, isMediaDefinitionType } from "../Setup/Enums"
+import { EncodingObjects } from "../Encode/Encoding/Encoding"
+import { DecodingObjects, Decodings } from "../Decode/Decoding/Decoding"
+import { isTranscoding, Transcoding, TranscodingObject } from "../Transcode/Transcoding/Transcoding"
+import { TranscodingObjects, Transcodings } from "../Transcode/Transcoding/Transcoding"
+import { DefinitionType, isDefinitionType } from "../Setup/Enums"
 import { errorsThrow } from "../Utility/Errors"
 import { MediaInstance, MediaInstanceObject } from "./MediaInstance/MediaInstance"
 
@@ -16,28 +15,23 @@ import { MediaInstance, MediaInstanceObject } from "./MediaInstance/MediaInstanc
 export interface MediaObject extends TranscodingObject {
   encodings?: EncodingObjects
   transcodings?: TranscodingObjects
-  probings?: ProbingObjects
+  decodings?: DecodingObjects
   label?: string
   size?: number
 }
 
 export const isMediaObject = (value: any): value is MediaObject => {
-  return isTranscoding(value) //&& isMediaDefinitionType(value.type)
+  return isTranscoding(value) 
 }
-
-
 
 export type MediaObjects = MediaObject[]
 
 export type MediaOrErrorObject = MediaObject | ErrorObject
 
 
-export type MediaTransitionalObject = MediaObject | PreloadableDefinitionObject 
-
-
 export interface Media extends Transcoding {
   transcodings: Transcodings
-  probings: Probings
+  decodings: Decodings
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined
   id: string
   instanceFromObject(object?: MediaInstanceObject): MediaInstance
@@ -56,7 +50,7 @@ export interface Media extends Transcoding {
 export type Medias = Media[]
 
 export const isMedia = (value: any): value is Media => {
-  return isTranscoding(value) && "type" in value && isMediaDefinitionType(value.type)
+  return isTranscoding(value) && "type" in value && isDefinitionType(value.type)
 }
 
 export function assertMedia(value: any, name?: string): asserts value is Media {

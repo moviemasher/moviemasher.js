@@ -1,46 +1,25 @@
 import { NumberObject } from "../declarations"
-import { isPopulatedString } from "./Is"
 
-const Id = {
-  count: 0,
-  prefix: '',
-  countsByPrefix: {} as NumberObject
-}
+const IdTemporaryPrefix = 'temporary'
+const IdCountsByPrefix: NumberObject = {} 
+
 
 export const idGenerateString = (): string => {
-  const components:string[] = []
-  if (Id.prefix) components.push(Id.prefix)
+  const components = [IdTemporaryPrefix]
 
   components.push(Date.now().toString(36))
   components.push(Math.random().toString(36).slice(2))
   return components.join('-')
 }
 
-export const idPrefixSet = (prefix: string): void => { Id.prefix = prefix }
-
-export const idTemporary = () => {
-  const { prefix } = Id
+export const idGenerate = (prefix: string): string => {
   const components:string[] = []
-  if (prefix) {
-    components.push(prefix)
-    Id.countsByPrefix[prefix] ||= 0
-    components.push(String(Id.countsByPrefix[prefix]++))
-  } else components.push(String(Id.count++))
-  return components.join('')
+  components.push(prefix)
+  IdCountsByPrefix[prefix] ||= 0
+  components.push(String(IdCountsByPrefix[prefix]++))
+  return components.join('-')
 }
 
-export const idGenerate = (prefix = Id.prefix): string => {
-  const components:string[] = []
-  if (prefix) {
-    components.push(prefix)
-    Id.countsByPrefix[prefix] ||= 0
-    components.push(String(Id.countsByPrefix[prefix]++))
-  } else components.push(String(Id.count++))
-  return components.join('')
-}
+export const idTemporary = () => idGenerate(IdTemporaryPrefix)
 
-export const idIsTemporary = (id: string): boolean => {
-  if (!isPopulatedString(Id.prefix)) return false
-
-  return id.startsWith(Id.prefix)
-}
+export const idIsTemporary = (id: string) => id.startsWith(IdTemporaryPrefix)

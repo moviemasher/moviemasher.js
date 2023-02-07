@@ -1,21 +1,19 @@
 import { LoadedImage, LoadedVideo } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
-import { isInstance } from "../../Instance/Instance"
 import {
   UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
   UpdatableSizeObject
 } from "../../Mixin/UpdatableSize/UpdatableSize"
-import {
-  Content, ContentObject
-} from "../Content/Content"
-import { UpdatableDuration, UpdatableDurationDefinition, 
+import { Content, ContentObject } from "../Content/Content"
+import { 
+  UpdatableDuration, UpdatableDurationDefinition, 
   UpdatableDurationDefinitionObject, UpdatableDurationObject 
 } from "../../Mixin/UpdatableDuration/UpdatableDuration"
-import { isDefinition } from "../../Definition"
 import { isMedia, Media, MediaObject } from "../Media"
-import { Transcoding } from "../Transcoding/Transcoding"
+import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
 import { Time } from "../../Helpers/Time/Time"
 import { Size } from "../../Utility/Size"
+import { isMediaInstance } from "../MediaInstance/MediaInstance"
 
 export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
@@ -46,7 +44,7 @@ export function assertVideoDefinition(value: any): asserts value is VideoDefinit
 }
 
 export const isVideo = (value: any): value is Video => {
-  return isInstance(value) && value.definition.type === DefinitionType.Video
+  return isMediaInstance(value) && value.definition.type === DefinitionType.Video
 }
 
 export function assertVideo(value: any): asserts value is Video {

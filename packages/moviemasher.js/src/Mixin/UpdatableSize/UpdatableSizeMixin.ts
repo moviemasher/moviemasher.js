@@ -17,8 +17,8 @@ import { ContentRectArgs } from "../../Media/Content/Content"
 import { assertSizeAboveZero, Size, sizeAboveZero } from "../../Utility/Size"
 import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
 import { svgSetDimensions } from "../../Utility/Svg"
-import { filterFromId } from "../../Module/Filter/FilterFactory"
-import { Filter } from "../../Module/Filter/Filter"
+import { filterFromId } from "../../Filter/FilterFactory"
+import { Filter } from "../../Filter/Filter"
 import { Errors } from "../../Setup/Errors"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {

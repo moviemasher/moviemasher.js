@@ -1,9 +1,9 @@
 import {
   Interval, PreviewItems, Scalar, UnknownObject} from "../../declarations"
-import { GraphFiles, PreloadArgs, PreloadOptions } from "../../MoveMe"
+import { PreloadArgs, PreloadOptions } from "../../MoveMe"
 import { SelectedItems, SelectedMovable, SelectedProperty } from "../../Utility/SelectedProperty"
 import {
-  ActionType, AVType, Duration, EventType, GraphType, SelectType
+  ActionType, AVType, Duration, EventType, SelectType
 } from "../../Setup/Enums"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, 
@@ -16,18 +16,16 @@ import { sortByIndex } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "./Track/Clip/Clip"
 import { assertTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
-import { AudioPreview, AudioPreviewArgs } from "./Preview/AudioPreview/AudioPreview"
+import { AudioPreview, AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { Mash, MashArgs, Movable, Movables } from "./Mash"
 import { Controls } from "./Control/Control"
-import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
-import { FilterGraphsClass } from "./FilterGraphs/FilterGraphsClass"
 import { trackInstance } from "./Track/TrackFactory"
 import { EditedClass } from "../EditedClass"
-import { Preview, PreviewArgs, PreviewOptions } from "./Preview/Preview"
-import { PreviewClass } from "./Preview/PreviewClass"
+import { Preview, PreviewArgs, PreviewOptions } from "../../Editor/Preview/Preview"
+import { PreviewClass } from "../../Editor/Preview/PreviewClass"
 import { LayerMash } from "../Cast/Layer/Layer"
 import { Actions } from "../../Editor/Actions/Actions"
-import { NonePreview } from "./Preview/NonePreview"
+import { NonePreview } from "../../Editor/Preview/NonePreview"
 import { Selectables } from "../../Editor/Selectable"
 import { Propertied } from "../../Base/Propertied"
 import { MoveActionOptions } from "../../Editor/Actions/Action/MoveAction"
@@ -35,6 +33,8 @@ import { controlInstance } from "./Control/ControlFactory"
 import { Editor } from "../../Editor/Editor"
 import { EmptyMethod } from "../../Setup/Constants"
 import { isFont } from "../../Media/Font/Font"
+import { encodingInstance } from "../../Encode/Encoding/EncodingFactory"
+import { Encodings } from "../../Encode/Encoding/Encoding"
 
 type TrackClips = [number, Clips]
 
@@ -44,13 +44,13 @@ export class MashClass extends EditedClass implements Mash {
     const {
       createdAt, icon, id, label,
       frame,
-      rendering,
+      encodings,
       tracks,
       controls,
       ...rest
     } = args
     this.dataPopulate(rest)
-    if (isPopulatedString(rendering)) this._rendering = rendering
+    if (encodings) this.encodings.push(...encodings.map(encodingInstance))
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isAboveZero(frame)) this._frame = frame
 
@@ -339,22 +339,6 @@ export class MashClass extends EditedClass implements Mash {
 
   get endTime(): Time { return timeFromArgs(this.frames, this.quantize) }
 
-  filterGraphs(options: FilterGraphsOptions = {}): FilterGraphs {
-    const { background, time, avType, graphType, size, videoRate, ...rest } = options
-    const definedTime = time || this.time
-    const definedAVType = avType || (definedTime.isRange ? AVType.Both : AVType.Video)
-    const filterGraphsOptions: FilterGraphsArgs = {
-      ...rest,
-      times: this.timeRanges(definedAVType, definedTime),
-      avType: definedAVType,
-      graphType: graphType || GraphType.Mash,
-      size: size || this.imageSize,
-      videoRate: videoRate || definedTime.fps,
-      mash: this,
-      background: background || this.color,
-    }
-    return new FilterGraphsClass(filterGraphsOptions)
-  }
 
   private filterIntersecting(clips: Clips, time: Time): Clip[] {
     const scaled = time.scale(this.quantize)
@@ -614,11 +598,7 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   _rendering = ''
-  get rendering() { return this._rendering }
-  set rendering(value: string) {
-    this._rendering = value
-    this.emitter?.emit(EventType.Render)
-  }
+  encodings: Encodings = []
 
   private restartAfterStop(time: Time, paused: boolean, seeking?: boolean): void {
     // console.log(this.constructor.name, "restartAfterStop", time, this.time)
@@ -721,7 +701,7 @@ export class MashClass extends EditedClass implements Mash {
     return range
   }
 
-  private timeRanges(avType: AVType, startTime?: Time): Times {
+  timeRanges(avType: AVType, startTime?: Time): Times {
     // const { time: startTime, graphType, avType } = args
     const time = startTime || this.time
     const { quantize } = this
@@ -758,11 +738,8 @@ export class MashClass extends EditedClass implements Mash {
   }
 
   toJSON(): UnknownObject {
-    const json: UnknownObject = super.toJSON()
-    json.tracks = this.tracks
-    if (this._layer) json.controls = this.controls
-    if (this._rendering) json.rendering = this.rendering
-    return json
+    const { encodings, tracks, controls } = this
+    return { ...super.toJSON(), encodings, tracks, controls}
   }
 
   private trackClips(clips: Clips, trackIndex: number): TrackClips[]  {

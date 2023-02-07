@@ -3,13 +3,14 @@ import fs from 'fs'
 import EventEmitter from "events"
 
 import {
-  CommandOptions, Errors, assertPopulatedString, isPopulatedString
+  Errors, assertPopulatedString, isPopulatedString
 } from "@moviemasher/moviemasher.js"
 
 import { commandArgsString } from "../Utility/Command"
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
+import { CommandOptions } from "../Encode/Encode"
 
 export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {

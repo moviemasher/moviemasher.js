@@ -1,6 +1,5 @@
 import { 
   Defined, clipInstance
-   
 } from "@moviemasher/moviemasher.js"
 
 import { audioDefinitionObject } from './Audio.mjs'

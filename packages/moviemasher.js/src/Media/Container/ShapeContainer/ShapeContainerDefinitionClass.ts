@@ -14,7 +14,7 @@ import { DefaultContainerId } from "../Container"
 import { MediaBase } from "../../MediaBase"
 import { Errors } from "../../../Setup/Errors"
 import { CommandProbeData } from "../../../Loader"
-import { DefinitionType, MediaDefinitionType } from "../../../Setup/Enums"
+import { DefinitionType } from "../../../Setup/Enums"
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -80,5 +80,5 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     return object
   }
 
-  type = DefinitionType.Image as MediaDefinitionType
+  type = DefinitionType.Image 
 }

@@ -1,6 +1,5 @@
-import { GraphFile, PreloadArgs, GraphFiles, SvgImageOptions, ServerPromiseArgs } from "../../MoveMe"
+import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../MoveMe"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
-import { InstanceBase } from "../../Instance/InstanceBase"
 import { Video, VideoDefinition } from "./Video"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { assertPopulatedString, assertTimeRange, isBoolean } from "../../Utility/Is"
@@ -13,13 +12,12 @@ import { Rect } from "../../Utility/Rect"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange, Times } from "../../Helpers/Time/Time"
 import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
-import { Size, sizeCopy, sizeCover } from "../../Utility/Size"
-import { urlPrependProtocol } from "../../Utility/Url"
+import { sizeCopy, sizeCover } from "../../Utility/Size"
 import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Utility/Svg"
 import { ContainerMixin } from "../Container/ContainerMixin"
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
-import { isTranscoding, Transcoding } from "../Transcoding/Transcoding"
-import { assertLoadedVideo, isLoadedAudio, isLoadedVideo } from "../../Loader/Loader"
+import { isTranscoding, Transcoding } from "../../Transcode/Transcoding/Transcoding"
+import { assertLoadedVideo } from "../../Loader/Loader"
 import { Errors } from "../../Setup/Errors"
 import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
 import { endpointUrl } from "../../Utility/Endpoint"
@@ -52,7 +50,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
  
     const { definition } = this
     const { request } = definition
-    const file = endpointUrl(request.endpoint) 
+    const file = endpointUrl(request!.endpoint) 
     
     assertPopulatedString(file)
 
@@ -88,7 +86,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       promises.push(definition.loadedAudioPromise.then(EmptyMethod))
     }
     if (visible) {
-      const visibleTranscoding = definition.preferredTranscoding(DefinitionType.VideoSequence, DefinitionType.Video)
+      const visibleTranscoding = definition.preferredTranscoding(DefinitionType.Sequence, DefinitionType.Video)
       if (isTranscoding(visibleTranscoding) ) {
         const audibleTranscoding = audio && audible && definition.preferredTranscoding(DefinitionType.Audio, DefinitionType.Video)
         if (visibleTranscoding !== audibleTranscoding) {
@@ -166,7 +164,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       case DefinitionType.Video: {
         return this.videoItemForPlayerPromise(previewTranscoding, rect, definitionTime)
       }
-      case DefinitionType.VideoSequence: {
+      case DefinitionType.Sequence: {
         return this.sequenceItemPromise(rect, definitionTime)
       }
     }

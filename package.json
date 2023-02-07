@@ -27,7 +27,7 @@
     "build-esm": "npm run build esm",
     
     "test": "npm run build-esm && npm run test-run",
-    "test-run": "docker compose --env-file dev/local.env --file images/tester/dev/docker-compose.yml run --rm -it tester packages",
+    "test-run": "docker compose --env-file dev/local.env --file images/tester/dev/docker-compose.yml run --rm -it tester",
 
     "docker-build":  "docker compose --env-file dev/local.env --file images/${npm_config_image}/dev/docker-compose.yml build",
 

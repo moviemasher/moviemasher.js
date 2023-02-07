@@ -1,8 +1,11 @@
 import { RequestObject } from "../Api/Api"
-import { ResponseObject } from "../MoveMe"
 import { isUndefined } from "./Is"
 import { urlForEndpoint } from "./Url"
 
+export interface ResponseObject {
+  json(): Promise<any>
+
+}
 export const fetchJsonPromise = (apiCallback: RequestObject): Promise<any> => {
   return fetchPromise(apiCallback).then(response => response.json())
 }

@@ -1,13 +1,10 @@
-import { Endpoint, IndexHandler, PreviewItems, StringObject } from "../declarations"
+import { IndexHandler, PreviewItems, StringObject } from "../declarations"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction } from "../Setup/Enums"
-import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Edited } from "../Edited/Edited"
 import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
-import { Mash, MashAndDefinitionsObject, Movable } from "../Edited/Mash/Mash"
-
-import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
-import { Effect } from "../Module/Effect/Effect"
+import { Mash, MashAndDefinitionsObject, MashAndMediaObject, Movable } from "../Edited/Mash/Mash"
+import { Effect } from "../Media/Effect/Effect"
 import { Track } from "../Edited/Mash/Track/Track"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
@@ -19,8 +16,8 @@ import { isObject } from "../Utility/Is"
 import { errorsThrow } from "../Utility/Errors"
 import { Rect } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
-import { Media, MediaObject, MediaObjects } from "../Media/Media"
-// extends Partial<NumberObject> 
+import { Media, MediaObject, MediaObjects, Medias } from "../Media/Media"
+
 export interface EditorIndex {
   layer?: number
   clip?: number
@@ -60,13 +57,12 @@ export function assertMashData(data: EditedData, name?: string): asserts data is
 
 export interface Editor {
   actions: Actions
-  // add(object: DefinitionObject | DefinitionObjects, editorIndex?: EditorIndex): Promise<Definition[]>
   addFiles(files: File[], editorIndex?: EditorIndex): Promise<Media[]>
   addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void>
   addMedia(object: MediaObject | MediaObjects, editorIndex?: EditorIndex): Promise<Media[]>
   addEffect: IndexHandler<Movable>
   addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
-  addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void
+  addMash(mashAndMedia?: MashAndMediaObject, layerAndPosition?: LayerAndPosition): void
   addTrack(): void
   autoplay: boolean
   buffer: number
@@ -77,8 +73,8 @@ export interface Editor {
   currentTime: number
   dataPutRequest(): Promise<DataPutRequest>
   dragging: boolean
-  definitions: Definition[]
-  definitionsUnsaved: Definition[]
+  definitions: Medias
+  definitionsUnsaved: Medias
   duration: number
   readonly edited?: Edited
   editing: boolean
@@ -115,6 +111,6 @@ export interface Editor {
   time: Time
   timeRange: TimeRange
   undo(): void
-  updateDefinition(definitionObject: DefinitionObject, definition?: Definition): Promise<void> 
+  updateDefinition(definitionObject: MediaObject, definition?: Media): Promise<void> 
   volume: number
 }

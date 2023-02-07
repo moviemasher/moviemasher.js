@@ -25,6 +25,7 @@ import { DefaultContentId } from "../Content/Content"
 export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
   const { id } = object
   assertPopulatedString(id, 'imageDefinition id')
+
   return new ImageDefinitionClass(object)
 }
 

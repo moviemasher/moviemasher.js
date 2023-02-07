@@ -12,7 +12,10 @@ import {
   assertMash,
   Mash,
   ApiRequest,
-  ApiResponse
+  ApiResponse,
+  MashAndMediaObject,
+  MediaObjects,
+  MashObject
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
@@ -50,7 +53,9 @@ export function RenderControl(props: PropsAndChild): ReactResult {
           if (endpoint.pathname === Endpoints.data.mash.put) {
             const putRequest: DataMashPutRequest = init!.body!
             const { rendering } = putRequest.mash
-            if (rendering) mash.rendering = rendering
+
+            // TODO: added encoding to mash...
+            // if (rendering) mash.rendering = rendering
           }
           handleApiCallback(apiCallback, mash)
         }
@@ -72,10 +77,12 @@ export function RenderControl(props: PropsAndChild): ReactResult {
 
 
     setProcessing(true)
+    const media: MediaObjects = editor.definitions.map(definition => definition.toJSON())
+    const mashObject: MashObject = edited.toJSON()
+    const mash: MashAndMediaObject = { ...mashObject, media }
     const request: RenderingStartRequest = {
-      mash: edited.toJSON(),
-      definitions: editor.definitions.map(definition => definition.toJSON()),
-      outputs: [{outputType: OutputType.Video}],
+      mash,
+      output: {outputType: OutputType.Video},
     }
     console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {

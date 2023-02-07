@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   assertMedia,
-  Defined, isMediaDefinitionType, assertPopulatedString, ClassDropping, DataType, 
+  Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, 
   ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition
 } from '@moviemasher/moviemasher.js'
 
@@ -56,7 +56,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     if (types.includes(TransferTypeFiles)) return true
 
     const draggingType = dragType(dataTransfer)
-    if (!isMediaDefinitionType(draggingType)) return false
+    if (!isDefinitionType(draggingType)) return false
 
     return definitionTypes.includes(draggingType)
   }

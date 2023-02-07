@@ -6,7 +6,7 @@ import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, Twe
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, Component, VisibleCommandFileArgs } from "../../MoveMe"
 import { IdPrefix, IdSuffix } from "../../Setup/Constants"
-import { EffectObject, Effects } from "../../Module/Effect/Effect"
+import { EffectObject, Effects } from "../Effect/Effect"
 import { Size } from "../../Utility/Size"
 
 export const DefaultContentId = `${IdPrefix}content.image${IdSuffix}`

@@ -1,18 +1,18 @@
 import {
-  DefinitionObject, DefinitionObjects, ContentObject, Timing,
-  MashObject, TrackObject, ClipObject, assertPopulatedString, 
-  DefinitionType, LoadType, ValueObject, OutputType,
-  RenderingInput, RenderingCommandOutput, 
+  MediaObject, MediaObjects, ContentObject, Timing,
+  TrackObject, ClipObject, assertPopulatedString, 
+  DefinitionType, LoadType, ValueObject, MashAndMediaObject, 
+  RenderingCommandOutput, RenderingInput,
 } from "@moviemasher/moviemasher.js"
 
 
-export const renderingInput = (definition: DefinitionObject, clipObject: ValueObject = {}): RenderingInput => {
+export const renderingInput = (definition: MediaObject, clipObject: ValueObject = {}): RenderingInput => {
   const { type, id } = definition
   const definitionObject = {
     ...definition,
-    type: type === DefinitionType.VideoSequence ? DefinitionType.Video : type
+    type: type === DefinitionType.Sequence ? DefinitionType.Video : type
   }
-  const definitions: DefinitionObjects = [definitionObject]
+  const definitions: MediaObjects = [definitionObject]
   const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
   const track: TrackObject = {
     dense: true,// String(type) !== String(DefinitionType.Audio),
@@ -20,8 +20,8 @@ export const renderingInput = (definition: DefinitionObject, clipObject: ValueOb
   }
   const tracks: TrackObject[] = [track]
   const mashObject = { id }
-  const mash: MashObject = { ...mashObject, tracks }
-  return { mash, definitions }
+  const mash: MashAndMediaObject = { ...mashObject, tracks, media: definitions }
+  return { mash }
 }
 
 
@@ -48,7 +48,7 @@ export const renderingSource = (commandOutput?: RenderingCommandOutput): string 
   return `${outputType}.${ext}`
 }
 
-export const renderingClipFromDefinition = (definition: DefinitionObject, overrides: ValueObject = {}): ClipObject => {
+export const renderingClipFromDefinition = (definition: MediaObject, overrides: ValueObject = {}): ClipObject => {
   const { id, type } = definition
   const { id: _, containerId: suppliedContainerId, ...rest } = overrides
   const contentId = id || type
@@ -66,16 +66,16 @@ export const renderingClipFromDefinition = (definition: DefinitionObject, overri
   return visibleClipObject
 }
 
-export const renderingDefinitionObject = (loadType: LoadType, source: string, definitionId: string, label?: string): DefinitionObject => {
+export const renderingMediaObject = (loadType: LoadType, source: string, definitionId: string, label?: string): MediaObject => {
   const type: DefinitionType = definitionTypeFromRaw(loadType) 
-  const definition: DefinitionObject = { id: definitionId, type, source, label }
+  const definition: MediaObject = { id: definitionId, type, source, label }
   return definition
 }
 
 export const definitionTypeFromRaw = (loadType: LoadType): DefinitionType => {
   switch (loadType) {
     case LoadType.Audio: return DefinitionType.Audio
-    case LoadType.Video: return DefinitionType.VideoSequence
+    case LoadType.Video: return DefinitionType.Sequence
     case LoadType.Image: return DefinitionType.Image
     case LoadType.Font: return DefinitionType.Font
   }

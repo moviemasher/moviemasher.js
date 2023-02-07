@@ -1,5 +1,5 @@
 import { SvgItem, ValueObject } from "../../declarations"
-import { CommandFile, CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, SvgImageOptions } from "../../MoveMe"
+import { CommandFile, CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
 import { DefinitionType, LoadType } from "../../Setup/Enums"
 import { ImageDefinition, Image } from "./Image"
 import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
@@ -10,9 +10,9 @@ import { ContainerMixin } from "../Container/ContainerMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { urlPrependProtocol } from "../../Utility/Url"
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
-import { Rect } from "../../Utility/Rect"
+import { Rect, RectOptions } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Requestable } from "../Requestable/Requestable"
+import { Requestable } from "../../Base/Requestable/Requestable"
 import { svgImagePromiseWithOptions } from "../../Utility/Svg"
 import { endpointUrl } from "../../Utility/Endpoint"
 
@@ -83,7 +83,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     })
     const requestable = transcoding || definition
     return requestable.srcPromise.then(url => {
-      const svgImageOptions: SvgImageOptions = { ...rect }
+      const svgImageOptions: RectOptions = { ...rect }
       return svgImagePromiseWithOptions(url, svgImageOptions)
     })
   }

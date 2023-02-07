@@ -8,7 +8,10 @@ let urlBaseValue = ''
 
 
 export const urlBase = (): string => {
-  if (!urlBaseInitialized()) throw new Error(Errors.invalid.baseUrl)
+  if (!urlBaseInitialized()) {
+    console.trace(Errors.invalid.baseUrl)
+    throw new Error(Errors.invalid.baseUrl)
+  }
 
   return urlBaseValue
 }

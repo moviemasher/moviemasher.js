@@ -28,8 +28,9 @@ export const environment = (key: Environment): string => {
   const { [key]: value } = env
   if (isPopulatedString(value)) return value
 
-  const { [key]: defaultValue } = env
+  const { [key]: defaultValue } = environmentDefaults
   if (isPopulatedString(defaultValue)) return defaultValue
 
+  console.warn('environment has no', key, [...Object.keys(env), ...Object.keys(environmentDefaults)])
   return ''
 }

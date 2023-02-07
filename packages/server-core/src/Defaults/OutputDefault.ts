@@ -1,7 +1,8 @@
-import { CommandOutput, CommandOutputs, NumberObject, OutputFormat, OutputType, RenderingCommandOutput } from "@moviemasher/moviemasher.js"
+import { CommandOutput, Errors, NumberObject, OutputFormat, OutputType, RenderingCommandOutput } from "@moviemasher/moviemasher.js"
 
 
 import outputDefaultAudioJson from './audio.json'
+import outputDefaultFontJson from './font.json'
 import outputDefaultImagePngJson from './imagepng.json'
 import outputDefaultVideoJson from './video.json'
 import outputDefaultImageSequenceJson from './imagesequence.json'
@@ -17,6 +18,13 @@ export const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandO
   const commandOutput = outputDefaultAudioJson as RenderingCommandOutput
   return { ...commandOutput,  ...object }
 }
+
+export const outputDefaultFont = (overrides?: CommandOutput): RenderingCommandOutput => {
+  const object = overrides || {}
+  const commandOutput = outputDefaultFontJson as RenderingCommandOutput
+  return { ...commandOutput,  ...object }
+}
+
 
 export const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput => {
   const object = overrides || {}
@@ -51,8 +59,10 @@ export const outputDefaultPopulate = (overrides: RenderingCommandOutput): Render
     case OutputType.Audio: return outputDefaultAudio(overrides)
     case OutputType.Image: return outputDefaultImage(overrides)
     case OutputType.Video: return outputDefaultVideo(overrides)
+    case OutputType.Font: return outputDefaultFont(overrides)
     // case OutputType.ImageSequence: return outputDefaultImageSequence(overrides)
   }
+  throw new Error(Errors.type)
 }
 
 export const outputDefaultRendering = (outputType: OutputType, overrides?: CommandOutput): RenderingCommandOutput => {
@@ -60,9 +70,8 @@ export const outputDefaultRendering = (outputType: OutputType, overrides?: Comma
 }
 
 
-export const renderingCommandOutputs = (commandOutputs: CommandOutputs): CommandOutputs => {
+export const renderingCommandOutput = (output: RenderingCommandOutput): RenderingCommandOutput => {
   const counts: NumberObject = {}
-  return commandOutputs.map(output => {
     const { outputType } = output
     const populated = outputDefaultPopulate(output)
     if (!counts[outputType]) {
@@ -72,7 +81,7 @@ export const renderingCommandOutputs = (commandOutputs: CommandOutputs): Command
       counts[outputType]++
     }
     return populated
-  })
+
 }
 
 

@@ -1,12 +1,9 @@
-import { DefinitionObjects } from "../Definition/Definition"
 import { AndId } from "../declarations"
 import { GraphFiles } from "../MoveMe"
 import { MashObject } from "../Edited/Mash/Mash"
-import { CommandOutput } from "../Output/Output"
 import { StreamingFormat } from "../Setup/Enums"
 import { ApiRequest, ApiResponse } from "./Api"
-import { CommandDescription } from "./Rendering"
-
+import { MediaObjects } from "../Media/Media"
 
 export interface StreamingStartRequest extends ApiRequest {
   format?: StreamingFormat
@@ -35,7 +32,7 @@ export interface StreamingPreloadResponse extends ApiResponse  {}
 
 export interface StreamingCutRequest extends ApiRequest {
   mashObjects: MashObject[]
-  definitionObjects: DefinitionObjects
+  definitionObjects: MediaObjects
 }
 export interface StreamingCutResponse extends ApiResponse {}
 
@@ -69,8 +66,4 @@ export interface StreamingLocalRequest extends ApiRequest, AndId {
 }
 export interface StreamingLocalResponse extends ApiResponse {
   localDescription: RTCSessionDescription
-}
-
-export interface StreamingDescription extends CommandDescription {
-  commandOutput: CommandOutput
 }

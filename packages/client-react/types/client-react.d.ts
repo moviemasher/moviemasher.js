@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import React from "react";
-import { ActivityInfo, AndId, Endpoint, ApiServersResponse, JsonObject, StringSetter, MediaDefinitionType, Medias, VoidMethod, Clip, DroppingPosition, Layer, UnknownObject, MashAndDefinitionsObject, Point, Rect, DefinitionType, MediaObject, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarObject, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, Track, EndpointPromiser, Emitter, EventType, StringObject } from "@moviemasher/moviemasher.js";
+import { ActivityInfo, AndId, Endpoint, ApiServersResponse, JsonObject, MediaDefinitionType, Medias, StringSetter, VoidMethod, Clip, DroppingPosition, Layer, UnknownObject, Point, Rect, DefinitionType, MediaObject, MashAndMediaObject, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarObject, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, Track, EndpointPromiser, Emitter, EventType, StringObject } from "@moviemasher/moviemasher.js";
 import { ThemeIcons } from "@moviemasher/theme-default";
 // TODO: determine if we really need to repeat this
 declare global {
@@ -150,7 +150,7 @@ declare function ApiClient(props: ApiProps): ReactResult;
 interface ApiContextInterface {
     enabled: boolean;
     servers: ApiServersResponse;
-    endpointPromise: (id: string, body?: JsonObject, setStatus?: StringSetter) => Promise<any>;
+    endpointPromise: (id: string, body?: JsonObject) => Promise<any>;
 }
 declare const ApiContextDefault: ApiContextInterface;
 declare const ApiContext: React.Context<ApiContextInterface>;
@@ -237,9 +237,9 @@ declare const isDragDefinitionObject: (value: any) => value is DragDefinitionObj
 declare function assertDragDefinitionObject(value: any): asserts value is DragDefinitionObject;
 interface DragLayerObject extends UnknownObject {
     offset: number;
-    mashAndDefinitions?: MashAndDefinitionsObject;
+    mashAndMedia?: MashAndMediaObject;
 }
-type Draggable = MediaObject | MashAndDefinitionsObject | Clip | Layer | FileList;
+type Draggable = MediaObject | MashAndMediaObject | Clip | Layer | FileList;
 declare enum DragType {
     Mash = "mash",
     Layer = "layer",

@@ -28,8 +28,10 @@ export const isBoolean = (value: any): value is boolean => typeof value === 'boo
 export function assertBoolean(value: any, name?: string): asserts value is Boolean {
   if (!isBoolean(value)) errorsThrow(value, "Boolean", name)
 }
-export const isMethod = (value: any): boolean => typeof value === 'function'
-
+export const isMethod = (value: any): value is Function => typeof value === 'function'
+export function assertMethod(value: any, name?: string): asserts value is Function {
+  if (!isMethod(value)) errorsThrow(value, 'Function', name)
+}
 export const isDefined = (value: any): boolean => !isUndefined(value)
 export function assertDefined(value: any, name?: string): asserts value is true {
   if (!isDefined(value)) errorsThrow(value, 'defined', name)

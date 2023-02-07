@@ -4,6 +4,10 @@ import {
   PreloadableDefinition, PreloadableDefinitionClass, PreloadableDefinitionObject
 } from "./Preloadable"
 import { ContentDefinitionClass } from "../../Media/Content/Content"
+const PreloadableArgs = () => {
+
+}
+
 
 export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Base: T): PreloadableDefinitionClass & T {
   return class extends Base implements PreloadableDefinition {
@@ -14,32 +18,24 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
         source, url, bytes, mimeType 
       } = object as PreloadableDefinitionObject
       // console.log(this.constructor.name, "source", source, "url", url)
+      if (!this.request)
+      if (source) {
 
+      }
       const sourceOrUrl = source || url || ''
-      this.source = source || sourceOrUrl
-      this.url = url || sourceOrUrl
+      
+      // this.source = source || sourceOrUrl
+      // this.url = url || sourceOrUrl
 
-      if (bytes) this.bytes = bytes
-      if (mimeType) this.mimeType = mimeType
+      // if (bytes) this.bytes = bytes
+      // if (mimeType) this.mimeType = mimeType
     }
 
-    bytes = 0
+    // bytes = 0
 
     // loadType!: LoadType
 
-    mimeType = ''
 
-    source: string
 
-    toJSON(): UnknownObject {
-      const json = super.toJSON()
-      if (this.url) json.url = this.url
-      if (this.source) json.source = this.source
-      if (this.bytes) json.bytes = this.bytes
-      if (this.mimeType) json.mimeType = this.mimeType
-      return json
-    }
-
-    url: string
   }
 }

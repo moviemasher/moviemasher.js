@@ -1,23 +1,21 @@
 import {
-  OutputType, RenderingCommandOutput, Size,
+  Size,
   RenderingStartRequest, RenderingStartResponse,
   RenderingStatusResponse, RenderingStatusRequest,
   RenderingUploadRequest, RenderingUploadResponse,
 } from "@moviemasher/moviemasher.js"
 
 import { Server, ServerArgs, ExpressHandler } from "../Server"
+import { RenderingCommandOutputRecord } from "./RenderingServerClass"
 
-export type RenderingCommandOutputs = {
-  [index in OutputType]?: RenderingCommandOutput
-}
 
 export interface RenderingServerArgs extends ServerArgs {
   cacheDirectory: string
   temporaryDirectory: string
-  commandOutputs?: RenderingCommandOutputs
   previewSize?: Size
   outputSize?: Size
   iconSize?: Size
+  commandOutputs: RenderingCommandOutputRecord
 }
 
 export interface RenderingServer extends Server {

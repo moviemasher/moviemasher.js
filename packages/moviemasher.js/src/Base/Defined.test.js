@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { EffectDefinitionClass, OverlayFilter, DefinitionType, Defined } from "@moviemasher/moviemasher.js"
+import { DefaultFontId, EffectDefinitionClass, OverlayFilter, DefinitionType, Defined } from "@moviemasher/moviemasher.js"
 
 describe("Defined.fromId", () => {
   test("returns OverlayFilter", () => {
@@ -18,13 +18,14 @@ describe("Defined.fromId", () => {
   })
 
   test("returns FontDefinition", () => {
-    const definition = Defined.fromId('com.moviemasher.font.default')
+    const definition = Defined.fromId(DefaultFontId)
     assert(definition)
   })
 
   test("returns ImageDefinition", () => {
     const imageDefinitionObject = {
-      id: 'globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg'
+      id: 'globe', type: DefinitionType.Image, 
+      request: { endpoint: { pathname: '../shared/image/globe.jpg' }}
     }
     Defined.define(imageDefinitionObject)
     const definition = Defined.fromId(imageDefinitionObject.id)

@@ -274,8 +274,8 @@ export const GenerateTestsDefault: GenerateTests = {
     ["K", "kitten", {}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
-    ["S", 'com.remixicon.container.heart', {}],
-    ["T", 'com.moviemasher.container.text', textOptions],
+    ["S", 'com.remixicon.container.image.heart', {}],
+    ["T", textOptions.fontId, textOptions],
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [

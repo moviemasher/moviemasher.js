@@ -1,28 +1,25 @@
-import { LoadedAudio, LoadedFont, LoadedImage, LoadedImageOrVideo, LoadedMedia, LoadedSvgImage, LoadedVideo, Scalar, ScalarObject, Value } from "../declarations"
-import { GraphFile, GraphFiles } from "../MoveMe"
-import { Definition, DefinitionObject } from "../Definition/Definition"
+import { LoadedAudio, LoadedFont, LoadedImage, LoadedMedia, LoadedSvgImage, LoadedVideo, ScalarObject, Value } from "../declarations"
 import { GraphFileType, isGraphFileType, isLoadType, LoadType } from "../Setup/Enums"
 import { errorsThrow } from "../Utility/Errors"
 import { isObject, isPopulatedString } from "../Utility/Is"
 
 
 export const isLoadedVideo = (value: any): value is LoadedVideo => {
-  return value instanceof HTMLVideoElement
+  return isObject(value) && value instanceof HTMLVideoElement
 }
-
 export function assertLoadedVideo(value: any, name?: string): asserts value is LoadedVideo {
   if (!isLoadedVideo(value)) errorsThrow(value, "LoadedVideo", name)
 }
 
 export const isLoadedImage = (value: any): value is LoadedImage => {
-  return value instanceof HTMLImageElement
+  return isObject(value) && value instanceof HTMLImageElement
 }
 export function assertLoadedImage(value: any, name?: string): asserts value is LoadedImage {
   if (!isLoadedImage(value)) errorsThrow(value, "LoadedImage", name)
 }
 
 export const isLoadedAudio = (value: any): value is LoadedAudio => {
-  return value instanceof AudioBuffer
+  return isObject(value) && value instanceof AudioBuffer
 }
 export const isLoadedFont = (value: any): value is LoadedFont => {
   return isObject(value) && "family" in value
@@ -33,7 +30,6 @@ export interface ErrorObject {
   label: string
   value?: Value
 }
-export type DefinitionOrErrorObject = DefinitionObject | ErrorObject
 export type Loaded = LoadedFont | LoadedMedia | LoadedSvgImage | AudioBuffer
 
 export interface CommandProbeStream {
@@ -137,26 +133,3 @@ export interface LoaderFile {
 }
 export type LoaderFiles = LoaderFile[]
 
-export interface LoaderCache {
-  error?: any
-  definitions: Definition[]
-  loaded: boolean
-  loadedInfo?: LoadedInfo
-  promise?: Promise<Loaded>
-  result?: Loaded
-}
-
-export interface Loader {
-  flushFilesExcept(fileUrls?: GraphFiles): void
-  getCache(path: LoaderPath): LoaderCache | undefined
-  info(loaderPath: LoaderPath): LoadedInfo | undefined
-  loaded(urlPath: string): boolean
-  loadPromise(urlPath: string | string[], definition: Definition): Promise<any> 
-  updateDefinition(loaderPath: string, definition: Definition): void
-  // RenderingOutputClass, FilterGraphsClass
-  loadFilesPromise(files: GraphFiles): Promise<void>
-  media(urlPath: LoaderPath): Loaded | undefined 
-  // FilterGraphClass, RenderingProcessClass
-  key(graphFile: GraphFile): string
-  sourceUrl(graphFile: GraphFile): string
-}

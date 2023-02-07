@@ -1,14 +1,12 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { AudibleSource, LoadedAudio, UnknownObject } from "../../declarations"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { assertLoadedVideo, isLoadedAudio, Loader } from "../../Loader/Loader"
+import { assertLoadedVideo, isLoadedAudio } from "../../Loader/Loader"
 import { DataType, DefinitionType, Duration } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { isAboveZero, isPopulatedString, isUndefined } from "../../Utility/Is"
+import { isAboveZero, isUndefined } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
-import { urlPrependProtocol } from "../../Utility/Url"
-import { Transcoding } from "../../Media/Transcoding/Transcoding"
 import { endpointFromUrl } from "../../Utility/Endpoint"
 import { requestAudioPromise } from "../../Utility/Request"
 
@@ -21,13 +19,13 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         audioUrl, audio, loop, duration, waveform 
       } = object as UpdatableDurationDefinitionObject
     
-      if (audio || audioUrl ) {//|| loadedAudio
-        this.audio = true
-        if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
-        if (waveform) this.waveform = waveform
-      }
-      // console.log(this.constructor.name, "audio", audio, this.audio, this.audioUrl)
-      if (isAboveZero(duration)) this.duration = duration
+      // if (audio || audioUrl ) {//|| loadedAudio
+      //   this.audio = true
+      //   if (isPopulatedString(audioUrl)) this.audioUrl = audioUrl
+      //   if (waveform) this.waveform = waveform
+      // }
+      // // console.log(this.constructor.name, "audio", audio, this.audio, this.audioUrl)
+      // if (isAboveZero(duration)) this.duration = duration
       // console.log(this.constructor.name, "duration", duration, this.duration)
       if (loop) {
         this.loop = loop
@@ -65,7 +63,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     private _audio?: boolean
     get audio(): boolean { 
       if (isUndefined(this._audio)) {
-        this._audio = this.probings.some(object => object.info?.audible)
+        this._audio = this.decodings.some(object => object.info?.audible)
       }
       return Boolean(this._audio)
     }
@@ -77,9 +75,9 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     private _duration = 0
     get duration(): number {
       if (!isAboveZero(this._duration)) {
-        for (const probing of this.probings) {
-          if (probing?.info?.duration) {
-            this._duration = probing.info.duration
+        for (const object of this.decodings) {
+          if (object?.info?.duration) {
+            this._duration = object.info.duration
             break
           }
         }
@@ -122,25 +120,8 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     loop = false
 
     toJSON() : UnknownObject {
-      const json = super.toJSON()
-      const { duration, audio, loop, waveform, audioUrl, url } = this
-      if (duration) json.duration = duration
-      if (audio) json.audio = audio
-      if (loop) json.loop = loop
-      if (waveform) json.waveform = waveform
-      if (url) json.url = url
-      else if (audioUrl) json.audioUrl = audioUrl
-      return json
+      const { loop } = this
+      return { ...super.toJSON(), loop }
     }
-
-    urlAudible(editing = false): string { 
-      // console.log(this.constructor.name, "urlAudible", editing, this.audioUrl)
-      if (editing) {
-        return urlPrependProtocol('audio', this.audioUrl || this.url) 
-      }
-      return this.source
-    }
-    
-    waveform?: string
   }
 }

@@ -2,11 +2,11 @@ import {
   JsonObject, AndId, StringObject, StringsObject, DescribedObject 
 } from "../declarations"
 import { Size } from "../Utility/Size"
-import { DefinitionObject, DefinitionObjects } from "../Definition/Definition"
-import { MashObject } from "../Edited/Mash/Mash"
+import { MashAndMediaObject, MashObject } from "../Edited/Mash/Mash"
 import { ApiRequest, ApiResponse } from "./Api"
 import { CastObject } from "../Edited/Cast/Cast"
 import { StreamObject } from "../Edited/Cast/Stream/Stream"
+import { MediaObject, MediaObjects } from "../Media/Media"
 
 
 export interface DataPutResponse extends ApiResponse {
@@ -35,7 +35,7 @@ export interface DataRetrieve {
 }
 
 export interface DataDefinitionPutRequest extends ApiRequest {
-  definition: DefinitionObject
+  definition: MediaObject
 }
 
 export interface DataDefinitionPutResponse extends ApiResponse, AndId {
@@ -45,7 +45,7 @@ export interface DataDefinitionRetrieveRequest extends ApiRequest, DataRetrieve 
   types: string[]
 }
 export interface DataDefinitionRetrieveResponse extends ApiResponse {
-  definitions: DefinitionObjects
+  definitions: MediaObjects
 }
 
 export interface DataDefinitionDeleteRequest extends ApiRequest, AndId {}
@@ -64,17 +64,16 @@ export interface DataMashPutRequest extends DataPutRequest {
 }
 export interface DataMashPutResponse extends DataPutResponse { }
 
-export interface DataMashDefinitions {
-  mash: MashObject
-  definitions: DefinitionObjects
+export interface DataMashAndMedia {
+  mash: MashAndMediaObject
 }
 
 export interface DataMashRetrieveRequest extends ApiRequest, DataRetrieve { }
 
-export interface DataMashGetResponse extends ApiResponse, DataMashDefinitions { }
+export interface DataMashGetResponse extends ApiResponse, DataMashAndMedia { }
 
 export interface DataMashDefaultRequest extends ApiRequest {}
-export interface DataMashDefaultResponse extends ApiResponse, DataMashDefinitions {
+export interface DataMashDefaultResponse extends ApiResponse, DataMashAndMedia {
   previewSize?: Size
 }
 
@@ -88,12 +87,12 @@ export interface DataMashDeleteResponse extends ApiResponse {
 
 // CAST
 export interface DataCastDefinitions {
-  definitions: DefinitionObjects
+  definitions: MediaObjects
 }
 
 export interface DataCastRelations {
   cast: CastObject
-  definitions: DefinitionObjects
+  definitions: MediaObjects
 }
 export interface DataCastDefaultRequest extends ApiRequest {}
 export type DataDefaultRequest = DataMashDefaultRequest | DataCastDefaultRequest
@@ -122,7 +121,7 @@ export interface DataCastGetResponse extends DataCastDefaultResponse {
 
 export interface DataDefinitionGetRequest extends ApiRequest, AndId {}
 export interface DataDefinitionGetResponse extends ApiResponse {
-  definition: DefinitionObject
+  definition: MediaObject
 }
 
 export interface DataCastRetrieveRequest extends ApiRequest, DataRetrieve { }
@@ -135,7 +134,7 @@ export interface DataStreamRetrieveResponse extends DataRetrieveResponse {}
 
 export interface DataStreamDefinitions {
   stream: StreamObject
-  definitions: DefinitionObjects
+  definitions: MediaObjects
 }
 
 export interface DataStreamPutRequest extends ApiRequest {

@@ -1,4 +1,4 @@
-import { DefinitionType, LoadType, MediaDefinitionType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { AudioClass } from "./AudioClass"
 import { Audio, AudioDefinition, AudioDefinitionObject, AudioObject } from "./Audio"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -47,7 +47,5 @@ export class AudioDefinitionClass extends AudioDefinitionWithUpdatableDuration i
     })
   }
 
-  type = DefinitionType.Audio as MediaDefinitionType
-
-  // loadType = LoadType.Audio
+  type = DefinitionType.Audio 
 }

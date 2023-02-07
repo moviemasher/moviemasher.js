@@ -8,14 +8,14 @@ import {
   eventStop,
   EditorIndex,
   DataPutResponse,
-  Endpoints, fetchJsonPromise, FileStoreResponse, ServerType,
-  RenderingUploadRequest, RenderingUploadResponse, ApiCallback, 
+  Endpoints, fetchJsonPromise, ServerType,
+  ApiCallback, 
   ApiCallbackResponse,
   DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes, 
   assertObject, EventType, isMashAndDefinitionsObject,
-  idGenerate, ActivityType, Definition, assertPreloadableDefinition, 
+  idGenerate, ActivityType, 
   isClip, isEffect, isLayer, 
-  sizeAboveZero, ScalarObject, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia
+  sizeAboveZero, ScalarObject, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, Medias, isMashAndMediaObject
 } from '@moviemasher/moviemasher.js'
 
 import type { ThemeIcons } from '@moviemasher/theme-default'
@@ -187,8 +187,8 @@ export function Masher(props: MasherProps): ReactResult {
       return dropMediaObject(draggable, editorIndex)
       
     }
-    if (isMashAndDefinitionsObject(draggable)) {
-      console.log("Masher drop MashAndDefinitionsObject")
+    if (isMashAndMediaObject(draggable)) {
+      console.log("Masher drop MashAndMediaObject")
       return Promise.resolve([])
     }
     return dropFiles(draggable, editorIndex).then(definitions => {
@@ -203,7 +203,7 @@ export function Masher(props: MasherProps): ReactResult {
     new Promise(resolve => { setTimeout(resolve, 2000) }) 
   )
 
-  const handleApiCallback = (id: string, definition: Definition, callback: ApiCallback): Promise<void> => {
+  const handleApiCallback = (id: string, definition: Media, callback: ApiCallback): Promise<void> => {
     console.debug("handleApiCallback request", callback)
     const { eventTarget } = editor
     return fetchJsonPromise(callback).then((response: ApiCallbackResponse) => {
@@ -256,49 +256,49 @@ export function Masher(props: MasherProps): ReactResult {
     return Promise.reject(error)
   }
 
-  const saveDefinitionsPromise = (definitions: Definition[]): Promise<void> => {
+  const saveDefinitionsPromise = (definitions: Medias): Promise<void> => {
     let promise = Promise.resolve()
     const { eventTarget } = editor
+throw new Error('')
+    // definitions.forEach(definition => {
+    //   assertPreloadableDefinition(definition)
+    //   const { label, type, source } = definition
 
-    definitions.forEach(definition => {
-      assertPreloadableDefinition(definition)
-      const { label, type, source } = definition
+    //   const id = idGenerate('activity')
+    //   eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
 
-      const id = idGenerate('activity')
-      eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
+    //   const { rendering } = Endpoints
+    //   console.log("Masher fetch", source)
+    //   const responsePromise = fetch(source)
+    //   const blobPromise = responsePromise.then(response => response.blob())
+    //   const filePromise = blobPromise.then(blob => new File([blob], label))
+    //   const resultPromise = filePromise.then(file => {
+    //     const request: RenderingUploadRequest = { type, name: label, size: file.size }
+    //     console.debug("RenderingUploadRequest", rendering.upload, request)
+    //     const responsePromise = endpointPromise(rendering.upload, request)
+    //     return responsePromise.then((response: RenderingUploadResponse) => {
+    //       console.debug("RenderingUploadResponse", rendering.upload, response)
+    //       const { error, fileApiCallback, apiCallback, fileProperty } = response
+    //       if (error) return handleError(rendering.upload, error, id)
 
-      const { rendering } = Endpoints
-      console.log("Masher fetch", source)
-      const responsePromise = fetch(source)
-      const blobPromise = responsePromise.then(response => response.blob())
-      const filePromise = blobPromise.then(blob => new File([blob], label))
-      const resultPromise = filePromise.then(file => {
-        const request: RenderingUploadRequest = { type, name: label, size: file.size }
-        console.debug("RenderingUploadRequest", rendering.upload, request)
-        const responsePromise = endpointPromise(rendering.upload, request)
-        return responsePromise.then((response: RenderingUploadResponse) => {
-          console.debug("RenderingUploadResponse", rendering.upload, response)
-          const { error, fileApiCallback, apiCallback, fileProperty } = response
-          if (error) return handleError(rendering.upload, error, id)
-
-          else if (fileApiCallback && fileApiCallback.init) {
-            if (fileProperty) fileApiCallback.init.body![fileProperty] = file
-            else fileApiCallback.init.body = file
-            return fetchJsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
-              console.debug("FileStoreResponse", response)
-              const { error } = response
-              if (error) return handleError(fileApiCallback.endpoint.pathname!, error, id)
+    //       else if (fileApiCallback && fileApiCallback.init) {
+    //         if (fileProperty) fileApiCallback.init.body![fileProperty] = file
+    //         else fileApiCallback.init.body = file
+    //         return fetchJsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
+    //           console.debug("FileStoreResponse", response)
+    //           const { error } = response
+    //           if (error) return handleError(fileApiCallback.endpoint.pathname!, error, id)
     
-              assertObject(apiCallback, 'apiCallback')
-              return handleApiCallback(id, definition, apiCallback)
-            })
-          } 
-          assertObject(apiCallback, 'apiCallback')
-          return handleApiCallback(id, definition, apiCallback)
-        })
-      })
-      promise = promise.then(() => resultPromise)
-    })
+    //           assertObject(apiCallback, 'apiCallback')
+    //           return handleApiCallback(id, definition, apiCallback)
+    //         })
+    //       } 
+    //       assertObject(apiCallback, 'apiCallback')
+    //       return handleApiCallback(id, definition, apiCallback)
+    //     })
+    //   })
+    //   promise = promise.then(() => resultPromise)
+    // })
     return promise
   }
 

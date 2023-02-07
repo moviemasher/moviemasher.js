@@ -5,7 +5,7 @@ import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
   ApiCallback, UploadDescription, Endpoints, Errors, UploadTypes,
-  FileStoreRequest, FileStoreResponse, JsonObject, LoadTypes, LoadType, assertPopulatedString,
+  FileStoreRequest, FileStoreResponse, JsonObject, LoadType, assertPopulatedString,
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../../Host/Host"

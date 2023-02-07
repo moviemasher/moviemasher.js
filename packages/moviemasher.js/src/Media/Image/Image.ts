@@ -1,6 +1,5 @@
 import { LoadedImage } from "../../declarations"
 import { DefinitionType } from "../../Setup/Enums"
-import { isDefinition } from "../../Definition/Definition"
 import { 
   Container, ContainerObject 
 } from "../Container/Container"

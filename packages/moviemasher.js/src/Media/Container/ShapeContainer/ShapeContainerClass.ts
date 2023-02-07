@@ -21,7 +21,7 @@ import { MediaInstanceBase } from "../../MediaInstance/MediaInstanceBase"
 import { IntrinsicOptions } from "../../../Edited"
 import { Time, TimeRange } from "../../../Helpers"
 import { ContentRectArgs } from "../../Content"
-import { Effects } from "../../../Module/Effect"
+import { Effects } from "../../Effect"
 
 const ShapeContainerWithTweenable = TweenableMixin(MediaInstanceBase)
 const ShapeContainerWithContainer = ContainerMixin(ShapeContainerWithTweenable)

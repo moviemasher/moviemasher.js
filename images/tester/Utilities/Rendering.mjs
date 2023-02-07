@@ -2,7 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import {
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
-  SizePreview, isPopulatedString, EmptyMethod, Duration, idGenerateString
+  SizePreview, isPopulatedString, EmptyMethod, Duration, 
+  idGenerateString
 } from '@moviemasher/moviemasher.js'
 
 import {
@@ -120,7 +121,7 @@ export const renderingJobPromise = (job, filePrefix, defaultDirectory) => {
   return renderingPromise(processArgs)
 }
 
-export const renderingProcessArgs = (id) => {
+export const renderingProcessArgs = id => {
 
   const options = {
     mash: {}, outputs: [], definitions: [], upload: false

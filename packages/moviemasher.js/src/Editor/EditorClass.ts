@@ -4,14 +4,13 @@ import {
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../Utility/Size"
 import { Media, MediaObject, MediaObjects, isMediaObject } from "../Media/Media"
 import { Edited, isEdited } from "../Edited/Edited"
-import { assertMash, isMash, Mash, MashAndDefinitionsObject, Movable, Movables } from "../Edited/Mash/Mash"
+import { assertMash, isMash, Mash, MashAndDefinitionsObject, MashAndMediaObject, Movable, Movables } from "../Edited/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs} from "../Helpers/Time/TimeUtilities"
-import { assertEffect } from "../Module/Effect/Effect"
+import { assertEffect } from "../Media/Effect/Effect"
 import { assertTrack, Track } from "../Edited/Mash/Track/Track"
-import { BrowserLoaderClass } from "../Loader/BrowserLoaderClass"
 import { Default } from "../Setup/Default"
 import {
   ActionType, assertEditType, DefinitionType, EditType, 
@@ -43,7 +42,7 @@ import { Layer, LayerAndPosition, LayerObject } from "../Edited/Cast/Layer/Layer
 import { Defined } from "../Base/Defined"
 import { assertClip, isClip, ClipObject, Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
 import { clipInstance } from "../Edited/Mash/Track/Clip/ClipFactory"
-import { assertContent, isContentDefinition } from "../Media/Content/Content"
+import { assertContent } from "../Media/Content/Content"
 import { DataPutRequest } from "../Api/Data"
 import { svgSvgElement, svgPolygonElement, svgElementInitialize, svgElement } from "../Utility/Svg"
 import { idGenerate, idIsTemporary } from "../Utility/Id"
@@ -60,8 +59,6 @@ import { MoveActionOptions } from "./Actions/Action/MoveAction"
 import { urlBaseInitialize, urlBaseInitialized } from "../Utility/Url"
 import { filePromises } from "../Utility/File"
 import { isMedia } from "../Media/Media"
-import { Definition, DefinitionObject, DefinitionObjects } from "../Definition/Definition"
-import { DefinedDefinitions } from "../Base/DefinedDefinitions"
 
 export class EditorClass implements Editor {
   constructor(args: EditorArgs) {
@@ -225,15 +222,13 @@ export class EditorClass implements Editor {
     this.actions.create(options)
   }
 
-  addMash(mashAndDefinitions?: MashAndDefinitionsObject, layerAndPosition?: LayerAndPosition): void {
+  addMash(mashAndMedia: MashAndMediaObject = { media: []}, layerAndPosition?: LayerAndPosition): void {
     const { cast } = this.selection
     assertCast(cast)
 
-    const mashObject = mashAndDefinitions?.mashObject || {}
-    // console.log(this.constructor.name, "addMash", mashObject)
-    const definitionObjects = mashAndDefinitions?.definitionObjects || []
+    const { media, ...mashObject } = mashAndMedia
 
-    Defined.define(...definitionObjects)
+    Defined.define(...media)
     const layerObject: LayerObject = { type: LayerType.Mash, mash: mashObject }
     const layer = cast.createLayer(layerObject)
     assertLayerMash(layer)
@@ -286,9 +281,9 @@ export class EditorClass implements Editor {
     if (!isMash(mash)) {
       const first = isArray(clip) ? clip[0] : clip
       const { label } = first.content.definition
-      const mashObject = { label }
+      const mashObject: MashAndMediaObject = { label, media: [] }
       if (editType === EditType.Mash) return this.load({ mash: mashObject})
-      this.addMash({ mashObject, definitionObjects: [] })
+      this.addMash(mashObject)
     }
     return Promise.resolve()
   }
@@ -611,10 +606,11 @@ export class EditorClass implements Editor {
   }
 
   private loadMashData(data: MashData = {}): Promise<void> {
-    const { mash: mashObject = {}, definitions: definitionObjects = [] } = data
+    const { mash: mashAndMedia = { media: [] } } = data
+    const { media, ...mashObject } = mashAndMedia
     // console.log(this.constructor.name, "loadMashData LOADING", mashObject, definitionObjects)
     Defined.undefineAll()
-    Defined.define(...definitionObjects)
+    Defined.define(...media)
     const mash = mashInstance(mashObject)
     this.mashDestroy()
     return this.configureMash(mash)

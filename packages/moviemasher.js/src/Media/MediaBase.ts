@@ -1,6 +1,6 @@
 import { Defined } from "../Base/Defined"
 import { UnknownObject } from "../declarations"
-import { PreloadArgs } from "../MoveMe"
+import { PreloadArgs, ServerPromiseArgs } from "../MoveMe"
 import { DefinitionType } from "../Setup/Enums"
 import { Errors } from "../Setup/Errors"
 import { Property } from "../Setup/Property"
@@ -10,22 +10,22 @@ import { Size } from "../Utility/Size"
 import { Media, MediaObject } from "./Media"
 import { MediaInstance, MediaInstanceObject } from "./MediaInstance/MediaInstance"
 import { MediaInstanceBase } from "./MediaInstance/MediaInstanceBase"
-import { Probings } from "./Probing/Probing"
-import { probingInstance } from "./Probing/ProbingFactory"
-import { Transcoding, Transcodings } from "./Transcoding/Transcoding"
-import { TranscodingClass } from "./Transcoding/TranscodingClass"
-import { transcodingInstance } from "./Transcoding/TranscodingFactory"
+import { Decodings } from "../Decode/Decoding/Decoding"
+import { decodingInstance } from "../Decode/Decoding/DecodingFactory"
+import { Transcoding, Transcodings } from "../Transcode/Transcoding/Transcoding"
+import { TranscodingClass } from "../Transcode/Transcoding/TranscodingClass"
+import { transcodingInstance } from "../Transcode/Transcoding/TranscodingFactory"
 
 export class MediaBase extends TranscodingClass implements Media { 
   constructor(object: MediaObject) {
     super(object)
     
     const { 
-      label, probings, transcodings, 
+      label, decodings, transcodings, 
     } = object 
  
     if (label) this.label = label
-    if (probings) this.probings.push(...probings.map(probingInstance))
+    if (decodings) this.decodings.push(...decodings.map(decodingInstance))
     if (transcodings) this.transcodings.push(...transcodings.map(transcodingInstance))
   }
   propertiesCustom!: Property[]
@@ -67,25 +67,29 @@ export class MediaBase extends TranscodingClass implements Media {
     return this
   }
 
-  get serverPromise(): Promise<void> {
+  serverPromise(args: ServerPromiseArgs): Promise<void> {
+
     if (this.serverPath) return Promise.resolve()
 
     const { request } = this
     return requestPromise(request).then(response => {
       const { error, path } = response
-      if (!error) this.serverPath = path
+      if (!error) {
+        assertPopulatedString(path, 'path')
+        this.serverPath = path
+      }
     })
   }
   
   toJSON(): UnknownObject {
-    const { label, probings, transcodings } = this
-    return { ...super.toJSON(), label, probings, transcodings }
+    const { label, decodings, transcodings } = this
+    return { ...super.toJSON(), label, decodings, transcodings }
   }
 
   label: string = ''
   transcodings: Transcodings = []
   properties: Property[] = []
-  probings: Probings = []
+  decodings: Decodings = []
   serverPath = ''
 
   static fromObject(object: MediaObject): Media {

@@ -1,5 +1,5 @@
 import { LoadedImage } from "../../declarations"
-import { DefinitionType, MediaDefinitionType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -10,9 +10,9 @@ import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinit
 import { isLoadedImage } from "../../Loader/Loader"
 import { assertSizeAboveZero, Size, sizeCover } from "../../Utility/Size"
 import { MediaBase } from "../MediaBase"
-import { PreloadArgs, SvgImageOptions } from "../../MoveMe"
+import { PreloadArgs } from "../../MoveMe"
 import { requestImagePromise } from "../../Utility/Request"
-import { centerPoint } from "../../Utility/Rect"
+import { centerPoint, RectOptions } from "../../Utility/Rect"
 import { svgImagePromiseWithOptions, svgSvgElement } from "../../Utility/Svg"
 
 const ImageDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
@@ -38,7 +38,7 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
       const inSize = { width, height }
       const coverSize = sizeCover(inSize, size, true)
       const outRect = { ...coverSize, ...centerPoint(size, coverSize) }
-      const options: SvgImageOptions = {
+      const options: RectOptions = {
         ...outRect
       }
       return svgImagePromiseWithOptions(src, options).then(svgImage => {
@@ -69,5 +69,5 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
   
   loadedImage?: LoadedImage 
   
-  type = DefinitionType.Image as MediaDefinitionType
+  type = DefinitionType.Image 
 }

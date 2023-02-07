@@ -9,14 +9,14 @@ describe("audio", () => {
   const quantize = 10
   const duration = 10 // frames
   const seconds = duration * quantize
-  const mediaObject = { 
+  const audioMediaObject = { 
     id: 'audio-blah', 
     url: "audio.mp3", 
     duration: seconds, 
     type: DefinitionType.Audio
   }
   // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: DefinitionType.Audio}
-  const definition = () => audioDefinition(mediaObject)
+  const definition = () => audioDefinition(audioMediaObject)
   const defaults = { startTrim: 0, gain: 1.0 } //frame: 0, frames: -1, 
 
   describe("instance", () => {

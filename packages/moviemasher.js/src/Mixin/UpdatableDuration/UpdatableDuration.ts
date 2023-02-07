@@ -1,7 +1,6 @@
 import { AudibleSource, Constrained, LoadedAudio, StartOptions, Value } from "../../declarations"
 import { TimeRange } from "../../Helpers/Time/Time"
-import { Loader } from "../../Loader/Loader"
-import { DefinitionType, isDefinitionType, isMediaDefinitionType } from "../../Setup/Enums"
+import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
 import { errorsThrow } from "../../Utility/Errors"
 import {
   isPreloadable, isPreloadableDefinition,
@@ -12,7 +11,7 @@ import {
 export const UpdatableDurationDefinitionTypes = [
   DefinitionType.Audio,
   DefinitionType.Video,
-  // DefinitionType.VideoSequence,
+  // DefinitionType.Sequence,
 ]
 export interface UpdatableDurationObject extends PreloadableObject {
   gain?: Value
@@ -45,7 +44,7 @@ export function assertUpdatableDuration(value?: any, name?: string): asserts val
 }
 
 export const isUpdatableDurationType = (value: any): value is DefinitionType => {
-  return isMediaDefinitionType(value) && UpdatableDurationDefinitionTypes.includes(value)
+  return isDefinitionType(value) && UpdatableDurationDefinitionTypes.includes(value)
 }
 
 export interface UpdatableDurationDefinition extends PreloadableDefinition {
@@ -57,7 +56,6 @@ export interface UpdatableDurationDefinition extends PreloadableDefinition {
   loadedAudio?: LoadedAudio
   loadedAudioPromise: Promise<LoadedAudio> 
   loop: boolean
-  urlAudible(editing?: boolean): string
 }
 export const isUpdatableDurationDefinition = (value?: any): value is UpdatableDurationDefinition => {
   return isPreloadableDefinition(value) && "audibleSource" in value

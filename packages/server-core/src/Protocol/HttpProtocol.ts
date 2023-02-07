@@ -3,12 +3,12 @@ import http from 'http'
 
 import path from 'path'
 
-import { errorFromAny, RequestObject, ProtocolPromise, Protocols, urlFilename, RequestRecord, PathOrError, PotentialError, requestPromise, MediaDefinitionType, resolverPromise, resolverExtension } from "@moviemasher/moviemasher.js"
+import { errorFromAny, RequestObject, ProtocolPromise, Protocols, urlFilename, RequestRecord, PathOrError, DefinitionType, resolverPromise, resolverExtension } from "@moviemasher/moviemasher.js"
 import { requestArgs, requestArgsHash } from '../Utility/Request'
 import { Environment, environment } from '../Utility/Environment'
 
 
-const promise = ((request: RequestObject, type?: string | MediaDefinitionType) => {
+const promise = ((request: RequestObject, type?: string | DefinitionType) => {
   console.log('HTTP', request)
   const record: RequestRecord = {}
   const response: PathOrError = { path: '' }

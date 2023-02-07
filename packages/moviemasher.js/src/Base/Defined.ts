@@ -1,9 +1,8 @@
 import { IdPrefix } from "../Setup/Constants"
-import { assertDefinitionType, MediaDefinitionType, isModuleDefinitionType, ModuleDefinitionType, isMediaDefinitionType } from "../Setup/Enums"
+import { assertDefinitionType, DefinitionType, isDefinitionType } from "../Setup/Enums"
 import { assertPopulatedString } from "../Utility/Is"
 import { assertMedia, Media, MediaObject, MediaObjects, Medias } from "../Media/Media"
 import { mediaDefinition } from "../Media/MediaFactory"
-import { ModuleDefaults } from "../Module/ModuleDefaults"
 import { MediaDefaults } from "../Media/MediaDefaults"
 
 
@@ -12,15 +11,17 @@ export class Defined {
 
   private static byIdAdd(definition: Media | Medias) {
     const definitions = Array.isArray(definition) ? definition : [definition]
-    definitions.forEach(definition => this.byId.set(definition.id, definition))
+    definitions.forEach(definition => {
+      console.log('Defined.byIdAdd', definition.id)
+      this.byId.set(definition.id, definition)
+    })
   }
 
-  static byType(type: MediaDefinitionType): Medias {
+  static byType(type: DefinitionType): Medias {
     const list = this.definitionsByType.get(type)
     if (list) return list
 
-    const isModule = isModuleDefinitionType(type)
-    const definitions = isModule ? ModuleDefaults[type] : MediaDefaults[type]
+    const definitions = MediaDefaults[type]
     this.definitionsByType.set(type, definitions)
     return definitions
   }
@@ -46,11 +47,11 @@ export class Defined {
     definitions.splice(index, 1)
   }
 
-  private static definitionsByType = new Map<MediaDefinitionType, Medias>()
+  private static definitionsByType = new Map<DefinitionType, Medias>()
 
-  private static definitionsType(id: string): MediaDefinitionType | undefined {
+  private static definitionsType(id: string): DefinitionType | undefined {
     const type = id.split('.').slice(-2).shift()
-    return isMediaDefinitionType(type) ? type : undefined
+    return isDefinitionType(type) ? type : undefined
   }
 
   static fromId(id: string): Media {
@@ -71,7 +72,7 @@ export class Defined {
     if (this.installed(id) || this.predefined(id)) return this.fromId(id)
 
     const definitionType = type || this.definitionsType(id)
-    assertDefinitionType(definitionType)
+    assertDefinitionType(definitionType, 'type')
     object.type = definitionType
     return this.install(this.definition(object))
   }
@@ -111,7 +112,7 @@ export class Defined {
     // console.log(this.name, "undefineAll")
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.byId = new Map<string, Media>()
-    this.definitionsByType = new Map<MediaDefinitionType, Medias>()
+    this.definitionsByType = new Map<DefinitionType, Medias>()
   }
 
   static updateDefinition(oldDefinition: Media, newDefinition: Media): Media {

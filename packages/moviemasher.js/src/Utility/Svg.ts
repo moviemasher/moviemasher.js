@@ -1,12 +1,11 @@
 import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from "./Size"
 import { NamespaceSvg } from "../Setup/Constants"
 import { assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from "./Is"
-import { isOrientation, Orientation } from "../Setup/Enums"
+import { Orientation } from "../Setup/Enums"
 import { LoadedSvgImage, StringObject, SvgFilter, SvgFilters, SvgItem, SvgItems } from "../declarations"
 import { idGenerateString } from "./Id"
 import { assertPoint, isPoint, Point, pointCopy, PointZero } from "./Point"
-import { Rect } from "./Rect"
-import { SvgImageOptions } from "../MoveMe"
+import { Rect, RectOptions } from "./Rect"
 
 
 let _svgElement: SVGSVGElement
@@ -325,7 +324,7 @@ export const svgText = (string: string, family: string, size: number, transform:
   return svgItem
 }
 
-export const svgImagePromiseWithOptions = (url:string, options: SvgImageOptions): Promise<LoadedSvgImage> => {
+export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Promise<LoadedSvgImage> => {
   return svgImagePromise(url).then(item => {
     const { lock, ...rest } = options
     svgSetDimensionsLock(item, rest, lock)

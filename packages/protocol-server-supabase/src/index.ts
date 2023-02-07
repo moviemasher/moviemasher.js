@@ -1,6 +1,10 @@
 import { PathOrError, PotentialError } from "@moviemasher/moviemasher.js"
 import { hashMd5 } from "@moviemasher/server-core"
 
+
+export type EnvScope = Record<string, string | undefined>
+
+
 const callback =async (params:type) => {
   
   const { token } = input as any

@@ -1,3 +1,4 @@
+import { Orientation } from "../Setup/Enums";
 import { errorsThrow } from "./Errors";
 import { isPoint, Point, pointCopy, pointRound, pointsEqual, pointString, PointTuple, PointZero } from "./Point";
 import { isSize, Size, sizeCopy, sizeRound, sizesEqual, sizeString, SizeTuple, SizeZero } from "./Size";
@@ -56,4 +57,9 @@ export const rectString = (dimensions: any): string => {
   if (isSize(dimensions)) bits.push(sizeString(dimensions))
   if (isPoint(dimensions)) bits.push(pointString(dimensions))
   return bits.join(';')
+}
+
+
+export interface RectOptions extends Partial<Rect> {
+  lock?: Orientation
 }

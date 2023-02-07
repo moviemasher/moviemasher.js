@@ -6,12 +6,12 @@ import {
   } from "@moviemasher/moviemasher.js"
 
 describe("image", () => {
-  const mediaObject = {
+  const imageMediaObject = {
     id: 'image-id',
     url: "../shared/image/globe.jpg",
     type: DefinitionType.Image,
   }
-  const definition = () => imageDefinition(mediaObject)
+  const definition = () => imageDefinition(imageMediaObject)
 
   describe("instance", () => {
     test("return ImageClass instance", () => {

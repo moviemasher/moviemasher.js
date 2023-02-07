@@ -4,6 +4,7 @@ services:
   tester:
     env_file:
       - ../../../dev/local.env
+      - ./test.env
     build: 
       context: ../../../
       dockerfile: images/tester/dev/Dockerfile.cnf
@@ -30,5 +31,5 @@ services:
       - ../../../packages/theme-default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/theme-default.js
 
       - ../../../temporary/standalone:${MOVIEMASHER_DIR_ROOT}/temporary/standalone
-    entrypoint: node --experimental-global-customevent --experimental-json-modules --test
-    command:  packages
+    entrypoint: node --experimental-global-customevent --experimental-json-modules --test 
+    command: packages

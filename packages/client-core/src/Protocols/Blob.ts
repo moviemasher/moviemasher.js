@@ -20,7 +20,11 @@ const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
 }
 
 
-const audioPromise = (url:string): Promise<LoadedAudio | any> => {
+const audioPromise = (request: RequestObject): Promise<LoadedAudio | any> => {
+  const { endpoint } = request
+  const absolute = endpointAbsolute(endpoint)
+  const url = endpointUrl(absolute)
+
   assertPopulatedString(url, 'url')
   // console.log(this.constructor.name, "audioPromise", isBlob ? 'BLOB' : url)
   const promise = blobAudioPromise(url) 
@@ -51,14 +55,12 @@ const audioPromise = (url:string): Promise<LoadedAudio | any> => {
 
 
 const promise = ((request: RequestObject, type?: DefinitionType) => {
-  const { endpoint } = request
-  const absolute = endpointAbsolute(endpoint)
-  const url = endpointUrl(absolute)
+
   // console.log('blob promise', url, absolute, endpoint)
   switch (type) {
-    case DefinitionType.Audio: return audioPromise(url)
-    case DefinitionType.Image: return imagePromise(url)
-    case DefinitionType.Video: return videoPromise(url)
+    case DefinitionType.Audio: return audioPromise(request)
+    case DefinitionType.Image: return imagePromise(request)
+    case DefinitionType.Video: return videoPromise(request)
 
     // case DefinitionType.Font: return fontPromise(url)
 

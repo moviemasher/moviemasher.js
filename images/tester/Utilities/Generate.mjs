@@ -6,7 +6,8 @@ import {
   assertSize, SizePreview, isSize, 
   assertContainerObject, isContainerObject,
   assertPoint, isPoint, errorsThrow,
-  Directions, Duration, DefaultContentId, DefaultContainerId
+  Directions, Duration, DefaultContentId, DefaultContainerId, 
+  DefaultFontId, DefinitionType
 } from '@moviemasher/moviemasher.js'
 
 const GeneratePoint = {
@@ -138,7 +139,7 @@ const generateClips = (testId, size = SizePreview, frames = Duration.Unknown, la
     width: 1,
   }
   const debugClip = {
-    containerId: 'com.moviemasher.container.text',
+    containerId: DefaultFontId,
     content: { color: colorBlack },
     sizing: 'preview',
     timing: 'custom',
@@ -242,8 +243,8 @@ export const GenerateTestsDefault = {
     ["K", "kitten", {}],
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
-    ["S", 'com.remixicon.container.heart', {}],
-    ["T", 'com.moviemasher.container.text', textOptions],
+    ["S", 'com.remixicon.image.heart', {}],
+    ["T", textOptions.fontId, textOptions],
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
@@ -306,34 +307,36 @@ export const generateArgsStatic = (renderTestOption) => {
 
 export const GenerateDefinitionObjects = [
   {
-    "id": "puppy",
-    "type": "image",
-    "source": "../shared/image/puppy/image.jpg",
-    "width": 3024, "height": 4032
+    id: "puppy",
+    type: "image",
+    request: { endpoint: { pathname: "../shared/image/puppy/image.jpg" } },
+    decodings: [{width: 3024, height: 4032}]
   },
   {
     "id": "rgb",
     "type": "video",
-    "source": "../shared/video/rgb.mp4",
+    request: { endpoint: { pathname: "../shared/video/rgb.mp4" } },
+    decodings: [{width: 512, height: 288, audible: true }]
   },
   {
     "id": "kitten",
     "type": "image",
-    "source": "../shared/image/kitten/image.jpg",
-    "width": 4592, "height": 3056
+    request: { endpoint: { pathname: "../shared/image/kitten/image.jpg" } },
+    decodings: [{width: 4592, height: 3056}]
   },
   {
     "id": "font.valken",
     "type": "font",
     "label": "Valken",
-    "url": "../shared/font/valken/valken.woff2",
-    "source": "../shared/font/valken/valken.ttf"
+    request: { endpoint: { pathname: "../shared/font/valken/valken.ttf" } },
+    transcodings: [
+      { type: DefinitionType.Font, request: { endpoint: { pathname: "../shared/font/valken/valken.woff2" } }}
+    ]
   },
   {
     "type": "video",
     "label": "Video", "id": "video",
-    "url": "../shared/video/dance.mp4",
-    "source": "../shared/video/dance.mp4"
+    request: { endpoint: { pathname: "../shared/video/dance.mp4" } },
   }
 ]
 
@@ -346,7 +349,7 @@ export const generateIds = (generateOptions = {}) => {
 
     return renderTests.filter(renderTest => idArray.includes(String(renderTest[0])))
   }
-  const mashIdss = []
+  const mashIds = []
   const limitedContents = limitedOptions(GenerateArg.Content) 
   assertPopulatedArray(limitedContents, 'limitedContents')
   limitedContents.forEach(([contentLabel, contentId]) => {

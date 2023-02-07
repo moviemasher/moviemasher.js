@@ -3,12 +3,12 @@ import path from 'path'
 import {
   SizePreview,
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
-  isPopulatedString, RenderingCommandOutput, EmptyMethod, Duration, idGenerateString
+  isPopulatedString, EmptyMethod, Duration, idGenerateString
 } from '@moviemasher/moviemasher.js'
 
 
 import {
-  commandProcess, ExtensionLoadedInfo, Probe, RenderingArgs, 
+  commandProcess, RenderingCommandOutput, ExtensionLoadedInfo, Probe, RenderingArgs, 
   renderingOutputFile, RenderingProcessArgs, RenderingProcessInput, 
   renderingProcessInstance 
 } from '@moviemasher/server-core'

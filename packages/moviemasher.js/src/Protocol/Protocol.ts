@@ -21,13 +21,13 @@ export interface ProtocolResponse extends PotentialError {
   requests: RequestRecord
 }
 
-export type ProtocolObject = Record<string, Protocol>
+export type ProtocolRecord = Record<string, Protocol>
+
+export const Protocols: ProtocolRecord = {}
 
 export const protocolName = (protocol: string) => (
   protocol.endsWith(':') ? protocol.slice(0, -1) : protocol
 )
-
-export const Protocols: ProtocolObject = {}
 
 export const protocolImportPrefix = (id: string) => {
   const components = []

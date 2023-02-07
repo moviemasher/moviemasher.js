@@ -35,13 +35,10 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
     }
 
     get sourceSize(): Size | undefined {
-      const probing = this.probings.find(probing => {
-        return probing.info
-      })
-      // console.log(this.constructor.name, "sourceSize probing", probing, this.probings)
-      if (!probing) return
+      const decoding = this.decodings.find(object => object.info)
+      if (!decoding) return
 
-      const { width, height } = probing.info!
+      const { width, height } = decoding.info!
       if (!(isAboveZero(width) && isAboveZero(height))) return 
 
       return { width, height }

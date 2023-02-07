@@ -1,18 +1,21 @@
 import path from 'path'
 import {
   ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
-  CommandOutput, LoadType, Size
+  LoadType, Size, CommandOutput 
 } from "@moviemasher/moviemasher.js"
-import { outputDefaultDash, outputDefaultRtmp, outputDefaultHls, expandFileOrScript } from '@moviemasher/server-core'
+import { 
+  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, expandFileOrScript
+} from '@moviemasher/server-core'
 
 import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
 import { DataServerArgs } from "../Server/DataServer/DataServer"
 import { FileServerArgs } from "../Server/FileServer/FileServer"
-import { RenderingCommandOutputs, RenderingServerArgs } from "../Server/RenderingServer/RenderingServer"
+import { RenderingServerArgs } from "../Server/RenderingServer/RenderingServer"
 import { ServerAuthentication } from "../Server/Server"
 import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "./Host"
+import { RenderingCommandOutputRecord } from '../Server/RenderingServer/RenderingServerClass'
 
 const OpenAuthentication: ServerAuthentication = { type: 'basic' }
 
@@ -31,7 +34,7 @@ export interface HostOptionsDefault {
   privateDirectory?: string
   publicDirectory?: string
   version?: string
-  renderingCommandOutputs?: RenderingCommandOutputs
+  renderingCommandOutputs?: RenderingCommandOutputRecord
 }
 
 export const HostDefaultPort = 8570
@@ -64,7 +67,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
 
   if (outputRate) commandOutput.videoRate = outputRate
 
-  const commandOutputs: RenderingCommandOutputs = renderingCommandOutputs || {}
+  const commandOutputs: RenderingCommandOutputRecord = renderingCommandOutputs || {}
 
   const uploadsRelative = path.relative(publicDirectory, uploadDir)
 

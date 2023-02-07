@@ -1,6 +1,5 @@
-import path from 'path'
 import { 
-  endpointAbsolute, endpointUrl, RequestObject, urlExtension
+  endpointAbsolute, RequestObject
 } from "@moviemasher/moviemasher.js"
 
 import { RequestArgs } from "../declarations"

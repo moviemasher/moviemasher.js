@@ -5,7 +5,7 @@ import internal, { PassThrough } from 'stream'
 import wrtc from 'wrtc'
 
 import {
-  CommandOutput, OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual, sizeString
+  OutputFormat, CommandInput, Timeout, AVType, Size, sizesEqual, CommandOutput
 } from '@moviemasher/moviemasher.js'
 
 import { ConnectionJson } from '../../declarations'

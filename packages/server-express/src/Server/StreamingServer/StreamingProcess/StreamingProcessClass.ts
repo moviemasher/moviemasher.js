@@ -1,12 +1,12 @@
 import fs from 'fs'
 import {
-  DefinitionObjects, DefinitionType, ImageDefinitionObject,
+  MediaObjects, DefinitionType, ImageDefinitionObject,
   MashObject, OutputFormat, UnknownObject, CommandInput, ValueObject,
-  WithError, mashInstance, ExtTs, ExtHls, CommandOptions, ClipObject, isString, isNumber, Defined,
+  WithError, mashInstance, ExtTs, ExtHls, ClipObject, isString, isNumber, Defined,
 } from "@moviemasher/moviemasher.js"
 import EventEmitter from "events"
 import path from "path"
-import { VideoStreamOutputArgs, VideoStreamOutputClass, RunningCommand, runningCommandDelete, runningCommandInstance, NodeLoader } from "@moviemasher/server-core"
+import { VideoStreamOutputArgs, VideoStreamOutputClass, RunningCommand, runningCommandDelete, runningCommandInstance, CommandOptions } from "@moviemasher/server-core"
 
 import { StreamingProcessArgs, StreamingProcessCutArgs } from "./StreamingProcess"
 import { directoryLatest } from '../../../Utilities/Directory'
@@ -40,9 +40,9 @@ export class StreamingProcessClass extends EventEmitter {
     } = this.args
     const { mashObjects, definitionObjects } = args
     Defined.define(...definitionObjects)
-    const preloader = new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories)
+    // const preloader = new NodeLoader(temporaryDirectory, cacheDirectory, filePrefix, defaultDirectory, validDirectories)
     const mashes = mashObjects.map(mashObject => {
-      return mashInstance({ ...mashObject, definitionObjects, preloader })
+      return mashInstance({ ...mashObject, definitionObjects })
     })
     const commandOutput = { ...this.args.commandOutput, options: this.currentOptions }
 
@@ -115,7 +115,7 @@ export class StreamingProcessClass extends EventEmitter {
     }
     const clip: ClipObject = { contentId, container: { height: 0.2 } }
     const mashObject: MashObject = { tracks: [{ clips: [clip] }] }
-    const definitionObjects: DefinitionObjects = [definitionObject]
+    const definitionObjects: MediaObjects = [definitionObject]
     const mashObjects: MashObject[] = [mashObject]
     const args: StreamingProcessCutArgs = { mashObjects, definitionObjects }
     console.log(this.constructor.name, "defaultContent", definitionObject)

@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMash, endpointFromUrl, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { assertMash, endpointFromUrl, endpointUrl, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -10,11 +10,12 @@ export function ViewControl(props: PropsAndChild): ReactResult {
   const editor = useEditor()
 
   const getDisabled = () => {
-  const { edited } = editor
+    const { edited } = editor
     if (!isMash(edited)) return true
 
-    const { rendering } = edited
-    return !rendering
+    const { encodings } = edited
+  
+    return !encodings.length
   }
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
@@ -30,8 +31,10 @@ export function ViewControl(props: PropsAndChild): ReactResult {
 
     const { edited } = editor
     assertMash(edited)
-    const endpoint = endpointFromUrl(edited.rendering)
-    const url = urlForEndpoint(endpoint)
+    
+    const { encodings } = edited
+    const [encoding] = encodings
+    const url = endpointUrl(encoding.request.endpoint)
     window.open(url)
   }
   const buttonOptions = { ...rest, onClick, disabled }

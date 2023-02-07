@@ -7,7 +7,6 @@ import { DefinitionType } from "../../Setup/Enums"
 export const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
   const { id } = object
   assertPopulatedString(id)
-
   return new VideoDefinitionClass(object)
 }
 

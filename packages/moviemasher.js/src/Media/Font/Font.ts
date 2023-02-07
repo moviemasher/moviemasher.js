@@ -1,6 +1,5 @@
-import { PreloadArgs, GraphFiles } from "../../MoveMe"
 import { DefinitionType } from "../../Setup/Enums"
-import { isMedia, Media, MediaObject } from "../Media"
+import { isMedia } from "../Media"
 import { PreloadableDefinition, PreloadableDefinitionObject, PreloadableObject } from "../../Mixin/Preloadable/Preloadable"
 import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer } from "../Container/Container"
 import { IdPrefix, IdSuffix } from "../../Setup/Constants"
@@ -15,21 +14,6 @@ export interface FontDefinitionObject extends ContainerDefinitionObject, Preload
 
 export interface FontObject extends ContainerObject, PreloadableObject {}
 
-export interface FontDefinition extends ContainerDefinition, PreloadableDefinition {
-  source: string
-  family: string
-  url: string
-  instanceFromObject(object?: FontObject): Font
-}
-
-export const isFontDefinition = (value: any): value is FontDefinition => {
-  return isMedia(value) && value.type === DefinitionType.Font
-}
-export function assertFontDefinition(value: any): asserts value is FontDefinition {
-  if (!isFontDefinition(value)) throw new Error("expected FontDefinition")
-}
-
-
 export interface Font extends Container {
   definition: FontDefinition
   fontId: string
@@ -41,3 +25,16 @@ export const isFont = (value: any): value is Font => {
 export function assertFont(value: any): asserts value is Font {
   if (!isFont(value)) throw new Error("expected Font")
 }
+
+export interface FontDefinition extends ContainerDefinition, PreloadableDefinition {
+  family: string
+  instanceFromObject(object?: FontObject): Font
+}
+
+export const isFontDefinition = (value: any): value is FontDefinition => {
+  return isMedia(value) && value.type === DefinitionType.Font
+}
+export function assertFontDefinition(value: any): asserts value is FontDefinition {
+  if (!isFontDefinition(value)) throw new Error("expected FontDefinition")
+}
+

@@ -4,7 +4,7 @@ import { ApiServersResponse, JsonObject, ServerType, StringSetter } from '@movie
 export interface ApiContextInterface {
   enabled: boolean
   servers: ApiServersResponse
-  endpointPromise: (id: string, body?: JsonObject, setStatus?: StringSetter) => Promise<any>
+  endpointPromise: (id: string, body?: JsonObject) => Promise<any>
 }
 
 export const ApiContextDefault: ApiContextInterface = {

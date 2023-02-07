@@ -4,7 +4,7 @@ import {
   DefinitionType, assertDefinitionType, StringsObject, NumberObject, 
   JsonObject, isUploadType, isAboveZero, isPopulatedString, isArray, 
   DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
-  ClassDroppingBefore, isPopulatedObject, errorsThrow, MediaObject
+  ClassDroppingBefore, isPopulatedObject, errorsThrow, MediaObject, MashAndMediaObject
 } from "@moviemasher/moviemasher.js"
 
 
@@ -35,11 +35,11 @@ export function assertDragDefinitionObject(value: any): asserts value is DragDef
 
 export interface DragLayerObject extends UnknownObject {
   offset: number
-  mashAndDefinitions?: MashAndDefinitionsObject
+  mashAndMedia?: MashAndMediaObject
 }
 
 
-export type Draggable = MediaObject | MashAndDefinitionsObject | Clip | Layer | FileList
+export type Draggable = MediaObject | MashAndMediaObject | Clip | Layer | FileList
 
 export enum DragType {
   Mash = 'mash',

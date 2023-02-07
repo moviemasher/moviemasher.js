@@ -4,7 +4,7 @@ import { isMash, Mash } from "../../Edited/Mash/Mash"
 import { isTrack, Track } from "../../Edited/Mash/Track/Track"
 import { Clip, isClip } from "../../Edited/Mash/Track/Clip/Clip"
 import { EventType, isClipSelectType, SelectType, SelectTypes } from "../../Setup/Enums"
-import { Selectable, SelectableRecord, Selectables } from "../Selectable"
+import { Selectable, Selectables } from "../Selectable"
 import { EditorSelection, EditorSelectionObject } from "./EditorSelection"
 import { SelectedItems } from "../../Utility/SelectedProperty"
 import { assertTrue, isPopulatedString, isPositive } from "../../Utility/Is"
@@ -13,7 +13,6 @@ import { Container } from "../../Media/Container/Container"
 import { Content } from "../../Media/Content/Content"
 import { isLayer, isLayerMash } from "../../Edited/Cast/Layer/LayerFactory"
 import { isCast } from "../../Edited/Cast/CastFactory"
-import { Effect, isEffect } from "../../Module/Effect/Effect"
 
 export class EditorSelectionClass implements EditorSelection {
     get [SelectType.None](): Selectable | undefined { return undefined }

@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertDefined, Editor, Medias, 
-  MediaDefinitionType, ServerType, DataDefinitionRetrieveRequest, 
+  DefinitionType, ServerType, DataDefinitionRetrieveRequest, 
   Endpoints, DataDefinitionRetrieveResponse, 
   MediaBase 
 } from "@moviemasher/moviemasher.js"
@@ -14,7 +14,7 @@ const ApiDefinitionsDisabled = 'disabled'
 const ApiDefinitionsEmpty = 'empty'
 
 
-export const useApiDefinitions = (types: MediaDefinitionType[] = []): [Editor, Medias] => {
+export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Medias] => {
   const apiContext = React.useContext(ApiContext)
   const masherContext = React.useContext(MasherContext)
   const { enabled, servers, endpointPromise } = apiContext

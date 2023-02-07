@@ -2,12 +2,12 @@ import { LoadedVideo, PreviewItems, SvgItem, SvgItems } from "../../declarations
 import { Rect, rectsEqual, RectTuple } from "../../Utility/Rect"
 import { Size, sizeCopy } from "../../Utility/Size"
 import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
-import { Filter } from "../../Module/Filter/Filter"
+import { Filter } from "../../Filter/Filter"
 import { Anchors, DataType, DefinitionType, DirectionObject, Directions } from "../../Setup/Enums"
 import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isTimeRange } from "../../Utility/Is"
 import { Container, ContainerClass, DefaultContainerId, ContainerDefinition, ContainerRectArgs } from "./Container"
 import { arrayLast } from "../../Utility/Array"
-import { filterFromId } from "../../Module/Filter/FilterFactory"
+import { filterFromId } from "../../Filter/FilterFactory"
 import { svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement } from "../../Utility/Svg"
 import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
@@ -80,10 +80,10 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const { type, definition } = this
       const types: DefinitionType[] = []
       if (type === DefinitionType.Image) types.push(type)
-      else types.push(DefinitionType.VideoSequence, DefinitionType.Video)
+      else types.push(DefinitionType.Sequence, DefinitionType.Video)
       const transcoding = definition.preferredTranscoding(...types)
       const { type: transcodingType } = transcoding
-      if (transcodingType === DefinitionType.VideoSequence) {
+      if (transcodingType === DefinitionType.Sequence) {
         assertVideoDefinition(definition)
         return definition.loadedImagePromise(definitionTime, sizeCopy(zeroRect)).then(image => (
           image.src

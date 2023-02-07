@@ -1,4 +1,6 @@
-import { CommandOutput, StreamingFormat, OutputConstructorArgs, Mashes, RenderingResult, StreamingDescription } from "@moviemasher/moviemasher.js";
+import { StreamingFormat, Mashes, CommandOutput } from "@moviemasher/moviemasher.js";
+import { OutputConstructorArgs, RenderingResult } from "../Encode/Encode";
+import { StreamingDescription } from "./Stream";
 
 
 

@@ -15,5 +15,5 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["**/src/**/*.ts", "**/src/**/*.tsx"]
+  "include": ["**/src/**/*.ts", "**/src/**/*.tsx", "packages/server-core/src/Encode/Encode.test.js"]
 }

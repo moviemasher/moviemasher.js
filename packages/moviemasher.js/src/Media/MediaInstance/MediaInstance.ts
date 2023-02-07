@@ -1,5 +1,5 @@
 import { Constrained, UnknownObject } from "../../declarations"
-import { DefinitionType, MediaDefinitionType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { Propertied } from "../../Base/Propertied"
 import { isObject } from "../../Utility/Is"
 import { Media } from "../Media"
@@ -20,7 +20,7 @@ export interface MediaInstance extends Propertied {
   definitionIds(): string[]
   id: string
   label: string
-  type: MediaDefinitionType
+  type: DefinitionType
   propertiesCustom: Property[]
   unload(): void
 }

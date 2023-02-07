@@ -2,10 +2,11 @@ import React from 'react'
 import {
   ApiVersion,
   ApiCallbacksResponse,
-  Endpoint, EndpointPromiser, fetchJsonPromise, idPrefixSet,
+  Endpoint, EndpointPromiser, fetchJsonPromise, 
   ApiServersRequest, ApiServersResponse, 
   Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback, urlEndpoint, 
   ApiCallbacksRequest,
+  urlBaseInitialize,
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult } from '../../declarations'
@@ -18,6 +19,8 @@ export interface ApiProps extends PropsWithChildren {
 
 export function ApiClient(props: ApiProps): ReactResult {
   const { endpoint: end, children, path } = props
+  urlBaseInitialize()
+
   const endpoint = end || urlEndpoint({ pathname: path || Endpoints.api.callbacks })
 
   console.log("ApiClient", path, end, endpoint)
@@ -65,7 +68,6 @@ export function ApiClient(props: ApiProps): ReactResult {
     console.debug("ApiServersRequest", request)
     endpointPromise(Endpoints.api.servers, request).then((response: ApiServersResponse) => {
       console.debug("ApiServersResponse", response)
-      if (response.data?.temporaryIdPrefix) idPrefixSet(response.data.temporaryIdPrefix)
       Object.assign(servers, response)
       setEnabled(true)
     })

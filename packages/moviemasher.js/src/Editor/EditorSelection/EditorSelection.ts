@@ -9,7 +9,7 @@ import { SelectedItems } from "../../Utility/SelectedProperty"
 import { Container } from "../../Media/Container"
 import { Content } from "../../Media/Content/Content"
 import { Editor } from "../Editor"
-import { Effect } from "../../Module/Effect/Effect"
+import { Effect } from "../../Media/Effect/Effect"
 
 
 export type EditorSelectionObject = {

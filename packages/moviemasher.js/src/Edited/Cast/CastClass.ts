@@ -14,7 +14,7 @@ import {
   Layer, LayerAndPosition, LayerFolder, LayerObject, Layers, LayersAndIndex
 } from "./Layer/Layer"
 import { EmptyMethod } from "../../Setup/Constants"
-import { PreviewOptions } from "../Mash/Preview/Preview"
+import { PreviewOptions } from "../../Editor/Preview/Preview"
 import { svgSvgElement, svgPolygonElement } from "../../Utility/Svg"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Selectables } from "../../Editor/Selectable"

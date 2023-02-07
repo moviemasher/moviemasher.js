@@ -1,3 +1,4 @@
+import { EffectObject } from "./Media/Effect/Effect"
 import { isObject } from "./Utility/Is"
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -28,10 +29,14 @@ export interface Context2D extends CanvasRenderingContext2D {}
 export interface Pixels extends Uint8ClampedArray {}
 export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
 export interface LoadedVideo extends HTMLVideoElement {}
-export interface LoadedSvgImage extends SVGImageElement {}
-
 export interface LoadedAudio extends AudioBuffer {}
 export interface LoadedFont extends FontFace { } // just { family: string } in tests!
+export interface LoadedEffect extends EffectObject {}
+export type LoadedImageOrVideo = LoadedImage | LoadedVideo
+export type LoadedMedia = LoadedImageOrVideo | LoadedAudio | LoadedFont
+
+export interface LoadedSvgImage extends SVGImageElement {}
+
 export interface AudibleSource extends AudioBufferSourceNode {}
 
 export type SvgOutline = SVGRectElement | SVGPathElement
@@ -39,9 +44,7 @@ export type SvgOutline = SVGRectElement | SVGPathElement
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
 export type SvgFilters = SvgFilter[]
-export type LoadedImageOrVideo = LoadedImage | LoadedVideo
 
-export type LoadedMedia = LoadedImageOrVideo | LoadedAudio | LoadedFont
 
 export type SvgItem = SVGElement | LoadedImageOrVideo
 
@@ -60,11 +63,6 @@ export type CanvasVisibleSource = VisibleSource | ImageBitmap | CanvasImageSourc
 
 export type Timeout = ReturnType<typeof setTimeout>
 export type Interval = ReturnType<typeof setInterval>
-
-export type LoadFontPromise = Promise<LoadedFont>
-export type LoadImagePromise = Promise<LoadedImage>
-export type LoadVideoPromise = Promise<LoadedVideo>
-export type LoadAudioPromise = Promise<LoadedAudio>
 
 export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }

@@ -1,6 +1,5 @@
 import { Propertied } from "../../../Base/Propertied"
 import { Selectable } from "../../../Editor/Selectable"
-import { Loader } from "../../../Loader/Loader"
 import { VoidMethod } from "../../../MoveMe"
 import { DroppingPosition, isLayerType, LayerType } from "../../../Setup/Enums"
 import { isObject } from "../../../Utility/Is"

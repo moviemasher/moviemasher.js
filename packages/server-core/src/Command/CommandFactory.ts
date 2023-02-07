@@ -2,10 +2,11 @@ import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg
 import {
   AVType,
   CommandFilters,
-  CommandOptions, isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, OutputFormat, ValueObject
+  isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, ValueObject
 } from '@moviemasher/moviemasher.js'
 
 import { Command } from './Command'
+import { CommandOptions } from '../Encode/Encode'
 
 const commandCombinedOptions = (args: ValueObject): string[] => Object.entries(args).map(
   ([key, value]) => {

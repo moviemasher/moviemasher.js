@@ -1,5 +1,4 @@
 import {
-  CommandOutput,
   UnknownObject,
   StreamingStartResponse,
   StreamingPreloadResponse, StreamingPreloadRequest,
@@ -8,7 +7,8 @@ import {
   StreamingRemoteRequest, StreamingRemoteResponse,
   StreamingLocalRequest, StreamingLocalResponse,
   StreamingWebrtcRequest, WithError, StreamingStartRequest,
-  StreamingFormat} from "@moviemasher/moviemasher.js"
+  StreamingFormat, CommandOutput
+} from "@moviemasher/moviemasher.js"
 
 import { Server, ServerArgs, ExpressHandler } from "../Server"
 import { WebrtcConnection } from "./WebrtcConnection"

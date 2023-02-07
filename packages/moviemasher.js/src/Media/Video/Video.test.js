@@ -2,8 +2,8 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  DefinitionType, VideoClass, idGenerateString, 
-  idGenerateString, timeRangeFromArgs, videoInstance 
+  DefinitionType, VideoClass, 
+  idGenerateString, timeRangeFromArgs, videoInstance, videoDefinition
 } from "@moviemasher/moviemasher.js"
 
 describe("Video", () => {

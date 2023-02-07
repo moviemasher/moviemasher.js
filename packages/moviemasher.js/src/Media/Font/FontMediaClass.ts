@@ -1,8 +1,7 @@
 import { LoadedFont, UnknownObject } from "../../declarations"
 import { GraphFile, PreloadArgs, GraphFiles } from "../../MoveMe"
-import { DataType, DefinitionType, LoadType, MediaDefinitionType, Orientation } from "../../Setup/Enums"
+import { DataType, DefinitionType, LoadType, Orientation } from "../../Setup/Enums"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
-import { urlPrependProtocol } from "../../Utility/Url"
 import { MediaBase } from "../MediaBase"
 import { EmptyMethod } from "../../Setup/Constants"
 import { requestFontPromise } from "../../Utility/Request"
@@ -10,7 +9,7 @@ import { Size, sizeCover } from "../../Utility/Size"
 import { centerPoint, Rect } from "../../Utility/Rect"
 import { svgSvgElement, svgText, svgTransform } from "../../Utility/Svg"
 import { CommandProbeData, isLoadedFont } from "../../Loader/Loader"
-import { Transcoding } from "../Transcoding/Transcoding"
+import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
 import { assertPopulatedString, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PointZero } from "../../Utility/Point"
 import { stringFamilySizeRect } from "../../Utility/String"
@@ -51,9 +50,9 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
       defaultValue: 0.8, max: 2.0, group: DataGroup.Size
     }))
   }
-  bytes: number = 0
-  mimeType: string = ''
-  info?: CommandProbeData | undefined
+  // bytes: number = 0
+  // mimeType: string = ''
+  // info?: CommandProbeData | undefined
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     return this.loadFontPromise(this.preferredTranscoding(DefinitionType.Font)).then(() => {
@@ -163,17 +162,14 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
   // }
   
   toJSON(): UnknownObject {
-    const json = super.toJSON()
-    const { url, source } = this
-    json.url = url
-    json.source = source
-    return json
+    const { string } = this
+    return { ...super.toJSON(), string }
   }
-  source = ''
+  // source = ''
 
   string = ''
 
-  type = DefinitionType.Font as MediaDefinitionType
+  type = DefinitionType.Font 
 
-  url = ''
+  // url = ''
 }

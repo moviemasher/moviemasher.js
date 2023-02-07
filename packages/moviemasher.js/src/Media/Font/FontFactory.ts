@@ -15,9 +15,6 @@ import fontShojumaruJson from "../../MediaObjects/font/shojumaru.json"
 import fontRubikDirtJson from "../../MediaObjects/font/rubik-dirt.json"
 import { MediaFactories } from "../MediaFactories"
 import { MediaDefaults } from "../MediaDefaults"
-import { mediaObject } from "../MediaFactory"
-
-
 
 export const fontFind = (id: string): FontDefinition | undefined => {
   const definition = MediaDefaults[DefinitionType.Font].find(definition => (
@@ -31,7 +28,8 @@ export const fontDefinition = (object : FontObject): FontDefinition => {
   const definition = fontFind(id)
   if (definition) return definition 
 
-  return new FontMediaClass(mediaObject({ ...object, type: DefinitionType.Font, id }))
+  const withDefaults = { ...object, type: DefinitionType.Font, id }
+  return new FontMediaClass(withDefaults)
 }
 
 export const fontDefault = fontDefinition(fontDefaultJson)

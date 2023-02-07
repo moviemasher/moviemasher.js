@@ -6,15 +6,39 @@ import path from 'path'
 
 import {
   EmptyMethod, GraphFile, GraphType, isPreloadableDefinition, assertObject, 
-  Errors, LoaderClass, GraphFileType, LoaderCache, Definition, urlIsHttp,
+  Errors, GraphFileType, Media, urlIsHttp,
   isAboveZero, isLoadType, assertPopulatedString, isUpdatableDurationDefinition, 
   isUpdatableSizeDefinition, PopulatedString, sizeAboveZero, Loaded, LoadType, 
-  isDefinition, isPopulatedString, LoadedInfo, isString, ContentTypeCss
+  isMedia, isPopulatedString, LoadedInfo, isString, ContentTypeCss, GraphFiles, LoaderPath, Medias
 } from '@moviemasher/moviemasher.js'
 
 import { BasenameCache, ExtensionLoadedInfo } from '../Setup/Constants'
 import { Probe } from '../Command/Probe/Probe'
 import { hashMd5 } from './Hash'
+import { LoaderClass } from './LoaderClass'
+
+export interface LoaderCache {
+  error?: any
+  definitions: Medias
+  loaded: boolean
+  loadedInfo?: LoadedInfo
+  promise?: Promise<Loaded>
+  result?: Loaded
+}
+
+
+export interface Loader {
+  flushFilesExcept(fileUrls?: GraphFiles): void
+  getCache(path: LoaderPath): LoaderCache | undefined
+  info(loaderPath: LoaderPath): LoadedInfo | undefined
+  loaded(urlPath: string): boolean
+  loadPromise(urlPath: string | string[], definition: Media): Promise<any> 
+  updateDefinition(loaderPath: string, definition: Media): void
+  loadFilesPromise(files: GraphFiles): Promise<void>
+  media(urlPath: LoaderPath): Loaded | undefined 
+  key(graphFile: GraphFile): string
+  sourceUrl(graphFile: GraphFile): string
+}
 
 
 export class NodeLoader extends LoaderClass {
@@ -41,8 +65,8 @@ export class NodeLoader extends LoaderClass {
     if (found ||!createIfNeeded) return found
 
     const { definition, type } = graphFile
-    const definitions: Definition[] = []
-    if (isDefinition(definition)) definitions.push(definition)
+    const definitions: Media[] = []
+    if (isMedia(definition)) definitions.push(definition)
     const cache: LoaderCache = { loaded: false, definitions }
     this.cacheSet(cacheKey, cache)
     cache.promise = this.cachePromise(key, graphFile, cache).then(loaded => {
@@ -150,7 +174,7 @@ export class NodeLoader extends LoaderClass {
     assertObject(cache, 'cache')
 
     const { definition } = graphFile
-    if (isDefinition(definition)) {
+    if (isMedia(definition)) {
       const { definitions } = cache 
       if (!definitions.includes(definition)) definitions.push(definition)
     }
@@ -215,7 +239,7 @@ export class NodeLoader extends LoaderClass {
     }
   }
 
-  private updateableDefinitions(preloaderSource: LoaderCache): Definition[] {
+  private updateableDefinitions(preloaderSource: LoaderCache): Media[] {
     const definitions = [...preloaderSource.definitions]
     const preloadableDefinitions = definitions.filter(definition => {
       return isPreloadableDefinition(definition) 
@@ -244,9 +268,9 @@ export class NodeLoader extends LoaderClass {
     definitions.forEach(definition => {
       if (!isPreloadableDefinition(definition)) return
 
-      if (!definition.source.startsWith('http')) {
-        definition.source = key
-      }
+      // if (!definition.source.startsWith('http')) {
+      //   definition.source = key
+      // }
       return 
     })
 

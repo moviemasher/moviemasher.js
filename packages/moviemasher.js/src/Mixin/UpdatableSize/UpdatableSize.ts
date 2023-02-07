@@ -13,7 +13,7 @@ import { Rect } from "../../Utility/Rect"
 export const UpdatableSizeDefinitionType = [
   DefinitionType.Image,
   DefinitionType.Video,
-  // DefinitionType.VideoSequence,
+  // DefinitionType.Sequence,
 ]
 export interface UpdatableSizeObject extends PreloadableObject {
 }

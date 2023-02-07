@@ -1,5 +1,5 @@
 import { UnknownObject } from "../../declarations"
-import { MediaDefinitionType } from "../../Setup/Enums"
+import { DefinitionType } from "../../Setup/Enums"
 import { idGenerateString } from "../../Utility/Id"
 import { PropertiedClass } from "../../Base/Propertied"
 import { assertPopulatedObject } from "../../Utility/Is"
@@ -43,7 +43,7 @@ export class MediaInstanceBase extends PropertiedClass implements MediaInstance 
     return json
   }
 
-  get type(): MediaDefinitionType { return this.definition.type }
+  get type(): DefinitionType { return this.definition.type }
 
 
   unload() { this.definition.unload() }

@@ -17,7 +17,7 @@ export function BroadcasterControl(props: BroadcasterControlProps): ReactResult 
   const apiContext = React.useContext(ApiContext)
   const masherContext = React.useContext(MasherContext)
 
-  const { setProcessing, processing, setStatus } = processContext
+  const { setProcessing, processing } = processContext
   const [disabled, setDisabled] = React.useState(processing)
   const { endpointPromise } = apiContext
   const { current, setStreaming } = masherContext
@@ -28,7 +28,6 @@ export function BroadcasterControl(props: BroadcasterControlProps): ReactResult 
     console.debug("StreamingStartRequest", Endpoints.streaming.start, request)
     endpointPromise(Endpoints.streaming.start, request).then((response: StreamingStartResponse) => {
       console.debug("StreamingStartResponse", Endpoints.streaming.start, response)
-      setStatus(`Started stream`)
       const { id, readySeconds, width, height, videoRate } = response
 
       current.streamId = id
@@ -48,7 +47,6 @@ export function BroadcasterControl(props: BroadcasterControlProps): ReactResult 
               setStreaming(true)
             
               setProcessing(true)
-              setStatus(`Streaming`)
             }
             else monitorStream()
           })

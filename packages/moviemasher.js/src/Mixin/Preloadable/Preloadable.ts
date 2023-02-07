@@ -1,11 +1,11 @@
 import { Constrained} from "../../declarations"
 import { LoadType } from "../../Setup/Enums"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Media/Content/Content"
-import { CommandProbeData } from "../../Loader/Loader"
-import { Media, MediaObject } from "../../Media/Media"
+import { MediaObject } from "../../Media/Media"
 import { isObject, isPopulatedString } from "../../Utility/Is"
 import { MediaInstanceObject } from "../../Media/MediaInstance/MediaInstance"
 import { errorsThrow } from "../../Utility/Errors"
+import { isTweenable, isTweenableDefinition } from "../Tweenable/Tweenable"
 
 export interface PreloadableObject extends MediaInstanceObject, ContentObject {}
 
@@ -21,14 +21,9 @@ export const isPreloadableDefinitionObject = (value: any): value is PreloadableD
 
 export interface PreloadableDefinition extends ContentDefinition {
   loadType: LoadType
-  source: string
-  url: string
-  bytes: number
-  mimeType: string
-  info?: CommandProbeData
 }
 export const isPreloadableDefinition = (value?: any): value is PreloadableDefinition => {
-  return isContentDefinition(value) && "loadType" in value 
+  return isTweenableDefinition(value) && "loadType" in value 
 }
 
 export function assertPreloadableDefinition(value?: any): asserts value is PreloadableDefinition {
@@ -37,7 +32,7 @@ export function assertPreloadableDefinition(value?: any): asserts value is Prelo
 
 export interface Preloadable extends Content {}
 export const isPreloadable = (value?: any): value is Preloadable => {
-  return isContent(value) && isPreloadableDefinition(value.definition)
+  return isTweenable(value) && isPreloadableDefinition(value.definition)
 }
 export function assertPreloadable(value?: any): asserts value is Preloadable {
   if (!isPreloadable(value)) errorsThrow(value, 'Preloadable') 

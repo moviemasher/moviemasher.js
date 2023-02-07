@@ -2,7 +2,7 @@ import React from "react"
 import {
   assertCast,
   assertLayerMash,
-  assertObject, DroppingPosition, EditorIndex, Endpoints, EventType, GraphFiles, isLayer, isPopulatedString, Layer, LayerAndPosition, MashAndDefinitionsObject, StreamingCutRequest, StreamingCutResponse, StreamingPreloadRequest, StreamingPreloadResponse, timeFromArgs
+  assertObject, DroppingPosition, EditorIndex, Endpoints, EventType, GraphFiles, isLayer, isPopulatedString, Layer, LayerAndPosition, MashAndDefinitionsObject, MashAndMediaObject, StreamingCutRequest, StreamingCutResponse, StreamingPreloadRequest, StreamingPreloadResponse, timeFromArgs
 } from "@moviemasher/moviemasher.js"
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
@@ -89,10 +89,10 @@ export function Composer(props: ComposerProps): ReactResult {
         break
       }
       case DragType.Mash: {
-        const mashAndDefinitions: MashAndDefinitionsObject = {
-          mashObject: {}, definitionObjects: []
+        const mashAndMedia: MashAndMediaObject = {
+          media: []
         }
-        editor.addMash(mashAndDefinitions, layerAndPosition)
+        editor.addMash(mashAndMedia, layerAndPosition)
         break
       }
       default: {
@@ -108,12 +108,9 @@ export function Composer(props: ComposerProps): ReactResult {
     const files: GraphFiles = []
 
     const request: StreamingPreloadRequest = { files, id  }
-    // setStatus(`Preloading...`)
     console.debug("StreamingPreloadRequest", Endpoints.streaming.preload, request)
     endpointPromise(Endpoints.streaming.preload, request).then((response: StreamingPreloadResponse) => {
       console.debug("StreamingPreloadResponse", Endpoints.streaming.preload, response)
-      // setStatus(`Preloaded`)
-      // setPreloading(false)
     })
   }
 
@@ -131,11 +128,9 @@ export function Composer(props: ComposerProps): ReactResult {
     const mashObjects = mashes.map(mash => mash.toJSON())
     const request: StreamingCutRequest = { definitionObjects, mashObjects, id }
     console.debug('StreamingCutRequest', Endpoints.streaming.cut, request)
-    // setStatus(`Updating stream`)
     endpointPromise(Endpoints.streaming.cut, request).then((response:StreamingCutResponse) => {
       console.debug("StreamingCutResponse", Endpoints.streaming.cut, response)
-      // setStatus(`Updated stream`)
-      // setUpdating(false)
+
     })
   }
   
