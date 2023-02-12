@@ -1,5 +1,5 @@
 import React from "react"
-import { UnknownObject } from "@moviemasher/moviemasher.js"
+import { UnknownRecord } from "@moviemasher/moviemasher.js"
 
 import { ReactResult, WithClassName } from "../../declarations"
 import { ActivityContentContext } from "./ActivityContentContext"
@@ -19,7 +19,7 @@ import { View } from "../../Utilities/View"
   const [firstInfo] = infos
   const labeledInfo = infos.find(info => info.label) || { label: '' }
   const label = labeledInfo.label || firstInfo.type 
-  const viewProps: UnknownObject = { ...props }
+  const viewProps: UnknownRecord = { ...props }
   if (collapsed) viewProps.children = label
   else {
     const labels = [ label, ...infos.map(info => activityLabel(info))]

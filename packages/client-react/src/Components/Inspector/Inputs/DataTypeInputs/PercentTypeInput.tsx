@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, isArray, isDefined, isNumber, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, isArray, isDefined, isNumber, UnknownRecord } from '@moviemasher/moviemasher.js'
 
 import { ReactResult, SliderChangeHandler } from '../../../../declarations'
 import { InputContext } from '../InputContext'
@@ -15,7 +15,7 @@ export function PercentTypeInput(): ReactResult {
 
   const { max, min, step, defaultValue: propertyDefault } = property
   const value = isDefined(contextValue) ? contextValue : (isDefined(contextDefault) ? contextDefault : propertyDefault)
-  const sliderProps: UnknownObject = {
+  const sliderProps: UnknownRecord = {
     value,
     min: isNumber(min) ? min : 0.0,
     max: isNumber(max) ? max : 1.0,

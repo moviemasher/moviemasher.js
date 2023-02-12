@@ -1,6 +1,6 @@
 import React from 'react'
 import { 
-  AndId,
+  Identified,
   assertSelectType, ClassSelected, isPopulatedString, SelectType 
 } from '@moviemasher/moviemasher.js'
 
@@ -11,7 +11,7 @@ import { InspectorContext } from './InspectorContext'
 
 
 
-export interface InspectorPickerProps extends PropsAndChild, WithClassName, AndId {}
+export interface InspectorPickerProps extends PropsAndChild, WithClassName, Identified {}
 /**
  * @parents Inspector
  */

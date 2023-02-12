@@ -1,7 +1,7 @@
-import { Scalar, StartOptions, UnknownObject, ValueObject } from "../../declarations"
-import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../MoveMe"
+import { Scalar, UnknownRecord, ValueRecord } from "../../declarations"
+import { StartOptions } from "../../Editor/Preview/AudioPreview/AudioPreview"
+import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../Base/Code"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { LoadType } from "../../Setup/Enums"
 import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
@@ -11,8 +11,9 @@ import { timeFromArgs, timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { idGenerate } from "../../Utility/Id"
 import { Tweening } from "../../Utility/Tween"
-import { Property } from "../../Setup"
-import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
+import { Property } from "../../Setup/Property"
+import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
+import { AudioType } from "../../Setup/Enums"
 
 const AudibleGainDelimiter = ','
 
@@ -69,7 +70,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
       const { definition } = this
       const graphFile: GraphFile = {
-        type: LoadType.Audio, file: '', definition, input: true
+        type: AudioType, file: '', definition, input: true
       }
       return [graphFile]
     }
@@ -103,7 +104,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
     
       const trimFilter = 'trim' 
       const trimId = idGenerate(trimFilter)
-      const trimOptions: ValueObject = {}
+      const trimOptions: ValueRecord = {}
       if (duration) trimOptions.duration = duration
       const { frame } = this.definitionTime(time, clipTime)
       if (frame) trimOptions.start = timeFromArgs(frame, quantize).seconds
@@ -191,7 +192,7 @@ export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): Upd
 
     declare speed: number
 
-    toJSON(): UnknownObject {
+    toJSON(): UnknownRecord {
       const json = super.toJSON()
       const { speed, gain } = this
       if (speed !== 1.0) json.speed = speed

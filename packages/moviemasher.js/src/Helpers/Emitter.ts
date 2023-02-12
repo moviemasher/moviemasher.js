@@ -1,14 +1,14 @@
-import { UnknownObject } from "../declarations"
+import { UnknownRecord } from "../declarations"
 import { EventType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
+
 
 export class Emitter extends EventTarget {
-  dispatch(type: EventType, detail?: UnknownObject): void {
+  dispatch(type: EventType, detail?: UnknownRecord): void {
     // console.log(this.constructor.name, "dispatch", type, detail)
     this.dispatchEvent(this.event(type, detail))
   }
 
-  emit(type: EventType, detail?: UnknownObject): void {
+  emit(type: EventType, detail?: UnknownRecord): void {
     if (!this.trapped.has(type)) {
       this.dispatch(type, detail)
       return
@@ -18,16 +18,16 @@ export class Emitter extends EventTarget {
     if (listener) listener(this.event(type, detail))
   }
   
-  enqueue(type: EventType, detail: UnknownObject = {}): void {
+  enqueue(type: EventType, detail: UnknownRecord = {}): void {
     
   }
 
-  event(type: EventType, detail?: UnknownObject): CustomEvent {
-    const init: CustomEventInit<UnknownObject> | undefined = detail ? { detail } : undefined
+  event(type: EventType, detail?: UnknownRecord): CustomEvent {
+    const init: CustomEventInit<UnknownRecord> | undefined = detail ? { detail } : undefined
     return new CustomEvent(type, init)
   }
 
-  private queue = new Map<EventType, UnknownObject>()
+  private queue = new Map<EventType, UnknownRecord>()
 
   trap(type: EventType, listener?: EventListener): void {
     if (this.trapped.has(type)) return

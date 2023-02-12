@@ -1,9 +1,9 @@
 import { Scalar } from "../declarations"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
 import {
-  DataType, isDataType, isDefinitionType
+  DataType, isDataType, isMediaType
 } from "../Setup/Enums"
-import { colorBlack, colorValid } from "../Utility/Color"
+import { colorBlack, colorValid } from "./Color/ColorFunctions"
 import { isBoolean, isNumber, isNumeric, isPopulatedString } from "../Utility/Is"
 
 export const PropertyTypesNumeric = [
@@ -23,7 +23,7 @@ export const propertyTypeIsString = (dataType: DataType): boolean => {
 }
 
 export const propertyTypeDefault = (dataType: DataType): Scalar => {
-  if (isDefinitionType(dataType)) return `${IdPrefix}${dataType}${IdSuffix}`
+  if (isMediaType(dataType)) return `${IdPrefix}${dataType}${IdSuffix}`
 
   switch (dataType) {
     case DataType.Boolean: return false
@@ -39,7 +39,7 @@ const propertyTypeValidBoolean = (value: Scalar): boolean => {
 }
 
 export const propertyTypeValid = (value: Scalar, dataType: DataType): boolean => {
-  if (isDefinitionType(dataType)) return isPopulatedString(value)
+  if (isMediaType(dataType)) return isPopulatedString(value)
 
   switch (dataType) {
     case DataType.Boolean: return propertyTypeValidBoolean(value)

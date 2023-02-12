@@ -1,13 +1,16 @@
-import { ScalarObject, SvgFilters, ValueObject, SvgItems, UnknownObject } from "../declarations"
-import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from "../MoveMe"
+import { ScalarRecord, ValueRecord, UnknownRecord } from "../declarations"
+import { SvgFilters, SvgItems } from "../Helpers/Svg/Svg"
+import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from "../Base/Code"
 import { DataType } from "../Setup/Enums"
 import { Parameter } from "../Setup/Parameter"
 import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from "./Filter"
 import { FilterClass } from "./FilterClass"
-import { Errors } from "../Setup/Errors"
+
 import { idGenerate } from "../Utility/Id"
 import { assertPopulatedString, assertValueObject } from "../Utility/Is"
 import { Property } from "../Setup/Property"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../Helpers/Error/ErrorName"
 
 export class FilterDefinitionClass implements FilterDefinition {
   constructor(object: FilterDefinitionObject) {
@@ -37,7 +40,7 @@ export class FilterDefinitionClass implements FilterDefinition {
     return commandFilters
   }
 
-  protected commandFilter(options: ValueObject = {}): CommandFilter {
+  protected commandFilter(options: ValueRecord = {}): CommandFilter {
     const { ffmpegFilter } = this
     const commandFilter: CommandFilter = { 
       ffmpegFilter, options, inputs: [], outputs: [idGenerate(ffmpegFilter)] 
@@ -51,7 +54,7 @@ export class FilterDefinitionClass implements FilterDefinition {
   }
 
   filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems {
-    throw new Error(Errors.unimplemented + 'initialSvgContent')
+    return errorThrow(ErrorName.Unimplemented)
   }
 
   instanceArgs(object: FilterObject = {}): FilterObject {
@@ -76,12 +79,12 @@ export class FilterDefinitionClass implements FilterDefinition {
     })
   }
 
-  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
-    throw Errors.unimplemented
+  filterDefinitionSvgFilter(valueObject: ScalarRecord): SvgFilters {
+    return errorThrow(ErrorName.Unimplemented)
   }
 
 
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const { id } = this
     return { id }
   }

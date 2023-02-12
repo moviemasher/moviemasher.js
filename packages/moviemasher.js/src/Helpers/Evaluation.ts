@@ -1,7 +1,9 @@
-import { UnknownObject, Value } from "../declarations"
-import { Errors } from "../Setup/Errors"
-import { colorRgbaToHex, colorRgbToHex } from "../Utility/Color"
+import { UnknownRecord, Value } from "../declarations"
+
+import { colorRgbaToHex, colorRgbToHex } from "./Color/ColorFunctions"
 import { isDefined, isNumeric, isString, isValue } from "../Utility/Is"
+import { errorThrow } from "./Error/ErrorFunctions"
+import { ErrorName } from "./Error/ErrorName"
 
 
 export interface EvaluationCallback { (evaluation: Evaluation): Value }
@@ -58,14 +60,15 @@ export class Evaluation {
     this.evaluation = evalution
   }
 
-  args: UnknownObject = {}
+  args: UnknownRecord = {}
 
   execute(message?: string): void {
     if (this.resolved) return
 
     const { expression, args } = this
     let cleaned = EvaluatorCleanString(expression)
-    if (cleaned.match(EvaluatorCodeRegex)) throw Errors.eval.string + cleaned
+    if (cleaned.match(EvaluatorCodeRegex)) errorThrow(ErrorName.Evaluation)
+    
 
     const keys: string[] = []
     const unknowns: unknown[] = []
@@ -84,16 +87,15 @@ export class Evaluation {
         this.resolved = true
         this._result = Number(result)
         this.log(message || 'executed')
-      } else if (!isString(result)) {
-        throw Errors.eval.string
-      }
+      } else if (!isString(result)) errorThrow(ErrorName.Evaluation) 
+    
     } catch (exception) {
       const underKeys = keys.filter(key => key.startsWith('_'))
       underKeys.forEach(key => {
         cleaned = cleaned.replaceAll(EvaluatorRegExp(key), key.slice(1))
       })
       this.expressions.push(cleaned)
-      this.log('execute failure')
+      this.log('execute failure', String(exception))
     }
   }
 

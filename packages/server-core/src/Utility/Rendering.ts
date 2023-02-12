@@ -1,21 +1,21 @@
 import {
   MediaObject, MediaObjects, ContentObject, Timing,
   TrackObject, ClipObject, assertPopulatedString, 
-  DefinitionType, LoadType, ValueObject, MashAndMediaObject, 
-  RenderingCommandOutput, RenderingInput,
+  MediaType, LoadType, ValueRecord, MashAndMediaObject, 
+  RenderingCommandOutput, RenderingInput, SequenceType, VideoType, ImageType, AudioType, FontType, errorThrow, ErrorName,
 } from "@moviemasher/moviemasher.js"
 
 
-export const renderingInput = (definition: MediaObject, clipObject: ValueObject = {}): RenderingInput => {
+export const renderingInput = (definition: MediaObject, clipObject: ValueRecord = {}): RenderingInput => {
   const { type, id } = definition
   const definitionObject = {
     ...definition,
-    type: type === DefinitionType.Sequence ? DefinitionType.Video : type
+    type: type === SequenceType ? VideoType : type
   }
   const definitions: MediaObjects = [definitionObject]
   const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
   const track: TrackObject = {
-    dense: true,// String(type) !== String(DefinitionType.Audio),
+    dense: true,// String(type) !== String(AudioType),
     clips: [clip]
   }
   const tracks: TrackObject[] = [track]
@@ -43,12 +43,12 @@ export const renderingSource = (commandOutput?: RenderingCommandOutput): string 
 
   const { format, extension, outputType } = commandOutput
   const ext = extension || format
-  // if (outputType === OutputType.ImageSequence) return ''
+  // if (outputType === EncodeType.ImageSequence) return ''
 
   return `${outputType}.${ext}`
 }
 
-export const renderingClipFromDefinition = (definition: MediaObject, overrides: ValueObject = {}): ClipObject => {
+export const renderingClipFromDefinition = (definition: MediaObject, overrides: ValueRecord = {}): ClipObject => {
   const { id, type } = definition
   const { id: _, containerId: suppliedContainerId, ...rest } = overrides
   const contentId = id || type
@@ -58,7 +58,7 @@ export const renderingClipFromDefinition = (definition: MediaObject, overrides: 
   const visibleClipObject: ClipObject = {
     contentId, content, containerId
   }
-  if (type === DefinitionType.Image) {
+  if (type === ImageType) {
     visibleClipObject.timing = Timing.Custom
     visibleClipObject.frames = 1
   }
@@ -66,17 +66,18 @@ export const renderingClipFromDefinition = (definition: MediaObject, overrides: 
   return visibleClipObject
 }
 
-export const renderingMediaObject = (loadType: LoadType, source: string, definitionId: string, label?: string): MediaObject => {
-  const type: DefinitionType = definitionTypeFromRaw(loadType) 
-  const definition: MediaObject = { id: definitionId, type, source, label }
+export const renderingMediaObject = (loadType: LoadType, source: string, id: string, label?: string): MediaObject => {
+  const type: MediaType = definitionTypeFromRaw(loadType) 
+  const definition: MediaObject = { id, type, source, label }
   return definition
 }
 
-export const definitionTypeFromRaw = (loadType: LoadType): DefinitionType => {
+export const definitionTypeFromRaw = (loadType: LoadType): MediaType => {
   switch (loadType) {
-    case LoadType.Audio: return DefinitionType.Audio
-    case LoadType.Video: return DefinitionType.Sequence
-    case LoadType.Image: return DefinitionType.Image
-    case LoadType.Font: return DefinitionType.Font
+    case AudioType: return AudioType
+    case VideoType: return SequenceType
+    case ImageType: return ImageType
+    case FontType: return FontType
   }
+  return errorThrow(ErrorName.Type) 
 }

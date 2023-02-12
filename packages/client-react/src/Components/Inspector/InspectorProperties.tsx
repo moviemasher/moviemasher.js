@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  SelectType, UnknownObject, isSelectedProperty, SelectedItems, Time,
+  SelectType, UnknownRecord, isSelectedProperty, SelectedItems, Time,
   assertDataGroup
 } from "@moviemasher/moviemasher.js"
 
@@ -29,7 +29,7 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
 
   const ungroupedInputs: React.ReactChild[] = []
   const groupedInputs: React.ReactChild[] = []
-  const groups: UnknownObject = {} 
+  const groups: UnknownRecord = {} 
   selectedItems.forEach(selectedItem => {
     if (isSelectedProperty(selectedItem)) {
       const { property, changeHandler, selectType, value, name: nameOveride } = selectedItem

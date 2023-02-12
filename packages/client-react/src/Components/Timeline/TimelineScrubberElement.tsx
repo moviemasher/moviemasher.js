@@ -1,10 +1,10 @@
 import React from "react"
-import { pixelFromFrame } from "@moviemasher/moviemasher.js"
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
 import { TimelineContext } from "./TimelineContext"
 import { MasherContext } from "../Masher/MasherContext"
 import { View } from "../../Utilities/View"
+import { pixelFromFrame } from "@moviemasher/client-core"
 
 /**
  * @parents TimelineScrubber

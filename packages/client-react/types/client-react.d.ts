@@ -1,7 +1,8 @@
 /// <reference types="react" />
 import React from "react";
-import { ActivityInfo, AndId, Endpoint, ApiServersResponse, JsonObject, MediaDefinitionType, Medias, StringSetter, VoidMethod, Clip, DroppingPosition, Layer, UnknownObject, Point, Rect, DefinitionType, MediaObject, MashAndMediaObject, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarObject, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, Track, EndpointPromiser, Emitter, EventType, StringObject } from "@moviemasher/moviemasher.js";
+import { ActivityInfo, Identified, Endpoint, ApiServersResponse, JsonRecord, MediaType, MediaArray, StringSetter, VoidMethod, Clip, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarRecord, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, UnknownRecord, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, DroppingPosition, Rect, Track, Point, Emitter, EventType, NestedStringRecord, StringRecord } from "@moviemasher/moviemasher.js";
 import { ThemeIcons } from "@moviemasher/theme-default";
+import { Draggable, Client } from "@moviemasher/client-core";
 // TODO: determine if we really need to repeat this
 declare global {
     interface Window {
@@ -66,9 +67,8 @@ declare enum ActivityGroup {
 declare const ActivityGroups: ActivityGroup[];
 declare const isActivityGroup: (type?: any) => type is ActivityGroup;
 declare function assertActivityGroup(value: any, name?: string): asserts value is ActivityGroup;
-interface ActivityObject {
+interface ActivityObject extends Identified {
     infos: ActivityInfo[];
-    id: string;
     activityGroup: ActivityGroup;
 }
 type ActivityObjects = ActivityObject[];
@@ -95,13 +95,13 @@ declare function ActivityItem(props: ActivityItemProps): ReactResult;
  * @parents ActivityItem
  */
 declare function ActivityLabel(props: WithClassName): ReactResult;
-interface ActivityPickedProps extends AndId, PropsAndChild {
+interface ActivityPickedProps extends Identified, PropsAndChild {
 }
 /**
  * @parents ActivityContent
  */
 declare function ActivityPicked(props: ActivityPickedProps): ReactResult;
-interface ActivityPickerProps extends PropsAndChild, WithClassName, AndId {
+interface ActivityPickerProps extends PropsAndChild, WithClassName, Identified {
 }
 /**
  * @parents ActivityContent
@@ -150,28 +150,11 @@ declare function ApiClient(props: ApiProps): ReactResult;
 interface ApiContextInterface {
     enabled: boolean;
     servers: ApiServersResponse;
-    endpointPromise: (id: string, body?: JsonObject) => Promise<any>;
+    endpointPromise: (id: string, body?: JsonRecord) => Promise<any>;
 }
 declare const ApiContextDefault: ApiContextInterface;
 declare const ApiContext: React.Context<ApiContextInterface>;
 declare function ApiEnabled(props: PropsWithChildren): ReactResult;
-interface BroadcasterProps extends PropsAndChildren, WithClassName {
-    initialCollapsed?: boolean;
-}
-/**
- * @parents Masher
- * @children BroadcasterContent, BroadcasterControl
- */
-declare function Broadcaster(props: BroadcasterProps): ReactResult;
-interface BroadcasterContentProps extends PropsWithoutChild, WithClassName {
-}
-declare function BroadcasterContent(props: BroadcasterContentProps): ReactResult;
-interface BroadcasterControlProps extends PropsAndChildren, WithClassName {
-}
-declare function BroadcasterControl(props: BroadcasterControlProps): ReactResult;
-interface BroadcasterPropsDefault extends PanelOptions, PropsWithoutChild {
-}
-declare const BroadcasterDefaultProps: PropsMethod<BroadcasterPropsDefault, BroadcasterProps>;
 interface BrowserProps extends PropsWithChildren {
     initialPicked?: string;
 }
@@ -189,15 +172,15 @@ interface BrowserContentProps extends WithClassName, PropsAndChild {
 declare function BrowserContent(props: BrowserContentProps): ReactResult;
 interface BrowserContextInterface {
     refresh: VoidMethod;
-    addPicker: (id: string, types: MediaDefinitionType[]) => void;
-    definitions: Medias;
+    addPicker: (id: string, types: MediaType[]) => void;
+    definitions: MediaArray;
     pick: StringSetter;
     picked: string;
     removePicker: (id: string) => void;
 }
 declare const BrowserContextDefault: BrowserContextInterface;
 declare const BrowserContext: React.Context<BrowserContextInterface>;
-interface BrowserPickerProps extends PropsAndChild, AndId, WithClassName {
+interface BrowserPickerProps extends PropsAndChild, Identified, WithClassName {
     type?: string;
     types?: string | string[];
 }
@@ -222,107 +205,6 @@ interface ClipItemProps extends WithClassName, PropsWithoutChild {
  */
 declare function ClipItem(props: ClipItemProps): ReactResult;
 declare const useClip: () => Clip;
-declare const DragSuffix = "/x-moviemasher";
-type FileInfo = File | UnknownObject;
-type FileInfos = FileInfo[];
-interface DragOffsetObject {
-    offset: number;
-}
-declare const isDragOffsetObject: (value: any) => value is DragOffsetObject;
-declare function assertDragOffsetObject(value: any): asserts value is DragOffsetObject;
-interface DragDefinitionObject extends DragOffsetObject {
-    mediaObject: MediaObject;
-}
-declare const isDragDefinitionObject: (value: any) => value is DragDefinitionObject;
-declare function assertDragDefinitionObject(value: any): asserts value is DragDefinitionObject;
-interface DragLayerObject extends UnknownObject {
-    offset: number;
-    mashAndMedia?: MashAndMediaObject;
-}
-type Draggable = MediaObject | MashAndMediaObject | Clip | Layer | FileList;
-declare enum DragType {
-    Mash = "mash",
-    Layer = "layer",
-    Track = "track"
-}
-declare const DragTypes: DragType[];
-declare const isDragType: (value: any) => value is DragType;
-declare const TransferTypeFiles = "Files";
-type TransferType = string;
-declare const isTransferType: (value: any) => value is string;
-//
-declare const dropType: (dataTransfer?: DataTransfer | null) => TransferType | undefined;
-declare const dragDefinitionType: (transferType: TransferType) => DefinitionType;
-declare const dragType: (dataTransfer?: DataTransfer | null) => DragType | DefinitionType | undefined;
-declare const dragTypes: (dataTransfer: DataTransfer) => string[];
-declare const dragData: (dataTransfer: DataTransfer, type?: TransferType) => any;
-declare const DragElementRect: (current: Element) => Rect;
-declare const DragElementPoint: (event: DragEvent, current: Element | Rect) => Point;
-declare const dropFilesFromList: (files: FileList, serverOptions?: JsonObject) => FileInfos;
-declare const droppingPositionClass: (droppingPosition?: DroppingPosition | number) => string;
-interface ComposerContextInterface {
-    selectedLayer?: Layer;
-    compose: (layer: Layer, frame: number, frames: number) => void;
-    refresh: VoidMethod;
-    validDragType: (dataTransfer?: DataTransfer | null) => DragType | undefined;
-    droppingPosition: DroppingPosition | number;
-    setDroppingPosition: (_: DroppingPosition | number) => void;
-    droppingLayer?: Layer;
-    setDroppingLayer: (_?: Layer) => void;
-    onDrop: (event: DragEvent) => void;
-    onDragLeave: VoidMethod;
-}
-declare const ComposerContextDefault: ComposerContextInterface;
-declare const ComposerContext: React.Context<ComposerContextInterface>;
-interface ComposerLayerButtonsProps {
-}
-/**
- * @parents ComposerContent
- * @children ComposerLayerFolder, ComposerLayerMash, ComposerFolderClose, ComposerFolderOpen, ComposerDepth, ComposerLayerLabel
- */
-declare function ComposerLayerButtons(props: ComposerLayerButtonsProps): ReactResult;
-interface ComposerProps extends PropsWithChildren {
-}
-/**
- * @parents Masher
- * @children ComposerContent
- */
-declare function Composer(props: ComposerProps): ReactResult;
-interface ComposerContentProps extends PropsAndChild, WithClassName {
-}
-/**
- * @parents Composer
- * @children ComposerLayer
- */
-declare function ComposerContent(props: ComposerContentProps): ReactResult;
-interface ComposerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
-}
-declare const ComposerDefaultProps: PropsMethod<ComposerPropsDefault, ComposerProps>;
-declare function ComposerDepth(props: PropsAndChild): ReactResult;
-/**
- * @parents ComposerContent
- */
-declare function ComposerFolderClose(props: PropsAndChild): ReactResult;
-/**
- * @parents ComposerContent
- */
-declare function ComposerFolderOpen(props: PropsAndChild): ReactResult;
-interface ComposerLayerProps extends PropsWithChildren, WithClassName {
-}
-/**
- * @parents ComposerContent
- * @children ComposerLayerFolder, ComposerLayerMash, ComposerFolderClose, ComposerFolderOpen, ComposerDepth, ComposerLayerLabel
- */
-declare function ComposerLayer(props: ComposerLayerProps): ReactResult;
-/**
- * @parents ComposerContent
- */
-declare function ComposerLayerFolder(props: PropsAndChildren): ReactResult;
-declare function ComposerLayerLabel(props: PropsWithoutChild): ReactResult;
-/**
- * @parents ComposerContent
- */
-declare function ComposerLayerMash(props: PropsAndChildren): ReactResult;
 declare function CreateEditedControl(props: PropsAndChild): ReactResult;
 interface EditorRedoButtonProps extends PropsAndChild {
 }
@@ -382,7 +264,7 @@ declare const DataGroupInputs: DataGroupElements;
 declare function ColorGroupInput(props: DataGroupProps): ReactResult;
 interface MovablesGroupInputProps extends PropsWithoutChild {
     selectedMovable?: SelectedMovable;
-    movableGenerator?: (object: ScalarObject) => Movable;
+    movableGenerator?: (object: ScalarRecord) => Movable;
     property: string;
 }
 /**
@@ -485,7 +367,7 @@ interface InspectorPickedProps {
  * @parents InspectorContent
  */
 declare function InspectorPicked(props: InspectorPickedProps): ReactResult;
-interface InspectorPickerProps extends PropsAndChild, WithClassName, AndId {
+interface InspectorPickerProps extends PropsAndChild, WithClassName, Identified {
 }
 /**
  * @parents Inspector
@@ -494,7 +376,7 @@ declare function InspectorPicker(props: InspectorPickerProps): ReactResult;
 interface MasherContextInterface {
     streaming: boolean;
     setStreaming: BooleanSetter;
-    current: ScalarObject;
+    current: ScalarRecord;
     changeDefinition: (definition?: Media) => void;
     drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Media[]>;
     editor?: Editor;
@@ -526,15 +408,6 @@ declare function Player(props: PlayerProps): ReactResult;
 interface PlayerPropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {
 }
 declare const PlayerDefaultProps: PropsMethod<PlayerPropsDefault, PlayerProps>;
-interface WebrtcProps extends PropsAndChildren, WithClassName {
-    initialPicked?: string;
-    initialCollapsed?: boolean;
-}
-declare function Webrtc(props: WebrtcProps): JSX.Element;
-// import { WebrtcRefresh } from './WebrtcRefresh'
-interface WebrtcPropsDefault extends PanelOptions, PropsWithoutChild {
-}
-declare const WebrtcDefaultProps: PropsMethod<WebrtcPropsDefault, WebrtcProps>;
 type PanelOptionsOrFalse = PanelOptions | false;
 interface UiOptions {
     [index: string]: PanelOptionsOrFalse;
@@ -542,16 +415,13 @@ interface UiOptions {
     player: PlayerPropsDefault | false;
     inspector: InspectorPropsDefault | false;
     timeline: TimelinePropsDefault | false;
-    composer: ComposerPropsDefault | false;
-    webrtc: WebrtcPropsDefault | false;
-    broadcaster: BroadcasterPropsDefault | false;
     activity: ActivityPropsDefault | false;
 }
-interface MasherOptions extends UnknownObject, WithClassName {
+interface MasherOptions extends UnknownRecord, WithClassName {
     previewSize?: Size;
     icons?: ThemeIcons;
     editType?: EditType;
-    edited?: DataDefaultResponse;
+    mashMedia?: DataDefaultResponse;
 }
 interface EditorProps extends MasherOptions, PropsWithoutChild {
     panels?: Partial<UiOptions>;
@@ -564,10 +434,10 @@ interface MasherProps extends MasherOptions, PropsWithChildren {
  * @returns provided children wrapped in a {@link View} and {@link MasherContext}
  */
 declare function Masher(props: MasherProps): ReactResult;
-declare const MasherCastProps: PropsMethod<EditorProps, MasherProps>;
 declare const MasherDefaultProps: PropsMethod<EditorProps, MasherProps>;
 interface MashingProps extends PropsAndChildren {
-    editType: string | EditType;
+    type?: string;
+    types?: string | string[];
 }
 /**
  * @parents Masher
@@ -656,16 +526,6 @@ declare function ProcessStatus(props: ProcessStatusProps): ReactResult;
  * @parents Process, ProcessActive
  */
 declare function ProcessProgress(_: PropsWithoutChild): ReactResult;
-interface ShooterProps extends PropsWithChildren, WithClassName {
-}
-declare function Shooter(props: ShooterProps): ReactResult;
-interface StreamerProps extends PropsWithChildren, WithClassName {
-}
-declare function Streamer(props: StreamerProps): ReactResult;
-interface StreamersProps extends PropsWithChildren, WithClassName {
-}
-declare function Streamers(props: StreamersProps): ReactResult;
-declare function StreamersCreateControl(props: PropsWithChildren): ReactResult;
 interface TimelineAddClipControlProps extends PropsAndChild, WithClassName {
 }
 declare function TimelineAddClipControl(props: TimelineAddClipControlProps): ReactResult;
@@ -755,56 +615,6 @@ declare function TimelineZoom(props: TimelineZoomProps): ReactResult;
  * @parents Timeline
  */
 declare function TimelineZoomer(props: PropsWithChildren): ReactResult;
-declare function WebrtcButton(props: PropsWithChildren): ReactResult;
-declare class WebrtcClient {
-    endpointPromise: EndpointPromiser;
-    localStream?: MediaStream;
-    constructor(endpointPromise: EndpointPromiser, localStream?: MediaStream);
-    beforeAnswer(peerConnection: RTCPeerConnection): Promise<void>;
-    closeConnection(): void;
-    createConnection(options?: {
-        stereo?: boolean;
-    }): Promise<void>;
-    localPeerConnection?: RTCPeerConnection;
-}
-interface WebrtcCollapseControlProps extends PropsWithChildren, WithClassName {
-}
-declare function WebrtcCollapseControl(props: WebrtcCollapseControlProps): ReactResult;
-interface WebrtcContentProps extends PropsWithoutChild, WithClassName {
-}
-declare function WebrtcContent(props: WebrtcContentProps): ReactResult;
-interface WebrtcContextInterface {
-    broadcasting: boolean;
-    setBroadcasting: BooleanSetter;
-    picked: string;
-    pick: StringSetter;
-    audioDeviceId: string;
-    setAudioDeviceId: StringSetter;
-    setVideoDeviceId: StringSetter;
-    videoDeviceId: string;
-    client?: WebrtcClient;
-    mediaStream?: MediaStream;
-    setMediaStream: (stream: MediaStream | undefined) => void;
-    setClient: (client: WebrtcClient | undefined) => void;
-}
-declare const WebrtcContextDefault: WebrtcContextInterface;
-declare const WebrtcContext: React.Context<WebrtcContextInterface>;
-interface WebrtcDevicesProps extends PropsWithoutChild, WithClassName {
-}
-/**
- * @parents WebrtcContent
- * @children WebrtcDevice
- */
-declare function WebrtcDevices(props: WebrtcDevicesProps): ReactResult;
-interface WebrtcPreviewProps extends PropsWithoutChild {
-}
-declare function WebrtcPreview(props: WebrtcPreviewProps): ReactResult;
-interface LayerContextInterface {
-    layer?: Layer;
-    depth: number;
-}
-declare const LayerContextDefault: LayerContextInterface;
-declare const LayerContext: React.Context<LayerContextInterface>;
 interface ProcessContextInterface {
     error: string;
     processing: boolean;
@@ -817,34 +627,29 @@ interface ProcessContextInterface {
 }
 declare const ProcessContextDefault: ProcessContextInterface;
 declare const ProcessContext: React.Context<ProcessContextInterface>;
-interface ShooterContextInterface {
-    devices: MediaDeviceInfo[];
-}
-declare const ShooterContextDefault: ShooterContextInterface;
-declare const ShooterContext: React.Context<ShooterContextInterface>;
 interface TrackContextInterface {
     track?: Track;
 }
 declare const TrackContextDefault: TrackContextInterface;
 declare const TrackContext: React.Context<TrackContextInterface>;
-declare const DefaultStreamerProps: (args: UnknownObject) => {
-    className: string;
-    children: JSX.Element;
-};
-declare const useApiDefinitions: (types?: MediaDefinitionType[]) => [
+interface ClientContextInterface {
+    client: Client;
+}
+declare const ClientContextDefault: ClientContextInterface;
+declare const ClientContext: React.Context<ClientContextInterface>;
+declare const useApiDefinitions: (types?: MediaType[]) => [
     Editor,
-    Medias
+    MediaArray
 ];
 declare const useEditor: () => Editor;
 declare const useEditorActivity: () => [
     Editor,
     ActivityObjects
 ];
-declare const useEditorDefinitions: (types?: MediaDefinitionType[]) => [
+declare const useEditorDefinitions: (types?: MediaType[]) => [
     Editor,
-    Medias
+    MediaArray
 ];
-declare const useLayer: () => Layer;
 interface ListenerEvents extends Partial<Record<EventType, ListenerCallback>> {
 }
 declare const useListeners: (events: ListenerEvents, target?: Emitter) => void;
@@ -852,6 +657,7 @@ declare const useRefresh: () => [
     (...args: any[]) => void,
     number
 ];
+declare const useClient: () => Client;
 declare const EmptyElement: UnknownElement;
 declare const TweenInputKey = "tween-input-key";
 declare const Problems: {
@@ -865,12 +671,12 @@ interface ButtonProps extends PropsAndChildren, WithClassName {
 }
 declare function Button(props: ButtonProps): ReactResult;
 declare const elementSetPreviewSize: (current?: HTMLDivElement | null, size?: Size) => void;
-declare const labelObjects: Record<string, StringObject>;
-declare const labels: StringObject;
+declare const labelObjects: NestedStringRecord;
+declare const labels: StringRecord;
 declare const labelLookup: (id: string) => string;
 declare const labelTranslate: (id: string) => string;
-declare const labelInterpolate: (id: string, context: StringObject) => string;
-declare const propsDefinitionTypes: (type?: string, types?: string | string[], id?: string) => MediaDefinitionType[];
+declare const labelInterpolate: (id: string, context: StringRecord) => string;
+declare const propsMediaTypes: (type?: string, types?: string | string[], id?: string) => MediaType[];
 declare const propsSelectTypes: (type?: string, types?: string | string[], id?: string) => SelectType[];
 declare const sessionGet: (key: string) => string;
 declare const sessionSet: (key: string, value: any) => void;
@@ -883,7 +689,6 @@ interface SliderProps extends WithClassName {
 }
 declare function Slider(props: SliderProps): ReactResult;
 declare const VideoView: React.ForwardRefExoticComponent<Pick<PropsWithoutChild, keyof PropsWithoutChild> & React.RefAttributes<HTMLVideoElement>>;
-declare const mediaStreamPromise: (audioDeviceId: string, videoDeviceId: string) => Promise<MediaStream>;
-declare const View: React.ForwardRefExoticComponent<Pick<UnknownObject, string | number> & React.RefAttributes<HTMLDivElement>>;
-export { ActivityProps, Activity, ActivityContentProps, ActivityContent, ActivityContentContextDefault, ActivityContentContext, activityLabel, ActivityGroup, ActivityGroups, isActivityGroup, assertActivityGroup, ActivityObject, ActivityObjects, ActivityContextInterface, ActivityContextDefault, ActivityContext, ActivityItemProps, ActivityItem, ActivityLabel, ActivityPickedProps, ActivityPicked, ActivityPickerProps, ActivityPicker, ActivityProgressProps, ActivityProgress, ActivityPropsDefault, ActivityDefaultProps, ApiProps, ApiClient, ApiContextInterface, ApiContextDefault, ApiContext, ApiEnabled, BroadcasterProps, Broadcaster, BroadcasterContentProps, BroadcasterContent, BroadcasterControlProps, BroadcasterControl, BroadcasterPropsDefault, BroadcasterDefaultProps, BrowserProps, Browser, BrowserContentProps, BrowserContent, BrowserContextInterface, BrowserContextDefault, BrowserContext, BrowserPickerProps, BrowserPicker, BrowserPropsDefault, BrowserDefaultProps, BrowserControl, ClipContextInterface, ClipContextDefault, ClipContext, ClipItemProps, ClipItem, useClip, ComposerContextInterface, ComposerContextDefault, ComposerContext, ComposerLayerButtonsProps, ComposerLayerButtons, ComposerProps, Composer, ComposerContentProps, ComposerContent, ComposerPropsDefault, ComposerDefaultProps, ComposerDepth, ComposerFolderClose, ComposerFolderOpen, ComposerLayerProps, ComposerLayer, ComposerLayerFolder, ComposerLayerLabel, ComposerLayerMash, CreateEditedControl, EditorRedoButtonProps, EditorRedoButton, EditorRemoveButtonProps, EditorRemoveButton, EditorUndoButtonProps, EditorUndoButton, RenderControl, SaveControl, SelectEditedControlProps, SelectEditedControl, ViewControl, DefinitionContextInterface, DefinitionContextDefault, DefinitionContext, DefinitionItemProps, DefinitionItem, useDefinition, DataTypeElements, DataTypeInputs, BooleanTypeInput, DefinitionDropProps, DefinitionDrop, DefinitionSelect, IconTypeInput, NumericTypeInput, PercentTypeInput, RgbTypeInput, TextTypeInput, OptionTypeInput, DataGroupElements, DataGroupProps, DataGroupInputs, ColorGroupInput, MovablesGroupInputProps, MovablesGroupInput, OpacityGroupInput, PointGroupInput, SizeGroupInput, OptionGroupInputProps, OptionGroupInput, InputContextInterface, InputContextDefault, InputContext, InspectorProps, Inspector, InspectorContent, DataGroupBooleans, SelectedInfo, TweenSetter, InspectorContextInterface, InspectorContextDefault, InspectorContext, InspectorMovableProps, InspectorMovable, InspectorPropertiesProps, InspectorProperties, InspectorPropertyProps, InspectorProperty, InspectorPropsDefault, InspectorDefaultProps, InspectorPickedProps, InspectorPicked, InspectorPickerProps, InspectorPicker, MasherContextInterface, MasherContextDefault, MasherContext, PanelOptionsOrFalse, UiOptions, MasherOptions, EditorProps, MasherProps, Masher, MasherCastProps, MasherDefaultProps, MashingProps, Mashing, ContentOptions, PanelOptionsStrict, PanelOptions, panelOptionsStrict, PanelProps, Panel, PanelContentProps, PanelContent, PanelContentElement, PanelFootProps, PanelFoot, PanelHeadProps, PanelHead, PanelHeadElement, PanelsProps, Panels, PlayerContextInterface, PlayerContextDefault, PlayerContext, PlayerProps, Player, PlayerButton, PlayerContentProps, PlayerContent, PlayerNotPlaying, PlayerPlaying, PlayerPropsDefault, PlayerDefaultProps, PlayerTimeProps, PlayerTime, PlayerTimeControlProps, PlayerTimeControl, ProcessProps, Process, ProcessActiveProps, ProcessActive, ProcessInactiveProps, ProcessInactive, ProcessStatusProps, ProcessStatus, ProcessProgress, ShooterProps, Shooter, StreamerProps, Streamer, StreamersProps, Streamers, StreamersCreateControl, TimelineProps, TimelineDefaultZoom, Timeline, TimelineAddClipControlProps, TimelineAddClipControl, TimelineAddTrackControlProps, TimelineAddTrackControl, TimelineContentProps, TimelineContent, TimelineContextInterface, TimelineContextDefault, TimelineContext, TimelinePropsDefault, TimelineDefaultProps, TimelineScrubber, TimelineScrubberElement, TimelineSizer, TimelineTrackProps, TimelineTrack, TimelineTrackIcon, TimelineTracksProps, TimelineTracks, TimelineZoomProps, TimelineZoom, TimelineZoomer, WebrtcProps, Webrtc, WebrtcButton, WebrtcClient, WebrtcCollapseControlProps, WebrtcCollapseControl, WebrtcContentProps, WebrtcContent, WebrtcContextInterface, WebrtcContextDefault, WebrtcContext, WebrtcDevicesProps, WebrtcDevices, WebrtcPreviewProps, WebrtcPreview, WebrtcPropsDefault, WebrtcDefaultProps, LayerContextInterface, LayerContextDefault, LayerContext, ProcessContextInterface, ProcessContextDefault, ProcessContext, ShooterContextInterface, ShooterContextDefault, ShooterContext, TrackContextInterface, TrackContextDefault, TrackContext, UnknownChangeEvent, SliderChangeHandler, NodeObject, NodesArray, UnknownElement, ElementRecord, SourceCallbackOptions, ReactStateSetter, ListenerCallback, PropsAndChild, PropsWithoutChild, PropsWithChildren, PropsAndChildren, ReactResult, PropsMethod, WithClassName, DragSuffix, FileInfo, FileInfos, DragOffsetObject, isDragOffsetObject, assertDragOffsetObject, DragDefinitionObject, isDragDefinitionObject, assertDragDefinitionObject, DragLayerObject, Draggable, DragType, DragTypes, isDragType, TransferTypeFiles, TransferType, isTransferType, dropType, dragDefinitionType, dragType, dragTypes, dragData, DragElementRect, DragElementPoint, dropFilesFromList, droppingPositionClass, DefaultStreamerProps, useApiDefinitions, useEditor, useEditorActivity, useEditorDefinitions, useLayer, ListenerEvents, useListeners, useRefresh, EmptyElement, TweenInputKey, Problems, BarOptions, BarProps, Bar, ButtonProps, Button, elementSetPreviewSize, labelObjects, labels, labelLookup, labelTranslate, labelInterpolate, propsDefinitionTypes, propsSelectTypes, sessionGet, sessionSet, SliderProps, Slider, VideoView, mediaStreamPromise, View };
+declare const View: React.ForwardRefExoticComponent<Pick<UnknownRecord, string | number> & React.RefAttributes<HTMLDivElement>>;
+export { ActivityProps, Activity, ActivityContentProps, ActivityContent, ActivityContentContextDefault, ActivityContentContext, activityLabel, ActivityGroup, ActivityGroups, isActivityGroup, assertActivityGroup, ActivityObject, ActivityObjects, ActivityContextInterface, ActivityContextDefault, ActivityContext, ActivityItemProps, ActivityItem, ActivityLabel, ActivityPickedProps, ActivityPicked, ActivityPickerProps, ActivityPicker, ActivityProgressProps, ActivityProgress, ActivityPropsDefault, ActivityDefaultProps, ApiProps, ApiClient, ApiContextInterface, ApiContextDefault, ApiContext, ApiEnabled, BrowserProps, Browser, BrowserContentProps, BrowserContent, BrowserContextInterface, BrowserContextDefault, BrowserContext, BrowserPickerProps, BrowserPicker, BrowserPropsDefault, BrowserDefaultProps, BrowserControl, ClipContextInterface, ClipContextDefault, ClipContext, ClipItemProps, ClipItem, useClip, CreateEditedControl, EditorRedoButtonProps, EditorRedoButton, EditorRemoveButtonProps, EditorRemoveButton, EditorUndoButtonProps, EditorUndoButton, RenderControl, SaveControl, SelectEditedControlProps, SelectEditedControl, ViewControl, DefinitionContextInterface, DefinitionContextDefault, DefinitionContext, DefinitionItemProps, DefinitionItem, useDefinition, DataTypeElements, DataTypeInputs, BooleanTypeInput, DefinitionDropProps, DefinitionDrop, DefinitionSelect, IconTypeInput, NumericTypeInput, PercentTypeInput, RgbTypeInput, TextTypeInput, OptionTypeInput, DataGroupElements, DataGroupProps, DataGroupInputs, ColorGroupInput, MovablesGroupInputProps, MovablesGroupInput, OpacityGroupInput, PointGroupInput, SizeGroupInput, OptionGroupInputProps, OptionGroupInput, InputContextInterface, InputContextDefault, InputContext, InspectorProps, Inspector, InspectorContent, DataGroupBooleans, SelectedInfo, TweenSetter, InspectorContextInterface, InspectorContextDefault, InspectorContext, InspectorMovableProps, InspectorMovable, InspectorPropertiesProps, InspectorProperties, InspectorPropertyProps, InspectorProperty, InspectorPropsDefault, InspectorDefaultProps, InspectorPickedProps, InspectorPicked, InspectorPickerProps, InspectorPicker, MasherContextInterface, MasherContextDefault, MasherContext, PanelOptionsOrFalse, UiOptions, MasherOptions, EditorProps, MasherProps, Masher, MasherDefaultProps, MashingProps, Mashing, ContentOptions, PanelOptionsStrict, PanelOptions, panelOptionsStrict, PanelProps, Panel, PanelContentProps, PanelContent, PanelContentElement, PanelFootProps, PanelFoot, PanelHeadProps, PanelHead, PanelHeadElement, PanelsProps, Panels, PlayerContextInterface, PlayerContextDefault, PlayerContext, PlayerProps, Player, PlayerButton, PlayerContentProps, PlayerContent, PlayerNotPlaying, PlayerPlaying, PlayerPropsDefault, PlayerDefaultProps, PlayerTimeProps, PlayerTime, PlayerTimeControlProps, PlayerTimeControl, ProcessProps, Process, ProcessActiveProps, ProcessActive, ProcessInactiveProps, ProcessInactive, ProcessStatusProps, ProcessStatus, ProcessProgress, TimelineProps, TimelineDefaultZoom, Timeline, TimelineAddClipControlProps, TimelineAddClipControl, TimelineAddTrackControlProps, TimelineAddTrackControl, TimelineContentProps, TimelineContent, TimelineContextInterface, TimelineContextDefault, TimelineContext, TimelinePropsDefault, TimelineDefaultProps, TimelineScrubber, TimelineScrubberElement, TimelineSizer, TimelineTrackProps, TimelineTrack, TimelineTrackIcon, TimelineTracksProps, TimelineTracks, TimelineZoomProps, TimelineZoom, TimelineZoomer, ProcessContextInterface, ProcessContextDefault, ProcessContext, TrackContextInterface, TrackContextDefault, TrackContext, ClientContextInterface, ClientContextDefault, ClientContext, UnknownChangeEvent, SliderChangeHandler, NodeObject, NodesArray, UnknownElement, ElementRecord, SourceCallbackOptions, ReactStateSetter, ListenerCallback, PropsAndChild, PropsWithoutChild, PropsWithChildren, PropsAndChildren, ReactResult, PropsMethod, WithClassName, useApiDefinitions, useEditor, useEditorActivity, useEditorDefinitions, ListenerEvents, useListeners, useRefresh, useClient, EmptyElement, TweenInputKey, Problems, BarOptions, BarProps, Bar, ButtonProps, Button, elementSetPreviewSize, labelObjects, labels, labelLookup, labelTranslate, labelInterpolate, propsMediaTypes, propsSelectTypes, sessionGet, sessionSet, SliderProps, Slider, VideoView, View };
 //# sourceMappingURL=client-react.d.ts.map

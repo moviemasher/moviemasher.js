@@ -1,8 +1,8 @@
 import { 
-  assertMash, assertTrue, isAboveZero, idGenerate, AVType, CommandFilter, 
+  assertMashMedia, assertTrue, isAboveZero, idGenerate, AVType, CommandFilter, 
   colorTransparent, Clip, sortByTrack, CommandFile, assertMedia, CommandInputs, 
   CommandInput, CommandFiles, CommandFileArgs, CommandFilters, CommandFilterArgs, 
-  timeRangeFromTime, arrayLast, Mash, Size, Time 
+  timeRangeFromTime, arrayLast, MashMedia, Size, Time 
 } from "@moviemasher/moviemasher.js"
 import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
 
@@ -15,7 +15,7 @@ export const FilterGraphInputAudible = 'SILENCE'
 export class FilterGraphClass implements FilterGraph {
   constructor(args: FilterGraphArgs) {
     const { mash, background, size, time, streaming, videoRate, visible } = args
-    assertMash(mash)
+    assertMashMedia(mash)
 
     this.mash = mash
     this.time = time
@@ -156,7 +156,7 @@ export class FilterGraphClass implements FilterGraph {
 
   get inputCommandFiles(): CommandFiles { return this.filterGraphCommandFiles.filter(file => file.input) }
   
-  mash: Mash
+  mash: MashMedia
 
   get quantize() { return this.mash.quantize }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, EditType, SelectType } from '@moviemasher/moviemasher.js'
+import { ClassButton, EditType, SelectType, VideoType } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
@@ -39,12 +39,6 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
   ]
  
   optionsStrict.footer.content ||= [
-    <InspectorPicker key="cast" className={ClassButton} id="cast">
-      {icons.broadcaster}
-    </InspectorPicker>,
-    <InspectorPicker key="layer" className={ClassButton} id="layer">
-      {icons.composer}
-    </InspectorPicker>,
     <InspectorPicker key="mash" className={ClassButton} id="mash">
       {icons.mmTube}
     </InspectorPicker>,
@@ -60,11 +54,11 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
  ]
 
   const contentChildren = [<InspectorProperties key="properties" />]
-  const types = [SelectType.Clip, SelectType.Track, SelectType.Layer]
+  const types = [SelectType.Clip, SelectType.Track]
 
   contentChildren.push(
     <ApiEnabled key="api-enabled">
-      <Mashing editType={EditType.Mash}>
+      <Mashing type={VideoType}>
         <InspectorPicked type="mash" key="inspector-mash">
           <View>
             <RenderControl key='render-process'>

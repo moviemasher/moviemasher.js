@@ -2,7 +2,7 @@ import React from "react"
 import { 
   assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, 
   isDefined, selectedPropertyObject, selectedPropertiesScalarObject, 
-  PropertyTweenSuffix, ScalarObject, assertTimeRange, tweenInputTime
+  PropertyTweenSuffix, ScalarRecord, assertTimeRange, tweenInputTime
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
@@ -37,7 +37,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   const endSelected = tweenSelected[DataGroup.Point]
 
   const byName = selectedPropertyObject(selectedItems, DataGroup.Point, selectType)
-  const values: ScalarObject = selectedPropertiesScalarObject(byName) 
+  const values: ScalarRecord = selectedPropertiesScalarObject(byName) 
   const { 
     offE, offW, offN, offS, x, y, 
     [`x${PropertyTweenSuffix}`]: xEnd,

@@ -1,11 +1,11 @@
 import { 
-  Editor, Medias, DefinitionType
+  Editor, MediaArray, MediaType
 } from "@moviemasher/moviemasher.js"
 
 import { useEditorDefinitions } from "./useEditorDefinitions"
 import { useApiDefinitions } from "./useApiDefinitions"
 
-export const useDefinitions = (types: DefinitionType[] = []): [Editor, Medias] => {
+export const useDefinitions = (types: MediaType[] = []): [Editor, MediaArray] => {
   const [editor, editorDefinitions] = useEditorDefinitions(types)
   const [_, apiDefinitions] = useApiDefinitions(types)
   const definitions = apiDefinitions.filter(apiDefinition => 

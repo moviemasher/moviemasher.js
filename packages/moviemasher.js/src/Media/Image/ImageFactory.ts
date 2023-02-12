@@ -2,7 +2,7 @@ import { ImageDefinitionClass } from "./ImageDefinitionClass"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { assertPopulatedString } from "../../Utility/Is"
 import { MediaFactories } from "../MediaFactories"
-import { DefinitionType } from "../../Setup/Enums"
+import { ImageType } from "../../Setup/Enums"
 
 import defaultContent from "../../MediaObjects/content/default.json"
 
@@ -30,7 +30,7 @@ export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinitio
 }
 
 export const imageDefinitionFromId = (id : string) : ImageDefinition => {
-  const definition = MediaDefaults[DefinitionType.Image].find(definition => 
+  const definition = MediaDefaults[ImageType].find(definition => 
     definition.id === id
   )
   if (definition) return definition as ImageDefinition
@@ -40,7 +40,8 @@ export const imageDefinitionFromId = (id : string) : ImageDefinition => {
 }
 
 export const imageInstance = (object : ImageObject) : Image => {
-  const definition = imageDefinition(object)
+  const { mediaId: id, definition: defined } = object
+  const definition = defined || imageDefinitionFromId(id!)
   const instance = definition.instanceFromObject(object)
   return instance
 }
@@ -50,9 +51,9 @@ export const imageFromId = (id : string) : Image => {
 }
 
 
-MediaFactories[DefinitionType.Image] = imageDefinition
+MediaFactories[ImageType] = imageDefinition
 
-MediaDefaults[DefinitionType.Image].push(
+MediaDefaults[ImageType].push(
   new ColorContentDefinitionClass({id: DefaultContentId, ...defaultContent}),
   new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
   new ShapeContainerDefinitionClass(roundedRectContainer),

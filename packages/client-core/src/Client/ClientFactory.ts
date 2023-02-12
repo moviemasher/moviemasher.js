@@ -1,6 +1,6 @@
-import { ClientOptions, ClientDefaultArgs } from "./Client"
+import { ClientOptions } from "./Client"
 import { ClientClass } from "./ClientClass"
 
-export const clientInstance = (args: ClientOptions = ClientDefaultArgs) => (
+export const clientInstance = (args: ClientOptions = {}) => (
   new ClientClass(args)
 )

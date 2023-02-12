@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMash, endpointFromUrl, endpointUrl, EventType, isMash, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { assertMashMedia, endpointFromUrl, endpointUrl, EventType, isMashMedia, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -10,10 +10,10 @@ export function ViewControl(props: PropsAndChild): ReactResult {
   const editor = useEditor()
 
   const getDisabled = () => {
-    const { edited } = editor
-    if (!isMash(edited)) return true
+    const { mashMedia } = editor
+    if (!isMashMedia(mashMedia)) return true
 
-    const { encodings } = edited
+    const { encodings } = mashMedia
   
     return !encodings.length
   }
@@ -21,7 +21,7 @@ export function ViewControl(props: PropsAndChild): ReactResult {
   const updateDisabled = () => setDisabled(getDisabled())
   useListeners({
     [EventType.Render]: updateDisabled,
-    [EventType.Mash]: updateDisabled
+    [EventType.Loaded]: updateDisabled
   })
 
   const { children, ...rest } = props
@@ -29,10 +29,10 @@ export function ViewControl(props: PropsAndChild): ReactResult {
   const onClick = () => {
     if (disabled) return
 
-    const { edited } = editor
-    assertMash(edited)
+    const { mashMedia } = editor
+    assertMashMedia(mashMedia)
     
-    const { encodings } = edited
+    const { encodings } = mashMedia
     const [encoding] = encodings
     const url = endpointUrl(encoding.request.endpoint)
     window.open(url)

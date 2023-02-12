@@ -1,10 +1,10 @@
-import { PreviewItems, SvgItems } from "../../declarations"
+import { PreviewItems, SvgItems } from "../../Helpers/Svg/Svg"
 import { Size } from "../../Utility/Size"
-import { PreloadOptions } from "../../MoveMe"
+import { PreloadOptions } from "../../Base/Code"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
-import { Mash } from "../../Edited/Mash/Mash"
-import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
+import { MashMedia } from "../../Media/Mash/Mash"
+import { Clip } from "../../Media/Mash/Track/Clip/Clip"
 
 export interface PreviewOptions  {
   editor?: Editor
@@ -16,7 +16,7 @@ export interface PreviewArgs extends PreviewOptions {
   clip?: Clip
   size?: Size
   time: Time
-  mash: Mash
+  mash: MashMedia
 }
 
 export interface Preview extends PreloadOptions {

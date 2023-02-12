@@ -1,5 +1,5 @@
-import { UnknownObject } from "../../declarations";
-import { LoadedInfo } from "../../Loader/Loader";
+import { UnknownRecord } from "../../declarations";
+import { LoadedInfo } from "../../Load/Loader";
 import { Requestable, RequestableObject } from "../../Base/Requestable/Requestable";
 
 

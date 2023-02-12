@@ -1,8 +1,8 @@
-import { RequestObject, StringObject, Value } from "@moviemasher/moviemasher.js"
+import { RequestObject, StringRecord, Value } from "@moviemasher/moviemasher.js"
 
 export interface RequestArgs {
   auth?: string;
-  headers?: StringObject
+  headers?: StringRecord
   hostname?: string
   method?: string
   path?: string;

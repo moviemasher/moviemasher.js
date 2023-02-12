@@ -2,7 +2,7 @@ import { assertPopulatedString } from "../../Utility/Is"
 import { VideoDefinitionClass } from "./VideoDefinitionClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 import { MediaFactories } from "../MediaFactories"
-import { DefinitionType } from "../../Setup/Enums"
+import { MediaType, VideoType } from "../../Setup/Enums"
 
 export const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
   const { id } = object
@@ -15,12 +15,15 @@ export const videoDefinitionFromId = (id : string) : VideoDefinition => {
 }
 
 export const videoInstance = (object : VideoObject) : Video => {
-  const definition = videoDefinition(object)
-  return definition.instanceFromObject(object)
+  const { mediaId: id, definition: defined } = object
+  const definition = defined || videoDefinitionFromId(id!)
+  const instance = definition.instanceFromObject(object)
+  return instance
+  
 }
 
 export const videoFromId = (id : string) : Video => {
   return videoInstance({ id })
 }
 
-MediaFactories[DefinitionType.Video] = videoDefinition
+MediaFactories[VideoType] = videoDefinition

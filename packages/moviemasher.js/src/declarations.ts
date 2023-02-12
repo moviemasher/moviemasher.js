@@ -1,235 +1,24 @@
-import { EffectObject } from "./Media/Effect/Effect"
-import { isObject } from "./Utility/Is"
-
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
 export type Value = number | string
-export type Scalar = boolean | Value | undefined
+export type Scalar = Value | boolean | undefined
 export type PopulatedString = string & { isEmpty: never }
-export interface ValueObject extends Record<string, Value> {}
-export type ValueObjects = ValueObject[]
-export type ValueObjectsTuple = [ValueObjects, ValueObjects]
-export interface NumberObject extends Record<string, number> {}
-export interface BooleanObject extends Record<string, boolean> {}
-export interface UnknownObject extends Record<string, unknown> {}
-export interface StringObject extends Record<string, string> { }
-export interface ScalarObject extends Record<string, Scalar> { }
-export interface StringsObject extends Record<string, string[]> { }
-export interface RegExpObject extends Record<string, RegExp> {}
+export type Integer = number 
 
-export interface ObjectUnknown extends Record<string, UnknownObject> {}
+export interface ValueRecord extends Record<string, Value> {}
+export interface NumberRecord extends Record<string, number> {}
+export interface UnknownRecord extends Record<string, unknown> {}
+export interface ScalarRecord extends Record<string, Scalar> { }
+export interface StringRecord extends Record<string, string> { }
+export interface StringsRecord extends Record<string, string[]> { }
+export interface NestedStringRecord extends Record<string, string | StringRecord | NestedStringRecord> {}
 
-export interface VisibleContextData extends ImageData {}
-export interface VisibleContextElement extends HTMLCanvasElement { }
-
-export interface AudibleContextData extends AudioContext {}
-export interface Context2D extends CanvasRenderingContext2D {}
-
-export interface Pixels extends Uint8ClampedArray {}
-export interface LoadedImage extends HTMLImageElement {} // limited Image API in tests!
-export interface LoadedVideo extends HTMLVideoElement {}
-export interface LoadedAudio extends AudioBuffer {}
-export interface LoadedFont extends FontFace { } // just { family: string } in tests!
-export interface LoadedEffect extends EffectObject {}
-export type LoadedImageOrVideo = LoadedImage | LoadedVideo
-export type LoadedMedia = LoadedImageOrVideo | LoadedAudio | LoadedFont
-
-export interface LoadedSvgImage extends SVGImageElement {}
-
-export interface AudibleSource extends AudioBufferSourceNode {}
-
-export type SvgOutline = SVGRectElement | SVGPathElement
-
-export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
-export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement
-export type SvgFilters = SvgFilter[]
-
-
-export type SvgItem = SVGElement | LoadedImageOrVideo
-
-
-export type SvgItems = SvgItem[]
-export type SvgItemsTuple = [SvgItems, SvgItems]
-
-export type PreviewItem = SVGSVGElement | HTMLDivElement
-export type PreviewItems = PreviewItem[]
-
-export type SvgOrImage = SVGSVGElement | LoadedImage
-
-export type VisibleSource = HTMLVideoElement | HTMLImageElement | SVGImageElement | HTMLCanvasElement
-
-export type CanvasVisibleSource = VisibleSource | ImageBitmap | CanvasImageSource
-
-export type Timeout = ReturnType<typeof setTimeout>
-export type Interval = ReturnType<typeof setInterval>
-
-export interface NumberConverter { (value: number): number }
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
 export interface BooleanGetter { (): boolean }
-export type EventHandler = (event: Event) => void 
 
 export type AnyArray = any[]
-export type JsonValue = Scalar | AnyArray | UnknownObject
-export interface JsonObject extends Record<string, JsonObject | JsonValue | JsonValue[]> {}
-
-export interface WithFrame {
-  frame : number
-}
-
-export interface WithIndex {
-  index : number
-}
-
-export interface WithTrack {
-  trackNumber : number
-}
-
-export interface WithLabel {
-  label : string
-}
-
-export interface Rgb {
-  [index: string] : number
-  r : number
-  g : number
-  b : number
-}
-
-export interface Rgba extends Rgb {
-  a : number
-}
-
-export interface AlphaColor {
-  color: string
-  alpha: number
-}
-
-export interface AndType {
-  type: string
-}
-
-export interface AndId {
-  id: string
-}
-
-export interface AndLabel {
-  label: string
-}
-
-export interface LabelAndId extends AndId, AndLabel {}
-
-export interface WithError {
-  error?: string
-}
-
-export interface AndTypeAndId extends AndType, AndId {}
-
-export interface AndTypeAndValue extends AndType {
-  value : number
-}
-
-export interface RgbObject {
-  r: Value
-  g: Value
-  b: Value
-}
-
-export interface RgbaObject extends RgbObject {
-  a: Value
-}
-
-export interface Rgb {
-  r: number
-  g: number
-  b: number
-}
-
-export interface YuvObject {
-  y: Value
-  u: Value
-  v: Value
-}
-
-export interface Yuv {
-  y: number
-  u: number
-  v: number
-}
-
-
-
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export type Constrained<T = UnknownObject> = new (...args: any[]) => T
-
-// export interface GenericFactory<INSTANCE, INSTANCEOBJECT, DEFINITION, DEFINITIONOBJECT> {
-//   defaults?: DEFINITION[]
-//   definitionFromId(id : string) : DEFINITION
-//   definition(object: DEFINITIONOBJECT): DEFINITION
-//   instance(object : INSTANCEOBJECT) : INSTANCE
-//   fromId(id : string) : INSTANCE
-// }
-
-export type IndexHandler<OBJECT = any, INDEX = number> = (effect: OBJECT, insertIndex?: INDEX) => void
-
-export interface StartOptions {
-  duration: number
-  offset?: number
-  start: number
-}
-
-// search includes '?' prefix
-// protocol includes ':' suffix
-export interface Endpoint {
-  protocol?: string
-  pathname?: string
-  hostname?: string
-  search?: string
-  port?: number
-}
-
-export const isEndpoint = (value: any): value is Endpoint => {
-  return isObject(value) 
-}
-
-export interface UploadDescription {
-  name: string
-  type: string
-  size: number
-}
-
-export interface InputParameter {
-  key: string
-  value: Value
-}
-
-export interface DescribedObject extends AndId, UnknownObject {
-  icon?: string
-  label?: string
-}
-
-export interface Described extends AndId {
-  createdAt: string
-  icon: string
-  label: string
-}
-
-
-
-export const isCustomEvent = (value: any): value is CustomEvent => (
-  value instanceof CustomEvent
-)
-
-
-
-
-
-
-
-
-
-
-
-
+export type JsonValue = Scalar | AnyArray | UnknownRecord
+export interface JsonRecord extends Record<string, JsonRecord | JsonValue | JsonValue[]> {}

@@ -1,4 +1,4 @@
-import { LoadedImage, LoadedVideo } from "../declarations";
+import { LoadedImage, LoadedVideo } from "../Load/Loaded";
 import { Time } from "../Helpers/Time/Time";
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities";
 import { assertTrue } from "./Is";

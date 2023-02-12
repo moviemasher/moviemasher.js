@@ -1,14 +1,14 @@
 import { RequestObject } from "../Api/Api"
-import { LoadedAudio, LoadedFont, LoadedImage, LoadedVideo } from "../declarations"
-import { PathOrError } from "../MoveMe"
-import { DefinitionType } from "../Setup/Enums"
+import { LoadedAudio, LoadedFont, LoadedImage, LoadedVideo } from "../Load/Loaded"
+import { PathOrError } from "../Helpers/Error/Error"
+import { AudioType, FontType, ImageType, MediaType, VideoType } from "../Setup/Enums"
 import { requestExtension, requestPromise } from "./Request"
 
 export type ResolverPromise = {
-  (file: string, mimeType: string, type: DefinitionType.Image): Promise<LoadedImage>
-  (file: string, mimeType: string, type: DefinitionType.Audio): Promise<LoadedAudio>
-  (file: string, mimeType: string, type: DefinitionType.Font): Promise<LoadedFont>
-  (file: string, mimeType: string, type: DefinitionType.Video): Promise<LoadedVideo>
+  (file: string, mimeType: string, type: ImageType): Promise<LoadedImage>
+  (file: string, mimeType: string, type: AudioType): Promise<LoadedAudio>
+  (file: string, mimeType: string, type: FontType): Promise<LoadedFont>
+  (file: string, mimeType: string, type: VideoType): Promise<LoadedVideo>
   (file: string, mimeType: string, type?: string): Promise<PathOrError>
 }
 

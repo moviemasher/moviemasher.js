@@ -1,28 +1,28 @@
-import { UnknownObject, Value, ValueObject } from "../declarations"
-import { MashAndMediaObject } from "../Edited/Mash/Mash"
-import { Output } from "../MoveMe"
-import { OutputFormat, OutputType } from "../Setup/Enums"
+import { UnknownRecord, Value, ValueRecord } from "../declarations"
+import { MashAndMediaObject } from "../Media/Mash/Mash"
+import { Output } from "../Base/Code"
+import { OutputFormat, EncodeType } from "../Setup/Enums"
 import { Size } from "../Utility/Size"
 
 export interface EncodeOutput extends Output {
   commandOutput: RenderingCommandOutput
 }
 
-export interface CommandOutput extends UnknownObject, Partial<Size> {
+export interface CommandOutput extends UnknownRecord, Partial<Size> {
   audioBitrate?: Value
   audioChannels?: number
   audioCodec?: string
   audioRate?: number
   extension?: string
   format?: OutputFormat
-  options?: ValueObject
+  options?: ValueRecord
   videoBitrate?: Value
   videoCodec?: string
   videoRate?: number
 }
 
 export interface RenderingCommandOutput extends CommandOutput {
-  outputType: OutputType
+  outputType: EncodeType
   basename?: string
   optional?: boolean
   cover?: boolean

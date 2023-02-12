@@ -26,7 +26,7 @@ export function TimelineContent(props: TimelineContentProps): ReactResult {
 
   const editor = useEditor()
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
-  useListeners({ [EventType.Mash]: resetScroll })
+  useListeners({ [EventType.Loaded]: resetScroll })
 
   const onPointerDown = () => { 
     editor.selection.unset(SelectType.Track) 

@@ -1,6 +1,4 @@
-import { 
-  Defined, clipInstance
-} from "@moviemasher/moviemasher.js"
+import { clipInstance } from "@moviemasher/moviemasher.js"
 
 import { audioDefinitionObject } from './Audio.mjs'
 import { imageDefinitionObject } from './Image.mjs'
@@ -12,30 +10,30 @@ export const createClipObject = (object) => {
   return object
 }
 
-export const createClip = (object) => (
-  clipInstance(object || createClipObject()) 
+export const createClip = () => (
+  clipInstance(createClipObject()) 
 )
 
-export const createClipObjectWithImage = (object) => {
+const createClipObjectWithImage = (media, object) => {
   object ||= {}
   const definitionObject = imageDefinitionObject()
-  Defined.define(definitionObject)
+  media.define(definitionObject)
   return { ...createClipObject(object), contentId: definitionObject.id }
 }
 
-export const createClipObjectWithAudio = (object) => {
+const createClipObjectWithAudio = (media, object) => {
   object ||= {}
   const definitionObject = audioDefinitionObject()
-  Defined.define(definitionObject)
+  media.define(definitionObject)
   return { ...createClipObject(object), contentId: definitionObject.id, containerId: "" }
 }
 
-export const createClipWithImage = (object) => (
-  createClip(createClipObjectWithImage(object))
+export const createClipWithImage = (media, object) => (
+  createClip(createClipObjectWithImage(media, object))
 )
 
-export const createClipWithAudio = (object) => (
-  createClip(createClipObjectWithAudio(object))
+export const createClipWithAudio = (media, object) => (
+  createClip(createClipObjectWithAudio(media, object))
 )
 
 

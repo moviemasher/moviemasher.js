@@ -1,7 +1,7 @@
-import { SvgFilters, SvgItem, UnknownObject, ValueObject } from "../../declarations"
+import { UnknownRecord, ValueRecord } from "../../declarations"
+import { SvgFilters, SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect, rectFromSize, RectTuple, RectZero } from "../../Utility/Rect"
 
-import { Errors } from "../../Setup/Errors"
 import { assertPopulatedString, isArray } from "../../Utility/Is"
 import { Content, ContentClass, ContentObject, ContentRectArgs, DefaultContentId } from "./Content"
 import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
@@ -9,18 +9,20 @@ import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from "../../Utility/Tween"
 import { DataGroup, Property, propertyInstance } from "../../Setup/Property"
 import { DataType, Orientation } from "../../Setup/Enums"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../Base/Code"
 import { idGenerate } from "../../Utility/Id"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { Actions } from "../../Editor/Actions/Actions"
-import { SelectedItems, SelectedMovable } from "../../Utility/SelectedProperty"
+import { SelectedItems, SelectedMovable } from "../../Helpers/Select/SelectedProperty"
 import { Effects } from "../Effect/Effect"
 import { arrayLast } from "../../Utility/Array"
 import { effectInstance } from "../Effect/EffectFactory"
 import { Size, sizeAboveZero } from "../../Utility/Size"
-import { svgFilterElement, svgSet } from "../../Utility/Svg"
+import { svgFilterElement, svgSet } from "../../Helpers/Svg/SvgFunctions"
 import { isAudio } from "../Audio/Audio"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
@@ -69,7 +71,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     
       const trimFilter = 'atrim'
       const trimId = idGenerate(trimFilter)
-      const trimOptions: ValueObject = {}
+      const trimOptions: ValueRecord = {}
 
       const { frame } = this.definitionTime(time, clipTime)
 
@@ -190,12 +192,12 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     
     intrinsicRect(_ = false): Rect { return RectZero }
 
-    get isDefault() { return this.definitionId === DefaultContentId }
+    get isDefault() { return this.mediaId === DefaultContentId }
 
     get isDefaultOrAudio() { return this.isDefault || isAudio(this) }
 
     contentSvgItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem> {
-      throw new Error(Errors.unimplemented) 
+      return errorThrow(ErrorName.Unimplemented)
     }
 
     selectedItems(actions: Actions): SelectedItems {
@@ -231,7 +233,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       return super.selectedProperty(property)
     }
 
-    toJSON(): UnknownObject {
+    toJSON(): UnknownRecord {
       const json = super.toJSON()
       json.effects = this.effects
       return json

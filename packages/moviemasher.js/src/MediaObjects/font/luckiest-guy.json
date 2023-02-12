@@ -2,5 +2,12 @@
   "label": "Luckiest Guy",
   "id": "com.moviemasher.font.luckiest-guy",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Luckiest+Guy"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Luckiest+Guy" 
+    } 
+  }
 }

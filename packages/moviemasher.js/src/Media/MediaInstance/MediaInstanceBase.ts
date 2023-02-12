@@ -1,5 +1,5 @@
-import { UnknownObject } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { UnknownRecord } from "../../declarations"
+import { MediaType } from "../../Setup/Enums"
 import { idGenerateString } from "../../Utility/Id"
 import { PropertiedClass } from "../../Base/Propertied"
 import { assertPopulatedObject } from "../../Utility/Is"
@@ -23,9 +23,9 @@ export class MediaInstanceBase extends PropertiedClass implements MediaInstance 
 
   definition!: Media 
 
-  get definitionId(): string { return this.definition.id }
+  get mediaId(): string { return this.definition.id }
 
-  definitionIds(): string[] { return [this.definitionId] }
+  definitionIds(): string[] { return [this.mediaId] }
 
   protected _id?: string
   get id(): string { return this._id ||= idGenerateString() }
@@ -34,16 +34,12 @@ export class MediaInstanceBase extends PropertiedClass implements MediaInstance 
   get label(): string { return this._label  }
   set label(value: string) { this._label = value }
 
-  toJSON(): UnknownObject {
-    const json = super.toJSON()
-    const { definitionId, type, label } = this
-    if (label) json.label = label
-    json.type = type
-    json.definitionId = definitionId
-    return json
+  toJSON(): UnknownRecord {
+    const { mediaId, type, label } = this
+    return { ...super.toJSON(), type, label, mediaId}
   }
 
-  get type(): DefinitionType { return this.definition.type }
+  get type(): MediaType { return this.definition.type }
 
 
   unload() { this.definition.unload() }

@@ -1,9 +1,9 @@
-import { Mash, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/moviemasher.js"
+import { MashMedia, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/moviemasher.js"
 
 export interface FilterGraphArgs {
   visible?: boolean
   background: string
-  mash: Mash
+  mash: MashMedia
   size: Size
   streaming?: boolean
   time: Time

@@ -1,5 +1,5 @@
-import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../MoveMe"
-import { DefinitionType, LoadType } from "../../Setup/Enums"
+import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../Base/Code"
+import { SequenceType, VideoType, AudioType } from "../../Setup/Enums"
 import { Video, VideoDefinition } from "./Video"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { assertPopulatedString, assertTimeRange, isBoolean } from "../../Utility/Is"
@@ -7,20 +7,22 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 
 import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
-import { LoadedVideo, SvgItem } from "../../declarations"
+import { LoadedVideo } from "../../Load/Loaded"
+import { SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect } from "../../Utility/Rect"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange, Times } from "../../Helpers/Time/Time"
 import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
 import { sizeCopy, sizeCover } from "../../Utility/Size"
-import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Utility/Svg"
+import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
 import { ContainerMixin } from "../Container/ContainerMixin"
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
-import { isTranscoding, Transcoding } from "../../Transcode/Transcoding/Transcoding"
-import { assertLoadedVideo } from "../../Loader/Loader"
-import { Errors } from "../../Setup/Errors"
+import { assertLoadedVideo } from "../../Load/Loader"
 import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
-import { endpointUrl } from "../../Utility/Endpoint"
+import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
+import { isRequestable, Requestable } from "../../Base/Requestable/Requestable"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 const VideoWithTweenable = TweenableMixin(MediaInstanceBase)
 
@@ -57,7 +59,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     if (visible) {
       if (!icon) {
         const visibleGraphFile: GraphFile = {
-          input: true, type: LoadType.Video, file, definition
+          input: true, type: VideoType, file, definition
         }
         files.push(visibleGraphFile)
       }
@@ -66,7 +68,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       const mutable = definition.duration ? this.mutable() : true
       if (mutable && !this.muted) {
         const audioGraphFile: GraphFile = {
-          input: true, type: LoadType.Audio, definition,
+          input: true, type: AudioType, definition,
           file: '',
         }  
         files.push(audioGraphFile)
@@ -86,15 +88,18 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       promises.push(definition.loadedAudioPromise.then(EmptyMethod))
     }
     if (visible) {
-      const visibleTranscoding = definition.preferredTranscoding(DefinitionType.Sequence, DefinitionType.Video)
-      if (isTranscoding(visibleTranscoding) ) {
-        const audibleTranscoding = audio && audible && definition.preferredTranscoding(DefinitionType.Audio, DefinitionType.Video)
+      const visibleTranscoding = definition.preferredTranscoding(SequenceType, VideoType)
+      if (isRequestable(visibleTranscoding) ) {
+        const audibleTranscoding = audio && audible && definition.preferredTranscoding(AudioType, VideoType)
         if (visibleTranscoding !== audibleTranscoding) {
           const { type } = visibleTranscoding
           console.log(this.constructor.name, 'loadPromise visibleTranscoding', visibleTranscoding)
  
-          if (type === DefinitionType.Video) {
-            promises.push(visibleTranscoding.loadedMediaPromise.then(EmptyMethod))
+          if (type === VideoType) {
+            promises.push(visibleTranscoding.loadedMediaPromise.then(orError => {
+              const { error, clientMedia: loadedMedia } = orError
+              if (error) return errorThrow(error)
+            }))
           } else promises.push(this.sequenceImagesPromise(args))
 
         } else console.log(this.constructor.name, 'loadPromise', visibleTranscoding, '===', audibleTranscoding)
@@ -104,11 +109,14 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return Promise.all(promises).then(EmptyMethod)
   }
 
-  private previewVideoPromise(previewTranscoding: Transcoding): Promise<LoadedVideo> {
+  private previewVideoPromise(previewTranscoding: Requestable): Promise<LoadedVideo> {
     const { loadedVideo } = this
     if (loadedVideo) return Promise.resolve(loadedVideo)
 
-    return previewTranscoding.loadedMediaPromise.then(media => {
+    return previewTranscoding.loadedMediaPromise.then(orError => {
+      const { error, clientMedia: media } = orError
+      if (error) return errorThrow(error)
+
       console.log(this.constructor.name, 'previewVideoPromise.loadedMediaPromise', media)
       assertLoadedVideo(media)
 
@@ -161,14 +169,14 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     const { previewTranscoding } = this.definition
     const { type } = previewTranscoding
     switch (type) {
-      case DefinitionType.Video: {
+      case VideoType: {
         return this.videoItemForPlayerPromise(previewTranscoding, rect, definitionTime)
       }
-      case DefinitionType.Sequence: {
+      case SequenceType: {
         return this.sequenceItemPromise(rect, definitionTime)
       }
     }
-    throw new Error(Errors.type)
+    return errorThrow(ErrorName.Type)
   }
 
   override svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
@@ -200,35 +208,35 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
   }
 
 
-  private videoItemForPlayerPromise(previewTranscoding: Transcoding, rect: Rect, definitionTime: Time): Promise<SvgItem> {
+  private videoItemForPlayerPromise(previewTranscoding: Requestable, rect: Rect, definitionTime: Time): Promise<SvgItem> {
     console.log(this.constructor.name, 'videoItemForPlayerPromise', definitionTime, previewTranscoding)
     return this.previewVideoPromise(previewTranscoding).then(() => (
       this.videoForPlayerPromise(rect, definitionTime)
     ))
   }
 
-  private videoItemForTimelinePromise(previewTranscoding: Transcoding, rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-    console.log(this.constructor.name, 'videoItemForTimelinePromise')
-    return this.previewVideoPromise(previewTranscoding).then(video => {
-      const { clientCanMaskVideo } = VideoClass
-      if (clientCanMaskVideo) {
-        svgSetDimensions(this.foreignElement, rect)
-      }
-      const { currentTime } = video
-      const definitionTime = this.definitionTime(time, range)
-      const maxDistance = time.isRange ? 1 : 1.0 / time.fps
-      const { seconds } = definitionTime
-      if (Math.abs(seconds - currentTime) > maxDistance) {
-        video.currentTime = seconds
-      }  
+  // private videoItemForTimelinePromise(previewTranscoding: Requestable, rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
+  //   console.log(this.constructor.name, 'videoItemForTimelinePromise')
+  //   return this.previewVideoPromise(previewTranscoding).then(video => {
+  //     const { clientCanMaskVideo } = VideoClass
+  //     if (clientCanMaskVideo) {
+  //       svgSetDimensions(this.foreignElement, rect)
+  //     }
+  //     const { currentTime } = video
+  //     const definitionTime = this.definitionTime(time, range)
+  //     const maxDistance = time.isRange ? 1 : 1.0 / time.fps
+  //     const { seconds } = definitionTime
+  //     if (Math.abs(seconds - currentTime) > maxDistance) {
+  //       video.currentTime = seconds
+  //     }  
       
-      const { width, height } = rect
-      video.width = width 
-      video.height = height
+  //     const { width, height } = rect
+  //     video.width = width 
+  //     video.height = height
 
-      return clientCanMaskVideo ? this.foreignElement : video
-    })
-  }
+  //     return clientCanMaskVideo ? this.foreignElement : video
+  //   })
+  // }
 
 
   static _clientCanMaskVideo?: boolean

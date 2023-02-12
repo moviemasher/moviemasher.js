@@ -1,6 +1,6 @@
-import { SvgItem, SvgItems } from "../../declarations"
-import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
-import { pixelColor } from "../../Utility/Pixel"
+import { Value } from "../../declarations"
+import { SvgItems } from "../../Helpers/Svg/Svg"
+import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { NamespaceSvg } from "../../Setup/Constants"
@@ -11,6 +11,16 @@ import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
 import { ColorizeFilter } from "./ColorizeFilter"
 import { assertSize } from "../../Utility/Size"
 import { FilterDefinitionObject } from "../Filter"
+
+
+
+const pixelColor = (value : Value) : string => {
+  const string = String(value)
+  if (string.slice(0, 2) === "0x") return `#${string.slice(2)}`
+
+  return string
+}
+
 
 /**
  * @category Filter

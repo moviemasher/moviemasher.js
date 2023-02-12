@@ -1,11 +1,11 @@
 import { 
-  controlInstance, ClassDropping, SelectedMovable, DataGroup, Movable, 
-  assertPopulatedObject, assertDefined, ScalarObject
+  ClassDropping, SelectedMovable, DataGroup, Movable, 
+  assertPopulatedObject, assertDefined, ScalarRecord
 } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
 import { PropsWithoutChild, ReactResult } from "../../../../declarations"
-import { dropType } from '../../../../Helpers/DragDrop'
+import { dropType } from '@moviemasher/client-core'
 import { useEditor } from '../../../../Hooks/useEditor'
 import { View } from '../../../../Utilities/View'
 import { InspectorMovable, InspectorMovableProps } from '../../InspectorMovable'
@@ -16,7 +16,7 @@ import { Button } from '../../../../Utilities/Button'
 
 export interface MovablesGroupInputProps extends PropsWithoutChild {
   selectedMovable?: SelectedMovable
-  movableGenerator?: (object: ScalarObject) => Movable
+  movableGenerator?: (object: ScalarRecord) => Movable
   property: string
 }
 /**
@@ -78,18 +78,11 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
     const data = JSON.parse(json)
     const { index } = data
     const droppedIndex = dropIndex(event)
-    // if (isObject(definitionObject)) {
-    //   const definition = Defined.fromObject(definitionObject)
-    //   if (isEffectDefinition(definition)) {
-    //     const effect = definition.instanceFromObject()
-    //     addHandler(effect, droppedIndex)
-    //   }
-    // } else {
-      if (droppedIndex === index) return
 
-      assertDefined(includedMovable)
-      moveHandler(includedMovable, droppedIndex)
-    // }
+    if (droppedIndex === index) return
+
+    assertDefined(includedMovable)
+    moveHandler(includedMovable, droppedIndex)
   }
 
   const onClick: React.MouseEventHandler = () => { setSelected(null) }
@@ -166,4 +159,4 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
 }
 
 DataGroupInputs[DataGroup.Effects] = <MovablesGroupInput property="effect" key="effects-group-input" />
-DataGroupInputs[DataGroup.Controls] = <MovablesGroupInput movableGenerator={controlInstance} property="control" key="controls-group-input" />
+// DataGroupInputs[DataGroup.Controls] = <MovablesGroupInput movableGenerator={controlInstance} property="control" key="controls-group-input" />

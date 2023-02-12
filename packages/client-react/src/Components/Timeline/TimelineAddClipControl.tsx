@@ -1,5 +1,5 @@
 import React from "react"
-import { assertPopulatedString, DefaultContentId, EditorIndex, EventType, UnknownObject } from "@moviemasher/moviemasher.js"
+import { assertPopulatedString, DefaultContentId, EditorIndex, EventType, UnknownRecord } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -18,14 +18,14 @@ export function TimelineAddClipControl(props:TimelineAddClipControlProps): React
   useListeners({ [EventType.Selection]: updateDisabled })
   
   const { children, ...rest } = props
-  const cloneProps: UnknownObject = { 
+  const cloneProps: UnknownRecord = { 
     ...rest, 
     disabled,
   }
   cloneProps.onClick = () => { 
-    const { selection, edited } = editor
+    const { selection, mashMedia } = editor
     const { clip, track } = selection
-    const id = current.definitionId || DefaultContentId
+    const id = current.mediaId || DefaultContentId
     assertPopulatedString(id)
     const object = { id }
     const editorIndex: EditorIndex = {
@@ -35,7 +35,7 @@ export function TimelineAddClipControl(props:TimelineAddClipControlProps): React
       editorIndex.clip = track.dense ? track.clips.indexOf(clip) : clip.endFrame
       editorIndex.track = track.index
     } else {
-      editorIndex.clip = editor.time.scale(edited!.quantize).frame
+      editorIndex.clip = editor.time.scale(mashMedia!.quantize).frame
     }
     drop(object, editorIndex)
   }

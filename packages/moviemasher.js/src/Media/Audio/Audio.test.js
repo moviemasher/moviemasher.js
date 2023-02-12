@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  DefinitionType, AudioClass, audioDefinition
+  MediaType, AudioClass, audioDefinition
   } from "@moviemasher/moviemasher.js"
 
 describe("audio", () => {
@@ -13,9 +13,9 @@ describe("audio", () => {
     id: 'audio-blah', 
     url: "audio.mp3", 
     duration: seconds, 
-    type: DefinitionType.Audio
+    type: AudioType
   }
-  // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: DefinitionType.Audio}
+  // const audioDefinitionObject = { id: 'audio-id-1', url: "audio.mp3", duration: 1 , type: AudioType}
   const definition = () => audioDefinition(audioMediaObject)
   const defaults = { startTrim: 0, gain: 1.0 } //frame: 0, frames: -1, 
 

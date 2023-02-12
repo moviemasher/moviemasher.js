@@ -2,7 +2,7 @@ import React from "react"
 import { 
   selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
   DataGroup, Orientation, PropertyTweenSuffix, isOrientation, 
-  selectedPropertyObject, ScalarObject, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
+  selectedPropertyObject, ScalarRecord, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
 } from "@moviemasher/moviemasher.js"
 
 
@@ -45,7 +45,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   
   const widthProperty = endSelected ? widthEnd : width
   const heightProperty = endSelected ? heightEnd : height
-  const values: ScalarObject = selectedPropertiesScalarObject(byName) 
+  const values: ScalarRecord = selectedPropertiesScalarObject(byName) 
 
   const { lock: lockValue } = values
   assertString(lockValue, 'lockValue')

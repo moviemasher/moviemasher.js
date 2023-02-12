@@ -1,5 +1,5 @@
 import { MediaClass } from "../../Media/Media"
-import { GraphFiles, PreloadArgs, ServerPromiseArgs } from "../../MoveMe"
+import { GraphFiles, PreloadArgs, ServerPromiseArgs } from "../../Base/Code"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { TweenableDefinition, TweenableDefinitionClass } from "./Tweenable"

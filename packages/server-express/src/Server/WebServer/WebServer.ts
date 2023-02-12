@@ -1,10 +1,10 @@
-import { StringObject } from "@moviemasher/moviemasher.js"
+import { StringRecord } from "@moviemasher/moviemasher.js"
 
 import { Server, ServerArgs } from "../Server"
 
 
 export interface WebServerArgs extends ServerArgs {
-  sources: StringObject
+  sources: StringRecord
 }
 
 export interface WebServer extends Server {

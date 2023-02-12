@@ -1,5 +1,5 @@
-import { LoadedImage, LoadedVideo } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { LoadedImage, LoadedVideo } from "../../Load/Loaded"
+import { VideoType } from "../../Setup/Enums"
 import {
   UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
   UpdatableSizeObject
@@ -10,13 +10,14 @@ import {
   UpdatableDurationDefinitionObject, UpdatableDurationObject 
 } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { isMedia, Media, MediaObject } from "../Media"
-import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
 import { Time } from "../../Helpers/Time/Time"
 import { Size } from "../../Utility/Size"
 import { isMediaInstance } from "../MediaInstance/MediaInstance"
+import { Requestable } from "../../Base/Requestable/Requestable"
 
 export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
+  definition?: VideoDefinition
 }
 
 export interface Video extends Content, UpdatableSize, UpdatableDuration {
@@ -31,20 +32,21 @@ export interface VideoDefinitionObject extends UpdatableSizeDefinitionObject, Up
 export type VideoTransitionalObject = MediaObject | VideoDefinitionObject
 
 export interface VideoDefinition extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
+  type: VideoType
   instanceFromObject(object?: VideoObject): Video
   loadedVideo?: LoadedVideo
-  readonly previewTranscoding: Transcoding
+  readonly previewTranscoding: Requestable
   loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<LoadedImage>
 }
 export const isVideoDefinition = (value: any): value is VideoDefinition => {
-  return isMedia(value) && value.type === DefinitionType.Video
+  return isMedia(value) && value.type === VideoType
 }
 export function assertVideoDefinition(value: any): asserts value is VideoDefinition {
   if (!isVideoDefinition(value)) throw new Error('expected VideoDefinition')
 }
 
 export const isVideo = (value: any): value is Video => {
-  return isMediaInstance(value) && value.definition.type === DefinitionType.Video
+  return isMediaInstance(value) && value.definition.type === VideoType
 }
 
 export function assertVideo(value: any): asserts value is Video {

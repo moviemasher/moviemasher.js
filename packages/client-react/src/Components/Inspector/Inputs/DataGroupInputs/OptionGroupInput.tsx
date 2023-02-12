@@ -62,7 +62,7 @@ export function OptionGroupInput(props: OptionGroupInputProps): ReactResult {
   </fieldset>
 }
 
-[DataGroup.Timing, DataGroup.Clicking].forEach(dataGroup => {
-  const props = { dataGroup, key: `${dataGroup}-group-input` }
-  DataGroupInputs[dataGroup] = <OptionGroupInput { ...props } />
-})
+// [DataGroup.Timing, DataGroup.Clicking].forEach(dataGroup => {
+  const timingProps = { dataGroup: DataGroup.Timing, key: `${DataGroup.Timing}-group-input` }
+  DataGroupInputs[DataGroup.Timing] = <OptionGroupInput { ...timingProps } />
+// })

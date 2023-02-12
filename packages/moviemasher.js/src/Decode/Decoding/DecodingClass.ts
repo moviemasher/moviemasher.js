@@ -1,4 +1,4 @@
-import { LoadedInfo } from "../../Loader/Loader";
+import { LoadedInfo } from "../../Load/Loader";
 import { RequestableClass } from "../../Base/Requestable/RequestableClass";
 import { Decoding, DecodingObject } from "./Decoding";
 

@@ -1,4 +1,4 @@
-import { DefinitionType } from "../../Setup/Enums"
+import { EffectType, MediaType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { Effect, EffectDefinition, EffectDefinitionObject, EffectObject } from "./Effect"
 import { EffectClass } from "./EffectClass"
@@ -6,7 +6,7 @@ import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinit
 import { MediaBase } from "../MediaBase"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { Filter } from "../../Filter/Filter"
-import { UnknownObject } from "../../declarations"
+import { UnknownRecord } from "../../declarations"
 import { filterInstance } from "../../Filter/FilterFactory"
 
 const EffectContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
@@ -32,17 +32,17 @@ export class EffectDefinitionClass extends EffectContainerDefinitionWithContaine
 
   initializeFilter?: Filter
 
-  instanceArgs(object?: EffectObject): EffectObject {
+  instanceArgs(object: EffectObject): EffectObject {
     const args = super.instanceArgs(object)
     args.label ||= this.label
     return args
   }
 
-  instanceFromObject(object: EffectObject = {}): Effect {
+  instanceFromObject(object: EffectObject): Effect {
     return new EffectClass(this.instanceArgs(object))
   }
 
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const object = super.toJSON()
     const custom = this.properties.filter(property => property.custom)
     if (custom.length) object.properties = custom
@@ -51,7 +51,7 @@ export class EffectDefinitionClass extends EffectContainerDefinitionWithContaine
   }
 
 
-  type = DefinitionType.Effect
+  type = EffectType
 
 
 

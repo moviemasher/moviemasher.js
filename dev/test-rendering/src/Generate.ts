@@ -8,9 +8,9 @@ import {
   assertContainerObject, ContainerObject, isContainerObject,
   DefinitionObjects,
   assertPoint, isPoint, Point, 
-  errorsThrow,
+  errorThrow,
   Directions,
-  ClipObject, MashObject, TrackObject, Duration, DefaultContentId, DefaultContainerId
+  ClipObject, MashMediaObject, TrackObject, Duration, DefaultContentId, DefaultContainerId
 } from '@moviemasher/moviemasher.js'
 
 enum GeneratePoint {
@@ -73,14 +73,14 @@ export type GenerateOptions = { [index in GenerateArg]?: string | string[] }
 export type GenerateContentTest = [string, string, ContentObject]
 export type GenerateContainerTest = [string, string, ContainerObject]
 export type PointTest = [string, ContainerObject]
-export type GenerateMashTest = [string, MashObject]
+export type GenerateMashTest = [string, MashMediaObject]
 export type SizeTest = [string, ContainerObject]
 export type BooleanTest = [string, ContainerObject]
 export type NumberTest = [string, ContainerObject]
 const textOptions: TextContainerObject = { 
   string: "Luckiest Guy",
   intrinsic: { width: 6167.01953125, height: 738, x: 0, y: 723 },
-  fontId: "com.moviemasher.font.luckiest-guy"
+  mediaId: "com.moviemasher.font.luckiest-guy"
 }
 
 type GenerateTest = GenerateContentTest | GenerateContainerTest | PointTest | SizeTest | NumberTest | BooleanTest
@@ -88,7 +88,7 @@ const isRenderTest = (value: any): value is GenerateTest => {
   return isPopulatedArray(value) && isString(value[0])
 }
 function assertRenderTest(value: any): asserts value is GenerateTest {
-  if (!isRenderTest(value)) errorsThrow(value, 'RenderTest')
+  if (!isRenderTest(value)) errorThrow(value, 'RenderTest')
 }
 
 type GenerateTests = { [index in GenerateArg]: GenerateTest[] }
@@ -163,7 +163,7 @@ const generateClips = (testId: GenerateTestId, size = SizePreview, frames = Dura
   const debug: TextContainerObject = {
     intrinsic: { x: 0, y: 0, width: width, height: 1000 / textHeight },
     // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
-    fontId: "com.moviemasher.font.luckiest-guy",
+    mediaId: "com.moviemasher.font.luckiest-guy",
     // height: textHeight, 
     x: 0, y: 0.5, 
     lock: 'V',
@@ -275,7 +275,7 @@ export const GenerateTestsDefault: GenerateTests = {
     // ["S", 'com.moviemasher.container.test', {}],
     // ["B", 'com.moviemasher.container.broadcast', {}],
     ["S", 'com.remixicon.container.image.heart', {}],
-    ["T", textOptions.fontId, textOptions],
+    ["T", textOptions.mediaId, textOptions],
     // ["P", "puppy" , {}],
   ],
   [GenerateArg.Content]: [
@@ -436,7 +436,7 @@ export const generateTests = (generateOptions: GenerateOptions, testId = 'all', 
   })
   const tracks: TrackObject[] = [{ clips }]
   if (labels) tracks.push({ clips: labelClips, dense: true })
-  const mash: MashObject = { 
+  const mash: MashMediaObject = { 
     id: testId, color: '#666666', tracks 
   }
   return [testId, mash]
@@ -446,7 +446,7 @@ export const generateTest = (testId: GenerateTestId, size = SizePreview, frames 
   const [clip, labelClip] = generateClips(testId, size, frames, labels)
   const tracks: TrackObject[] = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
-  const mash: MashObject = { 
+  const mash: MashMediaObject = { 
     id: testId, color: '#666666', tracks 
   }
   return [testId, mash]

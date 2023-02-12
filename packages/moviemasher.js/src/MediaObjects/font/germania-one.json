@@ -2,5 +2,12 @@
   "label": "Germania One",
   "id": "com.moviemasher.font.germania-one",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Germania+One"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Germania+One" 
+    } 
+  }
 }

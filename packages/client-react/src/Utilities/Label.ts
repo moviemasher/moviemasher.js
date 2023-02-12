@@ -1,8 +1,11 @@
-import { StringObject } from "@moviemasher/moviemasher.js"
+import { isString, NestedStringRecord, StringRecord } from "@moviemasher/moviemasher.js"
 
 const LabelRegex = /{{([a-z0-9_]*)}}/
 
-export const labelObjects: Record<string, StringObject> = {
+
+export const labelObjects: NestedStringRecord = {
+  internal: 'Internal Error',
+  client: { internal: 'Internal Client Error' },
   import: {
     bytes: 'Size above {{value}}',
     extension: 'Extension {{value}}',
@@ -13,7 +16,7 @@ export const labelObjects: Record<string, StringObject> = {
     displaySize: '{{width}}x{{height}}',
   }
 }
-export const labels: StringObject = {
+export const labels: StringRecord = {
   audible: 'Audible',
   clip: 'Clip',
   update: 'Save',
@@ -22,20 +25,25 @@ export const labels: StringObject = {
   analyze: 'Analyzing...',
   load: 'Loading...',
   complete: 'Completed',
-  layer: 'Layer',
   create: 'New',
   render: 'Render',
   view: 'View',
   open: 'Open...',
   undo: 'Undo',
   redo: 'Redo',
-  cast: 'Cast',
   mash: 'Mash',
 }
 
 export const labelLookup = (id: string): string => {
-  const [first, second] = id.split('.') 
-  return labelObjects[first][second]
+  let object: any = labelObjects
+  const components = id.split('.') 
+  for (const component of components) {
+    const child = object[component]
+    if (isString(child)) return child
+
+    object = child
+  }
+  return ''
 }
 
 export const labelTranslate = (id: string): string => {
@@ -44,7 +52,7 @@ export const labelTranslate = (id: string): string => {
   return labels[id] || id
 }
 
-export const labelInterpolate = (id: string, context: StringObject): string => {
+export const labelInterpolate = (id: string, context: StringRecord): string => {
   let translated = labelTranslate(id)
   
   const matches = translated.match(LabelRegex)

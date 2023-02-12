@@ -1,17 +1,17 @@
 import { Size } from "../../Utility/Size"
 import { Editor } from "../Editor"
 import { Time } from "../../Helpers/Time/Time"
-import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
+import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
 import { AVType } from "../../Setup/Enums"
 import { sortByTrack } from "../../Utility/Sort"
 import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
 import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
-import { Mash } from "../../Edited/Mash/Mash"
+import { MashMedia } from "../../Media/Mash/Mash"
 import { PreviewArgs, Preview } from "./Preview"
-import { svgAddClass, svgSvgElement } from "../../Utility/Svg"
+import { svgAddClass, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
 import { assertObject, isObject } from "../../Utility/Is"
-import { Component, PreloadArgs } from "../../MoveMe"
-import { PreviewItems, SvgItems } from "../../declarations"
+import { Component, PreloadArgs } from "../../Base/Code"
+import { PreviewItems, SvgItems } from "../../Helpers/Svg/Svg"
 import { timeRangeFromTime } from "../../Helpers/Time/TimeUtilities"
 import { EmptyMethod } from "../../Setup/Constants"
 
@@ -69,7 +69,7 @@ export class PreviewClass implements Preview {
     return Promise.all(promises).then(EmptyMethod)
   }
 
-  mash: Mash
+  mash: MashMedia
 
   get previewItemsPromise(): Promise<PreviewItems> { 
     if (this._svgItems) return Promise.resolve(this._svgItems)
@@ -134,7 +134,6 @@ export class PreviewClass implements Preview {
 
   private tupleItems(svgItems: PreviewItems): PreviewItems {
     const { size, editing, selectedClip, editor } = this
-    // console.log(this.constructor.name, "tupleItems", editor?.edited?.label)
     const items = [...svgItems]
 
     const trackClasses = 'track'

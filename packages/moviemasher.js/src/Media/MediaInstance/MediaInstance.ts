@@ -1,27 +1,26 @@
-import { Constrained, UnknownObject } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { UnknownRecord } from "../../declarations"
+import { Constrained } from "../../Base/Constrained"
+import { MediaType } from "../../Setup/Enums"
 import { Propertied } from "../../Base/Propertied"
 import { isObject } from "../../Utility/Is"
 import { Media } from "../Media"
-import { Property } from "../../Setup/Property"
+import { Identified } from "../../Base/Identified"
 
-export interface MediaInstanceObject extends UnknownObject {
-  definitionId?: string
+export interface MediaInstanceObject extends UnknownRecord {
+  mediaId?: string
   definition?: Media
   label?: string
 }
 export const isMediaInstanceObject = (value?: any): value is MediaInstanceObject => {
-  return isObject(value) && ("definitionId" in value || "definition" in value)
+  return isObject(value) && ("mediaId" in value || "definition" in value)
 }
 
-export interface MediaInstance extends Propertied {
+export interface MediaInstance extends Identified, Propertied {
   definition: Media
-  definitionId: string
+  mediaId: string
   definitionIds(): string[]
-  id: string
   label: string
-  type: DefinitionType
-  propertiesCustom: Property[]
+  type: MediaType
   unload(): void
 }
 

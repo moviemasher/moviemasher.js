@@ -1,11 +1,10 @@
-import { SvgFilters, UnknownObject, ScalarObject, SvgItems } from "../declarations"
-import { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from "../MoveMe"
+import { ScalarRecord } from "../declarations"
+import { SvgFilters, SvgItems } from "../Helpers/Svg/Svg"
+import { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from "../Base/Code"
 import { isDefined, isNumber, isPopulatedString, isString } from "../Utility/Is"
 import { assertFilterDefinition, Filter, FilterArgs, FilterDefinition, FilterObject } from "./Filter"
 import { Parameter } from "../Setup/Parameter"
 import { PropertiedClass, PropertyTweenSuffix } from "../Base/Propertied"
-import { idGenerateString } from "../Utility/Id"
-import { DefinitionType } from "../Setup/Enums"
 
 export class FilterClass extends PropertiedClass implements Filter {
   constructor(object: FilterObject) {
@@ -69,8 +68,8 @@ export class FilterClass extends PropertiedClass implements Filter {
   get label(): string { return this._label  }
   set label(value: string) { this._label = value }
 
-  scalarObject(tweening = false): ScalarObject {
-    const object: ScalarObject = {}
+  scalarObject(tweening = false): ScalarRecord {
+    const object: ScalarRecord = {}
     const { parametersDefined } = this
 
     parametersDefined.forEach(parameter => {

@@ -1,25 +1,24 @@
 import Express from "express"
 import {
-  Endpoint, JsonObject, StringObject, UnknownObject
+  Endpoint, Identified, JsonRecord, StringRecord, UnknownRecord
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../Host/Host"
 
-export interface ServerAuthentication extends UnknownObject {
+export interface ServerAuthentication extends UnknownRecord {
   password?: string
   type?: string
-  users?: StringObject
+  users?: StringRecord
 }
 
 export interface ServerArgs extends Endpoint {
   authentication?: ServerAuthentication
 }
 
-export interface Server {
+export interface Server extends Identified {
   stopServer(): void
   startServer(app: Express.Application, activeServers: HostServers): Promise<void>
-  init(userId: string): JsonObject
-  id: string
+  init(userId: string): JsonRecord
 }
 
-export type ExpressHandler<T1, T2 = UnknownObject> = Express.RequestHandler<UnknownObject, T1, T2, UnknownObject, UnknownObject>
+export type ExpressHandler<T1, T2 = UnknownRecord> = Express.RequestHandler<UnknownRecord, T1, T2, UnknownRecord, UnknownRecord>

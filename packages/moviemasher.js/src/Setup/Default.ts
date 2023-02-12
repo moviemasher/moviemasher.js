@@ -1,5 +1,5 @@
 import { EditorArgs } from "../Editor/Editor"
-import { colorBlack } from "../Utility/Color"
+import { colorBlack } from "../Helpers/Color/ColorFunctions"
 
 const DefaultEditorArgs: EditorArgs = {
   buffer: 10,
@@ -30,8 +30,15 @@ export const Default = {
   duration: 3,
   label: "Unlabeled",
   editor: DefaultEditorArgs,
-  cast: DefaultCast,
+  video: DefaultMash,
+  effect: { label: 'Effect'},
+  audio: { label: 'Audio'},
+  image: { label: 'Image' },
+  audiostream: { label: 'Audio Stream' },
+  sequence: { label: 'Sequence' },
+  videostream: DefaultCast,
   mash: DefaultMash,
+  font: { label: 'Text', string: 'Example Text' },
   definition: {
     image: { duration: 2 },
     textcontainer: { duration: 3 },

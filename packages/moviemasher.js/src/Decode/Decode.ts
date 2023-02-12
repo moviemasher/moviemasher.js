@@ -1,7 +1,7 @@
-import { isOutput, Output } from "../MoveMe";
+import { isOutput, Output } from "../Base/Code";
 import { DecodeType, isDecodeType, ProbeType } from "../Setup/Enums";
 import { isArray, isObject } from "../Utility/Is";
-import { errorsThrow } from "../Utility/Errors";
+import { errorThrow } from "../Helpers/Error/ErrorFunctions";
 
 export interface DecodeOutput extends Output {
   type: DecodeType
@@ -12,7 +12,7 @@ export const isDecodeOutput = (value: any): value is DecodeOutput => {
 }
 
 export function assertDecodeOutput(value: any): asserts value is DecodeOutput {
-  if (!isDecodeOutput(value)) errorsThrow(value, 'DecodeOutput')
+  if (!isDecodeOutput(value)) errorThrow(value, 'DecodeOutput')
 }
 
 
@@ -23,7 +23,7 @@ export const isProbeOptions = (value: any): value is ProbeOptions => {
   return isObject(value) && "types" in value && isArray(value.types)
 }
 export function assertProbeOptions(value: any): asserts value is ProbeOptions {
-  if (!isProbeOptions(value)) errorsThrow(value, 'ProbeOptions')
+  if (!isProbeOptions(value)) errorThrow(value, 'ProbeOptions')
 }
 
 export interface ProbeOutput extends DecodeOutput {
@@ -33,6 +33,6 @@ export const isProbeOutput = (value: any): value is ProbeOutput => {
   return isDecodeOutput(value) && "options" in value && isProbeOptions(value.options)
 }
 export function assertProbeOutput(value: any): asserts value is ProbeOutput {
-  if (!isProbeOutput(value)) errorsThrow(value, 'ProbeOutput')
+  if (!isProbeOutput(value)) errorThrow(value, 'ProbeOutput')
 }
 

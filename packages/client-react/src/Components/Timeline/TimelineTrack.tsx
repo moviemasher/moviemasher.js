@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
-  assertMash, assertTrack, assertTrue, ClassSelected, DroppingPosition, 
-  eventStop, UnknownObject 
+  assertMashMedia, assertTrack, assertTrue, ClassSelected, DroppingPosition, 
+  eventStop, UnknownRecord 
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
@@ -9,7 +9,7 @@ import { TimelineContext } from './TimelineContext'
 import { TrackContext } from '../../Contexts/TrackContext'
 import { View } from '../../Utilities/View'
 import { useEditor } from '../../Hooks/useEditor'
-import { droppingPositionClass } from '../../Helpers/DragDrop'
+import { droppingPositionClass } from '@moviemasher/client-core'
 import { ClipContext } from '../ClipItem/ClipContext'
 
 export interface TimelineTrackProps extends PropsAndChild, WithClassName {
@@ -52,7 +52,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
   )
   if (!(mash && track)) return null
 
-  // assertMash(mash)
+  // assertMashMedia(mash)
   // assertTrack(track)
 
   const { clips, dense, index } = track
@@ -82,7 +82,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
     setDroppingPosition(pos)
   }
 
-  const viewProps:UnknownObject = {
+  const viewProps:UnknownRecord = {
     ...rest,
     className,
     children: childNodes(),

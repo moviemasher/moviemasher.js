@@ -1,11 +1,11 @@
 import React from "react"
-import { AndId, assertTrue, ClassSelected } from "@moviemasher/moviemasher.js"
+import { Identified, assertTrue, ClassSelected } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { Problems } from "../../Setup/Problems"
 import { ActivityContext, assertActivityGroup } from "./ActivityContext"
 
-export interface ActivityPickerProps extends PropsAndChild, WithClassName, AndId {}
+export interface ActivityPickerProps extends PropsAndChild, WithClassName, Identified {}
 /**
  * @parents ActivityContent
  */

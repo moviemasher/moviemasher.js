@@ -1,18 +1,13 @@
 import path from 'path'
 import {
-  ExtDash, ExtRtmp, ExtHls, ExtTs, StreamingFormat,
-  LoadType, Size, CommandOutput 
+  Size, CommandOutput, AudioType, ImageType, VideoType 
 } from "@moviemasher/moviemasher.js"
-import { 
-  outputDefaultDash, outputDefaultRtmp, outputDefaultHls, expandFileOrScript
-} from '@moviemasher/server-core'
+import { expandFileOrScript } from '@moviemasher/server-core'
 
-import { ApiServerArgs } from "../Server/ApiServer/ApiServer"
 import { DataServerArgs } from "../Server/DataServer/DataServer"
 import { FileServerArgs } from "../Server/FileServer/FileServer"
 import { RenderingServerArgs } from "../Server/RenderingServer/RenderingServer"
 import { ServerAuthentication } from "../Server/Server"
-import { StreamingFormatOptions, StreamingServerArgs } from "../Server/StreamingServer/StreamingServer"
 import { WebServerArgs } from "../Server/WebServer/WebServer"
 import { HostOptions } from "./Host"
 import { RenderingCommandOutputRecord } from '../Server/RenderingServer/RenderingServerClass'
@@ -76,9 +71,7 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     // support grabbing shared password from command or text file
     authentication.password = expandFileOrScript(authentication.password)
   }
-  const api: ApiServerArgs = {
-    authentication
-  }
+
   const data: DataServerArgs = {
     temporaryIdPrefix: 'temporary-',
     dbPath: `${dbDirectory}/sqlite.db`,
@@ -95,18 +88,18 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     uploadsPrefix: uploadDir,
     uploadsRelative,
     extensions: {
-      [LoadType.Audio]: [
+      [AudioType]: [
         'aiff',
         'mp3',
       ],
-      [LoadType.Image]: [
+      [ImageType]: [
         'jpeg',
         'jpg',
         'png',
         'svg',
       ],
 
-      [LoadType.Video]: [
+      [VideoType]: [
         'mov',
         'mp4',
         'mpeg',
@@ -122,59 +115,15 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
     cacheDirectory, authentication, commandOutputs, previewSize, outputSize
   }
 
-  const streamingFormatOptions: StreamingFormatOptions = {
-    [StreamingFormat.Hls]: {
-      commandOutput: outputDefaultHls(commandOutput),
-      segmentFile: `000000.${ExtTs}`,
-      url: '/hls',
-      directory: `${temporaryDirectory}/streams`,
-      file: `index.${ExtHls}`,
-    },
-    [StreamingFormat.Rtmp]: {
-      commandOutput: outputDefaultRtmp(commandOutput),
-      segmentFile: '',
-      file: `index.${ExtRtmp}`,
-      url: '/rtmp',
-      directory: `${temporaryDirectory}/streams/rtmp`,
-    },
-    [StreamingFormat.Mdash]: {
-      commandOutput: outputDefaultDash(commandOutput),
-      segmentFile: '',
-      file: `index.${ExtDash}`,
-      url: '/rtmp',
-      directory: `${temporaryDirectory}/streams/mdash`,
-    },
-  }
-  const streaming: StreamingServerArgs = {
-    streamingFormatOptions,
-    commandOutput: outputDefaultHls(commandOutput),
-    appName: StreamingFormat.Rtmp,
-    cacheDirectory: `${temporaryDirectory}/cache`,
-    temporaryDirectory,
-    webrtcStreamingDir: `${temporaryDirectory}/streams/webrtc`,
-    rtmpOptions: {
-      port: 1935,
-      chunk_size: 60000,
-      gop_cache: true,
-      ping: 30,
-      ping_timeout: 60
-    },
-    httpOptions: {
-      port: basePort + 1,
-      mediaroot: `${temporaryDirectory}/streams`,
-      allow_origin: "*"
-    },
-    authentication
-  }
 
   const web: WebServerArgs = {
     sources: { '/': `${publicDirectory}/index.html` }, authentication
   }
 
-  const options = {
+  const options: HostOptions = {
     port: basePort, host: definedHost, version,
     corsOptions: { origin: "*" },
-    api, data, file, rendering, streaming, web
+    data, file, rendering, web
   }
 
   return options

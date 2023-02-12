@@ -1,7 +1,6 @@
-import { isInteger } from "../../Utility/Is"
+import { assertInteger, assertPositive, isInteger } from "../../Utility/Is"
 import { TimeClass, timeEqualizeRates } from "./TimeClass"
 import { roundWithMethod } from "../../Utility/Round"
-import { Errors } from "../../Setup/Errors"
 import { Time, TimeRange, TimeRanges, Times } from "./Time"
 
 export class TimeRangeClass extends TimeClass implements TimeRange {
@@ -9,11 +8,9 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
 
   constructor(frame = 0, fps = 1, frames = 1) {
     super(frame, fps)
-    if (!(isInteger(frames) && frames >= 0)) {
-      console.trace(this.constructor.name)
-      throw Errors.timeRange + ' frames'
-    }
-
+    assertPositive(frames)
+    assertInteger(frames)
+  
     this.frames = frames
   }
 

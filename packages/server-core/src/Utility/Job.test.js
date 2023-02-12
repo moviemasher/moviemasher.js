@@ -5,8 +5,7 @@ import path from 'path'
 import { Environment, environment } from '@moviemasher/server-core'
 
 import { 
-  DefinitionType, 
-  OutputType, mashInstance, Defined, 
+  mashMedia, MediaCollection, 
   assertUpdatableSizeDefinition, urlBaseInitialize
 } from "@moviemasher/moviemasher.js"
 
@@ -19,13 +18,13 @@ describe("Job", () => {
 
   test("renderingDescriptionPromise", async () => {
     const id = 'video-from-multiple'
-    const output = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
+    const output = outputDefaultPopulate({ outputType: EncodeType.Video, cover: false })
     const globeDefinitionObject = {
-      id: 'image-id-globe', type: DefinitionType.Image, source: '../shared/image/globe.jpg',
+      id: 'image-id-globe', type: ImageType, source: '../shared/image/globe.jpg',
       sourceSize: { width: 320, height: 320 }
     }
     const cableDefinitionObject = {
-      id: 'image-id-cable', type: DefinitionType.Image, source: '../shared/image/cable.jpg',
+      id: 'image-id-cable', type: ImageType, source: '../shared/image/cable.jpg',
       sourceSize: { width: 320, height: 240 }
       
     }
@@ -40,10 +39,10 @@ describe("Job", () => {
         }
       ]
     }
-
-    Defined.define(...definitionObjects)
+    const media = new MediaCollection()
+    media.define(...definitionObjects)
   
-    const mash = mashInstance(mashObject)
+    const mash = mashMedia(mashObject)
     const { quantize } = mash
     const videoTrack = mash.tracks[0]
     const clips = videoTrack.clips 
@@ -57,7 +56,7 @@ describe("Job", () => {
     const { commandOutput, visibleCommandDescriptions } = renderingDescription
 
     const { outputType } = commandOutput
-    assert.equal(outputType, OutputType.Video)
+    assert.equal(outputType, EncodeType.Video)
     assert(visibleCommandDescriptions instanceof Array)
     assert.equal(visibleCommandDescriptions?.length, 2)
     visibleCommandDescriptions?.forEach((description, index) => {

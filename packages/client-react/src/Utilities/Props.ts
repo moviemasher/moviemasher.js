@@ -1,4 +1,4 @@
-import { DefinitionType, isDefinitionType, isSelectType, isString, Property, SelectType } from "@moviemasher/moviemasher.js"
+import { MediaType, isMediaType, isSelectType, isString, Property, SelectType } from "@moviemasher/moviemasher.js"
 
 const propsStringArray = (string?: string, array?: string | string[], properties?: Property[]): string[] => {
   if (string) return [string]
@@ -10,11 +10,11 @@ const propsStringArray = (string?: string, array?: string | string[], properties
   return array
 }
 
-export const propsDefinitionTypes = (type?: string, types?: string | string[], id?: string): DefinitionType[] => {
+export const propsMediaTypes = (type?: string, types?: string | string[], id?: string): MediaType[] => {
   const strings = propsStringArray(type, types)
   if (id && !strings.length) strings.push(id)
-  const validStrings = strings.filter(string => isDefinitionType(string))
-  return validStrings.map(string => string as DefinitionType)
+  const validStrings = strings.filter(string => isMediaType(string))
+  return validStrings.map(string => string as MediaType)
 }
 
 

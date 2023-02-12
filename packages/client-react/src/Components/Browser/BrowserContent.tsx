@@ -7,8 +7,8 @@ import { WithClassName, ReactResult, PropsAndChild } from "../../declarations"
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "./BrowserContext"
 import { DefinitionContext } from "../../Contexts/DefinitionContext"
-import { dragTypes, TransferTypeFiles } from "../../Helpers/DragDrop"
 import { MasherContext } from "../Masher/MasherContext"
+import { dragTypes, TransferTypeFiles } from "@moviemasher/client-core"
 
 export interface BrowserContentProps extends WithClassName, PropsAndChild {}
 

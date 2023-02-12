@@ -1,5 +1,5 @@
 import { Orientation } from "../Setup/Enums";
-import { errorsThrow } from "./Errors";
+import { errorThrow } from "../Helpers/Error/ErrorFunctions";
 import { isPoint, Point, pointCopy, pointRound, pointsEqual, pointString, PointTuple, PointZero } from "./Point";
 import { isSize, Size, sizeCopy, sizeRound, sizesEqual, sizeString, SizeTuple, SizeZero } from "./Size";
 
@@ -8,7 +8,7 @@ export const isRect = (value: any): value is Rect => {
   return isSize(value) && isPoint(value) 
 }
 export function assertRect(value: any, name?: string): asserts value is Rect {
-  if (!isRect(value)) errorsThrow(value, 'Rect', name)
+  if (!isRect(value)) errorThrow(value, 'Rect', name)
 }
 
 export type Rects = Rect[]

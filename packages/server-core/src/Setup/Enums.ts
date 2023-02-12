@@ -1,4 +1,4 @@
-import { errorsThrow } from "@moviemasher/moviemasher.js"
+import { errorThrow } from "@moviemasher/moviemasher.js"
 
 export enum JobType {
   Decoding = 'decoding',
@@ -11,5 +11,5 @@ export const isJobType = (value: any): value is JobType => {
   return JobTypes.includes(value as JobType)
 }
 export function assertJobType(value: any, name?: string): asserts value is JobType {
-  if (!isJobType(value)) errorsThrow(value, 'JobType', name) 
+  if (!isJobType(value)) errorThrow(value, 'JobType', name) 
 }

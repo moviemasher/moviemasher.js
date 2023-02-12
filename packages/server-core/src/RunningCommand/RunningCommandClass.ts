@@ -3,7 +3,7 @@ import fs from 'fs'
 import EventEmitter from "events"
 
 import {
-  Errors, assertPopulatedString, isPopulatedString
+  assertPopulatedString, isPopulatedString, errorThrow, ErrorName
 } from "@moviemasher/moviemasher.js"
 
 import { commandArgsString } from "../Utility/Command"
@@ -20,7 +20,7 @@ export class RunningCommandClass extends EventEmitter implements RunningCommand 
 
     if (!(this.commandInputs.length || this.commandFilters.length)) {
       console.trace(this.constructor.name, "with no inputs or commandFilters")
-      throw Errors.invalid.argument + 'inputs'
+      return errorThrow(ErrorName.Internal) 
     }
   }
 

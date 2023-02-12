@@ -16,7 +16,7 @@ export const DataGroupInputs: DataGroupElements = {
   [DataGroup.Opacity]: EmptyElement,
   [DataGroup.Color]: EmptyElement,
   [DataGroup.Effects]: EmptyElement,
-  [DataGroup.Controls]: EmptyElement,
+  // [DataGroup.Controls]: EmptyElement,
   [DataGroup.Timing]: EmptyElement,
-  [DataGroup.Clicking]: EmptyElement,
+  // [DataGroup.Clicking]: EmptyElement,
 }

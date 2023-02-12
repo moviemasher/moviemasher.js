@@ -1,4 +1,4 @@
-import { Scalar, ScalarObject, UnknownObject } from "../declarations"
+import { Scalar, ScalarRecord, UnknownRecord } from "../declarations"
 import { propertyTypeCoerce,propertyTypeValid } from "../Helpers/PropertyType"
 import { Property } from "../Setup/Property"
 import { assertObject, assertTrue, isUndefined } from "../Utility/Is"
@@ -9,8 +9,8 @@ export interface Propertied {
   addProperties(object: any, ...properties: Property[]): void
   properties: Property[]
   setValue(value: Scalar, name: string, property?: Property ): void
-  setValues(object: ScalarObject): void
-  toJSON(): UnknownObject
+  setValues(object: ScalarRecord): void
+  toJSON(): UnknownRecord
   value(key: string): Scalar
 }
 
@@ -32,12 +32,6 @@ export class PropertiedClass implements Propertied {
   }
 
   properties: Property[] = []
-  
-
-  get propertiesCustom(): Property[] {
-    return this.properties.filter(property => property.custom)
-  }
-
 
   protected propertiesInitialize(object: any) {
     assertObject(object, 'propertiesInitialize(object)')
@@ -90,13 +84,13 @@ export class PropertiedClass implements Propertied {
     this[name] = coerced
   }
 
-  setValues(object: ScalarObject): void {
+  setValues(object: ScalarRecord): void {
     Object.entries(object).forEach(([name, value]) => {
       this.setValue(value, name)
     })
   }
 
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     return Object.fromEntries(this.properties.flatMap(property => {
       const { name, tweenable } = property
       const entries = [[name, this.value(name)]]

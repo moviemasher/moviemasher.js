@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS "transcodings" (
     "name" VARCHAR(255) DEFAULT '' NOT NULL,
 
     "type" VARCHAR(255) DEFAULT '' NOT NULL,
+    "purpose" VARCHAR(255) DEFAULT '' NOT NULL,
     "kind" VARCHAR(255) DEFAULT '' NOT NULL
 );

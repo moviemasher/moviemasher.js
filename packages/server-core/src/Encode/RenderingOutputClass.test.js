@@ -4,8 +4,7 @@ import path from 'path'
 import { Environment, environment } from '@moviemasher/server-core'
 
 import { 
-  DefinitionType, 
-  OutputType, mashInstance, Defined, 
+  VideoType, mashMedia, MediaCollection, 
   assertUpdatableSizeDefinition, urlBaseInitialize
 } from "@moviemasher/moviemasher.js"
 
@@ -18,14 +17,14 @@ describe("videoFactory", () => {
 
   test("renderingDescriptionPromise", async () => {
     const id = 'video-from-multiple'
-    const output = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
+    const output = outputDefaultPopulate({ outputType: VideoType, cover: false })
     const globeDefinitionObject = {
-      id: 'image-id-globe', type: DefinitionType.Image, 
+      id: 'image-id-globe', type: ImageType, 
       request: { endpoint: { pathname: '../shared/image/globe.jpg' }},
       decodings: [{info: { width: 320, height: 320 } }]
     }
     const cableDefinitionObject = {
-      id: 'image-id-cable', type: DefinitionType.Image, 
+      id: 'image-id-cable', type: ImageType, 
       request: { endpoint: { pathname: '../shared/image/cable.jpg' }},
       decodings: [{ info: { width: 320, height: 240 } }]
     }
@@ -41,12 +40,12 @@ describe("videoFactory", () => {
       ]
     }
 
-    Defined.define(...definitionObjects)
-    assert(Defined.installed(globeDefinitionObject.id))
-    const object = Defined.fromId(globeDefinitionObject.id)
+    MediaCollection.define(...definitionObjects)
+    assert(MediaCollection.installed(globeDefinitionObject.id))
+    const object = MediaCollection.fromId(globeDefinitionObject.id)
     assert(object)
     assert(object.decodings?.length)
-    const mash = mashInstance(mashObject)
+    const mash = mashMedia(mashObject)
     const { quantize } = mash
     const videoTrack = mash.tracks[0]
     const clips = videoTrack.clips 
@@ -66,7 +65,7 @@ describe("videoFactory", () => {
     const { commandOutput, visibleCommandDescriptions } = renderingDescription
 
     const { outputType } = commandOutput
-    assert.equal(outputType, OutputType.Video, 'output type video')
+    assert.equal(outputType, VideoType, 'output type video')
     assert(visibleCommandDescriptions instanceof Array, 'visibleCommandDescriptions')
     assert.equal(visibleCommandDescriptions?.length, 2)
     visibleCommandDescriptions?.forEach((description, index) => {

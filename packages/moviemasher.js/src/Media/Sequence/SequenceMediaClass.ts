@@ -1,4 +1,4 @@
-import { UnknownObject} from "../../declarations"
+import { UnknownRecord} from "../../declarations"
 import { Time } from "../../Helpers/Time/Time"
 import { SequenceClass } from "./SequenceClass"
 import {
@@ -15,6 +15,7 @@ import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { isPositive } from "../../Utility/Is"
 import { MediaBase } from "../MediaBase"
+import { SequenceType, VideoType } from "../../Setup/Enums"
 
 const SequenceDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const SequenceDefinitionWithContent = ContentDefinitionMixin(SequenceDefinitionWithTweenable)
@@ -73,13 +74,13 @@ export class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration 
     return new SequenceClass(this.instanceArgs(object))
   }
 
-  // loadType = LoadType.Image
+  // loadType = ImageType
 
   padding : number
 
   pattern = '%.jpg'
 
-  toJSON() : UnknownObject {
+  toJSON() : UnknownRecord {
     const json = super.toJSON()
     const { videosequence } = Default.definition
     const { pattern, increment, begin, fps, padding } = this
@@ -91,7 +92,7 @@ export class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration 
     return json
   }
 
-  // type = DefinitionType.Video
+  type = SequenceType
 
   // urlForFrame(frame : number): string {
   //   const { increment, begin, padding, url, pattern } = this

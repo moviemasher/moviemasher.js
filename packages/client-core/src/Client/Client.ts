@@ -1,107 +1,174 @@
 import { 
-  ContentTypeJson, Media, Medias, RequestObject, DecodeType, DefinitionType, 
-  TranscodeType, OutputType, ProbeType, Encoding, Transcoding, Decoding, 
-  Encodings, Decodings, Transcodings, PotentialError
+  Media, RequestObject, DecodeType, MediaType, 
+  ProbeType, Encoding, Transcoding, Decoding, CookedTypes,
+  PotentialError, ImageType, AudioType, VideoType, MashMedia, Endpoints
 } from "@moviemasher/moviemasher.js"
-import { DecodeTypesByDefinitionType, TranscodeTypesByDefinitionType } from "../declarations"
+import { DecodeTypesByMediaType, TranscodeTypesByMediaType } from "../declarations"
 
+export type ReadOperation = 'read'
+export type WriteOperation = 'write'
+export type TranscodeOperation = 'transcode'
+export type EncodeOperation = 'encode'
+export type DecodeOperation = 'decode'
+export const ReadOperation: ReadOperation = 'read'
+export const WriteOperation: WriteOperation = 'write'
+export const TranscodeOperation: TranscodeOperation = 'transcode'
+export const EncodeOperation: EncodeOperation = 'encode'
+export const DecodeOperation: DecodeOperation = 'decode'
 
-export interface DecodeArgs {
-  
+export type Operation = ReadOperation | WriteOperation | TranscodeOperation | EncodeOperation | DecodeOperation
+export type Operations = Operation[]
+export const Operations: Operations = [ReadOperation, WriteOperation, TranscodeOperation, EncodeOperation, DecodeOperation]
+export const isOperation = (value: any): value is Operation => {
+  return Operations.includes(value)
 }
 
-export interface EncodeArgs {
-  
+
+export interface Client {
+  enabled(operation?: Operation): boolean
+  decode(args: ClientDecodeOptions): Promise<Decoding>
+  encode(args: ClientEncodeOptions): Promise<Encoding>
+  media(args: ClientReadOptions): Promise<ClientArrayResponse>
+  save(media: Media, args?: ClientSaveOptions): Promise<ClientObjectResponse>
+  transcode(args: ClientTranscodeOptions): Promise<Transcoding>
 }
 
-export interface TranscodeArgs {
-  
+
+export interface ClientDecodeOptions { 
+  autoDecode?: DecodeTypesByMediaType | false
 }
 
-export interface ListMediaArgs {
-  type?: DefinitionType
+export interface ClientEncodeOptions {
+  autoTranscode?: TranscodeTypesByMediaType | false
 }
 
-export interface ListDecodingsArgs {
-  type?: DefinitionType
+export interface ClientTranscodeOptions {
+  autoTranscode?: TranscodeTypesByMediaType | false
 }
 
-export interface ListEncodingsArgs {
-  type?: DefinitionType
-}
-export interface ListTranscodingsArgs {
-  type?: DefinitionType
-}
-
-export interface SaveArgs {
-  media: Media | Medias
+export interface ClientReadOptions {
+  type?: MediaType
+  kind?: string
+  getRequest?: RequestObject | false
+  listRequest?: RequestObject | false
 }
 
 export interface UploadMediaArgs {
 
 }
 
-export interface ClientArgs {
-  autoDecode: DecodeTypesByDefinitionType
-  autoTranscode: TranscodeTypesByDefinitionType
-  listDecodingsRequest: RequestObject
-  listEncodingsRequest: RequestObject
-  listMediaRequest: RequestObject
-  listTranscodingsRequest: RequestObject
-  saveMediaRequest: RequestObject
+export interface ClientArgs extends Required<ClientOptions> {}
+
+export interface ClientWriteOptions {
+
+  saveRequest?: RequestObject | false
+  deleteRequest?: RequestObject | false
+  uploadRequest?: RequestObject | false
+  uploadResponseIsRequest?: boolean
+  uploadCookedTypes?: CookedTypes
 }
-export interface ClientOptions extends Partial<ClientArgs> {}
+
+
+export interface ClientOptions {
+  [ReadOperation]?: ClientReadOptions | false | undefined
+  [WriteOperation]?: ClientWriteOptions | false | undefined
+  [DecodeOperation]?: ClientDecodeOptions | false | undefined
+  [EncodeOperation]?: ClientEncodeOptions | false | undefined
+  [TranscodeOperation]?: ClientTranscodeOptions | false | undefined
+} 
+
+
+export const ClientDisabledArgs: ClientArgs = {
+  [ReadOperation]: false,
+  [WriteOperation]: false,
+  [DecodeOperation]: false,
+  [EncodeOperation]: false,
+  [TranscodeOperation]: false,
+}
 
 export const ClientDefaultArgs: ClientArgs = {
-  autoDecode: {
-    [DefinitionType.Audio]: [{ 
-      type: DecodeType.Probe, 
-      options: { types: [ProbeType.Duration] }
-    }],
-    [DefinitionType.Image]: [{ 
-      type: DecodeType.Probe, 
-      options: { types: [ProbeType.Alpha, ProbeType.Size] }
-    }],
+  [DecodeOperation]: {
+    autoDecode: {
+      [AudioType]: [{ 
+        type: DecodeType.Probe, 
+        options: { types: [ProbeType.Duration] }
+      }],
+      [ImageType]: [{ 
+        type: DecodeType.Probe, 
+        options: { types: [ProbeType.Alpha, ProbeType.Size] }
+      }],
 
-    [DefinitionType.Video]: [{ 
-      type: DecodeType.Probe, 
-      options: { 
-        types: [
-          ProbeType.Duration, ProbeType.Size, 
-          ProbeType.Alpha, ProbeType.Audio 
-        ] 
-      }
-    }],
+      [VideoType]: [{ 
+        type: DecodeType.Probe, 
+        options: { 
+          types: [
+            ProbeType.Duration, ProbeType.Size, 
+            ProbeType.Alpha, ProbeType.Audio 
+          ] 
+        }
+      }],
+    },
   },
-  autoTranscode: {
-    [DefinitionType.Audio]: [
-      { 
-        type: TranscodeType.Audio, 
-        options: { outputType: OutputType.Audio } 
-      }
-    ],
+  [EncodeOperation]: {
+
   },
-  saveMediaRequest: { endpoint: { pathname: '/media'}, init: { method: 'POST', headers: { 'content-type': ContentTypeJson } }},
-  listDecodingsRequest: { endpoint: { pathname: '/decodings' }, init: { method: 'GET' } },
-  listEncodingsRequest: { endpoint: { pathname: '/encodings' }, init: { method: 'GET' } },
-  listMediaRequest: { endpoint: { pathname: '/media' }, init: { method: 'GET' } },
-  listTranscodingsRequest: { endpoint: { pathname: '/transcodings' }, init: { method: 'GET' } },
+  [ReadOperation]: {
+    getRequest: { endpoint: { pathname: Endpoints.data.definition.get } }, 
+    listRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },
+      
+  },
+  [TranscodeOperation]: {
+    autoTranscode: {
+      [AudioType]: [
+        { 
+          type: AudioType, 
+          options: { outputType: AudioType } 
+        }
+      ],
+    },
+  },
+  [WriteOperation]: {
+    saveRequest: { endpoint: { pathname: Endpoints.data.definition.put} }, 
+    deleteRequest: { endpoint: { pathname: Endpoints.data.definition.delete } }, 
+    uploadRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },
+    uploadResponseIsRequest: true,
+    uploadCookedTypes: [],
+  },
+}
+
+export interface ClientSaveOptions extends ClientOptions {
+  callback?: ClientCallback
 }
 
 export interface ClientProgress extends PotentialError {
+  mash?: MashMedia
+  media: Media
+  processing?: Transcoding | Encoding | Decoding
   completed: number
 }
 
-export type ClientCallback = () => void
-export interface Client {
-  decode(args: DecodeArgs): Promise<Decoding>
-  decodings(args: ListDecodingsArgs): Promise<Decodings>
-  encode(args: EncodeArgs): Promise<Encoding>
-  encodings(args: ListEncodingsArgs): Promise<Encodings>
-  media(args: ListMediaArgs): Promise<Medias>
-  save(args: SaveArgs, callback?: ClientCallback): Promise<Media>
-  transcode(args: TranscodeArgs): Promise<Transcoding>
-  transcodings(args: ListTranscodingsArgs): Promise<Transcodings>
+export interface ClientProgessSteps extends ClientProgress {
+  steps: number
+  step: number
 }
+
+export type ClientCallback = (progress: ClientProgress) => void
+
+export type ClientData<T = {}> = T
+export type ClientDatum<T = {}> = ClientData<T>[]
+
+export interface ClientResponse<T = {}> extends PotentialError {
+  data?: ClientData<T> | ClientDatum<T>
+}
+
+export interface ClientArrayResponse extends PotentialError {
+  data?: Media[]
+}
+export interface ClientObjectResponse extends PotentialError {
+  data?: Media
+}
+
+export type ClientSaveResponse = ClientArrayResponse | ClientObjectResponse
+
 
 

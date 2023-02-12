@@ -1,8 +1,8 @@
 import React from 'react'
 import { 
-  EventType, Rect, eventStop, isDefinitionType, rectRound,
-  ClassDropping, sizeAboveZero, UnknownObject, assertDefinitionType, 
-  rectCopy, EditorIndex, assertObject, SelectType, EmptyMethod, 
+  EventType, Rect, eventStop, isMediaType, rectRound,
+  ClassDropping, sizeAboveZero, UnknownRecord, assertMediaType, 
+  rectCopy, EditorIndex, assertObject, SelectType, EmptyMethod, isMediaObject, 
 } from '@moviemasher/moviemasher.js'
 
 import {  
@@ -10,7 +10,7 @@ import {
 } from '../../declarations'
 import { 
   assertDragDefinitionObject, dragData, dragType, dragTypes, TransferTypeFiles 
-} from '../../Helpers/DragDrop'
+} from '@moviemasher/client-core'
 import { useEditor } from '../../Hooks/useEditor'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
@@ -35,7 +35,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   const playerContext = React.useContext(PlayerContext)
   const { disabled } = playerContext
   const { drop } = masherContext
-  const watchingRef = React.useRef<UnknownObject>({})
+  const watchingRef = React.useRef<UnknownRecord>({})
   const { current: watching } = watchingRef
 
   const handleResize = () => { 
@@ -98,7 +98,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     const types = dragTypes(dataTransfer)
     if (types.includes(TransferTypeFiles)) return true
     
-    return isDefinitionType(dragType(dataTransfer))
+    return isMediaType(dragType(dataTransfer))
   }
 
   const onDragLeave = (event: DragEvent): void => {
@@ -111,10 +111,10 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     const { dataTransfer } = event
     if (!dragValid(dataTransfer)) return 
 
-    const { edited } = editor
-    assertObject(edited, 'edited')
+    const { mashMedia } = editor
+    assertObject(mashMedia, 'mashMedia')
     const editorIndex: EditorIndex = {
-      clip: editor.time.scale(edited.quantize).frame,
+      clip: editor.time.scale(mashMedia.quantize).frame,
       track: -1,
     }
     const types = dragTypes(dataTransfer)
@@ -122,10 +122,11 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
       drop(dataTransfer.files, editorIndex)
     } else {
       const type = dragType(dataTransfer)
-      assertDefinitionType(type)
+      assertMediaType(type)
       const data = dragData(dataTransfer, type)
       assertDragDefinitionObject(data)
-      drop(data.mediaObject, editorIndex)
+      const { mediaObject } = data
+      if (isMediaObject(mediaObject)) drop(mediaObject, editorIndex)
     }
   } 
 
@@ -138,7 +139,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   if (className) classes.push(className)
   if (over) classes.push(ClassDropping)
 
-  const viewProps: UnknownObject = {
+  const viewProps: UnknownRecord = {
     ...rest, ref: viewRef, 
     className: classes.join(' '),
     key: 'player-content', 

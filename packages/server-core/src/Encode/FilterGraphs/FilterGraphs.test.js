@@ -2,9 +2,8 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  mashInstance, 
+  mashMedia, assertMashMedia, ErrorName, errorThrow
  } from "@moviemasher/moviemasher.js"
-
 
 import { 
   FilterGraphsClass, FilterGraphClass,
@@ -20,8 +19,8 @@ describe("FilterGraphs", () => {
   test("filterGraphsVisible returns two for two clips", () => {
     const clip1 = { frames: 60}
     const clip2 = { frames: 40 }
-    const mash = mashInstance({ tracks: [{ clips: [clip1, clip2] }] })
-    assertMashClass(mash)
+    const mash = mashMedia({ tracks: [{ clips: [clip1, clip2] }] })
+    assertMashMedia(mash)
     const { quantize, time, endTime, frames } = mash
     // console.log("quantize, time, endTime, frames", quantize, time, endTime, frames)
     assert.deepStrictEqual(time, timeFromArgs(0, quantize))
@@ -46,7 +45,7 @@ describe("FilterGraphs", () => {
     expectArrayLength(filterGraphsVisible, 1)
     const filterGraph = filterGraphsVisible[0]
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
     await filterGraphs.loadCommandFilesPromise
 
     const { commandFilters, filterGraphCommandFiles: commandFiles } = filterGraph
@@ -57,7 +56,7 @@ describe("FilterGraphs", () => {
     expectArrayLength(commandFiles, 1)
     const [commandFile] = commandFiles
     const { type, file, input, options } = commandFile
-    assert.equal(type, LoadType.Image)
+    assert.equal(type, ImageType)
     assert.equal(file, '../shared/image/cable.jpg')
     assert(input)
    
@@ -73,7 +72,7 @@ describe("FilterGraphs", () => {
     const videoTrack = mash.tracks[0]
     const clips = videoTrack.clips 
     const options = {
-      ...filterGraphsOptions, graphType: GraphType.Mash,
+      ...filterGraphsOptions,
       time: timeRangeFromTimes(filterGraphsOptions.time, mash.endTime),
     }
     const filterGraphs = filterGraphsInstance(filterGraphArgs(mash, options))
@@ -84,7 +83,7 @@ describe("FilterGraphs", () => {
 
       await mash.loadPromise(filterGraph)
       assert(filterGraph instanceof FilterGraphClass)
-      if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
 
       const clip = clips[index]
       const timeRange = clip.timeRange(quantize)
@@ -94,7 +93,7 @@ describe("FilterGraphs", () => {
       assert.equal(commandFiles.length, 1)
       const [graphFile] = commandFiles
       const { type, file, input, options } = graphFile
-      assert.equal(type, LoadType.Image)
+      assert.equal(type, ImageType)
       assert(input)
       
       const { definition } = clip.content
@@ -119,7 +118,7 @@ describe("FilterGraphs", () => {
     expectArrayLength(filterGraphsVisible, 1)
     const [filterGraph] = filterGraphsVisible
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
 
     await mash.loadPromise(filterGraph)
     const { commandFilters } = filterGraph
@@ -150,7 +149,7 @@ describe("FilterGraphs", () => {
       expectArrayLength(filterGraphsVisible, 1)
       const [filterGraph] = filterGraphsVisible
       assert(filterGraph instanceof FilterGraphClass)
-      if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+      if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
 
       const { visible, quantize, time } = filterGraph
       const graphFileArgs = { 
@@ -164,8 +163,8 @@ describe("FilterGraphs", () => {
       // console.log('commandFilters', commandFilters)
       expectArrayLength(commandFilters, 10)
       assert(files instanceof Array)
-      const imageFiles = files.filter(graphFile => graphFile.type === LoadType.Image)
-      const audioFiles = files.filter(graphFile => graphFile.type === LoadType.Audio)
+      const imageFiles = files.filter(graphFile => graphFile.type === ImageType)
+      const audioFiles = files.filter(graphFile => graphFile.type === AudioType)
       if (time.isRange) {
         expectArrayLength(audioFiles, 1)
         const [audioFile] = audioFiles
@@ -200,13 +199,12 @@ describe("FilterGraphs", () => {
   test("returns expected FilterGraphs for video", () => {
     const clipObjects = [{ contentId: 'video-rgb', frames: 30 }] 
     const mash = createMash(clipObjects)
-    const graphArgs = {...filterGraphsOptions, graphType: GraphType.Mash }
-    assert.equal(graphArgs.graphType, GraphType.Mash)
+    const graphArgs = {...filterGraphsOptions }
     const filterGraphs = filterGraphsInstance(filterGraphArgs(mash, graphArgs))
     const { filterGraphsVisible } = filterGraphs
     const [filterGraph] = filterGraphsVisible
     assert(filterGraph instanceof FilterGraphClass)
-    if (!(filterGraph instanceof FilterGraphClass)) throw Errors.internal
+    if (!(filterGraph instanceof FilterGraphClass)) return errorThrow(ErrorName.Internal)
 
     const { commandFilters, filterGraphCommandFiles: commandFiles, duration } = filterGraph
     assert.equal(duration, 0)
@@ -222,7 +220,7 @@ describe("FilterGraphs", () => {
 
   describe("empty mash", () => {
     test("it contains no audible or visible FilterGraph", () => {
-      const mash = mashInstance()
+      const mash = mashMedia()
       const filterGraphs = filterGraphsInstance(filterGraphsArgs(mash))
       const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
       assert(filterGraphs instanceof FilterGraphsClass)
@@ -234,7 +232,7 @@ describe("FilterGraphs", () => {
   
   describe("mash with single clip", () => {
     test("it contains a single visible FilterGraph", () => {
-      const mash = mashInstance({ tracks: [ { clips: [{}] }]})
+      const mash = mashMedia({ tracks: [ { clips: [{}] }]})
       const filterGraphs = filterGraphsInstance(filterGraphArgs(mash))
       const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs
       assert(!filterGraphAudible)
@@ -245,7 +243,7 @@ describe("FilterGraphs", () => {
     })
     
     test("its visible FilterGraph contains correct CommandFilters", () => {
-      const mash = mashInstance({ tracks: [ { clips: [{}] }]})
+      const mash = mashMedia({ tracks: [ { clips: [{}] }]})
       mash.imageSize = { width: 640, height: 480 }
       const filterGraphs = filterGraphsInstance(filterGraphArgs(mash))
       const { filterGraphAudible, filterGraphVisible, filterGraphsVisible } = filterGraphs

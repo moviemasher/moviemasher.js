@@ -1,20 +1,21 @@
+import { MediaType } from '@moviemasher/moviemasher.js'
 import React from 'react'
-import { assertEditType, EditType } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult } from '../../declarations'
 import { useEditor } from '../../Hooks/useEditor'
+import { propsMediaTypes } from '../../Utilities/Props'
 
 export interface MashingProps extends PropsAndChildren {
-  editType: string | EditType
+  type?: string
+  types?: string | string[]
 }
 
 /**
  * @parents Masher
  */
 export function Mashing(props: MashingProps): ReactResult {
-  const { editType, children } = props
-  assertEditType(editType)
-
+  const { type, types, children } = props
+  const mediaTypes = propsMediaTypes(type, types)
   const editor = useEditor()
-  return editType === editor.editType ? <>{children}</> : null
+  return mediaTypes.includes(editor.editType as MediaType) ? <>{children}</> : null
 }

@@ -1,5 +1,5 @@
-import { LoadedImage } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { LoadedImage } from "../../Load/Loaded"
+import { ImageType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -7,13 +7,14 @@ import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/Updatabl
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { isLoadedImage } from "../../Loader/Loader"
+import { isLoadedImage } from "../../Load/Loader"
 import { assertSizeAboveZero, Size, sizeCover } from "../../Utility/Size"
 import { MediaBase } from "../MediaBase"
-import { PreloadArgs } from "../../MoveMe"
+import { PreloadArgs } from "../../Base/Code"
 import { requestImagePromise } from "../../Utility/Request"
 import { centerPoint, RectOptions } from "../../Utility/Rect"
-import { svgImagePromiseWithOptions, svgSvgElement } from "../../Utility/Svg"
+import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
 const ImageDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
@@ -29,9 +30,12 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    const transcoding = this.preferredTranscoding(DefinitionType.Image) 
+    const transcoding = this.preferredTranscoding(ImageType) 
 
-    return transcoding.loadedMediaPromise.then(image => {
+    return transcoding.loadedMediaPromise.then(orError => {
+      const { error, clientMedia: image } = orError
+      if (error) return errorThrow(error)
+
       assertSizeAboveZero(image)
 
       const { width, height, src } = image
@@ -59,15 +63,17 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
     const { loadedImage } = this
     if (loadedImage) return Promise.resolve()
 
-    const transcoding = editing ? this.preferredTranscoding(DefinitionType.Image) : this
+    const transcoding = editing ? this.preferredTranscoding(ImageType) : this
     
     const { request } = transcoding
-    return requestImagePromise(request).then(image => {
-      this.loadedImage = image
+    return requestImagePromise(request).then(orError => {
+      const { error, clientImage } = orError
+      if (error) return errorThrow(error)
+      this.loadedImage = clientImage
     })
   }
   
   loadedImage?: LoadedImage 
   
-  type = DefinitionType.Image 
+  type = ImageType 
 }

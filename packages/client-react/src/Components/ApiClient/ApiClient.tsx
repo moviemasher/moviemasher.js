@@ -2,7 +2,7 @@ import React from 'react'
 import {
   ApiVersion,
   ApiCallbacksResponse,
-  Endpoint, EndpointPromiser, fetchJsonPromise, 
+  Endpoint, EndpointPromiser, 
   ApiServersRequest, ApiServersResponse, 
   Endpoints, isPopulatedObject, ApiCallbacks, ApiCallback, urlEndpoint, 
   ApiCallbacksRequest,
@@ -11,6 +11,7 @@ import {
 
 import { PropsWithChildren, ReactResult } from '../../declarations'
 import { ApiContext, ApiContextInterface } from './ApiContext'
+import { jsonPromise } from '@moviemasher/client-core'
 
 export interface ApiProps extends PropsWithChildren {
   endpoint?: Endpoint
@@ -38,7 +39,7 @@ export function ApiClient(props: ApiProps): ReactResult {
         endpointResponse.init ||= {}
         endpointResponse.init.body = { version: ApiVersion, ...body }
       }
-      return fetchJsonPromise(endpointResponse)
+      return jsonPromise(endpointResponse)
     })
   }
 
@@ -55,7 +56,7 @@ export function ApiClient(props: ApiProps): ReactResult {
       endpoint, init: { body: request }
     }
     console.debug("ApiCallbacksRequest", endpoint, request)
-    return fetchJsonPromise(promiseCallback).then((response: ApiCallbacksResponse) => {
+    return jsonPromise(promiseCallback).then((response: ApiCallbacksResponse) => {
       console.debug("ApiCallbacksResponse", endpoint, response)
       const { apiCallbacks } = response
       Object.assign(callbacks, apiCallbacks)

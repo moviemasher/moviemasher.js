@@ -1,13 +1,13 @@
-import { ValueObject } from "../../declarations"
+import { ValueRecord } from "../../declarations"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from "../../Utility/Is"
-import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from "../../MoveMe"
+import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from "../../Base/Code"
 import { arrayLast } from "../../Utility/Array"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { tweenMaxSize, tweenOption, tweenPosition } from "../../Utility/Tween"
-import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent } from "../../Utility/Color"
+import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba, colorWhite, colorWhiteTransparent } from "../../Helpers/Color/ColorFunctions"
 import { ColorizeFilter } from "./ColorizeFilter"
 import { Size, sizesEqual } from "../../Utility/Size"
 import { FilterDefinitionObject } from "../Filter"
@@ -60,7 +60,7 @@ export class TextFilter extends ColorizeFilter {
     const { width, height } = dimensions
     const transparentFilter = 'color'
     const transparentId = idGenerate(transparentFilter)
-    const object: ValueObject = { color, size: `${width}x${height}` }
+    const object: ValueRecord = { color, size: `${width}x${height}` }
     if (videoRate) object.rate = videoRate
     if (duration) object.duration = duration
     const commandFilter: CommandFilter = {
@@ -129,8 +129,8 @@ export class TextFilter extends ColorizeFilter {
     if (calculatedWidth > maxSize.width) maxSize.width = calculatedWidth
 
     let scaling = stretch || !sizesEqual(size, sizeEnd)
-    const scaleOptions: ValueObject = {}
-    const textOptions: ValueObject = {
+    const scaleOptions: ValueRecord = {}
+    const textOptions: ValueRecord = {
       fontsize: maxSize.height, fontfile, textfile, 
       x: Math.ceil(isNumber(xEnd) ? Math.max(x, xEnd) : x),
       y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),

@@ -2,14 +2,14 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  DefinitionType, ImageClass, imageDefinition
+  MediaType, ImageClass, imageDefinition
   } from "@moviemasher/moviemasher.js"
 
 describe("image", () => {
   const imageMediaObject = {
     id: 'image-id',
     url: "../shared/image/globe.jpg",
-    type: DefinitionType.Image,
+    type: ImageType,
   }
   const definition = () => imageDefinition(imageMediaObject)
 

@@ -1,6 +1,5 @@
-import { UnknownObject } from "../../declarations"
-import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../MoveMe"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
+import { UnknownRecord } from "../../declarations"
+import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { Sequence, SequenceDefinition } from "./Sequence"
 import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { ContentMixin } from "../Content/ContentMixin"
@@ -8,9 +7,9 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { ContainerMixin } from "../Container/ContainerMixin"
-import { LoadType } from "../../Setup/Enums"
-import { Size } from "../../Utility/Size"
+
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
+import { ImageType, VideoType } from "../../Setup/Enums"
 
 const SequenceWithTweenable = TweenableMixin(MediaInstanceBase)
 const SequenceWithContainer = ContainerMixin(SequenceWithTweenable)
@@ -49,7 +48,7 @@ export class SequenceClass extends SequenceWithUpdatableDuration implements Sequ
         const frames = definition.framesArray(definitionTime)
         const files = frames.map(frame => {
           const graphFile: GraphFile = {
-            type: LoadType.Image, file: '',//definition.urlForFrame(frame), 
+            type: ImageType, file: '',//definition.urlForFrame(frame), 
             input: true, definition
           }
           return graphFile
@@ -57,7 +56,7 @@ export class SequenceClass extends SequenceWithUpdatableDuration implements Sequ
         files.push(...files)
       } else {
         const graphFile: GraphFile = {
-          type: LoadType.Video, file: '', definition, input: true
+          type: VideoType, file: '', definition, input: true
         }
         files.push(graphFile)
       }
@@ -86,7 +85,7 @@ export class SequenceClass extends SequenceWithUpdatableDuration implements Sequ
   //       const frames = definition.framesArray(definitionTime)
   //       const files = frames.map(frame => {
   //         const graphFile: GraphFile = {
-  //           type: LoadType.Image, file: definition.urlForFrame(frame), 
+  //           type: ImageType, file: definition.urlForFrame(frame), 
   //           input: true, definition
   //         }
   //         return graphFile
@@ -99,7 +98,7 @@ export class SequenceClass extends SequenceWithUpdatableDuration implements Sequ
 
   speed = 1.0
 
-  toJSON() : UnknownObject {
+  toJSON() : UnknownRecord {
     const object = super.toJSON()
     if (this.speed !== 1.0) object.speed = this.speed
     return object

@@ -1,23 +1,24 @@
-import { Constrained, Described, Scalar, UnknownObject} from "../../declarations"
-import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../MoveMe"
+import { Scalar, UnknownRecord} from "../../declarations"
+import { Constrained } from "../../Base/Constrained"
+import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../Base/Code"
 import { Actions } from "../../Editor/Actions/Actions"
 import { Filter } from "../../Filter/Filter"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { DefinitionType, Orientation } from "../../Setup/Enums"
+import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
+import { MediaType, Orientation } from "../../Setup/Enums"
 import { Property } from "../../Setup/Property"
 import { PointTuple } from "../../Utility/Point"
 import { Rect, RectTuple } from "../../Utility/Rect"
-import { SelectedProperties } from "../../Utility/SelectedProperty"
+import { SelectedProperties } from "../../Helpers/Select/SelectedProperty"
 import { SizeTuple } from "../../Utility/Size"
 import { Tweening } from "../../Utility/Tween"
 import { Selectable } from "../../Editor/Selectable"
 import { isMedia, Media } from "../../Media/Media"
 import { isMediaInstance, MediaInstance } from "../../Media/MediaInstance/MediaInstance"
+import { Identified } from "../../Base/Identified"
 
-export interface TweenableObject extends UnknownObject {
-  id?: string
-  definitionId?: string
+export interface TweenableObject extends UnknownRecord {
+  mediaId?: string
   definition?: Media
   label?: string
   container?: boolean
@@ -25,12 +26,11 @@ export interface TweenableObject extends UnknownObject {
   xEnd?: number
   y?: number
   yEnd?: number
-
   lock?: string
 }
 
-export interface TweenableDefinitionObject extends  UnknownObject, Partial<Described> {
-  type?: DefinitionType | string
+export interface TweenableDefinitionObject extends Identified, UnknownRecord {
+  type?: MediaType | string
 }
 
 export interface Tweenable extends MediaInstance, Selectable {
@@ -78,7 +78,6 @@ export interface Tweenable extends MediaInstance, Selectable {
   tweenValues(key: string, time: Time, range: TimeRange): Scalar[] 
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles 
 }
-
 export const isTweenable = (value?: any): value is Tweenable => {
   return isMediaInstance(value) && isMedia(value.definition)
 }

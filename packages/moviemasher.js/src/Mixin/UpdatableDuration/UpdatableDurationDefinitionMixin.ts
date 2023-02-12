@@ -1,14 +1,16 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
-import { AudibleSource, LoadedAudio, UnknownObject } from "../../declarations"
+import { UnknownRecord } from "../../declarations"
+import { AudibleSource, LoadedAudio } from "../../Load/Loaded"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { assertLoadedVideo, isLoadedAudio } from "../../Loader/Loader"
-import { DataType, DefinitionType, Duration } from "../../Setup/Enums"
+import { assertLoadedAudio, assertLoadedVideo, isLoadedAudio } from "../../Load/Loader"
+import { DataType, MediaType, Duration, AudioType, VideoType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { isAboveZero, isUndefined } from "../../Utility/Is"
 import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
-import { endpointFromUrl } from "../../Utility/Endpoint"
+import { endpointFromUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { requestAudioPromise } from "../../Utility/Request"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
 export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {
@@ -99,8 +101,11 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
     get loadedAudioPromise(): Promise<LoadedAudio> {
       if (this.loadedAudio) return Promise.resolve(this.loadedAudio)
 
-      const transcoding = this.preferredTranscoding(DefinitionType.Audio, DefinitionType.Video)
-      return transcoding.loadedMediaPromise.then(media => {
+      const transcoding = this.preferredTranscoding(AudioType, VideoType)
+      return transcoding.loadedMediaPromise.then(orError => {
+        if (orError.error) return errorThrow(orError.error)
+
+        const { clientMedia: media } = orError
         if (isLoadedAudio(media)) {
           this.loadedAudio = media
           return media
@@ -110,7 +115,11 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         const { src } = media
         const endpoint = endpointFromUrl(src)
         const request = { endpoint }
-        return requestAudioPromise(request).then(audio => {
+        return requestAudioPromise(request).then(orError => {
+          if (orError.error) return errorThrow(orError.error)
+          const { clientAudio: audio } = orError
+          assertLoadedAudio(audio)
+          
           this.loadedAudio = audio
           return audio
         })
@@ -119,7 +128,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
 
     loop = false
 
-    toJSON() : UnknownObject {
+    toJSON() : UnknownRecord {
       const { loop } = this
       return { ...super.toJSON(), loop }
     }

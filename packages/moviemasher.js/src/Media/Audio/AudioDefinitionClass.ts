@@ -1,4 +1,4 @@
-import { DefinitionType } from "../../Setup/Enums"
+import { AudioType, MediaType } from "../../Setup/Enums"
 import { AudioClass } from "./AudioClass"
 import { Audio, AudioDefinition, AudioDefinitionObject, AudioObject } from "./Audio"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -6,8 +6,8 @@ import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { MediaBase } from "../MediaBase"
-import { LoadedAudio } from "../../declarations"
-import { PreloadArgs } from "../../MoveMe"
+import { LoadedAudio } from "../../Load/Loaded"
+import { PreloadArgs } from "../../Base/Code"
 import { requestAudioPromise } from "../../Utility/Request"
 
 
@@ -39,13 +39,14 @@ export class AudioDefinitionClass extends AudioDefinitionWithUpdatableDuration i
     if (loadedAudio) return Promise.resolve()
 
 
-    const transcoding = editing ? this.preferredTranscoding(DefinitionType.Audio) : this
+    const transcoding = editing ? this.preferredTranscoding(AudioType) : this
     
     const { request } = transcoding
-    return requestAudioPromise(request).then(audio => {
+    return requestAudioPromise(request).then(orError => {
+      const { clientAudio: audio } = orError
       this.loadedAudio = audio
     })
   }
 
-  type = DefinitionType.Audio 
+  type = AudioType 
 }

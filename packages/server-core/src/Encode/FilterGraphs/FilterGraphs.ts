@@ -1,6 +1,6 @@
 
 import { 
-  GraphFiles, AVType, GraphType, Size, Time, Mash, Times 
+  GraphFiles, AVType, Size, Time, MashMedia, Times 
 } from "@moviemasher/moviemasher.js"
 import { FilterGraph } from "../FilterGraph/FilterGraph"
 
@@ -16,7 +16,6 @@ export interface FilterGraphs {
 
 export interface FilterGraphsOptions {
   avType?: AVType
-  graphType?: GraphType
   size?: Size
   time?: Time
   videoRate?: number
@@ -24,10 +23,9 @@ export interface FilterGraphsOptions {
 }
 
 export interface FilterGraphsArgs {
-  mash: Mash
+  mash: MashMedia
   times: Times
   avType: AVType
-  graphType: GraphType
   size: Size
   videoRate: number
   background: string

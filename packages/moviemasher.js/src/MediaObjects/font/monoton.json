@@ -2,5 +2,12 @@
   "label": "Monoton",
   "id": "com.moviemasher.font.monoton",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Monoton"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Monoton" 
+    } 
+  }
 }

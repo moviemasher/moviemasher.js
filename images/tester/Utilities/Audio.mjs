@@ -1,9 +1,9 @@
-import { DefinitionType } from "@moviemasher/moviemasher.js";
+import { MediaType } from "@moviemasher/moviemasher.js";
 
 export const audioDefinitionObject = () => ({
   id: 'audio', 
   request: { endpoint: { pathname: '../shared/audio/loop.mp3' } },
-  type: DefinitionType.Audio,
+  type: AudioType,
   decodings: [{duration: 3}]
 })
 

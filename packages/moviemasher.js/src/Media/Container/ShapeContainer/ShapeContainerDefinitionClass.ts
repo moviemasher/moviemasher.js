@@ -1,4 +1,5 @@
-import { LoadedImage, LoadedMedia, UnknownObject } from "../../../declarations"
+import { UnknownRecord } from "../../../declarations"
+import { LoadedImage } from "../../../Load/Loaded"
 import { ContainerDefinitionMixin } from "../ContainerDefinitionMixin"
 import { ShapeContainerClass } from "./ShapeContainerClass"
 import {
@@ -7,14 +8,15 @@ import {
 } from "./ShapeContainer"
 import { TweenableDefinitionMixin } from "../../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { isAboveZero, isPopulatedString } from "../../../Utility/Is"
-import { svgSvgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../../Utility/Svg"
+import { svgSvgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../../Helpers/Svg/SvgFunctions"
 import { Size, sizeAboveZero, sizeCover } from "../../../Utility/Size"
 import { centerPoint } from "../../../Utility/Rect"
 import { DefaultContainerId } from "../Container"
 import { MediaBase } from "../../MediaBase"
-import { Errors } from "../../../Setup/Errors"
-import { CommandProbeData } from "../../../Loader"
-import { DefinitionType } from "../../../Setup/Enums"
+import { ClientMediaOrError, CommandProbeData } from "../../../Load"
+import { ImageType } from "../../../Setup/Enums"
+import { ErrorName } from "../../../Helpers/Error/ErrorName"
+import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -62,9 +64,9 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
 
   isVector = true
 
-  get loadedMediaPromise(): Promise<LoadedMedia> {
+  get loadedMediaPromise(): Promise<ClientMediaOrError> {
     console.trace(this.constructor.name, 'loadedMediaPromise')
-    throw new Error(Errors.unimplemented)
+    return errorThrow(ErrorName.Unimplemented)
   }
   path = ""
 
@@ -72,7 +74,7 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
 
   pathWidth = 0
 
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const object = super.toJSON()
     if (this.path) object.path = this.path
     if (isAboveZero(this.pathHeight)) object.pathHeight = this.pathHeight
@@ -80,5 +82,5 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     return object
   }
 
-  type = DefinitionType.Image 
+  type = ImageType 
 }

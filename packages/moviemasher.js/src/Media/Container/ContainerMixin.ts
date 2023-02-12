@@ -1,26 +1,28 @@
-import { LoadedVideo, PreviewItems, SvgItem, SvgItems } from "../../declarations"
+import { LoadedVideo } from "../../Load/Loaded"
+import { PreviewItems, SvgItem, SvgItems } from "../../Helpers/Svg/Svg"
 import { Rect, rectsEqual, RectTuple } from "../../Utility/Rect"
 import { Size, sizeCopy } from "../../Utility/Size"
-import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
 import { Filter } from "../../Filter/Filter"
-import { Anchors, DataType, DefinitionType, DirectionObject, Directions } from "../../Setup/Enums"
+import { Anchors, DataType, MediaType, DirectionObject, Directions, VideoType, ImageType, SequenceType } from "../../Setup/Enums"
 import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isTimeRange } from "../../Utility/Is"
 import { Container, ContainerClass, DefaultContainerId, ContainerDefinition, ContainerRectArgs } from "./Container"
 import { arrayLast } from "../../Utility/Array"
 import { filterFromId } from "../../Filter/FilterFactory"
-import { svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement } from "../../Utility/Svg"
+import { svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement } from "../../Helpers/Svg/SvgFunctions"
 import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../../Utility/Tween"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { idGenerateString } from "../../Utility/Id"
-import { isLoadedVideo } from "../../Loader/Loader"
-import { colorWhite } from "../../Utility/Color"
+import { assertLoadedImage, isLoadedVideo } from "../../Load/Loader"
+import { colorWhite } from "../../Helpers/Color/ColorFunctions"
 import { Content } from "../Content/Content"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { pointCopy } from "../../Utility/Point"
 import { assertVideoDefinition } from "../Video/Video"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
@@ -76,24 +78,30 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
 
     colorMaximize = false
     
-    private srcPromise(zeroRect: Rect, definitionTime: Time): Promise<string> {
+    private stylesSrcPromise(zeroRect: Rect, definitionTime: Time): Promise<string> {
       const { type, definition } = this
-      const types: DefinitionType[] = []
-      if (type === DefinitionType.Image) types.push(type)
-      else types.push(DefinitionType.Sequence, DefinitionType.Video)
+      const types: MediaType[] = []
+      if (type === ImageType) types.push(type)
+      else types.push(SequenceType, VideoType)
       const transcoding = definition.preferredTranscoding(...types)
       const { type: transcodingType } = transcoding
-      if (transcodingType === DefinitionType.Sequence) {
+      if (transcodingType === SequenceType) {
         assertVideoDefinition(definition)
         return definition.loadedImagePromise(definitionTime, sizeCopy(zeroRect)).then(image => (
           image.src
         ))
       }
-      return definition.preferredTranscoding(DefinitionType.Image).srcPromise 
+      return definition.preferredTranscoding(ImageType).loadedMediaPromise.then(orError => {
+        const { error, clientMedia: loadedMedia } = orError
+        if (error) return errorThrow(error)
+
+        assertLoadedImage(loadedMedia)
+        return loadedMedia.src
+      }) 
     }
 
     private stylesPromise(zeroRect: Rect, definitionTime: Time): Promise<string[]> {
-      return this.srcPromise(zeroRect, definitionTime).then(src => {
+      return this.stylesSrcPromise(zeroRect, definitionTime).then(src => {
         const styles: string[] = []
         styles.push(`mask-image: url(${src})`)
         styles.push('mask-repeat: no-repeat')
@@ -317,7 +325,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     private get div() { 
       return this._div ||= globalThis.document.createElement('div')
     }
-    get isDefault() { return this.definitionId === DefaultContainerId }
+    get isDefault() { return this.mediaId === DefaultContainerId }
 
 
     declare height: number

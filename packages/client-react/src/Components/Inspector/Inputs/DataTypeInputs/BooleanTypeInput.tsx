@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownRecord } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { InputContext } from '../InputContext'
@@ -10,7 +10,7 @@ export function BooleanTypeInput(): ReactResult {
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null
 
-  const inputProps: UnknownObject = {
+  const inputProps: UnknownRecord = {
     type: 'checkbox',
     name,
     checked: !!value,

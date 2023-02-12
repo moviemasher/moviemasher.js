@@ -1,8 +1,7 @@
 import React from 'react'
 import {
-  assertMedia,
-  Defined, isDefinitionType, assertPopulatedString, ClassDropping, DataType, 
-  ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition
+  assertMedia, isMediaType, assertPopulatedString, ClassDropping, DataType, 
+  ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition, MediaObject, isMediaObject, assertDefined
 } from '@moviemasher/moviemasher.js'
 
 import { PropsAndChild, ReactResult, WithClassName } from '../../../../declarations'
@@ -10,10 +9,11 @@ import { View } from '../../../../Utilities/View'
 import { InputContext } from '../InputContext'
 import { DefinitionContext } from '../../../../Contexts/DefinitionContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '../../../../Helpers/DragDrop'
+import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '@moviemasher/client-core'
 import { DefinitionItem } from '../../../DefinitionItem/DefinitionItem'
-import { propsDefinitionTypes } from '../../../../Utilities/Props'
+import { propsMediaTypes } from '../../../../Utilities/Props'
 import { MasherContext } from '../../../Masher/MasherContext'
+import { useEditor } from '../../../../Hooks/useEditor'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string
@@ -28,17 +28,19 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
   const [isOver, setIsOver] = React.useState(false)
   const inputContext = React.useContext(InputContext)
   const editorContext = React.useContext(MasherContext)
-  const { drop } = editorContext
+  const { drop, editor } = editorContext
+  assertDefined(editor)
   const { changeHandler, value, name } = inputContext
   assertTrue(changeHandler)
-
-  const definitionTypes = propsDefinitionTypes(type, types)
+  
+  const { media } = editor
+  const mediaTypes = propsMediaTypes(type, types)
 
   const childNodes = (): React.ReactElement | null => {
     if (!value) return null
 
     assertPopulatedString(value)
-    const definition = Defined.fromId(value)
+    const definition = media.fromId(value)
     assertMedia(definition)
 
     const definitionProps = { definition, key: definition.id }
@@ -56,9 +58,9 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     if (types.includes(TransferTypeFiles)) return true
 
     const draggingType = dragType(dataTransfer)
-    if (!isDefinitionType(draggingType)) return false
+    if (!isMediaType(draggingType)) return false
 
-    return definitionTypes.includes(draggingType)
+    return mediaTypes.includes(draggingType)
   }
 
   const onDragLeave = () => { setIsOver(false) }
@@ -76,8 +78,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
 
     const { dataTransfer } = event
     assertTrue(dataTransfer)
-
-
+    
     const types = dragTypes(dataTransfer)
     // any file can be dropped
     if (types.includes(TransferTypeFiles)) {
@@ -88,7 +89,7 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
         const valid = container ? definitions.filter(isContainerDefinition) : definitions
         const [definition] = valid
         if (definition) {
-          assertTrue(Defined.installed(definition.id), `${definition.type} installed`)
+          assertTrue(media.installed(definition.id), `${definition.type} installed`)
           // console.log("DefinitionDrop onDrop", definition.type, definition.label)
           changeHandler(name, definition.id)
         }
@@ -99,10 +100,12 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
     const json = dataTransfer.getData(type)
     const data: DragDefinitionObject = JSON.parse(json)
     const { mediaObject } = data
-    const [definition] = Defined.define(mediaObject)
-    if (name === "containerId" && !isContainerDefinition(definition)) return
+    if (isMediaObject(mediaObject)) {
+      const [definition] = media.define(mediaObject)
+      if (name === "containerId" && !isContainerDefinition(definition)) return
 
-    changeHandler(name, mediaObject.id!)
+      changeHandler(name, mediaObject.id!)
+    }
   }
 
   const calculateClassName = (): string => {

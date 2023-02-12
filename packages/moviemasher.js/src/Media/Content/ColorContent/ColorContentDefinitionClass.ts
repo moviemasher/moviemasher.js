@@ -2,11 +2,11 @@ import { ColorContent, ColorContentDefinition, ColorContentDefinitionObject, Col
 import { ColorContentClass } from "./ColorContentClass"
 import { ContentDefinitionMixin } from "../ContentDefinitionMixin"
 import { isPopulatedString } from "../../../Utility/Is"
-import { colorBlack } from "../../../Utility/Color"
+import { colorBlack } from "../../../Helpers/Color/ColorFunctions"
 import { TweenableDefinitionMixin } from "../../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { MediaBase } from "../../MediaBase"
 import { Size, sizeCover } from "../../../Utility/Size"
-import { svgPathElement, svgSetTransformRects, svgSvgElement } from "../../../Utility/Svg"
+import { svgPathElement, svgSetTransformRects, svgSvgElement } from "../../../Helpers/Svg/SvgFunctions"
 import { centerPoint } from "../../../Utility/Rect"
 
 

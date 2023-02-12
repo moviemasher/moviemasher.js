@@ -1,10 +1,10 @@
-import { DecodeOutput, DefinitionType, TranscodeOutput } from "@moviemasher/moviemasher.js"
+import { DecodeOutput, MediaType, TranscodeOutput } from "@moviemasher/moviemasher.js"
 
 
-export type DecodeTypesByDefinitionType = {
-  [index in DefinitionType]?: DecodeOutput[]
+export type DecodeTypesByMediaType = {
+  [index in MediaType]?: DecodeOutput[]
 }
 
-export type TranscodeTypesByDefinitionType = {
-  [index in DefinitionType]?: TranscodeOutput[]
+export type TranscodeTypesByMediaType = {
+  [index in MediaType]?: TranscodeOutput[]
 }

@@ -1,5 +1,4 @@
 export * from "./Command"
-export * from "./Environment"
 export * from "./Expand"
 export * from "./Hash"
 export * from "./Job"

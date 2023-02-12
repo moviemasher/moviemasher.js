@@ -64,7 +64,7 @@ exports.GenerateArgs = Object.values(GenerateArg);
 const textOptions = {
     string: "Luckiest Guy",
     intrinsic: { width: 6167.01953125, height: 738, x: 0, y: 723 },
-    fontId: "com.moviemasher.font.luckiest-guy"
+    mediaId: "com.moviemasher.font.luckiest-guy"
 };
 const isRenderTest = (value) => {
     return (0, moviemasher_js_1.isPopulatedArray)(value) && (0, moviemasher_js_1.isString)(value[0]);
@@ -111,7 +111,7 @@ const generateClips = (testId, size = moviemasher_js_1.SizePreview, frames = mov
     const debug = {
         intrinsic: { x: 0, y: 0, width: width, height: 1000 / textHeight },
         // { width: width / textHeight, height: 500, x: 0, y: 400 }, // 738
-        fontId: "com.moviemasher.font.luckiest-guy",
+        mediaId: "com.moviemasher.font.luckiest-guy",
         // height: textHeight, 
         x: 0, y: 0.5,
         lock: 'V',

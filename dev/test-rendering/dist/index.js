@@ -26,7 +26,7 @@ console.log("args", ...args);
 // })
 const imageOutput = (0, moviemasher_js_1.outputDefaultImage)({ cover: true });
 const audioOutput = (0, moviemasher_js_1.outputDefaultAudio)({ optional: true });
-const sequenceOutput = (0, moviemasher_js_1.outputDefaultImageSequence)({ ...moviemasher_js_1.SizePreview, cover: true });
+const sequenceOutput = (0, moviemasher_js_1.outputDefaultSequence)({ ...moviemasher_js_1.SizePreview, cover: true });
 const videoOutput = (0, moviemasher_js_1.outputDefaultVideo)({ ...moviemasher_js_1.SizePreview, mute: true });
 // const testUploadVideo = async (test: GenerateMashTest) => {
 //   const outputs = [imageOutput, audioOutput, sequenceOutput] // 
@@ -222,7 +222,7 @@ cherryPick();
 //   const imageUrl = '../shared/image/globe.jpg'
 //   const videoUrl = '../shared/video/rgb.mp4'
 //   const baseOutput: RenderingCommandOutput = {
-//     outputType: OutputType.Image,
+//     outputType: EncodeType.Image,
 //     format: OutputFormat.Png,
 //     extension: ExtJpeg,
 //   }
@@ -256,10 +256,10 @@ cherryPick();
 //   describe("with generated mashes", () => {
 //     describe("runPromise renders", () => {
 //       test("audio from trimmed video", async () => {
-//         const videoOutput = outputDefaultPopulate({ outputType: OutputType.Audio })
+//         const videoOutput = outputDefaultPopulate({ outputType: EncodeType.Audio })
 //         // console.log("videoOutput", videoOutput)
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl, { trim: 10 })
+//         const renderingInput: RenderingInput = renderingInputFromRaw(VideoType, videoUrl, { trim: 10 })
 //         // console.log("clip", renderingInput.mash.tracks![0].clips![0])
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('audio-from-trimmed-video'), outputs, ...renderingInput,
@@ -272,7 +272,7 @@ cherryPick();
 //       test("image from image with cover", async () => {
 //         const videoOutput = outputDefaultPopulate({ ...baseOutput })
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Image, imageUrl)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(ImageType, imageUrl)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('image-from-image-square-with-cover'), outputs, ...renderingInput,
 //         }
@@ -282,9 +282,9 @@ cherryPick();
 //         await expectOutputFile(result.results[0].destination)
 //       })
 //       test("video from image", async () => {
-//         const videoOutput = outputDefaultPopulate({ outputType: OutputType.Video, cover: false })
+//         const videoOutput = outputDefaultPopulate({ outputType: EncodeType.Video, cover: false })
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Image, imageUrl)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(ImageType, imageUrl)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('video-from-image-square'), outputs, ...renderingInput,
 //         }
@@ -296,7 +296,7 @@ cherryPick();
 //         const videoOutput = outputDefaultPopulate({ ...baseOutput })
 //         const outputs: CommandOutputs = [videoOutput]
 //         const clip = { id: 'video', trim: 10 }
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl, clip)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(VideoType, videoUrl, clip)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('image-from-trimmed-video'), outputs, ...renderingInput,
 //         }
@@ -306,9 +306,9 @@ cherryPick();
 //         await expectOutputFile(result.results[0].destination)
 //       })
 //       test("video from video with cover", async () => {
-//         const videoOutput = outputDefaultPopulate({ outputType: OutputType.Video, cover: true })
+//         const videoOutput = outputDefaultPopulate({ outputType: EncodeType.Video, cover: true })
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(VideoType, videoUrl)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('video-from-video-with-cover'), outputs, ...renderingInput,
 //         }
@@ -321,10 +321,10 @@ cherryPick();
 //         await expectOutputFile(first.destination)
 //       })
 //       test("image sequence from video with cover", async () => {
-//         const videoOutput = outputDefaultPopulate({ ...baseOutput, outputType: OutputType.ImageSequence, cover: true })
+//         const videoOutput = outputDefaultPopulate({ ...baseOutput, outputType: EncodeType.ImageSequence, cover: true })
 //         // console.log('videoOutput', videoOutput)
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Video, videoUrl)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(VideoType, videoUrl)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('image-sequence-from-video-with-cover'), outputs, ...renderingInput,
 //         }
@@ -335,7 +335,7 @@ cherryPick();
 //       test("image from image", async () => {
 //         const videoOutput = outputDefaultPopulate({ ...baseOutput, cover: false })
 //         const outputs: CommandOutputs = [videoOutput]
-//         const renderingInput: RenderingInput = renderingInputFromRaw(LoadType.Image, imageUrl)
+//         const renderingInput: RenderingInput = renderingInputFromRaw(ImageType, imageUrl)
 //         const processArgs: RenderingProcessArgs = {
 //           ...renderingProcessArgs('image-from-image-square'), outputs, ...renderingInput,
 //         }

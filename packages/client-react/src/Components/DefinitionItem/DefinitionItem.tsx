@@ -1,12 +1,12 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, sizeAboveZero, sizeCopy, sizeScale, UnknownObject} from "@moviemasher/moviemasher.js"
+  ClassSelected, MediaObject, sizeAboveZero, sizeCopy, sizeScale, UnknownRecord} from "@moviemasher/moviemasher.js"
 
 import { 
   PropsWithoutChild, ReactResult, WithClassName 
 } from '../../declarations'
-import { DragDefinitionObject, DragSuffix } from '../../Helpers/DragDrop'
+import { DragDefinitionObject, DragSuffix } from '@moviemasher/client-core'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
@@ -29,14 +29,14 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const viewRef = React.useRef<HTMLDivElement>(null)
   const browserContext = React.useContext(BrowserContext)
   const { refresh } = browserContext
-  const editorContext = React.useContext(MasherContext)
-  const { editor, changeDefinition, current } = editorContext
+  const masherContext = React.useContext(MasherContext)
+  const { editor, changeDefinition, current } = masherContext
   
   assertTrue(editor)
 
-  const definition = useDefinition()
+  const media = useDefinition()
 
-  const { id, label } = definition
+  const { id, label } = media
  
   const updateRef = async () => {
     const { rect } = editor
@@ -44,7 +44,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     if (!(current && sizeAboveZero(rect))) return 
 
     const scaled = sizeCeil(sizeScale(sizeCopy(rect), ratio, ratio))
-    const element = await definition.definitionIcon(scaled)
+    const element = await media.definitionIcon(scaled)
     if (element) current.replaceChildren(element)
   }
 
@@ -60,7 +60,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const onPointerDown = (event: Event) => { 
     event.stopPropagation()
     
-    changeDefinition(definition) 
+    changeDefinition(media) 
     refresh()
   }
 
@@ -69,24 +69,25 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     const rect = viewRef.current!.getBoundingClientRect()
     const { left } = rect
     const { clientX } = event
-    const data: DragDefinitionObject = { offset: clientX - left, mediaObject: definition.toJSON() }
+    const mediaObject = media.toJSON()
+    const data: DragDefinitionObject = { offset: clientX - left, mediaObject }
     const json = JSON.stringify(data)
     const { dataTransfer } = event
     if (!dataTransfer) return 
     
     dataTransfer.effectAllowed = 'copy'
     // console.log("DefinitionItem.onDragStart", definition.type + DragSuffix, json)
-    dataTransfer.setData(definition.type + DragSuffix, json)
+    dataTransfer.setData(media.type + DragSuffix, json)
   }
 
   const calculateClassName = () => {
     const classes = []
     if (className) classes.push(className)
-    if (current.definitionId === id) classes.push(ClassSelected)
+    if (current.mediaId === id) classes.push(ClassSelected)
     return classes.join(' ')
   }
 
-  const viewProps: UnknownObject = {
+  const viewProps: UnknownRecord = {
     ...rest,
     className,
     children: childNodes(),

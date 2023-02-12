@@ -1,29 +1,29 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, ScalarObject } from "../../declarations"
+import { Scalar, ScalarRecord } from "../../declarations"
 import { Filter } from "../../Filter/Filter"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../MoveMe"
-import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Utility/SelectedProperty"
+import { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../Base/Code"
+import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Helpers/Select/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { ActionType, DataType, isSizingDefinitionType, isTimingDefinitionType, Orientation, SelectType, Sizing, Timing } from "../../Setup/Enums"
-import { Errors } from "../../Setup/Errors"
+import { ActionType, DataType, isSizingMediaType, isTimingMediaType, Orientation, SelectType, Sizing, Timing } from "../../Setup/Enums"
 import { assertProperty, Property } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
-import { colorBlackOpaque, colorName, colorWhite } from "../../Utility/Color"
+import { colorBlackOpaque, colorWhite } from "../../Helpers/Color/ColorFunctions"
 import { idGenerate } from "../../Utility/Id"
 import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
 import { assertSize, Size, sizeEven, sizesEqual, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, Tweening, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
 import { Actions } from "../../Editor/Actions/Actions"
-import { Clip, IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
+import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
 import { Selectables } from "../../Editor/Selectable"
-import { Defined } from "../../Base"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { Default } from "../../Setup/Default"
 import { MediaInstanceClass } from "../../Media"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 export function TweenableMixin<T extends MediaInstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
@@ -33,7 +33,6 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       const { container } = object as TweenableObject
       if (container) this.container = true
     }
-    propertiesCustom!: Property[]
 
     alphamergeCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = [] 
@@ -86,7 +85,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       assertSize(outputSize)
       const evenSize = sizeEven(outputSize)
       const [color = colorBlackOpaque, colorEnd = colorBlackOpaque] = contentColors
-      const outputString = output || idGenerate(colorName(color) || 'back')
+      const outputString = output || idGenerate('back')
       const { colorFilter } = this
       const colorArgs: FilterCommandFilterArgs = { videoRate, duration } 
       colorFilter.setValue(color, 'color')
@@ -215,11 +214,11 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
     hasIntrinsicTiming = false
 
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening, container = false): CommandFilters {
-      throw new Error(Errors.unimplemented)
+      return errorThrow(ErrorName.Unimplemented)
     }
     
     intrinsicRect(editing = false): Rect { 
-      throw new Error(Errors.unimplemented) 
+      return errorThrow(ErrorName.Unimplemented)
     }
 
     intrinsicsKnown(options: IntrinsicOptions): boolean { return true }
@@ -317,14 +316,16 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
 
       // add contentId or containerId from target, as if it were my property 
       const { id: undoValue } = definition 
-      const { timing, sizing } = clip
+      const { timing, sizing, track } = clip
+      const { media } = track.mash.editor
+
       const dataType = container ? DataType.ContainerId : DataType.ContentId
       const property = clip.properties.find(property => property.type === dataType)
       assertProperty(property)
       
       const { name } = property
-      const undoValues: ScalarObject = { timing, sizing, [name]: undoValue }
-      const values: ScalarObject = { ...undoValues }
+      const undoValues: ScalarRecord = { timing, sizing, [name]: undoValue }
+      const values: ScalarRecord = { ...undoValues }
       const relevantTiming = container ? Timing.Container : Timing.Content
       const relevantSizing = container ? Sizing.Container : Sizing.Content
       const timingBound = timing === relevantTiming
@@ -337,12 +338,12 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
 
           const redoValues = { ...values, [name]: redoValue }
           if (timingBound || sizingBound) {
-            const newDefinition = Defined.fromId(redoValue)
+            const newDefinition = media.fromId(redoValue)
             const { type } = newDefinition
-            if (timingBound && !isTimingDefinitionType(type)) {
+            if (timingBound && !isTimingMediaType(type)) {
               redoValues.timing = Timing.Custom
             }
-            if (sizingBound && !isSizingDefinitionType(type)) {
+            if (sizingBound && !isSizingMediaType(type)) {
               redoValues.sizing = container ? Sizing.Content : Sizing.Container
             }
           } 

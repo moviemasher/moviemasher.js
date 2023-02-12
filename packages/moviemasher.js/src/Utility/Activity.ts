@@ -1,3 +1,4 @@
+import { Identified } from "../Base/Identified"
 
 
 
@@ -9,8 +10,7 @@ export enum ActivityType {
   Render = 'render',
 }
 
-export interface ActivityInfo {
-  id: string
+export interface ActivityInfo extends Identified {
   type: ActivityType
   label?: string
   steps?: number

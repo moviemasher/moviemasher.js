@@ -1,10 +1,10 @@
-import { Constrained} from "../../declarations"
+import { Constrained } from "../../Base/Constrained"
 import { LoadType } from "../../Setup/Enums"
 import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Media/Content/Content"
 import { MediaObject } from "../../Media/Media"
 import { isObject, isPopulatedString } from "../../Utility/Is"
 import { MediaInstanceObject } from "../../Media/MediaInstance/MediaInstance"
-import { errorsThrow } from "../../Utility/Errors"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { isTweenable, isTweenableDefinition } from "../Tweenable/Tweenable"
 
 export interface PreloadableObject extends MediaInstanceObject, ContentObject {}
@@ -27,7 +27,7 @@ export const isPreloadableDefinition = (value?: any): value is PreloadableDefini
 }
 
 export function assertPreloadableDefinition(value?: any): asserts value is PreloadableDefinition {
-  if (!isPreloadableDefinition(value)) errorsThrow(value, 'PreloadableDefinition') 
+  if (!isPreloadableDefinition(value)) errorThrow(value, 'PreloadableDefinition') 
 }
 
 export interface Preloadable extends Content {}
@@ -35,7 +35,7 @@ export const isPreloadable = (value?: any): value is Preloadable => {
   return isTweenable(value) && isPreloadableDefinition(value.definition)
 }
 export function assertPreloadable(value?: any): asserts value is Preloadable {
-  if (!isPreloadable(value)) errorsThrow(value, 'Preloadable') 
+  if (!isPreloadable(value)) errorThrow(value, 'Preloadable') 
 }
 
 export type PreloadableClass = Constrained<Preloadable>

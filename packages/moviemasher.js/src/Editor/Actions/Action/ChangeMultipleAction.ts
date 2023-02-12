@@ -1,9 +1,9 @@
-import { ScalarObject } from "../../../declarations"
+import { ScalarRecord } from "../../../declarations"
 import { ChangeAction, ChangeActionObject } from "./ChangeAction"
 
 export interface ChangeMultipleActionObject extends ChangeActionObject {
-  undoValues: ScalarObject
-  redoValues: ScalarObject
+  undoValues: ScalarRecord
+  redoValues: ScalarRecord
 }
 
 /**
@@ -24,7 +24,7 @@ export class ChangeMultipleAction extends ChangeAction {
     })
   }
 
-  redoValues: ScalarObject
+  redoValues: ScalarRecord
 
   undoAction() : void {
     const { target, undoValues } = this
@@ -38,5 +38,5 @@ export class ChangeMultipleAction extends ChangeAction {
     this.redo()
   }
   
-  undoValues: ScalarObject
+  undoValues: ScalarRecord
 }

@@ -2,20 +2,19 @@ import React from "react"
 import {
   RenderingStartRequest, RenderingStartResponse,
   Endpoints,
-  OutputType,
-  fetchJsonPromise,
   ApiCallbackResponse,
   ApiCallback,
   DataMashPutRequest,
   EventType,
   MasherAction,
-  assertMash,
-  Mash,
+  assertMashMedia,
+  MashMedia,
   ApiRequest,
   ApiResponse,
   MashAndMediaObject,
   MediaObjects,
-  MashObject
+  MashMediaObject,
+  VideoType
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
@@ -23,6 +22,7 @@ import { ProcessContext } from "../../Contexts/ProcessContext"
 import { ApiContext } from "../ApiClient/ApiContext"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
+import { jsonPromise } from "@moviemasher/client-core"
 
 export function RenderControl(props: PropsAndChild): ReactResult {
   const processContext = React.useContext(ProcessContext)
@@ -37,17 +37,17 @@ export function RenderControl(props: PropsAndChild): ReactResult {
   const updateDisabled = () => setDisabled(getDisabled())
   useListeners({
     [EventType.Save]: updateDisabled,
-    [EventType.Mash]: updateDisabled,
+    [EventType.Loaded]: updateDisabled,
     [EventType.Action]: updateDisabled
   })
 
-  const handleApiCallback = (callback: ApiCallback, mash: Mash) => {
+  const handleApiCallback = (callback: ApiCallback, mash: MashMedia) => {
     setTimeout(() => {
       console.debug("handleApiCallback request", callback)
-      fetchJsonPromise(callback).then((response: ApiCallbackResponse) => {
+      jsonPromise(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
         const { apiCallback, error } = response
-        if (error) handleError(callback.endpoint.pathname!, callback.init!, response, error)
+        if (error) handleError(callback.endpoint.pathname!, callback.init!, response, error.message)
         else if (apiCallback) {
           const { init, endpoint } = apiCallback
           if (endpoint.pathname === Endpoints.data.mash.put) {
@@ -72,24 +72,24 @@ export function RenderControl(props: PropsAndChild): ReactResult {
   const onClick = () => {
     if (disabled || processing) return
 
-    const { edited } = editor
-    assertMash(edited)
+    const { mashMedia } = editor
+    assertMashMedia(mashMedia)
 
 
     setProcessing(true)
-    const media: MediaObjects = editor.definitions.map(definition => definition.toJSON())
-    const mashObject: MashObject = edited.toJSON()
+    const media = editor.definitions.map(object => object.toJSON()) as MediaObjects
+    const mashObject = mashMedia.toJSON() as MashMediaObject
     const mash: MashAndMediaObject = { ...mashObject, media }
     const request: RenderingStartRequest = {
       mash,
-      output: {outputType: OutputType.Video},
+      output: {outputType: VideoType},
     }
     console.debug("RenderingStartRequest", Endpoints.rendering.start, request)
     endpointPromise(Endpoints.rendering.start, request).then((response: RenderingStartResponse) => {
       console.debug("RenderingStartResponse", Endpoints.rendering.start, response)
       const { apiCallback, error } = response
-      if (error) handleError(Endpoints.rendering.start, request, response, error)
-      else handleApiCallback(apiCallback!, edited)
+      if (error) handleError(Endpoints.rendering.start, request, response, error.message)
+      else handleApiCallback(apiCallback!, mashMedia)
     })
   }
   const buttonOptions = { ...rest, onClick, disabled: disabled || processing }

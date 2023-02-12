@@ -1,15 +1,12 @@
 import { SelectType } from "../../Setup/Enums"
-import { Mash } from "../../Edited/Mash/Mash"
-import { Cast } from "../../Edited/Cast/Cast"
-import { Track } from "../../Edited/Mash/Track/Track"
-import { Layer } from "../../Edited/Cast/Layer/Layer"
-import { Clip } from "../../Edited/Mash/Track/Clip/Clip"
-import { Selectable, SelectableRecord } from "../Selectable"
-import { SelectedItems } from "../../Utility/SelectedProperty"
+import { MashMedia } from "../../Media/Mash/Mash"
+import { Track } from "../../Media/Mash/Track/Track"
+import { Clip } from "../../Media/Mash/Track/Clip/Clip"
+import { Selectable } from "../Selectable"
+import { SelectedItems } from "../../Helpers/Select/SelectedProperty"
 import { Container } from "../../Media/Container"
 import { Content } from "../../Media/Content/Content"
 import { Editor } from "../Editor"
-import { Effect } from "../../Media/Effect/Effect"
 
 
 export type EditorSelectionObject = {
@@ -27,10 +24,8 @@ export interface EditorSelection extends EditorSelectionObject {
   set(selectable: Selectable): void
   unset(selectionType: SelectType): void
 
-  [SelectType.Cast]: Cast | undefined
   [SelectType.Clip]: Clip | undefined
-  [SelectType.Layer]: Layer | undefined
-  [SelectType.Mash]: Mash | undefined
+  [SelectType.Mash]: MashMedia | undefined
   [SelectType.Track]: Track | undefined
   [SelectType.Content]: Content | undefined
   [SelectType.Container]: Container | undefined

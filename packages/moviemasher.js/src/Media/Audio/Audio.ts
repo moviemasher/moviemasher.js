@@ -1,10 +1,12 @@
 import { Content, ContentObject, isContent } from "../Content/Content"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
-import { DefinitionType } from "../../Setup/Enums"
+import { AudioType } from "../../Setup/Enums"
 import { isMedia, Media, MediaObject } from "../Media"
 
 
-export interface AudioObject extends ContentObject, UpdatableDurationObject {}
+export interface AudioObject extends ContentObject, UpdatableDurationObject {
+  definition?: AudioDefinition
+}
 
 export interface Audio extends Content, UpdatableDuration {
   definition : AudioDefinition
@@ -17,9 +19,10 @@ export interface AudioDefinitionObject extends MediaObject, UpdatableDurationDef
 }
 
 export interface AudioDefinition extends Media, UpdatableDurationDefinition {
+  type: AudioType
   instanceFromObject(object?: AudioObject): Audio
 }
 
 export const isAudioDefinition = (value: any): value is AudioDefinition => {
-  return isMedia(value) && value.type === DefinitionType.Audio
+  return isMedia(value) && value.type === AudioType
 }

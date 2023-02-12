@@ -3,11 +3,11 @@ import path from 'path'
 
 import {
   CommandInput, AVType, CommandInputs,
-  Errors, CommandFilters,OutputType,
+  CommandFilters,
   EmptyMethod, 
-  Defined, assertTrue, ExtTs, assertSize, isDefined, 
-  NumberObject, assertAboveZero, 
-  Mash, mashInstance, idGenerateString, RenderingCommandOutput
+  assertTrue, ExtTs, assertSize, isDefined, 
+  NumberRecord, assertAboveZero, 
+  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, VideoType, SequenceType, ImageType, ErrorName, errorThrow
 } from "@moviemasher/moviemasher.js"
 
 import {
@@ -30,9 +30,9 @@ export type RenderingProcessConcatFileDuration = [string, number]
 
 export class RenderingProcessClass implements RenderingProcess {
   constructor(public args: RenderingProcessArgs) {
-    const { mash } = this.args
-    const { media } = mash
-    Defined.define(...media)
+    // const { mash } = this.args
+    // const { media } = mash
+    // MediaCollection.define(...media)
   }
 
   private combinedRenderingDescriptionPromise(index: number, renderingDescription: RenderingDescription): Promise<RenderingDescription> {
@@ -51,7 +51,7 @@ export class RenderingProcessClass implements RenderingProcess {
     } = commandOutput
     const options = { ...commandOutputOptions, an: '', qp: 0 }
     const output: RenderingCommandOutput = {
-      ...rest, options, extension, outputType: OutputType.Video
+      ...rest, options, extension, outputType: VideoType
     }
     const { outputDirectory } = this.args
     const concatDirectoryName = renderingOutputFile(index, commandOutput, 'concat')
@@ -185,19 +185,18 @@ export class RenderingProcessClass implements RenderingProcess {
 
   private fileName(index: number, commandOutput: RenderingCommandOutput, renderingOutput: RenderingOutput): string {
     const { outputType, videoRate } = commandOutput
-    // if (outputType !== OutputType.ImageSequence) 
-    return renderingOutputFile(index, commandOutput)
-    // if (!videoRate) throw Errors.internal + 'videoRate'
+    if (outputType !== SequenceType) return renderingOutputFile(index, commandOutput)
+    if (!videoRate) return errorThrow(ErrorName.Internal)
 
-    // const { format, extension, basename } = commandOutput
-    // const base = basename || ''
-    // const ext = extension || format
-    // const { duration } = renderingOutput
-    // const framesMax = Math.floor(videoRate * duration) - 2
-    // const begin = 1
-    // const lastFrame = begin + (framesMax - begin)
-    // const padding = String(lastFrame).length
-    // return `${base}%0${padding}d.${ext}`
+    const { format, extension, basename } = commandOutput
+    const base = basename || ''
+    const ext = extension || format
+    const { duration } = renderingOutput
+    const framesMax = Math.floor(videoRate * duration) - 2
+    const begin = 1
+    const lastFrame = begin + (framesMax - begin)
+    const padding = String(lastFrame).length
+    return `${base}%0${padding}d.${ext}`
   }
 
   private _id?: string
@@ -207,19 +206,19 @@ export class RenderingProcessClass implements RenderingProcess {
     return this._id = this.args.id || idGenerateString()
   }
 
-  private _mashInstance?: Mash
-  get mashInstance(): Mash {
-    if (this._mashInstance) return this._mashInstance
+  private _mashMedia?: MashMedia
+  private get mashMedia(): MashMedia {
+    if (this._mashMedia) return this._mashMedia
 
     const { args } = this
     const { mash } = args
 
-    return this._mashInstance = mashInstance(mash)
+    return this._mashMedia = mashMedia(mash)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {
     const { cacheDirectory } = this.args
-    const { mashInstance: mash } = this
+    const { mashMedia: mash } = this
     const args: RenderingOutputArgs = { commandOutput, cacheDirectory, mash }
     return new RenderingOutputClass(args)
   }
@@ -251,7 +250,7 @@ export class RenderingProcessClass implements RenderingProcess {
 
     const options = commandOutput.options!
     switch (outputType) {
-      case OutputType.Image: {
+      case ImageType: {
         options['frames:v'] = 1
         break
       }
@@ -315,7 +314,7 @@ export class RenderingProcessClass implements RenderingProcess {
 
   runPromise(): Promise<RunResult> {
     const results: RenderingResult[] = []
-    const countsByType: NumberObject = {}
+    const countsByType: NumberRecord = {}
     const runData = {
       runResult: { results }, countsByType
     }
@@ -333,7 +332,7 @@ export class RenderingProcessClass implements RenderingProcess {
         options: {}, ...output
       }
       // options!.report ||= path.join(outputDirectory, `report`)
-      const expectDuration = outputType !== OutputType.Image
+      const expectDuration = outputType !== ImageType
       const renderingOutput = this.outputInstance(instanceOptions)
       
       promise = promise.then(data => {
@@ -367,7 +366,8 @@ export class RenderingProcessClass implements RenderingProcess {
             const { duration, inputs } = commandDescription
             // console.log(this.constructor.name, "command", inputs)
 
-            if (!duration) throw Errors.invalid.duration
+            if (!duration) return errorThrow(ErrorName.ImportDuration) 
+            
           }
 
           const cmdFilename = renderingOutputFile(index, commandOutput, ExtensionCommands)

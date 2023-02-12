@@ -1,5 +1,5 @@
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { ColorTuple } from "../../../MoveMe"
+import { ColorTuple } from "../../../Base/Code"
 import {
   Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent
 } from "../Content"

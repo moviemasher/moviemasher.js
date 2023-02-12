@@ -1,6 +1,6 @@
 import Express from "express"
 import basicAuth from 'express-basic-auth'
-import { JsonObject } from "@moviemasher/moviemasher.js"
+import { JsonRecord } from "@moviemasher/moviemasher.js"
 
 import { Server, ServerArgs } from "./Server"
 import { HostServers } from "../Host/Host"
@@ -11,7 +11,7 @@ export class ServerClass implements Server {
 
   id = ''
 
-  init(userId: string): JsonObject { return {} }
+  init(userId: string): JsonRecord { return {} }
 
   startServer(app: Express.Application, _activeServers: HostServers): Promise<void> {
     // console.log(this.constructor.name, "startServer")

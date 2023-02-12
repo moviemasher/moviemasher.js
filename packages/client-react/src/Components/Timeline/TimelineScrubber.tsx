@@ -1,12 +1,17 @@
 import React from "react"
-import { ClassDisabled, eventStop, EventType, pixelFromFrame, pixelToFrame, Point, pointsEqual, PointZero, timeFromArgs, UnknownObject } from "@moviemasher/moviemasher.js"
+import { 
+  ClassDisabled, eventStop, EventType, pixelToFrame, 
+  timeFromArgs, UnknownRecord 
+} from "@moviemasher/moviemasher.js"
+import { 
+  pixelFromFrame
+} from "@moviemasher/client-core"
 
 import { View } from "../../Utilities/View"
 import { ReactResult, PropsWithChildren, WithClassName } from "../../declarations"
 import { TimelineContext } from "./TimelineContext"
 import { useListeners } from "../../Hooks/useListeners"
 import { useEditor } from "../../Hooks/useEditor"
-
 
 export interface TimelineScrubber extends PropsWithChildren, WithClassName {
   inactive?: boolean
@@ -74,11 +79,11 @@ export function TimelineScrubber(props: TimelineScrubber): ReactResult {
     const classes: string[] = []
     if (className) classes.push(className)
     if (disabled) classes.push(ClassDisabled)
-    const viewProps: UnknownObject = { 
+    const viewProps: UnknownRecord = { 
       ...rest, ref, className: classes.join(' ')
     }
     if (styleWidth || styleHeight) {
-      const style: UnknownObject = {}
+      const style: UnknownRecord = {}
       if (styleHeight) style.minHeight = height
       if (styleWidth) {
         const width = pixelFromFrame(frames, scale, 'ceil')

@@ -1,16 +1,15 @@
 import React from "react"
 import { 
-  DefinitionType, arraySet 
+  MediaType, arraySet, Identified 
 } from "@moviemasher/moviemasher.js"
 
 
 const DevicesEvent = 'devicechange'
 
 
-export interface WebrtcDeviceInfo {
+export interface WebrtcDeviceInfo extends Identified {
   audioinput?: MediaDeviceInfo
   videoinput?: MediaDeviceInfo
-  id: string
 }
 
 export const useDevices = (): WebrtcDeviceInfo[] => {

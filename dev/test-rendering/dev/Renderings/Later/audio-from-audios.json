@@ -12,7 +12,6 @@
       {
         "dense": true,
         "trackType": "audio",
-        "layer": 0,
         "clips": [
           {
             "containerId": "",
@@ -40,7 +39,6 @@
       {
         "dense": true,
         "trackType": "audio",
-        "layer": 1,
         "clips": [
           {
             "containerId": "",

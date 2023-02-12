@@ -15,8 +15,7 @@ export function CreateEditedControl(props: PropsAndChild): ReactResult {
 
   useListeners({
     [EventType.Action]: updateDisabled,
-    [EventType.Mash]: updateDisabled,
-    [EventType.Cast]: updateDisabled,
+    [EventType.Loaded]: updateDisabled,
     [EventType.Save]: updateDisabled,
   })
 

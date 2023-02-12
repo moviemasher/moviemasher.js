@@ -36,7 +36,7 @@
     "build": "run-s build-esm build-esm-min build-umd build-umd-min copy-types"
   },
   "devDependencies": {
-    "typescript": "4.9.4"
+    "typescript": "4.9.5"
   }
 }
 

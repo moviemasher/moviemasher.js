@@ -3,12 +3,14 @@ import http from 'http'
 
 import path from 'path'
 
-import { errorFromAny, RequestObject, ProtocolPromise, Protocols, urlFilename, RequestRecord, PathOrError, DefinitionType, resolverPromise, resolverExtension } from "@moviemasher/moviemasher.js"
+import {
+  errorCaught, MediaType, PathOrError, Plugins, ProtocolHttp, ProtocolHttps, ProtocolPromise, RequestObject, RequestRecord, resolverExtension, resolverPromise, urlFilename
+} from "@moviemasher/moviemasher.js"
+import { Environment, environment } from '../Environment/Environment'
 import { requestArgs, requestArgsHash } from '../Utility/Request'
-import { Environment, environment } from '../Utility/Environment'
 
 
-const promise = ((request: RequestObject, type?: string | DefinitionType) => {
+const promise = ((request: RequestObject, type?: string | MediaType) => {
   console.log('HTTP', request)
   const record: RequestRecord = {}
   const response: PathOrError = { path: '' }
@@ -32,15 +34,15 @@ const promise = ((request: RequestObject, type?: string | DefinitionType) => {
           stream.close()
           resolve(resolverPromise(file, mimeType, mimeType))
         })
-        stream.on('error', (error) => { resolve(errorFromAny(error)) })
+        stream.on('error', (error) => { resolve(errorCaught(error)) })
         response.pipe(stream)  
       }
     })
-    req.on('error', (error: any) => { resolve(errorFromAny(error)) })
+    req.on('error', (error: any) => { resolve(errorCaught(error)) })
     req.end()
   })
   return promise
 }) as ProtocolPromise
 
-Protocols.http = { promise }
-Protocols.https = { promise }
+Plugins.protocols.http = { promise, type: ProtocolHttp }
+Plugins.protocols.https = { promise, type: ProtocolHttps }

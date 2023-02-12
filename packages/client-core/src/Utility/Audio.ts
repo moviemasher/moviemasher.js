@@ -1,11 +1,36 @@
-import { AudibleContextInstance, LoadedAudio } from "@moviemasher/moviemasher.js"
+import { assertPopulatedString, AudibleContextInstance, ClientAudioOrError, endpointAbsolute, endpointUrl, errorCaught, LoadedAudio, RequestObject } from "@moviemasher/moviemasher.js"
 
 
-  export const audioBufferPromise = (audio: ArrayBuffer): Promise<LoadedAudio | any> => {
-    // console.log(this.constructor.name, "audioBufferPromise")
 
-    return AudibleContextInstance.decode(audio).catch(error => {
-      return { error }
-    })
-  }
+const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
+  // console.log(this.constructor.name, "blobAudioPromise", url)
+
+  return fetch(url).then(response => response.blob()).then(blob => {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => { resolve(reader.result as ArrayBuffer) }
+      reader.onerror = reject
+      reader.readAsArrayBuffer(blob)
+    }) 
+  })
+}
+
+
+export const clientAudioPromise = (request: RequestObject): Promise<ClientAudioOrError> => {
+  const { endpoint } = request
+  const url = endpointUrl(endpoint)
+
+  assertPopulatedString(url, 'url')
+  // console.log(this.constructor.name, "audioPromise", isBlob ? 'BLOB' : url)
+  const promise = blobAudioPromise(url) 
+  return promise.then(buffer => audioBufferPromise(buffer))
+}
+
+
+
+export const audioBufferPromise = (audio: ArrayBuffer): Promise<ClientAudioOrError> => {
+  return AudibleContextInstance.decode(audio)
+    .then(clientAudio => ({ clientAudio }))
+    .catch(error => errorCaught(error))
+}
 

@@ -1,16 +1,16 @@
 import React from "react"
 import { 
-  ClassSelected, AndId, assertPopulatedString, assertTrue 
+  ClassSelected, Identified, assertPopulatedString, assertTrue 
 } from "@moviemasher/moviemasher.js"
 
 import { 
   PropsAndChild, ReactResult, WithClassName
  } from "../../declarations"
-import { propsDefinitionTypes } from "../../Utilities/Props"
+import { propsMediaTypes } from "../../Utilities/Props"
 import { BrowserContext } from "./BrowserContext"
 import { Problems } from "../../Setup/Problems"
 
-export interface BrowserPickerProps extends PropsAndChild, AndId, WithClassName {
+export interface BrowserPickerProps extends PropsAndChild, Identified, WithClassName {
   type?: string
   types?: string | string[]
 }
@@ -30,7 +30,7 @@ export function BrowserPicker(props: BrowserPickerProps): ReactResult {
   if (picked === id) classes.push(ClassSelected)
 
   React.useEffect(() => {
-    addPicker(id, propsDefinitionTypes(type, types, id))
+    addPicker(id, propsMediaTypes(type, types, id))
     return () => { removePicker(id) }
   }, [])
 

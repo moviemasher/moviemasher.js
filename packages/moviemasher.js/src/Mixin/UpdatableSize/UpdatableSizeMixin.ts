@@ -1,8 +1,8 @@
-import { PropertyTweenSuffix } from "../../Base"
-import { SvgItem } from "../../declarations"
+import { PropertyTweenSuffix } from "../../Base/Propertied"
+import { SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect, rectFromSize, rectsEqual } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../MoveMe"
+import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
 import { DataType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
@@ -11,15 +11,16 @@ import { assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTru
 import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
 import { Tweening, tweenMaxSize } from "../../Utility/Tween"
-import { colorBlackOpaque, colorTransparent } from "../../Utility/Color"
+import { colorBlackOpaque, colorTransparent } from "../../Helpers/Color/ColorFunctions"
 import { PointZero } from "../../Utility/Point"
 import { ContentRectArgs } from "../../Media/Content/Content"
-import { assertSizeAboveZero, Size, sizeAboveZero } from "../../Utility/Size"
-import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { svgSetDimensions } from "../../Utility/Svg"
+import { assertSizeAboveZero, sizeAboveZero } from "../../Utility/Size"
+import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
+import { svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Filter } from "../../Filter/Filter"
-import { Errors } from "../../Setup/Errors"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -192,7 +193,7 @@ export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): Updatab
     }
 
     svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
-      throw new Error(Errors.unimplemented)
+      return errorThrow(ErrorName.Unimplemented)
     }
 
     contentSvgItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem> {

@@ -1,22 +1,23 @@
-import { IndexHandler, PreviewItems, StringObject } from "../declarations"
+import { StringRecord } from "../declarations"
+import { IndexHandler } from "../Helpers/Select/Select"
+import { PreviewItems } from "../Helpers/Svg/Svg"
 import { Emitter } from "../Helpers/Emitter"
 import { EditType, MasherAction } from "../Setup/Enums"
-import { Edited } from "../Edited/Edited"
-import { DataCastGetResponse, DataMashGetResponse, DataPutRequest } from "../Api/Data"
-import { Mash, MashAndDefinitionsObject, MashAndMediaObject, Movable } from "../Edited/Mash/Mash"
+import { DataMashGetResponse, DataPutRequest } from "../Api/Data"
+import { isMashAndMediaObject, MashMedia, MashAndMediaObject, Movable, MashMediaObject } from "../Media/Mash/Mash"
 import { Effect } from "../Media/Effect/Effect"
-import { Track } from "../Edited/Mash/Track/Track"
+import { Track } from "../Media/Mash/Track/Track"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { Layer, LayerAndPosition } from "../Edited/Cast/Layer/Layer"
 import { Action } from "./Actions/Action/Action"
-import { Clip, Clips } from "../Edited/Mash/Track/Clip/Clip"
+import { Clip, Clips } from "../Media/Mash/Track/Clip/Clip"
 import { Actions } from "./Actions/Actions"
 import { EditorSelection } from "./EditorSelection"
 import { isObject } from "../Utility/Is"
-import { errorsThrow } from "../Utility/Errors"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { Rect } from "../Utility/Rect"
 import { Size } from "../Utility/Size"
-import { Media, MediaObject, MediaObjects, Medias } from "../Media/Media"
+import { Media, MediaObject, MediaObjects, MediaArray } from "../Media/Media"
+import { MediaCollection } from "../Base/MediaCollection"
 
 export interface EditorIndex {
   layer?: number
@@ -29,7 +30,7 @@ export interface EditorArgs {
   buffer: number
   editType?: EditType
   baseUrl?: string
-  edited?: EditedData
+  mash?: MashMediaObject
   fps: number
   loop: boolean
   precision: number
@@ -42,17 +43,13 @@ export interface EditorOptions extends Partial<EditorArgs> { }
 
 export type ClipOrEffect = Clip | Effect
 
-export interface CastData extends Partial<DataCastGetResponse> { }
 export interface MashData extends Partial<DataMashGetResponse> { }
-export type EditedData = CastData | MashData
-export const isCastData = (data: EditedData): data is CastData => (
-  isObject(data) && "cast" in data
+
+export const isMashData = (value: any): value is MashData => (
+  isObject(value) && "mash" in value && isMashAndMediaObject(value.mash)
 )
-export const isMashData = (data: EditedData): data is CastData => (
-  isObject(data) && "mash" in data
-)
-export function assertMashData(data: EditedData, name?: string): asserts data is MashData {
-  if (!isMashData(data)) errorsThrow(data, 'MashData', name)
+export function assertMashData(value: any, name?: string): asserts value is MashData {
+  if (!isMashData(value)) errorThrow(value, 'MashData', name)
 }
 
 export interface Editor {
@@ -61,22 +58,19 @@ export interface Editor {
   addClip(clip: Clip | Clips, editorIndex: EditorIndex): Promise<void>
   addMedia(object: MediaObject | MediaObjects, editorIndex?: EditorIndex): Promise<Media[]>
   addEffect: IndexHandler<Movable>
-  addFolder(label?: string, layerAndPosition?: LayerAndPosition): void
-  addMash(mashAndMedia?: MashAndMediaObject, layerAndPosition?: LayerAndPosition): void
   addTrack(): void
   autoplay: boolean
   buffer: number
   can(action: MasherAction): boolean
   clips: Clips
-  compose(mash: Mash, frame: number, frames: number): void
-  create(): void
+  create(): Promise<void>
   currentTime: number
-  dataPutRequest(): Promise<DataPutRequest>
+  // dataPutRequest(): Promise<DataPutRequest>
   dragging: boolean
-  definitions: Medias
-  definitionsUnsaved: Medias
+  definitions: MediaArray
+  definitionsUnsaved: MediaArray
   duration: number
-  readonly edited?: Edited
+  readonly mashMedia?: MashMedia
   editing: boolean
   editType: EditType
   eventTarget: Emitter
@@ -84,12 +78,12 @@ export interface Editor {
   goToTime(value: Time): Promise<void>
   handleAction(action: Action): void
   rect: Rect
-  load(data: EditedData): Promise<void>
+  load(data: MashMediaObject): Promise<void>
   loop: boolean
   move(object: ClipOrEffect, editorIndex?: EditorIndex): void
   moveClip(clip: Clip, editorIndex?: EditorIndex): void
   moveEffect: IndexHandler<Movable>
-  moveLayer(layer: Layer, layerAndPosition?: LayerAndPosition): void
+  media: MediaCollection
   muted: boolean
   pause(): void
   paused: boolean
@@ -102,15 +96,16 @@ export interface Editor {
   redraw(): void
   removeClip(clip: Clip): void
   removeEffect: IndexHandler<Movable>
-  removeLayer(layer: Layer): void
+  // removeLayer(layer: Layer): void
   removeTrack(track: Track): void
-  saved(temporaryIdLookup?: StringObject): void
+  saved(temporaryIdLookup?: StringRecord): void
   readonly selection: EditorSelection
   svgElement: SVGSVGElement
   previewItems(enabled?: boolean): Promise<PreviewItems>
   time: Time
   timeRange: TimeRange
   undo(): void
+  unload(): void
   updateDefinition(definitionObject: MediaObject, definition?: Media): Promise<void> 
   volume: number
 }

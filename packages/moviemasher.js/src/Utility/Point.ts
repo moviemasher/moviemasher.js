@@ -1,5 +1,5 @@
 import { isNumber, isObject } from "./Is";
-import { errorsThrow } from "./Errors";
+import { errorThrow } from "../Helpers/Error/ErrorFunctions";
 
 export interface Point {
   x: number;
@@ -11,7 +11,7 @@ export const isPoint = (value: any): value is Point => {
 }
 
 export function assertPoint(value: any, name?: string): asserts value is Point {
-  if (!isPoint(value)) errorsThrow(value, 'Point', name)
+  if (!isPoint(value)) errorThrow(value, 'Point', name)
 }
 
 export type PointTuple = [Point, Point];

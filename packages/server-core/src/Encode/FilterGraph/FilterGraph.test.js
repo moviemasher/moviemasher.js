@@ -1,14 +1,15 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { mashInstance, SizeOutput, Defined } from "@moviemasher/moviemasher.js"
+import { mashMedia, SizeOutput, MediaCollection } from "@moviemasher/moviemasher.js"
 import { expectArrayLength } from "../../../../../../images/tester/Utilities/Expect.mjs"
 import { generateTest, GenerateDefinitionObjects } from "../../../../../../images/tester/Utilities/Generate.mjs"
 
 describe("FilterGraph", () => {
+  const media = new MediaCollection()
   describe("mash with color/rect clip", () => {
     test("its CommandFilters are correct", () => {
-      const mash = mashInstance({ tracks: [ { clips: [{}] }]})
+      const mash = mashMedia({ tracks: [ { clips: [{}] }]})
       mash.imageSize = { width: 480, height: 270 }
       const filterGraphs = mash.filterGraphs()
       const { filterGraphVisible } = filterGraphs
@@ -25,13 +26,13 @@ describe("FilterGraph", () => {
       const { tracks } = test
       const [track] = tracks
       const {clips: trackClips} = track
-      Defined.define(...GenerateDefinitionObjects)
+      media.define(...GenerateDefinitionObjects)
       GenerateDefinitionObjects.forEach(object => {
         const { id } = object
-        assert(Defined.installed(id), `${id} installed`)
+        assert(media.installed(id), `${id} installed`)
       })
       console.log('trackClips', trackClips)
-      const mash = mashInstance({ mash: test })
+      const mash = mashMedia({ mash: test })
       mash.loadCommandFilesPromise()
       const filterGraphs = mash.filterGraphs(args)
       await filterGraphs.loadCommandFilesPromise

@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, isDefined, UnknownRecord } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { InputContext } from '../InputContext'
@@ -15,7 +15,7 @@ export function NumericTypeInput(): ReactResult {
   const { min, max, step } = property
 
 
-  const inputProps: UnknownObject = {
+  const inputProps: UnknownRecord = {
     type: 'number',
     name,
     value: String(value),

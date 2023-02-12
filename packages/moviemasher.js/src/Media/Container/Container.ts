@@ -1,12 +1,13 @@
 import { Tweenable, TweenableObject, isTweenable, TweenableDefinitionObject, TweenableDefinition, isTweenableDefinition } from "../../Mixin/Tweenable/Tweenable"
-import { Constrained, PreviewItems, SvgItem } from "../../declarations"
+import { Constrained } from "../../Base/Constrained"
+import { PreviewItems, SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect, RectTuple } from "../../Utility/Rect"
 import { Size } from "../../Utility/Size"
-import { CommandFilters, CommandFilterArgs, Component } from "../../MoveMe"
+import { CommandFilters, CommandFilterArgs, Component } from "../../Base/Code"
 import { Anchor, DirectionObject, isContainerType } from "../../Setup/Enums"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { isObject } from "../../Utility/Is"
-import { errorsThrow } from "../../Utility/Errors"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 import { Content } from "../Content/Content"
 
@@ -29,7 +30,7 @@ export const isContainerObject = (value: any): value is ContainerObject => {
   return isObject(value) && "opacity" in value
 }
 export function assertContainerObject(value: any): asserts value is ContainerObject {
-  if (!isContainerObject(value)) errorsThrow(value, 'ContainerObject')
+  if (!isContainerObject(value)) errorThrow(value, 'ContainerObject')
 }
 export interface ContainerDefinitionObject extends TweenableDefinitionObject {}
 

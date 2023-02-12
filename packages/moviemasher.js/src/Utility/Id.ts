@@ -1,7 +1,7 @@
-import { NumberObject } from "../declarations"
+import { NumberRecord } from "../declarations"
 
 const IdTemporaryPrefix = 'temporary'
-const IdCountsByPrefix: NumberObject = {} 
+const IdCountsByPrefix: NumberRecord = {} 
 
 
 export const idGenerateString = (): string => {

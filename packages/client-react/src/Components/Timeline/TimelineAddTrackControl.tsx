@@ -1,5 +1,5 @@
 import React from "react"
-import { EventType, UnknownObject } from "@moviemasher/moviemasher.js"
+import { EventType, UnknownRecord } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -15,7 +15,7 @@ export function TimelineAddTrackControl(props:TimelineAddTrackControlProps): Rea
   useListeners({ [EventType.Selection]: updateDisabled })
   
   const { children, ...rest } = props
-  const cloneProps: UnknownObject = { 
+  const cloneProps: UnknownRecord = { 
     ...rest, 
     disabled,
   }

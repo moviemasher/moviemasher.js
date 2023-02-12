@@ -1,5 +1,5 @@
 import { 
-  assertMethod, errorsThrow, DefinitionType, DecodeOutput 
+  assertMethod, errorThrow, MediaType, DecodeOutput 
 } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
 import { isMediaRequest, MediaRequest, MediaResponse } from "../Media/Media"
@@ -16,7 +16,7 @@ export const isDecodeRequest = (value: any): value is DecodeRequest => {
   return isMediaRequest(value) 
 } 
 export function assertDecodeRequest(value: any): asserts value is DecodeRequest {
-  if (!isDecodeRequest(value)) errorsThrow(value, 'DecodeRequest')
+  if (!isDecodeRequest(value)) errorThrow(value, 'DecodeRequest')
 }
 
 export interface DecodeResponse extends MediaResponse {
@@ -29,7 +29,7 @@ export interface DecodeResponse extends MediaResponse {
 }
 
 export interface DecodeInput extends Required<Input> {
-  type: DefinitionType
+  type: MediaType
 }
 
 export const decode = (localPath: string, output: DecodeOutput): Promise<DecodeResponse> => {

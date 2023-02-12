@@ -1,19 +1,20 @@
-import { Constrained, SvgItem } from "../../declarations"
-import { errorsThrow } from "../../Utility/Errors"
+import { Constrained } from "../../Base/Constrained"
+import { SvgItem } from "../../Helpers/Svg/Svg"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { Size } from "../../Utility/Size"
 import {
   isPreloadable, isPreloadableDefinition,
   Preloadable, PreloadableDefinition,
   PreloadableDefinitionObject, PreloadableObject
 } from "../Preloadable/Preloadable"
-import { DefinitionType, isDefinitionType } from "../../Setup/Enums"
+import { MediaType, isMediaType, ImageType, VideoType } from "../../Setup/Enums"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Rect } from "../../Utility/Rect"
 
-export const UpdatableSizeDefinitionType = [
-  DefinitionType.Image,
-  DefinitionType.Video,
-  // DefinitionType.Sequence,
+export const UpdatableSizeMediaType: MediaType[] = [
+  ImageType,
+  VideoType,
+  // SequenceType,
 ]
 export interface UpdatableSizeObject extends PreloadableObject {
 }
@@ -32,11 +33,11 @@ export const isUpdatableSize = (value?: any): value is UpdatableSize => {
   return isPreloadable(value) 
 }
 export function assertUpdatableSize(value?: any): asserts value is UpdatableSize {
-  if (!isUpdatableSize(value)) errorsThrow(value, 'UpdatableSize') 
+  if (!isUpdatableSize(value)) errorThrow(value, 'UpdatableSize') 
 }
 
-export const isUpdatableSizeType = (value: any): value is DefinitionType => {
-  return isDefinitionType(value) && UpdatableSizeDefinitionType.includes(value)
+export const isUpdatableSizeType = (value: any): value is MediaType => {
+  return isMediaType(value) && UpdatableSizeMediaType.includes(value)
 }
 
 export interface UpdatableSizeDefinition extends PreloadableDefinition {
@@ -48,7 +49,7 @@ export const isUpdatableSizeDefinition = (value?: any): value is UpdatableSizeDe
   return isPreloadableDefinition(value)
 }
 export function assertUpdatableSizeDefinition(value?: any): asserts value is UpdatableSizeDefinition {
-  if (!isUpdatableSizeDefinition(value)) errorsThrow(value, 'UpdatableSizeDefinition') 
+  if (!isUpdatableSizeDefinition(value)) errorThrow(value, 'UpdatableSizeDefinition') 
 }
 
 export type UpdatableSizeClass = Constrained<UpdatableSize>

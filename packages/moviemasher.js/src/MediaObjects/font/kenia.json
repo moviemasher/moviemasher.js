@@ -2,5 +2,12 @@
   "label": "Kenia",
   "id": "com.moviemasher.font.kenia",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Kenia"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Kenia" 
+    } 
+  }
 }

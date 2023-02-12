@@ -1,5 +1,12 @@
 {
   "label": "League Spartan",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=League+Spartan"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=League+Spartan" 
+    } 
+  }
 }

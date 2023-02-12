@@ -1,16 +1,16 @@
 import React from 'react'
 import { 
   BooleanSetter,
-  Editor, EditorIndex, EmptyMethod, Media, ScalarObject 
+  Editor, EditorIndex, EmptyMethod, Media, ScalarRecord 
 } from '@moviemasher/moviemasher.js'
 import type { ThemeIcons } from '@moviemasher/theme-default'
 
-import { Draggable } from '../../Helpers/DragDrop'
+import { Draggable } from '@moviemasher/client-core'
 
 export interface MasherContextInterface {
   streaming: boolean
   setStreaming: BooleanSetter
-  current: ScalarObject
+  current: ScalarRecord
   changeDefinition: (definition?: Media) => void
   drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Media[]>
   editor?: Editor

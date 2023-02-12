@@ -1,5 +1,5 @@
-import { ValueObject } from "../../declarations"
-import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from "../../MoveMe"
+import { ValueRecord } from "../../declarations"
+import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from "../../Base/Code"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
@@ -36,7 +36,7 @@ export class OverlayFilter extends FilterDefinitionClass {
     assertPopulatedString(chainInput, 'chainInput')
 
     const scalars = filter.scalarObject(!!duration)
-    const options: ValueObject = {} //repeatlast: 0, shortest: 1
+    const options: ValueRecord = {} //repeatlast: 0, shortest: 1
     const { format, alpha } = scalars
     if (isPopulatedString(format)) options.format = format
     if (isPopulatedString(alpha)) options.alpha = alpha

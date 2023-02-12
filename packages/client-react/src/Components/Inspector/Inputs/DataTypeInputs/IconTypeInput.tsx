@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownRecord } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
@@ -21,7 +21,7 @@ export function IconTypeInput(): ReactResult {
     return <option {...optionProps} />
   })
 
-  const selectProps: UnknownObject = {
+  const selectProps: UnknownRecord = {
     children: options,
     name,
     value: String(value),

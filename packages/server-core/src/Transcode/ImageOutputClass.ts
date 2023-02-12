@@ -45,7 +45,7 @@ export class ImageOutputClass extends RenderingOutputClass {
     return filterGraphsOptions
   }
 
-  // outputType = OutputType.Image
+  // outputType = EncodeType.Image
 
   override get startTime(): Time {
     const { mash } = this.args

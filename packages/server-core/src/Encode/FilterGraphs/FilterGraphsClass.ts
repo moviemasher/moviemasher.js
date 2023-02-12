@@ -1,7 +1,8 @@
 
 import { 
-  timeFromArgs, Errors, timeRangeFromArgs, assertTrue, AVType, CommandFiles, 
-  ServerPromiseArgs, assertPreloadableDefinition, EmptyMethod, Time 
+  timeFromArgs, timeRangeFromArgs, assertTrue, AVType, CommandFiles, 
+  ServerPromiseArgs, assertPreloadableDefinition, EmptyMethod, Time, 
+  errorThrow, ErrorName 
 } from "@moviemasher/moviemasher.js"
 import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
@@ -27,7 +28,7 @@ export class FilterGraphsClass implements FilterGraphs {
     })
     if (endFrames.length) {
       const rate = Math.max(...rates)
-      if (rate !== Math.min(...rates)) throw Errors.internal + 'timeranges fps'
+      if (rate !== Math.min(...rates))  errorThrow(ErrorName.Internal) 
 
       const startFrame = Math.min(...startFrames)
       const endFrame = Math.max(...endFrames)

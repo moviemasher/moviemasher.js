@@ -5,10 +5,10 @@ import { ContentMixin } from "../Content/ContentMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Rect } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { SvgItem } from "../../declarations"
-import { svgPolygonElement } from "../../Utility/Svg"
+import { SvgItem } from "../../Helpers/Svg/Svg"
+import { svgPolygonElement } from "../../Helpers/Svg/SvgFunctions"
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
-import { Component } from "../../MoveMe"
+import { Component } from "../../Base/Code"
 
 
 const AudioWithTweenable = TweenableMixin(MediaInstanceBase)

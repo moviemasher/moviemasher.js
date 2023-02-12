@@ -1,6 +1,6 @@
 import { TweenableDefinitionClass } from "../../Mixin/Tweenable/Tweenable"
-import { PreloadArgs } from "../../MoveMe"
-import { DataType, DefinitionType, Orientation } from "../../Setup/Enums"
+import { PreloadArgs } from "../../Base/Code"
+import { DataType, ImageType, MediaType, Orientation } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { ContainerDefinition, ContainerDefinitionClass } from "./Container"
 
@@ -20,6 +20,6 @@ export function ContainerDefinitionMixin<T extends TweenableDefinitionClass>(Bas
     }
 
 
-    type = DefinitionType.Image 
+    type = ImageType 
   }
 }

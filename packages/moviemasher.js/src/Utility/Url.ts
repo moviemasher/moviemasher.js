@@ -1,17 +1,16 @@
-import { Endpoint, ScalarObject } from "../declarations"
-import { isLoaderType } from "../Loader/Loader"
-import { Errors } from "../Setup/Errors"
+import { ScalarRecord } from "../declarations"
+import { Endpoint } from "../Helpers/Endpoint/Endpoint"
+import { isLoaderType } from "../Load/Loader"
 import { arrayLast } from "./Array"
 import { assertPopulatedString, isAboveZero, isNumeric, isPopulatedString, isPositive } from "./Is"
+import { ErrorName } from "../Helpers/Error/ErrorName"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 
 let urlBaseValue = ''
 
 
 export const urlBase = (): string => {
-  if (!urlBaseInitialized()) {
-    console.trace(Errors.invalid.baseUrl)
-    throw new Error(Errors.invalid.baseUrl)
-  }
+  if (!urlBaseInitialized()) return errorThrow(ErrorName.Url)
 
   return urlBaseValue
 }
@@ -173,7 +172,7 @@ export const urlsAbsolute = (string: string, endpoint: Endpoint) => {
   return urls
 }
 
-export const urlOptionsObject = (options?: string): ScalarObject | undefined => {
+export const urlOptionsObject = (options?: string): ScalarRecord | undefined => {
   if (!isPopulatedString(options)) return 
   // console.log("parseOptions", type, options)
 
@@ -186,13 +185,13 @@ export const urlOptionsObject = (options?: string): ScalarObject | undefined => 
   return Object.fromEntries(entries)
 }
 
-export const urlOptions = (options?: ScalarObject) => {
+export const urlOptions = (options?: ScalarRecord) => {
   if (!options) return ''
 
   return Object.entries(options).map(entry => entry.join('=')).join(';')
 } 
 
-export const urlPrependProtocol = (protocol: string, url: string, options?: ScalarObject): string => {
+export const urlPrependProtocol = (protocol: string, url: string, options?: ScalarRecord): string => {
   const withColon = protocol.endsWith(':') ? protocol : `${protocol}:`
   if (url.startsWith(withColon) && !options) return url
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { 
-  ActivityInfo, EmptyMethod, isObject, isPopulatedString, errorsThrow,
+  ActivityInfo, EmptyMethod, isObject, isPopulatedString, errorThrow, Identified,
 } from '@moviemasher/moviemasher.js'
 
 import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
@@ -36,12 +36,11 @@ export const isActivityGroup = (type?: any): type is ActivityGroup => {
   return isPopulatedString(type) && ActivityGroups.includes(type as ActivityGroup)
 }
 export function assertActivityGroup(value: any, name?: string): asserts value is ActivityGroup {
-  if (!isActivityGroup(value)) errorsThrow(value, "ActivityGroup", name)
+  if (!isActivityGroup(value)) errorThrow(value, "ActivityGroup", name)
 }
 
-export interface ActivityObject {
+export interface ActivityObject extends Identified {
   infos: ActivityInfo[]
-  id: string
   activityGroup: ActivityGroup
 }
 export type ActivityObjects = ActivityObject[]

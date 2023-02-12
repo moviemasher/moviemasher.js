@@ -10,7 +10,7 @@ export default {
       'react': 'React',
       '@moviemasher/theme-default': 'MovieMasherTheme',
       '@moviemasher/moviemasher.js': 'MovieMasher',
-      '@moviemasher/client-core': 'MovieMasherCore',
+      '@moviemasher/client-core': 'MovieMasherClientCore',
     },
   },
   plugins: [

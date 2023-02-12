@@ -17,7 +17,7 @@ export function TimelineTracks(props: TimelineTracksProps): ReactResult {
   const updateRefreshed = () => { setRefreshed(nonce => nonce + 1) }
   const editor = useEditor()
   useListeners({
-    [EventType.Mash]: updateRefreshed, [EventType.Track]: updateRefreshed,
+    [EventType.Loaded]: updateRefreshed, [EventType.Track]: updateRefreshed,
   })
 
   const { children } = props

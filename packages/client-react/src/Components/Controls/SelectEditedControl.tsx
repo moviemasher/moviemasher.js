@@ -1,9 +1,9 @@
 import React from "react"
 import {
   DataMashRetrieveRequest, DataRetrieveResponse, DataGetRequest,
-  Endpoints, EventType, MasherAction, ServerType, DataCastGetResponse, 
+  Endpoints, EventType, MasherAction, ServerType, 
   DataMashGetResponse, isEventType, isSelectType, assertObject, 
-  isPopulatedString, LabelAndId, isPositive, assertTrue,
+  isPopulatedString, isPositive, assertTrue, Identified,
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
@@ -14,6 +14,13 @@ import { InspectorContext } from "../Inspector/InspectorContext"
 import { labelInterpolate, labelTranslate } from "../../Utilities/Label"
 import { View } from "../../Utilities/View"
 
+
+interface AndLabel {
+  label: string
+}
+
+interface LabelAndId extends Identified, AndLabel {}
+
 export interface SelectEditedControlProps extends PropsAndChild, WithClassName {}
 
 export function SelectEditedControl(props: SelectEditedControlProps): ReactResult {
@@ -21,13 +28,13 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
   const [requested, setRequested] = React.useState(false)
   const [described, setDescribed] = React.useState<LabelAndId[]>(() => [])
 
-  const [editedId, setEditedId] = React.useState(editor.edited?.id || '')
+  const [editedId, setEditedId] = React.useState(editor.mashMedia?.id || '')
   const apiContext = React.useContext(ApiContext)
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedInfo } = inspectorContext
   const { selectedType } = selectedInfo
 
-  const [editedLabel, setEditedLabel] = React.useState(editor.edited?.label || '')
+  const [editedLabel, setEditedLabel] = React.useState(editor.mashMedia?.label || '')
   const getDisabled = () => editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const { enabled, servers, endpointPromise } = apiContext
@@ -40,15 +47,15 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
     
     if (type !== selectedType) return
 
-    const { edited } = editor
-    assertObject(edited, 'edited')
+    const { mashMedia } = editor
+    assertObject(mashMedia, 'mashMedia')
 
-    const { id, label } = edited
+    const { id, label } = mashMedia
     setDescribed(original => {
       const copy = original.filter(object => isPopulatedString(object.label))
       const index = copy.findIndex(object => object.id === id)
-      if (isPositive(index)) copy.splice(index, 1, edited)
-      else copy.push(edited)
+      if (isPositive(index)) copy.splice(index, 1, mashMedia)
+      else copy.push(mashMedia)
       setEditedId(id)
       setEditedLabel(label)
       return copy
@@ -56,10 +63,10 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
   }
 
   const handleAction = () => {
-    const { edited } = editor
-    assertObject(edited, 'edited')
+    const { mashMedia } = editor
+    assertObject(mashMedia, 'mashMedia')
 
-    const { label } = edited
+    const { label } = mashMedia
     if (editedLabel !== label) {
       setDescribed(original => [...original])
       setEditedLabel(label)
@@ -69,8 +76,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
 
   useListeners({
     [EventType.Action]: handleAction,
-    [EventType.Mash]: handleEdited,
-    [EventType.Cast]: handleEdited,
+    [EventType.Loaded]: handleEdited,
     [EventType.Save]: updateDisabled,
   }, editor.eventTarget)
 
@@ -86,11 +92,11 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
     const { editType } = editor
     const endpoint = Endpoints.data[editType].get
     console.debug("GetRequest", endpoint, request)
-    endpointPromise(endpoint, request).then((response: DataMashGetResponse | DataCastGetResponse) => {
+    endpointPromise(endpoint, request).then((response: DataMashGetResponse) => {
       console.debug("GetResponse", endpoint, response)
-      const { error } = response
+      const { error, mash } = response
       if (error) console.error("GetResponse", endpoint, error)
-      else return editor.load(response)
+      else return editor.load(mash)
     })
   }
 
@@ -123,11 +129,11 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
   if (described.length < 2) return null
 
   const describedOptions = () => {
-    const { editType, edited } = editor
+    const { editType, mashMedia } = editor
     const elements = [<optgroup key="group" label={labelTranslate('open')}/>]
-    if (!edited) return elements
+    if (!mashMedia) return elements
 
-    const { id: editedId, label: editedLabel } = edited
+    const { id: editedId, label: editedLabel } = mashMedia
     elements.push(...described.map(object => {
       const { label: objectLabel, id } = object
       const label = (id === editedId) ? editedLabel : objectLabel
@@ -145,7 +151,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
   assertTrue(React.isValidElement(child))
 
   const selectOptions = {
-    key: "edited-select",
+    key: "mashMedia-select",
     onChange, disabled, children: describedOptions(), value: editedId
   }
   const viewProps = { ...rest, children: [child, <select {...selectOptions} />] }

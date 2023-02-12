@@ -1,6 +1,6 @@
 import { Orientation } from "../Setup/Enums";
 import { isAboveZero, isNumber, isObject } from "./Is"
-import { errorsThrow } from "./Errors";
+import { errorThrow } from "../Helpers/Error/ErrorFunctions";
 
 export interface Size {
   width: number;
@@ -10,7 +10,7 @@ export const isSize = (value: any): value is Size => {
   return isObject(value) && isNumber(value.width) && isNumber(value.height) 
 }
 export function assertSize(value: any, name?: string): asserts value is Size {
-  if (!isSize(value)) errorsThrow(value, 'Size', name)
+  if (!isSize(value)) errorThrow(value, 'Size', name)
 }
 
 
@@ -84,7 +84,7 @@ export const sizeAboveZero = (size: any): size is Size => {
   return isAboveZero(width) && isAboveZero(height)
 }
 export function assertSizeAboveZero(size: any, name?: string): asserts size is Size {
-  if (!sizeAboveZero(size)) errorsThrow(size, 'SizeAboveZero', name)
+  if (!sizeAboveZero(size)) errorThrow(size, 'SizeAboveZero', name)
 }
 
 export const SizeOutput: Size = { width: 1920, height: 1080 }
@@ -96,7 +96,7 @@ export const SizeIcon = sizeScale(SizePreview, 0.5, 0.5)
 export const sizeCopy = (size: any) => {
   // assertSize(size)
 
-  const { width, height } = size
+  const { width = 0, height = 0 } = size
   return { width, height }
 }
 

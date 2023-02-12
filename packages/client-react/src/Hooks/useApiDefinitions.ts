@@ -1,29 +1,34 @@
 import React from "react"
 import { 
-  assertDefined, Editor, Medias, 
-  DefinitionType, ServerType, DataDefinitionRetrieveRequest, 
+  assertDefined, Editor, MediaArray, 
+  MediaType, ServerType, DataDefinitionRetrieveRequest, 
   Endpoints, DataDefinitionRetrieveResponse, 
-  MediaBase 
 } from "@moviemasher/moviemasher.js"
 
 import { MasherContext } from "../Components/Masher/MasherContext"
 import { ApiContext } from "../Components/ApiClient/ApiContext"
+import { ClientContext } from "../Contexts/ClientContext"
+import { useClient } from "./useClient"
 
 const ApiDefinitionsEvent = 'api-definitions'
 const ApiDefinitionsDisabled = 'disabled'
 const ApiDefinitionsEmpty = 'empty'
 
 
-export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Medias] => {
+export const useApiDefinitions = (types: MediaType[] = []): [Editor, MediaArray] => {
+
+  const client = useClient()
+
   const apiContext = React.useContext(ApiContext)
   const masherContext = React.useContext(MasherContext)
   const { enabled, servers, endpointPromise } = apiContext
   const { editor } = masherContext
   assertDefined(editor)
   
-  const storeRef = React.useRef<Record<string, Medias>>({})
+  const storeRef = React.useRef<Record<string, MediaArray>>({})
 
   const { eventTarget } = editor
+  const { media } = editor
 
   const definitionsPromise = (key: string) => {
     const request: DataDefinitionRetrieveRequest = { types }
@@ -34,12 +39,12 @@ export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Medias
       console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
       const { definitions } = response
       const array = storeRef.current[key]
-      array.push(...definitions.map(def => MediaBase.fromObject(def)))
+      array.push(...definitions.map(def => media.media(def)))
       eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent))
     })
   }
   
-  const snapshotInitialize = (key: string): Medias => {
+  const snapshotInitialize = (key: string): MediaArray => {
     switch(key) {
       case ApiDefinitionsEmpty:
       case ApiDefinitionsDisabled: break
@@ -65,7 +70,7 @@ export const useApiDefinitions = (types: DefinitionType[] = []): [Editor, Medias
     return storeRef.current[key] = snapshotInitialize(key)
   }
 
-  const externalStore = React.useSyncExternalStore<Medias>((callback) => {
+  const externalStore = React.useSyncExternalStore<MediaArray>((callback) => {
     eventTarget.addEventListener(ApiDefinitionsEvent, callback)
     return () => {
       eventTarget.removeEventListener(ApiDefinitionsEvent, callback)

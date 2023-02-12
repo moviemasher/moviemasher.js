@@ -1,16 +1,17 @@
 
 import path from 'path'
-import { assertPopulatedString, Errors, GraphFile, GraphFileType, isLoadType, LoadType, PopulatedString } from "@moviemasher/moviemasher.js";
+import { assertPopulatedString, AudioType, ErrorName, errorThrow, FontType, GraphFile, GraphFileType, ImageType, isLoadType, JsonType, LoadType, PopulatedString, VideoType } from "@moviemasher/moviemasher.js";
 import { BasenameCache } from '../Setup/Constants';
 import { hashMd5 } from './Hash';
-import { Environment, environment } from './Environment';
+import { Environment, environment } from '../Environment/Environment';
 
 const typeExtension = (type: LoadType): string => {
   switch(type){
-    case LoadType.Font: return '.ttf'
-    case LoadType.Image: return '.png'
-    case LoadType.Audio: return '.mp3'
-    case LoadType.Video: return '.mp4'
+    case FontType: return '.ttf'
+    case ImageType: return '.png'
+    case AudioType: return '.mp3'
+    case VideoType: return '.mp4'
+    case JsonType: return '.json'
   }
 }
 
@@ -62,7 +63,7 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
   ]
   const valid = prefixes.some(prefix => resolved.startsWith(prefix))
 
-  if (!valid) throw Errors.invalid.url + resolved
+  if (!valid) errorThrow(ErrorName.Url) 
 
   graphFile.resolved = resolved
   return resolved

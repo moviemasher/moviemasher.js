@@ -1,46 +1,34 @@
-import { StringObject } from "../declarations"
+import { StringRecord } from "../declarations"
 import { ServerType } from "../Setup/Enums"
 import { isObject, isString } from "../Utility/Is"
 
-
-const EndpointsApi: StringObject = {
+const EndpointsApi: StringRecord = {
   servers: '',
   callbacks: '',
 }
 
-const EndpointsEncode: StringObject = {
+const EndpointsEncode: StringRecord = {
   start: '',
   status: '',
-  // stop: '',
 }
 
-const EndpointsRendering: StringObject = { ...EndpointsEncode, upload: '' }
+const EndpointsRendering: StringRecord = { ...EndpointsEncode, upload: '' }
 
-const EndpointsCrud: StringObject = {
+const EndpointsCrud: StringRecord = {
   delete: '',
   get: '',
   put: '',
   retrieve: '',
 }
 
-const EndpointsData: Record<string, StringObject> = {
+const EndpointsData: Record<string, StringRecord> = {
   cast: { ...EndpointsCrud, default: '' },
   mash: { ...EndpointsCrud, default: '' },
   stream: { ...EndpointsCrud },
   definition: { ...EndpointsCrud },
 }
 
-const EndpointsStreaming:StringObject = {
-  ...EndpointsEncode,
-  ...EndpointsCrud,
-  preload: '',
-  cut: '',
-  webrtc: '',
-  rtmp: '',
-  remote: '',
-  local: '',
-}
-const EndpointsFile: StringObject = {
+const EndpointsFile: StringRecord = {
   store: '',
 }
 
@@ -49,7 +37,6 @@ export const Endpoints = {
   [ServerType.Data]: EndpointsData,
   [ServerType.File]: EndpointsFile,
   [ServerType.Rendering]: EndpointsRendering,
-  [ServerType.Streaming]: EndpointsStreaming,
 }
 
 // populate Endpoints with key paths...

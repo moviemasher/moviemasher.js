@@ -1,8 +1,10 @@
-import { assertTrue, RequestObject, DefinitionType, ProtocolPromise, Protocols } from "@moviemasher/moviemasher.js"
+import { 
+  assertTrue, RequestObject, MediaType, ProtocolPromise, Plugins, ProtocolFile 
+} from "@moviemasher/moviemasher.js"
 
-const promise = ((request: RequestObject, type?: DefinitionType) => {
+const promise = ((request: RequestObject, type?: MediaType) => {
   assertTrue(!type)
   return Promise.resolve({})
 }) as ProtocolPromise
 
-Protocols.file = { promise }
+Plugins.protocols.file = { promise, type: ProtocolFile }

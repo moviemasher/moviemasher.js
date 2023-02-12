@@ -1,7 +1,8 @@
-import { Errors } from "../../Setup/Errors"
-import { assertAboveZero, assertNumber, isInteger, isNumber } from "../../Utility/Is"
+import { assertAboveZero, assertInteger, assertPositive } from "../../Utility/Is"
 import { roundWithMethod } from "../../Utility/Round"
 import { Time, TimeRange } from "./Time"
+import { errorThrow } from "../Error/ErrorFunctions"
+import { ErrorName } from "../Error/ErrorName"
 
 const timeGreatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1
@@ -31,11 +32,9 @@ export const timeEqualizeRates = (time1 : Time, time2 : Time, rounding = '') : T
 
 export class TimeClass implements Time {
   constructor(frame = 0, fps = 1) {
-    if (!isInteger(frame) || frame < 0) {
-      // console.trace(Errors.frame, frame)
-      throw Errors.frame + frame
-    }
-    if (!isInteger(fps) || fps < 1) throw Errors.fps
+    assertPositive(frame)
+    assertInteger(frame)
+    assertAboveZero(fps)
 
     this.frame = frame
     this.fps = fps
@@ -137,7 +136,7 @@ export class TimeClass implements Time {
     return time
   }
 
-  get timeRange(): TimeRange { throw Errors.timeRange }
+  get timeRange(): TimeRange { return errorThrow(ErrorName.Internal) }
 
   toString() : string { return `[${this.description}]` }
 

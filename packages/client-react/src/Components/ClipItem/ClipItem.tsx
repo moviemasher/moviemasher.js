@@ -1,13 +1,15 @@
 import React from 'react'
 import {
-  UnknownObject, pixelFromFrame, DroppingPosition, ClassSelected, eventStop, 
+  UnknownRecord, DroppingPosition, ClassSelected, eventStop, 
   assertTrue,
   sizeAboveZero, svgPolygonElement,
   Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject
 } from '@moviemasher/moviemasher.js'
+import { 
+  pixelFromFrame, DragSuffix, droppingPositionClass 
+} from '@moviemasher/client-core'
 
 import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
-import { DragSuffix, droppingPositionClass } from '../../Helpers/DragDrop'
 import { TrackContext } from '../../Contexts/TrackContext'
 import { TimelineContext } from '../Timeline/TimelineContext'
 import { useEditor } from '../../Hooks/useEditor'
@@ -32,7 +34,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   
   const [refresh, nonce] = useRefresh()
 
-  const watchingRef = React.useRef<UnknownObject>({})
+  const watchingRef = React.useRef<UnknownRecord>({})
   const { current: watching } = watchingRef
   const clipContext = React.useContext(ClipContext)
   const {
@@ -150,9 +152,9 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     delete watching.redraw 
     
     const { current } = svgRef
-    const { edited } = editor
+    const { mashMedia } = editor
 
-    const allOk = current && edited && width && width === getCurrentWidth()
+    const allOk = current && mashMedia && width && width === getCurrentWidth()
     if (redraw || !allOk) {
       refresh()
       if (!allOk) return Promise.resolve()
@@ -169,7 +171,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
       const latestWidth = getCurrentWidth()
       if (element && width >= latestWidth) {
         // console.log("ClipItem.populateSvg replacing children", fullSize)
-        current.replaceChildren(backgroundNode(edited.color, currentSize, 2), element)
+        current.replaceChildren(backgroundNode(mashMedia.color, currentSize, 2), element)
       } //else console.log("ClipItem.populateSvg", !!element, width, ">= ?", latestWidth)
     })
   }
@@ -181,8 +183,8 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     }
      
     const { current } = svgRef
-    const { edited } = editor
-    if (!(current && edited)) return
+    const { mashMedia } = editor
+    if (!(current && mashMedia)) return
 
     if (watching.timeout) {
       if (!watching.redraw) {
@@ -253,7 +255,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
   }
 
   const childNodes = () => {
-    const svgProps: UnknownObject = {
+    const svgProps: UnknownRecord = {
       key: "clip-previews", ref: svgRef
     }
     const size = { width: currentWidth, height: parentHeight }
@@ -268,7 +270,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     return nodes
   }
 
-  const style: UnknownObject = { width: currentWidth }
+  const style: UnknownRecord = { width: currentWidth }
   if (prevClipEnd > -1) {
     style.marginLeft = pixelFromFrame(frame - prevClipEnd, scale, 'floor')
   }

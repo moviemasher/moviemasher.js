@@ -1,8 +1,8 @@
 
-import { SvgItem, SvgItems } from "../../../declarations"
+import { SvgItem, SvgItems } from "../../../Helpers/Svg/Svg"
 
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { Clip } from "../../../Edited/Mash/Track/Clip/Clip"
+import { Clip } from "../../../Media/Mash/Track/Clip/Clip"
 import { Preview } from "../Preview"
 import { Container } from "../../../Media/Container/Container"
 import { Editor } from "../../Editor"
@@ -17,7 +17,6 @@ export interface TrackPreviewArgs {
 
 export interface TrackPreview {
   editingSvgItem(classes: string[], inactive?: boolean): SvgItem
-  id: string
   clip: Clip
   editor: Editor
   svgBoundsElement(lineClasses: string[], handleClasses: string[], inactive?: boolean): SvgItems 

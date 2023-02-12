@@ -1,8 +1,6 @@
-
-import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { isPositive, isArray, isDefined, Errors } from "@moviemasher/moviemasher.js"
+import { isPositive, isArray, isDefined } from "@moviemasher/moviemasher.js"
 
 export const expectArrayLength = (value, length = -1, constructor) => {
   const array = expectArray(value, constructor)
@@ -36,7 +34,7 @@ export const expectArray = (value, constructor)  => {
   }
   console.error('expectArray', typeof value, value?.constructor.name)
   assert.toBeInstanceOf(value, Array)
-  throw Errors.internal
+  throw 
 }
 
 export const expectEmptyArray = (value) => {

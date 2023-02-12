@@ -2,8 +2,11 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  colorHexToRgb, pixelFromFrame, pixelPerFrame, pixelsMixRbg, pixelToFrame 
+   pixelToFrame 
 } from "@moviemasher/moviemasher.js"
+import { 
+  pixelFromFrame, pixelPerFrame, 
+} from "@moviemasher/client-core"
 
 describe("Pixel", () => {
   describe("perFrame", () => {
@@ -22,14 +25,6 @@ describe("Pixel", () => {
       const pixel = 10
       const perFrame = 0.2
       assert.equal(pixelFromFrame(pixelToFrame(pixel, perFrame), perFrame), pixel)
-    })
-  })
-  describe("pixelsMixRbg", () => {
-    test("interpolates properly between colors", () => {
-      const red = colorHexToRgb('#FF0000')
-      const green = colorHexToRgb('#00FF00')
-      const blue = colorHexToRgb('#0000FF')
-      assert.deepStrictEqual(pixelsMixRbg(red, blue, 0.0), red)
     })
   })
 })

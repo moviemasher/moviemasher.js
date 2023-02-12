@@ -1,11 +1,11 @@
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { idGenerate } from "../../Utility/Id"
 import { assertPopulatedString, isTrueValue } from "../../Utility/Is"
 import { tweenOption, tweenPosition } from "../../Utility/Tween"
-import { ValueObject } from "../../declarations"
+import { ValueRecord } from "../../declarations"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { FilterDefinitionObject } from "../Filter"
 
@@ -39,7 +39,7 @@ export class CropFilter extends FilterDefinitionClass {
     const commandFilters: CommandFilters = []
     const scalars = filter.scalarObject(!!duration)
 
-    const options: ValueObject = { exact: 1 }
+    const options: ValueRecord = { exact: 1 }
     const position = tweenPosition(videoRate, duration)
     options.x = tweenOption(scalars.x, scalars[`x${PropertyTweenSuffix}`], position, true)
     options.y = tweenOption(scalars.y, scalars[`y${PropertyTweenSuffix}`], position, true)

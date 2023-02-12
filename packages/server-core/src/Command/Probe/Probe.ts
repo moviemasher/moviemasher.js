@@ -1,7 +1,7 @@
 import path from "path"
 import fs from 'fs'
 import Ffmpeg from "fluent-ffmpeg"
-import type { LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
+import { ErrorName, errorObject, LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
  
 import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
@@ -56,7 +56,7 @@ export class Probe {
             extension: path.extname(src).slice(1)
           }
           if (error) {
-            info.error = commandArgsString(process._getArguments(), dest, error)
+            info.error = errorObject(commandArgsString(process._getArguments(), dest, error), ErrorName.DecodeProbe)
           } else {
             const { streams, format } = data
             const { duration = 0 } = format

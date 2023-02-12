@@ -1,8 +1,11 @@
-import { endpointUrl, Errors, LoadedVideo, RequestInitObject, RequestObject } from "@moviemasher/moviemasher.js"
+import { 
+  endpointUrl, ErrorName, ClientVideoOrError, RequestObject, errorThrow,
+} from "@moviemasher/moviemasher.js"
+
 
 const videoFromUrl = (url: string): HTMLVideoElement => {
   const { document } = globalThis
-  if (!document) throw new Error(Errors.invalid.environment)
+  if (!document) errorThrow(ErrorName.Environment) 
 
   const video = document.createElement('video')
   // video.crossOrigin = 'anonymous'
@@ -10,12 +13,12 @@ const videoFromUrl = (url: string): HTMLVideoElement => {
   return video
 }
 
-export const videoPromise =  (request: RequestObject): Promise<LoadedVideo> => {
+export const clientVideoPromise =  (request: RequestObject): Promise<ClientVideoOrError> => {
   // TODO: use init?
   const { endpoint } = request
   const url = endpointUrl(endpoint)
   
-  return new Promise<LoadedVideo>((resolve, reject) => {
+  return new Promise<ClientVideoOrError>((resolve, reject) => {
     const video = videoFromUrl(url)
     video.oncanplay = () => {
       video.oncanplay = null
@@ -28,7 +31,7 @@ export const videoPromise =  (request: RequestObject): Promise<LoadedVideo> => {
       video.height = height
 
       // console.log(this.constructor.name, "videoPromise.oncanplay", width, height)
-      resolve(video)
+      resolve({ clientVideo: video })
     }
     video.onerror = reject
     video.autoplay = false

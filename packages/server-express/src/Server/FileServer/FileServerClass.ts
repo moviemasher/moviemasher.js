@@ -4,8 +4,8 @@ import fs from 'fs'
 import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
-  ApiCallback, UploadDescription, Endpoints, Errors, UploadTypes,
-  FileStoreRequest, FileStoreResponse, JsonObject, LoadType, assertPopulatedString,
+  ApiCallback, UploadDescription, Endpoints, RawTypes, assertAboveZero,
+  FileStoreRequest, FileStoreResponse, JsonRecord, LoadType, assertPopulatedString, errorCaught, ErrorName, errorName, errorObjectCaught, errorObject, errorThrow,
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../../Host/Host"
@@ -15,7 +15,6 @@ import { FileServer, FileServerArgs, FileServerFilename } from "./FileServer"
 
 
 const FileServerMeg = 1024 * 1024
-
 
 export class FileServerClass extends ServerClass implements FileServer {
   constructor(public args: FileServerArgs) { super(args) }
@@ -34,14 +33,15 @@ export class FileServerClass extends ServerClass implements FileServer {
   }
 
   extensionLoadType(extension: string): LoadType | undefined {
-    return UploadTypes.find(loadType =>
+    const found = RawTypes.find(loadType =>
       this.args.extensions[loadType].includes(extension)
     )
+    if (found) return found as LoadType
   }
 
   id = 'file'
 
-  init(userId: string): JsonObject {
+  init(userId: string): JsonRecord {
     const prefix = `/${path.join(this.args.uploadsRelative, userId)}/`
     const { extensions, uploadLimits } = this.args
     return { prefix, extensions, uploadLimits }
@@ -61,7 +61,7 @@ export class FileServerClass extends ServerClass implements FileServer {
         const { id } = req.body
         const request = req as basicAuth.IBasicAuthedRequest
         const { user } = request.auth
-        if (!user) cb(new Error(Errors.invalid.user), '')
+        if (!user) cb(errorObject(ErrorName.ServerAuthentication), '')
         else {
           const filePath = `${uploadsPrefix}/${user}/${id}`
           fs.mkdirSync(filePath, { recursive: true })
@@ -71,7 +71,7 @@ export class FileServerClass extends ServerClass implements FileServer {
       filename: function (_req, file, cb) {
         const { originalname } = file
         const ext = path.extname(originalname).slice(1).toLowerCase()
-        if (!extensions.includes(ext)) cb(new Error(`Invalid extension ${ext}`), '')
+        if (!extensions.includes(ext)) cb(errorObject(`Invalid extension ${ext}`), '')
         else cb(null, `${FileServerFilename}.${ext}`)
       }
     })
@@ -90,10 +90,10 @@ export class FileServerClass extends ServerClass implements FileServer {
         const { id } = request
         if (id) {
           const { file: uploadedFile} = req
-          if (!uploadedFile) response.error = 'No file supplied'
-        } else response.error = Errors.id
-      } else response.error = Errors.invalid.user
-    } catch (error) { response.error = String(error) }
+          if (!uploadedFile) response.error = errorName(ErrorName.ServerAuthentication) 
+        } else response.error = errorName(ErrorName.ImportFile, 'No file supplied')
+      } else response.error = errorName(ErrorName.ServerAuthentication) 
+    } catch (error) { response.error = errorObjectCaught(error) }
     res.send(response)
   }
 
@@ -104,11 +104,11 @@ export class FileServerClass extends ServerClass implements FileServer {
   }
 
   withinLimits(size: number, type: string): boolean {
-    if (!size) throw Errors.invalid.size
-    if (!type) throw Errors.invalid.type
+    assertAboveZero(size)
+    assertPopulatedString(type)
 
     const limit = this.args.uploadLimits[type]
-    if (!limit) throw Errors.invalid.type
+    assertAboveZero(limit)
 
     return limit > size / FileServerMeg
   }

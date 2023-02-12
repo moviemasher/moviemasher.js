@@ -1,9 +1,10 @@
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { colorRgbaKeys } from "../../Utility/Color"
+import { colorRgbaKeys } from "../../Helpers/Color/ColorFunctions"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { ScalarObject, StringObject, SvgFilters } from "../../declarations"
-import { svgFilter, svgFilterElement } from "../../Utility/Svg"
+import { ScalarRecord, StringRecord } from "../../declarations"
+import { SvgFilters } from "../../Helpers/Svg/Svg"
+import { svgFilter, svgFilterElement } from "../../Helpers/Svg/SvgFunctions"
 import { FilterDefinitionObject } from "../Filter"
 
 const ColorChannelMixerFilterKeys = colorRgbaKeys.flatMap(c =>
@@ -26,11 +27,11 @@ export class ColorChannelMixerFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
-  filterDefinitionSvgFilter(object: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(object: ScalarRecord): SvgFilters {
     const bits = colorRgbaKeys.flatMap(c =>
       [...colorRgbaKeys.map(d => Number(object[`${c}${d}`])), 0]
     )
-    const options: StringObject = { 
+    const options: StringRecord = { 
       filter: 'feColorMatrix',
       type: 'matrix',
       values: bits.join(' '),

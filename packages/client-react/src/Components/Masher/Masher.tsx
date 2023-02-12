@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  editorInstance, UnknownObject,
+  editorInstance, UnknownRecord,
   DataDefaultRequest,
   Size,
   EditType,
@@ -8,14 +8,14 @@ import {
   eventStop,
   EditorIndex,
   DataPutResponse,
-  Endpoints, fetchJsonPromise, ServerType,
+  Endpoints, ServerType,
   ApiCallback, 
   ApiCallbackResponse,
-  DataDefinitionPutRequest, RenderingStatusResponse, OutputTypes, 
-  assertObject, EventType, isMashAndDefinitionsObject,
+  DataDefinitionPutRequest, RenderingStatusResponse, EncodeTypes, 
+  assertObject, EventType, 
   idGenerate, ActivityType, 
-  isClip, isEffect, isLayer, 
-  sizeAboveZero, ScalarObject, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, Medias, isMashAndMediaObject
+  isClip, isEffect, 
+  sizeAboveZero, ScalarRecord, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, MediaArray, isMashAndMediaObject, VideoType, assertMashData, idTemporary, assertMashMedia
 } from '@moviemasher/moviemasher.js'
 
 import type { ThemeIcons } from '@moviemasher/theme-default'
@@ -28,14 +28,12 @@ import { MasherContext, MasherContextInterface } from './MasherContext'
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import { TimelinePropsDefault } from '../Timeline/TimelineDefaultProps'
 import { InspectorPropsDefault } from '../Inspector/InspectorDefaultProps'
-import { BroadcasterPropsDefault } from '../Broadcaster/BroadcasterDefaultProps'
 import { PlayerPropsDefault } from '../Player/PlayerDefaultProps'
 import { BrowserPropsDefault } from '../Browser/BrowserDefaultProps'
 import { PanelOptions } from '../Panel/Panel'
-import { ComposerPropsDefault } from '../Composer/ComposerDefaultProps'
-import { Draggable, dropFilesFromList } from '../../Helpers/DragDrop'
+import { Draggable, dropFilesFromList, jsonPromise } from '@moviemasher/client-core'
 import { ActivityPropsDefault } from '../Activity/ActivityDefaultProps'
-import { WebrtcPropsDefault } from '../Webrtc/WebrtcPropsDefault'
+import { useClient } from '../../Hooks/useClient'
 
 export type PanelOptionsOrFalse = PanelOptions | false
 
@@ -45,17 +43,14 @@ export interface UiOptions {
   player: PlayerPropsDefault | false
   inspector: InspectorPropsDefault | false
   timeline: TimelinePropsDefault | false
-  composer: ComposerPropsDefault | false
-  webrtc: WebrtcPropsDefault | false
-  broadcaster: BroadcasterPropsDefault | false
   activity: ActivityPropsDefault | false
 }
 
-export interface MasherOptions extends UnknownObject, WithClassName {
+export interface MasherOptions extends UnknownRecord, WithClassName {
   previewSize?: Size
   icons?: ThemeIcons
   editType?: EditType
-  edited?: DataDefaultResponse
+  mashMedia?: DataDefaultResponse
 }
 
 export interface EditorProps extends MasherOptions, PropsWithoutChild {
@@ -71,16 +66,16 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {}
  */
 export function Masher(props: MasherProps): ReactResult {
   const {
-    editType = EditType.Mash,
+    editType = VideoType,
     previewSize,
     icons = {},
-    edited,
+    mashMedia,
     ...rest
   } = props
 
   console.log("Masher", editType, previewSize)
   const editorIndexRef = React.useRef<EditorIndex>({})
-  const currentRef = React.useRef<ScalarObject>({})
+  const currentRef = React.useRef<ScalarRecord>({})
   const svgRef = React.useRef<SVGSVGElement>(null)
   const ref = React.useRef<HTMLDivElement>(null)
   const apiContext = React.useContext(ApiContext)
@@ -97,16 +92,19 @@ export function Masher(props: MasherProps): ReactResult {
   }, [previewSize])
 
   const editorLoad = (object?: DataDefaultResponse) => {
-    const loadObject = object || edited || { [editType]: {}, definitions: [] }
-    const { previewSize: size = previewSize, ...rest } = loadObject
+    const loadObject = object || mashMedia || { mash: { id: idTemporary(), media: [] } }
+    // const { previewSize: size = previewSize, ...rest } = loadObject
+    console.log('Masher.editorLoad', object, mashMedia, loadObject)
 
     const { current: svg } = svgRef
-    const { current: div } = ref
+    // const { current: div } = ref
     assertObject(svg, 'svg')
-    if (sizeAboveZero(size)) elementSetPreviewSize(div, size)
+    // if (sizeAboveZero(size)) elementSetPreviewSize(div, size)
     
     editor.svgElement = svg
-    editor.load(rest)
+    const { mash } = loadObject
+    // assertMashData(loadObject)
+    editor.load(mash)
   }
   React.useEffect(() => {
     console.debug("Masher useEffect", enabled, requested)
@@ -138,7 +136,7 @@ export function Masher(props: MasherProps): ReactResult {
   const dropFiles = (files: FileList, editorIndex?: EditorIndex): Promise<Media[]> => {
     const fileInfos = dropFilesFromList(files, servers.file)
     if (fileInfos.length) {
-      const errors: UnknownObject[] = []
+      const errors: UnknownRecord[] = []
       const validFiles: File[] = []
       const { eventTarget } = editor
       fileInfos.forEach(fileInfo => {
@@ -178,10 +176,7 @@ export function Masher(props: MasherProps): ReactResult {
       console.log("Masher drop Effect")
       return Promise.resolve([])
     }
-    if (isLayer(draggable)) {
-      console.log("Masher drop Layer")
-      return Promise.resolve([])
-    }
+    
     if (isMediaObject(draggable)) {
       console.log("Masher drop DefinitionObject")
       return dropMediaObject(draggable, editorIndex)
@@ -206,10 +201,10 @@ export function Masher(props: MasherProps): ReactResult {
   const handleApiCallback = (id: string, definition: Media, callback: ApiCallback): Promise<void> => {
     console.debug("handleApiCallback request", callback)
     const { eventTarget } = editor
-    return fetchJsonPromise(callback).then((response: ApiCallbackResponse) => {
+    return jsonPromise(callback).then((response: ApiCallbackResponse) => {
       console.debug("handleApiCallback response", response)
       const { apiCallback, error } = response
-      if (error) return handleError(callback.endpoint.pathname!, error, id)
+      if (error) return handleError(callback.endpoint.pathname!, error.message, id)
 
       if (apiCallback) {
         const { init, endpoint } = apiCallback
@@ -230,7 +225,7 @@ export function Masher(props: MasherProps): ReactResult {
           const statusResponse: RenderingStatusResponse = response
           let steps = 0
           let step = 0
-          OutputTypes.forEach(type => {
+          EncodeTypes.forEach(type => {
             const state = statusResponse[type]
             if (!state) return
 
@@ -256,7 +251,7 @@ export function Masher(props: MasherProps): ReactResult {
     return Promise.reject(error)
   }
 
-  const saveDefinitionsPromise = (definitions: Medias): Promise<void> => {
+  const saveDefinitionsPromise = (definitions: MediaArray): Promise<void> => {
     let promise = Promise.resolve()
     const { eventTarget } = editor
 throw new Error('')
@@ -284,7 +279,7 @@ throw new Error('')
     //       else if (fileApiCallback && fileApiCallback.init) {
     //         if (fileProperty) fileApiCallback.init.body![fileProperty] = file
     //         else fileApiCallback.init.body = file
-    //         return fetchJsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
+    //         return jsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
     //           console.debug("FileStoreResponse", response)
     //           const { error } = response
     //           if (error) return handleError(fileApiCallback.endpoint.pathname!, error, id)
@@ -302,26 +297,14 @@ throw new Error('')
     return promise
   }
 
-  const save = async () => {
-    const { definitionsUnsaved } = editor
-    const definitionsPromise = saveDefinitionsPromise(definitionsUnsaved)
-    const requestPromise = definitionsPromise.then(() => editor.dataPutRequest())
-    const savePromise = requestPromise.then(request => {
-      // const { editType } = editor
-      console.debug("DataPutRequest", Endpoints.data[editType].put, JSON.parse(JSON.stringify(request)))
-      endpointPromise(Endpoints.data[editType].put, request).then((response: DataPutResponse) => {
-        console.debug("DataPutResponse", Endpoints.data[editType].put, response)
-        const { error, temporaryIdLookup } = response
-        if (error) console.error(Endpoints.data[editType].put, error)
-        else editor.saved(temporaryIdLookup)
-      })
-    })
-    await savePromise
+  const client = useClient()
+  const save = () => {
+    const { mashMedia } = editor
+    assertMashMedia(mashMedia)
+    client.save(mashMedia)
   }
 
-  const changeDefinition = (definition?: Media) => { 
-    current.definitionId = definition?.id
-  }
+  const changeDefinition = (media?: Media) => { current.mediaId = media?.id }
 
   const editorContext: MasherContextInterface = {
     streaming, setStreaming,

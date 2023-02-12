@@ -2,16 +2,16 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { 
-  DefinitionType, sequenceDefinition, idGenerateString, 
+  MediaType, sequenceDefinition, idGenerateString, 
   SequenceClass, SequenceMediaClass 
 } from "@moviemasher/moviemasher.js"
 
 
-describe(DefinitionType.Sequence, () => {
+describe(SequenceType, () => {
   const definitionObject = {
     id: idGenerateString(),
     url: "frames/",
-    type: DefinitionType.Sequence,
+    type: SequenceType,
     fps: 30, duration: 10
   }
 

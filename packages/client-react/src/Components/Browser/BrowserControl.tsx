@@ -1,5 +1,5 @@
 import React from "react"
-import { assertObject, UploadTypes } from "@moviemasher/moviemasher.js"
+import { assertObject, RawTypes } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { ApiContext } from "../ApiClient/ApiContext"
@@ -23,7 +23,7 @@ export function BrowserControl(props: PropsAndChild): ReactResult {
 
   const { file = {} } = servers
   const { 
-    extensions = Object.fromEntries(UploadTypes.map(type => [type, []])) 
+    extensions = Object.fromEntries(RawTypes.map(type => [type, []])) 
   } = file
   assertObject(extensions, 'extensions')
 

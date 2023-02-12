@@ -1,24 +1,26 @@
-import { UnknownObject, Value, ValueObject } from "../declarations"
+import { UnknownRecord, Value, ValueRecord } from "../declarations"
 import { isNumeric, isUndefined } from "../Utility/Is"
 import { DataType, DataTypes } from "./Enums"
-import { Errors } from "./Errors"
+
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../Helpers/Error/ErrorName"
 
 export interface ParameterObject {
   name : string
-  value: Value | ValueObject[]
+  value: Value | ValueRecord[]
   values?: Value[]
   dataType?: DataType | string
 }
 
 export class Parameter {
   constructor({ name, value, dataType, values }: ParameterObject) {
-    if (!name) throw Errors.invalid.name
+    if (!name) return errorThrow(ErrorName.Internal) 
 
     this.values = values
     this.name = name
     if (isUndefined(value)) {
       if (this.values?.length) this.value = this.values[0]
-      else throw Errors.invalid.value
+      else return errorThrow(ErrorName.Internal) 
     } else this.value = value
 
     if (dataType && DataTypes.map(String).includes(dataType)) {
@@ -35,13 +37,13 @@ export class Parameter {
 
   dataType = DataType.String
 
-  name : string
+  name = ''
 
-  toJSON() : UnknownObject {
+  toJSON() : UnknownRecord {
     return { name: this.name, value: this.value }
   }
 
-  value: Value | ValueObject[]
+  value: Value | ValueRecord[] = ''
 
   values?: Value[]
 }

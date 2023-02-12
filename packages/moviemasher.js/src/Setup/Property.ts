@@ -3,12 +3,12 @@ import { DataType, isDataType, assertDataType } from "./Enums"
 import { propertyTypeDefault } from "../Helpers/PropertyType"
 import {
   isBoolean, isNumber, isObject, isPopulatedString, isUndefined} from "../Utility/Is"
-import { errorsThrow } from "../Utility/Errors"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 
 export enum DataGroup {
-  Clicking = 'clicking',
+  // Clicking = 'clicking',
   Color = 'color',
-  Controls = 'controls',
+  // Controls = 'controls',
   Effects = 'effects',
   Opacity = 'opacity',
   Point = 'point',
@@ -21,7 +21,7 @@ export const isDataGroup = (value?: any): value is DataGroup => {
   return DataGroups.includes(value as DataGroup)
 }
 export function assertDataGroup(value: any, name?: string): asserts value is DataGroup {
-  if (!isDataGroup(value)) errorsThrow(value, "DataGroup", name)
+  if (!isDataGroup(value)) errorThrow(value, "DataGroup", name)
 }
 
 export interface PropertyBase {
@@ -47,7 +47,7 @@ export const isProperty = (value: any): value is Property => {
   return isObject(value) && "type" in value && isDataType(value.type)
 }
 export function assertProperty(value: any, name?: string): asserts value is Property {
-  if (!isProperty(value)) errorsThrow(value, 'Property', name)
+  if (!isProperty(value)) errorThrow(value, 'Property', name)
 }
 
 const propertyType = (type?: DataType | string, value?: Scalar): DataType => {

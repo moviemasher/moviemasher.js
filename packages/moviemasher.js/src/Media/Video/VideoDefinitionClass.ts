@@ -1,5 +1,4 @@
-import { LoadedVideo, LoadedImage} from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { LoadedVideo, LoadedImage } from "../../Load/Loaded"
 import { VideoClass } from "./VideoClass"
 import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
 import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
@@ -10,14 +9,16 @@ import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinit
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { MediaBase } from "../MediaBase"
 import { assertSizeAboveZero, Size, sizeAboveZero, sizeCover, sizeString } from "../../Utility/Size"
-import { svgImagePromiseWithOptions, svgSvgElement } from "../../Utility/Svg"
+import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
 import { centerPoint, RectOptions } from "../../Utility/Rect"
-import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
 import { Time } from "../../Helpers/Time/Time"
-import { Errors } from "../../Setup/Errors"
-import { assertLoadedImage, assertLoadedVideo } from "../../Loader/Loader"
+import { assertLoadedImage, assertLoadedVideo } from "../../Load/Loader"
 import { imageFromVideoPromise } from "../../Utility/Image"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
+import { ImageType, SequenceType, VideoType } from "../../Setup/Enums"
+import { Requestable } from "../../Base/Requestable/Requestable"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 const VideoDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithTweenable)
@@ -67,36 +68,42 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
 
     return `${frameFps}-${sizeString(outSize)}`
   }
-  private imageFromSequencePromise(previewTranscoding: Transcoding, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
+  private imageFromSequencePromise(previewTranscoding: Requestable, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
     throw new Error()
   }
 
-  private imageFromTranscodingPromise(transcoding: Transcoding, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
+  private imageFromTranscodingPromise(transcoding: Requestable, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
     const { type } = transcoding
     switch (type) {
-      case DefinitionType.Image: {
-        return transcoding.loadedMediaPromise.then(media => {
+      case ImageType: {
+        return transcoding.loadedMediaPromise.then(orError => {
+          const { error, clientMedia: media } = orError
+          if (error) return errorThrow(error)
+          
           assertLoadedImage(media)
           return media
         })
       }
-      case DefinitionType.Video: {
+      case VideoType: {
         return this.imageFromVideoTranscodingPromise(transcoding, definitionTime, outSize)
       }
-      case DefinitionType.Sequence: {
+      case SequenceType: {
         return this.imageFromSequencePromise(transcoding, definitionTime, outSize)
       }
     }
-    throw new Error(Errors.internal) 
+    return errorThrow(ErrorName.Internal)
   }
 
-  private imageFromVideoTranscodingPromise(previewTranscoding: Transcoding, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
+  private imageFromVideoTranscodingPromise(previewTranscoding: Requestable, definitionTime: Time, outSize?: Size): Promise<LoadedImage> {
     console.log(this.constructor.name, 'imageFromVideoTranscodingPromise', definitionTime)
     
     const loaded = this.loadedImage(definitionTime, outSize)
     if (loaded) return Promise.resolve(loaded)
     
-    return previewTranscoding.loadedMediaPromise.then(media => {
+    return previewTranscoding.loadedMediaPromise.then(orError => {
+      const { error, clientMedia: media } = orError
+      if (error) return errorThrow(error)
+
       assertLoadedVideo(media)
 
       const key = this.loadedImageKey(definitionTime, outSize)
@@ -106,7 +113,7 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
         return image
       })
     })
-  
+
   }
 
 
@@ -125,18 +132,18 @@ export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration i
   }
   
 
-  get iconTranscoding(): Transcoding {
+  get iconTranscoding(): Requestable {
     return this.preferredTranscoding(
-      DefinitionType.Image, DefinitionType.Sequence, DefinitionType.Video
+      ImageType, SequenceType, VideoType
     )
   }
 
   
-  get previewTranscoding(): Transcoding {
+  get previewTranscoding(): Requestable {
     return this.preferredTranscoding(
-      DefinitionType.Sequence, DefinitionType.Video
+      SequenceType, VideoType
     )
   }
 
-  type = DefinitionType.Video 
+  type = VideoType 
 }

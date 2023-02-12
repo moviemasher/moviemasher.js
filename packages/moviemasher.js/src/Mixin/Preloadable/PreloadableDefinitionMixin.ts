@@ -1,5 +1,3 @@
-import { UnknownObject } from "../../declarations"
-import { LoadType } from "../../Setup/Enums"
 import {
   PreloadableDefinition, PreloadableDefinitionClass, PreloadableDefinitionObject
 } from "./Preloadable"
@@ -32,8 +30,6 @@ export function PreloadableDefinitionMixin<T extends ContentDefinitionClass>(Bas
     }
 
     // bytes = 0
-
-    // loadType!: LoadType
 
 
 

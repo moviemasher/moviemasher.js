@@ -1,5 +1,4 @@
-// export * from "./Modular"
 export * from "./Preloadable"
-export * from "./UpdatableSize"
-export * from "./UpdatableDuration"
 export * from "./Tweenable"
+export * from "./UpdatableDuration"
+export * from "./UpdatableSize"

@@ -1,16 +1,16 @@
 import { Container, ContainerRectArgs } from "../../../Media/Container/Container"
-import { EventHandler, ScalarObject, SvgItem, SvgItems, SvgItemsTuple } from "../../../declarations"
+import { ScalarRecord } from "../../../declarations"
+import { SvgItem, SvgItems } from "../../../Helpers/Svg/Svg"
 import { Point, pointsEqual, PointZero } from "../../../Utility/Point"
 import { Rect, rectsEqual } from "../../../Utility/Rect"
 import { assertSizeAboveZero, Size } from "../../../Utility/Size"
-import { Clip } from "../../../Edited/Mash/Track/Clip/Clip"
-import { svgAddClass, svgGroupElement, svgPolygonElement, svgSetTransformPoint } from "../../../Utility/Svg"
+import { Clip } from "../../../Media/Mash/Track/Clip/Clip"
+import { svgAddClass, svgPolygonElement } from "../../../Helpers/Svg/SvgFunctions"
 import { TrackPreview, TrackPreviewArgs } from "./TrackPreview"
 import { assertTrue } from "../../../Utility/Is"
 import { ActionType, Anchor, assertDirection, Direction } from "../../../Setup/Enums"
 import { Editor } from "../../Editor"
 import { Time, TimeRange } from "../../../Helpers/Time/Time"
-// import { eventStop } from "../../../Utility/Event"
 import { tweeningPoints, tweenMinMax } from "../../../Utility/Tween"
 import { PropertyTweenSuffix } from "../../../Base/Propertied"
 import { DataGroup } from "../../../Setup/Property"
@@ -38,7 +38,7 @@ export class TrackPreviewClass implements TrackPreview {
 
     svgItem.setAttribute('vector-effect', 'non-scaling-stroke')
     svgAddClass(svgItem, classes)
-    if (!inactive) svgItem.addEventListener('pointerdown', this.pointerDown())
+    if (!inactive) svgItem.addEventListener('pointerdown', this.pointerDownHandler())
   
     return svgItem
   }
@@ -47,9 +47,7 @@ export class TrackPreviewClass implements TrackPreview {
 
   get icon(): boolean { return !!this.args.icon }
 
-  get id() { return this.clip.id }
-
-  private pointerDown(): EventHandler {
+  private pointerDownHandler() {
     const clickPoint = { ...PointZero }
     const { editor, container, timeRange, rect, clip } = this
     const { rect: contentRect } = editor
@@ -111,11 +109,11 @@ export class TrackPreviewClass implements TrackPreview {
       const xKey = tweening ? `x${PropertyTweenSuffix}` : 'x'
       const yKey = tweening ? `y${PropertyTweenSuffix}` : 'y'
       
-      const undoValues: ScalarObject = {
+      const undoValues: ScalarRecord = {
         [xKey]: container.value(xKey), [yKey]: container.value(yKey)
       }
 
-      const redoValues: ScalarObject = {
+      const redoValues: ScalarRecord = {
         [xKey]: totalWidth ? limitedX / totalWidth : undoValues[xKey],
         [yKey]: totalHeight ? limitedY / totalHeight : undoValues[yKey]
       }

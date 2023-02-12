@@ -1,14 +1,13 @@
-import { isCustomEvent, UnknownObject } from "../../../declarations"
-import { Errors } from "../../../Setup/Errors"
+import { UnknownRecord } from "../../../declarations"
 import { ActionType } from "../../../Setup/Enums"
 
-import { assertMash, isMash, Mash } from "../../../Edited/Mash/Mash"
+import { assertMashMedia, isMashMedia, MashMedia } from "../../../Media/Mash/Mash"
 import { EditorSelectionObject } from "../../EditorSelection"
-import { Cast } from "../../../Edited/Cast/Cast"
-import { assertCast, isCast } from "../../../Edited/Cast/CastFactory"
+import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../../Helpers/Error/ErrorName"
 
 
-export interface ActionObject extends UnknownObject {
+export interface ActionObject extends UnknownRecord {
   redoSelection: EditorSelectionObject
   type: ActionType
   undoSelection: EditorSelectionObject
@@ -25,22 +24,15 @@ export class Action {
     this.type = type
     this.undoSelection = undoSelection
   }
-  protected get cast(): Cast { 
-    const { cast } = this.redoSelection
-    if (isCast(cast)) return cast
-
-    const { cast: undoCast } = this.undoSelection
-    assertCast(undoCast) 
-    return undoCast
-  }
+  
   done =  false
 
-  protected get mash(): Mash { 
+  protected get mash(): MashMedia { 
     const { mash } = this.redoSelection
-    if (isMash(mash)) return mash
+    if (isMashMedia(mash)) return mash
 
     const { mash: undoMash } = this.undoSelection
-    assertMash(undoMash) 
+    assertMashMedia(undoMash) 
     return undoMash
   }
 
@@ -49,7 +41,9 @@ export class Action {
     this.done = true
   }
 
-  protected redoAction() : void { throw Errors.unimplemented + 'redoAction' }
+  protected redoAction() : void { 
+    return errorThrow(ErrorName.Unimplemented)
+   }
 
   protected redoSelection: EditorSelectionObject
 
@@ -66,7 +60,9 @@ export class Action {
     this.done = false
   }
 
-  protected undoAction() : void { throw Errors.unimplemented + 'undoAction'}
+  protected undoAction() : void { 
+    return errorThrow(ErrorName.Unimplemented)
+  }
 
   protected undoSelection: EditorSelectionObject
 }
@@ -83,5 +79,5 @@ export const isActionInit = (value: any): value is ActionInit => isAction(value.
 
 export interface ActionEvent extends CustomEvent<ActionInit> { }
 export const isActionEvent = (value: any): value is ActionEvent => {
-  return isCustomEvent(value) && value.detail
+  return value instanceof CustomEvent && value.detail
 }

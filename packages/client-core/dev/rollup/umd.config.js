@@ -4,7 +4,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 export default {
   input: 'src/index.ts',
   output: { 
-    format: 'umd', file: 'umd/client-core.js', name: 'MovieMasherCore', 
+    format: 'umd', file: 'umd/client-core.js', name: 'MovieMasherClientCore', 
     globals: { 
       '@moviemasher/moviemasher.js': 'MovieMasher',
     },

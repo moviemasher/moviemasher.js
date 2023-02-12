@@ -1,21 +1,20 @@
 import { 
-  JsonObject, assertObject, isArray, requestPromise, 
-  RequestObject, PotentialError, PathOrError, RequestObjects
+  JsonRecord, assertObject, isArray, requestPromise, 
+  RequestObject, PotentialError, PathOrError, RequestObjects, Identified
 } from "@moviemasher/moviemasher.js";
 import { Input } from "../declarations";
 import { assertJobType, JobType } from "../Setup/Enums";
-import { Environment, environment } from "./Environment";
+import { Environment, environment } from "../Environment/Environment";
 
-export type JobTuple = [JobType, JsonObject]
+export type JobTuple = [JobType, JsonRecord]
 
 
 
-export interface CallbackRequestBody extends PotentialError {
-  id: string
+export interface CallbackRequestBody extends Identified, PotentialError {
   completed: number
 }
 
-export const jobExtract = (object: JsonObject): JobTuple => {
+export const jobExtract = (object: JsonRecord): JobTuple => {
   const typeKeypath = environment(Environment.API_KEYPATH_TYPE)
   const jobKeypath = environment(Environment.API_KEYPATH_JOB) 
   const { [typeKeypath]: jobType, [jobKeypath]: jobOrJobs } = object

@@ -1,12 +1,12 @@
-import { DefinitionType } from "../Setup/Enums";
-import { Medias } from "./Media";
+import { AudioType, EffectType, FontType, ImageType, MashType, MediaType, SequenceType, VideoType } from "../Setup/Enums";
+import { MediaArray } from "./Media";
 
-export const MediaDefaults: Record<DefinitionType, Medias> = {
-  [DefinitionType.Audio]: [],
-  [DefinitionType.Effect]: [],
-  [DefinitionType.Font]: [],
-  [DefinitionType.Image]: [],
-  [DefinitionType.Mash]: [],
-  [DefinitionType.Sequence]: [],
-  [DefinitionType.Video]: [],
+export const MediaDefaults: Record<MediaType, MediaArray> = {
+  [AudioType]: [],
+  [EffectType]: [],
+  [FontType]: [],
+  [ImageType]: [],
+  [MashType]: [],
+  [SequenceType]: [],
+  [VideoType]: [],
 }

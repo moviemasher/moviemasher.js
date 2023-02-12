@@ -1,17 +1,16 @@
 
-import { Mash, AVType, GraphType } from "@moviemasher/moviemasher.js"
+import { MashMedia, AVType } from "@moviemasher/moviemasher.js"
 import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs"
 import { FilterGraphsClass } from "./FilterGraphsClass"
 
-export const filterGraphsArgs = (mash: Mash, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
-  const { background, time, avType, graphType, size, videoRate, ...rest } = options
+export const filterGraphsArgs = (mash: MashMedia, options: FilterGraphsOptions = {}): FilterGraphsArgs => {
+  const { background, time, avType, size, videoRate, ...rest } = options
   const definedTime = time || mash.time
   const definedAVType = avType || (definedTime.isRange ? AVType.Both : AVType.Video)
   const filterGraphsOptions: FilterGraphsArgs = {
     ...rest,
     times: mash.timeRanges(definedAVType, definedTime),
     avType: definedAVType,
-    graphType: graphType || GraphType.Mash,
     size: size || mash.imageSize,
     videoRate: videoRate || definedTime.fps,
     mash,

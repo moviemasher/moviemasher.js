@@ -45,7 +45,7 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
     }
     
 
-    // toJSON() : UnknownObject {
+    // toJSON() : UnknownRecord {
     //   const json = super.toJSON()
     //   const { sourceSize, previewSize } = this
     //   if (sourceSize) json.sourceSize = this.sourceSize

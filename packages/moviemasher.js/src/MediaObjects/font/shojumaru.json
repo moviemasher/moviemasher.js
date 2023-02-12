@@ -2,5 +2,12 @@
   "label": "Shojumaru",
   "id": "com.moviemasher.font.shojumaru",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Shojumaru"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Shojumaru" 
+    } 
+  }
 }

@@ -1,6 +1,6 @@
 
 import { 
-  JsonObject, 
+  JsonRecord, 
   assertString, assertPopulatedString
 } from "@moviemasher/moviemasher.js"
 
@@ -43,12 +43,12 @@ export const handleRequest = (jobType: JobType, mediaRequest: MediaRequest): Pro
 
 export const handler = async (event: MediaEvent, context: any) => {
   console.log("event", event)
-  const bodyJson: JsonObject = JSON.parse(event.body)
+  const bodyJson: JsonRecord = JSON.parse(event.body)
 
   const [jobType, mediaRequest] = jobExtract(bodyJson)
   assertMediaRequest(mediaRequest)
   const { id, callback, output } = mediaRequest
-  const endResponse: JsonObject = { id }
+  const endResponse: JsonRecord = { id }
 
   if (callback) {
     const startBody = await callbackPromise(callback, { id, completed: 0.1 })

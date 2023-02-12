@@ -1,6 +1,7 @@
-import { NumberConverter } from "../declarations"
 
-export const roundMethod = (rounding = '') : NumberConverter => {
+type NumberConverter = (value: number) => number 
+
+export const roundMethod = (rounding = ''): NumberConverter => {
   switch (rounding) {
     case 'ceil': return Math.ceil
     case 'floor': return Math.floor

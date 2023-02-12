@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, isDefined, UnknownObject } from '@moviemasher/moviemasher.js'
+import { DataType, isDefined, UnknownRecord } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { InputContext } from '../InputContext'
@@ -18,7 +18,7 @@ export function RgbTypeInput(): ReactResult {
   const { defaultValue: propertyDefault } = property
 
   const value = isDefined(contextValue) ? contextValue : (isDefined(contextDefault) ? contextDefault : propertyDefault)
-  const colorProps: UnknownObject = {
+  const colorProps: UnknownRecord = {
     type: 'color', name, value: String(value),
   }
   if (changeHandler) {

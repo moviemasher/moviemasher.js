@@ -1,4 +1,4 @@
-import { CommandFiles } from "../MoveMe"
+import { CommandFiles } from "../Base/Code"
 import { assertPositive, isPositive } from "./Is"
 
 export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string, visible: boolean) => {

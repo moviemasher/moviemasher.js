@@ -1,11 +1,12 @@
-import { ScalarObject, StringObject, SvgFilters, ValueObject } from "../../declarations"
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { ScalarRecord, StringRecord, ValueRecord } from "../../declarations"
+import { SvgFilters } from "../../Helpers/Svg/Svg"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isAboveZero, isObject } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
-import { colorRgbaKeys } from "../../Utility/Color"
-import { svgFilter } from "../../Utility/Svg"
+import { colorRgbaKeys } from "../../Helpers/Color/ColorFunctions"
+import { svgFilter } from "../../Helpers/Svg/SvgFunctions"
 import { FilterDefinitionObject } from "../Filter"
 
 
@@ -45,10 +46,10 @@ import { FilterDefinitionObject } from "../Filter"
     return commandFilters
   }
 
-  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(valueObject: ScalarRecord): SvgFilters {
     assertConvolutionServerFilter(valueObject)
     const { matrix, bias, multiplier } = valueObject
-    const object: StringObject = { 
+    const object: StringRecord = { 
       filter: 'feConvolveMatrix',
       kernelMatrix: String(matrix),
       bias: String(bias)
@@ -97,7 +98,7 @@ export interface ConvolutionObject {
   multiplier: ConvolutionNumberObject
 }
 
-export interface ConvolutionServerFilter extends ValueObject {
+export interface ConvolutionServerFilter extends ValueRecord {
   matrix: string
   bias: string
   multiplier: string
@@ -174,8 +175,8 @@ const parse = (convolutionObject: ConvolutionServerFilter) => {
   return result
 }
 
-const optionsFromObject =(convolutionObject: ConvolutionObject): ValueObject => {
-  const valueObject: ValueObject = {}
+const optionsFromObject =(convolutionObject: ConvolutionObject): ValueRecord => {
+  const valueObject: ValueRecord = {}
   colorRgbaKeys.map(c => c as ConvolutionRgba).forEach((channel, index) => {
     const multiplier = convolutionObject.multiplier[channel]
     const matrix = convolutionObject.matrix[channel]

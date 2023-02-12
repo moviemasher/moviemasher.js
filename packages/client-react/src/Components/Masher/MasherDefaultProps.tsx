@@ -1,5 +1,5 @@
 import React from 'react'
-import { EditType } from '@moviemasher/moviemasher.js'
+import { VideoType } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod } from '../../declarations'
 import { EditorProps, MasherProps } from './Masher'
@@ -15,12 +15,6 @@ import { ActivityDefaultProps } from '../Activity/ActivityDefaultProps'
 import { Activity } from '../Activity/Activity'
 import { Panels } from '../Panel/Panels'
 import { Icons } from '@moviemasher/theme-default'
-import { ComposerDefaultProps } from '../Composer/ComposerDefaultProps'
-import { Composer } from '../Composer/Composer'
-import { Broadcaster } from '../Broadcaster'
-import { BroadcasterDefaultProps } from '../Broadcaster/BroadcasterDefaultProps'
-import { WebrtcDefaultProps } from '../Webrtc/WebrtcPropsDefault'
-import { Webrtc } from '../Webrtc/Webrtc'
 
 export const MasherDefaultProps: PropsMethod<EditorProps, MasherProps> = function(options = {}) {
   options.className ||= 'editor masher'
@@ -32,9 +26,6 @@ export const MasherDefaultProps: PropsMethod<EditorProps, MasherProps> = functio
     timeline = {}, 
     inspector = {}, 
     activity = {},
-    composer = false,
-    broadcaster = false,
-    webrtc = false,
   } = panels
   const masherChildren: JSX.Element[] = []
 
@@ -46,20 +37,12 @@ export const MasherDefaultProps: PropsMethod<EditorProps, MasherProps> = functio
     browser.icons ||= options.icons
     masherChildren.push(<Browser { ...BrowserDefaultProps(browser) } />)
   }
-  if (inspector || activity || broadcaster || webrtc) {
+  if (inspector || activity) {
     const panelsChildren: JSX.Element[] = []
     if (activity) {
       activity.icons ||= options.icons
       panelsChildren.push(<Activity { ...ActivityDefaultProps(activity) } />)
-    }    
-    if (broadcaster) {
-      broadcaster.icons ||= options.icons
-      panelsChildren.push(<Broadcaster { ...BroadcasterDefaultProps(broadcaster) } />)
-    }
-    if (webrtc) {
-      webrtc.icons ||= options.icons
-      panelsChildren.push(<Webrtc { ...WebrtcDefaultProps(webrtc) } />)
-    }
+    }   
     if (inspector) {  
       inspector.icons ||= options.icons
       panelsChildren.push(<Inspector { ...InspectorDefaultProps(inspector) } />)
@@ -73,15 +56,12 @@ export const MasherDefaultProps: PropsMethod<EditorProps, MasherProps> = functio
     timeline.icons ||= options.icons
     masherChildren.push(<Timeline { ...TimelineDefaultProps(timeline) } />)
   }
-  if (composer) {
-    composer.icons ||= options.icons
-    masherChildren.push(<Composer { ...ComposerDefaultProps(composer) }  />)
-  }
+
 
   return {
     className: 'editor masher', 
     ...rest, 
-    editType: EditType.Mash, 
+    editType: VideoType, 
     children: masherChildren
   }
 }

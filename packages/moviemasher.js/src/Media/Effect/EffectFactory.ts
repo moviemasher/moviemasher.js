@@ -1,4 +1,4 @@
-import { DefinitionType } from "../../Setup/Enums"
+import { EffectType } from "../../Setup/Enums"
 import { EffectDefinitionClass } from "./EffectDefinitionClass"
 import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
 import { assertPopulatedString } from "../../Utility/Is"
@@ -15,31 +15,27 @@ import { MediaDefaults } from "../MediaDefaults"
 export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
   const { id } = object
   assertPopulatedString(id)
-  return new EffectDefinitionClass({...object, type: DefinitionType.Effect })
+  return new EffectDefinitionClass({...object, type: EffectType })
 }
 
 export const effectDefinitionFromId = (id: string): EffectDefinition => {
-  const definition = MediaDefaults[DefinitionType.Effect].find(definition => 
-    definition.id === id
-  )
+  const definition = MediaDefaults[EffectType].find(object => object.id === id)
   if (definition) return definition as EffectDefinition
 
   return effectDefinition({ id })
 }
 
 export const effectInstance = (object: EffectObject): Effect => {
-  const { definitionId = '' } = object
-  // console.log("effectInstance", definitionId, object)
-  const definition = effectDefinitionFromId(definitionId)
+  const { mediaId = '' } = object
+  const definition = effectDefinitionFromId(mediaId)
   return definition.instanceFromObject(object)
 }
 
-export const effectFromId = (definitionId: string): Effect => {
-  const definition = effectDefinitionFromId(definitionId)
-  return definition.instanceFromObject()
+export const effectFromId = (id: string): Effect => {
+  return effectDefinitionFromId(id).instanceFromObject()
 }
-MediaFactories[DefinitionType.Effect] = effectDefinition
-MediaDefaults[DefinitionType.Effect].push(
+MediaFactories[EffectType] = effectDefinition
+MediaDefaults[EffectType].push(
   effectDefinition(effectBlurJson),
   effectDefinition(effectChromaKeyJson),
   effectDefinition(effectEmbossJson),

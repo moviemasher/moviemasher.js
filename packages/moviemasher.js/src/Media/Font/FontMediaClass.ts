@@ -1,15 +1,15 @@
-import { LoadedFont, UnknownObject } from "../../declarations"
-import { GraphFile, PreloadArgs, GraphFiles } from "../../MoveMe"
-import { DataType, DefinitionType, LoadType, Orientation } from "../../Setup/Enums"
+import { UnknownRecord } from "../../declarations"
+import { LoadedFont } from "../../Load/Loaded"
+import { GraphFile, PreloadArgs, GraphFiles } from "../../Base/Code"
+import { DataType, Orientation, FontType } from "../../Setup/Enums"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
 import { MediaBase } from "../MediaBase"
 import { EmptyMethod } from "../../Setup/Constants"
 import { requestFontPromise } from "../../Utility/Request"
 import { Size, sizeCover } from "../../Utility/Size"
 import { centerPoint, Rect } from "../../Utility/Rect"
-import { svgSvgElement, svgText, svgTransform } from "../../Utility/Svg"
-import { CommandProbeData, isLoadedFont } from "../../Loader/Loader"
-import { Transcoding } from "../../Transcode/Transcoding/Transcoding"
+import { svgSvgElement, svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
+import { assertLoadedFont, isLoadedFont } from "../../Load/Loader"
 import { assertPopulatedString, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PointZero } from "../../Utility/Point"
 import { stringFamilySizeRect } from "../../Utility/String"
@@ -17,7 +17,10 @@ import { FontClass } from "./FontClass"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { endpointUrl } from "../../Utility/Endpoint"
+import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
+import { Requestable } from "../../Base/Requestable/Requestable"
+import { Default } from "../../Setup/Default"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
 
 const TextHeight = 1000
@@ -28,17 +31,11 @@ const FontContainerDefinitionWithContainer = ContainerDefinitionMixin(FontContai
 export class FontMediaClass extends FontContainerDefinitionWithContainer implements FontDefinition {
   constructor(object: FontDefinitionObject) {
     super(object)
-    const { string } = object
-    this.string = string || this.label
-    const { loadedMedia, id } = this
-    if (isLoadedFont(loadedMedia)) this.loadedFont = loadedMedia
+    const { string, label } = object
+    this.string = string || label || Default.font.string
 
     this.properties.push(propertyInstance({
       name: 'string', custom: true, type: DataType.String, defaultValue: this.string
-    }))
-    this.properties.push(propertyInstance({
-      name: 'fontId', custom: true, type: DataType.FontId,  
-      defaultValue: id
     }))
     this.properties.push(propertyInstance({
       name: 'height', tweenable: true, custom: true, type: DataType.Percent, 
@@ -49,13 +46,16 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
       name: 'width', tweenable: true, custom: true, type: DataType.Percent, 
       defaultValue: 0.8, max: 2.0, group: DataGroup.Size
     }))
+    
+    const { loadedMedia } = this
+    if (isLoadedFont(loadedMedia)) this.loadedFont = loadedMedia
   }
   // bytes: number = 0
   // mimeType: string = ''
   // info?: CommandProbeData | undefined
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    return this.loadFontPromise(this.preferredTranscoding(DefinitionType.Font)).then(() => {
+    return this.loadFontPromise(this.preferredTranscoding(FontType)).then(() => {
       const { string, family } = this
       assertPopulatedString(family)
       assertPopulatedString(string)
@@ -97,7 +97,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
     // const file = editing ? url : source
     const graphFile: GraphFile = {
-      type: LoadType.Font, file, definition: this
+      type: FontType, file, definition: this
     }
     return [graphFile]
   }
@@ -134,9 +134,15 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
   isVector = true
 
-  loadFontPromise(transcoding: Transcoding): Promise<LoadedFont> {
+  loadFontPromise(transcoding: Requestable): Promise<LoadedFont> {
+    if (this.loadedFont) return Promise.resolve(this.loadedFont)
+    
     const { request } = transcoding
-    return requestFontPromise(request).then(loadedFont => {
+    return requestFontPromise(request).then(orError => {
+      const { error, clientFont: loadedFont } = orError
+      if (error) return errorThrow(error)
+      assertLoadedFont(loadedFont)
+      
       this.family = loadedFont.family
       this.loadedFont = loadedFont
       return loadedFont
@@ -146,7 +152,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     if (this.family) return Promise.resolve()
     
     const { editing } = args
-    const transcoding =  editing ? this.findTranscoding(DefinitionType.Font, 'woff', 'woff2') : undefined
+    const transcoding =  editing ? this.findTranscoding(FontType, 'woff', 'woff2') : undefined
     const requestable = transcoding || this
     return this.loadFontPromise(requestable).then(EmptyMethod)
   }
@@ -161,7 +167,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
   //   return [editing ? urlPrependProtocol('font:', url) : source]
   // }
   
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const { string } = this
     return { ...super.toJSON(), string }
   }
@@ -169,7 +175,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
   string = ''
 
-  type = DefinitionType.Font 
+  type = FontType 
 
   // url = ''
 }

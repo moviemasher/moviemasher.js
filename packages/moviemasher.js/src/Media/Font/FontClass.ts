@@ -1,13 +1,13 @@
 import { Font, FontDefinition, FontObject } from "./Font"
 import { Filter } from "../../Filter/Filter"
-import { Scalar, ScalarObject, SvgItem, UnknownObject } from "../../declarations"
+import { Scalar, ScalarRecord, UnknownRecord } from "../../declarations"
+import { SvgItem } from "../../Helpers/Svg/Svg"
 import { isRect, Rect } from "../../Utility/Rect"
-import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../MoveMe"
-import { GraphFileType, isOrientation, LoadType } from "../../Setup/Enums"
-import { Defined } from "../../Base/Defined"
+import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../Base/Code"
+import { FontType, GraphFileType, isOrientation } from "../../Setup/Enums"
 import { stringFamilySizeRect } from "../../Utility/String"
 import { Property } from "../../Setup/Property"
-import { colorBlack, colorBlackTransparent, colorWhite } from "../../Utility/Color"
+import { colorBlack, colorBlackTransparent, colorWhite } from "../../Helpers/Color/ColorFunctions"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { assertPopulatedString, assertTrue } from "../../Utility/Is"
@@ -15,8 +15,8 @@ import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { Tweening, tweenMaxSize } from "../../Utility/Tween"
 import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility/Array"
-import { IntrinsicOptions } from "../../Edited/Mash/Track/Clip/Clip"
-import { svgText, svgTransform } from "../../Utility/Svg"
+import { IntrinsicOptions } from "../Mash/Track/Clip/Clip"
+import { svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
 import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
 import { ContainerMixin } from "../Container/ContainerMixin"
 
@@ -31,6 +31,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
 
     const { intrinsic } = object as FontObject
     if (isRect(intrinsic)) this._intrinsicRect = intrinsic
+    
   }
 
   canColor(args: CommandFilterArgs): boolean { return true }
@@ -42,14 +43,6 @@ export class FontClass extends FontContainerWithContainer implements Font {
 
   declare definition: FontDefinition
 
-  definitionIds(): string[] { return [...super.definitionIds(), this.fontId] }
-
-  _font?: FontDefinition
-  get font() { return this._font ||= Defined.fromId(this.fontId) as FontDefinition }
-
-  declare fontId: string
-
- 
   hasIntrinsicSizing = true
 
   initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
@@ -93,7 +86,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     assertPopulatedString(textfile, 'textfile')
 
     const fontFile = commandFiles.find(commandFile => (
-      commandFile.inputId === this.id && commandFile.type === LoadType.Font
+      commandFile.inputId === this.id && commandFile.type === FontType
     ))
     assertTrue(fontFile, 'font file') 
     
@@ -113,7 +106,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     const intrinsicRatio = FontHeight / intrinsicRect.height
     const textSize = Math.round(height * intrinsicRatio)
     const textSizeEnd = Math.round(rectEnd.height * intrinsicRatio)
-    const options: ScalarObject = { 
+    const options: ScalarRecord = { 
       x, y, width, height: textSize, color, textfile, fontfile,
       stretch: !isOrientation(lock),
       intrinsicHeight: intrinsicRect.height,
@@ -160,7 +153,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
   }
 
   private intrinsicRectInitialize(): Rect {
-    const { family } = this.font
+    const { family } = this.definition
     assertPopulatedString(family)
 
     const clipString = this.string
@@ -174,40 +167,28 @@ export class FontClass extends FontContainerWithContainer implements Font {
   }
 
   intrinsicsKnown(options: IntrinsicOptions): boolean { 
-    const { size, editing } = options
-    if (!size || isRect(this._intrinsicRect) || this.font.family) return true
+    const { size } = options
+    if (!size || isRect(this._intrinsicRect) || this.definition.family) return true
 
     return false
-
   }
 
-
   loadPromise(args: PreloadArgs): Promise<void> {
-    return this.font.loadPromise(args)
+    return this.definition.loadPromise(args)
   }
 
   pathElement(rect: Rect): SvgItem {
-    const { string, font } = this
-    const { family } = font    
+    const { string, definition } = this
+    const { family } = definition    
     const transform = svgTransform(this.intrinsicRect(true), rect)
     return svgText(string, family, FontHeight, transform)
   }
-
-  // preloadUrls(args: PreloadArgs): string[] { 
-  //   const urls = this.font.preloadUrls(args) 
-  //   console.log(this.constructor.name, "preloadUrls", args, urls)
-  //   return urls
-  // }
   
   setValue(value: Scalar, name: string, property?: Property): void {
     super.setValue(value, name, property)
     if (property) return
 
     switch (name) {
-      case 'fontId':
-        delete this._font
-        delete this._intrinsicRect
-        break
       case 'string':
         delete this._intrinsicRect
         break
@@ -219,7 +200,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
   private _textFilter?: Filter
   get textFilter() { return this._textFilter ||= filterFromId('text')}
 
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const json = super.toJSON()
     json.intrinsic = this.intrinsicRect(true)
     return json

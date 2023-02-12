@@ -1,6 +1,6 @@
 import React from 'react'
-import { UnknownObject } from '@moviemasher/moviemasher.js'
+import { UnknownRecord } from '@moviemasher/moviemasher.js'
 
-export const View = React.forwardRef<HTMLDivElement, UnknownObject>((props, ref) =>
+export const View = React.forwardRef<HTMLDivElement, UnknownRecord>((props, ref) =>
   <div ref={ref} {...props} />
 )

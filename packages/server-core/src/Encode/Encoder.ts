@@ -3,7 +3,7 @@ import fs from 'fs'
 import { EncodeOutput, MashAndMediaObject } from "@moviemasher/moviemasher.js"
 import { RenderingProcessArgs } from "./RenderingProcess/RenderingProcess"
 import { renderingProcessInstance } from "./RenderingProcess/RenderingProcessFactory"
-import { Environment, environment } from "../Utility/Environment"
+import { Environment, environment } from "../Environment/Environment"
 import { EncodeResponse } from './Encode'
 
 export interface Encoder {}

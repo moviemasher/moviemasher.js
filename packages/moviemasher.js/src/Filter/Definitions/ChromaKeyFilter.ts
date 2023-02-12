@@ -1,10 +1,11 @@
-import { SvgFilters, ScalarObject, StringObject } from "../../declarations"
+import { ScalarRecord, StringRecord } from "../../declarations"
+import { SvgFilters } from "../../Helpers/Svg/Svg"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { colorGreen, colorToRgb } from "../../Utility/Color"
+import { colorGreen, colorToRgb } from "../../Helpers/Color/ColorFunctions"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { assertNumber, assertPopulatedString } from "../../Utility/Is"
-import { svgFilter } from "../../Utility/Svg"
+import { svgFilter } from "../../Helpers/Svg/SvgFunctions"
 import { FilterDefinitionObject } from "../Filter"
 
 /**
@@ -28,7 +29,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     this.populateParametersFromProperties()
   }
 
-  filterDefinitionSvgFilter(object: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(object: ScalarRecord): SvgFilters {
     const { similarity, color, blend } = object
     assertNumber(similarity)
     assertNumber(blend)
@@ -43,7 +44,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     const b = 1.0 - (similarity * ((rgb.b) / max))
     const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 ${r} ${g} ${b} -${range} ${range}`
     
-    const colorMatrix: StringObject = {
+    const colorMatrix: StringRecord = {
       filter: 'feColorMatrix',
       type: 'matrix',
       values,

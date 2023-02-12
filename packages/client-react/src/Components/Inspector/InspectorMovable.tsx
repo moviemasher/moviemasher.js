@@ -2,7 +2,7 @@ import React from 'react'
 import { ClassSelected, IndexHandler, isPopulatedString, Movable } from '@moviemasher/moviemasher.js'
 
 import { ReactResult, WithClassName } from '../../declarations'
-import { DragSuffix } from '../../Helpers/DragDrop'
+import { DragSuffix } from '@moviemasher/client-core'
 import { View } from '../../Utilities/View'
 import { MasherContext } from '../Masher/MasherContext'
 

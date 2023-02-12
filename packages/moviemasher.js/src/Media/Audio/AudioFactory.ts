@@ -1,13 +1,14 @@
-import { Errors } from "../../Setup/Errors"
 import { AudioDefinitionClass } from "./AudioDefinitionClass"
 import { AudioDefinition, AudioDefinitionObject, Audio, AudioObject } from "./Audio"
 import { MediaFactories } from "../MediaFactories"
-import { DefinitionType } from "../../Setup/Enums"
+import { AudioType } from "../../Setup/Enums"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../../Helpers/Error/ErrorName"
 
 
 export const audioDefinition = (object : AudioDefinitionObject) : AudioDefinition => {
   const { id } = object
-  if (!id) throw Errors.id
+  if (!id) return errorThrow(ErrorName.MediaId)
 
   return new AudioDefinitionClass(object)
 }
@@ -17,7 +18,8 @@ export const audioDefinitionFromId = (id : string) : AudioDefinition => {
 }
 
 export const audioInstance = (object : AudioObject) : Audio => {
-  const definition = audioDefinition(object)
+  const { mediaId: id, definition: defined } = object
+  const definition = defined || audioDefinitionFromId(id!)
   const instance = definition.instanceFromObject(object)
   return instance
 }
@@ -26,4 +28,4 @@ export const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
-MediaFactories[DefinitionType.Audio] = audioDefinition
+MediaFactories[AudioType] = audioDefinition

@@ -4,8 +4,8 @@ import assert from 'assert'
 import { JestPreloader } from "../../../../images/tester/Utilities/JestPreloader.mjs"
 
 import { 
-  Default, EditorClass, Emitter, editorInstance, timeFromSeconds, assertMash,
-  EditType, ClipClass 
+  Default, EditorClass, Emitter, editorInstance, timeFromSeconds, assertMashMedia,
+  isClip, VideoType, idTemporary 
 } from "@moviemasher/moviemasher.js"
 
 import visibleDefaultJson from "../DefinitionObjects/content/default.json" assert { type: "json" }
@@ -13,7 +13,7 @@ import visibleDefaultJson from "../DefinitionObjects/content/default.json" asser
 
 const createEditor = () => {
   const options = { 
-    editType: EditType.Mash, dimensions: { width: 480, height: 270 } 
+    editType: VideoType, dimensions: { width: 480, height: 270 } 
   }
   return editorInstance(options)
 }
@@ -55,14 +55,14 @@ describe("Editor", () => {
   describe("add", () => {
     test("returns promise that loads clip", async () => {
       const editor = createEditor()
-      await editor.load({ mash: {}, definitions: [] })
+      await editor.load({ id: idTemporary() })
 
       const { edited } = editor
-      assertMash(edited)
+      assertMashMedia(edited)
 
       await editor.add(visibleDefaultJson, {})
       const [clip] = edited.tracks[0].clips
-      assert(clip instanceof ClipClass)
+      assert(isClip(clip))
     })
   })
 
@@ -77,9 +77,9 @@ describe("Editor", () => {
   describe("goToTime", () => {
     test("returns what is set after resolving promise", async () => {
       const editor = createEditor()
-      await editor.load({ mash: {}, definitions: [] })
+      await editor.load({ id: idTemporary() })
       const { edited } = editor
-      assertMash(edited)
+      assertMashMedia(edited)
 
       await editor.add(visibleDefaultJson, {})
       assert.equal(edited.frames, 30)
@@ -92,7 +92,7 @@ describe("Editor", () => {
   describe("selectedItems", () => {
     test("returns expected properties", async () => {
       const editor = createEditor()
-      await editor.load({ mash: {}, definitions: []})
+      await editor.load({ id: idTemporary() })
       // masher.add(themeTextJson)
       const selectedItems = editor.selection.selectedItems()
       // console.log('selectedItems', selectedItems)

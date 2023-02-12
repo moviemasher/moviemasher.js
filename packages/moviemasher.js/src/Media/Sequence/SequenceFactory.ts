@@ -1,7 +1,7 @@
 import { assertPopulatedString } from "../../Utility/Is"
 import { SequenceMediaClass } from "./SequenceMediaClass"
 import { Sequence, SequenceDefinition, SequenceDefinitionObject, SequenceObject } from "./Sequence"
-import { DefinitionType } from "../../Setup/Enums"
+import { MediaType, SequenceType } from "../../Setup/Enums"
 import { MediaFactories } from "../MediaFactories"
 
 export const sequenceDefinition = (object : SequenceDefinitionObject) : SequenceDefinition => {
@@ -16,12 +16,14 @@ export const sequenceDefinitionFromId = (id : string) : SequenceDefinition => {
 }
 
 export const sequenceInstance = (object : SequenceObject) : Sequence => {
-  const definition = sequenceDefinition(object)
-  return definition.instanceFromObject(object)
+  const { mediaId: id, definition: defined } = object
+  const definition = defined || sequenceDefinitionFromId(id!)
+  const instance = definition.instanceFromObject(object)
+  return instance
 }
 
 export const sequenceFromId = (id : string) : Sequence => {
   return sequenceInstance({ id })
 }
 
-MediaFactories[DefinitionType.Sequence] = sequenceDefinition
+MediaFactories[SequenceType] = sequenceDefinition

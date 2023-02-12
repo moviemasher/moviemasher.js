@@ -1,11 +1,11 @@
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertPopulatedString, isNumber } from "../../Utility/Is"
 import { idGenerate } from "../../Utility/Id"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { ValueObject } from "../../declarations"
+import { ValueRecord } from "../../declarations"
 import { tweenOption, tweenPosition } from "../../Utility/Tween"
 import { FilterDefinitionObject } from "../Filter"
 
@@ -48,7 +48,7 @@ export class ScaleFilter extends FilterDefinitionClass {
     const { ffmpegFilter } = this
   
     const position = tweenPosition(videoRate, duration)
-    const options: ValueObject = {
+    const options: ValueRecord = {
       width: tweenOption(width, widthEnd, position, true),
       height: tweenOption(height, heightEnd, position, true),
       // sws_flags: 'accurate_rnd',

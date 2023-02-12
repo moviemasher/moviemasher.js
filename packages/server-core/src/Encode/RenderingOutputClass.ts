@@ -4,10 +4,17 @@ import {
   Clip, isPositive, IntrinsicOptions, Time, 
   GraphFiles, 
 
-  GraphType, Clips, PreloadArgs, EmptyMethod, Size, Errors, 
-  OutputType, timeFromArgs, timeRangeFromTimes,
+  Clips, PreloadArgs, EmptyMethod, Size, 
+  EncodeType, timeFromArgs, timeRangeFromTimes,
   
-  RenderingCommandOutput
+  RenderingCommandOutput,
+  VideoType,
+  FontType,
+  AudioType,
+  ImageType,
+  SequenceType,
+  errorThrow,
+  ErrorName
 } from "@moviemasher/moviemasher.js"
 import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs, RenderingResult } from "./Encode"
 import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
@@ -32,11 +39,11 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get avType() { 
     switch (this.outputType) {
-      case OutputType.Audio: return AVType.Audio
-
-      case OutputType.Font:
-      case OutputType.Image: return AVType.Video
-      case OutputType.Video: return AVType.Both 
+      case AudioType: return AVType.Audio
+      case FontType:
+      case SequenceType: 
+      case ImageType: return AVType.Video
+      case VideoType: return AVType.Both 
     }
   }
 
@@ -60,7 +67,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
 
   get duration(): number { 
-    if (this.outputType === OutputType.Image) return 0
+    if (this.outputType === ImageType) return 0
     
     return this.timeRange.lengthSeconds 
   }
@@ -79,7 +86,7 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get endTime(): Time | undefined {
-    if (this.outputType === OutputType.Image) return 
+    if (this.outputType === ImageType) return 
 
     return this.args.endTime || this.args.mash.endTime
   }
@@ -100,15 +107,13 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get filterGraphsOptions(): FilterGraphsOptions {
-    const { timeRange, graphType, videoRate, outputSize: size } = this
+    const { timeRange, videoRate, outputSize: size } = this
     const filterGraphsOptions: FilterGraphsOptions = {
-      time: timeRange, graphType, videoRate, size, 
+      time: timeRange, videoRate, size, 
       avType: this.avTypeNeededForClips
     }
     return filterGraphsOptions
   }
-
-  graphType = GraphType.Mash
 
   private get mashDurationPromise(): Promise<void> {
     return this.loadClipsPromise(this.durationClips)
@@ -135,12 +140,12 @@ export class RenderingOutputClass implements RenderingOutput {
       if (this.avType === AVType.Audio) return { width: 0, height: 0 }
 
       // console.error(this.constructor.name, "outputSize", this.args.commandOutput)
-      throw Errors.invalid.size + this.outputType + '.outputSize for avType ' + this.avType
+      return errorThrow(ErrorName.OutputDuration)
     }
     return { width, height }
   }
 
-  get outputType(): OutputType { return this.args.commandOutput.outputType }
+  get outputType(): EncodeType { return this.args.commandOutput.outputType }
 
   renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription> {
     // console.log(this.constructor.name, "renderingDescriptionPromise")
@@ -189,7 +194,7 @@ export class RenderingOutputClass implements RenderingOutput {
   get startTime(): Time {
     const { mash, startTime } = this.args
     const { quantize, frame, frames } = mash
-    if (this.outputType === OutputType.Image) {
+    if (this.outputType === ImageType) {
       if (frames < 0) return timeFromArgs(0, quantize)
 
       return mash.timeRange.positionTime(0, 'ceil')
@@ -202,7 +207,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get timeRange(): Time { 
     const { startTime } = this
-    if (this.outputType === OutputType.Image) return startTime
+    if (this.outputType === ImageType) return startTime
 
     return timeRangeFromTimes(startTime, this.endTime) 
   }

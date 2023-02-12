@@ -2,5 +2,12 @@
   "label": "Rubik+Dirt",
   "id": "com.moviemasher.font.rubik-dirt",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Rubik+Dirt"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Rubik+Dirt" 
+    } 
+  }
 }

@@ -1,5 +1,5 @@
-import { LoadedImage } from "../../declarations"
-import { DefinitionType } from "../../Setup/Enums"
+import { LoadedImage } from "../../Load/Loaded"
+import { ImageType, MediaType } from "../../Setup/Enums"
 import { 
   Container, ContainerObject 
 } from "../Container/Container"
@@ -13,7 +13,9 @@ import {
 } from "../../Mixin/UpdatableSize/UpdatableSize"
 import { isMedia, Media, MediaObject } from "../Media"
 
-export interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {}
+export interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {
+  definition?: ImageDefinition
+}
 
 export interface ImageDefinitionObject extends MediaObject, UpdatableSizeDefinitionObject {}
 
@@ -27,10 +29,11 @@ export const isImage = (value: any): value is Image => {
   return isUpdatableSize(value) && isImageDefinition(value.definition)
 }
 export interface ImageDefinition extends Media, UpdatableSizeDefinition {
+  type: ImageType
   instanceFromObject(object?: ImageObject): Image
   loadedImage?: LoadedImage
 }
 
 export const isImageDefinition = (value: any): value is ImageDefinition => {
-  return isMedia(value) && value.type === DefinitionType.Image
+  return isMedia(value) && value.type === ImageType
 }

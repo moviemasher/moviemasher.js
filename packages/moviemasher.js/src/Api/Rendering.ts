@@ -1,8 +1,14 @@
-import { AndId, UploadDescription } from "../declarations"
+import { Identified } from "../Base/Identified"
 import { RenderingOptions } from "../Encode/Encode"
-import { LoadType, OutputType } from "../Setup/Enums"
+import { LoadType, EncodeType } from "../Setup/Enums"
 import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
+
+export interface UploadDescription {
+  name: string
+  type: string
+  size: number
+}
 
 export interface RenderingState {
   total: number
@@ -10,7 +16,7 @@ export interface RenderingState {
 }
 
 export type RenderingStatus = {
-  [index in OutputType]?: RenderingState
+  [index in EncodeType]?: RenderingState
 }
 
 
@@ -19,7 +25,7 @@ export interface RenderingStartRequest extends ApiRequest, RenderingOptions {}
 
 export interface RenderingStartResponse extends ApiCallbackResponse {}
 
-export interface RenderingStatusRequest extends ApiRequest, AndId {
+export interface RenderingStatusRequest extends ApiRequest, Identified {
   renderingId: string
 }
 export interface RenderingStatusResponse extends ApiCallbackResponse, RenderingStatus {}

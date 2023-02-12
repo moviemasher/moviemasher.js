@@ -1,6 +1,6 @@
-import { JsonValue, UnknownObject, Value, ValueObject } from "../declarations"
+import { JsonValue, UnknownRecord, Value, ValueRecord } from "../declarations"
 import { Size } from "../Utility/Size"
-import { Errors } from "../Setup/Errors"
+
 import { assertDefined, assertValueObject, isBoolean, isDefined, isNan, isNumber, isNumeric, isString, isUndefined } from "../Utility/Is"
 import { Time, TimeRange } from "./Time/Time"
 import { Filter } from "../Filter/Filter"
@@ -9,6 +9,8 @@ import { Property } from "../Setup/Property"
 import { Evaluation } from "./Evaluation"
 import { propertyTypeIsString } from "./PropertyType"
 import { MediaInstance } from "../Media/MediaInstance/MediaInstance"
+import { errorThrow } from "./Error/ErrorFunctions"
+import { ErrorName } from "./Error/ErrorName"
 
 const EvaluatorArray = (elements : JsonValue) : Value[] => {
   if (isString(elements)) return String(elements).split(',')
@@ -16,7 +18,7 @@ const EvaluatorArray = (elements : JsonValue) : Value[] => {
   return <Value[]> elements
 }
 
-const EvaluatorConditional = (conditional : UnknownObject) : string => {
+const EvaluatorConditional = (conditional : UnknownRecord) : string => {
   const { condition } = conditional
 
   if (isDefined(conditional.is)) return `${condition}==${conditional.is}`
@@ -86,7 +88,7 @@ export class Evaluator {
     return false
   }
 
-  private evaluateConditionals(evaluation: Evaluation, conditionals: ValueObject[], debug?: boolean): Value {
+  private evaluateConditionals(evaluation: Evaluation, conditionals: ValueRecord[], debug?: boolean): Value {
     const trueConditional = conditionals.find(conditional => {
       const expression = EvaluatorConditional(conditional)
       if (isNumeric(expression)) return !!Number(expression)
@@ -105,11 +107,11 @@ export class Evaluator {
       return this.evaluateBooleanValue(result)
 
     })
-    assertValueObject(trueConditional, Errors.eval.conditionTruth) 
+    assertValueObject(trueConditional) 
 
     const { value } = trueConditional
-    if (isUndefined(value)) throw Errors.eval.conditionValue
-
+    if (isUndefined(value)) errorThrow(ErrorName.Evaluation)
+    
     return value
   }
 
@@ -215,7 +217,7 @@ export class Evaluator {
 
     this._filter = value
     this.parameterInstances = this.filter.parametersDefined
-    this.filterCustomProperties = [...this.filter.propertiesCustom]
+    this.filterCustomProperties = this.filter.properties.filter(property => property.custom)
     this.numbersInitialize()
   }
 
@@ -230,7 +232,7 @@ export class Evaluator {
   }
 
   private logDebug(evaluation: Evaluation) {
-    console.debug(this.filter.definitionId, `\n${evaluation.logs.join("\n")}`)
+    console.debug(this.filter.definition.id, `\n${evaluation.logs.join("\n")}`)
   }
 
   label = 'createVisibleContext'
@@ -239,7 +241,7 @@ export class Evaluator {
   get instance(): MediaInstance { return this._instance! }
   set instance(value: MediaInstance) {
     this._instance = value
-    this.instanceCustomProperties = [...this.instance.propertiesCustom]
+    this.instanceCustomProperties = this.instance.properties.filter(property => property.custom)
   }
 
   private numbers = new Map<string, number>()
@@ -265,14 +267,14 @@ export class Evaluator {
   parameterNumber(key: string, debug?: boolean): number {
     const value = this.parameter(key, debug)
     const number = Number(value)
-    if (isNan(number)) throw Errors.eval.number + `${key} ≠ ${value}`
+    if (isNan(number)) errorThrow(ErrorName.Evaluation)
 
     return number
   }
 
   parameter(key: string, debug?: boolean): Value {
     const parameter = this.parameterInstance(key)
-    if (!parameter) throw Errors.eval.string + key
+    if (!parameter) return errorThrow(ErrorName.Evaluation)
 
     const evaluation = new Evaluation(key)
     this.expandParameter(evaluation, parameter, debug)
@@ -283,7 +285,7 @@ export class Evaluator {
 
   parameterValue(key: string, debug?: boolean): Value {
     const parameter = this.parameterInstance(key)
-    if (!parameter) throw Errors.eval.string + key
+    if (!parameter) return errorThrow(ErrorName.Evaluation)
 
     const evaluation = new Evaluation(key)
     this.expandParameter(evaluation, parameter, debug)
@@ -291,8 +293,8 @@ export class Evaluator {
     return evaluation.result
   }
 
-  get parameters(): ValueObject {
-    const evaluated: ValueObject = {}
+  get parameters(): ValueRecord {
+    const evaluated: ValueRecord = {}
     this.parameterInstances.forEach(parameter => {
       const { name } = parameter
       evaluated[name] = this.parameter(name)
@@ -300,8 +302,8 @@ export class Evaluator {
     return evaluated
   }
 
-  get parameterValues(): ValueObject {
-    const evaluated: ValueObject = {}
+  get parameterValues(): ValueRecord {
+    const evaluated: ValueRecord = {}
     this.parameterInstances.forEach(parameter => {
       const { name } = parameter
       evaluated[name] = this.parameterValue(name)

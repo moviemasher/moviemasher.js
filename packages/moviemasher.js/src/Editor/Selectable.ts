@@ -1,6 +1,6 @@
 import { SelectType } from "../Setup/Enums"
 import { Actions } from "./Actions/Actions"
-import { SelectedItems } from "../Utility/SelectedProperty"
+import { SelectedItems } from "../Helpers/Select/SelectedProperty"
 
 export interface Selectable { 
   selectables(): Selectables

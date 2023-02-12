@@ -2,13 +2,13 @@ import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg
 import {
   AVType,
   CommandFilters,
-  isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, ValueObject
+  isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, ValueRecord
 } from '@moviemasher/moviemasher.js'
 
 import { Command } from './Command'
 import { CommandOptions } from '../Encode/Encode'
 
-const commandCombinedOptions = (args: ValueObject): string[] => Object.entries(args).map(
+const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
   ([key, value]) => {
     const keyString = `-${key}`
     const valueString = String(value)
@@ -79,7 +79,7 @@ export const commandInstance = (args: CommandOptions): Command => {
   }
   // if (isPopulatedString(output.format) && output.format !== OutputFormat.Png) instance.format(output.format)
 
-  const options: ValueObject = output.options || {}
+  const options: ValueRecord = output.options || {}
   const instanceOptions = isPopulatedObject(options) ? options : {}
   instanceOptions.hide_banner = ''
   instanceOptions.shortest = ''

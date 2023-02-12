@@ -13,7 +13,6 @@
       {
         "dense": true,
         "trackType": "video",
-        "layer": 0,
         "clips": [
           {
             "contentId": "frog-image",

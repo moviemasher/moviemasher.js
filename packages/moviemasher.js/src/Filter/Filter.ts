@@ -1,16 +1,17 @@
 import {
-  AndId, ScalarObject, SvgFilters, SvgItems, UnknownObject
+  ScalarRecord, UnknownRecord
 } from "../declarations"
+import { Identified } from "../Base/Identified"
+import { SvgFilters, SvgItems } from "../Helpers/Svg/Svg"
 import { 
   CommandFiles, CommandFilters, FilterCommandFileArgs, 
   FilterCommandFilterArgs, FilterDefinitionArgs, 
   FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs 
-} from "../MoveMe"
+} from "../Base/Code"
 import { Parameter, ParameterObject } from "../Setup/Parameter"
-import { isDefinitionType } from "../Setup/Enums"
 import { Property } from "../Setup/Property"
 import { Propertied } from "../Base/Propertied"
-import { errorsThrow } from "../Utility/Errors"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { isObject } from "../Utility/Is"
 
 export interface FilterArgs {
@@ -28,7 +29,7 @@ export interface FilterObject {
   label?: string
 }
 
-export interface FilterDefinitionObject extends AndId {}
+export interface FilterDefinitionObject extends Identified {}
 
 export interface Filter extends Propertied {
   commandFiles(args: FilterCommandFileArgs): CommandFiles
@@ -37,24 +38,22 @@ export interface Filter extends Propertied {
   filterSvgFilter(): SvgFilters
   filterSvgs(args?: FilterArgs): SvgItems
   parametersDefined: Parameter[]
-  propertiesCustom: Property[]
-  scalarObject(tweening?: boolean): ScalarObject
+  scalarObject(tweening?: boolean): ScalarRecord
 }
 
-export interface FilterDefinition {
+export interface FilterDefinition extends Identified {
   commandFiles(args: FilterDefinitionCommandFileArgs): CommandFiles
   commandFilters(args: FilterDefinitionCommandFilterArgs): CommandFilters
-  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters
+  filterDefinitionSvgFilter(valueObject: ScalarRecord): SvgFilters
   filterDefinitionSvgs(args: FilterDefinitionArgs): SvgItems
-  id: string
   instanceFromObject(object?: FilterObject): Filter
   parameters: Parameter[]
   properties: Property[]
-  toJSON(): UnknownObject
+  toJSON(): UnknownRecord
 }
 export const isFilterDefinition = (value: any): value is FilterDefinition => {
   return isObject(value) && "instanceFromObject" in value
 }
 export function assertFilterDefinition(value: any, name?: string): asserts value is FilterDefinition {
-  if (!isFilterDefinition(value)) errorsThrow(value, 'FilterDefinition', name)
+  if (!isFilterDefinition(value)) errorThrow(value, 'FilterDefinition', name)
 }

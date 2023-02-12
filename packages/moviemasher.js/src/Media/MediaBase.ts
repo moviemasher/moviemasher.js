@@ -1,9 +1,8 @@
-import { Defined } from "../Base/Defined"
-import { UnknownObject } from "../declarations"
-import { PreloadArgs, ServerPromiseArgs } from "../MoveMe"
-import { DefinitionType } from "../Setup/Enums"
-import { Errors } from "../Setup/Errors"
-import { Property } from "../Setup/Property"
+import { UnknownRecord } from "../declarations"
+import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
+import { assertMediaType, DataType, MediaType } from "../Setup/Enums"
+
+import { Property, propertyInstance } from "../Setup/Property"
 import { assertPopulatedString } from "../Utility/Is"
 import { requestPromise } from "../Utility/Request"
 import { Size } from "../Utility/Size"
@@ -13,28 +12,42 @@ import { MediaInstanceBase } from "./MediaInstance/MediaInstanceBase"
 import { Decodings } from "../Decode/Decoding/Decoding"
 import { decodingInstance } from "../Decode/Decoding/DecodingFactory"
 import { Transcoding, Transcodings } from "../Transcode/Transcoding/Transcoding"
-import { TranscodingClass } from "../Transcode/Transcoding/TranscodingClass"
 import { transcodingInstance } from "../Transcode/Transcoding/TranscodingFactory"
+import { RequestableClass } from "../Base/Requestable/RequestableClass"
+import { Requestable } from "../Base/Requestable/Requestable"
+import { Default } from "../Setup/Default"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../Helpers/Error/ErrorName"
 
-export class MediaBase extends TranscodingClass implements Media { 
+export class MediaBase extends RequestableClass implements Media { 
   constructor(object: MediaObject) {
     super(object)
-    
-    const { 
-      label, decodings, transcodings, 
-    } = object 
- 
-    if (label) this.label = label
+    const { decodings, transcodings, file } = object 
+    if (file) this.file = file
     if (decodings) this.decodings.push(...decodings.map(decodingInstance))
     if (transcodings) this.transcodings.push(...transcodings.map(transcodingInstance))
+
+    const { type } = this
+    assertMediaType(type)
+
+    this.properties.push(propertyInstance({ 
+      name: 'label', type: DataType.String, defaultValue: Default[type].label
+    }))
   }
-  propertiesCustom!: Property[]
+
+  declare type: MediaType
+  
+  unload(): void {
+    throw new Error("Method not implemented.")
+  }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    throw new Error(Errors.unimplemented)
+    return errorThrow(ErrorName.Unimplemented)
   }
   
-  findTranscoding(type: DefinitionType, ...kind: string[]): Transcoding | undefined {
+  file?: File | undefined
+
+  findTranscoding(type: MediaType, ...kind: string[]): Transcoding | undefined {
     return this.transcodings.find(transcoding => {
       if (transcoding.type !== type) return false
 
@@ -55,11 +68,13 @@ export class MediaBase extends TranscodingClass implements Media {
 
   isVector = false
   
+  declare label: string
+  
   loadPromise(args: PreloadArgs): Promise<void> { 
-    throw new Error(Errors.unimplemented)
+    return errorThrow(ErrorName.Unimplemented)
   }
 
-  preferredTranscoding(...types: DefinitionType[]): Transcoding {
+  preferredTranscoding(...types: MediaType[]): Requestable {
     for (const type of types) {
       const found = this.transcodings.find(object => object.type === type)
       if (found) return found
@@ -68,7 +83,6 @@ export class MediaBase extends TranscodingClass implements Media {
   }
 
   serverPromise(args: ServerPromiseArgs): Promise<void> {
-
     if (this.serverPath) return Promise.resolve()
 
     const { request } = this
@@ -81,20 +95,13 @@ export class MediaBase extends TranscodingClass implements Media {
     })
   }
   
-  toJSON(): UnknownObject {
+  toJSON(): UnknownRecord {
     const { label, decodings, transcodings } = this
     return { ...super.toJSON(), label, decodings, transcodings }
   }
 
-  label: string = ''
   transcodings: Transcodings = []
   properties: Property[] = []
   decodings: Decodings = []
   serverPath = ''
-
-  static fromObject(object: MediaObject): Media {
-    const { id } = object
-    assertPopulatedString(id, 'id')
-    return Defined.definition(object)
-  }
 }

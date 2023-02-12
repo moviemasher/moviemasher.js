@@ -1,5 +1,5 @@
 import { RenderingCommandOutput } from "../Encode/Encode"
-import { isOutput, Output } from "../MoveMe"
+import { isOutput, Output } from "../Base/Code"
 import { isTranscodeType, TranscodeType } from "../Setup/Enums"
 
 export interface TranscodeOutput extends Output {

@@ -1,10 +1,11 @@
 import { ShapeContainer, ShapeContainerDefinition } from "./ShapeContainer"
 import { NamespaceSvg } from "../../../Setup/Constants"
-import { colorBlack, colorBlackOpaque, colorWhite } from "../../../Utility/Color"
-import { SvgItem, ValueObject } from "../../../declarations"
+import { colorBlack, colorBlackOpaque, colorWhite } from "../../../Helpers/Color/ColorFunctions"
+import { ValueRecord } from "../../../declarations"
+import { SvgItem } from "../../../Helpers/Svg/Svg"
 import { Rect, rectsEqual, RectTuple } from "../../../Utility/Rect"
 import { Size, sizeAboveZero, sizeEven, sizesEqual } from "../../../Utility/Size"
-import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../MoveMe"
+import { CommandFile, CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../../Base/Code"
 import { DataType, GraphFileType } from "../../../Setup/Enums"
 import { ContainerMixin } from "../ContainerMixin"
 import { assertPopulatedArray, assertPopulatedString, isBoolean, isPopulatedArray, isPopulatedString, isTimeRange } from "../../../Utility/Is"
@@ -16,12 +17,12 @@ import { DataGroup, propertyInstance } from "../../../Setup/Property"
 import { idGenerate } from "../../../Utility/Id"
 import { PropertyTweenSuffix } from "../../../Base/Propertied"
 import { PointZero } from "../../../Utility/Point"
-import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgTransform } from "../../../Utility/Svg"
+import { svgPathElement, svgPolygonElement, svgSetTransformRects, svgTransform } from "../../../Helpers/Svg/SvgFunctions"
 import { MediaInstanceBase } from "../../MediaInstance/MediaInstanceBase"
-import { IntrinsicOptions } from "../../../Edited"
 import { Time, TimeRange } from "../../../Helpers"
 import { ContentRectArgs } from "../../Content"
 import { Effects } from "../../Effect"
+import { IntrinsicOptions } from "../../Mash/Track/Clip/Clip"
 
 const ShapeContainerWithTweenable = TweenableMixin(MediaInstanceBase)
 const ShapeContainerWithContainer = ContainerMixin(ShapeContainerWithTweenable)
@@ -336,10 +337,8 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const intrinsicRect = isDefault ? maxSize : this.intrinsicRect()
     const { width: inWidth, height: inHeight } = intrinsicRect
     const dimensionsString = `width="${inWidth}" height="${inHeight}"`
-    // console.log(this.constructor.name, "visibleCommandFiles", this.definitionId, rect, rectEnd, intrinsicRect)
 
     const transformAttribute = svgTransform(intrinsicRect, maxSize)
-    // console.log(this.constructor.name, "visibleCommandFiles", rect, rectEnd, transformAttribute)
     const tags: string[] = []
     tags.push(`<svg viewBox="0 0 ${maxWidth} ${maxHeight}" xmlns="${NamespaceSvg}">`)
     tags.push(`<g ${dimensionsString} transform="${transformAttribute}" >`)
@@ -349,7 +348,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     tags.push("</svg>")
     const svgTag = tags.join("")
   
-    const options: ValueObject = {}
+    const options: ValueRecord = {}
     if (duration) {
       options.loop = 1
       options.framerate = videoRate
@@ -360,7 +359,6 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
       type: GraphFileType.Svg, file: id, content: svgTag, 
       input: true, inputId: id, definition, options
     }
-    // console.log(this.constructor.name, "visibleCommandFiles", commandFile)
   
     return [commandFile]
   }

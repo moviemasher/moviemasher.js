@@ -1,23 +1,25 @@
 import React from "react"
 import { 
-  assertDefined, EventType, isEventType, Editor, Medias, 
-  DefinitionType, Defined, isPopulatedArray 
+  assertDefined, EventType, isEventType, Editor, MediaArray, 
+  MediaType, isPopulatedArray 
 } from "@moviemasher/moviemasher.js"
 
 import { MasherContext } from "../Components/Masher/MasherContext"
 
 const EditorDefinitionsEventAdded = EventType.Added
 const EditorDefinitionsEventResize = EventType.Resize
-export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Medias] => {
+export const useEditorDefinitions = (types: MediaType[] = []): [Editor, MediaArray] => {
   const masherContext = React.useContext(MasherContext)
   const { editor } = masherContext
   assertDefined(editor)
 
-  const storeRef = React.useRef<Record<string, Medias>>({})
+  const { media } = editor
+
+  const storeRef = React.useRef<Record<string, MediaArray>>({})
   const { eventTarget } = editor
   
-  const snapshotInitialize = (): Medias => {
-    const lists = types.map(type => Defined.byType(type))
+  const snapshotInitialize = (): MediaArray => {
+    const lists = types.map(type => media.byType(type))
     return lists.length === 1 ? lists[0] : lists.flat()
   }
 
@@ -32,7 +34,7 @@ export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Med
       const { detail } = event
       const { definitionTypes } = detail
       if (isPopulatedArray(definitionTypes)) {
-        const types = definitionTypes as DefinitionType[]
+        const types = definitionTypes as MediaType[]
 
         const { current} = storeRef
         const allIds = Object.keys(current)
@@ -41,7 +43,7 @@ export const useEditorDefinitions = (types: DefinitionType[] = []): [Editor, Med
       }
     }
   }
-  const externalStore = React.useSyncExternalStore<Medias>((callback) => {
+  const externalStore = React.useSyncExternalStore<MediaArray>((callback) => {
     eventTarget.addEventListener(EditorDefinitionsEventAdded, callback)
     eventTarget.addEventListener(EditorDefinitionsEventResize, callback)
     return () => {

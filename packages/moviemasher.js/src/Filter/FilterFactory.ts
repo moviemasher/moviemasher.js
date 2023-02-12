@@ -5,7 +5,7 @@ import { ConvolutionFilter } from "./Definitions/ConvolutionFilter"
 import { CropFilter } from "./Definitions/CropFilter"
 import { OverlayFilter } from "./Definitions/OverlayFilter"
 import { ScaleFilter } from "./Definitions/ScaleFilter"
-import { Errors } from "../Setup/Errors"
+
 import { FilterDefinition, Filter, FilterDefinitionObject, Filters, FilterObject } from "./Filter"
 import { assertPopulatedString } from "../Utility/Is"
 import { FilterDefinitionClass } from "./FilterDefinitionClass"
@@ -18,6 +18,8 @@ import { AlphamergeFilter } from "./Definitions/AlphamergeFilter"
 import { TrimFilter } from "./Definitions/TrimFilter"
 import { TextFilter } from "./Definitions/TextFilter"
 import { ColorizeFilter } from "./Definitions/ColorizeFilter"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { ErrorName } from "../Helpers/Error/ErrorName"
 
 export const FilterIdPrefix = `${IdPrefix}filter.`
 
@@ -38,7 +40,8 @@ export const filterDefinitionFromId = (id: string): FilterDefinition => {
 
 export const filterInstance = (object: FilterObject): Filter => {
   const { id } = object
-  if (!id) throw Errors.invalid.definition.id
+  if (!id) return errorThrow(ErrorName.FilterId) 
+
   const definition = filterDefinitionFromId(id)
   return definition.instanceFromObject(object)
 }

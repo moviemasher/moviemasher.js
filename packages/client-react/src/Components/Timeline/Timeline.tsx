@@ -1,18 +1,21 @@
 import React from 'react'
 import {
-  Rect, RectZero,
-  Clip, DefinitionType, DroppingPosition, EventType, Track, pixelToFrame, Clips, pixelPerFrame, Point, eventStop, arrayLast, EditorIndex, assertPopulatedString, isPositive, assertClip} from '@moviemasher/moviemasher.js'
+  Rect, RectZero, Clip, DroppingPosition, EventType, Track, pixelToFrame, Clips, 
+  Point, eventStop, EditorIndex, isPositive, assertClip, 
+  EffectType, isMediaObject
+} from '@moviemasher/moviemasher.js'
 
 import { PropsAndChildren, ReactResult } from '../../declarations'
 import { TimelineContext, TimelineContextInterface } from './TimelineContext'
 import { useListeners } from '../../Hooks/useListeners'
 import {
   dragTypes, isDragOffsetObject, isDragDefinitionObject, isTransferType, 
-  dragDefinitionType, TransferTypeFiles, dragData
-} from '../../Helpers/DragDrop'
+  dragMediaType, TransferTypeFiles, dragData, pixelPerFrame
+} from '@moviemasher/client-core'
 import { useEditor } from '../../Hooks/useEditor'
 import { MasherContext } from '../Masher/MasherContext'
 import { View } from '../../Utilities/View'
+
 
 
 export interface TimelineProps extends PropsAndChildren {}
@@ -44,7 +47,7 @@ export function Timeline(props: TimelineProps): ReactResult {
   const refresh = () => { setRefreshed(value => value + 1) }
 
   useListeners({
-    [EventType.Mash]: () => { setZoom(TimelineDefaultZoom) },
+    [EventType.Loaded]: () => { setZoom(TimelineDefaultZoom) },
     [EventType.Action]: refresh,
     [EventType.Selection]: () => {
       setSelectedClip(editor.selection.clip)
@@ -66,8 +69,8 @@ export function Timeline(props: TimelineProps): ReactResult {
     if (clip || type.startsWith('clip')) return true
 
     // effects can only be dropped on clips
-    const definitionType = dragDefinitionType(type)
-    return definitionType !== DefinitionType.Effect
+    const definitionType = dragMediaType(type)
+    return definitionType !== EffectType
   }
 
   const onDragLeave = (event: DragEvent) => {
@@ -132,8 +135,9 @@ export function Timeline(props: TimelineProps): ReactResult {
       console.log("onDrop", data)
       if (isDragDefinitionObject(data)) {
         const { mediaObject } = data
+        if (isMediaObject(mediaObject)) drop(mediaObject, editorIndex)
         // console.log("Timeline onDrop definition", definitionObject)
-        drop(mediaObject, editorIndex)
+        
       } else {
         const { clip } = editor.selection
         assertClip(clip)

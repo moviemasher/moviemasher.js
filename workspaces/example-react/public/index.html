@@ -27,14 +27,14 @@ const element = document.getElementById('root')
 const { createElement } = React
 const { createRoot } = ReactDOM
 const { Masher, MasherDefaultProps } = MovieMasherClient
-const { TextContainerId } = MovieMasher
+const { TextContainerId, idTemporary } = MovieMasher
 
 // create mash object containing text clip on a track
 const clip = { 
   container: { string: 'Hello World!' }, 
   containerId: TextContainerId
 }
-const mash = {} // tracks: [{ clips: [clip] }] }
+const mash = { id: idTemporary(), media: [] } // tracks: [{ clips: [clip] }] }
 
 // create root and render new Masher with mash in props
 const props = MasherDefaultProps({ edited: { mash } })

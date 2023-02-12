@@ -7,7 +7,7 @@ import {
 import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
-import { droppingPositionClass } from "../../Helpers/DragDrop"
+import { droppingPositionClass } from "@moviemasher/client-core"
 import type { ThemeIcons } from '@moviemasher/theme-default'
 
 export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {

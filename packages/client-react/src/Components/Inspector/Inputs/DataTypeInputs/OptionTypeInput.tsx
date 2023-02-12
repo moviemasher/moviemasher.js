@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownObject, assertPopulatedArray } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownRecord, assertPopulatedArray } from '@moviemasher/moviemasher.js'
 
 import { ReactResult } from '../../../../declarations'
 import { DataTypeInputs } from './DataTypeInputs'
@@ -12,7 +12,7 @@ export function OptionTypeInput(): ReactResult {
   assertPopulatedArray(options)
 
   const ids = options.map(String)
-  const selectProps: UnknownObject = {
+  const selectProps: UnknownRecord = {
     children: ids.map(id => {
     const optionProps = { value: id, children: id, key: id }
     return <option {...optionProps} />

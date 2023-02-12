@@ -1,7 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg'
 import { execSync } from "child_process";
 
-import { assertProbeOptions, ProbeType, DecodeType, errorFromAny } from "@moviemasher/moviemasher.js";
+import { assertProbeOptions, ProbeType, DecodeType, errorCaught } from "@moviemasher/moviemasher.js";
 import { Decoder, DecodeResponse } from "../../Decode";
 import { Decoders } from "../Decoders";
 
@@ -31,7 +31,7 @@ export const probe: Decoder = (localPath: string, options?: unknown): Promise<De
 
     command.ffprobe((error: any, data: ffmpeg.FfprobeData) => {
       if (error) {
-        resolve({ ...errorFromAny(error), ...response })
+        resolve({ ...errorCaught(error), ...response })
       } else {
         const formats = alphaFormats()
         response.info = data

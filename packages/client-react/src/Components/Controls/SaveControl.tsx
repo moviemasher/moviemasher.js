@@ -1,6 +1,6 @@
 import React from "react"
 import {
-  MasherAction, EventType,
+  MasherAction, EventType, assertMashMedia,
 } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
@@ -12,11 +12,6 @@ import { useClient } from "../../Hooks/useClient"
 export function SaveControl(props:PropsAndChild): ReactResult {
   const editor = useEditor()
   const masherContext = React.useContext(MasherContext)
-  const client = useClient()
-
-  client.save({})
-
-  
   const { save } = masherContext
   
   const getDisabled = () => !editor.can(MasherAction.Save)

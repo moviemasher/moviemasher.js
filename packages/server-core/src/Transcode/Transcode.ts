@@ -1,9 +1,9 @@
-import { DefinitionType, errorsThrow, isTranscodeOutput, PathOrError, TranscodeOutput } from "@moviemasher/moviemasher.js"
+import { MediaType, errorThrow, isTranscodeOutput, PathOrError, TranscodeOutput } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
 import { isMediaRequest, MediaRequest, MediaResponse } from "../Media/Media"
 
 export interface TranscodeInput extends Required<Input> {
-  type: DefinitionType
+  type: MediaType
 }
 
 
@@ -16,7 +16,7 @@ export const isTranscodeRequest = (value: any): value is TranscodeRequest => {
 }
 
 export function assertTranscodeRequest(value: any): asserts value is TranscodeRequest {
-  if (!isTranscodeRequest(value)) errorsThrow(value, 'TranscodeRequest')
+  if (!isTranscodeRequest(value)) errorThrow(value, 'TranscodeRequest')
 }
 
 export interface TranscodeResponse extends MediaResponse, PathOrError {}

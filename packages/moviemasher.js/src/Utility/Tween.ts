@@ -1,10 +1,10 @@
-import { NumberObject, PopulatedString, Scalar, Value } from "../declarations"
+import { NumberRecord, PopulatedString, Scalar, Value } from "../declarations"
 import { Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
 import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock, sizeRound, sizeFloor } from "./Size"
-import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "./Color"
+import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "../Helpers/Color/ColorFunctions"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
-import { pixelsMixRbg, pixelsMixRbga } from "./Pixel"
+import { colorMixRbg, colorMixRbga } from "../Helpers/Color/ColorFunctions"
 import { DirectionObject, Orientation } from "../Setup/Enums"
 import { assertTweenable, Tweenable } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
@@ -40,10 +40,10 @@ export const tweenColorStep = (value: PopulatedString, valueEnd: PopulatedString
   const offset = frame / frames
   assertTrue(colorValidHex(value), 'hex color')
   if (value.length === 7 || value.length === 4) {
-    const result = colorRgbToHex(pixelsMixRbg(colorToRgb(value), colorToRgb(valueEnd), offset))
+    const result = colorRgbToHex(colorMixRbg(colorToRgb(value), colorToRgb(valueEnd), offset))
     return result
   }
-  return colorRgbaToHex(pixelsMixRbga(colorToRgba(value), colorToRgba(valueEnd), offset))
+  return colorRgbaToHex(colorMixRbga(colorToRgba(value), colorToRgba(valueEnd), offset))
 }
 
 export const tweenRectStep = (rect: Rect, rectEnd: Rect, frame: number, frames: number): Rect => {
@@ -123,10 +123,10 @@ export const tweenPosition = (videoRate: number, duration: number, frame = 'n') 
   `(${frame}/${videoRate * duration})`
 )
 
-export const tweenNumberObject = (object: any): NumberObject => {
+export const tweenNumberObject = (object: any): NumberRecord => {
   if (!isObject(object)) return {}
   const entries = Object.entries(object).filter(([_, value]) => isNumber(value)) 
-  return Object.fromEntries(entries) as NumberObject
+  return Object.fromEntries(entries) as NumberRecord
 }
 
 export const tweenOverRect = (rect: Rect, rectEnd?: any): Rect => {

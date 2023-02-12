@@ -1,14 +1,15 @@
-import { ScalarObject, SvgFilters, ValueObject } from "../../declarations"
+import { ScalarRecord, ValueRecord } from "../../declarations"
+import { SvgFilters } from "../../Helpers/Svg/Svg"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { assertNumber, assertPopulatedString, isNumber } from "../../Utility/Is"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { idGenerate } from "../../Utility/Id"
 import { tweenPosition } from "../../Utility/Tween"
-import { svgFilterElement, svgSet } from "../../Utility/Svg"
+import { svgFilterElement, svgSet } from "../../Helpers/Svg/SvgFunctions"
 import { FilterDefinitionObject } from "../Filter"
 
 export class OpacityFilter extends FilterDefinitionClass {
@@ -29,7 +30,7 @@ export class OpacityFilter extends FilterDefinitionClass {
     assertNumber(opacity)
     assertPopulatedString(filterInput, 'filterInput')
 
-    const options: ValueObject = { 
+    const options: ValueRecord = { 
       lum: 'lum(X,Y)', cb: 'cb(X,Y)', cr: 'cr(X,Y)', a: `alpha(X,Y)*${opacity}` 
     }
     if (duration) {
@@ -59,7 +60,7 @@ export class OpacityFilter extends FilterDefinitionClass {
   
   protected _ffmpegFilter = 'geq'
   
-  filterDefinitionSvgFilter(valueObject: ScalarObject): SvgFilters {
+  filterDefinitionSvgFilter(valueObject: ScalarRecord): SvgFilters {
     const { opacity } = valueObject
     assertNumber(opacity)
 

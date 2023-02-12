@@ -2,5 +2,12 @@
   "label": "Butcherman",
   "id": "com.moviemasher.font.butcherman",
   "type": "font",
-  "source": "https://fonts.googleapis.com/css2?family=Butcherman"
+  "request": { 
+    "endpoint": { 
+      "protocol": "https:",
+      "hostname": "fonts.googleapis.com", 
+      "pathname": "/css2", 
+      "search": "?family=Butcherman" 
+    } 
+  }
 }

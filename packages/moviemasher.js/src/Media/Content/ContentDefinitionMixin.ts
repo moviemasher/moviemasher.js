@@ -1,6 +1,6 @@
 import { TweenableDefinitionClass } from "../../Mixin/Tweenable/Tweenable"
-import { PreloadArgs } from "../../MoveMe"
-import { DefinitionType } from "../../Setup/Enums"
+import { PreloadArgs } from "../../Base/Code"
+import { ImageType, MediaType } from "../../Setup/Enums"
 import { ContentDefinition, ContentDefinitionClass } from "./Content"
 
 export function ContentDefinitionMixin<T extends TweenableDefinitionClass>(Base: T): ContentDefinitionClass & T {
@@ -9,7 +9,7 @@ export function ContentDefinitionMixin<T extends TweenableDefinitionClass>(Base:
       return Promise.resolve()
     }
     
-    type = DefinitionType.Image
+    type = ImageType
 
   }
 }

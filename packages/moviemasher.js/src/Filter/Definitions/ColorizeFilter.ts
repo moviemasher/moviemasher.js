@@ -1,12 +1,12 @@
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../MoveMe"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
 import { DataType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
 import { idGenerate } from "../../Utility/Id"
-import { colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba } from "../../Utility/Color"
+import { colorRgbaKeys, colorRgbKeys, colorToRgb, colorToRgba } from "../../Helpers/Color/ColorFunctions"
 import { assertNumber, assertPopulatedString } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { ValueObject } from "../../declarations"
+import { ValueRecord } from "../../declarations"
 import { tweenPosition } from "../../Utility/Tween"
 import { FilterDefinitionObject } from "../Filter"
 
@@ -52,7 +52,7 @@ export class ColorizeFilter extends FilterDefinitionClass {
     const toColor = alpha ? colorToRgba(colorEnd) : colorToRgb(colorEnd)
 
     const keys = alpha ? colorRgbaKeys : colorRgbKeys
-    const options: ValueObject = {}
+    const options: ValueRecord = {}
 
     const position = duration ? tweenPosition(videoRate, duration, 'N') : 0
 

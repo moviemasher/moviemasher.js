@@ -1,8 +1,10 @@
-import { AudibleContextData, AudibleSource } from "../declarations"
-import { Errors } from "../Setup/Errors"
+import { AudibleSource } from "../Load/Loaded"
+import { assertMethod } from "../Utility/Is"
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2
+
+export interface AudibleContextData extends AudioContext {}
 
 export interface AudibleContextSource {
   gainNode: GainNode
@@ -20,7 +22,7 @@ export class AudibleContext {
   private get context() : AudibleContextData {
     if (!this._context) {
       const Klass = AudioContext || window.webkitAudioContext
-      if (!Klass) throw Errors.audibleContext
+      assertMethod(Klass)
 
       this._context = new Klass()
     }
