@@ -5,6 +5,7 @@ ARG DIR_ROOT
 WORKDIR ${DIR_ROOT}
 COPY package.json ${DIR_ROOT}/package.json
 COPY packages ${DIR_ROOT}/packages
+COPY workspaces ${DIR_ROOT}/workspaces
 COPY images/builder ${DIR_ROOT}/images/builder
 RUN npm install 
 # RUN npm install -g npm

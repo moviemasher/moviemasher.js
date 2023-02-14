@@ -1,5 +1,5 @@
 
-type NumberConverter = (value: number) => number 
+export type NumberConverter = (value: number) => number 
 
 export const roundMethod = (rounding = ''): NumberConverter => {
   switch (rounding) {

@@ -1,5 +1,4 @@
 import { UnknownRecord } from "../../../declarations"
-import { LoadedImage } from "../../../Load/Loaded"
 import { ContainerDefinitionMixin } from "../ContainerDefinitionMixin"
 import { ShapeContainerClass } from "./ShapeContainerClass"
 import {
@@ -13,7 +12,7 @@ import { Size, sizeAboveZero, sizeCover } from "../../../Utility/Size"
 import { centerPoint } from "../../../Utility/Rect"
 import { DefaultContainerId } from "../Container"
 import { MediaBase } from "../../MediaBase"
-import { ClientMediaOrError, CommandProbeData } from "../../../Load"
+import { ClientMediaOrError } from "../../../ClientMedia"
 import { ImageType } from "../../../Setup/Enums"
 import { ErrorName } from "../../../Helpers/Error/ErrorName"
 import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
@@ -31,17 +30,6 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     if (isAboveZero(pathWidth)) this.pathWidth = pathWidth
     if (isAboveZero(pathHeight)) this.pathHeight = pathHeight
   }
-
-
-  loadedImage?: LoadedImage | undefined
-  previewSize?: Size | undefined
-  sourceSize?: Size | undefined
-  alpha?: boolean | undefined
-  source: string = ''
-  url: string = ''
-  bytes: number = 0
-  mimeType: string = ''
-  info?: CommandProbeData | undefined
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const { id, pathHeight: height, pathWidth: width, path } = this
@@ -64,8 +52,8 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
 
   isVector = true
 
-  get loadedMediaPromise(): Promise<ClientMediaOrError> {
-    console.trace(this.constructor.name, 'loadedMediaPromise')
+  get clientMediaPromise(): Promise<ClientMediaOrError> {
+    console.trace(this.constructor.name, 'clientMediaPromise')
     return errorThrow(ErrorName.Unimplemented)
   }
   path = ""

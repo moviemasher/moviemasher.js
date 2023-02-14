@@ -1,0 +1,463 @@
+/* colors.css */
+
+:root {
+  --button-transition:
+      background-color 0.25s ease-out,
+      border-color 0.25s ease-out,
+      color 0.25s ease-out;
+  --hue-back: 220;
+  --hue-fore: 220;
+  --sat-primary: 60%;
+  --sat-secondary: 75%;
+  --sat-tertiary: 80%;
+  --lum-back-primary: 100%;
+  --lum-back-secondary: 80%;
+  --lum-back-tertiary: 60%;
+  --lum-fore-primary: 50%;
+  --lum-fore-secondary: 30%;
+  --lum-fore-tertiary: 10%;
+  --back-primary: hsl(0, 0%, var(--lum-back-primary));
+  --back-secondary: hsl(0, 0%, var(--lum-back-secondary));
+  --back-tertiary: hsl(0, 0%, var(--lum-back-tertiary));
+  --fore-primary: hsl(0, 0%, var(--lum-fore-primary));
+  --fore-secondary: hsl(0, 0%, var(--lum-fore-secondary));
+  --fore-secondary-promote: var(--color-fore-primary);
+  --fore-secondary-demote: var(---back-tertiary);
+  --fore-tertiary: hsl(0, 0%, var(--lum-fore-tertiary));
+  --color-back-primary: hsl(var(--hue-back), var(--sat-primary), var(--lum-back-primary));
+  --color-back-secondary: hsl(var(--hue-back), var(--sat-secondary), var(--lum-back-secondary));
+  --color-back-tertiary: hsl(var(--hue-back), var(--sat-tertiary), var(--lum-back-tertiary));
+  --color-fore-primary: hsl(var(--hue-fore), var(--sat-primary), var(--lum-fore-primary));
+  --color-fore-secondary: hsl(var(--hue-fore), var(--sat-secondary), var(--lum-fore-secondary));
+  --color-fore-tertiary: hsl(var(--hue-fore), var(--sat-tertiary), var(--lum-fore-tertiary));
+  --color-drop: red;
+}
+
+:root {
+  color-scheme: dark light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --lum-back-primary: 5%;
+    --lum-back-secondary: 15%;
+    --lum-back-tertiary: 20%;
+    --lum-fore-primary: 30%;
+    --lum-fore-secondary: 70%;
+    --lum-fore-tertiary: 85%;
+    --fore-secondary-promote: var(--color-fore-secondary);
+    --fore-secondary-demote: var(--back-primary);
+    --color-drop: yellow;
+  }
+}
+
+
+
+/* * {
+  box-sizing: border-box;
+}
+
+:root {
+  --pad: 20px;
+  --space: 5px;
+  --width: 500px;
+}
+
+body {
+  font-family: sans-serif;
+  line-height: 1.5em;
+  background-color: var(--back-primary);
+  color: var(--fore-tertiary);
+  padding: 0px;
+	margin: 0px;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+#root {
+  display: flex;
+  overflow-y: scroll;
+}
+
+.moviemasher .editor {
+  --padding: var(--pad);
+  min-height: 0px;
+} */
+
+.tsd-navigation a {
+  border-left: none;
+  transition: none;
+}
+
+.tsd-navigation.primary li.current > a,
+.tsd-navigation.primary li.selected > a,
+.tsd-navigation.primary ul li a:hover {
+  border-left: none;
+  color: var(--color-fore-tertiary);
+}
+
+/* .tsd-accordion-details > ul > li > a,
+.tsd-accordion-summary, */
+.tsd-navigation.settings { display: none; }
+
+/* 
+.tsd-anchor {
+  position: initial;
+  top: initial;
+}
+
+.tsd-index-panel {
+  margin: 0px;
+  padding: 0px;
+}
+
+
+
+.tsd-typopgraphy > p {
+  margin: 0px;
+}
+
+.tsd-panel,
+.tsd-navigation,
+.tsd-panel-group,
+.tsd-hierarchy {
+  background-color: initial;
+  box-shadow: initial;
+}
+.tsd-panel-group,
+.tsd-panel {
+  padding: 0px;
+  margin: initial;
+}
+
+.tsd-index-panel ul.tsd-index-list {
+  margin: 0;
+}
+
+.tsd-panel>.tsd-signatures {
+  margin-left: 0px;
+  margin-right: 0px;
+  border-width: 1px;
+}
+
+
+.tsd-panel-group,
+.tsd-member-group {
+  margin: 0;
+}
+
+.tsd-panel>.tsd-signature {
+  padding: 0;
+  margin: 0px;
+  border-width: 0;
+}
+.tsd-panel > .tsd-comment {
+  margin-left: var(--pad);
+}
+
+.tsd-panel>.tsd-signature:last-child {
+  border-width: 0;
+}
+.tsd-panel>.tsd-signature.tsd-kind-icon {
+  padding-left: 0px;
+}
+
+ul.tsd-descriptions {
+  margin-bottom: 0;
+}
+
+a.tsd-source-logo > svg {
+  float: right;
+  vertical-align: baseline;
+  width: 24px;
+}
+
+.tsd-index-panel h3 {
+  margin: 0 -20px 10px -20px;
+  padding: 0 20px 10px 20px;
+  border-bottom: 1px solid var(--color-panel-divider);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1em;
+  font-style: italic;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
+h3 {
+  color: var(--fore-secondary);
+  font-size: 1.2rem;
+}
+
+h4 {
+  font-size: 0.8em;
+  display: inline;
+}
+
+h4.tsd-returns-title > p {
+  display: inline;
+}
+
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    height: -webkit-fill-available;
+  }
+}
+
+header {
+  background-color: var(--back-secondary);
+  color: var(--fore-secondary);
+  height: min-content;
+  z-index: 1;
+}
+header {
+  border-bottom: var(--back-tertiary) 1px solid;
+}
+
+main {
+  width: 100%;
+  min-height: 50vh;
+  display: grid;
+  position: relative;
+  grid-template-columns: min-content 1fr min-content;
+}
+
+
+article {
+  display: grid;
+  min-height: 0px;
+}
+
+
+.scrollable {
+  padding: var(--pad);
+  text-align: center;
+  scroll-padding-top: var(--pad);
+  overflow-y: scroll;
+}
+
+nav {
+  overflow-y: scroll;
+  min-width: max-content;
+  padding: var(--pad);
+  background-color: var(--back-primary);
+  white-space: nowrap;
+}
+summary {
+  color: var(--color-fore-tertiary);
+}
+
+
+.nav-toggle {
+  display: none;
+}
+
+.nav-button {
+  float: right;
+}
+
+@media (max-width: 999px) {
+  .nav-right {
+    display: none;
+  }
+  .nav-left {
+    right: 100%;
+    transition: right 0.25s ease-out;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    top: 0px;
+    bottom: 0px;
+  }
+  .nav-toggle:checked~.nav-left {
+    right: 0%;
+  }
+
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1000px) {
+  .header {
+    display: grid;
+    grid-auto-flow: column;
+  }
+
+  h1 {
+    text-align: right;
+  }
+
+  .nav-button {
+    display: none;
+  }
+}
+
+
+
+section {
+  margin: var(--pad) auto !important;
+  border-radius: var(--pad);
+  border: var(--back-tertiary) 1px solid;
+  margin-bottom: var(--pad);
+  text-align: left;
+  max-width: 700px;
+}
+
+section .section {
+  padding: var(--pad);
+}
+
+fieldset > pre {
+  min-width: max-content;
+}
+section .section > *, fieldset, dl {
+  margin: 0px;
+  margin-bottom: 1.5rem;
+}
+
+section .section > *:last-child {
+  margin-bottom: 0;
+}
+
+
+section > a > h2 {
+  background-color: var(--back-secondary);
+  color: var(--fore-secondary);
+  border-radius: var(--pad) var(--pad) 0px 0px;
+  padding: 10px var(--pad);
+}
+
+
+hr {
+  border: 0;
+  border-top: var(--fore-tertiary) 1px solid;
+  height: 1px;
+}
+
+section hr {
+  border-top: var(--fore-secondary) 1px solid;
+}
+
+.section table {
+  width: 100%;
+  border-collapse: collapse;
+} 
+
+.section table thead {
+  border-bottom: var(--fore-secondary) 1px solid;
+}
+
+.section table tbody tr:first-child td {
+  padding-top: var(--space);
+}
+
+header > .header {
+  margin: var(--pad);
+  margin-bottom: 0;
+  align-items: baseline;
+}
+
+header > .header > a > svg {
+  vertical-align: baseline;
+  margin-right: 6px;
+}
+
+
+header>.header>a>svg {
+  color: var(--fore-secondary);
+}
+
+header > .header > * {
+  line-height: 20px;
+}
+
+header > hr {
+  line-height: 30px;
+}
+
+header > hr {
+  margin: 0;
+}
+
+label { user-select: none; }
+
+
+pre {
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+fieldset {
+  border: var(--fore-tertiary) 1px solid;
+  min-width: auto;
+  overflow-x: scroll;
+  background-color: var(--code-background);
+}
+legend {
+  background-color: var(--back-primary);
+  padding: 0px 10px;
+}
+
+details {
+  padding-left: 16px;
+}
+
+details > summary {
+  padding-left: 0px;
+  margin-left: -16px;
+  font-weight: bold;
+}
+
+ul { padding-left: 1.2em; }
+
+a:link, a:visited {
+  text-decoration: none;
+  color: var(--color-fore-secondary);
+  fill: var(--color-fore-secondary);
+}
+
+a:hover, a:active {
+  text-decoration: underline;
+  color: var(--color-fore-tertiary);
+  fill: var(--color-fore-tertiary);
+}
+
+a.current:link,
+a.current:visited {
+  color: var(--fore-secondary);
+  fill: var(--fore-secondary);
+}
+
+section .section svg.diagram {
+  width: 100%;
+  height: auto;
+}
+section .section svg.diagram text {
+  font-family: sans-serif;
+}
+section .section a>svg,
+section .section a:link>svg,
+section .section a:active>svg,
+section .section a:visited>svg,
+section .section a:hover>svg {
+  color: var(--fore-tertiary);
+}
+
+.material-icons {
+  vertical-align: bottom;
+}
+
+.material-icons.md-36 {
+  font-size: 36px;
+}
+ */

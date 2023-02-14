@@ -25,6 +25,6 @@ export class TranscodingClass extends RequestableClass implements Transcoding {
   declare type: TranscodeType
 
   unload() {
-    delete this.loadedMedia
+    delete this.clientMedia
   }
 }

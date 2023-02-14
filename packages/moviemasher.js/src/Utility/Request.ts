@@ -1,5 +1,5 @@
-import { ClientAudioOrError, ClientFontOrError, ClientImageOrError, ClientMediaOrError, ClientVideoOrError, JsonRecordOrError } from "../Load/Loaded"
-import { RequestObject } from "../Api/Api"
+import { ClientAudioOrError, ClientFontOrError, ClientImageOrError, ClientMediaOrError, ClientVideoOrError, JsonRecordOrError } from "../ClientMedia/ClientMedia"
+import { Request } from "../Helpers/Request/Request"
 import { protocolLoadPromise } from "../Plugin/Protocol/Protocol"
 import { endpointAbsolute } from "../Helpers/Endpoint/EndpointFunctions"
 import { assertPopulatedString } from "./Is"
@@ -8,7 +8,7 @@ import { PathOrError } from "../Helpers/Error/Error"
 import { errorPromise } from "../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../Helpers/Error/ErrorName"
 
-export const requestProtocol = (request: RequestObject): string => {
+export const requestProtocol = (request: Request): string => {
   const { endpoint } = request
   const absolute = endpointAbsolute(endpoint)
   const { protocol } = absolute
@@ -16,37 +16,37 @@ export const requestProtocol = (request: RequestObject): string => {
   return protocol
 }
 
-export const requestAudioPromise = (request: RequestObject): Promise<ClientAudioOrError> => {
+export const requestAudioPromise = (request: Request): Promise<ClientAudioOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, AudioType)
   )
 }
 
-export const requestFontPromise = (request: RequestObject): Promise<ClientFontOrError> => {
+export const requestFontPromise = (request: Request): Promise<ClientFontOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, FontType)
   )
 }
 
-export const requestImagePromise = (request: RequestObject): Promise<ClientImageOrError> => {
+export const requestImagePromise = (request: Request): Promise<ClientImageOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, ImageType)
   )
 }
 
-export const requestVideoPromise = (request: RequestObject): Promise<ClientVideoOrError> => {
+export const requestVideoPromise = (request: Request): Promise<ClientVideoOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, VideoType)
   )
 }
 
-export const requestJsonPromise = (request: RequestObject): Promise<JsonRecordOrError> => {
+export const requestJsonPromise = (request: Request): Promise<JsonRecordOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, JsonType)
   )
 }
 
-export const requestMediaPromise = (request: RequestObject, type: LoadType): Promise<ClientMediaOrError> => {
+export const requestMediaPromise = (request: Request, type: LoadType): Promise<ClientMediaOrError> => {
   switch(type) {
     case AudioType: return requestAudioPromise(request)
     case ImageType: return requestImagePromise(request)
@@ -57,13 +57,13 @@ export const requestMediaPromise = (request: RequestObject, type: LoadType): Pro
 }
 
 
-export const requestPromise = (request: RequestObject, type?: string): Promise<PathOrError> => {
+export const requestPromise = (request: Request, type?: string): Promise<PathOrError> => {
   return protocolLoadPromise(requestProtocol(request)).then(adaptor => 
     adaptor.promise(request, type)
   )
 }
 
-export const requestExtension = (request: RequestObject): string => {
+export const requestExtension = (request: Request): string => {
   const { endpoint } = request
   const { pathname = '' } = endpoint
   const last = pathname.split('.').pop() || ''

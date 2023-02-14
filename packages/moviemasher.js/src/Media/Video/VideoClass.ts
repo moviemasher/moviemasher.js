@@ -1,13 +1,12 @@
 import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../Base/Code"
 import { SequenceType, VideoType, AudioType } from "../../Setup/Enums"
 import { Video, VideoDefinition } from "./Video"
-import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { assertPopulatedString, assertTimeRange, isBoolean } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 
 import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
-import { LoadedVideo } from "../../Load/Loaded"
+import { ClientVideo } from "../../ClientMedia/ClientMedia"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect } from "../../Utility/Rect"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
@@ -16,8 +15,8 @@ import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
 import { sizeCopy, sizeCover } from "../../Utility/Size"
 import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
 import { ContainerMixin } from "../Container/ContainerMixin"
-import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
-import { assertLoadedVideo } from "../../Load/Loader"
+import { MediaInstanceBase } from "../MediaInstanceBase"
+import { assertClientVideo } from "../../ClientMedia/ClientMediaFunctions"
 import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
 import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { isRequestable, Requestable } from "../../Base/Requestable/Requestable"
@@ -28,8 +27,7 @@ const VideoWithTweenable = TweenableMixin(MediaInstanceBase)
 
 const VideoWithContainer = ContainerMixin(VideoWithTweenable)
 const VideoWithContent = ContentMixin(VideoWithContainer)
-const VideoWithPreloadable = PreloadableMixin(VideoWithContent)
-const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithPreloadable)
+const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithContent)
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize)
 
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
@@ -96,8 +94,8 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
           console.log(this.constructor.name, 'loadPromise visibleTranscoding', visibleTranscoding)
  
           if (type === VideoType) {
-            promises.push(visibleTranscoding.loadedMediaPromise.then(orError => {
-              const { error, clientMedia: loadedMedia } = orError
+            promises.push(visibleTranscoding.clientMediaPromise.then(orError => {
+              const { error, clientMedia: clientMedia } = orError
               if (error) return errorThrow(error)
             }))
           } else promises.push(this.sequenceImagesPromise(args))
@@ -109,18 +107,18 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return Promise.all(promises).then(EmptyMethod)
   }
 
-  private previewVideoPromise(previewTranscoding: Requestable): Promise<LoadedVideo> {
+  private previewVideoPromise(previewTranscoding: Requestable): Promise<ClientVideo> {
     const { loadedVideo } = this
     if (loadedVideo) return Promise.resolve(loadedVideo)
 
-    return previewTranscoding.loadedMediaPromise.then(orError => {
+    return previewTranscoding.clientMediaPromise.then(orError => {
       const { error, clientMedia: media } = orError
       if (error) return errorThrow(error)
 
-      console.log(this.constructor.name, 'previewVideoPromise.loadedMediaPromise', media)
-      assertLoadedVideo(media)
+      console.log(this.constructor.name, 'previewVideoPromise.clientMediaPromise', media)
+      assertClientVideo(media)
 
-      const video = media.cloneNode() as LoadedVideo
+      const video = media.cloneNode() as ClientVideo
       this.loadedVideo = video
       this.foreignElement.appendChild(video)
       return video
@@ -184,7 +182,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     return this.sequenceItemPromise(rect, definitionTime)
   }
 
-  loadedVideo?: LoadedVideo 
+  loadedVideo?: ClientVideo 
 
   override unload() {
     delete this._foreignElement
@@ -193,7 +191,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
 
   private videoForPlayerPromise(rect: Rect, definitionTime: Time): SvgItem {
     const { loadedVideo: video } = this 
-    assertLoadedVideo(video)
+    assertClientVideo(video)
 
     const { clientCanMaskVideo } = VideoClass
     if (clientCanMaskVideo) svgSetDimensions(this.foreignElement, rect)

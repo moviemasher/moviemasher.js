@@ -10,7 +10,7 @@ import { DataType } from "../../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../../Setup/Property"
 import { ColorTuple, Component } from "../../../Base/Code"
 import { assertPopulatedString, isPopulatedString } from "../../../Utility/Is"
-import { MediaInstanceBase } from "../../MediaInstance/MediaInstanceBase"
+import { MediaInstanceBase } from "../../MediaInstanceBase"
 
 const ColorContentWithTweenable = TweenableMixin(MediaInstanceBase)
 const ColorContentWithContent = ContentMixin(ColorContentWithTweenable)

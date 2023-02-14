@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 import path from 'path'
 
-import { urlBaseInitialize, urlEndpoint, urlForEndpoint, urlParse, urlsAbsolute, urlsParsed } from "@moviemasher/moviemasher.js"
+import { urlBaseInitialize, urlEndpoint, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 describe('Url', () => {
   urlBaseInitialize()
@@ -31,67 +31,6 @@ describe('Url', () => {
     })
   }) 
 
-  describe("urlParse", () => {
-    const protocol = 'protocol:'
-    const options = 'key=value'
-    const path = 'path'
-    const tests = [
-      [[protocol, options, path], `${protocol}${options}/${path}`],
-      [[protocol, options, ''], `${protocol}${options}/`],
-      [[protocol, '', ''], `${protocol}/`],
-      [[protocol, '', path], `${protocol}/${path}`],
-      [["svg:", '', "file.ext"], 'svg:/file.ext']
-    ]
-
-    tests.forEach(testArray => {
-      const [expected, url] = testArray
-      test(`urlParse for ${url}`, () => {
-        assert.deepStrictEqual(urlParse(url), expected)
-      })
-    })
-  })
-
-  describe("urlsParsed", () => {
-    const tests = [
-      [[], ""],
-      [[["http:", "", "/host.com/file.ext"]], "http://host.com/file.ext"],
-      [[["svg:", "", "file.ext"]], "svg:/file.ext"],
-      [[["svg:", "", "http://host.com/file.ext"]], "svg:/http://host.com/file.ext"],
-    ]
-
-
-    tests.forEach(testArray => {
-      const [expected, url] = testArray
-      test(`urlsParsed('${url}') returns ${expected}`, () => {
-        assert.deepStrictEqual(urlsParsed(url), expected)
-      })
-    })
-  })
-
-  describe("urlsAbsolute", () => {
-    const tests = [
-      [[], ""],
-      // [[['http://localhost/path/to/file.ext']], "path/to/file.ext"],
-      [[], "http://host.com/file.ext"],
-      [[
-        ["svg:", "", "http://localhost/file.ext"]
-      ], "svg:/file.ext"],
-      [[
-        ["svg:", "", "http://host.com:8080/file.ext"],
-      ], "svg:/http://host.com:8080/file.ext"],
-      [[
-        ["svg:", "", "image:/http://host.com:8080/file.ext"],
-        ["image:", "", "http://host.com:8080/file.ext"]
-      ], "svg:/image:/http://host.com:8080/file.ext"],
-    ]
-
-    tests.forEach(testArray => {
-      const [expected, url] = testArray
-      test(`urlsAbsolute('${url}') returns ${expected}`, () => {
-        assert.deepStrictEqual(urlsAbsolute(url, urlEndpoint()), expected)
-      })
-    })
-  })
 
   describe("urlEndpoint", () => {
     test("returns http localhost endpoint", () => {

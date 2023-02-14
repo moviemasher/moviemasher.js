@@ -13,18 +13,13 @@ The script below can then be included in your project and triggered in a variety
 
 <legend>server.js</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-express/host/server.js) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../images/standalone/private/server.js) -->
 
 ```js
-const MovieMasherServer = require("@moviemasher/server-express")
-
-const { Host } = MovieMasherServer
-const options = { 
-  port: 8572, host: '0.0.0.0', 
-  api: { authentication: { type: 'basic' } } 
-}
-const host = new Host(options)
-host.start()
+// src/server.ts
+import { Host, HostDefaultOptions } from "@moviemasher/server-express";
+var host = new Host(HostDefaultOptions());
+host.start();
 ```
 <!-- MAGIC:END -->
 </fieldset>

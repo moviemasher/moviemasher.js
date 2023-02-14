@@ -1,20 +1,20 @@
-import { RequestObject } from "../Api/Api"
-import { LoadedAudio, LoadedFont, LoadedImage, LoadedVideo } from "../Load/Loaded"
+import { Request } from "../Helpers/Request/Request"
+import { ClientAudio, ClientFont, ClientImage, ClientVideo } from "../ClientMedia/ClientMedia"
 import { PathOrError } from "../Helpers/Error/Error"
 import { AudioType, FontType, ImageType, MediaType, VideoType } from "../Setup/Enums"
 import { requestExtension, requestPromise } from "./Request"
 
 export type ResolverPromise = {
-  (file: string, mimeType: string, type: ImageType): Promise<LoadedImage>
-  (file: string, mimeType: string, type: AudioType): Promise<LoadedAudio>
-  (file: string, mimeType: string, type: FontType): Promise<LoadedFont>
-  (file: string, mimeType: string, type: VideoType): Promise<LoadedVideo>
+  (file: string, mimeType: string, type: ImageType): Promise<ClientImage>
+  (file: string, mimeType: string, type: AudioType): Promise<ClientAudio>
+  (file: string, mimeType: string, type: FontType): Promise<ClientFont>
+  (file: string, mimeType: string, type: VideoType): Promise<ClientVideo>
   (file: string, mimeType: string, type?: string): Promise<PathOrError>
 }
 
 
 export interface Resolver {
-  requestPromise: (file: string) => Promise<RequestObject>
+  requestPromise: (file: string) => Promise<Request>
   extension: string
 }
 
@@ -45,7 +45,7 @@ export const resolverPathPromise = (file: string, mimeType?: string): PathOrErro
   return { path: file }
 }
 
-export const resolverExtension = (request: RequestObject, mimeType?: string) => {
+export const resolverExtension = (request: Request, mimeType?: string) => {
   const resolver = resolverLoad(mimeType)
   return resolver ? resolver.extension : requestExtension(request) 
 }

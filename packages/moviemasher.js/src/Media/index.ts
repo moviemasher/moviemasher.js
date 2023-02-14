@@ -10,7 +10,8 @@ export * from "./Image"
 export * from "./Mash"
 export * from "./Media"
 export * from "./MediaBase"
-export * from "./MediaInstance"
+export * from "./MediaInstanceBase"
+
 export * from "./Sequence"
 export * from "./Video"
 

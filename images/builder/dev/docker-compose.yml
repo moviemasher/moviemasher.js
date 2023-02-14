@@ -11,8 +11,13 @@ services:
       - ../../../dev/local.env
     volumes:
       - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
-      - ../../../images/builder/package.json:${MOVIEMASHER_DIR_ROOT}/package.json
-      - ../../../tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
+      - ../../../images/:${MOVIEMASHER_DIR_ROOT}/images/
       - ../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages/
       - ../../../workspaces/:${MOVIEMASHER_DIR_ROOT}/workspaces/
-      - ../../../images/:${MOVIEMASHER_DIR_ROOT}/images/
+
+      - ../../../images/builder/package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+
+      - ../../../workspaces/documentation/dev/tsconfig.json:${MOVIEMASHER_DIR_ROOT}/tsconfig.json
+      - ../../../workspaces/documentation/dev/typedoc.js:${MOVIEMASHER_DIR_ROOT}/typedoc.js
+      - ../../../docs/:${MOVIEMASHER_DIR_ROOT}/docs/
+      - ../../../README.md:${MOVIEMASHER_DIR_ROOT}/README.md

@@ -172,8 +172,8 @@ export class EditorClass implements Editor {
         const id = idGenerate('activity')
         const info: UnknownRecord = { id, type: ActivityType.Analyze }
         eventTarget.emit(EventType.Active, info)
-        return filePromise.then(mediaObjectOrError => {
-          const { mediaObject, error } = mediaObjectOrError
+        return filePromise.then(orError => {
+          const { mediaObject, error } = orError
           const activityInfo = { ...info }
           if (isMediaObject(mediaObject)) {
             activityInfo.label = mediaObject.label || mediaObject.id
@@ -181,6 +181,7 @@ export class EditorClass implements Editor {
             mediaObjects.push(mediaObject)
             activityInfo.type = ActivityType.Complete
           } else {
+            console.log(this.constructor.name, 'addFiles NOT media object', mediaObject)
             const errorObject = error || errorName(ErrorName.Internal)
             const { message } = errorObject
             
@@ -827,7 +828,7 @@ export class EditorClass implements Editor {
       Object.assign(target, definitionObject)
       
       if (isMedia(target)) {
-        target.loadedMedia = undefined
+        target.clientMedia = undefined
         if (isVideoDefinition(target)) {
           target.loadedVideo = undefined
         }

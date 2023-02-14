@@ -1,12 +1,12 @@
 
 import { 
-  JsonRecord, 
-  assertString, assertPopulatedString
+  JsonRecord, MediaResponse, 
+  assertString, assertPopulatedString, UnknownRecord
 } from "@moviemasher/moviemasher.js"
 
 import { 
   JobType,
-  assertEncodeRequest, MediaEvent, MediaResponse, MediaRequest, 
+  assertEncodeRequest, MediaEvent, MediaRequest, 
   assertDecodeRequest, assertTranscodeRequest, assertMediaRequest, 
   jobExtract, callbackPromise, transcode, decode, encode, outputPromise, 
   inputPromise 
@@ -48,7 +48,7 @@ export const handler = async (event: MediaEvent, context: any) => {
   const [jobType, mediaRequest] = jobExtract(bodyJson)
   assertMediaRequest(mediaRequest)
   const { id, callback, output } = mediaRequest
-  const endResponse: JsonRecord = { id }
+  const endResponse: UnknownRecord = { id }
 
   if (callback) {
     const startBody = await callbackPromise(callback, { id, completed: 0.1 })

@@ -8,9 +8,6 @@
   },
   "license": "MIT",
   "scripts": {  
-    "logs": "docker compose --file dev/docker-compose.yml logs -f",
-    "up": "docker compose --file dev/docker-compose.yml up -d",
-    "down": "docker compose --file dev/docker-compose.yml down -v",
-    "build": "node ../../dev/utils/replace-paths.js ./src/index.html ./public/index.html"
+    "build": "node ../../dev/utils/replace-paths.mjs ./src/index.html ./public/index.html"
   }
 }

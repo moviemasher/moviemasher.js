@@ -1,9 +1,9 @@
-import { JsonRecord, UnknownRecord } from "../../declarations"
-import { ClientAudioOrError, ClientFontOrError, ClientImageOrError, ClientVideoOrError, JsonRecordOrError, LoadedAudio, LoadedFont, LoadedImage, LoadedVideo } from "../../Load/Loaded"
+import { Strings, UnknownRecord } from "../../declarations"
+import { ClientAudioOrError, ClientFontOrError, ClientImageOrError, ClientVideoOrError, JsonRecordOrError } from "../../ClientMedia/ClientMedia"
 import { PathOrError, PotentialError } from "../../Helpers/Error/Error"
 import { AudioType, FontType, ImageType, JsonType, VideoType } from "../../Setup/Enums"
 import { assertDefined } from "../../Utility/Is"
-import { RequestObject, RequestRecord } from "../../Api/Api"
+import { Request, RequestRecord } from "../../Helpers/Request/Request"
 import { Plugin } from "../Plugin"
 import { Plugins } from "../Plugins"
 
@@ -28,23 +28,23 @@ export type PluginsByProtocol = Record<Protocol, ProtocolPlugin>
 
 
 // export type ProtocolPromise = {
-//   (request: RequestObject, type: ImageType): Promise<ClientImageOrError>
-//   (request: RequestObject, type: VideoType): Promise<ClientVideoOrError>
+//   (request: Request, type: ImageType): Promise<ClientImageOrError>
+//   (request: Request, type: VideoType): Promise<ClientVideoOrError>
 
-//   // (request: RequestObject, type: AudioType): Promise<LoadedAudio>
-//   // (request: RequestObject, type: FontType): Promise<LoadedFont>
-//   // (request: RequestObject, type: JsonType): Promise<UnknownRecord>
-//   (request: RequestObject, type?: string): Promise<PathOrError>
+//   // (request: Request, type: AudioType): Promise<ClientAudio>
+//   // (request: Request, type: FontType): Promise<ClientFont>
+//   // (request: Request, type: JsonType): Promise<UnknownRecord>
+//   (request: Request, type?: string): Promise<PathOrError>
 // }
 
 
 export type ProtocolPromise = {
-  (request: RequestObject, type: ImageType): Promise<ClientImageOrError>
-  (request: RequestObject, type: AudioType): Promise<ClientAudioOrError>
-  (request: RequestObject, type: FontType): Promise<ClientFontOrError>
-  (request: RequestObject, type: VideoType): Promise<ClientVideoOrError>
-  (request: RequestObject, type: JsonType): Promise<JsonRecordOrError>
-  (request: RequestObject, type?: string): Promise<PathOrError>
+  (request: Request, type: ImageType): Promise<ClientImageOrError>
+  (request: Request, type: AudioType): Promise<ClientAudioOrError>
+  (request: Request, type: FontType): Promise<ClientFontOrError>
+  (request: Request, type: VideoType): Promise<ClientVideoOrError>
+  (request: Request, type: JsonType): Promise<JsonRecordOrError>
+  (request: Request, type?: string): Promise<PathOrError>
 }
 
 export const ProtocolOptions: UnknownRecord = {}
@@ -58,7 +58,7 @@ export const protocolName = (protocol: string) => (
 )
 
 export const protocolImportPrefix = (id: string) => {
-  const components = []
+  const components: Strings = []
   const { window } = globalThis
   if (window) components.push()
   else components.push('@moviemasher/')

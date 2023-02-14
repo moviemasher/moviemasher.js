@@ -21,7 +21,7 @@ module.exports = {
     'eslint-plugin-tsdoc'
   ],
   rules: {
-    "tsdoc/syntax": "warn",
+    "tsdoc/syntax": 1,
     "quotes": 0,
     "semi": 0,
     "no-console": 0,
@@ -32,7 +32,7 @@ module.exports = {
     "no-undef": 0,
     "class-methods-use-this": 0,
     "object-curly-newline": 0,
-    "no-unused-vars": "on",
+    "no-unused-vars": 2,
     "radix": 0,
     "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/no-unused-vars": 0,

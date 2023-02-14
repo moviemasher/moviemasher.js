@@ -1,6 +1,6 @@
-import { MediaType, errorThrow, isTranscodeOutput, PathOrError, TranscodeOutput } from "@moviemasher/moviemasher.js"
+import { MediaType, MediaResponse, errorThrow, isTranscodeOutput, PathOrError, TranscodeOutput } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
-import { isMediaRequest, MediaRequest, MediaResponse } from "../Media/Media"
+import { isMediaRequest, MediaRequest } from "../Media/Media"
 
 export interface TranscodeInput extends Required<Input> {
   type: MediaType

@@ -37,6 +37,11 @@
   },
   "devDependencies": {
     "typescript": "4.9.5"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "dev/tsdoc/index.md",
+    "displayName": "core"
   }
 }
 

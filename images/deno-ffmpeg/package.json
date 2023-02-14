@@ -16,6 +16,6 @@
     "@moviemasher/server-core": "5.1.2"
   },
   "devDependencies": {
-    "@types/node": "18.11.18"
+    "@types/node": "18.13.0"
   }
 }

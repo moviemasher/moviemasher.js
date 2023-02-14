@@ -1,23 +1,23 @@
 import { UnknownRecord } from '../../declarations'
-import { ClientMediaOrError, LoadedMedia } from "../../Load/Loaded"
+import { ClientMediaOrError, ClientMedia } from "../../ClientMedia/ClientMedia"
 import { isObject, isPopulatedString } from '../../Utility/Is'
 import { Requestable, RequestableObject } from './Requestable'
-import { isRequestObject, RequestObject } from '../../Api/Api'
+import { isRequest, Request } from "../../Helpers/Request/Request"
 import { assertLoadType, ImageType, LoadType, SequenceType } from '../../Setup/Enums'
 import { PropertiedClass } from '../Propertied'
 import { requestMediaPromise } from '../../Utility/Request'
-import { assertClientMedia } from '../../Load/Loader'
+import { assertClientMedia } from '../../ClientMedia/ClientMediaFunctions'
 
 export class RequestableClass extends PropertiedClass implements Requestable {
   constructor(object: RequestableObject) {
     super()
-    const { id, type, kind, createdAt, request, loadedMedia } = object 
+    const { id, type, kind, createdAt, request, clientMedia } = object 
     this.id = id
     if (isPopulatedString(type)) this.type = type
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isPopulatedString(kind)) this.kind = kind
-    if (isRequestObject(request)) this.request = request
-    if (isObject(loadedMedia)) this.loadedMedia
+    if (isRequest(request)) this.request = request
+    if (isObject(clientMedia)) this.clientMedia
   }
 
   createdAt = ''
@@ -36,27 +36,27 @@ export class RequestableClass extends PropertiedClass implements Requestable {
     return type
   }
 
-  loadedMedia?: LoadedMedia
+  clientMedia?: ClientMedia
 
-  get loadedMediaPromise(): Promise<ClientMediaOrError> {
-    const { loadedMedia } = this
-    if (loadedMedia) return Promise.resolve({ clientMedia: loadedMedia })
+  get clientMediaPromise(): Promise<ClientMediaOrError> {
+    const { clientMedia } = this
+    if (clientMedia) return Promise.resolve({ clientMedia: clientMedia })
 
     const { request, loadType } = this
     
-    console.log(this.constructor.name, 'loadedMediaPromise...', loadType, request)
+    console.log(this.constructor.name, 'clientMediaPromise...', loadType, request)
     return requestMediaPromise(request, loadType).then(orError => {
       if (orError.error) return orError
       const { clientMedia } = orError
       assertClientMedia(clientMedia)
-      console.log(this.constructor.name, 'loadedMediaPromise!', loadType, request, clientMedia?.constructor.name)
+      console.log(this.constructor.name, 'clientMediaPromise!', loadType, request, clientMedia?.constructor.name)
 
-      this.loadedMedia = clientMedia
+      this.clientMedia = clientMedia
       return { clientMedia }
     })
   }
 
-  request: RequestObject = { endpoint: {} }
+  request: Request = { endpoint: {} }
 
   type: string = ''
 

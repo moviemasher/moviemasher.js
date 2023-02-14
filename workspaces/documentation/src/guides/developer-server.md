@@ -42,7 +42,7 @@ Developers familar with Docker may want to launch the image available on
 
 Running the server locally is difficult because it requires certain FFmpeg features that don't come in the default binary supplied by fluent-ffmpeg. Supplying cross-platform binaries through the mechanisms that NPM provides is beyond the scope of Movie Masher since only LINUX is supported by the server at this juncture. Hence, Docker is used during development and testing to provide developers with a standard LINUX environment. 
 
-That said, it's still possible to run the server on other platforms if you've got a proper build of FFmpeg. Here's an example ExpressJS application from _workspaces/example-express/host/server.js_ that launches the server on port 8572:
+That said, it's still possible to run the server on other platforms if you've got a proper build of FFmpeg. Here's an example ExpressJS application from _standalone/src/server.js_ that launches the server on port 8572:
 
 
 <fieldset>
@@ -95,33 +95,18 @@ This does not install a client implementation that interacts with this package. 
 
 
 ```ts
-import path from 'path'
-import { Host, HostDefaultOptions, expandToJson } from '@moviemasher/server-express'
-
-const config = process.argv[2] || path.resolve(__dirname, './server-config.json')
-const configuration = expandToJson(config)
-const options = HostDefaultOptions(configuration)
-const host = new Host(options)
+import { Host, HostDefaultOptions } from '@moviemasher/server-express'
+const host = new Host(HostDefaultOptions())
 host.start()
 ```
 </fieldset>
 
-In this example we're using the [[Host]] class to construct all the [[Server]] instances, using arguments provided by the [[HostDefaultOptions]] function. We pass this function a parsed JSON file with the following structure:
-
-<fieldset>
-
-<legend>server-config.json</legend>
+In this example we're using the [[Host]] class to construct all the [[Server]] instances, using arguments provided by the [[HostDefaultOptions]] function. 
 
 
-```json
-{
-  "port": 8570,
-  "previewSize": { "width": 480, "height": 270 },
-  "outputSize": { "width": 1920, "height": 1080 }
-}
-```
-</fieldset>
+We pass this function a parsed JSON file with the following structure:
 
+# TODO: explain Environment...
 In the configuration we are setting the preview dimensions to their default for demonstration purposes. The server will pass these to the client and the client will apply them, but only after the CSS is applied so a resize will be visible if they differ. Preview dimensions should be overridden either in the client, or better still, in the CSS. If the defaults are overidden there they should be here too, since the client does NOT pass them to the server. The rendering server uses them to optimally size previews of uploaded video and images.
 
 We are also setting the output dimensions here, which are used as default values for both the rendering and streaming servers. They should always be an even multiple of the preview dimensions - in this case it's a multiple of four. Using different aspect ratios is actually supported, but then the preview in the client will not match the output of these servers.
@@ -133,11 +118,8 @@ We are also setting the output dimensions here, which are used as default values
 
 The [[ApiServer]] provides a high-level routing mechanism to other servers, through two endpoints:
 
-<!-- MAGIC:START (RUN:src=../../../../workspaces/documentation/dev/api.js&include=api) -->
-| Endpoint | Request Interface | Response Interface |
-| -- | -- | -- |
-| /api/servers | [[ApiServersRequest]] | [[ApiServersResponse]] |
-| /api/callbacks | [[ApiCallbacksRequest]] | [[ApiCallbacksResponse]] |
+<!-- MAGIC:START (API:include=api) -->
+{"include":"api"}
 <!-- MAGIC:END -->
 
 The `/api/servers` endpoint is called initially to determine which other servers are enabled, and retrieve any client configuration for them. Before making subsequent requests to another server, the `/api/callbacks` endpoint is first requested. This endpoint returns the actual request that the client should make, potentially from another server. By default though, the same server is returned.  
@@ -155,23 +137,8 @@ The [[DataServer]] is responsible for storing and retrieving JSON formatted data
 
 Its endpoints support typical _CRUD_ (create, retrieve, update, delete) operations:
 
-<!-- MAGIC:START (RUN:src=../../../../workspaces/documentation/dev/api.js&include=data&exclude=stream) -->
-| Endpoint | Request Interface | Response Interface |
-| -- | -- | -- |
-| /data/cast/delete | [[DataCastDeleteRequest]] | [[DataCastDeleteResponse]] |
-| /data/cast/get | [[DataCastGetRequest]] | [[DataCastGetResponse]] |
-| /data/cast/put | [[DataCastPutRequest]] | [[DataCastPutResponse]] |
-| /data/cast/retrieve | [[DataCastRetrieveRequest]] | [[DataCastRetrieveResponse]] |
-| /data/cast/default | [[DataCastDefaultRequest]] | [[DataCastDefaultResponse]] |
-| /data/mash/delete | [[DataMashDeleteRequest]] | [[DataMashDeleteResponse]] |
-| /data/mash/get | [[DataMashGetRequest]] | [[DataMashGetResponse]] |
-| /data/mash/put | [[DataMashPutRequest]] | [[DataMashPutResponse]] |
-| /data/mash/retrieve | [[DataMashRetrieveRequest]] | [[DataMashRetrieveResponse]] |
-| /data/mash/default | [[DataMashDefaultRequest]] | [[DataMashDefaultResponse]] |
-| /data/definition/delete | [[DataDefinitionDeleteRequest]] | [[DataDefinitionDeleteResponse]] |
-| /data/definition/get | [[DataDefinitionGetRequest]] | [[DataDefinitionGetResponse]] |
-| /data/definition/put | [[DataDefinitionPutRequest]] | [[DataDefinitionPutResponse]] |
-| /data/definition/retrieve | [[DataDefinitionRetrieveRequest]] | [[DataDefinitionRetrieveResponse]] |
+<!-- MAGIC:START (API:include=data&exclude=stream) -->
+{"include":"data","exclude":"stream"}
 <!-- MAGIC:END -->
 
 The client will typically request `/data/mash/default` or `/data/cast/default` in order to initially populate the [[Player]] and [[Timeline]] components. If the user has yet to create a [[Mash]] or [[Cast]] then an empty one is returned, otherwise the most recently created one is returned. A request is also made to `/data/mash/retrieve` or `/data/cast/retrieve` to populate the [[SelectEditedControl]] component.
@@ -183,10 +150,8 @@ The `/data/*/put` endpoints essentially act as _UPSERT_ (update or insert) mecha
 ## File Server
  The [[FileServer]] currently only supports a single endpoint that handles uploading of binary files: 
 
-<!-- MAGIC:START (RUN:src=../../../../workspaces/documentation/dev/api.js&include=file) -->
-| Endpoint | Request Interface | Response Interface |
-| -- | -- | -- |
-| /file/store | [[FileStoreRequest]] | [[FileStoreResponse]] |
+<!-- MAGIC:START (API:include=file) -->
+{"include":"file"}
 <!-- MAGIC:END -->
 
 It is not typically called directly, but rather triggered as a callback from `/rendering/upload` (see below). 
@@ -195,12 +160,8 @@ It is not typically called directly, but rather triggered as a callback from `/r
 
 The [[RenderingServer]] produces media files, with the help of [Fluent FFmpeg](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg). The processing is asynchronous, so the API supports both starting a rendering job and retrieving its current status:  
 
-<!-- MAGIC:START (RUN:src=../../../../workspaces/documentation/dev/api.js&include=rendering) -->
-| Endpoint | Request Interface | Response Interface |
-| -- | -- | -- |
-| /rendering/start | [[RenderingStartRequest]] | [[RenderingStartResponse]] |
-| /rendering/status | [[RenderingStatusRequest]] | [[RenderingStatusResponse]] |
-| /rendering/upload | [[RenderingUploadRequest]] | [[RenderingUploadResponse]] |
+<!-- MAGIC:START (API:include=rendering) -->
+{"include":"rendering"}
 <!-- MAGIC:END -->
 
 The `/rendering/start` endpoint initiates a rendering process and returns a callback to `/rendering/status`. This endpoint keeps returning a callback to itself until the rendering process is complete. If a [[Mash]] was being rendering, a URL to the rendered file is returned in the final response. 
@@ -218,18 +179,8 @@ The client uses these files exclusively, while the server will use the original 
 ## Streaming Server 
 The [[StreamingServer]] produces a video stream from a [[Cast]], potentially pushing it to another server. 
 
-<!-- MAGIC:START (RUN:src=../../../../workspaces/documentation/dev/api.js&include=streaming&exclude=get,put,retrieve) -->
-| Endpoint | Request Interface | Response Interface |
-| -- | -- | -- |
-| /streaming/start | [[StreamingStartRequest]] | [[StreamingStartResponse]] |
-| /streaming/status | [[StreamingStatusRequest]] | [[StreamingStatusResponse]] |
-| /streaming/delete | [[StreamingDeleteRequest]] | [[StreamingDeleteResponse]] |
-| /streaming/preload | [[StreamingPreloadRequest]] | [[StreamingPreloadResponse]] |
-| /streaming/cut | [[StreamingCutRequest]] | [[StreamingCutResponse]] |
-| /streaming/webrtc | [[StreamingWebrtcRequest]] | [[StreamingWebrtcResponse]] |
-| /streaming/rtmp | [[StreamingRtmpRequest]] | [[StreamingRtmpResponse]] |
-| /streaming/remote | [[StreamingRemoteRequest]] | [[StreamingRemoteResponse]] |
-| /streaming/local | [[StreamingLocalRequest]] | [[StreamingLocalResponse]] |
+<!-- MAGIC:START (API:include=streaming&exclude=get,put,retrieve) -->
+{"include":"streaming","exclude":"get,put,retrieve"}
 <!-- MAGIC:END -->
 
 | <svg width="1rem" height="1rem" viewBox="0 0 512 512" ><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z" stroke="none" fill="currentColor" /></svg> | _Warning_ |

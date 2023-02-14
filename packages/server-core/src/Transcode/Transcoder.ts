@@ -76,7 +76,7 @@ if (upload) {
   const { contentId } = clip
   
   const definition = media.fromId(contentId)
-  if (isPreloadableDefinition(definition)) {
+  if (isContentDefinition(definition)) {
     const { source: file, loadType: type } = definition
     const { preloader, args } = this
     const { outputDirectory } = args

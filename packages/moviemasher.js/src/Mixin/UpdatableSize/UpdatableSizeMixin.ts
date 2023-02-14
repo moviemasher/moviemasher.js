@@ -8,12 +8,11 @@ import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isTimeRange } from "../../Utility/Is"
-import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
 import { Tweening, tweenMaxSize } from "../../Utility/Tween"
 import { colorBlackOpaque, colorTransparent } from "../../Helpers/Color/ColorFunctions"
 import { PointZero } from "../../Utility/Point"
-import { ContentRectArgs } from "../../Media/Content/Content"
+import { ContentClass, ContentRectArgs } from "../../Media/Content/Content"
 import { assertSizeAboveZero, sizeAboveZero } from "../../Utility/Size"
 import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
 import { svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
@@ -22,7 +21,7 @@ import { Filter } from "../../Filter/Filter"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
 
-export function UpdatableSizeMixin<T extends PreloadableClass>(Base: T): UpdatableSizeClass & T {
+export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
     constructor(...args: any[]) {
       super(...args)

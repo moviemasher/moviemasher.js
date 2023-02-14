@@ -1,13 +1,12 @@
-import { LoadedImage } from "../../Load/Loaded"
+import { ClientImage } from "../../ClientMedia/ClientMedia"
 import { ImageType } from "../../Setup/Enums"
 import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
-import { PreloadableDefinitionMixin } from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { isLoadedImage } from "../../Load/Loader"
+import { isClientImage } from "../../ClientMedia/ClientMediaFunctions"
 import { assertSizeAboveZero, Size, sizeCover } from "../../Utility/Size"
 import { MediaBase } from "../MediaBase"
 import { PreloadArgs } from "../../Base/Code"
@@ -19,20 +18,19 @@ import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 const ImageDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
 const ImageDefinitionWithContent = ContentDefinitionMixin(ImageDefinitionWithContainer)
-const ImageDefinitionWithPreloadable = PreloadableDefinitionMixin(ImageDefinitionWithContent)
-const ImageDefinitionWithUpdatable = UpdatableSizeDefinitionMixin(ImageDefinitionWithPreloadable)
+const ImageDefinitionWithUpdatable = UpdatableSizeDefinitionMixin(ImageDefinitionWithContent)
 export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implements ImageDefinition {
   constructor(object: ImageDefinitionObject) {
     super(object)
-    const { loadedMedia } = this
-    if (isLoadedImage(loadedMedia)) this.loadedImage = loadedMedia
+    const { clientMedia } = this
+    if (isClientImage(clientMedia)) this.loadedImage = clientMedia
     console.log(this.constructor.name, object)
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const transcoding = this.preferredTranscoding(ImageType) 
 
-    return transcoding.loadedMediaPromise.then(orError => {
+    return transcoding.clientMediaPromise.then(orError => {
       const { error, clientMedia: image } = orError
       if (error) return errorThrow(error)
 
@@ -73,7 +71,7 @@ export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implement
     })
   }
   
-  loadedImage?: LoadedImage 
+  loadedImage?: ClientImage 
   
   type = ImageType 
 }

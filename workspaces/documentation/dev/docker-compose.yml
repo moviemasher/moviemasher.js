@@ -1,7 +1,7 @@
 version: "3"
 name: moviemasher-documentation
 services:
-  documentation:
+  service:
     image: httpd:2.4
     container_name: moviemasher-documentation-8577
     ports:
@@ -10,9 +10,8 @@ services:
       - ../../../docs:/usr/local/apache2/htdocs/docs
       - ../public/index.html:/usr/local/apache2/htdocs/index.html
       # - ../src/demo.html:/usr/local/apache2/htdocs/docs/demo/index.html
-      - ../../../docs/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+      - ../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
       - ../../../packages/moviemasher.js/umd/moviemasher.js:/usr/local/apache2/htdocs/docs/demo/moviemasher.js
       - ../../../packages/client-react/umd/client-react.js:/usr/local/apache2/htdocs/docs/demo/client-react.js
       - ../../../packages/theme-default/umd/theme-default.js:/usr/local/apache2/htdocs/docs/demo/theme-default.js
-      # - ../../../packages/theme-default/moviemasher.css:/usr/local/apache2/htdocs/docs/demo/moviemasher.css
-      # - ../../../dev/shared:/usr/local/apache2/htdocs/shared
+    

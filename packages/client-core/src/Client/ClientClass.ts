@@ -1,16 +1,17 @@
 import { 
   assertIdentified, DataDefinitionPutRequest, DataDefinitionPutResponse, 
   Decoding, Encoding, isMashMedia, MashMedia, Media, MediaObject, MediaArray, 
-  requestJsonPromise, Transcoding, transcodingInstance, VideoType, isRawMedia,
-  RequestObject, ErrorName, error, idIsTemporary, assertRequestObject, AudioType, ImageType, isRawType, urlIsBlob, assertTrue, assertPopulatedString, isMedia, isVideoDefinition, isImageDefinition, isUpdatableDurationDefinition, assertObject, PotentialError, 
+  requestJsonPromise, Transcoding, transcodingInstance, VideoType, 
+  Request, ErrorName, error, idIsTemporary, assertPopulatedString, isMedia, 
+  isVideoDefinition, isImageDefinition, isUpdatableDurationDefinition, 
+  PotentialError, ProbeType, 
 } from "@moviemasher/moviemasher.js"
 
 import { 
   Client, ClientOptions, ClientDecodeOptions, ClientEncodeOptions, 
   ClientReadOptions, ClientSaveOptions, ClientTranscodeOptions, 
   ClientObjectResponse, ClientProgessSteps, ClientArrayResponse, 
-  ClientDefaultArgs, ClientArgs, Operation, isOperation, Operations, WriteOperation, ClientWriteOptions 
-} from "./Client"
+  ClientDefaultArgs, ClientArgs, Operation, isOperation, Operations, WriteOperation} from "./Client"
 
 
 export class ClientClass implements Client {
@@ -108,7 +109,7 @@ export class ClientClass implements Client {
     if (!saveRequest) return this.errorPromise()
 
 
-    const requestObject: RequestObject = { ...saveRequest }
+    const requestObject: Request = { ...saveRequest }
     requestObject.init ||= {}
     const definition: MediaObject = { id, ...media.toJSON() }
     const request: DataDefinitionPutRequest = { definition }
@@ -137,8 +138,8 @@ export class ClientClass implements Client {
 
   //   }
 
-  //   const { label, type, loadedMedia } = media
-  //   if (!loadedMedia) return Promise.resolve(error(ErrorName.Internal))
+  //   const { label, type, clientMedia } = media
+  //   if (!clientMedia) return Promise.resolve(error(ErrorName.Internal))
   
   //   if (isRawType(type)) {
   //     type
@@ -239,7 +240,7 @@ export class ClientClass implements Client {
       
       if (isMedia(target)) {
         delete target.file
-        delete target.loadedMedia 
+        delete target.clientMedia 
         if (isVideoDefinition(target)) {
           delete target.loadedVideo 
         }
@@ -270,7 +271,7 @@ export class ClientClass implements Client {
   }
 
   decode(args: ClientDecodeOptions): Promise<Decoding> {
-    return Promise.resolve({})
+    return Promise.resolve({ type: ProbeType })
   }
 
   encode(args: ClientEncodeOptions): Promise<Encoding> {
@@ -289,7 +290,7 @@ export class ClientClass implements Client {
 // let promise = Promise.resolve()
 
 // definitions.forEach(definition => {
-//   assertPreloadableDefinition(definition)
+//   assertContentDefinition(definition)
 //   const { label, type, source } = definition
 
 //   const id = idGenerate('activity')
@@ -327,3 +328,114 @@ export class ClientClass implements Client {
 //   })
 //   promise = promise.then(() => resultPromise)
 // })
+
+
+
+// from rendering server class 
+
+  // private populateDefinition(user: string, renderingId: string, definition: MediaObject, commandOutputs: RenderingCommandOutputs): void {
+  //   const { fileServer } = this
+  //   assertTrue(fileServer)
+
+  //   const { id, source, type: definitionType } = definition
+  //   assertPopulatedString(id)
+  //   assertMediaType(definitionType)
+  //   assertPopulatedString(source)
+
+  //   const prefix = path.join(fileServer.userUploadPrefix(id, user), renderingId)
+  //   const outputDirectory = this.outputDirectory(user, id)
+  //   const inInfoName = `upload.${ExtensionLoadedInfo}`
+  //   const inInfoPath = path.join(outputDirectory, renderingId, inInfoName)
+  //   const inInfoExists = fs.existsSync(inInfoPath)
+  //   const inInfo: LoadedInfo = inInfoExists ? expandToJson(inInfoPath) : {}
+  //   const { 
+  //     width: inWidth, height: inHeight,
+  //     duration: inDuration, audible: inAudible, label: inLabel
+  //   } = inInfo
+  //   if (isUpdatableDurationType(definitionType) && isAboveZero(inDuration)) {
+  //     definition.duration = inDuration
+  //   }
+  //   if (isUpdatableSizeType(definitionType)) {
+  //     if (isAboveZero(inWidth) && isAboveZero(inHeight)) {
+  //       definition.sourceSize = { width: inWidth, height: inHeight }
+  //     }
+  //   }
+  //   const countByType: NumberRecord = {}
+  //   commandOutputs.forEach(output => {
+  //     const { outputType } = output
+  //     if (!isDefined(countByType[outputType])) countByType[outputType] = -1
+  //     countByType[outputType]++
+  //     const index = countByType[outputType]
+  //     const outInfoName = renderingOutputFile(index, output, ExtensionLoadedInfo)
+  //     const outInfoPath = path.join(outputDirectory, renderingId, outInfoName)
+
+  //     const outInfo: LoadedInfo = expandToJson(outInfoPath)
+  //     const { 
+  //       width: outWidth, height: outHeight, 
+  //       duration: outDuration, audible: outAudible, extension
+  //     } = outInfo
+  //     const outputFilename = renderingOutputFile(index, output, extension)
+  //     const outUrl = path.join(prefix, outputFilename)
+  //     // console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
+  //     switch(outputType) {
+  //       // case EncodeType.ImageSequence: {
+  //       //   if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
+  //       //     definition.fps = output.videoRate
+  //       //     definition.previewSize = { width: outWidth, height: outHeight }
+  //       //     definition.url = prefix + '/'
+  //       //   } 
+  //       //   break
+  //       // }
+  //       case EncodeType.Audio: {
+  //         const { duration: definitionDuration } = definition
+  //         if (isAboveZero(outDuration) && isAboveZero(definitionDuration)) {
+  //           definition.audio = true
+  //           definition.duration = Math.min(definitionDuration, outDuration)
+  //           const audioInput = definitionType === AudioType
+  //           if (audioInput) definition.url = outUrl
+  //           else definition.audioUrl = outUrl
+  //         }
+  //         break
+  //       }
+  //       case EncodeType.Image: {
+  //         if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
+  //           const outSize = { width: outWidth, height: outHeight }
+  //           const imageInput = definitionType === ImageType
+  //           if (imageInput && !index) {
+  //             definition.previewSize = outSize
+  //             definition.url = outUrl
+  //           } else definition.icon = outUrl
+  //         }
+  //         break
+  //       }
+  //     }
+  //   })
+  //   // console.log(this.constructor.name, "populateDefinition", definition)
+  // }
+  // private _renderingCommandOutputs?: UnusedRenderingCommandOutputs
+  // private get renderingCommandOutputs(): UnusedRenderingCommandOutputs {
+  //   if (this._renderingCommandOutputs) return this._renderingCommandOutputs
+
+  //   const { previewSize, outputSize } = this
+  //   const provided = this.args.commandOutputs || {}
+  //   const outputs = Object.fromEntries(EncodeTypes.map(outputType => {
+  //     const base: RenderingCommandOutput = { outputType }
+  //     switch (outputType) {
+  //       case EncodeType.Image: {
+  //         base.width = previewSize.width
+  //         base.height = previewSize.height
+  //         base.cover = true
+  //         break
+  //       }
+  //       case EncodeType.Video: {
+  //         base.width = outputSize.width
+  //         base.height = outputSize.height
+  //         break
+  //       }
+  //     }
+  //     const commandOutput: CommandOutput = provided[outputType] || {}
+  //     const renderingCommandOutput: RenderingCommandOutput = { ...base, ...commandOutput }
+  //     return [outputType, renderingCommandOutput]
+  //   }))
+  //   return this._renderingCommandOutputs = outputs
+  // }

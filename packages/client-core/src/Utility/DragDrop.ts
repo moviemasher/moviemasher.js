@@ -5,7 +5,7 @@ import {
   JsonRecord, isRawType, isAboveZero, isPopulatedString, isArray, 
   DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
   ClassDroppingBefore, isPopulatedObject, errorThrow, MediaObject, 
-  MashAndMediaObject, TrackType, MediaTypes, mediaTypeFromMime
+  MashAndMediaObject, TrackType, MediaTypes, mediaTypeFromMime, Strings
 } from "@moviemasher/moviemasher.js"
 
 export const DragSuffix = '/x-moviemasher'
@@ -74,7 +74,7 @@ export const dragType = (dataTransfer?: DataTransfer | null): DragType | undefin
   if (isDragType(type) || isMediaType(type)) return type
 }
 
-export const dragTypes = (dataTransfer: DataTransfer): string[] => {
+export const dragTypes = (dataTransfer: DataTransfer): Strings => {
   const { types } = dataTransfer
   return types.filter(type => (
     type === TransferTypeFiles || isTransferType(type)
@@ -138,6 +138,7 @@ export const dropFilesFromList = (files: FileList, serverOptions: JsonRecord = {
     }
     infos.push(file)
   }
+  console.log('dropFilesFromList infos', infos)
   return infos
 }
 

@@ -1,4 +1,4 @@
-import { RenderingOutputArgs, RenderingOutput } from "@moviemasher/moviemasher.js";
+import { RenderingOutput, RenderingOutputArgs } from "../Encode/Encode";
 
 export interface ImageSequenceOutputArgs extends RenderingOutputArgs {
   cover?: boolean;

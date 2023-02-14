@@ -1,3 +1,4 @@
+export * from './declarations'
 export * from "./Client"
 export * from "./Monitor"
 export * from "./Protocol"

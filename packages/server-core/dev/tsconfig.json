@@ -13,8 +13,8 @@
     "resolveJsonModule": true,
     "strict": true,
     "target": "ESNext",
-    "rootDir": "../"
+    "rootDir": "../../"
   },
   "exclude": ["../cjs/*",  "../esm/*", "../src/**/*.test*.ts", "*.node", "**/node_modules/*"],
-  "include": ["../src/index.ts"],
+  "include": ["../src/*.ts", "**/src/*.ts"],
 }

@@ -1,16 +1,16 @@
-import { LoadedImage, LoadedVideo } from "../Load/Loaded";
+import { ClientImage, ClientVideo } from "../ClientMedia/ClientMedia";
 import { Time } from "../Helpers/Time/Time";
 import { timeFromSeconds } from "../Helpers/Time/TimeUtilities";
 import { assertTrue } from "./Is";
 import { Size, sizeAboveZero, sizeCopy, sizeCover } from "./Size";
 
-const seekingPromises = new Map<LoadedVideo, Promise<LoadedImage>>()
+const seekingPromises = new Map<ClientVideo, Promise<ClientImage>>()
 
 const seek = (definitionTime: Time, video:HTMLVideoElement): void => {
   video.currentTime = definitionTime.seconds
 }
 
-const videoImagePromise = (video: LoadedVideo, outSize?: Size): Promise<LoadedImage> => {
+const videoImagePromise = (video: ClientVideo, outSize?: Size): Promise<ClientImage> => {
   console.log('videoImagePromise', video.currentTime)
   
   const inSize = sizeCopy(video)
@@ -43,10 +43,10 @@ const seekNeeded = (definitionTime: Time, video:HTMLVideoElement): boolean => {
   return !videoTime.equalsTime(definitionTime)
 }
 
-export const imageFromVideoPromise = (video: LoadedVideo, definitionTime: Time, outSize?: Size): Promise<LoadedImage> => {
+export const imageFromVideoPromise = (video: ClientVideo, definitionTime: Time, outSize?: Size): Promise<ClientImage> => {
   console.log('imageFromVideoPromise', definitionTime)
   
-  const promise: Promise<LoadedImage> = new Promise(resolve => {
+  const promise: Promise<ClientImage> = new Promise(resolve => {
     if (!seekNeeded(definitionTime, video)) {
       console.log('imageFromVideoPromise !seekNeeded', definitionTime)
 

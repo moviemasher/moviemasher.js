@@ -1,7 +1,7 @@
-import { endpointUrl, ClientImageOrError, RequestObject } from "@moviemasher/moviemasher.js"
+import { endpointUrl, ClientImageOrError, Request } from "@moviemasher/moviemasher.js"
 
 
-export const clientImagePromise = (request: RequestObject): Promise<ClientImageOrError> => {
+export const clientImagePromise = (request: Request): Promise<ClientImageOrError> => {
   // TODO: use init
   const { endpoint } = request
   const url = endpointUrl(endpoint)
@@ -9,7 +9,7 @@ export const clientImagePromise = (request: RequestObject): Promise<ClientImageO
   // console.trace("clientImagePromise", url)
   clientImage.src = url
   return new Promise<ClientImageOrError>(resolve => {
-    clientImage.onload = () => { resolve({ clientImage }) }
+    clientImage.onload = () => { resolve({ clientImage, clientMedia: clientImage }) }
   })
 }
 

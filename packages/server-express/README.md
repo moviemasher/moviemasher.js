@@ -2,12 +2,13 @@
 <!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
-_JavaScript video editor, encoder, switcher_
+_JavaScript video editor and encoder_
+_JavaScript video editor and encoder_
 - _visual compositing_ through **SVG API**
-- _audio mixing_ through **WebAudio API** 
-- _client_ implemented in **ReactJS** 
-- _server_ implemented in **ExpressJS**  
-- _encode_ and _stream_ through **FFmpeg**
+- _audio mixing_ through **WebAudio API**
+- _encode_ and _transcode_ through **FFmpeg**
+- _client_ implemented in **ReactJS**
+- _server_ implemented in **ExpressJS**
 <!-- MAGIC:END -->
 
 ## Express Server Plug-in
@@ -57,15 +58,10 @@ The script below can then be included in your project and triggered in a variety
 
 
 ```js
-const MovieMasherServer = require("@moviemasher/server-express")
-
-const { Host } = MovieMasherServer
-const options = { 
-  port: 8572, host: '0.0.0.0', 
-  api: { authentication: { type: 'basic' } } 
-}
-const host = new Host(options)
-host.start()
+// src/server.ts
+import { Host, HostDefaultOptions } from "@moviemasher/server-express";
+var host = new Host(HostDefaultOptions());
+host.start();
 ```
 </fieldset>
 

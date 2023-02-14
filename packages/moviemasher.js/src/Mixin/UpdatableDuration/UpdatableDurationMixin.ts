@@ -3,7 +3,6 @@ import { StartOptions } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../Base/Code"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
-import { PreloadableClass } from "../Preloadable/Preloadable"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
 import { filterFromId } from "../../Filter/FilterFactory"
 import { Filter } from "../../Filter/Filter"
@@ -14,11 +13,12 @@ import { Tweening } from "../../Utility/Tween"
 import { Property } from "../../Setup/Property"
 import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
 import { AudioType } from "../../Setup/Enums"
+import { ContentClass } from "../../Media/Content/Content"
 
 const AudibleGainDelimiter = ','
 
 
-export function UpdatableDurationMixin<T extends PreloadableClass>(Base: T): UpdatableDurationClass & T {
+export function UpdatableDurationMixin<T extends ContentClass>(Base: T): UpdatableDurationClass & T {
   return class extends Base implements UpdatableDuration {
     constructor(...args: any[]) {
       super(...args)

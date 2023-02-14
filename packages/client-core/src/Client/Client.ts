@@ -1,7 +1,7 @@
 import { 
-  Media, RequestObject, DecodeType, MediaType, 
-  ProbeType, Encoding, Transcoding, Decoding, CookedTypes,
-  PotentialError, ImageType, AudioType, VideoType, MashMedia, Endpoints
+  Media, Request, MediaType, 
+  Encoding, Transcoding, Decoding, CookedTypes,
+  PotentialError, ImageType, AudioType, VideoType, MashMedia, Endpoints, ProbeType, DurationProbe, AlphaProbe, SizeProbe, AudibleProbe
 } from "@moviemasher/moviemasher.js"
 import { DecodeTypesByMediaType, TranscodeTypesByMediaType } from "../declarations"
 
@@ -49,8 +49,8 @@ export interface ClientTranscodeOptions {
 export interface ClientReadOptions {
   type?: MediaType
   kind?: string
-  getRequest?: RequestObject | false
-  listRequest?: RequestObject | false
+  getRequest?: Request | false
+  listRequest?: Request | false
 }
 
 export interface UploadMediaArgs {
@@ -61,9 +61,9 @@ export interface ClientArgs extends Required<ClientOptions> {}
 
 export interface ClientWriteOptions {
 
-  saveRequest?: RequestObject | false
-  deleteRequest?: RequestObject | false
-  uploadRequest?: RequestObject | false
+  saveRequest?: Request | false
+  deleteRequest?: Request | false
+  uploadRequest?: Request | false
   uploadResponseIsRequest?: boolean
   uploadCookedTypes?: CookedTypes
 }
@@ -90,20 +90,20 @@ export const ClientDefaultArgs: ClientArgs = {
   [DecodeOperation]: {
     autoDecode: {
       [AudioType]: [{ 
-        type: DecodeType.Probe, 
-        options: { types: [ProbeType.Duration] }
+        type: ProbeType, 
+        options: { types: [DurationProbe] }
       }],
       [ImageType]: [{ 
-        type: DecodeType.Probe, 
-        options: { types: [ProbeType.Alpha, ProbeType.Size] }
+        type: ProbeType, 
+        options: { types: [AlphaProbe, SizeProbe] }
       }],
 
       [VideoType]: [{ 
-        type: DecodeType.Probe, 
+        type: ProbeType, 
         options: { 
           types: [
-            ProbeType.Duration, ProbeType.Size, 
-            ProbeType.Alpha, ProbeType.Audio 
+            DurationProbe, SizeProbe, 
+            AlphaProbe, AudibleProbe 
           ] 
         }
       }],
@@ -154,12 +154,6 @@ export interface ClientProgessSteps extends ClientProgress {
 
 export type ClientCallback = (progress: ClientProgress) => void
 
-export type ClientData<T = {}> = T
-export type ClientDatum<T = {}> = ClientData<T>[]
-
-export interface ClientResponse<T = {}> extends PotentialError {
-  data?: ClientData<T> | ClientDatum<T>
-}
 
 export interface ClientArrayResponse extends PotentialError {
   data?: Media[]

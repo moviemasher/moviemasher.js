@@ -130,7 +130,7 @@ The icon button currently selected in the browser header is painted with the pro
 <!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme-default/src/css/sizes.css&stripComments=1) -->
 
 ```css
-.moviemasher .editor {
+.moviemasher {
   --padding: 40px;
   --spacing: 20px;
   --header-height: 38px;
@@ -192,11 +192,6 @@ The icon button currently selected in the browser header is painted with the pro
 
 .moviemasher .editor .panel .preview label {
   --padding: 5px;
-}
-
-.moviemasher .editor .panel button {
-  --padding: 5px;
-  --spacing: 5px;
 }
 
 

@@ -1,4 +1,4 @@
-import { LoadedVideo } from "../../Load/Loaded"
+import { ClientVideo } from "../../ClientMedia/ClientMedia"
 import { PreviewItems, SvgItem, SvgItems } from "../../Helpers/Svg/Svg"
 import { Rect, rectsEqual, RectTuple } from "../../Utility/Rect"
 import { Size, sizeCopy } from "../../Utility/Size"
@@ -16,7 +16,7 @@ import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../../Utility/Tween"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { idGenerateString } from "../../Utility/Id"
-import { assertLoadedImage, isLoadedVideo } from "../../Load/Loader"
+import { assertClientImage, isClientVideo } from "../../ClientMedia/ClientMediaFunctions"
 import { colorWhite } from "../../Helpers/Color/ColorFunctions"
 import { Content } from "../Content/Content"
 import { NamespaceSvg } from "../../Setup/Constants"
@@ -91,12 +91,12 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           image.src
         ))
       }
-      return definition.preferredTranscoding(ImageType).loadedMediaPromise.then(orError => {
-        const { error, clientMedia: loadedMedia } = orError
+      return definition.preferredTranscoding(ImageType).clientMediaPromise.then(orError => {
+        const { error, clientMedia: clientMedia } = orError
         if (error) return errorThrow(error)
 
-        assertLoadedImage(loadedMedia)
-        return loadedMedia.src
+        assertClientImage(clientMedia)
+        return clientMedia.src
       }) 
     }
 
@@ -112,7 +112,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       })
     }
 
-    private containedVideo(video: LoadedVideo, containerRect: Rect, size: Size, time: Time, range: TimeRange): Promise<PreviewItems> {
+    private containedVideo(video: ClientVideo, containerRect: Rect, size: Size, time: Time, range: TimeRange): Promise<PreviewItems> {
       const x = Math.round(Number(video.getAttribute('x')))
       const y = Math.round(Number(video.getAttribute('y')))
       const containerPoint = pointCopy(containerRect)
@@ -156,7 +156,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const containedPromise = contentPromise.then(contentItem => {
         assertObject(contentItem, 'contentItem')
         
-        if (isLoadedVideo(contentItem)) {
+        if (isClientVideo(contentItem)) {
           assertTrue(component === Component.Player, 'video in player')
           return this.containedVideo(contentItem, containerRect, size, time, range)
         }   

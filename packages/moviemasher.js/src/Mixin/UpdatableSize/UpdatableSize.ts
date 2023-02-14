@@ -2,35 +2,32 @@ import { Constrained } from "../../Base/Constrained"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { Size } from "../../Utility/Size"
-import {
-  isPreloadable, isPreloadableDefinition,
-  Preloadable, PreloadableDefinition,
-  PreloadableDefinitionObject, PreloadableObject
-} from "../Preloadable/Preloadable"
+
 import { MediaType, isMediaType, ImageType, VideoType } from "../../Setup/Enums"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Rect } from "../../Utility/Rect"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Media/Content/Content"
 
 export const UpdatableSizeMediaType: MediaType[] = [
   ImageType,
   VideoType,
   // SequenceType,
 ]
-export interface UpdatableSizeObject extends PreloadableObject {
+export interface UpdatableSizeObject extends ContentObject {
 }
 
-export interface UpdatableSizeDefinitionObject extends PreloadableDefinitionObject {
+export interface UpdatableSizeDefinitionObject extends ContentDefinitionObject {
   sourceSize?: Size
   previewSize?: Size
 }
 
-export interface UpdatableSize extends Preloadable {
+export interface UpdatableSize extends Content {
   svgItemForPlayerPromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> 
   svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> 
 }
 
 export const isUpdatableSize = (value?: any): value is UpdatableSize => {
-  return isPreloadable(value) 
+  return isContent(value) 
 }
 export function assertUpdatableSize(value?: any): asserts value is UpdatableSize {
   if (!isUpdatableSize(value)) errorThrow(value, 'UpdatableSize') 
@@ -40,13 +37,13 @@ export const isUpdatableSizeType = (value: any): value is MediaType => {
   return isMediaType(value) && UpdatableSizeMediaType.includes(value)
 }
 
-export interface UpdatableSizeDefinition extends PreloadableDefinition {
+export interface UpdatableSizeDefinition extends ContentDefinition {
   previewSize?: Size
   sourceSize?: Size
   alpha?: boolean
 }
 export const isUpdatableSizeDefinition = (value?: any): value is UpdatableSizeDefinition => {
-  return isPreloadableDefinition(value)
+  return isContentDefinition(value)
 }
 export function assertUpdatableSizeDefinition(value?: any): asserts value is UpdatableSizeDefinition {
   if (!isUpdatableSizeDefinition(value)) errorThrow(value, 'UpdatableSizeDefinition') 

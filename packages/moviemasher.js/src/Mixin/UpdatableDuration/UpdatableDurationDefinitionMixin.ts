@@ -1,18 +1,18 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
 import { UnknownRecord } from "../../declarations"
-import { AudibleSource, LoadedAudio } from "../../Load/Loaded"
+import { ClientAudioNode, ClientAudio } from "../../ClientMedia/ClientMedia"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { assertLoadedAudio, assertLoadedVideo, isLoadedAudio } from "../../Load/Loader"
+import { assertClientAudio, assertClientVideo, isClientAudio } from "../../ClientMedia/ClientMediaFunctions"
 import { DataType, MediaType, Duration, AudioType, VideoType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { isAboveZero, isUndefined } from "../../Utility/Is"
-import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
 import { endpointFromUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { requestAudioPromise } from "../../Utility/Request"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { ContentDefinitionClass } from "../../Media/Content/Content"
 
-export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
+export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {
     constructor(...args: any[]) {
       super(...args)
@@ -54,7 +54,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       }))
     }
 
-    audibleSource(): AudibleSource | undefined {
+    audibleSource(): ClientAudioNode | undefined {
       const { loadedAudio } = this
       if (loadedAudio) {
         // console.log(this.constructor.name, "audibleSource loadedAudio")
@@ -96,21 +96,21 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
       return timeFromSeconds(this.duration, quantize, 'floor').frame
     }
 
-    loadedAudio?: LoadedAudio
+    loadedAudio?: ClientAudio
     
-    get loadedAudioPromise(): Promise<LoadedAudio> {
+    get loadedAudioPromise(): Promise<ClientAudio> {
       if (this.loadedAudio) return Promise.resolve(this.loadedAudio)
 
       const transcoding = this.preferredTranscoding(AudioType, VideoType)
-      return transcoding.loadedMediaPromise.then(orError => {
+      return transcoding.clientMediaPromise.then(orError => {
         if (orError.error) return errorThrow(orError.error)
 
         const { clientMedia: media } = orError
-        if (isLoadedAudio(media)) {
+        if (isClientAudio(media)) {
           this.loadedAudio = media
           return media
         }
-        assertLoadedVideo(media)
+        assertClientVideo(media)
 
         const { src } = media
         const endpoint = endpointFromUrl(src)
@@ -118,7 +118,7 @@ export function UpdatableDurationDefinitionMixin<T extends PreloadableDefinition
         return requestAudioPromise(request).then(orError => {
           if (orError.error) return errorThrow(orError.error)
           const { clientAudio: audio } = orError
-          assertLoadedAudio(audio)
+          assertClientAudio(audio)
           
           this.loadedAudio = audio
           return audio

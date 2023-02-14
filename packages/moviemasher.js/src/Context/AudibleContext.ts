@@ -1,4 +1,4 @@
-import { AudibleSource } from "../Load/Loaded"
+import { ClientAudioNode } from "../ClientMedia/ClientMedia"
 import { assertMethod } from "../Utility/Is"
 
 const AudibleSampleRate = 44100
@@ -8,7 +8,7 @@ export interface AudibleContextData extends AudioContext {}
 
 export interface AudibleContextSource {
   gainNode: GainNode
-  gainSource: AudibleSource
+  gainSource: ClientAudioNode
 }
 
 export class AudibleContext {
@@ -34,7 +34,7 @@ export class AudibleContext {
     return this.context.createBuffer(AudibleChannels, length, AudibleSampleRate)
   }
 
-  createBufferSource(buffer?: AudioBuffer): AudibleSource {
+  createBufferSource(buffer?: AudioBuffer): ClientAudioNode {
     // console.trace(this.constructor.name, "createBufferSource")
     const sourceNode = this.context.createBufferSource()
     if (buffer) sourceNode.buffer = buffer
@@ -77,7 +77,7 @@ export class AudibleContext {
 
   private sourcesById = new Map<string, AudibleContextSource>()
 
-  startAt(id: string, source: AudibleSource, start: number, duration: number, offset?: number, loops = false):void {
+  startAt(id: string, source: ClientAudioNode, start: number, duration: number, offset?: number, loops = false):void {
     const gainNode = this.createGain()
     source.loop = loops
     source.connect(gainNode)

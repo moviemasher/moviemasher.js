@@ -1,9 +1,9 @@
 import { Size, sizeAboveZero } from "../../Utility/Size"
-import { PreloadableDefinitionClass } from "../Preloadable/Preloadable"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass } from "./UpdatableSize"
 import { isAboveZero } from "../../Utility/Is"
+import { ContentDefinitionClass } from "../../Media/Content/Content"
 
-export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
+export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {
     constructor(...args: any[]) {
       super(...args)
@@ -20,15 +20,15 @@ export function UpdatableSizeDefinitionMixin<T extends PreloadableDefinitionClas
 
     get previewSize(): Size | undefined {
       const transcoding = this.transcodings.find(transcoding => {
-        return transcoding.loadedMedia
+        return transcoding.clientMedia
       })
       // console.log(this.constructor.name, "previewSize transcoding", transcoding)
       if (!transcoding) return this.sourceSize
 
-      const { loadedMedia } = transcoding
-      if (!sizeAboveZero(loadedMedia)) return 
+      const { clientMedia } = transcoding
+      if (!sizeAboveZero(clientMedia)) return 
 
-      const { width, height } = loadedMedia
+      const { width, height } = clientMedia
       if (!(isAboveZero(width) && isAboveZero(height))) return 
 
       return { width, height }

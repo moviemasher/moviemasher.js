@@ -7,3 +7,4 @@ temporary*
 **/cjs/*
 **/umd/*
 **/esm/*
+**/*-deleted/*

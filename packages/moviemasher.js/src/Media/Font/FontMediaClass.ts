@@ -1,5 +1,5 @@
 import { UnknownRecord } from "../../declarations"
-import { LoadedFont } from "../../Load/Loaded"
+import { ClientFont } from "../../ClientMedia/ClientMedia"
 import { GraphFile, PreloadArgs, GraphFiles } from "../../Base/Code"
 import { DataType, Orientation, FontType } from "../../Setup/Enums"
 import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
@@ -9,7 +9,7 @@ import { requestFontPromise } from "../../Utility/Request"
 import { Size, sizeCover } from "../../Utility/Size"
 import { centerPoint, Rect } from "../../Utility/Rect"
 import { svgSvgElement, svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { assertLoadedFont, isLoadedFont } from "../../Load/Loader"
+import { assertClientFont, isClientFont } from "../../ClientMedia/ClientMediaFunctions"
 import { assertPopulatedString, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PointZero } from "../../Utility/Point"
 import { stringFamilySizeRect } from "../../Utility/String"
@@ -47,12 +47,9 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
       defaultValue: 0.8, max: 2.0, group: DataGroup.Size
     }))
     
-    const { loadedMedia } = this
-    if (isLoadedFont(loadedMedia)) this.loadedFont = loadedMedia
+    const { clientMedia } = this
+    if (isClientFont(clientMedia)) this.loadedFont = clientMedia
   }
-  // bytes: number = 0
-  // mimeType: string = ''
-  // info?: CommandProbeData | undefined
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     return this.loadFontPromise(this.preferredTranscoding(FontType)).then(() => {
@@ -77,7 +74,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
   get family(): string {
     if (!this._family) {
       const { loadedFont } = this
-      if (isLoadedFont(loadedFont)) {
+      if (isClientFont(loadedFont)) {
         const { family } = loadedFont
         if (isPopulatedString(family)) this._family = family
       }
@@ -134,14 +131,14 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
   isVector = true
 
-  loadFontPromise(transcoding: Requestable): Promise<LoadedFont> {
+  loadFontPromise(transcoding: Requestable): Promise<ClientFont> {
     if (this.loadedFont) return Promise.resolve(this.loadedFont)
     
     const { request } = transcoding
     return requestFontPromise(request).then(orError => {
       const { error, clientFont: loadedFont } = orError
       if (error) return errorThrow(error)
-      assertLoadedFont(loadedFont)
+      assertClientFont(loadedFont)
       
       this.family = loadedFont.family
       this.loadedFont = loadedFont
@@ -157,7 +154,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     return this.loadFontPromise(requestable).then(EmptyMethod)
   }
   
-  private loadedFont?: LoadedFont
+  private loadedFont?: ClientFont
 
   // preloadUrls(args: PreloadArgs): string[] {
   //   const { visible, editing } = args

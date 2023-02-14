@@ -1,7 +1,6 @@
-import { isMedia, MediaObject } from "../Media"
+import { isMedia, Media, MediaObject } from "../Media"
 import { EffectType } from "../../Setup/Enums"
 
-import { PreloadableDefinition } from "../../Mixin/Preloadable/Preloadable"
 import { isTweenable, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../../Mixin/Tweenable/Tweenable"
 import { CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs } from "../../Base/Code"
 import { Size } from "../../Utility/Size"
@@ -10,10 +9,8 @@ import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { SvgFilters } from "../../Helpers/Svg/Svg"
 import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
 import { PropertyObject } from "../../Setup/Property"
-import { MediaInstanceObject } from "../MediaInstance/MediaInstance"
 
-
-export interface EffectObject extends TweenableObject, MediaInstanceObject {
+export interface EffectObject extends TweenableObject {
   
 }
 
@@ -40,7 +37,7 @@ export interface EffectDefinitionObject extends TweenableDefinitionObject, Media
   properties? : PropertyObject[]
 }
 
-export interface EffectDefinition extends TweenableDefinition, PreloadableDefinition {
+export interface EffectDefinition extends TweenableDefinition, Media {
   type: EffectType
   instanceFromObject(object?: EffectObject) : Effect
   filters: Filter[]

@@ -1,8 +1,8 @@
 
 import { 
   timeFromArgs, timeRangeFromArgs, assertTrue, AVType, CommandFiles, 
-  ServerPromiseArgs, assertPreloadableDefinition, EmptyMethod, Time, 
-  errorThrow, ErrorName 
+  ServerPromiseArgs, EmptyMethod, Time, 
+  errorThrow, ErrorName, assertMedia 
 } from "@moviemasher/moviemasher.js"
 import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
@@ -83,7 +83,7 @@ export class FilterGraphsClass implements FilterGraphs {
     }
     const promises = commandFiles.map(commandFile => {
       const { definition } = commandFile
-      assertPreloadableDefinition(definition)
+      assertMedia(definition)
       return definition.serverPromise(args)
       
     })

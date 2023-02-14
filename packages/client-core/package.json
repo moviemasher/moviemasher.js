@@ -29,5 +29,14 @@
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2"
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.7"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "client-core",
+    "tsconfig": "./tsconfig.json"
   }
 }

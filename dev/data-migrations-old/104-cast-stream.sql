@@ -1,8 +1,0 @@
-
-
-CREATE TABLE IF NOT EXISTS `cast_stream` (
-  id STRING PRIMARY KEY,
-  castId STRING NOT NULL,
-  streamId STRING NOT NULL,
-  createdAt STRING NOT NULL
-);

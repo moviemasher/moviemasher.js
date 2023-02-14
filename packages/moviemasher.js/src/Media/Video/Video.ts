@@ -1,4 +1,4 @@
-import { LoadedImage, LoadedVideo } from "../../Load/Loaded"
+import { ClientImage, ClientVideo } from "../../ClientMedia/ClientMedia"
 import { VideoType } from "../../Setup/Enums"
 import {
   UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
@@ -9,10 +9,9 @@ import {
   UpdatableDuration, UpdatableDurationDefinition, 
   UpdatableDurationDefinitionObject, UpdatableDurationObject 
 } from "../../Mixin/UpdatableDuration/UpdatableDuration"
-import { isMedia, Media, MediaObject } from "../Media"
+import { isMedia, isMediaInstance, Media, MediaObject } from "../Media"
 import { Time } from "../../Helpers/Time/Time"
 import { Size } from "../../Utility/Size"
-import { isMediaInstance } from "../MediaInstance/MediaInstance"
 import { Requestable } from "../../Base/Requestable/Requestable"
 
 export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
@@ -22,11 +21,11 @@ export interface VideoObject extends ContentObject, UpdatableSizeObject, Updatab
 
 export interface Video extends Content, UpdatableSize, UpdatableDuration {
   definition : VideoDefinition
-  loadedVideo?: LoadedVideo
+  loadedVideo?: ClientVideo
 }
 
 export interface VideoDefinitionObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
-  loadedVideo?: LoadedVideo
+  loadedVideo?: ClientVideo
 }
 
 export type VideoTransitionalObject = MediaObject | VideoDefinitionObject
@@ -34,9 +33,9 @@ export type VideoTransitionalObject = MediaObject | VideoDefinitionObject
 export interface VideoDefinition extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
   type: VideoType
   instanceFromObject(object?: VideoObject): Video
-  loadedVideo?: LoadedVideo
+  loadedVideo?: ClientVideo
   readonly previewTranscoding: Requestable
-  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<LoadedImage>
+  loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>
 }
 export const isVideoDefinition = (value: any): value is VideoDefinition => {
   return isMedia(value) && value.type === VideoType

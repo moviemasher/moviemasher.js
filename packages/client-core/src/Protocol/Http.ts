@@ -1,21 +1,21 @@
 import { 
-  RequestObject, LoadType, ProtocolPromise, Plugins, 
-  LoadedFont, assertTrue, isPopulatedString, 
-  LoadedInfo, endpointAbsolute, LoadedAudio, JsonType,
-  ContentTypeCss, RequestInitObject, urlFromCss, endpointUrl, ImageType, AudioType, VideoType, FontType, ProtocolHttp, ProtocolHttps, errorThrow
+  Request, LoadType, ProtocolPromise, Plugins, 
+  ClientFont, assertTrue, isPopulatedString, 
+  LoadedInfo, endpointAbsolute, ClientAudio, JsonType,
+  ContentTypeCss, RequestInit, urlFromCss, endpointUrl, ImageType, AudioType, VideoType, FontType, ProtocolHttp, ProtocolHttps, errorThrow, ClientFontOrError
 } from "@moviemasher/moviemasher.js"
 import { audioBufferPromise } from "../Utility/Audio"
 import { jsonPromise } from "../Utility/Json"
 import { clientImagePromise } from "../Utility/Image"
 import { clientVideoPromise } from "../Utility/Video"
 
-const arrayBufferPromise = (url: string, init?: RequestInitObject): Promise<ArrayBuffer> => (
+const arrayBufferPromise = (url: string, init?: RequestInit): Promise<ArrayBuffer> => (
    fetch(url, init).then(response => response.arrayBuffer())
 )
 
 const fontFamily = (url: string): string => url.replaceAll(/[^a-z0-9]/gi, '_')
 
-const fontPromise =  (request: RequestObject): Promise<LoadedFont> => {
+const fontPromise =  (request: Request): Promise<ClientFontOrError> => {
   const { endpoint, init } = request
   const url = endpointUrl(endpoint)
   
@@ -50,14 +50,13 @@ const fontPromise =  (request: RequestObject): Promise<LoadedFont> => {
     return fonts.ready.then(() => {
       
       console.log("fontPromise.ready", url)
-      const info: LoadedInfo = { family }
       // this.updateLoaderFile(file, info)
-      return face
+      return { clientFont: face }
     })
   })
 }
 
-const audioPromise =  (request: RequestObject): Promise<LoadedAudio| any> => {
+const audioPromise =  (request: Request): Promise<ClientAudio| any> => {
   const { endpoint, init } = request
   const url = endpointUrl(endpoint)
   // console.log(this.constructor.name, "audioPromise", isBlob ? 'BLOB' : url)
@@ -65,7 +64,7 @@ const audioPromise =  (request: RequestObject): Promise<LoadedAudio| any> => {
   return promise.then(buffer => audioBufferPromise(buffer))
 }
 
-const promise = ((request: RequestObject, type?: LoadType) => {
+const promise = ((request: Request, type?: LoadType) => {
   const { endpoint, init } = request
   const absolute = endpointAbsolute(endpoint)
   const absoluteRequest = { init, endpoint: absolute }

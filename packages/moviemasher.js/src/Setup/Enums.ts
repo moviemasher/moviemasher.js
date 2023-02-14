@@ -61,15 +61,15 @@ export const isCookedType = (type?: any): type is CookedType => {
 }
 
 
-export type RawType = AudioType | FontType | ImageType | VideoType
+export type RawType = AudioType | ImageType | VideoType
 export type RawTypes = RawType[]
-export const RawTypes: RawTypes = [AudioType, FontType, ImageType, VideoType]
+export const RawTypes: RawTypes = [AudioType, ImageType, VideoType]
 export const isRawType = (type?: any): type is RawType => {
   return isString(type) && RawTypes.includes(type as RawType)
 }
 
-export type LoadType = RawType | JsonType
-export const LoadTypes: LoadType[] = [...RawTypes, JsonType]
+export type LoadType = RawType | FontType | JsonType
+export const LoadTypes: LoadType[] = [...RawTypes, FontType, JsonType]
 export const isLoadType = (type?: any): type is LoadType => {
   return LoadTypes.includes(type)
 }
@@ -203,12 +203,7 @@ export enum StreamingFormat {
   Rtmp = 'rtmp',
 }
 
-export enum ProbeType {
-  Alpha = 'alpha',
-  Audio = 'audio',
-  Duration = 'duration',
-  Size = 'size',
-}
+
 export enum DecodeType {
   Probe = 'probe',
 }

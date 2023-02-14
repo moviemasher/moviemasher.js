@@ -8,22 +8,23 @@
   },
   "license": "MIT",
   "scripts": {  
+
+    "build": "typedoc --options ./dev/typedoc.js",
+
     "logs": "docker compose --file dev/docker-compose.yml logs -f",
     "start": "docker compose --file dev/docker-compose.yml up -d",
     "stop": "docker compose --file dev/docker-compose.yml down -v",
-    "build": "node ../../dev/utils/replace-paths.js ./src/demo.html ./public/demo.html"
+    "build-docs": "node ../../dev/utils/replace-paths.mjs ./src/demo.html ./public/demo.html"
 
   },
   "dependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",
     "@moviemasher/client-react": "5.1.2",
-    "@moviemasher/server-express": "5.1.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "@moviemasher/server-express": "5.1.2"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "@types/node": "18.11.18"
+    "typedoc": "^0.23.25",
+    "typedoc-plugin-resolve-crossmodule-references": "^0.3.3",
+    "@knodes/typedoc-plugin-pages": "^0.23.1"
   }
 }

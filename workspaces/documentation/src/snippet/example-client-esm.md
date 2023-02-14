@@ -53,7 +53,8 @@ Learn more about coloring and sizing the user interface using CSS in the
 
 <legend>masher.tsx</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-express-react/src/masher.tsx) -->
+
+<!-- MAGIC:START (TRIMCODE:src=../../../../images/standalone/src/client.tsx) -->
 
 ```tsx
 import React from 'react'

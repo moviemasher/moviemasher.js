@@ -1,6 +1,5 @@
 import { ScalarRecord } from "../declarations"
 import { Endpoint } from "../Helpers/Endpoint/Endpoint"
-import { isLoaderType } from "../Load/Loader"
 import { arrayLast } from "./Array"
 import { assertPopulatedString, isAboveZero, isNumeric, isPopulatedString, isPositive } from "./Is"
 import { ErrorName } from "../Helpers/Error/ErrorName"
@@ -106,70 +105,10 @@ export const urlForEndpoint = (endpoint: Endpoint, suffix: string = ''): string 
   return href
 }
 
-export const urlIsRootProtocol = (protocol: string) => {
-  if (protocol === 'object:' || urlIsHttp(protocol)) return true
-  
-  return !isLoaderType(protocol.slice(0, -1))
-}
-
 export const urlProtocol = (string: string) => {
   const colonIndex = string.indexOf(':')
   if (!isAboveZero(colonIndex)) return ''
   return string.slice(0, colonIndex + 1)
-}
-
-export const urlParse = (string: string) => {
-  const colonIndex = string.indexOf(':')
-  const slashIndex = string.indexOf('/')
-  if (!(isPositive(colonIndex) && isPositive(slashIndex))) return []
-
-  const protocol = string.slice(0, colonIndex + 1)
-  const options = string.slice(colonIndex + 1, slashIndex)
-  const rest = string.slice(slashIndex + 1)
-  return [protocol, options, rest]
-}
-
-export const urlsParsed = (string: string) => {
-  if (!string) return []
-
-  const urls = [urlParse(string)]
-  let lastPath = ''
-  while(lastPath = arrayLast(arrayLast(urls))) {
-    const parsed = urlParse(lastPath)
-    if (!parsed.length) break
-
-    const [protocol, _, path] = parsed
-    if (protocol === 'object:' || urlIsHttp(protocol)) break
-
-    urls.push(parsed)
-    if (urlIsRootProtocol(urlProtocol(path))) break
-  }
-  return urls
-}
-
-export const urlsAbsolute = (string: string, endpoint: Endpoint) => {
-  if (!string || urlIsRootProtocol(urlProtocol(string))) return []
-
-  const urls = urlsParsed(string)
-  // console.log(`urlsAbsolute urlsParsed('${string})`, urls)
-  const lastUrl = arrayLast(urls)
-  if (!lastUrl) return urls
-
-  const path = arrayLast(lastUrl)
-
-  // console.log(`urlsAbsolute path`, path)
-  if (urlIsObject(path) || urlIsHttp(path)) return urls
-
-  let absolute = urlForEndpoint(endpoint, path)
-  
-  const { length } = urls
-  for (let i = length - 1; i > -1; i--) {
-    const url = urls[i]
-    const [protocol, options] = url
-    url[2] = absolute
-    absolute = `${protocol}${options}/${absolute}`
-  }
-  return urls
 }
 
 export const urlOptionsObject = (options?: string): ScalarRecord | undefined => {

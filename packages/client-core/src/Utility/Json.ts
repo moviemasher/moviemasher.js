@@ -1,14 +1,14 @@
-import { RequestObject, isUndefined, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { Request, isUndefined, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 export interface ResponseObject {
   json(): Promise<any>
 
 }
-export const jsonPromise = (request: RequestObject): Promise<any> => {
+export const jsonPromise = (request: Request): Promise<any> => {
   return fetchPromise(request).then(response => response.json())
 }
 
-export const fetchPromise = (request: RequestObject): Promise<ResponseObject> => {
+export const fetchPromise = (request: Request): Promise<ResponseObject> => {
   const { endpoint, init = {} } = request
   
   // console.log('jsonPromise', endpoint, init)

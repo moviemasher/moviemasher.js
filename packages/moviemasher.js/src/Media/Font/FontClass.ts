@@ -17,7 +17,7 @@ import { PointZero } from "../../Utility/Point"
 import { arrayLast } from "../../Utility/Array"
 import { IntrinsicOptions } from "../Mash/Track/Clip/Clip"
 import { svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
+import { MediaInstanceBase } from "../MediaInstanceBase"
 import { ContainerMixin } from "../Container/ContainerMixin"
 
 const FontHeight = 1000

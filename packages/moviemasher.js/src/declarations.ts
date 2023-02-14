@@ -3,6 +3,7 @@ declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
 export type Value = number | string
 export type Scalar = Value | boolean | undefined
+export type Strings = string[]
 export type PopulatedString = string & { isEmpty: never }
 export type Integer = number 
 
@@ -11,7 +12,7 @@ export interface NumberRecord extends Record<string, number> {}
 export interface UnknownRecord extends Record<string, unknown> {}
 export interface ScalarRecord extends Record<string, Scalar> { }
 export interface StringRecord extends Record<string, string> { }
-export interface StringsRecord extends Record<string, string[]> { }
+export interface StringsRecord extends Record<string, Strings> { }
 export interface NestedStringRecord extends Record<string, string | StringRecord | NestedStringRecord> {}
 
 export interface StringSetter { (value: string): void }

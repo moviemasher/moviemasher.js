@@ -28,26 +28,22 @@
   },
   "peerDependencies": {
     "@bitjourney/uuid-v4": "^1.0.1",
+
     "@moviemasher/moviemasher.js": "5.1.2",
     "@moviemasher/server-core": "5.1.2",
-    "async": "2.6.4",
-    "child_process": "^1.0.2",
+
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "express-basic-auth": "^1.2.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "md5": "^2.3.0",
     "multer": "^1.4.5-lts.1",
-    "node-media-server": "^2.3.8",
-    "pm2": "5.2.2",
+    
     "sqlite": "^4.0.25",
     "sqlite3": "^5.0.8",
     
     "knex": "2.4.0",
-    "pg": "8.8.0",
+    
 
-    "tar": "^6.1.11",
-    "wrtc": "^0.4.7"
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",
@@ -56,7 +52,13 @@
     "@types/fluent-ffmpeg": "^2.1.20",
     "@types/md5": "^2.3.2",
     "@types/multer": "^1.4.7",
-    "@types/node": "18.11.18",
+    "@types/node": "18.13.0",
     "@types/node-media-server": "^2.3.3"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "server-express",
+    "tsconfig": "./dev/tsconfig.json"
   }
 }

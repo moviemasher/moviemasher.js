@@ -6,21 +6,17 @@ import {
   SequenceObject
 } from "./Sequence"
 import { Default } from "../../Setup/Default"
-import {
-  PreloadableDefinitionMixin
-} from "../../Mixin/Preloadable/PreloadableDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { isPositive } from "../../Utility/Is"
 import { MediaBase } from "../MediaBase"
-import { SequenceType, VideoType } from "../../Setup/Enums"
+import { SequenceType } from "../../Setup/Enums"
 
 const SequenceDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const SequenceDefinitionWithContent = ContentDefinitionMixin(SequenceDefinitionWithTweenable)
-const SequenceDefinitionWithPreloadable = PreloadableDefinitionMixin(SequenceDefinitionWithContent)
-const SequenceDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(SequenceDefinitionWithPreloadable)
+const SequenceDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(SequenceDefinitionWithContent)
 const SequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(SequenceDefinitionWithUpdatableSize)
 export class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration implements SequenceDefinition {
   constructor(...args : any[]) {

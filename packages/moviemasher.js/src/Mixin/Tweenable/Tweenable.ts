@@ -13,11 +13,10 @@ import { SelectedProperties } from "../../Helpers/Select/SelectedProperty"
 import { SizeTuple } from "../../Utility/Size"
 import { Tweening } from "../../Utility/Tween"
 import { Selectable } from "../../Editor/Selectable"
-import { isMedia, Media } from "../../Media/Media"
-import { isMediaInstance, MediaInstance } from "../../Media/MediaInstance/MediaInstance"
+import { isMedia, isMediaInstance, Media, MediaInstance, MediaInstanceObject, MediaObject } from "../../Media/Media"
 import { Identified } from "../../Base/Identified"
 
-export interface TweenableObject extends UnknownRecord {
+export interface TweenableObject extends MediaInstanceObject {
   mediaId?: string
   definition?: Media
   label?: string
@@ -29,7 +28,7 @@ export interface TweenableObject extends UnknownRecord {
   lock?: string
 }
 
-export interface TweenableDefinitionObject extends Identified, UnknownRecord {
+export interface TweenableDefinitionObject extends MediaObject {
   type?: MediaType | string
 }
 

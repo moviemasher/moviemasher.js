@@ -1,6 +1,5 @@
 import { FontType } from "../../Setup/Enums"
 import { isMedia } from "../Media"
-import { PreloadableDefinition, PreloadableDefinitionObject, PreloadableObject } from "../../Mixin/Preloadable/Preloadable"
 import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer } from "../Container/Container"
 import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 
@@ -8,11 +7,11 @@ import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 export const DefaultFontId = `${IdPrefix}font${IdSuffix}`
 
 
-export interface FontDefinitionObject extends ContainerDefinitionObject, PreloadableDefinitionObject {
+export interface FontDefinitionObject extends ContainerDefinitionObject {
   string?: string
 }
 
-export interface FontObject extends ContainerObject, PreloadableObject {}
+export interface FontObject extends ContainerObject {}
 
 export interface Font extends Container {
   definition: FontDefinition
@@ -25,7 +24,7 @@ export function assertFont(value: any): asserts value is Font {
   if (!isFont(value)) throw new Error("expected Font")
 }
 
-export interface FontDefinition extends ContainerDefinition, PreloadableDefinition {
+export interface FontDefinition extends ContainerDefinition {
   type: FontType
   family: string
   instanceFromObject(object?: FontObject): Font

@@ -2,10 +2,10 @@ import fs from 'fs'
 
 import { 
   urlFromCss, Resolver, Resolvers, arrayLast, ContentTypeCss, endpointFromUrl, 
-  ExtCss, RequestObject 
+  ExtCss, Request 
 } from "@moviemasher/moviemasher.js"
 
-const requestPromise = (filePath: string): Promise<RequestObject> => {
+const requestPromise = (filePath: string): Promise<Request> => {
   return fs.promises.readFile(filePath).then(buffer => {
     const string = buffer.toString()
     const lastUrl = urlFromCss(string)

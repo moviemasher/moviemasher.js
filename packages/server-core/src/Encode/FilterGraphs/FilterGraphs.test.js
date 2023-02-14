@@ -97,7 +97,7 @@ describe("FilterGraphs", () => {
       assert(input)
       
       const { definition } = clip.content
-      assertPreloadableDefinition(definition)
+      assertMedia(definition)
       assert.equal(file, definition.source)
 
       assert(options instanceof Object)

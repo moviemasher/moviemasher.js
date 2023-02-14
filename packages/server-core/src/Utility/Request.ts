@@ -1,11 +1,20 @@
 import { 
-  endpointAbsolute, RequestObject
+  endpointAbsolute, Request, StringRecord, Value
 } from "@moviemasher/moviemasher.js"
 
-import { RequestArgs } from "../declarations"
 import { hashMd5 } from './Hash'
 
-export const requestArgs = (request: RequestObject): RequestArgs => {
+export interface RequestArgs {
+  auth?: string;
+  headers?: StringRecord
+  hostname?: string
+  method?: string
+  path?: string;
+  port?: Value
+  protocol?: string
+}
+
+export const requestArgs = (request: Request): RequestArgs => {
   const { endpoint, init = {} } = request
   const absolute = endpointAbsolute(endpoint)
   const { protocol, hostname, port, pathname, search } = absolute
@@ -26,7 +35,7 @@ export const requestArgsHash = (args: RequestArgs): string => (
   hashMd5(JSON.stringify(args))
 )
 
-export const requestHash = (request: RequestObject): string => (
+export const requestHash = (request: Request): string => (
   requestArgsHash(requestArgs(request))
 )
 

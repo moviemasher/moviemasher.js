@@ -5,9 +5,9 @@ import { Filter, FilterArgs } from "../Filter/Filter"
 import { ValueRecord } from "../declarations"
 import { Size } from "../Utility/Size"
 import { RectTuple } from "../Utility/Rect"
-import { LoaderType } from "../Load/Loader"
+import { LoaderType } from "../ClientMedia/ClientMediaFunctions"
 import { Media } from "../Media/Media"
-import { RequestObject } from "../Api/Api"
+import { Request } from "../Helpers/Request/Request"
 import { isObject } from "../Utility/Is"
 
 export interface CommandInput {
@@ -25,6 +25,8 @@ export interface CommandFilter {
 }
 
 export type CommandFilters = CommandFilter[]
+
+
 
 export interface GraphFilter extends CommandFilter {
   filter: Filter
@@ -159,9 +161,9 @@ export enum Component {
 }
 
 export interface Output {
-  request?: RequestObject
+  request?: Request
 }
 export const isOutput = (value: any): value is Output => {
-  return isObject(value) //&& isRequestObject(value.request)
+  return isObject(value) //&& isRequest(value.request)
 }
 

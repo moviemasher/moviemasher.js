@@ -8,7 +8,7 @@ import {
   RenderingStartRequest,
   MediaType, 
   RenderingStartResponse,
-  LoadType, Endpoint, RequestInitObject, 
+  LoadType, Endpoint, RequestInit, 
   RenderingStatusResponse, RenderingStatusRequest,
   RenderingUploadRequest, RenderingUploadResponse, 
   MashMediaObject, assertTrue, NumberRecord, SizePreview, 
@@ -134,118 +134,13 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     return path.resolve(...components)
   }
 
-  // private populateDefinition(user: string, renderingId: string, definition: MediaObject, commandOutputs: RenderingCommandOutputs): void {
-  //   const { fileServer } = this
-  //   assertTrue(fileServer)
-
-  //   const { id, source, type: definitionType } = definition
-  //   assertPopulatedString(id)
-  //   assertMediaType(definitionType)
-  //   assertPopulatedString(source)
-
-  //   const prefix = path.join(fileServer.userUploadPrefix(id, user), renderingId)
-  //   const outputDirectory = this.outputDirectory(user, id)
-  //   const inInfoName = `upload.${ExtensionLoadedInfo}`
-  //   const inInfoPath = path.join(outputDirectory, renderingId, inInfoName)
-  //   const inInfoExists = fs.existsSync(inInfoPath)
-  //   const inInfo: LoadedInfo = inInfoExists ? expandToJson(inInfoPath) : {}
-  //   const { 
-  //     width: inWidth, height: inHeight,
-  //     duration: inDuration, audible: inAudible, label: inLabel
-  //   } = inInfo
-  //   if (isUpdatableDurationType(definitionType) && isAboveZero(inDuration)) {
-  //     definition.duration = inDuration
-  //   }
-  //   if (isUpdatableSizeType(definitionType)) {
-  //     if (isAboveZero(inWidth) && isAboveZero(inHeight)) {
-  //       definition.sourceSize = { width: inWidth, height: inHeight }
-  //     }
-  //   }
-  //   const countByType: NumberRecord = {}
-  //   commandOutputs.forEach(output => {
-  //     const { outputType } = output
-  //     if (!isDefined(countByType[outputType])) countByType[outputType] = -1
-  //     countByType[outputType]++
-  //     const index = countByType[outputType]
-  //     const outInfoName = renderingOutputFile(index, output, ExtensionLoadedInfo)
-  //     const outInfoPath = path.join(outputDirectory, renderingId, outInfoName)
-
-  //     const outInfo: LoadedInfo = expandToJson(outInfoPath)
-  //     const { 
-  //       width: outWidth, height: outHeight, 
-  //       duration: outDuration, audible: outAudible, extension
-  //     } = outInfo
-  //     const outputFilename = renderingOutputFile(index, output, extension)
-  //     const outUrl = path.join(prefix, outputFilename)
-  //     // console.log(this.constructor.name, "populateDefinition", outInfo, index, outputType, outUrl)
-  //     switch(outputType) {
-  //       // case EncodeType.ImageSequence: {
-  //       //   if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
-  //       //     definition.fps = output.videoRate
-  //       //     definition.previewSize = { width: outWidth, height: outHeight }
-  //       //     definition.url = prefix + '/'
-  //       //   } 
-  //       //   break
-  //       // }
-  //       case EncodeType.Audio: {
-  //         const { duration: definitionDuration } = definition
-  //         if (isAboveZero(outDuration) && isAboveZero(definitionDuration)) {
-  //           definition.audio = true
-  //           definition.duration = Math.min(definitionDuration, outDuration)
-  //           const audioInput = definitionType === AudioType
-  //           if (audioInput) definition.url = outUrl
-  //           else definition.audioUrl = outUrl
-  //         }
-  //         break
-  //       }
-  //       case EncodeType.Image: {
-  //         if (isAboveZero(outWidth) && isAboveZero(outHeight)) {
-  //           const outSize = { width: outWidth, height: outHeight }
-  //           const imageInput = definitionType === ImageType
-  //           if (imageInput && !index) {
-  //             definition.previewSize = outSize
-  //             definition.url = outUrl
-  //           } else definition.icon = outUrl
-  //         }
-  //         break
-  //       }
-  //     }
-  //   })
-  //   // console.log(this.constructor.name, "populateDefinition", definition)
-  // }
 
   private get previewSize() { return this.args.previewSize || SizePreview }
   // private get outputSize() { return this.args.outputSize || SizeOutput }
   private get iconSize() { return this.args.iconSize || SizeIcon }
 
 
-  // private _renderingCommandOutputs?: UnusedRenderingCommandOutputs
-  // private get renderingCommandOutputs(): UnusedRenderingCommandOutputs {
-  //   if (this._renderingCommandOutputs) return this._renderingCommandOutputs
 
-  //   const { previewSize, outputSize } = this
-  //   const provided = this.args.commandOutputs || {}
-  //   const outputs = Object.fromEntries(EncodeTypes.map(outputType => {
-  //     const base: RenderingCommandOutput = { outputType }
-  //     switch (outputType) {
-  //       case EncodeType.Image: {
-  //         base.width = previewSize.width
-  //         base.height = previewSize.height
-  //         base.cover = true
-  //         break
-  //       }
-  //       case EncodeType.Video: {
-  //         base.width = outputSize.width
-  //         base.height = outputSize.height
-  //         break
-  //       }
-  //     }
-  //     const commandOutput: CommandOutput = provided[outputType] || {}
-  //     const renderingCommandOutput: RenderingCommandOutput = { ...base, ...commandOutput }
-  //     return [outputType, renderingCommandOutput]
-  //   }))
-  //   return this._renderingCommandOutputs = outputs
-  // }
 
   start: ExpressHandler<RenderingStartResponse, RenderingStartRequest> = async (req, res) => {
     const request = req.body
@@ -254,16 +149,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       output, 
       ...rest 
     } = request
-    // console.log(this.constructor.name, "start", JSON.stringify(request, null, 2))
-    // const commandOutput: RenderingCommandOutput = {}
-    // outputs.map(output => {
-    //   const { outputType } = output
-    //   const commandOutput = { 
-    //     ...this.renderingCommandOutputs[outputType], 
-    //     ...output
-    //   }
-    //   return outputDefaultPopulate(commandOutput)
-    // })
+
 
     const id = mash.id || idUnique()
     const renderingId = idUnique()
@@ -308,7 +194,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const renderingStartRequest: RenderingStartRequest = { 
       ...input, output, upload: true 
     }
-    const init: RequestInitObject = { body: renderingStartRequest }
+    const init: RequestInit = { body: renderingStartRequest }
     const endpoint: Endpoint = { pathname: Endpoints.rendering.start }
     const renderingApiCallback: ApiCallback = { endpoint, init }
     return renderingApiCallback

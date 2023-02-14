@@ -1,6 +1,6 @@
 import { 
   JsonRecord, assertObject, isArray, requestPromise, 
-  RequestObject, PotentialError, PathOrError, RequestObjects, Identified
+  Request, PotentialError, PathOrError, Requests, Identified
 } from "@moviemasher/moviemasher.js";
 import { Input } from "../declarations";
 import { assertJobType, JobType } from "../Setup/Enums";
@@ -26,7 +26,7 @@ export const jobExtract = (object: JsonRecord): JobTuple => {
   return [jobType, job]
 }
 
-export const outputPromise = (localPath: string, request: RequestObject): Promise<PotentialError> => (
+export const outputPromise = (localPath: string, request: Request): Promise<PotentialError> => (
   
   
   requestPromise(request).then(() => { return {} })
@@ -46,7 +46,7 @@ export const inputPromise = (input: Input): Promise<PathOrError> => {
   })
 }
 
-export const callbackPromise = (request: RequestObject | RequestObjects, body: CallbackRequestBody): Promise<PotentialError> => {
+export const callbackPromise = (request: Request | Requests, body: CallbackRequestBody): Promise<PotentialError> => {
   const requests = isArray(request) ? request : [request]
   const promises = requests.map(request => {
     request.init ||= {}

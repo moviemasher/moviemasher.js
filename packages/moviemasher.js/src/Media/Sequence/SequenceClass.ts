@@ -1,21 +1,19 @@
 import { UnknownRecord } from "../../declarations"
 import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { Sequence, SequenceDefinition } from "./Sequence"
-import { PreloadableMixin } from "../../Mixin/Preloadable/PreloadableMixin"
 import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { ContainerMixin } from "../Container/ContainerMixin"
 
-import { MediaInstanceBase } from "../MediaInstance/MediaInstanceBase"
+import { MediaInstanceBase } from "../MediaInstanceBase"
 import { ImageType, VideoType } from "../../Setup/Enums"
 
 const SequenceWithTweenable = TweenableMixin(MediaInstanceBase)
 const SequenceWithContainer = ContainerMixin(SequenceWithTweenable)
 const SequenceWithContent = ContentMixin(SequenceWithContainer)
-const SequenceWithPreloadable = PreloadableMixin(SequenceWithContent)
-const SequenceWithUpdatableSize = UpdatableSizeMixin(SequenceWithPreloadable)
+const SequenceWithUpdatableSize = UpdatableSizeMixin(SequenceWithContent)
 const SequenceWithUpdatableDuration = UpdatableDurationMixin(SequenceWithUpdatableSize)
 
 export class SequenceClass extends SequenceWithUpdatableDuration implements Sequence {

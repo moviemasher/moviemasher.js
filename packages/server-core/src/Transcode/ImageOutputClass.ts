@@ -1,6 +1,10 @@
 
-import { RenderingCommandOutput, assertPreloadableDefinition, assertObject, Time, FilterGraphsOptions, timeFromArgs } from "@moviemasher/moviemasher.js"
+import { 
+  assertDecoding, RenderingCommandOutput, assertObject, Time, 
+  timeFromArgs 
+} from "@moviemasher/moviemasher.js"
 import { outputDefaultPng } from "../Defaults/OutputDefault"
+import { FilterGraphsOptions } from "../Encode/FilterGraphs/FilterGraphs"
 import { RenderingOutputClass } from "../Encode/RenderingOutputClass"
 
 export class ImageOutputClass extends RenderingOutputClass {
@@ -12,13 +16,15 @@ export class ImageOutputClass extends RenderingOutputClass {
     const [clip] = renderingClips
     const { definition } = clip.content
     // console.log(this.constructor.name, "commandOutput", definition.label)
-    assertPreloadableDefinition(definition)
+
+    const decoding = definition.decodings.find(object => object.type === ProbeType)
+    assertProbeDecoding(definition)
     const { info } = definition
     assertObject(info, 'info')
 
     const { streams } = info
     const [stream] = streams
-    const { pix_fmt, codec_name } = stream
+    const { codec_name } = stream
     if (codec_name !== 'png') {
       // console.log("commandOutput codec_name", codec_name)
       return commandOutput
@@ -36,11 +42,11 @@ export class ImageOutputClass extends RenderingOutputClass {
   override get endTime(): Time | undefined { return }
 
   override get filterGraphsOptions(): FilterGraphsOptions {
-    const { args, graphType, avType, startTime, outputSize: size } = this
+    const { args, avType, startTime, outputSize: size } = this
     const { mash } = args
     const { quantize: videoRate } = mash
     const filterGraphsOptions: FilterGraphsOptions = {
-      time: startTime, graphType, videoRate, size, avType
+      time: startTime, videoRate, size, avType
     }
     return filterGraphsOptions
   }

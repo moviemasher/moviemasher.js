@@ -1,4 +1,4 @@
-import { LoadedImage } from "../../Load/Loaded"
+import { ClientImage } from "../../ClientMedia/ClientMedia"
 import { ImageType, MediaType } from "../../Setup/Enums"
 import { 
   Container, ContainerObject 
@@ -26,12 +26,12 @@ export interface Image extends Content, Container, UpdatableSize {
 }
 
 export const isImage = (value: any): value is Image => {
-  return isUpdatableSize(value) && isImageDefinition(value.definition)
+  return isUpdatableSize(value) 
 }
 export interface ImageDefinition extends Media, UpdatableSizeDefinition {
   type: ImageType
   instanceFromObject(object?: ImageObject): Image
-  loadedImage?: LoadedImage
+  loadedImage?: ClientImage
 }
 
 export const isImageDefinition = (value: any): value is ImageDefinition => {

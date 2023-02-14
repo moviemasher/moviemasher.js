@@ -1,16 +1,43 @@
 import { UnknownRecord } from "../declarations"
 import { Constrained } from "../Base/Constrained"
-import { PreloadArgs } from "../Base/Code"
+import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
 import { Property } from "../Setup/Property"
 import { Size } from "../Utility/Size"
-import { DecodingObjects, Decodings } from "../Decode/Decoding/Decoding"
 import { isTranscoding } from "../Transcode/Transcoding/Transcoding"
 import { TranscodingObjects, Transcodings } from "../Transcode/Transcoding/Transcoding"
 import { MediaType, isMediaType } from "../Setup/Enums"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { MediaInstance, MediaInstanceObject } from "./MediaInstance/MediaInstance"
 import { isRequestableObject, Requestable, RequestableObject } from "../Base/Requestable/Requestable"
-import { PotentialError } from "../Helpers/Error/Error"
+import { PathOrError, PotentialError } from "../Helpers/Error/Error"
+import { isObject } from "../Utility/Is"
+import { Identified } from "../Base/Identified"
+import { Propertied } from "../Base/Propertied"
+import { DecodingObjects, Decodings } from "../Plugin/Decode/Decoding/Decoding"
+
+export interface MediaInstanceObject extends UnknownRecord {
+  mediaId?: string
+  definition?: Media
+  label?: string
+}
+export const isMediaInstanceObject = (value?: any): value is MediaInstanceObject => {
+  return isObject(value) && ("mediaId" in value || "definition" in value)
+}
+
+export interface MediaInstance extends Identified, Propertied {
+  definition: Media
+  mediaId: string
+  definitionIds(): string[]
+  label: string
+  type: MediaType
+  unload(): void
+}
+
+export const isMediaInstance = (value?: any): value is MediaInstance => {
+  return isObject(value) && "definitionIds" in value
+}
+
+export type MediaInstanceClass = Constrained<MediaInstance>
+
 
 
 export interface MediaObject extends RequestableObject {
@@ -37,6 +64,8 @@ export interface Media extends Requestable {
   type: MediaType
   transcodings: Transcodings
   decodings: Decodings
+
+  serverPromise(args: ServerPromiseArgs): Promise<void>
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined
   instanceFromObject(object?: MediaInstanceObject): MediaInstance
   instanceArgs(object?: MediaInstanceObject): MediaInstanceObject
@@ -63,4 +92,7 @@ export function assertMedia(value: any, name?: string): asserts value is Media {
 export type MediaClass = Constrained<Media>
 
 export type MediaFactoryMethod = (_: MediaObject) => Media
+
+
+export interface MediaResponse extends PathOrError {}
 

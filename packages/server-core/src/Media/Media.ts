@@ -1,16 +1,12 @@
-import { errorThrow, Identified, isObject, isPopulatedString, Output, PathOrError, RequestObject, RequestObjects } from "@moviemasher/moviemasher.js";
+import { errorThrow, Identified, isObject, isPopulatedString, Output, Request, Requests } from "@moviemasher/moviemasher.js";
 import { Input } from "../declarations";
 
 export interface MediaEvent {
   body: string
 }
 
-export interface MediaResponse extends PathOrError {}
-
-
-
 export interface MediaRequest extends Identified {
-  callback?: RequestObject | RequestObjects
+  callback?: Request | Requests
   input: Input
   output: Output
 }

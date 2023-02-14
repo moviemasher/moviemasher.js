@@ -1,10 +1,10 @@
 import { 
   AVType, CommandFilters, CommandInputs, errorThrow, GraphFiles, MashMedia, 
   EncodeOutput, MashMediaObject, MediaArray, EncodeType, Time, RenderingCommandOutput, 
-  CommandOutput 
+  CommandOutput, MediaResponse 
 } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
-import { isMediaRequest, MediaRequest, MediaResponse } from "../Media/Media"
+import { isMediaRequest, MediaRequest } from "../Media/Media"
 
 
 export interface EncodeInput extends Input {

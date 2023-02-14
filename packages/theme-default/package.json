@@ -28,7 +28,7 @@
     "react-icons": "4.7.1",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/node": "18.11.18"
+    "@types/node": "18.13.0"
   },
   "scripts": {
     "build-css": "cat src/css/* > moviemasher.css",
@@ -55,5 +55,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "theme-default",
+    "tsconfig": "./dev/tsconfig.json"
   }
 }

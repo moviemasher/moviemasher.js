@@ -1,11 +1,8 @@
 import { 
-  assertMethod, errorThrow, MediaType, DecodeOutput 
+  assertMethod, errorThrow, RawType, DecodeOutput, Plugins, DecodeResponse 
 } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
-import { isMediaRequest, MediaRequest, MediaResponse } from "../Media/Media"
-import { Decoders } from './Decoders/Decoders'
-
-export type Decoder = (localPath: string, options?: unknown) => Promise<DecodeResponse>
+import { isMediaRequest, MediaRequest } from "../Media/Media"
 
 
 export interface DecodeRequest extends MediaRequest {
@@ -19,23 +16,14 @@ export function assertDecodeRequest(value: any): asserts value is DecodeRequest 
   if (!isDecodeRequest(value)) errorThrow(value, 'DecodeRequest')
 }
 
-export interface DecodeResponse extends MediaResponse {
-  info?: any
-  width?: number
-  height?: number
-  duration?: number
-  alpha?: boolean
-  audio?: boolean
-}
-
 export interface DecodeInput extends Required<Input> {
-  type: MediaType
+  type: RawType
 }
 
 export const decode = (localPath: string, output: DecodeOutput): Promise<DecodeResponse> => {
   const { type } = output
-  const decoder = Decoders[type]
-  assertMethod(decoder)
-  return decoder(localPath, output.options)
+  const { decode } = Plugins.decoders[type]
+  assertMethod(decode)
+  return decode(localPath, output.options)
 }
 

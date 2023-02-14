@@ -1,26 +1,13 @@
 import { 
-  assertPopulatedString, endpointAbsolute, LoadedAudio, 
+  
   ProtocolPromise, 
-  ClientImageOrError, ClientVideoOrError,
-  Plugins, RequestObject, endpointUrl, AudioType, ImageType, VideoType, ProtocolBlob, errorThrow, assertLoadType, JsonType, FontType, requestFontPromise, LoadType, LoadedImage, LoadedFont, LoadedVideo, UnknownRecord, PathOrError, PotentialError, ClientAudioOrError
-} from "@moviemasher/moviemasher.js"
-import { audioBufferPromise, clientAudioPromise } from "../Utility/Audio"
+  
+  Plugins, Request, AudioType, ImageType, VideoType, ProtocolBlob, JsonType, PathOrError} from "@moviemasher/moviemasher.js"
+import { clientAudioPromise } from "../Utility/Audio"
 import { clientImagePromise } from "../Utility/Image"
 import { jsonPromise } from "../Utility/Json"
 import {  clientVideoPromise } from "../Utility/Video"
 
-const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
-  // console.log(this.constructor.name, "blobAudioPromise", url)
-
-  return fetch(url).then(response => response.blob()).then(blob => {
-    return new Promise<ArrayBuffer>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => { resolve(reader.result as ArrayBuffer) }
-      reader.onerror = reject
-      reader.readAsArrayBuffer(blob)
-    }) 
-  })
-}
 
 
 export type Mp4Extension = 'mp4'
@@ -30,10 +17,7 @@ export const PngExtension: PngExtension = 'png'
 
 export type Extension = string | Mp4Extension | PngExtension
 
-
-
-
-const promise: ProtocolPromise = ((request: RequestObject, type?: string) => {
+const promise: ProtocolPromise = ((request: Request, type?: string) => {
   // console.log('blob promise', url, absolute, endpoint)
   switch (type) {
     case AudioType: return clientAudioPromise(request)

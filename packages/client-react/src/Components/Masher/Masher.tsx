@@ -7,7 +7,6 @@ import {
   DataDefaultResponse,
   eventStop,
   EditorIndex,
-  DataPutResponse,
   Endpoints, ServerType,
   ApiCallback, 
   ApiCallbackResponse,
@@ -15,7 +14,7 @@ import {
   assertObject, EventType, 
   idGenerate, ActivityType, 
   isClip, isEffect, 
-  sizeAboveZero, ScalarRecord, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, MediaArray, isMashAndMediaObject, VideoType, assertMashData, idTemporary, assertMashMedia
+  ScalarRecord, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, MediaArray, isMashAndMediaObject, VideoType, idTemporary, assertMashMedia
 } from '@moviemasher/moviemasher.js'
 
 import type { ThemeIcons } from '@moviemasher/theme-default'
@@ -152,7 +151,7 @@ export function Masher(props: MasherProps): ReactResult {
         })
       }
       if (validFiles.length) return editor.addFiles(validFiles, editorIndex)
-    }
+    } else console.log('Masher.dropFiles no info')
     return Promise.resolve([])
   }
 
@@ -256,7 +255,7 @@ export function Masher(props: MasherProps): ReactResult {
     const { eventTarget } = editor
 throw new Error('')
     // definitions.forEach(definition => {
-    //   assertPreloadableDefinition(definition)
+    //   assertContentDefinition(definition)
     //   const { label, type, source } = definition
 
     //   const id = idGenerate('activity')
