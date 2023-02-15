@@ -5,24 +5,27 @@ import { isMedia, Media, MediaObject } from "../Media"
 
 
 export interface AudioObject extends ContentObject, UpdatableDurationObject {
-  definition?: AudioDefinition
+  definition?: AudioMedia
 }
 
 export interface Audio extends Content, UpdatableDuration {
-  definition : AudioDefinition
+  definition : AudioMedia
 }
 export const isAudio = (value: any): value is Audio => {
-  return isContent(value) && isAudioDefinition(value.definition)
+  return isContent(value) && isAudioMedia(value.definition)
 }
 
-export interface AudioDefinitionObject extends MediaObject, UpdatableDurationDefinitionObject { 
+export interface AudioMediaObject extends MediaObject, UpdatableDurationDefinitionObject { 
 }
 
-export interface AudioDefinition extends Media, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+export interface AudioMedia extends Media, UpdatableDurationDefinition {
   type: AudioType
   instanceFromObject(object?: AudioObject): Audio
 }
 
-export const isAudioDefinition = (value: any): value is AudioDefinition => {
+export const isAudioMedia = (value: any): value is AudioMedia => {
   return isMedia(value) && value.type === AudioType
 }

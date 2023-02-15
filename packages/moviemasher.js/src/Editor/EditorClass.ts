@@ -1,5 +1,5 @@
 import {
-  StringRecord, UnknownRecord} from "../declarations"
+  StringRecord} from "../declarations"
 import { PreviewItems } from "../Helpers/Svg/Svg"
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../Utility/Size"
 import { Media, MediaObject, MediaObjects, isMediaObject } from "../Media/Media"
@@ -40,9 +40,8 @@ import { idGenerate, idIsTemporary, idTemporary } from "../Utility/Id"
 import { PreloadOptions } from "../Base/Code"
 import { arrayUnique } from "../Utility/Array"
 import { isUpdatableDurationDefinition } from "../Mixin/UpdatableDuration"
-import { ActivityType } from "../Utility/Activity"
-import { isVideoDefinition } from "../Media/Video/Video"
-import { isImageDefinition } from "../Media/Image/Image"
+import { isVideoMedia } from "../Media/Video/Video"
+import { isImageMedia } from "../Media/Image/Image"
 import { Rect, rectsEqual } from "../Utility/Rect"
 import { isPoint, pointCopy, PointZero } from "../Utility/Point"
 import { MoveActionOptions } from "./Actions/Action/MoveAction"
@@ -50,8 +49,6 @@ import { urlBaseInitialize, urlBaseInitialized } from "../Utility/Url"
 import { filePromises } from "../Utility/File"
 import { isMedia } from "../Media/Media"
 import { mediaDefinition } from "../Media/MediaFactory"
-import { ErrorName } from "../Helpers/Error/ErrorName"
-import { errorName, errorThrow } from "../Helpers/Error/ErrorFunctions"
 
 type Timeout = ReturnType<typeof setTimeout>
 
@@ -170,27 +167,27 @@ export class EditorClass implements Editor {
     filePromises(files, rect).forEach(filePromise => {
       promise = promise.then(mediaObjects => {
         const id = idGenerate('activity')
-        const info: UnknownRecord = { id, type: ActivityType.Analyze }
-        eventTarget.emit(EventType.Active, info)
+        // const info: UnknownRecord = { id, type: ActivityType.Analyze }
+        // eventTarget.emit(EventType.Active, info)
         return filePromise.then(orError => {
           const { mediaObject, error } = orError
-          const activityInfo = { ...info }
+          // const activityInfo = { ...info }
           if (isMediaObject(mediaObject)) {
-            activityInfo.label = mediaObject.label || mediaObject.id
 
             mediaObjects.push(mediaObject)
-            activityInfo.type = ActivityType.Complete
+            // activityInfo.label = mediaObject.label || mediaObject.id
+
+            // activityInfo.type = ActivityType.Complete
           } else {
             console.log(this.constructor.name, 'addFiles NOT media object', mediaObject)
-            const errorObject = error || errorName(ErrorName.Internal)
-            const { message } = errorObject
+            // const errorObject = error || errorName(ErrorName.Internal)
+            // const { message } = errorObject
             
-            activityInfo.label = message
-
-            activityInfo.type = ActivityType.Error
-            activityInfo.error = errorObject
+            // activityInfo.label = message
+            // activityInfo.type = ActivityType.Error
+            // activityInfo.error = errorObject
           }
-          eventTarget.emit(EventType.Active, activityInfo)
+          // eventTarget.emit(EventType.Active, activityInfo)
           return mediaObjects
         })
       })
@@ -829,11 +826,11 @@ export class EditorClass implements Editor {
       
       if (isMedia(target)) {
         target.clientMedia = undefined
-        if (isVideoDefinition(target)) {
+        if (isVideoMedia(target)) {
           target.loadedVideo = undefined
         }
         else if (isUpdatableDurationDefinition(target)) target.loadedAudio = undefined
-        else if (isImageDefinition(target)) target.loadedImage = undefined
+        else if (isImageMedia(target)) target.loadedImage = undefined
       }    
     } 
     const { mashMedia } = this

@@ -1,4 +1,4 @@
-import { EffectDefinition } from "./Effect"
+import { EffectMedia } from "./Effect"
 import { Actions, Selectables } from "../../Editor"
 import { SelectedItems } from "../../Helpers/Select/SelectedProperty"
 import { SelectType } from "../../Setup/Enums"
@@ -59,7 +59,7 @@ export class EffectClass extends EffectContainerWithContainer {
   }
   
   
-  declare definition: EffectDefinition
+  declare definition: EffectMedia
   
   selectables(): Selectables { return [this] }
 

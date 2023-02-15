@@ -1,17 +1,17 @@
 import { assertPopulatedString } from "../../Utility/Is"
 import { SequenceMediaClass } from "./SequenceMediaClass"
-import { Sequence, SequenceDefinition, SequenceDefinitionObject, SequenceObject } from "./Sequence"
+import { Sequence, SequenceMedia, SequenceMediaObject, SequenceObject } from "./Sequence"
 import { MediaType, SequenceType } from "../../Setup/Enums"
 import { MediaFactories } from "../MediaFactories"
 
-export const sequenceDefinition = (object : SequenceDefinitionObject) : SequenceDefinition => {
+export const sequenceDefinition = (object : SequenceMediaObject) : SequenceMedia => {
   const { id } = object
   assertPopulatedString(id)
 
   return new SequenceMediaClass(object)
 }
 
-export const sequenceDefinitionFromId = (id : string) : SequenceDefinition => {
+export const sequenceDefinitionFromId = (id : string) : SequenceMedia => {
   return sequenceDefinition({ id })
 }
 

@@ -4,6 +4,7 @@ import { idGenerateString } from "../Utility/Id"
 import { PropertiedClass } from "../Base/Propertied"
 import { assertPopulatedObject } from "../Utility/Is"
 import { Media, MediaInstance, MediaInstanceObject } from "./Media"
+import { ServerPromiseArgs } from "../Base/Code"
 
 
 export class MediaInstanceBase extends PropertiedClass implements MediaInstance {
@@ -33,6 +34,10 @@ export class MediaInstanceBase extends PropertiedClass implements MediaInstance 
   get label(): string { return this._label  }
   set label(value: string) { this._label = value }
 
+  serverPromise(args: ServerPromiseArgs): Promise<void> {
+    return this.definition.serverPromise(args)
+  }
+  
   toJSON(): UnknownRecord {
     const { mediaId, type, label } = this
     return { ...super.toJSON(), type, label, mediaId}

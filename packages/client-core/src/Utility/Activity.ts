@@ -1,4 +1,4 @@
-import { Identified } from "../Base/Identified"
+import { Identified } from "@moviemasher/moviemasher.js"
 
 
 

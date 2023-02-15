@@ -3,7 +3,7 @@ import {
   Decoding, Encoding, isMashMedia, MashMedia, Media, MediaObject, MediaArray, 
   requestJsonPromise, Transcoding, transcodingInstance, VideoType, 
   Request, ErrorName, error, idIsTemporary, assertPopulatedString, isMedia, 
-  isVideoDefinition, isImageDefinition, isUpdatableDurationDefinition, 
+  isVideoMedia, isImageMedia, isUpdatableDurationDefinition, 
   PotentialError, ProbeType, 
 } from "@moviemasher/moviemasher.js"
 
@@ -241,11 +241,11 @@ export class ClientClass implements Client {
       if (isMedia(target)) {
         delete target.file
         delete target.clientMedia 
-        if (isVideoDefinition(target)) {
+        if (isVideoMedia(target)) {
           delete target.loadedVideo 
         }
         else if (isUpdatableDurationDefinition(target)) delete target.loadedAudio 
-        else if (isImageDefinition(target)) delete target.loadedImage 
+        else if (isImageMedia(target)) delete target.loadedImage 
       }    
     } 
     if (!idChanged) return Promise.resolve()

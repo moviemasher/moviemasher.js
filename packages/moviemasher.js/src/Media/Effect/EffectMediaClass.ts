@@ -1,6 +1,6 @@
-import { EffectType, MediaType } from "../../Setup/Enums"
+import { EffectType } from "../../Setup/Enums"
 import { propertyInstance } from "../../Setup/Property"
-import { Effect, EffectDefinition, EffectDefinitionObject, EffectObject } from "./Effect"
+import { Effect, EffectMedia, EffectMediaObject, EffectObject } from "./Effect"
 import { EffectClass } from "./EffectClass"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { MediaBase } from "../MediaBase"
@@ -12,8 +12,8 @@ import { filterInstance } from "../../Filter/FilterFactory"
 const EffectContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const EffectContainerDefinitionWithContainer = ContainerDefinitionMixin(EffectContainerDefinitionWithTweenable)
 
-export class EffectDefinitionClass extends EffectContainerDefinitionWithContainer implements EffectDefinition {
-  constructor(object: EffectDefinitionObject) {
+export class EffectMediaClass extends EffectContainerDefinitionWithContainer implements EffectMedia {
+  constructor(object: EffectMediaObject) {
     super(object)
     this.properties.push(propertyInstance({ name: "label", defaultValue: "" }))
 

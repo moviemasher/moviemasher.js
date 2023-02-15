@@ -16,7 +16,7 @@ module.exports = {
   "customCss": [
     "workspaces/documentation/src/css/styles.css"
   ],
-  // categoryOrder: ["Interface", "*"],
+  "categoryOrder": ["Media", "Plugin", "*"],
   "includeVersion": false,
   "disableSources": false,
   "gitRevision": "master",
@@ -73,9 +73,9 @@ module.exports = {
   "navigationLinks": {
     "Navigation Link": "http://example.com"
   },
-  // "sidebarLinks": {
-  //   "Sidebar Link": "http://example.com"
-  // },
+  "sidebarLinks": {
+    "Demo": "http://example.com"
+  },
   "pluginPages": {
     "source": ".",
     "output": "guides",

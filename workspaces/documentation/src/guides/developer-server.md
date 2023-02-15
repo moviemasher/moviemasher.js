@@ -129,11 +129,11 @@ The `/api/servers` endpoint is called initially to determine which other servers
 The [[DataServer]] is responsible for storing and retrieving JSON formatted data and metadata related to binary files. Specifically, it stores the following types of objects:
 - [[MashObject]] 
 - [[CastObject]]
-- [[VideoDefinitionObject]]
-- [[AudioDefinitionObject]]
-- [[ImageDefinitionObject]]
-- [[FontDefinitionObject]]
-- [[VideoSequenceDefinitionObject]]
+- [[VideoMediaObject]]
+- [[AudioMediaObject]]
+- [[ImageMediaObject]]
+- [[FontMediaObject]]
+- [[VideoSequenceMediaObject]]
 
 Its endpoints support typical _CRUD_ (create, retrieve, update, delete) operations:
 

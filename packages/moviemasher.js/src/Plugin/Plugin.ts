@@ -1,3 +1,7 @@
+
+/**
+ * @category Plugin
+ */
 export interface Plugin {
   type: PluginType
 }

@@ -18,11 +18,19 @@ export const ProtocolFile: ProtocolFile = 'file'
 
 export type Protocol = string | ProtocolHttp | ProtocolHttps | ProtocolBlob | ProtocolFile
 
+
+/**
+ * @category Plugin
+ */
 export interface ProtocolPlugin extends Plugin {
   type: Protocol
   promise: ProtocolPromise
 }
-export type PluginsByProtocol = Record<Protocol, ProtocolPlugin>
+
+/**
+ * @category Plugin
+ */
+export interface PluginsByProtocol extends Record<Protocol, ProtocolPlugin> {}
 
 
 

@@ -1,6 +1,6 @@
 import { ClientImage } from "../../ClientMedia/ClientMedia"
 import { ImageType } from "../../Setup/Enums"
-import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
+import { Image, ImageMedia, ImageMediaObject, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
@@ -15,12 +15,12 @@ import { centerPoint, RectOptions } from "../../Utility/Rect"
 import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
-const ImageDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
-const ImageDefinitionWithContainer = ContainerDefinitionMixin(ImageDefinitionWithTweenable)
-const ImageDefinitionWithContent = ContentDefinitionMixin(ImageDefinitionWithContainer)
-const ImageDefinitionWithUpdatable = UpdatableSizeDefinitionMixin(ImageDefinitionWithContent)
-export class ImageDefinitionClass extends ImageDefinitionWithUpdatable implements ImageDefinition {
-  constructor(object: ImageDefinitionObject) {
+const ImageMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
+const ImageMediaWithContainer = ContainerDefinitionMixin(ImageMediaWithTweenable)
+const ImageMediaWithContent = ContentDefinitionMixin(ImageMediaWithContainer)
+const ImageMediaWithUpdatable = UpdatableSizeDefinitionMixin(ImageMediaWithContent)
+export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMedia {
+  constructor(object: ImageMediaObject) {
     super(object)
     const { clientMedia } = this
     if (isClientImage(clientMedia)) this.loadedImage = clientMedia

@@ -1,6 +1,6 @@
 import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../Base/Code"
 import { SequenceType, VideoType, AudioType } from "../../Setup/Enums"
-import { Video, VideoDefinition } from "./Video"
+import { Video, VideoMedia } from "./Video"
 import { assertPopulatedString, assertTimeRange, isBoolean } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 
@@ -31,7 +31,7 @@ const VideoWithUpdatableSize = UpdatableSizeMixin(VideoWithContent)
 const VideoWithUpdatableDuration = UpdatableDurationMixin(VideoWithUpdatableSize)
 
 export class VideoClass extends VideoWithUpdatableDuration implements Video {
-  declare definition : VideoDefinition
+  declare definition : VideoMedia
 
   private _foreignElement?: SVGForeignObjectElement
   get foreignElement() { 

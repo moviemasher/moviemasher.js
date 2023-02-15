@@ -1,4 +1,4 @@
 export * from "./Video"
-export * from "./VideoDefinitionClass"
+export * from "./VideoMediaClass"
 export * from "./VideoFactory"
 export * from "./VideoClass"

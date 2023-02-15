@@ -6,10 +6,18 @@ export interface Plugins {
   protocols: PluginsByProtocol
   languages: PluginsByLanguage
   decoders: PluginsByDecoder
+  filters: {}
+  encoders: {}
+  transcoders: {}
+  resolvers: {}
 }
 
 export const Plugins: Plugins = {
   protocols: {},
   languages: {},
   decoders: {},
+  filters: {},
+  encoders: {},
+  transcoders: {},
+  resolvers: {},
 }

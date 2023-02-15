@@ -1,4 +1,4 @@
-import { AudioDefinition, Audio } from "./Audio"
+import { AudioMedia, Audio } from "./Audio"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
 import { ContentMixin } from "../Content/ContentMixin"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
@@ -19,7 +19,7 @@ export class AudioClass extends AudioWithUpdatableDuration implements Audio {
     return Promise.resolve(svgPolygonElement(containerRect, '', 'currentColor'))
   }
 
-  declare definition : AudioDefinition
+  declare definition : AudioMedia
 
   mutable() { return true }
 

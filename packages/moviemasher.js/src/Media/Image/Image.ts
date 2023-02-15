@@ -14,26 +14,29 @@ import {
 import { isMedia, Media, MediaObject } from "../Media"
 
 export interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {
-  definition?: ImageDefinition
+  definition?: ImageMedia
 }
 
-export interface ImageDefinitionObject extends MediaObject, UpdatableSizeDefinitionObject {}
+export interface ImageMediaObject extends MediaObject, UpdatableSizeDefinitionObject {}
 
-export type ImageTransitionalObject = MediaObject | ImageDefinitionObject
 
 export interface Image extends Content, Container, UpdatableSize {
-  definition : ImageDefinition
+  definition : ImageMedia
 }
 
 export const isImage = (value: any): value is Image => {
   return isUpdatableSize(value) 
 }
-export interface ImageDefinition extends Media, UpdatableSizeDefinition {
+
+/**
+ * @category Media
+ */
+export interface ImageMedia extends Media, UpdatableSizeDefinition {
   type: ImageType
   instanceFromObject(object?: ImageObject): Image
   loadedImage?: ClientImage
 }
 
-export const isImageDefinition = (value: any): value is ImageDefinition => {
+export const isImageMedia = (value: any): value is ImageMedia => {
   return isMedia(value) && value.type === ImageType
 }

@@ -16,11 +16,19 @@ export interface DecoderOptions {}
 
 export type DecoderMethod = (localPath: string, options?: DecoderOptions) => Promise<DecodeResponse>
 
+
+/**
+ * @category Plugin
+ */
 export interface DecoderPlugin extends Plugin {
   type: Decoder
   decode: DecoderMethod
 }
-export type PluginsByDecoder = Record<Decoder, DecoderPlugin>
+
+/**
+ * @category Plugin
+ */
+export interface PluginsByDecoder extends Record<Decoder, DecoderPlugin> {}
 
 
 export interface DecodeResponse extends MediaResponse {

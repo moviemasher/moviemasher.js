@@ -1,7 +1,8 @@
 import React from 'react'
 import { 
-  ActivityInfo, EmptyMethod, isObject, isPopulatedString, errorThrow, Identified,
+  EmptyMethod, isObject, isPopulatedString, errorThrow, Identified,
 } from '@moviemasher/moviemasher.js'
+import { ActivityInfo } from "@moviemasher/client-core"
 
 import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 

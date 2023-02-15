@@ -1,6 +1,6 @@
 import { EffectType } from "../../Setup/Enums"
-import { EffectDefinitionClass } from "./EffectDefinitionClass"
-import { Effect, EffectDefinition, EffectObject, EffectDefinitionObject } from "./Effect"
+import { EffectMediaClass } from "./EffectMediaClass"
+import { Effect, EffectMedia, EffectObject, EffectMediaObject } from "./Effect"
 import { assertPopulatedString } from "../../Utility/Is"
 
 import effectBlurJson from "../../MediaObjects/effect/blur.json"
@@ -12,15 +12,15 @@ import effectSharpenJson from "../../MediaObjects/effect/sharpen.json"
 import { MediaFactories } from "../MediaFactories"
 import { MediaDefaults } from "../MediaDefaults"
 
-export const effectDefinition = (object : EffectDefinitionObject) : EffectDefinition => {
+export const effectDefinition = (object : EffectMediaObject) : EffectMedia => {
   const { id } = object
   assertPopulatedString(id)
-  return new EffectDefinitionClass({...object, type: EffectType })
+  return new EffectMediaClass({...object, type: EffectType })
 }
 
-export const effectDefinitionFromId = (id: string): EffectDefinition => {
+export const effectDefinitionFromId = (id: string): EffectMedia => {
   const definition = MediaDefaults[EffectType].find(object => object.id === id)
-  if (definition) return definition as EffectDefinition
+  if (definition) return definition as EffectMedia
 
   return effectDefinition({ id })
 }

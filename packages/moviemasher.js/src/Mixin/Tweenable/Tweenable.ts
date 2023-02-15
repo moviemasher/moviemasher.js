@@ -1,4 +1,4 @@
-import { Scalar, UnknownRecord} from "../../declarations"
+import { Scalar} from "../../declarations"
 import { Constrained } from "../../Base/Constrained"
 import { CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../Base/Code"
 import { Actions } from "../../Editor/Actions/Actions"
@@ -14,7 +14,6 @@ import { SizeTuple } from "../../Utility/Size"
 import { Tweening } from "../../Utility/Tween"
 import { Selectable } from "../../Editor/Selectable"
 import { isMedia, isMediaInstance, Media, MediaInstance, MediaInstanceObject, MediaObject } from "../../Media/Media"
-import { Identified } from "../../Base/Identified"
 
 export interface TweenableObject extends MediaInstanceObject {
   mediaId?: string
@@ -69,7 +68,6 @@ export interface Tweenable extends MediaInstance, Selectable {
   scaleCommandFilters(args: CommandFilterArgs): CommandFilters 
   selectedProperties(actions: Actions, property: Property): SelectedProperties
   selectedProperty(property: Property): boolean 
-  serverPromise(args: ServerPromiseArgs): Promise<void>
   tween(keyPrefix: string, time: Time, range: TimeRange): Scalar
   tweenPoints(time: Time, range: TimeRange): PointTuple 
   tweenRects(time: Time, range: TimeRange): RectTuple
@@ -87,7 +85,6 @@ export function assertTweenable(value?: any): asserts value is Tweenable {
 export interface TweenableDefinition extends Media {
   graphFiles(args: PreloadArgs): GraphFiles 
   loadPromise(args: PreloadArgs): Promise<void> 
-  serverPromise(args: ServerPromiseArgs): Promise<void>
 }
 
 export const isTweenableDefinition = (value?: any): value is TweenableDefinition => {

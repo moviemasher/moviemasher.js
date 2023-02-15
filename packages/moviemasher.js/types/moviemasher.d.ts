@@ -647,6 +647,254 @@ interface RequestInit {
 }
 interface RequestRecord extends Record<string, Request> {
 }
+interface Typed {
+    type: string;
+}
+declare const isTyped: (value: any) => value is Typed;
+declare function assertTyped(value: any, name?: string): asserts value is Typed;
+interface RequestableObject extends UnknownRecord, Identified, Partial<Typed> {
+    createdAt?: string;
+    request?: Request;
+    kind?: string;
+}
+declare const isRequestableObject: (value: any) => value is RequestableObject;
+interface Requestable extends Propertied, Identified, Typed {
+    request: Request;
+    createdAt: string;
+    loadType: LoadType;
+    clientMediaPromise: Promise<ClientMediaOrError>;
+    clientMedia?: ClientMedia;
+    kind: string;
+}
+declare const isRequestable: (value: any) => value is Requestable;
+declare class RequestableClass extends PropertiedClass implements Requestable {
+    constructor(object: RequestableObject);
+    createdAt: string;
+    id: string;
+    kind: string;
+    get loadType(): LoadType;
+    clientMedia?: ClientMedia;
+    get clientMediaPromise(): Promise<ClientMediaOrError>;
+    request: Request;
+    type: string;
+    toJSON(): UnknownRecord;
+}
+interface TranscodingObject extends RequestableObject {
+    type?: TranscodeType | string;
+    purpose?: string;
+}
+type TranscodingObjects = TranscodingObject[];
+interface Transcoding extends Requestable {
+    type: TranscodeType;
+    purpose: string;
+}
+type Transcodings = Transcoding[];
+declare const isTranscoding: (value: any) => value is Transcoding;
+/**
+ * @category Plugin
+ */
+interface Plugin {
+    type: PluginType;
+}
+type PluginTypeProtocol = "protocol";
+declare const PluginTypeProtocol: PluginTypeProtocol;
+type PluginTypeLanguage = "language";
+declare const PluginTypeLanguage: PluginTypeLanguage;
+type PluginTypeProtocols = PluginTypeProtocol[];
+type PluginType = string | PluginTypeProtocol;
+type ProbeType = "probe";
+declare const ProbeType: ProbeType;
+type Decoder = string | ProbeType;
+declare const Decoders: Decoder[];
+declare const isDecoder: (value: any) => value is string;
+interface DecoderOptions {
+}
+type DecoderMethod = (localPath: string, options?: DecoderOptions) => Promise<DecodeResponse>;
+/**
+ * @category Plugin
+ */
+interface DecoderPlugin extends Plugin {
+    type: Decoder;
+    decode: DecoderMethod;
+}
+/**
+ * @category Plugin
+ */
+interface PluginsByDecoder extends Record<Decoder, DecoderPlugin> {
+}
+interface DecodeResponse extends MediaResponse {
+    info?: any;
+    width?: number;
+    height?: number;
+    duration?: number;
+    alpha?: boolean;
+    audio?: boolean;
+}
+interface DecodeOutput extends Output {
+    type: Decoder;
+    options?: DecoderOptions;
+}
+type AlphaProbe = "alpha";
+declare const AlphaProbe: AlphaProbe;
+type AudibleProbe = "audible";
+declare const AudibleProbe: AudibleProbe;
+type DurationProbe = "duration";
+declare const DurationProbe: DurationProbe;
+type SizeProbe = "size";
+declare const SizeProbe: SizeProbe;
+type ProbeKind = string | AlphaProbe | AudibleProbe | DurationProbe | SizeProbe;
+type ProbeKinds = ProbeKind[];
+declare const ProbeKinds: ProbeKinds;
+interface ProbeOptions extends DecoderOptions {
+    types: ProbeKinds;
+}
+interface ProbeOutput extends DecodeOutput {
+    options: ProbeOptions;
+}
+interface LoadedInfo extends PotentialError {
+    audible?: boolean;
+    duration?: number;
+    family?: string;
+    extension?: string;
+    alpha?: boolean;
+    fps?: number;
+    height?: number;
+    width?: number;
+    info?: CommandProbeData;
+}
+interface CommandProbeStream {
+    [key: string]: any;
+    // avg_frame_rate?: string | undefined
+    // bit_rate?: string | undefined
+    // bits_per_raw_sample?: string | undefined
+    // bits_per_sample?: number | undefined
+    // channel_layout?: string | undefined
+    // channels?: number | undefined
+    // chroma_location?: string | undefined
+    // codec_long_name?: string | undefined
+    // codec_tag_string?: string | undefined
+    // codec_tag?: string | undefined
+    // codec_time_base?: string | undefined
+    // coded_height?: number | undefined
+    // coded_width?: number | undefined
+    // color_primaries?: string | undefined
+    // color_range?: string | undefined
+    // color_space?: string | undefined
+    // color_transfer?: string | undefined
+    // display_aspect_ratio?: string | undefined
+    // duration_ts?: string | undefined
+    // field_order?: string | undefined
+    // has_b_frames?: number | undefined
+    // id?: string | undefined
+    // level?: string | undefined
+    // max_bit_rate?: string | undefined
+    // nb_frames?: string | undefined
+    // nb_read_frames?: string | undefined
+    // nb_read_packets?: string | undefined
+    // profile?: number | undefined
+    // r_frame_rate?: string | undefined
+    // refs?: number | undefined
+    // sample_aspect_ratio?: string | undefined
+    // sample_fmt?: string | undefined
+    // sample_rate?: number | undefined
+    // start_pts?: number | undefined
+    // start_time?: number | undefined
+    // time_base?: string | undefined
+    // timecode?: string | undefined
+    codec_name?: string | undefined;
+    codec_type?: string | undefined;
+    duration?: string | undefined;
+    height?: number | undefined;
+    pix_fmt?: string | undefined;
+    rotation?: string | number | undefined;
+    width?: number | undefined;
+}
+interface CommandProbeFormat {
+    // filename?: string | undefined
+    // nb_streams?: number | undefined
+    // nb_programs?: number | undefined
+    // format_name?: string | undefined
+    format_long_name?: string | undefined;
+    // start_time?: number | undefined
+    duration?: number | undefined;
+    // size?: number | undefined
+    // bit_rate?: number | undefined
+    probe_score?: number | undefined;
+    tags?: Record<string, string | number> | undefined;
+}
+interface CommandProbeData {
+    streams: CommandProbeStream[];
+    format: CommandProbeFormat;
+}
+interface DecodingData extends JsonRecord {
+    raw: JsonRecord;
+}
+interface DecodingObject {
+    type: Decoder;
+    info?: LoadedInfo;
+}
+type DecodingObjects = DecodingObject[];
+interface Decoding {
+    type: Decoder;
+    info?: LoadedInfo;
+}
+type Decodings = Decoding[];
+interface MediaInstanceObject extends UnknownRecord {
+    mediaId?: string;
+    definition?: Media;
+    label?: string;
+}
+declare const isMediaInstanceObject: (value?: any) => value is MediaInstanceObject;
+interface MediaInstance extends Identified, Propertied {
+    definition: Media;
+    mediaId: string;
+    definitionIds(): string[];
+    label: string;
+    type: MediaType;
+    unload(): void;
+    serverPromise(args: ServerPromiseArgs): Promise<void>;
+}
+declare const isMediaInstance: (value?: any) => value is MediaInstance;
+type MediaInstanceClass = Constrained<MediaInstance>;
+interface MediaObject extends RequestableObject {
+    file?: File;
+    type?: MediaType | string;
+    transcodings?: TranscodingObjects;
+    decodings?: DecodingObjects;
+    label?: string;
+}
+declare const isMediaObject: (value: any) => value is MediaObject;
+type MediaObjects = MediaObject[];
+interface MediaObjectOrError extends PotentialError {
+    mediaObject?: MediaObject;
+}
+/**
+ * @category Media
+ */
+interface Media extends Requestable {
+    type: MediaType;
+    transcodings: Transcodings;
+    decodings: Decodings;
+    serverPromise(args: ServerPromiseArgs): Promise<void>;
+    definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
+    instanceFromObject(object?: MediaInstanceObject): MediaInstance;
+    instanceArgs(object?: MediaInstanceObject): MediaInstanceObject;
+    file?: File;
+    isVector: boolean;
+    label: string;
+    preferredTranscoding(...types: MediaType[]): Requestable;
+    properties: Property[];
+    toJSON(): UnknownRecord;
+    loadPromise(args: PreloadArgs): Promise<void>;
+    unload(): void;
+}
+type MediaArray = Media[];
+declare const isMedia: (value: any) => value is Media;
+declare function assertMedia(value: any, name?: string): asserts value is Media;
+type MediaClass = Constrained<Media>;
+type MediaFactoryMethod = (_: MediaObject) => Media;
+interface MediaResponse extends PathOrError {
+}
 interface CommandInput {
     source: string;
     options?: ValueRecord;
@@ -778,240 +1026,6 @@ interface Output {
     request?: Request;
 }
 declare const isOutput: (value: any) => value is Output;
-interface Typed {
-    type: string;
-}
-declare const isTyped: (value: any) => value is Typed;
-declare function assertTyped(value: any, name?: string): asserts value is Typed;
-interface RequestableObject extends UnknownRecord, Identified, Partial<Typed> {
-    createdAt?: string;
-    request?: Request;
-    kind?: string;
-}
-declare const isRequestableObject: (value: any) => value is RequestableObject;
-interface Requestable extends Propertied, Identified, Typed {
-    request: Request;
-    createdAt: string;
-    loadType: LoadType;
-    clientMediaPromise: Promise<ClientMediaOrError>;
-    clientMedia?: ClientMedia;
-    kind: string;
-}
-declare const isRequestable: (value: any) => value is Requestable;
-declare class RequestableClass extends PropertiedClass implements Requestable {
-    constructor(object: RequestableObject);
-    createdAt: string;
-    id: string;
-    kind: string;
-    get loadType(): LoadType;
-    clientMedia?: ClientMedia;
-    get clientMediaPromise(): Promise<ClientMediaOrError>;
-    request: Request;
-    type: string;
-    toJSON(): UnknownRecord;
-}
-interface TranscodingObject extends RequestableObject {
-    type?: TranscodeType | string;
-    purpose?: string;
-}
-type TranscodingObjects = TranscodingObject[];
-interface Transcoding extends Requestable {
-    type: TranscodeType;
-    purpose: string;
-}
-type Transcodings = Transcoding[];
-declare const isTranscoding: (value: any) => value is Transcoding;
-interface Plugin {
-    type: PluginType;
-}
-type PluginTypeProtocol = "protocol";
-declare const PluginTypeProtocol: PluginTypeProtocol;
-type PluginTypeLanguage = "language";
-declare const PluginTypeLanguage: PluginTypeLanguage;
-type PluginTypeProtocols = PluginTypeProtocol[];
-type PluginType = string | PluginTypeProtocol;
-type ProbeType = "probe";
-declare const ProbeType: ProbeType;
-type Decoder = string | ProbeType;
-declare const Decoders: Decoder[];
-declare const isDecoder: (value: any) => value is string;
-interface DecoderOptions {
-}
-type DecoderMethod = (localPath: string, options?: DecoderOptions) => Promise<DecodeResponse>;
-interface DecoderPlugin extends Plugin {
-    type: Decoder;
-    decode: DecoderMethod;
-}
-type PluginsByDecoder = Record<Decoder, DecoderPlugin>;
-interface DecodeResponse extends MediaResponse {
-    info?: any;
-    width?: number;
-    height?: number;
-    duration?: number;
-    alpha?: boolean;
-    audio?: boolean;
-}
-interface DecodeOutput extends Output {
-    type: Decoder;
-    options?: DecoderOptions;
-}
-type AlphaProbe = "alpha";
-declare const AlphaProbe: AlphaProbe;
-type AudibleProbe = "audible";
-declare const AudibleProbe: AudibleProbe;
-type DurationProbe = "duration";
-declare const DurationProbe: DurationProbe;
-type SizeProbe = "size";
-declare const SizeProbe: SizeProbe;
-type ProbeKind = string | AlphaProbe | AudibleProbe | DurationProbe | SizeProbe;
-type ProbeKinds = ProbeKind[];
-declare const ProbeKinds: ProbeKinds;
-interface ProbeOptions extends DecoderOptions {
-    types: ProbeKinds;
-}
-interface ProbeOutput extends DecodeOutput {
-    options: ProbeOptions;
-}
-interface LoadedInfo extends PotentialError {
-    audible?: boolean;
-    duration?: number;
-    family?: string;
-    extension?: string;
-    alpha?: boolean;
-    fps?: number;
-    height?: number;
-    width?: number;
-    info?: CommandProbeData;
-}
-interface CommandProbeStream {
-    [key: string]: any;
-    // avg_frame_rate?: string | undefined
-    // bit_rate?: string | undefined
-    // bits_per_raw_sample?: string | undefined
-    // bits_per_sample?: number | undefined
-    // channel_layout?: string | undefined
-    // channels?: number | undefined
-    // chroma_location?: string | undefined
-    // codec_long_name?: string | undefined
-    // codec_tag_string?: string | undefined
-    // codec_tag?: string | undefined
-    // codec_time_base?: string | undefined
-    // coded_height?: number | undefined
-    // coded_width?: number | undefined
-    // color_primaries?: string | undefined
-    // color_range?: string | undefined
-    // color_space?: string | undefined
-    // color_transfer?: string | undefined
-    // display_aspect_ratio?: string | undefined
-    // duration_ts?: string | undefined
-    // field_order?: string | undefined
-    // has_b_frames?: number | undefined
-    // id?: string | undefined
-    // level?: string | undefined
-    // max_bit_rate?: string | undefined
-    // nb_frames?: string | undefined
-    // nb_read_frames?: string | undefined
-    // nb_read_packets?: string | undefined
-    // profile?: number | undefined
-    // r_frame_rate?: string | undefined
-    // refs?: number | undefined
-    // sample_aspect_ratio?: string | undefined
-    // sample_fmt?: string | undefined
-    // sample_rate?: number | undefined
-    // start_pts?: number | undefined
-    // start_time?: number | undefined
-    // time_base?: string | undefined
-    // timecode?: string | undefined
-    codec_name?: string | undefined;
-    codec_type?: string | undefined;
-    duration?: string | undefined;
-    height?: number | undefined;
-    pix_fmt?: string | undefined;
-    rotation?: string | number | undefined;
-    width?: number | undefined;
-}
-interface CommandProbeFormat {
-    // filename?: string | undefined
-    // nb_streams?: number | undefined
-    // nb_programs?: number | undefined
-    // format_name?: string | undefined
-    format_long_name?: string | undefined;
-    // start_time?: number | undefined
-    duration?: number | undefined;
-    // size?: number | undefined
-    // bit_rate?: number | undefined
-    probe_score?: number | undefined;
-    tags?: Record<string, string | number> | undefined;
-}
-interface CommandProbeData {
-    streams: CommandProbeStream[];
-    format: CommandProbeFormat;
-}
-interface DecodingData extends JsonRecord {
-    raw: JsonRecord;
-}
-interface DecodingObject {
-    type: Decoder;
-    info?: LoadedInfo;
-}
-type DecodingObjects = DecodingObject[];
-interface Decoding {
-    type: Decoder;
-    info?: LoadedInfo;
-}
-type Decodings = Decoding[];
-interface MediaInstanceObject extends UnknownRecord {
-    mediaId?: string;
-    definition?: Media;
-    label?: string;
-}
-declare const isMediaInstanceObject: (value?: any) => value is MediaInstanceObject;
-interface MediaInstance extends Identified, Propertied {
-    definition: Media;
-    mediaId: string;
-    definitionIds(): string[];
-    label: string;
-    type: MediaType;
-    unload(): void;
-}
-declare const isMediaInstance: (value?: any) => value is MediaInstance;
-type MediaInstanceClass = Constrained<MediaInstance>;
-interface MediaObject extends RequestableObject {
-    file?: File;
-    type?: MediaType | string;
-    transcodings?: TranscodingObjects;
-    decodings?: DecodingObjects;
-    label?: string;
-}
-declare const isMediaObject: (value: any) => value is MediaObject;
-type MediaObjects = MediaObject[];
-interface MediaObjectOrError extends PotentialError {
-    mediaObject?: MediaObject;
-}
-interface Media extends Requestable {
-    type: MediaType;
-    transcodings: Transcodings;
-    decodings: Decodings;
-    serverPromise(args: ServerPromiseArgs): Promise<void>;
-    definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
-    instanceFromObject(object?: MediaInstanceObject): MediaInstance;
-    instanceArgs(object?: MediaInstanceObject): MediaInstanceObject;
-    file?: File;
-    isVector: boolean;
-    label: string;
-    preferredTranscoding(...types: MediaType[]): Requestable;
-    properties: Property[];
-    toJSON(): UnknownRecord;
-    loadPromise(args: PreloadArgs): Promise<void>;
-    unload(): void;
-}
-type MediaArray = Media[];
-declare const isMedia: (value: any) => value is Media;
-declare function assertMedia(value: any, name?: string): asserts value is Media;
-type MediaClass = Constrained<Media>;
-type MediaFactoryMethod = (_: MediaObject) => Media;
-interface MediaResponse extends PathOrError {
-}
 type IndexHandler<OBJECT = any, INDEX = number> = (effect: OBJECT, insertIndex?: INDEX) => void;
 declare class Emitter extends EventTarget {
     dispatch(type: EventType, detail?: UnknownRecord): void;
@@ -1248,24 +1262,26 @@ declare function assertUpdatableSizeDefinition(value?: any): asserts value is Up
 type UpdatableSizeClass = Constrained<UpdatableSize>;
 type UpdatableSizeDefinitionClass = Constrained<UpdatableSizeDefinition>;
 interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {
-    definition?: ImageDefinition;
+    definition?: ImageMedia;
 }
-interface ImageDefinitionObject extends MediaObject, UpdatableSizeDefinitionObject {
+interface ImageMediaObject extends MediaObject, UpdatableSizeDefinitionObject {
 }
-type ImageTransitionalObject = MediaObject | ImageDefinitionObject;
 interface Image extends Content, Container, UpdatableSize {
-    definition: ImageDefinition;
+    definition: ImageMedia;
 }
 declare const isImage: (value: any) => value is Image;
-interface ImageDefinition extends Media, UpdatableSizeDefinition {
+/**
+ * @category Media
+ */
+interface ImageMedia extends Media, UpdatableSizeDefinition {
     type: ImageType;
     instanceFromObject(object?: ImageObject): Image;
     loadedImage?: ClientImage;
 }
-declare const isImageDefinition: (value: any) => value is ImageDefinition;
+declare const isImageMedia: (value: any) => value is ImageMedia;
 interface ShapeContainerObject extends ImageObject {
 }
-interface ShapeContainerDefinitionObject extends ImageDefinitionObject {
+interface ShapeContainerDefinitionObject extends ImageMediaObject {
     pathWidth?: number;
     pathHeight?: number;
     path?: string;
@@ -1274,7 +1290,7 @@ interface ShapeContainer extends Image {
     definition: ShapeContainerDefinition;
 }
 declare const isShapeContainer: (value: any) => value is ShapeContainer;
-interface ShapeContainerDefinition extends ImageDefinition {
+interface ShapeContainerDefinition extends ImageMedia {
     path: string;
     pathWidth: number;
     pathHeight: number;
@@ -1320,6 +1336,7 @@ declare class MediaInstanceBase extends PropertiedClass implements MediaInstance
     protected _label: string;
     get label(): string;
     set label(value: string);
+    serverPromise(args: ServerPromiseArgs): Promise<void>;
     toJSON(): UnknownRecord;
     get type(): MediaType;
     unload(): void;
@@ -1549,9 +1566,30 @@ interface ColorContentDefinition extends ContentDefinition {
     color: string;
     instanceFromObject(object?: ColorContentObject): ColorContent;
 }
+declare class MediaBase extends RequestableClass implements Media {
+    constructor(object: MediaObject);
+    type: MediaType;
+    unload(): void;
+    definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
+    file?: File | undefined;
+    findTranscoding(type: MediaType, ...kind: string[]): Transcoding | undefined;
+    instanceFromObject(object?: MediaInstanceObject): MediaInstance;
+    instanceArgs(object?: MediaInstanceObject): MediaInstanceObject;
+    isVector: boolean;
+    label: string;
+    loadPromise(args: PreloadArgs): Promise<void>;
+    preferredTranscoding(...types: MediaType[]): Requestable;
+    serverPromise(args: ServerPromiseArgs): Promise<void>;
+    toJSON(): UnknownRecord;
+    transcodings: Transcodings;
+    properties: Property[];
+    decodings: Decodings;
+    serverPath: string;
+}
 declare const MediaDefaults: Record<MediaType, MediaArray>;
 declare const MediaFactories: Record<MediaType, MediaFactoryMethod>;
 declare const mediaDefinition: (object: MediaObject) => Media;
+declare const mediaTypeFromMime: (mime?: string) => string;
 interface AudioPreview {
     adjustClipGain(clip: Clip, quantize: number): void;
     buffer: number;
@@ -1612,65 +1650,48 @@ declare function assertUpdatableDurationDefinition(value?: any, name?: string): 
 type UpdatableDurationClass = Constrained<UpdatableDuration>;
 type UpdatableDurationDefinitionClass = Constrained<UpdatableDurationDefinition>;
 interface AudioObject extends ContentObject, UpdatableDurationObject {
-    definition?: AudioDefinition;
+    definition?: AudioMedia;
 }
 interface Audio extends Content, UpdatableDuration {
-    definition: AudioDefinition;
+    definition: AudioMedia;
 }
 declare const isAudio: (value: any) => value is Audio;
-interface AudioDefinitionObject extends MediaObject, UpdatableDurationDefinitionObject {
+interface AudioMediaObject extends MediaObject, UpdatableDurationDefinitionObject {
 }
-interface AudioDefinition extends Media, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+interface AudioMedia extends Media, UpdatableDurationDefinition {
     type: AudioType;
     instanceFromObject(object?: AudioObject): Audio;
 }
-declare const isAudioDefinition: (value: any) => value is AudioDefinition;
-declare class MediaBase extends RequestableClass implements Media {
-    constructor(object: MediaObject);
-    type: MediaType;
-    unload(): void;
-    definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
-    file?: File | undefined;
-    findTranscoding(type: MediaType, ...kind: string[]): Transcoding | undefined;
-    instanceFromObject(object?: MediaInstanceObject): MediaInstance;
-    instanceArgs(object?: MediaInstanceObject): MediaInstanceObject;
-    isVector: boolean;
-    label: string;
-    loadPromise(args: PreloadArgs): Promise<void>;
-    preferredTranscoding(...types: MediaType[]): Requestable;
-    serverPromise(args: ServerPromiseArgs): Promise<void>;
-    toJSON(): UnknownRecord;
-    transcodings: Transcodings;
-    properties: Property[];
-    decodings: Decodings;
-    serverPath: string;
-}
+declare const isAudioMedia: (value: any) => value is AudioMedia;
 declare function TweenableDefinitionMixin<T extends MediaClass>(Base: T): TweenableDefinitionClass & T;
 declare function TweenableMixin<T extends MediaInstanceClass>(Base: T): TweenableClass & T;
 declare function UpdatableDurationMixin<T extends ContentClass>(Base: T): UpdatableDurationClass & T;
 declare function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T;
 declare function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSizeClass & T;
 declare function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T;
-declare const AudioDefinitionWithUpdatableDuration: UpdatableDurationDefinitionClass & ContentDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class AudioDefinitionClass extends AudioDefinitionWithUpdatableDuration implements AudioDefinition {
-    constructor(object: AudioDefinitionObject);
+declare const AudioMediaWithUpdatableDuration: UpdatableDurationDefinitionClass & ContentDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
+declare class AudioMediaClass extends AudioMediaWithUpdatableDuration implements AudioMedia {
+    constructor(object: AudioMediaObject);
     instanceFromObject(object?: AudioObject): Audio;
     loadPromise(args: PreloadArgs): Promise<void>;
     type: "audio";
 }
-declare const audioDefinition: (object: AudioDefinitionObject) => AudioDefinition;
-declare const audioDefinitionFromId: (id: string) => AudioDefinition;
+declare const audioDefinition: (object: AudioMediaObject) => AudioMedia;
+declare const audioDefinitionFromId: (id: string) => AudioMedia;
 declare const audioInstance: (object: AudioObject) => Audio;
 declare const audioFromId: (id: string) => Audio;
 declare const AudioWithUpdatableDuration: UpdatableDurationClass & ContentClass & TweenableClass & typeof MediaInstanceBase;
 declare class AudioClass extends AudioWithUpdatableDuration implements Audio {
     contentPreviewItemPromise(containerRect: Rect, time: Time, range: TimeRange, component: Component): Promise<SvgItem>;
-    definition: AudioDefinition;
+    definition: AudioMedia;
     mutable(): boolean;
 }
 declare const EffectContainerDefinitionWithContainer: ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class EffectDefinitionClass extends EffectContainerDefinitionWithContainer implements EffectDefinition {
-    constructor(object: EffectDefinitionObject);
+declare class EffectMediaClass extends EffectContainerDefinitionWithContainer implements EffectMedia {
+    constructor(object: EffectMediaObject);
     filters: Filter[];
     finalizeFilter?: Filter;
     initializeFilter?: Filter;
@@ -2094,39 +2115,42 @@ declare const EffectContainerWithContainer: ContainerClass & TweenableClass & ty
 declare class EffectClass extends EffectContainerWithContainer {
     commandFiles(args: VisibleCommandFileArgs): CommandFiles;
     commandFilters(args: CommandFilterArgs): CommandFilters;
-    definition: EffectDefinition;
+    definition: EffectMedia;
     selectables(): Selectables;
     selectType: SelectType;
     selectedItems(actions: Actions): SelectedItems;
     private setFilterValues;
     svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters;
 }
-declare const effectDefinition: (object: EffectDefinitionObject) => EffectDefinition;
-declare const effectDefinitionFromId: (id: string) => EffectDefinition;
+declare const effectDefinition: (object: EffectMediaObject) => EffectMedia;
+declare const effectDefinitionFromId: (id: string) => EffectMedia;
 declare const effectInstance: (object: EffectObject) => Effect;
 declare const effectFromId: (id: string) => Effect;
 declare const DefaultFontId: string;
-interface FontDefinitionObject extends ContainerDefinitionObject {
+interface FontMediaObject extends ContainerDefinitionObject {
     string?: string;
 }
 interface FontObject extends ContainerObject {
 }
 interface Font extends Container {
-    definition: FontDefinition;
+    definition: FontMedia;
     string: string;
 }
 declare const isFont: (value: any) => value is Font;
 declare function assertFont(value: any): asserts value is Font;
-interface FontDefinition extends ContainerDefinition {
+/**
+ * @category Media
+ */
+interface FontMedia extends ContainerDefinition {
     type: FontType;
     family: string;
     instanceFromObject(object?: FontObject): Font;
 }
-declare const isFontDefinition: (value: any) => value is FontDefinition;
-declare function assertFontDefinition(value: any): asserts value is FontDefinition;
+declare const isFontMedia: (value: any) => value is FontMedia;
+declare function assertFontMedia(value: any): asserts value is FontMedia;
 declare const FontContainerDefinitionWithContainer: ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class FontMediaClass extends FontContainerDefinitionWithContainer implements FontDefinition {
-    constructor(object: FontDefinitionObject);
+declare class FontMediaClass extends FontContainerDefinitionWithContainer implements FontMedia {
+    constructor(object: FontMediaObject);
     definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
     private _family;
     get family(): string;
@@ -2152,10 +2176,10 @@ declare class FontMediaClass extends FontContainerDefinitionWithContainer implem
     string: string;
     type: "font";
 }
-declare const fontFind: (id: string) => FontDefinition | undefined;
-declare const fontDefinition: (object: FontDefinitionObject) => FontDefinition;
-declare const fontDefault: FontDefinition;
-declare const fontDefinitionFromId: (id: string) => FontDefinition;
+declare const fontFind: (id: string) => FontMedia | undefined;
+declare const fontDefinition: (object: FontMediaObject) => FontMedia;
+declare const fontDefault: FontMedia;
+declare const fontDefinitionFromId: (id: string) => FontMedia;
 declare const FontContainerWithContainer: ContainerClass & TweenableClass & typeof MediaInstanceBase;
 declare class FontClass extends FontContainerWithContainer implements Font {
     constructor(...args: any[]);
@@ -2163,7 +2187,7 @@ declare class FontClass extends FontContainerWithContainer implements Font {
     canColorTween(args: CommandFilterArgs): boolean;
     private _colorFilter?;
     get colorFilter(): Filter;
-    definition: FontDefinition;
+    definition: FontMedia;
     hasIntrinsicSizing: boolean;
     initialCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters;
     protected _intrinsicRect?: Rect;
@@ -2179,23 +2203,23 @@ declare class FontClass extends FontContainerWithContainer implements Font {
     toJSON(): UnknownRecord;
     visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles;
 }
-declare const ImageDefinitionWithUpdatable: UpdatableSizeDefinitionClass & ContentDefinitionClass & ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class ImageDefinitionClass extends ImageDefinitionWithUpdatable implements ImageDefinition {
-    constructor(object: ImageDefinitionObject);
+declare const ImageMediaWithUpdatable: UpdatableSizeDefinitionClass & ContentDefinitionClass & ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
+declare class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMedia {
+    constructor(object: ImageMediaObject);
     definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
     instanceFromObject(object?: ImageObject): Image;
     loadPromise(args: PreloadArgs): Promise<void>;
     loadedImage?: ClientImage;
     type: "image";
 }
-declare const imageDefinition: (object: ImageDefinitionObject) => ImageDefinition;
-declare const imageDefinitionFromId: (id: string) => ImageDefinition;
+declare const imageDefinition: (object: ImageMediaObject) => ImageMedia;
+declare const imageDefinitionFromId: (id: string) => ImageMedia;
 declare const imageInstance: (object: ImageObject) => Image;
 declare const imageFromId: (id: string) => Image;
 declare const ImageWithUpdatableSize: UpdatableSizeClass & ContentClass & ContainerClass & TweenableClass & typeof MediaInstanceBase;
 declare class ImageClass extends ImageWithUpdatableSize implements Image {
     visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles;
-    definition: ImageDefinition;
+    definition: ImageMedia;
     graphFiles(args: PreloadArgs): GraphFiles;
     svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem>;
 }
@@ -2404,26 +2428,29 @@ declare class ClipClass extends PropertiedClass implements Clip {
 }
 interface SequenceObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
     speed?: number;
-    definition?: SequenceDefinition;
+    definition?: SequenceMedia;
 }
 interface Sequence extends Content, UpdatableSize, UpdatableDuration {
-    definition: SequenceDefinition;
+    definition: SequenceMedia;
     speed: number;
 }
-interface SequenceDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+interface SequenceMediaObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
     begin?: number;
     fps?: number;
     increment?: number;
     pattern?: string;
     padding?: number;
 }
-interface SequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+interface SequenceMedia extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
     type: SequenceType;
     instanceFromObject(object?: SequenceObject): Sequence;
     framesArray(start: Time): number[];
 }
-declare const SequenceDefinitionWithUpdatableDuration: UpdatableDurationDefinitionClass & UpdatableSizeDefinitionClass & ContentDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration implements SequenceDefinition {
+declare const SequenceMediaWithUpdatableDuration: UpdatableDurationDefinitionClass & UpdatableSizeDefinitionClass & ContentDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
+declare class SequenceMediaClass extends SequenceMediaWithUpdatableDuration implements SequenceMedia {
     constructor(...args: any[]);
     begin: number;
     fps: number;
@@ -2437,13 +2464,13 @@ declare class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration
     toJSON(): UnknownRecord;
     type: "sequence";
 }
-declare const sequenceDefinition: (object: SequenceDefinitionObject) => SequenceDefinition;
-declare const sequenceDefinitionFromId: (id: string) => SequenceDefinition;
+declare const sequenceDefinition: (object: SequenceMediaObject) => SequenceMedia;
+declare const sequenceDefinitionFromId: (id: string) => SequenceMedia;
 declare const sequenceInstance: (object: SequenceObject) => Sequence;
 declare const sequenceFromId: (id: string) => Sequence;
 declare const SequenceWithUpdatableDuration: UpdatableDurationClass & UpdatableSizeClass & ContentClass & ContainerClass & TweenableClass & typeof MediaInstanceBase;
 declare class SequenceClass extends SequenceWithUpdatableDuration implements Sequence {
-    definition: SequenceDefinition;
+    definition: SequenceMedia;
     visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles;
     graphFiles(args: PreloadArgs): GraphFiles;
     // iconUrl(size: Size, time: Time, range: TimeRange): string {
@@ -2479,30 +2506,32 @@ declare class SequenceClass extends SequenceWithUpdatableDuration implements Seq
 }
 interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
     speed?: number;
-    definition?: VideoDefinition;
+    definition?: VideoMedia;
 }
 interface Video extends Content, UpdatableSize, UpdatableDuration {
-    definition: VideoDefinition;
+    definition: VideoMedia;
     loadedVideo?: ClientVideo;
 }
-interface VideoDefinitionObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+interface VideoMediaObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
     loadedVideo?: ClientVideo;
 }
-type VideoTransitionalObject = MediaObject | VideoDefinitionObject;
-interface VideoDefinition extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+interface VideoMedia extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
     type: VideoType;
     instanceFromObject(object?: VideoObject): Video;
     loadedVideo?: ClientVideo;
     readonly previewTranscoding: Requestable;
     loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>;
 }
-declare const isVideoDefinition: (value: any) => value is VideoDefinition;
-declare function assertVideoDefinition(value: any): asserts value is VideoDefinition;
+declare const isVideoMedia: (value: any) => value is VideoMedia;
+declare function assertVideoMedia(value: any): asserts value is VideoMedia;
 declare const isVideo: (value: any) => value is Video;
 declare function assertVideo(value: any): asserts value is Video;
-declare const VideoDefinitionWithUpdatableDuration: UpdatableDurationDefinitionClass & UpdatableSizeDefinitionClass & ContentDefinitionClass & ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
-declare class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration implements VideoDefinition {
-    constructor(object: VideoDefinitionObject);
+declare const VideoMediaWithUpdatableDuration: UpdatableDurationDefinitionClass & UpdatableSizeDefinitionClass & ContentDefinitionClass & ContainerDefinitionClass & TweenableDefinitionClass & typeof MediaBase;
+declare class VideoMediaClass extends VideoMediaWithUpdatableDuration implements VideoMedia {
+    constructor(object: VideoMediaObject);
     definitionIcon(size: Size): Promise<SVGSVGElement> | undefined;
     loadedImages: Map<string, ClientImage>;
     loadedImage(definitionTime: Time, outSize?: Size): ClientImage | undefined;
@@ -2518,13 +2547,13 @@ declare class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration 
     get previewTranscoding(): Requestable;
     type: "video";
 }
-declare const videoDefinition: (object: VideoDefinitionObject) => VideoDefinition;
-declare const videoDefinitionFromId: (id: string) => VideoDefinition;
+declare const videoDefinition: (object: VideoMediaObject) => VideoMedia;
+declare const videoDefinitionFromId: (id: string) => VideoMedia;
 declare const videoInstance: (object: VideoObject) => Video;
 declare const videoFromId: (id: string) => Video;
 declare const VideoWithUpdatableDuration: UpdatableDurationClass & UpdatableSizeClass & ContentClass & ContainerClass & TweenableClass & typeof MediaInstanceBase;
 declare class VideoClass extends VideoWithUpdatableDuration implements Video {
-    definition: VideoDefinition;
+    definition: VideoMedia;
     private _foreignElement?;
     get foreignElement(): SVGForeignObjectElement;
     graphFiles(args: PreloadArgs): GraphFiles;
@@ -2562,7 +2591,6 @@ declare class VideoClass extends VideoWithUpdatableDuration implements Video {
     static _clientCanMaskVideo?: boolean;
     static get clientCanMaskVideo(): boolean;
 }
-declare const mediaTypeFromMime: (mime?: string) => string;
 declare const ColorContentWithContent: ContentClass & TweenableClass & typeof MediaInstanceBase;
 declare class ColorContentClass extends ColorContentWithContent implements ColorContent {
     constructor(...args: any[]);
@@ -2848,7 +2876,6 @@ interface Tweenable extends MediaInstance, Selectable {
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters;
     selectedProperties(actions: Actions, property: Property): SelectedProperties;
     selectedProperty(property: Property): boolean;
-    serverPromise(args: ServerPromiseArgs): Promise<void>;
     tween(keyPrefix: string, time: Time, range: TimeRange): Scalar;
     tweenPoints(time: Time, range: TimeRange): PointTuple;
     tweenRects(time: Time, range: TimeRange): RectTuple;
@@ -2861,16 +2888,13 @@ declare function assertTweenable(value?: any): asserts value is Tweenable;
 interface TweenableDefinition extends Media {
     graphFiles(args: PreloadArgs): GraphFiles;
     loadPromise(args: PreloadArgs): Promise<void>;
-    serverPromise(args: ServerPromiseArgs): Promise<void>;
 }
 declare const isTweenableDefinition: (value?: any) => value is TweenableDefinition;
 declare function assertTweenableDefinition(value?: any): asserts value is TweenableDefinition;
 type TweenableClass = Constrained<Tweenable>;
 type TweenableDefinitionClass = Constrained<TweenableDefinition>;
-interface EffectObject extends TweenableObject {
-}
 interface Effect extends Tweenable {
-    definition: EffectDefinition;
+    definition: EffectMedia;
     svgFilters(previewSize: Size, containerRect: Rect, time: Time, range: TimeRange): SvgFilters;
     commandFilters(args: CommandFilterArgs): CommandFilters;
     commandFiles(args: VisibleCommandFileArgs): CommandFiles;
@@ -2878,18 +2902,23 @@ interface Effect extends Tweenable {
 declare const isEffect: (value?: any) => value is Effect;
 declare function assertEffect(value?: any): asserts value is Effect;
 type Effects = Effect[];
-interface EffectDefinitionObject extends TweenableDefinitionObject, MediaObject {
+interface EffectObject extends TweenableObject {
+}
+interface EffectMediaObject extends TweenableDefinitionObject {
     initializeFilter?: FilterDefinitionObject;
     finalizeFilter?: FilterDefinitionObject;
     filters?: FilterDefinitionObject[];
     properties?: PropertyObject[];
 }
-interface EffectDefinition extends TweenableDefinition, Media {
+/**
+ * @category Media
+ */
+interface EffectMedia extends TweenableDefinition {
     type: EffectType;
     instanceFromObject(object?: EffectObject): Effect;
     filters: Filter[];
 }
-declare const isEffectDefinition: (value?: any) => value is EffectDefinition;
+declare const isEffectMedia: (value?: any) => value is EffectMedia;
 type RawMedia = ClientImageOrVideo | ClientAudio;
 declare const isRawMedia: (value: any) => value is RawMedia;
 type ClientMedia = ClientImageOrVideo | ClientAudio | ClientFont;
@@ -2964,6 +2993,9 @@ interface MashAndMediaObject extends MashMediaObject {
     media: MediaObjects;
 }
 declare const isMashAndMediaObject: (value: any) => value is MashAndMediaObject;
+/**
+ * @category Media
+ */
 interface MashMedia extends Media, Selectable {
     addClipToTrack(clip: Clip | Clips, trackIndex?: number, insertIndex?: number, frame?: number): void;
     addTrack(object?: TrackObject): Track;
@@ -3435,11 +3467,18 @@ declare const ProtocolBlob: ProtocolBlob;
 type ProtocolFile = "file";
 declare const ProtocolFile: ProtocolFile;
 type Protocol = string | ProtocolHttp | ProtocolHttps | ProtocolBlob | ProtocolFile;
+/**
+ * @category Plugin
+ */
 interface ProtocolPlugin extends Plugin {
     type: Protocol;
     promise: ProtocolPromise;
 }
-type PluginsByProtocol = Record<Protocol, ProtocolPlugin>;
+/**
+ * @category Plugin
+ */
+interface PluginsByProtocol extends Record<Protocol, ProtocolPlugin> {
+}
 // export type ProtocolPromise = {
 //   (request: Request, type: ImageType): Promise<ClientImageOrError>
 //   (request: Request, type: VideoType): Promise<ClientVideoOrError>
@@ -3466,14 +3505,25 @@ declare const protocolLoadPromise: (protocol: string) => Promise<ProtocolPlugin>
 type LanguageEnglish = "en";
 declare const LanguageEnglish: LanguageEnglish;
 type Language = string | LanguageEnglish;
+/**
+ * @category Plugin
+ */
 interface LanguagePlugin extends Plugin {
     type: Language;
 }
-type PluginsByLanguage = Record<Language, LanguagePlugin>;
+/**
+ * @category Plugin
+ */
+interface PluginsByLanguage extends Record<Language, LanguagePlugin> {
+}
 interface Plugins {
     protocols: PluginsByProtocol;
     languages: PluginsByLanguage;
     decoders: PluginsByDecoder;
+    filters: {};
+    encoders: {};
+    transcoders: {};
+    resolvers: {};
 }
 declare const Plugins: Plugins;
 declare const isDecodeOutput: (value: any) => value is DecodeOutput;
@@ -3490,6 +3540,23 @@ declare const isProbeOptions: (value: any) => value is ProbeOptions;
 declare function assertProbeOptions(value: any): asserts value is ProbeOptions;
 declare const isProbeOutput: (value: any) => value is ProbeOutput;
 declare function assertProbeOutput(value: any): asserts value is ProbeOutput;
+type ResolverPromise = {
+    (file: string, mimeType: string, type: ImageType): Promise<ClientImage>;
+    (file: string, mimeType: string, type: AudioType): Promise<ClientAudio>;
+    (file: string, mimeType: string, type: FontType): Promise<ClientFont>;
+    (file: string, mimeType: string, type: VideoType): Promise<ClientVideo>;
+    (file: string, mimeType: string, type?: string): Promise<PathOrError>;
+};
+interface Resolver {
+    requestPromise: (file: string) => Promise<Request>;
+    extension: string;
+}
+type ResolverRecord = Record<string, Resolver>;
+declare const Resolvers: ResolverRecord;
+declare const resolverLoad: (mimeType?: string) => Resolver | undefined;
+declare const resolverPromise: ResolverPromise;
+declare const resolverPathPromise: (file: string, mimeType?: string) => PathOrError | Promise<PathOrError>;
+declare const resolverExtension: (request: Request, mimeType?: string) => string;
 declare const Default: {
     duration: number;
     label: string;
@@ -3576,21 +3643,6 @@ declare class TranscodingClass extends RequestableClass implements Transcoding {
     unload(): void;
 }
 declare const transcodingInstance: (object: TranscodingObject) => Transcoding;
-declare enum ActivityType {
-    Analyze = "analyze",
-    Complete = "complete",
-    Error = "error",
-    Load = "load",
-    Render = "render"
-}
-interface ActivityInfo extends Identified {
-    type: ActivityType;
-    label?: string;
-    steps?: number;
-    step?: number;
-    error?: string;
-    value?: string;
-}
 declare const arrayLast: (array: AnyArray) => any;
 declare const arraySet: (array: AnyArray, items: AnyArray) => AnyArray;
 declare const arrayReversed: (array: AnyArray) => any[];
@@ -3660,23 +3712,6 @@ declare const requestJsonPromise: (request: Request) => Promise<JsonRecordOrErro
 declare const requestMediaPromise: (request: Request, type: LoadType) => Promise<ClientMediaOrError>;
 declare const requestPromise: (request: Request, type?: string) => Promise<PathOrError>;
 declare const requestExtension: (request: Request) => string;
-type ResolverPromise = {
-    (file: string, mimeType: string, type: ImageType): Promise<ClientImage>;
-    (file: string, mimeType: string, type: AudioType): Promise<ClientAudio>;
-    (file: string, mimeType: string, type: FontType): Promise<ClientFont>;
-    (file: string, mimeType: string, type: VideoType): Promise<ClientVideo>;
-    (file: string, mimeType: string, type?: string): Promise<PathOrError>;
-};
-interface Resolver {
-    requestPromise: (file: string) => Promise<Request>;
-    extension: string;
-}
-type ResolverRecord = Record<string, Resolver>;
-declare const Resolvers: ResolverRecord;
-declare const resolverLoad: (mimeType?: string) => Resolver | undefined;
-declare const resolverPromise: ResolverPromise;
-declare const resolverPathPromise: (file: string, mimeType?: string) => PathOrError | Promise<PathOrError>;
-declare const resolverExtension: (request: Request, mimeType?: string) => string;
 type NumberConverter = (value: number) => number;
 declare const roundMethod: (rounding?: string) => NumberConverter;
 declare const roundWithMethod: (number: number, method?: string) => number;
@@ -3711,5 +3746,5 @@ declare const urlPrependProtocol: (protocol: string, url: string, options?: Scal
 declare const urlExtension: (extension: string) => string;
 declare const urlFilename: (name: string, extension: string) => string;
 declare const urlFromCss: (string: string) => string;
-export { Value, Scalar, Strings, PopulatedString, Integer, ValueRecord, NumberRecord, UnknownRecord, ScalarRecord, StringRecord, StringsRecord, NestedStringRecord, StringSetter, NumberSetter, BooleanSetter, BooleanGetter, AnyArray, JsonValue, JsonRecord, ApiVersion, ApiRequest, ApiResponse, EndpointPromiser, ApiCallback, ApiCallbacks, ApiServerInit, ApiCallbacksRequest, ApiCallbacksResponse, ApiCallbackResponse, ApiServersRequest, ApiServersResponse, DescribedObject, DataPutResponse, DataGetRequest, DataPutRequest, DataRetrieveResponse, DataServerInit, DataRetrieve, DataDefinitionPutRequest, DataDefinitionPutResponse, DataDefinitionRetrieveRequest, DataDefinitionRetrieveResponse, DataDefinitionDeleteRequest, DataDefinitionDeleteResponse, DataMashPutRequest, DataMashPutResponse, DataMashAndMedia, DataMashRetrieveRequest, DataMashGetResponse, DataMashDefaultRequest, DataMashDefaultResponse, DataMashDeleteRequest, DataMashDeleteResponse, DataDefaultRequest, DataDefaultResponse, DataMashGetRequest, DataDefinitionGetRequest, DataDefinitionGetResponse, DataMashRetrieveResponse, Endpoints, FileStoreRequest, FileStoreResponse, UploadDescription, RenderingState, RenderingStatus, RenderingStartRequest, RenderingStartResponse, RenderingStatusRequest, RenderingStatusResponse, RenderingUploadRequest, RenderingUploadResponse, Framed, Indexed, Tracked, Labeled, CommandInput, CommandInputs, CommandFilter, CommandFilters, GraphFilter, GraphFilters, FilterValueObject, FilterValueObjects, PreloadOptionsBase, ServerPromiseArgs, PreloadArgs, PreloadOptions, ColorTuple, CommandFileOptions, CommandFileArgs, VisibleCommandFileArgs, CommandFilterArgs, VisibleCommandFilterArgs, FilterCommandFilterArgs, FilterCommandFileArgs, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs, FilterDefinitionCommandFileArgs, GraphFile, GraphFiles, CommandFile, CommandFiles, VoidMethod, Component, Output, isOutput, Constrained, Identified, isIdentified, assertIdentified, MediaCollection, PropertyTweenSuffix, Propertied, PropertiedChangeHandler, PropertiedClass, isPropertied, RequestableObject, isRequestableObject, Requestable, isRequestable, RequestableClass, Typed, isTyped, assertTyped, RawMedia, isRawMedia, ClientMedia, ClientImage, ClientVideo, ClientAudio, ClientFont, ClientEffect, ClientMash, ClientImageOrVideo, ClientAudioNode, ClientImageOrError, ClientAudioOrError, ClientFontOrError, ClientVideoOrError, ClientMediaOrError, JsonRecordOrError, isClientVideo, assertClientVideo, isClientImage, assertClientImage, isClientAudio, assertClientAudio, isClientFont, assertClientFont, LoaderType, isLoaderType, assertLoaderType, isClientMedia, assertClientMedia, AudibleContextData, AudibleContextSource, AudibleContext, AudibleContextInstance, ContextFactory, ActionObject, ActionOptions, ActionMethod, Action, isAction, assertAction, ActionInit, isActionInit, ActionEvent, isActionEvent, actionInstance, ActionFactory, AddClipToTrackActionObject, AddClipToTrackAction, AddTrackActionObject, AddTrackAction, ChangeActionObject, isChangeActionObject, ChangeAction, isChangeAction, assertChangeAction, ChangeFramesAction, ChangeMultipleActionObject, ChangeMultipleAction, MoveActionObject, MoveActionOptions, MoveAction, isMoveAction, assertMoveAction, MoveClipActionObject, MoveClipAction, RemoveClipActionObject, RemoveClipAction, Actions, EditorIndex, EditorArgs, EditorOptions, ClipOrEffect, MashData, isMashData, assertMashData, Editor, EditorClass, editorSingleton, editorArgs, editorInstance, EditorSelectionObject, EditorSelection, EditorSelectionClass, editorSelectionInstance, AudioPreview, AudioPreviewArgs, StartOptions, AudioPreviewClass, audioPreviewInstance, NonePreview, PreviewOptions, PreviewArgs, Preview, PreviewClass, TrackPreviewArgs, TrackPreview, TrackPreviews, TrackPreviewHandleSize, TrackPreviewLineSize, TrackPreviewClass, Selectable, Selectables, SelectableRecord, SelectTypesObject, EncodeOutput, CommandOutput, RenderingCommandOutput, RenderingCommandOutputs, RenderingInput, RenderingOptions, EncodingObject, EncodingObjects, Encoding, Encodings, EncodingClass, encodingInstance, AlphamergeFilter, ChromaKeyFilter, ColorChannelMixerFilter, ColorFilter, ColorizeFilter, ConvolutionFilter, Numbers, NumbersOrUndefined, NumberOrUndefined, ConvolutionRgba, ConvolutionChannel, ConvolutionRgbaObject, ConvolutionRgbasObject, ConvolutionNumberObject, ConvolutionNumbersObject, StringOrUndefined, ConvolutionStringObject, ConvolutionKey, ConvolutionNumbersKey, ConvolutionObject, ConvolutionServerFilter, isConvolutionServerFilter, assertConvolutionServerFilter, CropFilter, FpsFilter, OpacityFilter, OverlayFilter, ScaleFilter, SetptsFilter, SetsarFilter, TextFilter, TrimFilter, FilterArgs, FilterRecord, Filters, FilterObject, FilterDefinitionObject, Filter, FilterDefinition, isFilterDefinition, assertFilterDefinition, FilterClass, FilterDefinitionClass, FilterIdPrefix, filterDefinition, filterDefinitionFromId, filterInstance, filterFromId, Color, ColorObject, Rgb, Rgba, RgbObject, RgbaObject, colorRgbKeys, colorRgbaKeys, colorTransparent, colorBlack, colorWhite, colorWhiteTransparent, colorBlackTransparent, colorWhiteOpaque, colorBlackOpaque, colorGreen, colorYellow, colorRed, colorBlue, colorRgbToHex, colorRgbaToHex, colorValid, colorValidHex, colorToRgb, colorToRgba, colorFromRgb, colorRgbDifference, colorMixRbga, colorMixRbg, Emitter, Endpoint, isEndpoint, endpointUrl, endpointFromAbsolute, endpointFromUrl, endpointIsAbsolute, endpointAbsolute, ErrorObject, PotentialError, DefiniteError, PathOrError, ErrorName, ErrorNames, StandardErrorName, ErrorContext, isErrorName, errorMessage, errorObject, errorObjectCaught, errorName, error, errorCaught, errorPromise, errorThrow, Request, Requests, isRequest, assertRequest, RequestInit, RequestRecord, PropertyTypesNumeric, propertyTypeIsString, propertyTypeDefault, propertyTypeValid, propertyTypeCoerce, Selected, SelectedProperty, isSelectedProperty, SelectedMovable, SelectedItems, SelectedProperties, SelectedPropertyObject, selectedPropertyObject, selectedPropertiesScalarObject, IndexHandler, FfmpegSvgFilter, SvgFilter, SvgFilters, SvgItem, SvgItems, SvgItemsTuple, PreviewItem, PreviewItems, SvgOrImage, svgElement, svgElementInitialize, svgId, svgUrl, svgGroupElement, svgSetDimensions, svgSetTransformPoint, svgRectPoints, svgPolygonElement, svgSetBox, svgSvgElement, svgSetDimensionsLock, svgImageElement, svgPathElement, svgMaskElement, svgFilter, svgAppend, svgPatternElement, svgDefsElement, svgFeImageElement, svgFilterElement, svgDifferenceDefs, svgSet, svgAddClass, svgUseElement, svgSetTransform, svgTransform, svgSetTransformRects, svgFunc, svgSetChildren, svgImagePromise, svgText, svgImagePromiseWithOptions, Time, TimeRange, Times, TimeRanges, timeEqualizeRates, TimeClass, timeRangeFromArgs, timeRangeFromSeconds, timeRangeFromTime, timeRangeFromTimes, timeFromArgs, timeFromSeconds, TimeRangeClass, MediaDefaults, MediaFactories, mediaDefinition, AudioObject, Audio, isAudio, AudioDefinitionObject, AudioDefinition, isAudioDefinition, AudioDefinitionClass, audioDefinition, audioDefinitionFromId, audioInstance, audioFromId, AudioClass, DefaultContainerId, TextContainerId, ContainerObject, isContainerObject, assertContainerObject, ContainerDefinitionObject, ContainerDefinition, isContainerDefinition, ContainerRectArgs, Container, isContainer, assertContainer, ContainerClass, ContainerDefinitionClass, ContainerMixin, ContainerDefinitionMixin, ShapeContainerObject, ShapeContainerDefinitionObject, ShapeContainer, isShapeContainer, ShapeContainerDefinition, ShapeContainerClass, ShapeContainerDefinitionClass, DefaultContentId, ContentObject, ContentDefinitionObject, ContentRectArgs, Content, isContent, assertContent, ContentDefinition, isContentDefinition, ContentClass, ContentDefinitionClass, ContentDefinitionMixin, ContentMixin, ColorContentObject, ColorContentDefinitionObject, ColorContent, isColorContent, ColorContentDefinition, ColorContentClass, ColorContentDefinitionClass, EffectDefinitionClass, EffectClass, effectDefinition, effectDefinitionFromId, effectInstance, effectFromId, EffectObject, Effect, isEffect, assertEffect, Effects, EffectDefinitionObject, EffectDefinition, isEffectDefinition, DefaultFontId, FontDefinitionObject, FontObject, Font, isFont, assertFont, FontDefinition, isFontDefinition, assertFontDefinition, FontMediaClass, fontFind, fontDefinition, fontDefault, fontDefinitionFromId, FontClass, ImageObject, ImageDefinitionObject, ImageTransitionalObject, Image, isImage, ImageDefinition, isImageDefinition, ImageDefinitionClass, imageDefinition, imageDefinitionFromId, imageInstance, imageFromId, ImageClass, Frame, Movable, Movables, MashMediaObject, MashMediaArgs, MashAndMediaObject, isMashAndMediaObject, MashMedia, isMashMedia, assertMashMedia, MashMediaClass, mashMedia, TrackObject, TrackArgs, Track, isTrack, assertTrack, Tracks, trackInstance, TrackFactory, TrackClass, IntrinsicOptions, ClipObject, isClipObject, ClipArgs, ClipDefinitionObject, Clip, isClip, assertClip, Clips, clipInstance, ClipClass, MediaInstanceObject, isMediaInstanceObject, MediaInstance, isMediaInstance, MediaInstanceClass, MediaObject, isMediaObject, MediaObjects, MediaObjectOrError, Media, MediaArray, isMedia, assertMedia, MediaClass, MediaFactoryMethod, MediaResponse, MediaBase, MediaInstanceBase, SequenceObject, Sequence, SequenceDefinitionObject, SequenceDefinition, SequenceMediaClass, sequenceDefinition, sequenceDefinitionFromId, sequenceInstance, sequenceFromId, SequenceClass, VideoObject, Video, VideoDefinitionObject, VideoTransitionalObject, VideoDefinition, isVideoDefinition, assertVideoDefinition, isVideo, assertVideo, VideoDefinitionClass, videoDefinition, videoDefinitionFromId, videoInstance, videoFromId, VideoClass, mediaTypeFromMime, TweenableObject, TweenableDefinitionObject, Tweenable, isTweenable, assertTweenable, TweenableDefinition, isTweenableDefinition, assertTweenableDefinition, TweenableClass, TweenableDefinitionClass, TweenableDefinitionMixin, TweenableMixin, UpdatableDurationMediaTypes, UpdatableDurationObject, UpdatableDurationDefinitionObject, UpdatableDuration, isUpdatableDuration, assertUpdatableDuration, isUpdatableDurationType, UpdatableDurationDefinition, isUpdatableDurationDefinition, assertUpdatableDurationDefinition, UpdatableDurationClass, UpdatableDurationDefinitionClass, UpdatableDurationMixin, UpdatableDurationDefinitionMixin, UpdatableSizeMediaType, UpdatableSizeObject, UpdatableSizeDefinitionObject, UpdatableSize, isUpdatableSize, assertUpdatableSize, isUpdatableSizeType, UpdatableSizeDefinition, isUpdatableSizeDefinition, assertUpdatableSizeDefinition, UpdatableSizeClass, UpdatableSizeDefinitionClass, UpdatableSizeMixin, UpdatableSizeDefinitionMixin, Plugin, PluginTypeProtocol, PluginTypeLanguage, PluginTypeProtocols, PluginType, Plugins, ProbeType, Decoder, Decoders, isDecoder, DecoderOptions, DecoderMethod, DecoderPlugin, PluginsByDecoder, DecodeResponse, DecodeOutput, isDecodeOutput, assertDecodeOutput, DecodingData, DecodingObject, DecodingObjects, Decoding, Decodings, DecodingClass, decodingInstance, isDecoding, assertDecoding, AlphaProbe, AudibleProbe, DurationProbe, SizeProbe, ProbeKind, ProbeKinds, ProbeOptions, ProbeOutput, LoadedInfo, CommandProbeStream, CommandProbeFormat, CommandProbeData, isProbeOptions, assertProbeOptions, isProbeOutput, assertProbeOutput, LanguageEnglish, Language, LanguagePlugin, PluginsByLanguage, ProtocolHttp, ProtocolHttps, ProtocolBlob, ProtocolFile, Protocol, ProtocolPlugin, PluginsByProtocol, ProtocolPromise, ProtocolOptions, ProtocolResponse, protocolName, protocolImportPrefix, protocolLoadPromise, ExtHls, ExtTs, ExtRtmp, ExtDash, ExtJpeg, ExtPng, ExtJson, ExtText, ExtCss, ContentTypeJson, ContentTypeCss, OutputFilterGraphPadding, EmptyMethod, NamespaceSvg, NamespaceXhtml, NamespaceLink, IdPrefix, IdSuffix, ClassDisabled, ClassItem, ClassButton, ClassCollapsed, ClassSelected, ClassDropping, ClassDroppingBefore, ClassDroppingAfter, Default, AudioType, EffectType, FontType, ImageType, MashType, SequenceType, VideoType, AudioStreamType, VideoStreamType, JsonType, MediaType, MediaTypes, isMediaType, assertMediaType, TranscodeType, TranscodeTypes, isTranscodeType, assertTranscodeType, CookedType, CookedTypes, isCookedType, RawType, RawTypes, isRawType, LoadType, LoadTypes, isLoadType, assertLoadType, SizingMediaType, SizingMediaTypes, isSizingMediaType, TimingMediaType, TimingMediaTypes, isTimingMediaType, ContainerType, ContainerTypes, isContainerType, assertContainerType, ContentType, ContentTypes, isContentType, assertContentType, MediaTypesObject, StreamKind, EditType, EditTypes, isEditType, assertEditType, DroppingPosition, FolderType, TrackType, LayerType, LayerTypes, isLayerType, assertLayerType, ActionType, AVType, SelectType, SelectTypes, isSelectType, assertSelectType, ClipSelectType, ClipSelectTypes, isClipSelectType, OutputFormat, StreamingFormat, DecodeType, DecodeTypes, isDecodeType, EncodeType, EncodeTypes, FillType, FillTypes, isFillType, GraphFileType, GraphFileTypes, isGraphFileType, DataType, DataTypes, isDataType, assertDataType, Orientation, Orientations, isOrientation, Direction, Directions, isDirection, assertDirection, DirectionObject, Anchor, Anchors, TriggerType, TriggerTypes, isTriggerType, TransformType, EventType, EventTypes, isEventType, MoveType, MasherAction, ServerType, ServerTypes, Duration, Timing, Timings, Sizing, Sizings, Clicking, Clickings, ParameterObject, Parameter, DataGroup, DataGroups, isDataGroup, assertDataGroup, PropertyBase, Property, PropertyObject, isProperty, assertProperty, propertyInstance, TranscodeOutput, isTranscodeOutput, TranscodingObject, TranscodingObjects, Transcoding, Transcodings, isTranscoding, TranscodingClass, transcodingInstance, ActivityType, ActivityInfo, arrayLast, arraySet, arrayReversed, arrayUnique, commandFilesInputIndex, commandFilesInput, eventStop, mediaInfo, filePromises, idGenerateString, idGenerate, idTemporary, idIsTemporary, imageFromVideoPromise, isObject, assertObject, isString, assertString, isUndefined, isNumberOrNaN, assertNumber, isBoolean, assertBoolean, isMethod, assertMethod, isDefined, assertDefined, isNan, isNumber, isInteger, assertInteger, isFloat, isPositive, assertPositive, isBelowOne, isAboveZero, assertAboveZero, isArray, assertArray, isPopulatedString, assertPopulatedString, isPopulatedArray, assertPopulatedArray, isPopulatedObject, assertPopulatedObject, isNumeric, assertTrue, isRgb, assertRgb, isTime, assertTime, isTimeRange, assertTimeRange, isValue, isTrueValue, assertValue, isValueObject, assertValueObject, isJsonRecord, pixelToFrame, Point, isPoint, assertPoint, PointTuple, pointsEqual, PointZero, pointCopy, pointRound, pointString, pointValueString, pointNegate, Rect, isRect, assertRect, Rects, RectTuple, rectsEqual, RectZero, rectFromSize, rectsFromSizes, rectCopy, rectRound, centerPoint, rectString, RectOptions, requestProtocol, requestAudioPromise, requestFontPromise, requestImagePromise, requestVideoPromise, requestJsonPromise, requestMediaPromise, requestPromise, requestExtension, ResolverPromise, Resolver, ResolverRecord, Resolvers, resolverLoad, resolverPromise, resolverPathPromise, resolverExtension, NumberConverter, roundMethod, roundWithMethod, Size, isSize, assertSize, sizesEqual, Sizes, SizeTuple, SizeZero, sizedEven, sizeEven, sizeRound, sizeCeil, sizeFloor, sizeScale, sizeCover, sizeAboveZero, assertSizeAboveZero, SizeOutput, SizePreview, SizeIcon, sizeCopy, sizeLock, sizeString, sizeLockNegative, sizeFromElement, sortByFrame, sortByIndex, sortByTrack, sortByLabel, stringSeconds, stringFamilySizeRect, stringPluralize, Tweening, tweenPad, tweenNumberStep, tweenColorStep, tweenRectStep, tweenColors, tweenRects, tweenMaxSize, tweenMinSize, tweenOption, tweenableRects, tweenPosition, tweenNumberObject, tweenOverRect, tweenOverPoint, tweenOverSize, tweenScaleSizeToRect, tweenCoverSizes, tweenCoverPoints, tweenRectLock, tweenRectsLock, tweenScaleSizeRatioLock, tweeningPoints, tweenMinMax, tweenInputTime, urlBase, urlBaseInitialize, urlBaseInitialized, urlEndpoint, urlIsObject, urlIsHttp, urlIsBlob, urlHasProtocol, urlCombine, urlResolve, urlFromEndpoint, urlForEndpoint, urlProtocol, urlOptionsObject, urlOptions, urlPrependProtocol, urlExtension, urlFilename, urlFromCss };
+export { Value, Scalar, Strings, PopulatedString, Integer, ValueRecord, NumberRecord, UnknownRecord, ScalarRecord, StringRecord, StringsRecord, NestedStringRecord, StringSetter, NumberSetter, BooleanSetter, BooleanGetter, AnyArray, JsonValue, JsonRecord, ApiVersion, ApiRequest, ApiResponse, EndpointPromiser, ApiCallback, ApiCallbacks, ApiServerInit, ApiCallbacksRequest, ApiCallbacksResponse, ApiCallbackResponse, ApiServersRequest, ApiServersResponse, DescribedObject, DataPutResponse, DataGetRequest, DataPutRequest, DataRetrieveResponse, DataServerInit, DataRetrieve, DataDefinitionPutRequest, DataDefinitionPutResponse, DataDefinitionRetrieveRequest, DataDefinitionRetrieveResponse, DataDefinitionDeleteRequest, DataDefinitionDeleteResponse, DataMashPutRequest, DataMashPutResponse, DataMashAndMedia, DataMashRetrieveRequest, DataMashGetResponse, DataMashDefaultRequest, DataMashDefaultResponse, DataMashDeleteRequest, DataMashDeleteResponse, DataDefaultRequest, DataDefaultResponse, DataMashGetRequest, DataDefinitionGetRequest, DataDefinitionGetResponse, DataMashRetrieveResponse, Endpoints, FileStoreRequest, FileStoreResponse, UploadDescription, RenderingState, RenderingStatus, RenderingStartRequest, RenderingStartResponse, RenderingStatusRequest, RenderingStatusResponse, RenderingUploadRequest, RenderingUploadResponse, Framed, Indexed, Tracked, Labeled, CommandInput, CommandInputs, CommandFilter, CommandFilters, GraphFilter, GraphFilters, FilterValueObject, FilterValueObjects, PreloadOptionsBase, ServerPromiseArgs, PreloadArgs, PreloadOptions, ColorTuple, CommandFileOptions, CommandFileArgs, VisibleCommandFileArgs, CommandFilterArgs, VisibleCommandFilterArgs, FilterCommandFilterArgs, FilterCommandFileArgs, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs, FilterDefinitionCommandFileArgs, GraphFile, GraphFiles, CommandFile, CommandFiles, VoidMethod, Component, Output, isOutput, Constrained, Identified, isIdentified, assertIdentified, MediaCollection, PropertyTweenSuffix, Propertied, PropertiedChangeHandler, PropertiedClass, isPropertied, RequestableObject, isRequestableObject, Requestable, isRequestable, RequestableClass, Typed, isTyped, assertTyped, RawMedia, isRawMedia, ClientMedia, ClientImage, ClientVideo, ClientAudio, ClientFont, ClientEffect, ClientMash, ClientImageOrVideo, ClientAudioNode, ClientImageOrError, ClientAudioOrError, ClientFontOrError, ClientVideoOrError, ClientMediaOrError, JsonRecordOrError, isClientVideo, assertClientVideo, isClientImage, assertClientImage, isClientAudio, assertClientAudio, isClientFont, assertClientFont, LoaderType, isLoaderType, assertLoaderType, isClientMedia, assertClientMedia, AudibleContextData, AudibleContextSource, AudibleContext, AudibleContextInstance, ContextFactory, ActionObject, ActionOptions, ActionMethod, Action, isAction, assertAction, ActionInit, isActionInit, ActionEvent, isActionEvent, actionInstance, ActionFactory, AddClipToTrackActionObject, AddClipToTrackAction, AddTrackActionObject, AddTrackAction, ChangeActionObject, isChangeActionObject, ChangeAction, isChangeAction, assertChangeAction, ChangeFramesAction, ChangeMultipleActionObject, ChangeMultipleAction, MoveActionObject, MoveActionOptions, MoveAction, isMoveAction, assertMoveAction, MoveClipActionObject, MoveClipAction, RemoveClipActionObject, RemoveClipAction, Actions, EditorIndex, EditorArgs, EditorOptions, ClipOrEffect, MashData, isMashData, assertMashData, Editor, EditorClass, editorSingleton, editorArgs, editorInstance, EditorSelectionObject, EditorSelection, EditorSelectionClass, editorSelectionInstance, AudioPreview, AudioPreviewArgs, StartOptions, AudioPreviewClass, audioPreviewInstance, NonePreview, PreviewOptions, PreviewArgs, Preview, PreviewClass, TrackPreviewArgs, TrackPreview, TrackPreviews, TrackPreviewHandleSize, TrackPreviewLineSize, TrackPreviewClass, Selectable, Selectables, SelectableRecord, SelectTypesObject, EncodeOutput, CommandOutput, RenderingCommandOutput, RenderingCommandOutputs, RenderingInput, RenderingOptions, EncodingObject, EncodingObjects, Encoding, Encodings, EncodingClass, encodingInstance, AlphamergeFilter, ChromaKeyFilter, ColorChannelMixerFilter, ColorFilter, ColorizeFilter, ConvolutionFilter, Numbers, NumbersOrUndefined, NumberOrUndefined, ConvolutionRgba, ConvolutionChannel, ConvolutionRgbaObject, ConvolutionRgbasObject, ConvolutionNumberObject, ConvolutionNumbersObject, StringOrUndefined, ConvolutionStringObject, ConvolutionKey, ConvolutionNumbersKey, ConvolutionObject, ConvolutionServerFilter, isConvolutionServerFilter, assertConvolutionServerFilter, CropFilter, FpsFilter, OpacityFilter, OverlayFilter, ScaleFilter, SetptsFilter, SetsarFilter, TextFilter, TrimFilter, FilterArgs, FilterRecord, Filters, FilterObject, FilterDefinitionObject, Filter, FilterDefinition, isFilterDefinition, assertFilterDefinition, FilterClass, FilterDefinitionClass, FilterIdPrefix, filterDefinition, filterDefinitionFromId, filterInstance, filterFromId, Color, ColorObject, Rgb, Rgba, RgbObject, RgbaObject, colorRgbKeys, colorRgbaKeys, colorTransparent, colorBlack, colorWhite, colorWhiteTransparent, colorBlackTransparent, colorWhiteOpaque, colorBlackOpaque, colorGreen, colorYellow, colorRed, colorBlue, colorRgbToHex, colorRgbaToHex, colorValid, colorValidHex, colorToRgb, colorToRgba, colorFromRgb, colorRgbDifference, colorMixRbga, colorMixRbg, Emitter, Endpoint, isEndpoint, endpointUrl, endpointFromAbsolute, endpointFromUrl, endpointIsAbsolute, endpointAbsolute, ErrorObject, PotentialError, DefiniteError, PathOrError, ErrorName, ErrorNames, StandardErrorName, ErrorContext, isErrorName, errorMessage, errorObject, errorObjectCaught, errorName, error, errorCaught, errorPromise, errorThrow, Request, Requests, isRequest, assertRequest, RequestInit, RequestRecord, PropertyTypesNumeric, propertyTypeIsString, propertyTypeDefault, propertyTypeValid, propertyTypeCoerce, Selected, SelectedProperty, isSelectedProperty, SelectedMovable, SelectedItems, SelectedProperties, SelectedPropertyObject, selectedPropertyObject, selectedPropertiesScalarObject, IndexHandler, FfmpegSvgFilter, SvgFilter, SvgFilters, SvgItem, SvgItems, SvgItemsTuple, PreviewItem, PreviewItems, SvgOrImage, svgElement, svgElementInitialize, svgId, svgUrl, svgGroupElement, svgSetDimensions, svgSetTransformPoint, svgRectPoints, svgPolygonElement, svgSetBox, svgSvgElement, svgSetDimensionsLock, svgImageElement, svgPathElement, svgMaskElement, svgFilter, svgAppend, svgPatternElement, svgDefsElement, svgFeImageElement, svgFilterElement, svgDifferenceDefs, svgSet, svgAddClass, svgUseElement, svgSetTransform, svgTransform, svgSetTransformRects, svgFunc, svgSetChildren, svgImagePromise, svgText, svgImagePromiseWithOptions, Time, TimeRange, Times, TimeRanges, timeEqualizeRates, TimeClass, timeRangeFromArgs, timeRangeFromSeconds, timeRangeFromTime, timeRangeFromTimes, timeFromArgs, timeFromSeconds, TimeRangeClass, MediaInstanceObject, isMediaInstanceObject, MediaInstance, isMediaInstance, MediaInstanceClass, MediaObject, isMediaObject, MediaObjects, MediaObjectOrError, Media, MediaArray, isMedia, assertMedia, MediaClass, MediaFactoryMethod, MediaResponse, MediaBase, MediaDefaults, MediaFactories, mediaDefinition, mediaTypeFromMime, MediaInstanceBase, AudioObject, Audio, isAudio, AudioMediaObject, AudioMedia, isAudioMedia, AudioMediaClass, audioDefinition, audioDefinitionFromId, audioInstance, audioFromId, AudioClass, DefaultContainerId, TextContainerId, ContainerObject, isContainerObject, assertContainerObject, ContainerDefinitionObject, ContainerDefinition, isContainerDefinition, ContainerRectArgs, Container, isContainer, assertContainer, ContainerClass, ContainerDefinitionClass, ContainerMixin, ContainerDefinitionMixin, ShapeContainerObject, ShapeContainerDefinitionObject, ShapeContainer, isShapeContainer, ShapeContainerDefinition, ShapeContainerClass, ShapeContainerDefinitionClass, DefaultContentId, ContentObject, ContentDefinitionObject, ContentRectArgs, Content, isContent, assertContent, ContentDefinition, isContentDefinition, ContentClass, ContentDefinitionClass, ContentDefinitionMixin, ContentMixin, ColorContentObject, ColorContentDefinitionObject, ColorContent, isColorContent, ColorContentDefinition, ColorContentClass, ColorContentDefinitionClass, EffectMediaClass, EffectClass, effectDefinition, effectDefinitionFromId, effectInstance, effectFromId, Effect, isEffect, assertEffect, Effects, EffectObject, EffectMediaObject, EffectMedia, isEffectMedia, DefaultFontId, FontMediaObject, FontObject, Font, isFont, assertFont, FontMedia, isFontMedia, assertFontMedia, FontMediaClass, fontFind, fontDefinition, fontDefault, fontDefinitionFromId, FontClass, ImageObject, ImageMediaObject, Image, isImage, ImageMedia, isImageMedia, ImageMediaClass, imageDefinition, imageDefinitionFromId, imageInstance, imageFromId, ImageClass, Frame, Movable, Movables, MashMediaObject, MashMediaArgs, MashAndMediaObject, isMashAndMediaObject, MashMedia, isMashMedia, assertMashMedia, MashMediaClass, mashMedia, TrackObject, TrackArgs, Track, isTrack, assertTrack, Tracks, trackInstance, TrackFactory, TrackClass, IntrinsicOptions, ClipObject, isClipObject, ClipArgs, ClipDefinitionObject, Clip, isClip, assertClip, Clips, clipInstance, ClipClass, SequenceObject, Sequence, SequenceMediaObject, SequenceMedia, SequenceMediaClass, sequenceDefinition, sequenceDefinitionFromId, sequenceInstance, sequenceFromId, SequenceClass, VideoObject, Video, VideoMediaObject, VideoMedia, isVideoMedia, assertVideoMedia, isVideo, assertVideo, VideoMediaClass, videoDefinition, videoDefinitionFromId, videoInstance, videoFromId, VideoClass, TweenableObject, TweenableDefinitionObject, Tweenable, isTweenable, assertTweenable, TweenableDefinition, isTweenableDefinition, assertTweenableDefinition, TweenableClass, TweenableDefinitionClass, TweenableDefinitionMixin, TweenableMixin, UpdatableDurationMediaTypes, UpdatableDurationObject, UpdatableDurationDefinitionObject, UpdatableDuration, isUpdatableDuration, assertUpdatableDuration, isUpdatableDurationType, UpdatableDurationDefinition, isUpdatableDurationDefinition, assertUpdatableDurationDefinition, UpdatableDurationClass, UpdatableDurationDefinitionClass, UpdatableDurationMixin, UpdatableDurationDefinitionMixin, UpdatableSizeMediaType, UpdatableSizeObject, UpdatableSizeDefinitionObject, UpdatableSize, isUpdatableSize, assertUpdatableSize, isUpdatableSizeType, UpdatableSizeDefinition, isUpdatableSizeDefinition, assertUpdatableSizeDefinition, UpdatableSizeClass, UpdatableSizeDefinitionClass, UpdatableSizeMixin, UpdatableSizeDefinitionMixin, Plugin, PluginTypeProtocol, PluginTypeLanguage, PluginTypeProtocols, PluginType, Plugins, ProbeType, Decoder, Decoders, isDecoder, DecoderOptions, DecoderMethod, DecoderPlugin, PluginsByDecoder, DecodeResponse, DecodeOutput, isDecodeOutput, assertDecodeOutput, DecodingData, DecodingObject, DecodingObjects, Decoding, Decodings, DecodingClass, decodingInstance, isDecoding, assertDecoding, AlphaProbe, AudibleProbe, DurationProbe, SizeProbe, ProbeKind, ProbeKinds, ProbeOptions, ProbeOutput, LoadedInfo, CommandProbeStream, CommandProbeFormat, CommandProbeData, isProbeOptions, assertProbeOptions, isProbeOutput, assertProbeOutput, LanguageEnglish, Language, LanguagePlugin, PluginsByLanguage, ProtocolHttp, ProtocolHttps, ProtocolBlob, ProtocolFile, Protocol, ProtocolPlugin, PluginsByProtocol, ProtocolPromise, ProtocolOptions, ProtocolResponse, protocolName, protocolImportPrefix, protocolLoadPromise, ResolverPromise, Resolver, ResolverRecord, Resolvers, resolverLoad, resolverPromise, resolverPathPromise, resolverExtension, ExtHls, ExtTs, ExtRtmp, ExtDash, ExtJpeg, ExtPng, ExtJson, ExtText, ExtCss, ContentTypeJson, ContentTypeCss, OutputFilterGraphPadding, EmptyMethod, NamespaceSvg, NamespaceXhtml, NamespaceLink, IdPrefix, IdSuffix, ClassDisabled, ClassItem, ClassButton, ClassCollapsed, ClassSelected, ClassDropping, ClassDroppingBefore, ClassDroppingAfter, Default, AudioType, EffectType, FontType, ImageType, MashType, SequenceType, VideoType, AudioStreamType, VideoStreamType, JsonType, MediaType, MediaTypes, isMediaType, assertMediaType, TranscodeType, TranscodeTypes, isTranscodeType, assertTranscodeType, CookedType, CookedTypes, isCookedType, RawType, RawTypes, isRawType, LoadType, LoadTypes, isLoadType, assertLoadType, SizingMediaType, SizingMediaTypes, isSizingMediaType, TimingMediaType, TimingMediaTypes, isTimingMediaType, ContainerType, ContainerTypes, isContainerType, assertContainerType, ContentType, ContentTypes, isContentType, assertContentType, MediaTypesObject, StreamKind, EditType, EditTypes, isEditType, assertEditType, DroppingPosition, FolderType, TrackType, LayerType, LayerTypes, isLayerType, assertLayerType, ActionType, AVType, SelectType, SelectTypes, isSelectType, assertSelectType, ClipSelectType, ClipSelectTypes, isClipSelectType, OutputFormat, StreamingFormat, DecodeType, DecodeTypes, isDecodeType, EncodeType, EncodeTypes, FillType, FillTypes, isFillType, GraphFileType, GraphFileTypes, isGraphFileType, DataType, DataTypes, isDataType, assertDataType, Orientation, Orientations, isOrientation, Direction, Directions, isDirection, assertDirection, DirectionObject, Anchor, Anchors, TriggerType, TriggerTypes, isTriggerType, TransformType, EventType, EventTypes, isEventType, MoveType, MasherAction, ServerType, ServerTypes, Duration, Timing, Timings, Sizing, Sizings, Clicking, Clickings, ParameterObject, Parameter, DataGroup, DataGroups, isDataGroup, assertDataGroup, PropertyBase, Property, PropertyObject, isProperty, assertProperty, propertyInstance, TranscodeOutput, isTranscodeOutput, TranscodingObject, TranscodingObjects, Transcoding, Transcodings, isTranscoding, TranscodingClass, transcodingInstance, arrayLast, arraySet, arrayReversed, arrayUnique, commandFilesInputIndex, commandFilesInput, eventStop, mediaInfo, filePromises, idGenerateString, idGenerate, idTemporary, idIsTemporary, imageFromVideoPromise, isObject, assertObject, isString, assertString, isUndefined, isNumberOrNaN, assertNumber, isBoolean, assertBoolean, isMethod, assertMethod, isDefined, assertDefined, isNan, isNumber, isInteger, assertInteger, isFloat, isPositive, assertPositive, isBelowOne, isAboveZero, assertAboveZero, isArray, assertArray, isPopulatedString, assertPopulatedString, isPopulatedArray, assertPopulatedArray, isPopulatedObject, assertPopulatedObject, isNumeric, assertTrue, isRgb, assertRgb, isTime, assertTime, isTimeRange, assertTimeRange, isValue, isTrueValue, assertValue, isValueObject, assertValueObject, isJsonRecord, pixelToFrame, Point, isPoint, assertPoint, PointTuple, pointsEqual, PointZero, pointCopy, pointRound, pointString, pointValueString, pointNegate, Rect, isRect, assertRect, Rects, RectTuple, rectsEqual, RectZero, rectFromSize, rectsFromSizes, rectCopy, rectRound, centerPoint, rectString, RectOptions, requestProtocol, requestAudioPromise, requestFontPromise, requestImagePromise, requestVideoPromise, requestJsonPromise, requestMediaPromise, requestPromise, requestExtension, NumberConverter, roundMethod, roundWithMethod, Size, isSize, assertSize, sizesEqual, Sizes, SizeTuple, SizeZero, sizedEven, sizeEven, sizeRound, sizeCeil, sizeFloor, sizeScale, sizeCover, sizeAboveZero, assertSizeAboveZero, SizeOutput, SizePreview, SizeIcon, sizeCopy, sizeLock, sizeString, sizeLockNegative, sizeFromElement, sortByFrame, sortByIndex, sortByTrack, sortByLabel, stringSeconds, stringFamilySizeRect, stringPluralize, Tweening, tweenPad, tweenNumberStep, tweenColorStep, tweenRectStep, tweenColors, tweenRects, tweenMaxSize, tweenMinSize, tweenOption, tweenableRects, tweenPosition, tweenNumberObject, tweenOverRect, tweenOverPoint, tweenOverSize, tweenScaleSizeToRect, tweenCoverSizes, tweenCoverPoints, tweenRectLock, tweenRectsLock, tweenScaleSizeRatioLock, tweeningPoints, tweenMinMax, tweenInputTime, urlBase, urlBaseInitialize, urlBaseInitialized, urlEndpoint, urlIsObject, urlIsHttp, urlIsBlob, urlHasProtocol, urlCombine, urlResolve, urlFromEndpoint, urlForEndpoint, urlProtocol, urlOptionsObject, urlOptions, urlPrependProtocol, urlExtension, urlFilename, urlFromCss };
 //# sourceMappingURL=moviemasher.d.ts.map

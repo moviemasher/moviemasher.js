@@ -273,10 +273,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
 
     preloadUrls(args: PreloadArgs): string[] { return [] }
 
-    serverPromise(args: ServerPromiseArgs): Promise<void> {
-      return this.definition.serverPromise(args)
-    }
-    
+
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { time, containerRects, filterInput: input, videoRate } = args
       let filterInput = input

@@ -1,6 +1,6 @@
 import { ClientVideo, ClientImage } from "../../ClientMedia/ClientMedia"
 import { VideoClass } from "./VideoClass"
-import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
+import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
@@ -19,15 +19,15 @@ import { Requestable } from "../../Base/Requestable/Requestable"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
 
-const VideoDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
-const VideoDefinitionWithContainer = ContainerDefinitionMixin(VideoDefinitionWithTweenable)
-const VideoDefinitionWithContent = ContentDefinitionMixin(VideoDefinitionWithContainer)
-const VideoDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoDefinitionWithContent)
-const VideoDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoDefinitionWithUpdatableSize)
-export class VideoDefinitionClass extends VideoDefinitionWithUpdatableDuration implements VideoDefinition {
-  constructor(object: VideoDefinitionObject) {
+const VideoMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
+const VideoMediaWithContainer = ContainerDefinitionMixin(VideoMediaWithTweenable)
+const VideoMediaWithContent = ContentDefinitionMixin(VideoMediaWithContainer)
+const VideoMediaWithUpdatableSize = UpdatableSizeDefinitionMixin(VideoMediaWithContent)
+const VideoMediaWithUpdatableDuration = UpdatableDurationDefinitionMixin(VideoMediaWithUpdatableSize)
+export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements VideoMedia {
+  constructor(object: VideoMediaObject) {
     super(object)
-    const { loadedVideo } = object as VideoDefinitionObject
+    const { loadedVideo } = object as VideoMediaObject
     if (loadedVideo) this.loadedVideo = loadedVideo
   
     // TODO: support speed

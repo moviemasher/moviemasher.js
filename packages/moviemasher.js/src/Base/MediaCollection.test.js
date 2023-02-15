@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { DefaultFontId, EffectDefinitionClass, OverlayFilter, MediaCollection } from "@moviemasher/moviemasher.js"
+import { DefaultFontId, EffectMediaClass, OverlayFilter, MediaCollection } from "@moviemasher/moviemasher.js"
 
 describe("MediaCollection", () => {
   const media = new MediaCollection()
@@ -11,19 +11,19 @@ describe("MediaCollection", () => {
     assert(definition instanceof OverlayFilter)
   })
   
-  test("returns EffectDefinition", () => {
+  test("returns EffectMedia", () => {
     const definition = media.fromId('com.moviemasher.effect.chromakey')
     assert(definition)
     // console.log(definition.constructor.name, definition)
-    assert(definition instanceof EffectDefinitionClass)
+    assert(definition instanceof EffectMediaClass)
   })
 
-  test("returns FontDefinition", () => {
+  test("returns FontMedia", () => {
     const definition = media.fromId(DefaultFontId)
     assert(definition)
   })
 
-  test("returns ImageDefinition", () => {
+  test("returns ImageMedia", () => {
     const imageDefinitionObject = {
       id: 'globe', type: ImageType, 
       request: { endpoint: { pathname: '../shared/image/globe.jpg' }}

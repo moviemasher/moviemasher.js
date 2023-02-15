@@ -1,6 +1,6 @@
 import { UnknownRecord } from "../../declarations"
 import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
-import { Sequence, SequenceDefinition } from "./Sequence"
+import { Sequence, SequenceMedia } from "./Sequence"
 import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
@@ -17,7 +17,7 @@ const SequenceWithUpdatableSize = UpdatableSizeMixin(SequenceWithContent)
 const SequenceWithUpdatableDuration = UpdatableDurationMixin(SequenceWithUpdatableSize)
 
 export class SequenceClass extends SequenceWithUpdatableDuration implements Sequence {
-  declare definition : SequenceDefinition
+  declare definition : SequenceMedia
 
   visibleCommandFiles(args: VisibleCommandFileArgs): CommandFiles {
     const files = super.visibleCommandFiles(args)

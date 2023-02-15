@@ -2,7 +2,7 @@ import { UnknownRecord} from "../../declarations"
 import { Time } from "../../Helpers/Time/Time"
 import { SequenceClass } from "./SequenceClass"
 import {
-  Sequence, SequenceDefinition, SequenceDefinitionObject,
+  Sequence, SequenceMedia, SequenceMediaObject,
   SequenceObject
 } from "./Sequence"
 import { Default } from "../../Setup/Default"
@@ -14,17 +14,17 @@ import { isPositive } from "../../Utility/Is"
 import { MediaBase } from "../MediaBase"
 import { SequenceType } from "../../Setup/Enums"
 
-const SequenceDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
-const SequenceDefinitionWithContent = ContentDefinitionMixin(SequenceDefinitionWithTweenable)
-const SequenceDefinitionWithUpdatableSize = UpdatableSizeDefinitionMixin(SequenceDefinitionWithContent)
-const SequenceDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(SequenceDefinitionWithUpdatableSize)
-export class SequenceMediaClass extends SequenceDefinitionWithUpdatableDuration implements SequenceDefinition {
+const SequenceMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
+const SequenceMediaWithContent = ContentDefinitionMixin(SequenceMediaWithTweenable)
+const SequenceMediaWithUpdatableSize = UpdatableSizeDefinitionMixin(SequenceMediaWithContent)
+const SequenceMediaWithUpdatableDuration = UpdatableDurationDefinitionMixin(SequenceMediaWithUpdatableSize)
+export class SequenceMediaClass extends SequenceMediaWithUpdatableDuration implements SequenceMedia {
   constructor(...args : any[]) {
     const [object] = args
     super(object)
     const {
       padding, begin, fps, increment, pattern
-    } = <SequenceDefinitionObject>object
+    } = <SequenceMediaObject>object
 
     if (isPositive(begin)) this.begin = begin
     if (fps) this.fps = fps

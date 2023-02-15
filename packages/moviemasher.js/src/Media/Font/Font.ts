@@ -7,14 +7,14 @@ import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 export const DefaultFontId = `${IdPrefix}font${IdSuffix}`
 
 
-export interface FontDefinitionObject extends ContainerDefinitionObject {
+export interface FontMediaObject extends ContainerDefinitionObject {
   string?: string
 }
 
 export interface FontObject extends ContainerObject {}
 
 export interface Font extends Container {
-  definition: FontDefinition
+  definition: FontMedia
   string: string
 }
 export const isFont = (value: any): value is Font => {
@@ -24,16 +24,19 @@ export function assertFont(value: any): asserts value is Font {
   if (!isFont(value)) throw new Error("expected Font")
 }
 
-export interface FontDefinition extends ContainerDefinition {
+/**
+ * @category Media
+ */
+export interface FontMedia extends ContainerDefinition {
   type: FontType
   family: string
   instanceFromObject(object?: FontObject): Font
 }
 
-export const isFontDefinition = (value: any): value is FontDefinition => {
+export const isFontMedia = (value: any): value is FontMedia => {
   return isMedia(value) && value.type === FontType
 }
-export function assertFontDefinition(value: any): asserts value is FontDefinition {
-  if (!isFontDefinition(value)) throw new Error("expected FontDefinition")
+export function assertFontMedia(value: any): asserts value is FontMedia {
+  if (!isFontMedia(value)) throw new Error("expected FontMedia")
 }
 

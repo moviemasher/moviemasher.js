@@ -1,5 +1,9 @@
 import React from "react"
-import { assertDefined, EventType, isEventType,  ActivityInfo, ActivityType, Editor } from "@moviemasher/moviemasher.js"
+import { assertDefined, EventType, isEventType,  Editor } from "@moviemasher/moviemasher.js"
+
+import { ActivityInfo, ActivityType } from "@moviemasher/client-core"
+
+
 import { ActivityGroup, ActivityObject, ActivityObjects } from "../Components/Activity/ActivityContext"
 import { MasherContext } from "../Components/Masher/MasherContext"
 

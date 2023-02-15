@@ -1,8 +1,8 @@
-import { Request } from "../Helpers/Request/Request"
-import { ClientAudio, ClientFont, ClientImage, ClientVideo } from "../ClientMedia/ClientMedia"
-import { PathOrError } from "../Helpers/Error/Error"
-import { AudioType, FontType, ImageType, MediaType, VideoType } from "../Setup/Enums"
-import { requestExtension, requestPromise } from "./Request"
+import { Request } from "../../Helpers/Request/Request"
+import { ClientAudio, ClientFont, ClientImage, ClientVideo } from "../../ClientMedia/ClientMedia"
+import { PathOrError } from "../../Helpers/Error/Error"
+import { AudioType, FontType, ImageType, MediaType, VideoType } from "../../Setup/Enums"
+import { requestExtension, requestPromise } from "../../Utility/Request"
 
 export type ResolverPromise = {
   (file: string, mimeType: string, type: ImageType): Promise<ClientImage>

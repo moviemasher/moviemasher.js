@@ -6,15 +6,15 @@ import { SequenceType } from "../../Setup/Enums"
 
 export interface SequenceObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
-  definition? : SequenceDefinition
+  definition? : SequenceMedia
 }
 
 export interface Sequence extends Content, UpdatableSize, UpdatableDuration {
-  definition : SequenceDefinition
+  definition : SequenceMedia
   speed : number
 }
 
-export interface SequenceDefinitionObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+export interface SequenceMediaObject extends ContentDefinitionObject, UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   begin?: number
   fps?: number
   increment?: number
@@ -22,7 +22,10 @@ export interface SequenceDefinitionObject extends ContentDefinitionObject, Updat
   padding?: number
 }
 
-export interface SequenceDefinition extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+export interface SequenceMedia extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   type: SequenceType
   instanceFromObject(object?: SequenceObject): Sequence
   framesArray(start: Time): number[]

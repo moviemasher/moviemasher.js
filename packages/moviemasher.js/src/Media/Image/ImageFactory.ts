@@ -1,5 +1,5 @@
-import { ImageDefinitionClass } from "./ImageDefinitionClass"
-import { Image, ImageDefinition, ImageDefinitionObject, ImageObject } from "./Image"
+import { ImageMediaClass } from "./ImageMediaClass"
+import { Image, ImageMedia, ImageMediaObject, ImageObject } from "./Image"
 import { assertPopulatedString } from "../../Utility/Is"
 import { MediaFactories } from "../MediaFactories"
 import { ImageType } from "../../Setup/Enums"
@@ -22,18 +22,18 @@ import { MediaDefaults } from "../MediaDefaults"
 import { ColorContentDefinitionClass } from "../Content/ColorContent/ColorContentDefinitionClass"
 import { DefaultContentId } from "../Content/Content"
 
-export const imageDefinition = (object : ImageDefinitionObject) : ImageDefinition => {
+export const imageDefinition = (object : ImageMediaObject) : ImageMedia => {
   const { id } = object
   assertPopulatedString(id, 'imageDefinition id')
 
-  return new ImageDefinitionClass(object)
+  return new ImageMediaClass(object)
 }
 
-export const imageDefinitionFromId = (id : string) : ImageDefinition => {
+export const imageDefinitionFromId = (id : string) : ImageMedia => {
   const definition = MediaDefaults[ImageType].find(definition => 
     definition.id === id
   )
-  if (definition) return definition as ImageDefinition
+  if (definition) return definition as ImageMedia
 
   
   return imageDefinition({ id })

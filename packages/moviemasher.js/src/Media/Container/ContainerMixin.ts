@@ -21,7 +21,7 @@ import { colorWhite } from "../../Helpers/Color/ColorFunctions"
 import { Content } from "../Content/Content"
 import { NamespaceSvg } from "../../Setup/Constants"
 import { pointCopy } from "../../Utility/Point"
-import { assertVideoDefinition } from "../Video/Video"
+import { assertVideoMedia } from "../Video/Video"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
 
@@ -86,7 +86,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const transcoding = definition.preferredTranscoding(...types)
       const { type: transcodingType } = transcoding
       if (transcodingType === SequenceType) {
-        assertVideoDefinition(definition)
+        assertVideoMedia(definition)
         return definition.loadedImagePromise(definitionTime, sizeCopy(zeroRect)).then(image => (
           image.src
         ))

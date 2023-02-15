@@ -16,32 +16,34 @@ import { Requestable } from "../../Base/Requestable/Requestable"
 
 export interface VideoObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
-  definition?: VideoDefinition
+  definition?: VideoMedia
 }
 
 export interface Video extends Content, UpdatableSize, UpdatableDuration {
-  definition : VideoDefinition
+  definition : VideoMedia
   loadedVideo?: ClientVideo
 }
 
-export interface VideoDefinitionObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
+export interface VideoMediaObject extends UpdatableSizeDefinitionObject, UpdatableDurationDefinitionObject {
   loadedVideo?: ClientVideo
 }
 
-export type VideoTransitionalObject = MediaObject | VideoDefinitionObject
 
-export interface VideoDefinition extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
+/**
+ * @category Media
+ */
+export interface VideoMedia extends Media, UpdatableSizeDefinition, UpdatableDurationDefinition {
   type: VideoType
   instanceFromObject(object?: VideoObject): Video
   loadedVideo?: ClientVideo
   readonly previewTranscoding: Requestable
   loadedImagePromise(definitionTime: Time, outSize?: Size): Promise<ClientImage>
 }
-export const isVideoDefinition = (value: any): value is VideoDefinition => {
+export const isVideoMedia = (value: any): value is VideoMedia => {
   return isMedia(value) && value.type === VideoType
 }
-export function assertVideoDefinition(value: any): asserts value is VideoDefinition {
-  if (!isVideoDefinition(value)) throw new Error('expected VideoDefinition')
+export function assertVideoMedia(value: any): asserts value is VideoMedia {
+  if (!isVideoMedia(value)) throw new Error('expected VideoMedia')
 }
 
 export const isVideo = (value: any): value is Video => {

@@ -22,9 +22,5 @@ export function TweenableDefinitionMixin<T extends MediaClass>(Base: T): Tweenab
     loadPromise(args: PreloadArgs): Promise<void> {
       return Promise.resolve()
     }
-
-    serverPromise(args: ServerPromiseArgs): Promise<void> {
-      return Promise.resolve()
-    }
   }
 }

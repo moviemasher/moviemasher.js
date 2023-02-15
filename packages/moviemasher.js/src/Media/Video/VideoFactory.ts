@@ -1,16 +1,16 @@
 import { assertPopulatedString } from "../../Utility/Is"
-import { VideoDefinitionClass } from "./VideoDefinitionClass"
-import { Video, VideoDefinition, VideoDefinitionObject, VideoObject } from "./Video"
+import { VideoMediaClass } from "./VideoMediaClass"
+import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
 import { MediaFactories } from "../MediaFactories"
 import { MediaType, VideoType } from "../../Setup/Enums"
 
-export const videoDefinition = (object : VideoDefinitionObject) : VideoDefinition => {
+export const videoDefinition = (object : VideoMediaObject) : VideoMedia => {
   const { id } = object
   assertPopulatedString(id)
-  return new VideoDefinitionClass(object)
+  return new VideoMediaClass(object)
 }
 
-export const videoDefinitionFromId = (id : string) : VideoDefinition => {
+export const videoDefinitionFromId = (id : string) : VideoMedia => {
   return videoDefinition({ id })
 }
 

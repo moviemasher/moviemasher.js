@@ -52,6 +52,9 @@ export const isMashAndMediaObject = (value: any): value is MashAndMediaObject =>
   return isObject(value) && "media" in value && isArray(value.media)
 }
 
+/**
+ * @category Media
+ */
 export interface MashMedia extends Media, Selectable {
   addClipToTrack(clip : Clip | Clips, trackIndex? : number, insertIndex? : number, frame? : number) : void
   addTrack(object?: TrackObject): Track

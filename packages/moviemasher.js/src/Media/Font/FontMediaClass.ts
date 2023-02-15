@@ -2,7 +2,7 @@ import { UnknownRecord } from "../../declarations"
 import { ClientFont } from "../../ClientMedia/ClientMedia"
 import { GraphFile, PreloadArgs, GraphFiles } from "../../Base/Code"
 import { DataType, Orientation, FontType } from "../../Setup/Enums"
-import { Font, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
+import { Font, FontMedia, FontMediaObject, FontObject } from "./Font"
 import { MediaBase } from "../MediaBase"
 import { EmptyMethod } from "../../Setup/Constants"
 import { requestFontPromise } from "../../Utility/Request"
@@ -28,8 +28,8 @@ const TextHeight = 1000
 const FontContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const FontContainerDefinitionWithContainer = ContainerDefinitionMixin(FontContainerDefinitionWithTweenable)
 
-export class FontMediaClass extends FontContainerDefinitionWithContainer implements FontDefinition {
-  constructor(object: FontDefinitionObject) {
+export class FontMediaClass extends FontContainerDefinitionWithContainer implements FontMedia {
+  constructor(object: FontMediaObject) {
     super(object)
     const { string, label } = object
     this.string = string || label || Default.font.string

@@ -2,7 +2,6 @@
 
 CREATE TABLE IF NOT EXISTS "media" (
     id VARCHAR(255) PRIMARY KEY,
-    "media_id" VARCHAR(255),
     "object_id" VARCHAR(255),
     "user_id" VARCHAR(255) NOT NULL,
     "created_at" VARCHAR(255) NOT NULL,

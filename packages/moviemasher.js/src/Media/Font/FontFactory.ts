@@ -1,6 +1,6 @@
 import { FontType, MediaType } from "../../Setup/Enums"
 import { FontMediaClass } from "./FontMediaClass"
-import { DefaultFontId, FontDefinition, FontDefinitionObject, FontObject } from "./Font"
+import { DefaultFontId, FontMedia, FontMediaObject, FontObject } from "./Font"
 import { MediaFactories } from "../MediaFactories"
 import { MediaDefaults } from "../MediaDefaults"
 
@@ -16,12 +16,12 @@ import fontOleoScriptJson from "../../MediaObjects/font/oleo-script.json"
 import fontShojumaruJson from "../../MediaObjects/font/shojumaru.json"
 import fontRubikDirtJson from "../../MediaObjects/font/rubik-dirt.json"
 
-export const fontFind = (id: string): FontDefinition | undefined => {
+export const fontFind = (id: string): FontMedia | undefined => {
   const definition = MediaDefaults[FontType].find(object => object.id === id)
-  if (definition) return definition as FontDefinition
+  if (definition) return definition as FontMedia
 }
 
-export const fontDefinition = (object : FontDefinitionObject): FontDefinition => {
+export const fontDefinition = (object : FontMediaObject): FontMedia => {
   const { id = DefaultFontId } = object
   const definition = fontFind(id)
   if (definition) return definition 
@@ -32,7 +32,7 @@ export const fontDefinition = (object : FontDefinitionObject): FontDefinition =>
 
 export const fontDefault = fontDefinition({ id: DefaultFontId, ...fontDefaultJson })
 
-export const fontDefinitionFromId = (id: string): FontDefinition => fontDefinition({id})
+export const fontDefinitionFromId = (id: string): FontMedia => fontDefinition({id})
 
 MediaFactories[FontType] = fontDefinition
 MediaDefaults[FontType].push(

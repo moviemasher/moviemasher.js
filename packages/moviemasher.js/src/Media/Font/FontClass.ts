@@ -1,4 +1,4 @@
-import { Font, FontDefinition, FontObject } from "./Font"
+import { Font, FontMedia, FontObject } from "./Font"
 import { Filter } from "../../Filter/Filter"
 import { Scalar, ScalarRecord, UnknownRecord } from "../../declarations"
 import { SvgItem } from "../../Helpers/Svg/Svg"
@@ -41,7 +41,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
   private _colorFilter?: Filter
   get colorFilter() { return this._colorFilter ||= filterFromId('color')}
 
-  declare definition: FontDefinition
+  declare definition: FontMedia
 
   hasIntrinsicSizing = true
 

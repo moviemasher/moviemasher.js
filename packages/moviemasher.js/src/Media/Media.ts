@@ -30,6 +30,8 @@ export interface MediaInstance extends Identified, Propertied {
   label: string
   type: MediaType
   unload(): void
+
+  serverPromise(args: ServerPromiseArgs): Promise<void>
 }
 
 export const isMediaInstance = (value?: any): value is MediaInstance => {
@@ -59,7 +61,9 @@ export interface MediaObjectOrError extends PotentialError {
   mediaObject?: MediaObject
 } 
 
-
+/**
+ * @category Media
+ */
 export interface Media extends Requestable {
   type: MediaType
   transcodings: Transcodings

@@ -1,8 +1,8 @@
 /// <reference types="react" />
 import React from "react";
-import { ActivityInfo, Identified, Endpoint, ApiServersResponse, JsonRecord, MediaType, MediaArray, StringSetter, VoidMethod, Clip, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarRecord, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, UnknownRecord, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, DroppingPosition, Rect, Track, Point, Emitter, EventType, NestedStringRecord, StringRecord } from "@moviemasher/moviemasher.js";
+import { Identified, Endpoint, ApiServersResponse, JsonRecord, MediaType, MediaArray, StringSetter, VoidMethod, Clip, Media, DataType, DataGroup, SelectedItems, SelectType, SelectedMovable, Movable, ScalarRecord, Scalar, PropertiedChangeHandler, Property, Time, TimeRange, IndexHandler, BooleanSetter, Editor, EditorIndex, UnknownRecord, Size, EditType, DataDefaultResponse, NumberSetter, ServerType, DroppingPosition, Rect, Track, Point, Emitter, EventType, NestedStringRecord, StringRecord } from "@moviemasher/moviemasher.js";
+import { ActivityInfo, Draggable, Client } from "@moviemasher/client-core";
 import { ThemeIcons } from "@moviemasher/theme-default";
-import { Draggable, Client } from "@moviemasher/client-core";
 // TODO: determine if we really need to repeat this
 declare global {
     interface Window {

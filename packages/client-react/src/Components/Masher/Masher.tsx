@@ -12,10 +12,12 @@ import {
   ApiCallbackResponse,
   DataDefinitionPutRequest, RenderingStatusResponse, EncodeTypes, 
   assertObject, EventType, 
-  idGenerate, ActivityType, 
+  idGenerate, 
   isClip, isEffect, 
   ScalarRecord, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, MediaArray, isMashAndMediaObject, VideoType, idTemporary, assertMashMedia
 } from '@moviemasher/moviemasher.js'
+
+import { ActivityType } from "@moviemasher/client-core"
 
 import type { ThemeIcons } from '@moviemasher/theme-default'
 

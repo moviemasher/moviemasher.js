@@ -2,7 +2,7 @@ import { ValueRecord } from "../../declarations"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { CommandFile, CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { ImageType } from "../../Setup/Enums"
-import { ImageDefinition, Image } from "./Image"
+import { ImageMedia, Image } from "./Image"
 import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { ContentMixin } from "../Content/ContentMixin"
@@ -39,7 +39,7 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     return commandFiles
   }
 
-  declare definition: ImageDefinition
+  declare definition: ImageMedia
 
   graphFiles(args: PreloadArgs): GraphFiles { 
     const { visible, editing } = args

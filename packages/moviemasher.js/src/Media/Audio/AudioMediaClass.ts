@@ -1,6 +1,6 @@
 import { AudioType } from "../../Setup/Enums"
 import { AudioClass } from "./AudioClass"
-import { Audio, AudioDefinition, AudioDefinitionObject, AudioObject } from "./Audio"
+import { Audio, AudioMedia, AudioMediaObject, AudioObject } from "./Audio"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
@@ -10,11 +10,11 @@ import { PreloadArgs } from "../../Base/Code"
 import { requestAudioPromise } from "../../Utility/Request"
 
 
-const AudioDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
-const AudioDefinitionWithContent = ContentDefinitionMixin(AudioDefinitionWithTweenable)
-const AudioDefinitionWithUpdatableDuration = UpdatableDurationDefinitionMixin(AudioDefinitionWithContent)
-export class AudioDefinitionClass extends AudioDefinitionWithUpdatableDuration implements AudioDefinition {
-  constructor(object: AudioDefinitionObject) {
+const AudioMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
+const AudioMediaWithContent = ContentDefinitionMixin(AudioMediaWithTweenable)
+const AudioMediaWithUpdatableDuration = UpdatableDurationDefinitionMixin(AudioMediaWithContent)
+export class AudioMediaClass extends AudioMediaWithUpdatableDuration implements AudioMedia {
+  constructor(object: AudioMediaObject) {
     super(object)
     const { clientMedia } = this
     if (clientMedia) {
