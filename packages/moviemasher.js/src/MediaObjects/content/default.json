@@ -1,5 +1,7 @@
 {
   "label": "Color",
   "type": "image",
-  "color": "#FFFFFF"
+  "request": { "response": {
+    "color": "#FFFFFF"
+  }}
 }

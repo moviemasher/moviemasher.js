@@ -1,5 +1,5 @@
 import { 
-  CommandOutput, NumberRecord, OutputFormat, EncodeType, 
+  CommandOutput, NumberRecord, OutputFormat, EncodingType, 
   RenderingCommandOutput, AudioType, ImageType, FontType, VideoType, errorThrow, ErrorName 
 } from "@moviemasher/moviemasher.js"
 
@@ -64,7 +64,7 @@ export const outputDefaultPopulate = (overrides: RenderingCommandOutput): Render
   errorThrow(ErrorName.Type)
 }
 
-export const outputDefaultRendering = (outputType: EncodeType, overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultRendering = (outputType: EncodingType, overrides?: CommandOutput): RenderingCommandOutput => {
   return outputDefaultPopulate({ ...overrides, outputType })
 }
 

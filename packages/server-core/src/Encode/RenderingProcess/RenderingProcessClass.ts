@@ -5,13 +5,13 @@ import {
   CommandInput, AVType, CommandInputs,
   CommandFilters,
   EmptyMethod, 
-  assertTrue, ExtTs, assertSize, isDefined, 
+  assertTrue, assertSize, isDefined, 
   NumberRecord, assertAboveZero, 
-  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, VideoType, SequenceType, ImageType, ErrorName, errorThrow
+  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, VideoType, SequenceType, ImageType, ErrorName, errorThrow, Size
 } from "@moviemasher/moviemasher.js"
 
 import {
-  BasenameRendering, ExtensionCommands, ExtensionLoadedInfo
+  BasenameRendering, ExtensionCommands, ExtensionLoadedInfo, TsExtension
 } from '../../Setup/Constants'
 import { 
   CommandDescription, CommandDescriptions, CommandOptions, RenderingDescription, 
@@ -43,7 +43,7 @@ export class RenderingProcessClass implements RenderingProcess {
       return Promise.resolve(renderingDescription)
     }
 
-    const extension = ExtTs
+    const extension = TsExtension
     const {
       options: commandOutputOptions = {},
       audioBitrate, audioChannels, audioCodec, audioRate, outputType,
@@ -211,9 +211,10 @@ export class RenderingProcessClass implements RenderingProcess {
     if (this._mashMedia) return this._mashMedia
 
     const { args } = this
-    const { mash } = args
-
-    return this._mashMedia = mashMedia(mash)
+    const { mash, output } = args
+    const { width = 0, height = 0 } = output
+    const size: Size = { width, height }
+    return this._mashMedia = mashMedia(mash, size)
   }
 
   private outputInstance(commandOutput: RenderingCommandOutput): RenderingOutput {

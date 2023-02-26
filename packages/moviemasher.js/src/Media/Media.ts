@@ -8,7 +8,7 @@ import { TranscodingObjects, Transcodings } from "../Transcode/Transcoding/Trans
 import { MediaType, isMediaType } from "../Setup/Enums"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { isRequestableObject, Requestable, RequestableObject } from "../Base/Requestable/Requestable"
-import { PathOrError, PotentialError } from "../Helpers/Error/Error"
+import { PathDataOrError, PotentialError } from "../Helpers/Error/Error"
 import { isObject } from "../Utility/Is"
 import { Identified } from "../Base/Identified"
 import { Propertied } from "../Base/Propertied"
@@ -96,7 +96,4 @@ export function assertMedia(value: any, name?: string): asserts value is Media {
 export type MediaClass = Constrained<Media>
 
 export type MediaFactoryMethod = (_: MediaObject) => Media
-
-
-export interface MediaResponse extends PathOrError {}
 

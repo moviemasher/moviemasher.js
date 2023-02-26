@@ -1,60 +1,57 @@
-import React from "react"
-import { assertDefined, EventType, isEventType,  Editor } from "@moviemasher/moviemasher.js"
+import { Editor } from "@moviemasher/moviemasher.js"
 
-import { ActivityInfo, ActivityType } from "@moviemasher/client-core"
+import { useEditor } from "./useEditor"
 
-
-import { ActivityGroup, ActivityObject, ActivityObjects } from "../Components/Activity/ActivityContext"
-import { MasherContext } from "../Components/Masher/MasherContext"
+import { ActivityObjects } from "../Components/Activity/ActivityContext"
 
 export const useEditorActivity = (): [Editor, ActivityObjects] => {
   // console.log("useEditorActivity")
-  const masherContext = React.useContext(MasherContext)
-  const { editor } = masherContext
-  assertDefined(editor)
+  // const masherContext = React.useContext(MasherContext)
+  const editor = useEditor()
 
-  const allActivitiesRef = React.useRef<ActivityObjects>([])
-  const { eventTarget } = editor
+  // const allActivitiesRef = React.useRef<ActivityObjects>([])
+  // const { eventTarget } = editor
   
-  const getSnapshot = () => {
-    return allActivitiesRef.current
-  }
+  // const getSnapshot = () => {
+  //   return allActivitiesRef.current
+  // }
 
-  const handleEvent = (event: Event) => {
-    const { type } = event
-    if (isEventType(type) && (event instanceof CustomEvent)) {
-      const info: ActivityInfo = event.detail
-      const { id, type } = info
-      const { current: allActivities } = allActivitiesRef
-      const existing = allActivities.find(activity => activity.id === id)
+  // const handleEvent = (event: Event) => {
+  //   const { type } = event
+  //   if (isEventType(type) && (event instanceof CustomEvent)) {
+  //     const info: ActivityInfo = event.detail
+  //     const { id, type } = info
+  //     const { current: allActivities } = allActivitiesRef
+  //     const existing = allActivities.find(activity => activity.id === id)
 
-      const activity: ActivityObject = existing || { id, activityGroup: ActivityGroup.Active, infos: [] }
-      activity.infos.unshift(info)
-      if (type === ActivityType.Complete) activity.activityGroup = ActivityGroup.Complete
-      else if (type === ActivityType.Error) {
-        activity.activityGroup = ActivityGroup.Error
-      }
-      if (!existing) allActivities.unshift(activity)
-    }
-  }
-  const externalStore = React.useSyncExternalStore<ActivityObjects>((callback) => {
-    eventTarget.addEventListener(EventType.Active, callback)
-    return () => {
-      eventTarget.removeEventListener(EventType.Active, callback)
-    }
-  }, getSnapshot)
+  //     const activity: ActivityObject = existing || { id, activityGroup: ActivityGroup.Active, infos: [] }
+  //     activity.infos.unshift(info)
+  //     if (type === ActivityType.Complete) activity.activityGroup = ActivityGroup.Complete
+  //     else if (type === ActivityType.Error) {
+  //       activity.activityGroup = ActivityGroup.Error
+  //     }
+  //     if (!existing) allActivities.unshift(activity)
+  //   }
+  // }
+  const externalStore: ActivityObjects = []
+  // React.useSyncExternalStore<ActivityObjects>((callback) => {
+  //   eventTarget.addEventListener(EventType.Active, callback)
+  //   return () => {
+  //     eventTarget.removeEventListener(EventType.Active, callback)
+  //   }
+  // }, getSnapshot)
 
-  const removeListener = () => {
-    eventTarget.removeEventListener(EventType.Active, handleEvent)
-  }
+  // const removeListener = () => {
+  //   eventTarget.removeEventListener(EventType.Active, handleEvent)
+  // }
 
-  const addListener = () => {
-    eventTarget.addEventListener(EventType.Active, handleEvent)
+  // const addListener = () => {
+  //   eventTarget.addEventListener(EventType.Active, handleEvent)
 
-    return () => { removeListener() }
-  }
+  //   return () => { removeListener() }
+  // }
 
-  React.useEffect(() => addListener(), [])
+  // React.useEffect(() => addListener(), [])
   
   return [editor, externalStore]
 }

@@ -1,7 +1,7 @@
 import {
   Size,
   RenderingStartRequest, RenderingStartResponse,
-  RenderingStatusResponse, RenderingStatusRequest,
+  
   RenderingUploadRequest, RenderingUploadResponse,
 } from "@moviemasher/moviemasher.js"
 
@@ -21,6 +21,6 @@ export interface RenderingServerArgs extends ServerArgs {
 export interface RenderingServer extends Server {
   args: RenderingServerArgs
   start: ExpressHandler<RenderingStartResponse, RenderingStartRequest>
-  status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest>
+  // status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest>
   upload: ExpressHandler<RenderingUploadResponse, RenderingUploadRequest>
 }

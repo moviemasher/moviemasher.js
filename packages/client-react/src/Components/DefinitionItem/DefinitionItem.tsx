@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, MediaObject, sizeAboveZero, sizeCopy, sizeScale, UnknownRecord} from "@moviemasher/moviemasher.js"
+  ClassSelected, MediaObject, sizeAboveZero, sizeCopy, sizeScale, Strings, UnknownRecord} from "@moviemasher/moviemasher.js"
 
 import { 
   PropsWithoutChild, ReactResult, WithClassName 
@@ -81,7 +81,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   }
 
   const calculateClassName = () => {
-    const classes = []
+    const classes: Strings = []
     if (className) classes.push(className)
     if (current.mediaId === id) classes.push(ClassSelected)
     return classes.join(' ')

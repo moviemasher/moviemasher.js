@@ -1,5 +1,5 @@
 import React from "react"
-import { ClassSelected } from "@moviemasher/moviemasher.js"
+import { ClassSelected, UnknownRecord } from "@moviemasher/moviemasher.js"
 
 import {
   PropsWithoutChild, ReactResult, WithClassName
@@ -8,16 +8,15 @@ import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
 import { droppingPositionClass } from "@moviemasher/client-core"
-import type { ThemeIcons } from '@moviemasher/theme-default'
 
-export interface TimelineTrackIcon extends PropsWithoutChild, WithClassName {
-  icons: ThemeIcons
+export interface TimelineTrackIconProps extends PropsWithoutChild, WithClassName {
+  icons: UnknownRecord
 }
 /**
  * @parents TimelineTracks
  * @children TimelineTracks, TimelineScrubber, TimelineScrubberElement, TimelineSizer
  */
-export function TimelineTrackIcon(props: TimelineTrackIcon): ReactResult {
+export function TimelineTrackIcon(props: TimelineTrackIconProps): ReactResult {
   const { className: propsClassName, icons, ...rest } = props
   const timelineContext = React.useContext(TimelineContext)
   const trackContext = React.useContext(TrackContext)

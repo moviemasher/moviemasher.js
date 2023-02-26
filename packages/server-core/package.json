@@ -2,9 +2,12 @@
   "name": "@moviemasher/server-core",
   "version": "5.1.2",
   "description": "Movie Masher Server Core - version 5.1.2",
-  "types": "esm/server-core.d.ts",
-  "main": "esm/server-core.js",
-  "type": "module",
+  
+  "files": ["esm", "cjs"],
+  "main": "cjs/server-core.js",
+  "module": "esm/server-core.mjs",
+  "types": "esm/server-core.d.mts",
+
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -19,12 +22,7 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build-cjs-min": "rollup --config dev/rollup/cjs.min.config.js",
-    "build-cjs": "rollup --config dev/rollup/cjs.config.js",
-    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --outfile=esm/server-core.min.js --minify",
-    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --outfile=esm/server-core.js",
-    "copy-types": "cp cjs/server-core.d.ts esm/server-core.d.ts",
-    "build": "run-s build-esm build-esm-min build-cjs build-cjs-min copy-types"
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",

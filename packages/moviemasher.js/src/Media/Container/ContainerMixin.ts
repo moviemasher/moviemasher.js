@@ -5,7 +5,7 @@ import { Size, sizeCopy } from "../../Utility/Size"
 import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
 import { Filter } from "../../Filter/Filter"
 import { Anchors, DataType, MediaType, DirectionObject, Directions, VideoType, ImageType, SequenceType } from "../../Setup/Enums"
-import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isTimeRange } from "../../Utility/Is"
+import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isDefiniteError, isTimeRange } from "../../Utility/Is"
 import { Container, ContainerClass, DefaultContainerId, ContainerDefinition, ContainerRectArgs } from "./Container"
 import { arrayLast } from "../../Utility/Array"
 import { filterFromId } from "../../Filter/FilterFactory"
@@ -23,6 +23,7 @@ import { NamespaceSvg } from "../../Setup/Constants"
 import { pointCopy } from "../../Utility/Point"
 import { assertVideoMedia } from "../Video/Video"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { requestImagePromise } from "../../Helpers/Request/RequestFunctions"
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
@@ -91,12 +92,17 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           image.src
         ))
       }
-      return definition.preferredTranscoding(ImageType).clientMediaPromise.then(orError => {
-        const { error, clientMedia: clientMedia } = orError
-        if (error) return errorThrow(error)
+      const imageTranscoding = definition.preferredTranscoding(ImageType)
+      const { request } = imageTranscoding
 
-        assertClientImage(clientMedia)
-        return clientMedia.src
+      return requestImagePromise(request).then(orError => {
+        if (isDefiniteError(orError)) return errorThrow(orError.error)
+
+        const { data: clientImage } = orError
+       
+
+        assertClientImage(clientImage)
+        return clientImage.src
       }) 
     }
 

@@ -6,7 +6,7 @@ module.exports = {
   },
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true,
   },
   extends: ['plugin:@typescript-eslint/recommended'],
@@ -21,7 +21,7 @@ module.exports = {
     'eslint-plugin-tsdoc'
   ],
   rules: {
-    "tsdoc/syntax": 1,
+    "tsdoc/syntax": 0,
     "quotes": 0,
     "semi": 0,
     "no-console": 0,
@@ -32,16 +32,19 @@ module.exports = {
     "no-undef": 0,
     "class-methods-use-this": 0,
     "object-curly-newline": 0,
-    "no-unused-vars": 2,
+    "no-unused-vars": 0,
     "radix": 0,
     "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/no-unused-vars": 0,
     "@typescript-eslint/no-empty-function": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "react-hooks/exhaustive-deps": 0,
   },
   settings: {
     "import/resolver": {
       node: { extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "**/*.config.js"],
+  ignorePatterns: ['.eslintrc.js', "**/*config.js"],
 };

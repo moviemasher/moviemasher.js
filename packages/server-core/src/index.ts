@@ -1,6 +1,5 @@
 export * from './declarations'
 export * from "./Command"
-export * from "./Decode"
 export * from "./Defaults"
 export * from "./Encode"
 export * from "./Environment"

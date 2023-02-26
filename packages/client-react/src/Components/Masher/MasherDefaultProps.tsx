@@ -1,5 +1,6 @@
 import React from 'react'
 import { VideoType } from '@moviemasher/moviemasher.js'
+import { Icons } from '@moviemasher/theme-default'
 
 import { PropsMethod } from '../../declarations'
 import { EditorProps, MasherProps } from './Masher'
@@ -14,7 +15,6 @@ import { Timeline } from '../Timeline/Timeline'
 import { ActivityDefaultProps } from '../Activity/ActivityDefaultProps'
 import { Activity } from '../Activity/Activity'
 import { Panels } from '../Panel/Panels'
-import { Icons } from '@moviemasher/theme-default'
 
 export const MasherDefaultProps: PropsMethod<EditorProps, MasherProps> = function(options = {}) {
   options.className ||= 'editor masher'

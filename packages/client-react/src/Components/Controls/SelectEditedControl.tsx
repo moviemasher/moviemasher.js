@@ -9,7 +9,7 @@ import {
 import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
 import { useListeners } from "../../Hooks/useListeners"
-import { ApiContext } from "../ApiClient/ApiContext"
+import { ApiContext } from "../../../client-react-deleted/ApiClient/ApiContext"
 import { InspectorContext } from "../Inspector/InspectorContext"
 import { labelInterpolate, labelTranslate } from "../../Utilities/Label"
 import { View } from "../../Utilities/View"
@@ -78,7 +78,7 @@ export function SelectEditedControl(props: SelectEditedControlProps): ReactResul
     [EventType.Action]: handleAction,
     [EventType.Loaded]: handleEdited,
     [EventType.Save]: updateDisabled,
-  }, editor.eventTarget)
+  })
 
   const onChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     if (disabled) return

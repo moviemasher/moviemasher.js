@@ -1,5 +1,5 @@
 {
-  "description": "JavaScript video editor, encoder, switcher - version 5.1.2",
+  "description": "JavaScript video editor and encoder - version 5.1.2",
   "homepage": "https://moviemasher.com",
   "version": "5.1.2",
   "license": "MIT",
@@ -18,11 +18,11 @@
     "start": "npm run docker-up --dir=${npm_config_dir:=images} --space=${npm_config_space:=standalone}",
     "stop": "npm run docker-down --dir=${npm_config_dir:=images} --space=${npm_config_space:=standalone}",
     "logs": "npm run docker-logs --dir=${npm_config_dir:=images} --space=${npm_config_space:=standalone}",
-    "test": "npm run build esm && npm run docker-run --dir=images --space=tester",
-    "build": "docker compose --env-file dev/local.env --file images/builder/dev/docker-compose.yml run --rm builder",
-    "docker-run": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space}/dev/docker-compose.yml run --rm -it ${npm_config_service:=service}",
-    "docker-build": "docker compose --env-file dev/local.env --file images/${npm_config_space}/dev/docker-compose.yml build",
-    "docker-up": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml up -d",
+    "test": "npm run docker-run --dir=images --space=tester",
+    "build": "docker compose --env-file dev/local.env --file images/builder/dev/docker-compose.yml run --rm image",
+    "docker-run": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=example-supabase}/dev/docker-compose.yml run --rm -it ${npm_config_service:=service}",
+    "docker-build": "docker compose --env-file dev/local.env --file ${npm_config_dir:=images}/${npm_config_space:=builder}/dev/docker-compose.yml build ${npm_config_service:=image}",
+    "docker-up": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml up -d ${npm_config_service:=service}",
     "docker-down": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml down -v",
     "docker-logs": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml logs -f",
     "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}"

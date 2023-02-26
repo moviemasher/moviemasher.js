@@ -1,18 +1,23 @@
 
-export const ExtHls = 'm3u8'
-export const ExtTs = 'ts'
-export const ExtRtmp = 'flv'
-export const ExtDash = 'dash'
-export const ExtJpeg = 'jpg'
-export const ExtPng = 'png'
-export const ExtJson = 'json'
-export const ExtText = 'txt'
-export const ExtCss = 'css'
-export const ContentTypeJson = 'application/json'
-export const ContentTypeCss = 'text/css'
+export const OrderAscending = 'acending'
+export const OrderDecending = 'decending'
 
-export const OutputFilterGraphPadding = 6
+export const ExtJpeg = 'jpg'
+
+export const JsonExtension = 'json'
+export const TextExtension = 'txt'
+export const CssExtension = 'css'
+
+
+
+export const Mp4Extension = 'mp4'
+export const PngExtension = 'png'
+
+
+export const CssContentType = 'text/css'
+
 export const EmptyMethod = () => {}
+export type UnknownMethod = { (...args: unknown[]): unknown }
 
 
 // xmlns

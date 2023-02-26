@@ -1,23 +1,21 @@
 import { UnknownRecord } from '../../declarations'
-import { ClientMediaOrError, ClientMedia } from "../../ClientMedia/ClientMedia"
-import { isObject, isPopulatedString } from '../../Utility/Is'
+import { isPopulatedString } from '../../Utility/Is'
 import { Requestable, RequestableObject } from './Requestable'
-import { isRequest, Request } from "../../Helpers/Request/Request"
+import { assertRequest, Request } from "../../Helpers/Request/Request"
 import { assertLoadType, ImageType, LoadType, SequenceType } from '../../Setup/Enums'
 import { PropertiedClass } from '../Propertied'
-import { requestMediaPromise } from '../../Utility/Request'
-import { assertClientMedia } from '../../ClientMedia/ClientMediaFunctions'
 
 export class RequestableClass extends PropertiedClass implements Requestable {
   constructor(object: RequestableObject) {
     super()
-    const { id, type, kind, createdAt, request, clientMedia } = object 
+    const { id, type, kind, createdAt, request } = object 
     this.id = id
     if (isPopulatedString(type)) this.type = type
     if (isPopulatedString(createdAt)) this.createdAt = createdAt
     if (isPopulatedString(kind)) this.kind = kind
-    if (isRequest(request)) this.request = request
-    if (isObject(clientMedia)) this.clientMedia
+    assertRequest(request) 
+    this.request = request
+    this.relativeRequest = request
   }
 
   createdAt = ''
@@ -36,32 +34,15 @@ export class RequestableClass extends PropertiedClass implements Requestable {
     return type
   }
 
-  clientMedia?: ClientMedia
+  private relativeRequest: Request 
 
-  get clientMediaPromise(): Promise<ClientMediaOrError> {
-    const { clientMedia } = this
-    if (clientMedia) return Promise.resolve({ clientMedia: clientMedia })
-
-    const { request, loadType } = this
-    
-    console.log(this.constructor.name, 'clientMediaPromise...', loadType, request)
-    return requestMediaPromise(request, loadType).then(orError => {
-      if (orError.error) return orError
-      const { clientMedia } = orError
-      assertClientMedia(clientMedia)
-      console.log(this.constructor.name, 'clientMediaPromise!', loadType, request, clientMedia?.constructor.name)
-
-      this.clientMedia = clientMedia
-      return { clientMedia }
-    })
-  }
-
-  request: Request = { endpoint: {} }
+  request: Request
 
   type: string = ''
 
   toJSON(): UnknownRecord {
-    const { id, type, kind, createdAt, request } = this
+    const { id, type, kind, createdAt, relativeRequest } = this
+    const { response, ...request } = relativeRequest
     return { id, request, type, kind, createdAt }
   }
 }

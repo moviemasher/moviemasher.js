@@ -1,6 +1,5 @@
 import { isRequest, Request } from "../../Helpers/Request/Request"
 import { UnknownRecord } from "../../declarations"
-import { ClientMediaOrError, ClientMedia } from "../../ClientMedia/ClientMedia"
 import { LoadType } from "../../Setup/Enums"
 import { isObject } from "../../Utility/Is"
 import { Identified, isIdentified } from "../Identified"
@@ -20,8 +19,6 @@ export interface Requestable extends Propertied, Identified, Typed {
   request: Request
   createdAt: string
   loadType: LoadType
-  clientMediaPromise: Promise<ClientMediaOrError>
-  clientMedia?: ClientMedia
   kind: string
 }
 

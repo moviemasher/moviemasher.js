@@ -1,4 +1,5 @@
 {
   "label": "Rectangle",
-  "type": "image"
+  "type": "image",
+  "request": { "response": { } }
 }

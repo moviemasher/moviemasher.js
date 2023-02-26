@@ -36,8 +36,8 @@ export const HostDefaultPort = 8570
 
 export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions => {
   const {
-    publicDirectory = "./images/standalone/public",
-    privateDirectory = "./images/standalone/private",
+    publicDirectory = "./workspaces/example-standalone/public",
+    privateDirectory = "./workspaces/example-standalone/private",
     temporaryDirectory = './temporary', 
     dataMigrationsDirectory = "./dev/data-migrations", 
     dataDirectory,

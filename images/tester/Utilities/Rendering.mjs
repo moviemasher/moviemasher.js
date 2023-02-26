@@ -52,7 +52,7 @@ export const renderingTestIdsPromise = (ids, suffix, output) => {
       command.on('end', () => { resolve() })
       try {
         sources.forEach(source => command.mergeAdd(source))
-        command.mergeToFile(destination)
+        command.mergeToFile(destination, TestTemporary)
       }
       catch (error) { reject({ error }) }
       

@@ -1,5 +1,5 @@
 import { 
-  endpointUrl, ErrorName, ClientVideoOrError, Request, errorThrow,
+  endpointUrl, ErrorName, Request, errorThrow, VideoDataOrError, errorCaught, assertEndpoint,
 } from "@moviemasher/moviemasher.js"
 
 
@@ -13,12 +13,13 @@ const videoFromUrl = (url: string): HTMLVideoElement => {
   return video
 }
 
-export const clientVideoPromise =  (request: Request): Promise<ClientVideoOrError> => {
-  // TODO: use init?
+export const videoDataPromise = (request: Request): Promise<VideoDataOrError> => {
   const { endpoint } = request
+  assertEndpoint(endpoint)
+
   const url = endpointUrl(endpoint)
   
-  return new Promise<ClientVideoOrError>((resolve, reject) => {
+  return new Promise<VideoDataOrError>((resolve) => {
     const clientVideo = videoFromUrl(url)
     clientVideo.oncanplay = () => {
       clientVideo.oncanplay = null
@@ -31,9 +32,9 @@ export const clientVideoPromise =  (request: Request): Promise<ClientVideoOrErro
       clientVideo.height = height
 
       // console.log(this.constructor.name, "videoPromise.oncanplay", width, height)
-      resolve({ clientVideo, clientMedia: clientVideo })
+      resolve({ data: clientVideo })
     }
-    clientVideo.onerror = reject
+    clientVideo.onerror = error => { resolve(errorCaught(error)) }
     clientVideo.autoplay = false
     // video.requestVideoFrameCallback(() => {})
     clientVideo.load()

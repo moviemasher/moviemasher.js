@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_moviemasher_example_supabase=self.webpackChunk_moviemasher_example_supabase||[]).push([[815],{4815:function(e,s,a){e.exports=a.p+"static/media/client-core.mjs.c65eebe6ce3e2e81e82f.map"}}]);

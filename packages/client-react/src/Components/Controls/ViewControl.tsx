@@ -1,5 +1,5 @@
 import React from "react"
-import { assertMashMedia, endpointFromUrl, endpointUrl, EventType, isMashMedia, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { assertEndpoint, assertMashMedia, endpointFromUrl, endpointUrl, EventType, isMashMedia, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
 import { PropsAndChild, ReactResult } from "../../declarations"
 import { useEditor } from "../../Hooks/useEditor"
@@ -34,7 +34,10 @@ export function ViewControl(props: PropsAndChild): ReactResult {
     
     const { encodings } = mashMedia
     const [encoding] = encodings
-    const url = endpointUrl(encoding.request.endpoint)
+    const {endpoint} = encoding.request
+    assertEndpoint(endpoint)
+    
+    const url = endpointUrl(endpoint)
     window.open(url)
   }
   const buttonOptions = { ...rest, onClick, disabled }

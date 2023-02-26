@@ -1,6 +1,6 @@
 import React from "react"
 import { 
-  assertPopulatedString, MediaType, MediaTypesObject
+  assertPopulatedString, MediaType, MediaTypesRecord
 } from '@moviemasher/moviemasher.js'
 
 import { PropsWithChildren, ReactResult } from "../../declarations"
@@ -22,7 +22,7 @@ export interface BrowserProps extends PropsWithChildren {
 export function Browser(props: BrowserProps): ReactResult {
   const { initialPicked = 'container', ...rest } = props
 
-  const [typesObject, setTypesObject] = React.useState<MediaTypesObject>({})
+  const [typesObject, setTypesObject] = React.useState<MediaTypesRecord>({})
   const editorContext = React.useContext(MasherContext)
   const { changeDefinition } = editorContext
   const [refresh] = useRefresh()
@@ -33,7 +33,7 @@ export function Browser(props: BrowserProps): ReactResult {
     setPicked(id)
   }
 
-  const [_, definitions] = useDefinitions(typesObject[picked])
+  const definitions = useDefinitions(typesObject[picked])
 
   const addPicker = (id: string, types: MediaType[]) => {
     setTypesObject(original => ({ ...original, [id]: types }))

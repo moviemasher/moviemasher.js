@@ -11,14 +11,14 @@ import {
   timeRangeFromTimes
 } from "../../Helpers/Time/TimeUtilities"
 import { Default } from "../../Setup/Default"
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isNumber, isObject, isPositive } from "../../Utility/Is"
+import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isDefiniteError, isNumber, isObject, isPositive } from "../../Utility/Is"
 import { sortByIndex } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "./Track/Clip/Clip"
 import { assertTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
 import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
-import { MashMedia, MashMediaArgs } from "./Mash"
+import { MashEditorArgs, MashMedia, MashMediaArgs, MashMediaContent, MashMediaObject, MashMediaRequest } from "./Mash"
 import { trackInstance } from "./Track/TrackFactory"
 import { Preview, PreviewArgs, PreviewOptions } from "../../Editor/Preview/Preview"
 import { PreviewClass } from "../../Editor/Preview/PreviewClass"
@@ -32,7 +32,7 @@ import { isFont } from "../Font/Font"
 import { encodingInstance } from "../../Encode/Encoding/EncodingFactory"
 import { Encodings } from "../../Encode/Encoding/Encoding"
 import { Emitter } from "../../Helpers/Emitter"
-import { Size, SizeZero } from "../../Utility/Size"
+import { isSize, Size, SizeZero } from "../../Utility/Size"
 import { MediaBase } from "../MediaBase"
 import { propertyInstance } from "../../Setup/Property"
 import { colorBlack } from "../../Helpers/Color/ColorFunctions"
@@ -40,54 +40,41 @@ import { audioPreviewInstance } from "../../Editor/Preview/AudioPreview/AudioPre
 import { MediaCollection } from "../../Base/MediaCollection"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { requestRecordPromise } from "../../Helpers/Request/RequestFunctions"
 
 type TrackClips = [number, Clips]
 type Interval = ReturnType<typeof setInterval>
 
 export class MashMediaClass extends MediaBase implements MashMedia {
-  constructor(args: MashMediaArgs) {
-    super(args)
-    const { 
-      encodings, quantize, tracks, 
-      loop, gain, buffer, size,
-      media, mediaCollection, emitter, editor
-    } = args
-    if (editor) this.editor = editor
-    if (emitter) this.emitter = emitter
-    if (size) this.imageSize = size
-    if (isObject(mediaCollection)) this._media = mediaCollection
-    if (isArray(media)) this.media.define(...media)
+  constructor(object: MashMediaObject, args?: MashEditorArgs | Size) {
+    super(object)
+    const { encodings } = object
+    if (isSize(args)) this.imageSize = args
+    else if (args) {
+      const {
+        loop, gain, buffer, size, mediaCollection, emitter, editor, 
+      } = args
+      if (editor) this.editor = editor
+      if (emitter) this.emitter = emitter
+      if (size) this.imageSize = size
+      if (isObject(mediaCollection)) this._media = mediaCollection
+      if (isBoolean(loop)) this.loop = loop
+      if (isNumber(gain)) this.gain = gain
+      if (isAboveZero(buffer)) this._buffer = buffer
+    }
     if (isArray(encodings)) this.encodings.push(...encodings.map(encodingInstance))
     
-    if (isBoolean(loop)) this.loop = loop
-    if (isNumber(gain)) this.gain = gain
-    if (isAboveZero(buffer)) this._buffer = buffer
-    if (isAboveZero(quantize)) this.quantize = quantize
-
     this.properties.push(propertyInstance({
       name: 'color', defaultValue: colorBlack, type: DataType.Rgb
     }))
 
-
-    if (isArray(tracks)) tracks.forEach((trackObject, index) => {
-      const trackArgs: TrackArgs = {
-        mashMedia: this,
-        dense: !index, ...trackObject, index
-      }
-      const track = trackInstance(trackArgs)
-      track.assureFrames(this.quantize)
-      track.sortClips()
-      this.tracks.push(track)
-    })
-    this.assureTrack()
-    this.tracks.sort(sortByIndex)
     this._preview = new NonePreview({ mash: this, time: timeFromArgs() })
     // this.label ||= Default.mash.label
     
-    this.propertiesInitialize(args)
+    this.propertiesInitialize(object)
   }
 
- 
+
   declare color: string
 
   _editor?: Editor 
@@ -396,40 +383,83 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     }
   }
 
+  private _loadMashContentPromise?: Promise<void>
+  private _loadedMashContent = false
+  private get loadMashContentPromise(): Promise<void> {
+    const { _loadedMashContent } = this
+    if (_loadedMashContent) return Promise.resolve()
 
-  loadPromise(options: PreloadOptions = {}): Promise<void> {
-    options.time ||= this.timeToBuffer
+    const { _loadMashContentPromise } = this
 
-    const preloadOptions = this.graphFileOptions(options)
-    const { time, audible, visible } = preloadOptions
-    const { quantize } = this
-    assertTime(time)
+    if (!_loadMashContentPromise) {
+      const { request } = this
 
-    const scaled = time.scale(this.quantize)
-    const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
-    const clips = this.clipsInTimeOfType(scaled, type)
+      return this._loadMashContentPromise = requestRecordPromise(request, true).then(orError => {
+        if (isDefiniteError(orError)) return errorThrow(orError.error)
 
-
-    const promises = clips.map(clip => {
-      const clipTime = clip.timeRange(quantize)
-      const preloadArgs: PreloadArgs = { 
-        ...preloadOptions, clipTime, quantize, time 
-      }
-      return clip.loadPromise(preloadArgs)
-    })
-
-    const promise = Promise.all(promises).then(EmptyMethod)
-    const removedPromise = promise.then(() => {
-      const index = this.loadingPromises.indexOf(promise)
-      if (index < 0) return errorThrow(ErrorName.Internal) 
-
-      this.loadingPromises.splice(index, 1)
-    })
-    this.loadingPromises.push(promise)
+        const data = orError.data as MashMediaContent
+        const { media, tracks, quantize, color } = data
     
-    return removedPromise
+        if (isArray(media)) this.media.define(...media)
+        if (isAboveZero(quantize)) this.quantize = quantize
+        if (color) this.setValue(color, 'color')
+    
+        if (isArray(tracks)) tracks.forEach((trackObject, index) => {
+          const trackArgs: TrackArgs = {
+            mashMedia: this,
+            dense: !index, ...trackObject, index
+          }
+          const track = trackInstance(trackArgs)
+          track.assureFrames(this.quantize)
+          track.sortClips()
+          this.tracks.push(track)
+        })
+        this.assureTrack()
+        this.tracks.sort(sortByIndex)
+
+        this._loadedMashContent = true
+        delete this._loadMashContentPromise
+
+      })
+    }
+    return _loadMashContentPromise
   }
 
+  loadPromise(options: PreloadOptions = {}): Promise<void> {
+    return this.loadMashContentPromise.then(() => {
+      options.time ||= this.timeToBuffer
+      const preloadOptions = this.graphFileOptions(options)
+      const { time, audible, visible } = preloadOptions
+      const { quantize } = this
+      assertTime(time)
+
+      const scaled = time.scale(this.quantize)
+      const type = (audible && visible) ? AVType.Both : (audible ? AVType.Audio : AVType.Video)
+      const clips = this.clipsInTimeOfType(scaled, type)
+
+      const promises = clips.map(clip => {
+        const clipTime = clip.timeRange(quantize)
+        const preloadArgs: PreloadArgs = { 
+          ...preloadOptions, clipTime, quantize, time 
+        }
+        return clip.loadPromise(preloadArgs)
+      })
+
+      const promise = Promise.all(promises).then(EmptyMethod)
+      const removedPromise = promise.then(() => {
+        const index = this.loadingPromises.indexOf(promise)
+        if (index < 0) return errorThrow(ErrorName.Internal) 
+
+        this.loadingPromises.splice(index, 1)
+      })
+      this.loadingPromises.push(promise)
+      
+      return removedPromise
+    })
+  }
+
+  declare request: MashMediaRequest
+  
   private loadingPromises: Promise<void>[] = []
 
   get loading(): boolean { 
@@ -609,7 +639,6 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     const { properties } = this
     const items: SelectedItems = properties.map(property => {
       const undoValue = this.value(property.name)
-      const target = this
       const selectedProperty: SelectedProperty = {
         value: undoValue,
         selectType: SelectType.Mash, 
@@ -617,7 +646,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
-          const options = { property, target, redoValue, undoValue }
+          const options = { property, target: this, redoValue, undoValue }
           actions.create(options)
         }
       }

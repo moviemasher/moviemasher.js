@@ -1,10 +1,60 @@
 module.exports = {
   "entryPointStrategy": "packages",
+  "pluginPages": {
+    "source": ".",
+    "output": "guides",
+		"pages": [ 
+			{ 
+        "moduleRoot": true, "title": "core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" },
+          { "title": "Contributor", "source": "dev/tsdoc/contributor.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "server-core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "server-express", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "client-core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "client-react", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "theme-default", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "protocol-supabase", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+    ]
+	},
 
   "entryPoints": [
     "packages/moviemasher.js",
     "packages/server-core",
     "packages/client-core",
+    "packages/protocol-supabase",
     "packages/theme-default",
     "packages/server-express",
     "packages/client-react"
@@ -75,49 +125,5 @@ module.exports = {
   },
   "sidebarLinks": {
     "Demo": "http://example.com"
-  },
-  "pluginPages": {
-    "source": ".",
-    "output": "guides",
-		"pages": [ 
-			{ 
-        "moduleRoot": true, "title": "core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" },
-          { "title": "Contributor", "source": "dev/tsdoc/contributor.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "server-core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "server-express", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "client-core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "client-react", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "theme-default", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-    
-    ]
-	}
+  }
 }

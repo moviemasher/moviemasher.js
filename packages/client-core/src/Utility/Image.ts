@@ -1,15 +1,22 @@
-import { endpointUrl, ClientImageOrError, Request } from "@moviemasher/moviemasher.js"
+import { 
+  endpointUrl, Request, ImageData, ImageDataOrError, ErrorName, error, 
+  assertEndpoint 
+} from "@moviemasher/moviemasher.js"
 
-
-export const clientImagePromise = (request: Request): Promise<ClientImageOrError> => {
-  // TODO: use init
+export const imageDataPromise = (request: Request): Promise<ImageDataOrError> => {
   const { endpoint } = request
+  assertEndpoint(endpoint)
+
   const url = endpointUrl(endpoint)
-  const clientImage = new Image()
-  // console.trace("clientImagePromise", url)
-  clientImage.src = url
-  return new Promise<ClientImageOrError>(resolve => {
-    clientImage.onload = () => { resolve({ clientImage, clientMedia: clientImage }) }
+  const data = new Image()
+  data.src = url
+  return new Promise<ImageDataOrError>(resolve => {
+    data.onerror = () => {
+      resolve(error(ErrorName.Url))
+    }
+    data.onload = () => { 
+      const imageData: ImageData = { data }
+      resolve(imageData) 
+    }
   })
 }
-

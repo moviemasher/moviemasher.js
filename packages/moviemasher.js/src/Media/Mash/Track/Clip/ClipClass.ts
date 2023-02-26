@@ -513,14 +513,13 @@ export class ClipClass extends PropertiedClass implements Clip {
       const { name } = property
       const isFrames = name === 'frames' || name === 'frame'
       const undoValue = this.value(name)
-      const target = this
       selected.push({
         value: undoValue,
         selectType: SelectType.Clip, property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
-          const options = { property, target, redoValue, undoValue,
+          const options = { property, target: this, redoValue, undoValue,
             type: isFrames ? ActionType.ChangeFrame : ActionType.Change
           }
           actions.create(options)

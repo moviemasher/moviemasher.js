@@ -1,4 +1,5 @@
 import { 
+  assertEndpoint,
   endpointAbsolute, Request, StringRecord, Value
 } from "@moviemasher/moviemasher.js"
 
@@ -16,6 +17,8 @@ export interface RequestArgs {
 
 export const requestArgs = (request: Request): RequestArgs => {
   const { endpoint, init = {} } = request
+  assertEndpoint(endpoint)
+  
   const absolute = endpointAbsolute(endpoint)
   const { protocol, hostname, port, pathname, search } = absolute
   const pathComponents: string[] = []

@@ -6,7 +6,7 @@ const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
 const colorRgbaRegex = /^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(\d*(?:\.\d+)?)\)$/
 const colorHexRegex = /^#([A-Fa-f0-9]{3,4}){1,2}$/
 
-const colorStrip = (color: string): string => color.toLowerCase().replaceAll(/[\s]/g, '')
+const colorStrip = (color: string): string => color.toLowerCase().replace(/[\s]/g, '')
 
 const colorStyle = ():{ color: string } => {
   if (typeof Option !== 'function') return { color: '' }

@@ -7,7 +7,9 @@ export interface Size {
   height: number;
 }
 export const isSize = (value: any): value is Size => {
-  return isObject(value) && isNumber(value.width) && isNumber(value.height) 
+  return isObject(value) && 
+    "width" in value && "height" in value &&
+    isNumber(value.width) && isNumber(value.height) 
 }
 export function assertSize(value: any, name?: string): asserts value is Size {
   if (!isSize(value)) errorThrow(value, 'Size', name)

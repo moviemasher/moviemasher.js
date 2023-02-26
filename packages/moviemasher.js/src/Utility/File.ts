@@ -1,14 +1,14 @@
 import { Request } from "../Helpers/Request/Request"
-import { ClientAudio, ClientVideo, ClientMedia, ClientFont } from "../ClientMedia/ClientMedia"
+import { ClientAudio, ClientVideo, ClientMedia, ClientFont, MediaDataOrError } from "../ClientMedia/ClientMedia"
 import { isClientAudio, isClientFont, isClientImage, isClientVideo } from "../ClientMedia/ClientMediaFunctions"
-import { LoadedInfo } from "../Plugin/Decode/Probe/Probe"
+import { ProbingData } from "../Plugin/Decode/Probe/Probing/Probing"
 import { MediaObject, MediaObjectOrError } from "../Media/Media"
 import { DecodingObject, DecodingObjects } from "../Plugin/Decode/Decoding/Decoding"
 import { AudioType, ImageType, isRawType, VideoType } from "../Setup/Enums"
 import { endpointFromUrl } from "../Helpers/Endpoint/EndpointFunctions"
 import { idTemporary } from "./Id"
-import { isAboveZero } from "./Is"
-import { requestMediaPromise } from "./Request"
+import { isAboveZero, isDefiniteError } from "./Is"
+import { requestRawPromise } from "../Helpers/Request/RequestFunctions"
 import { Size, sizeAboveZero, sizeCopy, sizeString } from "./Size"
 import { ErrorName } from "../Helpers/Error/ErrorName"
 import { errorPromise } from "../Helpers/Error/ErrorFunctions"
@@ -16,13 +16,13 @@ import { mediaTypeFromMime } from "../Media/MediaFunctions"
 import { ProbeType } from "../Plugin/Decode/Decoder"
 
 
-const audioInfo = (buffer: ClientAudio): LoadedInfo => {
+const audioInfo = (buffer: ClientAudio): ProbingData => {
   const { duration } = buffer
-  const info: LoadedInfo = { duration, audible: true }
+  const info: ProbingData = { duration, audible: true }
   return info
 }
 
-const imageInfo = (size: Size): LoadedInfo => {
+const imageInfo = (size: Size): ProbingData => {
   return sizeCopy(size)
 }
 
@@ -38,15 +38,15 @@ const videoInfo = (video: ClientVideo) => {
   audible ||= Boolean(object.webkitAudioDecodedByteCount)
   audible ||= Boolean(object.audioTracks?.length)
   if (!audible) console.log(Object.values(video))
-  const info: LoadedInfo = { width, height, duration, audible }
+  const info: ProbingData = { width, height, duration, audible }
   return info
 }
 
-function fontInfo(media: ClientFont): LoadedInfo {
+function fontInfo(media: ClientFont): ProbingData {
   return {}
 }
 
-export const mediaInfo = (media?: ClientMedia): LoadedInfo => {
+export const mediaInfo = (media?: ClientMedia): ProbingData => {
   if (isClientVideo(media)) return videoInfo(media)
   if (isClientImage(media)) return imageInfo(media)
   if (isClientFont(media)) return fontInfo(media)
@@ -65,10 +65,9 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaObjectOrE
       console.log('filePromises NOT raw type', type, fileType, file)
       return errorPromise(ErrorName.ImportType, { value: type })
     }
-    const url = URL.createObjectURL(file)
     const decodings: DecodingObjects = []
     const request: Request = {
-      endpoint: endpointFromUrl(url)
+      endpoint: endpointFromUrl(URL.createObjectURL(file))
     }
     const object: MediaObject = {
       request, decodings,
@@ -79,13 +78,14 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaObjectOrE
     const isAudio = type === AudioType
     const hasDuration = isAudio || type === VideoType
     const hasSize = type === ImageType || type === VideoType
-    const promise: Promise<MediaObjectOrError> = requestMediaPromise(request, type).then(orError => {
+    const promise: Promise<MediaDataOrError> = requestRawPromise(request, type).then(orError => {
       console.log('filePromises', request, type, orError)
-      if (orError.error) return orError
+      if (isDefiniteError(orError)) return orError
     
-      const { clientMedia: media } = orError
-      const info = mediaInfo(media)
-      const decoding: DecodingObject = { info, type: ProbeType }
+      const { data: clientMedia } = orError
+      
+      const info = mediaInfo(clientMedia)
+      const decoding: DecodingObject = { data: info, type: ProbeType }
       decodings.push(decoding)
       if (hasDuration) {
         const { duration = 0 } = info
@@ -109,9 +109,9 @@ export const filePromises = (files: File[], size?: Size): Promise<MediaObjectOrE
         // const previewSize = size ? sizeCover(inSize, size, true) : inSize
         // const { width, height } = previewSize
         // object.previewSize = previewSize
-        object.clientMedia = media
+        object.clientMedia = clientMedia
        
-      } else object.clientMedia = media
+      } else object.clientMedia = clientMedia
       
       // loadLocalFile(media, idKey, info)
       console.log('filePromises', object)

@@ -1,11 +1,12 @@
-import { isObject, isString } from "../../../Utility/Is"
+import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
+import { isObject } from "../../../Utility/Is"
+import { isDecodingType } from "../Decoder"
 import { Decoding } from "./Decoding"
 
-
 export const isDecoding = (value: any): value is Decoding => (
-  isObject(value) && "type" in value && isString(value.type)
+  isObject(value) && "type" in value && isDecodingType(value.type)
 )
 export function assertDecoding(value: any): asserts value is Decoding {
-  if (!isDecoding(value)) throw new Error('expected Decoding')
+  if (!isDecoding(value)) errorThrow(value, 'Decoding') 
 }
 

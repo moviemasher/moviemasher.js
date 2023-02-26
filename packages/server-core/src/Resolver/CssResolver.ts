@@ -1,8 +1,8 @@
 import fs from 'fs'
 
 import { 
-  urlFromCss, Resolver, Resolvers, arrayLast, ContentTypeCss, endpointFromUrl, 
-  ExtCss, Request 
+  urlFromCss, Resolver, Resolvers, CssContentType, endpointFromUrl, 
+  CssExtension, Request 
 } from "@moviemasher/moviemasher.js"
 
 const requestPromise = (filePath: string): Promise<Request> => {
@@ -12,6 +12,6 @@ const requestPromise = (filePath: string): Promise<Request> => {
     return { endpoint: endpointFromUrl(lastUrl) }
   })
 }
-const resolver: Resolver = { extension: ExtCss, requestPromise }
+const resolver: Resolver = { extension: CssExtension, requestPromise }
 
-Resolvers[ContentTypeCss] = resolver
+Resolvers[CssContentType] = resolver

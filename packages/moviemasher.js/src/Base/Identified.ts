@@ -5,7 +5,7 @@ export interface Identified {
   id: string
 }
 export const isIdentified = (value: any): value is Identified => {
-  return isObject(value) && isPopulatedString(value.id)
+  return isObject(value) && "id" in value && isPopulatedString(value.id)
 }
 export function assertIdentified(value: any, name?: string): asserts value is Identified {
   if (!isIdentified(value)) errorThrow(value, 'Identified', name)

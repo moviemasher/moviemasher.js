@@ -5,7 +5,7 @@ import {
   GraphFiles, 
 
   Clips, PreloadArgs, EmptyMethod, Size, 
-  EncodeType, timeFromArgs, timeRangeFromTimes,
+  EncodingType, timeFromArgs, timeRangeFromTimes,
   
   RenderingCommandOutput,
   VideoType,
@@ -145,7 +145,7 @@ export class RenderingOutputClass implements RenderingOutput {
     return { width, height }
   }
 
-  get outputType(): EncodeType { return this.args.commandOutput.outputType }
+  get outputType(): EncodingType { return this.args.commandOutput.outputType }
 
   renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription> {
     // console.log(this.constructor.name, "renderingDescriptionPromise")

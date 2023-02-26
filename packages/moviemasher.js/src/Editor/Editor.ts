@@ -43,14 +43,14 @@ export interface EditorOptions extends Partial<EditorArgs> { }
 
 export type ClipOrEffect = Clip | Effect
 
-export interface MashData extends Partial<DataMashGetResponse> { }
+// export interface MashData extends Partial<DataMashGetResponse> { }
 
-export const isMashData = (value: any): value is MashData => (
-  isObject(value) && "mash" in value && isMashAndMediaObject(value.mash)
-)
-export function assertMashData(value: any, name?: string): asserts value is MashData {
-  if (!isMashData(value)) errorThrow(value, 'MashData', name)
-}
+// export const isMashData = (value: any): value is MashData => (
+//   isObject(value) && "mash" in value && isMashAndMediaObject(value.mash)
+// )
+// export function assertMashData(value: any, name?: string): asserts value is MashData {
+//   if (!isMashData(value)) errorThrow(value, 'MashData', name)
+// }
 
 export interface Editor {
   actions: Actions

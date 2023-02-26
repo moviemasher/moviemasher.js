@@ -1,40 +1,32 @@
-import React from 'react'
 import {
-  editorInstance, UnknownRecord,
-  DataDefaultRequest,
-  Size,
-  EditType,
-  DataDefaultResponse,
-  eventStop,
-  EditorIndex,
-  Endpoints, ServerType,
-  ApiCallback, 
-  ApiCallbackResponse,
-  DataDefinitionPutRequest, RenderingStatusResponse, EncodeTypes, 
-  assertObject, EventType, 
-  idGenerate, 
-  isClip, isEffect, 
-  ScalarRecord, urlBaseInitialize, isMediaObject, MediaObject, Media, isMedia, MediaArray, isMashAndMediaObject, VideoType, idTemporary, assertMashMedia
+
+  assertObject, DataDefaultRequest, DataDefaultResponse, Editor, EditorIndex, 
+  editorInstance, EditType, Endpoints, eventStop, EventType,
+  idGenerate, idTemporary, isClip, isEffect, isMashAndMediaObject, isMedia, 
+  isMediaObject, MashType, Media, MediaObject, ScalarRecord, Size, 
+  UnknownRecord, urlBaseInitialize, VideoType
 } from '@moviemasher/moviemasher.js'
+import React from 'react'
 
-import { ActivityType } from "@moviemasher/client-core"
+import {
+  ActivityType,
+  Client, ClientDisabledArgs, clientInstance, ClientOptions, ClientReadOptions, ReadOperation
+} from "@moviemasher/client-core"
 
-import type { ThemeIcons } from '@moviemasher/theme-default'
 
 
-import { PropsWithChildren, PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
-import { ApiContext } from '../ApiClient/ApiContext'
-import { View } from '../../Utilities/View'
-import { MasherContext, MasherContextInterface } from './MasherContext'
+import { Draggable, dropFilesFromList } from '@moviemasher/client-core'
+import { ApiContext } from '../../../client-react-deleted/ApiClient/ApiContext'
+import { PropsWithChildren, PropsWithoutChild, ReactResult, ThemeIcons, WithClassName } from '../../declarations'
 import { elementSetPreviewSize } from '../../Utilities/Element'
-import { TimelinePropsDefault } from '../Timeline/TimelineDefaultProps'
-import { InspectorPropsDefault } from '../Inspector/InspectorDefaultProps'
-import { PlayerPropsDefault } from '../Player/PlayerDefaultProps'
-import { BrowserPropsDefault } from '../Browser/BrowserDefaultProps'
-import { PanelOptions } from '../Panel/Panel'
-import { Draggable, dropFilesFromList, jsonPromise } from '@moviemasher/client-core'
+import { View } from '../../Utilities/View'
 import { ActivityPropsDefault } from '../Activity/ActivityDefaultProps'
-import { useClient } from '../../Hooks/useClient'
+import { BrowserPropsDefault } from '../Browser/BrowserDefaultProps'
+import { InspectorPropsDefault } from '../Inspector/InspectorDefaultProps'
+import { PanelOptions } from '../Panel/Panel'
+import { PlayerPropsDefault } from '../Player/PlayerDefaultProps'
+import { TimelinePropsDefault } from '../Timeline/TimelineDefaultProps'
+import { MasherContext, MasherContextInterface } from './MasherContext'
 
 export type PanelOptionsOrFalse = PanelOptions | false
 
@@ -52,6 +44,7 @@ export interface MasherOptions extends UnknownRecord, WithClassName {
   icons?: ThemeIcons
   editType?: EditType
   mashMedia?: DataDefaultResponse
+  clientOptions?: ClientOptions
 }
 
 export interface EditorProps extends MasherOptions, PropsWithoutChild {
@@ -68,6 +61,7 @@ export interface MasherProps extends MasherOptions, PropsWithChildren {}
 export function Masher(props: MasherProps): ReactResult {
   const {
     editType = VideoType,
+    clientOptions = ClientDisabledArgs,
     previewSize,
     icons = {},
     mashMedia,
@@ -75,18 +69,24 @@ export function Masher(props: MasherProps): ReactResult {
   } = props
 
   console.log("Masher", editType, previewSize)
+  const clientRef = React.useRef<Client>(clientInstance(clientOptions))
+  const editorRef = React.useRef<Editor>(editorInstance({ editType }))
   const editorIndexRef = React.useRef<EditorIndex>({})
   const currentRef = React.useRef<ScalarRecord>({})
   const svgRef = React.useRef<SVGSVGElement>(null)
   const ref = React.useRef<HTMLDivElement>(null)
+
+
   const apiContext = React.useContext(ApiContext)
-  const [editor] = React.useState(() => editorInstance({ editType }))
+
   const [requested, setRequested] = React.useState(false)
   const [streaming, setStreaming] = React.useState(false)
 
+  const { current: client } = clientRef
+  const { current: editor } = editorRef
   const { current: editorIndex } = editorIndexRef
   const { current } = currentRef
-  const { enabled, endpointPromise, servers } = apiContext
+  const { endpointPromise, servers } = apiContext
 
   React.useEffect(() => { 
     elementSetPreviewSize(ref.current, previewSize) 
@@ -104,18 +104,18 @@ export function Masher(props: MasherProps): ReactResult {
     
     editor.svgElement = svg
     const { mash } = loadObject
-    // assertMashData(loadObject)
     editor.load(mash)
   }
   React.useEffect(() => {
-    console.debug("Masher useEffect", enabled, requested)
+    console.debug("Masher useEffect", requested)
 
-    if (!enabled) {
+    if (!client.enabled(ReadOperation)) {
       editorLoad()
       return
     }
-    if (!requested && servers[ServerType.Data]) {
+    if (!requested) {
       setRequested(true)
+
       const request: DataDefaultRequest = {}
 
       console.debug("DataDefaultRequest", Endpoints.data[editType].default, request)
@@ -123,7 +123,7 @@ export function Masher(props: MasherProps): ReactResult {
       const promise = endpointPromise(Endpoints.data[editType].default, request)
       promise.then((response: DataDefaultResponse) => {
         console.debug("DataDefaultResponse", Endpoints.data[editType].default, response)
-        const { previewSize: serverSize = previewSize, ...rest } = response
+        const { previewSize: serverSize = previewSize } = response
         console.log("Masher DataDefaultResponse", servers.file?.prefix)
         if (servers.file?.prefix) {
           urlBaseInitialize(String(servers.file.prefix))
@@ -132,7 +132,7 @@ export function Masher(props: MasherProps): ReactResult {
         editorLoad(response)
       })
     }
-  }, [servers, enabled, requested])
+  }, [requested])
 
   const dropFiles = (files: FileList, editorIndex?: EditorIndex): Promise<Media[]> => {
     const fileInfos = dropFilesFromList(files, servers.file)
@@ -195,126 +195,19 @@ export function Masher(props: MasherProps): ReactResult {
     })
   }
   
-  const delayPromise = (): Promise<void> => (
-    new Promise(resolve => { setTimeout(resolve, 2000) }) 
-  )
 
-  const handleApiCallback = (id: string, definition: Media, callback: ApiCallback): Promise<void> => {
-    console.debug("handleApiCallback request", callback)
-    const { eventTarget } = editor
-    return jsonPromise(callback).then((response: ApiCallbackResponse) => {
-      console.debug("handleApiCallback response", response)
-      const { apiCallback, error } = response
-      if (error) return handleError(callback.endpoint.pathname!, error.message, id)
-
-      if (apiCallback) {
-        const { init, endpoint } = apiCallback
-        if (endpoint.pathname === Endpoints.data.definition.put) {
-          assertObject(init, 'init')
-
-          const { body } = init
-          assertObject(body, 'body')
-
-          const putRequest: DataDefinitionPutRequest = body
-          const { definition: definitionObject } = putRequest
-          console.debug("handleApiCallback calling updateDefinition", definitionObject)
-
-          editor.updateDefinition(definitionObject, definition)
-          console.debug("handleApiCallback called updateDefinition")
-        }
-        if (callback.endpoint.pathname === Endpoints.rendering.status) {
-          const statusResponse: RenderingStatusResponse = response
-          let steps = 0
-          let step = 0
-          EncodeTypes.forEach(type => {
-            const state = statusResponse[type]
-            if (!state) return
-
-            steps += state.total
-            step += state.completed
-          })
-          if (steps) eventTarget.emit(EventType.Active, { 
-            id, step, steps, type: ActivityType.Render 
-          })
-        }
-        
-        return delayPromise().then(() => handleApiCallback(id, definition, apiCallback))
-      }
-      eventTarget.emit(EventType.Active, { id, type: ActivityType.Complete })
-    })
-  }
-
-  const handleError = (endpoint: string, error: string, id: string) => {
-    editor.eventTarget.emit(EventType.Active, { 
-      id, type: ActivityType.Error, error: 'import.render', value: error 
-    })
-    console.error(endpoint, error)
-    return Promise.reject(error)
-  }
-
-  const saveDefinitionsPromise = (definitions: MediaArray): Promise<void> => {
-    let promise = Promise.resolve()
-    const { eventTarget } = editor
-throw new Error('')
-    // definitions.forEach(definition => {
-    //   assertContentDefinition(definition)
-    //   const { label, type, source } = definition
-
-    //   const id = idGenerate('activity')
-    //   eventTarget.emit(EventType.Active, { id, label, type: ActivityType.Render })
-
-    //   const { rendering } = Endpoints
-    //   console.log("Masher fetch", source)
-    //   const responsePromise = fetch(source)
-    //   const blobPromise = responsePromise.then(response => response.blob())
-    //   const filePromise = blobPromise.then(blob => new File([blob], label))
-    //   const resultPromise = filePromise.then(file => {
-    //     const request: RenderingUploadRequest = { type, name: label, size: file.size }
-    //     console.debug("RenderingUploadRequest", rendering.upload, request)
-    //     const responsePromise = endpointPromise(rendering.upload, request)
-    //     return responsePromise.then((response: RenderingUploadResponse) => {
-    //       console.debug("RenderingUploadResponse", rendering.upload, response)
-    //       const { error, fileApiCallback, apiCallback, fileProperty } = response
-    //       if (error) return handleError(rendering.upload, error, id)
-
-    //       else if (fileApiCallback && fileApiCallback.init) {
-    //         if (fileProperty) fileApiCallback.init.body![fileProperty] = file
-    //         else fileApiCallback.init.body = file
-    //         return jsonPromise(fileApiCallback).then((response: FileStoreResponse) => {
-    //           console.debug("FileStoreResponse", response)
-    //           const { error } = response
-    //           if (error) return handleError(fileApiCallback.endpoint.pathname!, error, id)
-    
-    //           assertObject(apiCallback, 'apiCallback')
-    //           return handleApiCallback(id, definition, apiCallback)
-    //         })
-    //       } 
-    //       assertObject(apiCallback, 'apiCallback')
-    //       return handleApiCallback(id, definition, apiCallback)
-    //     })
-    //   })
-    //   promise = promise.then(() => resultPromise)
-    // })
-    return promise
-  }
-
-  const client = useClient()
-  const save = () => {
-    const { mashMedia } = editor
-    assertMashMedia(mashMedia)
-    client.save(mashMedia)
-  }
 
   const changeDefinition = (media?: Media) => { current.mediaId = media?.id }
-
-  const editorContext: MasherContextInterface = {
+  
+  const masherContext: MasherContextInterface = {
+    client, editor, 
     streaming, setStreaming,
-    current, editor, save, editorIndex, drop,
+    current, editorIndex, drop,
     changeDefinition, icons
   }
   const viewProps = { ...rest, onDrop: eventStop, ref }
   return (
-    <MasherContext.Provider value={editorContext}>
+    <MasherContext.Provider value={masherContext}>
       <View { ...viewProps } />
       <svg style={{ display: 'none' }} ref={svgRef} />
     </MasherContext.Provider>

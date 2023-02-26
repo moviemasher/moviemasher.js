@@ -5,7 +5,9 @@ export interface Typed {
   type: string
 }
 export const isTyped = (value: any): value is Typed => {
-  return isObject(value) && isPopulatedString(value.id)
+  return isObject(value) && 
+    "type" in value && 
+    isPopulatedString(value.type)
 }
 export function assertTyped(value: any, name?: string): asserts value is Typed {
   if (!isTyped(value)) errorThrow(value, 'Typed', name)

@@ -3,23 +3,22 @@ import { UnknownRecord } from "../../declarations"
 import { ClientAudioNode, ClientAudio } from "../../ClientMedia/ClientMedia"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { assertClientAudio, assertClientVideo, isClientAudio } from "../../ClientMedia/ClientMediaFunctions"
-import { DataType, MediaType, Duration, AudioType, VideoType } from "../../Setup/Enums"
+import { DataType, Duration, AudioType, VideoType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { isAboveZero, isUndefined } from "../../Utility/Is"
+import { isAboveZero, isDefiniteError, isUndefined } from "../../Utility/Is"
 import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, UpdatableDurationDefinitionObject } from "./UpdatableDuration"
 import { endpointFromUrl } from "../../Helpers/Endpoint/EndpointFunctions"
-import { requestAudioPromise } from "../../Utility/Request"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { requestAudioPromise } from "../../Helpers/Request/RequestFunctions"
 import { ContentDefinitionClass } from "../../Media/Content/Content"
+import { ProbeType } from "../../Plugin/Decode/Decoder"
+import { isProbing } from "../../Plugin/Decode/Probe/Probing/ProbingFunctions"
 
 export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {
     constructor(...args: any[]) {
       super(...args)
       const [object] = args
-      const { 
-        audioUrl, audio, loop, duration, waveform 
-      } = object as UpdatableDurationDefinitionObject
+      const { loop } = object as UpdatableDurationDefinitionObject
     
       // if (audio || audioUrl ) {//|| loadedAudio
       //   this.audio = true
@@ -65,7 +64,7 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
     private _audio?: boolean
     get audio(): boolean { 
       if (isUndefined(this._audio)) {
-        this._audio = this.decodings.some(object => object.info?.audible)
+        this._audio = this.decodings.some(object => object.data?.audible)
       }
       return Boolean(this._audio)
     }
@@ -77,11 +76,11 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
     private _duration = 0
     get duration(): number {
       if (!isAboveZero(this._duration)) {
-        for (const object of this.decodings) {
-          if (object?.info?.duration) {
-            this._duration = object.info.duration
-            break
-          }
+        const probing = this.decodings.find(decoding => decoding.type === ProbeType)
+        if (isProbing(probing)) {
+          const { data } = probing
+          const { duration } = data
+          if (isAboveZero(duration)) this._duration = duration
         }
       }
       return this._duration
@@ -98,30 +97,36 @@ export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClas
 
     loadedAudio?: ClientAudio
     
-    get loadedAudioPromise(): Promise<ClientAudio> {
-      if (this.loadedAudio) return Promise.resolve(this.loadedAudio)
+    get preloadAudioPromise(): Promise<void> {
+      if (this.loadedAudio) return Promise.resolve()
 
       const transcoding = this.preferredTranscoding(AudioType, VideoType)
-      return transcoding.clientMediaPromise.then(orError => {
-        if (orError.error) return errorThrow(orError.error)
+      const { request } = transcoding
+      const { response } = request
+      if (isClientAudio(response)) {
+        this.loadedAudio = response
+        return Promise.resolve()
+      }
+      return requestAudioPromise(request).then(orError => {
+        if (isDefiniteError(orError)) return 
 
-        const { clientMedia: media } = orError
-        if (isClientAudio(media)) {
-          this.loadedAudio = media
-          return media
+        const { data } = orError
+        if (isClientAudio(data)) {
+          this.loadedAudio = data
+          return
         }
-        assertClientVideo(media)
+        assertClientVideo(data)
 
-        const { src } = media
+        const { src } = data
         const endpoint = endpointFromUrl(src)
         const request = { endpoint }
         return requestAudioPromise(request).then(orError => {
-          if (orError.error) return errorThrow(orError.error)
-          const { clientAudio: audio } = orError
+          if (isDefiniteError(orError)) return 
+
+          const { data: audio } = orError
           assertClientAudio(audio)
           
           this.loadedAudio = audio
-          return audio
         })
       })
     }

@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
 
-import { ExtJson, JsonRecord, ExtText } from '@moviemasher/moviemasher.js'
+import { JsonExtension, JsonRecord, TextExtension } from '@moviemasher/moviemasher.js'
 
 
 export const expandCommand = (command: string): string => { 
@@ -12,7 +12,7 @@ export const expandCommand = (command: string): string => {
 export const expandFileOrScript = (command?: string): string => {
   if (!command) return ''
 
-  if (command.endsWith(ExtText)) return expandFile(command)
+  if (command.endsWith(TextExtension)) return expandFile(command)
 
   if (command.startsWith('/')) return expandCommand(command) 
   return command
@@ -31,7 +31,7 @@ export const expandToJson = (config: string): JsonRecord => {
     return {}
   }
 
-  if (config.endsWith(ExtJson)) { // json file
+  if (config.endsWith(JsonExtension)) { // json file
     return expandToJson(expandFile(config))
   }
 

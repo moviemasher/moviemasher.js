@@ -1,11 +1,10 @@
 import React from 'react'
 import { CollapseContext, CollapseContextInterface } from '../Collapse/CollapseContext'
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+import { PropsAndChildren, ReactResult, ThemeIcons, WithClassName } from "../../declarations"
 import { BarOptions } from '../../Utilities/Bar'
 import { View } from '../../Utilities/View'
 import { assertPopulatedObject } from '@moviemasher/moviemasher.js'
-import type { ThemeIcons } from '@moviemasher/theme-default'
 
 export interface ContentOptions {
   props?: WithClassName

@@ -1,27 +1,20 @@
 import { AudioType } from "../../Setup/Enums"
 import { AudioClass } from "./AudioClass"
-import { Audio, AudioMedia, AudioMediaObject, AudioObject } from "./Audio"
+import { Audio, AudioMedia, AudioObject } from "./Audio"
 import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
 import { MediaBase } from "../MediaBase"
-import { ClientAudio } from "../../ClientMedia/ClientMedia"
 import { PreloadArgs } from "../../Base/Code"
-import { requestAudioPromise } from "../../Utility/Request"
+import { requestAudioPromise } from "../../Helpers/Request/RequestFunctions"
+import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { isDefiniteError } from "../../Utility/Is"
 
 
 const AudioMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
 const AudioMediaWithContent = ContentDefinitionMixin(AudioMediaWithTweenable)
 const AudioMediaWithUpdatableDuration = UpdatableDurationDefinitionMixin(AudioMediaWithContent)
 export class AudioMediaClass extends AudioMediaWithUpdatableDuration implements AudioMedia {
-  constructor(object: AudioMediaObject) {
-    super(object)
-    const { clientMedia } = this
-    if (clientMedia) {
-      this.loadedAudio = clientMedia as ClientAudio
-    }
-  }
-
   instanceFromObject(object: AudioObject = {}) : Audio {
     return new AudioClass(this.instanceArgs(object))
   }
@@ -38,8 +31,10 @@ export class AudioMediaClass extends AudioMediaWithUpdatableDuration implements 
     
     const { request } = transcoding
     return requestAudioPromise(request).then(orError => {
-      const { clientAudio: audio } = orError
-      this.loadedAudio = audio
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
+
+      const { data: clientAudio } = orError
+      this.loadedAudio = clientAudio
     })
   }
 

@@ -1,7 +1,7 @@
 import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../Base/Code"
 import { SequenceType, VideoType, AudioType } from "../../Setup/Enums"
 import { Video, VideoMedia } from "./Video"
-import { assertPopulatedString, assertTimeRange, isBoolean } from "../../Utility/Is"
+import { assertPopulatedString, assertTimeRange, isBoolean, isDefiniteError } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 
 import { ContentMixin } from "../Content/ContentMixin"
@@ -18,10 +18,11 @@ import { ContainerMixin } from "../Container/ContainerMixin"
 import { MediaInstanceBase } from "../MediaInstanceBase"
 import { assertClientVideo } from "../../ClientMedia/ClientMediaFunctions"
 import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
-import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
+import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { isRequestable, Requestable } from "../../Base/Requestable/Requestable"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { requestVideoPromise } from "../../Helpers/Request/RequestFunctions"
 
 const VideoWithTweenable = TweenableMixin(MediaInstanceBase)
 
@@ -50,7 +51,10 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
  
     const { definition } = this
     const { request } = definition
-    const file = endpointUrl(request!.endpoint) 
+    const { endpoint } = request
+    assertEndpoint(endpoint)
+    
+    const file = endpointUrl(endpoint) 
     
     assertPopulatedString(file)
 
@@ -83,20 +87,19 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     const { visible, audible } = args
     
     if (audio && audible) {
-      promises.push(definition.loadedAudioPromise.then(EmptyMethod))
+      promises.push(definition.preloadAudioPromise)
     }
     if (visible) {
       const visibleTranscoding = definition.preferredTranscoding(SequenceType, VideoType)
       if (isRequestable(visibleTranscoding) ) {
         const audibleTranscoding = audio && audible && definition.preferredTranscoding(AudioType, VideoType)
         if (visibleTranscoding !== audibleTranscoding) {
-          const { type } = visibleTranscoding
+          const { type, request } = visibleTranscoding
           console.log(this.constructor.name, 'loadPromise visibleTranscoding', visibleTranscoding)
  
           if (type === VideoType) {
-            promises.push(visibleTranscoding.clientMediaPromise.then(orError => {
-              const { error, clientMedia: clientMedia } = orError
-              if (error) return errorThrow(error)
+            promises.push(requestVideoPromise(request).then(orError => {
+              if (isDefiniteError(orError)) return errorThrow(orError.error)
             }))
           } else promises.push(this.sequenceImagesPromise(args))
 
@@ -111,14 +114,13 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     const { loadedVideo } = this
     if (loadedVideo) return Promise.resolve(loadedVideo)
 
-    return previewTranscoding.clientMediaPromise.then(orError => {
-      const { error, clientMedia: media } = orError
-      if (error) return errorThrow(error)
+    const { request } = previewTranscoding
+    return requestVideoPromise(request).then(orError => {
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
 
-      console.log(this.constructor.name, 'previewVideoPromise.clientMediaPromise', media)
-      assertClientVideo(media)
-
-      const video = media.cloneNode() as ClientVideo
+      const { data: clientVideo } = orError
+ 
+      const video = clientVideo.cloneNode() as ClientVideo
       this.loadedVideo = video
       this.foreignElement.appendChild(video)
       return video

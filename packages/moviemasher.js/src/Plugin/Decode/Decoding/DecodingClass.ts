@@ -1,16 +1,15 @@
-import { Decoder } from "../Decoder";
-import { LoadedInfo } from "../Probe/Probe";
+import { UnknownRecord } from "../../../declarations";
+import { DecodingType } from "../Decoder";
 import { Decoding, DecodingObject } from "./Decoding";
 
 
 export class DecodingClass implements Decoding {
   constructor(object: DecodingObject) {
-  
-    const { info, type } = object
+    const { data, type } = object
     this.type = type
-    if (info) this.info = info
+    this.data = data
   }
-  declare type: Decoder
-  
-  info?: LoadedInfo
+  data?: UnknownRecord
+
+  type: DecodingType
 }

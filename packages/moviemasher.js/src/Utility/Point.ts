@@ -7,7 +7,9 @@ export interface Point {
 }
 
 export const isPoint = (value: any): value is Point => {
-  return isObject(value) && isNumber(value.x) && isNumber(value.y) 
+  return isObject(value) && 
+  "x" in value && "y" in value && 
+  isNumber(value.x) && isNumber(value.y) 
 }
 
 export function assertPoint(value: any, name?: string): asserts value is Point {

@@ -1,6 +1,6 @@
 import { 
   JsonRecord, assertObject, isArray, requestPromise, 
-  Request, PotentialError, PathOrError, Requests, Identified
+  Request, PotentialError, PathDataOrError, Requests, Identified
 } from "@moviemasher/moviemasher.js";
 import { Input } from "../declarations";
 import { assertJobType, JobType } from "../Setup/Enums";
@@ -23,7 +23,7 @@ export const jobExtract = (object: JsonRecord): JobTuple => {
   assertObject(job, jobKeypath)
   assertJobType(jobType, typeKeypath)
 
-  return [jobType, job]
+  return [jobType, job as JsonRecord]
 }
 
 export const outputPromise = (localPath: string, request: Request): Promise<PotentialError> => (
@@ -32,18 +32,11 @@ export const outputPromise = (localPath: string, request: Request): Promise<Pote
   requestPromise(request).then(() => { return {} })
 )
 
-export const inputPromise = (input: Input): Promise<PathOrError> => {
-  const response: PathOrError = {}
-
+export const inputPromise = (input: Input): Promise<PathDataOrError> => {
   const { request } = input
   
-  const promise: Promise<PathOrError> = request ? requestPromise(request) : Promise.resolve({ path: '' })
-  return promise.then(path => {
-    if (path) {
-
-    }
-    return response
-  })
+  const promise: Promise<PathDataOrError> = request ? requestPromise(request) : Promise.resolve({ path: '' })
+  return promise
 }
 
 export const callbackPromise = (request: Request | Requests, body: CallbackRequestBody): Promise<PotentialError> => {
@@ -53,5 +46,5 @@ export const callbackPromise = (request: Request | Requests, body: CallbackReque
     request.init.body = body
     return requestPromise(request)
   })
-  return Promise.all(promises).then(() => { return {} })
+  return Promise.all(promises).then(() => ({}))
 }

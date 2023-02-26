@@ -11,13 +11,14 @@ import { assertSizeAboveZero, Size, sizeAboveZero, sizeCover, sizeString } from 
 import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
 import { centerPoint, RectOptions } from "../../Utility/Rect"
 import { Time } from "../../Helpers/Time/Time"
-import { assertClientImage, assertClientVideo } from "../../ClientMedia/ClientMediaFunctions"
 import { imageFromVideoPromise } from "../../Utility/Image"
 import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { ImageType, SequenceType, VideoType } from "../../Setup/Enums"
 import { Requestable } from "../../Base/Requestable/Requestable"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { requestImagePromise, requestVideoPromise } from "../../Helpers/Request/RequestFunctions"
+import { isDefiniteError } from "../../Utility/Is"
 
 const VideoMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
 const VideoMediaWithContainer = ContainerDefinitionMixin(VideoMediaWithTweenable)
@@ -71,15 +72,14 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
   }
 
   private imageFromTranscodingPromise(transcoding: Requestable, definitionTime: Time, outSize?: Size): Promise<ClientImage> {
-    const { type } = transcoding
+    const { type, request } = transcoding
     switch (type) {
       case ImageType: {
-        return transcoding.clientMediaPromise.then(orError => {
-          const { error, clientMedia: media } = orError
-          if (error) return errorThrow(error)
+
+        return requestImagePromise(request).then(orError => {
+          if (isDefiniteError(orError)) return errorThrow(orError.error)
           
-          assertClientImage(media)
-          return media
+          return orError.data
         })
       }
       case VideoType: {
@@ -98,15 +98,14 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
     const loaded = this.loadedImage(definitionTime, outSize)
     if (loaded) return Promise.resolve(loaded)
     
-    return previewTranscoding.clientMediaPromise.then(orError => {
-      const { error, clientMedia: media } = orError
-      if (error) return errorThrow(error)
+    return requestVideoPromise(previewTranscoding.request).then(orError => {
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
 
-      assertClientVideo(media)
+      const { data: clientVideo } = orError
 
       const key = this.loadedImageKey(definitionTime, outSize)
     
-      return imageFromVideoPromise(media, definitionTime, outSize).then(image => {
+      return imageFromVideoPromise(clientVideo, definitionTime, outSize).then(image => {
         this.loadedImages.set(key, image)
         return image
       })

@@ -1,10 +1,19 @@
 import { 
-  assertTrue, Request, MediaType, ProtocolPromise, Plugins, ProtocolFile 
+  Request, ProtocolPromise, Plugins, FileProtocol, LoadType, errorPromise, 
+  ErrorName, PathData, assertPopulatedString, ProtocolType, assertEndpoint 
 } from "@moviemasher/moviemasher.js"
 
-const promise = ((request: Request, type?: MediaType) => {
-  assertTrue(!type)
-  return Promise.resolve({})
-}) as ProtocolPromise
+const promise: ProtocolPromise = (request: Request, type?: LoadType) => {
+  if (type) return errorPromise(ErrorName.Type)
+  
+  const { endpoint } = request
+  assertEndpoint(endpoint)
+  const { pathname: path } = endpoint
+  assertPopulatedString(path)
 
-Plugins.protocols.file = { promise, type: ProtocolFile }
+  const pathData: PathData = { path }
+  return Promise.resolve(pathData)
+  
+}
+
+Plugins[ProtocolType][FileProtocol] = { promise, type: FileProtocol }

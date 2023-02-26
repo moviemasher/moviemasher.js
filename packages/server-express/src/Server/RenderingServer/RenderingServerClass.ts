@@ -4,19 +4,18 @@ import fs from 'fs'
 
 import {
   assertMediaType, 
-  ApiCallback, MediaObject, Endpoints, EncodeType, 
+  ApiCallback, MediaObject, Endpoints, EncodingType, 
   RenderingStartRequest,
   MediaType, 
   RenderingStartResponse,
   LoadType, Endpoint, RequestInit, 
-  RenderingStatusResponse, RenderingStatusRequest,
+  
   RenderingUploadRequest, RenderingUploadResponse, 
-  MashMediaObject, assertTrue, NumberRecord, SizePreview, 
+  MashMediaObject, assertTrue, SizePreview, 
   SizeIcon, 
   RenderingInput,
-  isLoadType, isDefined, urlBaseInitialize,
+  isLoadType, urlBaseInitialize,
   RenderingCommandOutputs,
-  RenderingOptions,
   RenderingCommandOutput,
   AudioType,
   ImageType,
@@ -25,12 +24,9 @@ import {
   errorCaught, mediaTypeFromMime, ErrorName, errorName, errorThrow
 } from "@moviemasher/moviemasher.js"
 import { 
-  expandFile, renderingProcessInstance, RenderingProcessArgs, 
+  renderingProcessInstance, RenderingProcessArgs, 
   renderingInput,
-  renderingOutputFile, 
   BasenameDefinition,
-  ExtensionLoadedInfo,
-  BasenameRendering,
   environment,
   Environment,
 } from "@moviemasher/server-core"
@@ -46,7 +42,7 @@ import { FileServer, FileServerFilename } from "../FileServer/FileServer"
 import { idUnique } from "../../Utilities/Id"
 
 export type RenderingCommandOutputRecord = {
-  [index in EncodeType]?: RenderingCommandOutput
+  [index in EncodingType]?: RenderingCommandOutput
 }
 
 export class RenderingServerClass extends ServerClass implements RenderingServer {
@@ -154,7 +150,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     const id = mash.id || idUnique()
     const renderingId = idUnique()
     const response: RenderingStartResponse = {
-      apiCallback: this.statusCallback(id, renderingId)
+      // apiCallback: this.statusCallback(id, renderingId)
     }
     try {
       const user = this.userFromRequest(req)
@@ -200,52 +196,52 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     return renderingApiCallback
   }
 
-  status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest> = async (req, res) => {
-    const request = req.body
-    // console.log(this.constructor.name, "status", JSON.stringify(request, null, 2))
-    const { id, renderingId } = request
-    const response: RenderingStatusResponse = {}
-    try {
-      const user = this.userFromRequest(req)
-      const outputDirectory = this.outputDirectory(user, id, renderingId)
-      const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
-      const jsonString = expandFile(jsonPath)
-      const json: RenderingOptions = JSON.parse(jsonString)
-      const { output } = json
+  // status: ExpressHandler<RenderingStatusResponse, RenderingStatusRequest> = async (req, res) => {
+  //   const request = req.body
+  //   // console.log(this.constructor.name, "status", JSON.stringify(request, null, 2))
+  //   const { id, renderingId } = request
+  //   const response: RenderingStatusResponse = {}
+  //   try {
+  //     const user = this.userFromRequest(req)
+  //     const outputDirectory = this.outputDirectory(user, id, renderingId)
+  //     const jsonPath = path.join(outputDirectory, `${BasenameRendering}.json`)
+  //     const jsonString = expandFile(jsonPath)
+  //     const json: RenderingOptions = JSON.parse(jsonString)
+  //     const { output } = json
 
-      const filenames = fs.readdirSync(outputDirectory)
-      const countsByType: NumberRecord = {}
+  //     const filenames = fs.readdirSync(outputDirectory)
+  //     const countsByType: NumberRecord = {}
 
-      const working = (renderingCommandOutput => {
-        // console.log(this.constructor.name, "status output", renderingCommandOutput)
-        const { outputType } = renderingCommandOutput
-        if (!isDefined(countsByType[outputType])) countsByType[outputType] = -1
-        countsByType[outputType]++
-        const index = countsByType[outputType]
-        response[outputType] ||= { total: 0, completed: 0 }
-        const state = response[outputType]!
-        state.total++
-        const resultFileName = renderingOutputFile(index, renderingCommandOutput, ExtensionLoadedInfo)
-        if (filenames.includes(resultFileName)) {
-          state.completed++
-          return 0
-        }
-        return 1
-      })(output)
-      if (working) response.apiCallback = this.statusCallback(id, renderingId)
-      else response.apiCallback = this.dataPutCallback(user, id, renderingId, [output])
-    } catch (error) { response.error = errorCaught(error).error }
-    // console.log(this.constructor.name, "status response", response)
-    res.send(response)
-  }
+  //     const working = (renderingCommandOutput => {
+  //       // console.log(this.constructor.name, "status output", renderingCommandOutput)
+  //       const { outputType } = renderingCommandOutput
+  //       if (!isDefined(countsByType[outputType])) countsByType[outputType] = -1
+  //       countsByType[outputType]++
+  //       const index = countsByType[outputType]
+  //       response[outputType] ||= { total: 0, completed: 0 }
+  //       const state = response[outputType]!
+  //       state.total++
+  //       const resultFileName = renderingOutputFile(index, renderingCommandOutput, ExtensionLoadedInfo)
+  //       if (filenames.includes(resultFileName)) {
+  //         state.completed++
+  //         return 0
+  //       }
+  //       return 1
+  //     })(output)
+  //     if (working) response.apiCallback = this.statusCallback(id, renderingId)
+  //     else response.apiCallback = this.dataPutCallback(user, id, renderingId, [output])
+  //   } catch (error) { response.error = errorCaught(error).error }
+  //   // console.log(this.constructor.name, "status response", response)
+  //   res.send(response)
+  // }
 
-  private statusCallback(id: string, renderingId: string): ApiCallback {
-    const statusCallback: ApiCallback = {
-      endpoint: { pathname: Endpoints.rendering.status },
-      init: { body: { id, renderingId }}
-    }
-    return statusCallback
-  }
+  // private statusCallback(id: string, renderingId: string): ApiCallback {
+  //   const statusCallback: ApiCallback = {
+  //     endpoint: { pathname: Endpoints.rendering.status },
+  //     init: { body: { id, renderingId }}
+  //   }
+  //   return statusCallback
+  // }
 
   startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
     super.startServer(app, activeServers)
@@ -254,7 +250,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       app.post(Endpoints.rendering.upload, this.upload)
     }
     app.post(Endpoints.rendering.start, this.start)
-    app.post(Endpoints.rendering.status, this.status)
+    // app.post(Endpoints.rendering.status, this.status)
     return Promise.resolve()
   }
 

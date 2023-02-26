@@ -1,11 +1,13 @@
-import { PopulatedString, AnyArray, ValueRecord, Value, JsonRecord, Integer } from "../declarations"
+import { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords } from "../declarations"
 import { Rgb } from "../Helpers/Color/Color"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { DefiniteError } from "../Helpers/Error/Error"
+import { UnknownMethod } from "../Setup/Constants"
 
-export const isObject = (value: any): value is Object => typeof value === 'object'
+export const isObject = (value: any): value is object => typeof value === 'object'
 
-export function assertObject(value: any, name?: string): asserts value is Object {
+export function assertObject(value: any, name?: string): asserts value is object {
   if (!isObject(value)) errorThrow(value, 'Object', name)
 }
 export const isString = (value: any): value is string => (
@@ -23,16 +25,16 @@ export function assertNumber(value: any, name?: string): asserts value is number
 }
 
 export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
-export function assertBoolean(value: any, name?: string): asserts value is Boolean {
+export function assertBoolean(value: any, name?: string): asserts value is boolean {
   if (!isBoolean(value)) errorThrow(value, "Boolean", name)
 }
-export const isMethod = (value: any): value is Function => typeof value === 'function'
-export function assertMethod(value: any, name?: string): asserts value is Function {
-  if (!isMethod(value)) errorThrow(value, 'Function', name)
+export const isMethod = (value: any): value is UnknownMethod => typeof value === 'function'
+export function assertMethod(value: any, name?: string): asserts value is UnknownMethod {
+  if (!isMethod(value)) errorThrow(value, 'Method', name)
 }
 export const isDefined = (value: any): boolean => !isUndefined(value)
 export function assertDefined(value: any, name?: string): asserts value is true {
-  if (!isDefined(value)) errorThrow(value, 'defined', name)
+  if (!isDefined(value)) errorThrow(value, 'Defined', name)
 }
 
 export const isNan = (value: any): boolean => isNumberOrNaN(value) && Number.isNaN(value)
@@ -56,14 +58,14 @@ export const isAboveZero = (value: any): value is number => isNumber(value) && v
 export function assertAboveZero(value: any, name?: string): asserts value is number {
   if (!isAboveZero(value)) errorThrow(value, '> zero', name)
 }
-export const isArray = (value: any): value is AnyArray => (
+export const isArray = (value: any): value is Unknowns => (
   isDefined(Array.isArray) ? Array.isArray(value): value instanceof Array
 )
-export function assertArray(value: any, name?: string): asserts value is AnyArray {
+export function assertArray(value: any, name?: string): asserts value is Unknowns {
   if (!isArray(value)) errorThrow(value, 'Array', name)
 }
 
-const length = (value: string | AnyArray): boolean => !!value.length
+const length = (value: string | Unknowns): boolean => !!value.length
 
 export const isPopulatedString = (value: any): value is PopulatedString => isString(value) && length(String(value))
 export function assertPopulatedString(value: any, name = 'value'): asserts value is PopulatedString {
@@ -71,17 +73,17 @@ export function assertPopulatedString(value: any, name = 'value'): asserts value
 }
 
 
-export const isPopulatedArray = (value: any): value is AnyArray => (
+export const isPopulatedArray = (value: any): value is Unknowns => (
   isArray(value) && length(value)
 )
-export function assertPopulatedArray(value: any, name = 'value'): asserts value is AnyArray {
+export function assertPopulatedArray(value: any, name = 'value'): asserts value is Unknowns {
   if (!isPopulatedArray(value)) errorThrow(value, 'populated array', name)
 }
 
 export const isPopulatedObject = (value: any): boolean => (
   isObject(value) && length(Object.keys(value))
 )
-export function assertPopulatedObject(value: any, name = 'value'): asserts value is Object {
+export function assertPopulatedObject(value: any, name = 'value'): asserts value is object {
   if (!isPopulatedObject(value)) errorThrow(value, 'populated array', name)
 }
 
@@ -139,5 +141,10 @@ export function assertValueObject(value: any, name?: string): asserts value is V
 export const isJsonRecord = (value: any): value is JsonRecord => (
   isObject(value) && !("error" in value)
 )
+export const isJsonRecords = (value: any): value is JsonRecords => (
+  isArray(value)
+)
 
-
+export const isDefiniteError = (value: any): value is DefiniteError => {
+  return isObject(value) && "error" in value && isObject(value.error)
+}

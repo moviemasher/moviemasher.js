@@ -19,7 +19,7 @@ export function PlayerTime(props: PlayerTimeProps): ReactResult {
 
   useListeners({
     [EventType.Time]: update, [EventType.Duration]: update,
-  }, editor.eventTarget)
+  })
 
   const { seconds, fps, lengthSeconds } = timeRange
 

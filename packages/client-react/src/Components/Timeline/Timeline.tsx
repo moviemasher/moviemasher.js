@@ -55,7 +55,7 @@ export function Timeline(props: TimelineProps): ReactResult {
     },
     [EventType.Time]: updateFrame,
     [EventType.Duration]: updateFrames,
-  }, editor.eventTarget)
+  })
 
   const dragTypeValid = (dataTransfer: DataTransfer, clip?: Clip): boolean => {
     const types = dragTypes(dataTransfer)

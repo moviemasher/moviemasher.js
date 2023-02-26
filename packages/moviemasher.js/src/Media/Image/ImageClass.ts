@@ -3,7 +3,7 @@ import { SvgItem } from "../../Helpers/Svg/Svg"
 import { CommandFile, CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { ImageType } from "../../Setup/Enums"
 import { ImageMedia, Image } from "./Image"
-import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
+import { assertPopulatedString, isDefiniteError, isTimeRange } from "../../Utility/Is"
 import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
 import { ContentMixin } from "../Content/ContentMixin"
 import { ContainerMixin } from "../Container/ContainerMixin"
@@ -12,9 +12,9 @@ import { MediaInstanceBase } from "../MediaInstanceBase"
 import { Rect, RectOptions } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { svgImagePromiseWithOptions } from "../../Helpers/Svg/SvgFunctions"
-import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
-import { assertClientImage } from "../../ClientMedia/ClientMediaFunctions"
+import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { requestImagePromise } from "../../Helpers/Request/RequestFunctions"
 
 const ImageWithTweenable = TweenableMixin(MediaInstanceBase)
 const ImageWithContainer = ContainerMixin(ImageWithTweenable)
@@ -48,7 +48,9 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
     
     const { definition } = this
     const { request } = definition
-    const file = endpointUrl(request.endpoint) 
+    const { endpoint } = request
+    assertEndpoint(endpoint)
+    const file = endpointUrl(endpoint) 
     if (!file) console.log(this.constructor.name, "graphFiles", request)
     assertPopulatedString(file)
 
@@ -62,15 +64,14 @@ export class ImageClass extends ImageWithUpdatableSize implements Image {
   svgItemForTimelinePromise(rect: Rect, time: Time, range: TimeRange): Promise<SvgItem> {
     const { definition } = this
     const requestable = definition.preferredTranscoding(ImageType)
-    
-    return requestable.clientMediaPromise.then(orError => {
-      const { error, clientMedia: clientMedia } = orError
-      if (error) return errorThrow(error)
+    const { request } = requestable
+    return requestImagePromise(request).then(orError => {
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
 
-      assertClientImage(clientMedia)
-      const { src: url } = clientMedia
+      const { data: clientImage } = orError
+      const { src } = clientImage
       const svgImageOptions: RectOptions = { ...rect }
-      return svgImagePromiseWithOptions(url, svgImageOptions)
+      return svgImagePromiseWithOptions(src, svgImageOptions)
     })
   }
 }

@@ -3,7 +3,7 @@ import {
 import { PreviewItems } from "../Helpers/Svg/Svg"
 import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../Utility/Size"
 import { Media, MediaObject, MediaObjects, isMediaObject } from "../Media/Media"
-import { assertMashMedia, isMashMedia, MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMediaArgs } from "../Media/Mash/Mash"
+import { assertMashMedia, isMashMedia, MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMediaArgs, MashEditorArgs } from "../Media/Mash/Mash"
 import { Emitter } from "../Helpers/Emitter"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import {
@@ -448,7 +448,7 @@ export class EditorClass implements Editor {
 
   private loadMashMediaObject(): Promise<void> {
     const { rect, mashMediaObject } = this
-    assertObject(mashMediaObject, 'data')
+    assertObject(mashMediaObject, 'mashMediaObject')
     const { kind } = mashMediaObject
 
     if (!sizeAboveZero(rect)) {
@@ -491,7 +491,7 @@ export class EditorClass implements Editor {
 
   private mashMediaFromObject(mashAndMedia: MashMediaObject): MashMedia {
     const { rect, buffer, gain, loop } = this
-    const args: MashMediaArgs = {
+    const editorArgs: MashEditorArgs = {
       ...mashAndMedia, 
       mediaCollection: this.media, 
       editor: this, emitter: this.eventTarget,
@@ -499,7 +499,7 @@ export class EditorClass implements Editor {
       buffer, gain, loop
     }
     this.destroy()
-    return this.mashMedia = mashMedia(args)
+    return this.mashMedia = mashMedia(mashAndMedia, editorArgs)
   }
 
   private mashMediaObject?: MashMediaObject
@@ -825,12 +825,10 @@ export class EditorClass implements Editor {
       Object.assign(target, definitionObject)
       
       if (isMedia(target)) {
-        target.clientMedia = undefined
-        if (isVideoMedia(target)) {
-          target.loadedVideo = undefined
-        }
-        else if (isUpdatableDurationDefinition(target)) target.loadedAudio = undefined
-        else if (isImageMedia(target)) target.loadedImage = undefined
+        delete target.request.response
+        if (isVideoMedia(target)) delete target.loadedVideo 
+        if (isUpdatableDurationDefinition(target)) delete target.loadedAudio 
+        if (isImageMedia(target)) delete target.loadedImage
       }    
     } 
     const { mashMedia } = this

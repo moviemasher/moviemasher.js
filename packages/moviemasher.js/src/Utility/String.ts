@@ -1,7 +1,7 @@
 import { assertObject, isAboveZero, isPopulatedString } from "./Is"
 import { Rect, RectZero } from "./Rect"
 
-export const stringSeconds = (seconds : number, fps : number = 0, lengthSeconds : number = 0) : string => {
+export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : string => {
   const bits: string[] = []
   let pad = 2
   let time = 60 * 60 // an hour
@@ -96,7 +96,6 @@ export const stringFamilySizeRect = (string: string, family: string, size: numbe
     actualBoundingBoxDescent, 
     actualBoundingBoxLeft, 
     actualBoundingBoxRight, 
-    width, 
   } = metrics
   // console.log("stringFamilySizeRect", "actualBoundingBoxAscent", actualBoundingBoxAscent, "actualBoundingBoxDescent", actualBoundingBoxDescent)
   return {

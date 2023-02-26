@@ -1,9 +1,13 @@
 import ffmpeg from 'fluent-ffmpeg'
+import path from 'path'
 
-import { TranscodeOutput, errorCaught, ValueRecord, PotentialError, assertPopulatedString, EncodeType, idGenerateString, urlFilename, RenderingCommandOutput, ImageType, VideoType, AudioType, TranscodeType } from '@moviemasher/moviemasher.js'
+import { 
+  TranscodeOutput, errorCaught, ValueRecord, assertPopulatedString, 
+  idGenerateString, urlFilename, RenderingCommandOutput, ImageType, 
+  VideoType, AudioType, TranscodingType 
+} from '@moviemasher/moviemasher.js'
 import { hashMd5 } from '../Utility/Hash'
 import { Environment, environment } from '../Environment/Environment'
-import path from 'path'
 import { TranscodeResponse } from './Transcode'
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
@@ -16,11 +20,11 @@ const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(a
 )
 
 export interface Transcoder {}
-const outputCommand = (inputPath: string, type: TranscodeType, commandOutput: RenderingCommandOutput) => {
+const outputCommand = (inputPath: string, type: TranscodingType, commandOutput: RenderingCommandOutput) => {
   const { 
     options = {},
-  videoBitrate, videoCodec, videoRate, width, height, audioBitrate, audioChannels, audioCodec, audioRate
-  
+    videoBitrate, videoCodec, videoRate, width, height, 
+    audioBitrate, audioChannels, audioCodec, audioRate
   } = commandOutput
   const command = ffmpeg()
   command.addInput(inputPath)
@@ -49,24 +53,22 @@ export const transcode = (localPath: string, output: TranscodeOutput): Promise<T
   const { extension, format } = options
   const ext = extension || format
   assertPopulatedString(ext, 'output extension')
-  const hash = hashMd5(idGenerateString())
+
+  const id = idGenerateString()
+  const hash = hashMd5(id)
   const temporaryDirectory = environment(Environment.API_DIR_TEMPORARY)
   const outputPath = path.resolve(temporaryDirectory, urlFilename(hash, ext))
-
   assertPopulatedString(localPath)
+
   const command = outputCommand(localPath, type, options)
-  
-  const promise = new Promise<PotentialError>(resolve => {
-    const result: TranscodeResponse = {}
+  const promise = new Promise<TranscodeResponse>(resolve => {
     command.on('error', (error) => { resolve(errorCaught(error)) })
-    command.on('end', () => { resolve(result) })
+    command.on('end', () => { resolve({ id }) })
     try { command.save(outputPath) }
     catch (error) { resolve(errorCaught(error)) }
   })
   return promise
 }
-
-
 
 /*
 from RenderingProcessClass

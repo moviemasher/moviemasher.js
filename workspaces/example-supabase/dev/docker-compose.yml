@@ -1,0 +1,18 @@
+version: "3"
+name: moviemasher-example-supabase
+services:
+  service:
+    image: httpd:2.4
+    container_name: moviemasher-example-supabase-3000
+    ports:
+      - 3000:80
+    volumes:
+      - ../src/index.html:/usr/local/apache2/htdocs/index.html
+      - ../iife/example-supabase.js:/usr/local/apache2/htdocs/example-supabase.js
+      - ../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:/usr/local/apache2/htdocs/moviemasher.js
+      - ../../../packages/theme-default/umd/theme-default.js:/usr/local/apache2/htdocs/theme-default.js
+      - ../../../packages/theme-default/moviemasher.css:/usr/local/apache2/htdocs/moviemasher.css
+      - ../../../packages/client-react/umd/client-react.js:/usr/local/apache2/htdocs/client-react.js
+      - ../../../packages/client-core/umd/client-core.js:/usr/local/apache2/htdocs/client-core.js
+      - ../../../packages/protocol-supabase/umd/protocol-supabase.js:/usr/local/apache2/htdocs/protocol-supabase.js

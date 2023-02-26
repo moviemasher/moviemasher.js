@@ -13,7 +13,7 @@ export enum Environment {
   APP_COLUMN_SOURCE = 'MOVIEMASHER_APP_COLUMN_SOURCE',
 }
 
-export const environmentDefaults: StringRecord = {
+const EnvironmentDefaults: StringRecord = {
   [Environment.API_PORT]: '3000',
   [Environment.API_HOST]: 'localhost',
   [Environment.API_KEYPATH_TYPE]: 'type',
@@ -22,7 +22,7 @@ export const environmentDefaults: StringRecord = {
   [Environment.API_DIR_TEMPORARY]: './temporary',
   [Environment.API_DIR_CACHE]: './temporary/cache',
   [Environment.API_DIR_VALID]: 'shared',
-  [Environment.API_DIR_FILE_PREFIX]: './images/standalone/public/media',
+  [Environment.API_DIR_FILE_PREFIX]: './workspaces/example-standalone/public/media',
   [Environment.APP_COLUMN_OWNER]: 'user_id',
   [Environment.APP_COLUMN_SOURCE]: 'object_id',
 }
@@ -32,8 +32,6 @@ export const environment = (key: Environment): string => {
   const { [key]: value } = env
   if (isPopulatedString(value)) return value
 
-  const { [key]: defaultValue } = environmentDefaults
-  if (isPopulatedString(defaultValue)) return defaultValue
-
-  return ''
+  const { [key]: defaultValue } = EnvironmentDefaults
+  return isPopulatedString(defaultValue) ? defaultValue : ''
 }

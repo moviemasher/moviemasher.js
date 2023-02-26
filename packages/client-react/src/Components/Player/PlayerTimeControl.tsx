@@ -17,7 +17,7 @@ export function PlayerTimeControl(props: PlayerTimeControlProps): ReactResult {
   useListeners({
     [EventType.Time]: update,
     [EventType.Duration]: update,
-  }, editor.eventTarget)
+  })
  
   const onChange: SliderChangeHandler = (_event, values) => {
     const number = isArray(values) ? values[0] : values

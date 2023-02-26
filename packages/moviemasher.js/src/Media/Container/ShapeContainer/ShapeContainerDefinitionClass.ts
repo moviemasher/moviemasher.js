@@ -12,10 +12,7 @@ import { Size, sizeAboveZero, sizeCover } from "../../../Utility/Size"
 import { centerPoint } from "../../../Utility/Rect"
 import { DefaultContainerId } from "../Container"
 import { MediaBase } from "../../MediaBase"
-import { ClientMediaOrError } from "../../../ClientMedia"
 import { ImageType } from "../../../Setup/Enums"
-import { ErrorName } from "../../../Helpers/Error/ErrorName"
-import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -52,10 +49,6 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
 
   isVector = true
 
-  get clientMediaPromise(): Promise<ClientMediaOrError> {
-    console.trace(this.constructor.name, 'clientMediaPromise')
-    return errorThrow(ErrorName.Unimplemented)
-  }
   path = ""
 
   pathHeight = 0

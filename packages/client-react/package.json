@@ -1,11 +1,13 @@
 {
   "name": "@moviemasher/client-react",
   "version": "5.1.2",
-  "description": "Movie Masher Client Plugin implemented in ReactJS - version 5.1.2",
-  "browser": "umd/client-react.js",
-  "main": "esm/client-react.js",
-  "type": "module",
-  "types": "types/client-react.d.ts",
+  "description": "Movie Masher ReactJS Client Plugin - version 5.1.2",
+
+  "files": ["esm", "umd"],
+  "main": "umd/client-react.js",
+  "module": "esm/client-react.mjs",
+  "types": "esm/client-react.d.mts",
+
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -20,33 +22,25 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --outfile=esm/client-react.js",
-    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --outfile=esm/client-react.min.js --minify",
-    "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
-    "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "copy-types": "mkdir -p types && mv -f umd/*.d.* types/",
-    "build": "run-s build-esm build-esm-min build-umd build-umd-min copy-types"
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",
     "@moviemasher/theme-default": "5.1.2",
     "@moviemasher/client-core": "5.1.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0"
+    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.0.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
+  "eslintConfig": { "extends": ["react-app"] },
   "typedoc": {
     "entryPoint": "./src/index.ts",
     "readmeFile": "./README.md",
-    "displayName": "client-react",
-    "tsconfig": "./dev/tsconfig.json"
+    "displayName": "client-react"
   }
 }

@@ -1,7 +1,9 @@
 
 import { 
-  assertDecoding, RenderingCommandOutput, assertObject, Time, 
-  timeFromArgs 
+  assertProbing, RenderingCommandOutput, Time, 
+  timeFromArgs, 
+  ProbeType,
+  assertDefined
 } from "@moviemasher/moviemasher.js"
 import { outputDefaultPng } from "../Defaults/OutputDefault"
 import { FilterGraphsOptions } from "../Encode/FilterGraphs/FilterGraphs"
@@ -18,11 +20,11 @@ export class ImageOutputClass extends RenderingOutputClass {
     // console.log(this.constructor.name, "commandOutput", definition.label)
 
     const decoding = definition.decodings.find(object => object.type === ProbeType)
-    assertProbeDecoding(definition)
-    const { info } = definition
-    assertObject(info, 'info')
-
-    const { streams } = info
+    assertProbing(decoding)
+    const { data } = decoding
+    const { raw } = data
+    assertDefined(raw)
+    const { streams } = raw
     const [stream] = streams
     const { codec_name } = stream
     if (codec_name !== 'png') {

@@ -8,7 +8,6 @@ import {
 } from 'react-icons/bi'
 import { 
   BsSkipStartFill, BsSkipEndFill,
-  BsReverseLayoutSidebarInsetReverse, 
   BsFillCircleFill, 
   BsRssFill, BsRss,
   BsSkipEnd, BsAspectRatioFill, BsHandIndexThumbFill, BsFillMicFill,
@@ -21,10 +20,8 @@ import {
   CiStreamOn
 } from 'react-icons/ci'
 import { 
-  FaUserCircle,
   FaExclamationCircle,
   FaRegCheckCircle,
-  FaRegHandPointer,
 } from 'react-icons/fa'
 import { 
   GiDirectorChair,
@@ -61,25 +58,16 @@ import {
   RiChatVoiceFill,
   RiVideoChatFill,
   RiImageFill,
-  RiMvLine,
-  RiMusicLine,
-  RiVideoLine,
-  RiArrowLeftRightLine,
-  RiArrowRightSLine,
   RiArrowGoBackLine,
   RiArrowGoForwardLine,
   RiDeleteBin7Line,
   RiAddLine,
-  RiEyeLine,
   RiEyeOffLine,
   RiVolumeUpLine,
   RiVolumeMuteLine,
   RiBroadcastFill,
-  RiUserSettingsFill,
   RiStackFill,
   RiStackLine,
-  RiChat3Fill,
-  RiMessage3Fill,
   RiEdit2Fill,
   RiFolderLine,
   RiFolderOpenLine,
@@ -96,7 +84,7 @@ import {
   VscTriangleDown,
 } from 'react-icons/vsc'
 
-export type ThemeIcons = Record<string, JSX.Element>
+// export type ThemeIcons = Record<string, JSX.Element>
 
 
 const MMWideIcon = () => {
@@ -145,7 +133,7 @@ const MMTubeIcon = () => {
   </svg>
 }
 
-export const Icons: ThemeIcons = {
+export const Icons = {
   // audible: <RiVolumeUpLine key='audible' />,
   // audio: <RiMusicLine key="audio" />,
   // chat: <RiChat3Fill key='chat' />,

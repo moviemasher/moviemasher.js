@@ -1,7 +1,7 @@
 import { NumberRecord, PopulatedString, Scalar, Value } from "../declarations"
 import { Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
-import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock, sizeRound, sizeFloor } from "./Size"
+import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock } from "./Size"
 import { colorRgbaToHex, colorRgbToHex, colorToRgb, colorToRgba, colorValidHex } from "../Helpers/Color/ColorFunctions"
 import { assertNumber, assertPopulatedString, assertPositive, assertString, assertTrue, isArray, isDefined, isNumber, isObject, isPopulatedString } from "./Is"
 import { colorMixRbg, colorMixRbga } from "../Helpers/Color/ColorFunctions"
@@ -104,7 +104,7 @@ export const tweenOption = (optionStart: Scalar, optionEnd: Scalar, pos: string,
   const end = round ? Math.round(optionEnd) : optionEnd
   if (start === end) return start
  
-  const nCased = pos.includes('n') ? 'n' : 'N'
+  // const nCased = pos.includes('n') ? 'n' : 'N'
   return  `(${start}+(${end - start}*${pos}))` // `(${start}+(${nCased} * 10))` //
 }
 

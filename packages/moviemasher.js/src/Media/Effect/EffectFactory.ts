@@ -37,9 +37,9 @@ export const effectFromId = (id: string): Effect => {
 MediaFactories[EffectType] = effectDefinition
 MediaDefaults[EffectType].push(
   effectDefinition(effectBlurJson),
-  effectDefinition(effectChromaKeyJson),
-  effectDefinition(effectEmbossJson),
-  effectDefinition(effectGrayscaleJson),
-  effectDefinition(effectSepiaJson),
-  effectDefinition(effectSharpenJson),
+  // effectDefinition(effectChromaKeyJson),
+  // effectDefinition(effectEmbossJson),
+  // effectDefinition(effectGrayscaleJson),
+  // effectDefinition(effectSepiaJson),
+  // effectDefinition(effectSharpenJson),
 )

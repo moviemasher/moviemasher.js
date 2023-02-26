@@ -1,12 +1,5 @@
 import React from 'react'
 
-// TODO: determine if we really need to repeat this
-declare global {
-  interface Window {
-    webkitAudioContext: typeof AudioContext
-  }
-}
-
 export type UnknownChangeEvent = React.ChangeEvent<{}>
 export type SliderChangeHandler = (event: UnknownChangeEvent, value: number | number[]) => void
 export type NodeObject = Exclude<React.ReactNode, boolean | null | undefined>
@@ -50,3 +43,5 @@ export type PropsMethod<I, O> = (input?: I) => O
 export interface WithClassName extends Record<string, unknown> {
   className?: string
 }
+
+export type ThemeIcons = Record<string, JSX.Element>

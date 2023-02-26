@@ -1,12 +1,18 @@
 import { Endpoint } from "./Endpoint";
-import { isNumeric, isPopulatedString } from "../../Utility/Is";
+import { isNumeric, isObject, isPopulatedString } from "../../Utility/Is";
 import { urlEndpoint, urlHasProtocol, urlIsBlob } from "../../Utility/Url";
+import { errorThrow } from "../Error/ErrorFunctions";
 
-/**
- * 
- * @param endpoint 
- * @returns absolute URL from potentially relative endpoint  
- */
+export const isEndpoint = (value: any): value is Endpoint => {
+  return isObject(value)
+}
+
+
+export function assertEndpoint(value: any, name?: string): asserts value is Endpoint {
+  if (!isEndpoint(value)) errorThrow(value, 'Endpoint', name)
+}
+
+
 export const endpointUrl = (endpoint: Endpoint): string => {
   const absolute = endpointAbsolute(endpoint)
   const { protocol, hostname, pathname, port, search  } = absolute
@@ -41,7 +47,7 @@ export const endpointIsAbsolute = (endpoint: Endpoint): boolean => {
 
 /**
  * 
- * @param endpoint 
+ * @param endpoint - relative or absolute Endpoint
  * @returns endpoint if absolute, otherwise endpoint relative to base URL
  */
 export const endpointAbsolute = (endpoint: Endpoint): Endpoint => {

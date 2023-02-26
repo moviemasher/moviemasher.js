@@ -2,6 +2,8 @@ import { Size, sizeAboveZero } from "../../Utility/Size"
 import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass } from "./UpdatableSize"
 import { isAboveZero } from "../../Utility/Is"
 import { ContentDefinitionClass } from "../../Media/Content/Content"
+import { isProbing } from "../../Plugin/Decode/Probe/Probing/ProbingFunctions"
+import { ProbeType } from "../../Plugin/Decode/Decoder"
 
 export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {
@@ -20,12 +22,12 @@ export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(B
 
     get previewSize(): Size | undefined {
       const transcoding = this.transcodings.find(transcoding => {
-        return transcoding.clientMedia
+        return transcoding.request.response
       })
       // console.log(this.constructor.name, "previewSize transcoding", transcoding)
       if (!transcoding) return this.sourceSize
 
-      const { clientMedia } = transcoding
+      const { response: clientMedia } = transcoding.request
       if (!sizeAboveZero(clientMedia)) return 
 
       const { width, height } = clientMedia
@@ -35,13 +37,14 @@ export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(B
     }
 
     get sourceSize(): Size | undefined {
-      const decoding = this.decodings.find(object => object.info)
-      if (!decoding) return
+      const probing = this.decodings.find(decoding => decoding.type === ProbeType)
+      if (isProbing(probing)) {
+        const { data } = probing
+        const { width, height } = data
+        if (!(isAboveZero(width) && isAboveZero(height))) return 
 
-      const { width, height } = decoding.info!
-      if (!(isAboveZero(width) && isAboveZero(height))) return 
-
-      return { width, height }
+        return { width, height }
+      }
     }
     
 

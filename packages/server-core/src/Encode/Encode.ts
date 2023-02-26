@@ -1,7 +1,7 @@
 import { 
   AVType, CommandFilters, CommandInputs, errorThrow, GraphFiles, MashMedia, 
-  EncodeOutput, MashMediaObject, MediaArray, EncodeType, Time, RenderingCommandOutput, 
-  CommandOutput, MediaResponse 
+  EncodeOutput, MashMediaObject, MediaArray, EncodingType, Time, RenderingCommandOutput, 
+  CommandOutput, DefiniteError, Identified 
 } from "@moviemasher/moviemasher.js"
 import { Input } from "../declarations"
 import { isMediaRequest, MediaRequest } from "../Media/Media"
@@ -23,7 +23,7 @@ export function assertEncodeRequest(value: any): asserts value is EncodeRequest 
   if (!isEncodeRequest(value)) errorThrow(value, 'EncodeRequest')
 }
 
-export interface EncodeResponse extends MediaResponse {}
+export type EncodeResponse = DefiniteError | Identified
 
 export interface CommandOptions extends CommandDescription {
   output: CommandOutput
@@ -44,7 +44,7 @@ export type CommandDescriptions = CommandDescription[]
 export interface RenderingResult {
   error?: string
   warning?: string
-  outputType: EncodeType
+  outputType: EncodingType
   destination?: string
 }
 
@@ -73,7 +73,7 @@ export interface RenderingOutput {
   renderingDescriptionPromise(renderingResults?: RenderingResult[]): Promise<RenderingDescription>
   /** seconds between startTime and endTime, but zero for image outputs */
   duration: number
-  outputType: EncodeType
+  outputType: EncodingType
   avType: AVType
   /** supplied time, or mash.time */
   startTime: Time

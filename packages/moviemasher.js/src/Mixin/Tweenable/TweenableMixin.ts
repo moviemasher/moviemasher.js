@@ -276,7 +276,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
 
     scaleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const { time, containerRects, filterInput: input, videoRate } = args
-      let filterInput = input
+      const filterInput = input
       assertPopulatedString(filterInput, 'filterInput')
 
       assertArray(containerRects, 'containerRects')
@@ -369,25 +369,23 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       
       const { selectType } = this
       const undoValue = this.value(name)
-      const target = this
       const type = dataType === DataType.Frame ? ActionType.ChangeFrame : ActionType.Change
       const selectedProperty: SelectedProperty = {
         selectType, property, value: undoValue, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
-          actions.create({ type, property, target, redoValue, undoValue })
+          actions.create({ type, property, target: this, redoValue, undoValue })
         }
       }
       // console.log(this.constructor.name, "selectedProperties", name)
       properties.push(selectedProperty)
       if (tweenable) {
         const tweenName = [name, PropertyTweenSuffix].join('')
-        const target = this
         const undoValue = this.value(tweenName)
         const selectedPropertEnd: SelectedProperty = {
           selectType, property, value: undoValue, name: tweenName,
           changeHandler: (property: string, redoValue: Scalar) => {            
-            actions.create({ property, target, redoValue, undoValue })
+            actions.create({ property, target: this, redoValue, undoValue })
           }
         }
         // console.log(this.constructor.name, "selectedProperties", tweenName)

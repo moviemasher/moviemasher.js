@@ -3,8 +3,8 @@ import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
 import { assertMediaType, DataType, MediaType } from "../Setup/Enums"
 
 import { Property, propertyInstance } from "../Setup/Property"
-import { assertPopulatedString } from "../Utility/Is"
-import { requestPromise } from "../Utility/Request"
+import { assertPopulatedString, isDefiniteError } from "../Utility/Is"
+import { requestPromise } from "../Helpers/Request/RequestFunctions"
 import { Size } from "../Utility/Size"
 import { Media, MediaInstance, MediaInstanceObject, MediaObject } from "./Media"
 import { MediaInstanceBase } from "./MediaInstanceBase"
@@ -41,7 +41,7 @@ export class MediaBase extends RequestableClass implements Media {
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    return errorThrow(ErrorName.Unimplemented)
+    return //errorThrow(ErrorName.Unimplemented)
   }
   
   file?: File | undefined
@@ -85,10 +85,9 @@ export class MediaBase extends RequestableClass implements Media {
     if (this.serverPath) return Promise.resolve()
 
     const { request } = this
-    return requestPromise(request).then(response => {
-      const { error, path } = response
-      if (!error) {
-        assertPopulatedString(path, 'path')
+    return requestPromise(request).then(orError => {
+      if (!isDefiniteError(orError)) {
+        const { path } = orError
         this.serverPath = path
       }
     })

@@ -5,19 +5,19 @@ import { DataType, Orientation, FontType } from "../../Setup/Enums"
 import { Font, FontMedia, FontMediaObject, FontObject } from "./Font"
 import { MediaBase } from "../MediaBase"
 import { EmptyMethod } from "../../Setup/Constants"
-import { requestFontPromise } from "../../Utility/Request"
+import { requestFontPromise } from "../../Helpers/Request/RequestFunctions"
 import { Size, sizeCover } from "../../Utility/Size"
 import { centerPoint, Rect } from "../../Utility/Rect"
 import { svgSvgElement, svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { assertClientFont, isClientFont } from "../../ClientMedia/ClientMediaFunctions"
-import { assertPopulatedString, isPopulatedString, isUndefined } from "../../Utility/Is"
+import { isClientFont } from "../../ClientMedia/ClientMediaFunctions"
+import { assertPopulatedString, isDefiniteError, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PointZero } from "../../Utility/Point"
 import { stringFamilySizeRect } from "../../Utility/String"
 import { FontClass } from "./FontClass"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
+import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { Requestable } from "../../Base/Requestable/Requestable"
 import { Default } from "../../Setup/Default"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
@@ -46,9 +46,6 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
       name: 'width', tweenable: true, custom: true, type: DataType.Percent, 
       defaultValue: 0.8, max: 2.0, group: DataGroup.Size
     }))
-    
-    const { clientMedia } = this
-    if (isClientFont(clientMedia)) this.loadedFont = clientMedia
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
@@ -89,7 +86,9 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     if (!visible) return []
     
     const { request } = this
-    const file = endpointUrl(request.endpoint) 
+    const { endpoint } = request
+    assertEndpoint(endpoint)
+    const file = endpointUrl(endpoint) 
 
 
     // const file = editing ? url : source
@@ -136,9 +135,10 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     
     const { request } = transcoding
     return requestFontPromise(request).then(orError => {
-      const { error, clientFont: loadedFont } = orError
-      if (error) return errorThrow(error)
-      assertClientFont(loadedFont)
+      if (isDefiniteError(orError)) return errorThrow(orError.error)
+
+      const { data: loadedFont } = orError
+      // assertClientFont(loadedFont)
       
       this.family = loadedFont.family
       this.loadedFont = loadedFont

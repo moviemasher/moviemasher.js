@@ -1,9 +1,14 @@
 import { 
-  Media, Request, MediaType, 
-  Encoding, Transcoding, Decoding, CookedTypes,
-  PotentialError, ImageType, AudioType, VideoType, MashMedia, Endpoints, ProbeType, DurationProbe, AlphaProbe, SizeProbe, AudibleProbe
+  AlphaProbe, AudibleProbe, AudioType, CookedTypes, DecodeOutput, Decoding, 
+  DurationProbe, Encoding, Endpoints, ImageType, LoadType, MashMedia, MashType, 
+  Media, MediaType, MediaTypes, OrderDecending, PotentialError, ProbeType, 
+  RawTypes, Request, SizeProbe, StringRecord, Strings, TranscodeOutput, 
+  Transcoding, VideoType 
 } from "@moviemasher/moviemasher.js"
-import { DecodeTypesByMediaType, TranscodeTypesByMediaType } from "../declarations"
+
+export interface DecodeTypesByMediaType extends Record<LoadType, DecodeOutput[]> {}
+export interface TranscodingTypesByMediaType extends Record<LoadType, TranscodeOutput[]> {}
+
 
 export type ReadOperation = 'read'
 export type WriteOperation = 'write'
@@ -25,12 +30,15 @@ export const isOperation = (value: any): value is Operation => {
 
 
 export interface Client {
+  accept(options?: ClientSaveOptions): string | undefined
   enabled(operation?: Operation): boolean
-  decode(args: ClientDecodeOptions): Promise<Decoding>
-  encode(args: ClientEncodeOptions): Promise<Encoding>
-  media(args: ClientReadOptions): Promise<ClientArrayResponse>
-  save(media: Media, args?: ClientSaveOptions): Promise<ClientObjectResponse>
-  transcode(args: ClientTranscodeOptions): Promise<Transcoding>
+  decode(options: ClientDecodeOptions): Promise<Decoding>
+  encode(mashMedia: MashMedia, options?: ClientEncodeOptions): Promise<Encoding>
+  list(options?: ClientReadOptions): Promise<ClientArrayResponse>
+  get(options?: ClientReadOptions): Promise<ClientObjectResponse>
+
+  save(media: Media, options?: ClientSaveOptions): Promise<ClientObjectResponse>
+  transcode(options: ClientTranscodeOptions): Promise<Transcoding>
 }
 
 
@@ -39,35 +47,33 @@ export interface ClientDecodeOptions {
 }
 
 export interface ClientEncodeOptions {
-  autoTranscode?: TranscodeTypesByMediaType | false
+  autoTranscode?: TranscodingTypesByMediaType | false
 }
 
 export interface ClientTranscodeOptions {
-  autoTranscode?: TranscodeTypesByMediaType | false
+  autoTranscode?: TranscodingTypesByMediaType | false
 }
-
-export interface ClientReadOptions {
-  type?: MediaType
-  kind?: string
+export interface ClientReadParams {
+  type?: MediaType | MediaTypes
+  kind?: string | Strings
+  order?: string | StringRecord
+}
+export interface ClientReadOptions extends ClientReadParams {
+  autoGet?: ClientReadParams | false
   getRequest?: Request | false
   listRequest?: Request | false
-}
-
-export interface UploadMediaArgs {
-
 }
 
 export interface ClientArgs extends Required<ClientOptions> {}
 
 export interface ClientWriteOptions {
-
+  accept?: string | Strings 
   saveRequest?: Request | false
   deleteRequest?: Request | false
   uploadRequest?: Request | false
   uploadResponseIsRequest?: boolean
   uploadCookedTypes?: CookedTypes
 }
-
 
 export interface ClientOptions {
   [ReadOperation]?: ClientReadOptions | false | undefined
@@ -113,6 +119,7 @@ export const ClientDefaultArgs: ClientArgs = {
 
   },
   [ReadOperation]: {
+    autoGet: { type: MashType, order: { created_at: OrderDecending }},
     getRequest: { endpoint: { pathname: Endpoints.data.definition.get } }, 
     listRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },
       
@@ -128,6 +135,7 @@ export const ClientDefaultArgs: ClientArgs = {
     },
   },
   [WriteOperation]: {
+    accept: RawTypes.map(type => `${type}/*`),
     saveRequest: { endpoint: { pathname: Endpoints.data.definition.put} }, 
     deleteRequest: { endpoint: { pathname: Endpoints.data.definition.delete } }, 
     uploadRequest: { endpoint: { pathname: Endpoints.data.definition.retrieve } },

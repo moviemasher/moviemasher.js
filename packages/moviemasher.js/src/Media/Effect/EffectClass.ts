@@ -68,14 +68,13 @@ export class EffectClass extends EffectContainerWithContainer {
   selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => { 
       const undoValue = this.value(property.name)
-      const target = this
       return {
         value: undoValue,
         selectType: SelectType.None, property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       
-          const options = { target, property, redoValue, undoValue }
+          const options = { target: this, property, redoValue, undoValue }
           actions.create(options)
         }
       }

@@ -1,7 +1,7 @@
 import path from "path"
 import fs from 'fs'
 import Ffmpeg from "fluent-ffmpeg"
-import { ErrorName, errorObject, LoadedInfo, Sizes } from "@moviemasher/moviemasher.js"
+import { ErrorName, errorObject, ProbingData, Sizes } from "@moviemasher/moviemasher.js"
  
 import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
@@ -32,7 +32,7 @@ export class Probe {
     return path.join(parentDir, `${zeros}1${ext}`)
   }
 
-  static promise(temporaryDirectory: string, file: string, destination?: string): Promise<LoadedInfo> {
+  static promise(temporaryDirectory: string, file: string, destination?: string): Promise<ProbingData> {
     const src = this.probeFile(file)
     const relative = path.relative('./', file)
     const parentDir = path.dirname(src)
@@ -42,7 +42,7 @@ export class Probe {
     const dest = destination || path.join(parentDir, `${path.basename(src)}.json`)
     if (fs.existsSync(dest)) {
       return fs.promises.readFile(dest).then(buffer => (
-        JSON.parse(buffer.toString()) as LoadedInfo
+        JSON.parse(buffer.toString()) as ProbingData
       ))
     }
 
@@ -51,7 +51,7 @@ export class Probe {
     return new Promise((resolve, reject) => {
       fs.promises.mkdir(path.dirname(dest), { recursive: true }).then(() => {
         process.ffprobe((error: any, data: Ffmpeg.FfprobeData) => {
-          const info: LoadedInfo = { 
+          const info: ProbingData = { 
             audible: false, ...SizeZero, info: data, 
             extension: path.extname(src).slice(1)
           }

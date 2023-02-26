@@ -1,4 +1,6 @@
-import { errorThrow, Identified, isObject, isPopulatedString, Output, Request, Requests } from "@moviemasher/moviemasher.js";
+import { 
+  isIdentified, errorThrow, Identified, isObject, Output, Request, Requests 
+} from "@moviemasher/moviemasher.js";
 import { Input } from "../declarations";
 
 export interface MediaEvent {
@@ -11,7 +13,9 @@ export interface MediaRequest extends Identified {
   output: Output
 }
 export const isMediaRequest = (value: any): value is MediaRequest => {
-  return isObject(value) && isPopulatedString(value.id) && isObject(value.input)
+  return isIdentified(value) && 
+    "input" in value && 
+    isObject(value.input)
 }
 export function assertMediaRequest(value: any): asserts value is MediaRequest {
   if (!isMediaRequest(value)) errorThrow(value, 'MediaRequest')

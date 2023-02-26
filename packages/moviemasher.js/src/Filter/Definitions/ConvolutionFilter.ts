@@ -1,4 +1,4 @@
-import { ScalarRecord, StringRecord, ValueRecord } from "../../declarations"
+import { Numbers, ScalarRecord, StringRecord, ValueRecord } from "../../declarations"
 import { SvgFilters } from "../../Helpers/Svg/Svg"
 import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
 import { FilterDefinitionClass } from "../FilterDefinitionClass"
@@ -60,9 +60,6 @@ import { FilterDefinitionObject } from "../Filter"
   }
 }
 
-export type Numbers = number[]
-export type NumbersOrUndefined = Numbers | undefined
-export type NumberOrUndefined = number | undefined
 
 export type ConvolutionRgba = 'r' | 'b' | 'g' | 'a'
 export type ConvolutionChannel = 'combined' | ConvolutionRgba

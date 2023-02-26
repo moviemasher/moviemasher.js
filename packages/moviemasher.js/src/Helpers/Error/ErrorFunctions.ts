@@ -4,6 +4,7 @@ import { DefiniteError, ErrorObject } from "./Error"
 
 export type ErrorContext = ValueRecord | string | undefined
 
+
 export const isErrorName = (value: any): value is ErrorName => (
   (typeof value === 'string') && ErrorNames.includes(value as ErrorName)
 )
@@ -16,10 +17,8 @@ export const errorMessage = (name: ErrorName, context?: ErrorContext): string =>
 }
 
 export const errorObject = (message: string, name: string = ErrorName.Internal, cause?: unknown): ErrorObject => {
-
-  const error = new Error(message, { cause })
-  error.name = name
-  
+  const error = new Error(message)
+  Object.assign(error, { name, cause })
   return error
 }
 

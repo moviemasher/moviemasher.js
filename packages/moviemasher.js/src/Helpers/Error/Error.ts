@@ -1,6 +1,3 @@
-import { UnknownRecord } from "../../declarations"
-
-
 export interface ErrorObject {
   message: string
   name: string
@@ -13,6 +10,7 @@ export interface PotentialError  {
 
 export interface DefiniteError extends Required<PotentialError> {}
 
-export interface PathOrError extends PotentialError {
-  path?: string;
+export interface PathData {
+  path: string
 }
+export type PathDataOrError = DefiniteError | PathData

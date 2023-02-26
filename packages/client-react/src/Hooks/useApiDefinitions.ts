@@ -1,81 +1,70 @@
-import React from "react"
 import { 
-  assertDefined, Editor, MediaArray, 
-  MediaType, ServerType, DataDefinitionRetrieveRequest, 
-  Endpoints, DataDefinitionRetrieveResponse, 
+  MediaArray, MediaTypes, 
 } from "@moviemasher/moviemasher.js"
+import { 
+  ReadOperation 
+} from "@moviemasher/client-core"
 
-import { MasherContext } from "../Components/Masher/MasherContext"
-import { ApiContext } from "../Components/ApiClient/ApiContext"
-import { ClientContext } from "../Contexts/ClientContext"
 import { useClient } from "./useClient"
 
-const ApiDefinitionsEvent = 'api-definitions'
-const ApiDefinitionsDisabled = 'disabled'
-const ApiDefinitionsEmpty = 'empty'
+// const ApiDefinitionsEvent = 'api-definitions'
+// const ApiDefinitionsDisabled = 'disabled'
+// const ApiDefinitionsEmpty = 'empty'
 
-
-export const useApiDefinitions = (types: MediaType[] = []): [Editor, MediaArray] => {
+export const useApiDefinitions = (types: MediaTypes = []): MediaArray => {
 
   const client = useClient()
+  if (!client.enabled(ReadOperation)) return []
 
-  const apiContext = React.useContext(ApiContext)
-  const masherContext = React.useContext(MasherContext)
-  const { enabled, servers, endpointPromise } = apiContext
-  const { editor } = masherContext
-  assertDefined(editor)
   
-  const storeRef = React.useRef<Record<string, MediaArray>>({})
+  // const storeRef = React.useRef<Record<string, MediaArray>>({})
 
-  const { eventTarget } = editor
-  const { media } = editor
+  // const { eventTarget } = editor
 
-  const definitionsPromise = (key: string) => {
-    const request: DataDefinitionRetrieveRequest = { types }
-    console.debug("DataDefinitionRetrieveRequest", Endpoints.data.definition.retrieve, request)
-    return endpointPromise(
-      Endpoints.data.definition.retrieve, request
-    ).then((response: DataDefinitionRetrieveResponse) => {
-      console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
-      const { definitions } = response
-      const array = storeRef.current[key]
-      array.push(...definitions.map(def => media.media(def)))
-      eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent))
-    })
-  }
+  // const definitionsPromise = (key: string) => {
+
+  //   const options: ClientReadOptions = { type: types }
+  //   return client.list(options).then((response: ClientArrayResponse) => {
+  //     console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
+  //     const { error, data } = response
+  //     if (!data) return
+  //     const array = storeRef.current[key]
+  //     array.push(...data)
+  //     eventTarget.dispatchEvent(new CustomEvent(ApiDefinitionsEvent))
+  //   })
+  // }
   
-  const snapshotInitialize = (key: string): MediaArray => {
-    switch(key) {
-      case ApiDefinitionsEmpty:
-      case ApiDefinitionsDisabled: break
-      default: definitionsPromise(key) 
-    }
-    return []
-  }
+  // const snapshotInitialize = (key: string): MediaArray => {
+  //   switch(key) {
+  //     case ApiDefinitionsEmpty:
+  //     case ApiDefinitionsDisabled: break
+  //     default: definitionsPromise(key) 
+  //   }
+  //   return []
+  // }
 
-  const currentKey = () => {
-    if (!(enabled && servers[ServerType.Data])) return ApiDefinitionsDisabled
+  // const currentKey = () => {
+  //   if (!types.length) return ApiDefinitionsEmpty
+
+  //   return types.join('-')
+  // }
+
+  // const snapshotGet = () => {
+  //   const key = currentKey()
+  //   const array = storeRef.current[key]
+  //   if (array) return array
     
-    if (!types.length) return ApiDefinitionsEmpty
+  //   // console.log("useApiDefinitions defining", key)
+  //   return storeRef.current[key] = snapshotInitialize(key)
+  // }
 
-    return types.join('-')
-  }
-
-  const snapshotGet = () => {
-    const key = currentKey()
-    const array = storeRef.current[key]
-    if (array) return array
-    
-    // console.log("useApiDefinitions defining", key)
-    return storeRef.current[key] = snapshotInitialize(key)
-  }
-
-  const externalStore = React.useSyncExternalStore<MediaArray>((callback) => {
-    eventTarget.addEventListener(ApiDefinitionsEvent, callback)
-    return () => {
-      eventTarget.removeEventListener(ApiDefinitionsEvent, callback)
-    }
-  }, snapshotGet)
+  const externalStore: MediaArray = []
+  // React.useSyncExternalStore<MediaArray>((callback) => {
+  //   eventTarget.addEventListener(ApiDefinitionsEvent, callback)
+  //   return () => {
+  //     eventTarget.removeEventListener(ApiDefinitionsEvent, callback)
+  //   }
+  // }, snapshotGet)
   
-  return [editor, externalStore]
+  return externalStore
 }

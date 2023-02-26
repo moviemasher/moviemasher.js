@@ -1,5 +1,5 @@
 import React from "react"
 import { Client } from "@moviemasher/client-core"
-import { ClientContext } from "../Contexts/ClientContext"
+import { MasherContext } from "../Components/Masher/MasherContext"
 
-export const useClient = (): Client => React.useContext(ClientContext).client!
+export const useClient = (): Client => React.useContext(MasherContext).client!

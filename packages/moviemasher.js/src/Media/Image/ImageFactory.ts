@@ -56,15 +56,15 @@ MediaFactories[ImageType] = imageDefinition
 MediaDefaults[ImageType].push(
   new ColorContentDefinitionClass({id: DefaultContentId, ...defaultContent}),
   new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
-  new ShapeContainerDefinitionClass(roundedRectContainer),
-  new ShapeContainerDefinitionClass(ovalContainer),
-  new ShapeContainerDefinitionClass(starburstContainer),
-  new ShapeContainerDefinitionClass(heartContainer),
-  new ShapeContainerDefinitionClass(cloudContainer),
-  new ShapeContainerDefinitionClass(fireContainer),
-  new ShapeContainerDefinitionClass(flagContainer),
-  new ShapeContainerDefinitionClass(mmContainer),
-  new ShapeContainerDefinitionClass(appleContainer),
+  // new ShapeContainerDefinitionClass(roundedRectContainer),
+  // new ShapeContainerDefinitionClass(ovalContainer),
+  // new ShapeContainerDefinitionClass(starburstContainer),
+  // new ShapeContainerDefinitionClass(heartContainer),
+  // new ShapeContainerDefinitionClass(cloudContainer),
+  // new ShapeContainerDefinitionClass(fireContainer),
+  // new ShapeContainerDefinitionClass(flagContainer),
+  // new ShapeContainerDefinitionClass(mmContainer),
+  // new ShapeContainerDefinitionClass(appleContainer),
 
 )
 

@@ -1,13 +1,14 @@
 import React from 'react'
 import { 
   BooleanSetter,
-  Editor, EditorIndex, EmptyMethod, Media, ScalarRecord 
+  Editor, EditorIndex, EmptyMethod, Media, ScalarRecord
 } from '@moviemasher/moviemasher.js'
-import type { ThemeIcons } from '@moviemasher/theme-default'
 
-import { Draggable } from '@moviemasher/client-core'
+import { Client, Draggable } from '@moviemasher/client-core'
+import { ThemeIcons } from '../../declarations'
 
 export interface MasherContextInterface {
+  client?: Client
   streaming: boolean
   setStreaming: BooleanSetter
   current: ScalarRecord
@@ -16,7 +17,6 @@ export interface MasherContextInterface {
   editor?: Editor
   editorIndex: EditorIndex
   icons: ThemeIcons
-  save: () => void
 }
 
 export const MasherContextDefault: MasherContextInterface = {
@@ -27,7 +27,6 @@ export const MasherContextDefault: MasherContextInterface = {
   drop: () => Promise.resolve([]),
   editorIndex: {},
   icons: {},
-  save: EmptyMethod,
 }
 
 export const MasherContext = React.createContext(MasherContextDefault)

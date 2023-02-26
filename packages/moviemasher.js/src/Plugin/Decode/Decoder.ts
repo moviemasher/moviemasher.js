@@ -1,46 +1,48 @@
 import { Output } from "../../Base/Code"
-import { MediaResponse } from "../../Media/Media"
+import { Data } from "../../ClientMedia/ClientMedia"
+import { DefiniteError, PathDataOrError } from "../../Helpers/Error/Error"
 import { Plugin } from "../Plugin"
+import { Decoding } from "./Decoding/Decoding"
+import { ProbingData } from "./Probe/Probing/Probing"
 
 export type ProbeType = 'probe'
 
 export const ProbeType: ProbeType = 'probe'
 
-export type Decoder = string | ProbeType
-export const Decoders: Decoder[] = [ProbeType]
-export const isDecoder = (value: any): value is Decoder => {
-  return Decoders.includes(value)
-}
+export type DecodingType = string | ProbeType
+export type DecodingTypes = DecodingType[]
+export const DecodingTypes: DecodingTypes = [ProbeType]
+export const isDecodingType = (value: any): value is DecodingType => DecodingTypes.includes(value)
 
 export interface DecoderOptions {}
 
-export type DecoderMethod = (localPath: string, options?: DecoderOptions) => Promise<DecodeResponse>
+export interface DecodeData extends Data {
+  data: Decoding
+}
+
+export type DecodeDataOrError = DefiniteError | DecodeData 
+
+export type DecodeMethod = (localPath: string, options?: DecoderOptions) => Promise<PathDataOrError>
 
 
 /**
  * @category Plugin
  */
-export interface DecoderPlugin extends Plugin {
-  type: Decoder
-  decode: DecoderMethod
+export interface DecodePlugin extends Plugin {
+  type: DecodingType
+  decode: DecodeMethod
 }
 
 /**
  * @category Plugin
  */
-export interface PluginsByDecoder extends Record<Decoder, DecoderPlugin> {}
+export interface PluginsByDecoder extends Record<DecodingType, DecodePlugin> {}
 
-
-export interface DecodeResponse extends MediaResponse {
-  info?: any
-  width?: number
-  height?: number
-  duration?: number
-  alpha?: boolean
-  audio?: boolean
+export interface ProbeData extends Data {
+  data: ProbingData
 }
 
 export interface DecodeOutput extends Output {
-  type: Decoder
+  type: DecodingType
   options?: DecoderOptions
 }

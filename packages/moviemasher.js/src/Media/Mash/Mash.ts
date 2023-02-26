@@ -2,13 +2,14 @@ import { UnknownRecord } from "../../declarations"
 import { PreviewItems } from "../../Helpers/Svg/Svg"
 import { AVType, MashType } from "../../Setup/Enums"
 import { Time, Times } from "../../Helpers/Time/Time"
-import { Clip, Clips } from "./Track/Clip/Clip"
+import { Clip, ClipObject, Clips } from "./Track/Clip/Clip"
 import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Track, TrackObject } from "./Track/Track"
 import { isArray, isObject } from "../../Utility/Is"
 
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { Request } from "../../Helpers/Request/Request"
 import { Propertied } from "../../Base/Propertied"
 import { Effect } from "../Effect/Effect"
 import { Media, MediaObject, MediaObjects } from "../Media"
@@ -28,22 +29,33 @@ export enum Frame {
 export type Movable = Effect 
 export type Movables = Movable[]
 
-export interface MashMediaObject extends MediaObject {
+export interface MashMediaContent {
   color?: string
-  encodings?: EncodingObjects
   quantize?: Number
   tracks?: TrackObject[]
   media?: MediaObjects
 }
 
+export interface MashMediaRequest extends Request {
+  response?: MashMediaContent
+}
+
+export interface MashMediaObject extends MediaObject {
+  request?: MashMediaRequest
+  encodings?: EncodingObjects
+}
+
+export interface MashEditorArgs {
+  mediaCollection: MediaCollection
+  editor: Editor
+  buffer: number
+  gain: number
+  loop: boolean
+  emitter: Emitter
+  size: Size
+}
 export interface MashMediaArgs extends MashMediaObject {
-  mediaCollection?: MediaCollection
-  editor?: Editor
-  buffer?: number
-  gain?: number
-  loop?: boolean
-  emitter?: Emitter
-  size?: Size
+  
 }
 export interface MashAndMediaObject extends MashMediaObject {
   media: MediaObjects
@@ -89,6 +101,8 @@ export interface MashMedia extends Media, Selectable {
   reload(): Promise<void> | undefined
   removeClipFromTrack(clip : Clip | Clips) : void
   removeTrack(index?: number): void
+  request: MashMediaRequest
+
   seekToTime(time: Time): Promise<void> | undefined
   time: Time
   timeRange: TimeRange

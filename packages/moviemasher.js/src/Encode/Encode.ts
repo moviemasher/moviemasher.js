@@ -1,7 +1,7 @@
 import { UnknownRecord, Value, ValueRecord } from "../declarations"
 import { MashAndMediaObject } from "../Media/Mash/Mash"
 import { Output } from "../Base/Code"
-import { OutputFormat, EncodeType } from "../Setup/Enums"
+import { OutputFormat, EncodingType } from "../Setup/Enums"
 import { Size } from "../Utility/Size"
 
 export interface EncodeOutput extends Output {
@@ -22,7 +22,7 @@ export interface CommandOutput extends UnknownRecord, Partial<Size> {
 }
 
 export interface RenderingCommandOutput extends CommandOutput {
-  outputType: EncodeType
+  outputType: EncodingType
   basename?: string
   optional?: boolean
   cover?: boolean

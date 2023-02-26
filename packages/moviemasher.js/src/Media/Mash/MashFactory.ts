@@ -1,12 +1,16 @@
 import { UnknownRecord } from "../../declarations"
 import { MashType } from "../../Setup/Enums"
 import { idTemporary } from "../../Utility/Id"
-import { MashMedia, MashMediaArgs, MashMediaObject } from "./Mash"
+import { Size } from "../../Utility/Size"
+import { MashEditorArgs, MashMedia, MashMediaArgs, MashMediaContent, MashMediaObject } from "./Mash"
 import { MashMediaClass } from "./MashMediaClass"
 
-export const mashMedia = (object?: MashMediaArgs): MashMedia => {
-  const copy: UnknownRecord = object ? { ...object } : {}
-  copy.id ||= idTemporary()
-  copy.type ||= MashType
-  return new MashMediaClass(copy as MashMediaArgs)
+export const mashDefault: MashMediaObject = { type: MashType, id: '', request: { response: {} } }
+
+
+export const mashMedia = (object: MashMediaObject, args?: MashEditorArgs | Size): MashMedia => {
+  const mashArgs: MashMediaArgs = { 
+    request: { response: {} }, type: MashType, ...object 
+  }
+  return new MashMediaClass(mashArgs, args)
 }

@@ -1,23 +1,16 @@
-import { PluginsByProtocol } from "./Protocol/Protocol"
-import { PluginsByLanguage } from "./Language/Language"
-import { PluginsByDecoder } from "./Decode/Decoder"
+import { 
+  DecodeType, EncodeType, FilterType, LanguageType, PluginRecord, PluginType, 
+  ProtocolType, ResolveType, TranscodeType 
+} from "./Plugin"
 
-export interface Plugins {
-  protocols: PluginsByProtocol
-  languages: PluginsByLanguage
-  decoders: PluginsByDecoder
-  filters: {}
-  encoders: {}
-  transcoders: {}
-  resolvers: {}
-}
+export interface Plugins extends Record<PluginType, PluginRecord> {}
 
 export const Plugins: Plugins = {
-  protocols: {},
-  languages: {},
-  decoders: {},
-  filters: {},
-  encoders: {},
-  transcoders: {},
-  resolvers: {},
+  [DecodeType]: {},
+  [EncodeType]: {},
+  [FilterType]: {},
+  [LanguageType]: {},
+  [ProtocolType]: {},
+  [ResolveType]: {},
+  [TranscodeType]: {},
 }

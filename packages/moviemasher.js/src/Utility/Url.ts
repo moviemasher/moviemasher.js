@@ -1,7 +1,7 @@
 import { ScalarRecord } from "../declarations"
 import { Endpoint } from "../Helpers/Endpoint/Endpoint"
 import { arrayLast } from "./Array"
-import { assertPopulatedString, isAboveZero, isNumeric, isPopulatedString, isPositive } from "./Is"
+import { assertPopulatedString, isAboveZero, isNumeric, isPopulatedString } from "./Is"
 import { ErrorName } from "../Helpers/Error/ErrorName"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 
@@ -27,7 +27,7 @@ export const urlBaseInitialized = (): boolean => Boolean(urlBaseValue)
 
 /**
  * 
- * @param endpoint 
+ * @param endpoint - relative Endpoint
  * @returns endpoint resolved relative to base URL
  */
 export const urlEndpoint = (endpoint: Endpoint = {}): Endpoint => {
@@ -93,7 +93,7 @@ export const urlFromEndpoint = (endpoint: Endpoint): string => {
   return [combined, search].join('')
 }
 
-export const urlForEndpoint = (endpoint: Endpoint, suffix: string = ''): string => {
+export const urlForEndpoint = (endpoint: Endpoint, suffix = ''): string => {
   if (suffix && urlHasProtocol(suffix)) return suffix
   
   const base = urlFromEndpoint(endpoint)

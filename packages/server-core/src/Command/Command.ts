@@ -1,11 +1,11 @@
-import { CommandProbeData } from "@moviemasher/moviemasher.js"
+import { RawProbeData } from "@moviemasher/moviemasher.js"
 
 import EventEmitter from "events"
 import { CommandDestination } from "../RunningCommand/RunningCommand"
 
 
 export interface CommandProbeFunction {
-  (error: any, data: CommandProbeData): void
+  (error: any, data: RawProbeData): void
 }
 
 export interface Command extends EventEmitter {
@@ -13,7 +13,7 @@ export interface Command extends EventEmitter {
   output(destination: CommandDestination): Command
   save(output: string): Command
   mergeAdd(file: string): Command
-  mergeToFile(destination: CommandDestination): Command
+  mergeToFile(destination: CommandDestination, tmpFolder: string): Command
 
   kill(signal: string): void
   ffprobe(callback: CommandProbeFunction): void

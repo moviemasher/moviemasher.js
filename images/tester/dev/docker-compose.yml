@@ -17,18 +17,18 @@ services:
       - ../../../temporary/tester/render:${MOVIEMASHER_DIR_ROOT}/temporary/render
 
       # use latest server ESM packages from host computer instead of image
-      - ../private/server.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/private/server.js
+      - ../private/server.mjs:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/private/server.mjs
       - ../../../packages/moviemasher.js:${MOVIEMASHER_DIR_ROOT}/packages/moviemasher.js
       - ../../../packages/server-core:${MOVIEMASHER_DIR_ROOT}/packages/server-core
       - ../../../packages/server-express:${MOVIEMASHER_DIR_ROOT}/packages/server-express
    
       # use latest client and theme UMD modules from host computer instead of image
-      - ../public/client.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/client.js
-      - ../../../packages/moviemasher.js/umd/moviemasher.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/moviemasher.js
-      - ../../../packages/client-react/umd/client-react.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/client-react.js
-      - ../../../packages/client-core/umd/client-core.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/client-core.js
-      - ../../../packages/theme-default/moviemasher.css:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/moviemasher.css
-      - ../../../packages/theme-default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/images/standalone/public/theme-default.js
+      - ../public/client.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/client.js
+      - ../../../packages/moviemasher.js/umd/moviemasher.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/moviemasher.js
+      - ../../../packages/client-react/umd/client-react.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/client-react.js
+      - ../../../packages/client-core/umd/client-core.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/client-core.js
+      - ../../../packages/theme-default/moviemasher.css:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/moviemasher.css
+      - ../../../packages/theme-default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/theme-default.js
 
       - ../../../temporary/standalone:${MOVIEMASHER_DIR_ROOT}/temporary/standalone
     entrypoint: node --experimental-global-customevent --experimental-json-modules --test 

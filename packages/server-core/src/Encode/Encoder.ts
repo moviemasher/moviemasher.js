@@ -1,14 +1,13 @@
 import fs from 'fs'
 
-import { EncodeOutput, MashAndMediaObject } from "@moviemasher/moviemasher.js"
+import { EncodeOutput, MashAndMediaObject, PathDataOrError } from "@moviemasher/moviemasher.js"
 import { RenderingProcessArgs } from "./RenderingProcess/RenderingProcess"
 import { renderingProcessInstance } from "./RenderingProcess/RenderingProcessFactory"
 import { Environment, environment } from "../Environment/Environment"
 import { EncodeResponse } from './Encode'
 
-export interface Encoder {}
-export const encode = (localPath: string, output: EncodeOutput): Promise<EncodeResponse> => {
-  const response: EncodeResponse = {}
+
+export const encode = (localPath: string, output: EncodeOutput): Promise<PathDataOrError> => {
   const { commandOutput } = output
   const temporaryDirectory = environment(Environment.API_DIR_TEMPORARY)
   const cacheDirectory = environment(Environment.API_DIR_CACHE)
@@ -26,10 +25,11 @@ export const encode = (localPath: string, output: EncodeOutput): Promise<EncodeR
       mash, 
       output: commandOutput, 
     }
+    const { id } = mash
     const process = renderingProcessInstance(options) 
     return process.runPromise().then(runResult => {
-
-      return response
+      const {} = runResult.results
+      return { path: id }
     })
   })
   

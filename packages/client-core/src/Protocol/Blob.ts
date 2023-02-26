@@ -1,42 +1,31 @@
 import { 
-  
-  ProtocolPromise, 
-  
-  Plugins, Request, AudioType, ImageType, VideoType, ProtocolBlob, JsonType, PathOrError} from "@moviemasher/moviemasher.js"
-import { clientAudioPromise } from "../Utility/Audio"
-import { clientImagePromise } from "../Utility/Image"
+  ProtocolPromise, Plugins, Request, AudioType, ImageType, VideoType, 
+  BlobProtocol, JsonType, PathData, ProtocolType
+} from "@moviemasher/moviemasher.js"
+import { audioDataPromise } from "../Utility/Audio"
+import { imageDataPromise } from "../Utility/Image"
 import { jsonPromise } from "../Utility/Json"
-import {  clientVideoPromise } from "../Utility/Video"
+import {  videoDataPromise } from "../Utility/Video"
 
 
-
-export type Mp4Extension = 'mp4'
-export const Mp4Extension: Mp4Extension = 'mp4'
-export type PngExtension = 'png'
-export const PngExtension: PngExtension = 'png'
-
-export type Extension = string | Mp4Extension | PngExtension
 
 const promise: ProtocolPromise = ((request: Request, type?: string) => {
   // console.log('blob promise', url, absolute, endpoint)
   switch (type) {
-    case AudioType: return clientAudioPromise(request)
-    case ImageType: return clientImagePromise(request)
-    case VideoType: return clientVideoPromise(request)
+    case AudioType: return audioDataPromise(request)
+    case ImageType: return imageDataPromise(request)
+    case VideoType: return videoDataPromise(request)
     case JsonType: return jsonPromise(request)
     // case FontType: return requestFontPromise(request)
     // case FontType: return errorThrow(type, 'LoadType', 'type')//fontPromise(url)
     default: {
-      const result: PathOrError = { path: ''}
-  return Promise.resolve(result)
+      const result: PathData = { path: '' }
+      return Promise.resolve(result)
     }
   }
-  
-  console.log()
-  // return errorThrow(type, 'LoadType', 'type')
-}) //as ProtocolPromise
+}) 
 
 
 
-Plugins.protocols.blob = { promise, type: ProtocolBlob }
+Plugins[ProtocolType][BlobProtocol] = { promise, type: BlobProtocol }
 

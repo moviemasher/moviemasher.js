@@ -1,9 +1,9 @@
-import { isMediaType, TranscodeType } from "../../Setup/Enums";
+import { isMediaType, TranscodingType } from "../../Setup/Enums";
 import { isRequestable, Requestable, RequestableObject } from "../../Base/Requestable";
 
 
 export interface TranscodingObject extends RequestableObject {
-  type?: TranscodeType | string
+  type?: TranscodingType | string
   purpose?: string
 }
 
@@ -11,7 +11,7 @@ export type TranscodingObjects = TranscodingObject[]
 
 
 export interface Transcoding extends Requestable {
-  type: TranscodeType
+  type: TranscodingType
   purpose: string
 }
 

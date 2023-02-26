@@ -2,19 +2,21 @@
   "label": "Blur",
   "type": "effect",
   "id": "com.moviemasher.effect.blur",
-  "filters": [
-    {
-      "id": "com.moviemasher.filter.convolution",
-      "parameters": [
-        {
-          "name": "matrix",
-          "value": "1,1,1,1,1,1,1,1,1"
-        },
-        {
-          "name": "multiplier",
-          "value": "0.11"
-        }
-      ]
-    }
-  ]
+  "request": { "response": {
+    "filters": [
+      {
+        "id": "com.moviemasher.filter.convolution",
+        "parameters": [
+          {
+            "name": "matrix",
+            "value": "1,1,1,1,1,1,1,1,1"
+          },
+          {
+            "name": "multiplier",
+            "value": "0.11"
+          }
+        ]
+      }
+    ]  
+  }}
 }

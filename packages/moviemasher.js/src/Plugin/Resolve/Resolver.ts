@@ -1,15 +1,15 @@
 import { Request } from "../../Helpers/Request/Request"
 import { ClientAudio, ClientFont, ClientImage, ClientVideo } from "../../ClientMedia/ClientMedia"
-import { PathOrError } from "../../Helpers/Error/Error"
+import { PathDataOrError } from "../../Helpers/Error/Error"
 import { AudioType, FontType, ImageType, MediaType, VideoType } from "../../Setup/Enums"
-import { requestExtension, requestPromise } from "../../Utility/Request"
+import { requestExtension, requestPromise } from "../../Helpers/Request/RequestFunctions"
 
 export type ResolverPromise = {
   (file: string, mimeType: string, type: ImageType): Promise<ClientImage>
   (file: string, mimeType: string, type: AudioType): Promise<ClientAudio>
   (file: string, mimeType: string, type: FontType): Promise<ClientFont>
   (file: string, mimeType: string, type: VideoType): Promise<ClientVideo>
-  (file: string, mimeType: string, type?: string): Promise<PathOrError>
+  (file: string, mimeType: string, type?: string): Promise<PathDataOrError>
 }
 
 
@@ -28,17 +28,17 @@ export const resolverLoad = (mimeType?: string): Resolver | undefined => {
   return Resolvers[mimeType]
 }
 
-export const resolverPromise = ((file: string, mimeType: string, type?: string): Promise<PathOrError> => {
+export const resolverPromise = ((file: string, mimeType: string, type?: string): Promise<PathDataOrError> => {
   const resolver = resolverLoad(mimeType)
   if (resolver) {
     const { requestPromise: resolverRequestPromise } = resolver
     return resolverRequestPromise(file).then(request => requestPromise(request, type))
   }
-  const result: PathOrError = { path: file }
+  const result: PathDataOrError = { path: file }
   return Promise.resolve(result) 
 }) as ResolverPromise
 
-export const resolverPathPromise = (file: string, mimeType?: string): PathOrError | Promise<PathOrError> => {
+export const resolverPathPromise = (file: string, mimeType?: string): PathDataOrError | Promise<PathDataOrError> => {
   const resolver = resolverLoad(mimeType)
   if (resolver) return resolver.requestPromise(file).then(requestPromise)
 

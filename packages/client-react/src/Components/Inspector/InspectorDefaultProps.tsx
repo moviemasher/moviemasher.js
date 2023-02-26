@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, EditType, SelectType, VideoType } from '@moviemasher/moviemasher.js'
+import { ClassButton, SelectType } from '@moviemasher/moviemasher.js'
 
 import { PropsMethod, PropsWithoutChild } from '../../declarations'
 import { Bar } from '../../Utilities/Bar'
@@ -11,14 +11,12 @@ import { InspectorPicked } from './InspectorPicked'
 import { InspectorPicker } from './InspectorPicker'
 import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
 import { Button } from '../../Utilities/Button'
-import { RenderControl } from '../Controls/RenderControl'
+import { EncodeControl } from '../Controls/EncodeControl'
 import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
-import { ApiEnabled } from '../ApiClient/ApiEnabled'
 import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
-import { Mashing } from '../Masher/Mashing'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 
@@ -57,26 +55,22 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
   const types = [SelectType.Clip, SelectType.Track]
 
   contentChildren.push(
-    <ApiEnabled key="api-enabled">
-      <Mashing type={VideoType}>
-        <InspectorPicked type="mash" key="inspector-mash">
-          <View>
-            <RenderControl key='render-process'>
-              <Button>
-                {labelTranslate('render')} 
-                {icons.render}
-              </Button>
-            </RenderControl>
-            <ViewControl key='view-control'>
-              <Button>
-                {labelTranslate('view')} 
-                {icons.view}
-              </Button>
-            </ViewControl>    
-          </View>  
-        </InspectorPicked>
-      </Mashing>
-    </ApiEnabled>
+    <InspectorPicked type="mash" key="inspector-mash">
+      <View>
+        <EncodeControl key='render-process'>
+          <Button>
+            {labelTranslate('render')} 
+            {icons.render}
+          </Button>
+        </EncodeControl>
+        <ViewControl key='view-control'>
+          <Button>
+            {labelTranslate('view')} 
+            {icons.view}
+          </Button>
+        </ViewControl>    
+      </View>  
+    </InspectorPicked>
   )
 
   types.forEach(type => {

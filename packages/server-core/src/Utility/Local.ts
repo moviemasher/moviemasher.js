@@ -11,7 +11,7 @@ const typeExtension = (type: LoadType): string => {
     case ImageType: return '.png'
     case AudioType: return '.mp3'
     case VideoType: return '.mp4'
-    case JsonType: return '.json'
+    default: return '.json'
   }
 }
 

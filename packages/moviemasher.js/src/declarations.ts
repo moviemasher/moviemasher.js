@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global { interface Window { webkitAudioContext: typeof AudioContext } }
 
 export type Value = number | string
 export type Scalar = Value | boolean | undefined
-export type Strings = string[]
 export type PopulatedString = string & { isEmpty: never }
 export type Integer = number 
+
+export type Strings = string[]
+export type Numbers = number[]
 
 export interface ValueRecord extends Record<string, Value> {}
 export interface NumberRecord extends Record<string, number> {}
@@ -15,11 +15,18 @@ export interface StringRecord extends Record<string, string> { }
 export interface StringsRecord extends Record<string, Strings> { }
 export interface NestedStringRecord extends Record<string, string | StringRecord | NestedStringRecord> {}
 
+export type UnknownRecords = UnknownRecord[]
+
 export interface StringSetter { (value: string): void }
 export interface NumberSetter { (value: number): void }
 export interface BooleanSetter { (value: boolean): void }
 export interface BooleanGetter { (): boolean }
 
-export type AnyArray = any[]
-export type JsonValue = Scalar | AnyArray | UnknownRecord
+export type Unknowns = unknown[]
+export type JsonArray = Strings | Numbers | UnknownRecords
+export type JsonValue = Scalar | Unknowns | UnknownRecord
 export interface JsonRecord extends Record<string, JsonRecord | JsonValue | JsonValue[]> {}
+export type JsonRecords = JsonRecord[]
+
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global { interface Window { webkitAudioContext: typeof AudioContext } }

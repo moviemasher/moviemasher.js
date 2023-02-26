@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_moviemasher_example_supabase=self.webpackChunk_moviemasher_example_supabase||[]).push([[263],{2263:function(e,s,a){e.exports=a.p+"static/media/protocol-supabase.d.7e98259d1ea13f7e48e9.mts"}}]);

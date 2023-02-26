@@ -54,7 +54,7 @@ export interface UpdatableDurationDefinition extends ContentDefinition {
   duration: number
   frames(quantize: number): number
   loadedAudio?: ClientAudio
-  loadedAudioPromise: Promise<ClientAudio> 
+  preloadAudioPromise: Promise<void> 
   loop: boolean
 }
 export const isUpdatableDurationDefinition = (value?: any): value is UpdatableDurationDefinition => {

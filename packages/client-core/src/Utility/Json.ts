@@ -1,4 +1,4 @@
-import { Request, isUndefined, urlForEndpoint } from "@moviemasher/moviemasher.js"
+import { Request, isUndefined, urlForEndpoint, assertEndpoint } from "@moviemasher/moviemasher.js"
 
 export interface ResponseObject {
   json(): Promise<any>
@@ -10,7 +10,7 @@ export const jsonPromise = (request: Request): Promise<any> => {
 
 export const fetchPromise = (request: Request): Promise<ResponseObject> => {
   const { endpoint, init = {} } = request
-  
+  assertEndpoint(endpoint)
   // console.log('jsonPromise', endpoint, init)
 
   const typeKey = 'Content-Type'

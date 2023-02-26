@@ -166,14 +166,13 @@ export class TrackClass extends PropertiedClass implements Track {
   selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => {
       const undoValue = this.value(property.name)
-      const target = this
       return {
         value: undoValue,
         property, selectType: SelectType.Track, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       
-          const options = { target, property, redoValue, undoValue }
+          const options = { target: this, property, redoValue, undoValue }
           actions.create(options)
         }
       }

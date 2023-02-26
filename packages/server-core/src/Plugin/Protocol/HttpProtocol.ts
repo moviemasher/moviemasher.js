@@ -1,27 +1,24 @@
 import fs from 'fs'
 import http from 'http'
-
 import path from 'path'
 
 import {
-  errorCaught, MediaType, PathOrError, Plugins, ProtocolHttp, ProtocolHttps, ProtocolPromise, Request, RequestRecord, resolverExtension, resolverPromise, urlFilename
+  errorCaught, ErrorName, errorPromise, LoadType, PathDataOrError, Plugins, 
+  HttpProtocol, ProtocolPromise, ProtocolType, Request, resolverExtension, resolverPromise, 
+  urlFilename
 } from "@moviemasher/moviemasher.js"
 import { Environment, environment } from '../../Environment/Environment'
 import { requestArgs, requestArgsHash } from '../../Utility/Request'
 
+const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
+  if (type) return errorPromise(ErrorName.Type)
 
-const promise = ((request: Request, type?: string | MediaType) => {
   console.log('HTTP', request)
-  const record: RequestRecord = {}
-  const response: PathOrError = { path: '' }
-  const { endpoint } = request
-
   const args = requestArgs(request)
   const hash = requestArgsHash(args)
   const temporaryDirectory = environment(Environment.API_DIR_TEMPORARY)
 
-
-  const promise: Promise<PathOrError> = new Promise(resolve => {
+  const promise: Promise<PathDataOrError> = new Promise(resolve => {
     const req = http.request(args, response => {
       const { ['content-type']: mimeType = '' } = response.headers
       const ext = resolverExtension(request, mimeType) 
@@ -42,7 +39,5 @@ const promise = ((request: Request, type?: string | MediaType) => {
     req.end()
   })
   return promise
-}) as ProtocolPromise
-
-Plugins.protocols.http = { promise, type: ProtocolHttp }
-Plugins.protocols.https = { promise, type: ProtocolHttps }
+}) 
+Plugins[ProtocolType][HttpProtocol] = { promise, type: HttpProtocol }

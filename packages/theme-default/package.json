@@ -2,10 +2,13 @@
   "name": "@moviemasher/theme-default",
   "version": "5.1.2",
   "description": "Movie Masher Theme Plugin - version 5.1.2",
-  "main": "umd/theme-default.js",
-  "module": "esm/theme-default.js",
-  "types": "esm/theme-default.d.ts",
-  "type": "module",
+
+
+  "module": "./esm/theme-default.mjs",
+  "main": "./umd/theme-default.js",
+  "types": "./esm/theme-default.d.mts",
+  "files": ["esm", "umd", "moviemasher.css"],
+
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -21,23 +24,26 @@
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
     "@moviemasher/client-react": "5.1.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+
+    "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
   },
   "devDependencies": {
+    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.0.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "4.7.1",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
     "@types/node": "18.13.0"
   },
   "scripts": {
     "build-css": "cat src/css/* > moviemasher.css",
-    "build-esm": "esbuild src/index.ts --sourcemap --bundle --platform=browser --outfile=esm/theme-default.js",
-    "build-esm-min": "esbuild src/index.ts --bundle --platform=browser --outfile=esm/theme-default.min.js --minify",
-    "build-umd-min": "rollup --config dev/rollup/umd.min.config.js",
-    "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "copy-types": "cp umd/theme-default.d.ts esm/theme-default.d.ts",
-    "build": "run-s build-esm build-esm-min build-umd build-umd-min build-css copy-types"
+    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --main-fields=main --outfile=esm/theme-default.mjs",
+    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --main-fields=main --outfile=esm/theme-default.min.mjs --minify",
+    "build-umd-min": "rollup --config dev/rollup/umd.min.config.mjs",
+    "build-rollup": "rollup --config dev/rollup.config.mjs",
+    "copy-types": "mkdir -p types && mv -f umd/*.d.* types/",
+    "build": "run-s build-rollup build-css"
   },
   "eslintConfig": {
     "extends": [

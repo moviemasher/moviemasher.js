@@ -1,5 +1,5 @@
-export * from './declarations'
 export * from "./Client"
+export * from "./Config"
 export * from "./Monitor"
 export * from "./Protocol"
 export * from "./Utility"
