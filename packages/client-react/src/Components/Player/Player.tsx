@@ -1,23 +1,20 @@
 import React from 'react'
 import { EventType } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+
+import { PropsWithChildren } from "../../Types/Props"
 import { PlayerContext, PlayerContextInterface } from './PlayerContext'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 
-export interface PlayerProps extends PropsAndChildren, WithClassName {
+export interface PlayerProps extends PropsWithChildren {
   disabled?: boolean
 }
 
-/**
- * @parents Masher
- * @children PlayerContent, PlayerPlaying, PlayerNotPlaying, PlayerTimeControl, PlayerTime, PlayerButton
- */
-export function Player(props: PlayerProps): ReactResult {
+export function Player(props: PlayerProps) {
   const { disabled, ...rest } = props
-  const editor = useEditor()
+  const editor = useMasher()
   const [paused, setPaused] = React.useState(editor.paused)
   const [volume, setVolume] = React.useState(editor.volume)
   const updatePaused = () => { setPaused(editor.paused) }

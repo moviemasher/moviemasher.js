@@ -1,8 +1,8 @@
-import React from 'react'
 import {
-  EmptyMethod,RectZero,
-  Clip, DroppingPosition, NumberSetter, Rect, Track, VoidMethod, Point
+  EmptyFunction,RectZero,
+  Clip, DroppingPosition, NumberSetter, Rect, Track, EmptyFunctionType, Point
 } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface TimelineContextInterface {
   dragTypeValid(dataTransfer: DataTransfer, clip?: Clip): boolean
@@ -14,7 +14,7 @@ export interface TimelineContextInterface {
   onDragLeave: (event: DragEvent) => void
   onDrop: (event: DragEvent) => void
   rect: Rect
-  refresh: VoidMethod
+  refresh: EmptyFunctionType
   refreshed: number
   scale: number
   scroll: Point
@@ -33,19 +33,19 @@ export const TimelineContextDefault: TimelineContextInterface = {
   dragTypeValid(): boolean { return false },
   frame: 0,
   frames: 0,
-  onDragLeave: EmptyMethod,
-  onDrop: EmptyMethod,
+  onDragLeave: EmptyFunction,
+  onDrop: EmptyFunction,
   rect: RectZero,
-  refreshed: 0, refresh: EmptyMethod,
+  refreshed: 0, refresh: EmptyFunction,
   scale: 0,
   scroll: { x: 0, y: 0 },
-  setDroppingClip: EmptyMethod,
-  setDroppingPosition: EmptyMethod,
-  setDroppingTrack: EmptyMethod,
-  setRect: EmptyMethod,
-  setScroll: EmptyMethod,
-  setZoom: EmptyMethod,
+  setDroppingClip: EmptyFunction,
+  setDroppingPosition: EmptyFunction,
+  setDroppingTrack: EmptyFunction,
+  setRect: EmptyFunction,
+  setScroll: EmptyFunction,
+  setZoom: EmptyFunction,
   zoom: 1,
 }
 
-export const TimelineContext = React.createContext(TimelineContextDefault)
+export const TimelineContext = createContext(TimelineContextDefault)

@@ -1,5 +1,5 @@
-import React from 'react'
 import { Track } from '@moviemasher/moviemasher.js'
+import { createContext } from '../Framework/FrameworkFunctions'
 
 export interface TrackContextInterface {
   track?: Track
@@ -7,4 +7,4 @@ export interface TrackContextInterface {
 
 export const TrackContextDefault: TrackContextInterface = {}
 
-export const TrackContext = React.createContext(TrackContextDefault)
+export const TrackContext = createContext(TrackContextDefault)

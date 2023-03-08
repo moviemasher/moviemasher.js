@@ -1,43 +1,27 @@
 import Express from "express"
-import path from "path"
 import fs from 'fs'
+import path from "path"
 
 import {
-  assertMediaType, 
-  ApiCallback, MediaObject, Endpoints, EncodingType, 
-  RenderingStartRequest,
-  MediaType, 
-  RenderingStartResponse,
-  LoadType, Endpoint, RequestInit, 
-  
-  RenderingUploadRequest, RenderingUploadResponse, 
-  MashMediaObject, assertTrue, SizePreview, 
-  SizeIcon, 
-  RenderingInput,
-  isLoadType, urlBaseInitialize,
-  RenderingCommandOutputs,
-  RenderingCommandOutput,
-  AudioType,
-  ImageType,
-  SequenceType,
-  FontType,
-  errorCaught, mediaTypeFromMime, ErrorName, errorName, errorThrow
+  ApiCallback, assertMediaType, assertTrue, AudioType, EncodingType, Endpoint, 
+  Endpoints, EnvironmentKeyUrlBase, errorCaught, ErrorName, errorName, 
+  errorThrow, FontType, ImageType, isLoadType, LoadType, MashMediaObject, 
+  MediaObject, MediaType, mediaTypeFromMime, RenderingCommandOutput, 
+  RenderingCommandOutputs, RenderingInput, RenderingStartRequest, 
+  RenderingStartResponse, RenderingUploadRequest, RenderingUploadResponse, 
+  RequestInit, Runtime, SequenceType, SizeIcon, SizePreview
 } from "@moviemasher/moviemasher.js"
-import { 
-  renderingProcessInstance, RenderingProcessArgs, 
-  renderingInput,
-  BasenameDefinition,
-  environment,
-  Environment,
+
+import {
+  BasenameDefinition, renderingInput, RenderingProcessArgs, 
+  renderingProcessInstance, EnvironmentKeyApiDirFilePrefix
 } from "@moviemasher/server-core"
 
-import { ServerClass } from "../ServerClass"
-import { ExpressHandler } from "../Server"
 import { HostServers } from "../../Host/Host"
-
-
-import { RenderingServer, RenderingServerArgs } from "./RenderingServer"
+import { ExpressHandler } from "../Server"
+import { ServerClass } from "../ServerClass"
 import { FileServer, FileServerFilename } from "../FileServer/FileServer"
+import { RenderingServer, RenderingServerArgs } from "./RenderingServer"
 
 import { idUnique } from "../../Utilities/Id"
 
@@ -95,13 +79,13 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
         // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
       }
       case SequenceType: {
-        return ({ outputType: AudioType, optional: true })
+        return ({ outputType: AudioType })
         // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
         // return ({ outputType: ImageSequenceType, ...previewSize })
       }
-      case FontType: {
-        return ({ outputType: FontType })
-      }
+      // case FontType: {
+      //   return ({ outputType: FontType })
+      // }
     }
     return errorThrow(ErrorName.Type) 
     // return outputs
@@ -154,10 +138,11 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
     }
     try {
       const user = this.userFromRequest(req)
-
-      urlBaseInitialize('file://' + path.resolve(environment(Environment.API_DIR_FILE_PREFIX), user))
-      
-      
+      const { environment } = Runtime
+      const prefix = environment.get(EnvironmentKeyApiDirFilePrefix)
+      const urlBase = 'file://' + path.resolve(prefix, user)
+      environment.set(EnvironmentKeyUrlBase, urlBase)
+  
       const { cacheDirectory, temporaryDirectory } = this.args
       const filePrefix = this.fileServer!.args.uploadsPrefix
       const outputDirectory = this.outputDirectory(user, id, renderingId)
@@ -272,7 +257,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
 
       if (!raw) response.error = errorName(ErrorName.ImportType)
       else if (!fileServer.withinLimits(size, raw)) {
-        response.error = errorName(ErrorName.ImportType, { value: size }) 
+        response.error = errorName(ErrorName.ImportSize, { value: size }) 
       } else {
         const loadType = raw as LoadType
         response.loadType = loadType

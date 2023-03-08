@@ -1,29 +1,29 @@
-.moviemasher .editor .panel.browser {
+.moviemasher .masher .panel.browser {
   grid-area: browser;
 }
 
-.moviemasher .editor .panel.browser .head {
+.moviemasher .masher .panel.browser .head {
   grid-template-columns: 1fr fit-content(var(--icon-size));
   overflow: hidden;
 }
 
-.moviemasher .editor .panel.browser .head .selected:hover {
+.moviemasher .masher .panel.browser .head .selected:hover {
   color: var(--fore-secondary);
 }
 
-.moviemasher .editor .panel.browser .foot label {
+.moviemasher .masher .panel.browser .foot label {
   text-align: right;
   flex-grow: 1;
 }
-.moviemasher .editor .panel.browser .foot label > svg:hover {
+.moviemasher .masher .browser label > svg:hover {
   color: var(--fore-secondary-promote);
 }
 
-.moviemasher .editor .panel.browser .dropping {
+.moviemasher .masher .panel.browser .dropping {
   box-shadow: var(--dropping-shadow);
 }
 
-.moviemasher .editor .panel.browser .content {
+.moviemasher .masher .panel.browser .content {
   padding: var(--padding);
   display: grid;
   grid-template-columns: repeat(auto-fit, calc(var(--preview-width) * var(--icon-ratio)));
@@ -32,15 +32,14 @@
   overflow-y: auto;
 }
 
-
-.moviemasher .editor .panel.browser .content .definition:hover,
-.moviemasher .editor .panel.browser .content .selected {
+.moviemasher .masher .panel.browser .content > *:hover,
+.moviemasher .masher .panel.browser .content > *.selected {
   border-color: var(--color-fore-secondary);
   color: var(--color-fore-secondary);
   background-color: var(--color-back-secondary);
 }
 
-.moviemasher .editor .panel.browser .content .selected:hover {
+.moviemasher .masher .panel.browser .content > *.selected:hover {
   border-color: var(--color-fore-tertiary);
   color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);

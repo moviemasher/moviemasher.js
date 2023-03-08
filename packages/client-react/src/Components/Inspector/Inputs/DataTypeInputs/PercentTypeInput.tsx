@@ -1,37 +1,36 @@
-import React from 'react'
-import { DataType, isArray, isDefined, isNumber, UnknownRecord } from '@moviemasher/moviemasher.js'
 
-import { ReactResult, SliderChangeHandler } from '../../../../declarations'
+
+
+import /* type */ { SliderChangeHandler } from "../../../../Types/Core"
+
+import React from 'react'
+
+import { DataType, assertScalar, isArray, isDefined, isNumber } from '@moviemasher/moviemasher.js'
+import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 import { InputContext } from '../InputContext'
 import { Slider } from '../../../../Utilities/Slider'
-import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { useEditor } from '../../../../Hooks/useEditor'
+import { useMasher } from '../../../../Hooks/useMasher'
+import { useContext } from '../../../../Framework/FrameworkFunctions'
 
-export function PercentTypeInput(): ReactResult {
-  const editor = useEditor()
-  const inputContext = React.useContext(InputContext)
+export function PercentTypeInput() {
+  const masher = useMasher()
+  const inputContext = useContext(InputContext)
   const { changeHandler, property, value: contextValue, name, time, defaultValue: contextDefault  } = inputContext
   if (!property) return null
 
-  const { max, min, step, defaultValue: propertyDefault } = property
+  const { max = 1.0, min = 0.0, step = 0.01, defaultValue: propertyDefault } = property
   const value = isDefined(contextValue) ? contextValue : (isDefined(contextDefault) ? contextDefault : propertyDefault)
-  const sliderProps: UnknownRecord = {
-    value,
-    min: isNumber(min) ? min : 0.0,
-    max: isNumber(max) ? max : 1.0,
-    step: isNumber(step) ? step : 0.01,
-    name,
-  }
-  if (changeHandler) {
-    const onChange: SliderChangeHandler = async (_event, values) => {
-      const value = isArray(values) ? values[0] : values
-      if (time) await editor.goToTime(time)
-      changeHandler(name, value)
-    }
-    sliderProps.onChange = onChange
-  } else sliderProps.disabled = true
 
-  return <Slider className='slider' {...sliderProps} />
+  const onChange: SliderChangeHandler = async (values) => {
+    const value = isArray(values) ? values[0] : values
+    if (time) await masher.goToTime(time)
+    changeHandler(name, value)
+  }
+
+  assertScalar(value, name)
+  return <Slider className='slider' max={max} min={min} step={step}
+    name={name} value={value} onChange={onChange} 
+  />
 }
 
 DataTypeInputs[DataType.Percent] = <PercentTypeInput />

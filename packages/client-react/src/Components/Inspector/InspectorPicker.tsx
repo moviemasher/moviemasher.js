@@ -1,11 +1,13 @@
 import React from 'react'
 import { 
   Identified,
-  assertSelectType, ClassSelected, isPopulatedString, SelectType 
+  assertSelectorType, ClassSelected, isPopulatedString, 
 } from '@moviemasher/moviemasher.js'
 
 
-import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
+
+import { WithClassName } from "../../Types/Core"
+import { PropsAndChild } from "../../Types/Props"
 import { View } from '../../Utilities/View'
 import { InspectorContext } from './InspectorContext'
 
@@ -16,9 +18,9 @@ export interface InspectorPickerProps extends PropsAndChild, WithClassName, Iden
  * @parents Inspector
  */
 
-export function InspectorPicker(props: InspectorPickerProps): ReactResult {
+export function InspectorPicker(props: InspectorPickerProps) {
   const { id, children, className } = props
-  assertSelectType(id)
+  assertSelectorType(id)
   
   const inspectorContext = React.useContext(InspectorContext)
   const { changeSelected, selectedInfo } = inspectorContext

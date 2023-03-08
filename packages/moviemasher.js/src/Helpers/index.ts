@@ -1,4 +1,5 @@
 
+export * from "./ClientMedia"
 export * from "./Color"
 export * from "./Emitter"
 export * from "./Endpoint"

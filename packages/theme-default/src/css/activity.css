@@ -1,33 +1,33 @@
-.moviemasher .editor .panel.activity {
+.moviemasher .masher .panel.activity {
   grid-area: activity;
   min-height: calc(var(--footer-height) + var(--header-height));
 }
 
-.moviemasher .editor .panel.activity.collapsed {
+.moviemasher .masher .panel.activity.collapsed {
   min-height: var(--header-height);
 }
-.moviemasher .editor .panel.activity .head {
+.moviemasher .masher .panel.activity .head {
   grid-template-columns: var(--icon-size) 1fr var(--icon-size);
 }
 
-.moviemasher .editor .panel.activity .content .item .label:first-child,
-.moviemasher .editor .panel.activity .head label  {
+.moviemasher .masher .panel.activity .content .item .label:first-child,
+.moviemasher .masher .panel.activity .head label  {
   overflow-x: hidden;
   white-space: nowrap;
 }
 
 
-.moviemasher .editor .panel.activity .head label {
+.moviemasher .masher .panel.activity .head label {
   font-size: 0.5em;
 }
 
-.moviemasher .editor .panel.activity .content {
+.moviemasher .masher .panel.activity .content {
   overflow-y: auto;
   padding: var(--padding);
 }
 
 
-.moviemasher .editor .panel.activity .content .item {
+.moviemasher .masher .panel.activity .content .item {
   display: grid;
   grid-template-columns: min-content 1fr min-content;
   grid-auto-flow: column;
@@ -35,11 +35,11 @@
   margin-bottom: var(--spacing);
 }
 
-.moviemasher .editor .panel.activity .content .item div {
+.moviemasher .masher .panel.activity .content .item div {
   margin-bottom: var(--spacing);
 }
 
-.moviemasher .editor .panel.activity .head > .progress {
+.moviemasher .masher .panel.activity .head > .progress {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr min-content;

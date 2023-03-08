@@ -1,8 +1,10 @@
-import React from 'react'
 import { 
-  EmptyMethod, SelectedItems, SelectType, 
-  StringSetter, DataGroup, TimeRange, Time
+  EmptyFunction, SelectedItems, 
+  DataGroup, TimeRange, Time, NoneType
 } from '@moviemasher/moviemasher.js'
+
+import /* type */ { SelectorType, StringSetter, SelectorTypes } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export type DataGroupBooleans = {
   [index in DataGroup]?: boolean
@@ -11,8 +13,8 @@ export type DataGroupBooleans = {
 export interface SelectedInfo {
   tweenDefined: DataGroupBooleans
   tweenSelected: DataGroupBooleans
-  selectedType: SelectType
-  selectTypes: SelectType[]
+  selectedType: SelectorType
+  selectTypes: SelectorTypes
   timeRange?: TimeRange
   onEdge?: boolean
   nearStart?: boolean
@@ -33,12 +35,12 @@ export const InspectorContextDefault: InspectorContextInterface = {
   selectedInfo: {
     tweenDefined: {},
     tweenSelected: {},
-    selectedType: SelectType.None,
+    selectedType: NoneType,
     selectTypes: [],
   },
   selectedItems: [],
-  changeSelected: EmptyMethod,
-  changeTweening: EmptyMethod,
+  changeSelected: EmptyFunction,
+  changeTweening: EmptyFunction,
 }
 
-export const InspectorContext = React.createContext(InspectorContextDefault)
+export const InspectorContext = createContext(InspectorContextDefault)

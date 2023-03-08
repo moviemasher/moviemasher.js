@@ -1,10 +1,11 @@
-import React from 'react'
+
 import { 
-  EmptyMethod, MediaType, MediaArray, StringSetter, VoidMethod 
+  EmptyFunction, MediaType, MediaArray, StringSetter, EmptyFunctionType 
 } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface BrowserContextInterface {
-  refresh: VoidMethod
+  refresh: EmptyFunctionType
   addPicker:(id: string, types: MediaType[]) => void
   definitions: MediaArray
   pick: StringSetter
@@ -13,12 +14,12 @@ export interface BrowserContextInterface {
 }
 
 export const BrowserContextDefault: BrowserContextInterface = {
-  addPicker: EmptyMethod,
-  refresh: EmptyMethod,
+  addPicker: EmptyFunction,
+  refresh: EmptyFunction,
   definitions: [],
-  pick: EmptyMethod,
+  pick: EmptyFunction,
   picked: '',
-  removePicker: EmptyMethod,
+  removePicker: EmptyFunction,
 }
 
-export const BrowserContext = React.createContext(BrowserContextDefault)
+export const BrowserContext = createContext(BrowserContextDefault)

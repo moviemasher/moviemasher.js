@@ -1,6 +1,6 @@
 
 
-.moviemasher .editor .panel button {
+.moviemasher .masher .panel button {
   display: inline-flex;
   gap: var(--spacing);
   padding: var(--padding);
@@ -23,7 +23,7 @@
   transition: var(--button-transition);
 }
 
-.moviemasher .editor .button {
+.moviemasher .masher .button {
   cursor: pointer;
   height: var(--button-size);
   font-size: var(--button-size);
@@ -31,19 +31,22 @@
   transition: var(--button-transition);
 }
 
-.moviemasher .editor button:hover {
+.moviemasher .masher button:hover {
   color: var(--fore-secondary);
   border-color: var(--fore-secondary);
 }
 
-.moviemasher .editor .button:hover,
-.moviemasher .editor .button.selected {
+.moviemasher .masher .button:hover,
+.moviemasher .masher .button.selected {
   color: var(--fore-secondary-promote);
 }
 
-.moviemasher .editor .button.disabled:hover,
-.moviemasher .editor .button.disabled,
-.moviemasher .editor button:disabled {
+.moviemasher .masher .button.disabled:hover,
+.moviemasher .masher .button.disabled,
+.moviemasher .masher label.disabled,
+.moviemasher .masher label.disabled:hover,
+.moviemasher .masher .panel label.disabled > svg:hover,
+.moviemasher .masher button:disabled {
   cursor: default;
   color: var(--fore-secondary-demote);
   border-color: var(--fore-secondary-demote);
@@ -51,7 +54,7 @@
 }
 
 
-.moviemasher .editor .panel button {
+.moviemasher .masher .panel button {
   --padding: 5px;
   --spacing: 5px;
 }

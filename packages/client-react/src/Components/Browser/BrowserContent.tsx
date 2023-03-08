@@ -3,27 +3,31 @@ import {
   assertTrue, ClassDropping, eventStop
 } from "@moviemasher/moviemasher.js"
 
-import { WithClassName, ReactResult, PropsAndChild } from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { View } from "../../Utilities/View"
 import { BrowserContext } from "./BrowserContext"
 import { DefinitionContext } from "../../Contexts/DefinitionContext"
-import { MasherContext } from "../Masher/MasherContext"
+import MasherContext from "../Masher/MasherContext"
 import { dragTypes, TransferTypeFiles } from "@moviemasher/client-core"
+import { DefinitionItem } from "../DefinitionItem/DefinitionItem"
+import { useContext } from "../../Framework/FrameworkFunctions"
 
-export interface BrowserContentProps extends WithClassName, PropsAndChild {}
+export interface BrowserContentProps extends WithClassName, PropsWithoutChild {}
 
 /**
  * @parents Browser
  * @children BrowserSource
  */
-export function BrowserContent(props: BrowserContentProps): ReactResult {
+export function BrowserContent(props: BrowserContentProps) {
   const [over, setOver] = React.useState(false)
-  const { className, children, ...rest } = props
+  const { className, ...rest } = props
 
-  const editorContext = React.useContext(MasherContext)
-  const browserContext = React.useContext(BrowserContext)
+  const masherContext = useContext(MasherContext)
+  const browserContext = useContext(BrowserContext)
   const definitions = browserContext.definitions || []
-  const { drop } = editorContext
+  const { drop } = masherContext
 
   const dragValid = (dataTransfer?: DataTransfer | null): dataTransfer is DataTransfer => {
     if (!dataTransfer) return false
@@ -51,27 +55,26 @@ export function BrowserContent(props: BrowserContentProps): ReactResult {
   if (className) classes.push(className)
   if (over) classes.push(ClassDropping)
   
-  const child = React.Children.only(children)
-  assertTrue(React.isValidElement(child))
   
   const childNodes = () => {
-    const childProps = child.props
     return definitions.map(definition => {
-      const cloneProps = { ...childProps, key: definition.id }
-      const children = React.cloneElement(child, cloneProps)
-      const contextProps = { children, value: { definition }, key: definition.id }
+      const clone = <DefinitionItem draggable={true} key={definition.id} className='definition preview' />
+
+      const contextProps = { 
+        children: clone, value: { definition }, key: definition.id 
+      }
       const context = <DefinitionContext.Provider { ...contextProps } />
       return context
     })
   }
 
   const viewProps = {
-    ...rest, 
-    className: classes.join(' '),
-    key: `browser-content`,
-    children: childNodes(), 
-    onDrop, onDragOver, onDragLeave,
 
+    
+    onDrop, onDragOver, onDragLeave,
   }
-  return <View {...viewProps} />
+  return <View key='browser-content'
+    className={classes.join(' ')}
+  
+  >{childNodes()}</View>
 }

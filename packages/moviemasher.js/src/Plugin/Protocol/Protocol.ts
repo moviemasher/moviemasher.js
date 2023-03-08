@@ -1,9 +1,14 @@
-import { AudioDataOrError, FontDataOrError, ImageDataOrError, RecordDataOrError, RecordsDataOrError, VideoDataOrError } from "../../ClientMedia/ClientMedia"
-import { PathDataOrError, PotentialError } from "../../Helpers/Error/Error"
-import { AudioType, FontType, ImageType, LoadType, RecordsType, RecordType, VideoType } from "../../Setup/Enums"
+import { 
+  ClientAudioDataOrError, ClientFontDataOrError, ClientImageDataOrError, 
+  JsonRecordDataOrError, JsonRecordsDataOrError, ClientVideoDataOrError, PathDataOrError 
+} from "../../Helpers/ClientMedia/ClientMedia"
+import { PotentialError } from "../../Helpers/Error/Error"
+import { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from "../../Setup/Enums"
+import { LoadType } from "../../Setup/LoadType"
 import { Request, RequestRecord } from "../../Helpers/Request/Request"
 import { Plugin, ProtocolType } from "../Plugin"
-import { pluginPromise } from "../PluginFunctions"
+
+export type Protocol = string | HttpProtocol | HttpsProtocol | BlobProtocol | FileProtocol
 
 export type HttpProtocol = 'http'
 export const HttpProtocol: HttpProtocol = 'http'
@@ -14,14 +19,12 @@ export const BlobProtocol: BlobProtocol = 'blob'
 export type FileProtocol = 'file'
 export const FileProtocol: FileProtocol = 'file'
 
-export type Protocol = string | HttpProtocol | HttpsProtocol | BlobProtocol | FileProtocol
-
-
 /**
  * @category Plugin
  */
 export interface ProtocolPlugin extends Plugin {
-  type: Protocol
+  type: ProtocolType
+  protocol: Protocol
   promise: ProtocolPromise
 }
 
@@ -32,12 +35,12 @@ export interface ProtocolPlugin extends Plugin {
 export interface PluginsByProtocol extends Record<Protocol, ProtocolPlugin> {}
 
 export type ProtocolPromise = {
-  (request: Request, type: ImageType): Promise<ImageDataOrError>
-  (request: Request, type: AudioType): Promise<AudioDataOrError>
-  (request: Request, type: FontType): Promise<FontDataOrError>
-  (request: Request, type: VideoType): Promise<VideoDataOrError>
-  (request: Request, type: RecordType): Promise<RecordDataOrError>
-  (request: Request, type: RecordsType): Promise<RecordsDataOrError>
+  (request: Request, type: ImageType): Promise<ClientImageDataOrError>
+  (request: Request, type: AudioType): Promise<ClientAudioDataOrError>
+  (request: Request, type: FontType): Promise<ClientFontDataOrError>
+  (request: Request, type: VideoType): Promise<ClientVideoDataOrError>
+  (request: Request, type: RecordType): Promise<JsonRecordDataOrError>
+  (request: Request, type: RecordsType): Promise<JsonRecordsDataOrError>
   (request: Request, type?: LoadType): Promise<PathDataOrError>
 }
 
@@ -45,7 +48,4 @@ export interface ProtocolResponse extends PotentialError {
   requests: RequestRecord
 }
 
-export const protocolLoadPromise = (protocol: string): Promise<ProtocolPlugin> => {
-  return pluginPromise(ProtocolType, protocol).then(plugin => plugin as ProtocolPlugin)
-}
 

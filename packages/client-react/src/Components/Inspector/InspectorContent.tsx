@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { PropsWithChildren, ReactResult } from '../../declarations'
+
+import { PropsWithChildren } from "../../Types/Props"
 import { View } from '../../Utilities/View'
 
 /**
  * @parents Inspector
  */
-export function InspectorContent(props: PropsWithChildren): ReactResult {
+export function InspectorContent(props: PropsWithChildren) {
   return <View {...props} />
 }

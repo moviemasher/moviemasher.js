@@ -1,12 +1,12 @@
 import React from 'react'
 import { DataType, UnknownRecord } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { DataTypeInputs } from './DataTypeInputs'
 import { InputContext } from '../InputContext'
-import { MasherContext } from '../../../Masher/MasherContext'
+import MasherContext from '../../../Masher/MasherContext'
 
-export function IconTypeInput(): ReactResult {
+export function IconTypeInput() {
   const inputContext = React.useContext(InputContext)
 
   const masherContext = React.useContext(MasherContext)

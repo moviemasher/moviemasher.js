@@ -1,11 +1,9 @@
 import React from 'react'
 import { UnknownRecord } from "@moviemasher/moviemasher.js"
 
-import { UnknownElement, ReactResult } from "../declarations"
-
-function ConstEmptyElementFunction(props: UnknownRecord): ReactResult { return null }
-
-export const EmptyElement: UnknownElement = <ConstEmptyElementFunction key="empty" />
+import { JsxElement } from "../Framework/Framework"
 
 
-export const TweenInputKey = 'tween-input-key'
+function ConstEmptyElementFunction(props: UnknownRecord) { return null }
+
+export const EmptyElement: JsxElement = <ConstEmptyElementFunction key="empty-element" />

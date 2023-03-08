@@ -1,4 +1,4 @@
-import { StringRecord } from "../declarations"
+import { StringRecord } from "../Types/Core"
 import { ServerType } from "../Setup/Enums"
 import { isObject, isString } from "../Utility/Is"
 

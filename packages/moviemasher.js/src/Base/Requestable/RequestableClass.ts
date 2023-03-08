@@ -1,8 +1,9 @@
-import { UnknownRecord } from '../../declarations'
+import { UnknownRecord } from '../../Types/Core'
 import { isPopulatedString } from '../../Utility/Is'
 import { Requestable, RequestableObject } from './Requestable'
 import { assertRequest, Request } from "../../Helpers/Request/Request"
-import { assertLoadType, ImageType, LoadType, SequenceType } from '../../Setup/Enums'
+import { ImageType, SequenceType } from '../../Setup/Enums'
+import { assertLoadType, LoadType } from "../../Setup/LoadType"
 import { PropertiedClass } from '../Propertied'
 
 export class RequestableClass extends PropertiedClass implements Requestable {
@@ -38,7 +39,7 @@ export class RequestableClass extends PropertiedClass implements Requestable {
 
   request: Request
 
-  type: string = ''
+  type = ''
 
   toJSON(): UnknownRecord {
     const { id, type, kind, createdAt, relativeRequest } = this

@@ -8,12 +8,13 @@ import {
 } from "@moviemasher/client-core"
 
 import { View } from "../../Utilities/View"
-import { ReactResult, PropsWithChildren, WithClassName } from "../../declarations"
+
+import { PropsWithChildren } from "../../Types/Props"
 import { TimelineContext } from "./TimelineContext"
 import { useListeners } from "../../Hooks/useListeners"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
 
-export interface TimelineScrubber extends PropsWithChildren, WithClassName {
+export interface TimelineScrubber extends PropsWithChildren {
   inactive?: boolean
   styleHeight?: boolean
   styleWidth?: boolean
@@ -21,8 +22,8 @@ export interface TimelineScrubber extends PropsWithChildren, WithClassName {
 /**
  * @parents Timeline
  */
-export function TimelineScrubber(props: TimelineScrubber): ReactResult {
-  const editor = useEditor()
+export function TimelineScrubber(props: TimelineScrubber) {
+  const editor = useMasher()
   const clientXRef = React.useRef<number>(-1)
   const ref = React.useRef<HTMLDivElement>(null)
   const timelineContext = React.useContext(TimelineContext)

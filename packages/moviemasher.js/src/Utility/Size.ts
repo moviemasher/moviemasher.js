@@ -1,10 +1,11 @@
-import { Orientation } from "../Setup/Enums";
+import { Orientation } from "../Setup/Enums"
 import { isAboveZero, isNumber, isObject } from "./Is"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions";
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { EqualsChar, SemicolonChar } from "../Setup/Constants"
 
 export interface Size {
-  width: number;
-  height: number;
+  width: number
+  height: number
 }
 export const isSize = (value: any): value is Size => {
   return isObject(value) && 
@@ -96,8 +97,6 @@ export const SizePreview = sizeScale(SizeOutput, 0.25, 0.25)
 export const SizeIcon = sizeScale(SizePreview, 0.5, 0.5)
 
 export const sizeCopy = (size: any) => {
-  // assertSize(size)
-
   const { width = 0, height = 0 } = size
   return { width, height }
 }
@@ -117,7 +116,9 @@ export const sizeLock = (lockSize: Size, lock?: Orientation): Size => {
 
 export const sizeString = (size: Size) => {
   const { width, height } = size
-  return `width=${width};height=${height}`
+  return [
+    ['width', width].join(EqualsChar), ['height', height].join(EqualsChar)
+  ].join(SemicolonChar)
 }
 
 export const sizeLockNegative = (size: Size, lock?: Orientation): Size => {

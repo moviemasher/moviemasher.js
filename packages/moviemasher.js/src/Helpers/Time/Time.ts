@@ -1,3 +1,5 @@
+import { Numbers } from "../../Types/Core"
+
 export interface Time {
   add(time: Time): Time
   closest(timeRange: TimeRange): Time
@@ -6,7 +8,7 @@ export interface Time {
   equalsTime(time: Time): boolean
   fps: number
   frame: number
-  durationFrames(duration: number, fps?: number): number[]
+  durationFrames(duration: number, fps?: number): Numbers
   lengthSeconds: number
   isRange: boolean
   min(time: Time): Time

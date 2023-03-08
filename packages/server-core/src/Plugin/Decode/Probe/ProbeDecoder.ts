@@ -1,15 +1,15 @@
 import ffmpeg from 'fluent-ffmpeg'
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
 
-import { execSync } from "child_process";
+import { execSync } from "child_process"
 
 import {
-   assertProbeOptions, AudibleProbe, DecodeMethod, DecodeType, Decoding, DurationProbe, 
-   errorCaught, idGenerateString, JsonExtension, PathData, PathDataOrError, 
-   Plugins, ProbeType, ProbingData, SizeProbe 
-} from "@moviemasher/moviemasher.js";
-import { environment, Environment } from '../../../Environment/Environment';
+  assertProbeOptions, AudibleProbe, DecodeMethod, DecodeType, Decoding, 
+  DurationProbe, errorCaught, idGenerateString, JsonExtension, NewlineChar, 
+  Numbers, PathDataOrError, ProbeType, ProbingData, Runtime, SizeProbe
+} from "@moviemasher/moviemasher.js"
+import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
 
@@ -21,7 +21,7 @@ const alphaFormats = (): string[] => {
 
 const alphaFormatsInitialize = (): string[] => {
   const result = execSync(AlphaFormatsCommand).toString().trim()
-  return result.split("\n")
+  return result.split(NewlineChar)
 }
 
 const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<PathDataOrError> => {
@@ -40,8 +40,8 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Pat
         const formats = alphaFormats()
         const { streams, format } = raw
         const { duration = 0 } = format
-        const durations: number[] = []
-        const rotations: number[] = []
+        const durations: Numbers = []
+        const rotations: Numbers = []
         const sizes: { width: number, height: number}[] = []
         for (const stream of streams) {
           const { rotation, width, height, duration, codec_type, pix_fmt } = stream
@@ -99,16 +99,17 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Pat
           }
         })
         const id = idGenerateString()
-        const data: Decoding = { id, type: ProbeType, data: probingData }
+        const decoding: Decoding = { id, type: ProbeType, data: probingData }
         // const decodeData: DecodeData = { data }
-        
-        const temporaryDirectory = environment(Environment.API_DIR_TEMPORARY)
-        const filePath = path.resolve(temporaryDirectory, `${id}.${JsonExtension}`)
-        fs.writeFileSync(filePath, JSON.stringify(data))
-        const pathData: PathData = { path: filePath }
-        resolve(pathData) 
+        const { environment } = Runtime
+        const temporaryDirectory = environment.get(EnvironmentKeyApiDirTemporary)
+        const data = path.resolve(temporaryDirectory, `${id}.${JsonExtension}`)
+        fs.writeFileSync(data, JSON.stringify(decoding))
+        resolve({ data }) 
       }
     })
   })
 }
-Plugins[DecodeType][ProbeType] = { decode, type: ProbeType}
+Runtime.plugins[DecodeType][ProbeType] ||= { 
+  decode, type: DecodeType, decodingType: ProbeType
+}

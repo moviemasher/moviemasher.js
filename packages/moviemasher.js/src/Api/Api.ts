@@ -1,5 +1,5 @@
 
-import { JsonRecord } from "../declarations"
+import { JsonRecord } from "../Types/Core"
 import { Identified } from "../Base/Identified"
 import { PotentialError } from "../Helpers/Error/Error"
 import { ServerType } from "../Setup/Enums"

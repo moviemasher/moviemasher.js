@@ -1,11 +1,11 @@
-import { Scalar, UnknownRecord, ValueRecord } from "../../declarations"
-import { StartOptions } from "../../Editor/Preview/AudioPreview/AudioPreview"
+import { Numbers, Scalar, UnknownRecord, ValueRecord } from "../../Types/Core"
+import { StartOptions } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
 import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../Base/Code"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
 import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
-import { filterFromId } from "../../Filter/FilterFactory"
-import { Filter } from "../../Filter/Filter"
+import { filterFromId } from "../../Plugin/Filter/FilterFactory"
+import { Filter } from "../../Plugin/Filter/Filter"
 import { timeFromArgs, timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
 import { commandFilesInput } from "../../Utility/CommandFiles"
 import { idGenerate } from "../../Utility/Id"
@@ -14,8 +14,8 @@ import { Property } from "../../Setup/Property"
 import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
 import { AudioType } from "../../Setup/Enums"
 import { ContentClass } from "../../Media/Content/Content"
-
-const AudibleGainDelimiter = ','
+import { arrayOfNumbers } from "../../Utility/Array"
+import { CommaChar } from "../../Setup/Constants"
 
 
 export function UpdatableDurationMixin<T extends ContentClass>(Base: T): UpdatableDurationClass & T {
@@ -27,12 +27,12 @@ export function UpdatableDurationMixin<T extends ContentClass>(Base: T): Updatab
 
       if (isDefined(gain)) {
         if (isString(gain)) {
-          if (gain.includes(AudibleGainDelimiter)) {
-            const floats = gain.split(AudibleGainDelimiter).map(string => parseFloat(string))
+          if (gain.includes(CommaChar)) {
+            const floats = gain.split(CommaChar).map(string => parseFloat(string))
             const z = floats.length / 2
-            for (let i = 0; i < z; i += 1) {
+            arrayOfNumbers(z).forEach(i => {
               this.gainPairs.push([floats[i * 2], floats[i * 2 + 1]])
-            }
+            })
             this.gain = -1
           } else this.gain = Number(gain)
         } else if (isPositive(gain)) this.gain = gain
@@ -61,7 +61,7 @@ export function UpdatableDurationMixin<T extends ContentClass>(Base: T): Updatab
 
     gain = 1.0
 
-    gainPairs: number[][] = []
+    gainPairs: Numbers[] = []
 
     graphFiles(args: PreloadArgs): GraphFiles {
       const { audible } = args

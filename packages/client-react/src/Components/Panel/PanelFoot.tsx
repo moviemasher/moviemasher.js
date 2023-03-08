@@ -1,13 +1,15 @@
 import React from 'react'
 import { CollapseContext } from '../Collapse/CollapseContext'
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+import { JsxChildren, JsxChilds } from "../../Types/Element"
+import { PropsWithChildren } from "../../Types/Props"
 import { BarProps } from '../../Utilities/Bar'
 import { View } from '../../Utilities/View'
+import { isArray } from '@moviemasher/moviemasher.js'
 
-export interface PanelFootProps extends PropsAndChildren, WithClassName {}
+export interface PanelFootProps extends PropsWithChildren {}
 
-export function PanelFoot(props: BarProps): ReactResult {
+export function PanelFoot(props: BarProps) {
   const panelContext = React.useContext(CollapseContext)
   const { collapsed } = panelContext
   if (collapsed) return null
@@ -16,7 +18,13 @@ export function PanelFoot(props: BarProps): ReactResult {
 
   if (!(before || content || after)) return null
 
-  const children = [before, content, after].filter(Boolean)
+  const children: JsxChildren = []
+  if (before) children.push(...before)
+  if (content) {
+    if (isArray(content)) children.push(...content)
+    else children.push(content)
+  }
+  if (after) children.push(...after)
 
   viewProps.children = children
   return <View {...viewProps}/>

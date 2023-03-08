@@ -1,4 +1,4 @@
-import { Unknowns } from "../declarations"
+import { Numbers, Unknowns } from "../Types/Core"
 
 export const arrayLast = (array: Unknowns): any => array[array.length - 1 ]
 
@@ -14,3 +14,7 @@ export const arrayReversed = (array: Unknowns) => {
 export const arrayUnique = (array: Unknowns) => {
   return [...new Set(array)]
 }
+
+export const arrayOfNumbers = (count = 0, start = 0): Numbers => (
+  [...Array(count)].map((_, index) => start + index)
+)

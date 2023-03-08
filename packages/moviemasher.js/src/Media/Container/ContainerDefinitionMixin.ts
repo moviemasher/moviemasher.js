@@ -1,6 +1,7 @@
 import { TweenableDefinitionClass } from "../../Mixin/Tweenable/Tweenable"
 import { PreloadArgs } from "../../Base/Code"
-import { DataType, ImageType, MediaType, Orientation } from "../../Setup/Enums"
+import { DataType, ImageType, Orientation } from "../../Setup/Enums"
+import { MediaType } from "../../Setup/MediaType"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { ContainerDefinition, ContainerDefinitionClass } from "./Container"
 

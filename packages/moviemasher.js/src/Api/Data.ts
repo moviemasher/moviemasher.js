@@ -1,6 +1,6 @@
 import { 
   JsonRecord, StringRecord, UnknownRecord 
-} from "../declarations"
+} from "../Types/Core"
 import { Labeled } from "../Base/Base"
 import { Identified } from "../Base/Identified"
 import { Size } from "../Utility/Size"

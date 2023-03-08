@@ -1,7 +1,7 @@
 import React from 'react'
-import { ClassButton, SelectType } from '@moviemasher/moviemasher.js'
+import { ClassButton, ClipType, TrackType } from '@moviemasher/moviemasher.js'
 
-import { PropsMethod, PropsWithoutChild } from '../../declarations'
+import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'
 import { InspectorProperties } from './InspectorProperties'
 import { InspectorContent } from './InspectorContent'
@@ -10,29 +10,28 @@ import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { InspectorPicked } from './InspectorPicked'
 import { InspectorPicker } from './InspectorPicker'
 import { EditorRemoveButton } from '../Controls/EditorRemoveButton'
-import { Button } from '../../Utilities/Button'
 import { EncodeControl } from '../Controls/EncodeControl'
 import { ViewControl } from '../Controls/ViewControl'
 import { View } from '../../Utilities/View'
-import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
 import { EditorUndoButton } from '../Controls/EditorUndoButton'
 import { EditorRedoButton } from '../Controls/EditorRedoButton'
+import TranslationSpan from '../Translation/TranslationSpan/TranslationSpan.lite'
 
 export interface InspectorPropsDefault extends PanelOptions, PropsWithoutChild {}
 
 export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, InspectorProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
-  optionsStrict.props.key ||= 'inspector'
+  // optionsStrict.props.key ||= 'inspector'
   optionsStrict.props.className ||= 'panel inspector'
 
   optionsStrict.header.content ||= [
     <View key="panel-icon" children={icons.inspector} />,
-    <EditorUndoButton key='undo'>
-      <Button>{icons.undo}{labelTranslate('undo')}</Button>
+    <EditorUndoButton key='undo' button={true} label='undo'>
+      {icons.undo}
     </EditorUndoButton>,
-    <EditorRedoButton key='redo'>
-      <Button>{icons.redo}{labelTranslate('redo')}</Button>
+    <EditorRedoButton key='redo' button={true} label='redo'>
+      {icons.redo}
     </EditorRedoButton>,
   ]
  
@@ -52,22 +51,18 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
  ]
 
   const contentChildren = [<InspectorProperties key="properties" />]
-  const types = [SelectType.Clip, SelectType.Track]
+  const types = [ClipType, TrackType]
 
   contentChildren.push(
     <InspectorPicked type="mash" key="inspector-mash">
       <View>
-        <EncodeControl key='render-process'>
-          <Button>
-            {labelTranslate('render')} 
-            {icons.render}
-          </Button>
+        <EncodeControl button={true} key='render-process'>
+          <TranslationSpan id='render' />
+          {icons.render}
         </EncodeControl>
-        <ViewControl key='view-control'>
-          <Button>
-            {labelTranslate('view')} 
-            {icons.view}
-          </Button>
+        <ViewControl button={true} key='view-control'>
+          <TranslationSpan id="view" />
+          {icons.view}
         </ViewControl>    
       </View>  
     </InspectorPicked>
@@ -76,11 +71,9 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
   types.forEach(type => {
     contentChildren.push(
       <InspectorPicked key={`${type}-delete`} type={type}>
-        <EditorRemoveButton type={type}>
-          <Button>
-            {labelInterpolate('delete', { type })}
-            {icons.remove}
-          </Button>
+        <EditorRemoveButton button={true} type={type}>
+          <TranslationSpan id="delete" values={{ type }} />
+          {icons.remove}
         </EditorRemoveButton>
       </InspectorPicked>
     )
@@ -89,11 +82,14 @@ export const InspectorDefaultProps: PropsMethod<InspectorPropsDefault, Inspector
   optionsStrict.content.children ||= <>{contentChildren}</>
 
   const children = <>
-    <Bar {...optionsStrict.header} />
-    <InspectorContent {...optionsStrict.content.props}>
+    <Bar key='head' {...optionsStrict.header} />
+    <InspectorContent key='content' {...optionsStrict.content.props}>
       {optionsStrict.content.children}
     </InspectorContent>
-    <Bar {...optionsStrict.footer} />
+    <Bar key='foot' {...optionsStrict.footer} />
   </>
-  return { ...optionsStrict.props, children }
+  return { 
+    key: 'inspector',
+    ...optionsStrict.props, children 
+  }
 }

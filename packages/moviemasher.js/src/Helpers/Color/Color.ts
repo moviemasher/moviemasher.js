@@ -1,4 +1,4 @@
-import { NumberRecord, Value, ValueRecord } from "../../declarations"
+import { NumberRecord, Value, ValueRecord } from "../../Types/Core"
 
 export type Color = Rgb | Rgba
 export type ColorObject = RgbObject | RgbaObject

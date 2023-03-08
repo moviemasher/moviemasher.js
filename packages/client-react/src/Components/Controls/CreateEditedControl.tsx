@@ -1,14 +1,19 @@
 import React from "react"
+
+import /* type */ { PropsClickable } from "../../Types/Props"
+
 import {
-  EventType, MasherAction} from "@moviemasher/moviemasher.js"
+  EventType, MasherAction
+} from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-export function CreateEditedControl(props: PropsAndChild): ReactResult {
+export function CreateEditedControl(props: PropsClickable) {
   const { children, ...rest } = props
-  const editor = useEditor()
+  const editor = useMasher()
   const getDisabled = () => editor.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled()) }
@@ -19,14 +24,14 @@ export function CreateEditedControl(props: PropsAndChild): ReactResult {
     [EventType.Save]: updateDisabled,
   })
 
-  const onClick = () => {
-    if (disabled) return
+  return <Clickable key='create-edited'
+    button={props.button}
+    label={props.label}
+    onClick={ () => {
+      if (disabled) return
 
-    editor.create()
-  }
-
-  const buttonOptions = { ...rest, onClick, disabled }
-  return React.cloneElement(React.Children.only(children), buttonOptions)
-
-
+      editor.create()
+    } }
+    className={className(disabled, props.className)}
+  >{props.children}</Clickable>
 }

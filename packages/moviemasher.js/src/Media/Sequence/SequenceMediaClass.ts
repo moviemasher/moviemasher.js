@@ -1,4 +1,4 @@
-import { UnknownRecord} from "../../declarations"
+import { Numbers, UnknownRecord} from "../../Types/Core"
 import { Time } from "../../Helpers/Time/Time"
 import { SequenceClass } from "./SequenceClass"
 import {
@@ -43,19 +43,9 @@ export class SequenceMediaClass extends SequenceMediaWithUpdatableDuration imple
 
   fps = Default.definition.videosequence.fps
 
-  framesArray(start: Time): number[] {
+  framesArray(start: Time): Numbers {
     const { duration, fps } = this
     return start.durationFrames(duration, fps)
-    // const frames : number[] = []
-    // const startFrame = Math.min(framesMax, start.scale(fps, "floor").frame)
-    // if (start.isRange) {
-    //   const endFrame = Math.min(framesMax + 1, start.timeRange.endTime.scale(fps, "ceil").frame)
-    //   for (let frame = startFrame; frame < endFrame; frame += 1) {
-    //     frames.push(frame)
-    //   }
-    // } else frames.push(startFrame)
-    // // console.log(this.constructor.name, "framesArray", start, fps, framesMax, frames)
-    // return frames
   }
 
   private get framesMax() : number { 

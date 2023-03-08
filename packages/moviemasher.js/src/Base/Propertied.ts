@@ -1,4 +1,4 @@
-import { Scalar, ScalarRecord, UnknownRecord } from "../declarations"
+import { Scalar, ScalarRecord, UnknownRecord } from "../Types/Core"
 import { propertyTypeCoerce,propertyTypeValid } from "../Helpers/PropertyType"
 import { Property } from "../Setup/Property"
 import { assertObject, assertTrue, isUndefined } from "../Utility/Is"

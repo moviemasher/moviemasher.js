@@ -31,7 +31,6 @@
   "typedoc": {
     "entryPoint": "./src/index.ts",
     "readmeFile": "./README.md",
-    "displayName": "client-core",
-    "tsconfig": "./tsconfig.json"
+    "displayName": "client-core"
   }
 }

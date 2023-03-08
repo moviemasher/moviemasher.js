@@ -1,6 +1,5 @@
-import { UnknownRecord } from "../../../declarations";
-import { DecodingType } from "../Decoder";
-import { Decoding, DecodingObject } from "./Decoding";
+import { UnknownRecord } from "../../../Types/Core"
+import { Decoding, DecodingObject, DecodingType } from "./Decoding"
 
 
 export class DecodingClass implements Decoding {
@@ -9,6 +8,7 @@ export class DecodingClass implements Decoding {
     this.type = type
     this.data = data
   }
+
   data?: UnknownRecord
 
   type: DecodingType

@@ -1,14 +1,14 @@
 
 import React from 'react'
-import { EmptyMethod, VoidMethod } from '@moviemasher/moviemasher.js'
+import { EmptyFunction, EmptyFunctionType } from '@moviemasher/moviemasher.js'
 
 export interface AppContextInterface {
-  initialize: VoidMethod
+  initialize: EmptyFunctionType
   initialized: boolean
 }
 
 export const AppContextDefault: AppContextInterface = { 
-  initialize: EmptyMethod,
+  initialize: EmptyFunction,
   initialized: false,
 }
 

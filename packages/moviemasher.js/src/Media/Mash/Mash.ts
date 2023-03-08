@@ -1,9 +1,8 @@
-import { UnknownRecord } from "../../declarations"
+import { UnknownRecord } from "../../Types/Core"
 import { PreviewItems } from "../../Helpers/Svg/Svg"
 import { AVType, MashType } from "../../Setup/Enums"
 import { Time, Times } from "../../Helpers/Time/Time"
-import { Clip, ClipObject, Clips } from "./Track/Clip/Clip"
-import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
+import { Clip, Clips } from "./Track/Clip/Clip"
 import { TimeRange } from "../../Helpers/Time/Time"
 import { Track, TrackObject } from "./Track/Track"
 import { isArray, isObject } from "../../Utility/Is"
@@ -13,31 +12,27 @@ import { Request } from "../../Helpers/Request/Request"
 import { Propertied } from "../../Base/Propertied"
 import { Effect } from "../Effect/Effect"
 import { Media, MediaObject, MediaObjects } from "../Media"
-import { EncodingObjects, Encodings } from "../../Encode/Encoding/Encoding"
-import { Selectable } from "../../Editor/Selectable"
+import { EncodingObjects, Encodings } from "../../Plugin/Encode/Encoding/Encoding"
 import { Size } from "../../Utility/Size"
 import { PreloadOptions } from "../../Base/Code"
-import { Editor } from "../../Editor/Editor"
 import { Emitter } from "../../Helpers/Emitter"
-import { MediaCollection } from "../../Base/MediaCollection"
-
-export enum Frame {
-  First = 0,
-  Last = -1,
-}
+import { MediaCollection } from "./MediaCollection/MediaCollection"
+import { Masher, MashingType } from "../../Plugin/Masher/Masher"
+import { Selectable } from "../../Plugin/Masher/Selectable"
+import { AudioPreview } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
 
 export type Movable = Effect 
 export type Movables = Movable[]
 
 export interface MashMediaContent {
   color?: string
-  quantize?: Number
+  quantize?: number
   tracks?: TrackObject[]
   media?: MediaObjects
 }
 
 export interface MashMediaRequest extends Request {
-  response?: MashMediaContent
+  response?: MashMediaContent | undefined
 }
 
 export interface MashMediaObject extends MediaObject {
@@ -45,9 +40,9 @@ export interface MashMediaObject extends MediaObject {
   encodings?: EncodingObjects
 }
 
-export interface MashEditorArgs {
+export interface MashMasherArgs {
   mediaCollection: MediaCollection
-  editor: Editor
+  masher: Masher
   buffer: number
   gain: number
   loop: boolean
@@ -82,7 +77,7 @@ export interface MashMedia extends Media, Selectable {
   draw() : void
   drawnTime? : Time
   duration: number
-  editor: Editor
+  editor: Masher
   emitter?: Emitter
   encodings: Encodings
   endTime: Time
@@ -90,12 +85,13 @@ export interface MashMedia extends Media, Selectable {
   frames: number
   gain: number
   imageSize: Size
+  kind: MashingType
   loading: boolean
   loadPromise(args?: PreloadOptions): Promise<void>
   loop: boolean
   media: MediaCollection
   paused: boolean
-  previewItemsPromise(editor?: Editor): Promise<PreviewItems>
+  previewItemsPromise(editor?: Masher): Promise<PreviewItems>
   putPromise(): Promise<void>
   quantize: number
   reload(): Promise<void> | undefined

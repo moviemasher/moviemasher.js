@@ -1,14 +1,104 @@
-
-import { 
-  
-  Request, LoadType, Plugins, 
-  ImageType, AudioType, VideoType, FontType, requestMediaPromise, 
-  assertPopulatedString, endpointFromUrl, 
-  errorCaught, ProtocolType, assertEndpoint, RecordType, JsonRecord, RecordData, errorPromise, ErrorName, ProtocolPlugin, Protocol, RecordDataOrError, JsonRecords, RecordsData, RecordsType, RecordsDataOrError
+import {
+  assertEndpoint, assertPopulatedString, AudioType, endpointFromUrl, 
+  EnvironmentKey, EnvironmentKeyPrefix, errorCaught, ErrorName, errorPromise, 
+  FontType, ImageType, JsonRecord, JsonRecords, LoadType, NumberType, Protocol, 
+  ProtocolPlugin, ProtocolType, JsonRecordDataOrError, 
+  JsonRecordsDataOrError, RecordsType, RecordType, Request, requestClientMediaPromise, 
+  Runtime, VideoType
 } from "@moviemasher/moviemasher.js"
-import { config, Config } from "@moviemasher/client-core"
-
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
+
+
+export class ProtocolSupabase implements ProtocolPlugin {
+  [index: string]: unknown
+
+  private _client?: SupabaseClient
+  get client(): SupabaseClient { return this._client ||= this.clientInitialize }
+  set client(value: SupabaseClient) { this._client = value }
+  
+  private get clientInitialize() {
+    const { environment } = Runtime
+    const projectUrl = environment.get(EnvironmentKeySupabaseProjectUrl) 
+    const anonKey = environment.get(EnvironmentKeySupabaseAnonKey) 
+    assertPopulatedString(projectUrl)
+    assertPopulatedString(anonKey)
+    const supabase = createClient(projectUrl, anonKey)
+    return supabase
+  }
+
+  promise(request: Request, type?: LoadType) {
+    switch (type) {
+      case ImageType: 
+      case AudioType: 
+      case VideoType: 
+      case FontType: {
+        const { endpoint, init } = request
+        assertEndpoint(endpoint)
+
+        const { hostname, pathname } = endpoint
+        assertPopulatedString(pathname)
+        const { client } = this
+
+        const { environment } = Runtime
+
+        const bucket = environment.get(EnvironmentKeySupabaseBucket) || hostname || 'media'
+
+        const path = pathname.slice(1) // required??
+        const expires = environment.get(EnvironmentKeySupabaseExpires, NumberType) || 60
+        return client.storage.from(bucket).createSignedUrl(path, expires).then(response => {
+          if (response.error) return errorCaught(response.error)
+          
+          const { data } = response
+          const { signedUrl } = data
+          const signed = { init, endpoint: endpointFromUrl(signedUrl) }
+          return requestClientMediaPromise(signed, type)
+        })
+      }
+      case RecordType: return this.recordPromise(request)
+      case RecordsType: return this.recordsPromise(request)
+      // default: return requestRecordPromise(request)
+    }
+    return errorPromise(ErrorName.Type)
+  }
+
+  private async recordPromise(request: Request): Promise<JsonRecordDataOrError> {
+    const { environment } = Runtime
+    const table = environment.get(EnvironmentKeySupabaseTable) || 'media'
+    const { client } = this
+    const { endpoint, init } = request
+  
+    const response = await client.from(table).select()
+    console.log('response', response)
+    if (response.error) return (errorCaught(response.error))
+  
+    const { data: responseData } = response
+    const data = responseData[0] as JsonRecord
+    return ({ data })
+  }
+
+  private async recordsPromise(request: Request): Promise<JsonRecordsDataOrError> {
+    const { environment } = Runtime
+    const table = environment.get(EnvironmentKeySupabaseTable) || 'media'
+    const { client } = this
+    const { endpoint, init } = request
+  
+    const response = await client.from(table).select()
+    console.log('response', response)
+    if (response.error) return (errorCaught(response.error))
+  
+    const { data: responseData } = response
+    const data = responseData as JsonRecords
+    return ({ data })
+  }
+  type = ProtocolType
+  protocol = SupabaseProtocol 
+}
+
+export const EnvironmentKeySupabaseProjectUrl: EnvironmentKey = `${EnvironmentKeyPrefix}SUPABASE_PROJECT_URL`
+export const EnvironmentKeySupabaseBucket: EnvironmentKey = `${EnvironmentKeyPrefix}SUPABASE_BUCKET`
+export const EnvironmentKeySupabaseTable: EnvironmentKey = `${EnvironmentKeyPrefix}SUPABASE_TABLE`
+export const EnvironmentKeySupabaseAnonKey: EnvironmentKey = `${EnvironmentKeyPrefix}SUPABASE_ANON_KEY`
+export const EnvironmentKeySupabaseExpires: EnvironmentKey = `${EnvironmentKeyPrefix}SUPABASE_EXPIRES`
 
 
 export const SupabaseProtocol: Protocol= 'supabase'
@@ -126,86 +216,4 @@ export const SupabaseProtocol: Protocol= 'supabase'
 // }
 
 
-export class ProtocolSupabase implements ProtocolPlugin {
-  [index: string]: unknown
-
-  private _client?: SupabaseClient
-  get client() { return this._client ||= this.clientInitialize }
-  private get clientInitialize() {
-    const projectUrl = config(Config.SUPABASE_PROJECT_URL)
-    const anonKey = config(Config.SUPABASE_ANON_KEY)
-    assertPopulatedString(projectUrl)
-    assertPopulatedString(anonKey)
-    const supabase = createClient(projectUrl, anonKey)
-    return supabase
-  }
-
-  promise(request: Request, type?: LoadType) {
-    switch (type) {
-      case ImageType: 
-      case AudioType: 
-      case VideoType: 
-      case FontType: {
-        const { endpoint, init } = request
-        assertEndpoint(endpoint)
-
-        const { hostname, pathname } = endpoint
-        assertPopulatedString(pathname)
-        const { client } = this
-
-        const bucket = config(Config.SUPABASE_BUCKET) || hostname
-        assertPopulatedString(bucket)
-        const path = pathname.slice(1) // required??
-        const expires = Number(config(Config.SUPABASE_EXPIRES) || 60)
-        return client.storage.from(bucket).createSignedUrl(path, expires).then(response => {
-          if (response.error) return errorCaught(response.error)
-          
-          const { data } = response
-          const { signedUrl } = data
-          const signed = { init, endpoint: endpointFromUrl(signedUrl) }
-          return requestMediaPromise(signed, type)
-        })
-      }
-      case RecordType: return this.recordPromise(request)
-      case RecordsType: return this.recordsPromise(request)
-      // default: return requestRecordPromise(request)
-    }
-    return errorPromise(ErrorName.Type)
-  }
-
-  private async recordPromise(request: Request): Promise<RecordDataOrError> {
-    const table = config(Config.SUPABASE_TABLE)
-    assertPopulatedString(table)
-    const { client } = this
-    const { endpoint, init } = request
-  
-    const response = await client.from(table).select()
-    console.log('response', response)
-    if (response.error) return (errorCaught(response.error))
-  
-    const { data: responseData } = response
-    const data = responseData[0] as JsonRecord
-    const result: RecordData = { data }
-    return (result)
-  }
-
-  private async recordsPromise(request: Request): Promise<RecordsDataOrError> {
-    const table = config(Config.SUPABASE_TABLE)
-    assertPopulatedString(table)
-    const { client } = this
-    const { endpoint, init } = request
-  
-    const response = await client.from(table).select()
-    console.log('response', response)
-    if (response.error) return (errorCaught(response.error))
-  
-    const { data: responseData } = response
-    const data = responseData as JsonRecords
-    const result: RecordsData = { data }
-    return (result)
-  }
-
-  type = SupabaseProtocol 
-}
-
-Plugins[ProtocolType][SupabaseProtocol] = new ProtocolSupabase
+Runtime.plugins[ProtocolType][SupabaseProtocol] ||= new ProtocolSupabase

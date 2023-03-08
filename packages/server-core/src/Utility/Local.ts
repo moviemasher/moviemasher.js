@@ -1,9 +1,16 @@
 
 import path from 'path'
-import { assertPopulatedString, AudioType, ErrorName, errorThrow, FontType, GraphFile, GraphFileType, ImageType, isLoadType, JsonType, LoadType, PopulatedString, VideoType } from "@moviemasher/moviemasher.js";
-import { BasenameCache } from '../Setup/Constants';
-import { hashMd5 } from './Hash';
-import { Environment, environment } from '../Environment/Environment';
+import { 
+  assertPopulatedString, AudioType, NewlineChar, ErrorName, errorThrow, 
+  FontType, GraphFile, GraphFileType, ImageType, isLoadType, LoadType, 
+  PopulatedString, VideoType, Runtime 
+} from "@moviemasher/moviemasher.js"
+import { BasenameCache } from '../Setup/Constants'
+import { hashMd5 } from './Hash'
+import { 
+  EnvironmentKeyApiDirCache, EnvironmentKeyApiDirFilePrefix, 
+  EnvironmentKeyApiDirValid 
+} from '../Environment/ServerEnvironment'
 
 const typeExtension = (type: LoadType): string => {
   switch(type){
@@ -17,7 +24,7 @@ const typeExtension = (type: LoadType): string => {
 
 const graphFileTypeBasename = (type: GraphFileType, content: PopulatedString) => {
   if (type !== GraphFileType.SvgSequence) return `${BasenameCache}.${type}`
-  const fileCount = content.split("\n").length
+  const fileCount = content.split(NewlineChar).length
   const digits = String(fileCount).length
   return `%0${digits}.svg`
 }
@@ -30,10 +37,12 @@ export const localPath = (username: string, graphFile: GraphFile): string => {
   }
   assertPopulatedString(file, 'file')
 
-  const cacheDirectory = environment(Environment.API_DIR_CACHE)
-  const filePrefix = environment(Environment.API_DIR_FILE_PREFIX)
+  const { environment } = Runtime
+  const cacheDirectory = environment.get(EnvironmentKeyApiDirCache)
+  const filePrefix = environment.get(EnvironmentKeyApiDirFilePrefix)
+  const validDirectories = environment.get(EnvironmentKeyApiDirValid)
+
   const defaultDirectory = username
-  const validDirectories = environment(Environment.API_DIR_VALID)
 
   if (!isLoadType(type)) {
     if (!type) console.trace("localPath NOT LOADTYPE", type, file, content)

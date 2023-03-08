@@ -1,4 +1,4 @@
-import { assertMediaType } from "../Setup/Enums"
+import { assertMediaType } from "../Setup/MediaType"
 import { Media, MediaObject } from "./Media"
 import { MediaFactories } from "./MediaFactories"
 

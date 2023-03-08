@@ -1,10 +1,11 @@
 import React from "react"
 
-import { PropsWithChildren, ReactResult, WithClassName } from "../../declarations"
+
+import { PropsWithChildren } from "../../Types/Props"
 import { View } from "../../Utilities/View"
 import { CollapseContext, CollapseContextInterface } from "../Collapse/CollapseContext"
 
-export interface ActivityItemProps extends PropsWithChildren, WithClassName {
+export interface ActivityItemProps extends PropsWithChildren {
   collapsed?: boolean
 }
 
@@ -12,7 +13,7 @@ export interface ActivityItemProps extends PropsWithChildren, WithClassName {
  * @parents ActivityContent
  * @children ActivityLabel, ActivityPicked, CollapseControl
  */
-export function ActivityItem(props: ActivityItemProps): ReactResult {
+export function ActivityItem(props: ActivityItemProps) {
   const { collapsed: collapsedProp, ...rest } = props
 
   const [collapsed, changeCollapsed] = React.useState(!!collapsedProp)

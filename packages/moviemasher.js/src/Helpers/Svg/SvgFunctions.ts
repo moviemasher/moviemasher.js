@@ -1,19 +1,40 @@
 import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from "../../Utility/Size"
-import { NamespaceSvg } from "../../Setup/Constants"
-import { assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from "../../Utility/Is"
+import { NamespaceSvg, NamespaceXhtml } from "../../Setup/Constants"
+import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from "../../Utility/Is"
 import { Orientation } from "../../Setup/Enums"
-import { StringRecord } from "../../declarations"
+import { StringRecord } from "../../Types/Core"
 import { SvgFilter, SvgFilters, SvgItem, SvgItems } from "./Svg"
 import { idGenerateString } from "../../Utility/Id"
-import { assertPoint, isPoint, Point, pointCopy, PointZero } from "../../Utility/Point"
+import { assertPoint, isPoint, Point, pointCopy, pointString, pointValueString, PointZero } from "../../Utility/Point"
 import { Rect, RectOptions } from "../../Utility/Rect"
+import { Runtime } from "../../Runtime/Runtime"
+import { EnvironmentKeySupportsLoadSvg } from "../../Runtime/Environment"
+import { BooleanType } from "../../Utility/Scalar"
+import { colorCurrent } from "../Color/ColorConstants"
 
+let PatchSvgElement: SVGSVGElement
 
-let _svgElement: SVGSVGElement
-let svgImageEmitsLoadEvent = false
+export const PatchSvgInitialize = (): SVGSVGElement => {
+  const { document } = globalThis
+  assertDefined(document)
+  console.log('document',document)
+  console.log('body', document.body)
+  const element = svgSvgElement()
+  element.setAttribute('style', 'display:none')
 
-export const svgElement = () =>  _svgElement ||= svgSvgElement() 
-export const svgElementInitialize = (value: SVGSVGElement) => { _svgElement = value }
+  const elements = document.getElementsByTagName('body')
+  const body = elements.item(0)
+  assertTrue(!!body, 'body')
+
+  if (body) body.appendChild(element)
+  return element
+}
+
+export const svgPatch = (value?: SVGSVGElement): SVGSVGElement => {
+  if (value) return PatchSvgElement = value
+  
+  return PatchSvgElement ||= PatchSvgInitialize()
+}
 
 export const svgId = (id: string): string => {
   return `#${id}`
@@ -67,7 +88,7 @@ export const svgRectPoints = (dimensions: any): Point[] => {
 export const svgPolygonElement = (dimensions: any, className?: string | string[], fill = '', id?: string): SVGPolygonElement => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'polygon')
   const rectPoints = svgRectPoints(dimensions)
-  const points = rectPoints.map(point => [point.x, point.y].join(',')).join(' ') 
+  const points = rectPoints.map(point => pointValueString(point)).join(' ') 
   svgSet(element, points, 'points')
   svgSet(element, fill, 'fill')
   svgAddClass(element, className)
@@ -114,7 +135,7 @@ export const svgImageElement = () => {
   return element
 }
 
-export const svgPathElement = (path: string, fill = 'currentColor') => {
+export const svgPathElement = (path: string, fill = colorCurrent) => {
   const element = globalThis.document.createElementNS(NamespaceSvg, 'path')
   svgSet(element, path, 'd')
   svgSet(element, fill, 'fill')
@@ -288,13 +309,15 @@ export const svgSetChildren = (element: Element, svgItems: SvgItems) => {
 }
 
 export const svgImagePromise = (url: string): Promise<SVGImageElement> => {
+  const { environment } = Runtime
+  const svgImageEmitsLoadEvent = environment.get(EnvironmentKeySupportsLoadSvg, BooleanType)
   return new Promise<SVGImageElement>((resolve, reject) => {
     const element = svgImageElement()
     const completed = () => {
       element.removeEventListener('error', failed)
       element.removeEventListener('load', passed)
-      if (_svgElement && !svgImageEmitsLoadEvent) {
-         _svgElement.appendChild(element) 
+      if (!svgImageEmitsLoadEvent) {
+         svgPatch().appendChild(element) 
       }
     }
     const failed = (error: any) => {
@@ -309,17 +332,19 @@ export const svgImagePromise = (url: string): Promise<SVGImageElement> => {
 
     element.addEventListener('error', failed, { once: true })
     element.addEventListener('load', passed, { once: true })
-    if (_svgElement && !svgImageEmitsLoadEvent) {
-      _svgElement.appendChild(element)
+    if (!svgImageEmitsLoadEvent) {
+      svgPatch().appendChild(element)
     }
     svgSet(element, url, 'href')
   })
 }
 
-export const svgText = (string: string, family: string, size: number, transform: string) => {
+export const svgText = (string: string, family: string, size: number, transform: string, color?: string) => {
   const svgItem = globalThis.document.createElementNS(NamespaceSvg, 'text')
-  svgItem.setAttribute('font-family', family)
-  svgItem.setAttribute('font-size', String(size))
+  svgSet(svgItem, family, 'font-family')
+  svgSet(svgItem, String(size), 'font-size')
+  svgSet(svgItem, color, 'fill')
+
   svgItem.append(string)
   svgSetTransform(svgItem, transform)
   return svgItem
@@ -343,9 +368,8 @@ export const svgImagePromiseWithOptions = (url:string, options: RectOptions): Pr
     assertTrue(context)
     context.fillRect(0, 0, 1, 1)
     svgImagePromise(canvas.toDataURL()).then(() => {
-      svgImageEmitsLoadEvent = true
+      const { environment } = Runtime
+      environment.set(EnvironmentKeySupportsLoadSvg, true)
     })
   }
 })()
-
-

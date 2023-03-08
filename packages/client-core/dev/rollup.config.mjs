@@ -1,8 +1,8 @@
-import { rollupConfigurations} from "../../../dev/utils/rollup-configurations.mjs"
+import { rollupConfigurations} from "../../../dev/utils/rollupConfigurations.mjs"
 
 const name = 'MovieMasherClientCore'
 const libName = 'client-core'
-const configurations = rollupConfigurations(name, libName)
+const configurations = rollupConfigurations({ name, libName })
 export default configurations
 
 

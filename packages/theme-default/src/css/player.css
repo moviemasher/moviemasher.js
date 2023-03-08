@@ -1,15 +1,15 @@
-.moviemasher .editor .panel.player {
+.moviemasher .masher .panel.player {
   grid-area: player;
 }
 
-.moviemasher .editor .panel.player .foot .time {
+.moviemasher .masher .panel.player .foot .time {
   font-size: 0.75em;
   text-align: right;
   flex-grow: 1;
 }
 
 
-.moviemasher .editor .panel.player .content {
+.moviemasher .masher .panel.player .content {
   width: var(--preview-width);
   height: var(--preview-height);
   margin-inline: auto;
@@ -17,32 +17,32 @@
   position: relative;
 }
 
-.moviemasher .editor .panel.player .content > .svgs {
+.moviemasher .masher .panel.player .content > .svgs {
   position: relative;
 }
 
 
-.moviemasher .editor .panel.player .content > .svgs > svg,
-.moviemasher .editor .panel.player .content > .svgs > div {
+.moviemasher .masher .panel.player .content > .svgs > svg,
+.moviemasher .masher .panel.player .content > .svgs > div {
   position: absolute;
   left: 0px;
   top: 0px;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds,
-.moviemasher .editor .panel.player .content > .svgs > svg.background,
-.moviemasher .editor .panel.player .content > .svgs > svg.track {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds,
+.moviemasher .masher .panel.player .content > .svgs > svg.background,
+.moviemasher .masher .panel.player .content > .svgs > svg.track {
   pointer-events: none;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg .outline {
+.moviemasher .masher .panel.player .content > .svgs > svg .outline {
   cursor: move;
   pointer-events: fill;
   stroke-width: 0;
   fill: transparent;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg .outline.animate:hover {
+.moviemasher .masher .panel.player .content > .svgs > svg .outline.animate:hover {
   stroke-width: calc(2 * var(--border-size));
   stroke-dasharray: 4px;
   stroke-dashoffset: 8px;
@@ -55,42 +55,42 @@
 @keyframes color { to {  stroke: black } }
 @keyframes stroke { to { stroke-dashoffset: 0; } }
 /* 
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.ne {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.ne {
   cursor: ne-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.se {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.se {
   cursor: se-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.nw {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.nw {
   cursor: nw-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.sw {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.sw {
   cursor: sw-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.n {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.n {
   cursor: n-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.s {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.s {
   cursor: s-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.e {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.e {
   cursor: e-resize;
 }
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds .handle.w {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds .handle.w {
   cursor: w-resize;
 } */
 
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds.back > * {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds.back > * {
   stroke-width: calc(2 * var(--border-size));
 
   stroke: black;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds.back .handle {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds.back .handle {
   pointer-events: fill;
 }
 
-.moviemasher .editor .panel.player .content > .svgs > svg.bounds.fore > * {
+.moviemasher .masher .panel.player .content > .svgs > svg.bounds.fore > * {
   stroke: none;
   fill: white;
 }

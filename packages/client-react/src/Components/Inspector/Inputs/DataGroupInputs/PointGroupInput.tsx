@@ -1,27 +1,29 @@
 import React from "react"
 import { 
-  assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, 
-  isDefined, selectedPropertyObject, selectedPropertiesScalarObject, 
+  assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
+  selectedPropertyObject, selectedPropertiesScalarObject, 
   PropertyTweenSuffix, ScalarRecord, assertTimeRange, tweenInputTime
 } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
+import { JsxElement } from "../../../../Framework/Framework"
+
 import { InspectorContext } from "../../../Inspector/InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
-import { useEditor } from "../../../../Hooks/useEditor"
-import { MasherContext } from "../../../Masher/MasherContext"
+import { useMasher } from "../../../../Hooks/useMasher"
+import MasherContext from "../../../Masher/MasherContext"
+import { PropsAndChild } from "../../../../Types/Props"
 
 
-export function PointGroupInput(props: DataGroupProps): ReactResult {
+export function PointGroupInput(props: DataGroupProps) {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   
-  const editor = useEditor()
+  const editor = useMasher()
   const { selectType, selectedItems: propsItems, ...rest } = props
-  assertSelectType(selectType)
+  assertSelectorType(selectType)
 
  
 
@@ -51,7 +53,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     offE: offEValue, offW: offWValue, offN: offNValue, offS: offSValue
   } = values
 
-  const elementsByName: Record<string, UnknownElement> = {}
+  const elementsByName: Record<string, JsxElement> = {}
   const inspectingProperties = [xProperty, yProperty]
 
   
@@ -84,7 +86,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
   })
 
   const selectedButton = [ClassSelected, ClassButton].join(' ')
-  const startProps: PropsAndChild = {
+  const startProps = {
     children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
@@ -94,7 +96,7 @@ export function PointGroupInput(props: DataGroupProps): ReactResult {
     }
   }
 
-  const endProps: PropsAndChild = {
+  const endProps = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
     children: endDefined ? icons.end : icons.endUndefined,

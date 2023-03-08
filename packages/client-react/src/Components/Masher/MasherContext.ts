@@ -1,32 +1,27 @@
-import React from 'react'
-import { 
-  BooleanSetter,
-  Editor, EditorIndex, EmptyMethod, Media, ScalarRecord
-} from '@moviemasher/moviemasher.js'
+import /* type */ { Masher, MashIndex, Media, ScalarRecord } from '@moviemasher/moviemasher.js'
+import /* type */ { Draggable } from '@moviemasher/client-core'
 
-import { Client, Draggable } from '@moviemasher/client-core'
-import { ThemeIcons } from '../../declarations'
+import { ElementRecord } from "../../Types/Element"
+
+import { EmptyFunction } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface MasherContextInterface {
-  client?: Client
-  streaming: boolean
-  setStreaming: BooleanSetter
   current: ScalarRecord
   changeDefinition: (definition?: Media) => void
-  drop: (draggable: Draggable, editorIndex?: EditorIndex) => Promise<Media[]>
-  editor?: Editor
-  editorIndex: EditorIndex
-  icons: ThemeIcons
+  drop: (draggable: Draggable, editorIndex?: MashIndex) => Promise<Media[]>
+  masher?: Masher
+  editorIndex: MashIndex
+  icons: ElementRecord
 }
 
 export const MasherContextDefault: MasherContextInterface = {
-  streaming: false,
-  setStreaming: EmptyMethod,
   current: {},
-  changeDefinition: EmptyMethod,
+  changeDefinition: EmptyFunction,
   drop: () => Promise.resolve([]),
   editorIndex: {},
   icons: {},
 }
 
-export const MasherContext = React.createContext(MasherContextDefault)
+export const MasherContext = createContext(MasherContextDefault)
+export default MasherContext

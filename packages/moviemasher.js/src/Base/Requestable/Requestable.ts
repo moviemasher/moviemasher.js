@@ -1,6 +1,6 @@
 import { isRequest, Request } from "../../Helpers/Request/Request"
-import { UnknownRecord } from "../../declarations"
-import { LoadType } from "../../Setup/Enums"
+import { UnknownRecord } from "../../Types/Core"
+import { LoadType } from "../../Setup/LoadType"
 import { isObject } from "../../Utility/Is"
 import { Identified, isIdentified } from "../Identified"
 import { Propertied } from "../Propertied"

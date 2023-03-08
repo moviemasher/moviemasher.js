@@ -1,9 +1,9 @@
 import { Sizing, Timing } from "../../../../Setup/Enums"
 import { isUndefined } from "../../../../Utility/Is"
-import { Clip, ClipArgs, ClipObject } from "./Clip"
+import { Clip, ClipArgs } from "./Clip"
 import { ClipClass } from "./ClipClass"
-import { DefaultContentId } from "../../../Content/Content"
-import { DefaultContainerId } from "../../../Container/Container"
+import { DefaultContentId } from "../../../Content/ContentConstants"
+import { DefaultContainerId } from "../../../Container/ContainerConstants"
 
 export const clipInstance = (object: ClipArgs): Clip => {
   const { containerId, contentId } = object

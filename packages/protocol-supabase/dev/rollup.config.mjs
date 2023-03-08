@@ -1,9 +1,9 @@
 
 
-import { rollupConfigurations} from "../../../dev/utils/rollup-configurations.mjs"
+import { rollupConfigurations} from "../../../dev/utils/rollupConfigurations.mjs"
 const name = 'MovieMasherProtocolSupabase'
 const libName = 'protocol-supabase'
-const configurations = rollupConfigurations(name, libName)
+const configurations = rollupConfigurations({ name, libName })
 export default configurations
 
 

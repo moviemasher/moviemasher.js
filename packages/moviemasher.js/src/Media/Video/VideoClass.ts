@@ -6,23 +6,23 @@ import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin
 
 import { ContentMixin } from "../Content/ContentMixin"
 import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
-import { ClientVideo } from "../../ClientMedia/ClientMedia"
+import { ClientVideo } from "../../Helpers/ClientMedia/ClientMedia"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect } from "../../Utility/Rect"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { Time, TimeRange, Times } from "../../Helpers/Time/Time"
-import { EmptyMethod, NamespaceSvg } from "../../Setup/Constants"
+import { EmptyFunction, NamespaceSvg } from "../../Setup/Constants"
 import { sizeCopy, sizeCover } from "../../Utility/Size"
 import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
 import { ContainerMixin } from "../Container/ContainerMixin"
 import { MediaInstanceBase } from "../MediaInstanceBase"
-import { assertClientVideo } from "../../ClientMedia/ClientMediaFunctions"
 import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
 import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { isRequestable, Requestable } from "../../Base/Requestable/Requestable"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
 import { requestVideoPromise } from "../../Helpers/Request/RequestFunctions"
+import { assertClientVideo } from "../../Helpers/ClientMedia/ClientMediaFunctions"
 
 const VideoWithTweenable = TweenableMixin(MediaInstanceBase)
 
@@ -107,7 +107,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       } else console.log(this.constructor.name, 'loadPromise NOT isTranscoding', visibleTranscoding)
     
     } 
-    return Promise.all(promises).then(EmptyMethod)
+    return Promise.all(promises).then(EmptyFunction)
   }
 
   private previewVideoPromise(previewTranscoding: Requestable): Promise<ClientVideo> {
@@ -140,7 +140,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     const promises = definitionTimes.map(definitionTime => {
       return this.definition.loadedImagePromise(definitionTime)
     })
-    return Promise.all(promises).then(EmptyMethod)
+    return Promise.all(promises).then(EmptyFunction)
   }
 
   private sequenceItemPromise(rect: Rect, definitionTime: Time): Promise<SvgItem> {
@@ -194,12 +194,12 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
   private videoForPlayerPromise(rect: Rect, definitionTime: Time): SvgItem {
     const { loadedVideo: video } = this 
     assertClientVideo(video)
+    
+    video.currentTime = definitionTime.seconds
 
     const { clientCanMaskVideo } = VideoClass
     if (clientCanMaskVideo) svgSetDimensions(this.foreignElement, rect)
-      
-    video.currentTime = definitionTime.seconds
-
+  
     const { width, height } = rect
     video.width = width 
     video.height = height

@@ -1,18 +1,18 @@
 import React from 'react'
-import { ClassDropping, DroppingPosition, eventStop, EventType, SelectType } from '@moviemasher/moviemasher.js'
+import { ClassDropping, DroppingPosition, eventStop, EventType, TrackType } from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, ReactResult, WithClassName } from '../../declarations'
+
+import { PropsWithChildren } from "../../Types/Props"
 import { useListeners } from '../../Hooks/useListeners'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { View } from '../../Utilities/View'
 import { TimelineContext } from './TimelineContext'
 
-export interface TimelineContentProps extends PropsWithChildren, WithClassName {}
 /**
  * @parents Timeline
  * @children TimelineTracks, TimelineScrubber, TimelineSizer
  */
-export function TimelineContent(props: TimelineContentProps): ReactResult {
+export function TimelineContent(props: PropsWithChildren) {
   const { className, ...rest } = props
 
   const timelineContext = React.useContext(TimelineContext)
@@ -24,12 +24,12 @@ export function TimelineContent(props: TimelineContentProps): ReactResult {
   const ref = React.useRef<HTMLDivElement>(null)
   const [over, setOver] = React.useState(false)
 
-  const editor = useEditor()
+  const editor = useMasher()
   const resetScroll = () => { ref.current?.scrollTo(0, 0) }
   useListeners({ [EventType.Loaded]: resetScroll })
 
   const onPointerDown = () => { 
-    editor.selection.unset(SelectType.Track) 
+    editor.selection.unset(TrackType) 
   }
   
   const onScroll = () => {

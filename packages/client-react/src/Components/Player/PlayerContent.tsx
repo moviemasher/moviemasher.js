@@ -2,32 +2,30 @@ import React from 'react'
 import { 
   EventType, Rect, eventStop, isMediaType, rectRound,
   ClassDropping, sizeAboveZero, UnknownRecord, assertMediaType, 
-  rectCopy, EditorIndex, assertObject, SelectType, EmptyMethod, isMediaObject, 
+  rectCopy, MashIndex, assertObject, EmptyFunction, isMediaObject, ClipType, CurrentIndex, 
 } from '@moviemasher/moviemasher.js'
 
-import {  
-  PropsWithChildren, ReactResult, WithClassName 
-} from '../../declarations'
+
+import { PropsWithChildren } from "../../Types/Props"
 import { 
   assertDragDefinitionObject, dragData, dragType, dragTypes, TransferTypeFiles 
 } from '@moviemasher/client-core'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
-import { MasherContext } from '../Masher/MasherContext'
+import MasherContext from '../Masher/MasherContext'
 import { PlayerContext } from './PlayerContext'
 
-export interface PlayerContentProps extends PropsWithChildren, WithClassName {}
 const PlayerRefreshRate = 10
 
 /**
  * @parents Player
  */
-export function PlayerContent(props: PlayerContentProps): ReactResult {
+export function PlayerContent(props: PropsWithChildren) {
   const { children, className, ...rest } = props
   
-  const editor = useEditor()
-  const [rect, setRect] = React.useState<Rect>(() => (rectCopy(editor.rect)))
+  const masher = useMasher()
+  const [rect, setRect] = React.useState<Rect>(() => (rectCopy(masher.rect)))
   const svgRef = React.useRef<HTMLDivElement>(null)//SVGSVGElement
   const viewRef = React.useRef<HTMLDivElement>(null)
   const masherContext = React.useContext(MasherContext)
@@ -44,7 +42,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
   
     const rect = rectRound(current.getBoundingClientRect())
     setRect(() => {
-      editor.rect = rect
+      masher.rect = rect
       return rectCopy(rect)
     })
   }
@@ -55,7 +53,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     const { current } = viewRef
     if (current) resizeObserver.observe(current)
     return () => { resizeObserver.disconnect() }
-  }, [])
+  }, [resizeObserver])
 
   const swapChildren = (elements: Element[]) => {
     const { current } = svgRef
@@ -69,18 +67,18 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     delete watching.timeout 
     delete watching.redraw 
 
-    return editor.previewItems(!disabled).then(svgs => {
+    return masher.previewItems(!disabled).then(svgs => {
    
       swapChildren(svgs)
       if (redraw) handleDraw()
     })
   }
 
-  const requestItems = () => { requestItemsPromise().then(EmptyMethod) }
+  const requestItems = () => { requestItemsPromise().then(EmptyFunction) }
 
   const handleDraw = () => { 
     const { current } = svgRef
-    const { rect } = editor
+    const { rect } = masher
     if (!(current && sizeAboveZero(rect))) return
 
     if (watching.timeout) {
@@ -110,23 +108,21 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     onDragLeave(event)
     const { dataTransfer } = event
     if (!dragValid(dataTransfer)) return 
-
-    const { mashMedia } = editor
-    assertObject(mashMedia, 'mashMedia')
-    const editorIndex: EditorIndex = {
-      clip: editor.time.scale(mashMedia.quantize).frame,
+    
+    const mashIndex: MashIndex = {
+      clip: CurrentIndex,
       track: -1,
     }
     const types = dragTypes(dataTransfer)
     if (types.includes(TransferTypeFiles)) {
-      drop(dataTransfer.files, editorIndex)
+      drop(dataTransfer.files, mashIndex)
     } else {
       const type = dragType(dataTransfer)
       assertMediaType(type)
       const data = dragData(dataTransfer, type)
       assertDragDefinitionObject(data)
       const { mediaObject } = data
-      if (isMediaObject(mediaObject)) drop(mediaObject, editorIndex)
+      if (isMediaObject(mediaObject)) drop(mediaObject, mashIndex)
     }
   } 
 
@@ -144,7 +140,7 @@ export function PlayerContent(props: PlayerContentProps): ReactResult {
     className: classes.join(' '),
     key: 'player-content', 
     onDragOver, onDrop, onDragLeave, 
-    onPointerDown: () => { editor.selection.unset(SelectType.Clip) }
+    onPointerDown: () => { masher.selection.unset(ClipType) }
   }
 
   if (sizeAboveZero(rect)) {

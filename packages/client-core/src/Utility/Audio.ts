@@ -1,6 +1,6 @@
 import { 
   assertEndpoint,
-  assertPopulatedString, AudibleContextInstance, AudioDataOrError, 
+  assertPopulatedString, AudibleContextInstance, ClientAudioDataOrError, 
   endpointUrl, errorCaught, Request
 } from "@moviemasher/moviemasher.js"
 
@@ -17,7 +17,7 @@ const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
   })
 }
 
-export const audioDataPromise = (request: Request): Promise<AudioDataOrError> => {
+export const audioDataPromise = (request: Request): Promise<ClientAudioDataOrError> => {
   const { endpoint } = request
   assertEndpoint(endpoint)
 
@@ -28,7 +28,7 @@ export const audioDataPromise = (request: Request): Promise<AudioDataOrError> =>
   return promise.then(audioBufferPromise)
 }
 
-export const audioBufferPromise = (audio: ArrayBuffer): Promise<AudioDataOrError> => {
+export const audioBufferPromise = (audio: ArrayBuffer): Promise<ClientAudioDataOrError> => {
   return AudibleContextInstance.decode(audio).then(data => ({ data }))
     .catch(error => errorCaught(error))
 }

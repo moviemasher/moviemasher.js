@@ -20,7 +20,7 @@
   "homepage": "https://moviemasher.com",
   "scripts": {
     "build-rollup": "rollup --config dev/rollup.config.mjs",
-    "build-html": "cp src/index.html public/index.html",
+    "build-html": "node ../../dev/utils/replace-paths.mjs ./src/index.html ./public/index.html",
     "build": "run-s build-rollup build-html"
   },
   "peerDependencies": {

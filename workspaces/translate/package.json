@@ -1,0 +1,17 @@
+{
+  "name": "@moviemasher/translate",
+  "version": "5.1.2",
+  "description": "Movie Masher Translate",
+  "license": "MIT",
+  "module": "./esm/translate.mjs",
+  "main": "./umd/translate.js",
+  "types": "./esm/translate.d.mts",
+  "files": ["esm", "umd"],
+
+  "scripts": {  
+    "build": "node dev/build.mjs"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2"
+  }
+}

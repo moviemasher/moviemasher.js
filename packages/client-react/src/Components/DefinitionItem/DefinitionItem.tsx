@@ -1,16 +1,16 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, MediaObject, sizeAboveZero, sizeCopy, sizeScale, Strings, UnknownRecord} from "@moviemasher/moviemasher.js"
+  ClassSelected, sizeAboveZero, sizeCopy, sizeScale, Strings, UnknownRecord} from "@moviemasher/moviemasher.js"
 
-import { 
-  PropsWithoutChild, ReactResult, WithClassName 
-} from '../../declarations'
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { DragDefinitionObject, DragSuffix } from '@moviemasher/client-core'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
 import { sizeCeil } from '@moviemasher/moviemasher.js'
-import { MasherContext } from '../Masher/MasherContext'
+import MasherContext from '../Masher/MasherContext'
 import { BrowserContext } from '../Browser/BrowserContext'
 
 export interface DefinitionItemProps extends WithClassName, PropsWithoutChild {
@@ -21,7 +21,7 @@ export interface DefinitionItemProps extends WithClassName, PropsWithoutChild {
 /**
  * @parents BrowserContent, DefinitionDrop
  */
-export function DefinitionItem(props: DefinitionItemProps): ReactResult {
+export function DefinitionItem(props: DefinitionItemProps) {
   const { className, iconRatio, ...rest } = props
   const ratio = iconRatio || 0.25
   
@@ -30,7 +30,7 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
   const browserContext = React.useContext(BrowserContext)
   const { refresh } = browserContext
   const masherContext = React.useContext(MasherContext)
-  const { editor, changeDefinition, current } = masherContext
+  const { masher: editor, changeDefinition, current } = masherContext
   
   assertTrue(editor)
 
@@ -72,11 +72,12 @@ export function DefinitionItem(props: DefinitionItemProps): ReactResult {
     const mediaObject = media.toJSON()
     const data: DragDefinitionObject = { offset: clientX - left, mediaObject }
     const json = JSON.stringify(data)
+    // console.log("DefinitionItem.onDragStart", mediaObject, json)
     const { dataTransfer } = event
     if (!dataTransfer) return 
     
     dataTransfer.effectAllowed = 'copy'
-    // console.log("DefinitionItem.onDragStart", definition.type + DragSuffix, json)
+    console.log("DefinitionItem.onDragStart", media.type + DragSuffix, json)
     dataTransfer.setData(media.type + DragSuffix, json)
   }
 

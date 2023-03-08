@@ -4,11 +4,13 @@ import {
   eventStop, UnknownRecord 
 } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChild, ReactResult, WithClassName } from '../../declarations'
+import { JsxElements } from "../../Types/Element"
+import { WithClassName } from "../../Types/Core"
+import { PropsAndChild } from "../../Types/Props"
 import { TimelineContext } from './TimelineContext'
 import { TrackContext } from '../../Contexts/TrackContext'
 import { View } from '../../Utilities/View'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { droppingPositionClass } from '@moviemasher/client-core'
 import { ClipContext } from '../ClipItem/ClipContext'
 
@@ -19,8 +21,8 @@ export interface TimelineTrackProps extends PropsAndChild, WithClassName {
 /**
  * @parents TimelineTracks
  */
-export function TimelineTrack(props: TimelineTrackProps): ReactResult {
-  const editor = useEditor()
+export function TimelineTrack(props: TimelineTrackProps) {
+  const editor = useMasher()
   const { selection } = editor
   const { mash } = selection
  
@@ -57,7 +59,7 @@ export function TimelineTrack(props: TimelineTrackProps): ReactResult {
 
   const { clips, dense, index } = track
   
-  const childNodes = (): React.ReactElement[] => {
+  const childNodes = (): JsxElements => {
     let prevClipEnd = dense ? -1 : 0
     const childProps = child.props
     return clips.map(clip => {

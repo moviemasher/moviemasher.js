@@ -1,8 +1,7 @@
 import React from 'react'
 
-import {
-  PropsMethod, PropsWithoutChild, WithClassName
-} from '../../declarations'
+import { WithClassName } from "../../Types/Core"
+import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'
 import { TimelineScrubberElement } from './TimelineScrubberElement'
 import { TimelineTrack } from './TimelineTrack'
@@ -20,14 +19,13 @@ import { TimelineZoom } from './TimelineZoom'
 import { TimelineAddClipControl } from './TimelineAddClipControl'
 import { ClipItem } from '../ClipItem/ClipItem'
 import { View } from '../../Utilities/View'
-import { Button } from '../../Utilities/Button'
 
 export interface TimelinePropsDefault extends PanelOptions, PropsWithoutChild, WithClassName {}
 
 export const TimelineDefaultProps: PropsMethod<TimelinePropsDefault, TimelineProps> = function(props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
-  optionsStrict.props.key ||= 'timeline'
+  // optionsStrict.props.key ||= 'timeline'
   optionsStrict.props.className ||= 'panel timeline'
 
   optionsStrict.header.content ||= [
@@ -36,17 +34,18 @@ export const TimelineDefaultProps: PropsMethod<TimelinePropsDefault, TimelinePro
 
   optionsStrict.footer.content ||= [
     <TimelineAddClipControl key='add-clip'>
-      <Button children={icons.add}/>
+      {icons.add}
     </TimelineAddClipControl>,
     <TimelineAddTrackControl key='add-track'>
-      <Button children={[icons.add, icons.trackDense]}/>
+      {icons.add}
+      {icons.trackDense}
     </TimelineAddTrackControl>,
     <TimelineZoom key="zoom-out" zoom={0}>
-      <Button useView={true}>{icons.zoomLess}</Button>
+      {icons.zoomLess}
     </TimelineZoom>,
     <TimelineZoomer key='zoomer'/>,
     <TimelineZoom key="zoom-in" zoom={1}>
-      <Button useView={true}>{icons.zoomMore}</Button>
+     {icons.zoomMore}
     </TimelineZoom>,
   ]
 
@@ -67,12 +66,15 @@ export const TimelineDefaultProps: PropsMethod<TimelinePropsDefault, TimelinePro
   </>
   
   const children = <>
-    <Bar {...optionsStrict.header} />
-    <TimelineContent {...optionsStrict.content.props}>
+    <Bar key='head' {...optionsStrict.header} />
+    <TimelineContent key='content' {...optionsStrict.content.props}>
       {optionsStrict.content.children}
     </TimelineContent>
-    <Bar {...optionsStrict.footer} />
+    <Bar key='foot' {...optionsStrict.footer} />
   </>
 
-  return { ...optionsStrict.props, children }
+  return { 
+    key: 'timeline',
+    ...optionsStrict.props, children 
+  }
 }

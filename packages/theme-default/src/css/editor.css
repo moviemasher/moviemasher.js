@@ -1,9 +1,9 @@
-.moviemasher .editor {
+.moviemasher .masher {
   user-select: none;
   -webkit-user-select: none;
 }
 
-.moviemasher .editor input[type=file] {
+.moviemasher .masher input[type=file] {
   visibility: hidden;
   vertical-align: bottom;
   width: 0px;

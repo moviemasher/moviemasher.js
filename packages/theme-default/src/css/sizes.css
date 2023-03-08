@@ -27,49 +27,22 @@
   ;
 }
 
-.moviemasher .editor .panel .content {
+.moviemasher .masher .panel .content {
   --padding: 20px;
   --spacing: 10px;
 }
 
-.moviemasher .editor .panel .foot,
-.moviemasher .editor .panel .head {
+.moviemasher .masher .panel .foot,
+.moviemasher .masher .panel .head {
   --padding: 5px;
   --spacing: 5px;
 }
 
-.moviemasher .editor .panel.composer .content {
-  --padding: 10px;
-  --spacing: var(--drop-size);
-}
-
-.moviemasher .editor .panel.composer .content .layer {
-  --padding: 2px;
-  --spacing: 5px;
-}
-
-.moviemasher .editor .panel.timeline .content {
-  --padding: 0px;
-  --spacing: 5px;
-}
-
-
-
-.moviemasher .editor .panel.activity .content {
+.moviemasher .masher .panel.activity .content {
   --padding: 10px;
   --spacing: 5px;
 }
 
-.moviemasher .editor .panel .preview label {
+.moviemasher .masher .panel .preview label {
   --padding: 5px;
-}
-
-
-.moviemasher .editor .panel.inspector .row .list {
-  --padding: 5px;
-  --spacing: 2px;  
-}
-
-.moviemasher .editor .panel.inspector .content > .row .icons {
-  --spacing: 2px;
 }

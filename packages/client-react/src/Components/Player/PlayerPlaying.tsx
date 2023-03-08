@@ -1,13 +1,14 @@
 import React from 'react'
 
 import { PlayerContext } from './PlayerContext'
-import { PropsAndChild, ReactResult } from '../../declarations'
+
+import { PropsAndChild } from "../../Types/Props"
 
 /**
  *
  * @group Player
  */
-export function PlayerPlaying(props: PropsAndChild): ReactResult {
+export function PlayerPlaying(props: PropsAndChild) {
   const playerContext = React.useContext(PlayerContext)
   if (playerContext.paused) return null
 

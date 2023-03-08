@@ -1,16 +1,17 @@
 import React from 'react'
 import { EventType, isArray, timeFromArgs, TimeRange } from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, ReactResult, SliderChangeHandler, WithClassName } from "../../declarations"
+
+import { SliderChangeHandler } from "../../Types/Core"
+import { PropsWithChildren } from "../../Types/Props"
 import { Slider } from '../../Utilities/Slider'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { useListeners } from '../../Hooks/useListeners'
 
-export interface PlayerTimeControlProps extends PropsWithChildren, WithClassName { }
 
-export function PlayerTimeControl(props: PlayerTimeControlProps): ReactResult {
-  const editor = useEditor()
-  const getTimeRange = () => editor.timeRange.timeRange
+export function PlayerTimeControl(props: PropsWithChildren) {
+  const masher = useMasher()
+  const getTimeRange = () => masher.timeRange.timeRange
   const [timeRange, setTimeRange] = React.useState<TimeRange>(getTimeRange)
 
   const update = () => { setTimeRange(getTimeRange())}
@@ -19,12 +20,16 @@ export function PlayerTimeControl(props: PlayerTimeControlProps): ReactResult {
     [EventType.Duration]: update,
   })
  
-  const onChange: SliderChangeHandler = (_event, values) => {
-    const number = isArray(values) ? values[0] : values
-    editor.time = timeFromArgs(number, timeRange.fps)
+  const onChange: SliderChangeHandler = (values) => {
+    const number = isArray(values) ? values[0] : Number(values)
+    masher.time = timeFromArgs(number, timeRange.fps)
   }
 
+  const { mashMedia } = masher
+  const disabled = !(mashMedia && timeRange.frames)
+
   const sliderProps = {
+    disabled,
     value: timeRange.frame,
     min: 0,
     max: timeRange.frames,

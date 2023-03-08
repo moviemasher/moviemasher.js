@@ -1,4 +1,4 @@
-import { NumberRecord } from "../declarations"
+import { NumberRecord } from "../Types/Core"
 
 const IdTemporaryPrefix = 'temporary'
 const IdCountsByPrefix: NumberRecord = {} 

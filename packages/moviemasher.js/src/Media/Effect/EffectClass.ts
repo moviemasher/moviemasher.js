@@ -1,8 +1,7 @@
 import { EffectMedia } from "./Effect"
-import { Actions, Selectables } from "../../Editor"
+import { Actions } from "../../Plugin/Masher/Actions/Actions"
 import { SelectedItems } from "../../Helpers/Select/SelectedProperty"
-import { SelectType } from "../../Setup/Enums"
-import { Scalar } from "../../declarations"
+import { Scalar } from "../../Types/Core"
 import { SvgFilters } from "../../Helpers/Svg/Svg"
 import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
 import { MediaInstanceBase } from "../MediaInstanceBase"
@@ -12,10 +11,12 @@ import { assertProperty } from "../../Setup/Property"
 import { Rect } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Filter } from "../../Filter/Filter"
+import { Filter } from "../../Plugin/Filter/Filter"
 import { Size } from "../../Utility/Size"
 import { CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs, VisibleCommandFileArgs } from "../../Base/Code"
 import { arrayLast } from "../../Utility/Array"
+import { Selectables } from "../../Plugin/Masher/Selectable"
+import { EffectType, NoneType, SelectorType } from "../../Setup/Enums"
 const EffectContainerWithTweenable = TweenableMixin(MediaInstanceBase)
 const EffectContainerWithContainer = ContainerMixin(EffectContainerWithTweenable)
 
@@ -63,14 +64,14 @@ export class EffectClass extends EffectContainerWithContainer {
   
   selectables(): Selectables { return [this] }
 
-  selectType = SelectType.None
+  selectType: SelectorType = EffectType
 
   selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => { 
       const undoValue = this.value(property.name)
       return {
         value: undoValue,
-        selectType: SelectType.None, property, 
+        selectType: NoneType, property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       

@@ -1,0 +1,19 @@
+{
+  "name": "@moviemasher/translate-fr",
+  "version": "5.1.2",
+  "description": "Movie Masher Translate Plugin for French Language",
+  "license": "MIT",
+  "module": "./esm/translate-fr.mjs",
+  "main": "./umd/translate-fr.js",
+  "types": "./esm/translate-fr.d.mts",
+  "files": [
+    "esm",
+    "umd"
+  ],
+  "scripts": {
+    "build": "rollup -c dev/rollup.config.mjs"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2"
+  }
+}

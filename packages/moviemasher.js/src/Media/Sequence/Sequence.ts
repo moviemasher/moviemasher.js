@@ -3,6 +3,7 @@ import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } fr
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { Time } from "../../Helpers/Time/Time"
 import { SequenceType } from "../../Setup/Enums"
+import { Numbers } from "../../Types/Core"
 
 export interface SequenceObject extends ContentObject, UpdatableSizeObject, UpdatableDurationObject {
   speed?: number
@@ -28,6 +29,6 @@ export interface SequenceMediaObject extends ContentDefinitionObject, UpdatableS
 export interface SequenceMedia extends ContentDefinition, UpdatableSizeDefinition, UpdatableDurationDefinition {
   type: SequenceType
   instanceFromObject(object?: SequenceObject): Sequence
-  framesArray(start: Time): number[]
+  framesArray(start: Time): Numbers
   // urlForFrame(frame : number): string
 }

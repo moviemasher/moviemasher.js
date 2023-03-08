@@ -4,11 +4,14 @@
   "version": "5.1.2",
   "license": "MIT",
   "scripts": {
-    "all": "run-s cores themes clients servers examples protocols docs",
-    "client-core": "npm run build -w @moviemasher/client-core",
+    "space": "npm run build -w @moviemasher/${npm_config_space:=moviemasher.js}",
+    "all": "run-s code themes examples protocols docs",
+    "client-core": "run-s space --space=client-core",
     "client-react": "npm run build -w @moviemasher/client-react",
-    "clients": "run-s client-react",
-    "core": "npm run build -w @moviemasher/moviemasher.js",
+    "clients": "npm run build -w @moviemasher/client",
+    "code": "run-s cores clients servers ",
+    "core": "run-s space",
+    "core-umd": "npm run build-umd -w @moviemasher/moviemasher.js",
     "cores": "run-s core client-core server-core",
     "docs": "typedoc",
     "example-core": "npm run build -w @moviemasher/example-core",
@@ -25,7 +28,9 @@
     "server-express": "npm run build -w @moviemasher/server-express",
     "servers": "run-s server-express",
     "theme-default": "npm run build -w @moviemasher/theme-default",
-    "themes": "run-s theme-default"
+    "themes": "run-s theme-default",
+    "libs": "LIB_ONLY=1 run-s code",
+    "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\" ; echo \"rollup: $(rollup -v)\""
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
@@ -41,17 +46,17 @@
     "rollup-plugin-ts": "^3.2.0",
     "rollup": "^3.17.2",
     "terser": "5.16.5",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
     "socket.io-client": "^4.6.0",
     "socket.io": "^4.6.0",
     "eslint-plugin-tsdoc": "0.2.17",
-    "esbuild": "0.17.10",
     "@types/node": "18.13.0",
     "typescript": "4.9.5"
   },
   "workspaces": [ 
     "images/*", 
     "packages/*",
+    "packages/**/*",
     "workspaces/*"
   ]
 }

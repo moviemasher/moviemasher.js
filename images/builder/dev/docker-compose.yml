@@ -1,7 +1,7 @@
 version: "3"
 name: moviemasher-builder
 services:
-  image:
+  service:
     build:
       dockerfile: images/builder/dev/Dockerfile.cnf
       context: ../../../

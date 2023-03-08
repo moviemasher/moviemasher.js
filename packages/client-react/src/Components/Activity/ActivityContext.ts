@@ -1,31 +1,10 @@
-import React from 'react'
+
 import { 
-  EmptyMethod, isObject, isPopulatedString, errorThrow, Identified,
+  EmptyFunction, isObject, isPopulatedString, errorThrow, Identified,
 } from '@moviemasher/moviemasher.js'
 import { ActivityInfo } from "@moviemasher/client-core"
 
-import { labelInterpolate, labelTranslate } from '../../Utilities/Label'
-
-export const activityLabel = (info: any): string => {
-  if (!isObject(info)) return ''
-
-  const { label, error, type, value } = info as ActivityInfo
-  if (error) {
-    if (value) return labelInterpolate(error, { value })
-    return labelTranslate(error)
-  }
-
-  // switch(type) {
-  //   case ActivityType.Complete:
-  //   case ActivityType.Analyze:
-  //   case ActivityType.Render:
-  //   case ActivityType.Load: return labelTranslate(type)
-    
-  // }
-
-  // if (label) return label
-  return labelTranslate(type)
-}
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export enum ActivityGroup {
   Active = 'active',
@@ -59,7 +38,7 @@ export const ActivityContextDefault: ActivityContextInterface = {
   activities: [],
   allActivities: [],
   picked: ActivityGroup.Active,
-  pick: EmptyMethod
+  pick: EmptyFunction
 }
 
-export const ActivityContext = React.createContext(ActivityContextDefault)
+export const ActivityContext = createContext(ActivityContextDefault)

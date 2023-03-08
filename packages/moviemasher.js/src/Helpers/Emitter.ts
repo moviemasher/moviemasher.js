@@ -1,4 +1,4 @@
-import { UnknownRecord } from "../declarations"
+import { UnknownRecord } from "../Types/Core"
 import { EventType } from "../Setup/Enums"
 
 

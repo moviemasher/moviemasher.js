@@ -1,16 +1,11 @@
 import { Constrained } from "../../Base/Constrained"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { Rect, RectTuple } from "../../Utility/Rect"
-import { isContentType } from "../../Setup/Enums"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isTweenable, isTweenableDefinition, Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../../Mixin/Tweenable/Tweenable"
+import { Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, Component, VisibleCommandFileArgs } from "../../Base/Code"
-import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 import { EffectObject, Effects } from "../Effect/Effect"
 import { Size } from "../../Utility/Size"
-
-export const DefaultContentId = `${IdPrefix}content.image${IdSuffix}`
 
 export interface ContentObject extends TweenableObject {
   effects?: EffectObject[]
@@ -35,19 +30,9 @@ export interface Content extends Tweenable {
   effects: Effects
   effectsCommandFiles(args: VisibleCommandFileArgs): CommandFiles
 }
-export const isContent = (value?: any): value is Content => {
-  return isTweenable(value) && isContentType(value.type)
-}
-export function assertContent(value?: any, name?: string): asserts value is Content {
-  if (!isContent(value)) errorThrow(value, 'Content', name)
-}
+
 
 export interface ContentDefinition extends TweenableDefinition {}
-export const isContentDefinition = (value?: any): value is ContentDefinition => {
-  return isTweenableDefinition(value) && isContentType(value.type)
-}
 
 export type ContentClass = Constrained<Content>
 export type ContentDefinitionClass = Constrained<ContentDefinition>
-
-

@@ -1,6 +1,6 @@
-import { rollupConfigurations} from "../../../dev/utils/rollup-configurations.mjs"
+import { rollupConfigurations} from "../../../dev/utils/rollupConfigurations.mjs"
 
 const name = 'MovieMasherTheme'
 const libName = 'theme-default'
-const configurations = rollupConfigurations(name, libName)
+const configurations = rollupConfigurations({ name, libName })
 export default configurations

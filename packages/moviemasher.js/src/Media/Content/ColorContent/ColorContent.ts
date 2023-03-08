@@ -1,7 +1,7 @@
-import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { ColorTuple } from "../../../Base/Code"
-import {
-  Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent
+import /* type */ { Time, TimeRange } from "../../../Helpers/Time/Time"
+import /* type */ { ColorTuple } from "../../../Base/Code"
+import /* type */ {
+  Content, ContentDefinition, ContentDefinitionObject, ContentObject
 } from "../Content"
 
 export interface ColorContentObject extends ContentObject {
@@ -13,13 +13,9 @@ export interface ColorContentDefinitionObject extends ContentDefinitionObject {
 }
 
 export interface ColorContent extends Content {
-  definition: ColorContentDefinition
   color: string
-
   contentColors(time: Time, range: TimeRange): ColorTuple
-}
-export const isColorContent = (value: any): value is ColorContent => {
-  return isContent(value) && "color" in value
+  definition: ColorContentDefinition
 }
 
 export interface ColorContentDefinition extends ContentDefinition {

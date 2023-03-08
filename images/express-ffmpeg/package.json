@@ -18,8 +18,8 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "start": "node esm/express-ffmpeg.js",
-    "build": "esbuild src/index.ts --outfile=esm/express-ffmpeg.js --bundle --platform=neutral --packages=external --define:process.env.FLUENTFFMPEG_COV=false"
+    "start": "node esm/express-ffmpeg.mjs",
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "dependencies": {
     "express": "4.18.2",

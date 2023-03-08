@@ -1,4 +1,4 @@
 export * from './MasherContext'
-export * from "./Masher"
-export * from "./MasherDefaultProps"
+export * from "./MasherAppFunction"
+export * from "./MasherAppDefaultProps"
 export * from "./Mashing"

@@ -1,4 +1,5 @@
-import { FontType, MediaType } from "../../Setup/Enums"
+import { FontType } from "../../Setup/Enums"
+import { MediaType } from "../../Setup/MediaType"
 import { FontMediaClass } from "./FontMediaClass"
 import { DefaultFontId, FontMedia, FontMediaObject, FontObject } from "./Font"
 import { MediaFactories } from "../MediaFactories"

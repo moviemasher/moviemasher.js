@@ -26,7 +26,7 @@
     "@types/fluent-ffmpeg": "2.1.20"
   },
   "scripts": {
-    "build-image": "docker compose --env-file ../../dev/local.env --file dev/docker-compose.yml build",
-    "build": "esbuild src/index.ts --define:process.env.FLUENTFFMPEG_COV=false --packages=external --bundle --outfile=esm/lambda-ffmpeg.js --platform=neutral" 
+    "start": "node esm/lambda-ffmpeg.mjs",
+    "build": "rollup --config dev/rollup.config.mjs"
   }
 }

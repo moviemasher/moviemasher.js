@@ -1,9 +1,9 @@
 import React from "react"
 import { ClassSelected, UnknownRecord } from "@moviemasher/moviemasher.js"
 
-import {
-  PropsWithoutChild, ReactResult, WithClassName
-} from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { TimelineContext } from "./TimelineContext"
 import { TrackContext } from "../../Contexts/TrackContext"
 import { View } from "../../Utilities/View"
@@ -16,7 +16,7 @@ export interface TimelineTrackIconProps extends PropsWithoutChild, WithClassName
  * @parents TimelineTracks
  * @children TimelineTracks, TimelineScrubber, TimelineScrubberElement, TimelineSizer
  */
-export function TimelineTrackIcon(props: TimelineTrackIconProps): ReactResult {
+export function TimelineTrackIcon(props: TimelineTrackIconProps) {
   const { className: propsClassName, icons, ...rest } = props
   const timelineContext = React.useContext(TimelineContext)
   const trackContext = React.useContext(TrackContext)

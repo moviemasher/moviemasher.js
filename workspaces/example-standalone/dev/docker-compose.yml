@@ -28,7 +28,7 @@ services:
       - ../../../packages/theme-default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/theme-default.js
 
       # use latest HTML from host computer instead of image
-      - ../public/index.html:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/index.html
+      - ../src/index.html:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/index.html
 
       # use temporary directories from host for user media, database files, etc.
       - ../../../temporary/standalone/media:${MOVIEMASHER_DIR_ROOT}/workspaces/example-standalone/public/media

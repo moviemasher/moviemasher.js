@@ -1,10 +1,10 @@
 
-.moviemasher .editor .panel.inspector {
+.moviemasher .masher .panel.inspector {
   grid-area: inspector;
   flex-grow: 1;
 }
 
-.moviemasher .editor .panel.inspector .content fieldset {
+.moviemasher .masher .panel.inspector .content fieldset {
   width: 100%;
   max-width: 100%;
   line-height: var(--icon-size);
@@ -14,71 +14,71 @@
 }
 
 
-.moviemasher .editor .panel.inspector .content .start-end {
+.moviemasher .masher .panel.inspector .content .start-end {
   display: flex;
   float: right;
 }
-.moviemasher .editor .panel.inspector .content fieldset > legend {
+.moviemasher .masher .panel.inspector .content fieldset > legend {
   width: 100%;
 }
-.moviemasher .editor .panel.inspector .content fieldset > legend > div {
+.moviemasher .masher .panel.inspector .content fieldset > legend > div {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr min-content;
   width: 100%;
 }
 
-.moviemasher .editor .panel.inspector .content fieldset > div {
+.moviemasher .masher .panel.inspector .content fieldset > div {
   display: flex;
   gap: var(--spacing);
   grid-auto-flow: column;
 }
 
-.moviemasher .editor .panel.inspector .content fieldset > div > input {
+.moviemasher .masher .panel.inspector .content fieldset > div > input {
   min-width: 50px;
   width: 100%;
 }
 
-.moviemasher .editor .panel.inspector .content {
+.moviemasher .masher .panel.inspector .content {
   overflow-y: auto;
   padding: var(--padding);
 }
 
-.moviemasher .editor .panel.inspector .content>* {
+.moviemasher .masher .panel.inspector .content>* {
   margin-bottom: var(--spacing);
 }
-.moviemasher .editor .panel.inspector .content > .row {
+.moviemasher .masher .panel.inspector .content > .row {
   display: grid;
   gap: var(--spacing);
   grid-template-columns: var(--icon-size) 1fr;
 }
 
 
-.moviemasher .editor .panel.inspector .content > .row > *:first-child {
+.moviemasher .masher .panel.inspector .content > .row > *:first-child {
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }
 
-.moviemasher .editor .panel.inspector .content > .row .icons {
+.moviemasher .masher .panel.inspector .content > .row .icons {
   display: grid;
   grid-template-rows: 1fr auto;
   gap: var(--spacing);
 }
 
-.moviemasher .editor .panel.inspector .content > .row input {
+.moviemasher .masher .panel.inspector .content > .row input {
   min-width: 20px;
 }
 
-.moviemasher .editor .panel.inspector .content > .row.tween {
+.moviemasher .masher .panel.inspector .content > .row.tween {
   grid-template-columns: var(--icon-size) minmax(50px, 1fr) min-content;
 }
 
-.moviemasher .editor .panel.inspector .content > div > label,
-.moviemasher .editor .panel.inspector .content > div > button {
+.moviemasher .masher .panel.inspector .content > div > label,
+.moviemasher .masher .panel.inspector .content > div > button {
   margin-right: var(--spacing);
 }
 
-.moviemasher .editor .panel.inspector .row .list {
+.moviemasher .masher .panel.inspector .row .list {
   width: 100%;
   height: calc((4 * var(--icon-size)) + (5 * var(--spacing)));
   border: var(--border);
@@ -90,7 +90,7 @@
   overflow-y: scroll;
 }
 
-.moviemasher .editor .panel.inspector .row .list .movable {
+.moviemasher .masher .panel.inspector .row .list .movable {
   display: grid;
   grid-template-columns: min-content 1fr;
   width: 100%;
@@ -104,21 +104,21 @@
   background-color: var(--back-secondary);
 }
 
-.moviemasher .editor .panel.inspector .row .list .movable:hover,
-.moviemasher .editor .panel.inspector .row .list .selected {
+.moviemasher .masher .panel.inspector .row .list .movable:hover,
+.moviemasher .masher .panel.inspector .row .list .selected {
   color: var(--color-fore-secondary);
   border-color: var(--color-fore-secondary);
   background-color: var(--color-back-secondary);
 }
 
-.moviemasher .editor .panel.inspector .row .list .selected:hover {
+.moviemasher .masher .panel.inspector .row .list .selected:hover {
   color: var(--color-fore-tertiary);
   border-color: var(--color-fore-tertiary);
   background-color: var(--color-back-tertiary);
 }
 
 
-.moviemasher .editor .panel.inspector .definition-drop {
+.moviemasher .masher .panel.inspector .drop-container {
   display: grid;
   aspect-ratio: var(--preview-aspect-ratio);
   border: var(--border);
@@ -131,6 +131,16 @@
 }
 
 
-.moviemasher .editor .panel.inspector .dropping {
+.moviemasher .masher .panel.inspector .dropping {
   box-shadow: var(--dropping-shadow);
 } 
+
+
+.moviemasher .masher .panel.inspector .row .list {
+  --padding: 5px;
+  --spacing: 2px;  
+}
+
+.moviemasher .masher .panel.inspector .content > .row .icons {
+  --spacing: 2px;
+}

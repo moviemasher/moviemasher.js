@@ -1,14 +1,14 @@
 import { AVType } from "../Setup/Enums"
 import { Time, TimeRange } from "../Helpers/Time/Time"
-import { EmptyMethod } from "../Setup/Constants"
-import { Filter, FilterArgs } from "../Filter/Filter"
-import { ValueRecord } from "../declarations"
+import { Filter, FilterArgs } from "../Plugin/Filter/Filter"
+import { ValueRecord } from "../Types/Core"
 import { Size } from "../Utility/Size"
 import { RectTuple } from "../Utility/Rect"
-import { LoaderType } from "../ClientMedia/ClientMediaFunctions"
+
 import { Media } from "../Media/Media"
 import { Request } from "../Helpers/Request/Request"
 import { isObject } from "../Utility/Is"
+import { LoaderType } from "../Helpers/ClientMedia/ClientMediaFunctions"
 
 export interface CommandInput {
   source: string
@@ -25,8 +25,6 @@ export interface CommandFilter {
 }
 
 export type CommandFilters = CommandFilter[]
-
-
 
 export interface GraphFilter extends CommandFilter {
   filter: Filter
@@ -150,7 +148,6 @@ export interface CommandFile extends GraphFile {
 
 export type CommandFiles = CommandFile[]
 
-export type VoidMethod = typeof EmptyMethod
 
 
 export enum Component {

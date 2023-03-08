@@ -4,13 +4,10 @@ export interface ErrorObject {
   cause?: unknown
 }
 
-export interface PotentialError  {
-  error?: ErrorObject
+export interface DefiniteError {
+  error: ErrorObject
 }
 
-export interface DefiniteError extends Required<PotentialError> {}
 
-export interface PathData {
-  path: string
+export interface PotentialError extends Partial<DefiniteError>  {
 }
-export type PathDataOrError = DefiniteError | PathData

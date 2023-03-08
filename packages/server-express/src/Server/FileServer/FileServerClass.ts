@@ -4,8 +4,9 @@ import fs from 'fs'
 import path from 'path'
 import basicAuth from 'express-basic-auth'
 import {
-  ApiCallback, UploadDescription, Endpoints, RawTypes, assertAboveZero,
-  FileStoreRequest, FileStoreResponse, JsonRecord, LoadType, assertPopulatedString, errorCaught, ErrorName, errorName, errorObjectCaught, errorObject, errorThrow,
+  ApiCallback, UploadDescription, Endpoints, EncodingTypes, assertAboveZero,
+  FileStoreRequest, FileStoreResponse, JsonRecord, LoadType, 
+  assertPopulatedString, ErrorName, errorName, errorObjectCaught, errorObject,
 } from "@moviemasher/moviemasher.js"
 
 import { HostServers } from "../../Host/Host"
@@ -33,7 +34,7 @@ export class FileServerClass extends ServerClass implements FileServer {
   }
 
   extensionLoadType(extension: string): LoadType | undefined {
-    const found = RawTypes.find(loadType =>
+    const found = EncodingTypes.find(loadType =>
       this.args.extensions[loadType].includes(extension)
     )
     if (found) return found as LoadType

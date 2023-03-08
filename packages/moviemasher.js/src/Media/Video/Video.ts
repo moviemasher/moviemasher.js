@@ -1,4 +1,4 @@
-import { ClientImage, ClientVideo } from "../../ClientMedia/ClientMedia"
+import { ClientImage, ClientVideo } from "../../Helpers/ClientMedia/ClientMedia"
 import { VideoType } from "../../Setup/Enums"
 import {
   UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 

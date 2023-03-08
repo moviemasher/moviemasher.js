@@ -2,7 +2,8 @@ import { assertPopulatedString } from "../../Utility/Is"
 import { VideoMediaClass } from "./VideoMediaClass"
 import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
 import { MediaFactories } from "../MediaFactories"
-import { MediaType, VideoType } from "../../Setup/Enums"
+import { VideoType } from "../../Setup/Enums"
+import { MediaType } from "../../Setup/MediaType"
 
 export const videoDefinition = (object : VideoMediaObject) : VideoMedia => {
   const { id } = object

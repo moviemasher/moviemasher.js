@@ -1,18 +1,17 @@
-
-
+import { TranslateArgs } from "../Plugin/Translate/Translate"
 
 export interface Framed {
-  frame: number;
+  frame: number
 }
 
 export interface Indexed {
-  index: number;
+  index: number
 }
 
 export interface Tracked {
-  trackNumber: number;
+  trackNumber: number
 }
 
 export interface Labeled {
-  label: string;
+  label?: string | TranslateArgs
 }

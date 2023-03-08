@@ -1,26 +1,27 @@
 import React from "react"
 import { 
-  assertSelectType, assertTime, ClassButton, ClassSelected, DataGroup, 
+  assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
   selectedPropertyObject, PropertyTweenSuffix, assertTimeRange,
   tweenInputTime
 } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../../../declarations"
+
 import { InspectorContext } from "../../../Inspector/InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
-import { useEditor } from "../../../../Hooks/useEditor"
-import { MasherContext } from "../../../Masher/MasherContext"
+import { useMasher } from "../../../../Hooks/useMasher"
+import MasherContext from "../../../Masher/MasherContext"
+import { PropsAndChild } from "../../../../Types/Props"
 
 
-export function OpacityGroupInput(props: DataGroupProps): ReactResult {
+export function OpacityGroupInput(props: DataGroupProps) {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
-  const editor = useEditor()
+  const editor = useMasher()
   const { selectType, selectedItems: propsItems, ...rest } = props
-  assertSelectType(selectType)
+  assertSelectorType(selectType)
   const inspectorContext = React.useContext(InspectorContext)
   const selectedItems = propsItems || inspectorContext.selectedItems
   const { changeTweening, selectedInfo } = inspectorContext
@@ -55,7 +56,7 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
   }
 
   const selectedButton = [ClassSelected, ClassButton].join(' ')
-  const startProps: PropsAndChild = {
+  const startProps = {
     children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
@@ -65,7 +66,7 @@ export function OpacityGroupInput(props: DataGroupProps): ReactResult {
     }
   }
 
-  const endProps: PropsAndChild = {
+  const endProps = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
     children: endDefined ? icons.end : icons.endUndefined,

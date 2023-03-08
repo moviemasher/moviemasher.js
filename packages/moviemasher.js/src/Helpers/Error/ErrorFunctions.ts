@@ -1,6 +1,7 @@
-import { ValueRecord } from "../../declarations"
+import { ValueRecord } from "../../Types/Core"
 import { ErrorName, ErrorNames } from "./ErrorName"
 import { DefiniteError, ErrorObject } from "./Error"
+import { isValueRecord } from "../../Utility/Is"
 
 export type ErrorContext = ValueRecord | string | undefined
 
@@ -11,7 +12,6 @@ export const isErrorName = (value: any): value is ErrorName => (
 
 export const errorMessage = (name: ErrorName, context?: ErrorContext): string => {
   if (typeof context === 'string') return context
-
 
   return name
 }
@@ -31,9 +31,10 @@ export const errorObjectCaught = (error: any): ErrorObject => {
   return errorObject(message, name, error)
 }
 
-export const errorName = (name: ErrorName, context?: ErrorContext): ErrorObject => (
-  { name, message: errorMessage(name, context) }
-)
+export const errorName = (name: ErrorName, context?: ErrorContext): ErrorObject => {
+  // console.log('errorName', name, context)
+  return { name, message: errorMessage(name, context), cause: context }
+}
 
 export const error = (code: ErrorName, context?: ErrorContext): DefiniteError => (
   { error: errorName(code, context)}

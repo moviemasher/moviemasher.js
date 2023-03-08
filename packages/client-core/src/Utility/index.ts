@@ -1,9 +1,7 @@
 export * from "./Audio"
+export * from "./Class"
 export * from "./DragDrop"
 export * from "./Image"
 export * from "./Json"
-export * from "./Video"
-
 export * from "./Pixel"
-
-export * from "./Activity"
+export * from "./Video"

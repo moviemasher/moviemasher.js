@@ -1,4 +1,4 @@
-export * from "./Decoder"
-export * from "./DecoderFunctions"
+export * from "./Decode"
+export * from "./DecodeFunctions"
 export * from "./Decoding"
 export * from "./Probe"

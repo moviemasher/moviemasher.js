@@ -1,6 +1,5 @@
-// 'use strict';
 
-// Object.defineProperty(exports, '__esModule', { value: true });
+// Object.defineProperty(exports, '__esModule', { value: true })
 
 // const MovieMasher = require('../../../packages/moviemasher.js/')
 // const { Endpoints } = MovieMasher

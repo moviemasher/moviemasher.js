@@ -1,8 +1,8 @@
-import { ClientImage, ClientVideo } from "../ClientMedia/ClientMedia";
-import { Time } from "../Helpers/Time/Time";
-import { timeFromSeconds } from "../Helpers/Time/TimeUtilities";
-import { assertTrue } from "./Is";
-import { Size, sizeAboveZero, sizeCopy, sizeCover } from "./Size";
+import { ClientImage, ClientVideo } from "../Helpers/ClientMedia/ClientMedia"
+import { Time } from "../Helpers/Time/Time"
+import { timeFromSeconds } from "../Helpers/Time/TimeUtilities"
+import { assertTrue } from "./Is"
+import { Size, sizeAboveZero, sizeCopy, sizeCover } from "./Size"
 
 const seekingPromises = new Map<ClientVideo, Promise<ClientImage>>()
 

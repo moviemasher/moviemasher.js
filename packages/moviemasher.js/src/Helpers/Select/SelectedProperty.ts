@@ -1,13 +1,14 @@
-import { SelectType } from "../../Setup/Enums"
-import { PropertiedChangeHandler } from "../../Base/Propertied"
-import { DataGroup, Property } from "../../Setup/Property"
-import { Scalar, ScalarRecord } from "../../declarations"
-import { IndexHandler } from "./Select"
+import /* type */ { SelectorType } from "../../Setup/Enums"
+import /* type */ { PropertiedChangeHandler } from "../../Base/Propertied"
+import /* type */ { DataGroup, Property } from "../../Setup/Property"
+import /* type */ { Scalar, ScalarRecord } from "../../Types/Core"
+import /* type */ { IndexHandler } from "./Select"
+import /* type */ { Movable, Movables } from "../../Media/Mash/Mash"
+
 import { isObject } from "../../Utility/Is"
-import { Movable, Movables } from "../../Media/Mash/Mash"
 
 export interface Selected {
-  selectType: SelectType
+  selectType: SelectorType
   name?: string
 }
 
@@ -15,9 +16,6 @@ export interface SelectedProperty extends Selected {
   property: Property
   changeHandler: PropertiedChangeHandler
   value: Scalar
-}
-export const isSelectedProperty = (value: any): value is SelectedProperty => {
-  return isObject(value) && "changeHandler" in value
 }
 
 export interface SelectedMovable extends Selected {
@@ -33,7 +31,15 @@ export type SelectedProperties = Array<SelectedProperty>
 
 export type SelectedPropertyObject = Record<string, SelectedProperty>
 
-export const selectedPropertyObject = (properties: SelectedItems, group: DataGroup, selectType: SelectType): SelectedPropertyObject => {
+
+
+
+export const isSelectedProperty = (value: any): value is SelectedProperty => {
+  return isObject(value) && "changeHandler" in value
+}
+
+
+export const selectedPropertyObject = (properties: SelectedItems, group: DataGroup, selectType: SelectorType): SelectedPropertyObject => {
   const filtered = properties.filter(prop => {
     if (!isSelectedProperty(prop)) return false
     return prop.property.group === group && prop.selectType === selectType

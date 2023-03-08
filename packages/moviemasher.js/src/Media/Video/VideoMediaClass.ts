@@ -1,4 +1,4 @@
-import { ClientVideo, ClientImage } from "../../ClientMedia/ClientMedia"
+import { ClientVideo, ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
 import { VideoClass } from "./VideoClass"
 import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
 import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"

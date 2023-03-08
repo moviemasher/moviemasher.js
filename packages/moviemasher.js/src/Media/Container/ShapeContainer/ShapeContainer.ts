@@ -1,7 +1,7 @@
 import { Image, ImageMedia, ImageMediaObject, ImageObject } from "../../Image/Image"
 import {
-  Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer
-} from "../Container"
+  Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject} from "../Container"
+import { isContainer } from "../ContainerFunctions"
 
 export interface ShapeContainerObject extends ImageObject {
 }

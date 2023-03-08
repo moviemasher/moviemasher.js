@@ -1,24 +1,24 @@
 import React from "react"
 import { 
-  assertSelectType, ClassButton, DataGroup, isPopulatedObject, selectedPropertyObject 
+  assertSelectorType, ClassButton, DataGroup, isPopulatedObject, selectedPropertyObject 
 } from "@moviemasher/moviemasher.js"
 
-import { ElementRecord, ReactResult } from "../../../../declarations"
+import { ElementRecord } from "../../../../Types/Element"
 import { InspectorContext } from "../../InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { View } from "../../../../Utilities/View"
 import { InspectorProperty, InspectorPropertyProps } from "../../InspectorProperty"
-import { MasherContext } from "../../../Masher/MasherContext"
+import MasherContext from "../../../Masher/MasherContext"
 
 export interface OptionGroupInputProps extends DataGroupProps {
   dataGroup: DataGroup
 }
 
-export function OptionGroupInput(props: OptionGroupInputProps): ReactResult {
+export function OptionGroupInput(props: OptionGroupInputProps) {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   const { selectType, selectedItems: propsItems, dataGroup, ...rest } = props
-  assertSelectType(selectType)
+  assertSelectorType(selectType)
 
   const inspectorContext = React.useContext(InspectorContext)
   const selectedItems = propsItems || inspectorContext.selectedItems
@@ -28,11 +28,10 @@ export function OptionGroupInput(props: OptionGroupInputProps): ReactResult {
     const { name: propertyName } = property
     const name = nameOveride || propertyName
     const propertyProps: InspectorPropertyProps = {
-      key: `inspector-${selectType}-group-${name}`,
       property, value, changeHandler, name,
       ...props
     }
-    return [key, <InspectorProperty {...propertyProps} />]
+    return [key, <InspectorProperty key={`inspector-${selectType}-group-${name}`} {...propertyProps} />]
   }))
 
   const { [dataGroup]: input, ...otherElements } = elementsByName

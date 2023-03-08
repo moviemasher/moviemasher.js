@@ -1,27 +1,27 @@
 import React from "react"
 import { 
-  assertSelectType, assertTime, ClassButton, ClassSelected, 
+  assertSelectorType, assertTime, ClassButton, ClassSelected, 
   DataGroup, selectedPropertyObject, PropertyTweenSuffix,
   assertTimeRange, tweenInputTime
 } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../../../declarations"
+
 import { InspectorContext } from "../../../Inspector/InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
-import { useEditor } from "../../../../Hooks/useEditor"
-import { MasherContext } from "../../../Masher/MasherContext"
+import { useMasher } from "../../../../Hooks/useMasher"
+import MasherContext from "../../../Masher/MasherContext"
 
-export function ColorGroupInput(props: DataGroupProps): ReactResult {  
+export function ColorGroupInput(props: DataGroupProps) {  
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   
-  const editor = useEditor()
+  const editor = useMasher()
 
   const { selectType, selectedItems: propsItems, ...rest } = props
-  assertSelectType(selectType)
+  assertSelectorType(selectType)
 
   const inspectorContext = React.useContext(InspectorContext)
   const selectedItems = propsItems || inspectorContext.selectedItems
@@ -59,18 +59,17 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
 
   const selectedButton = [ClassSelected, ClassButton].join(' ')
 
-  const startProps: PropsAndChild = {
+  const startProps = {
     children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
-    key: 'start',
+ 
     onClick: () => {
       editor.goToTime(timeRange.startTime)
       changeTweening(DataGroup.Color, false)
     }
   }
 
-  const endProps: PropsAndChild = {
-    key: 'end',
+  const endProps = {
     className: endSelected ? selectedButton : ClassButton,
     children: endDefined ? icons.end : icons.endUndefined,
     onClick: () => {      
@@ -88,8 +87,8 @@ export function ColorGroupInput(props: DataGroupProps): ReactResult {
       icons.color, 
       <InputContext.Provider { ...providerProps } />, 
       <View className="start-end" key='start-end'>
-        <View { ...startProps } />
-        <View { ...endProps } />
+        <View key='start' { ...startProps } />
+        <View key='end' { ...endProps } />
       </View>
     ]
   }

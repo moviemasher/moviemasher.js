@@ -1,5 +1,6 @@
 import { Rgb, Rgba, RgbaObject, RgbObject } from "./Color"
 import { isPositive } from "../../Utility/Is"
+import { colorRgbaKeys, colorRgbKeys } from "./ColorConstants"
 
 
 const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
@@ -27,7 +28,7 @@ const colorAlpha = (value?: number) => {
   return Math.max(0, Math.min(1.0, value / 255))
 }
 
-const colorHexToRgba = (hex: string): Rgba => {
+export const colorHexToRgba = (hex: string): Rgba => {
   if (!colorValidHex(hex)) return colorRgba
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
@@ -38,7 +39,7 @@ const colorHexToRgba = (hex: string): Rgba => {
   return { r, g, b, a: colorAlpha(a) }
 }
 
-const colorHexToRgb = (hex: string): Rgb => {
+export const colorHexToRgb = (hex: string): Rgb => {
   if (!colorValidHex(hex)) return colorRgb
 
   const chunkSize = Math.floor((hex.length - 1) / 3)
@@ -64,20 +65,6 @@ const colorRgbaToRgba = (value: string): Rgba => {
 
 const colorRgb: Rgb = { r: 0, g: 0, b: 0 }
 const colorRgba: Rgba = { ...colorRgb, a: 1.0 }
-
-export const colorRgbKeys = 'rgb'.split('')
-export const colorRgbaKeys = [...colorRgbKeys, 'a']
-export const colorTransparent = '#00000000'
-export const colorBlack = '#000000'
-export const colorWhite = '#FFFFFF'
-export const colorWhiteTransparent = '#FFFFFF00'
-export const colorBlackTransparent = '#00000000'
-export const colorWhiteOpaque = '#FFFFFFFF'
-export const colorBlackOpaque = '#000000FF'
-export const colorGreen = '#00FF00'
-export const colorYellow = '#FFFF00'
-export const colorRed = '#FF0000'
-export const colorBlue = '#0000FF'
 
 export const colorRgbToHex = (rgb: RgbObject): string => {
   let r = rgb.r.toString(16)

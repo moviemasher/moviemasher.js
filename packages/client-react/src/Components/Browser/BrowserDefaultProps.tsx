@@ -1,7 +1,7 @@
 import React from 'react'
 import { ClassButton } from '@moviemasher/moviemasher.js'
 
-import { PropsMethod, PropsWithoutChild } from '../../declarations'
+import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'
 import { BrowserContent } from './BrowserContent'
 import { BrowserPicker } from './BrowserPicker'
@@ -16,9 +16,9 @@ export interface BrowserPropsDefault extends PanelOptions, PropsWithoutChild {}
 export const BrowserDefaultProps: PropsMethod<BrowserPropsDefault, BrowserProps> = function (props = {}) {
   const optionsStrict = panelOptionsStrict(props)
   const { icons } = optionsStrict
-  optionsStrict.props.key ||= 'browser'
+  // optionsStrict.props.key ||= 'browser'
   optionsStrict.props.className ||= 'panel browser'
-  optionsStrict.props.initialPicked ||= 'container'
+  // optionsStrict.props.initialPicked ||= 'container'
   optionsStrict.header.content ||= [
     <View key="panel-icon" children={icons.browser} />
   ]
@@ -36,7 +36,7 @@ export const BrowserDefaultProps: PropsMethod<BrowserPropsDefault, BrowserProps>
   ]
 
   optionsStrict.footer.after ||= [
-    <BrowserControl key='import' children={icons.import} />
+    <BrowserControl key='import'>{icons.import}</BrowserControl>
   ]
 
   optionsStrict.content.children ||= (
@@ -44,12 +44,14 @@ export const BrowserDefaultProps: PropsMethod<BrowserPropsDefault, BrowserProps>
   )
 
   const children = <>
-    <Bar {...optionsStrict.header} />
-    <BrowserContent {...optionsStrict.content.props}>
-      {optionsStrict.content.children}
-    </BrowserContent>
-    <Bar {...optionsStrict.footer} />
+    <Bar key='head' {...optionsStrict.header} />
+    <BrowserContent key='content' {...optionsStrict.content.props} />
+    <Bar key='foot' {...optionsStrict.footer} />
   </>
   
-  return { ...optionsStrict.props, children }
+  return { 
+    initialPicked: 'container', 
+    key: 'browser',
+    ...optionsStrict.props, children, 
+  }
 }

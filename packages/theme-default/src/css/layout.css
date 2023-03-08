@@ -1,5 +1,5 @@
 
-.moviemasher .editor.masher {
+.moviemasher .masher {
   grid-template-areas:
     "player browser panels"
     "timeline timeline panels";
@@ -19,30 +19,14 @@
     1fr;
 }
 
-.moviemasher .editor.caster {
-  grid-template-areas:
-    "player browser panels"
-    "composer timeline panels";
-  grid-template-columns:
-    calc(var(--preview-width) + (var(--border-size) * 2))
-    1fr
-    var(--inspector-width);
-  grid-template-rows:
-    calc( var(--preview-height) + var(--header-height) + var(--footer-height))
-    1fr;
-}
-
 @media (max-width: 999px) {
-  .moviemasher .editor {
+  .moviemasher .masher {
     display: block;
     grid-template-areas: "player" "timeline" "inspector" "browser";
   }
-  .moviemasher .editor .panel {
-    margin-bottom: var(--spacing);
-  }
 }
 
-.moviemasher .editor .panels {
+.moviemasher .masher .panels {
   grid-area: panels;
 	display: flex;
   flex-direction: column;
@@ -50,7 +34,7 @@
 }
 
 
-.moviemasher .editor .panel {
+.moviemasher .masher .panel {
   flex-grow: 1;
   overflow: hidden;
   display: grid;
@@ -61,7 +45,7 @@
   background-color: var(--back-primary);
 }
 
-.moviemasher .editor .panel .content .drop-box {
+.moviemasher .masher .panel .content .drop-box {
   pointer-events: none;
   position: absolute;
   top: 0px;
@@ -70,25 +54,25 @@
   right: 0px;
 }
 
-.moviemasher .editor .panel .content.dropping .drop-box {
+.moviemasher .masher .panel .content.dropping .drop-box {
   box-shadow: var(--dropping-shadow);
 }
 
-.moviemasher .editor .panel.collapsed {
+.moviemasher .masher .panel.collapsed {
   grid-template-rows: var(--header-height);
   flex-grow: 0;
 }
 
-.moviemasher .editor .panel .head {
+.moviemasher .masher .panel .head {
   border-bottom: var(--border);
 }
 
-.moviemasher .editor .panel .foot {
+.moviemasher .masher .panel .foot {
   border-top: var(--border);
 }
 
-.moviemasher .editor .panel .foot,
-.moviemasher .editor .panel .head {
+.moviemasher .masher .panel .foot,
+.moviemasher .masher .panel .head {
   display: flex;
   gap: var(--spacing);
   padding: var(--padding);
@@ -98,20 +82,20 @@
   line-height: var(--icon-size);
   font-size: var(--icon-size);
 }
-.moviemasher .editor .panel .head>*:first-child {
+.moviemasher .masher .panel .head>*:first-child {
   flex-grow: 1;
 }
-.moviemasher .editor .panel .head>*,
-.moviemasher .editor .panel .foot>* {
+.moviemasher .masher .panel .head>*,
+.moviemasher .masher .panel .foot>* {
   margin-block: auto;
 }
 
 
-.moviemasher .editor * {
+.moviemasher .masher * {
   box-sizing: border-box;
 }
 
-.moviemasher .editor {
+.moviemasher .masher {
   width: 100%;
   display: grid;
   grid-column-gap: var(--spacing);
@@ -122,7 +106,7 @@
 }
 
 
-.moviemasher .editor .panel .preview {
+.moviemasher .masher .panel .preview {
   position: relative;
   overflow: hidden;
   border: var(--border);
@@ -131,12 +115,12 @@
   color: var(--fore-secondary);
   background-color: var(--back-secondary);
 }
-.moviemasher .editor .panel .preview > * {
+.moviemasher .masher .panel .preview > * {
   pointer-events: none;
 }
 
 
-.moviemasher .editor .panel .preview label {
+.moviemasher .masher .panel .preview label {
   position: absolute;
   display: inline-block;
   overflow: hidden;
@@ -148,11 +132,11 @@
   padding: var(--padding);
 }
 
-.moviemasher .editor label {
+.moviemasher .masher label {
   height: var(--icon-size);
 }
 
 
-.moviemasher .editor .panel select {
+.moviemasher .masher .panel select {
   height: var(--button-size);
 }

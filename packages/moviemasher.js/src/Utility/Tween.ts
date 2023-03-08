@@ -1,4 +1,4 @@
-import { NumberRecord, PopulatedString, Scalar, Value } from "../declarations"
+import { NumberRecord, PopulatedString, Scalar, Value } from "../Types/Core"
 import { Point, pointsEqual, PointTuple } from "./Point"
 import { assertRect, isRect, Rect, RectTuple } from "./Rect"
 import { assertSize, sizeCeil, sizeScale, isSize, Size, sizeCover, sizesEqual, SizeTuple, sizeLock } from "./Size"
@@ -8,6 +8,7 @@ import { colorMixRbg, colorMixRbga } from "../Helpers/Color/ColorFunctions"
 import { DirectionObject, Orientation } from "../Setup/Enums"
 import { assertTweenable, Tweenable } from "../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../Helpers/Time/Time"
+import { arrayOfNumbers } from "./Array"
 
 export interface Tweening {
   point?: boolean
@@ -59,9 +60,9 @@ export const tweenColors = (color: Scalar, colorEnd: Scalar, frames: number): st
   assertPopulatedString(color)
   const colors:string[] = [color]
   if (isPopulatedString(colorEnd) && frames > 1) {
-    for (let frame = 1; frame < frames; frame++) {
+    arrayOfNumbers(frames - 1, 1).forEach(frame => {
       colors.push(tweenColorStep(color, colorEnd, frame, frames))
-    }
+    })
   }
   return colors
 }
@@ -70,9 +71,9 @@ export const tweenColors = (color: Scalar, colorEnd: Scalar, frames: number): st
 export const tweenRects = (rect: Rect, rectEnd: Rect | undefined, frames: number): Rect[] => {
   const rects = [rect]
   if (rectEnd && frames > 1) {
-    for (let frame = 1; frame < frames; frame++) {
+    arrayOfNumbers(frames - 1, 1).forEach(frame => {
       rects.push(tweenRectStep(rect, rectEnd, frame, frames))
-    }
+    })
   }
   return rects
 }

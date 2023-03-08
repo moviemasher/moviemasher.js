@@ -1,14 +1,14 @@
 import { Font, FontMedia, FontObject } from "./Font"
-import { Filter } from "../../Filter/Filter"
-import { Scalar, ScalarRecord, UnknownRecord } from "../../declarations"
+import { Filter } from "../../Plugin/Filter/Filter"
+import { Scalar, ScalarRecord, UnknownRecord } from "../../Types/Core"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { isRect, Rect } from "../../Utility/Rect"
 import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../Base/Code"
 import { FontType, GraphFileType, isOrientation } from "../../Setup/Enums"
 import { stringFamilySizeRect } from "../../Utility/String"
 import { Property } from "../../Setup/Property"
-import { colorBlack, colorBlackTransparent, colorWhite } from "../../Helpers/Color/ColorFunctions"
-import { filterFromId } from "../../Filter/FilterFactory"
+import { colorBlack, colorBlackTransparent, colorWhite } from "../../Helpers/Color/ColorConstants"
+import { filterFromId } from "../../Plugin/Filter/FilterFactory"
 import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
 import { assertPopulatedString, assertTrue } from "../../Utility/Is"
 import { PropertyTweenSuffix } from "../../Base/Propertied"
@@ -111,12 +111,13 @@ export class FontClass extends FontContainerWithContainer implements Font {
       stretch: !isOrientation(lock),
       intrinsicHeight: intrinsicRect.height,
       intrinsicWidth: intrinsicRect.width,
-      [`x${PropertyTweenSuffix}`]: xEnd,
-      [`y${PropertyTweenSuffix}`]: yEnd,
-      [`color${PropertyTweenSuffix}`]: colorEnd,
-      [`height${PropertyTweenSuffix}`]: textSizeEnd,
-      [`width${PropertyTweenSuffix}`]: rectEnd.width,
     }
+    if (xEnd) options[`x${PropertyTweenSuffix}`] = xEnd
+    if (yEnd) options[`y${PropertyTweenSuffix}`] = yEnd
+    if (colorEnd) options[`color${PropertyTweenSuffix}`] = colorEnd
+    if (textSizeEnd) options[`height${PropertyTweenSuffix}`] = textSizeEnd
+    if (rectEnd.width) options[`width${PropertyTweenSuffix}`] = rectEnd.width
+
     textFilter.setValues(options)
     // console.log(this.constructor.name, "initialCommandFilters", options)
 
@@ -162,7 +163,6 @@ export class FontClass extends FontContainerWithContainer implements Font {
     if (!clipString) return dimensions
 
     const rect = stringFamilySizeRect(clipString, family, height)
-    // console.log(this.constructor.name, "intrinsicRectInitialize", rect)
     return rect
   }
 

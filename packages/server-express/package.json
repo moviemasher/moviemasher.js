@@ -52,7 +52,6 @@
   "typedoc": {
     "entryPoint": "./src/index.ts",
     "readmeFile": "./README.md",
-    "displayName": "server-express",
-    "tsconfig": "./dev/tsconfig.json"
+    "displayName": "server-express"
   }
 }

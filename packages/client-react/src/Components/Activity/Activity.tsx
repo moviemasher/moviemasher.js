@@ -1,24 +1,25 @@
 import React from "react"
 import { ClassCollapsed } from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, ReactResult, WithClassName } from "../../declarations"
+
+import { PropsWithChildren } from "../../Types/Props"
 import { View } from "../../Utilities/View"
 import { ActivityContext, ActivityContextInterface, ActivityGroup, 
   assertActivityGroup 
 } from "./ActivityContext"
 import { CollapseContext, CollapseContextInterface } from "../Collapse/CollapseContext"
-import { useEditorActivity } from "../../Hooks/useEditorActivity"
+import { useMasherActivity } from "../../Hooks/useMasherActivity"
 
-export interface ActivityProps extends PropsWithChildren, WithClassName {
+export interface ActivityProps extends PropsWithChildren {
   initialPicked?: string
   initialCollapsed?: boolean
 }
 
 /**
- * @parents Masher
+ * @parents MasherApp
  * @children ActivityContent
  */
-export function Activity(props: ActivityProps): ReactResult {
+export function Activity(props: ActivityProps) {
   const { 
     initialPicked = ActivityGroup.Active, 
     initialCollapsed = false, 
@@ -28,15 +29,15 @@ export function Activity(props: ActivityProps): ReactResult {
   assertActivityGroup(initialPicked)
 
   const [collapsed, setCollapsed] = React.useState(initialCollapsed)
-  const [label, setLabel] = React.useState('')
+  const [label] = React.useState('')
 
-  const [editor, activity] = useEditorActivity() 
+  const activity = useMasherActivity() 
   const [picked, setPicked] = React.useState(initialPicked)
 
   const filteredActivities = React.useMemo(() => {
     // console.log("filteredActivities", picked, allActivities.length)
     return activity.filter(activity => activity.activityGroup === picked)
-  }, [picked, activity.length])
+  }, [activity, picked])
 
   const activityContext: ActivityContextInterface = { 
     activities: filteredActivities, 

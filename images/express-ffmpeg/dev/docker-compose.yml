@@ -1,7 +1,7 @@
 version: "3"
 name: moviemasher-express-ffmpeg
 services:
- express-ffmpeg:
+ service:
     env_file:
       - ../../../dev/local.env
     build: 

@@ -1,4 +1,4 @@
-var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clientReact, protocolSupabase, clientCore, ReactDOM) {
+var MovieMasherExampleSupabase = (function (exports, React, protocolSupabase, moviemasher_js, clientReact, ReactDOM) {
   'use strict';
 
   function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
@@ -1947,16 +1947,13 @@ var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clie
   };
 
   const AppContextDefault = {
-      initialize: moviemasher_js.EmptyMethod,
+      initialize: moviemasher_js.EmptyFunction,
       initialized: false,
   };
   const AppContext = React__default.default.createContext(AppContextDefault);
 
-  // import { SupabaseClient } from "@supabase/supabase-js"
   const useClient = () => {
-      console.log('useClient', moviemasher_js.Plugins);
-      const { client } = moviemasher_js.Plugins.protocol.supabase;
-      // const client  = Plugins.protocol.supabase.client as SupabaseClient
+      const { client } = moviemasher_js.Runtime.plugins[moviemasher_js.ProtocolType].supabase;
       return { supabaseClient: client };
   };
 
@@ -1985,7 +1982,7 @@ var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clie
           const mash = { id: moviemasher_js.idTemporary(), request: { response: { tracks: [{ clips: [clip] }] } } };
           const options = { edited: { mash }, previewSize: { width: 480, height: 270 } };
           const props = clientReact.MasherDefaultProps(options);
-          return jsxRuntimeExports.jsx(clientReact.Masher, { ...props });
+          return jsxRuntimeExports.jsx(clientReact.MasherApp, { ...props });
       }
       const authProps = {
           ...client, providers: ['github'],
@@ -1994,30 +1991,6 @@ var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clie
       return jsxRuntimeExports.jsx("main", { children: jsxRuntimeExports.jsxs("aside", { children: [jsxRuntimeExports.jsx("section", { children: jsxRuntimeExports.jsx(Auth, { ...authProps }) }), jsxRuntimeExports.jsx("h1", { children: "Welcome" }), jsxRuntimeExports.jsx("p", { children: "This example Supabase deployment adds the following tables:" }), jsxRuntimeExports.jsxs("ul", { children: [jsxRuntimeExports.jsx("li", { children: "media" }), jsxRuntimeExports.jsx("li", { children: "probing" }), jsxRuntimeExports.jsx("li", { children: "encoding" })] })] }) });
   };
 
-  // export const App = () => {
-  //   const [session, setSession] = React.useState<Session | null>(null)
-  //   React.useEffect(() => {
-  //     const supabase = Plugins.protocol.supabase.client as SupabaseClient
-  //     supabase.auth.getSession().then(({ data: { session } }) => {
-  //       console.log('getSession', session)
-  //       setSession(session)
-  //     })
-  //     supabase.auth.onAuthStateChange((_event, session) => {
-  //       console.log('onAuthStateChange', session)
-  //       setSession(session)
-  //     })
-  //   }, [])
-  //   if (!session) return <Auth />
-  //   // create mash object containing text clip on a track
-  //   const clip = { 
-  //     container: { string: 'Hello World!' }, 
-  //     containerId: TextContainerId
-  //   }
-  //   const mash = { id: idTemporary(), request: { response: { tracks: [{ clips: [clip] }] } } } 
-  //   const options = { edited: { mash }, previewSize: { width: 480, height: 270 } }
-  //   const props = MasherDefaultProps(options)
-  //   return <Masher { ...props } />
-  // }
   const AuthApp = () => {
       const [initialized, setInitialized] = React__default.default.useState(false);
       // const children = [<header key='header'>Media<SignOut /></header>]
@@ -2032,15 +2005,14 @@ var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clie
   };
   const App = () => {
       console.log('ProtocolSupabase', moviemasher_js.ProtocolType, protocolSupabase.SupabaseProtocol);
-      // return <div>APP</div>
       const client = useClient();
       const authProps = { children: jsxRuntimeExports.jsx(AuthApp, {}), ...client };
       return jsxRuntimeExports.jsx(Auth.UserContextProvider, { ...authProps });
   };
 
-  clientCore.config(clientCore.Config.SUPABASE_PROJECT_URL, 'https://londrhbubledxrvsznll.supabase.co');
-  clientCore.config(clientCore.Config.SUPABASE_ANON_KEY, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvbmRyaGJ1YmxlZHhydnN6bmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzA5NDM4MTcsImV4cCI6MTk4NjUxOTgxN30.BAy8J9nnjc2BQNheVhVBsenNsTml5ImFX52pRlpL5Zs');
-  ReactDOM__default.default.createRoot(document.getElementById('root')).render(jsxRuntimeExports.jsx(React__default.default.StrictMode, { children: jsxRuntimeExports.jsx(App, {}) }));
+  moviemasher_js.Runtime.environment.set(protocolSupabase.EnvironmentKeySupabaseProjectUrl, 'https://londrhbubledxrvsznll.supabase.co');
+  moviemasher_js.Runtime.environment.set(protocolSupabase.EnvironmentKeySupabaseAnonKey, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvbmRyaGJ1YmxlZHhydnN6bmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzA5NDM4MTcsImV4cCI6MTk4NjUxOTgxN30.BAy8J9nnjc2BQNheVhVBsenNsTml5ImFX52pRlpL5Zs');
+  ReactDOM__default.default.createRoot(document.getElementById('root')).render(jsxRuntimeExports.jsx(App, {}));
 
   exports.App = App;
   exports.AppContext = AppContext;
@@ -2051,4 +2023,4 @@ var MovieMasherExampleSupabase = (function (exports, React, moviemasher_js, clie
 
   return exports;
 
-})({}, React, MovieMasher, MovieMasherClient, MovieMasherProtocolSupabase, MovieMasherClientCore, ReactDOM);
+})({}, React, MovieMasherProtocolSupabase, MovieMasher, MovieMasherClient, ReactDOM);

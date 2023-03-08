@@ -1,5 +1,5 @@
-import { ClientAudioNode } from "../ClientMedia/ClientMedia"
-import { assertMethod } from "../Utility/Is"
+import { ClientAudioNode } from "../Helpers/ClientMedia/ClientMedia"
+import { assertFunction } from "../Utility/Is"
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2
@@ -22,7 +22,7 @@ export class AudibleContext {
   private get context() : AudibleContextData {
     if (!this._context) {
       const Klass = AudioContext || window.webkitAudioContext
-      assertMethod(Klass)
+      assertFunction(Klass)
 
       this._context = new Klass()
     }

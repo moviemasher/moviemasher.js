@@ -1,4 +1,4 @@
-import { UnknownRecord, Value, ValueRecord } from "../declarations"
+import { UnknownRecord, Value, ValueRecord } from "../Types/Core"
 import { isNumeric, isUndefined } from "../Utility/Is"
 import { DataType, DataTypes } from "./Enums"
 

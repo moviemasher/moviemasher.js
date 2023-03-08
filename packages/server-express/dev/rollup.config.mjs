@@ -1,8 +1,9 @@
-import { rollupConfigurations} from "../../../dev/utils/rollup-configurations.mjs"
+import { rollupConfigurations} from "../../../dev/utils/rollupConfigurations.mjs"
 
 const name = 'MovieMasherServer'
 const libName = 'server-express'
-const configurations = rollupConfigurations(name, libName, { esm: 'mjs', cjs: 'js' })
+const formats = { esm: 'mjs', cjs: 'js' }
+const configurations = rollupConfigurations({ name, libName, formats })
 export default configurations
 
 

@@ -1,0 +1,20 @@
+{
+  "en": {
+    "identifier": "English",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "fr": "French"
+    },
+    "locale": "en"
+  },
+  "fr": {
+    "identifier": "French",
+    "language": "(FR) Language",
+    "languages": {
+      "en": "(FR) English",
+      "fr": "(FR) French"
+    },
+    "locale": "fr"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@moviemasher/translate-en",
+  "version": "5.1.2",
+  "description": "Movie Masher Translate Plugin for English Language",
+  "license": "MIT",
+  "module": "./esm/translate-en.mjs",
+  "main": "./umd/translate-en.js",
+  "types": "./esm/translate-en.d.mts",
+  "files": [
+    "esm",
+    "umd"
+  ],
+  "scripts": {
+    "build": "rollup -c dev/rollup.config.mjs"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2"
+  }
+}

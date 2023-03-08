@@ -1,9 +1,9 @@
 import React from 'react'
 import { assertPopulatedArray } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../declarations'
+
 import { InspectorContext } from './InspectorContext'
-import { propsSelectTypes } from '../../Utilities/Props'
+import { propsSelectorTypes } from '../../Utilities/Props'
 
 export interface InspectorPickedProps {
   types?: string | string[]
@@ -14,12 +14,12 @@ export interface InspectorPickedProps {
 /**
  * @parents InspectorContent
  */
-export function InspectorPicked(props: InspectorPickedProps): ReactResult {
+export function InspectorPicked(props: InspectorPickedProps) {
   const inspectorContext = React.useContext(InspectorContext)
   const { selectedInfo } = inspectorContext
   const { selectedType } = selectedInfo
   const { type, types, children } = props
-  const selectTypes = propsSelectTypes(type, types)
+  const selectTypes = propsSelectorTypes(type, types)
   assertPopulatedArray(selectTypes)
   
   if (!selectTypes.includes(selectedType)) return null

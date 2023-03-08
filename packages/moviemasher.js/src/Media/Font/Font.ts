@@ -1,6 +1,7 @@
 import { FontType } from "../../Setup/Enums"
 import { isMedia } from "../Media"
-import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject, isContainer } from "../Container/Container"
+import { Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject } from "../Container/Container"
+import { isContainer } from "../Container/ContainerFunctions"
 import { IdPrefix, IdSuffix } from "../../Setup/Constants"
 
 

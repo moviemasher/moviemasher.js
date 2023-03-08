@@ -1,54 +1,5 @@
 module.exports = {
   "entryPointStrategy": "packages",
-  "pluginPages": {
-    "source": ".",
-    "output": "guides",
-		"pages": [ 
-			{ 
-        "moduleRoot": true, "title": "core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" },
-          { "title": "Contributor", "source": "dev/tsdoc/contributor.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "server-core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "server-express", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "client-core", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "client-react", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "theme-default", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-			{ 
-        "moduleRoot": true, "title": "protocol-supabase", 
-        "children": [
-          { "title": "Read Me!", "source": "README.md" }
-        ] 
-      },
-    ]
-	},
 
   "entryPoints": [
     "packages/moviemasher.js",
@@ -113,10 +64,6 @@ module.exports = {
     "@beta": false
   },
   "sort": ["kind", "visibility"],
-  "plugin": [
-    "typedoc-plugin-resolve-crossmodule-references", 
-    "@knodes/typedoc-plugin-pages"
-  ],
   "markedOptions": {
     "mangle": false
   },
@@ -125,5 +72,86 @@ module.exports = {
   },
   "sidebarLinks": {
     "Demo": "http://example.com"
-  }
+  },
+  "requiredToBeDocumented": ["Function"],
+  "plugin": [
+    "typedoc-plugin-mdn-links",
+    "typedoc-plugin-resolve-crossmodule-references", 
+    // "typedoc-plugin-external-resolver",
+    "@knodes/typedoc-plugin-pages",
+    "@knodes/typedoc-plugin-code-blocks",
+    // "typedoc-plugin-expand-object-like-types",
+    "typedoc-plugin-extras", 
+    "typedoc-plugin-coverage",
+  ],
+  "pluginPages": {
+    "source": ".",
+    "output": "guides",
+		"pages": [ 
+			{ 
+        "moduleRoot": true, "title": "core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" },
+          { "title": "Contributor", "source": "dev/tsdoc/contributor.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "server-core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "server-express", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "client-core", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "client-react", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "theme-default", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+			{ 
+        "moduleRoot": true, "title": "protocol-supabase", 
+        "children": [
+          { "title": "Read Me!", "source": "README.md" }
+        ] 
+      },
+    ]
+	},
+  "pluginCodeBlocks": {
+    "source": "src"
+  },
+  "favicon": "dev/img/favicon.ico",
+  "footerTypedocVersion": true,
+  "footerLastModified": true,
+  "customDescription": "JavaScript video editor and encoder",
+  // "pluginExpandTypes": {
+  //   "internalModule": "<internal>",
+  // },
+  
+  // "externalDocumentation": {
+  //   "@moviemasher/moviemasher.js": {
+  //     "externalBaseURL": "https://moviemasher.com/docs"
+
+  //   },
+  //   "@supabase/supabase-js": {
+  //       "dtsPath": "~/dist/module/index.d.ts",
+  //       "externalBaseURL": "https://supabase.github.io/supabase-js/v2"
+  //   }
+  // }
 }

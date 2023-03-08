@@ -1,12 +1,13 @@
 import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg'
 import {
-  AVType,
-  CommandFilters,
-  isAboveZero, isPopulatedString, isNumber, isPopulatedObject, isValue, ValueRecord
+  AVType, CommandFilters, isAboveZero, isPopulatedString, isNumber, 
+  isPopulatedObject, isValue, ValueRecord, ColonRegex, CommaRegex
 } from '@moviemasher/moviemasher.js'
 
 import { Command } from './Command'
-import { CommandOptions } from '../Encode/Encode'
+import { CommandOptions } from '../Plugin/Encode/Encode'
+
+
 
 const commandCombinedOptions = (args: ValueRecord): string[] => Object.entries(args).map(
   ([key, value]) => {
@@ -23,10 +24,10 @@ const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[
     const newOptions = Object.entries(options).map(([key, value]) => {
       if (isNumber(value)) return `${key}=${value}`
 
-      if (!value.length) return key.replaceAll(',', '\\,')
+      if (!value.length) return key.replace(CommaRegex, '\\,')
 
-      const commasEscaped = value.replaceAll(',', '\\,')
-      const colonsEscaped = commasEscaped.replaceAll(':', '\\\\:')
+      const commasEscaped = value.replace(CommaRegex, '\\,')
+      const colonsEscaped = commasEscaped.replace(ColonRegex, '\\\\:')
       return `${key}=${colonsEscaped}`
     }).join(':')
     return { ...rest, options: newOptions, filter: ffmpegFilter }
@@ -34,7 +35,7 @@ const commandComplexFilter = (args: CommandFilters): ffmpeg.FilterSpecification[
 }
 
 export const commandProcess = (): ffmpeg.FfmpegCommand => {
-   const logger: FfmpegCommandLogger = {
+  const logger: FfmpegCommandLogger = {
     warn: console.warn,
     error: console.error,
     debug: console.debug,

@@ -1,7 +1,7 @@
-import { EditorArgs } from "../Editor/Editor"
-import { colorBlack } from "../Helpers/Color/ColorFunctions"
+import { MasherArgs } from "../Plugin/Masher/Masher"
+import { colorBlack } from "../Helpers/Color/ColorConstants"
 
-const DefaultEditorArgs: EditorArgs = {
+const DefaultMasherArgs: MasherArgs = {
   buffer: 10,
   fps: 30,
   loop: true,
@@ -29,7 +29,7 @@ const DefaultCast = {
 export const Default = {
   duration: 3,
   label: "Unlabeled",
-  editor: DefaultEditorArgs,
+  editor: DefaultMasherArgs,
   video: DefaultMash,
   effect: { label: 'Effect'},
   audio: { label: 'Audio'},

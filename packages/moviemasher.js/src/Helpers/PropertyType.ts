@@ -1,9 +1,10 @@
-import { Scalar } from "../declarations"
+import { Scalar } from "../Types/Core"
 import { IdPrefix, IdSuffix } from "../Setup/Constants"
 import {
-  DataType, isDataType, isMediaType
-} from "../Setup/Enums"
-import { colorBlack, colorValid } from "./Color/ColorFunctions"
+  DataType, isDataType} from "../Setup/Enums"
+import { isMediaType } from "../Setup/MediaType"
+import { colorValid } from "./Color/ColorFunctions"
+import { colorBlack } from "./Color/ColorConstants"
 import { isBoolean, isNumber, isNumeric, isPopulatedString } from "../Utility/Is"
 
 export const PropertyTypesNumeric = [

@@ -1,20 +1,21 @@
 import React from "react"
 import { Identified, assertTrue, ClassSelected } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
-import { Problems } from "../../Setup/Problems"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsAndChild } from "../../Types/Props"
 import { ActivityContext, assertActivityGroup } from "./ActivityContext"
 
 export interface ActivityPickerProps extends PropsAndChild, WithClassName, Identified {}
 /**
  * @parents ActivityContent
  */
- export function ActivityPicker(props: ActivityPickerProps): ReactResult {
+ export function ActivityPicker(props: ActivityPickerProps) {
   const { id, className, children, ...rest } = props
   assertActivityGroup(id)
 
   const child = React.Children.only(children)
-  assertTrue(React.isValidElement(child), Problems.child)
+  assertTrue(React.isValidElement(child))
 
   const activityContext = React.useContext(ActivityContext)
   const { picked, pick } = activityContext

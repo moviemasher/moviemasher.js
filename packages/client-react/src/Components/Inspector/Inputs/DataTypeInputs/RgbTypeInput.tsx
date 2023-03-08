@@ -1,17 +1,17 @@
 import React from 'react'
 import { DataType, isDefined, UnknownRecord } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { useEditor } from '../../../../Hooks/useEditor'
-import { MasherContext } from '../../../Masher/MasherContext'
+import { useMasher } from '../../../../Hooks/useMasher'
+import MasherContext from '../../../Masher/MasherContext'
 
-export function RgbTypeInput(): ReactResult {
+export function RgbTypeInput() {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   const inputContext = React.useContext(InputContext)
-  const editor = useEditor()
+  const editor = useMasher()
   const { changeHandler, property, value: contextValue, name, time, defaultValue: contextDefault } = inputContext
   if (!property) return null
 

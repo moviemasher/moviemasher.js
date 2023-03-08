@@ -1,5 +1,5 @@
 import { 
-  endpointUrl, ErrorName, Request, errorThrow, VideoDataOrError, errorCaught, assertEndpoint,
+  endpointUrl, ErrorName, Request, errorThrow, ClientVideoDataOrError, errorCaught, assertEndpoint,
 } from "@moviemasher/moviemasher.js"
 
 
@@ -13,13 +13,13 @@ const videoFromUrl = (url: string): HTMLVideoElement => {
   return video
 }
 
-export const videoDataPromise = (request: Request): Promise<VideoDataOrError> => {
+export const videoDataPromise = (request: Request): Promise<ClientVideoDataOrError> => {
   const { endpoint } = request
   assertEndpoint(endpoint)
 
   const url = endpointUrl(endpoint)
   
-  return new Promise<VideoDataOrError>((resolve) => {
+  return new Promise<ClientVideoDataOrError>((resolve) => {
     const clientVideo = videoFromUrl(url)
     clientVideo.oncanplay = () => {
       clientVideo.oncanplay = null

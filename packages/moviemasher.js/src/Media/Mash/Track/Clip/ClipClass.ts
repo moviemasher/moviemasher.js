@@ -1,22 +1,26 @@
-import { Scalar, UnknownRecord } from "../../../../declarations"
+import { Scalar, UnknownRecord } from "../../../../Types/Core"
 import { PreviewItems, SvgItems, SvgOrImage } from "../../../../Helpers/Svg/Svg"
 
-import { Clip, ClipArgs, ClipObject, IntrinsicOptions } from "./Clip"
+import { Clip, ClipArgs, IntrinsicOptions } from "./Clip"
 
-import { assertContainer, Container, ContainerObject, ContainerRectArgs, DefaultContainerId, isContainer } from "../../../Container/Container"
-import { assertContent, Content, ContentObject, DefaultContentId, isContent } from "../../../Content/Content"
+import { Container, ContainerObject, ContainerRectArgs } from "../../../Container/Container"
+import { assertContainer, isContainer } from "../../../Container/ContainerFunctions"
+import { DefaultContainerId } from "../../../Container/ContainerConstants"
+import { Content, ContentObject } from "../../../Content/Content"
+import { DefaultContentId } from "../../../Content/ContentConstants"
+import { assertContent, isContent } from "../../../Content/ContentFunctions"
 import { DataGroup, Property, propertyInstance } from "../../../../Setup/Property"
 import { PreloadArgs, GraphFiles, CommandFileArgs, CommandFiles, CommandFilters, CommandFilterArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs, Component, ServerPromiseArgs } from "../../../../Base/Code"
 import { SelectedItems } from "../../../../Helpers/Select/SelectedProperty"
-import { ActionType, DataType, Duration, SelectType, Sizing, Sizings, Timing, Timings } from "../../../../Setup/Enums"
-import { Actions } from "../../../../Editor/Actions/Actions"
+import { ActionType, ClipType, DataType, Duration, SelectorType, Sizing, Sizings, Timing, Timings } from "../../../../Setup/Enums"
+import { Actions } from "../../../../Plugin/Masher/Actions/Actions"
 import { assertAboveZero, assertPopulatedString, assertPositive, assertTrue, isAboveZero, isPopulatedArray, isPopulatedString } from "../../../../Utility/Is"
 import { isColorContent } from "../../../Content"
-import { arrayLast } from "../../../../Utility/Array"
+import { arrayLast, arrayOfNumbers } from "../../../../Utility/Array"
 import { Time, TimeRange } from "../../../../Helpers/Time/Time"
 import { Track } from "../Track"
 import { timeFromArgs, timeRangeFromArgs } from "../../../../Helpers/Time/TimeUtilities"
-import { Selectables } from "../../../../Editor/Selectable"
+import { Selectables } from "../../../../Plugin/Masher/Selectable"
 import { assertSizeAboveZero, Size, sizeCover, sizeEven, sizesEqual } from "../../../../Utility/Size"
 import { Tweening } from "../../../../Utility/Tween"
 import { pointsEqual, PointZero } from "../../../../Utility/Point"
@@ -25,12 +29,12 @@ import { Default } from "../../../../Setup/Default"
 import { Rect, rectsEqual, RectTuple } from "../../../../Utility/Rect"
 import { svgAppend, svgSvgElement, svgSetDimensions } from "../../../../Helpers/Svg/SvgFunctions"
 import { pixelToFrame } from "../../../../Utility/Pixel"
-import { Preview, PreviewArgs } from "../../../../Editor/Preview/Preview"
-import { PreviewClass } from "../../../../Editor/Preview/PreviewClass"
+import { Preview, PreviewArgs } from "../../../../Plugin/Masher/Preview/Preview"
+import { PreviewClass } from "../../../../Plugin/Masher/Preview/PreviewClass"
 import { isAudio } from "../../../Audio/Audio"
 import { PropertiedClass } from "../../../../Base/Propertied"
 import { idGenerateString } from "../../../../Utility/Id"
-import { EmptyMethod } from "../../../../Setup/Constants"
+import { EmptyFunction } from "../../../../Setup/Constants"
 
 export class ClipClass extends PropertiedClass implements Clip {
   constructor(...args: any[]) {
@@ -137,7 +141,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     const previews: Preview[] = []
     const { mash } = track
     let pixel = 0
-    for (let i = 0; i < cellCount; i++) {
+    arrayOfNumbers(cellCount).forEach(() => {
       const { copy: time } = startTime
       const previewArgs: PreviewArgs = { 
         mash, time, clip: this, size: frameSize,
@@ -146,7 +150,8 @@ export class ClipClass extends PropertiedClass implements Clip {
       previews.push(preview)
       pixel += widthAndBuffer
       startTime.frame = clipTime.frame + pixelToFrame(pixel, scale, 'floor')
-    }
+    })
+    
     let svgItemsPromise = Promise.resolve([] as SvgItems)
     previews.forEach(preview => {
       svgItemsPromise = svgItemsPromise.then(items => {
@@ -385,7 +390,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     const promises = [content.loadPromise(args)]
 
     if (container) promises.push(container.loadPromise(args))
-    return Promise.all(promises).then(EmptyMethod)
+    return Promise.all(promises).then(EmptyFunction)
   }
 
   maxFrames(_quantize : number, _trim? : number) : number { return 0 }
@@ -501,7 +506,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     }
   }
 
-  selectType = SelectType.Clip
+  selectType: SelectorType = ClipType
 
   selectables(): Selectables { return [this, ...this.track.selectables()] }
 
@@ -515,7 +520,7 @@ export class ClipClass extends PropertiedClass implements Clip {
       const undoValue = this.value(name)
       selected.push({
         value: undoValue,
-        selectType: SelectType.Clip, property, 
+        selectType: ClipType, property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
 
@@ -551,7 +556,7 @@ export class ClipClass extends PropertiedClass implements Clip {
     const { content, container } = this
     const promises = [content.serverPromise(args)]
     if (container) promises.push(container.serverPromise(args))
-    return Promise.all(promises).then(EmptyMethod)  
+    return Promise.all(promises).then(EmptyFunction)  
   }
 
   setValue(value: Scalar, name: string, property?: Property): void {
@@ -575,15 +580,6 @@ export class ClipClass extends PropertiedClass implements Clip {
   }
 
   declare sizing: Sizing
-
-  // private _svgElement?: SVGSVGElement
-  // private get svgElement() { 
-  //   return this._svgElement ||= svgElement() 
-  // }
-
-  // private updateSvg(rect: Rect) {
-  //   svgSetDimensions(this.svgElement, rect)
-  // }
 
   time(quantize : number) : Time { return timeFromArgs(this.frame, quantize) }
 

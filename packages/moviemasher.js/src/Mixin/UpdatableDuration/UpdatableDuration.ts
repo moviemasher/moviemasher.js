@@ -1,12 +1,14 @@
-import { Value } from "../../declarations"
+import { Numbers, Value } from "../../Types/Core"
 import { Constrained } from "../../Base/Constrained"
-import { StartOptions } from "../../Editor/Preview/AudioPreview/AudioPreview"
-import { ClientAudioNode, ClientAudio } from "../../ClientMedia/ClientMedia"
+import { StartOptions } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
+import { ClientAudioNode, ClientAudio } from "../../Helpers/ClientMedia/ClientMedia"
 import { TimeRange } from "../../Helpers/Time/Time"
-import { MediaType, isMediaType, AudioType, VideoType } from "../../Setup/Enums"
+import { AudioType, VideoType } from "../../Setup/Enums"
+import { MediaType, isMediaType } from "../../Setup/MediaType"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Media/Content/Content"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Media/Content/Content"
+import { isContent, isContentDefinition } from "../../Media/Content/ContentFunctions"
 
 export const UpdatableDurationMediaTypes: MediaType[] = [
   AudioType,
@@ -32,7 +34,7 @@ export interface UpdatableDurationDefinitionObject extends ContentDefinitionObje
 
 export interface UpdatableDuration extends Content {
   gain: number
-  gainPairs: number[][]
+  gainPairs: Numbers[]
   speed: number
   startOptions(seconds: number, timeRange: TimeRange): StartOptions
 }

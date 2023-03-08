@@ -1,5 +1,5 @@
-import { RenderingOptions } from "../Encode/Encode"
-import { LoadType } from "../Setup/Enums"
+import { RenderingOptions } from "../Plugin/Encode/Encode"
+import { LoadType } from "../Setup/LoadType"
 import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
 
 

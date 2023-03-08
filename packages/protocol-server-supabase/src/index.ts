@@ -2,7 +2,7 @@
 import { 
   Request, LoadType, 
   endpointAbsolute, JsonType,
-  ImageType, AudioType, VideoType, FontType, errorThrow, requestMediaPromise, requestRecordPromise, assertEndpoint
+  ImageType, AudioType, VideoType, FontType, errorThrow, requestClientMediaPromise, requestRecordPromise, assertEndpoint
 } from "@moviemasher/moviemasher.js"
 
 
@@ -144,7 +144,7 @@ const promise = ((request: Request, type?: LoadType) => {
     case ImageType: 
     case AudioType: 
     case VideoType: 
-    case FontType: return requestMediaPromise(transformed, type)
+    case FontType: return requestClientMediaPromise(transformed, type)
     case JsonType: return requestRecordPromise(transformed)
   }
   errorThrow(type, 'LoadType', 'type')

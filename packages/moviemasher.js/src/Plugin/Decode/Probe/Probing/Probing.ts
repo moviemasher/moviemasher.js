@@ -1,6 +1,5 @@
-import { UnknownRecord } from "../../../../declarations"
-import { ProbeType } from "../../Decoder"
-import { Decoding } from "../../Decoding/Decoding"
+import { UnknownRecord } from "../../../../Types/Core"
+import { Decoding, ProbeType } from "../../Decoding/Decoding"
 
 
 export interface Probing extends Decoding {

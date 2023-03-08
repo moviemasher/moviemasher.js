@@ -36,7 +36,7 @@
   const element = document.getElementById('root');
   const options = { previewSize: { width: 480, height: 270 } };
   const props = clientReact.MasherDefaultProps(options);
-  const masher = jsxRuntimeExports.jsx(clientReact.Masher, { ...props });
+  const masher = jsxRuntimeExports.jsx(clientReact.MasherApp, { ...props });
   ReactDOM__default.default.createRoot(element).render(masher);
 
 })(React, ReactDOM, MovieMasherClient);

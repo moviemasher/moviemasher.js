@@ -1,4 +1,4 @@
-import { ClientImage } from "../../ClientMedia/ClientMedia"
+import { ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
 import { ImageType } from "../../Setup/Enums"
 import { Image, ImageMedia, ImageObject } from "./Image"
 import { ImageClass } from "./ImageClass"

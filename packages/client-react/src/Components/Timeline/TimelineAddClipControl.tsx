@@ -1,18 +1,23 @@
 import React from "react"
-import { assertPopulatedString, DefaultContentId, EditorIndex, EventType, UnknownRecord } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import /* type */ { PropsClickable } from "../../Types/Props"
+
+import /* type */ { MashIndex, UnknownRecord } from "@moviemasher/moviemasher.js"
+import { assertPopulatedString, DefaultContentId, EventType } from "@moviemasher/moviemasher.js"
+
+
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
-import { MasherContext } from "../Masher/MasherContext"
+import MasherContext from "../Masher/MasherContext"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-export interface TimelineAddClipControlProps extends PropsAndChild, WithClassName {}
 
-export function TimelineAddClipControl(props:TimelineAddClipControlProps): ReactResult {
-  const editor = useEditor()
-  const editorContext = React.useContext(MasherContext)
-  const { current, drop } = editorContext
-  const getDisabled = () => !editor.selection.mash
+export function TimelineAddClipControl(props:PropsClickable) {
+  const masher = useMasher()
+  const masherContext = React.useContext(MasherContext)
+  const { current, drop } = masherContext
+  const getDisabled = () => !masher.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
   useListeners({ [EventType.Selection]: updateDisabled })
@@ -23,21 +28,27 @@ export function TimelineAddClipControl(props:TimelineAddClipControlProps): React
     disabled,
   }
   cloneProps.onClick = () => { 
-    const { selection, mashMedia } = editor
+    const { selection, mashMedia } = masher
     const { clip, track } = selection
     const id = current.mediaId || DefaultContentId
     assertPopulatedString(id)
     const object = { id }
-    const editorIndex: EditorIndex = {
+    const editorIndex: MashIndex = {
       clip: 0, track: -1
     }
     if (clip && track) {
       editorIndex.clip = track.dense ? track.clips.indexOf(clip) : clip.endFrame
       editorIndex.track = track.index
     } else {
-      editorIndex.clip = editor.time.scale(mashMedia!.quantize).frame
+      editorIndex.clip = masher.time.scale(mashMedia!.quantize).frame
     }
     drop(object, editorIndex)
   }
-  return React.cloneElement(React.Children.only(children), cloneProps)
+
+  return <Clickable key='add-clip'
+    button={props.button}
+    label={props.label}
+    onClick={ () => masher.undo() }
+    className={ className(disabled, props.className) }
+  >{props.children}</Clickable>
 }

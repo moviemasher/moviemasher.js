@@ -1,0 +1,44 @@
+{
+  "name": "@moviemasher/theme",
+  "version": "5.1.2",
+  "description": "Movie Masher Default Theme",
+
+  "module": "./esm/theme-default.mjs",
+  "main": "./umd/theme-default.js",
+  "types": "./esm/theme-default.d.mts",
+  "files": ["esm", "umd"],
+
+  "license": "MIT",
+
+
+  "devDependencies": {
+    "@types/node": "18.13.0",
+    "rollup-plugin-svg-import": "2.0.0"
+  },
+  "scripts": {  
+    "build": "rollup --config dev/rollup.config.mjs",
+    "build-script": "node dev/build.mjs"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "theme-builder"
+  }
+}

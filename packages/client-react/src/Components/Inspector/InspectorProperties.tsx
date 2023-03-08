@@ -1,15 +1,17 @@
 import React from "react"
 import { 
-  SelectType, UnknownRecord, isSelectedProperty, SelectedItems, Time,
+  UnknownRecord, isSelectedProperty, SelectedItems, Time,
   assertDataGroup
 } from "@moviemasher/moviemasher.js"
 
-import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { InspectorProperty, InspectorPropertyProps } from "./InspectorProperty"
 import { InspectorContext } from "./InspectorContext"
 import { DataGroupInputs } from "./Inputs/DataGroupInputs/DataGroupInputs"
 import { View } from "../../Utilities/View"
-import { MasherContext } from "../Masher/MasherContext"
+import MasherContext from "../Masher/MasherContext"
 
 export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassName {
   selectedItems?: SelectedItems
@@ -19,7 +21,7 @@ export interface InspectorPropertiesProps extends PropsWithoutChild, WithClassNa
 /**
  * @parents InspectorContent
  */
-export function InspectorProperties(props: InspectorPropertiesProps): ReactResult {
+export function InspectorProperties(props: InspectorPropertiesProps) {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
   const inspectorContext = React.useContext(InspectorContext)
@@ -47,12 +49,12 @@ export function InspectorProperties(props: InspectorPropertiesProps): ReactResul
       const name = nameOveride || propertyName
 
       const propertyProps: InspectorPropertyProps = {
-        key: `inspector-${selectType}-${name}`,
+        
         property, value, changeHandler, name, 
         ...props
       }
       const icon = icons[name]
-      const inspectorProperty = <InspectorProperty {...propertyProps} />
+      const inspectorProperty = <InspectorProperty key={`inspector-${selectType}-${name}`} {...propertyProps} />
       if (icon) {
         const viewChildren = [inspectorProperty]
         viewChildren.unshift(icon)

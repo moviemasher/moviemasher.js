@@ -1,8 +1,9 @@
 import { MediaType } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
-import { PropsAndChildren, ReactResult } from '../../declarations'
-import { useEditor } from '../../Hooks/useEditor'
+
+import { PropsAndChildren } from "../../Types/Props"
+import { useMasher } from '../../Hooks/useMasher'
 import { propsMediaTypes } from '../../Utilities/Props'
 
 export interface MashingProps extends PropsAndChildren {
@@ -11,11 +12,11 @@ export interface MashingProps extends PropsAndChildren {
 }
 
 /**
- * @parents Masher
+ * @parents MasherApp
  */
-export function Mashing(props: MashingProps): ReactResult {
+export function Mashing(props: MashingProps) {
   const { type, types, children } = props
   const mediaTypes = propsMediaTypes(type, types)
-  const editor = useEditor()
-  return mediaTypes.includes(editor.editType as MediaType) ? <>{children}</> : null
+  const editor = useMasher()
+  return mediaTypes.includes(editor.mashingType as MediaType) ? <>{children}</> : null
 }

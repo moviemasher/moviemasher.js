@@ -1,5 +1,5 @@
-import React from 'react'
 
+import { createContext } from '../../Framework/FrameworkFunctions'
 import { ActivityGroup, ActivityObject } from './ActivityContext'
 
 export const ActivityContentContextDefault: ActivityObject = {
@@ -8,4 +8,4 @@ export const ActivityContentContextDefault: ActivityObject = {
   id: '',
 }
 
-export const ActivityContentContext = React.createContext(ActivityContentContextDefault)
+export const ActivityContentContext = createContext(ActivityContentContextDefault)

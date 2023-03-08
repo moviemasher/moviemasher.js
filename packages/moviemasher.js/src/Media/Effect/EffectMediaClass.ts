@@ -5,9 +5,9 @@ import { EffectClass } from "./EffectClass"
 import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { MediaBase } from "../MediaBase"
 import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { Filter } from "../../Filter/Filter"
-import { UnknownRecord } from "../../declarations"
-import { filterInstance } from "../../Filter/FilterFactory"
+import { Filter } from "../../Plugin/Filter/Filter"
+import { UnknownRecord } from "../../Types/Core"
+import { filterInstance } from "../../Plugin/Filter/FilterFactory"
 
 const EffectContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const EffectContainerDefinitionWithContainer = ContainerDefinitionMixin(EffectContainerDefinitionWithTweenable)

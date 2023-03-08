@@ -23,7 +23,7 @@
   },
   "homepage": "https://moviemasher.com",
   "peerDependencies": {
-    "@moviemasher/client-react": "5.1.2",
+    "@moviemasher/moviemasher.js": "5.1.2",
 
     "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
     "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
@@ -38,12 +38,8 @@
   },
   "scripts": {
     "build-css": "cat src/css/* > moviemasher.css",
-    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --main-fields=main --outfile=esm/theme-default.mjs",
-    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --main-fields=main --outfile=esm/theme-default.min.mjs --minify",
-    "build-umd-min": "rollup --config dev/rollup/umd.min.config.mjs",
     "build-rollup": "rollup --config dev/rollup.config.mjs",
-    "copy-types": "mkdir -p types && mv -f umd/*.d.* types/",
-    "build": "run-s build-rollup build-css"
+    "build": "run-s build-css build-rollup"
   },
   "eslintConfig": {
     "extends": [
@@ -65,7 +61,6 @@
   "typedoc": {
     "entryPoint": "./src/index.ts",
     "readmeFile": "./README.md",
-    "displayName": "theme-default",
-    "tsconfig": "./dev/tsconfig.json"
+    "displayName": "theme-default"
   }
 }

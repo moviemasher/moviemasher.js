@@ -4,15 +4,16 @@ import {
 } from '@moviemasher/moviemasher.js'
 import React from 'react'
 
-import { PropsWithoutChild, ReactResult } from "../../../../declarations"
+import { JsxElements } from "../../../../Types/Element"
 import { dropType } from '@moviemasher/client-core'
-import { useEditor } from '../../../../Hooks/useEditor'
+import { useMasher } from '../../../../Hooks/useMasher'
 import { View } from '../../../../Utilities/View'
 import { InspectorMovable, InspectorMovableProps } from '../../InspectorMovable'
 import { InspectorProperties, InspectorPropertiesProps } from '../../InspectorProperties'
-import { MasherContext } from '../../../Masher/MasherContext'
+import MasherContext from '../../../Masher/MasherContext'
 import { DataGroupInputs } from './DataGroupInputs'
-import { Button } from '../../../../Utilities/Button'
+import Button from '../../../Button/Button'
+import { PropsWithoutChild } from '../../../../Types/Props'
 
 export interface MovablesGroupInputProps extends PropsWithoutChild {
   selectedMovable?: SelectedMovable
@@ -23,11 +24,11 @@ export interface MovablesGroupInputProps extends PropsWithoutChild {
  *
  * @children InspectorEffect
  */
-export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult {
+export function MovablesGroupInput(props: MovablesGroupInputProps) {
   const { movableGenerator, selectedMovable, property, ...rest } = props
   assertPopulatedObject(selectedMovable)
 
-  const editor = useEditor()
+  const editor = useMasher()
   const masherContext = React.useContext(MasherContext)
   const [isOver, setIsOver] = React.useState(false)
   const [selected, setSelected] = React.useState<Movable | null>(null)
@@ -85,18 +86,17 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
     moveHandler(includedMovable, droppedIndex)
   }
 
-  const onClick: React.MouseEventHandler = () => { setSelected(null) }
+  const onClick = () => { setSelected(null) }
 
-  const childNodes = (): React.ReactElement[] => {
+  const childNodes = (): JsxElements => {
     return value.map((movable, index) => {
       const clipProps: InspectorMovableProps = {
-        key: movable.id,
         selected: includedMovable, 
         select: setSelected,
         movable,
         index, removeHandler, property
       }
-      return <InspectorMovable {...clipProps} />
+      return <InspectorMovable key={movable.id} {...clipProps} />
     })
   }
 
@@ -107,7 +107,6 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
     onDragOver,
     onDrop,
     onClick,
-    key: 'view',
     className: memoClassName,
   }
 
@@ -142,7 +141,7 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
     className: "row",
     children: [
     <View { ...iconsViewProps } />, 
-    <View { ...listViewProps } />, 
+    <View key='view' { ...listViewProps } />, 
   ],
   }
   const listView = <View { ...viewProps } />
@@ -150,11 +149,11 @@ export function MovablesGroupInput(props: MovablesGroupInputProps): ReactResult 
 
   const inspectorProps: InspectorPropertiesProps = {
     selectedItems: includedMovable.selectedItems(editor.actions),
-    key: 'movable-properties',
+    
   }
   return <>
     {listView}
-    <InspectorProperties { ...inspectorProps }/>
+    <InspectorProperties key='movable-properties' { ...inspectorProps }/>
   </>
 }
 

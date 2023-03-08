@@ -9,7 +9,10 @@ module.exports = {
     es2022: true,
     node: true,
   },
-  extends: ['plugin:@typescript-eslint/recommended'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@builder.io/mitosis/recommended',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 12,
@@ -18,7 +21,8 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint/eslint-plugin',
-    'eslint-plugin-tsdoc'
+    'eslint-plugin-tsdoc',
+    '@builder.io/mitosis'
   ],
   rules: {
     "tsdoc/syntax": 0,
@@ -47,4 +51,4 @@ module.exports = {
     }
   },
   ignorePatterns: ['.eslintrc.js', "**/*config.js"],
-};
+}

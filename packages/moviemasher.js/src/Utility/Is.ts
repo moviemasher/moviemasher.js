@@ -1,11 +1,11 @@
-import { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords } from "../declarations"
+import { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar } from "../Types/Core"
 import { Rgb } from "../Helpers/Color/Color"
 import { Time, TimeRange } from "../Helpers/Time/Time"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { DefiniteError } from "../Helpers/Error/Error"
-import { UnknownMethod } from "../Setup/Constants"
+import { UnknownFunction } from "../Setup/Constants"
 
-export const isObject = (value: any): value is object => typeof value === 'object'
+export const isObject = (value: any): value is object => typeof value === 'object' 
 
 export function assertObject(value: any, name?: string): asserts value is object {
   if (!isObject(value)) errorThrow(value, 'Object', name)
@@ -28,9 +28,9 @@ export const isBoolean = (value: any): value is boolean => typeof value === 'boo
 export function assertBoolean(value: any, name?: string): asserts value is boolean {
   if (!isBoolean(value)) errorThrow(value, "Boolean", name)
 }
-export const isMethod = (value: any): value is UnknownMethod => typeof value === 'function'
-export function assertMethod(value: any, name?: string): asserts value is UnknownMethod {
-  if (!isMethod(value)) errorThrow(value, 'Method', name)
+export const isFunction = (value: any): value is UnknownFunction => typeof value === 'function'
+export function assertFunction(value: any, name?: string): asserts value is UnknownFunction {
+  if (!isFunction(value)) errorThrow(value, 'Method', name)
 }
 export const isDefined = (value: any): boolean => !isUndefined(value)
 export function assertDefined(value: any, name?: string): asserts value is true {
@@ -131,11 +131,11 @@ export function assertValue(value: any, name?: string): asserts value is Value {
   if (!isValue(value)) errorThrow(value, "Value", name)
 }
 
-export const isValueObject = (value: any): value is ValueRecord => {
+export const isValueRecord = (value: any): value is ValueRecord => {
   return isObject(value) && Object.values(value).every(value => isValue(value))
 }
-export function assertValueObject(value: any, name?: string): asserts value is ValueRecord {
-  if (!isValueObject(value)) errorThrow(value, "ValueRecord", name)
+export function assertValueRecord(value: any, name?: string): asserts value is ValueRecord {
+  if (!isValueRecord(value)) errorThrow(value, "ValueRecord", name)
 }
 
 export const isJsonRecord = (value: any): value is JsonRecord => (
@@ -147,4 +147,11 @@ export const isJsonRecords = (value: any): value is JsonRecords => (
 
 export const isDefiniteError = (value: any): value is DefiniteError => {
   return isObject(value) && "error" in value && isObject(value.error)
+}
+
+export const isScalar = (value: any): value is Scalar => (
+  isBoolean(value) || isValue(value)
+)
+export function assertScalar(value: any, name?: string): asserts value is Scalar {
+  if (!isScalar(value)) errorThrow(value, "Scalar", name)
 }

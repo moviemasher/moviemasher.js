@@ -1,5 +1,5 @@
 import { 
-  CommandOutput, NumberRecord, OutputFormat, EncodingType, 
+  VideoEncoderOptions, NumberRecord, OutputFormat, EncodingType, 
   RenderingCommandOutput, AudioType, ImageType, FontType, VideoType, errorThrow, ErrorName 
 } from "@moviemasher/moviemasher.js"
 
@@ -12,41 +12,41 @@ import outputDefaultSequenceJson from './imagesequence.json'
 import outputDefaultWaveformJson from './waveform.json'
 import outputDefaultImageJson from './image.json'
 
-export const outputDefaultAudio = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultAudio = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultAudioJson as RenderingCommandOutput
   return { ...commandOutput,  ...object }
 }
 
-export const outputDefaultFont = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultFont = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultFontJson as RenderingCommandOutput
   return { ...commandOutput,  ...object }
 }
 
 
-export const outputDefaultVideo = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultVideo = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultVideoJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
-export const outputDefaultSequence = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultSequence = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultSequenceJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
-export const outputDefaultWaveform = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultWaveform = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultWaveformJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
 
-export const outputDefaultPng = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultPng = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultImagePngJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
 }
-export const outputDefaultImage = (overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultImage = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
   const commandOutput = outputDefaultImageJson as RenderingCommandOutput
   return { ...commandOutput, ...object }
@@ -58,13 +58,13 @@ export const outputDefaultPopulate = (overrides: RenderingCommandOutput): Render
     case AudioType: return outputDefaultAudio(overrides)
     case ImageType: return outputDefaultImage(overrides)
     case VideoType: return outputDefaultVideo(overrides)
-    case FontType: return outputDefaultFont(overrides)
+    // case FontType: return outputDefaultFont(overrides)
     // case SequenceType: return outputDefaultSequence(overrides)
   }
   errorThrow(ErrorName.Type)
 }
 
-export const outputDefaultRendering = (outputType: EncodingType, overrides?: CommandOutput): RenderingCommandOutput => {
+export const outputDefaultRendering = (outputType: EncodingType, overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   return outputDefaultPopulate({ ...overrides, outputType })
 }
 

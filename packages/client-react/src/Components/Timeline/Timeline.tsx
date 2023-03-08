@@ -1,19 +1,20 @@
 import React from 'react'
 import {
   Rect, RectZero, Clip, DroppingPosition, EventType, Track, pixelToFrame, Clips, 
-  Point, eventStop, EditorIndex, isPositive, assertClip, 
+  Point, eventStop, MashIndex, isPositive, assertClip, 
   EffectType, isMediaObject
 } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChildren, ReactResult } from '../../declarations'
+
+import { PropsAndChildren } from "../../Types/Props"
 import { TimelineContext, TimelineContextInterface } from './TimelineContext'
 import { useListeners } from '../../Hooks/useListeners'
 import {
   dragTypes, isDragOffsetObject, isDragDefinitionObject, isTransferType, 
   dragMediaType, TransferTypeFiles, dragData, pixelPerFrame
 } from '@moviemasher/client-core'
-import { useEditor } from '../../Hooks/useEditor'
-import { MasherContext } from '../Masher/MasherContext'
+import { useMasher } from '../../Hooks/useMasher'
+import MasherContext from '../Masher/MasherContext'
 import { View } from '../../Utilities/View'
 
 
@@ -21,13 +22,13 @@ import { View } from '../../Utilities/View'
 export interface TimelineProps extends PropsAndChildren {}
 export const TimelineDefaultZoom = 1.0
 /**
- * @parents Masher
+ * @parents MasherApp
  * @children TimelineContent, TimelineZoomer
  */
-export function Timeline(props: TimelineProps): ReactResult {
-  const editor = useEditor()
-  const editorContext = React.useContext(MasherContext)
-  const { drop } = editorContext
+export function Timeline(props: TimelineProps) {
+  const editor = useMasher()
+  const masherContext = React.useContext(MasherContext)
+  const { drop } = masherContext
   const currentFrame = () => { return editor.selection.mash?.frame || 0 }
   const currentFrames = () => { return editor.selection.mash?.frames || 0 }
   const [frames, setFrames] = React.useState(currentFrames)
@@ -127,7 +128,7 @@ export function Timeline(props: TimelineProps): ReactResult {
       const frame = pixelToFrame(Math.max(0, scroll.x + (offsetDrop - offset)), scale)
       indexDrop = dense ? frameToIndex(frame, clips) : frame
     }
-    const editorIndex: EditorIndex = { clip: indexDrop, track: index }
+    const editorIndex: MashIndex = { clip: indexDrop, track: index }
 
     if (droppingFiles) {
       drop(dataTransfer.files, editorIndex)

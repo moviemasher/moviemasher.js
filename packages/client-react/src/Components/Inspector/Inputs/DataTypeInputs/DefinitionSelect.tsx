@@ -1,15 +1,15 @@
 import React from 'react'
 import { assertTrue, DataType, FontType } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { useEditor } from '../../../../Hooks/useEditor'
+import { useMasher } from '../../../../Hooks/useMasher'
 
-export function DefinitionSelect(): ReactResult {
+export function DefinitionSelect() {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, value, name } = inputContext
-  const editor = useEditor()
+  const editor = useMasher()
   const { media } = editor
   assertTrue(changeHandler)
   

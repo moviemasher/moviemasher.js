@@ -1,24 +1,24 @@
 import React from "react"
-import { EventType, UnknownRecord } from "@moviemasher/moviemasher.js"
+import { EventType } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult, WithClassName } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import /* type */ { PropsClickable } from "../../Types/Props"
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-export interface TimelineAddTrackControlProps extends PropsAndChild, WithClassName {}
 
-export function TimelineAddTrackControl(props:TimelineAddTrackControlProps): ReactResult {
-  const editor = useEditor()
-  const getDisabled = () => !editor.selection.mash
+export function TimelineAddTrackControl(props:PropsClickable) {
+  const masher = useMasher()
+  const getDisabled = () => !masher.mashMedia
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
   useListeners({ [EventType.Selection]: updateDisabled })
   
-  const { children, ...rest } = props
-  const cloneProps: UnknownRecord = { 
-    ...rest, 
-    disabled,
-  }
-  cloneProps.onClick = () => { editor.addTrack() }
-  return React.cloneElement(React.Children.only(children), cloneProps)
+  return <Clickable key='encode'
+    button={props.button}
+    label={props.label}
+    onClick={ () => masher.addTrack() }
+    className={ className(disabled, props.className) }
+  >{props.children}</Clickable>
 }

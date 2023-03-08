@@ -3,10 +3,11 @@ import {
   assertPopulatedString, MediaType, MediaTypesRecord
 } from '@moviemasher/moviemasher.js'
 
-import { PropsWithChildren, ReactResult } from "../../declarations"
+
+import { PropsWithChildren } from "../../Types/Props"
 import { View } from "../../Utilities/View"
 import { BrowserContext, BrowserContextInterface } from "./BrowserContext"
-import { MasherContext } from "../Masher/MasherContext"
+import MasherContext  from "../Masher/MasherContext"
 import { useDefinitions } from "../../Hooks/useDefinitions"
 import { useRefresh } from "../../Hooks/useRefresh"
 
@@ -15,16 +16,13 @@ export interface BrowserProps extends PropsWithChildren {
   initialPicked?: string
 }
 
-/**
- * @parents Masher
- * @children BrowserContent, BrowserPicker
- */
-export function Browser(props: BrowserProps): ReactResult {
+
+export function Browser(props: BrowserProps) {
   const { initialPicked = 'container', ...rest } = props
 
   const [typesObject, setTypesObject] = React.useState<MediaTypesRecord>({})
-  const editorContext = React.useContext(MasherContext)
-  const { changeDefinition } = editorContext
+  const masherContext = React.useContext(MasherContext)
+  const { changeDefinition } = masherContext
   const [refresh] = useRefresh()
   const [ picked, setPicked] = React.useState(initialPicked) 
   const pick = (id: string) => {

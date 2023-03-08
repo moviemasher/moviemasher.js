@@ -1,47 +1,36 @@
 import React from "react"
-import { 
-  ClassSelected, Identified, assertPopulatedString, assertTrue 
-} from "@moviemasher/moviemasher.js"
 
-import { 
-  PropsAndChild, ReactResult, WithClassName
- } from "../../declarations"
+import /* type */ { Identified, Strings } from "@moviemasher/moviemasher.js"
+import /* type */ { ClickableProps } from "../Clickable/Clickable.lite"
+
+import { ClassSelected } from "@moviemasher/moviemasher.js"
+import { className } from "@moviemasher/client-core"
 import { propsMediaTypes } from "../../Utilities/Props"
 import { BrowserContext } from "./BrowserContext"
-import { Problems } from "../../Setup/Problems"
+import { useContext } from "../../Framework/FrameworkFunctions"
+import Clickable from "../Clickable/Clickable.lite"
+import { PropsClickable } from "../../Types/Props"
 
-export interface BrowserPickerProps extends PropsAndChild, Identified, WithClassName {
+export interface BrowserPickerProps extends PropsClickable, Identified {
   type?: string
-  types?: string | string[]
+  types?: string | Strings
 }
 
-/**
- * @parents Browser
- */
-export function BrowserPicker(props: BrowserPickerProps): ReactResult {
-  const { children, type, types, className, id, ...rest } = props
-  assertPopulatedString(id)
+export function BrowserPicker(props: BrowserPickerProps) {
+  const { type, types, id } = props
 
-  const browserContext = React.useContext(BrowserContext)
+  const browserContext = useContext(BrowserContext)
   const { pick, picked, addPicker, removePicker } = browserContext
-
-  const classes = []
-  if (className) classes.push(className)
-  if (picked === id) classes.push(ClassSelected)
 
   React.useEffect(() => {
     addPicker(id, propsMediaTypes(type, types, id))
     return () => { removePicker(id) }
   }, [])
 
-  const viewProps = { 
-    ...rest, 
-    className: classes.join(' '),
-    key: `browser-picker-${id}`,
-    onClick: () => { pick(id) }, 
-  }
-  const child = React.Children.only(children)
-  assertTrue(React.isValidElement(child), Problems.child)
-   
-  return React.cloneElement(child, viewProps)
+  return <Clickable key={`browser-picker-${id}`}
+    button={props.button}
+    label={props.label}
+    onClick={ () => pick(id) }
+    className={className(picked === props.id, props.className, ClassSelected)}
+  >{props.children}</Clickable>
 }

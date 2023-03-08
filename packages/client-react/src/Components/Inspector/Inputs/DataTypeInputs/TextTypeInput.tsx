@@ -1,11 +1,11 @@
 import React from 'react'
 import { DataType, UnknownRecord } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
 
-export function TextTypeInput(): ReactResult {
+export function TextTypeInput() {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value, name } = inputContext
   if (!property) return null

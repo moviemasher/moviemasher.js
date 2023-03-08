@@ -5,7 +5,7 @@ import knex, { Knex } from 'knex'
 
 import {
   MashMediaObject, UnknownRecord, StringRecord, JsonRecord, PotentialError, stringPluralize,
-  MediaObject, MediaObjects, DataServerInit, Endpoints, EmptyMethod,
+  MediaObject, MediaObjects, DataServerInit, Endpoints, EmptyFunction,
   
   DataMashDefaultRequest, DataMashDefaultResponse,
   
@@ -23,7 +23,8 @@ import {
   idTemporary,
   errorCaught,
   ErrorName,
-  errorName, 
+  errorName,
+  Runtime, 
 } from "@moviemasher/moviemasher.js"
 
 import { ServerClass } from "../ServerClass"
@@ -33,7 +34,7 @@ import { DataServer, DataServerArgs } from "./DataServer"
 import { FileServer } from "../FileServer/FileServer"
 import { idUnique } from "../../Utilities/Id"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
-import { Environment, environment } from "@moviemasher/server-core"
+import { EnvironmentKeyAppColumnOwner, EnvironmentKeyAppColumnSource } from "@moviemasher/server-core/src/Environment/ServerEnvironment"
 
 
 export interface DataServerRow extends UnknownRecord, Identified { }
@@ -409,12 +410,11 @@ export class DataServerClass extends ServerClass implements DataServer {
     return this._mediaKeys ||= this.mediaKeysInitialize
   }
   private get mediaKeysInitialize(): string[] {
-    return [
-      ...DataServerColumns, 
-      environment(Environment.APP_COLUMN_OWNER),
-      environment(Environment.APP_COLUMN_SOURCE),
-    ].filter(Boolean)
-    
+    const { environment } = Runtime
+    const columnOwner = environment.get(EnvironmentKeyAppColumnOwner)
+    const columnSource = environment.get(EnvironmentKeyAppColumnSource)
+        
+    return [...DataServerColumns, columnOwner, columnSource].filter(Boolean)
   }
 
   startServer(app: Express.Application, activeServers: HostServers): Promise<void> {
@@ -443,7 +443,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
   private updatePromise(quotedTable: string, data: UnknownRecord): Promise<void> {
     const { id, ...rest } = data
-    return this.database(quotedTable).update(rest).where({ id }).then(EmptyMethod)
+    return this.database(quotedTable).update(rest).where({ id }).then(EmptyFunction)
   }
 
 
@@ -453,7 +453,7 @@ export class DataServerClass extends ServerClass implements DataServer {
 
     const json = JSON.stringify(rest)
     const data = { createdAt, icon, id, label, json }
-    return this.updatePromise('definition', data).then(EmptyMethod)
+    return this.updatePromise('definition', data).then(EmptyFunction)
   }
 
   private mashUpdateRelationsPromise(mashId: string, definitionIds?: string[]): Promise<StringRecord> {
@@ -487,13 +487,13 @@ export class DataServerClass extends ServerClass implements DataServer {
       const promises: Promise<void>[] = [
         ...toDelete.map(id => this.deletePromise(quotedTable, id)),
         ...toCreate.map(relatedId =>
-          this.createPromise(quotedTable, { [toId]: relatedId, [fromId]: id }).then(EmptyMethod)
+          this.createPromise(quotedTable, { [toId]: relatedId, [fromId]: id }).then(EmptyFunction)
         ),
       ]
       switch (promises.length) {
         case 0: return Promise.resolve()
         case 1: return promises[0]
-        default: return Promise.all(promises).then(EmptyMethod)
+        default: return Promise.all(promises).then(EmptyFunction)
       }
     }).then(() => temporaryLookup)
   }

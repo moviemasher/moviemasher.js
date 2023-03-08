@@ -1,10 +1,11 @@
 import React from 'react'
-import { ClassSelected, IndexHandler, isPopulatedString, Movable } from '@moviemasher/moviemasher.js'
+import { ClassSelected, eventStop, IndexHandler, isPopulatedString, Movable } from '@moviemasher/moviemasher.js'
 
-import { ReactResult, WithClassName } from '../../declarations'
+import { JsxElements } from "../../Types/Element"
+import { WithClassName } from "../../Types/Core"
 import { DragSuffix } from '@moviemasher/client-core'
 import { View } from '../../Utilities/View'
-import { MasherContext } from '../Masher/MasherContext'
+import MasherContext from '../Masher/MasherContext'
 
 export interface InspectorMovableProps extends WithClassName {
   movable: Movable
@@ -18,7 +19,7 @@ export interface InspectorMovableProps extends WithClassName {
 /**
  * @parents MovablesGroupInput
  */
-export function InspectorMovable(props: InspectorMovableProps): ReactResult {
+export function InspectorMovable(props: InspectorMovableProps) {
   const { 
     property, className, removeHandler, index, movable, selected, select, ...rest 
   } = props
@@ -51,7 +52,7 @@ export function InspectorMovable(props: InspectorMovableProps): ReactResult {
 
   const classes = [className || 'movable']
   if (isSelected) classes.push(ClassSelected)
-  const viewChildren = []
+  const viewChildren: JsxElements = []
 
 
   const label = movable.value('label')
@@ -60,14 +61,14 @@ export function InspectorMovable(props: InspectorMovableProps): ReactResult {
     const iconElement = icons[icon]
     if (iconElement) viewChildren.push(iconElement)
   }
-  if (isPopulatedString(label)) viewChildren.push(label)
+  if (isPopulatedString(label)) viewChildren.push(<span>{label}</span>)
   
   const viewProps = {
     ...rest,
     children: viewChildren,
     className: classes.join(' '),
     onMouseDown, onDragStart, onDragEnd,
-    onClick: (event: React.MouseEvent) => event.stopPropagation(),
+    onClick: eventStop,
     draggable: true,
   }
   return <View {...viewProps} />

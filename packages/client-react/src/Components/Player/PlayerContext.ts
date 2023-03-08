@@ -1,5 +1,5 @@
-import React from 'react'
-import { BooleanSetter, EmptyMethod, NumberSetter } from '@moviemasher/moviemasher.js'
+import { BooleanSetter, EmptyFunction, NumberSetter } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface PlayerContextInterface {
   disabled?: boolean
@@ -11,9 +11,9 @@ export interface PlayerContextInterface {
 
 export const PlayerContextDefault: PlayerContextInterface = {
   paused: false,
-  changePaused: EmptyMethod,
-  changeVolume: EmptyMethod,
+  changePaused: EmptyFunction,
+  changeVolume: EmptyFunction,
   volume: 0,
 }
 
-export const PlayerContext = React.createContext(PlayerContextDefault)
+export const PlayerContext = createContext(PlayerContextDefault)

@@ -1,28 +1,26 @@
 import React from 'react'
 import { EventType, arrayReversed, Tracks } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChildren, ReactResult } from '../../declarations'
+import { JsxElements } from "../../Types/Element"
+import { PropsWithChildren } from "../../Types/Props"
 import { useListeners } from '../../Hooks/useListeners'
 import { TrackContext } from '../../Contexts/TrackContext'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 
-export interface TimelineTracksProps extends PropsAndChildren {}
+export interface TimelineTracksProps extends PropsWithChildren {}
 
-/**
- * @parents TimelineContent
- * @children TimelineTrack
- */
-export function TimelineTracks(props: TimelineTracksProps): ReactResult {
+
+export function TimelineTracks(props: TimelineTracksProps) {
   const [refresh, setRefreshed] = React.useState(() => 0)
   const updateRefreshed = () => { setRefreshed(nonce => nonce + 1) }
-  const editor = useEditor()
+  const editor = useMasher()
   useListeners({
     [EventType.Loaded]: updateRefreshed, [EventType.Track]: updateRefreshed,
   })
 
   const { children } = props
 
-  const childNodes = (): React.ReactElement[] => {
+  const childNodes = (): JsxElements => {
     const { mash } = editor.selection
     if (!mash) return []
 

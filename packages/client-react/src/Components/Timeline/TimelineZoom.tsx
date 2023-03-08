@@ -1,10 +1,13 @@
 import React from 'react'
-import { EventType } from '@moviemasher/moviemasher.js'
+import { ClassButton, ClassDisabled, ClassSelected, EventType } from '@moviemasher/moviemasher.js'
 
-import { ReactResult, PropsAndChild, WithClassName } from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsAndChild } from "../../Types/Props"
 import { TimelineContext } from './TimelineContext'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { useListeners } from '../../Hooks/useListeners'
+import { View } from '../../Utilities/View'
 
 export interface TimelineZoomProps extends PropsAndChild, WithClassName {
   zoom: number
@@ -13,18 +16,24 @@ export interface TimelineZoomProps extends PropsAndChild, WithClassName {
 /**
  * @parents Timeline
  */
-export function TimelineZoom(props: TimelineZoomProps): ReactResult {
-  const editor = useEditor()
-  const { zoom, children, ...rest } = props
+export function TimelineZoom(props: TimelineZoomProps) {
+  const masher = useMasher()
+  const { zoom, className } = props
   const timelineContext = React.useContext(TimelineContext)
-  const getDisabled = () => !editor.selection.mash
+  const getDisabled = () => !masher.mashMedia
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
-  useListeners({ [EventType.Selection]: updateDisabled })
+  useListeners({ [EventType.Loaded]: updateDisabled })
 
-  const onClick = () => { timelineContext.setZoom(zoom) }
+  const classes = [ClassButton]
+  if (className) classes.push(className)
+  if (disabled) classes.push(ClassDisabled)
 
-  const buttonOptions = { ...rest, onClick, disabled }
+  return <View
+    key='timeline-zoom'
+    className={classes.join(' ')}
+    onClick={() => { timelineContext.setZoom(zoom) }}
+   >{ props.children }</View>
 
-  return React.cloneElement(React.Children.only(children), buttonOptions)
+  
 }

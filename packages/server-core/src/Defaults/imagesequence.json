@@ -5,6 +5,5 @@
   "height": 240,
   "videoRate": 10,
   "extension": "jpg",
-  "outputType": "imagesequence",
-  "cover": false
+  "outputType": "imagesequence"
 }

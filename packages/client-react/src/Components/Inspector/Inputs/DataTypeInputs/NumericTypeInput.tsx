@@ -1,14 +1,14 @@
 import React from 'react'
 import { DataType, isDefined, UnknownRecord } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { InputContext } from '../InputContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { useEditor } from '../../../../Hooks/useEditor'
+import { useMasher } from '../../../../Hooks/useMasher'
 
-export function NumericTypeInput(): ReactResult {
+export function NumericTypeInput() {
   const inputContext = React.useContext(InputContext)
-  const editor = useEditor()
+  const editor = useMasher()
   const { changeHandler, property, value, name, time } = inputContext
   if (!property) return null
 

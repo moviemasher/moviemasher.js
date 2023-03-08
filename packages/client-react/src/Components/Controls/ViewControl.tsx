@@ -1,45 +1,52 @@
 import React from "react"
-import { assertEndpoint, assertMashMedia, endpointFromUrl, endpointUrl, EventType, isMashMedia, urlForEndpoint } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import /* type */ { PropsClickable } from "../../Types/Props"
+
+import { assertEndpoint, assertMashMedia, endpointUrl, EventType, isMashMedia } from "@moviemasher/moviemasher.js"
+
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-
-export function ViewControl(props: PropsAndChild): ReactResult {
-  const editor = useEditor()
+export function ViewControl(props: PropsClickable) {
+  const masher = useMasher()
 
   const getDisabled = () => {
-    const { mashMedia } = editor
+    const { mashMedia } = masher
     if (!isMashMedia(mashMedia)) return true
 
     const { encodings } = mashMedia
-  
     return !encodings.length
   }
+
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
+
   useListeners({
     [EventType.Render]: updateDisabled,
     [EventType.Loaded]: updateDisabled
   })
 
-  const { children, ...rest } = props
-
-  const onClick = () => {
-    if (disabled) return
-
-    const { mashMedia } = editor
-    assertMashMedia(mashMedia)
+  return <Clickable key='encode'
+    button={props.button}
+    label={props.label}
+    onClick={
+      () => {
+        if (disabled) return
     
-    const { encodings } = mashMedia
-    const [encoding] = encodings
-    const {endpoint} = encoding.request
-    assertEndpoint(endpoint)
-    
-    const url = endpointUrl(endpoint)
-    window.open(url)
-  }
-  const buttonOptions = { ...rest, onClick, disabled }
-  return React.cloneElement(React.Children.only(children), buttonOptions)
+        const { mashMedia } = masher
+        assertMashMedia(mashMedia)
+        
+        const { encodings } = mashMedia
+        const [encoding] = encodings
+        const {endpoint} = encoding.request
+        assertEndpoint(endpoint)
+        
+        const url = endpointUrl(endpoint)
+        window.open(url)
+      }
+    }
+    className={ className(disabled, props.className) }
+  >{props.children}</Clickable> 
 }

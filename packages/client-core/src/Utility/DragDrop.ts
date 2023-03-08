@@ -1,12 +1,14 @@
+import /* type */ { Client } from "../Client/Client"
 import {
   UnknownRecord, 
   Clip, Point, isString, Rect, isObject, isMediaType, 
-  MediaType, assertMediaType, StringsRecord, NumberRecord, 
-  JsonRecord, isRawType, isAboveZero, isPopulatedString, isArray, 
+  MediaType, assertMediaType, 
   DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
-  ClassDroppingBefore, isPopulatedObject, errorThrow, MediaObject, 
-  MashAndMediaObject, MediaTypes, mediaTypeFromMime, Strings
+  ClassDroppingBefore, errorThrow, MediaObject, 
+  MashAndMediaObject, Strings, arrayOfNumbers, Effect, isDefiniteError, MediaArray, Masher, isMashAndMediaObject, isEffect, isClip, isMediaObject, MashIndex
 } from "@moviemasher/moviemasher.js"
+
+export type DragFunction = (event: DragEvent) => void
 
 export const DragSuffix = '/x-moviemasher'
 
@@ -39,7 +41,7 @@ export interface DragLayerObject extends UnknownRecord {
 }
 
 
-export type Draggable = MediaObject | MashAndMediaObject | Clip | FileList
+export type Draggable = MediaObject | MashAndMediaObject | Clip | FileList | Effect
 
 
 export const TransferTypeFiles = "Files"
@@ -94,47 +96,50 @@ export const DragElementPoint = (event: DragEvent, current: Element | Rect,): Po
   return { x: clientX - x, y: clientY - y }
 }
 
-export const dropFilesFromList = (files: FileList, serverOptions: JsonRecord = {}): FileInfos => {
-  const infos: FileInfos = []
-  const { length } = files
-  if (!length) return infos
+// export const dropFilesFromList = (files: FileList, serverOptions: JsonRecord = {}): FileInfos => {
+//   const infos: FileInfos = []
+//   const { length } = files
+//   if (!length) return infos
 
-  const exists = isPopulatedObject(serverOptions)
-  const { extensions = {}, uploadLimits = {} } = serverOptions
-  const extensionsByType = extensions as StringsRecord
-  const limitsByType = uploadLimits as NumberRecord
+//   const exists = isPopulatedObject(serverOptions)
+//   const { extensions = {}, uploadLimits = {} } = serverOptions
+//   const extensionsByType = extensions as StringsRecord
+//   const limitsByType = uploadLimits as NumberRecord
+//   const numbers = arrayOfNumbers(length)
+//   numbers.forEach(fileIndex => {
+//     const file = files.item(fileIndex)
+//     console.log('dropFilesFromList file', file, fileIndex, files[fileIndex])
+//     if (!file) return
 
-  for (let i = 0; i < length; i++) {
-    const file = files.item(i)
-    if (!file) continue
 
-    const { name, size, type } = file
-    const coreType = mediaTypeFromMime(type) 
-    if (!isRawType(coreType)) {
-      infos.push({ label: name, value: coreType, error: 'import.type' })
-      continue
-    }
+//     const { name, size, type } = file
+//     const coreType = mediaTypeFromMime(type) 
+//       console.log('dropFilesFromList file', file, type)
+//     if (!isEncodingType(coreType)) {
+//       infos.push({ label: name, value: coreType, error: 'import.type' })
+//       return
+//     }
     
-    const max = limitsByType[coreType]
-    if (exists && !(isAboveZero(max) && max * 1024 * 1024 > size)) {
-      infos.push({ label: name, value: `${max}MB`, error: 'import.bytes' })
-      continue
-    }
+//     const max = limitsByType[coreType]
+//     if (exists && !(isAboveZero(max) && max * 1024 * 1024 > size)) {
+//       infos.push({ label: name, value: `${max}MB`, error: 'import.bytes' })
+//       return
+//     }
 
-    const ext = name.toLowerCase().split('.').pop()
-    const extDefined = isPopulatedString(ext)
-    const exts = extensionsByType[coreType]
-    if (exists || !extDefined) {
-      if (!(extDefined && isArray(exts) && exts.includes(ext))) {
-        infos.push({ label: name, value: ext, error: 'import.extension' })
-        continue
-      } 
-    }
-    infos.push(file)
-  }
-  console.log('dropFilesFromList infos', infos)
-  return infos
-}
+//     const ext = name.toLowerCase().split('.').pop()
+//     const extDefined = isPopulatedString(ext)
+//     const exts = extensionsByType[coreType]
+//     if (exists || !extDefined) {
+//       if (!(extDefined && isArray(exts) && exts.includes(ext))) {
+//         infos.push({ label: name, value: ext, error: 'import.extension' })
+//         return
+//       } 
+//     }
+//     infos.push(file)
+//   })
+//   console.log('dropFilesFromList infos', infos, length, ...numbers)
+//   return infos
+// }
 
 
 export const droppingPositionClass = (droppingPosition?: DroppingPosition | number): string => {
@@ -147,3 +152,68 @@ export const droppingPositionClass = (droppingPosition?: DroppingPosition | numb
   }
   return ClassDropping
 }
+
+export const dropFiles = (masher: Masher, client: Client, fileList: FileList, editorIndex?: MashIndex): Promise<MediaArray> => {
+  const media: MediaArray = []
+  const { length } = fileList
+  const fileOrNulls = arrayOfNumbers(length).map(i => fileList.item(i))
+  const list = fileOrNulls.filter(file => file !== null) as File[]
+  const [file, ...rest] = list
+
+  let promise = client.fileMedia(file)
+  rest.forEach(file => {
+    promise = promise.then(orError => {
+      if (isDefiniteError(orError)) return orError
+      const { data } = orError
+      media.push(data)
+
+      return client.fileMedia(file)
+    })
+  })
+
+  return promise.then(orError => {
+    if (isDefiniteError(orError)) {
+      console.error(orError)
+      return []
+    }
+    const { data } = orError
+    media.push(data)
+    return masher.addMedia(media, editorIndex)
+  })
+}
+
+export const dropMediaObject = (masher: Masher, definitionObject: MediaObject, editorIndex?: MashIndex): Promise<MediaArray>  => {
+  // console.log("MasherApp onDrop MediaObject...", definitionObject, editorIndex)
+  return masher.addMediaObjects(definitionObject, editorIndex)
+}
+
+export const dropDraggable = (masher: Masher, client: Client, draggable: Draggable, editorIndex?: MashIndex): Promise<MediaArray>  => {
+  console.log("dropDraggable", editorIndex, draggable)
+
+  
+  if (!draggable) return Promise.resolve([]) 
+  console.log("dropDraggable editorIndex", editorIndex)
+
+  if (isClip(draggable)) {
+    // this does not happen since Timeline intercepts
+    console.log("dropDraggable Clip")
+    return Promise.resolve([])
+  }
+  if (isEffect(draggable)) {
+    console.log("dropDraggable Effect")
+    return Promise.resolve([])
+  }
+  
+  if (isMashAndMediaObject(draggable)) {
+    console.log("dropDraggable MashAndMediaObject")
+    return Promise.resolve([])
+  }
+  if (isMediaObject(draggable)) {
+    console.log("dropDraggable MediaObject")
+    return dropMediaObject(masher, draggable, editorIndex)
+    
+  }
+  return dropFiles(masher, client, draggable, editorIndex) 
+}
+
+

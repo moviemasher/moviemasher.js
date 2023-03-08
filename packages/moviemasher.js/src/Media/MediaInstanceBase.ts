@@ -1,5 +1,5 @@
-import { UnknownRecord } from "../declarations"
-import { MediaType } from "../Setup/Enums"
+import { UnknownRecord } from "../Types/Core"
+import { MediaType } from "../Setup/MediaType"
 import { idGenerateString } from "../Utility/Id"
 import { PropertiedClass } from "../Base/Propertied"
 import { assertPopulatedObject } from "../Utility/Is"

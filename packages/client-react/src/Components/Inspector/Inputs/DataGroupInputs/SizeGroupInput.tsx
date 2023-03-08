@@ -2,29 +2,31 @@ import React from "react"
 import { 
   selectedPropertiesScalarObject, ClassButton, assertString, ClassSelected, 
   DataGroup, Orientation, PropertyTweenSuffix, isOrientation, 
-  selectedPropertyObject, ScalarRecord, assertSelectType, assertTime, assertTimeRange, tweenInputTime 
+  selectedPropertyObject, ScalarRecord, assertSelectorType, assertTime, assertTimeRange, tweenInputTime, EmptyFunction 
 } from "@moviemasher/moviemasher.js"
 
 
-import { PropsAndChild, ReactResult, UnknownElement } from "../../../../declarations"
+import { JsxElement } from "../../../../Framework/Framework"
+
 import { InspectorContext } from "../../../Inspector/InspectorContext"
 import { DataGroupInputs, DataGroupProps } from "./DataGroupInputs"
 import { DataTypeInputs } from "../DataTypeInputs/DataTypeInputs"
 import { InputContext, InputContextInterface } from "../InputContext"
 import { View } from "../../../../Utilities/View"
-import { useEditor } from "../../../../Hooks/useEditor"
-import { MasherContext } from "../../../Masher/MasherContext"
+import { useMasher } from "../../../../Hooks/useMasher"
+import MasherContext from "../../../Masher/MasherContext"
+import { PropsAndChild } from "../../../../Types/Props"
 
 const SizeInputOrientations: Record<Orientation, string> = {
   [Orientation.H]: 'width', [Orientation.V]: 'height'
 }
 
-export function SizeGroupInput(props: DataGroupProps): ReactResult {
+export function SizeGroupInput(props: DataGroupProps) {
   const masherContext = React.useContext(MasherContext)
   const { icons } = masherContext
-  const editor = useEditor()
+  const editor = useMasher()
   const { selectType, selectedItems: propsItems, ...rest } = props
-  assertSelectType(selectType, 'selectType')
+  assertSelectorType(selectType, 'selectType')
   const inspectorContext = React.useContext(InspectorContext)
   const selectedItems = propsItems || inspectorContext.selectedItems
   const { selectedInfo, changeTweening } = inspectorContext
@@ -52,7 +54,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     
   const orientation = isOrientation(lockValue) ? lockValue as Orientation : undefined
   
-  const elementsByName: Record<string, UnknownElement> = {}
+  const elementsByName: Record<string, JsxElement> = {}
   const inspectingProperties = [widthProperty, heightProperty]
 
   // go to first/last frame if needed and tween value defined...
@@ -67,7 +69,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
     const input = DataTypeInputs[type] 
     const key = `inspector-${selectType}-${name}`
     const inputContext: InputContextInterface = { 
-      property, value, name, time: goTime
+      property, value, name, time: goTime, changeHandler: EmptyFunction
     }
 
     // if we're editing tween value, but it's not defined yet...
@@ -105,7 +107,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
   }
   const selectedButton = [ClassSelected, ClassButton].join(' ')
   const lockHeight = <View { ...lockHeightProps } />
-  const startProps: PropsAndChild = {
+  const startProps = {
     children: icons.start,
     className: endSelected ? ClassButton : selectedButton,
     key: 'start',
@@ -114,7 +116,7 @@ export function SizeGroupInput(props: DataGroupProps): ReactResult {
       changeTweening(DataGroup.Size, false)
     }
   }
-  const endProps: PropsAndChild = {
+  const endProps = {
     key: 'end',
     className: endSelected ? selectedButton : ClassButton,
     children: endDefined ? icons.end : icons.endUndefined,

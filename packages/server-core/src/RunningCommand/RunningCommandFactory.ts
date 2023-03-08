@@ -1,5 +1,5 @@
 
-import { CommandOptions } from "../Encode/Encode"
+import { CommandOptions } from "../Plugin/Encode/Encode"
 import { RunningCommand } from "./RunningCommand"
 import { RunningCommandClass } from './RunningCommandClass'
 

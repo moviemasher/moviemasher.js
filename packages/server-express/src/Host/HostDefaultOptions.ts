@@ -1,6 +1,6 @@
 import path from 'path'
 import {
-  Size, CommandOutput, AudioType, ImageType, VideoType 
+  Size, VideoEncoderOptions, AudioType, ImageType, VideoType 
 } from "@moviemasher/moviemasher.js"
 import { expandFileOrScript } from '@moviemasher/server-core'
 
@@ -52,14 +52,13 @@ export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions =
   const uploadDir = mediaDirectory || `${publicDirectory}/media`
   if (!uploadDir.startsWith(publicDirectory)) throw 'mediaDirectory must be public'
 
-  const commandOutput: CommandOutput = {}
+  const commandOutput: VideoEncoderOptions = {}
   const basePort = port || HostDefaultPort
   if (outputSize) {
     const { width, height } = outputSize
     commandOutput.width = width
     commandOutput.height = height
   }
-
   if (outputRate) commandOutput.videoRate = outputRate
 
   const commandOutputs: RenderingCommandOutputRecord = renderingCommandOutputs || {}

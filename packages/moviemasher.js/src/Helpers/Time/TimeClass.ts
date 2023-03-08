@@ -3,6 +3,8 @@ import { roundWithMethod } from "../../Utility/Round"
 import { Time, TimeRange } from "./Time"
 import { errorThrow } from "../Error/ErrorFunctions"
 import { ErrorName } from "../Error/ErrorName"
+import { arrayOfNumbers } from "../../Utility/Array"
+import { Numbers } from "../../Types/Core"
 
 const timeGreatestCommonDenominator = (fps1 : number, fps2 : number) : number => {
   let a = fps1
@@ -80,17 +82,15 @@ export class TimeClass implements Time {
 
   frame : number
 
-  durationFrames(duration: number, fps = 0): number[] {
+  durationFrames(duration: number, fps = 0): Numbers {
     const rate = fps || this.fps
-    const frames: number[] = []
     const framesMax  = Math.floor(rate * duration) - 2 
     const startFrame = Math.min(framesMax, this.scale(rate, "floor").frame)
+    const frames: Numbers = []
     if (this.isRange) {
       const scaledFrame = this.timeRange.endTime.scale(rate, "ceil").frame
       const endFrame = Math.min(framesMax + 1, scaledFrame)
-      for (let frame = startFrame; frame < endFrame; frame += 1) {
-        frames.push(frame)
-      }
+      frames.push(...arrayOfNumbers(endFrame - startFrame, startFrame))
     } else frames.push(startFrame)
     return frames
   }

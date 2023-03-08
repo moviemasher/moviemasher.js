@@ -1,7 +1,7 @@
 import path from "path"
 import fs from 'fs'
 import Ffmpeg from "fluent-ffmpeg"
-import { ErrorName, errorObject, ProbingData, Sizes } from "@moviemasher/moviemasher.js"
+import { ErrorName, errorObject, Numbers, ProbingData, Sizes, NewlineChar } from "@moviemasher/moviemasher.js"
  
 import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
 
@@ -18,7 +18,7 @@ export class Probe {
   }
   private static get alphaFormatsInitialize(): string[] {
     const result = expandCommand(this.AlphaFormatsCommand)
-    return result.split("\n")
+    return result.split(NewlineChar)
   }
 
   private static probeFile(src: string): string {
@@ -60,8 +60,8 @@ export class Probe {
           } else {
             const { streams, format } = data
             const { duration = 0 } = format
-            const durations: number[] = []
-            const rotations: number[] = []
+            const durations: Numbers = []
+            const rotations: Numbers = []
             const sizes: Sizes = []
             for (const stream of streams) {
               const { rotation, width, height, duration, codec_type, pix_fmt } = stream

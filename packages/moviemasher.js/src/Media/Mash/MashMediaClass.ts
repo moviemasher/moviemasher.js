@@ -1,11 +1,10 @@
 import {
-  Scalar, UnknownRecord} from "../../declarations"
+  Scalar, UnknownRecord} from "../../Types/Core"
 import { PreviewItems } from "../../Helpers/Svg/Svg"
 import { PreloadArgs, PreloadOptions } from "../../Base/Code"
 import { SelectedItems, SelectedProperty } from "../../Helpers/Select/SelectedProperty"
 import {
-  AVType, DataType, Duration, EventType, MashType, SelectType
-} from "../../Setup/Enums"
+  AVType, DataType, Duration, EventType, MashType} from "../../Setup/Enums"
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, 
   timeRangeFromTimes
@@ -16,28 +15,28 @@ import { sortByIndex } from "../../Utility/Sort"
 import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
 import { isClip, Clip, Clips } from "./Track/Clip/Clip"
 import { assertTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
-import { AudioPreview } from "../../Editor/Preview/AudioPreview/AudioPreview"
-import { AudioPreviewArgs } from "../../Editor/Preview/AudioPreview/AudioPreview"
-import { MashEditorArgs, MashMedia, MashMediaArgs, MashMediaContent, MashMediaObject, MashMediaRequest } from "./Mash"
+import { AudioPreview } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
+import { AudioPreviewArgs } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
+import { MashMasherArgs, MashMedia, MashMediaContent, MashMediaObject, MashMediaRequest } from "./Mash"
 import { trackInstance } from "./Track/TrackFactory"
-import { Preview, PreviewArgs, PreviewOptions } from "../../Editor/Preview/Preview"
-import { PreviewClass } from "../../Editor/Preview/PreviewClass"
-import { Actions } from "../../Editor/Actions/Actions"
-import { NonePreview } from "../../Editor/Preview/NonePreview"
-import { Selectables } from "../../Editor/Selectable"
+import { Preview, PreviewArgs, PreviewOptions } from "../../Plugin/Masher/Preview/Preview"
+import { PreviewClass } from "../../Plugin/Masher/Preview/PreviewClass"
+import { Actions } from "../../Plugin/Masher/Actions/Actions"
+import { NonePreview } from "../../Plugin/Masher/Preview/NonePreview"
+import { Selectables } from "../../Plugin/Masher/Selectable"
 import { Propertied } from "../../Base/Propertied"
-import { Editor } from "../../Editor/Editor"
-import { EmptyMethod } from "../../Setup/Constants"
+import { Masher, MashingType } from "../../Plugin/Masher/Masher"
+import { EmptyFunction } from "../../Setup/Constants"
 import { isFont } from "../Font/Font"
-import { encodingInstance } from "../../Encode/Encoding/EncodingFactory"
-import { Encodings } from "../../Encode/Encoding/Encoding"
+import { encodingInstance } from "../../Plugin/Encode/Encoding/EncodingFactory"
+import { Encodings } from "../../Plugin/Encode/Encoding/Encoding"
 import { Emitter } from "../../Helpers/Emitter"
 import { isSize, Size, SizeZero } from "../../Utility/Size"
 import { MediaBase } from "../MediaBase"
 import { propertyInstance } from "../../Setup/Property"
-import { colorBlack } from "../../Helpers/Color/ColorFunctions"
-import { audioPreviewInstance } from "../../Editor/Preview/AudioPreview/AudioPreviewFactory"
-import { MediaCollection } from "../../Base/MediaCollection"
+import { colorBlack } from "../../Helpers/Color/ColorConstants"
+import { audioPreviewInstance } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreviewFactory"
+import { MediaCollection } from "./MediaCollection/MediaCollection"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../../Helpers/Error/ErrorName"
 import { requestRecordPromise } from "../../Helpers/Request/RequestFunctions"
@@ -46,13 +45,13 @@ type TrackClips = [number, Clips]
 type Interval = ReturnType<typeof setInterval>
 
 export class MashMediaClass extends MediaBase implements MashMedia {
-  constructor(object: MashMediaObject, args?: MashEditorArgs | Size) {
+  constructor(object: MashMediaObject, args?: MashMasherArgs | Size) {
     super(object)
     const { encodings } = object
     if (isSize(args)) this.imageSize = args
     else if (args) {
       const {
-        loop, gain, buffer, size, mediaCollection, emitter, editor, 
+        loop, gain, buffer, size, mediaCollection, emitter, masher: editor, 
       } = args
       if (editor) this.editor = editor
       if (emitter) this.emitter = emitter
@@ -77,9 +76,9 @@ export class MashMediaClass extends MediaBase implements MashMedia {
 
   declare color: string
 
-  _editor?: Editor 
-  get editor(): Editor { return this._editor! }
-  set editor(value: Editor) { this._editor = value}
+  _editor?: Masher 
+  get editor(): Masher { return this._editor! }
+  set editor(value: Masher) { this._editor = value}
 
   emitter?: Emitter
  
@@ -383,6 +382,8 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     }
   }
 
+  declare kind: MashingType
+
   private _loadMashContentPromise?: Promise<void>
   private _loadedMashContent = false
   private get loadMashContentPromise(): Promise<void> {
@@ -400,7 +401,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
         const data = orError.data as MashMediaContent
         const { media, tracks, quantize, color } = data
     
-        if (isArray(media)) this.media.define(...media)
+        if (isArray(media)) this.media.define(media)
         if (isAboveZero(quantize)) this.quantize = quantize
         if (color) this.setValue(color, 'color')
     
@@ -445,7 +446,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
         return clip.loadPromise(preloadArgs)
       })
 
-      const promise = Promise.all(promises).then(EmptyMethod)
+      const promise = Promise.all(promises).then(EmptyFunction)
       const removedPromise = promise.then(() => {
         const index = this.loadingPromises.indexOf(promise)
         if (index < 0) return errorThrow(ErrorName.Internal) 
@@ -558,7 +559,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     return args
   }
 
-  previewItemsPromise(editor?: Editor): Promise<PreviewItems> {
+  previewItemsPromise(editor?: Masher): Promise<PreviewItems> {
     const options: PreviewOptions = { editor }
     return this.preview(options).previewItemsPromise 
   }
@@ -581,7 +582,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       }
       return [] 
     })  
-    return Promise.all(promises).then(EmptyMethod)
+    return Promise.all(promises).then(EmptyFunction)
   }
 
   quantize = Default.mash.quantize
@@ -631,7 +632,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     return this.stopLoadAndDraw(true)
   }
 
-  selectType = SelectType.Mash
+  selectType = MashType
 
   selectables(): Selectables { return [this] }
     
@@ -641,7 +642,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       const undoValue = this.value(property.name)
       const selectedProperty: SelectedProperty = {
         value: undoValue,
-        selectType: SelectType.Mash, 
+        selectType: MashType, 
         property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)

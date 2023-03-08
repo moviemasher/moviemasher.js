@@ -6,11 +6,11 @@ import {
 import { hashMd5 } from './Hash'
 
 export interface RequestArgs {
-  auth?: string;
+  auth?: string
   headers?: StringRecord
   hostname?: string
   method?: string
-  path?: string;
+  path?: string
   port?: Value
   protocol?: string
 }
@@ -38,7 +38,7 @@ export const requestArgsHash = (args: RequestArgs): string => (
   hashMd5(JSON.stringify(args))
 )
 
-export const requestHash = (request: Request): string => (
-  requestArgsHash(requestArgs(request))
-)
+// export const requestHash = (request: Request): string => (
+//   requestArgsHash(requestArgs(request))
+// )
 

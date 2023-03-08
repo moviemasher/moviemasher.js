@@ -1,39 +1,40 @@
 import { 
-  Request, LoadType, ProtocolPromise, Plugins, 
-  assertTrue, isPopulatedString, 
-  endpointAbsolute, 
-  CssContentType, RequestInit, urlFromCss, endpointUrl, ImageType, AudioType, VideoType, FontType, HttpProtocol, HttpsProtocol, errorThrow, FontDataOrError, ProtocolType, assertEndpoint, RecordType, RecordsType, AudioDataOrError
+  assertEndpoint, assertTrue, ClientAudioDataOrError, AudioType, CssMimetype, 
+  endpointAbsolute, endpointUrl, errorThrow, ClientFontDataOrError, FontType, 
+  HttpProtocol, HttpsProtocol, ImageType, isPopulatedString, LoadType, 
+  ProtocolPromise, ProtocolType, RecordsType, RecordType, Request, RequestInit, 
+  Runtime, urlFromCss, VideoType 
 } from "@moviemasher/moviemasher.js"
 import { audioBufferPromise } from "../Utility/Audio"
-import { jsonPromise } from "../Utility/Json"
 import { imageDataPromise } from "../Utility/Image"
+import { jsonPromise } from "../Utility/Json"
 import { videoDataPromise } from "../Utility/Video"
 
 const arrayBufferPromise = (url: string, init?: RequestInit): Promise<ArrayBuffer> => (
    fetch(url, init).then(response => response.arrayBuffer())
 )
 
-const fontFamily = (url: string): string => url.replaceAll(/[^a-z0-9]/gi, '_')
+const fontFamily = (url: string): string => url.replace(/[^a-z0-9]/gi, '_')
 
-const fontPromise =  (request: Request): Promise<FontDataOrError> => {
+const fontPromise =  (request: Request): Promise<ClientFontDataOrError> => {
   const { endpoint, init } = request
   assertEndpoint(endpoint)
 
   const url = endpointUrl(endpoint)
   
   const bufferPromise = fetch(url, init).then(response => {
-    const type = response.headers.get('content-type') || ''
+    const mimetype = response.headers.get('content-type') || ''
     // console.log("fontPromise.fetch", type)
-    if (!isPopulatedString(type) || type.startsWith(FontType)) {
+    if (!isPopulatedString(mimetype) || mimetype.startsWith(FontType)) {
       return response.arrayBuffer()
     }
-    assertTrue(type.startsWith(CssContentType)) 
+    assertTrue(mimetype.startsWith(CssMimetype)) 
     
     return response.text().then(string => {
       // TODO: use resolverPromise instead
       // return resolverPromise(string, type, FontType)
       const cssUrl = urlFromCss(string)
-      // console.log("fontPromise.fetch CSS", cssUrl)
+      console.log("fontPromise.fetch CSS", cssUrl)
       return arrayBufferPromise(cssUrl)
     })
   })
@@ -58,7 +59,7 @@ const fontPromise =  (request: Request): Promise<FontDataOrError> => {
   })
 }
 
-const audioPromise =  (request: Request): Promise<AudioDataOrError> => {
+const audioPromise =  (request: Request): Promise<ClientAudioDataOrError> => {
   const { endpoint, init } = request
   assertEndpoint(endpoint)
 
@@ -85,5 +86,5 @@ const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
   errorThrow(type, 'LoadType', 'type')
 }) 
 
-Plugins[ProtocolType][HttpProtocol] = { promise, type: HttpProtocol }
-Plugins[ProtocolType][HttpsProtocol] = { promise, type: HttpsProtocol }
+Runtime.plugins[ProtocolType][HttpProtocol] ||= { promise, type: ProtocolType, protocol: HttpProtocol }
+Runtime.plugins[ProtocolType][HttpsProtocol] ||= { promise, type: ProtocolType, protocol: HttpsProtocol }

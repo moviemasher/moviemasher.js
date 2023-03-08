@@ -1,8 +1,8 @@
 
 
-<script src="react.development.js" crossorigin></script>
-<script src="react-dom.development.js" crossorigin></script>
-
+<script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin></script>
+<script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin></script>
+    
 <script src="moviemasher.js" crossorigin></script>
 <script src="theme-default.js" crossorigin></script>
 <script src="client-react.js" crossorigin></script>
@@ -16,9 +16,9 @@
   // destructure constants from modules
   const { createElement } = React
   const { createRoot } = ReactDOM
-  const { Masher, MasherDefaultProps } = MovieMasherClient
-  const props = MasherDefaultProps()
-  const masher = createElement(Masher, props) 
+  const { MasherApp, MasherAppDefaultProps } = MovieMasherClient
+  const props = MasherAppDefaultProps()
+  const masher = createElement(MasherApp, props) 
   createRoot(element).render(masher)
   
 </script>

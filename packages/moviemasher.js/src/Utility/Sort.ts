@@ -10,7 +10,11 @@ export const sortByTrack = (a : Tracked, b : Tracked) : number => (
   a.trackNumber - b.trackNumber
 )
 export const sortByLabel = (a : Labeled, b : Labeled) : number => {
-  if (a.label < b.label) return -1
-  if (a.label > b.label) return 1
+  const { label: aLabel = '' } = a
+  const { label: bLabel = '' } = b
+  if (aLabel < bLabel) return -1
+
+  if (aLabel > bLabel) return 1
+  
   return 0
 }

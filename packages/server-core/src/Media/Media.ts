@@ -1,7 +1,7 @@
 import { 
   isIdentified, errorThrow, Identified, isObject, Output, Request, Requests 
-} from "@moviemasher/moviemasher.js";
-import { Input } from "../declarations";
+} from "@moviemasher/moviemasher.js"
+import { Input } from "../Types/Core"
 
 export interface MediaEvent {
   body: string

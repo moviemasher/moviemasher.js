@@ -1,0 +1,24 @@
+{
+  "name": "@moviemasher/client",
+  "version": "5.1.2",
+  "description": "Movie Masher Client",
+  "license": "MIT",
+  "scripts": {  
+    "build-script": "node dev/build.mjs",
+    "build": "run-s build-mitosis build-script",
+    "build-mitosis": "npm exec mitosis build -- --config=dev/mitosis.config.js"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/theme-default": "5.1.2",
+    "@moviemasher/client-core": "5.1.2",
+    "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
+  },
+  "devDependencies": {
+    "prettier": "2.8.4",
+    "@builder.io/mitosis": "0.0.92",
+    "@builder.io/mitosis-cli": "0.0.51", 
+    "@builder.io/eslint-plugin-mitosis": "0.0.14"
+  }
+}

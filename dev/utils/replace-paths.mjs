@@ -11,8 +11,6 @@ const inHtml = fs.readFileSync(inPath).toString()
 
 const replacements = [
   ['supabase.js', 'https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js'],
-  ['https://unpkg.com/react@17.0.2/umd/react.development.js', 'https://unpkg.com/react@17.0.2/umd/react.production.min.js'],
-  ['https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js', 'https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js'],
   ['https://unpkg.com/react@18/umd/react.development.js', 'https://unpkg.com/react@18/umd/react.production.min.js'],
   ['https://unpkg.com/react-dom@18/umd/react-dom.development.js', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'],
   ['react.development.js', 'https://unpkg.com/react@18/umd/react.production.min.js'],

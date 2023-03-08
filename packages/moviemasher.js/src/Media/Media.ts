@@ -1,18 +1,19 @@
-import { UnknownRecord } from "../declarations"
+import { UnknownRecord } from "../Types/Core"
 import { Constrained } from "../Base/Constrained"
 import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
 import { Property } from "../Setup/Property"
 import { Size } from "../Utility/Size"
-import { isTranscoding } from "../Transcode/Transcoding/Transcoding"
-import { TranscodingObjects, Transcodings } from "../Transcode/Transcoding/Transcoding"
-import { MediaType, isMediaType } from "../Setup/Enums"
+import { isTranscoding } from "../Plugin/Transcode/Transcoding/Transcoding"
+import { TranscodingObjects, Transcodings } from "../Plugin/Transcode/Transcoding/Transcoding"
+import { MediaType, isMediaType } from "../Setup/MediaType"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { isRequestableObject, Requestable, RequestableObject } from "../Base/Requestable/Requestable"
-import { PathDataOrError, PotentialError } from "../Helpers/Error/Error"
 import { isObject } from "../Utility/Is"
 import { Identified } from "../Base/Identified"
 import { Propertied } from "../Base/Propertied"
 import { DecodingObjects, Decodings } from "../Plugin/Decode/Decoding/Decoding"
+import { Data } from "../Helpers/ClientMedia/ClientMedia"
+import { DefiniteError } from "../Helpers/Error/Error"
 
 export interface MediaInstanceObject extends UnknownRecord {
   mediaId?: string
@@ -48,18 +49,22 @@ export interface MediaObject extends RequestableObject {
   transcodings?: TranscodingObjects
   decodings?: DecodingObjects
   label?: string
-  // size?: number
 }
+export type MediaObjects = MediaObject[]
 
 export const isMediaObject = (value: any): value is MediaObject => {
   return isRequestableObject(value) 
 }
 
-export type MediaObjects = MediaObject[]
+export function assertMediaObject(value: any, name?: string): asserts value is MediaObject {
+  if (!isMediaObject(value)) errorThrow(value, 'MediaObject', name)
+}
 
-export interface MediaObjectOrError extends PotentialError {
-  mediaObject?: MediaObject
-} 
+
+export interface MediaObjectData extends Data {
+  data: MediaObject
+}
+export type MediaObjectDataOrError = DefiniteError | MediaObjectData
 
 /**
  * @category Media

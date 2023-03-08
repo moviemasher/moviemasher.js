@@ -1,11 +1,7 @@
-import { Plugins } from "@moviemasher/moviemasher.js"
+import { ProtocolType, Runtime } from "@moviemasher/moviemasher.js"
 import { ProtocolSupabase } from "@moviemasher/protocol-supabase"
-// import { SupabaseClient } from "@supabase/supabase-js"
 
 export const useClient = () => {
-  console.log('useClient', Plugins)
-  const { client } = Plugins.protocol.supabase as ProtocolSupabase
-  // const client  = Plugins.protocol.supabase.client as SupabaseClient
-
+  const { client } = Runtime.plugins[ProtocolType].supabase as ProtocolSupabase
   return { supabaseClient: client }
 }

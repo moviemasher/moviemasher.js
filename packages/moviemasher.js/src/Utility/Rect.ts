@@ -1,7 +1,8 @@
-import { Orientation } from "../Setup/Enums";
-import { errorThrow } from "../Helpers/Error/ErrorFunctions";
-import { isPoint, Point, pointCopy, pointRound, pointsEqual, pointString, PointTuple, PointZero } from "./Point";
-import { isSize, Size, sizeCopy, sizeRound, sizesEqual, sizeString, SizeTuple, SizeZero } from "./Size";
+import { Orientation } from "../Setup/Enums"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { isPoint, Point, pointCopy, pointRound, pointsEqual, pointString, PointTuple, PointZero } from "./Point"
+import { isSize, Size, sizeCopy, sizeRound, sizesEqual, sizeString, SizeTuple, SizeZero } from "./Size"
+import { SemicolonChar } from "../Setup/Constants"
 
 export interface Rect extends Size, Point { }
 export const isRect = (value: any): value is Rect => {
@@ -56,7 +57,7 @@ export const rectString = (dimensions: any): string => {
   const bits: string[] = []
   if (isSize(dimensions)) bits.push(sizeString(dimensions))
   if (isPoint(dimensions)) bits.push(pointString(dimensions))
-  return bits.join(';')
+  return bits.join(SemicolonChar)
 }
 
 

@@ -3,12 +3,13 @@ import http from 'http'
 import path from 'path'
 
 import {
-  errorCaught, ErrorName, errorPromise, LoadType, PathDataOrError, Plugins, 
-  HttpProtocol, ProtocolPromise, ProtocolType, Request, resolverExtension, resolverPromise, 
-  urlFilename
+  errorCaught, ErrorName, errorPromise, LoadType, PathDataOrError, 
+  HttpProtocol, ProtocolPromise, ProtocolType, Request, 
+  urlFilename, Runtime
 } from "@moviemasher/moviemasher.js"
-import { Environment, environment } from '../../Environment/Environment'
 import { requestArgs, requestArgsHash } from '../../Utility/Request'
+import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment'
+import { resolverExtension, resolverPromise } from '../../Resolve/Resolve'
 
 const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
   if (type) return errorPromise(ErrorName.Type)
@@ -16,8 +17,9 @@ const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
   console.log('HTTP', request)
   const args = requestArgs(request)
   const hash = requestArgsHash(args)
-  const temporaryDirectory = environment(Environment.API_DIR_TEMPORARY)
-
+  const { environment } = Runtime
+  const temporaryDirectory = environment.get(EnvironmentKeyApiDirTemporary)
+  
   const promise: Promise<PathDataOrError> = new Promise(resolve => {
     const req = http.request(args, response => {
       const { ['content-type']: mimeType = '' } = response.headers
@@ -32,12 +34,12 @@ const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
           resolve(resolverPromise(file, mimeType, mimeType))
         })
         stream.on('error', (error) => { resolve(errorCaught(error)) })
-        response.pipe(stream)  
+        // response.pipe(stream)  
       }
     })
     req.on('error', (error: any) => { resolve(errorCaught(error)) })
-    req.end()
+    // req.end()
   })
   return promise
 }) 
-Plugins[ProtocolType][HttpProtocol] = { promise, type: HttpProtocol }
+Runtime.plugins[ProtocolType][HttpProtocol] ||= { promise, type: ProtocolType, protocol: HttpProtocol }

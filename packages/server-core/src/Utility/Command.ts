@@ -1,7 +1,8 @@
 import path from 'path'
-import { isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
+import { 
+  isNumeric, isPopulatedString, SemicolonChar, StringTuple, NewlineChar
+} from "@moviemasher/moviemasher.js"
 
-type StringTuple = [string, string]
 
 const commandErrorRegex = [
   /Input frame sizes do not match \([0-9]*x[0-9]* vs [0-9]*x[0-9]*\)/,
@@ -11,20 +12,21 @@ const commandErrorRegex = [
   'Unable to parse option value',
   'Invalid too big or non positive size',
 ]
-const commandNL = "\n"
+
+
 export const commandExpandComplex = (trimmed: string): string => {
-  if (!trimmed.includes(';')) return trimmed
+  if (!trimmed.includes(SemicolonChar)) return trimmed
   
-  const lines = trimmed.split(';')
+  const lines = trimmed.split(SemicolonChar)
   const broken = lines.map(line => {
     const [firstChar, secondChar] = line
-    if (firstChar !== '[' || isNumeric(secondChar)) return `${commandNL}${line}`
+    if (firstChar !== '[' || isNumeric(secondChar)) return `${NewlineChar}${line}`
     return line
   })
-  return broken.join(`;${commandNL}`)
+  return broken.join(`${SemicolonChar}${NewlineChar}`)
 }
 export const commandQuoteComplex = (trimmed: string): string => {
-  if (!trimmed.includes(';')) return trimmed
+  if (!trimmed.includes(SemicolonChar)) return trimmed
   
   return `'${trimmed}'`
 }
@@ -32,7 +34,7 @@ export const commandQuoteComplex = (trimmed: string): string => {
 export const commandErrors = (...args: any[]): string[] => {
   return args.flatMap(arg => {
     const stringArg = String(arg)
-    const lines = stringArg.split(commandNL).map(line => line.trim())
+    const lines = stringArg.split(NewlineChar).map(line => line.trim())
     return lines.filter(line => commandErrorRegex.some(regex => line.match(regex)))
   })
 }
@@ -52,7 +54,7 @@ export const commandArgsString = (args: string[], destination: string, ...errors
       if (name) params.push([name, ''])
       name = trimmed.slice(1)
     } else {
-      if (name) params.push([name, trimmed.replaceAll(rootPath, '')])
+      if (name) params.push([name, trimmed.replace(rootPath, '')])
       name = ''
     }
   })
@@ -65,7 +67,7 @@ export const commandArgsString = (args: string[], destination: string, ...errors
   
   displayParams.push('ffmpeg')
   displayParams.push(...params.map(([name, value]) => (
-    value ? `-${name} ${commandExpandComplex(value)}${commandNL}` : `-${name}${commandNL}`
+    value ? `-${name} ${commandExpandComplex(value)}${NewlineChar}` : `-${name}${NewlineChar}`
   )))
   if (destination) displayParams.push(destination)
   
@@ -76,8 +78,8 @@ export const commandArgsString = (args: string[], destination: string, ...errors
   commandParams.unshift('ffmpeg')
   if (destination) commandParams.push(destination)
 
-  const blocks = [displayParams.join(commandNL)]
+  const blocks = [displayParams.join(NewlineChar)]
   blocks.push(...errors)
   blocks.push(commandParams.join(' '))
-  return blocks.join(`${commandNL}${commandNL}`)
+  return blocks.join(`${NewlineChar}${NewlineChar}`)
 }

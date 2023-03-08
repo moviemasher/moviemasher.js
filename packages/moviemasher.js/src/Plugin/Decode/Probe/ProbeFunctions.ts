@@ -1,6 +1,6 @@
 import { isArray, isObject } from "../../../Utility/Is"
 import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
-import { isDecodeOutput } from "../DecoderFunctions"
+import { isDecodeOutput } from "../DecodeFunctions"
 import { ProbeOptions, ProbeOutput } from "./Probe"
 
 

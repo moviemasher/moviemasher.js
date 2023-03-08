@@ -1,4 +1,4 @@
-import { ValueRecord } from "../../declarations"
+import { ValueRecord } from "../../Types/Core"
 import { SvgItem } from "../../Helpers/Svg/Svg"
 import { CommandFile, CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { ImageType } from "../../Setup/Enums"

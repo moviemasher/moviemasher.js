@@ -1,4 +1,5 @@
-import { Content, ContentObject, isContent } from "../Content/Content"
+import { Content, ContentObject } from "../Content/Content"
+import { isContent } from "../Content/ContentFunctions"
 import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
 import { AudioType } from "../../Setup/Enums"
 import { isMedia, Media, MediaObject } from "../Media"

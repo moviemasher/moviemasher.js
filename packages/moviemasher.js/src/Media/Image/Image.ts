@@ -1,5 +1,5 @@
-import { ClientImage } from "../../ClientMedia/ClientMedia"
-import { ImageType, MediaType } from "../../Setup/Enums"
+import { ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
+import { ImageType } from "../../Setup/Enums"
 import { 
   Container, ContainerObject 
 } from "../Container/Container"

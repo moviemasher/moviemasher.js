@@ -1,15 +1,14 @@
-import { UnknownRecord } from "../declarations"
+import { UnknownRecord } from "../Types/Core"
 import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
-import { assertMediaType, DataType, MediaType } from "../Setup/Enums"
+import { DataType } from "../Setup/Enums"
+import { assertMediaType, MediaType } from "../Setup/MediaType"
 
 import { Property, propertyInstance } from "../Setup/Property"
-import { assertPopulatedString, isDefiniteError } from "../Utility/Is"
+import { isDefiniteError } from "../Utility/Is"
 import { requestPromise } from "../Helpers/Request/RequestFunctions"
 import { Size } from "../Utility/Size"
 import { Media, MediaInstance, MediaInstanceObject, MediaObject } from "./Media"
 import { MediaInstanceBase } from "./MediaInstanceBase"
-import { Transcoding, Transcodings } from "../Transcode/Transcoding/Transcoding"
-import { transcodingInstance } from "../Transcode/Transcoding/TranscodingFactory"
 import { RequestableClass } from "../Base/Requestable/RequestableClass"
 import { Requestable } from "../Base/Requestable/Requestable"
 import { Default } from "../Setup/Default"
@@ -17,7 +16,9 @@ import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../Helpers/Error/ErrorName"
 import { decodingInstance } from "../Plugin/Decode/Decoding/DecodingFactory"
 import { Decodings } from "../Plugin/Decode/Decoding/Decoding"
-
+import { Transcoding, Transcodings } from "../Plugin/Transcode/Transcoding/Transcoding"
+import { transcodingInstance } from "../Plugin/Transcode/Transcoding/TranscodingFactory"
+let counter = 0
 export class MediaBase extends RequestableClass implements Media { 
   constructor(object: MediaObject) {
     super(object)
@@ -28,9 +29,10 @@ export class MediaBase extends RequestableClass implements Media {
 
     const { type } = this
     assertMediaType(type)
-
+    counter++
+    const defaultValue = `${Default[type].label} ${counter}`
     this.properties.push(propertyInstance({ 
-      name: 'label', type: DataType.String, defaultValue: Default[type].label
+      name: 'label', type: DataType.String, defaultValue
     }))
   }
 
@@ -87,8 +89,8 @@ export class MediaBase extends RequestableClass implements Media {
     const { request } = this
     return requestPromise(request).then(orError => {
       if (!isDefiniteError(orError)) {
-        const { path } = orError
-        this.serverPath = path
+        const { data } = orError
+        this.serverPath = data
       }
     })
   }

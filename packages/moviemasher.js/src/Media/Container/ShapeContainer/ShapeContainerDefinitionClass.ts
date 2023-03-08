@@ -1,4 +1,4 @@
-import { UnknownRecord } from "../../../declarations"
+import { UnknownRecord } from "../../../Types/Core"
 import { ContainerDefinitionMixin } from "../ContainerDefinitionMixin"
 import { ShapeContainerClass } from "./ShapeContainerClass"
 import {
@@ -10,7 +10,7 @@ import { isAboveZero, isPopulatedString } from "../../../Utility/Is"
 import { svgSvgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../../Helpers/Svg/SvgFunctions"
 import { Size, sizeAboveZero, sizeCover } from "../../../Utility/Size"
 import { centerPoint } from "../../../Utility/Rect"
-import { DefaultContainerId } from "../Container"
+import { DefaultContainerId } from "../ContainerConstants"
 import { MediaBase } from "../../MediaBase"
 import { ImageType } from "../../../Setup/Enums"
 

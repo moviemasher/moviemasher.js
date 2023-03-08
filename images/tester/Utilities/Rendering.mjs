@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import {
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
-  SizePreview, isPopulatedString, EmptyMethod, Duration, 
-  idGenerateString
+  SizePreview, isPopulatedString, EmptyFunction, Duration, 
+  idGenerateString, CommaChar
 } from '@moviemasher/moviemasher.js'
 
 import {
@@ -47,7 +47,7 @@ export const renderingTestIdsPromise = (ids, suffix, output) => {
     return new Promise((resolve, reject) => {
       const command = commandProcess()
       command.on('error', (...args) => {
-        reject({ error: args.join(",") }) 
+        reject({ error: args.join(CommaChar) }) 
       })
       command.on('end', () => { resolve() })
       try {
@@ -61,7 +61,7 @@ export const renderingTestIdsPromise = (ids, suffix, output) => {
       const extName = path.extname(destination)
       const baseName = path.basename(destination, extName)
       const infoPath = path.join(dirName, `${baseName}.${ExtensionLoadedInfo}`)
-      return Probe.promise(TestTemporary, destination, infoPath).then(EmptyMethod)
+      return Probe.promise(TestTemporary, destination, infoPath).then(EmptyFunction)
     })
   })
 }
@@ -179,9 +179,9 @@ export const renderingMashTestPromise = (mashTest, upload, ...outputs) => {
   return promise
 }
 
-export const renderingTestIdPromise = (id, videoOutput, labels = false, duration = Duration.Unknown) => {
+export const renderingTestIdPromise = (id, videoOutput, doLabels = false, duration = Duration.Unknown) => {
   assertPopulatedString(id)
 
-  const mashTest = generateTest(id, SizePreview, duration, labels)
+  const mashTest = generateTest(id, SizePreview, duration, doLabels)
   return renderingMashTestPromise(mashTest, false, videoOutput)
 }

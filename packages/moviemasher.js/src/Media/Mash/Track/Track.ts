@@ -1,11 +1,11 @@
-import { UnknownRecord } from "../../../declarations"
+import { UnknownRecord } from "../../../Types/Core"
 import { Indexed } from "../../../Base/Base"
 import { Clips, ClipObject, Clip } from "./Clip/Clip"
 import { Propertied } from "../../../Base/Propertied"
 import { isObject } from "../../../Utility/Is"
 import { MashMedia } from "../Mash"
-import { Selectable } from "../../../Editor/Selectable"
 import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
+import { Selectable } from "../../../Plugin/Masher/Selectable"
 
 export interface TrackObject extends UnknownRecord {
   clips?: ClipObject[]

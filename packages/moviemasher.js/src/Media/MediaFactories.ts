@@ -1,8 +1,10 @@
-import { AudioType, EffectType, FontType, ImageType, MashType, MediaType, SequenceType, VideoType } from "../Setup/Enums"
+import { AudioType, EffectType, FontType, ImageType, MashType, SequenceType, VideoType } from "../Setup/Enums"
+import { MediaType } from "../Setup/MediaType"
 
 import { Media, MediaFactoryMethod, MediaObject } from "./Media"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 import { ErrorName } from "../Helpers/Error/ErrorName"
+import { FilterType } from "../Plugin/Plugin"
 
 const MediaFactoriesUnimplemented = (_: MediaObject): Media => {
   return errorThrow(ErrorName.Unimplemented)

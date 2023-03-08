@@ -1,4 +1,4 @@
-import { UnknownRecord } from "../../declarations"
+import { UnknownRecord } from "../../Types/Core"
 import { CommandFiles, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs } from "../../Base/Code"
 import { Sequence, SequenceMedia } from "./Sequence"
 import { ContentMixin } from "../Content/ContentMixin"

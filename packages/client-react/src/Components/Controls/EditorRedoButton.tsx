@@ -1,22 +1,25 @@
 import React from "react"
+
+import /* type */ { PropsClickable } from "../../Types/Props"
+
 import { MasherAction, EventType } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
 import { useListeners } from "../../Hooks/useListeners"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-export interface EditorRedoButtonProps extends PropsAndChild {}
 
-export function EditorRedoButton(props: EditorRedoButtonProps): ReactResult {
-
+export function EditorRedoButton(props: PropsClickable) {
   const [disabled, setDisabled] = React.useState(true)
-  const editor = useEditor()
+  const masher = useMasher()
   useListeners({
-    [EventType.Action]: () => { setDisabled(!editor.can(MasherAction.Redo)) }
+    [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Redo)) }
   })
-  const { children, ...rest } = props
-  const onClick = () => { editor.redo() }
-
-  const buttonOptions = { ...rest, onClick, disabled }
-  return React.cloneElement(React.Children.only(children), buttonOptions)
-}
+  
+  return <Clickable key='redo'
+    button={props.button}
+    label={props.label}
+    onClick={ () => masher.redo() }
+    className={className(disabled, props.className)}
+  >{props.children}</Clickable>}

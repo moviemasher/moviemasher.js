@@ -1,5 +1,5 @@
-import { Scalar, UnknownRecord } from "../../../declarations"
-import { Duration, SelectType } from "../../../Setup/Enums"
+import { Scalar, UnknownRecord } from "../../../Types/Core"
+import { Duration, TrackType } from "../../../Setup/Enums"
 import { propertyInstance } from "../../../Setup/Property"
 import { sortByFrame } from "../../../Utility/Sort"
 import { Clip, ClipArgs, Clips } from "./Clip/Clip"
@@ -11,9 +11,9 @@ import { idGenerate } from "../../../Utility/Id"
 import { Default } from "../../../Setup/Default"
 import { assertMashMedia, MashMedia } from "../Mash"
 import { SelectedItems } from "../../../Helpers/Select/SelectedProperty"
-import { Actions } from "../../../Editor/Actions/Actions"
+import { Actions } from "../../../Plugin/Masher/Actions/Actions"
 import { clipInstance } from "./Clip/ClipFactory"
-import { Selectables } from "../../../Editor/Selectable"
+import { Selectables } from "../../../Plugin/Masher/Selectable"
 import { arrayLast, arraySet } from "../../../Utility/Array"
 
 export class TrackClass extends PropertiedClass implements Track {
@@ -159,7 +159,7 @@ export class TrackClass extends PropertiedClass implements Track {
     arraySet(this.clips, newClips)
   }
 
-  selectType = SelectType.Track
+  selectType = TrackType
   
   selectables(): Selectables { return [this, ...this.mash.selectables()] }
     
@@ -168,7 +168,7 @@ export class TrackClass extends PropertiedClass implements Track {
       const undoValue = this.value(property.name)
       return {
         value: undoValue,
-        property, selectType: SelectType.Track, 
+        property, selectType: TrackType, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       

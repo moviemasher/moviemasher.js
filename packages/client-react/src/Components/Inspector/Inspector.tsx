@@ -1,12 +1,15 @@
 import React from 'react'
 import { 
-  arraySet, assertSelectType, EventType, SelectedItems, SelectType, SelectTypes, 
+  arraySet, assertSelectorType, EventType, SelectedItems, SelectorType, SelectorTypes, 
   assertPositive, assertTrue, timeFromArgs, timeEqualizeRates, assertDataGroup,
   isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, 
-  SelectedProperties 
+  SelectedProperties, 
+  NoneType
 } from '@moviemasher/moviemasher.js'
 
-import { PropsAndChildren, ReactResult, WithClassName } from '../../declarations'
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithChildren } from "../../Types/Props"
 import { useListeners } from '../../Hooks/useListeners'
 import { View } from '../../Utilities/View'
 import {
@@ -14,31 +17,31 @@ import {
   InspectorContext, InspectorContextDefault, InspectorContextInterface, 
   SelectedInfo
 } from './InspectorContext'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 
-export interface InspectorProps extends PropsAndChildren, WithClassName {}
+export interface InspectorProps extends PropsWithChildren {}
 
 /**
- * @parents Masher
+ * @parents MasherApp
  * @children InspectorContent
  */
-export function Inspector(props: InspectorProps): ReactResult {
-  const editor = useEditor()
+export function Inspector(props: InspectorProps) {
+  const editor = useMasher()
   const [actionCount, setActionCount] = React.useState(() => 0)
   const info = React.useRef<SelectedInfo>({ 
     tweenDefined: {}, tweenSelected: {}, 
-    selectedType: SelectType.None, selectTypes: []
+    selectedType: NoneType, selectTypes: []
   })
-  const [orderedTypes, setOrderedTypes] = React.useState<SelectType[]>(() => SelectTypes)
+  const [orderedTypes, setOrderedTypes] = React.useState<SelectorType[]>(() => SelectorTypes)
   const [selectedItems, setSelectedItems] = React.useState<SelectedItems>(() => [])
   const handleAction = () => { setActionCount(value => value + 1) }
-  const handleSelection = () => {
+  const handleSelection = React.useCallback(() => {
     const { selection } = editor
     const { selectTypes: types, clip, mash } = selection
     const { current } = info
     const { selectedType, selectTypes } = current
     const bestType = orderedTypes.find(type => types.includes(type))
-    assertSelectType(bestType)
+    assertSelectorType(bestType)
 
     if (bestType !== selectedType) {
       // console.log("setInfo selectedType", selectedType, "=>", bestType, types)
@@ -50,11 +53,11 @@ export function Inspector(props: InspectorProps): ReactResult {
     const tweening: DataGroupBooleans = {}
     if (clip && mash) {
       const tweenItems = items.filter(item => {
-        if (!isSelectedProperty(item)) return 
+        if (!isSelectedProperty(item)) return false
 
         const { property, name } = item
         const { tweenable, group } = property
-        if (!(tweenable && group && name)) return
+        if (!(tweenable && group && name)) return false
 
         return name.endsWith(PropertyTweenSuffix)
       }) as SelectedProperties
@@ -87,7 +90,7 @@ export function Inspector(props: InspectorProps): ReactResult {
 
     setSelectedItems(items)
     handleAction()
-  }
+  }, [editor, orderedTypes])
   
   useListeners({
     [EventType.Action]: handleAction,
@@ -95,7 +98,7 @@ export function Inspector(props: InspectorProps): ReactResult {
   })
 
   const changeSelected = React.useCallback((type: string) => {
-    assertSelectType(type)
+    assertSelectorType(type)
     setOrderedTypes(original => {
       const index = original.indexOf(type) 
       assertPositive(index) 
@@ -111,7 +114,7 @@ export function Inspector(props: InspectorProps): ReactResult {
     info.current.selectedType = type
     
     setSelectedItems(editor.selection.selectedItems([type]))
-  }, [])
+  }, [editor.selection, handleSelection])
 
   const changeTweening = (group: DataGroup, tweening: boolean): void => {
     info.current.tweenSelected[group] = tweening

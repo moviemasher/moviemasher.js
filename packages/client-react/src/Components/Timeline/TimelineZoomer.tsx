@@ -1,8 +1,10 @@
 import React from 'react'
-import { ReactResult, SliderChangeHandler, PropsWithChildren } from "../../declarations"
+
+import { SliderChangeHandler } from "../../Types/Core"
+import { PropsWithChildren } from "../../Types/Props"
 import { TimelineContext } from './TimelineContext'
 import { Slider } from '../../Utilities/Slider'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { EventType, isArray } from '@moviemasher/moviemasher.js'
 import { useListeners } from '../../Hooks/useListeners'
 
@@ -10,16 +12,16 @@ import { useListeners } from '../../Hooks/useListeners'
 /**
  * @parents Timeline
  */
-export function TimelineZoomer(props: PropsWithChildren): ReactResult {
-  const editor = useEditor()
+export function TimelineZoomer(props: PropsWithChildren) {
+  const editor = useMasher()
   const timelineContext = React.useContext(TimelineContext)
   const getDisabled = () => !editor.selection.mash
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => { setDisabled(getDisabled())}
   useListeners({ [EventType.Selection]: updateDisabled })
 
-  const handleChange : SliderChangeHandler = (_event, values) => {
-    const number = isArray(values) ? values[0] : values
+  const handleChange: SliderChangeHandler = (value) => {
+    const number = isArray(value) ? value[0] : Number(value)
     if (timelineContext.zoom !== number) timelineContext.setZoom(number)
   }
 

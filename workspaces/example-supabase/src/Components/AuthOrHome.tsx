@@ -4,7 +4,7 @@ import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 
 
 import { AppContext } from '../Contexts/AppContext'
-import { Masher, MasherDefaultProps } from '@moviemasher/client-react'
+import { MasherApp, MasherAppDefaultProps } from '@moviemasher/client-react'
 import { idTemporary, TextContainerId } from "@moviemasher/moviemasher.js"
 import { useClient } from '../Hooks/useClient'
 
@@ -29,9 +29,9 @@ export const AuthOrHome = () => {
     }
     const mash = { id: idTemporary(), request: { response: { tracks: [{ clips: [clip] }] } } } 
     const options = { edited: { mash }, previewSize: { width: 480, height: 270 } }
-    const props = MasherDefaultProps(options)
+    const props = MasherAppDefaultProps(options)
   
-    return <Masher { ...props } />  
+    return <MasherApp { ...props } />  
   }
 
   const authProps = { 

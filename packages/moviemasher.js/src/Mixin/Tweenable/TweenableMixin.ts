@@ -1,24 +1,24 @@
 import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, ScalarRecord } from "../../declarations"
-import { Filter } from "../../Filter/Filter"
-import { filterFromId } from "../../Filter/FilterFactory"
+import { Scalar, ScalarRecord } from "../../Types/Core"
+import { Filter } from "../../Plugin/Filter/Filter"
+import { filterFromId } from "../../Plugin/Filter/FilterFactory"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../Base/Code"
 import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Helpers/Select/SelectedProperty"
 import { Point, PointTuple } from "../../Utility/Point"
 import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { ActionType, DataType, isSizingMediaType, isTimingMediaType, Orientation, SelectType, Sizing, Timing } from "../../Setup/Enums"
+import { ActionType, DataType, isSizingMediaType, isTimingMediaType, NoneType, Orientation, SelectorType, Sizing, Timing } from "../../Setup/Enums"
 import { assertProperty, Property } from "../../Setup/Property"
 import { arrayLast } from "../../Utility/Array"
-import { colorBlackOpaque, colorWhite } from "../../Helpers/Color/ColorFunctions"
+import { colorBlackOpaque, colorWhite } from "../../Helpers/Color/ColorConstants"
 import { idGenerate } from "../../Utility/Id"
 import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
 import { assertSize, Size, sizeEven, sizesEqual, SizeTuple } from "../../Utility/Size"
 import { tweenColorStep, Tweening, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
 import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
-import { Actions } from "../../Editor/Actions/Actions"
+import { Actions } from "../../Plugin/Masher/Actions/Actions"
 import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
-import { Selectables } from "../../Editor/Selectable"
+import { Selectables } from "../../Plugin/Masher/Selectable"
 import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
 import { Default } from "../../Setup/Default"
 import { MediaInstanceClass } from "../../Media"
@@ -145,7 +145,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       const [color, colorEnd] = colors
             
       colorFilter.setValue(color || colorWhite, 'color')
-      colorFilter.setValue(colorEnd, `color${PropertyTweenSuffix}`)
+      colorFilter.setValue(colorEnd || colorWhite, `color${PropertyTweenSuffix}`)
       colorFilter.setValue(rect.width, 'width')
       colorFilter.setValue(rect.height, 'height')
       
@@ -305,7 +305,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
      
     selectables(): Selectables { return [this, ...this.clip.selectables()] }
 
-    selectType = SelectType.None
+    selectType: SelectorType = NoneType
 
     selectedItems(actions: Actions): SelectedItems {
       const selectedItems: SelectedItems = []

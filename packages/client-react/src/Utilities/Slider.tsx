@@ -1,27 +1,28 @@
+import { Scalar, StringSetter } from "@moviemasher/moviemasher.js"
 import React from "react"
-import { WithClassName, ReactResult, SliderChangeHandler } from "../declarations";
+
+import { WithClassName } from "../Types/Core"
 
 export interface SliderProps extends WithClassName {
-  value? : number
-  step? : number
   max? : number
   min? : number
-  onChange? : SliderChangeHandler
+  onChange: StringSetter
+  step? : number
+  value : Scalar
+  name?: string
+  disabled?: boolean
 }
 
-export function Slider(props: SliderProps): ReactResult {
-  const { className, onChange } = props
-  const options : WithClassName = { ...props }
+export function Slider(props: SliderProps) {
+  const { className, max, min, onChange, step, value, name, disabled } = props
+  const options: WithClassName = { ...props }
   const classes = ['slider']
   if (className) classes.push(className)
   options.className = classes.join(' ')
-  if (onChange) {
-    const handleChange = (event : React.ChangeEvent<HTMLInputElement>) => {
-      onChange(event, event.currentTarget.valueAsNumber)
-    }
-    options.onChange = handleChange
-  }
-
-  const input = <input type='range' { ...options } />
-  return input
+ 
+  return <input type='range' max={max} min={min} step={step} name={name}
+    value={Number(value)} disabled={disabled}
+    onChange={event => onChange(event.currentTarget.value)} 
+    className={classes.join(' ')} 
+  />
 }

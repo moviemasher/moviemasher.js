@@ -6,5 +6,6 @@ temporary*
 **/raw/*
 **/cjs/*
 **/umd/*
+**/iife/*
 **/esm/*
 **/*-deleted/*

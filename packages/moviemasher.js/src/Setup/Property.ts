@@ -1,4 +1,4 @@
-import { Scalar } from "../declarations"
+import { Scalar } from "../Types/Core"
 import { DataType, isDataType, assertDataType } from "./Enums"
 import { propertyTypeDefault } from "../Helpers/PropertyType"
 import {

@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+
+import { PropsWithChildren } from '../../Types/Props'
 import { View } from '../../Utilities/View'
 
-export interface PanelContentProps extends PropsAndChildren, WithClassName { }
+export interface PanelContentProps extends PropsWithChildren { }
 
-export function PanelContent(props: PanelContentProps): ReactResult {
+export function PanelContent(props: PanelContentProps) {
   const { children, className } = props
   if (!children) return null
   

@@ -1,4 +1,3 @@
-import { MediaType } from "@moviemasher/moviemasher.js";
 
 export const audioDefinitionObject = () => ({
   id: 'audio', 

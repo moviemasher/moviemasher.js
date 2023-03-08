@@ -1,6 +1,6 @@
 import { 
-  ProtocolPromise, Plugins, Request, AudioType, ImageType, VideoType, 
-  BlobProtocol, JsonType, PathData, ProtocolType
+  ProtocolPromise, Request, AudioType, ImageType, VideoType, 
+  BlobProtocol, JsonType, PathData, ProtocolType, Runtime, LoadType
 } from "@moviemasher/moviemasher.js"
 import { audioDataPromise } from "../Utility/Audio"
 import { imageDataPromise } from "../Utility/Image"
@@ -9,7 +9,7 @@ import {  videoDataPromise } from "../Utility/Video"
 
 
 
-const promise: ProtocolPromise = ((request: Request, type?: string) => {
+const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
   // console.log('blob promise', url, absolute, endpoint)
   switch (type) {
     case AudioType: return audioDataPromise(request)
@@ -19,13 +19,11 @@ const promise: ProtocolPromise = ((request: Request, type?: string) => {
     // case FontType: return requestFontPromise(request)
     // case FontType: return errorThrow(type, 'LoadType', 'type')//fontPromise(url)
     default: {
-      const result: PathData = { path: '' }
+      const result: PathData = { data: '' }
       return Promise.resolve(result)
     }
   }
 }) 
 
-
-
-Plugins[ProtocolType][BlobProtocol] = { promise, type: BlobProtocol }
+Runtime.plugins[ProtocolType][BlobProtocol] ||= { promise, type: ProtocolType, protocol: BlobProtocol }
 

@@ -104,7 +104,7 @@ const MashOpacityDefault = {
   [GenerateOpacity.Z]: { opacity: 0.0 },
 }
 
-const generateClips = (testId, size = SizePreview, frames = Duration.Unknown, labels = false) => {
+const generateClips = (testId, size = SizePreview, frames = Duration.Unknown, includeLabels = false) => {
   const generateOptions = generateTestArgs(testId)
   const renderTestObject = Object.fromEntries(GenerateArgs.map(renderTestOption => {
     const option = generateOptions[renderTestOption]
@@ -162,7 +162,7 @@ const generateClips = (testId, size = SizePreview, frames = Duration.Unknown, la
     }
   }  
   const objects = [clip]
-  if (labels) {
+  if (includeLabels) {
     const labelClip = { 
       ...debugClip, container: { ...debug, string: testId }
     }  
@@ -396,25 +396,25 @@ export const generateIds = (generateOptions = {}) => {
   return mashIds
 }
 
-export const generateTests = (generateOptions, testId = 'all', size = SizePreview, frames = 10, labels = false) => {
+export const generateTests = (generateOptions, testId = 'all', size = SizePreview, frames = 10, doLabels = false) => {
   const ids = generateIds(generateOptions)
   const clips = []
   const labelClips = []
   ids.forEach(id => {
-    const [clip, labelClip] = generateClips(id, size, frames, labels)
+    const [clip, labelClip] = generateClips(id, size, frames, doLabels)
     clips.push(clip)
     if (labelClip) labelClips.push(labelClip)
   })
   const tracks = [{ clips }]
-  if (labels) tracks.push({ clips: labelClips, dense: true })
+  if (doLabels) tracks.push({ clips: labelClips, dense: true })
   const mash = { 
     id: testId, color: '#666666', tracks 
   }
   return [testId, mash]
 }
 
-export const generateTest = (testId, size = SizePreview, frames = Duration.Unknown, labels = false) => {
-  const [clip, labelClip] = generateClips(testId, size, frames, labels)
+export const generateTest = (testId, size = SizePreview, frames = Duration.Unknown, doLabels = false) => {
+  const [clip, labelClip] = generateClips(testId, size, frames, doLabels)
   const tracks = [{ clips: [clip] }]
   if (labelClip) tracks.push({ clips: [labelClip], dense: true })
   const mash = { 

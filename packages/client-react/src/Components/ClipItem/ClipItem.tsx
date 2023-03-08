@@ -3,16 +3,18 @@ import {
   UnknownRecord, DroppingPosition, ClassSelected, eventStop, 
   assertTrue,
   sizeAboveZero, svgPolygonElement,
-  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject
+  Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject, EventFunction
 } from '@moviemasher/moviemasher.js'
 import { 
   pixelFromFrame, DragSuffix, droppingPositionClass 
 } from '@moviemasher/client-core'
 
-import { PropsWithoutChild, ReactResult, WithClassName } from '../../declarations'
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { TrackContext } from '../../Contexts/TrackContext'
 import { TimelineContext } from '../Timeline/TimelineContext'
-import { useEditor } from '../../Hooks/useEditor'
+import { useMasher } from '../../Hooks/useMasher'
 import { ClipContext } from './ClipContext'
 import { View } from '../../Utilities/View'
 import { useListeners } from '../../Hooks/useListeners'
@@ -24,11 +26,11 @@ export interface ClipItemProps extends WithClassName, PropsWithoutChild {}
 /**
  * @parents TimelineTrack
  */
-export function ClipItem(props: ClipItemProps): ReactResult {
+export function ClipItem(props: ClipItemProps) {
   const { className, ...rest } = props
   const svgRef = React.useRef<SVGSVGElement>(null)
   const viewRef = React.useRef<HTMLDivElement>(null)
-  const editor = useEditor()
+  const editor = useMasher()
   const trackContext = React.useContext(TrackContext)
   const timelineContext = React.useContext(TimelineContext)
   
@@ -101,7 +103,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
 
   const currentWidth = getCurrentWidth()
 
-  const actionCallback = (event: Event) => { 
+  const actionCallback: EventFunction = event => { 
     // console.log("ClipItem actionCallback", event)
     if (watching.redraw) return
     
@@ -281,7 +283,7 @@ export function ClipItem(props: ClipItemProps): ReactResult {
     className: calculateClassName(),
     onPointerDown, onDragStart, onDragEnd,
     onDragOver, onDragLeave, onDrop,
-    onClick: (event: React.MouseEvent) => event.stopPropagation(),
+    onClick: event => { event.stopPropagation() },
     draggable: true,
     ref: viewRef,
     children: childNodes()

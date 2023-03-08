@@ -1,7 +1,7 @@
 import { ShapeContainer, ShapeContainerDefinition } from "./ShapeContainer"
 import { NamespaceSvg } from "../../../Setup/Constants"
-import { colorBlack, colorBlackOpaque, colorWhite } from "../../../Helpers/Color/ColorFunctions"
-import { ValueRecord } from "../../../declarations"
+import { colorBlack, colorBlackOpaque, colorWhite } from "../../../Helpers/Color/ColorConstants"
+import { ValueRecord } from "../../../Types/Core"
 import { SvgItem } from "../../../Helpers/Svg/Svg"
 import { Rect, rectsEqual, RectTuple } from "../../../Utility/Rect"
 import { Size, sizeAboveZero, sizeEven, sizesEqual } from "../../../Utility/Size"
@@ -102,8 +102,9 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     colorFilter.setValue(maxSize.height, 'height')
     
     const tweenSize = isDefault 
-    colorFilter.setValue(tweenSize ? rectEnd.width : undefined, `width${PropertyTweenSuffix}`)
-    colorFilter.setValue(tweenSize ? rectEnd.height : undefined, `height${PropertyTweenSuffix}`)
+    if (tweenSize) colorFilter.setValue(rectEnd.width , `width${PropertyTweenSuffix}`)
+    if (tweenSize) colorFilter.setValue(rectEnd.height, `height${PropertyTweenSuffix}`)
+
     commandFilters.push(...colorFilter.commandFilters(colorArgs))
     return commandFilters
   }
@@ -254,7 +255,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
     const { contentColors } = args
     if (!isPopulatedArray(contentColors)) return false
 
-    let [forecolor, forecolorEnd] = contentColors
+    const [forecolor, forecolorEnd] = contentColors
     return forecolor !== forecolorEnd
   }
 
@@ -277,7 +278,7 @@ export class ShapeContainerClass extends ShapeContainerWithContainer implements 
   }
 
   
-  pathElement(rect: Rect, forecolor: string = ''): SvgItem {
+  pathElement(rect: Rect, forecolor = ''): SvgItem {
     const { definition } = this
     const inRect = this.intrinsicRect(true)
     if (!sizeAboveZero(inRect)) {

@@ -3,9 +3,9 @@ import {
   assertObject, isAboveZero, isPopulatedArray, isPopulatedString, isPositive 
 } from "@moviemasher/moviemasher.js"
 
-import { 
-  PropsWithoutChild, ReactResult, WithClassName 
-} from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { ActivityContext, ActivityGroup } from "./ActivityContext"
 import { View } from "../../Utilities/View"
 import { ActivityContentContext } from "./ActivityContentContext"
@@ -14,7 +14,7 @@ export interface ActivityProgressProps extends PropsWithoutChild, WithClassName 
 /**
  * @parents Activity
  */
- export function ActivityProgress(props: ActivityProgressProps): ReactResult {
+ export function ActivityProgress(props: ActivityProgressProps) {
   const activityContext = React.useContext(ActivityContext)
   const activityContentContext = React.useContext(ActivityContentContext)
   const { infos, id } = activityContentContext

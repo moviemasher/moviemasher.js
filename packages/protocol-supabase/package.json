@@ -22,12 +22,7 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "build-esm": "esbuild src/index.ts --sourcemap --packages=external --bundle --platform=neutral --outfile=esm/protocol-supabase.js",
-    "build-esm-min": "esbuild src/index.ts --packages=external --bundle --platform=neutral --outfile=esm/protocol-supabase.min.js --minify",
-    "build": "rollup --config dev/rollup.config.mjs",
-    "build-umd": "rollup --config dev/rollup/umd.config.js",
-    "copy-types": "mkdir -p types && mv -f umd/*.d.* types/",
-    "build-rollup": "run-s build-rollup build-esm-min build-umd build-umd-min copy-types"
+    "build": "rollup --config dev/rollup.config.mjs"
   },
   "peerDependencies": {
     "@moviemasher/moviemasher.js": "5.1.2",

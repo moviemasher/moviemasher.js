@@ -1,10 +1,10 @@
 import { DataType } from '@moviemasher/moviemasher.js'
 
-import { UnknownElement } from '../../../../declarations'
+import { JsxElement } from '../../../../Framework/Framework'
 import { EmptyElement } from '../../../../Setup/Constants'
 
 export type DataTypeElements = {
-  [key in DataType]: UnknownElement
+  [key in DataType]: JsxElement
 }
 
 export const DataTypeInputs: DataTypeElements = {

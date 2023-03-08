@@ -1,15 +1,14 @@
-import { UnknownRecord } from "../../declarations"
-import { ClientFont } from "../../ClientMedia/ClientMedia"
+import { UnknownRecord } from "../../Types/Core"
+import { ClientFont } from "../../Helpers/ClientMedia/ClientMedia"
 import { GraphFile, PreloadArgs, GraphFiles } from "../../Base/Code"
 import { DataType, Orientation, FontType } from "../../Setup/Enums"
 import { Font, FontMedia, FontMediaObject, FontObject } from "./Font"
 import { MediaBase } from "../MediaBase"
-import { EmptyMethod } from "../../Setup/Constants"
+import { EmptyFunction } from "../../Setup/Constants"
 import { requestFontPromise } from "../../Helpers/Request/RequestFunctions"
 import { Size, sizeCover } from "../../Utility/Size"
 import { centerPoint, Rect } from "../../Utility/Rect"
 import { svgSvgElement, svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { isClientFont } from "../../ClientMedia/ClientMediaFunctions"
 import { assertPopulatedString, isDefiniteError, isPopulatedString, isUndefined } from "../../Utility/Is"
 import { PointZero } from "../../Utility/Point"
 import { stringFamilySizeRect } from "../../Utility/String"
@@ -21,6 +20,8 @@ import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunc
 import { Requestable } from "../../Base/Requestable/Requestable"
 import { Default } from "../../Setup/Default"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
+import { isClientFont } from "../../Helpers/ClientMedia/ClientMediaFunctions"
+import { colorCurrent } from "../../Helpers/Color/ColorConstants"
 
 
 const TextHeight = 1000
@@ -60,14 +61,14 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
 
       const transform = svgTransform(inSize, outRect)
-      const textElement = svgText(this.string, family, TextHeight, transform)
-
+      const textElement = svgText(this.string, family, TextHeight, transform, colorCurrent)
+    
       return Promise.resolve(svgSvgElement(size, textElement))
     })
     
   }
 
-  private _family: string = ''
+  private _family = ''
   get family(): string {
     if (!this._family) {
       const { loadedFont } = this
@@ -123,7 +124,6 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     if (!(isPopulatedString(family) && isPopulatedString(string))) return dimensions
 
     const rect = stringFamilySizeRect(string, family, height)
-    console.log(this.constructor.name, "intrinsicRectInitialize", rect)
     return rect
   }
 
@@ -151,7 +151,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     const { editing } = args
     const transcoding =  editing ? this.findTranscoding(FontType, 'woff', 'woff2') : undefined
     const requestable = transcoding || this
-    return this.loadFontPromise(requestable).then(EmptyMethod)
+    return this.loadFontPromise(requestable).then(EmptyFunction)
   }
   
   private loadedFont?: ClientFont

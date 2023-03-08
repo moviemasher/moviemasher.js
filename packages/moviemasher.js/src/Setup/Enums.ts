@@ -1,8 +1,6 @@
 import { isPopulatedString, isString } from "../Utility/Is"
 import { errorThrow } from "../Helpers/Error/ErrorFunctions"
 
-
-
 export type AudioType = 'audio'
 export const AudioType: AudioType = 'audio'
 export type EffectType = 'effect'
@@ -31,50 +29,11 @@ export const RecordType: RecordType = 'record'
 export type RecordsType = 'records'
 export const RecordsType: RecordsType = 'records'
 
-export type MediaType = AudioType | EffectType | FontType | ImageType | MashType | SequenceType | VideoType 
-export type MediaTypes = MediaType[]
-export const MediaTypes: MediaTypes = [AudioType, EffectType, FontType, ImageType, MashType, SequenceType, VideoType]
-export type MediaTypesRecord = Record<string, MediaTypes>
-export const isMediaType = (value: any): value is MediaType => {
-  return MediaTypes.includes(value)
-}
-export function assertMediaType(value?: any, name?: string): asserts value is MediaType {
-  if (!isMediaType(value)) errorThrow(value, 'MediaType', name) 
-}
-
-
-export type TranscodingType = AudioType | FontType | ImageType | VideoType | SequenceType 
-export const TranscodingTypes: MediaTypes = [FontType, ImageType, VideoType, SequenceType]
-export const isTranscodingType = (type?: any): type is TranscodingType => {
-  return TranscodingTypes.includes(type)
-}
-export function assertTranscodingType(value: any, name?: string): asserts value is TranscodingType {
-  if (!isTranscodingType(value)) errorThrow(value, "TranscodingType", name)
-}
-
-export type CookedType = EffectType | MashType 
-export type CookedTypes = CookedType[]
-export const CookedTypes: CookedTypes = [EffectType, MashType]
-export const isCookedType = (type?: any): type is CookedType => {
-  return isString(type) && CookedTypes.includes(type as CookedType)
-}
-
-export type RawType = AudioType | ImageType | VideoType
-export type RawTypes = RawType[]
-export const RawTypes: RawTypes = [AudioType, ImageType, VideoType]
-export const isRawType = (type?: any): type is RawType => {
-  return isString(type) && RawTypes.includes(type as RawType)
-}
-
-
-export type LoadType = string | RawType | FontType | RecordType | RecordsType
-export type LoadTypes = LoadType[]
-export const LoadTypes: LoadTypes = [...RawTypes, FontType, JsonType]
-export const isLoadType = (type?: any): type is LoadType => {
-  return LoadTypes.includes(type)
-}
-export function assertLoadType(value: any, name?: string): asserts value is LoadType {
-  if (!isLoadType(value)) errorThrow(value, "LoadType", name)
+export type StorableType = EffectType | MashType 
+export type StorableTypes = StorableType[]
+export const StorableTypes: StorableTypes = [EffectType, MashType]
+export const isStorableType = (type?: any): type is StorableType => {
+  return isString(type) && StorableTypes.includes(type as StorableType)
 }
 
 export type SizingMediaType = FontType | ImageType | VideoType | SequenceType
@@ -89,32 +48,18 @@ export const isTimingMediaType = (type?: any): type is TimingMediaType => {
   return TimingMediaTypes.includes(type)
 }
 
-export type ContainerType = FontType | ImageType | SequenceType
-export const ContainerTypes: ContainerType[] = [FontType, ImageType, SequenceType]
-export const isContainerType = (type?: any): type is ContainerType => {
-  return ContainerTypes.includes(type)
-}
-export function assertContainerType(value?: any, name?: string): asserts value is ContainerType {
-  if (!isContainerType(value)) errorThrow(value, 'ContainerType', name) 
+export type ContainingType = FontType | ImageType | SequenceType
+export const ContainingTypes: ContainingType[] = [FontType, ImageType, SequenceType]
+export const isContainingType = (type?: any): type is ContainingType => {
+  return ContainingTypes.includes(type)
 }
 
-export type ContentType = ImageType | VideoType | SequenceType | AudioType
-export const ContentTypes: ContentType[] = [ImageType, VideoType, SequenceType, AudioType]
-export const isContentType = (type?: any): type is ContentType => {
+export type ContentingType = ImageType | VideoType | SequenceType | AudioType
+export const ContentTypes: ContentingType[] = [ImageType, VideoType, SequenceType, AudioType]
+export const isContentingType = (type?: any): type is ContentingType => {
   return ContentTypes.includes(type)
 }
-export function assertContentType(value?: any, name?: string): asserts value is ContentType {
-  if (!isContentType(value)) errorThrow(value, 'ContentType', name) 
-}
 
-export type EditType = ImageType | VideoType | SequenceType | AudioType | VideoStreamType | AudioStreamType
-export const EditTypes: EditType[] = [ImageType, VideoType, SequenceType, AudioType]
-export const isEditType = (type?: any): type is EditType => {
-  return EditTypes.includes(type)
-}
-export function assertEditType(value: any, name?: string): asserts value is EditType {
-  if (!isEditType(value)) errorThrow(value, 'EditType', name)
-}
 
 export enum DroppingPosition {
   At = 'at',
@@ -142,28 +87,33 @@ export enum AVType {
   Video = 'video',
 }
 
-export enum SelectType {
-  Clip = 'clip',
-  Container = 'container',
-  Content = 'content',
-  Mash = 'mash',
-  None = 'none',
-  Track = 'track',
+export type ClipType = 'clip'
+export const ClipType: ClipType = 'clip'
+
+export type ContentType = 'content'
+export const ContentType: ContentType = 'content'
+
+export type ContainerType = 'container'
+export const ContainerType: ContainerType = 'container'
+
+export type NoneType = 'none'
+export const NoneType: NoneType = 'none'
+
+
+export type TrackType = 'track'
+export const TrackType: TrackType = 'track'
+
+export type SelectorType = ClipType | ContainerType | ContentType | EffectType | MashType | NoneType | TrackType
+
+export type SelectorTypes = SelectorType[]
+export const SelectorTypes: SelectorTypes = [ClipType, ContainerType, ContentType, MashType, NoneType, TrackType]
+export const isSelectorType = (type?: any): type is SelectorType => {
+  return SelectorTypes.includes(type)
+}
+export function assertSelectorType(value: any, name?: string): asserts value is SelectorType {
+  if (!isSelectorType(value)) errorThrow(value, "SelectorType", name)
 }
 
-export const SelectTypes = Object.values(SelectType)
-export const isSelectType = (value?: any): value is SelectType => {
-  return SelectTypes.includes(value as SelectType)
-}
-export function assertSelectType(value: any, name?: string): asserts value is SelectType {
-  if (!isSelectType(value)) errorThrow(value, 'SelectType', name)
-}
-
-export type ClipSelectType = SelectType.Content | SelectType.Container
-export const ClipSelectTypes = [SelectType.Content, SelectType.Container]
-export const isClipSelectType = (type?: any): type is ClipSelectType => {
-  return isSelectType(type) && ClipSelectTypes.includes(type)
-}
 
 export enum OutputFormat {
   AudioConcat = 'wav',
@@ -179,9 +129,14 @@ export enum OutputFormat {
 }
 
 
-export type EncodingType = AudioType | ImageType | VideoType | FontType | SequenceType
 
-export const EncodingTypes: EncodingType[] = [AudioType, ImageType, VideoType, FontType]
+
+
+
+
+
+
+// TODO: remove enums
 
 export enum FillType {
   Color = 'color',
@@ -192,14 +147,12 @@ export const isFillType = (type?: any): type is FillType => {
   return FillTypes.includes(type as FillType)
 }
 
-
 export enum GraphFileType {
   Svg = 'svg',
   SvgSequence = 'svgsequence',
   Txt = 'txt',
   // Object = 'object'
 }
-
 export const GraphFileTypes = Object.values(GraphFileType)
 export const isGraphFileType = (type?: any): type is GraphFileType => {
   return isPopulatedString(type) && GraphFileTypes.includes(type as GraphFileType)
@@ -287,12 +240,11 @@ export enum EventType {
   Action = 'action',
   Active = 'active',
   Added = 'added',
-  Cast = 'cast',
   Draw = 'draw',
   Duration = 'durationchange',
   Ended = 'ended',
-  Frame = 'frame',
   Fps = 'ratechange',
+  Frame = 'frame',
   Loaded = 'loadeddata',
   Pause = 'pause',
   Play = 'play',
@@ -312,13 +264,6 @@ export enum EventType {
 export const EventTypes = Object.values(EventType)
 export const isEventType = (type?: any): type is EventType => {
   return EventTypes.includes(type as EventType)
-}
-
-
-export enum MoveType {
-  Audio = 'audio',
-  Effect = 'effect',
-  Video = 'video',
 }
 
 export enum MasherAction {

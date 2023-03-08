@@ -1,13 +1,15 @@
 import React from 'react'
 
-import { PropsAndChildren, ReactResult, WithClassName } from "../../declarations"
+
+import { PropsWithChildren } from '../../Types/Props'
 import { View } from '../../Utilities/View'
 
-export interface PanelHeadProps extends PropsAndChildren, WithClassName { }
+export interface PanelHeadProps extends PropsWithChildren { }
 
-export function PanelHead(props: PanelHeadProps): ReactResult {
+export function PanelHead(props: PanelHeadProps) {
   const { children, className } = props
   if (!children) return null
+
   const viewProps = { className, children }
   return <View {...viewProps} />
 }

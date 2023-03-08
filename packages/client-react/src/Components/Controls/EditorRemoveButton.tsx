@@ -1,35 +1,42 @@
 import React from "react"
-import { EventType, SelectType, assertSelectType, isEffect, isClip, isTrack } from "@moviemasher/moviemasher.js"
-import { useListeners } from "../../Hooks/useListeners"
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
 
-export interface EditorRemoveButtonProps extends PropsAndChild {
+import /* type */ { PropsClickable } from "../../Types/Props"
+
+import { 
+  assertSelectorType, ClipType, EventType, isClip, isEffect, isTrack 
+} from "@moviemasher/moviemasher.js"
+import { useListeners } from "../../Hooks/useListeners"
+import { useMasher } from "../../Hooks/useMasher"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
+
+export interface EditorRemoveButtonProps extends PropsClickable {
   type: string
 }
 
-export function EditorRemoveButton(props: EditorRemoveButtonProps): ReactResult {
-  const { children, type, ...rest } = props
-  const selectType = type || SelectType.Clip
-  assertSelectType(selectType)
 
-  const editor = useEditor()
-  const [disabled, setDisabled] = React.useState(!editor.selection[selectType])
+export function EditorRemoveButton(props: EditorRemoveButtonProps) {
+  const { type = ClipType } = props
+  assertSelectorType(type)
+
+  const masher = useMasher()
+  const getDisabled = () => !masher.selection[type]
+  const [disabled, setDisabled] = React.useState(getDisabled)
   useListeners({
-    [EventType.Selection]: () => { setDisabled(!editor.selection[selectType]) }
+    [EventType.Selection]: () => { setDisabled(getDisabled()) }
   })
 
-  const onClick = () => {
-    if (disabled) return
+  return <Clickable key='remove'
+    button={props.button}
+    label={props.label}
+    onClick={ () => {
+      if (disabled) return
 
-    const selectable = editor.selection[selectType]
-    if (isEffect(selectable)) editor.removeEffect(selectable)
-    else if (isClip(selectable)) editor.removeClip(selectable)
-    else if (isTrack(selectable)) editor.removeTrack(selectable)
-  }
-
-  const child = React.Children.only(children)
-
-  const cloneProps = { ...rest, ...child.props, onClick, disabled }
-  return React.cloneElement(child, cloneProps)
+      const selectable = masher.selection[type]
+      if (isEffect(selectable)) masher.removeEffect(selectable)
+      else if (isClip(selectable)) masher.removeClip(selectable)
+      else if (isTrack(selectable)) masher.removeTrack(selectable)
+    } }
+    className={ className(disabled, props.className) }
+  >{props.children}</Clickable>
 }

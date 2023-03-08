@@ -1,39 +1,65 @@
+
 import React from "react"
+
+import /* type */ { PropsClickable } from "../../Types/Props"
+
 import {
-  EventType, MasherAction, assertMashMedia
+  EventType, MasherAction, assertMashMedia, assertEncodingType, isEncodingType
 } from "@moviemasher/moviemasher.js"
+import { className, EncodeOperation } from "@moviemasher/client-core"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
-import { EncodeOperation } from "@moviemasher/client-core"
 import { useClient } from "../../Hooks/useClient"
+import Clickable from "../Clickable/Clickable.lite"
 
-export function EncodeControl(props: PropsAndChild): ReactResult {
+export function EncodeControl(props: PropsClickable) {
   const client = useClient()
-  const { children, ...rest } = props
-  const editor = useEditor()
+  const masher = useMasher()
 
-  const getDisabled = () => !editor.can(MasherAction.Render)
+  const getVisible = () => {
+    if (!client.enabled(EncodeOperation)) return false
+
+    const { mashMedia } = masher
+    if (!mashMedia) return false
+
+    const { kind } = mashMedia
+    return isEncodingType(kind)
+  }
+  const [visible, setVisible] = React.useState(getVisible)
+  const getDisabled = () => !masher.can(MasherAction.Render)
   const [disabled, setDisabled] = React.useState(getDisabled)
   const updateDisabled = () => setDisabled(getDisabled())
+  const updateVisible = () => setVisible(getVisible())
+  const updateBoth = () => { 
+    updateVisible() 
+    updateDisabled()
+  }
+
   useListeners({
     [EventType.Save]: updateDisabled,
-    [EventType.Loaded]: updateDisabled,
+    [EventType.Loaded]: updateBoth,
     [EventType.Action]: updateDisabled
   })
 
-  if (!client.enabled(EncodeOperation)) return null
+  if (!visible) return null
 
-  const onClick = () => {
-    if (disabled) return
+  return <Clickable key='encode'
+    button={props.button}
+    label={props.label}
+    className={ className(disabled, props.className) }
+    onClick={ () => {
+      if (disabled) return
 
-    const { mashMedia } = editor
-    assertMashMedia(mashMedia)
+      const { mashMedia } = masher
+      assertMashMedia(mashMedia)
 
-    setDisabled(true)
-    client.encode(mashMedia)
-  }
-  const buttonOptions = { ...rest, onClick, disabled }
-  return React.cloneElement(React.Children.only(children), buttonOptions)
+      const { kind } = mashMedia
+      assertEncodingType(kind)
+
+      setDisabled(true)
+      client.encode({ media: mashMedia, type: kind })
+    } }
+  >{props.children}</Clickable>
+    
 }

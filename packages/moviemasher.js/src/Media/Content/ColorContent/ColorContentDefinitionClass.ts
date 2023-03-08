@@ -2,7 +2,7 @@ import { ColorContent, ColorContentDefinition, ColorContentDefinitionObject, Col
 import { ColorContentClass } from "./ColorContentClass"
 import { ContentDefinitionMixin } from "../ContentDefinitionMixin"
 import { isPopulatedString } from "../../../Utility/Is"
-import { colorBlack } from "../../../Helpers/Color/ColorFunctions"
+import { colorGray } from "../../../Helpers/Color/ColorConstants"
 import { TweenableDefinitionMixin } from "../../../Mixin/Tweenable/TweenableDefinitionMixin"
 import { MediaBase } from "../../MediaBase"
 import { Size, sizeCover } from "../../../Utility/Size"
@@ -24,8 +24,7 @@ export class ColorContentDefinitionClass extends ColorContentDefinitionWithConte
     if (isPopulatedString(color)) this.color = color
   }
 
-  color = colorBlack
-
+  color = colorGray
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
     const inSize = { width: ColorContentSize, height: ColorContentSize }

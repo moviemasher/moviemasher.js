@@ -1,41 +1,55 @@
 import React from "react"
-import {
-  MasherAction, EventType, assertMashMedia,
+import /* type */ { PropsClickable } from "../../Types/Props"
+
+import { 
+  assertMashMedia, EventType, isMashMedia, MasherAction 
 } from "@moviemasher/moviemasher.js"
 
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
-import { useListeners } from "../../Hooks/useListeners"
+import { className, WriteOperation } from "@moviemasher/client-core"
 import { useClient } from "../../Hooks/useClient"
-import { WriteOperation } from "@moviemasher/client-core"
+import { useListeners } from "../../Hooks/useListeners"
+import { useMasher } from "../../Hooks/useMasher"
+import Clickable from "../Clickable/Clickable.lite"
 
-export function SaveControl(props:PropsAndChild): ReactResult {
-  const editor = useEditor()
+export function SaveControl(props: PropsClickable) {
+  const masher = useMasher()
   const client = useClient()
+  
+  const getVisible = () => {
+    if (!client.enabled(WriteOperation)) return false
 
-  const getDisabled = () => !editor.can(MasherAction.Save)
+    return isMashMedia(masher.mashMedia)
+  }
+  const [visible, setVisible] = React.useState(getVisible)
+  const getDisabled = () => !masher.can(MasherAction.Save)
   const [disabled, setDisabled] = React.useState(getDisabled)
+  const updateDisabled = () => setDisabled(getDisabled())
+  const updateVisible = () => setVisible(getVisible())
+  const updateBoth = () => { 
+    updateVisible() 
+    updateDisabled()
+  }
 
-  const updateDisabled = () => { setDisabled(getDisabled()) }
   useListeners({
     [EventType.Action]: updateDisabled, 
+    [EventType.Loaded]: updateBoth,
     [EventType.Save]: updateDisabled,
   })
 
-  if (!client.enabled(WriteOperation)) return null
+  if (!visible) return null
 
-  const { children, ...rest } = props
-  
-  const onClick = () => {
-    if (disabled) return
+  return <Clickable key='save'
+    button={props.button}
+    label={props.label}
+    onClick={ () => {
+      if (disabled) return
 
-    setDisabled(true)
-    const { mashMedia } = editor
-    assertMashMedia(mashMedia)
-    
-    client.save(mashMedia)
-  }
-  
-  const buttonOptions = { ...rest, onClick, disabled }
-  return React.cloneElement(React.Children.only(children), buttonOptions)
+      setDisabled(true)
+      const { mashMedia } = masher
+      assertMashMedia(mashMedia)
+      
+      client.save({ media: mashMedia })
+    } }
+    className={ className(disabled, props.className) }
+  >{props.children}</Clickable>
 }

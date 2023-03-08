@@ -17,10 +17,10 @@ import flagContainer from "../../MediaObjects/container/flag.json"
 import ovalContainer from "../../MediaObjects/container/oval.json"
 import mmContainer from "../../MediaObjects/container/mm.json"
 import { ShapeContainerDefinitionClass } from "../Container/ShapeContainer/ShapeContainerDefinitionClass"
-import { DefaultContainerId } from "../Container/Container"
+import { DefaultContainerId } from "../Container/ContainerConstants"
 import { MediaDefaults } from "../MediaDefaults"
 import { ColorContentDefinitionClass } from "../Content/ColorContent/ColorContentDefinitionClass"
-import { DefaultContentId } from "../Content/Content"
+import { DefaultContentId } from "../Content/ContentConstants"
 
 export const imageDefinition = (object : ImageMediaObject) : ImageMedia => {
   const { id } = object

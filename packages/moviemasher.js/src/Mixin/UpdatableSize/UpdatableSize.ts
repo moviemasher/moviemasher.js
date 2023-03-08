@@ -3,10 +3,12 @@ import { SvgItem } from "../../Helpers/Svg/Svg"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
 import { Size } from "../../Utility/Size"
 
-import { MediaType, isMediaType, ImageType, VideoType } from "../../Setup/Enums"
+import { ImageType, VideoType } from "../../Setup/Enums"
+import { MediaType, isMediaType } from "../../Setup/MediaType"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { Rect } from "../../Utility/Rect"
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject, isContent, isContentDefinition } from "../../Media/Content/Content"
+import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Media/Content/Content"
+import { isContent, isContentDefinition } from "../../Media/Content/ContentFunctions"
 
 export const UpdatableSizeMediaType: MediaType[] = [
   ImageType,

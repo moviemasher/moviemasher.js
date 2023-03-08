@@ -1,14 +1,16 @@
-import { ClientVideo } from "../../ClientMedia/ClientMedia"
+import { ClientVideo } from "../../Helpers/ClientMedia/ClientMedia"
 import { PreviewItems, SvgItem, SvgItems } from "../../Helpers/Svg/Svg"
 import { Rect, rectsEqual, RectTuple } from "../../Utility/Rect"
 import { Size, sizeCopy } from "../../Utility/Size"
 import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
-import { Filter } from "../../Filter/Filter"
-import { Anchors, DataType, MediaType, DirectionObject, Directions, VideoType, ImageType, SequenceType } from "../../Setup/Enums"
+import { Filter } from "../../Plugin/Filter/Filter"
+import { Anchors, DataType, DirectionObject, Directions, VideoType, ImageType, SequenceType } from "../../Setup/Enums"
+import { MediaType } from "../../Setup/MediaType"
 import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isDefiniteError, isTimeRange } from "../../Utility/Is"
-import { Container, ContainerClass, DefaultContainerId, ContainerDefinition, ContainerRectArgs } from "./Container"
+import { Container, ContainerClass, ContainerDefinition, ContainerRectArgs } from "./Container"
+import { DefaultContainerId } from "./ContainerConstants"
 import { arrayLast } from "../../Utility/Array"
-import { filterFromId } from "../../Filter/FilterFactory"
+import { filterFromId } from "../../Plugin/Filter/FilterFactory"
 import { svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement } from "../../Helpers/Svg/SvgFunctions"
 import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
@@ -16,10 +18,10 @@ import { PropertyTweenSuffix } from "../../Base/Propertied"
 import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../../Utility/Tween"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { idGenerateString } from "../../Utility/Id"
-import { assertClientImage, isClientVideo } from "../../ClientMedia/ClientMediaFunctions"
-import { colorWhite } from "../../Helpers/Color/ColorFunctions"
+import { assertClientImage, isClientVideo } from "../../Helpers/ClientMedia/ClientMediaFunctions"
+import { colorWhite } from "../../Helpers/Color/ColorConstants"
 import { Content } from "../Content/Content"
-import { NamespaceSvg } from "../../Setup/Constants"
+import { NamespaceSvg, SemicolonChar } from "../../Setup/Constants"
 import { pointCopy } from "../../Utility/Point"
 import { assertVideoMedia } from "../Video/Video"
 import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
@@ -138,7 +140,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         if (!updatableContainer) {
           const containerItem = this.pathElement(zeroRect)
           containerItem.setAttribute('fill', colorWhite)
-          let clipId = idGenerateString() 
+          const clipId = idGenerateString() 
           const clipElement = globalThis.document.createElementNS(NamespaceSvg, 'clipPath')
           svgSet(clipElement, clipId)
           svgAppend(clipElement, containerItem)
@@ -149,7 +151,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           styles.push(`clip-path:${svgUrl(clipId)}`)
           items.push(svg)
         }
-        div.setAttribute('style', styles.join(';') + ';')
+        div.setAttribute('style', styles.join(SemicolonChar) + SemicolonChar)
         svgSetChildren(div, [video])
           
         items.push(div)
@@ -180,7 +182,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           if (updatableContainer && component === Component.Player) {
             // container is image/video so we need to add a polygon for hover
             const polygonElement = svgPolygonElement(containerRect, '', 'transparent', containerId)
-            polygonElement.setAttribute('vector-effect', 'non-scaling-stroke;')
+            polygonElement.setAttribute('vector-effect', 'non-scaling-stroke')
             defs.push(polygonElement)
             containerId = idGenerateString()
           }
@@ -199,7 +201,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
           maskElement.appendChild(svgPolygonElement(size, '', 'black'))
           maskElement.appendChild(useContainerInMask)
           if (!updatableContainer) {
-            containerItem.setAttribute('vector-effect', 'non-scaling-stroke;')
+            containerItem.setAttribute('vector-effect', 'non-scaling-stroke')
             useContainerInMask.setAttribute('fill', colorWhite)
           }
           const svgFilter = this.containerSvgFilter(containerItem, size, containerRect, time, range)

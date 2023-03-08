@@ -16,6 +16,5 @@
   "g": 0,
   "format": "mp4",
   "extension": "mp4",
-  "outputType": "video",
-  "cover": false
+  "outputType": "video"
 }

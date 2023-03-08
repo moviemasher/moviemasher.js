@@ -1,5 +1,5 @@
-import React from 'react'
 import { BooleanSetter } from '@moviemasher/moviemasher.js'
+import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface CollapseContextInterface {
   collapsed: boolean,
@@ -11,4 +11,4 @@ export const CollapseContextDefault: CollapseContextInterface = {
   changeCollapsed: () => {},
 }
 
-export const CollapseContext = React.createContext(CollapseContextDefault)
+export const CollapseContext = createContext(CollapseContextDefault)

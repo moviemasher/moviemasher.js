@@ -10,7 +10,7 @@ import { commandArgsString } from "../Utility/Command"
 import { Command } from "../Command/Command"
 import { commandInstance } from "../Command/CommandFactory"
 import { RunningCommand, CommandDestination, CommandResult } from "./RunningCommand"
-import { CommandOptions } from "../Encode/Encode"
+import { CommandOptions } from "../Plugin/Encode/Encode"
 
 export class RunningCommandClass extends EventEmitter implements RunningCommand {
   constructor(id: string, args: CommandOptions) {

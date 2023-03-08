@@ -3,9 +3,9 @@ import {
   isDefined, PropertiedChangeHandler, Property, Scalar, Time 
 } from "@moviemasher/moviemasher.js"
 
-import { 
-  PropsWithoutChild, ReactResult, WithClassName 
-} from '../../declarations'
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { InputContext } from './Inputs/InputContext'
 import { DataTypeInputs } from './Inputs/DataTypeInputs/DataTypeInputs'
 
@@ -21,7 +21,7 @@ export interface InspectorPropertyProps extends PropsWithoutChild, WithClassName
 /**
  * @parents InspectorContent
  */
-export function InspectorProperty(props: InspectorPropertyProps): ReactResult {
+export function InspectorProperty(props: InspectorPropertyProps) {
   const { 
     defaultValue: propsDefault, changeHandler, time, property, value, name
   } = props

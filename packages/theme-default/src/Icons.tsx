@@ -84,8 +84,6 @@ import {
   VscTriangleDown,
 } from 'react-icons/vsc'
 
-// export type ThemeIcons = Record<string, JSX.Element>
-
 
 const MMWideIcon = () => {
   return <svg width="2em" height="1em" viewBox="0 0 48 24">
@@ -165,7 +163,6 @@ export const Icons = {
   collapsed: <VscTriangleRight key="collapsed" />,
   color: <IoMdColorFill key="color" />,
   complete: <FaRegCheckCircle key='complete' />,
-  composer: <GiDirectorChair key='composer' />,
   container: <BiBorderOuter key="container" />,
   content: <BiBorderInner key="content" />,
   control: <BiSquareRounded key="control" />,

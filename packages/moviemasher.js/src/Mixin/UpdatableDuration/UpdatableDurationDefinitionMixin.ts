@@ -1,8 +1,6 @@
 import { AudibleContextInstance } from "../../Context/AudibleContext"
-import { UnknownRecord } from "../../declarations"
-import { ClientAudioNode, ClientAudio } from "../../ClientMedia/ClientMedia"
+import { UnknownRecord } from "../../Types/Core"
 import { timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { assertClientAudio, assertClientVideo, isClientAudio } from "../../ClientMedia/ClientMediaFunctions"
 import { DataType, Duration, AudioType, VideoType } from "../../Setup/Enums"
 import { DataGroup, propertyInstance } from "../../Setup/Property"
 import { isAboveZero, isDefiniteError, isUndefined } from "../../Utility/Is"
@@ -10,8 +8,10 @@ import { UpdatableDurationDefinition, UpdatableDurationDefinitionClass, Updatabl
 import { endpointFromUrl } from "../../Helpers/Endpoint/EndpointFunctions"
 import { requestAudioPromise } from "../../Helpers/Request/RequestFunctions"
 import { ContentDefinitionClass } from "../../Media/Content/Content"
-import { ProbeType } from "../../Plugin/Decode/Decoder"
 import { isProbing } from "../../Plugin/Decode/Probe/Probing/ProbingFunctions"
+import { ProbeType } from "../../Plugin/Decode/Decoding/Decoding"
+import { ClientAudio, ClientAudioNode } from "../../Helpers/ClientMedia/ClientMedia"
+import { assertClientAudio, assertClientVideo, isClientAudio } from "../../Helpers/ClientMedia/ClientMediaFunctions"
 
 export function UpdatableDurationDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableDurationDefinitionClass & T {
   return class extends Base implements UpdatableDurationDefinition {

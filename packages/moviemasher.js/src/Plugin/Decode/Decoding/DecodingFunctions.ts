@@ -1,7 +1,6 @@
 import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
 import { isObject } from "../../../Utility/Is"
-import { isDecodingType } from "../Decoder"
-import { Decoding } from "./Decoding"
+import { Decoding, isDecodingType } from "./Decoding"
 
 export const isDecoding = (value: any): value is Decoding => (
   isObject(value) && "type" in value && isDecodingType(value.type)

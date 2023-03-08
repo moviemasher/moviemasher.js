@@ -1,22 +1,27 @@
 import React from "react"
+
+
+import /* type */ { PropsClickable } from "../../Types/Props"
+
 import { MasherAction, EventType } from "@moviemasher/moviemasher.js"
 
 import { useListeners } from "../../Hooks/useListeners"
-import { PropsAndChild, ReactResult } from "../../declarations"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
+import { className } from "@moviemasher/client-core"
+import Clickable from "../Clickable/Clickable.lite"
 
-export interface EditorUndoButtonProps extends PropsAndChild {}
 
-export function EditorUndoButton(props: EditorUndoButtonProps): ReactResult {
-  const editor = useEditor()
+export function EditorUndoButton(props: PropsClickable) {
+  const masher = useMasher()
   const [disabled, setDisabled] = React.useState(true)
   useListeners({
-    [EventType.Action]: () => { setDisabled(!editor.can(MasherAction.Undo)) }
+    [EventType.Action]: () => { setDisabled(!masher.can(MasherAction.Undo)) }
   })
-  const { children, ...rest } = props
 
-  const onClick = () => { editor.undo() }
-
-  const buttonOptions = { ...rest, onClick, disabled: disabled }
-  return  React.cloneElement(React.Children.only(children), buttonOptions)
+  return <Clickable key='undo'
+    button={props.button}
+    label={props.label}
+    className={className(disabled, props.className)}
+    onClick={ () => masher.undo() }
+  >{props.children}</Clickable>
 }

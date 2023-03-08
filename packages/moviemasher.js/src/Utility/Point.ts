@@ -1,9 +1,10 @@
-import { isNumber, isObject } from "./Is";
-import { errorThrow } from "../Helpers/Error/ErrorFunctions";
+import { isNumber, isObject } from "./Is"
+import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+import { CommaChar, EqualsChar, SemicolonChar } from "../Setup/Constants"
 
 export interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 export const isPoint = (value: any): value is Point => {
@@ -16,7 +17,7 @@ export function assertPoint(value: any, name?: string): asserts value is Point {
   if (!isPoint(value)) errorThrow(value, 'Point', name)
 }
 
-export type PointTuple = [Point, Point];
+export type PointTuple = [Point, Point]
 
 
 export const pointsEqual = (point: Point, pointEnd?: any) => {
@@ -28,8 +29,6 @@ export const pointsEqual = (point: Point, pointEnd?: any) => {
 export const PointZero: Point = { x: 0, y: 0 }
 
 export const pointCopy = (point: any): Point => {
-  // assertPoint(point)
-
   const { x, y } = point
   return { x, y } 
 }
@@ -41,11 +40,14 @@ export const pointRound = (point: Point): Point => {
 
 export const pointString = (point: Point): string => {
   const { x, y } = point
-  return `x=${x};y=${y}`
+  return [
+    ['x', x].join(EqualsChar), ['y', y].join(EqualsChar)
+  ].join(SemicolonChar)
 }
+
 export const pointValueString = (point: Point): string => {
   const { x, y } = point
-  return `${x},${y}`
+  return [x, y].join(CommaChar)
 }
 
 export const pointNegate = (point: Point): Point => {

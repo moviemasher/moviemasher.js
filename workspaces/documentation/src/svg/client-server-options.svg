@@ -15,7 +15,7 @@
 <text x="465.25" y="189.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[Host]]</text>
 <path d="M 80.33 160.00 L 209.67 160.00 L 209.67 200.00 L 80.33 200.00 Z M 80.33 160.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
-<text x="85.58" y="189.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[Masher]]</text>
+<text x="85.58" y="189.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[MasherApp]]</text>
 <path d="M 425.00 240.00 L 585.00 240.00 L 585.00 280.00 L 425.00 280.00 Z M 425.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
 <text x="430.25" y="269.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[ApiServer]]</text>
@@ -25,10 +25,10 @@
 
 <path d="M 0.00 0.00 L 290.00 0.00 L 290.00 40.00 L 0.00 40.00 Z M 0.00 0.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
-<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[MasherDefaultProps]]()</text>
+<text x="5.25" y="29.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >[[MasherAppDefaultProps]]()</text>
 <path d="M 37.54 80.00 L 252.46 80.00 L 252.46 120.00 L 37.54 120.00 Z M 37.54 80.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />
 
-<text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >{[[MasherProps]]}</text>
+<text x="42.79" y="109.73" font-family="Helvetica" font-size="24.00px" fill="black" opacity="1.00" font-weight="bold" >{[[MasherAppProps]]}</text>
 <path d="M 505.00 220.00 L 505.00 223.10 M 501.41 223.10 L 508.59 223.10 L 505.00 240.00 Z M 501.41 223.10" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="black"  />
 
 <path d="M 505.00 200.00 L 505.00 240.00" stroke-width="2.50" stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none"  />

@@ -7,7 +7,7 @@ import { Size } from "../../Utility/Size"
 import { Rect } from "../../Utility/Rect"
 import { Time, TimeRange } from "../../Helpers/Time/Time"
 import { SvgFilters } from "../../Helpers/Svg/Svg"
-import { Filter, FilterDefinitionObject } from "../../Filter/Filter"
+import { Filter, FilterDefinitionObject } from "../../Plugin/Filter/Filter"
 import { PropertyObject } from "../../Setup/Property"
 
 export interface Effect extends Tweenable {

@@ -1,12 +1,14 @@
-import { DataGroup, SelectedItems, SelectType } from "@moviemasher/moviemasher.js";
-import { PropsWithoutChild, UnknownElement, WithClassName } from "../../../../declarations"
+import { DataGroup, SelectedItems, SelectorType } from "@moviemasher/moviemasher.js"
+import { JsxElement } from "../../../../Framework/Framework"
+import { WithClassName } from "../../../../Types/Core"
+import { PropsWithoutChild } from "../../../../Types/Props"
 import { EmptyElement } from '../../../../Setup/Constants'
 export type DataGroupElements = {
-  [key in DataGroup]: UnknownElement
+  [key in DataGroup]: JsxElement
 }
 
 export interface DataGroupProps extends PropsWithoutChild, WithClassName {
-  selectType?: SelectType
+  selectType?: SelectorType
   selectedItems?: SelectedItems
 }
 
@@ -16,7 +18,5 @@ export const DataGroupInputs: DataGroupElements = {
   [DataGroup.Opacity]: EmptyElement,
   [DataGroup.Color]: EmptyElement,
   [DataGroup.Effects]: EmptyElement,
-  // [DataGroup.Controls]: EmptyElement,
   [DataGroup.Timing]: EmptyElement,
-  // [DataGroup.Clicking]: EmptyElement,
 }

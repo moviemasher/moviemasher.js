@@ -1,5 +1,5 @@
-import React from 'react'
 import { Media } from '@moviemasher/moviemasher.js'
+import { createContext } from '../Framework/FrameworkFunctions'
 
 export interface DefinitionContextInterface {
   definition?: Media
@@ -8,4 +8,4 @@ export interface DefinitionContextInterface {
 export const DefinitionContextDefault: DefinitionContextInterface = {
 }
 
-export const DefinitionContext = React.createContext(DefinitionContextDefault)
+export const DefinitionContext = createContext(DefinitionContextDefault)

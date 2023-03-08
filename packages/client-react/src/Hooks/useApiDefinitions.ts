@@ -24,7 +24,7 @@ export const useApiDefinitions = (types: MediaTypes = []): MediaArray => {
   // const definitionsPromise = (key: string) => {
 
   //   const options: ClientReadOptions = { type: types }
-  //   return client.list(options).then((response: ClientArrayResponse) => {
+  //   return client.list(options).then((response: MediaDataArrayOrError) => {
   //     console.debug("DataDefinitionRetrieveResponse", Endpoints.data.definition.retrieve, response)
   //     const { error, data } = response
   //     if (!data) return

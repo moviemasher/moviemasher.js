@@ -1,4 +1,4 @@
-import { DecodeOutput, DecoderOptions } from "../Decoder"
+import /* type */ { DecodeOutput, DecoderOptions } from "../Decode"
 
 export type AlphaProbe = 'alpha'
 export const AlphaProbe: AlphaProbe = 'alpha'

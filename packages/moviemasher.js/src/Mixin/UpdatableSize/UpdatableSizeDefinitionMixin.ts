@@ -3,7 +3,7 @@ import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass } from "./Updatab
 import { isAboveZero } from "../../Utility/Is"
 import { ContentDefinitionClass } from "../../Media/Content/Content"
 import { isProbing } from "../../Plugin/Decode/Probe/Probing/ProbingFunctions"
-import { ProbeType } from "../../Plugin/Decode/Decoder"
+import { ProbeType } from "../../Plugin/Decode/Decoding/Decoding"
 
 export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {

@@ -1,7 +1,7 @@
 version: "3"
 name: moviemasher-example-react
 services:
-  example-react:
+  service:
     image: httpd:2.4
     container_name: moviemasher-example-react-8578
     ports:
@@ -14,5 +14,3 @@ services:
       - ../../../packages/theme-default/moviemasher.css:/usr/local/apache2/htdocs/moviemasher.css
       - ../../../packages/client-react/umd/client-react.js:/usr/local/apache2/htdocs/client-react.js
       - ../../../packages/client-core/umd/client-core.js:/usr/local/apache2/htdocs/client-core.js
-      - ../../../node_modules/react/umd/react.development.js:/usr/local/apache2/htdocs/react.development.js
-      - ../../../node_modules/react-dom/umd/react-dom.development.js:/usr/local/apache2/htdocs/react-dom.development.js

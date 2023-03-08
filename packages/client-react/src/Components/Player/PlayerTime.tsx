@@ -1,18 +1,20 @@
 import React from "react"
 import { View } from "../../Utilities/View"
-import { PropsWithoutChild, ReactResult, WithClassName } from "../../declarations"
+
+import { WithClassName } from "../../Types/Core"
+import { PropsWithoutChild } from "../../Types/Props"
 import { EventType, stringSeconds } from "@moviemasher/moviemasher.js"
-import { useEditor } from "../../Hooks/useEditor"
+import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
 
 export interface PlayerTimeProps extends PropsWithoutChild, WithClassName {}
 
 /**
  *
- * @parents Editor
+ * @parents MasherApp
  */
-export function PlayerTime(props: PlayerTimeProps): ReactResult {
-  const editor = useEditor()
+export function PlayerTime(props: PlayerTimeProps) {
+  const editor = useMasher()
   const getTimeRange = () => editor.timeRange
   const [timeRange, setTimeRange] = React.useState(getTimeRange)
   const update = () => { setTimeRange(getTimeRange()) }

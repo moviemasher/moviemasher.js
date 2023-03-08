@@ -1,42 +1,46 @@
 import React from 'react'
 import {
   assertMedia, isMediaType, assertPopulatedString, ClassDropping, DataType, 
-  ContainerTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition, MediaObject, isMediaObject, assertDefined
+  ContainingTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition, 
+  isMediaObject, assertDefined, Strings
 } from '@moviemasher/moviemasher.js'
+import { 
+  DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles 
+} from '@moviemasher/client-core'
 
-import { PropsAndChild, ReactResult, WithClassName } from '../../../../declarations'
+import { JsxChildren } from "../../../../Types/Element"
+import { WithClassName } from "../../../../Types/Core"
+import { PropsAndChild } from "../../../../Types/Props"
 import { View } from '../../../../Utilities/View'
 import { InputContext } from '../InputContext'
 import { DefinitionContext } from '../../../../Contexts/DefinitionContext'
 import { DataTypeInputs } from '../DataTypeInputs/DataTypeInputs'
-import { DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles } from '@moviemasher/client-core'
 import { DefinitionItem } from '../../../DefinitionItem/DefinitionItem'
 import { propsMediaTypes } from '../../../../Utilities/Props'
-import { MasherContext } from '../../../Masher/MasherContext'
-import { useEditor } from '../../../../Hooks/useEditor'
+import MasherContext from '../../../Masher/MasherContext'
 
 export interface DefinitionDropProps extends WithClassName, PropsAndChild {
   type?: string
   types?: string | string[]
 }
 
-export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
+export function DefinitionDrop(props: DefinitionDropProps) {
   const { type, types, children, className, ...rest } = props
   const child = React.Children.only(children)
   assertTrue(React.isValidElement(child))
 
   const [isOver, setIsOver] = React.useState(false)
   const inputContext = React.useContext(InputContext)
-  const editorContext = React.useContext(MasherContext)
-  const { drop, editor } = editorContext
-  assertDefined(editor)
+  const masherContext = React.useContext(MasherContext)
+  const { drop, masher } = masherContext
+  assertDefined(masher)
   const { changeHandler, value, name } = inputContext
   assertTrue(changeHandler)
   
-  const { media } = editor
+  const { media } = masher
   const mediaTypes = propsMediaTypes(type, types)
 
-  const childNodes = (): React.ReactElement | null => {
+  const childNodes = (): JsxChildren => {
     if (!value) return null
 
     assertPopulatedString(value)
@@ -109,13 +113,13 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
   }
 
   const calculateClassName = (): string => {
-    const classes = []
+    const classes: Strings = []
     if (className) classes.push(className)
     if (isOver) classes.push(ClassDropping)
     return classes.join(' ')
   }
 
-  const memoClassName = React.useMemo(calculateClassName, [isOver])
+  const memoClassName = React.useMemo(calculateClassName, [isOver, className])
 
   const viewProps = {
     ...rest,
@@ -131,13 +135,13 @@ export function DefinitionDrop(props: DefinitionDropProps): ReactResult {
 }
 
 DataTypeInputs[DataType.ContainerId] = (
-  <DefinitionDrop types={ContainerTypes} className='definition-drop'>
+  <DefinitionDrop types={ContainingTypes} className='drop-container'>
     <DefinitionItem className='definition preview'/>
   </DefinitionDrop>
 )
 
 DataTypeInputs[DataType.ContentId] = (
-  <DefinitionDrop types={ContentTypes} className='definition-drop'>
+  <DefinitionDrop types={ContentTypes} className='drop-container'>
     <DefinitionItem className='definition preview' />
   </DefinitionDrop>
 )

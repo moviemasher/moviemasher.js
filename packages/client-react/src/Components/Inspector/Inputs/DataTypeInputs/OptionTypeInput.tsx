@@ -1,11 +1,11 @@
 import React from 'react'
 import { DataType, UnknownRecord, assertPopulatedArray } from '@moviemasher/moviemasher.js'
 
-import { ReactResult } from '../../../../declarations'
+
 import { DataTypeInputs } from './DataTypeInputs'
 import { InputContext } from '../InputContext'
 
-export function OptionTypeInput(): ReactResult {
+export function OptionTypeInput() {
   const inputContext = React.useContext(InputContext)
   const { changeHandler, property, value, name } = inputContext
   const { options } = property

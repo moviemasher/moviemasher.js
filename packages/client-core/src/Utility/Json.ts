@@ -1,4 +1,4 @@
-import { Request, isUndefined, urlForEndpoint, assertEndpoint } from "@moviemasher/moviemasher.js"
+import { Request, isUndefined, urlForEndpoint, JsonMimetype, assertEndpoint, FormDataMimetype, ContentTypeHeader } from "@moviemasher/moviemasher.js"
 
 export interface ResponseObject {
   json(): Promise<any>
@@ -8,25 +8,22 @@ export const jsonPromise = (request: Request): Promise<any> => {
   return fetchPromise(request).then(response => response.json())
 }
 
+
+
 export const fetchPromise = (request: Request): Promise<ResponseObject> => {
   const { endpoint, init = {} } = request
   assertEndpoint(endpoint)
-  // console.log('jsonPromise', endpoint, init)
 
-  const typeKey = 'Content-Type'
-  const jsonType = 'application/json'
-
-  const formType = 'multipart/form-data'
 
   init.method ||= 'POST'
   init.headers ||= {}
-  init.headers[typeKey] ||= jsonType
-  switch (init.headers[typeKey]) {
-    case jsonType: {
+  init.headers[ContentTypeHeader] ||= JsonMimetype
+  switch (init.headers[ContentTypeHeader]) {
+    case JsonMimetype: {
       init.body = JSON.stringify(init.body)
       break
     }
-    case formType: {
+    case FormDataMimetype: {
       const formData = new FormData()
       Object.entries(init.body).forEach(([key, value]) => {
         if (isUndefined(value)) return
@@ -35,7 +32,7 @@ export const fetchPromise = (request: Request): Promise<ResponseObject> => {
       })
 
       init.body = formData
-      delete init.headers[typeKey]
+      delete init.headers[ContentTypeHeader]
       break
     }
   }
