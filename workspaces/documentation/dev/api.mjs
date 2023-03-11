@@ -1,10 +1,10 @@
 
 // Object.defineProperty(exports, '__esModule', { value: true })
 
-// const MovieMasher = require('../../../packages/moviemasher.js/')
+// const MovieMasher = require('../../../packages/core/lib/')
 // const { Endpoints } = MovieMasher
 // console.log("Endpoints", Endpoints)
-// import { Endpoints } from '../../../packages/moviemasher.js/types/moviemasher.js'
+// import { Endpoints } from '../../../packages/core/lib/types/moviemasher.js'
 
 // const excludeEndpoints = (endpoints, exclude) => {
 //   if (!exclude) return endpoints

@@ -1,0 +1,3 @@
+# Movie Masher React Plugin
+
+The Movie Masher client plugin for Client...

@@ -3,9 +3,9 @@
 
 import { rollupConfigurations} from "../../../../dev/utils/rollupConfigurations.mjs"
 
-const locale = 'en'
-const label = 'English'
-const libName = `translate-${locale}`
-const name = `MovieMasherTranslate${label}`
-const configurations = rollupConfigurations({ name, libName })
+const framework = 'framework'
+const libName = `client-${framework}`
+const name = `MovieMasherClient`
+const extension = 'js'
+const configurations = rollupConfigurations({ name, libName, extension })
 export default configurations

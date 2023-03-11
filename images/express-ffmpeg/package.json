@@ -22,7 +22,9 @@
     "build": "rollup --config dev/rollup.config.mjs"
   },
   "dependencies": {
-    "express": "4.18.2",
+    "express": "4.18.2"
+  },
+  "peerDependencies": {
     "@moviemasher/server-core": "5.1.2"
   },
   "devDependencies": {

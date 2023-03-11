@@ -2,13 +2,13 @@ module.exports = {
   "entryPointStrategy": "packages",
 
   "entryPoints": [
-    "packages/moviemasher.js",
-    "packages/server-core",
-    "packages/client-core",
-    "packages/protocol-supabase",
-    "packages/theme-default",
-    "packages/server-express",
-    "packages/client-react"
+    "packages/core/lib",
+    "packages/core/server",
+    "packages/core/client",
+    "packages/protocol/supabase",
+    "packages/theme/default",
+    "packages/server/express",
+    "packages/client/react"
   ],
   "cleanOutputDir": false,
   "out": "docs",

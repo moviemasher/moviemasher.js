@@ -1,0 +1,27 @@
+{
+  "name": "@moviemasher/client-react",
+  "version": "5.1.2",
+  "description": "Movie Masher React Client",
+  "license": "MIT",
+  "files": [
+    "esm",
+    "umd"
+  ],
+  "main": "umd/client-react.js",
+  "module": "esm/client-react.mjs",
+  "types": "esm/client-react.d.mts",
+  "scripts": {
+    "build": "rollup -c dev/rollup.config.mjs"
+  },
+  "peerDependencies": {
+    "@moviemasher/client-core": "5.1.2",
+    "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
+  },
+  "devDependencies": {},
+  "typedoc": {
+    "entryPoint": "./src/index.js",
+    "readmeFile": "./README.md",
+    "displayName": "client-react"
+  }
+}

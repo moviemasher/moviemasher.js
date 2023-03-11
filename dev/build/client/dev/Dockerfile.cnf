@@ -1,0 +1,38 @@
+ARG DIR_ROOT=/app
+FROM node:18 as node
+ARG DIR_ROOT
+WORKDIR ${DIR_ROOT}
+
+# the root package.json (for version, shared dependencies, etc)
+COPY package.json ${DIR_ROOT}/package.json
+
+# copy just the client workspace (for its package.json file)
+COPY workspaces/client ${DIR_ROOT}/workspaces/client
+COPY packages/core/client ${DIR_ROOT}/packages/core/client
+COPY packages/core/lib ${DIR_ROOT}/packages/core/lib
+COPY dev/build/client ${DIR_ROOT}/dev/build/client
+COPY dev/build/cli.mjs ${DIR_ROOT}/dev/build/cli.mjs
+COPY dev/utils ${DIR_ROOT}/dev/utils
+COPY dev/dependencies ${DIR_ROOT}/dev/dependencies
+RUN node ${DIR_ROOT}/dev/build/cli.mjs package \
+  --src=${DIR_ROOT}/dev/build/client/package.json \
+  --workspace=packages/core/* \
+  --workspace=workspaces/* \
+  --peer=moviemasher.js \
+  --peer=client-core \
+  --dependency=rollup  
+
+FROM node:18 
+ARG DIR_ROOT
+WORKDIR ${DIR_ROOT}
+COPY --from=node ${DIR_ROOT}/package.json ${DIR_ROOT}/package.json
+COPY --from=node ${DIR_ROOT}/workspaces/client/package.json ${DIR_ROOT}/workspaces/client/package.json
+COPY --from=node ${DIR_ROOT}/packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
+COPY --from=node ${DIR_ROOT}/packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
+
+# RUN cat ${DIR_ROOT}/package.json ; exit 1
+RUN npm install 
+
+ENTRYPOINT ["npm", "run"]
+CMD ["all"]
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

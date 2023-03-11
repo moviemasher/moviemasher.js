@@ -1,8 +1,10 @@
 {
-  "description": "JavaScript video editor and encoder - version 5.1.2",
+  "private": true,
+  "description": "Movie Masher Mono Repository",
   "homepage": "https://moviemasher.com",
   "version": "5.1.2",
   "license": "MIT",
+
   "author": {
     "name": "Movie Masher",
     "email": "support@moviemasher.com"
@@ -15,23 +17,41 @@
     "url": "https://github.com/moviemasher/moviemasher.js.git"
   },
   "scripts": {
-    "start": "npm run docker-up --dir=${npm_config_dir:=workspaces} --space=${npm_config_space:=standalone}",
-    "stop": "npm run docker-down --dir=${npm_config_dir:=workspaces} --space=${npm_config_space:=standalone}",
-    "logs": "npm run docker-logs --dir=${npm_config_dir:=workspaces} --space=${npm_config_space:=standalone}",
+    "frameworks": "node dev/utils/frameworks.mjs --dest=stdout",
+
+    "build": "docker compose --env-file dev/local.env --file dev/build/${npm_config_build:=core}/docker-compose.yml run --rm service ${npm_config_script:=build}",
+    "build-client": "run-s build --build=clients --script=client-${npm_config_client:=react}",
+    "build-clients": "run-s build --build=clients",
+    "build-core": "run-s build --build=core",
+
+    "build-frameworks": "node dev/utils/frameworks.mjs --dest=stdout | xargs -I {} npm run build-client --dir=packages/client --space={} --service={} --command=\"npm run build\"",
+
+    "package-json": "cat package.json",
+    "start": "npm run docker-up --dir=${npm_config_dir:=workspaces/examples} --space=${npm_config_space:=standalone}",
+    "stop": "npm run docker-down --dir=${npm_config_dir:=workspaces/examples} --space=${npm_config_space:=standalone}",
+    "logs": "npm run docker-logs --dir=${npm_config_dir:=workspaces/examples} --space=${npm_config_space:=standalone}",
     "test": "npm run docker-run --dir=images --space=tester",
     "build-test": "npm run build libs ; npm run test",
-    "build": "docker compose --env-file dev/local.env --file images/builder/dev/docker-compose.yml run --rm service",
-    "build-space": "docker compose --env-file dev/local.env --file images/builder/dev/docker-compose.yml run --rm service space --space=${npm_config_space:=client-prebuild}",
-    "docker-run": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=example-supabase}/dev/docker-compose.yml run --rm -it ${npm_config_service:=service}",
-    "docker-build": "docker compose --env-file dev/local.env --file ${npm_config_dir:=images}/${npm_config_space:=builder}/dev/docker-compose.yml build ${npm_config_service:=service}",
+    "cli": "node dev/build/cli.mjs",
+    "build-space": "docker compose --env-file dev/local.env --file dev/builder/dev/docker-compose.yml run --rm service space --space=${npm_config_space:=client-prebuild}",
+    "docker-run": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces/examples}/${npm_config_space:=supabase/dev}/docker-compose.yml run --rm -it ${npm_config_service:=service}",
+    "docker-build": "docker compose --env-file dev/local.env --file ${npm_config_dir:=dev/build}/${npm_config_build:=core}/docker-compose.yml build ${npm_config_service:=service}",
     "docker-up": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml up -d ${npm_config_service:=service}",
     "docker-down": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml down -v",
     "docker-logs": "docker compose --env-file dev/local.env --file ${npm_config_dir:=workspaces}/${npm_config_space:=documentation}/dev/docker-compose.yml logs -f",
     "publish": "npm publish --access public --workspace @moviemasher/${npm_config_space}"
   },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@types/node": "18.13.0",
+    "typescript": "4.9.5"
+  },
   "workspaces": [
+    "dev/build/*",
     "images/*",
-    "packages/*",
-    "workspaces/*"
+    "packages/**/*",
+    "workspaces/*",
+    "examples/*"
   ]
 }

@@ -16,14 +16,15 @@
   },
   "homepage": "https://moviemasher.com",
   "dependencies": {
-    "@moviemasher/moviemasher.js": "5.1.2",
-    "@supabase/supabase-js": "2.2.0",
-    "express": "4.18.2",
     "fluent-ffmpeg": "2.1.2"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2"
   },
   "devDependencies": {
     "@types/express": "4.17.15",
-    "@types/fluent-ffmpeg": "2.1.20"
+    "@types/fluent-ffmpeg": "2.1.20",
+    "@supabase/supabase-js": "2.2.0"
   },
   "scripts": {
     "start": "node esm/lambda-ffmpeg.mjs",

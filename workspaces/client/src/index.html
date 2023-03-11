@@ -6,14 +6,23 @@
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin defer></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin defer></script>
-    <script src='moviemasher.js' crossorigin defer></script>
+    <!-- <script src='moviemasher.js' crossorigin defer></script>
+  
+    <script src='client-core.js' crossorigin defer></script> -->
     <script src='theme-default.js' crossorigin defer></script>
-    <script src='client-core.js' crossorigin defer></script>
-    <script src='client-react.js' crossorigin defer></script>
-    <link href='moviemasher.css' rel='stylesheet'>
+      <script src='client-react.js' crossorigin defer></script>
+    <!-- <link href='moviemasher.css' rel='stylesheet'>
     <style> /* fit root DIV to viewport */
       body { margin: 0px; padding: 0px; font-family: sans-serif; }
       body, #root { width: 100vw; height: 100vh; display: flex; }
+    </style> -->
+    <style>
+     
+      body {
+        color:brown;
+        font-size: 57px;
+        background-color: chartreuse;
+      }
     </style>
   </head>
   <body onload="bodyLoad()">
@@ -23,19 +32,22 @@
         // destructure constants from packages
         const { createElement } = React
         const { createRoot } = ReactDOM
-        const { MasherApp, MasherAppDefaultProps } = MovieMasherClient
-        const { TextContainerId, idTemporary } = MovieMasher
+        const { Test } = MovieMasherClient
 
-        // create mash object containing text clip on a track
-        const clip = { 
-          container: { string: 'Hello World!' }, 
-          containerId: TextContainerId
-        }
-        const mash = { id: idTemporary(), media: [] } // tracks: [{ clips: [clip] }] }
+        // const { MasherApp, MasherAppDefaultProps } = MovieMasherClient
+        // const { TextContainerId, idTemporary } = MovieMasher
 
-        // create root and render new MasherApp with mash in props
-        const props = MasherAppDefaultProps({ edited: { mash } })
-        const masher = createElement(MasherApp, props) 
+        // // create mash object containing text clip on a track
+        // const clip = { 
+        //   container: { string: 'Hello World!' }, 
+        //   containerId: TextContainerId
+        // }
+        // const mash = { id: idTemporary(), media: [] } // tracks: [{ clips: [clip] }] }
+
+        // // create root and render new MasherApp with mash in props
+        // const props = MasherAppDefaultProps({ edited: { mash } })
+        console.log('Test', Test, Test.constructor.name)
+        const masher = createElement(Test) 
         const element = document.getElementById('root')
         createRoot(element).render(masher)
       }

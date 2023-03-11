@@ -4,7 +4,7 @@ The HTML document below can be loaded in a web browser to display the simplest '
 
 <fieldset>
 <legend>moviemasher.html</legend>
-<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-core/public/index.html) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../examples/core/public/index.html) -->
 
 ```html
 <!DOCTYPE html>

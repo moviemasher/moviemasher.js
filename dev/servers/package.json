@@ -1,0 +1,68 @@
+{
+  "name": "@moviemasher/build-something",
+  
+  "scripts": {
+    "install": "npm install",
+    "space": "npm run build -w @moviemasher/${npm_config_space}",
+    "all": "run-s code themes examples protocols docs",
+    "client-core": "run-s space --space=client-core",
+    "client-react": "run-s space --space=client-react",
+    "client": "run-s space --space=client",
+    "clients": "run-s client client-react",
+    "code": "run-s cores clients servers ",
+    "core": "run-s space --space=moviemasher.js",
+    "core-umd": "npm run build-umd -w @moviemasher/moviemasher.js",
+    "cores": "run-s core client-core server-core",
+    "docs": "typedoc",
+    "example-core": "run-s space --space=example-core",
+    "example-react": "run-s install space --space=example-react",
+    "example-standalone": "run-s install space --space=example-standalone",
+    "example-supabase": "run-s install space --space=example-supabase",
+    "examples": "run-s example-core example-react example-supabase example-standalone",
+    "image-express": "run-s space --space=express-ffmpeg",
+    "image-lambda": "run-s space --space=lambda-ffmpeg",
+    "images": "run-s image-express image-lambda",
+    "protocol-supabase": "run-s space --space=protocol-supabase",
+    "protocols": "run-s protocol-supabase",
+    "server-core": "run-s space --space=server-core",
+    "server-express": "run-s space --space=server-express",
+    "servers": "run-s server-express",
+    "theme-default": "run-s space --space=theme-default",
+    "themes": "run-s theme-default",
+    "build-only": "BUILD_ONLY=esm run-s code",
+    "translate": "run-s space --space=translate",
+    "translate-en": "run-s space --space=translate-en",
+    "translations": "run-s translate translate-en",
+    "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\" ; echo \"rollup: $(rollup -v)\""
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "0.4.0",
+    "@types/css-font-loading-module": "^0.0.7",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^4.1.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^3.2.0",
+    "rollup": "^3.17.2",
+    "terser": "5.16.5",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "socket.io-client": "^4.6.0",
+    "socket.io": "^4.6.0",
+    "eslint-plugin-tsdoc": "0.2.17",
+    "@types/node": "18.13.0",
+    "typescript": "4.9.5"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "^5.1.2"
+  },
+  "workspaces": [ 
+    "images/*", 
+    "examples/*", 
+    "packages/**/*",
+    "workspaces/*"
+  ]
+}

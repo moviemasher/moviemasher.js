@@ -1,0 +1,39 @@
+{
+  "name": "@moviemasher/protocol-supabase",
+  "description": "Movie Masher Supabase Protocol Plugin - version 5.1.2",
+  "homepage": "https://moviemasher.com",
+
+  "files": ["esm", "umd"],
+  "main": "umd/protocol-supabase.js",
+  "module": "esm/protocol-supabase.mjs",
+  "types": "esm/protocol-supabase.d.mts",
+
+  "version": "5.1.2",
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "scripts": {
+    "build": "rollup --config dev/rollup.config.mjs"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "2.8.0"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/client-core": "5.1.2"
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "protocol-supabase"
+  }
+}

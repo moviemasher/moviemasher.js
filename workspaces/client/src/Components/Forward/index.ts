@@ -1,1 +1,1 @@
-export * as Test from './Forward.lite'
+export { default as Forward } from './Forward.lite'

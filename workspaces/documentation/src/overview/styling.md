@@ -57,7 +57,7 @@ These HSL variables are not used outside this file, so it's okay to remove them 
 <fieldset>
 <legend>colors.css</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme-default/src/css/colors.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme/default/src/css/colors.css&stripComments=1) -->
 
 ```css
 .moviemasher {
@@ -127,7 +127,7 @@ The icon button currently selected in the browser header is painted with the pro
 <fieldset>
 <legend>sizes.css</legend>
 
-<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme-default/src/css/sizes.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme/default/src/css/sizes.css&stripComments=1) -->
 
 ```css
 .moviemasher {
@@ -211,7 +211,7 @@ The icon button currently selected in the browser header is painted with the pro
 
 <fieldset>
 <legend>layout.css</legend>
-<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme-default/src/css/layout.css&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../packages/theme/default/src/css/layout.css&stripComments=1) -->
 
 ```css
 .moviemasher .editor.masher {

@@ -2,16 +2,16 @@ import fs from 'fs'
 import path from 'path'
 
 import { languages } from "./languages.mjs"
-import { rewritePackageFile } from "../../../dev/utils/rewritePackageFile.mjs"
-import { rewriteRollupFile } from "../../../dev/utils/rewriteRollupFile.mjs"
-
+import { packageJson } from "../../../dev/utils/rewritePackageFile.mjs"
 
 const build = () => {
+  const packageNamePrefix = 'translate'
+  const packageLabel = 'Translate'
   const rootDir = path.resolve('../../')
   const packagesDir = path.resolve(rootDir, 'packages')
-  const outputDir = path.join(packagesDir, 'translate')
+  const outputDir = path.join(packagesDir, packageNamePrefix)
   const languageCodes = languages()
-  const translateConfigDest = path.join(packagesDir, '/client-core/src/Translate/locales.json')
+  const translateConfigDest = path.join(packagesDir, '/core/client/src/Translate/locales.json')
 
   const translateConfig = {}
 
@@ -30,8 +30,6 @@ const build = () => {
     identifier: englishIdentifier, languages: englishLanguages 
   } = englishConfig
   const indexPath = path.resolve('src/index.ts')
-  const buildPackageId = 'translate'
-  const buildType = 'Translate'
   const englishIdentifierQuotedRegex = new RegExp(`'${englishIdentifier}'`, 'g') 
   const enQuotedRegex = /'en'/g
   const enDotJsonRegex = /en\.json/
@@ -46,19 +44,19 @@ const build = () => {
     console.log(localeInDefault, languageInDefault)
     const localeQuoted = `'${locale}'`
     const quotedLabel = `'${localeInDefault}'`
-    const packageName = `${buildPackageId}-${locale}`
+    const packageName = `${packageNamePrefix}-${locale}`
     const packageDir = `${outputDir}/${locale}`
 
     // package.json
-    rewritePackageFile( { 
-      destDir: packageDir, 
+    packageJson( { 
+      dest: packageDir, 
       replacements: [
         { 
-          replace: packageName, search: buildPackageId, 
-          keys: ['name', 'types', 'module', 'main']
+          replace: packageName, search: packageNamePrefix, 
+          keys: ['name', 'types', 'module', 'main', 'typedoc.displayName']
         },
         { 
-          replace: `Movie Masher ${buildType} Plugin for ${localeInDefault} ${languageInDefault}`,
+          replace: `Movie Masher ${packageLabel} Plugin for ${localeInDefault} ${languageInDefault}`,
           key: 'description'
         },
         {
@@ -75,16 +73,17 @@ const build = () => {
     const indexReplacedJson = indexReplacedEn.replace(enDotJsonRegex, `${locale}.json`)
     const indexReplaced = indexReplacedJson.replace(identifierRegex, identifier)
     fs.writeFileSync(indexDest, indexReplaced)
-    console.log(indexDest.slice(rootDir.length + 1))
+    console.log('Wrote', indexDest.slice(rootDir.length + 1))
 
     // src/locales/[locale].json
     const localeDest = `${packageDir}/src/locale/${locale}.json`
     fs.copyFileSync(localePath, localeDest)
-    console.log(localeDest.slice(rootDir.length + 1))
+    console.log('Wrote', localeDest.slice(rootDir.length + 1))
 
     // dev/rollup.config.mjs
-    rewriteRollupFile({
-      destDir: `${packageDir}/dev`,
+    replace({
+      src: 'src/rollup.config.mjs',
+      dest: `${packageDir}/dev/rollup.config.mjs`,
       replacements: [
         { search: enQuotedRegex, replace: localeQuoted },
         { search: englishIdentifierQuotedRegex, replace: quotedLabel}
@@ -92,9 +91,9 @@ const build = () => {
     })
   })
 
-  console.log(`${buildType} Configuration`)
+  console.log(`${packageLabel} Configuration`)
   fs.writeFileSync(translateConfigDest, JSON.stringify(translateConfig, null, 2))
-  console.log(translateConfigDest.slice(rootDir.length + 1))
+  console.log('Wrote', translateConfigDest.slice(rootDir.length + 1))
     
 }
 

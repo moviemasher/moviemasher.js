@@ -1,0 +1,17 @@
+version: "3"
+name: moviemasher-build-clients
+services:
+  service:
+    build:
+      dockerfile: dev/build/clients/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/build-clients:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-build-clients
+    env_file:
+      - ../../local.env
+    volumes:
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../packages/core/client/:${MOVIEMASHER_DIR_ROOT}/packages/core/client/
+      - ../../../packages/core/lib/:${MOVIEMASHER_DIR_ROOT}/packages/core/lib/
+      - ../../../packages/client/:${MOVIEMASHER_DIR_ROOT}/packages/client/
+

@@ -50,5 +50,8 @@ module.exports = {
       node: { extensions: [".mjs", ".js", ".jsx", ".ts", ".tsx"] }
     }
   },
-  ignorePatterns: ['.eslintrc.js', "**/*config.js"],
+  ignorePatterns: [
+    '.eslintrc.js', "**/*config.js", 
+    "**/cjs", "**/esm", "**/umd", "**/public", "**/private"
+  ],
 }

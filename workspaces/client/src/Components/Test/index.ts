@@ -1,1 +1,1 @@
-export * as Test from './Test.lite'
+export { default as Test} from './Test.lite'

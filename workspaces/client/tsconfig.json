@@ -9,7 +9,6 @@
     "jsxImportSource": "@builder.io/mitosis",
     "moduleResolution": "node"
   },
-  "include": [
-    "src"
-  ]
+  "include": [ "src/**/*" ],
+  "exclude": [ "node_modules", "esm", "umd" ]
 }

@@ -1,0 +1,42 @@
+version: "3"
+name: moviemasher-standalone
+services:
+  service:
+    env_file:
+      - ../../../dev/local.env
+    build: 
+      context: ../../../
+      dockerfile: examples/standalone/dev/Dockerfile.cnf
+    image: moviemasher/standalone:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-standalone-${MOVIEMASHER_CONSOLE_PORT}
+    ports:
+      - "${MOVIEMASHER_CONSOLE_PORT}:${MOVIEMASHER_CONSOLE_PORT}"
+    volumes:
+      # use latest server ESM packages from host computer instead of image
+      - ../private/server.mjs:${MOVIEMASHER_DIR_ROOT}/examples/standalone/private/server.mjs
+      - ../../../packages/core/lib:${MOVIEMASHER_DIR_ROOT}/packages/core/lib
+      - ../../../packages/core/server:${MOVIEMASHER_DIR_ROOT}/packages/core/server
+      - ../../../packages/server/express:${MOVIEMASHER_DIR_ROOT}/packages/server/express
+      - ../../../dev/data-migrations:${MOVIEMASHER_DIR_ROOT}/dev/data-migrations
+   
+      # use latest client and theme UMD modules from host computer instead of image
+      - ../public/client.js:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/client.js
+      - ../../../packages/core/lib/umd/moviemasher.js:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/moviemasher.js
+      - ../../../packages/core/client/umd/client-core.js:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/client-core.js
+      - ../../../packages/client/react/umd/client-react.js:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/client-react.js
+      - ../../../packages/theme/default/moviemasher.css:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/moviemasher.css
+      - ../../../packages/theme/default/umd/theme-default.js:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/theme-default.js
+
+      # use latest HTML from host computer instead of image
+      - ../src/index.html:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/index.html
+
+      # use temporary directories from host for user media, database files, etc.
+      - ../../../temporary/standalone/media:${MOVIEMASHER_DIR_ROOT}/examples/standalone/public/media
+      - ../../../temporary/standalone/data:${MOVIEMASHER_DIR_ROOT}/examples/standalone/private/data
+      - ../../../temporary/standalone/temporary:${MOVIEMASHER_DIR_ROOT}/temporary
+
+
+    entrypoint: node_modules/pm2/bin/pm2-docker
+    # entrypoint: node
+    command: examples/standalone/private/server.mjs
+

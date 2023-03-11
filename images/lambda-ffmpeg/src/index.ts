@@ -1,6 +1,6 @@
 
 import { 
-  JsonRecord, PathDataOrError, 
+  JsonRecord, StringDataOrError, 
   assertPopulatedString, Identified, isDefiniteError,
 } from "@moviemasher/moviemasher.js"
 
@@ -13,7 +13,7 @@ import {
 } from "@moviemasher/server-core"
 
 
-export const handleRequest = (jobType: JobType, mediaRequest: MediaRequest): Promise<PathDataOrError> => {
+export const handleRequest = (jobType: JobType, mediaRequest: MediaRequest): Promise<StringDataOrError> => {
   
   const { input } = mediaRequest
   

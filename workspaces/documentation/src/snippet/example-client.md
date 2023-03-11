@@ -4,7 +4,7 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
 
 <fieldset>
 <legend>umd.html</legend>
-<!-- MAGIC:START (TRIMCODE:src=../../../../workspaces/example-react/public/index.html&stripComments=1) -->
+<!-- MAGIC:START (TRIMCODE:src=../../../../examples/react/public/index.html&stripComments=1) -->
 
 ```html
 <!DOCTYPE html>

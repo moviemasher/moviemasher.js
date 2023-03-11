@@ -1,0 +1,65 @@
+{
+  "name": "@moviemasher/theme-default",
+  "version": "5.1.2",
+  "description": "Movie Masher Theme Plugin - version 5.1.2",
+
+
+  "module": "./esm/theme-default.mjs",
+  "main": "./umd/theme-default.js",
+  "types": "./esm/theme-default.d.mts",
+  "files": ["esm", "umd", "moviemasher.css"],
+
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "peerDependencies": {
+    "@moviemasher/client-core": "5.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "18.13.0",
+
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "4.7.1"
+  },
+  "scripts": {
+    "build-json": "node dev/build.mjs",
+    "build-css": "cat src/css/* > moviemasher.css",
+    "build-rollup": "rollup --config dev/rollup.config.mjs",
+    "build": "run-s build-css build-json build-rollup"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "theme-default"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@moviemasher/build-core",
+  "description": "Builds Movie Masher core packages",
+  "scripts": {
+    "build": "run-s core client-core server-core",
+    "space": "npm run build -w @moviemasher/${npm_config_space}",
+
+    "core": "run-s space --space=moviemasher.js",
+    "server-core": "run-s space --space=server-core",
+    "client-core": "run-s space --space=client-core",
+
+    "core-umd": "npm run build-umd -w @moviemasher/moviemasher.js",
+    "build-only": "BUILD_ONLY=esm run-s code",
+    "versions": "echo \"NodeJs: $(node -v)\" ; echo \"NPM: $(npm -v)\" ; echo \"TypeScript: $(tsc -v)\" ; echo \"rollup: $(rollup -v)\""
+  },
+  "devDependencies": {
+    "@types/css-font-loading-module": "^0.0.7",
+    "rimraf": "^4.1.2"
+  }
+}

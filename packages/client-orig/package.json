@@ -1,0 +1,46 @@
+{
+  "name": "@moviemasher/client-orig",
+  "version": "5.1.2",
+  "description": "Movie Masher ReactJS Client Plugin - version 5.1.2",
+
+  "files": ["esm", "umd"],
+  "main": "umd/client-react.js",
+  "module": "esm/client-react.mjs",
+  "types": "esm/client-react.d.mts",
+
+  "license": "MIT",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "homepage": "https://moviemasher.com",
+  "scripts": {
+    "build": "rollup --config dev/rollup.config.mjs"
+  },
+  "peerDependencies": {
+    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/theme-default": "5.1.2",
+    "@moviemasher/client-core": "5.1.2",
+    "react": "^16.13.1 || ^17.0.2 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.2 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^18.0.11",
+    "@types/react": "^18.0.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "eslintConfig": { "extends": ["react-app"] },
+  "typedoc": {
+    "entryPoint": "./src/index.ts",
+    "readmeFile": "./README.md",
+    "displayName": "client-orig"
+  }
+}

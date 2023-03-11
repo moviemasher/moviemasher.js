@@ -20,10 +20,6 @@
     "lint-verbose": "eslint --quiet --no-ignore src/**/*.[jt]s",
     "lint": "eslint src/**/*.ts"
   },
-  "dependencies": {
-    "canvas": "^2.11.0",
-    "puppeteer": "^19.4.1"
-  },
   "devDependencies": {
     "@types/css-font-loading-module": "^0.0.7",
     "@types/node": "18.13.0",

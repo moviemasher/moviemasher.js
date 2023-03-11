@@ -1,12 +1,10 @@
-import typescript from "rollup-plugin-ts"
-import terser from '@rollup/plugin-terser'
+import path from 'path'
+import commonjs from '@rollup/plugin-commonjs'
 import json from "@rollup/plugin-json"
 import nodeResolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
-import commonjs from '@rollup/plugin-commonjs'
-import path from 'path'
-import svg from 'rollup-plugin-svg-import'
-
+import terser from '@rollup/plugin-terser'
+import typescript from "rollup-plugin-ts"
 
 export const rollupConfigurations = (args) => {
   const { 
@@ -15,7 +13,7 @@ export const rollupConfigurations = (args) => {
     input, output, extension = 'ts'
   } = args
   
-  const { LIB_ONLY } = process.env
+  const { BUILD_ONLY } = process.env
  
   const src = input || `index.${extension}`
   const internalPrefixes = ['.', '/', 'src/', 'react-icons/']
@@ -41,7 +39,6 @@ export const rollupConfigurations = (args) => {
     }
   }
   const sharedPlugins = [
-    svg(),
     nodeResolve(), 
     replace({
       preventAssignment: true,
@@ -60,8 +57,9 @@ export const rollupConfigurations = (args) => {
     declaration: false, declarationMap: false,
     lib: ["DOM", "ESNext", "ES2022"],
     // "isolatedModules": true,
+    allowJs: extension === 'js',
     module: "ESNext",
-    jsx: "react-jsx",
+    jsx: "react",
   }
   const sharedOutput = { 
     interop: 'auto', 
@@ -79,7 +77,6 @@ export const rollupConfigurations = (args) => {
   }
   const configurations = []
 
-
   Object.entries(formats).forEach(([format, outputExtension]) => {
     let dir = output || format
     if (!dir.includes('/')) {
@@ -89,33 +86,30 @@ export const rollupConfigurations = (args) => {
     }
     const isModule = format === 'esm'
     
-    if (!(isModule && LIB_ONLY)) {
+    if (!(isModule && (BUILD_ONLY === 'esm'))) {
       const plugins = [...sharedPlugins]
-      if (extension !== 'js') {
-        const declaration = isModule && !output
-        plugins.push(
-          typescript({ 
-            tsconfig: { 
-              ...sharedTsconfig, declarationMap: declaration, declaration 
-            } 
-          })
-        )
-      }
+      const declaration = isModule && !output
+      plugins.push(
+        typescript({ 
+          tsconfig: { 
+            ...sharedTsconfig, declarationMap: declaration, declaration 
+          } 
+        })
+      )
       configurations.push({
         ...sharedConfiguration, plugins,
         output: { ...sharedOutput, format, file: `${dir}.${outputExtension}` }      
       })
     }
-    if (format === 'umd' && !LIB_ONLY) {
+    if (format === 'umd' && !(BUILD_ONLY === 'esm')) {
         const umdPlugins = [...sharedPlugins]
-        if (extension !== 'js') {
-          umdPlugins.push(typescript({ tsconfig: sharedTsconfig }))
-        }
+        umdPlugins.push(typescript({ tsconfig: sharedTsconfig }))
         umdPlugins.push(terser())
-
         configurations.push({
         ...sharedConfiguration,
-        output: { ...sharedOutput, format, file: `${dir}.min.${outputExtension}`,  },
+        output: { 
+          ...sharedOutput, format, file: `${dir}.min.${outputExtension}` 
+        },
         plugins: umdPlugins, 
       })
     }
