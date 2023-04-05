@@ -1,4 +1,4 @@
-import { Plugin, ThemeType } from '../Plugin'
+import type {Plugin, ThemeType } from '../Plugin.js'
 
 export type Theme = string 
 

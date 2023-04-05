@@ -1,10 +1,10 @@
-import { DotChar, IdPrefix } from "../../../Setup/Constants"
-import { assertMediaType, MediaType, isMediaType } from "../../../Setup/MediaType"
-import { assertPopulatedString, isArray } from "../../../Utility/Is"
-import { Media, MediaObject, MediaObjects, MediaArray } from "../../Media"
-import { mediaDefinition } from "../../MediaFactory"
-import { MediaDefaults } from "../../MediaDefaults"
-import { assertMedia, assertMediaObject } from "../../MediaFunctions"
+import {DotChar, IdPrefix} from '../../../Setup/Constants.js'
+import {assertMediaType, MediaType, isMediaType} from '../../../Setup/MediaType.js'
+import {assertPopulatedString, isArray} from '../../../Utility/Is.js'
+import {Media, MediaObject, MediaObjects, MediaArray} from '../../Media.js'
+import {mediaDefinition} from '../../MediaFactory.js'
+import {MediaDefaults} from '../../MediaDefaults.js'
+import {assertMedia, assertMediaObject} from '../../MediaFunctions.js'
 
 const counters = {
   count: 0
@@ -47,7 +47,7 @@ export class MediaCollection {
     const { type, id } = media
     const mediaArray = this.byType(type)
     const index = mediaArray.findIndex(media => id === media.id)
-    // console.log(this.constructor.name, this.id, "definitionDelete", type, id, index)
+    // console.log(this.constructor.name, this.id, 'definitionDelete', type, id, index)
     if (index < 0) return
 
     mediaArray.splice(index, 1)
@@ -85,7 +85,7 @@ export class MediaCollection {
     const mediaArray = isArray(media) ? media : [media]
     return mediaArray.map(media => {
         const { type, id } = media
-      // console.log(this.constructor.name, this.id, "install", media.label)
+      // console.log(this.constructor.name, this.id, 'install', media.label)
 
       if (this.installed(id) || this.predefined(id)) return this.fromId(id)
       
@@ -113,7 +113,7 @@ export class MediaCollection {
     const penultimate = bits.slice(-2)
     const type = penultimate.shift()
     const is = isMediaType(type) ? type : undefined
-    if (!is) console.log(this.constructor.name, this.id, "mediaTypeFromId", id, type, bits, penultimate)
+    if (!is) console.log(this.constructor.name, this.id, 'mediaTypeFromId', id, type, bits, penultimate)
     return is
   }
 
@@ -128,14 +128,14 @@ export class MediaCollection {
   }
 
   undefineAll() {
-    // console.log(this.constructor.name, this.id, "undefineAll")
+    // console.log(this.constructor.name, this.id, 'undefineAll')
     // TODO: be more graceful - tell definitions they are being destroyed...
     this.byId = new Map<string, Media>()
     this.mediaArraysByType = new Map<MediaType, MediaArray>()
   }
 
   updateDefinition(oldDefinition: Media, newDefinition: Media): Media {
-    // console.log(this.constructor.name, this.id, "updateDefinition", oldDefinition.type, oldDefinition.id, "->", newDefinition.type, newDefinition.id)
+    // console.log(this.constructor.name, this.id, 'updateDefinition', oldDefinition.type, oldDefinition.id, '->', newDefinition.type, newDefinition.id)
 
     this.uninstall(oldDefinition)
     this.install(newDefinition)
@@ -143,7 +143,7 @@ export class MediaCollection {
   }
 
   updateDefinitionId(oldId: string, newId: string) {
-    // console.log(this.constructor.name, this.id, "updateDefinitionId", oldId, "->", newId)
+    // console.log(this.constructor.name, this.id, 'updateDefinitionId', oldId, '->', newId)
 
     const media = this.byId.get(oldId)
     assertMedia(media, 'media')

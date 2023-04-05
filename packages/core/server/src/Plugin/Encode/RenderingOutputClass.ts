@@ -8,14 +8,12 @@ import {
   EncodingType, timeFromArgs, timeRangeFromTimes,
   
   RenderingCommandOutput,
-  VideoType,
-  FontType,
-  AudioType,
-  ImageType,
-  SequenceType,
+  TypeVideo,
+  TypeAudio,
+  TypeImage,
   errorThrow,
   ErrorName
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { CommandDescription, RenderingDescription, RenderingOutput, RenderingOutputArgs, RenderingResult } from "./Encode"
 import { FilterGraphsOptions } from "./FilterGraphs/FilterGraphs"
 import { filterGraphsArgs, filterGraphsInstance } from "./FilterGraphs/FilterGraphsFactory"
@@ -39,11 +37,11 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get avType() { 
     switch (this.outputType) {
-      case AudioType: return AVType.Audio
+      case TypeAudio: return AVType.Audio
       // case FontType:
       // case SequenceType: 
-      case ImageType: return AVType.Video
-      case VideoType: return AVType.Both 
+      case TypeImage: return AVType.Video
+      case TypeVideo: return AVType.Both 
     }
   }
 
@@ -67,7 +65,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
 
   get duration(): number { 
-    if (this.outputType === ImageType) return 0
+    if (this.outputType === TypeImage) return 0
     
     return this.timeRange.lengthSeconds 
   }
@@ -86,7 +84,7 @@ export class RenderingOutputClass implements RenderingOutput {
   }
 
   get endTime(): Time | undefined {
-    if (this.outputType === ImageType) return 
+    if (this.outputType === TypeImage) return 
 
     return this.args.endTime || this.args.mash.endTime
   }
@@ -194,7 +192,7 @@ export class RenderingOutputClass implements RenderingOutput {
   get startTime(): Time {
     const { mash, startTime } = this.args
     const { quantize, frame, frames } = mash
-    if (this.outputType === ImageType) {
+    if (this.outputType === TypeImage) {
       if (frames < 0) return timeFromArgs(0, quantize)
 
       return mash.timeRange.positionTime(0, 'ceil')
@@ -207,7 +205,7 @@ export class RenderingOutputClass implements RenderingOutput {
 
   get timeRange(): Time { 
     const { startTime } = this
-    if (this.outputType === ImageType) return startTime
+    if (this.outputType === TypeImage) return startTime
 
     return timeRangeFromTimes(startTime, this.endTime) 
   }

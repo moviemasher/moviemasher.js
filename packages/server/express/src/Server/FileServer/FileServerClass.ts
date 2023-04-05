@@ -7,7 +7,7 @@ import {
   ApiCallback, UploadDescription, Endpoints, EncodingTypes, assertAboveZero,
   FileStoreRequest, FileStoreResponse, JsonRecord, LoadType, 
   assertPopulatedString, ErrorName, errorName, errorObjectCaught, errorObject,
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { HostServers } from "../../Host/Host"
 import { ExpressHandler } from "../Server"

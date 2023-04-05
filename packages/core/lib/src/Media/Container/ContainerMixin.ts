@@ -1,31 +1,36 @@
-import { ClientVideo } from "../../Helpers/ClientMedia/ClientMedia"
-import { PreviewItems, SvgItem, SvgItems } from "../../Helpers/Svg/Svg"
-import { Rect, rectsEqual, RectTuple } from "../../Utility/Rect"
-import { Size, sizeCopy } from "../../Utility/Size"
-import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { Anchors, DataType, DirectionObject, Directions, VideoType, ImageType, SequenceType } from "../../Setup/Enums"
-import { MediaType } from "../../Setup/MediaType"
-import { assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isDefiniteError, isTimeRange } from "../../Utility/Is"
-import { Container, ContainerClass, ContainerDefinition, ContainerRectArgs } from "./Container"
-import { DefaultContainerId } from "./ContainerConstants"
-import { arrayLast } from "../../Utility/Array"
-import { filterFromId } from "../../Plugin/Filter/FilterFactory"
-import { svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement } from "../../Helpers/Svg/SvgFunctions"
-import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Tweening, tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect } from "../../Utility/Tween"
-import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { idGenerateString } from "../../Utility/Id"
-import { assertClientImage, isClientVideo } from "../../Helpers/ClientMedia/ClientMediaFunctions"
-import { colorWhite } from "../../Helpers/Color/ColorConstants"
-import { Content } from "../Content/Content"
-import { NamespaceSvg, SemicolonChar } from "../../Setup/Constants"
-import { pointCopy } from "../../Utility/Point"
-import { assertVideoMedia } from "../Video/Video"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { requestImagePromise } from "../../Helpers/Request/RequestFunctions"
+import type {ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
+import type {Container, ContainerClass, ContainerDefinition, ContainerRectArgs} from './Container.js'
+import type {Content} from '../Content/Content.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {PreviewItems, SvgItem, SvgItems} from '../../Helpers/Svg/Svg.js'
+import type {Rect, RectTuple} from '../../Utility/Rect.js'
+import type {Size} from '../../Utility/Size.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+import type {TweenableClass} from '../../Mixin/Tweenable/Tweenable.js'
+import type {Tweening} from '../../Mixin/Tweenable/Tween.js'
+
+import {Component} from '../../Base/Code.js'
+import { rectsEqual} from '../../Utility/Rect.js'
+import { sizeCopy} from '../../Utility/Size.js'
+import { tweenMaxSize, tweenOverRect, tweenRectsLock, tweenScaleSizeRatioLock, tweenScaleSizeToRect} from '../../Mixin/Tweenable/Tween.js'
+import {Anchors, DataType, DirectionObject, Directions, TypeVideo, TypeImage, TypeSequence} from '../../Setup/Enums.js'
+import {arrayLast} from '../../Utility/Array.js'
+import {assertClientImage, isClientVideo} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
+import {assertObject, assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isBelowOne, isDefined, isDefiniteError, isTimeRange} from '../../Utility/Is.js'
+import {assertVideoMedia} from '../Video/Video.js'
+import {colorWhite} from '../../Helpers/Color/ColorConstants.js'
+import {DataGroup, propertyInstance} from '../../Setup/Property.js'
+import {DefaultContainerId} from './ContainerConstants.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
+import {idGenerateString} from '../../Utility/Id.js'
+import {NamespaceSvg, SemicolonChar} from '../../Setup/Constants.js'
+import {pointCopy} from '../../Utility/Point.js'
+import {PropertyTweenSuffix} from '../../Base/Propertied.js'
+import {requestImagePromise} from '../../Helpers/Request/RequestFunctions.js'
+import {svgAddClass, svgAppend, svgDefsElement, svgSvgElement, svgFilterElement, svgGroupElement, svgMaskElement, svgPolygonElement, svgSet, svgSetChildren, svgSetDimensions, svgUrl, svgUseElement} from '../../Helpers/Svg/SvgFunctions.js'
+import { TranscodingTypes } from '../../Plugin/Transcode/Transcoding/Transcoding.js'
 
 
 export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClass & T {
@@ -83,18 +88,18 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     
     private stylesSrcPromise(zeroRect: Rect, definitionTime: Time): Promise<string> {
       const { type, definition } = this
-      const types: MediaType[] = []
-      if (type === ImageType) types.push(type)
-      else types.push(SequenceType, VideoType)
+      const types: TranscodingTypes = []
+      if (type === TypeImage) types.push(type)
+      else types.push(TypeSequence, TypeVideo)
       const transcoding = definition.preferredTranscoding(...types)
       const { type: transcodingType } = transcoding
-      if (transcodingType === SequenceType) {
+      if (transcodingType === TypeSequence) {
         assertVideoMedia(definition)
         return definition.loadedImagePromise(definitionTime, sizeCopy(zeroRect)).then(image => (
           image.src
         ))
       }
-      const imageTranscoding = definition.preferredTranscoding(ImageType)
+      const imageTranscoding = definition.preferredTranscoding(TypeImage)
       const { request } = imageTranscoding
 
       return requestImagePromise(request).then(orError => {
@@ -245,7 +250,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       const commandFilters: CommandFilters = []
       const { contentColors, filterInput: input } = args
       let filterInput = input
-      // console.log(this.constructor.name, "containerCommandFilters", filterInput)
+      // console.log(this.constructor.name, 'containerCommandFilters', filterInput)
       
       assertPopulatedString(filterInput, 'filterInput')
 
@@ -276,7 +281,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
     }
 
     containerRects(args: ContainerRectArgs, inRect: Rect): RectTuple {
-      // console.log(this.constructor.name, "containerRects", inRect, args)
+      // console.log(this.constructor.name, 'containerRects', inRect, args)
       const { size, time, timeRange } = args
       const { lock } = this
       const tweenRects = this.tweenRects(time, timeRange)
@@ -288,13 +293,13 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
       
       const [scale, scaleEnd] = locked 
       const forcedScale = tweenScaleSizeRatioLock(scale, size, ratio, lock)
-      // console.log(this.constructor.name, "containerRects forcedScale", forcedScale, "= tweenScaleSizeRatioLock(", scale, size, ratio, lock, ")")
+      // console.log(this.constructor.name, 'containerRects forcedScale', forcedScale, '= tweenScaleSizeRatioLock(', scale, size, ratio, lock, ')')
       const { directionObject } = this
       const transformedRect = tweenScaleSizeToRect(size, forcedScale, directionObject)
 
       const tweening = !rectsEqual(scale, scaleEnd)
       if (!tweening) {
-        // console.log(this.constructor.name, "containerRects !tweening", transformedRect, locked)
+        // console.log(this.constructor.name, 'containerRects !tweening', transformedRect, locked)
         return [transformedRect, transformedRect]
       }
 
@@ -311,7 +316,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
   
     private containerSvgFilter(svgItem: SvgItem, outputSize: Size, containerRect: Rect, time: Time, clipTime: TimeRange): SVGFilterElement | undefined {
       const [opacity] = this.tweenValues('opacity', time, clipTime)
-      // console.log(this.constructor.name, "containerSvgFilters", opacity)
+      // console.log(this.constructor.name, 'containerSvgFilters', opacity)
       if (!isBelowOne(opacity)) return 
       
       const { opacityFilter } = this
@@ -353,7 +358,7 @@ export function ContainerMixin<T extends TweenableClass>(Base: T): ContainerClas
         dimensions: outputSize, filterInput, videoRate, duration
       }
       const [opacity, opacityEnd] = this.tweenValues('opacity', time, clipTime)
-      // console.log(this.constructor.name, "opacityCommandFilters", opacity, opacityEnd)
+      // console.log(this.constructor.name, 'opacityCommandFilters', opacity, opacityEnd)
       if (isBelowOne(opacity) || (isDefined(opacityEnd) && isBelowOne(opacityEnd))) {
         const { opacityFilter } = this
         opacityFilter.setValues({ opacity, opacityEnd })

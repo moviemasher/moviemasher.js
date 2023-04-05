@@ -9,7 +9,7 @@ import { PlayerTimeControl } from './PlayerTimeControl'
 import { PlayerProps } from './Player'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 
-import { ClassButton } from '@moviemasher/moviemasher.js'
+import { ClassButton } from '@moviemasher/lib-core'
 import { PlayerTime } from './PlayerTime'
 import { View } from '../../Utilities/View'
 import { SaveControl } from '../Controls/SaveControl'

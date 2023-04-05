@@ -1,4 +1,4 @@
-import { Numbers } from "../../Types/Core"
+import { Numbers } from '../../Types/Core.js'
 
 export interface Time {
   add(time: Time): Time

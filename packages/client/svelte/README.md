@@ -1,3 +1,0 @@
-# Movie Masher Svelte Plugin
-
-The Movie Masher client plugin for Client...

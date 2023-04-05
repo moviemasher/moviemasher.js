@@ -1,16 +1,16 @@
-import { SvgItem } from "../../../Helpers/Svg/Svg"
-import { Rect } from "../../../Utility/Rect"
-import { ColorContent, ColorContentDefinition } from "./ColorContent"
-import { Filter } from "../../../Plugin/Filter/Filter"
-import { ContentMixin } from "../ContentMixin"
-import { filterFromId } from "../../../Plugin/Filter/FilterFactory"
-import { TweenableMixin } from "../../../Mixin/Tweenable/TweenableMixin"
-import { Time, TimeRange } from "../../../Helpers/Time/Time"
-import { DataType } from "../../../Setup/Enums"
-import { DataGroup, propertyInstance } from "../../../Setup/Property"
-import { ColorTuple, Component } from "../../../Base/Code"
-import { assertPopulatedString, isPopulatedString } from "../../../Utility/Is"
-import { MediaInstanceBase } from "../../MediaInstanceBase"
+import { SvgItem } from '../../../Helpers/Svg/Svg.js'
+import { Rect } from '../../../Utility/Rect.js'
+import { ColorContent, ColorContentDefinition } from './ColorContent.js'
+import { Filter } from '../../../Plugin/Filter/Filter.js'
+import { ContentMixin } from '../ContentMixin.js'
+import { filterFromId } from '../../../Plugin/Filter/FilterFactory.js'
+import { TweenableMixin } from '../../../Mixin/Tweenable/TweenableMixin.js'
+import { Time, TimeRange } from '../../../Helpers/Time/Time.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { DataGroup, propertyInstance } from '../../../Setup/Property.js'
+import { ColorTuple, Component } from '../../../Base/Code.js'
+import { assertPopulatedString, isPopulatedString } from '../../../Utility/Is.js'
+import { MediaInstanceBase } from '../../MediaInstanceBase.js'
 
 const ColorContentWithTweenable = TweenableMixin(MediaInstanceBase)
 const ColorContentWithContent = ContentMixin(ColorContentWithTweenable)

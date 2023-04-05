@@ -1,20 +1,20 @@
-import { error, errorPromise, errorThrow } from '../Helpers/Error/ErrorFunctions'
-import { ErrorName } from '../Helpers/Error/ErrorName'
-import { DefaultRequest } from '../Helpers/Request/RequestConstants'
-import { Request } from '../Helpers/Request/Request'
-import { DecodeType, EncodeType, FilterType, MasherType, Plugin, PluginDataOrError, PluginType, ProtocolType, ResolveType, TranscodeType, TranslateType } from './Plugin'
-import { Runtime } from '../Runtime/Runtime'
-import { isBoolean, isDefiniteError, isObject, isPopulatedString } from '../Utility/Is'
-import { DecodePlugin } from './Decode/Decode'
-import { EncodePlugin } from './Encode/Encode'
-import { FilterPlugin } from './Filter/Filter'
-import { MasherPlugin } from './Masher/Masher'
-import { ProtocolPlugin } from './Protocol/Protocol'
-import { TranscodePlugin } from './Transcode/Transcode'
-import { TranslatePlugin } from './Translate/Translate'
-import { endpointUrl, assertEndpoint, urlResolve } from '../Helpers/Endpoint/EndpointFunctions'
-import { ResolvePlugin } from './Resolve/Resolve'
+import type {DecodePlugin} from './Decode/Decode.js'
+import type {EncodePlugin} from './Encode/Encode.js'
+import type {FilterPlugin} from './Filter/Filter.js'
+import type {MasherPlugin} from './Masher/Masher.js'
+import type {Plugin, PluginDataOrError, PluginType, DecodeType, EncodeType, FilterType, MasherType, ProtocolType, ResolveType, ThemeType, TranscodeType} from './Plugin.js'
+import type {ProtocolPlugin} from './Protocol/Protocol.js'
+import type {Request} from '../Helpers/Request/Request.js'
+import type {ResolvePlugin} from './Resolve/Resolve.js'
+import type {ThemePlugin} from './Theme/Theme.js'
+import type {TranscodePlugin} from './Transcode/Transcode.js'
 
+import {DefaultRequest} from '../Helpers/Request/RequestConstants.js'
+import {endpointUrl, assertEndpoint, urlResolve} from '../Helpers/Endpoint/EndpointFunctions.js'
+import {error, errorPromise, errorThrow} from '../Helpers/Error/ErrorFunctions.js'
+import {ErrorName} from '../Helpers/Error/ErrorName.js'
+import {isBoolean, isDefiniteError, isObject, isPopulatedString} from '../Utility/Is.js'
+import {Runtime} from '../Runtime/Runtime.js'
 
 export const isPlugin = (value: any): value is Plugin => {
   return isObject(value) && 'type' in value && isPopulatedString(value.type)
@@ -37,7 +37,7 @@ export function pluginDataOrErrorPromise(id: string, pluginType: MasherType): Pr
 export function pluginDataOrErrorPromise(id: string, pluginType: ProtocolType): Promise<PluginDataOrError<ProtocolPlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: ResolveType): Promise<PluginDataOrError<ResolvePlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: TranscodeType): Promise<PluginDataOrError<TranscodePlugin>>
-export function pluginDataOrErrorPromise(id: string, pluginType: TranslateType): Promise<PluginDataOrError<TranslatePlugin>>
+export function pluginDataOrErrorPromise(id: string, pluginType: ThemeType): Promise<PluginDataOrError<ThemePlugin>>
 export function pluginDataOrErrorPromise(id: string, pluginType: PluginType): Promise<PluginDataOrError> 
 export function pluginDataOrErrorPromise(id: string, pluginType: PluginType): Promise<PluginDataOrError> {
   const plugin = pluginOrVoid(pluginType, id)
@@ -64,7 +64,7 @@ export function pluginDataOrErrorPromise(id: string, pluginType: PluginType): Pr
 export type PluginDataOrErrorPromiseFunction = typeof pluginDataOrErrorPromise
 
 
-export const plugin = (pluginType: PluginType, id: string): Plugin => {
+export const plugin = (id: string, pluginType: PluginType): Plugin => {
   const plugin = pluginOrVoid(pluginType, id)
   assertPlugin(plugin, id)
   
@@ -86,7 +86,7 @@ export function pluginDataOrError(id: string, pluginType: MasherType): PluginDat
 export function pluginDataOrError(id: string, pluginType: ProtocolType): PluginDataOrError<ProtocolPlugin>
 export function pluginDataOrError(id: string, pluginType: ResolveType): PluginDataOrError<ResolvePlugin>
 export function pluginDataOrError(id: string, pluginType: TranscodeType): PluginDataOrError<TranscodePlugin>
-export function pluginDataOrError(id: string, pluginType: TranslateType): PluginDataOrError<TranslatePlugin>
+export function pluginDataOrError(id: string, pluginType: ThemeType): PluginDataOrError<ThemePlugin>
 export function pluginDataOrError(id: string, pluginType: PluginType): PluginDataOrError 
 export function pluginDataOrError(id: string, pluginType: PluginType): PluginDataOrError {
   const data = pluginOrVoid(pluginType, id)

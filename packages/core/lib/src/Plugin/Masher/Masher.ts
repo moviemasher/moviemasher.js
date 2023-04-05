@@ -1,24 +1,26 @@
-import { StringRecord } from "../../Types/Core"
-import { IndexHandler } from "../../Helpers/Select/Select"
-import { PreviewItems } from "../../Helpers/Svg/Svg"
-import { Emitter } from "../../Helpers/Emitter"
-import { AudioStreamType, MasherAction, VideoStreamType } from "../../Setup/Enums"
-import { MashMedia, Movable, MashMediaObject } from "../../Media/Mash/Mash"
-import { Effect } from "../../Media/Effect/Effect"
-import { Track } from "../../Media/Mash/Track/Track"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Action } from "./Actions/Action/Action"
-import { Clip, Clips } from "../../Media/Mash/Track/Clip/Clip"
-import { Actions } from "./Actions/Actions"
-import { EditorSelection } from "./EditorSelection"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { Rect } from "../../Utility/Rect"
-import { Size } from "../../Utility/Size"
-import { Media, MediaObject, MediaObjects, MediaArray } from "../../Media/Media"
-import { MediaCollection } from "../../Media/Mash/MediaCollection/MediaCollection"
-import { MasherType, Plugin } from "../Plugin"
-import { EncodingType, EncodingTypes } from "../Encode/Encoding/Encoding"
+import type { MasherAction, VideoStreamType, AudioStreamType} from '../../Setup/Enums.js'
+import type { MasherType, Plugin} from '../Plugin.js'
+import type {Action} from './Actions/Action/Action.js'
+import type {Clip, Clips} from '../../Media/Mash/Track/Clip/Clip.js'
+import type {EditorSelection} from './EditorSelection/EditorSelection.js'
+import type {Effect} from '../../Media/Effect/Effect.js'
+import type {EncodingType} from '../Encode/Encoding/Encoding.js'
+import type {IndexHandler} from '../../Helpers/Select/Select.js'
+import type {MashMedia, Movable, MashMediaObject} from '../../Media/Mash/Mash.js'
+import type {Media, MediaObject, MediaObjects, MediaArray} from '../../Media/Media.js'
+import type {PreviewItems} from '../../Helpers/Svg/Svg.js'
+import type {Rect} from '../../Utility/Rect.js'
+import type {Size} from '../../Utility/Size.js'
+import type {StringRecord} from '../../Types/Core.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+import type {Track} from '../../Media/Mash/Track/Track.js'
 
+import { TypesEncoding} from '../Encode/Encoding/Encoding.js'
+import {Actions} from './Actions/Actions.js'
+import {Emitter} from '../../Helpers/Emitter.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {MediaCollection} from '../../Media/Mash/MediaCollection/MediaCollection.js'
+import {TypeAudioStream, TypeVideoStream } from '../../Setup/Enums.js'
 
 export interface Masher {
   actions: Actions
@@ -86,7 +88,7 @@ export interface PluginsByMashing extends Record<MashingType, MasherPlugin> {}
 
 export type MashingType = string | EncodingType | VideoStreamType | AudioStreamType
 export type MashingTypes = MashingType[]
-export const MashingTypes: MashingTypes = [...EncodingTypes, VideoStreamType, AudioStreamType]
+export const MashingTypes: MashingTypes = [...TypesEncoding, TypeVideoStream, TypeAudioStream]
 export const isMashingType = (type?: any): type is MashingType => {
   return MashingTypes.includes(type)
 }

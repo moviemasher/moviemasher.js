@@ -1,7 +1,7 @@
 import { 
-  Request, ProtocolPromise, FileProtocol, LoadType, errorPromise, assertEndpoint, 
-  ErrorName, assertPopulatedString, ProtocolType, Runtime 
-} from "@moviemasher/moviemasher.js"
+  Request, ProtocolPromise, ProtocolFile, LoadType, errorPromise, assertEndpoint, 
+  ErrorName, assertPopulatedString, TypeProtocol, Runtime 
+} from "@moviemasher/lib-core"
 
 const promise: ProtocolPromise = (request: Request, type?: LoadType) => {
   if (type) return errorPromise(ErrorName.Type)
@@ -15,6 +15,6 @@ const promise: ProtocolPromise = (request: Request, type?: LoadType) => {
   
 }
 
-Runtime.plugins[ProtocolType][FileProtocol] ||= { 
-  promise, type: ProtocolType, protocol: FileProtocol 
+Runtime.plugins[TypeProtocol][ProtocolFile] ||= { 
+  promise, type: TypeProtocol, protocol: ProtocolFile 
 }

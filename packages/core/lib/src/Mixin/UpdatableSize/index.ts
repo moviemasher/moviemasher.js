@@ -1,3 +1,3 @@
-export * from "./UpdatableSize"
-export * from "./UpdatableSizeMixin"
-export * from "./UpdatableSizeDefinitionMixin"
+export * from './UpdatableSize.js'
+export * from './UpdatableSizeMixin.js'
+export * from './UpdatableSizeDefinitionMixin.js'

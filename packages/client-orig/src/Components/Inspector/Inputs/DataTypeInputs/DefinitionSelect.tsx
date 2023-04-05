@@ -1,5 +1,5 @@
 import React from 'react'
-import { assertTrue, DataType, FontType } from '@moviemasher/moviemasher.js'
+import { assertTrue, DataType, FontType } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'

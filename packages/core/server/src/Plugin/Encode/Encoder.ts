@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import { CommaChar, EncodeOutput, MashAndMediaObject, StringDataOrError, Runtime } from "@moviemasher/moviemasher.js"
+import { CommaChar, EncodeOutput, MashAndMediaObject, StringDataOrError, Runtime } from "@moviemasher/lib-core"
 import { RenderingProcessArgs } from "./RenderingProcess/RenderingProcess"
 import { renderingProcessInstance } from "./RenderingProcess/RenderingProcessFactory"
 import { 

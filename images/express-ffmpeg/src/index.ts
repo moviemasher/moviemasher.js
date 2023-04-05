@@ -1,5 +1,5 @@
 import { jobExtract, JobType } from "@moviemasher/server-core"
-import { JsonRecord, errorObjectCaught, UnknownRecord, Runtime, ColonChar, NumberType } from '@moviemasher/moviemasher.js'
+import { JsonRecord, errorObjectCaught, UnknownRecord, Runtime, ColonChar, NumberType } from '@moviemasher/lib-core'
 import express from 'express'
 import { EnvironmentKeyApiHost, EnvironmentKeyApiPort } from "@moviemasher/server-core"
 

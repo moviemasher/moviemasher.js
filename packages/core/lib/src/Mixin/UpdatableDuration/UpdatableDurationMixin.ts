@@ -1,22 +1,22 @@
-import { Numbers, Scalar, UnknownRecord, ValueRecord } from "../../Types/Core"
-import { StartOptions } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
-import { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from "../../Base/Code"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from "../../Utility/Is"
-import { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from "./UpdatableDuration"
-import { filterFromId } from "../../Plugin/Filter/FilterFactory"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { timeFromArgs, timeFromSeconds } from "../../Helpers/Time/TimeUtilities"
-import { commandFilesInput } from "../../Utility/CommandFiles"
-import { idGenerate } from "../../Utility/Id"
-import { Tweening } from "../../Utility/Tween"
-import { Property } from "../../Setup/Property"
-import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
-import { AudioType } from "../../Setup/Enums"
-import { ContentClass } from "../../Media/Content/Content"
-import { arrayOfNumbers } from "../../Utility/Array"
-import { CommaChar } from "../../Setup/Constants"
+import type { CommandFilter, CommandFilters, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFilterArgs } from '../../Base/Code.js'
+import type { ContentClass } from '../../Media/Content/Content.js'
+import type { Filter } from '../../Plugin/Filter/Filter.js'
+import type { IntrinsicOptions } from '../../Media/Mash/Track/Clip/Clip.js'
+import type { Numbers, Scalar, UnknownRecord, ValueRecord } from '../../Types/Core.js'
+import type { Property } from '../../Setup/Property.js'
+import type { StartOptions } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
+import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import type { Tweening } from '../Tweenable/Tween.js'
+import type { UpdatableDuration, UpdatableDurationClass, UpdatableDurationDefinition, UpdatableDurationObject } from './UpdatableDuration.js'
 
+import { arrayOfNumbers } from '../../Utility/Array.js'
+import { assertAboveZero, assertPopulatedString, isAboveZero, isDefined, isPositive, isString } from '../../Utility/Is.js'
+import { CommaChar } from '../../Setup/Constants.js'
+import { commandFilesInput } from '../../Utility/CommandFiles.js'
+import { filterFromId } from '../../Plugin/Filter/FilterFactory.js'
+import { idGenerate } from '../../Utility/Id.js'
+import { timeFromArgs, timeFromSeconds } from '../../Helpers/Time/TimeUtilities.js'
+import { TypeAudio } from '../../Setup/Enums.js'
 
 export function UpdatableDurationMixin<T extends ContentClass>(Base: T): UpdatableDurationClass & T {
   return class extends Base implements UpdatableDuration {
@@ -70,7 +70,7 @@ export function UpdatableDurationMixin<T extends ContentClass>(Base: T): Updatab
 
       const { definition } = this
       const graphFile: GraphFile = {
-        type: AudioType, file: '', definition, input: true
+        type: TypeAudio, file: '', definition, input: true
       }
       return [graphFile]
     }
@@ -98,7 +98,7 @@ export function UpdatableDurationMixin<T extends ContentClass>(Base: T): Updatab
       } = args
 
       const { id } = this
-      // console.log(this.constructor.name, "initialCommandFilters calling commandFilesInput", id)
+      // console.log(this.constructor.name, 'initialCommandFilters calling commandFilesInput', id)
       let filterInput = commandFilesInput(commandFiles, id, true)
       assertPopulatedString(filterInput, 'filterInput')
     
@@ -169,7 +169,7 @@ export function UpdatableDurationMixin<T extends ContentClass>(Base: T): Updatab
         case 'startTrim':
         case 'endTrim':
         case 'speed':
-          // console.log(this.constructor.name, "setValue", name, value)
+          // console.log(this.constructor.name, 'setValue', name, value)
             
           this.clip.resetTiming(this)
           break

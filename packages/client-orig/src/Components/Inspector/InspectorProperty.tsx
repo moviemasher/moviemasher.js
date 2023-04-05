@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   isDefined, PropertiedChangeHandler, Property, Scalar, Time 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

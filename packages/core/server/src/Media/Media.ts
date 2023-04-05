@@ -1,6 +1,6 @@
 import { 
   isIdentified, errorThrow, Identified, isObject, Output, Request, Requests 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { Input } from "../Types/Core"
 
 export interface MediaEvent {

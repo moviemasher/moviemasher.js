@@ -1,7 +1,7 @@
-import { Scalar, ScalarRecord, UnknownRecord } from "../Types/Core"
-import { propertyTypeCoerce,propertyTypeValid } from "../Helpers/PropertyType"
-import { Property } from "../Setup/Property"
-import { assertObject, assertTrue, isUndefined } from "../Utility/Is"
+import { Scalar, ScalarRecord, UnknownRecord } from '../Types/Core.js'
+import { propertyTypeCoerce,propertyTypeValid } from '../Helpers/PropertyType.js'
+import { Property } from '../Setup/Property.js'
+import { assertObject, assertTrue, isUndefined } from '../Utility/Is.js'
 
 export const PropertyTweenSuffix = 'End'
 
@@ -27,7 +27,7 @@ export class PropertiedClass implements Propertied {
     this.properties.push(...properties)
     properties.forEach(property => {
       this.propertyTweenSetOrDefault(object, property)
-      // console.log(this.constructor.name, "property", property.name, this[property.name])
+      // console.log(this.constructor.name, 'property', property.name, this[property.name])
     })
   }
 
@@ -53,7 +53,7 @@ export class PropertiedClass implements Propertied {
 
     const definedValue = isUndefined(value) ? defaultValue : value
     // if (name === 'contentId' || name === 'containerId') 
-    // console.log(this.constructor.name, "propertySetOrDefault", name, definedValue, object)
+    // console.log(this.constructor.name, 'propertySetOrDefault', name, definedValue, object)
     this.setValue(definedValue, name, property)
   }
 
@@ -80,7 +80,7 @@ export class PropertiedClass implements Propertied {
       return
     }
     const coerced = propertyTypeCoerce(value, type)
-    // console.log(this.constructor.name, "setValue", name, coerced)
+    // console.log(this.constructor.name, 'setValue', name, coerced)
     this[name] = coerced
   }
 

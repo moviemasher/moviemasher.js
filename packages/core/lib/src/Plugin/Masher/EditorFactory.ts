@@ -1,9 +1,8 @@
-import { Default } from "../../Setup/Default"
-import { MasherClass } from "./MasherClass"
-import { Masher, MasherArgs, MasherOptions, MashingTypes, MasherPlugin } from "./Masher"
-import { Runtime } from "../../Runtime"
-import { MasherType } from "../Plugin"
-import { AudioType } from "../../Setup/Enums"
+import {Default} from '../../Setup/Default.js'
+import {MasherClass} from './MasherClass.js'
+import {Masher, MasherArgs, MasherOptions, MashingTypes, MasherPlugin} from './Masher.js'
+import {Runtime} from '../../Runtime/Runtime.js'
+import {TypeMasher} from '../Plugin.js'
 export let editorSingleton: Masher
 export const editorArgs = (options: MasherOptions = {}): MasherArgs => {
   return {
@@ -19,5 +18,5 @@ export const editorArgs = (options: MasherOptions = {}): MasherArgs => {
 const masher = (options: MasherOptions = {}): Masher => {
   return new MasherClass(editorArgs(options))
 }
-const plugin: MasherPlugin = { type: MasherType, masher }
-MashingTypes.forEach(type => Runtime.plugins[MasherType][type] ||= plugin)
+const plugin: MasherPlugin = { type: TypeMasher, masher }
+MashingTypes.forEach(type => Runtime.plugins[TypeMasher][type] ||= plugin)

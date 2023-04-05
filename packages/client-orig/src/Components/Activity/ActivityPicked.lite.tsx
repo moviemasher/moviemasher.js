@@ -1,5 +1,5 @@
 import React from 'react'
-import { Identified } from '@moviemasher/moviemasher.js'
+import { Identified } from '@moviemasher/lib-core'
 
 import { useContext } from "../../Framework/FrameworkFunctions"
 

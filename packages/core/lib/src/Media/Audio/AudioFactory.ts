@@ -1,9 +1,9 @@
-import { AudioMediaClass } from "./AudioMediaClass"
-import { AudioMedia, AudioMediaObject, Audio, AudioObject } from "./Audio"
-import { MediaFactories } from "../MediaFactories"
-import { AudioType } from "../../Setup/Enums"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import type { AudioMedia, AudioMediaObject, Audio, AudioObject } from './Audio.js'
+import { AudioMediaClass } from './AudioMediaClass.js'
+import { MediaFactories } from '../MediaFactories.js'
+import { TypeAudio } from '../../Setup/Enums.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 
 
 export const audioDefinition = (object : AudioMediaObject) : AudioMedia => {
@@ -28,4 +28,4 @@ export const audioFromId = (id : string) : Audio => {
   return audioInstance({ id })
 }
 
-MediaFactories[AudioType] = audioDefinition
+MediaFactories[TypeAudio] = audioDefinition

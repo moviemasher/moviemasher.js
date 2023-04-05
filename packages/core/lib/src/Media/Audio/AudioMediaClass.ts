@@ -1,14 +1,14 @@
-import { AudioType } from "../../Setup/Enums"
-import { AudioClass } from "./AudioClass"
-import { Audio, AudioMedia, AudioObject } from "./Audio"
-import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
-import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
-import { MediaBase } from "../MediaBase"
-import { PreloadArgs } from "../../Base/Code"
-import { requestAudioPromise } from "../../Helpers/Request/RequestFunctions"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isDefiniteError } from "../../Utility/Is"
+import type { PreloadArgs } from '../../Base/Code.js'
+import type { Audio, AudioMedia, AudioObject } from './Audio.js'
+import { TypeAudio } from '../../Setup/Enums.js'
+import {AudioClass} from './AudioClass.js'
+import {UpdatableDurationDefinitionMixin} from '../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin.js'
+import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
+import {ContentDefinitionMixin} from '../Content/ContentDefinitionMixin.js'
+import {MediaBase} from '../MediaBase.js'
+import {requestAudioPromise} from '../../Helpers/Request/RequestFunctions.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {isDefiniteError} from '../../Utility/Is.js'
 
 
 const AudioMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
@@ -27,7 +27,7 @@ export class AudioMediaClass extends AudioMediaWithUpdatableDuration implements 
     if (loadedAudio) return Promise.resolve()
 
 
-    const transcoding = editing ? this.preferredTranscoding(AudioType) : this
+    const transcoding = editing ? this.preferredTranscoding(TypeAudio) : this
     
     const { request } = transcoding
     return requestAudioPromise(request).then(orError => {
@@ -38,5 +38,5 @@ export class AudioMediaClass extends AudioMediaWithUpdatableDuration implements 
     })
   }
 
-  type = AudioType 
+  type = TypeAudio 
 }

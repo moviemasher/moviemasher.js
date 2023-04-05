@@ -1,25 +1,25 @@
-import { UnknownRecord } from "../../Types/Core"
-import { PreviewItems } from "../../Helpers/Svg/Svg"
-import { AVType, MashType } from "../../Setup/Enums"
-import { Time, Times } from "../../Helpers/Time/Time"
-import { Clip, Clips } from "./Track/Clip/Clip"
-import { TimeRange } from "../../Helpers/Time/Time"
-import { Track, TrackObject } from "./Track/Track"
-import { isArray, isObject } from "../../Utility/Is"
+import { UnknownRecord } from '../../Types/Core.js'
+import { PreviewItems } from '../../Helpers/Svg/Svg.js'
+import { AVType, MashType } from '../../Setup/Enums.js'
+import { Time, Times } from '../../Helpers/Time/Time.js'
+import { Clip, Clips } from './Track/Clip/Clip.js'
+import { TimeRange } from '../../Helpers/Time/Time.js'
+import { Track, TrackObject } from './Track/Track.js'
+import { isArray, isObject } from '../../Utility/Is.js'
 
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { Request } from "../../Helpers/Request/Request"
-import { Propertied } from "../../Base/Propertied"
-import { Effect } from "../Effect/Effect"
-import { Media, MediaObject, MediaObjects } from "../Media"
-import { EncodingObjects, Encodings } from "../../Plugin/Encode/Encoding/Encoding"
-import { Size } from "../../Utility/Size"
-import { PreloadOptions } from "../../Base/Code"
-import { Emitter } from "../../Helpers/Emitter"
-import { MediaCollection } from "./MediaCollection/MediaCollection"
-import { Masher, MashingType } from "../../Plugin/Masher/Masher"
-import { Selectable } from "../../Plugin/Masher/Selectable"
-import { AudioPreview } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { Request } from '../../Helpers/Request/Request.js'
+import { Propertied } from '../../Base/Propertied.js'
+import { Effect } from '../Effect/Effect.js'
+import { Media, MediaObject, MediaObjects } from '../Media.js'
+import { EncodingObjects, Encodings } from '../../Plugin/Encode/Encoding/Encoding.js'
+import { Size } from '../../Utility/Size.js'
+import { PreloadOptions } from '../../Base/Code.js'
+import { Emitter } from '../../Helpers/Emitter.js'
+import { MediaCollection } from './MediaCollection/MediaCollection.js'
+import { Masher, MashingType } from '../../Plugin/Masher/Masher.js'
+import { Selectable } from '../../Plugin/Masher/Selectable.js'
+import { AudioPreview } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
 
 export type Movable = Effect 
 export type Movables = Movable[]
@@ -56,7 +56,7 @@ export interface MashAndMediaObject extends MashMediaObject {
   media: MediaObjects
 }
 export const isMashAndMediaObject = (value: any): value is MashAndMediaObject => {
-  return isObject(value) && "media" in value && isArray(value.media)
+  return isObject(value) && 'media' in value && isArray(value.media)
 }
 
 /**
@@ -108,8 +108,8 @@ export interface MashMedia extends Media, Selectable {
   type: MashType
 }
 export const isMashMedia = (value: any): value is MashMedia => {
-  return isObject(value) && "composition" in value
+  return isObject(value) && 'composition' in value
 }
 export function assertMashMedia(value: any, name?: string): asserts value is MashMedia {
-  if (!isMashMedia(value)) errorThrow(value, "MashMedia", name)
+  if (!isMashMedia(value)) errorThrow(value, 'MashMedia', name)
 }

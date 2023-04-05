@@ -1,11 +1,11 @@
-import { Constrained } from "../../Base/Constrained"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { Rect, RectTuple } from "../../Utility/Rect"
-import { Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../../Mixin/Tweenable/Tweenable"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, Component, VisibleCommandFileArgs } from "../../Base/Code"
-import { EffectObject, Effects } from "../Effect/Effect"
-import { Size } from "../../Utility/Size"
+import { Constrained } from '../../Base/Constrained.js'
+import { SvgItem } from '../../Helpers/Svg/Svg.js'
+import { Rect, RectTuple } from '../../Utility/Rect.js'
+import { Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from '../../Mixin/Tweenable/Tweenable.js'
+import { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, Component, VisibleCommandFileArgs } from '../../Base/Code.js'
+import { EffectObject, Effects } from '../Effect/Effect.js'
+import { Size } from '../../Utility/Size.js'
 
 export interface ContentObject extends TweenableObject {
   effects?: EffectObject[]

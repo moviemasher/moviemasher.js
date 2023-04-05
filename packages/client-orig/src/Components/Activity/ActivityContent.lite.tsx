@@ -10,13 +10,12 @@ import { CollapseContext } from "../Collapse/CollapseContext"
 import { useContext } from "../../Framework/FrameworkFunctions"
 import { ActivityItem } from "./ActivityItem"
 import { CollapseControl } from "../Collapse/CollapseControl"
-import { NotCollapsed } from "../Collapse/NotCollapsed"
-import { Collapsed } from "../Collapse/Collapsed"
 import { ActivityLabel } from "./ActivityLabel"
 import ActivityPicked from "./ActivityPicked.lite"
 import { ActivityProgress } from "./ActivityProgress"
 import { MasherContext } from "../Masher/MasherContext"
 import Show from "../../Framework/Show/Show.lite"
+import { IconCollapse, IconCollapsed, IconComplete, IconError, themeIcon } from "@moviemasher/client-core"
 
 export interface ActivityContentProps extends WithClassName, PropsWithoutChild {}
 
@@ -34,14 +33,14 @@ export function ActivityContent(props: ActivityContentProps) {
     return <ActivityContentContext.Provider { ...contextProps }>
       <ActivityItem className='item' collapsed={true}>
         <CollapseControl key="collapse-control">
-          <Show when={collapsed} else={icons.collapse}>{icons.collapsed}</Show>
+          <Show when={collapsed} else={themeIcon(IconCollapse)}>{themeIcon(IconCollapsed)}</Show>
         </CollapseControl>
         <ActivityLabel key="label" className="label" />
         <ActivityPicked key="active" id="active">
           <ActivityProgress key="progress" />
         </ActivityPicked>
-        <ActivityPicked key="error" id="error" children={icons.error} />
-        <ActivityPicked key="complete" id="complete" children={icons.complete} />
+        <ActivityPicked key="error" id="error" children={themeIcon(IconError)} />
+        <ActivityPicked key="complete" id="complete" children={themeIcon(IconComplete)} />
       </ActivityItem>
     </ActivityContentContext.Provider>
   })

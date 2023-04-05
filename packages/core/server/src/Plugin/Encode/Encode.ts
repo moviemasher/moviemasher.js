@@ -2,7 +2,7 @@ import {
   AVType, CommandFilters, CommandInputs, errorThrow, GraphFiles, MashMedia, 
   EncodeOutput, MashMediaObject, MediaArray, EncodingType, Time, RenderingCommandOutput, 
   VideoEncoderOptions, DefiniteError, Identified 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { Input } from "../../Types/Core"
 import { isMediaRequest, MediaRequest } from "../../Media/Media"
 

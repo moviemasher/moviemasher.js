@@ -1,25 +1,29 @@
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { Rect, rectFromSize, rectsEqual } from "../../Utility/Rect"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFilterArgs, CommandFilters, Component, FilterCommandFilterArgs, VisibleCommandFilterArgs } from "../../Base/Code"
-import { DataType } from "../../Setup/Enums"
-import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { arrayLast } from "../../Utility/Array"
-import { commandFilesInput } from "../../Utility/CommandFiles"
-import { assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isTimeRange } from "../../Utility/Is"
-import { UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject } from "./UpdatableSize"
-import { Tweening, tweenMaxSize } from "../../Utility/Tween"
-import { colorBlackOpaque, colorTransparent } from "../../Helpers/Color/ColorConstants"
-import { PointZero } from "../../Utility/Point"
-import { ContentClass, ContentRectArgs } from "../../Media/Content/Content"
-import { assertSizeAboveZero, sizeAboveZero } from "../../Utility/Size"
-import { IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
-import { svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
-import { filterFromId } from "../../Plugin/Filter/FilterFactory"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import type {CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, VisibleCommandFilterArgs} from '../../Base/Code.js'
+import type {ContentClass, ContentRectArgs} from '../../Media/Content/Content.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {IntrinsicOptions} from '../../Media/Mash/Track/Clip/Clip.js'
+import type {Rect} from '../../Utility/Rect.js'
+import type {SvgItem} from '../../Helpers/Svg/Svg.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+import type {Tweening} from '../Tweenable/Tween.js'
+import type {UpdatableSize, UpdatableSizeClass, UpdatableSizeDefinition, UpdatableSizeObject} from './UpdatableSize.js'
+import {Component } from '../../Base/Code.js'
+
+import {arrayLast} from '../../Utility/Array.js'
+import {assertPopulatedArray, assertPopulatedString, assertTimeRange, assertTrue, isTimeRange} from '../../Utility/Is.js'
+import {assertSizeAboveZero, sizeAboveZero} from '../../Utility/Size.js'
+import {colorBlackOpaque, colorTransparent} from '../../Helpers/Color/ColorConstants.js'
+import {commandFilesInput} from '../../Utility/CommandFiles.js'
+import {DataGroup, propertyInstance} from '../../Setup/Property.js'
+import {DataType} from '../../Setup/Enums.js'
+import {ErrorName} from '../../Helpers/Error/ErrorName.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
+import {PointZero} from '../../Utility/Point.js'
+import {PropertyTweenSuffix} from '../../Base/Propertied.js'
+import {rectFromSize, rectsEqual} from '../../Utility/Rect.js'
+import {svgSetDimensions} from '../../Helpers/Svg/SvgFunctions.js'
+import {tweenMaxSize} from '../Tweenable/Tween.js'
 
 export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSizeClass & T {
   return class extends Base implements UpdatableSize {
@@ -41,7 +45,7 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
     colorMaximize = true
 
     containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters {
-      // console.log(this.constructor.name, "containerCommandFilters")
+      // console.log(this.constructor.name, 'containerCommandFilters')
       const commandFilters: CommandFilters = []
       const { 
         commandFiles, containerRects, filterInput: input, videoRate, track 
@@ -60,7 +64,7 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
       const colorInput = arrayLast(arrayLast(commandFilters).outputs) 
 
       const { id } = this
-      // console.log(this.constructor.name, "containerCommandFilters calling commandFilesInput", id)
+      // console.log(this.constructor.name, 'containerCommandFilters calling commandFilesInput', id)
       const fileInput = commandFilesInput(commandFiles, id, true)
 
       // then add file input, scaled
@@ -77,10 +81,10 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
       const cropArgs: FilterCommandFilterArgs = { duration: 0, videoRate }
       assertPopulatedString(filterInput, 'crop input')
       const { cropFilter } = this
-      cropFilter.setValue(maxSize.width, "width")
-      cropFilter.setValue(maxSize.height, "height")
-      cropFilter.setValue(0, "x")
-      cropFilter.setValue(0, "y")
+      cropFilter.setValue(maxSize.width, 'width')
+      cropFilter.setValue(maxSize.height, 'height')
+      cropFilter.setValue(0, 'x')
+      cropFilter.setValue(0, 'y')
       commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
       if (!tweening.size) {
@@ -162,17 +166,17 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
         duration, videoRate
       }
       const { cropFilter } = this
-      cropFilter.setValue(maxContainerSize.width, "width")
-      cropFilter.setValue(maxContainerSize.height, "height")
-      cropFilter.setValue(contentRect.x, "x")
-      cropFilter.setValue(contentRect.y, "y")
+      cropFilter.setValue(maxContainerSize.width, 'width')
+      cropFilter.setValue(maxContainerSize.height, 'height')
+      cropFilter.setValue(contentRect.x, 'x')
+      cropFilter.setValue(contentRect.y, 'y')
       cropFilter.setValue(contentRectEnd.x, `x${PropertyTweenSuffix}`)
       cropFilter.setValue(contentRectEnd.y, `y${PropertyTweenSuffix}`)
       commandFilters.push(...cropFilter.commandFilters({ ...cropArgs, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
 
       const { setsarFilter } = this
-      setsarFilter.setValue("1/1", "sar")
+      setsarFilter.setValue('1/1', 'sar')
 
       commandFilters.push(...setsarFilter.commandFilters({ ...cropArgs, filterInput }))
       filterInput = arrayLast(arrayLast(commandFilters).outputs) 
@@ -224,7 +228,7 @@ export function UpdatableSizeMixin<T extends ContentClass>(Base: T): UpdatableSi
       const { [key]: size } = this.definition
       assertSizeAboveZero(size, key)
       const rect = { ...PointZero, ...size } 
-      // console.log(this.constructor.name, "intrinsicRect", editing, rect)
+      // console.log(this.constructor.name, 'intrinsicRect', editing, rect)
       return rect
     }
     

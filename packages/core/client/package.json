@@ -2,10 +2,14 @@
   "name": "@moviemasher/client-core",
   "version": "5.1.2",
   "description": "Movie Masher Core Client - version 5.1.2",
-  "files": ["esm", "umd"],
-  "main": "umd/client-core.js",
-  "module": "esm/client-core.mjs",
-  "types": "esm/client-core.d.mts",
+
+
+  "files": ["esm"],
+  "type": "module",
+  "main": "esm/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -20,13 +24,16 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build": "rollup --config dev/rollup.config.mjs"
+    "script": "run-s",
+    "build": "run-s client package",
+    "client": "rollup --config dev/rollup/client.config.mjs",
+    "package": "rollup --config dev/rollup/package.config.mjs"
   },
-  "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.2"
+  "dependencies": {
+    "@moviemasher/lib-core": "5.1.2"
   },
-  "devDependencies": {
-    "@types/css-font-loading-module": "^0.0.7"
+  "imports": {
+    "#@moviemasher/lib-core/": "@moviemasher/lib-core/esm/"
   },
   "typedoc": {
     "entryPoint": "./src/index.ts",

@@ -1,4 +1,4 @@
-import { ApiRequest, ApiResponse } from "./Api"
+import { ApiRequest, ApiResponse } from './Api.js'
 
 export interface FileStoreRequest extends ApiRequest {
   id?: string

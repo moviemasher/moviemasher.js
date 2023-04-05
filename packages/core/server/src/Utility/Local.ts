@@ -1,10 +1,11 @@
 
 import path from 'path'
+import type { GraphFile, LoadType, PopulatedString } from '@moviemasher/lib-core'
 import { 
-  assertPopulatedString, AudioType, NewlineChar, ErrorName, errorThrow, 
-  FontType, GraphFile, GraphFileType, ImageType, isLoadType, LoadType, 
-  PopulatedString, VideoType, Runtime 
-} from "@moviemasher/moviemasher.js"
+  assertPopulatedString, TypeAudio, NewlineChar, ErrorName, errorThrow, 
+  TypeFont, GraphFileType, TypeImage, isLoadType, 
+  TypeVideo, Runtime 
+} from "@moviemasher/lib-core"
 import { BasenameCache } from '../Setup/Constants'
 import { hashMd5 } from './Hash'
 import { 
@@ -14,10 +15,10 @@ import {
 
 const typeExtension = (type: LoadType): string => {
   switch(type){
-    case FontType: return '.ttf'
-    case ImageType: return '.png'
-    case AudioType: return '.mp3'
-    case VideoType: return '.mp4'
+    case TypeFont: return '.ttf'
+    case TypeImage: return '.png'
+    case TypeAudio: return '.mp3'
+    case TypeVideo: return '.mp4'
     default: return '.json'
   }
 }

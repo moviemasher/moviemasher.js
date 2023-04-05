@@ -1,6 +1,7 @@
-import { StringRecord } from "../../Types/Core"
-import { Endpoint } from "../Endpoint/Endpoint"
-import { errorThrow } from "../Error/ErrorFunctions"
+import type { StringRecord } from '../../Types/Core.js'
+import type { Endpoint } from '../Endpoint/Endpoint.js'
+
+import { errorThrow } from '../Error/ErrorFunctions.js'
 
 export interface Request {
   response?: any | undefined

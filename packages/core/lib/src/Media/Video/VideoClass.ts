@@ -1,29 +1,29 @@
-import { GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs } from "../../Base/Code"
-import { SequenceType, VideoType, AudioType } from "../../Setup/Enums"
-import { Video, VideoMedia } from "./Video"
-import { assertPopulatedString, assertTimeRange, isBoolean, isDefiniteError } from "../../Utility/Is"
-import { UpdatableSizeMixin } from "../../Mixin/UpdatableSize/UpdatableSizeMixin"
+import {GraphFile, PreloadArgs, GraphFiles, ServerPromiseArgs} from '../../Base/Code.js'
+import {TypeSequence, TypeAudio, TypeVideo} from '../../Setup/Enums.js'
+import {Video, VideoMedia} from './Video.js'
+import {assertPopulatedString, assertTimeRange, isBoolean, isDefiniteError} from '../../Utility/Is.js'
+import {UpdatableSizeMixin} from '../../Mixin/UpdatableSize/UpdatableSizeMixin.js'
 
-import { ContentMixin } from "../Content/ContentMixin"
-import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
-import { ClientVideo } from "../../Helpers/ClientMedia/ClientMedia"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { Rect } from "../../Utility/Rect"
-import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { Time, TimeRange, Times } from "../../Helpers/Time/Time"
-import { EmptyFunction, NamespaceSvg } from "../../Setup/Constants"
-import { sizeCopy, sizeCover } from "../../Utility/Size"
-import { svgImagePromiseWithOptions, svgSetDimensions } from "../../Helpers/Svg/SvgFunctions"
-import { ContainerMixin } from "../Container/ContainerMixin"
-import { MediaInstanceBase } from "../MediaInstanceBase"
-import { timeRangeFromTimes } from "../../Helpers/Time/TimeUtilities"
-import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
-import { Requestable } from "../../Base/Requestable/Requestable"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
-import { requestVideoPromise } from "../../Helpers/Request/RequestFunctions"
-import { assertClientVideo } from "../../Helpers/ClientMedia/ClientMediaFunctions"
-import { isRequestable } from "../../Base/Requestable/RequestableFunctions"
+import {ContentMixin} from '../Content/ContentMixin.js'
+import {UpdatableDurationMixin} from '../../Mixin/UpdatableDuration/UpdatableDurationMixin.js'
+import {ClientVideo} from '../../Helpers/ClientMedia/ClientMedia.js'
+import {SvgItem} from '../../Helpers/Svg/Svg.js'
+import {Rect} from '../../Utility/Rect.js'
+import {TweenableMixin} from '../../Mixin/Tweenable/TweenableMixin.js'
+import {Time, TimeRange, Times} from '../../Helpers/Time/Time.js'
+import {EmptyFunction, NamespaceSvg} from '../../Setup/Constants.js'
+import {sizeCopy, sizeCover} from '../../Utility/Size.js'
+import {svgImagePromiseWithOptions, svgSetDimensions} from '../../Helpers/Svg/SvgFunctions.js'
+import {ContainerMixin} from '../Container/ContainerMixin.js'
+import {MediaInstanceBase} from '../MediaInstanceBase.js'
+import {timeRangeFromTimes} from '../../Helpers/Time/TimeUtilities.js'
+import {assertEndpoint, endpointUrl} from '../../Helpers/Endpoint/EndpointFunctions.js'
+import {Requestable} from '../../Base/Requestable/Requestable.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {ErrorName} from '../../Helpers/Error/ErrorName.js'
+import {requestVideoPromise} from '../../Helpers/Request/RequestFunctions.js'
+import {assertClientVideo} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
+import {isRequestable} from '../../Base/Requestable/RequestableFunctions.js'
 
 const VideoWithTweenable = TweenableMixin(MediaInstanceBase)
 
@@ -62,7 +62,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     if (visible) {
       if (!icon) {
         const visibleGraphFile: GraphFile = {
-          input: true, type: VideoType, file, definition
+          input: true, type: TypeVideo, file, definition
         }
         files.push(visibleGraphFile)
       }
@@ -71,7 +71,7 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       const mutable = definition.duration ? this.mutable() : true
       if (mutable && !this.muted) {
         const audioGraphFile: GraphFile = {
-          input: true, type: AudioType, definition,
+          input: true, type: TypeAudio, definition,
           file: '',
         }  
         files.push(audioGraphFile)
@@ -91,14 +91,14 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
       promises.push(definition.preloadAudioPromise)
     }
     if (visible) {
-      const visibleTranscoding = definition.preferredTranscoding(SequenceType, VideoType)
+      const visibleTranscoding = definition.preferredTranscoding(TypeSequence, TypeVideo)
       if (isRequestable(visibleTranscoding) ) {
-        const audibleTranscoding = audio && audible && definition.preferredTranscoding(AudioType, VideoType)
+        const audibleTranscoding = audio && audible && definition.preferredTranscoding(TypeAudio, TypeVideo)
         if (visibleTranscoding !== audibleTranscoding) {
           const { type, request } = visibleTranscoding
           console.log(this.constructor.name, 'loadPromise visibleTranscoding', visibleTranscoding)
  
-          if (type === VideoType) {
+          if (type === TypeVideo) {
             promises.push(requestVideoPromise(request).then(orError => {
               if (isDefiniteError(orError)) return errorThrow(orError.error)
             }))
@@ -170,10 +170,10 @@ export class VideoClass extends VideoWithUpdatableDuration implements Video {
     const { previewTranscoding } = this.definition
     const { type } = previewTranscoding
     switch (type) {
-      case VideoType: {
+      case TypeVideo: {
         return this.videoItemForPlayerPromise(previewTranscoding, rect, definitionTime)
       }
-      case SequenceType: {
+      case TypeSequence: {
         return this.sequenceItemPromise(rect, definitionTime)
       }
     }

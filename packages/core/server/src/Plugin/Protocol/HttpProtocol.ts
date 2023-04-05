@@ -3,15 +3,22 @@ import http from 'http'
 import https from 'https'
 import path from 'path'
 
-import { 
+import type { 
   AudioType, 
   DataOrError, 
-  error, errorCaught, ErrorName, FontType, HttpProtocol, ImageType, 
-  isDefiniteError, isPopulatedString, 
+ ImageType, 
   LoadType, ProtocolDataOrError,
-  ProtocolType, RecordsType, RecordType, Request, requestExtension, 
-  Runtime, TextExtension, urlFilename, VideoType, ClientImage, ClientAudio, ClientFont, ClientVideo, JsonRecord, JsonRecords, StringType, resolveMimetypePromise, isClientMediaType, StringData, pluginPromise, ResolveType, pluginDataOrErrorPromise, endpointFromUrl, requestPromise, requestClientMediaPromise, ClientMedia, assertPopulatedString, HttpsProtocol
-} from "@moviemasher/moviemasher.js"
+  RecordsType, RecordType, Request,  
+  VideoType, ClientImage, ClientAudio, ClientFont, 
+  ClientVideo, JsonRecord, JsonRecords, StringData, FontType, StringType,  
+} from "@moviemasher/lib-core"
+import {
+  TypeFont, TypeString, TypeResolve, TypeProtocol, ProtocolHttp, 
+  error, errorCaught, ErrorName, ProtocolHttps, urlFilename, TextExtension, 
+  isDefiniteError, isPopulatedString, requestExtension, 
+  pluginDataOrErrorPromise, endpointFromUrl, requestPromise, assertPopulatedString,
+  Runtime,
+} from "@moviemasher/lib-core"
 import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment'
 import { requestArgs, requestArgsHash } from '../../Utility/Request'
 
@@ -28,7 +35,7 @@ const filePromise = (request: Request, type: LoadType): Promise<DataOrError<File
   const args = requestArgs(request)
   const { protocol } = args
   assertPopulatedString(protocol)
-  const htt = protocol.startsWith(HttpsProtocol) ? https : http
+  const htt = protocol.startsWith(ProtocolHttps) ? https : http
 
   const hash = requestArgsHash(args)
 
@@ -82,15 +89,15 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
     if (mimeOk && extOk) return { data: file } as StringData
       // file was saved with temporary extension
     if (mimetype) {
-      if (type === FontType) {
-        return pluginDataOrErrorPromise(mimetype, ResolveType).then(onError => {
+      if (type === TypeFont) {
+        return pluginDataOrErrorPromise(mimetype, TypeResolve).then(onError => {
           if (isDefiniteError(onError)) return onError
 
           const resolvePlugin = onError.data
           const url = resolvePlugin.url(file, type)
           if (url) {
             const request: Request = { endpoint: endpointFromUrl(url) }
-            return requestPromise(request, StringType)
+            return requestPromise(request, TypeString)
             // switch (type) {
             //   case AudioType: { const something = requestClientMediaPromise(request, type).then(onError => {
             //     if (isDefiniteError(onError)) return onError
@@ -98,7 +105,7 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
 
             //    return error(ErrorName.Type)
             //   }); break }
-            //   case FontType: { const something = requestClientMediaPromise(request, type); break }
+            //   case TypeFont: { const something = requestClientMediaPromise(request, type); break }
             //   case ImageType: { const something = requestClientMediaPromise(request, type); break }
             //   case VideoType: { const something = requestClientMediaPromise(request, type); break }
             // }
@@ -106,7 +113,7 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
 
           // switch (type) {
           //   case AudioType: return resolvePlugin.promise(file, type)
-          //   case FontType: return resolvePlugin.promise(file, type)
+          //   case TypeFont: return resolvePlugin.promise(file, type)
           //   case ImageType: return resolvePlugin.promise(file, type)
           //   case VideoType: return resolvePlugin.promise(file, type)
           // }
@@ -132,7 +139,7 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
   //     const { ['content-type']: mimeType = '' } = response.headers
 
   //     switch(type) {
-  //       case FontType: return fontPromise()
+  //       case TypeFont: return fontPromise()
         
   //       {
 
@@ -160,5 +167,5 @@ function promise(request: Request, type: LoadType): Promise<ProtocolDataOrError>
   // })
   // return promise
 // }) 
-Runtime.plugins[ProtocolType][HttpProtocol] ||= { promise, type: ProtocolType, protocol: HttpProtocol }
-Runtime.plugins[ProtocolType][HttpsProtocol] ||= { promise, type: ProtocolType, protocol: HttpsProtocol }
+Runtime.plugins[TypeProtocol][ProtocolHttp] ||= { promise, type: TypeProtocol, protocol: ProtocolHttp }
+Runtime.plugins[TypeProtocol][ProtocolHttps] ||= { promise, type: TypeProtocol, protocol: ProtocolHttps }

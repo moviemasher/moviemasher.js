@@ -1,4 +1,4 @@
-import { roundWithMethod } from "@moviemasher/moviemasher.js"
+import { roundWithMethod } from '@moviemasher/lib-core'
 
 export const pixelPerFrame = (frames: number, width: number, zoom = 1): number => {
   if (!(frames && width)) return 0

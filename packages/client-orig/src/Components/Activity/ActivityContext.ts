@@ -1,7 +1,7 @@
 
 import { 
   EmptyFunction, isObject, isPopulatedString, errorThrow, Identified,
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { ActivityInfo } from "@moviemasher/client-core"
 
 import { createContext } from '../../Framework/FrameworkFunctions'

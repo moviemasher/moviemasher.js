@@ -1,18 +1,16 @@
-import { ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
-import { ImageType } from "../../Setup/Enums"
-import { 
-  Container, ContainerObject 
-} from "../Container/Container"
-import { 
-  Content, ContentObject 
-} from "../Content/Content"
-import {
-  isUpdatableSize,
-  UpdatableSize, UpdatableSizeDefinition, UpdatableSizeDefinitionObject, 
-  UpdatableSizeObject
-} from "../../Mixin/UpdatableSize/UpdatableSize"
-import { Media, MediaObject } from "../Media"
-import { isMedia } from "../MediaFunctions"
+import type {ClientImage} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {ImageType} from '../../Setup/Enums.js'
+import type {Media, MediaObject} from '../Media.js'
+import type { Container, ContainerObject } from '../Container/Container.js'
+import type { Content, ContentObject } from '../Content/Content.js'
+import type {
+  UpdatableSizeDefinitionObject, UpdatableSizeObject,
+  UpdatableSize, UpdatableSizeDefinition, 
+} from '../../Mixin/UpdatableSize/UpdatableSize.js'
+
+import { isUpdatableSize } from '../../Mixin/UpdatableSize/UpdatableSize.js'
+import {isMedia} from '../MediaFunctions.js'
+import {TypeImage} from '../../Setup/Enums.js'
 
 export interface ImageObject extends ContentObject, ContainerObject, UpdatableSizeObject {
   definition?: ImageMedia
@@ -39,5 +37,5 @@ export interface ImageMedia extends Media, UpdatableSizeDefinition {
 }
 
 export const isImageMedia = (value: any): value is ImageMedia => {
-  return isMedia(value) && value.type === ImageType
+  return isMedia(value) && value.type === TypeImage
 }

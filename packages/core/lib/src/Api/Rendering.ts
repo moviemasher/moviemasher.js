@@ -1,6 +1,6 @@
-import { RenderingOptions } from "../Plugin/Encode/Encode"
-import { LoadType } from "../Setup/LoadType"
-import { ApiCallback, ApiCallbackResponse, ApiRequest } from "./Api"
+import { RenderingOptions } from '../Plugin/Encode/Encode.js'
+import { LoadType } from '../Setup/LoadType.js'
+import { ApiCallback, ApiCallbackResponse, ApiRequest } from './Api.js'
 
 
 export interface UploadDescription {

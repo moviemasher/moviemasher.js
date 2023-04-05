@@ -1,10 +1,10 @@
 import React from "react"
 
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 
 import { 
   assertSelectorType, ClipType, EventType, isClip, isEffect, isTrack 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { useListeners } from "../../Hooks/useListeners"
 import { useMasher } from "../../Hooks/useMasher"
 import { className } from "@moviemasher/client-core"

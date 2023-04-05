@@ -1,10 +1,10 @@
-import { UnknownRecord } from "../Types/Core"
-import { MediaType } from "../Setup/MediaType"
-import { idGenerateString } from "../Utility/Id"
-import { PropertiedClass } from "../Base/Propertied"
-import { assertPopulatedObject } from "../Utility/Is"
-import { Media, MediaInstance, MediaInstanceObject } from "./Media"
-import { ServerPromiseArgs } from "../Base/Code"
+import { UnknownRecord } from '../Types/Core.js'
+import { MediaType } from '../Setup/MediaType.js'
+import { idGenerateString } from '../Utility/Id.js'
+import { PropertiedClass } from '../Base/Propertied.js'
+import { assertPopulatedObject } from '../Utility/Is.js'
+import { Media, MediaInstance, MediaInstanceObject } from './Media.js'
+import { ServerPromiseArgs } from '../Base/Code.js'
 
 
 export class MediaInstanceBase extends PropertiedClass implements MediaInstance {

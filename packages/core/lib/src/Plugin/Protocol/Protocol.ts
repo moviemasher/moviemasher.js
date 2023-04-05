@@ -1,25 +1,24 @@
-import { 
-  
+import type { 
   DataOrError, ClientImage, ClientAudio, ClientFont, ClientVideo, Data 
-} from "../../Helpers/ClientMedia/ClientMedia"
-import { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from "../../Setup/Enums"
-import { LoadType } from "../../Setup/LoadType"
-import { Request } from "../../Helpers/Request/Request"
-import { Plugin, ProtocolType } from "../Plugin"
-import { JsonRecord, JsonRecords } from "../../Types/Core"
-import { DefiniteError } from "../../Helpers/Error/Error"
-import { StringType } from "../../Utility/Scalar"
+} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from '../../Setup/Enums.js'
+import type {LoadType} from '../../Setup/LoadType.js'
+import type {Request} from '../../Helpers/Request/Request.js'
+import type {Plugin, ProtocolType} from '../Plugin.js'
+import type {JsonRecord, JsonRecords} from '../../Types/Core.js'
+import type {DefiniteError} from '../../Helpers/Error/Error.js'
+import type {StringType} from '../../Utility/Scalar.js'
 
 export type Protocol = string | HttpProtocol | HttpsProtocol | BlobProtocol | FileProtocol
 
-export type HttpProtocol = 'http'
-export const HttpProtocol: HttpProtocol = 'http'
-export type HttpsProtocol = 'https'
-export const HttpsProtocol: HttpsProtocol = 'https'
+export const ProtocolBlob: BlobProtocol = 'blob'
+export const ProtocolFile: FileProtocol = 'file'
+export const ProtocolHttp: HttpProtocol = 'http'
+export const ProtocolHttps: HttpsProtocol = 'https'
 export type BlobProtocol = 'blob'
-export const BlobProtocol: BlobProtocol = 'blob'
 export type FileProtocol = 'file'
-export const FileProtocol: FileProtocol = 'file'
+export type HttpProtocol = 'http'
+export type HttpsProtocol = 'https'
 
 /**
  * @category Plugin

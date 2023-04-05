@@ -1,9 +1,9 @@
 import {
   DecodeOutput, DecodePlugin, EncodingType, isDefiniteError, pluginDataOrErrorPromise
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { 
-  DecodeType, errorThrow, 
-} from "@moviemasher/moviemasher.js"
+  TypeDecode, errorThrow, 
+} from "@moviemasher/lib-core"
 
 import { Input } from "../../Types/Core"
 import { isMediaRequest, MediaRequest } from "../../Media/Media"
@@ -25,7 +25,7 @@ export interface DecodeInput extends Required<Input> {
 
 export const decode = (localPath: string, output: DecodeOutput) => {
   const { type } = output
-  return pluginDataOrErrorPromise(type, DecodeType).then(orError => {
+  return pluginDataOrErrorPromise(type, TypeDecode).then(orError => {
     if (isDefiniteError(orError)) return orError
     const { data: plugin } = orError
     const { decode } = plugin as DecodePlugin

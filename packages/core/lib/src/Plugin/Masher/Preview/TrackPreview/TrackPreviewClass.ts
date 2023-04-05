@@ -1,22 +1,22 @@
-import { Container, ContainerRectArgs } from "../../../../Media/Container/Container"
-import { EventFunction, } from "../../../../Types/Function"
-import { SvgItem, SvgItems } from "../../../../Helpers/Svg/Svg"
-import { Point, pointsEqual, PointZero } from "../../../../Utility/Point"
-import { Rect, rectsEqual } from "../../../../Utility/Rect"
-import { assertSizeAboveZero, Size } from "../../../../Utility/Size"
-import { Clip } from "../../../../Media/Mash/Track/Clip/Clip"
-import { svgAddClass, svgPolygonElement } from "../../../../Helpers/Svg/SvgFunctions"
-import { TrackPreview, TrackPreviewArgs } from "./TrackPreview"
-import { assertTrue } from "../../../../Utility/Is"
-import { ActionType, Anchor, assertDirection, Direction } from "../../../../Setup/Enums"
-import { Masher } from "../../Masher"
-import { Time, TimeRange } from "../../../../Helpers/Time/Time"
-import { tweeningPoints, tweenMinMax } from "../../../../Utility/Tween"
-import { PropertyTweenSuffix } from "../../../../Base/Propertied"
-import { DataGroup } from "../../../../Setup/Property"
-import { ActionOptions } from "../../Actions/Action/Action"
-import { eventStop } from "../../../../Utility/Event"
-import { ScalarRecord } from "../../../../Types/Core"
+import {Container, ContainerRectArgs} from '../../../../Media/Container/Container.js'
+import {EventFunction,} from '../../../../Types/Function.js'
+import {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
+import {Point, pointsEqual, PointZero} from '../../../../Utility/Point.js'
+import {Rect, rectsEqual} from '../../../../Utility/Rect.js'
+import {assertSizeAboveZero, Size} from '../../../../Utility/Size.js'
+import {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
+import {svgAddClass, svgPolygonElement} from '../../../../Helpers/Svg/SvgFunctions.js'
+import {TrackPreview, TrackPreviewArgs} from './TrackPreview.js'
+import {assertTrue} from '../../../../Utility/Is.js'
+import {ActionType, Anchor, assertDirection, Direction} from '../../../../Setup/Enums.js'
+import {Masher} from '../../Masher.js'
+import {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
+import {tweeningPoints, tweenMinMax} from '../../../../Mixin/Tweenable/Tween.js'
+import {PropertyTweenSuffix} from '../../../../Base/Propertied.js'
+import {DataGroup} from '../../../../Setup/Property.js'
+import {ActionOptions} from '../../Actions/Action/Action.js'
+import {eventStop} from '../../../../Utility/Event.js'
+import {ScalarRecord} from '../../../../Types/Core.js'
 
 export const TrackPreviewHandleSize = 8
 
@@ -33,7 +33,7 @@ export class TrackPreviewClass implements TrackPreview {
   get container(): Container { return this.clip.container! }
 
   editingSvgItem(classes: string[], inactive?: boolean): SvgItem {
-    // console.log(this.constructor.name, "editingSvgItem", className)
+    // console.log(this.constructor.name, 'editingSvgItem', className)
     const { container, rect } = this
     const svgItem = container.pathElement(rect)
 
@@ -55,7 +55,7 @@ export class TrackPreviewClass implements TrackPreview {
 
    
     const removeWindowHandlers = () => {
-      // console.log("removeWindowHandlers")
+      // console.log('removeWindowHandlers')
       globalThis.window.removeEventListener('pointermove', pointerMoveStart)
       globalThis.window.removeEventListener('pointermove', pointerMove)
       globalThis.window.removeEventListener('pointerup', pointerUp)
@@ -66,14 +66,14 @@ export class TrackPreviewClass implements TrackPreview {
       eventStop(event)
       removeWindowHandlers()
       // if (editor.dragging) {
-        // console.log("pointerUp unsetting dragging and redrawing")
+        // console.log('pointerUp unsetting dragging and redrawing')
         editor.dragging = false
         editor.redraw()
       // }
     }
 
     const pointerMove = (event: MouseEvent) => {
-      // console.log("pointerMove")
+      // console.log('pointerMove')
       eventStop(event)
 
       const { offE, offN, offS, offW } = container
@@ -127,7 +127,7 @@ export class TrackPreviewClass implements TrackPreview {
     }
 
     const pointerMoveStart = (event: MouseEvent) => {
-      // console.log("pointerMoveStart setting dragging")
+      // console.log('pointerMoveStart setting dragging')
       eventStop(event)
       const { clientX: x, clientY: y } = event
       const nowPoint = { x, y }
@@ -139,13 +139,13 @@ export class TrackPreviewClass implements TrackPreview {
         const closest = time.closest(timeRange)
         if (!time.equalsTime(closest)) {
           removeWindowHandlers()
-          // console.log("pointerMoveStart going to", closest)
+          // console.log('pointerMoveStart going to', closest)
           editor.goToTime(closest)
           return
         }
       }
       // set new move listener, and call it
-      // console.log("pointerMoveStart setting dragging")
+      // console.log('pointerMoveStart setting dragging')
       editor.dragging = true
       globalThis.window.removeEventListener('pointermove', pointerMoveStart)
       globalThis.window.addEventListener('pointermove', pointerMove)
@@ -153,7 +153,7 @@ export class TrackPreviewClass implements TrackPreview {
     }
 
     const pointerDown: EventFunction = event => {
-      // console.log("pointerDown")
+      // console.log('pointerDown')
       eventStop(event)
       // event.stopPropagation()
       if (!(event instanceof PointerEvent)) return 
@@ -221,7 +221,7 @@ export class TrackPreviewClass implements TrackPreview {
       if (inactive) return 
 
       const pointerDown: EventFunction = event => {
-        // console.log("pointerdown", direction)
+        // console.log('pointerdown', direction)
         this.editor.selection.set(this.clip)
         eventStop(event)
       }

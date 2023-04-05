@@ -1,10 +1,14 @@
+import type {
+  ClientAudio, ClientFont, ClientImage, ClientMedia, ResolvePlugin, Request, 
+  DataOrError, ClientVideo,
+  AudioType, FontType, ImageType, 
+  ClientMediaType, VideoType,
+} from '@moviemasher/lib-core'
 import { 
-  AudioType, ClientAudio, ClientFont, ClientImage, ClientMedia, 
-  ClientMediaType, ClientVideo, CssMimetype, DataOrError, 
-  endpointFromUrl, ErrorName, errorPromise, FontType, ImageType, Request, 
-  requestClientMediaPromise, ResolvePlugin, ResolveType, Runtime, urlFromCss, 
-  VideoType 
-} from "@moviemasher/moviemasher.js";
+  CssMimetype, 
+  endpointFromUrl, ErrorName, errorPromise, 
+  requestClientMediaPromise, TypeResolve, Runtime, urlFromCss, TypeFont,  
+} from '@moviemasher/lib-core';
 
 export const PluginResolveTextCss: ResolvePlugin = {
   mimeType: CssMimetype,
@@ -12,11 +16,11 @@ export const PluginResolveTextCss: ResolvePlugin = {
 
   url(file: string, type: ClientMediaType): string {
     switch (type) {
-      case FontType: return urlFromCss(file)
+      case TypeFont: return urlFromCss(file)
     }
     return ''
   },
-  type: ResolveType
+  type: TypeResolve
 }
 
 function promise(file: string, type: AudioType): Promise<DataOrError<ClientAudio>>
@@ -32,4 +36,4 @@ function promise(file: string, type: ClientMediaType): Promise<DataOrError<Clien
   return requestClientMediaPromise(request, type) 
 }
 
-Runtime.plugins[ResolveType][CssMimetype] ||= PluginResolveTextCss
+Runtime.plugins[TypeResolve][CssMimetype] ||= PluginResolveTextCss

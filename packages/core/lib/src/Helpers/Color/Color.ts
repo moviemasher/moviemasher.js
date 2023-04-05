@@ -1,4 +1,4 @@
-import { NumberRecord, Value, ValueRecord } from "../../Types/Core"
+import type { NumberRecord, Value, ValueRecord } from '../../Types/Core.js'
 
 export type Color = Rgb | Rgba
 export type ColorObject = RgbObject | RgbaObject

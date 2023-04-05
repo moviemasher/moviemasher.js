@@ -1,14 +1,14 @@
-import { AVType } from "../Setup/Enums"
-import { Time, TimeRange } from "../Helpers/Time/Time"
-import { Filter, FilterArgs } from "../Plugin/Filter/Filter"
-import { ValueRecord } from "../Types/Core"
-import { Size } from "../Utility/Size"
-import { RectTuple } from "../Utility/Rect"
+import type { LoaderType } from '../Helpers/ClientMedia/ClientMediaFunctions.js'
+import type { Time, TimeRange } from '../Helpers/Time/Time.js'
+import type { Filter, FilterArgs } from '../Plugin/Filter/Filter.js'
+import type { ValueRecord } from '../Types/Core.js'
+import type { Size } from '../Utility/Size.js'
+import type { RectTuple } from '../Utility/Rect.js'
+import type { Media } from '../Media/Media.js'
+import type { Request } from '../Helpers/Request/Request.js'
 
-import { Media } from "../Media/Media"
-import { Request } from "../Helpers/Request/Request"
-import { isObject } from "../Utility/Is"
-import { LoaderType } from "../Helpers/ClientMedia/ClientMediaFunctions"
+import { isObject } from '../Utility/Is.js'
+import { AVType } from '../Setup/Enums.js'
 
 export interface CommandInput {
   source: string

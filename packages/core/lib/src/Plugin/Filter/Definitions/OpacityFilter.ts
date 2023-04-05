@@ -1,16 +1,16 @@
-import { ScalarRecord, ValueRecord } from "../../../Types/Core"
-import { SvgFilters } from "../../../Helpers/Svg/Svg"
-import { NamespaceSvg } from "../../../Setup/Constants"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { assertNumber, assertPopulatedString, isNumber } from "../../../Utility/Is"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { idGenerate } from "../../../Utility/Id"
-import { tweenPosition } from "../../../Utility/Tween"
-import { svgFilterElement, svgSet } from "../../../Helpers/Svg/SvgFunctions"
-import { FilterDefinitionObject } from "../Filter"
+import { ScalarRecord, ValueRecord } from '../../../Types/Core.js'
+import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
+import { NamespaceSvg } from '../../../Setup/Constants.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { assertNumber, assertPopulatedString, isNumber } from '../../../Utility/Is.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { svgSet } from '../../../Helpers/Svg/SvgFunctions.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 export class OpacityFilter extends FilterDefinitionClass {
   constructor(object: FilterDefinitionObject) {
@@ -67,7 +67,7 @@ export class OpacityFilter extends FilterDefinitionClass {
     const filterElement = globalThis.document.createElementNS(NamespaceSvg, 'feColorMatrix')
     filterElement.setAttribute('type', 'matrix')
     const values = `1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 ${opacity} 0`
-    // console.log(this.constructor.name, "filterDefinitionSvgFilters", values)
+    // console.log(this.constructor.name, 'filterDefinitionSvgFilters', values)
     svgSet(filterElement, values, 'values')
 
 

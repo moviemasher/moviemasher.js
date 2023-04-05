@@ -1,5 +1,5 @@
-import { Decoding, DecodingObject } from "./Decoding"
-import { DecodingClass } from "./DecodingClass"
+import {Decoding, DecodingObject} from './Decoding.js'
+import {DecodingClass} from './DecodingClass.js'
 
 export const decodingInstance = (object: DecodingObject): Decoding => {
   return new DecodingClass(object)

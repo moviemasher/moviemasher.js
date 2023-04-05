@@ -4,7 +4,7 @@ import EventEmitter from "events"
 
 import {
   assertPopulatedString, isPopulatedString, errorThrow, ErrorName
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { commandArgsString } from "../Utility/Command"
 import { Command } from "../Command/Command"

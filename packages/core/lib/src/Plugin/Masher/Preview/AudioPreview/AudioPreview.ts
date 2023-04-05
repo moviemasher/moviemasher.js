@@ -1,5 +1,5 @@
-import { Time } from "../../../../Helpers/Time/Time"
-import { Clip } from "../../../../Media/Mash/Track/Clip/Clip"
+import { Time } from '../../../../Helpers/Time/Time.js'
+import { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
 
 export interface AudioPreview {
   adjustClipGain(clip: Clip, quantize: number): void

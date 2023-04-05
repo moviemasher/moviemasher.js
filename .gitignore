@@ -8,4 +8,6 @@ temporary*
 **/umd/*
 **/iife/*
 **/esm/*
+**/dist/*
 **/*-deleted/*
+*.tsbuildinfo

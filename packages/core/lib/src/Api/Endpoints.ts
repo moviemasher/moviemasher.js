@@ -1,6 +1,6 @@
-import { StringRecord } from "../Types/Core"
-import { ServerType } from "../Setup/Enums"
-import { isObject, isString } from "../Utility/Is"
+import { StringRecord } from '../Types/Core.js'
+import { ServerType } from '../Setup/Enums.js'
+import { isObject, isString } from '../Utility/Is.js'
 
 const EndpointsApi: StringRecord = {
   servers: '',

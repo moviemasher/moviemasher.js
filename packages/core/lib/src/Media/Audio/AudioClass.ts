@@ -1,14 +1,14 @@
-import { AudioMedia, Audio } from "./Audio"
-import { UpdatableDurationMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationMixin"
-import { ContentMixin } from "../Content/ContentMixin"
-import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { Rect } from "../../Utility/Rect"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { svgPolygonElement } from "../../Helpers/Svg/SvgFunctions"
-import { MediaInstanceBase } from "../MediaInstanceBase"
-import { Component } from "../../Base/Code"
+import type { AudioMedia, Audio } from './Audio.js'
+import type { Rect } from '../../Utility/Rect.js'
+import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import type { SvgItem } from '../../Helpers/Svg/Svg.js'
+import type { Component } from '../../Base/Code.js'
 
+import { svgPolygonElement } from '../../Helpers/Svg/SvgFunctions.js'
+import { MediaInstanceBase } from '../MediaInstanceBase.js'
+import { UpdatableDurationMixin } from '../../Mixin/UpdatableDuration/UpdatableDurationMixin.js'
+import { ContentMixin } from '../Content/ContentMixin.js'
+import { TweenableMixin } from '../../Mixin/Tweenable/TweenableMixin.js'
 
 const AudioWithTweenable = TweenableMixin(MediaInstanceBase)
 const AudioWithContent = ContentMixin(AudioWithTweenable)

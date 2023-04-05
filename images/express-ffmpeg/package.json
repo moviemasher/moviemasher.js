@@ -2,7 +2,7 @@
   "name": "@moviemasher/express-ffmpeg",
   "version": "5.1.2",
   "description": "Movie Masher Express FFmpeg - version 5.1.2",
-  "main": "esm/express-ffmpeg.js",
+  "main": "dist/express-ffmpeg.js",
   "type": "module",
   "license": "MIT",
   "author": {

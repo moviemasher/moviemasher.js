@@ -1,12 +1,12 @@
-import { isRequestableObject } from "../Base/Requestable/RequestableFunctions";
-import { ClientMediaType } from "../Helpers/ClientMedia/ClientMedia";
-import { isClientMediaType } from "../Helpers/ClientMedia/ClientMediaFunctions";
-import { errorThrow } from "../Helpers/Error/ErrorFunctions";
-import { isTranscoding } from "../Plugin/Transcode/Transcoding/TranscodingFunctions";
-import { SlashChar } from "../Setup/Constants";
-import { isMediaType } from "../Setup/MediaType";
-import { isObject } from "../Utility/Is";
-import { Media, MediaInstance, MediaInstanceObject, MediaObject } from "./Media";
+import { isRequestableObject } from '../Base/Requestable/RequestableFunctions.js'
+import { ClientMediaType } from '../Helpers/ClientMedia/ClientMedia.js'
+import { isClientMediaType } from '../Helpers/ClientMedia/ClientMediaFunctions.js'
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { isTranscoding } from '../Plugin/Transcode/Transcoding/TranscodingFunctions.js'
+import { SlashChar } from '../Setup/Constants.js'
+import { isMediaType } from '../Setup/MediaType.js'
+import { isObject } from '../Utility/Is.js'
+import { Media, MediaInstance, MediaInstanceObject, MediaObject } from './Media.js'
 
 export const mediaTypeFromMime = (mime?: string): ClientMediaType | undefined => {
   if (!mime) return 
@@ -17,11 +17,11 @@ export const mediaTypeFromMime = (mime?: string): ClientMediaType | undefined =>
 
 
 export const isMediaInstance = (value?: any): value is MediaInstance => {
-  return isObject(value) && "definitionIds" in value
+  return isObject(value) && 'definitionIds' in value
 }
 
 export const isMedia = (value: any): value is Media => {
-  return isTranscoding(value) && "type" in value && isMediaType(value.type)
+  return isTranscoding(value) && 'type' in value && isMediaType(value.type)
 }
 
 export function assertMedia(value: any, name?: string): asserts value is Media {
@@ -38,5 +38,5 @@ export function assertMediaObject(value: any, name?: string): asserts value is M
 }
 
 export const isMediaInstanceObject = (value?: any): value is MediaInstanceObject => {
-  return isObject(value) && ("mediaId" in value || "definition" in value)
+  return isObject(value) && ('mediaId' in value || 'definition' in value)
 }

@@ -1,5 +1,5 @@
-import { MasherArgs } from "../Plugin/Masher/Masher"
-import { colorBlack } from "../Helpers/Color/ColorConstants"
+import { MasherArgs } from '../Plugin/Masher/Masher.js'
+import { colorBlack } from '../Helpers/Color/ColorConstants.js'
 
 const DefaultMasherArgs: MasherArgs = {
   buffer: 10,
@@ -11,7 +11,7 @@ const DefaultMasherArgs: MasherArgs = {
 }
 
 const DefaultMash = {
-  label: "Mash",
+  label: 'Mash',
   quantize: 10,
   color: colorBlack,
   gain: 0.75,
@@ -19,7 +19,7 @@ const DefaultMash = {
 }
 
 const DefaultCast = {
-  label: "Cast",
+  label: 'Cast',
   quantize: 10,
   color: colorBlack,
   gain: 0.75,
@@ -28,7 +28,7 @@ const DefaultCast = {
 
 export const Default = {
   duration: 3,
-  label: "Unlabeled",
+  label: 'Unlabeled',
   editor: DefaultMasherArgs,
   video: DefaultMash,
   effect: { label: 'Effect'},

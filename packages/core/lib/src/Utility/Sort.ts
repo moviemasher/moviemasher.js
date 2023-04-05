@@ -1,4 +1,4 @@
-import { Framed, Labeled, Tracked, Indexed } from "../Base/Base"
+import type { Framed, Labeled, Tracked, Indexed } from '../Base/Base.js'
 
 export const sortByFrame = (a : Framed, b : Framed) : number => (
   a.frame - b.frame

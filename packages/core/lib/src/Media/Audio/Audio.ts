@@ -1,10 +1,14 @@
-import { Content, ContentObject } from "../Content/Content"
-import { isContent } from "../Content/ContentFunctions"
-import { UpdatableDuration, UpdatableDurationDefinition, UpdatableDurationDefinitionObject, UpdatableDurationObject } from "../../Mixin/UpdatableDuration/UpdatableDuration"
-import { AudioType } from "../../Setup/Enums"
-import { Media, MediaObject } from "../Media"
-import { isMedia } from "../MediaFunctions"
+import type { 
+  UpdatableDuration, UpdatableDurationDefinition, 
+  UpdatableDurationDefinitionObject, UpdatableDurationObject 
+} from '../../Mixin/UpdatableDuration/UpdatableDuration.js'
+import type { Content, ContentObject } from '../Content/Content.js'
+import type { Media, MediaObject } from '../Media.js'
+import type { AudioType } from '../../Setup/Enums.js'
 
+import { isContent } from '../Content/ContentFunctions.js'
+import { TypeAudio } from '../../Setup/Enums.js'
+import { isMedia } from '../MediaFunctions.js'
 
 export interface AudioObject extends ContentObject, UpdatableDurationObject {
   definition?: AudioMedia
@@ -29,5 +33,5 @@ export interface AudioMedia extends Media, UpdatableDurationDefinition {
 }
 
 export const isAudioMedia = (value: any): value is AudioMedia => {
-  return isMedia(value) && value.type === AudioType
+  return isMedia(value) && value.type === TypeAudio
 }

@@ -1,7 +1,7 @@
 
-export * from './Container'
-export * from './ContainerConstants'
-export * from "./ContainerDefinitionMixin"
-export * from "./ContainerFunctions"
-export * from "./ContainerMixin"
-export * from "./ShapeContainer"
+export * from './Container.js'
+export * from './ContainerConstants.js'
+export * from './ContainerDefinitionMixin.js'
+export * from './ContainerFunctions.js'
+export * from './ContainerMixin.js'
+export * from './ShapeContainer/index.js'

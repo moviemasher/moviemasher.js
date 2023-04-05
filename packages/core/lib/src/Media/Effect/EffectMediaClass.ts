@@ -1,13 +1,14 @@
-import { EffectType } from "../../Setup/Enums"
-import { propertyInstance } from "../../Setup/Property"
-import { Effect, EffectMedia, EffectMediaObject, EffectObject } from "./Effect"
-import { EffectClass } from "./EffectClass"
-import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { MediaBase } from "../MediaBase"
-import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { UnknownRecord } from "../../Types/Core"
-import { filterInstance } from "../../Plugin/Filter/FilterFactory"
+import type {Effect, EffectMedia, EffectMediaObject, EffectObject} from './Effect.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {UnknownRecord} from '../../Types/Core.js'
+
+import {ContainerDefinitionMixin} from '../Container/ContainerDefinitionMixin.js'
+import {EffectClass} from './EffectClass.js'
+import {filterInstance} from '../../Plugin/Filter/FilterFactory.js'
+import {MediaBase} from '../MediaBase.js'
+import {propertyInstance} from '../../Setup/Property.js'
+import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
+import {TypeEffect} from '../../Setup/Enums.js'
 
 const EffectContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const EffectContainerDefinitionWithContainer = ContainerDefinitionMixin(EffectContainerDefinitionWithTweenable)
@@ -15,7 +16,7 @@ const EffectContainerDefinitionWithContainer = ContainerDefinitionMixin(EffectCo
 export class EffectMediaClass extends EffectContainerDefinitionWithContainer implements EffectMedia {
   constructor(object: EffectMediaObject) {
     super(object)
-    this.properties.push(propertyInstance({ name: "label", defaultValue: "" }))
+    this.properties.push(propertyInstance({ name: 'label', defaultValue: '' }))
 
     const { properties, filters, initializeFilter, finalizeFilter } = object
     if (properties?.length) this.properties.push(...properties.map(property =>
@@ -50,9 +51,5 @@ export class EffectMediaClass extends EffectContainerDefinitionWithContainer imp
     return object
   }
 
-
-  type = EffectType
-
-
-
+  type = TypeEffect
 }

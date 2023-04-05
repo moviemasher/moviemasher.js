@@ -1,4 +1,4 @@
-import { ChangeAction, ChangeActionObject } from "./ChangeAction"
+import { ChangeAction, ChangeActionObject } from './ChangeAction.js'
 
 /**
  * @category Action

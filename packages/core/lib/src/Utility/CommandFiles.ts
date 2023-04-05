@@ -1,11 +1,11 @@
-import { CommandFiles } from "../Base/Code"
-import { assertPositive, isPositive } from "./Is"
+import type { CommandFiles } from '../Base/Code.js'
+import { assertPositive, isPositive } from './Is.js'
 
-export const commandFilesInputIndex = (commandFiles: CommandFiles, id: string, visible: boolean) => {
+const commandFilesInputIndex = (commandFiles: CommandFiles, id: string, visible: boolean) => {
   
   const inputCommandFiles = commandFiles.filter(commandFile => commandFile.input)
   const inputIndex = inputCommandFiles.findIndex(commandFile => commandFile.inputId === id)
-  if (!isPositive(inputIndex)) console.log("commandFilesInputIndex", id, inputCommandFiles)
+  if (!isPositive(inputIndex)) console.log('commandFilesInputIndex', id, inputCommandFiles)
   assertPositive(inputIndex, 'commandFilesInputIndex')
   return inputIndex
 }

@@ -1,18 +1,18 @@
 
 
-import /* type */ {
+import type {
   Masher, MashIndex, Media, MediaArray, 
-  ScalarRecord} from "@moviemasher/moviemasher.js"
-import /* type */ { Client, Draggable } from "@moviemasher/client-core"
+  ScalarRecord} from "@moviemasher/lib-core"
+import type { Client, Draggable } from "@moviemasher/client-core"
 
 
-import /* type */ { MasherContextInterface } from './MasherContext'
+import type { MasherContextInterface } from './MasherContext'
 
 import React from 'react'
 import {
   eventStop, 
   VideoType
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { ClientDisabledArgs, clientInstance, dropDraggable } from "@moviemasher/client-core"
 import { elementSetPreviewSize } from '../../Utilities/Element'
 import MasherContext from './MasherContext'
@@ -21,7 +21,7 @@ import { ClientContext } from "../../Contexts/ClientContext"
 import { MasherAppProps } from "./MasherApp"
 
 /**
- * {@codeblock ../../../../../examples/react/src/index.html}
+ * {@codeblock ../../../../../packages/example/react/src/index.html}
 
 * @parents ClientContext
 * @children Browser, Timeline, Inspector, Player
@@ -44,6 +44,9 @@ export function MasherApp(props: MasherAppProps) {
 
     return clientInstance(clientOptions)
   }
+//  return <data value='project_url'>https://example.com</data>
+
+  // return <masher-icon love="it" id="" />
 
   console.log("MasherApp", mashingType, previewSize)
   const clientRef = React.useRef<Client>(clientInitialize())

@@ -1,7 +1,7 @@
-import { rollupConfigurations} from "../../../dev/utils/rollupConfigurations.mjs"
+import path from 'path'
+import { rollupPackage } from "../../../dev/utils/rollupConfigurations.mjs"
 
 const name = 'MovieMasherExpressFfmpeg'
 const libName = 'express-ffmpeg'
-const formats = { esm: 'mjs' }
-const configurations = rollupConfigurations({ name, libName, formats })
-export default configurations
+
+export default rollupPackage({ name, libName, src: path.resolve('src') })

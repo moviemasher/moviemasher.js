@@ -3,7 +3,7 @@ import {
   colorTransparent, Clip, sortByTrack, CommandFile, assertMedia, CommandInputs, 
   CommandInput, CommandFiles, CommandFileArgs, CommandFilters, CommandFilterArgs, 
   timeRangeFromTime, arrayLast, MashMedia, Size, Time 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { FilterGraph, FilterGraphArgs } from "./FilterGraph"
 
 

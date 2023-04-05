@@ -1,12 +1,12 @@
-import { AudioPreviewArgs, StartOptions } from "./AudioPreview"
-import { Default } from "../../../../Setup/Default"
-import { isAboveZero, isPositive, isTimeRange } from "../../../../Utility/Is"
-import { Time, TimeRange } from "../../../../Helpers/Time/Time"
-import { AudibleContextInstance } from "../../../../Context/AudibleContext"
-import { assertUpdatableDurationDefinition, isUpdatableDuration, UpdatableDuration } from "../../../../Mixin"
-import { Clip } from "../../../../Media/Mash/Track/Clip/Clip"
-import { ErrorName } from "../../../../Helpers/Error/ErrorName"
-import { errorThrow } from "../../../../Helpers/Error/ErrorFunctions"
+import { AudioPreviewArgs, StartOptions } from './AudioPreview.js'
+import { Default } from '../../../../Setup/Default.js'
+import { isAboveZero, isPositive, isTimeRange } from '../../../../Utility/Is.js'
+import { Time, TimeRange } from '../../../../Helpers/Time/Time.js'
+import { AudibleContextInstance } from '../../../../Context/AudibleContext.js'
+import { assertUpdatableDurationDefinition, isUpdatableDuration, UpdatableDuration } from '../../../../Mixin/UpdatableDuration/UpdatableDuration.js'
+import { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import { ErrorName } from '../../../../Helpers/Error/ErrorName.js'
+import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
 
 export class AudioPreviewClass {
   constructor(object: AudioPreviewArgs) {
@@ -24,7 +24,7 @@ export class AudioPreviewClass {
   private adjustSourceGain(av: UpdatableDuration, timeRange: TimeRange | StartOptions): void {
     const source = AudibleContextInstance.getSource(av.id)
       if (!source) {
-        // console.log(this.constructor.name, "adjustSourceGain no source", clip.id)
+        // console.log(this.constructor.name, 'adjustSourceGain no source', clip.id)
         return
       }
 
@@ -55,7 +55,7 @@ export class AudioPreviewClass {
   buffer = Default.mash.buffer
   
   bufferClips(clips: Clip[], quantize: number): boolean {
-    // console.log(this.constructor.name, "compositeAudible", clips.length)
+    // console.log(this.constructor.name, 'compositeAudible', clips.length)
     if (!this.createSources(clips, quantize)) return false
 
     this.destroySources(clips)
@@ -75,12 +75,12 @@ export class AudioPreviewClass {
   }
 
   private createSources(clips: Clip[], quantize: number, time?:Time): boolean {
-    // console.log(this.constructor.name, "createSources", clips.length, "clip(s)", quantize, time, this.playing)
+    // console.log(this.constructor.name, 'createSources', clips.length, 'clip(s)', quantize, time, this.playing)
 
     if (!this.playing && !time) return false
 
     const addingClips = clips.filter(clip => !this.playingClips.includes(clip))
-    // console.log(this.constructor.name, "createSources", addingClips.length, "addingClip(s)")
+    // console.log(this.constructor.name, 'createSources', addingClips.length, 'addingClip(s)')
     if (!addingClips.length) return true
 
     let okay = true
@@ -99,18 +99,18 @@ export class AudioPreviewClass {
           const audibleSource = definition.audibleSource()
           if (!audibleSource) {
             if (!start) {
-              console.log(this.constructor.name, "createSources no audible source", definition.label)
+              console.log(this.constructor.name, 'createSources no audible source', definition.label)
               // wanted to start immediately but it's not loaded
               return false
             }
             return true
           }
           const { loop } = definition 
-          // console.log(this.constructor.name, "createSources", options, loop)
+          // console.log(this.constructor.name, 'createSources', options, loop)
           AudibleContextInstance.startAt(id, audibleSource, start, duration, offset, loop)
 
           this.adjustSourceGain(av, options)
-        } else console.error(this.constructor.name, "createSources", options)
+        } else console.error(this.constructor.name, 'createSources', options)
         return true
       })
     })
@@ -127,7 +127,7 @@ export class AudioPreviewClass {
       avs.forEach(av => AudibleContextInstance.deleteSource(av.id))
     })
     this.playingClips = clipsToKeep
-    // console.log(this.constructor.name, "destroySources removed", clipsToRemove.length, "kept", this.playingClips.length)
+    // console.log(this.constructor.name, 'destroySources removed', clipsToRemove.length, 'kept', this.playingClips.length)
   }
 
   gain = Default.mash.gain
@@ -150,12 +150,12 @@ export class AudioPreviewClass {
   get seconds(): number {
     const ellapsed = AudibleContextInstance.currentTime - this.contextSecondsWhenStarted
     const started = ellapsed + this.startedMashAt
-    // console.log("seconds", started, "=", this.startedMashAt, "+", ellapsed, '=', audibleContext.currentTime, '-', this.contextSecondsWhenStarted)
+    // console.log('seconds', started, '=', this.startedMashAt, '+', ellapsed, '=', audibleContext.currentTime, '-', this.contextSecondsWhenStarted)
     return started
   }
 
   startContext(): void {
-    // console.log(this.constructor.name, "startContext")
+    // console.log(this.constructor.name, 'startContext')
     if (this.bufferSource) return errorThrow(ErrorName.Internal) 
     if (this.playing) return errorThrow(ErrorName.Internal) 
 
@@ -175,15 +175,15 @@ export class AudioPreviewClass {
     this.playing = true
     this.startedMashAt = seconds
     this.contextSecondsWhenStarted = AudibleContextInstance.currentTime
-    // console.log(this.constructor.name, "startPlaying", "startedMashAt", this.startedMashAt, "contextSecondsWhenStarted", this.contextSecondsWhenStarted)
+    // console.log(this.constructor.name, 'startPlaying', 'startedMashAt', this.startedMashAt, 'contextSecondsWhenStarted', this.contextSecondsWhenStarted)
 
     if (!this.createSources(clips, quantize, time)) {    
-      // console.log(this.constructor.name, "startPlaying stalled")
+      // console.log(this.constructor.name, 'startPlaying stalled')
 
       this.stopPlaying()
       return false
     }
-    // console.log(this.constructor.name, "startPlaying", this.startedMashAt, this.contextSecondsWhenStarted)
+    // console.log(this.constructor.name, 'startPlaying', this.startedMashAt, this.contextSecondsWhenStarted)
     return true
   }
 
@@ -202,7 +202,7 @@ export class AudioPreviewClass {
   }
 
   stopPlaying(): void {
-    // console.log(this.constructor.name, "stopPlaying")
+    // console.log(this.constructor.name, 'stopPlaying')
     if (!this.playing) return
 
     this.playing = false

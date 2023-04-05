@@ -1,6 +1,6 @@
 import Express from "express"
 import basicAuth from 'express-basic-auth'
-import { JsonRecord } from "@moviemasher/moviemasher.js"
+import { JsonRecord } from "@moviemasher/lib-core"
 
 import { Server, ServerArgs } from "./Server"
 import { HostServers } from "../Host/Host"

@@ -1,4 +1,4 @@
-import { ApiCallback, RenderingOptions } from "@moviemasher/moviemasher.js"
+import { ApiCallback, RenderingOptions } from "@moviemasher/lib-core"
 import { RenderingResult } from "../Encode"
 export interface RenderingProcessInput {
   cacheDirectory: string

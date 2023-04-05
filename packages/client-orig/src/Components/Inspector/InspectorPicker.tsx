@@ -2,7 +2,7 @@ import React from 'react'
 import { 
   Identified,
   assertSelectorType, ClassSelected, isPopulatedString, 
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 
 

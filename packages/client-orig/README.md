@@ -1,5 +1,5 @@
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/head.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/head.md) -->
+<!-- The below content is automatically added from ../../dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
@@ -15,15 +15,15 @@ _JavaScript video editor and encoder_
 This module is a
 [ReactJS](https://reactjs.org)
 reference implementation of a client plug-in that utilizes the core
-[@moviemasher/moviemasher.js](https://www.npmjs.com/package/@moviemasher/moviemasher.js)
+[@moviemasher/lib-core](https://www.npmjs.com/package/@moviemasher/lib-core)
 module.
 
 It exports component functions, contexts, hooks, utility methods, and styles
 that manifest a video editing user interface and interact with a server implementation like
 [@moviemasher/server-express](https://www.npmjs.com/package/@moviemasher/server-express). Its imports are all specified as peer dependencies.
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/documentation.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/documentation.md) -->
+<!-- The below content is automatically added from ../../dev/documentation/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -34,7 +34,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILEMD:src=../../workspaces/documentation/src/snippet/example-client.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=../../dev/documentation/snippet/example-client.md&stripMagic=true) -->
 ## Client Example
 
 The HTML document below can simply be loaded in a web browser to display a 'hello world' example. The HEAD contains tags that load React and Movie Masher in UMD (Universal Module Definition) format directly from NPM through a CDN. The BODY contains just an empty DIV element followed by a SCRIPT that uses React to display Movie Masher, prepopulated with a text clip...
@@ -51,7 +51,7 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://unpkg.com/react@18/umd/react.production.min.js' crossorigin></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/moviemasher.js@5.1.2/umd/moviemasher.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/lib-core@5.1.2/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-core@5.1.2/umd/client-core.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js' crossorigin></script>
@@ -109,8 +109,8 @@ Learn more about building a fully customized video editing client in the
 [Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html).
 
 
-<!-- MAGIC:START (FILE:src=../../workspaces/documentation/src/snippet/foot.md) -->
-<!-- The below content is automatically added from ../../workspaces/documentation/src/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=../../dev/documentation/snippet/foot.md) -->
+<!-- The below content is automatically added from ../../dev/documentation/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

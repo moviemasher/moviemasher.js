@@ -1,16 +1,16 @@
 import {
   MediaObject, MediaObjects, ContentObject, Timing,
   TrackObject, ClipObject, assertPopulatedString, 
-  MediaType, LoadType, ValueRecord, MashAndMediaObject, 
-  RenderingCommandOutput, RenderingInput, SequenceType, VideoType, ImageType, AudioType, FontType, errorThrow, ErrorName,
-} from "@moviemasher/moviemasher.js"
+  ValueRecord, MashAndMediaObject, 
+  RenderingCommandOutput, RenderingInput, TypeImage,
+} from "@moviemasher/lib-core"
 
 
 export const renderingInput = (definition: MediaObject, clipObject: ValueRecord = {}): RenderingInput => {
   const { type, id } = definition
   const definitionObject = {
     ...definition,
-    type: type === SequenceType ? VideoType : type
+    type//: type === SequenceType ? VideoType : type
   }
   const definitions: MediaObjects = [definitionObject]
   const clip: ClipObject = renderingClipFromDefinition(definitionObject, clipObject)
@@ -58,7 +58,7 @@ export const renderingClipFromDefinition = (definition: MediaObject, overrides: 
   const visibleClipObject: ClipObject = {
     contentId, content, containerId
   }
-  if (type === ImageType) {
+  if (type === TypeImage) {
     visibleClipObject.timing = Timing.Custom
     visibleClipObject.frames = 1
   }
@@ -66,18 +66,18 @@ export const renderingClipFromDefinition = (definition: MediaObject, overrides: 
   return visibleClipObject
 }
 
-export const renderingMediaObject = (loadType: LoadType, source: string, id: string, label?: string): MediaObject => {
-  const type: MediaType = definitionTypeFromRaw(loadType) 
-  const definition: MediaObject = { id, type, source, label }
-  return definition
-}
+// export const renderingMediaObject = (loadType: LoadType, source: string, id: string, label?: string): MediaObject => {
+//   const type: MediaType = definitionTypeFromRaw(loadType) 
+//   const definition: MediaObject = { id, type, source, label }
+//   return definition
+// }
 
-export const definitionTypeFromRaw = (loadType: LoadType): MediaType => {
-  switch (loadType) {
-    case AudioType: return AudioType
-    case VideoType: return SequenceType
-    case ImageType: return ImageType
-    case FontType: return FontType
-  }
-  return errorThrow(ErrorName.Type) 
-}
+// export const definitionTypeFromRaw = (loadType: LoadType): MediaType => {
+//   switch (loadType) {
+//     case AudioType: return AudioType
+//     case VideoType: return SequenceType
+//     case TypeImage: return TypeImage
+//     case FontType: return FontType
+//   }
+//   return errorThrow(ErrorName.Type) 
+// }

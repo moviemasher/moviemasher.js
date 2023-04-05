@@ -1,5 +1,5 @@
 import React from 'react'
-import { assertPopulatedArray } from '@moviemasher/moviemasher.js'
+import { assertPopulatedArray } from '@moviemasher/lib-core'
 
 
 import { InspectorContext } from './InspectorContext'

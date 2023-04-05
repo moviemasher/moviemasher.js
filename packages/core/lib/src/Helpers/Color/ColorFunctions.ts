@@ -1,6 +1,6 @@
-import { Rgb, Rgba, RgbaObject, RgbObject } from "./Color"
-import { isPositive } from "../../Utility/Is"
-import { colorRgbaKeys, colorRgbKeys } from "./ColorConstants"
+import { Rgb, Rgba, RgbaObject, RgbObject } from './Color.js'
+import { isPositive } from '../../Utility/Is.js'
+import { colorRgbaKeys, colorRgbKeys } from './ColorConstants.js'
 
 
 const colorRgbRegex = /^rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)$/
@@ -11,14 +11,14 @@ const colorStrip = (color: string): string => color.toLowerCase().replace(/[\s]/
 
 const colorStyle = ():{ color: string } => {
   if (typeof Option !== 'function') return { color: '' }
-  console.log("colorStyle Option", Option)
+  console.log('colorStyle Option', Option)
   return new Option().style
 }
 
 const colorValidRgba = (value: string): boolean => colorRgbaRegex.test(value)
 const colorValidRgb = (value: string): boolean => colorRgbRegex.test(value)
 
-const getChunksFromString = (st: string, chunkSize: number) => st.match(new RegExp(`.{${chunkSize}}`, "g"))
+const getChunksFromString = (st: string, chunkSize: number) => st.match(new RegExp(`.{${chunkSize}}`, 'g'))
 
 const hex256 = (hexStr: string): number => parseInt(hexStr.repeat(2 / hexStr.length), 16)
 

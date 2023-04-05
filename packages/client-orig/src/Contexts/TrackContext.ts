@@ -1,4 +1,4 @@
-import { Track } from '@moviemasher/moviemasher.js'
+import { Track } from '@moviemasher/lib-core'
 import { createContext } from '../Framework/FrameworkFunctions'
 
 export interface TrackContextInterface {

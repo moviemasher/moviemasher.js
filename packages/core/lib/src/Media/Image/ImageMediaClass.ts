@@ -1,19 +1,21 @@
-import { ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
-import { ImageType } from "../../Setup/Enums"
-import { Image, ImageMedia, ImageObject } from "./Image"
-import { ImageClass } from "./ImageClass"
-import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
-import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
-import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { assertSizeAboveZero, Size, sizeCover } from "../../Utility/Size"
-import { MediaBase } from "../MediaBase"
-import { PreloadArgs } from "../../Base/Code"
-import { requestImagePromise } from "../../Helpers/Request/RequestFunctions"
-import { centerPoint, RectOptions } from "../../Utility/Rect"
-import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isDefiniteError } from "../../Utility/Is"
+import type {ClientImage} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {Image, ImageMedia, ImageObject} from './Image.js'
+import type {PreloadArgs} from '../../Base/Code.js'
+import type {Size} from '../../Utility/Size.js'
+
+import {assertSizeAboveZero, sizeCover} from '../../Utility/Size.js'
+import {centerPoint, RectOptions} from '../../Utility/Rect.js'
+import {ContainerDefinitionMixin} from '../Container/ContainerDefinitionMixin.js'
+import {ContentDefinitionMixin} from '../Content/ContentDefinitionMixin.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {ImageClass} from './ImageClass.js'
+import {isDefiniteError} from '../../Utility/Is.js'
+import {MediaBase} from '../MediaBase.js'
+import {requestImagePromise} from '../../Helpers/Request/RequestFunctions.js'
+import {svgImagePromiseWithOptions, svgSvgElement} from '../../Helpers/Svg/SvgFunctions.js'
+import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
+import {TypeImage} from '../../Setup/Enums.js'
+import {UpdatableSizeDefinitionMixin} from '../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin.js'
 
 const ImageMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ImageMediaWithContainer = ContainerDefinitionMixin(ImageMediaWithTweenable)
@@ -21,7 +23,7 @@ const ImageMediaWithContent = ContentDefinitionMixin(ImageMediaWithContainer)
 const ImageMediaWithUpdatable = UpdatableSizeDefinitionMixin(ImageMediaWithContent)
 export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMedia {
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    const transcoding = this.preferredTranscoding(ImageType) 
+    const transcoding = this.preferredTranscoding(TypeImage) 
 
     return requestImagePromise(transcoding.request).then(orError => {
       if (isDefiniteError(orError)) return errorThrow(orError.error)
@@ -52,7 +54,7 @@ export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMed
     const { loadedImage } = this
     if (loadedImage) return Promise.resolve()
 
-    const transcoding = editing ? this.preferredTranscoding(ImageType) : this
+    const transcoding = editing ? this.preferredTranscoding(TypeImage) : this
     
     const { request } = transcoding
     return requestImagePromise(request).then(orError => {
@@ -65,5 +67,5 @@ export class ImageMediaClass extends ImageMediaWithUpdatable implements ImageMed
   
   loadedImage?: ClientImage 
   
-  type = ImageType 
+  type = TypeImage 
 }

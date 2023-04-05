@@ -22,6 +22,7 @@ export const replaceText = (args) => {
   const { src, replacements } = args
   assertString(src, 'src')
   assertArray(replacements, 'replacements')
+  // console.log('replaceText replacements', replacements)
 
   return replacements.reduce((text, { search, replace }) => {
     return text.replace(search, replace)
@@ -32,7 +33,8 @@ export const replaceJson = (args) => {
   const { src, replacements, dest = {} } = args
   assertObject(src, 'src')
   if (!isArray(replacements)) return src
-
+  
+  // console.log('replaceJson replacements', replacements)
   return replacements.reduce((reduced, { search, replace, key, keys }) => {
     assertObject(reduced, 'reduced')
     keys ||= [key]
@@ -48,12 +50,14 @@ export const replaceJson = (args) => {
   }, isObject(dest) ? dest : src)
 }
 
-
-
-
 export const replace = (args) => {
+  const { dest, replacements } = args
   const read = fileRead(args)
-  const replaceArgs = { ...args, src: read }
-  const replaced = isString(read) ? replaceText(replaceArgs) : replaceJson(replaceArgs)
-  return fileWrite({ ...args, src: replaced })
+  
+  const writeArgs = { src: read, dest }
+  if (isArray(replacements)) {
+    writeArgs.replacements = replacements
+    writeArgs.src = isString(read) ? replaceText(writeArgs) : replaceJson(writeArgs)
+  }
+  return fileWrite(writeArgs)
 }

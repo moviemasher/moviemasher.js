@@ -1,7 +1,6 @@
 
-export * from "./Mash"
-export * from "./MashMediaClass"
-export * from "./MashFactory"
-export * from "./Track"
-
-export * from "./MediaCollection"
+export * from './Mash.js'
+export * from './MashMediaClass.js'
+export * from './MashFactory.js'
+export * from './Track/index.js'
+export * from './MediaCollection/index.js'

@@ -1,5 +1,5 @@
 import { DragFunction } from '@moviemasher/client-core'
-import { UnknownFunction, UnknownRecord, EmptyFunctionType } from '@moviemasher/moviemasher.js'
+import { UnknownFunction, UnknownRecord, EmptyFunctionType } from '@moviemasher/lib-core'
 import React from 'react'
 import { PropsWithChildren } from '../Types/Props'
 

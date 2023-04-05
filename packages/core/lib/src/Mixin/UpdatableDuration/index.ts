@@ -1,3 +1,3 @@
-export * from "./UpdatableDuration"
-export * from "./UpdatableDurationMixin"
-export * from "./UpdatableDurationDefinitionMixin"
+export * from './UpdatableDuration.js'
+export * from './UpdatableDurationMixin.js'
+export * from './UpdatableDurationDefinitionMixin.js'

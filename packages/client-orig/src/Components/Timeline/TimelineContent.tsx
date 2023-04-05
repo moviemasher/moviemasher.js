@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassDropping, DroppingPosition, eventStop, EventType, TrackType } from '@moviemasher/moviemasher.js'
+import { ClassDropping, DroppingPosition, eventStop, EventType, TrackType } from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"

@@ -1,5 +1,5 @@
 import React from "react"
-import { UnknownRecord } from "@moviemasher/moviemasher.js"
+import { UnknownRecord } from "@moviemasher/lib-core"
 
 import { WithClassName } from "../../Types/Core"
 import { ActivityContentContext } from "./ActivityContentContext"

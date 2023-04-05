@@ -1,4 +1,4 @@
-import { ClassDisabled } from "@moviemasher/moviemasher.js"
+import { ClassDisabled } from '@moviemasher/lib-core'
 
 export const className = (condition: boolean, className = '', addClass = ClassDisabled) => {
   if (!condition) return className

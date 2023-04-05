@@ -1,12 +1,10 @@
 
-import { JsonRecord } from "../Types/Core"
-import { Identified } from "../Base/Identified"
-import { PotentialError } from "../Helpers/Error/Error"
-import { ServerType } from "../Setup/Enums"
-import { DataServerInit } from "./Data"
-import { Request } from "../Helpers/Request/Request"
-
-export const ApiVersion = "5.1.2"
+import { JsonRecord } from '../Types/Core.js'
+import { Identified } from '../Base/Identified.js'
+import { PotentialError } from '../Helpers/Error/Error.js'
+import { ServerType } from '../Setup/Enums.js'
+import { DataServerInit } from './Data.js'
+import { Request } from '../Helpers/Request/Request.js'
 
 /**
  * @category API

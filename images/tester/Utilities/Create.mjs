@@ -1,4 +1,4 @@
-import { clipInstance } from "@moviemasher/moviemasher.js"
+import { clipInstance } from "@moviemasher/lib-core"
 
 import { audioDefinitionObject } from './Audio.mjs'
 import { imageDefinitionObject } from './Image.mjs'

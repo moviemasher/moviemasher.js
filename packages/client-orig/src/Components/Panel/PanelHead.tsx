@@ -14,4 +14,3 @@ export function PanelHead(props: PanelHeadProps) {
   return <View {...viewProps} />
 }
 
-export type PanelHeadElement = React.FunctionComponentElement<typeof PanelHead>

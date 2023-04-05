@@ -1,20 +1,20 @@
-import { Scalar, UnknownRecord } from "../../../Types/Core"
-import { Duration, TrackType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { sortByFrame } from "../../../Utility/Sort"
-import { Clip, ClipArgs, Clips } from "./Clip/Clip"
-import { PropertiedClass } from "../../../Base/Propertied"
-import { Track, TrackArgs } from "./Track"
-import { assertPopulatedString, assertTrue, isAboveZero, isDefined, isPositive } from "../../../Utility/Is"
-import { TimeRange } from "../../../Helpers/Time/Time"
-import { idGenerate } from "../../../Utility/Id"
-import { Default } from "../../../Setup/Default"
-import { assertMashMedia, MashMedia } from "../Mash"
-import { SelectedItems } from "../../../Helpers/Select/SelectedProperty"
-import { Actions } from "../../../Plugin/Masher/Actions/Actions"
-import { clipInstance } from "./Clip/ClipFactory"
-import { Selectables } from "../../../Plugin/Masher/Selectable"
-import { arrayLast, arraySet } from "../../../Utility/Array"
+import {Scalar, UnknownRecord} from '../../../Types/Core.js'
+import {Duration, TypeTrack} from '../../../Setup/Enums.js'
+import {propertyInstance} from '../../../Setup/Property.js'
+import {sortByFrame} from '../../../Utility/Sort.js'
+import {Clip, ClipArgs, Clips} from './Clip/Clip.js'
+import {PropertiedClass} from '../../../Base/Propertied.js'
+import {Track, TrackArgs} from './Track.js'
+import {assertPopulatedString, assertTrue, isAboveZero, isDefined, isPositive} from '../../../Utility/Is.js'
+import {TimeRange} from '../../../Helpers/Time/Time.js'
+import {idGenerate} from '../../../Utility/Id.js'
+import {Default} from '../../../Setup/Default.js'
+import {assertMashMedia, MashMedia} from '../Mash.js'
+import {SelectedItems} from '../../../Helpers/Select/SelectedProperty.js'
+import {Actions} from '../../../Plugin/Masher/Actions/Actions.js'
+import {clipInstance} from './Clip/ClipFactory.js'
+import {Selectables} from '../../../Plugin/Masher/Selectable.js'
+import {arrayLast, arraySet} from '../../../Utility/Array.js'
 
 export class TrackClass extends PropertiedClass implements Track {
   constructor(args: TrackArgs) {
@@ -27,7 +27,7 @@ export class TrackClass extends PropertiedClass implements Track {
 
     this.dense = isDefined(dense) ? !!dense : !this.index  
   
-    this.properties.push(propertyInstance({ name: "dense", defaultValue: false }))
+    this.properties.push(propertyInstance({ name: 'dense', defaultValue: false }))
     this.propertiesInitialize(args)
     
     if (clips) {
@@ -86,7 +86,7 @@ export class TrackClass extends PropertiedClass implements Track {
   assureFrames(quantize: number, clips?: Clips): void {
     const suppliedClips = isDefined(clips)
     const clipsArray = clips || this.clips
-    // console.log(this.constructor.name, "assureFrames", clipsArray.length, "clip(s)")
+    // console.log(this.constructor.name, 'assureFrames', clipsArray.length, 'clip(s)')
     clipsArray.forEach(clip => {
       const { frames } = clip
       if (isAboveZero(frames)) return
@@ -159,7 +159,7 @@ export class TrackClass extends PropertiedClass implements Track {
     arraySet(this.clips, newClips)
   }
 
-  selectType = TrackType
+  selectType = TypeTrack
   
   selectables(): Selectables { return [this, ...this.mash.selectables()] }
     
@@ -168,7 +168,7 @@ export class TrackClass extends PropertiedClass implements Track {
       const undoValue = this.value(property.name)
       return {
         value: undoValue,
-        property, selectType: TrackType, 
+        property, selectType: TypeTrack, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       

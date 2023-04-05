@@ -1,4 +1,4 @@
-// import { Masher } from "@moviemasher/moviemasher.js"
+// import { Masher } from "@moviemasher/lib-core"
 
 // import { useMasher } from "./useMasher"
 

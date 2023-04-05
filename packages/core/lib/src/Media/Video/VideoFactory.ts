@@ -1,9 +1,9 @@
-import { assertPopulatedString } from "../../Utility/Is"
-import { VideoMediaClass } from "./VideoMediaClass"
-import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
-import { MediaFactories } from "../MediaFactories"
-import { VideoType } from "../../Setup/Enums"
-import { MediaType } from "../../Setup/MediaType"
+import type {Video, VideoMedia, VideoMediaObject, VideoObject} from './Video.js'
+
+import {assertPopulatedString} from '../../Utility/Is.js'
+import {VideoMediaClass} from './VideoMediaClass.js'
+import {MediaFactories} from '../MediaFactories.js'
+import {TypeVideo} from '../../Setup/Enums.js'
 
 export const videoDefinition = (object : VideoMediaObject) : VideoMedia => {
   const { id } = object
@@ -27,4 +27,4 @@ export const videoFromId = (id : string) : Video => {
   return videoInstance({ id })
 }
 
-MediaFactories[VideoType] = videoDefinition
+MediaFactories[TypeVideo] = videoDefinition

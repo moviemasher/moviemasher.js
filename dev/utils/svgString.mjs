@@ -19,7 +19,7 @@ export const svgStringClean = svgString => {
   const svgMatch = svgString.match(svgRegex)
   let string = svgMatch ? svgMatch[0] : ''
   if (!string) throw new Error(`No SVG element in ${svgString}`)
-  
+
   // remove whitespace between tags
   const whitespaceBetweenTagsRegex = />\s+</g
   string = string.replace(whitespaceBetweenTagsRegex, '><')
@@ -44,6 +44,14 @@ export const svgStringClean = svgString => {
     return `${name}=${quoteMark}${trimmed}${quoteMark}`
   })
 
+  // // remove single quoted width attribute from first tag
+  // const widthRegex = /\swidth='[^']+'[^>]*?/
+  // string = string.replace(widthRegex, '')
+
+  // // remove single quoted height attribute from first tag
+  // const heightRegex = /\sheight='[^']+'[^>]*?/
+  // string = string.replace(heightRegex, '')
+  
   // include version attribute unless specified
   if (!string.includes('version=')) {
     string = string.replace(/<svg/, "<svg version='1.1'")

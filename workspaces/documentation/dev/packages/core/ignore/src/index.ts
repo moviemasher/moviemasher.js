@@ -1,1 +1,0 @@
-export const ignore = 'This is here to avoid reported error in tsconfig.json'

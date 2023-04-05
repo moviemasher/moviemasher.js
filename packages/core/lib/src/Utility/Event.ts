@@ -1,4 +1,4 @@
-import { EventFunction } from "../Types/Function"
+import type { EventFunction } from '../Types/Function.js'
 
 export const eventStop: EventFunction = event => {
   event.preventDefault()

@@ -1,3 +1,3 @@
-
-export * from "./SelectedProperty"
-export * from "./Select"
+export * from './Select.js'
+export * from './SelectedProperty.js'
+export * from './SelectedPropertyFunctions.js'

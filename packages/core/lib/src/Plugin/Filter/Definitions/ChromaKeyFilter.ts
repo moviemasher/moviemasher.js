@@ -1,13 +1,13 @@
-import { ScalarRecord, StringRecord } from "../../../Types/Core"
-import { SvgFilters } from "../../../Helpers/Svg/Svg"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { colorToRgb } from "../../../Helpers/Color/ColorFunctions"
-import { colorGreen } from "../../../Helpers/Color/ColorConstants"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { assertNumber, assertPopulatedString } from "../../../Utility/Is"
-import { svgFilter } from "../../../Helpers/Svg/SvgFunctions"
-import { FilterDefinitionObject } from "../Filter"
+import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
+import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { colorToRgb } from '../../../Helpers/Color/ColorFunctions.js'
+import { colorGreen } from '../../../Helpers/Color/ColorConstants.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { assertNumber, assertPopulatedString } from '../../../Utility/Is.js'
+import { svgFilter } from '../../../Helpers/Svg/SvgFunctions.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 /**
  * @category Filter
@@ -39,7 +39,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
     const max = 255.0
     const range = max * max * (1.0 - blend)
     const rgb = colorToRgb(color)
-    // console.log("filterDefinitionSvgFilters", rgb)
+    // console.log('filterDefinitionSvgFilters', rgb)
     const r = 1.0 - (similarity * ((rgb.r) / max)) 
     const g = 1.0 - (similarity * ((rgb.g) / max))
     const b = 1.0 - (similarity * ((rgb.b) / max))
@@ -54,7 +54,7 @@ export class ChromaKeyFilter extends FilterDefinitionClass {
   }
 }
 
-// <filter id='greenScreen' color-interpolation-filters="sRGB">
+// <filter id='greenScreen' color-interpolation-filters='sRGB'>
 // <feComponentTransfer result='colorToBlack'>
 //   <feFuncR id='funcR' type='discrete' tableValues='0 1 1  1 1 1'/>
 //   <feFuncG id='funcG' type='discrete' tableValues='0 1 '/>

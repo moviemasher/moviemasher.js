@@ -1,4 +1,3 @@
-export * from "./Error"
-export * from "./ErrorName"
-export * from "./ErrorFunctions"
-
+export * from './Error.js'
+export * from './ErrorName.js'
+export * from './ErrorFunctions.js'

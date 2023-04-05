@@ -1,12 +1,17 @@
-import /* type */ { Client } from "../Client/Client"
+import type { RemoteClient } from '../Client/RemoteClient.js'
+import type { 
+  UnknownRecord, Clip, Point, Rect, MediaObject, MashAndMediaObject, Strings, 
+  Effect, MashIndex, MediaArray, Masher, 
+} from '@moviemasher/lib-core'
 import {
-  UnknownRecord, 
-  Clip, Point, isString, Rect, isObject, isMediaType, 
+  isString, isObject, isMediaType, 
   MediaType, assertMediaType, 
   DroppingPosition, isUndefined, ClassDropping, ClassDroppingAfter, 
-  ClassDroppingBefore, errorThrow, MediaObject, 
-  MashAndMediaObject, Strings, arrayOfNumbers, Effect, isDefiniteError, MediaArray, Masher, isMashAndMediaObject, isEffect, isClip, isMediaObject, MashIndex
-} from "@moviemasher/moviemasher.js"
+  ClassDroppingBefore, errorThrow, 
+  arrayOfNumbers, 
+  isDefiniteError, isMashAndMediaObject, isEffect, isClip, 
+  isMediaObject, 
+} from '@moviemasher/lib-core'
 
 export type DragFunction = (event: DragEvent) => void
 
@@ -153,7 +158,7 @@ export const droppingPositionClass = (droppingPosition?: DroppingPosition | numb
   return ClassDropping
 }
 
-export const dropFiles = (masher: Masher, client: Client, fileList: FileList, editorIndex?: MashIndex): Promise<MediaArray> => {
+export const dropFiles = (masher: Masher, client: RemoteClient, fileList: FileList, editorIndex?: MashIndex): Promise<MediaArray> => {
   const media: MediaArray = []
   const { length } = fileList
   const fileOrNulls = arrayOfNumbers(length).map(i => fileList.item(i))
@@ -187,7 +192,7 @@ export const dropMediaObject = (masher: Masher, definitionObject: MediaObject, e
   return masher.addMediaObjects(definitionObject, editorIndex)
 }
 
-export const dropDraggable = (masher: Masher, client: Client, draggable: Draggable, editorIndex?: MashIndex): Promise<MediaArray>  => {
+export const dropDraggable = (masher: Masher, client: RemoteClient, draggable: Draggable, editorIndex?: MashIndex): Promise<MediaArray>  => {
   console.log("dropDraggable", editorIndex, draggable)
 
   

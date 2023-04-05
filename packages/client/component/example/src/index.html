@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="importmap">
+      {
+        "imports": {
+
+          "@moviemasher/": "./@moviemasher/",
+          "tslib/": "./tslib/",
+          "lit-element/": "./lit-element/",
+          "@lit-labs/context/": "./@lit-labs/context/",
+          "lit-html/": "./lit-html/",
+          "lit-html": "./lit-html/lit-html.js",
+          "@lit/reactive-element": "./@lit/reactive-element/reactive-element.js",
+          "@lit/": "./@lit/",
+          "lit/": "./lit/"
+        }
+      }
+    </script>
+    <style>
+      /* fit root DIV to viewport */
+
+      body {
+        height: 100vh;
+        height: 100svh;
+        display: flex;
+        margin: 0px;
+        padding: 0px;
+        font-family: sans-serif;
+      }
+
+      @media(prefers-color-scheme: dark) {
+        body { background-color: #000; }
+      }
+
+      moviemasher-form {
+        --gap: 20px;
+        padding: var(--gap);
+      }
+
+      moviemasher-form::part(selector) {
+        border: 2px solid red;
+        --control-fore: #fff;
+      }
+      moviemasher-form::part(selector-footer) {
+        border: 2px solid green;
+      }
+      moviemasher-form::part(selector-footer-left) {
+        border: 2px solid blue;
+      }
+     
+    </style>
+    <script type="module" src="@moviemasher/client-component/esm/form.js"></script>   
+  </head>
+  <body>
+    <moviemasher-form>
+      <moviemasher-span slot='selector-footer-right'><moviemasher-icon icon='effect'></moviemasher-icon></moviemasher-span>
+    </moviemasher-form>
+  </body>
+</html>

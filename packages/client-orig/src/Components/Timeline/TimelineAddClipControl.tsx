@@ -1,9 +1,9 @@
 import React from "react"
 
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 
-import /* type */ { MashIndex, UnknownRecord } from "@moviemasher/moviemasher.js"
-import { assertPopulatedString, DefaultContentId, EventType } from "@moviemasher/moviemasher.js"
+import type { MashIndex, UnknownRecord } from "@moviemasher/lib-core"
+import { assertPopulatedString, DefaultContentId, EventType } from "@moviemasher/lib-core"
 
 
 import { useMasher } from "../../Hooks/useMasher"

@@ -1,6 +1,6 @@
 import { 
   MediaArray, MediaTypes, 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { 
   ReadOperation 
 } from "@moviemasher/client-core"

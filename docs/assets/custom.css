@@ -81,7 +81,7 @@ body {
   overflow-y: scroll;
 }
 
-.moviemasher .editor {
+.moviemasher .masher {
   --padding: var(--pad);
   min-height: 0px;
 } */

@@ -1,10 +1,10 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { stringSeconds } from "@moviemasher/moviemasher.js"
+import { stringSeconds } from '@moviemasher/lib-core'
 
-describe("stringSeconds", () => {
-  test("returns expected response", () => {
+describe('stringSeconds', () => {
+  test('returns expected response', () => {
     assert.equal(stringSeconds(0.5, 30, 3), '00.50')
     assert.equal(stringSeconds(0.9, 30, 3), '00.90')
     assert.equal(stringSeconds(0.12324, 30, 3), '00.12')

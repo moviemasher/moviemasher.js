@@ -1,8 +1,10 @@
-import { Requestable, RequestableObject } from "../../../Base/Requestable/Requestable"
-import { FontType, SequenceType } from "../../../Setup/Enums"
-import { isMediaType } from "../../../Setup/MediaType"
-import { EncodingType, EncodingTypes } from "../../Encode/Encoding/Encoding"
 
+import type {EncodingType} from '../../Encode/Encoding/Encoding.js'
+import type {FontType, SequenceType} from '../../../Setup/Enums.js'
+import type {Requestable, RequestableObject} from '../../../Base/Requestable/Requestable.js'
+
+import { TypesEncoding} from '../../Encode/Encoding/Encoding.js'
+import {TypeFont, TypeSequence} from '../../../Setup/Enums.js'
 
 export interface TranscodingObject extends RequestableObject {
   type?: TranscodingType | string
@@ -23,5 +25,5 @@ export type Transcodings = Transcoding[]
 
 export type TranscodingType = EncodingType | FontType | SequenceType 
 export type TranscodingTypes = TranscodingType[]
-export const TranscodingTypes: TranscodingTypes = [...EncodingTypes, FontType, SequenceType]
+export const TypesTranscoding: TranscodingTypes = [...TypesEncoding, TypeFont, TypeSequence]
 

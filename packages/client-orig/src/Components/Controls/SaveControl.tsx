@@ -1,9 +1,9 @@
 import React from "react"
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 
 import { 
   assertMashMedia, EventType, isMashMedia, MasherAction 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { className, WriteOperation } from "@moviemasher/client-core"
 import { useClient } from "../../Hooks/useClient"

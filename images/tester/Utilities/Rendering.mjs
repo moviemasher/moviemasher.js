@@ -4,7 +4,7 @@ import {
   assertPopulatedArray, assertPopulatedString, assertTrue, isObject, 
   SizePreview, isPopulatedString, EmptyFunction, Duration, 
   idGenerateString, CommaChar
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 import {
   commandProcess, ExtensionLoadedInfo, Probe, 

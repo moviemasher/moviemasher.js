@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertDefined, MediaArray, MediaTypes
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import MasherContext from "../Components/Masher/MasherContext"
 

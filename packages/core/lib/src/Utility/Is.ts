@@ -1,9 +1,10 @@
-import { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar } from "../Types/Core"
-import { Rgb } from "../Helpers/Color/Color"
-import { Time, TimeRange } from "../Helpers/Time/Time"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { DefiniteError } from "../Helpers/Error/Error"
-import { UnknownFunction } from "../Setup/Constants"
+import type { DefiniteError } from '../Helpers/Error/Error.js'
+import type { PopulatedString, Unknowns, ValueRecord, Value, JsonRecord, Integer, JsonRecords, Scalar } from '../Types/Core.js'
+import type { Rgb } from '../Helpers/Color/Color.js'
+import type { Time, TimeRange } from '../Helpers/Time/Time.js'
+import type { UnknownFunction } from '../Setup/Constants.js'
+
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 
 export const isObject = (value: any): value is object => typeof value === 'object' 
 
@@ -26,7 +27,7 @@ export function assertNumber(value: any, name?: string): asserts value is number
 
 export const isBoolean = (value: any): value is boolean => typeof value === 'boolean'
 export function assertBoolean(value: any, name?: string): asserts value is boolean {
-  if (!isBoolean(value)) errorThrow(value, "Boolean", name)
+  if (!isBoolean(value)) errorThrow(value, 'Boolean', name)
 }
 export const isFunction = (value: any): value is UnknownFunction => typeof value === 'function'
 export function assertFunction(value: any, name?: string): asserts value is UnknownFunction {
@@ -58,10 +59,11 @@ export const isAboveZero = (value: any): value is number => isNumber(value) && v
 export function assertAboveZero(value: any, name?: string): asserts value is number {
   if (!isAboveZero(value)) errorThrow(value, '> zero', name)
 }
-export const isArray = (value: any): value is Unknowns => (
-  isDefined(Array.isArray) ? Array.isArray(value): value instanceof Array
-)
-export function assertArray(value: any, name?: string): asserts value is Unknowns {
+export function isArray<T = unknown>(value: any): value is T[] {
+  return Array.isArray(value)
+}
+
+export function assertArray<T = unknown>(value: any, name?: string): asserts value is T[] {
   if (!isArray(value)) errorThrow(value, 'Array', name)
 }
 
@@ -96,24 +98,24 @@ export function assertTrue(value: any, name = 'value'): asserts value is true {
 }
 
 export const isRgb = (value: any): value is Rgb => {
-  return isObject(value) && "r" in value && "g" in value && "b" in value
+  return isObject(value) && 'r' in value && 'g' in value && 'b' in value
 }
 export function assertRgb(value: any, name?: string): asserts value is Rgb {
   if (!isRgb(value)) errorThrow(value, 'Rgb', name)
 }
 
 export const isTime = (value: any): value is Time => {
-  return isObject(value) && "isRange" in value
+  return isObject(value) && 'isRange' in value
 }
 export function assertTime(value: any, name?: string): asserts value is Time {
-  if (!isTime(value)) errorThrow(value, "Time", name)
+  if (!isTime(value)) errorThrow(value, 'Time', name)
 }
 
 export const isTimeRange = (value: any): value is TimeRange => {
   return isTime(value) && value.isRange
 }
 export function assertTimeRange(value: any, name?: string): asserts value is TimeRange {
-  if (!isTimeRange(value)) errorThrow(value, "TimeRange", name)
+  if (!isTimeRange(value)) errorThrow(value, 'TimeRange', name)
 }
 
 export const isValue = (value: any): value is Value => {
@@ -128,30 +130,30 @@ export const isTrueValue = (value: any): value is Value => {
 }
 
 export function assertValue(value: any, name?: string): asserts value is Value {
-  if (!isValue(value)) errorThrow(value, "Value", name)
+  if (!isValue(value)) errorThrow(value, 'Value', name)
 }
 
 export const isValueRecord = (value: any): value is ValueRecord => {
   return isObject(value) && Object.values(value).every(value => isValue(value))
 }
 export function assertValueRecord(value: any, name?: string): asserts value is ValueRecord {
-  if (!isValueRecord(value)) errorThrow(value, "ValueRecord", name)
+  if (!isValueRecord(value)) errorThrow(value, 'ValueRecord', name)
 }
 
 export const isJsonRecord = (value: any): value is JsonRecord => (
-  isObject(value) && !("error" in value)
+  isObject(value) && !('error' in value)
 )
 export const isJsonRecords = (value: any): value is JsonRecords => (
   isArray(value)
 )
 
 export const isDefiniteError = (value: any): value is DefiniteError => {
-  return isObject(value) && "error" in value && isObject(value.error)
+  return isObject(value) && 'error' in value && isObject(value.error)
 }
 
 export const isScalar = (value: any): value is Scalar => (
   isBoolean(value) || isValue(value)
 )
 export function assertScalar(value: any, name?: string): asserts value is Scalar {
-  if (!isScalar(value)) errorThrow(value, "Scalar", name)
+  if (!isScalar(value)) errorThrow(value, 'Scalar', name)
 }

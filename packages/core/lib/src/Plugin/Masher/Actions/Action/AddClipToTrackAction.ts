@@ -1,6 +1,6 @@
-import { Clips } from "../../../../Media/Mash/Track/Clip/Clip"
-import { Track } from "../../../../Media/Mash/Track/Track"
-import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
+import { Clips } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import { Track } from '../../../../Media/Mash/Track/Track.js'
+import { AddTrackAction, AddTrackActionObject } from './AddTrackAction.js'
 
 export interface AddClipToTrackActionObject extends AddTrackActionObject {
   clips: Clips

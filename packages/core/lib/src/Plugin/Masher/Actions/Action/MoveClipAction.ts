@@ -1,5 +1,5 @@
-import { Clip } from "../../../../Media/Mash/Track/Clip/Clip"
-import { AddTrackAction, AddTrackActionObject } from "./AddTrackAction"
+import { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import { AddTrackAction, AddTrackActionObject } from './AddTrackAction.js'
 
 export interface MoveClipActionObject extends AddTrackActionObject {
   clip : Clip

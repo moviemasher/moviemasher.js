@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 
 import { ClientClass, clientInstance, Operations } from '@moviemasher/client-core'
-import { isPopulatedString, ErrorName, EnvironmentKeyUrlBase, Runtime, isMedia } from '@moviemasher/moviemasher.js'
+import { isPopulatedString, ErrorName, EnvironmentKeyUrlBase, Runtime, isMedia } from '@moviemasher/lib-core'
 import {} from "../../../../images/tester/Utilities/TestProtocol.mjs"
 describe("Client", () => {
   const client = clientInstance()

@@ -1,10 +1,10 @@
-import { PreviewItems, SvgItems } from "../../../Helpers/Svg/Svg"
-import { Size } from "../../../Utility/Size"
-import { PreloadOptions } from "../../../Base/Code"
-import { Masher } from "../Masher"
-import { Time } from "../../../Helpers/Time/Time"
-import { MashMedia } from "../../../Media/Mash/Mash"
-import { Clip } from "../../../Media/Mash/Track/Clip/Clip"
+import {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
+import {Size} from '../../../Utility/Size.js'
+import {PreloadOptions} from '../../../Base/Code.js'
+import {Masher} from '../Masher.js'
+import {Time} from '../../../Helpers/Time/Time.js'
+import {MashMedia} from '../../../Media/Mash/Mash.js'
+import {Clip} from '../../../Media/Mash/Track/Clip/Clip.js'
 
 export interface PreviewOptions  {
   editor?: Masher

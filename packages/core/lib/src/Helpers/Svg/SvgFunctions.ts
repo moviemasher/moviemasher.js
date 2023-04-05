@@ -1,24 +1,24 @@
-import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from "../../Utility/Size"
-import { NamespaceSvg, NamespaceXhtml } from "../../Setup/Constants"
-import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from "../../Utility/Is"
-import { Orientation } from "../../Setup/Enums"
-import { StringRecord } from "../../Types/Core"
-import { SvgFilter, SvgFilters, SvgItem, SvgItems } from "./Svg"
-import { idGenerateString } from "../../Utility/Id"
-import { assertPoint, isPoint, Point, pointCopy, pointString, pointValueString, PointZero } from "../../Utility/Point"
-import { Rect, RectOptions } from "../../Utility/Rect"
-import { Runtime } from "../../Runtime/Runtime"
-import { EnvironmentKeySupportsLoadSvg } from "../../Runtime/Environment"
-import { BooleanType } from "../../Utility/Scalar"
-import { colorCurrent } from "../Color/ColorConstants"
+import { assertSizeAboveZero, isSize, sizeCopy, Size, sizeAboveZero, sizeLockNegative } from '../../Utility/Size.js'
+import { NamespaceSvg } from '../../Setup/Constants.js'
+import { assertDefined, assertPopulatedString, assertTrue, isArray, isPopulatedString, isPositive } from '../../Utility/Is.js'
+import { Orientation } from '../../Setup/Enums.js'
+import { StringRecord } from '../../Types/Core.js'
+import { SvgFilter, SvgFilters, SvgItem, SvgItems } from './Svg.js'
+import { idGenerateString } from '../../Utility/Id.js'
+import { assertPoint, isPoint, Point, pointCopy, pointValueString, PointZero } from '../../Utility/Point.js'
+import { Rect, RectOptions } from '../../Utility/Rect.js'
+import { Runtime } from '../../Runtime/Runtime.js'
+import { EnvironmentKeySupportsLoadSvg } from '../../Runtime/Environment/Environment.js'
+import { TypeBoolean } from '../../Utility/Scalar.js'
+import { colorCurrent } from '../Color/ColorConstants.js'
 
 let PatchSvgElement: SVGSVGElement
 
 export const PatchSvgInitialize = (): SVGSVGElement => {
   const { document } = globalThis
   assertDefined(document)
-  console.log('document',document)
-  console.log('body', document.body)
+  // console.log('document',document)
+  // console.log('body', document.body)
   const element = svgSvgElement()
   element.setAttribute('style', 'display:none')
 
@@ -130,7 +130,7 @@ export const svgSetDimensionsLock = (element: SvgItem, dimensions: any, lock?: O
 }
 
 export const svgImageElement = () => {
-  const element = globalThis.document.createElementNS(NamespaceSvg, "image")
+  const element = globalThis.document.createElementNS(NamespaceSvg, 'image')
   svgSet(element, 'none', 'preserveAspectRatio')
   return element
 }
@@ -310,7 +310,7 @@ export const svgSetChildren = (element: Element, svgItems: SvgItems) => {
 
 export const svgImagePromise = (url: string): Promise<SVGImageElement> => {
   const { environment } = Runtime
-  const svgImageEmitsLoadEvent = environment.get(EnvironmentKeySupportsLoadSvg, BooleanType)
+  const svgImageEmitsLoadEvent = environment.get(EnvironmentKeySupportsLoadSvg, TypeBoolean)
   return new Promise<SVGImageElement>((resolve, reject) => {
     const element = svgImageElement()
     const completed = () => {

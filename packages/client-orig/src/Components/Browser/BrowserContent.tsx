@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertTrue, ClassDropping, eventStop
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

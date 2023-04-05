@@ -1,27 +1,30 @@
-import { UnknownRecord } from "../../Types/Core"
-import { ClientFont } from "../../Helpers/ClientMedia/ClientMedia"
-import { GraphFile, PreloadArgs, GraphFiles } from "../../Base/Code"
-import { DataType, Orientation, FontType } from "../../Setup/Enums"
-import { Font, FontMedia, FontMediaObject, FontObject } from "./Font"
-import { MediaBase } from "../MediaBase"
-import { EmptyFunction } from "../../Setup/Constants"
-import { requestFontPromise } from "../../Helpers/Request/RequestFunctions"
-import { Size, sizeCover } from "../../Utility/Size"
-import { centerPoint, Rect } from "../../Utility/Rect"
-import { svgSvgElement, svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { assertPopulatedString, isDefiniteError, isPopulatedString, isUndefined } from "../../Utility/Is"
-import { PointZero } from "../../Utility/Point"
-import { stringFamilySizeRect } from "../../Utility/String"
-import { FontClass } from "./FontClass"
-import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { assertEndpoint, endpointUrl } from "../../Helpers/Endpoint/EndpointFunctions"
-import { Requestable } from "../../Base/Requestable/Requestable"
-import { Default } from "../../Setup/Default"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isClientFont } from "../../Helpers/ClientMedia/ClientMediaFunctions"
-import { colorCurrent } from "../../Helpers/Color/ColorConstants"
+import type { Rect} from '../../Utility/Rect.js'
+import type {ClientFont} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {Font, FontMedia, FontMediaObject, FontObject} from './Font.js'
+import type {GraphFile, PreloadArgs, GraphFiles} from '../../Base/Code.js'
+import type {Requestable} from '../../Base/Requestable/Requestable.js'
+import type {Size} from '../../Utility/Size.js'
+import type {UnknownRecord} from '../../Types/Core.js'
+
+import { sizeCover} from '../../Utility/Size.js'
+import {assertEndpoint, endpointUrl} from '../../Helpers/Endpoint/EndpointFunctions.js'
+import {assertPopulatedString, isDefiniteError, isPopulatedString, isUndefined} from '../../Utility/Is.js'
+import {centerPoint} from '../../Utility/Rect.js'
+import {colorCurrent} from '../../Helpers/Color/ColorConstants.js'
+import {ContainerDefinitionMixin} from '../Container/ContainerDefinitionMixin.js'
+import {DataGroup, propertyInstance} from '../../Setup/Property.js'
+import {DataType, Orientation, TypeFont} from '../../Setup/Enums.js'
+import {Default} from '../../Setup/Default.js'
+import {EmptyFunction} from '../../Setup/Constants.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {FontClass} from './FontClass.js'
+import {isClientFont} from '../../Helpers/ClientMedia/ClientMediaFunctions.js'
+import {MediaBase} from '../MediaBase.js'
+import {PointZero} from '../../Utility/Point.js'
+import {requestFontPromise} from '../../Helpers/Request/RequestFunctions.js'
+import {stringFamilySizeRect} from '../../Utility/String.js'
+import {svgSvgElement, svgText, svgTransform} from '../../Helpers/Svg/SvgFunctions.js'
+import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
 
 
 const TextHeight = 1000
@@ -50,7 +53,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
-    return this.loadFontPromise(this.preferredTranscoding(FontType)).then(() => {
+    return this.loadFontPromise(this.preferredTranscoding(TypeFont)).then(() => {
       const { string, family } = this
       assertPopulatedString(family)
       assertPopulatedString(string)
@@ -94,7 +97,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
     // const file = editing ? url : source
     const graphFile: GraphFile = {
-      type: FontType, file, definition: this
+      type: TypeFont, file, definition: this
     }
     return [graphFile]
   }
@@ -149,7 +152,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
     if (this.family) return Promise.resolve()
     
     const { editing } = args
-    const transcoding =  editing ? this.findTranscoding(FontType, 'woff', 'woff2') : undefined
+    const transcoding =  editing ? this.findTranscoding(TypeFont, 'woff', 'woff2') : undefined
     const requestable = transcoding || this
     return this.loadFontPromise(requestable).then(EmptyFunction)
   }
@@ -172,7 +175,7 @@ export class FontMediaClass extends FontContainerDefinitionWithContainer impleme
 
   string = ''
 
-  type = FontType 
+  type = TypeFont 
 
   // url = ''
 }

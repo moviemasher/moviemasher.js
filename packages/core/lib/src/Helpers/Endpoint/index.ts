@@ -1,2 +1,2 @@
-export * from "./Endpoint"
-export * from "./EndpointFunctions"
+export * from './Endpoint.js'
+export * from './EndpointFunctions.js'

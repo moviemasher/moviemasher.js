@@ -1,0 +1,16 @@
+{
+  "name": "@moviemasher/build-core",
+  "description": "Builds Movie Masher core packages",
+  "scripts": {
+    "client-core": "npm run script -w @moviemasher/client-core --",
+    "lib-core": "npm run script -w @moviemasher/lib-core --",
+    "server-core": "npm run script -w @moviemasher/server-core --",
+    "build": "run-s lib client server",
+    "client": "npm run build -w @moviemasher/client-core",
+    "lib": "npm run build -w @moviemasher/lib-core",
+    "server": "npm run build -w @moviemasher/server-core"
+  },
+  "devDependencies": {
+    "rollup": "dependencies"
+  }
+}

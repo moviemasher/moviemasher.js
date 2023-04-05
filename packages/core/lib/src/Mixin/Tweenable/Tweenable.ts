@@ -1,23 +1,23 @@
-import { Scalar} from "../../Types/Core"
-import { Constrained } from "../../Base/Constrained"
-import { 
+import type { Scalar} from '../../Types/Core.js'
+import type { Constrained } from '../../Base/Constrained.js'
+import type { 
   CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, GraphFile, 
   PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs 
-} from "../../Base/Code"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
-import { Orientation } from "../../Setup/Enums"
-import { MediaType } from "../../Setup/MediaType"
-import { Property } from "../../Setup/Property"
-import { PointTuple } from "../../Utility/Point"
-import { Rect, RectTuple } from "../../Utility/Rect"
-import { SelectedProperties } from "../../Helpers/Select/SelectedProperty"
-import { SizeTuple } from "../../Utility/Size"
-import { Tweening } from "../../Utility/Tween"
-import { Media, MediaInstance, MediaInstanceObject, MediaObject } from "../../Media/Media"
-import { Selectable } from "../../Plugin/Masher/Selectable"
-import { Actions } from "../../Plugin/Masher/Actions/Actions"
+} from '../../Base/Code.js'
+import type { Filter } from '../../Plugin/Filter/Filter.js'
+import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import type { Clip, IntrinsicOptions } from '../../Media/Mash/Track/Clip/Clip.js'
+import type { Orientation } from '../../Setup/Enums.js'
+import type { MediaType } from '../../Setup/MediaType.js'
+import type { Property } from '../../Setup/Property.js'
+import type { PointTuple } from '../../Utility/Point.js'
+import type { Rect, RectTuple } from '../../Utility/Rect.js'
+import type { SelectedProperties } from '../../Helpers/Select/SelectedProperty.js'
+import type { SizeTuple } from '../../Utility/Size.js'
+import type { Tweening } from './Tween.js'
+import type { Media, MediaInstance, MediaInstanceObject, MediaObject } from '../../Media/Media.js'
+import type { Selectable } from '../../Plugin/Masher/Selectable.js'
+import type { Actions } from '../../Plugin/Masher/Actions/Actions.js'
 
 export interface TweenableObject extends MediaInstanceObject {
   mediaId?: string

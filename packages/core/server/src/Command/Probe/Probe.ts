@@ -1,9 +1,9 @@
 import path from "path"
 import fs from 'fs'
 import Ffmpeg from "fluent-ffmpeg"
-import { ErrorName, errorObject, Numbers, ProbingData, Sizes, NewlineChar } from "@moviemasher/moviemasher.js"
+import { ErrorName, errorObject, Numbers, ProbingData, Sizes, NewlineChar } from "@moviemasher/lib-core"
  
-import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/moviemasher.js"
+import { isPositive, SizeZero, isNumeric, isPopulatedString } from "@moviemasher/lib-core"
 
 import { commandProcess } from "../CommandFactory"
 import { commandArgsString } from "../../Utility/Command"

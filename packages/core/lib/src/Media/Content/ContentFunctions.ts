@@ -1,8 +1,8 @@
-import /* type */ { Content, ContentDefinition } from "./Content"
+import type { Content, ContentDefinition } from './Content.js'
 
-import { isContentingType } from "../../Setup/Enums"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isTweenable, isTweenableDefinition } from "../../Mixin/Tweenable/TweenableFunctions"
+import { isContentingType } from '../../Setup/Enums.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { isTweenable, isTweenableDefinition } from '../../Mixin/Tweenable/TweenableFunctions.js'
 
 export const isContent = (value?: any): value is Content => {
   return isTweenable(value) && isContentingType(value.type)

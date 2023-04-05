@@ -1,4 +1,4 @@
-import { roundWithMethod } from "./Round"
+import { roundWithMethod } from './Round.js'
 
 export const pixelToFrame = (pixels: number, perFrame : number, rounding = 'round'): number => {
   if (!(pixels && perFrame)) return 0

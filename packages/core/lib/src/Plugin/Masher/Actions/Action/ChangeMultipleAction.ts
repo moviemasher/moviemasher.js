@@ -1,5 +1,5 @@
-import { ScalarRecord } from "../../../../Types/Core"
-import { ChangeAction, ChangeActionObject } from "./ChangeAction"
+import { ScalarRecord } from '../../../../Types/Core.js'
+import { ChangeAction, ChangeActionObject } from './ChangeAction.js'
 
 export interface ChangeMultipleActionObject extends ChangeActionObject {
   undoValues: ScalarRecord

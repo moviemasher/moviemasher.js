@@ -1,29 +1,29 @@
-import { UnknownRecord, ValueRecord } from "../../Types/Core"
-import { SvgFilters, SvgItem } from "../../Helpers/Svg/Svg"
-import { Rect, rectFromSize, RectTuple, RectZero } from "../../Utility/Rect"
+import { UnknownRecord, ValueRecord } from '../../Types/Core.js'
+import { SvgFilters, SvgItem } from '../../Helpers/Svg/Svg.js'
+import { Rect, rectFromSize, RectTuple, RectZero } from '../../Utility/Rect.js'
 
-import { assertPopulatedString, isArray } from "../../Utility/Is"
-import { Content, ContentClass, ContentObject, ContentRectArgs } from "./Content"
-import { DefaultContentId } from "./ContentConstants"
-import { TweenableClass } from "../../Mixin/Tweenable/Tweenable"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from "../../Utility/Tween"
-import { DataGroup, Property, propertyInstance } from "../../Setup/Property"
-import { DataType, Orientation } from "../../Setup/Enums"
-import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../Base/Code"
-import { idGenerate } from "../../Utility/Id"
-import { commandFilesInput } from "../../Utility/CommandFiles"
-import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
-import { Actions } from "../../Plugin/Masher/Actions/Actions"
-import { SelectedItems, SelectedMovable } from "../../Helpers/Select/SelectedProperty"
-import { Effects } from "../Effect/Effect"
-import { arrayLast } from "../../Utility/Array"
-import { effectInstance } from "../Effect/EffectFactory"
-import { Size, sizeAboveZero } from "../../Utility/Size"
-import { svgFilterElement, svgSet } from "../../Helpers/Svg/SvgFunctions"
-import { isAudio } from "../Audio/Audio"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { assertPopulatedString, isArray } from '../../Utility/Is.js'
+import { Content, ContentClass, ContentObject, ContentRectArgs } from './Content.js'
+import { DefaultContentId } from './ContentConstants.js'
+import { TweenableClass } from '../../Mixin/Tweenable/Tweenable.js'
+import { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import { tweenCoverPoints, tweenCoverSizes, Tweening, tweenRectsLock } from '../../Mixin/Tweenable/Tween.js'
+import { DataGroup, Property, propertyInstance } from '../../Setup/Property.js'
+import { DataType, Orientation } from '../../Setup/Enums.js'
+import { CommandFileArgs, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, Component, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from '../../Base/Code.js'
+import { idGenerate } from '../../Utility/Id.js'
+import { commandFilesInput } from '../../Utility/CommandFiles.js'
+import { timeFromArgs } from '../../Helpers/Time/TimeUtilities.js'
+import { Actions } from '../../Plugin/Masher/Actions/Actions.js'
+import { SelectedItems, SelectedMovable } from '../../Helpers/Select/SelectedProperty.js'
+import { Effects } from '../Effect/Effect.js'
+import { arrayLast } from '../../Utility/Array.js'
+import { effectInstance } from '../Effect/EffectFactory.js'
+import { Size, sizeAboveZero } from '../../Utility/Size.js'
+import { svgFilterElement, svgSet } from '../../Helpers/Svg/SvgFunctions.js'
+import { isAudio } from '../Audio/Audio.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 
 
 export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & T {
@@ -62,12 +62,12 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
     audibleCommandFilters(args: CommandFilterArgs): CommandFilters {
       const commandFilters: CommandFilters = []
       const { time, quantize, commandFiles, clipTime } = args
-      // console.log(this.constructor.name, "initialCommandFilters", time, clipTime)
+      // console.log(this.constructor.name, 'initialCommandFilters', time, clipTime)
       const timeDuration = time.isRange ? time.lengthSeconds : 0
       const duration = timeDuration ? Math.min(timeDuration, clipTime!.lengthSeconds) : 0
       
       const { id } = this
-      // console.log(this.constructor.name, "audibleCommandFilters calling commandFilesInput", id)
+      // console.log(this.constructor.name, 'audibleCommandFilters calling commandFilesInput', id)
       let filterInput = commandFilesInput(commandFiles, id, false)
     
       const trimFilter = 'atrim'
@@ -106,7 +106,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
 
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
-      // console.log(this.constructor.name, "contentCommandFilters returning empty")
+      // console.log(this.constructor.name, 'contentCommandFilters returning empty')
       return this.effectsCommandFilters(args)
     }
 
@@ -134,7 +134,7 @@ export function ContentMixin<T extends TweenableClass>(Base: T): ContentClass & 
       const [point, pointEnd] = coverPoints
       const rect = rectFromSize(size, point)
       const rectEnd = rectFromSize(sizeEnd, pointEnd)
-      // console.log(this.constructor.name, "contentRects", lock, locked, isArray(rects) ? rects[0] : rects,  "->", rect)
+      // console.log(this.constructor.name, 'contentRects', lock, locked, isArray(rects) ? rects[0] : rects,  '->', rect)
       return [rect, rectEnd]
     }
     

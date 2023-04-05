@@ -4,7 +4,7 @@ import React from "react"
 import { PropsAndChild } from "../../Types/Props"
 import MasherContext from "../Masher/MasherContext"
 import { useClient } from "../../Hooks/useClient"
-import { CurrentIndex, NextIndex } from "@moviemasher/moviemasher.js"
+import { CurrentIndex, NextIndex } from "@moviemasher/lib-core"
 import { useContext } from "../../Framework/FrameworkFunctions"
 import { ImportOperation } from "@moviemasher/client-core"
 

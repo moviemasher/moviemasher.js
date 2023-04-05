@@ -1,15 +1,16 @@
-import { ScalarRecord } from "../../Types/Core"
-import { Endpoint } from "./Endpoint"
-import { arrayLast } from "../../Utility/Array"
+import type { ScalarRecord } from '../../Types/Core.js'
+import type { Endpoint } from './Endpoint.js'
+
+import { Runtime } from '../../Runtime/Runtime.js'
 import { 
   assertPopulatedString, isObject, isAboveZero, isNumeric, isPopulatedString 
-} from "../../Utility/Is"
-import { ColonChar, DotChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from "../../Setup/Constants"
+} from '../../Utility/Is.js'
+import { arrayLast } from '../../Utility/Array.js'
+import { ColonChar, DotChar, EqualsChar, QuestionChar, SemicolonChar, SlashChar } from '../../Setup/Constants.js'
 
-import { errorThrow } from "../Error/ErrorFunctions"
-import { HttpProtocol } from "../../Plugin/Protocol/Protocol"
-import { Runtime } from "../../Runtime/Runtime"
-import { EnvironmentKeyUrlBase } from "../../Runtime/Environment/Environment"
+import { errorThrow } from '../Error/ErrorFunctions.js'
+import { ProtocolHttp } from '../../Plugin/Protocol/Protocol.js'
+import { EnvironmentKeyUrlBase } from '../../Runtime/Environment/Environment.js'
 
 const urlIsBlob = (url?: string) => Boolean(url?.startsWith('blob'))
 
@@ -26,7 +27,7 @@ const urlBase = (): string => {
   }
 
   const base = [
-    HttpProtocol, ColonChar, SlashChar, SlashChar, 'localhost', SlashChar
+    ProtocolHttp, ColonChar, SlashChar, SlashChar, 'localhost', SlashChar
   ].join('')
   environment.set(EnvironmentKeyUrlBase, base)
   return base
@@ -118,7 +119,7 @@ export const urlEndpoint = (endpoint: Endpoint = {}): Endpoint => {
 
 export const urlIsObject = (url: string) => url.startsWith(`object${ColonChar}${SlashChar}`)
 
-export const urlIsHttp = (url: string) => url.startsWith(HttpProtocol)
+export const urlIsHttp = (url: string) => url.startsWith(ProtocolHttp)
 
 export const urlHasProtocol = (url: string) => url.includes(ColonChar)
 
@@ -168,7 +169,7 @@ export const urlProtocol = (string: string) => {
 
 export const urlOptionsObject = (options?: string): ScalarRecord | undefined => {
   if (!isPopulatedString(options)) return 
-  // console.log("parseOptions", type, options)
+  // console.log('parseOptions', type, options)
 
   const pairs = options.split(SemicolonChar)
   const entries = pairs.map(pair => {

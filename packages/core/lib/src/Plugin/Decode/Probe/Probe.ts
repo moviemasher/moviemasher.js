@@ -1,26 +1,19 @@
-import /* type */ { DecodeOutput, DecoderOptions } from "../Decode"
+import type { DecodeOutput } from '../Decode.js'
 
+export const ProbeAlpha: AlphaProbe = 'alpha'
+export const ProbeAudible: AudibleProbe = 'audible'
+export const ProbeDuration: DurationProbe = 'duration'
+export const ProbeSize: SizeProbe = 'size'
 export type AlphaProbe = 'alpha'
-export const AlphaProbe: AlphaProbe = 'alpha'
-
-
 export type AudibleProbe = 'audible'
-export const AudibleProbe: AudibleProbe = 'audible'
-
-
 export type DurationProbe = 'duration'
-export const DurationProbe: DurationProbe = 'duration'
-
-
 export type SizeProbe = 'size'
-export const SizeProbe: SizeProbe = 'size'
-
 
 export type ProbeKind = string | AlphaProbe | AudibleProbe | DurationProbe | SizeProbe
 export type ProbeKinds = ProbeKind[]
-export const ProbeKinds: ProbeKinds = [AlphaProbe, AudibleProbe, DurationProbe, SizeProbe]
+export const KindsProbe: ProbeKinds = [ProbeAlpha, ProbeAudible, ProbeDuration, ProbeSize]
 
-export interface ProbeOptions extends DecoderOptions {
+export interface ProbeOptions {
   types: ProbeKinds
 }
 

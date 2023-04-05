@@ -1,7 +1,11 @@
-import { Scalar, Scalars, Strings } from "../../Types/Core"
+import type { 
+   ScalarType, StringType, BooleanType, NumberType,
+} from '../../Utility/Scalar.js'
+import type {Scalar, Scalars, Strings} from '../../Types/Core.js'
+
 import { 
-  BooleanType, NumberType, scalar, scalars, ScalarType, StringType 
-} from "../../Utility/Scalar"
+  scalar, scalars, TypeString 
+} from '../../Utility/Scalar.js'
 
 export interface Environment {
   get: EnvironmentGetter
@@ -21,16 +25,16 @@ export const EnvironmentRecord: EnvironmentRecord = {}
 function EnvironmentGet(key: EnvironmentKey, type?: StringType): string
 function EnvironmentGet(key: EnvironmentKey, type?: BooleanType): boolean
 function EnvironmentGet(key: EnvironmentKey, type?: NumberType): number
-function EnvironmentGet(key: EnvironmentKey, type: ScalarType = StringType): Scalar {
+function EnvironmentGet(key: EnvironmentKey, type: ScalarType = TypeString): Scalar {
   return scalar(EnvironmentRecord[key] || '', type)
 }
 
 export function EnvironmentGetArray(key: EnvironmentKey, type?: StringType): Strings
-export function EnvironmentGetArray(key: EnvironmentKey, type: ScalarType = StringType): Scalars {
+export function EnvironmentGetArray(key: EnvironmentKey, type: ScalarType = TypeString): Scalars {
   return scalars(EnvironmentRecord[key] || '', type)
 }
 
-const EnvironmentSet = (key: EnvironmentKey, value: Scalar): Scalar => { 
+export const EnvironmentSet = (key: EnvironmentKey, value: Scalar): Scalar => { 
   return EnvironmentRecord[key] = value 
 }
 

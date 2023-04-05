@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
 
-import { JsonExtension, JsonRecord, TextExtension } from '@moviemasher/moviemasher.js'
+import { JsonExtension, JsonRecord, TextExtension } from '@moviemasher/lib-core'
 
 
 export const expandCommand = (command: string): string => { 

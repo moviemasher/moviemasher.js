@@ -1,4 +1,4 @@
-import { StringRecord } from "@moviemasher/moviemasher.js"
+import { StringRecord } from "@moviemasher/lib-core"
 
 import { Server, ServerArgs } from "../Server"
 

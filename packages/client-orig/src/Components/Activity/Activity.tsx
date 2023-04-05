@@ -1,5 +1,5 @@
 import React from "react"
-import { ClassCollapsed } from '@moviemasher/moviemasher.js'
+import { ClassCollapsed } from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"

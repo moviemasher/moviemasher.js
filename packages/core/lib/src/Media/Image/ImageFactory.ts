@@ -1,26 +1,14 @@
-import { ImageMediaClass } from "./ImageMediaClass"
-import { Image, ImageMedia, ImageMediaObject, ImageObject } from "./Image"
-import { assertPopulatedString } from "../../Utility/Is"
-import { MediaFactories } from "../MediaFactories"
-import { ImageType } from "../../Setup/Enums"
+import {ImageMediaClass} from './ImageMediaClass.js'
+import {Image, ImageMedia, ImageMediaObject, ImageObject} from './Image.js'
+import {assertPopulatedString} from '../../Utility/Is.js'
+import {MediaFactories} from '../MediaFactories.js'
+import {TypeImage} from '../../Setup/Enums.js'
 
-import defaultContent from "../../MediaObjects/content/default.json"
-
-import defaultContainer from "../../MediaObjects/container/default.json"
-import heartContainer from "../../MediaObjects/container/heart.json"
-import cloudContainer from "../../MediaObjects/container/cloud.json"
-import appleContainer from "../../MediaObjects/container/apple.json"
-import starburstContainer from "../../MediaObjects/container/starburst.json"
-import roundedRectContainer from "../../MediaObjects/container/rounded-rect.json"
-import fireContainer from "../../MediaObjects/container/fire.json"
-import flagContainer from "../../MediaObjects/container/flag.json"
-import ovalContainer from "../../MediaObjects/container/oval.json"
-import mmContainer from "../../MediaObjects/container/mm.json"
-import { ShapeContainerDefinitionClass } from "../Container/ShapeContainer/ShapeContainerDefinitionClass"
-import { DefaultContainerId } from "../Container/ContainerConstants"
-import { MediaDefaults } from "../MediaDefaults"
-import { ColorContentDefinitionClass } from "../Content/ColorContent/ColorContentDefinitionClass"
-import { DefaultContentId } from "../Content/ContentConstants"
+import {ShapeContainerDefinitionClass} from '../Container/ShapeContainer/ShapeContainerDefinitionClass.js'
+import {DefaultContainerId} from '../Container/ContainerConstants.js'
+import {MediaDefaults} from '../MediaDefaults.js'
+import {ColorContentDefinitionClass} from '../Content/ColorContent/ColorContentDefinitionClass.js'
+import {DefaultContentId} from '../Content/ContentConstants.js'
 
 export const imageDefinition = (object : ImageMediaObject) : ImageMedia => {
   const { id } = object
@@ -30,7 +18,7 @@ export const imageDefinition = (object : ImageMediaObject) : ImageMedia => {
 }
 
 export const imageDefinitionFromId = (id : string) : ImageMedia => {
-  const definition = MediaDefaults[ImageType].find(definition => 
+  const definition = MediaDefaults[TypeImage].find(definition => 
     definition.id === id
   )
   if (definition) return definition as ImageMedia
@@ -51,20 +39,24 @@ export const imageFromId = (id : string) : Image => {
 }
 
 
-MediaFactories[ImageType] = imageDefinition
+MediaFactories[TypeImage] = imageDefinition
 
-MediaDefaults[ImageType].push(
-  new ColorContentDefinitionClass({id: DefaultContentId, ...defaultContent}),
-  new ShapeContainerDefinitionClass({ id: DefaultContainerId, ...defaultContainer }),
-  // new ShapeContainerDefinitionClass(roundedRectContainer),
-  // new ShapeContainerDefinitionClass(ovalContainer),
-  // new ShapeContainerDefinitionClass(starburstContainer),
-  // new ShapeContainerDefinitionClass(heartContainer),
-  // new ShapeContainerDefinitionClass(cloudContainer),
-  // new ShapeContainerDefinitionClass(fireContainer),
-  // new ShapeContainerDefinitionClass(flagContainer),
-  // new ShapeContainerDefinitionClass(mmContainer),
-  // new ShapeContainerDefinitionClass(appleContainer),
 
+
+
+
+MediaDefaults[TypeImage].push(
+  new ColorContentDefinitionClass({
+    id: DefaultContentId,
+    label: "Color",
+    type: "image",
+    request: { response: { color: "#FFFFFF" }}
+  }),
+  new ShapeContainerDefinitionClass({
+    id: DefaultContainerId, 
+    label: "Rectangle",
+    type: "image",
+    request: { response: { } }
+  })
 )
 

@@ -1,6 +1,6 @@
 import Express from 'express'
 import cors from 'cors'
-import { ServerType, StringRecord } from '@moviemasher/moviemasher.js'
+import { ServerType, StringRecord } from '@moviemasher/lib-core'
 
 import { DataServerClass } from "../Server/DataServer/DataServerClass"
 import { FileServerClass } from "../Server/FileServer/FileServerClass"

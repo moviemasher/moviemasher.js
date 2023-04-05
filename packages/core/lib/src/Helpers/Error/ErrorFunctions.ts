@@ -1,7 +1,6 @@
-import { ValueRecord } from "../../Types/Core"
-import { ErrorName, ErrorNames } from "./ErrorName"
-import { DefiniteError, ErrorObject } from "./Error"
-import { isValueRecord } from "../../Utility/Is"
+import type { ValueRecord } from '../../Types/Core.js'
+import type { DefiniteError, ErrorObject } from './Error.js'
+import { ErrorName, ErrorNames } from './ErrorName.js'
 
 export type ErrorContext = ValueRecord | string | undefined
 

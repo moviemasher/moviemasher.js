@@ -8,7 +8,7 @@ import {
   assertPoint, isPoint, errorThrow,
   Directions, Duration, DefaultContentId, DefaultContainerId, 
   DefaultFontId, MediaType
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 const GeneratePoint = {
   TL: 'TL',

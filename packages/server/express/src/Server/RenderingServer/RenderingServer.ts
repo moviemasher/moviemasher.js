@@ -3,7 +3,7 @@ import {
   RenderingStartRequest, RenderingStartResponse,
   
   RenderingUploadRequest, RenderingUploadResponse,
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { Server, ServerArgs, ExpressHandler } from "../Server"
 import { RenderingCommandOutputRecord } from "./RenderingServerClass"

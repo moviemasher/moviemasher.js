@@ -2,7 +2,7 @@
 import { 
   JsonRecord, StringDataOrError, 
   assertPopulatedString, Identified, isDefiniteError,
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { 
   JobType,

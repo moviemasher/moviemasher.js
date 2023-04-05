@@ -1,15 +1,17 @@
-import { EffectType } from "../../Setup/Enums"
 
-import { Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from "../../Mixin/Tweenable/Tweenable"
-import { CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs } from "../../Base/Code"
-import { Size } from "../../Utility/Size"
-import { Rect } from "../../Utility/Rect"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { SvgFilters } from "../../Helpers/Svg/Svg"
-import { Filter, FilterDefinitionObject } from "../../Plugin/Filter/Filter"
-import { PropertyObject } from "../../Setup/Property"
-import { isTweenable } from "../../Mixin/Tweenable/TweenableFunctions"
-import { isMedia } from "../MediaFunctions"
+import type { Size } from '../../Utility/Size.js'
+import type { Rect } from '../../Utility/Rect.js'
+import type { CommandFiles, CommandFilterArgs, CommandFilters, VisibleCommandFileArgs } from '../../Base/Code.js'
+import type { Tweenable, TweenableDefinition, TweenableDefinitionObject, TweenableObject } from '../../Mixin/Tweenable/Tweenable.js'
+import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import type { SvgFilters } from '../../Helpers/Svg/Svg.js'
+import type { Filter, FilterDefinitionObject } from '../../Plugin/Filter/Filter.js'
+import type { PropertyObject } from '../../Setup/Property.js'
+
+import type { EffectType } from '../../Setup/Enums.js'
+import { TypeEffect } from '../../Setup/Enums.js'
+import { isTweenable } from '../../Mixin/Tweenable/TweenableFunctions.js'
+import { isMedia } from '../MediaFunctions.js'
 
 export interface Effect extends Tweenable {
   definition : EffectMedia
@@ -18,10 +20,10 @@ export interface Effect extends Tweenable {
   commandFiles(args: VisibleCommandFileArgs): CommandFiles
 }
 export const isEffect = (value?: any): value is Effect => {
-  return isTweenable(value) && value.type === EffectType
+  return isTweenable(value) && value.type === TypeEffect
 }
 export function assertEffect(value?: any): asserts value is Effect {
-  if (!isEffect(value)) throw new Error("expected Effect")
+  if (!isEffect(value)) throw new Error('expected Effect')
 }
 export type Effects = Effect[]
 
@@ -45,6 +47,6 @@ export interface EffectMedia extends TweenableDefinition {
 }
 
 export const isEffectMedia = (value?: any): value is EffectMedia => {
-  return isMedia(value) && value.type === EffectType
+  return isMedia(value) && value.type === TypeEffect
 }
 

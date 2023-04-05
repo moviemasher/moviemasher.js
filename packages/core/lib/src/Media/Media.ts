@@ -1,16 +1,16 @@
-import { UnknownRecord } from "../Types/Core"
-import { Constrained } from "../Base/Constrained"
-import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
-import { Property } from "../Setup/Property"
-import { Size } from "../Utility/Size"
-import { TranscodingObjects, Transcodings } from "../Plugin/Transcode/Transcoding/Transcoding"
-import { MediaType } from "../Setup/MediaType"
-import { Identified } from "../Base/Identified"
-import { Propertied } from "../Base/Propertied"
-import { DecodingObjects, Decodings } from "../Plugin/Decode/Decoding/Decoding"
-import { Data } from "../Helpers/ClientMedia/ClientMedia"
-import { DefiniteError } from "../Helpers/Error/Error"
-import { Requestable, RequestableObject } from "../Base/Requestable/Requestable"
+import type { UnknownRecord } from '../Types/Core.js'
+import type { Constrained } from '../Base/Constrained.js'
+import type { PreloadArgs, ServerPromiseArgs } from '../Base/Code.js'
+import type { Property } from '../Setup/Property.js'
+import type { Size } from '../Utility/Size.js'
+import type { TranscodingObjects, Transcodings, TranscodingTypes } from '../Plugin/Transcode/Transcoding/Transcoding.js'
+import type { MediaType } from '../Setup/MediaType.js'
+import type { Identified } from '../Base/Identified.js'
+import type { Propertied } from '../Base/Propertied.js'
+import type { DecodingObjects, Decodings } from '../Plugin/Decode/Decoding/Decoding.js'
+import type { Data } from '../Helpers/ClientMedia/ClientMedia.js'
+import type { DefiniteError } from '../Helpers/Error/Error.js'
+import type { Requestable, RequestableObject } from '../Base/Requestable/Requestable.js'
 
 export interface MediaInstanceObject extends UnknownRecord {
   mediaId?: string
@@ -61,7 +61,7 @@ export interface Media extends Requestable {
   file?: File
   isVector: boolean
   label: string
-  preferredTranscoding(...types: MediaType[]): Requestable
+  preferredTranscoding(...types: TranscodingTypes): Requestable
   properties: Property[]
   toJSON(): UnknownRecord
   loadPromise(args: PreloadArgs): Promise<void>

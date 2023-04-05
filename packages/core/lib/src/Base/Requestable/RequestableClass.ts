@@ -1,11 +1,12 @@
-import { UnknownRecord } from '../../Types/Core'
-import { isPopulatedString } from '../../Utility/Is'
-import { Requestable, RequestableObject } from './Requestable'
-import { Request } from "../../Helpers/Request/Request"
-import { ImageType, SequenceType } from '../../Setup/Enums'
-import { assertLoadType, LoadType } from "../../Setup/LoadType"
-import { PropertiedClass } from '../Propertied'
-import { assertRequest } from '../../Helpers/Request/RequestFunctions'
+import type { UnknownRecord } from '../../Types/Core.js'
+import type { Requestable, RequestableObject } from './Requestable.js'
+import type { Request } from '../../Helpers/Request/Request.js'
+import type { LoadType } from '../../Setup/LoadType.js'
+import { assertLoadType } from '../../Setup/LoadType.js'
+import { assertRequest } from '../../Helpers/Request/RequestFunctions.js'
+import { isPopulatedString } from '../../Utility/Is.js'
+import { PropertiedClass } from '../Propertied.js'
+import { TypeImage, TypeSequence } from '../../Setup/Enums.js'
 
 export class RequestableClass extends PropertiedClass implements Requestable {
   constructor(object: RequestableObject) {
@@ -28,8 +29,8 @@ export class RequestableClass extends PropertiedClass implements Requestable {
 
   get loadType(): LoadType { 
     const { type } = this
-    console.log(this.constructor.name, "loadType", type)
-    if (type === SequenceType) return ImageType
+    console.log(this.constructor.name, 'loadType', type)
+    if (type === TypeSequence) return TypeImage
 
     assertLoadType(type)
 
@@ -44,7 +45,7 @@ export class RequestableClass extends PropertiedClass implements Requestable {
 
   toJSON(): UnknownRecord {
     const { id, type, kind, createdAt, relativeRequest } = this
-    const { response, ...request } = relativeRequest
+    const { response: _, ...request } = relativeRequest
     return { id, request, type, kind, createdAt }
   }
 }

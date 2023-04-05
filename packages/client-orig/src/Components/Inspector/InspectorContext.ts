@@ -1,9 +1,9 @@
 import { 
   EmptyFunction, SelectedItems, 
   DataGroup, TimeRange, Time, NoneType
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
-import /* type */ { SelectorType, StringSetter, SelectorTypes } from '@moviemasher/moviemasher.js'
+import type { SelectorType, StringSetter, SelectorTypes } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export type DataGroupBooleans = {

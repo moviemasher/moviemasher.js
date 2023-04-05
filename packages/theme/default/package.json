@@ -4,10 +4,11 @@
   "description": "Movie Masher Theme Plugin - version 5.1.2",
 
 
-  "module": "./esm/theme-default.mjs",
-  "main": "./umd/theme-default.js",
-  "types": "./esm/theme-default.d.mts",
-  "files": ["esm", "umd", "moviemasher.css"],
+  "type": "module",
+  "module": "./esm/index.js",
+  "main": "./esm/theme-default.js",
+  "types": "./esm/index.d.ts",
+  "files": ["esm/*", "moviemasher.css"],
 
   "license": "MIT",
   "author": {
@@ -27,7 +28,6 @@
   },
   "devDependencies": {
     "@types/node": "18.13.0",
-
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "react": "^18.2.0",
@@ -35,31 +35,8 @@
     "react-icons": "4.7.1"
   },
   "scripts": {
-    "build-json": "node dev/build.mjs",
-    "build-css": "cat src/css/* > moviemasher.css",
-    "build-rollup": "rollup --config dev/rollup.config.mjs",
-    "build": "run-s build-css build-json build-rollup"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "typedoc": {
-    "entryPoint": "./src/index.ts",
-    "readmeFile": "./README.md",
-    "displayName": "theme-default"
+    "json": "node dev/build.mjs",
+    "css": "cat src/css/* > moviemasher.css",
+    "build": "run-s css json"
   }
 }

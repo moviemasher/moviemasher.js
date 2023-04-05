@@ -3,9 +3,9 @@ import path from 'path'
 
 import { 
   TranscodeOutput, errorCaught, ValueRecord, assertPopulatedString, 
-  idGenerateString, urlFilename, RenderingCommandOutput, ImageType, 
-  VideoType, AudioType, TranscodingType, Runtime 
-} from '@moviemasher/moviemasher.js'
+  idGenerateString, urlFilename, RenderingCommandOutput, 
+  TypeVideo, TypeAudio, TranscodingType, Runtime, TypeImage 
+} from '@moviemasher/lib-core'
 import { hashMd5 } from '../../Utility/Hash'
 import { TranscodeResponse } from './Transcode'
 import { EnvironmentKeyApiDirTemporary } from '../../Environment/ServerEnvironment'
@@ -28,15 +28,15 @@ const outputCommand = (inputPath: string, type: TranscodingType, commandOutput: 
   } = commandOutput
   const command = ffmpeg()
   command.addInput(inputPath)
-  if (type === VideoType) {
+  if (type === TypeVideo) {
     if (videoBitrate) command.videoBitrate(videoBitrate)
     if (videoCodec) command.videoCodec(videoCodec)
     if (videoRate) command.fpsOutput(videoRate)
   }
-  if (type === VideoType || type === ImageType) {
+  if (type === TypeVideo || type === TypeImage) {
     if (width && height) command.size([width, height].join('x'))
   }
-  if (type === AudioType || type === VideoType) {
+  if (type === TypeAudio || type === TypeVideo) {
     if (audioBitrate) command.audioBitrate(audioBitrate)
     if (audioChannels) command.audioChannels(audioChannels)
     if (audioCodec) command.audioCodec(audioCodec)

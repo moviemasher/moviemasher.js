@@ -1,9 +1,9 @@
-import /* type */ { Masher, MashIndex, Media, ScalarRecord } from '@moviemasher/moviemasher.js'
-import /* type */ { Draggable } from '@moviemasher/client-core'
+import type { Masher, MashIndex, Media, ScalarRecord } from '@moviemasher/lib-core'
+import type { Draggable } from '@moviemasher/client-core'
 
 import { ElementRecord } from "../../Types/Element"
 
-import { EmptyFunction } from '@moviemasher/moviemasher.js'
+import { EmptyFunction } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface MasherContextInterface {

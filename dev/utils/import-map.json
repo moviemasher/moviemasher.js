@@ -1,0 +1,19 @@
+{
+  "imports": {
+    "@moviemasher/lib-core": "https://unpkg.com/@moviemasher/lib-core/esm/index.js",
+    "@moviemasher/lib-core/": "https://unpkg.com/@moviemasher/lib-core/",
+    "@moviemasher/client-core": "https://unpkg.com/@moviemasher/client-core/esm/client-core.js",
+    "@moviemasher/client-core/esm/": "https://unpkg.com/@moviemasher/client-core/esm/",
+    "@moviemasher/client-component": "https://unpkg.com/@moviemasher/client-component/esm/form.js",
+    "@moviemasher/theme-default": "https://unpkg.com/@moviemasher/theme-default/esm/index.js",
+    "lit-element": "https://unpkg.com/lit-element@latest/lit-element.js?module",
+    "lit-html": "https://unpkg.com/lit-html@latest/lit-html.js?module",
+    "lit-html/directives/if-defined.js": "https://unpkg.com/lit-html@latest/directives/if-defined.js?module",
+    "@lit-labs/context": "https://unpkg.com/@lit-labs/context/index.js?module",
+    "@lit/reactive-element/decorators": "https://unpkg.com/@lit/reactive-element/decorators.js?module",
+    "lit/decorators.js": "https://unpkg.com/@lit/reactive-element/decorators.js?module",
+    "@lit/": "https://unpkg.com/@lit/",
+    "tslib": "https://unpkg.com/tslib@latest/tslib.es6.js?module"
+  }
+}
+

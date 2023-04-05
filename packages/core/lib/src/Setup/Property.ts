@@ -1,9 +1,10 @@
-import { Scalar } from "../Types/Core"
-import { DataType, isDataType, assertDataType } from "./Enums"
-import { propertyTypeDefault } from "../Helpers/PropertyType"
+import type { Scalar } from '../Types/Core.js'
+import { DataType, isDataType, assertDataType } from './Enums.js'
+import { propertyTypeDefault } from '../Helpers/PropertyType.js'
 import {
-  isBoolean, isNumber, isObject, isPopulatedString, isUndefined} from "../Utility/Is"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
+  isBoolean, isNumber, isObject, isPopulatedString, isUndefined
+} from '../Utility/Is.js'
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
 
 export enum DataGroup {
   // Clicking = 'clicking',
@@ -21,7 +22,7 @@ export const isDataGroup = (value?: any): value is DataGroup => {
   return DataGroups.includes(value as DataGroup)
 }
 export function assertDataGroup(value: any, name?: string): asserts value is DataGroup {
-  if (!isDataGroup(value)) errorThrow(value, "DataGroup", name)
+  if (!isDataGroup(value)) errorThrow(value, 'DataGroup', name)
 }
 
 export interface PropertyBase {
@@ -44,7 +45,7 @@ export interface PropertyObject extends Partial<PropertyBase> {
 }
 
 export const isProperty = (value: any): value is Property => {
-  return isObject(value) && "type" in value && isDataType(value.type)
+  return isObject(value) && 'type' in value && isDataType(value.type)
 }
 export function assertProperty(value: any, name?: string): asserts value is Property {
   if (!isProperty(value)) errorThrow(value, 'Property', name)

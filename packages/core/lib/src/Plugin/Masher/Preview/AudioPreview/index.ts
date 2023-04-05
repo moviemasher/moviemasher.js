@@ -1,3 +1,3 @@
-export * from "./AudioPreview"
-export * from "./AudioPreviewClass"
-export * from "./AudioPreviewFactory"
+export * from './AudioPreview.js'
+export * from './AudioPreviewClass.js'
+export * from './AudioPreviewFactory.js'

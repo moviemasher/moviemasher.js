@@ -1,7 +1,7 @@
 import React from "react"
-import { EventType } from "@moviemasher/moviemasher.js"
+import { EventType } from "@moviemasher/lib-core"
 
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
 import { className } from "@moviemasher/client-core"

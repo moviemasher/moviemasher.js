@@ -1,14 +1,14 @@
-import { ActionType } from "../../../../Setup/Enums"
-import { Action, ActionObject } from "./Action"
-import { AddClipToTrackAction, AddClipToTrackActionObject } from "./AddClipToTrackAction"
-import { AddTrackAction } from "./AddTrackAction"
-import { AddTrackActionObject } from "./AddTrackAction"
-import { ChangeAction, ChangeActionObject } from "./ChangeAction"
-import { ChangeFramesAction } from "./ChangeFramesAction"
-import { MoveClipAction, MoveClipActionObject } from "./MoveClipAction"
-import { RemoveClipAction, RemoveClipActionObject } from "./RemoveClipAction"
-import { ChangeMultipleAction, ChangeMultipleActionObject } from "./ChangeMultipleAction"
-import { MoveAction, MoveActionObject } from "./MoveAction"
+import { ActionType } from '../../../../Setup/Enums.js'
+import { Action, ActionObject } from './Action.js'
+import { AddClipToTrackAction, AddClipToTrackActionObject } from './AddClipToTrackAction.js'
+import { AddTrackAction } from './AddTrackAction.js'
+import { AddTrackActionObject } from './AddTrackAction.js'
+import { ChangeAction, ChangeActionObject } from './ChangeAction.js'
+import { ChangeFramesAction } from './ChangeFramesAction.js'
+import { MoveClipAction, MoveClipActionObject } from './MoveClipAction.js'
+import { RemoveClipAction, RemoveClipActionObject } from './RemoveClipAction.js'
+import { ChangeMultipleAction, ChangeMultipleActionObject } from './ChangeMultipleAction.js'
+import { MoveAction, MoveActionObject } from './MoveAction.js'
 
 
 export const actionInstance = (object: ActionObject): Action => {

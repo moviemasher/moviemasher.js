@@ -1,6 +1,6 @@
 import React from 'react'
 
-import /* type */ { PropsClickable, WithOnClick } from '../../Types/Props'
+import type { PropsClickable, WithOnClick } from '../../Types/Props'
 
 
 import Show from '../../Framework/Show/Show.lite'

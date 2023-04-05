@@ -1,7 +1,7 @@
 import { 
   MediaType, TranscodeOutput, DefiniteError, 
   Identified 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { Input } from "../../Types/Core"
 import { MediaRequest } from "../../Media/Media"
 

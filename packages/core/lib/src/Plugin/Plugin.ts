@@ -1,7 +1,5 @@
-import { Data } from "../Helpers/ClientMedia/ClientMedia"
-import { DefiniteError } from "../Helpers/Error/Error"
-import { UnknownRecord } from "../Types/Core"
-import { PluginsByMashing } from "./Masher/Masher"
+import type { Data } from '../Helpers/ClientMedia/ClientMedia.js'
+import type { DefiniteError } from '../Helpers/Error/Error.js'
 
 /**
  * @category Plugin
@@ -12,37 +10,28 @@ export type Plugin<T = unknown> = T &{
 
 export interface PluginRecord extends Record<string, Plugin | undefined | false> {}
 
+
 export type DecodeType = 'decode'
-export const DecodeType: DecodeType = 'decode'
-
 export type EncodeType = 'encode'
-export const EncodeType: EncodeType = 'encode'
-
 export type FilterType = 'filter'
-export const FilterType: FilterType = 'filter'
-
 export type MasherType = 'masher'
-export const MasherType: MasherType = 'masher'
-
-
 export type ProtocolType = 'protocol'
-export const ProtocolType: ProtocolType = 'protocol'
-
-export type ResolveType = 'resolve'
-export const ResolveType: ResolveType = 'resolve'
-
-export type TranscodeType = 'transcode'
-export const TranscodeType: TranscodeType = 'transcode'
-
-export type TranslateType = 'translate'
-export const TranslateType: TranslateType = 'translate'
-
 export type ProtocolTypes = ProtocolType[]
-
+export type ResolveType = 'resolve'
 export type ThemeType = 'theme'
-export const ThemeType: ThemeType = 'theme'
+export type TranscodeType = 'transcode'
 
-export type PluginType = DecodeType | EncodeType | FilterType | MasherType | ProtocolType | ResolveType | ThemeType | TranscodeType | TranslateType 
+export const TypeDecode: DecodeType = 'decode'
+export const TypeEncode: EncodeType = 'encode'
+export const TypeFilter: FilterType = 'filter'
+export const TypeMasher: MasherType = 'masher'
+export const TypeProtocol: ProtocolType = 'protocol'
+export const TypeResolve: ResolveType = 'resolve'
+export const TypeTheme: ThemeType = 'theme'
+export const TypeTranscode: TranscodeType = 'transcode'
+
+
+export type PluginType = DecodeType | EncodeType | FilterType | MasherType | ProtocolType | ResolveType | ThemeType | TranscodeType
 
 export interface PluginData<T = Plugin> {
   data: T

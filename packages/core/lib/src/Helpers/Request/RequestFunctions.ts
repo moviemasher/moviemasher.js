@@ -1,18 +1,26 @@
-import { ClientAudio, ClientAudioDataOrError, ClientFont, ClientFontDataOrError, ClientImage, ClientImageDataOrError, ClientMedia, ClientMediaType, ClientVideo, ClientVideoDataOrError, DataOrError } from "../ClientMedia/ClientMedia"
-import { assertMethod, GetMethod, Method, PostMethod, Request } from "./Request"
-import { ProtocolDataOrError, ProtocolPlugin } from "../../Plugin/Protocol/Protocol"
-import { protocolLoadPromise } from "../../Plugin/Protocol/ProtocolFunctions"
-import { assertEndpoint, endpointIsAbsolute, isEndpoint, urlEndpoint } from "../Endpoint/EndpointFunctions"
-import { assertPopulatedString, isDefiniteError, isJsonRecord, isJsonRecords, isObject, isUndefined } from "../../Utility/Is"
-import { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from "../../Setup/Enums"
-import { DefiniteError } from "../Error/Error"
-import { errorThrow } from "../Error/ErrorFunctions"
-import { isClientAudio, isClientFont, isClientImage, isClientVideo } from "../ClientMedia/ClientMediaFunctions"
-import { Data, JsonRecordDataOrError, JsonRecordsDataOrError } from "../ClientMedia/ClientMedia"
-import { ContentTypeHeader, JsonMimetype } from "../../Setup/Constants"
-import { LoadType } from "../../Setup/LoadType"
-import { JsonRecord, JsonRecords } from "../../Types/Core"
-import { StringType } from "../../Utility/Scalar"
+import type { ProtocolDataOrError, ProtocolPlugin } from '../../Plugin/Protocol/Protocol.js'
+import type { DefiniteError } from '../Error/Error.js'
+import type { Data, JsonRecordDataOrError, JsonRecordsDataOrError } from '../ClientMedia/ClientMedia.js'
+import type { LoadType } from '../../Setup/LoadType.js'
+import type { JsonRecord, JsonRecords } from '../../Types/Core.js'
+import type { 
+  ClientAudio, ClientAudioDataOrError, ClientFont, ClientFontDataOrError, 
+  ClientImage, ClientImageDataOrError, ClientMedia, ClientMediaType, 
+  ClientVideo, ClientVideoDataOrError, DataOrError 
+} from '../ClientMedia/ClientMedia.js'
+import type { AudioType, FontType, ImageType, RecordsType, RecordType, VideoType } from '../../Setup/Enums.js'
+import type { StringType } from '../../Utility/Scalar.js'
+
+import { TypeAudio, TypeFont, TypeImage, TypeRecords, TypeRecord, TypeVideo } from '../../Setup/Enums.js'
+import { ContentTypeHeader, JsonMimetype } from '../../Setup/Constants.js'
+
+import { assertMethod, GetMethod, Method, PostMethod, Request } from './Request.js'
+import { protocolLoadPromise } from '../../Plugin/Protocol/ProtocolFunctions.js'
+import { assertEndpoint, endpointIsAbsolute, isEndpoint, urlEndpoint } from '../Endpoint/EndpointFunctions.js'
+import { assertPopulatedString, isDefiniteError, isJsonRecord, isJsonRecords, isObject, isUndefined } from '../../Utility/Is.js'
+import { errorPromise, errorThrow } from '../Error/ErrorFunctions.js'
+import { isClientAudio, isClientFont, isClientImage, isClientVideo } from '../ClientMedia/ClientMediaFunctions.js'
+import { ErrorName } from '../Error/ErrorName.js'
 
 const makeRequestEndpointAbsolute = (request: Request): void => {
   const { endpoint } = request
@@ -43,7 +51,7 @@ export const requestAudioPromise = (request: Request): Promise<ClientAudioDataOr
 
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, AudioType).then(onError => {
+    protocolPlugin.promise(request, TypeAudio).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -56,7 +64,7 @@ export const requestFontPromise = (request: Request): Promise<ClientFontDataOrEr
 
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, FontType).then(onError => {
+    protocolPlugin.promise(request, TypeFont).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -69,7 +77,7 @@ export const requestImagePromise = (request: Request): Promise<ClientImageDataOr
 
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, ImageType).then(onError => {
+    protocolPlugin.promise(request, TypeImage).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -90,7 +98,7 @@ export const requestVideoPromise = (request: Request): Promise<ClientVideoDataOr
 
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, VideoType).then(onError => {
+    protocolPlugin.promise(request, TypeVideo).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -104,7 +112,7 @@ export const requestRecordPromise = (request: Request, useResponse = false): Pro
   }
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, RecordType).then(onError => {
+    protocolPlugin.promise(request, TypeRecord).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -118,7 +126,7 @@ export const requestRecordsPromise = (request: Request, useResponse = false): Pr
   }
   makeRequestEndpointAbsolute(request)
   return requestProtocolPromise(request).then(protocolPlugin => 
-    protocolPlugin.promise(request, RecordsType).then(onError => {
+    protocolPlugin.promise(request, TypeRecords).then(onError => {
       setRequestResponse(request, onError)
       return onError
     })
@@ -193,12 +201,12 @@ export function requestClientMediaPromise(request: Request, type: VideoType): Pr
 export function requestClientMediaPromise(request: Request, type: ClientMediaType): Promise<DataOrError<ClientMedia>> 
 export function requestClientMediaPromise(request: Request, type: ClientMediaType): Promise<DataOrError<ClientMedia>> {
   switch(type) {
-    case AudioType: return requestAudioPromise(request)
-    case FontType: return requestFontPromise(request)
-    case ImageType: return requestImagePromise(request)
-    case VideoType: return requestVideoPromise(request)
+    case TypeAudio: return requestAudioPromise(request)
+    case TypeFont: return requestFontPromise(request)
+    case TypeImage: return requestImagePromise(request)
+    case TypeVideo: return requestVideoPromise(request)
   }
-  // return errorPromise(ErrorName.Type)
+  return errorPromise(ErrorName.Type)
 }
 
 export type RequestEncodingPromiseFunction = typeof requestClientMediaPromise
@@ -211,8 +219,8 @@ export type RequestEncodingPromiseFunction = typeof requestClientMediaPromise
 
 export const isRequest = (value: any): value is Request => {
   return isObject(value) && (
-    ("endpoint" in value && isEndpoint(value.endpoint) || 
-    ("response" in value && isObject(value.response))
+    ('endpoint' in value && isEndpoint(value.endpoint) || 
+    ('response' in value && isObject(value.response))
   ))
 }
 export function assertRequest(value: any, name?: string): asserts value is Request {

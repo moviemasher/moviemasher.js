@@ -3,7 +3,7 @@ import {
   assertMedia, isMediaType, assertPopulatedString, ClassDropping, DataType, 
   ContainingTypes, ContentTypes, assertTrue, eventStop, isContainerDefinition, 
   isMediaObject, assertDefined, Strings
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { 
   DragDefinitionObject, dragType, dragTypes, dropType, TransferTypeFiles 
 } from '@moviemasher/client-core'

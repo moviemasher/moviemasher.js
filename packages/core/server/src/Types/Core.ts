@@ -1,4 +1,4 @@
-import { Request } from "@moviemasher/moviemasher.js"
+import { Request } from "@moviemasher/lib-core"
 
 
 export interface Input {

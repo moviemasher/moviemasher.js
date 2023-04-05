@@ -1,10 +1,10 @@
-import { ActionType } from "../../../Setup/Enums"
-import { isPositive } from "../../../Utility/Is"
-import { Masher } from "../Masher"
-import { EditorSelectionObject } from "../EditorSelection"
-import { Action, ActionOptions, ActionObject, assertAction } from "./Action/Action"
-import { actionInstance } from "./Action/ActionFactory"
-import { isChangeAction, isChangeActionObject } from "./Action/ChangeAction"
+import { ActionType } from '../../../Setup/Enums.js'
+import { isPositive } from '../../../Utility/Is.js'
+import { Masher } from '../Masher.js'
+import { EditorSelectionObject } from '../EditorSelection/EditorSelection.js'
+import { Action, ActionOptions, ActionObject, assertAction } from './Action/Action.js'
+import { actionInstance } from './Action/ActionFactory.js'
+import { isChangeAction, isChangeActionObject } from './Action/ChangeAction.js'
 
 export class Actions  {
   constructor(public editor: Masher) { }

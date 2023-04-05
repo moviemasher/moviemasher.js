@@ -1,10 +1,10 @@
-import { ScalarRecord } from "../../Types/Core"
-import { SvgFilters, SvgItems } from "../../Helpers/Svg/Svg"
-import { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from "../../Base/Code"
-import { isDefined, isNumber, isPopulatedString, isString } from "../../Utility/Is"
-import { assertFilterDefinition, Filter, FilterArgs, FilterDefinition, FilterObject } from "./Filter"
-import { Parameter } from "../../Setup/Parameter"
-import { PropertiedClass, PropertyTweenSuffix } from "../../Base/Propertied"
+import { ScalarRecord } from '../../Types/Core.js'
+import { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
+import { CommandFiles, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs } from '../../Base/Code.js'
+import { isDefined, isNumber, isPopulatedString, isString } from '../../Utility/Is.js'
+import { assertFilterDefinition, Filter, FilterArgs, FilterDefinition, FilterObject } from './Filter.js'
+import { Parameter } from '../../Setup/Parameter.js'
+import { PropertiedClass, PropertyTweenSuffix } from '../../Base/Propertied.js'
 
 export class FilterClass extends PropertiedClass implements Filter {
   constructor(object: FilterObject) {
@@ -24,7 +24,7 @@ export class FilterClass extends PropertiedClass implements Filter {
         const existing = this.definition.parameters.find(p => p.name === name)
         if (existing) parameter.dataType = existing.dataType
       }
-      // console.log(this.constructor.name, "constructor", parameter)
+      // console.log(this.constructor.name, 'constructor', parameter)
       return new Parameter(parameter)
     }))
     this.properties.push(...this.definition.properties)
@@ -90,7 +90,7 @@ export class FilterClass extends PropertiedClass implements Filter {
       const key = `${name}${PropertyTweenSuffix}`
       object[key] = this.value(key)
     })
-    // console.log(this.constructor.name, "scalerObject", object, parametersDefined.map(p => p.name))
+    // console.log(this.constructor.name, 'scalerObject', object, parametersDefined.map(p => p.name))
     return object
   }
 

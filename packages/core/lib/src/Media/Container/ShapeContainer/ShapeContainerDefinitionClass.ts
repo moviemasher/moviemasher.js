@@ -1,18 +1,20 @@
-import { UnknownRecord } from "../../../Types/Core"
-import { ContainerDefinitionMixin } from "../ContainerDefinitionMixin"
-import { ShapeContainerClass } from "./ShapeContainerClass"
-import {
+import type {Size} from '../../../Utility/Size.js'
+import type {UnknownRecord} from '../../../Types/Core.js'
+import type {
   ShapeContainer, ShapeContainerDefinition,
   ShapeContainerDefinitionObject, ShapeContainerObject
-} from "./ShapeContainer"
-import { TweenableDefinitionMixin } from "../../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { isAboveZero, isPopulatedString } from "../../../Utility/Is"
-import { svgSvgElement, svgPathElement, svgPolygonElement, svgSetTransformRects } from "../../../Helpers/Svg/SvgFunctions"
-import { Size, sizeAboveZero, sizeCover } from "../../../Utility/Size"
-import { centerPoint } from "../../../Utility/Rect"
-import { DefaultContainerId } from "../ContainerConstants"
-import { MediaBase } from "../../MediaBase"
-import { ImageType } from "../../../Setup/Enums"
+} from './ShapeContainer.js'
+
+import {ContainerDefinitionMixin} from '../ContainerDefinitionMixin.js'
+import {ShapeContainerClass} from './ShapeContainerClass.js'
+import {TweenableDefinitionMixin} from '../../../Mixin/Tweenable/TweenableDefinitionMixin.js'
+import {isAboveZero, isPopulatedString} from '../../../Utility/Is.js'
+import {svgSvgElement, svgPathElement, svgPolygonElement, svgSetTransformRects} from '../../../Helpers/Svg/SvgFunctions.js'
+import {sizeAboveZero, sizeCover} from '../../../Utility/Size.js'
+import {centerPoint} from '../../../Utility/Rect.js'
+import {DefaultContainerId} from '../ContainerConstants.js'
+import {MediaBase} from '../../MediaBase.js'
+import {TypeImage} from '../../../Setup/Enums.js'
 
 const ShapeContainerDefinitionWithTweenable = TweenableDefinitionMixin(MediaBase)
 const ShapeContainerDefinitionWithContainer = ContainerDefinitionMixin(ShapeContainerDefinitionWithTweenable)
@@ -49,7 +51,7 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
 
   isVector = true
 
-  path = ""
+  path = ''
 
   pathHeight = 0
 
@@ -63,5 +65,5 @@ export class ShapeContainerDefinitionClass extends ShapeContainerDefinitionWithC
     return object
   }
 
-  type = ImageType 
+  type = TypeImage 
 }

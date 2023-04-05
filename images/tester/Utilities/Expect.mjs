@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import { isPositive, isArray, isDefined } from "@moviemasher/moviemasher.js"
+import { isPositive, isArray, isDefined } from "@moviemasher/lib-core"
 
 export const expectArrayLength = (value, length = -1, constructor) => {
   const array = expectArray(value, constructor)

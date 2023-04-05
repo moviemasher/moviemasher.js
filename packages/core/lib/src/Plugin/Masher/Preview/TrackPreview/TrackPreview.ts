@@ -1,11 +1,11 @@
 
-import { SvgItem, SvgItems } from "../../../../Helpers/Svg/Svg"
+import {SvgItem, SvgItems} from '../../../../Helpers/Svg/Svg.js'
 
-import { Time, TimeRange } from "../../../../Helpers/Time/Time"
-import { Clip } from "../../../../Media/Mash/Track/Clip/Clip"
-import { Preview } from "../Preview"
-import { Container } from "../../../../Media/Container/Container"
-import { Masher } from "../../Masher"
+import {Time, TimeRange} from '../../../../Helpers/Time/Time.js'
+import {Clip} from '../../../../Media/Mash/Track/Clip/Clip.js'
+import {Preview} from '../Preview.js'
+import {Container} from '../../../../Media/Container/Container.js'
+import {Masher} from '../../Masher.js'
 
 export interface TrackPreviewArgs {
   clip: Clip

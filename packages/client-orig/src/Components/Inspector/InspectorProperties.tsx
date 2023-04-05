@@ -2,7 +2,7 @@ import React from "react"
 import { 
   UnknownRecord, isSelectedProperty, SelectedItems, Time,
   assertDataGroup
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

@@ -1,10 +1,10 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { colorHexToRgb, colorMixRbg, colorRgbaToHex, colorToRgb, colorValid } from "@moviemasher/moviemasher.js"
+import { colorHexToRgb, colorMixRbg, colorRgbaToHex, colorToRgb, colorValid } from '@moviemasher/lib-core'
 
-describe("Color", () => {
-  describe("colorValid", () => {
+describe('Color', () => {
+  describe('colorValid', () => {
     const validColors = [
       // 'gray', 'grey', 'red', 'green', 
       'rgb(0,0,0)', 'rgba(0,0,0,0.5)', '#FF00FF',
@@ -23,7 +23,7 @@ describe("Color", () => {
     }) 
   })
 
-  describe("colorRgbaToHex", () => {
+  describe('colorRgbaToHex', () => {
     const colors = {
       '#ff0000ff': { a: 1.0, r: 255, g: 0, b: 0 },
     }
@@ -34,8 +34,8 @@ describe("Color", () => {
     })
   })
 
-  describe("colorMixRbg", () => {
-    test("interpolates properly between colors", () => {
+  describe('colorMixRbg', () => {
+    test('interpolates properly between colors', () => {
       const red = colorHexToRgb('#FF0000')
       const green = colorHexToRgb('#00FF00')
       const blue = colorHexToRgb('#0000FF')
@@ -43,7 +43,7 @@ describe("Color", () => {
     })
   })
 
-  describe("colorToRgb", () => {
+  describe('colorToRgb', () => {
     const colors = {
       '#000000': { r: 0, g: 0, b: 0 },
       '#FF0000': { r: 255, g: 0, b: 0 },

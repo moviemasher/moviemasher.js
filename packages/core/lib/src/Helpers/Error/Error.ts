@@ -8,6 +8,5 @@ export interface DefiniteError {
   error: ErrorObject
 }
 
-
 export interface PotentialError extends Partial<DefiniteError>  {
 }

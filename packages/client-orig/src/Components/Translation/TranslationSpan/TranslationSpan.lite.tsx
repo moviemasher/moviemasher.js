@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { translateArgs, TranslateArgs } from '@moviemasher/moviemasher.js'
-import /* type */ { PropsWithChildren } from '../../../Types/Props'
+import { translateArgs, TranslateArgs } from '@moviemasher/lib-core'
+import type { PropsWithChildren } from '../../../Types/Props'
 import { useClient } from '../../../Hooks/useClient'
 import SpanContainer from '../../Span/SpanContainer/SpanContainer.lite'
 

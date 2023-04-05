@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react"
-import /* type */ { MediaArray, MediaType } from "@moviemasher/moviemasher.js"
+import type { MediaArray, MediaType } from "@moviemasher/lib-core"
 
-import { EventType } from "@moviemasher/moviemasher.js"
+import { EventType } from "@moviemasher/lib-core"
 
 import { useListeners } from "./useListeners"
 import { useMasher } from "./useMasher"

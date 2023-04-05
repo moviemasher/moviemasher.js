@@ -25,7 +25,7 @@ import {
   ErrorName,
   errorName,
   Runtime, 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { ServerClass } from "../ServerClass"
 import { ExpressHandler } from "../Server"
@@ -34,7 +34,7 @@ import { DataServer, DataServerArgs } from "./DataServer"
 import { FileServer } from "../FileServer/FileServer"
 import { idUnique } from "../../Utilities/Id"
 import { RenderingServer } from "../RenderingServer/RenderingServer"
-import { EnvironmentKeyAppColumnOwner, EnvironmentKeyAppColumnSource } from "@moviemasher/server-core/src/Environment/ServerEnvironment"
+import { EnvironmentKeyAppColumnOwner, EnvironmentKeyAppColumnSource } from "@moviemasher/server-core"
 
 
 export interface DataServerRow extends UnknownRecord, Identified { }

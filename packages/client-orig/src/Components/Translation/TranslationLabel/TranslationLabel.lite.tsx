@@ -1,4 +1,4 @@
-import { TranslateArgs } from "@moviemasher/moviemasher.js"
+import { TranslateArgs } from "@moviemasher/lib-core"
 import React from "react"
 import { PropsContained } from "../../../Types/Props"
 

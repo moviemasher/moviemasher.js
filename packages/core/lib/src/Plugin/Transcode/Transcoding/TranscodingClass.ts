@@ -1,6 +1,6 @@
-import { UnknownRecord } from "../../../Types/Core"
-import { RequestableClass } from "../../../Base/Requestable/RequestableClass"
-import { Transcoding, TranscodingObject, TranscodingType } from "./Transcoding"
+import {UnknownRecord} from '../../../Types/Core.js'
+import {RequestableClass} from '../../../Base/Requestable/RequestableClass.js'
+import {Transcoding, TranscodingObject, TranscodingType} from './Transcoding.js'
 
 
 export class TranscodingClass extends RequestableClass implements Transcoding {

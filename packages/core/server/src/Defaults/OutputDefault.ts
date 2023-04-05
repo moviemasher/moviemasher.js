@@ -1,16 +1,89 @@
 import { 
   VideoEncoderOptions, NumberRecord, OutputFormat, EncodingType, 
-  RenderingCommandOutput, AudioType, ImageType, FontType, VideoType, errorThrow, ErrorName 
-} from "@moviemasher/moviemasher.js"
+  RenderingCommandOutput, TypeAudio, TypeImage, FontType, TypeVideo, errorThrow, ErrorName 
+} from "@moviemasher/lib-core"
 
 
-import outputDefaultAudioJson from './audio.json'
-import outputDefaultFontJson from './font.json'
-import outputDefaultImagePngJson from './imagepng.json'
-import outputDefaultVideoJson from './video.json'
-import outputDefaultSequenceJson from './imagesequence.json'
-import outputDefaultWaveformJson from './waveform.json'
-import outputDefaultImageJson from './image.json'
+const outputDefaultAudioJson = {
+  "options": {},
+  "audioBitrate": 160,
+  "audioCodec": "libmp3lame",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "extension": "mp3",
+  "outputType": "audio"
+}
+
+const outputDefaultFontJson = {
+  "options": {},
+  "extension": "woff2",
+  "outputType": "font"
+}
+
+const outputDefaultImagePngJson = {
+  "options": {},
+  "width": 320,
+  "height": 240,
+  "extension": "png",
+  "outputType": "image",
+  "format": "image2",
+  "offset": 0
+}
+
+const outputDefaultVideoJson = {
+  "options": {
+    "g": 60,
+    "level": 41,
+    "movflags": "faststart"
+  },
+  "width": 1920,
+  "height": 1080,
+  "videoRate": 30,
+  "videoBitrate": 2000,
+  "audioBitrate": 160,
+  "audioCodec": "aac",
+  "videoCodec": "libx264",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "g": 0,
+  "format": "mp4",
+  "extension": "mp4",
+  "outputType": "video"
+}
+
+const outputDefaultSequenceJson = {
+  "options": {},
+  "format": "image2",
+  "width": 320,
+  "height": 240,
+  "videoRate": 10,
+  "extension": "jpg",
+  "outputType": "imagesequence"
+}
+
+const outputDefaultWaveformJson = {
+  "options": {},
+  "width": 320,
+  "height": 240,
+  "forecolor": "#000000",
+  "backcolor": "#00000000",
+  "audioBitrate": 160,
+  "audioCodec": "aac",
+  "audioChannels": 2,
+  "audioRate": 44100,
+  "extension": "png",
+  "outputType": "waveform"
+}
+
+const outputDefaultImageJson = {
+  "options": {},
+  "width": 320,
+  "height": 240,
+  "extension": "jpg",
+  "outputType": "image",
+  "offset": 0
+}
+
 
 export const outputDefaultAudio = (overrides?: VideoEncoderOptions): RenderingCommandOutput => {
   const object = overrides || {}
@@ -55,9 +128,9 @@ export const outputDefaultImage = (overrides?: VideoEncoderOptions): RenderingCo
 export const outputDefaultPopulate = (overrides: RenderingCommandOutput): RenderingCommandOutput => {
   const { outputType } = overrides
   switch (outputType) {
-    case AudioType: return outputDefaultAudio(overrides)
-    case ImageType: return outputDefaultImage(overrides)
-    case VideoType: return outputDefaultVideo(overrides)
+    case TypeAudio: return outputDefaultAudio(overrides)
+    case TypeImage: return outputDefaultImage(overrides)
+    case TypeVideo: return outputDefaultVideo(overrides)
     // case FontType: return outputDefaultFont(overrides)
     // case SequenceType: return outputDefaultSequence(overrides)
   }
@@ -85,23 +158,23 @@ export const renderingCommandOutput = (output: RenderingCommandOutput): Renderin
 
 
 export const outputDefaultTypeByFormat = {
-  [OutputFormat.AudioConcat]: AudioType,
-  [OutputFormat.Mdash]: VideoType,
-  [OutputFormat.Flv]: VideoType,
-  [OutputFormat.Hls]: VideoType,
-  [OutputFormat.Jpeg]: ImageType,
-  [OutputFormat.Mp3]: AudioType,
-  [OutputFormat.Mp4]: VideoType,
-  [OutputFormat.Png]: ImageType,
-  [OutputFormat.Rtmp]: VideoType,
-  [OutputFormat.VideoConcat]: VideoType,
+  [OutputFormat.AudioConcat]: TypeAudio,
+  [OutputFormat.Mdash]: TypeVideo,
+  [OutputFormat.Flv]: TypeVideo,
+  [OutputFormat.Hls]: TypeVideo,
+  [OutputFormat.Jpeg]: TypeImage,
+  [OutputFormat.Mp3]: TypeAudio,
+  [OutputFormat.Mp4]: TypeVideo,
+  [OutputFormat.Png]: TypeImage,
+  [OutputFormat.Rtmp]: TypeVideo,
+  [OutputFormat.VideoConcat]: TypeVideo,
 }
 
 export const outputDefaultFormatByType = {
-  [AudioType]: OutputFormat.Mp3,
-  [ImageType]: OutputFormat.Png,
-  [VideoType]: OutputFormat.Mp4,
-  // [ImageTypeSequence]: OutputFormat.Jpeg,
+  [TypeAudio]: OutputFormat.Mp3,
+  [TypeImage]: OutputFormat.Png,
+  [TypeVideo]: OutputFormat.Mp4,
+  // [TypeImageSequence]: OutputFormat.Jpeg,
 }
 
 

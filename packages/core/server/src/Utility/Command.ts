@@ -1,7 +1,7 @@
 import path from 'path'
 import { 
   isNumeric, isPopulatedString, SemicolonChar, StringTuple, NewlineChar
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 const commandErrorRegex = [

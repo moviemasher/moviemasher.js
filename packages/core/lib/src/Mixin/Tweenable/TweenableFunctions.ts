@@ -1,5 +1,5 @@
-import { isMedia, isMediaInstance } from "../../Media/MediaFunctions"
-import { Tweenable, TweenableDefinition } from "./Tweenable"
+import type {Tweenable, TweenableDefinition} from './Tweenable.js'
+import {isMedia, isMediaInstance} from '../../Media/MediaFunctions.js'
 
 export const isTweenableDefinition = (value?: any): value is TweenableDefinition => {
   return isMedia(value) 

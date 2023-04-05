@@ -1,24 +1,24 @@
-import { ClientVideo, ClientImage } from "../../Helpers/ClientMedia/ClientMedia"
-import { VideoClass } from "./VideoClass"
-import { Video, VideoMedia, VideoMediaObject, VideoObject } from "./Video"
-import { UpdatableSizeDefinitionMixin } from "../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin"
-import { ContentDefinitionMixin } from "../Content/ContentDefinitionMixin"
-import { UpdatableDurationDefinitionMixin } from "../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin"
-import { TweenableDefinitionMixin } from "../../Mixin/Tweenable/TweenableDefinitionMixin"
-import { ContainerDefinitionMixin } from "../Container/ContainerDefinitionMixin"
-import { MediaBase } from "../MediaBase"
-import { assertSizeAboveZero, Size, sizeAboveZero, sizeCover, sizeString } from "../../Utility/Size"
-import { svgImagePromiseWithOptions, svgSvgElement } from "../../Helpers/Svg/SvgFunctions"
-import { centerPoint, RectOptions } from "../../Utility/Rect"
-import { Time } from "../../Helpers/Time/Time"
-import { imageFromVideoPromise } from "../../Utility/Image"
-import { timeFromArgs } from "../../Helpers/Time/TimeUtilities"
-import { ImageType, SequenceType, VideoType } from "../../Setup/Enums"
-import { Requestable } from "../../Base/Requestable/Requestable"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
-import { requestImagePromise, requestVideoPromise } from "../../Helpers/Request/RequestFunctions"
-import { isDefiniteError } from "../../Utility/Is"
+import {ClientVideo, ClientImage} from '../../Helpers/ClientMedia/ClientMedia.js'
+import {VideoClass} from './VideoClass.js'
+import {Video, VideoMedia, VideoMediaObject, VideoObject} from './Video.js'
+import {UpdatableSizeDefinitionMixin} from '../../Mixin/UpdatableSize/UpdatableSizeDefinitionMixin.js'
+import {ContentDefinitionMixin} from '../Content/ContentDefinitionMixin.js'
+import {UpdatableDurationDefinitionMixin} from '../../Mixin/UpdatableDuration/UpdatableDurationDefinitionMixin.js'
+import {TweenableDefinitionMixin} from '../../Mixin/Tweenable/TweenableDefinitionMixin.js'
+import {ContainerDefinitionMixin} from '../Container/ContainerDefinitionMixin.js'
+import {MediaBase} from '../MediaBase.js'
+import {assertSizeAboveZero, Size, sizeAboveZero, sizeCover, sizeString} from '../../Utility/Size.js'
+import {svgImagePromiseWithOptions, svgSvgElement} from '../../Helpers/Svg/SvgFunctions.js'
+import {centerPoint, RectOptions} from '../../Utility/Rect.js'
+import {Time} from '../../Helpers/Time/Time.js'
+import {imageFromVideoPromise} from './Image.js'
+import {timeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
+import { TypeSequence, TypeImage, TypeVideo} from '../../Setup/Enums.js'
+import {Requestable} from '../../Base/Requestable/Requestable.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {ErrorName} from '../../Helpers/Error/ErrorName.js'
+import {requestImagePromise, requestVideoPromise} from '../../Helpers/Request/RequestFunctions.js'
+import {isDefiniteError} from '../../Utility/Is.js'
 
 const VideoMediaWithTweenable = TweenableDefinitionMixin(MediaBase)
 const VideoMediaWithContainer = ContainerDefinitionMixin(VideoMediaWithTweenable)
@@ -32,7 +32,7 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
     if (loadedVideo) this.loadedVideo = loadedVideo
   
     // TODO: support speed
-    // this.properties.push(propertyInstance({ name: "speed", type: DataType.Number, value: 1.0 }))
+    // this.properties.push(propertyInstance({ name: 'speed', type: DataType.Number, value: 1.0 }))
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
@@ -74,7 +74,7 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
   private imageFromTranscodingPromise(transcoding: Requestable, definitionTime: Time, outSize?: Size): Promise<ClientImage> {
     const { type, request } = transcoding
     switch (type) {
-      case ImageType: {
+      case TypeImage: {
 
         return requestImagePromise(request).then(orError => {
           if (isDefiniteError(orError)) return errorThrow(orError.error)
@@ -82,10 +82,10 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
           return orError.data
         })
       }
-      case VideoType: {
+      case TypeVideo: {
         return this.imageFromVideoTranscodingPromise(transcoding, definitionTime, outSize)
       }
-      case SequenceType: {
+      case TypeSequence: {
         return this.imageFromSequencePromise(transcoding, definitionTime, outSize)
       }
     }
@@ -131,16 +131,16 @@ export class VideoMediaClass extends VideoMediaWithUpdatableDuration implements 
 
   get iconTranscoding(): Requestable {
     return this.preferredTranscoding(
-      ImageType, SequenceType, VideoType
+      TypeImage, TypeSequence, TypeVideo
     )
   }
 
   
   get previewTranscoding(): Requestable {
     return this.preferredTranscoding(
-      SequenceType, VideoType
+      TypeSequence, TypeVideo
     )
   }
 
-  type = VideoType 
+  type = TypeVideo 
 }

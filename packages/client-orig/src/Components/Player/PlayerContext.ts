@@ -1,4 +1,4 @@
-import { BooleanSetter, EmptyFunction, NumberSetter } from '@moviemasher/moviemasher.js'
+import { BooleanSetter, EmptyFunction, NumberSetter } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface PlayerContextInterface {

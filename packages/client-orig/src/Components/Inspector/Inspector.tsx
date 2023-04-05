@@ -5,7 +5,7 @@ import {
   isSelectedProperty, isDefined, PropertyTweenSuffix, DataGroup, 
   SelectedProperties, 
   NoneType
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 
 import { WithClassName } from "../../Types/Core"

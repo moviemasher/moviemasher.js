@@ -1,6 +1,6 @@
 
 
-import /* type */ { Identified, Labeled } from "@moviemasher/moviemasher.js"
+import type { Identified, Labeled } from '@moviemasher/lib-core'
 
 export enum ActivityType {
   Analyze = 'analyze',

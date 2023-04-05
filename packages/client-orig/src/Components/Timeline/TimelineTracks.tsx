@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, arrayReversed, Tracks } from '@moviemasher/moviemasher.js'
+import { EventType, arrayReversed, Tracks } from '@moviemasher/lib-core'
 
 import { JsxElements } from "../../Types/Element"
 import { PropsWithChildren } from "../../Types/Props"

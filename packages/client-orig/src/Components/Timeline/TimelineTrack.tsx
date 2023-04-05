@@ -2,7 +2,7 @@ import React from 'react'
 import { 
   assertMashMedia, assertTrack, assertTrue, ClassSelected, DroppingPosition, 
   eventStop, UnknownRecord 
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 import { JsxElements } from "../../Types/Element"
 import { WithClassName } from "../../Types/Core"

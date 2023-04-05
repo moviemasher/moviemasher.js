@@ -1,0 +1,17 @@
+version: "3"
+name: moviemasher-documentation
+services:
+  service:
+    image: httpd:2.4
+    container_name: moviemasher-documentation-8577
+    ports:
+      - 8577:80
+    volumes:
+      - ../../../docs:/usr/local/apache2/htdocs/docs
+      - ../public/index.html:/usr/local/apache2/htdocs/index.html
+      # - ../src/demo.html:/usr/local/apache2/htdocs/docs/demo/index.html
+      - ../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+      # - ../../../packages/core/lib/esm/moviemasher.js:/usr/local/apache2/htdocs/docs/demo/moviemasher.js
+      # - ../../../packages/client/react/esm/client-react.js:/usr/local/apache2/htdocs/docs/demo/client-react.js
+      # - ../../../packages/theme/default/esm/theme-default.js:/usr/local/apache2/htdocs/docs/demo/theme-default.js
+    

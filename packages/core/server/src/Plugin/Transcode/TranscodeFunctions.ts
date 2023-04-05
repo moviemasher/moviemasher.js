@@ -1,4 +1,4 @@
-import { ErrorName, errorThrow, isTranscodeOutput, RenderingCommandOutput } from "@moviemasher/moviemasher.js";
+import { ErrorName, errorThrow, isTranscodeOutput, RenderingCommandOutput } from "@moviemasher/lib-core";
 import { RenderingOutput } from "../Encode/Encode";
 import { isMediaRequest } from "../Media/Media";
 import { TranscodeRequest } from "./Transcode";

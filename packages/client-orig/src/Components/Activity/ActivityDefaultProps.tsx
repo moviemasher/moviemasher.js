@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton } from '@moviemasher/moviemasher.js'
+import { ClassButton } from '@moviemasher/lib-core'
 
 import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'
@@ -8,7 +8,6 @@ import { ActivityProps } from './Activity'
 import { PanelOptions, panelOptionsStrict } from '../Panel/Panel'
 import { ActivityGroup } from './ActivityContext'
 import { ActivityPicker } from './ActivityPicker'
-import { PanelFoot } from '../Panel/PanelFoot'
 import { CollapseControl } from '../Collapse/CollapseControl'
 import { NotCollapsed } from '../Collapse/NotCollapsed'
 import { Collapsed } from '../Collapse/Collapsed'
@@ -50,7 +49,7 @@ export const ActivityDefaultProps: PropsMethod<ActivityPropsDefault, ActivityPro
   const children = <>
     <Bar key='head' {...optionsStrict.header} />
     <ActivityContent key='content' {...optionsStrict.content.props} />
-    <PanelFoot key='foot' {...optionsStrict.footer} />
+    <Bar key='foot' {...optionsStrict.footer} />
   </>
 
   return { 

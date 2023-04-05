@@ -1,5 +1,5 @@
 import React from "react"
-import { Identified, assertTrue, ClassSelected } from "@moviemasher/moviemasher.js"
+import { Identified, assertTrue, ClassSelected } from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

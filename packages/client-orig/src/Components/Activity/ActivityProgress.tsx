@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertObject, isAboveZero, isPopulatedArray, isPopulatedString, isPositive 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

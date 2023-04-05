@@ -1,0 +1,29 @@
+ARG DIR_ROOT=/app
+
+FROM node:18 as base
+ARG DIR_ROOT
+WORKDIR ${DIR_ROOT}
+
+COPY package.json ${DIR_ROOT}/package.json
+
+RUN npm install 
+
+FROM base as stage
+ARG DIR_ROOT
+WORKDIR ${DIR_ROOT}
+COPY packages/build/component/package.json ${DIR_ROOT}/packages/build/component/package.json
+COPY packages/core/lib/package.json ${DIR_ROOT}/packages/core/lib/package.json
+COPY packages/core/client/package.json ${DIR_ROOT}/packages/core/client/package.json
+COPY packages/client/component/package.json ${DIR_ROOT}/packages/client/component/package.json 
+COPY dev/tsconfig ${DIR_ROOT}/dev/tsconfig
+
+RUN npm install 
+
+FROM base 
+ARG DIR_ROOT
+
+COPY --from=stage ${DIR_ROOT}/node_modules ${DIR_ROOT}/node_modules
+
+ENTRYPOINT ["npm", "run", "--workspace=@moviemasher/client-component"]
+CMD ["build"]
+LABEL org.opencontainers.image.authors="support@moviemasher.com"

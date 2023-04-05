@@ -1,4 +1,4 @@
-import { DataDefaultResponse, Size } from "@moviemasher/moviemasher.js";
+import { DataDefaultResponse, Size } from "@moviemasher/lib-core";
 import { ClientOptions } from "@moviemasher/client-core";
 import { WithClassName } from "../../Types/Core";
 import { PropsWithChildren } from "../../Types/Props";
@@ -8,7 +8,7 @@ import { InspectorPropsDefault } from '../Inspector/InspectorDefaultProps';
 import { PanelOptions } from '../Panel/Panel';
 import { PlayerPropsDefault } from '../Player/PlayerDefaultProps';
 import { TimelinePropsDefault } from '../Timeline/TimelineDefaultProps';
-import { MashingType } from '@moviemasher/moviemasher.js';
+import { MashingType } from '@moviemasher/lib-core';
 import { ElementRecord } from "../../Types/Element";
 
 

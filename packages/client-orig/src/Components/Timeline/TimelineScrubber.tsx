@@ -2,7 +2,7 @@ import React from "react"
 import { 
   ClassDisabled, eventStop, EventType, pixelToFrame, 
   timeFromArgs, UnknownRecord 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { 
   pixelFromFrame
 } from "@moviemasher/client-core"

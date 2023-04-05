@@ -1,12 +1,12 @@
-import { Tweenable, TweenableObject, TweenableDefinitionObject, TweenableDefinition } from "../../Mixin/Tweenable/Tweenable"
-import { Constrained } from "../../Base/Constrained"
-import { PreviewItems, SvgItem } from "../../Helpers/Svg/Svg"
-import { Rect, RectTuple } from "../../Utility/Rect"
-import { Size } from "../../Utility/Size"
-import { CommandFilters, CommandFilterArgs, Component } from "../../Base/Code"
-import { Anchor, DirectionObject } from "../../Setup/Enums"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Content } from "../Content/Content"
+import type { Tweenable, TweenableObject, TweenableDefinitionObject, TweenableDefinition } from '../../Mixin/Tweenable/Tweenable.js'
+import type { Constrained } from '../../Base/Constrained.js'
+import type { PreviewItems, SvgItem } from '../../Helpers/Svg/Svg.js'
+import type { Rect, RectTuple } from '../../Utility/Rect.js'
+import type { Size } from '../../Utility/Size.js'
+import type { CommandFilters, CommandFilterArgs, Component } from '../../Base/Code.js'
+import type { Time, TimeRange } from '../../Helpers/Time/Time.js'
+import type { Content } from '../Content/Content.js'
+import type { Anchor, DirectionObject } from '../../Setup/Enums.js'
 
 export interface ContainerObject extends TweenableObject {
   height?: number

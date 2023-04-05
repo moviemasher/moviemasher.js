@@ -1,4 +1,4 @@
-import { AudibleContext } from "./AudibleContext"
+import { AudibleContext } from './AudibleContext.js'
 
 const createContextAudible = (): AudibleContext => { return new AudibleContext() }
 

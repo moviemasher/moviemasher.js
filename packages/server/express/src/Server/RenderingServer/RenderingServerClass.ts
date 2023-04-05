@@ -3,14 +3,14 @@ import fs from 'fs'
 import path from "path"
 
 import {
-  ApiCallback, assertMediaType, assertTrue, AudioType, EncodingType, Endpoint, 
+  ApiCallback, assertMediaType, assertTrue, EncodingType, Endpoint, 
   Endpoints, EnvironmentKeyUrlBase, errorCaught, ErrorName, errorName, 
-  errorThrow, FontType, ImageType, isLoadType, LoadType, MashMediaObject, 
+  errorThrow, isLoadType, LoadType, MashMediaObject, 
   MediaObject, MediaType, mediaTypeFromMime, RenderingCommandOutput, 
   RenderingCommandOutputs, RenderingInput, RenderingStartRequest, 
   RenderingStartResponse, RenderingUploadRequest, RenderingUploadResponse, 
-  RequestInit, Runtime, SequenceType, SizeIcon, SizePreview
-} from "@moviemasher/moviemasher.js"
+  RequestInit, Runtime, SizeIcon, SizePreview
+} from "@moviemasher/lib-core"
 
 import {
   BasenameDefinition, renderingInput, RenderingProcessArgs, 
@@ -70,23 +70,23 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
   
     // TODO: support waveform generation
     // TODO: support font uploading
-    switch (definitionType) {
-      case AudioType: {
-        return ({ outputType: AudioType })
-      }
-      case ImageType: {
-        return ({ outputType: ImageType, ...previewSize })
-        // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
-      }
-      case SequenceType: {
-        return ({ outputType: AudioType })
-        // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
-        // return ({ outputType: ImageSequenceType, ...previewSize })
-      }
+    // switch (definitionType) {
+    //   case AudioType: {
+    //     return ({ outputType: AudioType })
+    //   }
+    //   case ImageType: {
+    //     return ({ outputType: ImageType, ...previewSize })
+    //     // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
+    //   }
+    //   case SequenceType: {
+    //     return ({ outputType: AudioType })
+    //     // return ({ outputType: ImageType, ...iconSize, basename: 'icon' })
+    //     // return ({ outputType: ImageSequenceType, ...previewSize })
+    //   }
       // case FontType: {
       //   return ({ outputType: FontType })
       // }
-    }
+    // }
     return errorThrow(ErrorName.Type) 
     // return outputs
   }
@@ -148,7 +148,7 @@ export class RenderingServerClass extends ServerClass implements RenderingServer
       const outputDirectory = this.outputDirectory(user, id, renderingId)
       const processArgs: RenderingProcessArgs = {
         ...rest,
-        mash,
+        // mash,
         defaultDirectory: user,
         validDirectories: ['shared'],
         cacheDirectory,

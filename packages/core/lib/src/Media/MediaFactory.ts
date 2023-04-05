@@ -1,6 +1,7 @@
-import { assertMediaType } from "../Setup/MediaType"
-import { Media, MediaObject } from "./Media"
-import { MediaFactories } from "./MediaFactories"
+import type { Media, MediaObject } from './Media.js'
+
+import { assertMediaType } from '../Setup/MediaType.js'
+import { MediaFactories } from './MediaFactories.js'
 
 
 export const mediaDefinition = (object: MediaObject): Media => {

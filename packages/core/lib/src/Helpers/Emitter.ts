@@ -1,10 +1,10 @@
-import { UnknownRecord } from "../Types/Core"
-import { EventType } from "../Setup/Enums"
+import type { UnknownRecord } from '../Types/Core.js'
+import { EventType } from '../Setup/Enums.js'
 
 
 export class Emitter extends EventTarget {
   dispatch(type: EventType, detail?: UnknownRecord): void {
-    // console.log(this.constructor.name, "dispatch", type, detail)
+    // console.log(this.constructor.name, 'dispatch', type, detail)
     this.dispatchEvent(this.event(type, detail))
   }
 
@@ -14,7 +14,7 @@ export class Emitter extends EventTarget {
       return
     }
     const listener = this.trapped.get(type)
-    // console.log(this.constructor.name, "emit trapped", type, !!listener)
+    // console.log(this.constructor.name, 'emit trapped', type, !!listener)
     if (listener) listener(this.event(type, detail))
   }
   

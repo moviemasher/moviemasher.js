@@ -1,4 +1,4 @@
-import { BooleanSetter } from '@moviemasher/moviemasher.js'
+import { BooleanSetter } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface CollapseContextInterface {

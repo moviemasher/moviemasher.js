@@ -1,4 +1,4 @@
-import { SelectorType } from "../../Setup/Enums"
+import type { SelectorType } from '../../Setup/Enums.js'
 
 export interface Selector {
   type: SelectorType

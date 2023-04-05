@@ -1,7 +1,7 @@
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { assertPopulatedString } from "../../../Utility/Is"
-import { idGenerate } from "../../../Utility/Id"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { assertPopulatedString } from '../../../Utility/Is.js'
+import { idGenerate } from '../../../Utility/Id.js'
 
 /**
  * @category Filter

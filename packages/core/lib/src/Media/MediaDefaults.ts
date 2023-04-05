@@ -1,16 +1,15 @@
+import type { MediaType } from '../Setup/MediaType.js'
+import type { MediaArray } from './Media.js'
+
 import { 
-  AudioType, EffectType, FontType, ImageType, MashType, SequenceType, 
-  VideoType 
-} from "../Setup/Enums"
-import { MediaType } from "../Setup/MediaType"
-import { MediaArray } from "./Media"
+  TypeAudio, TypeEffect, TypeFont, TypeImage, TypeMash, TypeVideo 
+} from '../Setup/Enums.js'
 
 export const MediaDefaults: Record<MediaType, MediaArray> = {
-  [AudioType]: [],
-  [EffectType]: [],
-  [FontType]: [],
-  [ImageType]: [],
-  [MashType]: [],
-  [SequenceType]: [],
-  [VideoType]: [],
+  [TypeAudio]: [],
+  [TypeEffect]: [],
+  [TypeFont]: [],
+  [TypeImage]: [],
+  [TypeMash]: [],
+  [TypeVideo]: [],
 }

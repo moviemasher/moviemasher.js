@@ -1,4 +1,4 @@
-import { MashMedia, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/moviemasher.js"
+import { MashMedia, Size, Time, CommandFiles, CommandFilters, CommandInputs } from "@moviemasher/lib-core"
 
 export interface FilterGraphArgs {
   visible?: boolean

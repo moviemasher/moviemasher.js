@@ -1,4 +1,4 @@
-import /* type */ { Client } from "@moviemasher/client-core"
+import type { Client } from "@moviemasher/client-core"
 
 import React from "react"
 

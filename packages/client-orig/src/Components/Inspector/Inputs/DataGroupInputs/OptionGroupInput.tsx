@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertSelectorType, ClassButton, DataGroup, isPopulatedObject, selectedPropertyObject 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { ElementRecord } from "../../../../Types/Element"
 import { InspectorContext } from "../../InspectorContext"

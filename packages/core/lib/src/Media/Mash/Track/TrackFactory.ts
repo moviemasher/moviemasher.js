@@ -1,5 +1,5 @@
-import { Track, TrackArgs } from "./Track"
-import { TrackClass } from "./TrackClass"
+import {Track, TrackArgs} from './Track.js'
+import {TrackClass} from './TrackClass.js'
 
 export const trackInstance = (object : TrackArgs) : Track => new TrackClass(object)
 

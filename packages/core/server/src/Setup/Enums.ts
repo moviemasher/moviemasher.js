@@ -1,4 +1,4 @@
-import { errorThrow } from "@moviemasher/moviemasher.js"
+import { errorThrow } from "@moviemasher/lib-core"
 
 export enum JobType {
   Decoding = 'decoding',

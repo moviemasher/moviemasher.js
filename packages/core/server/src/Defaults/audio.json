@@ -1,9 +1,0 @@
-{
-  "options": {},
-  "audioBitrate": 160,
-  "audioCodec": "libmp3lame",
-  "audioChannels": 2,
-  "audioRate": 44100,
-  "extension": "mp3",
-  "outputType": "audio"
-}

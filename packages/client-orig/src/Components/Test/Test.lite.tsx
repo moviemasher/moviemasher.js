@@ -1,4 +1,4 @@
-import { assertDefined, errorThrow } from "@moviemasher/moviemasher.js"
+import { assertDefined, errorThrow } from "@moviemasher/lib-core"
 import React from "react"
 import { useRef } from "../../Framework/FrameworkFunctions"
 export const isSvg = (value: any): value is SVGSVGElement => {

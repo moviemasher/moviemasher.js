@@ -1,4 +1,4 @@
-import { Clip } from '@moviemasher/moviemasher.js'
+import { Clip } from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface ClipContextInterface {

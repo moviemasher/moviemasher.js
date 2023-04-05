@@ -2,7 +2,7 @@ import ffmpeg, { FfmpegCommandLogger, FfmpegCommandOptions } from 'fluent-ffmpeg
 import {
   AVType, CommandFilters, isAboveZero, isPopulatedString, isNumber, 
   isPopulatedObject, isValue, ValueRecord, ColonRegex, CommaRegex
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 import { Command } from './Command'
 import { CommandOptions } from '../Plugin/Encode/Encode'

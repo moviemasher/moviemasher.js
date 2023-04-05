@@ -1,0 +1,12 @@
+version: "3"
+name: moviemasher-example-core
+services:
+  example-core:
+    image: httpd:2.4
+    container_name: moviemasher-example-core-8579
+    ports:
+      - 8579:80
+    volumes:
+      - ../src/index.html:/usr/local/apache2/htdocs/index.html
+      - ../../../../dev/img/favicon.ico:/usr/local/apache2/htdocs/favicon.ico
+      - ../../../../packages/core/lib/esm/index.js:/usr/local/apache2/htdocs/index.js

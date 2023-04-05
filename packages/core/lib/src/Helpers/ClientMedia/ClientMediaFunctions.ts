@@ -1,36 +1,39 @@
-import { ClientAudio, ClientFont, ClientImage, ClientMedia, ClientMediaType, ClientMediaTypes, ClientVideo } from "./ClientMedia"
-import { GraphFileType, isGraphFileType } from "../../Setup/Enums"
-import { isLoadType, LoadType } from "../../Setup/LoadType"
-import { errorThrow } from "../Error/ErrorFunctions"
-import { isJsonRecord, isObject } from "../../Utility/Is"
+import type { ClientAudio, ClientFont, ClientImage, ClientMedia, ClientMediaType, ClientVideo } from './ClientMedia.js'
+import type { LoadType } from '../../Setup/LoadType.js'
+
+import { ClientMediaTypes } from './ClientMediaConstants.js'
+import { GraphFileType, isGraphFileType } from '../../Setup/Enums.js'
+import { isLoadType } from '../../Setup/LoadType.js'
+import { errorThrow } from '../Error/ErrorFunctions.js'
+import { isJsonRecord, isObject } from '../../Utility/Is.js'
 
 
 export const isClientVideo = (value: any): value is ClientVideo => {
   return isObject(value) && value instanceof HTMLVideoElement
 }
 export function assertClientVideo(value: any, name?: string): asserts value is ClientVideo {
-  if (!isClientVideo(value)) errorThrow(value, "ClientVideo", name)
+  if (!isClientVideo(value)) errorThrow(value, 'ClientVideo', name)
 }
 
 export const isClientImage = (value: any): value is ClientImage => {
   return isObject(value) && value instanceof HTMLImageElement
 }
 export function assertClientImage(value: any, name?: string): asserts value is ClientImage {
-  if (!isClientImage(value)) errorThrow(value, "ClientImage", name)
+  if (!isClientImage(value)) errorThrow(value, 'ClientImage', name)
 }
 
 export const isClientAudio = (value: any): value is ClientAudio => {
   return isObject(value) && value instanceof AudioBuffer
 }
 export function assertClientAudio(value: any, name?: string): asserts value is ClientAudio {
-  if (!isClientAudio(value)) errorThrow(value, "ClientAudio", name)
+  if (!isClientAudio(value)) errorThrow(value, 'ClientAudio', name)
 }
 
 export const isClientFont = (value: any): value is ClientFont => {
-  return isObject(value) && "family" in value
+  return isObject(value) && 'family' in value
 }
 export function assertClientFont(value: any, name?: string): asserts value is ClientFont {
-  if (!isClientFont(value)) errorThrow(value, "ClientFont", name)
+  if (!isClientFont(value)) errorThrow(value, 'ClientFont', name)
 }
 
 
@@ -39,7 +42,7 @@ export const isLoaderType = (value: any): value is LoaderType => {
   return isLoadType(value) || isGraphFileType(value)
 }
 export function assertLoaderType(value: any, name?: string): asserts value is LoaderType {
-  if (!isLoaderType(value)) errorThrow(value, "LoaderType", name)
+  if (!isLoaderType(value)) errorThrow(value, 'LoaderType', name)
 }
 
 

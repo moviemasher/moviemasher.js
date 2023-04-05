@@ -1,18 +1,18 @@
-import { Container, ContainerObject, ContainerRectArgs } from "../../../Container/Container"
-import { Content, ContentObject } from "../../../Content/Content"
-import { UnknownRecord } from "../../../../Types/Core"
-import { SvgOrImage, PreviewItems } from "../../../../Helpers/Svg/Svg"
-import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, PreloadArgs, GraphFiles, Component, ServerPromiseArgs } from "../../../../Base/Code"
-import { Sizing, Timing } from "../../../../Setup/Enums"
-import { errorThrow } from "../../../../Helpers/Error/ErrorFunctions"
-import { Time, TimeRange } from "../../../../Helpers/Time/Time"
-import { Track } from "../Track"
-import { Tweenable } from "../../../../Mixin/Tweenable/Tweenable"
-import { Size } from "../../../../Utility/Size"
-import { RectTuple } from "../../../../Utility/Rect"
-import { Propertied } from "../../../../Base/Propertied"
-import { isObject } from "../../../../Utility/Is"
-import { Selectable } from "../../../../Plugin/Masher/Selectable"
+import { Container, ContainerObject, ContainerRectArgs } from '../../../Container/Container.js'
+import { Content, ContentObject } from '../../../Content/Content.js'
+import { UnknownRecord } from '../../../../Types/Core.js'
+import { SvgOrImage, PreviewItems } from '../../../../Helpers/Svg/Svg.js'
+import { CommandFileArgs, CommandFiles, CommandFilterArgs, CommandFilters, PreloadArgs, GraphFiles, Component, ServerPromiseArgs } from '../../../../Base/Code.js'
+import { Sizing, Timing } from '../../../../Setup/Enums.js'
+import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
+import { Time, TimeRange } from '../../../../Helpers/Time/Time.js'
+import { Track } from '../Track.js'
+import { Tweenable } from '../../../../Mixin/Tweenable/Tweenable.js'
+import { Size } from '../../../../Utility/Size.js'
+import { RectTuple } from '../../../../Utility/Rect.js'
+import { Propertied } from '../../../../Base/Propertied.js'
+import { isObject } from '../../../../Utility/Is.js'
+import { Selectable } from '../../../../Plugin/Masher/Selectable.js'
 
 
 export interface IntrinsicOptions {
@@ -78,10 +78,10 @@ export interface Clip extends Selectable, Propertied {
 }
 
 export const isClip = (value: any): value is Clip => {
-  return isObject(value) && "contentId" in value
+  return isObject(value) && 'contentId' in value
 }
 export function assertClip(value: any, name?: string): asserts value is Clip {
-  if (!isClip(value)) errorThrow(value, "Clip", name)
+  if (!isClip(value)) errorThrow(value, 'Clip', name)
 }
 
 export type Clips = Clip[]

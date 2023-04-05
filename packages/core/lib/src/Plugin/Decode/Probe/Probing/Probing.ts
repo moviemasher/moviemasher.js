@@ -1,5 +1,5 @@
-import { UnknownRecord } from "../../../../Types/Core"
-import { Decoding, ProbeType } from "../../Decoding/Decoding"
+import type { UnknownRecord } from '../../../../Types/Core.js'
+import type { Decoding, ProbeType } from '../../Decoding/Decoding.js'
 
 
 export interface Probing extends Decoding {

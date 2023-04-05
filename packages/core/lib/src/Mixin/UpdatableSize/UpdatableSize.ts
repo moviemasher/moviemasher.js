@@ -1,22 +1,18 @@
-import { Constrained } from "../../Base/Constrained"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { Size } from "../../Utility/Size"
+import type {Constrained} from '../../Base/Constrained.js'
+import type {Content, ContentDefinition, ContentDefinitionObject, ContentObject} from '../../Media/Content/Content.js'
+import type {MediaType} from '../../Setup/MediaType.js'
+import type {Rect} from '../../Utility/Rect.js'
+import type {Size} from '../../Utility/Size.js'
+import type {SvgItem} from '../../Helpers/Svg/Svg.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
 
-import { ImageType, VideoType } from "../../Setup/Enums"
-import { MediaType, isMediaType } from "../../Setup/MediaType"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { Rect } from "../../Utility/Rect"
-import { Content, ContentDefinition, ContentDefinitionObject, ContentObject } from "../../Media/Content/Content"
-import { isContent, isContentDefinition } from "../../Media/Content/ContentFunctions"
+import { isMediaType} from '../../Setup/MediaType.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {isContent, isContentDefinition} from '../../Media/Content/ContentFunctions.js'
+import {TypeImage, TypeVideo} from '../../Setup/Enums.js'
 
-export const UpdatableSizeMediaType: MediaType[] = [
-  ImageType,
-  VideoType,
-  // SequenceType,
-]
-export interface UpdatableSizeObject extends ContentObject {
-}
+export const UpdatableSizeMediaType: MediaType[] = [TypeImage, TypeVideo ]
+export interface UpdatableSizeObject extends ContentObject {}
 
 export interface UpdatableSizeDefinitionObject extends ContentDefinitionObject {
   sourceSize?: Size

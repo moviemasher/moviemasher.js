@@ -1,5 +1,3 @@
-import { isObject } from "../../Utility/Is"
-
 // search includes '?' prefix
 // protocol includes ':' suffix
 

@@ -1,12 +1,12 @@
 import React from 'react'
 
 import { ElementRecord, JsxChildren } from "../../Types/Element"
-import /* type */ { BarOptions } from '../../Utilities/Bar'
-import /* type */ { CollapseContextInterface } from '../Collapse/CollapseContext'
-import /* type */ { PropsWithChildren } from "../../Types/Props"
-import /* type */ { WithClassName } from "../../Types/Core"
+import type { BarOptions } from '../../Utilities/Bar'
+import type { CollapseContextInterface } from '../Collapse/CollapseContext'
+import type { PropsWithChildren } from "../../Types/Props"
+import type { WithClassName } from "../../Types/Core"
 
-import { assertPopulatedObject } from '@moviemasher/moviemasher.js'
+import { assertPopulatedObject } from '@moviemasher/lib-core'
 
 import { CollapseContext } from '../Collapse/CollapseContext'
 import { View } from '../../Utilities/View'

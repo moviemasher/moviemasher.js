@@ -1,7 +1,7 @@
 
 import { 
   GraphFiles, AVType, Size, Time, MashMedia, Times 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { FilterGraph } from "../FilterGraph/FilterGraph"
 
 

@@ -1,4 +1,6 @@
-import { Numbers, Unknowns } from "../Types/Core"
+import type { Numbers, Unknowns } from '../Types/Core.js'
+import { isArray, isObject } from './Is.js'
+
 
 export const arrayLast = (array: Unknowns): any => array[array.length - 1 ]
 
@@ -18,3 +20,9 @@ export const arrayUnique = (array: Unknowns) => {
 export const arrayOfNumbers = (count = 0, start = 0): Numbers => (
   [...Array(count)].map((_, index) => start + index)
 )
+
+export function arrayFromOneOrMore<T>(value?: T | T[]): T[] {
+  if (!isObject(value)) return []
+
+  return isArray<T>(value) ? value : [value]
+}

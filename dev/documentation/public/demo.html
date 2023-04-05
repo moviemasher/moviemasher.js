@@ -1,0 +1,24 @@
+
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<script src="https://unpkg.com/@moviemasher/lib-core@5.1.2/umd/moviemasher.js" crossorigin></script>
+<script src="https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js" crossorigin></script>
+<script src="https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js" crossorigin></script>
+
+<div id='root' class='moviemasher'></div>
+<script>
+
+  // create constant referencing root DIV element
+  const element = document.getElementById('root')
+  
+  // destructure constants from modules
+  const { createElement } = React
+  const { createRoot } = ReactDOM
+  const { Masher, MasherDefaultProps } = MovieMasherClient
+  const props = MasherDefaultProps()
+  const masher = createElement(Masher, props) 
+  createRoot(element).render(masher)
+  
+</script>

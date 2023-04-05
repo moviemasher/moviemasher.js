@@ -1,7 +1,7 @@
-import { assertInteger, assertPositive, isInteger } from "../../Utility/Is"
-import { TimeClass, timeEqualizeRates } from "./TimeClass"
-import { roundWithMethod } from "../../Utility/Round"
-import { Time, TimeRange, TimeRanges, Times } from "./Time"
+import { assertInteger, assertPositive } from '../../Utility/Is.js'
+import { TimeClass, timeEqualizeRates } from './TimeClass.js'
+import { roundWithMethod } from '../../Utility/Round.js'
+import { Time, TimeRange, TimeRanges, Times } from './Time.js'
 
 export class TimeRangeClass extends TimeClass implements TimeRange {
   frames : number
@@ -90,7 +90,7 @@ export class TimeRangeClass extends TimeClass implements TimeRange {
 
   get startTime() : Time { return new TimeClass(this.frame, this.fps) }
 
-  scale(fps = 1, rounding = "") : TimeRange {
+  scale(fps = 1, rounding = '') : TimeRange {
     if (this.fps === fps) return this.copy
 
     const value = Number(this.frames) / (Number(this.fps) / Number(fps))

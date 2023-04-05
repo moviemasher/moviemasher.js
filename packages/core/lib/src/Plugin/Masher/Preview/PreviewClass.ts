@@ -1,19 +1,19 @@
-import { Size } from "../../../Utility/Size"
-import { Masher } from "../Masher"
-import { Time } from "../../../Helpers/Time/Time"
-import { Clip, IntrinsicOptions } from "../../../Media/Mash/Track/Clip/Clip"
-import { AVType } from "../../../Setup/Enums"
-import { sortByTrack } from "../../../Utility/Sort"
-import { TrackPreviewArgs, TrackPreviews } from "./TrackPreview/TrackPreview"
-import { TrackPreviewClass } from "./TrackPreview/TrackPreviewClass"
-import { MashMedia } from "../../../Media/Mash/Mash"
-import { PreviewArgs, Preview } from "./Preview"
-import { svgAddClass, svgSvgElement } from "../../../Helpers/Svg/SvgFunctions"
-import { assertObject, isObject } from "../../../Utility/Is"
-import { Component, PreloadArgs } from "../../../Base/Code"
-import { PreviewItems, SvgItems } from "../../../Helpers/Svg/Svg"
-import { timeRangeFromTime } from "../../../Helpers/Time/TimeUtilities"
-import { EmptyFunction } from "../../../Setup/Constants"
+import {Size} from '../../../Utility/Size.js'
+import {Masher} from '../Masher.js'
+import {Time} from '../../../Helpers/Time/Time.js'
+import {Clip, IntrinsicOptions} from '../../../Media/Mash/Track/Clip/Clip.js'
+import {AVType} from '../../../Setup/Enums.js'
+import {sortByTrack} from '../../../Utility/Sort.js'
+import {TrackPreviewArgs, TrackPreviews} from './TrackPreview/TrackPreview.js'
+import {TrackPreviewClass} from './TrackPreview/TrackPreviewClass.js'
+import {MashMedia} from '../../../Media/Mash/Mash.js'
+import {PreviewArgs, Preview} from './Preview.js'
+import {svgAddClass, svgSvgElement} from '../../../Helpers/Svg/SvgFunctions.js'
+import {assertObject, isObject} from '../../../Utility/Is.js'
+import {Component, PreloadArgs} from '../../../Base/Code.js'
+import {PreviewItems, SvgItems} from '../../../Helpers/Svg/Svg.js'
+import {timeRangeFromTime} from '../../../Helpers/Time/TimeUtilities.js'
+import {EmptyFunction} from '../../../Setup/Constants.js'
 
 /**
  * Preview of a single mash at a single frame
@@ -152,7 +152,7 @@ export class PreviewClass implements Preview {
       const trackSelected = trackPreview === selectedPreview
       const classes = ['outline']
       if (!(dragging || trackSelected)) classes.push('animate')
-      // console.log(this.constructor.name, "tupleItems", dragging, trackSelected)
+      // console.log(this.constructor.name, 'tupleItems', dragging, trackSelected)
       return trackPreview.editingSvgItem(classes)
     })
     const outlineClasses = ['outlines']

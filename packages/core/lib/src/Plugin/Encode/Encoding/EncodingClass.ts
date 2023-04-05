@@ -1,5 +1,5 @@
-import { RequestableClass } from "../../../Base/Requestable/RequestableClass"
-import { Encoding, EncodingObject } from "./Encoding"
+import { RequestableClass } from '../../../Base/Requestable/RequestableClass.js'
+import { Encoding, EncodingObject } from './Encoding.js'
 
 
 export class EncodingClass extends RequestableClass implements Encoding {

@@ -1,8 +1,8 @@
 import React from "react"
 
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 
-import { assertEndpoint, assertMashMedia, endpointUrl, EventType, isMashMedia } from "@moviemasher/moviemasher.js"
+import { assertEndpoint, assertMashMedia, endpointUrl, EventType, isMashMedia } from "@moviemasher/lib-core"
 
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"

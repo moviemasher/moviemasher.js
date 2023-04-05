@@ -14,4 +14,3 @@ export function PanelContent(props: PanelContentProps) {
   return <View {...viewProps} />
 }
 
-export type PanelContentElement = React.FunctionComponentElement<typeof PanelContent>

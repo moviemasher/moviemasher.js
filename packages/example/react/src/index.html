@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Movie Masher React Example</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin defer></script>
+    <script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin defer></script>
+    <script src='moviemasher.js' crossorigin defer></script>
+    <script src='client-core.js' crossorigin defer></script>
+    <script src='theme-default.js' crossorigin defer></script>
+    <script src='client-react.js' crossorigin defer></script>
+    <link href='moviemasher.css' rel='stylesheet'>
+    <style> /* fit root DIV to viewport */
+      body { margin: 0px; padding: 0px; font-family: sans-serif; }
+      body, #root { width: 100vw; height: 100vh; display: flex; }
+    </style>
+  </head>
+  <body>
+    <div id='root' class='moviemasher'></div>
+    <script>
+      globalThis.window.addEventListener('load', () => {
+        const { initialize } = MovieMasherClient
+        MovieMasherClient.initialize('root', { name: 'React' })
+      }, { once: true })
+    </script>
+  </body>
+</html>

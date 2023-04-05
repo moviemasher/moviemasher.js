@@ -1,7 +1,12 @@
-export * from './Client'
-export * from './Helpers'
-export * from './Monitor'
-export * from './Protocol'
-export * from './Translate'
-export * from './Types'
-export * from './Utility'
+export * from './Client/index.js'
+export * from './Helpers/index.js'
+export * from './Resolve/index.js'
+export * from './Protocol/index.js'
+export * from './Translate/index.js'
+export * from './Types/index.js'
+export * from './Utility/Audio.js'
+
+
+import { idGenerateString } from '@moviemasher/lib-core'
+
+export const hello = () => `Hello, ${idGenerateString()}`

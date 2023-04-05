@@ -1,5 +1,5 @@
-import { AudioPreview, AudioPreviewArgs } from "./AudioPreview"
-import { AudioPreviewClass } from "./AudioPreviewClass"
+import { AudioPreview, AudioPreviewArgs } from './AudioPreview.js'
+import { AudioPreviewClass } from './AudioPreviewClass.js'
 
 export const audioPreviewInstance = (args: AudioPreviewArgs): AudioPreview => (
   new AudioPreviewClass(args)

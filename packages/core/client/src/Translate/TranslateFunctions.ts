@@ -1,43 +1,69 @@
-import { DashChar, EnvironmentKeyLanguages, ErrorName, errorThrow, isPlugin, 
-  isPopulatedString, Locale, LocaleEnglish, plugin, 
-  Runtime, TranslatePlugin, TranslateType, TranslateArgs, pluginDataOrErrorPromise, isDefiniteError, pluginDataOrError, PluginDataOrError, error
-} from '@moviemasher/moviemasher.js'
 
-import TranslateLocales from './locales.json'
+import type {
+  Strings,
+  TranslateArgs, 
+} from '@moviemasher/lib-core'
+import { 
+  DashChar, EnvironmentKeyLanguages, errorThrow, 
+  isPopulatedString, 
+  isIdentified,
+  isString,
+  isValueRecord,
+  Runtime
+  } from '@moviemasher/lib-core'
+
+// import TranslateLocales from './locales.json'
+
+const LocaleEnglish = 'en'
+const isTranslateArgs = (value: any): value is TranslateArgs => {
+  return isIdentified(value)
+    && (!('locale' in value) || isString(value.locale))
+    && (!('values' in value) || isValueRecord(value.values));
+};
+function assertTranslateArgs(value: any, name?: string): asserts value is TranslateArgs {
+  if (!isTranslateArgs(value))
+    errorThrow(value, 'TranslateArgs', name);
+}
+export const translateArgs = (value: any): TranslateArgs => {
+  assertTranslateArgs(value);
+  return { id: value.id, locale: value.locale, values: value.values };
+};
+
 
 export const translate = (args: TranslateArgs): string => {
   const { id, values, locale } = args
   
   const definedLocale = locale || translateLocale()
-  const orError = pluginDataOrError(definedLocale, TranslateType) 
-  if (isDefiniteError(orError)) return ''
+  return ''
+  // const orError = pluginDataOrError(definedLocale, TranslateType) 
+  // if (isDefiniteError(orError)) return ''
   
-  return orError.data.translate(id, values)
+  // return orError.data.translate(id, values)
 }
 
 export type TranslateFunction = typeof translate
 
-const translateBrowserLocale = (): Locale => (
+const translateBrowserLocale = (): string => (
   globalThis.window?.navigator?.language || ''
 )
 
 
 const TranslatePrivate = {
   defaultLocale: LocaleEnglish,
-  locale: '' as Locale,
-  locales: [] as Locale[],
+  locale: '',
+  locales: [] as string[],
   warned: false,
 }
 
-export const translateDefaultLocale = (locale?: Locale): Locale => {
+export const translateDefaultLocale = (locale?: string): string => {
   console.log('translateDefaultLocale', locale, TranslatePrivate.defaultLocale)
   if (isPopulatedString(locale)) TranslatePrivate.defaultLocale = locale
   return TranslatePrivate.defaultLocale
 }
 
-const translateId = (id: string) : Locale => id.split(DashChar)[0] || ''
+const translateId = (id: string) : string => id.split(DashChar)[0] || ''
 
-export const translateLocale = (locale?: Locale): Locale => {
+export const translateLocale = (locale?: string): string => {
   if (isPopulatedString(locale)) return TranslatePrivate.locale = locale
   
   if (TranslatePrivate.locale) return TranslatePrivate.locale
@@ -55,10 +81,10 @@ export const translateLocale = (locale?: Locale): Locale => {
   return TranslatePrivate.locale = translateDefaultLocale()
 }
 
-export const translateLocales = (): Locale[] => {
+export const translateLocales = (): string[] => {
   if (TranslatePrivate.locales.length) return TranslatePrivate.locales
 
-  const allLocales = Object.keys(TranslateLocales)
+  const allLocales: Strings = []//Object.keys(TranslateLocales)
   console.log('translateLocales allLocales', allLocales)
   
   const { environment } = Runtime
@@ -71,40 +97,3 @@ export const translateLocales = (): Locale[] => {
   TranslatePrivate.locale = first
   return TranslatePrivate.locales = filtered
 }
-
-export const translatePluginPromise = (locale?: string): Promise<PluginDataOrError<TranslatePlugin>> => {
-  const definedLocale = translateLocale(locale)
-  return pluginDataOrErrorPromise(definedLocale, TranslateType).then(orError => {
-    if (isDefiniteError(orError)) return orError
-
-    const { data: plugin } = orError
-    if (isPlugin(plugin)) return { data: plugin as TranslatePlugin }
-
-    const defaultLocale = translateDefaultLocale()
-    if (locale === defaultLocale) {
-      if (!TranslatePrivate.warned) {
-        TranslatePrivate.warned = true
-        return errorThrow(ErrorName.Internal)
-      }
-      return error(ErrorName.Type)
-    }
-    if (definedLocale.includes(DashChar)) {
-      const id = translateId(definedLocale)
-      if (isPopulatedString(id)) return translatePluginPromise(id)
-    }
-    return translatePluginPromise(defaultLocale)
-  })
-}
-
-export const translatePromise = (args: TranslateArgs): Promise<string> => {
-  const { id, values, locale } = args
-  
-  const code = translateLocale(locale)
-  return translatePluginPromise(code).then(orError => {
-    if (!isDefiniteError(orError)) return orError.data.translate(id, values)
-    return ''
-})
-}
-
-export type TranslatePromiseFunction = typeof translatePromise
-

@@ -3,7 +3,7 @@ import { View } from "../../Utilities/View"
 
 import { WithClassName } from "../../Types/Core"
 import { PropsWithoutChild } from "../../Types/Props"
-import { EventType, stringSeconds } from "@moviemasher/moviemasher.js"
+import { EventType, stringSeconds } from "@moviemasher/lib-core"
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"
 

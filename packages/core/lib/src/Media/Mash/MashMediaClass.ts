@@ -1,45 +1,45 @@
 import {
-  Scalar, UnknownRecord} from "../../Types/Core"
-import { PreviewItems } from "../../Helpers/Svg/Svg"
-import { PreloadArgs, PreloadOptions } from "../../Base/Code"
-import { SelectedItems, SelectedProperty } from "../../Helpers/Select/SelectedProperty"
+  Scalar, UnknownRecord} from '../../Types/Core.js'
+import { PreviewItems } from '../../Helpers/Svg/Svg.js'
+import { PreloadArgs, PreloadOptions } from '../../Base/Code.js'
+import { SelectedItems, SelectedProperty } from '../../Helpers/Select/SelectedProperty.js'
 import {
-  AVType, DataType, Duration, EventType, MashType} from "../../Setup/Enums"
+  AVType, DataType, Duration, EventType, TypeMash} from '../../Setup/Enums.js'
 import {
   timeFromArgs, timeFromSeconds, timeRangeFromArgs, timeRangeFromTime, 
   timeRangeFromTimes
-} from "../../Helpers/Time/TimeUtilities"
-import { Default } from "../../Setup/Default"
-import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isDefiniteError, isNumber, isObject, isPositive } from "../../Utility/Is"
-import { sortByIndex } from "../../Utility/Sort"
-import { Time, Times, TimeRange } from "../../Helpers/Time/Time"
-import { isClip, Clip, Clips } from "./Track/Clip/Clip"
-import { assertTrack, Track, TrackArgs, TrackObject } from "./Track/Track"
-import { AudioPreview } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
-import { AudioPreviewArgs } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreview"
-import { MashMasherArgs, MashMedia, MashMediaContent, MashMediaObject, MashMediaRequest } from "./Mash"
-import { trackInstance } from "./Track/TrackFactory"
-import { Preview, PreviewArgs, PreviewOptions } from "../../Plugin/Masher/Preview/Preview"
-import { PreviewClass } from "../../Plugin/Masher/Preview/PreviewClass"
-import { Actions } from "../../Plugin/Masher/Actions/Actions"
-import { NonePreview } from "../../Plugin/Masher/Preview/NonePreview"
-import { Selectables } from "../../Plugin/Masher/Selectable"
-import { Propertied } from "../../Base/Propertied"
-import { Masher, MashingType } from "../../Plugin/Masher/Masher"
-import { EmptyFunction } from "../../Setup/Constants"
-import { isFont } from "../Font/Font"
-import { encodingInstance } from "../../Plugin/Encode/Encoding/EncodingFactory"
-import { Encodings } from "../../Plugin/Encode/Encoding/Encoding"
-import { Emitter } from "../../Helpers/Emitter"
-import { isSize, Size, SizeZero } from "../../Utility/Size"
-import { MediaBase } from "../MediaBase"
-import { propertyInstance } from "../../Setup/Property"
-import { colorBlack } from "../../Helpers/Color/ColorConstants"
-import { audioPreviewInstance } from "../../Plugin/Masher/Preview/AudioPreview/AudioPreviewFactory"
-import { MediaCollection } from "./MediaCollection/MediaCollection"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
-import { requestRecordPromise } from "../../Helpers/Request/RequestFunctions"
+} from '../../Helpers/Time/TimeUtilities.js'
+import { Default } from '../../Setup/Default.js'
+import { assertAboveZero, assertPopulatedString, assertPositive, assertTime, assertTrue, isAboveZero, isArray, isBoolean, isDefiniteError, isNumber, isObject, isPositive } from '../../Utility/Is.js'
+import { sortByIndex } from '../../Utility/Sort.js'
+import { Time, Times, TimeRange } from '../../Helpers/Time/Time.js'
+import { isClip, Clip, Clips } from './Track/Clip/Clip.js'
+import { assertTrack, Track, TrackArgs, TrackObject } from './Track/Track.js'
+import { AudioPreview } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
+import { AudioPreviewArgs } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreview.js'
+import { MashMasherArgs, MashMedia, MashMediaContent, MashMediaObject, MashMediaRequest } from './Mash.js'
+import { trackInstance } from './Track/TrackFactory.js'
+import { Preview, PreviewArgs, PreviewOptions } from '../../Plugin/Masher/Preview/Preview.js'
+import { PreviewClass } from '../../Plugin/Masher/Preview/PreviewClass.js'
+import { Actions } from '../../Plugin/Masher/Actions/Actions.js'
+import { NonePreview } from '../../Plugin/Masher/Preview/NonePreview.js'
+import { Selectables } from '../../Plugin/Masher/Selectable.js'
+import { Propertied } from '../../Base/Propertied.js'
+import { Masher, MashingType } from '../../Plugin/Masher/Masher.js'
+import { EmptyFunction } from '../../Setup/Constants.js'
+import { isFont } from '../Font/Font.js'
+import { encodingInstance } from '../../Plugin/Encode/Encoding/EncodingFactory.js'
+import { Encodings } from '../../Plugin/Encode/Encoding/Encoding.js'
+import { Emitter } from '../../Helpers/Emitter.js'
+import { isSize, Size, SizeZero } from '../../Utility/Size.js'
+import { MediaBase } from '../MediaBase.js'
+import { propertyInstance } from '../../Setup/Property.js'
+import { colorBlack } from '../../Helpers/Color/ColorConstants.js'
+import { audioPreviewInstance } from '../../Plugin/Masher/Preview/AudioPreview/AudioPreviewFactory.js'
+import { MediaCollection } from './MediaCollection/MediaCollection.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../Helpers/Error/ErrorName.js'
+import { requestRecordPromise } from '../../Helpers/Request/RequestFunctions.js'
 
 type TrackClips = [number, Clips]
 type Interval = ReturnType<typeof setInterval>
@@ -176,7 +176,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   }
 
   clearPreview() {
-    // console.log(this.constructor.name, "clearPreview")
+    // console.log(this.constructor.name, 'clearPreview')
     delete this._preview 
   }
 
@@ -223,7 +223,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   }
   // private counter = 0
   private compositeVisibleRequest(time: Time): void {
-    // console.log(this.constructor.name, "compositeVisibleRequest", time)
+    // console.log(this.constructor.name, 'compositeVisibleRequest', time)
     if (typeof requestAnimationFrame !== 'function') return 
     
     requestAnimationFrame(() => {
@@ -252,7 +252,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     const ids = clips.flatMap(clip => clip.definitionIds())
     const set = [...new Set(ids)]
 
-    // console.log(this.constructor.name, "definitionIds", set.length)
+    // console.log(this.constructor.name, 'definitionIds', set.length)
     return set
   }
 
@@ -269,14 +269,14 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   private drawInterval?: Interval
 
   private drawRequest(): void {
-    // console.log(this.constructor.name, "drawRequest")
+    // console.log(this.constructor.name, 'drawRequest')
     const { time } = this
     this.compositeVisibleRequest(time)
   }
 
   private drawTime(time: Time): void {
     const timeChange = time !== this.time
-    // console.log(this.constructor.name, "drawTime", time, timeChange)
+    // console.log(this.constructor.name, 'drawTime', time, timeChange)
     this.drawnTime = time
     this.drawRequest()
     this.emitter?.emit(timeChange ? EventType.Time : EventType.Loaded)
@@ -308,7 +308,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
 
   private _frame = 0 // initial frame supplied to constructor
 
-  get frame(): number { return this.time.scale(this.quantize, "floor").frame }
+  get frame(): number { return this.time.scale(this.quantize, 'floor').frame }
 
   get frames(): number {
     const { tracks } = this
@@ -350,13 +350,13 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     }
 
     const okay = definedVisible || definedAudible
-    // if (!okay) console.log(this.constructor.name, "graphFileArgs", args)
-    assertTrue(okay, "audible || visible")
+    // if (!okay) console.log(this.constructor.name, 'graphFileArgs', args)
+    assertTrue(okay, 'audible || visible')
     return args
   }
 
   private handleDrawInterval(): void {
-    // console.log(this.constructor.name, "handleDrawInterval", this._playing)
+    // console.log(this.constructor.name, 'handleDrawInterval', this._playing)
     // what time does the audio context think it is?
     const { seconds } = this.composition
 
@@ -464,7 +464,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   private loadingPromises: Promise<void>[] = []
 
   get loading(): boolean { 
-    // console.log(this.constructor.name, "loading", this.loadingPromises.length)
+    // console.log(this.constructor.name, 'loading', this.loadingPromises.length)
     return !!this.loadingPromises.length 
   }
 
@@ -479,7 +479,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   get paused(): boolean { return this._paused }
   set paused(value: boolean) {
     const paused = value || !this.frames
-    // console.log(this.constructor.name, "set paused", forcedValue)
+    // console.log(this.constructor.name, 'set paused', forcedValue)
     if (this._paused === paused) return
 
     this._paused = paused
@@ -499,7 +499,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       }).then(() => { 
         this.bufferStart()
         this.playing = true 
-      // console.log("Mash emit", EventType.Play)
+      // console.log('Mash emit', EventType.Play)
         this.emitter?.emit(EventType.Play)
       })
     }
@@ -508,19 +508,19 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   private _playing = false
   private get playing(): boolean { return this._playing }
   private set playing(value: boolean) {
-    // console.trace(this.constructor.name, "set playing", value)
+    // console.trace(this.constructor.name, 'set playing', value)
     if (this._playing !== value) {
       this._playing = value
       if (value) {
         const { quantize, time } = this
         const clips = this.clipsAudibleInTime(this.timeToBuffer)
-        // console.log(this.constructor.name, "playing", value, this.time, clips.length)
+        // console.log(this.constructor.name, 'playing', value, this.time, clips.length)
         if (!this.composition.startPlaying(time, clips, quantize)) {
-          // console.log(this.constructor.name, "playing audio not cached on first try", this.time, clips.length)
+          // console.log(this.constructor.name, 'playing audio not cached on first try', this.time, clips.length)
           // audio was not cached
           const currentClips = this.clipsAudibleInTime(this.timeToBuffer)
           if (!this.composition.startPlaying(time, currentClips, quantize)) {
-            // console.log(this.constructor.name, "playing audio not cached on second try", this.time, currentClips.length)
+            // console.log(this.constructor.name, 'playing audio not cached on second try', this.time, currentClips.length)
 
             this._playing = false
             return
@@ -632,7 +632,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     return this.stopLoadAndDraw(true)
   }
 
-  selectType = MashType
+  selectType = TypeMash
 
   selectables(): Selectables { return [this] }
     
@@ -642,7 +642,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
       const undoValue = this.value(property.name)
       const selectedProperty: SelectedProperty = {
         value: undoValue,
-        selectType: MashType, 
+        selectType: TypeMash, 
         property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
@@ -657,7 +657,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
   }
 
   private setDrawInterval(): void {
-    // console.log(this.constructor.name, "setDrawInterval", !!this.drawInterval)
+    // console.log(this.constructor.name, 'setDrawInterval', !!this.drawInterval)
     if (this.drawInterval) return 
 
     this.clearDrawInterval()
@@ -684,7 +684,7 @@ export class MashMediaClass extends MediaBase implements MashMedia {
     const { endTime, time } = this
     const scaled = endTime.scale(time.fps)
     const range = timeRangeFromTime(time, scaled.frame)
-    // console.log(this.constructor.name, "timeRange", range, time, endTime)
+    // console.log(this.constructor.name, 'timeRange', range, time, endTime)
     return range
   }
 
@@ -742,5 +742,5 @@ export class MashMediaClass extends MediaBase implements MashMedia {
 
   tracks: Track[] = []
 
-  type = MashType
+  type = TypeMash
 }

@@ -1,5 +1,5 @@
 import React from "react"
-import { ClassSelected, UnknownRecord } from "@moviemasher/moviemasher.js"
+import { ClassSelected, UnknownRecord } from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"

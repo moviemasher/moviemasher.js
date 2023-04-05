@@ -1,8 +1,13 @@
+import type {
+  Request, ClientAudioDataOrError, 
+
+} from '@moviemasher/lib-core'
+
 import { 
   assertEndpoint,
-  assertPopulatedString, AudibleContextInstance, ClientAudioDataOrError, 
-  endpointUrl, errorCaught, Request
-} from "@moviemasher/moviemasher.js"
+  assertPopulatedString, AudibleContextInstance, 
+  endpointUrl, errorCaught, 
+} from '@moviemasher/lib-core'
 
 const blobAudioPromise = (url: string): Promise<ArrayBuffer> => {
   // console.log(this.constructor.name, "blobAudioPromise", url)

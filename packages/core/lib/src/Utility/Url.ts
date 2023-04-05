@@ -1,7 +1,8 @@
-import /* type */ { ScalarRecord } from "../declarations"
-import { arrayLast } from "./Array"
-import { isAboveZero, isNumeric, isPopulatedString } from "./Is"
-import { SemicolonChar } from "../Setup/Constants"
+import type { ScalarRecord } from '../Types/Core.js'
+
+import { arrayLast } from './Array.js'
+import { isAboveZero, isNumeric, isPopulatedString } from './Is.js'
+import { SemicolonChar } from '../Setup/Constants.js'
 
 export const urlIsObject = (url: string) => url.startsWith('object:/')
 
@@ -24,7 +25,7 @@ export const urlProtocol = (string: string) => {
 
 export const urlOptionsObject = (options?: string): ScalarRecord | undefined => {
   if (!isPopulatedString(options)) return 
-  // console.log("parseOptions", type, options)
+  // console.log('parseOptions', type, options)
 
   const pairs = options.split(SemicolonChar)
   const entries = pairs.map(pair => {

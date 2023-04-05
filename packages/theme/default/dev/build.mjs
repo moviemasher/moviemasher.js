@@ -106,7 +106,6 @@ import {
     image: RiImageFill,
     inaudible: RiVolumeMuteLine,
     inspector: RiEdit2Fill,
-    invisible: RiEyeOffLine,
     label: MdLabel,
     lock: HiLockClosed,
     muted: RiVolumeMuteLine,

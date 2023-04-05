@@ -1,0 +1,27 @@
+{
+  "extends": "./dev/tsconfig/lit.json",
+
+  "compilerOptions": {
+    
+    "noImplicitReturns": false,
+    "noImplicitOverride": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "strict": false,
+    "rootDir": "./"
+  },
+  "include": [
+    "./packages/core/lib/src/*", 
+    "./packages/core/lib/src/**/*", 
+    "./packages/core/client/src/*", 
+    "./packages/core/client/src/**/*", 
+    "./packages/client/component/src/*", 
+    "./packages/client/component/src/**/*", 
+    "./packages/protocol/**/src/*", 
+  ],
+  "exclude": [
+    "./packages/server/**/src/*", 
+    "node_modules", "**/*.test.mjs", 
+    "**/umd/*", "**/esm/*",
+  ]
+}

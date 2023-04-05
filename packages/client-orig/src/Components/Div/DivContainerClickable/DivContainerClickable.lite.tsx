@@ -1,6 +1,6 @@
 import React from 'react'
 
-import /* type */ { PropsWithChildren, WithOnClick } from '../../../Types/Props'
+import type { PropsWithChildren, WithOnClick } from '../../../Types/Props'
 
 export interface PropsDivContainerClickable extends PropsWithChildren, WithOnClick {}
 

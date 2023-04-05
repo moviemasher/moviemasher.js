@@ -51,8 +51,8 @@ RUN sh ${DIR_ROOT}/dev/image/sh/bases/build-lambda.sh \
 # RUN sh ${DIR_ROOT}/dev/image/sh/clean.sh
 
 # # Assumes your function is named "app.js", and there is a package.json file in the app directory 
-# COPY examples/lambda/src/app.js examples/lambda/package.json ${DIR_ROOT}/
-# COPY packages/core/lib ${DIR_ROOT}/node_modules/@moviemasher/moviemasher.js
+# COPY packages/example/lambda/src/app.js packages/example/lambda/package.json ${DIR_ROOT}/
+# COPY packages/core/lib ${DIR_ROOT}/node_modules/@moviemasher/lib-core
 # COPY packages/core/server ${DIR_ROOT}/node_modules/@moviemasher/server-core
 
 # RUN npm install

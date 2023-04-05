@@ -3,10 +3,11 @@
   "version": "5.1.2",
   "description": "Movie Masher ExpressJS Server Plugin - version 5.1.2",
 
-  "files": ["esm", "cjs"],
-  "main": "cjs/server-express.js",
-  "module": "esm/server-express.mjs",
-  "types": "esm/server-express.d.mts",
+  "files": ["esm"],
+  "type": "module",
+  "main": "esm/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
 
   "license": "MIT",
   "author": {
@@ -22,13 +23,13 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build": "rollup --config dev/rollup.config.mjs"
+    "build": "rollup --config dev/rollup/package.config.mjs"
   },
   "dependencies": {
     "@bitjourney/uuid-v4": "^1.0.1",
-    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/lib-core": "5.1.2",
     "@moviemasher/server-core": "5.1.2",
-    "express": "^4.17.3",
+    "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
     "cors": "^2.8.5",
     "multer": "^1.4.5-lts.1",

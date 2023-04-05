@@ -1,11 +1,11 @@
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { colorRgbaKeys } from "../../../Helpers/Color/ColorConstants"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { ScalarRecord, StringRecord } from "../../../Types/Core"
-import { SvgFilters } from "../../../Helpers/Svg/Svg"
-import { svgFilter, svgFilterElement } from "../../../Helpers/Svg/SvgFunctions"
-import { FilterDefinitionObject } from "../Filter"
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { colorRgbaKeys } from '../../../Helpers/Color/ColorConstants.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { ScalarRecord, StringRecord } from '../../../Types/Core.js'
+import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
+import { svgFilter, svgFilterElement } from '../../../Helpers/Svg/SvgFunctions.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 const ColorChannelMixerFilterKeys = colorRgbaKeys.flatMap(c =>
   colorRgbaKeys.map(d => `${c}${d}`)

@@ -3,7 +3,7 @@ import {
   assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
   selectedPropertyObject, PropertyTweenSuffix, assertTimeRange,
   tweenInputTime
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 
 import { InspectorContext } from "../../InspectorContext"

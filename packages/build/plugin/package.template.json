@@ -1,0 +1,16 @@
+{
+  "name": "@moviemasher/build-plugin",
+  "description": "Builds everything in packages/themes and packages/protocols",
+  "scripts": {
+    "build": "run-s protocols themes",
+    "protocol-supabase": "npm run build -w @moviemasher/protocol-supabase",
+    "protocols": "run-s protocol-*",
+    "supabase": "run-s *-supabase",
+    "default": "run-s *-default",
+    "theme-default": "npm run build -w @moviemasher/theme-default",
+    "themes": "run-s theme-*"
+  },
+  "devDependencies": {
+    "rollup": "dependencies"
+  }
+}

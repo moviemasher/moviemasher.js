@@ -1,17 +1,17 @@
-import { ValueRecord } from "../../../Types/Core"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from "../../../Utility/Is"
-import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from "../../../Base/Code"
-import { arrayLast } from "../../../Utility/Array"
-import { idGenerate } from "../../../Utility/Id"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { tweenMaxSize, tweenOption, tweenPosition } from "../../../Utility/Tween"
-import { colorToRgb, colorToRgba } from "../../../Helpers/Color/ColorFunctions"
-import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorWhite, colorWhiteTransparent } from "../../../Helpers/Color/ColorConstants"
-import { ColorizeFilter } from "./ColorizeFilter"
-import { Size, sizesEqual } from "../../../Utility/Size"
-import { FilterDefinitionObject } from "../Filter"
+import { ValueRecord } from '../../../Types/Core.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { assertNumber, assertPopulatedString, isAboveZero, isNumber, isPopulatedString } from '../../../Utility/Is.js'
+import { FilterDefinitionCommandFilterArgs, CommandFilters, CommandFilter } from '../../../Base/Code.js'
+import { arrayLast } from '../../../Utility/Array.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { colorToRgb, colorToRgba } from '../../../Helpers/Color/ColorFunctions.js'
+import { colorBlack, colorBlackTransparent, colorRgbaKeys, colorRgbKeys, colorWhite, colorWhiteTransparent } from '../../../Helpers/Color/ColorConstants.js'
+import { ColorizeFilter } from './ColorizeFilter.js'
+import { Size, sizesEqual } from '../../../Utility/Size.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 /**
  * @category Filter
@@ -137,7 +137,7 @@ export class TextFilter extends ColorizeFilter {
       y: Math.ceil(isNumber(yEnd) ? Math.max(y, yEnd) : y),
       // fix_bounds: 1,
     }
-    // console.log(this.constructor.name, "commandFilters", colorSize, maxSize, size, sizeEnd)
+    // console.log(this.constructor.name, 'commandFilters', colorSize, maxSize, size, sizeEnd)
     const position = tweenPosition(videoRate, duration)
     if (tweeningColor) {
       const alpha = color.length > 7
@@ -158,7 +158,7 @@ export class TextFilter extends ColorizeFilter {
     commandFilters.push(colorCommand)
     let filterInput = arrayLast(colorCommand.outputs)
 
-    // console.log(this.constructor.name, "commandFilters", scaling, stretch)
+    // console.log(this.constructor.name, 'commandFilters', scaling, stretch)
     if (scaling) {
       scaleOptions.width = stretch ? tweenOption(width, sizeEnd.width, position, true) : -1
       scaleOptions.height = tweenOption(height, sizeEnd.height, position, true)

@@ -1,7 +1,7 @@
-import { Orientation } from "../Setup/Enums"
-import { isAboveZero, isNumber, isObject } from "./Is"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { EqualsChar, SemicolonChar } from "../Setup/Constants"
+import { Orientation } from '../Setup/Enums.js'
+import { isAboveZero, isNumber, isObject } from './Is.js'
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { EqualsChar, SemicolonChar } from '../Setup/Constants.js'
 
 export interface Size {
   width: number
@@ -9,7 +9,7 @@ export interface Size {
 }
 export const isSize = (value: any): value is Size => {
   return isObject(value) && 
-    "width" in value && "height" in value &&
+    'width' in value && 'height' in value &&
     isNumber(value.width) && isNumber(value.height) 
 }
 export function assertSize(value: any, name?: string): asserts value is Size {

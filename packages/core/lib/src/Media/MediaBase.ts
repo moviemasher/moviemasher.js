@@ -1,25 +1,27 @@
-import { UnknownRecord } from "../Types/Core"
-import { PreloadArgs, ServerPromiseArgs } from "../Base/Code"
-import { DataType } from "../Setup/Enums"
-import { assertMediaType, MediaType } from "../Setup/MediaType"
+import type { Decodings } from '../Plugin/Decode/Decoding/Decoding.js'
+import type { Media, MediaInstance, MediaInstanceObject, MediaObject } from './Media.js'
+import type { MediaType } from '../Setup/MediaType.js'
+import type { PreloadArgs, ServerPromiseArgs } from '../Base/Code.js'
+import type { Property } from '../Setup/Property.js'
+import type { Requestable } from '../Base/Requestable/Requestable.js'
+import type { Size } from '../Utility/Size.js'
+import type { Transcoding, Transcodings, TranscodingTypes } from '../Plugin/Transcode/Transcoding/Transcoding.js'
+import type { UnknownRecord } from '../Types/Core.js'
 
-import { Property, propertyInstance } from "../Setup/Property"
-import { isDefiniteError } from "../Utility/Is"
-import { requestPromise } from "../Helpers/Request/RequestFunctions"
-import { Size } from "../Utility/Size"
-import { Media, MediaInstance, MediaInstanceObject, MediaObject } from "./Media"
-import { MediaInstanceBase } from "./MediaInstanceBase"
-import { RequestableClass } from "../Base/Requestable/RequestableClass"
-import { Requestable } from "../Base/Requestable/Requestable"
-import { Default } from "../Setup/Default"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../Helpers/Error/ErrorName"
-import { decodingInstance } from "../Plugin/Decode/Decoding/DecodingFactory"
-import { Decodings } from "../Plugin/Decode/Decoding/Decoding"
-import { Transcoding, Transcodings } from "../Plugin/Transcode/Transcoding/Transcoding"
-import { transcodingInstance } from "../Plugin/Transcode/Transcoding/TranscodingFactory"
-import { StringType } from "../Utility/Scalar"
-let counter = 0
+import { assertMediaType } from '../Setup/MediaType.js'
+import { DataType } from '../Setup/Enums.js'
+import { decodingInstance } from '../Plugin/Decode/Decoding/DecodingFactory.js'
+import { Default } from '../Setup/Default.js'
+import { ErrorName } from '../Helpers/Error/ErrorName.js'
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { isDefiniteError } from '../Utility/Is.js'
+import { MediaInstanceBase } from './MediaInstanceBase.js'
+import { propertyInstance } from '../Setup/Property.js'
+import { RequestableClass } from '../Base/Requestable/RequestableClass.js'
+import { requestPromise } from '../Helpers/Request/RequestFunctions.js'
+import { transcodingInstance } from '../Plugin/Transcode/Transcoding/TranscodingFactory.js'
+import { TypeString } from '../Utility/Scalar.js'
+
 export class MediaBase extends RequestableClass implements Media { 
   constructor(object: MediaObject) {
     super(object)
@@ -30,8 +32,8 @@ export class MediaBase extends RequestableClass implements Media {
 
     const { type } = this
     assertMediaType(type)
-    counter++
-    const defaultValue = `${Default[type].label} ${counter}`
+    
+    const defaultValue = Default[type].label
     this.properties.push(propertyInstance({ 
       name: 'label', type: DataType.String, defaultValue
     }))
@@ -40,7 +42,7 @@ export class MediaBase extends RequestableClass implements Media {
   declare type: MediaType
   
   unload(): void {
-    throw new Error("Method not implemented.")
+    throw new Error('Method not implemented.')
   }
 
   definitionIcon(size: Size): Promise<SVGSVGElement> | undefined {
@@ -76,7 +78,7 @@ export class MediaBase extends RequestableClass implements Media {
     return errorThrow(ErrorName.Unimplemented)
   }
 
-  preferredTranscoding(...types: MediaType[]): Requestable {
+  preferredTranscoding(...types: TranscodingTypes): Requestable {
     for (const type of types) {
       const found = this.transcodings.find(object => object.type === type)
       if (found) return found
@@ -88,7 +90,7 @@ export class MediaBase extends RequestableClass implements Media {
     if (this.serverPath) return Promise.resolve()
 
     const { request } = this
-    return requestPromise(request, StringType).then(orError => {
+    return requestPromise(request, TypeString).then(orError => {
       if (!isDefiniteError(orError)) {
         const { data } = orError
         this.serverPath = data

@@ -1,13 +1,19 @@
-import { assertEndpoint, ClientAudioDataOrError, AudioType, 
-  endpointAbsolute, endpointUrl, errorThrow, ClientFontDataOrError, FontType, 
-  HttpProtocol, HttpsProtocol, ImageType, isPopulatedString, LoadType, 
-  ProtocolPromise, ProtocolType, RecordsType, RecordType, Request, RequestInit, 
-  Runtime, VideoType, pluginDataOrErrorPromise, ResolveType, isDefiniteError
-} from "@moviemasher/moviemasher.js"
-import { audioBufferPromise } from "../Utility/Audio"
-import { imageDataPromise } from "../Utility/Image"
-import { jsonPromise } from "../Utility/Json"
-import { videoDataPromise } from "../Utility/Video"
+import type {
+  ClientAudioDataOrError, ClientFontDataOrError, Request, RequestInit, 
+  ProtocolPromise, LoadType, 
+} from '@moviemasher/lib-core'
+
+import { 
+  assertEndpoint, TypeAudio, ProtocolHttps, ProtocolHttp, 
+  endpointAbsolute, endpointUrl, errorThrow, TypeFont, 
+  TypeImage, isPopulatedString, 
+  TypeProtocol, TypeRecords, TypeRecord, 
+  Runtime, TypeVideo, pluginDataOrErrorPromise, TypeResolve, isDefiniteError
+} from '@moviemasher/lib-core'
+import { audioBufferPromise } from '../Utility/Audio.js'
+import { imageDataPromise } from '../Utility/Image.js'
+import { jsonPromise } from '../Utility/Json.js'
+import { videoDataPromise } from '../Utility/Video.js'
 
 const arrayBufferPromise = (url: string, init?: RequestInit): Promise<ArrayBuffer> => (
    fetch(url, init).then(response => response.arrayBuffer())
@@ -24,21 +30,21 @@ const fontPromise =  (request: Request): Promise<ClientFontDataOrError> => {
 
   const bufferPromise = fetch(url, init).then(response => {
     const mimetype = response.headers.get('content-type') || ''
-    // console.log("fontPromise.fetch", type)
-    if (!isPopulatedString(mimetype) || mimetype.startsWith(FontType)) {
+    // console.log('fontPromise.fetch', type)
+    if (!isPopulatedString(mimetype) || mimetype.startsWith(TypeFont)) {
       return response.arrayBuffer().then(buffer => {
-        // console.log("fontPromise.bufferPromise", url)
+        // console.log('fontPromise.bufferPromise', url)
         const face = new FontFace(family, buffer)
         return face.load().then(data => ({ data }))
       })
     }
     //  mimetype does not match load type - see if there is resolver
-    return pluginDataOrErrorPromise(mimetype, ResolveType).then(orError => {
+    return pluginDataOrErrorPromise(mimetype, TypeResolve).then(orError => {
       if (isDefiniteError(orError)) return orError
       
       const { data: resolvePlugin } = orError
       return response.text().then(string => (
-        resolvePlugin.promise(string, FontType)
+        resolvePlugin.promise(string, TypeFont)
       ))
     })
   })
@@ -56,7 +62,7 @@ const audioPromise =  (request: Request): Promise<ClientAudioDataOrError> => {
   assertEndpoint(endpoint)
 
   const url = endpointUrl(endpoint)
-  // console.log(this.constructor.name, "audioPromise", isBlob ? 'BLOB' : url)
+  // console.log(this.constructor.name, 'audioPromise', isBlob ? 'BLOB' : url)
   return arrayBufferPromise(url, init).then(audioBufferPromise)
 }
 
@@ -68,15 +74,15 @@ const promise: ProtocolPromise = ((request: Request, type?: LoadType) => {
   const absoluteRequest = { init, endpoint: absolute }
   // console.log('http promise', endpoint, absolute)
   switch (type) {
-    case ImageType: return imageDataPromise(absoluteRequest)
-    case AudioType: return audioPromise(absoluteRequest)
-    case VideoType: return videoDataPromise(absoluteRequest)
-    case FontType: return fontPromise(absoluteRequest)
-    case RecordType: return jsonPromise(absoluteRequest) 
-    case RecordsType: return jsonPromise(absoluteRequest)
+    case TypeImage: return imageDataPromise(absoluteRequest)
+    case TypeAudio: return audioPromise(absoluteRequest)
+    case TypeVideo: return videoDataPromise(absoluteRequest)
+    case TypeFont: return fontPromise(absoluteRequest)
+    case TypeRecord: return jsonPromise(absoluteRequest) 
+    case TypeRecords: return jsonPromise(absoluteRequest)
   }
   errorThrow(type, 'LoadType', 'type')
 }) 
 
-Runtime.plugins[ProtocolType][HttpProtocol] ||= { promise, type: ProtocolType, protocol: HttpProtocol }
-Runtime.plugins[ProtocolType][HttpsProtocol] ||= { promise, type: ProtocolType, protocol: HttpsProtocol }
+Runtime.plugins[TypeProtocol][ProtocolHttp] ||= { promise, type: TypeProtocol, protocol: ProtocolHttp }
+Runtime.plugins[TypeProtocol][ProtocolHttps] ||= { promise, type: TypeProtocol, protocol: ProtocolHttps }

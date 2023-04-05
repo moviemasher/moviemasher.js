@@ -1,8 +1,10 @@
-import { isOutput, Output } from "../../Base/Code"
-import { isTyped } from "../../Base/Typed"
-import { RenderingCommandOutput } from "../Encode/Encode"
-import { TranscodingType } from "./Transcoding/Transcoding"
-import { Plugin, TranscodeType } from "../Plugin"
+import type { Output} from '../../Base/Code.js'
+import type {Plugin, TranscodeType} from '../Plugin.js'
+import type {RenderingCommandOutput} from '../Encode/Encode.js'
+import type {TranscodingType} from './Transcoding/Transcoding.js'
+
+import {isOutput} from '../../Base/Code.js'
+import {isTyped} from '../../Base/Typed.js'
 
 export interface TranscodeOutput extends Output {
   options: RenderingCommandOutput
@@ -19,5 +21,4 @@ export interface FontTranscoderOptions extends TranscoderOptions {}
 
 export interface TranscodePlugin extends Plugin {
   type: TranscodeType
-
 }

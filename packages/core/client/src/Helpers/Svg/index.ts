@@ -1,1 +1,1 @@
-export * from './SvgFunctions'
+export * from './SvgFunctions.js'

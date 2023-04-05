@@ -3,7 +3,7 @@ import {
   timeFromArgs, timeRangeFromArgs, assertTrue, AVType, CommandFiles, 
   ServerPromiseArgs, EmptyFunction, Time, 
   errorThrow, ErrorName, assertMedia, Numbers 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { FilterGraphArgs, FilterGraph } from "../FilterGraph/FilterGraph"
 import { FilterGraphClass } from "../FilterGraph/FilterGraphClass"
 import { FilterGraphsArgs, FilterGraphs } from "./FilterGraphs"

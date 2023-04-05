@@ -1,6 +1,6 @@
 import { 
   Scalar, PropertiedChangeHandler, Property, DataType, Time, EmptyFunction 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { createContext } from "../../../Framework/FrameworkFunctions"
 
 export interface InputContextInterface {

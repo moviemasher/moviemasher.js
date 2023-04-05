@@ -1,2 +1,1 @@
-// export * from './Translate'
-export * from './TranslateFunctions'
+export * from './TranslateFunctions.js'

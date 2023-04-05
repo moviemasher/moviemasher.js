@@ -1,4 +1,4 @@
-import /* type */ { Numbers } from '@moviemasher/moviemasher.js'
+import type { Numbers } from '@moviemasher/lib-core'
 
 
 export interface WithClassName { 

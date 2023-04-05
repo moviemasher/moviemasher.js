@@ -1,12 +1,12 @@
-import { ValueRecord } from "../../../Types/Core"
-import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from "../../../Base/Code"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { assertPopulatedString, isPopulatedString } from "../../../Utility/Is"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { tweenOption, tweenPosition } from "../../../Utility/Tween"
-import { FilterDefinitionObject } from "../Filter"
+import { ValueRecord } from '../../../Types/Core.js'
+import { CommandFilter, FilterDefinitionCommandFilterArgs, CommandFilters } from '../../../Base/Code.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { assertPopulatedString, isPopulatedString } from '../../../Utility/Is.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 /**
  * @category Filter

@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
   assertTrue,
-  ClassSelected, sizeAboveZero, sizeCopy, sizeScale, Strings, UnknownRecord} from "@moviemasher/moviemasher.js"
+  ClassSelected, sizeAboveZero, sizeCopy, sizeScale, Strings, UnknownRecord} from "@moviemasher/lib-core"
 
 
 import { WithClassName } from "../../Types/Core"
@@ -9,7 +9,7 @@ import { PropsWithoutChild } from "../../Types/Props"
 import { DragDefinitionObject, DragSuffix } from '@moviemasher/client-core'
 import { useDefinition } from './useDefinition'
 import { View } from '../../Utilities/View'
-import { sizeCeil } from '@moviemasher/moviemasher.js'
+import { sizeCeil } from '@moviemasher/lib-core'
 import MasherContext from '../Masher/MasherContext'
 import { BrowserContext } from '../Browser/BrowserContext'
 

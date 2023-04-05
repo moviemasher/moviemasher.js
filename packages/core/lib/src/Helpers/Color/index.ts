@@ -1,3 +1,3 @@
-export * from "./Color"
-export * from "./ColorFunctions"
-export * from "./ColorConstants"
+export * from './Color.js'
+export * from './ColorFunctions.js'
+export * from './ColorConstants.js'

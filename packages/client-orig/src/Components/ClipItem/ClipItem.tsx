@@ -4,7 +4,7 @@ import {
   assertTrue,
   sizeAboveZero, svgPolygonElement,
   Size, EventType, isAboveZero, colorToRgb, colorRgbDifference, colorFromRgb, svgPatternElement, idGenerate, svgDefsElement, svgUrl, svgSvgElement, sizeCeil, isEventType, isObject, EventFunction
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { 
   pixelFromFrame, DragSuffix, droppingPositionClass 
 } from '@moviemasher/client-core'

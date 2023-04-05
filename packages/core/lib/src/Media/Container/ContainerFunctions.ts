@@ -1,12 +1,12 @@
-import /* type */ { ContainerObject, ContainerDefinition, Container } from "./Container"
+import type { ContainerObject, ContainerDefinition, Container } from './Container.js'
 
-import { isContainingType } from "../../Setup/Enums"
-import { isObject } from "../../Utility/Is"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isTweenable, isTweenableDefinition } from "../../Mixin/Tweenable/TweenableFunctions"
+import { isContainingType } from '../../Setup/Enums.js'
+import { isObject } from '../../Utility/Is.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { isTweenable, isTweenableDefinition } from '../../Mixin/Tweenable/TweenableFunctions.js'
 
 export const isContainerObject = (value: any): value is ContainerObject => {
-  return isObject(value) && "opacity" in value
+  return isObject(value) && 'opacity' in value
 }
 
 export function assertContainerObject(value: any): asserts value is ContainerObject {

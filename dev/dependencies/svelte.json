@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "vite": "4.1.4",
+    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "svelte": "^3.56.0"
+	},
+	"dependencies": {
+	}
+}

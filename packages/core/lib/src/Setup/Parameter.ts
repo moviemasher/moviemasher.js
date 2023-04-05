@@ -1,9 +1,9 @@
-import { UnknownRecord, Value, ValueRecord } from "../Types/Core"
-import { isNumeric, isUndefined } from "../Utility/Is"
-import { DataType, DataTypes } from "./Enums"
+import { UnknownRecord, Value, ValueRecord } from '../Types/Core.js'
+import { isNumeric, isUndefined } from '../Utility/Is.js'
+import { DataType, DataTypes } from './Enums.js'
 
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../Helpers/Error/ErrorName"
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../Helpers/Error/ErrorName.js'
 
 export interface ParameterObject {
   name : string
@@ -38,12 +38,10 @@ export class Parameter {
   dataType = DataType.String
 
   name = ''
-
   toJSON() : UnknownRecord {
     return { name: this.name, value: this.value }
   }
 
   value: Value | ValueRecord[] = ''
-
   values?: Value[]
 }

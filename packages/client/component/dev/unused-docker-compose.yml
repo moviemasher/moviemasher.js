@@ -1,0 +1,21 @@
+version: "3"
+name: moviemasher-example-component
+services:
+  service:
+    build:
+      dockerfile: packages/build/example/Dockerfile.cnf
+      context: ../../../../
+    image: moviemasher/build-example:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-build-example-8573
+    ports:
+      - 8573:8573
+    env_file:
+      - ../../../../dev/local.env
+    environment:
+      - MOVIEMASHER_EXAMPLE_PORT=8573
+      - MOVIEMASHER_EXAMPLE_INDEX=${MOVIEMASHER_DIR_ROOT}/packages/client/component/example/src/index.html
+    command: serve --workspace=@moviemasher/client-component
+    volumes:
+      - ../../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ../../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev
+      - ../../../../packages/:${MOVIEMASHER_DIR_ROOT}/packages

@@ -7,8 +7,8 @@ import {
   EmptyFunction, 
   assertTrue, assertSize, isDefined, 
   NumberRecord, assertAboveZero, 
-  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, VideoType, SequenceType, ImageType, ErrorName, errorThrow, Size, Numbers, NewlineChar
-} from "@moviemasher/moviemasher.js"
+  MashMedia, mashMedia, idGenerateString, RenderingCommandOutput, TypeVideo, TypeImage, ErrorName, errorThrow, Size, Numbers, NewlineChar
+} from "@moviemasher/lib-core"
 
 import {
   BasenameRendering, ExtensionCommands, ExtensionLoadedInfo, TsExtension
@@ -51,7 +51,7 @@ export class RenderingProcessClass implements RenderingProcess {
     } = commandOutput
     const options = { ...commandOutputOptions, an: '', qp: 0 }
     const output: RenderingCommandOutput = {
-      ...rest, options, extension, outputType: VideoType
+      ...rest, options, extension, outputType: TypeVideo
     }
     const { outputDirectory } = this.args
     const concatDirectoryName = renderingOutputFile(index, commandOutput, 'concat')
@@ -240,7 +240,7 @@ export class RenderingProcessClass implements RenderingProcess {
 
     const options = commandOutput.options!
     switch (outputType) {
-      case ImageType: {
+      case TypeImage: {
         options['frames:v'] = 1
         break
       }
@@ -314,7 +314,7 @@ export class RenderingProcessClass implements RenderingProcess {
         options: {}, ...output
       }
       // options!.report ||= path.join(outputDirectory, `report`)
-      const expectDuration = outputType !== ImageType
+      const expectDuration = outputType !== TypeImage
       const renderingOutput = this.outputInstance(instanceOptions)
       
       promise = promise.then(data => {

@@ -2,24 +2,24 @@ import { describe, test } from 'node:test'
 import assert from 'assert'
 import path from 'path'
 
-import { urlEndpoint, urlForEndpoint, Runtime, EnvironmentKeyUrlBase } from "@moviemasher/moviemasher.js"
+import { urlEndpoint, urlForEndpoint, Runtime, EnvironmentKeyUrlBase } from '@moviemasher/lib-core'
 
 describe('Url', () => {
   
-  describe("urlForEndpoint", () => {
+  describe('urlForEndpoint', () => {
     const tests = [
-      ["http://localhost/"],
-      ["http://localhost/file.ext", "file.ext"],
-      ["http://localhost/file.ext", "/file.ext"],
-      ["http://localhost/file.ext", "/file.ext", "prefix"],
-      ["http://localhost/prefix/file.ext", "file.ext", "prefix"],
-      ["http://localhost/prefix/file.ext", "file.ext", "/prefix"],
-      ["http://localhost/prefix/file.ext", "file.ext", "/prefix/"],
-      ["http://localhost/file.ext", "../file.ext", "/prefix/"],
-      ["http://localhost/prefix/path/file.ext", "file.ext", "prefix/path"],
-      ["http://localhost/prefix/path/file.ext", "file.ext", "/prefix/path"],
-      ["http://localhost/prefix/path/file.ext", "file.ext", "/prefix/path/"],
-      ["http://localhost/prefix/file.ext", "../file.ext", "/prefix/path/"],
+      ['http://localhost/'],
+      ['http://localhost/file.ext', 'file.ext'],
+      ['http://localhost/file.ext', '/file.ext'],
+      ['http://localhost/file.ext', '/file.ext', 'prefix'],
+      ['http://localhost/prefix/file.ext', 'file.ext', 'prefix'],
+      ['http://localhost/prefix/file.ext', 'file.ext', '/prefix'],
+      ['http://localhost/prefix/file.ext', 'file.ext', '/prefix/'],
+      ['http://localhost/file.ext', '../file.ext', '/prefix/'],
+      ['http://localhost/prefix/path/file.ext', 'file.ext', 'prefix/path'],
+      ['http://localhost/prefix/path/file.ext', 'file.ext', '/prefix/path'],
+      ['http://localhost/prefix/path/file.ext', 'file.ext', '/prefix/path/'],
+      ['http://localhost/prefix/file.ext', '../file.ext', '/prefix/path/'],
 
     ]
     tests.forEach(testArray => {
@@ -32,8 +32,8 @@ describe('Url', () => {
   }) 
 
 
-  describe("urlEndpoint", () => {
-    test("returns http localhost endpoint", () => {
+  describe('urlEndpoint', () => {
+    test('returns http localhost endpoint', () => {
 
       
       const user = 'username'

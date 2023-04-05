@@ -1,4 +1,4 @@
-import { EmptyFunction } from "../Setup/Constants"
+import { EmptyFunction } from '../Setup/Constants.js'
 
 export type EventFunction = (event: Event) => void
 

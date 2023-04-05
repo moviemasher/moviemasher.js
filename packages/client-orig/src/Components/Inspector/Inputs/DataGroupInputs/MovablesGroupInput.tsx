@@ -1,7 +1,7 @@
 import { 
   ClassDropping, SelectedMovable, DataGroup, Movable, 
   assertPopulatedObject, assertDefined, ScalarRecord
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import React from 'react'
 
 import { JsxElements } from "../../../../Types/Element"

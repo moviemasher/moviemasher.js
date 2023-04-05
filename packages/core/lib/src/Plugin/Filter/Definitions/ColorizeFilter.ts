@@ -1,15 +1,15 @@
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { idGenerate } from "../../../Utility/Id"
-import { colorToRgb, colorToRgba } from "../../../Helpers/Color/ColorFunctions"
-import { colorRgbaKeys, colorRgbKeys } from "../../../Helpers/Color/ColorConstants"
-import { assertNumber, assertPopulatedString } from "../../../Utility/Is"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { ValueRecord } from "../../../Types/Core"
-import { tweenPosition } from "../../../Utility/Tween"
-import { FilterDefinitionObject } from "../Filter"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { colorToRgb, colorToRgba } from '../../../Helpers/Color/ColorFunctions.js'
+import { colorRgbaKeys, colorRgbKeys } from '../../../Helpers/Color/ColorConstants.js'
+import { assertNumber, assertPopulatedString } from '../../../Utility/Is.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { ValueRecord } from '../../../Types/Core.js'
+import { tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 /**
  * @category Filter

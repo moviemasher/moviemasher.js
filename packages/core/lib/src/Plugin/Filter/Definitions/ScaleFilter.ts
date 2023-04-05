@@ -1,13 +1,13 @@
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { assertPopulatedString, isNumber } from "../../../Utility/Is"
-import { idGenerate } from "../../../Utility/Id"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { ValueRecord } from "../../../Types/Core"
-import { tweenOption, tweenPosition } from "../../../Utility/Tween"
-import { FilterDefinitionObject } from "../Filter"
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { assertPopulatedString, isNumber } from '../../../Utility/Is.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { ValueRecord } from '../../../Types/Core.js'
+import { tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 /**
  * @category Filter
@@ -43,7 +43,7 @@ export class ScaleFilter extends FilterDefinitionClass {
     } = values
     assertPopulatedString(filterInput)
     
-    // console.log(this.constructor.name, "commandFilters", filterInput, width, "x", height) //, widthEnd, "x", heightEnd)
+    // console.log(this.constructor.name, 'commandFilters', filterInput, width, 'x', height) //, widthEnd, 'x', heightEnd)
 
     const { ffmpegFilter } = this
   

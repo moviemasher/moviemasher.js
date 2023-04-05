@@ -1,2 +1,2 @@
-export * from "./Http"
-export * from "./Blob"
+export * from './Http.js'
+export * from './Blob.js'

@@ -1,5 +1,5 @@
 import React from "react"
-import { Clip } from "@moviemasher/moviemasher.js"
+import { Clip } from "@moviemasher/lib-core"
 
 import { ClipContext } from "./ClipContext"
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventType, isArray, timeFromArgs, TimeRange } from '@moviemasher/moviemasher.js'
+import { EventType, isArray, timeFromArgs, TimeRange } from '@moviemasher/lib-core'
 
 
 import { SliderChangeHandler } from "../../Types/Core"

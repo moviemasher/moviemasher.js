@@ -1,18 +1,13 @@
-import /* type */ { DefiniteError } from "../Error/Error"
-import /* type */ { EffectObject } from "../../Media/Effect/Effect"
-import /* type */ { JsonRecord, JsonRecords } from "../../Types/Core"
-import /* type */ { MashMediaObject } from "../../Media/Mash/Mash"
-import /* type */ { Media, MediaArray } from "../../Media/Media"
-import { EncodingTypes } from "../../Plugin/Encode/Encoding/Encoding"
-import { AudioType, FontType, ImageType, VideoType } from "../../Setup/Enums"
+import type { DefiniteError } from '../Error/Error.js'
+import type { EffectObject } from '../../Media/Effect/Effect.js'
+import type { JsonRecord, JsonRecords } from '../../Types/Core.js'
+import type { MashMediaObject } from '../../Media/Mash/Mash.js'
+import type { Media, MediaArray } from '../../Media/Media.js'
+import type { AudioType, FontType, ImageType, VideoType } from '../../Setup/Enums.js'
 
-export type ClientMediaType = AudioType | FontType | ImageType | VideoType
-
-export type ClientMediaTypes = ClientMediaType[]
-export const ClientMediaTypes: ClientMediaTypes = [...EncodingTypes, FontType]
+export type ClientMediaType = AudioType | ImageType | VideoType | FontType
 
 export type ClientMedia = AudioBuffer | FontFace | HTMLImageElement | HTMLVideoElement 
-// ClientImage | ClientVideo | ClientAudio | ClientFont
 
 export type ClientMediaDataOrError = DataOrError<ClientImage> | DataOrError<ClientAudio> | DataOrError<ClientVideo> | DataOrError<ClientFont>
 

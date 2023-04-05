@@ -1,7 +1,7 @@
 import { 
   JsonRecord, assertObject, isArray, 
   Request, PotentialError, StringDataOrError, Requests, Identified, Runtime
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { Input } from "../Types/Core"
 import { assertJobType, JobType } from "../Setup/Enums"
 import { EnvironmentKeyApiKeypathJob, EnvironmentKeyApiKeypathType } from "../Environment/ServerEnvironment"

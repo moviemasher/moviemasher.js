@@ -1,5 +1,5 @@
-import { UnknownRecord } from "../../../Types/Core"
-import { Decoding, DecodingObject, DecodingType } from "./Decoding"
+import {UnknownRecord} from '../../../Types/Core.js'
+import {Decoding, DecodingObject, DecodingType} from './Decoding.js'
 
 
 export class DecodingClass implements Decoding {

@@ -1,8 +1,11 @@
-import { Orientation } from "../Setup/Enums"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { isPoint, Point, pointCopy, pointRound, pointsEqual, pointString, PointTuple, PointZero } from "./Point"
-import { isSize, Size, sizeCopy, sizeRound, sizesEqual, sizeString, SizeTuple, SizeZero } from "./Size"
-import { SemicolonChar } from "../Setup/Constants"
+import type { Point, PointTuple } from './Point.js'
+import type { Size, SizeTuple } from './Size.js'
+
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { isPoint, pointCopy, pointRound, pointsEqual, pointString, PointZero } from './Point.js'
+import { isSize, sizeCopy, sizeRound, sizesEqual, sizeString, SizeZero } from './Size.js'
+import { Orientation } from '../Setup/Enums.js'
+import { SemicolonChar } from '../Setup/Constants.js'
 
 export interface Rect extends Size, Point { }
 export const isRect = (value: any): value is Rect => {

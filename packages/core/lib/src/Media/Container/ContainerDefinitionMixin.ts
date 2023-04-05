@@ -1,9 +1,9 @@
-import { TweenableDefinitionClass } from "../../Mixin/Tweenable/Tweenable"
-import { PreloadArgs } from "../../Base/Code"
-import { DataType, ImageType, Orientation } from "../../Setup/Enums"
-import { MediaType } from "../../Setup/MediaType"
-import { DataGroup, propertyInstance } from "../../Setup/Property"
-import { ContainerDefinition, ContainerDefinitionClass } from "./Container"
+import type { ContainerDefinition, ContainerDefinitionClass } from './Container.js'
+import type { PreloadArgs } from '../../Base/Code.js'
+
+import { TweenableDefinitionClass } from '../../Mixin/Tweenable/Tweenable.js'
+import { DataType, TypeImage, Orientation } from '../../Setup/Enums.js'
+import { DataGroup, propertyInstance } from '../../Setup/Property.js'
 
 export function ContainerDefinitionMixin<T extends TweenableDefinitionClass>(Base: T): ContainerDefinitionClass & T {
   return class extends Base implements ContainerDefinition {
@@ -21,6 +21,6 @@ export function ContainerDefinitionMixin<T extends TweenableDefinitionClass>(Bas
     }
 
 
-    type = ImageType 
+    type = TypeImage 
   }
 }

@@ -1,11 +1,10 @@
-import { Scalar } from "../Types/Core"
-import { IdPrefix, IdSuffix } from "../Setup/Constants"
-import {
-  DataType, isDataType} from "../Setup/Enums"
-import { isMediaType } from "../Setup/MediaType"
-import { colorValid } from "./Color/ColorFunctions"
-import { colorBlack } from "./Color/ColorConstants"
-import { isBoolean, isNumber, isNumeric, isPopulatedString } from "../Utility/Is"
+import type { Scalar } from '../Types/Core.js'
+import { IdPrefix, IdSuffix } from '../Setup/Constants.js'
+import { DataType, isDataType} from '../Setup/Enums.js'
+import { isMediaType } from '../Setup/MediaType.js'
+import { colorValid } from './Color/ColorFunctions.js'
+import { colorBlack } from './Color/ColorConstants.js'
+import { isBoolean, isNumber, isNumeric, isPopulatedString } from '../Utility/Is.js'
 
 export const PropertyTypesNumeric = [
   DataType.Frame,
@@ -30,7 +29,7 @@ export const propertyTypeDefault = (dataType: DataType): Scalar => {
     case DataType.Boolean: return false
     case DataType.Rgb: return colorBlack
   }
-  return propertyTypeRepresentedAsNumber(dataType) ? 0 : ''
+  return propertyTypeRepresentedAsNumber(dataType) ? 0 : '.js'
 }
 
 const propertyTypeValidBoolean = (value: Scalar): boolean => {
@@ -62,7 +61,7 @@ export const propertyTypeCoerce = (value: Scalar, dataType: DataType): Scalar =>
   if (dataType === DataType.Boolean) {
     if (isBoolean(value)) return value as boolean
     if (isNumeric(value)) return !!Number(value)
-    return value === 'true'
+    return value === 'true.js'
   }
   if (propertyTypeRepresentedAsNumber(dataType)) return isNumeric(value) ? Number(value) : 0
   return String(value)

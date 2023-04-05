@@ -3,10 +3,11 @@
   "version": "5.1.2",
   "description": "Movie Masher Server Core - version 5.1.2",
   
-  "files": ["esm", "cjs"],
-  "main": "cjs/server-core.js",
-  "module": "esm/server-core.mjs",
-  "types": "esm/server-core.d.mts",
+  "files": ["esm"],
+  "type": "module",
+  "main": "esm/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
 
   "license": "MIT",
   "author": {
@@ -22,17 +23,18 @@
   },
   "homepage": "https://moviemasher.com",
   "scripts": {
-    "build": "rollup --config dev/rollup.config.mjs"
+    "script": "run-s",
+    "build": "rollup --config dev/rollup/package.config.mjs"
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/lib-core": "5.1.2",
     "fluent-ffmpeg": "^2.1.2",
     "ttf2woff2": "5.0.0",
     "child_process": "^1.0.2"
   },
   "devDependencies": {
-    "@types/fluent-ffmpeg": "^2.1.20",
-    "@types/node": "18.13.0"
+    "@types/fluent-ffmpeg": "2.1.21"
+
   },
   "typedoc": {
     "entryPoint": "./src/index.ts",

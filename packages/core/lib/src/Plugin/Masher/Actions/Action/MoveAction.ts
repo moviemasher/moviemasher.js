@@ -1,5 +1,5 @@
-import { errorThrow } from "../../../../Helpers/Error/ErrorFunctions"
-import { Action, ActionObject } from "./Action"
+import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
+import { Action, ActionObject } from './Action.js'
 
 export interface MoveActionObject extends ActionObject {
   objects: any[]

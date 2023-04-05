@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton } from '@moviemasher/moviemasher.js'
+import { ClassButton } from '@moviemasher/lib-core'
 
 import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'

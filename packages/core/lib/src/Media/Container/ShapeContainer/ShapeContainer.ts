@@ -1,7 +1,7 @@
-import { Image, ImageMedia, ImageMediaObject, ImageObject } from "../../Image/Image"
+import {Image, ImageMedia, ImageMediaObject, ImageObject} from '../../Image/Image.js'
 import {
-  Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject} from "../Container"
-import { isContainer } from "../ContainerFunctions"
+  Container, ContainerDefinition, ContainerDefinitionObject, ContainerObject} from '../Container.js'
+import {isContainer} from '../ContainerFunctions.js'
 
 export interface ShapeContainerObject extends ImageObject {
 }
@@ -16,7 +16,7 @@ export interface ShapeContainer extends Image {
   definition: ShapeContainerDefinition
 }
 export const isShapeContainer = (value: any): value is ShapeContainer => {
-  return isContainer(value) && "path" in value
+  return isContainer(value) && 'path' in value
 }
 
 export interface ShapeContainerDefinition extends ImageMedia {

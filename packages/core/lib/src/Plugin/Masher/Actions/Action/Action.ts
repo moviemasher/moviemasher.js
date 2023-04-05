@@ -1,10 +1,10 @@
-import { Scalar, ScalarRecord, UnknownRecord } from "../../../../Types/Core"
-import { ActionType } from "../../../../Setup/Enums"
+import { UnknownRecord } from '../../../../Types/Core.js'
+import { ActionType } from '../../../../Setup/Enums.js'
 
-import { assertMashMedia, isMashMedia, MashMedia } from "../../../../Media/Mash/Mash"
-import { EditorSelectionObject } from "../../EditorSelection"
-import { errorThrow } from "../../../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../../../Helpers/Error/ErrorName"
+import { assertMashMedia, isMashMedia, MashMedia } from '../../../../Media/Mash/Mash.js'
+import { EditorSelectionObject } from '../../EditorSelection/EditorSelection.js'
+import { errorThrow } from '../../../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../../../Helpers/Error/ErrorName.js'
 
 
 export interface ActionObject extends UnknownRecord {

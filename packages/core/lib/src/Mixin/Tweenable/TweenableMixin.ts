@@ -1,29 +1,34 @@
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Scalar, ScalarRecord } from "../../Types/Core"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { filterFromId } from "../../Plugin/Filter/FilterFactory"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs } from "../../Base/Code"
-import { SelectedItems, SelectedProperties, SelectedProperty } from "../../Helpers/Select/SelectedProperty"
-import { Point, PointTuple } from "../../Utility/Point"
-import { assertRect, Rect, RectTuple } from "../../Utility/Rect"
-import { ActionType, DataType, isSizingMediaType, isTimingMediaType, NoneType, Orientation, SelectorType, Sizing, Timing } from "../../Setup/Enums"
-import { assertProperty, Property } from "../../Setup/Property"
-import { arrayLast } from "../../Utility/Array"
-import { colorBlackOpaque, colorWhite } from "../../Helpers/Color/ColorConstants"
-import { idGenerate } from "../../Utility/Id"
-import { assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined } from "../../Utility/Is"
-import { assertSize, Size, sizeEven, sizesEqual, SizeTuple } from "../../Utility/Size"
-import { tweenColorStep, Tweening, tweenNumberStep, tweenOverPoint, tweenOverSize } from "../../Utility/Tween"
-import { Tweenable, TweenableClass, TweenableDefinition, TweenableObject } from "./Tweenable"
-import { Actions } from "../../Plugin/Masher/Actions/Actions"
-import { Clip, IntrinsicOptions } from "../../Media/Mash/Track/Clip/Clip"
-import { Selectables } from "../../Plugin/Masher/Selectable"
-import { timeFromArgs, timeRangeFromArgs } from "../../Helpers/Time/TimeUtilities"
-import { Default } from "../../Setup/Default"
-import { MediaInstanceClass } from "../../Media"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import type {Clip, IntrinsicOptions} from '../../Media/Mash/Track/Clip/Clip.js'
+import type {CommandFile, CommandFiles, CommandFilter, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, GraphFile, PreloadArgs, GraphFiles, VisibleCommandFileArgs, VisibleCommandFilterArgs, ServerPromiseArgs} from '../../Base/Code.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {Point, PointTuple} from '../../Utility/Point.js'
+import type {Rect, RectTuple} from '../../Utility/Rect.js'
+import type {Scalar, ScalarRecord} from '../../Types/Core.js'
+import type {Selectables} from '../../Plugin/Masher/Selectable.js'
+import type {SelectedItems, SelectedProperties, SelectedProperty} from '../../Helpers/Select/SelectedProperty.js'
+import type {SelectorType} from '../../Setup/Enums.js'
+import type {Size, SizeTuple} from '../../Utility/Size.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+import type {Tweenable, TweenableClass, TweenableDefinition, TweenableObject} from './Tweenable.js'
+import type {Tweening} from './Tween.js'
+
+import {Actions} from '../../Plugin/Masher/Actions/Actions.js'
+import {ActionType, DataType, isSizingMediaType, isTimingMediaType, TypeNone, Orientation,  Sizing, Timing} from '../../Setup/Enums.js'
+import {arrayLast} from '../../Utility/Array.js'
+import {assertAboveZero, assertArray, assertNumber, assertObject, assertPopulatedString, isNumber, isTimeRange, isUndefined} from '../../Utility/Is.js'
+import {assertProperty, Property} from '../../Setup/Property.js'
+import {assertRect } from '../../Utility/Rect.js'
+import {assertSize, sizeEven, sizesEqual} from '../../Utility/Size.js'
+import {colorBlackOpaque, colorWhite} from '../../Helpers/Color/ColorConstants.js'
+import {Default} from '../../Setup/Default.js'
+import {ErrorName} from '../../Helpers/Error/ErrorName.js'
+import {errorThrow} from '../../Helpers/Error/ErrorFunctions.js'
+import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
+import {idGenerate} from '../../Utility/Id.js'
+import {MediaInstanceClass} from '../../Media/Media.js'
+import {PropertyTweenSuffix} from '../../Base/Propertied.js'
+import {timeFromArgs, timeRangeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
+import {tweenColorStep, tweenNumberStep, tweenOverPoint, tweenOverSize} from './Tween.js'
 
 export function TweenableMixin<T extends MediaInstanceClass>(Base: T): TweenableClass & T {
   return class extends Base implements Tweenable {
@@ -120,7 +125,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       const commandFilters: CommandFilters = []
       const { filterInput: input = '' } = args
       let filterInput = input
-      // console.log(this.constructor.name, "commandFilters", container)
+      // console.log(this.constructor.name, 'commandFilters', container)
       const initialFilters = this.initialCommandFilters(args, tweening, container)
       if (initialFilters.length) {
         commandFilters.push(...initialFilters)
@@ -156,7 +161,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
     }
 
     containerCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
-      // console.log(this.constructor.name, "containerCommandFilters returning empty")
+      // console.log(this.constructor.name, 'containerCommandFilters returning empty')
       return [] 
     }
 
@@ -165,7 +170,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
     }
 
     contentCommandFilters(args: VisibleCommandFilterArgs, tweening: Tweening): CommandFilters { 
-      // console.log(this.constructor.name, "contentCommandFilters returning empty")
+      // console.log(this.constructor.name, 'contentCommandFilters returning empty')
       return []
     }
 
@@ -285,7 +290,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
       assertRect(rectEnd)
 
       const duration = isTimeRange(time) ? time.lengthSeconds : 0
-      // console.log(this.constructor.name, "scaleCommandFilters", containerRects, duration)
+      // console.log(this.constructor.name, 'scaleCommandFilters', containerRects, duration)
       const commandFilters: CommandFilters = []
       
       const { scaleFilter } = this
@@ -305,7 +310,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
      
     selectables(): Selectables { return [this, ...this.clip.selectables()] }
 
-    selectType: SelectorType = NoneType
+    selectType: SelectorType = TypeNone
 
     selectedItems(actions: Actions): SelectedItems {
       const selectedItems: SelectedItems = []
@@ -377,7 +382,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
           actions.create({ type, property, target: this, redoValue, undoValue })
         }
       }
-      // console.log(this.constructor.name, "selectedProperties", name)
+      // console.log(this.constructor.name, 'selectedProperties', name)
       properties.push(selectedProperty)
       if (tweenable) {
         const tweenName = [name, PropertyTweenSuffix].join('')
@@ -388,7 +393,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
             actions.create({ property, target: this, redoValue, undoValue })
           }
         }
-        // console.log(this.constructor.name, "selectedProperties", tweenName)
+        // console.log(this.constructor.name, 'selectedProperties', tweenName)
         properties.push(selectedPropertEnd)
       }
       return properties
@@ -459,7 +464,7 @@ export function TweenableMixin<T extends MediaInstanceClass>(Base: T): Tweenable
         ...args, audible: false, visible: true
       }
       const files = this.fileCommandFiles(graphFileArgs)
-      // console.log(this.constructor.name, "visibleCommandFiles", files)
+      // console.log(this.constructor.name, 'visibleCommandFiles', files)
       return files
     }
   }

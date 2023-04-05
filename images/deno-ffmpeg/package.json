@@ -12,7 +12,7 @@
 
   },
   "peerDependencies": {
-    "@moviemasher/moviemasher.js": "5.1.2",
+    "@moviemasher/lib-core": "5.1.2",
     "@moviemasher/server-core": "5.1.2"
   },
   "devDependencies": {

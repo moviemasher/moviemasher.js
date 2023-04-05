@@ -1,10 +1,10 @@
-import { assertAboveZero, assertInteger, assertPositive } from "../../Utility/Is"
-import { roundWithMethod } from "../../Utility/Round"
-import { Time, TimeRange } from "./Time"
-import { TimeClass, timeEqualizeRates } from "./TimeClass"
-import { TimeRangeClass } from "./TimeRangeClass"
-import { errorThrow } from "../Error/ErrorFunctions"
-import { ErrorName } from "../Error/ErrorName"
+import { assertAboveZero, assertInteger, assertPositive } from '../../Utility/Is.js'
+import { roundWithMethod } from '../../Utility/Round.js'
+import { Time, TimeRange } from './Time.js'
+import { TimeClass, timeEqualizeRates } from './TimeClass.js'
+import { TimeRangeClass } from './TimeRangeClass.js'
+import { errorThrow } from '../Error/ErrorFunctions.js'
+import { ErrorName } from '../Error/ErrorName.js'
 
 export const timeRangeFromArgs = (frame = 0, fps = 1, frames = 1) : TimeRange => {
   return new TimeRangeClass(frame, fps, frames)

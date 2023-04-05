@@ -1,11 +1,11 @@
-import { isArray, isObject } from "../../../Utility/Is"
-import { errorThrow } from "../../../Helpers/Error/ErrorFunctions"
-import { isDecodeOutput } from "../DecodeFunctions"
-import { ProbeOptions, ProbeOutput } from "./Probe"
+import {isArray, isObject} from '../../../Utility/Is.js'
+import {errorThrow} from '../../../Helpers/Error/ErrorFunctions.js'
+import {isDecodeOutput} from '../DecodeFunctions.js'
+import {ProbeOptions, ProbeOutput} from './Probe.js'
 
 
 export const isProbeOptions = (value: any): value is ProbeOptions => {
-  return isObject(value) && "types" in value && isArray(value.types)
+  return isObject(value) && 'types' in value && isArray(value.types)
 }
 export function assertProbeOptions(value: any): asserts value is ProbeOptions {
   if (!isProbeOptions(value))
@@ -13,7 +13,7 @@ export function assertProbeOptions(value: any): asserts value is ProbeOptions {
 }
 
 export const isProbeOutput = (value: any): value is ProbeOutput => {
-  return isDecodeOutput(value) && "options" in value && isProbeOptions(value.options)
+  return isDecodeOutput(value) && 'options' in value && isProbeOptions(value.options)
 }
 export function assertProbeOutput(value: any): asserts value is ProbeOutput {
   if (!isProbeOutput(value))

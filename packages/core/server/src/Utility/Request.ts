@@ -1,7 +1,7 @@
 import { 
   assertEndpoint,
   endpointAbsolute, Request, StringRecord, Value
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { hashMd5 } from './Hash'
 

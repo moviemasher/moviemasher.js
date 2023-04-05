@@ -1,2 +1,2 @@
-export * from './AudibleContext'
-export * from './ContextFactory'
+export * from './AudibleContext.js'
+export * from './ContextFactory.js'

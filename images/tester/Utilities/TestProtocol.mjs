@@ -1,7 +1,7 @@
 
 import { 
   JsonRecordType, JsonRecordsType, ErrorName, Runtime, ProtocolType, errorPromise, ImageType, AudioType 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 export const TestProtocol = 'test'
 const promise = (request, type) => {
   console.log("TestProtocol", request, type)

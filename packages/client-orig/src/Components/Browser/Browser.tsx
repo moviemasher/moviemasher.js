@@ -1,7 +1,7 @@
 import React from "react"
 import { 
   assertPopulatedString, MediaType, MediaTypesRecord
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"

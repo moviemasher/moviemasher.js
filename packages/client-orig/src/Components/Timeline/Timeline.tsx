@@ -3,7 +3,7 @@ import {
   Rect, RectZero, Clip, DroppingPosition, EventType, Track, pixelToFrame, Clips, 
   Point, eventStop, MashIndex, isPositive, assertClip, 
   EffectType, isMediaObject
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 
 import { PropsAndChildren } from "../../Types/Props"

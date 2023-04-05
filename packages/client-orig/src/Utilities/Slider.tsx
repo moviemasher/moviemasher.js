@@ -1,4 +1,4 @@
-import { Scalar, StringSetter } from "@moviemasher/moviemasher.js"
+import { Scalar, StringSetter } from "@moviemasher/lib-core"
 import React from "react"
 
 import { WithClassName } from "../Types/Core"

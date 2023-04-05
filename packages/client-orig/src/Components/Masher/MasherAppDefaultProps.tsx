@@ -1,5 +1,5 @@
 import React from 'react'
-import { VideoType } from '@moviemasher/moviemasher.js'
+import { VideoType } from '@moviemasher/lib-core'
 import { Icons } from '@moviemasher/theme-default'
 
 import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
@@ -28,6 +28,7 @@ export const MasherAppDefaultProps: PropsMethod<MasherAppOptions, MasherAppProps
     activity = {},
   } = panels
   const masherChildren: JsxElements = []
+
 
   if (player) {
     player.icons ||= options.icons

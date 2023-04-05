@@ -1,22 +1,22 @@
-import { Value } from "../../../Types/Core"
-import { SvgItems } from "../../../Helpers/Svg/Svg"
-import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { DataType } from "../../../Setup/Enums"
-import { propertyInstance } from "../../../Setup/Property"
-import { NamespaceSvg } from "../../../Setup/Constants"
-import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from "../../../Utility/Is"
-import { idGenerate } from "../../../Utility/Id"
-import { PropertyTweenSuffix } from "../../../Base/Propertied"
-import { tweenMaxSize, tweenOption, tweenPosition } from "../../../Utility/Tween"
-import { ColorizeFilter } from "./ColorizeFilter"
-import { assertSize } from "../../../Utility/Size"
-import { FilterDefinitionObject } from "../Filter"
+import { Value } from '../../../Types/Core.js'
+import { SvgItems } from '../../../Helpers/Svg/Svg.js'
+import { CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { DataType } from '../../../Setup/Enums.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { NamespaceSvg } from '../../../Setup/Constants.js'
+import { assertAboveZero, assertNumber, assertPopulatedString, isAboveZero, isPopulatedString } from '../../../Utility/Is.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { PropertyTweenSuffix } from '../../../Base/Propertied.js'
+import { tweenMaxSize, tweenOption, tweenPosition } from '../../../Mixin/Tweenable/Tween.js'
+import { ColorizeFilter } from './ColorizeFilter.js'
+import { assertSize } from '../../../Utility/Size.js'
+import { FilterDefinitionObject } from '../Filter.js'
 
 
 
 const pixelColor = (value : Value) : string => {
   const string = String(value)
-  if (string.slice(0, 2) === "0x") return `#${string.slice(2)}`
+  if (string.slice(0, 2) === '0x') return `#${string.slice(2)}`
 
   return string
 }
@@ -87,7 +87,7 @@ export class ColorFilter extends ColorizeFilter {
     if (isAboveZero(duration)) commandFilter.options.duration = duration
     commandFilters.push(commandFilter)
 
-    // console.log(this.constructor.name, "commandFilters", tweeningColor, color, colorEnd, duration)
+    // console.log(this.constructor.name, 'commandFilters', tweeningColor, color, colorEnd, duration)
 
     if (tweeningColor) {
       const fadeFilter = 'fade'

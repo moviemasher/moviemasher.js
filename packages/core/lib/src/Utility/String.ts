@@ -1,5 +1,7 @@
-import { assertObject, isAboveZero, isPopulatedString } from "./Is"
-import { Rect, RectZero } from "./Rect"
+import type { Rect } from './Rect.js'
+
+import { assertObject, isAboveZero, isPopulatedString } from './Is.js'
+import { RectZero } from './Rect.js'
 
 export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : string => {
   const bits: string[] = []
@@ -9,7 +11,7 @@ export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : st
   
   const duration = lengthSeconds || seconds
 
-  // console.log("stringSeconds seconds", seconds, "fps", fps, "duration", duration)
+  // console.log('stringSeconds seconds', seconds, 'fps', fps, 'duration', duration)
   if (duration >= time) {
     if (seconds >= time) {
       bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
@@ -19,7 +21,7 @@ export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : st
   }
   time = 60 // a minute
   if (do_rest || (duration >= time)) {
-    // console.log("stringSeconds duration", duration, ">=", time, "time")
+    // console.log('stringSeconds duration', duration, '>=', time, 'time')
     if (do_rest) bits.push(':')
     if (seconds >= time) {
       bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
@@ -27,53 +29,53 @@ export const stringSeconds = (seconds : number, fps = 0, lengthSeconds = 0) : st
       seconds = seconds % time
     } else bits.push('00:')
   } else {
-    // console.log("stringSeconds duration", duration, "<", time, "time")
+    // console.log('stringSeconds duration', duration, '<', time, 'time')
   }
   time = 1 // a second
 
   if (do_rest || (duration >= time)) {
-    // console.log("stringSeconds duration", duration, ">=", time, "time")
+    // console.log('stringSeconds duration', duration, '>=', time, 'time')
 
     if (do_rest) bits.push(':')
     if (seconds >= time) {
-      // console.log("stringSeconds seconds", seconds, ">=", time, "time")
+      // console.log('stringSeconds seconds', seconds, '>=', time, 'time')
 
 
       bits.push(String(Math.floor(seconds / time)).padStart(pad, '0'))
       do_rest = true
       seconds = seconds % time
     } else {
-      // console.log("stringSeconds seconds", seconds, "<", time, "time")
+      // console.log('stringSeconds seconds', seconds, '<', time, 'time')
       bits.push('00')
     }
   } else {
-    // console.log("stringSeconds duration", duration, "<", time, "time")
+    // console.log('stringSeconds duration', duration, '<', time, 'time')
     bits.push('00')
   }
   if (fps > 1) {
-    // console.log("stringSeconds fps", fps, "> 1")
+    // console.log('stringSeconds fps', fps, '> 1')
 
     if (fps === 10) pad = 1
     bits.push('.')
     if (seconds) {
-       // console.log("stringSeconds seconds", seconds, "true pad", pad)
+       // console.log('stringSeconds seconds', seconds, 'true pad', pad)
 
       if (pad === 1) seconds = Math.round(seconds * 10) / 10
       else seconds = Math.round(100 * seconds) / 100
       
-      // console.log("stringSeconds seconds", String(seconds), "presliced")
+      // console.log('stringSeconds seconds', String(seconds), 'presliced')
       seconds = Number(String(seconds).slice(2))
 
-      // console.log("stringSeconds seconds", seconds, "sliced")
+      // console.log('stringSeconds seconds', seconds, 'sliced')
 
       bits.push(String(seconds).padEnd(pad, '0'))
-      // console.log("stringSeconds seconds", seconds, "padded")
+      // console.log('stringSeconds seconds', seconds, 'padded')
     } else {
-      // console.log("stringSeconds seconds", seconds, "false")
+      // console.log('stringSeconds seconds', seconds, 'false')
       bits.push('0'.padStart(pad, '0'))
     }
   } else {
-    // console.log("stringSeconds fps", fps, "<= 1")
+    // console.log('stringSeconds fps', fps, '<= 1')
   }
   return bits.join('')
 }
@@ -97,7 +99,7 @@ export const stringFamilySizeRect = (string: string, family: string, size: numbe
     actualBoundingBoxLeft, 
     actualBoundingBoxRight, 
   } = metrics
-  // console.log("stringFamilySizeRect", "actualBoundingBoxAscent", actualBoundingBoxAscent, "actualBoundingBoxDescent", actualBoundingBoxDescent)
+  // console.log('stringFamilySizeRect', 'actualBoundingBoxAscent', actualBoundingBoxAscent, 'actualBoundingBoxDescent', actualBoundingBoxDescent)
   return {
     x: actualBoundingBoxLeft, y: actualBoundingBoxAscent,
     width: actualBoundingBoxLeft + actualBoundingBoxRight,

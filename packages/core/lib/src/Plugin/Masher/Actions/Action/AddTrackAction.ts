@@ -1,5 +1,5 @@
-import { arrayOfNumbers } from "../../../../Utility/Array"
-import { Action, ActionObject } from "./Action"
+import { arrayOfNumbers } from '../../../../Utility/Array.js'
+import { Action, ActionObject } from './Action.js'
 
 export interface AddTrackActionObject extends ActionObject {
   createTracks: number

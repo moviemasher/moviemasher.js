@@ -5,27 +5,27 @@ import {
   DefaultFontId, EffectMediaClass, MediaCollection, FontMediaClass, AudioMediaClass,
   ImageType, FontType, ImageMediaClass, EffectType, VideoType, VideoMediaClass,
   MashMediaClass, MashType
-} from "@moviemasher/moviemasher.js"
+} from '@moviemasher/lib-core'
 
-describe("MediaCollection", () => {
+describe('MediaCollection', () => {
   const collection = new MediaCollection()
 
   // test that we can find default font
-  test("returns default FontMedia", () => {
+  test('returns default FontMedia', () => {
     const definition = collection.fromId(DefaultFontId)
     assert(definition)
     assert(definition instanceof FontMediaClass)
   })
   
   // test that we can find predefined blur effect
-  test("returns blur EffectMedia", () => {
+  test('returns blur EffectMedia', () => {
     const definition = collection.fromId('com.moviemasher.effect.blur')
     assert(definition)
     assert(definition instanceof EffectMediaClass)
   })
 
   // test that we can define new image
-  test("returns new ImageMedia", () => {
+  test('returns new ImageMedia', () => {
     const imageDefinitionObject = {
       id: 'test-new-image', type: ImageType, 
       request: { endpoint: { pathname: '../shared/image/globe.jpg' }}
@@ -41,7 +41,7 @@ describe("MediaCollection", () => {
   })
 
   // test that we can define new font
-  test("returns new FontMedia", () => {
+  test('returns new FontMedia', () => {
     const fontDefinitionObject = {
       id: 'test-new-font', type: FontType, 
       request: { endpoint: { pathname: '../shared/font/valken/valken.ttf' }}
@@ -55,7 +55,7 @@ describe("MediaCollection", () => {
   })
 
   // test that we can define new effect
-  test("returns new EffectMedia", () => {
+  test('returns new EffectMedia', () => {
     const effectDefinitionObject = {
       id: 'test-new-effect', type: EffectType,
       request: { endpoint: { pathname: '../shared/effect/blur.json' }}
@@ -68,7 +68,7 @@ describe("MediaCollection", () => {
 
 
   // test that we can define new audio
-  test("returns new AudioMedia", () => {
+  test('returns new AudioMedia', () => {
     const audioDefinitionObject = {
       id: 'test-new-audio', type: 'audio',
       request: { endpoint: { pathname: '../shared/audio/loop.mp3' }}
@@ -79,7 +79,7 @@ describe("MediaCollection", () => {
   })
 
   // test that we can define new video
-  test("returns new VideoMedia", () => {
+  test('returns new VideoMedia', () => {
     const videoDefinitionObject = {
       id: 'test-new-video', type: VideoType,
       request: { endpoint: { pathname: '../shared/video/rgb.mp4' }}
@@ -91,7 +91,7 @@ describe("MediaCollection", () => {
 
 
   // test that we can define new mash
-  test("returns new MashMedia", () => {
+  test('returns new MashMedia', () => {
     const mashDefinitionObject = {
       id: 'test-new-mash', type: MashType,
       request: { endpoint: { pathname: '../shared/mash/test.json' }}

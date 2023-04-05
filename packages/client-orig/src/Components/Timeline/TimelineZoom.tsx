@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, ClassDisabled, ClassSelected, EventType } from '@moviemasher/moviemasher.js'
+import { ClassButton, ClassDisabled, ClassSelected, EventType } from '@moviemasher/lib-core'
 
 
 import { WithClassName } from "../../Types/Core"

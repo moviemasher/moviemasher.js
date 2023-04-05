@@ -1,47 +1,47 @@
 import {
-  StringRecord} from "../../Types/Core"
-import { PreviewItems } from "../../Helpers/Svg/Svg"
-import { sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize } from "../../Utility/Size"
-import { Media, MediaObject, MediaObjects, MediaArray } from "../../Media/Media"
-import { assertMashMedia, isMashMedia, MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMasherArgs } from "../../Media/Mash/Mash"
-import { Emitter } from "../../Helpers/Emitter"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
+  StringRecord} from '../../Types/Core.js'
+import {PreviewItems} from '../../Helpers/Svg/Svg.js'
+import {sizeCopy, sizeAboveZero, assertSizeAboveZero, SizeZero, isSize} from '../../Utility/Size.js'
+import {Media, MediaObject, MediaObjects, MediaArray} from '../../Media/Media.js'
+import {assertMashMedia, isMashMedia, MashMedia, MashAndMediaObject, Movable, Movables, MashMediaObject, MashMasherArgs} from '../../Media/Mash/Mash.js'
+import {Emitter} from '../../Helpers/Emitter.js'
+import {Time, TimeRange} from '../../Helpers/Time/Time.js'
 import {
-  timeFromArgs, timeFromSeconds, timeRangeFromArgs} from "../../Helpers/Time/TimeUtilities"
-import { assertEffect } from "../../Media/Effect/Effect"
-import { assertTrack, Track } from "../../Media/Mash/Track/Track"
-import { Default } from "../../Setup/Default"
+  timeFromArgs, timeFromSeconds, timeRangeFromArgs} from '../../Helpers/Time/TimeUtilities.js'
+import {assertEffect} from '../../Media/Effect/Effect.js'
+import {assertTrack, Track} from '../../Media/Mash/Track/Track.js'
+import {Default} from '../../Setup/Default.js'
 import {
-  ActionType, EventType, MasherAction, AudioType, VideoType
-} from "../../Setup/Enums"
-import { isLoadType } from "../../Setup/LoadType"
+  ActionType, EventType, MasherAction, TypeAudio, TypeVideo
+} from '../../Setup/Enums.js'
+import {isLoadType} from '../../Setup/LoadType.js'
 import {
   assertAboveZero, assertObject, assertPopulatedObject, isPositive,
   assertPositive, assertTrue, isAboveZero, isArray, 
-  isBoolean, isNumber} from "../../Utility/Is"
+  isBoolean, isNumber} from '../../Utility/Is.js'
 import {
   ClipOrEffect, Masher, MasherArgs, MashIndex, MashingType, isMashingType,
-} from "./Masher"
-import { editorSelectionInstance } from "./EditorSelection/EditorSelectionFactory"
+} from './Masher.js'
+import {editorSelectionInstance} from './EditorSelection/EditorSelectionFactory.js'
 
-import { EditorSelection, EditorSelectionObject } from "./EditorSelection/EditorSelection"
-import { Action, ActionOptions } from "./Actions/Action/Action"
-import { ChangeAction } from "./Actions/Action/ChangeAction"
-import { Actions } from "./Actions/Actions"
+import {EditorSelection, EditorSelectionObject} from './EditorSelection/EditorSelection.js'
+import {Action, ActionOptions} from './Actions/Action/Action.js'
+import {ChangeAction} from './Actions/Action/ChangeAction.js'
+import {Actions} from './Actions/Actions.js'
 
-import { mashMedia } from "../../Media/Mash/MashFactory"
+import {mashMedia} from '../../Media/Mash/MashFactory.js'
 
-import { MediaCollection } from "../../Media/Mash/MediaCollection/MediaCollection"
-import { assertClip, isClip, ClipObject, Clip, Clips } from "../../Media/Mash/Track/Clip/Clip"
-import { clipInstance } from "../../Media/Mash/Track/Clip/ClipFactory"
-import { assertContent } from "../../Media/Content/ContentFunctions"
-import { svgSvgElement, svgPolygonElement, svgPatch } from "../../Helpers/Svg/SvgFunctions"
-import { idIsTemporary, idTemporary } from "../../Utility/Id"
-import { PreloadOptions } from "../../Base/Code"
-import { Rect, rectsEqual } from "../../Utility/Rect"
-import { isPoint, pointCopy, PointZero } from "../../Utility/Point"
-import { MoveActionOptions } from "./Actions/Action/MoveAction"
-import { CurrentIndex, LastIndex, NextIndex } from "../../Setup/Constants"
+import {MediaCollection} from '../../Media/Mash/MediaCollection/MediaCollection.js'
+import {assertClip, isClip, ClipObject, Clip, Clips} from '../../Media/Mash/Track/Clip/Clip.js'
+import {clipInstance} from '../../Media/Mash/Track/Clip/ClipFactory.js'
+import {assertContent} from '../../Media/Content/ContentFunctions.js'
+import {svgSvgElement, svgPolygonElement, svgPatch} from '../../Helpers/Svg/SvgFunctions.js'
+import {idIsTemporary, idTemporary} from '../../Utility/Id.js'
+import {PreloadOptions} from '../../Base/Code.js'
+import {Rect, rectsEqual} from '../../Utility/Rect.js'
+import {isPoint, pointCopy, PointZero} from '../../Utility/Point.js'
+import {MoveActionOptions} from './Actions/Action/MoveAction.js'
+import {CurrentIndex, LastIndex, NextIndex} from '../../Setup/Constants.js'
 
 type Timeout = ReturnType<typeof setTimeout>
 
@@ -125,7 +125,7 @@ export class MasherClass implements Masher {
       if (definition.isVector) clipObject.containerId = id
       else clipObject.contentId = id
   
-      if (type === AudioType) clipObject.containerId = ''
+      if (type === TypeAudio) clipObject.containerId = ''
       return clipInstance(clipObject)
     })
 
@@ -315,7 +315,7 @@ export class MasherClass implements Masher {
 
   _editType?: MashingType
   get mashingType(): MashingType {
-    return this._editType ||= VideoType
+    return this._editType ||= TypeVideo
   }
 
   editing: boolean 
@@ -368,7 +368,7 @@ export class MasherClass implements Masher {
   handleAction(action: Action): void {
     const { mashMedia } = this
     assertTrue(mashMedia)
-    // console.log(this.constructor.name, "handleAction")
+    // console.log(this.constructor.name, 'handleAction')
     const { selection } = action
     const { mash } = selection
   
@@ -377,7 +377,7 @@ export class MasherClass implements Masher {
       if (action instanceof ChangeAction) {
         const { property, target } = action
         switch(property) {
-          case "gain": {
+          case 'gain': {
             if (isClip(target)) {
               mash.composition.adjustClipGain(target, mash.quantize)
             }    
@@ -389,23 +389,23 @@ export class MasherClass implements Masher {
 
     this.selection.object = selection
 
-    // console.log(this.constructor.name, "handleAction", this.selection.selectTypes, selection)
+    // console.log(this.constructor.name, 'handleAction', this.selection.selectTypes, selection)
 
     const promise = mashMedia.reload() || Promise.resolve()
     
     promise.then(() => {
       if (!mash) this.handleDraw()
-      // console.log(this.constructor.name, "handleAction", type)
+      // console.log(this.constructor.name, 'handleAction', type)
       this.eventTarget.emit(EventType.Action, { action })
     })
   }
 
   private handleDraw(event?: Event): void {
-    // console.log(this.constructor.name, "handleDraw")
+    // console.log(this.constructor.name, 'handleDraw')
     if (this.drawTimeout || !this.mashMedia?.loading) return
 
       this.drawTimeout = setTimeout(() => {
-        // console.log(this.constructor.name, "handleDraw drawTimeout")
+        // console.log(this.constructor.name, 'handleDraw drawTimeout')
         this.eventTarget.dispatch(EventType.Draw)
         delete this.drawTimeout
       }, 10)
@@ -414,7 +414,7 @@ export class MasherClass implements Masher {
 
   load(data: MashMediaObject): Promise<void> {
     this.mashMediaObject = data
-    // console.log(this.constructor.name, "load", data)
+    // console.log(this.constructor.name, 'load', data)
     return this.loadMashMediaObject()
   }
 
@@ -424,7 +424,7 @@ export class MasherClass implements Masher {
     const { kind } = mashMediaObject
 
     if (!sizeAboveZero(rect)) {
-      if (kind !== AudioType) return Promise.resolve()
+      if (kind !== TypeAudio) return Promise.resolve()
     }
 
     delete this.mashMediaObject
@@ -580,7 +580,7 @@ export class MasherClass implements Masher {
 
   moveTrack(): void {
     // TODO: create move track action...
-    console.debug(this.constructor.name, "moveTrack coming soon...")
+    console.debug(this.constructor.name, 'moveTrack coming soon...')
   }
 
   private _muted = false
@@ -623,7 +623,7 @@ export class MasherClass implements Masher {
   }
 
   get positionStep(): number {
-    return parseFloat(`0.${"0".repeat(this.precision - 1)}1`)
+    return parseFloat(`0.${'0'.repeat(this.precision - 1)}1`)
   }
 
   precision = Default.editor.precision
@@ -640,7 +640,7 @@ export class MasherClass implements Masher {
     const { mashMediaObject } = this
 
 
-    // console.log(this.constructor.name, "rect", rect, "=>", value, !!editedData)
+    // console.log(this.constructor.name, 'rect', rect, '=>', value, !!editedData)
     
     const promise = mashMediaObject ? this.loadMashMediaObject() : Promise.resolve()
     promise.then(() => {
@@ -700,7 +700,7 @@ export class MasherClass implements Masher {
 
   removeTrack(track: Track): void {
     // TODO: create remove track action...
-    console.debug(this.constructor.name, "removeTrack coming soon...")
+    console.debug(this.constructor.name, 'removeTrack coming soon...')
   }
 
   saved(temporaryIdLookup?: StringRecord): void {
@@ -769,10 +769,10 @@ export class MasherClass implements Masher {
   //   const target = definition || this.media.fromId(newId!)
   //   const { id: oldId } = target
   //   const idChanged = oldId !== id
-  //   console.log(this.constructor.name, "updateDefinition", idChanged, definitionObject)
+  //   console.log(this.constructor.name, 'updateDefinition', idChanged, definitionObject)
   //   if (idChanged) {
   //     this.media.updateDefinitionId(target.id, id)
-  //     console.log(this.constructor.name, "updateDefinition called updateDefinitionId", target.id, id)
+  //     console.log(this.constructor.name, 'updateDefinition called updateDefinitionId', target.id, id)
 
   //     Object.assign(target, definitionObject)
       

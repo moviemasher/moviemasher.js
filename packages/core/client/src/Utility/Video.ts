@@ -1,6 +1,11 @@
+import type {
+  Request,ClientVideoDataOrError, 
+} from '@moviemasher/lib-core'
+
 import { 
-  endpointUrl, ErrorName, Request, errorThrow, ClientVideoDataOrError, errorCaught, assertEndpoint,
-} from "@moviemasher/moviemasher.js"
+  endpointUrl, ErrorName, errorThrow, 
+  errorCaught, assertEndpoint,
+} from '@moviemasher/lib-core'
 
 
 const videoFromUrl = (url: string): HTMLVideoElement => {

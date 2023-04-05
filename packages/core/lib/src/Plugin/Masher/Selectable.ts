@@ -1,6 +1,6 @@
-import /* type */ { SelectorType } from "../../Setup/Enums"
-import /* type */ { SelectedItems } from "../../Helpers/Select/SelectedProperty"
-import { Actions } from "./Actions/Actions"
+import type { SelectorType } from '../../Setup/Enums.js'
+import type { SelectedItems } from '../../Helpers/Select/SelectedProperty.js'
+import {Actions} from './Actions/Actions.js'
 
 export interface Selectable { 
   selectables(): Selectables

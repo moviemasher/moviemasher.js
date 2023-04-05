@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, isDefined, UnknownRecord } from '@moviemasher/moviemasher.js'
+import { DataType, isDefined, UnknownRecord } from '@moviemasher/lib-core'
 
 
 import { InputContext } from '../InputContext'

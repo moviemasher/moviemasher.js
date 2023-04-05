@@ -1,0 +1,14 @@
+{
+  "name": "@moviemasher/build-component",
+  "description": "Builds Web Component client and example",
+  "scripts": {
+    "build": "run-s client",
+    "client": "npm run build -w @moviemasher/client-component",
+    "client-component": "npm run script -w @moviemasher/client-component --"
+  },
+  "devDependencies": {
+    "lit": "dependencies",
+    "rollup": "dependencies",
+    "express": "dependencies"
+  }
+}

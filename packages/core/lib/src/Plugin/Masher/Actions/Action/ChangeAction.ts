@@ -1,7 +1,7 @@
-import { isPropertied, Propertied } from "../../../../Base/Propertied"
-import { Scalar } from "../../../../Types/Core"
-import { isObject, isPopulatedString, isScalar } from "../../../../Utility/Is"
-import { Action, ActionObject } from "./Action"
+import { isPropertied, Propertied } from '../../../../Base/Propertied.js'
+import { Scalar } from '../../../../Types/Core.js'
+import { isObject, isPopulatedString, isScalar } from '../../../../Utility/Is.js'
+import { Action, ActionObject } from './Action.js'
 
 
 export interface ChangeActionObject extends ActionObject {
@@ -14,10 +14,10 @@ export interface ChangeActionObject extends ActionObject {
 
 export const isChangeActionObject = (value: any): value is ChangeActionObject => {
   return isObject(value) 
-    && "target" in value && isPropertied(value.target)
-    && "property" in value && isPopulatedString(value.property)
-    && "redoValue" in value && isScalar(value.redoValue)
-    && "undoValue" in value && isScalar(value.undoValue)
+    && 'target' in value && isPropertied(value.target)
+    && 'property' in value && isPopulatedString(value.property)
+    && 'redoValue' in value && isScalar(value.redoValue)
+    && 'undoValue' in value && isScalar(value.undoValue)
 }
 
 /**
@@ -54,7 +54,7 @@ export class ChangeAction extends Action {
   }
 
   updateAction(object: ChangeActionObject) : void {
-    // console.log(this.constructor.name, "updateAction", object)
+    // console.log(this.constructor.name, 'updateAction', object)
     const { redoValue } = object
     this.redoValue = redoValue
     this.redo()

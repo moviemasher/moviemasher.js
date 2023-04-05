@@ -1,6 +1,6 @@
-import { isNumber, isObject } from "./Is"
-import { errorThrow } from "../Helpers/Error/ErrorFunctions"
-import { CommaChar, EqualsChar, SemicolonChar } from "../Setup/Constants"
+import { isNumber, isObject } from './Is.js'
+import { errorThrow } from '../Helpers/Error/ErrorFunctions.js'
+import { CommaChar, EqualsChar, SemicolonChar } from '../Setup/Constants.js'
 
 export interface Point {
   x: number
@@ -9,7 +9,7 @@ export interface Point {
 
 export const isPoint = (value: any): value is Point => {
   return isObject(value) && 
-  "x" in value && "y" in value && 
+  'x' in value && 'y' in value && 
   isNumber(value.x) && isNumber(value.y) 
 }
 

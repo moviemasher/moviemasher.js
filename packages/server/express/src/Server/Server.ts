@@ -1,7 +1,7 @@
 import Express from "express"
 import {
   Endpoint, Identified, JsonRecord, StringRecord, UnknownRecord
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { HostServers } from "../Host/Host"
 

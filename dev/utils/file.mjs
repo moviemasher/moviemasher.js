@@ -1,7 +1,12 @@
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 import { assertObject, assertString, assertPath, isObject, isJsonPath, isString, isPath } from './assert.mjs'
+
+
+export const monoDir = () => path.resolve(fileURLToPath(import.meta.url), '../../../')
+
 
 export const assignSafely = (object, key, value) => {
   assertObject(object, 'object')
@@ -32,7 +37,7 @@ export const fileReadText = (args) => {
   assertPath(src, 'src')
 
   const resolved = path.resolve(src)
-  const text = fs.readFileSync(path.resolve(resolved), 'utf8')
+  const text = fs.readFileSync(resolved, 'utf8')
 
   assertString(text, `text from file ${resolved}`)
   return text
@@ -44,9 +49,9 @@ export const fileWriteText = (args) => {
   if (!isPath(dest)) return src
   
   const resolved = path.resolve(dest)
-  console.log(`writing ${resolved}`, src)
-  // fs.mkdirSync(path.dirname(resolved), { recursive: true })
-  // return fs.writeFileSync(resolved, src)
+  // console.log(`writing ${resolved}`, src)
+  fs.mkdirSync(path.dirname(resolved), { recursive: true })
+  return fs.writeFileSync(resolved, src)
 }
 
 export const fileWriteJson = (args) => {
@@ -77,4 +82,15 @@ export const fileRead = (args) => {
     return fileReadText(args)
   }
   return src
+}
+
+export const fileCopy = (args) => {
+  const { src, dest } = args
+  assertPath(src, 'src')
+  assertPath(dest, 'dest')
+
+  const resolvedSrc = path.resolve(src)
+  const resolvedDest = path.resolve(dest)
+  fs.mkdirSync(path.dirname(resolvedDest), { recursive: true })
+  fs.copyFileSync(resolvedSrc, resolvedDest)
 }

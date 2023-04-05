@@ -1,9 +1,14 @@
-import { Request, isUndefined, urlForEndpoint, JsonMimetype, assertEndpoint, FormDataMimetype, ContentTypeHeader } from "@moviemasher/moviemasher.js"
+import type {
+  Request, 
+} from '@moviemasher/lib-core'
+import { 
+  isUndefined, urlForEndpoint, JsonMimetype, assertEndpoint, FormDataMimetype, ContentTypeHeader 
+} from '@moviemasher/lib-core'
 
 export interface ResponseObject {
   json(): Promise<any>
-
 }
+
 export const jsonPromise = (request: Request): Promise<any> => {
   return fetchPromise(request).then(response => response.json())
 }

@@ -1,12 +1,12 @@
 import { 
   JsonRecord, StringRecord, UnknownRecord 
-} from "../Types/Core"
-import { Labeled } from "../Base/Base"
-import { Identified } from "../Base/Identified"
-import { Size } from "../Utility/Size"
-import { MashAndMediaObject, MashMediaObject } from "../Media/Mash/Mash"
-import { ApiRequest, ApiResponse } from "./Api"
-import { MediaObject, MediaObjects } from "../Media/Media"
+} from '../Types/Core.js'
+import { Labeled } from '../Base/Base.js'
+import { Identified } from '../Base/Identified.js'
+import { Size } from '../Utility/Size.js'
+import { MashAndMediaObject, MashMediaObject } from '../Media/Mash/Mash.js'
+import { ApiRequest, ApiResponse } from './Api.js'
+import { MediaObject, MediaObjects } from '../Media/Media.js'
 
 export interface DescribedObject extends Identified, Labeled, UnknownRecord {}
 

@@ -1,24 +1,31 @@
-import { Font, FontMedia, FontObject } from "./Font"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { Scalar, ScalarRecord, UnknownRecord } from "../../Types/Core"
-import { SvgItem } from "../../Helpers/Svg/Svg"
-import { isRect, Rect } from "../../Utility/Rect"
-import { CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, VisibleCommandFilterArgs } from "../../Base/Code"
-import { FontType, GraphFileType, isOrientation } from "../../Setup/Enums"
-import { stringFamilySizeRect } from "../../Utility/String"
-import { Property } from "../../Setup/Property"
-import { colorBlack, colorBlackTransparent, colorWhite } from "../../Helpers/Color/ColorConstants"
-import { filterFromId } from "../../Plugin/Filter/FilterFactory"
-import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { assertPopulatedString, assertTrue } from "../../Utility/Is"
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Tweening, tweenMaxSize } from "../../Utility/Tween"
-import { PointZero } from "../../Utility/Point"
-import { arrayLast } from "../../Utility/Array"
-import { IntrinsicOptions } from "../Mash/Track/Clip/Clip"
-import { svgText, svgTransform } from "../../Helpers/Svg/SvgFunctions"
-import { MediaInstanceBase } from "../MediaInstanceBase"
-import { ContainerMixin } from "../Container/ContainerMixin"
+import type { Rect} from '../../Utility/Rect.js'
+import type {
+  CommandFile, CommandFiles, CommandFilterArgs, CommandFilters, 
+  FilterCommandFilterArgs, PreloadArgs, VisibleCommandFileArgs, 
+  VisibleCommandFilterArgs
+} from '../../Base/Code.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {Font, FontMedia, FontObject} from './Font.js'
+import type {IntrinsicOptions} from '../Mash/Track/Clip/Clip.js'
+import type {Property} from '../../Setup/Property.js'
+import type {Scalar, ScalarRecord, UnknownRecord} from '../../Types/Core.js'
+import type {SvgItem} from '../../Helpers/Svg/Svg.js'
+import type {Tweening} from '../../Mixin/Tweenable/Tween.js'
+
+import {arrayLast} from '../../Utility/Array.js'
+import {assertPopulatedString, assertTrue} from '../../Utility/Is.js'
+import {colorBlack, colorBlackTransparent, colorWhite} from '../../Helpers/Color/ColorConstants.js'
+import {ContainerMixin} from '../Container/ContainerMixin.js'
+import {filterFromId} from '../../Plugin/Filter/FilterFactory.js'
+import {GraphFileType, isOrientation, TypeFont} from '../../Setup/Enums.js'
+import {isRect} from '../../Utility/Rect.js'
+import {MediaInstanceBase} from '../MediaInstanceBase.js'
+import {PointZero} from '../../Utility/Point.js'
+import {PropertyTweenSuffix} from '../../Base/Propertied.js'
+import {stringFamilySizeRect} from '../../Utility/String.js'
+import {svgText, svgTransform} from '../../Helpers/Svg/SvgFunctions.js'
+import {TweenableMixin} from '../../Mixin/Tweenable/TweenableMixin.js'
+import {tweenMaxSize} from '../../Mixin/Tweenable/Tween.js'
 
 const FontHeight = 1000
 const FontContainerWithTweenable = TweenableMixin(MediaInstanceBase)
@@ -53,7 +60,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     } = args
   
     let filterInput = input
-    // console.log(this.constructor.name, "initialCommandFilters", filterInput, tweening)
+    // console.log(this.constructor.name, 'initialCommandFilters', filterInput, tweening)
 
     if (filterInput) {
       commandFilters.push(this.copyCommandFilter(filterInput, track))
@@ -62,7 +69,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     const [rect, rectEnd] = containerRects
     const { height, width } = rect
  
-    // console.log(this.constructor.name, "initialCommandFilters", merging, ...containerRects)
+    // console.log(this.constructor.name, 'initialCommandFilters', merging, ...containerRects)
     const maxSize = tweenMaxSize(...containerRects) 
 
     let colorInput = ''
@@ -86,7 +93,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     assertPopulatedString(textfile, 'textfile')
 
     const fontFile = commandFiles.find(commandFile => (
-      commandFile.inputId === this.id && commandFile.type === FontType
+      commandFile.inputId === this.id && commandFile.type === TypeFont
     ))
     assertTrue(fontFile, 'font file') 
     
@@ -102,7 +109,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
 
     const xEnd = intrinsicRect.x * (rectEnd.width / intrinsicRect.width)
     const yEnd = 0 // intrinsicRect.y * (rectEnd.height / intrinsicRect.height)
-    // console.log(this.constructor.name, "initialCommandFilters", lock)
+    // console.log(this.constructor.name, 'initialCommandFilters', lock)
     const intrinsicRatio = FontHeight / intrinsicRect.height
     const textSize = Math.round(height * intrinsicRatio)
     const textSizeEnd = Math.round(rectEnd.height * intrinsicRatio)
@@ -119,7 +126,7 @@ export class FontClass extends FontContainerWithContainer implements Font {
     if (rectEnd.width) options[`width${PropertyTweenSuffix}`] = rectEnd.width
 
     textFilter.setValues(options)
-    // console.log(this.constructor.name, "initialCommandFilters", options)
+    // console.log(this.constructor.name, 'initialCommandFilters', options)
 
     const textArgs: FilterCommandFilterArgs = {
       dimensions: outputSize, videoRate, duration, filterInput
@@ -138,10 +145,10 @@ export class FontClass extends FontContainerWithContainer implements Font {
         duration: 0, videoRate, filterInput
       }
       const { cropFilter } = this
-      cropFilter.setValue(maxSize.width, "width")
-      cropFilter.setValue(maxSize.height, "height")
-      cropFilter.setValue(0, "x")
-      cropFilter.setValue(0, "y")
+      cropFilter.setValue(maxSize.width, 'width')
+      cropFilter.setValue(maxSize.height, 'height')
+      cropFilter.setValue(0, 'x')
+      cropFilter.setValue(0, 'y')
       commandFilters.push(...cropFilter.commandFilters(cropArgs))
     } 
     return commandFilters

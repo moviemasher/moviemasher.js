@@ -1,9 +1,9 @@
-import { 
+import type { 
   ClientAudio, ClientFont, ClientImage, ClientMedia, ClientMediaType, 
   ClientVideo, DataOrError 
-} from '../../Helpers/ClientMedia/ClientMedia'
-import { AudioType, FontType, ImageType, VideoType } from '../../Setup/Enums'
-import { ResolveType, Plugin } from '../Plugin'
+} from '../../Helpers/ClientMedia/ClientMedia.js'
+import type {AudioType, FontType, ImageType, VideoType} from '../../Setup/Enums.js'
+import type { Plugin, ResolveType} from '../Plugin.js'
 
 export type ResolvePromise = {
   (fileContent: string, type: ImageType):  Promise<DataOrError<ClientImage>>

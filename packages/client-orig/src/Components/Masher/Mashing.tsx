@@ -1,4 +1,4 @@
-import { MediaType } from '@moviemasher/moviemasher.js'
+import { MediaType } from '@moviemasher/lib-core'
 import React from 'react'
 
 

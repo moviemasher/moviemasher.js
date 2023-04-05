@@ -1,10 +1,10 @@
 import React from "react"
 
-import /* type */ { PropsClickable } from "../../Types/Props"
+import type { PropsClickable } from "../../Types/Props"
 
 import {
   EventType, MasherAction
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { useMasher } from "../../Hooks/useMasher"
 import { useListeners } from "../../Hooks/useListeners"

@@ -1,4 +1,4 @@
-import { RawProbeData } from "@moviemasher/moviemasher.js"
+import { RawProbeData } from "@moviemasher/lib-core"
 
 import EventEmitter from "events"
 import { CommandDestination } from "../RunningCommand/RunningCommand"

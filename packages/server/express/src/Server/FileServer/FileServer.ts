@@ -1,4 +1,4 @@
-import { ApiCallback, FileStoreRequest, FileStoreResponse, LoadType, NumberRecord, StringsRecord, UploadDescription } from "@moviemasher/moviemasher.js"
+import { ApiCallback, FileStoreRequest, FileStoreResponse, LoadType, NumberRecord, StringsRecord, UploadDescription } from "@moviemasher/lib-core"
 import { Server, ServerArgs, ExpressHandler } from "../Server"
 
 

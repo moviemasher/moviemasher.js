@@ -1,25 +1,25 @@
-import { ChromaKeyFilter } from "./Definitions/ChromaKeyFilter"
-import { ColorFilter } from "./Definitions/ColorFilter"
-import { ColorChannelMixerFilter } from "./Definitions/ColorChannelMixerFilter"
-import { ConvolutionFilter } from "./Definitions/ConvolutionFilter"
-import { CropFilter } from "./Definitions/CropFilter"
-import { OverlayFilter } from "./Definitions/OverlayFilter"
-import { ScaleFilter } from "./Definitions/ScaleFilter"
+import { ChromaKeyFilter } from './Definitions/ChromaKeyFilter.js'
+import { ColorFilter } from './Definitions/ColorFilter.js'
+import { ColorChannelMixerFilter } from './Definitions/ColorChannelMixerFilter.js'
+import { ConvolutionFilter } from './Definitions/ConvolutionFilter.js'
+import { CropFilter } from './Definitions/CropFilter.js'
+import { OverlayFilter } from './Definitions/OverlayFilter.js'
+import { ScaleFilter } from './Definitions/ScaleFilter.js'
 
-import { FilterDefinition, Filter, FilterDefinitionObject, Filters, FilterObject } from "./Filter"
-import { assertPopulatedString } from "../../Utility/Is"
-import { FilterDefinitionClass } from "./FilterDefinitionClass"
-import { OpacityFilter } from "./Definitions/OpacityFilter"
-import { SetsarFilter } from "./Definitions/SetsarFilter"
-import { FpsFilter } from "./Definitions/FpsFilter"
-import { IdPrefix } from "../../Setup/Constants"
-import { SetptsFilter } from "./Definitions/SetptsFilter"
-import { AlphamergeFilter } from "./Definitions/AlphamergeFilter"
-import { TrimFilter } from "./Definitions/TrimFilter"
-import { TextFilter } from "./Definitions/TextFilter"
-import { ColorizeFilter } from "./Definitions/ColorizeFilter"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { FilterDefinition, Filter, FilterDefinitionObject, Filters, FilterObject } from './Filter.js'
+import { assertPopulatedString } from '../../Utility/Is.js'
+import { FilterDefinitionClass } from './FilterDefinitionClass.js'
+import { OpacityFilter } from './Definitions/OpacityFilter.js'
+import { SetsarFilter } from './Definitions/SetsarFilter.js'
+import { FpsFilter } from './Definitions/FpsFilter.js'
+import { IdPrefix } from '../../Setup/Constants.js'
+import { SetptsFilter } from './Definitions/SetptsFilter.js'
+import { AlphamergeFilter } from './Definitions/AlphamergeFilter.js'
+import { TrimFilter } from './Definitions/TrimFilter.js'
+import { TextFilter } from './Definitions/TextFilter.js'
+import { ColorizeFilter } from './Definitions/ColorizeFilter.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 
 export const FilterIdPrefix = `${IdPrefix}filter.`
 

@@ -3,7 +3,7 @@ import {
   EventType, Rect, eventStop, isMediaType, rectRound,
   ClassDropping, sizeAboveZero, UnknownRecord, assertMediaType, 
   rectCopy, MashIndex, assertObject, EmptyFunction, isMediaObject, ClipType, CurrentIndex, 
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 
 
 import { PropsWithChildren } from "../../Types/Props"

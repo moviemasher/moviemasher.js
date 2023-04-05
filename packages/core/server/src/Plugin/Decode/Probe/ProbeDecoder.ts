@@ -5,10 +5,10 @@ import path from 'path'
 import { execSync } from "child_process"
 
 import {
-  assertProbeOptions, AudibleProbe, DecodeMethod, DecodeType, Decoding, 
-  DurationProbe, errorCaught, idGenerateString, JsonExtension, NewlineChar, 
-  Numbers, StringDataOrError, ProbeType, ProbingData, Runtime, SizeProbe
-} from "@moviemasher/moviemasher.js"
+  assertProbeOptions, ProbeAudible, DecodeMethod, TypeDecode, Decoding, 
+  ProbeDuration, errorCaught, idGenerateString, JsonExtension, NewlineChar, 
+  Numbers, StringDataOrError, TypeProbe, ProbingData, Runtime, ProbeSize
+} from "@moviemasher/lib-core"
 import { EnvironmentKeyApiDirTemporary } from '../../../Environment/ServerEnvironment'
 
 const AlphaFormatsCommand = "ffprobe -v 0 -of compact=p=0 -show_entries pixel_format=name:flags=alpha | grep 'alpha=1' | sed 's/.*=\\(.*\\)|.*/\\1/' "
@@ -47,29 +47,26 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
           const { rotation, width, height, duration, codec_type, pix_fmt } = stream
           types.forEach(type => {
             switch(type) {
-              case SizeProbe: {
+              case ProbeSize: {
                 if (pix_fmt && formats.includes(pix_fmt)) {
                   probingData.alpha = true
                 }
+                if (typeof rotation !== 'undefined') {
+                  rotations.push(Math.abs(Number(rotation)))
+                }
+                if (width && height) sizes.push({ width, height })
                 break
               }
-              case AudibleProbe: {
+              case ProbeAudible: {
                 if (codec_type === 'audio') {
                   probingData.audible = true
                 }
                 break
               }
-              case DurationProbe: {
+              case ProbeDuration: {
                 if (typeof duration !== 'undefined') {
                   durations.push(Number(duration))
                 }
-                break
-              }
-              case SizeProbe: {                
-                if (typeof rotation !== 'undefined') {
-                  rotations.push(Math.abs(Number(rotation)))
-                }
-                if (width && height) sizes.push({ width, height })
                 break
               }
             }
@@ -77,7 +74,7 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
         }
         types.forEach(type => {
           switch(type) {
-            case DurationProbe: {
+            case ProbeDuration: {
               if (duration || durations.length) {
                 if (durations.length) {
                   const maxDuration = Math.max(...durations)
@@ -86,7 +83,7 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
               }  
               break
             }
-            case SizeProbe: {
+            case ProbeSize: {
               if (sizes.length) {
                 const flipped = rotations.some(n => n === 90 || n === 270)
                 const widthKey = flipped ? 'height' : 'width'
@@ -99,7 +96,7 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
           }
         })
         const id = idGenerateString()
-        const decoding: Decoding = { id, type: ProbeType, data: probingData }
+        const decoding: Decoding = { id, type: TypeProbe, data: probingData }
         // const decodeData: DecodeData = { data }
         const { environment } = Runtime
         const temporaryDirectory = environment.get(EnvironmentKeyApiDirTemporary)
@@ -110,6 +107,6 @@ const decode: DecodeMethod = (localPath: string, options?: unknown): Promise<Str
     })
   })
 }
-Runtime.plugins[DecodeType][ProbeType] ||= { 
-  decode, type: DecodeType, decodingType: ProbeType
+Runtime.plugins[TypeDecode][TypeProbe] ||= { 
+  decode, type: TypeDecode, decodingType: TypeProbe
 }

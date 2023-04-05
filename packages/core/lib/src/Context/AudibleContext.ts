@@ -1,5 +1,5 @@
-import { ClientAudioNode } from "../Helpers/ClientMedia/ClientMedia"
-import { assertFunction } from "../Utility/Is"
+import type { ClientAudioNode } from '../Helpers/ClientMedia/ClientMedia.js'
+import { assertFunction } from '../Utility/Is.js'
 
 const AudibleSampleRate = 44100
 const AudibleChannels = 2
@@ -13,7 +13,7 @@ export interface AudibleContextSource {
 
 export class AudibleContext {
   private addSource(id: string, source: AudibleContextSource): void {
-    // console.log("addSource", id)
+    // console.log('addSource', id)
     this.sourcesById.set(id, source)
   }
 
@@ -35,7 +35,7 @@ export class AudibleContext {
   }
 
   createBufferSource(buffer?: AudioBuffer): ClientAudioNode {
-    // console.trace(this.constructor.name, "createBufferSource")
+    // console.trace(this.constructor.name, 'createBufferSource')
     const sourceNode = this.context.createBufferSource()
     if (buffer) sourceNode.buffer = buffer
     return sourceNode
@@ -56,7 +56,7 @@ export class AudibleContext {
   }
 
   deleteSource(id: string): void {
-    // console.log("deleteSource", id)
+    // console.log('deleteSource', id)
     const source = this.getSource(id)
     if (!source) return
 

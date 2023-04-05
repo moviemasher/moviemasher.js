@@ -1,2 +1,2 @@
-export * from './Resolve'
-export * from './ResolveFunctions'
+export * from './Resolve.js'
+export * from './ResolveFunctions.js'

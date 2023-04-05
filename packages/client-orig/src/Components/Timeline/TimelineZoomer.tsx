@@ -5,7 +5,7 @@ import { PropsWithChildren } from "../../Types/Props"
 import { TimelineContext } from './TimelineContext'
 import { Slider } from '../../Utilities/Slider'
 import { useMasher } from '../../Hooks/useMasher'
-import { EventType, isArray } from '@moviemasher/moviemasher.js'
+import { EventType, isArray } from '@moviemasher/lib-core'
 import { useListeners } from '../../Hooks/useListeners'
 
 

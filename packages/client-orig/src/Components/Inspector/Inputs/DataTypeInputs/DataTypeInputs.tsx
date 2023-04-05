@@ -1,4 +1,4 @@
-import { DataType } from '@moviemasher/moviemasher.js'
+import { DataType } from '@moviemasher/lib-core'
 
 import { JsxElement } from '../../../../Framework/Framework'
 import { EmptyElement } from '../../../../Setup/Constants'

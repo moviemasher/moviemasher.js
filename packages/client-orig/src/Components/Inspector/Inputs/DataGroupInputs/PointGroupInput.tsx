@@ -3,7 +3,7 @@ import {
   assertSelectorType, assertTime, ClassButton, ClassSelected, DataGroup, 
   selectedPropertyObject, selectedPropertiesScalarObject, 
   PropertyTweenSuffix, ScalarRecord, assertTimeRange, tweenInputTime
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { JsxElement } from "../../../../Framework/Framework"
 

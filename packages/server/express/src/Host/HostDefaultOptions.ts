@@ -1,7 +1,7 @@
 import path from 'path'
 import {
   Size, VideoEncoderOptions, AudioType, ImageType, VideoType 
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 import { expandFileOrScript } from '@moviemasher/server-core'
 
 import { DataServerArgs } from "../Server/DataServer/DataServer"
@@ -36,8 +36,8 @@ export const HostDefaultPort = 8570
 
 export const HostDefaultOptions = (args: HostOptionsDefault = {}): HostOptions => {
   const {
-    publicDirectory = "./examples/standalone/public",
-    privateDirectory = "./examples/standalone/private",
+    publicDirectory = "./packages/example/standalone/public",
+    privateDirectory = "./packages/example/standalone/private",
     temporaryDirectory = './temporary', 
     dataMigrationsDirectory = "./dev/data-migrations", 
     dataDirectory,

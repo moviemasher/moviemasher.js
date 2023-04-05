@@ -2,7 +2,7 @@ import internal from 'stream'
 import EventEmitter from 'events'
 
 import { Command } from '../Command/Command'
-import { Identified } from '@moviemasher/moviemasher.js'
+import { Identified } from '@moviemasher/lib-core'
 
 export type CommandDestination = string | internal.Writable
 

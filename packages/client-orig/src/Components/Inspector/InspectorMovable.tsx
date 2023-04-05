@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassSelected, eventStop, IndexHandler, isPopulatedString, Movable } from '@moviemasher/moviemasher.js'
+import { ClassSelected, eventStop, IndexHandler, isPopulatedString, Movable } from '@moviemasher/lib-core'
 
 import { JsxElements } from "../../Types/Element"
 import { WithClassName } from "../../Types/Core"

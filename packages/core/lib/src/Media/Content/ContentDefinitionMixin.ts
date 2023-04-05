@@ -1,7 +1,7 @@
-import { TweenableDefinitionClass } from "../../Mixin/Tweenable/Tweenable"
-import { PreloadArgs } from "../../Base/Code"
-import { ImageType } from "../../Setup/Enums"
-import { ContentDefinition, ContentDefinitionClass } from "./Content"
+import { TweenableDefinitionClass } from '../../Mixin/Tweenable/Tweenable.js'
+import { PreloadArgs } from '../../Base/Code.js'
+import { TypeImage } from '../../Setup/Enums.js'
+import { ContentDefinition, ContentDefinitionClass } from './Content.js'
 
 export function ContentDefinitionMixin<T extends TweenableDefinitionClass>(Base: T): ContentDefinitionClass & T {
   return class extends Base implements ContentDefinition {
@@ -9,7 +9,7 @@ export function ContentDefinitionMixin<T extends TweenableDefinitionClass>(Base:
       return Promise.resolve()
     }
     
-    type = ImageType
+    type = TypeImage
 
   }
 }

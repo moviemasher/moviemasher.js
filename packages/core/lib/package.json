@@ -1,11 +1,15 @@
 {
-  "name": "@moviemasher/moviemasher.js",
+  "name": "@moviemasher/lib-core",
   "version": "5.1.2",
   "description": "JavaScript video editor and encoder - version 5.1.2",
-  "files": ["esm", "umd"],
-  "main": "umd/moviemasher.js",
-  "module": "esm/moviemasher.mjs",
-  "types": "esm/moviemasher.d.mts",
+
+
+  "files": ["esm"],
+  "type": "module",
+  "main": "esm/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  
   "license": "MIT",
   "author": {
     "name": "Movie Masher",
@@ -22,20 +26,20 @@
   "keywords": [
     "video editor",
     "audio editor",
-    "video streaming",
+    "image editor",
     "svg",
     "composite"
   ],
   "scripts": {
-    "build": "rollup --config dev/rollup.config.mjs"
-  },
-  "devDependencies": {
-    "typescript": "4.9.5"
+    "wtf": "echo \"wtf\"",
+    "script": "run-s",
+    "build": "run-s client package",
+    "client": "rollup --config dev/rollup/client.config.mjs",
+    "package": "rollup --config dev/rollup/package.config.mjs"
   },
   "typedoc": {
     "entryPoint": "src/index.ts",
     "readmeFile": "dev/tsdoc/index.md",
-    "displayName": "core"
+    "displayName": "lib-core"
   }
 }
-

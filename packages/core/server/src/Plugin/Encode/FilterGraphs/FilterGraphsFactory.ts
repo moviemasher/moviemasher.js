@@ -1,5 +1,5 @@
 
-import { MashMedia, AVType } from "@moviemasher/moviemasher.js"
+import { MashMedia, AVType } from "@moviemasher/lib-core"
 import { FilterGraphs, FilterGraphsArgs, FilterGraphsOptions } from "./FilterGraphs"
 import { FilterGraphsClass } from "./FilterGraphsClass"
 

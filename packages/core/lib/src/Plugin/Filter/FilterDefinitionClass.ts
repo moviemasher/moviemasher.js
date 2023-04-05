@@ -1,16 +1,16 @@
-import { ScalarRecord, ValueRecord, UnknownRecord } from "../../Types/Core"
-import { SvgFilters, SvgItems } from "../../Helpers/Svg/Svg"
-import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from "../../Base/Code"
-import { DataType } from "../../Setup/Enums"
-import { Parameter } from "../../Setup/Parameter"
-import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from "./Filter"
-import { FilterClass } from "./FilterClass"
+import { ScalarRecord, ValueRecord, UnknownRecord } from '../../Types/Core.js'
+import { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
+import { CommandFiles, CommandFilter, CommandFilters, FilterDefinitionArgs, FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs } from '../../Base/Code.js'
+import { DataType } from '../../Setup/Enums.js'
+import { Parameter } from '../../Setup/Parameter.js'
+import { Filter, FilterDefinition, FilterDefinitionObject, FilterObject } from './Filter.js'
+import { FilterClass } from './FilterClass.js'
 
-import { idGenerate } from "../../Utility/Id"
-import { assertPopulatedString, assertValueRecord } from "../../Utility/Is"
-import { Property } from "../../Setup/Property"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { ErrorName } from "../../Helpers/Error/ErrorName"
+import { idGenerate } from '../../Utility/Id.js'
+import { assertPopulatedString, assertValueRecord } from '../../Utility/Is.js'
+import { Property } from '../../Setup/Property.js'
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { ErrorName } from '../../Helpers/Error/ErrorName.js'
 
 export class FilterDefinitionClass implements FilterDefinition {
   constructor(object: FilterDefinitionObject) {

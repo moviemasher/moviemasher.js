@@ -1,9 +1,9 @@
-import /* type */ { EnvironmentKey } from "@moviemasher/moviemasher.js"
+import type { EnvironmentKey } from "@moviemasher/lib-core"
 import { 
   EnvironmentKeyPrefix, Runtime, Scalar, EnvironmentRecord,
   ScalarType, scalar, NumberType, StringType, BooleanType, EnvironmentGetArray
-} from "@moviemasher/moviemasher.js"
-import /* type */ { EnvironmentRecord as  EnvironmentRecordType } from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
+import type { EnvironmentRecord as  EnvironmentRecordType } from "@moviemasher/lib-core"
 
 
 export const EnvironmentKeyApiPort: EnvironmentKey = `${EnvironmentKeyPrefix}API_PORT`
@@ -25,7 +25,7 @@ const ServerEnvironmentDefaults: EnvironmentRecordType = {
   [EnvironmentKeyApiDirTemporary]: './temporary',
   [EnvironmentKeyApiDirCache]: './temporary/cache',
   [EnvironmentKeyApiDirValid]: 'shared',
-  [EnvironmentKeyApiDirFilePrefix]: './examples/standalone/public/media',
+  [EnvironmentKeyApiDirFilePrefix]: './packages/example/standalone/public/media',
   [EnvironmentKeyAppColumnOwner]: 'user_id',
   [EnvironmentKeyAppColumnSource]: 'object_id',
 }

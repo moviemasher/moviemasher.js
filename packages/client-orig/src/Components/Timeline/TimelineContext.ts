@@ -1,7 +1,7 @@
 import {
   EmptyFunction,RectZero,
   Clip, DroppingPosition, NumberSetter, Rect, Track, EmptyFunctionType, Point
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface TimelineContextInterface {

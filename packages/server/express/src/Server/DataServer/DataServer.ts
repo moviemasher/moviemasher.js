@@ -10,7 +10,7 @@ import {
   DataGetRequest, DataRetrieveResponse,
   DataDefinitionGetResponse, DataDefinitionGetRequest,
   DataDefinitionRetrieveResponse, DataDefinitionRetrieveRequest,
-} from "@moviemasher/moviemasher.js"
+} from "@moviemasher/lib-core"
 
 import { Server, ServerArgs, ExpressHandler } from "../Server"
 

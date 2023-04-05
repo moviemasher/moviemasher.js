@@ -1,3 +1,0 @@
-# Movie Masher Client Plugin
-
-The Movie Masher client plugin for Client...

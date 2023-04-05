@@ -1,0 +1,10 @@
+{
+  "name": "@moviemasher/build-documentation",
+  "description": "Builds everything in packages/themes and packages/protocols",
+  "scripts": {
+    "build": "npm run build -w @moviemasher/documentation"
+  },
+  "devDependencies": {
+    "typedoc": "dependencies"
+  }
+}

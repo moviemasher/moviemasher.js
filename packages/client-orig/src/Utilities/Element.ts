@@ -1,4 +1,4 @@
-import { Size } from '@moviemasher/moviemasher.js'
+import { Size } from '@moviemasher/lib-core'
 
 export const elementSetPreviewSize = (current?: HTMLDivElement | null, size?: Size) => {
   if (!(size && current))

@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataType, UnknownRecord, assertPopulatedArray } from '@moviemasher/moviemasher.js'
+import { DataType, UnknownRecord, assertPopulatedArray } from '@moviemasher/lib-core'
 
 
 import { DataTypeInputs } from './DataTypeInputs'

@@ -1,8 +1,8 @@
-import /* type */ { Time, TimeRange } from "../../../Helpers/Time/Time"
-import /* type */ { ColorTuple } from "../../../Base/Code"
-import /* type */ {
+import type { Time, TimeRange } from '../../../Helpers/Time/Time.js'
+import type { ColorTuple } from '../../../Base/Code.js'
+import type {
   Content, ContentDefinition, ContentDefinitionObject, ContentObject
-} from "../Content"
+} from '../Content.js'
 
 export interface ColorContentObject extends ContentObject {
   color?: string

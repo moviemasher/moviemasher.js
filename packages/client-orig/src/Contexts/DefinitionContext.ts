@@ -1,4 +1,4 @@
-import { Media } from '@moviemasher/moviemasher.js'
+import { Media } from '@moviemasher/lib-core'
 import { createContext } from '../Framework/FrameworkFunctions'
 
 export interface DefinitionContextInterface {

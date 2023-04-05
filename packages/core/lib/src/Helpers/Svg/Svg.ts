@@ -1,6 +1,6 @@
-import /* type */ { 
+import type { 
   ClientImage, ClientVideo 
-} from "../ClientMedia/ClientMedia"
+} from '../ClientMedia/ClientMedia.js'
 
 export type FfmpegSvgFilter = SVGFEFloodElement | SVGFEOffsetElement | SVGFEBlendElement | SVGClipPathElement
 export type SvgFilter = FfmpegSvgFilter | SVGFEColorMatrixElement | SVGFEConvolveMatrixElement | SVGFEDisplacementMapElement | SVGFEComponentTransferElement

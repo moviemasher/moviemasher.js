@@ -1,9 +1,11 @@
-import { Size, sizeAboveZero } from "../../Utility/Size"
-import { UpdatableSizeDefinition, UpdatableSizeDefinitionClass } from "./UpdatableSize"
-import { isAboveZero } from "../../Utility/Is"
-import { ContentDefinitionClass } from "../../Media/Content/Content"
-import { isProbing } from "../../Plugin/Decode/Probe/Probing/ProbingFunctions"
-import { ProbeType } from "../../Plugin/Decode/Decoding/Decoding"
+import type {ContentDefinitionClass} from '../../Media/Content/Content.js'
+import type {Size} from '../../Utility/Size.js'
+import type {UpdatableSizeDefinition, UpdatableSizeDefinitionClass} from './UpdatableSize.js'
+
+import { sizeAboveZero} from '../../Utility/Size.js'
+import {isAboveZero} from '../../Utility/Is.js'
+import {isProbing} from '../../Plugin/Decode/Probe/Probing/ProbingFunctions.js'
+import {TypeProbe} from '../../Plugin/Decode/Decoding/Decoding.js'
 
 export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(Base: T): UpdatableSizeDefinitionClass & T {
   return class extends Base implements UpdatableSizeDefinition {
@@ -24,7 +26,7 @@ export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(B
       const transcoding = this.transcodings.find(transcoding => {
         return transcoding.request.response
       })
-      // console.log(this.constructor.name, "previewSize transcoding", transcoding)
+      // console.log(this.constructor.name, 'previewSize transcoding', transcoding)
       if (!transcoding) return this.sourceSize
 
       const { response: clientMedia } = transcoding.request
@@ -37,7 +39,7 @@ export function UpdatableSizeDefinitionMixin<T extends ContentDefinitionClass>(B
     }
 
     get sourceSize(): Size | undefined {
-      const probing = this.decodings.find(decoding => decoding.type === ProbeType)
+      const probing = this.decodings.find(decoding => decoding.type === TypeProbe)
       if (isProbing(probing)) {
         const { data } = probing
         const { width, height } = data

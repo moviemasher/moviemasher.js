@@ -1,11 +1,12 @@
-import { Value, ValueRecord } from "../../Types/Core"
-import { MashAndMediaObject } from "../../Media/Mash/Mash"
-import { Output } from "../../Base/Code"
-import { OutputFormat } from "../../Setup/Enums"
-import { Size } from "../../Utility/Size"
-import { EncodingType } from "./Encoding"
-import { EncodeType, Plugin } from "../Plugin"
-import { StringDataOrError } from "../../Helpers/ClientMedia/ClientMedia"
+import type { Value, ValueRecord } from '../../Types/Core.js'
+import type { MashAndMediaObject } from '../../Media/Mash/Mash.js'
+import type { Output } from '../../Base/Code.js'
+import type { Size } from '../../Utility/Size.js'
+import type { EncodingType } from './Encoding/Encoding.js'
+import type { Plugin, EncodeType } from '../Plugin.js'
+import type { StringDataOrError } from '../../Helpers/ClientMedia/ClientMedia.js'
+
+import { OutputFormat } from '../../Setup/Enums.js'
 
 /**
  * @category Plugin
@@ -62,8 +63,6 @@ export interface VideoEncoderOptions extends ImageEncoderOptions, AudioEncoderOp
 export type EncoderOptionsBy = {
   [index in EncodingType]?: EncoderOptions
 }
-
-
 
 
 export type EncodeMethod = (localPath: string, options?: EncoderOptions) => Promise<StringDataOrError>

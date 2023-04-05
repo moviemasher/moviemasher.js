@@ -1,4 +1,4 @@
-import { isArray } from "@moviemasher/moviemasher.js"
+import { isArray } from "@moviemasher/lib-core"
 import React from "react"
 import { JsxChildren, JsxChilds, JsxElements } from "../Types/Element"
 import { PropsWithoutChild } from "../Types/Props"

@@ -2,10 +2,10 @@
 import { describe, test } from 'node:test'
 import assert from 'assert'
 
-import { isString, isInteger, isPositive } from '@moviemasher/moviemasher.js'
+import { isString, isInteger, isPositive } from '@moviemasher/lib-core'
 describe('Is', () => {
   describe('isInteger', () => {
-    test("returns true for integers, and rounded floats", () => {
+    test('returns true for integers, and rounded floats', () => {
       assert(isInteger(1))
       assert(isInteger(1.0))
       assert(isInteger(0))
@@ -13,7 +13,7 @@ describe('Is', () => {
       assert(isInteger(-1))
     })
 
-    test("returns false for floats and other", () => {
+    test('returns false for floats and other', () => {
       assert(!isInteger(1.000001))
       assert(!isInteger('1'))
       assert(!isInteger([1]))
@@ -27,31 +27,31 @@ describe('Is', () => {
   })
 
   describe('isPositive', () => {
-    test("returns true for numbers greater or equal to zero", () => {
+    test('returns true for numbers greater or equal to zero', () => {
       assert(isPositive(0.4))
       assert(isPositive(1000.000222))
       assert(isPositive(0))
     })
-    test("returns false for numbers less than zero", () => {
+    test('returns false for numbers less than zero', () => {
       assert(!isPositive(-1))
     })
   })
 
   describe('isString', () => {
-    test("returns true for strings, regardless of content", () => {
-      assert(isString(""))
+    test('returns true for strings, regardless of content', () => {
+      assert(isString(''))
       " 1s'!".split('').forEach(character => {
         assert(isString(character))
       })
     })
 
-    test("returns false for non-strings", () => {
+    test('returns false for non-strings', () => {
       assert(!isString(1))
       assert(!isString(0))
       assert(!isString([]))
       assert(!isString({}))
       assert(!isString({ foo: 'bar' }))
-      assert(!isString([""]))
+      assert(!isString(['']))
       assert(!isString(undefined))
       assert(!isString(null))
       assert(!isString(true))

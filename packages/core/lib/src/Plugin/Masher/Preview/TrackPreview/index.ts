@@ -1,2 +1,2 @@
-export * from "./TrackPreview"
-export * from "./TrackPreviewClass"
+export * from './TrackPreview.js'
+export * from './TrackPreviewClass.js'

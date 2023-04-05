@@ -1,11 +1,11 @@
 
 
 
-import /* type */ { SliderChangeHandler } from "../../../../Types/Core"
+import type { SliderChangeHandler } from "../../../../Types/Core"
 
 import React from 'react'
 
-import { DataType, assertScalar, isArray, isDefined, isNumber } from '@moviemasher/moviemasher.js'
+import { DataType, assertScalar, isArray, isDefined, isNumber } from '@moviemasher/lib-core'
 import { DataTypeInputs } from './DataTypeInputs'
 import { InputContext } from '../InputContext'
 import { Slider } from '../../../../Utilities/Slider'

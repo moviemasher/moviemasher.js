@@ -1,6 +1,6 @@
-import { Track } from "../../../../Media/Mash/Track/Track"
-import { Clip, Clips } from "../../../../Media/Mash/Track/Clip/Clip"
-import { Action, ActionObject } from "./Action"
+import { Track } from '../../../../Media/Mash/Track/Track.js'
+import { Clip } from '../../../../Media/Mash/Track/Clip/Clip.js'
+import { Action, ActionObject } from './Action.js'
 
 export interface RemoveClipActionObject extends ActionObject {
   clip : Clip

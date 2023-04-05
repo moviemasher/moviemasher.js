@@ -1,9 +1,9 @@
 import React from "react"
 
-import /* type */ { Identified, Strings } from "@moviemasher/moviemasher.js"
-import /* type */ { ClickableProps } from "../Clickable/Clickable.lite"
+import type { Identified, Strings } from "@moviemasher/lib-core"
+import type { ClickableProps } from "../Clickable/Clickable.lite"
 
-import { ClassSelected } from "@moviemasher/moviemasher.js"
+import { ClassSelected } from "@moviemasher/lib-core"
 import { className } from "@moviemasher/client-core"
 import { propsMediaTypes } from "../../Utilities/Props"
 import { BrowserContext } from "./BrowserContext"

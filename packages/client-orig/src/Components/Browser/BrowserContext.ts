@@ -1,7 +1,7 @@
 
 import { 
   EmptyFunction, MediaType, MediaArray, StringSetter, EmptyFunctionType 
-} from '@moviemasher/moviemasher.js'
+} from '@moviemasher/lib-core'
 import { createContext } from '../../Framework/FrameworkFunctions'
 
 export interface BrowserContextInterface {

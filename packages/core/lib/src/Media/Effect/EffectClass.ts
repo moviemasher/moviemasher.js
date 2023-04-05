@@ -1,22 +1,25 @@
-import { EffectMedia } from "./Effect"
-import { Actions } from "../../Plugin/Masher/Actions/Actions"
-import { SelectedItems } from "../../Helpers/Select/SelectedProperty"
-import { Scalar } from "../../Types/Core"
-import { SvgFilters } from "../../Helpers/Svg/Svg"
-import { assertPopulatedString, isTimeRange } from "../../Utility/Is"
-import { MediaInstanceBase } from "../MediaInstanceBase"
-import { TweenableMixin } from "../../Mixin/Tweenable/TweenableMixin"
-import { ContainerMixin } from "../Container/ContainerMixin"
-import { assertProperty } from "../../Setup/Property"
-import { Rect } from "../../Utility/Rect"
-import { Time, TimeRange } from "../../Helpers/Time/Time"
-import { PropertyTweenSuffix } from "../../Base/Propertied"
-import { Filter } from "../../Plugin/Filter/Filter"
-import { Size } from "../../Utility/Size"
-import { CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs, VisibleCommandFileArgs } from "../../Base/Code"
-import { arrayLast } from "../../Utility/Array"
-import { Selectables } from "../../Plugin/Masher/Selectable"
-import { EffectType, NoneType, SelectorType } from "../../Setup/Enums"
+import type {CommandFiles, CommandFilterArgs, CommandFilters, FilterCommandFileArgs, FilterCommandFilterArgs, VisibleCommandFileArgs} from '../../Base/Code.js'
+import type {EffectMedia} from './Effect.js'
+import type {Filter} from '../../Plugin/Filter/Filter.js'
+import type {Rect} from '../../Utility/Rect.js'
+import type {Scalar} from '../../Types/Core.js'
+import type {Selectables} from '../../Plugin/Masher/Selectable.js'
+import type {SelectedItems} from '../../Helpers/Select/SelectedProperty.js'
+import type {Size} from '../../Utility/Size.js'
+import type {SvgFilters} from '../../Helpers/Svg/Svg.js'
+import type {Time, TimeRange} from '../../Helpers/Time/Time.js'
+
+import {Actions} from '../../Plugin/Masher/Actions/Actions.js'
+import {arrayLast} from '../../Utility/Array.js'
+import {assertPopulatedString, isTimeRange} from '../../Utility/Is.js'
+import {assertProperty} from '../../Setup/Property.js'
+import {ContainerMixin} from '../Container/ContainerMixin.js'
+import {MediaInstanceBase} from '../MediaInstanceBase.js'
+import {PropertyTweenSuffix} from '../../Base/Propertied.js'
+import {TweenableMixin} from '../../Mixin/Tweenable/TweenableMixin.js'
+import {TypeEffect, TypeNone, SelectorType} from '../../Setup/Enums.js'
+
+
 const EffectContainerWithTweenable = TweenableMixin(MediaInstanceBase)
 const EffectContainerWithContainer = ContainerMixin(EffectContainerWithTweenable)
 
@@ -64,14 +67,14 @@ export class EffectClass extends EffectContainerWithContainer {
   
   selectables(): Selectables { return [this] }
 
-  selectType: SelectorType = EffectType
+  selectType: SelectorType = TypeEffect
 
   selectedItems(actions: Actions): SelectedItems {
     return this.properties.map(property => { 
       const undoValue = this.value(property.name)
       return {
         value: undoValue,
-        selectType: NoneType, property, 
+        selectType: TypeNone, property, 
         changeHandler: (property: string, redoValue: Scalar) => {
           assertPopulatedString(property)
       

@@ -1,0 +1,17 @@
+version: "3"
+name: moviemasher-build-core
+services:
+  service:
+    build:
+      dockerfile: packages/build/core/Dockerfile.cnf
+      context: ../../../
+    image: moviemasher/build-core:${MOVIEMASHER_VERSION}
+    container_name: moviemasher-build-core
+    env_file:
+      - ../../../dev/local.env
+    volumes:
+      - ../../../package.json:${MOVIEMASHER_DIR_ROOT}/package.json
+      - ./package.json:${MOVIEMASHER_DIR_ROOT}/packages/build/core/package.json
+      - ../../../dev/:${MOVIEMASHER_DIR_ROOT}/dev/
+      - ../../../packages/core:${MOVIEMASHER_DIR_ROOT}/packages/core
+      - ../../../node_modules/rollup-plugin-import-maps/src/index.mjs:${MOVIEMASHER_DIR_ROOT}/node_modules/rollup-plugin-import-maps/src/index.mjs

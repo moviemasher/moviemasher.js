@@ -1,14 +1,14 @@
-import { Numbers, ScalarRecord, StringRecord, ValueRecord } from "../../../Types/Core"
-import { SvgFilters } from "../../../Helpers/Svg/Svg"
-import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from "../../../Base/Code"
-import { FilterDefinitionClass } from "../FilterDefinitionClass"
-import { propertyInstance } from "../../../Setup/Property"
-import { assertPopulatedString, isAboveZero, isObject } from "../../../Utility/Is"
-import { idGenerate } from "../../../Utility/Id"
-import { colorRgbaKeys } from "../../../Helpers/Color/ColorConstants"
-import { svgFilter } from "../../../Helpers/Svg/SvgFunctions"
-import { FilterDefinitionObject } from "../Filter"
-import { CommaChar } from "../../../Setup/Constants"
+import { Numbers, ScalarRecord, StringRecord, ValueRecord } from '../../../Types/Core.js'
+import { SvgFilters } from '../../../Helpers/Svg/Svg.js'
+import { CommandFilter, CommandFilters, FilterDefinitionCommandFilterArgs } from '../../../Base/Code.js'
+import { FilterDefinitionClass } from '../FilterDefinitionClass.js'
+import { propertyInstance } from '../../../Setup/Property.js'
+import { assertPopulatedString, isAboveZero, isObject } from '../../../Utility/Is.js'
+import { idGenerate } from '../../../Utility/Id.js'
+import { colorRgbaKeys } from '../../../Helpers/Color/ColorConstants.js'
+import { svgFilter } from '../../../Helpers/Svg/SvgFunctions.js'
+import { FilterDefinitionObject } from '../Filter.js'
+import { CommaChar } from '../../../Setup/Constants.js'
 
 
 /**
@@ -18,14 +18,14 @@ import { CommaChar } from "../../../Setup/Constants"
   constructor(object: FilterDefinitionObject) {
     super(object)
     this.properties.push(propertyInstance({
-      custom: true, name: "bias",
+      custom: true, name: 'bias',
       defaultValue: 0.0, min: 0.0, max: 100.0, step: 0.01
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: "matrix", defaultValue: "0 0 0 0 1 0 0 0 0",
+      custom: true, name: 'matrix', defaultValue: '0 0 0 0 1 0 0 0 0',
     }))
     this.properties.push(propertyInstance({
-      custom: true, name: "multiplier",
+      custom: true, name: 'multiplier',
       defaultValue: 1.0, min: 0.0, max: 100.0, step: 0.01
     }))
     this.populateParametersFromProperties()
@@ -56,7 +56,7 @@ import { CommaChar } from "../../../Setup/Constants"
       bias: String(bias)
     }
     if (isAboveZero(multiplier)) object.divisor = String(multiplier)
-    // console.log(this.constructor.name, "filterDefinitionSvgFilter", object)
+    // console.log(this.constructor.name, 'filterDefinitionSvgFilter', object)
     return [svgFilter(object)]
   }
 }
@@ -103,15 +103,15 @@ export interface ConvolutionServerFilter extends ValueRecord {
 }
 
 export const isConvolutionServerFilter = (value: any): value is ConvolutionServerFilter => {
-  return isObject(value) && "matrix" in value && "bias" in value && "multiplier" in value
+  return isObject(value) && 'matrix' in value && 'bias' in value && 'multiplier' in value
 }
 export function assertConvolutionServerFilter(value: any): asserts value is ConvolutionServerFilter {
-  if (!isConvolutionServerFilter(value)) throw new Error("expected ConvolutionServerFilter")
+  if (!isConvolutionServerFilter(value)) throw new Error('expected ConvolutionServerFilter')
 }
 
 
 const matrixFromString = (string?: string): Numbers => {
-  const definedString = string || "0 0 0 0 1 0 0 0 0"
+  const definedString = string || '0 0 0 0 1 0 0 0 0'
   return definedString.split(CommaChar).map(component => parseInt(component.trim()))
 }
 

@@ -1,2 +1,2 @@
-export * from './Core'
-export * from './Function'
+export * from './Core.js'
+export * from './Function.js'

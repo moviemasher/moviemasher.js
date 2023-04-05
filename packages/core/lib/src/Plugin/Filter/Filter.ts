@@ -1,19 +1,18 @@
-import {
-  ScalarRecord, UnknownRecord
-} from "../../Types/Core"
-import { Identified } from "../../Base/Identified"
-import { SvgFilters, SvgItems } from "../../Helpers/Svg/Svg"
-import { 
+import type { ScalarRecord, UnknownRecord } from '../../Types/Core.js'
+import type { Identified } from '../../Base/Identified.js'
+import type { SvgFilters, SvgItems } from '../../Helpers/Svg/Svg.js'
+import type { 
   CommandFiles, CommandFilters, FilterCommandFileArgs, 
   FilterCommandFilterArgs, FilterDefinitionArgs, 
   FilterDefinitionCommandFileArgs, FilterDefinitionCommandFilterArgs 
-} from "../../Base/Code"
-import { Parameter, ParameterObject } from "../../Setup/Parameter"
-import { Property } from "../../Setup/Property"
-import { Propertied } from "../../Base/Propertied"
-import { errorThrow } from "../../Helpers/Error/ErrorFunctions"
-import { isObject } from "../../Utility/Is"
-import { FilterType, Plugin } from "../Plugin"
+} from '../../Base/Code.js'
+import type { Parameter, ParameterObject } from '../../Setup/Parameter.js'
+import type { Property } from '../../Setup/Property.js'
+import type { Propertied } from '../../Base/Propertied.js'
+import type { FilterType, Plugin } from '../Plugin.js'
+
+import { errorThrow } from '../../Helpers/Error/ErrorFunctions.js'
+import { isObject } from '../../Utility/Is.js'
 
 export interface FilterArgs {
   propertied?: Propertied
@@ -53,7 +52,7 @@ export interface FilterDefinition extends Identified {
   toJSON(): UnknownRecord
 }
 export const isFilterDefinition = (value: any): value is FilterDefinition => {
-  return isObject(value) && "instanceFromObject" in value
+  return isObject(value) && 'instanceFromObject' in value
 }
 export function assertFilterDefinition(value: any, name?: string): asserts value is FilterDefinition {
   if (!isFilterDefinition(value)) errorThrow(value, 'FilterDefinition', name)

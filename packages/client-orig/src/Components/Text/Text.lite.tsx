@@ -1,8 +1,8 @@
 import React from 'react'
-import { translateArgs, isTranslateArgs } from '@moviemasher/moviemasher.js'
+import { translateArgs, isTranslateArgs } from '@moviemasher/lib-core'
 
-import /* type */ { Labeled } from '@moviemasher/moviemasher.js'
-import /* type */ { PropsContained } from '../../Types/Props'
+import type { Labeled } from '@moviemasher/lib-core'
+import type { PropsContained } from '../../Types/Props'
 
 import Show from '../../Framework/Show/Show.lite'
 import TranslationLabel from '../Translation/TranslationLabel/TranslationLabel.lite'

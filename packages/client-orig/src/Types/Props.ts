@@ -1,4 +1,4 @@
-import type { Labeled } from '@moviemasher/moviemasher.js'
+import type { Labeled } from '@moviemasher/lib-core'
 import { MouseEventFunction } from '../Framework/Framework'
 import { JsxAndChildren, JsxChild, JsxChildren } from "./Element"
 import { WithClassName } from './Core'

@@ -1,5 +1,5 @@
-<!-- MAGIC:START (FILE:src=workspaces/documentation/src/snippet/head.md) -->
-<!-- The below content is automatically added from workspaces/documentation/src/snippet/head.md -->
+<!-- MAGIC:START (FILE:src=dev/documentation/snippet/head.md) -->
+<!-- The below content is automatically added from dev/documentation/snippet/head.md -->
 [![Image](https://moviemasher.com/media/img/moviemasher.svg "Movie Masher")](https://moviemasher.com)
 
 _JavaScript video editor and encoder_
@@ -20,8 +20,8 @@ Movie Masher is a web-based video editor built entirely in TypeScript and availa
 - reorganized inspector
 
 
-<!-- MAGIC:START (FILE:src=workspaces/documentation/src/snippet/documentation.md) -->
-<!-- The below content is automatically added from workspaces/documentation/src/snippet/documentation.md -->
+<!-- MAGIC:START (FILE:src=dev/documentation/snippet/documentation.md) -->
+<!-- The below content is automatically added from dev/documentation/snippet/documentation.md -->
 ## Documentation
 
 In addition to this README, there is a simple
@@ -33,7 +33,7 @@ also available when using a code editor that supports TypeScript and IntelliSens
 
 ## Availability
 
-Movie Masher is packaged into several formats and published on some of the most popular platforms. The [core library](https://www.npmjs.com/package/@moviemasher/moviemasher.js) 
+Movie Masher is packaged into several formats and published on some of the most popular platforms. The [core library](https://www.npmjs.com/package/@moviemasher/lib-core) 
 as well as the
 [server](https://www.npmjs.com/package/@moviemasher/server-express), 
 [client](https://www.npmjs.com/package/@moviemasher/client-react), and
@@ -67,7 +67,7 @@ docker rm moviemasher
 
 
 
-<!-- MAGIC:START (FILEMD:src=workspaces/documentation/src/snippet/example-core.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-core.md&stripMagic=true) -->
 ## Core Example
 
 The HTML document below can be loaded in a web browser to display the simplest 'hello world' example. The SCRIPT tag within the HEAD tag loads the UMD version of the core library directly from NPM through a CDN. The BODY contains just an empty DIV tag followed by another SCRIPT tag containing code that uses the library to populate it with Elements. 
@@ -82,7 +82,7 @@ The HTML document below can be loaded in a web browser to display the simplest '
     <title>Movie Masher Express Example</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <script src="https://unpkg.com/@moviemasher/moviemasher.js@5.1.2/umd/moviemasher.js" crossorigin></script>
+    <script src="https://unpkg.com/@moviemasher/lib-core@5.1.2/umd/moviemasher.js" crossorigin></script>
     <style>
       #root { width: 360px; height: 640px; }
       #root > * { position: absolute; }
@@ -120,7 +120,7 @@ This example will only display what's on the first frame of our mash and will no
 
 <!-- MAGIC:END -->
 
-<!-- MAGIC:START (FILEMD:src=workspaces/documentation/src/snippet/example-client.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-client.md&stripMagic=true) -->
 ## Client Example
 
 The HTML document below can simply be loaded in a web browser to display a 'hello world' example. The HEAD contains tags that load React and Movie Masher in UMD (Universal Module Definition) format directly from NPM through a CDN. The BODY contains just an empty DIV element followed by a SCRIPT that uses React to display Movie Masher, prepopulated with a text clip...
@@ -137,7 +137,7 @@ The HTML document below can simply be loaded in a web browser to display a 'hell
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://unpkg.com/react@18/umd/react.production.min.js' crossorigin></script>
     <script src='https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' crossorigin></script>
-    <script src='https://unpkg.com/@moviemasher/moviemasher.js@5.1.2/umd/moviemasher.js' crossorigin></script>
+    <script src='https://unpkg.com/@moviemasher/lib-core@5.1.2/umd/moviemasher.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/theme-default@5.1.2/umd/theme-default.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-core@5.1.2/umd/client-core.js' crossorigin></script>
     <script src='https://unpkg.com/@moviemasher/client-react@5.1.2/umd/client-react.js' crossorigin></script>
@@ -194,7 +194,7 @@ The `mash` is included in arguments passed to the `MasherDefaultProps` function.
 This example utilizes the UMD builds of React and Movie Masher to avoid a bundling step. The appoach is simple, but potentially suboptimal since more code is being delivered than might be used in production. One simple optimization is to load the minimized builds instead, by changing React's file extensions from 'development.js' to 'production.js' and Movie Masher's from '.js' to '.min.js'. But typically a bundler converts the ESM builds into a truly optimized (tree shaken) script for final delivery. Learn more about bundling in the [Client Developer Guide](https://moviemasher.com/docs/ClientDeveloper.html). 
 
 
-<!-- MAGIC:START (FILEMD:src=workspaces/documentation/src/snippet/example-server.md&stripMagic=true) -->
+<!-- MAGIC:START (FILEMD:src=dev/documentation/snippet/example-server.md&stripMagic=true) -->
 ## Server Example
 
 The following shell command installs the server and required packages to your NPM project,
@@ -228,8 +228,8 @@ This example installs an FFmpeg build that has limited rendering capabilities du
 <!-- MAGIC:END -->
 
 
-<!-- MAGIC:START (FILE:src=workspaces/documentation/src/snippet/foot.md) -->
-<!-- The below content is automatically added from workspaces/documentation/src/snippet/foot.md -->
+<!-- MAGIC:START (FILE:src=dev/documentation/snippet/foot.md) -->
+<!-- The below content is automatically added from dev/documentation/snippet/foot.md -->
 ## Feedback
 
 If any problems arise while utilizing the Movie Masher repository, a

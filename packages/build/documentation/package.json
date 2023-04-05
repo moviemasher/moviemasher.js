@@ -1,0 +1,34 @@
+{
+  "name": "@moviemasher/build-documentation",
+  "description": "Builds everything in /docs",
+  "scripts": {
+    "build": "npm run build-docs"
+  },
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://github.com/moviemasher/moviemasher.js/issues"
+  },
+  "homepage": "https://moviemasher.com",
+  "author": {
+    "name": "Movie Masher",
+    "email": "support@moviemasher.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moviemasher/moviemasher.js.git"
+  },
+  "version": "5.1.2",
+  "dependencies": {
+    "@types/css-font-loading-module": "^0.0.7",
+    "typedoc": "^0.23.26",
+    "typedoc-plugin-external-resolver": "^1.0.1",
+    "typedoc-plugin-resolve-crossmodule-references": "^0.3.3",
+    "typedoc-plugin-mdn-links": "^2.0.2",
+    "@knodes/typedoc-plugin-pages": "^0.23.1",
+    "typedoc-plugin-expand-object-like-types": "^0.1.1",
+    "@knodes/typedoc-plugin-code-blocks": "^0.23.1",
+    "typedoc-plugin-extras": "^2.3.2",
+    "typedoc-plugin-coverage": "^2.0.0"
+  }
+}

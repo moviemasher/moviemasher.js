@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassButton, ClipType, TrackType } from '@moviemasher/moviemasher.js'
+import { ClassButton, ClipType, TrackType } from '@moviemasher/lib-core'
 
 import { PropsMethod, PropsWithoutChild } from "../../Types/Props"
 import { Bar } from '../../Utilities/Bar'
